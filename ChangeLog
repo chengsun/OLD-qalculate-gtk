@@ -1,3 +1,16 @@
+2004-08-12 Niklas Knutsson  <nq@altern.org>
+
+	* Fix derangements() which was broken due to changed interpretion of -1^x
+	* CALCULATOR->u_rad was null
+	* True and False variables
+	* "yes" -> "Yes" and "no" -> "No"
+	* Localize "True" and "False" radio buttons
+	* Add *.xml.in files to the dist tar sources
+	* Complete exp1 in "2+5exp1"
+	* Add undefined variable
+	* Fix ids in text arguments when function is used in other function (fixes distribution functions)
+	* Show classification in atom() dialog
+
 2004-08-11 Niklas Knutsson  <nq@altern.org>
 
 	* Remove double decimal points

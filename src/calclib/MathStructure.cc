@@ -5429,6 +5429,10 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 					MathStructure msave(CHILD(0)[0]);
 					CHILD(0) = msave;
 				}
+				if(CHILD(1).contains(x_var)) {
+					CHILD(0) -= CHILD(1);
+					CHILD(1).clear();
+				}
 				isolate_x(eo, x_var);
 				childrenUpdated();
 				return true;

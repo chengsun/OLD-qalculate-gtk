@@ -784,6 +784,8 @@ void Calculator::addBuiltinVariables() {
 	v_pinf = (KnownVariable*) addVariable(new KnownVariable("", "plus_infinity", mstruct, "+Infinity", false, true));
 	mstruct.number().setMinusInfinity();
 	v_minf = (KnownVariable*) addVariable(new KnownVariable("", "minus_infinity", mstruct, "-Infinity", false, true));
+	mstruct.setUndefined();
+	v_undef = (KnownVariable*) addVariable(new KnownVariable("", "undefined", mstruct, "Undefined", false, true));
 	addVariable(new EulerVariable());
 	addVariable(new CatalanVariable());
 	
@@ -1034,17 +1036,10 @@ void Calculator::clearBuffers() {
 			ids_p.erase(it);
 		}
 	}
-/*	for(unsigned int i = 0; i < ids.size(); i++) {
-		if(!ids_p[i]) {
-			freed_ids.push_back(ids[i]);
-			ids.erase(ids.begin() + i);
-			delete id_structs[i];
-			id_structs.erase(id_structs.begin() + i);
-			ids_p.erase(ids_p.begin() + i);	
-			i--;
-		}
-		break;
-	}*/
+	/*freed_ids.clear();
+	id_structs.clear();
+	ids_p.clear();
+	ids_i = 0;*/
 }
 void Calculator::abort() {
 	if(calculate_thread_stopped) {
@@ -1251,6 +1246,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 			default: {}
 		}
 	}
+	//clearBuffers();
 	return mstruct;
 }
 string Calculator::printMathStructureTimeOut(const MathStructure &mstruct, int usecs, const PrintOptions &po) {
@@ -2730,10 +2726,15 @@ MathStructure Calculator::parseNumber(string str, const ParseOptions &po) {
 			str.erase(i, 1);
 		}
 	}
-
 	if(str[0] == ID_WRAP_LEFT_CH && str.length() > 2 && str[str.length() - 1] == ID_WRAP_RIGHT_CH) {
 		int id = s2i(str.substr(1, str.length() - 2));
-		mstruct.set(*getId(id));
+		const MathStructure *m_temp = getId(id);
+		if(!m_temp) {
+			mstruct.setUndefined();
+			error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
+			return mstruct;
+		}
+		mstruct.set(*m_temp);
 		if(s == MINUS_CH) mstruct.negate();
 		delId(id);
 		return mstruct;
@@ -2756,6 +2757,7 @@ MathStructure Calculator::parseNumber(string str, const ParseOptions &po) {
 	if(s == MINUS_CH) {
 		str.insert(str.begin(), 1, MINUS_CH);
 	}
+	
 	Number nr(str, po.base, po.read_precision);
 	mstruct.set(nr);
 	return mstruct;
@@ -3611,6 +3613,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 	Prefix *p;
 	Argument *arg;
 	int itmp;
+	string rad_str = "rad";
 	IntegerArgument *iarg;
 	NumberArgument *farg;	
 	xmlChar *value, *lang, *value2;
@@ -4099,13 +4102,23 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						au->setApproximate(b);
 						au->setHidden(hidden);
 						item = au;
+						if(!u_rad) {
+							if(version_numbers[1] < 6 || version_numbers[2] < 3 && name == rad_str) {
+								u_rad = au;
+							}
+							for(unsigned int i = 0; i < 10; i++) {
+								if(names[i].name == rad_str || ref_names[i].name == rad_str) {
+									u_rad = au;
+									break;
+								}
+							}
+						}
 						ITEM_SET_NAME_2
 						ITEM_SET_NAME_3
 						au->setAsSIUnit(b_si);
 						addUnit(au);
 						au->setChanged(false);
-						done_something = true;
-						if(name == "rad") u_rad = au;
+						done_something = true;	
 					}
 				} else if(type == "composite") {	
 					if(version_numbers[1] < 6 || version_numbers[2] < 3) {

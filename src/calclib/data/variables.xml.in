@@ -740,6 +740,37 @@
         <_name>minus_infinity</_name>
       </name>
     </builtin_variable>
+    <builtin_variable name="undefined">
+      <_title>Undefined</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>undefined</_name>
+      </name>
+    </builtin_variable>
+    <variable>
+      <_title>False</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>false</_name>
+      </name>
+      <name index="2">
+        <reference>true</reference>
+        <_name>no</_name>
+      </name>
+      <value>0</value>
+    </variable>
+    <variable>
+      <_title>True</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>true</_name>
+      </name>
+      <name index="2">
+        <reference>true</reference>
+        <_name>yes</_name>
+      </name>
+      <value>1</value>
+    </variable>
   </category>
   <category>
     <_title>Unknowns</_title>

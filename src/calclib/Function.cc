@@ -1168,11 +1168,59 @@ MathStructure Argument::parse(const string &str, const ParseOptions &po) const {
 					i++;
 				}
 				if((cits / 2) % 2 == 0) {
-					return str.substr(1 + pars, str.length() - 2 - pars * 2);
+					i = str.find(ID_WRAP_LEFT, 1 + pars);
+					if(i == string::npos || i >= str.length() - (1 + pars)) {
+						return str.substr(1 + pars, str.length() - 2 - pars * 2);
+					}
+					string str2 = str.substr(1 + pars, str.length() - 2 - pars * 2);
+					string str3;
+					i = 0;
+					unsigned int i2 = 0; int id = 0;
+					while((i = str2.find(ID_WRAP_LEFT, i)) != string::npos) {
+						i2 = str2.find(ID_WRAP_RIGHT, i + 1);
+						if(i2 == string::npos) break;
+						id = s2i(str2.substr(i + 1, i2 - (i + 1)));
+						const MathStructure *m_temp = CALCULATOR->getId(id);
+						str3 = "(";
+						if(!m_temp) {
+							CALCULATOR->error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
+							str3 += CALCULATOR->v_undef->preferredInputName(true, false, false, true).name;
+						} else {
+							str3 += m_temp->print(CALCULATOR->save_printoptions).c_str();
+						}
+						str3 += ")";
+						str2.replace(i, i2 - i + 1, str3);
+						i += str3.length();
+					}
+					return str2;
 				}
 			}
 		}
-		return str.substr(pars, str.length() - pars * 2);
+		unsigned int i = str.find(ID_WRAP_LEFT, pars);
+		if(i == string::npos || i >= str.length() - pars) {
+			return str.substr(pars, str.length() - pars * 2);
+		}
+		string str2 = str.substr(pars, str.length() - pars * 2);
+		string str3;
+		i = 0;
+		unsigned int i2 = 0; int id = 0;
+		while((i = str2.find(ID_WRAP_LEFT, i)) != string::npos) {
+			i2 = str2.find(ID_WRAP_RIGHT, i + 1);
+			if(i2 == string::npos) break;
+			id = s2i(str2.substr(i + 1, i2 - (i + 1)));
+			const MathStructure *m_temp = CALCULATOR->getId(id);
+			str3 = "(";
+			if(!m_temp) {
+				CALCULATOR->error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
+				str3 += CALCULATOR->v_undef->preferredInputName(true, false, false, true).name;
+			} else {
+				str3 += m_temp->print(CALCULATOR->save_printoptions).c_str();
+			}
+			str3 += ")";
+			str2.replace(i, i2 - i + 1, str3);
+			i += str3.length();
+		}
+		return str2;
 	} else {
 		return CALCULATOR->parse(str, po);
 	}

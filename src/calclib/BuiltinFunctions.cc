@@ -2004,6 +2004,23 @@ int AtomInfoFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	message += _("Name"); message +=":\t\t\t"; message += e->name; message += "\n";
 	message += _("Symbol"); message +=":\t\t\t"; message += e->symbol; message += "\n";
 	message += _("Number"); message +=":\t\t\t"; message += i2s(e->number);
+	if(e->group > 0) {
+		message += "\n"; message += _("Classification"); message +=":\t\t";
+		switch(e->group) {
+			case ALKALI_METALS: {message += _("Alkali Metal"); break;}
+			case ALKALI_EARTH_METALS: {message += _("Alkaline-Earth Metal"); break;}
+			case LANTHANIDES: {message += _("Lanthanide"); break;}
+			case ACTINIDES: {message += _("Actinide"); break;}
+			case TRANSITION_METALS: {message += _("Transition Metal"); break;}
+			case METALS: {message += _("Metal"); break;}
+			case METALLOIDS: {message += _("Metalloid"); break;}
+			case NONMETALS: {message += _("Non-Metal"); break;}
+			case HALOGENS: {message += _("Halogen"); break;}
+			case NOBLE_GASES: {message += _("Noble Gas"); break;}
+			case TRANSACTINIDES: {message += _("Transactinide"); break;}
+			default: {message += _("Unknown"); break;}
+		}
+	}
 	if(!e->weight.empty()) {message += "\n"; message += _("Atomic Weight"); message +=":\t\t"; message += e->weight; message += " u";}
 	CALCULATOR->message(MESSAGE_INFORMATION, message.c_str(), NULL);
 	return 1;
