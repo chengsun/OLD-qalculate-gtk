@@ -67,7 +67,7 @@ extern GtkWidget *tUnits, *tUnitCategories;
 extern GtkListStore *tUnits_store;
 extern GtkListStore *tUnitCategories_store;
 extern GtkAccelGroup *accel_group;
-GtkWidget *u_enable_item, *f_enable_item, *v_enable_item;
+GtkWidget *u_enable_item, *f_enable_item, *v_enable_item, *uv_enable_item;
 extern GtkWidget *functions_window;
 extern string selected_function_category;
 extern string selected_function;
