@@ -219,7 +219,7 @@ class MathStructure {
 		bool calculatesub(const EvaluationOptions &eo, const EvaluationOptions &feo);
 		bool calculateFunctions(const EvaluationOptions &eo);			
 		MathStructure &eval(const EvaluationOptions &eo = default_evaluation_options);
-		void factorize(const EvaluationOptions &eo = default_evaluation_options);
+		bool factorize(const EvaluationOptions &eo = default_evaluation_options, bool prioritize_power = false);
 
 #ifdef HAVE_GIAC		
 		giac::gen toGiac() const;
