@@ -5309,6 +5309,7 @@ void load_preferences() {
 	printops.negative_exponents = false;
 	printops.sort_options.minus_last = true;
 	printops.indicate_infinite_series = false;
+	printops.round_halfway_to_even = false;
 	printops.number_fraction_format = FRACTION_DECIMAL;
 	printops.abbreviate_units = true;
 	printops.use_unicode_signs = true;
@@ -5478,7 +5479,9 @@ void load_preferences() {
 				else if(svar == "multiplication_sign")
 					multi_sign = svalue;	
 				else if(svar == "indicate_infinite_series")
-					printops.indicate_infinite_series = v;											
+					printops.indicate_infinite_series = v;
+				else if(svar == "round_halfway_to_even")
+					printops.round_halfway_to_even = v;	
 				else if(svar == "always_exact")		//obsolete
 					evalops.approximation = APPROXIMATION_EXACT;
 				else if(svar == "approximation")
@@ -5699,7 +5702,8 @@ void save_preferences(bool mode)
 	fprintf(file, "donot_calculate_variables=%i\n", !saved_evalops.calculate_variables);	
 	fprintf(file, "unknownvariables_enabled=%i\n", saved_evalops.parse_options.unknowns_enabled);
 	fprintf(file, "units_enabled=%i\n", saved_evalops.parse_options.units_enabled);
-	fprintf(file, "indicate_infinite_series=%i\n", saved_printops.indicate_infinite_series);	
+	fprintf(file, "indicate_infinite_series=%i\n", saved_printops.indicate_infinite_series);
+	fprintf(file, "round_halfway_to_even=%i\n", saved_printops.round_halfway_to_even);
 	fprintf(file, "approximation=%i\n", saved_evalops.approximation);	
 	fprintf(file, "in_rpn_mode=%i\n", saved_evalops.parse_options.rpn);
 	fprintf(file, "default_assumption_type=%i\n", CALCULATOR->defaultAssumptions()->numberType());
@@ -6586,6 +6590,70 @@ void on_menu_item_import_csv_file_activate(GtkMenuItem *w, gpointer user_data) {
 	import_csv_file(glade_xml_get_widget (main_glade, "main_window"));
 }
 
+void on_menu_item_export_csv_file_activate(GtkMenuItem *w, gpointer user_data) {
+	GtkWidget *dialog = glade_xml_get_widget (main_glade, "csv_export_dialog");
+	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
+
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (main_glade, "csv_export_entry_file")), "");	
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (main_glade, "csv_export_entry_matrix")), "ans");
+
+run_csv_export_dialog:
+	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
+		//clicked "OK"
+		string str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (main_glade, "csv_export_entry_file")));
+		remove_blank_ends(str);
+		if(str.empty()) {
+			//no filename -- open dialog again
+			show_message(_("No file name entered."), dialog);
+			goto run_csv_export_dialog;
+		}
+		string delimiter = "";
+		switch(gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (main_glade, "csv_export_optionmenu_delimiter")))) {
+			case DELIMITER_COMMA: {
+				delimiter = ",";
+				break;
+			}
+			case DELIMITER_TABULATOR: {
+				delimiter = "\t";
+				break;
+			}			
+			case DELIMITER_SEMICOLON: {
+				delimiter = ";";
+				break;
+			}		
+			case DELIMITER_SPACE: {
+				delimiter = " ";
+				break;
+			}				
+			case DELIMITER_OTHER: {
+				delimiter = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (main_glade, "csv_export_entry_delimiter_other")));
+				break;
+			}			
+		}
+		if(delimiter.empty()) {
+			//no delimiter -- open dialog again
+			show_message(_("No delimiter selected."), dialog);
+			goto run_csv_export_dialog;
+		}		
+		if(!CALCULATOR->exportCSV(CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (main_glade, "csv_export_entry_matrix")))), evalops), str.c_str(), delimiter)) {
+			GtkWidget *edialog = gtk_message_dialog_new(
+				GTK_WINDOW(
+					glade_xml_get_widget (main_glade, "main_window")
+				),
+				GTK_DIALOG_DESTROY_WITH_PARENT,
+				GTK_MESSAGE_ERROR,
+				GTK_BUTTONS_CLOSE,
+				_("Could not export to file \n%s"),
+				str.c_str()
+			);
+			gtk_dialog_run(GTK_DIALOG(edialog));
+			gtk_widget_destroy(edialog);
+		}
+	}
+	gtk_widget_hide(dialog);
+	gtk_widget_grab_focus(expression);
+}
+
 
 void on_menu_item_convert_to_unit_expression_activate(GtkMenuItem *w, gpointer user_data) {
 	GtkWidget *dialog = get_unit_dialog();
@@ -7108,6 +7176,11 @@ void on_menu_item_display_prefixes_activate(GtkMenuItem *w, gpointer user_data) 
 }
 void on_menu_item_indicate_infinite_series_activate(GtkMenuItem *w, gpointer user_data) {
 	printops.indicate_infinite_series = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
+	setResult();
+	gtk_widget_grab_focus(expression);
+}
+void on_menu_item_round_halfway_to_even_activate(GtkMenuItem *w, gpointer user_data) {
+	printops.round_halfway_to_even = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
@@ -7869,6 +7942,28 @@ void on_csv_import_button_file_clicked(GtkButton *button, gpointer user_data) {
 	GtkWidget *d = gtk_file_selection_new(_("Select file to import"));
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (csvimport_glade, "csv_import_entry_file")), gtk_file_selection_get_filename(GTK_FILE_SELECTION(d)));
+	}
+	gtk_widget_destroy(d);
+#endif
+}
+
+void on_csv_export_optionmenu_delimiter_changed(GtkOptionMenu *w, gpointer user_data) {
+	gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "csv_export_entry_delimiter_other"), gtk_option_menu_get_history(w) == DELIMITER_OTHER);
+}
+void on_csv_export_button_file_clicked(GtkButton *button, gpointer user_data) {
+#if GTK_MINOR_VERSION >= 3
+	GtkWidget *d = gtk_file_chooser_dialog_new(_("Select file to export to"), GTK_WINDOW(glade_xml_get_widget(csvimport_glade, "csv_import_dialog")), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+#if GTK_MICRO_VERSION >= 6 || GTK_MINOR_VERSION >= 4
+	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (main_glade, "csv_export_entry_file"))));
+#endif	
+	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT) {
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (main_glade, "csv_export_entry_file")), gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d)));
+	}
+	gtk_widget_destroy(d);
+#else	
+	GtkWidget *d = gtk_file_selection_new(_("Select file to export to"));
+	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (main_glade, "csv_export_entry_file")), gtk_file_selection_get_filename(GTK_FILE_SELECTION(d)));
 	}
 	gtk_widget_destroy(d);
 #endif

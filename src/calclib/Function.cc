@@ -277,7 +277,12 @@ int Function::args(const string &argstr, MathStructure &vargs, const ParseOption
 	if(itmp < maxargs() && itmp >= minargs()) {
 		int itmp2 = itmp;
 		while(itmp2 < maxargs()) {
-			vargs.addItem(CALCULATOR->parse(default_values[itmp2 - minargs()], po));
+			arg = getArgumentDefinition(itmp2 + 1);
+			if(arg) {
+				vargs.addItem(arg->parse(default_values[itmp2 - minargs()], po));
+			} else {
+				vargs.addItem(CALCULATOR->parse(default_values[itmp2 - minargs()], po));
+			}
 			itmp2++;
 		}
 	}

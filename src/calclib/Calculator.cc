@@ -834,7 +834,7 @@ void Calculator::addBuiltinFunctions() {
 
 	f_factorial = addFunction(new FactorialFunction());
 	f_binomial = addFunction(new BinomialFunction());
-	
+
 	f_abs = addFunction(new AbsFunction());
 	f_signum = addFunction(new SignumFunction());
 	f_gcd = addFunction(new GcdFunction());
@@ -846,19 +846,19 @@ void Calculator::addBuiltinFunctions() {
 	f_frac = addFunction(new FracFunction());
 	f_rem = addFunction(new RemFunction());
 	f_mod = addFunction(new ModFunction());
-	
+
 	f_re = addFunction(new ReFunction());
 	f_im = addFunction(new ImFunction());
 	f_arg = addFunction(new ArgFunction());
 
 	f_sqrt = addFunction(new SqrtFunction());
 	f_sq = addFunction(new SquareFunction());
-	
+
 	f_exp = addFunction(new ExpFunction());
-	
+
 	f_ln = addFunction(new LogFunction());
 	f_logn = addFunction(new LognFunction());
-	
+
 	f_sin = addFunction(new SinFunction());
 	f_cos = addFunction(new CosFunction());
 	f_tan = addFunction(new TanFunction());
@@ -872,18 +872,18 @@ void Calculator::addBuiltinFunctions() {
 	f_acosh = addFunction(new AcoshFunction());
 	f_atanh = addFunction(new AtanhFunction());
 	f_radians_to_default_angle_unit = addFunction(new RadiansToDefaultAngleUnitFunction());
-	
+
 	f_zeta = addFunction(new ZetaFunction());
 	f_gamma = addFunction(new GammaFunction());
 	f_beta = addFunction(new BetaFunction());
-	
+
 	f_total = addFunction(new TotalFunction());
 	f_percentile = addFunction(new PercentileFunction());
 	f_min = addFunction(new MinFunction());
 	f_max = addFunction(new MaxFunction());
 	f_mode = addFunction(new ModeFunction());
 	f_rand = addFunction(new RandFunction());
-	
+
 	f_days = addFunction(new DaysFunction());
 	f_yearfrac = addFunction(new YearFracFunction());
 	f_week = addFunction(new WeekFunction());
@@ -893,27 +893,36 @@ void Calculator::addBuiltinFunctions() {
 	f_year = addFunction(new YearFunction());
 	f_yearday = addFunction(new YeardayFunction());
 	f_time = addFunction(new TimeFunction());
-	
+
 	f_base = addFunction(new BaseFunction());
 	f_bin = addFunction(new BinFunction());
 	f_oct = addFunction(new OctFunction());
 	f_hex = addFunction(new HexFunction());
 	f_roman = addFunction(new RomanFunction());
-	
+
 	f_ascii = addFunction(new AsciiFunction());
 	f_char = addFunction(new CharFunction());
-	
+
 	f_length = addFunction(new LengthFunction());
 	f_concatenate = addFunction(new ConcatenateFunction());
-	
+		
 	f_replace = addFunction(new ReplaceFunction());
+
 	f_for = addFunction(new ForFunction());
 	f_sum = addFunction(new SumFunction());
 	f_product = addFunction(new ProductFunction());
 	f_process = addFunction(new ProcessFunction());
 	f_process_matrix = addFunction(new ProcessMatrixFunction());
 	f_csum = addFunction(new CustomSumFunction());
-	
+	f_function = addFunction(new FunctionFunction());
+	f_title = addFunction(new TitleFunction());
+	f_if = addFunction(new IFFunction());	
+	f_error = addFunction(new ErrorFunction());
+	f_warning = addFunction(new WarningFunction());
+	f_save = addFunction(new SaveFunction());
+	f_load = addFunction(new LoadFunction());
+	f_export = addFunction(new ExportFunction());
+
 	f_diff = addFunction(new DeriveFunction());
 	f_solve = addFunction(new SolveFunction());
 
@@ -2459,7 +2468,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 				str.replace(str_index, name_length, stmp);
 				str_index += stmp.length() - 1;
 			}
-		} else if(str[str_index] == '!') {
+		} else if(str[str_index] == '!' && po.functions_enabled) {
 			if(str_index > 0 && (chars_left == 1 || str[str_index + 1] != EQUALS_CH)) {
 				stmp = "";
 				if(is_in(NUMBERS, str[str_index - 1])) {
@@ -2500,7 +2509,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 					str_index += stmp.length() - 1;
 				}
 			}
-		} else if(is_not_in(NUMBERS NOT_IN_NAMES, str[str_index])) {
+		} else if(po.base == 10 && is_not_in(NUMBERS NOT_IN_NAMES, str[str_index])) {
 			found_function_index = -1;
 			found_function_name_length = -1;
 			for(ufv_index = 0; ufv_index < (int) ufv.size(); ufv_index++) {
@@ -2861,7 +2870,7 @@ MathStructure Calculator::parseNumber(string str, const ParseOptions &po) {
 	if(str.empty() || ((itmp = str.find_first_not_of(" ")) == (int) string::npos)) {
 		return mstruct;
 	}
-	if((itmp = str.find_first_not_of(NUMBER_ELEMENTS MINUS, 0)) != (int) string::npos) {
+	if(po.base == 10 && (itmp = str.find_first_not_of(NUMBER_ELEMENTS MINUS, 0)) != (int) string::npos) {
 		string stmp = str.substr(itmp, str.length() - itmp);
 		str.erase(itmp, str.length() - itmp);
 		if(itmp == 0) {
@@ -2875,7 +2884,7 @@ MathStructure Calculator::parseNumber(string str, const ParseOptions &po) {
 	if(s == MINUS_CH) {
 		str.insert(str.begin(), 1, MINUS_CH);
 	}
-	Number nr(str);
+	Number nr(str, po.base);
 	mstruct.set(nr);
 	return mstruct;
 	
@@ -4996,6 +5005,39 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 			addVariable(new KnownVariable(category, str1, vectors[i], str2));
 		}
 	}
+	return true;
+}
+bool Calculator::exportCSV(const MathStructure &mstruct, const char *file_name, string delimiter) {
+	FILE *file = fopen(file_name, "w+");
+	if(file == NULL) {
+		return false;
+	}
+	MathStructure mcsv(mstruct);
+	PrintOptions po;
+	po.number_fraction_format = FRACTION_DECIMAL;
+	po.decimalpoint_sign = ".";
+	po.comma_sign = ",";
+	if(mcsv.isMatrix()) {
+		for(unsigned int i = 0; i < mcsv.size(); i++) {
+			for(unsigned int i2 = 0; i2 < mcsv[i].size(); i2++) {
+				if(i2 > 0) fputs(delimiter.c_str(), file);
+				mcsv[i][i2].format(po);
+				fputs(mcsv[i][i2].print(po).c_str(), file);
+			}
+			fputs("\n", file);
+		}
+	} else if(mcsv.isVector()) {
+		for(unsigned int i = 0; i < mcsv.size(); i++) {
+			mcsv[i].format(po);
+			fputs(mcsv[i].print(po).c_str(), file);
+			fputs("\n", file);
+		}
+	} else {
+		mcsv.format(po);
+		fputs(mcsv.print(po).c_str(), file);
+		fputs("\n", file);
+	}
+	fclose(file);
 	return true;
 }
 int Calculator::testCondition(string expression) {

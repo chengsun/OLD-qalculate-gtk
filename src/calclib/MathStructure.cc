@@ -4387,7 +4387,7 @@ void MathStructure::addColumns(unsigned int c, const MathStructure &mfill) {
 	if(c == 0) return;
 	for(unsigned int i = 0; i < SIZE; i++) {
 		if(CHILD(i).isVector()) {
-			for(unsigned int i = 0; i < c; i++) {
+			for(unsigned int i2 = 0; i2 < c; i2++) {
 				CHILD(i).addItem(mfill);
 			}
 		}

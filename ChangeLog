@@ -1,3 +1,15 @@
+2004-07-14 Niklas Knutsson  <nq@altern.org>
+
+	* Alternative to round halfway integers to even (instead of upwards)
+	* Make qalculate symlink from qalculate-gtk
+	* Fix addColumns() and import of CSV file to matrix
+	* Export to CSV file
+	* if, function, error, warning, load, save and title functions were not activated (oops!)
+	* Let argument definitions parse default values
+	* Do not parse ! as factorial if functions is disabled
+	* Ability to set number base for expression parsing
+	* Allow full expressions in base functions
+
 2004-07-13 Niklas Knutsson  <nq@altern.org>
 
 	* Ability to set all number bases from 2 to 36 from GUI

@@ -389,14 +389,14 @@ void Number::set(string number, int base) {
 				den = den * base;
 			}
 			numbers_started = true;
-		} else if(base > 10 && number[index] >= 'a' && number[index] <= 'z') {
+		} else if(base > 10 && number[index] >= 'a' && number[index] < 'a' + base - 10) {
 			num = num * base;
 			num = num + (number[index] - 'a' + 10);
 			if(in_decimals) {
 				den = den * base;
 			}
 			numbers_started = true;
-		} else if(base > 10 && number[index] >= 'A' && number[index] <= 'Z') {
+		} else if(base > 10 && number[index] >= 'A' && number[index] < 'A' + base - 10) {
 			num = num * base;
 			num = num + (number[index] - 'A' + 10);
 			if(in_decimals) {
@@ -464,6 +464,8 @@ void Number::set(string number, int base) {
 			minus = !minus;
 		} else if(number[index] == 'i') {
 			b_cplx = true;
+		} else {
+			CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), number.substr(index, 1).c_str(), number.c_str(), i2s(base).c_str(), NULL);
 		}
 	}
 	if(minus) num = -num;
@@ -1926,8 +1928,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				cln::cl_RA_div_t div = cln::floor2(ivalue / cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo)));
 				if(!cln::zerop(div.remainder)) {
 					ivalue = div.quotient;
-					if(div.remainder * base >= cln::cl_I(base) / cln::cl_I(2)) {
-						ivalue++;
+					if(po.round_halfway_to_even && cln::evenp(ivalue)) {
+						if(div.remainder * base > cln::cl_I(base) / cln::cl_I(2)) {
+							ivalue++;
+						}
+					} else {
+						if(div.remainder * base >= cln::cl_I(base) / cln::cl_I(2)) {
+							ivalue++;
+						}
 					}
 					ivalue *= cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo));
 					if(po.is_approximate) *po.is_approximate = true;
@@ -1938,8 +1946,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				cln::cl_RA_div_t div = cln::floor2(ivalue / cln::expt_pos(cln::cl_I(base), -precision));
 				if(!cln::zerop(div.remainder)) {
 					ivalue = div.quotient;
-					if(div.remainder * base >= cln::cl_I(base) / cln::cl_I(2)) {
-						ivalue++;
+					if(po.round_halfway_to_even && cln::evenp(ivalue)) {
+						if(div.remainder * base > cln::cl_I(base) / cln::cl_I(2)) {
+							ivalue++;
+						}
+					} else {
+						if(div.remainder * base >= cln::cl_I(base) / cln::cl_I(2)) {
+							ivalue++;
+						}
 					}
 					ivalue *= cln::expt_pos(cln::cl_I(base), -precision);
 					if(po.is_approximate) *po.is_approximate = true;
@@ -2078,8 +2092,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					cln::cl_R_div_t divr = cln::floor2(cln::realpart(value) / cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo)));
 					if(!cln::zerop(divr.remainder)) {
 						num = divr.quotient;
-						if(divr.remainder * base >= cln::cl_I(base) / cln::cl_I(2)) {
-							num++;
+						if(po.round_halfway_to_even && cln::evenp(num)) {
+							if(divr.remainder * base > cln::cl_I(base) / cln::cl_I(2)) {
+								num++;
+							}
+						} else {
+							if(divr.remainder * base >= cln::cl_I(base) / cln::cl_I(2)) {
+								num++;
+							}
 						}
 						num *= cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo));
 						exact = false;
@@ -2090,8 +2110,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					cln::cl_R_div_t divr = cln::floor2(cln::realpart(value) / cln::expt_pos(cln::cl_I(base), -precision));
 					if(!cln::zerop(divr.remainder)) {
 						num = divr.quotient;
-						if(divr.remainder * base >= cln::cl_I(base) / cln::cl_I(2)) {
-							num++;
+						if(po.round_halfway_to_even && cln::evenp(num)) {
+							if(divr.remainder * base > cln::cl_I(base) / cln::cl_I(2)) {
+								num++;
+							}
+						} else {
+							if(divr.remainder * base >= cln::cl_I(base) / cln::cl_I(2)) {
+								num++;
+							}
 						}
 						num *= cln::expt_pos(cln::cl_I(base), -precision);
 						exact = false;
@@ -2138,8 +2164,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				div = cln::truncate2(remainder, d);
 				remainder2 = div.remainder;
 				remainder = div.quotient;
-				if(remainder >= base / 2 + base % 2) {
-					num += 1;
+				if(po.round_halfway_to_even && cln::evenp(num)) {
+					if(remainder > cl_I(base) / cl_I(2)) {
+						num += 1;
+					}
+				} else {
+					if(remainder >= cl_I(base) / cl_I(2)) {
+						num += 1;
+					}
 				}
 			}
 			if(!exact && !infinite_series) {

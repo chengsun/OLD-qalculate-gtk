@@ -193,6 +193,7 @@ void on_menu_item_manage_variables_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_manage_functions_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_manage_units_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_import_csv_file_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_export_csv_file_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_convert_to_unit_expression_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_convert_to_base_units_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_convert_to_best_unit_activate(GtkMenuItem *w, gpointer user_data);
@@ -243,6 +244,8 @@ void on_popup_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer use
 void on_popup_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_display_prefixes_activate(GtkMenuItem *w, gpointer user_data);
+void on_popup_menu_item_indicate_infinite_series_activate(GtkMenuItem *w, gpointer user_data);
+void on_popup_menu_item_round_halfway_to_even_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_fraction_decimal_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_fraction_decimal_exact_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer user_data);
@@ -340,6 +343,9 @@ void on_csv_import_radiobutton_matrix_toggled(GtkToggleButton *w, gpointer user_
 void on_csv_import_radiobutton_vectors_toggled(GtkToggleButton *w, gpointer user_data);
 void on_csv_import_optionmenu_delimiter_changed(GtkOptionMenu *w, gpointer user_data);
 void on_csv_import_button_file_clicked(GtkButton *button, gpointer user_data);
+
+void on_csv_export_optionmenu_delimiter_changed(GtkOptionMenu *w, gpointer user_data);
+void on_csv_export_button_file_clicked(GtkButton *button, gpointer user_data);
 
 void on_type_label_date_clicked(GtkButton *w, gpointer user_data);
 void on_type_label_file_clicked(GtkButton *w, gpointer user_data);

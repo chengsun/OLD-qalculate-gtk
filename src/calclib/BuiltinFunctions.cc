@@ -1429,22 +1429,31 @@ BinFunction::BinFunction() : Function("bin", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
 int BinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct = Number(vargs[0].symbol(), 2);
+	//mstruct = Number(vargs[0].symbol(), 2);
+	ParseOptions po = eo.parse_options;
+	po.base = BASE_BINARY;
+	mstruct = CALCULATOR->parse(vargs[0].symbol(), po);
 	return 1 ;
 }
 OctFunction::OctFunction() : Function("oct", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
 int OctFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct = Number(vargs[0].symbol(), 8);
+	//mstruct = Number(vargs[0].symbol(), 8);
+	ParseOptions po = eo.parse_options;
+	po.base = BASE_OCTAL;
+	mstruct = CALCULATOR->parse(vargs[0].symbol(), po);
 	return 1 ;
 }
 HexFunction::HexFunction() : Function("hex", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
 int HexFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct = Number(vargs[0].symbol(), 16);
-	return 1 ;
+	//mstruct = Number(vargs[0].symbol(), 16);
+	ParseOptions po = eo.parse_options;
+	po.base = BASE_HEXADECIMAL;
+	mstruct = CALCULATOR->parse(vargs[0].symbol(), po);
+	return 1;
 }
 BaseFunction::BaseFunction() : Function("base", 2) {
 	setArgumentDefinition(1, new TextArgument());
@@ -1456,14 +1465,20 @@ BaseFunction::BaseFunction() : Function("base", 2) {
 	setArgumentDefinition(2, arg);
 }
 int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct = Number(vargs[0].symbol(), vargs[1].number().intValue());
+	//mstruct = Number(vargs[0].symbol(), vargs[1].number().intValue());
+	ParseOptions po = eo.parse_options;
+	po.base = vargs[1].number().intValue();
+	mstruct = CALCULATOR->parse(vargs[0].symbol(), po);
 	return 1 ;
 }
 RomanFunction::RomanFunction() : Function("roman", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
 int RomanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct = Number(vargs[0].symbol(), BASE_ROMAN_NUMERALS);
+	//mstruct = Number(vargs[0].symbol(), BASE_ROMAN_NUMERALS);
+	ParseOptions po = eo.parse_options;
+	po.base = BASE_ROMAN_NUMERALS;
+	mstruct = CALCULATOR->parse(vargs[0].symbol(), po);
 	return 1 ;
 }
 
@@ -1773,6 +1788,23 @@ int LoadFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	if(!CALCULATOR->importCSV(mstruct, vargs[0].symbol().c_str(), vargs[1].number().intValue(), delim)) {
 		CALCULATOR->error(true, "Failed to load %s.", vargs[0].symbol().c_str(), NULL);
+		return 0;
+	}
+	return 1 ;
+}
+ExportFunction::ExportFunction() : Function("export", 2, 3) {
+	setArgumentDefinition(1, new VectorArgument());
+	setArgumentDefinition(2, new FileArgument());
+	setArgumentDefinition(3, new TextArgument());
+	setDefaultValue(3, ",");	
+}
+int ExportFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	string delim = vargs[2].symbol();
+	if(delim == "tab") {
+		delim = "\t";
+	}
+	if(!CALCULATOR->exportCSV(vargs[0], vargs[1].symbol().c_str(), delim)) {
+		CALCULATOR->error(true, "Failed to export to %s.", vargs[1].symbol().c_str(), NULL);
 		return 0;
 	}
 	return 1 ;

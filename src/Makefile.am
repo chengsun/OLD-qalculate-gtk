@@ -23,3 +23,7 @@ qalculate_gtk_LDADD = \
 	@PACKAGE_LIBS@ \
 	@GNOME_UTILS_LIBS@ \
 	calclib/libcalculate.la
+
+install-exec-local:
+	cd $(DESTDIR)$(bindir) && $(LN_S) qalculate-gtk qalculate
+

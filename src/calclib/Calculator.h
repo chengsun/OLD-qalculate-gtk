@@ -126,8 +126,9 @@ class Calculator {
 	Function *f_ascii, *f_char;
 	Function *f_length, *f_concatenate;
 	Function *f_replace;
-	Function *f_for, *f_sum, *f_product, *f_process, *f_process_matrix, *f_csum;
+	Function *f_for, *f_sum, *f_product, *f_process, *f_process_matrix, *f_csum, *f_if, *f_function;
 	Function *f_diff, *f_solve;
+	Function *f_error, *f_warning, *f_save, *f_load, *f_export, *f_title;
 	Unit *u_rad, *u_euro;
 	Prefix *null_prefix;
   
@@ -274,6 +275,7 @@ class Calculator {
 	MathStructure setAngleValue(const MathStructure &mstruct);	
 	bool importCSV(MathStructure &mstruct, const char *file_name, int first_row = 1, string delimiter = ",", vector<string> *headers = NULL);
 	bool importCSV(const char *file_name, int first_row = 1, bool headers = true, string delimiter = ",", bool to_matrix = false, string name = "", string title = "", string category = "");
+	bool exportCSV(const MathStructure &mstruct, const char *file_name, string delimiter = ",");
 	int testCondition(string expression);
 	
 	bool canFetch();
