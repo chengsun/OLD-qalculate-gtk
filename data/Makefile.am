@@ -3,5 +3,7 @@
 #
 
 config_DATA = qalculate.cfg
-configdir = $(data_dir)/$(PACKAGE)/
+configdir = $(datadir)/$(PACKAGE)
+
+EXTRA_DIST = qalculate.cfg
 

@@ -1,5 +1,13 @@
 2003-08-06  Sven Herzberg  <herzi@gnome-de.org>
 
+	* Makefile.am: make dist works now
+	* configure.in: added data/Makefile.am
+	* data/.cvsignore: cvs update has less warnings now
+	* data/Makefile.am: make dist works now, make install too
+	* po/.cvsignore: cvs update has less warnings now
+
+2003-08-06  Sven Herzberg  <herzi@gnome-de.org>
+
 	* .cvsignore: cvs update has less warnings now
 	* Makefile.am: added data as subdir
 	* acconfig.h: removed (templates are deprecated)

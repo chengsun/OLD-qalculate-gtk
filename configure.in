@@ -37,6 +37,7 @@ changequote([,])dnl
 
 AC_OUTPUT([
   Makefile
+  data/Makefile
   src/Makefile
   src/calclib/Makefile
   po/Makefile.in
