@@ -445,6 +445,8 @@ void on_plot_button_modify_clicked(GtkButton *w, gpointer user_data);
 void on_plot_button_remove_clicked(GtkButton *w, gpointer user_data);
 void on_plot_checkbutton_xlog_toggled(GtkToggleButton *w, gpointer user_data);
 void on_plot_checkbutton_ylog_toggled(GtkToggleButton *w, gpointer user_data);
+void on_plot_radiobutton_step_toggled(GtkToggleButton *w, gpointer user_data);
+void on_plot_radiobutton_steps_toggled(GtkToggleButton *w, gpointer user_data);
 void on_plot_entry_expression_activate(GtkEntry *entry, gpointer user_data);
 
 void on_unit_dialog_button_apply_clicked(GtkButton *w, gpointer user_data);

@@ -1,14 +1,17 @@
 2004-09-30 Niklas Knutsson  <nq@altern.org>
 
-	* Modify CLN error message
-	* hyperfactorial() and superfactorial()
-	* Make factorials more efficient by using CLN numbers directly
+	* Alternative to use step size instead of sampling rate for generation of plot data
+	* Big approximate and precision check and fix
+	* Message about the limited functionality of the gamma function
 
 2004-09-29 Niklas Knutsson  <nq@altern.org>
 
 	* Gamma for rational numbers with denominator 2
 	* Double and multi factorials
 	* Tweak parsing of !-factorials 
+	* Modify CLN error message
+	* hyperfactorial() and superfactorial()
+	* Make factorials more efficient by using CLN numbers directly
 
 2004-09-28 Niklas Knutsson  <nq@altern.org>
 

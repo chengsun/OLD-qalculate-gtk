@@ -97,9 +97,9 @@ class MathStructure {
 		void set(const Number &o);
 		void setInfinity();
 		void setUndefined();
-		void clear();
-		void clearVector();
-		void clearMatrix();
+		void clear(bool preserve_precision = false);
+		void clearVector(bool preserve_precision = false);
+		void clearMatrix(bool preserve_precision = false);
 		
 		void operator = (const MathStructure &o);
 		MathStructure operator - () const;

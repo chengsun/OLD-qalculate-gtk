@@ -127,7 +127,9 @@ bool default_plot_display_grid = true;
 bool default_plot_full_border = false;
 string default_plot_min = "0";
 string default_plot_max = "10";
+string default_plot_step = "1";
 int default_plot_sampling_rate = 100;
+bool default_plot_use_sampling_rate = true;
 bool default_plot_rows = false;
 int default_plot_type = 0;
 PlotStyle default_plot_style = PLOT_STYLE_LINES;
@@ -6753,6 +6755,7 @@ void load_preferences() {
 	default_plot_full_border = false;
 	default_plot_min = "0";
 	default_plot_max = "10";
+	default_plot_step = "1";
 	default_plot_sampling_rate = 100;
 	default_plot_rows = false;
 	default_plot_type = 0;
@@ -6760,6 +6763,7 @@ void load_preferences() {
 	default_plot_smoothing = PLOT_SMOOTHING_NONE;
 	default_plot_variable = "x";
 	default_plot_color = true;
+	default_plot_use_sampling_rate = true;
 
 	printops.is_approximate = new bool(false);
 	printops.prefix = NULL;
@@ -7052,9 +7056,13 @@ void load_preferences() {
 				else if(svar == "plot_min")
 					default_plot_min = svalue;	
 				else if(svar == "plot_max")
-					default_plot_max = svalue;		
+					default_plot_max = svalue;
+				else if(svar == "plot_step")
+					default_plot_step = svalue;
 				else if(svar == "plot_sampling_rate")
 					default_plot_sampling_rate = v;	
+				else if(svar == "plot_use_sampling_rate")
+					default_plot_use_sampling_rate = v;		
 				else if(svar == "plot_variable")
 					default_plot_variable = svalue;
 				else if(svar == "plot_rows")
@@ -7207,7 +7215,9 @@ void save_preferences(bool mode)
 	fprintf(file, "plot_full_border=%i\n", default_plot_full_border);
 	fprintf(file, "plot_min=%s\n", default_plot_min.c_str());
 	fprintf(file, "plot_max=%s\n", default_plot_max.c_str());
+	fprintf(file, "plot_step=%s\n", default_plot_step.c_str());
 	fprintf(file, "plot_sampling_rate=%i\n", default_plot_sampling_rate);
+	fprintf(file, "plot_use_sampling_rate=%i\n", default_plot_use_sampling_rate);
 	fprintf(file, "plot_variable=%s\n", default_plot_variable.c_str());
 	fprintf(file, "plot_rows=%i\n", default_plot_rows);
 	fprintf(file, "plot_type=%i\n", default_plot_type);
@@ -8510,7 +8520,10 @@ void on_menu_item_plot_functions_activate(GtkMenuItem *w, gpointer user_data) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (plot_glade, "plot_radiobutton_mono")), !default_plot_color);
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_min")), default_plot_min.c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_max")), default_plot_max.c_str());
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_step")), default_plot_step.c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_variable")), default_plot_variable.c_str());
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (plot_glade, "plot_radiobutton_steps")), default_plot_use_sampling_rate);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (plot_glade, "plot_radiobutton_step")), !default_plot_use_sampling_rate);
 		switch(default_plot_type) {
 			case 1: {gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (plot_glade, "plot_radiobutton_vector")), TRUE); break;}
 			case 2: {gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (plot_glade, "plot_radiobutton_paired")), TRUE); break;}
@@ -8558,7 +8571,9 @@ void on_plot_dialog_hide(GtkWidget *w, gpointer user_data) {
 	default_plot_color = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (plot_glade, "plot_radiobutton_color")));
 	default_plot_min = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_min")));
 	default_plot_max = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_max")));
+	default_plot_step = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_step")));
 	default_plot_variable = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_variable")));
+	default_plot_use_sampling_rate = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (plot_glade, "plot_radiobutton_steps")));
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (plot_glade, "plot_radiobutton_vector")))) {
 		default_plot_type = 1;
 	} else if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (plot_glade, "plot_radiobutton_paired")))) {
@@ -9902,7 +9917,6 @@ bool generate_plot(plot_parameters &pp, vector<MathStructure> &y_vectors, vector
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	MathStructure min(CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_min")))), eo));
 	MathStructure max(CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_max")))), eo));
-	int steps = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (plot_glade, "plot_spinbutton_steps")));
 	MathStructure x_vector;
 	while(b) {
 		x_vector.clearVector();
@@ -9967,7 +9981,11 @@ bool generate_plot(plot_parameters &pp, vector<MathStructure> &y_vectors, vector
 				x_vectors.push_back(m_undefined);
 			}
 		} else {
-			y_vectors.push_back(CALCULATOR->expressionToPlotVector(gstr2, min, max, steps, &x_vector, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_variable")))));
+			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (plot_glade, "plot_radiobutton_step")))) {
+				y_vectors.push_back(CALCULATOR->expressionToPlotVector(gstr2, min, max, CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_step")))), eo), &x_vector, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_variable")))));
+			} else {
+				y_vectors.push_back(CALCULATOR->expressionToPlotVector(gstr2, min, max, gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (plot_glade, "plot_spinbutton_steps"))), &x_vector, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_variable")))));
+			}
 			x_vectors.push_back(x_vector);
 		}
 		for(int i = 0; i < count; i++) {
@@ -10159,6 +10177,14 @@ void on_plot_checkbutton_xlog_toggled(GtkToggleButton *w, gpointer user_data) {
 }
 void on_plot_checkbutton_ylog_toggled(GtkToggleButton *w, gpointer user_data) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (plot_glade, "plot_spinbutton_ylog_base"), gtk_toggle_button_get_active(w));
+}
+void on_plot_radiobutton_step_toggled(GtkToggleButton *w, gpointer user_data) {
+	gtk_widget_set_sensitive(glade_xml_get_widget (plot_glade, "plot_entry_step"), gtk_toggle_button_get_active(w));
+	gtk_widget_set_sensitive(glade_xml_get_widget (plot_glade, "plot_spinbutton_steps"), !gtk_toggle_button_get_active(w));
+}
+void on_plot_radiobutton_steps_toggled(GtkToggleButton *w, gpointer user_data) {
+	gtk_widget_set_sensitive(glade_xml_get_widget (plot_glade, "plot_entry_step"), !gtk_toggle_button_get_active(w));
+	gtk_widget_set_sensitive(glade_xml_get_widget (plot_glade, "plot_spinbutton_steps"), gtk_toggle_button_get_active(w));
 }
 void on_plot_entry_expression_activate(GtkEntry *entry, gpointer user_data) {
 	GtkTreeModel *model;

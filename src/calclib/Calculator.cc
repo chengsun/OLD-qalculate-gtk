@@ -5861,33 +5861,54 @@ bool Calculator::canPlot() {
 	return false;
 }
 MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, string x_var) {
-	/*if(x_var[0] == '\\') {
-		string x_var_sub = "\"";
-		x_var_sub += x_var;
-		x_var_sub += "\"";
-		gsub(x_var, x_var_sub, expression);	
-	}*/
 	Variable *v = getActiveVariable(x_var);
 	MathStructure x_mstruct;
 	if(v) x_mstruct = v;
 	else x_mstruct = x_var;
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
-	return parse(expression).generateVector(x_mstruct, min, max, steps, x_vector, eo);
+	MathStructure y_vector(parse(expression).generateVector(x_mstruct, min, max, steps, x_vector, eo));
+	if(y_vector.size() == 0) {
+		CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
+	}
+	return y_vector;
 }
 MathStructure Calculator::expressionToPlotVector(string expression, float min, float max, int steps, MathStructure *x_vector, string x_var) {
 	MathStructure min_mstruct(min), max_mstruct(max);
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
-	return expressionToPlotVector(expression, min_mstruct, max_mstruct, steps, x_vector, x_var).eval(eo);
+	MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, steps, x_vector, x_var));
+	y_vector.eval(eo);
+	if(y_vector.size() == 0) {
+		CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
+	}
+	return y_vector;
+}
+MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector, string x_var) {
+	Variable *v = getActiveVariable(x_var);
+	MathStructure x_mstruct;
+	if(v) x_mstruct = v;
+	else x_mstruct = x_var;
+	EvaluationOptions eo;
+	eo.approximation = APPROXIMATION_APPROXIMATE;
+	MathStructure y_vector(parse(expression).generateVector(x_mstruct, min, max, step, x_vector, eo));
+	if(y_vector.size() == 0) {
+		CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
+	}
+	return y_vector;
+}
+MathStructure Calculator::expressionToPlotVector(string expression, float min, float max, float step, MathStructure *x_vector, string x_var) {
+	MathStructure min_mstruct(min), max_mstruct(max), step_mstruct(step);
+	EvaluationOptions eo;
+	eo.approximation = APPROXIMATION_APPROXIMATE;
+	MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, step_mstruct, x_vector, x_var));
+	y_vector.eval(eo);
+	if(y_vector.size() == 0) {
+		CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
+	}
+	return y_vector;
 }
 MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &x_vector, string x_var) {
-	/*if(x_var[0] == '\\') {
-		string x_var_sub = "\"";
-		x_var_sub += x_var;
-		x_var_sub += "\"";
-		gsub(x_var, x_var_sub, expression);		
-	}*/
 	Variable *v = getActiveVariable(x_var);
 	MathStructure x_mstruct;
 	if(v) x_mstruct = v;
@@ -5896,31 +5917,6 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	return parse(expression).generateVector(x_mstruct, x_vector, eo).eval(eo);
 }
-/*bool Calculator::plotVectors(plot_parameters *param, const MathStructure *y_vector, ...) {
-
-	plot_data_parameters *pdp;
-	vector<MathStructure*> y_vectors;
-	vector<MathStructure*> x_vectors;
-	vector<plot_data_parameters*> pdps;
-	const MathStructure *v;
-	y_vectors.push_back(y_vector);
-	va_list ap;
-	va_start(ap, y_vector); 
-	while(true) {
-		v = va_arg(ap, const MathStructure*);
-		if(v == NULL) break;
-		x_vectors.push_back(v);
-		pdp = va_arg(ap, plot_data_parameters*);
-		if(pdp == NULL) break;
-		pdps.push_back(pdp);
-		v = va_arg(ap, const MathStructure*);
-		if(v == NULL) break;
-		y_vectors.push_back(v);
-	}
-	va_end(ap);	
-
-	return plotVectors(param, y_vectors, x_vectors, pdps);
-}*/
 
 bool Calculator::plotVectors(plot_parameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<plot_data_parameters*> &pdps, bool persistent) {
 

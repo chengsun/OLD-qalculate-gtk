@@ -345,8 +345,9 @@ class Calculator {
 	bool canPlot();
 	MathStructure expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL, string x_var = "\\x");
 	MathStructure expressionToPlotVector(string expression, float min, float max, int steps, MathStructure *x_vector = NULL, string x_var = "\\x");
+	MathStructure expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector = NULL, string x_var = "\\x");
+	MathStructure expressionToPlotVector(string expression, float min, float max, float step, MathStructure *x_vector = NULL, string x_var = "\\x");
 	MathStructure expressionToPlotVector(string expression, const MathStructure &x_vector, string x_var = "\\x");
-	//bool plotVectors(plot_parameters *param, const MathStructure *y_vector, ...);
 	bool plotVectors(plot_parameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<plot_data_parameters*> &pdps, bool persistent = false);
 	bool invokeGnuplot(string commands, string commandline_extra = "", bool persistent = false);
 	bool closeGnuplot();

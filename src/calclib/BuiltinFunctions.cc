@@ -337,7 +337,8 @@ int GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 				return 1;
 			}
 		}
-	} 
+	}
+	CALCULATOR->error(false, _("%s() does at the moment only support integers and fractions of two."), preferredDisplayName().name.c_str(), NULL); 
 	return 0;
 }
 BetaFunction::BetaFunction() : Function("beta", 2, 2, SIGN_CAPITAL_BETA) {
