@@ -12,18 +12,24 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#define DECI_LEAST	1
-#define DECI_FIXED	2
+enum {
+	DECI_LEAST = 1,
+	DECI_FIXED = 2
+};
 
-#define MODE_NORMAL	1
-#define MODE_SCIENTIFIC	2
-#define MODE_DECIMALS	3
-#define MODE_PREFIXES	4
+enum {
+	MODE_NORMAL = 1,
+	MODE_SCIENTIFIC = 2,
+	MODE_DECIMALS = 3,
+	MODE_PREFIXES = 4
+};
 
-#define BASE_DECI	1
-#define BASE_OCTAL	2
-#define BASE_HEX	3
+enum {
+	BASE_DECI = 1,
+	BASE_OCTAL = 2,
+	BASE_HEX = 3
+};
 
 #include "Calculator.h"
 
-#endif
+#endif /* MAIN_H */

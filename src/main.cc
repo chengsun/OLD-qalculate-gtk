@@ -36,18 +36,17 @@ string selected_unit, selected_to_unit;
 bool load_global_defs;
 GtkWidget *omToUnit_menu;
 
-int main (int argc, char *argv[]) {
-
+int
+main (int argc, char **argv)
+{
 	GtkWidget *window;
 
 #ifdef ENABLE_NLS
-
 	bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 #endif
 
-	gtk_set_locale ();
 	gtk_init (&argc, &argv);
 	calc = new Calculator();
 
@@ -55,7 +54,9 @@ int main (int argc, char *argv[]) {
 
 	gchar *gstr = g_build_filename(PACKAGE_DATA_DIR, PACKAGE, "qalculate.cfg", NULL);
 	if(load_global_defs && !calc->load(gstr))
+	{
 		g_print("%s not found!\n", gstr);
+	}
 	g_free(gstr);
 
 	gstr = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate.cfg", NULL);
