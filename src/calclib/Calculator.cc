@@ -512,7 +512,7 @@ Prefix *Calculator::getBestPrefix(int exp10, int exp, bool all_prefixes) const {
 	while((exp < 0 && i >= 0) || (exp >= 0 && i < (int) prefixes.size())) {
 		if(all_prefixes || prefixes[i]->exponent() % 3 == 0) {
 			p = prefixes[i];
-			if(p_prev && p_prev->exponent() >= 0 != p->exponent() >= 0) {
+			if(p_prev && p_prev->exponent() >= 0 != p->exponent() >= 0 && p_prev->exponent() != 0) {
 				if(exp < 0) {
 					i++;
 				} else {
@@ -565,7 +565,7 @@ Prefix *Calculator::getBestPrefix(const Number &exp10, const Number &exp, bool a
 	while((exp.isNegative() && i >= 0) || (!exp.isNegative() && i < (int) prefixes.size())) {
 		if(all_prefixes || prefixes[i]->exponent() % 3 == 0) {
 			p = prefixes[i];
-			if(p_prev && p_prev->exponent() >= 0 != p->exponent() >= 0) {
+			if(p_prev && p_prev->exponent() >= 0 != p->exponent() >= 0 && p_prev->exponent() != 0) {
 				if(exp.isNegative()) {
 					i++;
 				} else {
@@ -2313,22 +2313,21 @@ bool compare_name_no_case(const string &name, const string &str, const int &name
 
 MathStructure Calculator::parse(string str, const ParseOptions &po) {
 
-	const string *name;
+	const string *name = NULL;
 	string stmp, stmp2;
-	bool b, moved_forward;
-	int i, i3, i4, i5, i6, i7, i8, i9;
-	int chars_left;
-	int name_length, name_length_old;
-	int found_function_index, found_function_name_length;
-	int ufv_index;
-	bool case_sensitive;
-	Function *f;
-	Variable *v;
-	Unit *u;
+	bool b = false, moved_forward = false;
+	int i = 0, i3 = 0, i4 = 0, i5 = 0, i6 = 0, i7 = 0, i8 = 0, i9 = 0;
+	int chars_left = 0;
+	int name_length = 0, name_length_old = 0;
+	int found_function_index = 0, found_function_name_length = 0;
+	int ufv_index = 0;
+	bool case_sensitive = false;
+	Function *f = NULL;
+	Variable *v = NULL;
+	Unit *u = NULL;
 	Prefix *p = NULL;
 	vector<int> q_begin;
 	vector<int> q_end;
-	i3 = 0;
 	while(true) {
 		i3 = str.find_first_of("\"\'", i3);
 		if(i3 == (int) string::npos) {

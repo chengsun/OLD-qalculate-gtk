@@ -3305,7 +3305,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 				w += wpa[index];
 				g_object_unref(pixmap_args[index]);
 			}	
-			gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w - arc_w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 270 * 64, 180 * 64);			
+			gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w - arc_w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 270 * 64, 180 * 64);
 			w += arc_w;				
 			
 			g_object_unref(layout_comma);
@@ -3446,6 +3446,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			pango_layout_get_pixel_extents(layout, &rect, NULL);
 			w = rect.width;
 			w += 1;
+			if(m.variable() == CALCULATOR->v_i) w += 1;
 			central_point = h / 2;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);	
 			draw_background(pixmap, w, h);
@@ -3624,7 +3625,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 		gint arc_base_w = base_h / 6;
 		base_h += 4;
 		central_point += 2;
-		w += arc_base_w * 2 + 4;
+		w += arc_base_w * 2 + 5;
 		GdkPixmap *pixmap_old = pixmap;
 		pixmap = gdk_pixmap_new(resultview->window, w, h, -1);	
 		draw_background(pixmap, w, h);
@@ -3639,7 +3640,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 		gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w, 0, arc_base_w * 2, h, 90 * 64, 180 * 64);
 		w += arc_base_w + 1;
 		gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_old), 0, 0, w, (h - base_h) / 2, -1, -1);
-		w += base_w;
+		w += base_w + 1;
 		gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w - arc_base_w, 0, arc_base_w * 2, h, 270 * 64, 180 * 64);			
 		g_object_unref(pixmap_old);
 		gdk_gc_unref(line_gc);
@@ -5052,6 +5053,7 @@ void edit_function(const char *category = "", Function *f = NULL, GtkWidget *win
 
 	if(f && f->subtype() == SUBTYPE_DATA_SET) {
 		edit_dataset((DataSet*) f, win);
+		return;
 	}
 
 	GtkWidget *dialog = get_function_edit_dialog();	

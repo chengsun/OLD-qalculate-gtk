@@ -188,7 +188,7 @@
 		  <child>
 		    <widget class="GtkImageMenuItem" id="menu_item_save_image">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Save Result Image</property>
+		      <property name="label" translatable="yes">Save Result Image...</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_save_image_activate" last_modification_time="Sun, 22 Aug 2004 21:05:32 GMT"/>
 
@@ -2747,7 +2747,7 @@
   <child>
     <widget class="GtkImageMenuItem" id="popup_menu_item_save_image">
       <property name="visible">True</property>
-      <property name="label" translatable="yes">Save Image</property>
+      <property name="label" translatable="yes">Save Image...</property>
       <property name="use_underline">True</property>
       <signal name="activate" handler="on_menu_item_save_image_activate" last_modification_time="Sun, 22 Aug 2004 21:08:13 GMT"/>
 

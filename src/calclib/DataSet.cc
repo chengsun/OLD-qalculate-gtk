@@ -926,16 +926,16 @@ string DataSet::printProperties(DataObject *o) {
 				lmax = properties[i]->title().length();
 			}	
 		}
+		str = "-------------------------------------\n";
+		bool started = false;
 		for(unsigned int i = 0; i < properties.size(); i++) {
 			if(!properties[i]->isHidden() && properties[i]->isKey()) {
 				stmp = o->getPropertyDisplayString(properties[i]);
 				if(!stmp.empty()) {
-					if(!str.empty()) str += '\n';
+					if(started) str += "\n\n";
+					else started = true;
 					str += properties[i]->title();
-					l = lmax - properties[i]->title().length() + 1;
-					for(unsigned int i2 = 0; i2 < l; i2 += 6) {
-						str += '\t';
-					}
+					str += ":\n";
 					str += stmp;
 				}
 			}
@@ -944,16 +944,15 @@ string DataSet::printProperties(DataObject *o) {
 			if(!properties[i]->isHidden() && !properties[i]->isKey()) {
 				stmp = o->getPropertyDisplayString(properties[i]);
 				if(!stmp.empty()) {
-					if(!str.empty()) str += '\n';
+					if(started) str += "\n\n";
+					else started = true;
 					str += properties[i]->title();
-					l = lmax - properties[i]->title().length() + 1;
-					for(unsigned int i2 = 0; i2 < l; i2 += 6) {
-						str += '\t';
-					}
+					str += ":\n";
 					str += stmp;
 				}
 			}
 		}
+		str += "\n-------------------------------------";
 		return str;
 	}
 	return empty_string;

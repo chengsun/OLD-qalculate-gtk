@@ -235,6 +235,7 @@ class MathStructure {
 		const MathStructure *getChild(unsigned int index) const;
 		MathStructure *getChild(unsigned int index);
 		unsigned int countChilds() const;
+		unsigned int countTotalChilds(bool count_function_as_one = true) const;
 		unsigned int size() const;
 		
 #define		addItem(o)		addChild(o)

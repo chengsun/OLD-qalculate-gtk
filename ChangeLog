@@ -1,3 +1,18 @@
+2004-09-23 Niklas Knutsson  <nq@altern.org>
+
+	* Increase space after imaginary i by 1
+	* Fix never ending loop in getBestPrefix()
+	* Fix (2x)/(5(yz)) --> (2x)/(5yz)
+	* Take into account place_units_separately in improve_division_multipliers()
+	* Increase space at end of parenthesis by 1
+	* Change components() to dimension()
+	* Set correl() as a different name for pearson() instead of a separate function
+	* Check that the dimension of vectors is equal in pearson() and spearman()
+	* Test if polynomial division reduces the size of the expression
+	* Stop after editing data set from edit function function
+	* Tweak data set info printing removing tabs
+	* Save Image -> Save Image...
+
 2004-09-22 Niklas Knutsson  <nq@altern.org>
 
 	* Fix data object edit option menu

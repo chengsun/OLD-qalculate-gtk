@@ -171,7 +171,7 @@ int ElementFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	}
 	return b;
 }
-ComponentsFunction::ComponentsFunction() : Function("components", 1) {
+ComponentsFunction::ComponentsFunction() : Function("dimension", 1) {
 	setArgumentDefinition(1, new VectorArgument(""));
 }
 int ComponentsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {

@@ -72,9 +72,13 @@
         <_title>Vector</_title>
       </argument>
     </builtin_function>
-    <builtin_function name="components">
-      <_title>Components</_title>
+    <builtin_function name="dimension">
+      <_title>Dimension</_title>
       <name index="1">
+        <reference>true</reference>
+        <_name>dimension</_name>
+      </name>
+      <name index="2">
         <reference>true</reference>
         <_name>components</_name>
       </name>
@@ -500,7 +504,7 @@
           <reference>true</reference>
           <_name>multiply</_name>
         </name>
-        <expression>product(component("x",\x),1,components(\x),"x")</expression>
+        <expression>product(component("x",\x),1,dimension(\x),"x")</expression>
         <argument type="vector" index="1">
           <_title>Factors</_title>
         </argument>
@@ -1287,7 +1291,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <_name>number</_name>
         </name>
         <_description>Returns the number of samples.</_description>
-        <expression>components(\x)</expression>
+        <expression>dimension(\x)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
@@ -1328,7 +1332,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <reference>true</reference>
           <_name>mean</_name>
         </name>
-        <expression>total(\x)/components(\x)</expression>
+        <expression>total(\x)/dimension(\x)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
@@ -1339,7 +1343,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <reference>true</reference>
           <_name>harmmean</_name>
         </name>
-        <expression>components(\x)/csum(1,-1,0,"y"+1/"x","x","y",\x)</expression>
+        <expression>dimension(\x)/csum(1,-1,0,"y"+1/"x","x","y",\x)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
@@ -1350,7 +1354,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <reference>true</reference>
           <_name>geomean</_name>
         </name>
-        <expression>abs(csum(1,-1,1,"y"*"x","x","y",\x)^(1/components(\x)))</expression>
+        <expression>abs(csum(1,-1,1,"y"*"x","x","y",\x)^(1/dimension(\x)))</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
@@ -1361,7 +1365,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <reference>true</reference>
           <_name>trimmean</_name>
         </name>
-        <expression>mean(limits(round(components(\y)/100*\x),round(components(\y)/100*(100-\x)),sort(\y)))</expression>
+        <expression>mean(limits(round(dimension(\y)/100*\x),round(dimension(\y)/100*(100-\x)),sort(\y)))</expression>
         <argument type="free" index="1">
           <_title>Trimmed Percentage</_title>
         </argument>
@@ -1375,7 +1379,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <reference>true</reference>
           <_name>winsormean</_name>
         </name>
-        <expression>mean(limits(1,round(components(\y)/100*\x),sort(\y)),limits(round(components(\y)/100*\x),round(components(\y)/100*(100-\x)),sort(\y)),limits(round(components(\y)/100*(100-\x)),-1,sort(\y)))</expression>
+        <expression>mean(limits(1,round(dimension(\y)/100*\x),sort(\y)),limits(round(dimension(\y)/100*\x),round(dimension(\y)/100*(100-\x)),sort(\y)),limits(round(dimension(\y)/100*(100-\x)),-1,sort(\y)))</expression>
         <argument type="free" index="1">
           <_title>Trimmed Percentage</_title>
         </argument>
@@ -1389,7 +1393,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <reference>true</reference>
           <_name>weighmean</_name>
         </name>
-        <expression>csum(1,min(components(\x),components(\y)),0,"y"+"x"*component("i"+components(\x),"v"),"x","y",mergevectors(\x,\y),"i","v")/total(limits(1,min(components(\x),components(\y)),\y))</expression>
+        <expression>csum(1,min(dimension(\x),dimension(\y)),0,"y"+"x"*component("i"+dimension(\x),"v"),"x","y",mergevectors(\x,\y),"i","v")/total(limits(1,min(dimension(\x),dimension(\y)),\y))</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
@@ -1403,7 +1407,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <reference>true</reference>
           <_name>rms</_name>
         </name>
-        <expression>abs((csum(1,-1,0,"y"+"x"^2,"x","y",\x)/components(\x))^(1/2))</expression>
+        <expression>abs((csum(1,-1,0,"y"+"x"^2,"x","y",\x)/dimension(\x))^(1/2))</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
@@ -1440,7 +1444,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <_name>varp</_name>
         </name>
         <subfunction precalculate="true">mean(\x)</subfunction>
-        <expression>csum(1,-1,0,"y"+("x"-\1)^2,"x","y",\x)/components(\x)</expression>
+        <expression>csum(1,-1,0,"y"+("x"-\1)^2,"x","y",\x)/dimension(\x)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
@@ -1452,7 +1456,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <_name>var</_name>
         </name>
         <subfunction precalculate="true">mean(\x)</subfunction>
-        <expression>csum(1,-1,0,"y"+("x"-\1)^2,"x","y",\x)/(components(\x)-1)</expression>
+        <expression>csum(1,-1,0,"y"+("x"-\1)^2,"x","y",\x)/(dimension(\x)-1)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
@@ -1463,7 +1467,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <reference>true</reference>
           <_name>stderr</_name>
         </name>
-        <expression>abs((var(\x)/components(\x))^(1/2))</expression>
+        <expression>abs((var(\x)/dimension(\x))^(1/2))</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
@@ -1475,7 +1479,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <_name>meandev</_name>
         </name>
         <subfunction precalculate="true">mean(\x)</subfunction>
-        <expression>csum(1,-1,0,"y"+abs("x"-\1),"x","y",\x)/components(\x)</expression>
+        <expression>csum(1,-1,0,"y"+abs("x"-\1),"x","y",\x)/dimension(\x)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
@@ -1487,7 +1491,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <_name>covar</_name>
         </name>
         <subfunction precalculate="true">mean(\x)</subfunction>
-        <expression>csum(1,min(components(\x),components(\y)),0,"y"+("x"-\1)*(component("i"+components(\x),"v")-mean(\y)),"x","y",mergevectors(\x,\y),"i","v")/min(components(\x),components(\y))</expression>
+        <expression>csum(1,min(dimension(\x),dimension(\y)),0,"y"+("x"-\1)*(component("i"+dimension(\x),"v")-mean(\y)),"x","y",mergevectors(\x,\y),"i","v")/min(dimension(\x),dimension(\y))</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
         </argument>
@@ -1503,7 +1507,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
         </name>
         <subfunction precalculate="true">mean(\x)</subfunction>
         <subfunction precalculate="true">mean(\y)^2</subfunction>
-        <expression>(csum(1,-1,0,"y"+("x"-\1)^2,"x","y",\x)+csum(1,-1,0,"y"+("x"-\2)^2,"x","y",\y))/(components(\x)+components(\y)-2)</expression>
+        <expression>(csum(1,-1,0,"y"+("x"-\1)^2,"x","y",\x)+csum(1,-1,0,"y"+("x"-\2)^2,"x","y",\y))/(dimension(\x)+dimension(\y)-2)</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
         </argument>
@@ -1529,26 +1533,17 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
         </argument>
       </function>
       <function>
-        <_title>Correlation Coefficient</_title>
-        <name index="1">
-          <reference>true</reference>
-          <_name>correl</_name>
-        </name>
-        <expression>pearson(\x,\y)</expression>
-        <argument type="vector" index="1">
-          <_title>Data 1</_title>
-        </argument>
-        <argument type="vector" index="2">
-          <_title>Data 2</_title>
-        </argument>
-      </function>
-      <function>
-        <_title>Pearson Correlation</_title>
+        <_title>Pearson's Correlation Coefficient</_title>
         <name index="1">
           <reference>true</reference>
           <_name>pearson</_name>
         </name>
-        <expression>(\x*\y-total(\x)*total(\y)/components(\x))/abs(((\x*\x-(total(\x)^2)/components(\x))*(\y*\y-(total(\y)^2)/components(\y)))^(1/2))</expression>
+	<name index="2">
+          <reference>true</reference>
+          <_name>correl</_name>
+        </name>
+	<condition>dimension(\x)=dimension(\y)</condition>
+        <expression>(\x*\y-total(\x)*total(\y)/dimension(\x))/abs(((\x*\x-(total(\x)^2)/dimension(\x))*(\y*\y-(total(\y)^2)/dimension(\y)))^(1/2))</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
         </argument>
@@ -1562,6 +1557,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <reference>true</reference>
           <_name>spearman</_name>
         </name>
+	<condition>dimension(\x)=dimension(\y)</condition>
         <expression>pearson(rank(\x),rank(\y))</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
@@ -1591,7 +1587,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <_name>ttest</_name>
         </name>
         <subfunction precalculate="true">poolvar(\x,\y)^2</subfunction>
-        <expression>(mean(\x)-mean(\y))/abs(((\1)/components(\x)+(\1)/components(\y))^(1/2))</expression>
+        <expression>(mean(\x)-mean(\y))/abs(((\1)/dimension(\x)+(\1)/dimension(\y))^(1/2))</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
         </argument>
