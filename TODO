@@ -1,6 +1,6 @@
-* Finish unit conversion
-* Finish (x + y)^5 etc.
-* Support unsolved functions
+* Unit conversion to an AliasUnit based on CompositeUnit
+* Selectable prefix in result
+* Complex unit editing
 * More functions
 * More Units
 * Complete number bases
@@ -11,7 +11,6 @@
 * Derivative, x^2 + y^2 + xy => (x + y)^2, etc.
 
 * Internationalisation
-* Clean up build system
 * Separate library
 * Support non-glibc systems (Solaris)
 
@@ -19,4 +18,5 @@
 * User documentation
 
 * Command line version
+* Gnome/KDE applets
 * QT version
