@@ -991,6 +991,24 @@ void Calculator::setFunctionsAndVariables(string &str) {
 	vector<char> ut;
 	string stmp, stmp2;
 	long double value;
+	printf("S1 %s\n", str.c_str());	
+	while(true) {
+		i = str.find_first_of(DIVISION_S, i);
+		if(i == string::npos) break;
+		i = str.find_first_not_of(SPACE_S, i + 1);
+		if(i == string::npos) break;
+		if(is_not_in(str[i], BRACKETS_S, NULL)) { 
+			str.insert(i, LEFT_BRACKET_STR);
+			i = find_first_of(str, i + 1, DIVISION_S, MULTIPLICATION_S, PLUS_S, MINUS_S, BRACKETS_S, NULL);
+			if(i == string::npos) {
+				str.append(RIGHT_BRACKET_STR);
+				break;
+			} else {
+				str.insert(i, RIGHT_BRACKET_STR);
+			}
+		}
+	}
+	printf("S2 %s\n", str.c_str());	
 	gsub(SIGN_POWER_0, "o", str);
 	gsub(SIGN_POWER_1, "^1", str);
 	gsub(SIGN_POWER_2, "^2", str);
@@ -1306,7 +1324,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 	}
 	remove_blanks(str);
 	i = 0;
-	while(1) {
+	while(true) {
 		i = find_first_not_of(str, i, NUMBERS_S, ILLEGAL_IN_NAMES, DOT_S, NULL);
 		if(i == string::npos) break;
 		stmp = str[i];
