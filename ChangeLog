@@ -1,3 +1,19 @@
+2004-03-20 Niklas Knutsson  <nq@altern.org>
+
+	* Print short currency unit before value
+	* Factorize independent of giac
+	* Make my own derive function default
+
+2004-03-19 Niklas Knutsson  <nq@altern.org>
+
+	* asec, acsc, acot, sech, csch, coth, asech, acsch, acoth
+	* cis
+	* As we now have complex number, define inverse trigonometric functions as expressions
+	* sec, csc, cot
+	* "CAS" -> "Calculus"
+	* Update my own derive function and enable it if giac is not used
+	* Fix ln() argument so that e can pass through
+
 2004-03-18 Niklas Knutsson  <nq@altern.org>
 
 	* Show error when custom condition is not met

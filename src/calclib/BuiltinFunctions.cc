@@ -820,8 +820,8 @@ void IFFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}	
 }
 GCDFunction::GCDFunction() : Function("Arithmetics", "gcd", 2, "Greatest Common Divisor") {
-	NON_COMPLEX_NUMBER_ARGUMENT(1)
-	NON_COMPLEX_NUMBER_ARGUMENT(2)
+	setArgumentDefinition(1, new IntegerArgument());
+	setArgumentDefinition(2, new IntegerArgument());
 }
 void GCDFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -870,20 +870,6 @@ void YearFracFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		mngr->set(fr);
 	}
 	delete fr;
-}
-DifferentiateFunction::DifferentiateFunction() : Function("Experimental", "diff", 2, "Differentiate") {
-	setArgumentDefinition(2, new TextArgument());
-}
-void DifferentiateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	CALCULATOR->error(true, _("%s() is an experimental unfinished function!"), name().c_str(), NULL);
-	if(vargs[0]->isText()) {
-		Manager *mngr2 = CALCULATOR->calculate(vargs[0]->text());
-		mngr->set(mngr2);
-		mngr2->unref();
-	} else {
-		mngr->set(vargs[0]);
-	}
-	mngr->differentiate(vargs[1]->text());
 }
 FactorialFunction::FactorialFunction() : Function("Arithmetics", "factorial", 1, "Factorial") {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, false));
@@ -1117,7 +1103,7 @@ void AtanhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(atanh)
 }
 LogFunction::LogFunction() : Function("Exponents and Logarithms", "ln", 1, "Natural Logarithm") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
 }
 void LogFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->isNumber()) {
@@ -1555,9 +1541,15 @@ void CharFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	str += vargs[0]->number()->intValue();
 	mngr->set(str);
 }
+ReplaceFunction::ReplaceFunction() : Function("Utilities", "replace", 3, "Replace") {
+}
+void ReplaceFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	mngr->set(vargs[0]);
+	mngr->replace(vargs[1], vargs[2]);
+}
 
 #ifdef HAVE_GIAC
-GiacFunction::GiacFunction() : Function("CAS", "giac", 1, "Giac expression") {
+GiacFunction::GiacFunction() : Function("Calculus", "giac", 1, "Giac expression") {
 	setArgumentDefinition(1, new TextArgument());
 }
 void GiacFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
@@ -1571,7 +1563,36 @@ void GiacFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		return;
 	}
 }
-SolveFunction::SolveFunction() : Function("CAS", "solve", 1, "Solve equation", "", 2) {
+GiacDeriveFunction::GiacDeriveFunction() : Function("Calculus", "giac_diff", 1, "Derive (giac)", "", 3) {
+	setArgumentDefinition(1, new GiacArgument());
+	setArgumentDefinition(2, new TextArgument());
+	setDefaultValue(2, "\"x\"");
+	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setDefaultValue(3, "1");		
+}
+void GiacDeriveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	bool failed = false;
+	giac::gen v1 = vargs[0]->toGiac(&failed);
+	if(failed) {
+		CALCULATOR->error(true, _("Conversion to Giac failed."), NULL);
+		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
+		return;
+	}
+	giac::identificateur id(vargs[1]->text());
+	giac::gen vars = id;
+	giac::gen nderiv = vargs[2]->toGiac();
+	try {
+		giac::gen ans = giac::derive(v1, vars, nderiv);
+		ans = simplify(ans);
+		mngr->set(ans);
+		mngr->clean();
+	} catch(std::runtime_error & err){
+		CALCULATOR->error(true, "Giac error: %s.", err.what(), NULL);
+		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
+		return;
+	}
+}
+SolveFunction::SolveFunction() : Function("Calculus", "solve", 1, "Solve equation", "", 2) {
 	setArgumentDefinition(1, new GiacArgument());
 	setArgumentDefinition(2, new TextArgument());
 	setDefaultValue(2, "\"x\"");		
@@ -1606,41 +1627,12 @@ void SolveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		return;
 	}
 }
-DeriveFunction::DeriveFunction() : Function("CAS", "diff", 1, "Derive", "", 3) {
-	setArgumentDefinition(1, new GiacArgument());
-	setArgumentDefinition(2, new TextArgument());
-	setDefaultValue(2, "\"x\"");
-	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
-	setDefaultValue(3, "1");		
-}
-void DeriveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	bool failed = false;
-	giac::gen v1 = vargs[0]->toGiac(&failed);
-	if(failed) {
-		CALCULATOR->error(true, _("Conversion to Giac failed."), NULL);
-		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
-		return;
-	}
-	giac::identificateur id(vargs[1]->text());
-	giac::gen vars = id;
-	giac::gen nderiv = vargs[2]->toGiac();
-	try {
-		giac::gen ans = giac::derive(v1, vars, nderiv);
-		ans = simplify(ans);
-		mngr->set(ans);
-		mngr->clean();
-	} catch(std::runtime_error & err){
-		CALCULATOR->error(true, "Giac error: %s.", err.what(), NULL);
-		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
-		return;
-	}
-}
-IntegrateFunction::IntegrateFunction() : Function("CAS", "integrate", 1, "Integrate", "", 2) {
+GiacIntegrateFunction::GiacIntegrateFunction() : Function("Calculus", "integrate", 1, "Integrate", "", 2) {
 	setArgumentDefinition(1, new GiacArgument());
 	setArgumentDefinition(2, new TextArgument());
 	setDefaultValue(2, "\"x\"");
 }
-void IntegrateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+void GiacIntegrateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	bool failed = false;
 	giac::gen v1 = vargs[0]->toGiac(&failed);
 	if(failed) {
@@ -1665,6 +1657,28 @@ void IntegrateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 #endif
+DeriveFunction::DeriveFunction() : Function("Calculus", "diff", 1, "Derive", "", 3) {
+	setArgumentDefinition(2, new TextArgument());
+	setDefaultValue(2, "\"x\"");
+	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setDefaultValue(3, "1");		
+}
+void DeriveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	int i = vargs[2]->number()->intValue();
+	mngr->set(vargs[0]);
+	while(i) {
+		mngr->differentiate(vargs[1]->text());
+		i--;
+	}
+}
+IntegrateFunction::IntegrateFunction() : Function("Calculus", "integrate_test", 1, "Integrate", "", 2) {
+	setArgumentDefinition(2, new TextArgument());
+	setDefaultValue(2, "\"x\"");
+}
+void IntegrateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	mngr->set(vargs[0]);
+	mngr->integrate(vargs[1]->text());
+}
 LoadFunction::LoadFunction() : Function("Utilities", "load", 1, "Load CSV file", "", 3) {
 	setArgumentDefinition(1, new FileArgument());
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));

@@ -159,6 +159,18 @@
         <_title>Value</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="replace">
+      <_title>Replace</_title>
+      <argument index="1">
+        <_title>Expression</_title>
+      </argument>
+      <argument index="2">
+        <_title>Original value</_title>
+      </argument>
+      <argument index="3">
+        <_title>New value</_title>
+      </argument>
+    </builtin_function>
   </category>
   <category>
     <_title>Matrices &amp; Vectors</_title>
@@ -539,10 +551,34 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
 	<test>false</test>
       </argument>
     </function>
+    <function name="sec">
+      <_title>Secant</_title>
+      <expression>1/cos(\x)</expression>
+      <argument index="1" type="angle">
+        <_title>Angle</_title>
+	<test>false</test>
+      </argument>
+    </function>
+    <function name="csc">
+      <_title>Cosecant</_title>
+      <expression>1/sin(\x)</expression>
+      <argument index="1" type="angle">
+        <_title>Angle</_title>
+	<test>false</test>
+      </argument>
+    </function>
+    <function name="cot">
+      <_title>Cotangent</_title>
+      <expression>cos(\x)/sin(\x)</expression>
+      <argument index="1" type="angle">
+        <_title>Angle</_title>
+	<test>false</test>
+      </argument>
+    </function>
     <function name="sinh">
       <_title>Hyperbolic sine</_title>
       <expression>(e^\x-e^(-\x))/2</expression>
-      <argument index="1" type="angle">
+      <argument type="angle" index="1">
         <_title>Angle</_title>
 	<test>false</test>
       </argument>
@@ -550,7 +586,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     <function name="cosh">
       <_title>Hyperbolic cosine</_title>
       <expression>(e^\x+e^(-\x))/2</expression>
-      <argument index="1" type="angle">
+      <argument type="angle" index="1">
         <_title>Angle</_title>
 	<test>false</test>
       </argument>
@@ -563,26 +599,80 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
 	<test>false</test>
       </argument>
     </function>
-    <builtin_function name="asin">
-      <_title>Arcsine</_title>
-      <argument index="1">
+    <function name="sech">
+      <_title>Hyperbolic secant</_title>
+      <expression>1/cosh(\x)</expression>
+      <argument index="1" type="angle">
         <_title>Angle</_title>
+	<test>false</test>
       </argument>
-    </builtin_function>
-    <builtin_function name="acos">
-      <_title>Arccosine</_title>
-      <argument index="1">
+    </function>
+    <function name="csch">
+      <_title>Hyperbolic cosecant</_title>
+      <expression>1/sinh(\x)</expression>
+      <argument index="1" type="angle">
         <_title>Angle</_title>
+	<test>false</test>
       </argument>
-    </builtin_function>
-    <builtin_function name="atan">
-      <_title>Arctangent</_title>
-      <argument index="1">
+    </function>
+    <function name="coth">
+      <_title>Hyperbolic cotangent</_title>
+      <expression>(e^(2\x)+1)/(e^(2\x)-1)</expression>
+      <argument index="1" type="angle">
         <_title>Angle</_title>
+	<test>false</test>
       </argument>
-    </builtin_function>
+    </function>
+    <function name="asin">
+      <_title>Inverse sine</_title>
+      <expression>-i*ln(i*\x+sqrt(1-\x^2))</expression>
+      <argument type="angle" index="1">
+        <_title>Angle</_title>
+	<test>false</test>
+      </argument>
+    </function>
+    <function name="acos">
+      <_title>Inverse cosine</_title>
+      <expression>0.5pi+i*ln(i*\x+sqrt(1-\x^2))</expression>
+      <argument type="angle" index="1">
+        <_title>Angle</_title>
+	<test>false</test>
+      </argument>
+    </function>
+    <function name="atan">
+      <_title>Inverse tangent</_title>
+      <expression>0.5i*(ln(1-\x*i)-ln(1+\x*i))</expression>
+      <argument type="angle" index="1">
+        <_title>Angle</_title>
+	<test>false</test>
+      </argument>
+    </function>
+    <function name="asec">
+      <_title>Inverse secant</_title>
+      <expression>0.5pi+i*ln(sqrt(1-1\x^2)+i/\x)</expression>
+      <argument type="angle" index="1">
+        <_title>Angle</_title>
+	<test>false</test>
+      </argument>
+    </function>
+    <function name="acsc">
+      <_title>Inverse cosecant</_title>
+      <expression>-i*ln(sqrt(1-1\x^2)+i/\x)</expression>
+      <argument type="angle" index="1">
+        <_title>Angle</_title>
+	<test>false</test>
+      </argument>
+    </function>
+    <function name="acot">
+      <_title>Inverse cotangent</_title>
+      <expression>i/2*(ln((\x-i)/\x)-ln((\x+i)/\x))</expression>
+      <argument type="angle" index="1">
+        <_title>Angle</_title>
+	<test>false</test>
+      </argument>
+    </function>
     <function name="asinh">
-      <_title>Hyperbolic arcsine</_title>
+      <_title>Inverse hyperbolic sine</_title>
       <expression>ln(\x+sqrt(\x^2+1))</expression>
       <argument index="1" type="angle">
         <_title>Angle</_title>
@@ -590,7 +680,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </function>
     <function name="acosh">
-      <_title>Hyperbolic arccosine</_title>
+      <_title>Inverse hyperbolic cosine</_title>
       <expression>ln(\x+sqrt(\x^2-1))</expression>
       <argument index="1" type="angle">
         <_title>Angle</_title>
@@ -598,8 +688,32 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </function>
     <function name="atanh">
-      <_title>Hyperbolic arctangent</_title>
+      <_title>Inverse hyperbolic tangent</_title>
       <expression>ln((1+\x)/(1-\x))/2</expression>
+      <argument index="1" type="angle">
+        <_title>Angle</_title>
+	<test>false</test>
+      </argument>
+    </function>
+    <function name="asech">
+      <_title>Inverse hyperbolic secant</_title>
+      <expression>ln(sqrt(1/\x-1)*sqrt(1/\x+1)+1/\x)</expression>
+      <argument index="1" type="angle">
+        <_title>Angle</_title>
+	<test>false</test>
+      </argument>
+    </function>
+    <function name="acsch">
+      <_title>Inverse hyperbolic cosecant</_title>
+      <expression>ln(sqrt(1+1/\x^2)+1/\x)</expression>
+      <argument index="1" type="angle">
+        <_title>Angle</_title>
+	<test>false</test>
+      </argument>
+    </function>
+    <function name="acoth">
+      <_title>Inverse hyperbolic cotangent</_title>
+      <expression>(ln(1+1/\x)-ln(1-1/\x))/2</expression>
       <argument index="1" type="angle">
         <_title>Angle</_title>
 	<test>false</test>
@@ -644,8 +758,15 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </function>
     <function name="exp">
-      <_title>e raised to the power X</_title>
+      <_title>Exponential (e^x)</_title>
       <expression>e^\x</expression>
+      <argument index="1">
+        <_title>Exponent</_title>
+      </argument>
+    </function>
+    <function name="cis">
+      <_title>Complex exponential (Cis)</_title>
+      <expression>e^(\x*i)</expression>
       <argument index="1">
         <_title>Exponent</_title>
       </argument>
@@ -1968,7 +2089,7 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
     </function>
   </category>
   <category>  
-    <_title>CAS</_title>
+    <_title>Calculus</_title>
     <builtin_function name="giac">
       <_title>Giac expression</_title>
       <argument index="1">
@@ -1986,6 +2107,18 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
     </builtin_function>
     <builtin_function name="diff">
       <_title>Derive</_title>
+      <argument index="1">
+        <_title>Expression</_title>
+      </argument>
+      <argument index="2">
+        <_title>With respect to</_title>
+      </argument>
+      <argument index="3">
+        <_title>Order</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="giac_diff">
+      <_title>Derive (giac)</_title>
       <argument index="1">
         <_title>Expression</_title>
       </argument>

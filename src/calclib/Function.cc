@@ -273,8 +273,9 @@ void Function::setArgumentDefinition(unsigned int index, Argument *argdef) {
 }
 bool Function::testArgumentCount(int itmp) {
 	if(itmp >= minargs()) {
-		if(itmp > maxargs() && maxargs() >= 0)
-			CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str());						
+		if(itmp > maxargs() && maxargs() >= 0) {
+			CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str());
+		}
 		return true;	
 	}
 	string str;
@@ -348,6 +349,11 @@ Manager *Function::calculate(vector<Manager*> &vargs, int itmp) {
 	Manager *mngr = NULL;
 	if(itmp < 0) itmp = vargs.size();
 	if(testArgumentCount(itmp)) {
+		while(itmp < maxargs()) {
+			mngr = CALCULATOR->calculate(default_values[itmp - minargs()]);
+			vargs.push_back(mngr);
+			itmp++;
+		}
 		mngr = new Manager();
 		bool b = false;
 		for(unsigned int i = 0; i < vargs.size(); i++) {

@@ -167,15 +167,17 @@ class Manager {
 		
 #ifdef HAVE_GIAC
 		giac::gen toGiac(bool *isnull = NULL) const;
-		Manager::Manager(const giac::gen &giac_gen);
-		void Manager::set(const giac::gen &giac_gen, bool in_retry = false);
-		void Manager::simplify();
-		void Manager::factor();
+		Manager(const giac::gen &giac_gen);
+		void set(const giac::gen &giac_gen, bool in_retry = false);
+		void simplify();
 #endif
 		
+		bool contains(Manager *mngr) const;
 		void replace(Manager *replace_this, Manager *replace_with);
 		void replace_no_copy(Manager *replace_this, Manager *replace_with);
 		void differentiate(string x_var);
+		void integrate(string x_var);
+		void factorize();
 		
 		Vector *generateVector(string x_var, const Manager *min, const Manager *max, int steps, Vector **x_vector = NULL);
 		Vector *generateVector(string x_var, Vector *x_vector);

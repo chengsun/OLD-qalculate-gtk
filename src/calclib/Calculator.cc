@@ -182,7 +182,7 @@ Calculator::Calculator() {
 	angleMode(RADIANS);
 	pi_var = NULL;
 	e_var = NULL;
-	ln_func = NULL, matrix_func = NULL, vector_func = NULL;
+	ln_func = NULL, matrix_func = NULL, vector_func = NULL, sin_func = NULL, cos_func = NULL, diff_func = NULL;
 	addBuiltinVariables();
 	addBuiltinFunctions();
 	addBuiltinUnits();
@@ -224,6 +224,9 @@ bool Calculator::utf8_pos_is_valid_in_name(char *pos) {
 Variable *Calculator::getPI() const {return pi_var;}
 Variable *Calculator::getE() const {return e_var;}
 Function *Calculator::getLnFunction() const {return ln_func;}
+Function *Calculator::getSinFunction() const {return sin_func;}
+Function *Calculator::getCosFunction() const {return cos_func;}
+Function *Calculator::getDiffFunction() const {return diff_func;}
 void Calculator::setRPNMode(bool enable) {
 	b_rpn = enable;
 }
@@ -775,14 +778,8 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new IntFunction());	
 	addFunction(new ModFunction());
 	addFunction(new RemFunction());
-	addFunction(new SinFunction());
-	addFunction(new CosFunction());
-	addFunction(new SinhFunction());
-	addFunction(new CoshFunction());
-	addFunction(new TanhFunction());
-	addFunction(new AsinFunction());
-	addFunction(new AcosFunction());
-	addFunction(new AtanFunction());
+	sin_func = addFunction(new SinFunction());
+	cos_func = addFunction(new CosFunction());
 	ln_func = addFunction(new LogFunction());
 	addFunction(new LognFunction());
 	addFunction(new SqrtFunction());
@@ -806,12 +803,15 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new LengthFunction());
 	addFunction(new AsciiFunction());
 	addFunction(new CharFunction());
+	addFunction(new ReplaceFunction());
 #ifdef HAVE_GIAC
 	addFunction(new GiacFunction());
 	addFunction(new SolveFunction());
-	addFunction(new DeriveFunction());
-	addFunction(new IntegrateFunction());
+	addFunction(new GiacIntegrateFunction());
+	addFunction(new GiacDeriveFunction());
 #endif
+	diff_func = addFunction(new DeriveFunction());
+	addFunction(new IntegrateFunction());
 	addFunction(new LoadFunction());
 }
 void Calculator::addBuiltinUnits() {

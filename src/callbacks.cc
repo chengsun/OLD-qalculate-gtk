@@ -1951,7 +1951,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				if(func_str == "zeta") func_str = SIGN_ZETA;
 				else if(func_str == "sqrt") func_str = SIGN_SQRT;
 			}			
-
+			gsub("_", " ", func_str);
 			MARKUP_STRING(str, func_str)
 			pango_layout_set_markup(layout_function, str.c_str(), -1);			
 			pango_layout_get_pixel_size(layout_function, &function_w, &function_h);
@@ -2035,7 +2035,8 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				} else {
 					str = TEXT_TAGS;
 				}
-				if(!in_composite && !no_add_one) {
+				bool b_mon = m->unit()->category() == _("Currency") && displayflags & DISPLAY_FORMAT_SHORT_UNITS && m->unit()->name().length() == 3;
+				if(!in_composite && !no_add_one && !b_mon) {
 					str2 = "1";
 					if(min_decimals > 0) {
 						str2 += CALCULATOR->getDecimalPoint();
@@ -2048,13 +2049,14 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				if(m->prefix()) {
 					str += m->prefix()->name(displayflags & DISPLAY_FORMAT_SHORT_UNITS);	
 				}
-				if(displayflags & DISPLAY_FORMAT_SHORT_UNITS) {
+				bool no_mon_space = false;
+				if(displayflags & DISPLAY_FORMAT_SHORT_UNITS && m->unit()->name().find("_") == string::npos) {
 					if(displayflags & DISPLAY_FORMAT_NONASCII) {
-						if(m->unit()->name() == "EUR") str += SIGN_EURO;
-//						else if(m->unit()->name() == "USD") str += "$";
-//						else if(m->unit()->name() == "GBP") str += SIGN_POUND;
-//						else if(m->unit()->name() == "cent") str += SIGN_CENT;
-//						else if(m->unit()->name() == "JPY") str += SIGN_YEN;
+						if(m->unit()->name() == "EUR") {str += SIGN_EURO; no_mon_space = true;}
+						else if(m->unit()->name() == "USD") {str += "$"; no_mon_space = true;}
+						else if(m->unit()->name() == "GBP") {str += SIGN_POUND; no_mon_space = true;}
+						else if(m->unit()->name() == "cent") str += SIGN_CENT;
+						else if(m->unit()->name() == "JPY") {str += SIGN_YEN; no_mon_space = true;}
 						else if(m->unit()->name() == "oC") str += SIGN_POWER_0 "C";
 						else if(m->unit()->name() == "oF") str += SIGN_POWER_0 "F";
 						else if(m->unit()->name() == "oR") str += SIGN_POWER_0 "R";
@@ -2066,6 +2068,20 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				} else if(plural && *plural) str += m->unit()->plural();
 				else str += m->unit()->singular();
 				gsub("_", " ", str);
+				if(!in_composite && !no_add_one && b_mon) {
+					str2 = "";
+					if(!no_mon_space) {
+						str2 += " ";
+					}
+					str2 += "1";
+					if(min_decimals > 0) {
+						str2 += CALCULATOR->getDecimalPoint();
+						for(int i = 0; i < min_decimals; i++) {
+							str2 += '0';
+						}
+					}
+					str += str2;
+				}
 				if(in_power) {
 					str += TEXT_TAGS_SMALL_END;
 				} else {
@@ -2765,6 +2781,64 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			break;
 		} 
 		case MULTIPLICATION_MANAGER: {
+		
+			int mon_pre = -1;
+			for(unsigned int i = 0; i < m->countChilds(); i++) {
+				if(m->getChild(i)->isUnit_exp()) {
+					if(mon_pre < 0 && m->getChild(i)->isUnit() && m->getChild(i)->unit()->category() == _("Currency") && m->getChild(i)->unit()->name().length() == 3) {
+						mon_pre = i;
+					} else {
+						mon_pre = -1;
+						break;
+					}
+				}
+			}
+			if(mon_pre >= 0 && m->countChilds() > 1 && (displayflags & DISPLAY_FORMAT_SHORT_UNITS || m->getChild(mon_pre)->unit()->singular(false).empty())) {
+				CALCULATE_SPACE_W
+				gint unit_w = 0, unit_h = 0, unit_c = 0, value_w = 0, value_h = 0, value_c = 0, w = 0, h = 0, dh = 0, uh = 0;
+				GdkPixmap *pixmap_unit = draw_manager(m->getChild(mon_pre), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, false, in_power, draw_minus || toplevel, &unit_c, true, true, false, NULL, 0, true);
+				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_unit), &unit_w, &unit_h);
+				dh = unit_c;
+				uh = unit_h - dh;
+				GdkPixmap *pixmap_value;
+				bool add_space = !(displayflags & DISPLAY_FORMAT_NONASCII) || (m->getChild(mon_pre)->unit()->name() != "EUR" && m->getChild(mon_pre)->unit()->name() != "USD" && m->getChild(mon_pre)->unit()->name() != "GBP" && m->getChild(mon_pre)->unit()->name() != "JPY");
+				if(m->countChilds() > 2) {
+					Manager mngr;
+					mngr.setType(MULTIPLICATION_MANAGER);
+					for(unsigned int i = 0; i < m->countChilds(); i++) {
+						if((int) i != mon_pre) {
+							m->getChild(i)->ref();
+							mngr.push_back(m->getChild(i));
+						}
+					}
+					pixmap_value = draw_manager(&mngr, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, false, in_power, draw_minus || toplevel, &value_c, true, false, false, NULL, 0, true);
+				} else if(mon_pre == 0) {
+					pixmap_value = draw_manager(m->getChild(1), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, false, in_power, draw_minus || toplevel, &value_c, true, true, false, NULL, 0, true);
+				} else {
+					pixmap_value = draw_manager(m->getChild(0), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, false, in_power, draw_minus || toplevel, &value_c, true, true, false, NULL, 0, true);
+				}
+				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_value), &value_w, &value_h);
+				if(value_h - value_c > uh) {
+					uh = value_h - value_c;
+				}
+				if(value_c > dh) {
+					dh = value_c;
+				}
+				w = unit_w + value_w;
+				if(add_space) w += space_w;
+				central_point = dh;
+				h = dh + uh;
+				pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
+				draw_background(pixmap, w, h);			
+				w = 0;
+				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_unit), 0, 0, w, uh - (unit_h - unit_c), -1, -1);
+				w += unit_w;
+				if(add_space) w += space_w;
+				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_value), 0, 0, w, uh - (value_h - value_c), -1, -1);
+				g_object_unref(pixmap_unit);
+				g_object_unref(pixmap_value);
+				break;
+			}
 		
 			if(displayflags & DISPLAY_FORMAT_SCIENTIFIC) {
 				m->sort(SORT_SCIENTIFIC);
@@ -6070,6 +6144,7 @@ void on_history_dialog_destroy_event(GtkWidget *widget, gpointer user_data) {
 	history_width = w;
 	history_height = h;
 	gtk_widget_hide(glade_xml_get_widget(main_glade, "history_dialog"));
+	gtk_widget_grab_focus(expression);
 }
 
 #if GTK_MINOR_VERSION >= 3
@@ -6872,11 +6947,9 @@ void on_menu_item_multiple_roots_activate(GtkMenuItem *w, gpointer user_data) {
 	execute_expression();
 }
 void on_menu_item_factorize_activate(GtkMenuItem *w, gpointer user_data) {
-#ifdef HAVE_GIAC
-	mngr->factor();
+	mngr->factorize();
 	setResult();
 	gtk_widget_grab_focus(expression);
-#endif
 }
 void on_menu_item_convert_number_bases_activate(GtkMenuItem *w, gpointer user_data) {
 	changing_in_nbases_dialog = false;

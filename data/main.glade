@@ -2177,6 +2177,63 @@
 <widget class="GtkMenu" id="popup_menu_resultview">
 
   <child>
+    <widget class="GtkImageMenuItem" id="popup_menu_item_copy">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">_Copy</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_menu_item_copy_activate" last_modification_time="Sat, 20 Mar 2004 09:40:15 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image657">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-copy</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkImageMenuItem" id="popup_menu_item_convert_to_unit">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Convert</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_menu_item_convert_to_unit_expression_activate" last_modification_time="Sat, 20 Mar 2004 09:40:15 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image658">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-convert</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkMenuItem" id="popup_menu_item_factorize">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Factorize</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_menu_item_factorize_activate" last_modification_time="Sat, 20 Mar 2004 09:40:15 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkMenuItem" id="separator32">
+      <property name="visible">True</property>
+    </widget>
+  </child>
+
+  <child>
     <widget class="GtkRadioMenuItem" id="popup_menu_item_display_normal">
       <property name="visible">True</property>
       <property name="label" translatable="yes">Normal</property>

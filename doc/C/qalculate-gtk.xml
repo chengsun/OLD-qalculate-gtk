@@ -115,7 +115,7 @@ The result of calculations is displayed in the open area below the expression en
 In front of the result an equals or approximately equals sign is shown. This indicates whether Qalculate! was able to calculate/display the result exact or only approximate, in the current mode.
 </para>
 <para>
-The result display has a context menu, which pops up when clicking with the right mouse button anywhere in the field. This menu provides a subset of <xref linkend="qalculate-TBL-mode-menu"/> and contains alternatives for the display of the result. See more info in <xref linkend="qalculate-result"/>.
+The result display has a context menu, which pops up when clicking with the right mouse button anywhere in the field. This menu provides a subset of the display alternatives from the mode menu (<xref linkend="qalculate-TBL-mode-menu"/>) and some actions from the edit menu (<xref linkend="qalculate-TBL-edit-menu"/>). See more info in <xref linkend="qalculate-result"/>.
 </para>
 <para>
 To copy the result, either select <menuchoice><guimenu>Edit</guimenu><guimenuitem>Copy Result</guimenuitem></menuchoice>, press <keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>C</keycap></keycombo>, or copy the text from the history window.
@@ -267,7 +267,7 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 			</row>
 			<row valign="top">
 				<entry><para>Factorize</para></entry>
-				<entry><para>Factorizes the current result. Only available if the Qalculate! installation has Giac support.</para></entry>
+				<entry><para>Factorizes the current result. At the moment rather limited if Qalculate! was not installed with Giac support.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Convert to unit</para></entry>
@@ -944,9 +944,9 @@ Contains functions for basic arithmetic manipulation of numbers, such as roundin
 </para></listitem>
 </varlistentry>
 <varlistentry>
-<term>CAS</term>
+<term>Calculus</term>
 <listitem><para>
-Computer Algebra System functions that are available only if the Qalculate! installation has support for Giac. These include <command>diff()</command> which calculates the derivative of an expression with optional arguments <quote>with respect to</quote> (default x) and <quote>order</quote> (default 1), <command>integrate()</command> which is the former reversed, and <command>solve()</command> which solves an equation (ex. <quote>solve(x * 2 = 8)</quote> returns <quote>4</quote> meaning that x equals 4). There is also a generic Giac function, which passes a text argument directly to Giac.
+Includes <command>diff()</command> which calculates the derivative of an expression with optional arguments <quote>with respect to</quote> (default x) and <quote>order</quote> (default 1), <command>integrate()</command> which is the former reversed, and <command>solve()</command> which solves an equation (ex. <quote>solve(x * 2 = 8)</quote> returns <quote>4</quote> meaning that x equals 4). The last two are only available if Qalculate! was installed with Giac support. There is also a generic Giac function, which passes a text argument directly to Giac.
 </para></listitem>
 </varlistentry>
 <varlistentry>

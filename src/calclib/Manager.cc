@@ -2369,44 +2369,311 @@ void Manager::differentiate(string x_var) {
 			typeclean();
 			break;
 		}
+		case ALTERNATIVE_MANAGER: {
+			for(unsigned int i = 0; i < mngrs.size(); i++) {
+				mngrs[i]->differentiate(x_var);
+			}
+			typeclean();
+			break;
+		}
+		case MATRIX_MANAGER: {
+			for(unsigned int index_r = 1; index_r <= mtrx->rows(); index_r++) {
+				for(unsigned int index_c = 1; index_c <= mtrx->columns(); index_c++) {
+					mtrx->get(index_r, index_c)->differentiate(x_var);
+				}
+			}
+			break;
+		}
+		case AND_MANAGER: {}
+		case OR_MANAGER: {}
+		case COMPARISON_MANAGER: {}
+		case UNIT_MANAGER: {}
+		case NUMBER_MANAGER: {
+			clear();
+			b_exact = true;
+			break;
+		}
+		case POWER_MANAGER: {
+			Manager *x_mngr = new Manager(x_var);
+			bool x_in_base = base()->contains(x_mngr);
+			bool x_in_exp = exponent()->contains(x_mngr);
+			x_mngr->unref();
+			if(x_in_base && !x_in_exp) {
+				Manager *exp_mngr = new Manager(exponent());
+				Manager *base_mngr = new Manager(base());
+				exponent()->addInteger(-1, OPERATION_ADD);
+				typeclean();
+				add(exp_mngr, OPERATION_MULTIPLY);
+				exp_mngr->unref();
+				base_mngr->differentiate(x_var);
+				add(base_mngr, OPERATION_MULTIPLY);
+				base_mngr->unref();
+			} else if(!x_in_base && x_in_exp) {
+				Manager *exp_mngr = new Manager(exponent());
+				Manager *mngr = new Manager(CALCULATOR->getLnFunction(), base(), NULL);
+				add(mngr, OPERATION_MULTIPLY);
+				exp_mngr->differentiate(x_var);
+				add(exp_mngr, OPERATION_MULTIPLY);
+				exp_mngr->unref();
+				mngr->unref();
+			} else if(x_in_base && x_in_exp) {
+				Manager *exp_mngr = new Manager(exponent());
+				Manager *base_mngr = new Manager(base());
+				exp_mngr->differentiate(x_var);
+				base_mngr->differentiate(x_var);
+				base_mngr->add(base(), OPERATION_DIVIDE);
+				base_mngr->add(exponent(), OPERATION_MULTIPLY);
+				Manager *mngr = new Manager(CALCULATOR->getLnFunction(), base(), NULL);
+				mngr->add(exp_mngr, OPERATION_MULTIPLY);
+				mngr->add(base_mngr, OPERATION_ADD);
+				exp_mngr->unref();
+				base_mngr->unref();
+				add(mngr, OPERATION_MULTIPLY);
+				mngr->unref();
+			} else {
+				Manager *mngr2 = new Manager(x_var);
+				Manager *mngr = new Manager(CALCULATOR->getDiffFunction(), this, mngr2, NULL);
+				mngr2->unref();
+				moveto(mngr);
+			}
+			break;
+		}
 		case FUNCTION_MANAGER: {
-			Manager *mngr2 = new Manager(x_var);
-			Manager *mngr = new Manager(CALCULATOR->getFunction("diff"), this, mngr2, NULL);
-			mngr2->unref();
-			moveto(mngr);
+			if(function() == CALCULATOR->getLnFunction() && mngrs.size() == 1) {
+				Manager *mngr = new Manager(mngrs[0]);
+				set(mngr);
+				addInteger(-1, OPERATION_RAISE);
+				mngr->differentiate(x_var);
+				add(mngr, OPERATION_MULTIPLY);
+				mngr->unref();
+			} else if(function() == CALCULATOR->getSinFunction() && mngrs.size() == 1) {
+				o_function = CALCULATOR->getCosFunction();
+				Manager *mngr = new Manager(mngrs[0]);
+				mngr->differentiate(x_var);
+				add(mngr, OPERATION_MULTIPLY);
+				mngr->unref();
+			} else if(function() == CALCULATOR->getCosFunction() && mngrs.size() == 1) {
+				o_function = CALCULATOR->getSinFunction();
+				Manager *mngr = new Manager(mngrs[0]);
+				addInteger(-1, OPERATION_MULTIPLY);
+				mngr->differentiate(x_var);
+				add(mngr, OPERATION_MULTIPLY);
+				mngr->unref();
+			} else if(function() == CALCULATOR->getDiffFunction() && mngrs.size() == 3) {
+				mngrs[2]->addInteger(1, OPERATION_ADD);
+			} else if(function() == CALCULATOR->getDiffFunction() && mngrs.size() == 2) {
+				Manager *mngr = new Manager(1, 1);
+				push_back(mngr);
+			} else if(function() == CALCULATOR->getDiffFunction() && mngrs.size() == 1) {
+				Manager *mngr = new Manager(x_var);
+				push_back(mngr);
+				mngr = new Manager(1, 1);
+				push_back(mngr);
+			} else {
+				Manager *mngr2 = new Manager(x_var);
+				Manager *mngr = new Manager(CALCULATOR->getDiffFunction(), this, mngr2, NULL);
+				mngr2->unref();
+				moveto(mngr);
+			}
+			break;
+		}
+		case MULTIPLICATION_MANAGER: {
+			if(mngrs.size() > 2) {
+				Manager *mngr = new Manager();
+				mngr->setType(MULTIPLICATION_MANAGER);
+				for(unsigned int i = 0; i < mngrs.size() - 1; i++) {
+					mngr->push_back(new Manager(mngrs[i]));
+				}
+				Manager *mngr2 = new Manager(mngrs[mngrs.size() - 1]);
+				Manager *mngr3 = new Manager(mngr);
+				mngr->differentiate(x_var);
+				mngr2->differentiate(x_var);			
+				mngr->add(mngrs[mngrs.size() - 1], OPERATION_MULTIPLY);					
+				mngr2->add(mngr3, OPERATION_MULTIPLY);
+				mngr3->unref();
+				moveto(mngr);
+				add(mngr2, OPERATION_ADD);
+				mngr2->unref();
+			} else {
+				Manager *mngr = new Manager(mngrs[0]);
+				Manager *mngr2 = new Manager(mngrs[1]);
+				mngr->differentiate(x_var);
+				mngr2->differentiate(x_var);			
+				mngr->add(mngrs[1], OPERATION_MULTIPLY);					
+				mngr2->add(mngrs[0], OPERATION_MULTIPLY);
+				moveto(mngr);
+				add(mngr2, OPERATION_ADD);
+				mngr2->unref();			
+			}
 			break;
 		}
 		case STRING_MANAGER: {
 			if(s_var == x_var) set(1, 1);
 			else clear();
 			break;
-		}
-		case POWER_MANAGER: {
-			Manager *mngr = new Manager(mngrs[1]);
-			Manager *mngr2 = new Manager(mngrs[0]);
-			mngrs[1]->addInteger(-1, OPERATION_ADD);
+		}		
+		default: {
+			Manager *mngr2 = new Manager(x_var);
+			Manager *mngr = new Manager(CALCULATOR->getDiffFunction(), this, mngr2, NULL);
+			mngr2->unref();
+			moveto(mngr);
+			break;
+		}	
+	}
+}
+
+void Manager::integrate(string x_var) {
+	switch(c_type) {
+		case ADDITION_MANAGER: {
+			for(unsigned int i = 0; i < mngrs.size(); i++) {
+				mngrs[i]->integrate(x_var);
+			}
 			typeclean();
+			break;
+		}
+		case ALTERNATIVE_MANAGER: {
+			for(unsigned int i = 0; i < mngrs.size(); i++) {
+				mngrs[i]->integrate(x_var);
+			}
+			typeclean();
+			break;
+		}
+		case MATRIX_MANAGER: {
+			for(unsigned int index_r = 1; index_r <= mtrx->rows(); index_r++) {
+				for(unsigned int index_c = 1; index_c <= mtrx->columns(); index_c++) {
+					mtrx->get(index_r, index_c)->integrate(x_var);
+				}
+			}
+			break;
+		}
+		case AND_MANAGER: {}
+		case OR_MANAGER: {}
+		case COMPARISON_MANAGER: {}
+		case UNIT_MANAGER: {}
+		case NUMBER_MANAGER: {
+			Manager *mngr = new Manager(x_var);
 			add(mngr, OPERATION_MULTIPLY);
 			mngr->unref();
-			mngr2->differentiate(x_var);
-			add(mngr2, OPERATION_MULTIPLY);
-			mngr2->unref();
+			break;
+		}
+		case POWER_MANAGER: {
+			Manager *x_mngr = new Manager(x_var);
+			bool x_in_base = base()->contains(x_mngr);
+			bool x_in_exp = exponent()->contains(x_mngr);
+			x_mngr->unref();
+			if(x_in_base && !x_in_exp) {
+				exponent()->addInteger(1, OPERATION_ADD);
+				typeclean();
+				add(exponent(), OPERATION_DIVIDE);
+			} else if(!x_in_base && x_in_exp) {
+				Manager *exp_mngr = new Manager(exponent());
+				Manager *mngr = new Manager(CALCULATOR->getLnFunction(), base(), NULL);
+				add(mngr, OPERATION_MULTIPLY);
+				exp_mngr->differentiate(x_var);
+				add(exp_mngr, OPERATION_MULTIPLY);
+				exp_mngr->unref();
+				mngr->unref();
+			} else if(x_in_base && x_in_exp) {
+				Manager *exp_mngr = new Manager(exponent());
+				Manager *base_mngr = new Manager(base());
+				exp_mngr->differentiate(x_var);
+				base_mngr->differentiate(x_var);
+				base_mngr->add(base(), OPERATION_DIVIDE);
+				base_mngr->add(exponent(), OPERATION_MULTIPLY);
+				Manager *mngr = new Manager(CALCULATOR->getLnFunction(), base(), NULL);
+				mngr->add(exp_mngr, OPERATION_MULTIPLY);
+				mngr->add(base_mngr, OPERATION_ADD);
+				exp_mngr->unref();
+				base_mngr->unref();
+				add(mngr, OPERATION_MULTIPLY);
+				mngr->unref();
+			} else {
+				Manager *mngr2 = new Manager(x_var);
+				Manager *mngr = new Manager(CALCULATOR->getDiffFunction(), this, mngr2, NULL);
+				mngr2->unref();
+				moveto(mngr);
+			}
+			break;
+		}
+		case FUNCTION_MANAGER: {
+			if(function() == CALCULATOR->getLnFunction() && mngrs.size() == 1) {
+				Manager *mngr = new Manager(mngrs[0]);
+				set(mngr);
+				addInteger(-1, OPERATION_RAISE);
+				mngr->differentiate(x_var);
+				add(mngr, OPERATION_MULTIPLY);
+				mngr->unref();
+			} else if(function() == CALCULATOR->getSinFunction() && mngrs.size() == 1) {
+				o_function = CALCULATOR->getCosFunction();
+				Manager *mngr = new Manager(mngrs[0]);
+				mngr->differentiate(x_var);
+				add(mngr, OPERATION_MULTIPLY);
+				mngr->unref();
+			} else if(function() == CALCULATOR->getCosFunction() && mngrs.size() == 1) {
+				o_function = CALCULATOR->getSinFunction();
+				Manager *mngr = new Manager(mngrs[0]);
+				addInteger(-1, OPERATION_MULTIPLY);
+				mngr->differentiate(x_var);
+				add(mngr, OPERATION_MULTIPLY);
+				mngr->unref();
+			} else if(function() == CALCULATOR->getDiffFunction() && mngrs.size() == 3) {
+				mngrs[2]->addInteger(1, OPERATION_ADD);
+			} else if(function() == CALCULATOR->getDiffFunction() && mngrs.size() == 2) {
+				Manager *mngr = new Manager(1, 1);
+				push_back(mngr);
+			} else if(function() == CALCULATOR->getDiffFunction() && mngrs.size() == 1) {
+				Manager *mngr = new Manager(x_var);
+				push_back(mngr);
+				mngr = new Manager(1, 1);
+				push_back(mngr);
+			} else {
+				Manager *mngr2 = new Manager(x_var);
+				Manager *mngr = new Manager(CALCULATOR->getDiffFunction(), this, mngr2, NULL);
+				mngr2->unref();
+				moveto(mngr);
+			}
 			break;
 		}
 		case MULTIPLICATION_MANAGER: {
-			Manager *mngr = new Manager(mngrs[0]);
-			Manager *mngr2 = new Manager(mngrs[1]);
-			mngr->differentiate(x_var);
-			mngr2->differentiate(x_var);			
-			mngr->add(mngrs[1], OPERATION_MULTIPLY);					
-			mngr2->add(mngrs[0], OPERATION_MULTIPLY);
-			moveto(mngr);
-			add(mngr2, OPERATION_ADD);
-			mngr2->unref();			
+			if(mngrs.size() > 2) {
+				Manager *mngr = new Manager();
+				mngr->setType(MULTIPLICATION_MANAGER);
+				for(unsigned int i = 0; i < mngrs.size() - 1; i++) {
+					mngr->push_back(new Manager(mngrs[i]));
+				}
+				Manager *mngr2 = new Manager(mngrs[mngrs.size() - 1]);
+				Manager *mngr3 = new Manager(mngr);
+				mngr->differentiate(x_var);
+				mngr2->differentiate(x_var);			
+				mngr->add(mngrs[mngrs.size() - 1], OPERATION_MULTIPLY);					
+				mngr2->add(mngr3, OPERATION_MULTIPLY);
+				mngr3->unref();
+				moveto(mngr);
+				add(mngr2, OPERATION_ADD);
+				mngr2->unref();
+			} else {
+				Manager *mngr = new Manager(mngrs[0]);
+				Manager *mngr2 = new Manager(mngrs[1]);
+				mngr->differentiate(x_var);
+				mngr2->differentiate(x_var);			
+				mngr->add(mngrs[1], OPERATION_MULTIPLY);					
+				mngr2->add(mngrs[0], OPERATION_MULTIPLY);
+				moveto(mngr);
+				add(mngr2, OPERATION_ADD);
+				mngr2->unref();			
+			}
+			break;
+		}
+		case STRING_MANAGER: {
+			if(s_var == x_var) set(1, 1);
+			else clear();
 			break;
 		}		
 		default: {
-			clear();
+			Manager *mngr2 = new Manager(x_var);
+			Manager *mngr = new Manager(CALCULATOR->getDiffFunction(), this, mngr2, NULL);
+			mngr2->unref();
+			moveto(mngr);
 			break;
 		}	
 	}
@@ -2474,6 +2741,10 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			}			
 
 			str += func_str;
+			if(displayflags & DISPLAY_FORMAT_ALLOW_NOT_USABLE) {
+				gsub("_", " ", str);
+				if(usable) *usable = false;
+			}
 			
 			str += LEFT_PARENTHESIS;
 			for(unsigned int index = 0; index < mngrs.size(); index++) {
@@ -2501,7 +2772,8 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				mngr_d->unref();
 				return str;
 			} else {
-				if(!no_add_one) {
+				bool b_mon = unit()->category() == _("Currency") && displayflags & DISPLAY_FORMAT_SHORT_UNITS && unit()->name().length() == 3;
+				if(!no_add_one && !b_mon) {
 					str += "1";
 					if(min_decimals > 0) {
 						str += CALCULATOR->getDecimalPoint();
@@ -2514,13 +2786,13 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				if(prefix()) {
 					str += prefix()->name(displayflags & DISPLAY_FORMAT_SHORT_UNITS);	
 				}
-				if(displayflags & DISPLAY_FORMAT_SHORT_UNITS) {
+				if(displayflags & DISPLAY_FORMAT_SHORT_UNITS && (!(displayflags & DISPLAY_FORMAT_ALLOW_NOT_USABLE) || unit()->name().find("_") == string::npos)) {
 					if(displayflags & DISPLAY_FORMAT_NONASCII) {
 						if(unit()->name() == "EUR") str += SIGN_EURO;
-//						else if(unit()->name() == "USD") str += "$";
-//						else if(unit()->name() == "GBP") str += SIGN_POUND;
-//						else if(unit()->name() == "cent") str += SIGN_CENT;
-//						else if(unit()->name() == "JPY") str += SIGN_YEN;
+						else if(unit()->name() == "USD") str += "$";
+						else if(unit()->name() == "GBP") str += SIGN_POUND;
+						else if(unit()->name() == "cent") str += SIGN_CENT;
+						else if(unit()->name() == "JPY") str += SIGN_YEN;
 						else if(unit()->name() == "oC") str += SIGN_POWER_0 "C";
 						else if(unit()->name() == "oF") str += SIGN_POWER_0 "F";
 						else if(unit()->name() == "oR") str += SIGN_POWER_0 "R";
@@ -2534,6 +2806,18 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				if(displayflags & DISPLAY_FORMAT_ALLOW_NOT_USABLE) {
 					gsub("_", " ", str);
 					if(usable) *usable = false;
+				}
+				if(!no_add_one && b_mon) {
+					if(str != SIGN_POUND && str != SIGN_YEN && str != SIGN_EURO && str != "$") {
+						str += " ";
+					}
+					str += "1";
+					if(min_decimals > 0) {
+						str += CALCULATOR->getDecimalPoint();
+						for(int i = 0; i < min_decimals; i++) {
+							str += '0';
+						}
+					}
 				}
 			}
 			break;
@@ -2795,6 +3079,41 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			break;
 		} 
 		case MULTIPLICATION_MANAGER: {
+		
+			int mon_pre = -1;
+			for(unsigned int i = 0; i < countChilds(); i++) {
+				if(getChild(i)->isUnit_exp()) {
+					if(mon_pre < 0 && getChild(i)->isUnit() && getChild(i)->unit()->category() == _("Currency") && getChild(i)->unit()->name().length() == 3) {
+						mon_pre = i;
+					} else {
+						mon_pre = -1;
+						break;
+					}
+				}
+			}
+			if(mon_pre >= 0 && countChilds() > 1 && (displayflags & DISPLAY_FORMAT_SHORT_UNITS || getChild(mon_pre)->unit()->singular(false).empty())) {
+				str = getChild(mon_pre)->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, false, in_power, draw_minus || toplevel, print_equals, true, true, false, NULL, 0, true);
+				if(str != SIGN_POUND && str != SIGN_YEN && str != SIGN_EURO && str != "$") {
+					str += " ";
+				}
+				if(countChilds() > 2) {
+					Manager mngr;
+					mngr.setType(MULTIPLICATION_MANAGER);
+					for(unsigned int i = 0; i < countChilds(); i++) {
+						if((int) i != mon_pre) {
+							getChild(i)->ref();
+							mngr.push_back(getChild(i));
+						}
+					}
+					str += mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, false, in_power, draw_minus || toplevel, print_equals, true, false, false, NULL, 0, true);
+				} else if(mon_pre == 0) {
+					str += getChild(1)->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, false, in_power, draw_minus || toplevel, print_equals, true, true, false, NULL, 0, true);
+				} else if(mon_pre == 1) {
+					str += getChild(0)->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, false, in_power, draw_minus || toplevel, print_equals, true, true, false, NULL, 0, true);
+				}
+				if(!toplevel && wrap) wrap_all = true;
+				break;
+			}
 		
 			if(displayflags & DISPLAY_FORMAT_SCIENTIFIC) {
 				((Manager*) this)->sort(SORT_SCIENTIFIC);
@@ -3256,6 +3575,17 @@ Vector *Manager::generateVector(string x_var, Vector *x_vector) {
 	return y_vector;
 }
 
+bool Manager::contains(Manager *mngr) const {
+	if(this->equals(mngr)) {
+		return true;
+	}
+	for(unsigned int i = 0; i < mngrs.size(); i++) {
+		if(mngrs[i]->contains(mngr)) {
+			return true;
+		}
+	}
+	return false;
+}
 void Manager::replace(Manager *replace_this, Manager *replace_with) {
 	if(this->equals(replace_this)) {
 		set(replace_with);
@@ -3852,7 +4182,9 @@ void Manager::set(const giac::gen &giac_gen, bool in_retry) {
 void Manager::simplify() {
 	set(giac::simplify(toGiac()));
 }
-void Manager::factor() {
+#endif
+void Manager::factorize() {
+#ifdef HAVE_GIAC
 	try {
 		giac::gen giac_gen = toGiac();
 		giac_gen = giac::factor(giac_gen);		
@@ -3860,8 +4192,142 @@ void Manager::factor() {
 	} catch(std::runtime_error & err){
 		CALCULATOR->error(true, "Giac error: %s.", err.what(), NULL);
 	}
-}
+#else
+	switch(type()) {
+		case ADDITION_MANAGER: {
+			Manager *factor_mngr = new Manager(1, 1);
+			Number gcd;
+			for(unsigned int i = 0; i < mngrs.size(); i++) {
+				if(mngrs[i]->isNumber()) {
+					if(gcd.isZero()) {
+						gcd.set(mngrs[i]->number());
+					} else {
+						gcd.gcd(mngrs[i]->number());
+					}	
+				} else if(mngrs[i]->isMultiplication() && mngrs[i]->getChild(0)->isNumber()) {	
+					if(gcd.isZero()) {
+						gcd.set(mngrs[i]->getChild(0)->number());
+					} else {
+						gcd.gcd(mngrs[i]->getChild(0)->number());
+					}
+				} else {
+					gcd.clear();
+					break;
+				}
+				if(gcd.isOne() || gcd.isZero()) {
+					gcd.clear();
+					break;
+				}
+			}
+			if(!gcd.isZero()) {
+				factor_mngr->set(&gcd);
+			}
+			if(mngrs.size() > 0) {
+				unsigned int i = 0;
+				Manager *cur_mngr;
+				while(true) {
+					if(mngrs[0]->isMultiplication()) {
+						if(i >= mngrs[0]->countChilds()) {
+							break;
+						}
+						cur_mngr = mngrs[0]->getChild(i);
+					} else {
+						cur_mngr = mngrs[0];
+					}
+					if(!cur_mngr->isNumber() && !(cur_mngr->isPower() && !cur_mngr->exponent()->isNumber())) {
+						Manager *exp = NULL;
+						Manager *bas;
+						if(cur_mngr->isPower()) {
+							exp = new Manager(cur_mngr->exponent());
+							bas = cur_mngr->base();
+						} else {
+							bas = cur_mngr;
+						}
+						bool b = true;
+						for(unsigned int i2 = 1; i2 < mngrs.size(); i2++) {
+							b = false;
+							unsigned int i3 = 0;
+							Manager *cmp_mngr;
+							while(true) {
+								if(mngrs[i2]->isMultiplication()) {
+									if(i3 >= mngrs[i2]->countChilds()) {
+										break;
+									}
+									cmp_mngr = mngrs[i2]->getChild(i3);
+								} else {
+									cmp_mngr = mngrs[i2];
+								}
+								if(cmp_mngr->equals(bas)) {
+									if(exp) {
+										exp->unref();
+										exp = NULL;
+									}
+									b = true;
+									break;
+								} else if(cmp_mngr->isPower() && cmp_mngr->base()->equals(bas)) {
+									if(exp) {
+										if(cmp_mngr->exponent()->isNumber()) {
+											if(cmp_mngr->exponent()->number()->isLessThan(exp->number())) {
+												exp->set(cmp_mngr->exponent());
+											}
+											b = true;
+											break;
+										} else {
+											exp->unref();
+											exp = NULL;
+										}
+									} else {
+										b = true;
+										break;
+									}
+								}
+								if(!mngrs[i2]->isMultiplication()) {
+									break;
+								}
+								i3++;
+							}
+							if(!b) break;
+						}
+						if(b) {
+							if(exp) {
+								Manager *mngr = new Manager();
+								mngr->setType(POWER_MANAGER);
+								mngr->push_back(new Manager(bas));
+								mngr->push_back(exp);
+								factor_mngr->add(mngr, OPERATION_MULTIPLY);
+								mngr->unref();
+							} else {
+								factor_mngr->add(bas, OPERATION_MULTIPLY);
+							}
+						}
+					}
+					if(!mngrs[0]->isMultiplication()) {
+						break;
+					}
+					i++;
+				}
+			}
+			if(!factor_mngr->isOne()) {
+				add(factor_mngr, OPERATION_DIVIDE);
+				Manager *mngr = new Manager();
+				mngr->setType(MULTIPLICATION_MANAGER);
+				mngr->push_back(factor_mngr);
+				Manager *mngr_this = new Manager(this);
+				mngr->push_back(mngr_this);
+				moveto(mngr);
+			}
+			break;
+		}
+		case POWER_MANAGER: {}
+		case ALTERNATIVE_MANAGER: {
+			for(unsigned int i = 0; i < mngrs.size(); i++) {
+				mngrs[i]->factorize();
+			}
+		}
+	}
 #endif
+}
+
 
 /*void Manager::differentiate(string x_var) {
 	Manager *a_mngr = new Manager(this);
