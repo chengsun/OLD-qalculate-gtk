@@ -7191,11 +7191,21 @@ void on_csv_import_optionmenu_delimiter_changed(GtkOptionMenu *w, gpointer user_
 	gtk_widget_set_sensitive(glade_xml_get_widget (csvimport_glade, "csv_import_entry_delimiter_other"), gtk_option_menu_get_history(w) == DELIMITER_OTHER);
 }
 void on_csv_import_button_file_clicked(GtkButton *button, gpointer user_data) {
+#if GTK_MINOR_VERSION >= 3
+	GtkWidget *d = gtk_file_chooser_dialog_new(_("Select file to import"), GTK_WINDOW(glade_xml_get_widget(csvimport_glade, "csv_import_dialog")), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+//disable until segmantation fault fixed	
+//	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (csvimport_glade, "csv_import_entry_file"))));
+	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT) {
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (csvimport_glade, "csv_import_entry_file")), gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d)));
+	}
+	gtk_widget_destroy(d);
+#else	
 	GtkWidget *d = gtk_file_selection_new(_("Select file to import"));
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (csvimport_glade, "csv_import_entry_file")), gtk_file_selection_get_filename(GTK_FILE_SELECTION(d)));
 	}
 	gtk_widget_destroy(d);
+#endif
 }
 
 void on_type_label_date_clicked(GtkButton *w, gpointer user_data) {
@@ -7512,14 +7522,44 @@ bool generate_plot(plot_parameters &pp, vector<Vector*> &y_vectors, vector<Vecto
 	return true;
 }
 void on_plot_button_save_clicked(GtkButton *w, gpointer user_data) {
-	GtkWidget *d = gtk_file_selection_new(_("Select file to import"));
+	GtkWidget *d;
+#if GTK_MINOR_VERSION >= 3
+	d = gtk_file_chooser_dialog_new(_("Select file to export"), GTK_WINDOW(glade_xml_get_widget(plot_glade, "plot_dialog")), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
+	GtkFileFilter *filter = gtk_file_filter_new();
+	gtk_file_filter_set_name(filter, _("Allowed File Types"));
+	gtk_file_filter_add_mime_type(filter, "image/x-xfig");
+	gtk_file_filter_add_mime_type(filter, "image/svg");
+	gtk_file_filter_add_mime_type(filter, "text/x-tex");
+	gtk_file_filter_add_mime_type(filter, "application/postscript");
+	gtk_file_filter_add_mime_type(filter, "image/x-eps");
+	gtk_file_filter_add_mime_type(filter, "image/png");
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(d), filter);
+	GtkFileFilter *filter_all = gtk_file_filter_new();
+	gtk_file_filter_add_pattern(filter_all, "*");
+	gtk_file_filter_set_name(filter_all, _("All Files"));
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(d), filter_all);
+	string title = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_plottitle")));
+	if(title.empty()) {
+		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(d), "plot.png");
+	} else {
+		title += ".png";
+		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(d), title.c_str());
+	}
+	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT) {
+#else	
+	d = gtk_file_selection_new(_("Select file to export"));
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
+#endif	
 		vector<Vector*> y_vectors;
 		vector<Vector*> x_vectors;
 		vector<plot_data_parameters*> pdps;
 		plot_parameters pp;
 		if(generate_plot(pp, y_vectors, x_vectors, pdps)) {
+#if GTK_MINOR_VERSION >= 3			
+			pp.filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d));
+#else		
 			pp.filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(d));
+#endif			
 			pp.filetype = PLOT_FILETYPE_AUTO;
 			CALCULATOR->plotVectors(&pp, y_vectors, x_vectors, pdps);
 			for(unsigned int i = 0; i < y_vectors.size(); i++) {

@@ -513,7 +513,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     </function>
     <function name="tanh">
       <_title>Hyperbolic tangent</_title>
-      <expression>(e^(2\x)-1)/(e^(-2\x)+1)</expression>
+      <expression>(e^(2\x)-1)/(e^(2\x)+1)</expression>
       <argument index="1" type="angle">
         <_title>Angle</_title>
 	<test>false</test>

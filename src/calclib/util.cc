@@ -14,28 +14,38 @@
 //#include <langinfo.h>
 #include "Fraction.h"
 
+#include <glib.h>
+
+
 bool eqstr::operator()(const char *s1, const char *s2) const {
 	return strcmp(s1, s2) == 0;
 }
 
 char buffer[20000];
 
-bool s2date(string str, int &year, int &month, int &day) {
-	struct tm time;
-	bool b = s2date(str, &time);
-	if(b) {
-		year = time.tm_year + 1900;
-		month = time.tm_mon + 1;
-		day = time.tm_mday;	
+bool s2date(string str, GDate *time) {
+/*	if(strptime(str.c_str(), "%x", time) || strptime(str.c_str(), "%Ex", time) || strptime(str.c_str(), "%Y-%m-%d", time) || strptime(str.c_str(), "%m/%d/%Y", time) || strptime(str.c_str(), "%m/%d/%y", time)) {
 		return true;
-	}
-	return false;
-}
-bool s2date(string str, struct tm *time) {
-	if(strptime(str.c_str(), "%x", time) || strptime(str.c_str(), "%Ex", time) || strptime(str.c_str(), "%Y-%m-%d", time) || strptime(str.c_str(), "%m/%d/%Y", time) || strptime(str.c_str(), "%m/%d/%y", time)) {
-		return true;
-	}
+	}*/
 	//char *date_format = nl_langinfo(D_FMT);
+	g_date_set_parse(time, str.c_str());
+	return g_date_valid(time);
+}
+
+bool s2date(string str, int &year, int &month, int &day) {
+	//struct tm time;
+	GDate *time = g_date_new();
+	bool b = s2date(str, time);
+	if(b) {
+/*		year = time.tm_year + 1900;
+		month = time.tm_mon + 1;
+		day = time.tm_mday;	*/
+		year = g_date_get_year(time);
+		month = g_date_get_month(time);
+		day = g_date_get_day(time);
+		return true;
+	}
+	g_date_free(time);
 	return false;
 }
 bool isLeapYear(int year) {

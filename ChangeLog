@@ -1,3 +1,22 @@
+2004-02-26  Niklas Knutsson  <nq@altern.org>
+
+	* Release 0.4.1
+	* Replace strptime with g_date_set_parse
+
+2004-02-24  Niklas Knutsson  <nq@altern.org>
+
+	* Destroy widgets after autoconnect
+
+2004-02-19  Niklas Knutsson  <nq@altern.org>
+
+	* Use the new file chooser
+	* "Select file to import" --> "Select file to export"
+
+2004-02-18  Niklas Knutsson  <nq@altern.org>
+
+	* Release 0.4
+	* Fix tanh
+
 2004-02-15  Niklas Knutsson  <nq@altern.org>
 
 	* Reenable checks for arguments that results in infinity

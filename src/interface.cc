@@ -89,11 +89,6 @@ create_main_window (void)
 	/* make sure we get a valid main window */
 	g_assert (glade_xml_get_widget (main_glade, "main_window") != NULL);
 
-#ifndef HAVE_GIAC
-	gtk_widget_destroy(glade_xml_get_widget(main_glade, "menu_item_factorize"));
-	gtk_widget_destroy(glade_xml_get_widget(main_glade, "separator_factorize"));
-#endif
-
 	expression = glade_xml_get_widget (main_glade, "expression");
 	resultview = glade_xml_get_widget (main_glade, "resultview");
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "red_foreground", "foreground", "red", NULL);
@@ -332,6 +327,11 @@ create_main_window (void)
 	gtk_widget_grab_default(expression);
 
 	glade_xml_signal_autoconnect(main_glade);
+
+#ifndef HAVE_GIAC
+	gtk_widget_destroy(glade_xml_get_widget(main_glade, "menu_item_factorize"));
+	gtk_widget_destroy(glade_xml_get_widget(main_glade, "separator_factorize"));
+#endif
 	
 //	gtk_widget_modify_bg(resultview, GTK_STATE_NORMAL, &glade_xml_get_widget(main_glade, "history")->style->base[GTK_WIDGET_STATE(glade_xml_get_widget(main_glade, "history"))]);	
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-02-18 11:02+0100\n"
+"POT-Creation-Date: 2004-02-26 15:25+0100\n"
 "PO-Revision-Date: 2003-10-27 12:29+0100\n"
 "Last-Translator: Niklas Knutsson <nq@altern.org>\n"
 "Language-Team: Swedish\n"
@@ -34,7 +34,7 @@ msgstr "Qalculate!"
 #: data/about.glade.h:1
 msgid ""
 "<span weight=\"bold\" size=\"xx-large\"><span foreground=\"#cc4499\">Q</"
-"span>alculate!</span> (v. 0.4)\n"
+"span>alculate!</span> (v. 0.4.1)\n"
 "<span size=\"large\">- A modern desktop calculator</span>\n"
 "\n"
 "<i>http://qalculate.sourceforge.net/</i>\n"
@@ -1603,11 +1603,11 @@ msgstr "Svar"
 msgid "All"
 msgstr "Alla"
 
-#: src/interface.cc:285 src/callbacks.cc:6030
+#: src/interface.cc:280 src/callbacks.cc:6030
 msgid "<< Less"
 msgstr "<< Mindre"
 
-#: src/interface.cc:291 src/callbacks.cc:6024
+#: src/interface.cc:286 src/callbacks.cc:6024
 msgid "More >>"
 msgstr "Mer >>"
 
@@ -1915,19 +1915,31 @@ msgstr "Kan inte ta bort enheten eftersom den används av andra enheter."
 msgid "Components (in horizontal order)"
 msgstr "Komponenter (från vänster till höger)"
 
-#: src/callbacks.cc:7194 src/callbacks.cc:7515
+#: src/callbacks.cc:7195 src/callbacks.cc:7203
 msgid "Select file to import"
 msgstr "Välj fil att importera"
 
-#: src/callbacks.cc:7202
+#: src/callbacks.cc:7212
 msgid "Select date"
 msgstr "Välj datum"
 
-#: src/callbacks.cc:7382
+#: src/callbacks.cc:7392
 msgid "No functions defined."
 msgstr "Inga funktioner är definierade."
 
-#: src/callbacks.cc:7555 src/callbacks.cc:7588
+#: src/callbacks.cc:7527 src/callbacks.cc:7550
+msgid "Select file to export"
+msgstr "Välj fil att exporta till"
+
+#: src/callbacks.cc:7529
+msgid "Allowed File Types"
+msgstr "Tillåtna filtyper"
+
+#: src/callbacks.cc:7539
+msgid "All Files"
+msgstr "All filer"
+
+#: src/callbacks.cc:7595 src/callbacks.cc:7628
 msgid "Empty expression."
 msgstr "Tomt uttryck."
 
@@ -2129,20 +2141,17 @@ msgid "Integral point for Riemann's zeta is too large."
 msgstr "Integralpunkten för Riemanns zeta är för stor."
 
 #: src/calclib/Fraction.cc:847
-#, fuzzy
 msgid "The inverse hyperbolic tangent is infinite for 1 and -1."
-msgstr "Omvänd hyperbolisk cosinus är odefinierad för x < 1."
+msgstr "Omvänd hyperbolisk tangens är oändlig för 1 och -1."
 
 #: src/calclib/Fraction.cc:890
-#, fuzzy
 msgid "The natural logarithm is infinite for zero."
 msgstr ""
-"Naturliga logaritmer är odefinierade för negativa tal och oändliga för noll."
+"Naturliga logaritmer är oändliga för noll."
 
 #: src/calclib/Fraction.cc:918
-#, fuzzy
 msgid "Logarithms is infinite for zero."
-msgstr "Logaritmer är odefinierade för negativa tal och oändliga för noll."
+msgstr "Logaritmer är oändliga för noll."
 
 #: src/calclib/Fraction.cc:993 src/calclib/Fraction.cc:1022
 msgid "Logarithms is undefined for negative numbers and infinite for zero."

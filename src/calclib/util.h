@@ -14,20 +14,6 @@
 
 #include "includes.h"
 
-#ifndef _XOPEN_SOURCE
-#define _XOPEN_SOURCE
-#include <time.h>
-#undef _XOPEN_SOURCE
-#else
-#include <time.h>
-#endif
-
-#ifndef HAVE_STRPTIME_PROTOTYPE
-extern char *strptime (__const char *__restrict __s,
-		       __const char *__restrict __fmt, struct tm *__tp)
-     __THROW;
-#endif
-
 /*
  * Standard gettext macros.
  */
@@ -70,7 +56,6 @@ string li2s(long int value);
 string &lli2s(long long int &value, string &str);
 
 bool s2date(string str, int &year, int &month, int &day);
-bool s2date(string str, struct tm *time);
 bool isLeapYear(int year);
 int daysPerYear(int year, int basis = 0);
 int daysPerMonth(int month, int year);

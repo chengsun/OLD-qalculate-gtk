@@ -7,7 +7,7 @@ dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
 AC_INIT(configure.in)
-AM_INIT_AUTOMAKE(qalculate-gtk, 0.4pre1)
+AM_INIT_AUTOMAKE(qalculate-gtk, 0.4.1)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
@@ -50,22 +50,6 @@ PKG_CHECK_MODULES(PACKAGE, [
 	])
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
-
-AC_LANG_SAVE
-AC_LANG_CPLUSPLUS
-AC_MSG_CHECKING([for strptime])
-AC_TRY_COMPILE([#ifndef _XOPEN_SOURCE 
-#define _XOPEN_SOURCE
-#endif
-#include <time.h>],[
-   tm newTime;
-   strptime("12-04-2000", "%A %h %d %H:%M:%S %Y", &newTime);],
-have_strptime_prototype=yes, have_strptime_prototype=no)
-AC_MSG_RESULT([$have_strptime_prototype])
-if test $have_strptime_prototype = yes; then
-	AC_DEFINE(HAVE_STRPTIME_PROTOTYPE,1,[If strptime is directly available.])
-fi
-AC_LANG_RESTORE
 
 dnl  --------------------------------
 dnl | check for GMP and CLN         |-----------------------------------------
