@@ -197,7 +197,8 @@ void ForFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 
 ProcessFunction::ProcessFunction() : Function("Utilities", "process", 1, "Process components", "", -1) {
-	setArgumentDefinition(1, new MatrixArgument("", false));
+	setArgumentDefinition(1, new TextArgument("", false));
+	setArgumentDefinition(2, new MatrixArgument("", false));
 }
 void ProcessFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 

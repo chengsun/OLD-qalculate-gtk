@@ -1,3 +1,19 @@
+2003-10-16  Niklas Knutsson  <nq@altern.org>
+
+	* If add argument button is not sensitive, modify argument instead on enter
+	* Fix arguments for process()
+	* Titles for functions and arguments in utilities category
+	* Put buttons in first tab
+	* Default to show buttons
+	* Remove quotes from default values in insert function dialog
+	* Matrix multiplication error message
+	* Better error message for misplaced operators
+	* Updated swedish translation
+	* More argument names
+	* Fix category selection after editing
+	* Argument names for all geometry functions
+	* Do not use "free" for argument == NULL but printlong() of default argument
+
 2003-10-15  Niklas Knutsson  <nq@altern.org>
 
 	* Do not add extra space after matrix in GTK widget

@@ -369,10 +369,10 @@ string& remove_blank_ends(string &str) {
 		str.resize(0);
 	return str;
 }
-string& remove_brackets(string &str) {
+string& remove_parenthesis(string &str) {
 	if(str[0] == LEFT_PARENTHESIS_CH && str[str.length() - 1] == RIGHT_PARENTHESIS_CH) {
 		str = str.substr(1, str.length() - 2);
-		return remove_brackets(str);
+		return remove_parenthesis(str);
 	}
 	return str;
 }

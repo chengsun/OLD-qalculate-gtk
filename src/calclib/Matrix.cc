@@ -436,6 +436,7 @@ bool Matrix::multiply(const Matrix *matrix) {
 		return true;
 	} else {
 		if(columns() != matrix->rows()) {
+			CALCULATOR->error(true, _("The second matrix must have as many rows (was %s) as the first has columns (was %s) for matrix multiplication."), i2s(matrix->rows()).c_str(), i2s(columns()).c_str(), NULL);
 			return false;
 		}	
 		Matrix product(rows(), matrix->columns());

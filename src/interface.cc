@@ -259,6 +259,10 @@ create_main_window (void)
 
 	if(show_buttons)
 	{
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(glade_xml_get_widget (glade_xml, "notebook")), 0);
+	}
+	else
+	{
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(glade_xml_get_widget (glade_xml, "notebook")), 1);
 	}
 

@@ -2,6 +2,9 @@
 <QALCULATE version="0.3">
   <builtin_function name="zeta">
     <_title>Riemann Zeta</_title>
+    <argument index="1">
+      <_title>Integral point</_title>
+    </argument>
   </builtin_function>
   <category>
     <_title>Logical</_title>
@@ -24,32 +27,89 @@
   </category>
   <category>
     <_title>Utilities</_title>
-    <builtin_function name="process">
-      <_title>Process components</_title>
-    </builtin_function>
-    <builtin_function name="csum">
-      <_title>Custom sum of components</_title>
-    </builtin_function>
-    <builtin_function name="function">
-      <_title>Function</_title>
-    </builtin_function>
-    <builtin_function name="title">
-      <_title>Function Title</_title>
-    </builtin_function>
-    <builtin_function name="save">
-      <_title>Save as variable</_title>
-    </builtin_function>
-    <builtin_function name="concatenate">
-      <_title>Concatenate strings</_title>
-    </builtin_function>
-    <builtin_function name="len">
-      <_title>Length of string</_title>
-    </builtin_function>
     <builtin_function name="warning">
       <_title>Display warning</_title>
+      <argument index="1">
+        <_title>Message</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="error">
       <_title>Display error</_title>
+      <argument index="1">
+        <_title>Message</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="process">
+      <_title>Process components</_title>
+      <argument index="1">
+        <_title>Expression</_title>
+      </argument>
+      <argument index="2">
+        <_title>Vector</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="csum">
+      <_title>Custom sum of components</_title>
+      <argument index="1">
+        <_title>First component</_title>
+      </argument>
+      <argument index="2">
+        <_title>Last component</_title>
+      </argument>
+      <argument index="3">
+        <_title>Initial value</_title>
+      </argument>
+      <argument index="4">
+        <_title>Expression</_title>
+      </argument>
+      <argument index="5">
+        <_title>Vector</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="function">
+      <_title>Function</_title>
+      <argument index="1">
+        <_title>Expression</_title>
+      </argument>
+      <argument index="2">
+        <_title>Arguments</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="title">
+      <_title>Title</_title>
+      <argument index="1">
+        <_title>Name</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="save">
+      <_title>Save as variable</_title>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+      <argument index="2">
+        <_title>Name</_title>
+      </argument>
+      <argument index="3">
+        <_title>Category</_title>
+      </argument>
+      <argument index="4">
+        <_title>Title</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="concatenate">
+      <_title>Concatenate strings</_title>
+      <argument index="1">
+        <_title>Text 1</_title>
+      </argument>
+      <argument index="2">
+        <_title>Text 2</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="len">
+      <_title>Length of string</_title>
+      <argument index="1">
+        <_title>Text</_title>
+      </argument>
     </builtin_function>
   </category>
   <category>
@@ -163,27 +223,51 @@
     </builtin_function>
     <builtin_function name="factorial">
       <_title>Factorial</_title>
+      <argument index="1">
+          <_title>Value</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="abs">
       <_title>Absolute Value</_title>
+      <argument index="1">
+          <_title>Value</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="ceil">
       <_title>Round upwards</_title>
+      <argument index="1">
+          <_title>Value</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="floor">
       <_title>Round downwards</_title>
+      <argument index="1">
+          <_title>Value</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="trunc">
       <_title>Round towards zero</_title>
+      <argument index="1">
+          <_title>Value</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="round">
       <_title>Round</_title>
+      <argument index="1">
+          <_title>Value</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="frac">
       <_title>Extract fractional part</_title>
+      <argument index="1">
+          <_title>Value</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="int">
       <_title>Extract integer part</_title>
+      <argument index="1">
+          <_title>Value</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="mod">
       <_title>Reminder (mod)</_title>
@@ -208,39 +292,75 @@
     <_title>Trigonometry</_title>
     <builtin_function name="sin">
       <_title>Sine</_title>
+      <argument index="1">
+        <_title>Angle</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="cos">
       <_title>Cosine</_title>
+      <argument index="1">
+        <_title>Angle</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="tan">
       <_title>Tangent</_title>
+      <argument index="1">
+        <_title>Angle</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="sinh">
       <_title>Hyperbolic sine</_title>
+      <argument index="1">
+        <_title>Angle</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="cosh">
       <_title>Hyperbolic cosine</_title>
+      <argument index="1">
+        <_title>Angle</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="tanh">
       <_title>Hyperbolic tangent</_title>
+      <argument index="1">
+        <_title>Angle</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="asin">
       <_title>Arcsine</_title>
+      <argument index="1">
+        <_title>Angle</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="acos">
       <_title>Arccosine</_title>
+      <argument index="1">
+        <_title>Angle</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="atan">
       <_title>Arctangent</_title>
+      <argument index="1">
+        <_title>Angle</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="asinh">
       <_title>Hyperbolic arcsine</_title>
+      <argument index="1">
+        <_title>Angle</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="acosh">
       <_title>Hyperbolic arccosine</_title>
+      <argument index="1">
+        <_title>Angle</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="atanh">
       <_title>Hyperbolic arctangent</_title>
+      <argument index="1">
+        <_title>Angle</_title>
+      </argument>
     </builtin_function>
     <function name="rad2deg">
       <_title>Radians to Degrees</_title>
@@ -289,12 +409,21 @@
     <_title>Exponents &amp; Logarithms</_title>
     <builtin_function name="ln">
       <_title>Natural Logarithm</_title>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="log2">
       <_title>Base-2 Logarithm</_title>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="log10">
       <_title>Base-10 Logarithm</_title>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="exp">
       <_title>e raised to the power X</_title>
@@ -317,11 +446,14 @@
     <builtin_function name="sqrt">
       <_title>Square Root</_title>
       <argument index="1">
-        <_title>Non-negative number</_title>
+        <_title>Value</_title>
       </argument>
     </builtin_function>
     <builtin_function name="cbrt">
       <_title>Cube Root</_title>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="root">
       <_title>Nth Root</_title>
@@ -370,10 +502,10 @@
       <builtin_function name="hypot">
         <_title>Hypotenuse</_title>
         <argument index="1">
-          <_title>Side 1</_title>
+          <_title>Side A</_title>
         </argument>
         <argument index="2">
-          <_title>Side 2</_title>
+          <_title>Side B</_title>
         </argument>
       </builtin_function>
       <function name="triangle">
@@ -390,10 +522,10 @@
         <_title>Triangle Perimeter</_title>
         <expression>\x+\y+hypot(\x,\y)</expression>
         <argument type="free" index="1">
-          <_title>Base</_title>
+          <_title>Side A</_title>
         </argument>
         <argument type="free" index="2">
-          <_title>Height</_title>
+          <_title>Side B</_title>
         </argument>
       </function>
     </category>
@@ -421,6 +553,12 @@
       <function name="cylinder">
         <_title>Cylinder Volume</_title>
         <expression>\x^2*pi*\y</expression>
+	<argument type="free" index="1">
+          <_title>Radius</_title>
+        </argument>
+        <argument type="free" index="2">
+          <_title>Height</_title>
+        </argument>
       </function>
       <function name="cylinder_sa">
         <_title>Surface Area of Cylinder</_title>
@@ -438,6 +576,12 @@
       <function name="cone">
         <_title>Cone Volume</_title>
         <expression>\x^2*pi*\y/3</expression>
+	<argument type="free" index="1">
+          <_title>Radius</_title>
+        </argument>
+        <argument type="free" index="2">
+          <_title>Height</_title>
+        </argument>
       </function>
       <function name="cone_sa">
         <_title>Surface Area of Cone</_title>
@@ -455,6 +599,9 @@
       <function name="sphere">
         <_title>Sphere Volume</_title>
         <expression>\x^3*pi*4/3</expression>
+	<argument type="free" index="1">
+          <_title>Radius</_title>
+        </argument>
       </function>
       <function name="sphere_sa">
         <_title>Surface Area of Sphere</_title>
@@ -469,6 +616,9 @@
       <function name="square">
         <_title>Square Area</_title>
         <expression>\x^2</expression>
+	<argument type="free" index="1">
+          <_title>Length of side</_title>
+        </argument>
       </function>
       <function name="square_perimeter">
         <_title>Square Perimeter</_title>
@@ -483,6 +633,9 @@
       <function name="cube">
         <_title>Cube Volume</_title>
         <expression>\x^3</expression>
+	<argument type="free" index="1">
+          <_title>Length of side</_title>
+        </argument>
       </function>
       <function name="cube_sa">
         <_title>Surface Area of Cube</_title>

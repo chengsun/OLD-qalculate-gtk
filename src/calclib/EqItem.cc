@@ -46,8 +46,10 @@ EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 				s = MINUS_CH;
 			str.erase(i, 1);
 			i--;
-		} else {
-			break;
+		} else if(is_in(OPERATORS, str[i])) {
+			CALCULATOR->error(false, _("Misplaced '%s' ignored"), str.substr(0, 1).c_str(), NULL);
+			str.erase(i, 1);
+			i--;
 		}
 	}	
 	if(str[0] == ID_WRAP_LEFT_CH && str[str.length() - 1] == ID_WRAP_RIGHT_CH) {

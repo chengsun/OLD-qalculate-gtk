@@ -426,7 +426,7 @@ int Function::stringArgs(const string &argstr, vector<string> &svargs) {
 					if(itmp <= maxargs() || args() < 0) {
 						stmp = str.substr(start_pos, str_index - start_pos);
 						remove_blank_ends(stmp);																				
-						remove_brackets(stmp);						
+						remove_parenthesis(stmp);						
 						remove_blank_ends(stmp);
 						if(stmp.empty()) {
 							stmp = getDefaultValue(itmp);
@@ -444,7 +444,7 @@ int Function::stringArgs(const string &argstr, vector<string> &svargs) {
 		if(itmp <= maxargs() || args() < 0) {
 			stmp = str.substr(start_pos, str.length() - start_pos);
 			remove_blank_ends(stmp);																				
-			remove_brackets(stmp);						
+			remove_parenthesis(stmp);						
 			remove_blank_ends(stmp);
 			if(stmp.empty()) {
 				stmp = getDefaultValue(itmp);

@@ -1333,14 +1333,18 @@ void update_function_arguments_list(Function *f) {
 		if(args < 0) {
 			args = f->minargs() + 1;	
 		}
+		Argument defarg;
+		string str, str2;
 		for(int i = 1; i <= args; i++) {
 			gtk_list_store_append(tFunctionArguments_store, &iter);
-			string str = "free", str2 = "";
 			arg = f->getArgumentDefinition(i);
 			if(arg) {
 				arg = arg->copy();
 				str = arg->printlong();
 				str2 = arg->name();
+			} else {
+				str = defarg.printlong();
+				str2 = "";
 			}			
 			gtk_list_store_set(tFunctionArguments_store, &iter, 0, str2.c_str(), 1, str.c_str(), 2, (gpointer) arg, -1);
 		}
@@ -3895,7 +3899,11 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 			type_label[i] = gtk_label_new(typestr.c_str());		
 			gtk_misc_set_alignment(GTK_MISC(type_label[i]), 1, 0.5);
 		}
-		gtk_entry_set_text(GTK_ENTRY(entry[i]), f->getDefaultValue(i + 1).c_str());
+		argstr = f->getDefaultValue(i + 1);
+		if(argstr.length() >= 2 && argstr[0] == '\"' && argstr[argstr.length() - 1] == '\"') {
+			argstr = argstr.substr(1, argstr.length() - 2);
+		}
+		gtk_entry_set_text(GTK_ENTRY(entry[i]), argstr.c_str());
 		//insert selection in expression entry into the first argument entry
 		if(i == 0) {
 			gchar *gstr = gtk_editable_get_chars(GTK_EDITABLE(expression), start, end);
@@ -4221,12 +4229,13 @@ run_unit_edit_dialog:
 		}
 		//select the new unit
 		selected_unit = u;
-		selected_unit_category = u->category();
-		if(selected_unit_category.empty()) {
-			selected_unit_category = _("Uncategorized");
-		}
 		if(!u->isActive()) {
 			selected_unit_category = _("Inactive");
+		} else if(u->category().empty()) {
+			selected_unit_category = _("Uncategorized");
+		} else {
+			selected_unit_category = "/";
+			selected_unit_category += u->category();
 		}
 		update_umenus();
 	}
@@ -4483,13 +4492,14 @@ run_function_edit_dialog:
 		}
 		//select the new function
 		selected_function = f;
-		selected_function_category = f->category();
-		if(selected_function_category.empty()) {
-			selected_function_category = _("Uncategorized");
-		}
 		if(!f->isActive()) {
 			selected_function_category = _("Inactive");
-		}		
+		} else if(f->category().empty()) {
+			selected_function_category = _("Uncategorized");
+		} else {
+			selected_function_category = "/";
+			selected_function_category += f->category();
+		}
 		update_fmenu();	
 	}
 	edited_function = NULL;
@@ -4666,13 +4676,14 @@ run_variable_edit_dialog:
 		}
 		//select the new variable
 		selected_variable = v;
-		selected_variable_category = v->category();
-		if(selected_variable_category.empty()) {
-			selected_variable_category = _("Uncategorized");
-		}
 		if(!v->isActive()) {
 			selected_variable_category = _("Inactive");
-		}		
+		} else if(v->category().empty()) {
+			selected_variable_category = _("Uncategorized");
+		} else {
+			selected_variable_category = "/";
+			selected_variable_category += v->category();
+		}
 		update_vmenu();
 	}
 	gtk_widget_hide(dialog);
@@ -4887,13 +4898,14 @@ run_matrix_edit_dialog:
 		}
 		//select the new variable
 		selected_variable = v;
-		selected_variable_category = v->category();
-		if(selected_variable_category.empty()) {
-			selected_variable_category = _("Uncategorized");
-		}
 		if(!v->isActive()) {
 			selected_variable_category = _("Inactive");
-		}		
+		} else if(v->category().empty()) {
+			selected_variable_category = _("Uncategorized");
+		} else {
+			selected_variable_category = "/";
+			selected_variable_category += v->category();
+		}
 		update_vmenu();
 	}
 	gtk_widget_hide(dialog);
@@ -5379,8 +5391,8 @@ void load_preferences() {
 	fractional_mode = FRACTIONAL_MODE_DECIMAL;
 	use_custom_font = false;
 	custom_font = "";
-	show_more = false;
-	show_buttons = false;
+	show_more = true;
+	show_buttons = true;
 	use_short_units = true;
 	use_unicode_signs = true;
 	use_prefixes = true;
@@ -5557,7 +5569,7 @@ void save_preferences(bool mode)
 	fprintf(file, "load_global_definitions=%i\n", load_global_defs);
 	fprintf(file, "fetch_exchange_rates_at_startup=%i\n", fetch_exchange_rates_at_startup);
 	fprintf(file, "show_more=%i\n", GTK_WIDGET_VISIBLE(glade_xml_get_widget (glade_xml, "notebook")));
-	fprintf(file, "show_buttons=%i\n", gtk_notebook_get_current_page(GTK_NOTEBOOK(glade_xml_get_widget (glade_xml, "notebook"))) == 1);
+	fprintf(file, "show_buttons=%i\n", gtk_notebook_get_current_page(GTK_NOTEBOOK(glade_xml_get_widget (glade_xml, "notebook"))) == 0);
 	fprintf(file, "use_short_units=%i\n", use_short_units);
 	fprintf(file, "all_prefixes_enabled=%i\n", CALCULATOR->allPrefixesEnabled());
 	fprintf(file, "multiple_roots_enabled=%i\n", CALCULATOR->multipleRootsEnabled());
@@ -6482,16 +6494,11 @@ void on_unit_edit_optionmenu_class_changed(GtkOptionMenu *om, gpointer user_data
 	"New" button clicked in unit manager -- open new unit dialog
 */
 void on_units_button_new_clicked(GtkButton *button, gpointer user_data) {
-	if(selected_unit_category == _("All") || selected_unit_category == _("Uncategorized") || selected_unit_category == _("Inactive")) {
+	if(selected_unit_category.empty() || selected_unit_category[0] != '/') {
 		edit_unit("", NULL, units_window);
 	} else {
 		//fill in category field with selected category
-		if(selected_unit_category[0] == '/') {
-			string str = selected_unit_category.substr(1, selected_unit_category.length() - 1);
-			edit_unit(str.c_str(), NULL, units_window);
-		} else {
-			edit_unit(selected_unit_category.c_str(), NULL, units_window);
-		}
+		edit_unit(selected_unit_category.substr(1, selected_unit_category.length() - 1).c_str(), NULL, units_window);
 	}
 }
 
@@ -6575,11 +6582,11 @@ void on_units_button_delete_clicked(GtkButton *button, gpointer user_data) {
 	"New" button clicked in variable manager -- open new variable dialog
 */
 void on_variables_button_new_clicked(GtkButton *button, gpointer user_data) {
-	if(selected_variable_category == _("All") || selected_variable_category == _("Uncategorized") || selected_variable_category == _("Inactive")) {
+	if(selected_variable_category.empty() || selected_variable_category[0] != '/') {
 		edit_variable("", NULL, NULL, variables_window);
 	} else {
 		//fill in category field with selected category
-		edit_variable(selected_variable_category.c_str(), NULL, NULL, variables_window);
+		edit_variable(selected_variable_category.substr(1, selected_variable_category.length() - 1).c_str(), NULL, NULL, variables_window);
 	}
 }
 
@@ -6648,11 +6655,11 @@ void on_variables_button_close_clicked(GtkButton *button, gpointer user_data) {
 	"New" button clicked in function manager -- open new function dialog
 */
 void on_functions_button_new_clicked(GtkButton *button, gpointer user_data) {
-	if(selected_function_category == _("All") || selected_function_category == _("Uncategorized") || selected_function_category == _("Inactive")) {
+	if(selected_function_category.empty() || selected_function_category[0] != '/') {
 		edit_function("", NULL, functions_window);
 	} else {
 		//fill in category field with selected category
-		edit_function(selected_function_category.c_str(), NULL, functions_window);
+		edit_function(selected_function_category.substr(1, selected_function_category.length() - 1).c_str(), NULL, functions_window);
 	}
 }
 
@@ -7161,7 +7168,11 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 	}
 }
 void on_function_edit_entry_argument_name_activate(GtkEntry *entry, gpointer user_data) {
-	on_function_edit_button_add_argument_clicked(GTK_BUTTON(glade_xml_get_widget (glade_xml, "function_edit_button_add_argument_")), NULL);
+	if(GTK_WIDGET_SENSITIVE(glade_xml_get_widget (glade_xml, "function_edit_button_add_argument"))) {
+		on_function_edit_button_add_argument_clicked(GTK_BUTTON(glade_xml_get_widget (glade_xml, "function_edit_button_add_argument")), NULL);
+	} else if(GTK_WIDGET_SENSITIVE(glade_xml_get_widget (glade_xml, "function_edit_button_modify_argument"))) {
+		on_function_edit_button_modify_argument_clicked(GTK_BUTTON(glade_xml_get_widget (glade_xml, "function_edit_button_modify_argument")), NULL);
+	}
 }
 void on_function_edit_button_rules_clicked(GtkButton *w, gpointer user_data) {
 	edit_argument(get_selected_argument());

@@ -88,7 +88,7 @@ string& wrap_p(string &str);
 string& remove_blanks(string &str);
 string& remove_duplicate_blanks(string &str);
 string& remove_blank_ends(string &str);
-string& remove_brackets(string &str);
+string& remove_parenthesis(string &str);
 
 bool is_in(char c, ...);
 bool is_not_in(char c, ...);
