@@ -48,7 +48,7 @@ typedef enum {
 #define SIGN_POWER_3		"³"
 #define SIGN_EURO		"€"
 #define SIGN_MICRO		"µ"
-#define SIGN_PI			"Π"
+#define SIGN_PI			"π"
 #define SIGN_MULTIPLICATION	"×"
 #define SIGN_MULTIDOT		"⋅"
 #define SIGN_DIVISION		"∕"

@@ -921,4 +921,3 @@ msgstr ""
 #, c-format
 msgid "You need at least %s arguments in function %s()."
 msgstr "Det krävs minst %s parametrar i funktionen %s()."
-
