@@ -186,7 +186,26 @@ Calculator::Calculator() {
 	addStringAlternative(";", COMMA);
 	addStringAlternative("\t", SPACE);
 	addStringAlternative("\n", SPACE);
-	addStringAlternative("**", POWER);	
+	addStringAlternative("**", POWER);
+	
+	per_str = _("per");
+	per_str_len = per_str.length();
+	times_str = _("times");
+	times_str_len = times_str.length();
+	plus_str = _("plus");
+	plus_str_len = plus_str.length();
+	minus_str = _("minus");
+	minus_str_len = minus_str.length();
+	and_str = _("and");
+	and_str_len = and_str.length();
+	AND_str = "AND";
+	AND_str_len = AND_str.length();
+	or_str = _("or");
+	or_str_len = or_str.length();
+	OR_str = "OR";
+	OR_str_len = OR_str.length();
+	XOR_str = "XOR";
+	XOR_str_len = OR_str.length();
 
 	setLocale();
 
@@ -2404,6 +2423,37 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 					str.replace(str_index - stmp2.length(), stmp2.length() + 1, stmp);
 					str_index -=  stmp2.length();
 					str_index += stmp.length() - 1;
+				}
+			}
+		} else if(str[str_index] == SPACE_CH) {
+			i = str.find(SPACE, str_index + 1);
+			if(i != (int) string::npos) {
+				i -= str_index + 1;
+				if(i == per_str_len && compare_name_no_case(per_str, str, per_str_len, str_index + 1, i)) {
+					str.replace(str_index + 1, i, DIVISION);
+					str_index++;
+				} else if(i == times_str_len && compare_name_no_case(times_str, str, times_str_len, str_index + 1, i)) {
+					str.replace(str_index + 1, i, MULTIPLICATION);
+					str_index++;
+				} else if(i == plus_str_len && compare_name_no_case(plus_str, str, plus_str_len, str_index + 1, i)) {
+					str.replace(str_index + 1, i, PLUS);
+					str_index++;
+				} else if(i == minus_str_len && compare_name_no_case(minus_str, str, minus_str_len, str_index + 1, i)) {
+					str.replace(str_index + 1, i, MINUS);
+					str_index++;
+				} else if(i == and_str_len && compare_name_no_case(and_str, str, and_str_len, str_index + 1, i)) {
+					str.replace(str_index + 1, i, AND);
+					str_index++;
+				} else if(i == AND_str_len && compare_name_no_case(AND_str, str, AND_str_len, str_index + 1, i)) {
+					str.replace(str_index + 1, i, AND);
+					str_index++;
+				} else if(i == or_str_len && compare_name_no_case(or_str, str, or_str_len, str_index + 1, i)) {
+					str.replace(str_index + 1, i, OR);
+					str_index++;
+				} else if(i == OR_str_len && compare_name_no_case(OR_str, str, OR_str_len, str_index + 1, i)) {
+					str.replace(str_index + 1, i, OR);
+					str_index++;
+//				} else if(compare_name_no_case(XOR_str, str, XOR_str_len, str_index + 1, i)) {
 				}
 			}
 		} else if(po.base >= 2 && po.base <= 10 && is_not_in(NUMBERS NOT_IN_NAMES, str[str_index])) {

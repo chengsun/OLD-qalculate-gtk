@@ -1902,9 +1902,18 @@ IntegrateFunction::IntegrateFunction() : Function("integrate", 1, 2) {
 int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	if(!mstruct.integrate(vargs[1], eo)) {
-		return 0;
+		mstruct = vargs[0];
+		mstruct.eval(eo);
+		if(mstruct == vargs[0]) {
+			return 0;
+		}
+		MathStructure mstruct2(mstruct);
+		if(!mstruct.integrate(vargs[1], eo)) {
+			mstruct = mstruct2;
+			return -1;
+		}
 	}
-	return 1 ;
+	return 1;
 }
 SolveFunction::SolveFunction() : Function("solve", 1, 2) {
 	setArgumentDefinition(2, new SymbolicArgument());

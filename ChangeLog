@@ -1,3 +1,16 @@
+2004-09-09 Niklas Knutsson  <nq@altern.org>
+
+	* Make factorization much more functional
+
+2004-09-08 Niklas Knutsson  <nq@altern.org>
+
+	* Integration fixes
+	* Use representsNonZero() for arguments that must be non-zero
+
+2004-09-07 Niklas Knutsson  <nq@altern.org>
+
+	* "times", "plus", "minus", "per", "AND", "OR"
+
 2004-09-06 Niklas Knutsson  <nq@altern.org>
 
 	* Finish GUI and user modifications for data sets

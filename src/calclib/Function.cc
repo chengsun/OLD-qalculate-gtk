@@ -1033,11 +1033,11 @@ bool Argument::test(MathStructure &value, int index, Function *f, const Evaluati
 	bool evaled = false;
 	bool b = subtest(value, eo);
 	if(b && !b_zero) {
-		if(!value.isNumber()) {
+		if(!value.isNumber() && !value.representsNonZero()) {
 			value.eval(eo);	
 			evaled = true;
 		}
-		b = !value.isZero();
+		b = value.representsNonZero();
 	}
 	if(!b && b_matrix) {
 		if(!evaled && !value.isMatrix()) {
