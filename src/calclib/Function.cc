@@ -17,41 +17,6 @@
 #include "Number.h"
 #include "Unit.h"
 
-#ifdef HAVE_GIAC
-#ifndef NO_NAMESPACE_GIAC
-namespace giac {
-#endif // ndef NO_NAMESPACE_GIAC
-
-/*	gen qalculate_function(const gen &a, const gen &b){
-		if(is_integer(a) && is_integer(b)) return (a + b) / (a * b);
-		return symbolic(at_qalculate_function, makevecteur(a, b));
-	}*/
-
-	gen _qalculate_function(const gen &args){
-		return symbolic(at_qalculate_function, args);
-		/*if((args.type != _VECT) || (args._VECTptr->size() < 1)) setsizeerr();
-		vecteur &v = *args._VECTptr;
-		if(v[0].type != _POINTER_) {
-			return symbolic(at_qalculate_function, v);
-		}
-		Function *f = (Function*) v[0]._POINTER_val;
-		MathStructure vargs;
-		vargs.clearVector();
-		for(unsigned int i = 1; i < v.size(); i++) {
-			vargs.addComponent(v[i]);
-		}
-		MathStructure mstruct = f->calculate(vargs);
-		return mstruct.toGiac();*/
-	}
-	const string _qalculate_function_s("qalculate_function");
-	unary_function_unary __qalculate_function(&_qalculate_function, _qalculate_function_s);
-	unary_function_ptr at_qalculate_function (&__qalculate_function, 0, true);
-     
-#ifndef NO_NAMESPACE_GIAC
-}
-#endif // ndef NO_NAMESPACE_GIAC
-#endif
-
 Function::Function(string name_, int argc_, int max_argc_, string unicode_name, string cat_, string title_, string descr_, bool is_active) : ExpressionItem(cat_, name_, title_, descr_, false, true, is_active, unicode_name) {
 	argc = argc_;
 	if(max_argc_ < 0 || argc < 0) {
@@ -79,7 +44,6 @@ Function::~Function() {
 	clearArgumentDefinitions();
 }
 
-//ExpressionItem *Function::copy() const {return new Function(this);}
 void Function::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_FUNCTION) {
 		Function *f = (Function*) item;
@@ -103,25 +67,6 @@ void Function::set(const ExpressionItem *item) {
 int Function::type() const {
 	return TYPE_FUNCTION;
 }
-
-#ifdef HAVE_GIAC
-giac::gen Function::toGiac(const MathStructure &vargs) const {
-	giac::vecteur v;
-	v.push_back(giac::identificateur(p2s((void*) this)));
-	for(unsigned int i = 0; i < vargs.size(); i++) {
-		v.push_back(vargs[i].toGiac());
-	}
-	return giac::symbolic(giac::at_qalculate_function, v);
-}
-giac::gen Function::argsToGiac(const MathStructure &vargs) const {
-	giac::vecteur v;
-	for(unsigned int i = 0; i < vargs.size(); i++) {
-		v.push_back(vargs[i].toGiac());
-	}
-	return v;
-}
-bool Function::isGiacFunction() const {return false;}
-#endif
 
 int Function::countArgOccurence(unsigned int arg_) {
 	if((int) arg_ > argc && max_argc < 0) {
@@ -476,7 +421,7 @@ MathStructure Function::calculate(MathStructure &vargs, const EvaluationOptions 
 				}
 				if(!b) break;
 				MathStructure mstruct2;
-				if(!testArguments(vargs_copy) || !calculate(mstruct2, vargs_copy, eo)) {
+				if(!testArguments(vargs_copy) || calculate(mstruct2, vargs_copy, eo) < 1) {
 					mstruct2 = createFunctionMathStructureFromVArgs(vargs_copy);
 				} else {
 					if(isApproximate()) mstruct2.setApproximate();
@@ -489,7 +434,7 @@ MathStructure Function::calculate(MathStructure &vargs, const EvaluationOptions 
 				b = false;	 			
 			}
 		} else {
-			if(!testArguments(vargs) || !calculate(mstruct, vargs, eo)) {
+			if(!testArguments(vargs) || calculate(mstruct, vargs, eo) < 1) {
 				return createFunctionMathStructureFromVArgs(vargs);
 			}
 		}
@@ -499,9 +444,9 @@ MathStructure Function::calculate(MathStructure &vargs, const EvaluationOptions 
 		return createFunctionMathStructureFromVArgs(vargs);
 	}
 }
-bool Function::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int Function::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	//mstruct = createFunctionMathStructureFromVArgs(vargs);
-	return false;
+	return 0;
 }
 void Function::setDefaultValue(unsigned int arg_, string value_) {
 	if((int) arg_ > argc && (int) arg_ <= max_argc && (int) default_values.size() >= (int) arg_ - argc) {
@@ -659,7 +604,7 @@ void UserFunction::set(const ExpressionItem *item) {
 	}
 }
 
-bool UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(args() != 0) {
 		string stmp = eq_calc;
 		string svar;
@@ -754,7 +699,7 @@ bool UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		mstruct = CALCULATOR->parse(eq_calc, po);
 		if(isApproximate()) mstruct.setApproximate();
 	}
-	return true;
+	return 1;
 }
 void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 	setChanged(true);

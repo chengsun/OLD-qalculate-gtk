@@ -2,13 +2,12 @@
 <QALCULATE version="0.3">
   <category>
     <_title>Analysis</_title>
-    <function name="arg" active="false">
+    <builtin_function name="arg">
       <_title>Complex Argument</_title>
-      <expression>atan(im(\x)/re(\x))</expression>
-      <argument type="free" index="1">
+      <argument index="1">
         <_title>Complex Number</_title>
       </argument>
-    </function>
+    </builtin_function>
     <builtin_function name="re">
       <_title>Real Part</_title>
       <argument index="1">
@@ -20,6 +19,12 @@
       <argument index="1">
         <_title>Complex Number</_title>
       </argument>
+    </builtin_function>
+    <builtin_function name="beta">
+      <_title>Beta Function</_title>
+    </builtin_function>
+    <builtin_function name="gamma">
+      <_title>Gamma Function</_title>
     </builtin_function>
   </category>
   <category>
@@ -258,19 +263,15 @@
   </category>  
   <category>
     <_title>Combinatorics</_title>
-    <function name="binomial">
-      <_title>Binomial coefficient</_title>
-      <expression>factorial(\x)/(factorial(\x-\y)*factorial(\y))</expression>
-      <argument type="integer" index="1">
+    <builtin_function name="binomial">
+      <_title>Binomial Coefficient</_title>
+      <argument index="1">
         <_title>Exponent</_title>
-	<min>1</min>
       </argument>
-      <argument type="integer" index="2">
+      <argument index="2">
         <_title>Index</_title>
-	<min>0</min>
       </argument>
-      <condition>\x >= \y</condition>
-    </function>
+    </builtin_function>
     <builtin_function name="factorial">
       <_title>Factorial</_title>
       <argument index="1">
@@ -356,12 +357,42 @@
       </argument>
     </builtin_function>
     <builtin_function name="process">
-      <_title>Process components</_title>
+      <_title>Process Vector Components</_title>
       <argument index="1">
         <_title>Expression</_title>
       </argument>
       <argument index="2">
+        <_title>Component Variable</_title>
+      </argument>
+      <argument index="3">
         <_title>Vector</_title>
+      </argument>
+      <argument index="4">
+        <_title>Index Variable</_title>
+      </argument>
+      <argument index="5">
+        <_title>Vector Variable</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="processm">
+      <_title>Process Matrix Elements</_title>
+      <argument index="1">
+        <_title>Expression</_title>
+      </argument>
+      <argument index="2">
+        <_title>Element Variable</_title>
+      </argument>
+      <argument index="3">
+        <_title>Matrix</_title>
+      </argument>
+      <argument index="4">
+        <_title>Row Variable</_title>
+      </argument>
+      <argument index="5">
+        <_title>Column Variable</_title>
+      </argument>
+      <argument index="6">
+        <_title>Matrix Variable</_title>
       </argument>
     </builtin_function>
     <builtin_function name="csum">
@@ -376,7 +407,7 @@
         <_title>Initial value</_title>
       </argument>
       <argument index="4">
-        <_title>Expression</_title>
+        <_title>Function Expression</_title>
       </argument>
       <argument index="5">
         <_title>Component Variable</_title>
@@ -470,7 +501,7 @@
   <category>
     <_title>Matrices &amp; Vectors</_title>
     <builtin_function name="load">
-      <_title>Load CSV file</_title>
+      <_title>Load CSV File</_title>
       <argument index="1">
         <_title>File name</_title>
       </argument>
@@ -483,7 +514,7 @@
       <_description>Imports a CSV data file as a matrix.</_description>
     </builtin_function>    
     <builtin_function name="matrix">
-      <_title>Construct matrix</_title>
+      <_title>Construct Matrix</_title>
       <argument index="1">
         <_title>Rows</_title>
       </argument>
@@ -496,7 +527,7 @@
       <_description>Returns a matrix with specified order and listed elements. Omitted elements are set to zero.</_description>
     </builtin_function>
     <builtin_function name="vector">
-      <_title>Construct vector</_title>
+      <_title>Construct Vector</_title>
       <argument index="1">
         <_title>Components</_title>
       </argument>
@@ -523,8 +554,11 @@
       </argument>
       <_description>Returns a vector with values of components replaced with their mutual ranks.</_description>
     </builtin_function>
+    <builtin_function name="mergevectors">
+      <_title>Merge Vectors</_title>
+    </builtin_function>
     <builtin_function name="matrix2vector">
-      <_title>Convert matrix to vector</_title>
+      <_title>Convert Matrix to Vector</_title>
       <argument index="1">
         <_title>Matrix</_title>
       </argument>
@@ -541,7 +575,7 @@
       <_description>Returns a row in a matrix as a vector.</_description>
     </builtin_function>
     <builtin_function name="column">
-      <_title>Extract column as vector</_title>
+      <_title>Extract Column as Vector</_title>
       <argument index="1">
         <_title>Column</_title>
       </argument>
@@ -771,9 +805,30 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <_title>Date</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="time">
+      <_title>Current Time</_title>
+    </builtin_function>
   </category>
   <category>
     <_title>Trigonometry</_title>
+    <builtin_function name="sin">
+      <_title>Sine</_title>
+      <argument index="1">
+        <_title>Angle</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="cos">
+      <_title>Cosine</_title>
+      <argument index="1">
+        <_title>Angle</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="tan">
+      <_title>Tangent</_title>
+      <argument index="1">
+        <_title>Angle</_title>
+      </argument>
+    </builtin_function>
     <function name="sec">
       <_title>Secant</_title>
       <expression>1/cos(\x)</expression>
@@ -798,53 +853,86 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
 	<test>false</test>
       </argument>
     </function>
+    <builtin_function name="sinh">
+      <_title>Hyperbolic Sine</_title>
+    </builtin_function>
+    <builtin_function name="cosh">
+      <_title>Hyperbolic Cosine</_title>
+    </builtin_function>
+    <builtin_function name="tanh">
+      <_title>Hyperbolic Tangent</_title>
+    </builtin_function>
     <function name="sech">
-      <_title>Hyperbolic secant</_title>
+      <_title>Hyperbolic Secant</_title>
       <expression>1/cosh(\x)</expression>
     </function>
     <function name="csch">
-      <_title>Hyperbolic cosecant</_title>
+      <_title>Hyperbolic Cosecant</_title>
       <expression>1/sinh(\x)</expression>
     </function>
     <function name="coth">
-      <_title>Hyperbolic cotangent</_title>
+      <_title>Hyperbolic Cotangent</_title>
       <expression>cosh(\x)/sinh(\x)</expression>
     </function>
+    <builtin_function name="asin">
+      <_title>Inverse Sine</_title>
+    </builtin_function>
+    <builtin_function name="acos">
+      <_title>Inverse Cosine</_title>
+    </builtin_function>
+    <builtin_function name="atan">
+      <_title>Inverse Tangent</_title>
+    </builtin_function>
     <function name="asec">
-      <_title>Inverse secant</_title>
+      <_title>Inverse Secant</_title>
       <expression>radtodef(0.5pi+i*ln(sqrt(1-1\x^2)+i/\x))</expression>
     </function>
     <function name="acsc">
-      <_title>Inverse cosecant</_title>
+      <_title>Inverse Cosecant</_title>
       <expression>radtodef(-i*ln(sqrt(1-1\x^2)+i/\x))</expression>
     </function>
     <function name="acot">
-      <_title>Inverse cotangent</_title>
+      <_title>Inverse Cotangent</_title>
       <expression>radtodef(i/2*(ln((\x-i)/\x)-ln((\x+i)/\x)))</expression>
     </function>
+    <builtin_function name="asinh">
+      <_title>Inverse Hyperbolic Sine</_title>
+    </builtin_function>
+    <builtin_function name="acosh">
+      <_title>Inverse Hyperbolic Cosine</_title>
+    </builtin_function>
+    <builtin_function name="atanh">
+      <_title>Inverse Hyperbolic Tangent</_title>
+    </builtin_function>
     <function name="asech">
-      <_title>Inverse hyperbolic secant</_title>
+      <_title>Inverse Hyperbolic secant</_title>
       <expression>ln(sqrt(1/\x-1)*sqrt(1/\x+1)+1/\x)</expression>
     </function>
     <function name="acsch">
-      <_title>Inverse hyperbolic cosecant</_title>
+      <_title>Inverse Hyperbolic Cosecant</_title>
       <expression>ln(sqrt(1+1/\x^2)+1/\x)</expression>
     </function>
     <function name="acoth">
-      <_title>Inverse hyperbolic cotangent</_title>
+      <_title>Inverse Hyperbolic Cotangent</_title>
       <expression>(ln(1+1/\x)-ln(1-1/\x))/2</expression>
     </function>
+    <builtin_function name="radtodef">
+      <_title>Radians to Default Angle Unit</_title>
+      <argument index="1">
+        <_title>Radians</_title>
+      </argument>
+    </builtin_function>
   </category>
   <category>
     <_title>Exponents &amp; Logarithms</_title>
     <builtin_function name="ln">
-      <_title>Natural logarithm</_title>
+      <_title>Natural Logarithm</_title>
       <argument index="1">
         <_title>Value</_title>
       </argument>
     </builtin_function>
     <builtin_function name="log">
-      <_title>Base-N logarithm</_title>
+      <_title>Base-N Logarithm</_title>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -853,7 +941,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </builtin_function>
     <function name="log2">
-      <_title>Base-2 logrithm</_title>
+      <_title>Base-2 Logrithm</_title>
       <_description>Returns the base n logarithm.</_description>
       <expression>log(\x,2)</expression>
       <argument type="number" index="1">
@@ -863,7 +951,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </function>
     <function name="log10">
-      <_title>Base-10 logrithm</_title>
+      <_title>Base-10 Logrithm</_title>
       <_description>Returns the base n logarithm.</_description>
       <expression>log(\x,10)</expression>
       <argument type="number" index="1">
@@ -872,15 +960,14 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
 	<test>false</test>
       </argument>
     </function>
-    <function name="exp">
+    <builtin_function name="exp">
       <_title>Exponential (e^x)</_title>
-      <expression>e^\x</expression>
       <argument index="1">
         <_title>Exponent</_title>
       </argument>
-    </function>
+    </builtin_function>
     <function name="cis">
-      <_title>Complex exponential (Cis)</_title>
+      <_title>Complex Exponential (Cis)</_title>
       <expression>e^(\x*i)</expression>
       <argument index="1">
         <_title>Exponent</_title>
@@ -900,15 +987,20 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <_title>Exponent</_title>
       </argument>
     </function>
-    <function name="sqrt">
-      <_title>Square root</_title>
-      <expression>\x^(1/2)</expression>
+    <builtin_function name="sq">
+      <_title>Square</_title>
       <argument index="1">
         <_title>Value</_title>
       </argument>
-    </function>
+    </builtin_function>
+    <builtin_function name="sqrt">
+      <_title>Square Root</_title>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+    </builtin_function>
     <function name="cbrt">
-      <_title>Cube root</_title>
+      <_title>Cube Root</_title>
       <expression>\x^(1/3)</expression>
       <argument index="1">
         <_title>Value</_title>
@@ -2228,21 +2320,6 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
   </category>
   <category>  
     <_title>Calculus</_title>
-    <builtin_function name="giac">
-      <_title>Giac expression</_title>
-      <argument index="1">
-        <_title>Expression</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="giac_solve">
-      <_title>Solve equation (giac)</_title>
-      <argument index="1">
-        <_title>Equation</_title>
-      </argument>
-      <argument index="2">
-        <_title>With respect to</_title>
-      </argument>
-    </builtin_function>
     <builtin_function name="diff">
       <_title>Derive</_title>
       <argument index="1">
@@ -2253,27 +2330,6 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
       </argument>
       <argument index="3">
         <_title>Order</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="giac_diff">
-      <_title>Derive (giac)</_title>
-      <argument index="1">
-        <_title>Expression</_title>
-      </argument>
-      <argument index="2">
-        <_title>With respect to</_title>
-      </argument>
-      <argument index="3">
-        <_title>Order</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="integrate">
-      <_title>Integrate</_title>
-      <argument index="1">
-        <_title>Expression</_title>
-      </argument>
-      <argument index="2">
-        <_title>With respect to</_title>
       </argument>
     </builtin_function>
     <function name="extremum">

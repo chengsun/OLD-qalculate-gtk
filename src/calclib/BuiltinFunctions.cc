@@ -18,8 +18,8 @@
 
 #include <sstream>
 
-#define FR_FUNCTION(FUNC)	Number nr = vargs[0].number(); if(!nr.FUNC() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) {return false;} else {mstruct = nr; return true;}
-#define FR_FUNCTION_2(FUNC)	Number nr = vargs[0].number(); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) {return false;} else {mstruct = nr; return true;}
+#define FR_FUNCTION(FUNC)	Number nr = vargs[0].number(); if(!nr.FUNC() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) {return 0;} else {mstruct = nr; return 1 ;}
+#define FR_FUNCTION_2(FUNC)	Number nr = vargs[0].number(); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) {return 0;} else {mstruct = nr; return 1 ;}
 
 #define NON_COMPLEX_NUMBER_ARGUMENT(i)				NumberArgument *arg_non_complex##i = new NumberArgument(); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
 #define NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(i)			NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
@@ -29,16 +29,16 @@
 VectorFunction::VectorFunction() : Function("vector", 0, 1) {
 	setArgumentDefinition(1, new VectorArgument());
 }
-bool VectorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int VectorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	return true;
+	return 1 ;
 }
 MatrixFunction::MatrixFunction() : Function("matrix", 3) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 	setArgumentDefinition(3, new VectorArgument());
 }
-bool MatrixFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int MatrixFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	unsigned int rows = vargs[0].number().intValue();
 	unsigned int columns = vargs[1].number().intValue();
 	mstruct.clearMatrix(); mstruct.resizeMatrix(rows, columns, m_zero);
@@ -56,25 +56,25 @@ bool MatrixFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 			c++;
 		}
 	}
-	return true;
+	return 1 ;
 }
 RankFunction::RankFunction() : Function("rank", 1) {
 	setArgumentDefinition(1, new VectorArgument(""));
 }
-bool RankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int RankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	return mstruct.rankVector();
 }
 SortFunction::SortFunction() : Function("sort", 1) {
 	setArgumentDefinition(1, new VectorArgument(""));
 }
-bool SortFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int SortFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	return mstruct.sortVector();
 }
 MergeVectorsFunction::MergeVectorsFunction() : Function("mergevectors", -1) {
 }
-bool MergeVectorsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int MergeVectorsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct.clearVector();
 	for(unsigned int i = 0; i < vargs.size(); i++) {
 		if(vargs[i].isVector()) {
@@ -85,68 +85,68 @@ bool MergeVectorsFunction::calculate(MathStructure &mstruct, const MathStructure
 			mstruct.addItem(vargs[i]);
 		}
 	}
-	return true;
+	return 1 ;
 }
 MatrixToVectorFunction::MatrixToVectorFunction() : Function("matrix2vector", 1) {
 	setArgumentDefinition(1, new MatrixArgument());
 }
-bool MatrixToVectorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int MatrixToVectorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	vargs[0].matrixToVector(mstruct);
-	return true;
+	return 1 ;
 }
 RowFunction::RowFunction() : Function("row", 2) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 	setArgumentDefinition(2, new MatrixArgument());	
 }
-bool RowFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int RowFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int row = vargs[0].number().intValue();
 	if(row > (int) vargs[1].rows()) {
 		CALCULATOR->error(true, _("Row %s does not exist in matrix."), vargs[0].print().c_str(), NULL);
-		return false;
+		return 0;
 	}
 	vargs[1].rowToVector(row, mstruct);
-	return true;
+	return 1 ;
 }
 ColumnFunction::ColumnFunction() : Function("column", 2) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 	setArgumentDefinition(2, new MatrixArgument());	
 }
-bool ColumnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ColumnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int col = vargs[0].number().intValue();
 	if(col > (int) vargs[1].columns()) {
 		CALCULATOR->error(true, _("Column %s does not exist in matrix."), vargs[0].print().c_str(), NULL);
-		return false;
+		return 0;
 	}
 	vargs[1].columnToVector(col, mstruct);
-	return true;
+	return 1 ;
 }
 RowsFunction::RowsFunction() : Function("rows", 1) {
 	setArgumentDefinition(1, new MatrixArgument(""));
 }
-bool RowsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int RowsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = (int) vargs[0].rows();
-	return true;
+	return 1 ;
 }
 ColumnsFunction::ColumnsFunction() : Function("columns", 1) {
 	setArgumentDefinition(1, new MatrixArgument(""));
 }
-bool ColumnsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ColumnsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = (int) vargs[0].columns();
-	return true;
+	return 1 ;
 }
 ElementsFunction::ElementsFunction() : Function("elements", 1) {
 	setArgumentDefinition(1, new MatrixArgument(""));
 }
-bool ElementsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ElementsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = (int) (vargs[0].rows() * vargs[0].columns());
-	return true;
+	return 1 ;
 }
 ElementFunction::ElementFunction() : Function("element", 3) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 	setArgumentDefinition(3, new MatrixArgument(""));
 }
-bool ElementFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ElementFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int row = vargs[0].number().intValue();
 	int col = vargs[1].number().intValue();
 	bool b = true;
@@ -168,31 +168,31 @@ bool ElementFunction::calculate(MathStructure &mstruct, const MathStructure &var
 ComponentsFunction::ComponentsFunction() : Function("components", 1) {
 	setArgumentDefinition(1, new VectorArgument(""));
 }
-bool ComponentsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ComponentsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = (int) vargs[0].components();
-	return true;
+	return 1 ;
 }
 ComponentFunction::ComponentFunction() : Function("component", 2) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 	setArgumentDefinition(2, new VectorArgument(""));
 }
-bool ComponentFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ComponentFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int i = vargs[0].number().intValue();
 	if(i > (int) vargs[1].components()) {
 		CALCULATOR->error(true, _("Component %s does not exist in vector."), vargs[0].print().c_str(), NULL);
-		return false;
+		return 0;
 	}
 	mstruct = *vargs[1].getComponent(i);
-	return true;
+	return 1 ;
 }
 LimitsFunction::LimitsFunction() : Function("limits", 3) {
 	setArgumentDefinition(1, new IntegerArgument(""));
 	setArgumentDefinition(2, new IntegerArgument(""));	
 	setArgumentDefinition(3, new VectorArgument(""));	
 }
-bool LimitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int LimitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	vargs[2].getRange(vargs[0].number().intValue(), vargs[1].number().intValue(), mstruct);
-	return true;
+	return 1 ;
 }
 AreaFunction::AreaFunction() : Function("area", 5) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
@@ -201,14 +201,14 @@ AreaFunction::AreaFunction() : Function("area", 5) {
 	setArgumentDefinition(4, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));	
 	setArgumentDefinition(5, new MatrixArgument(""));	
 }
-bool AreaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int AreaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	vargs[4].getArea(vargs[0].number().intValue(), vargs[1].number().intValue(), vargs[2].number().intValue(), vargs[3].number().intValue(), mstruct);
-	return true;
+	return 1 ;
 }
 TransposeFunction::TransposeFunction() : Function("transpose", 1) {
 	setArgumentDefinition(1, new MatrixArgument());
 }
-bool TransposeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int TransposeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	return mstruct.transposeMatrix();
 }
@@ -220,23 +220,23 @@ IdentityFunction::IdentityFunction() : Function("identity", 1) {
 	arg->addArgument(marg);
 	setArgumentDefinition(1, arg);
 }
-bool IdentityFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int IdentityFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isMatrix()) {
 		if(vargs[0].rows() != vargs[0].columns()) {
-			return false;
+			return 0;
 		}
 		mstruct.setToIdentityMatrix(vargs[0].size());
 	} else {
 		mstruct.setToIdentityMatrix((unsigned int) vargs[0].number().intValue());
 	}
-	return true;
+	return 1 ;
 }
 DeterminantFunction::DeterminantFunction() : Function("det", 1) {
 	MatrixArgument *marg = new MatrixArgument();
 	marg->setSymmetricDemanded(true);
 	setArgumentDefinition(1, marg);
 }
-bool DeterminantFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int DeterminantFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	vargs[0].determinant(mstruct, eo);
 	return !mstruct.isUndefined();
 }
@@ -245,7 +245,7 @@ PermanentFunction::PermanentFunction() : Function("permanent", 1) {
 	marg->setSymmetricDemanded(true);
 	setArgumentDefinition(1, marg);
 }
-bool PermanentFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int PermanentFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	vargs[0].permanent(mstruct, eo);
 	return !mstruct.isUndefined();
 }
@@ -254,7 +254,7 @@ CofactorFunction::CofactorFunction() : Function("cofactor", 3) {
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));	
 	setArgumentDefinition(3, new MatrixArgument());
 }
-bool CofactorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int CofactorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	vargs[2].cofactor(vargs[0].number().intValue(), vargs[1].number().intValue(), mstruct, eo);
 	return !mstruct.isUndefined();
 }
@@ -263,7 +263,7 @@ AdjointFunction::AdjointFunction() : Function("adj", 1) {
 	marg->setSymmetricDemanded(true);
 	setArgumentDefinition(1, marg);
 }
-bool AdjointFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int AdjointFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	mstruct.adjointMatrix(eo);
 	return !mstruct.isUndefined();
@@ -273,7 +273,7 @@ InverseFunction::InverseFunction() : Function("inverse", 1) {
 	marg->setSymmetricDemanded(true);
 	setArgumentDefinition(1, marg);
 }
-bool InverseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int InverseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	mstruct.invertMatrix(eo);
 	return !mstruct.isUndefined();;
@@ -282,37 +282,37 @@ bool InverseFunction::calculate(MathStructure &mstruct, const MathStructure &var
 ZetaFunction::ZetaFunction() : Function("zeta", 1, 1, SIGN_ZETA) {
 	setArgumentDefinition(1, new IntegerArgument());
 }
-bool ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(zeta)
 }
-GammaFunction::GammaFunction() : Function("gamma", 1) {
+GammaFunction::GammaFunction() : Function("gamma", 1, 1, SIGN_CAPITAL_GAMMA) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, false));
 }
-bool GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0]; 
 	mstruct -= 1;
 	mstruct.set(CALCULATOR->f_factorial, &vargs[0], NULL);
 	mstruct[0] -= 1;
-	return true;
+	return 1 ;
 }
-BetaFunction::BetaFunction() : Function("beta", 2) {
+BetaFunction::BetaFunction() : Function("beta", 2, 2, SIGN_CAPITAL_BETA) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, false));
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, false));
 }
-bool BetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int BetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0]; 
 	mstruct.set(CALCULATOR->f_gamma, &vargs[0], NULL);
 	MathStructure mstruct2(CALCULATOR->f_gamma, &vargs[1], NULL);
 	mstruct *= mstruct2;
 	mstruct2[0] += vargs[0];
 	mstruct /= mstruct2;
-	return true;
+	return 1 ;
 }
 
 FactorialFunction::FactorialFunction() : Function("factorial", 1) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
-bool FactorialFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int FactorialFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(factorial)
 }
 BinomialFunction::BinomialFunction() : Function("binomial", 2) {
@@ -320,150 +320,150 @@ BinomialFunction::BinomialFunction() : Function("binomial", 2) {
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, true));
 	setCondition("\\x>=\\y");
 }
-bool BinomialFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int BinomialFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	Number nr;
-	if(!nr.binomial(vargs[0].number(), vargs[1].number())) return false;
+	if(!nr.binomial(vargs[0].number(), vargs[1].number())) return 0;
 	mstruct = nr;
-	return true;
+	return 1 ;
 }
 
 AbsFunction::AbsFunction() : Function("abs", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
-bool AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0]; 
 	mstruct.eval(eo);
 	if(mstruct.isNumber()) {
 		Number nr = mstruct.number(); 
 		if(!nr.abs() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) {
-			return false;
+			return 0;
 		} else {
 			mstruct = nr; 
-			return true;
+			return 1 ;
 		}
 	} else if(mstruct.representsNegative()) {
 		mstruct.negate();
-		return true;
+		return 1 ;
 	} else if(mstruct.representsNonNegative()) {
-		return true;
+		return 1 ;
 	}
-	return false;
+	return -1;
 }
 GcdFunction::GcdFunction() : Function("gcd", 2) {
 	setArgumentDefinition(1, new IntegerArgument());
 	setArgumentDefinition(2, new IntegerArgument());
 }
-bool GcdFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int GcdFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION_2(gcd)
 }
 SignumFunction::SignumFunction() : Function("sgn", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
-bool SignumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int SignumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(signum)
 }
 CeilFunction::CeilFunction() : Function("ceil", 1) {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
-bool CeilFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int CeilFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(ceil)
 }
 FloorFunction::FloorFunction() : Function("floor", 1) {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
-bool FloorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int FloorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(floor)
 }
 TruncFunction::TruncFunction() : Function("trunc", 1) {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
-bool TruncFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int TruncFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(trunc)
 }
 RoundFunction::RoundFunction() : Function("round", 1) {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
-bool RoundFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int RoundFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(round)
 }
 FracFunction::FracFunction() : Function("frac", 1) {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
-bool FracFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int FracFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(frac)
 }
 IntFunction::IntFunction() : Function("int", 1) {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
-bool IntFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int IntFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(trunc)
 }
 RemFunction::RemFunction() : Function("rem", 2) {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(2)
 }
-bool RemFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int RemFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION_2(rem)
 }
 ModFunction::ModFunction() : Function("mod", 2) {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(2)
 }
-bool ModFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ModFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION_2(mod)
 }
 
 ImFunction::ImFunction() : Function("im", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
-bool ImFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ImFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0].number().imaginaryPart();
-	return true;
+	return 1 ;
 }
 ReFunction::ReFunction() : Function("re", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
-bool ReFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ReFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0].number().realPart();
-	return true;
+	return 1 ;
 }
 ArgFunction::ArgFunction() : Function("arg", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
-bool ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	MathStructure m_re(CALCULATOR->f_re, &vargs[0], NULL);
 	MathStructure m_im(CALCULATOR->f_re, &vargs[0], NULL);
 	mstruct.set(CALCULATOR->f_atan, &m_im, &m_re, NULL);
-	return true;
+	return 1 ;
 }
 
 SqrtFunction::SqrtFunction() : Function("sqrt", 1, 1, SIGN_SQRT) {
 }
-bool SqrtFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int SqrtFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	mstruct ^= MathStructure(1, 2);
-	return true;
+	return 1 ;
 }
 SquareFunction::SquareFunction() : Function("sq", 1) {
 }
-bool SquareFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int SquareFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	mstruct ^= 2;
-	return true;
+	return 1 ;
 }
 
 ExpFunction::ExpFunction() : Function("exp", 1) {
 }
-bool ExpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ExpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = CALCULATOR->v_e;
 	mstruct ^= vargs[0];
-	return true;
+	return 1 ;
 }
 
 LogFunction::LogFunction() : Function("ln", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false));
 }
-bool LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	mstruct = vargs[0]; 
 	
@@ -517,7 +517,7 @@ bool LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			MathStructure mstruct2 = vargs[0];
 			mstruct2.eval(eo2);
 		}
-		return true;
+		return 1 ;
 	}
 	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
 		EvaluationOptions eo2 = eo;
@@ -529,26 +529,26 @@ bool LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(mstruct.number().isMinusOne()) {
 			mstruct = CALCULATOR->v_i->get();
 			mstruct *= CALCULATOR->v_pi;
-			return true;
+			return 1 ;
 		} else if(mstruct.number().isI() || mstruct.number().isMinusI()) {
 			mstruct = Number(1, 2);
 			mstruct *= CALCULATOR->v_pi;
 			mstruct *= CALCULATOR->v_i->get();
-			return true;
+			return 1 ;
 		} else if(mstruct.number().isMinusInfinity()) {
 			mstruct = CALCULATOR->v_pi;
 			mstruct *= CALCULATOR->v_i->get();
 			Number nr; nr.setPlusInfinity();
 			mstruct += nr;
-			return true;
+			return 1 ;
 		}
 		Number nr(mstruct.number());
 		if(nr.ln() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) {
 			mstruct = nr;
-			return true;
+			return 1 ;
 		}
 	}
-	return false;
+	return -1;
 	
 }
 LognFunction::LognFunction() : Function("log", 1, 2) {
@@ -556,92 +556,11 @@ LognFunction::LognFunction() : Function("log", 1, 2) {
 	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false));
 	setDefaultValue(2, "e");
 }
-bool LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	if(vargs[1].isVariable() && vargs[1].variable() == CALCULATOR->v_e) {
-		mstruct = vargs[0]; 
-		if(eo.approximation == APPROXIMATION_TRY_EXACT) {
-			EvaluationOptions eo2 = eo;
-			eo2.approximation = APPROXIMATION_EXACT;
-			CALCULATOR->beginTemporaryStopErrors();
-			mstruct.eval(eo2);
-			CALCULATOR->endTemporaryStopErrors();
-		} else {
-			mstruct.eval(eo);
-		}
-		bool b = false;
-		if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_e) {
-			mstruct.set(1, 1);
-			b = true;
-		} else if(mstruct.isPower()) {
-			if(mstruct[0].isVariable() && mstruct[0].variable() == CALCULATOR->v_e) {
-				if(mstruct[1].representsReal()) {
-					mstruct = mstruct[1];
-					b = true;
-				}
-			} else if(mstruct[1].representsPositive() || (mstruct[1].representsNegative() && mstruct[0].representsPositive())) {
-				MathStructure mstruct2;
-				mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
-				mstruct2 *= mstruct[1];
-				mstruct = mstruct2;
-				b = true;
-			}
-		} else if(mstruct.isMultiplication()) {
-			b = true;
-			for(unsigned int i = 0; i < mstruct.size(); i++) {
-				if(!mstruct[i].representsPositive()) {
-					b = false;
-					break;
-				}
-			}
-			if(b) {
-				MathStructure mstruct2;
-				mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
-				for(unsigned int i = 1; i < mstruct.size(); i++) {
-					mstruct2.add(MathStructure(CALCULATOR->f_ln, &mstruct[i], NULL), i > 1);
-				}
-				mstruct = mstruct2;
-			}
-		}
-		if(b) {
-			if(eo.approximation == APPROXIMATION_TRY_EXACT) {
-				EvaluationOptions eo2 = eo;
-				eo2.approximation = APPROXIMATION_EXACT;
-				MathStructure mstruct2 = vargs[0];
-				mstruct2.eval(eo2);
-			}
-			return true;
-		}
-		if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
-			EvaluationOptions eo2 = eo;
-			eo2.approximation = APPROXIMATION_APPROXIMATE;
-			mstruct = vargs[0];
-			mstruct.eval(eo2);
-		}
-		if(mstruct.isNumber()) {
-			if(mstruct.number().isMinusOne()) {
-				mstruct = CALCULATOR->v_i->get();
-				mstruct *= CALCULATOR->v_pi;
-				return true;
-			} else if(mstruct.number().isI() || mstruct.number().isMinusI()) {
-				mstruct = Number(1, 2);
-				mstruct *= CALCULATOR->v_pi;
-				mstruct *= CALCULATOR->v_i->get();
-				return true;
-			} else if(mstruct.number().isMinusInfinity()) {
-				mstruct = CALCULATOR->v_pi;
-				mstruct *= CALCULATOR->v_i->get();
-				Number nr; nr.setPlusInfinity();
-				mstruct += nr;
-				return true;
-			}
-			Number nr(mstruct.number());
-			if(nr.ln() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) {
-				mstruct = nr;
-				return true;
-			}
-		}	
-		return false;
+		mstruct.set(CALCULATOR->f_ln, &vargs[0], NULL);
+		return 1 ;
 	}
 	mstruct = vargs[0];
 	mstruct.eval(eo);
@@ -653,7 +572,7 @@ bool LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			mstruct2.set(CALCULATOR->f_logn, &mstruct[0], &mstructv2, NULL);
 			mstruct2 *= mstruct[1];
 			mstruct = mstruct2;
-			return true;
+			return 1 ;
 		}
 	} else if(mstruct.isMultiplication()) {
 		bool b = true;
@@ -670,24 +589,24 @@ bool LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 				mstruct2.add(MathStructure(CALCULATOR->f_logn, &mstruct[i], &mstructv2, NULL), i > 1);
 			}
 			mstruct = mstruct2;
-			return true;
+			return 1 ;
 		}
 	} else if(vargs[0].isNumber() && vargs[1].isNumber()) {
 		Number nr(mstruct.number());
 		if(nr.log(vargs[1].number()) && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) {
 			mstruct = nr;
-			return true;
+			return 1 ;
 		}
 	} 
 	mstruct.set(CALCULATOR->f_ln, &vargs[0], NULL);
 	mstruct /= MathStructure(CALCULATOR->f_ln, &vargs[1], NULL);
-	return true;
+	return 1 ;
 }
 
 SinFunction::SinFunction() : Function("sin", 1) {
 	setArgumentDefinition(1, new AngleArgument());
 }
-bool SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	mstruct = vargs[0]; 
 	if(CALCULATOR->u_rad) mstruct /= CALCULATOR->u_rad;
@@ -781,7 +700,7 @@ bool SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			if(CALCULATOR->u_rad) mstruct2 /= CALCULATOR->u_rad;
 			mstruct2.eval(eo2);
 		}
-		return true;
+		return 1 ;
 	}
 	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
 		EvaluationOptions eo2 = eo;
@@ -794,21 +713,21 @@ bool SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		Number nr(mstruct.number());
 		if(nr.sin() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) {
 			mstruct = nr;
-			return true;
+			return 1 ;
 		}
 	}
 	if(mstruct.isNegate()) {
 		MathStructure mstruct2(CALCULATOR->f_sin, &mstruct[0], NULL);
 		mstruct = mstruct2;
 		mstruct.negate();
-		return true;
+		return 1 ;
 	}
-	return false;
+	return -1;
 }
 CosFunction::CosFunction() : Function("cos", 1) {
 	setArgumentDefinition(1, new AngleArgument());
 }
-bool CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	mstruct = vargs[0]; 
 	if(CALCULATOR->u_rad) mstruct /= CALCULATOR->u_rad;
@@ -891,7 +810,7 @@ bool CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			if(CALCULATOR->u_rad) mstruct2 /= CALCULATOR->u_rad;
 			mstruct2.eval(eo2);
 		}
-		return true;
+		return 1 ;
 	}
 	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
 		EvaluationOptions eo2 = eo;
@@ -904,23 +823,23 @@ bool CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		Number nr(mstruct.number());
 		if(nr.cos() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) {
 			mstruct = nr;
-			return true;
+			return 1 ;
 		}
 	}
-	return false;
+	return -1;
 }
 TanFunction::TanFunction() : Function("tan", 1) {
 	setArgumentDefinition(1, new AngleArgument());
 }
-bool TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct.set(CALCULATOR->f_sin, &vargs[0], NULL);
 	mstruct /= MathStructure(CALCULATOR->f_cos, &vargs[0], NULL);
-	return true;
+	return 1 ;
 }
 AsinFunction::AsinFunction() : Function("asin", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
-bool AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	
 	if(vargs[0].number().isZero()) {
 		mstruct.clear();
@@ -971,7 +890,7 @@ bool AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		}
 	} else {
 		Number nr = vargs[0].number();
-		if(!nr.asin() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) return false;
+		if(!nr.asin() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) return 0;
 		mstruct = nr;
 		switch(CALCULATOR->angleMode()) {
 			case DEGREES: {
@@ -986,13 +905,13 @@ bool AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			}
 		}
 	}
-	return true;
+	return 1 ;
 	
 }
 AcosFunction::AcosFunction() : Function("acos", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
-bool AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	
 	if(vargs[0].number().isZero()) {
 		switch(CALCULATOR->angleMode()) {
@@ -1042,7 +961,7 @@ bool AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		}
 	} else {
 		Number nr = vargs[0].number();
-		if(!nr.acos() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) return false;
+		if(!nr.acos() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) return 0;
 		mstruct = nr;
 		switch(CALCULATOR->angleMode()) {
 			case DEGREES: {
@@ -1057,13 +976,13 @@ bool AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			}
 		}
 	}
-	return true;
+	return 1 ;
 	
 }
 AtanFunction::AtanFunction() : Function("atan", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
-bool AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	
 	if(vargs[0].number().isZero()) {
 		mstruct.clear();
@@ -1083,58 +1002,58 @@ bool AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		mstruct *= CALCULATOR->v_pi;
 	} else {
 		Number nr = vargs[0].number();
-		if(!nr.atan() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) return false;
+		if(!nr.atan() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) return 0;
 		mstruct = nr;
 	}
-	return true;
+	return 1 ;
 	
 }
 SinhFunction::SinhFunction() : Function("sinh", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
-bool SinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int SinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(sinh)
 }
 CoshFunction::CoshFunction() : Function("cosh", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));	
 }
-bool CoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int CoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(cosh)
 }
 TanhFunction::TanhFunction() : Function("tanh", 1) {}
-bool TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct.set(CALCULATOR->f_sinh, &vargs[0], NULL);
 	mstruct /= MathStructure(CALCULATOR->f_cosh, &vargs[0], NULL);
-	return true;
+	return 1 ;
 }
 AsinhFunction::AsinhFunction() : Function("asinh", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
-bool AsinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int AsinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	MathStructure m_arg(vargs[0]);
 	m_arg ^= 2;
 	m_arg += 1;
 	m_arg ^= Number(1, 2);
 	m_arg += vargs[0];
 	mstruct.set(CALCULATOR->f_ln, &m_arg, NULL);
-	return true;
+	return 1 ;
 }
 AcoshFunction::AcoshFunction() : Function("acosh", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
-bool AcoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int AcoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	MathStructure m_arg(vargs[0]);
 	m_arg ^= 2;
 	m_arg -= 1;
 	m_arg ^= Number(1, 2);
 	m_arg += vargs[0];
 	mstruct.set(CALCULATOR->f_ln, &m_arg, NULL);
-	return true;
+	return 1 ;
 }
 AtanhFunction::AtanhFunction() : Function("atanh", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
-bool AtanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int AtanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	
 	MathStructure m_arg = 1;
 	m_arg += vargs[0];
@@ -1143,13 +1062,13 @@ bool AtanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	m_arg /= m_den;
 	mstruct.set(CALCULATOR->f_ln, &m_arg, NULL);
 	mstruct *= Number(1, 2);
-	return true;
+	return 1 ;
 	
 }
 
 RadiansToDefaultAngleUnitFunction::RadiansToDefaultAngleUnitFunction() : Function("radtodef", 1) {
 }
-bool RadiansToDefaultAngleUnitFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int RadiansToDefaultAngleUnitFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	switch(CALCULATOR->angleMode()) {
 		case DEGREES: {
@@ -1163,18 +1082,18 @@ bool RadiansToDefaultAngleUnitFunction::calculate(MathStructure &mstruct, const 
 			break;
 		}
 	}
-	return true;
+	return 1 ;
 }
 
 TotalFunction::TotalFunction() : Function("total", 1) {
 	setArgumentDefinition(1, new VectorArgument(""));
 }
-bool TotalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int TotalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct.clear();
 	for(unsigned int index = 0; index < vargs[0].size(); index++) {
 		mstruct.add(vargs[0][index], true);
 	}
-	return true;
+	return 1 ;
 }
 PercentileFunction::PercentileFunction() : Function("percentile", 2) {
 	NumberArgument *arg = new NumberArgument();
@@ -1187,12 +1106,12 @@ PercentileFunction::PercentileFunction() : Function("percentile", 2) {
 	setArgumentDefinition(1, arg);
 	setArgumentDefinition(2, new VectorArgument(""));
 }
-bool PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	MathStructure v(vargs[1]);
 	MathStructure *mp;
 	Number fr100(100);
 	if(!v.sortVector()) {
-		return false;
+		return 0;
 	} else {
 		Number pfr(vargs[0].number());		
 		pfr /= 100;
@@ -1203,7 +1122,7 @@ bool PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &
 		}*/
 		if(pfr.isInteger()) {
 			mp = v.getComponent(pfr.intValue());
-			if(!mp) return false;
+			if(!mp) return 0;
 			mstruct = *mp;
 		} else {
 			Number ufr(pfr);
@@ -1212,24 +1131,24 @@ bool PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &
 			lfr.floor();
 			pfr -= lfr;
 			mp = v.getComponent(ufr.intValue());
-			if(!mp) return false;
+			if(!mp) return 0;
 			MathStructure gap(*mp);
 			mp = v.getComponent(lfr.intValue());
-			if(!mp) return false;
+			if(!mp) return 0;
 			gap -= *mp;
 			gap *= pfr;
 			mp = v.getComponent(lfr.intValue());
-			if(!mp) return false;
+			if(!mp) return 0;
 			mstruct = *mp;
 			mstruct += gap;
 		}
 	}
-	return true;
+	return 1 ;
 }
 MinFunction::MinFunction() : Function("min", 1) {
 	setArgumentDefinition(1, new VectorArgument(""));
 }
-bool MinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int MinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	ComparisonResult cmp;
 	const MathStructure *min = NULL;
 	vector<const MathStructure*> unsolveds;
@@ -1254,25 +1173,25 @@ bool MinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	if(min) {
 		if(unsolveds.size() > 0) {
-			if(!b) return false;
+			if(!b) return 0;
 			MathStructure margs; margs.clearVector();
 			margs.addItem(*min);
 			for(unsigned int i = 0; i < unsolveds.size(); i++) {
 				margs.addItem(*unsolveds[i]);
 			}
 			mstruct.set(this, &margs, NULL);
-			return true;
+			return 1 ;
 		} else {
 			mstruct = *min;
-			return true;
+			return 1 ;
 		}
 	}
-	return false;
+	return 0;
 }
 MaxFunction::MaxFunction() : Function("max", 1) {
 	setArgumentDefinition(1, new VectorArgument(""));
 }
-bool MaxFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int MaxFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	ComparisonResult cmp;
 	const MathStructure *max = NULL;
 	vector<const MathStructure*> unsolveds;
@@ -1297,27 +1216,27 @@ bool MaxFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	if(max) {
 		if(unsolveds.size() > 0) {
-			if(!b) return false;
+			if(!b) return 0;
 			MathStructure margs; margs.clearVector();
 			margs.addItem(*max);
 			for(unsigned int i = 0; i < unsolveds.size(); i++) {
 				margs.addItem(*unsolveds[i]);
 			}
 			mstruct.set(this, &margs, NULL);
-			return true;
+			return 1 ;
 		} else {
 			mstruct = *max;
-			return true;
+			return 1 ;
 		}
 	}
-	return false;
+	return 0;
 }
 ModeFunction::ModeFunction() : Function("mode", 1) {
 	setArgumentDefinition(1, new VectorArgument(""));
 }
-bool ModeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ModeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].size() <= 0) {
-		return false;
+		return 0;
 	}
 	int n = 0;
 	bool b;
@@ -1346,15 +1265,15 @@ bool ModeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	}
 	if(value) {
 		mstruct = *value;
-		return true;
+		return 1 ;
 	}
-	return false;
+	return 0;
 }
 RandFunction::RandFunction() : Function("rand", 0, 1) {
 	setArgumentDefinition(1, new IntegerArgument());
 	setDefaultValue(1, "-1"); 
 }
-bool RandFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int RandFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].number().isNegative()) {
 		Number nr;
 		nr.setInternal(cln::random_F(cln::cl_float(1)));
@@ -1364,7 +1283,7 @@ bool RandFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		nr.setInternal(cln::random_I(cln::numerator(cln::rational(cln::realpart(vargs[0].number().internalNumber())))));
 		mstruct = nr;
 	}
-	return true;
+	return 1 ;
 }
 
 DaysFunction::DaysFunction() : Function("days", 2, 4) {
@@ -1379,14 +1298,14 @@ DaysFunction::DaysFunction() : Function("days", 2, 4) {
 	setArgumentDefinition(4, new BooleanArgument());				
 	setDefaultValue(3, "1"); 
 }
-bool DaysFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int DaysFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int days = daysBetweenDates(vargs[0].symbol(), vargs[1].symbol(), vargs[2].number().intValue(), vargs[3].number().isZero());
 	if(days < 0) {
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
-		return false;
+		return 0;
 	}
 	mstruct.set(days, 1, 0);
-	return true;			
+	return 1 ;			
 }
 YearFracFunction::YearFracFunction() : Function("yearfrac", 2, 4) {
 	setArgumentDefinition(1, new DateArgument());
@@ -1400,96 +1319,96 @@ YearFracFunction::YearFracFunction() : Function("yearfrac", 2, 4) {
 	setArgumentDefinition(4, new BooleanArgument());		
 	setDefaultValue(3, "1");
 }
-bool YearFracFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int YearFracFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	Number yfr = yearsBetweenDates(vargs[0].symbol(), vargs[1].symbol(), vargs[2].number().intValue(), vargs[3].number().isZero());
 	if(yfr.isMinusOne()) {
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
-		return false;
+		return 0;
 	}
 	mstruct.set(yfr);
-	return true;
+	return 1 ;
 }
 WeekFunction::WeekFunction() : Function("week", 0, 2) {
 	setArgumentDefinition(1, new DateArgument());
 	setArgumentDefinition(2, new BooleanArgument());	
 	setDefaultValue(1, "\"today\"");
 }
-bool WeekFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int WeekFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int w = week(vargs[0].symbol(), vargs[1].number().getBoolean());
 	if(w < 0) {
-		return false;
+		return 0;
 	}
 	mstruct.set(w, 1);
-	return true;
+	return 1 ;
 }
 WeekdayFunction::WeekdayFunction() : Function("weekday", 0, 2) {
 	setArgumentDefinition(1, new DateArgument());
 	setArgumentDefinition(2, new BooleanArgument());
 	setDefaultValue(1, "\"today\"");
 }
-bool WeekdayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int WeekdayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int w = weekday(vargs[0].symbol());
 	if(w < 0) {
-		return false;
+		return 0;
 	}
 	if(vargs[1].number().getBoolean()) {
 		if(w == 7) w = 1;
 		else w++;
 	}
 	mstruct.set(w, 1);
-	return true;
+	return 1 ;
 }
 YeardayFunction::YeardayFunction() : Function("yearday", 0, 1) {
 	setArgumentDefinition(1, new DateArgument());
 	setDefaultValue(1, "\"today\"");
 }
-bool YeardayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int YeardayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int d = yearday(vargs[0].symbol());
 	if(d < 0) {
-		return false;
+		return 0;
 	}
 	mstruct.set(d, 1);
-	return true;
+	return 1 ;
 }
 MonthFunction::MonthFunction() : Function("month", 0, 1) {
 	setArgumentDefinition(1, new DateArgument());
 	setDefaultValue(1, "\"today\"");
 }
-bool MonthFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int MonthFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int year, month, day;
 	if(!s2date(vargs[0].symbol(), year, month, day)) {
-		return false;
+		return 0;
 	}
 	mstruct.set(month, 1);
-	return true;
+	return 1 ;
 }
 DayFunction::DayFunction() : Function("day", 0, 1) {
 	setArgumentDefinition(1, new DateArgument());
 	setDefaultValue(1, "\"today\"");
 }
-bool DayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int DayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int year, month, day;
 	if(!s2date(vargs[0].symbol(), year, month, day)) {
-		return false;
+		return 0;
 	}
 	mstruct.set(day, 1);
-	return true;
+	return 1 ;
 }
 YearFunction::YearFunction() : Function("year", 0, 1) {
 	setArgumentDefinition(1, new DateArgument());
 	setDefaultValue(1, "\"today\"");
 }
-bool YearFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int YearFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int year, month, day;
 	if(!s2date(vargs[0].symbol(), year, month, day)) {
-		return false;
+		return 0;
 	}
 	mstruct.set(year, 1);
-	return true;
+	return 1 ;
 }
 TimeFunction::TimeFunction() : Function("time", 0) {
 }
-bool TimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int TimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int hour, min, sec;
 	now(hour, min, sec);
 	Number tnr(sec, 1);
@@ -1498,29 +1417,29 @@ bool TimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	tnr /= 60;
 	tnr += hour;
 	mstruct = tnr;
-	return true;
+	return 1 ;
 }
 
 BinFunction::BinFunction() : Function("bin", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
-bool BinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int BinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = Number(vargs[0].symbol(), 2);
-	return true;
+	return 1 ;
 }
 OctFunction::OctFunction() : Function("oct", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
-bool OctFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int OctFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = Number(vargs[0].symbol(), 8);
-	return true;
+	return 1 ;
 }
 HexFunction::HexFunction() : Function("hex", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
-bool HexFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int HexFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = Number(vargs[0].symbol(), 16);
-	return true;
+	return 1 ;
 }
 BaseFunction::BaseFunction() : Function("base", 2) {
 	setArgumentDefinition(1, new TextArgument());
@@ -1531,16 +1450,16 @@ BaseFunction::BaseFunction() : Function("base", 2) {
 	arg->setMax(&integ);
 	setArgumentDefinition(2, arg);
 }
-bool BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = Number(vargs[0].symbol(), vargs[1].number().intValue());
-	return true;
+	return 1 ;
 }
 RomanFunction::RomanFunction() : Function("roman", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
-bool RomanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int RomanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = Number(vargs[0].symbol(), BASE_ROMAN_NUMERALS);
-	return true;
+	return 1 ;
 }
 
 AsciiFunction::AsciiFunction() : Function("code", 1) {
@@ -1548,10 +1467,10 @@ AsciiFunction::AsciiFunction() : Function("code", 1) {
 	arg->setCustomCondition("len(\\x) = 1");
 	setArgumentDefinition(1, arg);
 }
-bool AsciiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int AsciiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	unsigned char c = (unsigned char) vargs[0].symbol()[0];
 	mstruct.set(c, 1);
-	return true;
+	return 1 ;
 }
 CharFunction::CharFunction() : Function("char", 1) {
 	IntegerArgument *arg = new IntegerArgument();
@@ -1561,11 +1480,11 @@ CharFunction::CharFunction() : Function("char", 1) {
 	arg->setMax(&fr);
 	setArgumentDefinition(1, arg);
 }
-bool CharFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int CharFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	string str;
 	str += vargs[0].number().intValue();
 	mstruct = str;
-	return true;
+	return 1 ;
 }
 
 ConcatenateFunction::ConcatenateFunction() : Function("concatenate", 1) {
@@ -1573,53 +1492,53 @@ ConcatenateFunction::ConcatenateFunction() : Function("concatenate", 1) {
 	arg->addArgument(new TextArgument());
 	setArgumentDefinition(1, arg);	
 }
-bool ConcatenateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ConcatenateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	string str;
 	for(unsigned int i = 0; i < vargs.size(); i++) {
 		str += vargs[i].symbol();
 	}
 	mstruct = str;
-	return true;
+	return 1 ;
 }
 LengthFunction::LengthFunction() : Function("len", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
-bool LengthFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int LengthFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = (int) vargs[0].symbol().length();
-	return true;
+	return 1 ;
 }
 
 ReplaceFunction::ReplaceFunction() : Function("replace", 3, 4) {
 	setArgumentDefinition(4, new BooleanArgument());
 	setDefaultValue(4, "0");
 }
-bool ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	if(vargs[3].number().getBoolean()) mstruct.eval(eo);
 	mstruct.replace(vargs[1], vargs[2]);
-	return true;
+	return 1 ;
 }
 
 ErrorFunction::ErrorFunction() : Function("error", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
-bool ErrorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ErrorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	CALCULATOR->error(true, vargs[0].symbol().c_str(), NULL);
-	return true;
+	return 1 ;
 }
 WarningFunction::WarningFunction() : Function("warning", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
-bool WarningFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int WarningFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	CALCULATOR->error(false, vargs[0].symbol().c_str(), NULL);
-	return true;
+	return 1 ;
 }
 
 ForFunction::ForFunction() : Function("for", 7) {
 	setArgumentDefinition(2, new SymbolicArgument());	
 	setArgumentDefinition(7, new SymbolicArgument());
 }
-bool ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	mstruct = vargs[6];
 	MathStructure mcounter = vargs[0];
@@ -1630,7 +1549,7 @@ bool ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mtest = vargs[3];
 		mtest.replace(vargs[1], mcounter);
 		mtest.eval(eo);
-		if(!mtest.isNumber()) return false;
+		if(!mtest.isNumber()) return 0;
 		if(!mtest.number().getBoolean()) {
 			break;
 		}
@@ -1644,7 +1563,7 @@ bool ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mcount.replace(vargs[1], mcounter);
 		mcounter = mcount;
 	}
-	return true;
+	return 1 ;
 
 }
 SumFunction::SumFunction() : Function("sum", 3, 4, SIGN_CAPITAL_SIGMA) {
@@ -1654,7 +1573,7 @@ SumFunction::SumFunction() : Function("sum", 3, 4, SIGN_CAPITAL_SIGMA) {
 	setDefaultValue(4, "x");
 	setCondition("\\z >= \\y");
 }
-bool SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	mstruct.clear();
 	Number i_nr(vargs[1].number());
@@ -1672,7 +1591,7 @@ bool SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 		i_nr += 1;
 	}
-	return true;
+	return 1 ;
 	
 }
 ProductFunction::ProductFunction() : Function("product", 3, 4, SIGN_CAPITAL_PI) {
@@ -1682,7 +1601,7 @@ ProductFunction::ProductFunction() : Function("product", 3, 4, SIGN_CAPITAL_PI) 
 	setDefaultValue(4, "x");
 	setCondition("\\z >= \\y");
 }
-bool ProductFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	mstruct.clear();
 	Number i_nr(vargs[1].number());
@@ -1700,7 +1619,7 @@ bool ProductFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		}
 		i_nr += 1;
 	}
-	return true;
+	return 1 ;
 	
 }
 
@@ -1712,7 +1631,7 @@ ProcessFunction::ProcessFunction() : Function("process", 3, 5) {
 	setArgumentDefinition(5, new SymbolicArgument());
 	setDefaultValue(5, "\"\"");
 }
-bool ProcessFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ProcessFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	mstruct = vargs[2];
 	MathStructure mprocess;
@@ -1727,7 +1646,7 @@ bool ProcessFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		}
 		mstruct[index] = mprocess;
 	}
-	return true;
+	return 1 ;
 	
 }
 ProcessMatrixFunction::ProcessMatrixFunction() : Function("processm", 3, 6) {
@@ -1740,7 +1659,7 @@ ProcessMatrixFunction::ProcessMatrixFunction() : Function("processm", 3, 6) {
 	setArgumentDefinition(6, new SymbolicArgument());
 	setDefaultValue(6, "\"\"");
 }
-bool ProcessMatrixFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int ProcessMatrixFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	mstruct = vargs[2];
 	MathStructure mprocess;
@@ -1760,7 +1679,7 @@ bool ProcessMatrixFunction::calculate(MathStructure &mstruct, const MathStructur
 			mstruct[rindex][cindex] = mprocess;
 		}
 	}
-	return true;
+	return 1 ;
 	
 }
 CustomSumFunction::CustomSumFunction() : Function("csum", 7, 9) {
@@ -1776,7 +1695,7 @@ CustomSumFunction::CustomSumFunction() : Function("csum", 7, 9) {
 	setArgumentDefinition(9, new SymbolicArgument()); //v var
 	setDefaultValue(9, "\"\"");
 }
-bool CustomSumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int CustomSumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	int start = vargs[0].number().intValue();
 	if(start < 1) start = 1;
@@ -1801,7 +1720,7 @@ bool CustomSumFunction::calculate(MathStructure &mstruct, const MathStructure &v
 		}
 		mstruct = mprocess;
 	}
-	return true;
+	return 1 ;
 
 }
 
@@ -1809,27 +1728,27 @@ FunctionFunction::FunctionFunction() : Function("function", 2) {
 	setArgumentDefinition(1, new TextArgument());
 	setArgumentDefinition(2, new VectorArgument());
 }
-bool FunctionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int FunctionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	UserFunction f("", "Generated Function", vargs[0].symbol());
 	MathStructure args = vargs[1];
 	mstruct = f.Function::calculate(args, eo);	
-	return true;
+	return 1 ;
 }
 IFFunction::IFFunction() : Function("if", 3) {
 	NON_COMPLEX_NUMBER_ARGUMENT(1)
 	setArgumentDefinition(2, new TextArgument());
 	setArgumentDefinition(3, new TextArgument());
 }
-bool IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int result = vargs[0].number().getBoolean();
 	if(result) {			
 		mstruct = CALCULATOR->parse(vargs[1].symbol());
 	} else if(result == 0) {			
 		mstruct = CALCULATOR->parse(vargs[2].symbol());		
 	} else {
-		return false;
+		return 0;
 	}	
-	return true;
+	return 1 ;
 }
 LoadFunction::LoadFunction() : Function("load", 1, 3) {
 	setArgumentDefinition(1, new FileArgument());
@@ -1838,29 +1757,29 @@ LoadFunction::LoadFunction() : Function("load", 1, 3) {
 	setArgumentDefinition(3, new TextArgument());
 	setDefaultValue(3, ",");	
 }
-bool LoadFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int LoadFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	string delim = vargs[2].symbol();
 	if(delim == "tab") {
 		delim = "\t";
 	}
 	if(!CALCULATOR->importCSV(mstruct, vargs[0].symbol().c_str(), vargs[1].number().intValue(), delim)) {
 		CALCULATOR->error(true, "Failed to load %s.", vargs[0].symbol().c_str(), NULL);
-		return false;
+		return 0;
 	}
-	return true;
+	return 1 ;
 }
 TitleFunction::TitleFunction() : Function("title", 1) {
 	setArgumentDefinition(1, new ExpressionItemArgument());
 }
-bool TitleFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int TitleFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	ExpressionItem *item = CALCULATOR->getExpressionItem(vargs[0].symbol());
 	if(!item) {
 		CALCULATOR->error(true, _("Object %s does not exist."), vargs[0].symbol().c_str(), NULL);
-		return false;
+		return 0;
 	} else {
 		mstruct = item->title();
 	}
-	return true;
+	return 1 ;
 }
 SaveFunction::SaveFunction() : Function("save", 2, 4) {
 	setArgumentDefinition(2, new TextArgument());
@@ -1869,9 +1788,9 @@ SaveFunction::SaveFunction() : Function("save", 2, 4) {
 	setDefaultValue(3, "\"Temporary\"");
 	setDefaultValue(4, "\"\"");	
 }
-bool SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	CALCULATOR->addVariable(new KnownVariable(vargs[2].symbol(), vargs[1].symbol(), vargs[0], vargs[3].symbol()));
-	return true;
+	return 1 ;
 }
 
 DeriveFunction::DeriveFunction() : Function("diff", 1, 3) {
@@ -1880,16 +1799,38 @@ DeriveFunction::DeriveFunction() : Function("diff", 1, 3) {
 	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 	setDefaultValue(3, "1");		
 }
-bool DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int i = vargs[2].number().intValue();
 	mstruct = vargs[0];
 	bool b = false;
 	while(i) {
 		if(!b && !mstruct.differentiate(vargs[1], eo)) {
-			return false;
+			return 0;
 		}
 		b = true;
 		i--;
 	}
-	return true;
+	return 1 ;
+}
+SolveFunction::SolveFunction() : Function("solve", 1, 2) {
+	setArgumentDefinition(2, new SymbolicArgument());
+	setDefaultValue(2, "x");
+}
+int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	if(mstruct.isComparison()) {
+		if(mstruct[0] != vargs[1]) {
+			CALCULATOR->error(true, _("Unable to isolate %s."), vargs[1].print().c_str(), NULL);
+		} else {
+			if(mstruct.comparisonType() == COMPARISON_EQUALS) {
+				MathStructure msave(mstruct[1]);
+				mstruct = msave;	
+			}
+			return 1 ;
+		}
+	} else {
+		CALCULATOR->error(true, _("No comparison to solve."), NULL);
+	}
+	return -1;
 }

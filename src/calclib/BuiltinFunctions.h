@@ -17,7 +17,7 @@
 
 #define DECLARE_BUILTIN_FUNCTION(x)	class x : public Function { \
 					  public: \
-						bool calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
 						x(); \
 						x(const x *function) {set(function);} \
 						ExpressionItem *copy() const {return new x(this);} \
@@ -140,5 +140,6 @@ DECLARE_BUILTIN_FUNCTION(SaveFunction);
 DECLARE_BUILTIN_FUNCTION(LoadFunction);
 
 DECLARE_BUILTIN_FUNCTION(DeriveFunction);
+DECLARE_BUILTIN_FUNCTION(SolveFunction);
 
 #endif

@@ -43,19 +43,6 @@ typedef enum {
 	ARGUMENT_MIN_MAX_NEGATIVE	
 } ArgumentMinMaxPreDefinition;
 
-#ifdef HAVE_GIAC
-#ifndef NO_NAMESPACE_GIAC
-namespace giac {
-#endif
-     
-	//gen qalculate_function(const gen &a, const gen &b);
-	gen _qalculate_function(const gen &args);
-	extern unary_function_ptr at_qalculate_function;
-     
-#ifndef NO_NAMESPACE_GIAC
-}
-#endif
-#endif
 
 class Function : public ExpressionItem {
 
@@ -83,17 +70,11 @@ class Function : public ExpressionItem {
 	virtual void set(const ExpressionItem *item);
 	virtual int type() const;
 
-#ifdef HAVE_GIAC	
-	virtual giac::gen toGiac(const MathStructure &vargs) const;
-	virtual giac::gen argsToGiac(const MathStructure &vargs) const;
-	virtual bool isGiacFunction() const;
-#endif
-	
 	bool testArgumentCount(int itmp);
 	virtual MathStructure calculate(const string &eq, const EvaluationOptions &eo = default_evaluation_options);
 	virtual MathStructure parse(const string &eq, const ParseOptions &po = default_parse_options);
 	virtual MathStructure calculate(MathStructure &vargs, const EvaluationOptions &eo = default_evaluation_options);	
-	virtual bool calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);	
+	virtual int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);	
 	string condition() const;
 	void setCondition(string expression);
 	bool testCondition(const MathStructure &vargs);
@@ -126,7 +107,7 @@ class UserFunction : public Function {
 	ExpressionItem *copy() const;
 	string equation() const;
 	string internalEquation() const;
-	bool calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);	
+	int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);	
 	void setEquation(string new_eq, int argc_ = -1, int max_argc_ = 0);	
 };
 
@@ -173,7 +154,7 @@ class Argument {
 	
 	bool matrixAllowed() const;
 	void setMatrixAllowed(bool allow_matrix);
-
+	
 	virtual bool suggestsQuotes() const;
 	
 	virtual int type() const;

@@ -208,11 +208,9 @@ class MathStructure {
 		int merge_power(const MathStructure &mstruct, const EvaluationOptions &eo);
 		void calculate();
 		bool calculatesub(const EvaluationOptions &eo);
-		bool calculateFunctions(const EvaluationOptions &eo);
-		
-		void evalQalculateFunctions(const EvaluationOptions &eo);
-		void evalf();
+		bool calculateFunctions(const EvaluationOptions &eo);			
 		MathStructure &eval(const EvaluationOptions &eo = default_evaluation_options);
+		void factorize(const EvaluationOptions &eo = default_evaluation_options);
 
 #ifdef HAVE_GIAC		
 		giac::gen toGiac() const;
@@ -320,6 +318,9 @@ class MathStructure {
 		MathStructure generateVector(MathStructure x_mstruct, const MathStructure &x_vector, const EvaluationOptions &eo = default_evaluation_options);
 		
 		bool differentiate(const MathStructure &x_var, const EvaluationOptions &eo);
+		
+		const MathStructure &find_x_var() const;
+		bool isolate_x(const EvaluationOptions &eo, const MathStructure &x_var = m_undefined);
 
 };
 

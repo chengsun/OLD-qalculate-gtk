@@ -2362,6 +2362,24 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			vector<gint> cpt;
 			gint sign_w, sign_h, wtmp, htmp, hetmp = 0, w = 0, h = 0, dh = 0, uh = 0;
 			CALCULATE_SPACE_W
+			
+			for(unsigned int i = 0; i < m.size(); i++) {
+				hetmp = 0;		
+				ips_n.wrap = m[i].needsParenthesis(po, ips_n, m, i + 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+				pixmap_terms.push_back(draw_structure(m[i], po, ips_n, &hetmp));
+				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_terms[i]), &wtmp, &htmp);
+				hpt.push_back(htmp);
+				cpt.push_back(hetmp);
+				wpt.push_back(wtmp);
+				w += wtmp;
+				if(htmp - hetmp > uh) {
+					uh = htmp - hetmp;
+				}
+				if(hetmp > dh) {
+					dh = hetmp;
+				}				
+			}
+			
 			PangoLayout *layout_sign = gtk_widget_create_pango_layout(resultview, NULL);
 			string str;
 			if(ips.power_depth > 0) {
@@ -2372,7 +2390,11 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			if(m.type() == STRUCT_COMPARISON) {
 				switch(m.comparisonType()) {
 					case COMPARISON_EQUALS: {
-						str += "=";
+						if(ips.depth == 0 && po.use_unicode_signs && (*po.is_approximate || m.isApproximate())) {
+							str += SIGN_ALMOST_EQUAL;
+						} else {
+							str += "=";
+						}
 						break;
 					}
 					case COMPARISON_NOT_EQUALS: {
@@ -2423,30 +2445,16 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			}
 			pango_layout_set_markup(layout_sign, str.c_str(), -1);
 			pango_layout_get_pixel_size(layout_sign, &sign_w, &sign_h);
-			for(unsigned int i = 0; i < m.size(); i++) {
-				hetmp = 0;		
-				ips_n.wrap = m[i].needsParenthesis(po, ips_n, m, i + 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
-				pixmap_terms.push_back(draw_structure(m[i], po, ips_n, &hetmp));
-				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_terms[i]), &wtmp, &htmp);
-				hpt.push_back(htmp);
-				cpt.push_back(hetmp);
-				wpt.push_back(wtmp);
-				w += wtmp;
-				if(i > 0) w += sign_w;
-				if(sign_h / 2 > dh) {
-					dh = sign_h / 2;
-				}
-				if(sign_h / 2 + sign_h % 2 > uh) {
-					uh = sign_h / 2 + sign_h % 2;
-				}					
-				if(htmp - hetmp > uh) {
-					uh = htmp - hetmp;
-				}
-				if(hetmp > dh) {
-					dh = hetmp;
-				}				
+			if(sign_h / 2 > dh) {
+				dh = sign_h / 2;
 			}
+			if(sign_h / 2 + sign_h % 2 > uh) {
+				uh = sign_h / 2 + sign_h % 2;
+			}
+			w += sign_w * (m.size() - 1);
+			
 			w += space_w * (pixmap_terms.size() - 1) * 2;
+			
 			central_point = dh;
 			h = dh + uh;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
@@ -2919,7 +2927,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 		g_object_unref(pixmap_old);
 		gdk_gc_unref(line_gc);
 	}
-	if(ips.depth == 0 && pixmap) {
+	if(ips.depth == 0 && !(m.isComparison() && ((m.comparisonType() == COMPARISON_EQUALS && po.use_unicode_signs) || (!*po.is_approximate && !m.isApproximate()))) && pixmap) {
 		gint w, h, wle, hle, w_new, h_new;
 		gdk_drawable_get_size(GDK_DRAWABLE(pixmap), &w, &h);			
 		GdkPixmap *pixmap_old = pixmap;
@@ -2981,6 +2989,7 @@ void *view_proc(void *) {
 	printops.allow_non_usable = false;
 	m.format(printops);
 	result_text = m.print(printops);	
+	
 	if(result_text.length() > 1500) {
 		PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
 		pango_layout_set_markup(layout, _("result is too long\nsee history"), -1);
@@ -6640,7 +6649,7 @@ void on_menu_item_multiple_roots_activate(GtkMenuItem *w, gpointer user_data) {
 	execute_expression();
 }
 void on_menu_item_factorize_activate(GtkMenuItem *w, gpointer user_data) {
-//	mstruct->factorize();
+	mstruct->factorize(evalops);
 	setResult();
 	gtk_widget_grab_focus(expression);
 }

@@ -1105,7 +1105,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 				}
 				case STRUCT_POWER: {
 					if(mstruct[0] == CHILD(0)) {
-						if(CHILD(0).representsNonNegative() || (CHILD(1).representsPositive() && mstruct[1].representsPositive())) {
+						if(CHILD(0).representsNonZero() || (CHILD(1).representsPositive() && mstruct[1].representsPositive())) {
 							MathStructure mstruct2(CHILD(1));
 							mstruct2 += mstruct[1];
 							if(mstruct2.calculatesub(eo)) {
@@ -1125,7 +1125,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 				}
 				default: {
 					if(CHILD(1).isNumber() && CHILD(0) == mstruct) {
-						if(CHILD(0).representsNonNegative() || CHILD(1).representsPositive()) {
+						if(CHILD(0).representsNonZero() || CHILD(1).representsPositive()) {
 							CHILD(1) += 1;
 							return 1;
 						}
@@ -1599,6 +1599,13 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo) {
 				break;
 			}
 			case STRUCT_COMPARISON: {
+				if(!eo.test_comparisons) {
+					CHILD(0).calculatesub(eo);
+					CHILD(1).calculatesub(eo);
+					childrenUpdated();
+					b = false;
+					break;
+				}
 				if(!CHILD(1).isZero()) {
 					CHILD(0) -= CHILD(1);
 					CHILD(0).calculatesub(eo);
@@ -1712,7 +1719,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo) {
 bool MathStructure::calculateFunctions(const EvaluationOptions &eo) {
 	if(m_type == STRUCT_FUNCTION) {
 		if(!o_function->testArgumentCount(SIZE)) {
-			goto calculate_childs;
+			return false;
 		}
 		if(o_function->maxargs() > -1 && (int) SIZE > o_function->maxargs()) {
 			REDUCE(o_function->maxargs());
@@ -1744,17 +1751,21 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo) {
 			return false;
 		}
 		MathStructure mstruct;
-		if(o_function->calculate(mstruct, *this, eo)) {
+		int i = o_function->calculate(mstruct, *this, eo);
+		if(i > 0) {
 			set(mstruct);
 			calculateFunctions(eo);
 			return true;
 		} else {
+			if(i < 0) {
+				i = -i;
+				if(i <= (int) SIZE) CHILD(i - 1) = mstruct;
+			}
 			m_type = STRUCT_FUNCTION;
 			return false;
 		}
 		return false;
 	}
-	calculate_childs:
 	bool b = false;
 	for(unsigned int i = 0; i < SIZE; i++) {
 		if(CHILD(i).calculateFunctions(eo)) b = true;
@@ -1955,6 +1966,7 @@ void MathStructure::evalSort() {
 
 int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, const MathStructure &parent, const SortOptions &so);
 int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, const MathStructure &parent, const SortOptions &so) {
+
 	if(mstruct1.type() != mstruct2.type() && !mstruct1.isUnit()) {
 		if(parent.isAddition() && so.minus_last) {
 			bool m1 = mstruct1.hasNegativeSign(), m2 = mstruct2.hasNegativeSign();
@@ -1974,9 +1986,10 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 		}
 		if(mstruct2.isUnit()) return -sortCompare(mstruct2, mstruct1, parent, so);
 		else if(mstruct2.isAddition()) return -sortCompare(mstruct2, mstruct1, parent, so);	
-		else if(mstruct2.isMultiplication() && !mstruct1.isMultiplication()) return -sortCompare(mstruct2, mstruct1, parent, so);
+		else if(mstruct2.isMultiplication() && !mstruct1.isAddition()) return -sortCompare(mstruct2, mstruct1, parent, so);
 		else if(mstruct2.isPower() && !mstruct1.isAddition() && !mstruct1.isMultiplication()) return -sortCompare(mstruct2, mstruct1, parent, so);
 	}
+
 	switch(mstruct1.type()) {
 		case STRUCT_NUMBER: {
 			if(mstruct2.isNumber()) {
@@ -2143,195 +2156,7 @@ void MathStructure::sort(const SortOptions &so) {
 	}
 }
 
-
-#ifdef HAVE_GIAC
-
-#ifndef NO_NAMESPACE_GIAC
-namespace giac {
-#endif
-
-gen evalf_try_exact(const gen &g, int level=DEFAULT_EVAL_LEVEL,const context * contextptr = 0);
-
-  gen check_not_assume_try_exact(const gen & not_evaled,const gen & evaled, bool evalf_after,int level,const context * contextptr){
-    if ( (evaled.type==_VECT) && (evaled.subtype==_ASSUME__VECT) ){
-      if ( evalf_after && evaled._VECTptr->size()==2 && evaled._VECTptr->back().type<=_CPLX )
-	  return evalf_try_exact(evaled._VECTptr->back(),level,contextptr);
-      if (not_evaled.type==_IDNT && evaled._VECTptr->size()==1 && evaled._VECTptr->front().type==_INT_){
-	gen tmp=not_evaled;
-	tmp.subtype=evaled._VECTptr->front().val;
-	return tmp;
-      }
-      return not_evaled;
-    }
-    else {
-      if (evalf_after && (evaled.type!=_IDNT))
-	return evalf_try_exact(evaled,level,contextptr);
-      else {
-	if (not_evaled.subtype==evaled.subtype && not_evaled==evaled) // don't return a copy of the _IDNT
-	  return not_evaled;
-	else
-	  return evaled;
-      }
-    }
-  }
-
-  gen evalf_try_exact_VECT(const vecteur & v,int subtype,int level,const context * contextptr){
-    // bool save_is_inevalf=is_inevalf;
-    // is_inevalf=true;
-    vecteur w;
-    vecteur::const_iterator it=v.begin(), itend=v.end();
-    w.reserve(itend-it);
-    for (;it!=itend;++it){
-      gen tmp=evalf_try_exact(*it,level,contextptr);
-      if (subtype){
-	if ((subtype==_SEQ__VECT)&&(tmp.type==_VECT) && (tmp.subtype==_SEQ__VECT)){
-	  const_iterateur jt=tmp._VECTptr->begin(),jtend=tmp._VECTptr->end();
-	  for (;jt!=jtend;++jt)
-	    w.push_back(*jt);
-	}
-	else {
-	  if ((subtype==_SEQ__VECT) || (!equalposcomp(w,tmp)))
-	    w.push_back(tmp);
-	}
-      }
-      else
-	w.push_back(tmp);
-    }
-    // is_inevalf=save_is_inevalf;
-    return gen(w,subtype);
-  }
-
-
-gen evalf_try_exact(const gen &g, int level, const context *contextptr) {
-    switch (g.type) {
-    case _DOUBLE_: case _REAL: case _STRNG: case _MAP: case _EQW: case _GROB: case _INT_: case _ZINT:
-      return g;
-    case _CPLX: 
-      return gen(evalf_try_exact(*g._CPLXptr,level,contextptr),evalf_try_exact(*(g._CPLXptr + 1),level,contextptr));
-    case _USER:
-      return g._USERptr->evalf(level,contextptr);
-    case _IDNT:
-      if (*g._IDNTptr==_IDNT_pi || *g._IDNTptr==e__IDNT )
-	return g._IDNTptr->eval(level,contextptr);
-      if (!contextptr && g.subtype==_GLOBAL__EVAL)
-	return check_not_assume_try_exact(g,global_eval(g,100),true,level,contextptr);
-      return check_not_assume_try_exact(g,g._IDNTptr->eval(level,contextptr),true,level,contextptr);
-    case _VECT:
-      return gen(evalf_try_exact_VECT(*g._VECTptr,g.subtype,level,contextptr));
-    case _SYMB:
-      if ( (g._SYMBptr->sommet==at_pow) && (g._SYMBptr->feuille._VECTptr->back().type==_INT_))
-	return pow(g._SYMBptr->feuille._VECTptr->front().evalf(level,contextptr),g._SYMBptr->feuille._VECTptr->back());
-      if (g._SYMBptr->sommet==at_integrate)
-	return _romberg(g._SYMBptr->feuille,contextptr);
-      if (g._SYMBptr->sommet==at_rootof)
-	return approx_rootof(g._SYMBptr->feuille.evalf(level,contextptr));
-      if (g._SYMBptr->sommet==at_cell)
-	return g;
-      return g._SYMBptr->evalf(level,contextptr);
-    case _FRAC:
-      return rdiv(evalf_try_exact(g._FRACptr->num,level,contextptr),evalf_try_exact(g._FRACptr->den,level,contextptr));
-    case _FUNC: case _MOD: case _ROOT:
-      return g; // replace in RPN mode
-    case _EXT:
-      return alg_evalf(evalf_try_exact(*g._EXTptr,level,contextptr),evalf_try_exact(*(g._EXTptr+1),level,contextptr));
-    case _POLY:
-      return apply(*g._POLYptr,no_context_evalf);
-    default: 
-      return g.evalf(level, contextptr);
-    }
-}
-#ifndef NO_NAMESPACE_GIAC
-}
-#endif
-
-void MathStructure::evalf() {
-	if(m_type == STRUCT_FUNCTION) {
-		MathStructure mstruct(toGiac().evalf());
-		if(!mstruct.isFunction()) {
-			set(mstruct);
-			return evalf();
-		}
-	} else if(m_type == STRUCT_POWER) {
-		MathStructure mstruct(giac::simplify(toGiac()));
-		if(!mstruct.isPower()) {
-			set(mstruct);
-			return evalf();
-		}
-		mstruct.set(toGiac().evalf());
-		if(!mstruct.isPower()) {
-			set(mstruct);
-			return evalf();
-		}
-	} else if(m_type == STRUCT_UNKNOWN) {
-		set(giac_unknown->evalf());
-	}
-	for(unsigned int i = 0; i < SIZE; i++) {
-		CHILD(i).evalf();
-	}
-	set(toGiac().eval());
-	if(m_type == STRUCT_FUNCTION) {
-		MathStructure mstruct(toGiac().evalf());
-		if(!mstruct.isFunction()) {
-			set(mstruct);
-		}
-	} else if(m_type == STRUCT_POWER) {
-		MathStructure mstruct(giac::simplify(toGiac()));
-		if(!mstruct.isPower()) {
-			set(mstruct);
-			return;
-		}
-		mstruct.set(toGiac().evalf());
-		if(!mstruct.isPower()) {
-			set(mstruct);
-			return;
-		}
-	} else if(m_type == STRUCT_UNKNOWN) {
-		set(giac_unknown->evalf());
-	}
-}
-
-void MathStructure::evalQalculateFunctions(const EvaluationOptions &eo) {
-	if(m_type == STRUCT_FUNCTION && !o_function->isGiacFunction()) {
-		for(unsigned int i = 0; i < SIZE; i++) {
-			CHILD(i).eval(eo);
-		}
-		m_type = STRUCT_VECTOR;
-		MathStructure vargs(*this);
-		m_type = STRUCT_FUNCTION;
-		set(o_function->calculate(vargs));
-	} else {
-		for(unsigned int i = 0; i < SIZE; i++) {
-			CHILD(i).evalQalculateFunctions(eo);
-		}
-	}
-}
-#endif
-
 MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
-#ifdef HAVE_GIAC
-	if(eo.sync_units) {
-		syncUnits();
-	}
-	evalQalculateFunctions(eo);
-	try {
-		if(eo.approximation == APPROXIMATION_APPROXIMATE) {
-			set(toGiac().evalf());
-		} else if(eo.approximation == APPROXIMATION_TRY_EXACT) {
-			//g = giac::evalf_try_exact(g);
-			set(toGiac().eval());
-			evalf();
-		} else {
-			set(toGiac().eval());
-		}
-		if(eo.structuring == STRUCTURING_SIMPLIFY) {
-			set(giac::simplify(toGiac()));
-		} else if(eo.structuring == STRUCTURING_FACTORIZE) {
-			set(giac::factor(toGiac()));
-		}
-	} catch(std::runtime_error & err){
-		CALCULATOR->error(true, _("Giac error: %s.\n"), err.what(), NULL);
-	}
-#else
 	if(eo.structuring == STRUCTURING_NONE) return *this;
 	unformat(eo);
 	if(eo.sync_units) {
@@ -2344,11 +2169,13 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
-		calculatesub(eo2);
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 		calculatesub(eo2);
 	} else {
 		calculatesub(eo);
+	}
+	if(eo.isolate_x) {
+		isolate_x(eo);
 	}
 	if(eo.sync_units && eo.sync_complex_unit_relations) {
 		if(syncUnits(true)) {
@@ -2362,12 +2189,152 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			} else {
 				calculatesub(eo);
 			}
+			if(eo.isolate_x) {
+				isolate_x(eo);
+			}
 		}
 	}
-	
-#endif
 	return *this;
 }
+void MathStructure::factorize(const EvaluationOptions &eo) {
+	switch(type()) {
+		case STRUCT_ADDITION: {
+			MathStructure factor_mstruct(1, 1);
+			Number gcd;
+			for(unsigned int i = 0; i < SIZE; i++) {
+				if(CHILD(i).isNumber()) {
+					if(gcd.isZero()) {
+						gcd = CHILD(i).number();
+					} else {
+						if(!gcd.gcd(CHILD(i).number())) {
+							gcd.clear();
+							break;
+						}
+					}	
+				} else if(CHILD(i).isMultiplication() && CHILD(i)[0].isNumber()) {	
+					if(gcd.isZero()) {
+						gcd.set(CHILD(i)[0].number());
+					} else {
+						if(!gcd.gcd(CHILD(i)[0].number())) {
+							gcd.clear();
+							break;
+						}
+					}
+				} else {
+					gcd.clear();
+					break;
+				}
+				if(gcd.isOne() || gcd.isZero()) {
+					gcd.clear();
+					break;
+				}
+			}
+			if(!gcd.isZero()) {
+				factor_mstruct.set(gcd);
+			}
+			if(SIZE > 0) {
+				unsigned int i = 0;
+				MathStructure *cur_mstruct;
+				while(true) {
+					if(CHILD(0).isMultiplication()) {
+						if(i >= CHILD(0).size()) {
+							break;
+						}
+						cur_mstruct = &CHILD(0)[i];
+					} else {
+						cur_mstruct = &CHILD(0);
+					}
+					if(!cur_mstruct->isNumber() && (!cur_mstruct->isPower() || cur_mstruct->exponent()->isNumber())) {
+						MathStructure *exp = NULL;
+						MathStructure *bas;
+						if(cur_mstruct->isPower()) {
+							exp = cur_mstruct->exponent();
+							bas = cur_mstruct->base();
+						} else {
+							bas = cur_mstruct;
+						}
+						bool b = true;
+						for(unsigned int i2 = 1; i2 < SIZE; i2++) {
+							b = false;
+							unsigned int i3 = 0;
+							MathStructure *cmp_mstruct;
+							while(true) {
+								if(CHILD(i2).isMultiplication()) {
+									if(i3 >= CHILD(i2).size()) {
+										break;
+									}
+									cmp_mstruct = &CHILD(i2)[i3];
+								} else {
+									cmp_mstruct = &CHILD(i2);
+								}
+								if(cmp_mstruct->equals(*bas)) {
+									if(exp) {
+										exp = NULL;
+									}
+									b = true;
+									break;
+								} else if(cmp_mstruct->isPower() && cmp_mstruct->base()->equals(*bas)) {
+									if(exp) {
+										if(cmp_mstruct->exponent()->isNumber()) {
+											if(cmp_mstruct->exponent()->number().isLessThan(exp->number())) {
+												exp = cmp_mstruct->exponent();
+											}
+											b = true;
+											break;
+										} else {
+											exp = NULL;
+										}
+									} else {
+										b = true;
+										break;
+									}
+								}
+								if(!CHILD(i2).isMultiplication()) {
+									break;
+								}
+								i3++;
+							}
+							if(!b) break;
+						}
+						if(b) {
+							if(exp) {
+								MathStructure mstruct(*bas);
+								mstruct ^= *exp;
+								factor_mstruct.multiply(mstruct, true);
+							} else {
+								factor_mstruct.multiply(*bas, true);
+							}
+						}
+					}
+					if(!CHILD(0).isMultiplication()) {
+						break;
+					}
+					i++;
+				}
+			}
+			if(!factor_mstruct.isOne()) {
+				MathStructure msave(*this);
+				msave /= factor_mstruct;
+				EvaluationOptions eo2 = eo;
+				eo2.calculate_functions = false;
+				eo2.sync_units = false;
+				msave.eval(eo2);
+				clear();
+				m_type = STRUCT_MULTIPLICATION;
+				APPEND(factor_mstruct);
+				APPEND(msave);
+			}
+			break;
+		}
+		default: {
+			for(unsigned int i = 0; i < SIZE; i++) {
+				CHILD(i).factorize();
+			}
+		}
+	}
+}
+
+
 #ifdef HAVE_GIAC
 giac::gen MathStructure::toGiac() const {
 	switch(type()) {
@@ -3110,7 +3077,7 @@ void MathStructure::postFormatUnits(const PrintOptions &po, const MathStructure 
 						for(unsigned int i = 1; i < dens.size(); i++) {
 							den.multiply(CHILD(1)[dens[i]], i > 1);
 						}
-						for(unsigned int i = 0; i < nums.size(); i++) {
+						for(unsigned int i = 0; i < dens.size(); i++) {
 							CHILD(1).delChild(dens[i] + 1 - i);
 						}
 						if(CHILD(1).size() == 1) {
@@ -3960,7 +3927,7 @@ bool MathStructure::rankVector(bool ascending) {
 		for(unsigned int i = 0; i < ranked.size(); i++) {
 			ComparisonResult cmp = CHILD(index).compare(CHILD(ranked[i]));
 			if(COMPARISON_NOT_FULLY_KNOWN(cmp)) {
-				CALCULATOR->error(true, _("Unsolvable comparison at component %s when trying to rank matrix/vector."), i2s(index).c_str(), NULL);
+				CALCULATOR->error(true, _("Unsolvable comparison at component %s when trying to rank vector."), i2s(index).c_str(), NULL);
 				return false;
 			}
 			if((ascending && cmp == COMPARISON_RESULT_GREATER) || cmp == COMPARISON_RESULT_EQUAL || (!ascending && cmp == COMPARISON_RESULT_LESS)) {
@@ -4008,7 +3975,7 @@ bool MathStructure::sortVector(bool ascending) {
 		for(unsigned int i = 0; i < ranked_mstructs.size(); i++) {
 			ComparisonResult cmp = CHILD(index).compare(v_subs[ranked_mstructs[i]]);
 			if(COMPARISON_MIGHT_BE_LESS_OR_GREATER(cmp)) {
-				CALCULATOR->error(true, _("Unsolvable comparison at component %s when trying to sort matrix/vector."), i2s(index).c_str(), NULL);
+				CALCULATOR->error(true, _("Unsolvable comparison at component %s when trying to sort vector."), i2s(index).c_str(), NULL);
 				return false;
 			}
 			if((ascending && COMPARISON_IS_EQUAL_OR_GREATER(cmp)) || (!ascending && COMPARISON_IS_EQUAL_OR_LESS(cmp))) {
@@ -4949,4 +4916,195 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 	}
 	return true;
 }
+
+const MathStructure &MathStructure::find_x_var() const {
+	if(isSymbolic()) {
+		return *this;
+	} else if(isVariable()) {
+		if(o_variable->isKnown()) return m_undefined;
+		return *this;
+	}
+	const MathStructure *mstruct;
+	const MathStructure *x_mstruct = &m_undefined;
+	for(unsigned int i = 0; i < SIZE; i++) {
+		mstruct = &CHILD(i).find_x_var();
+		if(mstruct->isVariable()) {
+			if(mstruct->variable() == CALCULATOR->v_x) {
+				return *mstruct;
+			} else if(!x_mstruct->isVariable()) {
+				x_mstruct = mstruct;
+			} else if(mstruct->variable() == CALCULATOR->v_y) {
+				x_mstruct = mstruct;
+			} else if(mstruct->variable() == CALCULATOR->v_z && x_mstruct->variable() != CALCULATOR->v_y) {
+				x_mstruct = mstruct;
+			}
+		} else if(mstruct->isSymbolic()) {
+			if(!x_mstruct->isVariable() && !x_mstruct->isSymbolic()) {
+				x_mstruct = mstruct;
+			}
+		}
+	}
+	return *x_mstruct;
+}
+bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &x_varp) {
+	if(!isComparison()) {
+		bool b = false;
+		for(unsigned int i = 0; i < SIZE; i++) {
+			if(CHILD(i).isolate_x(eo, x_varp)) b = true;
+		}
+		return b;
+	}
+	if(x_varp.isUndefined()) {
+		const MathStructure &x_var2 = find_x_var();
+		if(x_var2.isUndefined()) return false;
+		return isolate_x(eo, x_var2);
+	}
+	MathStructure x_var(x_varp);
+	EvaluationOptions eo2 = eo;
+	eo2.calculate_functions = false;
+	eo2.test_comparisons = false;
+	eo2.isolate_x = false;
+	switch(CHILD(0).type()) {
+		case STRUCT_ADDITION: {
+			bool b = false;
+			for(unsigned int i = 0; i < CHILD(0).size(); i++) {
+				if(!CHILD(0)[i].contains(x_var)) {
+					CHILD(1).subtract(CHILD(0)[i], true);
+					CHILD(0).delChild(i + 1);
+					b = true;
+				}
+			}
+			if(b) {
+				CHILD(1).eval(eo2);
+				if(CHILD(0).size() == 1) {
+					MathStructure msave(CHILD(0)[0]);
+					CHILD(0) = msave;
+				}
+				isolate_x(eo, x_var);
+				childrenUpdated();
+				return true;
+			}
+			break;
+		}
+		case STRUCT_MULTIPLICATION: {
+			bool b = false;
+			for(unsigned int i = 0; i < CHILD(0).size(); i++) {
+				if(!CHILD(0)[i].contains(x_var) && CHILD(0)[i].representsNonZero()) {
+					bool b2 = false;
+					if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) {
+						if(CHILD(0)[i].representsNegative()) {
+							switch(ct_comp) {
+								case COMPARISON_LESS: {ct_comp = COMPARISON_GREATER; break;}
+								case COMPARISON_GREATER: {ct_comp = COMPARISON_LESS; break;}
+								case COMPARISON_EQUALS_LESS: {ct_comp = COMPARISON_EQUALS_GREATER; break;}
+								case COMPARISON_EQUALS_GREATER: {ct_comp = COMPARISON_EQUALS_LESS; break;}
+								default: {}
+							}
+							b2 = true;
+						} else if(CHILD(0)[i].representsNonNegative()) {
+							b2 = true;
+						}
+					} else {
+						b2 = true;
+					}
+					if(b2) {
+						CHILD(1).divide(CHILD(0)[i], true);
+						CHILD(0).delChild(i + 1);
+						b = true;
+					}
+				}
+			}
+			if(b) {
+				CHILD(1).eval(eo2);
+				if(CHILD(0).size() == 1) {
+					MathStructure msave(CHILD(0)[0]);
+					CHILD(0) = msave;
+				}
+				isolate_x(eo, x_var);
+				childrenUpdated();
+				return true;
+			}
+			break;
+		} 
+		case STRUCT_POWER: {
+			if(CHILD(0)[0].contains(x_var)) {
+				if(!CHILD(0)[1].contains(x_var)) {
+					if(!CHILD(0)[1].representsNonNegative() && !CHILD(0)[0].representsNonZero()) {
+						return false;
+					}
+					bool multiple = CHILD(0)[1].representsEven();
+					MathStructure exp(1, 1);
+					exp /= CHILD(0)[1];
+					CHILD(1) ^= exp;
+					CHILD(1).eval(eo2);
+					if(multiple) {
+						MathStructure mstruct(CHILD(1));
+						CHILD(1).clearVector();
+						CHILD(1).addItem(mstruct);
+						CHILD(1).addItem(mstruct);
+						CHILD(1)[1].negate();
+						CHILD(1)[1].eval(eo2);
+					}
+					MathStructure msave(CHILD(0)[0]);
+					CHILD(0) = msave;
+					isolate_x(eo, x_var);
+					childrenUpdated();
+					return true;
+				}
+			} else if(CHILD(0)[1].contains(x_var)) {
+				MathStructure msave(CHILD(1));
+				CHILD(1).set(CALCULATOR->f_logn, &msave, &CHILD(0)[0], NULL);
+				eo2.calculate_functions = true;
+				CHILD(1).eval(eo2);
+				MathStructure msave2(CHILD(0)[1]);
+				CHILD(0) = msave2;
+				isolate_x(eo, x_var);
+				childrenUpdated();
+			}
+			break;
+		}
+		case STRUCT_FUNCTION: {
+			if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) {
+				break;
+			}
+			if(CHILD(0).function() == CALCULATOR->f_ln && CHILD(0).size() == 1) {
+				if(CHILD(0)[0].contains(x_var)) {
+					MathStructure msave(CHILD(1));
+					CHILD(1).set(CALCULATOR->v_e);
+					CHILD(1) ^= msave;
+					CHILD(1).eval(eo2);
+					MathStructure msave2(CHILD(0)[0]);
+					CHILD(0) = msave2;
+					isolate_x(eo, x_var);
+					childrenUpdated();
+				}
+			} else if(CHILD(0).function() == CALCULATOR->f_logn && CHILD(0).size() == 2) {
+				if(CHILD(0)[0].contains(x_var)) {
+					MathStructure msave(CHILD(1));
+					CHILD(1) = CHILD(0)[1];
+					CHILD(1) ^= msave;
+					CHILD(1).eval(eo2);
+					MathStructure msave2(CHILD(0)[0]);
+					CHILD(0) = msave2;
+					isolate_x(eo, x_var);
+					childrenUpdated();
+				}
+			} else if(CHILD(0).function() == CALCULATOR->f_abs && CHILD(0).size() == 1) {
+				if(CHILD(0)[0].contains(x_var)) {
+					MathStructure malt(-1, 1);
+					malt *= CHILD(1);
+					CHILD(1).transform(STRUCT_VECTOR, malt);					
+					CHILD(1)[1].eval(eo2);
+					MathStructure msave(CHILD(0)[0]);
+					CHILD(0) = msave;
+					isolate_x(eo, x_var);
+					childrenUpdated();
+				}
+			}
+			break;
+		}
+	}
+	return false;
+}
+
 

@@ -32,13 +32,9 @@
 #include <queue>
 #include <stack>
 
-#ifdef HAVE_GIAC
-
-#else
 #define WANT_OBFUSCATING_OPERATORS
 #include <cln/cln.h>
 using namespace cln;
-#endif
 
 #define XML_GET_APPROX_FROM_PROP(node, b)		value = xmlGetProp(node, (xmlChar*) "approximate"); if(value) {b = !xmlStrcmp(value, (const xmlChar*) "true");} else {value = xmlGetProp(node, (xmlChar*) "precise"); if(value) {b = xmlStrcmp(value, (const xmlChar*) "true");} else {b = false;}} if(value) xmlFree(value);
 #define XML_GET_FALSE_FROM_PROP(node, name, b)		value = xmlGetProp(node, (xmlChar*) name); if(value && !xmlStrcmp(value, (const xmlChar*) "false")) {b = false;} else {b = true;} if(value) xmlFree(value);
@@ -198,6 +194,7 @@ Calculator::Calculator() {
 
 	default_assumptions = new Assumptions;
 	default_assumptions->setNumberType(ASSUMPTION_NUMBER_REAL);
+	default_assumptions->setSign(ASSUMPTION_SIGN_NONZERO);
 	
 	u_rad = NULL;
 
@@ -663,27 +660,11 @@ void Calculator::prefixNameChanged(Prefix *p) {
 
 void Calculator::setPrecision(int precision) {
 	if(precision <= 0) precision = DEFAULT_PRECISION;
-#ifdef HAVE_GIAC
-	giac::set_decimal_digits(precision + 1);
-	mpfr_t f_e;
-	mpfr_init(f_e);
-	mpfr_t f_1;
-	mpfr_init(f_1);
-	mpfr_set_ui(f_1, 1, GMP_RNDN);
-	mpfr_exp(f_e, f_1, GMP_RNDN);
-	if(precision > 14) {
-		*giac::e__IDNT.value = giac::real_object(f_e);
-	} else {
-		*giac::e__IDNT.value = M_E;
-	}
-	mpfr_clear(f_e);
-#else
 	if(precision < 10) {
 		cln::default_float_format = float_format(precision + (10 - precision) + 5);	
 	} else {
 		cln::default_float_format = float_format(precision + 5);	
 	}
-#endif
 	i_precision = precision;
 }
 int Calculator::getPrecision() const {
@@ -700,15 +681,11 @@ void Calculator::setLocale() {
 		DOT_S = ".,";	
 		COMMA_STR = ";";
 		COMMA_S = ";";		
-		//addStringAlternative(",", DOT);	
-		//signs.insert(signs.begin(), DOT);
-		//real_signs.insert(real_signs.begin(), ",");
 	} else {
 		DOT_STR = ".";	
 		DOT_S = ".";	
 		COMMA_STR = ",";
 		COMMA_S = ",;";		
-		//delStringAlternative(",", DOT);	
 	}
 	setlocale(LC_NUMERIC, "C");
 }
@@ -717,7 +694,6 @@ void Calculator::unsetLocale() {
 	COMMA_S = ",;";	
 	DOT_STR = ".";
 	DOT_S = ".";
-	//delStringAlternative(",", DOT);
 }
 
 unsigned int Calculator::addId(const MathStructure &m_struct, bool persistent) {
@@ -912,6 +888,7 @@ void Calculator::addBuiltinFunctions() {
 	f_csum = addFunction(new CustomSumFunction());
 	
 	f_diff = addFunction(new DeriveFunction());
+	f_solve = addFunction(new SolveFunction());
 
 }
 void Calculator::addBuiltinUnits() {

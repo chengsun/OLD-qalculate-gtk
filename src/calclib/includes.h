@@ -257,10 +257,11 @@ static const struct ParseOptions {
 
 static const struct EvaluationOptions {
 	ApproximationMode approximation;
-	bool sync_units, sync_complex_unit_relations, keep_prefixes, calculate_variables, calculate_functions;
+	bool sync_units, sync_complex_unit_relations, keep_prefixes;
+	bool calculate_variables, calculate_functions, test_comparisons, isolate_x;
 	StructuringMode structuring;
 	ParseOptions parse_options;
-	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), structuring(STRUCTURING_SIMPLIFY) {}
+	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), structuring(STRUCTURING_SIMPLIFY) {}
 } default_evaluation_options;
 
 #define DEFAULT_PRECISION	8
@@ -297,6 +298,8 @@ static const struct EvaluationOptions {
 #define SIGN_CAPITAL_SIGMA		"Σ"
 #define SIGN_CAPITAL_PI			"Π"
 #define SIGN_CAPITAL_OMEGA		"Ω"
+#define SIGN_CAPITAL_GAMMA		"Γ"
+#define SIGN_CAPITAL_BETA		"Β"
 #define SIGN_INFINITY			"∞"
 
 #define ID_WRAP_LEFT_CH		'{'
