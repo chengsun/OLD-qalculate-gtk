@@ -4,7 +4,7 @@
 
 xmldir = $(datadir)/qalculate
 
-xml_in_files = functions.xml.in prefixes.xml.in units.xml.in variables.xml.in
+xml_in_files = elements.xml.in functions.xml.in prefixes.xml.in units.xml.in variables.xml.in
 xml_DATA = $(xml_in_files:.xml.in=.xml)
 
 @INTLTOOL_XML_RULE@

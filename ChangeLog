@@ -1,3 +1,15 @@
+2004-08-09 Niklas Knutsson  <nq@altern.org>
+
+	* Do not be backwards compatible for definitions saved with the current version
+	* Update Swedish translation
+	* Where there is approximate there shall also be precision
+	* More physical constants
+	* Fix formatting of x/unit
+	* Add atomic mass unit, u
+	* Add <system>si</system> again
+	* Elements!
+	* Ignore initial zeroes for precision
+
 2004-08-08 Niklas Knutsson  <nq@altern.org>
 
 	* Finish names GUI

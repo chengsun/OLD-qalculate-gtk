@@ -444,6 +444,7 @@ MathStructure Function::calculate(MathStructure &vargs, const EvaluationOptions 
 				if(!testArguments(vargs_copy) || calculate(mstruct2, vargs_copy, eo) < 1) {
 					mstruct2 = createFunctionMathStructureFromVArgs(vargs_copy);
 				} else {
+					if(precision() < 0) mstruct2.setPrecision(precision());
 					if(isApproximate()) mstruct2.setApproximate();
 				}
 				if(mstruct.isZero()) {
@@ -458,6 +459,7 @@ MathStructure Function::calculate(MathStructure &vargs, const EvaluationOptions 
 				return createFunctionMathStructureFromVArgs(vargs);
 			}
 		}
+		if(precision() < 0) mstruct.setPrecision(precision());
 		if(isApproximate()) mstruct.setApproximate();
 		return mstruct;
 	} else {
@@ -809,9 +811,11 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		for(unsigned int i = 0; i < v_id.size(); i++) {
 			CALCULATOR->delId(v_id[i], true);
 		}
+		if(precision() < 0) mstruct.setPrecision(precision());
 		if(isApproximate()) mstruct.setApproximate();
 	} else {
 		mstruct = CALCULATOR->parse(eq_calc, po);
+		if(precision() < 0) mstruct.setPrecision(precision());
 		if(isApproximate()) mstruct.setApproximate();
 	}
 	return 1;

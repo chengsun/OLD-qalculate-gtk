@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="0.6.2">
+<QALCULATE version="0.6.3">
   <category>
     <_title>Matrices &amp; Vectors</_title>
     <builtin_function name="vector">
@@ -1892,7 +1892,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </builtin_function>
     <builtin_function name="csum">
-      <_title>Custom sum of components</_title>
+      <_title>Custom Sum of Components</_title>
       <name index="1">
         <reference>true</reference>
         <_name>csum</_name>
@@ -1946,7 +1946,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </builtin_function>
     <builtin_function name="error">
-      <_title>Display error</_title>
+      <_title>Display Error</_title>
       <name index="1">
         <reference>true</reference>
         <_name>error</_name>
@@ -1956,7 +1956,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </builtin_function>
     <builtin_function name="warning">
-      <_title>Display warning</_title>
+      <_title>Display Warning</_title>
       <name index="1">
         <reference>true</reference>
         <_name>warning</_name>
@@ -1965,8 +1965,18 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <_title>Message</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="message">
+      <_title>Display Message</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>message</_name>
+      </name>
+      <argument index="1">
+        <_title>Message</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="save">
-      <_title>Save as variable</_title>
+      <_title>Save as Variable</_title>
       <name index="1">
         <reference>true</reference>
         <_name>save</_name>

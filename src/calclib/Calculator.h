@@ -47,30 +47,47 @@ struct plot_data_parameters {
 	plot_data_parameters();
 };
 
-class CalculatorError {
+typedef enum {
+	MESSAGE_INFORMATION,
+	MESSAGE_WARNING,
+	MESSAGE_ERROR
+} MessageType;
+
+class CalculatorMessage {
   protected:
 	string smessage;
-	bool bcritical;
+	MessageType mtype;
   public:
-	CalculatorError(string message_, bool critical_);
-	CalculatorError(const CalculatorError &e);
-	string message(void) const;
-	const char* c_message(void) const;	
-	bool critical(void) const;
+	CalculatorMessage(string message_, MessageType type_ = MESSAGE_WARNING);
+	CalculatorMessage(const CalculatorMessage &e);
+	string message() const;
+	const char* c_message() const;	
+	MessageType type() const;
 };
 
 #include <MathStructure.h>
 
+struct Element {
+	string symbol, name;
+	int number;
+	string weight, density, melting_point, boiling_point, atomic_radius, covalent_radius, ionic_radius, atomic_volume;
+	string specific_heat, fusion_heat, evaporation_heat, termal_conductivity, pauling, ionising_energy;
+	string oxidation_states; string electronic_configuration;
+	int x_pos, y_pos;
+};
+
 class Calculator {
   protected:
-	vector<CalculatorError> errors;
-	int error_id;
+	vector<CalculatorMessage> messages;
+
 	int ianglemode;
 	int i_precision;
 	char vbuffer[200];
 	vector<void*> ufv;
 	vector<char> ufv_t;
 	vector<unsigned int> ufv_i;
+	
+	vector<Element*> elements;
 	
 	Sgi::hash_map<unsigned int, MathStructure> id_structs;
 	Sgi::hash_map<unsigned int, bool> ids_p;
@@ -129,10 +146,13 @@ class Calculator {
 	Function *f_replace;
 	Function *f_for, *f_sum, *f_product, *f_process, *f_process_matrix, *f_csum, *f_if, *f_function;
 	Function *f_diff, *f_solve;
-	Function *f_error, *f_warning, *f_save, *f_load, *f_export, *f_title;
+	Function *f_error, *f_warning, *f_message, *f_save, *f_load, *f_export, *f_title;
+	Function *f_atomic_symbol, *f_atomic_number, *f_atomic_name, *f_atomic_weight, *f_atomic_density, *f_melting_point, *f_boiling_point, *f_atomic_radius;
+	Function *f_covalent_radius, *f_ionic_radius, *f_atomic_volume, *f_specific_heat, *f_fusion_heat, *f_evaporation_heat;
+	Function *f_termal_conductivity, *f_pauling, *f_ionising_energy, *f_oxidation_states, *f_electronic_configuration, *f_atom;
 	Unit *u_rad, *u_euro;
 	Prefix *null_prefix;
-  
+
   	bool place_currency_code_before, place_currency_sign_before;
   
   	bool b_busy, calculate_thread_stopped, print_thread_stopped;
@@ -268,8 +288,9 @@ class Calculator {
 	Function* getFunction(string name_);	
 	Function* getActiveFunction(string name_);	
 	void error(bool critical, const char *TEMPLATE,...);
-	CalculatorError *error();
-	CalculatorError *nextError();
+	void message(MessageType mtype, const char *TEMPLATE,...);
+	CalculatorMessage *message();
+	CalculatorMessage *nextMessage();
 	bool variableNameIsValid(const string &name_);
 	bool variableNameIsValid(const char *name_);
 	string convertToValidVariableName(string name_);
@@ -287,12 +308,12 @@ class Calculator {
 	string getName(string name = "", ExpressionItem *object = NULL, bool force = false, bool always_append = false);
 	bool loadGlobalDefinitions();
 	bool loadLocalDefinitions();
-	int loadDefinitions(const char* file_name, bool is_user_defs = true);
+	int loadDefinitions(const char *file_name, bool is_user_defs = true);
 	bool saveDefinitions();	
-	int savePrefixes(const char* file_name, bool save_global = false);	
-	int saveVariables(const char* file_name, bool save_global = false);	
-	int saveUnits(const char* file_name, bool save_global = false);	
-	int saveFunctions(const char* file_name, bool save_global = false);	
+	int savePrefixes(const char *file_name, bool save_global = false);	
+	int saveVariables(const char *file_name, bool save_global = false);	
+	int saveUnits(const char *file_name, bool save_global = false);	
+	int saveFunctions(const char *file_name, bool save_global = false);	
 	MathStructure setAngleValue(const MathStructure &mstruct);	
 	bool importCSV(MathStructure &mstruct, const char *file_name, int first_row = 1, string delimiter = ",", vector<string> *headers = NULL);
 	bool importCSV(const char *file_name, int first_row = 1, bool headers = true, string delimiter = ",", bool to_matrix = false, string name = "", string title = "", string category = "");
@@ -313,6 +334,11 @@ class Calculator {
 	bool invokeGnuplot(string commands, string commandline_extra = "", bool persistent = false);
 	bool closeGnuplot();
 	bool gnuplotOpen();
+	
+	bool loadElements(const char *file_name = NULL);
+	bool elementsLoaded() const;
+	Element *getElement(int e_number);
+	Element *getElement(string e_symname);
 		
 };
 

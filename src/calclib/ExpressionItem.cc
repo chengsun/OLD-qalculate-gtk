@@ -64,6 +64,7 @@ ExpressionItem::ExpressionItem(string cat_, string name_, string title_, string 
 	sdescr = descr_;
 	b_changed = false;
 	b_approx = false;
+	i_precision = -1;
 	b_active = is_active;
 	b_registered = false;
 	b_hidden = false;
@@ -73,6 +74,7 @@ ExpressionItem::ExpressionItem(string cat_, string name_, string title_, string 
 ExpressionItem::ExpressionItem() {
 	b_changed = false;
 	b_approx = false;
+	i_precision = -1;
 	b_active = true;
 	b_local = true;
 	b_builtin = false;
@@ -86,6 +88,7 @@ ExpressionItem::~ExpressionItem() {
 void ExpressionItem::set(const ExpressionItem *item) {
 	b_changed = item->hasChanged();
 	b_approx = item->isApproximate();
+	i_precision = item->precision();
 	b_active = item->isActive();
 	for(unsigned int i = 1; i <= item->countNames(); i++) {
 		names.push_back(item->getName(1));
@@ -374,6 +377,16 @@ bool ExpressionItem::isApproximate() const {
 void ExpressionItem::setApproximate(bool is_approx) {
 	if(is_approx != b_approx) {
 		b_approx = is_approx;
+		b_changed = true;	
+	}
+}
+int ExpressionItem::precision() const {
+	return i_precision;
+}
+void ExpressionItem::setPrecision(int prec) {
+	if(i_precision != prec) {
+		i_precision = prec;
+		if(i_precision < 0) b_approx = true;
 		b_changed = true;	
 	}
 }

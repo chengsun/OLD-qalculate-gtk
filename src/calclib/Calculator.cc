@@ -38,6 +38,7 @@
 #include <cln/cln.h>
 using namespace cln;
 
+#define XML_GET_PREC_FROM_PROP(node, i)			value = xmlGetProp(node, (xmlChar*) "precision"); if(value) {i = s2i((char*) value); xmlFree(value);} else {i = -1;}
 #define XML_GET_APPROX_FROM_PROP(node, b)		value = xmlGetProp(node, (xmlChar*) "approximate"); if(value) {b = !xmlStrcmp(value, (const xmlChar*) "true");} else {value = xmlGetProp(node, (xmlChar*) "precise"); if(value) {b = xmlStrcmp(value, (const xmlChar*) "true");} else {b = false;}} if(value) xmlFree(value);
 #define XML_GET_FALSE_FROM_PROP(node, name, b)		value = xmlGetProp(node, (xmlChar*) name); if(value && !xmlStrcmp(value, (const xmlChar*) "false")) {b = false;} else {b = true;} if(value) xmlFree(value);
 #define XML_GET_TRUE_FROM_PROP(node, name, b)		value = xmlGetProp(node, (xmlChar*) name); if(value && !xmlStrcmp(value, (const xmlChar*) "true")) {b = true;} else {b = false;} if(value) xmlFree(value);
@@ -45,12 +46,13 @@ using namespace cln;
 #define XML_GET_FALSE_FROM_TEXT(node, b)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value && !xmlStrcmp(value, (const xmlChar*) "false")) {b = false;} else {b = true;} if(value) xmlFree(value);
 #define XML_GET_TRUE_FROM_TEXT(node, b)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value && !xmlStrcmp(value, (const xmlChar*) "true")) {b = true;} else {b = true;} if(value) xmlFree(value);
 #define XML_GET_BOOL_FROM_TEXT(node, b)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value && !xmlStrcmp(value, (const xmlChar*) "false")) {b = false;} else if(value && !xmlStrcmp(value, (const xmlChar*) "true")) {b = true;} if(value) xmlFree(value);
-#define XML_GET_STRING_FROM_PROP(node, name, str)	value = xmlGetProp(node, (xmlChar*) name); if(value) str = (char*) value; else str = ""; if(value) xmlFree(value);
-#define XML_GET_STRING_FROM_TEXT(node, str)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) str = (char*) value; else str = ""; if(value) xmlFree(value);
+#define XML_GET_STRING_FROM_PROP(node, name, str)	value = xmlGetProp(node, (xmlChar*) name); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = ""; 
+#define XML_GET_STRING_FROM_TEXT(node, str)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = "";
 #define XML_DO_FROM_PROP(node, name, action)		value = xmlGetProp(node, (xmlChar*) name); if(value) action((char*) value); else action(""); if(value) xmlFree(value);
-#define XML_DO_FROM_TEXT(node, action)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) action((char*) value); else action(""); if(value) xmlFree(value);
-#define XML_GET_INT_FROM_PROP(node, name, i)		value = xmlGetProp(child, (xmlChar*) "index"); if(value) i = s2i((char*) value); if(value) xmlFree(value);
-#define XML_GET_LOCALE_STRING_FROM_TEXT(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); if(!best) {if(!lang) {if(!next_best) {if(value) str = (char*) value; else str = ""; if(locale.empty()) {best = true;}}} else {lang_tmp = (char*) lang; if(lang_tmp == locale) {best = true; if(value) str = (char*) value; else str = "";} else if(!next_best && lang_tmp.length() >= 2 && lang_tmp.substr(0, 2) == localebase) {next_best = true; if(value) str = (char*) value; else str = "";} else if(!next_best && str.empty() && value) {str = (char*) value;}}} if(value) xmlFree(value); if(lang) xmlFree(lang) 
+#define XML_DO_FROM_TEXT(node, action)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {action((char*) value); xmlFree(value);} else action("");
+#define XML_GET_INT_FROM_PROP(node, name, i)		value = xmlGetProp(node, (xmlChar*) name); if(value) {i = s2i((char*) value); xmlFree(value);}
+#define XML_GET_INT_FROM_TEXT(node, i)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {i = s2i((char*) value); xmlFree(value);}
+#define XML_GET_LOCALE_STRING_FROM_TEXT(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {lang_tmp = (char*) lang; if(lang_tmp == locale) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && lang_tmp.length() >= 2 && lang_tmp.substr(0, 2) == localebase) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
 
 const string &PrintOptions::comma() const {if(comma_sign.empty()) return CALCULATOR->getComma(); return comma_sign;}
 const string &PrintOptions::decimalpoint() const {if(decimalpoint_sign.empty()) return CALCULATOR->getDecimalPoint(); return decimalpoint_sign;}
@@ -75,22 +77,22 @@ plot_data_parameters::plot_data_parameters() {
 	xaxis2 = false;
 }
 
-CalculatorError::CalculatorError(string message_, bool critical_ = false) {
-	bcritical = critical_;
+CalculatorMessage::CalculatorMessage(string message_, MessageType type_) {
+	mtype = type_;
 	smessage = message_;
 }
-CalculatorError::CalculatorError(const CalculatorError &e) {
-	bcritical = e.critical();
+CalculatorMessage::CalculatorMessage(const CalculatorMessage &e) {
+	mtype = e.type();
 	smessage = e.message();
 }
-string CalculatorError::message() const {
+string CalculatorMessage::message() const {
 	return smessage;
 }
-const char* CalculatorError::c_message() const {
+const char* CalculatorMessage::c_message() const {
 	return smessage.c_str();
 }
-bool CalculatorError::critical() const {
-	return bcritical;
+MessageType CalculatorMessage::type() const {
+	return mtype;
 }
 
 void Calculator::addStringAlternative(string replacement, string standard) {
@@ -932,12 +934,35 @@ void Calculator::addBuiltinFunctions() {
 	f_if = addFunction(new IFFunction());	
 	f_error = addFunction(new ErrorFunction());
 	f_warning = addFunction(new WarningFunction());
+	f_message = addFunction(new MessageFunction());
+	
 	f_save = addFunction(new SaveFunction());
 	f_load = addFunction(new LoadFunction());
 	f_export = addFunction(new ExportFunction());
 
 	f_diff = addFunction(new DeriveFunction());
 	f_solve = addFunction(new SolveFunction());
+	
+	f_atomic_symbol = addFunction(new AtomicSymbolFunction());
+	f_atomic_number = addFunction(new AtomicNumberFunction());
+	f_atomic_name = addFunction(new AtomicNameFunction());
+	f_atomic_weight = addFunction(new AtomicWeightFunction());
+	f_atomic_density = addFunction(new AtomicDensityFunction());
+	f_melting_point = addFunction(new MeltingPointFunction());
+	f_boiling_point = addFunction(new BoilingPointFunction());
+	f_atomic_radius = addFunction(new AtomicRadiusFunction());
+	f_covalent_radius = addFunction(new CovalentRadiusFunction());
+	f_ionic_radius = addFunction(new IonicRadiusFunction());
+	f_atomic_volume = addFunction(new AtomicVolumeFunction());
+	f_specific_heat = addFunction(new SpecificHeatFunction());
+	f_fusion_heat = addFunction(new FusionHeatFunction());
+	f_evaporation_heat = addFunction(new EvaporationHeatFunction());
+	f_termal_conductivity = addFunction(new TermalConductivityFunction());
+	f_pauling = addFunction(new PaulingFunction());
+	f_ionising_energy = addFunction(new IonisingEnergyFunction());
+	f_oxidation_states = addFunction(new OxidationStatesFunction());
+	f_electronic_configuration = addFunction(new ElectronicConfigurationFunction());
+	f_atom = addFunction(new AtomInfoFunction());
 
 }
 void Calculator::addBuiltinUnits() {
@@ -958,27 +983,53 @@ void Calculator::error(bool critical, const char *TEMPLATE, ...) {
 	}
 	va_end(ap);
 	bool dup_error = false;
-	for(unsigned int i = 0; i < errors.size(); i++) {
-		if(error_str == errors[i].message()) {
+	for(unsigned int i = 0; i < messages.size(); i++) {
+		if(error_str == messages[i].message()) {
 			dup_error = true;
 			break;
 		}
 	}
 	if(!dup_error) {
-		errors.push_back(CalculatorError(error_str, critical));
+		if(critical) messages.push_back(CalculatorMessage(error_str, MESSAGE_ERROR));
+		else messages.push_back(CalculatorMessage(error_str, MESSAGE_WARNING));
 	}
 }
-CalculatorError* Calculator::error() {
-	if(!errors.empty()) {
-		return &errors.back();
+void Calculator::message(MessageType mtype, const char *TEMPLATE, ...) {
+	if(disable_errors_ref) return;
+	string error_str = TEMPLATE;
+	va_list ap;
+	va_start(ap, TEMPLATE);
+	const char *str;
+	while(true) {
+		unsigned int i = error_str.find("%s");
+		if(i == string::npos) break;	
+		str = va_arg(ap, const char*);
+		if(!str) break;
+		error_str.replace(i, 2, str);
+	}
+	va_end(ap);
+	bool dup_error = false;
+	for(unsigned int i = 0; i < messages.size(); i++) {
+		if(error_str == messages[i].message()) {
+			dup_error = true;
+			break;
+		}
+	}
+	if(!dup_error) {
+		messages.push_back(CalculatorMessage(error_str, mtype));
+	}
+}
+CalculatorMessage* Calculator::message() {
+	if(!messages.empty()) {
+		return &messages.back();
 	}
 	return NULL;
 }
-CalculatorError* Calculator::nextError() {
-	if(!errors.empty()) {
-		errors.pop_back();
-		if(!errors.empty()) {
-			return &errors.back();
+CalculatorMessage* Calculator::nextMessage() {
+	if(!messages.empty()) {
+		messages.pop_back();
+		if(!messages.empty()) {
+			return &messages.back();
 		}
 	}
 	return NULL;
@@ -2786,7 +2837,13 @@ void Calculator::parseAdd(string &str, MathStructure &mstruct, const ParseOption
 			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
 		}
 		if(i == string::npos && str[0] != NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1)) {
-			mstruct.add(parseNumber(str, po), s, true);
+			if(s == OPERATION_EXP10 && po.read_precision == ALWAYS_READ_PRECISION) {
+				ParseOptions po2 = po;
+				po2.read_precision = READ_PRECISION_WHEN_DECIMALS;
+				mstruct.add(parseNumber(str, po2), s, true);
+			} else {
+				mstruct.add(parseNumber(str, po), s, true);
+			}
 		} else {
 			mstruct.add(parseOperators(str, po), s, true);
 		}
@@ -3146,7 +3203,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));		
 		parseAdd(str2, mstruct, po);
-		parseAdd(str, mstruct, po, OPERATION_RAISE);		
+		parseAdd(str, mstruct, po, OPERATION_RAISE);
 	} else if(po.base >= 2 && po.base <= 10 && (i = str.find(EXP_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
 		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
@@ -3420,9 +3477,9 @@ bool Calculator::loadLocalDefinitions() {
 					}
 					
 #define ITEM_READ_DTH			if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {\
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);\
+						XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description)\
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {\
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);\
+						XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title)\
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "hidden")) {\
 						XML_GET_TRUE_FROM_TEXT(child, hidden);\
 					}
@@ -3574,7 +3631,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 	ExpressionName ref_names[10];
 	bool best_name[10];
 	bool nextbest_name[10];
-	int name_index;
+	int name_index, prec;
 	ExpressionName ename;
 
 	string locale;
@@ -3631,6 +3688,17 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 		xmlFreeDoc(doc);
 		return false;
 	}
+	int version_numbers[] = {0, 0, 0};
+	for(unsigned int i = 0; i < 3; i++) {
+		unsigned int dot_i = version.find(".");
+		if(dot_i == string::npos) {
+			version_numbers[i] = s2i(version);
+			break;
+		}
+		version_numbers[i] = s2i(version.substr(0, dot_i));
+		version = version.substr(dot_i + 1, version.length() - (dot_i + 1));
+	}
+	
 	ParseOptions po;
 
 	vector<xmlNodePtr> unfinished_nodes;
@@ -3647,7 +3715,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 			child = cur->xmlChildrenNode;
 			while(child != NULL) {
 				if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {
-					XML_GET_LOCALE_STRING_FROM_TEXT(child, category_title, best_category_title, next_best_category_title);
+					XML_GET_LOCALE_STRING_FROM_TEXT(child, category_title, best_category_title, next_best_category_title)
 				} else if(!xmlStrcmp(child->name, (const xmlChar*) "category")) {
 					nodes.back().push(child);
 				} else {
@@ -3680,7 +3748,11 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					done_something = true;
 				}
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "function")) {
-				XML_GET_STRING_FROM_PROP(cur, "name", name)
+				if(version_numbers[1] < 6 || version_numbers[2] < 3) {
+					XML_GET_STRING_FROM_PROP(cur, "name", name)
+				} else {
+					name = "";
+				}
 				XML_GET_FALSE_FROM_PROP(cur, "active", active)
 				f = new UserFunction(category, "", "", is_user_defs, 0, "", "", 0, active);
 				item = f;
@@ -3691,6 +3763,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				while(child != NULL) {
 					if(!xmlStrcmp(child->name, (const xmlChar*) "expression")) {
 						XML_DO_FROM_TEXT(child, ((UserFunction*) f)->setEquation);
+						XML_GET_PREC_FROM_PROP(child, prec)
+						f->setPrecision(prec);
 						XML_GET_APPROX_FROM_PROP(child, b)
 						f->setApproximate(b);
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "condition")) {
@@ -3741,7 +3815,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						argname = ""; best_argname = false; next_best_argname = false;
 						while(child2 != NULL) {
 							if(!xmlStrcmp(child2->name, (const xmlChar*) "title")) {
-								XML_GET_LOCALE_STRING_FROM_TEXT(child2, argname, best_argname, next_best_argname);
+								XML_GET_LOCALE_STRING_FROM_TEXT(child2, argname, best_argname, next_best_argname)
 							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "min")) {
 								if(farg) {
 									XML_DO_FROM_TEXT(child2, nr.set);
@@ -3815,7 +3889,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							argname = ""; best_argname = false; next_best_argname = false;
 							while(child2 != NULL) {
 								if(!xmlStrcmp(child2->name, (const xmlChar*) "title")) {
-									XML_GET_LOCALE_STRING_FROM_TEXT(child2, argname, best_argname, next_best_argname);
+									XML_GET_LOCALE_STRING_FROM_TEXT(child2, argname, best_argname, next_best_argname)
 								}
 								child2 = child2->next;
 							}
@@ -3839,7 +3913,11 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					done_something = true;
 				}
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "unknown")) {
-				XML_GET_STRING_FROM_PROP(cur, "name", name)
+				if(version_numbers[1] < 6 || version_numbers[2] < 3) {
+					XML_GET_STRING_FROM_PROP(cur, "name", name)
+				} else {
+					name = "";
+				}
 				XML_GET_FALSE_FROM_PROP(cur, "active", active)
 				svalue = "";
 				v = new UnknownVariable(category, "", "", is_user_defs, false, active);
@@ -3884,7 +3962,11 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				addVariable(v);
 				v->setChanged(false);
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "variable")) {
-				XML_GET_STRING_FROM_PROP(cur, "name", name)
+				if(version_numbers[1] < 6 || version_numbers[2] < 3) {
+					XML_GET_STRING_FROM_PROP(cur, "name", name)
+				} else {
+					name = "";
+				}
 				XML_GET_FALSE_FROM_PROP(cur, "active", active)
 				svalue = "";
 				v = new KnownVariable(category, "", "", "", is_user_defs, false, active);
@@ -3897,6 +3979,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				while(child != NULL) {
 					if(!xmlStrcmp(child->name, (const xmlChar*) "value")) {
 						XML_DO_FROM_TEXT(child, ((KnownVariable*) v)->set);
+						XML_GET_PREC_FROM_PROP(child, prec)
+						v->setPrecision(prec);
 						XML_GET_APPROX_FROM_PROP(child, b);
 						v->setApproximate(b);
 					} else ITEM_READ_NAME(variableNameIsValid)
@@ -3937,7 +4021,11 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				XML_GET_STRING_FROM_PROP(cur, "type", type)
 				bool b_si = false;
 				if(type == "base") {	
-					XML_GET_STRING_FROM_PROP(cur, "name", name)
+					if(version_numbers[1] < 6 || version_numbers[2] < 3) {
+						XML_GET_STRING_FROM_PROP(cur, "name", name)
+					} else {
+						name = "";
+					}
 					XML_GET_FALSE_FROM_PROP(cur, "active", active)
 					u = new Unit(category, "", "", "", "", is_user_defs, false, active);
 					item = u;
@@ -3957,13 +4045,13 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 								}
 								xmlFree(value);
 							}
-						} else if(!xmlStrcmp(child->name, (const xmlChar*) "singular")) {
-							XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular);
+						} else if((version_numbers[1] < 6 || version_numbers[2] < 3) && !xmlStrcmp(child->name, (const xmlChar*) "singular")) {
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular)
 							if(!unitNameIsValid(singular)) {
 								singular = "";
 							}
-						} else if(!xmlStrcmp(child->name, (const xmlChar*) "plural") && !xmlGetProp(child, (xmlChar*) "index")) {
-							XML_GET_LOCALE_STRING_FROM_TEXT(child, plural, best_plural, next_best_plural);
+						} else if((version_numbers[1] < 6 || version_numbers[2] < 3) && !xmlStrcmp(child->name, (const xmlChar*) "plural") && !xmlGetProp(child, (xmlChar*) "index")) {
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, plural, best_plural, next_best_plural)
 							if(!unitNameIsValid(plural)) {
 								plural = "";
 							}
@@ -3982,12 +4070,17 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					u->setChanged(false);
 					done_something = true;
 				} else if(type == "alias") {	
-					XML_GET_STRING_FROM_PROP(cur, "name", name)
+					if(version_numbers[1] < 6 || version_numbers[2] < 3) {
+						XML_GET_STRING_FROM_PROP(cur, "name", name)
+					} else {
+						name = "";
+					}
 					XML_GET_FALSE_FROM_PROP(cur, "active", active)
 					u = NULL;
 					child = cur->xmlChildrenNode;
 					singular = ""; best_singular = false; next_best_singular = false;
 					plural = ""; best_plural = false; next_best_plural = false;
+					prec = -1;
 					ITEM_INIT_DTH
 					ITEM_INIT_NAME
 					while(child != NULL) {
@@ -4007,6 +4100,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "relation")) {
 									XML_GET_STRING_FROM_TEXT(child2, svalue);
 									XML_GET_APPROX_FROM_PROP(child2, b)
+									XML_GET_PREC_FROM_PROP(child, prec)
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "reverse_relation")) {
 									XML_GET_STRING_FROM_TEXT(child2, reverse);
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "exponent")) {
@@ -4029,13 +4123,13 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 									}
 									xmlFree(value);
 								}
-						} else if(!xmlStrcmp(child->name, (const xmlChar*) "singular")) {	
-							XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular);
+						} else if((version_numbers[1] < 6 || version_numbers[2] < 3) && !xmlStrcmp(child->name, (const xmlChar*) "singular")) {	
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular)
 							if(!unitNameIsValid(singular)) {
 								singular = "";
 							}
-						} else if(!xmlStrcmp(child->name, (const xmlChar*) "plural") && !xmlGetProp(child, (xmlChar*) "index")) {	
-							XML_GET_LOCALE_STRING_FROM_TEXT(child, plural, best_plural, next_best_plural);
+						} else if((version_numbers[1] < 6 || version_numbers[2] < 3) && !xmlStrcmp(child->name, (const xmlChar*) "plural") && !xmlGetProp(child, (xmlChar*) "index")) {	
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, plural, best_plural, next_best_plural)
 							if(!unitNameIsValid(plural)) {
 								plural = "";
 							}
@@ -4052,6 +4146,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					} else {
 						au = new AliasUnit(category, name, plural, singular, title, u, svalue, exponent, reverse, is_user_defs, false, active);
 						au->setDescription(description);
+						au->setPrecision(prec);
 						au->setApproximate(b);
 						au->setHidden(hidden);
 						item = au;
@@ -4064,7 +4159,11 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						if(name == "rad") u_rad = au;
 					}
 				} else if(type == "composite") {	
-					XML_GET_STRING_FROM_PROP(cur, "name", name)
+					if(version_numbers[1] < 6 || version_numbers[2] < 3) {
+						XML_GET_STRING_FROM_PROP(cur, "name", name)
+					} else {
+						name = "";
+					}
 					XML_GET_FALSE_FROM_PROP(cur, "active", active)
 					child = cur->xmlChildrenNode;
 					cu = NULL;
@@ -4169,12 +4268,12 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					ITEM_INIT_NAME
 					while(child != NULL) {
 						if(!xmlStrcmp(child->name, (const xmlChar*) "singular")) {	
-							XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular);
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular)
 							if(!unitNameIsValid(singular)) {
 								singular = "";
 							}
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "plural") && !xmlGetProp(child, (xmlChar*) "index")) {	
-							XML_GET_LOCALE_STRING_FROM_TEXT(child, plural, best_plural, next_best_plural);
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, plural, best_plural, next_best_plural)
 							if(!unitNameIsValid(plural)) {
 								plural = "";
 							}
@@ -4434,6 +4533,7 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "value", (xmlChar*) ((KnownVariable*) variables[i])->get().print(save_printoptions).c_str());
 						}
 						if(variables[i]->isApproximate()) xmlNewProp(newnode2, (xmlChar*) "approximate", (xmlChar*) "true");
+						if(variables[i]->precision() > 0) xmlNewProp(newnode2, (xmlChar*) "precision", (xmlChar*) i2s(variables[i]->precision()).c_str());
 					} else {
 						if(((UnknownVariable*) variables[i])->assumptions()) {
 							switch(((UnknownVariable*) variables[i])->assumptions()->numberType()) {
@@ -4584,6 +4684,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 				}
 				if(!units[i]->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");
 				if(units[i]->isHidden()) xmlNewTextChild(newnode, NULL, (xmlChar*) "hidden", (xmlChar*) "true");
+				if(units[i]->isSIUnit()) xmlNewTextChild(newnode, NULL, (xmlChar*) "system", (xmlChar*) "si");
 				if(!units[i]->title(false).empty()) {
 					if(save_global) {
 						xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) units[i]->title(false).c_str());
@@ -4631,6 +4732,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 						xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) au->firstBaseUnit()->referenceName().c_str());								
 						newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "relation", (xmlChar*) au->expression().c_str());
 						if(units[i]->isApproximate()) xmlNewProp(newnode3, (xmlChar*) "approximate", (xmlChar*) "true");
+						if(units[i]->precision() > 0) xmlNewProp(newnode2, (xmlChar*) "precision", (xmlChar*) i2s(units[i]->precision()).c_str());
 						if(!au->reverseExpression().empty()) {
 							xmlNewTextChild(newnode2, NULL, (xmlChar*) "reverse_relation", (xmlChar*) au->reverseExpression().c_str());	
 						}
@@ -4771,6 +4873,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 					}
 					newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "expression", (xmlChar*) ((UserFunction*) functions[i])->equation().c_str());
 					if(functions[i]->isApproximate()) xmlNewProp(newnode2, (xmlChar*) "approximate", (xmlChar*) "true");
+					if(functions[i]->precision() > 0) xmlNewProp(newnode2, (xmlChar*) "precision", (xmlChar*) i2s(functions[i]->precision()).c_str());
 					if(!functions[i]->condition().empty()) {
 						xmlNewTextChild(newnode, NULL, (xmlChar*) "condition", (xmlChar*) functions[i]->condition().c_str());
 					}
@@ -5209,6 +5312,7 @@ bool Calculator::loadExchangeRates() {
 			}
 		}
 	}
+	xmlFreeDoc(doc);
 	exchange_rates_warning_issued = false;
 	return true;
 }
@@ -5668,5 +5772,167 @@ bool Calculator::closeGnuplot() {
 }
 bool Calculator::gnuplotOpen() {
 	return b_gnuplot_open && gnuplot_pipe;
+}
+
+bool Calculator::loadElements(const char *file_name) {
+	string filename;
+	if(file_name) {
+		filename = file_name;
+	} else {
+		filename = PACKAGE_DATA_DIR;
+		filename += "/qalculate/";
+		filename += "elements.xml";
+	}
+	xmlDocPtr doc;
+	xmlNodePtr cur, child;
+
+	string locale, lang_tmp;
+	char *clocale = setlocale(LC_MESSAGES, "");
+	if(clocale) {
+		locale = clocale;
+		if(locale == "POSIX" || locale == "C") {
+			locale = "";
+		}
+	}
+
+	string localebase;
+	if(locale.length() > 2) {
+		localebase = locale.substr(0, 2);
+	} else {
+		localebase = locale;
+	}
+
+	doc = xmlParseFile(filename.c_str());
+	if(doc == NULL) {
+		error(true, _("Unable to load elements in %s."), filename.c_str(), NULL);
+		return false;
+	}
+	cur = xmlDocGetRootElement(doc);
+	if(cur == NULL) {
+		xmlFreeDoc(doc);
+		error(true, _("Unable to load elements in %s."), filename.c_str(), NULL);
+		return false;
+	}
+	string version;
+	xmlChar *value, *lang;
+	while(cur != NULL) {
+		if(!xmlStrcmp(cur->name, (const xmlChar*) "QALCULATE")) {
+			XML_GET_STRING_FROM_PROP(cur, "version", version)
+			break;
+		}
+		cur = cur->next;
+	}
+	if(cur == NULL) {
+		error(true, _("File not identified as Qalculate! definitions file: %s."), file_name, NULL);
+		xmlFreeDoc(doc);
+		return false;
+	}
+	int version_numbers[] = {0, 0, 0};
+	for(unsigned int i = 0; i < 3; i++) {
+		unsigned int dot_i = version.find(".");
+		if(dot_i == string::npos) {
+			version_numbers[i] = s2i(version);
+			break;
+		}
+		version_numbers[i] = s2i(version.substr(0, dot_i));
+		version = version.substr(dot_i + 1, version.length() - (dot_i + 1));
+	}
+	
+	int e_number; 
+	string e_symbol;
+	Element *element;
+	cur = cur->xmlChildrenNode;
+	string str;
+	string ename = ""; bool best_ename = false; bool next_best_ename = false;
+	while(cur) {
+		if(!xmlStrcmp(cur->name, (const xmlChar*) "element")) {
+			e_number = -1; e_symbol = "";
+			XML_GET_STRING_FROM_PROP(cur, "symbol", e_symbol);
+			XML_GET_INT_FROM_PROP(cur, "number", e_number);
+			if(!e_symbol.empty() && e_number > 0) {
+				element = new Element();
+				element->number = e_number;
+				element->symbol = e_symbol;
+				ename = ""; best_ename = false; next_best_ename = false;
+				child = cur->xmlChildrenNode;
+				while(child) {
+					if(!xmlStrcmp(child->name, (const xmlChar*) "name")) {
+						XML_GET_LOCALE_STRING_FROM_TEXT(child, ename, best_ename, next_best_ename)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "weight")) {
+						XML_GET_STRING_FROM_TEXT(child, element->weight)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "density")) {
+						XML_GET_STRING_FROM_TEXT(child, element->density)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "melting_point")) {
+						XML_GET_STRING_FROM_TEXT(child, element->melting_point)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "boiling_point")) {
+						XML_GET_STRING_FROM_TEXT(child, element->boiling_point)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "atomic_radius")) {
+						XML_GET_STRING_FROM_TEXT(child, element->atomic_radius)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "covalent_radius")) {
+						XML_GET_STRING_FROM_TEXT(child, element->covalent_radius)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "ionic_radius")) {
+						XML_GET_STRING_FROM_TEXT(child, element->ionic_radius)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "atomic_volume")) {
+						XML_GET_STRING_FROM_TEXT(child, element->atomic_volume)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "specific_heat")) {
+						XML_GET_STRING_FROM_TEXT(child, element->specific_heat)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "fusion_heat")) {
+						XML_GET_STRING_FROM_TEXT(child, element->fusion_heat)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "evaporation_heat")) {
+						XML_GET_STRING_FROM_TEXT(child, element->evaporation_heat)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "termal_conductivity")) {
+						XML_GET_STRING_FROM_TEXT(child, element->termal_conductivity)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "pauling")) {
+						XML_GET_STRING_FROM_TEXT(child, element->pauling)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "ionising_energy")) {
+						XML_GET_STRING_FROM_TEXT(child, element->ionising_energy)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "oxidation_states")) {
+						XML_GET_STRING_FROM_TEXT(child, str)
+						if(!str.empty()) {
+							if(str == "-") str = "";
+							element->oxidation_states = "[";
+							element->oxidation_states += str;
+							element->oxidation_states += "]";
+						}
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "electronic_configuration")) {
+						XML_GET_STRING_FROM_TEXT(child, element->electronic_configuration)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "x_pos")) {
+						XML_GET_INT_FROM_TEXT(child, element->x_pos)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "y_pos")) {
+						XML_GET_INT_FROM_TEXT(child, element->y_pos)
+					}
+					child = child->next;
+				}
+				element->name = ename;
+				elements.push_back(element);	
+			}
+		}
+		cur = cur->next;
+	}
+	xmlFreeDoc(doc);
+	return true;
+}
+
+bool Calculator::elementsLoaded() const {
+	return elements.size() > 0;
+}
+Element *Calculator::getElement(int e_number) {
+	if(!elementsLoaded()) {
+		if(!loadElements()) return NULL;
+	}
+	for(unsigned int i = 0; i < elements.size(); i++) {
+		if(elements[i]->number == e_number) return elements[i];
+	}
+	return NULL;
+}
+Element *Calculator::getElement(string e_symname) {
+	if(!elementsLoaded()) {
+		if(!loadElements()) return NULL;
+	}
+	if(e_symname.find_first_not_of("0123456789") == string::npos) return getElement(s2i(e_symname));
+	for(unsigned int i = 0; i < elements.size(); i++) {
+		if(elements[i]->symbol == e_symname || equalsIgnoreCase(e_symname, elements[i]->name)) return elements[i];
+	}
+	return NULL;
 }
 

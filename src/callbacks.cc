@@ -219,42 +219,47 @@ bool ask_question(const gchar *text, GtkWidget *win) {
 	display errors generated under calculation
 */
 void display_errors(GtkTextIter *iter = NULL) {
-	if(!CALCULATOR->error())
-		return;
-	bool critical = false; bool b = false;
+	if(!CALCULATOR->message()) return;
+	bool b = false, critical = false;
+	MessageType mtype;
 	GtkWidget *edialog;
 	string str = "";
 	GtkTextBuffer *tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history")));
 	GtkTextIter tbiter;
 	while(true) {
-		if(CALCULATOR->error()->critical()) {
-			critical = true;
-		}
-		if(b) {
-			str += "\n";
+		mtype = CALCULATOR->message()->type();
+		if(mtype == MESSAGE_ERROR || mtype == MESSAGE_WARNING) {
+			if(b) {
+				str += "\n";
+			} else {
+				b = true;
+			}
+			str += CALCULATOR->message()->message();
+			if(!iter) {
+				gtk_text_buffer_get_start_iter(tb, &tbiter);
+				iter = &tbiter;
+			}
+			if(mtype == MESSAGE_ERROR) {
+				critical = true;
+				gtk_text_buffer_insert_with_tags_by_name(tb, iter, CALCULATOR->message()->message().c_str(), -1, "red_foreground", NULL);
+			} else if(mtype == MESSAGE_WARNING) {
+				gtk_text_buffer_insert_with_tags_by_name(tb, iter, CALCULATOR->message()->message().c_str(), -1, "blue_foreground", NULL);
+			}
+			gtk_text_buffer_insert(tb, iter, "\n", -1);
+			gtk_text_buffer_place_cursor(tb, iter);
 		} else {
-			b = true;
+			edialog = gtk_message_dialog_new(
+					GTK_WINDOW(
+						glade_xml_get_widget (main_glade, "main_window")
+					),
+					GTK_DIALOG_DESTROY_WITH_PARENT,
+					GTK_MESSAGE_INFO,
+					GTK_BUTTONS_CLOSE,
+					CALCULATOR->message()->message().c_str());
+			gtk_dialog_run(GTK_DIALOG(edialog));
+			gtk_widget_destroy(edialog);
 		}
-		str += CALCULATOR->error()->message();
-		
-		if(!iter) {
-			gtk_text_buffer_get_start_iter(tb, &tbiter);
-			iter = &tbiter;
-		}
-		if(CALCULATOR->error()->critical()) {
-			gtk_text_buffer_insert_with_tags_by_name(tb, iter, CALCULATOR->error()->message().c_str(), -1, "red_foreground", NULL);
-		} else {
-			gtk_text_buffer_insert_with_tags_by_name(tb, iter, CALCULATOR->error()->message().c_str(), -1, "blue_foreground", NULL);
-		}
-		/*gtk_text_buffer_get_start_iter(tb, &iter_s);
-		if(CALCULATOR->error()->critical()) {
-			gtk_text_buffer_apply_tag_by_name(tb, "red_foreground", &iter_s, &iter);
-		} else {
-			gtk_text_buffer_apply_tag_by_name(tb, "blue_foreground", &iter_s, &iter);
-		}*/
-		gtk_text_buffer_insert(tb, iter, "\n", -1);
-		gtk_text_buffer_place_cursor(tb, iter);
-		if(!CALCULATOR->nextError()) break;
+		if(!CALCULATOR->nextMessage()) break;
 	}
 	if(!str.empty()) {
 		if(critical) {
@@ -1901,6 +1906,8 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 	gint central_point = 0;
 	
 	InternalPrintStruct ips_n = ips;
+	if(m.isApproximate()) ips_n.parent_approximate = true;
+	if(m.precision() > 0 && (ips_n.parent_precision < 1 || m.precision() < ips_n.parent_precision)) ips_n.parent_precision = m.precision();
 	
 	switch(m.type()) {
 		case STRUCT_NUMBER: {
@@ -2430,7 +2437,9 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			}
 			ips_n.power_depth++;
 			ips_n.wrap = m[1].needsParenthesis(po, ips_n, m, 2, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
-			GdkPixmap *pixmap_exp = draw_structure(m[1], po, ips_n, &ctmp);
+			PrintOptions po2 = po;
+			po2.show_ending_zeroes = false;
+			GdkPixmap *pixmap_exp = draw_structure(m[1], po2, ips_n, &ctmp);
 			gdk_drawable_get_size(GDK_DRAWABLE(pixmap_exp), &exp_w, &exp_h);
 			
 			h = base_h;

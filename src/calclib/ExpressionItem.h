@@ -38,7 +38,7 @@ class ExpressionItem {
 
 	string scat, stitle, sdescr;
 	bool b_local, b_changed, b_builtin, b_approx, b_active, b_registered, b_hidden, b_destroyed;
-	int i_ref;
+	int i_ref, i_precision;
 	vector<ExpressionItem*> v_refs;
 	vector<ExpressionName> names;
 
@@ -96,6 +96,9 @@ class ExpressionItem {
 	
 	virtual bool isApproximate() const;
 	virtual void setApproximate(bool is_approx = true);
+	
+	virtual int precision() const;
+	virtual void setPrecision(int prec);
 	
 	virtual bool isActive() const;
 	virtual void setActive(bool is_active);

@@ -318,7 +318,7 @@ int AliasUnit::baseExp(int exp_) const {
 MathStructure &AliasUnit::convertToFirstBase(MathStructure &mvalue, MathStructure &mexp) const {
 	if(exp != 1) mexp /= exp;
 	ParseOptions po;
-	if(isApproximate()) {
+	if(isApproximate() && precision() < 1) {
 		po.read_precision = ALWAYS_READ_PRECISION;
 	}
 	if(rvalue.empty()) {
@@ -364,12 +364,13 @@ MathStructure &AliasUnit::convertToFirstBase(MathStructure &mvalue, MathStructur
 			mvalue.multiply(mstruct, true);
 		}
 	}
+	if(precision() > 0 && (mvalue.precision() < 1 || precision() < mvalue.precision())) mvalue.setPrecision(precision());
 	if(isApproximate()) mvalue.setApproximate();
 	return mvalue;
 }
 MathStructure &AliasUnit::firstBaseValue(MathStructure &mvalue, MathStructure &mexp) const {
 	ParseOptions po;
-	if(isApproximate()) {
+	if(isApproximate() && precision() < 1) {
 		po.read_precision = ALWAYS_READ_PRECISION;
 	}
 	if(value.find("\\x") != string::npos) {
@@ -393,6 +394,7 @@ MathStructure &AliasUnit::firstBaseValue(MathStructure &mvalue, MathStructure &m
 		mstruct.multiply(mvalue, true);
 		mvalue = mstruct;
 	}
+	if(precision() > 0 && (mvalue.precision() < 1 || precision() < mvalue.precision())) mvalue.setPrecision(precision());
 	if(isApproximate()) mvalue.setApproximate();	
 	return mvalue;
 }

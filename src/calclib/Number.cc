@@ -382,15 +382,18 @@ void Number::set(string number, int base, ReadPrecisionMode read_precision) {
 	if(base > 36) base = 36;
 	if(base < 0) base = 10;
 	int readprec = 0;
-	bool numbers_started = false, minus = false, in_decimals = false, b_cplx = false;
+	bool numbers_started = false, minus = false, in_decimals = false, b_cplx = false, had_nonzero = false;
 	for(unsigned int index = 0; index < number.size(); index++) {
 		if(number[index] >= '0' && ((base >= 10 && number[index] <= '9') || (base < 10 && number[index] < '0' + base))) {
 			num = num * base;
-			num = num + number[index] - '0';
+			if(number[index] != '0') {
+				num = num + number[index] - '0';
+				had_nonzero = true;
+			}
 			if(in_decimals) {
 				den = den * base;
 			}
-			readprec++;
+			if(had_nonzero) readprec++;
 			numbers_started = true;
 		} else if(base > 10 && number[index] >= 'a' && number[index] < 'a' + base - 10) {
 			num = num * base;
@@ -398,6 +401,7 @@ void Number::set(string number, int base, ReadPrecisionMode read_precision) {
 			if(in_decimals) {
 				den = den * base;
 			}
+			had_nonzero = true;
 			readprec++;
 			numbers_started = true;
 		} else if(base > 10 && number[index] >= 'A' && number[index] < 'A' + base - 10) {
@@ -406,6 +410,7 @@ void Number::set(string number, int base, ReadPrecisionMode read_precision) {
 			if(in_decimals) {
 				den = den * base;
 			}
+			had_nonzero = true;
 			readprec++;
 			numbers_started = true;
 		} else if(number[index] == 'E' && base <= 10) {
@@ -1894,6 +1899,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	
 	int precision = PRECISION;
 	if(b_approx && i_precision > 0 && i_precision < PRECISION) precision = i_precision;
+	if(ips.parent_precision > 0 && ips.parent_precision < precision) precision = ips.parent_precision;
 	
 	if(isComplex()) {
 		bool bre = hasRealPart();
@@ -2068,7 +2074,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 		}
 		if(!exact && po.is_approximate) *po.is_approximate = true;
-		if(po.show_ending_zeroes && (isApproximate() || !exact)) {
+		if(po.show_ending_zeroes && (isApproximate() || !exact || ips.parent_approximate)) {
 			if(base != 10) {
 				Number precmax(10);
 				precmax.raise(precision);
@@ -2323,7 +2329,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					str += "0";
 				}
 			}
-			if(po.show_ending_zeroes && !infinite_series && (isApproximate() || !exact)) {
+			if(po.show_ending_zeroes && !infinite_series && (isApproximate() || !exact || ips.parent_approximate)) {
 				precision -= str.length();
 				if(decimals > 0) {
 					precision += 1;

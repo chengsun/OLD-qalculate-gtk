@@ -51,6 +51,7 @@ class MathStructure {
 	
 		int m_type;
 		bool b_approx;
+		int i_precision;
 	
 		vector<MathStructure> v_subs;
 		vector<unsigned int> v_order;
@@ -192,6 +193,9 @@ class MathStructure {
 	
 		void setApproximate(bool is_approx = true);	
 		bool isApproximate() const;
+		
+		void setPrecision(int prec);
+		int precision() const;
 		
 		void transform(int mtype, const MathStructure &o);
 		void transform(int mtype);

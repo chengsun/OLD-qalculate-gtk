@@ -164,6 +164,8 @@ bool UnknownVariable::isNonZero() {
 
 KnownVariable::KnownVariable(string cat_, string name_, const MathStructure &o, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
 	mstruct = new MathStructure(o);
+	setApproximate(mstruct->isApproximate());
+	setPrecision(mstruct->precision());
 	b_expression = false;
 	sexpression = "";
 	calculated_precision = 0;
@@ -208,6 +210,8 @@ void KnownVariable::set(const ExpressionItem *item) {
 void KnownVariable::set(const MathStructure &o) {
 	if(!mstruct) mstruct = new MathStructure(o);
 	else mstruct->set(o);
+	setApproximate(mstruct->isApproximate());
+	setPrecision(mstruct->precision());
 	calculated_precision = 0;
 	b_expression = false;
 	sexpression = "";
@@ -227,10 +231,16 @@ void KnownVariable::set(string expression_) {
 const MathStructure &KnownVariable::get() {
 	if(b_expression && !mstruct) {
 		ParseOptions po;
-		if(isApproximate()) {
-			po.read_precision = ALWAYS_READ_PRECISION;
+		if(isApproximate() && precision() < 1) {
+			po.read_precision = READ_PRECISION_WHEN_DECIMALS;
 		}
 		mstruct = new MathStructure(CALCULATOR->parse(sexpression, po));
+		if(precision() > 0 && (mstruct->precision() < 1 || precision() < mstruct->precision())) {
+			mstruct->setPrecision(precision());
+		}
+		if(isApproximate() && !mstruct->isApproximate()) {
+			mstruct->setApproximate();
+		}
 	}
 	return *mstruct;
 }
