@@ -1,3 +1,10 @@
+2003-09-01  Niklas Knutsson  <nq@altern.org>
+	
+	* factorial function and !
+	* frac and int functions
+	* Menu items for fractional representation
+	* Turn "use prefixes" into check menu item
+
 2003-08-31  Niklas Knutsson  <nq@altern.org>
 
 	* Move builtin functions to fraction system

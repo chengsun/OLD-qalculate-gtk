@@ -605,6 +605,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new DaysBetweenDatesFunction());		
 	addFunction(new YearsBetweenDatesFunction());		
 	addFunction(new GCDFunction());	
+	addFunction(new FactorialFunction());		
 	addFunction(new AbsFunction());
 	addFunction(new CeilFunction());
 	addFunction(new FloorFunction());
@@ -1689,6 +1690,59 @@ void Calculator::setFunctionsAndVariables(string &str) {
 			stmp += ID_WRAP_RIGHT_CH;
 			stmp += RIGHT_BRACKET_CH;
 			str.replace(i, 1, stmp);
+		}
+	}
+	f = getFunction("factorial");
+	while(f) {
+		i = str.find("!", i);	
+		if(i == string::npos) break;		
+		if(i != 0) {
+			stmp = "";
+			if(is_in(NUMBERS, str[i - 1])) {
+				i3 = str.find_last_not_of(NUMBERS, i - 1);
+				if(i3 == string::npos) {
+					stmp2 = str.substr(0, i);
+				} else {
+					stmp2 = str.substr(i3 + 1, i - i3 - 1);
+				}
+			} else if(str[i - 1] == RIGHT_BRACKET_CH) {
+				i3 = i - 2;
+				i4 = 1;
+				while(true) {
+					i3 = str.find_last_of(BRACKETS, i3);
+					if(i3 == string::npos) {
+						break;
+					}
+					if(str[i3] == RIGHT_BRACKET_CH) {
+						i4++;
+					} else {
+						i4--;
+						if(i4 == 0) {
+							stmp2 = str.substr(i3, i - i3);
+							break;
+						}
+					}
+					i3--;
+				}
+			}
+			if(!stmp2.empty()) {
+				mngr =  f->calculate(stmp2);
+				if(mngr) {
+					stmp = LEFT_BRACKET_CH;
+					stmp += ID_WRAP_LEFT_CH;
+					stmp += i2s(addId(mngr));
+					mngr->unref();
+					stmp += ID_WRAP_RIGHT_CH;
+					stmp += RIGHT_BRACKET_CH;
+				} else {
+					stmp = "";
+				}
+				str.replace(i - stmp2.length(), stmp2.length() + 1, stmp);
+			} else {
+				i++;
+			}
+		} else {
+			i++;
 		}
 	}
 }

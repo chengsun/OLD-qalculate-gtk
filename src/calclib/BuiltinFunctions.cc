@@ -151,7 +151,21 @@ Manager *DifferentiateFunction::calculate(const string &argv) {
 	clearSVArgs();
 	return mngr;	
 }
+FactorialFunction::FactorialFunction() : Function("Arithmetics", "factorial", 1, "Factorial") {
 
+}
+void FactorialFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isFraction() && !vargs[0]->fraction()->isNegative() && vargs[0]->fraction()->isInteger()) {
+		if(vargs[0]->fraction()->isZero()) mngr->set(1, 1);
+		mngr->set(vargs[0]);
+		while(!vargs[0]->fraction()->isOne()) {
+			vargs[0]->addInteger(-1, ADD);
+			mngr->add(vargs[0], MULTIPLY);
+		}
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
+}
 AbsFunction::AbsFunction() : Function("Arithmetics", "abs", 1, "Absolute Value") {
 
 }

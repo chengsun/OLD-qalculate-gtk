@@ -50,6 +50,12 @@ class YearsBetweenDatesFunction : public Function {
   public:
 	YearsBetweenDatesFunction();
 };
+class FactorialFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	FactorialFunction();
+};
 class AbsFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
