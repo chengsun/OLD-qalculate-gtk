@@ -1,10 +1,9 @@
 * XML definitions file, restructure
 * More functions
 * More Units
-* Approximate variables and exact result (ex. circumference(2) = 2 PI)
+* Approximate variables and exact result (ex. 4/12 = 1/3)
 * Vector support
 * Matrix support
-* Fractions
 * Derivative, x^2 + y^2 + xy => (x + y)^2, etc.
 
 * Complete internationalisation

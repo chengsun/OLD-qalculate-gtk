@@ -198,6 +198,10 @@ void on_nbases_entry_binary_changed(GtkEditable *editable, gpointer user_data);
 void on_nbases_entry_octal_changed(GtkEditable *editable, gpointer user_data);
 void on_nbases_entry_hexadecimal_changed(GtkEditable *editable, gpointer user_data);
 
+void on_button_functions_clicked(GtkButton *button, gpointer user_data);
+void on_button_variables_clicked(GtkButton *button, gpointer user_data);
+void on_button_units_clicked(GtkButton *button, gpointer user_data);
+
 }
 
 

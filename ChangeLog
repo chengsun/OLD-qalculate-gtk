@@ -1,5 +1,11 @@
 2003-08-14  Niklas Knutsson  <nq@altern.org>
 
+	* Fix loading of argument names for builtin functions
+	* Do not add argument names in code for builtin functions, read from definitions file instead
+	* Fix crash when creating new unit
+	* Disable OK button for editing global definitions until structure is sorted out
+	* Beautify dialogs
+	* Functions, variables and units buttons in main window
 	* Sorting menus
 	* Tree lists implemented for units, variables and functions dialogs
 	* Submenus implemented for unit, variable and function menus

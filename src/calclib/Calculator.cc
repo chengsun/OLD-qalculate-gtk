@@ -1646,8 +1646,8 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 										shtmp = "";
 									if(func)
 										func->description(shtmp);
+									b = true;										
 									while(1) {
-										b = true;
 										if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 											if(func && b) {
 												func->clearArgNames();
