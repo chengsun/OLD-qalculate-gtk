@@ -264,10 +264,14 @@ void on_argument_rules_checkbutton_enable_min_toggled(GtkToggleButton *w, gpoint
 void on_argument_rules_checkbutton_enable_max_toggled(GtkToggleButton *w, gpointer user_data);
 void on_argument_rules_checkbutton_enable_condition_toggled(GtkToggleButton *w, gpointer user_data);
 
+void on_plot_button_save_clicked(GtkButton *w, gpointer user_data);
 void on_plot_button_apply_clicked(GtkButton *w, gpointer user_data);
 void on_plot_button_add_clicked(GtkButton *w, gpointer user_data);
 void on_plot_button_modify_clicked(GtkButton *w, gpointer user_data);
 void on_plot_button_remove_clicked(GtkButton *w, gpointer user_data);
+void on_plot_checkbutton_xlog_toggled(GtkToggleButton *w, gpointer user_data);
+void on_plot_checkbutton_ylog_toggled(GtkToggleButton *w, gpointer user_data);
+void on_plot_entry_expression_activate(GtkEntry *entry, gpointer user_data);
 
 }
 

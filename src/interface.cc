@@ -332,7 +332,7 @@ create_main_window (void)
 	g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tFunctionArguments_selection_changed), NULL);
 
 	tPlotFunctions = glade_xml_get_widget (glade_xml, "plot_treeview_data");
-	tPlotFunctions_store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
+	tPlotFunctions_store = gtk_list_store_new(6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tPlotFunctions), GTK_TREE_MODEL(tPlotFunctions_store));
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tPlotFunctions));
 	gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);

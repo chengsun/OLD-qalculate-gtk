@@ -23,22 +23,32 @@ extern Calculator *calculator;
 typedef vector<Prefix*> p_type;
 
 struct plot_parameters {
+	string title;
 	string y_label, x_label;
+	string filename;
+	PlotFileType filetype;
+	string font;
+	bool color;
 	bool auto_y_min, auto_x_min;
 	bool auto_y_max, auto_x_max;
 	float y_min, x_min;
 	float y_max, x_max;
-	plot_parameters() {
-		auto_y_min = true;
-		auto_x_min = true;
-		auto_y_max = true;
-		auto_x_max = true;
-	}
+	bool y_log, x_log;
+	int y_log_base, x_log_base;
+	bool grid;
+	int linewidth;
+	bool show_all_borders;
+	PlotLegendPlacement legend_placement;
+	plot_parameters();
 };
 
 struct plot_data_parameters {
 	string title;
 	string smoothing;
+	string style;
+	bool yaxis2;
+	bool xaxis2;
+	plot_data_parameters();
 };
 
 class Calculator {
@@ -206,15 +216,17 @@ class Calculator {
 	bool importCSV(const char *file_name, int first_row = 1, bool headers = true, string delimiter = ",", bool to_matrix = false, string name = "", string title = "", string category = "");
 	int testCondition(string expression);
 	
+	bool canFetch();
 	bool loadExchangeRates();
 	bool fetchExchangeRates();
 	
-	Vector *expressionToVector(string expression, const Manager *min, const Manager *max, const Manager *step, Vector **x_vector = NULL, string x_var = "\\x");
-	Vector *expressionToVector(string expression, float min, float max, float step, Vector **x_vector = NULL, string x_var = "\\x");
+	bool canPlot();
+	Vector *expressionToVector(string expression, const Manager *min, const Manager *max, int steps, Vector **x_vector = NULL, string x_var = "\\x");
+	Vector *expressionToVector(string expression, float min, float max, int steps, Vector **x_vector = NULL, string x_var = "\\x");
 	Vector *expressionToVector(string expression, Vector *x_vector, string x_var = "\\x");
 	bool plotVectors(plot_parameters *param, Vector *y_vector, ...);
 	bool plotVectors(plot_parameters *param, vector<Vector*> &y_vectors, vector<Vector*> &x_vectors, vector<plot_data_parameters*> &pdps);
-	bool invokeGnuplot(string commands);
+	bool invokeGnuplot(string commands, string commandline_extra = "");
 		
 };
 

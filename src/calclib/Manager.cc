@@ -2582,7 +2582,10 @@ void Manager::differentiate(string x_var) {
 	}
 }
 
-Vector *Manager::generateVector(string x_var, const Manager *min, const Manager *max, const Manager *step, Vector **x_vector) {
+Vector *Manager::generateVector(string x_var, const Manager *min, const Manager *max, int steps, Vector **x_vector) {
+	if(steps < 1) {
+		steps = 1;
+	}
 	Manager x_value(min);
 	Manager x_mngr(x_var);
 	Manager y_value;
@@ -2591,7 +2594,23 @@ Vector *Manager::generateVector(string x_var, const Manager *min, const Manager 
 		*x_vector = new Vector();
 	}
 	bool b = false;
-	while(x_value.compare(max) >= 0) {
+/*	if(x_value.compare(max) >= 0) {
+		Manager diff(max);
+		diff.add(min, OPERATION_SUBTRACT);
+		Manager diff_with_step(&diff);
+		diff_with_step.add(step, OPERATION_SUBTRACT);
+		if(diff_with_step.compare(&diff) <= 0) {
+			CALCULATOR->error(true, _("Illegal range/step."), NULL);
+			if(x_vector) {
+				*x_vector = NULL;
+			}
+			return NULL;
+		}
+	}*/
+	Manager step(max);
+	step.add(min, OPERATION_SUBTRACT);
+	step.addInteger(steps, OPERATION_DIVIDE);
+	for(int i = 0; i <= steps; i++) {
 		if(x_vector) {
 			if(b) (*x_vector)->addComponent();
 			(*x_vector)->set(&x_value, (*x_vector)->components());
@@ -2602,7 +2621,7 @@ Vector *Manager::generateVector(string x_var, const Manager *min, const Manager 
 		y_value.finalize();
 		if(b) y_vector->addComponent();
 		y_vector->set(&y_value, y_vector->components());
-		x_value.add(step, OPERATION_ADD);
+		x_value.add(&step, OPERATION_ADD);
 		b = true;
 	}
 	return y_vector;

@@ -145,7 +145,7 @@ class Manager {
 		void replace_no_copy(Manager *replace_this, Manager *replace_with);
 		void differentiate(string x_var);
 		
-		Vector *generateVector(string x_var, const Manager *min, const Manager *max, const Manager *step, Vector **x_vector = NULL);
+		Vector *generateVector(string x_var, const Manager *min, const Manager *max, int steps, Vector **x_vector = NULL);
 		Vector *generateVector(string x_var, Vector *x_vector);
 
 };

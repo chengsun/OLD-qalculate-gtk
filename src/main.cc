@@ -76,7 +76,10 @@ int main (int argc, char **argv) {
 
 	mngr = new Manager();
 
-	if(fetch_exchange_rates_at_startup) {
+	bool canplot = CALCULATOR->canPlot();
+	bool canfetch = CALCULATOR->canFetch();
+
+	if(fetch_exchange_rates_at_startup && canfetch) {
 		CALCULATOR->fetchExchangeRates();
 	}
 	CALCULATOR->loadExchangeRates();
@@ -123,6 +126,9 @@ int main (int argc, char **argv) {
 
 	//create main window
 	create_main_window();
+	
+	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "menu_item_plot_functions"), canplot);
+	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "menu_item_fetch_exchange_rates"), canfetch);
 	
 	for(int i = recent_objects_pre.size() - 1; i >= 0; i--) {
 		object_inserted(CALCULATOR->getExpressionItem(recent_objects_pre[i]));

@@ -1,3 +1,15 @@
+2003-10-10  Niklas Knutsson  <nq@altern.org>
+
+	* More plot stuff
+	* Change step to steps
+	* Make that the second tab page is realised
+	* Save plot as postscript, eps, png, svg, fig or latex
+	* Set a nicer font for gnuplot
+	* Plot dialog: tabwidget, paired matrix, save
+	* Plots: logscale, style, separate smoothing for each line, title, grid, color, linewidth, borders
+	* Set timeout for wget and error on fail
+	* Check if wget and gnuplot is available
+
 2003-10-08  Niklas Knutsson  <nq@altern.org>
 
 	* Plot dialog

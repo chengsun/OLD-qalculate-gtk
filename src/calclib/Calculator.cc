@@ -60,6 +60,25 @@ using namespace cln;
 #define XML_GET_INT_FROM_PROP(node, name, i)		value = xmlGetProp(child, (xmlChar*) "index"); if(value) i = s2i((char*) value); if(value) xmlFree(value);
 #define XML_GET_LOCALE_STRING_FROM_TEXT(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); if(!best) {if(!lang) {if(!next_best) {if(value) str = (char*) value; else str = ""; if(locale.empty()) {best = true;}}} else {lang_tmp = (char*) lang; if(lang_tmp == locale) {best = true; if(value) str = (char*) value; else str = "";} else if(!next_best && lang_tmp.length() >= 2 && lang_tmp.substr(0, 2) == localebase) {next_best = true; if(value) str = (char*) value; else str = "";} else if(!next_best && str.empty() && value) {str = (char*) value;}}} if(value) xmlFree(value); if(lang) xmlFree(lang) 
 
+plot_parameters::plot_parameters() {
+	auto_y_min = true;
+	auto_x_min = true;
+	auto_y_max = true;
+	auto_x_max = true;
+	y_log = false;
+	x_log = false;
+	y_log_base = 10;
+	x_log_base = 10;
+	grid = false;
+	color = true;
+	linewidth = -1;
+	show_all_borders = false;
+	legend_placement = PLOT_LEGEND_TOP_RIGHT;
+}
+plot_data_parameters::plot_data_parameters() {
+	yaxis2 = false;
+	xaxis2 = false;
+}
 void Calculator::addStringAlternative(string replacement, string standard) {
 	signs.push_back(replacement);
 	real_signs.push_back(standard);
@@ -3397,6 +3416,12 @@ bool Calculator::loadExchangeRates() {
 		}
 	}
 }
+bool Calculator::canFetch() {
+	if(system("wget --version") == 0) {
+		return true;
+	}
+	return false;
+}
 bool Calculator::fetchExchangeRates() {
 	pid_t pid;
 	int status;
@@ -3413,7 +3438,7 @@ bool Calculator::fetchExchangeRates() {
 	
 	pid = fork();
 	if(pid == 0) {
-		execlp("wget", "--quiet", filename_arg.c_str(), "--tries=1", "http://www.ecb.int/stats/eurofxref/eurofxref-daily.xml", NULL);
+		execlp("wget", "--quiet", filename_arg.c_str(), "--tries=1", "--timeout=15", "http://www.ecb.int/stats/eurofxref/eurofxref-daily.xml", NULL);
 		_exit(EXIT_FAILURE);
 	} else if(pid < 0) {
 		//error
@@ -3423,9 +3448,19 @@ bool Calculator::fetchExchangeRates() {
 			status = -1;
 		}
 	}
-	return status >= 0;
+	if(status != 0) error(true, _("Failed to download exchange rates from ECB."), NULL);
+	return status == 0;
 }
-Vector *Calculator::expressionToVector(string expression, const Manager *min, const Manager *max, const Manager *step, Vector **x_vector, string x_var) {
+
+bool Calculator::canPlot() {
+	FILE *pipe = popen("gnuplot -", "w");
+	if(!pipe) {
+		return false;
+	}
+	fputs("show version\n", pipe);
+	return pclose(pipe) == 0;
+}
+Vector *Calculator::expressionToVector(string expression, const Manager *min, const Manager *max, int steps, Vector **x_vector, string x_var) {
 
 	if(x_var[0] == '\\') {
 		string x_var_sub = "\"";
@@ -3437,14 +3472,14 @@ Vector *Calculator::expressionToVector(string expression, const Manager *min, co
 	CALCULATOR->beginTemporaryStopErrors();
 	Manager *mngr = calculate(expression);
 	CALCULATOR->endTemporaryStopErrors();
-	Vector *v = mngr->generateVector(x_var, min, max, step, x_vector);
+	Vector *v = mngr->generateVector(x_var, min, max, steps, x_vector);
 	mngr->unref();
 	return v;
 	
 }
-Vector *Calculator::expressionToVector(string expression, float min, float max, float step, Vector **x_vector, string x_var) {
-	Manager min_mngr(min), max_mngr(max), step_mngr(step);
-	return expressionToVector(expression, &min_mngr, &max_mngr, &step_mngr, x_vector, x_var);
+Vector *Calculator::expressionToVector(string expression, float min, float max, int steps, Vector **x_vector, string x_var) {
+	Manager min_mngr(min), max_mngr(max);
+	return expressionToVector(expression, &min_mngr, &max_mngr, steps, x_vector, x_var);
 }
 Vector *Calculator::expressionToVector(string expression, Vector *x_vector, string x_var) {
 	
@@ -3491,14 +3526,112 @@ bool Calculator::plotVectors(plot_parameters *param, Vector *y_vector, ...) {
 }
 bool Calculator::plotVectors(plot_parameters *param, vector<Vector*> &y_vectors, vector<Vector*> &x_vectors, vector<plot_data_parameters*> &pdps) {
 
+	string commandline_extra;
+
 	if(!param) {
 		plot_parameters pp;
 		param = &pp;
 	}
 	
 	Vector *x_vector, *y_vector;
-
 	string plot;
+	
+	if(param->filename.empty()) {
+		if(!param->color) {
+			commandline_extra += " -mono";
+		}
+		if(param->font.empty()) {
+			commandline_extra += " -font \"-*-helvetica-bold-r-*-*-14-*-*-*-*-*-*-*\"";
+		}
+	} else {
+		if(param->filetype == PLOT_FILETYPE_AUTO) {
+			int i = param->filename.find(".");
+			if(i == string::npos) {
+				param->filetype = PLOT_FILETYPE_PNG;
+				error(false, _("No extension in file name. Saving as PNG image."), NULL);
+			} else {
+				string ext = param->filename.substr(i + 1, param->filename.length() - (i + 1));
+				if(ext == "png") {
+					param->filetype = PLOT_FILETYPE_PNG;
+				} else if(ext == "ps") {
+					param->filetype = PLOT_FILETYPE_PS;
+				} else if(ext == "eps") {
+					param->filetype = PLOT_FILETYPE_EPS;
+				} else if(ext == "svg") {
+					param->filetype = PLOT_FILETYPE_SVG;
+				} else if(ext == "fig") {
+					param->filetype = PLOT_FILETYPE_FIG;
+				} else if(ext == "tex") {
+					param->filetype = PLOT_FILETYPE_LATEX;
+				} else {
+					param->filetype = PLOT_FILETYPE_PNG;
+					error(false, _("Unknown extension in file name. Saving as PNG image."), NULL);
+				}
+			}
+		}
+		plot += "set terminal ";
+		switch(param->filetype) {
+			case PLOT_FILETYPE_PNG: {
+				plot += "png ";
+				if(param->color) {
+					plot += "color";
+				} else {
+					plot += "monochrome";
+				}
+				break;
+			}
+			case PLOT_FILETYPE_FIG: {
+				plot += "fig ";
+				if(param->color) {
+					plot += "color";
+				} else {
+					plot += "monochrome";
+				}
+				break;
+			}
+			case PLOT_FILETYPE_SVG: {
+				plot += "svg";
+				break;
+			}
+			case PLOT_FILETYPE_LATEX: {
+				plot += "latex ";
+				break;
+			}
+			case PLOT_FILETYPE_PS: {
+				plot += "postscript ";
+				if(param->color) {
+					plot += "color";
+				} else {
+					plot += "monochrome";
+				}
+				plot += " \"Times\"";
+				break;
+			}
+			case PLOT_FILETYPE_EPS: {
+				plot += "postscript eps ";
+				if(param->color) {
+					plot += "color";
+				} else {
+					plot += "monochrome";
+				}
+				plot += " \"Times\"";
+				break;
+			}
+		}
+		plot += "\nset output \"";
+		plot += param->filename;
+		plot += "\"\n";
+	}
+
+	switch(param->legend_placement) {
+		case PLOT_LEGEND_NONE: {plot += "set nokey\n"; break;}
+		case PLOT_LEGEND_TOP_LEFT: {plot += "set key top left\n"; break;}
+		case PLOT_LEGEND_TOP_RIGHT: {plot += "set key top right\n"; break;}
+		case PLOT_LEGEND_BOTTOM_LEFT: {plot += "set key bottom left\n"; break;}
+		case PLOT_LEGEND_BOTTOM_RIGHT: {plot += "set key bottom right\n"; break;}
+		case PLOT_LEGEND_BELOW: {plot += "set key below\n"; break;}
+		case PLOT_LEGEND_OUTSIDE: {plot += "set key outside\n"; break;}
+	}
 	if(!param->x_label.empty()) {
 		plot += "set xlabel \"";
 		plot += param->x_label;
@@ -3509,25 +3642,85 @@ bool Calculator::plotVectors(plot_parameters *param, vector<Vector*> &y_vectors,
 		plot += param->y_label;
 		plot += "\"\n";	
 	}
+	if(!param->title.empty()) {
+		plot += "set title \"";
+		plot += param->title;
+		plot += "\"\n";	
+	}
+	if(param->grid) {
+		plot += "set grid\n";
+	}
+	if(param->y_log) {
+		plot += "set logscale y ";
+		plot += i2s(param->y_log_base);
+		plot += "\n";
+	}
+	if(param->x_log) {
+		plot += "set logscale x ";
+		plot += i2s(param->x_log_base);
+		plot += "\n";
+	}
+	if(param->show_all_borders) {
+		plot += "set border 15\n";
+	} else {
+		bool xaxis2 = false, yaxis2 = false;
+		for(int i = 0; i < pdps.size(); i++) {
+			if(pdps[i] && pdps[i]->xaxis2) {
+				xaxis2 = true;
+			}
+			if(pdps[i] && pdps[i]->yaxis2) {
+				yaxis2 = true;
+			}
+		}
+		if(xaxis2 && yaxis2) {
+			plot += "set border 15\nset x2tics\nset y2tics\n";
+		} else if(xaxis2) {
+			plot += "set border 7\nset x2tics\n";
+		} else if(yaxis2) {
+			plot += "set border 11\nset y2tics\n";
+		} else {
+			plot += "set border 3\n";
+		}
+		plot += "set xtics nomirror\nset ytics nomirror\n";
+	}
 	plot += "plot ";
 	for(int i = 0; i < y_vectors.size(); i++) {
-		if(i != 0) {
-			plot += ",";
-		}
-		plot += "'-'";
-		if(i < pdps.size()) {
-			if(!pdps[i]->smoothing.empty() && pdps[i]->smoothing != "none") {
-				plot += " smooth ";
-				plot += pdps[i]->smoothing;
+		if(y_vectors[i]) {
+			if(i != 0) {
+				plot += ",";
 			}
-			if(!pdps[i]->title.empty()) {
-				plot += " title \"";
-				plot += pdps[i]->title;
-				plot += "\"";
+			plot += "'-'";
+			if(i < pdps.size()) {
+				if(pdps[i]->xaxis2 && pdps[i]->yaxis2) {
+					plot += " axis x2y2";
+				} else if(pdps[i]->xaxis2) {
+					plot += " axis x2y1";
+				} else if(pdps[i]->yaxis2) {
+					plot += " axis x1y2";
+				}
+				if(!pdps[i]->smoothing.empty() && pdps[i]->smoothing != "none") {
+					plot += " smooth ";
+					plot += pdps[i]->smoothing;
+				}
+				if(!pdps[i]->title.empty()) {
+					plot += " title \"";
+					plot += pdps[i]->title;
+					plot += "\"";
+				}
+				if(!pdps[i]->style.empty()) {
+					plot += " with ";
+					plot += pdps[i]->style;
+				}
+				if(param->linewidth < 1) {
+					plot += " lw 2";
+				} else {
+					plot += " lw ";
+					plot += i2s(param->linewidth);
+				}
 			}
 		}
 	}
-	
+	plot += "\n";
 	bool b_always_exact = alwaysExact();
 	setAlwaysExact(false);	
 
@@ -3538,29 +3731,33 @@ bool Calculator::plotVectors(plot_parameters *param, vector<Vector*> &y_vectors,
 		} else {
 			x_vector = NULL;
 		}
-		for(int i = 1; i <= y_vector->components(); i++) {
-			if(x_vector && x_vector->components() == y_vector->components()) {
-				plot += x_vector->get(i)->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DECIMAL_ONLY);
-				plot += " ";
+		if(y_vector) {
+			for(int i = 1; i <= y_vector->components(); i++) {
+				if(x_vector && x_vector->components() == y_vector->components()) {
+					plot += x_vector->get(i)->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DECIMAL_ONLY);
+					plot += " ";
+				}
+				plot += y_vector->get(i)->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DECIMAL_ONLY);
+				plot += "\n";	
 			}
-			plot += y_vector->get(i)->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DECIMAL_ONLY);
-			plot += "\n";	
+			plot += "e\n";
 		}
-		plot += "e\n";
 	}
 	
 	setAlwaysExact(b_always_exact);	
 	
-	return invokeGnuplot(plot);
+	return invokeGnuplot(plot, commandline_extra);
 }
-bool Calculator::invokeGnuplot(string commands) {
-	FILE *pipe = popen("gnuplot -persist -", "w");
+bool Calculator::invokeGnuplot(string commands, string commandline_extra) {
+	string commandline = "gnuplot -persist";
+	commandline += commandline_extra;
+	commandline += " -";
+	FILE *pipe = popen(commandline.c_str(), "w");
 	if(!pipe) {
 		error(true, _("Failed to invoke gnuplot. Make that you have gnuplot installed in your path."), NULL);
 		return false;
 	}
 	fputs(commands.c_str(), pipe);
-	pclose(pipe);
-	return true;
+	return pclose(pipe) == 0;
 }
 
