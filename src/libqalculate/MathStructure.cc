@@ -7742,10 +7742,12 @@ int MathStructure::contains(const MathStructure &mstruct, bool structural_only, 
 		}
 	} else {
 		int ret = 0;
-		for(size_t i = 0; i < SIZE; i++) {
-			int retval = CHILD(i).contains(mstruct, structural_only, check_variables, check_functions);
-			if(retval == 1) return 1;
-			else if(retval < 0) ret = retval;
+		if(m_type != STRUCT_FUNCTION) {
+			for(size_t i = 0; i < SIZE; i++) {
+				int retval = CHILD(i).contains(mstruct, structural_only, check_variables, check_functions);
+				if(retval == 1) return 1;
+				else if(retval < 0) ret = retval;
+			}
 		}
 		if(m_type == STRUCT_VARIABLE && check_variables && o_variable->isKnown()) {
 			if(((KnownVariable*) o_variable)->get().contains(mstruct, structural_only, check_variables, check_functions) == 0) return 0;
@@ -7769,10 +7771,12 @@ int MathStructure::contains(const MathStructure &mstruct, bool structural_only, 
 int MathStructure::containsRepresentativeOf(const MathStructure &mstruct, bool check_variables, bool check_functions) const {
 	if(equals(mstruct)) return 1;
 	int ret = 0;
-	for(size_t i = 0; i < SIZE; i++) {
-		int retval = CHILD(i).containsRepresentativeOf(mstruct, check_variables, check_functions);
-		if(retval == 1) return 1;
-		else if(retval < 0) ret = retval;
+	if(m_type != STRUCT_FUNCTION) {
+		for(size_t i = 0; i < SIZE; i++) {
+			int retval = CHILD(i).containsRepresentativeOf(mstruct, check_variables, check_functions);
+			if(retval == 1) return 1;
+			else if(retval < 0) ret = retval;
+		}
 	}
 	if(m_type == STRUCT_VARIABLE && check_variables && o_variable->isKnown()) {
 		if(((KnownVariable*) o_variable)->get().containsRepresentativeOf(mstruct, check_variables, check_functions) == 0) return 0;
@@ -7801,10 +7805,12 @@ int MathStructure::containsType(int mtype, bool structural_only, bool check_vari
 		return 0;
 	} else {
 		int ret = 0;
-		for(size_t i = 0; i < SIZE; i++) {
-			int retval = CHILD(i).containsType(mtype, false, check_variables, check_functions);
-			if(retval == 1) return 1;
-			else if(retval < 0) ret = retval;
+		if(m_type != STRUCT_FUNCTION) {
+			for(size_t i = 0; i < SIZE; i++) {
+				int retval = CHILD(i).containsType(mtype, false, check_variables, check_functions);
+				if(retval == 1) return 1;
+				else if(retval < 0) ret = retval;
+			}
 		}
 		if(check_variables && m_type == STRUCT_VARIABLE && o_variable->isKnown()) {
 			if(((KnownVariable*) o_variable)->get().containsType(mtype, false, check_variables, check_functions) == 0) return 0;
@@ -7826,10 +7832,12 @@ int MathStructure::containsType(int mtype, bool structural_only, bool check_vari
 int MathStructure::containsRepresentativeOfType(int mtype, bool check_variables, bool check_functions) const {
 	if(m_type == mtype) return 1;
 	int ret = 0;
-	for(size_t i = 0; i < SIZE; i++) {
-		int retval = CHILD(i).containsRepresentativeOfType(mtype, check_variables, check_functions);
-		if(retval == 1) return 1;
-		else if(retval < 0) ret = retval;
+	if(m_type != STRUCT_FUNCTION) {
+		for(size_t i = 0; i < SIZE; i++) {
+			int retval = CHILD(i).containsRepresentativeOfType(mtype, check_variables, check_functions);
+			if(retval == 1) return 1;
+			else if(retval < 0) ret = retval;
+		}
 	}
 	if(check_variables && m_type == STRUCT_VARIABLE && o_variable->isKnown()) {
 		if(((KnownVariable*) o_variable)->get().containsRepresentativeOfType(mtype, check_variables, check_functions) == 0) return 0;

@@ -8523,7 +8523,7 @@ void on_menu_item_limit_implicit_multiplication_activate(GtkMenuItem *w, gpointe
 	result_format_updated();
 }
 void fetch_exchange_rates(int timeout) {
-#if GTK_MINOR_VERSION == 6
+#if GTK_MINOR == 6 && GTK_MICRO < 2
 	GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE, _("Fetching exchange rates."));
 #else	
 	GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO, GTK_BUTTONS_NONE, _("Fetching exchange rates."));

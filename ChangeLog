@@ -1,3 +1,8 @@
+2005-02-06 Niklas Knutsson  <nq@altern.org>
+
+	* Dialog with buttons works in gtk+-2.6.2
+	* Do not look at function arguments in contains... functions
+
 2005-02-02 Niklas Knutsson  <nq@altern.org>
 
 	* Update integration and differentiation (sin(x) != sin(x)*rad) after change in sin() and cos() behaviour
