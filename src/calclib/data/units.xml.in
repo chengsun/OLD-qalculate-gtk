@@ -429,6 +429,81 @@
     </unit>
   </category>
   <category>
+    <_title>Angle</_title>  
+    <category>
+      <_title>Plane Angle</_title>
+      <unit type="composite" name="m_p_m">
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Meter per Meter</_title>
+      </unit>
+      <unit type="alias" name="rad">
+        <_singular>radian</_singular>
+        <_plural>radians</_plural>
+        <base>
+          <unit>m_p_m</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Radian</_title>
+      </unit>
+      <unit type="alias" name="deg">
+        <_singular>degree</_singular>
+        <_plural>degrees</_plural>
+        <base>
+          <unit>rad</unit>
+          <relation>pi/180</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Degree</_title>
+      </unit>
+      <unit type="alias" name="gra">
+        <_singular>gradian</_singular>
+        <_plural>gradians</_plural>
+        <base>
+          <unit>rad</unit>
+          <relation>pi/200</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Gradian</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Solid Angle</_title>
+      <unit type="composite" name="sqm_p_sqm">
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>2</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-2</exponent>
+        </part>
+        <_title>Square Meter per Square Meter</_title>
+      </unit>
+      <unit type="alias" name="sr">
+        <_singular>steradian</_singular>
+        <_plural>steradians</_plural>
+        <base>
+          <unit>m_p_m</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Steradian</_title>
+      </unit>
+    </category>
+  </category>
+  <category>
     <_title>Mass</_title>
     <unit type="base" name="g">
       <_singular>gram</_singular>
@@ -1077,11 +1152,24 @@
     </category>
     <category>
       <_title>Luminous Flux</_title>
+      <unit type="composite" name="cd_sr">
+        <part>
+          <unit>cd</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>sr</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <_title>Candela Steradian</_title>
+      </unit>
       <unit type="alias" name="lm">
         <_singular>lumen</_singular>
         <_plural>lumens</_plural>
         <base>
-          <unit>cd</unit>
+          <unit>cd_sr</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
@@ -1114,8 +1202,24 @@
       </unit>
     </category>
     <category>
+      <_title>Radiant Flux</_title>
+      <unit type="composite" name="W_p_sr">
+        <part>
+          <unit>W</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+	<part>
+          <unit>sr</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Watt per Steradian</_title>
+      </unit>
+    </category>    
+    <category>
       <_title>Irradiance</_title>
-      <unit type="composite" name="W_p_sqm">
+      <unit type="composite" name="W_p_sqm_sr">
         <part>
           <unit>W</unit>
           <prefix>0</prefix>
@@ -1126,7 +1230,12 @@
           <prefix>0</prefix>
           <exponent>-2</exponent>
         </part>
-        <_title>Watt per Square Meter</_title>
+	<part>
+          <unit>sr</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Watt per Square Meter Steradian</_title>
       </unit>
     </category>
   </category>
@@ -1916,8 +2025,8 @@
         </base>
         <_title>Gray</_title>
       </unit>
-      <unit type="alias" name="rad">
-        <_singular>rad</_singular>
+      <unit type="alias" name="rad_radioactivity">
+        <_singular>rad_radioactivity</_singular>
         <base>
           <unit>Gy</unit>
           <relation>1/100</relation>
@@ -1938,8 +2047,8 @@
         </base>
         <_title>Sievert</_title>
       </unit>
-      <unit type="alias" name="rem_unit">
-        <_singular>rem_unit</_singular>
+      <unit type="alias" name="rem_radioactivity">
+        <_singular>rem_radioactivity</_singular>
         <base>
           <unit>Sv</unit>
           <relation>1/100</relation>

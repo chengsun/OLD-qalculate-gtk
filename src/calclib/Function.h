@@ -27,7 +27,8 @@ enum {
 	ARGUMENT_TYPE_FUNCTION,	
 	ARGUMENT_TYPE_UNIT,
 	ARGUMENT_TYPE_BOOLEAN,
-	ARGUMENT_TYPE_VARIABLE
+	ARGUMENT_TYPE_VARIABLE,
+	ARGUMENT_TYPE_ANGLE
 };
 
 typedef enum {
@@ -338,6 +339,21 @@ class UnitArgument : public Argument {
 	virtual Argument *copy() const;
 	virtual string print() const;
 	virtual bool needQuotes() const;
+};
+class AngleArgument : public Argument {
+
+  protected:
+  
+	virtual bool subtest(const Manager *value) const;  
+	virtual string subprintlong() const;
+
+  public:
+  
+  	AngleArgument(string name_ = "", bool does_test = true);
+	AngleArgument(const AngleArgument *arg);
+	virtual int type() const;
+	virtual Argument *copy() const;
+	virtual string print() const;
 };
 class VariableArgument : public Argument {
 

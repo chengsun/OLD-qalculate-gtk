@@ -173,28 +173,29 @@ void display_errors() {
 	GtkTextBuffer *tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (glade_xml, "history")));
 	GtkTextIter iter, iter_s;
 	while(true) {
-		if(CALCULATOR->error()->critical())
+		if(CALCULATOR->error()->critical()) {
 			critical = true;
-		if(b)
+		}
+		if(b) {
 			str += "\n";
-		else
+		} else {
 			b = true;
+		}
 		str += CALCULATOR->error()->message();
 		gtk_text_buffer_get_start_iter(tb, &iter);
 		gtk_text_buffer_insert(tb, &iter, CALCULATOR->error()->message().c_str(), -1);
 		gtk_text_buffer_get_start_iter(tb, &iter_s);
-		if(CALCULATOR->error()->critical())
+		if(CALCULATOR->error()->critical()) {
 			gtk_text_buffer_apply_tag_by_name(tb, "red_foreground", &iter_s, &iter);
-		else
+		} else {
 			gtk_text_buffer_apply_tag_by_name(tb, "blue_foreground", &iter_s, &iter);
+		}
 		gtk_text_buffer_insert(tb, &iter, "\n", -1);
 		gtk_text_buffer_place_cursor(tb, &iter);
 		if(!CALCULATOR->nextError()) break;
 	}
-	if(!str.empty())
-	{
-		if(critical)
-		{
+	if(!str.empty()) {
+		if(critical) {
 			edialog = gtk_message_dialog_new(
 					GTK_WINDOW(
 						glade_xml_get_widget (glade_xml, "main_window")
@@ -203,9 +204,7 @@ void display_errors() {
 					GTK_MESSAGE_ERROR,
 					GTK_BUTTONS_CLOSE,
 					str.c_str());
-		}
-		else
-		{
+		} else {
 			edialog = gtk_message_dialog_new(
 					GTK_WINDOW(
 						glade_xml_get_widget (glade_xml, "main_window")
@@ -1303,6 +1302,10 @@ void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gp
 				case ARGUMENT_TYPE_BOOLEAN: {
 					menu_index = MENU_ARGUMENT_TYPE_BOOLEAN;
 					break;
+				}
+				case ARGUMENT_TYPE_ANGLE: {
+					menu_index = MENU_ARGUMENT_TYPE_ANGLE;
+					break;
 				}						
 			}			
 		} else {
@@ -1931,6 +1934,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						else if(m->unit()->name() == "oC") str += SIGN_POWER_0 "C";
 						else if(m->unit()->name() == "oF") str += SIGN_POWER_0 "F";
 						else if(m->unit()->name() == "oR") str += SIGN_POWER_0 "R";
+						else if(m->unit()->name() == "deg") str += SIGN_POWER_0;
 						else str += m->unit()->name();
 					} else {
 						str += m->unit()->name();
@@ -7084,6 +7088,7 @@ void on_function_edit_button_add_argument_clicked(GtkButton *w, gpointer user_da
 			case MENU_ARGUMENT_TYPE_UNIT: {arg = new UnitArgument(); break;}
 			case MENU_ARGUMENT_TYPE_VARIABLE: {arg = new VariableArgument(); break;}
 			case MENU_ARGUMENT_TYPE_BOOLEAN: {arg = new BooleanArgument(); break;}	
+			case MENU_ARGUMENT_TYPE_ANGLE: {arg = new AngleArgument(); break;}	
 			default: {arg = new Argument();}
 		}
 	}
@@ -7134,6 +7139,7 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 				case MENU_ARGUMENT_TYPE_UNIT: {argtype = ARGUMENT_TYPE_UNIT; break;}
 				case MENU_ARGUMENT_TYPE_VARIABLE: {argtype = ARGUMENT_TYPE_VARIABLE; break;}
 				case MENU_ARGUMENT_TYPE_BOOLEAN: {argtype = ARGUMENT_TYPE_BOOLEAN; break;}	
+				case MENU_ARGUMENT_TYPE_ANGLE: {argtype = ARGUMENT_TYPE_ANGLE; break;}	
 			}			
 			
 			if(!selected_argument || argtype != selected_argument->type() || menu_index == MENU_ARGUMENT_TYPE_NONNEGATIVE_INTEGER || menu_index == MENU_ARGUMENT_TYPE_POSITIVE_INTEGER || menu_index == MENU_ARGUMENT_TYPE_NONZERO_INTEGER || menu_index == MENU_ARGUMENT_TYPE_NONZERO || menu_index == MENU_ARGUMENT_TYPE_POSITIVE || menu_index == MENU_ARGUMENT_TYPE_NONNEGATIVE) {
@@ -7158,6 +7164,7 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 					case MENU_ARGUMENT_TYPE_UNIT: {selected_argument = new UnitArgument(); break;}
 					case MENU_ARGUMENT_TYPE_VARIABLE: {selected_argument = new VariableArgument(); break;}
 					case MENU_ARGUMENT_TYPE_BOOLEAN: {selected_argument = new BooleanArgument(); break;}	
+					case MENU_ARGUMENT_TYPE_ANGLE: {selected_argument = new AngleArgument(); break;}	
 					default: {selected_argument = new Argument();}
 				}			
 			}

@@ -10,6 +10,22 @@
     <_title>Logical</_title>
     <builtin_function name="for">
       <_title>for...do</_title>
+      <argument index="1">
+        <_title>Initial value of counter</_title>
+      </argument>
+      <argument index="2">
+        <_title>For condition</_title>
+      </argument>
+      <argument index="3">
+        <_title>Counter update expression</_title>
+      </argument>
+      <argument index="4">
+        <_title>Initial value</_title>
+      </argument>
+      <argument index="5">
+        <_title>Do expression</_title>
+      </argument>
+      <_description>Repeats an expression updating '\y' while a condition for '\x' is fulfilled.</_description>
     </builtin_function>
     <builtin_function name="if">
       <_title>If...Then...Else</_title>
@@ -18,10 +34,10 @@
         <_title>Condition</_title>
       </argument>
       <argument index="2">
-        <_title>Expression if condition met</_title>
+        <_title>Expression if condition is met</_title>
       </argument>
       <argument index="3">
-        <_title>Expression if condition NOT met</_title>
+        <_title>Expression if condition is NOT met</_title>
       </argument>
     </builtin_function>
   </category>
@@ -122,63 +138,170 @@
       <argument index="2">
         <_title>Columns</_title>
       </argument>
+      <argument index="3">
+        <_title>Elements</_title>
+      </argument>
+      <_description>Returns a matrix with specified order and listed elements. Omitted elements are set to zero.</_description>
     </builtin_function>
     <builtin_function name="vector">
       <_title>Construct Vector</_title>
+      <argument index="1">
+        <_title>Components</_title>
+      </argument>
+      <_description>Returns a vector with listed components.</_description>
     </builtin_function>
     <builtin_function name="elements">
       <_title>Elements</_title>
+      <argument index="1">
+        <_title>Matrix</_title>
+      </argument>
+      <_description>Returns the number of elements in a matrix.</_description>
     </builtin_function>
     <builtin_function name="sort">
       <_title>Sort</_title>
+      <argument index="1">
+        <_title>Vector</_title>
+      </argument>
+      <_description>Returns a sorted vector.</_description>
     </builtin_function>
     <builtin_function name="rank">
       <_title>Rank</_title>
+      <argument index="1">
+        <_title>Vector</_title>
+      </argument>
+      <_description>Returns a vector with values of components replaced with their mutual ranks.</_description>
     </builtin_function>
     <builtin_function name="matrix2vector">
       <_title>Convert Matrix to Vector</_title>
+      <argument index="1">
+        <_title>Matrix</_title>
+      </argument>
+      <_description>Puts each element of a matrix in vertical order in a vector.</_description>
     </builtin_function>
     <builtin_function name="row">
       <_title>Extract Row as Vector</_title>
+      <argument index="1">
+        <_title>Row</_title>
+      </argument>
+      <argument index="2">
+        <_title>Matrix</_title>
+      </argument>
+      <_description>Returns a row in a matrix as a vector.</_description>
     </builtin_function>
     <builtin_function name="column">
       <_title>Extract Column as Vector</_title>
+      <argument index="1">
+        <_title>Column</_title>
+      </argument>
+      <argument index="2">
+        <_title>Matrix</_title>
+      </argument>
+      <_description>Returns a column in a matrix as a vector.</_description>
     </builtin_function>
     <builtin_function name="rows">
       <_title>Rows</_title>
+      <argument index="1">
+        <_title>Matrix</_title>
+      </argument>
+      <_description>Returns the number of rows in a matrix.</_description>
     </builtin_function>
     <builtin_function name="columns">
       <_title>Columns</_title>
+      <argument index="1">
+        <_title>Matrix</_title>
+      </argument>
+      <_description>Returns the number of columns in a matrix.</_description>
     </builtin_function>
     <builtin_function name="element">
       <_title>Element</_title>
+      <argument index="1">
+        <_title>Row</_title>
+      </argument>
+      <argument index="2">
+        <_title>Column</_title>
+      </argument>
+      <argument index="3">
+        <_title>Matrix</_title>
+      </argument>
+      <_description>Returns the element at specified position in a matrix.</_description>
     </builtin_function>
     <builtin_function name="components">
       <_title>Components</_title>
+      <argument index="1">
+        <_title>Vector</_title>
+      </argument>
+      <_description>Returns the number of components in a vector.</_description>
     </builtin_function>
     <builtin_function name="component">
       <_title>Component</_title>
+      <argument index="1">
+        <_title>Component index</_title>
+      </argument>
+      <argument index="2">
+        <_title>Vector</_title>
+      </argument>
+      <_description>Returns the component at specified position in a vector.</_description>
     </builtin_function>
     <builtin_function name="limits">
       <_title>Limits</_title>
+      <argument index="1">
+        <_title>Lower limit</_title>
+      </argument>
+      <argument index="2">
+        <_title>Upper limit</_title>
+      </argument>
+      <argument index="3">
+        <_title>Vector</_title>
+      </argument>
+      <_description>Returns a part of a vector.</_description>
     </builtin_function>
     <builtin_function name="transpose">
       <_title>Transpose</_title>
+      <argument index="1">
+        <_title>Matrix</_title>
+      </argument>
+      <_description>Returns the transpose of a matrix.</_description>
     </builtin_function>
     <builtin_function name="identity">
       <_title>Identity</_title>
+      <argument index="1">
+        <_title>Matrix or Rows/Columns</_title>
+      </argument>
+      <_description>Returns the identity matrix of a matrix or with specified number of rows/columns.</_description>
     </builtin_function>
     <builtin_function name="det">
       <_title>Determinant</_title>
+      <argument index="1">
+        <_title>Matrix</_title>
+      </argument>
+      <_description>Calculates the determinant of a matrix.</_description>
     </builtin_function>
     <builtin_function name="cofactor">
       <_title>Cofactor</_title>
+      <argument index="1">
+        <_title>Row</_title>
+      </argument>
+      <argument index="2">
+        <_title>Column</_title>
+      </argument>
+      <argument index="3">
+        <_title>Matrix</_title>
+      </argument>
+      <_description>Returns the cofactor of the element at specified position.</_description>
     </builtin_function>
     <builtin_function name="adj">
       <_title>Adjoint</_title>
+      <argument index="1">
+        <_title>Matrix</_title>
+      </argument>
+      <_description>Returns the adjoint of a matrix.</_description>
     </builtin_function>
     <builtin_function name="inverse">
       <_title>Inverse</_title>
+      <argument index="1">
+        <_title>Matrix</_title>
+      </argument>
+      <_description>Returns the inverse of a matrix.</_description>
     </builtin_function>
     <function name="norm">
       <_title>Norm (length)</_title>
@@ -187,6 +310,7 @@
         <_title>Vector</_title>
         <test>false</test>
       </argument>
+      <_description>Calculates the norm/length of a vector.</_description>
     </function>
   </category>
   <category>
@@ -205,9 +329,39 @@
     <_title>Date &amp; Time</_title>
     <builtin_function name="days">
       <_title>Days between two dates</_title>
+      <argument index="1">
+        <_title>First date</_title>
+      </argument>
+      <argument index="2">
+        <_title>Second date</_title>
+      </argument>
+      <argument index="3">
+        <_title>Day counting basis</_title>
+      </argument>
+      <argument index="4">
+        <_title>Financial function mode</_title>
+      </argument>      
+      <_description>Returns the number of days between two dates.
+
+Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
     </builtin_function>
     <builtin_function name="yearfrac">
       <_title>Years between two dates</_title>
+      <argument index="1">
+        <_title>First date</_title>
+      </argument>
+      <argument index="2">
+        <_title>Second date</_title>
+      </argument>
+      <argument index="3">
+        <_title>Day counting basis</_title>
+      </argument>
+      <argument index="4">
+        <_title>Financial function mode</_title>
+      </argument>      
+      <_description>Returns the number of years (fractional) between two dates.
+
+Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
     </builtin_function>
   </category>
   <category>
@@ -362,48 +516,6 @@
         <_title>Angle</_title>
       </argument>
     </builtin_function>
-    <function name="rad2deg">
-      <_title>Radians to Degrees</_title>
-      <expression>\x*180/pi</expression>
-      <argument type="free" index="1">
-        <_title>Radians</_title>
-      </argument>
-    </function>
-    <function name="deg2rad">
-      <_title>Degrees to Radians</_title>
-      <expression>\x*pi/180</expression>
-      <argument type="free" index="1">
-        <_title>Degrees</_title>
-      </argument>
-    </function>
-    <function name="rad2gra">
-      <_title>Radians to Gradians</_title>
-      <expression>\x*200/pi</expression>
-      <argument type="free" index="1">
-        <_title>Radians</_title>
-      </argument>
-    </function>
-    <function name="gra2rad">
-      <_title>Gradians to Radians</_title>
-      <expression>\x*pi/200</expression>
-      <argument type="free" index="1">
-        <_title>Gradians</_title>
-      </argument>
-    </function>
-    <function name="deg2gra">
-      <_title>Degrees to Gradians</_title>
-      <expression>\x*400/360</expression>
-      <argument type="free" index="1">
-        <_title>Degrees</_title>
-      </argument>
-    </function>
-    <function name="gra2deg">
-      <_title>Gradians to Degrees</_title>
-      <expression>\x*360/400</expression>
-      <argument type="free" index="1">
-        <_title>Gradians</_title>
-      </argument>
-    </function>
   </category>
   <category>
     <_title>Exponents &amp; Logarithms</_title>
@@ -465,7 +577,7 @@
       </argument>
     </builtin_function>
     <builtin_function name="pow">
-      <_title>Power</_title>
+      <_title>X raised to the power Y</_title>
       <argument index="1">
         <_title>Base</_title>
       </argument>
@@ -770,22 +882,44 @@
     <_title>Statistics</_title>
     <builtin_function name="sum">
       <_title>Sum</_title>
+      <argument index="1">
+        <_title>Vector</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="percentile">
       <_title>Percentile</_title>
+      <argument index="1">
+        <_title>Percentile (%)</_title>
+      </argument>
+      <argument index="2">
+        <_title>Vector</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="min">
       <_title>Min</_title>
+      <_description>Returns the lowest value.</_description>
+      <argument index="1">
+        <_title>Vector</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="max">
       <_title>Max</_title>
+      <_description>Returns the highest value.</_description>
+      <argument index="1">
+        <_title>Vector</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="mode">
       <_title>Mode</_title>
+      <_description>Returns the most frequently occuring value.</_description>
+      <argument index="1">
+        <_title>Vector</_title>
+      </argument>
     </builtin_function>
     <function name="range">
       <_title>Range</_title>
       <expression>max(\v)-min(\v)</expression>
+      <_description>Calculates the difference between the min and max value.</_description>
       <argument type="vector" index="1">
         <_title>Data</_title>
         <test>false</test>
@@ -871,6 +1005,7 @@
     </function>
     <function name="iqr">
       <_title>Interquartile Range</_title>
+      <_description>Calculates the difference between the first and third quartile.</_description>
       <expression>quartile(3,\v)-quartile(1,\v)</expression>
       <argument type="vector" index="1">
         <_title>Data</_title>
@@ -888,6 +1023,7 @@
     <function name="number">
       <_title>Number</_title>
       <expression>elements(\v)</expression>
+      <_description>Returns the number of samples.</_description>
       <argument type="vector" index="1">
         <_title>Data</_title>
         <test>false</test>
@@ -1224,7 +1360,7 @@ If type = 1 then the payment is made at the beginning of the period, If type = 0
     </function>
     <function name="zero_coupon">
       <_title>Zero coupon</_title>
-      <_description>Calculates the valucalculates the value of a zero-coupon (pure discount) bond.</_description>
+      <_description>Calculates the value of a zero-coupon (pure discount) bond.</_description>
       <expression>\x/((1+\y)^\z)</expression>
       <argument type="free" index="1">
         <_title>Face value</_title>

@@ -16,10 +16,12 @@
 #include "Manager.h"
 #include "Integer.h"
 #include "Fraction.h"
+#include "Unit.h"
 
 Function::Function(string cat_, string name_, int argc_, string title_, string descr_, int max_argc_, bool is_active) : ExpressionItem(cat_, name_, title_, descr_, false, true, is_active) {
 	argc = argc_;
 	if(max_argc_ < 0 || argc < 0) {
+		if(argc < 0) argc = 0;
 		max_argc = -1;
 	} else if(max_argc_ < argc) {
 		max_argc = argc;
@@ -729,6 +731,7 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 	}
 	if(max_argc_ < 0 || argc_ < 0) {
 		max_argc_ = -1;
+		if(argc_ < 0) argc_ = 0;
 	} else if(max_argc_ < argc_) {
 		max_argc_ = argc_;	
 	}
@@ -1224,4 +1227,31 @@ int BooleanArgument::type() const {return ARGUMENT_TYPE_BOOLEAN;}
 Argument *BooleanArgument::copy() const {return new BooleanArgument(this);}
 string BooleanArgument::print() const {return _("boolean");}
 string BooleanArgument::subprintlong() const {return _("a boolean (0 or 1)");}
+
+AngleArgument::AngleArgument(string name_, bool does_test) : Argument(name_, does_test) {}
+AngleArgument::AngleArgument(const AngleArgument *arg) {set(arg);}
+bool AngleArgument::subtest(const Manager *value) const {
+	if(value->isFraction()) {
+		return true;
+	} else if(value->isUnit()) {
+		Unit *rad = CALCULATOR->getUnit("rad");
+		return value->unit() == rad || value->unit()->isChildOf(rad);
+	} else if(value->isMultiplication() && value->countChilds() == 2 && value->getChild(0)->isFraction() && value->getChild(1)->isUnit()) {
+		Unit *rad = CALCULATOR->getUnit("rad");
+		return value->getChild(1)->unit() == rad || value->getChild(1)->unit()->isChildOf(rad);
+	} else {
+		Unit *rad = CALCULATOR->getUnit("rad");
+		if(!rad) {
+			return false;
+		}
+		Manager mngr(value);
+		mngr.addUnit(rad, OPERATION_DIVIDE);
+		mngr.finalize();
+		return mngr.isFraction();
+	}
+}
+int AngleArgument::type() const {return ARGUMENT_TYPE_ANGLE;}
+Argument *AngleArgument::copy() const {return new AngleArgument(this);}
+string AngleArgument::print() const {return _("angle");}
+string AngleArgument::subprintlong() const {return _("an angle or a number (using the default angle unit)");}
 

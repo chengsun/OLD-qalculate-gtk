@@ -1,3 +1,16 @@
+2003-10-17  Niklas Knutsson  <nq@altern.org>
+
+	* Finally implement angle units and allow direct specification of angle unit in trigonometric functions
+	* rem and rad units renamed to rem_radioactivity and rad_radioactivity
+	* Some swedish translation updates
+	* Some tooltip updates
+	* Some TODO updates
+	* Fill in the last argument titles and add some descriptions
+	* Set min arguments to zero if lower (and max to -1)
+	* Argument names and descriptions for matrix and vector functions
+	* Rename title "Power" with "X raised to Y" to solve translation conflict with the category "Power"
+	* Fix 0^0 warning
+
 2003-10-16  Niklas Knutsson  <nq@altern.org>
 
 	* If add argument button is not sensitive, modify argument instead on enter

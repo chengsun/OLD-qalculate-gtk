@@ -959,6 +959,11 @@ int Fraction::pow(const Fraction *fr, int solution) {
 		return false;
 	}
 	if(isZero()) {
+		if(fr->isZero()) {
+			//0^0
+			CALCULATOR->error(false, _("0^0 might be considered undefined"), NULL);
+			return 1;
+		}
 		return 1;
 	}
 	if(!fr->isPrecise()) b_exact = false;

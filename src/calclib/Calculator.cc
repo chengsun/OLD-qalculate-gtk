@@ -133,7 +133,10 @@ Calculator::Calculator() {
 	setPrecision(DEFAULT_PRECISION);
 
 	setLocale();
-	addStringAlternative(SIGN_POWER_0, "o");
+	addStringAlternative(SIGN_POWER_0 "C", "oC");
+	addStringAlternative(SIGN_POWER_0 "F", "oF");
+	addStringAlternative(SIGN_POWER_0 "R", "oR");
+	addStringAlternative(SIGN_POWER_0, "deg");
 	addStringAlternative(SIGN_POWER_1, "^1");
 	addStringAlternative(SIGN_POWER_2, "^2");
 	addStringAlternative(SIGN_POWER_3, "^3");
@@ -2205,6 +2208,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 								arg = new VariableArgument();
 							} else if(type == "object") {
 								arg = new ExpressionItemArgument();
+							} else if(type == "angle") {
+								arg = new AngleArgument();
 							} else {
 								arg = new Argument();
 							}
@@ -3106,6 +3111,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 								case ARGUMENT_TYPE_UNIT: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "unit"); break;}
 								case ARGUMENT_TYPE_VARIABLE: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "variable"); break;}
 								case ARGUMENT_TYPE_EXPRESSION_ITEM: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "object"); break;}
+								case ARGUMENT_TYPE_ANGLE: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "angle"); break;}
 								default: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "free");}
 							}
 							xmlNewProp(newnode, (xmlChar*) "index", (xmlChar*) i2s(i2).c_str());
@@ -3173,23 +3179,29 @@ long double Calculator::getAngleValue(long double value) {
 	}
 }
 Manager *Calculator::setAngleValue(Manager *mngr) {
-	switch(angleMode()) {
-		case DEGREES: {
-			Fraction fr;
-			fr.pi();
-			Manager mngr_pi(&fr);
-	    		mngr->add(&mngr_pi, OPERATION_MULTIPLY);
-	    		mngr->addFloat(180, OPERATION_DIVIDE);			
-			break;
+	if(mngr->isFraction()) {
+		switch(angleMode()) {
+			case DEGREES: {
+				Fraction fr;
+				fr.pi();
+				Manager mngr_pi(&fr);
+		    		mngr->add(&mngr_pi, OPERATION_MULTIPLY);
+	    			mngr->addFloat(180, OPERATION_DIVIDE);			
+				break;
+			}
+			case GRADIANS: {
+				Fraction fr;
+				fr.pi();
+				Manager mngr_pi(&fr);
+		    		mngr->add(&mngr_pi, OPERATION_MULTIPLY);			
+	    			mngr->addFloat(200, OPERATION_DIVIDE);		
+				break;
+			}
 		}
-		case GRADIANS: {
-			Fraction fr;
-			fr.pi();
-			Manager mngr_pi(&fr);
-	    		mngr->add(&mngr_pi, OPERATION_MULTIPLY);			
-	    		mngr->addFloat(200, OPERATION_DIVIDE);		
-			break;
-		}
+	} else {
+		Unit *rad = getUnit("rad");
+		mngr->addUnit(rad, OPERATION_DIVIDE);
+		mngr->finalize();
 	}
 	return mngr;
 }

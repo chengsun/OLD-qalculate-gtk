@@ -14,6 +14,7 @@
 * Complex numbers
 * Sort out percentile and provide alternative methods
 * Ask for exchange rate update on demand
+* Improve matrix editing
 
 * More functions
 * More units
@@ -24,6 +25,7 @@
 * API documentation
 * User documentation
 
+* Better graphs/charts (do not use gnuplot)
 * Script/code plugins for advanced functions
 * Command line version
 * Gnome/KDE applets

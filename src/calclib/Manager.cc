@@ -967,18 +967,8 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 		}
 	} else if(op == OPERATION_RAISE) {
 		if(mngr->isNull()) {
-/*			if(isNull()) {
-				CALCULATOR->error(false, _("0^0 is undefined"), NULL);
-				if(!translate_) {
-					return false;
-				}
-				transform(mngr, POWER_MANAGER, op);
-				return true;
-			} else {*/
-				CALCULATOR->error(false, _("0^0 might be considered undefined"), NULL);
-				set(1, 1);
-				return true;
-//			}
+			set(1, 1);
+			return true;
 		} else if(mngr->isOne()) {
 			return true;
 		} else if(isZero() && mngr->isFraction() && mngr->fraction()->isNegative()) {

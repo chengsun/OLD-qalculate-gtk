@@ -958,51 +958,51 @@ void ModFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(mngr->fraction()->isPrecise());
 }
 
-SinFunction::SinFunction() : Function("Trigonometry", "sin", 1, "Sine") {setArgumentDefinition(1, new FractionArgument());}
+SinFunction::SinFunction() : Function("Trigonometry", "sin", 1, "Sine") {setArgumentDefinition(1, new AngleArgument());}
 void SinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(sin)
 }
-CosFunction::CosFunction() : Function("Trigonometry", "cos", 1, "Cosine") {setArgumentDefinition(1, new FractionArgument());}
+CosFunction::CosFunction() : Function("Trigonometry", "cos", 1, "Cosine") {setArgumentDefinition(1, new AngleArgument());}
 void CosFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(cos)
 }
-TanFunction::TanFunction() : Function("Trigonometry", "tan", 1, "Tangent") {setArgumentDefinition(1, new FractionArgument());}
+TanFunction::TanFunction() : Function("Trigonometry", "tan", 1, "Tangent") {setArgumentDefinition(1, new AngleArgument());}
 void TanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(tan)
 }
-SinhFunction::SinhFunction() : Function("Trigonometry", "sinh", 1, "Hyperbolic sine") {setArgumentDefinition(1, new FractionArgument());}
+SinhFunction::SinhFunction() : Function("Trigonometry", "sinh", 1, "Hyperbolic sine") {setArgumentDefinition(1, new AngleArgument());}
 void SinhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(sinh)
 }
-CoshFunction::CoshFunction() : Function("Trigonometry", "cosh", 1, "Hyperbolic cosine") {setArgumentDefinition(1, new FractionArgument());}
+CoshFunction::CoshFunction() : Function("Trigonometry", "cosh", 1, "Hyperbolic cosine") {setArgumentDefinition(1, new AngleArgument());}
 void CoshFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(cosh)
 }
-TanhFunction::TanhFunction() : Function("Trigonometry", "tanh", 1, "Hyperbolic tangent") {setArgumentDefinition(1, new FractionArgument());}
+TanhFunction::TanhFunction() : Function("Trigonometry", "tanh", 1, "Hyperbolic tangent") {setArgumentDefinition(1, new AngleArgument());}
 void TanhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(tanh)
 }
-AsinFunction::AsinFunction() : Function("Trigonometry", "asin", 1, "Arcsine") {setArgumentDefinition(1, new FractionArgument());}
+AsinFunction::AsinFunction() : Function("Trigonometry", "asin", 1, "Arcsine") {setArgumentDefinition(1, new AngleArgument());}
 void AsinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(asin)
 }
-AcosFunction::AcosFunction() : Function("Trigonometry", "acos", 1, "Arccosine") {setArgumentDefinition(1, new FractionArgument());}
+AcosFunction::AcosFunction() : Function("Trigonometry", "acos", 1, "Arccosine") {setArgumentDefinition(1, new AngleArgument());}
 void AcosFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(acos)
 }
-AtanFunction::AtanFunction() : Function("Trigonometry", "atan", 1, "Arctangent") {setArgumentDefinition(1, new FractionArgument());}
+AtanFunction::AtanFunction() : Function("Trigonometry", "atan", 1, "Arctangent") {setArgumentDefinition(1, new AngleArgument());}
 void AtanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(atan)
 }
-AsinhFunction::AsinhFunction() : Function("Trigonometry", "asinh", 1, "Hyperbolic arcsine") {setArgumentDefinition(1, new FractionArgument());}
+AsinhFunction::AsinhFunction() : Function("Trigonometry", "asinh", 1, "Hyperbolic arcsine") {setArgumentDefinition(1, new AngleArgument());}
 void AsinhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(asinh)
 }
-AcoshFunction::AcoshFunction() : Function("Trigonometry", "acosh", 1, "Hyperbolic arccosine") {setArgumentDefinition(1, new FractionArgument());}
+AcoshFunction::AcoshFunction() : Function("Trigonometry", "acosh", 1, "Hyperbolic arccosine") {setArgumentDefinition(1, new AngleArgument());}
 void AcoshFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(acosh)
 }
-AtanhFunction::AtanhFunction() : Function("Trigonometry", "atanh", 1, "Hyperbolic arctangent") {setArgumentDefinition(1, new FractionArgument());}
+AtanhFunction::AtanhFunction() : Function("Trigonometry", "atanh", 1, "Hyperbolic arctangent") {setArgumentDefinition(1, new AngleArgument());}
 void AtanhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(atanh)
 }
