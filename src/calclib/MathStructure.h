@@ -141,6 +141,9 @@ class MathStructure {
 		void setPrefix(Prefix *p);
 		bool isPlural() const;
 		void setPlural(bool is_plural);
+		void setFunction(Function *f);
+		void setUnit(Unit *u);
+		void setVariable(Variable *v);
 		Function *function() const;
 		Variable *variable() const;
 		

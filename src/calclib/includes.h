@@ -275,6 +275,14 @@ static const struct EvaluationOptions {
 	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), simplify_addition_powers(true), structuring(STRUCTURING_SIMPLIFY) {}
 } default_evaluation_options;
 
+extern MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one;
+extern EvaluationOptions no_evaluation;
+
+extern Calculator *calculator;
+
+#define CALCULATOR	calculator
+
+
 #define DEFAULT_PRECISION	8
 #define PRECISION		CALCULATOR->getPrecision()
 

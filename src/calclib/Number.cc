@@ -10,6 +10,7 @@
 */
 
 #include "Number.h"
+#include "Calculator.h"
 
 #include <sstream>
 #include "util.h"
@@ -403,7 +404,7 @@ void Number::set(string number, int base) {
 				den = den * base;
 			}
 			numbers_started = true;
-		} else if(number[index] == 'E' && base == 10) {
+		} else if(number[index] == 'E' && base <= 10) {
 			index++;
 			numbers_started = false;
 			bool exp_minus = false;
@@ -429,7 +430,7 @@ void Number::set(string number, int base) {
 			break;
 		} else if(number[index] == '.') {
 			in_decimals = true;
-		} else if(number[index] == ':' && base == 10) {
+		} else if(number[index] == ':') {
 			if(in_decimals) {
 				CALCULATOR->error(true, _("\':\' in decimal number ignored (decimal point detected)."), NULL);
 			} else {

@@ -13,7 +13,6 @@
 #define NUMBER_H
 
 #include "includes.h"
-#include "Calculator.h"
 
 #define WANT_OBFUSCATING_OPERATORS
 #include <cln/cln.h>

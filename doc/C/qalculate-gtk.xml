@@ -180,6 +180,10 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Opens a dialog for import of a data file as a matrix or vectors.</para></entry>
 			</row>
 			<row valign="top">
+				<entry><para>Export CSV File...</para></entry>
+				<entry><para>Opens a dialog for export of a matrix or vector to a data file.</para></entry>
+			</row>
+			<row valign="top">
 				<entry><para>Store Result... (<keycombo><keycap>Ctrl</keycap><keycap>S</keycap></keycombo>)</para></entry>
 				<entry><para>Stores the current result as a variable. See <xref linkend="qalculate-variable-creation"/>.</para></entry>
 			</row>
@@ -476,7 +480,7 @@ The manager windows provide a structural way of working with variables, function
 To the left is a category tree and beside that is a list of all objects in the selected category, including all subcategories. Objects without a category are put under <quote>Uncategorized</quote>. The top category, <quote>All</quote>, provides a list of all objects, except those that are deactivated and available in the second top-level category — <quote>Inactive</quote>. The object list does, in addition to descriptive names, for variables have an extra column for values of variables, and units have additional columns for abbreviation/singular/plural and base unit. 
 </para>
 <para>
-The buttons on the right work on the selected object in the list. <guibutton>New</guibutton> opens a dialog for creation of a new object, while <guibutton>Edit</guibutton> opens the same dialog to edit the selected unit. <guibutton>Insert</guibutton> inserts the object into the expression entry in the main window, <guibutton>Delete</guibutton> removes the object and <guibutton>(De)activate</guibutton> toggles recognition in expressions on/off. The unit manager has an additional button for conversion of the current result.
+The buttons on the right work on the selected object in the list. <guibutton>New</guibutton> opens a dialog for creation of a new object, while <guibutton>Edit</guibutton> opens the same dialog to edit the selected unit. <guibutton>Insert</guibutton> inserts the object into the expression entry in the main window, <guibutton>Delete</guibutton> removes the object and <guibutton>(De)activate</guibutton> toggles recognition in expressions on/off. The unit manager has an additional button for conversion of the current result and the variable manager a button for export to a data file.
 </para>
 <figure id="qalculate-FIG-function-manager">
 	<title>Function Manager</title>
@@ -541,7 +545,7 @@ In Qalculate! mathematical entities, such as numbers and variables, are referred
 	<varlistentry>
 		<term>Numbers</term>
 		<listitem><para>
-		These are the regular numbers composed by digits 0-9 and a decimal point — a dot, and a comma if it is the default decimal point in the locale/language used. Separators (ex. <quote>1,000.00</quote>), usually comma or dot whichever is not the decimal point, are not allowed. Numbers include integers, real numbers, and complex numbers. The imaginary part of complex numbers are written with as regular number followed by the special variable <quote>i</quote>, which represents the square root of -1 (ex. <quote>2 + 3i</quote>). Spaces between digits are ignored (<quote>5  5 = 55</quote>). <quote>E</quote> can be considered as a shortcut for writing many zeros and is equivalent to multiplication by 10 raised to the power of the right-hand value (ex. <quote>5E3 = 5000</quote>). Sexagesimal numbers (and time) can be entered directly using colons (ex. <quote>5:30 = 5.5</quote>).
+		These are the regular numbers composed by digits 0-9 and a decimal point — a dot, and a comma if it is the default decimal point in the locale/language used. Separators (ex. <quote>1,000.00</quote>), usually comma or dot whichever is not the decimal point, are not allowed. Numbers include integers, real numbers, and complex numbers. The imaginary part of complex numbers are written with as regular number followed by the special variable <quote>i</quote>, which represents the square root of -1 (ex. <quote>2 + 3i</quote>). Spaces between digits are ignored (<quote>5  5 = 55</quote>). <quote>E</quote> can be considered as a shortcut for writing many zeros and is equivalent to multiplication by 10 raised to the power of the right-hand value (ex. <quote>5E3 = 5000</quote>). Sexagesimal numbers (and time) can be entered directly using colons (ex. <quote>5:30 = 5.5</quote>). Numbers in other bases also be entered, either by using the <command>base()</command>, <command>bin()</command>, <command>oct()</command>, <command>hex()</command> and <command>roman()</command> functions, or by setting the base used for all numbers in the whole expression from <menuchoice><guimenu>Mode</guimenu><guisubmenu>Number Base</guisubmenu><guimenuitem>Set Base In Expression</guimenuitem></menuchoice>.
 		</para></listitem>
 	</varlistentry>
 	<varlistentry>
@@ -768,7 +772,7 @@ Qalculate! provides flexible calculation output and result display. There are se
 <varlistentry>
 <term>Number Bases</term>
 <listitem><para>
-Non-decimal bases can be selected for display of numbers in the result. This include regular number bases (binary, octal, hexadecimal, sexagesimal) as well as sexagesimal time format and roman numerals. All number bases between 2 and 36 can be selected from a dialog window accessed from <menuchoice><guimenu>Mode</guimenu><guimenu>Number Base</guimenu><guimenuitem>Other...</guimenuitem></menuchoice>. Note that this only affects the display of the result and not entered numbers. The convert number bases dialog (see <xref linkend="qalculate-convert-number-bases-dialog"/>) is more efficient for other purposes.
+Non-decimal bases can be selected for display of numbers in the result. This include regular number bases (binary, octal, hexadecimal, sexagesimal) as well as sexagesimal time format and roman numerals. All number bases between 2 and 36 can be selected from a dialog window accessed from <menuchoice><guimenu>Mode</guimenu><guisubmenu>Number Base</guisubmenu><guimenuitem>Other...</guimenuitem></menuchoice>. The base for entered numbers in expressions can be selected from the dialog opened with <menuchoice><guimenu>Mode</guimenu><guisubmenu>Number Base</guisubmenu><guimenuitem>Set Base In Expression</guimenuitem></menuchoice>. The convert number bases dialog (see <xref linkend="qalculate-convert-number-bases-dialog"/>) is more efficient for other purposes.
 </para></listitem>
 </varlistentry>
 <varlistentry>
@@ -781,6 +785,12 @@ These modes mainly control when numbers are displayed exponentially (ex. <quote>
 <term>Indicate Infinite Series</term>
 <listitem><para>
 If this option is on, Qalculate! will not round infinitely repeating digit sequences if discovered. Instead <quote>...</quote> will be displayed after the maximal number of decimals and the result indicated as exact (compare <quote>2/3 = 0.666667</quote> with <quote>2/3 = 0.666666...</quote>).
+</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Round Halfway Number To Even</term>
+<listitem><para>
+With this option, halfway numbers will be rounded to even instead of upwards (ex. 2.65 is then rounded to 2.6 instead of 2.7). Note that this behaviour is always applied in the <command>round()</command> function.
 </para></listitem>
 </varlistentry>
 <varlistentry>
@@ -902,7 +912,7 @@ Matrices and vectors can also be loaded from data files. These files most be pla
 	</screenshot>
 </figure>
 <para>
-The <command>load()</command> function can be used to access a CSV file directly in an expression.
+The <command>load()</command> function can be used to access a CSV file directly in an expression. The reversed action is also available with <command>export()</command>, or the dialog accessed with <menuchoice><guimenu>File</guimenu><guimenuitem>Export CSV File...</guimenuitem></menuchoice> or from the variable manager.
 </para>
 </sect2>
 </sect1>
@@ -1026,7 +1036,7 @@ A category for functions that do not fit elsewhere.
 <varlistentry>
 <term>Number Theory</term>
 <listitem><para>
-Contains subcategories arithmetics, number bases, and rounding, in addition to functions such as <command>abs()</command>, which returns the absolute value of a number, and <command>gcd()</command>, the greatest common divisor. <command>round()</command> is the standard rounding function. The functions for number bases translates a text string, representing a number in a different base, to a decimal number. Includes <command>bin()</command> for binary numbers, <command>hex()</command> for hexadecimal numbers, <command>oct()</command> for octal numbers and <command>base()</command> for numbers in a base between 2 and 36 specified in the second argument.
+Contains subcategories arithmetics, number bases, and rounding, in addition to functions such as <command>abs()</command>, which returns the absolute value of a number, and <command>gcd()</command>, the greatest common divisor. <command>round()</command> is the standard rounding function (note that halfway numbers are rounded to even). The functions for number bases translates a text string, representing an expression (bases that use letters does not allow variables, functions and units) with numbers in a different base, to a decimal number. Includes <command>bin()</command> for binary numbers, <command>hex()</command> for hexadecimal numbers, <command>oct()</command> for octal numbers and <command>base()</command> for numbers in a base between 2 and 36 specified in the second argument.
 </para></listitem>
 </varlistentry>
 <varlistentry>

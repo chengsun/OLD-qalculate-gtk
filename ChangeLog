@@ -1,3 +1,23 @@
+2004-07-16 Niklas Knutsson  <nq@altern.org>
+
+	* Oops! operators does not include parenthesis
+	* Use unicode operators in text printing
+	* base == 10 -> base >= 2 && base <= 10 (in parsing)
+	* Refine CSV export dialog
+	* Sort out some getActive... vs get...
+	* Fix too many arguments warning
+	* Increase function parsing efficiency (decrease number of MathStructure copies)
+	* Produce vector imediately on parse
+	* Export button in variables dialog
+	* Split number base expression and export csv dialogs from main.glade
+	* Remove <requires lib="gnome"/> lines
+	* Update Swedish translation
+	* Update documentation
+	* Fix nameTaken()
+	* Fix overwriting variable
+	* Remove deleted items from recent units/variables/functions
+	* Do not try to insert deleted variable
+
 2004-07-15 Niklas Knutsson  <nq@altern.org>
 
 	* More work on base in parse options

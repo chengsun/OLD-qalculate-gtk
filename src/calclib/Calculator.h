@@ -16,10 +16,6 @@
 #include "util.h"
 #include <pthread.h>
 
-extern Calculator *calculator;
-
-#define CALCULATOR	calculator
-
 typedef vector<Prefix*> p_type;
 
 struct plot_parameters {
@@ -63,8 +59,7 @@ class CalculatorError {
 	bool critical(void) const;
 };
 
-extern MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one;
-extern EvaluationOptions no_evaluation;
+#include <MathStructure.h>
 
 class Calculator {
   protected:
@@ -76,9 +71,11 @@ class Calculator {
 	vector<void*> ufv;
 	vector<char> ufv_t;	
 	
-	vector<MathStructure> id_structs;
+/*	vector<MathStructure*> id_structs;
 	vector<unsigned int> ids;
-	vector<bool> ids_p;
+	vector<bool> ids_p;*/
+	Sgi::hash_map<unsigned int, MathStructure> id_structs;
+	Sgi::hash_map<unsigned int, bool> ids_p;
 	vector<unsigned int> freed_ids;	
 	unsigned int ids_i;
 	
@@ -159,6 +156,8 @@ class Calculator {
 	void endTemporaryStopErrors();	
 	
 	unsigned int addId(const MathStructure &m_struct, bool persistent = false);
+	unsigned int parseAddId(Function *f, const string &str, const ParseOptions &po, bool persistent = false);
+	unsigned int parseAddVectorId(const string &str, const ParseOptions &po, bool persistent = false);
 	const MathStructure *getId(unsigned int id);	
 	void delId(unsigned int id, bool force = false);
 
@@ -233,6 +232,9 @@ class Calculator {
 	void deleteUnitName(string name_, Unit *object = NULL);	
 	Unit* addUnit(Unit *u, bool force = true);
 	void delUFV(void *object);		
+	bool hasVariable(Variable *v);
+	bool hasUnit(Unit *u);
+	bool hasFunction(Function *f);
 	ExpressionItem *getActiveExpressionItem(string name, ExpressionItem *item = NULL);
 	ExpressionItem *getInactiveExpressionItem(string name, ExpressionItem *item = NULL);	
 	ExpressionItem *getActiveExpressionItem(ExpressionItem *item);
@@ -262,6 +264,9 @@ class Calculator {
 	bool unitNameIsValid(string name_);
 	string convertToValidUnitName(string name_);		
 	bool nameTaken(string name, ExpressionItem *object = NULL);
+	bool variableNameTaken(string name, Variable *object = NULL);
+	bool unitNameTaken(string name, Unit *object = NULL);
+	bool functionNameTaken(string name, Function *object = NULL);
 	bool unitIsUsedByOtherUnits(const Unit *u) const;	
 	string getName(string name = "", ExpressionItem *object = NULL, bool force = false, bool always_append = false);
 	bool loadGlobalDefinitions();

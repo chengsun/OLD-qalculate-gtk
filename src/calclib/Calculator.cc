@@ -279,6 +279,24 @@ Variable *Calculator::getVariable(unsigned int index) const {
 	}
 	return NULL;
 }
+bool Calculator::hasVariable(Variable *v) {
+	for(unsigned int i = 0; i < variables.size(); i++) {
+		if(variables[i] == v) return true;
+	}
+	return false;
+}
+bool Calculator::hasUnit(Unit *u) {
+	for(unsigned int i = 0; i < units.size(); i++) {
+		if(units[i] == u) return true;
+	}
+	return false;
+}
+bool Calculator::hasFunction(Function *f) {
+	for(unsigned int i = 0; i < functions.size(); i++) {
+		if(functions[i] == f) return true;
+	}
+	return false;
+}
 ExpressionItem *Calculator::getActiveExpressionItem(ExpressionItem *item) {
 	if(!item) return NULL;
 	string name;
@@ -724,42 +742,87 @@ void Calculator::unsetLocale() {
 }
 
 unsigned int Calculator::addId(const MathStructure &m_struct, bool persistent) {
+	unsigned int id = 0;
 	if(freed_ids.size() > 0) {
-		ids.push_back(freed_ids.back());
-		id_structs.push_back(m_struct);
-		ids_p.push_back(persistent);
+		id = freed_ids.back();
 		freed_ids.pop_back();
-		return ids.back();
 	} else {
 		ids_i++;
-		ids.push_back(ids_i);
-		id_structs.push_back(m_struct);
-		ids_p.push_back(persistent);
-		return ids_i;
+		id = ids_i;
 	}
-	return 0;
+	ids_p[id] = persistent;
+	id_structs[id] = m_struct;
+/*	ids.push_back(id);
+	id_structs.push_back(new MathStructure(m_struct));
+	ids_p.push_back(persistent);*/
+	return id;
+}
+unsigned int Calculator::parseAddId(Function *f, const string &str, const ParseOptions &po, bool persistent) {
+	//MathStructure *mstruct = new MathStructure();
+	//f->parse(*mstruct, str, po);
+	unsigned int id = 0;
+	if(freed_ids.size() > 0) {
+		id = freed_ids.back();
+		freed_ids.pop_back();
+	} else {
+		ids_i++;
+		id = ids_i;
+	}
+	ids_p[id] = persistent;
+	f->parse(id_structs[id], str, po);
+	/*	ids.push_back(id);
+	id_structs.push_back(mstruct);
+	ids_p.push_back(persistent);*/
+	return id;
+}
+unsigned int Calculator::parseAddVectorId(const string &str, const ParseOptions &po, bool persistent) {
+	//MathStructure *mstruct = new MathStructure();
+	//f->parse(*mstruct, str, po);
+	unsigned int id = 0;
+	if(freed_ids.size() > 0) {
+		id = freed_ids.back();
+		freed_ids.pop_back();
+	} else {
+		ids_i++;
+		id = ids_i;
+	}
+	ids_p[id] = persistent;
+	f_vector->args(str, id_structs[id], po);
+	/*	ids.push_back(id);
+	id_structs.push_back(mstruct);
+	ids_p.push_back(persistent);*/
+	return id;
 }
 const MathStructure *Calculator::getId(unsigned int id) {
-	for(unsigned int i = 0; i < ids.size(); i++) {
+	if(id_structs.find(id) != id_structs.end()) return &id_structs[id];
+	/*for(unsigned int i = 0; i < ids.size(); i++) {
 		if(ids[i] == id) {
-			return &id_structs[i];
+			return id_structs[i];
 		}
-	} 
+	} */
 	return NULL;
 }
 
 void Calculator::delId(unsigned int id, bool force) {
-	for(unsigned int i = 0; i < ids.size(); i++) {
+	if(ids_p.find(id) != ids_p.end()) {	
+		if(!ids_p[id] || force) {
+			freed_ids.push_back(id);
+			id_structs.erase(id);
+			ids_p.erase(id);
+		}
+	}
+/*	for(unsigned int i = 0; i < ids.size(); i++) {
 		if(ids[i] == id) {
 			if(!ids_p[i] || force) {
 				freed_ids.push_back(ids[i]);
 				ids.erase(ids.begin() + i);
+				delete id_structs[i];
 				id_structs.erase(id_structs.begin() + i);
 				ids_p.erase(ids_p.begin() + i);	
 			}
 			break;
 		}
-	}
+	}*/
 }
 
 int Calculator::angleMode() const {
@@ -985,6 +1048,7 @@ void Calculator::deleteName(string name_, ExpressionItem *object) {
 			f2->destroy();
 		}
 	}
+	deleteName(name_, object);
 }
 void Calculator::deleteUnitName(string name_, Unit *object) {
 	Unit *u2 = getUnit(name_);
@@ -1000,22 +1064,31 @@ void Calculator::deleteUnitName(string name_, Unit *object) {
 			u2->destroy();
 		}
 	}
+	deleteUnitName(name_, object);
 }
 void Calculator::saveState() {
 }
 void Calculator::restoreState() {
 }
 void Calculator::clearBuffers() {
-	for(unsigned int i = 0; i < ids.size(); i++) {
+	for(Sgi::hash_map<unsigned int, bool>::iterator it = ids_p.begin(); it != ids_p.end(); ++it) {
+		if(!it->second) {
+			freed_ids.push_back(it->first);
+			id_structs.erase(it->first);
+			ids_p.erase(it);
+		}
+	}
+/*	for(unsigned int i = 0; i < ids.size(); i++) {
 		if(!ids_p[i]) {
 			freed_ids.push_back(ids[i]);
 			ids.erase(ids.begin() + i);
+			delete id_structs[i];
 			id_structs.erase(id_structs.begin() + i);
 			ids_p.erase(ids_p.begin() + i);	
 			i--;
 		}
 		break;
-	}
+	}*/
 }
 void Calculator::abort() {
 	if(calculate_thread_stopped) {
@@ -2345,6 +2418,63 @@ bool Calculator::nameTaken(string name, ExpressionItem *object) {
 				break;
 			}
 		}
+	} else {
+		return getActiveExpressionItem(name) != NULL;
+	}
+	return false;
+}
+bool Calculator::variableNameTaken(string name, Variable *object) {
+	if(name.empty()) return false;
+	for(unsigned int index = 0; index < variables.size(); index++) {
+		if(variables[index]->isActive() && (variables[index]->referenceName() == name || variables[index]->unicodeName(false) == name)) {
+			return variables[index] != object;
+		}
+	}
+	
+	for(unsigned int i = 0; i < units.size(); i++) {
+		if(units[i]->isActive()) {
+			if(units[i]->unitType() == COMPOSITE_UNIT) {
+				if(name == units[i]->referenceName()) {
+					return true;
+				}
+			} else {
+				if(units[i]->name() == name || units[i]->singular(false) == name || units[i]->plural(false) == name || units[i]->unicodeName(false) == name) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+bool Calculator::unitNameTaken(string name, Unit *object) {
+	if(name.empty()) return false;
+	for(unsigned int index = 0; index < variables.size(); index++) {
+		if(variables[index]->isActive() && (variables[index]->referenceName() == name || variables[index]->unicodeName(false) == name)) {
+			return true;
+		}
+	}
+	
+	for(unsigned int i = 0; i < units.size(); i++) {
+		if(units[i]->isActive()) {
+			if(units[i]->unitType() == COMPOSITE_UNIT) {
+				if(name == units[i]->referenceName()) {
+					return units[i] == object;
+				}
+			} else {
+				if(units[i]->name() == name || units[i]->singular(false) == name || units[i]->plural(false) == name || units[i]->unicodeName(false) == name) {
+					return units[i] == object;
+				}
+			}
+		}
+	}
+	return false;
+}
+bool Calculator::functionNameTaken(string name, Function *object) {
+	if(name.empty()) return false;
+	for(unsigned int index = 0; index < functions.size(); index++) {
+		if(functions[index]->isActive() && (functions[index]->referenceName() == name || functions[index]->unicodeName(false) == name)) {
+			return functions[index] != object;
+		}
 	}
 	return false;
 }
@@ -2441,7 +2571,8 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 					stmp2 = str.substr(str_index + 1, i3 - str_index - 1);
 					stmp = LEFT_PARENTHESIS_CH;
 					stmp += ID_WRAP_LEFT_CH;
-					stmp += i2s(addId(f_vector->parse(stmp2, po)));
+					//stmp += i2s(addId(f_vector->parse(stmp2, po)));
+					stmp += i2s(parseAddVectorId(stmp2, po));
 					stmp += ID_WRAP_RIGHT_CH;
 					str.replace(str_index, i3 + 1 - str_index, stmp);
 					str_index += stmp.length() - 1;
@@ -2468,7 +2599,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 				str.replace(str_index, name_length, stmp);
 				str_index += stmp.length() - 1;
 			}
-		} else if(po.base == 10 && str[str_index] == '!' && po.functions_enabled) {
+		} else if(po.base >= 2 && po.base <= 10 && str[str_index] == '!' && po.functions_enabled) {
 			if(str_index > 0 && (chars_left == 1 || str[str_index + 1] != EQUALS_CH)) {
 				stmp = "";
 				if(is_in(NUMBERS, str[str_index - 1])) {
@@ -2501,7 +2632,8 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 				if(!stmp2.empty()) {
 					stmp = LEFT_PARENTHESIS_CH;
 					stmp += ID_WRAP_LEFT_CH;
-					stmp += i2s(addId(f_factorial->parse(stmp2, po)));
+					//stmp += i2s(addId(f_factorial->parse(stmp2, po)));
+					stmp += i2s(parseAddId(f_factorial, stmp2, po));
 					stmp += ID_WRAP_RIGHT_CH;
 					stmp += RIGHT_PARENTHESIS_CH;
 					str.replace(str_index - stmp2.length(), stmp2.length() + 1, stmp);
@@ -2509,7 +2641,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 					str_index += stmp.length() - 1;
 				}
 			}
-		} else if(po.base == 10 && is_not_in(NUMBERS NOT_IN_NAMES, str[str_index])) {
+		} else if(po.base >= 2 && po.base <= 10 && is_not_in(NUMBERS NOT_IN_NAMES, str[str_index])) {
 			found_function_index = -1;
 			found_function_name_length = -1;
 			for(ufv_index = 0; ufv_index < (int) ufv.size(); ufv_index++) {
@@ -2622,7 +2754,8 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 								}
 								stmp = LEFT_PARENTHESIS_CH;
 								stmp += ID_WRAP_LEFT_CH;
-								stmp += i2s(addId(f->parse("", po)));
+								//stmp += i2s(addId(f->parse("", po)));
+								stmp += i2s(parseAddId(f, empty_string, po));
 								stmp += ID_WRAP_RIGHT_CH;
 								stmp += RIGHT_PARENTHESIS_CH;
 								if(i4 < 0) i4 = name_length;
@@ -2635,7 +2768,9 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 								}
 								stmp = LEFT_PARENTHESIS_CH;
 								stmp += ID_WRAP_LEFT_CH;
-								stmp += i2s(addId(f->parse(stmp2, po)));
+								//stmp += i2s(addId(f->parse(stmp2, po)));
+								if(f == f_vector) stmp += i2s(parseAddVectorId(stmp2, po));
+								else stmp += i2s(parseAddId(f, stmp2, po));
 								stmp += ID_WRAP_RIGHT_CH;
 								stmp += RIGHT_PARENTHESIS_CH;
 								if(i5 == (int) string::npos) {
@@ -2679,7 +2814,9 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 									stmp2 = str.substr(str_index + name_length, i6 - 1);
 									stmp = LEFT_PARENTHESIS_CH;
 									stmp += ID_WRAP_LEFT_CH;
-									stmp += i2s(addId(f->parse(stmp2, po)));
+									//stmp += i2s(addId(f->parse(stmp2, po)));
+									if(f == f_vector) stmp += i2s(parseAddVectorId(stmp2, po));
+									else stmp += i2s(parseAddId(f, stmp2, po));
 									stmp += ID_WRAP_RIGHT_CH;
 									stmp += RIGHT_PARENTHESIS_CH;
 									i4 = i6 + 1 + name_length - 2;
@@ -2710,7 +2847,9 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 									stmp2 = str.substr(str_index + name_length + i9, i6 - (str_index + name_length + i9));
 									stmp = LEFT_PARENTHESIS_CH;
 									stmp += ID_WRAP_LEFT_CH;
-									stmp += i2s(addId(f->parse(stmp2, po)));
+									//stmp += i2s(addId(f->parse(stmp2, po)));
+									if(f == f_vector) stmp += i2s(parseAddVectorId(stmp2, po));
+									else stmp += i2s(parseAddId(f, stmp2, po));
 									stmp += ID_WRAP_RIGHT_CH;
 									stmp += RIGHT_PARENTHESIS_CH;
 									i4 = i6 + 1 - str_index;
@@ -2870,7 +3009,7 @@ MathStructure Calculator::parseNumber(string str, const ParseOptions &po) {
 	if(str.empty() || ((itmp = str.find_first_not_of(" ")) == (int) string::npos)) {
 		return mstruct;
 	}
-	if(po.base == 10 && (itmp = str.find_first_not_of(NUMBER_ELEMENTS MINUS, 0)) != (int) string::npos) {
+	if(po.base >= 2 && po.base <= 10 && (itmp = str.find_first_not_of(NUMBER_ELEMENTS MINUS, 0)) != (int) string::npos) {
 		string stmp = str.substr(itmp, str.length() - itmp);
 		str.erase(itmp, str.length() - itmp);
 		if(itmp == 0) {
@@ -2893,10 +3032,10 @@ MathStructure Calculator::parseNumber(string str, const ParseOptions &po) {
 void Calculator::parseAdd(string &str, MathStructure &mstruct, const ParseOptions &po) {
 	if(str.length() > 0) {
 		unsigned int i;
-		if(po.base == 10) {
-			i = str.find_first_of(OPERATORS EXP ID_WRAP_LEFT, 1);
+		if(po.base >= 2 && po.base <= 10) {
+			i = str.find_first_of(OPERATORS PARENTHESISS EXP ID_WRAP_LEFT, 1);
 		} else {
-			i = str.find_first_of(OPERATORS ID_WRAP_LEFT, 1);
+			i = str.find_first_of(OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
 		}
 		if(i == string::npos && str[0] != NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1)) {
 			mstruct.set(parseNumber(str, po));
@@ -2908,10 +3047,10 @@ void Calculator::parseAdd(string &str, MathStructure &mstruct, const ParseOption
 void Calculator::parseAdd(string &str, MathStructure &mstruct, const ParseOptions &po, MathOperation s) {
 	if(str.length() > 0) {
 		unsigned int i;
-		if(po.base == 10) {
-			i = str.find_first_of(OPERATORS EXP ID_WRAP_LEFT, 1);
+		if(po.base >= 2 && po.base <= 10) {
+			i = str.find_first_of(OPERATORS PARENTHESISS EXP ID_WRAP_LEFT, 1);
 		} else {
-			i = str.find_first_of(OPERATORS ID_WRAP_LEFT, 1);
+			i = str.find_first_of(OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
 		}
 		if(i == string::npos && str[0] != NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1)) {
 			mstruct.add(parseNumber(str, po), s, true);
@@ -2961,7 +3100,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 				break;
 			}
 		}
-		if(i > 0 && is_not_in(OPERATORS SPACE, str[i - 1]) && (po.base != 10 || str[i - 1] != EXP_CH)) {
+		if(i > 0 && is_not_in(OPERATORS PARENTHESISS SPACE, str[i - 1]) && (po.base > 10 || po.base < 2 || str[i - 1] != EXP_CH)) {
 			if(po.rpn) {
 				str.insert(i2 + 1, MULTIPLICATION);	
 				str.insert(i, SPACE);
@@ -2973,7 +3112,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 				i2++;
 			}
 		}
-		if(i2 < (int) str.length() - 1 && is_not_in(OPERATORS SPACE, str[i2 + 1]) && (po.base != 10 || str[i2 + 1] != EXP_CH)) {
+		if(i2 < (int) str.length() - 1 && is_not_in(OPERATORS PARENTHESISS SPACE, str[i2 + 1]) && (po.base > 10 || po.base < 2 || str[i2 + 1] != EXP_CH)) {
 			if(po.rpn) {
 				i3 = str.find(SPACE, i2 + 1);
 				if(i3 == (int) string::npos) {
@@ -2986,7 +3125,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 				str.insert(i2 + 1, MULTIPLICATION_2);
 			}
 		}
-		if(po.rpn && i > 0 && i2 + 1 == (int) str.length() && str[i - 1] != SPACE_CH) {
+		if(po.rpn && i > 0 && i2 + 1 == (int) str.length() && is_not_in(PARENTHESISS SPACE, str[i - 1])) {
 			str += MULTIPLICATION_CH;	
 		}
 		str2 = str.substr(i + 1, i2 - (i + 1));
@@ -3261,7 +3400,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
 		parseAdd(str, mstruct, po, OPERATION_RAISE);
-	} else if(po.base == 10 && (i = str.find(EXP_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
+	} else if(po.base >= 2 && po.base <= 10 && (i = str.find(EXP_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
 		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
@@ -5191,7 +5330,7 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 		x_var_sub += "\"";
 		gsub(x_var, x_var_sub, expression);	
 	}*/
-	Variable *v = getVariable(x_var);
+	Variable *v = getActiveVariable(x_var);
 	MathStructure x_mstruct;
 	if(v) x_mstruct = v;
 	else x_mstruct = x_var;
@@ -5212,7 +5351,7 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 		x_var_sub += "\"";
 		gsub(x_var, x_var_sub, expression);		
 	}*/
-	Variable *v = getVariable(x_var);
+	Variable *v = getActiveVariable(x_var);
 	MathStructure x_mstruct;
 	if(v) x_mstruct = v;
 	else x_mstruct = x_var;

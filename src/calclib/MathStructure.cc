@@ -10,6 +10,7 @@
 */
 
 #include "MathStructure.h"
+#include "Calculator.h"
 #include "Number.h"
 #include "Function.h"
 #include "Variable.h"
@@ -363,6 +364,15 @@ bool MathStructure::isPlural() const {
 }
 void MathStructure::setPlural(bool is_plural) {
 	if(isUnit()) b_plural = is_plural;
+}
+void MathStructure::setFunction(Function *f) {
+	o_function = f;
+}
+void MathStructure::setUnit(Unit *u) {
+	o_unit = u;
+}
+void MathStructure::setVariable(Variable *v) {
+	o_variable = v;
 }
 Function *MathStructure::function() const {
 	return o_function;
@@ -3971,7 +3981,8 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 				if(i > 0) {
 					if(CHILD(i).type() == STRUCT_NEGATE) {
 						if(po.spacious) print_str += " ";
-						print_str += "-";
+						if(po.use_unicode_signs) print_str += SIGN_MINUS;
+						else print_str += "-";
 						if(po.spacious) print_str += " ";
 						ips_n.wrap = CHILD(i)[0].needsParenthesis(po, ips_n, *this, i + 1, true, true);
 						print_str += CHILD(i)[0].print(po, ips_n);
@@ -3990,7 +4001,8 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			break;
 		}
 		case STRUCT_NEGATE: {
-			print_str = "-";
+			if(po.use_unicode_signs) print_str += SIGN_MINUS;
+			else print_str = "-";
 			ips_n.depth++;
 			ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
 			print_str += CHILD(0).print(po, ips_n);
@@ -4003,13 +4015,24 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, true);
 				if(!po.short_multiplication && i > 0) {
 					if(po.spacious) print_str += " ";
-					print_str += "*";
+					if(po.use_unicode_signs) print_str += SIGN_MULTIDOT;
+					else print_str += "*";
 					if(po.spacious) print_str += " ";
 				} else if(i > 0) {
 					switch(CHILD(i).neededMultiplicationSign(po, ips_n, *this, i + 1, ips_n.wrap, par_prev, true, true)) {
 						case MULTIPLICATION_SIGN_SPACE: {print_str += " "; break;}
-						case MULTIPLICATION_SIGN_OPERATOR: {if(po.spacious) {print_str += " * "; break;}}
-						case MULTIPLICATION_SIGN_OPERATOR_SHORT: {print_str += "*"; break;}
+						case MULTIPLICATION_SIGN_OPERATOR: {
+							if(po.spacious) {
+								if(po.use_unicode_signs) print_str += " " SIGN_MULTIDOT " ";
+								else print_str += " * "; 
+								break;
+							}
+						}
+						case MULTIPLICATION_SIGN_OPERATOR_SHORT: {
+							if(po.use_unicode_signs) print_str += SIGN_MULTIDOT;
+							else print_str += "*"; 
+							break;
+						}
 					}
 				}
 				print_str += CHILD(i).print(po, ips_n);
@@ -4020,7 +4043,8 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 		case STRUCT_INVERSE: {
 			print_str = "1";
 			if(po.spacious) print_str += " ";
-			print_str += "/";
+			if(po.use_unicode_signs) print_str += SIGN_DIVISION;
+			else print_str += "/";
 			if(po.spacious) print_str += " ";
 			ips_n.depth++;
 			ips_n.division_depth++;
@@ -4034,7 +4058,8 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
 			print_str = CHILD(0).print(po, ips_n);
 			if(po.spacious) print_str += " ";
-			print_str += "/";
+			if(po.use_unicode_signs) print_str += SIGN_DIVISION;
+			else print_str += "/";
 			if(po.spacious) print_str += " ";
 			ips_n.wrap = CHILD(1).needsParenthesis(po, ips_n, *this, 2, true, true);
 			print_str += CHILD(1).print(po, ips_n);
@@ -4057,11 +4082,23 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			if(po.spacious) print_str += " ";
 			switch(ct_comp) {
 				case COMPARISON_EQUALS: {print_str += "="; break;}
-				case COMPARISON_NOT_EQUALS: {print_str += "!="; break;}
+				case COMPARISON_NOT_EQUALS: {
+					if(po.use_unicode_signs) print_str += SIGN_NOT_EQUAL;
+					else print_str += "!="; 
+					break;
+				}
 				case COMPARISON_GREATER: {print_str += ">"; break;}
 				case COMPARISON_LESS: {print_str += "<"; break;}
-				case COMPARISON_EQUALS_GREATER: {print_str += ">="; break;}
-				case COMPARISON_EQUALS_LESS: {print_str += "<="; break;}
+				case COMPARISON_EQUALS_GREATER: {
+					if(po.use_unicode_signs) print_str += SIGN_GREATER_OR_EQUAL;
+					else print_str += ">="; 
+					break;
+				}
+				case COMPARISON_EQUALS_LESS: {
+					if(po.use_unicode_signs) print_str += SIGN_LESS_OR_EQUAL;
+					else print_str += "<="; 
+					break;
+				}
 			}
 			if(po.spacious) print_str += " ";
 			ips_n.wrap = CHILD(1).needsParenthesis(po, ips_n, *this, 2, true, true);

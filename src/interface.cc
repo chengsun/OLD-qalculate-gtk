@@ -31,7 +31,7 @@
 #include "qalculate.h"
 #include "data/icon.xpm"
 
-extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *decimals_glade;
+extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *nbexpression_glade, *decimals_glade;
 extern GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *nbases_glade, *plot_glade, *precision_glade;
 extern GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
 
@@ -189,38 +189,7 @@ create_main_window (void)
 	if(printops.base >= 2 && printops.base <= 36) {
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (main_glade, "number_base_spinbutton_base")), printops.base);
 	}
-	switch(evalops.parse_options.base) {
-		case BASE_BINARY: {
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (main_glade, "number_base_expression_radiobutton_binary")), TRUE);
-			gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
-			break;
-		}
-		case BASE_OCTAL: {
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (main_glade, "number_base_expression_radiobutton_octal")), TRUE);
-			gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
-			break;
-		}
-		case BASE_DECIMAL: {
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (main_glade, "number_base_expression_radiobutton_decimal")), TRUE);
-			gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
-			break;
-		}
-		case BASE_HEXADECIMAL: {
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (main_glade, "number_base_expression_radiobutton_hexadecimal")), TRUE);
-			gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
-			break;
-		}
-		case BASE_ROMAN_NUMERALS: {
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (main_glade, "number_base_expression_radiobutton_roman")), TRUE);
-			gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
-			break;
-		}
-		default: {
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (main_glade, "number_base_expression_radiobutton_custom_base")), TRUE);
-			gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "number_base_expression_spinbutton_custom_base"), TRUE);
-			gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (main_glade, "number_base_expression_spinbutton_custom_base")), evalops.parse_options.base);
-		}
-	}
+	
 	switch(printops.min_exp) {
 		case EXP_PRECISION: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_normal")), TRUE);
@@ -893,6 +862,77 @@ get_csv_import_dialog (void)
 	g_list_free(items);
 
 	return glade_xml_get_widget (csvimport_glade, "csv_import_dialog");
+}
+
+GtkWidget*
+get_csv_export_dialog (void)
+{
+
+	if(!csvexport_glade) {
+	
+		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "csvexport.glade", NULL);
+		csvexport_glade = glade_xml_new(gstr, NULL, NULL);
+		g_assert(csvexport_glade != NULL);
+		g_free(gstr);
+	
+		g_assert (glade_xml_get_widget (csvexport_glade, "csv_export_dialog") != NULL);
+		
+		glade_xml_signal_autoconnect(csvexport_glade);
+	
+	}
+	
+	return glade_xml_get_widget (csvexport_glade, "csv_export_dialog");
+	
+}
+
+GtkWidget* get_number_base_expression_dialog (void) {
+	if(!nbexpression_glade) {
+	
+		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "nbexpression.glade", NULL);
+		nbexpression_glade = glade_xml_new(gstr, NULL, NULL);
+		g_assert(nbexpression_glade != NULL);
+		g_free(gstr);
+	
+		g_assert (glade_xml_get_widget (nbexpression_glade, "number_base_expression_dialog") != NULL);
+		
+		switch(evalops.parse_options.base) {
+			case BASE_BINARY: {
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (nbexpression_glade, "number_base_expression_radiobutton_binary")), TRUE);
+				gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
+				break;
+			}
+			case BASE_OCTAL: {
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (nbexpression_glade, "number_base_expression_radiobutton_octal")), TRUE);
+				gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
+				break;
+			}
+			case BASE_DECIMAL: {
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (nbexpression_glade, "number_base_expression_radiobutton_decimal")), TRUE);
+				gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
+				break;
+			}
+			case BASE_HEXADECIMAL: {
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (nbexpression_glade, "number_base_expression_radiobutton_hexadecimal")), TRUE);
+				gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
+				break;
+			}
+			case BASE_ROMAN_NUMERALS: {
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (nbexpression_glade, "number_base_expression_radiobutton_roman")), TRUE);
+				gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
+				break;
+			}
+			default: {
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (nbexpression_glade, "number_base_expression_radiobutton_custom_base")), TRUE);
+				gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), TRUE);
+				gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base")), evalops.parse_options.base);
+			}
+		}
+		
+		glade_xml_signal_autoconnect(nbexpression_glade);
+	
+	}
+
+	return glade_xml_get_widget (nbexpression_glade, "number_base_expression_dialog");
 }
 
 GtkWidget*

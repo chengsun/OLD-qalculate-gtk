@@ -72,7 +72,7 @@ int Function::countArgOccurence(unsigned int arg_) {
 	if((int) arg_ > argc && max_argc < 0) {
 		arg_ = argc + 1;
 	}
-	if(argoccs.count(arg_) > 0) {
+	if(argoccs.find(arg_) != argoccs.end()) {
 		return argoccs[arg_];
 	}
 	return 1;
@@ -234,6 +234,8 @@ int Function::args(const string &argstr, MathStructure &vargs, const ParseOption
 						} else {
 							vargs[vargs.size() - 1].addItem(getArgumentDefinition(maxargs())->parse(stmp, po));
 						}
+					} else {
+						CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s argument(s)."), name().c_str(), i2s(maxargs()).c_str());
 					}
 					start_pos = str_index + 1;
 				}
@@ -272,7 +274,9 @@ int Function::args(const string &argstr, MathStructure &vargs, const ParseOption
 			} else {
 				vargs[vargs.size() - 1].addItem(getArgumentDefinition(maxargs())->parse(stmp, po));
 			}
-		}	
+		} else {
+			CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s argument(s)."), name().c_str(), i2s(maxargs()).c_str());
+		}
 	}
 	if(itmp < maxargs() && itmp >= minargs()) {
 		int itmp2 = itmp;
@@ -292,7 +296,7 @@ unsigned int Function::lastArgumentDefinitionIndex() const {
 	return last_argdef_index;
 }
 Argument *Function::getArgumentDefinition(unsigned int index) {
-	if(argdefs.count(index)) {
+	if(argdefs.find(index) != argdefs.end()) {
 		return argdefs[index];
 	}
 	return NULL;
@@ -306,7 +310,7 @@ void Function::clearArgumentDefinitions() {
 	setChanged(true);
 }
 void Function::setArgumentDefinition(unsigned int index, Argument *argdef) {
-	if(argdefs.count(index)) {
+	if(argdefs.find(index) != argdefs.end()) {
 		delete argdefs[index];
 	}
 	argdefs[index] = argdef;
@@ -370,7 +374,15 @@ MathStructure Function::calculate(const string &argv, const EvaluationOptions &e
 MathStructure Function::parse(const string &argv, const ParseOptions &po) {
 	MathStructure vargs;
 	args(argv, vargs, po);	
-	return createFunctionMathStructureFromVArgs(vargs);
+	vargs.setType(STRUCT_FUNCTION);
+	vargs.setFunction(this);
+	return vargs;
+	//return createFunctionMathStructureFromVArgs(vargs);
+}
+void Function::parse(MathStructure &mstruct, const string &argv, const ParseOptions &po) {
+	args(argv, mstruct, po);	
+	mstruct.setType(STRUCT_FUNCTION);
+	mstruct.setFunction(this);
 }
 bool Function::testArguments(MathStructure &vargs) {
 	unsigned int last = 0;
@@ -382,7 +394,7 @@ bool Function::testArguments(MathStructure &vargs) {
 			return false;
 		}
 	}
-	if(max_argc < 0 && (int) last > argc && argdefs.count(last)) {
+	if(max_argc < 0 && (int) last > argc && argdefs.find(last) != argdefs.end()) {
 		for(unsigned int i = last + 1; i <= vargs.size(); i++) {
 			if(!argdefs[last]->test(vargs[i - 1], i, this)) {
 				return false;
@@ -618,7 +630,11 @@ void UserFunction::set(const ExpressionItem *item) {
 	}
 }
 int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+
+	ParseOptions po;
+
 	if(args() != 0) {
+		
 		string stmp = eq_calc;
 		string svar;
 		string v_str, w_str;
@@ -629,9 +645,6 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(i_args < 0) {
 			i_args = minargs();
 		}
-		
-		ParseOptions po = eo.parse_options;
-		po.rpn = false;
 		
 		for(int i = 0; i < i_args; i++) {
 			v_id.push_back(CALCULATOR->addId(vargs[i], true));
@@ -798,8 +811,6 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 		if(isApproximate()) mstruct.setApproximate();
 	} else {
-		ParseOptions po = eo.parse_options;
-		po.rpn = false;
 		mstruct = CALCULATOR->parse(eq_calc, po);
 		if(isApproximate()) mstruct.setApproximate();
 	}
@@ -1714,7 +1725,7 @@ bool FunctionArgument::subtest(MathStructure &value, const EvaluationOptions &eo
 	if(!value.isSymbolic()) {
 		value.eval(eo);
 	}
-	return value.isSymbolic() && CALCULATOR->getFunction(value.symbol());
+	return value.isSymbolic() && CALCULATOR->getActiveFunction(value.symbol());
 }
 int FunctionArgument::type() const {return ARGUMENT_TYPE_FUNCTION;}
 Argument *FunctionArgument::copy() const {return new FunctionArgument(this);}
@@ -1728,7 +1739,7 @@ bool UnitArgument::subtest(MathStructure &value, const EvaluationOptions &eo) co
 	if(!value.isSymbolic()) {
 		value.eval(eo);
 	}
-	return value.isSymbolic() && CALCULATOR->getUnit(value.symbol());
+	return value.isSymbolic() && CALCULATOR->getActiveUnit(value.symbol());
 }
 int UnitArgument::type() const {return ARGUMENT_TYPE_UNIT;}
 Argument *UnitArgument::copy() const {return new UnitArgument(this);}
@@ -1742,7 +1753,7 @@ bool VariableArgument::subtest(MathStructure &value, const EvaluationOptions &eo
 	if(!value.isSymbolic()) {
 		value.eval(eo);
 	}
-	return value.isSymbolic() && CALCULATOR->getVariable(value.symbol());
+	return value.isSymbolic() && CALCULATOR->getActiveVariable(value.symbol());
 }
 int VariableArgument::type() const {return ARGUMENT_TYPE_VARIABLE;}
 Argument *VariableArgument::copy() const {return new VariableArgument(this);}

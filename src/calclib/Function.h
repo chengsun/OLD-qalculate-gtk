@@ -73,6 +73,7 @@ class Function : public ExpressionItem {
 	bool testArgumentCount(int itmp);
 	virtual MathStructure calculate(const string &eq, const EvaluationOptions &eo = default_evaluation_options);
 	virtual MathStructure parse(const string &eq, const ParseOptions &po = default_parse_options);
+	virtual void parse(MathStructure &mstruct, const string &eq, const ParseOptions &po = default_parse_options);
 	virtual MathStructure calculate(MathStructure &vargs, const EvaluationOptions &eo = default_evaluation_options);	
 	virtual int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);	
 	string condition() const;

@@ -112,6 +112,7 @@ void edit_unknown(const char *category = "", Variable *v = NULL, GtkWidget *win 
 void edit_variable(const char *category = "", Variable *v = NULL, MathStructure *mstruct_ = NULL, GtkWidget *win = NULL);
 void edit_matrix(const char *category = "", Variable *v = NULL, MathStructure *mstruct_ = NULL, GtkWidget *win = NULL, gboolean create_vector = FALSE);
 void import_csv_file(GtkWidget *win = NULL);
+void export_csv_file(KnownVariable *v = NULL, GtkWidget *win = NULL);
 
 #ifdef __cplusplus
 extern "C" {
@@ -227,13 +228,13 @@ void on_menu_item_roman_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_sexagesimal_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_time_format_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_expression_base_activate(GtkMenuItem *w, gpointer user_data);
-void on_number_base_expression_radiobutton_binary_toggled(GtkCheckButton *w, gpointer user_data);
-void on_number_base_expression_radiobutton_octal_toggled(GtkCheckButton *w, gpointer user_data);
-void on_number_base_expression_radiobutton_decimal_toggled(GtkCheckButton *w, gpointer user_data);
-void on_number_base_expression_radiobutton_hexadecimal_toggled(GtkCheckButton *w, gpointer user_data);
-void on_number_base_expression_radiobutton_custom_base_toggled(GtkCheckButton *w, gpointer user_data);
+void on_number_base_expression_radiobutton_binary_toggled(GtkToggleButton *w, gpointer user_data);
+void on_number_base_expression_radiobutton_octal_toggled(GtkToggleButton *w, gpointer user_data);
+void on_number_base_expression_radiobutton_decimal_toggled(GtkToggleButton *w, gpointer user_data);
+void on_number_base_expression_radiobutton_hexadecimal_toggled(GtkToggleButton *w, gpointer user_data);
+void on_number_base_expression_radiobutton_custom_base_toggled(GtkToggleButton *w, gpointer user_data);
 void on_number_base_expression_spinbutton_base_value_changed(GtkSpinButton *w, gpointer user_data);
-void on_number_base_expression_radiobutton_roman_toggled(GtkCheckButton *w, gpointer user_data);
+void on_number_base_expression_radiobutton_roman_toggled(GtkToggleButton *w, gpointer user_data);
 void on_menu_item_convert_number_bases_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_assumptions_integer_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_assumptions_rational_activate(GtkMenuItem *w, gpointer user_data);
@@ -303,6 +304,7 @@ void on_variables_button_new_clicked(GtkButton *button, gpointer user_data);
 void on_variables_button_edit_clicked(GtkButton *button, gpointer user_data);
 void on_variables_button_insert_clicked(GtkButton *button, gpointer user_data);
 void on_variables_button_delete_clicked(GtkButton *button, gpointer user_data);
+void on_variables_button_export_clicked(GtkButton *button, gpointer user_data);
 void on_variables_button_close_clicked(GtkButton *button, gpointer user_data);
 void on_functions_button_new_clicked(GtkButton *button, gpointer user_data);
 void on_functions_button_edit_clicked(GtkButton *button, gpointer user_data);
@@ -354,6 +356,8 @@ void on_csv_import_button_file_clicked(GtkButton *button, gpointer user_data);
 
 void on_csv_export_optionmenu_delimiter_changed(GtkOptionMenu *w, gpointer user_data);
 void on_csv_export_button_file_clicked(GtkButton *button, gpointer user_data);
+void on_csv_export_radiobutton_current_toggled(GtkToggleButton *w, gpointer user_data);
+void on_csv_export_radiobutton_matrix_toggled(GtkToggleButton *w, gpointer user_data);
 
 void on_type_label_date_clicked(GtkButton *w, gpointer user_data);
 void on_type_label_file_clicked(GtkButton *w, gpointer user_data);

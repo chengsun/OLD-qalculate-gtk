@@ -2,6 +2,7 @@
 data/qalculate.desktop.in
 data/about.glade
 data/argumentrules.glade
+data/csvexport.glade
 data/csvimport.glade
 data/decimals.glade
 data/functionedit.glade
@@ -9,6 +10,7 @@ data/functions.glade
 data/main.glade
 data/matrixedit.glade
 data/nbases.glade
+data/nbexpression.glade
 data/plot.glade
 data/precision.glade
 data/preferences.glade

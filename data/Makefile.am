@@ -2,9 +2,9 @@
 # data/Makefile.am for qalculate
 #
 
-glade_DATA = about.glade argumentrules.glade csvimport.glade decimals.glade \
+glade_DATA = about.glade argumentrules.glade csvexport.glade csvimport.glade decimals.glade \
 	functionedit.glade functions.glade main.glade matrixedit.glade nbases.glade \
-	plot.glade precision.glade preferences.glade unit.glade unitedit.glade \
+	nbexpression.glade plot.glade precision.glade preferences.glade unit.glade unitedit.glade \
 	units.glade unknownedit.glade variableedit.glade variables.glade
 gladedir = $(datadir)/$(PACKAGE)/glade
 
