@@ -35,6 +35,7 @@ EqNumber::EqNumber(Manager *value_, MathOperation operation_) : EqItem(operation
 EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 	string ssave = str;
 	char s = PLUS_CH;
+	printf("%s\n", str.c_str());
 	for(int i = 0; i < (int) str.length() - 1; i++) {
 		if(str[i] == PLUS_CH || str[i] == SPACE_CH) {
 			str.erase(i, 1);
@@ -51,7 +52,13 @@ EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 			str.erase(i, 1);
 			i--;
 		}
-	}	
+	}
+	for(int i = str.length() - 1; i >= 0; i--) {	
+		if(is_in(OPERATORS, str[i])) {
+			CALCULATOR->error(false, _("Misplaced '%s' ignored"), str.substr(i, 1).c_str(), NULL);
+			str.erase(i, 1);
+		}
+	}
 	if(str[0] == ID_WRAP_LEFT_CH && str[str.length() - 1] == ID_WRAP_RIGHT_CH) {
 		int id = s2i(str.substr(1, str.length() - 2));
 		mngr = CALCULATOR->getId(id);
@@ -116,7 +123,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 			} else {
 				//right parenthesis missing -- append
 				str += RIGHT_PARENTHESIS_CH;
-				i2 = str.length() - 1;
+				i2 = (int) str.length() - 1;
 			}
 		} else {
 			if(i2 > 0) {
@@ -177,8 +184,8 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 		str2 += ID_WRAP_RIGHT_CH;
 		str.replace(i, i2 - i + 1, str2);
 	}
-	if((i = str.find(AND, 1)) != (int) string::npos) {
-		while(i != (int) string::npos) {
+	if((i = str.find(AND, 1)) != (int) string::npos && i != (int) str.length() - 1) {
+		while(i != (int) string::npos && i != (int) str.length() - 1) {
 			s = OPERATION_AND;
 			str2 = str.substr(0, i);
 			EqContainer eq_c(str2, OPERATION_ADD);
@@ -201,8 +208,8 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 		add(str);
 		return;
 	}
-	if((i = str.find(OR, 1)) != (int) string::npos) {
-		while(i != (int) string::npos) {
+	if((i = str.find(OR, 1)) != (int) string::npos && i != (int) str.length() - 1) {
+		while(i != (int) string::npos && i != (int) str.length() - 1) {
 			s = OPERATION_OR;
 			str2 = str.substr(0, i);
 			EqContainer eq_c(str2, OPERATION_ADD);
@@ -335,7 +342,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 				str2 = str.substr(i3, i - i3);
 			}
 /*			i2 = str2.find(EXP_CH);
-			if(i2 > 0 && i2 < str.length() - 1) {
+			if(i2 > 0 && i2 < (int) str.length() - 1) {
 			
 			}*/
 			CALCULATOR->setRPNMode(false);
@@ -365,9 +372,9 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 			i3 = i;
 		}
 	}
-	if((i = str.find_first_of(PLUS MINUS, 1)) != (int) string::npos) {
+	if((i = str.find_first_of(PLUS MINUS, 1)) != (int) string::npos && i != (int) str.length() - 1) {
 		bool b = false;
-		while(i != (int) string::npos) {
+		while(i != (int) string::npos && i != (int) str.length() - 1) {
 			if(is_not_in(OPERATORS EXP, str[i - 1])) {
 				if(str[i] == PLUS_CH) s = OPERATION_ADD;
 				else s = OPERATION_SUBTRACT;
@@ -386,8 +393,8 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 			return;
 		}
 	}
-	if((i = str.find_first_of(MULTIPLICATION DIVISION, 1)) != (int) string::npos) {
-		while(i != (int) string::npos) {
+	if((i = str.find_first_of(MULTIPLICATION DIVISION, 1)) != (int) string::npos && i != (int) str.length() - 1) {
+		while(i != (int) string::npos && i != (int) str.length() - 1) {
 			if(str[i] == MULTIPLICATION_CH) s = OPERATION_MULTIPLY;
 			else s = OPERATION_DIVIDE;			
 			str2 = str.substr(0, i);
@@ -396,8 +403,8 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 			i = str.find_first_of(MULTIPLICATION DIVISION, 1);
 		}
 		add(str);
-	} else if((i = str.find(MULTIPLICATION_2_CH, 1)) != (int) string::npos) {
-		while(i != (int) string::npos) {
+	} else if((i = str.find(MULTIPLICATION_2_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
+		while(i != (int) string::npos && i != (int) str.length() - 1) {
 			s = OPERATION_MULTIPLY;
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
@@ -405,8 +412,8 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 			i = str.find(MULTIPLICATION_2_CH, 1);
 		}
 		add(str);		
-	} else if((i = str.find(POWER_CH, 1)) != (int) string::npos) {
-		while(i != (int) string::npos) {
+	} else if((i = str.find(POWER_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
+		while(i != (int) string::npos && i != (int) str.length() - 1) {
 			s = OPERATION_RAISE;
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
@@ -414,8 +421,8 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 			i = str.find(POWER_CH, 1);
 		}
 		add(str);
-	} else if((i = str.find(EXP_CH, 1)) != (int) string::npos) {
-		while(i != (int) string::npos) {
+	} else if((i = str.find(EXP_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
+		while(i != (int) string::npos && i != (int) str.length() - 1) {
 			s = OPERATION_EXP10;
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));

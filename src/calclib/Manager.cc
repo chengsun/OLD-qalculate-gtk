@@ -2329,6 +2329,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 					} else {
 						whole_.insert(whole_.begin(), 1, MINUS_CH);
 					}
+					if(!toplevel && wrap) wrap_all = true;
 				}
 				str += whole_;
 				if(!exponent_.empty()) {
@@ -2368,6 +2369,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 					denominator_ += exponent_;
 				}
 				str += denominator_;
+				if(!toplevel && wrap) wrap_all = true;
 			}
 			break;
 		}	
@@ -2474,7 +2476,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 					}
 					str += " ";
 				}
-				str += mngrs[i]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, set_prefix, false, NULL, l_exp, in_composite, in_power, false, print_equals);
+				str += mngrs[i]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, set_prefix, false, NULL, l_exp, in_composite, in_power, false, print_equals, false, mngrs[i]->isAddition());
 			}
 			
 			((Manager*) this)->sort();
@@ -2535,6 +2537,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			if(!in_power && displayflags & DISPLAY_FORMAT_TAGS) {
 				str += "</sup>";
 			}
+			if(!toplevel && wrap) wrap_all = true;
 			break;
 		} 
 		case MULTIPLICATION_MANAGER: {
@@ -2819,7 +2822,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				string num_string;
 				string den_string;
 				if(!do_num_frac && num_mngrs.size() == 1) {
-					num_string = num_mngrs[0]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, set_prefix, false, NULL, l_exp, false, in_power, false, print_equals, true, div == 1 && in_power, false, NULL, 1, in_composite);
+					num_string = num_mngrs[0]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, set_prefix, false, NULL, l_exp, false, in_power, false, print_equals, true, true, false, NULL, 1, in_composite);
 				} else if(num_mngrs.size() > 0) {
 					Manager *num_mngr = new Manager();
 					num_mngr->setType(MULTIPLICATION_MANAGER);
@@ -2827,14 +2830,14 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 						num_mngrs[i]->ref();
 						num_mngr->push_back(num_mngrs[i]);
 					}
-					num_string = num_mngr->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, l_exp, in_composite, in_power, false, print_equals, true, div == 1 && in_power, false, NULL, 1, in_composite, NULL, &prefix_1, NULL, string_num_fr);
+					num_string = num_mngr->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, l_exp, in_composite, in_power, false, print_equals, true, true, false, NULL, 1, in_composite, NULL, &prefix_1, NULL, string_num_fr);
 					num_mngr->unref();
 				}
 				if(first_is_copy) {
 					num_mngrs[0]->unref();
 				}
 				if(!do_den_frac && den_mngrs.size() == 1) {
-					den_string = den_mngrs[0]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, l_exp, false, in_power, false, print_equals, true, div == 1 && in_power, false, NULL, 2, true);
+					den_string = den_mngrs[0]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, l_exp, false, in_power, false, print_equals, true, true, false, NULL, 2, true);
 					den_mngrs[0]->unref();
 				} else if(den_mngrs.size() > 0) {
 					Manager *den_mngr = new Manager();
@@ -2842,7 +2845,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 					for(unsigned int i = 0; i < den_mngrs.size(); i++) {
 						den_mngr->push_back(den_mngrs[i]);
 					}
-					den_string = den_mngr->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, l_exp, in_composite, in_power, false, print_equals, true, div == 1 && in_power, false, NULL, 2, true, NULL, &prefix_2, NULL, string_den_fr);
+					den_string = den_mngr->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, l_exp, in_composite, in_power, false, print_equals, true, true, false, NULL, 2, true, NULL, &prefix_2, NULL, string_den_fr);
 					den_mngr->unref();
 				}
 				if(first_is_minus) {
@@ -2872,7 +2875,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			}
 			
 			((Manager*) this)->sort();
-		
+			if(!toplevel && wrap) wrap_all = true;
 			break;
 		}			
 		case ALTERNATIVE_MANAGER: {

@@ -1,5 +1,8 @@
 2003-10-27  Niklas Knutsson  <nq@altern.org>
 
+	* More extensive error handling for misplaced operators
+	* Replace "**" with "^"
+	* Fix parenthesis in Manager::print()
 	* Recreated Manager::print() from gtk drawing function
 	* Optional prefix for denominator
 	* Reworked composite unit printing

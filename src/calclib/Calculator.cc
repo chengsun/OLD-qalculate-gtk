@@ -163,7 +163,8 @@ Calculator::Calculator() {
 	addStringAlternative("]", RIGHT_PARENTHESIS);	
 	addStringAlternative(";", COMMA);	
 	addStringAlternative("\t", SPACE);	
-	addStringAlternative("\n", SPACE);	
+	addStringAlternative("\n", SPACE);
+	addStringAlternative("**", POWER);	
 
 
 	NAME_NUMBER_PRE_S = "_~#";
