@@ -16,6 +16,10 @@ class Variable;
 
 #include "Calculator.h"
 
+/**
+* Contains a known variable.
+*/
+
 class Variable {
   protected:
 	Calculator *calc;  
@@ -26,15 +30,50 @@ class Variable {
 	Variable(Calculator *calc_, string cat_, string name_, Manager *mngr_, string title_ = "", bool uservariable_ = true);
 	Variable(Calculator *calc_, string cat_, string name_, long double value_, string title_ = "", bool uservariable_ = true);	
 	~Variable(void);
+
+	/**
+	* Sets the value of the variable.
+	*
+	* @see #value
+	*/
 	void set(Manager *mngr_);
+	/**
+	* Returns the value of the variable.
+	*/	
 	Manager *get(void);
+	/**
+	* Sets the name of the variable.
+	*/	
 	void name(string name_, bool force = true);
+	/**
+	* Returns the name of the variable.
+	*/		
 	string name(void);
+	/**
+	* Returns the title/descriptive name of the variable.
+	*/		
 	string title(void);
+	/**
+	* Sets the title/descriptive name of the variable.
+	*/			
 	void title(string title_);		
+	/**
+	* Sets the value of the variable.
+	*
+	* @see #set
+	*/			
 	void value(long double value_);
+	/**
+	* Returns the category of the variable.
+	*/			
 	string category(void);
+	/**
+	* Sets the category of the variable.
+	*/			
 	void category(string cat_);		
+	/**
+	* Tells if the variable is editable for the end user.
+	*/			
 	bool isUserVariable(void);
 };
 
