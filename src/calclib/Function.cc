@@ -872,10 +872,10 @@ bool Argument::test(const Manager *value, int index, Function *f) const {
 Manager *Argument::evaluate(const string &str) const {
 	if(b_text) {
 		int pars = 0;
-		while(str.length() >= 2 + pars * 2 && str[pars] == LEFT_PARENTHESIS_CH && str[str.length() - 1 - pars] == RIGHT_PARENTHESIS_CH) {
+		while((int) str.length() >= 2 + pars * 2 && str[pars] == LEFT_PARENTHESIS_CH && str[str.length() - 1 - pars] == RIGHT_PARENTHESIS_CH) {
 			pars++;
 		}
-		if(str.length() >= 2 + pars * 2) {
+		if((int) str.length() >= 2 + pars * 2) {
 			if(str[pars] == ID_WRAP_LEFT_CH && str[str.length() - 1 - pars] == ID_WRAP_RIGHT_CH) {
 				return CALCULATOR->calculate(str.substr(pars, str.length() - pars * 2));
 			}

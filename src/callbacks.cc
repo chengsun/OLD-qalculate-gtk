@@ -5759,7 +5759,7 @@ void save_preferences(bool mode)
 	fprintf(file, "use_unicode_signs=%i\n", use_unicode_signs);	
 	fprintf(file, "use_custom_font=%i\n", use_custom_font);	
 	fprintf(file, "custom_font=%s\n", custom_font.c_str());		
-	for(int i = 0; i < expression_history.size(); i++) {
+	for(unsigned int i = 0; i < expression_history.size(); i++) {
 		fprintf(file, "expression_history=%s\n", expression_history[i].c_str()); 
 	}	
 	GtkTextIter iter1, iter2;
@@ -7181,7 +7181,7 @@ gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointe
 		}
 		case GDK_KP_Up: {}		
 		case GDK_Up: {
-			if(expression_history_index + 1 < expression_history.size()) {
+			if(expression_history_index + 1 < (int) expression_history.size()) {
 				expression_history_index++;
 				dont_change_index = true;
 				gtk_entry_set_text(GTK_ENTRY(expression), expression_history[expression_history_index].c_str());

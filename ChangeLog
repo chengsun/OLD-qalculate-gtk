@@ -1,6 +1,18 @@
+2004-03-07 Niklas Knutsson  <nq@altern.org>
+
+	* Update Swedish translation
+	* First manual draft finished
+	* Remove compiler warnings
+
+2004-03-06 Niklas Knutsson  <nq@altern.org>
+	
+	* Gnuplot does not like quotation signs
+	* Do not abort when locale not supported by C library
+
 2004-03-05  Niklas Knutsson  <nq@altern.org>
 
 	* Fix unit conversion of ex. ch^2 to acre
+	* Some menu fixes
 	* More user documentation
 
 2004-03-04  Niklas Knutsson  <nq@altern.org>

@@ -136,6 +136,7 @@ Calculator::Calculator() {
 	setPrecision(DEFAULT_PRECISION);
 
 	setLocale();
+
 	addStringAlternative(SIGN_POWER_0 "C", "oC");
 	addStringAlternative(SIGN_POWER_0 "F", "oF");
 	addStringAlternative(SIGN_POWER_0 "R", "oR");
@@ -197,7 +198,7 @@ Calculator::Calculator() {
 	b_gnuplot_open = false;
 	b_den_prefix = false;
 	gnuplot_pipe = NULL;
-	pthread_attr_init(&calculate_thread_attr);	    	
+	pthread_attr_init(&calculate_thread_attr);
 }
 Calculator::~Calculator() {
 	closeGnuplot();
@@ -2173,7 +2174,6 @@ string Calculator::getName(string name, ExpressionItem *object, bool force, bool
 }
 
 bool Calculator::loadGlobalDefinitions() {
-
 	string dir = PACKAGE_DATA_DIR;
 	string filename;
 	dir += "/qalculate/";
@@ -2236,17 +2236,28 @@ bool Calculator::loadLocalDefinitions() {
 	return true;
 }
 int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
+
 	xmlDocPtr doc;
 	xmlNodePtr cur, child, child2;
 	string version, stmp, lang_tmp, name, type, svalue, plural, singular, category_title, category, description, title, reverse, base, argname;
 	bool best_title, next_best_title, best_category_title, next_best_category_title, best_description, next_best_description;
 	bool best_plural, next_best_plural, best_singular, next_best_singular, best_argname, next_best_argname;
 
-	string locale = setlocale(LC_ALL, "");
-	if(locale == "POSIX" || locale == "C") {
-		locale = "";
+	string locale;
+	char *clocale = setlocale(LC_MESSAGES, "");
+	if(clocale) {
+		locale = clocale;
+		if(locale == "POSIX" || locale == "C") {
+			locale = "";
+		}
 	}
-	string localebase = locale.substr(0, 2);
+
+	string localebase;
+	if(locale.length() > 2) {
+		localebase = locale.substr(0, 2);
+	} else {
+		localebase = locale;
+	}
 
 	long int exponent, litmp;
 	bool active, hidden, b;
@@ -3823,12 +3834,12 @@ Vector *Calculator::expressionToVector(string expression, float min, float max, 
 	return expressionToVector(expression, &min_mngr, &max_mngr, steps, x_vector, x_var);
 }
 Vector *Calculator::expressionToVector(string expression, Vector *x_vector, string x_var) {
-	
+
 	if(x_var[0] == '\\') {
 		string x_var_sub = "\"";
 		x_var_sub += x_var;
 		x_var_sub += "\"";
-		gsub(x_var, x_var_sub, expression);	
+		gsub(x_var, x_var_sub, expression);		
 	}
 	
 	CALCULATOR->beginTemporaryStopErrors();
@@ -3881,6 +3892,7 @@ bool Calculator::plotVectors(plot_parameters *param, vector<Vector*> &y_vectors,
 	mkdir(homedir.c_str(), S_IRWXU);
 
 	string commandline_extra;
+	string title;
 
 	if(!param) {
 		plot_parameters pp;
@@ -3990,18 +4002,24 @@ bool Calculator::plotVectors(plot_parameters *param, vector<Vector*> &y_vectors,
 		case PLOT_LEGEND_OUTSIDE: {plot += "set key outside\n"; break;}
 	}
 	if(!param->x_label.empty()) {
+		title = param->x_label;
+		gsub("\"", "\\\"", title);
 		plot += "set xlabel \"";
-		plot += param->x_label;
+		plot += title;
 		plot += "\"\n";	
 	}
 	if(!param->y_label.empty()) {
+		string title = param->y_label;
+		gsub("\"", "\\\"", title);
 		plot += "set ylabel \"";
-		plot += param->y_label;
+		plot += title;
 		plot += "\"\n";	
 	}
 	if(!param->title.empty()) {
+		title = param->title;
+		gsub("\"", "\\\"", title);
 		plot += "set title \"";
-		plot += param->title;
+		plot += title;
 		plot += "\"\n";	
 	}
 	if(param->grid) {
@@ -4067,8 +4085,10 @@ bool Calculator::plotVectors(plot_parameters *param, vector<Vector*> &y_vectors,
 					plot += " axis x1y2";
 				}
 				if(!pdps[i]->title.empty()) {
+					title = pdps[i]->title;
+					gsub("\"", "\\\"", title);
 					plot += " title \"";
-					plot += pdps[i]->title;
+					plot += title;
 					plot += "\"";
 				}
 				switch(pdps[i]->style) {

@@ -109,7 +109,7 @@ create_main_window (void)
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_exact_mode")), CALCULATOR->alwaysExact());
 
 
-	accel_group = gtk_accel_group_new ();
+	accel_group = gtk_accel_group_new();
 
 
 	switch (CALCULATOR->angleMode())
@@ -342,11 +342,8 @@ create_main_window (void)
 	                  G_CALLBACK (on_menu_r_deactivate),
 	                  NULL);
 
-	gtk_window_add_accel_group (
-			GTK_WINDOW (
-				glade_xml_get_widget (main_glade, "main_window")
-			),
-			accel_group);
+	gtk_window_add_accel_group (GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), accel_group);
+
 	gtk_widget_grab_focus(expression);
 	GTK_WIDGET_SET_FLAGS(expression, GTK_CAN_DEFAULT);
 	gtk_widget_grab_default(expression);

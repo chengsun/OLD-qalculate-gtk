@@ -119,7 +119,6 @@ int main (int argc, char **argv) {
 	} else {
 		vAns->set(mngr);
 	}	
-
 	//reset
 	functions_window = NULL;
 	selected_function_category = _("All");
