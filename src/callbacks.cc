@@ -2178,13 +2178,13 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			h += 4;
 			for(int i = 0; i < col_w.size(); i++) {
 				w += col_w[i];
-				w += space_w * 2;
+				if(i != 0) w += space_w * 2;
 			}
 	
 			gint wlr = h / 6, wll = h / 6;
 			
 			w += wlr + 1;
-			w += wll + 1;
+			w += wll + 2;
 			central_point = h / 2;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
 			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	

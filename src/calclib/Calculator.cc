@@ -727,6 +727,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new PowFunction());	
 	addFunction(new HypotFunction());
 	addFunction(new PercentileFunction());
+	addFunction(new SumFunction());
 	addFunction(new MinFunction());
 	addFunction(new MaxFunction());
 	addFunction(new ModeFunction());

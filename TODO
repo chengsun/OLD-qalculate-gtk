@@ -11,6 +11,8 @@
 * Replace pointers to unit when unit type has changed (a different object must be created)
 * Direct reference to a CSV file (function)
 * Export to CSV file
+* Complex numbers
+* Sort out percentile and provide alternative methods
 
 * More functions
 * More units

@@ -1,3 +1,14 @@
+2003-10-15  Niklas Knutsson  <nq@altern.org>
+
+	* Do not add extra space after matrix in GTK widget
+	* Update rank() and sort() to new comparison that not only allows fractions
+	* Update min() and max() to new comparison that not only allows fractions
+	* Go back to builtin sum() function as sum() is used often and csum() is rather slow
+	* eurocent and cent
+	* Fix yearfrac() for basis = 1
+	* More TODO
+	* Category "Matrices" -> "Matrices & Vectors", "Financial" -> "Finance"
+
 2003-10-13  Niklas Knutsson  <nq@altern.org>
 
 	* Finally make class variables in Manager protected

@@ -64,6 +64,21 @@ int daysPerYear(int year, int basis) {
 	return -1;
 }
 
+int daysPerMonth(int month, int year) {
+	switch(month) {
+		case 1: {} case 3: {} case 5: {} case 7: {} case 8: {} case 10: {} case 12: {
+			return 31;
+		}
+		case 2:	{
+			if(isLeapYear(year)) return 29;
+			else return 28;
+		}				
+		default: {
+			return 30;
+		}
+	}
+}	
+
 Fraction *yearsBetweenDates(string date1, string date2, int basis, bool date_func) {
 	if(basis < 0 || basis > 4) return NULL;
 	if(basis == 1) {
@@ -79,28 +94,41 @@ Fraction *yearsBetweenDates(string date1, string date2, int basis, bool date_fun
 			year1 = year2; month1 = month2; day1 = day2;
 			year2 = year3; month2 = month3; day2 = day3;		
 		}		
-		int days;
+		int days = 0;
 		if(year1 == year2) {
 			days = daysBetweenDates(year1, month1, day1, year2, month2, day2, basis, date_func);
 			if(days < 0) return NULL;
 			return new Fraction(days, daysPerYear(year1, basis));
 		}
-		days = daysBetweenDates(year1, month1, day1, year1 + 1, 1, 1, basis, date_func);
-		if(days < 0) return NULL;
-		int days_of_years = daysPerYear(year1, basis);
-		int years = year2 - year1;
-		for(year1++; year1 < year2; year1++) {
-			days_of_years += daysPerYear(year1, basis);
-			days += daysPerYear(year1, basis);
+		for(int month = 12; month > month1; month--) {
+			days += daysPerMonth(month, year1);
 		}
-		int days2 = daysBetweenDates(year2, 1, 1, year2, month2, day2, basis, date_func);
-		if(days2 < 0) return NULL;		
-		days += days2;
-		days_of_years += daysPerYear(year2, basis);
-		Fraction *fr = new Fraction(days, days_of_years);		
-		Fraction *fr2 = new Fraction(years);
-		fr->add(OPERATION_MULTIPLY, fr2);
-		delete fr2;
+		days += daysPerMonth(month1, year1) - day1 + 1;
+/*		Fraction *fr = new Fraction(days, daysPerYear(year1, basis));
+		year1++;
+		if(year1 != year2) {
+			Fraction yfr(year2 - year1);
+			fr->add(&yfr);
+		}
+		days = 0;*/
+		for(int month = 1; month < month2; month++) {
+			days += daysPerMonth(month, year2);
+		}
+		days += day2 - 1;
+		int days_of_years = 0;
+		for(int year = year1; year <= year2; year++) {
+			days_of_years += daysPerYear(year, basis);
+			if(year != year1 && year != year2) {
+				days += daysPerYear(year, basis);
+			}
+		}
+		Fraction year_frac(days_of_years, year2 + 1 - year1);
+/*		if(days > 0) {
+			Fraction fr2(days, daysPerYear(year2, basis));
+			fr->add(&fr2);
+		}*/
+		Fraction *fr = new Fraction(days);
+		fr->divide(&year_frac);
 		return fr;
 	} else {
 		int days = daysBetweenDates(date1, date2, basis, date_func);
@@ -170,21 +198,12 @@ int daysBetweenDates(int year1, int month1, int day1, int year2, int month2, int
 					month1 = 1;
 					month4 = month2;
 					if(month1 == month2) break;
-				}			
-				switch(month1) {
-					case 1: {} case 3: {} case 5: {} case 7: {} case 8: {} case 10: {} case 12: {
-						days += 31;
-						break;
-					}
-					case 2:	{
-						if((!b && isLeapYear(year2)) || (b && isLeapYear(year1))) days += 29;
-						else days += 28;
-						break;
-					}				
-					default: {
-						days += 30;
-					}
-				}	
+				}
+				if(!b) {
+					days += daysPerMonth(month1, year2);
+				} else {
+					days += daysPerMonth(month1, year1);
+				}
 			}
 			if(years == 0) return days;
 			if(basis == 1) {

@@ -101,6 +101,26 @@
     <builtin_unit name="ZAR">
       <_title>South African Rand</_title>
     </builtin_unit>
+    <unit type="alias" name="eurocent">
+      <_singular>eurocent</_singular>
+      <_plural>eurocents</_plural>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/100</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Euro Cent</_title>
+    </unit>
+    <unit type="alias" name="cent">
+      <_singular>cent</_singular>
+      <_plural>cents</_plural>
+      <base>
+        <unit>USD</unit>
+        <relation>1/100</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Cent (USD)</_title>
+    </unit>
     <unit type="alias" name="BEF">
       <_singular>BEF</_singular>
       <base>

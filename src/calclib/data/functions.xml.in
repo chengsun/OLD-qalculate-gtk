@@ -53,7 +53,7 @@
     </builtin_function>
   </category>
   <category>
-    <_title>Matrices</_title>
+    <_title>Matrices &amp; Vectors</_title>
     <builtin_function name="matrix">
       <_title>Construct Matrix</_title>
       <argument index="1">
@@ -286,7 +286,7 @@
     </function>
   </category>
   <category>
-    <_title>Exponents and Logarithms</_title>
+    <_title>Exponents &amp; Logarithms</_title>
     <builtin_function name="ln">
       <_title>Natural Logarithm</_title>
     </builtin_function>
@@ -615,6 +615,9 @@
   </category>
   <category>
     <_title>Statistics</_title>
+    <builtin_function name="sum">
+      <_title>Sum</_title>
+    </builtin_function>
     <builtin_function name="percentile">
       <_title>Percentile</_title>
     </builtin_function>
@@ -724,14 +727,6 @@
     <function name="rms">
       <_title>Quadratic Mean (RMS)</_title>
       <expression>abs(csum(1,-1,0,&quot;\\y+\\x^2&quot;,\v)/elements(\v)^(1/2))</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="sum">
-      <_title>Sum</_title>
-      <expression>csum(1,-1,0,&quot;\\y+\\x&quot;,\v)</expression>
       <argument type="vector" index="1">
         <_title>Data</_title>
         <test>false</test>
@@ -1007,7 +1002,7 @@
     </builtin_function>
   </category>
   <category>
-    <_title>Financial</_title>
+    <_title>Finance</_title>
     <function name="syd">
       <_title>Sum-of-years digits depreciation</_title>
       <_description>Calculates the sum-of-years digits depreciation for an asset based on its cost, salvage value, anticipated life, and a particular period. This method accelerates the rate of the depreciation, so that more depreciation expense occurs in earlier periods than in later ones. The depreciable cost is the actual cost minus the salvage value. The useful life is the number of periods (typically years) over which the asset is depreciated.</_description>

@@ -135,13 +135,13 @@ bool Matrix::rank(bool ascending) {
 	for(int index_r = 1; index_r <= rows(); index_r++) {
 		for(int index_c = 1; index_c <= columns(); index_c++) {
 			mngr = get(index_r, index_c);
-			if(!mngr->isFraction()) {
-				CALCULATOR->error(true, _("Only numbers can be ranked -- halted on \"%s\"."), mngr->print().c_str(), NULL);
-				return false;
-			}
 			bool b = false;
 			for(int i = 0; i < ranked_r.size(); i++) {
-				int cmp = mngr->fraction()->compare(ranked_mngr[i]->fraction());
+				int cmp = mngr->compare(ranked_mngr[i]);
+				if(cmp < -1) {
+					CALCULATOR->error(true, _("Unsolvable comparison at element %s:%s when trying to rank matrix/vector."), i2s(index_r).c_str(), i2s(index_c).c_str(), NULL);
+					return false;
+				}
 				if((cmp > 0 && ascending) || cmp == 0 || (cmp < 0 && !ascending)) {
 					if(cmp == 0) {
 						ranked_c.insert(ranked_c.begin() + i + 1, index_c);
@@ -192,13 +192,13 @@ bool Matrix::sort(bool ascending) {
 	for(int index_r = 1; index_r <= rows(); index_r++) {
 		for(int index_c = 1; index_c <= columns(); index_c++) {
 			mngr = new Manager(get(index_r, index_c));
-			if(!mngr->isFraction()) {
-				CALCULATOR->error(true, _("Only numbers can be sorted -- halted on \"%s\"."), mngr->print().c_str(), NULL);
-				return false;
-			}
 			bool b = false;
 			for(int i = 0; i < ranked_mngr.size(); i++) {
-				int cmp = mngr->fraction()->compare(ranked_mngr[i]->fraction());
+				int cmp = mngr->compare(ranked_mngr[i]);
+				if(cmp < -1) {
+					CALCULATOR->error(true, _("Unsolvable comparison at element %s:%s when trying to sort matrix/vector."), i2s(index_r).c_str(), i2s(index_c).c_str(), NULL);
+					return false;
+				}
 				if((cmp > 0 && ascending) || cmp == 0 || (cmp < 0 && !ascending)) {
 					ranked_mngr.insert(ranked_mngr.begin() + i, mngr);
 					b = true;

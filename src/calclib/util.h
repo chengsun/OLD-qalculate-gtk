@@ -61,6 +61,7 @@ bool s2date(string str, int &year, int &month, int &day);
 bool s2date(string str, struct tm *time);
 bool isLeapYear(int year);
 int daysPerYear(int year, int basis = 0);
+int daysPerMonth(int month, int year);
 Fraction *yearsBetweenDates(string date1, string date2, int basis, bool date_func = true);
 int daysBetweenDates(string date1, string date2, int basis, bool date_func = true);
 int daysBetweenDates(int year1, int month1, int day1, int year2, int month2, int day2, int basis, bool date_func = true);

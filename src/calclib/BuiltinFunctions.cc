@@ -1158,40 +1158,12 @@ SumFunction::SumFunction() : Function("Statistics", "sum", -1, "Sum") {
 	setArgumentDefinition(1, new VectorArgument("", false));
 }
 void SumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	for(unsigned int i = 0; i < vargs.size(); i++) {
-		mngr->add(vargs[i], OPERATION_ADD);
-	}
-}
-MeanFunction::MeanFunction() : Function("Statistics", "mean", -1, "Mean") {
-	setArgumentDefinition(1, new VectorArgument("", false));
-}
-void MeanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() <= 0)
 		return;
-	for(unsigned int i = 0; i < vargs.size(); i++) {
-		mngr->add(vargs[i], OPERATION_ADD);
+	Vector *v = produceVector(vargs);
+	for(int index = 1; index <= v->components(); index++) {
+		mngr->add(v->get(index), OPERATION_ADD);
 	}
-	mngr->addInteger(vargs.size(), OPERATION_DIVIDE);	
-}
-MedianFunction::MedianFunction() : Function("Statistics", "median", -1, "Median") {
-	setArgumentDefinition(1, new VectorArgument("", false));
-}
-void MedianFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs.size() <= 0)
-		return;
-	Vector *v = produceVector(vargs);	
-	if(!v->sort()) {
-		Manager *mngr2 = createFunctionManagerFromVArgs(vargs);
-		mngr->set(mngr2);
-		mngr2->unref();	
-	} else if(v->components() % 2 == 0) {
-		mngr->set(v->get(v->components() / 2));
-		mngr->add(v->get(v->components() / 2 + 1), OPERATION_ADD);		
-		mngr->addInteger(2, OPERATION_DIVIDE);
-	} else {
-		mngr->set(v->get(v->components() / 2 + 1));
-	}
-	delete v;
 }
 PercentileFunction::PercentileFunction() : Function("Statistics", "percentile", 1, "Percentile", "", -1) {
 	FractionArgument *arg = new FractionArgument();
@@ -1205,7 +1177,7 @@ PercentileFunction::PercentileFunction() : Function("Statistics", "percentile", 
 	setArgumentDefinition(2, new VectorArgument("", false));
 }
 void PercentileFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs.size() <= 1) {
+	if(vargs.size() < 1) {
 		return;
 	}
 	Fraction fr100(100);
@@ -1248,22 +1220,21 @@ void MinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() <= 0)
 		return;
 	Vector *v = produceVector(vargs);		
-	Fraction *fr = NULL;
+	int cmp;
+	Manager *min = NULL;
 	for(int index = 1; index <= v->components(); index++) {
-		if(v->get(index)->isFraction()) {
-			if(!fr || v->get(index)->fraction()->isLessThan(fr)) {
-				fr = v->get(index)->fraction();
-			}
+		if(min == NULL) {
+			min = v->get(index);
 		} else {
-			CALCULATOR->error(true, _("%s() can only compare numbers."), name().c_str(), NULL);
-			Manager *mngr2 = createFunctionManagerFromVArgs(vargs);
-			mngr->set(mngr2);
-			mngr2->unref();
-			fr = NULL;
-			break;
+			cmp = min->compare(v->get(index));
+			if(cmp == -1) {
+				min = v->get(index);
+			} else if(cmp < -1) {
+				CALCULATOR->error(true, _("Unsolvable comparison in %s() ignored."), name().c_str(), NULL);
+			}
 		}
 	}
-	if(fr) mngr->set(fr);
+	mngr->set(min);
 	delete v;
 }
 MaxFunction::MaxFunction() : Function("Statistics", "max", -1, "Max") {
@@ -1273,22 +1244,21 @@ void MaxFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() <= 0)
 		return;
 	Vector *v = produceVector(vargs);		
-	Fraction *fr = NULL;
+	int cmp;
+	Manager *max = NULL;
 	for(int index = 1; index <= v->components(); index++) {
-		if(v->get(index)->isFraction()) {
-			if(!fr || v->get(index)->fraction()->isGreaterThan(fr)) {
-				fr = v->get(index)->fraction();
-			}
+		if(max == NULL) {
+			max = v->get(index);
 		} else {
-			CALCULATOR->error(true, _("%s() function can only compare numbers."), name().c_str(), NULL);
-			Manager *mngr2 = createFunctionManagerFromVArgs(vargs);
-			mngr->set(mngr2);
-			mngr2->unref();
-			fr = NULL;
-			break;
+			cmp = max->compare(v->get(index));
+			if(cmp == 1) {
+				max = v->get(index);
+			} else if(cmp < -1) {
+				CALCULATOR->error(true, _("Unsolvable comparison in %s() ignored."), name().c_str(), NULL);
+			}
 		}
 	}
-	if(fr) mngr->set(fr);
+	mngr->set(max);
 	delete v;
 }
 ModeFunction::ModeFunction() : Function("Statistics", "mode", -1, "Mode") {
@@ -1326,56 +1296,6 @@ void ModeFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 	mngr->set(value);
 	delete v;
-}
-NumberFunction::NumberFunction() : Function("Statistics", "number", -1, "Number") {
-	setArgumentDefinition(1, new VectorArgument("", false));
-}
-void NumberFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs.size(), 1);
-}
-StdDevFunction::StdDevFunction() : Function("Statistics", "stddev", -1, "Standard Deviation") {
-	setArgumentDefinition(1, new VectorArgument("", false));
-}
-void StdDevFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs.size() <= 0) {
-		return;
-	}
-	Manager mean, value;
-	for(unsigned int i = 0; i < vargs.size(); i++) {
-		mean.add(vargs[i], OPERATION_ADD);
-	}
-	mean.addInteger(vargs.size(), OPERATION_DIVIDE);
-	for(unsigned int i = 0; i < vargs.size(); i++) {
-		vargs[i]->add(&mean, OPERATION_SUBTRACT);
-		vargs[i]->addInteger(2, OPERATION_RAISE);
-		value.add(vargs[i], OPERATION_ADD);
-	}
-	value.addInteger(vargs.size(), OPERATION_DIVIDE);
-	Manager mngr2(1, 2);
-	value.add(&mngr2, OPERATION_RAISE);
-	mngr->set(&value);
-}
-StdDevSFunction::StdDevSFunction() : Function("Statistics", "stddevs", -1, "Standard Deviation (random sampling)") {
-	setArgumentDefinition(1, new VectorArgument("", false));
-}
-void StdDevSFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs.size() <= 0) {
-		return;
-	}
-	Manager mean, value;
-	for(unsigned int i = 0; i < vargs.size(); i++) {
-		mean.add(vargs[i], OPERATION_ADD);
-	}
-	mean.addInteger(vargs.size(), OPERATION_DIVIDE);
-	for(unsigned int i = 0; i < vargs.size(); i++) {
-		vargs[i]->add(&mean, OPERATION_SUBTRACT);
-		vargs[i]->addInteger(2, OPERATION_RAISE);
-		value.add(vargs[i], OPERATION_ADD);
-	}
-	value.addInteger(vargs.size() - 1, OPERATION_DIVIDE);
-	Manager mngr2(1, 2);
-	value.add(&mngr2, OPERATION_RAISE);
-	mngr->set(&value);
 }
 RandomFunction::RandomFunction() : Function("General", "rand", 0, "Random Number") {}
 void RandomFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
