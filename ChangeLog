@@ -1,6 +1,8 @@
 2003-08-18  Niklas Knutsson  <nq@altern.org>
 
+	* Qalculate! version 0.2 released
 	* Last minute fixes
+	* More unicode
 	* Fix display of exponent of exponent
 	* Put unicode chars on buttons in code and add option to disable unicode signs
 	* Unicode math operators

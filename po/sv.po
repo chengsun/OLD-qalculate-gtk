@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
-"POT-Creation-Date: 2003-08-18 08:37+0200\n"
-"PO-Revision-Date: 2003-08-17 21:08+0200\n"
+"POT-Creation-Date: 2003-08-18 14:55+0200\n"
+"PO-Revision-Date: 2003-08-18 14:56+0200\n"
 "Last-Translator: Niklas Knutsson <nq@altern.org>\n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -289,21 +289,21 @@ msgstr "E (exponent)"
 msgid "EXP"
 msgstr "EXP"
 
-#: data/qalculate.glade.h:71 src/callbacks.cc:1933
+#: data/qalculate.glade.h:71 src/callbacks.cc:1939
 msgid "Edit Function"
 msgstr "Redigera funktion"
 
-#: data/qalculate.glade.h:72 src/callbacks.cc:1714
+#: data/qalculate.glade.h:72 src/callbacks.cc:1720
 msgid "Edit Unit"
 msgstr "Redigera enhet"
 
-#: data/qalculate.glade.h:73 src/callbacks.cc:2161
+#: data/qalculate.glade.h:73 src/callbacks.cc:2167
 msgid "Edit Variable"
 msgstr "Redigera variabel"
 
 #: data/qalculate.glade.h:74
 msgid "Enable unicode signs"
-msgstr "Anv�nd unicode tecken"
+msgstr "Använd unicodetecken"
 
 #: data/qalculate.glade.h:75
 msgid "Execute"
@@ -317,7 +317,7 @@ msgstr "Exponent"
 msgid "Expression"
 msgstr "Uttryck"
 
-#: data/qalculate.glade.h:78 src/callbacks.cc:1362
+#: data/qalculate.glade.h:78 src/callbacks.cc:1368
 msgid "Functions"
 msgstr "Funktioner"
 
@@ -562,16 +562,16 @@ msgstr "Kunde finna %s!\n"
 #: src/main.cc:105 src/main.cc:108 src/main.cc:111 src/callbacks.cc:532
 #: src/callbacks.cc:579 src/callbacks.cc:616 src/callbacks.cc:697
 #: src/callbacks.cc:746 src/callbacks.cc:785 src/callbacks.cc:866
-#: src/callbacks.cc:913 src/callbacks.cc:990 src/callbacks.cc:3377
-#: src/callbacks.cc:3462 src/callbacks.cc:3541
+#: src/callbacks.cc:913 src/callbacks.cc:990 src/callbacks.cc:3405
+#: src/callbacks.cc:3490 src/callbacks.cc:3569
 msgid "All"
 msgstr "Alla"
 
-#: src/interface.cc:209 src/callbacks.cc:2933
+#: src/interface.cc:209 src/callbacks.cc:2955
 msgid "<< Less"
 msgstr "<< Mindre"
 
-#: src/interface.cc:215 src/callbacks.cc:2927
+#: src/interface.cc:215 src/callbacks.cc:2949
 msgid "More >>"
 msgstr "Mer >>"
 
@@ -598,8 +598,8 @@ msgstr "Typ"
 #: src/callbacks.cc:572 src/callbacks.cc:573 src/callbacks.cc:618
 #: src/callbacks.cc:739 src/callbacks.cc:740 src/callbacks.cc:787
 #: src/callbacks.cc:905 src/callbacks.cc:906 src/callbacks.cc:992
-#: src/callbacks.cc:1916 src/callbacks.cc:2059 src/callbacks.cc:2260
-#: src/callbacks.cc:3377 src/callbacks.cc:3462 src/callbacks.cc:3541
+#: src/callbacks.cc:1922 src/callbacks.cc:2065 src/callbacks.cc:2266
+#: src/callbacks.cc:3405 src/callbacks.cc:3490 src/callbacks.cc:3569
 msgid "Uncategorized"
 msgstr "Okategoriserad"
 
@@ -623,11 +623,11 @@ msgstr "Lägg till ny enhet"
 msgid "Manage units"
 msgstr "Hantera enheter"
 
-#: src/callbacks.cc:1152 src/callbacks.cc:2441
+#: src/callbacks.cc:1152 src/callbacks.cc:2458
 msgid "Disable units"
 msgstr "Inaktivera enheter"
 
-#: src/callbacks.cc:1154 src/callbacks.cc:2438
+#: src/callbacks.cc:1154 src/callbacks.cc:2455
 msgid "Enable units"
 msgstr "Aktivera enhet"
 
@@ -643,73 +643,81 @@ msgstr "Skapa en ny variabel"
 msgid "Manage variables"
 msgstr "Hantera variabler"
 
-#: src/callbacks.cc:1270 src/callbacks.cc:2415
+#: src/callbacks.cc:1270 src/callbacks.cc:2421
 msgid "Disable variables"
 msgstr "Inaktivera variabler"
 
-#: src/callbacks.cc:1272 src/callbacks.cc:2412
+#: src/callbacks.cc:1272 src/callbacks.cc:2418
 msgid "Enable variables"
 msgstr "Aktivera variabler"
 
-#: src/callbacks.cc:1276 src/callbacks.cc:2428
+#: src/callbacks.cc:1276 src/callbacks.cc:2431
+msgid "Calculate variables"
+msgstr "Beräkna variabler"
+
+#: src/callbacks.cc:1278 src/callbacks.cc:2428
+msgid "Do not calculate variables"
+msgstr "Beräkna inte variabler"
+
+#: src/callbacks.cc:1282 src/callbacks.cc:2445
 msgid "Disable unknown variables"
 msgstr "Inaktivera okända variabler"
 
-#: src/callbacks.cc:1278 src/callbacks.cc:2425
+#: src/callbacks.cc:1284 src/callbacks.cc:2442
 msgid "Enable unknown variables"
 msgstr "Aktivera okända variabler"
 
-#: src/callbacks.cc:1290
+#: src/callbacks.cc:1296
 msgid "Prefixes"
 msgstr "Prefix"
 
-#: src/callbacks.cc:1321
+#: src/callbacks.cc:1327
 msgid "Set prefix"
 msgstr "Sätt prefix"
 
-#: src/callbacks.cc:1400
+#: src/callbacks.cc:1406
 msgid "Create new function"
 msgstr "Skapa en ny funktion"
 
-#: src/callbacks.cc:1401
+#: src/callbacks.cc:1407
 msgid "Manage functions"
 msgstr "Hantera funktioner"
 
-#: src/callbacks.cc:1404 src/callbacks.cc:2402
+#: src/callbacks.cc:1410 src/callbacks.cc:2408
 msgid "Disable functions"
 msgstr "Inaktivera funktioner"
 
-#: src/callbacks.cc:1406 src/callbacks.cc:2399
+#: src/callbacks.cc:1412 src/callbacks.cc:2405
 msgid "Enable functions"
 msgstr "Aktivera funktioner"
 
-#: src/callbacks.cc:1599
+#: src/callbacks.cc:1605
 #, c-format
 msgid "Argument %i"
 msgstr "Parameter %i"
 
-#: src/callbacks.cc:1619
+#: src/callbacks.cc:1625
 msgid "Vector (1,2,3,4...)"
 msgstr "Vektor (1,2,3,4,...)"
 
-#: src/callbacks.cc:1716
+#: src/callbacks.cc:1722
 msgid "Edit Unit (read only)"
 msgstr "Redigera enhet (skrivskyddad)"
 
-#: src/callbacks.cc:1718
+#: src/callbacks.cc:1724
 msgid "New Unit"
 msgstr "Ny enhet"
 
-#: src/callbacks.cc:1802
+#: src/callbacks.cc:1808
 msgid "Empty internal name field."
 msgstr "Tomt fält för internt namn."
 
 #. no short unit name either -- open dialog again
-#: src/callbacks.cc:1809 src/callbacks.cc:1985 src/callbacks.cc:2214
+#: src/callbacks.cc:1815 src/callbacks.cc:1991 src/callbacks.cc:2220
 msgid "Empty name field."
 msgstr "Tomt namnfält"
 
-#: src/callbacks.cc:1821
+#: src/callbacks.cc:1827
 msgid ""
 "A unit with the same internal name already exists.\n"
 "Overwrite unit?"
@@ -717,7 +725,7 @@ msgstr ""
 "En enhet med samma interna namn finns redan.\n"
 "Vill du ersätta den?"
 
-#: src/callbacks.cc:1825
+#: src/callbacks.cc:1831
 msgid ""
 "A unit with the same name already exists.\n"
 "Overwrite unit?"
@@ -725,7 +733,7 @@ msgstr ""
 "En enhet med samma namn finns redan.\n"
 "Vill du ersätta den?"
 
-#: src/callbacks.cc:1828
+#: src/callbacks.cc:1834
 msgid ""
 "A unit with the same plural name already exists.\n"
 "Overwrite unit?"
@@ -733,7 +741,7 @@ msgstr ""
 "En enhet med samma pluralform finns redan.\n"
 "Vill du ersätta den?"
 
-#: src/callbacks.cc:1831
+#: src/callbacks.cc:1837
 msgid ""
 "A unit with the same short format already exists.\n"
 "Overwrite unit?"
@@ -741,25 +749,25 @@ msgstr ""
 "En enhet med samma kortform finns redan.\n"
 "Vill du ersätta den?"
 
-#: src/callbacks.cc:1849 src/callbacks.cc:1893
+#: src/callbacks.cc:1855 src/callbacks.cc:1899
 msgid "Base unit does not exist."
 msgstr "Angiven grundenhet finns inte."
 
-#: src/callbacks.cc:1935
+#: src/callbacks.cc:1941
 msgid "Edit Function (read only)"
 msgstr "Redigera funktion (skrivskyddad)"
 
-#: src/callbacks.cc:1937
+#: src/callbacks.cc:1943
 msgid "New Function"
 msgstr "Ny funktion"
 
 #. no expression/relation -- open dialog again
-#: src/callbacks.cc:1992
+#: src/callbacks.cc:1998
 msgid "Empty expression field."
 msgstr "Tom uttrycksfält."
 
 #. function with the same name exists -- overwrite or open the dialog again
-#: src/callbacks.cc:1999 src/callbacks.cc:2224
+#: src/callbacks.cc:2005 src/callbacks.cc:2230
 msgid ""
 "A function or variable with the same name already exists.\n"
 "Overwrite function/variable?"
@@ -767,28 +775,28 @@ msgstr ""
 "En funktion eller variabel med samma namn finns redan.\n"
 "Vill du ersätta funktionen/variabeln?"
 
-#: src/callbacks.cc:2101
+#: src/callbacks.cc:2107
 msgid "Unit does not exist"
 msgstr "Enheten finns inte"
 
-#: src/callbacks.cc:2163
+#: src/callbacks.cc:2169
 msgid "Edit Variable (read only)"
 msgstr "Redigera variabel (skrivskyddad)"
 
-#: src/callbacks.cc:2165
+#: src/callbacks.cc:2171
 msgid "New Variable"
 msgstr "Ny variabel"
 
 #. no value -- open dialog again
-#: src/callbacks.cc:2219
+#: src/callbacks.cc:2225
 msgid "Empty value field."
 msgstr "Tomt värdefält."
 
-#: src/callbacks.cc:2273 src/callbacks.cc:2285
+#: src/callbacks.cc:2279 src/callbacks.cc:2291
 msgid "Temporary"
 msgstr "Temporära"
 
-#: src/callbacks.cc:2554
+#: src/callbacks.cc:2571
 #, c-format
 msgid ""
 "Couldn't write definitions to\n"
@@ -797,7 +805,7 @@ msgstr ""
 "Kunde inte spara definitioner till\n"
 "%s"
 
-#: src/callbacks.cc:2684
+#: src/callbacks.cc:2704
 #, c-format
 msgid ""
 "Couldn't write preferences to\n"
@@ -807,7 +815,7 @@ msgstr ""
 "%s"
 
 #. do not delete units that are used by other units
-#: src/callbacks.cc:3438
+#: src/callbacks.cc:3466
 msgid "Cannot delete unit as it is needed by other units."
 msgstr "Kan inte ta bort enheten eftersom den används av andra enheter."
 
@@ -830,31 +838,31 @@ msgstr ""
 "Överblivna tecken i uttrycket \"%s\" ignorerades (okänd variabel/funktion/"
 "enhet)."
 
-#: src/calclib/Calculator.cc:465 src/calclib/Calculator.cc:466
+#: src/calclib/Calculator.cc:475 src/calclib/Calculator.cc:476
 msgid " to "
 msgstr " till "
 
-#: src/calclib/Calculator.cc:498
+#: src/calclib/Calculator.cc:508
 msgid "Floating point error: division by zero."
 msgstr "Flyttalsfel: division med noll."
 
-#: src/calclib/Calculator.cc:509
+#: src/calclib/Calculator.cc:519
 msgid "Floating point error: invalid operation."
 msgstr "Flyttalsfel: ogiltig operation."
 
-#: src/calclib/Calculator.cc:522
+#: src/calclib/Calculator.cc:532
 #, c-format
 msgid "Floating point error: division by zero in \"%s\"."
 msgstr "Flyttalsfel: division med noll i \"%s\"."
 
-#: src/calclib/Calculator.cc:533
+#: src/calclib/Calculator.cc:543
 #, c-format
 msgid ""
 "Floating point error: invalid operation in \"%s\n"
 "."
 msgstr "Flyttalsfel: ogiltig operation i \"%s\"."
 
-#: src/calclib/Calculator.cc:1472 src/calclib/Calculator.cc:1498
+#: src/calclib/Calculator.cc:1488 src/calclib/Calculator.cc:1514
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr "Namnet \"%s\" är upptaget. Ändrar till \"%s\"."
@@ -914,5 +922,3 @@ msgstr ""
 msgid "You need at least %s arguments in function %s()."
 msgstr "Det krävs minst %s parametrar i funktionen %s()."
 
-#~ msgid "Non-scientific"
-#~ msgstr "Ovetenskaplig"
