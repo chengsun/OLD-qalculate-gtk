@@ -1,3 +1,10 @@
+2004-07-15 Niklas Knutsson  <nq@altern.org>
+
+	* More work on base in parse options
+	* Fix E in rpn mode
+	* Parsing tweaking
+	* GUI for number base in expression
+
 2004-07-14 Niklas Knutsson  <nq@altern.org>
 
 	* Alternative to round halfway integers to even (instead of upwards)

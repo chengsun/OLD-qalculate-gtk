@@ -5326,6 +5326,7 @@ void load_preferences() {
 	evalops.sync_units = true;
 	evalops.structuring = STRUCTURING_SIMPLIFY;
 	evalops.parse_options.unknowns_enabled = false;
+	evalops.parse_options.base = BASE_DECIMAL;
 	
 	save_mode_on_exit = true;
 	save_defs_on_exit = true;
@@ -5444,6 +5445,8 @@ void load_preferences() {
 					printops.number_fraction_format = (NumberFractionFormat) v;					
 				else if(svar == "number_base")
 					printops.base = v;
+				else if(svar == "number_base_expression")
+					evalops.parse_options.base = v;	
 				else if(svar == "angle_unit")
 					CALCULATOR->angleMode(v);
 				else if(svar == "hyp_is_on")
@@ -5695,6 +5698,7 @@ void save_preferences(bool mode)
 	fprintf(file, "all_prefixes_enabled=%i\n", saved_printops.use_all_prefixes);
 	fprintf(file, "denominator_prefix_enabled=%i\n", saved_printops.use_denominator_prefix);
 	fprintf(file, "number_base=%i\n", saved_printops.base);
+	fprintf(file, "number_base_expression=%i\n", saved_evalops.parse_options.base);
 	fprintf(file, "angle_unit=%i\n", saved_angle_unit);
 	fprintf(file, "hyp_is_on=%i\n", saved_hyp_is_on);
 	fprintf(file, "functions_enabled=%i\n", saved_evalops.parse_options.functions_enabled);
@@ -6869,7 +6873,7 @@ void on_menu_item_custom_base_activate(GtkMenuItem *w, gpointer user_data) {
 	on_number_base_spinbutton_base_value_changed(GTK_SPIN_BUTTON(glade_xml_get_widget (main_glade, "number_base_spinbutton_base")), NULL);
 }
 void on_number_base_spinbutton_base_value_changed(GtkSpinButton *w, gpointer user_data) {
-	printops.base = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (main_glade, "number_base_spinbutton_base")));
+	printops.base = gtk_spin_button_get_value_as_int(w);
 	switch(printops.base) {
 		case 2: {
 			g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_binary"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_binary_activate, NULL);
@@ -6924,6 +6928,49 @@ void on_menu_item_time_format_activate(GtkMenuItem *w, gpointer user_data) {
 	printops.base = BASE_TIME;
 	setResult();
 	gtk_widget_grab_focus(expression);
+}
+void on_menu_item_expression_base_activate(GtkMenuItem *w, gpointer user_data) {
+	gtk_widget_show(glade_xml_get_widget (main_glade, "number_base_expression_dialog"));
+	gtk_window_present(GTK_WINDOW(glade_xml_get_widget (main_glade, "number_base_expression_dialog")));
+}
+void on_number_base_expression_radiobutton_binary_toggled(GtkCheckButton *w, gpointer user_data) {
+	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+		return;
+	evalops.parse_options.base = BASE_BINARY;
+	gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
+}
+void on_number_base_expression_radiobutton_octal_toggled(GtkCheckButton *w, gpointer user_data) {
+	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+		return;
+	evalops.parse_options.base = BASE_OCTAL;
+	gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
+}
+void on_number_base_expression_radiobutton_decimal_toggled(GtkCheckButton *w, gpointer user_data) {
+	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+		return;
+	evalops.parse_options.base = BASE_DECIMAL;
+	gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
+}
+void on_number_base_expression_radiobutton_hexadecimal_toggled(GtkCheckButton *w, gpointer user_data) {
+	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+		return;
+	evalops.parse_options.base = BASE_HEXADECIMAL;
+	gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
+}
+void on_number_base_expression_radiobutton_custom_base_toggled(GtkCheckButton *w, gpointer user_data) {
+	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+		return;
+	evalops.parse_options.base = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (main_glade, "number_base_expression_spinbutton_custom_base")));
+	gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "number_base_expression_spinbutton_custom_base"), TRUE);
+}
+void on_number_base_expression_spinbutton_base_value_changed(GtkSpinButton *w, gpointer user_data) {
+	evalops.parse_options.base = gtk_spin_button_get_value_as_int(w);
+}
+void on_number_base_expression_radiobutton_roman_toggled(GtkCheckButton *w, gpointer user_data) {
+	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+		return;
+	evalops.parse_options.base = BASE_ROMAN_NUMERALS;
+	gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
 }
 void on_menu_item_short_units_activate(GtkMenuItem *w, gpointer user_data) {
 	printops.abbreviate_units = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
@@ -7725,10 +7772,10 @@ void on_nbases_entry_binary_changed(GtkEditable *editable, gpointer user_data) {
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
 	if(str.empty()) return;
-	str.insert(0, "\"");
-	str += "\"";
+	EvaluationOptions eo;
+	eo.parse_options.base = BASE_BINARY;
 	changing_in_nbases_dialog = true;	
-	update_nbases_entries(CALCULATOR->f_bin->calculate(CALCULATOR->unlocalizeExpression(str)), 2);
+	update_nbases_entries(CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(str), eo), 2);
 	changing_in_nbases_dialog = false;	
 }
 void on_nbases_entry_octal_changed(GtkEditable *editable, gpointer user_data) {
@@ -7736,21 +7783,21 @@ void on_nbases_entry_octal_changed(GtkEditable *editable, gpointer user_data) {
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
 	if(str.empty()) return;	
-	str.insert(0, "\"");
-	str += "\"";
+	EvaluationOptions eo;
+	eo.parse_options.base = BASE_OCTAL;
 	changing_in_nbases_dialog = true;	
-	update_nbases_entries(CALCULATOR->f_oct->calculate(CALCULATOR->unlocalizeExpression(str)), 8);
+	update_nbases_entries(CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(str), eo), 8);
 	changing_in_nbases_dialog = false;	
 }
 void on_nbases_entry_hexadecimal_changed(GtkEditable *editable, gpointer user_data) {
 	if(changing_in_nbases_dialog) return;
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
-	str.insert(0, "\"");
-	str += "\"";
-	changing_in_nbases_dialog = true;	
 	if(str.empty()) return;	
-	update_nbases_entries(CALCULATOR->f_hex->calculate(CALCULATOR->unlocalizeExpression(str)), 16);
+	EvaluationOptions eo;
+	eo.parse_options.base = BASE_HEXADECIMAL;
+	changing_in_nbases_dialog = true;	
+	update_nbases_entries(CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(str), eo), 16);
 	changing_in_nbases_dialog = false;	
 }
 

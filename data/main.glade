@@ -40,7 +40,7 @@
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1048">
+			<widget class="GtkImage" id="image1175">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-new</property>
 			  <property name="icon_size">1</property>
@@ -120,7 +120,7 @@
 		      <signal name="activate" handler="on_menu_item_import_csv_file_activate" last_modification_time="Wed, 10 Mar 2004 15:40:44 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1049">
+			<widget class="GtkImage" id="image1176">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -139,9 +139,9 @@
 		      <property name="label" translatable="yes">Export CSV File...</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_export_csv_file_activate" last_modification_time="Wed, 14 Jul 2004 17:15:07 GMT"/>
-		      
+
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1049_2">
+			<widget class="GtkImage" id="image1177">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -163,7 +163,7 @@
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1050">
+			<widget class="GtkImage" id="image1178">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -191,7 +191,7 @@
 		      <signal name="activate" handler="on_menu_item_save_defs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1051">
+			<widget class="GtkImage" id="image1179">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -213,7 +213,7 @@
 		      <signal name="activate" handler="on_menu_item_fetch_exchange_rates_activate" last_modification_time="Mon, 06 Oct 2003 21:06:00 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1052">
+			<widget class="GtkImage" id="image1180">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-refresh</property>
 			  <property name="icon_size">1</property>
@@ -250,7 +250,7 @@
 		      <accelerator key="B" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1053">
+			<widget class="GtkImage" id="image1181">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -278,7 +278,7 @@
 		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1054">
+			<widget class="GtkImage" id="image1182">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -356,7 +356,7 @@
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1055">
+			<widget class="GtkImage" id="image1183">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -386,7 +386,7 @@
 		      <accelerator key="T" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1056">
+			<widget class="GtkImage" id="image1184">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -407,7 +407,7 @@
 		      <signal name="activate" handler="on_menu_item_convert_to_base_units_activate" last_modification_time="Sun, 21 Mar 2004 08:14:57 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1057">
+			<widget class="GtkImage" id="image1185">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -428,7 +428,7 @@
 		      <signal name="activate" handler="on_menu_item_convert_to_best_unit_activate" last_modification_time="Sun, 21 Mar 2004 08:14:57 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1058">
+			<widget class="GtkImage" id="image1186">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -456,7 +456,7 @@
 		      <accelerator key="C" modifiers="GDK_CONTROL_MASK | GDK_MOD1_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1059">
+			<widget class="GtkImage" id="image1187">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-copy</property>
 			  <property name="icon_size">1</property>
@@ -483,7 +483,7 @@
 		      <signal name="activate" handler="on_menu_item_edit_prefs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1060">
+			<widget class="GtkImage" id="image1188">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -608,6 +608,21 @@
 			      <property name="active">False</property>
 			      <property name="group">menu_item_binary</property>
 			      <signal name="activate" handler="on_menu_item_roman_activate" last_modification_time="Thu, 25 Mar 2004 14:44:14 GMT"/>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="separator32">
+			      <property name="visible">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="menu_item_expression_base">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Set Base In Expression</property>
+			      <property name="use_underline">True</property>
+			      <signal name="activate" handler="on_menu_item_expression_base_activate" last_modification_time="Thu, 15 Jul 2004 21:02:41 GMT"/>
 			    </widget>
 			  </child>
 			</widget>
@@ -1197,7 +1212,7 @@
 		      <signal name="activate" handler="on_menu_item_save_mode_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1061">
+			<widget class="GtkImage" id="image1189">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -1256,7 +1271,7 @@
 		      <accelerator key="F1" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1062">
+			<widget class="GtkImage" id="image1190">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
@@ -1277,7 +1292,7 @@
 		      <signal name="activate" handler="on_menu_item_about_activate" last_modification_time="Thu, 14 Aug 2003 22:31:50 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1063">
+			<widget class="GtkImage" id="image1191">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-dialog-info</property>
 			  <property name="icon_size">1</property>
@@ -2886,7 +2901,7 @@
 
 <widget class="GtkDialog" id="number_base_dialog">
   <property name="border_width">5</property>
-  <property name="title" translatable="yes">Number Base</property>
+  <property name="title" translatable="yes">Number Base (Result)</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -3355,6 +3370,207 @@
 	  <property name="padding">0</property>
 	  <property name="expand">True</property>
 	  <property name="fill">True</property>
+	</packing>
+      </child>
+    </widget>
+  </child>
+</widget>
+
+<widget class="GtkDialog" id="number_base_expression_dialog">
+  <property name="border_width">5</property>
+  <property name="title" translatable="yes">Number Base (Expression)</property>
+  <property name="type">GTK_WINDOW_TOPLEVEL</property>
+  <property name="window_position">GTK_WIN_POS_NONE</property>
+  <property name="modal">False</property>
+  <property name="resizable">False</property>
+  <property name="destroy_with_parent">False</property>
+  <property name="has_separator">False</property>
+  <signal name="delete_event" handler="gtk_widget_hide" object="number_base_expression_dialog" last_modification_time="Mon, 12 Jul 2004 20:52:47 GMT"/>
+  <signal name="destroy_event" handler="gtk_widget_hide" object="number_base_expression_dialog" last_modification_time="Mon, 12 Jul 2004 20:52:57 GMT"/>
+
+  <child internal-child="vbox">
+    <widget class="GtkVBox" id="vbox62">
+      <property name="visible">True</property>
+      <property name="homogeneous">False</property>
+      <property name="spacing">0</property>
+
+      <child internal-child="action_area">
+	<widget class="GtkHButtonBox" id="hbuttonbox7">
+	  <property name="visible">True</property>
+	  <property name="layout_style">GTK_BUTTONBOX_END</property>
+
+	  <child>
+	    <widget class="GtkButton" id="button1">
+	      <property name="visible">True</property>
+	      <property name="can_default">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label">gtk-close</property>
+	      <property name="use_stock">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="response_id">-7</property>
+	      <signal name="clicked" handler="gtk_widget_hide" object="number_base_expression_dialog" last_modification_time="Mon, 12 Jul 2004 20:53:29 GMT"/>
+	    </widget>
+	  </child>
+	</widget>
+	<packing>
+	  <property name="padding">0</property>
+	  <property name="expand">False</property>
+	  <property name="fill">True</property>
+	  <property name="pack_type">GTK_PACK_END</property>
+	</packing>
+      </child>
+
+      <child>
+	<widget class="GtkVBox" id="vbox63">
+	  <property name="border_width">12</property>
+	  <property name="visible">True</property>
+	  <property name="homogeneous">False</property>
+	  <property name="spacing">6</property>
+
+	  <child>
+	    <widget class="GtkRadioButton" id="number_base_expression_radiobutton_binary">
+	      <property name="visible">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Binary</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_number_base_expression_radiobutton_binary_toggled" last_modification_time="Thu, 15 Jul 2004 20:53:46 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkRadioButton" id="number_base_expression_radiobutton_octal">
+	      <property name="visible">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Octal</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <property name="group">number_base_expression_radiobutton_binary</property>
+	      <signal name="toggled" handler="on_number_base_expression_radiobutton_octal_toggled" last_modification_time="Thu, 15 Jul 2004 20:53:50 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkRadioButton" id="number_base_expression_radiobutton_decimal">
+	      <property name="visible">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Decimal</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">True</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <property name="group">number_base_expression_radiobutton_binary</property>
+	      <signal name="toggled" handler="on_number_base_expression_radiobutton_decimal_toggled" last_modification_time="Thu, 15 Jul 2004 20:53:56 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkRadioButton" id="number_base_expression_radiobutton_hexadecimal">
+	      <property name="visible">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Hexadecimal</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <property name="group">number_base_expression_radiobutton_binary</property>
+	      <signal name="toggled" handler="on_number_base_expression_radiobutton_hexadecimal_toggled" last_modification_time="Thu, 15 Jul 2004 20:54:00 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkRadioButton" id="number_base_expression_radiobutton_custom_base">
+	      <property name="visible">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Other</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <property name="group">number_base_expression_radiobutton_binary</property>
+	      <signal name="toggled" handler="on_number_base_expression_radiobutton_custom_base_toggled" last_modification_time="Thu, 15 Jul 2004 21:58:32 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkSpinButton" id="number_base_expression_spinbutton_custom_base">
+	      <property name="visible">True</property>
+	      <property name="sensitive">False</property>
+	      <property name="can_focus">True</property>
+	      <property name="climb_rate">1</property>
+	      <property name="digits">0</property>
+	      <property name="numeric">True</property>
+	      <property name="update_policy">GTK_UPDATE_ALWAYS</property>
+	      <property name="snap_to_ticks">False</property>
+	      <property name="wrap">False</property>
+	      <property name="adjustment">10 2 36 1 10 10</property>
+	      <signal name="value_changed" handler="on_number_base_expression_spinbutton_base_value_changed" last_modification_time="Thu, 15 Jul 2004 19:35:33 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkRadioButton" id="number_base_expression_radiobutton_roman">
+	      <property name="visible">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Roman Numerals</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <property name="group">number_base_expression_radiobutton_binary</property>
+	      <signal name="toggled" handler="on_number_base_expression_radiobutton_roman_toggled" last_modification_time="Thu, 15 Jul 2004 20:54:12 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+	</widget>
+	<packing>
+	  <property name="padding">0</property>
+	  <property name="expand">False</property>
+	  <property name="fill">False</property>
 	</packing>
       </child>
     </widget>

@@ -2468,7 +2468,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 				str.replace(str_index, name_length, stmp);
 				str_index += stmp.length() - 1;
 			}
-		} else if(str[str_index] == '!' && po.functions_enabled) {
+		} else if(po.base == 10 && str[str_index] == '!' && po.functions_enabled) {
 			if(str_index > 0 && (chars_left == 1 || str[str_index + 1] != EQUALS_CH)) {
 				stmp = "";
 				if(is_in(NUMBERS, str[str_index - 1])) {
@@ -2859,7 +2859,7 @@ MathStructure Calculator::parseNumber(string str, const ParseOptions &po) {
 			str.erase(i, 1);
 		}
 	}
-	if(str[0] == ID_WRAP_LEFT_CH && str[str.length() - 1] == ID_WRAP_RIGHT_CH) {
+	if(str[0] == ID_WRAP_LEFT_CH && str.length() > 2 && str[str.length() - 1] == ID_WRAP_RIGHT_CH) {
 		int id = s2i(str.substr(1, str.length() - 2));
 		mstruct.set(*getId(id));
 		if(s == MINUS_CH) mstruct.negate();
@@ -2892,23 +2892,31 @@ MathStructure Calculator::parseNumber(string str, const ParseOptions &po) {
 
 void Calculator::parseAdd(string &str, MathStructure &mstruct, const ParseOptions &po) {
 	if(str.length() > 0) {
-		if(str.find_first_not_of(OPERATORS EXP) != string::npos) {
-			if((str.find_first_not_of(NUMBER_ELEMENTS ID_WRAPS, 1) != string::npos && str.find_first_not_of(NUMBER_ELEMENTS ID_WRAPS PLUS MINUS, 0) != 0) || (str.length() > 0 && str[0] == NOT_CH)) {
-				mstruct.set(parseOperators(str, po));
-			} else {
-				mstruct.set(parseNumber(str, po));
-			}
+		unsigned int i;
+		if(po.base == 10) {
+			i = str.find_first_of(OPERATORS EXP ID_WRAP_LEFT, 1);
+		} else {
+			i = str.find_first_of(OPERATORS ID_WRAP_LEFT, 1);
+		}
+		if(i == string::npos && str[0] != NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1)) {
+			mstruct.set(parseNumber(str, po));
+		} else {
+			mstruct.set(parseOperators(str, po));
 		}
 	}
 }
 void Calculator::parseAdd(string &str, MathStructure &mstruct, const ParseOptions &po, MathOperation s) {
 	if(str.length() > 0) {
-		if(str.find_first_not_of(OPERATORS EXP) != string::npos) {
-			if((str.find_first_not_of(NUMBER_ELEMENTS ID_WRAPS, 1) != string::npos && str.find_first_not_of(NUMBER_ELEMENTS ID_WRAPS PLUS MINUS, 0) != 0) || (str.length() > 0 && str[0] == NOT_CH)) {
-				mstruct.add(parseOperators(str, po), s);
-			} else {
-				mstruct.add(parseNumber(str, po), s, true);
-			}
+		unsigned int i;
+		if(po.base == 10) {
+			i = str.find_first_of(OPERATORS EXP ID_WRAP_LEFT, 1);
+		} else {
+			i = str.find_first_of(OPERATORS ID_WRAP_LEFT, 1);
+		}
+		if(i == string::npos && str[0] != NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1)) {
+			mstruct.add(parseNumber(str, po), s, true);
+		} else {
+			mstruct.add(parseOperators(str, po), s);
 		}
 	}
 }
@@ -2953,7 +2961,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 				break;
 			}
 		}
-		if(i > 0 && is_in(NUMBER_ELEMENTS ID_WRAPS, str[i - 1])) {
+		if(i > 0 && is_not_in(OPERATORS SPACE, str[i - 1]) && (po.base != 10 || str[i - 1] != EXP_CH)) {
 			if(po.rpn) {
 				str.insert(i2 + 1, MULTIPLICATION);	
 				str.insert(i, SPACE);
@@ -2965,7 +2973,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 				i2++;
 			}
 		}
-		if(i2 < (int) str.length() - 1 && is_in(NUMBER_ELEMENTS ID_WRAPS, str[i2 + 1])) {
+		if(i2 < (int) str.length() - 1 && is_not_in(OPERATORS SPACE, str[i2 + 1]) && (po.base != 10 || str[i2 + 1] != EXP_CH)) {
 			if(po.rpn) {
 				i3 = str.find(SPACE, i2 + 1);
 				if(i3 == (int) string::npos) {
@@ -2978,7 +2986,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 				str.insert(i2 + 1, MULTIPLICATION_2);
 			}
 		}
-		if(po.rpn && i > 0 && i2 + 1 == (int) str.length() && is_in(NUMBER_ELEMENTS OPERATORS ID_WRAPS, str[i - 1])) {
+		if(po.rpn && i > 0 && i2 + 1 == (int) str.length() && str[i - 1] != SPACE_CH) {
 			str += MULTIPLICATION_CH;	
 		}
 		str2 = str.substr(i + 1, i2 - (i + 1));
@@ -3113,7 +3121,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 		bool b = false;
 		MathOperation s = OPERATION_ADD;
 		while(true) {
-			i = str.find_first_of(OPERATORS EXP SPACE, i3 + 1);
+			i = str.find_first_of(OPERATORS SPACE, i3 + 1);
 			if(i == (int) string::npos) {
 				if(i3 != 0) {
 					str2 = str.substr(i3 + 1, str.length() - i3 - 1);
@@ -3253,28 +3261,21 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
 		parseAdd(str, mstruct, po, OPERATION_RAISE);
-/*		bool b = false;
-		while(i != (int) string::npos && i != (int) str.length() - 1) {
-			str2 = str.substr(0, i);
-			str = str.substr(i + 1, str.length() - (i + 1));
-			if(b) {
-				parseAdd(str2, mstruct, po, OPERATION_RAISE);
-			} else {
-				parseAdd(str2, mstruct, po);
-				b = true;
-			}
-			i = str.find(POWER_CH, 1);
-		}
-		if(b) {
-			parseAdd(str, mstruct, po, OPERATION_RAISE);
-		} else {
-			parseAdd(str, mstruct, po);
-		}*/
-	} else if((i = str.find(EXP_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
+	} else if(po.base == 10 && (i = str.find(EXP_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
 		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
 		parseAdd(str, mstruct, po, OPERATION_EXP10);
+	} else if((i = str.find(ID_WRAP_LEFT_CH, 1)) != (int) string::npos && i != (int) str.length() - 1 && str.find(ID_WRAP_RIGHT_CH, i + 1)) {
+		str2 = str.substr(0, i);
+		str = str.substr(i, str.length() - i);
+		parseAdd(str2, mstruct, po);
+		parseAdd(str, mstruct, po, OPERATION_MULTIPLY);
+	} else if(str.length() > 0 && str[0] == ID_WRAP_LEFT_CH && (i = str.find(ID_WRAP_RIGHT_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
+		str2 = str.substr(0, i + 1);
+		str = str.substr(i + 1, str.length() - (i + 1));
+		parseAdd(str2, mstruct, po);
+		parseAdd(str, mstruct, po, OPERATION_MULTIPLY);
 	} else {
 		return parseNumber(str, po);
 	}
