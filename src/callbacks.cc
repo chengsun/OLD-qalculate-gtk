@@ -2104,11 +2104,11 @@ void insertButtonFunction(gchar *text) {
 		g_free(gstr);
 		g_free(gstr2);
 	} else {
-		//one-argument functions should not actually need parenthesis
-//		gchar *gstr2 = g_strdup_printf("%s ", text);
-		gchar *gstr2 = g_strdup_printf("%s()", text);
+		//one-argument functions do not need parenthesis
+		gchar *gstr2 = g_strdup_printf("%s ", text);
+//		gchar *gstr2 = g_strdup_printf("%s()", text);
 		insert_text(gstr2);
-		gtk_editable_set_position(GTK_EDITABLE(expression), gtk_editable_get_position(GTK_EDITABLE(expression)) - 1);
+//		gtk_editable_set_position(GTK_EDITABLE(expression), gtk_editable_get_position(GTK_EDITABLE(expression)) - 1);
 		g_free(gstr2);
 	}
 
