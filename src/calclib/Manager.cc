@@ -2206,22 +2206,22 @@ bool Manager::convert(const Unit *u) {
 		return b;
 	} else if(c_type == POWER_MANAGER) {
 		bool b = false;
-		b = mngrs[1]->convert(u);
+		b = mngrs[1]->convert(u);		
 		if(b) {
 			typeclean();
 			return convert(u);
 		}
 		if(mngrs[0]->type() == UNIT_MANAGER) {
 			if(u == mngrs[0]->unit()) return false;
-			if(mngrs[0]->testDissolveCompositeUnit(u)) {
+			if(mngrs[0]->testDissolveCompositeUnit(u)) {			
 				typeclean();
-				convert(u);			
+				convert(u);					
 				return true;
 			}
 			Manager *mngr = u->convert(mngrs[0]->unit(), NULL, mngrs[1], &b);
 			if(b) {
 				mngrs[0]->set(u);
-				add(mngr, OPERATION_MULTIPLY);
+				add(mngr, OPERATION_MULTIPLY);			
 			}			
 			mngr->unref();
 		} else {

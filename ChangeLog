@@ -1,6 +1,10 @@
+2004-03-05  Niklas Knutsson  <nq@altern.org>
+
+	* Fix unit conversion of ex. ch^2 to acre
+	* More user documentation
+
 2004-03-04  Niklas Knutsson  <nq@altern.org>
 
-	* More user documentation
 	* Move calculate multiple roots option to result menu
 	* Move unit display options to a unit display submenu
 	* Begin writing the manual

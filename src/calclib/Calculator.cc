@@ -1064,7 +1064,7 @@ Manager *Calculator::convert(Manager *mngr, Unit *to_unit, bool always_convert) 
 					}
 					break;
 				}
-				case POWER_MANAGER: {
+				case POWER_MANAGER: {				
 					if(mngr->getChild(0)->isUnit() && cu->containsRelativeTo(mngr->getChild(0)->unit())) {
 						b = true;
 					}
@@ -1073,11 +1073,11 @@ Manager *Calculator::convert(Manager *mngr, Unit *to_unit, bool always_convert) 
 			}
 		}
 		if(b) {			
-			mngr->addUnit(to_unit, OPERATION_DIVIDE);
-			mngr->finalize();			
+			mngr->addUnit(to_unit, OPERATION_DIVIDE);		
+			mngr->finalize();		
 			Manager *mngr2 = new Manager(to_unit);
 			if(mngr->isMultiplication()) {
-				mngr->push_back(mngr2);
+				mngr->push_back(mngr2);		
 			} else {
 				mngr->transform(mngr2, MULTIPLICATION_MANAGER, OPERATION_MULTIPLY);
 				mngr2->unref();
@@ -1106,6 +1106,7 @@ Manager *Calculator::convertToCompositeUnit(Manager *mngr, CompositeUnit *cu, bo
 					if(cu->containsRelativeTo(mngr->unit())) {
 						b = true;
 					}
+					printf("B: %s\n", mngr->print().c_str());
 					break;
 				} 
 				case MULTIPLICATION_MANAGER: {
@@ -1139,7 +1140,6 @@ Manager *Calculator::convertToCompositeUnit(Manager *mngr, CompositeUnit *cu, bo
 				mngr->setType(MULTIPLICATION_MANAGER);
 				mngr->push_back(mngr2);
 			}
-			
 			unsigned int i = 0;
 			Prefix *p = NULL;
 			long int exp = 1;

@@ -260,7 +260,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="trennlinie1">
+		    <widget class="GtkMenuItem" id="separator125">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -305,6 +305,12 @@
 			  <property name="ypad">0</property>
 			</widget>
 		      </child>
+		    </widget>
+		  </child>
+
+                  <child>
+		    <widget class="GtkMenuItem" id="trennlinie1">
+		      <property name="visible">True</property>
 		    </widget>
 		  </child>
 
@@ -511,12 +517,6 @@
 			    </widget>
 			  </child>
 
-			  <child>
-			    <widget class="GtkMenuItem" id="menu_item_fraction_combined">
-			      <property name="visible">True</property>
-			      <signal name="activate" handler="on_menu_item_fraction_combined_activate" last_modification_time="Mon, 01 Sep 2003 10:55:17 GMT"/>
-			    </widget>
-			  </child>
 			</widget>
 		      </child>
 		    </widget>

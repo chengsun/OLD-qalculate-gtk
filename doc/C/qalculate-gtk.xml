@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
-    "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Docarticle XML V4.1.2//EN"
+    "http://www.oasis-open.org/docarticle/xml/4.1.2/docarticlex.dtd" [
   <!ENTITY legal SYSTEM "legal.xml">
   <!ENTITY appversion "0.4.1">
   <!ENTITY manrevision "1.0">
@@ -60,7 +60,7 @@ The center of attention in Qalculate! is the expression entry, Instead of enteri
 The interpretation of expressions is flexible, fault tolerant and if you nevertheless do something wrong Qalculate! will tell you so.
 </para>
 <para>
-In addition to numbers and arithmetic operators (+,-,*,/) an expression may contain any combination of variables, units, and functions. These are immediately accessible from the interface - the menus in the upper right corner, the managers, and calculator buttons.
+In addition to numbers and arithmetic operators (+,−,*,/) an expression may contain any combination of variables, units, and functions. These are immediately accessible from the interface - the menus in the upper right corner, the managers, and calculator buttons.
 </para>
 <para>
 Qalculate! also has some special tools to increase your efficiency, including a fast number base conversion dialog and a simple plotting interface.
@@ -74,7 +74,7 @@ Although use of Qalculate! for simple calculations should be natural and self-ex
 <title>The User Interface</title>
 <para>
 </para>
-<sect2 id="qalculate-expression-entry">
+<sect2 id="qalculate-main-window">
 <title>The Main Window</title>
 <para>
 The expression entry is the most important part of the Qalculate! user interface. The normal calculation procedure in Qalculate! is to type in a mathematical expression (ex. <quote>1+1</quote>) and press <keycap>Enter</keycap> (or click <guibutton>Execute</guibutton>). The result (<quote>2</quote>) is then displayed below the expression entry in the result display.
@@ -88,7 +88,7 @@ put in parenthesis.
 </para>
 <para>
 The <keycap>Up</keycap> and <keycap>Down</keycap> keys will access your previously entered expressions. Press <keycap>Up</keycap> with focus in the expression entry and you traverse backwards in you expression history and <keycap>Down</keycap> will traverse forward. 
-<figure id="fig-main-window">
+<figure id="qalculate-FIG-main-window">
 	<title>The main window</title>
 	<screenshot>
 		<mediaobject>
@@ -99,10 +99,9 @@ The <keycap>Up</keycap> and <keycap>Down</keycap> keys will access your previous
 	</screenshot>
 </figure>
 </para>
-</sect2>
-
-<sect2 id="qalculate-main-buttons">
-<title>Main Buttons</title>
+<para>
+The result will be displayed in the open area below the expression entry. The font used for the result display can be selected in the preferences dialog, which can be opened from the expression menu. There you can also turn off use of unicode signs, in case you have problems with missing characters. Information about customization of the mathematical result output is available in <xref linkend="qalculate-result"/>.
+</para>
 <para>
 In the bottom of the main window three buttons are accessible. <guibutton>Close</guibutton> on the right simply closes/exits Qalculate!, <guibutton>Execute</guibutton> executes the calculation of entered expression (same as <keycap>Enter</keycap>), while <guibutton>More &gt;&gt;</guibutton> (<guibutton>&lt;&lt; Less</guibutton>) button shows/hides calculator buttons and calculation history.
 </para>
@@ -115,7 +114,7 @@ Right of the expression entry and the result display are two small buttons with 
 <title>Calculator Buttons</title>
 <para>
 In the buttons tab you have access to a fairly small set of traditional calculator buttons, which works as expected. The <guibutton>Convert</guibutton> button opens the convert to unit dialog, while the buttons on the top right side opens functions, variables and units manage dialogs respectively.
-<figure id="fig-calculator-buttons">
+<figure id="qalculate-FIG-calculator-buttons">
 	<title>Calculator Buttons</title>
 	<screenshot>
 		<mediaobject>
@@ -131,7 +130,7 @@ In the buttons tab you have access to a fairly small set of traditional calculat
 <title>Calculation History</title>
 <para>
 In the history tab you have access to your full calculation history (20 rows are reloaded on restart). Previous expressions and results, as well as errors and warnings, are displayed in plain text and can be marked and copied (from the right button context menu or with <keycombo><keycap>Ctrl</keycap><keycap>C</keycap></keycombo>) to the expression entry or elsewhere.
-<figure id="fig-calculation-history">
+<figure id="qalculate-FIG-calculation-history">
 	<title>Calculation History</title>
 	<screenshot>
 		<mediaobject>
@@ -148,6 +147,210 @@ In the history tab you have access to your full calculation history (20 rows are
 <title>Menus</title>
 <para>
 </para>
+<table id="qalculate-TBL-expression-menu" frame="topbot" colsep="1">
+	<title>The Expression Menu</title> 
+	<tgroup cols="2" colsep="1" rowsep="0">
+		<colspec colname="COLSPEC0" colwidth="50*"/>
+		<colspec colname="COLSPEC1"/>
+		<thead>
+			<row valign="top">
+				<entry colname="COLSPEC0"><para>Menu Item</para></entry>
+				<entry colname="COLSPEC1"><para>Description</para></entry>
+			</row>
+		</thead> 
+                <tbody>
+			<row valign="top">
+				<entry><para>Recently Used</para></entry>
+				<entry><para>Submenu with the most recently inserted variables, functions, units and prefixes</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Functions</para></entry>
+				<entry><para>Submenu. See <xref linkend="qalculate-TBL-functions-menu"/>.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Variables</para></entry>
+				<entry><para>Submenu. See <xref linkend="qalculate-TBL-variables-menu"/>.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Units</para></entry>
+				<entry><para>Submenu. See <xref linkend="qalculate-TBL-units-menu"/>.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Prefixes</para></entry>
+				<entry><para>Submenu with prefixes which are inserted into the expression on selection.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Angle Unit</para></entry>
+				<entry><para>Submenu wich sets the default angle unit to either degrees, radians or gradians.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>RPN Mode</para></entry>
+				<entry><para>Toggles RPN mode on/off. See <xref linkend="qalculate-expressions"/>.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Plot functions/data</para></entry>
+				<entry><para>Opens the plot dialog. See <xref linkend="qalculate-plotting"/>.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Convert number bases</para></entry>
+				<entry><para>Opens the number bases convertor. See <xref linkend="qalculate-convert-number-bases-dialog"/></para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Save definitions</para></entry>
+				<entry><para>Saves all user definitions (variables, functions and units)</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Save mode</para></entry>
+				<entry><para>Saves current settings.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Update exchange rates</para></entry>
+				<entry><para>Downloads current exchange rates from the internet.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Preferences</para></entry>
+				<entry><para>Opens the preferences dialog, which controls settings for visual appearance and start/exit actions.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Help</para></entry>
+				<entry><para>Opens this help.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>About</para></entry>
+				<entry><para>Info about Qalculate!</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Quit</para></entry>
+				<entry><para>Exits Qalculate!</para></entry>
+			</row>
+		</tbody>
+	</tgroup>
+</table>
+<table id="qalculate-TBL-functions-menu" frame="topbot" colsep="1">
+	<title>The Functions Menu</title> 
+	<tgroup cols="2" colsep="1" rowsep="0">
+		<colspec colname="COLSPEC0" colwidth="50*"/>
+		<colspec colname="COLSPEC1"/>
+		<thead>
+			<row valign="top">
+				<entry colname="COLSPEC0"><para>Menu Item</para></entry>
+				<entry colname="COLSPEC1"><para>Description</para></entry>
+			</row>
+		</thead> 
+                <tbody>
+			<row valign="top">
+				<entry><para></para></entry>
+				<entry><para></para></entry>
+			</row>
+		</tbody>
+	</tgroup>
+</table>
+<table id="qalculate-TBL-variables-menu" frame="topbot" colsep="1">
+	<title>The Variables Menu</title> 
+	<tgroup cols="2" colsep="1" rowsep="0">
+		<colspec colname="COLSPEC0" colwidth="50*"/>
+		<colspec colname="COLSPEC1"/>
+		<thead>
+			<row valign="top">
+				<entry colname="COLSPEC0"><para>Menu Item</para></entry>
+				<entry colname="COLSPEC1"><para>Description</para></entry>
+			</row>
+		</thead> 
+                <tbody>
+			<row valign="top">
+				<entry><para></para></entry>
+				<entry><para></para></entry>
+			</row>
+		</tbody>
+	</tgroup>
+</table>
+<table id="qalculate-TBL-units-menu" frame="topbot" colsep="1">
+	<title>The Units Menu</title> 
+	<tgroup cols="2" colsep="1" rowsep="0">
+		<colspec colname="COLSPEC0" colwidth="50*"/>
+		<colspec colname="COLSPEC1"/>
+		<thead>
+			<row valign="top">
+				<entry colname="COLSPEC0"><para>Menu Item</para></entry>
+				<entry colname="COLSPEC1"><para>Description</para></entry>
+			</row>
+		</thead> 
+                <tbody>
+			<row valign="top">
+				<entry><para></para></entry>
+				<entry><para></para></entry>
+			</row>
+		</tbody>
+	</tgroup>
+</table>
+<table id="qalculate-TBL-result-menu" frame="topbot" colsep="1">
+	<title>The Result Menu</title> 
+	<tgroup cols="2" colsep="1" rowsep="0">
+		<colspec colname="COLSPEC0" colwidth="50*"/>
+		<colspec colname="COLSPEC1"/>
+		<thead>
+			<row valign="top">
+				<entry colname="COLSPEC0"><para>Menu Item</para></entry>
+				<entry colname="COLSPEC1"><para>Description</para></entry>
+			</row>
+		</thead> 
+                <tbody>
+			<row valign="top">
+				<entry><para>Number Base</para></entry>
+				<entry><para>Submenu which switches between binary, octal, decimal and hexadecimal numbers in result.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Numerical Display</para></entry>
+				<entry><para>Submenu which selects numerical display mode. See <xref linkend="qalculate-result"/>.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Fractional Display</para></entry>
+				<entry><para>Submenu which selects decimal, fractional or combined fractional display. See <xref linkend="qalculate-result"/>.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Unit Display</para></entry>
+				<entry><para>Submenu which controls the display of units and prefixes. See <xref linkend="qalculate-result"/>.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Exact Mode</para></entry>
+				<entry><para>Toggles on/off exact mode.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Calculate multiple roots</para></entry>
+				<entry><para>Toggles on/off calculation of multiple results for even roots.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Factorize</para></entry>
+				<entry><para>Factorizes the current result. Only available of Qalculate! installation has Giac support.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Convert to unit</para></entry>
+				<entry><para>Submenu. See <xref linkend="qalculate-TBL-convert-unit-menu"/>.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Set prefix</para></entry>
+				<entry><para>Submenu for choise of unit prefix in the current result.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Store Result</para></entry>
+				<entry><para>Stores the current result as a variable. See <xref linkend="qalculate-variable-creation"/>.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Copy Result</para></entry>
+				<entry><para>Copies the current result to the clipboard.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Precision</para></entry>
+				<entry><para>Opens a dialog to change precision in calculations.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Decimals</para></entry>
+				<entry><para>Opens a dialog to change displayed number of decimals.</para></entry>
+			</row>
+		</tbody>
+	</tgroup>
+</table>
+
 </sect2>
 <sect2 id="qalculate-managers">
 <title>The Variable/Function/Unit Managers</title>
@@ -159,7 +362,7 @@ In the history tab you have access to your full calculation history (20 rows are
 <para>
 The number bases dialog, accessible from the <guimenu>Expression Menu</guimenu> or <keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>, is a fast and convenient tool for conversion between binary, octal, decimal and hexadecimal numbers. This dialog contains entries for each of the number bases. When you type in numbers in any of entries, the others are automatically updated to display the current number in their format. The numbers, or expressions, entered follow the same
 rules as expressions in the main expression entry.
-<figure id="fig-convert-number-bases">
+<figure id="qalculate-FIG-convert-number-bases">
 	<title>Convert Number Bases Dialog</title>
 	<screenshot>
 		<mediaobject>
@@ -243,73 +446,140 @@ For more information about variables, functions and units, see <xref linkend="qa
 <title>Operators</title>
 <para>
 The following operators are defined in Qalculate! and may be used in expressions.
-<itemizedlist>
-	<listitem><para>
-		Addition <quote>+</quote>:
-		Ex. <quote>1 + 1</quote> returns <quote>2</quote>.
-	</para></listitem>
-	<listitem><para>
-		Subtraction <quote>-</quote>:
-		Ex. <quote>1 - 1</quote> returns <quote>0</quote>.
-	</para></listitem>
-	<listitem><para>
-		Division <quote>/</quote>:
-		Ex. <quote>2 / 2</quote> returns <quote>1</quote>.
-	</para></listitem>
-	<listitem><para>
-		Multiplication <quote>*</quote>:
-		Ex. <quote>2 * 2</quote> returns <quote>4</quote>.
-	</para></listitem>
-	<listitem><para>
-		Exponent <quote>^</quote>:
-		Can also be typed as <quote>**</quote>.
-		Ex. <quote>2^3</quote> returns <quote>8</quote>.
-	</para></listitem>
-	<listitem><para>
-		10^x <quote>E</quote>:
-		Ex. <quote>1E3</quote> returns <quote>1000</quote>.
-	</para></listitem>
-	<listitem><para>
-		Parenthesis <quote>(</quote> and <quote>)</quote>: Ex. <quote>5 * (1 + 1)</quote> returns <quote>10</quote>.
-	</para></listitem>	
-	<listitem><para>
-		Less than <quote>&lt;</quote>:
-		Returns 1 for true, if the left value is is less than the right, and 0 for false. Ex. <quote>1&lt;2</quote> returns <quote>1</quote>.
-	</para></listitem>
-	<listitem><para>
-		Greater than <quote>&gt;</quote>:
-		Returns 1 for true, if the left value is greater than the right, and 0 for false. Ex. <quote>1&gt;2</quote> returns <quote>0</quote>.
-	</para></listitem>
-	<listitem><para>
-		Less than or equal <quote>&lt;=</quote>:
-		Returns 1 for true, if the left value is is less than or equal the right, and 0 for false. Ex. <quote>1&lt;=2</quote> returns <quote>1</quote>.
-	</para></listitem>
-	<listitem><para>
-		Greater than or equal <quote>&gt;=</quote>:
-		Returns 1 for true, if the left value is is greater than or equal the right, and 0 for false. Ex. <quote>1&gt;=2</quote> returns <quote>0</quote>.
-	</para></listitem>
-	<listitem><para>
-		Equals <quote>=</quote>:
-		Returns 1 for true, if the left value equals the right, and 0 for false. Ex. <quote>1=2</quote> returns <quote>0</quote>.
-	</para></listitem>
-	<listitem><para>
-		Not equals <quote>!=</quote>:
-		Returns 1 for true, if the left value not equals the right, and 0 for false. Ex. <quote>1!=2</quote> returns <quote>1</quote>.
-	</para></listitem>
-	<listitem><para>
-		Logical NOT <quote>!</quote>:
-		Returns 1 for true, if left value on the right is false, and 0 for false. Ex. <quote>!(1>2)</quote> returns <quote>1</quote>.
-	</para></listitem>
-	<listitem><para>
-		Logical OR <quote>|</quote>:
-		Returns 1 for true, if the right or left value is true, and 0 for false. Ex. <quote>1&gt;2 | 2&gt;1</quote> returns <quote>1</quote>.
-	</para></listitem>
-	<listitem><para>
-		Logical AND <quote>&amp;</quote>:
-		Returns 1 for true, if the right and left value is true, and 0 for false. Ex. <quote>1&gt;2 &amp; 2&gt;1</quote> returns <quote>0</quote>.
-	</para></listitem>
-</itemizedlist>
 </para>
+<table id="qalculate-TBL-operators" frame="topbot" colsep="1">
+	<title>Operators</title> 
+	<tgroup cols="5" rowsep="1">
+		<colspec colname="COLSPEC0" colwidth="50*"/>
+		<colspec colname="COLSPEC1" align="center" colwidth="50*"/>
+		<colspec colname="COLSPEC2"/>
+		<colspec colname="COLSPEC3" colwidth="50*"/>
+		<colspec colname="COLSPEC4" align="right" colwidth="50*"/>
+		<thead>
+			<row valign="top">
+				<entry colname="COLSPEC0"><para>Operation</para></entry>
+				<entry colname="COLSPEC1"><para>Sign</para></entry>
+				<entry colname="COLSPEC2"><para>Description</para></entry>
+				<entry colname="COLSPEC3"><para>Example</para></entry>
+				<entry colname="COLSPEC4"><para>Result</para></entry>
+			</row>
+		</thead> 
+                <tbody>
+                	<row valign="top">
+				<entry><para>Addition</para></entry>
+				<entry><para>+</para></entry>
+				<entry><para>Adds the right value to the left value.</para></entry>
+				<entry><para>1 + 1</para></entry>
+				<entry><para>2</para></entry>
+			</row>
+                	<row valign="top">
+				<entry><para>Subtraction</para></entry>
+				<entry><para>−</para></entry>
+				<entry><para>Subtracts the right value from the left value.</para></entry>
+				<entry><para>1 − 1</para></entry>
+				<entry><para>0</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Multiplication</para></entry>
+				<entry><para>⋅ or *</para></entry>
+				<entry><para>Multiplies the left value with the right value.</para></entry>
+				<entry><para>2 * 2</para></entry>
+				<entry><para>4</para></entry>
+			</row>                
+			<row valign="top">
+				<entry><para>Division</para></entry>
+				<entry><para>/</para></entry>
+				<entry><para>Multiplies the left value by the right value.</para></entry>
+				<entry><para>2 / 2</para></entry>
+				<entry><para>1</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Exponent</para></entry>
+				<entry><para>^</para></entry>
+				<entry><para>Can also be typed as <quote>**</quote></para></entry>
+				<entry><para>2^3</para></entry>
+				<entry><para>8</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>10^x</para></entry>
+				<entry><para>E</para></entry>
+				<entry><para>Multiplies the left value with 10 raised to the right value.</para></entry>
+				<entry><para>1E3</para></entry>
+				<entry><para>1000</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Parenthesis</para></entry>
+				<entry><para>( and )</para></entry>
+				<entry><para>Evaluates the expression in parenthesis first.</para></entry>
+				<entry><para>5 * (1 + 1)</para></entry>
+				<entry><para>10</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Less than</para></entry>
+				<entry><para>&lt;</para></entry>
+				<entry><para>Returns 1 for true, if the left value is is less than the right, and 0 for false.</para></entry>
+				<entry><para>1 &lt; 2</para></entry>
+				<entry><para>1</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Greater than</para></entry>
+				<entry><para>&gt;</para></entry>
+				<entry><para>Returns 1 for true, if the left value is greater than the right, and 0 for false.</para></entry>
+				<entry><para>1 &gt;2 </para></entry>
+				<entry><para>0</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Less than or equal</para></entry>
+				<entry><para>≤ or &lt;=</para></entry>
+				<entry><para>Returns 1 for true, if the left value is is less than or equal the right, and 0 for false.</para></entry>
+				<entry><para>1 &lt;= 2</para></entry>
+				<entry><para>1</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Greater than or equal</para></entry>
+				<entry><para>≥ or &gt;=</para></entry>
+				<entry><para>Returns 1 for true, if the left value is is greater than or equal the right, and 0 for false.</para></entry>
+				<entry><para>1 &gt;= 2</para></entry>
+				<entry><para>0</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Equals</para></entry>
+				<entry><para>=</para></entry>
+				<entry><para>Returns 1 for true, if the left value equals the right, and 0 for false.</para></entry>
+				<entry><para>1 = 2</para></entry>
+				<entry><para>0</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Not equals</para></entry>
+				<entry><para>≠ or !=</para></entry>
+				<entry><para>Returns 1 for true, if the left value not equals the right, and 0 for false.</para></entry>
+				<entry><para>1 != 2</para></entry>
+				<entry><para>1</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>NOT</para></entry>
+				<entry><para>!</para></entry>
+				<entry><para>Returns 1 for true, if left value on the right is false, and 0 for false.</para></entry>
+				<entry><para>!(1&gt;2)</para></entry>
+				<entry><para>1</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>OR</para></entry>
+				<entry><para>|</para></entry>
+				<entry><para>Returns 1 for true, if the right or left value is true, and 0 for false.</para></entry>
+				<entry><para>1&gt;2 | 2&gt;1</para></entry>
+				<entry><para>1</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>AND</para></entry>
+				<entry><para>&amp;</para></entry>
+				<entry><para>Returns 1 for true, if the right and left value is true, and 0 for false.</para></entry>
+				<entry><para>1&gt;2 &amp; 2&gt;1</para></entry>
+				<entry><para>0</para></entry>
+			</row>
+		</tbody>
+	</tgroup>
+</table>
 <para>
 In addition to these operators there are a couple of shortcuts for certain functions, such as <quote>5!</quote> equals <quote>factorial(5)</quote>.
 </para>
@@ -368,7 +638,7 @@ Another special and very useful variable is the ans variable, which always conta
 <title>Variable creation/editing</title>
 <para>
 The simples way of creating a variable is to store the current result. You can do this by pressing the <keycap>STO</keycap> button or selecting <menuchoice><guimenu>Result Menu</guimenu><guimenuitem>Store Result</guimenuitem></menuchoice>. You then type a name for the variable in the dialog that pops up. You may also optionally enter a category and descriptive name for the variable to keep your variables well organized.
-<figure id="fig-store-variable">
+<figure id="qalculate-FIG-store-variable">
 	<title>Store Result</title>
 	<screenshot>
 		<mediaobject>
@@ -391,7 +661,7 @@ The simples way of creating a variable is to store the current result. You can d
 <title>Functions</title>
 <para>
 Functions is normally entered in an expression by entering the name followed by arguments, separated by commas (or semicolons in languages with comma as decimal point), in parenthesis, thus following the syntax name(arg1, arg2, ...). 
-<figure id="fig-insert-function">
+<figure id="qalculate-FIG-insert-function">
 	<title>Insert function dialog</title>
 	<screenshot>
 		<mediaobject>
@@ -442,8 +712,8 @@ Functions are a bit more complex than variables, but can nevertheless be relativ
 have a working function. A bit more does however need to be said about the function expression.
 </para>
 <para>
-The expression of the function is basically a regular expression with placeholders for arguments. These placeholders consists of a backslash and a letter -- x, y, z for the 1st, 2nd and 3rd argument and a to u for argument 4 to 24. These placeholders are replaced by entered arguments when the function is calculated. They naturally also decides the number of argument that the function requires. For example the function for triangle area (<quote>base * height / 2</quote>) has the name triangle and the expression <quote>(\x*\y)/2</quote> which gives that <quote>triangle(2, 3)</quote> equals <quote>(2*3) / 2</quote> and gives <quote>3</quote> as result. An argument can be used more than one time and they need not be in order in the expression.
-<figure id="fig-edit-function">
+The expression of the function is basically a regular expression with placeholders for arguments. These placeholders consists of a backslash and a letter - x, y, z for the 1st, 2nd and 3rd argument and a to u for argument 4 to 24. These placeholders are replaced by entered arguments when the function is calculated. They naturally also decides the number of argument that the function requires. For example the function for triangle area (<quote>base * height / 2</quote>) has the name triangle and the expression <quote>(\x*\y)/2</quote> which gives that <quote>triangle(2, 3)</quote> equals <quote>(2*3) / 2</quote> and gives <quote>3</quote> as result. An argument can be used more than one time and they need not be in order in the expression.
+<figure id="qalculate-FIG-edit-function">
 	<title>The function edit dialog</title>
 	<screenshot>
 		<mediaobject>
@@ -478,6 +748,15 @@ Note that some functions are hard-coded and cannot be changed by the user.
 <title>Units</title>
 <para>
 </para>
+<sect2 id="qalculate-currency">
+<title>Currency</title>
+<para>
+Among units, Qalculate! has support for currencies with up-to-date exchange rates. Currencies are normally referenced with the standard three letter code due to name clashes, but a number of currency unit can also be accessed through its regular name. U.S. dollars are for example referenced both as USD and dollar/dollars. 
+</para>
+<para>
+Wget must be installed on your system for exchange rate updates to be enabled. Current exchange rates are automatically fetched from the European Central Bank on the internet the first time Qalculate! is started. By default you will thereafter have to update the exchange rates manually from <menuchoice><guimenu>Expression Menu</guimenu><guimenuitem>Update exchange rates</guimenuitem></menuchoice>, unless you enable automatic updates in the preferences dialog.
+</para>
+</sect2>
 <sect2 id="qalculate-unit-conversion">
 <title>Conversion</title>
 <para>
@@ -485,7 +764,7 @@ You can convert an expression to a specific unit directly in the expression entr
 </para>
 <para>
 You can also use the unit conversion dialog, accessible from the <guibutton>Convert</guibutton> button, <menuchoice><guimenu>Result Menu</guimenu><guisubmenu>Convert to unit</guisubmenu><guimenuitem>Enter custom unit</guimenuitem></menuchoice>, or <keycombo><keycap>Ctrl</keycap><keycap>T</keycap></keycombo>. You enter your unit in the dialog that pops up and the displayed result is then converted.
-<figure id="fig-unit-conversion-dialog">
+<figure id="qalculate-FIG-unit-conversion-dialog">
 	<title>Unit Conversion Dialog</title>
 	<screenshot>
 		<mediaobject>
@@ -510,7 +789,7 @@ There are three different unit classes in Qalculate! -- base, alias and composit
 </para>
 <para>
 Select create new unit in the menu or in the unit manager and the unit edit dialog pops up. 
-<figure id="fig-edit-unit">
+<figure id="qalculate-FIG-edit-unit">
 	<title>The unit edit dialog</title>
 	<screenshot>
 		<mediaobject>
@@ -526,7 +805,7 @@ First you need to select the unit class. Depending on the unit class different e
 Base and alias units may have three different name forms defined for use in expressions -- short (ex. <quote>m</quote>), singular (<quote>meter</quote>) and plural (<quote>meters</quote>). At least the short name must be specified. Composite units only have an (mandatory) internal name, used to reference the unit in definitions of other units.
 </para>
 <para>
-For base units the name is all that is needed. For alias units, on the other hand, a base unit, exponent and relation is necessary. For more complex relations a reversed relation can also be specified for conversion back from the base unit. The base unit must not necessarily be of the base unit class and it is recommended that an alias unit is defined in relation to the closest unit (ex. 1ft = 3 hands, 1 hand = 4 in, and 1 in = 0.0254 m). The relation is usually just a number that tells how much of the base unit is needed to get the alias unit (alias unit = base unit * relation). More complex can specify the relation as an full-blown expression where <quote>\x</quote> is relaced by the number of the base unit and <quote>\y</quote> is the exponent. For example Degrees Celcius has the relation <quote>\x + 273.15</quote> and the reversed relation <quote>\x - 273.15</quote> to the base unit Kelvin. For simple relations the reversion is automatic and ought not be defined separately, With the check box below relation in the dialog you can specify if the relation is exact or approximate. The exponent defines the exponential relation to the base unit, so that the alias unit equals the base unit raised to the exponent. For simple unit relations this gives: alias unit = relation * base unit^exponent.
+For base units the name is all that is needed. For alias units, on the other hand, a base unit, exponent and relation is necessary. For more complex relations a reversed relation can also be specified for conversion back from the base unit. The base unit must not necessarily be of the base unit class and it is recommended that an alias unit is defined in relation to the closest unit (ex. 1ft = 3 hands, 1 hand = 4 in, and 1 in = 0.0254 m). The relation is usually just a number that tells how much of the base unit is needed to get the alias unit (alias unit = base unit * relation). More complex can specify the relation as an full-blown expression where <quote>\x</quote> is relaced by the number of the base unit and <quote>\y</quote> is the exponent. For example Degrees Celcius has the relation <quote>\x + 273.15</quote> and the reversed relation <quote>\x − 273.15</quote> to the base unit Kelvin. For simple relations the reversion is automatic and ought not be defined separately, With the check box below relation in the dialog you can specify if the relation is exact or approximate. The exponent defines the exponential relation to the base unit, so that the alias unit equals the base unit raised to the exponent. For simple unit relations this gives: alias unit = relation * base unit^exponent.
 </para>
 <para>
 Composite unit must specify a unit expression with multiple units as base in the base unit field. This expression may only contain units, prefixes, exponents, multiplication and division (ex. <quote>km/h</quote>). 

@@ -121,7 +121,7 @@ Manager *Unit::convert(const Unit *u, Manager *value_, Manager *exp_, bool *conv
 	else exp_->ref();
 	bool b = false;
 	if(u->baseUnit() == baseUnit()) {
-		u->baseValue(value_, exp_);		
+		u->baseValue(value_, exp_);
 		convertToBase(value_, exp_);
 		b = true;
 	} else if(u->unitType() == COMPOSITE_UNIT) {
@@ -221,7 +221,9 @@ Manager *AliasUnit::convertToBase(Manager *value_, Manager *exp_) const {
 	else exp_->ref();
 	exp_->add(exp_mngr, OPERATION_DIVIDE);	
 	convertToFirstBase(value_, exp_);	
+	exp_->add(exp_mngr, OPERATION_MULTIPLY);		
 	unit->convertToBase(value_, exp_);
+	exp_->add(exp_mngr, OPERATION_DIVIDE);		
 	exp_->unref();	
 	return value_;
 }
