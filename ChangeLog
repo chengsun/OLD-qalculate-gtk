@@ -1,3 +1,10 @@
+2003-10-13  Niklas Knutsson  <nq@altern.org>
+
+	* Finally make class variables in Manager protected
+	* setPrecise(fraction()->isPrecise()) after operation directly on Manager::fraction()
+	* Change output of "log" button to log10
+	* Write more in TODO
+
 2003-10-11  Niklas Knutsson  <nq@altern.org>
 
 	* Update plot on add/modify/remove

@@ -606,27 +606,27 @@ Manager *CompositeUnit::generateManager(bool cleaned) const {
 		return CALCULATOR->calculate(print(false, true));
 	} else {
 		Manager *mngr = new Manager();
-		if(units.size() > 0) mngr->c_type = MULTIPLICATION_MANAGER;
+		if(units.size() > 0) mngr->setType(MULTIPLICATION_MANAGER);
 		for(int i = 0; i < units.size(); i++) {
 			if(units[i]->firstBaseExp() != 1) {
 				Manager *mngr2 = new Manager();
-				mngr2->c_type = POWER_MANAGER;
+				mngr2->setType(POWER_MANAGER);
 				if(units[i]->prefix()) {
 					Manager *mngr3 = new Manager();
-					mngr3->c_type = MULTIPLICATION_MANAGER;
-					mngr3->mngrs.push_back(new Manager(1, 1, units[i]->prefix()->exponent()));
-					mngr3->mngrs.push_back(new Manager(units[i]->firstBaseUnit()));
-					mngr2->mngrs.push_back(mngr3);
+					mngr3->setType(MULTIPLICATION_MANAGER);
+					mngr3->push_back(new Manager(1, 1, units[i]->prefix()->exponent()));
+					mngr3->push_back(new Manager(units[i]->firstBaseUnit()));
+					mngr2->push_back(mngr3);
 				} else {				
-					mngr2->mngrs.push_back(new Manager(units[i]->firstBaseUnit()));
+					mngr2->push_back(new Manager(units[i]->firstBaseUnit()));
 				}
-				mngr2->mngrs.push_back(new Manager(units[i]->firstBaseExp(), 1));
-				mngr->mngrs.push_back(mngr2);				
+				mngr2->push_back(new Manager(units[i]->firstBaseExp(), 1));
+				mngr->push_back(mngr2);				
 			} else {
 				if(units[i]->prefix()) {
-					mngr->mngrs.push_back(new Manager(1, 1, units[i]->prefix()->exponent()));
+					mngr->push_back(new Manager(1, 1, units[i]->prefix()->exponent()));
 				}
-				mngr->mngrs.push_back(new Manager(units[i]->firstBaseUnit()));
+				mngr->push_back(new Manager(units[i]->firstBaseUnit()));
 			}
 		}
 		return mngr;
@@ -683,11 +683,11 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 		if(mngr) {
 			prefix = NULL;
 			exp = 1;
-			if(mngr->type() == MULTIPLICATION_MANAGER && mngr->mngrs.size() == 2 && mngr->mngrs[0]->isFraction() && mngr->mngrs[1]->type() == UNIT_MANAGER) {
-				prefix = CALCULATOR->getExactPrefix(mngr->mngrs[0]->fraction());
-				mngr = mngr->mngrs[1];
+			if(mngr->isMultiplication() && mngr->countChilds() == 2 && mngr->getChild(0)->isFraction() && mngr->getChild(1)->isUnit()) {
+				prefix = CALCULATOR->getExactPrefix(mngr->getChild(0)->fraction());
+				mngr = mngr->getChild(1);
 			} 
-			if(mngr->type() == UNIT_MANAGER) {
+			if(mngr->isUnit()) {
 				if(base_expression_.length() > i2 + 3 && base_expression_[i2 + 2] == POWER_CH) {
 					if(is_in(NUMBERS, base_expression_[i2 + 3])) {
 						exp = s2li(base_expression_.substr(i2 + 3, 1));
@@ -700,7 +700,7 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 				if(div) {
 					exp = -exp;
 				}
-				add(mngr->o_unit, exp, prefix);
+				add(mngr->unit(), exp, prefix);
 			} else {
 				CALCULATOR->error(false, _("Error in unitexpression: \"%s\"."), mngr->print().c_str(), NULL);
 			}

@@ -19,6 +19,9 @@
 #include "Matrix.h"
 #include "util.h"
 
+void Manager::setType(int mngr_type) {
+	c_type = mngr_type;
+}
 void Manager::init() {
 	refcount = 1;
 	b_exact = true;
@@ -2082,6 +2085,7 @@ bool Manager::testCompositeUnit(const Unit *u) {
 void Manager::clean() {
 	for(int i = 0; i < mngrs.size(); i++) {
 		mngrs[i]->clean();
+		if(!mngrs[i]->isPrecise()) setPrecise(false);
 	}
 	typeclean();
 }
@@ -2110,27 +2114,27 @@ void Manager::finalize() {
 void gatherInformation(Manager *mngr, vector<Unit*> &base_units, vector<AliasUnit*> &alias_units) {
 	switch(mngr->type()) {
 		case UNIT_MANAGER: {
-			switch(mngr->o_unit->unitType()) {
+			switch(mngr->unit()->unitType()) {
 				case BASE_UNIT: {
 					for(int i = 0; i < base_units.size(); i++) {
-						if(base_units[i] == mngr->o_unit) {
+						if(base_units[i] == mngr->unit()) {
 							return;
 						}
 					}
-					base_units.push_back(mngr->o_unit);
+					base_units.push_back(mngr->unit());
 					break;
 				}
 				case ALIAS_UNIT: {
 					for(int i = 0; i < alias_units.size(); i++) {
-						if(alias_units[i] == mngr->o_unit) {
+						if(alias_units[i] == mngr->unit()) {
 							return;
 						}
 					}
-					alias_units.push_back((AliasUnit*) (mngr->o_unit));				
+					alias_units.push_back((AliasUnit*) (mngr->unit()));
 					break;
 				}
 				case COMPOSITE_UNIT: {
-					mngr = ((CompositeUnit*) (mngr->o_unit))->generateManager();
+					mngr = ((CompositeUnit*) (mngr->unit()))->generateManager();
 					gatherInformation(mngr, base_units, alias_units);
 					break;
 				}				
@@ -2146,8 +2150,8 @@ void gatherInformation(Manager *mngr, vector<Unit*> &base_units, vector<AliasUni
 			break;
 		}
 		default: {
-			for(int i = 0; i < mngr->mngrs.size(); i++) {
-				gatherInformation(mngr->mngrs[i], base_units, alias_units);
+			for(int i = 0; i < mngr->countChilds(); i++) {
+				gatherInformation(mngr->getChild(i), base_units, alias_units);
 			}
 			break;
 		}
@@ -2317,7 +2321,7 @@ bool Manager::convert(string unit_str) {
 bool Manager::convert(const Manager *unit_mngr) {
 	bool b = false;
 	if(unit_mngr->type() == UNIT_MANAGER) {
-		if(convert(unit_mngr->o_unit)) b = true;
+		if(convert(unit_mngr->unit())) b = true;
 	} else {
 		for(int i = 0; i < unit_mngr->mngrs.size(); i++) {
 			if(convert(unit_mngr->mngrs[i])) b = true;
@@ -2369,15 +2373,15 @@ bool Manager::convert(const Unit *u) {
 			return convert(u);
 		}
 		if(mngrs[0]->type() == UNIT_MANAGER) {
-			if(u == mngrs[0]->o_unit) return false;
+			if(u == mngrs[0]->unit()) return false;
 			if(mngrs[0]->testDissolveCompositeUnit(u)) {
 				typeclean();
 				convert(u);			
 				return true;
 			}
-			Manager *mngr = u->convert(mngrs[0]->o_unit, NULL, mngrs[1], &b);
+			Manager *mngr = u->convert(mngrs[0]->unit(), NULL, mngrs[1], &b);
 			if(b) {
-				mngrs[0]->o_unit = (Unit*) u;
+				mngrs[0]->set(u);
 				add(mngr, OPERATION_MULTIPLY);
 			}			
 			mngr->unref();
@@ -2395,9 +2399,9 @@ bool Manager::convert(const Unit *u) {
 				typeclean();
 				i = -1;
 				if(b) c = true;
-			} else if(mngrs[i]->type() == UNIT_MANAGER && mngrs[i]->o_unit != u) {
+			} else if(mngrs[i]->type() == UNIT_MANAGER && mngrs[i]->unit() != u) {
 				Manager *mngr;
-				if(mngrs[i]->o_unit->hasComplexRelationTo(u)) {
+				if(mngrs[i]->unit()->hasComplexRelationTo(u)) {
 					int i3 = 0;
 					for(int i2 = 0; i2 < mngrs.size(); i2++) {
 						if(mngrs[i2]->type() == UNIT_MANAGER || (mngrs[i2]->type() == POWER_MANAGER && mngrs[i2]->mngrs[0]->type() == UNIT_MANAGER)) {
@@ -2409,7 +2413,7 @@ bool Manager::convert(const Unit *u) {
 				mngr = new Manager(this);
 				mngr->add(mngrs[i], OPERATION_DIVIDE);
 				Manager *exp = new Manager(1, 1);				
-				u->convert(mngrs[i]->o_unit, mngr, exp, &b);
+				u->convert(mngrs[i]->unit(), mngr, exp, &b);
 				if(b) {
 					set(u);
 					if(!exp->isNumber() || exp->value() != 1.0L) {
@@ -2419,9 +2423,9 @@ bool Manager::convert(const Unit *u) {
 					c = true;
 				}
 				mngr->unref();
-			} else if(mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->type() == UNIT_MANAGER && mngrs[i]->mngrs[0]->o_unit != u) {
+			} else if(mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->type() == UNIT_MANAGER && mngrs[i]->mngrs[0]->unit() != u) {
 				Manager *mngr;
-				if(mngrs[i]->mngrs[0]->o_unit->hasComplexRelationTo(u)) {
+				if(mngrs[i]->mngrs[0]->unit()->hasComplexRelationTo(u)) {
 					int i3 = 0;
 					for(int i2 = 0; i2 < mngrs.size(); i2++) {
 						if(mngrs[i2]->type() == UNIT_MANAGER || (mngrs[i2]->type() == POWER_MANAGER && mngrs[i2]->mngrs[0]->type() == UNIT_MANAGER)) {
@@ -2432,7 +2436,7 @@ bool Manager::convert(const Unit *u) {
 				}
 				mngr = new Manager(this);
 				mngr->add(mngrs[i], OPERATION_DIVIDE);
-				u->convert(mngrs[i]->mngrs[0]->o_unit, mngr, mngrs[i]->mngrs[1], &b);
+				u->convert(mngrs[i]->mngrs[0]->unit(), mngr, mngrs[i]->mngrs[1], &b);
 				if(b) {
 					Manager *mngr2 = mngrs[i]->mngrs[1];
 					mngr2->ref();
@@ -2461,13 +2465,13 @@ bool Manager::convert(const Unit *u) {
 					typeclean();
 					c = true;
 				} else if(mngrs[i]->type() == UNIT_MANAGER) {
-					if(mngrs[i]->o_unit->hasComplexRelationTo(u)) {
+					if(mngrs[i]->unit()->hasComplexRelationTo(u)) {
 						return true;
 					}				
 					Manager *mngr = new Manager(this);
 					Manager *exp = new Manager(1, 1);
 					mngr->add(mngrs[i], OPERATION_DIVIDE);
-					u->convert(mngrs[i]->o_unit, mngr, exp, &b);
+					u->convert(mngrs[i]->unit(), mngr, exp, &b);
 					if(b) {
 						set(u);
 						if(!exp->isNumber() || exp->value() != 1.0L) {
@@ -2477,13 +2481,13 @@ bool Manager::convert(const Unit *u) {
 						c = true;
 					}
 					mngr->unref();
-				} else if(mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->type() == UNIT_MANAGER && mngrs[i]->mngrs[0]->o_unit != u) {
-					if(mngrs[i]->mngrs[0]->o_unit->hasComplexRelationTo(u)) {
+				} else if(mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->type() == UNIT_MANAGER && mngrs[i]->mngrs[0]->unit() != u) {
+					if(mngrs[i]->mngrs[0]->unit()->hasComplexRelationTo(u)) {
 						return true;
 					}
 					Manager *mngr = new Manager(this);
 					mngr->add(mngrs[i], OPERATION_DIVIDE);
-					u->convert(mngrs[i]->mngrs[0]->o_unit, mngr, mngrs[i]->mngrs[1], &b);
+					u->convert(mngrs[i]->mngrs[0]->unit(), mngr, mngrs[i]->mngrs[1], &b);
 					if(b) {	
 						Manager *mngr2 = mngrs[i]->mngrs[1];
 						mngr2->ref();

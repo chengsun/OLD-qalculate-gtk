@@ -328,13 +328,13 @@ Manager *Function::calculate(vector<Manager*> &vargs, int itmp) {
 				}
 				for(int i = 0; i < vargs.size(); i++) {
 					if(vargs[i]->type() == ALTERNATIVE_MANAGER) {
-						if(!b && solutions[i] < vargs[i]->mngrs.size()) {
-							vargs[i] = vargs[i]->mngrs[solutions[i]];
+						if(!b && solutions[i] < vargs[i]->countChilds()) {
+							vargs[i] = vargs[i]->getChild(solutions[i]);
 							solutions[i]++;
 							b = true;
 						} else {
 							solutions[i] = 0;
-							vargs[i] = vargs[i]->mngrs[solutions[i]];
+							vargs[i] = vargs[i]->getChild(solutions[i]);
 						}
 					}
 				}

@@ -974,8 +974,9 @@ Manager *Calculator::convert(Manager *mngr, Unit *to_unit, bool always_convert) 
 	}
 	mngr->finalize();
 	if(mngr->type() == ADDITION_MANAGER) {
-		for(int i = 0; i < mngr->mngrs.size(); i++) {
-			convert(mngr->mngrs[i], to_unit, false);
+		for(int i = 0; i < mngr->countChilds(); i++) {
+			convert(mngr->getChild(i), to_unit, false);
+			if(!mngr->getChild(i)->isPrecise()) mngr->setPrecise(false);
 		}
 		mngr->sort();
 	} else {
@@ -986,24 +987,24 @@ Manager *Calculator::convert(Manager *mngr, Unit *to_unit, bool always_convert) 
 			CompositeUnit *cu = (CompositeUnit*) ((AliasUnit*) to_unit)->baseUnit();
 			switch(mngr->type()) {
 				case UNIT_MANAGER: {
-					if(cu->containsRelativeTo(mngr->o_unit)) {
+					if(cu->containsRelativeTo(mngr->unit())) {
 						b = true;
 					}
 					break;
 				} 
 				case MULTIPLICATION_MANAGER: {
-					for(int i = 0; i < mngr->mngrs.size(); i++) {
-						if(mngr->mngrs[i]->type() == UNIT_MANAGER && cu->containsRelativeTo(mngr->mngrs[i]->o_unit)) {
+					for(int i = 0; i < mngr->countChilds(); i++) {
+						if(mngr->getChild(i)->isUnit() && cu->containsRelativeTo(mngr->getChild(i)->unit())) {
 							b = true;
 						}
-						if(mngr->mngrs[i]->type() == POWER_MANAGER && mngr->mngrs[i]->mngrs[0]->type() == UNIT_MANAGER && cu->containsRelativeTo(mngr->mngrs[i]->mngrs[0]->o_unit)) {
+						if(mngr->getChild(i)->isPower() && mngr->getChild(i)->getChild(0)->isUnit() && cu->containsRelativeTo(mngr->getChild(i)->getChild(0)->unit())) {
 							b = true;
 						}
 					}
 					break;
 				}
 				case POWER_MANAGER: {
-					if(mngr->mngrs[0]->type() == UNIT_MANAGER && cu->containsRelativeTo(mngr->mngrs[0]->o_unit)) {
+					if(mngr->getChild(0)->isUnit() && cu->containsRelativeTo(mngr->getChild(0)->unit())) {
 						b = true;
 					}
 					break;				
@@ -1014,8 +1015,8 @@ Manager *Calculator::convert(Manager *mngr, Unit *to_unit, bool always_convert) 
 			mngr->addUnit(to_unit, OPERATION_DIVIDE);
 			mngr->finalize();			
 			Manager *mngr2 = new Manager(to_unit);
-			if(mngr->type() == MULTIPLICATION_MANAGER) {
-				mngr->mngrs.push_back(mngr2);
+			if(mngr->isMultiplication()) {
+				mngr->push_back(mngr2);
 			} else {
 				mngr->transform(mngr2, MULTIPLICATION_MANAGER, OPERATION_MULTIPLY);
 				mngr2->unref();
@@ -1029,8 +1030,9 @@ Manager *Calculator::convertToCompositeUnit(Manager *mngr, CompositeUnit *cu, bo
 	mngr->finalize();
 	Manager *mngr3 = cu->generateManager(true);
 	if(mngr->type() == ADDITION_MANAGER) {
-		for(int i = 0; i < mngr->mngrs.size(); i++) {
-			convertToCompositeUnit(mngr->mngrs[i], cu, false);
+		for(int i = 0; i < mngr->countChilds(); i++) {
+			convertToCompositeUnit(mngr->getChild(i), cu, false);
+			if(!mngr->getChild(i)->isPrecise()) mngr->setPrecise(false);
 		}
 		mngr->sort();
 	} else {
@@ -1040,24 +1042,24 @@ Manager *Calculator::convertToCompositeUnit(Manager *mngr, CompositeUnit *cu, bo
 		} else {
 			switch(mngr->type()) {
 				case UNIT_MANAGER: {
-					if(cu->containsRelativeTo(mngr->o_unit)) {
+					if(cu->containsRelativeTo(mngr->unit())) {
 						b = true;
 					}
 					break;
 				} 
 				case MULTIPLICATION_MANAGER: {
-					for(int i = 0; i < mngr->mngrs.size(); i++) {
-						if(mngr->mngrs[i]->type() == UNIT_MANAGER && cu->containsRelativeTo(mngr->mngrs[i]->o_unit)) {
+					for(int i = 0; i < mngr->countChilds(); i++) {
+						if(mngr->getChild(i)->isUnit() && cu->containsRelativeTo(mngr->getChild(i)->unit())) {
 							b = true;
 						}
-						if(mngr->mngrs[i]->type() == POWER_MANAGER && mngr->mngrs[i]->mngrs[0]->type() == UNIT_MANAGER && cu->containsRelativeTo(mngr->mngrs[i]->mngrs[0]->o_unit)) {
+						if(mngr->getChild(i)->isPower() && mngr->getChild(i)->getChild(0)->isUnit() && cu->containsRelativeTo(mngr->getChild(i)->getChild(0)->unit())) {
 							b = true;
 						}
 					}
 					break;
 				}
 				case POWER_MANAGER: {
-					if(mngr->mngrs[0]->type() == UNIT_MANAGER && cu->containsRelativeTo(mngr->mngrs[0]->o_unit)) {
+					if(mngr->getChild(0)->isUnit() && cu->containsRelativeTo(mngr->getChild(0)->unit())) {
 						b = true;
 					}
 					break;				
@@ -1069,7 +1071,7 @@ Manager *Calculator::convertToCompositeUnit(Manager *mngr, CompositeUnit *cu, bo
 			mngr->finalize();			
 			Manager *mngr2 = new Manager(cu);
 			if(mngr->type() == MULTIPLICATION_MANAGER) {
-				mngr->mngrs.push_back(mngr2);
+				mngr->push_back(mngr2);
 			} else {
 				mngr->transform(mngr2, MULTIPLICATION_MANAGER, OPERATION_MULTIPLY);
 				mngr2->unref();		

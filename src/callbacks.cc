@@ -6097,7 +6097,7 @@ void on_button_sqrt_clicked(GtkButton *w, gpointer user_data) {
 	else insertButtonFunction("sqrt");
 }
 void on_button_log_clicked(GtkButton *w, gpointer user_data) {
-	insertButtonFunction("log");
+	insertButtonFunction("log10");
 }
 void on_button_ln_clicked(GtkButton *w, gpointer user_data) {
 	insertButtonFunction("ln");

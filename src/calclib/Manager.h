@@ -33,9 +33,8 @@ enum {
 
 class Manager {
 
-	
-	public:
-	
+	protected:
+
 		Unit* o_unit;
 		vector<Manager*> mngrs;
 		int c_type;
@@ -47,14 +46,21 @@ class Manager {
 		bool b_exact;
 		bool b_protect;
 		ComparisonType comparison_type;
+
+		void init();
+	
+	public:
+		
+		//dangerous
+		void setType(int mngr_type);
 		
 		void transform(const Manager *mngr, char type_, MathOperation op, bool reverse_ = false);		
 		bool typeclean();
 		bool reverseadd(const Manager *mngr, MathOperation op, bool translate_ = true);
 		bool compatible(const Manager *mngr);
 		void moveto(Manager *mngr);			
-		void init();
 		void push_back(Manager *mngr);
+		
 		
 		Manager();
 		Manager(long double value_);		

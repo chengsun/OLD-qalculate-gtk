@@ -1,5 +1,19 @@
+* Do not recalculate plot data when it has not changed
+* Instant apply for all parameters in plot
+* Plot functions
+* Make it possible to have functions and units with the same name (use function if name followed by parenthesis)
+* Sexagesimal numbers
+* Permutations
+* Matrix area
+* Finish differentiation
+* Fix dates
+* Check if unit is used on delete
+* Replace pointers to unit when unit type has changed (a different object must be created)
+* Direct reference to a CSV file (function)
+* Export to CSV file
+
 * More functions
-* More Units
+* More units
 
 * Separate library
 * Support non-glibc systems (Solaris)
@@ -7,6 +21,7 @@
 * API documentation
 * User documentation
 
+* Script/code plugins for advanced functions
 * Command line version
 * Gnome/KDE applets
 * QT version
