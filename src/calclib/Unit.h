@@ -24,8 +24,9 @@ class Unit {
   protected:
 	string scategory, sname, sshortname, stitle, splural;
 	Calculator *calc;
+	bool b_user, b_changed;
   public:
-	Unit(Calculator *calc_, string cat_, string name_, string plural_ = "", string short_name_ = "", string title_ = "");
+	Unit(Calculator *calc_, string cat_, string name_, string plural_ = "", string short_name_ = "", string title_ = "", bool is_user_unit = true);
 	virtual ~Unit(void);
 	void title(string title_);
 	string title(void);
@@ -53,6 +54,10 @@ class Unit {
 	virtual bool isParentOf(Unit *u);
 	virtual bool hasComplexRelationTo(Unit *u);	
 	Manager *convert(Unit *u, Manager *value_ = NULL, Manager *exp_ = NULL, bool *converted = NULL);
+	bool isUserUnit();
+	bool hasChanged();
+	void setUserUnit(bool is_user_unit);
+	void setChanged(bool has_changed);	
 };
 
 class AliasUnit : public Unit {
@@ -61,7 +66,7 @@ class AliasUnit : public Unit {
 	long double d_exp;
 	Unit *unit;
   public:
-	AliasUnit(Calculator *calc_, string cat_, string name_, string plural_, string short_name_, string title_, Unit *alias, string relation = "1", long double exp_ = 1.0L, string reverse = "");
+	AliasUnit(Calculator *calc_, string cat_, string name_, string plural_, string short_name_, string title_, Unit *alias, string relation = "1", long double exp_ = 1.0L, string reverse = "", bool is_user_unit = true);
 	~AliasUnit(void);
 	virtual string baseName(void);
 	virtual string baseExpName(void);
@@ -116,7 +121,7 @@ class CompositeUnit : public Unit {
 		bool bsorted;
 		//-----------------------------//
 
-		CompositeUnit(Calculator *calc_, string cat_, string name_, string title_ = "", string base_expression_ = "");
+		CompositeUnit(Calculator *calc_, string cat_, string name_, string title_ = "", string base_expression_ = "", bool is_user_unit = true);
 		virtual ~CompositeUnit(void);
 		virtual void add(Unit *u, long double exp_ = 1.0L, long double prefix = 1.0L);
 		virtual Unit *get(int index, long double *exp_ = NULL, long double *prefix = NULL);

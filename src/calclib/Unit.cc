@@ -12,7 +12,8 @@
 #include "Unit.h"
 #include "util.h"
 
-Unit::Unit(Calculator *calc_, string cat_, string name_, string plural_, string short_name_, string title_) {
+Unit::Unit(Calculator *calc_, string cat_, string name_, string plural_, string short_name_, string title_, bool is_user_unit) {
+	b_user = is_user_unit;
 	calc = calc_;
 	remove_blank_ends(name_);
 	remove_blank_ends(plural_);
@@ -23,6 +24,7 @@ Unit::Unit(Calculator *calc_, string cat_, string name_, string plural_, string 
 	sshortname = short_name_;
 	stitle = title_;
 	splural = plural_;
+	b_changed = false;
 }
 Unit::~Unit() {}
 bool Unit::isUsedByOtherUnits(void) {
@@ -31,6 +33,7 @@ bool Unit::isUsedByOtherUnits(void) {
 void Unit::title(string title_) {
 	remove_blank_ends(title_);
 	stitle = title_;
+	b_changed = true;
 }
 string Unit::title(void) {
 	return stitle;
@@ -38,11 +41,13 @@ string Unit::title(void) {
 void Unit::category(string cat_) {
 	remove_blank_ends(cat_);
 	scategory = cat_;
+	b_changed = true;
 }
 void Unit::name(string name_, bool force) {
 	remove_blank_ends(name_);
 	if(name_ != sname) {
 		sname = calc->getUnitName(name_, this, force);
+		b_changed = true;
 	}
 	calc->unitNameChanged(this);
 }
@@ -50,6 +55,7 @@ void Unit::plural(string name_, bool force) {
 	remove_blank_ends(name_);
 	if(name_ != splural) {
 		splural = calc->getUnitName(name_, this, force);
+		b_changed = true;
 	}
 	calc->unitPluralChanged(this);
 }
@@ -60,6 +66,7 @@ void Unit::shortName(string name_, bool force) {
 	else if(name_ != sshortname) {
 		sshortname = calc->getUnitName(name_, this, force);
 	}
+	b_changed = true;
 	calc->unitShortNameChanged(this);
 
 }
@@ -156,14 +163,19 @@ Manager *Unit::convert(Unit *u, Manager *value_, Manager *exp_, bool *converted)
 	if(converted) *converted = b;
 	return value_;
 }
+bool Unit::isUserUnit() {return b_user;}
+bool Unit::hasChanged() {return b_changed;}
+void Unit::setUserUnit(bool is_user_unit) {b_user = is_user_unit;}
+void Unit::setChanged(bool has_changed) {b_changed = has_changed;}
 
-AliasUnit::AliasUnit(Calculator *calc_, string cat_, string name_, string plural_, string short_name_, string title_, Unit *alias, string relation, long double exp_, string reverse) : Unit(calc_, cat_, name_, plural_, short_name_, title_) {
+AliasUnit::AliasUnit(Calculator *calc_, string cat_, string name_, string plural_, string short_name_, string title_, Unit *alias, string relation, long double exp_, string reverse, bool is_user_unit) : Unit(calc_, cat_, name_, plural_, short_name_, title_, is_user_unit) {
 	unit = alias;
 	remove_blank_ends(relation);
 	remove_blank_ends(reverse);
 	value = relation;
 	rvalue = reverse;
 	d_exp = exp_;
+	b_changed = false;
 }
 AliasUnit::~AliasUnit() {}
 string AliasUnit::baseName() {
@@ -224,6 +236,7 @@ Unit* AliasUnit::firstBaseUnit() {
 }
 void AliasUnit::baseUnit(Unit *alias) {
 	unit = alias;
+	b_changed = true;
 }
 string AliasUnit::expression() {
 	return value;
@@ -237,10 +250,12 @@ void AliasUnit::expression(string relation) {
 		value = "1";
 	else
 		value = relation;
+	b_changed = true;		
 }
 void AliasUnit::reverseExpression(string reverse) {
 	remove_blank_ends(reverse);
 	rvalue = reverse;
+	b_changed = true;
 }
 Manager *AliasUnit::baseValue(Manager *value_, Manager *exp_) {
 	if(!exp_) exp_ = new Manager(calc, 1.0L);		
@@ -345,6 +360,7 @@ Manager *AliasUnit::firstBaseValue(Manager *value_, Manager *exp_) {
 }
 void AliasUnit::exp(long double exp_) {
 	d_exp = exp_;
+	b_changed = true;
 }
 long double AliasUnit::firstBaseExp() {
 	return d_exp;
@@ -473,8 +489,9 @@ Manager *AliasUnit_Composite::convertToFirstBase(Manager *value_, Manager *exp_)
 	return value_;
 }
 
-CompositeUnit::CompositeUnit(Calculator *calc_, string cat_, string name_, string title_, string base_expression_) : Unit(calc_, cat_, name_, "", "", title_) {
+CompositeUnit::CompositeUnit(Calculator *calc_, string cat_, string name_, string title_, string base_expression_, bool is_user_unit) : Unit(calc_, cat_, name_, "", "", title_, is_user_unit) {
 	baseExpression(base_expression_);
+	b_changed = false;
 }
 CompositeUnit::~CompositeUnit(void) {
 	for(int i = 0; i < units.size(); i++)
@@ -484,6 +501,7 @@ void CompositeUnit::add(Unit *u, long double exp_, long double prefix) {
 	bsorted = false;
 	units.push_back(new AliasUnit_Composite(calc, u, exp_, prefix));
 	sort();
+	b_changed = true;
 }
 Unit *CompositeUnit::get(int index, long double *exp_, long double *prefix) {
 	sort();
@@ -695,5 +713,6 @@ void CompositeUnit::baseExpression(string base_expression_) {
 	calc->setUnknownVariablesEnabled(b_var_u);	
 	calc->setFunctionsEnabled(b_func);	
 	calc->setUnitsEnabled(b_unit);			
+	b_changed = true;
 }
 

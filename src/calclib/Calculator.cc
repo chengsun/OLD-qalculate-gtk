@@ -320,8 +320,8 @@ void Calculator::reset() {
 	resetUnits();
 }
 void Calculator::addBuiltinVariables() {
-	addVariable(new Variable(this, "General", "pi", PI_VALUE, "", false));
-	addVariable(new Variable(this, "General", "e", E_VALUE, "", false));
+	addVariable(new Variable(this, "General", "pi", PI_VALUE, "", false, true));
+	addVariable(new Variable(this, "General", "e", E_VALUE, "", false, true));
 }
 void Calculator::addBuiltinFunctions() {
 	addFunction(new IFFunction(this));
@@ -585,6 +585,7 @@ Unit* Calculator::addUnit(Unit *u, bool force) {
 		}
 	}
 	units.push_back(u);
+	u->setChanged(false);
 	return u;
 }
 void Calculator::delUnit(Unit *u) {
@@ -645,6 +646,7 @@ Unit* Calculator::getCompositeUnit(string internal_name_) {
 Variable* Calculator::addVariable(Variable *v, bool force) {
 	variables.push_back(v);
 	v->name(getName(v->name(), (void*) v, force));
+	v->setChanged(false);
 	return v;
 }
 void Calculator::variableNameChanged(Variable *v) {
@@ -845,6 +847,7 @@ Variable* Calculator::getVariable(string name_) {
 Function* Calculator::addFunction(Function *f, bool force) {
 	f->name(getName(f->name(), (void*) f, force));
 	functions.push_back(f);
+	f->setChanged(false);
 	return f;
 }
 void Calculator::delFunction(Function *f) {
@@ -1390,52 +1393,56 @@ bool Calculator::save(const char* file_name) {
 	string str;
 	unsetLocale();
 	for(int i = 0; i < variables.size(); i++) {
-		if(variables[i]->isUserVariable())
-			fprintf(file, "*Variable\t");
-		else
-			fprintf(file, "*BuiltinVariable\t");
-		if(!variables[i]->isUserVariable())
-			fprintf(file, "%s\t", variables[i]->name().c_str());
-		if(variables[i]->category().empty())
-			fprintf(file, "0\t");
-		else
-			fprintf(file, "%s\t", variables[i]->category().c_str());
-		if(variables[i]->isUserVariable())
-			fprintf(file, "%s\t%s\t", variables[i]->name().c_str(), variables[i]->get()->print().c_str());
-		if(variables[i]->title().empty())
-			fprintf(file, "0\t");
-		else
-			fprintf(file, "%s\t", variables[i]->title().c_str());
-		fprintf(file, "\n");
+		if(variables[i]->isUserVariable()) {
+			if(!variables[i]->isBuiltinVariable()) 
+				fprintf(file, "*Variable\t");
+			else
+				fprintf(file, "*BuiltinVariable\t");
+			if(variables[i]->isBuiltinVariable())
+				fprintf(file, "%s\t", variables[i]->name().c_str());
+			if(variables[i]->category().empty())
+				fprintf(file, "0\t");
+			else
+				fprintf(file, "%s\t", variables[i]->category().c_str());
+			if(!variables[i]->isBuiltinVariable())
+				fprintf(file, "%s\t%s\t", variables[i]->name().c_str(), variables[i]->get()->print().c_str());
+			if(variables[i]->title().empty())
+				fprintf(file, "0\t");
+			else
+				fprintf(file, "%s\t", variables[i]->title().c_str());
+			fprintf(file, "\n");
+		}
 	}
 	fprintf(file, "\n");
 	for(int i = 0; i < functions.size(); i++) {
-		if(functions[i]->isUserFunction())
-			fprintf(file, "*Function\t");
-		else
-			fprintf(file, "*BuiltinFunction\t");
-		if(!functions[i]->isUserFunction())
-			fprintf(file, "%s\t", functions[i]->name().c_str());
-		if(functions[i]->category().empty())
-			fprintf(file, "0\t");
-		else
-			fprintf(file, "%s\t", functions[i]->category().c_str());
-		if(functions[i]->isUserFunction())
-			fprintf(file, "%s\t%s\t", functions[i]->name().c_str(), ((UserFunction*) functions[i])->equation().c_str());
-		if(functions[i]->title().empty())
-			fprintf(file, "0\t");
-		else
-			fprintf(file, "%s\t", functions[i]->title().c_str());
-		str = functions[i]->description();
-		gsub("\n", "\\", str);
-		if(str.empty())
-			fprintf(file, "0");
-		else
-			fprintf(file, "%s", str.c_str());
-		for(int i2 = 1; !functions[i]->argName(i2).empty(); i2++) {
-			fprintf(file, "\t%s", functions[i]->argName(i2).c_str());
-		}
-		fprintf(file, "\n");
+		if(functions[i]->isUserFunction()) {	
+			if(!functions[i]->isBuiltinFunction())
+				fprintf(file, "*Function\t");
+			else
+				fprintf(file, "*BuiltinFunction\t");
+			if(functions[i]->isBuiltinFunction())
+				fprintf(file, "%s\t", functions[i]->name().c_str());
+			if(functions[i]->category().empty())
+				fprintf(file, "0\t");
+			else
+				fprintf(file, "%s\t", functions[i]->category().c_str());
+			if(!functions[i]->isBuiltinFunction())
+				fprintf(file, "%s\t%s\t", functions[i]->name().c_str(), ((UserFunction*) functions[i])->equation().c_str());
+			if(functions[i]->title().empty())
+				fprintf(file, "0\t");
+			else
+				fprintf(file, "%s\t", functions[i]->title().c_str());
+			str = functions[i]->description();
+			gsub("\n", "\\", str);
+			if(str.empty())
+				fprintf(file, "0");
+			else
+				fprintf(file, "%s", str.c_str());
+			for(int i2 = 1; !functions[i]->argName(i2).empty(); i2++) {
+				fprintf(file, "\t%s", functions[i]->argName(i2).c_str());
+			}
+			fprintf(file, "\n");
+		}	
 	}
 	fprintf(file, "\n");
 	CompositeUnit *cu;
@@ -1443,71 +1450,73 @@ bool Calculator::save(const char* file_name) {
 	Unit *u;
 	int exp = 1;
 	for(int i = 0; i < units.size(); i++) {
-		switch(units[i]->type()) {
-		case 'U': {
-				fprintf(file, "*Unit\t");
-				break;
+		if(units[i]->isUserUnit()) {
+			switch(units[i]->type()) {
+				case 'U': {
+					fprintf(file, "*Unit\t");
+					break;
+				}
+				case 'A': {
+					au = (AliasUnit*) units[i];
+					fprintf(file, "*AliasUnit\t");
+					break;
+				}
+				case 'D': {
+					fprintf(file, "*CompositeUnit\t");
+					break;
+				}
 			}
-		case 'A': {
-				au = (AliasUnit*) units[i];
-				fprintf(file, "*AliasUnit\t");
-				break;
+			if(units[i]->category().empty())
+				fprintf(file, "0\t");
+			else
+				fprintf(file, "%s\t", units[i]->category().c_str());
+			if(units[i]->type() == 'D') {
+				cu = (CompositeUnit*) units[i];			
+				fprintf(file, "%s\t", cu->internalName().c_str());
+				if(units[i]->title().empty())
+					fprintf(file, "0\t");
+				else
+					fprintf(file, "%s", units[i]->title().c_str());
+				cu->sort();
+				for(int i2 = 0; i2 < cu->sorted.size(); i2++) {
+//					fprintf(file, "\t%s\t%s\t%LG", cu->units[cu->sorted[i2]]->firstBaseUnit()->shortName().c_str(), cu->units[cu->sorted[i2]]->firstBaseExp()->print().c_str(), cu->units[cu->sorted[i2]]->prefixValue());
+					fprintf(file, "\t%s\t%s\t%LG", cu->units[cu->sorted[i2]]->firstBaseUnit()->shortName().c_str(), d2s(cu->units[cu->sorted[i2]]->firstBaseExp()).c_str(), cu->units[cu->sorted[i2]]->prefixValue());
+				}
+			} else {
+				fprintf(file, "%s\t", units[i]->name().c_str());
+				if(!units[i]->hasPlural())
+					fprintf(file, "0\t");
+				else
+					fprintf(file, "%s\t", units[i]->plural().c_str());
+				if(!units[i]->hasShortName())
+					fprintf(file, "0\t");
+				else
+					fprintf(file, "%s\t", units[i]->shortName().c_str());
+				if(units[i]->title().empty())
+					fprintf(file, "0\t");
+				else
+					fprintf(file, "%s", units[i]->title().c_str());
 			}
-		case 'D': {
-				fprintf(file, "*CompositeUnit\t");
-				break;
+			if(units[i]->type() == 'A') {
+//				fprintf(file, "\t%s\t%s\t%s", au->firstShortBaseName().c_str(), au->expression().c_str(), au->firstBaseExp()->print().c_str());
+				fprintf(file, "\t%s\t%s\t%s", au->firstShortBaseName().c_str(), au->expression().c_str(), d2s(au->firstBaseExp()).c_str());
+				if(!au->reverseExpression().empty())
+					fprintf(file, "\t%s", au->reverseExpression().c_str());
 			}
+			fprintf(file, "\n");
 		}
-		if(units[i]->category().empty())
-			fprintf(file, "0\t");
-		else
-			fprintf(file, "%s\t", units[i]->category().c_str());
-		if(units[i]->type() == 'D') {
-			cu = (CompositeUnit*) units[i];			
-			fprintf(file, "%s\t", cu->internalName().c_str());
-			if(units[i]->title().empty())
-				fprintf(file, "0\t");
-			else
-				fprintf(file, "%s", units[i]->title().c_str());
-			cu->sort();
-			for(int i2 = 0; i2 < cu->sorted.size(); i2++) {
-//				fprintf(file, "\t%s\t%s\t%LG", cu->units[cu->sorted[i2]]->firstBaseUnit()->shortName().c_str(), cu->units[cu->sorted[i2]]->firstBaseExp()->print().c_str(), cu->units[cu->sorted[i2]]->prefixValue());
-				fprintf(file, "\t%s\t%s\t%LG", cu->units[cu->sorted[i2]]->firstBaseUnit()->shortName().c_str(), d2s(cu->units[cu->sorted[i2]]->firstBaseExp()).c_str(), cu->units[cu->sorted[i2]]->prefixValue());
-			}
-		} else {
-			fprintf(file, "%s\t", units[i]->name().c_str());
-			if(!units[i]->hasPlural())
-				fprintf(file, "0\t");
-			else
-				fprintf(file, "%s\t", units[i]->plural().c_str());
-			if(!units[i]->hasShortName())
-				fprintf(file, "0\t");
-			else
-				fprintf(file, "%s\t", units[i]->shortName().c_str());
-			if(units[i]->title().empty())
-				fprintf(file, "0\t");
-			else
-				fprintf(file, "%s", units[i]->title().c_str());
-		}
-		if(units[i]->type() == 'A') {
-//			fprintf(file, "\t%s\t%s\t%s", au->firstShortBaseName().c_str(), au->expression().c_str(), au->firstBaseExp()->print().c_str());
-			fprintf(file, "\t%s\t%s\t%s", au->firstShortBaseName().c_str(), au->expression().c_str(), d2s(au->firstBaseExp()).c_str());
-			if(!au->reverseExpression().empty())
-				fprintf(file, "\t%s", au->reverseExpression().c_str());
-		}
-		fprintf(file, "\n");
 	}
-	fprintf(file, "\n");
+/*	fprintf(file, "\n");
 	for(l_type::iterator it = l_prefix.begin(); it != l_prefix.end(); ++it) {
 		fprintf(file, "*Prefix\t%s\t%LG\n", it->first, it->second);
 	}
 	for(hash_map<char, long double>::iterator it = s_prefix.begin(); it != s_prefix.end(); ++it) {
 		fprintf(file, "*Prefix\t%c\t%LG\n", it->first, it->second);
-	}
+	}*/
 	fclose(file);
 	setLocale();
 }
-bool Calculator::load(const char* file_name) {
+bool Calculator::load(const char* file_name, bool is_user_defs) {
 	FILE *file = fopen(file_name, "r");
 	if(file == NULL)
 		return false;
@@ -1546,7 +1555,7 @@ bool Calculator::load(const char* file_name) {
 								}
 								if(variableNameIsValid(ntmp)) {
 									mngr = calculate(vtmp);
-									addVariable(new Variable(this, ctmp, ntmp, mngr, ttmp));
+									addVariable(new Variable(this, ctmp, ntmp, mngr, ttmp, is_user_defs));
 									mngr->unref();
 								}
 							}
@@ -1571,6 +1580,10 @@ bool Calculator::load(const char* file_name) {
 									v->title(ttmp);
 							}
 						}
+						if(v) {
+							v->setChanged(false);
+							v->setUserVariable(is_user_defs);
+						}
 					}
 				} else if(str == "*Function") {
 					if((i = stmp.find_first_not_of("\t\n", i)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
@@ -1581,7 +1594,7 @@ bool Calculator::load(const char* file_name) {
 							ntmp = stmp.substr(i, i2 - i);
 							if(functionNameIsValid(ntmp) && ((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos)) {
 								vtmp = stmp.substr(i, i2 - i);
-								func = addFunction(new UserFunction(this, ctmp, ntmp, vtmp));
+								func = addFunction(new UserFunction(this, ctmp, ntmp, vtmp, is_user_defs));
 								if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 									shtmp = stmp.substr(i, i2 - i);
 									if(shtmp == "0")
@@ -1602,6 +1615,7 @@ bool Calculator::load(const char* file_name) {
 										}
 									}
 								}
+								func->setChanged(false);
 							}
 						}
 					}
@@ -1646,6 +1660,10 @@ bool Calculator::load(const char* file_name) {
 								}
 							}
 						}
+						if(func) {
+							func->setChanged(false);
+							func->setUserFunction(is_user_defs);
+						}
 					}
 				} else if(str == "*Unit") {
 					if((i = stmp.find_first_not_of("\t\n", i)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
@@ -1671,7 +1689,7 @@ bool Calculator::load(const char* file_name) {
 								}
 							}
 							if(unitNameIsValid(ntmp) && unitNameIsValid(etmp) && unitNameIsValid(shtmp))
-								addUnit(new Unit(this, ctmp, ntmp, etmp, shtmp, ttmp));
+								addUnit(new Unit(this, ctmp, ntmp, etmp, shtmp, ttmp, is_user_defs));
 						}
 					}
 				} else if(str == "*CompositeUnit") {
@@ -1717,8 +1735,11 @@ bool Calculator::load(const char* file_name) {
 											break;
 										i3++;
 									}
-									if(cu)
+									if(cu) {
 										addUnit(cu);
+										cu->setUserUnit(is_user_defs);
+										cu->setChanged(false);
+									}
 								}
 							}						
 						}
@@ -1765,6 +1786,8 @@ bool Calculator::load(const char* file_name) {
 													}
 												}
 												addUnit(au);
+												au->setUserUnit(is_user_defs);
+												au->setChanged(false);
 											}
 										}
 									}

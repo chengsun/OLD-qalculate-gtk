@@ -335,6 +335,7 @@ void on_tFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer u
 				gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (glade_xml, "functions_textview_description"))), calc->functions[i]->description().c_str(), -1);
 				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "functions_button_edit"), TRUE);
 				//enable only delete button if function is defined in definitions file and not in source (builtin)
+				//user cannot delete global definitions
 				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "functions_button_delete"), calc->functions[i]->isUserFunction());
 			}
 		}
@@ -461,6 +462,7 @@ void on_tVariables_selection_changed(GtkTreeSelection *treeselection, gpointer u
 			if(calc->variables[i]->name() == selected_variable) {
 				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variables_button_edit"), TRUE);
 				//user is not allowed to delete some variables (pi and e)
+				//user cannot delete global definitions
 				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variables_button_delete"), calc->variables[i]->isUserVariable());
 			}
 		}
@@ -669,7 +671,8 @@ void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer user_
 					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (glade_xml, "units_label_from_unit")), calc->units[i]->shortName().c_str());
 				else
 					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (glade_xml, "units_label_from_unit")), calc->units[i]->plural().c_str());
-				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_delete"), TRUE);
+					//user cannot delete global definitions
+				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_delete"), calc->units[i]->isUserUnit());
 				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_edit"), TRUE);
 			}
 		}
@@ -1269,6 +1272,10 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category")), u->category().c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc")), u->title().c_str());
+		
+		if(!u->isUserUnit()) {
+			gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "unit_edit_entry_name"), FALSE);
+		}
 
 		switch(u->type()) {
 			case 'A': {
@@ -1360,7 +1367,7 @@ run_unit_edit_dialog:
 					au->baseUnit(bu);
 					au->expression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_relation"))));
 					au->reverseExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_reversed"))));
-					au->exp(gtk_spin_button_get_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_entry_spinbutton_exp"))));
+					au->exp(gtk_spin_button_get_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_spinbutton_exp"))));
 					break;
 				}
 				case 'D': {
@@ -1389,6 +1396,7 @@ run_unit_edit_dialog:
 				u->title(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc"))));
 				u->category(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category"))));
 			}
+			u->setUserUnit(true);
 		}
 		if(!u) {
 			//new unit
@@ -1399,16 +1407,16 @@ run_unit_edit_dialog:
 						show_message(_("Base unit does not exist."), dialog);
 						goto run_unit_edit_dialog;
 					}
-					u = new AliasUnit(calc, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc"))), bu, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_relation"))), gtk_spin_button_get_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_spinbutton_exp"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_reversed"))));
+					u = new AliasUnit(calc, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc"))), bu, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_relation"))), gtk_spin_button_get_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_spinbutton_exp"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_reversed"))), true);
 					break;
 				}
 				case COMPOSITE_UNIT: {
-					CompositeUnit *cu = new CompositeUnit(calc, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_internal"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"))));
+					CompositeUnit *cu = new CompositeUnit(calc, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_internal"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"))), true);
 					u = cu;
 					break;
 				}
 				default: {
-					u = new Unit(calc, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc"))));
+					u = new Unit(calc, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc"))), true);
 					break;
 				}
 			}
@@ -1452,10 +1460,10 @@ void edit_function(const char *category = "", Function *f = NULL, GtkWidget *win
 	if(f) {
 		//fill in original paramaters
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_name")), f->name().c_str());
-		if(f->isUserFunction())
+		if(!f->isBuiltinFunction())
 			gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_expression")), ((UserFunction*) f)->equation().c_str());
-		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "function_edit_entry_name"), f->isUserFunction());
-		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "function_edit_entry_expression"), f->isUserFunction());
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "function_edit_entry_name"), !f->isBuiltinFunction() && f->isUserFunction());
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "function_edit_entry_expression"), !f->isBuiltinFunction());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_category")), f->category().c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_desc")), f->title().c_str());
 		gtk_text_buffer_set_text(buffer, f->description().c_str(), -1);
@@ -1473,7 +1481,7 @@ void edit_function(const char *category = "", Function *f = NULL, GtkWidget *win
 	}
 
 run_function_edit_dialog:
-	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
 		//clicked "OK"
 		string str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_name")));
 		remove_blank_ends(str);
@@ -1484,7 +1492,7 @@ run_function_edit_dialog:
 		}
 		str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_expression")));
 		remove_blank_ends(str);
-		if(str.empty()) {
+		if(!f->isBuiltinFunction() && str.empty()) {
 			//no expression/relation -- open dialog again
 			show_message(_("Empty expression field."), dialog);
 			goto run_function_edit_dialog;
@@ -1499,12 +1507,12 @@ run_function_edit_dialog:
 		}
 		if(f) {
 			//edited an existing function
-			if(f->isUserFunction())
+			if(!f->isBuiltinFunction())
 				f->name(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_name"))));
 			f->category(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_category"))));
 			f->title(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_desc"))));
 			f->description(gtk_text_buffer_get_text(buffer, &iter_s, &iter_e, FALSE));
-			if(f->isUserFunction())
+			if(!f->isBuiltinFunction())
 				((UserFunction*) f)->equation(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_expression"))));
 			str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_arguments")));
 			string str2;
@@ -1526,9 +1534,10 @@ run_function_edit_dialog:
 					break;
 				}
 			}
+			f->setUserFunction(true);
 		} else {
 			//new function
-			f = new UserFunction(calc, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_category"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_name"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_expression"))), -1, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_desc"))), gtk_text_buffer_get_text(buffer, &iter_s, &iter_e, FALSE));
+			f = new UserFunction(calc, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_category"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_name"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_expression"))), true, -1, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_desc"))), gtk_text_buffer_get_text(buffer, &iter_s, &iter_e, FALSE));
 			str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_arguments")));
 			string str2;
 			unsigned int i = 0, i2 = 0;
@@ -1658,8 +1667,8 @@ void edit_variable(const char *category = "", Variable *v = NULL, Manager *mngr_
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_name")), v->name().c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_value")), get_value_string(v->get()).c_str());
 		//can only change name and value of user variable
-		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variable_edit_entry_name"), v->isUserVariable());
-		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variable_edit_entry_value"), v->isUserVariable());
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variable_edit_entry_name"), !v->isBuiltinVariable() && v->isUserVariable());
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variable_edit_entry_value"), !v->isBuiltinVariable());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_category")), v->category().c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_desc")), v->title().c_str());
 	} else {
@@ -1688,7 +1697,7 @@ void edit_variable(const char *category = "", Variable *v = NULL, Manager *mngr_
 	}
 
 run_variable_edit_dialog:
-	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
 		//clicked "OK"
 		string str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_name")));
 		string str2 = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_value")));
@@ -1715,24 +1724,26 @@ run_variable_edit_dialog:
 		}
 		if(v) {
 			//update existing variable
-			if(v->isUserVariable()) {
+			if(!v->isBuiltinVariable()) {
 				if(mngr_) v->set(mngr_);
 				else {
 					mngr_ = calc->calculate(str2);
 					v->set(mngr_);
 					mngr_->unref();
 				}
+				v->name(str);
 			}
 			v->category(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_category"))));
 			v->title(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_desc"))));
+			v->setUserVariable(true);
 		} else {
 			//new variable
 			if(mngr_) {
 				//forced value
-				v = calc->addVariable(new Variable(calc, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_category"))), str, mngr_, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_desc")))));
+				v = calc->addVariable(new Variable(calc, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_category"))), str, mngr_, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_desc"))), true));
 			} else {
 				mngr_ = calc->calculate(str2);
-				v = calc->addVariable(new Variable(calc, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_category"))), str, mngr_, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_desc")))));
+				v = calc->addVariable(new Variable(calc, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_category"))), str, mngr_, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_desc"))), true));
 				mngr_->unref();
 			}
 		}
@@ -2105,7 +2116,7 @@ void load_preferences() {
 	display_mode = MODE_NORMAL;
 	number_base = BASE_DECI;
 	save_mode_on_exit = true;
-	save_defs_on_exit = false;
+	save_defs_on_exit = true;
 	hyp_is_on = false;
 	show_more = false;
 	show_buttons = false;
@@ -3010,7 +3021,7 @@ void on_variables_button_delete_clicked(GtkButton *button, gpointer user_data) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	Variable *v = get_selected_variable();
-	if(v && v->isUserVariable()) {
+	if(v && !v->isBuiltinVariable()) {
 		//ensure that all references are removed in Calculator
 		calc->delVariable(v);
 		delete v;
@@ -3084,7 +3095,7 @@ void on_functions_button_delete_clicked(GtkButton *button, gpointer user_data) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	Function *f = get_selected_function();
-	if(f && f->isUserFunction()) {
+	if(f && !f->isBuiltinFunction()) {
 		//ensure removal of all references in Calculator
 		calc->delFunction(f);
 		delete f;

@@ -25,10 +25,10 @@ class Variable {
 	Calculator *calc;  
 	string sname, scat, stitle;
 	Manager *mngr;
-	bool buservariable;
+	bool b_user, b_changed, b_builtin;
   public:
-	Variable(Calculator *calc_, string cat_, string name_, Manager *mngr_, string title_ = "", bool uservariable_ = true);
-	Variable(Calculator *calc_, string cat_, string name_, long double value_, string title_ = "", bool uservariable_ = true);	
+	Variable(Calculator *calc_, string cat_, string name_, Manager *mngr_, string title_ = "", bool uservariable_ = true, bool is_builtin = false);
+	Variable(Calculator *calc_, string cat_, string name_, long double value_, string title_ = "", bool uservariable_ = true, bool is_builtin = false);	
 	~Variable(void);
 
 	/**
@@ -75,6 +75,11 @@ class Variable {
 	* Tells if the variable is editable for the end user.
 	*/			
 	bool isUserVariable(void);
+	bool hasChanged();
+	bool setUserVariable(bool is_user_var);
+	bool setChanged(bool has_changed);
+	bool isBuiltinVariable();
+
 };
 
 #endif

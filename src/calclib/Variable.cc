@@ -12,7 +12,7 @@
 #include "Variable.h"
 #include "util.h"
 
-Variable::Variable(Calculator *calc_, string cat_, string name_, Manager *mngr_, string title_, bool uservariable_) : buservariable(uservariable_) {
+Variable::Variable(Calculator *calc_, string cat_, string name_, Manager *mngr_, string title_, bool uservariable_, bool is_builtin) : b_user(uservariable_), b_builtin(is_builtin) {
 	calc = calc_;
 	remove_blank_ends(name_);
 	remove_blank_ends(cat_);
@@ -22,8 +22,9 @@ Variable::Variable(Calculator *calc_, string cat_, string name_, Manager *mngr_,
 	scat = cat_;
 	mngr = mngr_;
 	mngr->ref();
+	b_changed = false;
 }
-Variable::Variable(Calculator *calc_, string cat_, string name_, long double value_, string title_, bool uservariable_) : buservariable(uservariable_) {
+Variable::Variable(Calculator *calc_, string cat_, string name_, long double value_, string title_, bool uservariable_, bool is_builtin) : b_user(uservariable_), b_builtin(is_builtin) {
 	calc = calc_;
 	remove_blank_ends(name_);
 	remove_blank_ends(cat_);
@@ -32,6 +33,7 @@ Variable::Variable(Calculator *calc_, string cat_, string name_, long double val
 	stitle = title_;
 	scat = cat_;
 	mngr = new Manager(calc, value_);
+	b_changed = false;
 }
 Variable::~Variable(void) {
 	if(mngr) mngr->unref();
@@ -42,11 +44,13 @@ string Variable::title(void) {
 void Variable::title(string title_) {
 	remove_blank_ends(title_);
 	stitle = title_;
+	b_changed = true;
 }
 void Variable::set(Manager *mngr_) {
 	if(mngr) mngr->unref();
 	mngr = mngr_;
 	mngr->ref();
+	b_changed = true;
 }
 Manager *Variable::get(void) {
 	return mngr;
@@ -55,6 +59,7 @@ void Variable::name(string name_, bool force) {
 	remove_blank_ends(name_);
 	if(name_ != sname) {
 		sname = calc->getName(name_, (void*) this, force);
+		b_changed = true;
 	}
 	calc->variableNameChanged(this);
 }
@@ -65,6 +70,7 @@ void Variable::value(long double value_) {
 	Manager *mngr_ = new Manager(calc, value_);
 	set(mngr_);
 	mngr_->unref();
+	b_changed = true;
 }
 string Variable::category(void) {
 	return scat;
@@ -74,5 +80,17 @@ void Variable::category(string cat_) {
 	scat = cat_;
 }
 bool Variable::isUserVariable() {
-	return buservariable;
+	return b_user;
+}
+bool Variable::isBuiltinVariable() {
+	return b_builtin;
+}
+bool Variable::hasChanged() {
+	return b_changed;
+}
+bool Variable::setUserVariable(bool is_user_var) {
+	b_user = is_user_var;
+}
+bool Variable::setChanged(bool has_changed) {
+	b_changed = has_changed;
 }

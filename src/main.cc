@@ -71,14 +71,14 @@ int main (int argc, char **argv) {
 
 	//load global definitions
 	gstr = g_build_filename(PACKAGE_DATA_DIR, PACKAGE, "qalculate.cfg", NULL);
-	if(load_global_defs && !calc->load(gstr)) {
+	if(load_global_defs && !calc->load(gstr, false)) {
 		g_print(_("%s not found!\n"), gstr);
 	}
 	g_free(gstr);
 
 	//load local definitions
 	gstr = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate.cfg", NULL);
-	calc->load(gstr);
+	calc->load(gstr, true);
 	g_free(gstr);
 
 	mngr = new Manager(calc);

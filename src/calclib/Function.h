@@ -24,6 +24,7 @@ class Function {
 	int max_argc;
 	vector<string> default_values;
 	string sname, stitle, sdescr, scat;
+	bool b_user, b_changed;
 	bool bpriv;
 	vector<string> sargs;
 	vector<Manager*> vargs;
@@ -58,6 +59,10 @@ class Function {
 	void addArgName(string name_);
 	bool setArgName(string name_, int index);
 	virtual bool isUserFunction(void);	
+	virtual bool isBuiltinFunction(void);		
+	virtual bool hasChanged(void);
+	virtual void setUserFunction(bool is_user_function);	
+	virtual void setChanged(bool has_changed);	
 	int stringArgs(const string &str);		
 	void setDefaultValue(int arg_, string value_);
 	string getDefaultValue(int arg_);	
@@ -68,11 +73,11 @@ class UserFunction : public Function {
   protected:
 	string eq, eq_calc;	
   public:
-	UserFunction(Calculator *calc_, string cat_, string name_, string eq_, int argc_ = -1, string title_ = "", string descr_ = "", int max_argc_ = -1);
+	UserFunction(Calculator *calc_, string cat_, string name_, string eq_, bool is_user_function = true, int argc_ = -1, string title_ = "", string descr_ = "", int max_argc_ = -1);
 	string equation(void);
 	Manager *calculate(const string &argv);	
 	void equation(string new_eq, int argc_ = -1, int max_argc_ = -1);	
-	bool isUserFunction(void);
+	bool isBuiltinFunction(void);
 };
 
 #endif

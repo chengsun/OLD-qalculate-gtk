@@ -115,7 +115,7 @@ class Calculator {
 	bool unitIsUsedByOtherUnits(Unit *u);	
 	string getName(string name = "", void *object = NULL, bool force = false, bool always_append = false);
 	string getUnitName(string name = "", Unit *object = NULL, bool force = false, bool always_append = false);	
-	bool load(const char* file_name);
+	bool load(const char* file_name, bool is_user_defs = true);
 	void addPrefix(const string &ntmp, long double value);
 	bool getPrefix(const char *str, long double *value); 
 	bool getPrefix(const string &str, long double *value); 	

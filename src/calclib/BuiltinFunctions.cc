@@ -15,6 +15,7 @@ IFFunction::IFFunction(Calculator *calc_) : Function(calc_, "Logical", "if", 3, 
 	addArgName("Condition (use <, <=, =, <>, => or >)");
 	addArgName("Value if condition met");	
 	addArgName("Value if condition NOT met");		
+	setChanged(false);	
 }
 Manager *IFFunction::calculate(const string &argv) {
 	Manager *mngr = NULL;
@@ -81,6 +82,7 @@ Manager *IFFunction::calculate(const string &argv) {
 GCDFunction::GCDFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "gcd", 2, "Greatest Common Divisor") {
 	addArgName("Number 1");
 	addArgName("Number 2");	
+	setChanged(false);
 }
 void GCDFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], vargs[1], NULL);
@@ -90,6 +92,7 @@ void GCDFunction::calculate2(Manager *mngr) {
 DifferentiateFunction::DifferentiateFunction(Calculator *calc_) : Function(calc_, "Experimental", "differentiate", 2, "Differentiate") {
 	addArgName("Expression");
 	addArgName("With respect to");	
+	setChanged(false);	
 }
 Manager *DifferentiateFunction::calculate(const string &argv) {
 	calc->error(true, _("%s() is an experimental unfinished function!"), name().c_str(), NULL);
@@ -107,6 +110,7 @@ Manager *DifferentiateFunction::calculate(const string &argv) {
 
 AbsFunction::AbsFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "abs", 1, "Absolute Value") {
 	addArgName("Number");
+	setChanged(false);	
 }
 void AbsFunction::calculate2(Manager *mngr) {
 	//fabsl(vargs[0]->value());
@@ -117,6 +121,7 @@ void AbsFunction::calculate2(Manager *mngr) {
 }
 CeilFunction::CeilFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "ceil", 1, "Round upwards") {
 	addArgName("Number");
+	setChanged(false);	
 }
 void CeilFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
@@ -124,6 +129,7 @@ void CeilFunction::calculate2(Manager *mngr) {
 }
 FloorFunction::FloorFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "floor", 1, "Round downwards") {
 	addArgName("Number");
+	setChanged(false);	
 }
 void FloorFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
@@ -131,6 +137,7 @@ void FloorFunction::calculate2(Manager *mngr) {
 }
 TruncFunction::TruncFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "trunc", 1, "Round towards zero") {
 	addArgName("Number");
+	setChanged(false);	
 }
 void TruncFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
@@ -138,6 +145,7 @@ void TruncFunction::calculate2(Manager *mngr) {
 }
 RoundFunction::RoundFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "round", 1, "Round") {
 	addArgName("Number");
+	setChanged(false);	
 }
 void RoundFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
@@ -146,6 +154,7 @@ void RoundFunction::calculate2(Manager *mngr) {
 RemFunction::RemFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "rem", 2, "Reminder (rem)") {
 	addArgName("Numerator");
 	addArgName("Denominator");
+	setChanged(false);	
 }
 void RemFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], vargs[1], NULL);
@@ -162,6 +171,7 @@ void RemFunction::calculate2(Manager *mngr) {
 ModFunction::ModFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "mod", 2, "Reminder (mod)") {
 	addArgName("Numerator");
 	addArgName("Denominator");
+	setChanged(false);	
 }
 void ModFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], vargs[1], NULL);
@@ -280,6 +290,7 @@ void Exp2Function::calculate2(Manager *mngr) {
 }
 SqrtFunction::SqrtFunction(Calculator *calc_) : Function(calc_, "Exponents and Logarithms", "sqrt", 1, "Square Root") {
 	addArgName("Non-negative number");
+	setChanged(false);	
 }
 void SqrtFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->type() == VALUE_MANAGER) {
@@ -307,6 +318,7 @@ void CbrtFunction::calculate2(Manager *mngr) {
 HypotFunction::HypotFunction(Calculator *calc_) : Function(calc_, "Geometry", "hypot", 2, "Hypotenuse") {
 	addArgName("Side 1 of triangle");
 	addArgName("Side 2 of triangle");
+	setChanged(false);
 }
 void HypotFunction::calculate2(Manager *mngr) {
 	mngr->value(hypotl(vargs[0]->value(), vargs[1]->value()));
@@ -477,6 +489,7 @@ Manager *RandomFunction::calculate(const string &eq) {
 BASEFunction::BASEFunction(Calculator *calc_) : Function(calc_, "General", "BASE", 2, "Number Base", "Returns a decimal integer from a number of specified base between 2 and 36") {
 	addArgName("Number");
 	addArgName("Base");	
+	setChanged(false);
 }
 Manager *BASEFunction::calculate(const string &eq) {
 	int itmp = stringArgs(eq);
@@ -504,6 +517,7 @@ Manager *BASEFunction::calculate(const string &eq) {
 }
 BINFunction::BINFunction(Calculator *calc_) : Function(calc_, "General", "BIN", 1, "Binary", "Returns a decimal integer from a binary number") {
 	addArgName("Binary number");
+	setChanged(false);
 }
 Manager *BINFunction::calculate(const string &eq) {
 	Manager *mngr = new Manager(calc);
@@ -512,6 +526,7 @@ Manager *BINFunction::calculate(const string &eq) {
 }
 OCTFunction::OCTFunction(Calculator *calc_) : Function(calc_, "General", "OCT", 1, "Octal", "Returns a decimal integer from an octal number") {
 	addArgName("Octal number");
+	setChanged(false);
 }
 Manager *OCTFunction::calculate(const string &eq) {
 	Manager *mngr = new Manager(calc);
@@ -520,6 +535,7 @@ Manager *OCTFunction::calculate(const string &eq) {
 }
 HEXFunction::HEXFunction(Calculator *calc_) : Function(calc_, "General", "HEX", 1, "Hexadecimal", "Returns a decimal value from a hexadecimal number") {
 	addArgName("Hexadecimal number");
+	setChanged(false);
 }
 Manager *HEXFunction::calculate(const string &eq) {
 	string stmp;

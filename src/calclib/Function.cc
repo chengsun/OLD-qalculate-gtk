@@ -14,6 +14,7 @@
 
 Function::Function(Calculator *calc_, string cat_, string name_, int argc_, string title_, string descr_, bool priviliged_, int max_argc_) {
 	calc = calc_;
+	b_user = false;
 	bpriv = priviliged_;
 	remove_blank_ends(cat_);
 	remove_blank_ends(title_);
@@ -32,6 +33,7 @@ Function::Function(Calculator *calc_, string cat_, string name_, int argc_, stri
 		}
 	}
 	sargs.clear();
+	b_changed = false;
 }
 Function::~Function(void) {}
 bool Function::priviliged(void) {
@@ -52,6 +54,7 @@ string Function::name(void) {
 void Function::name(string new_name, bool force) {
 	remove_blank_ends(new_name);
 	if(new_name != sname) {
+		b_changed = true;
 		sname = calc->getName(new_name, (void*) this, force);
 	}
 	calc->functionNameChanged(this, bpriv);
@@ -138,6 +141,7 @@ string Function::category(void) {
 void Function::category(string cat_) {
 	remove_blank_ends(cat_);
 	scat = cat_;
+	b_changed = true;
 }
 string Function::description(void) {
 	return sdescr;
@@ -145,6 +149,7 @@ string Function::description(void) {
 void Function::description(string descr_) {
 	remove_blank_ends(descr_);
 	sdescr = descr_;
+	b_changed = true;
 }
 string Function::title(void) {
 	return stitle;
@@ -152,6 +157,7 @@ string Function::title(void) {
 void Function::title(string title_) {
 	remove_blank_ends(title_);
 	stitle = title_;
+	b_changed = true;
 }
 string Function::argName(int index) {
 	if(index > 0 && index <= sargs.size())
@@ -160,13 +166,16 @@ string Function::argName(int index) {
 }
 void Function::clearArgNames(void) {
 	sargs.clear();
+	b_changed = true;
 }
 void Function::addArgName(string name_) {
 	sargs.push_back(name_);
+	b_changed = true;
 }
 bool Function::setArgName(string name_, int index) {
 	if(index > 0 && index <= sargs.size()) {
 		sargs[index - 1] = name_;
+		b_changed = true;
 		return true;
 	}
 	return false;
@@ -227,8 +236,20 @@ void Function::calculate2(Manager *mngr) {
 long double Function::calculate3() {
 	return 0;
 }
+bool Function::isBuiltinFunction(void) {
+	return true;
+}
 bool Function::isUserFunction(void) {
-	return false;
+	return b_user;
+}
+bool Function::hasChanged(void) {
+	return b_changed;
+}
+void Function::setUserFunction(bool is_user_function) {
+	b_user = is_user_function;
+}
+void Function::setChanged(bool has_changed) {
+	b_changed = has_changed;
 }
 void Function::setDefaultValue(int arg_, string value_) {
 	if(arg_ > argc && arg_ <= max_argc && default_values.size() >= arg_ - argc) {
@@ -242,8 +263,10 @@ string Function::getDefaultValue(int arg_) {
 	return "";
 }
 
-UserFunction::UserFunction(Calculator *calc_, string cat_, string name_, string eq_, int argc_, string title_, string descr_, int max_argc_) : Function(calc_, cat_, name_, argc_, title_, descr_, false, max_argc_) {
+UserFunction::UserFunction(Calculator *calc_, string cat_, string name_, string eq_, bool is_user_function, int argc_, string title_, string descr_, int max_argc_) : Function(calc_, cat_, name_, argc_, title_, descr_, false, max_argc_) {
+	b_user = is_user_function;
 	equation(eq_, argc_, max_argc_);
+	b_changed = false;	
 }
 string UserFunction::equation(void) {
 	return eq;
@@ -342,6 +365,7 @@ Manager *UserFunction::calculate(const string &argv) {
 	}
 }
 void UserFunction::equation(string new_eq, int argc_, int max_argc_) {
+	b_changed = true;
 	eq = new_eq;
 	default_values.clear();
 	if(argc_ < 0) {
@@ -404,6 +428,6 @@ void UserFunction::equation(string new_eq, int argc_, int max_argc_) {
 	argc = argc_;
 	max_argc = max_argc_;	
 }
-bool UserFunction::isUserFunction(void) {
-	return true;
+bool UserFunction::isBuiltinFunction(void) {
+	return false;
 }
