@@ -5,6 +5,9 @@
 config_DATA = qalculate.cfg
 configdir = $(datadir)/$(PACKAGE)
 
+glade_DATA = qalculate.glade
+gladedir = $(datadir)/$(PACKAGE)/glade
+
 # this is for gnome and kde 3.2+
 
 desktop_IN_FILES = qalculate.desktop.in
@@ -17,6 +20,7 @@ applnk_DATA = $(desktop_DATA)
 applnkdir = $(datadir)/applnk/Utilities
 
 EXTRA_DIST = \
-	$(config_DATA)	\
-	$(desktop_IN_FILES)
+	$(config_DATA)		\
+	$(desktop_IN_FILES)	\
+	$(glade_DATA)
 

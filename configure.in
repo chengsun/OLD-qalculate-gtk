@@ -43,6 +43,7 @@ dnl  --------------------------------
 
 PKG_CHECK_MODULES(PACKAGE, [
 	gtk+-2.0 >= 1.3.13
+	libglade-2.0
 	])
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)

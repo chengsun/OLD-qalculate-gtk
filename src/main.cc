@@ -15,6 +15,7 @@
 #endif
 
 #include <gtk/gtk.h>
+#include <glade/glade.h>
 
 #include "support.h"
 #include "interface.h"
@@ -35,6 +36,7 @@ string selected_unit_category;
 string selected_unit, selected_to_unit;
 bool load_global_defs;
 GtkWidget *omToUnit_menu;
+GladeXML * glade_xml;
 
 int main (int argc, char **argv) {
 
@@ -47,6 +49,21 @@ int main (int argc, char **argv) {
 #endif
 
 	gtk_init (&argc, &argv);
+	glade_init ();
+
+	/* load the glade file into the object and die if that doesn't work */
+	gchar *gstr = g_build_filename (
+			PACKAGE_DATA_DIR,
+			PACKAGE,
+			"glade",
+			"qalculate.glade",
+			NULL);
+	glade_xml = glade_xml_new (
+			gstr,
+			NULL,
+			NULL);
+	g_assert (glade_xml != NULL);
+	g_free (gstr);
 	
 	//create the almighty Calculator object
 	calc = new Calculator();
@@ -55,7 +72,7 @@ int main (int argc, char **argv) {
 	load_preferences();
 
 	//load global definitions
-	gchar *gstr = g_build_filename(PACKAGE_DATA_DIR, PACKAGE, "qalculate.cfg", NULL);
+	gstr = g_build_filename(PACKAGE_DATA_DIR, PACKAGE, "qalculate.cfg", NULL);
 	if(load_global_defs && !calc->load(gstr)) {
 		g_print("%s not found!\n", gstr);
 	}

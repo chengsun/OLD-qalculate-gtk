@@ -22,12 +22,16 @@
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
+#include <glade/glade.h>
 
 #include "support.h"
 #include "callbacks.h"
 #include "interface.h"
 #include "main.h"
 #include "Calculator.h"
+
+/* from main.cc */
+extern GladeXML *glade_xml;
 
 GtkWidget *wFunctions;
 GtkWidget *tFunctionCategories;
@@ -100,7 +104,6 @@ GtkTreeViewColumn *column;
 GtkTreeSelection *selection;
 
 
-GtkWidget *window;
 GtkWidget *tableT;
 GtkWidget *bClose;
 GtkWidget *history_scrolled;
@@ -166,6 +169,7 @@ extern bool use_short_units, save_mode_on_exit, save_defs_on_exit, load_global_d
 
 GtkWidget*
 create_window (void) {
+	GtkWidget *window;
 	GtkWidget *tab1label;
 	GtkWidget *vbox;
 	GtkWidget *vbox1;
@@ -185,8 +189,7 @@ create_window (void) {
 
 	accel_group = gtk_accel_group_new ();
 
-	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title (GTK_WINDOW (window), _("Qalculate!"));
+	window = glade_xml_get_widget (glade_xml, "main_window");
 
 	menu_e = gtk_menu_new();
 	gtk_widget_show (menu_e);
@@ -722,6 +725,7 @@ create_window (void) {
 	GTK_WIDGET_SET_FLAGS(expression, GTK_CAN_DEFAULT);
 	gtk_widget_grab_default(expression);
 
+	g_assert (GTK_IS_WIDGET (window));
 	return window;
 }
 

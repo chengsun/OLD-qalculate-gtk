@@ -1,5 +1,15 @@
 2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
 
+	* configure.in: added libglade dependency
+	* data/Makefile.am: added glade file
+	* data/qalculate.glade: user interface definition
+	* src/callbacks.cc: removed the extern GtkWidget *window
+	* src/interface.cc: started migration to glade
+	* src/interface.h: started migration to glade
+	* src/main.cc: started migration to glade
+
+2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
+
 	* .cvsignore: cvs update has less warnings now
 	* configure.in: added de to ALL_LINGUAS
 	* data/qalculate.desktop.in: fixed the starter

@@ -9,6 +9,9 @@
     (at your option) any later version.
 */
 
+#ifndef INTERFACE_H
+#define INTERFACE_H
+
 #define MENU_ITEM_WITH_INT(x,y,z)	item = gtk_menu_item_new_with_label(x); gtk_widget_show (item); gtk_signal_connect (GTK_OBJECT (item), "activate", GTK_SIGNAL_FUNC(y), GINT_TO_POINTER (z)); gtk_menu_shell_append(GTK_MENU_SHELL(sub), item);
 #define MENU_ITEM_WITH_STRING(x,y,z)	item = gtk_menu_item_new_with_label(x); gtk_widget_show (item); gtk_signal_connect (GTK_OBJECT (item), "activate", GTK_SIGNAL_FUNC(y), (gpointer) z); gtk_menu_shell_append(GTK_MENU_SHELL(sub), item);
 #define MENU_ITEM_WITH_POINTER(x,y,z)	item = gtk_menu_item_new_with_label(x); gtk_widget_show (item); gtk_signal_connect (GTK_OBJECT (item), "activate", GTK_SIGNAL_FUNC(y), (gpointer) z); gtk_menu_shell_append(GTK_MENU_SHELL(sub), item);
@@ -36,9 +39,6 @@ enum {
 	COMPOSITE_UNIT
 };
 
-#ifndef INTERFACE_H
-#define INTERFACE_H
-
 GtkWidget* create_window (void);
 GtkWidget* create_wFunctions (void);
 GtkWidget* create_wVariables (void);
@@ -47,4 +47,4 @@ GtkWidget* create_wPreferences (void);
 GtkWidget* create_wEditUnit (void);
 GtkWidget *create_InfoWidget(const gchar *text);
 
-#endif
+#endif /* INTERFACE_H */

@@ -16,11 +16,14 @@
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <sys/stat.h>
+#include <glade/glade.h>
 
 #include "support.h"
 #include "callbacks.h"
 #include "interface.h"
 #include "main.h"
+
+extern GladeXML *glade_xml;
 
 extern GtkWidget *bEditFunction;
 extern GtkWidget *bDeleteFunction;
@@ -39,7 +42,6 @@ extern GtkWidget *omToUnit;
 extern GtkWidget *lFunctionDescription;
 extern GtkWidget *history_scrolled;
 extern GtkWidget *tabs;
-extern GtkWidget *window;
 extern GtkWidget *history;
 extern GtkWidget *expression;
 extern GtkWidget *result;
@@ -205,11 +207,31 @@ void display_errors() {
 		gtk_text_buffer_place_cursor(tb, &iter);
 		if(!calc->nextError()) break;
 	}
-	if(!str.empty()) {
+	if(!str.empty())
+	{
 		if(critical)
-			edialog = gtk_message_dialog_new(GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, str.c_str());
+		{
+			edialog = gtk_message_dialog_new(
+					GTK_WINDOW(
+						glade_xml_get_widget (glade_xml, "main_window")
+					),
+					GTK_DIALOG_DESTROY_WITH_PARENT,
+					GTK_MESSAGE_ERROR,
+					GTK_BUTTONS_CLOSE,
+					str.c_str());
+		}
 		else
-			edialog = gtk_message_dialog_new(GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_WARNING, GTK_BUTTONS_CLOSE, str.c_str());
+		{
+			edialog = gtk_message_dialog_new(
+					GTK_WINDOW(
+						glade_xml_get_widget (glade_xml, "main_window")
+					),
+					GTK_DIALOG_DESTROY_WITH_PARENT,
+					GTK_MESSAGE_WARNING,
+					GTK_BUTTONS_CLOSE,
+					str.c_str());
+		}
+		
 		gtk_dialog_run(GTK_DIALOG(edialog));
 		gtk_widget_destroy(edialog);
 	}
@@ -986,8 +1008,11 @@ on_expression_activate                 (GtkEntry        *entry,
 */
 void
 on_bHistory_clicked                    (GtkButton       *button,
-                                        gpointer         user_data) {
+                                        gpointer         user_data)
+{
+	GtkWidget	* window = glade_xml_get_widget (glade_xml, "main_window");
 	gint w = 0, h = 0, hh = 150;
+	
 	if(GTK_WIDGET_VISIBLE(tabs)) {
 		hh = tabs->allocation.height;
 		gtk_widget_hide(tabs);
@@ -1087,7 +1112,9 @@ on_bEXE_clicked                        (GtkButton       *button,
 /*
 	calculate position of expression menu
 */
-void menu_e_posfunc(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data) {
+void menu_e_posfunc(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data)
+{
+	GtkWidget *window = glade_xml_get_widget (glade_xml, "main_window");
 	gint root_x = 0, root_y = 0, size_x = 0, size_y = 0;
 	GdkRectangle rect;
 	gdk_window_get_frame_extents(window->window, &rect);
@@ -1101,7 +1128,9 @@ void menu_e_posfunc(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer
 /*
 	calculate position of result menu
 */
-void menu_r_posfunc(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data) {
+void menu_r_posfunc(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data)
+{
+	GtkWidget *window = glade_xml_get_widget (glade_xml, "main_window");
 	gint root_x = 0, root_y = 0, size_x = 0, size_y = 0;
 	GdkRectangle rect;
 	gdk_window_get_frame_extents(window->window, &rect);
@@ -1327,7 +1356,9 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 */
 void insert_function(GtkMenuItem *w, gpointer user_data) {
 	gchar *name = (gchar*) user_data;
-	insert_function(calc->getFunction(name), window);
+	insert_function(
+			calc->getFunction(name),
+			glade_xml_get_widget (glade_xml, "main_window"));
 }
 
 /*
@@ -1697,24 +1728,40 @@ run_function_edit_dialog:
 /*
 	"New function" menu item selected
 */
-void new_function(GtkMenuItem *w, gpointer user_data) {
-	edit_function("", NULL, window);
+void new_function(GtkMenuItem *w, gpointer user_data)
+{
+	edit_function(
+			"",
+			NULL,
+			glade_xml_get_widget (glade_xml, "main_window"));
 }
 /*
 	"New unit" menu item selected
 */
-void new_unit(GtkMenuItem *w, gpointer user_data) {
-	edit_unit("", NULL, window);
+void new_unit(GtkMenuItem *w, gpointer user_data)
+{
+	edit_unit(
+			"",
+			NULL,
+			glade_xml_get_widget (glade_xml, "main_window"));
 }
 
 /*
 	a unit selected in result menu, convert result
 */
-void convert_to_unit(GtkMenuItem *w, gpointer user_data) {
+void convert_to_unit(GtkMenuItem *w, gpointer user_data)
+{
 	GtkWidget *edialog;
 	Unit *u = (Unit*) user_data;
 	if(!u) {
-		edialog = gtk_message_dialog_new(GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "Unit does not exist");
+		edialog = gtk_message_dialog_new(
+				GTK_WINDOW(
+					glade_xml_get_widget (glade_xml, "main_window")
+				),
+				GTK_DIALOG_DESTROY_WITH_PARENT,
+				GTK_MESSAGE_ERROR,
+				GTK_BUTTONS_CLOSE,
+				"Unit does not exist");
 		gtk_dialog_run(GTK_DIALOG(edialog));
 		gtk_widget_destroy(edialog);
 	}
@@ -1724,8 +1771,19 @@ void convert_to_unit(GtkMenuItem *w, gpointer user_data) {
 	gtk_widget_grab_focus(expression);
 }
 
-void convert_to_custom_unit(GtkMenuItem *w, gpointer user_data) {
-	GtkWidget *dialog = gtk_dialog_new_with_buttons("Convert to custom unit", GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL);
+void convert_to_custom_unit(GtkMenuItem *w, gpointer user_data)
+{
+	GtkWidget *dialog = gtk_dialog_new_with_buttons(
+			"Convert to custom unit",
+			GTK_WINDOW(
+				glade_xml_get_widget (glade_xml, "main_window")
+			),
+			GTK_DIALOG_DESTROY_WITH_PARENT,
+			GTK_STOCK_CANCEL,
+			GTK_RESPONSE_REJECT,
+			GTK_STOCK_OK,
+			GTK_RESPONSE_ACCEPT,
+			NULL);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	GtkWidget *vbox = gtk_vbox_new(false, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -1875,15 +1933,25 @@ run_variable_edit_dialog:
 /*
 	add a new variable (from menu) with the value of result
 */
-void add_as_variable(GtkMenuItem *w, gpointer user_data) {
-	edit_variable("Temporary", NULL, mngr, window);
+void add_as_variable(GtkMenuItem *w, gpointer user_data)
+{
+	edit_variable(
+			"Temporary",
+			NULL,
+			mngr,
+			glade_xml_get_widget (glade_xml, "main_window"));
 }
 
 /*
 	add a new variable (from menu)
 */
-void new_variable(GtkMenuItem *w, gpointer user_data) {
-	edit_variable("Temporary", NULL, NULL, window);
+void new_variable(GtkMenuItem *w, gpointer user_data)
+{
+	edit_variable(
+			"Temporary",
+			NULL,
+			NULL,
+			glade_xml_get_widget (glade_xml, "main_window"));
 }
 
 /*
@@ -1917,8 +1985,17 @@ void on_deci_fixed_toggled(GtkToggleButton *w, gpointer user_data) {
 /*
 	"Precision" menu item selected -- open dialog for change of precision in result
 */
-void select_precision(GtkMenuItem *w, gpointer user_data) {
-	GtkWidget *dialog = gtk_dialog_new_with_buttons("Precision", GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CLOSE, GTK_RESPONSE_ACCEPT, NULL);
+void select_precision(GtkMenuItem *w, gpointer user_data)
+{
+	GtkWidget *dialog = gtk_dialog_new_with_buttons(
+			"Precision",
+			GTK_WINDOW(
+				glade_xml_get_widget (glade_xml, "main_window")
+			),
+			GTK_DIALOG_DESTROY_WITH_PARENT,
+			GTK_STOCK_CLOSE,
+			GTK_RESPONSE_ACCEPT,
+			NULL);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	GtkWidget *label1 = gtk_label_new("Precision");
 	GtkWidget *spin1 = gtk_spin_button_new_with_range(1, 25, 1);
@@ -1941,8 +2018,17 @@ void select_precision(GtkMenuItem *w, gpointer user_data) {
 /*
 	"Decimals" menu item selected -- open dialog for change of number of displayed decimals
 */
-void select_decimals(GtkMenuItem *w, gpointer user_data) {
-	GtkWidget *dialog = gtk_dialog_new_with_buttons("Decimals", GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CLOSE, GTK_RESPONSE_ACCEPT, NULL);
+void select_decimals(GtkMenuItem *w, gpointer user_data)
+{
+	GtkWidget *dialog = gtk_dialog_new_with_buttons(
+			"Decimals",
+			GTK_WINDOW(
+				glade_xml_get_widget (glade_xml, "main_window")
+			),
+			GTK_DIALOG_DESTROY_WITH_PARENT,
+			GTK_STOCK_CLOSE,
+			GTK_RESPONSE_ACCEPT,
+			NULL);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	GtkWidget *label1 = gtk_label_new("Decimals");
 	GtkWidget *spin1 = gtk_spin_button_new_with_range(0, 25, 1);
@@ -2634,7 +2720,15 @@ void save_defs() {
 	g_free(gstr);
 	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate.cfg", NULL);
 	if(!calc->save(gstr2)) {
-		GtkWidget *edialog = gtk_message_dialog_new(GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "Couldn't write definitions to\n%s", gstr2);
+		GtkWidget *edialog = gtk_message_dialog_new(
+				GTK_WINDOW(
+					glade_xml_get_widget (glade_xml, "main_window")
+				),
+				GTK_DIALOG_DESTROY_WITH_PARENT,
+				GTK_MESSAGE_ERROR,
+				GTK_BUTTONS_CLOSE,
+				"Couldn't write definitions to\n%s",
+				gstr2);
 		gtk_dialog_run(GTK_DIALOG(edialog));
 		gtk_widget_destroy(edialog);
 	}
@@ -2741,7 +2835,8 @@ void load_preferences() {
 	save preferences to ~/.qalculate/qalculate-gtk.cfg
 	set mode to true to save current calculator mode
 */
-void save_preferences(bool mode) {
+void save_preferences(bool mode)
+{
 	FILE *file = NULL;
 	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", NULL);
 	mkdir(gstr, S_IRWXU);
@@ -2749,7 +2844,15 @@ void save_preferences(bool mode) {
 	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate-gtk.cfg", NULL);
 	file = fopen(gstr2, "w+");
 	if(file == NULL) {
-		GtkWidget *edialog = gtk_message_dialog_new(GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "Couldn't write preferences to\n%s", gstr2);
+		GtkWidget *edialog = gtk_message_dialog_new(
+				GTK_WINDOW(
+					glade_xml_get_widget (glade_xml, "main_window")
+				),
+				GTK_DIALOG_DESTROY_WITH_PARENT,
+				GTK_MESSAGE_ERROR,
+				GTK_BUTTONS_CLOSE,
+				"Couldn't write preferences to\n%s",
+				gstr2);
 		gtk_dialog_run(GTK_DIALOG(edialog));
 		gtk_widget_destroy(edialog);
 		g_free(gstr2);
