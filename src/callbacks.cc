@@ -1035,16 +1035,18 @@ void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpoin
 	bool b = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tUnits_store), &iter2);
 	Unit *u;
 	while(b) {
-		gtk_tree_model_get(GTK_TREE_MODEL(tUnits_store), &iter2, UNITS_POINTER_COLUMN, &u, -1);
+		gchar *gstr;
+		gtk_tree_model_get(GTK_TREE_MODEL(tUnits_store), &iter2, UNITS_TITLE_COLUMN, &gstr, UNITS_POINTER_COLUMN, &u, -1);
 		if(!selected_to_unit)
 			selected_to_unit = u;
 		if(u) {
-			MENU_ITEM_WITH_POINTER(u->plural().c_str(), on_omToUnit_menu_activate, u)
+			MENU_ITEM_WITH_POINTER(gstr, on_omToUnit_menu_activate, u)
 			if(selected_to_unit == u)
 				h = i;
 		}
 		b = gtk_tree_model_iter_next(GTK_TREE_MODEL(tUnits_store), &iter2);
 		i++;
+		g_free(gstr);
 	}
 	//if no items were added to the menu, reset selected unit
 	if(i == 0)

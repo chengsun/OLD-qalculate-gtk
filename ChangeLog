@@ -1,5 +1,6 @@
 2003-08-17  Niklas Knutsson  <nq@altern.org>
 
+	* Make units dialog a bit nicer
 	* More energy and pressure units
 	* Some constants
 	* Write variables to file with maximum precision
