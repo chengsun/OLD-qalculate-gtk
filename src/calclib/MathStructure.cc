@@ -3672,11 +3672,11 @@ int namelen(const MathStructure &mstruct, const PrintOptions &po, const Internal
 	const string *str;
 	switch(mstruct.type()) {
 		case STRUCT_FUNCTION: {
-			str = &mstruct.function()->name(po.use_unicode_signs);
+			str = &mstruct.function()->preferredDisplayName(po.abbreviate_units, po.use_unicode_signs).name;
 			break;
 		}
 		case STRUCT_VARIABLE:  {
-			str = &mstruct.variable()->name(po.use_unicode_signs);
+			str = &mstruct.variable()->preferredDisplayName(po.abbreviate_units, po.use_unicode_signs).name;
 			break;
 		}
 		case STRUCT_SYMBOLIC:  {
@@ -3684,13 +3684,7 @@ int namelen(const MathStructure &mstruct, const PrintOptions &po, const Internal
 			break;
 		}
 		case STRUCT_UNIT:  {
-			if(po.abbreviate_units) {
-				str = &mstruct.unit()->shortName(po.use_unicode_signs);
-			} else if(mstruct.isPlural()) {
-				str = &mstruct.unit()->plural(true, po.use_unicode_signs);
-			} else {
-				str = &mstruct.unit()->singular(true, po.use_unicode_signs);
-			}
+			str = &mstruct.unit()->preferredDisplayName(po.abbreviate_units, po.use_unicode_signs, mstruct.isPlural()).name;
 			break;
 		}
 		default: {return 0;}
@@ -4170,30 +4164,18 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			break;
 		}
 		case STRUCT_UNIT: {
-			if(po.abbreviate_units) {
-				if(o_prefix) {
-					print_str = o_prefix->shortName(true, po.use_unicode_signs);
-				}
-				print_str += o_unit->shortName(po.use_unicode_signs);
-			} else {
-				if(o_prefix && o_prefix) {
-					print_str = o_prefix->longName(true, po.use_unicode_signs);
-				}
-				if(b_plural) {
-					print_str += o_unit->plural(true, po.use_unicode_signs);
-				} else {
-					print_str += o_unit->singular(true, po.use_unicode_signs);
-				}
-			}
+			const ExpressionName *ename = &o_unit->preferredDisplayName(po.abbreviate_units, po.use_unicode_signs, b_plural);
+			if(o_prefix) print_str += o_prefix->name(po.abbreviate_units && ename->abbreviation, po.use_unicode_signs);
+			print_str += ename->name;
 			break;
 		}
 		case STRUCT_VARIABLE: {
-			print_str = o_variable->name(po.use_unicode_signs);
+			print_str = o_variable->preferredDisplayName(po.abbreviate_units, po.use_unicode_signs).name;
 			break;
 		}
 		case STRUCT_FUNCTION: {
 			ips_n.depth++;
-			print_str += o_function->name(po.use_unicode_signs);
+			print_str += o_function->preferredDisplayName(po.abbreviate_units, po.use_unicode_signs).name;
 			print_str += "(";
 			for(unsigned int i = 0; i < SIZE; i++) {
 				if(i > 0) {
@@ -5431,6 +5413,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 							APPEND(mtest1);
 							APPEND(mtest2);
 						}
+
 						childrenUpdated();
 						
 					} else {

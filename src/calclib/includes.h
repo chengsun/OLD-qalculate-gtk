@@ -60,6 +60,7 @@ using namespace std;
 static string empty_string;
 
 
+struct ExpressionName;
 class Calculator;
 class MathStructure;
 class Manager;
@@ -286,6 +287,7 @@ static const struct EvaluationOptions {
 
 extern MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one;
 extern EvaluationOptions no_evaluation;
+extern ExpressionName empty_expression_name;
 
 extern Calculator *calculator;
 

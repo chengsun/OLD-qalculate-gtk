@@ -13,14 +13,39 @@
 #include "Calculator.h"
 #include "util.h"
 
-ExpressionItem::ExpressionItem(string cat_, string name_, string title_, string descr_, bool is_local, bool is_builtin, bool is_active, string unicode_name) {
+ExpressionName::ExpressionName(string sname) : suffix(false), unicode(false), plural(false), reference(false), avoid_input(false) {
+	if(text_length_is_one(sname)) {
+		abbreviation = true;
+		case_sensitive = true;
+	} else {
+		abbreviation = false;
+		case_sensitive = false;
+	}
+}
+bool ExpressionName::operator == (const ExpressionName &ename) const {
+	return name == ename.name && abbreviation == ename.abbreviation && case_sensitive == ename.case_sensitive && suffix == ename.suffix && unicode == ename.unicode && plural == ename.plural && reference == ename.reference && avoid_input == ename.avoid_input;
+}
+bool ExpressionName::operator != (const ExpressionName &ename) const {
+	return name != ename.name || abbreviation != ename.abbreviation || case_sensitive != ename.case_sensitive || suffix != ename.suffix || unicode != ename.unicode || plural != ename.plural || reference != ename.reference || avoid_input != ename.avoid_input;
+}
+
+ExpressionItem::ExpressionItem(string cat_, string name_, string title_, string descr_, bool is_local, bool is_builtin, bool is_active) {
 	b_local = is_local;
 	b_builtin = is_builtin;
 	remove_blank_ends(name_);
 	remove_blank_ends(cat_);
 	remove_blank_ends(title_);
-	sname = name_;
-	uname = unicode_name;
+	if(!name_.empty()) {
+		names.resize(1);
+		names[0].name = name_;
+		names[0].unicode = false;
+		names[0].abbreviation = false;
+		names[0].case_sensitive = text_length_is_one(names[0].name);
+		names[0].suffix = false;
+		names[0].avoid_input = false;
+		names[0].reference = true;
+		names[0].plural = false;
+	}
 	stitle = title_;
 	scat = cat_;
 	sdescr = descr_;
@@ -49,8 +74,9 @@ void ExpressionItem::set(const ExpressionItem *item) {
 	b_changed = item->hasChanged();
 	b_approx = item->isApproximate();
 	b_active = item->isActive();
-	sname = item->name(false);
-	uname = item->unicodeName(false);
+	for(unsigned int i = 1; i <= item->countNames(); i++) {
+		names.push_back(item->getName(1));
+	}
 	stitle = item->title(false);
 	scat = item->category();
 	sdescr = item->description();
@@ -77,7 +103,7 @@ void ExpressionItem::setRegistered(bool is_registered) {
 }
 const string &ExpressionItem::title(bool return_name_if_no_title, bool use_unicode) const {
 	if(return_name_if_no_title && stitle.empty()) {
-		return name(use_unicode);
+		return preferredName(false, use_unicode).name;
 	}
 	return stitle;
 }
@@ -100,31 +126,206 @@ void ExpressionItem::setDescription(string descr_) {
 }
 void ExpressionItem::setName(string name_, bool force) {
 	remove_blank_ends(name_);
-	if(name_ != sname) {
-		sname = CALCULATOR->getName(name_, this, force);
-		b_changed = true;
+	int index = -1;
+	for(unsigned int i = 0; i < names.size(); i++) {
+		if(!names[i].unicode) index = i;
 	}
-	CALCULATOR->nameChanged(this);
-}
-void ExpressionItem::setUnicodeName(string name_, bool force) {
-	remove_blank_ends(name_);
-	if(name_ != uname) {
-		uname = CALCULATOR->getName(name_, this, force);
-		b_changed = true;
+	if(index < 0) {
+		names.insert(names.begin(), empty_expression_name);
+		index = 0;
 	}
-	CALCULATOR->nameChanged(this);
+	if(names[index].name != name_) {
+		if(b_registered) names[index].name = CALCULATOR->getName(name_, this, force);
+		else names[index].name = name_;
+		names[index].unicode = false;
+		names[index].abbreviation = false;
+		names[index].case_sensitive = text_length_is_one(names[index].name);
+		names[index].suffix = false;
+		names[index].avoid_input = false;
+		names[index].reference = true;
+		names[index].plural = false;
+		b_changed = true;
+		if(b_registered) CALCULATOR->nameChanged(this);
+	}
 }
 const string &ExpressionItem::name(bool use_unicode) const {
-	if(use_unicode && !uname.empty()) return uname;
-	return sname;
-}
-const string &ExpressionItem::unicodeName(bool return_name_if_no_unicode) const {
-	if(return_name_if_no_unicode && uname.empty()) return sname;
-	return uname;
+	for(unsigned int i = 0; i < names.size(); i++) {
+		if(names[i].unicode == use_unicode) {
+			return names[i].name;
+		}
+	}
+	if(names.size() > 0) return names[0].name;
+	return empty_string;
 }
 const string &ExpressionItem::referenceName() const {
-	return name();
+	for(unsigned int i = 0; i < names.size(); i++) {
+		if(names[i].reference) {
+			return names[i].name;
+		}
+	}
+	if(names.size() > 0) return names[0].name;
+	return empty_string;
 }
+
+const ExpressionName &ExpressionItem::preferredName(bool abbreviation, bool use_unicode, bool plural) const {
+	if(names.size() == 1) return names[0];
+	int index = -1;
+	for(unsigned int i = 0; i < names.size(); i++) {
+		if(names[i].abbreviation == abbreviation && names[i].unicode == use_unicode && names[i].plural == plural) return names[i];
+		if(index < 0) {
+			index = i;
+		} else if(!use_unicode && names[i].unicode != names[index].unicode) {
+			if(!names[i].unicode) index = i;
+		} else if(names[i].abbreviation != names[index].abbreviation) {
+			if(names[i].abbreviation == abbreviation) index = i;
+		} else if(names[i].plural != names[index].plural) {
+			if(names[i].plural == plural) index = i;
+		} else if(use_unicode && names[i].unicode != names[index].unicode) {
+			if(names[i].unicode) index = i;
+		}
+	}
+	if(index >= 0) return names[index];
+	return empty_expression_name;
+}
+const ExpressionName &ExpressionItem::preferredInputName(bool abbreviation, bool use_unicode, bool plural) const {
+	if(names.size() == 1) return names[0];
+	int index = -1;
+	for(unsigned int i = 0; i < names.size(); i++) {
+		if(names[i].abbreviation == abbreviation && names[i].unicode == use_unicode && names[i].plural == plural) return names[i];
+		if(index < 0) {
+			index = i;
+		} else if(!use_unicode && names[i].unicode != names[index].unicode) {
+			if(!names[i].unicode) index = i;
+		} else if(names[i].avoid_input != names[index].avoid_input) {
+			if(!names[i].avoid_input) index = i;
+		} else if(plural && names[i].plural != names[index].plural) {
+			if(names[i].plural) index = i;
+		} else if(names[i].abbreviation != names[index].abbreviation) {
+			if(names[i].abbreviation == abbreviation) index = i;
+		} else if(!plural && names[i].plural != names[index].plural) {
+			if(!names[i].plural) index = i;
+		} else if(use_unicode && names[i].unicode != names[index].unicode) {
+			if(names[i].unicode) index = i;
+		}
+	}
+	if(index >= 0) return names[index];
+	return empty_expression_name;
+}
+const ExpressionName &ExpressionItem::preferredDisplayName(bool abbreviation, bool use_unicode, bool plural) const {
+	return preferredName(abbreviation, use_unicode, plural);
+}
+const ExpressionName &ExpressionItem::getName(unsigned int index) const {
+	if(index > 0 && index <= names.size()) return names[index - 1];
+	return empty_expression_name;
+}
+void ExpressionItem::setName(const ExpressionName &ename, unsigned int index, bool force) {
+	if(index < 1) addName(ename, 1);
+	if(index > names.size()) addName(ename);
+	if(b_registered && names[index - 1].name != ename.name) {
+		names[index - 1] = ename;
+		names[index - 1].name = CALCULATOR->getName(ename.name, this, force);
+		b_changed = true;
+		CALCULATOR->nameChanged(this);
+	} else if(ename != names[index - 1]) {
+		names[index - 1] = ename;
+		b_changed = true;
+	}
+}
+void ExpressionItem::setName(string sname, unsigned int index, bool force) {
+	if(index < 1) addName(sname, 1);
+	if(index > names.size()) addName(sname);
+	if(b_registered && names[index - 1].name != sname) {
+		names[index - 1].name = CALCULATOR->getName(sname, this, force);
+		b_changed = true;
+		CALCULATOR->nameChanged(this);
+	} else if(sname != names[index - 1].name) {
+		names[index - 1].name = sname;
+		b_changed = true;
+	}
+}
+void ExpressionItem::addName(const ExpressionName &ename, unsigned int index, bool force) {
+	if(index < 1 || index > names.size()) {
+		names.push_back(ename);
+		index = names.size();
+	} else {
+		names.insert(names.begin() + (index - 1), ename);
+	}
+	if(b_registered) {
+		names[index - 1].name = CALCULATOR->getName(names[index - 1].name, this, force);
+		CALCULATOR->nameChanged(this);
+	}
+	b_changed = true;
+}
+void ExpressionItem::addName(string sname, unsigned int index, bool force) {
+	if(index < 1 || index > names.size()) {
+		names.push_back(ExpressionName(sname));
+		index = names.size();
+	} else {
+		names.insert(names.begin() + (index - 1), ExpressionName(sname));
+	}
+	if(b_registered) {
+		names[index - 1].name = CALCULATOR->getName(names[index - 1].name, this, force);
+		CALCULATOR->nameChanged(this);
+	}
+	b_changed = true;
+}
+unsigned int ExpressionItem::countNames() const {
+	return names.size();
+}
+void ExpressionItem::clearNames() {
+	if(names.size() > 0) {
+		names.clear();
+		if(b_registered) {
+			CALCULATOR->nameChanged(this);
+		}
+		b_changed = true;
+	}
+}
+void ExpressionItem::clearNonReferenceNames() {
+	bool b = false;
+	for(vector<ExpressionName>::iterator it = names.begin(); it != names.end(); ++it) {
+		if(!it->reference) {
+			it = names.erase(it);
+			--it;
+			b = true;
+		}
+	}
+	if(b) {
+		if(b_registered) {
+			CALCULATOR->nameChanged(this);
+		}
+		b_changed = true;
+	}
+}
+void ExpressionItem::removeName(unsigned int index) {
+	if(index > 0 && index <= names.size()) {
+		names.erase(names.begin() + (index - 1));
+		if(b_registered) {
+			CALCULATOR->nameChanged(this);
+		}
+		b_changed = true;
+	}
+}
+bool ExpressionItem::hasName(const string &sname) const {
+	for(unsigned int i = 0; i < names.size(); i++) {
+		if(names[i].case_sensitive && sname == names[i].name) return true;
+		if(!names[i].case_sensitive && equalsIgnoreCase(names[i].name, sname)) return true;
+	}
+	return false;
+}
+bool ExpressionItem::hasNameCaseSensitive(const string &sname) const {
+	for(unsigned int i = 0; i < names.size(); i++) {
+		if(sname == names[i].name) return true;
+	}
+	return false;
+}
+const ExpressionName &ExpressionItem::findName(int abbreviation, int use_unicode, int plural) const {
+	for(unsigned int i = 0; i < names.size(); i++) {
+		if((abbreviation < 0 || names[i].abbreviation == abbreviation) && (use_unicode < 0 || names[i].unicode == use_unicode) && (plural < 0 || names[i].plural == plural)) return names[i];
+	}
+	return empty_expression_name;
+}
+
 const string &ExpressionItem::category() const {
 	return scat;
 }

@@ -19,26 +19,29 @@
 */
 
 struct ExpressionName {
-	bool abbreviation, suffix, unicode, plural;
+	bool abbreviation, suffix, unicode, plural, reference;
 	bool avoid_input;
-	bool ignore_case;
-	int rank;
+	bool case_sensitive;
 	string name;
-	ExpressionName() : abbreviation(false), suffix(false), unicode(false), plural(false), avoid_input(false), ignore_case(true), rank(1) {}
+	ExpressionName() : abbreviation(false), suffix(false), unicode(false), plural(false), reference(false), avoid_input(false), case_sensitive(false) {}
+	ExpressionName(string sname);
+	bool operator == (const ExpressionName &ename) const;
+	bool operator != (const ExpressionName &ename) const;
 };
 
 class ExpressionItem {
 
   protected:
 
-	string sname, uname, scat, stitle, sdescr;
+	string scat, stitle, sdescr;
 	bool b_local, b_changed, b_builtin, b_approx, b_active, b_registered, b_hidden, b_destroyed;
 	int i_ref;
 	vector<ExpressionItem*> v_refs;
+	vector<ExpressionName> names;
 
   public:
 
-	ExpressionItem(string cat_, string name_, string title_ = "", string descr_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true, string unicode_name = "");
+	ExpressionItem(string cat_, string name_, string title_ = "", string descr_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
 	ExpressionItem();
 	virtual ~ExpressionItem();
 	
@@ -51,11 +54,25 @@ class ExpressionItem {
 	void setRegistered(bool is_registered);
 
 	virtual void setName(string name_, bool force = true);
-	virtual void setUnicodeName(string name_, bool force = true);
 	
 	virtual const string &name(bool use_unicode = false) const;
-	virtual const string &unicodeName(bool return_name_if_no_unicode = true) const;
 	virtual const string &referenceName() const;
+	
+	virtual const ExpressionName &preferredName(bool abbreviation = false, bool use_unicode = false, bool plural = false) const;
+	virtual const ExpressionName &preferredInputName(bool abbreviation = false, bool use_unicode = false, bool plural = false) const;
+	virtual const ExpressionName &preferredDisplayName(bool abbreviation = false, bool use_unicode = false, bool plural = false) const;
+	virtual const ExpressionName &getName(unsigned int index) const;
+	virtual void setName(const ExpressionName &ename, unsigned int index = 1, bool force = true);
+	virtual void setName(string sname, unsigned int index, bool force = true);
+	virtual void addName(const ExpressionName &ename, unsigned int index = 0, bool force = true);
+	virtual void addName(string sname, unsigned int index = 0, bool force = true);
+	virtual unsigned int countNames() const;
+	virtual void clearNames();
+	virtual void clearNonReferenceNames();
+	virtual void removeName(unsigned int index);
+	virtual bool hasName(const string &sname) const;
+	virtual bool hasNameCaseSensitive(const string &sname) const;
+	virtual const ExpressionName &findName(int abbreviation = -1, int use_unicode = -1, int plural = -1) const;
 	
 	virtual const string &title(bool return_name_if_no_title = true, bool use_unicode = false) const;
 	

@@ -141,6 +141,7 @@ int main (int argc, char **argv) {
 		fetch_exchange_rates(5);
 		while(gtk_events_pending()) gtk_main_iteration();
 	}
+	
 	CALCULATOR->loadExchangeRates();
 
 	//load global definitions

@@ -6,24 +6,25 @@
       <_singular>euro</_singular>
       <_plural>euros</_plural>
       <_title>European Euros</_title>
+      <_name index="1" abbreviation="true" unicode="true">€</_name>
     </builtin_unit>
     <builtin_unit name="USD">
-      <_singular>dollar</_singular>
-      <_plural>dollars</_plural>
-      <unicode>$</unicode>
       <_title>U.S. Dollars</_title>
+      <_name index="1" abbreviation="true">$</_name>
+      <_name index="2">dollar</_name>
+      <_name index="3" plural="true">dollars</_name>
     </builtin_unit>
     <builtin_unit name="JPY">
       <_singular>yen</_singular>
-      <unicode>¥</unicode>
       <_title>Japanese Yen</_title>
+      <_name index="1" abbreviation="true" unicode="true">¥</_name>
     </builtin_unit>
     <builtin_unit name="DKK">
       <_title>Danish Kroner</_title>
     </builtin_unit>
     <builtin_unit name="GBP">
-      <unicode>£</unicode>
       <_title>British Pounds</_title>
+      <_name index="1" abbreviation="true" unicode="true">£</_name>
     </builtin_unit>
     <builtin_unit name="SEK">
       <_title>Swedish Krona</_title>
@@ -117,13 +118,13 @@
     <unit type="alias" name="cent">
       <_singular>cent</_singular>
       <_plural>cents</_plural>
-      <unicode>¢</unicode>
       <base>
         <unit>USD</unit>
         <relation>1/100</relation>
         <exponent>1</exponent>
       </base>
       <_title>Cent (USD)</_title>
+      <_name index="1" abbreviation="true" unicode="true">¢</_name>
     </unit>
     <unit type="alias" name="BEF">
       <_singular>BEF</_singular>
@@ -465,13 +466,13 @@
       <unit type="alias" name="deg">
         <_singular>degree</_singular>
         <_plural>degrees</_plural>
-	<unicode>°</unicode>
         <base>
           <unit>rad</unit>
           <relation>pi/180</relation>
           <exponent>1</exponent>
         </base>
         <_title>Degree</_title>
+	<_name index="1" abbreviation="true" unicode="true">°</_name>
       </unit>
       <unit type="alias" name="gra">
         <_singular>gradian</_singular>
@@ -992,13 +993,13 @@
         <system>si</system>
         <_singular>ohm</_singular>
         <_plural>ohms</_plural>
-	<unicode>Ω</unicode>
         <base>
           <unit>V_p_A</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
         <_title>Ohm</_title>
+	<_name index="1" abbreviation="true" unicode="true">Ω</_name>
       </unit>
     </category>
     <category>
@@ -1119,7 +1120,6 @@
       <system>si</system>
       <_singular>celcius</_singular>
       <_plural>celcius</_plural>
-      <unicode>°C</unicode>
       <base>
         <unit>K</unit>
         <relation>\x + 273.15</relation>
@@ -1127,10 +1127,10 @@
         <exponent>1</exponent>
       </base>
       <_title>Degree Celcius</_title>
+      <_name index="1" abbreviation="true" unicode="true">°C</_name>
     </unit>
     <unit type="alias" name="oR">
       <_singular>rankine</_singular>
-      <unicode>°R</unicode>
       <base>
         <unit>K</unit>
         <relation>5\x/9</relation>
@@ -1138,10 +1138,10 @@
         <exponent>1</exponent>
       </base>
       <_title>Degrees Rankine</_title>
+      <_name index="1" abbreviation="true" unicode="true">°R</_name>
     </unit>
     <unit type="alias" name="oF">
       <_singular>fahrenheit</_singular>
-      <unicode>°F</unicode>
       <base>
         <unit>K</unit>
         <relation>(2298.35+5\x)/9</relation>
@@ -1149,6 +1149,7 @@
         <exponent>1</exponent>
       </base>
       <_title>Degrees Fahrenheit</_title>
+      <_name index="1" abbreviation="true" unicode="true">°F</_name>
     </unit>
   </category>
   <category>

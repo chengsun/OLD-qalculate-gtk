@@ -470,7 +470,7 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	return 1 ;
 }
 
-SqrtFunction::SqrtFunction() : Function("sqrt", 1, 1, SIGN_SQRT) {
+SqrtFunction::SqrtFunction() : Function("sqrt", 1) {
 }
 int SqrtFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
@@ -1617,7 +1617,7 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	return 1 ;
 
 }
-SumFunction::SumFunction() : Function("sum", 3, 4, SIGN_CAPITAL_SIGMA) {
+SumFunction::SumFunction() : Function("sum", 3, 4) {
 	setArgumentDefinition(2, new IntegerArgument());
 	setArgumentDefinition(3, new IntegerArgument());	
 	setArgumentDefinition(4, new SymbolicArgument());
@@ -1645,7 +1645,7 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	return 1 ;
 	
 }
-ProductFunction::ProductFunction() : Function("product", 3, 4, SIGN_CAPITAL_PI) {
+ProductFunction::ProductFunction() : Function("product", 3, 4) {
 	setArgumentDefinition(2, new IntegerArgument());
 	setArgumentDefinition(3, new IntegerArgument());	
 	setArgumentDefinition(4, new SymbolicArgument());

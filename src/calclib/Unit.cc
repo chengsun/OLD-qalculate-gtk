@@ -15,11 +15,31 @@
 #include "MathStructure.h"
 #include "Prefix.h"
 
-Unit::Unit(string cat_, string name_, string plural_, string singular_, string title_, bool is_local, bool is_builtin, bool is_active, string unicode_name) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active, unicode_name) {
+Unit::Unit(string cat_, string name_, string plural_, string singular_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active) {
 	remove_blank_ends(plural_);
 	remove_blank_ends(singular_);
-	ssingular = singular_;
-	splural = plural_;
+	if(!singular_.empty()) {
+		names.resize(names.size() + 1);
+		names[names.size() - 1].name = name_;
+		names[names.size() - 1].unicode = false;
+		names[names.size() - 1].abbreviation = false;
+		names[names.size() - 1].case_sensitive = text_length_is_one(names[names.size() - 1].name);
+		names[names.size() - 1].suffix = false;
+		names[names.size() - 1].avoid_input = false;
+		names[names.size() - 1].reference = false;
+		names[names.size() - 1].plural = false;
+	}
+	if(!plural_.empty()) {
+		names.resize(names.size() + 1);
+		names[names.size() - 1].name = name_;
+		names[names.size() - 1].unicode = false;
+		names[names.size() - 1].abbreviation = false;
+		names[names.size() - 1].case_sensitive = text_length_is_one(names[names.size() - 1].name);
+		names[names.size() - 1].suffix = false;
+		names[names.size() - 1].avoid_input = false;
+		names[names.size() - 1].reference = false;
+		names[names.size() - 1].plural = true;
+	}
 	b_si = false;
 }
 Unit::Unit() {
@@ -36,8 +56,6 @@ ExpressionItem *Unit::copy() const {
 }
 void Unit::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_UNIT) {
-		splural = ((Unit*) item)->plural(false);
-		ssingular = ((Unit*) item)->singular(false);
 		b_si = ((Unit*) item)->isSIUnit();
 	}
 	ExpressionItem::set(item);
@@ -174,7 +192,7 @@ MathStructure &Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp
 	return mvalue;
 }
 
-AliasUnit::AliasUnit(string cat_, string name_, string plural_, string short_name_, string title_, Unit *alias, string relation, int exp_, string reverse, bool is_local, bool is_builtin, bool is_active, string unicode_name) : Unit(cat_, name_, plural_, short_name_, title_, is_local, is_builtin, is_active, unicode_name) {
+AliasUnit::AliasUnit(string cat_, string name_, string plural_, string short_name_, string title_, Unit *alias, string relation, int exp_, string reverse, bool is_local, bool is_builtin, bool is_active) : Unit(cat_, name_, plural_, short_name_, title_, is_local, is_builtin, is_active) {
 	unit = (Unit*) alias;
 	remove_blank_ends(relation);
 	remove_blank_ends(reverse);

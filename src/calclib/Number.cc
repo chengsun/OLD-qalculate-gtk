@@ -165,8 +165,8 @@ string printCL_I(cl_I integ, int base = 10, bool display_sign = true, bool displ
 Number::Number() {
 	clear();
 }
-Number::Number(string number, int base) {
-	set(number, base);
+Number::Number(string number, int base, bool read_precision) {
+	set(number, base, read_precision);
 }
 Number::Number(int numerator, int denominator, int exp_10) {
 	set(numerator, denominator, exp_10);
@@ -381,7 +381,7 @@ void Number::set(string number, int base, bool read_precision) {
 	}
 	if(base > 36) base = 36;
 	if(base < 0) base = 10;
-	readprec = 0;
+	int readprec = 0;
 	bool numbers_started = false, minus = false, in_decimals = false, b_cplx = false;
 	for(unsigned int index = 0; index < number.size(); index++) {
 		if(number[index] >= '0' && (base >= 10 && number[index] <= '9') || (base < 10 && number[index] < '0' + base)) {
@@ -480,9 +480,11 @@ void Number::set(string number, int base, bool read_precision) {
 		value = num / den;
 	}
 	if(read_precision) i_precision = readprec;
+	else i_precision = -1;
 }
 void Number::set(int numerator, int denominator, int exp_10) {
 	b_inf = false; b_pinf = false; b_minf = false; b_approx = false;
+	i_precision = -1;
 	value = numerator;
 	if(denominator) {
 		value = value / denominator;
@@ -494,10 +496,12 @@ void Number::set(int numerator, int denominator, int exp_10) {
 void Number::setFloat(double d_value) {
 	b_inf = false; b_pinf = false; b_minf = false; b_approx = true;
 	value = d_value;
+	i_precision = -1;
 }
 void Number::setInternal(const cl_N &cln_value) {
 	b_inf = false; b_pinf = false; b_minf = false; b_approx = false;
 	value = cln_value;
+	i_precision = -1;
 	testApproximate();
 }
 void Number::setImaginaryPart(const Number &o) {
@@ -514,6 +518,7 @@ void Number::set(const Number &o) {
 	b_minf = o.isMinusInfinity();
 	value = o.internalNumber();
 	b_approx = o.isApproximate();
+	i_precision = -1;
 }
 void Number::setInfinity() {
 	b_inf = true;
@@ -521,6 +526,7 @@ void Number::setInfinity() {
 	b_minf = false;
 	b_approx = false;
 	value = 0;
+	i_precision = -1;
 }
 void Number::setPlusInfinity() {
 	b_inf = false;
@@ -528,6 +534,7 @@ void Number::setPlusInfinity() {
 	b_minf = false;
 	b_approx = false;
 	value = 0;
+	i_precision = -1;
 }
 void Number::setMinusInfinity() {
 	b_inf = false; 
@@ -535,10 +542,12 @@ void Number::setMinusInfinity() {
 	b_minf = true;
 	b_approx = false;
 	value = 0;
+	i_precision = -1;
 }
 void Number::clear() {
 	b_inf = false; b_pinf = false; b_minf = false; b_approx = false;
 	value = 0;
+	i_precision = -1;
 }
 
 const cl_N &Number::internalNumber() const {

@@ -7,9 +7,11 @@
     </builtin_variable>
     <builtin_variable name="pi">
       <_title>Archimede's Constant (pi)</_title>
+      <_name index="1" abbreviation="true" unicode="true">π</_name>
     </builtin_variable>
     <builtin_variable name="euler">
       <_title>Euler's Constant</_title>
+      <_name index="1" abbreviation="true" unicode="true">γ</_name>
     </builtin_variable>
     <variable name="apery">
       <_title>Apery's Constant</_title>
@@ -23,77 +25,78 @@
       <value>sqrt(2)</value>
     </variable>
     <variable name="golden">
-      <unicode>φ</unicode>
       <_title>The Golden Ratio</_title>
       <value>(1+sqrt(5))/2</value>
+      <_name index="1" abbreviation="true" unicode="true">φ</_name>
     </variable>
   </category>
   <category>
     <_title>Physical Constants</_title>
     <category>
       <_title>Universal Constants</_title>
-      <variable name="characteristic_impedance">
+      <variable>
         <_title>Characteristic Impedance of Vacuum</_title>
         <value>magnetic_constant*c</value>
-	<_name suffix="true">characteristic_impedance</_name>
-        <name abbreviation="true" suffix="true">Z_0</name>
+	<_name index="1" reference="true">characteristic_impedance</_name>
+        <_name index="2" abbreviation="true" suffix="true" avoid_input="true">Z_0</_name>
       </variable>
-      <variable name="magnetic_constant">
+      <variable>
         <_title>Magnetic Constant (Permeability of Free Space)</_title>
         <value>4E-7*pi*N*A^(-2)</value>
-	<_name suffix="true">magnetic_constant</_name>
-        <name abbreviation="true" suffix="true" unicode="true">μ_0</name>
+	<_name index="1" reference="true">magnetic_constant</_name>
+        <_name index="2" abbreviation="true" suffix="true" unicode="true" avoid_input="true">μ_0</_name>
       </variable>
-      <variable name="electric_constant">
+      <variable>
         <_title>Electric Constant (Permittivity of Free Space)</_title>
         <value>1/(magnetic_constant*c^2)</value>
-	<_name suffix="true">electric_constant</_name>
-        <name abbreviation="true" suffix="true" unicode="true">ε_0</name>
+	<_name index="1" reference="true">electric_constant</_name>
+        <_name index="2" abbreviation="true" suffix="true" unicode="true" avoid_input="true">ε_0</_name>
       </variable>
-      <variable name="newtonian_constant">
+      <variable>
         <_title>Newtonian Constant of Gravitation</_title>
         <value approximate="true">6.6742E-11*m^3*kg^(-1)*s^(-2)</value>
-        <_name>newtonian_constant</_name>
-	<name abbreviation="true">G</name>
+	<_name index="1" reference="true">newtonian_constant</_name>
+        <_name index="2" abbreviation="true">G</_name>
       </variable>
-      <variable name="planck">
+      <variable>
         <_title>Planck Constant</_title>
         <value approximate="true">6.626 0693E-34*J*s</value>
-	<_name>planck</_name>
+	<_name index="1" reference="true">planck</_name>
       </variable>
-      <variable name="planck2pi">
+      <variable>
         <_title>Planck Constant over 2 pi</_title>
         <value>planck/(2*pi)</value>
-	<_name>planck2pi</_name>
+	<_name index="1" reference="true">planck2pi</_name>
       </variable>
-      <variable name="planck_length">
+      <variable>
         <_title>Planck Length</_title>
-        <value>planck2pi/(m_p*c)</value>
-        <_name abbreviation="true" suffix="true">l_p</_name>
-	<_name>planck_length</_name>
+        <value>planck2pi/(planck_mass*c)</value>
+	<_name index="1" reference="true">planck_length</_name>
+        <_name index="2" abbreviation="true" suffix="true" avoid_input="true">l_p</_name>
       </variable>
-      <variable name="planck_mass">
+      <variable>
         <_title>Planck Mass</_title>
         <value>(planck+c/newtonian_constant)^(1/2)</value>
-        <_name abbreviation="true" suffix="true">m_p</_name>
-	<_name>planck_mass</_name>
+	<_name index="1" reference="true">planck_mass</_name>
+        <_name index="2" abbreviation="true" suffix="true" avoid_input="true">m_p</_name>
       </variable>
-      <variable name="planck_temperature">
+      <variable>
         <_title>Planck Temperature</_title>
-        <value>m_p*c^2/k</value>
-        <_name abbreviation="true" suffix="true">T_p</_name>
-	<_name>planck_temperature</_name>
+        <value>planck_mass*c^2/k</value>
+	<_name index="1" reference="true">planck_temperature</_name>
+        <_name index="2" abbreviation="true" suffix="true" avoid_input="true">T_p</_name>
       </variable>
-      <variable name="planck_time">
+      <variable>
         <_title>Planck Time</_title>
-        <value>l_p/c</value>
-        <_name abbreviation="true" suffix="true">t_p</_name>
-	<_name>planck_time</_name>
+        <value>planck_length/c</value>
+	<_name index="1" reference="true">planck_time</_name>
+        <_name index="2" abbreviation="true" suffix="true" avoid_input="true">t_p</_name>
       </variable>
-      <variable name="c">
+      <variable>
         <_title>Speed of Light in Vacuum</_title>
         <value>299792458*m*s^(-1)</value>
-        <_name>speed_of_light</_name>
+	<_name index="1" reference="true" abbreviation="true">c</_name>
+        <_name index="2">speed_of_light</_name>
       </variable>
     </category>
   </category>  
@@ -195,7 +198,7 @@
   <category>
     <_title>Small Numbers</_title>
     <variable name="procent">
-      <unicode>%</unicode>
+      <_name index="1" abbreviation="true">%</_name>
       <_title>Procent</_title>
       <value>1/100</value>
     </variable>

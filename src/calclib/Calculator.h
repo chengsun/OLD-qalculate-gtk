@@ -69,11 +69,9 @@ class Calculator {
 	int i_precision;
 	char vbuffer[200];
 	vector<void*> ufv;
-	vector<char> ufv_t;	
+	vector<char> ufv_t;
+	vector<unsigned int> ufv_i;
 	
-/*	vector<MathStructure*> id_structs;
-	vector<unsigned int> ids;
-	vector<bool> ids_p;*/
 	Sgi::hash_map<unsigned int, MathStructure> id_structs;
 	Sgi::hash_map<unsigned int, bool> ids_p;
 	vector<unsigned int> freed_ids;	
@@ -257,7 +255,7 @@ class Calculator {
 	Unit* getCompositeUnit(string internal_name_);	
 	Variable* addVariable(Variable *v, bool force = true);
 	void variableNameChanged(Variable *v);
-	void functionNameChanged(Function *f, bool priviliged = false);	
+	void functionNameChanged(Function *f);	
 	void unitNameChanged(Unit *u);	
 	void unitSingularChanged(Unit *u);	
 	void unitPluralChanged(Unit *u);	
@@ -270,11 +268,14 @@ class Calculator {
 	void error(bool critical, const char *TEMPLATE,...);
 	CalculatorError *error();
 	CalculatorError *nextError();
-	bool variableNameIsValid(string name_);
-	string convertToValidVariableName(string name_);	
-	bool functionNameIsValid(string name_);
+	bool variableNameIsValid(const string &name_);
+	bool variableNameIsValid(const char *name_);
+	string convertToValidVariableName(string name_);
+	bool functionNameIsValid(const string &name_);
+	bool functionNameIsValid(const char *name_);
 	string convertToValidFunctionName(string name_);		
-	bool unitNameIsValid(string name_);
+	bool unitNameIsValid(const string &name_);
+	bool unitNameIsValid(const char *name_);
 	string convertToValidUnitName(string name_);		
 	bool nameTaken(string name, ExpressionItem *object = NULL);
 	bool variableNameTaken(string name, Variable *object = NULL);

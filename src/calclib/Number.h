@@ -30,6 +30,7 @@ class Number {
 		cln::cl_N value;
 		bool b_inf, b_pinf, b_minf;
 		bool b_approx;
+		int i_precision;
 
 	public:
 	
@@ -39,7 +40,7 @@ class Number {
 		Number(const Number &o);
 		virtual ~Number();
 		
-		void set(string number, int base = 10);
+		void set(string number, int base = 10, bool read_precision = false);
 		void set(int numerator, int denominator = 1, int exp_10 = 0);
 		void setInfinity();
 		void setPlusInfinity();

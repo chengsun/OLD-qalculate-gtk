@@ -709,7 +709,7 @@ void on_tFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer u
 				Argument *arg;
 				Argument default_arg;
 				string str, str2;
-				str += f->name();
+				str += f->preferredName(false, true).name;
 				gtk_text_buffer_get_end_iter(buffer, &iter);
 				gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, str.c_str(), -1, "bold", "italic", NULL);
 				str = "";
@@ -1122,19 +1122,10 @@ void setUnitTreeItem(GtkTreeIter &iter2, Unit *u) {
 	gtk_list_store_append(tUnits_store, &iter2);
 	string snames, sbase;
 	//display name, plural name and short name in the second column
-	AliasUnit *au;	
-	snames = u->name();
-	if(!u->plural(false, printops.use_unicode_signs).empty()) {
-		snames += " : ";
-		snames += u->plural(false, printops.use_unicode_signs);
-	}
-	if(!u->singular(false, printops.use_unicode_signs).empty()) {
-		if(u->plural(false, printops.use_unicode_signs).empty()) {
-			snames += " : ";
-		} else {
-			snames += "/";
-		}
-		snames += u->singular(false, printops.use_unicode_signs);
+	AliasUnit *au;
+	for(unsigned int i = 1; i < u->countNames(); i++) {
+		if(i > 1) snames += " / ";
+		snames = u->getName(i).name;
 	}
 	//depending on unit type display relation to base unit(s)
 	switch(u->unitType()) {
@@ -1145,11 +1136,7 @@ void setUnitTreeItem(GtkTreeIter &iter2, Unit *u) {
 		}
 		case ALIAS_UNIT: {
 			au = (AliasUnit*) u;
-			if(printops.abbreviate_units) {
-				sbase = au->firstBaseUnit()->shortName(printops.use_unicode_signs);
-			} else {
-				sbase = au->firstBaseUnit()->singular(true, printops.use_unicode_signs);
-			}
+			sbase = au->firstBaseUnit()->preferredDisplayName(printops.abbreviate_units, printops.use_unicode_signs).name;
 			if(au->firstBaseExp() != 1) {
 				sbase += POWER;
 				sbase += i2s(au->firstBaseExp());
@@ -1786,7 +1773,7 @@ void update_completion() {
 	string str;
 	for(unsigned int i = 0; i < CALCULATOR->functions.size(); i++) {
 		if(CALCULATOR->functions[i]->isActive()) {
-			str = CALCULATOR->functions[i]->name();
+			str = CALCULATOR->functions[i]->preferredInputName(true, true).name;
 			str += "()";
 			gtk_list_store_append(completion_store, &iter);
 			gtk_list_store_set(completion_store, &iter, 0, str.c_str(), 1, CALCULATOR->functions[i]->title().c_str(), -1);
@@ -1795,13 +1782,13 @@ void update_completion() {
 	for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
 		if(CALCULATOR->variables[i]->isActive()) {
 			gtk_list_store_append(completion_store, &iter);
-			gtk_list_store_set(completion_store, &iter, 0, CALCULATOR->variables[i]->name().c_str(), 1, CALCULATOR->variables[i]->title().c_str(), -1);
+			gtk_list_store_set(completion_store, &iter, 0, CALCULATOR->variables[i]->preferredInputName(true, true).name.c_str(), 1, CALCULATOR->variables[i]->title().c_str(), -1);
 		}
 	}
 	for(unsigned int i = 0; i < CALCULATOR->units.size(); i++) {
 		if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->unitType() != COMPOSITE_UNIT) {
 			gtk_list_store_append(completion_store, &iter);
-			gtk_list_store_set(completion_store, &iter, 0, CALCULATOR->units[i]->name().c_str(), 1, CALCULATOR->units[i]->title().c_str(), -1);
+			gtk_list_store_set(completion_store, &iter, 0, CALCULATOR->units[i]->preferredInputName(true, true).name.c_str(), 1, CALCULATOR->units[i]->title().c_str(), -1);
 		}
 	}
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(completion_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
@@ -2794,17 +2781,31 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			} else {
 				str = TEXT_TAGS;
 			}
-			if(po.abbreviate_units && m.unit()->name(po.use_unicode_signs).find("_") == string::npos) {
-				if(m.prefix()) str += m.prefix()->shortName(true, po.use_unicode_signs);
-				str += m.unit()->shortName(po.use_unicode_signs);
-			} else if(m.isPlural()) {
-				if(m.prefix()) str += m.prefix()->longName(true, po.use_unicode_signs);
-				str += m.unit()->plural(true, po.use_unicode_signs);
+			
+			const ExpressionName *ename = &m.unit()->preferredDisplayName(po.abbreviate_units, po.use_unicode_signs, m.isPlural());
+			if(m.prefix() && po.abbreviate_units && ename->abbreviation && (ename->suffix || !ename->name.find("_"))) {
+				str += m.prefix()->shortName(true, po.use_unicode_signs);
+			} else if(m.prefix()) {
+				str += m.prefix()->longName(true, po.use_unicode_signs);
+			}
+			if(ename->suffix) {
+				unsigned int i = ename->name.rfind('_');
+				if(i == string::npos && i != ename->name.length() - 1 && i != 0) {
+					str += ename->name.substr(0, ename->name.length() - 1);
+					str += "<sub>";
+					str += ename->name[ename->name.length() - 1];
+					str += "</sub>";
+				} else {
+					str += ename->name.substr(0, i);
+					str += "<sub>";
+					str += ename->name.substr(i + 1, ename->name.length() - (i + 1));
+					str += "</sub>";
+				}
 			} else {
-				if(m.prefix()) str += m.prefix()->longName(true, po.use_unicode_signs);
-				str += m.unit()->singular(true, po.use_unicode_signs);
+				str += ename->name;
 			}
 			gsub("_", " ", str);
+
 			if(ips.power_depth > 0) {
 				str += TEXT_TAGS_SMALL_END;
 			} else {
@@ -2823,6 +2824,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 		case STRUCT_VARIABLE: {
 			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
 			string str;
+			
 			if(m.variable() == CALCULATOR->v_i) {
 				if(ips.power_depth > 0) {
 					str = TEXT_TAGS_SMALL;
@@ -2836,7 +2838,26 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 					str = "<i>" TEXT_TAGS;
 				}
 			}
-			str += m.variable()->name(po.use_unicode_signs);
+			
+			const ExpressionName *ename = &m.variable()->preferredDisplayName(po.abbreviate_units, po.use_unicode_signs);
+			if(ename->suffix) {
+				unsigned int i = ename->name.rfind('_');
+				if(i == string::npos && i != ename->name.length() - 1 && i != 0) {
+					str += ename->name.substr(0, ename->name.length() - 1);
+					str += "<sub>";
+					str += ename->name[ename->name.length() - 1];
+					str += "</sub>";
+				} else {
+					str += ename->name.substr(0, i);
+					str += "<sub>";
+					str += ename->name.substr(i + 1, ename->name.length() - (i + 1));
+					str += "</sub>";
+				}
+			} else {
+				str += ename->name;
+			}
+			gsub("_", " ", str);
+			
 			if(m.variable() == CALCULATOR->v_i) {
 				if(ips.power_depth > 0) {
 					str += TEXT_TAGS_SMALL_END;
@@ -2875,14 +2896,43 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			
 			CALCULATE_SPACE_W
 			PangoLayout *layout_comma = gtk_widget_create_pango_layout(resultview, NULL);
-			string str, func_str;
+			string str;
 			MARKUP_STRING(str, po.comma())
 			pango_layout_set_markup(layout_comma, str.c_str(), -1);		
 			pango_layout_get_pixel_size(layout_comma, &comma_w, &comma_h);
 			PangoLayout *layout_function = gtk_widget_create_pango_layout(resultview, NULL);
-			func_str = m.function()->name(po.use_unicode_signs);
-			gsub("_", " ", func_str);
-			MARKUP_STRING(str, func_str)
+			
+			if(ips.power_depth > 0) {
+				str = TEXT_TAGS_SMALL;
+			} else {
+				str = TEXT_TAGS;
+			}
+			
+			const ExpressionName *ename = &m.function()->preferredDisplayName(po.abbreviate_units, po.use_unicode_signs);
+			if(ename->suffix) {
+				unsigned int i = ename->name.rfind('_');
+				if(i == string::npos && i != ename->name.length() - 1 && i != 0) {
+					str += ename->name.substr(0, ename->name.length() - 1);
+					str += "<sub>";
+					str += ename->name[ename->name.length() - 1];
+					str += "</sub>";
+				} else {
+					str += ename->name.substr(0, i);
+					str += "<sub>";
+					str += ename->name.substr(i + 1, ename->name.length() - (i + 1));
+					str += "</sub>";
+				}
+			} else {
+				str += ename->name;
+			}
+			gsub("_", " ", str);
+			
+			if(ips.power_depth > 0) {
+				str += TEXT_TAGS_SMALL_END;
+			} else {
+				str += TEXT_TAGS_END;
+			}
+			
 			pango_layout_set_markup(layout_function, str.c_str(), -1);			
 			pango_layout_get_pixel_size(layout_function, &function_w, &function_h);
 			w = function_w + 1;
@@ -3653,7 +3703,7 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	GtkWidget *dialog;
 	//if function takes no arguments, do not display dialog and insert function directly
 	if(f->args() == 0) {
-		string str = f->name(printops.use_unicode_signs) + "()";
+		string str = f->preferredInputName(printops.abbreviate_units, printops.use_unicode_signs).name + "()";
 		gchar *gstr = g_strdup(str.c_str());
 		function_inserted(f);
 		insert_text(gstr);
@@ -3866,7 +3916,7 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
 	if(response == GTK_RESPONSE_ACCEPT || response == GTK_RESPONSE_APPLY) {
 		
-		string str = f->name(printops.use_unicode_signs) + "(", str2;
+		string str = f->preferredInputName(printops.abbreviate_units, printops.use_unicode_signs).name + "(", str2;
 		for(int i = 0; i < args; i++) {
 			if(f->getArgumentDefinition(i + 1) && f->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_BOOLEAN) {
 				if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(boolean_buttons[boolean_index[i]]))) {
@@ -3931,7 +3981,7 @@ void insert_variable(GtkMenuItem *w, gpointer user_data) {
 		update_vmenu();
 		return;
 	}
-	insert_text(v->name(printops.use_unicode_signs).c_str());
+	insert_text(v->preferredInputName(printops.abbreviate_units, printops.use_unicode_signs).name.c_str());
 	variable_inserted((Variable*) user_data);
 }
 //from prefix menu
@@ -3940,7 +3990,11 @@ void insert_prefix(GtkMenuItem *w, gpointer user_data) {
 }
 //from unit menu
 void insert_unit(GtkMenuItem *w, gpointer user_data) {
-	insert_text(((Unit*) user_data)->print(true, printops.abbreviate_units, printops.use_unicode_signs).c_str());
+	if(((Unit*) user_data)->unitType() == COMPOSITE_UNIT) {
+		insert_text(((CompositeUnit*) user_data)->print(true, printops.abbreviate_units, printops.use_unicode_signs).c_str());
+	} else {
+		insert_text(((Unit*) user_data)->preferredInputName(printops.abbreviate_units, printops.use_unicode_signs, true).name.c_str());
+	}
 	unit_inserted((Unit*) user_data);
 }
 
@@ -3992,8 +4046,8 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 
 		//gtk_widget_set_sensitive(glade_xml_get_widget (unitedit_glade, "unit_edit_optionmenu_class"), u->isLocal() && !u->isBuiltin());
 
-		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_name")), u->name().c_str());
-		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_internal")), u->name().c_str());		
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_name")), u->findName(1, -1, -1).name.c_str());
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_internal")), u->referenceName().c_str());
 		
 		if(u->unitType() != COMPOSITE_UNIT) {
 			gtk_widget_set_sensitive(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_name"), !u->isBuiltin());
@@ -4001,8 +4055,8 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (unitedit_glade, "unit_edit_checkbutton_hidden")), u->isHidden());
 		
-		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_plural")), u->plural(false).c_str());
-		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_singular")), u->singular(false).c_str());
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_plural")), u->findName(0, -1, 1).name.c_str());
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_singular")), u->findName(0, -1, 0).name.c_str());
 
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_category")), u->category().c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_desc")), u->title(false).c_str());
@@ -4010,14 +4064,7 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 		switch(u->unitType()) {
 			case ALIAS_UNIT: {
 				AliasUnit *au = (AliasUnit*) u;
-				if(au->firstBaseUnit()->unitType() == COMPOSITE_UNIT) {
-					gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base")), ((CompositeUnit*) (au->firstBaseUnit()))->referenceName().c_str());
-				} else {
-					if(printops.abbreviate_units)
-						gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base")), au->firstBaseUnit()->shortName().c_str());
-					else
-						gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base")), au->firstBaseUnit()->singular().c_str());	
-				}		
+				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base")), ((CompositeUnit*) (au->firstBaseUnit()))->preferredDisplayName(printops.abbreviate_units, true, false).name.c_str());
 				gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (unitedit_glade, "unit_edit_spinbutton_exp")), au->firstBaseExp());
 				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_relation")), CALCULATOR->localizeExpression(au->expression()).c_str());
 				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_reversed")), CALCULATOR->localizeExpression(au->reverseExpression()).c_str());
@@ -4030,12 +4077,8 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 				break;
 			}
 			case COMPOSITE_UNIT: {
-				if(printops.abbreviate_units) {
-					gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base")), u->shortName().c_str());
-				} else {
-					gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base")), u->singular().c_str());
-				}
-				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_internal")), ((CompositeUnit*) u)->referenceName().c_str());			
+				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base")), ((CompositeUnit*) u)->print(false, printops.abbreviate_units, true).c_str());
+				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_internal")), u->referenceName().c_str());
 				gtk_widget_set_sensitive(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_internal"), !u->isBuiltin());
 				gtk_widget_set_sensitive(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base"), !u->isBuiltin());
 			}
@@ -5101,8 +5144,8 @@ void export_csv_file(KnownVariable *v, GtkWidget *win) {
 	if(win) gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(win));
 
 	if(v) {
-		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (csvexport_glade, "csv_export_entry_file")), v->name().c_str());
-		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (csvexport_glade, "csv_export_entry_matrix")), v->name().c_str());
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (csvexport_glade, "csv_export_entry_file")), v->preferredDisplayName(false, false).name.c_str());
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (csvexport_glade, "csv_export_entry_matrix")), v->preferredDisplayName(false, false).name.c_str());
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (csvexport_glade, "csv_export_radiobutton_matrix")), TRUE);
 	} else {
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (csvexport_glade, "csv_export_entry_file")), "");
@@ -7718,7 +7761,7 @@ void on_variables_button_insert_clicked(GtkButton *button, gpointer user_data) {
 			update_vmenu();
 			return;
 		}
-		gchar *gstr = g_strdup(v->name().c_str());
+		gchar *gstr = g_strdup(v->preferredInputName(printops.abbreviate_units, true).name.c_str());
 		insert_text(gstr);
 		g_free(gstr);
 	}

@@ -61,7 +61,7 @@ class Function : public ExpressionItem {
 	
   public:
   
-	Function(string name_, int argc_, int max_argc_ = 0, string unicode_name = "", string cat_ = "", string title_ = "", string descr_ = "", bool is_active = true);
+	Function(string name_, int argc_, int max_argc_ = 0, string cat_ = "", string title_ = "", string descr_ = "", bool is_active = true);
 	Function(const Function *function);
 	Function();
 	virtual ~Function();	
@@ -119,7 +119,7 @@ class UserFunction : public Function {
 	
   public:
   
-	UserFunction(string cat_, string name_, string eq_, bool is_local = true, int argc_ = -1, string title_ = "", string descr_ = "", int max_argc_ = 0, bool is_active = true, string unicode_name = "");
+	UserFunction(string cat_, string name_, string eq_, bool is_local = true, int argc_ = -1, string title_ = "", string descr_ = "", int max_argc_ = 0, bool is_active = true);
 	UserFunction(const UserFunction *function);
 	void set(const ExpressionItem *item);
 	ExpressionItem *copy() const;

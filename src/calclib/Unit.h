@@ -30,7 +30,7 @@ class Unit : public ExpressionItem {
 
   public:
 
-	Unit(string cat_, string name_, string plural_ = "", string singular_ = "", string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true, string unicode_name = "");
+	Unit(string cat_, string name_, string plural_ = "", string singular_ = "", string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
 	Unit();	
 	Unit(const Unit *unit);	
 	virtual ~Unit();
@@ -77,7 +77,7 @@ class AliasUnit : public Unit {
 
   public:
 
-	AliasUnit(string cat_, string name_, string plural_, string singular_, string title_, Unit *alias, string relation = "1", int exp_ = 1, string reverse = "", bool is_local = true, bool is_builtin = false, bool is_active = true, string unicode_name = "");
+	AliasUnit(string cat_, string name_, string plural_, string singular_, string title_, Unit *alias, string relation = "1", int exp_ = 1, string reverse = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
 	AliasUnit(const AliasUnit *unit);		
 	AliasUnit();			
 	virtual ~AliasUnit();

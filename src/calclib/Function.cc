@@ -17,7 +17,7 @@
 #include "Number.h"
 #include "Unit.h"
 
-Function::Function(string name_, int argc_, int max_argc_, string unicode_name, string cat_, string title_, string descr_, bool is_active) : ExpressionItem(cat_, name_, title_, descr_, false, true, is_active, unicode_name) {
+Function::Function(string name_, int argc_, int max_argc_, string cat_, string title_, string descr_, bool is_active) : ExpressionItem(cat_, name_, title_, descr_, false, true, is_active) {
 	argc = argc_;
 	if(max_argc_ < 0 || argc < 0) {
 		if(argc < 0) argc = 0;
@@ -594,7 +594,7 @@ MathStructure Function::produceArgumentsVector(const MathStructure &vargs, int b
 	return vargs.getRange(begin, end, mstruct);
 }
 
-UserFunction::UserFunction(string cat_, string name_, string eq_, bool is_local, int argc_, string title_, string descr_, int max_argc_, bool is_active, string unicode_name) : Function(name_, argc_, max_argc_, unicode_name, cat_, title_, descr_, is_active) {
+UserFunction::UserFunction(string cat_, string name_, string eq_, bool is_local, int argc_, string title_, string descr_, int max_argc_, bool is_active) : Function(name_, argc_, max_argc_, cat_, title_, descr_, is_active) {
 	b_local = is_local;
 	b_builtin = false;
 	setEquation(eq_, argc_, max_argc_);
