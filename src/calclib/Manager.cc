@@ -1177,38 +1177,53 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 }
 void Manager::finalize() {}
 bool Manager::convert(Unit *u) {
+	printf("CONVERT 1\n");
 	if(c_type == 'v' || c_type == 's') return false;
+	printf("CONVERT 2\n");	
 	bool b = false;
 	if(c_type == PLUS_CH) {
+		printf("CONVERT PLUS 1\n");
 		for(int i = 0; i < mngrs.size(); i++) {
+			printf("CONVERT PLUS 2\n");
 			if(mngrs[i]->convert(u)) b = true;
 		}
 		if(b) plusclean();
 	} else if(c_type == 'u') {
+		printf("CONVERT UNIT 1\n");
 		if(u == o_unit) return false;
-		Unit *u2 = o_unit;
-		o_unit = u;
-		u2->convert(u, this, 1, &b);
+		printf("CONVERT UNIT 2\n");
+		Manager *mngr = u->convert(o_unit, NULL, 1, &b);
+		if(b) {
+			o_unit = u;
+			add(mngr, MULTIPLICATION_CH);
+		}
+		mngr->unref();
 		return b;
 	} else if(c_type == POWER_CH) {
+		printf("CONVERT POWER 1\n");
 		bool b = false;
 		b = mngrs[1]->convert(u);
 		if(b) {
+			printf("CONVERT POWER 2\n");
 			powerclean();
 			return convert(u);
 		}
 		if(mngrs[0]->c_type == 'u') {
+			printf("CONVERT POWER 3\n");
 			if(u == o_unit) return false;
-			Unit *u2 = o_unit;
-			o_unit = u;
-			//u2->convert(u, this, mngrs[1], &b);
-			u2->convert(u, this, mngrs[1]->value(), &b);
+			Manager *mngr = u->convert(o_unit, NULL, mngrs[1]->value(), &b);
+			if(b) {
+				o_unit = u;
+				add(mngr, MULTIPLICATION_CH);
+			}			
+			mngr->unref();
 		} else {
+			printf("CONVERT POWER 4\n");
 			b = mngrs[0]->convert(u);
 		}
 		return b;
 	} else if(c_type == MULTIPLICATION_CH) {
-
+		printf("CONVERT 5\n");
 	}
 }
 void Manager::unref() {
