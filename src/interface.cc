@@ -50,6 +50,10 @@ GtkWidget *tUnits;
 GtkListStore *tUnits_store;
 GtkTreeStore *tUnitCategories_store;
 
+#if GTK_MINOR_VERSION >= 3
+GtkWidget *expander;
+#endif
+
 GtkWidget *tFunctionArguments;
 GtkListStore *tFunctionArguments_store;
 
@@ -66,7 +70,7 @@ GtkWidget *f_menu ,*v_menu, *u_menu, *u_menu2, *recent_menu;
 GtkAccelGroup *accel_group;
 
 extern int display_mode, number_base, fractional_mode;
-extern bool show_more, show_buttons;
+extern bool show_buttons;
 extern bool use_short_units, save_mode_on_exit, save_defs_on_exit, load_global_defs, use_unicode_signs, hyp_is_on, fraction_is_on, use_prefixes;
 extern bool use_custom_font, indicate_infinite_series;
 extern string custom_font;
@@ -235,6 +239,12 @@ create_main_window (void)
 				glade_xml_get_widget (main_glade, "menu_item_multiple_roots")
 				),
 			CALCULATOR->multipleRootsEnabled());
+			
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_enable_variables")), CALCULATOR->variablesEnabled());
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_enable_functions")), CALCULATOR->functionsEnabled());
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_enable_units")), CALCULATOR->unitsEnabled());
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_enable_unknown_variables")), CALCULATOR->unknownVariablesEnabled());
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_calculate_variables")), !CALCULATOR->donotCalculateVariables());
 
 	switch (fractional_mode)
 	{
@@ -264,15 +274,6 @@ create_main_window (void)
 		break;
 	}
 
-	if(show_more)
-	{
-		gtk_widget_show (glade_xml_get_widget (main_glade, "notebook"));
-	}
-	else
-	{
-		gtk_widget_hide (glade_xml_get_widget (main_glade, "notebook"));
-	}
-
 	switch (CALCULATOR->angleMode())
 	{
 	case RADIANS:
@@ -289,27 +290,15 @@ create_main_window (void)
 		break;
 	}
 
-	if(show_buttons)
-	{
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(glade_xml_get_widget (main_glade, "notebook")), 0);
+#if GTK_MINOR_VERSION < 3
+	if(show_buttons) {
+		gtk_widget_show (glade_xml_get_widget (main_glade, "buttons"));
+		gtk_button_set_label (GTK_BUTTON(glade_xml_get_widget (main_glade, "button_less_more")), _("Hide buttons"));
+	} else {
+		gtk_widget_hide (glade_xml_get_widget (main_glade, "buttons"));
+		gtk_button_set_label (GTK_BUTTON(glade_xml_get_widget (main_glade, "button_less_more")), _("Show buttons"));
 	}
-	else
-	{
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(glade_xml_get_widget (main_glade, "notebook")), 1);
-	}
-
-	if(show_more)
-	{
-		gtk_button_set_label (
-				GTK_BUTTON(glade_xml_get_widget (main_glade, "button_less_more")),
-				_("<< Less"));
-	}
-	else
-	{
-		gtk_button_set_label (
-				GTK_BUTTON(glade_xml_get_widget (main_glade, "button_less_more")),
-				_("More >>"));
-	}
+#endif
 
 	if(use_unicode_signs) {
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_sub")), SIGN_MINUS);
@@ -335,13 +324,6 @@ create_main_window (void)
 		}		
 	}
 	
-	g_signal_connect (G_OBJECT (gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_expression")))), "deactivate",
-	                  G_CALLBACK (on_menu_e_deactivate),
-	                  NULL);
-	g_signal_connect (G_OBJECT (gtk_menu_item_get_submenu(GTK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_result")))), "deactivate",
-	                  G_CALLBACK (on_menu_r_deactivate),
-	                  NULL);
-
 	gtk_window_add_accel_group (GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), accel_group);
 
 	gtk_widget_grab_focus(expression);
@@ -368,15 +350,27 @@ create_main_window (void)
 	}
 	initial_history.clear();
 
-	gtk_widget_show (glade_xml_get_widget (main_glade, "main_window"));
-
 #ifndef HAVE_GIAC
 	gtk_widget_destroy(glade_xml_get_widget(main_glade, "menu_item_factorize"));
-	gtk_widget_destroy(glade_xml_get_widget(main_glade, "separator_factorize"));
+//	gtk_widget_destroy(glade_xml_get_widget(main_glade, "separator_factorize"));
 #endif
 #ifndef HAVE_LIBGNOME
 	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_help"), FALSE);
 #endif
+
+#if GTK_MINOR_VERSION >= 3
+	gtk_widget_hide(glade_xml_get_widget(main_glade, "buttonbox_bottom"));
+	expander = gtk_expander_new(_("Show buttons"));
+	g_object_ref(glade_xml_get_widget(main_glade, "buttons"));
+	gtk_container_remove(GTK_CONTAINER(glade_xml_get_widget(main_glade, "main_vbox")), glade_xml_get_widget(main_glade, "buttons"));
+	gtk_box_pack_end(GTK_BOX(glade_xml_get_widget(main_glade, "main_vbox")), expander, TRUE, TRUE, 0);
+	gtk_container_add(GTK_CONTAINER(expander), glade_xml_get_widget(main_glade, "buttons"));
+	g_object_unref(glade_xml_get_widget(main_glade, "buttons"));
+	gtk_expander_set_expanded(GTK_EXPANDER(expander), show_buttons);
+	gtk_widget_show(expander);
+#endif
+
+	gtk_widget_show (glade_xml_get_widget (main_glade, "main_window"));
 
 	GtkStyle *style;
 	GdkBitmap *bitmap;

@@ -35,6 +35,10 @@ extern GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, 
 
 bool changing_in_nbases_dialog;
 
+#if GTK_MINOR_VERSION >= 3
+extern GtkWidget *expander;
+#endif
+
 extern GtkWidget *expression;
 extern GtkWidget *f_menu, *v_menu, *u_menu, *u_menu2, *recent_menu;
 extern Variable *vans, *vAns;
@@ -52,7 +56,6 @@ extern GtkWidget *tUnits, *tUnitCategories;
 extern GtkListStore *tUnits_store;
 extern GtkTreeStore *tUnitCategories_store;
 extern GtkAccelGroup *accel_group;
-GtkWidget *u_enable_item, *f_enable_item, *v_enable_item, *uv_enable_item, *v_calcvar_item;
 extern string selected_function_category;
 extern Function *selected_function;
 Function *edited_function;
@@ -78,7 +81,7 @@ bool saved_always_exact;
 bool hyp_is_on, saved_hyp_is_on;
 bool use_min_deci, use_max_deci;
 int min_deci, max_deci, display_mode, number_base;
-bool show_more, show_buttons;
+bool show_buttons;
 extern bool load_global_defs, fetch_exchange_rates_at_startup, first_time;
 extern GtkWidget *omToUnit_menu;
 bool block_unit_convert;
@@ -1385,6 +1388,7 @@ void create_umenu() {
 	GtkWidget *sub, *sub2, *sub3;
 	item = glade_xml_get_widget (main_glade, "menu_item_expression_units");
 	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);	
+	
 	u_menu = sub;
 	sub2 = sub;
 	Unit *u;
@@ -1428,17 +1432,14 @@ void create_umenu() {
 		if(u->isActive() && !u->isHidden()) {
 			MENU_ITEM_WITH_POINTER(u->title(true).c_str(), insert_unit, u)
 		}
-	}			
+	}		
+	
 	MENU_SEPARATOR	
-	MENU_ITEM(_("Create new unit"), new_unit);
-	MENU_ITEM(_("Manage units"), manage_units);
-	MENU_ITEM_SET_ACCEL(GDK_u);
-	if(CALCULATOR->unitsEnabled()) {
-		MENU_ITEM(_("Disable units"), set_units_enabled)
-	} else {
-		MENU_ITEM(_("Enable units"), set_units_enabled)
-	}
-	u_enable_item = item;
+	item = gtk_menu_item_new_with_label(_("Prefixes"));
+	gtk_widget_show (item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(sub), item);
+	create_pmenu(item);		
+	
 }
 
 /*
@@ -1493,11 +1494,6 @@ void create_umenu2() {
 			MENU_ITEM_WITH_POINTER(u->title(true).c_str(), convert_to_unit, u)
 		}
 	}		
-	MENU_SEPARATOR	
-	MENU_ITEM(_("Enter custom unit"), convert_to_custom_unit);
-	MENU_ITEM_SET_ACCEL(GDK_t);
-	MENU_ITEM(_("Create new unit"), new_unit);
-	MENU_ITEM(_("Manage units"), manage_units);
 }
 
 /*
@@ -1521,6 +1517,7 @@ void create_vmenu() {
 	GtkWidget *sub, *sub2, *sub3;
 	item = glade_xml_get_widget (main_glade, "menu_item_expression_variables");
 	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);
+	
 	v_menu = sub;
 	sub2 = sub;
 	Variable *v;
@@ -1569,43 +1566,15 @@ void create_vmenu() {
 		}
 	}		
 
-	MENU_SEPARATOR	
-	MENU_ITEM(_("Create new variable"), new_variable);
-	MENU_ITEM(_("Create new matrix"), new_matrix);	
-	MENU_ITEM(_("Create new vector"), new_vector);		
-	MENU_ITEM(_("Import CSV file"), on_import_csv_file_activated);	
-	MENU_SEPARATOR		
-	MENU_ITEM(_("Manage variables"), manage_variables);
-	MENU_ITEM_SET_ACCEL(GDK_m);	
-	MENU_SEPARATOR
-	if(CALCULATOR->variablesEnabled()) {
-		MENU_ITEM(_("Disable variables"), set_variables_enabled)
-	} else {
-		MENU_ITEM(_("Enable variables"), set_variables_enabled)
-	}
-	v_enable_item = item;
-	if(CALCULATOR->donotCalculateVariables()) {
-		MENU_ITEM(_("Calculate variables"), set_donot_calcvars)
-	} else {
-		MENU_ITEM(_("Do not calculate variables"), set_donot_calcvars)
-	}
-	v_calcvar_item = item;	
-	if(CALCULATOR->unknownVariablesEnabled()) {
-		MENU_ITEM(_("Disable unknown variables"), set_unknownvariables_enabled)
-	} else {
-		MENU_ITEM(_("Enable unknown variables"), set_unknownvariables_enabled)
-	}
-	uv_enable_item = item;
-
 }
 
 /*
 	generate prefixes submenu in expression menu
 */
-void create_pmenu() {
-	GtkWidget *item;
+void create_pmenu(GtkWidget *item) {
+//	GtkWidget *item;
 	GtkWidget *sub;
-	item = glade_xml_get_widget (main_glade, "menu_item_expression_prefixes");
+//	item = glade_xml_get_widget (main_glade, "menu_item_expression_prefixes");
 	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);	
 	int index = 0;
 	Prefix *p = CALCULATOR->getPrefix(index);
@@ -1701,16 +1670,6 @@ void create_fmenu() {
 			MENU_ITEM_WITH_POINTER(f->title(true).c_str(), insert_function, f)
 		}
 	}		
-	MENU_SEPARATOR
-	MENU_ITEM(_("Create new function"), new_function);
-	MENU_ITEM(_("Manage functions"), manage_functions);
-	MENU_ITEM_SET_ACCEL(GDK_f);
-	if(CALCULATOR->functionsEnabled()) {
-		MENU_ITEM(_("Disable functions"), set_functions_enabled)
-	} else {
-		MENU_ITEM(_("Enable functions"), set_functions_enabled)
-	}
-	f_enable_item = item;
 }
 
 /*
@@ -4737,17 +4696,6 @@ void convert_to_unit(GtkMenuItem *w, gpointer user_data)
 	gtk_widget_grab_focus(expression);
 }
 
-void convert_to_custom_unit(GtkMenuItem *w, gpointer user_data)
-{
-	GtkWidget *dialog = get_unit_dialog();
-	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
-	if(GTK_WIDGET_VISIBLE(dialog)) {
-		gtk_window_present(GTK_WINDOW(dialog));
-	} else {
-		gtk_widget_show(dialog);
-	}
-}
-
 /*
 	display edit/new variable dialog
 	creates new variable if v == NULL, mngr_ is forced value, win is parent window
@@ -5212,10 +5160,6 @@ void new_vector(GtkMenuItem *w, gpointer user_data)
 			glade_xml_get_widget (main_glade, "main_window"), TRUE);
 }
 
-void on_import_csv_file_activated(GtkMenuItem *w, gpointer user_data) {
-	import_csv_file(glade_xml_get_widget (main_glade, "main_window"));
-}
-
 /*
 	insert one-argument function when button clicked
 */
@@ -5336,72 +5280,9 @@ void set_clean_mode(GtkMenuItem *w, gpointer user_data) {
 }
 
 /*
-	functions enabled/disabled from menu
-*/
-void set_functions_enabled(GtkMenuItem *w, gpointer user_data) {
-	if(CALCULATOR->functionsEnabled()) {
-		gtk_label_set_text(GTK_LABEL(gtk_bin_get_child(GTK_BIN(f_enable_item))), _("Enable functions"));
-		CALCULATOR->setFunctionsEnabled(false);
-	} else {
-		gtk_label_set_text(GTK_LABEL(gtk_bin_get_child(GTK_BIN(f_enable_item))), _("Disable functions"));
-		CALCULATOR->setFunctionsEnabled(true);
-	}
-}
-
-/*
-	variables enabled/disabled from menu
-*/
-void set_variables_enabled(GtkMenuItem *w, gpointer user_data) {
-	if(CALCULATOR->variablesEnabled()) {
-		gtk_label_set_text(GTK_LABEL(gtk_bin_get_child(GTK_BIN(v_enable_item))), _("Enable variables"));
-		CALCULATOR->setVariablesEnabled(false);
-	} else {
-		gtk_label_set_text(GTK_LABEL(gtk_bin_get_child(GTK_BIN(v_enable_item))), _("Disable variables"));
-		CALCULATOR->setVariablesEnabled(true);
-	}
-}
-
-void set_donot_calcvars(GtkMenuItem *w, gpointer user_data) {
-	if(CALCULATOR->donotCalculateVariables()) {
-		gtk_label_set_text(GTK_LABEL(gtk_bin_get_child(GTK_BIN(v_calcvar_item))), _("Do not calculate variables"));
-		CALCULATOR->setDonotCalculateVariables(false);
-	} else {
-		gtk_label_set_text(GTK_LABEL(gtk_bin_get_child(GTK_BIN(v_calcvar_item))), _("Calculate variables"));
-		CALCULATOR->setDonotCalculateVariables(true);
-	}
-	execute_expression();
-}
-
-/*
-	unknown variables enabled/disabled from menu
-*/
-void set_unknownvariables_enabled(GtkMenuItem *w, gpointer user_data) {
-	if(CALCULATOR->unknownVariablesEnabled()) {
-		gtk_label_set_text(GTK_LABEL(gtk_bin_get_child(GTK_BIN(uv_enable_item))), _("Enable unknown variables"));
-		CALCULATOR->setUnknownVariablesEnabled(false);
-	} else {
-		gtk_label_set_text(GTK_LABEL(gtk_bin_get_child(GTK_BIN(uv_enable_item))), _("Disable unknown variables"));
-		CALCULATOR->setUnknownVariablesEnabled(true);
-	}
-}
-
-/*
-	units enabled/disabled from menu
-*/
-void set_units_enabled(GtkMenuItem *w, gpointer user_data) {
-	if(CALCULATOR->unitsEnabled()) {
-		gtk_label_set_text(GTK_LABEL(gtk_bin_get_child(GTK_BIN(u_enable_item))), _("Enable units"));
-		CALCULATOR->setUnitsEnabled(false);
-	} else {
-		gtk_label_set_text(GTK_LABEL(gtk_bin_get_child(GTK_BIN(u_enable_item))), _("Disable units"));
-		CALCULATOR->setUnitsEnabled(true);
-	}
-}
-
-/*
 	Open variable manager
 */
-void manage_variables(GtkMenuItem *w, gpointer user_data) {
+void manage_variables() {
 	GtkWidget *dialog = get_variables_dialog();
 	gtk_widget_show(dialog);
 	gtk_window_present(GTK_WINDOW(dialog));
@@ -5410,9 +5291,7 @@ void manage_variables(GtkMenuItem *w, gpointer user_data) {
 /*
 	Open function manager
 */
-void
-manage_functions(GtkMenuItem *w, gpointer user_data)
-{
+void manage_functions() {
 	GtkWidget *dialog = get_functions_dialog();
 	gtk_widget_show(dialog);
 	gtk_window_present(GTK_WINDOW(dialog));	
@@ -5421,7 +5300,7 @@ manage_functions(GtkMenuItem *w, gpointer user_data)
 /*
 	Open unit manager
 */
-void manage_units(GtkMenuItem *w, gpointer user_data) {
+void manage_units() {
 	GtkWidget *dialog = get_units_dialog();
 	gtk_widget_show(dialog);
 	gtk_window_present(GTK_WINDOW(dialog));
@@ -5568,7 +5447,6 @@ void load_preferences() {
 	fractional_mode = FRACTIONAL_MODE_DECIMAL;
 	use_custom_font = false;
 	custom_font = "";
-	show_more = true;
 	show_buttons = true;
 	use_short_units = true;
 	use_unicode_signs = true;
@@ -5606,8 +5484,6 @@ void load_preferences() {
 					load_global_defs = v;
 				else if(svar == "fetch_exchange_rates_at_startup")
 					fetch_exchange_rates_at_startup = v;
-				else if(svar == "show_more")
-					show_more = v;
 				else if(svar == "show_buttons")
 					show_buttons = v;
 				else if(svar == "min_deci")
@@ -5754,8 +5630,11 @@ void save_preferences(bool mode)
 	fprintf(file, "save_definitions_on_exit=%i\n", save_defs_on_exit);
 	fprintf(file, "load_global_definitions=%i\n", load_global_defs);
 	fprintf(file, "fetch_exchange_rates_at_startup=%i\n", fetch_exchange_rates_at_startup);
-	fprintf(file, "show_more=%i\n", GTK_WIDGET_VISIBLE(glade_xml_get_widget (main_glade, "notebook")));
-	fprintf(file, "show_buttons=%i\n", gtk_notebook_get_current_page(GTK_NOTEBOOK(glade_xml_get_widget (main_glade, "notebook"))) == 0);
+#if GTK_MINOR_VERSION >= 3	
+	fprintf(file, "show_buttons=%i\n", gtk_expander_get_expanded(GTK_EXPANDER(expander)));
+#else
+	fprintf(file, "show_buttons=%i\n", GTK_WIDGET_VISIBLE(glade_xml_get_widget (main_glade, "buttons")));
+#endif
 	fprintf(file, "use_short_units=%i\n", use_short_units);
 	fprintf(file, "all_prefixes_enabled=%i\n", CALCULATOR->allPrefixesEnabled());
 	fprintf(file, "denominator_prefix_enabled=%i\n", CALCULATOR->denominatorPrefixEnabled());
@@ -6007,6 +5886,13 @@ void on_button_close_clicked(GtkButton *w, gpointer user_data) {
 	on_gcalc_exit(NULL, NULL, user_data);
 }
 
+void on_button_history_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
+	if(gtk_toggle_button_get_active(togglebutton)) {
+		gtk_widget_show(glade_xml_get_widget(main_glade, "history_dialog"));
+	} else {
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "history_dialog"));
+	}
+}
 /*
 	angle mode radio buttons toggled
 */
@@ -6049,16 +5935,16 @@ on_button_less_more_clicked                    (GtkButton       *button,
 	GtkWidget	* window = glade_xml_get_widget (main_glade, "main_window");
 	gint w = 0, h = 0, hh = 150;
 
-	if(GTK_WIDGET_VISIBLE(glade_xml_get_widget (main_glade, "notebook"))) {
-		hh = glade_xml_get_widget (main_glade, "notebook")->allocation.height;
-		gtk_widget_hide(glade_xml_get_widget (main_glade, "notebook"));
-		gtk_button_set_label(button, _("More >>"));
+	if(GTK_WIDGET_VISIBLE(glade_xml_get_widget (main_glade, "buttons"))) {
+		hh = glade_xml_get_widget (main_glade, "buttons")->allocation.height;
+		gtk_widget_hide(glade_xml_get_widget (main_glade, "buttons"));
+		gtk_button_set_label(button, _("Show buttons"));
 		//the extra widgets increased the window height with 150 pixels, decrease again
 		gtk_window_get_size(GTK_WINDOW(window), &w, &h);
 		gtk_window_resize(GTK_WINDOW(window), w, h - hh);
 	} else {
-		gtk_widget_show(glade_xml_get_widget (main_glade, "notebook"));
-		gtk_button_set_label(button, _("<< Less"));
+		gtk_widget_show(glade_xml_get_widget (main_glade, "buttons"));
+		gtk_button_set_label(button, _("Hide buttons"));
 	}
 	focus_keeping_selection();
 }
@@ -6305,6 +6191,63 @@ void on_button_log_clicked(GtkButton *w, gpointer user_data) {
 }
 void on_button_ln_clicked(GtkButton *w, gpointer user_data) {
 	insertButtonFunction("ln");
+}
+
+void on_menu_item_manage_variables_activate(GtkMenuItem *w, gpointer user_data) {
+	manage_variables();
+}
+void on_menu_item_manage_functions_activate(GtkMenuItem *w, gpointer user_data) {
+	manage_functions();
+}
+void on_menu_item_manage_units_activate(GtkMenuItem *w, gpointer user_data) {
+	manage_units();
+}
+
+void on_menu_item_import_csv_file_activate(GtkMenuItem *w, gpointer user_data) {
+	import_csv_file(glade_xml_get_widget (main_glade, "main_window"));
+}
+
+
+void on_menu_item_convert_to_unit_expression_activate(GtkMenuItem *w, gpointer user_data) {
+	GtkWidget *dialog = get_unit_dialog();
+	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
+	if(GTK_WIDGET_VISIBLE(dialog)) {
+		gtk_window_present(GTK_WINDOW(dialog));
+	} else {
+		gtk_widget_show(dialog);
+	}
+}
+
+void on_menu_item_enable_variables_activate(GtkMenuItem *w, gpointer user_data) {
+	CALCULATOR->setVariablesEnabled(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+}
+void on_menu_item_enable_functions_activate(GtkMenuItem *w, gpointer user_data) {
+	CALCULATOR->setFunctionsEnabled(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+}
+void on_menu_item_enable_units_activate(GtkMenuItem *w, gpointer user_data) {
+	CALCULATOR->setUnitsEnabled(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+}
+void on_menu_item_enable_unknown_variables_activate(GtkMenuItem *w, gpointer user_data) {
+	CALCULATOR->setUnknownVariablesEnabled(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+}
+void on_menu_item_calculate_variables_activate(GtkMenuItem *w, gpointer user_data) {
+	CALCULATOR->setDonotCalculateVariables(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+}
+
+void on_menu_item_new_variable_activate(GtkMenuItem *w, gpointer user_data) {
+	edit_variable(_("Temporary"), NULL, NULL, glade_xml_get_widget (main_glade, "main_window"));
+}
+void on_menu_item_new_matrix_activate(GtkMenuItem *w, gpointer user_data) {
+	edit_matrix(_("Matrices"), NULL, NULL, glade_xml_get_widget (main_glade, "main_window"), FALSE);
+}
+void on_menu_item_new_vector_activate(GtkMenuItem *w, gpointer user_data) {
+	edit_matrix(_("Vectors"), NULL, NULL, glade_xml_get_widget (main_glade, "main_window"), TRUE);
+}
+void on_menu_item_new_function_activate(GtkMenuItem *w, gpointer user_data) {
+	edit_function("", NULL,	glade_xml_get_widget (main_glade, "main_window"));
+}
+void on_menu_item_new_unit_activate(GtkMenuItem *w, gpointer user_data) {
+	edit_unit("", NULL, glade_xml_get_widget (main_glade, "main_window"));
 }
 
 void on_menu_item_rpn_mode_activate(GtkMenuItem *w, gpointer user_data) {
@@ -7101,16 +7044,16 @@ void on_nbases_entry_hexadecimal_changed(GtkEditable *editable, gpointer user_da
 }
 
 void on_button_functions_clicked(GtkButton *button, gpointer user_data) {
-	manage_functions(NULL, user_data);
+	manage_functions();
 }
 void on_button_variables_clicked(GtkButton *button, gpointer user_data) {
-	manage_variables(NULL, user_data);
+	manage_variables();
 }
 void on_button_units_clicked(GtkButton *button, gpointer user_data) {
-	manage_units(NULL, user_data);
+	manage_units();
 }
 void on_button_convert_clicked(GtkButton *button, gpointer user_data) {
-	convert_to_custom_unit(NULL, user_data);
+	on_menu_item_convert_to_unit_expression_activate(NULL, user_data);
 }
 
 void on_menu_item_about_activate(GtkMenuItem *w, gpointer user_data) {
@@ -7278,8 +7221,9 @@ void on_csv_import_optionmenu_delimiter_changed(GtkOptionMenu *w, gpointer user_
 void on_csv_import_button_file_clicked(GtkButton *button, gpointer user_data) {
 #if GTK_MINOR_VERSION >= 3
 	GtkWidget *d = gtk_file_chooser_dialog_new(_("Select file to import"), GTK_WINDOW(glade_xml_get_widget(csvimport_glade, "csv_import_dialog")), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
-//disable until segmantation fault fixed	
-//	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (csvimport_glade, "csv_import_entry_file"))));
+#if GTK_MICRO_VERSION >= 6 || GTK_MINOR_VERSION >= 4
+	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (csvimport_glade, "csv_import_entry_file"))));
+#endif	
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT) {
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (csvimport_glade, "csv_import_entry_file")), gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d)));
 	}
@@ -7310,8 +7254,9 @@ void on_type_label_date_clicked(GtkButton *w, gpointer user_data) {
 void on_type_label_file_clicked(GtkButton *w, gpointer user_data) {
 #if GTK_MINOR_VERSION >= 3
 	GtkWidget *d = gtk_file_chooser_dialog_new(_("Select file to import"), GTK_WINDOW(glade_xml_get_widget(csvimport_glade, "csv_import_dialog")), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
-//disable until segmantation fault fixed	
-//	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d), gtk_entry_get_text(GTK_ENTRY(user_data)));
+#if GTK_MICRO_VERSION >= 6 || GTK_MINOR_VERSION >= 4
+	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d), gtk_entry_get_text(GTK_ENTRY(user_data)));
+#endif
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT) {
 		gtk_entry_set_text(GTK_ENTRY(user_data), gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d)));
 	}

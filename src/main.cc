@@ -157,7 +157,7 @@ int main (int argc, char **argv) {
 	create_fmenu();
 	create_vmenu();	
 	create_umenu();
-	create_pmenu();	
+	//create_pmenu();	
 	create_umenu2();
 	create_pmenu2();			
 	

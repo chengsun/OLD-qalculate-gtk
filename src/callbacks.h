@@ -27,7 +27,7 @@ void create_umenu(void);
 void create_umenu2(void);
 void create_vmenu(void);
 void create_fmenu(void);
-void create_pmenu(void);
+void create_pmenu(GtkWidget *item);
 void create_pmenu2(void);
 
 void generate_functions_tree_struct();
@@ -62,7 +62,6 @@ void convert_in_wUnits(int toFrom = -1);
 void on_omToUnit_menu_activate(GtkMenuItem *item, gpointer user_data);
 
 void convert_to_unit(GtkMenuItem *w, gpointer user_data);
-void convert_to_custom_unit(GtkMenuItem *w, gpointer user_data);
 
 void save_defs();
 void save_mode();
@@ -76,9 +75,9 @@ gint int_string_sort_func(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, g
 
 void set_prefix(GtkMenuItem *w, gpointer user_data);
 
-void manage_variables(GtkMenuItem *w, gpointer user_data);
-void manage_functions(GtkMenuItem *w, gpointer user_data);
-void manage_units(GtkMenuItem *w, gpointer user_data);
+void manage_variables();
+void manage_functions();
+void manage_units();
 
 void set_clean_mode(GtkMenuItem *w, gpointer user_data);
 void set_functions_enabled(GtkMenuItem *w, gpointer user_data);
@@ -96,7 +95,6 @@ void new_variable(GtkMenuItem *w, gpointer user_data);
 void new_matrix(GtkMenuItem *w, gpointer user_data);
 void new_vector(GtkMenuItem *w, gpointer user_data);
 void new_unit(GtkMenuItem *w, gpointer user_data);
-void on_import_csv_file_activated(GtkMenuItem *w, gpointer user_data);
 void add_as_variable();
 
 void edit_argument(Argument *arg = NULL);
@@ -111,6 +109,7 @@ extern "C" {
 
 void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data);
 void on_button_close_clicked(GtkButton *w, gpointer user_data);
+void on_button_history_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_fetch_exchange_rates_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_save_defs_toggled(GtkToggleButton *w, gpointer user_data);
@@ -168,6 +167,21 @@ void on_button_square_clicked(GtkButton *w, gpointer user_data);
 void on_button_sqrt_clicked(GtkButton *w, gpointer user_data);
 void on_button_log_clicked(GtkButton *w, gpointer user_data);
 void on_button_ln_clicked(GtkButton *w, gpointer user_data);
+void on_menu_item_manage_variables_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_manage_functions_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_manage_units_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_import_csv_file_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_convert_to_unit_expression_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_enable_variables_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_enable_functions_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_enable_units_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_enable_unknown_variables_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_calculate_variables_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_new_variable_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_new_matrix_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_new_vector_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_new_function_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_new_unit_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_rpn_mode_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_fetch_exchange_rates_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_save_defs_activate(GtkMenuItem *w, gpointer user_data);

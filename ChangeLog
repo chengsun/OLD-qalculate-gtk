@@ -1,5 +1,6 @@
 2004-03-10 Niklas Knutsson  <nq@altern.org>
 	
+	* Reworked GUI -- menubar, expander, history window...
 	* Release 0.4.2a
 	* Set correct name on separator again
 	* Fix some compiler warnings

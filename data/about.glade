@@ -63,7 +63,7 @@
 &lt;i&gt;License:&lt;/i&gt; GNU General Public Licence
 &lt;i&gt;Authors:&lt;/i&gt; Niklas Knutsson, Sven Herzberg (gladeification etc.)
 
-Copyright (c) 2003 Niklas Knutsson
+Copyright (c) 2003-2004 Niklas Knutsson
 </property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">True</property>
