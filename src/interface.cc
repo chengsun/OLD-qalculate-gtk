@@ -615,29 +615,10 @@ create_wFunctions (void)
 }
 
 GtkWidget*
-create_wVariables (void) {
-
-	GtkWidget *dialog_action_area1_v;
-	GtkWidget *hbox1_v;
-	GtkWidget *scrolledwindow1_v;
-	GtkWidget *scrolledwindow2_v;
-	GtkWidget *vbuttonbox1_v;
-	GtkWidget *alignment2_v;
-	GtkWidget *hbox3_v;
-	GtkWidget *image2_v;
-	GtkWidget *label3_v;
-	GtkWidget *alignment1_v;
-	GtkWidget *hbox2_v;
-	GtkWidget *image1_v;
-	GtkWidget *label2_v;
-	GtkWidget *dialog_vbox1_v;
-
+create_wVariables (void)
+{
 	wVariables = glade_xml_get_widget (glade_xml, "variables_dialog");
-	dialog_vbox1_v = GTK_DIALOG (wVariables)->vbox;
-	hbox1_v = glade_xml_get_widget (glade_xml, "variables_hbox1");
-	scrolledwindow1_v = glade_xml_get_widget (glade_xml, "variables_scrolledwindow1");
 	tVariableCategories = glade_xml_get_widget (glade_xml, "variables_tree_view1");
-	scrolledwindow2_v = glade_xml_get_widget (glade_xml, "variables_scrolledwindow2");
 	tVariables = glade_xml_get_widget (glade_xml, "variables_tree_view2");
 
 	tVariables_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
@@ -671,18 +652,9 @@ create_wVariables (void) {
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(tVariableCategories_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(tVariableCategories_store), 0, GTK_SORT_ASCENDING);
 
-	vbuttonbox1_v	= glade_xml_get_widget (glade_xml, "variables_vbuttonbox1");
 	bNewVariable	= glade_xml_get_widget (glade_xml, "variables_button_new");
 	bEditVariable	= glade_xml_get_widget (glade_xml, "variables_button_edit");
-	alignment2_v	= glade_xml_get_widget (glade_xml, "variables_button_edit_alignment");
-	hbox3_v		= glade_xml_get_widget (glade_xml, "variables_button_edit_hbox");
-	image2_v	= glade_xml_get_widget (glade_xml, "variables_button_edit_image");
-	label3_v	= glade_xml_get_widget (glade_xml, "variables_button_edit_label");
 	bInsertVariable = glade_xml_get_widget (glade_xml, "variables_button_insert");
-	alignment1_v	= glade_xml_get_widget (glade_xml, "variables_button_insert_alignment");
-	hbox2_v		= glade_xml_get_widget (glade_xml, "variables_button_insert_hbox");
-	image1_v	= glade_xml_get_widget (glade_xml, "variables_button_insert_image");
-	label2_v	= glade_xml_get_widget (glade_xml, "variables_button_insert_label");
 	bDeleteVariable	= glade_xml_get_widget (glade_xml, "variables_button_delete");
 	bCloseVariables = glade_xml_get_widget (glade_xml, "variables_button_close");
 
