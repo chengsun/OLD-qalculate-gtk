@@ -49,10 +49,12 @@ EqNumber::EqNumber(string str, Calculator *parent, char operation_) : EqItem(ope
 	if(str[0] == ID_WRAP_LEFT_CH && str[str.length() - 1] == ID_WRAP_RIGHT_CH) {
 		int id = s2i(str.substr(1, str.length() - 2));
 		mngr = calc->getId(id);
-		if(s == MINUS_CH) mngr->add(-1, MULTIPLICATION_CH);
-		mngr->ref();
-		calc->delId(id);
-		return;
+		if(mngr) {
+			if(s == MINUS_CH) mngr->add(-1, MULTIPLICATION_CH);
+			mngr->ref();
+			calc->delId(id);
+			return;
+		}
 	}
 	mngr = new Manager(calc);
 	if(operation_ == MINUS_CH || operation_ == PLUS_CH) value = 0;
