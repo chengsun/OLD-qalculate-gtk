@@ -176,27 +176,27 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Submenu for creation of new objects. See <xref linkend="qalculate-TBL-new-menu"/>.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Import CSV file</para></entry>
+				<entry><para>Import CSV File...</para></entry>
 				<entry><para>Opens a dialog for import of a data file as a matrix or vectors.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Store Result (<keycombo><keycap>Ctrl</keycap><keycap>S</keycap></keycombo>)</para></entry>
+				<entry><para>Store Result... (<keycombo><keycap>Ctrl</keycap><keycap>S</keycap></keycombo>)</para></entry>
 				<entry><para>Stores the current result as a variable. See <xref linkend="qalculate-variable-creation"/>.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Save definitions</para></entry>
+				<entry><para>Save Definitions</para></entry>
 				<entry><para>Saves all user definitions (variables, functions and units).</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Update exchange rates</para></entry>
+				<entry><para>Update Exchange Rates</para></entry>
 				<entry><para>Downloads current exchange rates from the Internet.</para></entry>
 			</row>						
 			<row valign="top">
-				<entry><para>Plot functions/data</para></entry>
+				<entry><para>Plot Functions/Data</para></entry>
 				<entry><para>Opens the plot dialog. See <xref linkend="qalculate-plotting"/>.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Convert number bases (<keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>)</para></entry>
+				<entry><para>Convert Number Bases (<keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>)</para></entry>
 				<entry><para>Opens the number bases converter. See <xref linkend="qalculate-convert-number-bases-dialog"/></para></entry>
 			</row>
 			<row valign="top">
@@ -270,16 +270,24 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Factorizes the current result. At the moment rather limited if Qalculate! was not installed with Giac support.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Convert to unit</para></entry>
+				<entry><para>Convert To Unit</para></entry>
 				<entry><para>Submenu with units. Select a unit to convert the current result.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Set prefix</para></entry>
+				<entry><para>Set Prefix</para></entry>
 				<entry><para>Submenu for choice of unit prefix in current result.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Convert To Unit Expression (<keycombo><keycap>Ctrl</keycap><keycap>T</keycap></keycombo>)</para></entry>
 				<entry><para>Opens the convert to unit dialog for conversion of result to custom unit expression. See <xref linkend="qalculate-unit-conversion"/>.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Convert To Base Units</para></entry>
+				<entry><para>Splits up unit(s) in the current result into base units.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Convert To Best Unit</para></entry>
+				<entry><para>Tries to convert the units in the current result so that as few units as possible is used. Base units are prioritised.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Copy Result (<keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>C</keycap></keycombo>)</para></entry>
@@ -333,7 +341,7 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Toggles exact mode on/off.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Calculate multiple roots</para></entry>
+				<entry><para>Calculate Multiple Roots</para></entry>
 				<entry><para>Toggles calculation of multiple results for even roots on/off.</para></entry>
 			</row>
 			<row valign="top">
@@ -839,7 +847,7 @@ The ans variable, which always contains the last calculated result, is another s
 	</screenshot>
 </figure>
 <para>
-The easiest way to create a variable is to store the current result. This can be done by clicking the <keycap>STO</keycap> button or selecting <menuchoice><guimenu>File</guimenu><guimenuitem>Store Result</guimenuitem></menuchoice>. Type a name for the variable in the dialog that pops up and optionally enter a category and descriptive name to keep variables well organized.
+The easiest way to create a variable is to store the current result. This can be done by clicking the <keycap>STO</keycap> button or selecting <menuchoice><guimenu>File</guimenu><guimenuitem>Store Result...</guimenuitem></menuchoice>. Type a name for the variable in the dialog that pops up and optionally enter a category and descriptive name to keep variables well organized.
 </para>
 <para>
 Variables can also be created from scratch by selecting <menuchoice><guimenu>File</guimenu><guisubmenu>New</guisubmenu><guimenuitem>Variable</guimenuitem></menuchoice>  or by clicking <guibutton>New</guibutton> in the variable manager. The value can then be filled in, in the text field below the name, and specified as exact or approximate. 
@@ -867,7 +875,7 @@ Vectors and matrices are most effectively used stored in a variable. Qalculate! 
 In this dialog, name, category and descriptive name are typed in as usual, but instead of a single value entry, the matrix/vector edit dialog has a table of entries. Select number of rows and columns above. In a vector this only determines how many value entries that are shown in the table and empty entries will be ignored. For matrices, each entry in the table is an element in the matrix. It is possible to switch between matrix and vector in the dialog (the menu item selected only determines the initial mode).
 </para>
 <para>
-Matrices and vectors can also be loaded from data files. These files most be plain text files with values organized in separated rows and columns. Select <menuchoice><guimenu>File</guimenu><guimenuitem>Import CSV file</guimenuitem></menuchoice> and a dialog window pops up. First select the file to import and then specify whether if it shall be imported as a matrix or vectors. A name, descriptive name and category can optionally be typed in. If the name field is empty, the file name will be used instead. After that, the row in the file where the data starts should be specified. as well as whether this first row contains column headings. Finally the delimiter, used to separate columns in the file, must be selected. Click <guibutton>OK</guibutton> and variables will be generated from the file. If vectors are to be generated and the file contains more than one column, the name will be used as a subcategory and each variable will add the column heading (or <quote>Column 1</quote>, <quote>Column 2</quote>, ...) to the name and the descriptive name.
+Matrices and vectors can also be loaded from data files. These files most be plain text files with values organized in separated rows and columns. Select <menuchoice><guimenu>File</guimenu><guimenuitem>Import CSV File...</guimenuitem></menuchoice> and a dialog window pops up. First select the file to import and then specify whether if it shall be imported as a matrix or vectors. A name, descriptive name and category can optionally be typed in. If the name field is empty, the file name will be used instead. After that, the row in the file where the data starts should be specified. as well as whether this first row contains column headings. Finally the delimiter, used to separate columns in the file, must be selected. Click <guibutton>OK</guibutton> and variables will be generated from the file. If vectors are to be generated and the file contains more than one column, the name will be used as a subcategory and each variable will add the column heading (or <quote>Column 1</quote>, <quote>Column 2</quote>, ...) to the name and the descriptive name.
 </para>
 <figure id="qalculate-FIG-import-csv">
 	<title>Import CSV Dialog</title>
@@ -938,15 +946,15 @@ The argument can be restricted by further conditions. For example that a number 
 Here the main function categories and some of their members are described, to give an overview of available functions. The right place for a complete list and information about separate functions is however in the function manager.
 <variablelist>
 <varlistentry>
-<term>Arithmetics</term>
-<listitem><para>
-Contains functions for basic arithmetic manipulation of numbers, such as rounding, negation, etc. For example,  <command>round()</command> is the standard rounding function, <command>abs()</command> returns the absolute value of a number and <command>gcd()</command> the greatest common divisor.
-</para></listitem>
-</varlistentry>
-<varlistentry>
 <term>Calculus</term>
 <listitem><para>
 Includes <command>diff()</command> which calculates the derivative of an expression with optional arguments <quote>with respect to</quote> (default x) and <quote>order</quote> (default 1), <command>integrate()</command> which is the former reversed, and <command>solve()</command> which solves an equation (ex. <quote>solve(x * 2 = 8)</quote> returns <quote>4</quote> meaning that x equals 4). The last two are only available if Qalculate! was installed with Giac support. There is also a generic Giac function, which passes a text argument directly to Giac.
+</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Combinatorics</term>
+<listitem><para>
+Contains <command>perm()</command> for permutations, <command>comb()</command> for combinations, and <command>factorial()</command>.
 </para></listitem>
 </varlistentry>
 <varlistentry>
@@ -965,12 +973,6 @@ Standard logarithmic and exponential functions. <command>ln()</command> calculat
 <term>Finance</term>
 <listitem><para>
 This essentially includes most of the financial functions that are usually found in spreadsheet applications.
-</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>General</term>
-<listitem><para>
-This unclear category does at the moment only contain the <command>rand()</command> function, which returns a pseudo random number between 0 and 1, and does not take any arguments.
 </para></listitem>
 </varlistentry>
 <varlistentry>
@@ -995,27 +997,33 @@ Separate elements at a specified row and column are accessed with <command>eleme
 </para></listitem>
 </varlistentry>
 <varlistentry>
-<term>Number Bases</term>
+<term>Miscellaneous</term>
 <listitem><para>
-Translates a text string, representing a number in a different base, to a decimal number. Includes <command>BIN()</command> for binary numbers, <command>HEX()</command> for hexadecimal numbers, <command>OCT()</command> for octal numbers and <command>BASE()</command> for numbers in a base between 2 and 36 specified in the second argument.
+A category for functions that do not fit elsewhere. 
+</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Number Theory</term>
+<listitem><para>
+Contains subcategories arithmetics, number bases, and rounding, in addition to functions such as <command>abs()</command>, which returns the absolute value of a number, and <command>gcd()</command>, the greatest common divisor. <command>round()</command> is the standard rounding function. The functions for number bases translates a text string, representing a number in a different base, to a decimal number. Includes <command>BIN()</command> for binary numbers, <command>HEX()</command> for hexadecimal numbers, <command>OCT()</command> for octal numbers and <command>BASE()</command> for numbers in a base between 2 and 36 specified in the second argument.
 </para></listitem>
 </varlistentry>
 <varlistentry>
 <term>Statistics</term>
 <listitem><para>
-Contains a lot of functions for descriptive statistics and some statistical tests. Data sets are stored as vectors. Generally, functions with a vector/data set as last argument can take components/samples as a variable number of arguments directly instead of in a vector (ex. <quote>mean(1, 2, 3)</quote> equals <quote>mean(vector(1, 2, 3))</quote>).
+Contains a lot of functions for descriptive statistics and some statistical tests. Data sets are stored as vectors. Generally, functions with a vector/data set as last argument can take components/samples as a variable number of arguments directly instead of in a vector (ex. <quote>mean(1, 2, 3)</quote> equals <quote>mean(vector(1, 2, 3))</quote>). Also contains the <command>rand()</command> function, which returns a pseudo random number between 0 and 1, and does not take any arguments.
 </para></listitem>
 </varlistentry>
 <varlistentry>
 <term>Trigonometry</term>
 <listitem><para>
-Trigonometric functions, including <command>sin()</command>, <command>cos()</command>, <command>tan()</command>, and hyperbolic and inverse versions of those. These functions take as argument an angle, with degrees, radians or gradians as unit. The default angle unit is used if the argument does not have a unit.
+Trigonometric functions, including <command>sin()</command>, <command>cos()</command>, <command>tan()</command>, <command>sec()</command>, <command>csc()</command>, <command>cot()</command>, and hyperbolic and inverse versions of those. These functions take as argument an angle, with degrees, radians or gradians as unit. The default angle unit is used if the argument does not have a unit.
 </para></listitem>
 </varlistentry>
 <varlistentry>
 <term>Utilities</term>
 <listitem><para>
-Various utility functions. Most are only useful in definition of other functions. The <command>save()</command> function can however be a quick way of storing a value in a variable, and <command>csum()</command> can be a powerful tool for data processing. This category also contains some functions, such as <command>char()</command> and <command>ascii()</command>, that might be useful for programmers.
+Various utility functions. Most are only useful in definition of other functions. The <command>save()</command> function can however be a quick way of storing a value in a variable, and <command>csum()</command> can be a powerful tool for data processing. This category also contains some functions, such as <command>char()</command> and <command>ascii()</command>, that might be useful for programmers. , <command>replace()</command> provides an easy way of replacing unknown variables by known expressions in a value (ex. <quote>replace(5x^2+x, x, 3)</quote> equals <quote>5*3^2+3</quote>).
 </para></listitem>
 </varlistentry>
 </variablelist>
@@ -1071,7 +1079,7 @@ Units give numbers meaning in the real world. They specify what is measured by t
 Among units, Qalculate! has support for currencies with up-to-date exchange rates. Currencies are normally referenced with the standard three letter code due to name clashes, but a number of currency unit can also be accessed through their regular name and symbol. U.S. dollars can, for example, be referenced both as USD and dollar/dollars, or with the $ symbol. 
 </para>
 <para>
-<application>Wget</application> must be installed on the computer for exchange rate updates to be enabled. Current exchange rates are automatically fetched from the European Central Bank on the Internet, the first time Qalculate! is started. By default the exchange rates will thereafter have to be updated manually from <menuchoice><guimenu>File</guimenu><guimenuitem>Update exchange rates</guimenuitem></menuchoice>, unless automatic updates are enabled in the preferences dialog.
+<application>Wget</application> must be installed on the computer for exchange rate updates to be enabled. Current exchange rates are automatically fetched from the European Central Bank on the Internet, the first time Qalculate! is started. By default the exchange rates will thereafter have to be updated manually from <menuchoice><guimenu>File</guimenu><guimenuitem>Update Exchange Rates</guimenuitem></menuchoice>, unless automatic updates are enabled in the preferences dialog.
 </para>
 </sect2>
 <sect2 id="qalculate-unit-conversion">
@@ -1080,7 +1088,7 @@ Among units, Qalculate! has support for currencies with up-to-date exchange rate
 Expression can be converted to a specific unit directly in the expression entry with the <quote>to</quote> operator, which converts the left-hand expression to a specified unit (ex. <quote>5 feet + 2 inches to cm</quote> converts the result of <quote>5 feet + 2 inches</quote> to centimeters and displays it). Note that the command <quote>to</quote> is localized, meaning that if Qalculate! is used with for example Swedish translation, then <quote>till</quote> should be used instead. Unit expressions may only contain units, prefixes, exponents, multiplication and division. Other elements are ignored. 
 </para>
 <para>
-The unit conversion dialog, accessible from the <guibutton>Convert</guibutton> button, <menuchoice><guimenu>Edit</guimenu><guisubmenu>Convert to unit</guisubmenu><guimenuitem>Enter custom unit</guimenuitem></menuchoice> or <keycombo><keycap>Ctrl</keycap><keycap>T</keycap></keycombo>, can also be used. Enter a unit in the dialog that pops up, click <guibutton>Apply</guibutton> or <guibutton>OK</guibutton> and the displayed result is then converted.
+The unit conversion dialog, accessible from the <guibutton>Convert</guibutton> button, <menuchoice><guimenu>Edit</guimenu><guimenuitem>Convert To Unit Expression...</guimenuitem></menuchoice> or <keycombo><keycap>Ctrl</keycap><keycap>T</keycap></keycombo>, can also be used. Enter a unit in the dialog that pops up, click <guibutton>Apply</guibutton> or <guibutton>OK</guibutton> and the displayed result is then converted.
 <figure id="qalculate-FIG-unit-conversion-dialog">
 	<title>Unit Conversion Dialog</title>
 	<screenshot>
@@ -1093,7 +1101,10 @@ The unit conversion dialog, accessible from the <guibutton>Convert</guibutton> b
 </figure>
 </para>
 <para>
-The final way to convert to another unit is to use the predefined units in the <menuchoice><guimenu>Edit</guimenu><guisubmenu>Convert to unit</guisubmenu></menuchoice> menu or press <guibutton>Convert result</guibutton> in the unit manager. <menuchoice><guimenu>Edit</guimenu><guisubmenu>Set prefix</guisubmenu></menuchoice> can be used to select a prefix.
+The final way to convert to another unit is to use the predefined units in the <menuchoice><guimenu>Edit</guimenu><guisubmenu>Convert To Unit</guisubmenu></menuchoice> menu or press <guibutton>Convert Result</guibutton> in the unit manager. <menuchoice><guimenu>Edit</guimenu><guisubmenu>Set Prefix</guisubmenu></menuchoice> can be used to select a prefix.
+</para>
+<para>
+It is also possible to let Qalculate! automatically convert the result to appropriate units with <menuchoice><guimenu>Edit</guimenu><guisubmenu>Convert To Base Units</guisubmenu></menuchoice> and <menuchoice><guimenu>Edit</guimenu><guisubmenu>Convert To Best Unit</guisubmenu></menuchoice>.
 </para>
 </sect2>
 <sect2 id="qalculate-unit-creation">
@@ -1133,7 +1144,7 @@ Composite units need a unit expression with multiple units as base, in the base 
 Plotting in Qalculate! is done through an external program, <application>Gnuplot</application>. Thus <application>Gnuplot</application> (&gt;= v. 3.7) need to be installed on the computer for plotting to work.
 </para>
 <para>
-To plot functions or data sets, select <menuchoice><guimenu>File</guimenu><guimenuitem>Plot functions/data</guimenuitem></menuchoice>, which brings up the plot dialog. The plot dialog consists of two tabs/pages — the first for the data and the other for control of function sampling and appearance. 
+To plot functions or data sets, select <menuchoice><guimenu>File</guimenu><guimenuitem>Plot Functions/Data</guimenuitem></menuchoice>, which brings up the plot dialog. The plot dialog consists of two tabs/pages — the first for the data and the other for control of function sampling and appearance. 
 </para>
 <figure id="qalculate-FIG-plot-data">
 	<title>Plot Data</title>

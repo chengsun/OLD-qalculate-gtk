@@ -40,7 +40,7 @@
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image674">
+			<widget class="GtkImage" id="image708">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-new</property>
 			  <property name="icon_size">1</property>
@@ -106,12 +106,12 @@
 		  <child>
 		    <widget class="GtkImageMenuItem" id="menu_item_import_csv_file">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Import CSV File</property>
+		      <property name="label" translatable="yes">Import CSV File...</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_import_csv_file_activate" last_modification_time="Wed, 10 Mar 2004 15:40:44 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image675">
+			<widget class="GtkImage" id="image709">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -127,13 +127,13 @@
 		  <child>
 		    <widget class="GtkImageMenuItem" id="menu_item_save">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">_Store Result</property>
+		      <property name="label" translatable="yes">_Store Result...</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_save_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image676">
+			<widget class="GtkImage" id="image710">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -161,7 +161,7 @@
 		      <signal name="activate" handler="on_menu_item_save_defs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image677">
+			<widget class="GtkImage" id="image711">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -183,7 +183,7 @@
 		      <signal name="activate" handler="on_menu_item_fetch_exchange_rates_activate" last_modification_time="Mon, 06 Oct 2003 21:06:00 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image678">
+			<widget class="GtkImage" id="image712">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-refresh</property>
 			  <property name="icon_size">1</property>
@@ -220,7 +220,7 @@
 		      <accelerator key="B" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image679">
+			<widget class="GtkImage" id="image713">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -248,7 +248,7 @@
 		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image680">
+			<widget class="GtkImage" id="image714">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -326,7 +326,7 @@
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image681">
+			<widget class="GtkImage" id="image715">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -350,13 +350,13 @@
 		  <child>
 		    <widget class="GtkImageMenuItem" id="menu_item_convert_to_custom_unit">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Convert To Unit Expression</property>
+		      <property name="label" translatable="yes">Convert To Unit Expression...</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_convert_to_unit_expression_activate" last_modification_time="Wed, 10 Mar 2004 15:28:33 GMT"/>
 		      <accelerator key="T" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image682">
+			<widget class="GtkImage" id="image716">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -377,7 +377,7 @@
 		      <signal name="activate" handler="on_menu_item_convert_to_base_units_activate" last_modification_time="Sun, 21 Mar 2004 08:14:57 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image683">
+			<widget class="GtkImage" id="image717">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -398,7 +398,7 @@
 		      <signal name="activate" handler="on_menu_item_convert_to_best_unit_activate" last_modification_time="Sun, 21 Mar 2004 08:14:57 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image684">
+			<widget class="GtkImage" id="image718">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -426,7 +426,7 @@
 		      <accelerator key="C" modifiers="GDK_CONTROL_MASK | GDK_MOD1_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image685">
+			<widget class="GtkImage" id="image719">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-copy</property>
 			  <property name="icon_size">1</property>
@@ -453,7 +453,7 @@
 		      <signal name="activate" handler="on_menu_item_edit_prefs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image686">
+			<widget class="GtkImage" id="image720">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -745,7 +745,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Gradians</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">True</property>
+			      <property name="active">False</property>
 			      <property name="group">menu_item_degrees</property>
 			      <signal name="activate" handler="on_menu_item_gradians_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 			    </widget>
@@ -907,7 +907,7 @@
 		      <signal name="activate" handler="on_menu_item_save_mode_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image687">
+			<widget class="GtkImage" id="image721">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -966,7 +966,7 @@
 		      <accelerator key="F1" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image688">
+			<widget class="GtkImage" id="image722">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
@@ -987,7 +987,7 @@
 		      <signal name="activate" handler="on_menu_item_about_activate" last_modification_time="Thu, 14 Aug 2003 22:31:50 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image689">
+			<widget class="GtkImage" id="image723">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-dialog-info</property>
 			  <property name="icon_size">1</property>
@@ -2238,7 +2238,7 @@
       <signal name="activate" handler="on_menu_item_copy_activate" last_modification_time="Sat, 20 Mar 2004 09:40:15 GMT"/>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image657">
+	<widget class="GtkImage" id="image736">
 	  <property name="visible">True</property>
 	  <property name="stock">gtk-copy</property>
 	  <property name="icon_size">1</property>
@@ -2252,14 +2252,192 @@
   </child>
 
   <child>
+    <widget class="GtkImageMenuItem" id="popup_menu_item_save">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">_Store...</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_menu_item_save_activate" last_modification_time="Sun, 21 Mar 2004 20:46:44 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image737">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-save</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkMenuItem" id="separator_popup_factorize">
+      <property name="visible">True</property>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkMenuItem" id="popup_menu_item_factorize">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">_Factorize</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_menu_item_factorize_activate" last_modification_time="Sat, 20 Mar 2004 09:40:15 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkMenuItem" id="separator_popup_display">
+      <property name="visible">True</property>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkRadioMenuItem" id="popup_menu_item_display_normal">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">_Normal</property>
+      <property name="use_underline">True</property>
+      <property name="active">True</property>
+      <signal name="activate" handler="on_popup_menu_item_display_normal_activate" last_modification_time="Thu, 11 Mar 2004 08:37:06 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkRadioMenuItem" id="popup_menu_item_display_scientific">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Sc_ientific</property>
+      <property name="use_underline">True</property>
+      <property name="active">False</property>
+      <property name="group">popup_menu_item_display_normal</property>
+      <signal name="activate" handler="on_popup_menu_item_display_scientific_activate" last_modification_time="Thu, 11 Mar 2004 08:37:06 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkRadioMenuItem" id="popup_menu_item_display_purely_scientific">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Purel_y Scientific</property>
+      <property name="use_underline">True</property>
+      <property name="active">False</property>
+      <property name="group">popup_menu_item_display_normal</property>
+      <signal name="activate" handler="on_popup_menu_item_display_purely_scientific_activate" last_modification_time="Sun, 21 Mar 2004 21:37:18 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkRadioMenuItem" id="popup_menu_item_display_non_scientific">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Simp_le</property>
+      <property name="use_underline">True</property>
+      <property name="active">False</property>
+      <property name="group">popup_menu_item_display_normal</property>
+      <signal name="activate" handler="on_popup_menu_item_display_non_scientific_activate" last_modification_time="Sun, 21 Mar 2004 21:37:18 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkMenuItem" id="separator_popup_base">
+      <property name="visible">True</property>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkRadioMenuItem" id="popup_menu_item_binary">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">_Binary</property>
+      <property name="use_underline">True</property>
+      <property name="active">False</property>
+      <signal name="activate" handler="on_popup_menu_item_binary_activate" last_modification_time="Thu, 11 Mar 2004 08:34:34 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkRadioMenuItem" id="popup_menu_item_octal">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">_Octal</property>
+      <property name="use_underline">True</property>
+      <property name="active">False</property>
+      <property name="group">popup_menu_item_binary</property>
+      <signal name="activate" handler="on_popup_menu_item_octal_activate" last_modification_time="Thu, 11 Mar 2004 08:34:34 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkRadioMenuItem" id="popup_menu_item_decimal">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">_Decimal</property>
+      <property name="use_underline">True</property>
+      <property name="active">True</property>
+      <property name="group">popup_menu_item_binary</property>
+      <signal name="activate" handler="on_popup_menu_item_decimal_activate" last_modification_time="Thu, 11 Mar 2004 08:34:34 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkRadioMenuItem" id="popup_menu_item_hexadecimal">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">_Hexadecimal</property>
+      <property name="use_underline">True</property>
+      <property name="active">False</property>
+      <property name="group">popup_menu_item_binary</property>
+      <signal name="activate" handler="on_popup_menu_item_hexadecimal_activate" last_modification_time="Thu, 11 Mar 2004 08:34:34 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkMenuItem" id="separator_popup_fraction">
+      <property name="visible">True</property>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkRadioMenuItem" id="popup_menu_item_fraction_decimal">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Fraction D_ecimal</property>
+      <property name="use_underline">True</property>
+      <property name="active">True</property>
+      <signal name="activate" handler="on_popup_menu_item_fraction_decimal_activate" last_modification_time="Thu, 11 Mar 2004 08:34:34 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkRadioMenuItem" id="popup_menu_item_fraction_combined">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Fraction Co_mbined</property>
+      <property name="use_underline">True</property>
+      <property name="active">False</property>
+      <property name="group">popup_menu_item_fraction_decimal</property>
+      <signal name="activate" handler="on_popup_menu_item_fraction_combined_activate" last_modification_time="Thu, 11 Mar 2004 08:34:34 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkRadioMenuItem" id="popup_menu_item_fraction_fraction">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Fraction F_ractional</property>
+      <property name="use_underline">True</property>
+      <property name="active">False</property>
+      <property name="group">popup_menu_item_fraction_decimal</property>
+      <signal name="activate" handler="on_popup_menu_item_fraction_fraction_activate" last_modification_time="Thu, 11 Mar 2004 08:34:34 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkMenuItem" id="separator_popup_units">
+      <property name="visible">True</property>
+    </widget>
+  </child>
+
+  <child>
     <widget class="GtkImageMenuItem" id="popup_menu_item_convert_to_unit">
       <property name="visible">True</property>
-      <property name="label" translatable="yes">Convert</property>
+      <property name="label" translatable="yes">C_onvert...</property>
       <property name="use_underline">True</property>
       <signal name="activate" handler="on_menu_item_convert_to_unit_expression_activate" last_modification_time="Sat, 20 Mar 2004 09:40:15 GMT"/>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image658">
+	<widget class="GtkImage" id="image738">
 	  <property name="visible">True</property>
 	  <property name="stock">gtk-convert</property>
 	  <property name="icon_size">1</property>
@@ -2273,152 +2451,49 @@
   </child>
 
   <child>
-    <widget class="GtkMenuItem" id="popup_menu_item_factorize">
+    <widget class="GtkImageMenuItem" id="popup_menu_item_convert_to_base_units">
       <property name="visible">True</property>
-      <property name="label" translatable="yes">Factorize</property>
+      <property name="label" translatable="yes">Convert To Base _Units</property>
       <property name="use_underline">True</property>
-      <signal name="activate" handler="on_menu_item_factorize_activate" last_modification_time="Sat, 20 Mar 2004 09:40:15 GMT"/>
+      <signal name="activate" handler="on_menu_item_convert_to_base_units_activate" last_modification_time="Sun, 21 Mar 2004 20:29:28 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image739">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-convert</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
     </widget>
   </child>
 
   <child>
-    <widget class="GtkMenuItem" id="separator32">
+    <widget class="GtkImageMenuItem" id="popup_menu_item_convert_to_best_unit">
       <property name="visible">True</property>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkRadioMenuItem" id="popup_menu_item_display_normal">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Normal</property>
+      <property name="label" translatable="yes">Convert _To Best Unit</property>
       <property name="use_underline">True</property>
-      <property name="active">True</property>
-      <signal name="activate" handler="on_popup_menu_item_display_normal_activate" last_modification_time="Thu, 11 Mar 2004 08:37:06 GMT"/>
+      <signal name="activate" handler="on_menu_item_convert_to_best_unit_activate" last_modification_time="Sun, 21 Mar 2004 20:29:28 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image740">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-convert</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
     </widget>
   </child>
 
   <child>
-    <widget class="GtkRadioMenuItem" id="popup_menu_item_display_scientific">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Scientific</property>
-      <property name="use_underline">True</property>
-      <property name="active">False</property>
-      <property name="group">popup_menu_item_display_normal</property>
-      <signal name="activate" handler="on_popup_menu_item_display_scientific_activate" last_modification_time="Thu, 11 Mar 2004 08:37:06 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkRadioMenuItem" id="popup_menu_item_display_purely_scientific">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Purely Scientific</property>
-      <property name="use_underline">True</property>
-      <property name="active">False</property>
-      <property name="group">popup_menu_item_display_normal</property>
-      <signal name="activate" handler="on_popup_menu_item_display_purely_scientific_activate" last_modification_time="Thu, 11 Mar 2004 22:10:35 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkRadioMenuItem" id="popup_menu_item_display_non_scientific">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Simple</property>
-      <property name="use_underline">True</property>
-      <property name="active">False</property>
-      <property name="group">popup_menu_item_display_normal</property>
-      <signal name="activate" handler="on_popup_menu_item_display_non_scientific_activate" last_modification_time="Thu, 11 Mar 2004 22:09:35 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkMenuItem" id="separator28">
-      <property name="visible">True</property>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkRadioMenuItem" id="popup_menu_item_binary">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Binary</property>
-      <property name="use_underline">True</property>
-      <property name="active">False</property>
-      <signal name="activate" handler="on_popup_menu_item_binary_activate" last_modification_time="Thu, 11 Mar 2004 08:34:34 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkRadioMenuItem" id="popup_menu_item_octal">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Octal</property>
-      <property name="use_underline">True</property>
-      <property name="active">False</property>
-      <property name="group">popup_menu_item_binary</property>
-      <signal name="activate" handler="on_popup_menu_item_octal_activate" last_modification_time="Thu, 11 Mar 2004 08:34:34 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkRadioMenuItem" id="popup_menu_item_decimal">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Decimal</property>
-      <property name="use_underline">True</property>
-      <property name="active">True</property>
-      <property name="group">popup_menu_item_binary</property>
-      <signal name="activate" handler="on_popup_menu_item_decimal_activate" last_modification_time="Thu, 11 Mar 2004 08:34:34 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkRadioMenuItem" id="popup_menu_item_hexadecimal">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Hexadecimal</property>
-      <property name="use_underline">True</property>
-      <property name="active">False</property>
-      <property name="group">popup_menu_item_binary</property>
-      <signal name="activate" handler="on_popup_menu_item_hexadecimal_activate" last_modification_time="Thu, 11 Mar 2004 08:34:34 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkMenuItem" id="separator30">
-      <property name="visible">True</property>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkRadioMenuItem" id="popup_menu_item_fraction_decimal">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Fraction Decimal</property>
-      <property name="use_underline">True</property>
-      <property name="active">True</property>
-      <signal name="activate" handler="on_popup_menu_item_fraction_decimal_activate" last_modification_time="Thu, 11 Mar 2004 08:34:34 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkRadioMenuItem" id="popup_menu_item_fraction_combined">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Fraction Combined</property>
-      <property name="use_underline">True</property>
-      <property name="active">False</property>
-      <property name="group">popup_menu_item_fraction_decimal</property>
-      <signal name="activate" handler="on_popup_menu_item_fraction_combined_activate" last_modification_time="Thu, 11 Mar 2004 08:34:34 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkRadioMenuItem" id="popup_menu_item_fraction_fraction">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Fraction Fractional</property>
-      <property name="use_underline">True</property>
-      <property name="active">False</property>
-      <property name="group">popup_menu_item_fraction_decimal</property>
-      <signal name="activate" handler="on_popup_menu_item_fraction_fraction_activate" last_modification_time="Thu, 11 Mar 2004 08:34:34 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkMenuItem" id="separator29">
+    <widget class="GtkMenuItem" id="separator_popup_unit_settings">
       <property name="visible">True</property>
     </widget>
   </child>
@@ -2426,20 +2501,40 @@
   <child>
     <widget class="GtkCheckMenuItem" id="popup_menu_item_short_units">
       <property name="visible">True</property>
-      <property name="label" translatable="yes">Use Abbreviations</property>
+      <property name="label" translatable="yes">Use _Abbreviations</property>
       <property name="use_underline">True</property>
-      <property name="active">True</property>
-      <signal name="activate" handler="on_popup_menu_item_short_units_activate" last_modification_time="Thu, 11 Mar 2004 08:34:34 GMT"/>
+      <property name="active">False</property>
+      <signal name="activate" handler="on_popup_menu_item_short_units_activate" last_modification_time="Sun, 21 Mar 2004 21:37:18 GMT"/>
     </widget>
   </child>
 
   <child>
     <widget class="GtkCheckMenuItem" id="popup_menu_item_display_prefixes">
       <property name="visible">True</property>
-      <property name="label" translatable="yes">Enable Prefixes</property>
+      <property name="label" translatable="yes">Enable _Prefixes</property>
       <property name="use_underline">True</property>
       <property name="active">True</property>
       <signal name="activate" handler="on_popup_menu_item_display_prefixes_activate" last_modification_time="Thu, 11 Mar 2004 08:37:06 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkCheckMenuItem" id="popup_menu_item_all_prefixes">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Enable Use Of All Prefi_xes</property>
+      <property name="use_underline">True</property>
+      <property name="active">False</property>
+      <signal name="activate" handler="on_popup_menu_item_all_prefixes_activate" last_modification_time="Sun, 21 Mar 2004 21:37:18 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkCheckMenuItem" id="popup_menu_item_denominator_prefixes">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Enable Denominator Prefixes</property>
+      <property name="use_underline">True</property>
+      <property name="active">False</property>
+      <signal name="activate" handler="on_popup_menu_item_denominator_prefixes_activate" last_modification_time="Sun, 21 Mar 2004 21:37:18 GMT"/>
     </widget>
   </child>
 </widget>

@@ -1,5 +1,17 @@
+2004-03-23 Niklas Knutsson  <nq@altern.org>
+
+	* derangements()
+	* sum() and product() corresponding to the signs
+	* sum() -> total()
+	* Reorganisation of function categories
+
+2004-03-22 Niklas Knutsson  <nq@altern.org>
+
+	* Complete convert to best unit
+
 2004-03-21 Niklas Knutsson  <nq@altern.org>
 
+	* Make result context menu context sensitive
 	* Protect intValue and longIntValue against overflow
 	* Fix printing of exponent 1E...
 	* Convert to best unit (beginning)
