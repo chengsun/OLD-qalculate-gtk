@@ -2,8 +2,8 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
     "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
   <!ENTITY legal SYSTEM "legal.xml">
-  <!ENTITY appversion "0.6.3">
-  <!ENTITY manrevision "0.6.3">
+  <!ENTITY appversion "0.6.4">
+  <!ENTITY manrevision "0.6.4">
   <!ENTITY date "August 2004">
   <!ENTITY app "Qalculate!">    
 ]>
@@ -251,6 +251,10 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Opens the function edit dialog for creation of a new function.</para></entry>
 			</row>
 			<row valign="top">
+				<entry><para>Data Set</para></entry>
+				<entry><para>Opens the data set edit dialog for creation of a new data set.</para></entry>
+			</row>
+			<row valign="top">
 				<entry><para>Unit</para></entry>
 				<entry><para>Opens the unit edit dialog for creation of a new unit.</para></entry>
 			</row>
@@ -282,8 +286,12 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Opens the unit manager. See <xref linkend="qalculate-managers"/>.</para></entry>
 			</row>
 			<row valign="top">
+				<entry><para>Manage Data Sets</para></entry>
+				<entry><para>Opens the data set manager.</para></entry>
+			</row>
+			<row valign="top">
 				<entry><para>Factorize</para></entry>
-				<entry><para>Factorizes the current result. At the moment rather limited.</para></entry>
+				<entry><para>Factorizes the current result.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Convert To Unit</para></entry>
@@ -369,7 +377,7 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Enables/disables interpretation of input numbers with decimals as approximate with a precision equal to the number of digits (after preceding zeroes).</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>RPN Mode</para></entry>
+				<entry><para>RPN Mode (<keycombo><keycap>Ctrl</keycap><keycap>R</keycap></keycombo>)</para></entry>
 				<entry><para>Toggles use of Reverse Polish Notation syntax in expressions on/off.</para></entry>
 			</row>
 			<row valign="top">
@@ -759,6 +767,8 @@ The following operators are defined in Qalculate! and may be used in expressions
 	</tgroup>
 </table>
 <para>
+The operator names <quote>plus</quote>, <quote>minus</quote>, <quote>times</quote>, <quote>per</quote>, <quote>AND</quote> and <quote>OR</quote> may also be used, surrounded by space, for the corresponding operation (ex. <quote>5 plus 2</quote>, but not <quote>5plus2</quote>, equals <quote>5 + 2</quote>).
+These operator names are localized, but <quote>AND</quote> and <quote>OR</quote> are always available.
 In addition to these operators there are a couple of shortcuts for certain functions, such as <quote>5!</quote> which equals <quote>factorial(5)</quote>. 
 </para>
 <para>
@@ -1010,13 +1020,21 @@ Contains <command>sum()</command> and <command>productive()</command>, which cor
 <varlistentry>
 <term>Calculus</term>
 <listitem><para>
-Includes <command>diff()</command> which calculates the derivative of an expression with optional arguments <quote>with respect to</quote> (default x) and <quote>order</quote> (default 1).
+Includes <command>diff()</command>, which calculates the derivative of an expression with optional arguments <quote>with respect to</quote> (default x) and <quote>order</quote> (default 1), and a limited integration function.
 </para></listitem>
 </varlistentry>
 <varlistentry>
 <term>Combinatorics</term>
 <listitem><para>
 Contains functions such as <command>perm()</command> for permutations, <command>comb()</command> for combinations, and <command>factorial()</command>.
+</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Data Sets</term>
+<listitem><para>
+A data set consists of a set of properties and objects, which can be accessed by a function which takes two arguments — object and property. The function returns the object's value for the selected property.
+For example, the data in the <quote>Elements</quote> data set is accessed with the <command>atom()</command> function, with the element (referenced using atomic symbol, number or name) and property (ex. weight) as arguments.
+The special property <quote>info</quote> displays all properties of the object in a dialog window.
 </para></listitem>
 </varlistentry>
 <varlistentry>

@@ -412,6 +412,7 @@ bool MathStructure::isInteger() const {return m_type == STRUCT_NUMBER && o_numbe
 bool MathStructure::isNumber() const {return m_type == STRUCT_NUMBER;}
 bool MathStructure::isZero() const {return m_type == STRUCT_NUMBER && o_number.isZero();}
 bool MathStructure::isOne() const {return m_type == STRUCT_NUMBER && o_number.isOne();}
+bool MathStructure::isMinusOne() const {return m_type == STRUCT_NUMBER && o_number.isMinusOne();}
 
 bool MathStructure::hasNegativeSign() const {
 	return (m_type == STRUCT_NUMBER && o_number.hasNegativeSign()) || m_type == STRUCT_NEGATE || (m_type == STRUCT_MULTIPLICATION && SIZE > 0 && CHILD(0).hasNegativeSign());
@@ -1410,7 +1411,7 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 		case STRUCT_POWER: {
 			if(mstruct.representsInteger() || CHILD(0).representsReal()) {
 				if(CHILD(1).isNumber() && CHILD(1).number().isRational()) {
-					if(CHILD(1).number().numeratorIsEven()) {
+					if(CHILD(1).number().numeratorIsEven() && !mstruct.representsInteger()) {
 						MathStructure mstruct_base(CHILD(0));
 						CHILD(0).set(CALCULATOR->f_abs, &mstruct_base, NULL);
 					}
@@ -1998,6 +1999,8 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 				} else {
 					return i;
 				}
+			} else if(mstruct2.isNumber()) {
+				return -1;
 			} else if(!mstruct2.isAddition()) {
 				int i = evalSortCompare(mstruct1[0], mstruct2);
 				if(i == 0) {
@@ -2077,7 +2080,7 @@ void MathStructure::evalSort() {
 			if(!b) sorted.push_back(v_order[i]);
 		} else {		
 			for(unsigned int i2 = 0; i2 < sorted.size(); i2++) {
-				if(!(m_type == STRUCT_MULTIPLICATION && v_subs[sorted[i2]].isNumber_exp()) && evalSortCompare(CHILD(i), v_subs[sorted[i2]]) < 0) {
+				if(!(m_type == STRUCT_MULTIPLICATION && v_subs[sorted[i2]].isNumber_exp()) && evalSortCompare(CHILD(i), v_subs[sorted[i2]]) < 0) {	
 					sorted.insert(sorted.begin() + i2, v_order[i]);
 					b = true;
 					break;
@@ -2091,11 +2094,11 @@ void MathStructure::evalSort() {
 	}
 }
 
-int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, const MathStructure &parent, const SortOptions &so);
-int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, const MathStructure &parent, const SortOptions &so) {
+int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, const MathStructure &parent, const PrintOptions &po);
+int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, const MathStructure &parent, const PrintOptions &po) {
 
 	if(mstruct1.type() != mstruct2.type() && !mstruct1.isUnit()) {
-		if(parent.isAddition() && so.minus_last) {
+		if(parent.isAddition() && po.sort_options.minus_last) {
 			bool m1 = mstruct1.hasNegativeSign(), m2 = mstruct2.hasNegativeSign();
 			if(m1 && !m2) {
 				return 1;
@@ -2111,10 +2114,10 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			if(parent.isMultiplication()) return 1;
 			return -1;
 		}
-		if(mstruct2.isUnit()) return -sortCompare(mstruct2, mstruct1, parent, so);
-		else if(mstruct2.isAddition()) return -sortCompare(mstruct2, mstruct1, parent, so);	
-		else if(mstruct2.isMultiplication() && !mstruct1.isAddition()) return -sortCompare(mstruct2, mstruct1, parent, so);
-		else if(mstruct2.isPower() && !mstruct1.isAddition() && !mstruct1.isMultiplication()) return -sortCompare(mstruct2, mstruct1, parent, so);
+		if(mstruct2.isUnit()) return -sortCompare(mstruct2, mstruct1, parent, po);
+		else if(mstruct2.isAddition()) return -sortCompare(mstruct2, mstruct1, parent, po);	
+		else if(mstruct2.isMultiplication() && !mstruct1.isAddition()) return -sortCompare(mstruct2, mstruct1, parent, po);
+		else if(mstruct2.isPower() && !mstruct1.isAddition() && !mstruct1.isMultiplication()) return -sortCompare(mstruct2, mstruct1, parent, po);
 	}
 
 	switch(mstruct1.type()) {
@@ -2155,8 +2158,8 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 		} 
 		case STRUCT_UNIT: {
 			if(mstruct2.isUnit()) {
-				if(mstruct1.unit()->name() < mstruct2.unit()->name()) return -1;
-				if(mstruct1.unit()->name() == mstruct2.unit()->name()) return 0;
+				if(mstruct1.unit() == mstruct2.unit()) return 0;
+				if(mstruct1.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct1.isPlural(), po.use_reference_names).name < mstruct2.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct2.isPlural(), po.use_reference_names).name) return -1;
 				return 1;
 			}
 			return 1;
@@ -2167,7 +2170,7 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 				else if(mstruct1.symbol() == mstruct2.symbol()) return 0;
 				else return 1;
 			} else if(mstruct2.isVariable()) {
-				if(mstruct1.symbol() < mstruct2.variable()->name()) return -1;
+				if(mstruct1.symbol() < mstruct2.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name) return -1;
 				else return 1;
 			}
 			if(mstruct2.isUnit() || mstruct2.isFunction()) return -1;
@@ -2175,11 +2178,11 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 		}
 		case STRUCT_VARIABLE: {
 			if(mstruct2.isVariable()) {
-				if(mstruct1.variable()->name() < mstruct2.variable()->name()) return -1;
-				else if(mstruct1.variable()->name() == mstruct2.variable()->name()) return 0;
+				if(mstruct1.variable() == mstruct2.variable()) return 0;
+				else if(mstruct1.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name < mstruct2.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name) return -1;
 				else return 1;
 			} else if(mstruct2.isSymbolic()) {
-				if(mstruct1.variable()->name() <= mstruct2.symbol()) return -1;
+				if(mstruct1.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name <= mstruct2.symbol()) return -1;
 				else return 1;
 			}
 			if(mstruct2.isUnit() || mstruct2.isFunction()) return -1;
@@ -2187,30 +2190,30 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 		}
 		case STRUCT_FUNCTION: {
 			if(mstruct2.isFunction()) {
-				if(mstruct1.function()->name() < mstruct2.function()->name()) return -1;
-				if(mstruct1.function()->name() == mstruct2.function()->name()) {
+				if(mstruct1.function() == mstruct2.function()) {
 					for(unsigned int i = 0; i < mstruct2.size(); i++) {
 						if(i >= mstruct1.size()) {
 							return -1;	
 						}
-						int i2 = sortCompare(mstruct1[i], mstruct2[i], parent, so);
+						int i2 = sortCompare(mstruct1[i], mstruct2[i], parent, po);
 						if(i2 != 0) return i2;
 					}
 					return 0;
-				} else return 1;
+				}
+				if(mstruct1.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name < mstruct2.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name) return -1;
 			}
 			return 1;
 		}
 		case STRUCT_POWER: {
 			if(mstruct2.isPower()) {
-				int i = sortCompare(mstruct1[0], mstruct2[0], parent, so);
+				int i = sortCompare(mstruct1[0], mstruct2[0], parent, po);
 				if(i == 0) {
-					return sortCompare(mstruct1[1], mstruct2[1], parent, so);
+					return sortCompare(mstruct1[1], mstruct2[1], parent, po);
 				} else {
 					return i;
 				}
 			} else if(!mstruct2.isAddition()) {
-				int i = sortCompare(mstruct1[0], mstruct2, parent, so);
+				int i = sortCompare(mstruct1[0], mstruct2, parent, po);
 				if(i == 0) {
 					if(mstruct1[1].hasNegativeSign()) return 1;
 					return -1;
@@ -2224,7 +2227,7 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			if(mstruct2.isNumber()) return -1;
 			unsigned int start = 0;
 			if(mstruct1[0].isNumber() && mstruct1.size() > 1) start = 1;
-			if(mstruct2.size() < 1 || mstruct2.isPower()) return sortCompare(mstruct1[start], mstruct2, parent, so);
+			if(mstruct2.size() < 1 || mstruct2.isPower()) return sortCompare(mstruct1[start], mstruct2, parent, po);
 			if(mstruct2.isMultiplication()) {
 				if(mstruct2.size() < 1) return -1;
 				unsigned int mstruct_start = 0;
@@ -2233,11 +2236,10 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 					if(i >= mstruct2.size() - mstruct_start && i >= mstruct1.size() - start) return 0;
 					if(i >= mstruct2.size() - mstruct_start) return 1;
 					if(i >= mstruct1.size() - start) return -1;
-					int i2 = sortCompare(mstruct1[i + start], mstruct2[i + mstruct_start], parent, so);
+					int i2 = sortCompare(mstruct1[i + start], mstruct2[i + mstruct_start], parent, po);
 					if(i2 != 0) return i2;
 				}
 			} 
-			if(mstruct2.isAddition()) return 1;
 			return -1;
 		} 
 		case STRUCT_ADDITION: {		
@@ -2249,11 +2251,13 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 					if(i >= mstruct2.size() && i >= mstruct1.size()) return 0;
 					if(i >= mstruct2.size()) return 1;
 					if(i >= mstruct1.size()) return -1;
-					int i2 = sortCompare(mstruct1[i], mstruct2[i], parent, so);
+					int i2 = sortCompare(mstruct1[i], mstruct2[i], parent, po);
 					if(i2 != 0) return i2;
 				}
-			} 
-			return sortCompare(mstruct1[0], mstruct2, parent, so);
+				return sortCompare(mstruct1[0], mstruct2, parent, po);
+			}
+			if(parent.isMultiplication()) return 1;
+			return sortCompare(mstruct1[0], mstruct2, parent, po);
 		}
 		default: {
 			return 1;
@@ -2262,10 +2266,10 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 	return 1;
 }
 
-void MathStructure::sort(const SortOptions &so, bool recursive) {
+void MathStructure::sort(const PrintOptions &po, bool recursive) {
 	if(recursive) {
 		for(unsigned int i = 0; i < SIZE; i++) {
-			CHILD(i).sort(so);
+			CHILD(i).sort(po);
 		}
 	}
 	if(m_type != STRUCT_ADDITION && m_type != STRUCT_MULTIPLICATION) return;
@@ -2274,7 +2278,7 @@ void MathStructure::sort(const SortOptions &so, bool recursive) {
 	for(unsigned int i = 0; i < SIZE; i++) {
 		b = false;
 		for(unsigned int i2 = 0; i2 < sorted.size(); i2++) {
-			if(sortCompare(CHILD(i), v_subs[sorted[i2]], *this, so) < 0) {
+			if(sortCompare(CHILD(i), v_subs[sorted[i2]], *this, po) < 0) {
 				sorted.insert(sorted.begin() + i2, v_order[i]);
 				b = true;
 				break;
@@ -2358,8 +2362,10 @@ bool MathStructure::factorize(const EvaluationOptions &eo, bool prioritize_power
 			MathStructure factor_mstruct(1, 1);
 			if(!prioritize_power) {
 				Number gcd;
+				bool bminus = true;
 				for(unsigned int i = 0; i < SIZE; i++) {
 					if(CHILD(i).isNumber()) {
+						if(!CHILD(i).number().isNegative()) bminus = false;
 						if(gcd.isZero()) {
 							gcd = CHILD(i).number();
 						} else {
@@ -2369,6 +2375,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo, bool prioritize_power
 							}
 						}	
 					} else if(CHILD(i).isMultiplication() && CHILD(i)[0].isNumber()) {	
+						if(!CHILD(i)[0].number().isNegative()) bminus = false;
 						if(gcd.isZero()) {
 							gcd.set(CHILD(i)[0].number());
 						} else {
@@ -2381,12 +2388,13 @@ bool MathStructure::factorize(const EvaluationOptions &eo, bool prioritize_power
 						gcd.clear();
 						break;
 					}
-					if(gcd.isOne() || gcd.isZero()) {
+					if((gcd.isOne() && !bminus) || gcd.isZero()) {
 						gcd.clear();
 						break;
 					}
 				}
 				if(!gcd.isZero()) {
+					if(bminus) gcd.setNegative(true);
 					factor_mstruct.set(gcd);
 				}
 				if(SIZE > 0) {
@@ -2592,7 +2600,9 @@ bool MathStructure::factorize(const EvaluationOptions &eo, bool prioritize_power
 				}
 				Number nr;
 				Number exp(1, 1);
+				Number exp_low(1, 1);
 				vector<unsigned int> bases;
+				vector<bool> minusb;
 				bool factorable = true;
 				for(unsigned int i = 0; i < SIZE && factorable; i++) {
 					switch(CHILD(i).type()) {
@@ -2608,17 +2618,46 @@ bool MathStructure::factorize(const EvaluationOptions &eo, bool prioritize_power
 							if(CHILD(i)[1].isNumber() && CHILD(i)[1].number().isInteger() && !CHILD(i)[1].number().isOne()) {
 								if(exp.isOne()) {
 									exp = CHILD(i)[1].number();
+									exp_low = exp;
 								} else if(CHILD(i)[1].number() != exp) {
+									if(exp.isLessThan(exp_low)) exp_low = exp;
 									exp.gcd(CHILD(i)[1].number());
 									if(exp.isOne()) factorable = false;
 								}
 								bases.push_back(i);
+								minusb.push_back(false);
 							} else {
 								factorable = false;
 							}
 							break;
 						}
 						case STRUCT_MULTIPLICATION: {
+/*							if(CHILD(i).size() == 2 && CHILD(i)[0].isMinusOne() && CHILD(i)[1].isPower()) {
+								if(CHILD(i)[1][1].isNumber() && CHILD(i)[1][1].number().isInteger() && !CHILD(i)[1][1].number().isOne()) {
+									if(exp.isOne()) {
+										exp = CHILD(i)[1][1].number();
+										exp_low = exp;
+									} else if(CHILD(i)[1][1].number() != exp) {
+										if(exp.isLessThan(exp_low)) exp_low = exp;
+										exp.gcd(CHILD(i)[1][1].number());
+										if(exp.isOne()) {
+											factorable = false;
+											break;
+										}
+									}
+									while(exp.isEven()) {
+										exp /= 2;
+										if(exp.isOne()) {
+											factorable = false;
+											break;
+										}
+									}
+									bases.push_back(i);
+									minusb.push_back(true);
+								} else {
+									factorable = false;
+								}
+							}*/
 							break;
 						}
 						default: {
@@ -2627,7 +2666,53 @@ bool MathStructure::factorize(const EvaluationOptions &eo, bool prioritize_power
 					}
 				}
 				if(factorable && !exp.isOne()) {
-					if(!nr.isOne() && !nr.isZero()) {
+					Number min_multi;
+					bool b1 = false; 
+					for(unsigned int i = 0; !b1 && i < SIZE; i++) {
+						if(CHILD(i).isMultiplication()) {
+							for(unsigned int i2 = 0; !b1 && i2 < CHILD(i).size(); i2++) {
+								switch(CHILD(i)[i2].type()) {
+									case STRUCT_NUMBER: {
+										break;
+									}
+									case STRUCT_POWER: {
+										for(unsigned int i3 = 0; i3 < bases.size(); i3++) {
+											if(CHILD(bases[i3]).isPower() && CHILD(i)[i2].equals(CHILD(bases[i3])[0])) {
+												b1 = true;
+												break;
+											}
+										}
+										if(!b1) {
+											if(!CHILD(i)[i2][1].isNumber()) {
+												factorable = false;
+												b1 = true;
+												break;
+											}
+											if(min_multi.isZero() || CHILD(i)[i2][1].number().isLessThan(min_multi)) {
+												min_multi = CHILD(i)[i2][1].number();
+											}
+										}
+										break;
+									}
+									default: {
+										b1 = true;
+									}
+								}
+							}
+						}
+					}
+					if(!b1) {
+						if(min_multi.isZero()) {
+							factorable = false;
+						} else {
+							exp_low /= min_multi;
+							if(!exp_low.isInteger() || exp_low.isOne() || exp_low.isZero()) {
+								factorable = false;
+							}
+							if(exp_low.isLessThan(exp)) exp = exp_low;
+						}
+					}	
+					if(factorable && !nr.isOne() && !nr.isZero()) {
 						factorable = false;
 						Number pow(exp);
 						pow.recip();
@@ -2748,6 +2833,18 @@ bool MathStructure::factorize(const EvaluationOptions &eo, bool prioritize_power
 				}
 			}
 			if(factorable && !exp.isOne()) {
+				bool bminus = false;
+				if(nr.isMinusOne()) {
+					if(SIZE > 2) {
+						bminus = true;
+						nr.set(1, 1);
+					} else {
+						factorable = false;
+					}
+				} else if(nr.isNegative()) {
+					nr.setNegative(false);
+					bminus = true;
+				}
 				if(!nr.isOne()) {
 					factorable = false;
 					Number pow(exp);
@@ -2809,11 +2906,23 @@ bool MathStructure::factorize(const EvaluationOptions &eo, bool prioritize_power
 							}
 						}
 					}
-					if(SIZE == 1) {
-						MathStructure msave(CHILD(0));
-						set(msave);
+					if(bminus) {
+						MathStructure msave;
+						if(SIZE == 1) {
+							msave = CHILD(0);
+						} else {
+							msave = *this;
+						}
+						set(-1, 1);
+						msave.raise(exp);
+						multiply(msave);
+					} else {
+						if(SIZE == 1) {
+							MathStructure msave(CHILD(0));
+							set(msave);
+						}
+						raise(exp);
 					}
-					raise(exp);
 					return true;
 				}
 			}
@@ -3772,7 +3881,7 @@ void MathStructure::prefixCurrencies() {
 	}
 }
 void MathStructure::format(const PrintOptions &po) {
-	sort(po.sort_options);
+	sort(po);
 	setPrefixes(po);
 	formatsub(po);
 	postFormatUnits(po);
@@ -3841,7 +3950,7 @@ void MathStructure::formatsub(const PrintOptions &po, const MathStructure *paren
 					}
 				}
 				if(b) {
-					(*mi)[0].sort(po.sort_options, false);
+					(*mi)[0].sort(po, false);
 					c = true;
 				}
 			}
@@ -3850,7 +3959,7 @@ void MathStructure::formatsub(const PrintOptions &po, const MathStructure *paren
 					MathStructure msave(CHILD(0));
 					set(msave);
 				} else {
-					sort(po.sort_options, false);
+					sort(po, false);
 				}
 			}
 			break;

@@ -2,6 +2,7 @@
 <QALCULATE version="0.6.4">
   <object>
     <name>Earth</name>
+    <name xml:lang="sv">Jorden</name>
     <year>365.25696</year>
     <speed>29.7859</speed>
     <eccentricity>0.01671022</eccentricity>
@@ -68,6 +69,7 @@
   </object>
   <object>
     <name>Saturn</name>
+    <name xml:lang="sv">Saturnus</name>
     <year>10757.7365</year>
     <speed>9.6724</speed>
     <eccentricity>0.05415060</eccentricity>
@@ -81,6 +83,7 @@
   </object>
   <object>
     <name>Neptune</name>
+    <name xml:lang="sv">Neptunus</name>
     <year>60224.9036</year>
     <speed>5.4778</speed>
     <eccentricity>0.00858587</eccentricity>
