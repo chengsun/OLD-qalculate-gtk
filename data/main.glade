@@ -872,7 +872,7 @@
 			  <child>
 			    <widget class="GtkCheckMenuItem" id="menu_item_enable_unknown_variables">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Unknown Variables</property>
+			      <property name="label" translatable="yes">Unknowns</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">True</property>
 			      <signal name="activate" handler="on_menu_item_enable_unknown_variables_activate" last_modification_time="Wed, 10 Mar 2004 15:08:11 GMT"/>

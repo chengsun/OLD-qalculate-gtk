@@ -3240,11 +3240,11 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 			parseAdd(str, mstruct, po);
 		}
 	} else if((i = str.find(POWER_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
-/*		str2 = str.substr(0, i);
+		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
-		parseAdd(str, mstruct, po, OPERATION_RAISE);*/
-		bool b = false;
+		parseAdd(str, mstruct, po, OPERATION_RAISE);
+/*		bool b = false;
 		while(i != (int) string::npos && i != (int) str.length() - 1) {
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
@@ -3260,7 +3260,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 			parseAdd(str, mstruct, po, OPERATION_RAISE);
 		} else {
 			parseAdd(str, mstruct, po);
-		}
+		}*/
 	} else if((i = str.find(EXP_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
 		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));

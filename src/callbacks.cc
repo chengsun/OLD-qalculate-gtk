@@ -49,6 +49,8 @@ extern GtkWidget *tPlotFunctions;
 extern GtkListStore *tPlotFunctions_store;
 extern GtkWidget *tFunctionArguments;
 extern GtkListStore *tFunctionArguments_store;
+extern GtkWidget *tSubfunctions;
+extern GtkListStore *tSubfunctions_store;
 extern GtkWidget *tFunctions, *tFunctionCategories;
 extern GtkListStore *tFunctions_store;
 extern GtkTreeStore *tFunctionCategories_store;
@@ -62,6 +64,8 @@ extern GtkAccelGroup *accel_group;
 extern string selected_function_category;
 extern Function *selected_function;
 Function *edited_function;
+unsigned int selected_subfunction;
+unsigned int last_subfunction_index;
 Argument *selected_argument;
 Argument *edited_argument;
 extern string selected_variable_category;
@@ -287,6 +291,9 @@ Argument *get_edited_argument() {
 }
 Argument *get_selected_argument() {
 	return selected_argument;
+}
+unsigned int get_selected_subfunction() {
+	return selected_subfunction;
 }
 
 Variable *get_selected_variable() {
@@ -1310,6 +1317,26 @@ void on_tPlotFunctions_selection_changed(GtkTreeSelection *treeselection, gpoint
 	}
 }
 
+void on_tSubfunctions_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	selected_subfunction = 0;
+	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
+		gboolean g_b = FALSE;
+		guint index = 0;
+		gchar *gstr;
+		gtk_tree_model_get(model, &iter, 1, &gstr, 3, &index, 4, &g_b, -1);
+		selected_subfunction = index;
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_subexpression")), gstr);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (functionedit_glade, "function_edit_checkbutton_precalculate")), g_b);
+		gtk_widget_set_sensitive(glade_xml_get_widget (functionedit_glade, "function_edit_button_modify_subfunction"), TRUE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (functionedit_glade, "function_edit_button_remove_subfunction"), TRUE);
+		g_free(gstr);
+	} else {
+		gtk_widget_set_sensitive(glade_xml_get_widget (functionedit_glade, "function_edit_button_modify_subfunction"), FALSE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (functionedit_glade, "function_edit_button_remove_subfunction"), FALSE);
+	}
+}
 
 void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
 	GtkTreeModel *model;
@@ -4226,6 +4253,15 @@ void edit_function(const char *category = "", Function *f = NULL, GtkWidget *win
 	gtk_widget_set_sensitive(glade_xml_get_widget (functionedit_glade, "function_edit_optionmenu_argument_type"), !f || !f->isBuiltin());
 	gtk_widget_set_sensitive(glade_xml_get_widget (functionedit_glade, "function_edit_button_add_argument"), !f || !f->isBuiltin());
 
+	gtk_widget_set_sensitive(glade_xml_get_widget (functionedit_glade, "function_edit_button_subfunctions"), !f || !f->isBuiltin());
+	gtk_list_store_clear(tSubfunctions_store);
+	gtk_widget_set_sensitive(glade_xml_get_widget (functionedit_glade, "function_edit_button_modify_subfunction"), FALSE);
+	gtk_widget_set_sensitive(glade_xml_get_widget (functionedit_glade, "function_edit_button_remove_subfunction"), FALSE);		
+	gtk_widget_set_sensitive(glade_xml_get_widget (functionedit_glade, "function_edit_button_add_subfunction"), !f || !f->isBuiltin());
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_subexpression")), "");
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (functionedit_glade, "function_edit_checkbutton_precalculate")), TRUE);
+	selected_subfunction = 0;
+	last_subfunction_index = 0;
 	if(f) {
 		//fill in original paramaters
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_name")), f->name().c_str());
@@ -4237,9 +4273,26 @@ void edit_function(const char *category = "", Function *f = NULL, GtkWidget *win
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_condition")), CALCULATOR->localizeExpression(f->condition()).c_str());
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (functionedit_glade, "function_edit_checkbutton_hidden")), f->isHidden());
 		gtk_text_buffer_set_text(description_buffer, f->description().c_str(), -1);
+		
+		if(!f->isBuiltin()) {
+			GtkTreeIter iter;
+			string str, str2;
+			for(unsigned int i = 1; i <= ((UserFunction*) f)->countSubfunctions(); i++) {
+				gtk_list_store_append(tSubfunctions_store, &iter);
+				if(((UserFunction*) f)->subfunctionPrecalculated(i)) {
+					str = _("yes");
+				} else {
+					str = _("no");
+				}
+				str2 = "\\";
+				str2 += i2s(i);
+				gtk_list_store_set(tSubfunctions_store, &iter, 0, str2.c_str(), 1, ((UserFunction*) f)->getSubfunction(i).c_str(), 2, str.c_str(), 3, i, 4, ((UserFunction*) f)->subfunctionPrecalculated(i), -1);
+				last_subfunction_index = i;
+			}
+		}
 	}
 	update_function_arguments_list(f);
-
+	
 run_function_edit_dialog:
 	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
 		//clicked "OK"
@@ -4302,6 +4355,16 @@ run_function_edit_dialog:
 				}
 				b = gtk_tree_model_iter_next(GTK_TREE_MODEL(tFunctionArguments_store), &iter);
 				i++;
+			}
+			b = !f->isBuiltin() && gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tSubfunctions_store), &iter);
+			if(!f->isBuiltin()) ((UserFunction*) f)->clearSubfunctions();
+			while(b) {
+				gchar *gstr;
+				gboolean g_b = FALSE;
+				gtk_tree_model_get(GTK_TREE_MODEL(tSubfunctions_store), &iter, 1, &gstr, 4, &g_b, -1);
+				((UserFunction*) f)->addSubfunction(gstr, g_b);
+				b = gtk_tree_model_iter_next(GTK_TREE_MODEL(tSubfunctions_store), &iter);
+				g_free(gstr);
 			}		
 			f->setHidden(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (functionedit_glade, "function_edit_checkbutton_hidden"))));
 			if(!f->isActive()) {
@@ -5249,6 +5312,7 @@ void load_preferences() {
 	evalops.approximation = APPROXIMATION_TRY_EXACT;
 	evalops.sync_units = true;
 	evalops.structuring = STRUCTURING_SIMPLIFY;
+	evalops.parse_options.unknowns_enabled = false;
 	
 	save_mode_on_exit = true;
 	save_defs_on_exit = true;
@@ -7779,6 +7843,59 @@ void on_units_button_deactivate_clicked(GtkButton *w, gpointer user_data) {
 	}
 }
 
+void on_function_edit_button_subfunctions_clicked(GtkButton *w, gpointer user_data) {
+	gtk_window_set_transient_for(GTK_WINDOW(glade_xml_get_widget (functionedit_glade, "function_edit_dialog_subfunctions")), GTK_WINDOW(glade_xml_get_widget (functionedit_glade, "function_edit_dialog")));
+	gtk_dialog_run(GTK_DIALOG(glade_xml_get_widget (functionedit_glade, "function_edit_dialog_subfunctions")));
+	gtk_widget_hide(glade_xml_get_widget (functionedit_glade, "function_edit_dialog_subfunctions"));
+}
+void on_function_edit_button_add_subfunction_clicked(GtkButton *w, gpointer user_data) {
+	GtkTreeIter iter;	
+	gtk_list_store_append(tSubfunctions_store, &iter);
+	string str = "\\";
+	last_subfunction_index++;
+	str += i2s(last_subfunction_index);
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (functionedit_glade, "function_edit_checkbutton_precalculate")))) {
+		gtk_list_store_set(tSubfunctions_store, &iter, 0, str.c_str(), 1, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_subexpression"))), 2, _("yes"), 3, last_subfunction_index, 4, TRUE, -1);
+	} else {
+		gtk_list_store_set(tSubfunctions_store, &iter, 0, str.c_str(), 1, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_subexpression"))), 2, _("no"), 3, last_subfunction_index, 4, FALSE, -1);
+	}
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_subexpression")), "");
+}
+void on_function_edit_button_modify_subfunction_clicked(GtkButton *w, gpointer user_data) {
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	if(gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(tSubfunctions)), &model, &iter)) {
+		if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (functionedit_glade, "function_edit_checkbutton_precalculate")))) {
+			gtk_list_store_set(tSubfunctions_store, &iter, 1, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_subexpression"))), 2, _("yes"), 4, TRUE, -1);
+		} else {
+			gtk_list_store_set(tSubfunctions_store, &iter, 1, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_subexpression"))), 2, _("no"), 4, FALSE, -1);
+		}
+	}
+}
+void on_function_edit_button_remove_subfunction_clicked(GtkButton *w, gpointer user_data) {
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	if(gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(tSubfunctions)), &model, &iter)) {
+		GtkTreeIter iter2 = iter;
+		while(gtk_tree_model_iter_next(GTK_TREE_MODEL(tSubfunctions_store), &iter2)) {
+			guint index;
+			gtk_tree_model_get(GTK_TREE_MODEL(tSubfunctions_store), &iter2, 3, &index, -1);
+			index--;
+			string str = "\\";
+			str += i2s(index);
+			gtk_list_store_set(tSubfunctions_store, &iter2, 0, str.c_str(), 3, index, -1);
+		}
+		gtk_list_store_remove(tSubfunctions_store, &iter);
+		last_subfunction_index--;
+	}
+}
+void on_function_edit_entry_subexpression_activate(GtkEntry *entry, gpointer user_data) {
+	if(GTK_WIDGET_SENSITIVE(glade_xml_get_widget (functionedit_glade, "function_edit_button_add_subfunction"))) {
+		on_function_edit_button_add_subfunction_clicked(GTK_BUTTON(glade_xml_get_widget (functionedit_glade, "function_edit_button_add_subfunction")), NULL);
+	} else if(GTK_WIDGET_SENSITIVE(glade_xml_get_widget (functionedit_glade, "function_edit_button_modify_subfunction"))) {
+		on_function_edit_button_modify_subfunction_clicked(GTK_BUTTON(glade_xml_get_widget (functionedit_glade, "function_edit_button_modify_subfunction")), NULL);
+	}
+}
 void on_function_edit_button_add_argument_clicked(GtkButton *w, gpointer user_data) {
 	GtkTreeIter iter;	
 	gtk_list_store_append(tFunctionArguments_store, &iter);

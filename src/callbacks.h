@@ -59,6 +59,7 @@ void unit_inserted(Unit *object);
 
 void on_tPlotFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 
+void on_tSubfunctions_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void update_function_arguments_list(Function *f);
 
@@ -343,6 +344,11 @@ void on_functions_button_deactivate_clicked(GtkButton *w, gpointer user_data);
 void on_variables_button_deactivate_clicked(GtkButton *w, gpointer user_data);
 void on_units_button_deactivate_clicked(GtkButton *w, gpointer user_data);
 
+void on_function_edit_button_subfunctions_clicked(GtkButton *w, gpointer user_data);
+void on_function_edit_button_add_subfunction_clicked(GtkButton *w, gpointer user_data);
+void on_function_edit_button_modify_subfunction_clicked(GtkButton *w, gpointer user_data);
+void on_function_edit_button_remove_subfunction_clicked(GtkButton *w, gpointer user_data);
+void on_function_edit_entry_subexpression_activate(GtkEntry *entry, gpointer user_data);
 void on_function_edit_button_add_argument_clicked(GtkButton *w, gpointer user_data);
 void on_function_edit_button_remove_argument_clicked(GtkButton *w, gpointer user_data);
 void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user_data);

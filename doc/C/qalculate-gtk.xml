@@ -2,9 +2,9 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
     "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
   <!ENTITY legal SYSTEM "legal.xml">
-  <!ENTITY appversion "0.5.9">
-  <!ENTITY manrevision "0.5.9">
-  <!ENTITY date "Mars 2004">
+  <!ENTITY appversion "0.6.2">
+  <!ENTITY manrevision "0.6.2">
+  <!ENTITY date "July 2004">
   <!ENTITY app "Qalculate!">    
 ]>
 <article>
@@ -231,6 +231,10 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Opens a dialog for entry of a new vector variable.</para></entry>
 			</row>
 			<row valign="top">
+				<entry><para>Unknown Variable</para></entry>
+				<entry><para>Opens the variable edit dialog for creation of a new unknown variable.</para></entry>
+			</row>
+			<row valign="top">
 				<entry><para>Function</para></entry>
 				<entry><para>Opens the function edit dialog for creation of a new function.</para></entry>
 			</row>
@@ -330,11 +334,7 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 			</row>
 			<row valign="top">
 				<entry><para>Enabled Objects</para></entry>
-				<entry><para>Submenu which enables/disables variables, functions, units and unknown variables.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Calculate Variables</para></entry>
-				<entry><para>Toggles calculation of variables on/off. If calculation of variables is not on, all variables will be treated as unknown.</para></entry>
+				<entry><para>Submenu which enables/disables variables, functions, units and unknowns (will not affect defined unknown variables and quoted unknowns), and calculation of variables (If calculation of variables is not on, all variables will be treated as unknown).</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Approximation</para></entry>
@@ -569,9 +569,9 @@ In Qalculate! mathematical entities, such as numbers and variables, are referred
 		</para></listitem>
 	</varlistentry>
 	<varlistentry>
-		<term>Unknown Variables</term>
+		<term>Unknowns</term>
 		<listitem><para>
-		Unknown variables are text strings without any associated value. If Qalculate! finds a character that are not associated with any variable, function or unit in an expression, then it will be regarded as an unknown variable. Unknown variables can also be explicitly entered by putting a text string in quotes. This is also necessary for unknown variables with more than one character (ex.<quote>xy</quote> is just one object, while xy means x * y).
+		Unknowns are text strings without any associated value. If Qalculate! finds a character that are not associated with any variable, function or unit in an expression, then it will be regarded as an unknown variable. These are temporary unknown variables with default assumptions. Unknowns can also be explicitly entered by putting a text string in quotes. This is also necessary for undefined unknown variables with more than one character (ex.<quote>xy</quote> is just one object, while xy means x * y). See <xref linkend="qalculate-variables"/>.
 		</para></listitem>
 	</varlistentry>	
 	<varlistentry>
@@ -650,7 +650,7 @@ The following operators are defined in Qalculate! and may be used in expressions
 			<row valign="top">
 				<entry><para>Exponent</para></entry>
 				<entry align="center"><para>^</para></entry>
-				<entry><para>Raises the left value by the right value. Can also be typed as <quote>**</quote></para></entry>
+				<entry><para>Raises the left value by the right value. Can also be typed as <quote>**</quote>. Note that x^y^z equals x^(y^z), and not (x^y)^z.</para></entry>
 				<entry align="center"><para>2^3</para></entry>
 				<entry align="right"><para>8</para></entry>
 			</row>
@@ -768,7 +768,7 @@ Qalculate! provides flexible calculation output and result display. There are se
 <varlistentry>
 <term>Number Bases</term>
 <listitem><para>
-Non-decimal bases can be selected for display of numbers in the result. Only decimal numbers support decimals and therefore the other bases are displayed as fractions if necessary (ex. <quote>0.01 = 0x1/0x64</quote>). Note that this only affects the display of the result and not entered numbers. The convert number bases dialog (see <xref linkend="qalculate-convert-number-bases-dialog"/>) is more efficient for other purposes.
+Non-decimal bases can be selected for display of numbers in the result. This include regular number bases (binary, octal, hexadecimal, sexagesimal) as well as sexagesimal time format and roman numerals. Note that this only affects the display of the result and not entered numbers. The convert number bases dialog (see <xref linkend="qalculate-convert-number-bases-dialog"/>) is more efficient for other purposes.
 </para></listitem>
 </varlistentry>
 <varlistentry>
@@ -792,13 +792,19 @@ This controls if numbers are displayed in fractional or decimal mode. Decimal mo
 <varlistentry>
 <term>Unit Display</term>
 <listitem><para>
-The display of unit names can be controlled by selecting to display abbreviations or full length names (ex. <quote>5 cm</quote> or <quote>5 centimeters</quote>). This also affects prefixes. Both abbreviations and long names can however always be entered in expressions. The use of prefixes for units can be toggled on and off. By default prefixes representing a power of ten not dividable by three (centi, deci, deca and hekto) are not used and need to be enabled. If denominator prefixes are not explicitly enabled, prefixes will only be set for the numerator in a fractional unit expression (ex. <quote>1 Mg/m</quote> or <quote>1 kg/mm</quote>).
+The display of unit names can be controlled by selecting to display abbreviations or full length names (ex. <quote>5 cm</quote> or <quote>5 centimeters</quote>). This also affects prefixes. Both abbreviations and long names can however always be entered in expressions. The use of prefixes for units can be toggled on and off. By default prefixes representing a power of ten not dividable by three (centi, deci, deca and hekto) are not used and need to be enabled. If denominator prefixes are not explicitly enabled, prefixes will only be set for the numerator in a fractional unit expression (ex. <quote>1 Mg/m</quote> or <quote>1 kg/mm</quote>). The place units separately alternative controls the display of unit expressions in result. If it is enabled (default) units will be displayed separate from other parts of the expression at the end (compare <quote>(5x*m)/(y*s)</quote> and <quote>5x/y m/s</quote>).
 </para></listitem>
 </varlistentry>
 <varlistentry>
 <term>Approximation</term>
 <listitem><para>
-When always exact mode is on, the calculation will not go further than what can be calculated exactly (ex. <quote>sqrt(2+3) = sqrt(5)</quote>).
+When always exact mode is on, the calculation will not go further than what can be calculated exactly (ex. <quote>sqrt(2+3) = sqrt(5)</quote>). The  default <quote>Try Exact</quote> mode, will calculate the result exact as far as possible and then approximately. Approximate mode will directly calculate a approximate result, thus being a bit faster but giving a less correct approximate indication (<quote>sin(pi/2)</quote> return approximately one instead of exactly one).
+</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Assumptions</term>
+<listitem><para>
+This controls the default assumptions for unknown variables without explicitly defined assumptions. See <xref linkend="qalculate-variables"/>.
 </para></listitem>
 </varlistentry>
 <varlistentry>
@@ -820,13 +826,19 @@ In the decimals dialog, the number of decimals displayed can be controlled. This
 <sect1 id="qalculate-variables">
 <title>Variables</title>
 <para>
-Variables are used to conveniently store a fixed value/result under a name. Variables can store everything that a result may contain, including numbers, units, unknown variables, unsolved expressions and functions etc.
+Variables are used to conveniently store a fixed value/result under a name. Variables can store everything that a result may contain, including numbers, units, variables, unsolved expressions and functions etc.
 </para>
 <para>
-Some common constants that can only be approximately represented by a real number, such as pi and e, are special variables. They are not fixed but are recalculated each time precision changes, thereby not compromising the arbitrary precision of Qalculate!.
+There two different kinds of variables known and unknown. Known variables represents a fixed value, usually a number, while unknown variables represents a range or type of values (ex. a non-negative integer). 
+</para>
+<para>
+Some common constants that can only be approximately represented by a real number, such as pi and e, are special known variables. They are not fixed but are recalculated each time precision changes, thereby not compromising the arbitrary precision of Qalculate!.
 </para>
 <para>
 The ans variable, which always contains the last calculated result, is another special and useful variable.
+</para>
+<para>
+The unknown variables x, y and z are predefined. They cannot be deleted, but changed. By default they use the default assumptions.
 </para>
 <sect2 id="qalculate-variable-creation">
 <title>Variable creation/editing</title>
@@ -841,10 +853,13 @@ The ans variable, which always contains the last calculated result, is another s
 	</screenshot>
 </figure>
 <para>
-The easiest way to create a variable is to store the current result. This can be done by clicking the <keycap>STO</keycap> button or selecting <menuchoice><guimenu>File</guimenu><guimenuitem>Store Result...</guimenuitem></menuchoice>. Type a name for the variable in the dialog that pops up and optionally enter a category and descriptive name to keep variables well organized.
+The easiest way to create a known variable is to store the current result. This can be done by clicking the <keycap>STO</keycap> button or selecting <menuchoice><guimenu>File</guimenu><guimenuitem>Store Result...</guimenuitem></menuchoice>. Type a name for the variable in the dialog that pops up and optionally enter a category and descriptive name to keep variables well organized.
 </para>
 <para>
-Variables can also be created from scratch by selecting <menuchoice><guimenu>File</guimenu><guisubmenu>New</guisubmenu><guimenuitem>Variable</guimenuitem></menuchoice>  or by clicking <guibutton>New</guibutton> in the variable manager. The value can then be filled in, in the text field below the name, and specified as exact or approximate. 
+Known variables can also be created from scratch by selecting <menuchoice><guimenu>File</guimenu><guisubmenu>New</guisubmenu><guimenuitem>Variable</guimenuitem></menuchoice>  or by clicking <guibutton>New</guibutton> in the variable manager. The value can then be filled in, in the text field below the name, and specified as exact or approximate. 
+</para>
+<para>
+The dialog for creation of unknown variables are accessed by selecting <menuchoice><guimenu>File</guimenu><guisubmenu>New</guisubmenu><guimenuitem>Unknown Variable</guimenuitem></menuchoice>. Instead of a value, an assumed type and sign can then be entered.
 </para>
 <para>
 Edit a variable by clicking <guibutton>Edit</guibutton> in the variable manager.
@@ -922,6 +937,7 @@ Argument types include:
 	<listitem><para>Free — anything</para></listitem>
 	<listitem><para>Number — a numeric value</para></listitem>
 	<listitem><para>Integer — a whole number</para></listitem>
+	<listitem><para>Symbol — a defined or undefined unknown variable</para></listitem>
 	<listitem><para>Text — a free text string</para></listitem>
 	<listitem><para>Date — a date in local or standard format (Year-Month-Day, recommended)</para></listitem>
 	<listitem><para>Vector</para></listitem>

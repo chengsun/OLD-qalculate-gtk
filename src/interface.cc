@@ -58,6 +58,8 @@ GtkListStore *completion_store;
 
 GtkWidget *tFunctionArguments;
 GtkListStore *tFunctionArguments_store;
+GtkWidget *tSubfunctions;
+GtkListStore *tSubfunctions_store;
 
 GtkWidget *tPlotFunctions;
 GtkListStore *tPlotFunctions_store;
@@ -657,6 +659,22 @@ get_function_edit_dialog (void)
 		column = gtk_tree_view_column_new_with_attributes(_("Type"), renderer, "text", 1, NULL);
 		gtk_tree_view_append_column(GTK_TREE_VIEW(tFunctionArguments), column);	
 		g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tFunctionArguments_selection_changed), NULL);
+		
+		tSubfunctions = glade_xml_get_widget (functionedit_glade, "function_edit_treeview_subfunctions");
+		tSubfunctions_store = gtk_list_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_BOOLEAN);
+		gtk_tree_view_set_model(GTK_TREE_VIEW(tSubfunctions), GTK_TREE_MODEL(tSubfunctions_store));
+		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tSubfunctions));
+		gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes(_("Reference"), renderer, "text", 0, NULL);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(tSubfunctions), column);
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes(_("Expression"), renderer, "text", 1, NULL);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(tSubfunctions), column);
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes(_("Precalculate"), renderer, "text", 2, NULL);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(tSubfunctions), column);
+		g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tSubfunctions_selection_changed), NULL);
 		
 		glade_xml_signal_autoconnect(functionedit_glade);
 	

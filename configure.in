@@ -7,7 +7,7 @@ dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
 AC_INIT(configure.in)
-AM_INIT_AUTOMAKE(qalculate-gtk, 0.6.1)
+AM_INIT_AUTOMAKE(qalculate-gtk, 0.6.2)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
@@ -26,6 +26,21 @@ AC_PROG_INTLTOOL
 dnl  ------------------------------------
 dnl | check for compiler characteristics |-------------------------------------
 dnl  ------------------------------------
+
+dnl Replace -Os with -O2 to stop segfault on startup
+if test "x$GCC" = "xyes"; then
+	case $CFLAGS in
+	*-Os*)
+		CFLAGS="$CFLAGS -O2"
+		;;
+	esac
+	case $CXXFLAGS in
+	*-Os*)
+		CXXFLAGS="$CXXFLAGS -O2"
+		;;
+	esac
+fi
+
 
 dnl Use -Wall if we have gcc.
 changequote(,)dnl

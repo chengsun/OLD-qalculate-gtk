@@ -1,3 +1,12 @@
+2004-07-12 Niklas Knutsson  <nq@altern.org>
+
+	* Update documentation
+	* Force use of -O2 instead of -Os
+	* Revert back to a^b^c = a^(b^z) (I don't remember changing it)
+	* Unknowns disabled by default
+	* Copy subfunctions
+	* GUI for subfunctions
+
 2004-07-11 Niklas Knutsson  <nq@altern.org>
 
 	* Do not segfault on exit

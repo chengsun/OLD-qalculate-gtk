@@ -581,7 +581,7 @@ UserFunction::UserFunction(string cat_, string name_, string eq_, bool is_local,
 	b_local = is_local;
 	b_builtin = false;
 	setEquation(eq_, argc_, max_argc_);
-	setChanged(false);	
+	setChanged(false);
 }
 UserFunction::UserFunction(const UserFunction *function) {
 	set(function);
@@ -599,7 +599,13 @@ void UserFunction::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_FUNCTION) {
 		if(!item->isBuiltin()) {
 			eq = ((UserFunction*) item)->equation();
-			eq_calc = ((UserFunction*) item)->internalEquation();			
+			eq_calc = ((UserFunction*) item)->internalEquation();
+			v_subs.clear();
+			v_precalculate.clear();
+			for(unsigned int i = 1; i <= ((UserFunction*) item)->countSubfunctions(); i++) {
+				v_subs.push_back(((UserFunction*) item)->getSubfunction(i));
+				v_precalculate.push_back(((UserFunction*) item)->subfunctionPrecalculated(i));
+			}
 		}
 		Function::set(item);
 	} else {
@@ -899,24 +905,34 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 	max_argc = max_argc_;	
 }
 void UserFunction::addSubfunction(string subfunction, bool precalculate) {
+	setChanged(true);
 	v_subs.push_back(subfunction);
 	v_precalculate.push_back(precalculate);
 }
 void UserFunction::setSubfunction(unsigned int index, string subfunction) {
 	if(index > 0 && index <= v_subs.size()) {
+		setChanged(true);
 		v_subs[index - 1] = subfunction;
 	}
 }
 void UserFunction::delSubfunction(unsigned int index) {
 	if(index > 0 && index <= v_subs.size()) {
+		setChanged(true);
 		v_subs.erase(v_subs.begin() + (index - 1));
 	}
 	if(index > 0 && index <= v_precalculate.size()) {
+		setChanged(true);
 		v_precalculate.erase(v_precalculate.begin() + (index - 1));
 	}
 }
+void UserFunction::clearSubfunctions() {
+	setChanged(true);
+	v_subs.clear();
+	v_precalculate.clear();
+}
 void UserFunction::setSubfunctionPrecalculated(unsigned int index, bool precalculate) {
 	if(index > 0 && index <= v_precalculate.size()) {
+		setChanged(true);
 		v_precalculate[index - 1] = precalculate;
 	}
 }

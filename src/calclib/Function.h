@@ -115,7 +115,6 @@ class UserFunction : public Function {
 	string eq, eq_calc;
 	vector<string> v_subs;
 	vector<bool> v_precalculate;
-	unsigned int last_sub_index;
 	
   public:
   
@@ -130,6 +129,7 @@ class UserFunction : public Function {
 	void addSubfunction(string subfunction, bool precalculate = true);
 	void setSubfunction(unsigned int index, string subfunction);
 	void delSubfunction(unsigned int index);
+	void clearSubfunctions();
 	unsigned int countSubfunctions() const;
 	void setSubfunctionPrecalculated(unsigned int index, bool precalculate);
 	const string &getSubfunction(unsigned int index) const;
