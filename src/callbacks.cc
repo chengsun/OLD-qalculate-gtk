@@ -1067,8 +1067,9 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	}
 	dialog = gtk_dialog_new_with_buttons(f->title().c_str(), GTK_WINDOW(parent), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, GTK_STOCK_EXECUTE, GTK_RESPONSE_APPLY, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-	GtkWidget *vbox = gtk_vbox_new(false, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);	
+	GtkWidget *vbox = gtk_vbox_new(false, 6);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 12);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), vbox);
 	GtkWidget *label[args];
 	GtkWidget *entry[args];
@@ -1089,8 +1090,10 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 			gtk_entry_set_text(GTK_ENTRY(entry[i]), gstr);
 			g_free(gstr);
 		}
-		gtk_container_add(GTK_CONTAINER(vbox), label[i]);
-		gtk_container_add(GTK_CONTAINER(vbox), entry[i]);
+		GtkWidget *hbox = gtk_hbox_new(TRUE, 6);
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);		
+		gtk_container_add(GTK_CONTAINER(hbox), label[i]);
+		gtk_container_add(GTK_CONTAINER(hbox), entry[i]);
 		gtk_misc_set_alignment(GTK_MISC(label[i]), 0, 0.5);
 	}
 	//arguments is defined as less than zero, the function requests an vector of undefined length
@@ -1101,8 +1104,10 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 			title1 = g_strdup(f->argName(1).c_str());
 		label1 = gtk_label_new(title1);
 		entry1 = gtk_entry_new();
-		gtk_container_add(GTK_CONTAINER(vbox), label1);
-		gtk_container_add(GTK_CONTAINER(vbox), entry1);
+		GtkWidget *hbox = gtk_hbox_new(TRUE, 6);
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);		
+		gtk_container_add(GTK_CONTAINER(hbox), label1);
+		gtk_container_add(GTK_CONTAINER(hbox), entry1);
 		gtk_misc_set_alignment(GTK_MISC(label1), 0, 0.5);
 	}
 	//display function description
