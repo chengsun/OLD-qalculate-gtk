@@ -80,7 +80,7 @@ extern string selected_unit;
 extern string selected_to_unit;
 int saved_deci_mode, saved_decimals, saved_precision, saved_display_mode, saved_number_base, saved_angle_unit;
 bool use_short_units;
-bool saved_functions_enabled, saved_variables_enabled, saved_units_enabled;
+bool saved_functions_enabled, saved_variables_enabled, saved_unknownvariables_enabled, saved_units_enabled;
 bool save_mode_on_exit;
 bool save_defs_on_exit;
 bool hyp_is_on, saved_hyp_is_on;
@@ -896,7 +896,13 @@ void create_vmenu() {
 	} else {
 		MENU_ITEM("Enable variables", set_variables_enabled)
 	}
-	v_enable_item = item;
+	v_enable_item = item;	
+	if(calc->unknownVariablesEnabled()) {
+		MENU_ITEM("Disable unknown variables", set_unknownvariables_enabled)
+	} else {
+		MENU_ITEM("Enable unknown variables", set_unknownvariables_enabled)
+	}	
+	uv_enable_item = item;
 }
 
 /*
@@ -2279,6 +2285,19 @@ void set_variables_enabled(GtkMenuItem *w, gpointer user_data) {
 }
 
 /*
+	unknown variables enabled/disabled from menu
+*/
+void set_unknownvariables_enabled(GtkMenuItem *w, gpointer user_data) {
+	if(calc->unknownVariablesEnabled()) {
+		gtk_label_set_text(GTK_LABEL(gtk_bin_get_child(GTK_BIN(uv_enable_item))), "Enable unknown variables");
+		calc->setUnknownVariablesEnabled(false);
+	} else {
+		gtk_label_set_text(GTK_LABEL(gtk_bin_get_child(GTK_BIN(uv_enable_item))), "Disable unknown variables");
+		calc->setUnknownVariablesEnabled(true);
+	}
+}
+
+/*
 	units enabled/disabled from menu
 */
 void set_units_enabled(GtkMenuItem *w, gpointer user_data) {
@@ -2756,6 +2775,7 @@ void set_saved_mode() {
 	saved_angle_unit = calc->angleMode();
 	saved_functions_enabled = calc->functionsEnabled();
 	saved_variables_enabled = calc->variablesEnabled();
+	saved_unknownvariables_enabled = calc->unknownVariablesEnabled();	
 	saved_units_enabled = calc->unitsEnabled();
 	saved_hyp_is_on = hyp_is_on;
 }
@@ -2822,6 +2842,8 @@ void load_preferences() {
 					calc->setFunctionsEnabled(v);
 				else if(svar == "variables_enabled")
 					calc->setVariablesEnabled(v);
+				else if(svar == "unknownvariables_enabled")
+					calc->setUnknownVariablesEnabled(v);
 				else if(svar == "units_enabled")
 					calc->setUnitsEnabled(v);
 				else if(svar == "use_short_units")
@@ -2880,6 +2902,7 @@ void save_preferences(bool mode)
 	fprintf(file, "hyp_is_on=%i\n", saved_hyp_is_on);
 	fprintf(file, "functions_enabled=%i\n", saved_functions_enabled);
 	fprintf(file, "variables_enabled=%i\n", saved_variables_enabled);
+	fprintf(file, "unknownvariables_enabled=%i\n", saved_unknownvariables_enabled);	
 	fprintf(file, "units_enabled=%i\n", saved_units_enabled);
 	fclose(file);
 }

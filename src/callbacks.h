@@ -114,6 +114,7 @@ void on_bSTO_clicked(GtkButton *w, gpointer user_data);
 void set_clean_mode(GtkMenuItem *w, gpointer user_data);
 void set_functions_enabled(GtkMenuItem *w, gpointer user_data);
 void set_variables_enabled(GtkMenuItem *w, gpointer user_data);
+void set_unknownvariables_enabled(GtkMenuItem *w, gpointer user_data);
 void set_units_enabled(GtkMenuItem *w, gpointer user_data);
 void set_angle_mode(GtkMenuItem *w, gpointer user_data);
 void on_rRad_toggled(GtkToggleButton *togglebutton, gpointer user_data);

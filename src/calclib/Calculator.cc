@@ -119,6 +119,7 @@ Calculator::Calculator() {
 	b_functions = true;
 	b_variables = true;
 	b_units = true;
+	b_unknown = true;
 }
 Calculator::~Calculator(void) {}
 
@@ -281,6 +282,12 @@ bool Calculator::variablesEnabled(void) {
 }
 void Calculator::setVariablesEnabled(bool enable) {
 	b_variables = enable;
+}
+bool Calculator::unknownVariablesEnabled(void) {
+	return b_unknown;
+}
+void Calculator::setUnknownVariablesEnabled(bool enable) {
+	b_unknown = enable;
 }
 bool Calculator::unitsEnabled(void) {
 	return b_units;
@@ -1187,15 +1194,23 @@ void Calculator::setFunctionsAndVariables(string &str) {
 		if(i == string::npos) break;
 		stmp = str[i];
 		u = getUnit(stmp);
-		if(u) mngr = new Manager(this, u);
-		else mngr = new Manager(this, stmp);
-		stmp = LEFT_BRACKET_STR;
-		stmp += ID_WRAP_LEFT_STR;
-		stmp += i2s(addId(mngr));
-		mngr->unref();
-		stmp += ID_WRAP_RIGHT_STR;
-		stmp += RIGHT_BRACKET_STR;
-		str.replace(i, 1, stmp);
+		if(u) {
+			mngr = new Manager(this, u);
+		} else if(b_unknown) {
+			mngr = new Manager(this, stmp);
+		} else {
+			mngr = NULL;
+			i++;
+		}
+		if(mngr) {
+			stmp = LEFT_BRACKET_STR;
+			stmp += ID_WRAP_LEFT_STR;
+			stmp += i2s(addId(mngr));
+			mngr->unref();
+			stmp += ID_WRAP_RIGHT_STR;
+			stmp += RIGHT_BRACKET_STR;
+			str.replace(i, 1, stmp);
+		}
 	}
 }
 string Calculator::getName(string name, void *object, bool force, bool always_append) {
