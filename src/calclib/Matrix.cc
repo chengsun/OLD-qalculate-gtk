@@ -585,6 +585,23 @@ bool Matrix::isPrecise() const {
 void Matrix::setPrecise(bool is_precise) {
 	b_exact = is_precise;
 }
+Matrix *Matrix::getArea(int start_row, int start_column, int end_row, int end_column) {
+	if(start_row < 1) start_row = 1;
+	else if(start_row > (int) rows()) start_row = rows();
+	if(start_column < 1) start_column = 1;
+	else if(start_column > (int) columns()) start_column = columns();
+	if(end_row < 1 || end_row > (int) rows()) end_row = rows();
+	else if(end_row < start_row) end_row = start_row;
+	if(end_column < 1 || end_column > (int) columns()) end_column = columns();
+	else if(end_column < start_column) end_column = start_column;
+	Matrix *mtrx = new Matrix(end_row - start_row + 1, end_column - start_column + 1);
+	for(int index_r = start_row; index_r <= end_row; index_r++) {
+		for(int index_c = start_column; index_c <= end_column; index_c++) {
+			mtrx->set(get(index_r, index_c), index_r - start_row + 1, index_c - start_column + 1);
+		}			
+	}
+	return mtrx;
+}
 Vector *Matrix::getRange(int start, int end) {
 	int n = columns() * rows();
 	if(start < 1) start = 1;
@@ -650,19 +667,28 @@ void Matrix::recalculateVariables() {
 	} 	
 }
 string Matrix::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Number *l_exp, bool in_composite, bool in_power) const {
-	string str = "matrix(";
-	str += i2s(rows());
-	str += CALCULATOR->getComma();
-	str += " ";
-	str += i2s(columns());
+//	string str = "matrix(";
+//	str += i2s(rows());
+//	str += CALCULATOR->getComma();
+//	str += " ";
+//	str += i2s(columns());
+	string str = LEFT_VECTOR_WRAP;
 	for(unsigned int index_r = 0; index_r < elements.size(); index_r++) {
-		for(unsigned int index_c = 0; index_c < elements[index_r].size(); index_c++) {
+		if(index_r > 0) {
 			str += CALCULATOR->getComma();
 			str += " ";
+		}
+		str += LEFT_VECTOR_WRAP;
+		for(unsigned int index_c = 0; index_c < elements[index_r].size(); index_c++) {
+			if(index_c > 0 || index_r > 0) {
+				str += CALCULATOR->getComma();
+				str += " ";
+			}
 			str += elements[index_r][index_c]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
 		}
+		str += RIGHT_VECTOR_WRAP;
 	}	
-	str += ")";
+	str += RIGHT_VECTOR_WRAP;
 	return str;
 }
 
@@ -698,7 +724,8 @@ string Vector::print(NumberFormat nrformat, int displayflags, int min_decimals, 
 	if(!isVector()) {
 		return Matrix::print(nrformat, displayflags, min_decimals, max_decimals, prefix, in_exact, usable, toplevel, plural, l_exp, in_composite, in_power);
 	}
-	string str = "vector(";
+//	string str = "vector(";
+	string str = LEFT_VECTOR_WRAP;
 	for(unsigned int index = 1; index <= components(); index++) {
 		if(index != 1) {
 			str += CALCULATOR->getComma();
@@ -706,7 +733,7 @@ string Vector::print(NumberFormat nrformat, int displayflags, int min_decimals, 
 		}
 		str += get(index)->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true);
 	}	
-	str += ")";
+	str += RIGHT_VECTOR_WRAP;
 	return str;
 }
 

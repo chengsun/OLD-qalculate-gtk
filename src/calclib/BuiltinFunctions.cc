@@ -711,8 +711,8 @@ void RangeFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(&v);
 }
 LimitsFunction::LimitsFunction() : Function("Matrices", "limits", 2, "Limits", "", -1) {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));	
+	setArgumentDefinition(1, new IntegerArgument(""));
+	setArgumentDefinition(2, new IntegerArgument(""));	
 	setArgumentDefinition(3, new VectorArgument("", false));	
 }
 void LimitsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
@@ -722,6 +722,18 @@ void LimitsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vctr);
 	delete vctr;
 	delete v;
+}
+AreaFunction::AreaFunction() : Function("Matrices", "area", 5, "Area") {
+	setArgumentDefinition(1, new IntegerArgument(""));
+	setArgumentDefinition(2, new IntegerArgument(""));	
+	setArgumentDefinition(3, new IntegerArgument(""));
+	setArgumentDefinition(4, new IntegerArgument(""));	
+	setArgumentDefinition(5, new MatrixArgument(""));	
+}
+void AreaFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	Matrix *mtrx = vargs[4]->matrix()->getArea(vargs[0]->number()->intValue(), vargs[1]->number()->intValue(), vargs[2]->number()->intValue(), vargs[3]->number()->intValue());
+	mngr->set(mtrx);
+	delete mtrx;
 }
 TransposeFunction::TransposeFunction() : Function("Matrices", "transpose", 1, "Transpose") {
 	setArgumentDefinition(1, new MatrixArgument());
@@ -1520,6 +1532,28 @@ LengthFunction::LengthFunction() : Function("Utilities", "len", 1, "Length of st
 }
 void LengthFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]->text().length());
+}
+AsciiFunction::AsciiFunction() : Function("Utilities", "ascii", 1, "ASCII Value") {
+	TextArgument *arg = new TextArgument();
+	arg->setCustomCondition("len(\\x) = 1");
+	setArgumentDefinition(1, arg);
+}
+void AsciiFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	unsigned char c = (unsigned char) vargs[0]->text()[0];
+	mngr->set(c, 1);
+}
+CharFunction::CharFunction() : Function("Utilities", "char", 1, "ASCII Char") {
+	IntegerArgument *arg = new IntegerArgument();
+	Number fr(32, 0);
+	arg->setMin(&fr);
+	fr.set(0x7f, 1);
+	arg->setMax(&fr);
+	setArgumentDefinition(1, arg);
+}
+void CharFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	string str;
+	str += vargs[0]->number()->intValue();
+	mngr->set(str);
 }
 
 #ifdef HAVE_GIAC

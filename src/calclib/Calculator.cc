@@ -753,6 +753,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new ComponentFunction());	
 	addFunction(new RangeFunction());
 	addFunction(new LimitsFunction());	
+	addFunction(new AreaFunction());
 	addFunction(new TransposeFunction());
 	addFunction(new IdentityFunction());
 	addFunction(new DeterminantFunction());
@@ -803,6 +804,8 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new SaveFunction());
 	addFunction(new ConcatenateFunction());
 	addFunction(new LengthFunction());
+	addFunction(new AsciiFunction());
+	addFunction(new CharFunction());
 #ifdef HAVE_GIAC
 	addFunction(new GiacFunction());
 	addFunction(new SolveFunction());

@@ -48,7 +48,7 @@ bool Manager::clearPrefixes() {
 	return b;
 }
 void Manager::init() {
-	refcount = 1;
+	i_refcount = 1;
 	b_exact = true;
 	b_protect = false;
 	o_number = new Number();
@@ -2338,14 +2338,17 @@ bool Manager::convert(const Unit *u) {
 }
 void Manager::unref() {
 	if(!b_protect) {
-		refcount--;
-		if(refcount <= 0) delete this;
+		i_refcount--;
+		if(i_refcount <= 0) delete this;
 	}
 }
 void Manager::ref() {
 	if(!b_protect) {
-		refcount++;
+		i_refcount++;
 	}
+}
+int Manager::refcount() const {
+	return i_refcount;
 }
 void Manager::protect(bool do_protect) {
 	b_protect = do_protect;

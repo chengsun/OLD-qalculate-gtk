@@ -147,6 +147,18 @@
         <_title>Text</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="ascii">
+      <_title>ASCII Value</_title>
+      <argument index="1">
+        <_title>Character</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="char">
+      <_title>ASCII Char</_title>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+    </builtin_function>
   </category>
   <category>
     <_title>Matrices &amp; Vectors</_title>
@@ -276,7 +288,7 @@
       <_description>Returns the component at specified position in a vector.</_description>
     </builtin_function>
     <builtin_function name="limits">
-      <_title>Limits</_title>
+      <_title>Vector Limits</_title>
       <argument index="1">
         <_title>Lower limit</_title>
       </argument>
@@ -287,6 +299,25 @@
         <_title>Vector</_title>
       </argument>
       <_description>Returns a part of a vector.</_description>
+    </builtin_function>
+    <builtin_function name="area">
+      <_title>Matrix Area</_title>
+      <argument index="1">
+        <_title>Start row</_title>
+      </argument>
+      <argument index="2">
+        <_title>Start column</_title>
+      </argument>
+      <argument index="3">
+        <_title>End row</_title>
+      </argument>
+      <argument index="4">
+        <_title>End column</_title>
+      </argument>
+      <argument index="5">
+        <_title>Matrix</_title>
+      </argument>
+      <_description>Returns a part of a matrix.</_description>
     </builtin_function>
     <builtin_function name="transpose">
       <_title>Transpose</_title>

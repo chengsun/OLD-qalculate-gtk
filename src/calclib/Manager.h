@@ -40,7 +40,7 @@ class Manager {
 		Unit* o_unit;
 		vector<Manager*> mngrs;
 		int c_type;
-		int refcount;
+		int i_refcount;
 		string s_var;
 		Function *o_function;
 		Variable *o_variable;
@@ -158,6 +158,7 @@ class Manager {
 		bool convert(string unit_str);		
 		bool convert(const Manager *unit_mngr);				
 		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *set_prefix = NULL, bool toplevel = true, bool *plural = NULL, Number *l_exp = NULL, bool in_composite = false, bool in_power = false, bool draw_minus = false, bool print_equals = false, bool in_multiplication = false, bool wrap = true, bool wrap_all = false, bool *has_parenthesis = NULL, bool in_div = false, bool no_add_one = false, Number *l_exp2 = NULL, Prefix **prefix1 = NULL, Prefix **prefix2 = NULL, string string_fr = "") const;
+		int refcount() const;
 		void ref();
 		void unref();
 		void protect(bool do_protect = true);

@@ -1,3 +1,10 @@
+2004-03-18 Niklas Knutsson  <nq@altern.org>
+
+	* Show error when custom condition is not met
+	* area, ascii and char functions
+	* Limits function should accept negative numbers for end. Fixes trimmed, weighted and winsorized mean.
+	* Nicer text printing of matrices and vectors
+
 2004-03-17 Niklas Knutsson  <nq@altern.org>
 
 	* Save size of history dialog

@@ -866,7 +866,16 @@ bool Argument::test(const Manager *value, int index, Function *f) const {
 		bool result = CALCULATOR->testCondition(expression);
 		CALCULATOR->delId(id, true);
 		mngr->protect(false);
-		return result;
+		if(!result) {
+			if(b_error) {
+				if(sname.empty()) {
+					CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
+				} else {
+					CALCULATOR->error(true, _("Argument %s, %s, in %s() must be %s."), i2s(index).c_str(), sname.c_str(), f->name().c_str(), printlong().c_str(), NULL);
+				}
+			}
+			return false;
+		}
 	}
 	return true;
 }

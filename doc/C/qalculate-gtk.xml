@@ -2,8 +2,8 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
     "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
   <!ENTITY legal SYSTEM "legal.xml">
-  <!ENTITY appversion "0.4.1">
-  <!ENTITY manrevision "0.4">
+  <!ENTITY appversion "0.5">
+  <!ENTITY manrevision "0.5">
   <!ENTITY date "Mars 2004">
   <!ENTITY app "Qalculate!">    
 ]>
@@ -23,16 +23,6 @@
 			<surname>Knutsson</surname>
 		</author>
 	</authorgroup>
-	<revhistory>
-		<revision> 
-			<revnumber>&app; Manual V&manrevision;</revnumber> 
-			<date>&date;</date> 
-			<revdescription> 
-	  			<para role="author">Niklas Knutsson</para>
-	  			<para role="publisher">Niklas Knutsson</para>
-			</revdescription> 
-		</revision>
-	</revhistory> 
 
 	<releaseinfo>This manual describes version &appversion; of &app;.
 	</releaseinfo> 
@@ -60,7 +50,7 @@ The center of attention in Qalculate! is the expression entry, Instead of enteri
 The interpretation of expressions is flexible and fault tolerant, and if you nevertheless do something wrong, Qalculate! will tell you so. Not fully solvable expressions are however not errors. Qalculate! will simplify as far as it can and answer with an expression.
 </para>
 <para>
-In addition to numbers and arithmetic operators, an expression may contain any combination of variables, units, and functions. These are immediately accessible from the interface — the menus in the upper right corner, the managers, and calculator buttons.
+In addition to numbers and arithmetic operators, an expression may contain any combination of variables, units, and functions. These are immediately accessible from the user interface — the menu bar, the managers, the calculator keypad, and automatic completion.
 </para>
 <para>
 Qalculate! also has some special tools to increase your efficiency, including a number base conversion dialog and a simple plotting interface.
@@ -84,24 +74,9 @@ Although use of Qalculate! for simple calculations should be natural and self-ex
 		</mediaobject>
 	</screenshot>
 </figure>
-<variablelist>
-<varlistentry>
-<term>Buttons</term>
-<listitem>
 <para>
-In the bottom of the main window, three buttons are accessible. <guibutton>Close</guibutton> on the right simply closes/exits Qalculate!, <guibutton>Execute</guibutton> performs the calculation of the entered expression (same as <keycap>Enter</keycap>), while the <guibutton>More &gt;&gt;</guibutton> / <guibutton>&lt;&lt; Less</guibutton> button shows/hides calculator buttons and calculation history.
+The main window provides a menu bar, the expression entry, the result display and a calculator keypad which can be shown/hidden by clicking on <guilabel>Keypad</guilabel>. There are two small buttons to right of the expression entry and the result display. The upper button performs calculation of the entered expression (same as <keycap>Enter</keycap>), while the one below opens a window showing previous calculations.
 </para>
-</listitem>
-</varlistentry>
-<varlistentry>
-<term>Menus</term>
-<listitem>
-<para>
-Two small buttons with arrows are placed right of the expression entry and the result display. These open the expression menu and the result menu, respectively. The contents of menus are described below in <xref linkend="qalculate-menus"/>.
-</para>
-</listitem>
-</varlistentry>
-</variablelist>
 </sect2>
 <sect2 id="qalculate-expression-entry">
 <title>Expression Entry</title>
@@ -125,28 +100,31 @@ Qalculate! helps out with the expression by giving a list of possible endings to
 After execution of an expression, the whole expression will be marked. This normally means that if something new is entered, the old expression will be overwritten. If, however, an operator (+, −, *, /, ^) is entered first, the old expression will instead be the target of action. The operator will then apply to the whole expression, which is put in parenthesis. This works on all marked ranges, meaning that this way an expression can conveniently be put in parenthesis. Functions set the selection as their first argument.
 </para>
 <para>
-The <keycap>Up</keycap> and <keycap>Down</keycap> keys will access previously entered expressions. With focus in the expression entry, <keycap>Up</keycap> traverses backwards in the expression history and <keycap>Down</keycap> forward. 
+The <keycap>Page Up</keycap> and <keycap>Page Down</keycap> keys will access previously entered expressions. With focus in the expression entry, <keycap>Page Up</keycap> traverses backwards in the expression history and <keycap>Page Down</keycap> forward. 
+</para>
+<para>
+The font used for the expression entry can be selected in the preferences dialog (<menuchoice><guimenu>Edit</guimenu><guimenuitem>Preferences</guimenuitem></menuchoice>).
 </para>
 </sect2>
 <sect2 id="qalculate-result-display">
 <title>Result Display</title>
 <para>
-The result of calculations is displayed in the open area below the expression entry. The font used for the result display can be selected in the preferences dialog (<menuchoice><guimenu>Expression Menu</guimenu><guimenuitem>Preferences</guimenuitem></menuchoice>). Use of Unicode signs can be turned off in the same dialog, in case of problems with missing characters. Otherwise Qalculate! will try to make the result as fancy as possible and print π for pi, √ for sqrt, € for euro, and so on. Information about customization of the mathematical result output is available in <xref linkend="qalculate-result"/>.
+The result of calculations is displayed in the open area below the expression entry. The font used for the result display can be selected in the preferences dialog (<menuchoice><guimenu>Edit</guimenu><guimenuitem>Preferences</guimenuitem></menuchoice>). Use of Unicode signs can be turned off in the same dialog, in case of problems with missing characters. Otherwise Qalculate! will try to make the result as fancy as possible and print π for pi, √ for sqrt, € for euro, and so on. Information about customization of the mathematical result output is available in <xref linkend="qalculate-result"/>.
 </para>
 <para>
 In front of the result an equals or approximately equals sign is shown. This indicates whether Qalculate! was able to calculate/display the result exact or only approximate, in the current mode.
 </para>
 <para>
-Context menu.
+The result display has a context menu, which pops up when clicking with the right mouse button anywhere in the field. This menu provides a subset of <xref linkend="qalculate-TBL-mode-menu"/> and contains alternatives for the display of the result. See more info in <xref linkend="qalculate-result"/>.
 </para>
 <para>
-To copy the result, either select <menuchoice><guimenu>Result Menu</guimenu><guimenuitem>Copy Result</guimenuitem></menuchoice>, press <keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>C</keycap></keycombo>, or copy the text from the history tab.
+To copy the result, either select <menuchoice><guimenu>Edit</guimenu><guimenuitem>Copy Result</guimenuitem></menuchoice>, press <keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>C</keycap></keycombo>, or copy the text from the history window.
 </para>
 </sect2>
 <sect2 id="qalculate-calculator-buttons">
 <title>Keypad</title>
 <para>
-The buttons tab provides access to a fairly small set of traditional calculator buttons, which work as expected. The <guibutton>Convert</guibutton> button in the top left corner opens the convert to unit dialog (see <xref linkend="qalculate-unit-conversion"/>), while the buttons to the right open the functions, variables and units managers (see <xref linkend="qalculate-managers"/>).
+The keypad provides access to a fairly small set of traditional calculator buttons, which work as expected. The <guibutton>Convert</guibutton> button in the top left corner opens the convert to unit dialog (see <xref linkend="qalculate-unit-conversion"/>), while the buttons to the right open the functions, variables and units managers (see <xref linkend="qalculate-managers"/>).
 <figure id="qalculate-FIG-calculator-buttons">
 	<title>Keypad</title>
 	<screenshot>
@@ -162,7 +140,7 @@ The buttons tab provides access to a fairly small set of traditional calculator 
 <sect2 id="qalculate-calculation-history">
 <title>Calculation History</title>
 <para>
-The history tab provides full calculation history (20 rows are reloaded on restart). Previous expressions and results, as well as errors and warnings, are displayed in plain text and can be marked and copied (from the right-button context menu or with <keycombo><keycap>Ctrl</keycap><keycap>C</keycap></keycombo>) to the expression entry or elsewhere.
+The history window, opened with the button next to the result display, provides access to previous calculation results (20 rows are reloaded on restart). Previous expressions and results, as well as errors and warnings, are displayed in plain text and can be marked and copied (from the right-button context menu or with <keycombo><keycap>Ctrl</keycap><keycap>C</keycap></keycombo>) to the expression entry or elsewhere.
 <figure id="qalculate-FIG-calculation-history">
 	<title>Calculation History</title>
 	<screenshot>
@@ -177,12 +155,12 @@ The history tab provides full calculation history (20 rows are reloaded on resta
 </para>
 </sect2>
 <sect2 id="qalculate-menus">
-<title>Menus</title>
+<title>Menu Bar</title>
 <para>
-The contents of the expression menu and the result menu (opened with the buttons in the top right corner of the main window), and associated key shortcuts, are listed in the tables below.
+The menus in the menu bar provides access to most of the functionality of Qalculate!. Their contents are listed and described below.
 </para>
-<table id="qalculate-TBL-expression-menu" frame="topbot" colsep="1">
-	<title>Expression Menu</title> 
+<table id="qalculate-TBL-file-menu" frame="topbot" colsep="1">
+	<title>File Menu</title> 
 	<tgroup cols="2" colsep="1" rowsep="0">
 		<colspec colname="COLSPEC0" colwidth="50*"/>
 		<colspec colname="COLSPEC1"/>
@@ -194,33 +172,25 @@ The contents of the expression menu and the result menu (opened with the buttons
 		</thead> 
                 <tbody>
 			<row valign="top">
-				<entry><para>Recently Used</para></entry>
-				<entry><para>Submenu with the most recently inserted variables, functions, units and prefixes</para></entry>
+				<entry><para>New</para></entry>
+				<entry><para>Submenu for creation of new objects. See <xref linkend="qalculate-TBL-new-menu"/>.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Functions</para></entry>
-				<entry><para>Submenu. See <xref linkend="qalculate-TBL-functions-menu"/>.</para></entry>
+				<entry><para>Import CSV file</para></entry>
+				<entry><para>Opens a dialog for import of a data file as a matrix or vectors.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Variables</para></entry>
-				<entry><para>Submenu. See <xref linkend="qalculate-TBL-variables-menu"/>.</para></entry>
+				<entry><para>Store Result (<keycombo><keycap>Ctrl</keycap><keycap>S</keycap></keycombo>)</para></entry>
+				<entry><para>Stores the current result as a variable. See <xref linkend="qalculate-variable-creation"/>.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Units</para></entry>
-				<entry><para>Submenu. See <xref linkend="qalculate-TBL-units-menu"/>.</para></entry>
+				<entry><para>Save definitions</para></entry>
+				<entry><para>Saves all user definitions (variables, functions and units).</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Prefixes</para></entry>
-				<entry><para>Submenu with prefixes which are inserted into the expression on selection.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Angle Unit</para></entry>
-				<entry><para>Submenu which sets the default angle unit to either degrees, radians or gradians.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>RPN Mode</para></entry>
-				<entry><para>Toggles RPN mode on/off.</para></entry>
-			</row>
+				<entry><para>Update exchange rates</para></entry>
+				<entry><para>Downloads current exchange rates from the Internet.</para></entry>
+			</row>						
 			<row valign="top">
 				<entry><para>Plot functions/data</para></entry>
 				<entry><para>Opens the plot dialog. See <xref linkend="qalculate-plotting"/>.</para></entry>
@@ -230,38 +200,14 @@ The contents of the expression menu and the result menu (opened with the buttons
 				<entry><para>Opens the number bases converter. See <xref linkend="qalculate-convert-number-bases-dialog"/></para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Save definitions</para></entry>
-				<entry><para>Saves all user definitions (variables, functions and units).</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Save mode</para></entry>
-				<entry><para>Saves current mode/settings.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Update exchange rates</para></entry>
-				<entry><para>Downloads current exchange rates from the Internet.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Preferences</para></entry>
-				<entry><para>Opens the preferences dialog, which controls settings for visual appearance and start/exit actions.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Help (<keycap>F1</keycap>)</para></entry>
-				<entry><para>Opens this help.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>About</para></entry>
-				<entry><para>Info about Qalculate!</para></entry>
-			</row>
-			<row valign="top">
 				<entry><para>Quit (<keycombo><keycap>Ctrl</keycap><keycap>Q</keycap></keycombo>)</para></entry>
 				<entry><para>Exits Qalculate!</para></entry>
 			</row>
 		</tbody>
 	</tgroup>
 </table>
-<table id="qalculate-TBL-functions-menu" frame="topbot" colsep="1">
-	<title>Functions Menu</title> 
+<table id="qalculate-TBL-new-menu" frame="topbot" colsep="1">
+	<title>New Menu</title> 
 	<tgroup cols="2" colsep="1" rowsep="0">
 		<colspec colname="COLSPEC0" colwidth="50*"/>
 		<colspec colname="COLSPEC1"/>
@@ -273,77 +219,30 @@ The contents of the expression menu and the result menu (opened with the buttons
 		</thead> 
                 <tbody>
 			<row valign="top">
-				<entry><para>(Function list)</para></entry>
-				<entry><para>Select a function to open the insert function dialog.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Create new function</para></entry>
-				<entry><para>Opens the edit function dialog for creation of a new function.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Manage functions (<keycombo><keycap>Ctrl</keycap><keycap>F</keycap></keycombo>)</para></entry>
-				<entry><para>Opens the function manager.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Disable/Enable functions</para></entry>
-				<entry><para>Toggles recognition of functions in expressions on/off.</para></entry>
-			</row>
-		</tbody>
-	</tgroup>
-</table>
-<table id="qalculate-TBL-variables-menu" frame="topbot" colsep="1">
-	<title>Variables Menu</title> 
-	<tgroup cols="2" colsep="1" rowsep="0">
-		<colspec colname="COLSPEC0" colwidth="50*"/>
-		<colspec colname="COLSPEC1"/>
-		<thead>
-			<row valign="top">
-				<entry colname="COLSPEC0"><para>Menu Item</para></entry>
-				<entry colname="COLSPEC1"><para>Description</para></entry>
-			</row>
-		</thead> 
-                <tbody>
-			<row valign="top">
-				<entry><para>(Variable list)</para></entry>
-				<entry><para>Select a variable to insert it into the expression entry.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Create new variable.</para></entry>
+				<entry><para>Variable</para></entry>
 				<entry><para>Opens the variable edit dialog for creation of a new variable.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Create new matrix.</para></entry>
+				<entry><para>Matrix</para></entry>
 				<entry><para>Opens a dialog for entry of a new matrix variable.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Create new vector.</para></entry>
+				<entry><para>Vector</para></entry>
 				<entry><para>Opens a dialog for entry of a new vector variable.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Import CSV file.</para></entry>
-				<entry><para>Opens a dialog for import of a data file as a matrix or vectors.</para></entry>
+				<entry><para>Function</para></entry>
+				<entry><para>Opens the function edit dialog for creation of a new function.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Manage variables (<keycombo><keycap>Ctrl</keycap><keycap>M</keycap></keycombo>)</para></entry>
-				<entry><para>Opens the variable manager.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Disable/Enable variables</para></entry>
-				<entry><para>Toggles recognition of variables in expressions on/off.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>(Do not) Calculate variables</para></entry>
-				<entry><para>Toggles treatment of known variables as unknown on/off.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Disable/Enable unknown variables</para></entry>
-				<entry><para>Toggles recognition of unknown variables in expressions on/off.</para></entry>
+				<entry><para>Unit</para></entry>
+				<entry><para>Opens the unit edit dialog for creation of a new unit.</para></entry>
 			</row>
 		</tbody>
 	</tgroup>
 </table>
-<table id="qalculate-TBL-units-menu" frame="topbot" colsep="1">
-	<title>Units Menu</title> 
+<table id="qalculate-TBL-edit-menu" frame="topbot" colsep="1">
+	<title>Edit Menu</title> 
 	<tgroup cols="2" colsep="1" rowsep="0">
 		<colspec colname="COLSPEC0" colwidth="50*"/>
 		<colspec colname="COLSPEC1"/>
@@ -355,26 +254,46 @@ The contents of the expression menu and the result menu (opened with the buttons
 		</thead> 
                 <tbody>
 			<row valign="top">
-				<entry><para>(Unit list)</para></entry>
-				<entry><para>Select a unit to insert it into the expression entry.</para></entry>
+				<entry><para>Manage Variables (<keycombo><keycap>Ctrl</keycap><keycap>M</keycap></keycombo>)</para></entry>
+				<entry><para>Opens the variable manager. See <xref linkend="qalculate-managers"/>.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Create new unit</para></entry>
-				<entry><para>Opens the edit unit dialog for creation of a new unit.</para></entry>
+				<entry><para>Manage Functions (<keycombo><keycap>Ctrl</keycap><keycap>F</keycap></keycombo>)</para></entry>
+				<entry><para>Opens the function manager. See <xref linkend="qalculate-managers"/>.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Manage units (<keycombo><keycap>Ctrl</keycap><keycap>U</keycap></keycombo>)</para></entry>
-				<entry><para>Opens the unit manager.</para></entry>
+				<entry><para>Manage Units (<keycombo><keycap>Ctrl</keycap><keycap>U</keycap></keycombo>)</para></entry>
+				<entry><para>Opens the unit manager. See <xref linkend="qalculate-managers"/>.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Disable/Enable units</para></entry>
-				<entry><para>Toggles recognition of units in expressions on/off.</para></entry>
+				<entry><para>Factorize</para></entry>
+				<entry><para>Factorizes the current result. Only available if the Qalculate! installation has Giac support.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Convert to unit</para></entry>
+				<entry><para>Submenu with units. Select a unit to convert the current result.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Set prefix</para></entry>
+				<entry><para>Submenu for choice of unit prefix in current result.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Convert To Unit Expression (<keycombo><keycap>Ctrl</keycap><keycap>T</keycap></keycombo>)</para></entry>
+				<entry><para>Opens the convert to unit dialog for conversion of result to custom unit expression. See <xref linkend="qalculate-unit-conversion"/>.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Copy Result (<keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>C</keycap></keycombo>)</para></entry>
+				<entry><para>Copies the current result to the clipboard.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Preferences</para></entry>
+				<entry><para>Opens the preferences dialog, which controls settings for visual appearance and start/exit actions.</para></entry>
 			</row>
 		</tbody>
 	</tgroup>
 </table>
-<table id="qalculate-TBL-result-menu" frame="topbot" colsep="1">
-	<title>Result Menu</title> 
+<table id="qalculate-TBL-mode-menu" frame="topbot" colsep="1">
+	<title>Mode Menu</title>
 	<tgroup cols="2" colsep="1" rowsep="0">
 		<colspec colname="COLSPEC0" colwidth="50*"/>
 		<colspec colname="COLSPEC1"/>
@@ -402,6 +321,14 @@ The contents of the expression menu and the result menu (opened with the buttons
 				<entry><para>Submenu which controls the display of units and prefixes. See <xref linkend="qalculate-result"/>.</para></entry>
 			</row>
 			<row valign="top">
+				<entry><para>Enabled Objects</para></entry>
+				<entry><para>Submenu which enables/disables variables, functions, units and unknown variables.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Calculate Variables</para></entry>
+				<entry><para>Toggles calculation of variables on/off. If calculation of variables is not on, all variables will be treated as unknown.</para></entry>
+			</row>
+			<row valign="top">
 				<entry><para>Exact Mode</para></entry>
 				<entry><para>Toggles exact mode on/off.</para></entry>
 			</row>
@@ -410,24 +337,8 @@ The contents of the expression menu and the result menu (opened with the buttons
 				<entry><para>Toggles calculation of multiple results for even roots on/off.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Factorize</para></entry>
-				<entry><para>Factorizes the current result. Only available if the Qalculate! installation has Giac support.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Convert to unit</para></entry>
-				<entry><para>Submenu. See <xref linkend="qalculate-TBL-convert-unit-menu"/>.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Set prefix</para></entry>
-				<entry><para>Submenu for choice of unit prefix in current result.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Store Result</para></entry>
-				<entry><para>Stores the current result as a variable. See <xref linkend="qalculate-variable-creation"/>.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Copy Result</para></entry>
-				<entry><para>Copies the current result to the clipboard.</para></entry>
+				<entry><para>RPN Mode</para></entry>
+				<entry><para>Toggles use of Reverse Polish Notation syntax in expressions on/off.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Precision</para></entry>
@@ -437,11 +348,15 @@ The contents of the expression menu and the result menu (opened with the buttons
 				<entry><para>Decimals</para></entry>
 				<entry><para>Opens a dialog to change displayed number of decimals.</para></entry>
 			</row>
+			<row valign="top">
+				<entry><para>Save Mode</para></entry>
+				<entry><para>Saves the current calculator mode.</para></entry>
+			</row>
 		</tbody>
 	</tgroup>
 </table>
-<table id="qalculate-TBL-convert-unit-menu" frame="topbot" colsep="1">
-	<title>Convert to Unit Menu</title> 
+<table id="qalculate-TBL-functions-menu" frame="topbot" colsep="1">
+	<title>Functions Menu</title> 
 	<tgroup cols="2" colsep="1" rowsep="0">
 		<colspec colname="COLSPEC0" colwidth="50*"/>
 		<colspec colname="COLSPEC1"/>
@@ -453,20 +368,81 @@ The contents of the expression menu and the result menu (opened with the buttons
 		</thead> 
                 <tbody>
 			<row valign="top">
+				<entry><para>(Recent functions list)</para></entry>
+				<entry><para>Select a function to open the insert function dialog.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>(Function list)</para></entry>
+				<entry><para>Select a function to open the insert function dialog.</para></entry>
+			</row>
+		</tbody>
+	</tgroup>
+</table>
+<table id="qalculate-TBL-variables-menu" frame="topbot" colsep="1">
+	<title>Variables Menu</title> 
+	<tgroup cols="2" colsep="1" rowsep="0">
+		<colspec colname="COLSPEC0" colwidth="50*"/>
+		<colspec colname="COLSPEC1"/>
+		<thead>
+			<row valign="top">
+				<entry colname="COLSPEC0"><para>Menu Item</para></entry>
+				<entry colname="COLSPEC1"><para>Description</para></entry>
+			</row>
+		</thead> 
+                <tbody>
+			<row valign="top">
+				<entry><para>(Recent variables list)</para></entry>
+				<entry><para>Select a variable to insert it into the expression entry.</para></entry>
+			</row>                
+			<row valign="top">
+				<entry><para>(Variable list)</para></entry>
+				<entry><para>Select a variable to insert it into the expression entry.</para></entry>
+			</row>
+		</tbody>
+	</tgroup>
+</table>
+<table id="qalculate-TBL-units-menu" frame="topbot" colsep="1">
+	<title>Units Menu</title> 
+	<tgroup cols="2" colsep="1" rowsep="0">
+		<colspec colname="COLSPEC0" colwidth="50*"/>
+		<colspec colname="COLSPEC1"/>
+		<thead>
+			<row valign="top">
+				<entry colname="COLSPEC0"><para>Menu Item</para></entry>
+				<entry colname="COLSPEC1"><para>Description</para></entry>
+			</row>
+		</thead> 
+                <tbody>
+                	<row valign="top">
+				<entry><para>(Recent units list)</para></entry>
+				<entry><para>Select a unit to insert it into the expression entry.</para></entry>
+			</row>
+			<row valign="top">
 				<entry><para>(Unit list)</para></entry>
-				<entry><para>Select a unit to convert the result.</para></entry>
+				<entry><para>Select a unit to insert it into the expression entry.</para></entry>
+			</row>
+		</tbody>
+	</tgroup>
+</table>
+<table id="qalculate-TBL-help-menu" frame="topbot" colsep="1">
+	<title>Help Menu</title> 
+	<tgroup cols="2" colsep="1" rowsep="0">
+		<colspec colname="COLSPEC0" colwidth="50*"/>
+		<colspec colname="COLSPEC1"/>
+		<thead>
+			<row valign="top">
+				<entry colname="COLSPEC0"><para>Menu Item</para></entry>
+				<entry colname="COLSPEC1"><para>Description</para></entry>
+			</row>
+		</thead> 
+                <tbody>
+			<row valign="top">
+				<entry><para>Contents (<keycap>F1</keycap>)</para></entry>
+				<entry><para>Opens this help.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Enter custom unit (<keycombo><keycap>Ctrl</keycap><keycap>T</keycap></keycombo>)</para></entry>
-				<entry><para>Opens the convert to unit dialog for conversion of result to custom unit expression.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Create new unit</para></entry>
-				<entry><para>Opens the edit unit dialog for creation of a new unit.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Manage units</para></entry>
-				<entry><para>Opens the unit manager.</para></entry>
+				<entry><para>About</para></entry>
+				<entry><para>Info about Qalculate!</para></entry>
 			</row>
 		</tbody>
 	</tgroup>
@@ -476,7 +452,7 @@ The contents of the expression menu and the result menu (opened with the buttons
 <sect2 id="qalculate-managers">
 <title>Variable/Function/Unit Managers</title>
 <para>
-The manager windows provide a structural way of working with variables, functions and units (collectively referred to as objects). The managers for the three different objects are essentially similar. They can be opened from the expression menu and the calculator buttons. <keycombo><keycap>Ctrl</keycap><keycap>M</keycap></keycombo>, <keycombo><keycap>Ctrl</keycap><keycap>F</keycap></keycombo> and <keycombo><keycap>Ctrl</keycap><keycap>U</keycap></keycombo> can also be used for variables, functions and units respectively.
+The manager windows provide a structural way of working with variables, functions and units (collectively referred to as objects). The managers for the three different objects are essentially similar. They can be opened from the edit menu and the keypad. <keycombo><keycap>Ctrl</keycap><keycap>M</keycap></keycombo>, <keycombo><keycap>Ctrl</keycap><keycap>F</keycap></keycombo> and <keycombo><keycap>Ctrl</keycap><keycap>U</keycap></keycombo> can also be used for variables, functions and units respectively.
 </para>
 <figure id="qalculate-FIG-variable-manager">
 	<title>Variable Manager</title>
@@ -527,7 +503,7 @@ For more information about variables, functions and units, see <xref linkend="qa
 <sect2 id="qalculate-convert-number-bases-dialog">
 <title>Convert Number Bases Dialog</title>
 <para>
-The number bases dialog, accessible from the <guimenu>Expression Menu</guimenu> or <keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>, is an efficient and convenient tool for conversion between binary, octal, decimal and hexadecimal numbers. This dialog contains entries for each number base. When a number is typed in any of the entries, the others are automatically updated to display the current number in their format. Numbers, or expressions, entered follow the same rules as expressions in the main expression entry.
+The number bases dialog, accessible from the <guimenu>File Menu</guimenu> or <keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>, is an efficient and convenient tool for conversion between binary, octal, decimal and hexadecimal numbers. This dialog contains entries for each number base. When a number is typed in any of the entries, the others are automatically updated to display the current number in their format. Numbers, or expressions, entered follow the same rules as expressions in the main expression entry.
 <figure id="qalculate-FIG-convert-number-bases">
 	<title>Convert Number Bases Dialog</title>
 	<screenshot>
@@ -563,7 +539,7 @@ In Qalculate! mathematical entities, such as numbers and variables, are referred
 	<varlistentry>
 		<term>Vectors and Matrices</term>
 		<listitem><para>
-		A matrix is a two-dimensional rectangular array of mathematical objects. Vectors are matrices with only one row or column, thus one-dimensional sequences of objects, Vectors and matrices are generated by <command>vector()</command>, <command>matrix()</command> and similar functions, or stored in a variable. Syntax in the form of <quote>[[1, 2], [3, 4]]</quote> is not yet supported.
+		A matrix is a two-dimensional rectangular array of mathematical objects. Vectors are matrices with only one row or column, thus one-dimensional sequences of objects, Vectors and matrices are generated by <command>vector()</command>, <command>matrix()</command> and similar functions, or stored in a variable. Syntax in the form of <quote>[1, 2, 3, 4]</quote> and <quote>[[1, 2], [3, 4]]</quote> can also be used.
 		</para></listitem>
 	</varlistentry>	
 	<varlistentry>
@@ -779,7 +755,7 @@ Usually, mathematical expressions are written as normally expected. Standard ope
 <sect1 id="qalculate-result">
 <title>Calculator Modes</title>
 <para>
-Qalculate! provides flexible calculation output and result display. There are several ways in which calculation output and display of results can be customized. These modes can generally be changed through the result menu. Different modes are summarized below.
+Qalculate! provides flexible calculation output and result display. There are several ways in which calculation output and display of results can be customized. These modes can generally be changed through the mode menu. Different modes are summarized below.
 <variablelist>
 <varlistentry>
 <term>Number Bases</term>
@@ -863,10 +839,10 @@ The ans variable, which always contains the last calculated result, is another s
 	</screenshot>
 </figure>
 <para>
-The easiest way to create a variable is to store the current result. This can be done by clicking the <keycap>STO</keycap> button or selecting <menuchoice><guimenu>Result Menu</guimenu><guimenuitem>Store Result</guimenuitem></menuchoice>. Type a name for the variable in the dialog that pops up and optionally enter a category and descriptive name to keep variables well organized.
+The easiest way to create a variable is to store the current result. This can be done by clicking the <keycap>STO</keycap> button or selecting <menuchoice><guimenu>File</guimenu><guimenuitem>Store Result</guimenuitem></menuchoice>. Type a name for the variable in the dialog that pops up and optionally enter a category and descriptive name to keep variables well organized.
 </para>
 <para>
-Variables can also be created from scratch by selecting <menuchoice><guimenu>Expression Menu</guimenu><guisubmenu>Variables</guisubmenu><guimenuitem>Create new variable</guimenuitem></menuchoice>  or by clicking <guibutton>New</guibutton> in the variable manager. The value can then be filled in, in the text field below the name, and specified as exact or approximate. 
+Variables can also be created from scratch by selecting <menuchoice><guimenu>File</guimenu><guisubmenu>New</guisubmenu><guimenuitem>Variable</guimenuitem></menuchoice>  or by clicking <guibutton>New</guibutton> in the variable manager. The value can then be filled in, in the text field below the name, and specified as exact or approximate. 
 </para>
 <para>
 Edit a variable by clicking <guibutton>Edit</guibutton> in the variable manager.
@@ -875,7 +851,7 @@ Edit a variable by clicking <guibutton>Edit</guibutton> in the variable manager.
 <sect2 id="qalculate-vectors-matrices">
 <title>Vectors and Matrices</title>
 <para>
-Vectors and matrices are most effectively used stored in a variable. Qalculate! provides separate tools for these variables. They use a different dialog, where each element can be edited separately as in a spreadsheet. As with other variables, click <guibutton>Edit</guibutton> in the variable manager to edit a matrix/vector variable, but to create a new, select <menuchoice><guimenu>Expression Menu</guimenu><guisubmenu>Variables</guisubmenu><guimenuitem>Create new matrix</guimenuitem></menuchoice> or <menuchoice><guimenu>Expression Menu</guimenu><guisubmenu>Variables</guisubmenu><guimenuitem>Create new vector</guimenuitem></menuchoice>.
+Vectors and matrices are most effectively used stored in a variable. Qalculate! provides separate tools for these variables. They use a different dialog, where each element can be edited separately as in a spreadsheet. As with other variables, click <guibutton>Edit</guibutton> in the variable manager to edit a matrix/vector variable, but to create a new, select <menuchoice><guimenu>File</guimenu><guisubmenu>New</guisubmenu><guimenuitem>Matrix</guimenuitem></menuchoice> or <menuchoice><guimenu>File</guimenu><guisubmenu>New</guisubmenu><guimenuitem>Vector</guimenuitem></menuchoice>.
 </para>
 <figure id="qalculate-FIG-edit-matrix">
 	<title>Matrix/Vector Edit Dialog</title>
@@ -891,7 +867,7 @@ Vectors and matrices are most effectively used stored in a variable. Qalculate! 
 In this dialog, name, category and descriptive name are typed in as usual, but instead of a single value entry, the matrix/vector edit dialog has a table of entries. Select number of rows and columns above. In a vector this only determines how many value entries that are shown in the table and empty entries will be ignored. For matrices, each entry in the table is an element in the matrix. It is possible to switch between matrix and vector in the dialog (the menu item selected only determines the initial mode).
 </para>
 <para>
-Matrices and vectors can also be loaded from data files. These files most be plain text files with values organized in separated rows and columns. Select <menuchoice><guimenu>Expression Menu</guimenu><guisubmenu>Variables</guisubmenu><guimenuitem>Import CSV file</guimenuitem></menuchoice> and a dialog window pops up. First select the file to import and then specify whether if it shall be imported as a matrix or vectors. A name, descriptive name and category can optionally be typed in. If the name field is empty, the file name will be used instead. After that, the row in the file where the data starts should be specified. as well as whether this first row contains column headings. Finally the delimiter, used to separate columns in the file, must be selected. Click <guibutton>OK</guibutton> and variables will be generated from the file. If vectors are to be generated and the file contains more than one column, the name will be used as a subcategory and each variable will add the column heading (or <quote>Column 1</quote>, <quote>Column 2</quote>, ...) to the name and the descriptive name.
+Matrices and vectors can also be loaded from data files. These files most be plain text files with values organized in separated rows and columns. Select <menuchoice><guimenu>File</guimenu><guimenuitem>Import CSV file</guimenuitem></menuchoice> and a dialog window pops up. First select the file to import and then specify whether if it shall be imported as a matrix or vectors. A name, descriptive name and category can optionally be typed in. If the name field is empty, the file name will be used instead. After that, the row in the file where the data starts should be specified. as well as whether this first row contains column headings. Finally the delimiter, used to separate columns in the file, must be selected. Click <guibutton>OK</guibutton> and variables will be generated from the file. If vectors are to be generated and the file contains more than one column, the name will be used as a subcategory and each variable will add the column heading (or <quote>Column 1</quote>, <quote>Column 2</quote>, ...) to the name and the descriptive name.
 </para>
 <figure id="qalculate-FIG-import-csv">
 	<title>Import CSV Dialog</title>
@@ -1039,7 +1015,7 @@ Trigonometric functions, including <command>sin()</command>, <command>cos()</com
 <varlistentry>
 <term>Utilities</term>
 <listitem><para>
-Various utility functions. Most are only useful in definition of other functions. The <command>save()</command> function can however be a quick way of storing a value in a variable, and <command>csum()</command> can be a powerful tool for data processing. 
+Various utility functions. Most are only useful in definition of other functions. The <command>save()</command> function can however be a quick way of storing a value in a variable, and <command>csum()</command> can be a powerful tool for data processing. This category also contains some functions, such as <command>char()</command> and <command>ascii()</command>, that might be useful for programmers.
 </para></listitem>
 </varlistentry>
 </variablelist>
@@ -1048,7 +1024,7 @@ Various utility functions. Most are only useful in definition of other functions
 <sect2 id="qalculate-function-creation">
 <title>Function creation/editing</title>
 <para>
-Functions are a bit more complex than variables, but can nevertheless be relatively easily created. <menuchoice><guimenu>Expression Menu</guimenu><guisubmenu>Functions</guisubmenu><guimenuitem>Create new function</guimenuitem></menuchoice> or click <guibutton>New</guibutton> in the function manager and the function edit dialog pops up. First enter a name, used to reference the function in an expression. If an expression is entered a bit further down, then the function will already be fully working. A bit more does however need to be said about the function expression.
+Functions are a bit more complex than variables, but can nevertheless be relatively easily created. <menuchoice><guimenu>File</guimenu><guisubmenu>New</guisubmenu><guimenuitem>Function</guimenuitem></menuchoice> or click <guibutton>New</guibutton> in the function manager and the function edit dialog pops up. First enter a name, used to reference the function in an expression. If an expression is entered a bit further down, then the function will already be fully working. A bit more does however need to be said about the function expression.
 </para>
 <para>
 The expression of a function is basically a normal expression with placeholders for arguments. These placeholders consists of a backslash and a letter — x, y, z for the 1st, 2nd and 3rd arguments and a to u for argument 4 to 24. These placeholders are replaced by entered arguments when a function is calculated. They naturally also decide the number of arguments that a function requires. For example the function for triangle area (<quote>base * height / 2</quote>) has the name triangle and the expression <quote>(\x*\y)/2</quote>, which gives that <quote>triangle(2, 3)</quote> equals <quote>(2*3) / 2</quote> and returns <quote>3</quote> as result. An argument can be used more than one time and must not necessarily be in order in the expression.
@@ -1095,7 +1071,7 @@ Units give numbers meaning in the real world. They specify what is measured by t
 Among units, Qalculate! has support for currencies with up-to-date exchange rates. Currencies are normally referenced with the standard three letter code due to name clashes, but a number of currency unit can also be accessed through their regular name and symbol. U.S. dollars can, for example, be referenced both as USD and dollar/dollars, or with the $ symbol. 
 </para>
 <para>
-<application>Wget</application> must be installed on the computer for exchange rate updates to be enabled. Current exchange rates are automatically fetched from the European Central Bank on the Internet, the first time Qalculate! is started. By default the exchange rates will thereafter have to be updated manually from <menuchoice><guimenu>Expression Menu</guimenu><guimenuitem>Update exchange rates</guimenuitem></menuchoice>, unless automatic updates are enabled in the preferences dialog.
+<application>Wget</application> must be installed on the computer for exchange rate updates to be enabled. Current exchange rates are automatically fetched from the European Central Bank on the Internet, the first time Qalculate! is started. By default the exchange rates will thereafter have to be updated manually from <menuchoice><guimenu>File</guimenu><guimenuitem>Update exchange rates</guimenuitem></menuchoice>, unless automatic updates are enabled in the preferences dialog.
 </para>
 </sect2>
 <sect2 id="qalculate-unit-conversion">
@@ -1104,7 +1080,7 @@ Among units, Qalculate! has support for currencies with up-to-date exchange rate
 Expression can be converted to a specific unit directly in the expression entry with the <quote>to</quote> operator, which converts the left-hand expression to a specified unit (ex. <quote>5 feet + 2 inches to cm</quote> converts the result of <quote>5 feet + 2 inches</quote> to centimeters and displays it). Note that the command <quote>to</quote> is localized, meaning that if Qalculate! is used with for example Swedish translation, then <quote>till</quote> should be used instead. Unit expressions may only contain units, prefixes, exponents, multiplication and division. Other elements are ignored. 
 </para>
 <para>
-The unit conversion dialog, accessible from the <guibutton>Convert</guibutton> button, <menuchoice><guimenu>Result Menu</guimenu><guisubmenu>Convert to unit</guisubmenu><guimenuitem>Enter custom unit</guimenuitem></menuchoice> or <keycombo><keycap>Ctrl</keycap><keycap>T</keycap></keycombo>, can also be used. Enter a unit in the dialog that pops up, click <guibutton>Apply</guibutton> or <guibutton>OK</guibutton> and the displayed result is then converted.
+The unit conversion dialog, accessible from the <guibutton>Convert</guibutton> button, <menuchoice><guimenu>Edit</guimenu><guisubmenu>Convert to unit</guisubmenu><guimenuitem>Enter custom unit</guimenuitem></menuchoice> or <keycombo><keycap>Ctrl</keycap><keycap>T</keycap></keycombo>, can also be used. Enter a unit in the dialog that pops up, click <guibutton>Apply</guibutton> or <guibutton>OK</guibutton> and the displayed result is then converted.
 <figure id="qalculate-FIG-unit-conversion-dialog">
 	<title>Unit Conversion Dialog</title>
 	<screenshot>
@@ -1117,7 +1093,7 @@ The unit conversion dialog, accessible from the <guibutton>Convert</guibutton> b
 </figure>
 </para>
 <para>
-The final way to convert to another unit is to use the predefined units in the <menuchoice><guimenu>Result Menu</guimenu><guisubmenu>Convert to unit</guisubmenu></menuchoice> menu or press <guibutton>Convert result</guibutton> in the unit manager. <menuchoice><guimenu>Result Menu</guimenu><guisubmenu>Set prefix</guisubmenu></menuchoice> can be used to select a prefix.
+The final way to convert to another unit is to use the predefined units in the <menuchoice><guimenu>Edit</guimenu><guisubmenu>Convert to unit</guisubmenu></menuchoice> menu or press <guibutton>Convert result</guibutton> in the unit manager. <menuchoice><guimenu>Edit</guimenu><guisubmenu>Set prefix</guisubmenu></menuchoice> can be used to select a prefix.
 </para>
 </sect2>
 <sect2 id="qalculate-unit-creation">
@@ -1126,7 +1102,7 @@ The final way to convert to another unit is to use the predefined units in the <
 There are three different unit classes in Qalculate! — base, alias and composite units. Base units are units defined as basis for other units. Meters and seconds are typical base units. Alias units is defined in relation to another unit, for example hour are defined as an alias unit that equals 60 minutes which in turn is defined in relation to seconds. Finally, composite units are defined by a unit expression with multiple units. Composite units often have an alias unit associated with them, as they do not have a reference name on their own. For example, a joule is defined as an alias defined in relation to a composite unit defined as <quote>Newton * meter</quote>.
 </para>
 <para>
-Select <menuchoice><guimenu>Expression Menu</guimenu><guisubmenu>Units</guisubmenu><guimenuitem>Create new unit</guimenuitem></menuchoice>, or click <guibutton>New</guibutton> in the unit manager, and the unit edit dialog pops up. 
+Select <menuchoice><guimenu>File</guimenu><guisubmenu>New</guisubmenu><guimenuitem>Unit</guimenuitem></menuchoice>, or click <guibutton>New</guibutton> in the unit manager, and the unit edit dialog pops up. 
 <figure id="qalculate-FIG-edit-unit">
 	<title>Unit Edit Dialog</title>
 	<screenshot>
@@ -1157,7 +1133,7 @@ Composite units need a unit expression with multiple units as base, in the base 
 Plotting in Qalculate! is done through an external program, <application>Gnuplot</application>. Thus <application>Gnuplot</application> (&gt;= v. 3.7) need to be installed on the computer for plotting to work.
 </para>
 <para>
-To plot functions or data sets, select <menuchoice><guimenu>Expression Menu</guimenu><guimenuitem>Plot functions/data</guimenuitem></menuchoice>, which brings up the plot dialog. The plot dialog consists of two tabs/pages — the first for the data and the other for control of function sampling and appearance. 
+To plot functions or data sets, select <menuchoice><guimenu>File</guimenu><guimenuitem>Plot functions/data</guimenuitem></menuchoice>, which brings up the plot dialog. The plot dialog consists of two tabs/pages — the first for the data and the other for control of function sampling and appearance. 
 </para>
 <figure id="qalculate-FIG-plot-data">
 	<title>Plot Data</title>
