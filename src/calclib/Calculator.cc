@@ -2294,8 +2294,8 @@ bool compare_name_no_case(const string &name, const string &str, const int &name
 			if(str[str_index + i2] >= 0) return false;
 			i2++;
 		}
-		gchar *gstr1 = g_utf8_strdown(name.substr(0, i2).c_str(), -1);
-		gchar *gstr2 = g_utf8_strdown(str.substr(str_index, i2).c_str(), -1);
+		gchar *gstr1 = g_utf8_strdown(name.c_str(), i2);
+		gchar *gstr2 = g_utf8_strdown(str.c_str() + (sizeof(char) * str_index), i2);
 		if(strcmp(gstr1, gstr2) != 0) return false;
 		g_free(gstr1);
 		g_free(gstr2);
@@ -2316,11 +2316,12 @@ bool compare_name_no_case(const string &name, const string &str, const int &name
 				if(str[str_index + i2 + i] >= 0) return false;
 				i2++;
 			}
-			gchar *gstr1 = g_utf8_strdown(name.substr(i, i2).c_str(), -1);
-			gchar *gstr2 = g_utf8_strdown(str.substr(str_index + i, i2).c_str(), -1);
+			gchar *gstr1 = g_utf8_strdown(name.c_str() + (sizeof(char) * i), i2);
+			gchar *gstr2 = g_utf8_strdown(str.c_str() + (sizeof(char) * (str_index + i)), i2);
 			if(strcmp(gstr1, gstr2) != 0) return false;
 			g_free(gstr1);
 			g_free(gstr2);
+			i += i2 - 1;
 		} else if(name[i] != str[str_index + i] && !((name[i] >= 'a' && name[i] <= 'z') && name[i] - 32 == str[str_index + i]) && !((name[i] <= 'Z' && name[i] >= 'A') && name[i] + 32 == str[str_index + i])) {
 			return false;
 		}

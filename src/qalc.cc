@@ -7,6 +7,7 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <vector>
+#include <glib.h>
 #ifdef HAVE_LIBREADLINE
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -47,39 +48,45 @@ void result_action_executed();
 void result_prefix_changed(Prefix *prefix = NULL);
 void expression_format_updated();
 
+#define EQUALS_IGNORECASE_AND_LOCAL(x,y)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, _(y)))
+
 int s2b(const string &str) {
 	if(str.empty()) return -1;
-	if(str == "yes") return 1;
-	if(str == "no") return 0;
-	if(str == "Yes") return 1;
-	if(str == "No") return 0;
-	if(str == "true") return 1;
-	if(str == "false") return 0;
-	if(str == "True") return 1;
-	if(str == "False") return 0;
-	if(str == "on") return 1;
-	if(str == "off") return 0;
-	if(str == "On") return 1;
-	if(str == "Off") return 0;
-	if(str == _("yes")) return 1;
-	if(str == _("no")) return 0;
-	if(str == _("Yes")) return 1;
-	if(str == _("No")) return 0;
-	if(str == _("true")) return 1;
-	if(str == _("false")) return 0;
-	if(str == _("True")) return 1;
-	if(str == _("False")) return 0;
-	if(str == _("on")) return 1;
-	if(str == _("off")) return 0;
-	if(str == _("On")) return 1;
-	if(str == _("Off")) return 0;
-	int v = s2i(str);
-	if(v > 0) return 1;
+	if(EQUALS_IGNORECASE_AND_LOCAL(str, "yes")) return 1;
+	if(EQUALS_IGNORECASE_AND_LOCAL(str, "no")) return 0;
+	if(EQUALS_IGNORECASE_AND_LOCAL(str, "true")) return 1;
+	if(EQUALS_IGNORECASE_AND_LOCAL(str, "false")) return 0;
+	if(EQUALS_IGNORECASE_AND_LOCAL(str, "on")) return 1;
+	if(EQUALS_IGNORECASE_AND_LOCAL(str, "off")) return 0;
+	if(str.find_first_not_of(SPACES NUMBERS) != string::npos) return -1;
+	int i = s2i(str);
+	if(i > 0) return 1;
 	return 0;
 }
 
 bool is_answer_variable(Variable *v) {
 	return v == vans[0] || v == vans[1] || v == vans[2] || v == vans[3] || v == vans[4];
+}
+
+bool equalsIgnoreCaseFirst(const string &str1, const char *str2) {
+	if(str1.length() < 1 || strlen(str2) < 1) return false;
+	if(str1[0] < 0 && str1.length() > 1) {
+		if(str2[0] >= 0) return false;
+		unsigned int i2 = 1;
+		while(i2 < str1.length() && str1[i2] < 0) {
+			if(i2 >= strlen(str2) || str2[i2] >= 0) return false;
+			i2++;
+		}
+		if(i2 != str1.length()) return false;
+		gchar *gstr1 = g_utf8_strdown(str1.c_str(), i2);
+		gchar *gstr2 = g_utf8_strdown(str2, i2);
+		if(strcmp(gstr1, gstr2) != 0) return false;
+		g_free(gstr1);
+		g_free(gstr2);
+	} else if(str1.length() != 1 || (str1[0] != str2[0] && !((str1[0] >= 'a' && str1[0] <= 'z') && str1[0] - 32 == str2[0]) && !((str1[0] <= 'Z' && str1[0] >= 'A') && str1[0] + 32 == str2[0]))) {
+		return false;
+	}
+	return true;
 }
 
 bool ask_question(const char *question) {
@@ -95,9 +102,9 @@ bool ask_question(const char *question) {
 		string str = buffer;
 #endif		
 		remove_blank_ends(str);
-		if(str == "y" || (str.length() == 1 && strlen(_("yes")) > 1 && str[0] == _("yes")[0]) || str == _("yes") || str == "yes") {
+		if(equalsIgnoreCaseFirst(str, "yes") || equalsIgnoreCaseFirst(str, _("yes")) || EQUALS_IGNORECASE_AND_LOCAL(str, "yes")) {
 			return true;
-		} else if(str == "n" || (str.length() == 1 && strlen(_("no")) > 1 && str[0] == _("no")[0]) || str == _("no") || str == "no") {	
+		} else if(equalsIgnoreCaseFirst(str, "no") || equalsIgnoreCaseFirst(str, _("no")) || EQUALS_IGNORECASE_AND_LOCAL(str, "no")) {	
 			return false;
 		} else {
 			fputs(_("Please answer yes or no"), stdout);
@@ -107,33 +114,33 @@ bool ask_question(const char *question) {
 }
 
 void set_assumption(const string &str, bool first_of_two = false) {
-	if(str == "unknown" || str == _("unknown")) {
+	if(EQUALS_IGNORECASE_AND_LOCAL(str, "unknown")) {
 		if(first_of_two) {
 			CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_UNKNOWN);
 		} else {
 			CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_NONE);
 		}
-	} else if(str == "none" || str == _("none")) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "none")) {
 		CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_NONE);
-	} else if(str == "complex" || str == _("complex")) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "complex")) {
 		CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_COMPLEX);
-	} else if(str == "real" || str == _("real")) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "real")) {
 		CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_REAL);
-	} else if(str == "number" || str == _("number")) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "number")) {
 		CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_NUMBER);
-	} else if(str == "rational" || str == _("rational")) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rational")) {
 		CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_RATIONAL);
-	} else if(str == "integer" || str == _("integer")) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "integer")) {
 		CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_INTEGER);
-	} else if(str == "non-zero" || str == _("non-zero")) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "non-zero")) {
 		CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONZERO);
-	} else if(str == "positive" || str == _("positive")) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "positive")) {
 		CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_POSITIVE);
-	} else if(str == "non-negative" || str == _("non-negative")) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "non-negative")) {
 		CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONNEGATIVE);
-	} else if(str == "negative" || str == _("negative")) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "negative")) {
 		CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NEGATIVE);
-	} else if(str == "non-positive" || str == _("non-positive")) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "non-positive")) {
 		CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONPOSITIVE);
 	} else {
 		puts(_("Unrecognized assumption."));
@@ -142,6 +149,7 @@ void set_assumption(const string &str, bool first_of_two = false) {
 
 #define SET_BOOL_D(x)	{int v = s2b(svalue); if(v < 0) {puts(_("Illegal value"));} else {x = v; result_display_updated();}}
 #define SET_BOOL_E(x)	{int v = s2b(svalue); if(v < 0) {puts(_("Illegal value"));} else {x = v; expression_format_updated();}}
+
 
 vector<const string*> matches;
 
@@ -316,8 +324,8 @@ int main (int argc, char *argv[]) {
 	rl_completion_entry_function = qalc_completion;
 #endif
 	
-	string svar, svalue;
-	unsigned int index, slen;
+	string svar, svalue, scom;
+	unsigned int index, slen, ispace;
 	
 	while(true) {
 #ifdef HAVE_LIBREADLINE			
@@ -330,8 +338,14 @@ int main (int argc, char *argv[]) {
 #endif				
 		slen = str.length();
 		remove_blank_ends(str);
-		if(slen > 4 && str.substr(0, 4) == "set ") {
-			str = str.substr(4, str.length() - 4);
+		ispace = str.find_first_of(SPACES);
+		if(ispace == string::npos) {
+			scom = "";
+		} else {
+			scom = str.substr(0, ispace);
+		}
+		if(equalsIgnoreCase(scom, "set")) {
+			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
 			svalue = "";
 			if((index = str.find_first_of(SPACES)) != string::npos) {
@@ -340,18 +354,18 @@ int main (int argc, char *argv[]) {
 			}
 			svar = str.substr(0, index);
 			remove_blank_ends(svar);
-			if(svar == "base" || svar == "inbase" || svar == "outbase") {
+			if(equalsIgnoreCase(svar, "base") || equalsIgnoreCase(svar, "inbase") || equalsIgnoreCase(svar, "outbase")) {
 				set_base:
 				int v = 0;
-				bool b_in = (svar == "inbase");
-				if(svalue == "roman") v = BASE_ROMAN_NUMERALS;
-				else if(svalue == "time") {if(b_in) v = 0; else v = BASE_TIME;}
-				else if(svalue == "hex" || svalue == "hexadecimal") v = BASE_HEXADECIMAL;
-				else if(svalue == "bin" || svalue == "binary") v = BASE_BINARY;
-				else if(svalue == "oct" || svalue == "octal") v = BASE_HEXADECIMAL;
-				else if(svalue == "dec" || svalue == "decimal") v = BASE_DECIMAL;
-				else if(svalue == "sex" || svalue == "sexagesimal") {if(b_in) v = 0; else v = BASE_SEXAGESIMAL;}
-				else {
+				bool b_in = equalsIgnoreCase(svar, "inbase");
+				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "roman")) v = BASE_ROMAN_NUMERALS;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "time")) {if(b_in) v = 0; else v = BASE_TIME;}
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "hex") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "hexadecimal")) v = BASE_HEXADECIMAL;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "bin") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "binary")) v = BASE_BINARY;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "oct") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "octal")) v = BASE_HEXADECIMAL;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "dec") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "decimal")) v = BASE_DECIMAL;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "sex") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "sexagesimal")) {if(b_in) v = 0; else v = BASE_SEXAGESIMAL;}
+				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 					v = s2i(svalue);
 					if((v < 2 || v > 36) && (b_in || v != 60)) {
 						v = 0;
@@ -366,7 +380,7 @@ int main (int argc, char *argv[]) {
 					printops.base = v;
 					result_format_updated();
 				}
-			} else if(svar == "assumptions") {
+			} else if(equalsIgnoreCase(svar, "assumptions")) {
 				set_assumptions:
 				unsigned int i = svalue.find_first_of(SPACES);
 				if(i != string::npos) {
@@ -377,31 +391,31 @@ int main (int argc, char *argv[]) {
 				}
 				expression_format_updated();
 			}
-			else if(svar == "all_prefixes") SET_BOOL_D(printops.use_all_prefixes)
-			else if(svar == "complex") SET_BOOL_E(evalops.allow_complex)
-			else if(svar == "excessive_parenthises") SET_BOOL_D(printops.excessive_parenthesis)
-			else if(svar == "functions") SET_BOOL_E(evalops.parse_options.functions_enabled)
-			else if(svar == "infinite") SET_BOOL_E(evalops.allow_infinite)
-			else if(svar == "negative_exponents") SET_BOOL_D(printops.negative_exponents)
-			else if(svar == "nonzero_denominators") SET_BOOL_E(evalops.assume_denominators_nonzero)
-			else if(svar == "prefixes") SET_BOOL_D(printops.use_unit_prefixes)
-			else if(svar == "round_to_even") SET_BOOL_D(printops.round_halfway_to_even)
-			else if(svar == "rpn") SET_BOOL_E(evalops.parse_options.rpn)
-			else if(svar == "short_multiplication") SET_BOOL_D(printops.short_multiplication)
-			else if(svar == "spacious") SET_BOOL_D(printops.spacious)
-			else if(svar == "unicode") SET_BOOL_D(printops.use_unicode_signs)
-			else if(svar == "units") SET_BOOL_E(evalops.parse_options.units_enabled)
-			else if(svar == "unknowns") SET_BOOL_E(evalops.parse_options.unknowns_enabled)
-			else if(svar == "variables") SET_BOOL_E(evalops.parse_options.variables_enabled)
-			else if(svar == "abbreviations") SET_BOOL_D(printops.abbreviate_names)
-			else if(svar == "ending_zeroes") SET_BOOL_D(printops.show_ending_zeroes)
-			else if(svar == "infinite_series") SET_BOOL_D(printops.indicate_infinite_series)
-			else if(svar == "angleunit") {
+			else if(equalsIgnoreCase(svar, "all_prefixes")) SET_BOOL_D(printops.use_all_prefixes)
+			else if(equalsIgnoreCase(svar, "complex")) SET_BOOL_E(evalops.allow_complex)
+			else if(equalsIgnoreCase(svar, "excessive_parenthises")) SET_BOOL_D(printops.excessive_parenthesis)
+			else if(equalsIgnoreCase(svar, "functions")) SET_BOOL_E(evalops.parse_options.functions_enabled)
+			else if(equalsIgnoreCase(svar, "infinite")) SET_BOOL_E(evalops.allow_infinite)
+			else if(equalsIgnoreCase(svar, "negative_exponents")) SET_BOOL_D(printops.negative_exponents)
+			else if(equalsIgnoreCase(svar, "nonzero_denominators")) SET_BOOL_E(evalops.assume_denominators_nonzero)
+			else if(equalsIgnoreCase(svar, "prefixes")) SET_BOOL_D(printops.use_unit_prefixes)
+			else if(equalsIgnoreCase(svar, "round_to_even")) SET_BOOL_D(printops.round_halfway_to_even)
+			else if(equalsIgnoreCase(svar, "rpn")) SET_BOOL_E(evalops.parse_options.rpn)
+			else if(equalsIgnoreCase(svar, "short_multiplication")) SET_BOOL_D(printops.short_multiplication)
+			else if(equalsIgnoreCase(svar, "spacious")) SET_BOOL_D(printops.spacious)
+			else if(equalsIgnoreCase(svar, "unicode")) SET_BOOL_D(printops.use_unicode_signs)
+			else if(equalsIgnoreCase(svar, "units")) SET_BOOL_E(evalops.parse_options.units_enabled)
+			else if(equalsIgnoreCase(svar, "unknowns")) SET_BOOL_E(evalops.parse_options.unknowns_enabled)
+			else if(equalsIgnoreCase(svar, "variables")) SET_BOOL_E(evalops.parse_options.variables_enabled)
+			else if(equalsIgnoreCase(svar, "abbreviations")) SET_BOOL_D(printops.abbreviate_names)
+			else if(equalsIgnoreCase(svar, "ending_zeroes")) SET_BOOL_D(printops.show_ending_zeroes)
+			else if(equalsIgnoreCase(svar, "infinite_series")) SET_BOOL_D(printops.indicate_infinite_series)
+			else if(equalsIgnoreCase(svar, "angleunit")) {
 				int v = -1;
-				if(svalue == "rad") v = RADIANS;
-				else if(svalue == "deg") v = DEGREES;
-				else if(svalue == "gra") v = GRADIANS;
-				else {
+				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "rad") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "radians")) v = RADIANS;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "deg") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "degrees")) v = DEGREES;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "gra") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "gradians")) v = GRADIANS;
+				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 					v = s2i(svalue);
 				}
 				if(v < 0 || v > 2) {
@@ -410,12 +424,12 @@ int main (int argc, char *argv[]) {
 					evalops.angle_unit = (AngleUnit) v;
 					expression_format_updated();
 				}
-			} else if(svar == "approximation") {
+			} else if(equalsIgnoreCase(svar, "approximation")) {
 				int v = -1;
-				if(svalue == "exact") v = APPROXIMATION_EXACT;
-				else if(svalue == "try exact") v = APPROXIMATION_TRY_EXACT;
-				else if(svalue == "approximate") v = APPROXIMATION_APPROXIMATE;
-				else {
+				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exact")) v = APPROXIMATION_EXACT;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "try exact")) v = APPROXIMATION_TRY_EXACT;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "approximate")) v = APPROXIMATION_APPROXIMATE;
+				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 					v = s2i(svalue);
 				}
 				if(v < 0 || v > 2) {
@@ -424,12 +438,12 @@ int main (int argc, char *argv[]) {
 					evalops.approximation = (ApproximationMode) v;
 					expression_format_updated();
 				}
-			} else if(svar == "autoconversion") {
+			} else if(equalsIgnoreCase(svar, "autoconversion")) {
 				int v = -1;
-				if(svalue == "none") v = POST_CONVERSION_NONE;
-				else if(svalue == "best") v = POST_CONVERSION_BEST;
-				else if(svalue == "base") v = POST_CONVERSION_BASE;
-				else {
+				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none")) v = POST_CONVERSION_NONE;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "best")) v = POST_CONVERSION_BEST;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "base")) v = POST_CONVERSION_BASE;
+				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 					v = s2i(svalue);
 				}
 				if(v < 0 || v > 2) {
@@ -438,7 +452,7 @@ int main (int argc, char *argv[]) {
 					evalops.auto_post_conversion = (AutoPostConversion) v;
 					expression_format_updated();
 				}
-			} else if(svar == "exact") {
+			} else if(equalsIgnoreCase(svar, "exact")) {
 				int v = s2b(svalue); 
 				if(v < 0) {
 					puts(_("Illegal value")); 
@@ -449,7 +463,7 @@ int main (int argc, char *argv[]) {
 					evalops.approximation = APPROXIMATION_TRY_EXACT; 
 					expression_format_updated();
 				}
-			} else if(svar == "save_mode") {
+			} else if(equalsIgnoreCase(svar, "save_mode")) {
 				int v = s2b(svalue); 
 				if(v < 0) {
 					puts(_("Illegal value")); 
@@ -458,7 +472,7 @@ int main (int argc, char *argv[]) {
 				} else {
 					save_mode_on_exit = false;
 				}
-			} else if(svar == "save_definitions") {
+			} else if(equalsIgnoreCase(svar, "save_definitions")) {
 				int v = s2b(svalue); 
 				if(v < 0) {
 					puts(_("Illegal value")); 
@@ -467,13 +481,13 @@ int main (int argc, char *argv[]) {
 				} else {
 					save_defs_on_exit = false;
 				}
-			} else if(svar == "expmode") {
+			} else if(equalsIgnoreCase(svar, "expmode")) {
 				int v = -2;
-				if(svalue == "off") v = EXP_NONE;
-				else if(svalue == "default") v = EXP_PRECISION;
-				else if(svalue == "pure") v = EXP_PURE;
-				else if(svalue == "scientific") v = EXP_SCIENTIFIC;
-				else {
+				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off")) v = EXP_NONE;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "default")) v = EXP_PRECISION;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "pure")) v = EXP_PURE;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "scientific")) v = EXP_SCIENTIFIC;
+				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 					v = s2i(svalue);
 					if(v < 0) v = -2;
 				}
@@ -483,18 +497,19 @@ int main (int argc, char *argv[]) {
 					printops.min_exp = v;
 					result_format_updated();
 				}
-			} else if(svar == "precision") {
-				int v = s2i(svalue);
+			} else if(equalsIgnoreCase(svar, "precision")) {
+				int v = 0;
+				if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
 				if(v < 1) {
 					puts(_("Illegal value."));
 				} else {
 					CALCULATOR->setPrecision(v);
 					expression_format_updated();
 				}
-			} else if(svar == "max_decimals") {
+			} else if(equalsIgnoreCase(svar, "max_decimals")) {
 				int v = -1;
-				if(svalue == "off") v = -1;
-				else v = s2i(svalue);
+				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off")) v = -1;
+				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
 				if(v < 0) {
 					printops.use_max_decimals = false;
 					result_format_updated();
@@ -503,10 +518,10 @@ int main (int argc, char *argv[]) {
 					printops.use_max_decimals = true;
 					result_format_updated();
 				}
-			} else if(svar == "min_decimals") {
+			} else if(equalsIgnoreCase(svar, "min_decimals")) {
 				int v = -1;
-				if(svalue == "off") v = -1;
-				else v = s2i(svalue);
+				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off")) v = -1;
+				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
 				if(v < 0) {
 					printops.min_decimals = 0;
 					printops.use_min_decimals = false;
@@ -516,13 +531,13 @@ int main (int argc, char *argv[]) {
 					printops.use_min_decimals = true;
 					result_format_updated();
 				}
-			} else if(svar == "fractions") {
+			} else if(equalsIgnoreCase(svar, "fractions")) {
 				int v = -1;
-				if(svalue == "off") v = FRACTION_DECIMAL;
-				else if(svalue == "exact") v = FRACTION_DECIMAL_EXACT;
-				else if(svalue == "on") v = FRACTION_FRACTIONAL;
-				else if(svalue == "combined") v = FRACTION_COMBINED;
-				else {
+				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off")) v = FRACTION_DECIMAL;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exact")) v = FRACTION_DECIMAL_EXACT;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "on")) v = FRACTION_FRACTIONAL;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "combined")) v = FRACTION_COMBINED;
+				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 					v = s2i(svalue);
 				}
 				if(v < 0) {
@@ -531,12 +546,12 @@ int main (int argc, char *argv[]) {
 					printops.number_fraction_format = (NumberFractionFormat) v;
 					result_format_updated();
 				}
-			} else if(svar == "read_precision") {
+			} else if(equalsIgnoreCase(svar, "read_precision")) {
 				int v = -1;
-				if(svalue == "off") v = DONT_READ_PRECISION;
-				else if(svalue == "always") v = ALWAYS_READ_PRECISION;
-				else if(svalue == "when decimals") v = READ_PRECISION_WHEN_DECIMALS;
-				else {
+				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off")) v = DONT_READ_PRECISION;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "always")) v = ALWAYS_READ_PRECISION;
+				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "when decimals")) v = READ_PRECISION_WHEN_DECIMALS;
+				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 					v = s2i(svalue);
 				}
 				if(v < 0) {
@@ -546,18 +561,14 @@ int main (int argc, char *argv[]) {
 					expression_format_updated();
 				}
 			}
-		} else if((slen > 5 && str.substr(0, 5) == "save ") || (slen > 6 && str.substr(0, 6) == "store ")) {
-			if(str.substr(0, 6) == "store ") {
-				str = str.substr(6, str.length() - 6);
-			} else {
-				str = str.substr(5, str.length() - 5);
-			}
+		} else if(equalsIgnoreCase(scom, "save") || equalsIgnoreCase(scom, "store")) {
+			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
-			if(str == "mode") {
+			if(EQUALS_IGNORECASE_AND_LOCAL(str, "mode")) {
 				if(save_mode()) {
 					puts(_("mode saved"));
 				}
-			} else if(str == "definitions") {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "definitions")) {
 				if(save_defs()) {
 					puts(_("definitions saved"));
 				}
@@ -636,43 +647,43 @@ int main (int argc, char *argv[]) {
 					}
 				}
 			}
-		} else if(slen > 7 && str.substr(0, 7) == "assume ") {
-			svalue = str.substr(7, str.length() - 7);
+		} else if(equalsIgnoreCase(scom, "assume")) {
+			svalue = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(svalue);
 			svar = "assumptions";
 			goto set_assumptions;
-		} else if(slen > 5 && str.substr(0, 5) == "base ") {
-			svalue = str.substr(5, str.length() - 5);
+		} else if(equalsIgnoreCase(scom, "base")) {
+			svalue = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(svalue);
 			svar = "base";
 			goto set_base;
-		} else if(str == "exact") {
+		} else if(equalsIgnoreCase(str, "exact")) {
 			if(evalops.approximation != APPROXIMATION_EXACT) {
 				evalops.approximation = APPROXIMATION_EXACT;
 				expression_format_updated();
 			}
-		} else if(str == "approximate") {
+		} else if(equalsIgnoreCase(str, "approximate")) {
 			if(evalops.approximation != APPROXIMATION_TRY_EXACT) {
 				evalops.approximation = APPROXIMATION_TRY_EXACT;
 				expression_format_updated();
 			}
-		} else if(slen > 8 && str.substr(0, 8) == "convert ") {
-			str = str.substr(8, str.length() - 8);
+		} else if(equalsIgnoreCase(scom, "convert")) {
+			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
-			if(str == "best") {
+			if(equalsIgnoreCase(str, "best")) {
 				mstruct->set(CALCULATOR->convertToBestUnit(*mstruct, evalops));
 				result_action_executed();
-			} else if(str == "best") {
+			} else if(equalsIgnoreCase(str, "best")) {
 				mstruct->set(CALCULATOR->convertToBaseUnits(*mstruct, evalops));
 				result_action_executed();
 			} else {
 				mstruct->set(CALCULATOR->convert(*mstruct, str, evalops));
 				result_action_executed();
 			}
-		} else if(str == "factor") {
+		} else if(equalsIgnoreCase(str, "factor")) {
 			mstruct->factorize(evalops);
 			result_action_executed();
-		} else if(str == "mode") {
+		} else if(equalsIgnoreCase(str, "mode")) {
 			puts("");
 			printf("abbreviations:\t\t"); puts(b2oo(printops.abbreviate_names, false));
 			printf("all_prefixes:\t\t"); puts(b2oo(printops.use_all_prefixes, false));
@@ -780,7 +791,7 @@ int main (int argc, char *argv[]) {
 			printf("unknowns:\t\t"); puts(b2oo(evalops.parse_options.unknowns_enabled, false));
 			printf("variables:\t\t"); puts(b2oo(evalops.parse_options.variables_enabled, false));
 			puts("");
-		} else if(str == "help" || str == _("help") || str == "?") {
+		} else if(equalsIgnoreCase(str, "help") || equalsIgnoreCase(str, _("help")) || str == "?") {
 			puts("");
 			puts(_("Enter a mathematical expression or a command."));
 			puts("");
@@ -801,8 +812,8 @@ int main (int argc, char *argv[]) {
 			puts(_("Type help COMMAND for more help (example: help save)."));
 			puts(_("Type help NAME for info about a function, variable or unit (example: help sin)."));
 			puts("");
-		} else if(slen > 5 && str.substr(0, 5) == "info ") {
-			str = str.substr(5, str.length() - 5);
+		} else if(equalsIgnoreCase(scom, "info")) {
+			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
 			show_info:
 			ExpressionItem *item = CALCULATOR->getActiveExpressionItem(str);
@@ -1105,14 +1116,14 @@ int main (int argc, char *argv[]) {
 					}
 				}
 			}
-		} else if(slen > 5 && str.substr(0, 5) == "help ") {
-			str = str.substr(5, str.length() - 5);
+		} else if(equalsIgnoreCase(scom, "help")) {
+			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
-			if(str == "factor") {
+			if(equalsIgnoreCase(str, "factor")) {
 				puts("");
 				puts(_("Factorize the current result."));
 				puts("");
-			} else if(str == "set") {
+			} else if(equalsIgnoreCase(str, "set")) {
 				puts("");
 				puts(_("Sets the value of an option."));
 				puts("");
@@ -1155,24 +1166,24 @@ int main (int argc, char *argv[]) {
 				puts("");
 				puts(_("Example: set base 16."));
 				puts("");
-			} else if(str == "save" || str == "store") {
+			} else if(equalsIgnoreCase(str, "save") || equalsIgnoreCase(str, "store")) {
 				puts("");
 				puts(_("Saves the current result in a variable with the specified name. You may optionally also provide a category (default \"Temporary\") and a title."));
 				puts(_("If name equals \"mode\" or \"definitions\", the current mode and definitions, respectively, will be saved."));
 				puts("");
 				puts(_("Example: store var1."));
 				puts("");
-			} else if(str == "mode") {
+			} else if(equalsIgnoreCase(str, "mode")) {
 				puts("");
 				puts(_("Display the current mode."));
 				puts("");
-			} else if(str == "info") {
+			} else if(equalsIgnoreCase(str, "info")) {
 				puts("");
 				puts(_("Displays information about a function, variable or unit."));
 				puts("");
 				puts(_("Example: info sin."));
 				puts("");
-			} else if(str == "convert") {
+			} else if(equalsIgnoreCase(str, "convert")) {
 				puts("");
 				puts(_("Converts units in current result."));
 				puts("");
@@ -1185,14 +1196,14 @@ int main (int argc, char *argv[]) {
 				puts("");
 				puts(_("Example: convert best."));
 				puts("");
-			} else if(str == "quit" || str == "exit") {
+			} else if(equalsIgnoreCase(str, "quit") || equalsIgnoreCase(str, "exit")) {
 				puts("");
 				puts("Terminates this program.");
 				puts("");
 			} else {
 				goto show_info;
 			}
-		} else if(str == "quit" || str == "exit") {
+		} else if(equalsIgnoreCase(str, "quit") || equalsIgnoreCase(str, "exit")) {
 #ifdef HAVE_LIBREADLINE				
 			free(rlbuffer);
 #endif			

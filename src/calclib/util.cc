@@ -715,11 +715,35 @@ bool equalsIgnoreCase(const string &str1, const string &str2) {
 				if(str2[i2 + i] >= 0) return false;
 				i2++;
 			}
-			gchar *gstr1 = g_utf8_strdown(str1.substr(i, i2).c_str(), -1);
-			gchar *gstr2 = g_utf8_strdown(str2.substr(i, i2).c_str(), -1);
+			gchar *gstr1 = g_utf8_strdown(str1.c_str() + (sizeof(char) * i), i2);
+			gchar *gstr2 = g_utf8_strdown(str2.c_str() + (sizeof(char) * i), i2);
 			if(strcmp(gstr1, gstr2) != 0) return false;
 			g_free(gstr1);
 			g_free(gstr2);
+			i += i2 - 1;
+		} else if(str1[i] != str2[i] && !((str1[i] >= 'a' && str1[i] <= 'z') && str1[i] - 32 == str2[i]) && !((str1[i] <= 'Z' && str1[i] >= 'A') && str1[i] + 32 == str2[i])) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool equalsIgnoreCase(const string &str1, const char *str2) {
+	if(str1.length() != strlen(str2)) return false;
+	for(unsigned int i = 0; i < str1.length(); i++) {
+		if(str1[i] < 0 && i + 1 < str1.length()) {
+			if(str2[i] >= 0) return false;
+			int i2 = 1;
+			while(i2 + i < str1.length() && str1[i2 + i] < 0) {
+				if(str2[i2 + i] >= 0) return false;
+				i2++;
+			}
+			gchar *gstr1 = g_utf8_strdown(str1.c_str() + (sizeof(char) * i), i2);
+			gchar *gstr2 = g_utf8_strdown(str2 + (sizeof(char) * i), i2);
+			if(strcmp(gstr1, gstr2) != 0) return false;
+			g_free(gstr1);
+			g_free(gstr2);
+			i += i2 - 1;
 		} else if(str1[i] != str2[i] && !((str1[i] >= 'a' && str1[i] <= 'z') && str1[i] - 32 == str2[i]) && !((str1[i] <= 'Z' && str1[i] >= 'A') && str1[i] + 32 == str2[i])) {
 			return false;
 		}

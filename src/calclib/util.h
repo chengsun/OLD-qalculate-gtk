@@ -94,6 +94,7 @@ int gcd(int i1, int i2);
 
 bool text_length_is_one(const string &str);
 bool equalsIgnoreCase(const string &str1, const string &str2);
+bool equalsIgnoreCase(const string &str1, const char *str2);
 
 string getLocalDir();
 

@@ -1,3 +1,8 @@
+2004-10-05 Niklas Knutsson  <nq@altern.org>
+
+	* Fix equalsIgnoreCase() for unicode chars and make more efficient
+	* Make qalc case insensitive and add extend localization
+
 2004-10-04 Niklas Knutsson  <nq@altern.org>
 
 	* Use readline for qalc
