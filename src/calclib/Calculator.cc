@@ -517,6 +517,7 @@ Manager *Calculator::convert(Manager *mngr, Unit *to_unit, bool always_convert) 
 		if(!mngr->convert(to_unit)) {
 			mngr->moveto(mngr_old);
 		} else {
+			mngr->finalize();
 			mngr_old->unref();
 			return mngr;
 		}

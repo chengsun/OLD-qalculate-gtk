@@ -1528,7 +1528,6 @@ void Manager::syncUnits() {
 		dont_erase_alias_unit_3:
 		true;
 	}
-	
 	for(int i = 0; i < composite_units.size(); i++) {	
 		convert(composite_units[i]);
 	}	
@@ -1660,23 +1659,32 @@ bool Manager::convert(Unit *u) {
 				b = true;
 				convert(u);
 				multiclean();
+				i = -1;
 				if(b) c = true;
 			} else if(mngrs[i]->type() == UNIT_MANAGER && mngrs[i]->o_unit != u) {
-				Manager *mngr = new Manager(this);
-				Manager *exp = new Manager(calc, 1.0L);				
+				Manager *mngr;
+				if(mngrs[i]->o_unit->hasComplexRelationTo(u)) {
+					goto end_of_loop_convert_multi;
+				}
+				mngr = new Manager(this);
 				mngr->add(mngrs[i], DIVISION_CH);
+				Manager *exp = new Manager(calc, 1.0L);				
 				u->convert(mngrs[i]->o_unit, mngr, exp, &b);
 				if(b) {
 					set(u);
 					if(exp->type() != VALUE_MANAGER || exp->value() != 1.0L) {
 						add(exp, POWER_CH);
 					}
-					add(mngr, MULTIPLICATION_CH);
+					add(mngr, MULTIPLICATION_CH);										
 					c = true;
 				}
 				mngr->unref();
 			} else if(mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->c_type == UNIT_MANAGER && mngrs[i]->mngrs[0]->o_unit != u) {
-				Manager *mngr = new Manager(this);
+				Manager *mngr;
+				if(mngrs[i]->mngrs[0]->o_unit->hasComplexRelationTo(u)) {
+					goto end_of_loop_convert_multi;
+				}
+				mngr = new Manager(this);
 				mngr->add(mngrs[i], DIVISION_CH);
 				u->convert(mngrs[i]->mngrs[0]->o_unit, mngr, mngrs[i]->mngrs[1], &b);
 				if(b) {
@@ -1685,13 +1693,16 @@ bool Manager::convert(Unit *u) {
 					set(u);
 					add(mngr2, POWER_CH);
 					mngr2->unref();
-					add(mngr, MULTIPLICATION_CH);
+					add(mngr, MULTIPLICATION_CH);					
 					c = true;
-				}			
+				}		
 				mngr->unref();			
 			}
+			end_of_loop_convert_multi:
+			true;
 		}
-		if(c) return c;
+//		return c;
+//		if(c) return c;
 		for(int i = 0; i < mngrs.size(); i++) {
 			if(mngrs[i]->testDissolveCompositeUnit(u)) {
 				 convert(u); c = true;
@@ -1705,6 +1716,9 @@ bool Manager::convert(Unit *u) {
 					multiclean();
 					c = true;
 				} else if(mngrs[i]->type() == UNIT_MANAGER) {
+					if(mngrs[i]->o_unit->hasComplexRelationTo(u)) {
+						goto end_of_loop_convert_multi2;
+					}				
 					Manager *mngr = new Manager(this);
 					Manager *exp = new Manager(calc, 1.0L);
 					mngr->add(mngrs[i], DIVISION_CH);
@@ -1719,6 +1733,9 @@ bool Manager::convert(Unit *u) {
 					}
 					mngr->unref();
 				} else if(mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->c_type == UNIT_MANAGER && mngrs[i]->mngrs[0]->o_unit != u) {
+					if(mngrs[i]->mngrs[0]->o_unit->hasComplexRelationTo(u)) {
+						goto end_of_loop_convert_multi2;
+					}
 					Manager *mngr = new Manager(this);
 					mngr->add(mngrs[i], DIVISION_CH);
 					u->convert(mngrs[i]->mngrs[0]->o_unit, mngr, mngrs[i]->mngrs[1], &b);
@@ -1733,7 +1750,8 @@ bool Manager::convert(Unit *u) {
 					}			
 					mngr->unref();			
 				}
-			}			
+			}	
+			end_of_loop_convert_multi2:	
 			c = true;
 		}
 		return c;			
