@@ -909,11 +909,16 @@ void Calculator::restoreState() {
 	b_functions = b_functions_was; b_variables = b_variables_was; b_units = b_units_was; b_unknown = b_unknown_was; b_calcvars = b_calcvars_was; b_always_exact = b_always_exact_was; b_rpn = b_rpn_was;
 }
 void Calculator::clearBuffers() {
-	ids_p.clear();
-	for(Sgi::hash_map<unsigned int, Manager*>::iterator it = ids.begin(); it != ids.end(); ++it) {
-		delete it->second;
+	for(Sgi::hash_map<unsigned int, Manager*>::iterator it = ids.begin(); it != ids.end(); ) {
+		if(!ids_p[it->first]) {		
+			delete it->second;
+			ids_p.erase(it->first);
+			ids.erase(it);
+			it = ids.begin();
+		} else {
+			++it;
+		}
 	}
-	ids.clear();
 }
 void Calculator::abort() {
 	while(pthread_cancel(calculate_thread) == 0) {
@@ -1315,7 +1320,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 								cu_unit = cu->get(i2, &exp);
 								if(!cu_unit) {
 									break;
-								} else if(((AliasUnit*) cu_unit)->firstBaseUnit() == bu) {
+								} else if(cu_unit == bu) {
 									bool m = false;
 									if(b_exp < 0 && exp < 0) {
 										b_exp = -b_exp;
@@ -1362,7 +1367,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 											cu_unit = cu->get(i3, &exp);
 											if(!cu_unit) {
 												break;
-											} else if(((AliasUnit*) cu_unit)->firstBaseUnit() == bu) {
+											} else if(cu_unit == bu) {
 												bool m = false;
 												if(exp < 0 && b_exp > 0) {
 													new_points -= b_exp;
@@ -1454,12 +1459,12 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 									cu_unit2 = cu_new->get(i4, &b_exp);
 									if(!cu_unit2) {
 										break;
-									} else if(((AliasUnit*) cu_unit2)->firstBaseUnit() == ((AliasUnit*) cu_unit)->firstBaseUnit()) {
-										((AliasUnit*) cu_unit2)->setExponent(b_exp + exp);
+									} else if(cu_unit2 == cu_unit) {
+										cu_new->setExponent(i4, b_exp + exp);
 										break;
 									}
 								}
-								if(!cu_unit2) cu_new->add(((AliasUnit*) cu_unit)->firstBaseUnit(), exp);
+								if(!cu_unit2) cu_new->add(cu_unit, exp);
 							}
 						}
 						return_cu = true;
@@ -1470,8 +1475,8 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 							cu_unit = cu_new->get(i3, &exp);
 							if(!cu_unit) {
 								break;
-							} else if(((AliasUnit*) cu_unit)->firstBaseUnit() == u2) {
-								((AliasUnit*) cu_unit)->setExponent(exp + 1);
+							} else if(cu_unit == u2) {
+								cu_new->setExponent(i3, exp + 1);
 								break;
 							}
 						}
@@ -1660,6 +1665,7 @@ Manager *Calculator::convert(Manager *mngr, string composite_) {
 	if(u) return convert(mngr, u);
 	CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert", "", composite_);
 	convertToCompositeUnit(mngr, cu);
+	delete cu;
 	return mngr;			
 }
 Unit* Calculator::addUnit(Unit *u, bool force) {

@@ -62,9 +62,11 @@ int main (int argc, char **argv) {
 #ifdef HAVE_LIBGNOME
 	gnome_program_init(PACKAGE, VERSION, LIBGNOME_MODULE, argc, argv, NULL, NULL, NULL);
 #endif
+
 	gtk_init(&argc, &argv);
+
 	glade_init();
-	
+
 	string calc_arg;
 	for(int i = 1; i < argc; i++) {
 		if(i > 1) {
@@ -181,7 +183,7 @@ int main (int argc, char **argv) {
 	//create_pmenu();	
 	create_umenu2();
 	create_pmenu2();			
-	
+
 	for(int i = recent_functions_pre.size() - 1; i >= 0; i--) {
 		function_inserted(CALCULATOR->getFunction(recent_functions_pre[i]));
 	}

@@ -1495,83 +1495,191 @@ void RomanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	string str = vargs[0]->text();
 	remove_blanks(str);
 	Number nr;
-	int prev = 0;
-	int cur = 0;
-	bool sub = false, large = false;
-	for(int i = str.length() - 1; i >= 0; i--) {
-		prev = cur;
+	Number cur;
+	bool large = false;
+	vector<Number> numbers;
+	bool capital = false;
+	for(unsigned int i = 0; i < str.length(); i++) {
 		switch(str[i]) {
-			case 'i': {}
 			case 'I': {
-				cur = 1;
+				if(!capital && i == str.length() - 1) {
+					cur.set(2);
+					CALCULATOR->error(false, _("Assuming the unusual practice of letting a last capital I mean 2 in a roman numeral."), NULL);
+					break;
+				}
+			}
+			case 'J': {capital = true;}
+			case 'i': {}
+			case 'j': {
+				cur.set(1);
 				break;
 			}
-			case 'v': {}
-			case 'V': {
-				cur = 5;
+			case 'V': {capital = true;}
+			case 'v': {
+				cur.set(5);
 				break;
 			}
-			case 'x': {}
-			case 'X': {
-				cur = 10;
+			case 'X': {capital = true;}
+			case 'x': {
+				cur.set(10);
 				break;
 			}
-			case 'l': {}
-			case 'L': {
-				cur = 50;
+			case 'L': {capital = true;}
+			case 'l': {
+				cur.set(50);
 				break;
 			}
-			case 'c': {}
-			case 'C': {
-				cur = 100;
+			case 'C': {capital = true;}
+			case 'c': {
+				cur.set(100);
 				break;
 			}
-			case 'd': {}
-			case 'D': {
-				cur = 500;
+			case 'D': {capital = true;}
+			case 'd': {
+				cur.set(500);
 				break;
 			}
-			case 'm': {}
-			case 'M': {
-				cur = 1000;
+			case 'M': {capital = true;}
+			case 'm': {
+				cur.set(1000);
+				break;
+			}
+			case '(': {
+				int multi = 1, multi2;
+				bool turn = false;
+				bool error = false;
+				i++;
+				for(; i < str.length(); i++) {
+					if(str[i] == '|') {
+						if(!turn) {
+							turn = true;
+							multi2 = multi;
+						} else {
+							error = true;
+							break;
+						}
+					} else if(str[i] == ')') {
+						if(turn) {
+							multi2--;
+							if(multi2 < 1) {
+								break;
+							}	
+						} else {
+							error = true;
+							break;
+						}
+					} else if(str[i] == '(') {
+						if(!turn) {
+							multi++;	
+						} else {
+							error = true;
+							break;
+						}
+					} else {
+						error = true;
+						i--;
+						break;
+					}
+				}
+				if(error | !turn) {
+					CALCULATOR->error(true, _("Error in roman numerals: %s."), str.c_str(), NULL);
+				} else {
+					cur.set(10);
+					cur.raise(multi);
+					cur.multiply(100);
+				}
 				break;
 			}
 			case '|': {
 				if(large) {
-					cur = -1;
+					cur.clear();
 					large = false;
 					break;
-				} else if(i > 2 || str[i - 2] == '|') {
-					cur = -1;
+				} else if(str.length() > i + 1 && str[i + 2] == ')') {
+					i++;
+					int multi = 1;
+					for(; i < str.length(); i++) {
+						if(str[i] != ')') {
+							i--;
+							break;
+						}
+						multi++;
+					}
+					cur.set(10);
+					cur.raise(multi);
+					cur.multiply(50);
+					break;
+				} else if(str.length() > i + 2 && str[i + 2] == '|') {
+					cur.clear();
 					large = true;
 					break;
 				}
 			}
 			default: {
-				cur = -1;
-				CALCULATOR->error(true, "Unknown roman numeral: %s.", str.substr(i, 1).c_str(), NULL);
+				cur.clear();
+				CALCULATOR->error(true, _("Unknown roman numeral: %s."), str.substr(i, 1).c_str(), NULL);
 			}
 		}
-		if(cur < 1) {
-			cur = prev;
-		} else {
+		if(!cur.isZero()) {
 			if(large) {
-				cur *= 100000;
+				cur.multiply(100000);
 			}
-			if(prev > cur) {
-				sub = true;
-			} else if(prev < cur) {
-				sub = false;
-			}
-			if(sub) {
-				nr.subtract(cur);
-			} else {
-				nr.add(cur);
-			}
+			numbers.resize(numbers.size() + 1);
+			numbers[numbers.size() - 1].set(&cur);
 		}
 	}
+	vector<Number> values;
+	values.resize(numbers.size());
+	bool error = false;
+	int rep = 1;
+	for(unsigned int i = 0; i < numbers.size(); i++) {
+		if(i == 0 || numbers[i].isLessThanOrEqualTo(&numbers[i - 1])) {
+			nr.add(&numbers[i]);
+			if(i > 0 && numbers[i].equals(&numbers[i - 1])) {
+				rep++;
+				if(rep > 3 && numbers[i].isLessThan(1000)) {
+					error = true;
+				} else if(rep > 1 && (numbers[i].equals(5) || numbers[i].equals(50) || numbers[i].equals(500))) {
+					error = true;
+				}
+			} else {
+				rep = 1;
+			}
+		} else {
+			numbers[i - 1].multiply(10);
+			if(numbers[i - 1].isLessThan(&numbers[i])) {
+				error = true;
+			}
+			numbers[i - 1].divide(10);
+			for(int i2 = i - 2; ; i2--) {
+				if(i2 < 0) {
+					nr.negate();
+					nr.add(&numbers[i]);
+					break;
+				} else if(numbers[i2].isGreaterThan(&numbers[i2 + 1])) {
+					Number nr2(&nr);
+					nr2.subtract(&values[i2]);
+					nr.subtract(&nr2);
+					nr.subtract(&nr2);
+					nr.add(&numbers[i]);
+					if(numbers[i2].isLessThan(&numbers[i])) {
+						error = true;
+					}
+					break;
+				}
+				error = true;
+			}
+		}
+		values[i].set(&nr);
+	}
+	if(error) {
+		CALCULATOR->error(false, _("Errors in roman numerals: \"%s\". Interpreted as %s, which should be written as %s."), str.c_str(), nr.print().c_str(), nr.print(NUMBER_FORMAT_ROMAN).c_str(), NULL);
+	}
+	values.clear();
+	numbers.clear();
 	mngr->set(&nr);
 }
+
 TitleFunction::TitleFunction() : Function("Utilities", "title", 1, "Object title") {
 	setArgumentDefinition(1, new ExpressionItemArgument());
 }
@@ -1650,7 +1758,7 @@ void GiacFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		mngr->set(simplify(v1));
 		mngr->clean();
 	} catch(std::runtime_error & err){
-		CALCULATOR->error(true, "Giac error: %s.", err.what(), NULL);
+		CALCULATOR->error(true, _("Giac error: %s."), err.what(), NULL);
 		mngr->set(this, vargs[0], NULL);
 		return;
 	}
@@ -1679,7 +1787,7 @@ void GiacDeriveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		mngr->set(ans);
 		mngr->clean();
 	} catch(std::runtime_error & err){
-		CALCULATOR->error(true, "Giac error: %s.", err.what(), NULL);
+		CALCULATOR->error(true, _("Giac error: %s."), err.what(), NULL);
 		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
 		return;
 	}
@@ -1714,7 +1822,7 @@ void SolveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		}
 		mngr->clean();
 	} catch(std::runtime_error & err){
-		CALCULATOR->error(true, "Giac error: %s.", err.what(), NULL);
+		CALCULATOR->error(true, _("Giac error: %s."), err.what(), NULL);
 		mngr->set(this, vargs[0], vargs[1], NULL);
 		return;
 	}
@@ -1743,7 +1851,7 @@ void GiacIntegrateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		mngr->set(ans);
 		mngr->clean();
 	} catch(std::runtime_error & err){
-		CALCULATOR->error(true, "Giac error: %s.", err.what(), NULL);
+		CALCULATOR->error(true, _("Giac error: %s."), err.what(), NULL);
 		mngr->set(this, vargs[0], vargs[1], NULL);
 		return;
 	}

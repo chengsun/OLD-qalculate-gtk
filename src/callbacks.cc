@@ -2112,13 +2112,16 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			if(m->number()->isComplex()) {
 				string str;
 				PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
-				if(in_power) {
-					str += TEXT_TAGS_SMALL;
-				} else {
-					str += TEXT_TAGS;
-				}
-				str += m->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, toplevel, NULL, NULL, in_composite, in_power, draw_minus, false, in_multiplication, false, false, NULL, in_div, false, NULL, prefix1, prefix2);
+				str = m->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, toplevel, NULL, NULL, in_composite, in_power, draw_minus, false, in_multiplication, wrap, false, NULL, in_div, false, NULL, prefix1, prefix2);
 				gsub(SIGN_PLUS, "+", str);
+				if(str[0] == '(' && str[str.length() - 1] == ')') {
+					str = str.substr(1, str.length() - 2);
+				}
+				if(in_power) {
+					str.insert(0, TEXT_TAGS_SMALL);
+				} else {
+					str.insert(0, TEXT_TAGS);
+				}
 				if(in_power) {
 					str += TEXT_TAGS_SMALL_END;
 				} else {
@@ -2700,13 +2703,13 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			w = 0;
 			for(unsigned int i = 0; i < pixmap_terms.size(); i++) {
 				if(i == 0) {
-					if(m->getChild(i)->negative()) {
+					if(m->getChild(i)->hasNegativeSign()) {
 						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - minus_h / 2 - minus_h % 2, layout_minus);
 						w += minus_w;
 					}
 				} else {
 					w += space_w;
-					if(m->getChild(i)->negative()) {
+					if(m->getChild(i)->hasNegativeSign()) {
 						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - minus_h / 2 - minus_h % 2, layout_minus);
 						w += minus_w;
 					} else {
@@ -5095,6 +5098,7 @@ void edit_variable(const char *category, Variable *v, Manager *mngr_, GtkWidget 
 		gtk_widget_set_sensitive(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_name"), !v->isBuiltin());
 		gtk_widget_set_sensitive(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_value"), !v->isBuiltin());
 		gtk_widget_set_sensitive(glade_xml_get_widget (variableedit_glade, "variable_edit_checkbutton_exact"), !v->isBuiltin());
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (variableedit_glade, "variable_edit_checkbutton_exact")), v->isPrecise());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_category")), v->category().c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_desc")), v->title(false).c_str());
 	} else {
@@ -6836,10 +6840,10 @@ on_togglebutton_result_toggled                      (GtkToggleButton       *butt
 	clear the displayed result when expression changes
 */
 void on_expression_changed(GtkEditable *w, gpointer user_data) {
+#if GTK_MINOR_VERSION >= 3
 	if(completion_blocked) {
 		completion_blocked = false;
 	} else {
-#if GTK_MINOR_VERSION >= 3
 		gtk_entry_completion_set_minimum_key_length(completion, 1);
 	}
 #endif
@@ -7919,10 +7923,12 @@ void on_menu_item_help_activate(GtkMenuItem *w, gpointer user_data) {
 	GError *error = NULL;
 	gnome_help_display_desktop(NULL, "qalculate-gtk", "qalculate-gtk", NULL, &error);
 	if (error) {
-		GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help for Qalculate!.\n%s"), error->message);
+		gchar *error_str = g_locale_to_utf8(error->message, -1, NULL, NULL, NULL);
+		GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help for Qalculate!.\n%s"), error_str);
 		g_signal_connect_swapped (dialog, "response", G_CALLBACK (gtk_widget_destroy), dialog);
 		gtk_widget_show (dialog);
-		g_error_free (error);
+		g_free(error_str);
+		g_error_free(error);
 	}
 #endif	
 	gtk_widget_grab_focus(expression);

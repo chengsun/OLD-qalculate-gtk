@@ -520,9 +520,19 @@ Unit *CompositeUnit::get(unsigned int index, long int *exp_, Prefix **prefix) co
 	if(index >= 0 && index < units.size()) {
 		if(exp_) *exp_ = units[index]->firstBaseExp();
 		if(prefix) *prefix = (Prefix*) units[index]->prefix();
-		return units[index];
+		return (Unit*) units[index]->firstBaseUnit();
 	}
 	return NULL;
+}
+void CompositeUnit::setExponent(unsigned int index, long int exp_) {
+	if(index >= 0 && index < units.size()) {
+		units[index]->setExponent(exp_);
+	}
+}
+void CompositeUnit::setPrefix(unsigned int index, const Prefix *prefix) {
+	if(index >= 0 && index < units.size()) {
+		units[index]->set(units[index]->firstBaseUnit(), units[index]->firstBaseExp(), prefix);
+	}
 }
 unsigned int CompositeUnit::countUnits() const {
 	return units.size();

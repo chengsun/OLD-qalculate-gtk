@@ -1,5 +1,21 @@
+2004-03-30 Niklas Knutsson  <nq@altern.org>
+
+	* Free temporary composite units
+	* Fix sin(x)/tan(x)
+	* No (+ -) in printing with complex numbers
+	* Fix sorting of complex numbers
+
+2004-03-29 Niklas Knutsson  <nq@altern.org>
+
+	* Release v. 0.5
+	* More extensive, verbose and fault-tolerant roman input
+
 2004-03-28 Niklas Knutsson  <nq@altern.org>
 
+	* Set exact button for edit variable
+	* Fix diff() with power without x
+	* Fix compilation with gtk+ < 2.3
+	* Do not crash on abort sum() (memory leak is better)
 	* Change line width instead of drawing multiple lines
 	* Use barckets instead of parenthesis when drawing matrix
 	* Use commas for vector drawing

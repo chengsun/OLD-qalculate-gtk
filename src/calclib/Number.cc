@@ -359,21 +359,47 @@ bool Number::isMinusI() const {
 	return cln::zerop(realpart(value)) && imagpart(value) == -1;
 }
 bool Number::isNegative() const {
-	return !isComplex() && cln::minusp(realpart(value));
+	return !isComplex() && cln::minusp(cln::realpart(value));
 }
 bool Number::isPositive() const {
-	return !isComplex() && cln::plusp(realpart(value));
+	return !isComplex() && cln::plusp(cln::realpart(value));
+}
+bool Number::realPartIsNegative() const {
+	return cln::minusp(cln::realpart(value));
+}
+bool Number::realPartIsPositive() const {
+	return cln::plusp(cln::realpart(value));
+}
+bool Number::imaginaryPartIsNegative() const {
+	return cln::minusp(cln::imagpart(value));
+}
+bool Number::imaginaryPartIsPositive() const {
+	return cln::plusp(cln::imagpart(value));
+}
+bool Number::hasNegativeSign() const {
+	if(hasRealPart()) return realPartIsNegative();
+	return imaginaryPartIsNegative();
+}
+bool Number::hasPositiveSign() const {
+	if(hasRealPart()) return realPartIsPositive();
+	return imaginaryPartIsPositive();
 }
 bool Number::equals(const Number *o) const {
 	return value == o->clnNumber();
 }
 int Number::compare(const Number *o) const {
 	if(!isComplex() && !o->isComplex()) {
-		return cln::compare(realpart(o->clnNumber()), realpart(value));
+		return cln::compare(cln::realpart(o->clnNumber()), cln::realpart(value));
 	} else {
 		if(equals(o)) return 0;
 		return -2;
 	}
+}
+int Number::compareImaginaryParts(const Number *o) const {
+	return cln::compare(cln::imagpart(o->clnNumber()), cln::imagpart(value));
+}
+int Number::compareRealParts(const Number *o) const {
+	return cln::compare(cln::realpart(o->clnNumber()), cln::realpart(value));
 }
 bool Number::isGreaterThan(const Number *o) const {
 	return !isComplex() && !o->isComplex() && realpart(value) > realpart(o->clnNumber());

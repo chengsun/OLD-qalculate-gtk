@@ -139,6 +139,8 @@ class CompositeUnit : public Unit {
 		virtual void set(const ExpressionItem *item);		
 		virtual void add(const Unit *u, long int exp_ = 1, const Prefix *prefix = NULL);
 		virtual Unit *get(unsigned int index, long int *exp_ = NULL, Prefix **prefix = NULL) const;
+		virtual void setExponent(unsigned int index, long int exp_);
+		virtual void setPrefix(unsigned int index, const Prefix *prefix);
 		virtual unsigned int countUnits() const;
 		virtual void del(Unit *u);
 		virtual string print(bool plural_, bool short_) const;

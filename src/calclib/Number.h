@@ -73,8 +73,16 @@ class Number {
 		bool isMinusOne() const;
 		bool isNegative() const;
 		bool isPositive() const;
+		bool realPartIsNegative() const;
+		bool realPartIsPositive() const;
+		bool imaginaryPartIsNegative() const;
+		bool imaginaryPartIsPositive() const;
+		bool hasNegativeSign() const;
+		bool hasPositiveSign() const;
 		bool equals(const Number *o) const;
 		int compare(const Number *o) const;
+		int compareImaginaryParts(const Number *o) const;
+		int compareRealParts(const Number *o) const;
 		bool isGreaterThan(const Number *o) const;
 		bool isLessThan(const Number *o) const;
 		bool isGreaterThanOrEqualTo(const Number *o) const;

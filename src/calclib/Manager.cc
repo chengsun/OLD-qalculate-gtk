@@ -836,6 +836,8 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 								}
 							} else if(div.isPower() && (!div.exponent()->isNumber() || !div.exponent()->number()->isPositive() || !div.exponent()->number()->isInteger())) {
 								b = false;
+							} else if(div.isAddition()) {
+								b = false;
 							}
 							if(b) {
 								b2 = true;
@@ -1394,7 +1396,25 @@ int Manager::sortCompare(const Manager *mngr, int sortflags) const {
 				return 1;			
 			}
 			if(mngr->isNumber()) {
-				return o_number->compare(mngr->number());
+				if(!number()->isComplex() && !mngr->number()->isComplex()) {
+					return o_number->compare(mngr->number());
+				} else {
+					if(!number()->hasRealPart()) {
+						if(mngr->number()->hasRealPart()) {
+							return 1;
+						} else {
+							return o_number->compareImaginaryParts(mngr->number());
+						}
+					} else if(mngr->number()->hasRealPart()) {
+						int i = o_number->compareRealParts(mngr->number());
+						if(i == 0) {
+							return o_number->compareImaginaryParts(mngr->number());
+						}
+						return i;
+					} else {
+						return -1;
+					}
+				}
 			}
 			if(mngr->type() == FUNCTION_MANAGER) return -1;
 			return 1;
@@ -1757,8 +1777,8 @@ bool Manager::negative() const {
 	return false;
 }
 bool Manager::hasNegativeSign() const {
-	if(c_type == NUMBER_MANAGER) return o_number->isNegative();	
-	else if(c_type == MULTIPLICATION_MANAGER || c_type == POWER_MANAGER) return mngrs[0]->negative();
+	if(c_type == NUMBER_MANAGER) return o_number->hasNegativeSign();	
+	else if(c_type == MULTIPLICATION_MANAGER || c_type == POWER_MANAGER) return mngrs[0]->hasNegativeSign();
 	return false;
 }
 int Manager::signedness() const {
@@ -1867,7 +1887,9 @@ void Manager::recalculateVariables() {
 	switch(c_type) {
 		case VARIABLE_MANAGER: {
 			if(!CALCULATOR->donotCalculateVariables() && (variable()->isPrecise() || !CALCULATOR->alwaysExact())) {
+				bool appr = !variable()->isPrecise();
 				set(variable()->get());
+				if(appr) b_exact = false;
 			}
 			break;
 		}
@@ -1909,6 +1931,7 @@ void gatherInformation(Manager *mngr, vector<Unit*> &base_units, vector<AliasUni
 				case COMPOSITE_UNIT: {
 					mngr = ((CompositeUnit*) (mngr->unit()))->generateManager();
 					gatherInformation(mngr, base_units, alias_units);
+					mngr->unref();
 					break;
 				}				
 			}
@@ -1996,6 +2019,7 @@ void Manager::syncUnits() {
 				case COMPOSITE_UNIT: {
 					Manager *mngr = ((CompositeUnit*) cu->units[i2]->firstBaseUnit())->generateManager();
 					gatherInformation(mngr, base_units, alias_units);
+					mngr->unref();
 					break;
 				}
 			}
@@ -2344,10 +2368,9 @@ void Manager::differentiate(string x_var) {
 			break;
 		}
 		case POWER_MANAGER: {
-			Manager *x_mngr = new Manager(x_var);
-			bool x_in_base = base()->contains(x_mngr);
-			bool x_in_exp = exponent()->contains(x_mngr);
-			x_mngr->unref();
+			Manager x_mngr(x_var);
+			bool x_in_base = base()->contains(&x_mngr);
+			bool x_in_exp = exponent()->contains(&x_mngr);
 			if(x_in_base && !x_in_exp) {
 				Manager *exp_mngr = new Manager(exponent());
 				Manager *base_mngr = new Manager(base());
@@ -2381,10 +2404,7 @@ void Manager::differentiate(string x_var) {
 				add(mngr, OPERATION_MULTIPLY);
 				mngr->unref();
 			} else {
-				Manager *mngr2 = new Manager(x_var);
-				Manager *mngr = new Manager(CALCULATOR->getDiffFunction(), this, mngr2, NULL);
-				mngr2->unref();
-				moveto(mngr);
+				clear();
 			}
 			break;
 		}
@@ -2441,6 +2461,7 @@ void Manager::differentiate(string x_var) {
 				mngr->add(mngrs[mngrs.size() - 1], OPERATION_MULTIPLY);					
 				mngr2->add(mngr3, OPERATION_MULTIPLY);
 				mngr3->unref();
+				if(!b_exact) mngr->setPrecise(false);
 				moveto(mngr);
 				add(mngr2, OPERATION_ADD);
 				mngr2->unref();
@@ -2451,6 +2472,7 @@ void Manager::differentiate(string x_var) {
 				mngr2->differentiate(x_var);			
 				mngr->add(mngrs[1], OPERATION_MULTIPLY);					
 				mngr2->add(mngrs[0], OPERATION_MULTIPLY);
+				if(!b_exact) mngr->setPrecise(false);
 				moveto(mngr);
 				add(mngr2, OPERATION_ADD);
 				mngr2->unref();			
@@ -2803,8 +2825,11 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				if(b_real && number()->hasRealPart()) {
 					Number *nr_real = number()->realPart();
 					Manager mngr(nr_real);
+					if(b_imag && !draw_minus && !toplevel && wrap) {
+						nr_im->setNegative(!nr_im->isNegative());
+					}
 					delete nr_real;
-					str += mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, in_composite, in_power, true, print_equals, in_multiplication, false, false, NULL, in_div, false, NULL, prefix1, prefix2);	
+					str += mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, in_composite, in_power, draw_minus, print_equals, in_multiplication, false, false, NULL, in_div, false, NULL, prefix1, prefix2);	
 					if(b_imag) {
 						str += " ";
 						if(nr_im->isNegative()) {
@@ -2827,10 +2852,10 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				if(b_imag) {
 					Manager mngr(nr_im);
 					delete nr_im;
-					string str2 = mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, in_composite, in_power, !number()->hasRealPart(), print_equals, in_multiplication, false, false, NULL, in_div, true, NULL, prefix1, prefix2);
+					string str2 = mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, in_composite, in_power, !number()->hasRealPart() && draw_minus, print_equals, in_multiplication, false, false, NULL, in_div, true, NULL, prefix1, prefix2);
 					if(str2 == SIGN_MINUS "1") str += SIGN_MINUS;
 					else if(str2 == MINUS "1") str += MINUS;
-					else str += str2;
+					else if(str2 != "1") str += str2;
 					str += "i";
 				}
 				break;
