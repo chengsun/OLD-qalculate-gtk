@@ -77,7 +77,7 @@ Calculator::Calculator() {
 	RIGHT_BRACKET_STR = ")";
 	SPACE_S = " \t\n";
 	SPACE_STR = " ";
-	RESERVED_S = "?!\\{}&':<>|";
+	RESERVED_S = "?!\\{}&':<>|\"";
 	PLUS_S = "+";
 	PLUS_STR = "+";
 	MINUS_S = "-";
@@ -912,7 +912,7 @@ bool Calculator::unitIsUsedByOtherUnits(Unit *u) {
 	return false;
 }
 void Calculator::setFunctionsAndVariables(string &str) {
-	int i = -1, i3 = 0, i4, i5, i6, i7, i8, i9;
+	int i = 0, i3 = 0, i4, i5, i6, i7, i8, i9;
 	bool b;
 	Variable *v;
 	Function *f;
@@ -932,6 +932,35 @@ void Calculator::setFunctionsAndVariables(string &str) {
 //	gsub(ID_WRAP_LEFT_STR, "", str);
 //	gsub(ID_WRAP_RIGHT_STR, "", str);
 	Manager *mngr;
+	b = false;
+	while(!b) {
+		i = str.find("\"", i);
+		if(i == string::npos) break;
+		i3 = str.find("\"", i + 1);
+		if(i3 == string::npos) {
+			i3 = str.length();
+			b = true;
+		}
+		printf("%i : %i\n", i, i3);		
+		stmp = str.substr(i + 1, i3 - i - 1);
+		remove_blank_ends(stmp);
+		if(stmp.empty()) {
+			i = i3;
+		} else {
+			mngr = new Manager(this, stmp);
+			stmp = LEFT_BRACKET_STR;
+			stmp += ID_WRAP_LEFT_STR;
+			stmp += i2s(addId(mngr));
+			stmp += ID_WRAP_RIGHT_STR;
+			stmp += RIGHT_BRACKET_STR;
+			if(b) str.replace(i, str.length() - i, stmp);
+			else str.replace(i, i3 + 1 - i, stmp);
+			printf("%s : %s\n", stmp.c_str(), str.c_str());
+			mngr->unref();		
+		}
+	}	
+	gsub("\"", "", str);	
+	i = -1; i3 = 0; b = false;
 	for(int i2 = 0; i2 < (int) ufv.size(); i2++) {
 		i = 0, i3 = 0;
 		b = false;
@@ -1794,7 +1823,14 @@ string Calculator::value2str_decimals(long double &value, int precision) {
 	return stmp;
 }
 string Calculator::value2str_bin(long double &value, int precision) {
-	if(value > 10000000) return value2str(value, precision);
+	if(value < 0) {
+		error(false, "Conversion to binary cannot handle negative numbers, showing decimal value.", NULL);
+		return value2str(value, precision);	
+	}
+	if(value > 10000000) {
+		error(false, "Conversion to binary cannot handle such large numbers, showing decimal value.", NULL);
+		return value2str(value, precision);
+	}	
 	string stmp;
 	long int val = lroundl(value);
 	long int mask = ((long int) pow(2, (((long int) log2(val)) / 8 + 1) * 8)) / 2;
@@ -1812,11 +1848,27 @@ string Calculator::value2str_bin(long double &value, int precision) {
 	return stmp;
 }
 string Calculator::value2str_octal(long double &value, int precision) {
+	if(value < 0) {
+		error(false, "Conversion to octal cannot handle negative numbers, showing decimal value.", NULL);
+		return value2str(value, precision);	
+	}
+	if(value > 2000000000) {
+		error(false, "Conversion to octal cannot handle such large numbers, showing decimal value.", NULL);
+		return value2str(value, precision);
+	}
 	sprintf(vbuffer, "%#lo", lroundl(value));
 	string stmp = vbuffer;
 	return stmp;
 }
 string Calculator::value2str_hex(long double &value, int precision) {
+	if(value < 0) {
+		error(false, "Conversion to hexadecimal cannot handle negative numbers, showing decimal value.", NULL);
+		return value2str(value, precision);	
+	}
+	if(value > 2000000000) {
+		error(false, "Conversion to hexadecimal cannot handle such large numbers, showing decimal value.", NULL);
+		return value2str(value, precision);
+	}
 	sprintf(vbuffer, "%#lx", lroundl(value));
 	string stmp = vbuffer;
 	return stmp;

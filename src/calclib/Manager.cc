@@ -1242,7 +1242,7 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 					prefix = true;						
 				}
 			}
-			if(i == 0 && (mngrs[i]->c_type == 'u' || (mngrs[i]->c_type == POWER_CH && mngrs[i]->mngrs[0]->c_type == 'u'))) {
+			if(i == 0 && (mngrs[i]->c_type == 'u' || (mngrs[i]->c_type == 's' && mngrs[i]->s_var.length() > 1) || (mngrs[i]->c_type == POWER_CH && (mngrs[i]->mngrs[0]->c_type == 'u' || (mngrs[i]->mngrs[0]->c_type == 's' && mngrs[i]->mngrs[0]->s_var.length() > 1))))) {
 				str2 = "1";
 				calc->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
 				str += str2; str += " ";
@@ -1269,6 +1269,8 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 					if(!prefix || is_in(str[str.length() - 1], NUMBERS_S, NULL)) {
 						str += " ";
 					}
+				} else if(i > 0 && mngrs[i]->c_type == 's' && mngrs[i]->s_var.length() > 1 || (mngrs[i]->c_type == POWER_CH && mngrs[i]->mngrs[0]->c_type == 's' && mngrs[i]->mngrs[0]->s_var.length() > 1)) {
+					str += " ";
 				}					
 				str += mngrs[i]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, false, &plural_, d_exp);
 			}

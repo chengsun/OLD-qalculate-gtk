@@ -1,6 +1,6 @@
 2003-08-12  Niklas Knutsson  <nq@altern.org>
 
-	* Interpret "xyz" as an unknown variable named xyz ("xyz" * x = x"xyz", not x^2yz)
+	* Interpret "apple" as an unknown variable named apple
 	* Add base conversion dialog
 	* Beautify units dialog
 	* Store pointer to unit in GUI to simplify the Unit/ComplexUnit mess
