@@ -109,6 +109,8 @@ bool default_plot_color = true;
 #define TEXT_TAGS_END			"</span>"
 #define TEXT_TAGS_SMALL			"<span size=\"large\">"
 #define TEXT_TAGS_SMALL_END		"</span>"
+#define TEXT_TAGS_XSMALL		"<span size=\"medium\">"
+#define TEXT_TAGS_XSMALL_END		"</span>"
 
 #define MARKUP_STRING(str, text)	if(in_power) {str = TEXT_TAGS_SMALL;} else {str = TEXT_TAGS;} str += text; if(in_power) {str += TEXT_TAGS_SMALL_END;} else {str += TEXT_TAGS_END;}			
 #define CALCULATE_SPACE_W		gint space_w, space_h; PangoLayout *layout_space = gtk_widget_create_pango_layout(resultview, NULL); if(in_power) {pango_layout_set_markup(layout_space, TEXT_TAGS_SMALL " " TEXT_TAGS_SMALL_END, -1);} else {pango_layout_set_markup(layout_space, TEXT_TAGS " " TEXT_TAGS_END, -1);} pango_layout_get_pixel_size(layout_space, &space_w, &space_h); g_object_unref(layout_space);
@@ -1099,6 +1101,8 @@ void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpoin
 	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_insert"), FALSE);
 	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_delete"), FALSE);
 	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_deactivate"), FALSE);
+	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_convert_to"), FALSE);
+	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_frame_convert"), FALSE);
 	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
 		gchar *gstr;
 		gtk_tree_model_get(model, &iter, 1, &gstr, -1);
@@ -1194,6 +1198,7 @@ void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer user_
 		selected_unit = u;
 		for(int i = 0; i < CALCULATOR->units.size(); i++) {
 			if(CALCULATOR->units[i] == selected_unit) {
+				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_frame_convert"), TRUE);				
 				if(use_short_units) {
 					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (glade_xml, "units_label_from_unit")), CALCULATOR->units[i]->shortName().c_str());
 				} else {
@@ -1201,6 +1206,7 @@ void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer user_
 				}
 				//user cannot delete global definitions
 				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_delete"), CALCULATOR->units[i]->isLocal());
+				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_convert_to"), TRUE);
 				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_insert"), CALCULATOR->units[i]->isActive());
 				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_edit"), TRUE);
 				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_deactivate"), TRUE);
@@ -1216,6 +1222,8 @@ void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer user_
 		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_insert"), FALSE);
 		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_delete"), FALSE);
 		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_deactivate"), FALSE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_convert_to"), FALSE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_frame_convert"), FALSE);
 		selected_unit = NULL;
 	}
 	if(!block_unit_convert) convert_in_wUnits();
@@ -1724,8 +1732,8 @@ void update_fmenu() {
 void getFormat(NumberFormat &numberformat, int &displayflags, int &min_decimals, int &max_decimals, bool rlabel = false, Prefix *prefix = NULL) {
 	displayflags = 0;
 	displayflags = displayflags | DISPLAY_FORMAT_BEAUTIFY;
-	if(fractional_mode == FRACTIONAL_MODE_COMBINED) displayflags = displayflags | DISPLAY_FORMAT_FRACTION;	
-	else if(fractional_mode == FRACTIONAL_MODE_FRACTION) displayflags = displayflags | DISPLAY_FORMAT_FRACTIONAL_ONLY;		
+	if(fractional_mode == FRACTIONAL_MODE_COMBINED && rlabel) displayflags = displayflags | DISPLAY_FORMAT_FRACTION;	
+	else if(fractional_mode == FRACTIONAL_MODE_FRACTION || fractional_mode == FRACTIONAL_MODE_COMBINED) displayflags = displayflags | DISPLAY_FORMAT_FRACTIONAL_ONLY;		
 	else displayflags = displayflags | DISPLAY_FORMAT_DECIMAL_ONLY;		
 	if(use_short_units) displayflags = displayflags | DISPLAY_FORMAT_SHORT_UNITS;
 	else displayflags = displayflags | DISPLAY_FORMAT_LONG_UNITS;
@@ -1767,7 +1775,7 @@ string get_value_string(Manager *mngr_, bool rlabel = false, Prefix *prefix = NU
 //	return mngr_->print(numberformat, displayflags, min_decimals, max_decimals, in_exact, NULL, prefix);
 }
 
-GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *prefix = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false, bool draw_minus = false, gint *point_central = NULL, bool in_multiplication = false) {
+GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *prefix = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false, bool draw_minus = false, gint *point_central = NULL, bool in_multiplication = false, bool wrap = false) {
 
 	GdkPixmap *pixmap = NULL;
 	gint w, h;
@@ -1804,9 +1812,12 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			} else {
 				str += TEXT_TAGS_END "</i>";
 			}
-			w += 1;					
 			pango_layout_set_markup(layout, str.c_str(), -1);
+			PangoRectangle rect;
 			pango_layout_get_pixel_size(layout, &w, &h);
+			pango_layout_get_pixel_extents(layout, &rect, NULL);
+			w = rect.width;
+			w += 1;
 			central_point = h / 2;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
 			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
@@ -1907,7 +1918,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				if(!(displayflags_d & DISPLAY_FORMAT_USE_PREFIXES)) {
 					displayflags_d = displayflags_d | DISPLAY_FORMAT_USE_PREFIXES;
 				}
-				pixmap = draw_manager(mngr_d, nrformat, displayflags_d, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, true, in_power, true, &central_point);		
+				pixmap = draw_manager(mngr_d, nrformat, displayflags_d, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, true, in_power, true, &central_point, in_multiplication);		
 				mngr_d->unref();
 			} else {
 				string str, str2;
@@ -1976,8 +1987,13 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				}
 				MARKUP_STRING(str, whole_)
 				if(!exponent_.empty()) {
-					str += TEXT_TAGS_SMALL EXP TEXT_TAGS_SMALL_END;
-					str += TEXT_TAGS;
+					if(in_power) {
+						str += TEXT_TAGS_XSMALL "E" TEXT_TAGS_XSMALL_END;
+						str += TEXT_TAGS_SMALL;
+					} else {
+						str += TEXT_TAGS_SMALL "E" TEXT_TAGS_SMALL_END;
+						str += TEXT_TAGS;
+					}
 					if(exp_minus) {
 						if(displayflags & DISPLAY_FORMAT_NONASCII) {
 							str += SIGN_MINUS;
@@ -1986,7 +2002,11 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						}
 					}
 					str += exponent_;
-					str += TEXT_TAGS_END;
+					if(in_power) {
+						str += TEXT_TAGS_SMALL_END;
+					} else {
+						str += TEXT_TAGS_END;
+					}
 				}
 				layout_whole = gtk_widget_create_pango_layout(resultview, NULL);
 				pango_layout_set_markup(layout_whole, str.c_str(), -1);
@@ -2026,11 +2046,25 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				if(in_power) {
 					layout_num = gtk_widget_create_pango_layout(resultview, NULL);
 					string str = TEXT_TAGS_SMALL;
+					if(!exponent_.empty() && !exp_minus) {
+						numerator_ += TEXT_TAGS_XSMALL "E" TEXT_TAGS_XSMALL_END;
+						numerator_ += TEXT_TAGS_SMALL;
+						numerator_ += exponent_;
+						numerator_ += TEXT_TAGS_SMALL_END;
+					}
 					str += numerator_;
 					if(displayflags & DISPLAY_FORMAT_NONASCII) {
+						str += " ";
 						str += SIGN_DIVISION;
+						str += " ";
 					} else {
 						str += "/";
+					}
+					if(!exponent_.empty() && exp_minus) {
+						denominator_ += TEXT_TAGS_XSMALL "E" TEXT_TAGS_XSMALL_END;
+						denominator_ += TEXT_TAGS_SMALL;
+						denominator_ += exponent_;
+						denominator_ += TEXT_TAGS_SMALL_END;
 					}
 					str += denominator_;
 					str += " " TEXT_TAGS_SMALL_END;
@@ -2042,7 +2076,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					numerator_.insert(0, TEXT_TAGS);
 					numerator_ += TEXT_TAGS_END;
 					if(!exponent_.empty() && !exp_minus) {
-						numerator_ += TEXT_TAGS_SMALL EXP TEXT_TAGS_SMALL_END;
+						numerator_ += TEXT_TAGS_SMALL "E" TEXT_TAGS_SMALL_END;
 						numerator_ += TEXT_TAGS;
 						numerator_ += exponent_;
 						numerator_ += TEXT_TAGS_END;
@@ -2052,7 +2086,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					denominator_.insert(0, TEXT_TAGS);
 					denominator_ += TEXT_TAGS_END;
 					if(!exponent_.empty() && exp_minus) {
-						denominator_ += TEXT_TAGS_SMALL EXP TEXT_TAGS_SMALL_END;
+						denominator_ += TEXT_TAGS_SMALL "E" TEXT_TAGS_SMALL_END;
 						denominator_ += TEXT_TAGS;
 						denominator_ += exponent_;
 						denominator_ += TEXT_TAGS_END;
@@ -2499,7 +2533,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					Function *sqrt = CALCULATOR->getFunction("sqrt");
 					if(sqrt) {
 						Manager *m2 = new Manager(sqrt, m->base(), NULL);
-						pixmap = draw_manager(m2, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, toplevel, plural, l_exp, in_composite, in_power, draw_minus, point_central);
+						pixmap = draw_manager(m2, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, toplevel, plural, l_exp, in_composite, in_power, draw_minus, point_central, in_multiplication, wrap);
 						m2->unref();
 						return pixmap;
 					}
@@ -2508,7 +2542,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					m2->setType(MULTIPLICATION_MANAGER);
 					m->ref();
 					m2->push_back(m);
-					pixmap = draw_manager(m2, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, toplevel, plural, l_exp, in_composite, in_power, draw_minus, point_central);
+					pixmap = draw_manager(m2, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, toplevel, plural, l_exp, in_composite, in_power, draw_minus, point_central, in_multiplication, wrap);
 					m2->unref();
 					return pixmap;
 				}
@@ -2783,7 +2817,11 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				if(m_i->isPower() && m_i->exponent()->hasNegativeSign()) {
 					Manager mngr_i(m_i);
 					mngr_i.addInteger(-1, OPERATION_RAISE);
-					pixmap_factors_div.push_back(draw_manager(&mngr_i, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &hetmp, true));
+					if(layout_den && mngr_i.countChilds() > 1 && !mngr_i.isPower()) {
+						pixmap_factors_div.push_back(draw_manager(&mngr_i, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &hetmp, true, true));
+					} else {
+						pixmap_factors_div.push_back(draw_manager(&mngr_i, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &hetmp, true));
+					}	
 					gdk_drawable_get_size(GDK_DRAWABLE(pixmap_factors_div[i]), &wtmp, &htmp);
 					w2 += wtmp;
 					if(htmp - hetmp > uh2) {
@@ -2828,8 +2866,13 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							if(denominator_.empty() && exp_minus) denominator_ = "1";
 							layout_den = gtk_widget_create_pango_layout(resultview, NULL);
 							if(exp_minus && !exponent_.empty()) {
-								exponent_.insert(0, TEXT_TAGS_END TEXT_TAGS_SMALL "E" TEXT_TAGS_SMALL_END TEXT_TAGS);
-								denominator_ += exponent_;
+								if(in_power) {
+									exponent_.insert(0, TEXT_TAGS_XSMALL "E" TEXT_TAGS_XSMALL_END);
+									denominator_ += exponent_;
+								} else {
+									exponent_.insert(0, TEXT_TAGS_SMALL "E" TEXT_TAGS_SMALL_END);
+									denominator_ += exponent_;
+								}
 							}
 							MARKUP_STRING(str, denominator_)							
 							pango_layout_set_markup(layout_den, str.c_str(), -1);
@@ -2848,8 +2891,13 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						if(numerator_ == "1") numerator_ = "";
 						if(!exp_minus && !exponent_.empty()) {
 							if(numerator_.empty()) numerator_ = "1";
-							exponent_.insert(0, TEXT_TAGS_END TEXT_TAGS_SMALL "E" TEXT_TAGS_SMALL_END TEXT_TAGS);
-							numerator_ += exponent_;
+							if(in_power) {
+								exponent_.insert(0, TEXT_TAGS_XSMALL "E" TEXT_TAGS_XSMALL_END);
+								numerator_ += exponent_;
+							} else {
+								exponent_.insert(0, TEXT_TAGS_SMALL "E" TEXT_TAGS_SMALL_END);
+								numerator_ += exponent_;
+							}
 						}
 						if(!prefix_.empty()) {
 							prefix_fract = true;
@@ -2974,24 +3022,21 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						den_w = den_fract_w;						
 						last_den = true;
 					}
-					if(prepend_one) {
+					if(prepend_one || f_is_unit[0 + first_is_minus]) {
 						num_w += one_w;
 						if(one_h / 2 + one_h % 2 > num_uh) {
 							num_uh = one_h / 2 + one_h % 2;
 						}
 						if(one_h / 2 > num_dh) {
 							num_dh = one_h / 2;
-						}						
+						}	
+						prepend_one = true;					
 					}
 					for(; index < m->countChilds(); index++) {
 						if(!f_is_div[index] && m->getChild(index)->isFraction() && (layout_num || layout_den)) {
 							index++; if(index >= m->countChilds()) break;
 						}
 						if(f_is_div[index]) {
-							if(index == 0 || (index == 1 && first_is_minus)) {
-								num_w = 0;
-								prepend_one = false;
-							}
 							break;
 						}
 						if(!prepend_one && last_num && num_fract_w == 0 && f_is_unit[index] && !in_composite) {
@@ -3122,6 +3167,12 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					dh = dh2;
 					w = w2;
 					do_simple_unit_div = true;
+					if(f_is_div[0] || (f_is_div[1] && (first_is_minus || (m->getChild(0)->isFraction() && !layout_num && layout_den)))) {
+						w += one_w;
+					} else if(layout_den && !layout_num && f_is_unit[1] && !f_is_div[1]) {
+						prepend_one = true;
+						w += one_w;
+					}
 				}
 			}
 			h = uh + dh;
@@ -3132,6 +3183,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			w = 0;
 			bool in_den = false;
 			bool in_num = true;
+			bool do_one = false;
 			int div_i = 0;
 			gint w_first_fract = 0;
 			gint line_y = uh;
@@ -3199,7 +3251,6 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						if((i > 0 || prepend_one) && f_needs_multi_space[i] && !f_has_prefix[i - 1] && !f_needs_multi_space[i - 1] && !(i == 1 && (first_is_minus || prefix_fract))) {
 							w += space_w;
 						}
-						prepend_one = false;
 						if(i == 0 && layout_num) {						
 							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, num_uh - num_fract_h / 2 - num_fract_h % 2, layout_num);	
 							w += num_fract_w;						
@@ -3219,6 +3270,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 								w += space_w;
 							}							
 						}
+						prepend_one = false;
 					} else {
 						i--;
 						div_i = 1;
@@ -3231,18 +3283,33 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						w += space_w;						
 					}
 				} else {
-					if(prepend_one) {
+					if(prepend_one && i == 0) {
 						gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w, uh - one_h / 2 - one_h % 2, -1, -1);								
 						w += one_w;
 						w += space_w;
 						prepend_one = false;
 					}		
-					if(div_i != 1 && div_i != 2 && i > 0 && f_needs_multi_space[i] && !f_has_prefix[i - 1] && !f_needs_multi_space[i - 1] && !(i == 1 && first_is_minus)) {
+					if(!(i == 1 && !layout_num && layout_den) && div_i != 1 && div_i != 2 && i > 0 && f_needs_multi_space[i] && !f_has_prefix[i - 1] && !f_needs_multi_space[i - 1] && !(i == 1 && first_is_minus)) {
 						w += space_w;
 					}
 					if(do_simple_unit_div && f_is_div[i]) {
+						if(i == 0 || (i == 1 && first_is_minus)) {
+							div_i = 2;
+							gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w, uh - one_h / 2 - one_h % 2, -1, -1);
+							w += one_w;
+							w += space_w;
+							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - div_h / 2 - div_h % 2, layout_div);
+							w += div_w;
+							w += space_w;							
+							if(layout_den) {
+								div_i = 3;						
+								gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - den_fract_h / 2 - den_fract_h % 2, layout_den);	
+								w += den_fract_w;
+							}
+						}
 						gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_factors_div[i]), 0, 0, w, uh - (hpf_div[i] - cpf_div[i]), -1, -1);							
 						w += wpf_div[i];
+						do_one = false;
 					} else 	if(do_simple_unit_div && i == 0 && layout_num) {						
 						if(minus) {
 							if(toplevel || draw_minus) {
@@ -3252,13 +3319,21 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						}
 						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - num_fract_h / 2 - num_fract_h % 2, layout_num);	
 						w += num_fract_w;
-					} else {
+						do_one = false;
+					} else if(!do_simple_unit_div || !(m->getChild(i)->isFraction() && !layout_num && layout_den)) {
 						gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_factors[i]), 0, 0, w, uh - (hpf[i] - cpf[i]), -1, -1);
 						w += wpf[i];
+						do_one = false;
+					} else {
+						do_one = true;
 					}
 					if(div_i == 2) div_i = 3;
-					if(do_simple_unit_div && div_i != 2 && i + 1 < m->countChilds() && f_is_div[i + 1]) {		
+					if(do_simple_unit_div && div_i != 3 && i + 1 < m->countChilds() && f_is_div[i + 1]) {		
 						div_i = 2;
+						if(do_one) {
+							gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w, uh - one_h / 2 - one_h % 2, -1, -1);
+							w += one_w;
+						}
 						w += space_w;
 						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - div_h / 2 - div_h % 2, layout_div);
 						w += div_w;
@@ -3382,6 +3457,28 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			g_object_unref(layout_equals);
 			toplevel = false;
 		}		
+	}
+	if(wrap && pixmap) {
+		gint w, h, base_h, base_w;
+		gdk_drawable_get_size(GDK_DRAWABLE(pixmap), &base_w, &base_h);
+		h = base_h;
+		w = base_w;
+		gint arc_base_w = base_h / 6;
+		base_h += 4;
+		central_point += 2;
+		w += arc_base_w * 2 + 3;
+		GdkPixmap *pixmap_old = pixmap;
+		pixmap = gdk_pixmap_new(resultview->window, w, h, -1);	
+		gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
+		w = 0;
+		gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w, 0, arc_base_w * 2, h, 90 * 64, 180 * 64);			
+		if(!in_power) gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w + 1, 0, arc_base_w * 2, h, 90 * 64, 180 * 64);	
+		w += arc_base_w + 1;
+		gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_old), 0, 0, w, (h - base_h) / 2, -1, -1);
+		w += base_w + 1;
+		gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w - arc_base_w, 0, arc_base_w * 2, h, 270 * 64, 180 * 64);			
+		if(!in_power) gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w - 1 - arc_base_w, 0, arc_base_w * 2, h, 270 * 64, 180 * 64);	
+		g_object_unref(pixmap_old);
 	}
 	if(toplevel && pixmap) {
 		gint w, h, wle, hle, w_new, h_new;
@@ -5981,8 +6078,8 @@ void on_button_hyp_toggled(GtkToggleButton *w, gpointer user_data) {
 */
 void on_button_fraction_toggled(GtkToggleButton *w, gpointer user_data) {
 	if(gtk_toggle_button_get_active(w)) {
-		fractional_mode = FRACTIONAL_MODE_FRACTION;
-		GtkWidget *w_fraction = glade_xml_get_widget (glade_xml, "menu_item_fraction_fraction");
+		fractional_mode = FRACTIONAL_MODE_COMBINED;
+		GtkWidget *w_fraction = glade_xml_get_widget (glade_xml, "menu_item_fraction_combined");
 		g_signal_handlers_block_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_fraction_combined_activate, NULL);		
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w_fraction), TRUE);		
 		g_signal_handlers_unblock_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_fraction_combined_activate, NULL);		
@@ -6394,7 +6491,7 @@ void on_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer user_data)
 
 	GtkWidget *w_fraction = glade_xml_get_widget (glade_xml, "button_fraction");
 	g_signal_handlers_block_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_button_fraction_toggled, NULL);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w_fraction), FALSE);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w_fraction), TRUE);
 	g_signal_handlers_unblock_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_button_fraction_toggled, NULL);	
 	
 	setResult(result_text.c_str());
@@ -6407,7 +6504,7 @@ void on_menu_item_fraction_fraction_activate(GtkMenuItem *w, gpointer user_data)
 
 	GtkWidget *w_fraction = glade_xml_get_widget (glade_xml, "button_fraction");
 	g_signal_handlers_block_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_button_fraction_toggled, NULL);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w_fraction), TRUE);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w_fraction), FALSE);
 	g_signal_handlers_unblock_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_button_fraction_toggled, NULL);	
 	
 	setResult(result_text.c_str());

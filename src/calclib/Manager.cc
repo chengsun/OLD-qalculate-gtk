@@ -2006,9 +2006,15 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			} else {
 				str += "/";
 			}
+			if(mngr2.countChilds() > 1) {
+				str += "(";
+			}
 			str += mngr2.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, in_composite, in_power);
+			if(mngr2.countChilds() > 1) {
+				str += ")";
+			}			
 		} else {
-		if(!in_composite && toplevel && mngrs[0]->type() == UNIT_MANAGER) {
+		if(!in_composite && toplevel && mngrs[0]->isUnit()) {
 			str2 = "1";
 			if(min_decimals > 0) {
 				str2 += CALCULATOR->getDecimalPoint();

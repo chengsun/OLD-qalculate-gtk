@@ -1,6 +1,11 @@
 2003-10-21  Niklas Knutsson  <nq@altern.org>
 
 	* Release Qalculate-GTK version 0.3
+	* Disable convert in units dialog when no unit selected	
+	* Revert fractional button to use combined fractional display, but treat it as normal fractional display for regular text
+	* Draw parenthesis around not alone manager (not power) with childs in denominator
+	* Add a bit more space behind italic text to not cut tall chars off
+	* More drawing fixes
 
 2003-10-20  Niklas Knutsson  <nq@altern.org>
 
