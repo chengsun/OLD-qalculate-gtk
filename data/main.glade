@@ -80,6 +80,15 @@
 			      <signal name="activate" handler="on_menu_item_new_vector_activate" last_modification_time="Wed, 10 Mar 2004 14:54:54 GMT"/>
 			    </widget>
 			  </child>
+			  
+			  <child>
+			    <widget class="GtkMenuItem" id="menu_item_new_unknown">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Unknown Variable</property>
+			      <property name="use_underline">True</property>
+			      <signal name="activate" handler="on_menu_item_new_unknown_activate" last_modification_time="Mon, 24 May 2004 13:22:54 GMT"/>
+			    </widget>
+			  </child>
 
 			  <child>
 			    <widget class="GtkMenuItem" id="menu_item_new_function">
@@ -876,17 +885,6 @@
 		      <property name="use_underline">True</property>
 		      <property name="active">False</property>
 		      <signal name="activate" handler="on_menu_item_exact_mode_activate" last_modification_time="Thu, 11 Sep 2003 12:26:38 GMT"/>
-		    </widget>
-		  </child>
-
-		  <child>
-		    <widget class="GtkCheckMenuItem" id="menu_item_multiple_roots">
-		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">Enables calculation of multiple real results for even roots</property>
-		      <property name="label" translatable="yes">Calculate Multiple Real Roots</property>
-		      <property name="use_underline">True</property>
-		      <property name="active">False</property>
-		      <signal name="activate" handler="on_menu_item_multiple_roots_activate" last_modification_time="Thu, 04 Mar 2004 16:38:33 GMT"/>
 		    </widget>
 		  </child>
 

@@ -110,6 +110,7 @@ GtkWidget* get_preferences_dialog (void);
 GtkWidget* get_unit_edit_dialog (void);
 GtkWidget* get_function_edit_dialog (void);
 GtkWidget* get_variable_edit_dialog (void);
+GtkWidget* get_unknown_edit_dialog (void);
 GtkWidget* get_matrix_edit_dialog (void);
 GtkWidget* get_csv_import_dialog (void);
 GtkWidget* get_nbases_dialog (void);

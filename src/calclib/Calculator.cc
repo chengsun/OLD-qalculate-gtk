@@ -123,6 +123,8 @@ bool Calculator::delDefaultStringAlternative(string replacement, string standard
 
 Calculator *calculator;
 
+MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one;
+
 void *calculate_proc(void *x) {
 	CALCULATOR->b_busy = true;
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
@@ -203,7 +205,7 @@ Calculator::Calculator() {
 	m_empty_matrix.clearMatrix();
 	m_zero.clear();
 	m_one.set(1, 1);
-	
+
 	default_assumptions = new Assumptions;
 	
 	u_rad = NULL;
@@ -226,16 +228,12 @@ Calculator::Calculator() {
 	b_units = true;
 	b_unknown = true;
 	b_calcvars = true;
-	b_always_exact = false;
-	b_temp_exact = false;
-	b_use_all_prefixes = false;
-	b_multiple_roots = false;
 	disable_errors_ref = 0;
 	b_busy = false;
 	b_gnuplot_open = false;
-	b_den_prefix = false;
 	gnuplot_pipe = NULL;
 	pthread_attr_init(&calculate_thread_attr);
+
 }
 Calculator::~Calculator() {
 	closeGnuplot();
@@ -265,27 +263,6 @@ bool Calculator::inRPNMode() const {
 }
 bool Calculator::showArgumentErrors() const {
 	return b_argument_errors;
-}
-bool Calculator::alwaysExactIsTemporary() const {
-	return b_temp_exact;
-}
-bool Calculator::alwaysExact() const {
-	return b_always_exact;
-}
-void Calculator::setAlwaysExact(bool always_exact) {
-	b_always_exact = always_exact;
-}
-bool Calculator::multipleRootsEnabled() const {
-	return b_multiple_roots;
-}
-void Calculator::setMultipleRootsEnabled(bool enable_multiple_roots) {
-	b_multiple_roots = enable_multiple_roots;
-}
-bool Calculator::denominatorPrefixEnabled() const {
-	return b_den_prefix;
-}
-void Calculator::setDenominatorPrefixEnabled(bool enable) {
-	b_den_prefix = enable;
 }
 void Calculator::beginTemporaryStopErrors() {
 	disable_errors_ref++;
@@ -492,7 +469,7 @@ Prefix *Calculator::getNearestPrefix(int exp10, int exp) const {
 	}
 	return prefixes[prefixes.size() - 1];
 }
-Prefix *Calculator::getBestPrefix(int exp10, int exp) const {
+Prefix *Calculator::getBestPrefix(int exp10, int exp, bool all_prefixes) const {
 	if(prefixes.size() <= 0) return NULL;
 	int prev_i = 0;
 	int i = 0;
@@ -500,7 +477,7 @@ Prefix *Calculator::getBestPrefix(int exp10, int exp) const {
 		i = prefixes.size() - 1;
 	}
 	while((exp < 0 && i >= 0) || (exp >= 0 && i < (int) prefixes.size())) {	
-		if(b_use_all_prefixes || prefixes[i]->exponent() % 3 == 0) {
+		if(all_prefixes || prefixes[i]->exponent() % 3 == 0) {
 			if(prefixes[i]->exponent(exp) == exp10) {
 				return prefixes[i];
 			} else if(prefixes[i]->exponent(exp) > exp10) {
@@ -522,7 +499,7 @@ Prefix *Calculator::getBestPrefix(int exp10, int exp) const {
 	}
 	return prefixes[prev_i];
 }
-Prefix *Calculator::getBestPrefix(const Number &exp10, const Number &exp) const {
+Prefix *Calculator::getBestPrefix(const Number &exp10, const Number &exp, bool all_prefixes) const {
 	if(prefixes.size() <= 0) return NULL;
 	int prev_i = 0;
 	int i = 0;
@@ -531,7 +508,7 @@ Prefix *Calculator::getBestPrefix(const Number &exp10, const Number &exp) const 
 		i = prefixes.size() - 1;
 	}
 	while((exp.isNegative() && i >= 0) || (!exp.isNegative() && i < (int) prefixes.size())) {
-		if(b_use_all_prefixes || prefixes[i]->exponent() % 3 == 0) {
+		if(all_prefixes || prefixes[i]->exponent() % 3 == 0) {
 			c = exp10.compare(prefixes[i]->exponent(exp));
 			if(c == COMPARISON_RESULT_EQUAL) {
 				return prefixes[i];
@@ -734,12 +711,6 @@ void Calculator::delId(unsigned int id, bool force) {
 	}
 }
 
-bool Calculator::allPrefixesEnabled() const {
-	return b_use_all_prefixes;
-}
-void Calculator::setAllPrefixesEnabled(bool enable) {
-	b_use_all_prefixes = enable;
-}
 bool Calculator::functionsEnabled() const {
 	return b_functions;
 }
@@ -827,6 +798,7 @@ void Calculator::addBuiltinFunctions() {
 	f_limits = addFunction(new LimitsFunction());
 	f_component = addFunction(new ComponentFunction());
 	f_components = addFunction(new ComponentsFunction());
+	f_merge_vectors = addFunction(new MergeVectorsFunction());
 	f_matrix = addFunction(new MatrixFunction());
 	f_matrix_to_vector = addFunction(new MatrixToVectorFunction());
 	f_area = addFunction(new AreaFunction());
@@ -1094,10 +1066,10 @@ void Calculator::deleteUnitName(string name_, Unit *object) {
 	}
 }
 void Calculator::saveState() {
-	b_functions_was = b_functions; b_variables_was = b_variables; b_units_was = b_units; b_unknown_was = b_unknown; b_calcvars_was = b_calcvars; b_always_exact_was = b_always_exact; b_rpn_was = b_rpn;
+	b_functions_was = b_functions; b_variables_was = b_variables; b_units_was = b_units; b_unknown_was = b_unknown; b_calcvars_was = b_calcvars; b_rpn_was = b_rpn;
 }
 void Calculator::restoreState() {
-	b_functions = b_functions_was; b_variables = b_variables_was; b_units = b_units_was; b_unknown = b_unknown_was; b_calcvars = b_calcvars_was; b_always_exact = b_always_exact_was; b_rpn = b_rpn_was;
+	b_functions = b_functions_was; b_variables = b_variables_was; b_units = b_units_was; b_unknown = b_unknown_was; b_calcvars = b_calcvars_was; b_rpn = b_rpn_was;
 }
 void Calculator::clearBuffers() {
 	for(unsigned int i = 0; i < ids.size(); i++) {
@@ -3348,8 +3320,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 		xmlFreeDoc(doc);
 		return false;
 	}
-	bool functions_was = b_functions, variables_was = b_variables, units_was = b_units, unknown_was = b_unknown, calcvars_was = b_calcvars, always_exact_was = b_always_exact, rpn_was = b_rpn;
-	b_functions = true; b_variables = true; b_units = true; b_unknown = true; b_calcvars = true; b_always_exact = true; b_rpn = false;
+	bool functions_was = b_functions, variables_was = b_variables, units_was = b_units, unknown_was = b_unknown, calcvars_was = b_calcvars, rpn_was = b_rpn;
+	b_functions = true; b_variables = true; b_units = true; b_unknown = true; b_calcvars = true; b_rpn = false;
 
 	vector<xmlNodePtr> unfinished_nodes;
 	vector<string> unfinished_cats;
@@ -3918,7 +3890,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 			break;
 		} 
 	}
-	b_functions = functions_was; b_variables = variables_was; b_units = units_was; b_unknown = unknown_was; b_calcvars = calcvars_was; b_always_exact = always_exact_was; b_rpn = rpn_was;
+	b_functions = functions_was; b_variables = variables_was; b_units = units_was; b_unknown = unknown_was; b_calcvars = calcvars_was; b_rpn = rpn_was;
 	xmlFreeDoc(doc);
 	return true;
 }
@@ -3987,9 +3959,6 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 	xmlNodePtr cur, newnode, newnode2;	
 	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);	
 	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
-	//cur = doc->children;
-	bool was_always_exact = alwaysExact();
-	setAlwaysExact(true);
 	node_tree_item top;
 	top.category = "";
 	top.node = doc->children;
@@ -4080,7 +4049,6 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 			}
 		}
 	}	
-	setAlwaysExact(was_always_exact);
 	int returnvalue = xmlSaveFormatFile(file_name, doc, 1);
 	xmlFreeDoc(doc);
 	setLocale();
@@ -5113,9 +5081,6 @@ bool Calculator::plotVectors(plot_parameters *param, const vector<const MathStru
 	}
 	plot += "\n";
 	
-	bool b_always_exact = alwaysExact();
-	setAlwaysExact(false);	
-
 	string filename_data;
 	string plot_data;
 	PrintOptions po;
@@ -5154,11 +5119,7 @@ bool Calculator::plotVectors(plot_parameters *param, const vector<const MathStru
 		}
 	}
 	
-	setAlwaysExact(b_always_exact);	
-	
 	return invokeGnuplot(plot, commandline_extra, persistent);
-	
-	return true;
 }
 bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool persistent) {
 	FILE *pipe = NULL;

@@ -609,7 +609,10 @@ MathStructure Function::produceVector(const MathStructure &vargs, int begin, int
 			return vargs;
 		}
 	}
-	return vargs.range(begin, end).flattenVector();
+	MathStructure mstruct;
+	vargs.getRange(begin, end, mstruct);
+	MathStructure mstruct2;
+	return mstruct.flattenVector(mstruct2);
 }
 MathStructure Function::produceArgumentsVector(const MathStructure &vargs, int begin, int end) {	
 	if(begin < 1) {
@@ -622,7 +625,8 @@ MathStructure Function::produceArgumentsVector(const MathStructure &vargs, int b
 	if(begin == 1 && vargs.size() == 1) {
 		return vargs;
 	}
-	return vargs.range(begin, end);
+	MathStructure mstruct;
+	return vargs.getRange(begin, end, mstruct);
 }
 
 UserFunction::UserFunction(string cat_, string name_, string eq_, bool is_local, int argc_, string title_, string descr_, int max_argc_, bool is_active) : Function(name_, argc_, max_argc_, cat_, title_, descr_, is_active) {
@@ -690,7 +694,6 @@ bool UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 				}
 			}
 		}
-
 		if(maxargs() < 0) {
 			string w_str;
 			if(stmp.find("\\v") != string::npos) {
@@ -1441,7 +1444,7 @@ MathStructure GiacArgument::parse(const string &str) const {
 	return CALCULATOR->parse(str);
 }
 
-SymbolicArgument::SymbolicArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
+SymbolicArgument::SymbolicArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
 SymbolicArgument::SymbolicArgument(const SymbolicArgument *arg) {set(arg);}
 SymbolicArgument::~SymbolicArgument() {}
 bool SymbolicArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
@@ -1684,12 +1687,12 @@ AngleArgument::AngleArgument(string name_, bool does_test, bool does_error) : Ar
 AngleArgument::AngleArgument(const AngleArgument *arg) {set(arg);}
 AngleArgument::~AngleArgument() {}
 bool AngleArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	if(CALCULATOR->u_rad && value.convert(CALCULATOR->u_rad) && value.contains(CALCULATOR->u_rad)) {
-		value /= CALCULATOR->u_rad;
+	if(CALCULATOR->u_rad) value.convert(CALCULATOR->u_rad);
+	if(CALCULATOR->u_rad && value.contains(CALCULATOR->u_rad)) {
 	} else {
 		switch(CALCULATOR->angleMode()) {
 			case DEGREES: {
-		    		value *= (Variable*) CALCULATOR->v_pi;
+		  		value *= (Variable*) CALCULATOR->v_pi;
 	    			value /= 180;
 				break;
 			}
@@ -1699,6 +1702,7 @@ bool AngleArgument::subtest(MathStructure &value, const EvaluationOptions &eo) c
 				break;
 			}
 		}
+		if(CALCULATOR->u_rad) value *= CALCULATOR->u_rad;
 	}
 	return true;
 }

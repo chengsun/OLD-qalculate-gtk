@@ -182,7 +182,7 @@ typedef enum {
 #define BASE_OCTAL		8
 #define BASE_DECIMAL		10
 #define BASE_HEXADECIMAL	16
-#define BASE_SEXAGECIMAL	60
+#define BASE_SEXAGESIMAL	60
 
 #define EXP_PRECISION		-1
 #define EXP_NONE		0
@@ -202,25 +202,31 @@ static const struct PrintOptions {
 	NumberFractionFormat number_fraction_format;
 	bool indicate_infinite_series;
 	bool abbreviate_units;
+	bool place_units_separately;
 	bool use_unit_prefixes;
+	bool use_all_prefixes;
+	bool use_denominator_prefix;
 	bool negative_exponents;
 	bool short_multiplication;
 	bool allow_non_usable;
 	bool use_unicode_signs;
 	bool spacious;
+	bool excessive_parenthesis;
 	int min_decimals;
 	int max_decimals;
+	bool use_min_decimals;
+	bool use_max_decimals;
 	Prefix *prefix;
 	bool *is_approximate;
-	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), abbreviate_units(true), use_unit_prefixes(true), negative_exponents(false), short_multiplication(true), allow_non_usable(false), use_unicode_signs(false), spacious(true), min_decimals(0), max_decimals(-1), prefix(NULL), is_approximate(NULL) {}
+	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), abbreviate_units(true), place_units_separately(true), use_unit_prefixes(true), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), allow_non_usable(false), use_unicode_signs(false), spacious(true), excessive_parenthesis(false), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), prefix(NULL), is_approximate(NULL) {}
 } default_print_options;
 
 static const struct InternalPrintStruct {
-	int depth;
+	int depth, power_depth, division_depth;
 	bool wrap;
-	string *num, *den, *re, *im;
-	bool *minus;
-	InternalPrintStruct() : depth(0), wrap(false), num(NULL), den(NULL), re(NULL), im(NULL), minus(NULL) {}
+	string *num, *den, *re, *im, *exp;
+	bool *minus, *exp_minus;
+	InternalPrintStruct() : depth(0), power_depth(0), division_depth(0), wrap(false), num(NULL), den(NULL), re(NULL), im(NULL), exp(NULL), minus(NULL), exp_minus(NULL) {}
 } top_ips;
 
 typedef enum {

@@ -22,10 +22,10 @@ bool Assumptions::isPositive() {return i_sign == ASSUMPTION_SIGN_POSITIVE || (fm
 bool Assumptions::isNegative() {return i_sign == ASSUMPTION_SIGN_NEGATIVE || (fmax && (fmax->isNegative() || (!b_incl_max && fmax->isNonPositive())));}
 bool Assumptions::isNonNegative() {return i_sign == ASSUMPTION_SIGN_NONNEGATIVE || i_sign == ASSUMPTION_SIGN_POSITIVE || (fmin && fmin->isNonNegative());}
 bool Assumptions::isNonPositive() {return i_sign == ASSUMPTION_SIGN_NONPOSITIVE || i_sign == ASSUMPTION_SIGN_NEGATIVE || (fmax && fmax->isNonPositive());}
-bool Assumptions::isInteger() {return i_type <= ASSUMPTION_NUMBER_INTEGER;}
-bool Assumptions::isNumber() {return i_type <= ASSUMPTION_NUMBER_NUMBER || fmin || fmax || isPositive() || isNegative();}
-bool Assumptions::isRational() {return i_type <= ASSUMPTION_NUMBER_RATIONAL;}
-bool Assumptions::isReal() {return i_type <= ASSUMPTION_NUMBER_REAL || isPositive() || isNegative();}
+bool Assumptions::isInteger() {return i_type >= ASSUMPTION_NUMBER_INTEGER;}
+bool Assumptions::isNumber() {return i_type >= ASSUMPTION_NUMBER_NUMBER || fmin || fmax || isPositive() || isNegative();}
+bool Assumptions::isRational() {return i_type >= ASSUMPTION_NUMBER_RATIONAL;}
+bool Assumptions::isReal() {return i_type >= ASSUMPTION_NUMBER_REAL || isPositive() || isNegative();}
 bool Assumptions::isNonZero() {return i_sign == ASSUMPTION_SIGN_NONZERO || isPositive() || isNegative();}
 
 AssumptionNumberType Assumptions::numberType() {return i_type;}

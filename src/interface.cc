@@ -33,7 +33,7 @@
 
 extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *decimals_glade;
 extern GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *nbases_glade, *plot_glade, *precision_glade;
-extern GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *variableedit_glade, *variables_glade;
+extern GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
 
 GtkWidget *tFunctionCategories;
 GtkWidget *tFunctions;
@@ -71,11 +71,13 @@ GtkWidget *resultview;
 GtkWidget *f_menu ,*v_menu, *u_menu, *u_menu2, *recent_menu;
 GtkAccelGroup *accel_group;
 
-extern int display_mode, number_base, fractional_mode;
 extern bool show_buttons;
-extern bool use_short_units, save_mode_on_exit, save_defs_on_exit, load_global_defs, use_unicode_signs, hyp_is_on, fraction_is_on, use_prefixes;
-extern bool use_custom_result_font, use_custom_expression_font, indicate_infinite_series;
+extern bool save_mode_on_exit, save_defs_on_exit, load_global_defs, hyp_is_on;
+extern bool use_custom_result_font, use_custom_expression_font;
 extern string custom_result_font, custom_expression_font;
+
+extern PrintOptions printops, saved_printops;
+extern EvaluationOptions evalops, saved_evalops;
 
 extern vector<vector<GtkWidget*> > element_entries;
 extern vector<string> initial_history;
@@ -110,9 +112,9 @@ create_main_window (void)
 			TRUE);
 			
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "button_hyp")), hyp_is_on);			
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "button_fraction")), fractional_mode == FRACTIONAL_MODE_COMBINED);
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "button_fraction")), printops.number_fraction_format == FRACTION_COMBINED);
 //	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "button_inexact")), !CALCULATOR->alwaysExact());					
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_exact_mode")), CALCULATOR->alwaysExact());
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_exact_mode")), evalops.approximation == APPROXIMATION_EXACT);
 
 
 	accel_group = gtk_accel_group_new();
@@ -135,7 +137,7 @@ create_main_window (void)
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_rpn_mode")), CALCULATOR->inRPNMode());
 
-	switch(number_base) {
+	switch(printops.base) {
 		case BASE_OCTAL: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_octal")), TRUE);
 			break;
@@ -156,7 +158,7 @@ create_main_window (void)
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_roman")), TRUE);
 			break;
 		}
-		case BASE_SEXAGECIMAL: {
+		case BASE_SEXAGESIMAL: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_sexagesimal")), TRUE);
 			break;
 		}
@@ -165,31 +167,30 @@ create_main_window (void)
 			break;
 		}
 	}
-	switch (display_mode) {
-		case MODE_NORMAL: {
+	switch(printops.min_exp) {
+		case EXP_PRECISION: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_normal")), TRUE);
 			break;
 		}
-		case MODE_SCIENTIFIC: {
+		case EXP_SCIENTIFIC: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_scientific")), TRUE);
 			break;
 		}
-		case MODE_SCIENTIFIC_PURE: {
+		case EXP_PURE: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_purely_scientific")), TRUE);
 			break;
 		}
-		case MODE_DECIMALS: {
+		case EXP_NONE: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_non_scientific")), TRUE);
 			break;
 		}
 	}
 
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_indicate_infinite_series")), indicate_infinite_series);
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_prefixes")), use_prefixes);
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_all_prefixes")), CALCULATOR->allPrefixesEnabled());
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_denominator_prefixes")), CALCULATOR->denominatorPrefixEnabled());
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_short_units")), use_short_units);
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_multiple_roots")), CALCULATOR->multipleRootsEnabled());
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_indicate_infinite_series")), printops.indicate_infinite_series);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_prefixes")), printops.use_unit_prefixes);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_all_prefixes")), printops.use_all_prefixes);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_denominator_prefixes")), printops.use_denominator_prefix);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_short_units")), printops.abbreviate_units);
 			
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_enable_variables")), CALCULATOR->variablesEnabled());
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_enable_functions")), CALCULATOR->functionsEnabled());
@@ -197,16 +198,16 @@ create_main_window (void)
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_enable_unknown_variables")), CALCULATOR->unknownVariablesEnabled());
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_calculate_variables")), !CALCULATOR->donotCalculateVariables());
 
-	switch (fractional_mode) {
-		case FRACTIONAL_MODE_DECIMAL: {
+	switch (printops.number_fraction_format) {
+		case FRACTION_DECIMAL: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_fraction_decimal")), TRUE);
 			break;
 		}
-		case FRACTIONAL_MODE_COMBINED: {
+		case FRACTION_COMBINED: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_fraction_combined")), TRUE);
 			break;		
 		}
-		case FRACTIONAL_MODE_FRACTION: {
+		case FRACTION_FRACTIONAL: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_fraction_fraction")), TRUE);
 			break;		
 		}
@@ -237,7 +238,7 @@ create_main_window (void)
 	}
 #endif
 
-	if(use_unicode_signs) {
+	if(printops.use_unicode_signs) {
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_sub")), SIGN_MINUS);
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_add")), SIGN_PLUS);
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_times")), SIGN_MULTIPLICATION);	
@@ -532,7 +533,7 @@ get_preferences_dialog (void)
 	
 		g_assert (glade_xml_get_widget (preferences_glade, "preferences_dialog") != NULL);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_save_mode")), save_mode_on_exit);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_unicode_signs")), use_unicode_signs);	
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_unicode_signs")), printops.use_unicode_signs);	
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_save_defs")), save_defs_on_exit);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_custom_result_font")), use_custom_result_font);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_custom_expression_font")), use_custom_expression_font);		
@@ -672,6 +673,44 @@ get_variable_edit_dialog (void)
 	g_list_free(items);
 
 	return glade_xml_get_widget (variableedit_glade, "variable_edit_dialog");
+}
+
+GtkWidget*
+get_unknown_edit_dialog (void)
+{
+	
+	if(!unknownedit_glade) {
+	
+		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "unknownedit.glade", NULL);
+		unknownedit_glade = glade_xml_new(gstr, NULL, NULL);
+		g_assert(unknownedit_glade != NULL);
+		g_free(gstr);
+	
+		g_assert (glade_xml_get_widget (unknownedit_glade, "unknown_edit_dialog") != NULL);
+		
+		glade_xml_signal_autoconnect(unknownedit_glade);
+	
+	}
+	
+	/* populate combo menu */
+	
+	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
+	GList *items = NULL;
+	for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
+		if(!CALCULATOR->variables[i]->category().empty()) {
+			//add category if not present
+			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->variables[i]->category().c_str()) == NULL) {
+				items = g_list_insert_sorted(items, (gpointer) CALCULATOR->variables[i]->category().c_str(), (GCompareFunc) compare_categories);
+				//remember added categories
+				g_hash_table_insert(hash, (gpointer) CALCULATOR->variables[i]->category().c_str(), (gpointer) hash);
+			}
+		}
+	}
+	gtk_combo_set_popdown_strings(GTK_COMBO(glade_xml_get_widget (unknownedit_glade, "unknown_edit_combo_category")), items);
+	g_hash_table_destroy(hash);
+	g_list_free(items);
+
+	return glade_xml_get_widget (unknownedit_glade, "unknown_edit_dialog");
 }
 
 GtkWidget*

@@ -191,10 +191,10 @@ class Number {
 	
 		bool add(const Number &o, MathOperation op); 
 
-		string printNumerator(int base = 10, bool display_sign = true) const;
-		string printDenominator(int base = 10, bool display_sign = true) const;
-		string printImaginaryNumerator(int base = 10, bool display_sign = true) const;
-		string printImaginaryDenominator(int base = 10, bool display_sign = true) const;
+		string printNumerator(int base = 10, bool display_sign = true, bool display_base_indicator = true) const;
+		string printDenominator(int base = 10, bool display_sign = true, bool display_base_indicator = true) const;
+		string printImaginaryNumerator(int base = 10, bool display_sign = true, bool display_base_indicator = true) const;
+		string printImaginaryDenominator(int base = 10, bool display_sign = true, bool display_base_indicator = true) const;
 
 		string print(const PrintOptions &po = default_print_options, const InternalPrintStruct &ips = top_ips) const;
 	

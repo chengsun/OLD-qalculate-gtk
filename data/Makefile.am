@@ -5,7 +5,7 @@
 glade_DATA = about.glade argumentrules.glade csvimport.glade decimals.glade \
 	functionedit.glade functions.glade main.glade matrixedit.glade nbases.glade \
 	plot.glade precision.glade preferences.glade unit.glade unitedit.glade \
-	units.glade variableedit.glade variables.glade
+	units.glade unknownedit.glade variableedit.glade variables.glade
 gladedir = $(datadir)/$(PACKAGE)/glade
 
 # this is for gnome and kde 3.2+

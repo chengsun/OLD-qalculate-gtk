@@ -27,7 +27,7 @@
 #include "main.h"
 
 MathStructure *mstruct;
-Variable *vans, *vAns;
+KnownVariable *vans, *vAns;
 GtkWidget *functions_window;
 string selected_function_category;
 Function *selected_function;
@@ -49,7 +49,7 @@ extern vector<string> recent_units_pre;
 
 GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *decimals_glade;
 GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *nbases_glade, *plot_glade, *precision_glade;
-GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *variableedit_glade, *variables_glade;
+GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
 
 int main (int argc, char **argv) {
 
@@ -86,7 +86,8 @@ int main (int argc, char **argv) {
 	csvimport_glade = NULL; decimals_glade = NULL; functionedit_glade = NULL; 
 	functions_glade = NULL; matrixedit_glade = NULL; nbases_glade = NULL; plot_glade = NULL; 
 	precision_glade = NULL; preferences_glade = NULL; unit_glade = NULL; 
-	unitedit_glade = NULL; units_glade = NULL; variableedit_glade = NULL; variables_glade = NULL;	
+	unitedit_glade = NULL; units_glade = NULL; unknownedit_glade = NULL; variableedit_glade = NULL; 
+	variables_glade = NULL;	
 
 	//create the almighty Calculator object
 	new Calculator();
@@ -139,15 +140,15 @@ int main (int argc, char **argv) {
 	CALCULATOR->loadLocalDefinitions();
 
 	//get ans variable objects or create if they do not exist
-	vans = CALCULATOR->getVariable(_("ans"));
-	vAns = CALCULATOR->getVariable(_("Ans"));
+	vans = (KnownVariable*) CALCULATOR->getVariable(_("ans"));
+	vAns = (KnownVariable*) CALCULATOR->getVariable(_("Ans"));
 	if(!vans) {
-		vans = CALCULATOR->addVariable(new Variable(_("Temporary"), _("ans"), *mstruct, _("Answer"), false));
+		vans = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), _("ans"), *mstruct, _("Answer"), false));
 	} else {
 		vans->set(*mstruct);
 	}
 	if(!vAns) {
-		vAns = CALCULATOR->addVariable(new Variable(_("Temporary"), _("Ans"), *mstruct, _("Answer"), false));
+		vAns = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), _("Ans"), *mstruct, _("Answer"), false));
 	} else {
 		vAns->set(*mstruct);
 	}	

@@ -29,7 +29,7 @@ void cln::cl_abort() {
 	}
 }
 
-string printCL_I(cl_I integ, int base = 10, bool display_sign = true) {
+string printCL_I(cl_I integ, int base = 10, bool display_sign = true, bool display_base_indicator = true) {
 	if(base == BASE_ROMAN_NUMERALS) {
 		if(!zerop(integ) && integ < 10000 && integ > -10000) {
 			string str;
@@ -111,13 +111,15 @@ string printCL_I(cl_I integ, int base = 10, bool display_sign = true) {
 		cl_str.erase(cl_str.length() - 1, 1);
 	}
 	string str = "";
-	if(base == 16) {
-		str += "0x";
-	} else if(base == 8) {
-		str += "0";
-	} 
+	if(display_base_indicator) {
+		if(base == 16) {
+			str += "0x";
+		} else if(base == 8) {
+			str += "0";
+		} 
+	}
 	str += cl_str;
-	if(base == 2) {
+	if(base == 2 && display_base_indicator) {
 		int i2 = str.length() % 4;
 		if(i2 != 0) i2 = 4 - i2;
 		for(int i = (int) str.length() - 4; i > 0; i -= 4) {
@@ -1593,33 +1595,98 @@ bool Number::add(const Number &o, MathOperation op) {
 	}
 	return false;	
 }
-string Number::printNumerator(int base, bool display_sign) const {
-	return printCL_I(cln::numerator(cln::rational(cln::realpart(value))), base, display_sign);
+string Number::printNumerator(int base, bool display_sign, bool display_base_indicator) const {
+	return printCL_I(cln::numerator(cln::rational(cln::realpart(value))), base, display_sign, display_base_indicator);
 }
-string Number::printDenominator(int base, bool display_sign) const {
-	return printCL_I(cln::denominator(cln::rational(cln::realpart(value))), base, display_sign);
+string Number::printDenominator(int base, bool display_sign, bool display_base_indicator) const {
+	return printCL_I(cln::denominator(cln::rational(cln::realpart(value))), base, display_sign, display_base_indicator);
 }
-string Number::printImaginaryNumerator(int base, bool display_sign) const {
-	return printCL_I(cln::numerator(cln::rational(cln::imagpart(value))), base, display_sign);
+string Number::printImaginaryNumerator(int base, bool display_sign, bool display_base_indicator) const {
+	return printCL_I(cln::numerator(cln::rational(cln::imagpart(value))), base, display_sign, display_base_indicator);
 }
-string Number::printImaginaryDenominator(int base, bool display_sign) const {
-	return printCL_I(cln::denominator(cln::rational(cln::imagpart(value))), base, display_sign);
+string Number::printImaginaryDenominator(int base, bool display_sign, bool display_base_indicator) const {
+	return printCL_I(cln::denominator(cln::rational(cln::imagpart(value))), base, display_sign, display_base_indicator);
 }
 
 string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
 
 	if(ips.minus) *ips.minus = false;
+	if(ips.exp_minus) *ips.exp_minus = false;
 	if(ips.num) *ips.num = "";
 	if(ips.den) *ips.den = "";
+	if(ips.exp) *ips.exp = "";
 	if(ips.re) *ips.re = "";
 	if(ips.im) *ips.im = "";
+	if(po.is_approximate) *po.is_approximate = isApproximate();
+	
+	if((po.base == BASE_SEXAGESIMAL || po.base == BASE_TIME) && isReal()) {
+		Number nr(*this);
+		bool neg = nr.isNegative();
+		nr.setNegative(false);
+		nr.trunc();
+		string str = nr.printNumerator(10, false);
+		if(po.base == BASE_SEXAGESIMAL) {
+			if(po.use_unicode_signs) {
+				str += SIGN_POWER_0;
+			} else {
+				str += "o";
+			}	
+		}
+		nr = *this;
+		nr.frac();
+		nr *= 60;
+		Number nr2(nr);
+		nr.trunc();
+		if(po.base == BASE_TIME) {
+			str += ":";
+			if(nr.isLessThan(10)) {
+				str += "0";
+			}
+		}
+		str += nr.printNumerator(10, false);
+		if(po.base == BASE_SEXAGESIMAL) {
+			str += "'";
+		}	
+		nr2.frac();
+		if(!nr2.isZero() || po.base == BASE_SEXAGESIMAL) {
+			nr2.multiply(60);
+			nr = nr2;
+			nr.trunc();
+			nr2.frac();
+			if(!nr2.isZero()) {
+				if(po.is_approximate) *po.is_approximate = true;
+				if(nr2.isGreaterThanOrEqualTo(Number(1, 2))) {
+					nr.add(1);
+				}
+			}
+			if(po.base == BASE_TIME) {
+				str += ":";
+				if(nr.isLessThan(10)) {
+					str += "0";
+				}
+			}
+			str += nr.printNumerator(10, false);
+			if(po.base == BASE_SEXAGESIMAL) {
+				str += "\"";
+			}
+		}
+		if(ips.minus) {
+			*ips.minus = neg;
+		} else if(neg) {
+			str.insert(0, "-");
+		}
+		if(ips.num) *ips.num = str;
+		return str;
+	}
+	
 	string str;
 	int base;
 	int min_decimals = po.min_decimals;
-	if(min_decimals < 0) min_decimals = 0;
-	if(po.base <= 1) base = 10;
-	else if(po.base > 36) base = 36;
+	if(min_decimals < 0 || !po.use_min_decimals) min_decimals = 0;
+	if(po.base <= 0 && po.base != BASE_ROMAN_NUMERALS && po.base != BASE_TIME) base = 10;
+	else if(po.base > 36 && po.base != BASE_SEXAGESIMAL) base = 36;
 	else base = po.base;
+	if(isApproximate() && base == BASE_ROMAN_NUMERALS) base = 10;
 	if(isComplex()) {
 		bool bre = hasRealPart();
 		if(bre) {
@@ -1653,22 +1720,24 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 		}
 		str += "i";
+		if(po.is_approximate) *po.is_approximate = isApproximate();
 		if(ips.num) *ips.num = str;
 	} else if(isInteger()) {
 		bool neg = cln::minusp(cln::realpart(value));
-		string mpz_str = printCL_I(cln::numerator(cln::rational(cln::realpart(value))), base, false);
+		string mpz_str = printCL_I(cln::numerator(cln::rational(cln::realpart(value))), base, false, true);
 		int expo = 0;
-		if(mpz_str.length() > 0 && po.number_fraction_format == FRACTION_DECIMAL) {
-			expo = mpz_str.length() - 1;
-		} else if(mpz_str.length() > 0) {
-			for(int i = mpz_str.length() - 1; i >= 0; i--) {
-				if(mpz_str[i] != '0') {
-					break;
-				}
-				expo++;
-			} 
+		if(base == 10) {
+			if(mpz_str.length() > 0 && po.number_fraction_format == FRACTION_DECIMAL) {
+				expo = mpz_str.length() - 1;
+			} else if(mpz_str.length() > 0) {
+				for(int i = mpz_str.length() - 1; i >= 0; i--) {
+					if(mpz_str[i] != '0') {
+						break;
+					}
+					expo++;
+				} 
+			}
 		}
-		if(base != 10) expo = 0;
 		if(po.min_exp < 0) {
 			if(expo > -PRECISION && expo < PRECISION) { 
 				expo = 0;
@@ -1696,23 +1765,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		} else if(neg) {
 			str += "-";
 		}
-		if(base == 16) {
-			str += "0x";
-		} else if(base == 8) {
-			str += "0";
-		} 
 		str += mpz_str;
-		if(base == 2) {
-			int i2 = str.length() % 4;
-			if(i2 != 0) i2 = 4 - i2;	
-			for(int i = (int) str.length() - 4; i > 0; i -= 4) {
-				str.insert(i, 1, ' ');
-			}
-			for(; i2 > 0; i2--) {
-				str.insert(str.begin(), 1, '0');
-			}		 
-		}
-		if(po.number_fraction_format == FRACTION_DECIMAL) {
+		if(base != BASE_ROMAN_NUMERALS && po.number_fraction_format == FRACTION_DECIMAL) {
 			int pos = str.length() - 1;
 			for(; pos >= (int) (str.length() - expo) + min_decimals; pos--) {
 				if(str[pos] != '0') {
@@ -1720,7 +1774,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 			}
 			str = str.substr(0, pos + 1);
-			if(po.max_decimals >= 0 && expo > po.max_decimals) {
+			if(po.use_max_decimals && po.max_decimals >= 0 && expo > po.max_decimals) {
 				int i = (str.length() - expo) + po.max_decimals;
 				if(str[i] >= '5') {
 					str[i - 1]++;
@@ -1734,15 +1788,23 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			if(str[str.length() - 1] == '.') str.erase(str.end() - 1);
 		}
-		if(po.number_fraction_format == FRACTION_DECIMAL && min_decimals > 0) {
+		if(base != BASE_ROMAN_NUMERALS && po.number_fraction_format == FRACTION_DECIMAL && min_decimals > 0) {
 			str += ".";
 			for(int i = min_decimals; i > 0; i--) {
 				str += "0";
 			}
 		}
 		if(expo != 0) {
-			str += "E";
-			str += i2s(expo);
+			if(ips.exp) {
+				if(ips.exp_minus) {
+					*ips.exp_minus = expo < 0;
+					if(expo < 0) expo = -expo;
+				}
+				*ips.exp = i2s(expo);
+			} else {
+				str += "E";
+				str += i2s(expo);
+			}
 		}
 		if(ips.num) *ips.num = str;
 	} else if(isInfinity()) {
@@ -1770,7 +1832,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		str += ")";
 	} else {
-		if(isApproximate() || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT) {
+		if(base != BASE_ROMAN_NUMERALS && (isApproximate() || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 		
 			cln::cl_I num, d = cln::denominator(cln::rational(cln::realpart(value))), remainder = 0, remainder2 = 0, exp = 0;
 			cln::cl_I_div_t div;
@@ -1791,13 +1853,23 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			vector<cln::cl_I> remainders;
 			bool infinite_series = false;
 			int precision = PRECISION;
-			if(base > 10) precision = (precision * 10) / base;
+			if(base != 10) {
+				Number precmax(10);
+				precmax.raise(PRECISION);
+				precmax--;
+				precmax.log(base);
+				precmax.floor();
+				precision = precmax.intValue();
+			}
 			
 			bool started = false;
 			if(!cln::zerop(num)) {
-				str = printCL_I(num, base, true);
+				str = printCL_I(num, base, true, false);
 				precision -= str.length();
 				started = true;
+			}
+			if(po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals < precision) {
+				precision = po.max_decimals;
 			}
 			while(!exact && precision) {
 				if(po.indicate_infinite_series && !infinite_series) {
@@ -1848,7 +1920,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(po.is_approximate) *po.is_approximate = true;
 			}
 			
-			str = printCL_I(num, base, true);
+			str = printCL_I(num, base, true, false);
 			
 			int expo = str.length() - l10 - 1;
 			if(str.empty() || base != 10) expo = 0;
@@ -1906,8 +1978,16 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				str += "...";
 			}
 			if(expo != 0) {
-				str += "E";
-				str += i2s(expo);
+				if(ips.exp) {
+					if(ips.exp_minus) {
+						*ips.exp_minus = expo < 0;
+						if(expo < 0) expo = -expo;
+					}
+					*ips.exp = i2s(expo);
+				} else {
+					str += "E";
+					str += i2s(expo);
+				}
 			}
 			if(base == 16) {
 				str.insert(0, "0x");
@@ -1932,6 +2012,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			string str2 = den.print(po, ips_n);
 			if(ips.den) *ips.den = str2;
 			str += str2;
+			if(po.is_approximate) *po.is_approximate = isApproximate();
 		}
 	}
 	return str;

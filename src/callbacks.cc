@@ -32,7 +32,7 @@
 
 extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *decimals_glade;
 extern GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *nbases_glade, *plot_glade, *precision_glade;
-extern GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *variableedit_glade, *variables_glade;
+extern GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
 
 bool changing_in_nbases_dialog;
 
@@ -44,7 +44,7 @@ extern GtkListStore *completion_store;
 
 extern GtkWidget *expression;
 extern GtkWidget *f_menu, *v_menu, *u_menu, *u_menu2, *recent_menu;
-extern Variable *vans, *vAns;
+extern KnownVariable *vans, *vAns;
 extern GtkWidget *tPlotFunctions;
 extern GtkListStore *tPlotFunctions_store;
 extern GtkWidget *tFunctionArguments;
@@ -69,21 +69,14 @@ extern Variable *selected_variable;
 extern string selected_unit_category;
 extern Unit *selected_unit;
 extern Unit *selected_to_unit;
-bool saved_use_min_deci, saved_use_max_deci;
-int saved_min_deci, saved_max_deci, saved_precision, saved_display_mode, saved_number_base, saved_angle_unit;
-bool use_short_units, use_unicode_signs, use_prefixes;
-bool saved_functions_enabled, saved_variables_enabled, saved_unknownvariables_enabled, saved_units_enabled, saved_donot_calcvars, saved_use_prefixes;
-bool saved_indicate_infinite_series, indicate_infinite_series;
+int saved_precision, saved_angle_unit;
+bool saved_functions_enabled, saved_variables_enabled, saved_unknownvariables_enabled, saved_units_enabled, saved_donot_calcvars;
 bool save_mode_on_exit;
 bool save_defs_on_exit;
 bool saved_in_rpn_mode;
-NumberFractionFormat fractional_mode, saved_fractional_mode;
 bool use_custom_result_font, use_custom_expression_font;
 string custom_result_font, custom_expression_font;
-bool saved_always_exact;
 bool hyp_is_on, saved_hyp_is_on;
-bool use_min_deci, use_max_deci;
-int min_deci, max_deci, display_mode, number_base;
 bool show_buttons;
 extern bool load_global_defs, fetch_exchange_rates_at_startup, first_time;
 extern GtkWidget *omToUnit_menu;
@@ -96,8 +89,6 @@ extern GdkPixbuf *pixbuf_result;
 vector<vector<GtkWidget*> > element_entries;
 bool b_busy;
 pthread_t view_thread;
-Prefix *tmp_prefix;
-bool tmp_in_exact;
 GdkPixmap *tmp_pixmap;
 bool expression_has_changed, current_object_has_changed;
 int history_width, history_height;
@@ -122,6 +113,10 @@ bool default_plot_color = true;
 
 gint current_object_start = -1, current_object_end = -1;
 
+PrintOptions printops, saved_printops;
+EvaluationOptions evalops, saved_evalops;
+
+
 #define TEXT_TAGS			"<span size=\"xx-large\">"
 #define TEXT_TAGS_END			"</span>"
 #define TEXT_TAGS_SMALL			"<span size=\"large\">"
@@ -129,8 +124,8 @@ gint current_object_start = -1, current_object_end = -1;
 #define TEXT_TAGS_XSMALL		"<span size=\"medium\">"
 #define TEXT_TAGS_XSMALL_END		"</span>"
 
-#define MARKUP_STRING(str, text)	if(in_power) {str = TEXT_TAGS_SMALL;} else {str = TEXT_TAGS;} str += text; if(in_power) {str += TEXT_TAGS_SMALL_END;} else {str += TEXT_TAGS_END;}			
-#define CALCULATE_SPACE_W		gint space_w, space_h; PangoLayout *layout_space = gtk_widget_create_pango_layout(resultview, NULL); if(in_power) {pango_layout_set_markup(layout_space, TEXT_TAGS_SMALL " " TEXT_TAGS_SMALL_END, -1);} else {pango_layout_set_markup(layout_space, TEXT_TAGS " " TEXT_TAGS_END, -1);} pango_layout_get_pixel_size(layout_space, &space_w, &space_h); g_object_unref(layout_space);
+#define MARKUP_STRING(str, text)	if(ips.power_depth > 0) {str = TEXT_TAGS_SMALL;} else {str = TEXT_TAGS;} str += text; if(ips.power_depth > 0) {str += TEXT_TAGS_SMALL_END;} else {str += TEXT_TAGS_END;}			
+#define CALCULATE_SPACE_W		gint space_w, space_h; PangoLayout *layout_space = gtk_widget_create_pango_layout(resultview, NULL); if(ips.power_depth > 0) {pango_layout_set_markup(layout_space, TEXT_TAGS_SMALL " " TEXT_TAGS_SMALL_END, -1);} else {pango_layout_set_markup(layout_space, TEXT_TAGS " " TEXT_TAGS_END, -1);} pango_layout_get_pixel_size(layout_space, &space_w, &space_h); g_object_unref(layout_space);
 
 
 struct tree_struct {
@@ -875,20 +870,43 @@ void setVariableTreeItem(GtkTreeIter &iter2, Variable *v) {
 	string value = "";
 	if(v == vans || v == vAns) {
 		value = _("the previous result");
-	} else if(v->isExpression()) {
-		value = CALCULATOR->localizeExpression(v->expression());
-		if(value.length() > 13) {
-			value = value.substr(0, 10);
-			value += "...";
+	} else if(v->isKnown()) {
+		if(((KnownVariable*) v)->isExpression()) {
+			value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression());
+			if(value.length() > 13) {
+				value = value.substr(0, 10);
+				value += "...";
+			}
+		} else {
+			if(((KnownVariable*) v)->get().isMatrix()) {
+				value = "matrix";
+			} else if(((KnownVariable*) v)->get().isVector()) {
+				value = "vector";
+			} else {
+				value = CALCULATOR->printMathStructureTimeOut(((KnownVariable*) v)->get(), 30000);
+			}
 		}
 	} else {
-		if(v->get().isMatrix()) {
-			value = "matrix";
-		} else if(v->get().isVector()) {
-			value = "vector";
-		} else {
-			value = CALCULATOR->printMathStructureTimeOut(v->get(), 30000);
+		if(((UnknownVariable*) v)->assumptions()) {
+			switch(((UnknownVariable*) v)->assumptions()->sign()) {
+				case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
+				case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
+				case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
+				case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
+				case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
+				default: {}
+			}
+			if(!value.empty() && !((UnknownVariable*) v)->assumptions()->numberType() == ASSUMPTION_NUMBER_NONE) value += " ";
+			switch(((UnknownVariable*) v)->assumptions()->numberType()) {
+				case ASSUMPTION_NUMBER_INTEGER: {value += _("integer"); break;}
+				case ASSUMPTION_NUMBER_RATIONAL: {value += _("rational"); break;}
+				case ASSUMPTION_NUMBER_REAL: {value += _("real"); break;}
+				case ASSUMPTION_NUMBER_COMPLEX: {value += _("complex"); break;}
+				case ASSUMPTION_NUMBER_NUMBER: {value += _("number"); break;}
+				default: {}
+			}
 		}
+		if(value.empty()) value = "unknown";
 	}
 	gtk_list_store_set(tVariables_store, &iter2, 0, v->title(true).c_str(), 1, value.c_str(), 2, (gpointer) v, -1);
 	if(v == selected_variable) {
@@ -1089,7 +1107,7 @@ void setUnitTreeItem(GtkTreeIter &iter2, Unit *u) {
 		}
 		case ALIAS_UNIT: {
 			au = (AliasUnit*) u;
-			if(use_short_units) {
+			if(printops.abbreviate_units) {
 				sbase = au->firstBaseUnit()->shortName();
 			} else {
 				sbase = au->firstBaseUnit()->singular();
@@ -1227,7 +1245,7 @@ void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer user_
 		for(unsigned int i = 0; i < CALCULATOR->units.size(); i++) {
 			if(CALCULATOR->units[i] == selected_unit) {
 				gtk_widget_set_sensitive(glade_xml_get_widget (units_glade, "units_frame_convert"), TRUE);				
-				if(use_short_units) {
+				if(printops.abbreviate_units) {
 					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (units_glade, "units_label_from_unit")), CALCULATOR->units[i]->shortName().c_str());
 				} else {
 					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (units_glade, "units_label_from_unit")), CALCULATOR->units[i]->plural(true).c_str());
@@ -1758,42 +1776,13 @@ void update_fmenu() {
 }
 
 
-/*
-	return a customized result string
-	set rlabel to true for result label (nicer look)
-*/
-PrintOptions getFormat(bool rlabel = false, Prefix *p = NULL, bool *in_exact = NULL) {
-	PrintOptions po;
-	po.is_approximate = in_exact;
-	po.prefix = p;
-	po.short_multiplication = true;
-	po.number_fraction_format = fractional_mode;	
-	po.abbreviate_units = use_short_units;
-	po.use_unicode_signs = use_unicode_signs;	
-	po.indicate_infinite_series = indicate_infinite_series;		
-	po.use_unit_prefixes = use_prefixes || p;	
-	po.allow_non_usable = rlabel;
-	po.base = number_base;
-	switch(display_mode) {
-		case MODE_SCIENTIFIC: {po.min_exp = EXP_SCIENTIFIC; po.negative_exponents = true; break;}
-		case MODE_SCIENTIFIC_PURE: {po.min_exp = EXP_PURE; po.negative_exponents = true; break;}			
-		case MODE_DECIMALS: {po.min_exp = EXP_NONE; po.negative_exponents = false; break;}
-		default: {po.min_exp = EXP_PRECISION; po.negative_exponents = false; break;}
-	}
-	if(use_min_deci) {
-		po.min_decimals = min_deci;
-	} else {
-		po.min_decimals = 0;
-	}
-	if(use_max_deci) {
-		po.max_decimals = max_deci;
-	} else {
-		po.max_decimals = -1;
-	}	
-	return po;
-}
-string get_value_string(MathStructure &mstruct_, bool rlabel = false, Prefix *prefix = NULL, bool *in_exact = NULL) {
-	return CALCULATOR->printMathStructureTimeOut(mstruct_, 100000, getFormat(rlabel, prefix, in_exact));
+string get_value_string(const MathStructure &mstruct_, bool rlabel = false, Prefix *prefix = NULL) {
+	printops.allow_non_usable = rlabel;
+	printops.prefix = prefix;
+	string str = CALCULATOR->printMathStructureTimeOut(mstruct_, 100000, printops);
+	printops.allow_non_usable = false;
+	printops.prefix = NULL;
+	return str;
 }
 
 void draw_background(GdkPixmap *pixmap, gint w, gint h) {
@@ -1803,27 +1792,1060 @@ void draw_background(GdkPixmap *pixmap, gint w, gint h) {
 		gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);
 //	}
 }
-GdkPixmap *draw_structure(MathStructure *m, PrintOptions po = default_print_options, InternalPrintStruct ips = top_ips, gint *point_central = NULL) {
+GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_options, InternalPrintStruct ips = top_ips, gint *point_central = NULL) {
+
 	GdkPixmap *pixmap = NULL;
 	gint w, h;
 	gint central_point = 0;
-	bool in_power = false;
-	PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
-	string str;
-	str = TEXT_TAGS;
-	str += m->print(po, ips);
-	str += TEXT_TAGS_END;
-	pango_layout_set_markup(layout, str.c_str(), -1);
-	PangoRectangle rect;
-	pango_layout_get_pixel_size(layout, &w, &h);
-	pango_layout_get_pixel_extents(layout, &rect, NULL);
-	w = rect.width;
-	w += 1;
-	central_point = h / 2;
-	pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
-	draw_background(pixmap, w, h);
-	gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
-	g_object_unref(layout);
+	
+	InternalPrintStruct ips_n = ips;
+	
+	switch(m.type()) {
+		case STRUCT_NUMBER: {
+			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
+			string str, exp = "";
+			bool exp_minus;
+			ips_n.exp = &exp;
+			ips_n.exp_minus = &exp_minus;
+			if(ips.power_depth > 0) {
+				str = TEXT_TAGS_SMALL;
+			} else {
+				str = TEXT_TAGS;
+			}
+			str += m.number().print(po, ips_n);
+			if(!exp.empty()) {
+				if(ips.power_depth > 0) {
+					str += TEXT_TAGS_XSMALL "E" TEXT_TAGS_XSMALL_END;
+				} else {
+					str += TEXT_TAGS_SMALL "E" TEXT_TAGS_SMALL_END;
+				}
+				if(exp_minus) {
+					str += "-";
+				}
+				str += exp;
+			}
+			if(ips.power_depth > 0) {
+				str += TEXT_TAGS_SMALL_END;
+			} else {
+				str += TEXT_TAGS_END;
+			}
+			pango_layout_set_markup(layout, str.c_str(), -1);
+			PangoRectangle rect;
+			pango_layout_get_pixel_size(layout, &w, &h);
+			pango_layout_get_pixel_extents(layout, &rect, NULL);
+			w = rect.width;
+			w += 1;
+			central_point = h / 2;
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);	
+			draw_background(pixmap, w, h);
+			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
+			g_object_unref(layout);
+			break;
+		}
+		case STRUCT_SYMBOLIC: {
+			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
+			string str;
+			if(ips.power_depth > 0) {
+				str = "<i>" TEXT_TAGS_SMALL;
+			} else {
+				str = "<i>" TEXT_TAGS;
+			}
+			str += m.symbol();
+			if(ips.power_depth > 0) {
+				str += TEXT_TAGS_SMALL_END "</i>";
+			} else {
+				str += TEXT_TAGS_END "</i>";
+			}
+			pango_layout_set_markup(layout, str.c_str(), -1);
+			PangoRectangle rect;
+			pango_layout_get_pixel_size(layout, &w, &h);
+			pango_layout_get_pixel_extents(layout, &rect, NULL);
+			w = rect.width;
+			w += 1;
+			central_point = h / 2;
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
+			draw_background(pixmap, w, h);
+			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
+			g_object_unref(layout);
+			break;
+		}
+#ifdef HAVE_GIAC		
+		case STRUCT_UNKNOWN: {
+			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
+			string str;
+			if(ips.power_depth > 0) {
+				str = TEXT_TAGS_SMALL;
+			} else {
+				str = TEXT_TAGS;
+			}
+			str += m.unknown()->print();
+			if(ips.power_depth > 0) {
+				str += TEXT_TAGS_SMALL_END;
+			} else {
+				str += TEXT_TAGS_END;
+			}
+			pango_layout_set_markup(layout, str.c_str(), -1);
+			PangoRectangle rect;
+			pango_layout_get_pixel_size(layout, &w, &h);
+			pango_layout_get_pixel_extents(layout, &rect, NULL);
+			w = rect.width;
+			w += 1;
+			central_point = h / 2;
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
+			draw_background(pixmap, w, h);
+			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
+			g_object_unref(layout);
+			break;
+		}
+#endif
+		case STRUCT_ADDITION: {
+
+			ips_n.depth++;
+			
+			vector<GdkPixmap*> pixmap_terms;
+			vector<gint> hpt;
+			vector<gint> wpt;
+			vector<gint> cpt;
+			gint plus_w, plus_h, minus_w, minus_h, wtmp, htmp, hetmp = 0, w = 0, h = 0, dh = 0, uh = 0;
+			
+			CALCULATE_SPACE_W
+			PangoLayout *layout_plus = gtk_widget_create_pango_layout(resultview, NULL);
+			if(ips.power_depth > 0) {
+				pango_layout_set_markup(layout_plus, TEXT_TAGS_SMALL "+" TEXT_TAGS_SMALL_END, -1);
+			} else {
+				pango_layout_set_markup(layout_plus, TEXT_TAGS "+" TEXT_TAGS_END, -1);
+			}
+			pango_layout_get_pixel_size(layout_plus, &plus_w, &plus_h);
+			PangoLayout *layout_minus = gtk_widget_create_pango_layout(resultview, NULL);
+			if(po.use_unicode_signs) {
+				if(ips.power_depth > 0) {
+					pango_layout_set_markup(layout_minus, TEXT_TAGS_SMALL SIGN_MINUS TEXT_TAGS_SMALL_END, -1);
+				} else {
+					pango_layout_set_markup(layout_minus, TEXT_TAGS SIGN_MINUS TEXT_TAGS_END, -1);
+				}			
+			} else {
+				if(ips.power_depth > 0) {
+					pango_layout_set_markup(layout_minus, TEXT_TAGS_SMALL "-" TEXT_TAGS_SMALL_END, -1);
+				} else {
+					pango_layout_set_markup(layout_minus, TEXT_TAGS "-" TEXT_TAGS_END, -1);
+				}			
+			}
+			pango_layout_get_pixel_size(layout_minus, &minus_w, &minus_h);
+			for(unsigned int i = 0; i < m.size(); i++) {
+				hetmp = 0;		
+				if(m[i].type() == STRUCT_NEGATE && i > 0) {
+					ips_n.wrap = m[i][0].needsParenthesis(po, ips_n, m, i + 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+					pixmap_terms.push_back(draw_structure(m[i][0], po, ips_n, &hetmp));
+				} else {
+					ips_n.wrap = m[i].needsParenthesis(po, ips_n, m, i + 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+					pixmap_terms.push_back(draw_structure(m[i], po, ips_n, &hetmp));
+				}
+				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_terms[i]), &wtmp, &htmp);
+				hpt.push_back(htmp);
+				cpt.push_back(hetmp);
+				wpt.push_back(wtmp);
+				w += wtmp;
+				if(m[i].type() == STRUCT_NEGATE && i > 0) {
+					w += minus_w;
+					if(minus_h / 2 > dh) {
+						dh = minus_h / 2;
+					}
+					if(minus_h / 2 + minus_h % 2 > uh) {
+						uh = minus_h / 2 + minus_h % 2;
+					}						
+				} else if(i > 0) {
+					w += plus_w;
+					if(plus_h / 2 > dh) {
+						dh = plus_h / 2;
+					}
+					if(plus_h / 2 + plus_h % 2 > uh) {
+						uh = plus_h / 2 + plus_h % 2;
+					}					
+				}
+				if(htmp - hetmp > uh) {
+					uh = htmp - hetmp;
+				}
+				if(hetmp > dh) {
+					dh = hetmp;
+				}				
+			}
+			w += space_w * (pixmap_terms.size() - 1) * 2;
+			central_point = dh;
+			h = dh + uh;
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
+			draw_background(pixmap, w, h);			
+			w = 0;
+			for(unsigned int i = 0; i < pixmap_terms.size(); i++) {
+				if(i > 0) {
+					w += space_w;
+					if(m[i].type() == STRUCT_NEGATE) {
+						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - minus_h / 2 - minus_h % 2, layout_minus);
+						w += minus_w;
+					} else {
+						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - plus_h / 2 - plus_h % 2, layout_plus);
+						w += plus_w;
+					}	
+					w += space_w;			
+				}
+				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_terms[i]), 0, 0, w, uh - (hpt[i] - cpt[i]), -1, -1);
+				w += wpt[i];
+				g_object_unref(pixmap_terms[i]);
+			}
+			g_object_unref(layout_minus);
+			g_object_unref(layout_plus);
+			
+			break;
+		}
+		case STRUCT_NEGATE: {
+
+			ips_n.depth++;
+
+			gint minus_w, minus_h, uh, dh, h, w, ctmp, htmp, wtmp, hpa, cpa, wpa;
+			
+			PangoLayout *layout_minus = gtk_widget_create_pango_layout(resultview, NULL);
+			
+			if(po.use_unicode_signs) {
+				if(ips.power_depth > 0) {
+					pango_layout_set_markup(layout_minus, TEXT_TAGS_SMALL SIGN_MINUS TEXT_TAGS_SMALL_END, -1);
+				} else {
+					pango_layout_set_markup(layout_minus, TEXT_TAGS SIGN_MINUS TEXT_TAGS_END, -1);
+				}			
+			} else {
+				if(ips.power_depth > 0) {
+					pango_layout_set_markup(layout_minus, TEXT_TAGS_SMALL "-" TEXT_TAGS_SMALL_END, -1);
+				} else {
+					pango_layout_set_markup(layout_minus, TEXT_TAGS "-" TEXT_TAGS_END, -1);
+				}			
+			}
+			pango_layout_get_pixel_size(layout_minus, &minus_w, &minus_h);
+
+			w = minus_w + 1;
+			uh = minus_h / 2 + minus_h % 2;
+			dh = minus_h / 2;
+			
+			ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+			GdkPixmap *pixmap_arg = draw_structure(m[0], po, ips_n, &ctmp);
+			gdk_drawable_get_size(GDK_DRAWABLE(pixmap_arg), &wtmp, &htmp);
+			hpa = htmp;
+			cpa = ctmp;
+			wpa = wtmp;
+			w += wtmp;
+			if(ctmp > dh) {
+				dh = ctmp;
+			}
+			if(htmp - ctmp > uh) {
+				uh = htmp - ctmp;
+			}				
+			
+			h = uh + dh;
+			central_point = dh;
+
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
+			draw_background(pixmap, w, h);
+			
+			w = 0;
+			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - minus_h / 2 - minus_h % 2, layout_minus);	
+			w += minus_w + 1;
+			gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_arg), 0, 0, w, uh - (hpa - cpa), -1, -1);
+			g_object_unref(pixmap_arg);
+			
+			g_object_unref(layout_minus);		
+			break;
+		}
+		case STRUCT_MULTIPLICATION: {
+
+			ips_n.depth++;
+			
+			vector<GdkPixmap*> pixmap_terms;
+			vector<gint> hpt;
+			vector<gint> wpt;
+			vector<gint> cpt;
+			gint mul_w, mul_h, wtmp, htmp, hetmp = 0, w = 0, h = 0, dh = 0, uh = 0;
+			
+			CALCULATE_SPACE_W
+			PangoLayout *layout_mul = gtk_widget_create_pango_layout(resultview, NULL);
+			if(po.use_unicode_signs) {
+				if(ips.power_depth > 0) {
+					pango_layout_set_markup(layout_mul, TEXT_TAGS_SMALL SIGN_MULTIDOT TEXT_TAGS_SMALL_END, -1);
+				} else {
+					pango_layout_set_markup(layout_mul, TEXT_TAGS SIGN_MULTIDOT TEXT_TAGS_END, -1);
+				}			
+			} else {
+				if(ips.power_depth > 0) {
+					pango_layout_set_markup(layout_mul, TEXT_TAGS_SMALL "*" TEXT_TAGS_SMALL_END, -1);
+				} else {
+					pango_layout_set_markup(layout_mul, TEXT_TAGS "*" TEXT_TAGS_END, -1);
+				}			
+			}
+			pango_layout_get_pixel_size(layout_mul, &mul_w, &mul_h);
+			bool par_prev = false;
+			for(unsigned int i = 0; i < m.size(); i++) {
+				hetmp = 0;		
+				ips_n.wrap = m[i].needsParenthesis(po, ips_n, m, i + 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+				pixmap_terms.push_back(draw_structure(m[i], po, ips_n, &hetmp));
+				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_terms[i]), &wtmp, &htmp);
+				hpt.push_back(htmp);
+				cpt.push_back(hetmp);
+				wpt.push_back(wtmp);
+				w += wtmp;
+				if(!po.short_multiplication && i > 0) {
+					w += mul_w + space_w * 2;
+					if(mul_h / 2 > dh) {
+						dh = mul_h / 2;
+					}
+					if(mul_h / 2 + mul_h % 2 > uh) {
+						uh = mul_h / 2 + mul_h % 2;
+					}
+				} else if(i > 0) {
+					switch(m[i].neededMultiplicationSign(po, ips_n, m, i + 1, ips_n.wrap, par_prev, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0)) {
+						case MULTIPLICATION_SIGN_SPACE: {
+							w += space_w;
+							break;
+						}
+						case MULTIPLICATION_SIGN_OPERATOR: {
+							w += mul_w + space_w * 2;
+							if(mul_h / 2 > dh) {
+								dh = mul_h / 2;
+							}
+							if(mul_h / 2 + mul_h % 2 > uh) {
+								uh = mul_h / 2 + mul_h % 2;
+							}
+							break;
+						}
+					}
+				}
+				if(htmp - hetmp > uh) {
+					uh = htmp - hetmp;
+				}
+				if(hetmp > dh) {
+					dh = hetmp;
+				}				
+			}
+			central_point = dh;
+			h = dh + uh;
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
+			draw_background(pixmap, w, h);			
+			w = 0;
+			for(unsigned int i = 0; i < pixmap_terms.size(); i++) {
+				if(!po.short_multiplication && i > 0) {
+					w += space_w;
+					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - mul_h / 2 - mul_h % 2, layout_mul);
+					w += mul_w;
+					w += space_w;
+				} else if(i > 0) {
+					switch(m[i].neededMultiplicationSign(po, ips_n, m, i + 1, ips_n.wrap, par_prev, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0)) {
+						case MULTIPLICATION_SIGN_SPACE: {
+							w += space_w;
+							break;
+						}
+						case MULTIPLICATION_SIGN_OPERATOR: {
+							w += space_w;
+							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - mul_h / 2 - mul_h % 2, layout_mul);
+							w += mul_w;
+							w += space_w;
+							break;
+						}
+					}
+				}
+				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_terms[i]), 0, 0, w, uh - (hpt[i] - cpt[i]), -1, -1);
+				w += wpt[i];
+				g_object_unref(pixmap_terms[i]);
+			}
+			g_object_unref(layout_mul);
+			break;
+		}
+		case STRUCT_INVERSE: {}
+		case STRUCT_DIVISION: {
+			
+			ips_n.depth++;
+			ips_n.division_depth++;
+			
+			gint den_uh, den_w, den_dh, num_w, num_dh, num_uh, dh = 0, uh = 0, w = 0, h = 0, one_w, one_h;
+			
+			GdkPixmap *num_pixmap = NULL, *den_pixmap = NULL, *pixmap_one = NULL;
+			if(m.type() == STRUCT_DIVISION) {
+				ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+				num_pixmap = draw_structure(m[0], po, ips_n, &num_dh);
+				gdk_drawable_get_size(GDK_DRAWABLE(num_pixmap), &num_w, &h);
+				num_uh = h - num_dh;
+			} else {
+				MathStructure onestruct(1, 1);
+				pixmap_one = draw_structure(onestruct, po, ips_n, NULL);	
+				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_one), &one_w, &one_h);
+				num_w = one_w; num_dh = one_h / 2; num_uh = one_h - num_dh;
+			}
+			if(m.type() == STRUCT_DIVISION) {
+				ips_n.wrap = m[1].needsParenthesis(po, ips_n, m, 2, ips.division_depth > 1 || ips.power_depth > 0, ips.power_depth > 0);
+				den_pixmap = draw_structure(m[1], po, ips_n, &den_dh);
+			} else {
+				ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 2, ips.division_depth > 1 || ips.power_depth > 0, ips.power_depth > 0);
+				den_pixmap = draw_structure(m[0], po, ips_n, &den_dh);
+			}
+			gdk_drawable_get_size(GDK_DRAWABLE(den_pixmap), &den_w, &h);
+			den_uh = h - den_dh;
+			h = 0;
+			bool flat = ips.division_depth > 0 || ips.power_depth > 0;
+			if(!flat && po.place_units_separately) {
+				flat = true;
+				for(unsigned int i = 0; i < m.size(); i++) {
+					if(!m[i].isUnit_exp()) {
+						flat = false;
+						break;
+					}
+				}
+			}
+			if(flat) {
+				gint div_w, div_h;
+				PangoLayout *layout_div = gtk_widget_create_pango_layout(resultview, NULL);
+				CALCULATE_SPACE_W
+				if(po.use_unicode_signs) {
+					if(ips.power_depth > 0) {
+						pango_layout_set_markup(layout_div, TEXT_TAGS_SMALL SIGN_DIVISION TEXT_TAGS_SMALL_END, -1);
+					} else {
+						pango_layout_set_markup(layout_div, TEXT_TAGS SIGN_DIVISION TEXT_TAGS_END, -1);
+					}
+				} else {
+					if(ips.power_depth > 0) {
+						pango_layout_set_markup(layout_div, TEXT_TAGS_SMALL "/" TEXT_TAGS_SMALL_END, -1);
+					} else {
+						pango_layout_set_markup(layout_div, TEXT_TAGS "/" TEXT_TAGS_END, -1);
+					}
+				}
+				pango_layout_get_pixel_size(layout_div, &div_w, &div_h);
+				w = num_w + den_w + space_w + space_w + div_w;
+				dh = num_dh; uh = num_uh;
+				if(den_dh > dh) h = den_dh;
+				if(den_uh > uh) uh = den_uh;
+				if(div_h / 2 > dh) {
+					dh = div_h / 2;
+				}
+				if(div_h / 2 + div_h % 2 > uh) {
+					uh = div_h / 2 + div_h % 2;
+				}
+				h = uh + dh;
+				central_point = dh;
+				pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
+				draw_background(pixmap, w, h);
+				w = 0;
+				if(m.type() == STRUCT_DIVISION) {
+					gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(num_pixmap), 0, 0, w, uh - num_uh, -1, -1);
+				} else {
+					gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w, uh - one_h / 2 - one_h % 2, -1, -1);
+				}
+				w += num_w;
+				w += space_w;
+				gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - div_h / 2 - div_h % 2, layout_div);	
+				w += div_w;
+				w += space_w;
+				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(den_pixmap), 0, 0, w, uh - den_uh, -1, -1);
+				g_object_unref(layout_div);
+			} else {
+				gint wfr;
+				dh = den_dh + den_uh + 3;
+				uh = num_dh + num_uh + 3;
+				wfr = den_w;
+				if(num_w > wfr) wfr = num_w;
+				wfr += 2;
+				w = wfr;
+				h = uh + dh;
+				central_point = dh;
+				pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
+				draw_background(pixmap, w, h);
+				w = 0;
+				if(m.type() == STRUCT_DIVISION) {
+					gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(num_pixmap), 0, 0, w + (wfr - num_w) / 2, uh - 3 - num_uh - num_dh, -1, -1);
+				} else {
+					gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w + (wfr - one_w) / 2, uh - 3 - one_h, -1, -1);
+				}
+				gdk_draw_line(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh, w + wfr, uh);
+				gdk_draw_line(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh + 1, w + wfr, uh + 1);
+				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(den_pixmap), 0, 0, w + (wfr - den_w) / 2, uh + 3, -1, -1);
+			}
+			if(num_pixmap) g_object_unref(num_pixmap);
+			if(den_pixmap) g_object_unref(den_pixmap);
+			if(pixmap_one) g_object_unref(pixmap_one);
+			break;
+		}
+		case STRUCT_POWER: {
+
+			ips_n.depth++;
+			
+			gint base_w, base_h, exp_w, exp_h, w = 0, h = 0, ctmp = 0, power_w, power_h;
+			CALCULATE_SPACE_W
+			ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+			GdkPixmap *pixmap_base = draw_structure(m[0], po, ips_n, &central_point);			
+			gdk_drawable_get_size(GDK_DRAWABLE(pixmap_base), &base_w, &base_h);
+			
+			PangoLayout *layout_power = NULL;
+			if(ips.power_depth > 0) {
+				layout_power = gtk_widget_create_pango_layout(resultview, NULL);
+				pango_layout_set_markup(layout_power, TEXT_TAGS_SMALL "^" TEXT_TAGS_SMALL_END, -1);
+				pango_layout_get_pixel_size(layout_power, &power_w, &power_h);			
+			}
+			ips_n.power_depth++;
+			ips_n.wrap = m[1].needsParenthesis(po, ips_n, m, 2, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+			GdkPixmap *pixmap_exp = draw_structure(m[1], po, ips_n, &ctmp);
+			gdk_drawable_get_size(GDK_DRAWABLE(pixmap_exp), &exp_w, &exp_h);
+			
+			h = base_h;
+			w = base_w;
+			if(layout_power) {
+				w += power_w; 
+				if(exp_h > h) {
+					h = exp_h;
+				}
+			} else {
+				if(exp_h < h) {
+					h += exp_h / 2;
+				} else {
+					h += exp_h - base_h / 2;
+				}
+			}
+			w += exp_w;
+			
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
+			draw_background(pixmap, w, h);
+
+			w = 0;
+			gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_base), 0, 0, w, h - base_h, -1, -1);
+			w += base_w;
+			if(layout_power) {
+				gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, 0, layout_power);
+				w += power_w;
+			}
+			gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_exp), 0, 0, w, 0, -1, -1);
+			
+			g_object_unref(pixmap_base);
+			g_object_unref(pixmap_exp);
+			if(layout_power) g_object_unref(layout_power);
+			break;
+		}
+		case STRUCT_COMPARISON: {}
+		case STRUCT_AND: {}
+		case STRUCT_XOR: {}
+		case STRUCT_OR: {
+			
+			ips_n.depth++;
+			
+			vector<GdkPixmap*> pixmap_terms;
+			vector<gint> hpt;
+			vector<gint> wpt;
+			vector<gint> cpt;
+			gint sign_w, sign_h, wtmp, htmp, hetmp = 0, w = 0, h = 0, dh = 0, uh = 0;
+			CALCULATE_SPACE_W
+			PangoLayout *layout_sign = gtk_widget_create_pango_layout(resultview, NULL);
+			string str;
+			if(ips.power_depth > 0) {
+				str = TEXT_TAGS_SMALL;
+			} else {
+				str = TEXT_TAGS;
+			}	
+			if(m.type() == STRUCT_COMPARISON) {
+				switch(m.comparisonType()) {
+					case COMPARISON_EQUALS: {
+						str += "=";
+						break;
+					}
+					case COMPARISON_NOT_EQUALS: {
+						if(po.use_unicode_signs) {
+							str += SIGN_NOT_EQUAL;
+						} else {
+							str += "!=";
+						}
+						break;
+					}
+					case COMPARISON_GREATER: {
+						str += "&gt;";
+						break;
+					}
+					case COMPARISON_LESS: {
+						str += "&lt;";
+						break;
+					}
+					case COMPARISON_EQUALS_GREATER: {
+						if(po.use_unicode_signs) {
+							str += SIGN_GREATER_OR_EQUAL;
+						} else {
+							str += "&gt;=";
+						}
+						break;
+					}
+					case COMPARISON_EQUALS_LESS: {
+						if(po.use_unicode_signs) {
+							str += SIGN_LESS_OR_EQUAL;
+						} else {
+							str += "&lt;=";
+						}
+						break;
+					}
+				}
+			} else if(m.type() == STRUCT_AND) {
+				str += "&amp;";
+			} else if(m.type() == STRUCT_OR) {
+				str += "|";
+			} else if(m.type() == STRUCT_XOR) {
+				str += "XOR";
+			}
+			
+			if(ips.power_depth > 0) {
+				str += TEXT_TAGS_SMALL_END;
+			} else {
+				str += TEXT_TAGS_END;
+			}
+			pango_layout_set_markup(layout_sign, str.c_str(), -1);
+			pango_layout_get_pixel_size(layout_sign, &sign_w, &sign_h);
+			for(unsigned int i = 0; i < m.size(); i++) {
+				hetmp = 0;		
+				ips_n.wrap = m[i].needsParenthesis(po, ips_n, m, i + 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+				pixmap_terms.push_back(draw_structure(m[i], po, ips_n, &hetmp));
+				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_terms[i]), &wtmp, &htmp);
+				hpt.push_back(htmp);
+				cpt.push_back(hetmp);
+				wpt.push_back(wtmp);
+				w += wtmp;
+				if(i > 0) w += sign_w;
+				if(sign_h / 2 > dh) {
+					dh = sign_h / 2;
+				}
+				if(sign_h / 2 + sign_h % 2 > uh) {
+					uh = sign_h / 2 + sign_h % 2;
+				}					
+				if(htmp - hetmp > uh) {
+					uh = htmp - hetmp;
+				}
+				if(hetmp > dh) {
+					dh = hetmp;
+				}				
+			}
+			w += space_w * (pixmap_terms.size() - 1) * 2;
+			central_point = dh;
+			h = dh + uh;
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
+			draw_background(pixmap, w, h);
+			w = 0;
+			for(unsigned int i = 0; i < pixmap_terms.size(); i++) {
+				if(i > 0) {
+					w += space_w;
+					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - sign_h / 2 - sign_h % 2, layout_sign);
+					w += sign_w;	
+					w += space_w;			
+				}
+				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_terms[i]), 0, 0, w, uh - (hpt[i] - cpt[i]), -1, -1);
+				w += wpt[i];
+				g_object_unref(pixmap_terms[i]);
+			}
+			g_object_unref(layout_sign);
+			break;
+		}
+		case STRUCT_NOT: {
+
+			ips_n.depth++;
+
+			gint not_w, not_h, uh, dh, h, w, ctmp, htmp, wtmp, hpa, cpa, wpa;
+			
+			PangoLayout *layout_not = gtk_widget_create_pango_layout(resultview, NULL);
+			
+			if(ips.power_depth > 0) {
+				pango_layout_set_markup(layout_not, TEXT_TAGS_SMALL "!" TEXT_TAGS_SMALL_END, -1);
+			} else {
+				pango_layout_set_markup(layout_not, TEXT_TAGS "!" TEXT_TAGS_END, -1);
+			}
+			pango_layout_get_pixel_size(layout_not, &not_w, &not_h);
+
+			w = not_w + 1;
+			uh = not_h / 2 + not_h % 2;
+			dh = not_h / 2;
+			
+			ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+			GdkPixmap *pixmap_arg = draw_structure(m[0], po, ips_n, &ctmp);
+			gdk_drawable_get_size(GDK_DRAWABLE(pixmap_arg), &wtmp, &htmp);
+			hpa = htmp;
+			cpa = ctmp;
+			wpa = wtmp;
+			w += wtmp;
+			if(ctmp > dh) {
+				dh = ctmp;
+			}
+			if(htmp - ctmp > uh) {
+				uh = htmp - ctmp;
+			}				
+			
+			h = uh + dh;
+			central_point = dh;
+
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
+			draw_background(pixmap, w, h);
+			
+			w = 0;
+			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - not_h / 2 - not_h % 2, layout_not);	
+			w += not_w + 1;
+			gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_arg), 0, 0, w, uh - (hpa - cpa), -1, -1);
+			g_object_unref(pixmap_arg);
+			
+			g_object_unref(layout_not);		
+			break;
+		}
+		case STRUCT_VECTOR: {
+			
+			ips_n.depth++;
+			
+			if(m.isMatrix()) {
+				gint wtmp, htmp, ctmp = 0, w = 0, h = 0;
+				CALCULATE_SPACE_W
+				vector<gint> col_w;
+				vector<gint> row_h;
+				vector<gint> row_uh;
+				vector<gint> row_dh;									
+				vector<vector<gint> > element_w;
+				vector<vector<gint> > element_h;
+				vector<vector<gint> > element_c;			
+				vector<vector<GdkPixmap*> > pixmap_elements;
+				element_w.resize(m.size());
+				element_h.resize(m.size());
+				element_c.resize(m.size());						
+				pixmap_elements.resize(m.size());
+				PangoLayout *layout_comma = gtk_widget_create_pango_layout(resultview, NULL);
+				string str;
+				gint comma_w = 0, comma_h = 0;
+				MARKUP_STRING(str, CALCULATOR->getComma())
+				pango_layout_set_markup(layout_comma, str.c_str(), -1);		
+				pango_layout_get_pixel_size(layout_comma, &comma_w, &comma_h);
+				for(unsigned int index_r = 0; index_r < m.size(); index_r++) {
+					for(unsigned int index_c = 0; index_c < m[index_r].size(); index_c++) {
+						ctmp = 0;
+						ips_n.wrap = m[index_r][index_c].needsParenthesis(po, ips_n, m, index_r + 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+						pixmap_elements[index_r].push_back(draw_structure(m[index_r][index_c], po, ips_n, &ctmp));
+						gdk_drawable_get_size(GDK_DRAWABLE(pixmap_elements[index_r][index_c]), &wtmp, &htmp);
+						element_w[index_r].push_back(wtmp);
+						element_h[index_r].push_back(htmp);
+						element_c[index_r].push_back(ctmp);					
+						if(index_r == 0) {
+							col_w.push_back(wtmp);
+						} else if(wtmp > col_w[index_c]) {
+							col_w[index_c] = wtmp;
+						}
+						if(index_c == 0) {
+							row_uh.push_back(htmp - ctmp);
+							row_dh.push_back(ctmp);
+						} else {
+							if(ctmp > row_dh[index_r]) {
+								row_dh[index_r] = ctmp;
+							}
+							if(htmp - ctmp > row_uh[index_r]) {
+								row_uh[index_r] = htmp - ctmp;
+							}						
+						}
+					}
+					row_h.push_back(row_uh[index_r] + row_dh[index_r]);
+					h += row_h[index_r];
+					if(index_r != 0) {
+						h += 4;
+					}
+				}	
+				h += 4;
+				for(unsigned int i = 0; i < col_w.size(); i++) {
+					w += col_w[i];
+					if(i != 0) {
+						w += space_w * 2;
+					}
+				}
+	
+				gint wlr, wll;
+				wll = 10;
+				wlr = 10;
+			
+				w += wlr + 1;
+				w += wll + 3;
+				central_point = h / 2;
+				pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
+				draw_background(pixmap, w, h);
+				GdkGC *line_gc = gdk_gc_new(GDK_DRAWABLE(pixmap));
+				gdk_gc_copy(line_gc, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)]);
+				gdk_gc_set_line_attributes(line_gc, 2, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
+				w = 1;
+				gdk_draw_line(GDK_DRAWABLE(pixmap), line_gc, w, 1, w, h - 1);
+				gdk_draw_line(GDK_DRAWABLE(pixmap), line_gc, w, 1, w + 7, 1);
+				gdk_draw_line(GDK_DRAWABLE(pixmap), line_gc, w, h - 1, w + 7, h - 1);
+				h = 2;
+				for(unsigned int index_r = 0; index_r < m.size(); index_r++) {
+					w = wll + 1;
+					for(unsigned int index_c = 0; index_c < m[index_r].size(); index_c++) {
+						gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_elements[index_r][index_c]), 0, 0, w + (col_w[index_c] - element_w[index_r][index_c]), h + row_uh[index_r] - (element_h[index_r][index_c] - element_c[index_r][index_c]), -1, -1);				
+						w += col_w[index_c];
+						if(index_c != m[index_r].size() - 1) {
+							w += space_w * 2;
+						}
+						g_object_unref(pixmap_elements[index_r][index_c]);
+					}
+					h += row_h[index_r];
+					h += 4;
+				}
+				h -= 4;
+				h += 2;
+				//w += 1;
+				w += wll - 7;
+				gdk_draw_line(GDK_DRAWABLE(pixmap), line_gc, w + 7, 1, w + 7, h - 1);
+				gdk_draw_line(GDK_DRAWABLE(pixmap), line_gc, w, 1, w + 7, 1);
+				gdk_draw_line(GDK_DRAWABLE(pixmap), line_gc, w, h - 1, w + 7, h - 1);
+				g_object_unref(layout_comma);
+				gdk_gc_unref(line_gc);
+				break;
+			}
+			
+			gint comma_w, comma_h, uh = 0, dh = 0, h = 0, w = 0, ctmp, htmp, wtmp, arc_w, arc_h;
+			vector<GdkPixmap*> pixmap_args;
+			vector<gint> hpa;
+			vector<gint> cpa;			
+			vector<gint> wpa;
+			
+			CALCULATE_SPACE_W
+			PangoLayout *layout_comma = gtk_widget_create_pango_layout(resultview, NULL);
+			string str, func_str;
+			MARKUP_STRING(str, CALCULATOR->getComma())
+			pango_layout_set_markup(layout_comma, str.c_str(), -1);		
+			pango_layout_get_pixel_size(layout_comma, &comma_w, &comma_h);
+
+			for(unsigned int index = 0; index < m.size(); index++) {
+				ips_n.wrap = m[index].needsParenthesis(po, ips_n, m, index + 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+				pixmap_args.push_back(draw_structure(m[index], po, ips_n, &ctmp));
+				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_args[index]), &wtmp, &htmp);
+				hpa.push_back(htmp);
+				cpa.push_back(ctmp);				
+				wpa.push_back(wtmp);
+				if(index > 0) {
+					w += comma_w;
+					w += space_w;
+				}				
+				w += wtmp;
+				if(ctmp > dh) {
+					dh = ctmp;
+				}
+				if(htmp - ctmp > uh) {
+					uh = htmp - ctmp;
+				}				
+			}
+			
+			uh += 2;
+			dh += 2;
+			if(uh > dh) dh = uh;
+			else uh = dh;
+			h = uh + dh;
+			central_point = dh;
+			arc_h = dh * 2;
+			arc_w = arc_h / 6;
+			w += arc_w * 2 + 2;
+			w += 2;
+
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
+			draw_background(pixmap, w, h);
+			
+			GdkGC *line_gc = gdk_gc_new(GDK_DRAWABLE(pixmap));
+			gdk_gc_copy(line_gc, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)]);
+			if(ips.power_depth > 0) {
+				gdk_gc_set_line_attributes(line_gc, 1, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
+			} else {
+				gdk_gc_set_line_attributes(line_gc, 2, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
+			}
+			w = 0;
+			gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w + 1, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);	
+			w += arc_w + 2;
+			for(unsigned int index = 0; index < m.size(); index++) {
+				if(index > 0) {
+					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - comma_h / 2 - comma_h % 2, layout_comma);	
+					w += comma_w;
+					w += space_w;
+				}
+				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_args[index]), 0, 0, w, uh - (hpa[index] - cpa[index]), -1, -1);
+				w += wpa[index];
+				g_object_unref(pixmap_args[index]);
+			}	
+			gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w - arc_w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 270 * 64, 180 * 64);			
+			w += arc_w;				
+			
+			g_object_unref(layout_comma);
+			gdk_gc_unref(line_gc);
+
+			break;
+		}
+		case STRUCT_UNIT: {
+			string str, str2;
+			if(ips.power_depth > 0) {
+				str = TEXT_TAGS_SMALL;
+			} else {
+				str = TEXT_TAGS;
+			}
+			if(po.abbreviate_units && m.unit()->name().find("_") == string::npos) {
+				if(m.prefix()) str += m.prefix()->shortName();
+				str += m.unit()->shortName();
+			} else if(m.isPlural()) {
+				if(m.prefix()) str += m.prefix()->longName();
+				str += m.unit()->plural();
+			} else {
+				if(m.prefix()) str += m.prefix()->longName();
+				str += m.unit()->singular();
+			}
+			gsub("_", " ", str);
+			if(ips.power_depth > 0) {
+				str += TEXT_TAGS_SMALL_END;
+			} else {
+				str += TEXT_TAGS_END;
+			}		
+			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
+			pango_layout_set_markup(layout, str.c_str(), -1);
+			pango_layout_get_pixel_size(layout, &w, &h);
+			central_point = h / 2;
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
+			draw_background(pixmap, w, h);
+			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 0, 0, layout);	
+			g_object_unref(layout);
+			break;
+		}
+		case STRUCT_VARIABLE: {
+			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
+			string str;
+			if(ips.power_depth > 0) {
+				str = "<i>" TEXT_TAGS_SMALL;
+			} else {
+				str = "<i>" TEXT_TAGS;
+			}
+			str += m.variable()->name();
+			if(ips.power_depth > 0) {
+				str += TEXT_TAGS_SMALL_END "</i>";
+			} else {
+				str += TEXT_TAGS_END "</i>";
+			}
+			pango_layout_set_markup(layout, str.c_str(), -1);
+			PangoRectangle rect;
+			pango_layout_get_pixel_size(layout, &w, &h);
+			pango_layout_get_pixel_extents(layout, &rect, NULL);
+			w = rect.width;
+			w += 1;
+			central_point = h / 2;
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);	
+			draw_background(pixmap, w, h);
+			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
+			g_object_unref(layout);
+			break;
+		}
+		case STRUCT_FUNCTION: {
+
+			ips_n.depth++;
+			
+			gint comma_w, comma_h, function_w, function_h, uh, dh, h, w, ctmp, htmp, wtmp, arc_w, arc_h;
+			vector<GdkPixmap*> pixmap_args;
+			vector<gint> hpa;
+			vector<gint> cpa;			
+			vector<gint> wpa;
+			
+			CALCULATE_SPACE_W
+			PangoLayout *layout_comma = gtk_widget_create_pango_layout(resultview, NULL);
+			string str, func_str;
+			MARKUP_STRING(str, CALCULATOR->getComma())
+			pango_layout_set_markup(layout_comma, str.c_str(), -1);		
+			pango_layout_get_pixel_size(layout_comma, &comma_w, &comma_h);
+			PangoLayout *layout_function = gtk_widget_create_pango_layout(resultview, NULL);
+			func_str = m.function()->name();
+			gsub("_", " ", func_str);
+			MARKUP_STRING(str, func_str)
+			pango_layout_set_markup(layout_function, str.c_str(), -1);			
+			pango_layout_get_pixel_size(layout_function, &function_w, &function_h);
+			w = function_w + 1;
+			uh = function_h / 2 + function_h % 2;
+			dh = function_h / 2;
+
+			for(unsigned int index = 0; index < m.size(); index++) {
+				ips_n.wrap = m[index].needsParenthesis(po, ips_n, m, index + 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+				pixmap_args.push_back(draw_structure(m[index], po, ips_n, &ctmp));
+				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_args[index]), &wtmp, &htmp);
+				hpa.push_back(htmp);
+				cpa.push_back(ctmp);				
+				wpa.push_back(wtmp);
+				if(index > 0) {
+					w += comma_w;
+					w += space_w;
+				}				
+				w += wtmp;
+				if(ctmp > dh) {
+					dh = ctmp;
+				}
+				if(htmp - ctmp > uh) {
+					uh = htmp - ctmp;
+				}				
+			}
+			
+			uh += 2;
+			dh += 2;
+			if(uh > dh) dh = uh;
+			else uh = dh;
+			h = uh + dh;
+			central_point = dh;
+			arc_h = dh * 2;
+			arc_w = arc_h / 6;
+			w += arc_w * 2 + 2;
+			w += 2;
+
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
+			draw_background(pixmap, w, h);
+			
+			GdkGC *line_gc = gdk_gc_new(GDK_DRAWABLE(pixmap));
+			gdk_gc_copy(line_gc, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)]);
+			if(ips.power_depth > 0) {
+				gdk_gc_set_line_attributes(line_gc, 1, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
+			} else {
+				gdk_gc_set_line_attributes(line_gc, 2, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
+			}
+			w = 0;
+			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - function_h / 2 - function_h % 2, layout_function);	
+			w += function_w + 1;
+			gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w + 1, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);	
+			w += arc_w + 2;
+			for(unsigned int index = 0; index < m.size(); index++) {
+				if(index > 0) {
+					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - comma_h / 2 - comma_h % 2, layout_comma);	
+					w += comma_w;
+					w += space_w;
+				}
+				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_args[index]), 0, 0, w, uh - (hpa[index] - cpa[index]), -1, -1);
+				w += wpa[index];
+				g_object_unref(pixmap_args[index]);
+			}	
+			gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w - arc_w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 270 * 64, 180 * 64);			
+			w += arc_w;				
+			
+			g_object_unref(layout_comma);
+			g_object_unref(layout_function);
+			gdk_gc_unref(line_gc);
+
+			break;
+		}
+		case STRUCT_UNDEFINED: {
+			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
+			string str;
+			if(ips.power_depth > 0) {
+				str = TEXT_TAGS_SMALL;
+			} else {
+				str = TEXT_TAGS;
+			}
+			str += _("undefined");
+			if(ips.power_depth > 0) {
+				str += TEXT_TAGS_SMALL_END;
+			} else {
+				str += TEXT_TAGS_END;
+			}
+			pango_layout_set_markup(layout, str.c_str(), -1);
+			PangoRectangle rect;
+			pango_layout_get_pixel_size(layout, &w, &h);
+			pango_layout_get_pixel_extents(layout, &rect, NULL);
+			w = rect.width;
+			w += 1;
+			central_point = h / 2;
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);	
+			draw_background(pixmap, w, h);
+			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
+			g_object_unref(layout);
+			break;
+		}
+	}
 	if(ips.wrap && pixmap) {
 		gint w, h, base_h, base_w;
 		gdk_drawable_get_size(GDK_DRAWABLE(pixmap), &base_w, &base_h);
@@ -1839,7 +2861,7 @@ GdkPixmap *draw_structure(MathStructure *m, PrintOptions po = default_print_opti
 		GdkGC *line_gc = gdk_gc_new(GDK_DRAWABLE(pixmap));
 		gdk_gc_copy(line_gc, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)]);
 		w = 1;
-		if(in_power) {
+		if(ips.power_depth > 0) {
 			gdk_gc_set_line_attributes(line_gc, 1, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
 		} else {
 			gdk_gc_set_line_attributes(line_gc, 2, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
@@ -1851,14 +2873,13 @@ GdkPixmap *draw_structure(MathStructure *m, PrintOptions po = default_print_opti
 		gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w - arc_base_w, 0, arc_base_w * 2, h, 270 * 64, 180 * 64);			
 		g_object_unref(pixmap_old);
 		gdk_gc_unref(line_gc);
-//		if(has_parenthesis) *has_parenthesis = true;
 	}
 	if(ips.depth == 0 && pixmap) {
 		gint w, h, wle, hle, w_new, h_new;
 		gdk_drawable_get_size(GDK_DRAWABLE(pixmap), &w, &h);			
 		GdkPixmap *pixmap_old = pixmap;
 		PangoLayout *layout_equals = gtk_widget_create_pango_layout(resultview, NULL);
-		if(m->isApproximate()) {
+		if(*po.is_approximate) {
 			if(po.use_unicode_signs) {
 				pango_layout_set_markup(layout_equals, TEXT_TAGS SIGN_ALMOST_EQUAL " " TEXT_TAGS_END, -1);
 			} else {
@@ -1910,9 +2931,11 @@ void *view_proc(void *) {
 
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);	
-printf("A\n");
-	result_text = mstruct->print(getFormat(false, tmp_prefix, &tmp_in_exact));	
-printf("B\n");	
+
+	MathStructure m(*mstruct);
+	printops.allow_non_usable = false;
+	m.format(printops);
+	result_text = m.print(printops);	
 	if(result_text.length() > 1500) {
 		PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
 		pango_layout_set_markup(layout, _("result is too long\nsee history"), -1);
@@ -1922,7 +2945,7 @@ printf("B\n");
 		gdk_draw_rectangle(tmp_pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
 		gdk_draw_layout(GDK_DRAWABLE(tmp_pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
 		g_object_unref(layout);
-		tmp_in_exact = false;
+		*printops.is_approximate = false;
 	} else if(result_text == _("aborted")) {
 		PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
 		pango_layout_set_markup(layout, _("calculation was aborted"), -1);
@@ -1932,11 +2955,11 @@ printf("B\n");
 		gdk_draw_rectangle(tmp_pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
 		gdk_draw_layout(GDK_DRAWABLE(tmp_pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
 		g_object_unref(layout);
-		tmp_in_exact = false;
+		*printops.is_approximate = false;
 	} else {
-	printf("C\n");
-		tmp_pixmap = draw_structure(mstruct, getFormat(true, tmp_prefix, &tmp_in_exact));
-printf("D\n");		
+		printops.allow_non_usable = true;
+		tmp_pixmap = draw_structure(m, printops);
+		printops.allow_non_usable = false;
 	}
 	b_busy = false;
 	
@@ -1994,9 +3017,8 @@ void setResult(Prefix *prefix = NULL, bool update_history = true) {
 	}
 	pixbuf_result = NULL;
 
-	tmp_prefix = prefix;
+	printops.prefix = prefix;
 	tmp_pixmap = NULL;
-	tmp_in_exact = false;
 	
 	CALCULATOR->saveState();
 
@@ -2045,7 +3067,7 @@ void setResult(Prefix *prefix = NULL, bool update_history = true) {
 		gdk_draw_rectangle(tmp_pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
 		gdk_draw_layout(GDK_DRAWABLE(tmp_pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
 		g_object_unref(layout);
-		tmp_in_exact = false;
+		*printops.is_approximate = false;
 	}
 	gdk_drawable_get_size(GDK_DRAWABLE(tmp_pixmap), &w, &h);	
 	gtk_widget_get_size_request(resultview, &wr, &hr);	
@@ -2101,10 +3123,10 @@ void setResult(Prefix *prefix = NULL, bool update_history = true) {
 		if(result_text.length() > 500000) {
 			result_text = "(...)";
 		}
-		if(!tmp_in_exact) {
+		if(!(*printops.is_approximate)) {
 			gtk_text_buffer_insert(tb, &iter, "=", -1);	
 		} else {
-			if(use_unicode_signs) {
+			if(printops.use_unicode_signs) {
 				gtk_text_buffer_insert(tb, &iter, SIGN_ALMOST_EQUAL, -1);		
 			} else {
 				string str_approx = "= ";
@@ -2119,7 +3141,7 @@ void setResult(Prefix *prefix = NULL, bool update_history = true) {
 			CALCULATOR->nextError();
 		}
 	}
-	
+	printops.prefix = NULL;
 	b_busy = false;
 	display_errors();
 }
@@ -2158,7 +3180,7 @@ void execute_expression() {
 
 	b_busy = true;
 	gulong handler_id = g_signal_connect(G_OBJECT(glade_xml_get_widget (main_glade, "main_window")), "event", G_CALLBACK(on_event), NULL);
-	CALCULATOR->calculate(*mstruct, CALCULATOR->unlocalizeExpression(str), 0);
+	CALCULATOR->calculate(*mstruct, CALCULATOR->unlocalizeExpression(str), 0, evalops);
 	int i = 0;
 	while(CALCULATOR->busy() && i < 50) {
 		usleep(10000);
@@ -2648,11 +3670,11 @@ void insert_variable(GtkMenuItem *w, gpointer user_data) {
 }
 //from prefix menu
 void insert_prefix(GtkMenuItem *w, gpointer user_data) {
-	insert_text(((Prefix*) user_data)->name(use_short_units).c_str());
+	insert_text(((Prefix*) user_data)->name(printops.abbreviate_units).c_str());
 }
 //from unit menu
 void insert_unit(GtkMenuItem *w, gpointer user_data) {
-	if(use_short_units) {
+	if(printops.abbreviate_units) {
 		insert_text(((Unit*) user_data)->shortName().c_str());
 	} else {
 		insert_text(((Unit*) user_data)->plural().c_str());
@@ -2728,7 +3750,7 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 				if(au->firstBaseUnit()->unitType() == COMPOSITE_UNIT) {
 					gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base")), ((CompositeUnit*) (au->firstBaseUnit()))->referenceName().c_str());
 				} else {
-					if(use_short_units)
+					if(printops.abbreviate_units)
 						gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base")), au->firstBaseUnit()->shortName().c_str());
 					else
 						gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base")), au->firstBaseUnit()->singular().c_str());	
@@ -2745,7 +3767,7 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 				break;
 			}
 			case COMPOSITE_UNIT: {
-				if(use_short_units) {
+				if(printops.abbreviate_units) {
 					gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base")), u->shortName().c_str());
 				} else {
 					gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base")), u->singular().c_str());
@@ -3232,13 +4254,127 @@ void convert_to_unit(GtkMenuItem *w, gpointer user_data)
 	gtk_widget_grab_focus(expression);
 }
 
+void edit_unknown(const char *category, Variable *var, GtkWidget *win) {
+
+	if(var != NULL && var->isKnown()) {
+		edit_variable(category, var, NULL, win);
+		return;
+	}
+	
+	UnknownVariable *v = (UnknownVariable*) var;
+	
+	GtkWidget *dialog = get_unknown_edit_dialog();
+	if(win) gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(win));
+	
+	if(v) {
+		if(v->isLocal())
+			gtk_window_set_title(GTK_WINDOW(dialog), _("Edit Unknown Variable"));
+		else
+			gtk_window_set_title(GTK_WINDOW(dialog), _("Edit Unknown Variable (global)"));
+	} else {
+		gtk_window_set_title(GTK_WINDOW(dialog), _("New Unknown Variable"));
+	}
+	
+	if(v) {
+		//fill in original parameters
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_name")), v->name().c_str());
+		gtk_widget_set_sensitive(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_name"), !v->isBuiltin());
+		gtk_widget_set_sensitive(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_type"), !v->isBuiltin());
+		gtk_widget_set_sensitive(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_sign"), !v->isBuiltin());
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_category")), v->category().c_str());
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_desc")), v->title(false).c_str());
+		if(v->assumptions()) {
+			gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_type")), v->assumptions()->numberType());
+			gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_sign")), v->assumptions()->sign());
+		} else {
+			gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_type")), ASSUMPTION_NUMBER_NONE);
+			gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_sign")), ASSUMPTION_SIGN_UNKNOWN);
+		}
+	} else {
+		gtk_widget_set_sensitive(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_name"), TRUE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_type"), TRUE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_sign"), TRUE);
+
+		//fill in default values
+		string v_name = CALCULATOR->getName();
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_name")), v_name.c_str());
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_category")), category);
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_desc")), "");
+		gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_type")), ASSUMPTION_NUMBER_NONE);
+		gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_sign")), ASSUMPTION_SIGN_UNKNOWN);
+
+	}
+
+run_unknown_edit_dialog:
+	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
+		//clicked "OK"
+		string str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_name")));
+		remove_blank_ends(str);
+		if(str.empty()) {
+			//no name -- open dialog again
+			show_message(_("Empty name field."), dialog);
+			goto run_unknown_edit_dialog;
+		}
+
+		//unknown with the same name exists -- overwrite or open dialog again
+		if((!v || str != v->name()) && CALCULATOR->nameTaken(str, v) && !ask_question(_("An unit or variable with the same name already exists.\nDo you want to overwrite it?"), dialog)) {
+			goto run_unknown_edit_dialog;
+		}
+		if(!v) {
+			//no need to create a new unknown when a unknown with the same name exists
+			var = CALCULATOR->getVariable(str);
+			if(var && !var->isKnown()) v = (UnknownVariable*) var;
+		}
+		if(v) {
+			//update existing unknown
+			v->setLocal(true);
+			if(!v->isBuiltin()) {
+				if(!v->assumptions()) v->setAssumptions(new Assumptions());
+				v->assumptions()->setNumberType((AssumptionNumberType) gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_type"))));
+				v->assumptions()->setSign((AssumptionSign) gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_sign"))));
+				v->setName(str);
+			}
+			v->setCategory(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_category"))));
+			v->setTitle(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_desc"))));
+		} else {
+			//new unknown
+			v = (UnknownVariable*) CALCULATOR->addVariable(new UnknownVariable(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_category"))), str, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_desc"))), true));
+			if(!v->assumptions()) v->setAssumptions(new Assumptions());
+			v->assumptions()->setNumberType((AssumptionNumberType) gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_type"))));
+			v->assumptions()->setSign((AssumptionSign) gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_sign"))));
+		}
+		if(v) {
+			//select the new unknown
+			selected_variable = v;
+			if(!v->isActive()) {
+				selected_variable_category = _("Inactive");
+			} else if(v->category().empty()) {
+				selected_variable_category = _("Uncategorized");
+			} else {
+				selected_variable_category = "/";
+				selected_variable_category += v->category();
+			}
+		}
+		update_vmenu();
+		variable_inserted(v);
+	}
+	gtk_widget_hide(dialog);
+	gtk_widget_grab_focus(expression);
+}
+
 /*
 	display edit/new variable dialog
 	creates new variable if v == NULL, mstruct_ is forced value, win is parent window
 */
-void edit_variable(const char *category, Variable *v, MathStructure *mstruct_, GtkWidget *win) {
+void edit_variable(const char *category, Variable *var, MathStructure *mstruct_, GtkWidget *win) {
 
-/*	if((v != NULL && v->get().isVector() && (!mstruct_ || mstruct_->isVector())) || (mstruct_ && !v && mstruct_->isVector())) {
+	if(var != NULL && !var->isKnown()) {
+		edit_unknown(category, var, win);
+		return;
+	}
+	KnownVariable *v = (KnownVariable*) var;
+
+	if((v != NULL && v->get().isVector() && (!mstruct_ || mstruct_->isVector())) || (mstruct_ && !v && mstruct_->isVector())) {
 		edit_matrix(category, v, mstruct_, win);
 		return;
 	}
@@ -3260,13 +4396,12 @@ void edit_variable(const char *category, Variable *v, MathStructure *mstruct_, G
 	if(v) {
 		//fill in original parameters
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_name")), v->name().c_str());
-		bool in_exact = false;
-		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_value")), get_value_string(v->get(), false, NULL, &in_exact).c_str());
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (variableedit_glade, "variable_edit_checkbutton_exact")), !in_exact);
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_value")), get_value_string(v->get(), false, NULL).c_str());
+		bool b_approx = *printops.is_approximate || v->isApproximate();
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (variableedit_glade, "variable_edit_checkbutton_exact")), !b_approx);
 		gtk_widget_set_sensitive(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_name"), !v->isBuiltin());
 		gtk_widget_set_sensitive(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_value"), !v->isBuiltin());
 		gtk_widget_set_sensitive(glade_xml_get_widget (variableedit_glade, "variable_edit_checkbutton_exact"), !v->isBuiltin());
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (variableedit_glade, "variable_edit_checkbutton_exact")), !v->isApproximate());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_category")), v->category().c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_desc")), v->title(false).c_str());
 	} else {
@@ -3315,14 +4450,15 @@ run_variable_edit_dialog:
 		}
 		if(!v) {
 			//no need to create a new variable when a variable with the same name exists
-			v = CALCULATOR->getVariable(str);
+			var = CALCULATOR->getVariable(str);
+			if(var && !var->isKnown()) v = (KnownVariable*) var;
 		}
 		if(v) {
 			//update existing variable
 			v->setLocal(true);
 			if(!v->isBuiltin()) {
 				if(mstruct_) {
-					v->set(mstruct_);
+					v->set(*mstruct_);
 				} else {
 					v->set(str2);
 				}
@@ -3335,9 +4471,9 @@ run_variable_edit_dialog:
 			//new variable
 			if(mstruct_) {
 				//forced value
-				v = CALCULATOR->addVariable(new Variable(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_category"))), str, mstruct_, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_desc"))), true));
+				v = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_category"))), str, *mstruct_, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_desc"))), true));
 			} else {
-				v = CALCULATOR->addVariable(new Variable(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_category"))), str, str2, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_desc"))), true));
+				v = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_category"))), str, str2, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_desc"))), true));
 				v->setApproximate(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (variableedit_glade, "variable_edit_checkbutton_exact"))));
 			}
 		}
@@ -3357,16 +4493,22 @@ run_variable_edit_dialog:
 		variable_inserted(v);
 	}
 	gtk_widget_hide(dialog);
-	gtk_widget_grab_focus(expression);*/
+	gtk_widget_grab_focus(expression);
 }
 
 /*
 	display edit/new matrix dialog
 	creates new matrix if v == NULL, mstruct_ is forced value, win is parent window
 */
-void edit_matrix(const char *category, Variable *v, MathStructure *mstruct_, GtkWidget *win, gboolean create_vector) {
+void edit_matrix(const char *category, Variable *var, MathStructure *mstruct_, GtkWidget *win, gboolean create_vector) {
 
-/*	if((v && !v->get().isVector()) || (mstruct_ && !mstruct_->isVector())) {
+	if(var != NULL && !var->isKnown()) {
+		edit_unknown(category, var, win);
+		return;
+	}
+	KnownVariable *v = (KnownVariable*) var;
+
+	if((v && !v->get().isVector()) || (mstruct_ && !mstruct_->isVector())) {
 		edit_variable(category, v, mstruct_, win);
 		return;
 	}
@@ -3374,11 +4516,11 @@ void edit_matrix(const char *category, Variable *v, MathStructure *mstruct_, Gtk
 	GtkWidget *dialog = get_matrix_edit_dialog();
 	if(win) gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(win));
 	if(mstruct_) {
-		create_vector = mstruct_->matrix()->isVector();
+		create_vector = !mstruct_->isMatrix();
 	} else if(v) {
-		create_vector = v->get()->matrix()->isVector();	
+		create_vector = !v->get().isMatrix();	
 	}
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (matrixedit_glade, "matrix_edit_radiobutton_vector")), create_vector);				
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (matrixedit_glade, "matrix_edit_radiobutton_vector")), create_vector);
 
 	if(create_vector) {
 		if(v) {
@@ -3402,10 +4544,13 @@ void edit_matrix(const char *category, Variable *v, MathStructure *mstruct_, Gtk
 	gtk_widget_set_sensitive(glade_xml_get_widget (matrixedit_glade, "matrix_edit_button_ok"), TRUE);		
 
 	int r = 4, c = 4;
-	Vector *old_vctr = NULL;
+	const MathStructure *old_vctr = NULL;
 	if(v) {
 		if(create_vector) {
-			old_vctr = (Vector*) v->get()->matrix();
+			old_vctr = &v->get();
+		} else {
+			c = v->get().columns();
+			r = v->get().rows();
 		}	
 		//fill in original parameters
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_name")), v->name().c_str());
@@ -3417,9 +4562,7 @@ void edit_matrix(const char *category, Variable *v, MathStructure *mstruct_, Gtk
 		gtk_widget_set_sensitive(glade_xml_get_widget (matrixedit_glade, "matrix_edit_radiobutton_matrix"), !v->isBuiltin());						
 		gtk_widget_set_sensitive(glade_xml_get_widget (matrixedit_glade, "matrix_edit_radiobutton_vector"), !v->isBuiltin());								
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_category")), v->category().c_str());
-		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_desc")), v->title(false).c_str());
-		c = v->get()->matrix()->columns();
-		r = v->get()->matrix()->rows();
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_desc")), v->title(false).c_str());	
 	} else {
 		gtk_widget_set_sensitive(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_name"), TRUE);
 		gtk_widget_set_sensitive(glade_xml_get_widget (matrixedit_glade, "matrix_edit_spinbutton_rows"), TRUE);		
@@ -3438,10 +4581,11 @@ void edit_matrix(const char *category, Variable *v, MathStructure *mstruct_, Gtk
 	if(mstruct_) {
 		//forced value
 		if(create_vector) {
-			old_vctr = (Vector*) mstruct_->matrix();
+			old_vctr = mstruct_;
+		} else {
+			c = mstruct_->columns();
+			r = mstruct_->rows();
 		}
-		c = mstruct_->matrix()->columns();
-		r = mstruct_->matrix()->rows();				
 		gtk_widget_set_sensitive(glade_xml_get_widget (matrixedit_glade, "matrix_edit_spinbutton_rows"), FALSE);		
 		gtk_widget_set_sensitive(glade_xml_get_widget (matrixedit_glade, "matrix_edit_spinbutton_columns"), FALSE);				
 		gtk_widget_set_sensitive(glade_xml_get_widget (matrixedit_glade, "matrix_edit_table_elements"), FALSE);						
@@ -3476,15 +4620,15 @@ void edit_matrix(const char *category, Variable *v, MathStructure *mstruct_, Gtk
 		for(unsigned int index_c = 0; index_c < element_entries[index_r].size(); index_c++) {
 			if(create_vector) {
 				if(old_vctr && index_r * element_entries[index_r].size() + index_c < old_vctr->components()) {
-					gtk_entry_set_text(GTK_ENTRY(element_entries[index_r][index_c]), old_vctr->get(index_r * element_entries[index_r].size() + index_c + 1)->print(po).c_str());
+					gtk_entry_set_text(GTK_ENTRY(element_entries[index_r][index_c]), old_vctr->getComponent(index_r * element_entries[index_r].size() + index_c + 1)->print(po).c_str());
 				} else {
 					gtk_entry_set_text(GTK_ENTRY(element_entries[index_r][index_c]), "");
 				}
 			} else {
 				if(v) {
-					gtk_entry_set_text(GTK_ENTRY(element_entries[index_r][index_c]), v->get()->matrix()->get(index_r + 1, index_c + 1)->print(po).c_str());
+					gtk_entry_set_text(GTK_ENTRY(element_entries[index_r][index_c]), v->get().getElement(index_r + 1, index_c + 1)->print(po).c_str());
 				} else if(mstruct_) {
-					gtk_entry_set_text(GTK_ENTRY(element_entries[index_r][index_c]), mstruct_->matrix()->get(index_r + 1, index_c + 1)->print(po).c_str());			
+					gtk_entry_set_text(GTK_ENTRY(element_entries[index_r][index_c]), mstruct_->getElement(index_r + 1, index_c + 1)->print(po).c_str());			
 				} else {
 					gtk_entry_set_text(GTK_ENTRY(element_entries[index_r][index_c]), "0");
 				}
@@ -3493,7 +4637,7 @@ void edit_matrix(const char *category, Variable *v, MathStructure *mstruct_, Gtk
 	}		
 run_matrix_edit_dialog:
 	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
-		//clicked "OK"
+/*		//clicked "OK"
 		string str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_name")));
 		remove_blank_ends(str);
 		if(str.empty()) {
@@ -3508,7 +4652,8 @@ run_matrix_edit_dialog:
 		}
 		if(!v) {
 			//no need to create a new variable when a variable with the same name exists
-			v = CALCULATOR->getVariable(str);
+			var = CALCULATOR->getVariable(str);
+			if(var && !var->isKnown()) v = (KnownVariable*) var;
 		}
 		Matrix *mtrx;
 		if(!mstruct_) {
@@ -3560,10 +4705,10 @@ run_matrix_edit_dialog:
 			//new variable
 			if(mstruct_) {
 				//forced value
-				v = CALCULATOR->addVariable(new Variable(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_category"))), str, mstruct_, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_desc"))), true));
+				v = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_category"))), str, mstruct_, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_desc"))), true));
 			} else {
 				mstruct_ = new MathStructure(mtrx);
-				v = CALCULATOR->addVariable(new Variable(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_category"))), str, mstruct_, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_desc"))), true));
+				v = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_category"))), str, mstruct_, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_desc"))), true));
 				mstruct_->unref();
 				delete mtrx;
 			}
@@ -3579,12 +4724,12 @@ run_matrix_edit_dialog:
 				selected_variable_category = "/";
 				selected_variable_category += v->category();
 			}
-		}
+		}*/
 		update_vmenu();
 		variable_inserted(v);
 	}
 	gtk_widget_hide(dialog);
-	gtk_widget_grab_focus(expression);*/
+	gtk_widget_grab_focus(expression);
 }
 
 void import_csv_file(GtkWidget *win) {
@@ -3660,6 +4805,11 @@ run_csv_import_dialog:
 void add_as_variable()
 {
 	edit_variable(_("Temporary"), NULL, mstruct, glade_xml_get_widget (main_glade, "main_window"));
+}
+
+void new_unknown(GtkMenuItem *w, gpointer user_data)
+{
+	edit_unknown(_("My Variables"), NULL, glade_xml_get_widget (main_glade, "main_window"));
 }
 
 /*
@@ -3862,8 +5012,7 @@ void convert_in_wUnits(int toFrom) {
 	//units
 	Unit *uFrom = get_selected_unit();
 	Unit *uTo = get_selected_to_unit();
-	bool b_always_exact = CALCULATOR->alwaysExact();
-	CALCULATOR->setAlwaysExact(false);
+	
 	if(uFrom && uTo) {
 		//values
 		const gchar *fromValue = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (units_glade, "units_entry_from_val")));
@@ -3889,7 +5038,6 @@ void convert_in_wUnits(int toFrom) {
 			}
 		}
 	}
-	CALCULATOR->setAlwaysExact(b_always_exact);
 }
 
 /*
@@ -3922,13 +5070,7 @@ void save_mode() {
 	remember current mode
 */
 void set_saved_mode() {
-	saved_use_min_deci = use_min_deci;
-	saved_min_deci = min_deci;
-	saved_use_max_deci = use_max_deci;
-	saved_max_deci = max_deci;	
 	saved_precision = CALCULATOR->getPrecision();
-	saved_display_mode = display_mode;
-	saved_number_base = number_base;
 	saved_angle_unit = CALCULATOR->angleMode();
 	saved_functions_enabled = CALCULATOR->functionsEnabled();
 	saved_variables_enabled = CALCULATOR->variablesEnabled();
@@ -3936,11 +5078,9 @@ void set_saved_mode() {
 	saved_unknownvariables_enabled = CALCULATOR->unknownVariablesEnabled();
 	saved_units_enabled = CALCULATOR->unitsEnabled();
 	saved_hyp_is_on = hyp_is_on;
-	saved_fractional_mode = fractional_mode;
-	saved_use_prefixes = use_prefixes;
-	saved_indicate_infinite_series = indicate_infinite_series;
-	saved_always_exact = CALCULATOR->alwaysExact();
 	saved_in_rpn_mode = CALCULATOR->inRPNMode();
+	saved_printops = printops;
+	saved_evalops = evalops;
 }
 
 /*
@@ -3961,25 +5101,40 @@ void load_preferences() {
 	default_plot_variable = "x";
 	default_plot_color = true;
 
-	use_min_deci = false;
-	min_deci = 0;
-	use_max_deci = false;
-	max_deci = 2;	
-	display_mode = MODE_NORMAL;
-	number_base = 10;
+	printops.is_approximate = new bool(false);
+	printops.prefix = NULL;
+	printops.use_min_decimals = false;
+	printops.use_denominator_prefix = true;
+	printops.min_decimals = 0;
+	printops.use_max_decimals = false;
+	printops.max_decimals = 2;
+	printops.base = 10;
+	printops.min_exp = EXP_PRECISION;
+	printops.negative_exponents = false;
+	printops.indicate_infinite_series = false;
+	printops.number_fraction_format = FRACTION_DECIMAL;
+	printops.abbreviate_units = true;
+	printops.use_unicode_signs = true;
+	printops.use_unit_prefixes = true;
+	printops.spacious = true;
+	printops.short_multiplication = true;
+	printops.place_units_separately = true;
+	printops.use_all_prefixes = false;
+	printops.excessive_parenthesis = false;
+	printops.allow_non_usable = false;
+	
+	evalops.approximation = APPROXIMATION_TRY_EXACT;
+	evalops.sync_units = true;
+	evalops.structuring = STRUCTURING_SIMPLIFY;
+	
 	save_mode_on_exit = true;
 	save_defs_on_exit = true;
-	indicate_infinite_series = false;
 	hyp_is_on = false;
-	fractional_mode = FRACTION_DECIMAL;
 	use_custom_result_font = false;
 	use_custom_expression_font = false;
 	custom_result_font = "";
 	custom_expression_font = "";
 	show_buttons = true;
-	use_short_units = true;
-	use_unicode_signs = true;
-	use_prefixes = true;
 	load_global_defs = true;
 	fetch_exchange_rates_at_startup = false;
 	first_time = false;
@@ -4018,29 +5173,75 @@ void load_preferences() {
 				else if(svar == "show_buttons")
 					show_buttons = v;
 				else if(svar == "min_deci")
-					min_deci = v;
+					printops.min_decimals = v;
 				else if(svar == "use_min_deci")
-					use_min_deci = v;
+					printops.use_min_decimals = v;
 				else if(svar == "max_deci")
-					max_deci = v;
+					printops.max_decimals = v;
 				else if(svar == "use_max_deci")
-					use_max_deci = v;					
+					printops.use_max_decimals = v;					
 				else if(svar == "precision")
 					CALCULATOR->setPrecision(v);
-				else if(svar == "display_mode")
-					display_mode = v;
-				else if(svar == "use_prefixes")
-					use_prefixes = v;					
-				else if(svar == "fractional_mode")
-					fractional_mode = (NumberFractionFormat) v;					
+				else if(svar == "min_exp")
+					printops.min_exp = v;
+				else if(svar == "negative_exponentes")
+					printops.negative_exponents = v;	
+				else if(svar == "spacious")
+					printops.spacious = v;	
+				else if(svar == "excessive_parenthesis")
+					printops.excessive_parenthesis = v;
+				else if(svar == "short_multiplication")
+					printops.short_multiplication = v;
+				else if(svar == "place_units_separately")
+					printops.place_units_separately = v;
+				else if(svar == "display_mode") {	//obsolete
+					switch(v) {
+						case 1: {
+							printops.min_exp = EXP_PRECISION;
+							printops.negative_exponents = false;
+							break;
+						}
+						case 2: {
+							printops.min_exp = EXP_SCIENTIFIC;
+							printops.negative_exponents = true;
+							break;
+						}
+						case 3: {
+							printops.min_exp = EXP_PURE;
+							printops.negative_exponents = true;
+							break;
+						}
+						case 4: {
+							printops.min_exp = EXP_NONE;
+							printops.negative_exponents = false;
+							break;
+						}
+					}
+				} else if(svar == "use_prefixes")
+					printops.use_unit_prefixes = v;
+				else if(svar == "fractional_mode") {	//obsolete
+					switch(v) {
+						case 1: {
+							printops.number_fraction_format = FRACTION_DECIMAL;
+							break;
+						}
+						case 2: {
+							printops.number_fraction_format = FRACTION_COMBINED;
+							break;
+						}
+						case 3: {
+							printops.number_fraction_format = FRACTION_FRACTIONAL;
+							break;
+						}
+					}
+				} else if(svar == "number_fraction_format")
+					printops.number_fraction_format = (NumberFractionFormat) v;					
 				else if(svar == "number_base")
-					number_base = v;
+					printops.base = v;
 				else if(svar == "angle_unit")
 					CALCULATOR->angleMode(v);
 				else if(svar == "hyp_is_on")
 					hyp_is_on = v;
-				else if(svar == "multiple_roots_enabled")
-					CALCULATOR->setMultipleRootsEnabled(v);					
 				else if(svar == "functions_enabled")
 					CALCULATOR->setFunctionsEnabled(v);
 				else if(svar == "variables_enabled")
@@ -4052,13 +5253,13 @@ void load_preferences() {
 				else if(svar == "units_enabled")
 					CALCULATOR->setUnitsEnabled(v);
 				else if(svar == "use_short_units")
-					use_short_units = v;
+					printops.abbreviate_units = v;
 				else if(svar == "all_prefixes_enabled")
-					CALCULATOR->setAllPrefixesEnabled(v);	
+					printops.use_all_prefixes = v;
 				else if(svar == "denominator_prefix_enabled")
-					CALCULATOR->setDenominatorPrefixEnabled(v);		
+					printops.use_denominator_prefix = v;
 				else if(svar == "use_unicode_signs")
-					use_unicode_signs = v;	
+					printops.use_unicode_signs = v;	
 				else if(svar == "use_custom_result_font")
 					use_custom_result_font = v;
 				else if(svar == "use_custom_expression_font")
@@ -4068,9 +5269,11 @@ void load_preferences() {
 				else if(svar == "custom_expression_font")
 					custom_expression_font = svalue;	
 				else if(svar == "indicate_infinite_series")
-					indicate_infinite_series = v;											
-				else if(svar == "always_exact")
-					CALCULATOR->setAlwaysExact(v);					
+					printops.indicate_infinite_series = v;											
+				else if(svar == "always_exact")		//obsolete
+					evalops.approximation = APPROXIMATION_EXACT;
+				else if(svar == "approximation")
+					evalops.approximation = (ApproximationMode) v;
 				else if(svar == "in_rpn_mode")
 					CALCULATOR->setRPNMode(v);
 				else if(svar == "recent_functions") {
@@ -4213,11 +5416,11 @@ void save_preferences(bool mode)
 #else
 	fprintf(file, "show_buttons=%i\n", GTK_WIDGET_VISIBLE(glade_xml_get_widget (main_glade, "buttons")));
 #endif
-	fprintf(file, "use_short_units=%i\n", use_short_units);
-	fprintf(file, "all_prefixes_enabled=%i\n", CALCULATOR->allPrefixesEnabled());
-	fprintf(file, "denominator_prefix_enabled=%i\n", CALCULATOR->denominatorPrefixEnabled());
-	fprintf(file, "multiple_roots_enabled=%i\n", CALCULATOR->multipleRootsEnabled());
-	fprintf(file, "use_unicode_signs=%i\n", use_unicode_signs);	
+	fprintf(file, "spacious=%i\n", printops.spacious);
+	fprintf(file, "excessive_parenthesis=%i\n", printops.excessive_parenthesis);
+	fprintf(file, "short_multiplication=%i\n", printops.short_multiplication);
+	fprintf(file, "use_unicode_signs=%i\n", printops.use_unicode_signs);
+	fprintf(file, "place_units_separately=%i\n", printops.place_units_separately);	
 	fprintf(file, "use_custom_result_font=%i\n", use_custom_result_font);	
 	fprintf(file, "use_custom_expression_font=%i\n", use_custom_expression_font);	
 	fprintf(file, "custom_result_font=%s\n", custom_result_font.c_str());	
@@ -4260,15 +5463,19 @@ void save_preferences(bool mode)
 	if(mode)
 		set_saved_mode();
 	fprintf(file, "\n[Mode]\n");
-	fprintf(file, "min_deci=%i\n", saved_min_deci);
-	fprintf(file, "use_min_deci=%i\n", saved_use_min_deci);
-	fprintf(file, "max_deci=%i\n", saved_max_deci);
-	fprintf(file, "use_max_deci=%i\n", saved_use_max_deci);	
+	fprintf(file, "min_deci=%i\n", saved_printops.min_decimals);
+	fprintf(file, "use_min_deci=%i\n", saved_printops.use_min_decimals);
+	fprintf(file, "max_deci=%i\n", saved_printops.max_decimals);
+	fprintf(file, "use_max_deci=%i\n", saved_printops.use_max_decimals);	
 	fprintf(file, "precision=%i\n", saved_precision);
-	fprintf(file, "display_mode=%i\n", saved_display_mode);
-	fprintf(file, "fractional_mode=%i\n", saved_fractional_mode);	
-	fprintf(file, "use_prefixes=%i\n", saved_use_prefixes);	
-	fprintf(file, "number_base=%i\n", saved_number_base);
+	fprintf(file, "min_exp=%i\n", saved_printops.min_exp);
+	fprintf(file, "negative_exponents=%i\n", saved_printops.negative_exponents);
+	fprintf(file, "number_fraction_format=%i\n", saved_printops.number_fraction_format);	
+	fprintf(file, "use_prefixes=%i\n", saved_printops.use_unit_prefixes);
+	fprintf(file, "use_short_units=%i\n", saved_printops.abbreviate_units);
+	fprintf(file, "all_prefixes_enabled=%i\n", saved_printops.use_all_prefixes);
+	fprintf(file, "denominator_prefix_enabled=%i\n", saved_printops.use_denominator_prefix);
+	fprintf(file, "number_base=%i\n", saved_printops.base);
 	fprintf(file, "angle_unit=%i\n", saved_angle_unit);
 	fprintf(file, "hyp_is_on=%i\n", saved_hyp_is_on);
 	fprintf(file, "functions_enabled=%i\n", saved_functions_enabled);
@@ -4276,8 +5483,8 @@ void save_preferences(bool mode)
 	fprintf(file, "donot_calculate_variables=%i\n", saved_donot_calcvars);	
 	fprintf(file, "unknownvariables_enabled=%i\n", saved_unknownvariables_enabled);
 	fprintf(file, "units_enabled=%i\n", saved_units_enabled);
-	fprintf(file, "indicate_infinite_series=%i\n", saved_indicate_infinite_series);	
-	fprintf(file, "always_exact=%i\n", saved_always_exact);	
+	fprintf(file, "indicate_infinite_series=%i\n", saved_printops.indicate_infinite_series);	
+	fprintf(file, "approximation=%i\n", saved_evalops.approximation);	
 	fprintf(file, "in_rpn_mode=%i\n", saved_in_rpn_mode);		
 	
 	fprintf(file, "\n[Plotting]\n");
@@ -4461,8 +5668,8 @@ void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data) {
 	change preferences
 */
 void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpointer user_data) {
-	use_unicode_signs = gtk_toggle_button_get_active(w);
-	if(use_unicode_signs) {
+	printops.use_unicode_signs = gtk_toggle_button_get_active(w);
+	if(printops.use_unicode_signs) {
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_sub")), SIGN_MINUS);
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_add")), SIGN_PLUS);
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_times")), SIGN_MULTIPLICATION);	
@@ -4670,7 +5877,7 @@ void update_resultview_popup() {
 			gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_factorize"));
 		}
 	}
-	switch (number_base) {
+	switch (printops.base) {
 		case BASE_OCTAL: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_octal")), TRUE);
 			break;
@@ -4691,7 +5898,7 @@ void update_resultview_popup() {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_roman")), TRUE);
 			break;
 		}
-		case BASE_SEXAGECIMAL: {
+		case BASE_SEXAGESIMAL: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_sexagesimal")), TRUE);
 			break;
 		}
@@ -4700,29 +5907,29 @@ void update_resultview_popup() {
 			break;
 		}
 	}
-	switch (display_mode) {
-		case MODE_NORMAL: {
+	switch(printops.min_exp) {
+		case EXP_PRECISION: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_display_normal")), TRUE);
 			break;
 		}
-		case MODE_SCIENTIFIC: {
+		case EXP_SCIENTIFIC: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_display_scientific")), TRUE);
 			break;
 		}
-		case MODE_SCIENTIFIC_PURE: {
+		case EXP_PURE: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_display_purely_scientific")), TRUE);
 			break;
 		}
-		case MODE_DECIMALS: {
+		case EXP_NONE: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_display_non_scientific")), TRUE);
 			break;
 		}
 	}
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_display_prefixes")), use_prefixes);
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_short_units")), use_short_units);
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_all_prefixes")), CALCULATOR->allPrefixesEnabled());
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_denominator_prefixes")), CALCULATOR->denominatorPrefixEnabled());
-	switch (fractional_mode) {
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_display_prefixes")), printops.use_unit_prefixes);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_short_units")), printops.abbreviate_units);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_all_prefixes")), printops.use_all_prefixes);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_denominator_prefixes")), printops.use_denominator_prefix);
+	switch(printops.number_fraction_format) {
 		case FRACTION_DECIMAL: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_fraction_decimal")), TRUE);
 			break;
@@ -4916,13 +6123,13 @@ void on_button_hyp_toggled(GtkToggleButton *w, gpointer user_data) {
 */
 void on_button_fraction_toggled(GtkToggleButton *w, gpointer user_data) {
 	if(gtk_toggle_button_get_active(w)) {
-		fractional_mode = FRACTION_COMBINED;
+		printops.number_fraction_format = FRACTION_COMBINED;
 		GtkWidget *w_fraction = glade_xml_get_widget (main_glade, "menu_item_fraction_combined");
 		g_signal_handlers_block_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_fraction_combined_activate, NULL);		
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w_fraction), TRUE);		
 		g_signal_handlers_unblock_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_fraction_combined_activate, NULL);		
 	} else {
-		fractional_mode = FRACTION_DECIMAL;
+		printops.number_fraction_format = FRACTION_DECIMAL;
 		GtkWidget *w_fraction = glade_xml_get_widget (main_glade, "menu_item_fraction_decimal");
 		g_signal_handlers_block_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_fraction_decimal_activate, NULL);
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w_fraction), TRUE);
@@ -5055,23 +6262,23 @@ void on_button_brace_close_clicked(GtkButton *w, gpointer user_data) {
 }
 void on_button_times_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
-	if(use_unicode_signs) insert_text(SIGN_MULTIDOT);
+	if(printops.use_unicode_signs) insert_text(SIGN_MULTIDOT);
 	else insert_text("*");
 }
 void on_button_add_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
-//	if(use_unicode_signs) insert_text(SIGN_PLUS);
+//	if(printops.use_unicode_signs) insert_text(SIGN_PLUS);
 //	else 
 	insert_text("+");
 }
 void on_button_sub_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
-	if(use_unicode_signs) insert_text(SIGN_MINUS);
+	if(printops.use_unicode_signs) insert_text(SIGN_MINUS);
 	else insert_text("-");
 }
 void on_button_divide_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
-//	if(use_unicode_signs) insert_text(SIGN_DIVISION);
+//	if(printops.use_unicode_signs) insert_text(SIGN_DIVISION);
 //	else 
 	insert_text("/");
 }
@@ -5096,7 +6303,7 @@ void on_button_square_clicked(GtkButton *w, gpointer user_data) {
 	Button clicked -- insert corresponding function
 */
 void on_button_sqrt_clicked(GtkButton *w, gpointer user_data) {
-	if(use_unicode_signs) insertButtonFunction(SIGN_SQRT, false);
+	if(printops.use_unicode_signs) insertButtonFunction(SIGN_SQRT, false);
 	else insertButtonFunction("sqrt");
 }
 void on_button_log_clicked(GtkButton *w, gpointer user_data) {
@@ -5158,6 +6365,9 @@ void on_menu_item_calculate_variables_activate(GtkMenuItem *w, gpointer user_dat
 	execute_expression();
 }
 
+void on_menu_item_new_unknown_activate(GtkMenuItem *w, gpointer user_data) {
+	edit_unknown(_("My Variables"), NULL, glade_xml_get_widget (main_glade, "main_window"));
+}
 void on_menu_item_new_variable_activate(GtkMenuItem *w, gpointer user_data) {
 	edit_variable(_("My Variables"), NULL, NULL, glade_xml_get_widget (main_glade, "main_window"));
 }
@@ -5218,66 +6428,66 @@ void on_menu_item_gradians_activate(GtkMenuItem *w, gpointer user_data) {
 void on_menu_item_binary_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
-	number_base = BASE_BINARY;
+	printops.base = BASE_BINARY;
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
 void on_menu_item_octal_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
-	number_base = BASE_OCTAL;
+	printops.base = BASE_OCTAL;
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
 void on_menu_item_decimal_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
-	number_base = BASE_DECIMAL;
+	printops.base = BASE_DECIMAL;
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
 void on_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
-	number_base = BASE_HEXADECIMAL;
+	printops.base = BASE_HEXADECIMAL;
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
 void on_menu_item_roman_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
-	number_base = BASE_ROMAN_NUMERALS;
+	printops.base = BASE_ROMAN_NUMERALS;
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
 void on_menu_item_sexagesimal_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
-	number_base = BASE_SEXAGECIMAL;
+	printops.base = BASE_SEXAGESIMAL;
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
 void on_menu_item_time_format_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
-	number_base = BASE_TIME;
+	printops.base = BASE_TIME;
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
 void on_menu_item_short_units_activate(GtkMenuItem *w, gpointer user_data) {
-	use_short_units = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
+	printops.abbreviate_units = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	setResult();
 }
 void on_menu_item_all_prefixes_activate(GtkMenuItem *w, gpointer user_data) {
-	CALCULATOR->setAllPrefixesEnabled(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+	printops.use_all_prefixes = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	setResult();
 }
 void on_menu_item_denominator_prefixes_activate(GtkMenuItem *w, gpointer user_data) {
-	CALCULATOR->setDenominatorPrefixEnabled(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+	printops.use_denominator_prefix = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	setResult();
 }
 void on_menu_item_multiple_roots_activate(GtkMenuItem *w, gpointer user_data) {
-	CALCULATOR->setMultipleRootsEnabled(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+	//CALCULATOR->setMultipleRootsEnabled(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
 	execute_expression();
 }
 void on_menu_item_factorize_activate(GtkMenuItem *w, gpointer user_data) {
@@ -5463,49 +6673,57 @@ void on_popup_menu_item_denominator_prefixes_activate(GtkMenuItem *w, gpointer u
 void on_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
-	display_mode = MODE_NORMAL;
+	printops.min_exp = EXP_PRECISION;
+	printops.negative_exponents = false;
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
 void on_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
-	display_mode = MODE_SCIENTIFIC;
+	printops.min_exp = EXP_SCIENTIFIC;
+	printops.negative_exponents = true;
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
 void on_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
-	display_mode = MODE_SCIENTIFIC_PURE;
+	printops.min_exp = EXP_PURE;
+	printops.negative_exponents = true;
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
 void on_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
-	display_mode = MODE_DECIMALS;
+	printops.min_exp = EXP_NONE;
+	printops.negative_exponents = false;
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
 void on_menu_item_display_prefixes_activate(GtkMenuItem *w, gpointer user_data) {
-	use_prefixes = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
+	printops.use_unit_prefixes = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
 void on_menu_item_indicate_infinite_series_activate(GtkMenuItem *w, gpointer user_data) {
-	indicate_infinite_series = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
+	printops.indicate_infinite_series = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
 void on_menu_item_exact_mode_activate(GtkMenuItem *w, gpointer user_data) {
-	CALCULATOR->setAlwaysExact(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+	if(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) {
+		evalops.approximation = APPROXIMATION_EXACT;
+	} else {
+		evalops.approximation = APPROXIMATION_TRY_EXACT;
+	}
 	execute_expression();
 }
 void on_menu_item_fraction_decimal_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
-	fractional_mode = FRACTION_DECIMAL;
+	printops.number_fraction_format = FRACTION_DECIMAL;
 
 	GtkWidget *w_fraction = glade_xml_get_widget (main_glade, "button_fraction");
 	g_signal_handlers_block_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_button_fraction_toggled, NULL);
@@ -5518,7 +6736,7 @@ void on_menu_item_fraction_decimal_activate(GtkMenuItem *w, gpointer user_data) 
 void on_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
-	fractional_mode = FRACTION_COMBINED;
+	printops.number_fraction_format = FRACTION_COMBINED;
 
 	GtkWidget *w_fraction = glade_xml_get_widget (main_glade, "button_fraction");
 	g_signal_handlers_block_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_button_fraction_toggled, NULL);
@@ -5531,7 +6749,7 @@ void on_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer user_data)
 void on_menu_item_fraction_fraction_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
-	fractional_mode = FRACTION_FRACTIONAL;
+	printops.number_fraction_format = FRACTION_FRACTIONAL;
 
 	GtkWidget *w_fraction = glade_xml_get_widget (main_glade, "button_fraction");
 	g_signal_handlers_block_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_button_fraction_toggled, NULL);
@@ -5563,12 +6781,12 @@ void on_menu_item_decimals_activate(GtkMenuItem *w, gpointer user_data) {
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget (decimals_glade, "decimals_dialog_checkbutton_min"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_decimals_dialog_checkbutton_min_toggled, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget (decimals_glade, "decimals_dialog_spinbutton_max"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_decimals_dialog_spinbutton_max_value_changed, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget (decimals_glade, "decimals_dialog_spinbutton_min"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_decimals_dialog_spinbutton_min_value_changed, NULL);	
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (decimals_glade, "decimals_dialog_checkbutton_min")), use_min_deci);
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (decimals_glade, "decimals_dialog_checkbutton_max")), use_max_deci);	
-	gtk_widget_set_sensitive (glade_xml_get_widget (decimals_glade, "decimals_dialog_spinbutton_min"), use_min_deci);
-	gtk_widget_set_sensitive (glade_xml_get_widget (decimals_glade, "decimals_dialog_spinbutton_max"), use_max_deci);	
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (decimals_glade, "decimals_dialog_spinbutton_min")), min_deci);
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (decimals_glade, "decimals_dialog_spinbutton_max")), max_deci);	
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (decimals_glade, "decimals_dialog_checkbutton_min")), printops.use_min_decimals);
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (decimals_glade, "decimals_dialog_checkbutton_max")), printops.use_max_decimals);	
+	gtk_widget_set_sensitive (glade_xml_get_widget (decimals_glade, "decimals_dialog_spinbutton_min"), printops.use_min_decimals);
+	gtk_widget_set_sensitive (glade_xml_get_widget (decimals_glade, "decimals_dialog_spinbutton_max"), printops.use_max_decimals);	
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (decimals_glade, "decimals_dialog_spinbutton_min")), printops.min_decimals);
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (decimals_glade, "decimals_dialog_spinbutton_max")), printops.max_decimals);	
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget (decimals_glade, "decimals_dialog_checkbutton_max"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_decimals_dialog_checkbutton_max_toggled, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget (decimals_glade, "decimals_dialog_checkbutton_min"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_decimals_dialog_checkbutton_min_toggled, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget (decimals_glade, "decimals_dialog_spinbutton_max"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_decimals_dialog_spinbutton_max_value_changed, NULL);
@@ -5696,7 +6914,7 @@ void on_units_button_insert_clicked(GtkButton *button, gpointer user_data) {
 	Unit *u = get_selected_unit();
 	if(u) {
 		gchar *gstr;
-		if(use_short_units) {
+		if(printops.abbreviate_units) {
 			gstr = g_strdup(u->shortName().c_str());
 		} else {
 			gstr = g_strdup(u->plural(true).c_str());
@@ -6094,21 +7312,21 @@ void on_precision_dialog_button_recalculate_clicked(GtkButton *w, gpointer user_
 
 
 void on_decimals_dialog_spinbutton_max_value_changed(GtkSpinButton *w, gpointer user_data) {
-	max_deci = gtk_spin_button_get_value_as_int(w);
+	printops.max_decimals = gtk_spin_button_get_value_as_int(w);
 	setResult();
 }
 void on_decimals_dialog_spinbutton_min_value_changed(GtkSpinButton *w, gpointer user_data) {
-	min_deci = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
+	printops.min_decimals = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
 	setResult();
 }
 void on_decimals_dialog_checkbutton_max_toggled(GtkToggleButton *w, gpointer user_data) {
-	use_max_deci = gtk_toggle_button_get_active(w);
-	gtk_widget_set_sensitive(glade_xml_get_widget (decimals_glade, "decimals_dialog_spinbutton_max"), use_max_deci);
+	printops.use_max_decimals = gtk_toggle_button_get_active(w);
+	gtk_widget_set_sensitive(glade_xml_get_widget (decimals_glade, "decimals_dialog_spinbutton_max"), printops.use_max_decimals);
 	setResult();
 }
 void on_decimals_dialog_checkbutton_min_toggled(GtkToggleButton *w, gpointer user_data) {
-	use_min_deci = gtk_toggle_button_get_active(w);
-	gtk_widget_set_sensitive(glade_xml_get_widget (decimals_glade, "decimals_dialog_spinbutton_min"), use_min_deci);
+	printops.use_min_decimals = gtk_toggle_button_get_active(w);
+	gtk_widget_set_sensitive(glade_xml_get_widget (decimals_glade, "decimals_dialog_spinbutton_min"), printops.use_min_decimals);
 	setResult();
 }
 
@@ -6156,7 +7374,7 @@ gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointe
 			return TRUE;
 		}
 	}
-	if(use_unicode_signs) {
+	if(printops.use_unicode_signs) {
 		gint pos = gtk_editable_get_position(GTK_EDITABLE(expression));
 		switch(event->keyval) {
 			case GDK_KP_Divide: {}		

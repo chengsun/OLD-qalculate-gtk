@@ -36,6 +36,9 @@
       <argument index="3">
         <_title>Factor expression</_title>
       </argument>
+      <argument index="4">
+        <_title>Index Variable</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="sum">
       <_title>Sum</_title>
@@ -48,6 +51,9 @@
       </argument>
       <argument index="3">
         <_title>Term expression</_title>
+      </argument>
+      <argument index="4">
+        <_title>Index Variable</_title>
       </argument>
     </builtin_function>
     <builtin_function name="solve">
@@ -121,7 +127,7 @@
       </function>
       <function name="multiply">
         <_title>Multiply</_title>
-        <expression>csum(1,-1,1,\\y*\\x,\v)</expression>
+        <expression>product(component(&quot;x&quot;,\v),1,components(\v),&quot;x&quot;)</expression>
         <argument index="1">
           <_title>Factors</_title>
         </argument>
@@ -135,7 +141,7 @@
       </function>
       <function name="subtract">
         <_title>Subtract</_title>
-        <expression>csum(1,-1,0,\\y-\\x,\v)</expression>
+        <expression>csum(2,-1,component(1,\v),&quot;y&quot;-&quot;x&quot;,&quot;x&quot;,&quot;y&quot;,\v)</expression>
         <argument index="1">
           <_title>Terms</_title>
         </argument>
@@ -293,7 +299,7 @@
     </function>
     <function name="derangements">
       <_title>Derangements</_title>
-      <expression>factorial(\x)*sum((-1^\\i)/factorial(\\i),\\i,0,\x)</expression>
+      <expression>factorial(\x)*sum((-1^&quot;i&quot;)/factorial(&quot;i&quot;),0,\x,&quot;i&quot;)</expression>
       <argument type="integer" index="1">
         <_title>Number of elements</_title>
         <min>1</min>
@@ -373,7 +379,19 @@
         <_title>Expression</_title>
       </argument>
       <argument index="5">
+        <_title>Component Variable</_title>
+      </argument>
+      <argument index="4">
+        <_title>Value Variable</_title>
+      </argument>
+      <argument index="7">
         <_title>Vector</_title>
+      </argument>
+      <argument index="8">
+        <_title>Index Variable</_title>
+      </argument>
+      <argument index="9">
+        <_title>Vector Variable</_title>
       </argument>
     </builtin_function>
     <builtin_function name="function">
@@ -1201,7 +1219,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       <_title>Means</_title>
       <function name="mean">
         <_title>Mean</_title>
-        <expression>total(\v)/elements(\v)</expression>
+        <expression>total(\v)/components(\v)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
           <test>false</test>
@@ -1209,7 +1227,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="harmmean">
         <_title>Harmonic mean</_title>
-        <expression>elements(\v)/csum(1,-1,0,&quot;\\y+1/\\x&quot;,\v)</expression>
+        <expression>components(\v)/csum(1,-1,0,&quot;y&quot;+1/&quot;x&quot;,&quot;x&quot;,&quot;y&quot;,\v)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
           <test>false</test>
@@ -1217,7 +1235,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="geomean">
         <_title>Geometric mean</_title>
-        <expression>abs(csum(1,-1,1,&quot;\\y*\\x&quot;,\v)^(1/elements(\v)))</expression>
+        <expression>abs(csum(1,-1,1,&quot;y&quot;*&quot;x&quot;,&quot;x&quot;,&quot;y&quot;,\v)^(1/components(\v)))</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
           <test>false</test>
@@ -1225,7 +1243,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="trimmean">
         <_title>Trimmed mean</_title>
-        <expression>mean(limits(round(elements(\v)/100*\x),round(elements(\v)/100*(100-\x)),sort(\v)))</expression>
+        <expression>mean(limits(round(components(\v)/100*\x),round(components(\v)/100*(100-\x)),sort(\v)))</expression>
         <argument type="free" index="1">
           <_title>Trimmed percentage</_title>
         </argument>
@@ -1236,7 +1254,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="winsormean">
         <_title>Winsorized mean</_title>
-        <expression>mean(limits(1,round(elements(\v)/100*\x),sort(\v)),limits(round(elements(\v)/100*\x),round(elements(\v)/100*(100-\x)),sort(\v)),limits(round(elements(\v)/100*(100-\x)),-1,sort(\v)))</expression>
+        <expression>mean(limits(1,round(components(\v)/100*\x),sort(\v)),limits(round(components(\v)/100*\x),round(components(\v)/100*(100-\x)),sort(\v)),limits(round(components(\v)/100*(100-\x)),-1,sort(\v)))</expression>
         <argument type="free" index="1">
           <_title>Trimmed percentage</_title>
         </argument>
@@ -1247,7 +1265,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>  
       <function name="weighmean">
         <_title>Weighted mean</_title>
-        <expression>csum(1,min(elements(\x),elements(\v)),0,&quot;\\y+\\x*\\x_(\\i+elements(\x))&quot;,\x,\v)/total(limits(1,min(elements(\x),elements(\v)),\v))</expression>
+        <expression>csum(1,min(components(\x),components(\v)),0,&quot;y&quot;+&quot;x&quot;*component(&quot;i&quot;+components(\x),&quot;v&quot;),&quot;x&quot;,&quot;y&quot;,mergevectors(\x,\v),&quot;i&quot;,&quot;v&quot;)/total(limits(1,min(components(\x),components(\v)),\v))</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
           <test>false</test>
@@ -1259,7 +1277,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>  
       <function name="rms">
         <_title>Quadratic mean (RMS)</_title>
-        <expression>abs((csum(1,-1,0,&quot;\\y+\\x^2&quot;,\v)/elements(\v))^(1/2))</expression>
+        <expression>abs((csum(1,-1,0,&quot;y&quot;+&quot;x&quot;^2,&quot;x&quot;,&quot;y&quot;,\v)/components(\v))^(1/2))</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
           <test>false</test>
@@ -1356,7 +1374,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="number">
         <_title>Number</_title>
-        <expression>elements(\v)</expression>
+        <expression>components(\v)</expression>
         <_description>Returns the number of samples.</_description>
         <argument type="vector" index="1">
           <_title>Data</_title>
@@ -1384,7 +1402,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="varp">
         <_title>Variance (entire population)</_title>
-        <expression>csum(1,-1,0,&quot;\\y+(\\x-mean(\v))^2&quot;,\v)/elements(\v)</expression>
+        <expression>csum(1,-1,0,&quot;y&quot;+(&quot;x&quot;-mean(\v))^2,&quot;x&quot;,&quot;y&quot;,\v)/components(\v)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
           <test>false</test>
@@ -1392,7 +1410,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="var">
         <_title>Variance (random sampling)</_title>
-        <expression>csum(1,-1,0,&quot;\\y+(\\x-mean(\v))^2&quot;,\v)/(elements(\v)-1)</expression>
+        <expression>csum(1,-1,0,&quot;y&quot;+(&quot;x&quot;-mean(\v))^2,&quot;x&quot;,&quot;y&quot;,\v)/(components(\v)-1)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
           <test>false</test>
@@ -1400,7 +1418,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="stderr">
         <_title>Standard error</_title>
-        <expression>abs((var(\v)/elements(\v))^(1/2))</expression>
+        <expression>abs((var(\v)/components(\v))^(1/2))</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
           <test>false</test>
@@ -1408,7 +1426,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="meandev">
         <_title>Mean deviation</_title>
-        <expression>csum(1,-1,0,&quot;\\y+abs(\\x-mean(\v))&quot;,\v)/elements(\v)</expression>
+        <expression>csum(1,-1,0,&quot;y&quot;+abs(&quot;x&quot;-mean(\v)),&quot;x&quot;,&quot;y&quot;,\v)/components(\v)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
           <test>false</test>
@@ -1416,7 +1434,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="covar">
         <_title>Covariance</_title>
-        <expression>csum(1,min(elements(\x),elements(\v)),0,&quot;\\y+(\\x-mean(\x))*(\\x_(\\i+elements(\x))-mean(\v))&quot;,\x,\v)/min(elements(\x),elements(\v))</expression>
+        <expression>csum(1,min(components(\x),components(\v)),0,&quot;y&quot;+(&quot;x&quot;-mean(\x))*(component(&quot;i&quot;+components(\x),&quot;v&quot;)-mean(\v)),&quot;x&quot;,&quot;y&quot;,mergevectors(\x,\v),&quot;i&quot;,&quot;v&quot;)/min(components(\x),components(\v))</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
           <test>false</test>
@@ -1428,7 +1446,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="poolvar">
         <_title>Pooled variance</_title>
-        <expression>(csum(1,-1,0,&quot;\\y+(\\x-mean(\x))^2&quot;,\x)+csum(1,-1,0,&quot;\\y+(\\x-mean(\v))^2&quot;,\v))/(elements(\x)+elements(\v)-2)</expression>
+        <expression>(csum(1,-1,0,&quot;y&quot;+(&quot;x&quot;-mean(\x))^2,&quot;x&quot;,&quot;y&quot;,\x)+csum(1,-1,0,&quot;y&quot;+(&quot;x&quot;-mean(\v))^2,&quot;x&quot;,&quot;y&quot;,\v))/(components(\x)+components(\v)-2)</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
           <test>false</test>
@@ -1467,7 +1485,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="pearson">
         <_title>Pearson correlation</_title>
-        <expression>(\x*\v-sum(\x)*sum(\v)/elements(\x))/abs(((\x*\x-(sum(\x)^2)/elements(\x))*(\v*\v-(sum(\v)^2)/elements(\v)))^(1/2))</expression>
+        <expression>(\x*\v-total(\x)*total(\v)/components(\x))/abs(((\x*\x-(total(\x)^2)/components(\x))*(\v*\v-(total(\v)^2)/components(\v)))^(1/2))</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
           <test>false</test>
@@ -1491,7 +1509,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="durbinwatson" active="false">
         <_title>Durbin-Watson</_title>
-        <expression precise="false">csum(2,-1,0,&quot;\\y+(\\x-\\x_(\\i-1))^2&quot;,0,\v)/csum(1,-1,0,&quot;\\y+\\x^2&quot;,\v)</expression>
+        <expression precise="false">csum(2,-1,0,&quot;y&quot;+(&quot;x&quot;-component(&quot;i&quot;-1,&quot;v&quot;))^2,&quot;x&quot;,&quot;y&quot;,mergevectors(0,\v),&quot;i&quot;,&quot;v&quot;)/csum(1,-1,0,&quot;y&quot;+&quot;x&quot;^2,&quot;x&quot;,&quot;y&quot;,\v)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
           <test>false</test>
@@ -1502,7 +1520,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       <_title>Statistical Tests</_title>
       <function name="ttest">
         <_title>Unpaired t-test</_title>
-        <expression>(mean(\x)-mean(\v))/abs(((poolvar(\x,\v)^2)/elements(\x)+(poolvar(\x,\v)^2)/elements(\v))^(1/2))</expression>
+        <expression>(mean(\x)-mean(\v))/abs(((poolvar(\x,\v)^2)/components(\x)+(poolvar(\x,\v)^2)/components(\v))^(1/2))</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
           <test>false</test>

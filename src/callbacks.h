@@ -98,6 +98,7 @@ void insert_prefix(GtkMenuItem *w, gpointer user_data);
 void insert_unit(GtkMenuItem *w, gpointer user_data);
 
 void new_function(GtkMenuItem *w, gpointer user_data);
+void new_unknown(GtkMenuItem *w, gpointer user_data);
 void new_variable(GtkMenuItem *w, gpointer user_data);
 void new_matrix(GtkMenuItem *w, gpointer user_data);
 void new_vector(GtkMenuItem *w, gpointer user_data);
@@ -106,6 +107,7 @@ void add_as_variable();
 
 void edit_argument(Argument *arg = NULL);
 
+void edit_unknown(const char *category = "", Variable *v = NULL, GtkWidget *win = NULL);
 void edit_variable(const char *category = "", Variable *v = NULL, MathStructure *mstruct_ = NULL, GtkWidget *win = NULL);
 void edit_matrix(const char *category = "", Variable *v = NULL, MathStructure *mstruct_ = NULL, GtkWidget *win = NULL, gboolean create_vector = FALSE);
 void import_csv_file(GtkWidget *win = NULL);
@@ -193,6 +195,7 @@ void on_menu_item_enable_functions_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_enable_units_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_enable_unknown_variables_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_calculate_variables_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_new_unknown_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_new_variable_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_new_matrix_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_new_vector_activate(GtkMenuItem *w, gpointer user_data);

@@ -38,6 +38,13 @@ enum {
 	STRUCT_UNDEFINED
 };
 
+enum {
+	MULTIPLICATION_SIGN_NONE,
+	MULTIPLICATION_SIGN_SPACE,
+	MULTIPLICATION_SIGN_OPERATOR,
+	MULTIPLICATION_SIGN_OPERATOR_SHORT
+};
+
 class MathStructure {
 
 	protected:
@@ -50,8 +57,13 @@ class MathStructure {
 		string s_sym;
 		Number o_number;
 		Variable *o_variable;
+
 		Unit *o_unit;
+		Prefix *o_prefix;
+		bool b_plural;
+		
 		Function *o_function;
+		
 #ifdef HAVE_GIAC		
 		giac::gen *giac_unknown;
 #endif
@@ -119,6 +131,10 @@ class MathStructure {
 #endif
 		ComparisonType comparisonType() const;
 		Unit *unit() const;
+		Prefix *prefix() const;
+		void setPrefix(Prefix *p);
+		bool isPlural() const;
+		void setPlural(bool is_plural);
 		Function *function() const;
 		Variable *variable() const;
 		
@@ -191,8 +207,6 @@ class MathStructure {
 		bool calculatesub(const EvaluationOptions &eo);
 		void calculateFunctions(const EvaluationOptions &eo);
 		
-		void sort(int sortflags = SORT_SCIENTIFIC);
-		
 		void evalQalculateFunctions(const EvaluationOptions &eo);
 		void evalf();
 		MathStructure &eval(const EvaluationOptions &eo = default_evaluation_options);
@@ -233,22 +247,26 @@ class MathStructure {
 
 		int type() const;
 		
+		void sort(int sortflags = SORT_SCIENTIFIC);
+		void setPrefixes(const PrintOptions &po = default_print_options, const MathStructure *parent = NULL, unsigned int pindex = 0);
+		void format(const PrintOptions &po = default_print_options, const MathStructure *parent = NULL, unsigned int pindex = 0);
+		void postFormatUnits(const PrintOptions &po = default_print_options, const MathStructure *parent = NULL, unsigned int pindex = 0);
 		void unformat();
-		
-		void format(const PrintOptions &po = default_print_options);
+		bool needsParenthesis(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, unsigned int index, bool flat_division = true, bool flat_power = true) const;
+
+		int neededMultiplicationSign(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, unsigned int index, bool par, bool par_prev, bool flat_division = true, bool flat_power = true) const;
 		
 		string print(const PrintOptions &po = default_print_options, const InternalPrintStruct &ips = top_ips) const;
 		
 		
 //vector
 	
-		MathStructure range(int start, int end = -1) const;
-		MathStructure flattenVector() const;
+		MathStructure &flattenVector(MathStructure &mstruct) const;
 		
 		bool rankVector(bool ascending = true);
 		bool sortVector(bool ascending = true);
 		
-		MathStructure getRange(unsigned int index1, unsigned int index2) const;
+		MathStructure &getRange(int start, int end, MathStructure &mstruct) const;
 		
 		void resizeVector(unsigned int i, const MathStructure &mfill);
 		
@@ -257,10 +275,10 @@ class MathStructure {
 		unsigned int rows() const;
 		unsigned int columns() const;
 		const MathStructure *getElement(unsigned int row, unsigned int column) const;
-		MathStructure getArea(unsigned int r1, unsigned int c1, unsigned int r2, unsigned int c2) const;
-		MathStructure rowToVector(unsigned int r) const;
-		MathStructure columnToVector(unsigned int c) const;
-		MathStructure matrixToVector() const;
+		MathStructure &getArea(unsigned int r1, unsigned int c1, unsigned int r2, unsigned int c2, MathStructure &mstruct) const;
+		MathStructure &rowToVector(unsigned int r, MathStructure &mstruct) const;
+		MathStructure &columnToVector(unsigned int c, MathStructure &mstruct) const;
+		MathStructure &matrixToVector(MathStructure &mstruct) const;
 		void setElement(const MathStructure &mstruct, unsigned int row, unsigned int column);
 		void addRows(unsigned int r, const MathStructure &mfill);
 		void addColumns(unsigned int c, const MathStructure &mfill);
@@ -268,14 +286,14 @@ class MathStructure {
 		void addColumn(const MathStructure &mfill);
 		void resizeMatrix(unsigned int r, unsigned int c, const MathStructure &mfill);
 		bool matrixIsSymmetric() const;
-		MathStructure determinant() const;
-		MathStructure permanent() const;
+		MathStructure &determinant(MathStructure &mstruct, const EvaluationOptions &eo) const;
+		MathStructure &permanent(MathStructure &mstruct, const EvaluationOptions &eo) const;
 		void setToIdentityMatrix(unsigned int n);
-		MathStructure getIdentityMatrix() const;
-		bool invertMatrix();
-		bool adjointMatrix();
+		MathStructure &getIdentityMatrix(MathStructure &mstruct) const;
+		bool invertMatrix(const EvaluationOptions &eo);
+		bool adjointMatrix(const EvaluationOptions &eo);
 		bool transposeMatrix();
-		MathStructure cofactor(unsigned int r, unsigned int c) const;
+		MathStructure &cofactor(unsigned int r, unsigned int c, MathStructure &mstruct, const EvaluationOptions &eo) const;
 		
 //units
 
@@ -299,7 +317,5 @@ class MathStructure {
 		bool differentiate(const MathStructure &x_var);
 
 };
-
-static MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one;
 
 #endif

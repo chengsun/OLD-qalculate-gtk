@@ -63,6 +63,8 @@ class CalculatorError {
 	bool critical(void) const;
 };
 
+extern MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one;
+
 class Calculator {
   protected:
 	vector<CalculatorError> errors;
@@ -70,7 +72,7 @@ class Calculator {
 	int ianglemode;
 	int i_precision;
 	char vbuffer[200];
-	bool b_functions, b_variables, b_units, b_unknown, b_calcvars, b_always_exact, b_rpn, b_use_all_prefixes, b_multiple_roots, b_den_prefix;
+	bool b_functions, b_variables, b_units, b_unknown, b_calcvars, b_rpn;
 	vector<void*> ufv;
 	vector<char> ufv_t;	
 	
@@ -88,10 +90,10 @@ class Calculator {
 	int disable_errors_ref;
 	pthread_t calculate_thread;
 	pthread_attr_t calculate_thread_attr;
-	bool b_functions_was, b_variables_was, b_units_was, b_unknown_was, b_calcvars_was, b_always_exact_was, b_rpn_was;
+	bool b_functions_was, b_variables_was, b_units_was, b_unknown_was, b_calcvars_was, b_rpn_was;
 	string NAME_NUMBER_PRE_S, NAME_NUMBER_PRE_STR, DOT_STR, DOT_S, COMMA_S, COMMA_STR, ILLEGAL_IN_NAMES, ILLEGAL_IN_UNITNAMES, ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
 
-	bool b_argument_errors, b_temp_exact;
+	bool b_argument_errors;
 
 	bool b_gnuplot_open;
 	string gnuplot_cmdline;
@@ -105,7 +107,7 @@ class Calculator {
 
 	KnownVariable *v_pi, *v_e, *v_i, *v_inf, *v_pinf, *v_minf;
 	UnknownVariable *v_x, *v_y, *v_z;
-	Function *f_vector, *f_sort, *f_rank, *f_limits, *f_component, *f_components;
+	Function *f_vector, *f_sort, *f_rank, *f_limits, *f_component, *f_components, *f_merge_vectors;
 	Function *f_matrix, *f_matrix_to_vector, *f_area, *f_rows, *f_columns, *f_row, *f_column, *f_elements, *f_element, *f_transpose, *f_identity, *f_determinant, *f_permanent, *f_adjoint, *f_cofactor, *f_inverse; 
 	Function *f_factorial, *f_binomial;
 	Function *f_abs, *f_gcd, *f_signum, *f_round, *f_floor, *f_ceil, *f_trunc, *f_int, *f_frac, *f_rem, *f_mod;
@@ -147,15 +149,7 @@ class Calculator {
 	void addDefaultStringAlternative(string replacement, string standard);
 	bool delDefaultStringAlternative(string replacement, string standard);
 
-	bool alwaysExact() const;
-	void setAlwaysExact(bool always_exact);
-	
-	bool multipleRootsEnabled() const;
-	void setMultipleRootsEnabled(bool enable_multiple_roots);
-
 	bool showArgumentErrors() const;
-	bool alwaysExactIsTemporary() const;
-	
 	void beginTemporaryStopErrors();
 	void endTemporaryStopErrors();	
 	
@@ -175,8 +169,8 @@ class Calculator {
 	Prefix *getExactPrefix(int exp10, int exp = 1) const;			
 	Prefix *getExactPrefix(const Number &o, int exp = 1) const;				
 	Prefix *getNearestPrefix(int exp10, int exp = 1) const;		
-	Prefix *getBestPrefix(int exp10, int exp = 1) const;		
-	Prefix *getBestPrefix(const Number &exp10, const Number &exp) const;
+	Prefix *getBestPrefix(int exp10, int exp = 1, bool all_prefixes = true) const;		
+	Prefix *getBestPrefix(const Number &exp10, const Number &exp, bool all_prefixes = true) const;
 	Prefix *addPrefix(Prefix *p);
 	void prefixNameChanged(Prefix *p);	
 
@@ -188,8 +182,6 @@ class Calculator {
 	void setLocale();
 	void unsetLocale();
 	
-	bool allPrefixesEnabled() const;
-	void setAllPrefixesEnabled(bool enable);
 	bool functionsEnabled() const;
 	void setFunctionsEnabled(bool enable);
 	bool variablesEnabled() const;
@@ -200,8 +192,6 @@ class Calculator {
 	void setDonotCalculateVariables(bool enable);			
 	bool unitsEnabled() const;
 	void setUnitsEnabled(bool enable);
-	bool denominatorPrefixEnabled() const;
-	void setDenominatorPrefixEnabled(bool enable);	
 	void setRPNMode(bool enable);
 	bool inRPNMode() const;
 	int angleMode() const;
