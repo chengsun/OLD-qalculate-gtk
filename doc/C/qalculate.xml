@@ -1,15 +1,18 @@
 <?xml version="1.0"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
     "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
   <!ENTITY legal SYSTEM "legal.xml">
-  <!ENTITY appversion "0.6.4">
-  <!ENTITY manrevision "0.6.4">
-  <!ENTITY date "September 2004">
-  <!ENTITY app "Qalculate!">    
+  <!ENTITY appversion "0.7.0">
+  <!ENTITY manrevision "0.7.0">
+  <!ENTITY date "October 2004">
+  <!ENTITY app "Qalculate!">
+  <!ENTITY appendixa SYSTEM "appendixa.xml">
+  <!ENTITY appendixb SYSTEM "appendixb.xml">
+  <!ENTITY appendixc SYSTEM "appendixc.xml">
 ]>
-<article>
-<articleinfo>
-	<title>&app; Manual V&manrevision;</title>
+<book>
+<title>&app; Manual v&manrevision;</title>
+<bookinfo>
 	<copyright>
 		<year>2004</year>
 		<holder>Niklas Knutsson</holder>
@@ -33,12 +36,9 @@
 		</para>
 	</legalnotice> 
 	
-</articleinfo>
-<indexterm> 
-	<primary>Qalculate!</primary> 
-</indexterm> 
+</bookinfo>
 
-<sect1 id="qalculate-introduction">
+<chapter id="qalculate-introduction">
 <title>Introduction</title>
 <para>
 Qalculate! is not your regular software replication of the cheapest available calculator. Qalculate! aims to make full use of the superior interface, power and flexibility of modern computers.
@@ -58,11 +58,11 @@ Qalculate! also has some special tools to increase your efficiency, including a 
 <para>
 Although use of Qalculate! for simple calculations should be natural and self-explanatory, reading the rest of the manual can help you maximize your productivity and discover some maybe unexpected features. More advanced users should read on and discover a large number of customization options and the ability to create and modify your own variables, functions and units directly from the user interface.
 </para>
-</sect1>
+</chapter>
 
-<sect1 id="qalculate-user-interface">
+<chapter id="qalculate-user-interface">
 <title>User Interface</title>
-<sect2 id="qalculate-main-window">
+<sect1 id="qalculate-main-window">
 <title>Main Window</title>
 <figure id="qalculate-FIG-main-window">
 	<title>Main Window</title>
@@ -77,8 +77,8 @@ Although use of Qalculate! for simple calculations should be natural and self-ex
 <para>
 The main window provides a menu bar, the expression entry, the result display and a calculator keypad which can be shown/hidden by clicking on <guilabel>Keypad</guilabel>. There are two small buttons to right of the expression entry and the result display. The upper button performs calculation of the entered expression (same as <keycap>Enter</keycap>), while the one below opens a window showing previous calculations. When non-default options for the interpretion of expressions have been selected, the choice will be indicated in a small status area below the expression entry.
 </para>
-</sect2>
-<sect2 id="qalculate-expression-entry">
+</sect1>
+<sect1 id="qalculate-expression-entry">
 <title>Expression Entry</title>
 <para>
 The expression entry is the most important part of the Qalculate! user interface. The normal calculation procedure in Qalculate! is to type in a mathematical expression (ex. <quote>5+5</quote>) and press <keycap>Enter</keycap> (or click <guibutton>Execute</guibutton>). The result (<quote>10</quote>) is then displayed below the expression entry in the result display.
@@ -105,8 +105,8 @@ The <keycap>Page Up</keycap> and <keycap>Page Down</keycap> keys will access pre
 <para>
 The font used for the expression entry can be selected in the preferences dialog (<menuchoice><guimenu>Edit</guimenu><guimenuitem>Preferences</guimenuitem></menuchoice>).
 </para>
-</sect2>
-<sect2 id="qalculate-result-display">
+</sect1>
+<sect1 id="qalculate-result-display">
 <title>Result Display</title>
 <para>
 The result of calculations is displayed in the open area below the expression entry. The font used for the result display can be selected in the preferences dialog (<menuchoice><guimenu>Edit</guimenu><guimenuitem>Preferences</guimenuitem></menuchoice>). Use of Unicode signs can be turned off in the same dialog, in case of problems with missing characters. Otherwise Qalculate! will try to make the result as fancy as possible and print π for pi, √ for sqrt, € for euro, and so on. Information about customization of the mathematical result output is available in <xref linkend="qalculate-result"/>.
@@ -120,8 +120,8 @@ The result display has a context menu, which pops up when clicking with the righ
 <para>
 To copy the result, either select <menuchoice><guimenu>Edit</guimenu><guimenuitem>Copy Result</guimenuitem></menuchoice>, press <keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>C</keycap></keycombo>, or copy the text from the history window.
 </para>
-</sect2>
-<sect2 id="qalculate-calculator-buttons">
+</sect1>
+<sect1 id="qalculate-calculator-buttons">
 <title>Keypad</title>
 <para>
 The keypad provides access to a fairly small set of traditional calculator buttons, which work as expected. The <guibutton>Convert</guibutton> button in the top left corner opens the convert to unit dialog (see <xref linkend="qalculate-unit-conversion"/>), while the buttons to the right open the functions, variables and units managers (see <xref linkend="qalculate-managers"/>).
@@ -136,8 +136,8 @@ The keypad provides access to a fairly small set of traditional calculator butto
 	</screenshot>
 </figure>
 </para>
-</sect2>
-<sect2 id="qalculate-calculation-history">
+</sect1>
+<sect1 id="qalculate-calculation-history">
 <title>Calculation History</title>
 <para>
 The history window, opened with the button next to the result display, provides access to previous calculation results (20 rows are reloaded on restart). Previous expressions and results, as well as errors and warnings, are displayed in plain text and can be marked and copied (from the right-button context menu or with <keycombo><keycap>Ctrl</keycap><keycap>C</keycap></keycombo>) to the expression entry or elsewhere.
@@ -153,8 +153,8 @@ The history window, opened with the button next to the result display, provides 
 </figure>
 
 </para>
-</sect2>
-<sect2 id="qalculate-menus">
+</sect1>
+<sect1 id="qalculate-menus">
 <title>Menu Bar</title>
 <para>
 The menus in the menu bar provides access to most of the functionality of Qalculate!. Their contents are listed and described below.
@@ -496,8 +496,8 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 	</tgroup>
 </table>
 
-</sect2>
-<sect2 id="qalculate-managers">
+</sect1>
+<sect1 id="qalculate-managers">
 <title>Variable/Function/Unit Managers</title>
 <para>
 The manager windows provide a structural way of working with variables, functions and units (collectively referred to as objects). The managers for the three different objects are essentially similar. They can be opened from the edit menu and the keypad. <keycombo><keycap>Ctrl</keycap><keycap>M</keycap></keycombo>, <keycombo><keycap>Ctrl</keycap><keycap>F</keycap></keycombo> and <keycombo><keycap>Ctrl</keycap><keycap>U</keycap></keycombo> can also be used for variables, functions and units respectively.
@@ -547,8 +547,8 @@ The unit manager has an area for quick conversion between units. This converts b
 <para>
 For more information about variables, functions and units, see <xref linkend="qalculate-variables"/>,  <xref linkend="qalculate-functions"/> and <xref linkend="qalculate-units"/>.
 </para>
-</sect2>
-<sect2 id="qalculate-convert-number-bases-dialog">
+</sect1>
+<sect1 id="qalculate-convert-number-bases-dialog">
 <title>Convert Number Bases Dialog</title>
 <para>
 The number bases dialog, accessible from the <guimenu>File Menu</guimenu> or <keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>, is an efficient and convenient tool for conversion between binary, octal, decimal and hexadecimal numbers. This dialog contains entries for each number base. When a number is typed in any of the entries, the others are automatically updated to display the current number in their format. Numbers, or expressions, entered follow the same rules as expressions in the main expression entry.
@@ -563,15 +563,15 @@ The number bases dialog, accessible from the <guimenu>File Menu</guimenu> or <ke
 	</screenshot>
 </figure>
 </para>
-</sect2>
 </sect1>
+</chapter>
 
-<sect1 id="qalculate-expressions">
+<chapter id="qalculate-expressions">
 <title>Expressions</title>
 <para>
 Expressions are mathematical statements. Mathematical questions are asked through expressions, which contains objects tied together with operators. The result of an expression may also be an expression, if the result is not a single object. Apples and oranges can be mixed, but the result will hold them apart. Qalculate! knows algebra. 
 </para>
-<sect2 id="qalculate-expression-objects">
+<sect1 id="qalculate-expression-objects">
 <title>Objects</title>
 <para>
 In Qalculate! mathematical entities, such as numbers and variables, are referred to as objects. The recognized object types are listed below.
@@ -635,8 +635,8 @@ Qalculate! can handle most commonly used symbols for certain variables, function
 <para>
 For more information about variables, functions and units, see <xref linkend="qalculate-variables"/>,  <xref linkend="qalculate-functions"/> and <xref linkend="qalculate-units"/>.
 </para>
-</sect2>
-<sect2 id="qalculate-expression-operators">
+</sect1>
+<sect1 id="qalculate-expression-operators">
 <title>Operators</title>
 <para>
 The following operators are defined in Qalculate! and may be used in expressions.
@@ -799,10 +799,10 @@ Usually, mathematical expressions are written as normally expected. Standard ope
 </para>
 <para>
 </para>
-</sect2>
 </sect1>
+</chapter>
 
-<sect1 id="qalculate-result">
+<chapter id="qalculate-result">
 <title>Calculator Modes</title>
 <para>
 Qalculate! provides flexible calculation output and result display. There are several ways in which calculation output and display of results can be customized. These modes can generally be changed through the mode menu. Different modes are summarized below.
@@ -882,9 +882,9 @@ In the decimals dialog, the number of decimals displayed can be controlled. This
 </varlistentry>
 </variablelist>
 </para>
-</sect1>
+</chapter>
 
-<sect1 id="qalculate-variables">
+<chapter id="qalculate-variables">
 <title>Variables</title>
 <para>
 Variables are used to conveniently store a fixed value/result under a name. Variables can store everything that a result may contain, including numbers, units, variables, unsolved expressions and functions etc.
@@ -901,7 +901,7 @@ The ans variable, which always contains the last calculated result, is another s
 <para>
 The unknown variables x, y and z are predefined. They cannot be deleted, but changed. By default they use the default assumptions.
 </para>
-<sect2 id="qalculate-variable-creation">
+<sect1 id="qalculate-variable-creation">
 <title>Variable creation/editing</title>
 <figure id="qalculate-FIG-store-variable">
 	<title>Store Result</title>
@@ -930,8 +930,8 @@ Edit a variable by clicking <guibutton>Edit</guibutton> in the variable manager.
 Variables stored in the <quote>Temporary</quote> category will not be saved after the program exit.
 </para>
 </caution>
-</sect2>
-<sect2 id="qalculate-vectors-matrices">
+</sect1>
+<sect1 id="qalculate-vectors-matrices">
 <title>Vectors and Matrices</title>
 <para>
 Vectors and matrices are most effectively used stored in a variable. Qalculate! provides separate tools for these variables. They use a different dialog, where each element can be edited separately as in a spreadsheet. As with other variables, click <guibutton>Edit</guibutton> in the variable manager to edit a matrix/vector variable, but to create a new, select <menuchoice><guimenu>File</guimenu><guisubmenu>New</guisubmenu><guimenuitem>Matrix</guimenuitem></menuchoice> or <menuchoice><guimenu>File</guimenu><guisubmenu>New</guisubmenu><guimenuitem>Vector</guimenuitem></menuchoice>.
@@ -965,10 +965,10 @@ Matrices and vectors can also be loaded from data files. These files most be pla
 <para>
 The <command>load()</command> function can be used to access a CSV file directly in an expression. The reversed action is also available with <command>export()</command>, or the dialog accessed with <menuchoice><guimenu>File</guimenu><guimenuitem>Export CSV File...</guimenuitem></menuchoice> or from the variable manager.
 </para>
-</sect2>
 </sect1>
+</chapter>
 
-<sect1 id="qalculate-functions">
+<chapter id="qalculate-functions">
 <title>Functions</title>
 <para>
 Functions are essentially mathematical formulas. They are used to store expressions with variable values, arguments. To execute a function, the values for a number of arguments need to specified. These arguments are then inserted into the expression, making it possible to calculate.
@@ -1015,7 +1015,7 @@ Argument types include:
 <para>
 The argument can be restricted by further conditions. For example that a number must be positive.
 </para>
-<sect2 id="qalculate-available-functions">
+<sect1 id="qalculate-available-functions">
 <title>Available Functions</title>
 <para>
 Here the main function categories and some of their members are described, to give an overview of available functions. The right place for a complete list and information about separate functions is however in the function manager.
@@ -1023,7 +1023,7 @@ Here the main function categories and some of their members are described, to gi
 <varlistentry>
 <term>Algebra</term>
 <listitem><para>
-Contains <command>sum()</command> and <command>productive()</command>, which corresponds to the sum and product signs. <command>solve()</command> solves equations (ex. <quote>solve(x * 2 = 8)</quote> returns <quote>4</quote> meaning that x equals 4). Use <command>solve2()</command> and <command>multisolve()</command> to solve multiple equations with multiple variables.
+Contains <command>sum()</command> and <command>product()</command>, which corresponds to the sum and product signs. <command>solve()</command> solves equations (ex. <quote>solve(x * 2 = 8)</quote> returns <quote>4</quote> meaning that x equals 4). Use <command>solve2()</command> and <command>multisolve()</command> to solve multiple equations with multiple variables.
 </para></listitem>
 </varlistentry>
 <varlistentry>
@@ -1123,8 +1123,8 @@ Various utility functions. Most are only useful in definition of other functions
 </varlistentry>
 </variablelist>
 </para>
-</sect2>
-<sect2 id="qalculate-function-creation">
+</sect1>
+<sect1 id="qalculate-function-creation">
 <title>Function creation/editing</title>
 <para>
 Functions are a bit more complex than variables, but can nevertheless be relatively easily created. <menuchoice><guimenu>File</guimenu><guisubmenu>New</guisubmenu><guimenuitem>Function</guimenuitem></menuchoice> or click <guibutton>New</guibutton> in the function manager and the function edit dialog pops up. First enter a name, used to reference the function in an expression. If an expression is entered a bit further down, then the function will already be fully working. A bit more does however need to be said about the function expression.
@@ -1157,15 +1157,15 @@ The keep functions well organized, supply a category, descriptive name and descr
 <para>
 Global, system-wide functions can not actually be changed by the user, but if one of these functions is edited, they are deactivated and seemingly replaced by a new function. This way global functions can be <quote>deleted</quote> by deactivation. Some functions are however hard-coded and cannot be changed by the user.
 </para>
-</sect2>
 </sect1>
+</chapter>
 
-<sect1 id="qalculate-units">
+<chapter id="qalculate-units">
 <title>Units</title>
 <para>
 Units give numbers meaning in the real world. They specify what is measured by the numbers and the scale used. Qalculate! fully incorporates units in calculations and includes all standard SI units as well as many non-standard local units.
 </para>
-<sect2 id="qalculate-currency">
+<sect1 id="qalculate-currency">
 <title>Currency</title>
 <para>
 Among units, Qalculate! has support for currencies with up-to-date exchange rates. Currencies are normally referenced with the standard three letter code due to name clashes, but a number of currency unit can also be accessed through their regular name and symbol. U.S. dollars can, for example, be referenced both as USD and dollar/dollars, or with the $ symbol. 
@@ -1173,8 +1173,8 @@ Among units, Qalculate! has support for currencies with up-to-date exchange rate
 <para>
 <application>Wget</application> must be installed on the computer for exchange rate updates to be enabled. Current exchange rates are automatically fetched from the European Central Bank on the Internet, the first time Qalculate! is started. By default the exchange rates will thereafter have to be updated manually from <menuchoice><guimenu>File</guimenu><guimenuitem>Update Exchange Rates</guimenuitem></menuchoice>, unless automatic updates are enabled in the preferences dialog.
 </para>
-</sect2>
-<sect2 id="qalculate-unit-conversion">
+</sect1>
+<sect1 id="qalculate-unit-conversion">
 <title>Conversion</title>
 <para>
 Expression can be converted to a specific unit directly in the expression entry with the <quote>to</quote> operator, which converts the left-hand expression to a specified unit (ex. <quote>5 feet + 2 inches to cm</quote> converts the result of <quote>5 feet + 2 inches</quote> to centimeters and displays it). Unit expressions may only contain units, prefixes, exponents, multiplication and division. Other elements are ignored. 
@@ -1198,8 +1198,8 @@ The final way to convert to another unit is to use the predefined units in the <
 <para>
 It is also possible to let Qalculate! automatically convert the result to appropriate units with <menuchoice><guimenu>Edit</guimenu><guisubmenu>Convert To Base Units</guisubmenu></menuchoice> and <menuchoice><guimenu>Edit</guimenu><guisubmenu>Convert To Best Unit</guisubmenu></menuchoice>.
 </para>
-</sect2>
-<sect2 id="qalculate-unit-creation">
+</sect1>
+<sect1 id="qalculate-unit-creation">
 <title>Unit creation/editing</title>
 <para>
 There are three different unit classes in Qalculate! — base, alias and composite units. Base units are units defined as basis for other units. Meters and seconds are typical base units. Alias units is defined in relation to another unit, for example hour are defined as an alias unit that equals 60 minutes which in turn is defined in relation to seconds. Finally, composite units are defined by a unit expression with multiple units. Composite units often have an alias unit associated with them, as they do not have a reference name on their own. For example, a joule is defined as an alias defined in relation to a composite unit defined as <quote>Newton * meter</quote>.
@@ -1227,10 +1227,10 @@ For base units, the name is all that is needed. For alias units, on the other ha
 <para>
 Composite units need a unit expression with multiple units as base, in the base unit field. These expressions may only contain units, prefixes, exponents, multiplication and division (ex. <quote>km/h</quote>). 
 </para>
-</sect2>
 </sect1>
+</chapter>
 
-<sect1 id="qalculate-plotting">
+<chapter id="qalculate-plotting">
 <title>Plotting</title>
 <para>
 Plotting in Qalculate! is done through an external program, <application>Gnuplot</application>. Thus <application>Gnuplot</application> (&gt;= v. 3.7) need to be installed on the computer for plotting to work.
@@ -1273,7 +1273,7 @@ Even though Qalculate! does all the calculations before handing over the data to
 	</screenshot>
 </figure>
 <para>
-For functions, the function range — min and max x value, and the number of y values calculated — can be specified.
+For functions, the function range — min and max x value, and the number of values or the size of the step between each y value calculated — can be specified.
 </para>
 <para>
 A title can be set to appear at the top of the plot, as well as labels for the x and y axis. The appearance can also be controlled by selecting or disabling legend placement, displaying/hiding the grid and borders on the top and the right side of the diagram and choosing color or monochrome graphics. The x and y scales can be made logarithmic by clicking the box on the right and filling in a desired logarithmic base.
@@ -1294,6 +1294,11 @@ To update the plot window, click <guibutton>Apply</guibutton> at the bottom of t
 <para>
 The plot can be saved as an image file. Click <guibutton>Save</guibutton> and select a file name and folder. The extension of the file name will decide the file type (.png for PNG image, .svg for SVG, .ps for postscript, .eps for encapsulated postscript, .tex for LaTeX, and .fig for XFig). Default is to save as a PNG image.
 </para>
-</sect1>
+</chapter>
 
-</article>
+&appendixa;
+&appendixb;
+&appendixc;
+
+</book>
+

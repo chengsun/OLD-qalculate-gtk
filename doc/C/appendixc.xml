@@ -1,0 +1,2909 @@
+<appendix id="qalculate-definitions-units">
+<title>Unit List</title>
+<sect1 id="qalculate-definitions-units-1-Angle">
+<title>Angle</title>
+<sect2 id="qalculate-definitions-units-2-Angular-Acceleration">
+<title>Angular Acceleration</title>
+<table id="qalculate-TBL-units-Angular-Acceleration" frame="topbot" colsep="1">
+<title>Units: Angular Acceleration</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Radians per Square Second</para></entry>
+<entry><para></para></entry>
+<entry><para>rad/s^2</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Angular-Velocity">
+<title>Angular Velocity</title>
+<table id="qalculate-TBL-units-Angular-Velocity" frame="topbot" colsep="1">
+<title>Units: Angular Velocity</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Radians per Second</para></entry>
+<entry><para></para></entry>
+<entry><para>rad/s</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Plane-Angle">
+<title>Plane Angle</title>
+<table id="qalculate-TBL-units-Plane-Angle" frame="topbot" colsep="1">
+<title>Units: Plane Angle</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Degree</para></entry>
+<entry><para>deg / ° / degree / degrees</para></entry>
+<entry><para>rad</para></entry>
+<entry><para>pi/180</para></entry>
+</row>
+<row valign="top">
+<entry><para>Gradian</para></entry>
+<entry><para>gra / gradian / gradians</para></entry>
+<entry><para>rad</para></entry>
+<entry><para>pi/200</para></entry>
+</row>
+<row valign="top">
+<entry><para>Meter per Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>m/m</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Radian</para></entry>
+<entry><para>rad / radian / radians</para></entry>
+<entry><para>m_p_m</para></entry>
+<entry><para>1</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Solid-Angle">
+<title>Solid Angle</title>
+<table id="qalculate-TBL-units-Solid-Angle" frame="topbot" colsep="1">
+<title>Units: Solid Angle</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Square Meter per Square Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>m^2/m^2</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Steradian</para></entry>
+<entry><para>sr / steradian / steradians</para></entry>
+<entry><para>m_p_m</para></entry>
+<entry><para>1</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+</sect1>
+<sect1 id="qalculate-definitions-units-1-Area">
+<title>Area</title>
+<table id="qalculate-TBL-units-Area" frame="topbot" colsep="1">
+<title>Units: Area</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Acre</para></entry>
+<entry><para>acre / acres</para></entry>
+<entry><para>ch^2</para></entry>
+<entry><para>10</para></entry>
+</row>
+<row valign="top">
+<entry><para>Are</para></entry>
+<entry><para>a / are / ares</para></entry>
+<entry><para>m^2</para></entry>
+<entry><para>100</para></entry>
+</row>
+<row valign="top">
+<entry><para>Barn</para></entry>
+<entry><para>b / barn / barns</para></entry>
+<entry><para>m^2</para></entry>
+<entry><para>1E-28</para></entry>
+</row>
+<row valign="top">
+<entry><para>Hectare</para></entry>
+<entry><para></para></entry>
+<entry><para>ha</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Rood</para></entry>
+<entry><para>rood / roods</para></entry>
+<entry><para>yd^2</para></entry>
+<entry><para>1210</para></entry>
+</row>
+<row valign="top">
+<entry><para>Section</para></entry>
+<entry><para>section / sections</para></entry>
+<entry><para>mi^2</para></entry>
+<entry><para>1</para></entry>
+</row>
+<row valign="top">
+<entry><para>Square Foot</para></entry>
+<entry><para></para></entry>
+<entry><para>ft^2</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Square Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>m^2</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Township</para></entry>
+<entry><para>township / townships</para></entry>
+<entry><para>section</para></entry>
+<entry><para>36</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect1>
+<sect1 id="qalculate-definitions-units-1-Currency">
+<title>Currency</title>
+<table id="qalculate-TBL-units-Currency" frame="topbot" colsep="1">
+<title>Units: Currency</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Australian Dollars</para></entry>
+<entry><para>AUD</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/1.7151</para></entry>
+</row>
+<row valign="top">
+<entry><para>Austrian shilling</para></entry>
+<entry><para>ATS / shilling</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/13.7603</para></entry>
+</row>
+<row valign="top">
+<entry><para>Belgian franc</para></entry>
+<entry><para>BEF</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/40.3399</para></entry>
+</row>
+<row valign="top">
+<entry><para>British Pounds</para></entry>
+<entry><para>GBP / £</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/0.69095</para></entry>
+</row>
+<row valign="top">
+<entry><para>Bulgarian Lev</para></entry>
+<entry><para>lev / BGN</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/1.9559</para></entry>
+</row>
+<row valign="top">
+<entry><para>Canadian Dollars</para></entry>
+<entry><para>CAD</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/1.5661</para></entry>
+</row>
+<row valign="top">
+<entry><para>Cent (USD)</para></entry>
+<entry><para>¢ / cent / cents</para></entry>
+<entry><para>$</para></entry>
+<entry><para>1/100</para></entry>
+</row>
+<row valign="top">
+<entry><para>Cypriot Pound</para></entry>
+<entry><para>CYP</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/0.57550</para></entry>
+</row>
+<row valign="top">
+<entry><para>Czech Koruna</para></entry>
+<entry><para>CZK</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/31.618</para></entry>
+</row>
+<row valign="top">
+<entry><para>Danish Kroner</para></entry>
+<entry><para>DKK</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/7.4404</para></entry>
+</row>
+<row valign="top">
+<entry><para>Deutche Mark</para></entry>
+<entry><para>DEM / mark</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/1.95583</para></entry>
+</row>
+<row valign="top">
+<entry><para>Dutch guilder</para></entry>
+<entry><para>NLG / guilder</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/2.20371</para></entry>
+</row>
+<row valign="top">
+<entry><para>Estonian Kroon</para></entry>
+<entry><para>EEK</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/15.6466</para></entry>
+</row>
+<row valign="top">
+<entry><para>Euro Cent</para></entry>
+<entry><para>eurocent / eurocents</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/100</para></entry>
+</row>
+<row valign="top">
+<entry><para>European Euros</para></entry>
+<entry><para>EUR / € / euro / euros</para></entry>
+<entry><para></para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Finnish markka</para></entry>
+<entry><para>FIM / markka</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/5.94573</para></entry>
+</row>
+<row valign="top">
+<entry><para>French franc</para></entry>
+<entry><para>FRF / franc</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/6.55957</para></entry>
+</row>
+<row valign="top">
+<entry><para>Greek drachma</para></entry>
+<entry><para>GRD</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/340.750</para></entry>
+</row>
+<row valign="top">
+<entry><para>Hong Kong Dollars</para></entry>
+<entry><para>HKD</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/9.6786</para></entry>
+</row>
+<row valign="top">
+<entry><para>Hungarian Forint</para></entry>
+<entry><para>forint / HUF</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/246.25</para></entry>
+</row>
+<row valign="top">
+<entry><para>Icelandic Krona</para></entry>
+<entry><para>ISK</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/87.87</para></entry>
+</row>
+<row valign="top">
+<entry><para>Irish pound</para></entry>
+<entry><para>IEP</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/0.787564</para></entry>
+</row>
+<row valign="top">
+<entry><para>Italian lira</para></entry>
+<entry><para>ITL / lira</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/1936.27</para></entry>
+</row>
+<row valign="top">
+<entry><para>Japanese Yen</para></entry>
+<entry><para>JPY / ¥ / yen</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/136.85</para></entry>
+</row>
+<row valign="top">
+<entry><para>Latvian Lat</para></entry>
+<entry><para>lat / LVL</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/0.6675</para></entry>
+</row>
+<row valign="top">
+<entry><para>Lithuanian Lit</para></entry>
+<entry><para>lit / LTL</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/3.4528</para></entry>
+</row>
+<row valign="top">
+<entry><para>Luxembourg franc</para></entry>
+<entry><para>LUF</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/40.3399</para></entry>
+</row>
+<row valign="top">
+<entry><para>Maltese Lira</para></entry>
+<entry><para>MTL</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/0.4294</para></entry>
+</row>
+<row valign="top">
+<entry><para>New Zealand Dollars</para></entry>
+<entry><para>NZD</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/1.8449</para></entry>
+</row>
+<row valign="top">
+<entry><para>Norwegian Kroner</para></entry>
+<entry><para>NOK</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/8.3280</para></entry>
+</row>
+<row valign="top">
+<entry><para>Polish Zloty</para></entry>
+<entry><para>zloty / PLN</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/4.3634</para></entry>
+</row>
+<row valign="top">
+<entry><para>Portuguese escudo</para></entry>
+<entry><para>PTE / escudo</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/200.482</para></entry>
+</row>
+<row valign="top">
+<entry><para>Romanian Leu</para></entry>
+<entry><para>leu / ROL</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/41187</para></entry>
+</row>
+<row valign="top">
+<entry><para>Singapore Dollars</para></entry>
+<entry><para>SGD</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/2.0908</para></entry>
+</row>
+<row valign="top">
+<entry><para>Slovakian Koruna</para></entry>
+<entry><para>SKK</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/40.075</para></entry>
+</row>
+<row valign="top">
+<entry><para>Slovenian Tolar</para></entry>
+<entry><para>tolar / SIT</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/239.9900</para></entry>
+</row>
+<row valign="top">
+<entry><para>South African Rand</para></entry>
+<entry><para>ZAR</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/8.0434</para></entry>
+</row>
+<row valign="top">
+<entry><para>South Korean Won</para></entry>
+<entry><para>KRW</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/1426.13</para></entry>
+</row>
+<row valign="top">
+<entry><para>Spanish peseta</para></entry>
+<entry><para>ESP / peseta / pesetas</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/166.386</para></entry>
+</row>
+<row valign="top">
+<entry><para>Swedish Krona</para></entry>
+<entry><para>SEK</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/9.0288</para></entry>
+</row>
+<row valign="top">
+<entry><para>Swiss Francs</para></entry>
+<entry><para>CHF</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/1.5495</para></entry>
+</row>
+<row valign="top">
+<entry><para>Turkish Lira</para></entry>
+<entry><para>TRL</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/1870400</para></entry>
+</row>
+<row valign="top">
+<entry><para>U.S. Dollars</para></entry>
+<entry><para>$ / USD / dollar / dollars</para></entry>
+<entry><para>€</para></entry>
+<entry><para>1/1.2413</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect1>
+<sect1 id="qalculate-definitions-units-1-Electricity">
+<title>Electricity</title>
+<sect2 id="qalculate-definitions-units-2-Capacitance">
+<title>Capacitance</title>
+<table id="qalculate-TBL-units-Capacitance" frame="topbot" colsep="1">
+<title>Units: Capacitance</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Coulomb per Volt</para></entry>
+<entry><para></para></entry>
+<entry><para>C/V</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Farad</para></entry>
+<entry><para>F / farad / farads</para></entry>
+<entry><para>C_p_V</para></entry>
+<entry><para>1</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Current-Density">
+<title>Current Density</title>
+<table id="qalculate-TBL-units-Current-Density" frame="topbot" colsep="1">
+<title>Units: Current Density</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Ampere per Square Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>A/m^2</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Electric-Charge">
+<title>Electric Charge</title>
+<table id="qalculate-TBL-units-Electric-Charge" frame="topbot" colsep="1">
+<title>Units: Electric Charge</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Coulomb</para></entry>
+<entry><para>C / coulomb / coulombs</para></entry>
+<entry><para>s_A</para></entry>
+<entry><para>1</para></entry>
+</row>
+<row valign="top">
+<entry><para>Second Ampere</para></entry>
+<entry><para></para></entry>
+<entry><para>s A</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Electric-Charge-Density">
+<title>Electric Charge Density</title>
+<table id="qalculate-TBL-units-Electric-Charge-Density" frame="topbot" colsep="1">
+<title>Units: Electric Charge Density</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Coulomb per Cubic Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>C/m^3</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Electric-Conductance">
+<title>Electric Conductance</title>
+<table id="qalculate-TBL-units-Electric-Conductance" frame="topbot" colsep="1">
+<title>Units: Electric Conductance</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Ampere per Volt</para></entry>
+<entry><para></para></entry>
+<entry><para>A/V</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Siemens</para></entry>
+<entry><para>S / siemens / siemens</para></entry>
+<entry><para>A_p_V</para></entry>
+<entry><para>1</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Electric-Current">
+<title>Electric Current</title>
+<table id="qalculate-TBL-units-Electric-Current" frame="topbot" colsep="1">
+<title>Units: Electric Current</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Ampere</para></entry>
+<entry><para>A / ampere / amperes</para></entry>
+<entry><para></para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Electric-Field-Strength">
+<title>Electric Field Strength</title>
+<table id="qalculate-TBL-units-Electric-Field-Strength" frame="topbot" colsep="1">
+<title>Units: Electric Field Strength</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Volt per Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>V/m</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Electric-Flux-Density">
+<title>Electric Flux Density</title>
+<table id="qalculate-TBL-units-Electric-Flux-Density" frame="topbot" colsep="1">
+<title>Units: Electric Flux Density</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Coulomb per Square Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>C/m^2</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Electric-Potential">
+<title>Electric Potential</title>
+<table id="qalculate-TBL-units-Electric-Potential" frame="topbot" colsep="1">
+<title>Units: Electric Potential</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Volt</para></entry>
+<entry><para>V / volt / volts</para></entry>
+<entry><para>W_p_A</para></entry>
+<entry><para>1</para></entry>
+</row>
+<row valign="top">
+<entry><para>Watt per Ampere</para></entry>
+<entry><para></para></entry>
+<entry><para>W/A</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Electric-Resistance">
+<title>Electric Resistance</title>
+<table id="qalculate-TBL-units-Electric-Resistance" frame="topbot" colsep="1">
+<title>Units: Electric Resistance</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Ohm</para></entry>
+<entry><para>Ω / ohm / ohms</para></entry>
+<entry><para>V_p_A</para></entry>
+<entry><para>1</para></entry>
+</row>
+<row valign="top">
+<entry><para>Volt per Ampere</para></entry>
+<entry><para></para></entry>
+<entry><para>V/A</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Inductance">
+<title>Inductance</title>
+<table id="qalculate-TBL-units-Inductance" frame="topbot" colsep="1">
+<title>Units: Inductance</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Henry</para></entry>
+<entry><para>H / henry / henrys</para></entry>
+<entry><para>Wb_p_A</para></entry>
+<entry><para>1</para></entry>
+</row>
+<row valign="top">
+<entry><para>Weber per Ampere</para></entry>
+<entry><para></para></entry>
+<entry><para>Wb/A</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Permeability">
+<title>Permeability</title>
+<table id="qalculate-TBL-units-Permeability" frame="topbot" colsep="1">
+<title>Units: Permeability</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Henry per Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>H/m</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Permittivity">
+<title>Permittivity</title>
+<table id="qalculate-TBL-units-Permittivity" frame="topbot" colsep="1">
+<title>Units: Permittivity</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Farad per Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>F/m</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+</sect1>
+<sect1 id="qalculate-definitions-units-1-Energy">
+<title>Energy</title>
+<table id="qalculate-TBL-units-Energy" frame="topbot" colsep="1">
+<title>Units: Energy</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>British Thermal Unit (IT)</para></entry>
+<entry><para>Btu</para></entry>
+<entry><para>J</para></entry>
+<entry><para>1055.056</para></entry>
+</row>
+<row valign="top">
+<entry><para>Calorie (15 degrees Celcius)</para></entry>
+<entry><para>calorie_fifteen / calories_fifteen</para></entry>
+<entry><para>J</para></entry>
+<entry><para>4.185880 (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Calorie (capital C)</para></entry>
+<entry><para>Calorie / Calories</para></entry>
+<entry><para>cal</para></entry>
+<entry><para>1000</para></entry>
+</row>
+<row valign="top">
+<entry><para>Calorie (international table)</para></entry>
+<entry><para>cal / calorie / calories</para></entry>
+<entry><para>J</para></entry>
+<entry><para>4.1868</para></entry>
+</row>
+<row valign="top">
+<entry><para>Calorie (mean)</para></entry>
+<entry><para>cal_mean / mean_calorie / mean_calories</para></entry>
+<entry><para>J</para></entry>
+<entry><para>4.19002 (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Calorie (thermochemical)</para></entry>
+<entry><para>cal_th / thermo_calorie / thermo_calories</para></entry>
+<entry><para>J</para></entry>
+<entry><para>4.184</para></entry>
+</row>
+<row valign="top">
+<entry><para>Electron Volt</para></entry>
+<entry><para>eV / electron_volt / electron_volts</para></entry>
+<entry><para>J</para></entry>
+<entry><para>1.602177E-19 (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Erg</para></entry>
+<entry><para>erg / ergs</para></entry>
+<entry><para>J</para></entry>
+<entry><para>1E-7</para></entry>
+</row>
+<row valign="top">
+<entry><para>Joule</para></entry>
+<entry><para>J / joule / joules</para></entry>
+<entry><para>N_m</para></entry>
+<entry><para>1</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+<sect2 id="qalculate-definitions-units-2-Energy-Density">
+<title>Energy Density</title>
+<table id="qalculate-TBL-units-Energy-Density" frame="topbot" colsep="1">
+<title>Units: Energy Density</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Joule per Cubic Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>J/m^3</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Entropy">
+<title>Entropy</title>
+<table id="qalculate-TBL-units-Entropy" frame="topbot" colsep="1">
+<title>Units: Entropy</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Joule per Kelvin</para></entry>
+<entry><para></para></entry>
+<entry><para>J/K</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Molar-Energy">
+<title>Molar Energy</title>
+<table id="qalculate-TBL-units-Molar-Energy" frame="topbot" colsep="1">
+<title>Units: Molar Energy</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Joule per Mole</para></entry>
+<entry><para></para></entry>
+<entry><para>J/mol</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Molar-Entropy">
+<title>Molar Entropy</title>
+<table id="qalculate-TBL-units-Molar-Entropy" frame="topbot" colsep="1">
+<title>Units: Molar Entropy</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Joule per Mole Kelvin</para></entry>
+<entry><para></para></entry>
+<entry><para>J/(mol K)</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Power">
+<title>Power</title>
+<table id="qalculate-TBL-units-Power" frame="topbot" colsep="1">
+<title>Units: Power</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Horse Power</para></entry>
+<entry><para>hp / horsepower / horsepowers</para></entry>
+<entry><para>W</para></entry>
+<entry><para>745.699987158227022</para></entry>
+</row>
+<row valign="top">
+<entry><para>Joule per Second</para></entry>
+<entry><para></para></entry>
+<entry><para>J/s</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Pferdestärke</para></entry>
+<entry><para>PS / pferdestärke</para></entry>
+<entry><para>W</para></entry>
+<entry><para>735.49875</para></entry>
+</row>
+<row valign="top">
+<entry><para>Watt</para></entry>
+<entry><para>W / watt / watts</para></entry>
+<entry><para>J_p_s</para></entry>
+<entry><para>1</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Specific-Energy">
+<title>Specific Energy</title>
+<table id="qalculate-TBL-units-Specific-Energy" frame="topbot" colsep="1">
+<title>Units: Specific Energy</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Joule per Kilogram</para></entry>
+<entry><para></para></entry>
+<entry><para>J/kg</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Specific-Entropy">
+<title>Specific Entropy</title>
+<table id="qalculate-TBL-units-Specific-Entropy" frame="topbot" colsep="1">
+<title>Units: Specific Entropy</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Joule per Kilogram Kelvin</para></entry>
+<entry><para></para></entry>
+<entry><para>J/(kg K)</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Thermal-Conductivity">
+<title>Thermal Conductivity</title>
+<table id="qalculate-TBL-units-Thermal-Conductivity" frame="topbot" colsep="1">
+<title>Units: Thermal Conductivity</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Watt per Meter Kelvin</para></entry>
+<entry><para></para></entry>
+<entry><para>W/(m K)</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+</sect1>
+<sect1 id="qalculate-definitions-units-1-Force">
+<title>Force</title>
+<table id="qalculate-TBL-units-Force" frame="topbot" colsep="1">
+<title>Units: Force</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Dyne</para></entry>
+<entry><para>dyn / dyne / dynes</para></entry>
+<entry><para>N</para></entry>
+<entry><para>1E-5</para></entry>
+</row>
+<row valign="top">
+<entry><para>Meter Kilogram per Square Second</para></entry>
+<entry><para></para></entry>
+<entry><para>m kg/s^2</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Newton</para></entry>
+<entry><para>N / newton / newtons</para></entry>
+<entry><para>m_kg_p_sqs</para></entry>
+<entry><para>1</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+<sect2 id="qalculate-definitions-units-2-Dynamic-Viscosity">
+<title>Dynamic Viscosity</title>
+<table id="qalculate-TBL-units-Dynamic-Viscosity" frame="topbot" colsep="1">
+<title>Units: Dynamic Viscosity</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Pascal Second</para></entry>
+<entry><para></para></entry>
+<entry><para>Pa s</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Poise</para></entry>
+<entry><para>P / poise / poises</para></entry>
+<entry><para>Pa_s</para></entry>
+<entry><para>0.1</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Kinematic-Viscosity">
+<title>Kinematic Viscosity</title>
+<table id="qalculate-TBL-units-Kinematic-Viscosity" frame="topbot" colsep="1">
+<title>Units: Kinematic Viscosity</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Square Meter per Second</para></entry>
+<entry><para></para></entry>
+<entry><para>m^2/s</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Stokes</para></entry>
+<entry><para>St / stokes / stokes</para></entry>
+<entry><para>sqm_p_s</para></entry>
+<entry><para>0.0001</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Moment-of-Force">
+<title>Moment of Force</title>
+<table id="qalculate-TBL-units-Moment-of-Force" frame="topbot" colsep="1">
+<title>Units: Moment of Force</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Newton Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>N m</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Pressure">
+<title>Pressure</title>
+<table id="qalculate-TBL-units-Pressure" frame="topbot" colsep="1">
+<title>Units: Pressure</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Atmosphere</para></entry>
+<entry><para>atm / atmosphere / atmospheres</para></entry>
+<entry><para>Pa</para></entry>
+<entry><para>101325</para></entry>
+</row>
+<row valign="top">
+<entry><para>Bar</para></entry>
+<entry><para>bar / bars</para></entry>
+<entry><para>Pa</para></entry>
+<entry><para>100000</para></entry>
+</row>
+<row valign="top">
+<entry><para>Newton per Square Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>N/m^2</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Pascal</para></entry>
+<entry><para>Pa / pascal / pascals</para></entry>
+<entry><para>N_p_sqm</para></entry>
+<entry><para>1</para></entry>
+</row>
+<row valign="top">
+<entry><para>Torr</para></entry>
+<entry><para>torr / torrs</para></entry>
+<entry><para>atm</para></entry>
+<entry><para>1/760</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Surface-Tension">
+<title>Surface Tension</title>
+<table id="qalculate-TBL-units-Surface-Tension" frame="topbot" colsep="1">
+<title>Units: Surface Tension</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Newton per Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>N/m</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+</sect1>
+<sect1 id="qalculate-definitions-units-1-Length">
+<title>Length</title>
+<table id="qalculate-TBL-units-Length" frame="topbot" colsep="1">
+<title>Units: Length</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Astronomical Unit</para></entry>
+<entry><para>AU / astronomical_unit / astronomical_units</para></entry>
+<entry><para>m</para></entry>
+<entry><para>149578706600</para></entry>
+</row>
+<row valign="top">
+<entry><para>Chain</para></entry>
+<entry><para>ch / chain / chains</para></entry>
+<entry><para>li</para></entry>
+<entry><para>100</para></entry>
+</row>
+<row valign="top">
+<entry><para>Fathom</para></entry>
+<entry><para>fathom / fathoms</para></entry>
+<entry><para>yd</para></entry>
+<entry><para>2</para></entry>
+</row>
+<row valign="top">
+<entry><para>Foot</para></entry>
+<entry><para>ft / foot / feet</para></entry>
+<entry><para>hand</para></entry>
+<entry><para>3</para></entry>
+</row>
+<row valign="top">
+<entry><para>Furlong</para></entry>
+<entry><para>fur / furlong / furlongs</para></entry>
+<entry><para>yd</para></entry>
+<entry><para>220</para></entry>
+</row>
+<row valign="top">
+<entry><para>Hand</para></entry>
+<entry><para>hand / hands</para></entry>
+<entry><para>in</para></entry>
+<entry><para>4</para></entry>
+</row>
+<row valign="top">
+<entry><para>Inch</para></entry>
+<entry><para>in / inch / inches</para></entry>
+<entry><para>m</para></entry>
+<entry><para>0.0254</para></entry>
+</row>
+<row valign="top">
+<entry><para>Light Year</para></entry>
+<entry><para>ly / light_year / light_years</para></entry>
+<entry><para>m</para></entry>
+<entry><para>9460536207068016</para></entry>
+</row>
+<row valign="top">
+<entry><para>Link</para></entry>
+<entry><para>li / link / links</para></entry>
+<entry><para>ft</para></entry>
+<entry><para>66/100</para></entry>
+</row>
+<row valign="top">
+<entry><para>Meter</para></entry>
+<entry><para>m / meter / meters</para></entry>
+<entry><para></para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Mil (1/1000 in)</para></entry>
+<entry><para>mil / mils</para></entry>
+<entry><para>in</para></entry>
+<entry><para>0.001</para></entry>
+</row>
+<row valign="top">
+<entry><para>Mile</para></entry>
+<entry><para>mi / mile / miles</para></entry>
+<entry><para>ch</para></entry>
+<entry><para>80</para></entry>
+</row>
+<row valign="top">
+<entry><para>Nautical Mile</para></entry>
+<entry><para>nautical_mile / nautical_miles</para></entry>
+<entry><para>m</para></entry>
+<entry><para>1852</para></entry>
+</row>
+<row valign="top">
+<entry><para>Parsec</para></entry>
+<entry><para>pc / parsec / parsecs</para></entry>
+<entry><para>AU</para></entry>
+<entry><para>648000/pi</para></entry>
+</row>
+<row valign="top">
+<entry><para>Rod (pole/perch)</para></entry>
+<entry><para>rd / rod / rods</para></entry>
+<entry><para>US_ft</para></entry>
+<entry><para>16.5</para></entry>
+</row>
+<row valign="top">
+<entry><para>U.S. Survey Foot</para></entry>
+<entry><para>US_ft / US_foot / US_feet</para></entry>
+<entry><para>US_in</para></entry>
+<entry><para>12</para></entry>
+</row>
+<row valign="top">
+<entry><para>U.S. Survey Inch</para></entry>
+<entry><para>US_in / US_inch / US_inches</para></entry>
+<entry><para>m</para></entry>
+<entry><para>100/3937</para></entry>
+</row>
+<row valign="top">
+<entry><para>U.S. Survey Mile</para></entry>
+<entry><para>US_mi / US_mile / US_miles</para></entry>
+<entry><para>US_ft</para></entry>
+<entry><para>5280</para></entry>
+</row>
+<row valign="top">
+<entry><para>Yard</para></entry>
+<entry><para>yd / yard / yards</para></entry>
+<entry><para>ft</para></entry>
+<entry><para>3</para></entry>
+</row>
+<row valign="top">
+<entry><para>Ångström</para></entry>
+<entry><para>Å / ångström / angstrom</para></entry>
+<entry><para>m</para></entry>
+<entry><para>1E-10</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect1>
+<sect1 id="qalculate-definitions-units-1-Light">
+<title>Light</title>
+<sect2 id="qalculate-definitions-units-2-Illuminance">
+<title>Illuminance</title>
+<table id="qalculate-TBL-units-Illuminance" frame="topbot" colsep="1">
+<title>Units: Illuminance</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Lumen per Square Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>lm/m^2</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Lux</para></entry>
+<entry><para>lx / lux</para></entry>
+<entry><para>lm_p_sqm</para></entry>
+<entry><para>1</para></entry>
+</row>
+<row valign="top">
+<entry><para>Phot</para></entry>
+<entry><para>ph / phot / phots</para></entry>
+<entry><para>lx</para></entry>
+<entry><para>10000</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Irradiance">
+<title>Irradiance</title>
+<table id="qalculate-TBL-units-Irradiance" frame="topbot" colsep="1">
+<title>Units: Irradiance</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Watt per Square Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>W/m^2</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Luminance">
+<title>Luminance</title>
+<table id="qalculate-TBL-units-Luminance" frame="topbot" colsep="1">
+<title>Units: Luminance</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Candela per Square Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>cd/m^2</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Stilb</para></entry>
+<entry><para>sb / stilb / stilbs</para></entry>
+<entry><para>cd_p_sqm</para></entry>
+<entry><para>10000</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Luminous-Flux">
+<title>Luminous Flux</title>
+<table id="qalculate-TBL-units-Luminous-Flux" frame="topbot" colsep="1">
+<title>Units: Luminous Flux</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Candela Steradian</para></entry>
+<entry><para></para></entry>
+<entry><para>cd sr</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Lumen</para></entry>
+<entry><para>lm / lumen / lumens</para></entry>
+<entry><para>cd_sr</para></entry>
+<entry><para>1</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Luminous-Intensity">
+<title>Luminous Intensity</title>
+<table id="qalculate-TBL-units-Luminous-Intensity" frame="topbot" colsep="1">
+<title>Units: Luminous Intensity</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Candela</para></entry>
+<entry><para>cd / candela / candelas</para></entry>
+<entry><para></para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Radiance">
+<title>Radiance</title>
+<table id="qalculate-TBL-units-Radiance" frame="topbot" colsep="1">
+<title>Units: Radiance</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Watt per Square Meter Steradian</para></entry>
+<entry><para></para></entry>
+<entry><para>W/(sr m^2)</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Radiant-Intensity">
+<title>Radiant Intensity</title>
+<table id="qalculate-TBL-units-Radiant-Intensity" frame="topbot" colsep="1">
+<title>Units: Radiant Intensity</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Watt per Steradian</para></entry>
+<entry><para></para></entry>
+<entry><para>W/sr</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+</sect1>
+<sect1 id="qalculate-definitions-units-1-Magnetism">
+<title>Magnetism</title>
+<sect2 id="qalculate-definitions-units-2-Magnetic-Field-Strength">
+<title>Magnetic Field Strength</title>
+<table id="qalculate-TBL-units-Magnetic-Field-Strength" frame="topbot" colsep="1">
+<title>Units: Magnetic Field Strength</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Ampere per Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>A/m</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Oersted</para></entry>
+<entry><para>Oe / oersted / oersteds</para></entry>
+<entry><para>A_p_m</para></entry>
+<entry><para>1000/(4*pi)</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Magnetic-Flux">
+<title>Magnetic Flux</title>
+<table id="qalculate-TBL-units-Magnetic-Flux" frame="topbot" colsep="1">
+<title>Units: Magnetic Flux</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Maxwell</para></entry>
+<entry><para>Mx / maxwell / maxwells</para></entry>
+<entry><para>Wb</para></entry>
+<entry><para>1E-8</para></entry>
+</row>
+<row valign="top">
+<entry><para>Volt Seconds</para></entry>
+<entry><para></para></entry>
+<entry><para>V s</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Weber</para></entry>
+<entry><para>Wb / weber / webers</para></entry>
+<entry><para>V_s</para></entry>
+<entry><para>1</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Magnetic-Flux-Density">
+<title>Magnetic Flux Density</title>
+<table id="qalculate-TBL-units-Magnetic-Flux-Density" frame="topbot" colsep="1">
+<title>Units: Magnetic Flux Density</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Gauss</para></entry>
+<entry><para>gauss</para></entry>
+<entry><para>T</para></entry>
+<entry><para>0.0001</para></entry>
+</row>
+<row valign="top">
+<entry><para>Tesla</para></entry>
+<entry><para>T / tesla / teslas</para></entry>
+<entry><para>Wb_p_sqm</para></entry>
+<entry><para>1</para></entry>
+</row>
+<row valign="top">
+<entry><para>Weber per Square Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>Wb/m^2</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Wave-Number">
+<title>Wave Number</title>
+<table id="qalculate-TBL-units-Wave-Number" frame="topbot" colsep="1">
+<title>Units: Wave Number</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Reciprocal Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>m^-1</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+</sect1>
+<sect1 id="qalculate-definitions-units-1-Mass">
+<title>Mass</title>
+<table id="qalculate-TBL-units-Mass" frame="topbot" colsep="1">
+<title>Units: Mass</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Carat</para></entry>
+<entry><para>carat / carats</para></entry>
+<entry><para>g</para></entry>
+<entry><para>0.2</para></entry>
+</row>
+<row valign="top">
+<entry><para>Cental</para></entry>
+<entry><para>cental / centals</para></entry>
+<entry><para>lb</para></entry>
+<entry><para>100</para></entry>
+</row>
+<row valign="top">
+<entry><para>Dram</para></entry>
+<entry><para>dr / dram / drams</para></entry>
+<entry><para>g</para></entry>
+<entry><para>1.7718451953125</para></entry>
+</row>
+<row valign="top">
+<entry><para>Grain</para></entry>
+<entry><para>gr / grain / grains</para></entry>
+<entry><para>g</para></entry>
+<entry><para>0.06479891</para></entry>
+</row>
+<row valign="top">
+<entry><para>Gram</para></entry>
+<entry><para>g / gram / grams</para></entry>
+<entry><para></para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Long Hundredweight</para></entry>
+<entry><para>l_cwt / long_hundredweight / long_hundredweights</para></entry>
+<entry><para>lb</para></entry>
+<entry><para>112</para></entry>
+</row>
+<row valign="top">
+<entry><para>Long Ton</para></entry>
+<entry><para>l_ton / long_ton / long_tons</para></entry>
+<entry><para>lb</para></entry>
+<entry><para>2240</para></entry>
+</row>
+<row valign="top">
+<entry><para>Metric Ton</para></entry>
+<entry><para>t / tonne / tonnes / ton / tons</para></entry>
+<entry><para>g</para></entry>
+<entry><para>1000000</para></entry>
+</row>
+<row valign="top">
+<entry><para>Ounce</para></entry>
+<entry><para>oz / ounce / ounces</para></entry>
+<entry><para>dr</para></entry>
+<entry><para>16</para></entry>
+</row>
+<row valign="top">
+<entry><para>Ounce (troy)</para></entry>
+<entry><para>oz_t / troy_ounce / troy_ounces</para></entry>
+<entry><para>pwt</para></entry>
+<entry><para>20</para></entry>
+</row>
+<row valign="top">
+<entry><para>Pennyweight</para></entry>
+<entry><para>pwt / pennyweight / pennyweights</para></entry>
+<entry><para>gr</para></entry>
+<entry><para>24</para></entry>
+</row>
+<row valign="top">
+<entry><para>Pfund</para></entry>
+<entry><para>pfund</para></entry>
+<entry><para>g</para></entry>
+<entry><para>500</para></entry>
+</row>
+<row valign="top">
+<entry><para>Pound</para></entry>
+<entry><para>lb / pound / pounds</para></entry>
+<entry><para>oz</para></entry>
+<entry><para>16</para></entry>
+</row>
+<row valign="top">
+<entry><para>Pound (troy)</para></entry>
+<entry><para>lb_t / troy_pound / troy_pounds</para></entry>
+<entry><para>oz_t</para></entry>
+<entry><para>12</para></entry>
+</row>
+<row valign="top">
+<entry><para>Short Hundredweight</para></entry>
+<entry><para>cwt / hundredweight / hundredweights</para></entry>
+<entry><para>lb</para></entry>
+<entry><para>100</para></entry>
+</row>
+<row valign="top">
+<entry><para>Short Ton</para></entry>
+<entry><para>s_ton / short_ton / short_tons</para></entry>
+<entry><para>lb</para></entry>
+<entry><para>2000</para></entry>
+</row>
+<row valign="top">
+<entry><para>Stone</para></entry>
+<entry><para>stone / stones</para></entry>
+<entry><para>lb</para></entry>
+<entry><para>14</para></entry>
+</row>
+<row valign="top">
+<entry><para>Zentner</para></entry>
+<entry><para>zentner</para></entry>
+<entry><para>pfund</para></entry>
+<entry><para>100</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+<sect2 id="qalculate-definitions-units-2-Density">
+<title>Density</title>
+<table id="qalculate-TBL-units-Density" frame="topbot" colsep="1">
+<title>Units: Density</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Atomic Mass Unit</para></entry>
+<entry><para>u / atomic_mass_unit / atomic_mass_units</para></entry>
+<entry><para>g_p_mol</para></entry>
+<entry><para>1</para></entry>
+</row>
+<row valign="top">
+<entry><para>Gram per Mole</para></entry>
+<entry><para></para></entry>
+<entry><para>g/mol</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Kilogram per Cubic Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>kg/m^3</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Mass-Fraction">
+<title>Mass Fraction</title>
+<table id="qalculate-TBL-units-Mass-Fraction" frame="topbot" colsep="1">
+<title>Units: Mass Fraction</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Kilogram per Kilogram</para></entry>
+<entry><para></para></entry>
+<entry><para>kg/kg</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+</sect1>
+<sect1 id="qalculate-definitions-units-1-Radioactivity">
+<title>Radioactivity</title>
+<table id="qalculate-TBL-units-Radioactivity" frame="topbot" colsep="1">
+<title>Units: Radioactivity</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Becquerel</para></entry>
+<entry><para>Bq / becquerel / becquerels</para></entry>
+<entry><para>s^-1</para></entry>
+<entry><para>1</para></entry>
+</row>
+<row valign="top">
+<entry><para>Curie</para></entry>
+<entry><para>Ci / curie / curies</para></entry>
+<entry><para>Bq</para></entry>
+<entry><para>3.7E10</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+<sect2 id="qalculate-definitions-units-2-Absorbed-Dose">
+<title>Absorbed Dose</title>
+<table id="qalculate-TBL-units-Absorbed-Dose" frame="topbot" colsep="1">
+<title>Units: Absorbed Dose</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Gray</para></entry>
+<entry><para>Gy / gray / grays</para></entry>
+<entry><para>J_p_kg</para></entry>
+<entry><para>1</para></entry>
+</row>
+<row valign="top">
+<entry><para>Rad</para></entry>
+<entry><para>rad_radioactivity</para></entry>
+<entry><para>Gy</para></entry>
+<entry><para>1/100</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Absorbed-Dose-Rate">
+<title>Absorbed Dose Rate</title>
+<table id="qalculate-TBL-units-Absorbed-Dose-Rate" frame="topbot" colsep="1">
+<title>Units: Absorbed Dose Rate</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Gray per Second</para></entry>
+<entry><para></para></entry>
+<entry><para>Gy/s</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Dose-Equivalent">
+<title>Dose Equivalent</title>
+<table id="qalculate-TBL-units-Dose-Equivalent" frame="topbot" colsep="1">
+<title>Units: Dose Equivalent</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Rem</para></entry>
+<entry><para>rem_radioactivity</para></entry>
+<entry><para>Sv</para></entry>
+<entry><para>1/100</para></entry>
+</row>
+<row valign="top">
+<entry><para>Sievert</para></entry>
+<entry><para>Sv / sievert / sieverts</para></entry>
+<entry><para>J_p_kg</para></entry>
+<entry><para>1</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Exposure">
+<title>Exposure</title>
+<table id="qalculate-TBL-units-Exposure" frame="topbot" colsep="1">
+<title>Units: Exposure</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Coulomb per Kilogram</para></entry>
+<entry><para></para></entry>
+<entry><para>C/kg</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Roentgen</para></entry>
+<entry><para>R / roentgen / roentgens</para></entry>
+<entry><para>C_p_kg</para></entry>
+<entry><para>0.000258</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+</sect1>
+<sect1 id="qalculate-definitions-units-1-Speed">
+<title>Speed</title>
+<table id="qalculate-TBL-units-Speed" frame="topbot" colsep="1">
+<title>Units: Speed</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Knot</para></entry>
+<entry><para>knot / knots</para></entry>
+<entry><para>nautical_mile_p_h</para></entry>
+<entry><para>1</para></entry>
+</row>
+<row valign="top">
+<entry><para>Meter per Second</para></entry>
+<entry><para></para></entry>
+<entry><para>m/s</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Nautical Mile per Hour</para></entry>
+<entry><para></para></entry>
+<entry><para>nautical_mile/h</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+<sect2 id="qalculate-definitions-units-2-Acceleration">
+<title>Acceleration</title>
+<table id="qalculate-TBL-units-Acceleration" frame="topbot" colsep="1">
+<title>Units: Acceleration</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Galileo</para></entry>
+<entry><para>Gal / galileo / galileos</para></entry>
+<entry><para>m_p_sqs</para></entry>
+<entry><para>1/100</para></entry>
+</row>
+<row valign="top">
+<entry><para>Meter per Square Second</para></entry>
+<entry><para></para></entry>
+<entry><para>m/s^2</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+</sect1>
+<sect1 id="qalculate-definitions-units-1-Substance">
+<title>Substance</title>
+<table id="qalculate-TBL-units-Substance" frame="topbot" colsep="1">
+<title>Units: Substance</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Mole</para></entry>
+<entry><para>mol / mole / moles</para></entry>
+<entry><para></para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+<sect2 id="qalculate-definitions-units-2-Catalytic-Activity">
+<title>Catalytic Activity</title>
+<table id="qalculate-TBL-units-Catalytic-Activity" frame="topbot" colsep="1">
+<title>Units: Catalytic Activity</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Katal</para></entry>
+<entry><para>kat / katal / katals</para></entry>
+<entry><para>recs_mol</para></entry>
+<entry><para>1</para></entry>
+</row>
+<row valign="top">
+<entry><para>Reciprocal Seconds Mole</para></entry>
+<entry><para></para></entry>
+<entry><para>mol/s</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Catalytic-Concentration">
+<title>Catalytic Concentration</title>
+<table id="qalculate-TBL-units-Catalytic-Concentration" frame="topbot" colsep="1">
+<title>Units: Catalytic Concentration</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Katal per Cubic Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>kat/m^3</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Substance-Concentration">
+<title>Substance Concentration</title>
+<table id="qalculate-TBL-units-Substance-Concentration" frame="topbot" colsep="1">
+<title>Units: Substance Concentration</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Mole per Cubic Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>mol/m^3</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+</sect1>
+<sect1 id="qalculate-definitions-units-1-Temperature">
+<title>Temperature</title>
+<table id="qalculate-TBL-units-Temperature" frame="topbot" colsep="1">
+<title>Units: Temperature</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Degree Celcius</para></entry>
+<entry><para>oC / °C / celcius</para></entry>
+<entry><para>K</para></entry>
+<entry><para>\x + 273.15</para></entry>
+</row>
+<row valign="top">
+<entry><para>Degrees Fahrenheit</para></entry>
+<entry><para>oF / °F / fahrenheit</para></entry>
+<entry><para>K</para></entry>
+<entry><para>(2298.35+5\x)/9</para></entry>
+</row>
+<row valign="top">
+<entry><para>Degrees Rankine</para></entry>
+<entry><para>oR / °R / rankine</para></entry>
+<entry><para>K</para></entry>
+<entry><para>5\x/9</para></entry>
+</row>
+<row valign="top">
+<entry><para>Kelvin</para></entry>
+<entry><para>K / kelvin / kelvins</para></entry>
+<entry><para></para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect1>
+<sect1 id="qalculate-definitions-units-1-Time">
+<title>Time</title>
+<table id="qalculate-TBL-units-Time" frame="topbot" colsep="1">
+<title>Units: Time</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Day</para></entry>
+<entry><para>d / day / days</para></entry>
+<entry><para>h</para></entry>
+<entry><para>24</para></entry>
+</row>
+<row valign="top">
+<entry><para>Hour</para></entry>
+<entry><para>h / hour / hours</para></entry>
+<entry><para>min</para></entry>
+<entry><para>60</para></entry>
+</row>
+<row valign="top">
+<entry><para>Julian Year</para></entry>
+<entry><para>year / years</para></entry>
+<entry><para>d</para></entry>
+<entry><para>365.25</para></entry>
+</row>
+<row valign="top">
+<entry><para>Minute</para></entry>
+<entry><para>min / minute / minutes</para></entry>
+<entry><para>s</para></entry>
+<entry><para>60</para></entry>
+</row>
+<row valign="top">
+<entry><para>Second</para></entry>
+<entry><para>s / second / seconds</para></entry>
+<entry><para></para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+<sect2 id="qalculate-definitions-units-2-Frequency">
+<title>Frequency</title>
+<table id="qalculate-TBL-units-Frequency" frame="topbot" colsep="1">
+<title>Units: Frequency</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Hertz</para></entry>
+<entry><para>Hz / hertz</para></entry>
+<entry><para>s^-1</para></entry>
+<entry><para>1</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+</sect1>
+<sect1 id="qalculate-definitions-units-1-Volume">
+<title>Volume</title>
+<table id="qalculate-TBL-units-Volume" frame="topbot" colsep="1">
+<title>Units: Volume</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Cubic Inch</para></entry>
+<entry><para></para></entry>
+<entry><para>in^3</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Cubic Meter</para></entry>
+<entry><para></para></entry>
+<entry><para>m^3</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Liter</para></entry>
+<entry><para>L / l / liter / liters / litre / litres</para></entry>
+<entry><para>m^3</para></entry>
+<entry><para>0.001</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+<sect2 id="qalculate-definitions-units-2-Cooking">
+<title>Cooking</title>
+<table id="qalculate-TBL-units-Cooking" frame="topbot" colsep="1">
+<title>Units: Cooking</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Cup</para></entry>
+<entry><para>cup / cups</para></entry>
+<entry><para>L</para></entry>
+<entry><para>0.250</para></entry>
+</row>
+<row valign="top">
+<entry><para>Dessertspoon</para></entry>
+<entry><para>dessertspoon / dessertspoons</para></entry>
+<entry><para>teaspoon</para></entry>
+<entry><para>2</para></entry>
+</row>
+<row valign="top">
+<entry><para>Tablespoon</para></entry>
+<entry><para>tablespoon / tablespoons</para></entry>
+<entry><para>teaspoon</para></entry>
+<entry><para>3</para></entry>
+</row>
+<row valign="top">
+<entry><para>Teaspoon</para></entry>
+<entry><para>teaspoon / teaspoons</para></entry>
+<entry><para>L</para></entry>
+<entry><para>0.005</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Imperial-Capacity">
+<title>Imperial Capacity</title>
+<table id="qalculate-TBL-units-Imperial-Capacity" frame="topbot" colsep="1">
+<title>Units: Imperial Capacity</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Imperial Bushel</para></entry>
+<entry><para>UK_bu / imperial_bushel / imperial_bushels</para></entry>
+<entry><para>UK_gal</para></entry>
+<entry><para>8</para></entry>
+</row>
+<row valign="top">
+<entry><para>Imperial Fluid Drachm</para></entry>
+<entry><para>UK_fl_dr / imperial_fluid_drachm / imperial_fluid_drachms</para></entry>
+<entry><para>imperial_fluid_scuple</para></entry>
+<entry><para>3</para></entry>
+</row>
+<row valign="top">
+<entry><para>Imperial Fluid Ounce</para></entry>
+<entry><para>UK_fl_oz / imperial_fluid_ounce / imperial_fluid_ounces</para></entry>
+<entry><para>L</para></entry>
+<entry><para>0.0284130625</para></entry>
+</row>
+<row valign="top">
+<entry><para>Imperial Fluid Scuple</para></entry>
+<entry><para>imperial_fluid_scuple / imperial_fluid_scuples</para></entry>
+<entry><para>imperial_minim</para></entry>
+<entry><para>20</para></entry>
+</row>
+<row valign="top">
+<entry><para>Imperial Gallon</para></entry>
+<entry><para>UK_gal / imperial_gallon / imperial_gallons</para></entry>
+<entry><para>UK_qt</para></entry>
+<entry><para>4</para></entry>
+</row>
+<row valign="top">
+<entry><para>Imperial Gill</para></entry>
+<entry><para>imperial_gill / imperial_gills</para></entry>
+<entry><para>UK_fl_oz</para></entry>
+<entry><para>5</para></entry>
+</row>
+<row valign="top">
+<entry><para>Imperial Minim</para></entry>
+<entry><para>imperial_minim / imperial_minims</para></entry>
+<entry><para>UK_fl_oz</para></entry>
+<entry><para>1/480</para></entry>
+</row>
+<row valign="top">
+<entry><para>Imperial Pint</para></entry>
+<entry><para>UK_pt / imperial_pint / imperial_pints</para></entry>
+<entry><para>imperial_gill</para></entry>
+<entry><para>4</para></entry>
+</row>
+<row valign="top">
+<entry><para>Imperial Quart</para></entry>
+<entry><para>UK_qt / imperial_quart / imperial_quarts</para></entry>
+<entry><para>UK_pt</para></entry>
+<entry><para>2</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-Specific-Volume">
+<title>Specific Volume</title>
+<table id="qalculate-TBL-units-Specific-Volume" frame="topbot" colsep="1">
+<title>Units: Specific Volume</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Cubic Meter per Kilogram</para></entry>
+<entry><para></para></entry>
+<entry><para>m^3/kg</para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-units-2-US-Capacity">
+<title>U.S. Capacity</title>
+<table id="qalculate-TBL-units-US-Capacity" frame="topbot" colsep="1">
+<title>Units: U.S. Capacity</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>U.S. Barrell (oil)</para></entry>
+<entry><para>bbl / barrell / barrells</para></entry>
+<entry><para>gal</para></entry>
+<entry><para>42</para></entry>
+</row>
+<row valign="top">
+<entry><para>U.S. Bushel</para></entry>
+<entry><para>bu / bushel / bushels</para></entry>
+<entry><para>pk</para></entry>
+<entry><para>4</para></entry>
+</row>
+<row valign="top">
+<entry><para>U.S. Dry Pint</para></entry>
+<entry><para>dry_pt / dry_pint / dry_pints</para></entry>
+<entry><para>in^3</para></entry>
+<entry><para>33.6003125</para></entry>
+</row>
+<row valign="top">
+<entry><para>U.S. Dry Quart</para></entry>
+<entry><para>dry_qt / dry_quart / dry_quarts</para></entry>
+<entry><para>dry_pt</para></entry>
+<entry><para>2</para></entry>
+</row>
+<row valign="top">
+<entry><para>U.S. Fluid Drachm</para></entry>
+<entry><para>fl_dr / fluid_drachm / fluid_drachms</para></entry>
+<entry><para>minim</para></entry>
+<entry><para>60</para></entry>
+</row>
+<row valign="top">
+<entry><para>U.S. Fluid Ounce</para></entry>
+<entry><para>fl_oz / fluid_ounce / fluid_ounces</para></entry>
+<entry><para>in^3</para></entry>
+<entry><para>231/128</para></entry>
+</row>
+<row valign="top">
+<entry><para>U.S. Gallon</para></entry>
+<entry><para>gal / gallon / gallons</para></entry>
+<entry><para>liq_qt</para></entry>
+<entry><para>4</para></entry>
+</row>
+<row valign="top">
+<entry><para>U.S. Gill</para></entry>
+<entry><para>gi / gill / gills</para></entry>
+<entry><para>fl_oz</para></entry>
+<entry><para>4</para></entry>
+</row>
+<row valign="top">
+<entry><para>U.S. Liquid Pints</para></entry>
+<entry><para>liq_pt / luquid_pint / liquid_pints</para></entry>
+<entry><para>gi</para></entry>
+<entry><para>4</para></entry>
+</row>
+<row valign="top">
+<entry><para>U.S. Liquid Quarts</para></entry>
+<entry><para>liq_qt / liquid_quart / liquid_quarts</para></entry>
+<entry><para>liq_pt</para></entry>
+<entry><para>2</para></entry>
+</row>
+<row valign="top">
+<entry><para>U.S. Minim</para></entry>
+<entry><para>minim / minims</para></entry>
+<entry><para>fl_oz</para></entry>
+<entry><para>1/480</para></entry>
+</row>
+<row valign="top">
+<entry><para>U.S. Peck</para></entry>
+<entry><para>pk / peck / pecks</para></entry>
+<entry><para>dry_qt</para></entry>
+<entry><para>8</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+</sect1>
+</appendix>

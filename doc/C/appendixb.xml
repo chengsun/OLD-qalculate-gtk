@@ -1,0 +1,626 @@
+<appendix id="qalculate-definitions-variables">
+<title>Variable List</title>
+<sect1 id="qalculate-definitions-variables-1-Basic-Constants">
+<title>Basic Constants</title>
+<table id="qalculate-TBL-variables-Basic-Constants" frame="topbot" colsep="1">
+<title>Variables: Basic Constants</title>
+<tgroup cols="3" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Value</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Apery's Constant</para></entry>
+<entry><para>apery</para></entry>
+<entry><para>zeta(3)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Archimede's Constant (pi)</para></entry>
+<entry><para>π / pi</para></entry>
+<entry><para>3.1415927 (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Catalan's Constant</para></entry>
+<entry><para>catalan</para></entry>
+<entry><para>0.91596559 (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Euler's Constant</para></entry>
+<entry><para>γ / euler</para></entry>
+<entry><para>0.57721566 (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Pythagora's Constant (sqrt 2)</para></entry>
+<entry><para>pythagoras</para></entry>
+<entry><para>sqrt(2)</para></entry>
+</row>
+<row valign="top">
+<entry><para>The Base of Natural Logarithms (e)</para></entry>
+<entry><para>e</para></entry>
+<entry><para>2.7182818 (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>The Golden Ratio</para></entry>
+<entry><para>golden / φ</para></entry>
+<entry><para>(1+sqrt(5))/2</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect1>
+<sect1 id="qalculate-definitions-variables-1-Large-Numbers">
+<title>Large Numbers</title>
+<table id="qalculate-TBL-variables-Large-Numbers" frame="topbot" colsep="1">
+<title>Variables: Large Numbers</title>
+<tgroup cols="3" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Value</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Billion</para></entry>
+<entry><para>billion</para></entry>
+<entry><para>1E9</para></entry>
+</row>
+<row valign="top">
+<entry><para>Centillion</para></entry>
+<entry><para>centillion</para></entry>
+<entry><para>1E303</para></entry>
+</row>
+<row valign="top">
+<entry><para>Decillion</para></entry>
+<entry><para>decillion</para></entry>
+<entry><para>1E33</para></entry>
+</row>
+<row valign="top">
+<entry><para>Duodecillion</para></entry>
+<entry><para>duodecillion</para></entry>
+<entry><para>1E39</para></entry>
+</row>
+<row valign="top">
+<entry><para>Googol</para></entry>
+<entry><para>googol</para></entry>
+<entry><para>10^100</para></entry>
+</row>
+<row valign="top">
+<entry><para>Googolplex</para></entry>
+<entry><para>googolplex</para></entry>
+<entry><para>10^(10^100)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Hundred</para></entry>
+<entry><para>Hundred</para></entry>
+<entry><para>1E2</para></entry>
+</row>
+<row valign="top">
+<entry><para>Million</para></entry>
+<entry><para>million</para></entry>
+<entry><para>1E6</para></entry>
+</row>
+<row valign="top">
+<entry><para>Nonillion</para></entry>
+<entry><para>nonillion</para></entry>
+<entry><para>1E30</para></entry>
+</row>
+<row valign="top">
+<entry><para>Novemdecillion</para></entry>
+<entry><para>novemdecillion</para></entry>
+<entry><para>1E60</para></entry>
+</row>
+<row valign="top">
+<entry><para>Octillion</para></entry>
+<entry><para>octillion</para></entry>
+<entry><para>1E27</para></entry>
+</row>
+<row valign="top">
+<entry><para>Octodecillion</para></entry>
+<entry><para>octodecillion</para></entry>
+<entry><para>1E57</para></entry>
+</row>
+<row valign="top">
+<entry><para>Quadrillion</para></entry>
+<entry><para>quadrillion</para></entry>
+<entry><para>1E15</para></entry>
+</row>
+<row valign="top">
+<entry><para>Quattuordecillion</para></entry>
+<entry><para>quattuordecillion</para></entry>
+<entry><para>1E45</para></entry>
+</row>
+<row valign="top">
+<entry><para>Quindecillion</para></entry>
+<entry><para>quindecillion</para></entry>
+<entry><para>1E48</para></entry>
+</row>
+<row valign="top">
+<entry><para>Quintillion</para></entry>
+<entry><para>quintillion</para></entry>
+<entry><para>1E18</para></entry>
+</row>
+<row valign="top">
+<entry><para>Septendecillion</para></entry>
+<entry><para>septendecillion</para></entry>
+<entry><para>1E54</para></entry>
+</row>
+<row valign="top">
+<entry><para>Septillion</para></entry>
+<entry><para>septillion</para></entry>
+<entry><para>1E24</para></entry>
+</row>
+<row valign="top">
+<entry><para>Sexdecillion</para></entry>
+<entry><para>sexdecillion</para></entry>
+<entry><para>1E51</para></entry>
+</row>
+<row valign="top">
+<entry><para>Sextillion</para></entry>
+<entry><para>sextillion</para></entry>
+<entry><para>1E21</para></entry>
+</row>
+<row valign="top">
+<entry><para>Thousand</para></entry>
+<entry><para>thousand</para></entry>
+<entry><para>1E3</para></entry>
+</row>
+<row valign="top">
+<entry><para>Tredecillion</para></entry>
+<entry><para>tredecillion</para></entry>
+<entry><para>1E42</para></entry>
+</row>
+<row valign="top">
+<entry><para>Trillion</para></entry>
+<entry><para>trillion</para></entry>
+<entry><para>1E12</para></entry>
+</row>
+<row valign="top">
+<entry><para>Undecillion</para></entry>
+<entry><para>undecillion</para></entry>
+<entry><para>1E36</para></entry>
+</row>
+<row valign="top">
+<entry><para>Vigintillion</para></entry>
+<entry><para>vigintillion</para></entry>
+<entry><para>1E63</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect1>
+<sect1 id="qalculate-definitions-variables-1-Physical-Constants">
+<title>Physical Constants</title>
+<sect2 id="qalculate-definitions-variables-2-Atomic-and-Nuclear-Constants">
+<title>Atomic and Nuclear Constants</title>
+<table id="qalculate-TBL-variables-Atomic-and-Nuclear-Constants" frame="topbot" colsep="1">
+<title>Variables: Atomic and Nuclear Constants</title>
+<tgroup cols="3" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Value</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Alpha Particle Mass</para></entry>
+<entry><para>alpha_particle_mass / m_α</para></entry>
+<entry><para>6.6446565E-24*g (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Bohr Radius</para></entry>
+<entry><para>bohr_radius / a_o</para></entry>
+<entry><para>0.5291772108E-10*m (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Classical Electron Radius</para></entry>
+<entry><para>classical_electron_radius / r_e</para></entry>
+<entry><para>2.817940325E-15*m (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Compton Wavelength</para></entry>
+<entry><para>compton_wavelength / λ_C</para></entry>
+<entry><para>2.426310238E-12*m (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Electron Mass</para></entry>
+<entry><para>electron_mass / m_e</para></entry>
+<entry><para>9.1093826E-28*g (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Helion Mass</para></entry>
+<entry><para>helion_mass / m_h</para></entry>
+<entry><para>5.00641214E-24*g (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Neutron Mass</para></entry>
+<entry><para>neutron_mass / m_n</para></entry>
+<entry><para>1.67492728 (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Proton Mass</para></entry>
+<entry><para>proton_mass / m_p</para></entry>
+<entry><para>1.67262171E-24*g (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Rydberg Constant</para></entry>
+<entry><para>rydberg / R_∞</para></entry>
+<entry><para>10973731.568525*m^(-1) (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Tau Mass</para></entry>
+<entry><para>tau_mass / m_τ</para></entry>
+<entry><para>3.16777E-24*g (approximate)</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-variables-2-Electromagnetic-Constants">
+<title>Electromagnetic Constants</title>
+<table id="qalculate-TBL-variables-Electromagnetic-Constants" frame="topbot" colsep="1">
+<title>Variables: Electromagnetic Constants</title>
+<tgroup cols="3" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Value</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Borh Magneton</para></entry>
+<entry><para>bohr_magneton / μ_B</para></entry>
+<entry><para>927.400949E-26*J*T^(-1) (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Conductance Quantum</para></entry>
+<entry><para>conductance_quantum / G_0</para></entry>
+<entry><para>7.748091733E-5*S (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Elementary Charge</para></entry>
+<entry><para>elementary_charge / e_charge</para></entry>
+<entry><para>1.60217653E-19*C (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Josephson Constant</para></entry>
+<entry><para>josephson / K_J</para></entry>
+<entry><para>483597.879E9*Hz*V^(-1) (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Magnetic Flux Quantum</para></entry>
+<entry><para>magnetic_flux_quantum / Φ_0</para></entry>
+<entry><para>2.06783372E-15*Wb (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Nuclear Magneton</para></entry>
+<entry><para>nuclear_magneton / μ_N</para></entry>
+<entry><para>5.05078343E-27*J*T^(-1) (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>von Klitzing Constant</para></entry>
+<entry><para>klitzing / R_K</para></entry>
+<entry><para>25812.807449*ohm (approximate)</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-variables-2-Physico-Chemical-Constants">
+<title>Physico-Chemical Constants</title>
+<table id="qalculate-TBL-variables-Physico-Chemical-Constants" frame="topbot" colsep="1">
+<title>Variables: Physico-Chemical Constants</title>
+<tgroup cols="3" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Value</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Atomic Mass Constant</para></entry>
+<entry><para>atomic_mass / m_u</para></entry>
+<entry><para>1.66053886E-24*g (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Avogadro Constant</para></entry>
+<entry><para>avogadro / N_A</para></entry>
+<entry><para>6.0221415E23*mol^(-1) (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Boltzmann Constant</para></entry>
+<entry><para>boltzmann</para></entry>
+<entry><para>1.3806505E-23*J*K^(-1) (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Faraday Constant</para></entry>
+<entry><para>faraday</para></entry>
+<entry><para>96485.3383*C*mol^(-1) (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>First Radiation Constant</para></entry>
+<entry><para>first_radiation / c_1</para></entry>
+<entry><para>3.74177138E-16*W*m^2 (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Second Radiation Constant</para></entry>
+<entry><para>second_radiation / c_2</para></entry>
+<entry><para>1.4387752E-2*m*K (approximate)</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+<sect2 id="qalculate-definitions-variables-2-Universal-Constants">
+<title>Universal Constants</title>
+<table id="qalculate-TBL-variables-Universal-Constants" frame="topbot" colsep="1">
+<title>Variables: Universal Constants</title>
+<tgroup cols="3" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Value</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Characteristic Impedance of Vacuum</para></entry>
+<entry><para>characteristic_impedance / Z_0</para></entry>
+<entry><para>4E-7*pi*299792458*ohm</para></entry>
+</row>
+<row valign="top">
+<entry><para>Electric Constant (Permittivity of Free Space)</para></entry>
+<entry><para>electric_constant / ε_0</para></entry>
+<entry><para>1/(4E-7*pi*299792458^2)*F*m^(-1)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Magnetic Constant (Permeability of Free Space)</para></entry>
+<entry><para>magnetic_constant / μ_0</para></entry>
+<entry><para>4E-7*pi*N*A^(-2)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Newtonian Constant of Gravitation</para></entry>
+<entry><para>newtonian_constant / G</para></entry>
+<entry><para>6.6742E-11*m^3*kg^(-1)*s^(-2) (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Planck Constant</para></entry>
+<entry><para>planck</para></entry>
+<entry><para>6.626 0693E-34*J*s (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Planck Constant over 2 pi</para></entry>
+<entry><para>planck2pi</para></entry>
+<entry><para>planck/(2*pi)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Planck Length</para></entry>
+<entry><para>planck_length / l_P</para></entry>
+<entry><para>1.61624E-35*m (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Planck Mass</para></entry>
+<entry><para>planck_mass / m_P</para></entry>
+<entry><para>2.17645E-5*g (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Planck Temperature</para></entry>
+<entry><para>planck_temperature / T_P</para></entry>
+<entry><para>1.41679E32*K (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Planck Time</para></entry>
+<entry><para>planck_time / t_P</para></entry>
+<entry><para>5.39121E-44*s (approximate)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Speed of Light in Vacuum</para></entry>
+<entry><para>c / speed_of_light</para></entry>
+<entry><para>299792458*m*s^(-1)</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect2>
+</sect1>
+<sect1 id="qalculate-definitions-variables-1-Small-Numbers">
+<title>Small Numbers</title>
+<table id="qalculate-TBL-variables-Small-Numbers" frame="topbot" colsep="1">
+<title>Variables: Small Numbers</title>
+<tgroup cols="3" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Value</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Per Mille</para></entry>
+<entry><para>permille / ‰</para></entry>
+<entry><para>1/1000</para></entry>
+</row>
+<row valign="top">
+<entry><para>Per Myriad</para></entry>
+<entry><para>permyriad / ‱</para></entry>
+<entry><para>1/10000</para></entry>
+</row>
+<row valign="top">
+<entry><para>Procent</para></entry>
+<entry><para>% / procent</para></entry>
+<entry><para>1/100</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect1>
+<sect1 id="qalculate-definitions-variables-1-Special-Numbers">
+<title>Special Numbers</title>
+<table id="qalculate-TBL-variables-Special-Numbers" frame="topbot" colsep="1">
+<title>Variables: Special Numbers</title>
+<tgroup cols="3" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Value</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>False</para></entry>
+<entry><para>false / no</para></entry>
+<entry><para>0</para></entry>
+</row>
+<row valign="top">
+<entry><para>Imaginary i (sqrt -1)</para></entry>
+<entry><para>i</para></entry>
+<entry><para>i</para></entry>
+</row>
+<row valign="top">
+<entry><para>Infinity</para></entry>
+<entry><para>infinity</para></entry>
+<entry><para>infinity</para></entry>
+</row>
+<row valign="top">
+<entry><para>Negative Infinity</para></entry>
+<entry><para>minus_infinity</para></entry>
+<entry><para>-(+infinity)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Positive Infinity</para></entry>
+<entry><para>plus_infinity</para></entry>
+<entry><para>(+infinity)</para></entry>
+</row>
+<row valign="top">
+<entry><para>True</para></entry>
+<entry><para>true / yes</para></entry>
+<entry><para>1</para></entry>
+</row>
+<row valign="top">
+<entry><para>Undefined</para></entry>
+<entry><para>undefined</para></entry>
+<entry><para>undefined</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect1>
+<sect1 id="qalculate-definitions-variables-1-Temporary">
+<title>Temporary</title>
+<table id="qalculate-TBL-variables-Temporary" frame="topbot" colsep="1">
+<title>Variables: Temporary</title>
+<tgroup cols="3" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Value</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Answer 2</para></entry>
+<entry><para>ans2</para></entry>
+<entry><para>a previous result</para></entry>
+</row>
+<row valign="top">
+<entry><para>Answer 3</para></entry>
+<entry><para>ans3</para></entry>
+<entry><para>a previous result</para></entry>
+</row>
+<row valign="top">
+<entry><para>Answer 4</para></entry>
+<entry><para>ans4</para></entry>
+<entry><para>a previous result</para></entry>
+</row>
+<row valign="top">
+<entry><para>Answer 5</para></entry>
+<entry><para>ans5</para></entry>
+<entry><para>a previous result</para></entry>
+</row>
+<row valign="top">
+<entry><para>Last Answer</para></entry>
+<entry><para>ans / answer / ans1</para></entry>
+<entry><para>a previous result</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect1>
+<sect1 id="qalculate-definitions-variables-1-Unknowns">
+<title>Unknowns</title>
+<table id="qalculate-TBL-variables-Unknowns" frame="topbot" colsep="1">
+<title>Variables: Unknowns</title>
+<tgroup cols="3" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Value</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>x</para></entry>
+<entry><para>x</para></entry>
+<entry><para>default assumptions</para></entry>
+</row>
+<row valign="top">
+<entry><para>y</para></entry>
+<entry><para>y</para></entry>
+<entry><para>default assumptions</para></entry>
+</row>
+<row valign="top">
+<entry><para>z</para></entry>
+<entry><para>z</para></entry>
+<entry><para>default assumptions</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect1>
+</appendix>

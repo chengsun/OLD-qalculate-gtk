@@ -1027,7 +1027,9 @@ int main (int argc, char *argv[]) {
 			puts("");
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "help", _("help")) || str == "?") {
 			puts("");
-			PUTS_UNICODE(_("Enter a mathematical expression or a command."));
+			FPUTS_UNICODE(_("Enter a mathematical expression or a command."), stdout);
+			fputs(" ", stdout);
+			PUTS_UNICODE(_("Complete functions, units and variables with the tabulator key."));
 			puts("");
 			PUTS_UNICODE(_("Available commands are:"));
 			puts("");
@@ -1066,7 +1068,7 @@ int main (int argc, char *argv[]) {
 						Argument default_arg;
 						string str2;
 						str = _("Function");
-						if(!f->title().empty()) {
+						if(!f->title(false).empty()) {
 							str += ": ";
 							str += f->title();
 						}
@@ -1194,7 +1196,7 @@ int main (int argc, char *argv[]) {
 					}
 					case TYPE_UNIT: {
 						puts("");						
-						if(!item->title().empty()) {
+						if(!item->title(false).empty()) {
 							PRINT_AND_COLON_TABS_INFO(_("Unit"));
 							FPUTS_UNICODE(item->title().c_str(), stdout);
 						} else {
@@ -1262,7 +1264,7 @@ int main (int argc, char *argv[]) {
 					}
 					case TYPE_VARIABLE: {
 						puts("");						
-						if(!item->title().empty()) {
+						if(!item->title(false).empty()) {
 							PRINT_AND_COLON_TABS_INFO(_("Variable"));
 							FPUTS_UNICODE(item->title().c_str(), stdout);
 						} else {

@@ -1,0 +1,3109 @@
+<appendix id="qalculate-definitions-functions">
+<title>Function List</title>
+<sect1 id="qalculate-definitions-functions-1-Algebra">
+<title>Algebra</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Find Linear Function</emphasis></term>
+<listitem>
+<para><command>linearfunction(x1, y1, x2, y2)</command></para>
+<para>Finds the linear function for the straight line between two distinct points.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>x1: a free value</para></listitem>
+<listitem><para>y1: a free value</para></listitem>
+<listitem><para>x2: a free value</para></listitem>
+<listitem><para>y2: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Product</emphasis></term>
+<listitem>
+<para><command>product(Factor Expression, Lower Limit (i), Upper Limit (n)[, Index Variable])</command></para>
+<para><command>Π</command></para><para>Corresponds to the product symbol. Multiplies factors for each x ranging from the lower to the upper limit.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Factor Expression: a free value</para></listitem>
+<listitem><para>Lower Limit (i): an integer</para></listitem>
+<listitem><para>Upper Limit (n): an integer</para></listitem>
+<listitem><para>Index Variable: an unknown variable/symbol (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+<formalpara>
+<title>Requirement</title><para>
+"Upper Limit (n)" &gt;= "Lower Limit (i)"
+</para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Solve equation</emphasis></term>
+<listitem>
+<para><command>solve(Equation[, With respect to])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Equation: a free value</para></listitem>
+<listitem><para>With respect to: an unknown variable/symbol (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Solve for multiple variables</emphasis></term>
+<listitem>
+<para><command>multisolve(Equation Vector, Variable Vector)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Equation Vector: a vector</para></listitem>
+<listitem><para>Variable Vector: a vector with an unknown variable/symbol, ...</para></listitem>
+</itemizedlist></para>
+</formalpara>
+<formalpara>
+<title>Requirement</title><para>
+dimension("Equation Vector")=dimension("Variable Vector")
+</para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Solve for two variables</emphasis></term>
+<listitem>
+<para><command>solve2(Equation 1, Equation 2[, Variable 1][, Variable 2])</command></para>
+<para>Solves two equations with two unknown variables. Returns the value of the first variable.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Equation 1: a free value</para></listitem>
+<listitem><para>Equation 2: a free value</para></listitem>
+<listitem><para>Variable 1: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Variable 2: an unknown variable/symbol (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Sum</emphasis></term>
+<listitem>
+<para><command>sum(Term Expression, Lower Limit (i), Upper Limit (n)[, Index Variable])</command></para>
+<para><command>Σ</command></para><para>Corresponds to the sum symbol. Adds terms for each x ranging from the lower to the upper limit.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Term Expression: a free value</para></listitem>
+<listitem><para>Lower Limit (i): an integer</para></listitem>
+<listitem><para>Upper Limit (n): an integer</para></listitem>
+<listitem><para>Index Variable: an unknown variable/symbol (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+<formalpara>
+<title>Requirement</title><para>
+"Upper Limit (n)" &gt;= "Lower Limit (i)"
+</para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+<sect1 id="qalculate-definitions-functions-1-Analysis">
+<title>Analysis</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Beta Function</emphasis></term>
+<listitem>
+<para><command>beta(argument 1, argument 2)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: an integer</para></listitem>
+<listitem><para>2: an integer</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Gamma Function</emphasis></term>
+<listitem>
+<para><command>gamma(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Imaginary Part</emphasis></term>
+<listitem>
+<para><command>im(Complex Number)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Complex Number: a number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Real Part</emphasis></term>
+<listitem>
+<para><command>re(Complex Number)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Complex Number: a number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+<sect1 id="qalculate-definitions-functions-1-Calculus">
+<title>Calculus</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Derive</emphasis></term>
+<listitem>
+<para><command>diff(Function[, With respect to][, Order])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Function: a free value</para></listitem>
+<listitem><para>With respect to: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Order: an integer &gt;= 1 (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Extreme Values</emphasis></term>
+<listitem>
+<para><command>extremum(Function[, With respect to])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Function: a free value</para></listitem>
+<listitem><para>With respect to: an unknown variable/symbol (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Integrate</emphasis></term>
+<listitem>
+<para><command>integrate(Function[, Variable of Integration])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Function: a free value</para></listitem>
+<listitem><para>Variable of Integration: an unknown variable/symbol (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+<sect1 id="qalculate-definitions-functions-1-Combinatorics">
+<title>Combinatorics</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Binomial Coefficient</emphasis></term>
+<listitem>
+<para><command>binomial(Exponent, Index)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Exponent: an integer &gt;= 1</para></listitem>
+<listitem><para>Index: an integer &gt;= 0</para></listitem>
+</itemizedlist></para>
+</formalpara>
+<formalpara>
+<title>Requirement</title><para>
+"Exponent"&gt;="Index"
+</para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Combinations</emphasis></term>
+<listitem>
+<para><command>comb(Objects, Size)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Objects: a free value</para></listitem>
+<listitem><para>Size: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Derangements</emphasis></term>
+<listitem>
+<para><command>derangements(Number of Elements)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Number of Elements: an integer &gt;= 1</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Double Factorial</emphasis></term>
+<listitem>
+<para><command>factorial2(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: an integer &gt;= -1</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Factorial</emphasis></term>
+<listitem>
+<para><command>factorial(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: an integer</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Hyperfactorial</emphasis></term>
+<listitem>
+<para><command>hyperfactorial(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: an integer &gt;= 1</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Multifactorial</emphasis></term>
+<listitem>
+<para><command>multifactorial(Value, Factorial)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: an integer &gt;= 0</para></listitem>
+<listitem><para>Factorial: an integer &gt;= 1</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Permutations</emphasis></term>
+<listitem>
+<para><command>perm(Objects, Size)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Objects: a free value</para></listitem>
+<listitem><para>Size: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Superfactorial</emphasis></term>
+<listitem>
+<para><command>superfactorial(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: an integer &gt;= 0</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+<sect1 id="qalculate-definitions-functions-1-Data-Sets">
+<title>Data Sets</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Elements</emphasis></term>
+<listitem>
+<para><command>atom(Element[, Property])</command></para>
+<para>Retrieves data from the Elements data set for a given object and property. If "info" is typed as property, all properties of the object will be listed.</para><formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Element: an object from "Elements" (use symbol, number, or name)</para></listitem>
+<listitem><para>Property: name of a data property (symbol, number, name, class, or weight) (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+<formalpara>
+<title>Properties</title><para><itemizedlist spacing="compact">
+<listitem><para>Symbol: symbol (key)</para></listitem>
+<listitem><para>Number: number (key)</para></listitem>
+<listitem><para>Name: name (key)</para></listitem>
+<listitem><para>Classification: class</para><para>A number representing an element group:</para><para>1 Alkali Metal</para><para>2 Alkaline-Earth Metal</para><para>3 Lanthanide</para><para>4 Actinide</para><para>5 Transition Metal</para><para>6 Metal</para><para>7 Metalloid</para><para>8 Non-Metal</para><para>9 Halogen</para><para>10 Noble Gas</para><para>11 Transactinide</para></listitem>
+<listitem><para>Weight: weight, mass</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Planets</emphasis></term>
+<listitem>
+<para><command>planet(Planet[, Property])</command></para>
+<para>Retrieves data from the Planets data set for a given object and property. If "info" is typed as property, all properties of the object will be listed.</para><para>This data uses material from the Wikipedia articles</para><para>"Earth" (http://www.wikipedia.org/wiki/Earth),</para><para>"Jupiter (planet)" (http://www.wikipedia.org/wiki/Jupiter_(planet)),</para><para>"Mars (planet)" (http://www.wikipedia.org/wiki/Mars_(planet)),</para><para>"Mercury (planet)" (http://www.wikipedia.org/wiki/Mercury_(planet)),</para><para>"Neptune (planet)" (http://www.wikipedia.org/wiki/Neptune_(planet)),</para><para>"Pluto (planet)" (http://www.wikipedia.org/wiki/Pluto_(planet)),</para><para>"Saturn (planet)" (http://www.wikipedia.org/wiki/Saturn_(planet)),</para><para>"Uranus (planet)" (http://www.wikipedia.org/wiki/Uranus_(planet)), and</para><para>"Venus (planet)" (http://en.wikipedia.org/wiki/Venus_(planet)),</para><para>licensed under the GNU Free Documentation License (http://www.gnu.org/copyleft/fdl.html)</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Planet: an object from "Planets" (use name)</para></listitem>
+<listitem><para>Property: name of a data property (name, year, speed, eccentricity, inclination, satellites, mass, density, area, gravity, or temperature) (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+<formalpara>
+<title>Properties</title><para><itemizedlist spacing="compact">
+<listitem><para>Name: name (key)</para></listitem>
+<listitem><para>Orbital Period (Year): year</para></listitem>
+<listitem><para>Average Orbital Speed: speed</para></listitem>
+<listitem><para>Eccentricity: eccentricity</para></listitem>
+<listitem><para>Inclination: inclination</para></listitem>
+<listitem><para>Number of Satellites: satellites</para></listitem>
+<listitem><para>Mass: mass</para></listitem>
+<listitem><para>Mean Density: density</para></listitem>
+<listitem><para>Surface Area: area</para></listitem>
+<listitem><para>Equatorial Gravity: gravity</para></listitem>
+<listitem><para>Mean Surface Temperature: temperature</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+<sect1 id="qalculate-definitions-functions-1-Date--Time">
+<title>Date &amp; Time</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Current Time</emphasis></term>
+<listitem>
+<para><command>time()</command></para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Day of Month</emphasis></term>
+<listitem>
+<para><command>day([Date])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Date: a date (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Day of Week</emphasis></term>
+<listitem>
+<para><command>weekday([Date][, Week begins on Sunday])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Date: a date (optional)</para></listitem>
+<listitem><para>Week begins on Sunday: a boolean (0 or 1) (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Day of Year</emphasis></term>
+<listitem>
+<para><command>yearday([Date])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Date: a date (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Days between two dates</emphasis></term>
+<listitem>
+<para><command>days(First Date, Second Date[, Day Counting Basis][, Financial function mode])</command></para>
+<para>Returns the number of days between two dates. Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>First Date: a date</para></listitem>
+<listitem><para>Second Date: a date</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
+<listitem><para>Financial function mode: a boolean (0 or 1) (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Month</emphasis></term>
+<listitem>
+<para><command>month([Date])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Date: a date (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Week of Year</emphasis></term>
+<listitem>
+<para><command>week([Date][, Week begins on Sunday])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Date: a date (optional)</para></listitem>
+<listitem><para>Week begins on Sunday: a boolean (0 or 1) (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Year</emphasis></term>
+<listitem>
+<para><command>year([Date])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Date: a date (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Years between two dates</emphasis></term>
+<listitem>
+<para><command>yearfrac(First Date, Second Date[, Day Counting Basis][, Financial function mode])</command></para>
+<para>Returns the number of years (fractional) between two dates. Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>First Date: a date</para></listitem>
+<listitem><para>Second Date: a date</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
+<listitem><para>Financial function mode: a boolean (0 or 1) (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+<sect1 id="qalculate-definitions-functions-1-Economics">
+<title>Economics</title>
+<sect2 id="qalculate-definitions-functions-2-Finance">
+<title>Finance</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Accrued interest of security paying at maturity</emphasis></term>
+<listitem>
+<para><command>accrintm(Issue Date, Settlement Date, Annual Rate of Security[, Par Value][, Day Counting Basis])</command></para>
+<para>Returns the accrued interest for a security which pays interest at maturity date. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Issue Date: a date</para></listitem>
+<listitem><para>Settlement Date: a date</para></listitem>
+<listitem><para>Annual Rate of Security: a free value</para></listitem>
+<listitem><para>Par Value: a free value (optional)</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Accrued interest of security with periodic interest payments</emphasis></term>
+<listitem>
+<para><command>accrint(Issue Date, First Interest, Settlement Date, Annual Rate of Security, Par Value, Number of payments per year[, Day Counting Basis])</command></para>
+<para>Returns accrued interest for a security which pays periodic interest. Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Issue Date: a date</para></listitem>
+<listitem><para>First Interest: a date</para></listitem>
+<listitem><para>Settlement Date: a date</para></listitem>
+<listitem><para>Annual Rate of Security: a free value</para></listitem>
+<listitem><para>Par Value: a free value</para></listitem>
+<listitem><para>Number of payments per year: an integer &gt;= 1</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Amount received at maturity for a security bond</emphasis></term>
+<listitem>
+<para><command>received(Settlement Date, Maturity Date, Investment, Discount Rate[, Day Counting Basis])</command></para>
+<para>Returns the amount received at the maturity date for an invested security. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360. The settlement date must be before maturity date.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Settlement Date: a date</para></listitem>
+<listitem><para>Maturity Date: a date</para></listitem>
+<listitem><para>Investment: a free value</para></listitem>
+<listitem><para>Discount Rate: a free value</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Compound</emphasis></term>
+<listitem>
+<para><command>compound(Principal, Nominal Interest Rate, Periods per year, Years)</command></para>
+<para>Returns the value of an investment, given the principal, nominal interest rate, compounding frequency and time.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Principal: a free value</para></listitem>
+<listitem><para>Nominal Interest Rate: a free value</para></listitem>
+<listitem><para>Periods per year: a free value</para></listitem>
+<listitem><para>Years: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Discount rate for a security</emphasis></term>
+<listitem>
+<para><command>disc(Settlement Date, Maturity Date, Price per $100 face value, Redemption[, Day Counting Basis])</command></para>
+<para>Returns the discount rate for a security. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Settlement Date: a date</para></listitem>
+<listitem><para>Maturity Date: a date</para></listitem>
+<listitem><para>Price per $100 face value: a free value</para></listitem>
+<listitem><para>Redemption: a free value</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Dollar Decimal</emphasis></term>
+<listitem>
+<para><command>dollarde(Fractional Dollar, Denominator of Fraction)</command></para>
+<para>Converts a dollar price expressed as a fraction into a dollar price expressed as a decimal number.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Fractional Dollar: a free value</para></listitem>
+<listitem><para>Denominator of Fraction: an integer &gt;= 1</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Dollar Fraction</emphasis></term>
+<listitem>
+<para><command>dollarfr(Decimal Dollar, Denominator of Fraction)</command></para>
+<para>Converts a decimal dollar price into a dollar price expressed as a fraction.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Decimal Dollar: a free value</para></listitem>
+<listitem><para>Denominator of Fraction: an integer &gt;= 1</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Effective Interest Rate</emphasis></term>
+<listitem>
+<para><command>effect(Nominal Interest Rate, Periods)</command></para>
+<para>Calculates the effective interest for a given nominal rate.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Nominal Interest Rate: a free value</para></listitem>
+<listitem><para>Periods: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Future Value</emphasis></term>
+<listitem>
+<para><command>fv(Interest Rate, Number of Periods, Payment made each period[, Present Value][, Type])</command></para>
+<para>Computes the future value of an investment. This is based on periodic, constant payments and a constant interest rate. If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Interest Rate: a free value</para></listitem>
+<listitem><para>Number of Periods: a free value</para></listitem>
+<listitem><para>Payment made each period: a free value</para></listitem>
+<listitem><para>Present Value: a free value (optional)</para></listitem>
+<listitem><para>Type: a boolean (0 or 1) (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Interest paid on a given period of an investment (ISPMT)</emphasis></term>
+<listitem>
+<para><command>ispmt(Periodic Interest Rate, Amortizement Period, Number of Periods, Present Value)</command></para>
+<para>Calculates the interest paid on a given period of an investment.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Periodic Interest Rate: a free value</para></listitem>
+<listitem><para>Amortizement Period: an integer &gt;= 1</para></listitem>
+<listitem><para>Number of Periods: an integer &gt;= 1</para></listitem>
+<listitem><para>Present Value: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Interest rate for a fully invested security</emphasis></term>
+<listitem>
+<para><command>intrate(Settlement Date, Maturity Date, Investment, Redemption[, Day Counting Basis])</command></para>
+<para>Returns the interest rate for a fully invested security. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Settlement Date: a date</para></listitem>
+<listitem><para>Maturity Date: a date</para></listitem>
+<listitem><para>Investment: a free value</para></listitem>
+<listitem><para>Redemption: a free value</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Level-Coupon Bond</emphasis></term>
+<listitem>
+<para><command>level_coupon(Face Value, Coupon Rate, Coupons per Year, Years, Market Interest Rate)</command></para>
+<para>Calculates the value of a level-coupon bond.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Face Value: a free value</para></listitem>
+<listitem><para>Coupon Rate: a free value</para></listitem>
+<listitem><para>Coupons per Year: a free value</para></listitem>
+<listitem><para>Years: a free value</para></listitem>
+<listitem><para>Market Interest Rate: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Nominal Interest Rate</emphasis></term>
+<listitem>
+<para><command>nominal(Effective Interest Rate, Periods)</command></para>
+<para>Calculates the nominal interest rate from a given effective interest rate compounded at given intervals.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Effective Interest Rate: a free value</para></listitem>
+<listitem><para>Periods: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Number of coupons to be paid</emphasis></term>
+<listitem>
+<para><command>coupnum(Settlement Date, Maturity Date, Frequency[, Day Counting Basis])</command></para>
+<para>Returns the number of coupons to be paid between the settlement and the maturity. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Settlement Date: a date</para></listitem>
+<listitem><para>Maturity Date: a date</para></listitem>
+<listitem><para>Frequency: an integer &gt;= 1</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Payment for a loan</emphasis></term>
+<listitem>
+<para><command>pmt(Rate, Number of Periods, Present Value[, Future Value][, Type])</command></para>
+<para>Returns the amount of payment for a loan based on a constant interest rate and constant payments (each payment is equal amount). If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Rate: a free value</para></listitem>
+<listitem><para>Number of Periods: a free value</para></listitem>
+<listitem><para>Present Value: a free value</para></listitem>
+<listitem><para>Future Value: a free value (optional)</para></listitem>
+<listitem><para>Type: a boolean (0 or 1) (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Payment of an annuity going towards interest (IPMT)</emphasis></term>
+<listitem>
+<para><command>ipmt(Periodic Interest Rate, Period, Number of Periods, Present Value[, Future Value][, Type])</command></para>
+<para>Calculates the amount of a payment of an annuity going towards interest. Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Periodic Interest Rate: a free value</para></listitem>
+<listitem><para>Period: an integer &gt;= 1</para></listitem>
+<listitem><para>Number of Periods: an integer &gt;= 1</para></listitem>
+<listitem><para>Present Value: a free value</para></listitem>
+<listitem><para>Future Value: a free value (optional)</para></listitem>
+<listitem><para>Type: a boolean (0 or 1) (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Payment of an annuity going towards principal (PPMT)</emphasis></term>
+<listitem>
+<para><command>ppmt(Periodic Interest Rate, Amortizement Period, Number of Periods, Present Value[, Desired Future Value][, Type])</command></para>
+<para>Calculates the amount of a payment of an annuity going towards principal. Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Periodic Interest Rate: a free value</para></listitem>
+<listitem><para>Amortizement Period: an integer &gt;= 1</para></listitem>
+<listitem><para>Number of Periods: an integer &gt;= 1</para></listitem>
+<listitem><para>Present Value: a free value</para></listitem>
+<listitem><para>Desired Future Value: a free value (optional)</para></listitem>
+<listitem><para>Type: a boolean (0 or 1) (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Periods for investment to attain desired value</emphasis></term>
+<listitem>
+<para><command>g_duration(Rate, Present Value, Future Value)</command></para>
+<para>Returns the number of periods needed for an investment to attain a desired value.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Rate: a free value</para></listitem>
+<listitem><para>Present Value: a free value</para></listitem>
+<listitem><para>Future Value: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Periods of an investment</emphasis></term>
+<listitem>
+<para><command>nper(Interest Rate, Payment made each period, Present Value[, Future Value][, Type])</command></para>
+<para>Calculates number of periods of an investment based on periodic constant payments and a constant interest rate. Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Interest Rate: a free value</para></listitem>
+<listitem><para>Payment made each period: a free value</para></listitem>
+<listitem><para>Present Value: a free value</para></listitem>
+<listitem><para>Future Value: a free value (optional)</para></listitem>
+<listitem><para>Type: a free value (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Present Value</emphasis></term>
+<listitem>
+<para><command>pv(Interest Rate, Number of Periods, Payment made each period[, Future Value][, Type])</command></para>
+<para>Returns the present value of an investment. If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Interest Rate: a free value</para></listitem>
+<listitem><para>Number of Periods: a free value</para></listitem>
+<listitem><para>Payment made each period: a free value</para></listitem>
+<listitem><para>Future Value: a free value (optional)</para></listitem>
+<listitem><para>Type: a boolean (0 or 1) (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Price per $100 face value of a security</emphasis></term>
+<listitem>
+<para><command>pricemat(Settlement Date, Maturity Date, Issue Date, Discount Rate, Annual Yield[, Day Counting Basis])</command></para>
+<para>Calculates and returns the price per $100 face value of a security. The security pays interest at maturity. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Settlement Date: a date</para></listitem>
+<listitem><para>Maturity Date: a date</para></listitem>
+<listitem><para>Issue Date: a date</para></listitem>
+<listitem><para>Discount Rate: a free value</para></listitem>
+<listitem><para>Annual Yield: a free value</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Price per $100 face value of a security bond</emphasis></term>
+<listitem>
+<para><command>pricedisc(Settlement Date, Maturity Date, Discount, Redemption[, Day Counting Basis])</command></para>
+<para>Calculates and returns the price per $100 face value of a security bond. The security does not pay interest at maturity. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Settlement Date: a date</para></listitem>
+<listitem><para>Maturity Date: a date</para></listitem>
+<listitem><para>Discount: a free value</para></listitem>
+<listitem><para>Redemption: a free value</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Return on continuously compounded interest</emphasis></term>
+<listitem>
+<para><command>countinuous(Principal, Interest Rate, Years)</command></para>
+<para>Calculates the return on continuously compounded interest, given the principal, nominal rate and time in years.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Principal: a free value</para></listitem>
+<listitem><para>Interest Rate: a free value</para></listitem>
+<listitem><para>Years: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Straight Line Depreciation</emphasis></term>
+<listitem>
+<para><command>sln(Cost, Salvage value, Life)</command></para>
+<para>Determines the straight line depreciation of an asset for a single period. Cost is the amount you paid for the asset. Salvage is the value of the asset at the end of the period. Life is the number of periods over which the asset is depreciated. SLN divides the cost evenly over the life of an asset.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Cost: a free value</para></listitem>
+<listitem><para>Salvage value: a free value</para></listitem>
+<listitem><para>Life: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Sum-of-Years Digits Depreciation</emphasis></term>
+<listitem>
+<para><command>syd(Cost, Salvage Value, Life, Period)</command></para>
+<para>Calculates the sum-of-years digits depreciation for an asset based on its cost, salvage value, anticipated life, and a particular period. This method accelerates the rate of the depreciation, so that more depreciation expense occurs in earlier periods than in later ones. The depreciable cost is the actual cost minus the salvage value. The useful life is the number of periods (typically years) over which the asset is depreciated.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Cost: a free value</para></listitem>
+<listitem><para>Salvage Value: a free value</para></listitem>
+<listitem><para>Life: a free value</para></listitem>
+<listitem><para>Period: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Treasury Bill Equivalent</emphasis></term>
+<listitem>
+<para><command>tbilleq(Settlement Date, Maturity Date, Discount Rate)</command></para>
+<para>Returns the bond equivalent for a treasury bill.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Settlement Date: a date</para></listitem>
+<listitem><para>Maturity Date: a date</para></listitem>
+<listitem><para>Discount Rate: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Treasury Bill Price</emphasis></term>
+<listitem>
+<para><command>tbillprice(Settlement Date, Maturity Date, Discount Rate)</command></para>
+<para>Returns the price per $100 value for a treasury bill.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Settlement Date: a date</para></listitem>
+<listitem><para>Maturity Date: a date</para></listitem>
+<listitem><para>Discount Rate: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Treasury Bill Yield</emphasis></term>
+<listitem>
+<para><command>tbillyield(Settlement Date, Maturity Date, Price per $100 face value)</command></para>
+<para>Returns the yield for a treasury bill.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Settlement Date: a date</para></listitem>
+<listitem><para>Maturity Date: a date</para></listitem>
+<listitem><para>Price per $100 face value: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Zero Coupon</emphasis></term>
+<listitem>
+<para><command>zero_coupon(Face Value, Interest Rate, Years)</command></para>
+<para>Calculates the value of a zero-coupon (pure discount) bond.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Face Value: a free value</para></listitem>
+<listitem><para>Interest Rate: a free value</para></listitem>
+<listitem><para>Years: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Microeconomics">
+<title>Microeconomics</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Elasticity</emphasis></term>
+<listitem>
+<para><command>elasticity(Demand Function, Price[, Price Variable])</command></para>
+<para>Calculates the demand elesticity. Also works for supply elasticity, income elasticity, cross-price elasticity, etc. Just replace demand, with supply, or price with income... Ex. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 for the function "Q = 100 - x^2" where x is the default price variable.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Demand Function: a free value</para></listitem>
+<listitem><para>Price: a free value</para></listitem>
+<listitem><para>Price Variable: an unknown variable/symbol (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+</sect1>
+<sect1 id="qalculate-definitions-functions-1-Exponents--Logarithms">
+<title>Exponents &amp; Logarithms</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>10 raised the to power X</emphasis></term>
+<listitem>
+<para><command>exp10(Exponent)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Exponent: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>2 raised the to power X</emphasis></term>
+<listitem>
+<para><command>exp2(Exponent)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Exponent: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Base-10 Logrithm</emphasis></term>
+<listitem>
+<para><command>log10(Value)</command></para>
+<para>Returns the base n logarithm.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a number &gt;= 0</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Base-2 Logrithm</emphasis></term>
+<listitem>
+<para><command>log2(Value)</command></para>
+<para>Returns the base n logarithm.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a number &gt;= 0</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Base-N Logarithm</emphasis></term>
+<listitem>
+<para><command>log(Value[, Base])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a number that is nonzero</para></listitem>
+<listitem><para>Base: a number that is nonzero (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Complex Exponential (Cis)</emphasis></term>
+<listitem>
+<para><command>cis(Exponent)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Exponent: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Cube Root</emphasis></term>
+<listitem>
+<para><command>cbrt(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Exponential (e^x)</emphasis></term>
+<listitem>
+<para><command>exp(Exponent)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Exponent: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Natural Logarithm</emphasis></term>
+<listitem>
+<para><command>ln(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a number that is nonzero</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Nth root</emphasis></term>
+<listitem>
+<para><command>root(Base, Exponent)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Base: a free value</para></listitem>
+<listitem><para>Exponent: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Square</emphasis></term>
+<listitem>
+<para><command>sq(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Square Root</emphasis></term>
+<listitem>
+<para><command>sqrt(Value)</command></para>
+<para><command>√</command></para><formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Square root (x * pi)</emphasis></term>
+<listitem>
+<para><command>sqrtpi(Non-Negative Value)</command></para>
+<para>Returns the non-negative square root of x * pi</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Non-Negative Value: a number &gt;= 0</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>X raised to the power Y</emphasis></term>
+<listitem>
+<para><command>pow(Base, Exponent)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Base: a free value</para></listitem>
+<listitem><para>Exponent: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+<sect1 id="qalculate-definitions-functions-1-Geometry">
+<title>Geometry</title>
+<sect2 id="qalculate-definitions-functions-2-Circle">
+<title>Circle</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Circle Area</emphasis></term>
+<listitem>
+<para><command>circle(Radius)</command></para>
+<para>Calculates the area of a circle using the radius</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Radius: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Circle Circumference</emphasis></term>
+<listitem>
+<para><command>circumference(Diameter)</command></para>
+<para>Calculates the area of a circle using the diameter</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Diameter: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Cone">
+<title>Cone</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Cone Volume</emphasis></term>
+<listitem>
+<para><command>cone(Radius, Height)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Radius: a free value</para></listitem>
+<listitem><para>Height: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Surface Area of Cone</emphasis></term>
+<listitem>
+<para><command>cone_sa(Radius, Height)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Radius: a free value</para></listitem>
+<listitem><para>Height: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Cube">
+<title>Cube</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Cube Volume</emphasis></term>
+<listitem>
+<para><command>cube(Length of Side)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Length of Side: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Surface Area of Cube</emphasis></term>
+<listitem>
+<para><command>cube_sa(Length of Side)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Length of Side: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Cylinder">
+<title>Cylinder</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Cylinder Volume</emphasis></term>
+<listitem>
+<para><command>cylinder(Radius, Height)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Radius: a free value</para></listitem>
+<listitem><para>Height: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Surface Area of Cylinder</emphasis></term>
+<listitem>
+<para><command>cylinder_sa(Radius, Height)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Radius: a free value</para></listitem>
+<listitem><para>Height: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Parallelogram">
+<title>Parallelogram</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Parallelogram Area</emphasis></term>
+<listitem>
+<para><command>parallelogram(Base, Height)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Base: a free value</para></listitem>
+<listitem><para>Height: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Parallelogram Perimeter</emphasis></term>
+<listitem>
+<para><command>parallelogram_perimeter(Side A, Side B)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Side A: a free value</para></listitem>
+<listitem><para>Side B: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Prism">
+<title>Prism</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Surface Area of Rectangular Prism</emphasis></term>
+<listitem>
+<para><command>rectprism_sa(Length, Width, Height)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Length: a free value</para></listitem>
+<listitem><para>Width: a free value</para></listitem>
+<listitem><para>Height: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Volume of Rectangular Prism</emphasis></term>
+<listitem>
+<para><command>rectprism(Length, Width, Height)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Length: a free value</para></listitem>
+<listitem><para>Width: a free value</para></listitem>
+<listitem><para>Height: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Volume of Triangular Prism</emphasis></term>
+<listitem>
+<para><command>triangleprism(Length, Width, Height)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Length: a free value</para></listitem>
+<listitem><para>Width: a free value</para></listitem>
+<listitem><para>Height: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Pyramid">
+<title>Pyramid</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Pyramid Volume</emphasis></term>
+<listitem>
+<para><command>pyramid(Length of Base, Width of Base, Height)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Length of Base: a free value</para></listitem>
+<listitem><para>Width of Base: a free value</para></listitem>
+<listitem><para>Height: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Rectangle">
+<title>Rectangle</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Rectangle Area</emphasis></term>
+<listitem>
+<para><command>rect(Length, Width)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Length: a free value</para></listitem>
+<listitem><para>Width: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Rectangle Perimeter</emphasis></term>
+<listitem>
+<para><command>rect_perimeter(Length, Width)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Length: a free value</para></listitem>
+<listitem><para>Width: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Sphere">
+<title>Sphere</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Sphere Volume</emphasis></term>
+<listitem>
+<para><command>sphere(Radius)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Radius: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Surface Area of Sphere</emphasis></term>
+<listitem>
+<para><command>sphere_sa(Radius)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Radius: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Square">
+<title>Square</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Square Area</emphasis></term>
+<listitem>
+<para><command>square(Length of Side)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Length of Side: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Square Perimeter</emphasis></term>
+<listitem>
+<para><command>square_perimeter(Length of Side)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Length of Side: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Trapezoid">
+<title>Trapezoid</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Trapezoid Area</emphasis></term>
+<listitem>
+<para><command>trapezoid(Side A, Side B, Height)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Side A: a free value</para></listitem>
+<listitem><para>Side B: a free value</para></listitem>
+<listitem><para>Height: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Triangle">
+<title>Triangle</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Hypotenuse</emphasis></term>
+<listitem>
+<para><command>hypot(Side A, Side B)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Side A: a free value</para></listitem>
+<listitem><para>Side B: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Triangle Area</emphasis></term>
+<listitem>
+<para><command>triangle(Base, Height)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Base: a free value</para></listitem>
+<listitem><para>Height: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Triangle Perimeter</emphasis></term>
+<listitem>
+<para><command>triangle_perimeter(Side A, Side B)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Side A: a free value</para></listitem>
+<listitem><para>Side B: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+</sect1>
+<sect1 id="qalculate-definitions-functions-1-Logical">
+<title>Logical</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>For...Do</emphasis></term>
+<listitem>
+<para><command>for(Initial Value of Counter, Counter Variable, For Condition, Counter Update Function, Initial Value, Do Function, Value Variable)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Initial Value of Counter: a free value</para></listitem>
+<listitem><para>Counter Variable: an unknown variable/symbol</para></listitem>
+<listitem><para>For Condition: a free value</para></listitem>
+<listitem><para>Counter Update Function: a free value</para></listitem>
+<listitem><para>Initial Value: a free value</para></listitem>
+<listitem><para>Do Function: a free value</para></listitem>
+<listitem><para>Value Variable: an unknown variable/symbol</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>If...Then...Else</emphasis></term>
+<listitem>
+<para><command>if(Condition, Expression if condition is met, Expression if condition is NOT met)</command></para>
+<para>Tests a condition and returns a value depending on the result.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Condition: a real number</para></listitem>
+<listitem><para>Expression if condition is met: a free value</para></listitem>
+<listitem><para>Expression if condition is NOT met: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+<sect1 id="qalculate-definitions-functions-1-Matrices--Vectors">
+<title>Matrices &amp; Vectors</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Adjoint</emphasis></term>
+<listitem>
+<para><command>adj(Matrix)</command></para>
+<para>Returns the adjoint of a matrix.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Matrix: a symmetric matrix</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Cofactor</emphasis></term>
+<listitem>
+<para><command>cofactor(Row, Column, Matrix)</command></para>
+<para>Returns the cofactor of the element at specified position.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Row: an integer &gt;= 1</para></listitem>
+<listitem><para>Column: an integer &gt;= 1</para></listitem>
+<listitem><para>Matrix: a matrix</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Columns</emphasis></term>
+<listitem>
+<para><command>columns(Matrix)</command></para>
+<para>Returns the number of columns in a matrix.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Matrix: a matrix</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Component</emphasis></term>
+<listitem>
+<para><command>component(Component Index, Vector)</command></para>
+<para>Returns the component at specified position in a vector.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Component Index: an integer &gt;= 1</para></listitem>
+<listitem><para>Vector: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Construct Matrix</emphasis></term>
+<listitem>
+<para><command>matrix(Rows, Columns, Elements)</command></para>
+<para>Returns a matrix with specified order and listed elements. Omitted elements are set to zero.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Rows: an integer &gt;= 1</para></listitem>
+<listitem><para>Columns: an integer &gt;= 1</para></listitem>
+<listitem><para>Elements: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Construct Vector</emphasis></term>
+<listitem>
+<para><command>vector([argument 1], ...)</command></para>
+<para>Returns a vector with listed components.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a free value (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Convert Matrix to Vector</emphasis></term>
+<listitem>
+<para><command>matrix2vector(Matrix)</command></para>
+<para>Puts each element of a matrix in vertical order in a vector.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Matrix: a matrix</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Determinant</emphasis></term>
+<listitem>
+<para><command>det(Matrix)</command></para>
+<para>Calculates the determinant of a matrix.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Matrix: a symmetric matrix</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Dimension</emphasis></term>
+<listitem>
+<para><command>dimension(Vector)</command></para>
+<para><command>components</command></para><para>Returns the number of components in a vector.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Vector: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Element</emphasis></term>
+<listitem>
+<para><command>element(Row, Column, Matrix)</command></para>
+<para>Returns the element at specified position in a matrix.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Row: an integer &gt;= 1</para></listitem>
+<listitem><para>Column: an integer &gt;= 1</para></listitem>
+<listitem><para>Matrix: a matrix</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Elements</emphasis></term>
+<listitem>
+<para><command>elements(Matrix)</command></para>
+<para>Returns the number of elements in a matrix.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Matrix: a matrix</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Export To CSV File</emphasis></term>
+<listitem>
+<para><command>export(Matrix/Vector, File Name[, Separator])</command></para>
+<para>Imports a CSV data file as a matrix.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Matrix/Vector: a vector</para></listitem>
+<listitem><para>File Name: a valid file name</para></listitem>
+<listitem><para>Separator: a text string (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Extract Column as Vector</emphasis></term>
+<listitem>
+<para><command>column(Column, Matrix)</command></para>
+<para>Returns a column in a matrix as a vector.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Column: an integer &gt;= 1</para></listitem>
+<listitem><para>Matrix: a matrix</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Extract row as vector</emphasis></term>
+<listitem>
+<para><command>row(Row, Matrix)</command></para>
+<para>Returns a row in a matrix as a vector.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Row: an integer &gt;= 1</para></listitem>
+<listitem><para>Matrix: a matrix</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Identity</emphasis></term>
+<listitem>
+<para><command>identity(Matrix or Rows/Columns)</command></para>
+<para>Returns the identity matrix of a matrix or with specified number of rows/columns.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Matrix or Rows/Columns: an integer &gt;= 1 or a symmetric matrix</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Load CSV File</emphasis></term>
+<listitem>
+<para><command>load(File Name[, First Data Row][, Separator])</command></para>
+<para>Imports a CSV data file as a matrix.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>File Name: a valid file name</para></listitem>
+<listitem><para>First Data Row: an integer &gt;= 1 (optional)</para></listitem>
+<listitem><para>Separator: a text string (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Matrix Area</emphasis></term>
+<listitem>
+<para><command>area(Start Row, Start Column, End Row, End Column, Matrix)</command></para>
+<para>Returns a part of a matrix.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Start Row: an integer &gt;= 1</para></listitem>
+<listitem><para>Start Column: an integer &gt;= 1</para></listitem>
+<listitem><para>End Row: an integer &gt;= 1</para></listitem>
+<listitem><para>End Column: an integer &gt;= 1</para></listitem>
+<listitem><para>Matrix: a matrix</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Matrix Inverse</emphasis></term>
+<listitem>
+<para><command>inverse(Matrix)</command></para>
+<para>Returns the inverse of a matrix.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Matrix: a symmetric matrix</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Merge Vectors</emphasis></term>
+<listitem>
+<para><command>mergevectors(Vector 1[, Vector 2], ...)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Vector 1: a vector</para></listitem>
+<listitem><para>Vector 2: a vector (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Norm (length)</emphasis></term>
+<listitem>
+<para><command>norm(Vector)</command></para>
+<para>Calculates the norm/length of a vector.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Vector: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Permanent</emphasis></term>
+<listitem>
+<para><command>permanent(Matrix)</command></para>
+<para>Calculates the permanent of a matrix.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Matrix: a symmetric matrix</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Rank</emphasis></term>
+<listitem>
+<para><command>rank(Vector[, Ascending])</command></para>
+<para>Returns a vector with values of components replaced with their mutual ranks.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Vector: a vector</para></listitem>
+<listitem><para>Ascending: a boolean (0 or 1) (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Rows</emphasis></term>
+<listitem>
+<para><command>rows(Matrix)</command></para>
+<para>Returns the number of rows in a matrix.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Matrix: a matrix</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Sort</emphasis></term>
+<listitem>
+<para><command>sort(Vector[, Ascending])</command></para>
+<para>Returns a sorted vector.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Vector: a vector</para></listitem>
+<listitem><para>Ascending: a boolean (0 or 1) (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Transpose</emphasis></term>
+<listitem>
+<para><command>transpose(Matrix)</command></para>
+<para>Returns the transpose of a matrix.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Matrix: a matrix</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Vector Limits</emphasis></term>
+<listitem>
+<para><command>limits(Lower Limit, Upper Limit, Vector)</command></para>
+<para>Returns a part of a vector.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Lower Limit: an integer</para></listitem>
+<listitem><para>Upper Limit: an integer</para></listitem>
+<listitem><para>Vector: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+<sect1 id="qalculate-definitions-functions-1-Miscellaneous">
+<title>Miscellaneous</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Body Mass Index (BMI)</emphasis></term>
+<listitem>
+<para><command>bmi(Weight, Length)</command></para>
+<para>Calculates the Body Mass Index. The resulting BMI-value is interpreted as follows: Underweight &lt; 18.5 Normal weight 18.5-25 Overweight 25-30 Obesity &gt; 30 Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Weight: a free value</para></listitem>
+<listitem><para>Length: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Riemann Zeta</emphasis></term>
+<listitem>
+<para><command>zeta(Integral Point)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Integral Point: an integer</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Roman Number</emphasis></term>
+<listitem>
+<para><command>roman(Roman Number)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Roman Number: a text string</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+<sect1 id="qalculate-definitions-functions-1-Number-Theory">
+<title>Number Theory</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Absolute Value</emphasis></term>
+<listitem>
+<para><command>abs(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Greatest Common Divisor</emphasis></term>
+<listitem>
+<para><command>gcd(1st Number, 2nd Number)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1st Number: an integer</para></listitem>
+<listitem><para>2nd Number: an integer</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+<sect2 id="qalculate-definitions-functions-2-Arithmetics">
+<title>Arithmetics</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Add</emphasis></term>
+<listitem>
+<para><command>add(Terms)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Terms: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Divide</emphasis></term>
+<listitem>
+<para><command>divide(Numerator, Denominator)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Numerator: a free value</para></listitem>
+<listitem><para>Denominator: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Multiply</emphasis></term>
+<listitem>
+<para><command>multiply(Factors)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Factors: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Negate</emphasis></term>
+<listitem>
+<para><command>neg(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Raise</emphasis></term>
+<listitem>
+<para><command>raise(Base, Exponent)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Base: a free value</para></listitem>
+<listitem><para>Exponent: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Reciprocal</emphasis></term>
+<listitem>
+<para><command>inv(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Reminder (mod)</emphasis></term>
+<listitem>
+<para><command>mod(Numerator, Denominator)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Numerator: a real number</para></listitem>
+<listitem><para>Denominator: a real number that is nonzero</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Reminder (rem)</emphasis></term>
+<listitem>
+<para><command>rem(Numerator, Denominator)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Numerator: a real number</para></listitem>
+<listitem><para>Denominator: a real number that is nonzero</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Signum</emphasis></term>
+<listitem>
+<para><command>sgn(Number)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Number: a number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Subtract</emphasis></term>
+<listitem>
+<para><command>subtract(Terms)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Terms: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Number-Bases">
+<title>Number Bases</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Binary</emphasis></term>
+<listitem>
+<para><command>bin(Binary Number)</command></para>
+<para>Returns a decimal integer from a binary number</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Binary Number: a text string</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Hexadecimal</emphasis></term>
+<listitem>
+<para><command>hex(Hexadecimal Number)</command></para>
+<para>Returns a decimal value from a hexadecimal number</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Hexadecimal Number: a text string</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Number Base</emphasis></term>
+<listitem>
+<para><command>base(Number, Base)</command></para>
+<para>Returns a decimal integer from a number of specified base between 2 and 36</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Number: a text string</para></listitem>
+<listitem><para>Base: an integer &gt;= 2 and &lt;= 36</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Octal</emphasis></term>
+<listitem>
+<para><command>oct(Octal Number)</command></para>
+<para>Returns a decimal integer from an octal number</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Octal Number: a text string</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Rounding">
+<title>Rounding</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Extract Fractional Part</emphasis></term>
+<listitem>
+<para><command>frac(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a real number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Extract Integer Part</emphasis></term>
+<listitem>
+<para><command>int(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a real number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Round</emphasis></term>
+<listitem>
+<para><command>round(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a real number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Round Downwards</emphasis></term>
+<listitem>
+<para><command>floor(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a real number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Round Towards Zero</emphasis></term>
+<listitem>
+<para><command>trunc(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a real number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Round Upwards</emphasis></term>
+<listitem>
+<para><command>ceil(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a real number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+</sect1>
+<sect1 id="qalculate-definitions-functions-1-Statistics">
+<title>Statistics</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Random Number</emphasis></term>
+<listitem>
+<para><command>rand([Ceil])</command></para>
+<para>Generates a pseudo-random number. Returns a real number between 0 and 1, if ceil is zero (default), or an integer between 1 and (including) ceil.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Ceil: an integer (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Random Number Between Limits</emphasis></term>
+<listitem>
+<para><command>randbetween(Bottom, Top)</command></para>
+<para>Returns an integer between (including) bottom and top.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Bottom: an integer</para></listitem>
+<listitem><para>Top: an integer</para></listitem>
+</itemizedlist></para>
+</formalpara>
+<formalpara>
+<title>Requirement</title><para>
+"Bottom"&lt;="Top"
+</para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+<sect2 id="qalculate-definitions-functions-2-Descriptive-Statistics">
+<title>Descriptive Statistics</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Decile</emphasis></term>
+<listitem>
+<para><command>decile(Decile, Data)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Decile: a number &gt;= 0</para></listitem>
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Interquartile Range</emphasis></term>
+<listitem>
+<para><command>iqr(Data)</command></para>
+<para>Calculates the difference between the first and third quartile.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Max</emphasis></term>
+<listitem>
+<para><command>max(Vector)</command></para>
+<para>Returns the highest value.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Vector: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Median</emphasis></term>
+<listitem>
+<para><command>median(Data)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Min</emphasis></term>
+<listitem>
+<para><command>min(Vector)</command></para>
+<para>Returns the lowest value.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Vector: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Mode</emphasis></term>
+<listitem>
+<para><command>mode(Vector)</command></para>
+<para>Returns the most frequently occuring value.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Vector: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Number</emphasis></term>
+<listitem>
+<para><command>number(Data)</command></para>
+<para>Returns the number of samples.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Percentile</emphasis></term>
+<listitem>
+<para><command>percentile(Percentile (%), Vector)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Percentile (%): a number &gt; 0 and &lt; 99</para></listitem>
+<listitem><para>Vector: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Quartile</emphasis></term>
+<listitem>
+<para><command>quartile(Quartile, Data)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Quartile: an integer &gt;= 1</para></listitem>
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Range</emphasis></term>
+<listitem>
+<para><command>range(Data)</command></para>
+<para>Calculates the difference between the min and max value.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Sum (total)</emphasis></term>
+<listitem>
+<para><command>total(Vector)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Vector: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Distribution">
+<title>Distribution</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Logistic Distribution</emphasis></term>
+<listitem>
+<para><command>logistic(X, Scale)</command></para>
+<para>Returns the probability density p(x) at x for a logistic distribution with scale parameter. (from Gnumeric)</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>X: a free value</para></listitem>
+<listitem><para>Scale: a number &gt;= 0</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Pareto Distribution</emphasis></term>
+<listitem>
+<para><command>pareto(X, Exponent, Scale)</command></para>
+<para>Returns the probability density p(x) at x for a Pareto distribution with exponent and scale. (from Gnumeric)</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>X: a free value</para></listitem>
+<listitem><para>Exponent: a number &gt;= 0</para></listitem>
+<listitem><para>Scale: a number &gt;= 0</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Rayleigh Distribution</emphasis></term>
+<listitem>
+<para><command>rayleigh(X, Sigma)</command></para>
+<para>Returns the probability density p(x) at x for a Rayleigh distribution with scale parameter sigma. (from Gnumeric)</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>X: a free value</para></listitem>
+<listitem><para>Sigma: a number &gt;= 0</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Rayleigh Tail Distribution</emphasis></term>
+<listitem>
+<para><command>rayleightail(X, Lower Limit, Sigma)</command></para>
+<para>Returns the probability density p(x) at x for a Rayleigh tail distribution with scale parameter sigma and a lower limit. (from Gnumeric)</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>X: a free value</para></listitem>
+<listitem><para>Lower Limit: a free value</para></listitem>
+<listitem><para>Sigma: a number &gt;= 0</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Means">
+<title>Means</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Geometric Mean</emphasis></term>
+<listitem>
+<para><command>geomean(Data)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Harmonic Mean</emphasis></term>
+<listitem>
+<para><command>harmmean(Data)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Mean</emphasis></term>
+<listitem>
+<para><command>mean(Data)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Quadratic Mean (RMS)</emphasis></term>
+<listitem>
+<para><command>rms(Data)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Trimmed Mean</emphasis></term>
+<listitem>
+<para><command>trimmean(Trimmed Percentage (at each end), Data)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Trimmed Percentage (at each end): a free value</para></listitem>
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Weighted Mean</emphasis></term>
+<listitem>
+<para><command>weighmean(Data, Weights)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data: a vector</para></listitem>
+<listitem><para>Weights: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Winsorized Mean</emphasis></term>
+<listitem>
+<para><command>winsormean(Winsorized Percentage (at each end), Data)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Winsorized Percentage (at each end): a free value</para></listitem>
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Moments">
+<title>Moments</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Covariance</emphasis></term>
+<listitem>
+<para><command>covar(Data 1, Data 2)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data 1: a vector</para></listitem>
+<listitem><para>Data 2: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Mean Deviation</emphasis></term>
+<listitem>
+<para><command>meandev(Data)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Pooled Variance</emphasis></term>
+<listitem>
+<para><command>poolvar(Data 1, Data 2)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data 1: a vector</para></listitem>
+<listitem><para>Data 2: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Standard Deviation (entire population)</emphasis></term>
+<listitem>
+<para><command>stdevp(Data)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Standard Deviation (random sampling)</emphasis></term>
+<listitem>
+<para><command>stdev(Data)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Standard Error</emphasis></term>
+<listitem>
+<para><command>stderr(Data)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Variance (entire population)</emphasis></term>
+<listitem>
+<para><command>varp(Data)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Variance (random sampling)</emphasis></term>
+<listitem>
+<para><command>var(Data)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Regression">
+<title>Regression</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Pearson's Correlation Coefficient</emphasis></term>
+<listitem>
+<para><command>pearson(Data 1, Data 2)</command></para>
+<para><command>correl</command></para><formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data 1: a vector</para></listitem>
+<listitem><para>Data 2: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+<formalpara>
+<title>Requirement</title><para>
+dimension("Data 1")=dimension("Data 2")
+</para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Spearman's Rho</emphasis></term>
+<listitem>
+<para><command>spearman(Data 1, Data 2)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data 1: a vector</para></listitem>
+<listitem><para>Data 2: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+<formalpara>
+<title>Requirement</title><para>
+dimension("Data 1")=dimension("Data 2")
+</para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Statistical Correlation</emphasis></term>
+<listitem>
+<para><command>cor(Data 1, Data 2)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data 1: a vector</para></listitem>
+<listitem><para>Data 2: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Statistical-Tests">
+<title>Statistical Tests</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Paired T-Test</emphasis></term>
+<listitem>
+<para><command>pttest(Data 1, Data 2)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data 1: a vector</para></listitem>
+<listitem><para>Data 2: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Unpaired T-Test</emphasis></term>
+<listitem>
+<para><command>ttest(Data 1, Data 2)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Data 1: a vector</para></listitem>
+<listitem><para>Data 2: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+</sect1>
+<sect1 id="qalculate-definitions-functions-1-Trigonometry">
+<title>Trigonometry</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Cosecant</emphasis></term>
+<listitem>
+<para><command>csc(Angle)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Angle: an angle or a number (using the default angle unit)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Cosine</emphasis></term>
+<listitem>
+<para><command>cos(Angle)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Angle: an angle or a number (using the default angle unit)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Cotangent</emphasis></term>
+<listitem>
+<para><command>cot(Angle)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Angle: an angle or a number (using the default angle unit)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Hyperbolic Cosecant</emphasis></term>
+<listitem>
+<para><command>csch(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Hyperbolic Cosine</emphasis></term>
+<listitem>
+<para><command>cosh(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Hyperbolic Cotangent</emphasis></term>
+<listitem>
+<para><command>coth(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Hyperbolic Secant</emphasis></term>
+<listitem>
+<para><command>sech(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Hyperbolic Sine</emphasis></term>
+<listitem>
+<para><command>sinh(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Hyperbolic Tangent</emphasis></term>
+<listitem>
+<para><command>tanh(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Inverse Cosecant</emphasis></term>
+<listitem>
+<para><command>acsc(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Inverse Cosine</emphasis></term>
+<listitem>
+<para><command>acos(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Inverse Cotangent</emphasis></term>
+<listitem>
+<para><command>acot(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Inverse Hyperbolic Cosecant</emphasis></term>
+<listitem>
+<para><command>acsch(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Inverse Hyperbolic Cosine</emphasis></term>
+<listitem>
+<para><command>acosh(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Inverse Hyperbolic Cotangent</emphasis></term>
+<listitem>
+<para><command>acoth(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Inverse Hyperbolic Sine</emphasis></term>
+<listitem>
+<para><command>asinh(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Inverse Hyperbolic Tangent</emphasis></term>
+<listitem>
+<para><command>atanh(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Inverse Hyperbolic secant</emphasis></term>
+<listitem>
+<para><command>asech(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Inverse Secant</emphasis></term>
+<listitem>
+<para><command>asec(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Inverse Sine</emphasis></term>
+<listitem>
+<para><command>asin(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Inverse Tangent</emphasis></term>
+<listitem>
+<para><command>atan(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Radians to Default Angle Unit</emphasis></term>
+<listitem>
+<para><command>radtodef(Radians)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Radians: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Secant</emphasis></term>
+<listitem>
+<para><command>sec(Angle)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Angle: an angle or a number (using the default angle unit)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Sine</emphasis></term>
+<listitem>
+<para><command>sin(Angle)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Angle: an angle or a number (using the default angle unit)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Tangent</emphasis></term>
+<listitem>
+<para><command>tan(Angle)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Angle: an angle or a number (using the default angle unit)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+<sect1 id="qalculate-definitions-functions-1-Utilities">
+<title>Utilities</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>ASCII Char</emphasis></term>
+<listitem>
+<para><command>char(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: an integer &gt;= 32 and &lt;= 127</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>ASCII Value</emphasis></term>
+<listitem>
+<para><command>code(Character)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Character: a text string that fulfills the condition: "len(\x) = 1"</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Concatenate Strings</emphasis></term>
+<listitem>
+<para><command>concatenate(Text String 1[, Text String 2], ...)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Text String 1: a text string</para></listitem>
+<listitem><para>Text String 2: a text string (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Custom Sum of Components</emphasis></term>
+<listitem>
+<para><command>csum(First Component, Last Component, Initial Value, Function, Value Variable, Component Variable, Vector[, Index Variable][, Vector Variable])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>First Component: an integer</para></listitem>
+<listitem><para>Last Component: an integer</para></listitem>
+<listitem><para>Initial Value: a free value</para></listitem>
+<listitem><para>Function: a free value</para></listitem>
+<listitem><para>Value Variable: an unknown variable/symbol</para></listitem>
+<listitem><para>Component Variable: an unknown variable/symbol</para></listitem>
+<listitem><para>Vector: a vector</para></listitem>
+<listitem><para>Index Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Vector Variable: an unknown variable/symbol (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Display Error</emphasis></term>
+<listitem>
+<para><command>error(Message)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Message: a text string</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Display Message</emphasis></term>
+<listitem>
+<para><command>message(Message)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Message: a text string</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Display Warning</emphasis></term>
+<listitem>
+<para><command>warning(Message)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Message: a text string</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Function</emphasis></term>
+<listitem>
+<para><command>function(Expression, Arguments)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Expression: a text string</para></listitem>
+<listitem><para>Arguments: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Length of string</emphasis></term>
+<listitem>
+<para><command>len(Text)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Text: a text string</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Process Matrix Elements</emphasis></term>
+<listitem>
+<para><command>processm(Function, Element Variable, Matrix[, Row Variable][, Column Variable][, Matrix Variable])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Function: a free value</para></listitem>
+<listitem><para>Element Variable: an unknown variable/symbol</para></listitem>
+<listitem><para>Matrix: a matrix</para></listitem>
+<listitem><para>Row Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Column Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Matrix Variable: an unknown variable/symbol (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Process Vector Components</emphasis></term>
+<listitem>
+<para><command>process(Function, Component Variable, Vector[, Index Variable][, Vector Variable])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Function: a free value</para></listitem>
+<listitem><para>Component Variable: an unknown variable/symbol</para></listitem>
+<listitem><para>Vector: a vector</para></listitem>
+<listitem><para>Index Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Vector Variable: an unknown variable/symbol (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Replace</emphasis></term>
+<listitem>
+<para><command>replace(Expression, Original Value, New Value[, Precalculate expression])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Expression: a free value</para></listitem>
+<listitem><para>Original Value: a free value</para></listitem>
+<listitem><para>New Value: a free value</para></listitem>
+<listitem><para>Precalculate expression: a boolean (0 or 1) (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Save as Variable</emphasis></term>
+<listitem>
+<para><command>save(Value, Name[, Category][, Title])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a free value</para></listitem>
+<listitem><para>Name: a text string</para></listitem>
+<listitem><para>Category: a text string (optional)</para></listitem>
+<listitem><para>Title: a text string (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Select Vector Components</emphasis></term>
+<listitem>
+<para><command>select(Vector, Condition[, Component Variable][, Select first match])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Vector: a free value</para></listitem>
+<listitem><para>Condition: a free value</para></listitem>
+<listitem><para>Component Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Select first match: a boolean (0 or 1) (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Title</emphasis></term>
+<listitem>
+<para><command>title(Name)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Name: a valid function, unit or variable name</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+</appendix>

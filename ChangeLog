@@ -1,3 +1,8 @@
+2004-10-10 Niklas Knutsson  <nq@altern.org>
+
+	* defs2doc program for generation of definition list in help
+	* Make help book and add appendix for lists of functions, variables and units
+
 2004-10-09 Niklas Knutsson  <nq@altern.org>
 
 	* promille -> permille

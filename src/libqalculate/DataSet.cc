@@ -1037,7 +1037,7 @@ Argument *DataObjectArgument::copy() const {return new DataObjectArgument(this);
 string DataObjectArgument::print() const {return _("data object");}
 string DataObjectArgument::subprintlong() const {
 	string str = _("an object from");
-	str += "\"";
+	str += " \"";
 	str += o_data->title();
 	str += "\"";
 	DataPropertyIter it;

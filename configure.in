@@ -21,6 +21,12 @@ AC_ARG_ENABLE(textport,
               enable_textport=$enableval, 
               enable_textport="yes")
 
+AC_ARG_ENABLE(defs2doc, 
+              [  --enable-defs2doc	  Enable compiling the definitions documentation generator], 
+              enable_defs2doc=$enableval, 
+              enable_defs2doc="no")
+
+
 dnl  -------------------------------
 dnl | check for neccessary programs |------------------------------------------
 dnl  -------------------------------
@@ -245,6 +251,12 @@ AC_SUBST(READLINE_LIBS)
 AC_SUBST(QALCULATE_TEXT)
 
 AC_SUBST(LN_QALCULATE)
+
+QALCULATE_DEFS2DOC=""
+if test "x$enable_defs2doc" = "xyes" ; then
+	QALCULATE_DEFS2DOC="defs2doc"
+fi
+AC_SUBST(QALCULATE_DEFS2DOC)
 
 dnl  -------------------------------------
 dnl | internationalization (i18n) support |------------------------------------

@@ -2152,7 +2152,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <reference>true</reference>
         <_name>sum</_name>
       </name>
-      <_description>Corresponds to the sum symbol. Adds terms for each i (represented by \i in the expression) ranging from the lower to the upper limit. Use \j for the second index in a nested sum.</_description>
+      <_description>Corresponds to the sum symbol. Adds terms for each x ranging from the lower to the upper limit.</_description>
       <argument index="1">
         <_title>Term Expression</_title>
       </argument>
@@ -2176,7 +2176,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <reference>true</reference>
         <_name>product</_name>
       </name>
-      <_description>Corresponds to the product symbol. Multiplies factors for each i (represented by \i in the expression) ranging from the lower to the upper limit. Use \j for the second index in a nested product.</_description>
+      <_description>Corresponds to the product symbol. Multiplies factors for each x ranging from the lower to the upper limit.</_description>
       <argument index="1">
         <_title>Factor Expression</_title>
       </argument>

@@ -13,7 +13,8 @@ INCLUDES = \
 	@GLIB_CFLAGS@
 
 bin_PROGRAMS = @QALCULATE_GTK@ @QALCULATE_TEXT@
-EXTRA_PROGRAMS = qalculate-gtk qalc
+noinst_PROGRAMS = @QALCULATE_DEFS2DOC@
+EXTRA_PROGRAMS = qalculate-gtk qalc defs2doc
 
 qalculate_gtk_SOURCES = \
 	main.cc		main.h		\
@@ -31,6 +32,12 @@ qalc_SOURCES = qalc.cc
 qalc_LDADD = \
 	@GLIB_LIBS@ \
 	@READLINE_LIBS@ \
+	libqalculate/libqalculate.la
+
+defs2doc_SOURCES = defs2doc.cc
+
+defs2doc_LDADD = \
+	@GLIB_LIBS@ \
 	libqalculate/libqalculate.la
 
 install-exec-local:
