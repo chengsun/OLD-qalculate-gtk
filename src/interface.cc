@@ -72,6 +72,7 @@ extern bool use_custom_font, indicate_infinite_series;
 extern string custom_font;
 
 extern vector<vector<GtkWidget*> > element_entries;
+extern vector<string> initial_history;
 
 gint compare_categories(gconstpointer a, gconstpointer b) {
 	return strcasecmp((const char*) a, (const char*) b);
@@ -336,6 +337,20 @@ create_main_window (void)
 //	gtk_widget_modify_bg(resultview, GTK_STATE_NORMAL, &glade_xml_get_widget(main_glade, "history")->style->base[GTK_WIDGET_STATE(glade_xml_get_widget(main_glade, "history"))]);	
 
 	recent_menu = gtk_menu_new(); gtk_menu_item_set_submenu(GTK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_expression_recent")), recent_menu);
+
+	GtkTextIter iter;
+	GtkTextBuffer *tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history")));
+	for(int i = 0; i < initial_history.size(); i++) {
+		gtk_text_buffer_get_end_iter(tb, &iter);
+		if(i == 0 && initial_history[i] != "-----------------------") {
+			gtk_text_buffer_insert(tb, &iter, "-----------------------\n", -1);
+		}
+		gtk_text_buffer_get_end_iter(tb, &iter);
+		gtk_text_buffer_insert(tb, &iter, initial_history[i].c_str(), -1);
+		gtk_text_buffer_get_end_iter(tb, &iter);
+		gtk_text_buffer_insert(tb, &iter, "\n", -1);
+	}
+	initial_history.clear();
 
 	gtk_widget_show (glade_xml_get_widget (main_glade, "main_window"));
 

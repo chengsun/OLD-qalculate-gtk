@@ -871,18 +871,22 @@ bool Argument::test(const Manager *value, int index, Function *f) const {
 }
 Manager *Argument::evaluate(const string &str) const {
 	if(b_text) {
-		if(str.length() >= 2) {
-			if(str[0] == ID_WRAP_LEFT_CH && str[str.length() - 1] == ID_WRAP_RIGHT_CH) {
-				return CALCULATOR->calculate(str);
+		int pars = 0;
+		while(str.length() >= 2 + pars * 2 && str[pars] == LEFT_PARENTHESIS_CH && str[str.length() - 1 - pars] == RIGHT_PARENTHESIS_CH) {
+			pars++;
+		}
+		if(str.length() >= 2 + pars * 2) {
+			if(str[pars] == ID_WRAP_LEFT_CH && str[str.length() - 1 - pars] == ID_WRAP_RIGHT_CH) {
+				return CALCULATOR->calculate(str.substr(pars, str.length() - pars * 2));
 			}
-			if(str[0] == '\\' && str[str.length() - 1] == '\\') {
-				return CALCULATOR->calculate(str.substr(1, str.length() - 2));
+			if(str[pars] == '\\' && str[str.length() - 1 - pars] == '\\') {
+				return CALCULATOR->calculate(str.substr(1 + pars, str.length() - 2 - pars * 2));
 			}	
-			if((str[0] == '\"' && str[str.length() - 1] == '\"') || (str[0] == '\'' && str[str.length() - 1] == '\'')) {
-				return new Manager(str.substr(1, str.length() - 2));
+			if((str[pars] == '\"' && str[str.length() - 1 - pars] == '\"') || (str[pars] == '\'' && str[str.length() - 1 - pars] == '\'')) {
+				return new Manager(str.substr(1 + pars, str.length() - 2 - pars * 2));
 			}
 		}
-		return new Manager(str);
+		return new Manager(str.substr(pars, str.length() - pars * 2));
 	} else {
 		return CALCULATOR->calculate(str);
 	}

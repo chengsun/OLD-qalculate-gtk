@@ -1,6 +1,18 @@
+2004-03-01  Niklas Knutsson  <nq@altern.org>
+
+	* Replace localized decimal point with dot in plot data
+	* Save history (20 rows)
+	* Expression entry history
+	* "Save Result" -> "Store Result"
+
+2004-02-28  Niklas Knutsson  <nq@altern.org>
+
+	* Calculate command line expression
+
 2004-02-26  Niklas Knutsson  <nq@altern.org>
 
 	* Release 0.4.1
+	* Fix parsing of text arguments
 	* Replace strptime with g_date_set_parse
 
 2004-02-24  Niklas Knutsson  <nq@altern.org>

@@ -54,6 +54,19 @@ int main (int argc, char **argv) {
 
 	gtk_init (&argc, &argv);
 	glade_init ();
+	
+	string calc_arg;
+	for(int i = 1; i < argc; i++) {
+		if(i > 1) {
+			calc_arg += " ";
+		}
+		if(strlen(argv[i]) >= 2 && ((argv[i][0] == '\"' && argv[i][strlen(argv[i] - 1)] == '\"') || (argv[i][0] == '\'' && argv[i][strlen(argv[i] - 1)] == '\''))) {
+			calc_arg += argv[i] + 1;
+			calc_arg.erase(calc_arg.length() - 1);
+		} else {
+			calc_arg += argv[i];
+		}
+	}
 
 	b_busy = false;
 	
@@ -120,6 +133,8 @@ int main (int argc, char **argv) {
 	//create main window
 	create_main_window();
 
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(main_glade, "expression")), calc_arg.c_str());
+
 	//check for calculation errros regularly
 	g_timeout_add(100, on_display_errors_timeout, NULL);
 	
@@ -129,7 +144,7 @@ int main (int argc, char **argv) {
 	for(int i = recent_objects_pre.size() - 1; i >= 0; i--) {
 		object_inserted(CALCULATOR->getExpressionItem(recent_objects_pre[i]));
 	}
-	
+		
 	//create dynamic menus
 	generate_units_tree_struct();
 	generate_functions_tree_struct();
@@ -140,6 +155,10 @@ int main (int argc, char **argv) {
 	create_pmenu();	
 	create_umenu2();
 	create_pmenu2();			
+	
+	if(!calc_arg.empty()) {
+		execute_expression();
+	}
 	
 	gtk_main();
 	return 0;

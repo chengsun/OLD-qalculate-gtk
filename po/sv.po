@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-02-26 15:25+0100\n"
+"POT-Creation-Date: 2004-03-01 13:26+0100\n"
 "PO-Revision-Date: 2003-10-27 12:29+0100\n"
 "Last-Translator: Niklas Knutsson <nq@altern.org>\n"
 "Language-Team: Swedish\n"
@@ -572,7 +572,7 @@ msgstr "Avbryt operationen"
 msgid "Angle Unit"
 msgstr "Vinkelenhet"
 
-#: data/main.glade.h:23 src/main.cc:92 src/main.cc:99
+#: data/main.glade.h:23 src/main.cc:105 src/main.cc:112
 msgid "Ans"
 msgstr "Ans"
 
@@ -876,12 +876,12 @@ msgid "_Quit"
 msgstr "_Avsluta"
 
 #: data/main.glade.h:101
-msgid "_Save Result"
-msgstr "_Spara resultatet"
-
-#: data/main.glade.h:102
 msgid "_Save definitions"
 msgstr "_Spara definitioner"
+
+#: data/main.glade.h:102
+msgid "_Store Result"
+msgstr "_Spara resultatet"
 
 #: data/main.glade.h:103
 msgid "a <sup>b</sup>/<small>c</small>"
@@ -1577,26 +1577,26 @@ msgstr "Redigera vald variabel"
 msgid "Insert the selected variable into the expression entry"
 msgstr "Sätt in vald variabel i uttrycket"
 
-#: src/main.cc:84
+#: src/main.cc:97
 msgid "Failed to load global definitions!\n"
 msgstr "Fel vid inhämtande av systemvida definitioner!\n"
 
 #. get ans variable objects or create if they do not exist
-#: src/main.cc:91 src/main.cc:94
+#: src/main.cc:104 src/main.cc:107
 msgid "ans"
 msgstr ""
 
-#: src/main.cc:94 src/main.cc:99 src/callbacks.cc:5147 src/callbacks.cc:5159
+#: src/main.cc:107 src/main.cc:112 src/callbacks.cc:5147 src/callbacks.cc:5159
 #: src/calclib/Calculator.cc:2930
 msgid "Temporary"
 msgstr "Temporära"
 
-#: src/main.cc:94 src/main.cc:99
+#: src/main.cc:107 src/main.cc:112
 msgid "Answer"
 msgstr "Svar"
 
 #. if no category has been selected (previously selected has been renamed/deleted), select "All"
-#: src/main.cc:106 src/main.cc:109 src/main.cc:112 src/callbacks.cc:506
+#: src/main.cc:119 src/main.cc:122 src/main.cc:125 src/callbacks.cc:506
 #: src/callbacks.cc:567 src/callbacks.cc:601 src/callbacks.cc:764
 #: src/callbacks.cc:828 src/callbacks.cc:884 src/callbacks.cc:964
 #: src/callbacks.cc:1024 src/callbacks.cc:1105
@@ -2146,8 +2146,7 @@ msgstr "Omvänd hyperbolisk tangens är oändlig för 1 och -1."
 
 #: src/calclib/Fraction.cc:890
 msgid "The natural logarithm is infinite for zero."
-msgstr ""
-"Naturliga logaritmer är oändliga för noll."
+msgstr "Naturliga logaritmer är oändliga för noll."
 
 #: src/calclib/Fraction.cc:918
 msgid "Logarithms is infinite for zero."
@@ -2194,8 +2193,8 @@ msgstr "ett valfritt värde"
 msgid "that is nonzero"
 msgstr "som är icke-noll"
 
-#: src/calclib/Function.cc:813 src/calclib/Function.cc:1075
-#: src/calclib/Function.cc:1210
+#: src/calclib/Function.cc:813 src/calclib/Function.cc:1079
+#: src/calclib/Function.cc:1214
 msgid "and"
 msgstr "och"
 
@@ -2213,119 +2212,119 @@ msgstr "Parameter %s i %s() måste vara %s."
 msgid "Argument %s, %s, in %s() must be %s."
 msgstr "Parameter %s, %s, i %s() måste vara %s."
 
-#: src/calclib/Function.cc:1058
+#: src/calclib/Function.cc:1062
 msgid "number"
 msgstr "nummer"
 
-#: src/calclib/Function.cc:1061
+#: src/calclib/Function.cc:1065
 msgid "a number"
 msgstr "ett nummer"
 
-#: src/calclib/Function.cc:1065 src/calclib/Function.cc:1203
+#: src/calclib/Function.cc:1069 src/calclib/Function.cc:1207
 msgid ">="
 msgstr ">="
 
-#: src/calclib/Function.cc:1067
+#: src/calclib/Function.cc:1071
 msgid ">"
 msgstr ">"
 
-#: src/calclib/Function.cc:1079 src/calclib/Function.cc:1213
+#: src/calclib/Function.cc:1083 src/calclib/Function.cc:1217
 msgid "<="
 msgstr "<="
 
-#: src/calclib/Function.cc:1081
+#: src/calclib/Function.cc:1085
 msgid "<"
 msgstr "<"
 
-#: src/calclib/Function.cc:1197
+#: src/calclib/Function.cc:1201
 msgid "integer"
 msgstr "heltal"
 
-#: src/calclib/Function.cc:1200
+#: src/calclib/Function.cc:1204
 msgid "an integer"
 msgstr "ett heltal"
 
-#: src/calclib/Function.cc:1225
+#: src/calclib/Function.cc:1229
 msgid "a free value (giac adjusted)"
 msgstr "ett valfritt värde (giac justerat)"
 
-#: src/calclib/Function.cc:1240
+#: src/calclib/Function.cc:1244
 msgid "text"
 msgstr "text"
 
-#: src/calclib/Function.cc:1241
+#: src/calclib/Function.cc:1245
 msgid "a text string"
 msgstr "en textsträng"
 
-#: src/calclib/Function.cc:1253
+#: src/calclib/Function.cc:1257
 msgid "date"
 msgstr "datum"
 
-#: src/calclib/Function.cc:1254
+#: src/calclib/Function.cc:1258
 msgid "a date"
 msgstr "ett datum"
 
-#: src/calclib/Function.cc:1264
+#: src/calclib/Function.cc:1268
 msgid "vector"
 msgstr "vektor"
 
-#: src/calclib/Function.cc:1265
+#: src/calclib/Function.cc:1269
 msgid "a vector"
 msgstr "en vektor"
 
-#: src/calclib/Function.cc:1273
+#: src/calclib/Function.cc:1277
 msgid "matrix"
 msgstr "matris"
 
-#: src/calclib/Function.cc:1274
+#: src/calclib/Function.cc:1278
 msgid "a matrix"
 msgstr "en matris"
 
-#: src/calclib/Function.cc:1282
+#: src/calclib/Function.cc:1286
 msgid "object"
 msgstr "objekt"
 
-#: src/calclib/Function.cc:1283
+#: src/calclib/Function.cc:1287
 msgid "a valid function, unit or variable name"
 msgstr "ett giltigt funktions, enhets eller variabelnamn"
 
-#: src/calclib/Function.cc:1291
+#: src/calclib/Function.cc:1295
 msgid "function"
 msgstr "funktion"
 
-#: src/calclib/Function.cc:1292
+#: src/calclib/Function.cc:1296
 msgid "a valid function name"
 msgstr "ett giltigt funktionsnamn"
 
-#: src/calclib/Function.cc:1300
+#: src/calclib/Function.cc:1304
 msgid "unit"
 msgstr "enhet"
 
-#: src/calclib/Function.cc:1301
+#: src/calclib/Function.cc:1305
 msgid "a valid unit name"
 msgstr "ett giltigt enhetsnamn"
 
-#: src/calclib/Function.cc:1309
+#: src/calclib/Function.cc:1313
 msgid "variable"
 msgstr "variabel"
 
-#: src/calclib/Function.cc:1310
+#: src/calclib/Function.cc:1314
 msgid "a valid variable name"
 msgstr "ett giltigt variabelnamn"
 
-#: src/calclib/Function.cc:1318
+#: src/calclib/Function.cc:1322
 msgid "boolean"
 msgstr "boolskt värde"
 
-#: src/calclib/Function.cc:1319
+#: src/calclib/Function.cc:1323
 msgid "a boolean (0 or 1)"
 msgstr "ett boolskt värde (0 eller 1)"
 
-#: src/calclib/Function.cc:1346
+#: src/calclib/Function.cc:1350
 msgid "angle"
 msgstr "vinkel"
 
-#: src/calclib/Function.cc:1347
+#: src/calclib/Function.cc:1351
 msgid "an angle or a number (using the default angle unit)"
 msgstr "en vinkel eller ett tal (som använder inställd vinkelenhet)"
 
@@ -5963,6 +5962,9 @@ msgstr "Basen för naturliga logaritmer (e)"
 #: src/calclib/data/variables.xml.in.h:11
 msgid "The Golden Ratio"
 msgstr "Golden ratio"
+
+#~ msgid "_Save Result"
+#~ msgstr "_Spara resultatet"
 
 #~ msgid "The arc sine is only defined for -1 to 1."
 #~ msgstr "Arcussinus är enbart definierad för -1 till 1."

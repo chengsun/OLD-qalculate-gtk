@@ -91,6 +91,11 @@ bool tmp_in_exact;
 GdkPixmap *tmp_pixmap;
 bool expression_has_changed;
 
+vector<string> initial_history;
+vector<string> expression_history;
+int expression_history_index = -1;
+bool dont_change_index = false;
+
 PlotLegendPlacement default_plot_legend_placement = PLOT_LEGEND_TOP_RIGHT;
 bool default_plot_display_grid = true;
 bool default_plot_full_border = false;
@@ -3743,6 +3748,11 @@ void on_abort_calculation(GtkDialog *w, gint arg1, gpointer user_data) {
 */
 void execute_expression() {
 	expression_has_changed = false;
+	if(expression_history.size() >= 10) {
+		expression_history.pop_back();
+	}
+	expression_history.insert(expression_history.begin(), gtk_entry_get_text(GTK_ENTRY(expression)));
+	expression_history_index = 0;
 	string str = gtk_entry_get_text(GTK_ENTRY(expression));
 	//unreference previous result (deletes the object if it is not used anywhere else
 	mngr->unref();
@@ -5552,6 +5562,8 @@ void load_preferences() {
 	FILE *file = NULL;
 	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate-gtk.cfg", NULL);
 	file = fopen(gstr2, "r");
+	expression_history.clear();
+	expression_history_index = -1;
 	g_free(gstr2);
 	if(file) {
 		char line[10000];
@@ -5676,7 +5688,12 @@ void load_preferences() {
 				else if(svar == "plot_type")
 					default_plot_type = v;	
 				else if(svar == "plot_color")
-					default_plot_color = v;		
+					default_plot_color = v;
+				else if(svar == "expression_history")
+					expression_history.push_back(svalue);		
+				else if(svar == "history") {
+					initial_history.push_back(svalue);
+				}
 			}
 		}
 	} else {
@@ -5729,6 +5746,19 @@ void save_preferences(bool mode)
 	fprintf(file, "use_unicode_signs=%i\n", use_unicode_signs);	
 	fprintf(file, "use_custom_font=%i\n", use_custom_font);	
 	fprintf(file, "custom_font=%s\n", custom_font.c_str());		
+	for(int i = 0; i < expression_history.size(); i++) {
+		fprintf(file, "expression_history=%s\n", expression_history[i].c_str()); 
+	}	
+	GtkTextIter iter1, iter2;
+	GtkTextBuffer *tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history")));
+	int lc = gtk_text_buffer_get_line_count(tb);
+	if(lc > 20) lc = 20;
+	lc--;
+	for(int i = 0; i < lc; i++) {
+		gtk_text_buffer_get_iter_at_line(tb, &iter1, i);
+		gtk_text_buffer_get_iter_at_line(tb, &iter2, i + 1);
+		fprintf(file, "history=%s", gtk_text_buffer_get_text(tb, &iter1, &iter2, TRUE)); 
+	}
 	fprintf(file, "recent="); 
 	for(int i = (int) (recent_objects.size()) - 1; i >= 0; i--) {
 		fprintf(file, "%s", recent_objects[i]->referenceName().c_str()); 
@@ -6177,6 +6207,7 @@ on_togglebutton_result_toggled                      (GtkToggleButton       *butt
 void on_expression_changed(GtkEditable *w, gpointer user_data) {
 	expression_has_changed = true;
 	if(result_text.empty()) return;
+	if(!dont_change_index) expression_history_index = -1;
 	clearresult();
 }
 
@@ -7121,7 +7152,31 @@ gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointe
 		case GDK_minus: {
 			wrap_expression_selection();
 			break;
-		}						
+		}
+		case GDK_KP_Up: {}		
+		case GDK_Up: {
+			if(expression_history_index + 1 < expression_history.size()) {
+				expression_history_index++;
+				dont_change_index = true;
+				gtk_entry_set_text(GTK_ENTRY(expression), expression_history[expression_history_index].c_str());
+				dont_change_index = false;
+			}
+			return TRUE;
+		}
+		case GDK_KP_Down: {}
+		case GDK_Down: {
+			if(expression_history_index > -1) {
+				expression_history_index--;
+				dont_change_index = true;
+				if(expression_history_index < 0) {
+					gtk_entry_set_text(GTK_ENTRY(expression), "");
+				} else {
+					gtk_entry_set_text(GTK_ENTRY(expression), expression_history[expression_history_index].c_str());
+				}
+				dont_change_index = false;
+			}
+			return TRUE;
+		}
 	}
 	if(use_unicode_signs) {
 		gint pos = gtk_editable_get_position(GTK_EDITABLE(expression));

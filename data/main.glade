@@ -561,7 +561,7 @@
 		  <child>
 		    <widget class="GtkImageMenuItem" id="menu_item_save">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">_Save Result</property>
+		      <property name="label" translatable="yes">_Store Result</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_save_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
 

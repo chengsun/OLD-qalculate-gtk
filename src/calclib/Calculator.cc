@@ -4044,6 +4044,9 @@ bool Calculator::plotVectors(plot_parameters *param, vector<Vector*> &y_vectors,
 				}
 				plot_data += y_vector->get(i)->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DECIMAL_ONLY);
 				plot_data += "\n";	
+				if(getDecimalPoint() != ".") {
+					gsub(getDecimalPoint(), ".", plot_data);
+				}
 			}
 			fputs(plot_data.c_str(), fdata);
 			fflush(fdata);
