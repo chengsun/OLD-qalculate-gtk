@@ -80,6 +80,18 @@ class RoundFunction : public Function {
   public:
 	RoundFunction();
 };
+class FracFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	FracFunction();
+};
+class IntFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	IntFunction();
+};
 class RemFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  

@@ -16,6 +16,7 @@ class Prefix;
 
 #include "includes.h"
 #include "Calculator.h"
+#include "Integer.h"
 
 class Prefix {
   protected:
@@ -30,8 +31,11 @@ class Prefix {
 	void setLongName(string long_name);
 	const string &name(bool short_default = true) const;
 	long int exponent(long int exp_ = 1) const;
+	Integer *exponent(const Integer *exp_, Integer *buffer = NULL) const;	
 	void setExponent(long int exp_);	
-	long double value(long int exp_ = 1) const;
+	Fraction *value(const Integer *exp_, Fraction *buffer = NULL) const;
+	Fraction *value(long int exp_ = 1, Fraction *buffer = NULL) const;
+	
 };
 
 #endif

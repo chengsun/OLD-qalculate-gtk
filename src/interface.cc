@@ -58,9 +58,9 @@ GtkWidget *label_equals;
 GtkWidget *f_menu ,*v_menu, *u_menu, *u_menu2;
 GtkAccelGroup *accel_group;
 
-extern int display_mode, number_base;
+extern int display_mode, number_base, fractional_mode;
 extern bool show_more, show_buttons;
-extern bool use_short_units, save_mode_on_exit, save_defs_on_exit, load_global_defs, use_unicode_signs, hyp_is_on, fraction_is_on;
+extern bool use_short_units, save_mode_on_exit, save_defs_on_exit, load_global_defs, use_unicode_signs, hyp_is_on, fraction_is_on, use_prefixes;
 
 
 void
@@ -84,7 +84,7 @@ create_main_window (void)
 			TRUE);
 			
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (glade_xml, "button_hyp")), hyp_is_on);			
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (glade_xml, "button_fraction")), fraction_is_on);				
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (glade_xml, "button_fraction")), fractional_mode == FRACTIONAL_MODE_COMBINED);				
 
 	accel_group = gtk_accel_group_new ();
 
@@ -163,18 +163,46 @@ create_main_window (void)
 					),
 				TRUE);
 		break;
-	case MODE_PREFIXES:
-		gtk_check_menu_item_set_active(
-				GTK_CHECK_MENU_ITEM(
-					glade_xml_get_widget (glade_xml, "menu_item_display_prefixes")
-					),
-				TRUE);
-		break;
 	default:
 		g_assert_not_reached ();
 		break;
 	}
 
+	if(use_prefixes) {
+		gtk_check_menu_item_set_active(
+				GTK_CHECK_MENU_ITEM(
+					glade_xml_get_widget (glade_xml, "menu_item_display_prefixes")
+					),
+				TRUE);
+	}
+
+	switch (fractional_mode)
+	{
+	case FRACTIONAL_MODE_DECIMAL:
+		gtk_check_menu_item_set_active(
+				GTK_CHECK_MENU_ITEM(
+					glade_xml_get_widget (glade_xml, "menu_item_fraction_decimal")
+					),
+				TRUE);
+		break;
+	case FRACTIONAL_MODE_COMBINED:
+		gtk_check_menu_item_set_active(
+				GTK_CHECK_MENU_ITEM(
+					glade_xml_get_widget (glade_xml, "menu_item_fraction_combined")
+					),
+				TRUE);
+		break;		
+	case FRACTIONAL_MODE_FRACTION:
+		gtk_check_menu_item_set_active(
+				GTK_CHECK_MENU_ITEM(
+					glade_xml_get_widget (glade_xml, "menu_item_fraction_fraction")
+					),
+				TRUE);
+		break;		
+	default:
+		g_assert_not_reached ();
+		break;
+	}
 
 	if(show_more)
 	{

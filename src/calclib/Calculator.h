@@ -68,9 +68,10 @@ class Calculator {
 	Prefix *getPrefix(int index) const;	
 	Prefix *getPrefix(string name_) const;		
 	Prefix *getExactPrefix(long int exp10, long int exp = 1) const;			
+	Prefix *getExactPrefix(const Fraction *fr, long int exp = 1) const;				
 	Prefix *getNearestPrefix(long int exp10, long int exp = 1) const;		
 	Prefix *getBestPrefix(long int exp10, long int exp = 1) const;		
-	Prefix *getBestPrefix(const Integer *exp10, long int exp = 1) const;				
+	Prefix *getBestPrefix(const Integer *exp10, const Integer *exp) const;				
 	Prefix *addPrefix(Prefix *p);
 	void prefixNameChanged(Prefix *p);	
 

@@ -1243,13 +1243,14 @@ bool Manager::negative() {
 	else if(c_type == MULTIPLICATION_MANAGER || c_type == POWER_MANAGER) return mngrs[0]->negative();
 	return false;
 }
-string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_keep, bool decimals_expand, bool decimals_decrease, bool *in_exact, bool *usable, Prefix *prefix, bool toplevel, bool *plural, long int *l_exp, bool in_composite, bool in_power) {
+string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_keep, bool decimals_expand, bool decimals_decrease, bool *in_exact, bool *usable, Prefix *prefix, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) {
 	if(in_exact && !isPrecise()) *in_exact = true;
 	string str, str2;
 	if(toplevel && (displayflags & DISPLAY_FORMAT_TAGS)) {
-	    str = "<b><big>";
+		str = "<b><big>";
+	} else {
+		str = "";
 	}
-	else str = "";
 /*	if(c_type == VALUE_MANAGER) {
 		long double new_value = d_value;
 		switch(nrformat) {
@@ -1265,7 +1266,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 				str2 = CALCULATOR->value2str_exp_pure(d_value, precision);
 				break;
 			}
-			case NUMBER_FORMAT_PREFIX: {
+			case DISPLAY_FORMAT_USE_PREFIXES: {
 				if(l_exp) {
 					str2 = CALCULATOR->value2str_prefix(d_value, *l_exp, precision, displayflags & DISPLAY_FORMAT_SHORT_UNITS, &new_value, prefix, !in_composite);
 					if((displayflags & DISPLAY_FORMAT_SHORT_UNITS) && (displayflags & DISPLAY_FORMAT_NONASCII)) gsub("micro", SIGN_MICRO, str2);
@@ -1315,7 +1316,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 		int min_decimals = 0;
 		int max_decimals = -1;			
 		if(decimals_decrease) max_decimals = decimals_to_keep;
-		if(decimals_expand) min_decimals = decimals_to_keep;			
+		if(decimals_expand) min_decimals = decimals_to_keep;					
 		str += fr->print(nrformat, displayflags, min_decimals, max_decimals, prefix, in_exact, usable, false, NULL, l_exp, in_composite, in_power);
 	} else if(c_type == UNIT_MANAGER) {
 		if(!in_composite && toplevel) {
@@ -1325,7 +1326,9 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 		}
 		if(o_unit->type() == 'D') {
 			Manager *mngr = ((CompositeUnit*) o_unit)->generateManager(false);
-			str2 = mngr->print(NUMBER_FORMAT_PREFIX, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, NULL, NULL, true, in_power);		
+			int displayflags_d = displayflags;
+			if(!(displayflags_d & DISPLAY_FORMAT_USE_PREFIXES)) displayflags_d = displayflags_d | DISPLAY_FORMAT_USE_PREFIXES;
+			str2 = mngr->print(nrformat, displayflags_d, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, NULL, NULL, true, in_power);		
 			str += str2;
 			mngr->unref();
 		} else {
@@ -1374,6 +1377,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 				}
 				str += " ";				
 			}
+			if(l_exp) delete l_exp;
 			l_exp = NULL;
 			if(toplevel && !in_composite && (mngrs[i]->type() == UNIT_MANAGER || (mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->type() == UNIT_MANAGER))) {
 				str2 = "1";
@@ -1405,6 +1409,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 					}
 				}
 			}		
+			if(l_exp) delete l_exp;
 			l_exp = NULL;
 			if(prefix_) prefix_--;
 			if(i == 0 && mngrs[i]->isNumber() && mngrs[i]->value() == -1 && mngrs.size() > 1 && mngrs[1]->type() != UNIT_MANAGER && (mngrs[1]->type() != UNIT_MANAGER || mngrs[1]->mngrs[0]->type() != UNIT_MANAGER)) {
@@ -1418,8 +1423,10 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 			if(mngrs[i]->isNumber() && mngrs.size() >= i + 2) {
 				if(mngrs[i + 1]->type() == POWER_MANAGER) {
 					if(mngrs[i + 1]->mngrs[1]->type() == FRACTION_MANAGER && mngrs[i + 1]->mngrs[0]->type() == UNIT_MANAGER) {
-						Integer *exp_value = mngrs[i + 1]->mngrs[1]->fraction()->getInteger();
-						delete exp_value;
+						if(mngrs[i + 1]->mngrs[1]->fraction()->isInteger()) {
+							l_exp = new Integer(mngrs[i + 1]->mngrs[1]->fraction()->numerator());
+						}
+						prefix_ = 2;
 					} 
 					/*else if(mngrs[i + 1]->mngrs[1]->type() == VALUE_MANAGER && mngrs[i + 1]->mngrs[0]->type() == UNIT_MANAGER) {
 						long double exp_value = mngrs[i + 1]->mngrs[1]->value();
@@ -1430,8 +1437,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 						}
 					}*/				
 				} else if(mngrs[i + 1]->type() == UNIT_MANAGER && mngrs[i + 1]->o_unit->type() != 'D') {
-					long int exp_value = 1;
-					l_exp = &exp_value;
+					l_exp = new Integer(1);
 					prefix_ = 2;						
 				}
 			}
@@ -1554,6 +1560,8 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 			if(is_unit) {
 				had_unit = true;
 			}
+			if(l_exp) delete l_exp;
+			l_exp = NULL;
 		}
 	} else if(c_type == POWER_MANAGER) {
 		if(!in_composite && toplevel && mngrs[0]->type() == UNIT_MANAGER) {

@@ -145,8 +145,21 @@ bool Fraction::equals(const Fraction *fr) const {
 }
 int Fraction::compare(const Fraction *fr) const {
 	if(equals(fr)) return 0;
+	int cmp_num = num.compare(fr->numerator());
+	int cmp_den = den.compare(fr->denominator());	
+	if(cmp_num >= 0 && cmp_den >= 0) {
+		return 1;
+	} else 	if(cmp_num <= 0 && cmp_den <= 0) {
+		return -1;
+	}
 	if(fr->value() > value()) return 1;
 	return -1;
+}
+bool Fraction::isGreaterThan(const Fraction *fr) const {
+	return compare(fr) == -1;
+}
+bool Fraction::isLessThan(const Fraction *fr) const {
+	return compare(fr) == 1;
 }
 const Integer *Fraction::numerator() const {
 	return &num;
@@ -519,7 +532,7 @@ bool Fraction::floatify(int precision) {
 	if(reminder2) delete reminder2;
 	return exact;	
 }
-string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, long int *l_exp, bool in_composite, bool in_power) const {
+string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) const {
 	if(max_decimals < 0) max_decimals = PRECISION;
 	if(in_exact && !isPrecise()) *in_exact = true;
 	Integer exp;
@@ -535,29 +548,27 @@ string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals
 	string str_spec = "", str_prefix = "";	
 	bool force_fractional = false;
 	int base = 10;
-	switch(nrformat) {
-		case NUMBER_FORMAT_PREFIX: {
-			if(l_exp) {
-				if(prefix) {
-					exp_spec.add(-prefix->exponent(*l_exp));
+	if(displayflags & DISPLAY_FORMAT_USE_PREFIXES) {
+		if(l_exp) {
+			Integer tmp_exp;
+			if(prefix) {
+				exp_spec.subtract(prefix->exponent(l_exp, &tmp_exp));
+				str_prefix = prefix->name(displayflags & DISPLAY_FORMAT_SHORT_UNITS);
+			} else {
+				prefix = CALCULATOR->getBestPrefix(&exp, l_exp);
+				Integer test_exp(&exp);
+				test_exp.subtract(prefix->exponent(l_exp, &tmp_exp));
+				if((exp.isPositive() && !exp.isOne() && exp.compare(&test_exp) == -1) || (!exp.isPositive() && exp.compare(&test_exp) == 1)) {
+					exp_spec.set(&test_exp);
 					str_prefix = prefix->name(displayflags & DISPLAY_FORMAT_SHORT_UNITS);
-				} else {
-					prefix = CALCULATOR->getBestPrefix(&exp, *l_exp);
-					Integer test_exp(&exp);
-					test_exp.add(-prefix->exponent(*l_exp));
-					if((exp.isPositive() && !exp.isOne() && exp.compare(&test_exp) == -1) || (!exp.isPositive() && exp.compare(&test_exp) == 1)) {
-						exp_spec.set(&test_exp);
-						str_prefix = prefix->name(displayflags & DISPLAY_FORMAT_SHORT_UNITS);
-					}
-				}
-				if((displayflags & DISPLAY_FORMAT_SHORT_UNITS) && (displayflags & DISPLAY_FORMAT_NONASCII)) {
-					gsub("micro", SIGN_MICRO, str_prefix);
-				}
-				if(in_composite && den.isOne() && num.isOne()) {
-					return str_prefix;
 				}
 			}
+			if((displayflags & DISPLAY_FORMAT_SHORT_UNITS) && (displayflags & DISPLAY_FORMAT_NONASCII)) {
+				gsub("micro", SIGN_MICRO, str_prefix);
+			}
 		}
+	}	
+	switch(nrformat) {
 		case NUMBER_FORMAT_DECIMALS: {
 			break;
 		}		
@@ -613,7 +624,7 @@ string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals
 	}
 	string str_base = "";
 
-	if(!force_fractional && !(displayflags & DISPLAY_FORMAT_FRACTION)) {
+	if(!force_fractional && !(displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY)) {
 		Fraction fr(&whole, &den_spec);
 		fr.floatify(max_decimals);
 		if(in_exact && !fr.isPrecise()) *in_exact = true;
@@ -657,9 +668,13 @@ string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals
 			}			
 		}
 	} else {
-
 		Integer *part;
-		whole.divide(&den_spec, &part);	
+		if(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY) {
+			part = new Integer(&whole);
+			whole.clear();
+		} else {
+			whole.divide(&den_spec, &part);	
+		}
 		if(!whole.isZero()) {
 			if(whole.isNegative()) {
 				if(displayflags & DISPLAY_FORMAT_NONASCII) {
@@ -724,6 +739,7 @@ string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals
 	}
 
 	if(!str_prefix.empty()) {
+		if(in_composite && str_spec.empty() && str_base == "1") return str_prefix;
 		str_spec += " ";
 		str_spec += str_prefix;
 	}

@@ -45,9 +45,31 @@ const string &Prefix::name(bool short_default) const {
 long int Prefix::exponent(long int exp_) const {
 	return exp * exp_;
 }
+Integer *Prefix::exponent(const Integer *exp_, Integer *buffer) const {
+	Integer *integer;
+	if(buffer) integer = buffer;
+	else integer = new Integer();
+	integer->set(exp_);
+	integer->multiply(exp);
+	return integer;
+}
 void Prefix::setExponent(long int exp_) {
 	exp = exp_;
 }
-long double Prefix::value(long int exp_) const {
-	return exp10l(exponent(exp_));
+Fraction *Prefix::value(const Integer *exp_, Fraction *buffer) const {
+	Fraction *fr;
+	if(buffer) fr = buffer;
+	else fr = new Fraction();
+	Integer tmp_exp;
+	fr->set(exponent(exp_, &tmp_exp));
+	fr->exp10();
+	return fr;
+}
+Fraction *Prefix::value(long int exp_, Fraction *buffer) const {
+	Fraction *fr;
+	if(buffer) fr = buffer;
+	else fr = new Fraction();
+	fr->set(exponent(exp_));
+	fr->exp10();
+	return fr;
 }

@@ -38,6 +38,8 @@ class Fraction {
 	void clear();
 	bool equals(const Fraction *fr) const;
 	int compare(const Fraction *fr) const;
+	bool isGreaterThan(const Fraction *fr) const; 	
+	bool isLessThan(const Fraction *fr) const; 			
 	const Integer *numerator() const;
 	const Integer *denominator() const;
 	long double value() const;
@@ -88,7 +90,7 @@ class Fraction {
 	bool isOne() const;	
 	bool isMinusOne() const;	
 	bool add(MathOperation op, const Fraction *fr); 
-	string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, Prefix *prefix = NULL, bool *in_exact = NULL, bool *usable = NULL, bool toplevel = true, bool *plural = NULL, long int *l_exp = NULL, bool in_composite = false, bool in_power = false) const;
+	string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, Prefix *prefix = NULL, bool *in_exact = NULL, bool *usable = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false) const;
 };
 
 #endif

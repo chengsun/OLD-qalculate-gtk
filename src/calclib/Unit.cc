@@ -677,8 +677,8 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 		if(mngr) {
 			prefix = NULL;
 			exp = 1;
-			if(mngr->type() == MULTIPLICATION_MANAGER && mngr->mngrs.size() == 2 && mngr->mngrs[0]->type() == FRACTION_MANAGER && mngr->mngrs[1]->type() == UNIT_MANAGER) {
-//				prefix = CALCULATOR->getExactPrefix(mngr->mngrs[0]->fraction()->exponent());
+			if(mngr->type() == MULTIPLICATION_MANAGER && mngr->mngrs.size() == 2 && mngr->mngrs[0]->isFraction() && mngr->mngrs[1]->type() == UNIT_MANAGER) {
+				prefix = CALCULATOR->getExactPrefix(mngr->mngrs[0]->fraction());
 				mngr = mngr->mngrs[1];
 			} 
 			if(mngr->type() == UNIT_MANAGER) {

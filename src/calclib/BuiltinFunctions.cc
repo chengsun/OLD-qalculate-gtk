@@ -207,6 +207,28 @@ void RoundFunction::calculate2(Manager *mngr) {
 		mngr->set(this, vargs[0], NULL);
 	}
 }
+FracFunction::FracFunction() : Function("Arithmetics", "frac", 1, "Extract fractional part") {
+
+}
+void FracFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isFraction()) {
+		mngr->set(vargs[0]);
+		mngr->fraction()->mod();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
+}
+IntFunction::IntFunction() : Function("Arithmetics", "int", 1, "Extract integer part") {
+
+}
+void IntFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isFraction()) {
+		mngr->set(vargs[0]);
+		mngr->fraction()->trunc();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
+}
 RemFunction::RemFunction() : Function("Arithmetics", "rem", 2, "Reminder (rem)") {
 
 }

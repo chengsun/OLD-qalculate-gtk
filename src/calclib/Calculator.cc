@@ -231,6 +231,17 @@ Prefix *Calculator::getExactPrefix(long int exp10, long int exp) const {
 	}
 	return NULL;
 }
+Prefix *Calculator::getExactPrefix(const Fraction *fr, long int exp) const {
+	Fraction tmp_exp;
+	for(int i = 0; i < prefixes.size(); i++) {
+		if(fr->equals(prefixes[i]->value(exp, &tmp_exp))) {
+			return prefixes[i];
+		} else if(fr->isLessThan(prefixes[i]->value(exp, &tmp_exp))) {
+			break;
+		}
+	}
+	return NULL;
+}
 Prefix *Calculator::getNearestPrefix(long int exp10, long int exp) const {
 	if(prefixes.size() <= 0) return NULL;
 	for(int i = 0; i < prefixes.size(); i++) {
@@ -265,18 +276,19 @@ Prefix *Calculator::getBestPrefix(long int exp10, long int exp) const {
 	}
 	return prefixes[prefixes.size() - 1];	
 }
-Prefix *Calculator::getBestPrefix(const Integer *exp10, long int exp) const {
+Prefix *Calculator::getBestPrefix(const Integer *exp10, const Integer *exp) const {
 	if(prefixes.size() <= 0) return NULL;
+	Integer tmp_exp;
 	for(int i = 0; i < prefixes.size(); i++) {
-		if(exp10->equals(prefixes[i]->exponent(exp))) {
+		if(exp10->equals(prefixes[i]->exponent(exp, &tmp_exp))) {
 			return prefixes[i];
-		} else if(exp10->compare(prefixes[i]->exponent(exp)) == 1) {
+		} else if(exp10->compare(prefixes[i]->exponent(exp, &tmp_exp)) == 1) {
 			if(i == 0) {
 				return prefixes[i];
 			}
 			Integer exp10_1(exp10);
-			exp10_1.subtract(prefixes[i - 1]->exponent(exp));
-			Integer exp10_2(prefixes[i]->exponent(exp));
+			exp10_1.subtract(prefixes[i - 1]->exponent(exp, &tmp_exp));
+			Integer exp10_2(prefixes[i]->exponent(exp, &tmp_exp));
 			exp10_2.subtract(exp10);
 			exp10_2.multiply(2);
 			exp10_2.add(2);
@@ -598,6 +610,8 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new FloorFunction());
 	addFunction(new TruncFunction());
 	addFunction(new RoundFunction());
+	addFunction(new FracFunction());
+	addFunction(new IntFunction());	
 	addFunction(new ModFunction());
 	addFunction(new RemFunction());
 	addFunction(new SinFunction());
@@ -1335,7 +1349,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 	vector<int> ues;
 	vector<char> ut;
 	string stmp, stmp2;
-	long long int value;
+	long int value;
 	for(int i = 0; i < signs.size(); i++) gsub(signs[i], real_signs[i], str);
 	Manager *mngr;
 	b = false;
@@ -1878,7 +1892,6 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 	int rerun_i = 0;
 	vector<string> unfinished_units;
 	unsigned int i, i2, i3;
-	long double value;
 	char line[10000];
 	while(1) {
 		if(fgets(line, 10000, file) == NULL) {
