@@ -1,3 +1,14 @@
+2004-09-22 Niklas Knutsson  <nq@altern.org>
+
+	* Fix data object edit option menu
+	* Do not show error when global data file cannot be loaded for local data set
+	* Update data property list also when the data set is new
+	* Fix setting data set function name
+	* Set default argument names for data set when entries are empty
+	* Do not delete original property and add new -- set original with new to not invalidate references in objects
+	* Position progress dialog center parent, and set unknowns and convert to unit expression under mouse
+	* Once again, fix prefix selection when prefix is first before/after zero
+
 2004-09-21 Niklas Knutsson  <nq@altern.org>
 
 	* Rational factorization of higher degree polynomials

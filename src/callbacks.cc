@@ -117,6 +117,7 @@ int history_width, history_height;
 AssumptionNumberType saved_assumption_type;
 AssumptionSign saved_assumption_sign;
 vector<DataProperty*> tmp_props;
+vector<DataProperty*> tmp_props_orig;
 
 vector<string> initial_history;
 vector<string> expression_history;
@@ -4657,7 +4658,7 @@ void set_name_label_and_entry(ExpressionItem *item, GtkWidget *entry, GtkWidget 
 	}
 }
 void set_edited_names(ExpressionItem *item, string str) {
-	if(item->isBuiltin()) return;
+	if(item->isBuiltin() && !(item->type() == TYPE_FUNCTION && item->subtype() == SUBTYPE_DATA_SET)) return;
 	if(names_edited) {
 		item->clearNames();
 		GtkTreeIter iter;
@@ -5822,8 +5823,9 @@ void edit_dataobject(DataSet *ds, DataObject *o, GtkWidget *win) {
 		
 		entry = gtk_entry_new();
 		value_entries.push_back(entry);
+		int iapprox = -1;
 		if(o) {
-			gtk_entry_set_text(GTK_ENTRY(entry), o->getProperty(dp).c_str());
+			gtk_entry_set_text(GTK_ENTRY(entry), o->getProperty(dp, &iapprox).c_str());
 		}
 		gtk_table_attach(GTK_TABLE(ptable), entry, 1, 2, rows - 1, rows, GTK_FILL, GTK_FILL, 0, 0);
 		
@@ -5832,11 +5834,13 @@ void edit_dataobject(DataSet *ds, DataObject *o, GtkWidget *win) {
 		
 		om = gtk_option_menu_new();
 		approx_menus.push_back(om);
-		menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(om));
+		menu = gtk_menu_new();
 		gtk_menu_append(GTK_MENU(menu), gtk_menu_item_new_with_label("Default"));
 		gtk_menu_append(GTK_MENU(menu), gtk_menu_item_new_with_label("Approximate"));
 		gtk_menu_append(GTK_MENU(menu), gtk_menu_item_new_with_label("Exact"));
-		gtk_option_menu_set_history(GTK_OPTION_MENU(om), 0);
+		gtk_option_menu_set_menu(GTK_OPTION_MENU(om), menu);
+		gtk_option_menu_set_history(GTK_OPTION_MENU(om), iapprox + 1);
+		
 		gtk_table_attach(GTK_TABLE(ptable), om, 3, 4, rows - 1, rows, GTK_FILL, GTK_FILL, 0, 0);
 		
 		rows++;
@@ -5867,6 +5871,10 @@ void edit_dataobject(DataSet *ds, DataObject *o, GtkWidget *win) {
 		selected_dataobject = o;
 		update_dataobjects();
 	}
+	for(unsigned int i = 0; i < approx_menus.size(); i++) {
+		menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(approx_menus[i]));
+		gtk_widget_destroy(menu);
+	}
 	gtk_widget_hide(dialog);
 }
 
@@ -5876,10 +5884,10 @@ void update_dataset_property_list(DataSet *ds) {
 	gtk_list_store_clear(tDataProperties_store);
 	gtk_widget_set_sensitive(glade_xml_get_widget (datasetedit_glade, "dataset_edit_button_edit_property"), FALSE);
 	gtk_widget_set_sensitive(glade_xml_get_widget (datasetedit_glade, "dataset_edit_button_del_property"), FALSE);
-	if(ds) {
-		GtkTreeIter iter;
-		string str;
-		for(unsigned int i = 0; i < tmp_props.size(); i++) {
+	GtkTreeIter iter;
+	string str;
+	for(unsigned int i = 0; i < tmp_props.size(); i++) {
+		if(tmp_props[i]) {
 			gtk_list_store_append(tDataProperties_store, &iter);
 			str = "";
 			switch(tmp_props[i]->propertyType()) {
@@ -6100,6 +6108,7 @@ void edit_dataset(DataSet *ds, GtkWidget *win) {
 		DataProperty *dp = ds->getFirstProperty(&it);
 		while(dp) {
 			tmp_props.push_back(new DataProperty(*dp));
+			tmp_props_orig.push_back(dp);
 			dp = ds->getNextProperty(&it);
 		}
 	}
@@ -6137,37 +6146,43 @@ void edit_dataset(DataSet *ds, GtkWidget *win) {
 			ds = new DataSet(_("Data Sets"), "", gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_file"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_desc"))), gtk_text_buffer_get_text(description_buffer, &d_iter_s, &d_iter_e, FALSE), true);
 			add_func = true;
 		}
+		string str2;
 		if(ds) {
+			str2 = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_object_name")));
+			remove_blank_ends(str2);
+			if(str2.empty()) str2 = _("Object");
 			Argument *arg = ds->getArgumentDefinition(1);
 			if(arg) {
-				arg->setName(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_object_name"))));
+				arg->setName(str2);
 			}
+			str2 = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_property_name")));
+			remove_blank_ends(str2);
+			if(str2.empty()) str2 = _("Property");
 			arg = ds->getArgumentDefinition(2);
 			if(arg) {
-				arg->setName(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_property_name"))));
+				arg->setName(str2);
 			}
 			ds->setDefaultProperty(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_default_property"))));
 			ds->setCopyright(gtk_text_buffer_get_text(copyright_buffer, &c_iter_s, &c_iter_e, FALSE));
 			DataPropertyIter it;
-			DataProperty *dp = ds->getFirstProperty(&it);
-			while(dp) {
-				if(dp->isUserModified()) {
-					ds->delProperty(&it);
-					dp = *it;
-				} else {
-					dp = ds->getNextProperty(&it);
-				}
-			}
-			for(unsigned int i = 0; i < tmp_props.size(); i++) {
-				if(tmp_props[i]->isUserModified()) {
-					ds->addProperty(tmp_props[i]);
-					tmp_props.erase(tmp_props.begin() + i);
-					i--;
+			for(int i = 0; i < (int) tmp_props.size(); i++) {
+				if(!tmp_props[i]) {
+					if(tmp_props_orig[i]) ds->delProperty(tmp_props_orig[i]);
+				} else if(tmp_props[i]->isUserModified()) {
+					if(tmp_props_orig[i]) {
+						tmp_props_orig[i]->set(*tmp_props[i]);
+					} else {
+						ds->addProperty(tmp_props[i]);
+						tmp_props.erase(tmp_props.begin() + i);
+						i--;
+					}
 				}
 			}
 			set_edited_names(ds, str);
 			if(add_func) {
 				CALCULATOR->addDataSet(ds);
+				ds->loadObjects();
+				ds->setObjectsLoaded(true);
 			}
 			selected_dataset = ds;
 		}
@@ -6176,9 +6191,10 @@ void edit_dataset(DataSet *ds, GtkWidget *win) {
 		update_datasets_tree();
 	}
 	for(unsigned int i = 0; i < tmp_props.size(); i++) {
-		delete tmp_props[i];
+		if(tmp_props[i]) delete tmp_props[i];
 	}
 	tmp_props.clear();
+	tmp_props_orig.clear();
 	edited_dataset = NULL;
 	editing_dataset = false;
 	names_edited = false;
@@ -10373,6 +10389,7 @@ void on_dataset_edit_button_new_property_clicked(GtkButton *button, gpointer use
 	dp->setUserModified(true);
 	if(edit_dataproperty(dp)) {
 		tmp_props.push_back(dp);
+		tmp_props_orig.push_back(NULL);
 		update_dataset_property_list(edited_dataset);
 	} else {
 		delete dp;
@@ -10387,9 +10404,14 @@ void on_dataset_edit_button_edit_property_clicked(GtkButton *button, gpointer us
 }
 void on_dataset_edit_button_del_property_clicked(GtkButton *button, gpointer user_data) {
 	if(edited_dataset && selected_dataproperty && selected_dataproperty->isUserModified()) {
-		for(vector<DataProperty*>::iterator it = tmp_props.begin(); it != tmp_props.end(); ++it) {
-			if(*it == selected_dataproperty) {
-				tmp_props.erase(it);
+		for(unsigned int i = 0; i < tmp_props.size(); i++) {
+			if(tmp_props[i] == selected_dataproperty) {
+				if(tmp_props_orig[i]) {
+					tmp_props[i] = NULL;
+				} else {
+					tmp_props.erase(tmp_props.begin() + i);
+					tmp_props_orig.erase(tmp_props_orig.begin() + i);
+				}
 				break;
 			}
 		}
@@ -10416,6 +10438,7 @@ void on_menu_item_set_unknowns_activate(GtkMenuItem *w, gpointer user_data) {
 	}
 	GtkWidget *dialog = gtk_dialog_new_with_buttons(_("Set Unknowns"), GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), (GtkDialogFlags) (GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT), GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, GTK_STOCK_APPLY, GTK_RESPONSE_APPLY, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, NULL);
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
 	GtkWidget *vbox = gtk_vbox_new(FALSE, 15);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 12);

@@ -3651,7 +3651,7 @@ bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew
 							case STRUCT_POWER: {
 								if(mfactor->isNumber()) {
 									mnew[i2].transform(STRUCT_MULTIPLICATION);
-									mnew[i2].insertChild(MathStructure(1, 1), 0);
+									mnew[i2].insertChild(MathStructure(1, 1), 1);
 									mnew[i2][0].number() /= mfactor->number();
 								} else if(mfactor->isPower()) {
 									if(mfactor->equals(mnew[i2])) {
@@ -3677,7 +3677,7 @@ bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew
 							case STRUCT_MULTIPLICATION: {
 								bool b = true;
 								if(mfactor->isNumber() && (mnew[i2].size() < 1 || !mnew[i2][0].isNumber())) {
-									mnew[i2].insertChild(MathStructure(1, 1), 0);
+									mnew[i2].insertChild(MathStructure(1, 1), 1);
 								}
 								for(unsigned int i3 = 0; i3 < mnew[i2].size() && b; i3++) {
 									switch(mnew[i2][i3].type()) {
@@ -3736,7 +3736,7 @@ bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew
 							default: {
 								if(mfactor->isNumber()) {
 									mnew[i2].transform(STRUCT_MULTIPLICATION);
-									mnew[i2].insertChild(MathStructure(1, 1), 0);
+									mnew[i2].insertChild(MathStructure(1, 1), 1);
 									mnew[i2][0].number() /= mfactor->number();
 								} else {
 									mnew[i2].set(1, 1);

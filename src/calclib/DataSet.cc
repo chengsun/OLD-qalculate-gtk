@@ -150,10 +150,16 @@ DataProperty::DataProperty(DataSet *parent_set, string s_name, string s_title, s
 	b_uchanged = false;
 }
 DataProperty::DataProperty(const DataProperty &dp) {
+	m_unit = NULL;
+	set(dp);
+}
+
+void DataProperty::set(const DataProperty &dp) {
 	stitle = dp.title(false);
 	sdescr = dp.description();
 	sunit = dp.getUnitString();
 	parent = dp.parentSet();
+	if(m_unit) delete m_unit;
 	m_unit = NULL;
 	ptype = dp.propertyType();
 	b_key = dp.isKey(); 
@@ -162,12 +168,12 @@ DataProperty::DataProperty(const DataProperty &dp) {
 	b_brackets = dp.usesBrackets(); 
 	b_approximate = dp.isApproximate();
 	b_uchanged = dp.isUserModified();
+	clearNames();
 	for(unsigned int i = 1; i <= dp.countNames(); i++) {
 		names.push_back(dp.getName(i));
 		name_is_ref.push_back(dp.nameIsReference(i));
 	}
 }
-
 	
 void DataProperty::setName(string s_name, bool is_ref) {
 	if(s_name.empty()) return;
@@ -450,7 +456,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 
 	doc = xmlParseFile(filename.c_str());
 	if(doc == NULL) {
-		if(!is_user_defs) {
+		if(!is_user_defs && !isLocal()) {
 			CALCULATOR->error(true, _("Unable to load data objects in %s."), filename.c_str(), NULL);
 		}
 		return false;
@@ -458,7 +464,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	cur = xmlDocGetRootElement(doc);
 	if(cur == NULL) {
 		xmlFreeDoc(doc);
-		if(!is_user_defs) {
+		if(!is_user_defs && !isLocal()) {
 			CALCULATOR->error(true, _("Unable to load data objects in %s."), filename.c_str(), NULL);
 		}
 		return false;
@@ -747,6 +753,9 @@ int DataSet::saveObjects(const char *file_name, bool save_global) {
 bool DataSet::objectsLoaded() const {
 	return b_loaded || sfile.empty();
 }
+void DataSet::setObjectsLoaded(bool objects_loaded) {
+	b_loaded = objects_loaded;
+}
 	
 void DataSet::addProperty(DataProperty *dp) {
 	properties.push_back(dp);
@@ -764,6 +773,7 @@ void DataSet::delProperty(DataProperty *dp) {
 }
 void DataSet::delProperty(DataPropertyIter *it) {
 	*it = properties.erase(*it);
+	--(*it);
 }
 DataProperty *DataSet::getPrimaryKeyProperty() {
 	for(unsigned int i = 0; i < properties.size(); i++) {
@@ -813,6 +823,7 @@ void DataSet::delObject(DataObject *o) {
 }
 void DataSet::delObject(DataObjectIter *it) {
 	*it = objects.erase(*it);
+	--(*it);
 }
 DataObject *DataSet::getObject(string object) {
 	if(!objectsLoaded()) loadObjects();

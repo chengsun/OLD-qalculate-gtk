@@ -502,26 +502,48 @@ Prefix *Calculator::getNearestPrefix(int exp10, int exp) const {
 	return prefixes[prefixes.size() - 1];
 }
 Prefix *Calculator::getBestPrefix(int exp10, int exp, bool all_prefixes) const {
-	if(prefixes.size() <= 0) return NULL;
-	int prev_i = 0;
+	if(prefixes.size() <= 0 || exp10 == 0) return NULL;
 	int i = 0;
 	if(exp < 0) {
 		i = prefixes.size() - 1;
 	}
-	while((exp < 0 && i >= 0) || (exp >= 0 && i < (int) prefixes.size())) {	
+	Prefix *p = NULL, *p_prev = NULL;
+	int exp10_1, exp10_2;
+	while((exp < 0 && i >= 0) || (exp >= 0 && i < (int) prefixes.size())) {
 		if(all_prefixes || prefixes[i]->exponent() % 3 == 0) {
-			if(prefixes[i]->exponent(exp) == exp10) {
-				return prefixes[i];
-			} else if(prefixes[i]->exponent(exp) > exp10) {
-				if(i == 0) {
-					return prefixes[i];
-				} else if(exp10 - prefixes[prev_i]->exponent(exp) < (prefixes[i]->exponent(exp) - exp10) * 2 + 2) {
-					return prefixes[prev_i];
+			p = prefixes[i];
+			if(p_prev && p_prev->exponent() >= 0 != p->exponent() >= 0) {
+				if(exp < 0) {
+					i++;
 				} else {
-					return prefixes[i];
+					i--;
+				}
+				p = null_prefix;
+			}
+			if(p->exponent(exp) == exp10) {
+				if(p == null_prefix) return NULL;
+				return p;
+			} else if(p->exponent(exp) > exp10) {
+				if(i == 0) {
+					if(p == null_prefix) return NULL;
+					return p;
+				}
+				exp10_1 = exp10;
+				if(p_prev) {
+					exp10_1 -= p_prev->exponent(exp);
+				}
+				exp10_2 = p->exponent(exp);
+				exp10_2 -= exp10;
+				exp10_2 *= 2;
+				exp10_2 += 2;
+				if(exp10_1 < exp10_2) {
+					if(p_prev == null_prefix) return NULL;
+					return p_prev;
+				} else {
+					return p;
 				}
 			}
-			prev_i = i;
+			p_prev = p;
 		}
 		if(exp < 0) {
 			i--;
@@ -529,43 +551,53 @@ Prefix *Calculator::getBestPrefix(int exp10, int exp, bool all_prefixes) const {
 			i++;
 		}
 	}
-	return prefixes[prev_i];
+	return p_prev;
 }
 Prefix *Calculator::getBestPrefix(const Number &exp10, const Number &exp, bool all_prefixes) const {
 	if(prefixes.size() <= 0 || exp10.isZero()) return NULL;
-	int prev_i = 0;
 	int i = 0;
 	ComparisonResult c;
 	if(exp.isNegative()) {
 		i = prefixes.size() - 1;
 	}
+	Prefix *p = NULL, *p_prev = NULL;
+	Number exp10_1, exp10_2;
 	while((exp.isNegative() && i >= 0) || (!exp.isNegative() && i < (int) prefixes.size())) {
 		if(all_prefixes || prefixes[i]->exponent() % 3 == 0) {
-			c = exp10.compare(prefixes[i]->exponent(exp));
+			p = prefixes[i];
+			if(p_prev && p_prev->exponent() >= 0 != p->exponent() >= 0) {
+				if(exp.isNegative()) {
+					i++;
+				} else {
+					i--;
+				}
+				p = null_prefix;
+			}
+			c = exp10.compare(p->exponent(exp));
 			if(c == COMPARISON_RESULT_EQUAL) {
-				return prefixes[i];
+				if(p == null_prefix) return NULL;
+				return p;
 			} else if(c == COMPARISON_RESULT_GREATER) {
 				if(i == 0) {
-					return prefixes[i];
+					if(p == null_prefix) return NULL;
+					return p;
 				}
-				Number exp10_1(exp10);
-				if(prefixes[prev_i]->exponent() > 0 == prefixes[i]->exponent() > 0) {
-					exp10_1 -= prefixes[prev_i]->exponent(exp);
+				exp10_1 = exp10;
+				if(p_prev) {
+					exp10_1 -= p_prev->exponent(exp);
 				}
-				Number exp10_2(prefixes[i]->exponent(exp));
+				exp10_2 = p->exponent(exp);
 				exp10_2 -= exp10;
 				exp10_2 *= 2;
 				exp10_2 += 2;
 				if(exp10_1.isLessThan(exp10_2)) {
-					if(prefixes[prev_i]->exponent() > 0 != prefixes[i]->exponent() > 0) {
-						return NULL;
-					}
-					return prefixes[prev_i];
+					if(p_prev == null_prefix) return NULL;
+					return p_prev;
 				} else {
-					return prefixes[i];
+					return p;
 				}
 			}
-			prev_i = i;
+			p_prev = p;
 		}
 		if(exp.isNegative()) {
 			i--;
@@ -573,7 +605,7 @@ Prefix *Calculator::getBestPrefix(const Number &exp10, const Number &exp, bool a
 			i++;
 		}
 	}
-	return prefixes[prev_i];
+	return p_prev;
 }
 Prefix *Calculator::addPrefix(Prefix *p) {
 	prefixes.push_back(p);

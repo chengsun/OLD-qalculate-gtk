@@ -74,6 +74,7 @@ class DataProperty {
 	DataProperty(DataSet *parent_set, string s_name = "", string s_title = "", string s_description = "");
 	DataProperty(const DataProperty &dp);
 	
+	void set(const DataProperty &dp);
 	void setName(string s_name, bool is_ref = false);
 	void setNameIsReference(unsigned int index = 1, bool is_ref = true);
 	bool nameIsReference(unsigned int index = 1) const;
@@ -147,6 +148,7 @@ class DataSet : public Function {
 	bool loadObjects(const char *file_name = NULL, bool is_user_defs = true);
 	int saveObjects(const char *file_name = NULL, bool save_global = false);
 	bool objectsLoaded() const;
+	void setObjectsLoaded(bool objects_loaded);
 	
 	void addProperty(DataProperty *dp);
 	void delProperty(DataProperty *dp);
