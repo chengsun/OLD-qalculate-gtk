@@ -56,6 +56,24 @@ class DeterminantFunction : public Function {
   public:
 	DeterminantFunction();
 };
+class AdjointFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	AdjointFunction();
+};
+class CofactorFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	CofactorFunction();
+};
+class InverseFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	InverseFunction();
+};
 class IFFunction : public Function {
   protected:
 	Manager *calculate(const string &argv);  

@@ -71,7 +71,7 @@ void ElementFunction::calculate2(Manager *mngr) {
 TransposeFunction::TransposeFunction() : Function("Matrices", "transpose", 1, "Transpose") {}
 void TransposeFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->isMatrix()) {
-		mngr->set(vargs[0]->matrix());
+		mngr->set(vargs[0]);
 		mngr->matrix()->transpose();
 	} else {
 		mngr->set(this, vargs[0], NULL);
@@ -97,6 +97,41 @@ void DeterminantFunction::calculate2(Manager *mngr) {
 		Manager *det = vargs[0]->matrix()->determinant();
 		mngr->set(det);
 		delete det;	
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
+}
+CofactorFunction::CofactorFunction() : Function("Matrices", "cofactor", 3, "Cofactor") {}
+void CofactorFunction::calculate2(Manager *mngr) {
+	if(!vargs[0]->isFraction() || !vargs[0]->fraction()->isInteger() || !vargs[0]->fraction()->isPositive() || !vargs[1]->isFraction() || !vargs[1]->fraction()->isInteger() || !vargs[1]->fraction()->isPositive()) {
+		Manager *mngr2 = createFunctionManagerFromVArgs(vargs.size());	
+		mngr->set(mngr2);
+		delete mngr2;
+		CALCULATOR->error(true, _("Row and column in matrix must be positive integers."), NULL);
+		return;
+	}
+	if(vargs[2]->isMatrix()) {
+		Manager *mngr2 = vargs[2]->matrix()->cofactor(vargs[0]->fraction()->numerator()->getInt(), vargs[1]->fraction()->numerator()->getInt());
+		mngr->set(mngr2);
+		delete mngr2;
+	} else {
+		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
+	}
+}
+AdjointFunction::AdjointFunction() : Function("Matrices", "adj", 1, "Adjoint") {}
+void AdjointFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isMatrix()) {
+		mngr->set(vargs[0]);
+		mngr->matrix()->adjoint();	
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
+}
+InverseFunction::InverseFunction() : Function("Matrices", "inverse", 1, "Inverse") {}
+void InverseFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isMatrix()) {
+		mngr->set(vargs[0]);
+		mngr->matrix()->inverse();		
 	} else {
 		mngr->set(this, vargs[0], NULL);
 	}

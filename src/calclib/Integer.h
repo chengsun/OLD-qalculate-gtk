@@ -125,7 +125,7 @@ class Integer {
 	bool isMinusOne() const;
 	long int getLongInt() const;
 	int getInt() const;	
-	string print(int base = 10) const;
+	string print(int base = 10, bool display_sign = true) const;
 
 };
 

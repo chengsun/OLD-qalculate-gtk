@@ -126,6 +126,7 @@ class CompositeUnit : public Unit {
 		virtual ~CompositeUnit(void);
 		virtual void add(const Unit *u, long int exp_ = 1, const Prefix *prefix = NULL);
 		virtual Unit *get(int index, long int *exp_ = NULL, Prefix **prefix = NULL) const;
+		virtual int countUnits() const;
 		virtual void del(Unit *u);
 		virtual string print(bool plural_, bool short_) const;
 		virtual string name(void) const;

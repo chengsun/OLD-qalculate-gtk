@@ -518,6 +518,9 @@ Unit *CompositeUnit::get(int index, long int *exp_, Prefix **prefix) const {
 	}
 	return NULL;
 }
+int CompositeUnit::countUnits() const {
+	units.size();
+}
 void CompositeUnit::del(Unit *u) {
 	for(int i = 0; i < units.size(); i++) {
 		if(units[i]->firstBaseUnit() == u) {

@@ -273,6 +273,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 			for(int i = 2; i <= solutions; i++) {
 				mngr2.set(&fr_save);
 				mngr2.fraction()->add(op, mngr->fraction(), i);
+				if(!mngr2.fraction()->isPrecise()) mngr2.setPrecise(false);
 				addAlternative(&mngr2);
 			}
 			return true;
@@ -963,11 +964,11 @@ void Manager::addInteger(long int value_, MathOperation op) {
 	add(mngr, op);
 	mngr->unref();
 }
-int Manager::compare(const Manager *mngr) const {
+int Manager::compare(const Manager *mngr, int sortflags) const {
 	if(c_type != mngr->type()) {
-		if(mngr->type() == ADDITION_MANAGER) return -mngr->compare(this);	
-		if(mngr->type() == MULTIPLICATION_MANAGER && c_type != ADDITION_MANAGER) return -mngr->compare(this);		
-		if(mngr->type() == POWER_MANAGER && c_type != ADDITION_MANAGER && c_type != MULTIPLICATION_MANAGER) return -mngr->compare(this);		
+		if(mngr->type() == ADDITION_MANAGER) return -mngr->compare(this, sortflags);	
+		if(mngr->type() == MULTIPLICATION_MANAGER && c_type != ADDITION_MANAGER) return -mngr->compare(this, sortflags);		
+		if(mngr->type() == POWER_MANAGER && c_type != ADDITION_MANAGER && c_type != MULTIPLICATION_MANAGER) return -mngr->compare(this, sortflags);		
 	}
 	switch(c_type) {
 		case ALTERNATIVE_MANAGER: {
@@ -1018,7 +1019,7 @@ int Manager::compare(const Manager *mngr) const {
 						if(i >= mngrs.size()) {
 							return -1;	
 						}
-						int i2 = mngr->mngrs[i]->compare(mngrs[i]);
+						int i2 = mngr->mngrs[i]->compare(mngrs[i], sortflags);
 						if(i2 != 0) return i2;
 					}
 					return 0;
@@ -1030,17 +1031,21 @@ int Manager::compare(const Manager *mngr) const {
 			if(mngr->type() == POWER_MANAGER) {
 				if(mngrs[1]->negative() && !mngr->mngrs[1]->negative()) return 1;
 				if(!mngrs[1]->negative() && mngr->mngrs[1]->negative()) return -1;				
-				int i = mngrs[0]->compare(mngr->mngrs[0]);
+				int i = mngrs[0]->compare(mngr->mngrs[0], sortflags);
 				if(i == 0) {
-					return mngrs[1]->compare(mngr->mngrs[1]);
+					return mngrs[1]->compare(mngr->mngrs[1], sortflags);
 				} else {
 					return i;
 				}
 			} else if(mngr->type() != ADDITION_MANAGER) {
-				int i = mngrs[0]->compare(mngr);
-				if(i == 0) {
-					if(mngrs[1]->negative()) return 1;
-					return -1;
+				int i = mngrs[0]->compare(mngr, sortflags);
+				if(sortflags & SORT_SCIENTIFIC) {
+					if(i == 0) {
+						if(mngrs[1]->negative()) return 1;
+						return -1;
+					}
+				} else {
+					if(mngrs[1]->negative()) return 1;				
 				}
 				return i;
 			}
@@ -1051,7 +1056,7 @@ int Manager::compare(const Manager *mngr) const {
 			if(mngr->isNumber()) return -1;
 			int start = 0;
 			if(mngrs[0]->isNumber() && mngrs.size() > 1) start = 1;
-			if(mngr->mngrs.size() < 1 || mngr->type() == POWER_MANAGER) return mngrs[start]->compare(mngr);
+			if(mngr->mngrs.size() < 1 || mngr->type() == POWER_MANAGER) return mngrs[start]->compare(mngr, sortflags);
 			if(mngr->type() == MULTIPLICATION_MANAGER) {
 				if(mngr->mngrs.size() < 1) return -1;
 				int mngr_start = 0;
@@ -1060,7 +1065,7 @@ int Manager::compare(const Manager *mngr) const {
 					if(i >= mngr->mngrs.size() - mngr_start && i >= mngrs.size() - start) return 0;
 					if(i >= mngr->mngrs.size() - mngr_start) return 1;
 					if(i >= mngrs.size() - start) return -1;
-					int i2 = mngrs[i + start]->compare(mngr->mngrs[i + mngr_start]);
+					int i2 = mngrs[i + start]->compare(mngr->mngrs[i + mngr_start], sortflags);
 					if(i2 != 0) return i2;
 				}
 			} 
@@ -1076,17 +1081,17 @@ int Manager::compare(const Manager *mngr) const {
 					if(i >= mngr->mngrs.size() && i >= mngrs.size()) return 0;
 					if(i >= mngr->mngrs.size()) return 1;
 					if(i >= mngrs.size()) return -1;
-					int i2 = mngrs[i]->compare(mngr->mngrs[i]);
+					int i2 = mngrs[i]->compare(mngr->mngrs[i], sortflags);
 					if(i2 != 0) return i2;
 				}
 			} 
-			return mngrs[0]->compare(mngr);
+			return mngrs[0]->compare(mngr, sortflags);
 		}
 	}
 	return 1;
 }
 
-void Manager::sort() {
+void Manager::sort(int sortflags) {
 	if(c_type == POWER_MANAGER || mngrs.size() < 2) return;
 	vector<Manager*> sorted;
 	bool b;
@@ -1096,7 +1101,7 @@ void Manager::sort() {
 			sorted.insert(sorted.begin(), mngrs[i]);	
 		} else {		
 			for(int i2 = 0; i2 < sorted.size(); i2++) {
-				if(!(c_type == MULTIPLICATION_MANAGER && sorted[i2]->isNumber()) && mngrs[i]->compare(sorted[i2]) < 0) {
+				if(!(c_type == MULTIPLICATION_MANAGER && sorted[i2]->isNumber()) && mngrs[i]->compare(sorted[i2], sortflags) < 0) {
 					sorted.insert(sorted.begin() + i2, mngrs[i]);
 					b = true;
 					break;
@@ -1269,6 +1274,31 @@ void Manager::setPrecise(bool is_precise) {
 		matrix()->setPrecise(b_exact);
 	}
 }
+const string &Manager::text() const {return s_var;}
+Unit *Manager::unit() const {return o_unit;}
+Manager *Manager::getChild(int index) const {
+	if(index >= 0 && index < mngrs.size()) {
+		return mngrs[index];
+	}
+	return NULL;
+}
+int Manager::countChilds() const {return mngrs.size();}
+Manager *Manager::base() const {
+	if(!isPower()) return NULL;
+	return mngrs[0];
+}
+Manager *Manager::exponent() const {
+	if(!isPower()) return NULL;
+	return mngrs[1];
+}
+Function *Manager::function() const {return o_function;}
+bool Manager::isText() const {return c_type == STRING_MANAGER;}
+bool Manager::isUnit() const {return c_type == UNIT_MANAGER;}
+bool Manager::isUnit_exp() const {return c_type == UNIT_MANAGER || (c_type == POWER_MANAGER && mngrs[0]->type() == UNIT_MANAGER);}
+bool Manager::isAddition() const {return c_type == ADDITION_MANAGER;}
+bool Manager::isMultiplication() const {return c_type == MULTIPLICATION_MANAGER;}
+bool Manager::isFunction() const {return c_type == FUNCTION_MANAGER;}
+bool Manager::isPower() const {return c_type == POWER_MANAGER;}
 bool Manager::isNumber() const {return c_type == FRACTION_MANAGER;}
 bool Manager::isFraction() const {return c_type == FRACTION_MANAGER;}
 bool Manager::isMatrix() const {return c_type == MATRIX_MANAGER;}
@@ -1278,11 +1308,13 @@ bool Manager::isNull() const {
 bool Manager::isZero() const {
 	return isNull();
 }
-const Unit *Manager::unit() const {
-	return o_unit;
-}
 bool Manager::isOne() const {return c_type == FRACTION_MANAGER && fr->isOne();}
 bool Manager::negative() const {
+	if(c_type == FRACTION_MANAGER) return fr->isNegative();	
+	else if(c_type == MULTIPLICATION_MANAGER || c_type == POWER_MANAGER) return mngrs[0]->negative();
+	return false;
+}
+bool Manager::hasNegativeSign() const {
 	if(c_type == FRACTION_MANAGER) return fr->isNegative();	
 	else if(c_type == MULTIPLICATION_MANAGER || c_type == POWER_MANAGER) return mngrs[0]->negative();
 	return false;
@@ -1363,7 +1395,12 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 	} else if(c_type == UNIT_MANAGER) {
 		if(!in_composite && toplevel) {
 			str2 = "1";
-			CALCULATOR->remove_trailing_zeros(str2, min_decimals, max_decimals);
+			if(min_decimals > 0) {
+				str2 += DOT_STR;
+				for(int i = 0; i < min_decimals; i++) {
+					str2 += '0';
+				}
+			}			
 			str += str2; str += " ";
 		}
 		if(o_unit->type() == 'D') {
@@ -1388,12 +1425,18 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			else str += o_unit->name();
 		}
 	} else if(c_type == STRING_MANAGER) {
+		if(displayflags & DISPLAY_FORMAT_TAGS) {
+			str += "<i>";
+		}	
 		if(displayflags & DISPLAY_FORMAT_NONASCII) {
 			if(s_var == "pi") str += SIGN_PI;
 			else str += s_var;
 		} else {
 			str += s_var;
 		}
+		if(displayflags & DISPLAY_FORMAT_TAGS) {
+			str += "</i>";
+		}			
 		if(plural) *plural = true;
 	} else if(c_type == ALTERNATIVE_MANAGER) {
 		for(int i = 0; i < mngrs.size(); i++) {
@@ -1430,7 +1473,12 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			l_exp = NULL;
 			if(toplevel && !in_composite && (mngrs[i]->type() == UNIT_MANAGER || (mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->type() == UNIT_MANAGER))) {
 				str2 = "1";
-				CALCULATOR->remove_trailing_zeros(str2, min_decimals, max_decimals);
+				if(min_decimals > 0) {
+					str2 += DOT_STR;
+					for(int i = 0; i < min_decimals; i++) {
+						str2 += '0';
+					}
+				}
 				str += str2; str += " ";
 			}
 			str2 = mngrs[i]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
@@ -1461,7 +1509,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			if(l_exp) delete l_exp;
 			l_exp = NULL;
 			if(prefix_) prefix_--;
-			if(i == 0 && mngrs[i]->isNumber() && mngrs[i]->value() == -1 && mngrs.size() > 1 && mngrs[1]->type() != UNIT_MANAGER && (mngrs[1]->type() != UNIT_MANAGER || mngrs[1]->mngrs[0]->type() != UNIT_MANAGER)) {
+			if(i == 0 && mngrs[i]->isFraction() && mngrs[i]->fraction()->isMinusOne() && mngrs.size() > 1 && mngrs[1]->type() != UNIT_MANAGER && (mngrs[1]->type() != POWER_MANAGER || mngrs[1]->mngrs[0]->type() != UNIT_MANAGER)) {
 				if(displayflags & DISPLAY_FORMAT_NONASCII) {
 					str += SIGN_MINUS;
 				} else {
@@ -1492,7 +1540,12 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			}
 			if(!in_composite && i == 0 && (mngrs[i]->type() == UNIT_MANAGER || (mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->type() == UNIT_MANAGER))) {
 				str2 = "1";
-				CALCULATOR->remove_trailing_zeros(str2, min_decimals, max_decimals);
+				if(min_decimals > 0) {
+					str2 += DOT_STR;
+					for(int i = 0; i < min_decimals; i++) {
+						str2 += '0';
+					}
+				}
 				str += str2; str += " ";
 			}
 			if(!b && mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[1]->negative() && mngrs[i]->mngrs[0]->type() == UNIT_MANAGER && !had_unit) {
@@ -1615,7 +1668,12 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 	} else if(c_type == POWER_MANAGER) {
 		if(!in_composite && toplevel && mngrs[0]->type() == UNIT_MANAGER) {
 			str2 = "1";
-			CALCULATOR->remove_trailing_zeros(str2, min_decimals, max_decimals);
+			if(min_decimals > 0) {
+				str2 += DOT_STR;
+				for(int i = 0; i < min_decimals; i++) {
+					str2 += '0';
+				}
+			}
 			str += str2; str += " ";
 		}
 		if(mngrs[0]->mngrs.size() > 0 && !in_composite) {

@@ -488,12 +488,18 @@ int Fraction::pow(const Fraction *fr, int solution) {
 	if(isZero() && fr->isNegative()) {
 		return false;
 	}
+	if(isZero()) {
+		return 1;
+	}
 	if(!fr->isPrecise()) b_exact = false;
 	if(fr->isZero()) {
 		set(1);
 		return 1;
-	} 
+	} 		
 	if(fr->isOne()) return 1;
+	if(isNegative() && fr->denominator()->isEven()) {
+		return false;
+	}
 	if(fr->denominator()->isOne()) {
 //	root(fr->denominator());
 		Integer exp(fr->numerator());
@@ -509,7 +515,7 @@ int Fraction::pow(const Fraction *fr, int solution) {
 	} else {
 		setFloat(powl(value(), fr->value()));
 		b_exact = false;
-		if(fr->denominator()->isEven()) {
+		if(fr->denominator()->isEven() && !fr->numerator()->isEven()) {
 			if(solution == 2) setNegative(true);
 			return 2;
 		}
@@ -572,7 +578,7 @@ bool Fraction::floatify(int precision) {
 	if(reminder2) delete reminder2;
 	return exact;	
 }
-string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) const {
+/*string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) const {
 	if(max_decimals < 0) max_decimals = PRECISION;
 	if(in_exact && !isPrecise()) *in_exact = true;
 	Integer exp;
@@ -806,5 +812,256 @@ string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals
 	}
 	if(str_base.empty() && str_spec.empty()) str_base = "0";
 	return str_base + str_spec;	
+}*/
+string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) const {
+
+	bool minus, exp_minus;
+	string whole_, numerator_, denominator_, exponent_, prefix_;
+	getPrintObjects(minus, whole_, numerator_, denominator_, exp_minus, exponent_, prefix_, nrformat, displayflags, min_decimals, max_decimals, prefix, in_exact, usable, toplevel, plural, l_exp, in_composite, in_power);
+
+	string str;
+	if(minus) {
+		if(displayflags & DISPLAY_FORMAT_NONASCII) {
+			str += SIGN_MINUS;
+		} else {
+			str += MINUS_STR;
+		}			
+	}
+	str += whole_;
+	if(!numerator_.empty()) {
+		if(!whole_.empty()) {
+			str += " ";
+		}
+		if(displayflags & DISPLAY_FORMAT_TAGS) {	
+			str += "<sup>";
+			str += numerator_;
+			str += "</sup>";		
+		} else {
+			str += numerator_;
+		}
+		if(displayflags & DISPLAY_FORMAT_NONASCII) {
+			str += SIGN_DIVISION;
+		} else {
+			str += DIVISION_STR;	
+		}
+
+		if(displayflags & DISPLAY_FORMAT_TAGS) {	
+			str += "<small>";
+ 			str += denominator_;
+			str += "</small>";		
+		} else {
+			str += denominator_;
+		}	
+		if(!exponent_.empty()) {
+			str += " ";
+			if(displayflags & DISPLAY_FORMAT_NONASCII) {
+				str += SIGN_MULTIDOT;
+			} else {
+				str += MULTIPLICATION_STR;
+			}
+			str += " 1";				
+		}		
+	}
+	if(!exponent_.empty()) {
+		if(displayflags & DISPLAY_FORMAT_TAGS) {	
+			str += "<small>";
+		 	str += "E";
+			str += "</small>";		
+		} else {
+			str += "E";
+		}	
+		if(exp_minus) {
+			if(displayflags & DISPLAY_FORMAT_NONASCII) {
+				str += SIGN_MINUS;
+			} else {
+				str += MINUS_STR;
+			}					
+		}
+		str += exponent_;		
+	}
+	if(!prefix_.empty()) {
+		if(!str.empty()) {
+			str += " ";
+		}
+		str += prefix_;
+	}
+	if(str.empty()) {
+		str = "0";
+	}
+	return str;
+}
+void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, string &denominator_, bool &exp_minus, string &exponent_, string &prefix_, NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) const {
+	if(max_decimals < 0) max_decimals = PRECISION;
+	if(in_exact && !isPrecise()) *in_exact = true;
+	Integer exp;
+
+	if(nrformat != NUMBER_FORMAT_DECIMALS && !isZero()) {
+		if((!(displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY))) {
+			Fraction exp_pre(this);
+			exp_pre.setNegative(false);
+			if(exp_pre.log10()) {
+				exp_pre.floor();
+				exp.set(exp_pre.numerator());
+			}
+		} else {
+			if(num.mod10()) {
+				Integer num_test(&num);				
+				while(num_test.div10()) {	
+					exp.add(1);		
+				}		
+			} else {
+				Integer den_test(&den);
+				while(den_test.div10()) {	
+					exp.add(-1);
+				}
+			}
+		}
+	}
+	Integer exp_spec(&exp);
+
+	minus = isNegative();
+	whole_ = "";
+	numerator_ = "";
+	denominator_ = "";
+	exponent_ = "";
+	exp_minus = false;
+	prefix_ = "";	
+	bool force_fractional = false;
+	int base = 10;
+	if(displayflags & DISPLAY_FORMAT_USE_PREFIXES) {
+		if(l_exp) {
+			Integer tmp_exp;
+			if(prefix) {
+				exp_spec.subtract(prefix->exponent(l_exp, &tmp_exp));
+				prefix_ = prefix->name(displayflags & DISPLAY_FORMAT_SHORT_UNITS);
+			} else {
+				prefix = CALCULATOR->getBestPrefix(&exp, l_exp);
+				Integer test_exp(&exp);
+				test_exp.subtract(prefix->exponent(l_exp, &tmp_exp));
+				if((exp.isPositive() && exp.compare(&test_exp) == -1) || (exp.isNegative() && exp.compare(&test_exp) == 1)) {
+					exp_spec.set(&test_exp);
+					prefix_ = prefix->name(displayflags & DISPLAY_FORMAT_SHORT_UNITS);
+				}
+			}
+			if((displayflags & DISPLAY_FORMAT_SHORT_UNITS) && (displayflags & DISPLAY_FORMAT_NONASCII)) {
+				gsub("micro", SIGN_MICRO, prefix_);
+			}
+		}
+	}	
+	switch(nrformat) {
+		case NUMBER_FORMAT_DECIMALS: {
+			break;
+		}		
+		case NUMBER_FORMAT_HEX: {
+			base = 16;
+			force_fractional = true;
+			break;			
+		}
+		case NUMBER_FORMAT_OCTAL: {
+			base = 8;
+			force_fractional = true;
+			break;			
+		}
+		case NUMBER_FORMAT_BIN: {
+			base = 2;
+			force_fractional = true;
+			break;
+		}					
+		case NUMBER_FORMAT_NORMAL: {
+			if(exp_spec.isGreaterThan(-PRECISION) && exp_spec.isLessThan(PRECISION)) { 
+				break;
+			}
+		}			
+		case NUMBER_FORMAT_EXP: {
+			if(exp_spec.isGreaterThan(-3) && exp_spec.isLessThan(3)) { 
+				break;
+			}		
+		}
+		case NUMBER_FORMAT_EXP_PURE: {
+			if(!exp_spec.isZero()) {
+				exponent_ = exp_spec.print(10, false);
+				exp_spec.clear();
+			}
+			break;
+		}		
+	}
+
+	Integer den_spec(&den);	
+	Integer whole(&num);
+	exp.subtract(&exp_spec);
+	if(exp.isNegative()) {
+		exp_minus = true;
+		exp.setNegative(false);
+		whole.exp10(&exp);	
+	} else if(exp.isPositive()) {
+		den_spec.exp10(&exp);
+	}
+	Integer *divisor;
+	if(whole.gcd(&den_spec, &divisor)) {
+		whole.divide(divisor);
+		den_spec.divide(divisor);
+	}	
+	delete divisor;
+	if(in_composite && whole.isOne() && den_spec.isOne()) {
+		return;
+	} else if(!force_fractional && !(displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY)) {
+		Fraction fr(&whole, &den_spec);
+		fr.floatify(max_decimals);
+		if(in_exact && !fr.isPrecise()) *in_exact = true;
+		whole_ = fr.numerator()->print(10, false);
+		int l10 = 0;
+		Integer d(fr.denominator());
+		while(d.div10()) {
+			l10++;
+		}
+		if(l10) {
+			l10 = whole_.length() - l10;
+			for(; l10 < 1; l10++) {
+				whole_.insert(0, 1, '0');
+			}
+			whole_.insert(l10, DOT_STR);
+		}
+		if(min_decimals > 0) {
+			int index = whole_.find(DOT_STR);
+			if(index == string::npos) {
+				whole_ += DOT_STR;
+				for(int i = 0; i < min_decimals; i++) {
+					whole_ += '0';
+				}
+			} else {
+				index += strlen(DOT_STR);
+				index = whole_.length() - index;
+				index = min_decimals - index;
+				for(int i = 0; i < index; i++) {
+					whole_ += '0';
+				}				
+			}
+		}
+	} else {
+		Integer *part;
+		if((displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY) && !den_spec.isOne()) {
+			part = new Integer(&whole);
+			whole.clear();
+		} else {
+			whole.divide(&den_spec, &part);	
+		}
+		Integer *divisor;
+		if(part->gcd(&den_spec, &divisor)) {
+			part->divide(divisor);
+			den_spec.divide(divisor);
+		}
+		delete divisor;		
+		if(!whole.isZero()) {
+			whole_ = whole.print(base, false);
+		}
+		if(!part->isZero()) {
+			numerator_ = part->print(base, false);
+			denominator_ = den_spec.print(base, false);
+		}		
+		delete part;
+	}
+	if(whole_.empty() && numerator_.empty() && denominator_.empty() && exponent_.empty() && prefix_.empty()) {
+		whole_ = "0";
+	}
 }
 

@@ -606,6 +606,9 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new TransposeFunction());
 	addFunction(new IdentityFunction());
 	addFunction(new DeterminantFunction());
+	addFunction(new CofactorFunction());
+	addFunction(new AdjointFunction());
+	addFunction(new InverseFunction());
 	addFunction(new IFFunction());
 	addFunction(new DifferentiateFunction());	
 	addFunction(new DaysFunction());		
@@ -1825,7 +1828,7 @@ bool Calculator::save(const char* file_name) {
 	string str;
 	unsetLocale();
 	for(int i = 0; i < variables.size(); i++) {
-		if(variables[i]->isUserVariable()) {
+		if(variables[i]->isUserVariable() && variables[i]->category() != _("Temporary")) {
 			if(!variables[i]->isBuiltinVariable()) 
 				fprintf(file, "*Variable\t");
 			else

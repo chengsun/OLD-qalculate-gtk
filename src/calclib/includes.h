@@ -47,6 +47,11 @@ typedef enum {
 	DISPLAY_FORMAT_HIDE_UNITS		= 1 << 12	
 } DisplayFormatFlags;
 
+typedef enum {
+	SORT_DEFAULT				= 1 << 0,
+	SORT_SCIENTIFIC				= 1 << 1
+} SortFlags;
+
 #define DEFAULT_PRECISION	12
 #define PRECISION		CALCULATOR->getPrecision()
 

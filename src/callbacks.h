@@ -215,5 +215,7 @@ void on_decimals_dialog_radiobutton_always_toggled(GtkToggleButton *w, gpointer 
 
 gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointer user_data);
 
+gboolean on_resultview_expose_event(GtkWidget *w, GdkEventExpose *event, gpointer user_data);
+
 }
 

@@ -30,12 +30,14 @@ string selected_function;
 GtkWidget *variables_window;
 string selected_variable_category;
 string selected_variable;
+string result_text;
 GtkWidget *units_window;
 string selected_unit_category;
 Unit *selected_unit, *selected_to_unit;
 bool load_global_defs;
 GtkWidget *omToUnit_menu;
-GladeXML * glade_xml;
+GladeXML *glade_xml;
+GdkPixmap *pixmap_result;
 
 int main (int argc, char **argv) {
 
@@ -109,6 +111,8 @@ int main (int argc, char **argv) {
 	selected_unit = NULL;
 	selected_to_unit = NULL;
 	omToUnit_menu = NULL;
+	result_text = "0";
+	pixmap_result = NULL;
 
 	//check for calculation errros regularly
 	g_timeout_add(100, on_display_errors_timeout, NULL);

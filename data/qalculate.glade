@@ -510,37 +510,6 @@
 	  <property name="column_spacing">6</property>
 
 	  <child>
-	    <widget class="GtkToggleButton" id="togglebutton_result">
-	      <property name="visible">True</property>
-	      <property name="can_focus">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="active">False</property>
-	      <property name="inconsistent">False</property>
-	      <signal name="toggled" handler="on_togglebutton_result_toggled" last_modification_time="Sun, 10 Aug 2003 21:47:07 GMT"/>
-
-	      <child>
-		<widget class="GtkArrow" id="togglebutton_result_arrow">
-		  <property name="visible">True</property>
-		  <property name="arrow_type">GTK_ARROW_RIGHT</property>
-		  <property name="shadow_type">GTK_SHADOW_IN</property>
-		  <property name="xalign">0.5</property>
-		  <property name="yalign">0.5</property>
-		  <property name="xpad">0</property>
-		  <property name="ypad">0</property>
-		</widget>
-	      </child>
-	    </widget>
-	    <packing>
-	      <property name="left_attach">2</property>
-	      <property name="right_attach">3</property>
-	      <property name="top_attach">1</property>
-	      <property name="bottom_attach">2</property>
-	      <property name="x_options"></property>
-	      <property name="y_options"></property>
-	    </packing>
-	  </child>
-
-	  <child>
 	    <widget class="GtkToggleButton" id="togglebutton_expression">
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
@@ -596,49 +565,75 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkLabel" id="result">
+	    <widget class="GtkAlignment" id="alignment11">
 	      <property name="visible">True</property>
-	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">&lt;big&gt;&lt;b&gt;0&lt;/b&gt;&lt;/big&gt;</property>
-	      <property name="use_underline">False</property>
-	      <property name="use_markup">True</property>
-	      <property name="justify">GTK_JUSTIFY_RIGHT</property>
-	      <property name="wrap">True</property>
-	      <property name="selectable">True</property>
-	      <property name="xalign">1</property>
-	      <property name="yalign">0.5</property>
-	      <property name="xpad">6</property>
-	      <property name="ypad">0</property>
+	      <property name="xalign">0.5</property>
+	      <property name="yalign">0</property>
+	      <property name="xscale">1</property>
+	      <property name="yscale">0</property>
+
+	      <child>
+		<widget class="GtkToggleButton" id="togglebutton_result">
+		  <property name="visible">True</property>
+		  <property name="can_focus">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <signal name="toggled" handler="on_togglebutton_result_toggled" last_modification_time="Sun, 10 Aug 2003 21:47:07 GMT"/>
+
+		  <child>
+		    <widget class="GtkArrow" id="togglebutton_result_arrow">
+		      <property name="visible">True</property>
+		      <property name="arrow_type">GTK_ARROW_RIGHT</property>
+		      <property name="shadow_type">GTK_SHADOW_IN</property>
+		      <property name="xalign">0.5</property>
+		      <property name="yalign">0.5</property>
+		      <property name="xpad">0</property>
+		      <property name="ypad">0</property>
+		    </widget>
+		  </child>
+		</widget>
+	      </child>
 	    </widget>
 	    <packing>
-	      <property name="left_attach">1</property>
-	      <property name="right_attach">2</property>
+	      <property name="left_attach">2</property>
+	      <property name="right_attach">3</property>
 	      <property name="top_attach">1</property>
 	      <property name="bottom_attach">2</property>
+	      <property name="x_options"></property>
 	      <property name="y_options">fill</property>
 	    </packing>
 	  </child>
 
 	  <child>
-	    <widget class="GtkLabel" id="label_equals">
+	    <widget class="GtkScrolledWindow" id="scrolled_result">
+	      <property name="border_width">4</property>
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes"></property>
-	      <property name="use_underline">False</property>
-	      <property name="use_markup">True</property>
-	      <property name="justify">GTK_JUSTIFY_LEFT</property>
-	      <property name="wrap">False</property>
-	      <property name="selectable">False</property>
-	      <property name="xalign">0</property>
-	      <property name="yalign">0.5</property>
-	      <property name="xpad">2</property>
-	      <property name="ypad">2</property>
+	      <property name="can_focus">True</property>
+	      <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+	      <property name="vscrollbar_policy">GTK_POLICY_NEVER</property>
+	      <property name="shadow_type">GTK_SHADOW_NONE</property>
+	      <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
+
+	      <child>
+		<widget class="GtkViewport" id="resultport">
+		  <property name="visible">True</property>
+		  <property name="shadow_type">GTK_SHADOW_NONE</property>
+
+		  <child>
+		    <widget class="GtkDrawingArea" id="resultview">
+		      <property name="visible">True</property>
+		      <signal name="expose_event" handler="on_resultview_expose_event" last_modification_time="Thu, 04 Sep 2003 10:38:54 GMT"/>
+		    </widget>
+		  </child>
+		</widget>
+	      </child>
 	    </widget>
 	    <packing>
 	      <property name="left_attach">0</property>
-	      <property name="right_attach">1</property>
+	      <property name="right_attach">2</property>
 	      <property name="top_attach">1</property>
 	      <property name="bottom_attach">2</property>
-	      <property name="x_options">fill</property>
 	      <property name="y_options">fill</property>
 	    </packing>
 	  </child>

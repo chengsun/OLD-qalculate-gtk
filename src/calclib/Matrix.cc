@@ -82,6 +82,66 @@ void Matrix::transpose() {
 		}
 	}	
 }
+bool Matrix::inverse() {
+	Manager *mngr = determinant();
+	if(!mngr) {
+		return false;
+	}
+	if(mngr->isNull()) {
+		delete mngr;
+		return false;
+	}
+	mngr->addInteger(-1, RAISE);
+	adjoint();
+	multiply(mngr);
+	delete mngr;	
+	return true;
+}
+bool Matrix::adjoint() {
+	if(columns() != rows()) {
+		return false;
+	}
+	Matrix mtrx(this);
+	Manager *mngr;
+	for(int index_r = 1; index_r <= rows(); index_r++) {
+		for(int index_c = 1; index_c <= columns(); index_c++) {
+			mngr = mtrx.cofactor(index_r, index_c);
+			set(mngr, index_r, index_c);
+			delete mngr;
+		}
+	}
+	transpose();
+	return true;
+}
+Manager *Matrix::cofactor(int row, int column) const {
+	if(row < 1) row = 1;
+	if(column < 1) column = 1;
+	Matrix mtrx(rows() - 1, columns() - 1);
+	for(int index_r = 1; index_r <= rows(); index_r++) {
+		if(index_r != row) {
+			for(int index_c = 1; index_c <= columns(); index_c++) {
+				if(index_c > column) {
+					if(index_r > row) {
+						mtrx.set(get(index_r, index_c), index_r - 1, index_c - 1);
+					} else {
+						mtrx.set(get(index_r, index_c), index_r, index_c - 1);
+					}
+				} else if(index_c < column) {
+					if(index_r > row) {
+						mtrx.set(get(index_r, index_c), index_r - 1, index_c);
+					} else {
+						mtrx.set(get(index_r, index_c), index_r, index_c);
+					}
+				}
+			}
+		}
+	}	
+	Manager *mngr = mtrx.determinant();	
+	if((row + column) % 2 == 1) {
+		mngr->addInteger(-1, MULTIPLY);
+	}
+	return mngr;
+}
 bool Matrix::isSymmetric() const {
 	Matrix tr_mtrx(this);
 	tr_mtrx.transpose();
@@ -111,24 +171,10 @@ Manager *Matrix::determinant() const {
 		tmp.add(get(1, 2), MULTIPLY);
 		mngr->add(&tmp, SUBTRACT);
 	} else {
-		Matrix mtrx(rows() - 1, columns() - 1);
 		for(int index_c = 1; index_c <= columns(); index_c++) {
-			for(int index_r = 2; index_r <= rows(); index_r++) {
-				for(int index_c2 = 1; index_c2 <= columns(); index_c2++) {
-					if(index_c2 > index_c) {
-						mtrx.set(get(index_r, index_c2), index_r - 1, index_c2 - 1);
-					} else if(index_c2 < index_c) {
-						mtrx.set(get(index_r, index_c2), index_r - 1, index_c2);
-					}
-				}
-			}	
-			Manager *tmp = mtrx.determinant();
+			Manager *tmp = cofactor(1, index_c);
 			tmp->add(get(1, index_c), MULTIPLY);
-			if(index_c % 2 == 0) {
-				mngr->add(tmp, SUBTRACT);
-			} else {
-				mngr->add(tmp, ADD);
-			}
+			mngr->add(tmp, ADD);
 			delete tmp;
 		}
 	}
@@ -335,6 +381,9 @@ bool Matrix::divide(const Manager *mngr) {
 bool Matrix::raise(const Manager *mngr) {
 	if(mngr->isMatrix()) {
 		return raise(mngr->matrix());
+	} else if(mngr->isFraction() && mngr->fraction()->isMinusOne()) {
+		return inverse();
+		return true;
 	}
 	return false;
 }
@@ -367,23 +416,18 @@ void Matrix::setPrecise(bool is_precise) {
 }
 
 string Matrix::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) const {
-	string str = "[";
+	string str = "matrix(";
+	str += i2s(rows());
+	str += COMMA_STR;
+	str += " ";
+	str += i2s(columns());
 	for(int index_r = 0; index_r < elements.size(); index_r++) {
-		if(index_r != 0) {
-			str += "  \\  ";
-		}
 		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
-			if(index_c != 0) str += "  ";
+			str += COMMA_STR;
+			str += " ";
 			str += elements[index_r][index_c]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
 		}
 	}	
-	str += "]";
-	if(displayflags & DISPLAY_FORMAT_TAGS) {
-		str += "<small><sub>";
-		str += i2s(rows());
-		str += "x";
-		str += i2s(columns());
-		str += "</sub></small>";
-	}
+	str += ")";
 	return str;
 }

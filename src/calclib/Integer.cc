@@ -991,16 +991,20 @@ int Integer::getInt() const {
 	if(li < INT_MIN) return INT_MIN;	
 	return (int) li;
 }
-string Integer::print(int base) const {
+string Integer::print(int base, bool display_sign) const {
 #ifdef HAVE_LIBGMP
 	char *c_str = mpz_get_str(NULL, base, integ);
+	string mpz_str = c_str;
+	if(!display_sign && isNegative()) {
+		mpz_str.erase(0, 1);
+	}
 	string str = "";
 	if(base == 16) {
 		str += "0x";
 	} else if(base == 8) {
 		str += "0";
 	} 
-	str += c_str;
+	str += mpz_str;
 	if(base == 2) {
 		for(int i = str.length() - 4; (isNegative() && i > 1) || (!isNegative() && i > 0); i -= 4) {
 			str.insert(i, 1, ' ');
@@ -1012,7 +1016,7 @@ string Integer::print(int base) const {
 	string str = "";
 	long int value;
 	char c;	
-	if(b_neg) str = '-';
+	if(b_neg && display_sign) str = '-';
 	if(base == 10) {
 		if(isZero()) return "0";
 		bool keep_zeros = false;

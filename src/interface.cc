@@ -53,8 +53,7 @@ GtkTreeViewColumn *column;
 GtkTreeSelection *selection;
 
 GtkWidget *expression;
-GtkWidget *result;
-GtkWidget *label_equals;
+GtkWidget *resultview;
 GtkWidget *f_menu ,*v_menu, *u_menu, *u_menu2;
 GtkAccelGroup *accel_group;
 
@@ -70,8 +69,7 @@ create_main_window (void)
 	g_assert (NULL != glade_xml_get_widget (glade_xml, "main_window"));
 
 	expression = glade_xml_get_widget (glade_xml, "expression");
-	result = glade_xml_get_widget (glade_xml, "result");
-	label_equals = glade_xml_get_widget (glade_xml, "label_equals");	
+	resultview = glade_xml_get_widget (glade_xml, "resultview");
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (glade_xml, "history"))), "red_foreground", "foreground", "red", NULL);
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (glade_xml, "history"))), "blue_foreground", "foreground", "blue", NULL);
 
@@ -156,6 +154,13 @@ create_main_window (void)
 					),
 				TRUE);
 		break;
+	case MODE_SCIENTIFIC_PURE:
+		gtk_check_menu_item_set_active(
+				GTK_CHECK_MENU_ITEM(
+					glade_xml_get_widget (glade_xml, "menu_item_display_purely_scientific")
+					),
+				TRUE);
+		break;
 	case MODE_DECIMALS:
 		gtk_check_menu_item_set_active(
 				GTK_CHECK_MENU_ITEM(
@@ -168,13 +173,11 @@ create_main_window (void)
 		break;
 	}
 
-	if(use_prefixes) {
-		gtk_check_menu_item_set_active(
-				GTK_CHECK_MENU_ITEM(
-					glade_xml_get_widget (glade_xml, "menu_item_display_prefixes")
-					),
-				TRUE);
-	}
+	gtk_check_menu_item_set_active(
+			GTK_CHECK_MENU_ITEM(
+				glade_xml_get_widget (glade_xml, "menu_item_display_prefixes")
+				),
+			use_prefixes);
 
 	switch (fractional_mode)
 	{

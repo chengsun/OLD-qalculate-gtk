@@ -1,3 +1,8 @@
+2003-09-07  Niklas Knutsson  <nq@altern.org>
+
+	* Use GtkDrawingArea to make result display nicer
+	* More matrix functions: cofactor, adjoint, inverse
+
 2003-09-03  Niklas Knutsson  <nq@altern.org>
 
 	* Matrix functions: determinant (det), identity, transpose, element, columns, rows, matrix

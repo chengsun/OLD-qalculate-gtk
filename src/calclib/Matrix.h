@@ -54,10 +54,13 @@ class Matrix {
 	Matrix *getIdentityMatrix() const;
 	
 	void transpose();
+	bool inverse();
+	bool adjoint();
 	
 	bool isSymmetric() const;
 	bool isOrthogonal() const;
 	Manager *determinant() const;
+	Manager *cofactor(int row, int column) const;
 
 	/**
 	* Returns the number of rows in the matrix.
