@@ -1773,6 +1773,9 @@ void Manager::recalculateFunctions() {
 			moveto(mngr_f);
 			mngr_f->unref();
 			break;
+		}
+		case MATRIX_MANAGER: {
+			mtrx->recalculateFunctions();
 		}				
 	}
 }

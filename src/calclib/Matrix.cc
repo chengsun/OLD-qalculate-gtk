@@ -608,6 +608,13 @@ Vector *Matrix::columnToVector(int column) {
 bool Matrix::isVector() const {
 	return b_vector;
 }
+void Matrix::recalculateFunctions() {
+	for(int index_r = 0; index_r < elements.size(); index_r++) {
+		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
+			elements[index_r][index_c]->recalculateFunctions();
+		}
+	} 	
+}
 string Matrix::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) const {
 	string str = "matrix(";
 	str += i2s(rows());

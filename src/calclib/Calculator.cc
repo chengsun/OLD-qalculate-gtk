@@ -170,7 +170,7 @@ Calculator::Calculator() {
 	RIGHT_BRACKET_STR = ")";
 	SPACE_S = " \t\n";
 	SPACE_STR = " ";
-	RESERVED_S = "@?!\\{}&:<>|\"";
+	RESERVED_S = "@?!\\{}&:<>|\",;";
 	PLUS_S = "+";
 	PLUS_STR = "+";
 	MINUS_S = "-";
@@ -204,6 +204,7 @@ Calculator::Calculator() {
 	ILLEGAL_IN_UNITNAMES = (char*) malloc(sizeof(char) * (strlen(ILLEGAL_IN_NAMES) + strlen(NUMBERS_S) + 1));
 	sprintf(ILLEGAL_IN_UNITNAMES, "%s%s", ILLEGAL_IN_NAMES, NUMBERS_S);			
 
+	b_rpn = false;
 	calculator = this;
 	srand48(time(0));
 	angleMode(RADIANS);
@@ -216,24 +217,22 @@ Calculator::Calculator() {
 	b_unknown = true;
 	b_calcvars = true;
 	b_always_exact = false;
-	tmp_always_exact = b_always_exact;
 	disable_errors_ref = 0;
 	
 }
 Calculator::~Calculator() {}
 
+void Calculator::setRPNMode(bool enable) {
+	b_rpn = enable;
+}
+bool Calculator::inRPNMode() const {
+	return b_rpn;
+}
 bool Calculator::alwaysExact() const {
 	return b_always_exact;
 }
 void Calculator::setAlwaysExact(bool always_exact) {
 	b_always_exact = always_exact;
-	tmp_always_exact = b_always_exact;	
-}
-void Calculator::beginTemporaryInexact() {
-	b_always_exact = false;
-}
-void Calculator::endTemporaryInexact() {
-	b_always_exact = tmp_always_exact;
 }
 void Calculator::beginTemporaryStopErrors() {
 	disable_errors_ref++;
@@ -303,6 +302,32 @@ ExpressionItem *Calculator::getActiveExpressionItem(string name, ExpressionItem 
 	}
 	for(int i = 0; i < units.size(); i++) {
 		if(units[i] != item && units[i]->isActive()) {
+			if(units[i]->unitType() == COMPOSITE_UNIT) {
+				if(name == units[i]->referenceName()) {
+					return units[i];
+				}
+			} else {
+				if(units[i]->name() == name || units[i]->shortName(false) == name || units[i]->plural(false) == name) {
+					return units[i];
+				}
+			}
+		}
+	}
+	return NULL;
+}
+ExpressionItem *Calculator::getInactiveExpressionItem(string name, ExpressionItem *item) {
+	for(int index = 0; index < variables.size(); index++) {
+		if(variables[index] != item && !variables[index]->isActive() && variables[index]->referenceName() == name) {
+			return variables[index];
+		}
+	}
+	for(int index = 0; index < functions.size(); index++) {
+		if(functions[index] != item && !functions[index]->isActive() && functions[index]->referenceName() == name) {
+			return functions[index];
+		}
+	}
+	for(int i = 0; i < units.size(); i++) {
+		if(units[i] != item && !units[i]->isActive()) {
 			if(units[i]->unitType() == COMPOSITE_UNIT) {
 				if(name == units[i]->referenceName()) {
 					return units[i];
@@ -1005,7 +1030,11 @@ Unit* Calculator::addUnit(Unit *u, bool force) {
 			u->setShortName(getUnitName(u->shortName(false), u, force));
 		}
 	}
-	units.push_back(u);
+	if(!u->isLocal() && units.size() > 0 && units[units.size() - 1]->isLocal()) {
+		units.insert(units.begin(), u);
+	} else {	
+		units.push_back(u);
+	}
 	u->setChanged(false);
 	return u;
 }
@@ -1056,7 +1085,11 @@ Unit* Calculator::getCompositeUnit(string internal_name_) {
 }
 
 Variable* Calculator::addVariable(Variable *v, bool force) {
-	variables.push_back(v);
+	if(!v->isLocal() && variables.size() > 0 && variables[variables.size() - 1]->isLocal()) {
+		variables.insert(variables.begin(), v);
+	} else {
+		variables.push_back(v);
+	}
 	v->setName(getName(v->name(), v, force));
 	v->setChanged(false);
 	return v;
@@ -1325,7 +1358,11 @@ ExpressionItem* Calculator::addExpressionItem(ExpressionItem *item, bool force) 
 }
 Function* Calculator::addFunction(Function *f, bool force) {
 	f->setName(getName(f->name(), f, force));
-	functions.push_back(f);
+	if(!f->isLocal() && functions.size() > 0 && functions[functions.size() - 1]->isLocal()) {
+		functions.insert(functions.begin(), f);
+	} else {
+		functions.push_back(f);
+	}
 	f->setChanged(false);
 	return f;
 }
@@ -1449,6 +1486,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 					stmp += ID_WRAP_LEFT_CH;
 					if(b_calcvars && (!b_always_exact || v->isPrecise())) {
 						mngr = new Manager(v->get());
+						mngr->recalculateFunctions();
 						if(!v->isPrecise()) {
 							mngr->setPrecise(false);
 						}
@@ -1739,7 +1777,19 @@ void Calculator::setFunctionsAndVariables(string &str) {
 			}
 		}
 	}
-	remove_blanks(str);
+	if(b_rpn) {
+		int rpn_i = str.find(SPACE, 0);
+		while(rpn_i != string::npos) {
+			if(rpn_i == 0 || is_in(OPERATORS, str[rpn_i - 1]) || rpn_i + 1 == str.length() || is_in(SPACE OPERATORS, str[rpn_i + 1])) {
+				str.erase(rpn_i, 1);
+			} else {
+				rpn_i++;
+			}
+			rpn_i = str.find(SPACE, rpn_i);
+		}
+	} else {
+		remove_blanks(str);
+	}
 	i = 0;
 	if(!b_units && !b_unknown) return;	
 	u = NULL;
@@ -1833,12 +1883,18 @@ string Calculator::getName(string name, ExpressionItem *object, bool force, bool
 	if(force) {
 		ExpressionItem *item = getActiveExpressionItem(name, object);
 		if(item) {
-			if(object->isLocal() && !item->isLocal()) {
+			if(!item->isLocal()) {
+				bool b = item->hasChanged();
 				if(object->isActive()) {
 					item->setActive(false);
 				}
+				if(!object->isLocal()) {
+					item->setChanged(b);
+				}
 			} else {
-				item->destroy();
+				if(object->isActive()) {
+					item->destroy();
+				}
 			}
 		}
 		return name;
@@ -1877,10 +1933,18 @@ string Calculator::getUnitName(string name, Unit *object, bool force, bool alway
 	if(force) {
 		ExpressionItem *item = getActiveExpressionItem(name, object);
 		if(item) {
-			if(object->isLocal() && !item->isLocal()) {
-				item->setActive(false);
+			if(!item->isLocal()) {
+				bool b = item->hasChanged();
+				if(object->isActive()) {
+					item->setActive(false);
+				}
+				if(!object->isLocal()) {
+					item->setChanged(b);
+				}			
 			} else {
-				item->destroy();
+				if(object->isActive()) {
+					item->destroy();
+				}			
 			}
 		}
 		return name;	
@@ -2033,7 +2097,7 @@ bool Calculator::save(const char* file_name) {
 			}
 			fprintf(file, "\n");
 		} else {
-			if(!functions[i]->isActive()) {
+			if(!functions[i]->isActive() && functions[i]->hasChanged()) {
 				fprintf(file, "*Deactivate\t%s\n", functions[i]->referenceName().c_str());
 			}			
 		}
@@ -2103,13 +2167,15 @@ bool Calculator::save(const char* file_name) {
 			}
 			fprintf(file, "\n");
 		} else {
-			if(!units[i]->isActive()) {
+			if(!units[i]->isActive() && units[i]->hasChanged()) {
 				fprintf(file, "*Deactivate\t%s\n", units[i]->referenceName().c_str());
 			}			
 		}
 	}
 	fprintf(file, "\n");
-	
+
+	bool was_always_exact = alwaysExact();
+	setAlwaysExact(true);	
 	for(int i = 0; i < variables.size(); i++) {
 		if(variables[i]->isLocal() && variables[i]->category() != _("Temporary")) {
 			if(!variables[i]->isBuiltin()) {
@@ -2139,11 +2205,12 @@ bool Calculator::save(const char* file_name) {
 			}
 			fprintf(file, "\n");
 		} else {
-			if(!variables[i]->isActive()) {
+			if(!variables[i]->isActive() && variables[i]->hasChanged()) {
 				fprintf(file, "*Deactivate\t%s\n", variables[i]->referenceName().c_str());
 			}
 		}
 	}
+	setAlwaysExact(was_always_exact);
 	
 	fclose(file);
 	setLocale();
@@ -2165,7 +2232,8 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 	vector<string> unfinished_units;
 	unsigned int i, i2, i3;
 	char line[10000];
-	
+	bool functions_was = b_functions, variables_was = b_variables, units_was = b_units, unknown_was = b_unknown, calcvars_was = b_calcvars, always_exact_was = b_always_exact, rpn_was = b_rpn;
+	b_functions = true; b_variables = true; b_units = true; b_unknown = true; b_calcvars = true; b_always_exact = true; b_rpn = false;
 	while(1) {
 		if(fgets(line, 10000, file) == NULL) {
 			rerun = true;
@@ -2202,6 +2270,13 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 							item->setActive(false);
 						}
 					}
+				} else if(str == "*Activate") {
+					FIRST_READ_TAB_DELIMITED(ntmp)
+						ExpressionItem *item = getInactiveExpressionItem(ntmp);
+						if(!item->isLocal()) {
+							item->setActive(true);
+						}
+					}					
 				} else if(str == "*Variable") {
 					FIRST_READ_TAB_DELIMITED_SET_BOOL(b2)
 						READ_TAB_DELIMITED_SET_0(ctmp)
@@ -2211,13 +2286,11 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 									READ_TAB_DELIMITED_SET_0(ttmp)
 									}
 									if(variableNameIsValid(ntmp)) {
-										mngr = calculate(vtmp);
-										v = new Variable(ctmp, ntmp, mngr, ttmp, is_user_defs, false, b2);
+										v = new Variable(ctmp, ntmp, vtmp, ttmp, is_user_defs, false, b2);
 										v = addVariable(v);
 										READ_TAB_DELIMITED_SET_BOOL(b)
 											if(v) v->setPrecise(b);	
 										}									
-										mngr->unref();
 									}
 								}
 							}
@@ -2505,6 +2578,7 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 			}
 		}
 	}
+	b_functions = functions_was; b_variables = variables_was; b_units = units_was; b_unknown = unknown_was; b_calcvars = calcvars_was; b_always_exact = always_exact_was; b_rpn = rpn_was;
 	fclose(file);
 	return true;
 }

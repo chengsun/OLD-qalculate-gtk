@@ -60,16 +60,20 @@ string ExpressionItem::title(bool return_name_if_no_title) const {
 }
 void ExpressionItem::setTitle(string title_) {
 	remove_blank_ends(title_);
-	stitle = title_;
-	b_changed = true;
+	if(stitle != title_) {
+		stitle = title_;
+		b_changed = true;
+	}
 }
 string ExpressionItem::description() const {
 	return sdescr;
 }
 void ExpressionItem::setDescription(string descr_) {
 	remove_blank_ends(descr_);
-	sdescr = descr_;
-	b_changed = true;
+	if(sdescr != descr_) {
+		sdescr = descr_;
+		b_changed = true;
+	}
 }
 void ExpressionItem::setName(string name_, bool force) {
 	remove_blank_ends(name_);
@@ -90,17 +94,21 @@ string ExpressionItem::category() const {
 }
 void ExpressionItem::setCategory(string cat_) {
 	remove_blank_ends(cat_);
-	scat = cat_;
+	if(scat != cat_) {
+		scat = cat_;
+		b_changed = true;
+	}
 }
 bool ExpressionItem::isLocal() const {
 	return b_local;
 }
 bool ExpressionItem::setLocal(bool is_local, int will_be_active) {
 	if(is_local != b_local) {
-		if(!is_local) {
+		if(!b_local) {
 			bool was_active = b_active;
-			b_active = false;
+			b_active = false;	
 			ExpressionItem *item = copy();
+			b_local = is_local;
 			if(will_be_active < 0) {
 				b_active = was_active;
 			} else if(will_be_active) {
@@ -110,7 +118,8 @@ bool ExpressionItem::setLocal(bool is_local, int will_be_active) {
 				b_active = was_active;
 				setActive(false);
 			}
-			CALCULATOR->addExpressionItem(item);
+			CALCULATOR->addExpressionItem(item);	
+			if(was_active && b_active) item->setChanged(true);
 			if(was_active && will_be_active == 0) {
 				item->setActive(true);
 			}
@@ -133,7 +142,10 @@ bool ExpressionItem::isPrecise() const {
 	return b_exact;
 }
 void ExpressionItem::setPrecise(bool is_precise) {
-	b_exact = is_precise;
+	if(is_precise == b_exact) {
+		b_exact = is_precise;
+		b_changed = true;	
+	}
 }
 bool ExpressionItem::isActive() const {
 	return b_active;
@@ -148,6 +160,7 @@ void ExpressionItem::setActive(bool is_active, bool not_yet_added) {
 			}
 		}
 		b_active = is_active;		
+		b_changed = true;
 	}
 }
 

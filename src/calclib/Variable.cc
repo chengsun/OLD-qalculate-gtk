@@ -18,6 +18,11 @@ Variable::Variable(string cat_, string name_, Manager *mngr_, string title_, boo
 	mngr = mngr_;
 	mngr->ref();
 }
+Variable::Variable(string cat_, string name_, string expression_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active) {
+	mngr = NULL;
+	set(expression_);
+	setChanged(false);	
+}
 Variable::Variable(const Variable *variable) {
 	set(variable);
 }
@@ -40,6 +45,14 @@ void Variable::set(Manager *mngr_) {
 	if(mngr) mngr->unref();
 	mngr = mngr_;
 	mngr->ref();
+	setChanged(true);
+}
+void Variable::set(string expression_) {
+	if(mngr) mngr->unref();
+	bool b_always_exact = CALCULATOR->alwaysExact();
+	CALCULATOR->setAlwaysExact(true);
+	mngr = CALCULATOR->calculate(expression_);
+	CALCULATOR->setAlwaysExact(b_always_exact);
 	setChanged(true);
 }
 Manager *Variable::get() {

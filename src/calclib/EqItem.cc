@@ -28,8 +28,9 @@ MathOperation EqItem::operation() {
 
 
 
-EqNumber::EqNumber(long double value_, MathOperation operation_) : EqItem(operation_) {
-	mngr = new Manager(value_);
+EqNumber::EqNumber(Manager *value_, MathOperation operation_) : EqItem(operation_) {
+	mngr = value_;
+	mngr->ref();
 }
 EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 	string ssave = str;
@@ -53,7 +54,7 @@ EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 	if(str[0] == ID_WRAP_LEFT_CH && str[str.length() - 1] == ID_WRAP_RIGHT_CH) {
 		int id = s2i(str.substr(1, str.length() - 2));
 		mngr = CALCULATOR->getId(id);
-		if(mngr) {
+		if(mngr) {	
 			if(s == MINUS_CH) mngr->addInteger(-1, MULTIPLY);
 			mngr->ref();
 			CALCULATOR->delId(id);
@@ -61,39 +62,9 @@ EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 		}
 	}
 	mngr = new Manager();
-	if(operation_ == SUBTRACT || operation_ == ADD) value = 0;
-	else value = 1;
 	int itmp;
-	//	    if(str.substr(0, 3) == "NAN" || str.substr(0, 3) == "INF") {
-	//		CALCULATOR->error(true, "Math error", NULL);
-	//	    	return;
-	//	    }
 	if(str.empty() || ((itmp = str.find_first_not_of(" ")) == (int) string::npos)) {
-		//		  CALCULATOR->error(true, "Empty expression", NULL);
-		mngr->set(value);
-		return;
-	}
-	if(str.substr(0, 3) == SNAN) {
-		mngr->set(NAN);
-		//			CALCULATOR->error(true, "Math error", NULL);
-		str[0] = ZERO_CH;
-		str[1] = ZERO_CH;
-		str[2] = ZERO_CH;
-		return;
-	} else if(str.substr(0, 3) == SINF) {
-		if(s == MINUS_CH)
-			mngr->set(-INFINITY);
-		else
-			mngr->set(INFINITY);
-		str[0] = ZERO_CH;
-		str[1] = ZERO_CH;
-		str[2] = ZERO_CH;
-	} else {
-		if(s == MINUS_CH) {
-			str.insert(0, 1, MINUS_CH);
-		}
-		Fraction fr(str);
-		mngr->set(&fr);
+		CALCULATOR->error(true, "Empty expression", NULL);
 		return;
 	}
 	if((itmp = str.find_first_not_of(NUMBERS MINUS DOT, 0)) != (int) string::npos) {
@@ -101,17 +72,20 @@ EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 		str.erase(itmp, str.length() - itmp);
 
 		if(itmp == 0) {
-			value = 1;
 			CALCULATOR->error(true, _("\"%s\" is not a valid variable/function/unit."), ssave.c_str(), NULL);
-			mngr->set(value);
+			mngr->set(1, 1);
 			return;
 		} else {
-			CALCULATOR->error(true, _("Trailing characters in expression \"%s\" was ignored (unknown variable/function/unit)."), ssave.c_str(), NULL);
+			CALCULATOR->error(true, _("Trailing characters in expression \"%s\" was ignored."), ssave.c_str(), NULL);
 		}
 	}
-	//if(s == '-') str.insert(0, "-");
-	//if(s == '-') value = -value;
-	mngr->set(value);		
+	if(s == MINUS_CH) {
+		str.insert(0, 1, MINUS_CH);
+	}
+	Fraction fr(str);
+	mngr->set(&fr);
+	return;
+	
 }
 Manager *EqNumber::calculate() {
 	return mngr;
@@ -130,7 +104,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 	char buffer[100];
 	EqContainer *eq_c;
 	long double dtmp;
-	int i = 0, i2 = 0, i3 = 0, i4 = 0, i5 = 0;
+	int i = 0, i2 = 0, i3 = 0;
 	string str2, str3;
 	MathOperation s = ADD;
 goto_place1:
@@ -162,12 +136,11 @@ goto_place1:
 				str.insert(i2 + 1, 1, MULTIPLICATION_2_CH);
 			}
 			str2 = str.substr(i + 1, i2 - (i + 1));
-			eq_c = new EqContainer(str2, ADD);
-			Manager *mngr2 = eq_c->calculate();
+			EqContainer eq_c(str2, ADD);
+			Manager *mngr2 = eq_c.calculate();
 			str2 = ID_WRAP_LEFT_CH;
 			str2 += i2s(CALCULATOR->addId(mngr2));
 			str2 += ID_WRAP_RIGHT_CH;
-			delete eq_c;
 			str.replace(i, i2 - i + 1, str2);
 			i = str.find(LEFT_BRACKET_CH);
 			i2 = str.find(RIGHT_BRACKET_CH);
@@ -179,15 +152,53 @@ goto_place1:
 	}
 	i = 0;
 	i3 = 0;
-	i4 = 0;
-	i5 = 0;
-	if(i4 > 0) {
-		if(!str.empty())
-			add(str);
-		return;
-	} else if((i = str.find_first_of(PLUS MINUS, 1)) > 0 && i != (int) string::npos) {
+	if(CALCULATOR->inRPNMode()) {
+		while(true) {
+			i = str.find_first_of(OPERATORS SPACE, i3 + 1);
+			if(i == string::npos) {
+				if(items.size() > 1) {
+					CALCULATOR->error(true, _("RPN syntax error."), NULL);
+					while(items.size() > 1) {
+						delete items[0];
+						items.erase(items.begin());
+					}
+				}
+				return;
+			}
+			if(i3 != 0) {
+				str2 = str.substr(i3 + 1, i - i3 - 1);
+			} else {
+				str2 = str.substr(i3, i - i3);
+			}
+			add(str2, ADD);
+			if(str[i] != SPACE_CH) {
+				switch(str[i]) {
+					case PLUS_CH: {s = ADD; break;}
+					case MINUS_CH: {s = SUBTRACT; break;}
+					case MULTIPLICATION_CH: {s = MULTIPLY; break;}
+					case DIVISION_CH: {s = DIVIDE; break;}
+					case POWER_CH: {s = RAISE; break;}
+					case EXP_CH: {s = EXP10; break;}
+				}
+				if(items.size() < 2) {
+					CALCULATOR->error(true, _("RPN syntax error."), NULL);
+				} else {
+					Manager *mngr2 = new Manager(items[items.size() - 2]->calculate());
+					delete items[items.size() - 2];
+					items.erase(items.begin() + (items.size() - 2));
+					mngr2->add(items[items.size() - 1]->calculate(), s);
+					delete items[items.size() - 1];
+					items.erase(items.begin() + (items.size() - 1));				
+					items.push_back(new EqNumber(mngr2));
+					mngr2->unref();
+				}
+			}
+			i3 = i;
+		}
+	}
+	if((i = str.find_first_of(PLUS MINUS, 1)) != string::npos) {
 		bool b = false;
-		while(i > -1) {
+		while(i != string::npos) {
 			if(is_not_in(OPERATORS, str[i - 1])) {
 				if(str[i] == PLUS_CH) s = ADD;
 				else s = SUBTRACT;
@@ -206,8 +217,8 @@ goto_place1:
 			return;
 		}
 	}
-	if((i = str.find_first_of(MULTIPLICATION DIVISION, 1)) > 0 && i != (int) string::npos) {
-		while(i > -1) {
+	if((i = str.find_first_of(MULTIPLICATION DIVISION, 1)) != string::npos) {
+		while(i != string::npos) {
 			if(str[i] == MULTIPLICATION_CH) s = MULTIPLY;
 			else s = DIVIDE;			
 			str2 = str.substr(0, i);
@@ -216,8 +227,8 @@ goto_place1:
 			i = str.find_first_of(MULTIPLICATION DIVISION, 1);
 		}
 		add(str);
-	} else if((i = str.find(MULTIPLICATION_2_CH, 1)) > 0 && i != (int) string::npos) {
-		while(i > -1) {
+	} else if((i = str.find(MULTIPLICATION_2_CH, 1)) != string::npos) {
+		while(i != string::npos) {
 			s = MULTIPLY;
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
@@ -225,8 +236,8 @@ goto_place1:
 			i = str.find(MULTIPLICATION_2_CH, 1);
 		}
 		add(str);		
-	} else if((i = str.find(POWER_CH, 1)) > 0 && i != (int) string::npos) {
-		while(i > -1) {
+	} else if((i = str.find(POWER_CH, 1)) != string::npos) {
+		while(i != string::npos) {
 			s = RAISE;
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
@@ -234,8 +245,8 @@ goto_place1:
 			i = str.find(POWER_CH, 1);
 		}
 		add(str);
-	} else if((i = str.find(EXP_CH, 1)) > 0 && i != (int) string::npos) {
-		while(i > -1) {
+	} else if((i = str.find(EXP_CH, 1)) != string::npos) {
+		while(i != string::npos) {
 			s = EXP10;
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
@@ -263,10 +274,13 @@ void EqContainer::add(EqItem *e) {
 	items.push_back(e);
 }
 Manager *EqContainer::calculate() {
-	long double value = 0, vtmp = 0;
 	MathOperation s = ADD;
 	for(unsigned int i = 0; i < items.size(); i++) {
-		mngr->add(items[i]->calculate(), s);
+		if(i == 0) {
+			mngr->set(items[i]->calculate());
+		} else {
+			mngr->add(items[i]->calculate(), s);
+		}
 		s = items[i]->operation();
 	}
 	return mngr;

@@ -48,6 +48,9 @@ GtkWidget *tUnits;
 GtkListStore *tUnits_store;
 GtkTreeStore *tUnitCategories_store;
 
+GtkWidget *tFunctionArguments;
+GtkListStore *tFunctionArguments_store;
+
 GtkCellRenderer *renderer;
 GtkTreeViewColumn *column;
 GtkTreeSelection *selection;
@@ -305,6 +308,19 @@ create_main_window (void)
 	glade_xml_signal_autoconnect(glade_xml);
 	
 //	gtk_widget_modify_bg(resultview, GTK_STATE_NORMAL, &glade_xml_get_widget(glade_xml, "history")->style->base[GTK_WIDGET_STATE(glade_xml_get_widget(glade_xml, "history"))]);	
+	tFunctionArguments = glade_xml_get_widget (glade_xml, "function_edit_treeview_arguments");
+	tFunctionArguments_store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(tFunctionArguments), GTK_TREE_MODEL(tFunctionArguments_store));
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctionArguments));
+	gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
+	renderer = gtk_cell_renderer_text_new();
+	column = gtk_tree_view_column_new_with_attributes(_("Name"), renderer, "text", 0, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tFunctionArguments), column);
+	renderer = gtk_cell_renderer_text_new();
+	column = gtk_tree_view_column_new_with_attributes(_("Type"), renderer, "text", 1, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tFunctionArguments), column);	
+	g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tFunctionArguments_selection_changed), NULL);
+
 
 	gtk_widget_show (glade_xml_get_widget (glade_xml, "main_window"));
 	
@@ -346,7 +362,7 @@ create_functions_dialog (void)
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(tFunctionCategories_store), 0, GTK_SORT_ASCENDING);
 
 
-	update_functions_tree(glade_xml_get_widget (glade_xml, "functions_dialog"));
+	update_functions_tree();
 
 	return glade_xml_get_widget (glade_xml, "functions_dialog");
 }
@@ -389,7 +405,7 @@ create_variables_dialog (void)
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(tVariableCategories_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(tVariableCategories_store), 0, GTK_SORT_ASCENDING);
 
-	update_variables_tree(glade_xml_get_widget (glade_xml, "variables_dialog"));
+	update_variables_tree();
 
 	return glade_xml_get_widget (glade_xml, "variables_dialog");
 }
@@ -442,7 +458,7 @@ create_units_dialog (void)
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(tUnitCategories_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(tUnitCategories_store), 0, GTK_SORT_ASCENDING);
 
-	update_units_tree(glade_xml_get_widget (glade_xml, "units_dialog"));
+	update_units_tree();
 	
 	gtk_entry_set_text (GTK_ENTRY (glade_xml_get_widget (glade_xml, "units_entry_from_val")), "1");	
 	gtk_entry_set_text (GTK_ENTRY (glade_xml_get_widget (glade_xml, "units_entry_to_val")), "1");		
@@ -510,7 +526,7 @@ create_function_edit_dialog (void)
 	gtk_combo_set_popdown_strings(GTK_COMBO(glade_xml_get_widget (glade_xml, "function_edit_combo_category")), items);
 	g_hash_table_destroy(hash);	
 	g_list_free(items);
-
+	
 	return glade_xml_get_widget (glade_xml, "function_edit_dialog");
 }
 GtkWidget*

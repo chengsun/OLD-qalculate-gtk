@@ -28,7 +28,7 @@ class Calculator {
 	int ianglemode;
 	int i_precision;
 	char vbuffer[200];
-	bool b_functions, b_variables, b_units, b_unknown, b_calcvars, b_always_exact, tmp_always_exact;
+	bool b_functions, b_variables, b_units, b_unknown, b_calcvars, b_always_exact, b_rpn;
 	vector<void*> ufv;
 	vector<char> ufv_t;	
 	hash_map<int, Manager*> ids;
@@ -54,8 +54,6 @@ class Calculator {
 
 	bool alwaysExact() const;
 	void setAlwaysExact(bool always_exact);
-	void beginTemporaryInexact();
-	void endTemporaryInexact();
 
 	void beginTemporaryStopErrors();
 	void endTemporaryStopErrors();	
@@ -94,6 +92,8 @@ class Calculator {
 	void setDonotCalculateVariables(bool enable);			
 	bool unitsEnabled();
 	void setUnitsEnabled(bool enable);	
+	void setRPNMode(bool enable);
+	bool inRPNMode() const;
 	int angleMode();
 	void angleMode(int mode_);
 	void resetVariables();
@@ -120,6 +120,7 @@ class Calculator {
 	Unit* addUnit(Unit *u, bool force = true);
 	void delUFV(void *object);		
 	ExpressionItem *getActiveExpressionItem(string name, ExpressionItem *item = NULL);
+	ExpressionItem *getInactiveExpressionItem(string name, ExpressionItem *item = NULL);	
 	ExpressionItem *getActiveExpressionItem(ExpressionItem *item);
 	ExpressionItem *getExpressionItem(string name, ExpressionItem *item = NULL);
 	Unit* getUnit(string name_);

@@ -975,7 +975,8 @@ bool Fraction::floatify(int precision, int max_decimals, bool *infinite_series) 
 	}
 	Integer exp;
 	if((!exact && max_decimals) || !isPrecise()) {
-		CALCULATOR->beginTemporaryInexact();
+		bool b_always_exact = CALCULATOR->alwaysExact();
+		CALCULATOR->setAlwaysExact(false);
 		exp_test.setNegative(false);
 		exp_test.log10();
 		exp_test.floor();
@@ -1002,7 +1003,7 @@ bool Fraction::floatify(int precision, int max_decimals, bool *infinite_series) 
 			precision -= exp.getInt();
 			exp.clear();
 		}
-		CALCULATOR->endTemporaryInexact();
+		CALCULATOR->setAlwaysExact(b_always_exact);
 	}
 	if(max_decimals >= 0 && max_decimals < precision) {
 		precision = max_decimals;
@@ -1130,12 +1131,13 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 		if((!(displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY))) {
 			Fraction exp_pre(this);
 			exp_pre.setNegative(false);
-			CALCULATOR->beginTemporaryInexact();
+			bool b_always_exact = CALCULATOR->alwaysExact();
+			CALCULATOR->setAlwaysExact(false);	
 			if(exp_pre.log10()) {
 				exp_pre.floor();
 				exp.set(exp_pre.numerator());
 			}
-			CALCULATOR->endTemporaryInexact();
+			CALCULATOR->setAlwaysExact(b_always_exact);	
 		} else {
 			if(num.mod10()) {
 				Integer num_test(&num);				

@@ -309,8 +309,21 @@ string& gsub(const char *pattern, const char *sub, string &str) {
 
 string& remove_blanks(string &str) {
 	int i = str.find_first_of(SPACE_S, 0);
-	while(i > -1) {
+	while(i != string::npos) {
 		str.erase(i, 1);
+		i = str.find_first_of(SPACE_S, i);
+	}
+	return str;
+}
+
+string& remove_duplicate_blanks(string &str) {
+	int i = str.find_first_of(SPACE_S, 0);
+	while(i != string::npos) {
+		if(i == 0 && is_in(str[i - 1], SPACE_S)) {
+			str.erase(i, 1);
+		} else {
+			i++;
+		}
 		i = str.find_first_of(SPACE_S, i);
 	}
 	return str;

@@ -1,7 +1,19 @@
+2003-09-20  Niklas Knutsson  <nq@altern.org>
+
+	* RPN Mode
+	* Clean up EqItem.cc
+	* Add variables for constants functions
+	* Load definitions in exact mode
+	* Reset (and restore) mode when loading definitions
+	* Lots of tooltips (too many perhaps?)
+	* Some definitions fixes
+	* Function edit dialog: turn argument entry into a list view and add argument type
+	* Do not locally save global deactivations
+
 2003-09-18  Niklas Knutsson  <nq@altern.org>
 
-	* Big restructuring to fix editing of global definitions, including deactivation 
-	  of definitions and a new virtual ExpressionItem class 
+	* Big restructuring to fix editing of global definitions, including deactivation
+	  of definitions and a new virtual ExpressionItem class
 	* More error messages in matrix functions
 	* Check if matrix operations were successful
 	* Correct bad setPrecise(false) call in matrix
@@ -21,9 +33,9 @@
 	* Fix insert function dialog
 	* Add scrollbars to table in matrix edit dialog
 	* CSV file import
-	* Lots of statistical functions: range, harmonic mean, geometric mean, trimmed mean, 
-	  winsorized mean, quadratic mean, quartile, decile, percentile, interquartile range, 
-	  variance, standard error, mean deviation, pearson, spearman's rho, 
+	* Lots of statistical functions: range, harmonic mean, geometric mean, trimmed mean,
+	  winsorized mean, quadratic mean, quartile, decile, percentile, interquartile range,
+	  variance, standard error, mean deviation, pearson, spearman's rho,
 	  covariance, correlation, pooled variance, paired t-test, unpaired t-test...
 	* Add limits to custom sum function and allow references to other than current element (x_i-1)
 	* Limits

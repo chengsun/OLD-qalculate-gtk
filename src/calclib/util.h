@@ -85,6 +85,7 @@ long double gra2deg(long double &value);
 
 string& wrap_p(string &str);
 string& remove_blanks(string &str);
+string& remove_duplicate_blanks(string &str);
 string& remove_blank_ends(string &str);
 string& remove_brackets(string &str);
 

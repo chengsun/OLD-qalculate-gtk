@@ -36,15 +36,18 @@ void generate_units_tree_struct();
 
 gboolean on_display_errors_timeout(gpointer data);
 
-void update_functions_tree(GtkWidget *wfun);
-void update_variables_tree(GtkWidget *wvar);
-void update_units_tree(GtkWidget *wvar);
+void update_functions_tree();
+void update_variables_tree();
+void update_units_tree();
 void on_tFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tFunctionCategories_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tVariables_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tVariableCategories_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
+
+void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
+void update_function_arguments_list(Function *f);
 
 void on_menu_e_deactivate(GtkMenuShell *menushell, gpointer user_data);
 void on_menu_r_deactivate(GtkMenuShell *menushell, gpointer user_data);
@@ -163,6 +166,7 @@ void on_menu_item_multiplication_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_division_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_power_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_exponent_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_rpn_mode_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_save_defs_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_save_mode_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_edit_prefs_activate(GtkMenuItem *w, gpointer user_data);
@@ -249,6 +253,10 @@ void on_type_label_date_clicked(GtkButton *w, gpointer user_data);
 void on_functions_button_deactivate_clicked(GtkButton *w, gpointer user_data);
 void on_variables_button_deactivate_clicked(GtkButton *w, gpointer user_data);
 void on_units_button_deactivate_clicked(GtkButton *w, gpointer user_data);
+
+void on_function_edit_button_add_argument_clicked(GtkButton *w, gpointer user_data);
+void on_function_edit_button_remove_argument_clicked(GtkButton *w, gpointer user_data);
+void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user_data);
 
 }
 

@@ -9,7 +9,6 @@
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
-  <property name="default_width">400</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
   <signal name="delete_event" handler="on_gcalc_exit" last_modification_time="Sun, 10 Aug 2003 21:34:28 GMT"/>
@@ -152,6 +151,22 @@
 		  </child>
 
 		  <child>
+		    <widget class="GtkCheckMenuItem" id="menu_item_rpn_mode">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">RPN Mode</property>
+		      <property name="use_underline">True</property>
+		      <property name="active">False</property>
+		      <signal name="activate" handler="on_menu_item_rpn_mode_activate" last_modification_time="Sat, 20 Sep 2003 15:21:55 GMT"/>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="separator6">
+		      <property name="visible">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
 		    <widget class="GtkImageMenuItem" id="menu_item_save_defs">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">_Save definitions</property>
@@ -159,7 +174,7 @@
 		      <signal name="activate" handler="on_menu_item_save_defs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image29">
+			<widget class="GtkImage" id="image47">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -180,7 +195,7 @@
 		      <signal name="activate" handler="on_menu_item_save_mode_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image30">
+			<widget class="GtkImage" id="image48">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -201,7 +216,7 @@
 		      <signal name="activate" handler="on_menu_item_edit_prefs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image31">
+			<widget class="GtkImage" id="image49">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -228,7 +243,7 @@
 		      <signal name="activate" handler="on_menu_item_about_activate" last_modification_time="Thu, 14 Aug 2003 22:31:50 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image32">
+			<widget class="GtkImage" id="image50">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-dialog-info</property>
 			  <property name="icon_size">1</property>
@@ -249,7 +264,7 @@
 		      <signal name="activate" handler="on_menu_item_quit_activate" last_modification_time="Fri, 08 Aug 2003 10:07:30 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image33">
+			<widget class="GtkImage" id="image51">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -498,7 +513,7 @@
 		      <signal name="activate" handler="on_menu_item_save_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image34">
+			<widget class="GtkImage" id="image52">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -580,6 +595,7 @@
 	  <child>
 	    <widget class="GtkToggleButton" id="togglebutton_expression">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Open expression menu</property>
 	      <property name="can_focus">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="active">False</property>
@@ -645,6 +661,7 @@
 	      <child>
 		<widget class="GtkToggleButton" id="togglebutton_result">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Open result display menu</property>
 		  <property name="can_focus">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
 		  <property name="active">False</property>
@@ -808,6 +825,7 @@
 			  <child>
 			    <widget class="GtkButton" id="button_convert">
 			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Convert result to a custom unit expression</property>
 			      <property name="can_default">True</property>
 			      <property name="can_focus">True</property>
 			      <property name="label" translatable="yes">Convert</property>
@@ -834,6 +852,7 @@
 			  <child>
 			    <widget class="GtkButton" id="button_functions">
 			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Open function manager</property>
 			      <property name="can_default">True</property>
 			      <property name="can_focus">True</property>
 			      <property name="label" translatable="yes">Functions</property>
@@ -846,6 +865,7 @@
 			  <child>
 			    <widget class="GtkButton" id="button_variables">
 			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Open variable manager</property>
 			      <property name="can_default">True</property>
 			      <property name="can_focus">True</property>
 			      <property name="label" translatable="yes">Variables</property>
@@ -858,6 +878,7 @@
 			  <child>
 			    <widget class="GtkButton" id="button_units">
 			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Open unit manager</property>
 			      <property name="can_default">True</property>
 			      <property name="can_focus">True</property>
 			      <property name="label" translatable="yes">Units</property>
@@ -906,6 +927,7 @@
 			      <child>
 				<widget class="GtkButton" id="button_sqrt">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Square root</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">SQRT</property>
 				  <property name="use_underline">True</property>
@@ -923,6 +945,7 @@
 			      <child>
 				<widget class="GtkButton" id="button_log">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Base-10 logarithm</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">log</property>
 				  <property name="use_underline">True</property>
@@ -940,6 +963,7 @@
 			      <child>
 				<widget class="GtkButton" id="button_ln">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Natural logarithm</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">ln</property>
 				  <property name="use_underline">True</property>
@@ -957,6 +981,7 @@
 			      <child>
 				<widget class="GtkButton" id="button_sine">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Sine</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">sin</property>
 				  <property name="use_underline">True</property>
@@ -974,6 +999,7 @@
 			      <child>
 				<widget class="GtkButton" id="button_cosine">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Cosine</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">cos</property>
 				  <property name="use_underline">True</property>
@@ -991,6 +1017,7 @@
 			      <child>
 				<widget class="GtkButton" id="button_tan">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Tangent</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">tan</property>
 				  <property name="use_underline">True</property>
@@ -1008,6 +1035,7 @@
 			      <child>
 				<widget class="GtkButton" id="button_store">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Store result</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">STO</property>
 				  <property name="use_underline">True</property>
@@ -1025,6 +1053,7 @@
 			      <child>
 				<widget class="GtkButton" id="button_brace_open">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Left parenthesis</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">(</property>
 				  <property name="use_underline">True</property>
@@ -1042,6 +1071,7 @@
 			      <child>
 				<widget class="GtkButton" id="button_brace_close">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Right parenthesis</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">)</property>
 				  <property name="use_underline">True</property>
@@ -1059,6 +1089,7 @@
 			      <child>
 				<widget class="GtkToggleButton" id="button_hyp">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Toggle hyperbolic functions</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">hyp</property>
 				  <property name="use_underline">True</property>
@@ -1078,6 +1109,7 @@
 			      <child>
 				<widget class="GtkButton" id="button_xy">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Raise</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">x&lt;sup&gt;y&lt;/sup&gt;</property>
 				  <property name="use_underline">True</property>
@@ -1097,6 +1129,7 @@
 			      <child>
 				<widget class="GtkToggleButton" id="button_fraction">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Toggle fractional display</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">a &lt;sup&gt;b&lt;/sup&gt;/&lt;small&gt;c&lt;/small&gt;</property>
 				  <property name="use_underline">True</property>
@@ -1132,6 +1165,7 @@
 			      <child>
 				<widget class="GtkRadioButton" id="radiobutton_degrees">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Degrees</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">Deg</property>
 				  <property name="use_underline">True</property>
@@ -1151,6 +1185,7 @@
 			      <child>
 				<widget class="GtkRadioButton" id="radiobutton_radians">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Radiants</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">Rad</property>
 				  <property name="use_underline">True</property>
@@ -1171,6 +1206,7 @@
 			      <child>
 				<widget class="GtkRadioButton" id="radiobutton_gradians">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Gradiants</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">Gra</property>
 				  <property name="use_underline">True</property>
@@ -1621,6 +1657,7 @@
 	      <child>
 		<widget class="GtkButton" id="button_less_more">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Display/hide history and buttons</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="label" translatable="yes">more &gt;&gt;</property>
@@ -1646,6 +1683,7 @@
 	      <child>
 		<widget class="GtkButton" id="button_execute">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Calculate the entered expression</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
@@ -1712,6 +1750,7 @@
 	      <child>
 		<widget class="GtkButton" id="button_close">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Close Qalculate!</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="label">gtk-close</property>
@@ -1766,6 +1805,7 @@
 	  <child>
 	    <widget class="GtkButton" id="functions_button_close">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Close this window</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-close</property>
@@ -1915,6 +1955,7 @@
 		  <child>
 		    <widget class="GtkButton" id="functions_button_new">
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Create a new function</property>
 		      <property name="can_default">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="label">gtk-new</property>
@@ -1927,6 +1968,7 @@
 		  <child>
 		    <widget class="GtkButton" id="functions_button_edit">
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Edit the selected function</property>
 		      <property name="can_default">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
@@ -1993,6 +2035,7 @@
 		  <child>
 		    <widget class="GtkButton" id="functions_button_insert">
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Insert (or execute) the selected function into the expression entry</property>
 		      <property name="can_default">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
@@ -2059,6 +2102,7 @@
 		  <child>
 		    <widget class="GtkButton" id="functions_button_delete">
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Delete the selected function</property>
 		      <property name="can_default">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="label">gtk-delete</property>
@@ -2071,6 +2115,7 @@
 		  <child>
 		    <widget class="GtkButton" id="functions_button_deactivate">
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Activate/deactivate the selected function</property>
 		      <property name="can_default">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
@@ -2261,6 +2306,7 @@
 	  <child>
 	    <widget class="GtkButton" id="variables_button_close">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Close this window</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-close</property>
@@ -2404,6 +2450,7 @@
 	      <child>
 		<widget class="GtkButton" id="variables_button_new">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Create a new variable</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="label">gtk-new</property>
@@ -2416,6 +2463,7 @@
 	      <child>
 		<widget class="GtkButton" id="variables_button_edit">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Edit the selected variable</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
@@ -2482,6 +2530,7 @@
 	      <child>
 		<widget class="GtkButton" id="variables_button_insert">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Insert the selected variable into the expression entry</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
@@ -2548,6 +2597,7 @@
 	      <child>
 		<widget class="GtkButton" id="variables_button_delete">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Delete the selected variable</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="label">gtk-delete</property>
@@ -2560,6 +2610,7 @@
 	      <child>
 		<widget class="GtkButton" id="variables_button_deactivate">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Activate/deactivate the selected variable</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
@@ -2671,6 +2722,7 @@
 	  <child>
 	    <widget class="GtkButton" id="units_button_close">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Close this window</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-close</property>
@@ -2814,6 +2866,7 @@
 	      <child>
 		<widget class="GtkButton" id="units_button_new">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Create a new unit</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="label">gtk-new</property>
@@ -2826,6 +2879,7 @@
 	      <child>
 		<widget class="GtkButton" id="units_button_edit">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Edit the selected unit</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
@@ -2892,6 +2946,7 @@
 	      <child>
 		<widget class="GtkButton" id="units_button_insert">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Insert the selected unit into the expression entry</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
@@ -2958,6 +3013,7 @@
 	      <child>
 		<widget class="GtkButton" id="units_button_convert_to">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Convert the result to the selected unit</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
@@ -3024,6 +3080,7 @@
 	      <child>
 		<widget class="GtkButton" id="units_button_delete">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Delete the selected unit</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="label">gtk-delete</property>
@@ -3036,6 +3093,7 @@
 	      <child>
 		<widget class="GtkButton" id="units_button_deactivate">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Activate/deactivate the selected unit</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
@@ -3153,6 +3211,7 @@
 		  <child>
 		    <widget class="GtkButton" id="units_button_convert">
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Convert between units</property>
 		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		      <signal name="clicked" handler="on_units_button_convert_clicked" last_modification_time="Sun, 10 Aug 2003 20:37:24 GMT"/>
@@ -3188,6 +3247,7 @@
 		      <child>
 			<widget class="GtkEntry" id="units_entry_from_val">
 			  <property name="visible">True</property>
+			  <property name="tooltip" translatable="yes">Value to convert from</property>
 			  <property name="can_focus">True</property>
 			  <property name="editable">True</property>
 			  <property name="visibility">True</property>
@@ -3246,6 +3306,7 @@
 		      <child>
 			<widget class="GtkEntry" id="units_entry_to_val">
 			  <property name="visible">True</property>
+			  <property name="tooltip" translatable="yes">Converted value</property>
 			  <property name="can_focus">True</property>
 			  <property name="editable">True</property>
 			  <property name="visibility">True</property>
@@ -3268,6 +3329,7 @@
 		      <child>
 			<widget class="GtkOptionMenu" id="units_optionmenu_to_unit">
 			  <property name="visible">True</property>
+			  <property name="tooltip" translatable="yes">Unit to convert to</property>
 			  <property name="can_focus">True</property>
 			  <property name="history">-1</property>
 			</widget>
@@ -3352,6 +3414,7 @@
 	  <child>
 	    <widget class="GtkButton" id="preferences_button_close">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Close this window</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-close</property>
@@ -3379,6 +3442,7 @@
 	  <child>
 	    <widget class="GtkCheckButton" id="preferences_checkbutton_load_defs">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">If global definitions shall be loaded (you probably want this)</property>
 	      <property name="can_focus">True</property>
 	      <property name="label" translatable="yes">Load global definitions on start</property>
 	      <property name="use_underline">True</property>
@@ -3398,6 +3462,7 @@
 	  <child>
 	    <widget class="GtkCheckButton" id="preferences_checkbutton_save_mode">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">If the mode of the calculator shall be restored</property>
 	      <property name="can_focus">True</property>
 	      <property name="label" translatable="yes">Save mode on exit</property>
 	      <property name="use_underline">True</property>
@@ -3417,6 +3482,7 @@
 	  <child>
 	    <widget class="GtkCheckButton" id="preferences_checkbutton_save_defs">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">If changes to functions, units and variables shall be saved automatically</property>
 	      <property name="can_focus">True</property>
 	      <property name="label" translatable="yes">Save definitions on exit</property>
 	      <property name="use_underline">True</property>
@@ -3436,6 +3502,7 @@
 	  <child>
 	    <widget class="GtkCheckButton" id="preferences_checkbutton_short_units">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">If you want the abbreviation of unit names to be displayed in the result</property>
 	      <property name="can_focus">True</property>
 	      <property name="label" translatable="yes">Short unit format</property>
 	      <property name="use_underline">True</property>
@@ -3455,6 +3522,7 @@
 	  <child>
 	    <widget class="GtkCheckButton" id="preferences_checkbutton_unicode_signs">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Disable this if you have problems with some fancy characters</property>
 	      <property name="can_focus">True</property>
 	      <property name="label" translatable="yes">Enable unicode signs</property>
 	      <property name="use_underline">True</property>
@@ -3474,6 +3542,7 @@
 	  <child>
 	    <widget class="GtkCheckButton" id="preferences_checkbutton_custom_font">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">If you want to use a font other than the default in the result display</property>
 	      <property name="can_focus">True</property>
 	      <property name="label" translatable="yes">Custom result font</property>
 	      <property name="use_underline">True</property>
@@ -3494,6 +3563,7 @@
 	    <widget class="GtkButton" id="preferences_button_font">
 	      <property name="visible">True</property>
 	      <property name="sensitive">False</property>
+	      <property name="tooltip" translatable="yes">Select custom font</property>
 	      <property name="can_focus">True</property>
 	      <property name="label" translatable="yes">Font</property>
 	      <property name="use_underline">True</property>
@@ -3541,6 +3611,7 @@
 	  <child>
 	    <widget class="GtkButton" id="unit_edit_button_cancel">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Do not create/modify this unit</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-cancel</property>
@@ -3553,6 +3624,7 @@
 	  <child>
 	    <widget class="GtkButton" id="unit_edit_button_ok">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Accept the creation/modification of this unit</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-ok</property>
@@ -3667,6 +3739,7 @@
 			  <child>
 			    <widget class="GtkEntry" id="unit_edit_entry_singular">
 			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Singular form of this unit's name</property>
 			      <property name="can_focus">True</property>
 			      <property name="editable">True</property>
 			      <property name="visibility">True</property>
@@ -3721,6 +3794,7 @@
 			  <child>
 			    <widget class="GtkEntry" id="unit_edit_entry_plural">
 			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Plural form of this unit's name</property>
 			      <property name="can_focus">True</property>
 			      <property name="editable">True</property>
 			      <property name="visibility">True</property>
@@ -3775,6 +3849,7 @@
 			  <child>
 			    <widget class="GtkEntry" id="unit_edit_entry_short">
 			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Abbreviation of this unit's name</property>
 			      <property name="can_focus">True</property>
 			      <property name="editable">True</property>
 			      <property name="visibility">True</property>
@@ -3829,6 +3904,7 @@
 			  <child>
 			    <widget class="GtkEntry" id="unit_edit_entry_desc">
 			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Title displayed in menus and in unit manager</property>
 			      <property name="can_focus">True</property>
 			      <property name="editable">True</property>
 			      <property name="visibility">True</property>
@@ -3882,6 +3958,7 @@
 			  <child>
 			    <widget class="GtkEntry" id="unit_edit_entry_internal">
 			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Name used to reference composite units</property>
 			      <property name="can_focus">True</property>
 			      <property name="editable">True</property>
 			      <property name="visibility">True</property>
@@ -4017,6 +4094,7 @@
 			  <child>
 			    <widget class="GtkOptionMenu" id="unit_edit_optionmenu_class">
 			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">The class that this unit belongs to. Alias units is defined in relation to another unit, composite units is a composition of a number of other units Base units is not defined in relation to other units.</property>
 			      <property name="can_focus">True</property>
 			      <property name="history">0</property>
 			      <signal name="changed" handler="on_unit_edit_optionmenu_class_changed" last_modification_time="Mon, 11 Aug 2003 08:11:29 GMT"/>
@@ -4103,6 +4181,7 @@
 			      <child internal-child="entry">
 				<widget class="GtkEntry" id="unit_edit_entry_category">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">The category this unit belongs to</property>
 				  <property name="can_focus">True</property>
 				  <property name="editable">True</property>
 				  <property name="visibility">True</property>
@@ -4246,6 +4325,7 @@
 			  <child>
 			    <widget class="GtkEntry" id="unit_edit_entry_base">
 			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Unit (for alias unit) or units (for composite unit) that this unit as defined in relation to</property>
 			      <property name="can_focus">True</property>
 			      <property name="editable">True</property>
 			      <property name="visibility">True</property>
@@ -4299,6 +4379,7 @@
 			  <child>
 			    <widget class="GtkSpinButton" id="unit_edit_spinbutton_exp">
 			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Exponent of the base unit</property>
 			      <property name="can_focus">True</property>
 			      <property name="climb_rate">1</property>
 			      <property name="digits">0</property>
@@ -4358,6 +4439,7 @@
 			      <child>
 				<widget class="GtkEntry" id="unit_edit_entry_relation">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Relation to the base unit (usually just a number)</property>
 				  <property name="can_focus">True</property>
 				  <property name="editable">True</property>
 				  <property name="visibility">True</property>
@@ -4392,6 +4474,7 @@
 			      <child>
 				<widget class="GtkCheckButton" id="unit_edit_checkbutton_exact">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">If the relation is precise</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">relation is exact</property>
 				  <property name="use_underline">True</property>
@@ -4452,6 +4535,7 @@
 			      <child>
 				<widget class="GtkEntry" id="unit_edit_entry_reversed">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">You probably do not need to define this</property>
 				  <property name="can_focus">True</property>
 				  <property name="editable">True</property>
 				  <property name="visibility">True</property>
@@ -4472,27 +4556,6 @@
 			      <property name="padding">0</property>
 			      <property name="expand">True</property>
 			      <property name="fill">True</property>
-			    </packing>
-			  </child>
-
-			  <child>
-			    <widget class="GtkLabel" id="unit_edit_label_info2">
-			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">&lt;span size='small' style='italic'&gt;Not needed for fixed relations&lt;/span&gt;</property>
-			      <property name="use_underline">False</property>
-			      <property name="use_markup">True</property>
-			      <property name="justify">GTK_JUSTIFY_LEFT</property>
-			      <property name="wrap">True</property>
-			      <property name="selectable">False</property>
-			      <property name="xalign">1</property>
-			      <property name="yalign">0.5</property>
-			      <property name="xpad">12</property>
-			      <property name="ypad">0</property>
-			    </widget>
-			    <packing>
-			      <property name="padding">0</property>
-			      <property name="expand">False</property>
-			      <property name="fill">False</property>
 			    </packing>
 			  </child>
 			</widget>
@@ -4558,6 +4621,7 @@
 	  <child>
 	    <widget class="GtkButton" id="button1">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Do not create/modify this function</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-cancel</property>
@@ -4570,6 +4634,7 @@
 	  <child>
 	    <widget class="GtkButton" id="function_edit_button_ok">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Accept the creation/modification of this function</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-ok</property>
@@ -4642,6 +4707,7 @@
 			  <child>
 			    <widget class="GtkEntry" id="function_edit_entry_name">
 			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Name used to invoke this function in expressions</property>
 			      <property name="can_focus">True</property>
 			      <property name="editable">True</property>
 			      <property name="visibility">True</property>
@@ -4741,6 +4807,7 @@
 			      <child>
 				<widget class="GtkEntry" id="function_edit_entry_expression">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Formula of this function. Replace arguments with \x, \y, \z, \a, \b... Capitals is used for optional arguments and the default value can be put in brackets (ex. \X{0}). \v is used to get a vector of undefined length from additional arguments put at the end.</property>
 				  <property name="can_focus">True</property>
 				  <property name="editable">True</property>
 				  <property name="visibility">True</property>
@@ -4763,27 +4830,6 @@
 			      <property name="fill">True</property>
 			    </packing>
 			  </child>
-
-			  <child>
-			    <widget class="GtkLabel" id="label46">
-			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">&lt;span size='small' style='italic'&gt;insert '\x' in the place of the 1st argument, '\y' 2nd, '\z' 3rd, '\a' 4th, ...&lt;/span&gt;</property>
-			      <property name="use_underline">False</property>
-			      <property name="use_markup">True</property>
-			      <property name="justify">GTK_JUSTIFY_LEFT</property>
-			      <property name="wrap">True</property>
-			      <property name="selectable">False</property>
-			      <property name="xalign">1</property>
-			      <property name="yalign">0.5</property>
-			      <property name="xpad">12</property>
-			      <property name="ypad">0</property>
-			    </widget>
-			    <packing>
-			      <property name="padding">0</property>
-			      <property name="expand">False</property>
-			      <property name="fill">False</property>
-			    </packing>
-			  </child>
 			</widget>
 			<packing>
 			  <property name="padding">0</property>
@@ -4803,93 +4849,6 @@
 		  <property name="padding">0</property>
 		  <property name="expand">True</property>
 		  <property name="fill">True</property>
-		</packing>
-	      </child>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">True</property>
-	      <property name="fill">True</property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkVBox" id="vbox36">
-	      <property name="visible">True</property>
-	      <property name="homogeneous">False</property>
-	      <property name="spacing">0</property>
-
-	      <child>
-		<widget class="GtkHBox" id="hbox46">
-		  <property name="visible">True</property>
-		  <property name="homogeneous">True</property>
-		  <property name="spacing">6</property>
-
-		  <child>
-		    <widget class="GtkLabel" id="label47">
-		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Argument names</property>
-		      <property name="use_underline">False</property>
-		      <property name="use_markup">False</property>
-		      <property name="justify">GTK_JUSTIFY_LEFT</property>
-		      <property name="wrap">False</property>
-		      <property name="selectable">False</property>
-		      <property name="xalign">0</property>
-		      <property name="yalign">0.5</property>
-		      <property name="xpad">0</property>
-		      <property name="ypad">0</property>
-		    </widget>
-		    <packing>
-		      <property name="padding">0</property>
-		      <property name="expand">True</property>
-		      <property name="fill">True</property>
-		    </packing>
-		  </child>
-
-		  <child>
-		    <widget class="GtkEntry" id="function_edit_entry_arguments">
-		      <property name="visible">True</property>
-		      <property name="can_focus">True</property>
-		      <property name="editable">True</property>
-		      <property name="visibility">True</property>
-		      <property name="max_length">0</property>
-		      <property name="text" translatable="yes"></property>
-		      <property name="has_frame">True</property>
-		      <property name="invisible_char" translatable="yes">*</property>
-		      <property name="activates_default">False</property>
-		    </widget>
-		    <packing>
-		      <property name="padding">0</property>
-		      <property name="expand">True</property>
-		      <property name="fill">True</property>
-		    </packing>
-		  </child>
-		</widget>
-		<packing>
-		  <property name="padding">0</property>
-		  <property name="expand">True</property>
-		  <property name="fill">True</property>
-		</packing>
-	      </child>
-
-	      <child>
-		<widget class="GtkLabel" id="label48">
-		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">&lt;span size='small' style='italic'&gt;comma separated list&lt;/span&gt;</property>
-		  <property name="use_underline">False</property>
-		  <property name="use_markup">True</property>
-		  <property name="justify">GTK_JUSTIFY_LEFT</property>
-		  <property name="wrap">True</property>
-		  <property name="selectable">False</property>
-		  <property name="xalign">1</property>
-		  <property name="yalign">0.5</property>
-		  <property name="xpad">12</property>
-		  <property name="ypad">0</property>
-		</widget>
-		<packing>
-		  <property name="padding">0</property>
-		  <property name="expand">False</property>
-		  <property name="fill">False</property>
 		</packing>
 	      </child>
 	    </widget>
@@ -4939,6 +4898,7 @@
 		  <child internal-child="entry">
 		    <widget class="GtkEntry" id="function_edit_entry_category">
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">The category this function belongs to</property>
 		      <property name="can_focus">True</property>
 		      <property name="editable">True</property>
 		      <property name="visibility">True</property>
@@ -5001,6 +4961,7 @@
 	      <child>
 		<widget class="GtkEntry" id="function_edit_entry_desc">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Title displayed in menus and in function manager</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">True</property>
 		  <property name="visibility">True</property>
@@ -5025,9 +4986,9 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkHBox" id="hbox47">
+	    <widget class="GtkVBox" id="vbox54">
 	      <property name="visible">True</property>
-	      <property name="homogeneous">True</property>
+	      <property name="homogeneous">False</property>
 	      <property name="spacing">6</property>
 
 	      <child>
@@ -5046,13 +5007,14 @@
 		</widget>
 		<packing>
 		  <property name="padding">0</property>
-		  <property name="expand">True</property>
-		  <property name="fill">True</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
 		</packing>
 	      </child>
 
 	      <child>
 		<widget class="GtkScrolledWindow" id="scrolledwindow5">
+		  <property name="height_request">125</property>
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
@@ -5063,6 +5025,7 @@
 		  <child>
 		    <widget class="GtkTextView" id="function_edit_textview_description">
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Description of this function</property>
 		      <property name="can_focus">True</property>
 		      <property name="editable">True</property>
 		      <property name="justification">GTK_JUSTIFY_LEFT</property>
@@ -5091,11 +5054,351 @@
 	      <property name="fill">True</property>
 	    </packing>
 	  </child>
+
+	  <child>
+	    <widget class="GtkVBox" id="vbox36">
+	      <property name="visible">True</property>
+	      <property name="homogeneous">False</property>
+	      <property name="spacing">6</property>
+
+	      <child>
+		<widget class="GtkLabel" id="label78">
+		  <property name="visible">True</property>
+		  <property name="label" translatable="yes">Arguments:</property>
+		  <property name="use_underline">False</property>
+		  <property name="use_markup">False</property>
+		  <property name="justify">GTK_JUSTIFY_LEFT</property>
+		  <property name="wrap">False</property>
+		  <property name="selectable">False</property>
+		  <property name="xalign">0</property>
+		  <property name="yalign">0.5</property>
+		  <property name="xpad">0</property>
+		  <property name="ypad">0</property>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkScrolledWindow" id="function_edit_scrolled_arguments">
+		  <property name="height_request">125</property>
+		  <property name="visible">True</property>
+		  <property name="can_focus">True</property>
+		  <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+		  <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+		  <property name="shadow_type">GTK_SHADOW_IN</property>
+		  <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
+
+		  <child>
+		    <widget class="GtkTreeView" id="function_edit_treeview_arguments">
+		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Descriptions of this function's arguments</property>
+		      <property name="can_focus">True</property>
+		      <property name="headers_visible">True</property>
+		      <property name="rules_hint">False</property>
+		      <property name="reorderable">False</property>
+		      <property name="enable_search">True</property>
+		    </widget>
+		  </child>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">True</property>
+		  <property name="fill">True</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkHBox" id="hbox90">
+		  <property name="visible">True</property>
+		  <property name="homogeneous">False</property>
+		  <property name="spacing">6</property>
+
+		  <child>
+		    <widget class="GtkEntry" id="function_edit_entry_argument_name">
+		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Argument name</property>
+		      <property name="can_focus">True</property>
+		      <property name="editable">True</property>
+		      <property name="visibility">True</property>
+		      <property name="max_length">0</property>
+		      <property name="text" translatable="yes"></property>
+		      <property name="has_frame">True</property>
+		      <property name="invisible_char" translatable="yes">*</property>
+		      <property name="activates_default">False</property>
+		    </widget>
+		    <packing>
+		      <property name="padding">0</property>
+		      <property name="expand">True</property>
+		      <property name="fill">True</property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkOptionMenu" id="function_edit_optionmenu_argument_type">
+		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Argument type</property>
+		      <property name="can_focus">True</property>
+		      <property name="history">0</property>
+
+		      <child>
+			<widget class="GtkMenu" id="menu3">
+
+			  <child>
+			    <widget class="GtkMenuItem" id="item13">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Free</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="item14">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Number</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="item15">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Integer</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="item16">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Text</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="item17">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Date</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="item18">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Vector</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="item19">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Matrix</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="item20">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Positive number</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="item21">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Non-zero number</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="item22">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Non-negative number</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="item23">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Positive integer</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="item24">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Non-zero integer</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="item25">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Non-negative integer</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="item26">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Boolean</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="item27">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Function</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="item28">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Unit</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+			</widget>
+		      </child>
+		    </widget>
+		    <packing>
+		      <property name="padding">0</property>
+		      <property name="expand">False</property>
+		      <property name="fill">True</property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkHBox" id="hbox91">
+		      <property name="visible">True</property>
+		      <property name="homogeneous">False</property>
+		      <property name="spacing">0</property>
+
+		      <child>
+			<widget class="GtkButton" id="function_edit_button_add_argument">
+			  <property name="visible">True</property>
+			  <property name="tooltip" translatable="yes">Add entered argument description</property>
+			  <property name="can_default">True</property>
+			  <property name="can_focus">True</property>
+			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <signal name="clicked" handler="on_function_edit_button_add_argument_clicked" last_modification_time="Fri, 19 Sep 2003 11:33:05 GMT"/>
+
+			  <child>
+			    <widget class="GtkImage" id="image39">
+			      <property name="visible">True</property>
+			      <property name="stock">gtk-add</property>
+			      <property name="icon_size">4</property>
+			      <property name="xalign">0.5</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xpad">0</property>
+			      <property name="ypad">0</property>
+			    </widget>
+			  </child>
+			</widget>
+			<packing>
+			  <property name="padding">0</property>
+			  <property name="expand">False</property>
+			  <property name="fill">False</property>
+			</packing>
+		      </child>
+
+		      <child>
+			<widget class="GtkButton" id="function_edit_button_modify_argument">
+			  <property name="visible">True</property>
+			  <property name="tooltip" translatable="yes">Modify selected argument</property>
+			  <property name="can_default">True</property>
+			  <property name="can_focus">True</property>
+			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <signal name="clicked" handler="on_function_edit_button_modify_argument_clicked" last_modification_time="Fri, 19 Sep 2003 11:33:55 GMT"/>
+
+			  <child>
+			    <widget class="GtkImage" id="image41">
+			      <property name="visible">True</property>
+			      <property name="stock">gtk-refresh</property>
+			      <property name="icon_size">4</property>
+			      <property name="xalign">0.5</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xpad">0</property>
+			      <property name="ypad">0</property>
+			    </widget>
+			  </child>
+			</widget>
+			<packing>
+			  <property name="padding">0</property>
+			  <property name="expand">False</property>
+			  <property name="fill">False</property>
+			</packing>
+		      </child>
+
+		      <child>
+			<widget class="GtkButton" id="function_edit_button_remove_argument">
+			  <property name="visible">True</property>
+			  <property name="tooltip" translatable="yes">Remove selected argument</property>
+			  <property name="can_default">True</property>
+			  <property name="can_focus">True</property>
+			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <signal name="clicked" handler="on_function_edit_button_remove_argument_clicked" last_modification_time="Fri, 19 Sep 2003 11:33:34 GMT"/>
+
+			  <child>
+			    <widget class="GtkImage" id="image40">
+			      <property name="visible">True</property>
+			      <property name="stock">gtk-remove</property>
+			      <property name="icon_size">4</property>
+			      <property name="xalign">0.5</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xpad">0</property>
+			      <property name="ypad">0</property>
+			    </widget>
+			  </child>
+			</widget>
+			<packing>
+			  <property name="padding">0</property>
+			  <property name="expand">False</property>
+			  <property name="fill">False</property>
+			</packing>
+		      </child>
+		    </widget>
+		    <packing>
+		      <property name="padding">0</property>
+		      <property name="expand">True</property>
+		      <property name="fill">True</property>
+		    </packing>
+		  </child>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">True</property>
+		  <property name="fill">True</property>
+		</packing>
+	      </child>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">True</property>
+	      <property name="fill">True</property>
+	    </packing>
+	  </child>
 	</widget>
 	<packing>
 	  <property name="padding">0</property>
-	  <property name="expand">False</property>
-	  <property name="fill">False</property>
+	  <property name="expand">True</property>
+	  <property name="fill">True</property>
 	</packing>
       </child>
     </widget>
@@ -5126,6 +5429,7 @@
 	  <child>
 	    <widget class="GtkButton" id="button3">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Do not create/modify this variable</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-cancel</property>
@@ -5138,6 +5442,7 @@
 	  <child>
 	    <widget class="GtkButton" id="variable_edit_button_ok">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Accept the creation/modification of this variable</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-ok</property>
@@ -5210,6 +5515,7 @@
 			  <child>
 			    <widget class="GtkEntry" id="variable_edit_entry_name">
 			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Name used to reference this variable in expressions</property>
 			      <property name="can_focus">True</property>
 			      <property name="editable">True</property>
 			      <property name="visibility">True</property>
@@ -5285,6 +5591,7 @@
 	      <child>
 		<widget class="GtkEntry" id="variable_edit_entry_value">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Value of this variable (expression)</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">True</property>
 		  <property name="visibility">True</property>
@@ -5319,6 +5626,7 @@
 	      <child>
 		<widget class="GtkCheckButton" id="variable_edit_checkbutton_exact">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">If the value is precise</property>
 		  <property name="can_focus">True</property>
 		  <property name="label" translatable="yes">value is exact</property>
 		  <property name="use_underline">True</property>
@@ -5375,6 +5683,7 @@
 		  <child internal-child="entry">
 		    <widget class="GtkEntry" id="variable_edit_entry_category">
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">The category this variable belongs to</property>
 		      <property name="can_focus">True</property>
 		      <property name="editable">True</property>
 		      <property name="visibility">True</property>
@@ -5437,6 +5746,7 @@
 	      <child>
 		<widget class="GtkEntry" id="variable_edit_entry_desc">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Title displayed in menus and in variable manager</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">True</property>
 		  <property name="visibility">True</property>
@@ -5494,6 +5804,7 @@
 	  <child>
 	    <widget class="GtkButton" id="nbases_button_close">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Close this window</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-close</property>
@@ -5525,6 +5836,7 @@
 	  <child>
 	    <widget class="GtkEntry" id="nbases_entry_binary">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Binary value</property>
 	      <property name="can_focus">True</property>
 	      <property name="editable">True</property>
 	      <property name="visibility">True</property>
@@ -5547,6 +5859,7 @@
 	  <child>
 	    <widget class="GtkEntry" id="nbases_entry_octal">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Octal value</property>
 	      <property name="can_focus">True</property>
 	      <property name="editable">True</property>
 	      <property name="visibility">True</property>
@@ -5569,6 +5882,7 @@
 	  <child>
 	    <widget class="GtkEntry" id="nbases_entry_hexadecimal">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Hexadecimal value</property>
 	      <property name="can_focus">True</property>
 	      <property name="editable">True</property>
 	      <property name="visibility">True</property>
@@ -5687,6 +6001,7 @@
 	  <child>
 	    <widget class="GtkEntry" id="nbases_entry_decimal">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Decimal value</property>
 	      <property name="can_focus">True</property>
 	      <property name="editable">True</property>
 	      <property name="visibility">True</property>
@@ -5828,6 +6143,7 @@ Copyright (c) 2003 Niklas Knutsson
 	  <child>
 	    <widget class="GtkButton" id="unit_dialog_cancel">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Close this window</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-cancel</property>
@@ -5840,6 +6156,7 @@ Copyright (c) 2003 Niklas Knutsson
 	  <child>
 	    <widget class="GtkButton" id="unit_dialog_apply">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Convert result to entered unit expression</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-apply</property>
@@ -5852,6 +6169,7 @@ Copyright (c) 2003 Niklas Knutsson
 	  <child>
 	    <widget class="GtkButton" id="unit_dialog_ok">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Do the conversion and close this window</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-ok</property>
@@ -5900,6 +6218,7 @@ Copyright (c) 2003 Niklas Knutsson
 	  <child>
 	    <widget class="GtkEntry" id="unit_dialog_entry_unit">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Unit(s) and prefix to convert result to</property>
 	      <property name="can_focus">True</property>
 	      <property name="has_focus">True</property>
 	      <property name="editable">True</property>
@@ -5951,6 +6270,7 @@ Copyright (c) 2003 Niklas Knutsson
 	  <child>
 	    <widget class="GtkButton" id="precision_dialog_button_close">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Close this window</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-close</property>
@@ -5999,6 +6319,7 @@ Copyright (c) 2003 Niklas Knutsson
 	  <child>
 	    <widget class="GtkSpinButton" id="precision_dialog_spinbutton_precision">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">The number of significant digits to display/calculate (simple arithmetics are always calculated exact)</property>
 	      <property name="can_focus">True</property>
 	      <property name="climb_rate">1</property>
 	      <property name="digits">0</property>
@@ -6050,6 +6371,7 @@ Copyright (c) 2003 Niklas Knutsson
 	  <child>
 	    <widget class="GtkButton" id="decimals_dialog_button_close">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Close this window</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-close</property>
@@ -6103,6 +6425,7 @@ Copyright (c) 2003 Niklas Knutsson
 		<widget class="GtkSpinButton" id="decimals_dialog_spinbutton_min">
 		  <property name="visible">True</property>
 		  <property name="sensitive">False</property>
+		  <property name="tooltip" translatable="yes">Minimal number of displayed decimals</property>
 		  <property name="can_focus">True</property>
 		  <property name="climb_rate">1</property>
 		  <property name="digits">0</property>
@@ -6156,6 +6479,7 @@ Copyright (c) 2003 Niklas Knutsson
 		<widget class="GtkSpinButton" id="decimals_dialog_spinbutton_max">
 		  <property name="visible">True</property>
 		  <property name="sensitive">False</property>
+		  <property name="tooltip" translatable="yes">Maximal number of decimals to display (and round to)</property>
 		  <property name="can_focus">True</property>
 		  <property name="climb_rate">1</property>
 		  <property name="digits">0</property>
@@ -6357,6 +6681,7 @@ Copyright (c) 2003 Niklas Knutsson
 			  <child>
 			    <widget class="GtkEntry" id="matrix_edit_entry_name">
 			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Name used to reference this variable in expressions</property>
 			      <property name="can_focus">True</property>
 			      <property name="editable">True</property>
 			      <property name="visibility">True</property>
@@ -6441,6 +6766,7 @@ Copyright (c) 2003 Niklas Knutsson
 		  <child internal-child="entry">
 		    <widget class="GtkEntry" id="matrix_edit_entry_category">
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Category that this variable belongs to</property>
 		      <property name="can_focus">True</property>
 		      <property name="editable">True</property>
 		      <property name="visibility">True</property>
@@ -6503,6 +6829,7 @@ Copyright (c) 2003 Niklas Knutsson
 	      <child>
 		<widget class="GtkEntry" id="matrix_edit_entry_desc">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Title displayed in menus and in variable manager</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">True</property>
 		  <property name="visibility">True</property>
@@ -6556,6 +6883,7 @@ Copyright (c) 2003 Niklas Knutsson
 	      <child>
 		<widget class="GtkSpinButton" id="matrix_edit_spinbutton_rows">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Number of rows in this matrix (rows displayed for vectors)</property>
 		  <property name="can_focus">True</property>
 		  <property name="climb_rate">1</property>
 		  <property name="digits">0</property>
@@ -6610,6 +6938,7 @@ Copyright (c) 2003 Niklas Knutsson
 	      <child>
 		<widget class="GtkSpinButton" id="matrix_edit_spinbutton_columns">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Number of columns in this matrix (columns displayed for vectors)</property>
 		  <property name="can_focus">True</property>
 		  <property name="climb_rate">1</property>
 		  <property name="digits">0</property>
@@ -6664,6 +6993,7 @@ Copyright (c) 2003 Niklas Knutsson
 	      <child>
 		<widget class="GtkRadioButton" id="matrix_edit_radiobutton_matrix">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">If this is a matrix or vector</property>
 		  <property name="can_focus">True</property>
 		  <property name="label" translatable="yes">Matrix</property>
 		  <property name="use_underline">True</property>
@@ -6683,6 +7013,7 @@ Copyright (c) 2003 Niklas Knutsson
 	      <child>
 		<widget class="GtkRadioButton" id="matrix_edit_radiobutton_vector">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">If this is a matrix or vector</property>
 		  <property name="can_focus">True</property>
 		  <property name="label" translatable="yes">Vector</property>
 		  <property name="use_underline">True</property>
@@ -6741,6 +7072,7 @@ Copyright (c) 2003 Niklas Knutsson
 	  <child>
 	    <widget class="GtkButton" id="button4">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Do not import the file</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-cancel</property>
@@ -6753,6 +7085,7 @@ Copyright (c) 2003 Niklas Knutsson
 	  <child>
 	    <widget class="GtkButton" id="button5">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Import the file</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-ok</property>
@@ -6813,6 +7146,7 @@ Copyright (c) 2003 Niklas Knutsson
 		  <child>
 		    <widget class="GtkEntry" id="csv_import_entry_file">
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Name of the data file to import</property>
 		      <property name="can_focus">True</property>
 		      <property name="editable">True</property>
 		      <property name="visibility">True</property>
@@ -6832,6 +7166,7 @@ Copyright (c) 2003 Niklas Knutsson
 		  <child>
 		    <widget class="GtkButton" id="csv_import_button_file">
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Select a file</property>
 		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		      <signal name="clicked" handler="on_csv_import_button_file_clicked" last_modification_time="Sun, 14 Sep 2003 21:05:58 GMT"/>
@@ -6905,6 +7240,7 @@ Copyright (c) 2003 Niklas Knutsson
 		  <child>
 		    <widget class="GtkRadioButton" id="csv_import_radiobutton_matrix">
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">If a matrix or vectors shall be generated from the contents of the file </property>
 		      <property name="can_focus">True</property>
 		      <property name="label" translatable="yes">Matrix</property>
 		      <property name="use_underline">True</property>
@@ -6924,6 +7260,7 @@ Copyright (c) 2003 Niklas Knutsson
 		  <child>
 		    <widget class="GtkRadioButton" id="csv_import_radiobutton_vectors">
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">If a matrix or vectors shall be generated from the contents of the file</property>
 		      <property name="can_focus">True</property>
 		      <property name="label" translatable="yes">Vectors</property>
 		      <property name="use_underline">True</property>
@@ -6985,6 +7322,7 @@ Copyright (c) 2003 Niklas Knutsson
 	      <child>
 		<widget class="GtkEntry" id="csv_import_entry_name">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Name (or name prefix) used to reference generated variable(s) in expressions</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">True</property>
 		  <property name="visibility">True</property>
@@ -7039,6 +7377,7 @@ Copyright (c) 2003 Niklas Knutsson
 	      <child>
 		<widget class="GtkEntry" id="csv_import_entry_desc">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Title displayed in menus and in variable manager</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">True</property>
 		  <property name="visibility">True</property>
@@ -7101,6 +7440,7 @@ Copyright (c) 2003 Niklas Knutsson
 		  <child internal-child="entry">
 		    <widget class="GtkEntry" id="csv_import_entry_category">
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Category that the generated variable(s) shall belong to</property>
 		      <property name="can_focus">True</property>
 		      <property name="editable">True</property>
 		      <property name="visibility">True</property>
@@ -7163,6 +7503,7 @@ Copyright (c) 2003 Niklas Knutsson
 	      <child>
 		<widget class="GtkSpinButton" id="csv_import_spinbutton_first_row">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">The first row with data to import in the file</property>
 		  <property name="can_focus">True</property>
 		  <property name="climb_rate">1</property>
 		  <property name="digits">0</property>
@@ -7197,8 +7538,9 @@ Copyright (c) 2003 Niklas Knutsson
 	      <child>
 		<widget class="GtkCheckButton" id="csv_import_checkbutton_headers">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">If the first row contains column headings</property>
 		  <property name="can_focus">True</property>
-		  <property name="label" translatable="yes">Includes headers</property>
+		  <property name="label" translatable="yes">Includes headings</property>
 		  <property name="use_underline">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
 		  <property name="active">True</property>
@@ -7244,6 +7586,7 @@ Copyright (c) 2003 Niklas Knutsson
 	      <child>
 		<widget class="GtkOptionMenu" id="csv_import_optionmenu_delimiter">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Delimiter used to separate columns in the file</property>
 		  <property name="can_focus">True</property>
 		  <property name="history">0</property>
 		  <signal name="changed" handler="on_csv_import_optionmenu_delimiter_changed" last_modification_time="Sun, 14 Sep 2003 18:44:09 GMT"/>
@@ -7338,6 +7681,7 @@ Copyright (c) 2003 Niklas Knutsson
 		<widget class="GtkEntry" id="csv_import_entry_delimiter_other">
 		  <property name="visible">True</property>
 		  <property name="sensitive">False</property>
+		  <property name="tooltip" translatable="yes">Custom delimiter</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">True</property>
 		  <property name="visibility">True</property>

@@ -26,58 +26,65 @@
 
 
 
-PiFunction::PiFunction() : Function("Constants", "pi", 0, "Archimede's Constant (pi)") {}
+PiFunction::PiFunction() : Function("Constants", "PI", 0, "Archimede's Constant (pi)") {}
 void PiFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(CALCULATOR->alwaysExact()) {
-		mngr->set(name());
+//		mngr->set(name());
+		mngr->set(this, NULL);
 	} else {
 		Fraction fr; fr.pi(); mngr->set(&fr);
 	}
 }
-EFunction::EFunction() : Function("Constants", "e", 0, "The Base of Natural Logarithms (e)") {}
+EFunction::EFunction() : Function("Constants", "EXP0", 0, "The Base of Natural Logarithms (e)") {}
 void EFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(CALCULATOR->alwaysExact()) {
-		mngr->set(name());
+//		mngr->set(name());
+		mngr->set(this, NULL);		
 	} else {
 		Fraction fr; fr.e(); mngr->set(&fr);
 	}
 }
-PythagorasFunction::PythagorasFunction() : Function("Constants", "pythagoras", 0, "Pythagora's Constant (sqrt 2)") {}
+PythagorasFunction::PythagorasFunction() : Function("Constants", "PYTHAGORAS", 0, "Pythagora's Constant (sqrt 2)") {}
 void PythagorasFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(CALCULATOR->alwaysExact()) {
-		mngr->set(name());
+//		mngr->set(name());
+		mngr->set(this, NULL);		
 	} else {
 		Fraction fr; fr.pythagoras(); mngr->set(&fr);
 	}
 }
-EulerFunction::EulerFunction() : Function("Constants", "euler", 0, "Euler's Constant") {}
+EulerFunction::EulerFunction() : Function("Constants", "EULER", 0, "Euler's Constant") {}
 void EulerFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(CALCULATOR->alwaysExact()) {
-		mngr->set(name());
+//		mngr->set(name());
+		mngr->set(this, NULL);		
 	} else {
 		Fraction fr; fr.euler(); mngr->set(&fr);
 	}
 }
-GoldenFunction::GoldenFunction() : Function("Constants", "golden", 0, "The Golden Ratio") {}
+GoldenFunction::GoldenFunction() : Function("Constants", "GOLDEN", 0, "The Golden Ratio") {}
 void GoldenFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(CALCULATOR->alwaysExact()) {
-		mngr->set(name());
+//		mngr->set(name());
+		mngr->set(this, NULL);		
 	} else {
 		Fraction fr; fr.golden(); mngr->set(&fr);
 	}
 }
-AperyFunction::AperyFunction() : Function("Constants", "apery", 0, "Apery's Constant") {}
+AperyFunction::AperyFunction() : Function("Constants", "APERY", 0, "Apery's Constant") {}
 void AperyFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(CALCULATOR->alwaysExact()) {
-		mngr->set(name());
+//		mngr->set(name());
+		mngr->set(this, NULL);		
 	} else {
 		Fraction fr; fr.apery(); mngr->set(&fr);
 	}
 }
-CatalanFunction::CatalanFunction() : Function("Constants", "catalan", 0, "Catalan's Constant") {}
+CatalanFunction::CatalanFunction() : Function("Constants", "CATALAN", 0, "Catalan's Constant") {}
 void CatalanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(CALCULATOR->alwaysExact()) {
-		mngr->set(name());
+//		mngr->set(name());
+		mngr->set(this, NULL);		
 	} else {
 		Fraction fr; fr.catalan(); mngr->set(&fr);
 	}

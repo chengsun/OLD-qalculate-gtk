@@ -28,6 +28,7 @@ class Variable : public ExpressionItem {
   public:
   
 	Variable(string cat_, string name_, Manager *mngr_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	Variable(string cat_, string name_, string expression_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);	
 	Variable(const Variable *variable);
 	~Variable();
 
@@ -40,17 +41,18 @@ class Variable : public ExpressionItem {
 	*
 	* @see #value
 	*/
-	void set(Manager *mngr_);
+	virtual void set(Manager *mngr_);
+	virtual void set(string expression_);	
 
 	/**
 	* Returns the value of the variable.
 	*/	
-	Manager *get();
+	virtual Manager *get();
 
 	/**
 	* Returns the value of the variable.
 	*/	
-	const Manager *get() const;	
+	virtual const Manager *get() const;	
 
 };
 
