@@ -3404,7 +3404,7 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	if(po.rpn) {
 		ParseOptions po2 = po;
 		po2.rpn = false;
-		vector<MathStructure> mstack;
+		vector<MathStructure*> mstack;
 		bool b = false;
 		while(true) {
 			i = str.find_first_of(OPERATORS SPACE, i3 + 1);
@@ -3424,7 +3424,11 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				} else if(mstack.size() > 1) {
 					error(false, _("Unused stack values."), NULL);
 				}
-				mstruct->set(mstack.back());
+				mstruct->set_nocopy(*mstack.back());
+				while(!mstack.empty()) {
+					mstack.back()->unref();
+					mstack.pop_back();
+				}
 				return;
 			}
 			b = true;
@@ -3435,22 +3439,22 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			}
 			remove_blank_ends(str2);
 			if(!str2.empty()) {
-				mstack.push_back(m_zero);
-				parseAdd(str2, &mstack.back(), po2);
+				mstack.push_back(new MathStructure());
+				parseAdd(str2, mstack.back(), po2);
 			}
 			if(str[i] != SPACE_CH) {
 				if(mstack.size() < 1) {
 					error(true, _("RPN syntax error. Stack is empty."), NULL);		
 				} else {
 					if(mstack.size() < 2) {
-						mstack.push_back(mstack[0]);
+						mstack.push_back(new MathStructure(mstack.back()));
 					}
 					switch(str[i]) {
-						case PLUS_CH: {mstack[mstack.size() - 2] += mstack.back(); mstack.pop_back(); break;}
-						case MINUS_CH: {mstack[mstack.size() - 2] -= mstack.back(); mstack.pop_back(); break;}
-						case MULTIPLICATION_CH: {mstack[mstack.size() - 2] *= mstack.back(); mstack.pop_back(); break;}
-						case DIVISION_CH: {mstack[mstack.size() - 2] /= mstack.back(); mstack.pop_back(); break;}
-						case POWER_CH: {mstack[mstack.size() - 2] ^= mstack.back(); mstack.pop_back(); break;}
+						case PLUS_CH: {mstack[mstack.size() - 2]->add_nocopy(mstack.back()); mstack.pop_back(); break;}
+						case MINUS_CH: {mstack[mstack.size() - 2]->subtract_nocopy(mstack.back()); mstack.pop_back(); break;}
+						case MULTIPLICATION_CH: {mstack[mstack.size() - 2]->multiply_nocopy(mstack.back()); mstack.pop_back(); break;}
+						case DIVISION_CH: {mstack[mstack.size() - 2]->divide_nocopy(mstack.back()); mstack.pop_back(); break;}
+						case POWER_CH: {mstack[mstack.size() - 2]->raise_nocopy(mstack.back()); mstack.pop_back(); break;}
 					}
 				}
 			}

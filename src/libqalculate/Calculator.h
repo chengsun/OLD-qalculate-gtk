@@ -89,7 +89,7 @@ struct Element {
 	int x_pos, y_pos;
 };
 
-#define UFV_LENGTHS	5
+#define UFV_LENGTHS	20
 
 class Calculator {
 

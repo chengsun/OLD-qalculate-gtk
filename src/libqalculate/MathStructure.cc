@@ -5407,7 +5407,7 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po) {
 	switch(m_type) {
 		case STRUCT_MULTIPLICATION: {
 			unsigned int inum = 0, iden = 0;
-			bool bfrac = false, bint = true, bdiv = false;
+			bool bfrac = false, bint = true, bdiv = false, bnonunitdiv = false;
 			unsigned int index1, index2;
 			bool dofrac = !po.negative_exponents;
 			for(unsigned int i2 = 0; i2 < SIZE; i2++) {
@@ -5416,6 +5416,7 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po) {
 						if(iden == 0) index1 = i2;
 						iden++;
 						bdiv = true;
+						if(!CHILD(i2)[0].isUnit()) bnonunitdiv = true;
 						if(CHILD(i2)[0].contains(STRUCT_ADDITION)) {
 							dofrac = true;
 						}
@@ -5424,6 +5425,7 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po) {
 					if(!po.place_units_separately || !CHILD(i2)[0].isUnit()) {
 						if(!bdiv) index1 = i2;
 						bdiv = true;
+						if(!CHILD(i2)[0].isUnit()) bnonunitdiv = true;
 					}
 				} else {
 					if(!po.place_units_separately || !CHILD(i2).isUnit_exp()) {
@@ -5432,7 +5434,7 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po) {
 					}
 				}
 			}
-			if(!bdiv) break;
+			if(!bdiv || !bnonunitdiv) break;
 			if(iden > 1 && !po.negative_exponents) {
 				for(int i2 = index1 + 1; i2 < (int) SIZE; i2++) {
 					if(CHILD(i2).isPower() && CHILD(i2)[1].isMinusOne()) {

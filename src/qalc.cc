@@ -891,7 +891,7 @@ int main (int argc, char *argv[]) {
 				evalops.approximation = APPROXIMATION_TRY_EXACT;
 				expression_format_updated();
 			}
-		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "convert", _("convert"))) {
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "to", _("to"))) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
 			if(EQUALS_IGNORECASE_AND_LOCAL(str, "best", _("best"))) {
@@ -1059,7 +1059,7 @@ int main (int argc, char *argv[]) {
 			PUTS_UNICODE(_("approximate"));
 			FPUTS_UNICODE(_("assume"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("ASSUMPTIONS"));
 			FPUTS_UNICODE(_("base"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("BASE"));
-			FPUTS_UNICODE(_("convert"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("UNIT"));
+			FPUTS_UNICODE(_("convert"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("to"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("UNIT"));
 			PUTS_UNICODE(_("exact"));
 			PUTS_UNICODE(_("factor"));
 			PUTS_UNICODE(_("info"));
@@ -1448,7 +1448,7 @@ int main (int argc, char *argv[]) {
 				puts("");
 				PUTS_UNICODE(_("Downloads current exchange rates from the Internet."));
 				puts("");
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "convert", _("convert"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(str, "to", _("to"))) {
 				puts("");
 				PUTS_UNICODE(_("Converts units in current result."));
 				puts("");
@@ -1775,7 +1775,7 @@ void load_preferences() {
 	printops.spacious = true;
 	printops.short_multiplication = true;
 	printops.limit_implicit_multiplication = false;
-	printops.place_units_separately = false;
+	printops.place_units_separately = true;
 	printops.use_all_prefixes = false;
 	printops.excessive_parenthesis = false;
 	printops.allow_non_usable = false;
