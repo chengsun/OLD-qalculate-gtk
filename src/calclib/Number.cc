@@ -26,7 +26,7 @@ void cln::cl_abort() {
 	}
 }
 
-string printCL_I(cl_I integ, unsigned int base, bool display_sign) {
+string printCL_I(cl_I integ, unsigned int base = 10, bool display_sign = true) {
 	cl_print_flags flags;
 	flags.rational_base = base;
 	ostringstream stream;
@@ -634,12 +634,12 @@ bool Number::zeta() {
 		CALCULATOR->error(true, _("Integral point for Riemann's zeta must be an integer > 1."), NULL);
 		return false;
 	}
-	cl_I integ = cln::numerator(cln::rational(cln::realpart(value)));
-	if(integ > INT_MAX) {
+	if(isGreaterThan(INT_MAX)) {
 		CALCULATOR->error(true, _("Integral point for Riemann's zeta is too large."), NULL);
 		return false;
 	}
 	if(CALCULATOR->alwaysExact()) return false;
+	cl_I integ = cln::numerator(cln::rational(cln::realpart(value)));
 	value = cln::zeta(cl_I_to_int(integ)); 
 	setApproximate();
 	return true;
@@ -855,9 +855,7 @@ bool Number::binomial(const Number *m, const Number *k) {
 	} else {
 		cl_I im = cln::numerator(cln::rational(cln::realpart(m->clnNumber())));
 		cl_I ik = cln::numerator(cln::rational(cln::realpart(k->clnNumber())));
-		if(im < UINT_MAX && ik < UINT_MAX) {
-			value = cln::binomial(cl_I_to_uint(im), cl_I_to_uint(ik));
-		} else {
+		if(m->isGreaterThan(INT_MAX) || k->isGreaterThan(INT_MAX)) {
 			ik--;
 			Number k_fac(k);
 			k_fac.factorial();
@@ -868,6 +866,8 @@ bool Number::binomial(const Number *m, const Number *k) {
 			}
 			setCln(ithis);
 			divide(&k_fac);
+		} else {
+			value = cln::binomial(cl_I_to_uint(im), cl_I_to_uint(ik));
 		}
 	}
 	return true;
@@ -935,7 +935,7 @@ int Number::add(MathOperation op, const Number *o, int solution) {
 }
 
 bool Number::floatify(cl_I *num, cl_I *den, int precision, int max_decimals, bool *infinite_series) {
-	cl_I remainder, remainder2;
+	cl_I remainder = 0, remainder2 = 0;
 	cl_I_div_t div;
 	Number exp_test(this);
 	cl_I d = cln::denominator(cln::rational(cln::realpart(value)));
@@ -944,7 +944,7 @@ bool Number::floatify(cl_I *num, cl_I *den, int precision, int max_decimals, boo
 	div = truncate2(*num, d);
 	remainder = div.remainder;
 	*num = div.quotient;
-	bool exact = div.remainder == 0;
+	bool exact = (remainder == 0);
 	vector<cl_I> remainders;
 	if(infinite_series) {
 		*infinite_series = false;
@@ -954,7 +954,11 @@ bool Number::floatify(cl_I *num, cl_I *den, int precision, int max_decimals, boo
 		bool b_always_exact = CALCULATOR->alwaysExact();
 		CALCULATOR->setAlwaysExact(false);
 		exp_test.setNegative(false);
-		exp_test.setCln(cln::log(exp_test.clnNumber(), 10));
+		if(exp_test.isLessThan(1)) {
+			exp_test.setCln(-cln::log(cln::recip(exp_test.clnNumber()), 10));
+		} else {
+			exp_test.setCln(cln::log(exp_test.clnNumber(), 10));
+		}
 		exp_test.floor();
 		exp = cln::numerator(cln::rational(cln::realpart(exp_test.clnNumber())));
 /*		exp_test.floor();
@@ -972,11 +976,11 @@ bool Number::floatify(cl_I *num, cl_I *den, int precision, int max_decimals, boo
 			cl_I exp10 = cln::expt_pos(cl_I(10), exp);
 			div = cln::truncate2(*num, exp10);
 			*num = div.quotient;
-			exact = div.remainder == 0;
+			exact = (div.remainder == 0);
 			div = cln::truncate2(*num, 10);
 			remainder = div.remainder;
 			*num = div.quotient;
-			exact = exact && remainder == 0;
+			exact = (exact && remainder == 0);
 			remainder *= 10;
 			if(minusp(remainder)) {
 				remainder = -remainder;
@@ -1009,7 +1013,7 @@ bool Number::floatify(cl_I *num, cl_I *den, int precision, int max_decimals, boo
 		div = cln::truncate2(remainder, d);
 		remainder2 = div.remainder;
 		remainder = div.quotient;
-		exact = remainder == 0;
+		exact = (remainder2 == 0);
 		*num *= 10;	
 		*num += remainder;
 		*den *= 10;
@@ -1037,7 +1041,6 @@ bool Number::floatify(cl_I *num, cl_I *den, int precision, int max_decimals, boo
 			else *num += 1;			
 		}
 	}
-	if(!exact) setApproximate();
 	return exact;	
 }
 
@@ -1132,7 +1135,11 @@ void Number::getPrintObjects(bool &minus, string &whole_, string &numerator_, st
 				exp_pre.setNegative(false);
 				bool b_always_exact = CALCULATOR->alwaysExact();
 				CALCULATOR->setAlwaysExact(false);	
-				exp_pre.setCln(cln::log(exp_pre.clnNumber(), 10));
+				if(exp_pre.isLessThan(1)) {
+					exp_pre.setCln(-cln::log(cln::recip(exp_pre.clnNumber()), 10));
+				} else {
+					exp_pre.setCln(cln::log(exp_pre.clnNumber(), 10));
+				}
 				exp_pre.floor();
 				exp = cln::numerator(cln::rational(cln::realpart(exp_pre.clnNumber())));
 				CALCULATOR->setAlwaysExact(b_always_exact);
@@ -1321,18 +1328,19 @@ void Number::getPrintObjects(bool &minus, string &whole_, string &numerator_, st
 		nr.setCln(whole / den_spec);
 		bool infinite_series = false;
 		cl_I nr_num, nr_den;
+		bool b_exact;
 		if(displayflags & DISPLAY_FORMAT_INDICATE_INFINITE_SERIES) {
-			nr.floatify(&nr_num, &nr_den, PRECISION, max_decimals, &infinite_series);
+			b_exact = nr.floatify(&nr_num, &nr_den, PRECISION, max_decimals, &infinite_series);
 		} else {
-			nr.floatify(&nr_num, &nr_den, PRECISION, max_decimals);
+			b_exact = nr.floatify(&nr_num, &nr_den, PRECISION, max_decimals);
 		}
-		if(nr.isApproximate()) {
+		if(!b_exact) {
 			if(!isApproximate() && ((displayflags & DISPLAY_FORMAT_ALWAYS_DISPLAY_EXACT) || CALCULATOR->alwaysExact())) {
 				displayflags = displayflags | DISPLAY_FORMAT_FRACTIONAL_ONLY;
 				return getPrintObjects(minus, whole_, numerator_, denominator_, exp_minus, exponent_, prefix_, nrformat, displayflags, min_decimals, max_decimals, prefix, in_exact, usable, toplevel, plural, l_exp, in_composite, in_power);
 			}
 		}
-		if(in_exact && nr.isApproximate() && !infinite_series) {
+		if(in_exact && !b_exact && !infinite_series) {
 			*in_exact = true;
 		}
 		whole_ = printCL_I(nr_num, 10, false);
