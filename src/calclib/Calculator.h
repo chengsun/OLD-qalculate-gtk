@@ -241,7 +241,6 @@ class Calculator {
 	int saveVariables(const char* file_name, bool save_global = false);	
 	int saveUnits(const char* file_name, bool save_global = false);	
 	int saveFunctions(const char* file_name, bool save_global = false);	
-	double getAngleValue(double value);
 	Manager *setAngleValue(Manager *mngr);	
 	Matrix *importCSV(const char *file_name, int first_row = 1, string delimiter = ",", vector<string> *headers = NULL);
 	bool importCSV(const char *file_name, int first_row = 1, bool headers = true, string delimiter = ",", bool to_matrix = false, string name = "", string title = "", string category = "");

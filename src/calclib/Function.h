@@ -49,15 +49,16 @@ class Function : public ExpressionItem {
 	int max_argc;
 	vector<string> default_values;
 	Sgi::hash_map<unsigned int, Argument*> argdefs;
-	unsigned int last_argdef_index;
-	virtual void calculate(Manager *mngr, vector<Manager*> &vargs);			
+	unsigned int last_argdef_index;		
 	bool testArgumentCount(int itmp);
 	bool testArguments(vector<Manager*> &vargs);
+	virtual void calculate(Manager *mngr, vector<Manager*> &vargs);	
 	virtual Manager *createFunctionManagerFromVArgs(vector<Manager*> &vargs);
 	virtual Manager *createFunctionManagerFromSVArgs(vector<string> &svargs);	
 	string scondition;
 	
   public:
+  
 	Function(string cat_, string name_, int argc_, string title_ = "", string descr_ = "", int max_argc_ = 0, bool is_active = true);
 	Function(const Function *function);
 	Function();

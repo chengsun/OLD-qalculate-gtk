@@ -720,11 +720,11 @@ string Matrix::print(NumberFormat nrformat, int displayflags, int min_decimals, 
 		}
 		str += LEFT_VECTOR_WRAP;
 		for(unsigned int index_c = 0; index_c < elements[index_r].size(); index_c++) {
-			if(index_c > 0 || index_r > 0) {
+			if(index_c > 0) {
 				str += CALCULATOR->getComma();
 				str += " ";
 			}
-			str += elements[index_r][index_c]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
+			str += elements[index_r][index_c]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true);
 		}
 		str += RIGHT_VECTOR_WRAP;
 	}	

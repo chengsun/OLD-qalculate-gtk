@@ -314,7 +314,7 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
                 <tbody>
 			<row valign="top">
 				<entry><para>Number Base</para></entry>
-				<entry><para>Submenu which switches between binary, octal, decimal and hexadecimal bases, and roman numerals in result.</para></entry>
+				<entry><para>Submenu which switches between binary, octal, decimal, hexadecimal and sexagesimal (normal or time format) bases, and roman numerals in result.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Numerical Display</para></entry>
@@ -855,6 +855,11 @@ Variables can also be created from scratch by selecting <menuchoice><guimenu>Fil
 <para>
 Edit a variable by clicking <guibutton>Edit</guibutton> in the variable manager.
 </para>
+<caution>
+<para>
+Variables stored in the <quote>Temporary</quote> category will not be saved after the program exit.
+</para>
+</caution>
 </sect2>
 <sect2 id="qalculate-vectors-matrices">
 <title>Vectors and Matrices</title>
@@ -1091,7 +1096,7 @@ Among units, Qalculate! has support for currencies with up-to-date exchange rate
 <sect2 id="qalculate-unit-conversion">
 <title>Conversion</title>
 <para>
-Expression can be converted to a specific unit directly in the expression entry with the <quote>to</quote> operator, which converts the left-hand expression to a specified unit (ex. <quote>5 feet + 2 inches to cm</quote> converts the result of <quote>5 feet + 2 inches</quote> to centimeters and displays it). Note that the command <quote>to</quote> is localized, meaning that if Qalculate! is used with for example Swedish translation, then <quote>till</quote> should be used instead. Unit expressions may only contain units, prefixes, exponents, multiplication and division. Other elements are ignored. 
+Expression can be converted to a specific unit directly in the expression entry with the <quote>to</quote> operator, which converts the left-hand expression to a specified unit (ex. <quote>5 feet + 2 inches to cm</quote> converts the result of <quote>5 feet + 2 inches</quote> to centimeters and displays it). Unit expressions may only contain units, prefixes, exponents, multiplication and division. Other elements are ignored. 
 </para>
 <para>
 The unit conversion dialog, accessible from the <guibutton>Convert</guibutton> button, <menuchoice><guimenu>Edit</guimenu><guimenuitem>Convert To Unit Expression...</guimenuitem></menuchoice> or <keycombo><keycap>Ctrl</keycap><keycap>T</keycap></keycombo>, can also be used. Enter a unit in the dialog that pops up, click <guibutton>Apply</guibutton> or <guibutton>OK</guibutton> and the displayed result is then converted.

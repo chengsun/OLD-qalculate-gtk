@@ -1,3 +1,5 @@
+* Possible to specify if unknown variables is non-zero, real, positive
+* (x+y)/z should return (x+y)/z instead of x/z + y/z
 * Infinity
 * Free temporary composite units
 * Limit fraction precision

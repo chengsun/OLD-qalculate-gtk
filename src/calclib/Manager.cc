@@ -1182,7 +1182,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 									}
 									delete img;
 									break;
-								} else if(img->equals(1, 2)) {
+								} else if(img->equals(1, 2) || img->equals(-1, 2)) {
 									clear();
 									img->set(1, 1);
 									o_number->setImaginaryPart(img);
@@ -1193,7 +1193,10 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 							}
 						}
 					} else if(mngr->isFunction() && mngr->function() == CALCULATOR->getLnFunction() && mngr->countChilds() == 1 && mngr->getChild(0)->isNumber()) {
-						if(!mngr->getChild(0)->number()->isZero()) {
+						if(mngr->getChild(0)->number()->isPositive()) {
+							set(mngr->getChild(0));
+							break;
+						} else if(!mngr->getChild(0)->number()->isZero() && mngr->getChild(0)->number()->isComplex()) {
 							set(mngr->getChild(0));
 							break;
 						}

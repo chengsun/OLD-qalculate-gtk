@@ -781,13 +781,13 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new YearFracFunction());		
 	addFunction(new WeekFunction());
 	addFunction(new WeekdayFunction());
+	addFunction(new YeardayFunction());
 	addFunction(new MonthFunction());
 	addFunction(new DayFunction());
 	addFunction(new YearFunction());
 	addFunction(new TimeFunction());
 	addFunction(new GCDFunction());	
 	addFunction(new FactorialFunction());
-	//addFunction(new BinomialFunction());		
 	addFunction(new AbsFunction());
 	addFunction(new CeilFunction());
 	addFunction(new FloorFunction());
@@ -799,15 +799,8 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new IntFunction());	
 	addFunction(new ModFunction());
 	addFunction(new RemFunction());
-	//sin_func = addFunction(new SinFunction());
-	//cos_func = addFunction(new CosFunction());
 	ln_func = addFunction(new LogFunction());
 	addFunction(new LognFunction());
-	addFunction(new SqrtFunction());
-	addFunction(new CbrtFunction());
-	addFunction(new RootFunction());	
-	addFunction(new PowFunction());	
-	addFunction(new HypotFunction());
 	addFunction(new PercentileFunction());
 	addFunction(new TotalFunction());
 	addFunction(new MinFunction());
@@ -833,7 +826,6 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new GiacDeriveFunction());
 #endif
 	diff_func = addFunction(new DeriveFunction());
-	//addFunction(new IntegrateFunction());
 	addFunction(new LoadFunction());
 }
 void Calculator::addBuiltinUnits() {
@@ -3991,13 +3983,6 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 	return returnvalue;
 }
 
-double Calculator::getAngleValue(double value) {
-	switch(angleMode()) {
-	    case DEGREES: {return deg2rad(value);}
-	    case GRADIANS: {return gra2rad(value);}
-	    default: {return value;}
-	}
-}
 Manager *Calculator::setAngleValue(Manager *mngr) {
 	bool b = false;
 	if(mngr->isUnit_exp()) {

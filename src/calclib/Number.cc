@@ -548,6 +548,7 @@ int Number::raise(const Number *o, int solution) {
 			}
 		}
 	}
+	if(CALCULATOR->alwaysExact()) return false;
 	bool b_complex = isComplex();
 	value = expt(value, o->clnNumber());
 	setApproximate();

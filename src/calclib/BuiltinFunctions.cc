@@ -29,71 +29,6 @@
 
 
 
-PiFunction::PiFunction() : Function("Constants", "PI", 0, "Archimede's Constant (pi)") {}
-void PiFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(CALCULATOR->alwaysExact()) {
-//		mngr->set(name());
-		mngr->set(this, NULL);
-	} else {
-		Number fr; fr.pi(); mngr->set(&fr);
-	}
-}
-EFunction::EFunction() : Function("Constants", "EXP0", 0, "The Base of Natural Logarithms (e)") {}
-void EFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(CALCULATOR->alwaysExact()) {
-//		mngr->set(name());
-		mngr->set(this, NULL);		
-	} else {
-		Number fr; fr.e(); mngr->set(&fr);
-	}
-}
-PythagorasFunction::PythagorasFunction() : Function("Constants", "PYTHAGORAS", 0, "Pythagora's Constant (sqrt 2)") {}
-void PythagorasFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(CALCULATOR->alwaysExact()) {
-//		mngr->set(name());
-		mngr->set(this, NULL);		
-	} else {
-		Number fr; fr.pythagoras(); mngr->set(&fr);
-	}
-}
-EulerFunction::EulerFunction() : Function("Constants", "EULER", 0, "Euler's Constant") {}
-void EulerFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(CALCULATOR->alwaysExact()) {
-//		mngr->set(name());
-		mngr->set(this, NULL);		
-	} else {
-		Number fr; fr.euler(); mngr->set(&fr);
-	}
-}
-GoldenFunction::GoldenFunction() : Function("Constants", "GOLDEN", 0, "The Golden Ratio") {}
-void GoldenFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(CALCULATOR->alwaysExact()) {
-//		mngr->set(name());
-		mngr->set(this, NULL);		
-	} else {
-		Number fr; fr.golden(); mngr->set(&fr);
-	}
-}
-AperyFunction::AperyFunction() : Function("Constants", "APERY", 0, "Apery's Constant") {}
-void AperyFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(CALCULATOR->alwaysExact()) {
-//		mngr->set(name());
-		mngr->set(this, NULL);		
-	} else {
-		Number fr; fr.apery(); mngr->set(&fr);
-	}
-}
-CatalanFunction::CatalanFunction() : Function("Constants", "CATALAN", 0, "Catalan's Constant") {}
-void CatalanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(CALCULATOR->alwaysExact()) {
-//		mngr->set(name());
-		mngr->set(this, NULL);		
-	} else {
-		Number fr; fr.catalan(); mngr->set(&fr);
-	}
-}
-
-
 #ifdef HAVE_LIBCLN
 ZetaFunction::ZetaFunction() : Function("", "zeta", 1, "Riemann Zeta") {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
@@ -113,12 +48,6 @@ WarningFunction::WarningFunction() : Function("Utilities", "warning", 1, "Displa
 	setArgumentDefinition(1, new TextArgument());
 }
 void WarningFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	CALCULATOR->error(false, vargs[0]->text().c_str(), NULL);
-}
-MessageFunction::MessageFunction() : Function("Utilities", "message", 1, "Display a message", "", -1) {
-	setArgumentDefinition(1, new TextArgument());
-}
-void MessageFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	CALCULATOR->error(false, vargs[0]->text().c_str(), NULL);
 }
 
@@ -1022,8 +951,9 @@ void WeekFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		mngr->set(w, 1);
 	}
 }
-WeekdayFunction::WeekdayFunction() : Function("Date & Time", "weekday", 0, "Day of Week", "", 1) {
+WeekdayFunction::WeekdayFunction() : Function("Date & Time", "weekday", 0, "Day of Week", "", 2) {
 	setArgumentDefinition(1, new DateArgument());
+	setArgumentDefinition(2, new BooleanArgument());
 	setDefaultValue(1, "\"today\"");
 }
 void WeekdayFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
@@ -1031,7 +961,23 @@ void WeekdayFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(w < 0) {
 		mngr->set(this, vargs[0], vargs[1], NULL);
 	} else {
+		if(vargs[1]->number()->getBoolean()) {
+			if(w == 7) w = 1;
+			else w++;
+		}
 		mngr->set(w, 1);
+	}
+}
+YeardayFunction::YeardayFunction() : Function("Date & Time", "yearday", 0, "Day of Year", "", 1) {
+	setArgumentDefinition(1, new DateArgument());
+	setDefaultValue(1, "\"today\"");
+}
+void YeardayFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	int d = yearday(vargs[0]->text());
+	if(d < 0) {
+		mngr->set(this, vargs[0], NULL);
+	} else {
+		mngr->set(d, 1);
 	}
 }
 MonthFunction::MonthFunction() : Function("Date & Time", "month", 0, "Month", "", 1) {
@@ -1042,7 +988,7 @@ void MonthFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	int year, month, day;
 	bool b = s2date(vargs[0]->text(), year, month, day);
 	if(!b) {
-		mngr->set(this, vargs[0], vargs[1], NULL);
+		mngr->set(this, vargs[0], NULL);
 	} else {
 		mngr->set(month, 1);
 	}
@@ -1055,7 +1001,7 @@ void DayFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	int year, month, day;
 	bool b = s2date(vargs[0]->text(), year, month, day);
 	if(!b) {
-		mngr->set(this, vargs[0], vargs[1], NULL);
+		mngr->set(this, vargs[0], NULL);
 	} else {
 		mngr->set(day, 1);
 	}
@@ -1068,7 +1014,7 @@ void YearFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	int year, month, day;
 	bool b = s2date(vargs[0]->text(), year, month, day);
 	if(!b) {
-		mngr->set(this, vargs[0], vargs[1], NULL);
+		mngr->set(this, vargs[0], NULL);
 	} else {
 		mngr->set(year, 1);
 	}
@@ -1199,8 +1145,7 @@ void ModFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 
-SinFunction::SinFunction() : Function("Trigonometry", "sin", 1, "Sine") {setArgumentDefinition(1, new AngleArgument("", false));}
-void SinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+/*void SinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]); 
 	if(mngr->isVariable() && mngr->variable() == CALCULATOR->getPI()) {
 		mngr->clear();
@@ -1235,106 +1180,7 @@ void SinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	} else {
 		mngr->setPrecise(!mngr->number()->isApproximate());
 	}
-}
-CosFunction::CosFunction() : Function("Trigonometry", "cos", 1, "Cosine") {setArgumentDefinition(1, new AngleArgument("", false));}
-void CosFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]); 
-	if(mngr->isVariable() && mngr->variable() == CALCULATOR->getPI()) {
-		mngr->set(-1, 1);
-		return;
-	} else if(mngr->isMultiplication() && mngr->countChilds() == 2 && mngr->getChild(0)->isNumber() && mngr->getChild(1)->isVariable() && mngr->getChild(1)->variable() == CALCULATOR->getPI()) {
-		if(mngr->getChild(0)->number()->isInteger()) {
-			if(mngr->getChild(0)->number()->isEven()) {
-				mngr->set(-1, 1);
-			} else {
-				mngr->set(1, 1);
-			}
-			return;
-		} else if(!mngr->getChild(0)->number()->isComplex()) {
-			if(mngr->getChild(0)->number()->equals(1, 2)) {
-				mngr->clear();
-				return;
-			}
-			if(mngr->getChild(0)->number()->equals(-1, 2)) {
-				mngr->clear();
-				return;
-			}
-		}
-	}
-	mngr->recalculateVariables();
-	if(!mngr->isNumber() || !mngr->number()->cos()) {
-		vargs[0]->recalculateVariables();
-		mngr->set(this, vargs[0], NULL);
-	} else {
-		mngr->setPrecise(!mngr->number()->isApproximate());
-	}
-}
-TanFunction::TanFunction() : Function("Trigonometry", "tan", 1, "Tangent") {setArgumentDefinition(1, new AngleArgument("", false));}
-void TanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TRIG_FUNCTION(tan)
-}
-SinhFunction::SinhFunction() : Function("Trigonometry", "sinh", 1, "Hyperbolic sine") {setArgumentDefinition(1, new AngleArgument("", false));}
-void SinhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TRIG_FUNCTION(sinh)
-}
-CoshFunction::CoshFunction() : Function("Trigonometry", "cosh", 1, "Hyperbolic cosine") {setArgumentDefinition(1, new AngleArgument("", false));}
-void CoshFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TRIG_FUNCTION(cosh)
-}
-TanhFunction::TanhFunction() : Function("Trigonometry", "tanh", 1, "Hyperbolic tangent") {setArgumentDefinition(1, new AngleArgument("", false));}
-void TanhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TRIG_FUNCTION(tanh)
-}
-AsinFunction::AsinFunction() : Function("Trigonometry", "asin", 1, "Arcsine") {setArgumentDefinition(1, new AngleArgument("", false));}
-void AsinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]); mngr->recalculateVariables();
-	if(mngr->isNumber() && mngr->number()->isOne()) {
-		mngr->set(1, 2);
-		Manager mngr2(CALCULATOR->getPI());
-		mngr->add(&mngr2, OPERATION_MULTIPLY);
-	} else if(mngr->isNumber() && mngr->number()->isMinusOne()) {
-		mngr->set(-1, 2);
-		Manager mngr2(CALCULATOR->getPI());
-		mngr->add(&mngr2, OPERATION_MULTIPLY);
-	} else if(!mngr->isNumber() || !mngr->number()->asin()) {
-		mngr->set(this, vargs[0], NULL);
-	} else {
-		mngr->setPrecise(!mngr->number()->isApproximate());
-	}
-}
-AcosFunction::AcosFunction() : Function("Trigonometry", "acos", 1, "Arccosine") {setArgumentDefinition(1, new AngleArgument("", false));}
-void AcosFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]); mngr->recalculateVariables();
-	if(mngr->isZero()) {
-		mngr->set(1, 2);
-		Manager mngr2(CALCULATOR->getPI());
-		mngr->add(&mngr2, OPERATION_MULTIPLY);
-		return;
-	} else if(mngr->isNumber() && mngr->number()->isMinusOne()) {
-		mngr->set(CALCULATOR->getPI());
-		return;
-	} else if(!mngr->isNumber() || !mngr->number()->acos()) {
-		mngr->set(this, vargs[0], NULL);
-	} else {
-		mngr->setPrecise(!mngr->number()->isApproximate());
-	}
-}
-AtanFunction::AtanFunction() : Function("Trigonometry", "atan", 1, "Arctangent") {setArgumentDefinition(1, new AngleArgument("", false));}
-void AtanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TRIG_FUNCTION(atan)
-}
-AsinhFunction::AsinhFunction() : Function("Trigonometry", "asinh", 1, "Hyperbolic arcsine") {setArgumentDefinition(1, new AngleArgument("", false));}
-void AsinhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TRIG_FUNCTION(asinh)
-}
-AcoshFunction::AcoshFunction() : Function("Trigonometry", "acosh", 1, "Hyperbolic arccosine") {setArgumentDefinition(1, new AngleArgument("", false));}
-void AcoshFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TRIG_FUNCTION(acosh)
-}
-AtanhFunction::AtanhFunction() : Function("Trigonometry", "atanh", 1, "Hyperbolic arctangent") {setArgumentDefinition(1, new AngleArgument("", false));}
-void AtanhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TRIG_FUNCTION(atanh)
-}
+}*/
 LogFunction::LogFunction() : Function("Exponents and Logarithms", "ln", 1, "Natural Logarithm") {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
 }
@@ -1386,9 +1232,10 @@ void LogFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 	mngr->set(this, vargs[0], NULL);			
 }
-LognFunction::LognFunction() : Function("Exponents and Logarithms", "log", 2, "Base-N Logarithm") {
+LognFunction::LognFunction() : Function("Exponents and Logarithms", "log", 1, "Base-N Logarithm", "", 2) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
 	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
+	setDefaultValue(2, "e");
 }
 void LognFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->isNumber() && vargs[1]->isNumber()) {
@@ -1397,163 +1244,57 @@ void LognFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 			mngr->setPrecise(!mngr->number()->isApproximate());
 			return;
 		}
+	} else if(vargs[1]->isVariable() && vargs[1]->variable() == CALCULATOR->getE()) {
+		if(vargs[0]->isNumber()) {
+			if(vargs[0]->number()->isMinusOne()) {
+				mngr->clear();
+				Number cmplx(1, 1);
+				mngr->number()->setImaginaryPart(&cmplx);
+				Manager mngr2(CALCULATOR->getPI());
+				mngr->add(&mngr2, OPERATION_MULTIPLY);
+				return;
+			}
+			if(vargs[0]->number()->isComplex() && !vargs[0]->number()->hasRealPart()) {
+				if(vargs[0]->number()->isI() || vargs[0]->number()->isMinusI()) {
+					mngr->set(vargs[0]);
+					mngr->addInteger(2, OPERATION_DIVIDE);
+					Manager mngr2(CALCULATOR->getPI());
+					mngr->add(&mngr2, OPERATION_MULTIPLY);
+					return;
+				}
+			}
+			mngr->set(vargs[0]);
+			if(mngr->number()->ln()) {
+				mngr->setPrecise(!mngr->number()->isApproximate());
+				return;
+			}
+		}
+		if(vargs[0]->isVariable() && vargs[0]->variable() == CALCULATOR->getE()) {
+			mngr->set(1, 1);
+			return;
+		} else if(vargs[0]->isPower() && vargs[0]->base()->isVariable() && vargs[0]->base()->variable() == CALCULATOR->getE() && vargs[0]->exponent()->isNumber()) {
+			if(!vargs[0]->exponent()->number()->isComplex()) {
+				mngr->set(vargs[0]->exponent());
+				return;
+			} else {
+				Number pi_nr(CALCULATOR->getPI()->get()->number());
+				Number *img_part = vargs[0]->exponent()->number()->imaginaryPart();
+				if(img_part->isLessThanOrEqualTo(&pi_nr)) {
+					pi_nr.negate();
+					if(img_part->isGreaterThan(&pi_nr)) {
+						mngr->set(vargs[0]->exponent());
+						delete img_part;
+						return;
+					}
+				}
+				delete img_part;
+			}
+		}
+		mngr->set(CALCULATOR->getLnFunction(), vargs[0], NULL);
 	}
 	mngr->set(CALCULATOR->getLnFunction(), vargs[0], NULL);
 	Manager mngr2(CALCULATOR->getLnFunction(), vargs[1], NULL);
 	mngr->add(&mngr2, OPERATION_DIVIDE);		
-}
-Log10Function::Log10Function() : Function("Exponents and Logarithms", "log10", 1, "Base-10 Logarithm") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
-}
-void Log10Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	if(!mngr->isNumber() || !mngr->number()->log(10)) {
-		mngr->set(this, vargs[0], NULL);
-	} else {
-		mngr->setPrecise(!mngr->number()->isApproximate());
-	}		
-}
-Log2Function::Log2Function() : Function("Exponents and Logarithms", "log2", 1, "Base-2 Logarithm") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
-}
-void Log2Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	if(!mngr->isNumber() || !mngr->number()->log(2)) {
-		mngr->set(this, vargs[0], NULL);
-	} else {
-		mngr->setPrecise(!mngr->number()->isApproximate());
-	}		
-}
-ExpFunction::ExpFunction() : Function("Exponents and Logarithms", "exp", 1, "e raised to the power X") {}
-void ExpFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isNumber()) {
-		mngr->set(vargs[0]);
-		if(!mngr->number()->exp()) {
-			mngr->set(this, vargs[0], NULL);
-		} else {
-			mngr->setPrecise(!mngr->number()->isApproximate());
-		}		
-	} else {
-		mngr->number()->e();
-		mngr->setPrecise(!mngr->number()->isApproximate());
-		mngr->add(vargs[0], OPERATION_RAISE);	
-	}
-}
-Exp10Function::Exp10Function() : Function("Exponents and Logarithms", "exp10", 1, "10 raised the to power X") {}
-void Exp10Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isNumber()) {
-		mngr->set(vargs[0]);
-		if(!mngr->number()->exp10()) {
-			mngr->set(this, vargs[0], NULL);
-		} else {
-			mngr->setPrecise(!mngr->number()->isApproximate());
-		}		
-	} else {
-		mngr->set(10, 1);
-		mngr->add(vargs[0], OPERATION_RAISE);	
-	}
-}
-Exp2Function::Exp2Function() : Function("Exponents and Logarithms", "exp2", 1, "2 raised the to power X") {}
-void Exp2Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isNumber()) {
-		mngr->set(vargs[0]);
-		if(!mngr->number()->exp2()) {
-			mngr->set(this, vargs[0], NULL);
-		} else {
-			mngr->setPrecise(!mngr->number()->isApproximate());
-		}		
-	} else {
-		mngr->set(2, 1);
-		mngr->add(vargs[0], OPERATION_RAISE);	
-	}
-}
-SqrtFunction::SqrtFunction() : Function("Exponents and Logarithms", "sqrt", 1, "Square Root") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
-}
-void SqrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	Manager *mngr2 = new Manager(1, 2);
-	mngr->add(mngr2, OPERATION_RAISE);	
-	mngr2->unref();
-}
-AbsSqrtFunction::AbsSqrtFunction() : Function("Exponents and Logarithms", "abssqrt", 1, "Square Root (abs)") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
-}
-void AbsSqrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isNumber()) {
-		mngr->set(vargs[0]);
-		if(!mngr->number()->raise(1, 2)) {
-			mngr->set(this, vargs[0], NULL);
-		} else {
-			mngr->setPrecise(!mngr->number()->isApproximate());
-		}
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
-}
-CbrtFunction::CbrtFunction() : Function("Exponents and Logarithms", "cbrt", 1, "Cube Root") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
-}
-void CbrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isNumber()) {
-		mngr->set(vargs[0]);
-		if(!mngr->number()->raise(1, 3)) {
-			mngr->set(this, vargs[0], NULL);
-		} else {
-			mngr->setPrecise(!mngr->number()->isApproximate());
-		}		
-	} else {
-		mngr->set(vargs[0]);
-		Manager *mngr2 = new Manager(1, 3);		
-		mngr->add(mngr2, OPERATION_RAISE);
-		mngr2->unref();	
-	}
-}
-RootFunction::RootFunction() : Function("Exponents and Logarithms", "root", 2, "Nth Root") {}
-void RootFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	Manager *mngr2 = new Manager(1, 1);		
-	mngr2->add(vargs[1], OPERATION_DIVIDE);
-	mngr->add(mngr2, OPERATION_RAISE);
-	mngr2->unref();	
-}
-AbsRootFunction::AbsRootFunction() : Function("Exponents and Logarithms", "absroot", 2, "Nth Root (abs)") {}
-void AbsRootFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isNumber() && vargs[1]->isNumber()) {
-		mngr->set(vargs[0]);
-		Number fr(1);
-		fr.divide(vargs[1]->number());
-		if(mngr->number()->raise(&fr)) {
-			mngr->setPrecise(!mngr->number()->isApproximate());
-			return;
-		}		
-	} 
-	mngr->set(this, vargs[0], vargs[1], NULL);
-}
-PowFunction::PowFunction() : Function("Exponents and Logarithms", "pow", 2, "Power") {}
-void PowFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-/*	if(vargs[0]->isNumber() && vargs[1]->isNumber()) {
-		mngr->set(vargs[0]);
-		if(mngr->number()->pow(vargs[1]->number())) {
-			mngr->setPrecise(!mngr->number()->isApproximate());
-			return;
-		}		
-	}*/
-	mngr->set(vargs[0]);
-	mngr->add(vargs[1], OPERATION_RAISE);
-}
-HypotFunction::HypotFunction() : Function("Geometry", "hypot", 2, "Hypotenuse") {
-}
-void HypotFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	mngr->addInteger(2, OPERATION_RAISE);
-	Manager *mngr2 = new Manager(vargs[1]);
-	mngr2->addInteger(2, OPERATION_RAISE);		
-	mngr->add(mngr2, OPERATION_RAISE);
-	mngr2->unref();
-	mngr2 = new Manager(1, 2);
-	mngr->add(mngr2, OPERATION_RAISE);
-	mngr2->unref();
 }
 TotalFunction::TotalFunction() : Function("Statistics", "total", -1, "Sum (total)") {
 	setArgumentDefinition(1, new VectorArgument("", false));
@@ -1870,7 +1611,7 @@ LengthFunction::LengthFunction() : Function("Utilities", "len", 1, "Length of st
 void LengthFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]->text().length());
 }
-AsciiFunction::AsciiFunction() : Function("Utilities", "ascii", 1, "ASCII Value") {
+AsciiFunction::AsciiFunction() : Function("Utilities", "code", 1, "ASCII Value") {
 	TextArgument *arg = new TextArgument();
 	arg->setCustomCondition("len(\\x) = 1");
 	setArgumentDefinition(1, arg);

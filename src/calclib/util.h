@@ -55,6 +55,7 @@ string &li2s(long int &value, string &str);
 string date2s(int year, int month, int day);
 int week(string str, bool start_sunday = false);
 int weekday(string str);
+int yearday(string str);
 void now(int &hour, int &min, int &sec);
 void today(int &year, int &month, int &day);
 bool s2date(string str, int &year, int &month, int &day);
@@ -73,13 +74,6 @@ int find_first_not_of(const string &str, unsigned int pos, ...);
 int find_first_of(const string &str, unsigned int pos, ...);
 int find_last_not_of(const string &str, unsigned int pos, ...);
 int find_last_of(const string &str, unsigned int pos, ...);
-
-double rad2deg(double &value);
-double deg2rad(double &value);
-double rad2gra(double &value);
-double gra2rad(double &value);
-double deg2gra(double &value);
-double gra2deg(double &value);
 
 string& wrap_p(string &str);
 string& remove_blanks(string &str);

@@ -100,6 +100,23 @@ int weekday(string str) {
 	g_date_free(gtime);
 	return day;
 }
+int yearday(string str) {
+	remove_blank_ends(str);
+	GDate *gtime = g_date_new();
+	bool b;
+	if(str == _("today") || str == "today") {
+		g_date_set_time(gtime, time(NULL));
+		b = true;
+	} else {
+		b = s2date(str, gtime);
+	}
+	int day = -1;
+	if(b) {
+		day = g_date_get_day_of_year(gtime);
+	}
+	g_date_free(gtime);
+	return day;
+}
 
 bool s2date(string str, int &year, int &month, int &day) {
 	//struct tm time;
@@ -462,25 +479,6 @@ string& remove_parenthesis(string &str) {
 		return remove_parenthesis(str);
 	}
 	return str;
-}
-
-double rad2deg(double &value) {
-	return value * 180 / PI_VALUE;
-}
-double deg2rad(double &value) {
-	return value * PI_VALUE / 180;
-}
-double rad2gra(double &value) {
-	return value * 200 / PI_VALUE;
-}
-double gra2rad(double &value) {
-	return value * PI_VALUE / 200;
-}
-double deg2gra(double &value) {
-	return value * 400 / 360;
-}
-double gra2deg(double &value) {
-	return value * 360 / 400;
 }
 
 string d2s(double value, int precision) {

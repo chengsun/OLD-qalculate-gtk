@@ -1991,17 +1991,23 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			arc_h = dh * 2;
 			arc_w = arc_h / 6;
 			w += arc_w * 2 + 2;
-			w += 1;
+			w += 2;
 
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
 			draw_background(pixmap, w, h);
 			
+			GdkGC *line_gc = gdk_gc_new(GDK_DRAWABLE(pixmap));
+			gdk_gc_copy(line_gc, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)]);
+			if(in_power) {
+				gdk_gc_set_line_attributes(line_gc, 1, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
+			} else {
+				gdk_gc_set_line_attributes(line_gc, 2, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
+			}
 			w = 0;
 			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - function_h / 2 - function_h % 2, layout_function);	
 			w += function_w + 1;
-			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);			
-			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w + 1, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);	
-			w += arc_w + 1;
+			gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w + 1, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);	
+			w += arc_w + 2;
 			for(unsigned int index = 0; index < m->countChilds(); index++) {
 				if(index > 0) {
 					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - comma_h / 2 - comma_h % 2, layout_comma);	
@@ -2012,13 +2018,12 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				w += wpa[index];
 				g_object_unref(pixmap_args[index]);
 			}	
-			w += 1;
-			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w - arc_w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 270 * 64, 180 * 64);			
-			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w - 1 - arc_w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 270 * 64, 180 * 64);	
+			gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w - arc_w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 270 * 64, 180 * 64);			
 			w += arc_w;				
 			
 			g_object_unref(layout_comma);
 			g_object_unref(layout_function);
+			gdk_gc_unref(line_gc);
 			if(plural) *plural = true;
 			break;
 		}			
@@ -2349,6 +2354,12 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			element_h.resize(m->matrix()->rows());
 			element_c.resize(m->matrix()->rows());						
 			pixmap_elements.resize(m->matrix()->rows());
+			PangoLayout *layout_comma = gtk_widget_create_pango_layout(resultview, NULL);
+			string str;
+			gint comma_w = 0, comma_h = 0;
+			MARKUP_STRING(str, CALCULATOR->getComma())
+			pango_layout_set_markup(layout_comma, str.c_str(), -1);		
+			pango_layout_get_pixel_size(layout_comma, &comma_w, &comma_h);
 			for(unsigned int index_r = 0; index_r < m->matrix()->rows(); index_r++) {
 				for(unsigned int index_c = 0; index_c < m->matrix()->columns(); index_c++) {
 					ctmp = 0;
@@ -2383,38 +2394,74 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			h += 4;
 			for(unsigned int i = 0; i < col_w.size(); i++) {
 				w += col_w[i];
-				if(i != 0) w += space_w * 2;
+				if(i != 0) {
+					if(m->matrix()->isVector()) {
+						w += comma_w;
+						w += space_w;
+					} else {
+						w += space_w * 2;
+					}
+				}
 			}
 	
-			gint wlr = h / 6, wll = h / 6;
+			gint wlr, wll;
+			if(m->matrix()->isVector()) {
+				wll = h / 6;
+				wlr = h / 6;
+			} else {
+				wll = 10;
+				wlr = 10;
+			}
 			
 			w += wlr + 1;
-			w += wll + 2;
+			w += wll + 3;
 			central_point = h / 2;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
 			draw_background(pixmap, w, h);
-
-			w = 0;
-			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w, 0, wll * 2, h, 90 * 64, 180 * 64);			
-			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w + 1, 0, wll * 2, h, 90 * 64, 180 * 64);						
+			GdkGC *line_gc = gdk_gc_new(GDK_DRAWABLE(pixmap));
+			gdk_gc_copy(line_gc, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)]);
+			gdk_gc_set_line_attributes(line_gc, 2, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
+			w = 1;
+			if(m->matrix()->isVector()) {
+				gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w, 0, wll * 2, h, 90 * 64, 180 * 64);
+			} else {
+				gdk_draw_line(GDK_DRAWABLE(pixmap), line_gc, w, 1, w, h - 1);
+				gdk_draw_line(GDK_DRAWABLE(pixmap), line_gc, w, 1, w + 7, 1);
+				gdk_draw_line(GDK_DRAWABLE(pixmap), line_gc, w, h - 1, w + 7, h - 1);
+			}
 			h = 2;
 			for(unsigned int index_r = 0; index_r < m->matrix()->rows(); index_r++) {
 				w = wll + 1;
 				for(unsigned int index_c = 0; index_c < m->matrix()->columns(); index_c++) {
-					gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_elements[index_r][index_c]), 0, 0, w + (col_w[index_c] - element_w[index_r][index_c]) / 2, h + row_uh[index_r] - (element_h[index_r][index_c] - element_c[index_r][index_c]), -1, -1);				
+					gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_elements[index_r][index_c]), 0, 0, w + (col_w[index_c] - element_w[index_r][index_c]), h + row_uh[index_r] - (element_h[index_r][index_c] - element_c[index_r][index_c]), -1, -1);				
 					w += col_w[index_c];
-					w += space_w * 2;
+					if(index_c != m->matrix()->columns() - 1) {
+						if(m->matrix()->isVector()) {
+							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, row_uh[index_r] - comma_h / 2 - comma_h % 2, layout_comma);	
+							w += comma_w;
+							w += space_w;
+						} else  {
+							w += space_w * 2;
+						}
+					}
 					g_object_unref(pixmap_elements[index_r][index_c]);
 				}
 				h += row_h[index_r];
 				h += 4;
 			}
-			w -= space_w * 2;
 			h -= 4;
 			h += 2;
-			w += 1;
-			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w - wlr, 0, wlr * 2, h, 270 * 64, 180 * 64);
-			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w - 1 - wlr, 0, wlr * 2, h, 270 * 64, 180 * 64);						
+			//w += 1;
+			if(m->matrix()->isVector()) {
+				gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w - wlr, 0, wlr * 2, h, 270 * 64, 180 * 64);
+			} else {
+				w += wll - 7;
+				gdk_draw_line(GDK_DRAWABLE(pixmap), line_gc, w + 7, 1, w + 7, h - 1);
+				gdk_draw_line(GDK_DRAWABLE(pixmap), line_gc, w, 1, w + 7, 1);
+				gdk_draw_line(GDK_DRAWABLE(pixmap), line_gc, w, h - 1, w + 7, h - 1);
+			}
+			g_object_unref(layout_comma);
+			gdk_gc_unref(line_gc);
 			break;
 		}
 		case NOT_MANAGER: {
@@ -3620,19 +3667,25 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 		gint arc_base_w = base_h / 6;
 		base_h += 4;
 		central_point += 2;
-		w += arc_base_w * 2 + 3;
+		w += arc_base_w * 2 + 4;
 		GdkPixmap *pixmap_old = pixmap;
 		pixmap = gdk_pixmap_new(resultview->window, w, h, -1);	
 		draw_background(pixmap, w, h);
-		w = 0;
-		gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w, 0, arc_base_w * 2, h, 90 * 64, 180 * 64);			
-		if(!in_power) gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w + 1, 0, arc_base_w * 2, h, 90 * 64, 180 * 64);	
+		GdkGC *line_gc = gdk_gc_new(GDK_DRAWABLE(pixmap));
+		gdk_gc_copy(line_gc, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)]);
+		w = 1;
+		if(in_power) {
+			gdk_gc_set_line_attributes(line_gc, 1, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
+		} else {
+			gdk_gc_set_line_attributes(line_gc, 2, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
+		}
+		gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w, 0, arc_base_w * 2, h, 90 * 64, 180 * 64);
 		w += arc_base_w + 1;
 		gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_old), 0, 0, w, (h - base_h) / 2, -1, -1);
-		w += base_w + 1;
-		gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w - arc_base_w, 0, arc_base_w * 2, h, 270 * 64, 180 * 64);			
-		if(!in_power) gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w - 1 - arc_base_w, 0, arc_base_w * 2, h, 270 * 64, 180 * 64);	
+		w += base_w;
+		gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w - arc_base_w, 0, arc_base_w * 2, h, 270 * 64, 180 * 64);			
 		g_object_unref(pixmap_old);
+		gdk_gc_unref(line_gc);
 		if(has_parenthesis) *has_parenthesis = true;
 	}
 	if(toplevel && pixmap) {
@@ -4426,7 +4479,7 @@ void insert_variable(GtkMenuItem *w, gpointer user_data) {
 }
 //from prefix menu
 void insert_prefix(GtkMenuItem *w, gpointer user_data) {
-	insert_text(((Prefix*) user_data)->name(false).c_str());
+	insert_text(((Prefix*) user_data)->name(use_short_units).c_str());
 }
 //from unit menu
 void insert_unit(GtkMenuItem *w, gpointer user_data) {
@@ -5800,8 +5853,8 @@ void load_preferences() {
 					save_mode_on_exit = v;
 				else if(svar == "save_definitions_on_exit")
 					save_defs_on_exit = v;
-				else if(svar == "load_global_definitions")
-					load_global_defs = v;
+				/*else if(svar == "load_global_definitions")
+					load_global_defs = v;*/
 				else if(svar == "fetch_exchange_rates_at_startup")
 					fetch_exchange_rates_at_startup = v;
 				else if(svar == "show_buttons")
@@ -6941,6 +6994,7 @@ void on_menu_item_enable_unknown_variables_activate(GtkMenuItem *w, gpointer use
 }
 void on_menu_item_calculate_variables_activate(GtkMenuItem *w, gpointer user_data) {
 	CALCULATOR->setDonotCalculateVariables(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+	execute_expression();
 }
 
 void on_menu_item_new_variable_activate(GtkMenuItem *w, gpointer user_data) {

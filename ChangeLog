@@ -1,3 +1,19 @@
+2004-03-28 Niklas Knutsson  <nq@altern.org>
+
+	* Change line width instead of drawing multiple lines
+	* Use barckets instead of parenthesis when drawing matrix
+	* Use commas for vector drawing
+	* Fix matrix text printing
+
+2004-03-27 Niklas Knutsson  <nq@altern.org>
+
+	* Do not let user disable loading of global definitions
+	* Do not raise if makes approximate in exact mode
+	* Cleanup unused functions
+	* Fix hypotenuse and make non-builtin
+	* Automatically act on "calculate variables"
+	* Set e as default second argument in log()
+
 2004-03-26 Niklas Knutsson  <nq@altern.org>
 
 	* time()
