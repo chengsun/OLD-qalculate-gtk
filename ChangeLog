@@ -1,5 +1,6 @@
 2003-08-13  Niklas Knutsson  <nq@altern.org>
 
+	* Remove duplicate functions
 	* Do not save unchanged global definitions in users definitions files
 	* Selectable prefix in result
 	* Fully functional unit conversion!
