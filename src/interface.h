@@ -45,6 +45,8 @@ GtkWidget* create_variables_dialog (void);
 GtkWidget* create_units_dialog (void);
 GtkWidget* create_preferences_dialog (void);
 GtkWidget* create_unit_edit_dialog (void);
+GtkWidget* create_function_edit_dialog (void);
+GtkWidget* create_variable_edit_dialog (void);
 GtkWidget *create_InfoWidget(const gchar *text);
 
 #endif /* INTERFACE_H */

@@ -388,9 +388,66 @@ create_preferences_dialog (void)
 GtkWidget*
 create_unit_edit_dialog (void)
 {
-	/* FIXME populate the combo menus */
+	/* populate combo menu */
+	
+	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
+	GList *items = NULL;
+	for(int i = 0; i < calc->units.size(); i++) {
+		if(!calc->units[i]->category().empty()) {
+			//add category if not present
+			if(g_hash_table_lookup(hash, (gconstpointer) calc->units[i]->category().c_str()) == NULL) {
+				items = g_list_append(items, (gpointer) calc->units[i]->category().c_str());
+				//remember added categories
+				g_hash_table_insert(hash, (gpointer) calc->units[i]->category().c_str(), (gpointer) hash);
+			}
+		}
+	}
+	gtk_combo_set_popdown_strings(GTK_COMBO(glade_xml_get_widget (glade_xml, "unit_edit_combo_category")), items);
 
 	return glade_xml_get_widget (glade_xml, "unit_edit_dialog");
+}
+
+GtkWidget*
+create_function_edit_dialog (void)
+{
+	/* populate combo menu */
+	
+	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
+	GList *items = NULL;
+	for(int i = 0; i < calc->functions.size(); i++) {
+		if(!calc->functions[i]->category().empty()) {
+			//add category if not present
+			if(g_hash_table_lookup(hash, (gconstpointer) calc->functions[i]->category().c_str()) == NULL) {
+				items = g_list_append(items, (gpointer) calc->functions[i]->category().c_str());
+				//remember added categories
+				g_hash_table_insert(hash, (gpointer) calc->functions[i]->category().c_str(), (gpointer) hash);
+			}
+		}
+	}
+	gtk_combo_set_popdown_strings(GTK_COMBO(glade_xml_get_widget (glade_xml, "function_edit_combo_category")), items);
+
+	return glade_xml_get_widget (glade_xml, "function_edit_dialog");
+}
+GtkWidget*
+create_variable_edit_dialog (void)
+{
+	/* populate combo menu */
+	
+	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
+	GList *items = NULL;
+	for(int i = 0; i < calc->variables.size(); i++) {
+		if(!calc->variables[i]->category().empty()) {
+			//add category if not present
+			if(g_hash_table_lookup(hash, (gconstpointer) calc->variables[i]->category().c_str()) == NULL) {
+				items = g_list_append(items, (gpointer) calc->variables[i]->category().c_str());
+				//remember added categories
+				g_hash_table_insert(hash, (gpointer) calc->variables[i]->category().c_str(), (gpointer) hash);
+			}
+		}
+	}
+	gtk_combo_set_popdown_strings(GTK_COMBO(glade_xml_get_widget (glade_xml, "variable_edit_combo_category")), items);
+
+	return glade_xml_get_widget (glade_xml, "variable_edit_dialog");
 }
 
 

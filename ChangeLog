@@ -1,5 +1,8 @@
 2003-08-11  Niklas Knutsson  <nq@altern.org>
 
+	* Populate category combos
+	* Turn base unit combo into entry as it probably is not a good idea to fill the combo with all units
+	* Gladify the variable and function edit dialogs hidden callbacks.cc
 	* Beautification of dialogs
 	* Huge gladeification of signals and widget references
 

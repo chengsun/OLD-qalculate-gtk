@@ -19,9 +19,6 @@ void create_pmenu(void);
 
 gboolean on_display_errors_timeout(gpointer data);
 
-void on_function_name_entry_changed(GtkEditable *editable, gpointer user_data);
-void on_variable_name_entry_changed(GtkEditable *editable, gpointer user_data);
-
 void update_functions_tree(GtkWidget *wfun);
 void update_variables_tree(GtkWidget *wvar);
 void update_units_tree(GtkWidget *wvar);
@@ -177,6 +174,8 @@ void on_functions_button_delete_clicked(GtkButton *button, gpointer user_data);
 void on_functions_button_close_clicked(GtkButton *button, gpointer user_data);
 gboolean on_functions_dialog_destroy_event(GtkWidget *widget, GdkEvent *event, gpointer user_data);
 gboolean on_functions_dialog_delete_event(GtkWidget *widget, GdkEvent *event, gpointer user_data);
+void on_function_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
+void on_variable_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 
 }
 
