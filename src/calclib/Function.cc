@@ -803,7 +803,10 @@ Argument::Argument(string name_, bool does_test, bool does_error) {
 	b_text = false;
 	b_error = does_error;
 }
-Argument::Argument(const Argument *arg) {set(arg);}
+Argument::Argument(const Argument *arg) {
+	b_text = false;
+	set(arg);
+}
 Argument::~Argument() {}
 Argument *Argument::copy() const {
 	return new Argument(this);

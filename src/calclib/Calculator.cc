@@ -188,7 +188,7 @@ Calculator::Calculator() {
 	angleMode(RADIANS);
 	pi_var = NULL;
 	e_var = NULL;
-	ln_func = NULL, matrix_func = NULL, vector_func = NULL, sin_func = NULL, cos_func = NULL, diff_func = NULL, base_func = NULL, bin_func = NULL, oct_func = NULL, hex_func = NULL;
+	ln_func = NULL, matrix_func = NULL, vector_func = NULL, abs_func = NULL, diff_func = NULL, base_func = NULL, bin_func = NULL, oct_func = NULL, hex_func = NULL, integrate_func = NULL;
 	addBuiltinVariables();
 	addBuiltinFunctions();
 	addBuiltinUnits();
@@ -234,9 +234,9 @@ Function *Calculator::getOctalFunction() const {return oct_func;}
 Function *Calculator::getHexadecimalFunction() const {return hex_func;}
 Function *Calculator::getBaseFunction() const {return base_func;}
 Function *Calculator::getLnFunction() const {return ln_func;}
-Function *Calculator::getSinFunction() const {return sin_func;}
-Function *Calculator::getCosFunction() const {return cos_func;}
+Function *Calculator::getAbsFunction() const {return abs_func;}
 Function *Calculator::getDiffFunction() const {return diff_func;}
+Function *Calculator::getIntegrateFunction() const {return integrate_func;}
 void Calculator::setRPNMode(bool enable) {
 	b_rpn = enable;
 }
@@ -788,7 +788,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new TimeFunction());
 	addFunction(new GCDFunction());	
 	addFunction(new FactorialFunction());
-	addFunction(new AbsFunction());
+	abs_func = addFunction(new AbsFunction());
 	addFunction(new CeilFunction());
 	addFunction(new FloorFunction());
 	addFunction(new TruncFunction());
@@ -822,8 +822,10 @@ void Calculator::addBuiltinFunctions() {
 #ifdef HAVE_GIAC
 	addFunction(new GiacFunction());
 	addFunction(new SolveFunction());
-	addFunction(new GiacIntegrateFunction());
+	integrate_func = addFunction(new IntegrateFunction());
 	addFunction(new GiacDeriveFunction());
+#else
+	integrate_func = addFunction(new IntegrateFunction());
 #endif
 	diff_func = addFunction(new DeriveFunction());
 	addFunction(new LoadFunction());

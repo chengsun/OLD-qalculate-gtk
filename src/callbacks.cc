@@ -2532,7 +2532,8 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			if(m->type() == COMPARISON_MANAGER) {
 				switch(m->comparisonType()) {
 					case COMPARISON_EQUALS: {
-						str += "==";
+						str += "=";
+						if(toplevel) wrap_all = true;
 						break;
 					}
 					case COMPARISON_NOT_EQUALS: {
@@ -2665,7 +2666,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				if(l_exp) delete l_exp;
 				l_exp = NULL;	
 				hetmp = 0;		
-				pixmap_terms.push_back(draw_manager(m->getChild(i), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, false, &hetmp, false, m->getChild(i)->isAddition()));
+				pixmap_terms.push_back(draw_manager(m->getChild(i), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, false, &hetmp, false, m->getChild(i)->isAddition() || m->getChild(i)->isComparison()));
 				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_terms[i]), &wtmp, &htmp);
 				hpt.push_back(htmp);
 				cpt.push_back(hetmp);
@@ -7755,7 +7756,7 @@ void on_function_edit_entry_name_changed(GtkEditable *editable, gpointer user_da
 */
 void on_variable_edit_entry_name_changed(GtkEditable *editable, gpointer user_data) {
 	if(!CALCULATOR->variableNameIsValid(gtk_entry_get_text(GTK_ENTRY(editable)))) {
-		g_signal_handlers_block_matched((gpointer) editable, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_variable_edit_entry_name_changed, NULL);		
+		g_signal_handlers_block_matched((gpointer) editable, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_variable_edit_entry_name_changed, NULL);
 		gtk_entry_set_text(GTK_ENTRY(editable), CALCULATOR->convertToValidVariableName(gtk_entry_get_text(GTK_ENTRY(editable))).c_str());
 		g_signal_handlers_unblock_matched((gpointer) editable, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_variable_edit_entry_name_changed, NULL);		
 	}
@@ -8597,4 +8598,3 @@ void on_unit_dialog_entry_unit_activate(GtkEntry *entry, gpointer user_data) {
 #ifdef __cplusplus
 }
 #endif
-

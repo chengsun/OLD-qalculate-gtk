@@ -489,6 +489,10 @@ bool Number::subtract(const Number *o) {
 }
 bool Number::multiply(const Number *o) {
 	if(isZero()) return true;
+	if(!o->isApproximate() && o->isZero()) {
+		clear();
+		return true;
+	}
 	if(o->isApproximate()) setApproximate();
 	value *= o->clnNumber();
 	return true;
@@ -1043,64 +1047,73 @@ bool Number::binomial(const Number *m, const Number *k) {
 }
 
 int Number::add(MathOperation op, const Number *o, int solution) {
-	if(!o) return false;
+	if(!o) return 0;
 	switch(op) {
 		case OPERATION_SUBTRACT: {
-			return subtract(o);
+			if(subtract(o)) return 1;
+			return 0;
 		}
 		case OPERATION_ADD: {
-			return add(o);
+			if(add(o)) return 1;
+			return 0;
 		} 
 		case OPERATION_MULTIPLY: {
-			return multiply(o);
+			if(multiply(o)) return 1;
+			return 0;
 		}
 		case OPERATION_DIVIDE: {
-			return divide(o);
+			if(divide(o)) return 1;
+			return 0;
 		}		
 		case OPERATION_RAISE: {
 			return raise(o, solution);
 		}
 		case OPERATION_EXP10: {
-			return exp10(o);
+			if(exp10(o)) return 1;
+			return 0;
 		}
 		case OPERATION_OR: {
 			setTrue(isPositive() || o->isPositive());
-			return true;
+			return 1;
 		}
 		case OPERATION_AND: {
 			setTrue(isPositive() && o->isPositive());
-			return true;
+			return 1;
 		}
 		case OPERATION_EQUALS: {
 			setTrue(equals(o));
-			return true;
+			return 1;
 		}
 		case OPERATION_GREATER: {
 			int i = compare(o);
 			if(i != -2) setTrue(i == -1);
-			return i != -2;
+			if(i != -2) return 1;
+			return 0;
 		}
 		case OPERATION_LESS: {
 			int i = compare(o);
 			if(i != -2) setTrue(i == 1);
-			return i != -2;
+			if(i != -2) return 1;
+			return 0;
 		}
 		case OPERATION_EQUALS_GREATER: {
 			int i = compare(o);
 			if(i != -2) setTrue(i == 0 || i == -1);
-			return i != -2;
+			if(i != -2) return 1;
+			return 0;
 		}
 		case OPERATION_EQUALS_LESS: {
 			int i = compare(o);
 			if(i != -2) setTrue(i == 0 || i == 1);
-			return i != -2;
+			if(i != -2) return 1;
+			return 0;
 		}
 		case OPERATION_NOT_EQUALS: {
 			setTrue(!equals(o));
-			return true;
+			return 1;
 		}
 	}
-	return false;	
+	return 0;	
 }
 
 bool Number::floatify(cl_I *num, cl_I *den, int precision, int max_decimals, bool *infinite_series) {

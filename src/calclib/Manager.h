@@ -182,6 +182,10 @@ class Manager {
 		
 		Vector *generateVector(string x_var, const Manager *min, const Manager *max, int steps, Vector **x_vector = NULL);
 		Vector *generateVector(string x_var, Vector *x_vector);
+		
+		string find_x_var();
+		void move_x_to_one_side(string x_var = "");
+		void solve(string x_var);
 
 };
 

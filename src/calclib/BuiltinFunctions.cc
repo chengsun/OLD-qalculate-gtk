@@ -1792,12 +1792,12 @@ void GiacDeriveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		return;
 	}
 }
-SolveFunction::SolveFunction() : Function("Calculus", "solve", 1, "Solve equation", "", 2) {
+GiacSolveFunction::GiacSolveFunction() : Function("Calculus", "solve", 1, "Solve equation", "", 2) {
 	setArgumentDefinition(1, new GiacArgument());
 	setArgumentDefinition(2, new TextArgument());
 	setDefaultValue(2, "\"x\"");		
 }
-void SolveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+void GiacSolveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	bool failed = false;
 	giac::gen v1 = vargs[0]->toGiac(&failed);
 	if(failed) {
@@ -1871,7 +1871,7 @@ void DeriveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		i--;
 	}
 }
-IntegrateFunction::IntegrateFunction() : Function("Calculus", "integrate_test", 1, "Integrate", "", 2) {
+IntegrateFunction::IntegrateFunction() : Function("Calculus", "integrate", 1, "Integrate", "", 2) {
 	setArgumentDefinition(2, new TextArgument());
 	setDefaultValue(2, "\"x\"");
 }
@@ -1879,6 +1879,26 @@ void IntegrateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
 	mngr->integrate(vargs[1]->text());
 }
+SolveFunction::SolveFunction() : Function("Calculus", "solve", 1, "Solve equation", "", 2) {
+	setArgumentDefinition(2, new TextArgument());
+	setDefaultValue(2, "\"x\"");		
+}
+void SolveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	Manager mngr_solve(vargs[0]);
+	mngr_solve.solve(vargs[1]->text());
+	if(vargs[0]->isComparison() && vargs[0]->comparisonType() == COMPARISON_EQUALS) {
+		if(mngr_solve.getChild(0)->equals(vargs[1])) {
+			mngr->set(mngr_solve.getChild(1));
+			return;
+		} else if(mngr_solve.getChild(1)->equals(vargs[1])) {
+			mngr->set(mngr_solve.getChild(0));
+			return;
+		}
+	}
+	CALCULATOR->error(false, _("No solution was found."), NULL);
+	mngr->set(this, &mngr_solve, vargs[1], NULL);
+}
+
 LoadFunction::LoadFunction() : Function("Utilities", "load", 1, "Load CSV file", "", 3) {
 	setArgumentDefinition(1, new FileArgument());
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));

@@ -148,7 +148,7 @@ class Argument {
 	
 	bool matrixAllowed() const;
 	void setMatrixAllowed(bool allow_matrix);
-	
+
 	virtual bool suggestsQuotes() const;
 	
 	virtual int type() const;

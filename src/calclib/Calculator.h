@@ -80,7 +80,7 @@ class Calculator {
 	bool local_to;
 	
 	Variable *pi_var, *e_var;
-	Function *ln_func, *vector_func, *matrix_func, *sin_func, *cos_func, *diff_func, *bin_func, *oct_func, *hex_func, *base_func;
+	Function *ln_func, *vector_func, *matrix_func, *abs_func, *diff_func, *bin_func, *oct_func, *hex_func, *base_func, *integrate_func;
 
   public:
   
@@ -120,9 +120,9 @@ class Calculator {
 	Function *getHexadecimalFunction() const;
 	Function *getBinaryFunction() const;
 	Function *getBaseFunction() const;
-	Function *getSinFunction() const;
-	Function *getCosFunction() const;
+	Function *getAbsFunction() const;
 	Function *getDiffFunction() const;
+	Function *getIntegrateFunction() const;
 	Variable *getVariable(unsigned int index) const;
 	Unit *getUnit(unsigned int index) const;	
 	Function *getFunction(unsigned int index) const;	

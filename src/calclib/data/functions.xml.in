@@ -1704,7 +1704,28 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     </builtin_function>
   </category>
   <category>
-    <_title>Finance</_title>
+    <_title>Economics</_title>
+    <category>
+      <_title>Microeconomics</_title>
+      <function name="elasticity">
+        <_title>Elasticity</_title>
+        <_description>Calculates the demand elesticity. Also works for supply elasticity, income elasticity, cross-price elasticity, etc. Just replace demand, with supply, or price with income...
+	
+Ex. elasticity(100-P^2, 3) calculates the demand elasticity when the price is 3 for the function "Q = 100 - P^2" where P is the default price variable.</_description>
+        <expression>replace(diff(\x,\Z{"P"}),\Z,\y)*\y/replace(\x,\Z,\y)</expression>
+        <argument type="free" index="1">
+          <_title>Demand Function</_title>
+        </argument>
+        <argument type="free" index="2">
+          <_title>Price</_title>
+        </argument>
+        <argument type="text" index="3">
+          <_title>Price Variable</_title>
+        </argument>
+      </function>
+    </category>
+    <category>
+      <_title>Finance</_title>
     <function name="syd">
       <_title>Sum-of-years digits depreciation</_title>
       <_description>Calculates the sum-of-years digits depreciation for an asset based on its cost, salvage value, anticipated life, and a particular period. This method accelerates the rate of the depreciation, so that more depreciation expense occurs in earlier periods than in later ones. The depreciable cost is the actual cost minus the salvage value. The useful life is the number of periods (typically years) over which the asset is depreciated.</_description>
@@ -2282,6 +2303,7 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
         <_title>Market interest rate</_title>
       </argument>
     </function>
+    </category>
   </category>
   <category>  
     <_title>Calculus</_title>

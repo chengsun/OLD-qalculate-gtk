@@ -1,5 +1,16 @@
+2004-03-31 Niklas Knutsson  <nq@altern.org>
+
+	* Clean after multiplication raise... (serious bug)
+	* Quadratic equations
+	* Non-giac solve function and automatic "solving" of comparisons
+	* Better comparison equals printing
+	* Minimal non-giac integrate function
+
 2004-03-30 Niklas Knutsson  <nq@altern.org>
 
+	* Finance -> Economics/Finance
+	* Demand Elasticity function
+	* Fix that all arguments wanted text after function editing
 	* Free temporary composite units
 	* Fix sin(x)/tan(x)
 	* No (+ -) in printing with complex numbers
