@@ -29,6 +29,7 @@
 #include "callbacks.h"
 #include "interface.h"
 #include "main.h"
+#include <stack>
 
 extern bool do_timeout;
 
@@ -1449,10 +1450,10 @@ void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gp
 					menu_index = MENU_ARGUMENT_TYPE_ANGLE;
 					break;
 				}
-				case ARGUMENT_TYPE_GIAC: {
+/*				case ARGUMENT_TYPE_GIAC: {
 					menu_index = MENU_ARGUMENT_TYPE_GIAC;
 					break;
-				}						
+				}	*/					
 			}			
 		} else {
 			gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_argument_name")), "");
@@ -8587,7 +8588,7 @@ void on_function_edit_button_add_argument_clicked(GtkButton *w, gpointer user_da
 			case MENU_ARGUMENT_TYPE_FILE: {arg = new FileArgument(); break;}
 			case MENU_ARGUMENT_TYPE_BOOLEAN: {arg = new BooleanArgument(); break;}	
 			case MENU_ARGUMENT_TYPE_ANGLE: {arg = new AngleArgument(); break;}	
-			case MENU_ARGUMENT_TYPE_GIAC: {arg = new GiacArgument(); break;}	
+//			case MENU_ARGUMENT_TYPE_GIAC: {arg = new GiacArgument(); break;}
 			default: {arg = new Argument();}
 		}
 	}
@@ -8641,7 +8642,7 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 				case MENU_ARGUMENT_TYPE_FILE: {argtype = ARGUMENT_TYPE_FILE; break;}
 				case MENU_ARGUMENT_TYPE_BOOLEAN: {argtype = ARGUMENT_TYPE_BOOLEAN; break;}	
 				case MENU_ARGUMENT_TYPE_ANGLE: {argtype = ARGUMENT_TYPE_ANGLE; break;}	
-				case MENU_ARGUMENT_TYPE_GIAC: {argtype = ARGUMENT_TYPE_GIAC; break;}	
+//				case MENU_ARGUMENT_TYPE_GIAC: {argtype = ARGUMENT_TYPE_GIAC; break;}	
 			}			
 			
 			if(!selected_argument || argtype != selected_argument->type() || menu_index == MENU_ARGUMENT_TYPE_NONNEGATIVE_INTEGER || menu_index == MENU_ARGUMENT_TYPE_POSITIVE_INTEGER || menu_index == MENU_ARGUMENT_TYPE_NONZERO_INTEGER || menu_index == MENU_ARGUMENT_TYPE_NONZERO || menu_index == MENU_ARGUMENT_TYPE_POSITIVE || menu_index == MENU_ARGUMENT_TYPE_NONNEGATIVE) {
@@ -8669,7 +8670,7 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 					case MENU_ARGUMENT_TYPE_FILE: {selected_argument = new FileArgument(); break;}
 					case MENU_ARGUMENT_TYPE_BOOLEAN: {selected_argument = new BooleanArgument(); break;}	
 					case MENU_ARGUMENT_TYPE_ANGLE: {selected_argument = new AngleArgument(); break;}
-					case MENU_ARGUMENT_TYPE_GIAC: {selected_argument = new GiacArgument(); break;}	
+//					case MENU_ARGUMENT_TYPE_GIAC: {selected_argument = new GiacArgument(); break;}	
 					default: {selected_argument = new Argument();}
 				}			
 			}

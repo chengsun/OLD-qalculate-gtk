@@ -1,3 +1,13 @@
+2004-08-20 Niklas Knutsson  <nq@altern.org>
+
+	* Fix RPN mode
+	* include errno.h
+
+2004-08-16 Niklas Knutsson  <nq@altern.org>
+
+	* Remove giac arguments
+	* Update documentation
+
 2004-08-15 Niklas Knutsson  <nq@altern.org>
 
 	* Fix prefix selection when first positive/negative exponent prefix
@@ -22,7 +32,7 @@
 
 2004-08-12 Niklas Knutsson  <nq@altern.org>
 
-	* Fix derangements() which was broken due to changed interpretion of -1^x
+	* Fix derangements() which was broken due to changed interpretation of -1^x
 	* CALCULATOR->u_rad was null
 	* True and False variables
 	* "yes" -> "Yes" and "no" -> "No"

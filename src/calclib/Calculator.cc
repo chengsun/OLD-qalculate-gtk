@@ -26,12 +26,12 @@
 #include <pwd.h>
 #include <unistd.h>
 #include <time.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
 #include <wait.h>
 #include <queue>
-#include <stack>
 #include <glib.h>
 
 #define WANT_OBFUSCATING_OPERATORS
@@ -3002,61 +3002,48 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 	if(po.rpn) {
 		ParseOptions po2 = po;
 		po2.rpn = false;
-		vector<string> stack;
+		vector<MathStructure> mstack;
 		bool b = false;
-		MathOperation s = OPERATION_ADD;
 		while(true) {
 			i = str.find_first_of(OPERATORS SPACE, i3 + 1);
 			if(i == (int) string::npos) {
+				if(!b) {
+					parseAdd(str, mstruct, po2);
+					return mstruct;
+				}
 				if(i3 != 0) {
 					str2 = str.substr(i3 + 1, str.length() - i3 - 1);
 				} else {
 					str2 = str.substr(i3, str.length() - i3);
 				}
-				if(str2.length() > 0) {
-					if(b) {
-						parseAdd(str2, mstruct, po2, s);
-					} else {
-						parseAdd(str2, mstruct, po2);
-					}
-				} else {
-					b = false;
+				remove_blank_ends(str2);
+				if(!str2.empty() || mstack.size() > 1) {
+					error(true, _("RPN syntax error. Stack values left."), NULL);
 				}
-				if(b || stack.size() > 0) {
-					error(true, _("RPN syntax error."), NULL);
-				}
-				return mstruct;
+				return mstack.back();
 			}
+			b = true;
 			if(i3 != 0) {
 				str2 = str.substr(i3 + 1, i - i3 - 1);
 			} else {
 				str2 = str.substr(i3, i - i3);
 			}
-			stack.push_back(str2);
+			remove_blank_ends(str2);
+			if(!str2.empty()) {
+				mstack.push_back(m_zero);
+				parseAdd(str2, mstack.back(), po2);
+			}
 			if(str[i] != SPACE_CH) {
-				switch(str[i]) {
-					case PLUS_CH: {s = OPERATION_ADD; break;}
-					case MINUS_CH: {s = OPERATION_SUBTRACT; break;}
-					case MULTIPLICATION_CH: {s = OPERATION_MULTIPLY; break;}
-					case DIVISION_CH: {s = OPERATION_DIVIDE; break;}
-					case POWER_CH: {s = OPERATION_RAISE; break;}
-				}
-				if((!b && stack.size() < 2) || (b && stack.size() < 1)) {
-					error(true, _("RPN syntax error."), NULL);
-					if(!b && stack.size() > 0) {
-						b = true;
-						parseAdd(stack[0], mstruct, po);
-					}
+				if(mstack.size() < 2) {
+					error(true, _("RPN syntax error. Stack does not contain two values to apply the operation to."), NULL);
 				} else {
-					for(unsigned int index = 0; index < stack.size(); index++) {
-						if(!b) {
-							b = true;
-							parseAdd(stack[index], mstruct, po);
-						} else {
-							parseAdd(stack[index], mstruct, po, s);
-						}
+					switch(str[i]) {
+						case PLUS_CH: {mstack[mstack.size() - 2] += mstack.back(); mstack.pop_back(); break;}
+						case MINUS_CH: {mstack[mstack.size() - 2] -= mstack.back(); mstack.pop_back(); break;}
+						case MULTIPLICATION_CH: {mstack[mstack.size() - 2] *= mstack.back(); mstack.pop_back(); break;}
+						case DIVISION_CH: {mstack[mstack.size() - 2] /= mstack.back(); mstack.pop_back(); break;}
+						case POWER_CH: {mstack[mstack.size() - 2] ^= mstack.back(); mstack.pop_back(); break;}
 					}
-					stack.clear();
 				}
 			}
 			i3 = i;
@@ -3763,8 +3750,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							arg = new ExpressionItemArgument();
 						} else if(type == "angle") {
 							arg = new AngleArgument();
-						} else if(type == "giac") {
-							arg = new GiacArgument();
+/*						} else if(type == "giac") {
+							arg = new GiacArgument();*/
 						} else {
 							arg = new Argument();
 						}
@@ -4870,7 +4857,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 								case ARGUMENT_TYPE_VARIABLE: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "variable"); break;}
 								case ARGUMENT_TYPE_EXPRESSION_ITEM: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "object"); break;}
 								case ARGUMENT_TYPE_ANGLE: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "angle"); break;}
-								case ARGUMENT_TYPE_GIAC: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "giac"); break;}
+//								case ARGUMENT_TYPE_GIAC: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "giac"); break;}
 								default: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "free");}
 							}
 							xmlNewProp(newnode, (xmlChar*) "index", (xmlChar*) i2s(i2).c_str());

@@ -279,7 +279,7 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 			</row>
 			<row valign="top">
 				<entry><para>Factorize</para></entry>
-				<entry><para>Factorizes the current result. At the moment rather limited if Qalculate! was not installed with Giac support.</para></entry>
+				<entry><para>Factorizes the current result. At the moment rather limited.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Convert To Unit</para></entry>
@@ -299,7 +299,7 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 			</row>
 			<row valign="top">
 				<entry><para>Convert To Best Unit</para></entry>
-				<entry><para>Tries to convert the units in the current result so that as few units as possible is used. Base units are prioritised.</para></entry>
+				<entry><para>Tries to convert the units in the current result so that as few units as possible is used. Base units are prioritized.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Copy Result (<keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>C</keycap></keycombo>)</para></entry>
@@ -362,7 +362,7 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 			</row>
 			<row valign="top">
 				<entry><para>Read Precision</para></entry>
-				<entry><para>Enables/disables interpretion of input numbers with decimals as approximate with a precision equal to the number of digits (after preceeding zeroes).</para></entry>
+				<entry><para>Enables/disables interpretation of input numbers with decimals as approximate with a precision equal to the number of digits (after preceding zeroes).</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>RPN Mode</para></entry>
@@ -806,13 +806,13 @@ If this option is on, Qalculate! will not round infinitely repeating digit seque
 <varlistentry>
 <term>Round Halfway Number To Even</term>
 <listitem><para>
-With this option, halfway numbers will be rounded to even instead of upwards (ex. 2.65 is then rounded to 2.6 instead of 2.7). Note that this behaviour is always applied in the <command>round()</command> function.
+With this option, halfway numbers will be rounded to even instead of upwards (ex. 2.65 is then rounded to 2.6 instead of 2.7). Note that this behavior is always applied in the <command>round()</command> function.
 </para></listitem>
 </varlistentry>
 <varlistentry>
 <term>Show Ending Zeroes</term>
 <listitem><para>
-if this option is on, approximate numbers in the result will be appended with zeroes, so that the number of digits (after preceeding zeroes) will equal the precision.
+if this option is on, approximate numbers in the result will be appended with zeroes, so that the number of digits (after preceding zeroes) will equal the precision.
 </para></listitem>
 </varlistentry>
 <varlistentry>
@@ -987,7 +987,6 @@ Argument types include:
 	<listitem><para>Unit — the name of a unit</para></listitem>
 	<listitem><para>File — the path to a file</para></listitem>
 	<listitem><para>Angle — an angle used in trigonometric functions, meaning a number and an angle unit. If no angle unit is included the default is used.</para></listitem>
-	<listitem><para>Giac — as free. Used in Giac connected functions.</para></listitem>
 </itemizedlist>
 </para>
 <para>
@@ -1007,7 +1006,7 @@ Contains <command>sum()</command> and <command>productive()</command>, which cor
 <varlistentry>
 <term>Calculus</term>
 <listitem><para>
-Includes <command>diff()</command> which calculates the derivative of an expression with optional arguments <quote>with respect to</quote> (default x) and <quote>order</quote> (default 1), and <command>integrate()</command>.  Integrate are very limited without Giac support. There is also a generic Giac function, which passes a text argument directly to Giac.
+Includes <command>diff()</command> which calculates the derivative of an expression with optional arguments <quote>with respect to</quote> (default x) and <quote>order</quote> (default 1).
 </para></listitem>
 </varlistentry>
 <varlistentry>
@@ -1037,7 +1036,7 @@ This essentially includes most of the financial functions that are usually found
 <varlistentry>
 <term>Elements</term>
 <listitem><para>
-This category includes functions to retrieve data sush atomic weight. The <command>atom()</command> function opens a window with available data of an element. These functions accept the number, symbol or name of the element as argument. The data are loaded on demand.
+This category includes functions to retrieve data such as atomic weight. The <command>atom()</command> function opens a window with available data of an element. These functions accept the number, symbol or name of the element as argument. The data are loaded on demand.
 </para></listitem>
 </varlistentry>
 <varlistentry>

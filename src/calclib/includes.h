@@ -84,6 +84,9 @@ class EqItem;
 class EqNumber;
 class EqContainer;
 class Argument;
+class DataCollection;
+class DataProperty;
+class DataObject;
 
 enum {
 	TYPE_VARIABLE,

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-16 11:53+0200\n"
+"POT-Creation-Date: 2004-08-16 15:45+0200\n"
 "PO-Revision-Date: 2003-10-27 12:29+0100\n"
 "Last-Translator: Niklas Knutsson <nq@altern.org>\n"
 "Language-Team: Swedish\n"
@@ -220,12 +220,12 @@ msgstr "Inkludera kolumner"
 msgid "Matrices"
 msgstr "Matriser"
 
-#: data/csvimport.glade.h:20 data/functionedit.glade.h:30 data/main.glade.h:97
+#: data/csvimport.glade.h:20 data/functionedit.glade.h:29 data/main.glade.h:97
 #: data/matrixedit.glade.h:14 src/calclib/data/functions.xml.in.h:245
 msgid "Matrix"
 msgstr "Matris"
 
-#: data/csvimport.glade.h:21 data/functionedit.glade.h:33
+#: data/csvimport.glade.h:21 data/functionedit.glade.h:32
 #: data/matrixedit.glade.h:15 data/namesedit.glade.h:5
 #: data/unitedit.glade.h:19 data/unknownedit.glade.h:9
 #: data/variableedit.glade.h:8 src/interface.cc:551 src/interface.cc:690
@@ -384,126 +384,122 @@ msgid "Function"
 msgstr "Funktion"
 
 #: data/functionedit.glade.h:27
-msgid "Giac"
-msgstr ""
-
-#: data/functionedit.glade.h:28
 msgid "If this function shall be hidden in menus"
 msgstr "Huruvida funktionen skall döljas i menyer"
 
-#: data/functionedit.glade.h:29 data/main.glade.h:92
+#: data/functionedit.glade.h:28 data/main.glade.h:92
 #: data/unknownedit.glade.h:8
 msgid "Integer"
 msgstr "Heltal"
 
-#: data/functionedit.glade.h:31
+#: data/functionedit.glade.h:30
 msgid "Modify selected argument"
 msgstr "Modifiera vald parameter"
 
-#: data/functionedit.glade.h:32
+#: data/functionedit.glade.h:31
 msgid "Modify selected subfunction"
 msgstr "Modifiera vald subfunktion"
 
-#: data/functionedit.glade.h:34
+#: data/functionedit.glade.h:33
 msgid "Name used to invoke this function in expressions"
 msgstr "Namn som används för referera till funktionen i uttryck"
 
-#: data/functionedit.glade.h:35 data/matrixedit.glade.h:17
+#: data/functionedit.glade.h:34 data/matrixedit.glade.h:17
 #: data/unitedit.glade.h:20 data/unknownedit.glade.h:11
 #: data/variableedit.glade.h:10
 msgid "Names Details"
 msgstr "Namndetaljer"
 
-#: data/functionedit.glade.h:36
+#: data/functionedit.glade.h:35
 msgid "Non-negative integer"
 msgstr "Icke-negativt nummer"
 
-#: data/functionedit.glade.h:37
+#: data/functionedit.glade.h:36
 msgid "Non-negative number"
 msgstr "Icke-negativt nummer"
 
-#: data/functionedit.glade.h:38
+#: data/functionedit.glade.h:37
 msgid "Non-zero integer"
 msgstr "Icke-noll heltal"
 
-#: data/functionedit.glade.h:39
+#: data/functionedit.glade.h:38
 msgid "Non-zero number"
 msgstr "Icke-noll nummer"
 
-#: data/functionedit.glade.h:40 data/main.glade.h:106
+#: data/functionedit.glade.h:39 data/main.glade.h:106
 #: data/unknownedit.glade.h:16 src/calclib/BuiltinFunctions.cc:2006
 #: src/calclib/data/functions.xml.in.h:274
 msgid "Number"
 msgstr "Nummer"
 
-#: data/functionedit.glade.h:41
+#: data/functionedit.glade.h:40
 msgid "Object"
 msgstr "Objekt"
 
-#: data/functionedit.glade.h:42
+#: data/functionedit.glade.h:41
 msgid "Positive integer"
 msgstr "Positivt heltal"
 
-#: data/functionedit.glade.h:43
+#: data/functionedit.glade.h:42
 msgid "Positive number"
 msgstr "Positivt nummer"
 
-#: data/functionedit.glade.h:44 src/interface.cc:709
+#: data/functionedit.glade.h:43 src/interface.cc:709
 msgid "Precalculate"
 msgstr "Förberäkna"
 
-#: data/functionedit.glade.h:45
+#: data/functionedit.glade.h:44
 msgid "Remove selected argument"
 msgstr "Ta bort vald parameter"
 
-#: data/functionedit.glade.h:46
+#: data/functionedit.glade.h:45
 msgid "Remove selected subfunction"
 msgstr "Ta bort vald subfunktion"
 
-#: data/functionedit.glade.h:47
+#: data/functionedit.glade.h:46
 msgid "Rules"
 msgstr "Villkor"
 
-#: data/functionedit.glade.h:48
+#: data/functionedit.glade.h:47
 msgid "Sub-Functions"
 msgstr "Subfunktioner"
 
-#: data/functionedit.glade.h:49 src/calclib/BuiltinFunctions.cc:2005
+#: data/functionedit.glade.h:48 src/calclib/BuiltinFunctions.cc:2005
 msgid "Symbol"
 msgstr "Symbol"
 
-#: data/functionedit.glade.h:50 src/calclib/data/functions.xml.in.h:456
+#: data/functionedit.glade.h:49 src/calclib/data/functions.xml.in.h:456
 msgid "Text"
 msgstr "Text"
 
-#: data/functionedit.glade.h:51
+#: data/functionedit.glade.h:50
 msgid "The category this function belongs to"
 msgstr "Kategorin som funktionen tillhör"
 
-#: data/functionedit.glade.h:52
+#: data/functionedit.glade.h:51
 msgid "Title displayed in menus and in function manager"
 msgstr "Rubrik som skall visas i menyer och funktionshanteraren"
 
-#: data/functionedit.glade.h:53 data/main.glade.h:159 data/units.glade.h:16
+#: data/functionedit.glade.h:52 data/main.glade.h:159 data/units.glade.h:16
 #: src/interface.cc:555 src/interface.cc:559
 msgid "Unit"
 msgstr "Enhet"
 
-#: data/functionedit.glade.h:54 data/main.glade.h:166 data/plot.glade.h:52
+#: data/functionedit.glade.h:53 data/main.glade.h:166 data/plot.glade.h:52
 #: data/variables.glade.h:11 src/interface.cc:495
 msgid "Variable"
 msgstr "Variabel"
 
-#: data/functionedit.glade.h:55 data/main.glade.h:168
+#: data/functionedit.glade.h:54 data/main.glade.h:168
 #: data/matrixedit.glade.h:22 src/calclib/data/functions.xml.in.h:483
 msgid "Vector"
 msgstr "Vektor"
 
-#: data/functionedit.glade.h:56
+#: data/functionedit.glade.h:55
 msgid "a function, unit or variable"
 msgstr "en funktion, enhet eller variabel"
 
-#: data/functionedit.glade.h:57
+#: data/functionedit.glade.h:56
 msgid "hide function"
 msgstr "dölj funktionen"
 
