@@ -19,7 +19,7 @@
 
 #include <sstream>
 
-#define TRIG_FUNCTION(FUNC)	mngr->set(vargs[0]); CALCULATOR->setAngleValue(mngr); if(!mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);} else {mngr->setPrecise(mngr->fraction()->isPrecise());}
+#define TRIG_FUNCTION(FUNC)	mngr->set(vargs[0]); mngr->recalculateVariables(); if(!mngr->isFraction() || !mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);} else {mngr->setPrecise(mngr->fraction()->isPrecise());}
 #define FR_FUNCTION(FUNC)	mngr->set(vargs[0]); if(!mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);} else {mngr->setPrecise(mngr->fraction()->isPrecise());}
 #define FR_FUNCTION_2(FUNC)	mngr->set(vargs[0]); if(!mngr->fraction()->FUNC(vargs[1]->fraction())) {mngr->set(this, vargs[0], vargs[1], NULL);} else {mngr->setPrecise(mngr->fraction()->isPrecise());}
 
@@ -958,71 +958,152 @@ void ModFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(mngr->fraction()->isPrecise());
 }
 
-SinFunction::SinFunction() : Function("Trigonometry", "sin", 1, "Sine") {setArgumentDefinition(1, new AngleArgument());}
+SinFunction::SinFunction() : Function("Trigonometry", "sin", 1, "Sine") {setArgumentDefinition(1, new AngleArgument("", false));}
 void SinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TRIG_FUNCTION(sin)
+	mngr->set(vargs[0]); 
+	if(mngr->isVariable() && mngr->variable()->name() == "pi") {
+		mngr->clear();
+		return;
+	} else if(mngr->isMultiplication() && mngr->countChilds() == 2 && mngr->getChild(0)->isFraction() && mngr->getChild(1)->isVariable() && mngr->getChild(1)->variable()->name() == "pi") {
+		if(mngr->getChild(0)->fraction()->isInteger()) {
+			mngr->clear();
+		} else {
+			Fraction fr(mngr->getChild(0)->fraction());
+			fr.frac();
+			if((fr.numerator()->isOne() || fr.numerator()->isMinusOne()) && fr.denominator()->equals(2)) {
+				fr.set(mngr->getChild(0)->fraction());
+				fr.floor();
+				if(fr.numerator()->isEven()) {
+					mngr->set(1, 1);
+				} else {
+					mngr->set(-1, 1);
+				}
+				return;
+			}
+		}
+	}
+	mngr->recalculateVariables();
+	if(!mngr->isFraction() || !mngr->fraction()->sin()) {
+		vargs[0]->recalculateVariables();
+		mngr->set(this, vargs[0], NULL);
+	} else {
+		mngr->setPrecise(mngr->fraction()->isPrecise());
+	}
 }
-CosFunction::CosFunction() : Function("Trigonometry", "cos", 1, "Cosine") {setArgumentDefinition(1, new AngleArgument());}
+CosFunction::CosFunction() : Function("Trigonometry", "cos", 1, "Cosine") {setArgumentDefinition(1, new AngleArgument("", false));}
 void CosFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TRIG_FUNCTION(cos)
+	mngr->set(vargs[0]); 
+	if(mngr->isVariable() && mngr->variable()->name() == "pi") {
+		mngr->set(1, 1);
+		return;
+	} else if(mngr->isMultiplication() && mngr->countChilds() == 2 && mngr->getChild(0)->isFraction() && mngr->getChild(1)->isVariable() && mngr->getChild(1)->variable()->name() == "pi") {
+		if(mngr->getChild(0)->fraction()->isInteger()) {
+			if(mngr->getChild(0)->fraction()->numerator()->isEven()) {
+				mngr->set(-1, 1);
+			} else {
+				mngr->set(1, 1);
+			}
+		} else {
+			Fraction fr(mngr->getChild(0)->fraction());
+			fr.frac();
+			if((fr.numerator()->isOne() || fr.numerator()->isMinusOne()) && fr.denominator()->equals(2)) {
+				mngr->clear();
+				return;
+			}
+		}
+	}
+	mngr->recalculateVariables();
+	if(!mngr->isFraction() || !mngr->fraction()->cos()) {
+		vargs[0]->recalculateVariables();
+		mngr->set(this, vargs[0], NULL);
+	} else {
+		mngr->setPrecise(mngr->fraction()->isPrecise());
+	}
 }
-TanFunction::TanFunction() : Function("Trigonometry", "tan", 1, "Tangent") {setArgumentDefinition(1, new AngleArgument());}
+TanFunction::TanFunction() : Function("Trigonometry", "tan", 1, "Tangent") {setArgumentDefinition(1, new AngleArgument("", false));}
 void TanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(tan)
 }
-SinhFunction::SinhFunction() : Function("Trigonometry", "sinh", 1, "Hyperbolic sine") {setArgumentDefinition(1, new AngleArgument());}
+SinhFunction::SinhFunction() : Function("Trigonometry", "sinh", 1, "Hyperbolic sine") {setArgumentDefinition(1, new AngleArgument("", false));}
 void SinhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(sinh)
 }
-CoshFunction::CoshFunction() : Function("Trigonometry", "cosh", 1, "Hyperbolic cosine") {setArgumentDefinition(1, new AngleArgument());}
+CoshFunction::CoshFunction() : Function("Trigonometry", "cosh", 1, "Hyperbolic cosine") {setArgumentDefinition(1, new AngleArgument("", false));}
 void CoshFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(cosh)
 }
-TanhFunction::TanhFunction() : Function("Trigonometry", "tanh", 1, "Hyperbolic tangent") {setArgumentDefinition(1, new AngleArgument());}
+TanhFunction::TanhFunction() : Function("Trigonometry", "tanh", 1, "Hyperbolic tangent") {setArgumentDefinition(1, new AngleArgument("", false));}
 void TanhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(tanh)
 }
-AsinFunction::AsinFunction() : Function("Trigonometry", "asin", 1, "Arcsine") {setArgumentDefinition(1, new AngleArgument());}
+AsinFunction::AsinFunction() : Function("Trigonometry", "asin", 1, "Arcsine") {setArgumentDefinition(1, new AngleArgument("", false));}
 void AsinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(asin)
 }
-AcosFunction::AcosFunction() : Function("Trigonometry", "acos", 1, "Arccosine") {setArgumentDefinition(1, new AngleArgument());}
+AcosFunction::AcosFunction() : Function("Trigonometry", "acos", 1, "Arccosine") {setArgumentDefinition(1, new AngleArgument("", false));}
 void AcosFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(acos)
 }
-AtanFunction::AtanFunction() : Function("Trigonometry", "atan", 1, "Arctangent") {setArgumentDefinition(1, new AngleArgument());}
+AtanFunction::AtanFunction() : Function("Trigonometry", "atan", 1, "Arctangent") {setArgumentDefinition(1, new AngleArgument("", false));}
 void AtanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(atan)
 }
-AsinhFunction::AsinhFunction() : Function("Trigonometry", "asinh", 1, "Hyperbolic arcsine") {setArgumentDefinition(1, new AngleArgument());}
+AsinhFunction::AsinhFunction() : Function("Trigonometry", "asinh", 1, "Hyperbolic arcsine") {setArgumentDefinition(1, new AngleArgument("", false));}
 void AsinhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(asinh)
 }
-AcoshFunction::AcoshFunction() : Function("Trigonometry", "acosh", 1, "Hyperbolic arccosine") {setArgumentDefinition(1, new AngleArgument());}
+AcoshFunction::AcoshFunction() : Function("Trigonometry", "acosh", 1, "Hyperbolic arccosine") {setArgumentDefinition(1, new AngleArgument("", false));}
 void AcoshFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(acosh)
 }
-AtanhFunction::AtanhFunction() : Function("Trigonometry", "atanh", 1, "Hyperbolic arctangent") {setArgumentDefinition(1, new AngleArgument());}
+AtanhFunction::AtanhFunction() : Function("Trigonometry", "atanh", 1, "Hyperbolic arctangent") {setArgumentDefinition(1, new AngleArgument("", false));}
 void AtanhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(atanh)
 }
 LogFunction::LogFunction() : Function("Exponents and Logarithms", "ln", 1, "Natural Logarithm") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, false));
 }
 void LogFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	FR_FUNCTION(log)
+	if(vargs[0]->isFraction()) {
+		mngr->set(vargs[0]);
+		if(!mngr->fraction()->log()) {
+			mngr->set(this, vargs[0], NULL);
+		} else {
+			mngr->setPrecise(mngr->fraction()->isPrecise());
+		}		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 Log10Function::Log10Function() : Function("Exponents and Logarithms", "log10", 1, "Base-10 Logarithm") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, false));
 }
 void Log10Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	FR_FUNCTION(log10)
+	if(vargs[0]->isFraction()) {
+		mngr->set(vargs[0]);
+		if(!mngr->fraction()->log10()) {
+			mngr->set(this, vargs[0], NULL);
+		} else {
+			mngr->setPrecise(mngr->fraction()->isPrecise());
+		}		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 Log2Function::Log2Function() : Function("Exponents and Logarithms", "log2", 1, "Base-2 Logarithm") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, false));
 }
 void Log2Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	FR_FUNCTION(log2)
+	if(vargs[0]->isFraction()) {
+		mngr->set(vargs[0]);
+		if(!mngr->fraction()->log2()) {
+			mngr->set(this, vargs[0], NULL);
+		} else {
+			mngr->setPrecise(mngr->fraction()->isPrecise());
+		}		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 ExpFunction::ExpFunction() : Function("Exponents and Logarithms", "exp", 1, "e raised to the power X") {}
 void ExpFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
@@ -1388,7 +1469,16 @@ void LengthFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 
 #ifdef HAVE_GIAC
+GiacFunction::GiacFunction() : Function("CAS", "giac", 1, "Giac expression") {
+	setArgumentDefinition(1, new TextArgument());
+}
+void GiacFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	giac::gen v1(vargs[0]->text());
+	mngr->set(simplify(v1));
+	mngr->clean();
+}
 SolveFunction::SolveFunction() : Function("CAS", "solve", 1, "Solve equation", "", 2) {
+	setArgumentDefinition(1, new GiacArgument());
 	setArgumentDefinition(2, new TextArgument());
 	setDefaultValue(2, "\"x\"");		
 }
@@ -1402,7 +1492,7 @@ void SolveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 	giac::identificateur id(vargs[1]->text());
 	giac::vecteur v = giac::solve(v1, id);
-	if(v.empty()) {
+	if(v.size() < 1) {
 		CALCULATOR->error(false, _("No solution could be found."), NULL);
 		mngr->set(this, vargs[0], vargs[1], NULL);
 	} else {
@@ -1414,8 +1504,10 @@ void SolveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 			mngr->addAlternative(&alt_mngr);
 		}
 	}
+	mngr->clean();
 }
 DeriveFunction::DeriveFunction() : Function("CAS", "diff", 1, "Derive", "", 3) {
+	setArgumentDefinition(1, new GiacArgument());
 	setArgumentDefinition(2, new TextArgument());
 	setDefaultValue(2, "\"x\"");
 	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
@@ -1435,8 +1527,10 @@ void DeriveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	giac::gen ans = giac::derive(v1, vars, nderiv);
 	ans = simplify(ans);
 	mngr->set(ans);
+	mngr->clean();
 }
 IntegrateFunction::IntegrateFunction() : Function("CAS", "integrate", 1, "Integrate", "", 2) {
+	setArgumentDefinition(1, new GiacArgument());
 	setArgumentDefinition(2, new TextArgument());
 	setDefaultValue(2, "\"x\"");
 }
@@ -1452,5 +1546,6 @@ void IntegrateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	giac::gen ans = giac::integrate(v1, id);
 	ans = simplify(ans);
 	mngr->set(ans);
+	mngr->clean();
 }
 #endif

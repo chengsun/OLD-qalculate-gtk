@@ -12,6 +12,8 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
+#include "includes.h"
+
 enum {
 	MULTIPLICATION_MANAGER,
 	ADDITION_MANAGER,
@@ -21,15 +23,15 @@ enum {
 	NULL_MANAGER,
 	STRING_MANAGER,
 	FUNCTION_MANAGER,
+	VARIABLE_MANAGER,	
 	MATRIX_MANAGER,
 	ALTERNATIVE_MANAGER,
 	AND_MANAGER,
 	OR_MANAGER,
 	NOT_MANAGER,
-	COMPARISON_MANAGER
+	COMPARISON_MANAGER,
+	GIAC_MANAGER	
 };
-
-#include "includes.h"
 
 class Manager {
 
@@ -41,6 +43,7 @@ class Manager {
 		int refcount;
 		string s_var;
 		Function *o_function;
+		Variable *o_variable;
 		Fraction *fr;
 		Matrix *mtrx;
 		bool b_exact;
@@ -51,6 +54,10 @@ class Manager {
 		void init();
 	
 	public:
+
+#ifdef HAVE_GIAC
+		giac::gen *g_gen;
+#endif
 		
 		//dangerous
 		void setType(int mngr_type);
@@ -71,6 +78,7 @@ class Manager {
 		Manager(long double value_);		
 		Manager(long int numerator_, long int denominator_, long int fraction_exp_ = 0);		
 		Manager(string var_);	
+		Manager(const Variable *v);
 		Manager(const Function *f, ...);							
 		Manager(const Unit *u, long int exp10 = 0);				
 		Manager(const Manager *mngr);	
@@ -86,7 +94,8 @@ class Manager {
 		void set(const Vector *vector_);
 		void set(long double value_);		
 		void set(long int numerator_, long int denominator_, long int fraction_exp_ = 0);		
-		void set(string var_);				
+		void set(string var_);		
+		void set(const Variable *v);		
 		void set(const Unit *u, long int exp10 = 0);				
 		void addFunctionArg(const Manager *mngr);
 		bool add(const Manager *mngr, MathOperation op = OPERATION_MULTIPLY, bool translate_ = true);	
@@ -110,7 +119,9 @@ class Manager {
 		Manager *base() const;
 		Manager *exponent() const;
 		Function *function() const;
+		Variable *variable() const;
 		void recalculateFunctions();
+		void recalculateVariables();
 		ComparisonType comparisonType() const;
 		bool isAlternatives() const;
 		bool isComparison() const;
@@ -123,6 +134,7 @@ class Manager {
 		bool isAddition() const;
 		bool isMultiplication() const;
 		bool isFunction() const;
+		bool isVariable() const;
 		bool isPower() const;
 		bool isNumber() const;
 		bool isNumber_exp() const;
@@ -157,7 +169,7 @@ class Manager {
 #ifdef HAVE_GIAC
 		giac::gen toGiac(bool *isnull = NULL) const;
 		Manager::Manager(const giac::gen &giac_gen);
-		void Manager::set(const giac::gen &giac_gen);
+		void Manager::set(const giac::gen &giac_gen, bool in_retry = false);
 		void Manager::simplify();
 		void Manager::factor();
 #endif

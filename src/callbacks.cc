@@ -1310,6 +1310,10 @@ void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gp
 				case ARGUMENT_TYPE_ANGLE: {
 					menu_index = MENU_ARGUMENT_TYPE_ANGLE;
 					break;
+				}
+				case ARGUMENT_TYPE_GIAC: {
+					menu_index = MENU_ARGUMENT_TYPE_GIAC;
+					break;
 				}						
 			}			
 		} else {
@@ -1773,7 +1777,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 		*in_exact = true;
 	}
 	switch(m->type()) {
-		case STRING_MANAGER: {
+		case VARIABLE_MANAGER: {
 			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
 			string str;
 			if(in_power) {
@@ -1782,16 +1786,75 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				str = "<i>" TEXT_TAGS;
 			}
 			if(displayflags & DISPLAY_FORMAT_NONASCII) {
-				if(m->text() == "pi") str += SIGN_PI;
-				else if(m->text() == "euler") str += SIGN_GAMMA;
-				else if(m->text() == "apery") str += SIGN_ZETA "(3)";
-				else if(m->text() == "pythagoras") str += SIGN_SQRT "2";
-				//else if(m->text() == "catalan") str += "G";
-				else if(m->text() == "golden") str += SIGN_PHI;
-				else str += m->text();
+				if(m->variable()->name() == "pi") str += SIGN_PI;
+				else if(m->variable()->name() == "euler") str += SIGN_GAMMA;
+				else if(m->variable()->name() == "apery") str += SIGN_ZETA "(3)";
+				else if(m->variable()->name() == "pythagoras") str += SIGN_SQRT "2";
+				//else if(m->variable()->name() == "catalan") str += "G";
+				else if(m->variable()->name() == "golden") str += SIGN_PHI;
+				else str += m->variable()->name();
 			} else {
-				str += m->text();
+				str += m->variable()->name();
 			}
+			if(in_power) {
+				str += TEXT_TAGS_SMALL_END "</i>";
+			} else {
+				str += TEXT_TAGS_END "</i>";
+			}
+			pango_layout_set_markup(layout, str.c_str(), -1);
+			PangoRectangle rect;
+			pango_layout_get_pixel_size(layout, &w, &h);
+			pango_layout_get_pixel_extents(layout, &rect, NULL);
+			w = rect.width;
+			w += 1;
+			central_point = h / 2;
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
+			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
+			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
+			g_object_unref(layout);
+			if(plural) *plural = true;
+			break;
+		}
+#ifdef HAVE_GIAC
+		case GIAC_MANAGER: {
+			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
+			string str;
+			if(in_power) {
+				str = TEXT_TAGS_SMALL;
+			} else {
+				str = TEXT_TAGS;
+			}
+			str += m->g_gen->print();
+			if(in_power) {
+				str += TEXT_TAGS_SMALL_END;
+			} else {
+				str += TEXT_TAGS_END;
+			}
+			pango_layout_set_markup(layout, str.c_str(), -1);
+			PangoRectangle rect;
+			pango_layout_get_pixel_size(layout, &w, &h);
+			pango_layout_get_pixel_extents(layout, &rect, NULL);
+			w = rect.width;
+			w += 1;
+			central_point = h / 2;
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
+			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
+			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
+			g_object_unref(layout);
+			if(plural) *plural = true;
+			if(!toplevel && wrap) wrap_all = true;
+			break;
+		}
+#endif
+		case STRING_MANAGER: {
+			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
+			string str;
+			if(in_power) {
+				str = "<i>" TEXT_TAGS_SMALL;
+			} else {
+				str = "<i>" TEXT_TAGS;
+			}
+			str += m->text();
 			if(in_power) {
 				str += TEXT_TAGS_SMALL_END "</i>";
 			} else {
@@ -2444,7 +2507,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				if(l_exp) delete l_exp;
 				l_exp = NULL;	
 				hetmp = 0;		
-				pixmap_terms.push_back(draw_manager(m->getChild(i), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, false, &hetmp));
+				pixmap_terms.push_back(draw_manager(m->getChild(i), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, false, &hetmp, false, m->getChild(i)->isAddition()));
 				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_terms[i]), &wtmp, &htmp);
 				hpt.push_back(htmp);
 				cpt.push_back(hetmp);
@@ -2873,7 +2936,9 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							if(f_has_parenthesis[i]) {
 								do_space.push_back(0);
 							} else {
-								if(m_i->isText() && (text_length_is_one(m_i->text()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->text() == "pi" || m_i->text() == "euler" || m_i->text() == "golden")))) {
+								if(m_i->isText() && text_length_is_one(m_i->text())) {
+									do_space.push_back(0);
+								} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable()->name() == "pi" || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {
 									do_space.push_back(0);
 								} else if(m_i->isPower() && m_i->base()->isFraction()) {
 									do_space.push_back(2);
@@ -2902,14 +2967,16 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						} else if(m_i->isFunction()) {	
 							do_space.push_back(2);
 						} else if(m_i_prev->isFraction()) {
-							if(m_i->isText() && (text_length_is_one(m_i->text()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->text() == "pi" || m_i->text() == "euler" || m_i->text() == "golden")))) {
+							if(m_i->isText() && text_length_is_one(m_i->text())) {
+								do_space.push_back(0);
+							} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable()->name() == "pi" || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {	
 								do_space.push_back(0);
 							} else if(m_i->isPower() && m_i->base()->isFraction()) {
 								do_space.push_back(2);
 							} else {
 								do_space.push_back(1);
 							}
-						} else if(m_i_prev->isPower() && m_i_prev->base()->isText()) {
+						} else if(m_i_prev->isPower() && (m_i_prev->base()->isText() || m_i_prev->base()->isVariable())) {
 							do_space.push_back(0);
 						} else if(m_i->isUnit_exp() && m_i_prev->isUnit_exp()) {
 							if(!(displayflags & DISPLAY_FORMAT_SHORT_UNITS)) {
@@ -2917,10 +2984,12 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							} else {
 								do_space.push_back(2);
 							}
-						} else if(m_i_prev->isText() && (text_length_is_one(m_i_prev->text()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i_prev->text() == "pi" || m_i_prev->text() == "euler" || m_i_prev->text() == "golden")))) {
-							if(m_i->isText() && (text_length_is_one(m_i->text()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->text() == "pi" || m_i->text() == "euler" || m_i->text() == "golden")))) {		
+						} else if((m_i_prev->isText() && text_length_is_one(m_i_prev->text())) || (m_i_prev->isVariable() && (text_length_is_one(m_i_prev->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i_prev->variable()->name() == "pi" || m_i_prev->variable()->name() == "euler" || m_i_prev->variable()->name() == "golden"))))) {
+							if(m_i->isText() && text_length_is_one(m_i->text())) {
 								do_space.push_back(0);
-							} else if(m_i->isUnit_exp() || m_i->isPower() || m_i->isText()) {
+							} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable()->name() == "pi" || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {
+								do_space.push_back(0);
+							} else if(m_i->isUnit_exp() || m_i->isPower()) {
 								do_space.push_back(1);
 							} else {
 								do_space.push_back(2);
@@ -3309,7 +3378,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 
 				bool bie = false;
 				ctmp = 0;
-				pixmap_terms.push_back(draw_manager(m->getChild(i), nrformat, displayflags, min_decimals, max_decimals, &bie, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &ctmp));
+				pixmap_terms.push_back(draw_manager(m->getChild(i), nrformat, displayflags, min_decimals, max_decimals, &bie, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &ctmp, false, false));
 				if(bie && in_exact) {
 					*in_exact = true;
 				}	
@@ -3978,7 +4047,7 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 			if(i >= f->minargs()) {
 				remove_blank_ends(str2);
 			}
-			if(!(i >= f->minargs() && str2.empty()) && f->getArgumentDefinition(i + 1) && f->getArgumentDefinition(i + 1)->needQuotes()) {
+			if(!(i >= f->minargs() && str2.empty()) && f->getArgumentDefinition(i + 1) && f->getArgumentDefinition(i + 1)->suggestsQuotes()) {
 				if(str2.length() < 1 || (str2[0] != '\"' && str[0] != '\'')) { 
 					str2.insert(0, "\"");
 					str2 += "\"";
@@ -7155,6 +7224,7 @@ void on_function_edit_button_add_argument_clicked(GtkButton *w, gpointer user_da
 			case MENU_ARGUMENT_TYPE_VARIABLE: {arg = new VariableArgument(); break;}
 			case MENU_ARGUMENT_TYPE_BOOLEAN: {arg = new BooleanArgument(); break;}	
 			case MENU_ARGUMENT_TYPE_ANGLE: {arg = new AngleArgument(); break;}	
+			case MENU_ARGUMENT_TYPE_GIAC: {arg = new GiacArgument(); break;}	
 			default: {arg = new Argument();}
 		}
 	}
@@ -7206,6 +7276,7 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 				case MENU_ARGUMENT_TYPE_VARIABLE: {argtype = ARGUMENT_TYPE_VARIABLE; break;}
 				case MENU_ARGUMENT_TYPE_BOOLEAN: {argtype = ARGUMENT_TYPE_BOOLEAN; break;}	
 				case MENU_ARGUMENT_TYPE_ANGLE: {argtype = ARGUMENT_TYPE_ANGLE; break;}	
+				case MENU_ARGUMENT_TYPE_GIAC: {argtype = ARGUMENT_TYPE_GIAC; break;}	
 			}			
 			
 			if(!selected_argument || argtype != selected_argument->type() || menu_index == MENU_ARGUMENT_TYPE_NONNEGATIVE_INTEGER || menu_index == MENU_ARGUMENT_TYPE_POSITIVE_INTEGER || menu_index == MENU_ARGUMENT_TYPE_NONZERO_INTEGER || menu_index == MENU_ARGUMENT_TYPE_NONZERO || menu_index == MENU_ARGUMENT_TYPE_POSITIVE || menu_index == MENU_ARGUMENT_TYPE_NONNEGATIVE) {
@@ -7230,7 +7301,8 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 					case MENU_ARGUMENT_TYPE_UNIT: {selected_argument = new UnitArgument(); break;}
 					case MENU_ARGUMENT_TYPE_VARIABLE: {selected_argument = new VariableArgument(); break;}
 					case MENU_ARGUMENT_TYPE_BOOLEAN: {selected_argument = new BooleanArgument(); break;}	
-					case MENU_ARGUMENT_TYPE_ANGLE: {selected_argument = new AngleArgument(); break;}	
+					case MENU_ARGUMENT_TYPE_ANGLE: {selected_argument = new AngleArgument(); break;}
+					case MENU_ARGUMENT_TYPE_GIAC: {selected_argument = new GiacArgument(); break;}	
 					default: {selected_argument = new Argument();}
 				}			
 			}

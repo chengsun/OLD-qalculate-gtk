@@ -1,3 +1,4 @@
+* Possibility to use [] for vector and matrix creation
 * Limit fraction precision
 * Do not recalculate plot data when it has not changed
 * Instant apply for all parameters in plot

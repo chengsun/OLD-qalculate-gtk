@@ -1,5 +1,13 @@
+2003-10-30  Niklas Knutsson  <nq@altern.org>
+
+	* Define tan, asinh, acosh, atanh as sin(x)/cos(x), log(x+sqrt(x^2+1)), ...
+	* Handle pi correctly in trigonometric functions
+	* Delay calculation of inexact values
+	* New variable manager
+
 2003-10-29  Niklas Knutsson  <nq@altern.org>
 
+	* Giac function
 	* Factorize in result menu
 	* New functions: diff, integrate, solve
 	* Giac support

@@ -641,6 +641,13 @@ void Matrix::recalculateFunctions() {
 		}
 	} 	
 }
+void Matrix::recalculateVariables() {
+	for(unsigned int index_r = 0; index_r < elements.size(); index_r++) {
+		for(unsigned int index_c = 0; index_c < elements[index_r].size(); index_c++) {
+			elements[index_r][index_c]->recalculateVariables();
+		}
+	} 	
+}
 string Matrix::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) const {
 	string str = "matrix(";
 	str += i2s(rows());

@@ -444,12 +444,14 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <_title>Angle</_title>
       </argument>
     </builtin_function>
-    <builtin_function name="tan">
+    <function name="tan">
       <_title>Tangent</_title>
-      <argument index="1">
+      <expression>sin(\x)/cos(\x)</expression>
+      <argument index="1" type="angle">
         <_title>Angle</_title>
+	<test>false</test>
       </argument>
-    </builtin_function>
+    </function>
     <builtin_function name="sinh">
       <_title>Hyperbolic sine</_title>
       <argument index="1">
@@ -486,24 +488,30 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <_title>Angle</_title>
       </argument>
     </builtin_function>
-    <builtin_function name="asinh">
+    <function name="asinh">
       <_title>Hyperbolic arcsine</_title>
-      <argument index="1">
+      <expression>ln(\x+sqrt(\x^2+1))</expression>
+      <argument index="1" type="angle">
         <_title>Angle</_title>
+	<test>false</test>
       </argument>
-    </builtin_function>
-    <builtin_function name="acosh">
+    </function>
+    <function name="acosh">
       <_title>Hyperbolic arccosine</_title>
-      <argument index="1">
+      <expression>ln(\x+sqrt(\x^2-1))</expression>
+      <argument index="1" type="angle">
         <_title>Angle</_title>
+	<test>false</test>
       </argument>
-    </builtin_function>
-    <builtin_function name="atanh">
+    </function>
+    <function name="atanh">
       <_title>Hyperbolic arctangent</_title>
-      <argument index="1">
+      <expression>ln((1+\x)/(1-\x))/2</expression>
+      <argument index="1" type="angle">
         <_title>Angle</_title>
+	<test>false</test>
       </argument>
-    </builtin_function>
+    </function>
   </category>
   <category>
     <_title>Exponents &amp; Logarithms</_title>

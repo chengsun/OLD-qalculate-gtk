@@ -745,16 +745,12 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new RemFunction());
 	addFunction(new SinFunction());
 	addFunction(new CosFunction());
-	addFunction(new TanFunction());
 	addFunction(new SinhFunction());
 	addFunction(new CoshFunction());
 	addFunction(new TanhFunction());
 	addFunction(new AsinFunction());
 	addFunction(new AcosFunction());
 	addFunction(new AtanFunction());
-	addFunction(new AsinhFunction());
-	addFunction(new AcoshFunction());
-	addFunction(new AtanhFunction());
 	addFunction(new LogFunction());
 	addFunction(new Log2Function());
 	addFunction(new Log10Function());
@@ -781,6 +777,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new ConcatenateFunction());
 	addFunction(new LengthFunction());
 #ifdef HAVE_GIAC
+	addFunction(new GiacFunction());
 	addFunction(new SolveFunction());
 	addFunction(new DeriveFunction());
 	addFunction(new IntegrateFunction());
@@ -907,9 +904,12 @@ Manager *Calculator::calculate(string str, bool enable_abort, int usecs) {
 				str = str.substr(0, i);
 			}
 		}
+		bool was_exact = alwaysExact();
+		setAlwaysExact(true);
 		setFunctionsAndVariables(str);
 		EqContainer *e = new EqContainer(str, OPERATION_ADD);
 		mngr = e->calculate();
+		setAlwaysExact(was_exact);
 		mngr->finalize();
 		if(!str2.empty()) {
 			convert(mngr, str2);
@@ -1807,7 +1807,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 								stmp += i2s(addId(mngr));
 								mngr->unref();
 							} else {
-								mngr = new Manager(v->name());
+								mngr = new Manager(v);
 								stmp += i2s(addId(mngr));
 								mngr->unref();
 							}
@@ -2371,6 +2371,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 								arg = new ExpressionItemArgument();
 							} else if(type == "angle") {
 								arg = new AngleArgument();
+							} else if(type == "giac") {
+								arg = new GiacArgument();
 							} else {
 								arg = new Argument();
 							}
@@ -3304,6 +3306,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 								case ARGUMENT_TYPE_VARIABLE: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "variable"); break;}
 								case ARGUMENT_TYPE_EXPRESSION_ITEM: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "object"); break;}
 								case ARGUMENT_TYPE_ANGLE: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "angle"); break;}
+								case ARGUMENT_TYPE_GIAC: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "giac"); break;}
 								default: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "free");}
 							}
 							xmlNewProp(newnode, (xmlChar*) "index", (xmlChar*) i2s(i2).c_str());
@@ -3371,20 +3374,43 @@ long double Calculator::getAngleValue(long double value) {
 	}
 }
 Manager *Calculator::setAngleValue(Manager *mngr) {
-	if(mngr->isFraction()) {
+	bool b = false;
+	if(mngr->isUnit_exp()) {
+		b = true;
+	} else if(mngr->isMultiplication()) {
+		for(unsigned int i = 0; i < mngr->countChilds(); i++) {
+			if(mngr->getChild(i)->isUnit_exp()) {
+				b = true;
+				break;
+			}
+		}
+	}
+	if(!b) {
 		switch(angleMode()) {
 			case DEGREES: {
-				Fraction fr;
-				fr.pi();
-				Manager mngr_pi(&fr);
+				Variable *v;
+				Manager mngr_pi;
+				if(alwaysExact() && (v = CALCULATOR->getVariable("pi")) != NULL) {
+					mngr_pi.set(v);
+				} else {
+					Fraction fr;
+					fr.pi();
+					mngr_pi.set(&fr);
+				}
 		    		mngr->add(&mngr_pi, OPERATION_MULTIPLY);
 	    			mngr->addFloat(180, OPERATION_DIVIDE);			
 				break;
 			}
 			case GRADIANS: {
-				Fraction fr;
-				fr.pi();
-				Manager mngr_pi(&fr);
+				Variable *v;
+				Manager mngr_pi;
+				if(alwaysExact() && (v = CALCULATOR->getVariable("pi")) != NULL) {
+					mngr_pi.set(v);
+				} else {
+					Fraction fr;
+					fr.pi();
+					mngr_pi.set(&fr);
+				}
 		    		mngr->add(&mngr_pi, OPERATION_MULTIPLY);			
 	    			mngr->addFloat(200, OPERATION_DIVIDE);		
 				break;

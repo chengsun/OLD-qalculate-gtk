@@ -2,6 +2,7 @@
 <!DOCTYPE glade-interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
 
 <glade-interface>
+<requires lib="gnome"/>
 
 <widget class="GtkDialog" id="function_edit_dialog">
   <property name="border_width">5</property>
@@ -713,6 +714,14 @@
 			    <widget class="GtkMenuItem" id="item59">
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Angle</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="item60">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Giac</property>
 			      <property name="use_underline">True</property>
 			    </widget>
 			  </child>

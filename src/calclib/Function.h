@@ -28,7 +28,8 @@ enum {
 	ARGUMENT_TYPE_UNIT,
 	ARGUMENT_TYPE_BOOLEAN,
 	ARGUMENT_TYPE_VARIABLE,
-	ARGUMENT_TYPE_ANGLE
+	ARGUMENT_TYPE_ANGLE,
+	ARGUMENT_TYPE_GIAC
 };
 
 typedef enum {
@@ -109,7 +110,7 @@ class Argument {
   protected:
   
   	string sname, scondition;
-	bool b_zero, b_test, b_matrix;
+	bool b_zero, b_test, b_matrix, b_text;
 	virtual bool subtest(const Manager *value) const;
 	virtual string subprintlong() const;
 	
@@ -126,6 +127,7 @@ class Argument {
 	string printlong() const;
 	
 	bool test(const Manager *value, int index, Function *f) const;
+	virtual Manager *evaluate(const string &str) const;
 	
 	string name() const;
 	void setName(string name_);
@@ -142,7 +144,7 @@ class Argument {
 	bool matrixAllowed() const;
 	void setMatrixAllowed(bool allow_matrix);
 	
-	virtual bool needQuotes() const;
+	virtual bool suggestsQuotes() const;
 	
 	virtual int type() const;
 
@@ -230,8 +232,22 @@ class TextArgument : public Argument {
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
-	virtual bool needQuotes() const;
-	
+	virtual bool suggestsQuotes() const;
+};
+class GiacArgument : public Argument {
+
+  protected:
+  
+	virtual string subprintlong() const;
+
+  public:
+  
+  	GiacArgument(string name_ = "", bool does_test = true);
+	GiacArgument(const GiacArgument *arg);
+	virtual ~GiacArgument();
+	virtual int type() const;
+	virtual Argument *copy() const;
+	virtual Manager *evaluate(const string &str) const;
 };
 class DateArgument : public Argument {
 
@@ -248,7 +264,6 @@ class DateArgument : public Argument {
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
-	virtual bool needQuotes() const;
 };
 class VectorArgument : public Argument {
 
@@ -297,7 +312,6 @@ class ExpressionItemArgument : public Argument {
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
-	virtual bool needQuotes() const;
 };
 class FunctionArgument : public Argument {
 
@@ -314,7 +328,6 @@ class FunctionArgument : public Argument {
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
-	virtual bool needQuotes() const;
 };
 class BooleanArgument : public Argument {
 
@@ -347,7 +360,6 @@ class UnitArgument : public Argument {
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
-	virtual bool needQuotes() const;
 };
 class AngleArgument : public Argument {
 
@@ -364,6 +376,7 @@ class AngleArgument : public Argument {
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
+	virtual Manager *evaluate(const string &str) const;
 };
 class VariableArgument : public Argument {
 
@@ -380,7 +393,6 @@ class VariableArgument : public Argument {
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
-	virtual bool needQuotes() const;
 };
 
 #endif

@@ -91,7 +91,7 @@ class DynamicVariable : public Variable {
 	/**
 	* Returns the value of the variable.
 	*/	
-	Manager *get();
+	virtual Manager *get();
 	
 	virtual Manager *copyManager() const;		
 
