@@ -39,6 +39,7 @@ using namespace std;
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #ifdef __GNUC__
 #   if __GNUC__ < 3

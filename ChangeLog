@@ -1,3 +1,11 @@
+2004-07-03 Niklas Knutsson  <nq@altern.org>
+
+	* Fix input of numbers in bases > 10
+	* Is approximate? fixes
+	* usleep() is obsolete. use nanosleep() instead
+	* Terminate threads before exit
+	* Include unistd.h in main.cc for pipes
+
 2004-06-24 Niklas Knutsson  <nq@altern.org>
 
 	* definitions -> subfunctions

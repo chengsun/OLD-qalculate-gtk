@@ -25,6 +25,7 @@
 #include <libxml/parser.h>
 #include <pwd.h>
 #include <unistd.h>
+#include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -1008,18 +1009,11 @@ void Calculator::clearBuffers() {
 	}
 }
 void Calculator::abort() {
-	int i;
-	while(true) {
-		i = pthread_cancel(calculate_thread);
-		if(i == 0 || i == ESRCH) break;
-		usleep(100);
-	}
+	pthread_cancel(calculate_thread);
 	restoreState();
 	clearBuffers();
 	b_busy = false;
-	while(!pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, calculate_pipe_r) == 0) {
-		usleep(100);
-	}
+	pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, calculate_pipe_r);
 }
 void Calculator::abort_this() {
 	restoreState();
@@ -1151,9 +1145,7 @@ bool Calculator::calculate(MathStructure &mstruct, string str, int usecs, const 
 	saveState();
 	b_busy = true;
 	if(calculate_thread_stopped) {
-		while(!pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, calculate_pipe_r) == 0) {
-			usleep(100);
-		}
+		pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, calculate_pipe_r);
 		calculate_thread_stopped = false;
 	}
 	bool had_usecs = usecs > 0;
@@ -1162,8 +1154,11 @@ bool Calculator::calculate(MathStructure &mstruct, string str, int usecs, const 
 	void *x = (void*) &mstruct;
 	fwrite(&x, sizeof(void*), 1, calculate_pipe_w);
 	fflush(calculate_pipe_w);
+	struct timespec rtime;
+	rtime.tv_sec = 0;
+	rtime.tv_nsec = 1000000;
 	while(usecs > 0 && b_busy) {
-		usleep(1000);
+		nanosleep(&rtime, NULL);
 		usecs -= 1000;
 	}	
 	if(had_usecs && b_busy) {
@@ -1203,31 +1198,25 @@ string Calculator::printMathStructureTimeOut(const MathStructure &mstruct, int u
 	saveState();
 	b_busy = true;
 	if(print_thread_stopped) {
-		while(!pthread_create(&print_thread, &print_thread_attr, print_proc, print_pipe_r) == 0) {
-			usleep(100);
-		}
+		pthread_create(&print_thread, &print_thread_attr, print_proc, print_pipe_r);
 		print_thread_stopped = false;
 	}
 	void *x = (void*) &mstruct;
 	fwrite(&x, sizeof(void*), 1, print_pipe_w);
 	fflush(print_pipe_w);
+	struct timespec rtime;
+	rtime.tv_sec = 0;
+	rtime.tv_nsec = 1000000;
 	while(usecs > 0 && b_busy) {
-		usleep(1000);
+		nanosleep(&rtime, NULL);
 		usecs -= 1000;
 	}
 	if(b_busy) {
-		int i;
-		while(true) {
-			i = pthread_cancel(print_thread);
-			if(i == 0 || i == ESRCH) break;
-			usleep(100);
-		}
+		pthread_cancel(print_thread);
 		restoreState();
 		clearBuffers();
 		b_busy = false;
-		while(!pthread_create(&print_thread, &print_thread_attr, print_proc, print_pipe_r) == 0) {
-			usleep(100);
-		}
+		pthread_create(&print_thread, &print_thread_attr, print_proc, print_pipe_r);
 		tmp_print_result = "timed out";
 	}
 	return tmp_print_result;

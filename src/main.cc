@@ -20,6 +20,7 @@
 #ifdef HAVE_LIBGNOME
 #include <libgnome/libgnome.h>
 #endif
+#include <unistd.h>
 
 #include "support.h"
 #include "interface.h"
@@ -206,9 +207,7 @@ int main (int argc, char **argv) {
 	view_pipe_r = fdopen(pipe_wr[0], "r");
 	view_pipe_w = fdopen(pipe_wr[1], "w");
 	pthread_attr_init(&view_thread_attr);
-	while(!pthread_create(&view_thread, &view_thread_attr, view_proc, view_pipe_r) == 0) {
-		usleep(100);
-	}
+	pthread_create(&view_thread, &view_thread_attr, view_proc, view_pipe_r);
 	
 	if(!calc_arg.empty()) {
 		execute_expression();

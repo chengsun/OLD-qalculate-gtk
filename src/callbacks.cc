@@ -2998,18 +2998,11 @@ void clearresult() {
 }
 
 void on_abort_display(GtkDialog *w, gint arg1, gpointer user_data) {
-	int i;
-	while(true) {
-		i = pthread_cancel(view_thread);
-		if(i == 0 || i == ESRCH) break;
-		usleep(100);
-	}
+	pthread_cancel(view_thread);
 	CALCULATOR->restoreState();
 	CALCULATOR->clearBuffers();
 	b_busy = false;
-	while(!pthread_create(&view_thread, &view_thread_attr, view_proc, view_pipe_r) == 0) {
-		usleep(100);
-	}
+	pthread_create(&view_thread, &view_thread_attr, view_proc, view_pipe_r);
 }
 
 void *view_proc(void *pipe) {
@@ -3115,9 +3108,12 @@ void setResult(Prefix *prefix = NULL, bool update_history = true) {
 	fwrite(&mstruct, sizeof(void*), 1, view_pipe_w);
 	fflush(view_pipe_w);
 
+	struct timespec rtime;
+	rtime.tv_sec = 0;
+	rtime.tv_nsec = 10000000;
 	int i = 0;
 	while(b_busy && i < 50) {
-		usleep(10000);
+		nanosleep(&rtime, NULL);
 		i++;
 	}
 	i = 0;
@@ -3131,10 +3127,10 @@ void setResult(Prefix *prefix = NULL, bool update_history = true) {
 		g_signal_connect(GTK_OBJECT(dialog), "response", G_CALLBACK(on_abort_display), NULL);
 		gtk_widget_show(dialog);
 	}
-	
+	rtime.tv_nsec = 100000000;
 	while(b_busy) {
 		while(gtk_events_pending()) gtk_main_iteration();
-		usleep(100000);
+		nanosleep(&rtime, NULL);
 		gtk_progress_bar_pulse(GTK_PROGRESS_BAR(glade_xml_get_widget (main_glade, "progress_progressbar")));
 	}
 
@@ -3269,9 +3265,12 @@ void execute_expression() {
 	b_busy = true;
 	gulong handler_id = g_signal_connect(G_OBJECT(glade_xml_get_widget (main_glade, "main_window")), "event", G_CALLBACK(on_event), NULL);
 	CALCULATOR->calculate(*mstruct, CALCULATOR->unlocalizeExpression(str), 0, evalops);
+	struct timespec rtime;
+	rtime.tv_sec = 0;
+	rtime.tv_nsec = 10000000;
 	int i = 0;
 	while(CALCULATOR->busy() && i < 50) {
-		usleep(10000);
+		nanosleep(&rtime, NULL);
 		i++;
 	}
 	i = 0;
@@ -3284,9 +3283,10 @@ void execute_expression() {
 		g_signal_connect(GTK_OBJECT(dialog), "response", G_CALLBACK(on_abort_calculation), NULL);
 		gtk_widget_show(dialog);
 	}
+	rtime.tv_nsec = 100000000;
 	while(CALCULATOR->busy()) {
 		while(gtk_events_pending()) gtk_main_iteration();
-		usleep(100000);
+		nanosleep(&rtime, NULL);
 		gtk_progress_bar_pulse(GTK_PROGRESS_BAR(glade_xml_get_widget (main_glade, "progress_progressbar")));
 	}
 	if(dialog) {

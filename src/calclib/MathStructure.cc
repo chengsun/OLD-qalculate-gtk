@@ -917,10 +917,16 @@ int MathStructure::merge_addition(const MathStructure &mstruct, const Evaluation
 		return -1;
 	}
 	if(isZero()) {
-		set(mstruct);
+		if(b_approx) {
+			set(mstruct);
+			b_approx = true;
+		} else {
+			set(mstruct);
+		}
 		return 1;
 	}
 	if(mstruct.isZero()) {
+		if(mstruct.isApproximate()) b_approx = true;
 		return 1;
 	}
 	if(representsUndefined() || mstruct.representsUndefined()) return -1;
@@ -932,6 +938,7 @@ int MathStructure::merge_addition(const MathStructure &mstruct, const Evaluation
 						for(unsigned int i = 0; i < SIZE; i++) {
 							CHILD(i) += mstruct[i]; 
 						}
+						if(mstruct.isApproximate()) b_approx = true;
 						return 1;
 					}
 				}
@@ -950,10 +957,12 @@ int MathStructure::merge_addition(const MathStructure &mstruct, const Evaluation
 					for(unsigned int i = 0; i < mstruct.size(); i++) {
 						APPEND(mstruct[i]);
 					}
+					if(mstruct.isApproximate()) b_approx = true;
 					return 1;
 				}
 				default: {
 					APPEND(mstruct);
+					if(mstruct.isApproximate()) b_approx = true;
 					return 1;
 				}
 			}
@@ -986,6 +995,7 @@ int MathStructure::merge_addition(const MathStructure &mstruct, const Evaluation
 							} else {
 								CHILD(0).number() += mstruct[0].number();
 							}
+							if(mstruct.isApproximate()) b_approx = true;
 							return 1;
 						}
 					}
@@ -994,6 +1004,7 @@ int MathStructure::merge_addition(const MathStructure &mstruct, const Evaluation
 				default: {
 					if(SIZE == 2 && CHILD(0).isNumber() && CHILD(1) == mstruct) {
 						CHILD(0).number() += 1;
+						if(mstruct.isApproximate()) b_approx = true;
 						return 1;
 					}
 				}					
@@ -1010,6 +1021,7 @@ int MathStructure::merge_addition(const MathStructure &mstruct, const Evaluation
 				default: {
 					if(equals(mstruct)) {
 						multiply(2);
+						if(mstruct.isApproximate()) b_approx = true;
 						return 1;
 					}
 				}
@@ -1030,6 +1042,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 		return -1;
 	}
 	if(mstruct.isOne()) {
+		if(mstruct.isApproximate()) b_approx = true;
 		return 1;
 	} else if(isOne()) {
 		if(b_approx) {
@@ -1063,6 +1076,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 								}			
 							}		
 						}
+						if(mstruct.isApproximate()) b_approx = true;
 						return 1;
 					} else {
 						if(SIZE == mstruct.size()) {
@@ -1070,6 +1084,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 								CHILD(i) *= mstruct[i];
 							}
 							m_type = STRUCT_ADDITION;
+							if(mstruct.isApproximate()) b_approx = true;
 							return 1;
 						}
 					}
@@ -1079,6 +1094,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 					for(unsigned int i = 0; i < SIZE; i++) {
 						CHILD(i) *= mstruct;
 					}
+					if(mstruct.isApproximate()) b_approx = true;
 					return 1;
 				}
 			}
@@ -1095,6 +1111,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 						APPEND(msave);
 						CHILD(i) *= mstruct[i];
 					}
+					if(mstruct.isApproximate()) b_approx = true;
 					return 1;
 				}
 				case STRUCT_POWER: {
@@ -1110,6 +1127,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 					for(unsigned int i = 0; i < SIZE; i++) {
 						CHILD(i).multiply(mstruct);
 					}
+					if(mstruct.isApproximate()) b_approx = true;
 					return 1;
 				}
 			}
@@ -1125,6 +1143,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 					for(unsigned int i = 0; i < mstruct.size(); i++) {
 						APPEND(mstruct[i]);
 					}
+					if(mstruct.isApproximate()) b_approx = true;
 					return 1;
 				}
 				case STRUCT_POWER: {
@@ -1138,6 +1157,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 				}
 				default: {
 					APPEND(mstruct);
+					if(mstruct.isApproximate()) b_approx = true;
 					return 1;
 				}
 			}
@@ -1165,6 +1185,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 						mstruct2 *= mstruct[0];
 						if(mstruct2.calculatesub(eo, eo)) {
 							CHILD(0) = mstruct2;
+							if(mstruct.isApproximate()) b_approx = true;
 							return 1;
 						}
 					}
@@ -1174,11 +1195,13 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 					if(CHILD(1).isNumber() && CHILD(0) == mstruct) {
 						if(CHILD(0).representsNonZero() || CHILD(1).representsPositive()) {
 							CHILD(1) += 1;
+							if(mstruct.isApproximate()) b_approx = true;
 							return 1;
 						}
 					}
 					if(mstruct.isZero()) {
-						clear(); 
+						clear();
+						if(mstruct.isApproximate()) b_approx = true; 
 						return 1;
 					}
 					break;
@@ -1197,10 +1220,12 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 				default: {
 					if(mstruct.isZero() || isZero()) {
 						clear(); 
+						if(mstruct.isApproximate()) b_approx = true;
 						return 1;
 					}
 					if(equals(mstruct)) {
 						raise(2);
+						if(mstruct.isApproximate()) b_approx = true;
 						return 1;
 					}
 					break;
@@ -1233,6 +1258,7 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 		return -1;
 	}
 	if(mstruct.isOne()) {
+		if(mstruct.isApproximate()) b_approx = true;
 		return 1;
 	}
 	if(representsUndefined() || mstruct.representsUndefined()) return -1;
@@ -1241,9 +1267,7 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 	}
 	if(mstruct.isZero()) {
 		set(1, 1);
-		if(mstruct.isApproximate()) {
-			b_approx = true;
-		}
+		if(mstruct.isApproximate()) b_approx = true;
 		return 1;
 	}
 	switch(m_type) {
@@ -1268,6 +1292,7 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 						if(b_neg) {
 							invertMatrix(eo);
 						}
+						if(mstruct.isApproximate()) b_approx = true;
 						return 1;
 					}
 					return -1;
@@ -1284,6 +1309,7 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 					MathStructure msave(*this);
 					merge_multiplication(msave, eo);
 					raise(nr);
+					if(mstruct.isApproximate()) b_approx = true;
 					return 1;
 				}
 				
@@ -1326,6 +1352,7 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 				APPEND(mstruct2);
 				LAST.raise(m);
 				if(neg) inverse();
+				if(mstruct.isApproximate()) b_approx = true;
 				return 1;
 			}
 			goto default_power_merge;
@@ -1335,6 +1362,7 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 				for(unsigned int i = 0; i < SIZE; i++) {
 					CHILD(i).raise(mstruct);	
 				}
+				if(mstruct.isApproximate()) b_approx = true;
 				return 1;
 			} else {
 				bool b = true;
@@ -1347,6 +1375,7 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 					for(unsigned int i = 0; i < SIZE; i++) {
 						CHILD(i).raise(mstruct);	
 					}
+					if(mstruct.isApproximate()) b_approx = true;
 					return 1;
 				}
 			}
@@ -1360,6 +1389,7 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 						CHILD(0).set(CALCULATOR->f_abs, &mstruct_base, NULL);
 					}
 					CHILD(1) *= mstruct;
+					if(mstruct.isApproximate()) b_approx = true;
 					return 1;
 				}
 			}
@@ -1380,16 +1410,19 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 								} else {
 									set(-1, 1);
 								}
+								if(mstruct.isApproximate()) b_approx = true;
 								return 1;
 							} else if(img == Number(1, 2)) {
 								clear();
 								img.set(1, 1);
 								o_number.setImaginaryPart(img);
+								if(mstruct.isApproximate()) b_approx = true;
 								return 1;
 							} else if(img == Number(-1, 2)) {
 								clear();
 								img.set(-1, 1);
 								o_number.setImaginaryPart(img);
+								if(mstruct.isApproximate()) b_approx = true;
 								return 1;
 							}
 						}
@@ -1413,6 +1446,7 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 					APPEND(msave);
 					LAST.raise(mstruct[i]);
 				}
+				if(mstruct.isApproximate()) b_approx = true;
 				return 1;
 			} else if(mstruct.isMultiplication() && mstruct.size() > 1) {
 				MathStructure mthis(*this);
@@ -1428,6 +1462,7 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 							raise(mstruct);
 							CHILD(1).delChild(i + 1);
 						}
+						if(mstruct.isApproximate()) b_approx = true;
 						return 1;
 					}
 				}
