@@ -120,6 +120,9 @@ int main (int argc, char **argv) {
 	create_main_window();
 	
 	//create dynamic menus
+	generate_units_tree_struct();
+	generate_functions_tree_struct();
+	generate_variables_tree_struct();
 	create_fmenu();
 	create_vmenu();	
 	create_pmenu();	

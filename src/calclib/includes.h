@@ -31,7 +31,8 @@ typedef enum {
 	UNIT_FORMAT_TAGS		= 1 << 5,
 	UNIT_FORMAT_ALLOW_NOT_USABLE	= 1 << 6,
 	UNIT_FORMAT_SHORT		= 1 << 7,
-	UNIT_FORMAT_HIDE		= 1 << 8	
+	UNIT_FORMAT_LONG		= 1 << 8,	
+	UNIT_FORMAT_HIDE		= 1 << 9	
 } UnitFormatFlags;
 
 #define PRECISION	12

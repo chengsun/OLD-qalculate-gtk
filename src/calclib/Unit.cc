@@ -498,94 +498,77 @@ CompositeUnit::~CompositeUnit(void) {
 		delete units[i];
 }
 void CompositeUnit::add(Unit *u, long double exp_, long double prefix) {
-	bsorted = false;
-	units.push_back(new AliasUnit_Composite(calc, u, exp_, prefix));
-	sort();
-	b_changed = true;
+	bool b = false;
+	for(int i = 0; i < (int) units.size(); i++) {
+		if(exp_ > units[i]->firstBaseExp()) {
+			units.insert(units.begin() + i, new AliasUnit_Composite(calc, u, exp_, prefix));
+			b = true;
+			break;
+		}
+	}
+	if(!b) {
+		units.push_back(new AliasUnit_Composite(calc, u, exp_, prefix));
+	}
 }
 Unit *CompositeUnit::get(int index, long double *exp_, long double *prefix) {
-	sort();
-	if(index >= 0 && index < sorted.size()) {
-		if(exp_) *exp_ = units[sorted[index]]->firstBaseExp();
-		if(prefix) *prefix = units[sorted[index]]->prefixValue();
-		return units[sorted[index]];
+	if(index >= 0 && index < units.size()) {
+		if(exp_) *exp_ = units[index]->firstBaseExp();
+		if(prefix) *prefix = units[index]->prefixValue();
+		return units[index];
 	}
 	return NULL;
 }
 void CompositeUnit::del(Unit *u) {
 	for(int i = 0; i < units.size(); i++) {
 		if(units[i]->firstBaseUnit() == u) {
-			bsorted = false;
 			delete units[i];
 			units.erase(units.begin() + i);
 		}
 	}
-	sort();
-}
-void CompositeUnit::sort() {
-	if(bsorted)
-		return;
-	bool btmp = false;
-	sorted.clear();
-	int i2;
-	for(int i = 0; i < (int) units.size(); i++) {
-		btmp = true;
-		for(i2 = 0; i2 < i; i2++) {
-			if(units[sorted[i2]]->firstBaseExp() < units[i]->firstBaseExp()) {
-				sorted.push_back(sorted[i2]);
-				sorted[i2] = i;
-				btmp = false;
-				break;
-			}
-		}
-		if(btmp) {
-			sorted.push_back(i);
-		}
-	}
-	bsorted = true;
 }
 string CompositeUnit::print(bool plural_, bool short_) {
 	string str = "";
-	sort();
-	bool b = false;
-	for(int i = 0; i < sorted.size(); i++) {
-		if(units[sorted[i]]->firstBaseExp() != 0) {
-/*			if(!b && units[sorted[i]]->firstBaseExp() < 0) {
-				str += UNIT_DIVISION_CH;
-				b = true;
-			}*/
-			if(units[sorted[i]]->firstBaseExp() < 0) {
+	bool b = false, b2 = false;
+	for(int i = 0; i < units.size(); i++) {
+		if(units[i]->firstBaseExp() != 0) {
+			if(!b && units[i]->firstBaseExp() < 0 && i > 0) {
 				str += DIVISION_STR;
 				b = true;
+				if(i < units.size() - 1) {
+					b2 = true;
+					str += LEFT_BRACKET_STR;
+				}				
 			} else {
 //				if(i > 0) str += MULTIPLICATION_STR;
 				if(i > 0) str += " ";
-				b = false;
 			}
 			if(short_) {
-				if(plural_ && i == 0 && units[sorted[i]]->firstBaseExp() > 0)
-					str += units[sorted[i]]->printShort(true);
-				else
-					str += units[sorted[i]]->printShort(false);
-			} else {
-				if(plural_ && i == 0 && units[sorted[i]]->firstBaseExp() > 0)
-					str += units[sorted[i]]->print(true);
-				else
-					str += units[sorted[i]]->print(false);
-			}
-			if(b) {
-				if(units[sorted[i]]->firstBaseExp() < -1) {
-					str += POWER_STR;
-					str += d2s(-units[sorted[i]]->firstBaseExp());
+				if(plural_ && i == 0 && units[i]->firstBaseExp() > 0) {
+					str += units[i]->printShort(true);
+				} else {
+					str += units[i]->printShort(false);
 				}
 			} else {
-				if(units[sorted[i]]->firstBaseExp() > 1) {
+				if(plural_ && i == 0 && units[i]->firstBaseExp() > 0) {
+					str += units[i]->print(true);
+				} else {
+					str += units[i]->print(false);
+				}
+			}
+			if(b) {
+				if(units[i]->firstBaseExp() != -1) {
 					str += POWER_STR;
-					str += d2s(units[sorted[i]]->firstBaseExp());
+					str += d2s(-units[i]->firstBaseExp());
+				}
+			} else {
+				if(units[i]->firstBaseExp() != 1) {
+					str += POWER_STR;
+					str += d2s(units[i]->firstBaseExp());
 				}
 			}
 		}
 	}
+	if(b2) str += RIGHT_BRACKET_STR;
 	return str;
 }
 string CompositeUnit::name(void) {
@@ -661,6 +644,10 @@ string CompositeUnit::internalName() {
 }
 void CompositeUnit::baseExpression(string base_expression_) {
 	units.clear();
+	if(base_expression_.empty()) {
+		b_changed = true;
+		return;
+	}
 	bool b_var = calc->variablesEnabled();
 	calc->setVariablesEnabled(false);
 	bool b_var_u = calc->unknownVariablesEnabled();
@@ -698,8 +685,12 @@ void CompositeUnit::baseExpression(string base_expression_) {
 				mngr = mngr->mngrs[1];
 			} 
 			if(mngr->type() == UNIT_MANAGER) {
-				if(base_expression_.length() > i2 + 3 && is_in(base_expression_[i2 + 2], POWER_S, NULL) && is_in(base_expression_[i2 + 3], NUMBERS_S, NULL)) {
-					exp = (long double) s2i(base_expression_.substr(i2 + 3, 1));
+				if(base_expression_.length() > i2 + 3 && is_in(base_expression_[i2 + 2], POWER_S, NULL)) {
+					if(is_in(base_expression_[i2 + 3], NUMBERS_S, NULL)) {
+						exp = (long double) s2i(base_expression_.substr(i2 + 3, 1));
+					} else if(base_expression_.length() > i2 + 4 && is_in(base_expression_[i2 + 3], MINUS_S, PLUS_S, NULL) && is_in(base_expression_[i2 + 4], NUMBERS_S, NULL)) {
+						exp = (long double) s2i(base_expression_.substr(i2 + 3, 2));
+					}
 				}
 				if(div) {
 					exp = -exp;

@@ -29,14 +29,6 @@ class Manager;
 
 class Manager {
 
-	protected:
-	
-		void plusclean();		
-		void multiclean();		
-		void powerclean();				
-		bool reverseadd(Manager *mngr, char sign, bool translate_ = true);
-		bool mergable(Manager *mngr, char type_);
-		bool compatible(Manager *mngr);
 	
 	public:
 	
@@ -50,7 +42,12 @@ class Manager {
 		Function *o_function;
 		
 		void transform(Manager *mngr, char type_, char sign, bool reverse_ = false);		
-	
+		void plusclean();		
+		void multiclean();		
+		void powerclean();				
+		bool reverseadd(Manager *mngr, char sign, bool translate_ = true);
+		bool mergable(Manager *mngr, char type_);
+		bool compatible(Manager *mngr);
 		void moveto(Manager *mngr);			
 		
 		Manager(Calculator *calc_);

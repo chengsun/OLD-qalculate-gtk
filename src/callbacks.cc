@@ -32,13 +32,13 @@ extern Calculator *calc;
 extern Variable *vans, *vAns;
 extern GtkWidget *tFunctions, *tFunctionCategories;
 extern GtkListStore *tFunctions_store;
-extern GtkListStore *tFunctionCategories_store;
+extern GtkTreeStore *tFunctionCategories_store;
 extern GtkWidget *tVariables, *tVariableCategories;
 extern GtkListStore *tVariables_store;
-extern GtkListStore *tVariableCategories_store;
+extern GtkTreeStore *tVariableCategories_store;
 extern GtkWidget *tUnits, *tUnitCategories;
 extern GtkListStore *tUnits_store;
-extern GtkListStore *tUnitCategories_store;
+extern GtkTreeStore *tUnitCategories_store;
 extern GtkAccelGroup *accel_group;
 GtkWidget *u_enable_item, *f_enable_item, *v_enable_item, *uv_enable_item;
 extern GtkWidget *functions_window;
@@ -63,6 +63,17 @@ extern bool load_global_defs;
 extern GtkWidget *omToUnit_menu;
 bool block_unit_convert;
 extern Manager *mngr;
+
+struct tree_struct {
+	string item;
+	list<tree_struct> items;
+	vector<void*> objects;	
+	bool operator < (tree_struct &s1) const {
+		return item < s1.item;	
+	}	
+};
+list<tree_struct> unit_cats, variable_cats, function_cats;
+vector<void*> uc_units, uc_variables, uc_functions;	
 
 gulong get_signal_handler(GtkWidget *w) {
 	return g_signal_handler_find((gpointer) w, G_SIGNAL_MATCH_UNBLOCKED, 0, 0, NULL, NULL, NULL);
@@ -220,57 +231,325 @@ Unit *get_selected_to_unit() {
 	return selected_to_unit;
 }
 
+void generate_units_tree_struct() {
+	tree_struct *p_cat;
+	int i2; bool b;
+	bool no_cat = false;	
+	string str;
+	unit_cats.clear();
+	uc_units.clear();
+	Unit *u;
+	list<tree_struct>::iterator it;	
+	for(int i = 0; i < calc->units.size(); i++) {
+		if(calc->units[i]->category().empty()) {
+			b = false;
+			for(int i3 = 0; i3 < uc_units.size(); i3++) {
+				u = (Unit*) uc_units[i3];
+				if(calc->units[i]->title() < u->title()) {
+					b = true;
+					it->objects.insert(it->objects.begin() + i3, (void*) calc->units[i]);
+					break;
+				}
+			}
+			if(!b) uc_units.push_back((void*) calc->units[i]);			
+		} else {
+			b = false;
+			//add category if not present
+			if((i2 = calc->units[i]->category().find("/")) == string::npos) { 	
+				for(it = unit_cats.begin(); it != unit_cats.end(); ++it) {
+					if(it->item == calc->units[i]->category()) {
+						for(int i3 = 0; i3 < it->objects.size(); i3++) {
+							u = (Unit*) it->objects[i3];
+							if(calc->units[i]->title() < u->title()) {
+								b = true;
+								it->objects.insert(it->objects.begin() + i3, (void*) calc->units[i]);
+								break;
+							}
+						}
+						if(!b) it->objects.push_back((void*) calc->units[i]);					
+						b = true;
+					}
+				}
+				if(!b) {
+					tree_struct cat;		
+					cat.item = calc->units[i]->category();
+					cat.objects.push_back((void*) calc->units[i]);
+					unit_cats.push_back(cat);
+				}
+			} else {
+				str = calc->units[i]->category().substr(0, i2);
+				for(it = unit_cats.begin(); it != unit_cats.end(); ++it) {
+					if(it->item == str) {
+						p_cat = &(*it);
+						b = true;
+					}
+				}
+				if(!b) {
+					tree_struct cat;		
+					cat.item = str;
+					unit_cats.push_back(cat);				
+					it = unit_cats.end();
+					--it;
+					p_cat = &(*it);
+				}				
+				b = false;
+				str = calc->units[i]->category().substr(i2 + 1, calc->units[i]->category().length() - i2 - 1);
+				for(it = p_cat->items.begin(); it != p_cat->items.end(); ++it) {
+					if(it->item == str) {
+						for(int i3 = 0; i3 < it->objects.size(); i3++) {
+							u = (Unit*) it->objects[i3];
+							if(calc->units[i]->title() < u->title()) {
+								b = true;
+								it->objects.insert(it->objects.begin() + i3, (void*) calc->units[i]);
+								break;
+							}
+						}
+						if(!b) it->objects.push_back((void*) calc->units[i]);
+						b = true;
+					}
+				}	
+				if(!b) {
+					tree_struct cat;		
+					cat.item = str;
+					cat.objects.push_back((void*) calc->units[i]);
+					p_cat->items.push_back(cat);				
+				}			
+			}
+		}
+	}
+	
+	unit_cats.sort();
+	for(it = unit_cats.begin(); it != unit_cats.end(); ++it) {
+		it->items.sort();
+	}
+}
+void generate_variables_tree_struct() {
+	tree_struct *p_cat;
+	int i2; bool b;
+	bool no_cat = false;	
+	string str;
+	Variable *v;
+	variable_cats.clear();
+	uc_variables.clear();
+	list<tree_struct>::iterator it;	
+	for(int i = 0; i < calc->variables.size(); i++) {
+		if(calc->variables[i]->category().empty()) {
+			//uncategorized variable
+			b = false;
+			for(int i3 = 0; i3 < uc_variables.size(); i3++) {
+				v = (Variable*) uc_variables[i3];
+				if(calc->variables[i]->title() < v->title()) {
+					b = true;
+					it->objects.insert(it->objects.begin() + i3, (void*) calc->variables[i]);
+					break;
+				}
+			}
+			if(!b) uc_variables.push_back((void*) calc->variables[i]);								
+		} else {
+			b = false;
+			//add category if not present
+			if((i2 = calc->variables[i]->category().find("/")) == string::npos) { 	
+				for(it = variable_cats.begin(); it != variable_cats.end(); ++it) {
+					if(it->item == calc->variables[i]->category()) {
+						for(int i3 = 0; i3 < it->objects.size(); i3++) {
+							v = (Variable*) it->objects[i3];
+							if(calc->variables[i]->title() < v->title()) {
+								b = true;
+								it->objects.insert(it->objects.begin() + i3, (void*) calc->variables[i]);
+								break;
+							}
+						}
+						if(!b) it->objects.push_back((void*) calc->variables[i]);					
+						b = true;
+					}
+				}
+				if(!b) {
+					tree_struct cat;		
+					cat.item = calc->variables[i]->category();
+					cat.objects.push_back((void*) calc->variables[i]);
+					variable_cats.push_back(cat);
+				}
+			} else {
+				str = calc->variables[i]->category().substr(0, i2);
+				for(it = variable_cats.begin(); it != variable_cats.end(); ++it) {
+					if(it->item == str) {
+						p_cat = &(*it);
+						b = true;
+					}
+				}
+				if(!b) {
+					tree_struct cat;		
+					cat.item = str;
+					variable_cats.push_back(cat);				
+					it = variable_cats.end();
+					--it;
+					p_cat = &(*it);
+				}				
+				b = false;
+				str = calc->variables[i]->category().substr(i2 + 1, calc->variables[i]->category().length() - i2 - 1);
+				for(it = p_cat->items.begin(); it != p_cat->items.end(); ++it) {
+					if(it->item == str) {
+						for(int i3 = 0; i3 < it->objects.size(); i3++) {
+							v = (Variable*) it->objects[i3];
+							if(calc->variables[i]->title() < v->title()) {
+								b = true;
+								it->objects.insert(it->objects.begin() + i3, (void*) calc->variables[i]);
+								break;
+							}
+						}
+						if(!b) it->objects.push_back((void*) calc->variables[i]);
+						b = true;
+					}
+				}	
+				if(!b) {
+					tree_struct cat;		
+					cat.item = str;
+					cat.objects.push_back((void*) calc->variables[i]);
+					p_cat->items.push_back(cat);				
+				}			
+			}
+		}
+	}
+	
+	variable_cats.sort();
+	for(it = variable_cats.begin(); it != variable_cats.end(); ++it) {
+		it->items.sort();
+	}
+}
+void generate_functions_tree_struct() {
+	tree_struct *p_cat;
+	int i2; bool b;
+	bool no_cat = false;	
+	string str;
+	Function *f;
+	function_cats.clear();
+	uc_functions.clear();
+	list<tree_struct>::iterator it;
+	for(int i = 0; i < calc->functions.size(); i++) {
+		if(calc->functions[i]->category().empty()) {
+			//uncategorized function
+			b = false;
+			for(int i3 = 0; i3 < uc_functions.size(); i3++) {
+				f = (Function*) uc_functions[i3];
+				if(calc->functions[i]->title() < f->title()) {
+					b = true;
+					it->objects.insert(it->objects.begin() + i3, (void*) calc->functions[i]);
+					break;
+				}
+			}
+			if(!b) uc_functions.push_back((void*) calc->functions[i]);					
+		} else {
+			b = false;
+			//add category if not present
+			if((i2 = calc->functions[i]->category().find("/")) == string::npos) { 	
+				for(it = function_cats.begin(); it != function_cats.end(); ++it) {
+					if(it->item == calc->functions[i]->category()) {
+						for(int i3 = 0; i3 < it->objects.size(); i3++) {
+							f = (Function*) it->objects[i3];
+							if(calc->functions[i]->title() < f->title()) {
+								b = true;
+								it->objects.insert(it->objects.begin() + i3, (void*) calc->functions[i]);
+								break;
+							}
+						}
+						if(!b) it->objects.push_back((void*) calc->functions[i]);					
+						b = true;
+					}
+				}
+				if(!b) {
+					tree_struct cat;		
+					cat.item = calc->functions[i]->category();
+					cat.objects.push_back((void*) calc->functions[i]);
+					function_cats.push_back(cat);
+				}
+			} else {
+				str = calc->functions[i]->category().substr(0, i2);
+				for(it = function_cats.begin(); it != function_cats.end(); ++it) {
+					if(it->item == str) {
+						p_cat = &(*it);
+						b = true;
+					}
+				}
+				if(!b) {
+					tree_struct cat;		
+					cat.item = str;
+					function_cats.push_back(cat);				
+					it = function_cats.end();
+					--it;
+					p_cat = &(*it);
+				}				
+				b = false;
+				str = calc->functions[i]->category().substr(i2 + 1, calc->functions[i]->category().length() - i2 - 1);
+				for(it = p_cat->items.begin(); it != p_cat->items.end(); ++it) {
+					if(it->item == str) {
+						it->objects.push_back((void*) calc->functions[i]);
+						b = true;
+					}
+				}	
+				if(!b) {
+					tree_struct cat;		
+					cat.item = str;
+					cat.objects.push_back((void*) calc->functions[i]);
+					p_cat->items.push_back(cat);				
+				}			
+			}
+		}
+	}
+	
+	function_cats.sort();
+	for(it = function_cats.begin(); it != function_cats.end(); ++it) {
+		it->items.sort();
+	}
+}
+
 /*
 	generate the function categories tree in manage functions dialog
 */
 void update_functions_tree(GtkWidget *fwin) {
 	if(!fwin)
 		return;
-	GHashTable *hash;
-	GtkTreeIter iter;
+	GtkTreeIter iter, iter2;
 	GtkTreeModel *model;
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctionCategories));
 	gulong s_handler = get_signal_handler(G_OBJECT(select));
 	block_signal(G_OBJECT(select), s_handler);
-	gtk_list_store_clear(tFunctionCategories_store);
+	gtk_tree_store_clear(tFunctionCategories_store);
 	unblock_signal(G_OBJECT(select), s_handler);
-	bool no_cat = false;
-	hash = g_hash_table_new(g_str_hash, g_str_equal);
-	gtk_list_store_append(tFunctionCategories_store, &iter);
-	gtk_list_store_set(tFunctionCategories_store, &iter, 0, _("All"), -1);
-	for(int i = 0; i < calc->functions.size(); i++) {
-		if(calc->functions[i]->category().empty()) {
-			//uncategorized function
-			no_cat = true;
-		} else {
-			//add category if not present
-			if(g_hash_table_lookup(hash, (gconstpointer) calc->functions[i]->category().c_str()) == NULL) {
-				gtk_list_store_append(tFunctionCategories_store, &iter);
-				gtk_list_store_set(tFunctionCategories_store, &iter, 0, calc->functions[i]->category().c_str(), -1);
-				//select item if category correspond with the previously selected
-				if(calc->functions[i]->category() == selected_function_category) {
-					gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctionCategories)), &iter);
-				}
-				//remember added categories
-				g_hash_table_insert(hash, (gpointer) calc->functions[i]->category().c_str(), (gpointer) hash);
+	gtk_tree_store_append(tFunctionCategories_store, &iter, NULL);
+	gtk_tree_store_set(tFunctionCategories_store, &iter, 0, _("All"), 1, _("All"), -1);
+	string str;
+	list<tree_struct>::iterator it, it2;
+	for(it = function_cats.begin(); it != function_cats.end(); ++it) {
+		gtk_tree_store_append(tFunctionCategories_store, &iter, NULL);
+		gtk_tree_store_set(tFunctionCategories_store, &iter, 0, it->item.c_str(), 1, it->item.c_str(), -1);
+		if(str == selected_function_category) {
+			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctionCategories)), &iter);
+		}
+		for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
+			str = it->item;
+			str += "/";
+			str += it2->item;
+			gtk_tree_store_append(tFunctionCategories_store, &iter2, &iter);
+			gtk_tree_store_set(tFunctionCategories_store, &iter2, 0, it2->item.c_str(), 1, str.c_str(), -1);		
+			if(str == selected_function_category) {
+				gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctionCategories)), &iter2);
 			}
 		}
 	}
-	if(no_cat) {
+	if(!uc_functions.empty()) {
 		//add "Uncategorized" category if there are functions without category
-		gtk_list_store_append(tFunctionCategories_store, &iter);
-		gtk_list_store_set(tFunctionCategories_store, &iter, 0, _("Uncategorized"), -1);
+		gtk_tree_store_append(tFunctionCategories_store, &iter, NULL);
+		gtk_tree_store_set(tFunctionCategories_store, &iter, 0, _("Uncategorized"), -1);
 		if(selected_function_category == _("Uncategorized")) {
 			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctionCategories)), &iter);
 		}
-	}
+	}	
 	if(!gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctionCategories)), &model, &iter)) {
 		//if no category has been selected (previously selected has been renamed/deleted), select "All"
 		selected_function_category = _("All");
 		gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tFunctionCategories_store), &iter);
 		gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctionCategories)), &iter);
 	}
-	g_hash_table_destroy(hash);
 }
 
 /*
@@ -289,7 +568,7 @@ void on_tFunctionCategories_selection_changed(GtkTreeSelection *treeselection, g
 	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "functions_button_delete"), FALSE);
 	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
 		gchar *gstr;
-		gtk_tree_model_get(model, &iter, 0, &gstr, -1);
+		gtk_tree_model_get(model, &iter, 1, &gstr, -1);
 		selected_function_category = gstr;
 		string str;
 		if(selected_function_category == _("All"))
@@ -333,7 +612,8 @@ void on_tFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer u
 		for(int i = 0; i < calc->functions.size(); i++) {
 			if(calc->functions[i]->name() == selected_function) {
 				gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (glade_xml, "functions_textview_description"))), calc->functions[i]->description().c_str(), -1);
-				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "functions_button_edit"), TRUE);
+				//disable editing of global functions until everything get sorted out
+				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "functions_button_edit"), calc->functions[i]->isUserFunction());
 				//enable only delete button if function is defined in definitions file and not in source (builtin)
 				//user cannot delete global definitions
 				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "functions_button_delete"), calc->functions[i]->isUserFunction());
@@ -353,40 +633,38 @@ void on_tFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer u
 void update_variables_tree(GtkWidget *fwin) {
 	if(!fwin)
 		return;
-	GHashTable *hash;
-	GtkTreeIter iter;
+	GtkTreeIter iter, iter2;
 	GtkTreeModel *model;
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tVariableCategories));
 	gulong s_handler = get_signal_handler(G_OBJECT(select));
 	block_signal(G_OBJECT(select), s_handler);
-	gtk_list_store_clear(tVariableCategories_store);
+	gtk_tree_store_clear(tVariableCategories_store);
 	unblock_signal(G_OBJECT(select), s_handler);
-	bool no_cat = false;
-	hash = g_hash_table_new(g_str_hash, g_str_equal);
-	gtk_list_store_append(tVariableCategories_store, &iter);
-	gtk_list_store_set(tVariableCategories_store, &iter, 0, _("All"), -1);
-	for(int i = 0; i < calc->variables.size(); i++) {
-		if(calc->variables[i]->category().empty()) {
-			//uncategorized variable
-			no_cat = true;
-		} else {
-			//add category if not present
-			if(g_hash_table_lookup(hash, (gconstpointer) calc->variables[i]->category().c_str()) == NULL) {
-				gtk_list_store_append(tVariableCategories_store, &iter);
-				gtk_list_store_set(tVariableCategories_store, &iter, 0, calc->variables[i]->category().c_str(), -1);
-				//select item if category correspond with the previously selected
-				if(calc->variables[i]->category() == selected_variable_category) {
-					gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tVariableCategories)), &iter);
-				}
-				//remember added categories
-				g_hash_table_insert(hash, (gpointer) calc->variables[i]->category().c_str(), (gpointer) hash);
+	gtk_tree_store_append(tVariableCategories_store, &iter, NULL);
+	gtk_tree_store_set(tVariableCategories_store, &iter, 0, _("All"), 1, _("All"), -1);
+	string str;
+	list<tree_struct>::iterator it, it2;
+	for(it = variable_cats.begin(); it != variable_cats.end(); ++it) {
+		gtk_tree_store_append(tVariableCategories_store, &iter, NULL);
+		gtk_tree_store_set(tVariableCategories_store, &iter, 0, it->item.c_str(), 1, it->item.c_str(), -1);
+		if(str == selected_variable_category) {
+			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tVariableCategories)), &iter);
+		}
+		for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
+			str = it->item;
+			str += "/";
+			str += it2->item;
+			gtk_tree_store_append(tVariableCategories_store, &iter2, &iter);
+			gtk_tree_store_set(tVariableCategories_store, &iter2, 0, it2->item.c_str(), 1, str.c_str(), -1);		
+			if(str == selected_variable_category) {
+				gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tVariableCategories)), &iter2);
 			}
 		}
-	}
-	if(no_cat) {
+	}	
+	if(!uc_variables.empty()) {
 		//add "Uncategorized" category if there are variables without category
-		gtk_list_store_append(tVariableCategories_store, &iter);
-		gtk_list_store_set(tVariableCategories_store, &iter, 0, _("Uncategorized"), -1);
+		gtk_tree_store_append(tVariableCategories_store, &iter, NULL);
+		gtk_tree_store_set(tVariableCategories_store, &iter, 0, _("Uncategorized"), -1);
 		if(selected_variable_category == _("Uncategorized")) {
 			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tVariableCategories)), &iter);
 		}
@@ -397,7 +675,6 @@ void update_variables_tree(GtkWidget *fwin) {
 		gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tVariableCategories_store), &iter);
 		gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tVariableCategories)), &iter);
 	}
-	g_hash_table_destroy(hash);
 }
 
 /*
@@ -416,7 +693,7 @@ void on_tVariableCategories_selection_changed(GtkTreeSelection *treeselection, g
 	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variables_button_delete"), FALSE);
 	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
 		gchar *gstr;
-		gtk_tree_model_get(model, &iter, 0, &gstr, -1);
+		gtk_tree_model_get(model, &iter, 1, &gstr, -1);
 		selected_variable_category = gstr;
 		string str, str2;
 		if(selected_variable_category == _("All"))
@@ -460,7 +737,8 @@ void on_tVariables_selection_changed(GtkTreeSelection *treeselection, gpointer u
 		selected_variable = gstr;
 		for(int i = 0; i < calc->variables.size(); i++) {
 			if(calc->variables[i]->name() == selected_variable) {
-				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variables_button_edit"), TRUE);
+				//disable editing of global variables until everything get sorted out
+				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variables_button_edit"), calc->variables[i]->isUserVariable());
 				//user is not allowed to delete some variables (pi and e)
 				//user cannot delete global definitions
 				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variables_button_delete"), calc->variables[i]->isUserVariable());
@@ -474,57 +752,55 @@ void on_tVariables_selection_changed(GtkTreeSelection *treeselection, gpointer u
 	}
 }
 
+
 /*
 	generate the unit categories tree in manage units dialog
 */
 void update_units_tree(GtkWidget *fwin) {
 	if(!fwin)
-		return;
-	GHashTable *hash;
-	GtkTreeIter iter;
+		return;		
+	GtkTreeIter iter, iter2;
 	GtkTreeModel *model;
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnitCategories));
 	gulong s_handler = get_signal_handler(G_OBJECT(select));
 	block_signal(G_OBJECT(select), s_handler);
-	gtk_list_store_clear(tUnitCategories_store);
+	gtk_tree_store_clear(tUnitCategories_store);
 	unblock_signal(G_OBJECT(select), s_handler);
-	bool no_cat = false;
-	hash = g_hash_table_new(g_str_hash, g_str_equal);
-	gtk_list_store_append(tUnitCategories_store, &iter);
-	gtk_list_store_set(tUnitCategories_store, &iter, 0, _("All"), -1);
-	for(int i = 0; i < calc->units.size(); i++) {
-		if(calc->units[i]->category().empty()) {
-			//uncategorized unit
-			no_cat = true;
-		} else {
-			//add category if not present
-			if(g_hash_table_lookup(hash, (gconstpointer) calc->units[i]->category().c_str()) == NULL) {
-				gtk_list_store_append(tUnitCategories_store, &iter);
-				gtk_list_store_set(tUnitCategories_store, &iter, 0, calc->units[i]->category().c_str(), -1);
-				//select item if category correspond with the previously selected
-				if(calc->units[i]->category() == selected_unit_category) {
-					gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnitCategories)), &iter);
-				}
-				//remember added categories
-				g_hash_table_insert(hash, (gpointer) calc->units[i]->category().c_str(), (gpointer) hash);
+	gtk_tree_store_append(tUnitCategories_store, &iter, NULL);
+	gtk_tree_store_set(tUnitCategories_store, &iter, 0, _("All"), 1, _("All"), -1);
+	string str;
+	list<tree_struct>::iterator it, it2;
+	for(it = unit_cats.begin(); it != unit_cats.end(); ++it) {
+		gtk_tree_store_append(tUnitCategories_store, &iter, NULL);
+		gtk_tree_store_set(tUnitCategories_store, &iter, 0, it->item.c_str(), 1, it->item.c_str(), -1);
+		if(str == selected_unit_category) {
+			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnitCategories)), &iter);
+		}
+		for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
+			str = it->item;
+			str += "/";
+			str += it2->item;
+			gtk_tree_store_append(tUnitCategories_store, &iter2, &iter);
+			gtk_tree_store_set(tUnitCategories_store, &iter2, 0, it2->item.c_str(), 1, str.c_str(), -1);		
+			if(str == selected_unit_category) {
+				gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnitCategories)), &iter2);
 			}
 		}
 	}
-	if(no_cat) {
+	if(!uc_units.empty()) {
 		//add "Uncategorized" category if there are units without category
-		gtk_list_store_append(tUnitCategories_store, &iter);
-		gtk_list_store_set(tUnitCategories_store, &iter, 0, _("Uncategorized"), -1);
+		gtk_tree_store_append(tUnitCategories_store, &iter, NULL);
+		gtk_tree_store_set(tUnitCategories_store, &iter, 0, _("Uncategorized"), -1);
 		if(selected_unit_category == _("Uncategorized")) {
 			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnitCategories)), &iter);
 		}
-	}
+	}	
 	if(!gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnitCategories)), &model, &iter)) {
 		//if no category has been selected (previously selected has been renamed/deleted), select "All"
 		selected_unit_category = _("All");
 		gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tUnitCategories_store), &iter);
 		gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnitCategories)), &iter);
 	}
-	g_hash_table_destroy(hash);
 }
 
 /*
@@ -547,7 +823,7 @@ void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpoin
 	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
 		gchar *gstr;
 		AliasUnit *au;
-		gtk_tree_model_get(model, &iter, 0, &gstr, -1);
+		gtk_tree_model_get(model, &iter, 1, &gstr, -1);
 		selected_unit_category = gstr;
 		if(selected_unit_category == _("All"))
 			b_all = true;
@@ -671,9 +947,10 @@ void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer user_
 					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (glade_xml, "units_label_from_unit")), calc->units[i]->shortName().c_str());
 				else
 					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (glade_xml, "units_label_from_unit")), calc->units[i]->plural().c_str());
-					//user cannot delete global definitions
+				//user cannot delete global definitions
 				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_delete"), calc->units[i]->isUserUnit());
-				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_edit"), TRUE);
+				//disable editing of global units until everything get sorted out
+				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_edit"), calc->units[i]->isUserUnit());
 			}
 		}
 	} else {
@@ -694,29 +971,42 @@ void create_umenu() {
 	GHashTable *hash;
 	SUBMENU_ITEM_INSERT(_("Units"), gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression"))), 5)
 	u_menu = item;
-//	MENU_TEAROFF
 	sub2 = sub;
-	hash = g_hash_table_new(g_str_hash, g_str_equal);
-	for(int i = 0; i < calc->units.size(); i++) {
-		if(calc->units[i]->category().empty()) {
-			sub = sub2;
-		} else {
-			if(g_hash_table_lookup(hash, (gconstpointer) calc->units[i]->category().c_str()) == NULL) {
-				SUBMENU_ITEM(calc->units[i]->category().c_str(), sub2)
-//				MENU_TEAROFF
-				g_hash_table_insert(hash, (gpointer) calc->units[i]->category().c_str(), (gpointer) sub);
+	Unit *u;
+	list<tree_struct>::iterator it, it2;
+	for(it = unit_cats.begin(); it != unit_cats.end(); ++it) {
+		SUBMENU_ITEM(it->item.c_str(), sub2)
+		GtkWidget *sub3 = sub;
+		for(int i = 0; i < it->objects.size(); i++) {
+			u = (Unit*) it->objects[i];
+			if(u->title().empty()) {
+				MENU_ITEM_WITH_POINTER(u->name().c_str(), insert_unit, u)
 			} else {
-				sub = GTK_WIDGET(g_hash_table_lookup(hash, (gconstpointer) calc->units[i]->category().c_str()));
-			}
+				MENU_ITEM_WITH_POINTER(u->title().c_str(), insert_unit, u)
+			}		
+		}				
+		for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
+			SUBMENU_ITEM(it2->item.c_str(), sub3)
+			for(int i = 0; i < it2->objects.size(); i++) {
+				u = (Unit*) it2->objects[i];
+				if(u->title().empty()) {
+					MENU_ITEM_WITH_POINTER(u->name().c_str(), insert_unit, u)
+				} else {
+					MENU_ITEM_WITH_POINTER(u->title().c_str(), insert_unit, u)
+				}		
+			}			
 		}
-		if(calc->units[i]->title().empty()) {
-			MENU_ITEM_WITH_POINTER(calc->units[i]->name().c_str(), insert_unit, calc->units[i])
-		} else {
-			MENU_ITEM_WITH_POINTER(calc->units[i]->title().c_str(), insert_unit, calc->units[i])
-		}
-	}
-	g_hash_table_destroy(hash);
+	}		
 	sub = sub2;
+	for(int i = 0; i < uc_units.size(); i++) {
+		u = (Unit*) uc_units[i];
+		if(u->title().empty()) {
+			MENU_ITEM_WITH_POINTER(u->name().c_str(), insert_unit, u)
+		} else {
+			MENU_ITEM_WITH_POINTER(u->title().c_str(), insert_unit, u)
+		}			
+	}	
+	MENU_SEPARATOR	
 	MENU_ITEM(_("Create new unit"), new_unit);
 	MENU_ITEM(_("Manage units"), manage_units);
 	MENU_ITEM_SET_ACCEL(GDK_u);
@@ -737,29 +1027,42 @@ void create_umenu2() {
 	GHashTable *hash;
 	SUBMENU_ITEM_INSERT(_("Convert to unit"), gtk_menu_item_get_submenu(GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_result"))), 2)
 	u_menu2 = item;
-//	MENU_TEAROFF
 	sub2 = sub;
-	hash = g_hash_table_new(g_str_hash, g_str_equal);
-	for(int i = 0; i < calc->units.size(); i++) {
-		if(calc->units[i]->category().empty()) {
-			sub = sub2;
-		} else {
-			if(g_hash_table_lookup(hash, (gconstpointer) calc->units[i]->category().c_str()) == NULL) {
-				SUBMENU_ITEM(calc->units[i]->category().c_str(), sub2)
-//				MENU_TEAROFF
-				g_hash_table_insert(hash, (gpointer) calc->units[i]->category().c_str(), (gpointer) sub);
+	Unit *u;
+	list<tree_struct>::iterator it, it2;
+	for(it = unit_cats.begin(); it != unit_cats.end(); ++it) {
+		SUBMENU_ITEM(it->item.c_str(), sub2)
+		GtkWidget *sub3 = sub;
+		for(int i = 0; i < it->objects.size(); i++) {
+			u = (Unit*) it->objects[i];
+			if(u->title().empty()) {
+				MENU_ITEM_WITH_POINTER(u->name().c_str(), convert_to_unit, u)
 			} else {
-				sub = GTK_WIDGET(g_hash_table_lookup(hash, (gconstpointer) calc->units[i]->category().c_str()));
-			}
+				MENU_ITEM_WITH_POINTER(u->title().c_str(), convert_to_unit, u)
+			}		
+		}				
+		for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
+			SUBMENU_ITEM(it2->item.c_str(), sub3)
+			for(int i = 0; i < it2->objects.size(); i++) {
+				u = (Unit*) it2->objects[i];
+				if(u->title().empty()) {
+					MENU_ITEM_WITH_POINTER(u->name().c_str(), convert_to_unit, u)
+				} else {
+					MENU_ITEM_WITH_POINTER(u->title().c_str(), convert_to_unit, u)
+				}		
+			}			
 		}
-		if(calc->units[i]->title().empty()) {
-			MENU_ITEM_WITH_POINTER(calc->units[i]->name().c_str(), convert_to_unit, calc->units[i])
-		} else {
-			MENU_ITEM_WITH_POINTER(calc->units[i]->title().c_str(), convert_to_unit, calc->units[i])
-		}
-	}
-	g_hash_table_destroy(hash);
+	}	
 	sub = sub2;
+	for(int i = 0; i < uc_units.size(); i++) {
+		u = (Unit*) uc_units[i];
+		if(u->title().empty()) {
+			MENU_ITEM_WITH_POINTER(u->name().c_str(), convert_to_unit, u)
+		} else {
+			MENU_ITEM_WITH_POINTER(u->title().c_str(), convert_to_unit, u)
+		}			
+	}	
+	MENU_SEPARATOR	
 	MENU_ITEM(_("Enter composite unit"), convert_to_custom_unit);
 	MENU_ITEM(_("Create new unit"), new_unit);
 	MENU_ITEM(_("Manage units"), manage_units);
@@ -771,6 +1074,7 @@ void create_umenu2() {
 void update_umenus() {
 	gtk_widget_destroy(u_menu);
 	gtk_widget_destroy(u_menu2);
+	generate_units_tree_struct();
 	create_umenu();
 	create_umenu2();
 	update_units_tree(units_window);
@@ -785,25 +1089,30 @@ void create_vmenu() {
 	GHashTable *hash;
 	SUBMENU_ITEM_INSERT(_("Variables"), gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression"))), 3)
 	v_menu = item;
-//	MENU_TEAROFF
 	sub2 = sub;
-	hash = g_hash_table_new(g_str_hash, g_str_equal);
-	for(int i = 0; i < calc->variables.size(); i++) {
-		if(calc->variables[i]->category().empty()) {
-			sub = sub2;
-		} else {
-			if(g_hash_table_lookup(hash, (gconstpointer) calc->variables[i]->category().c_str()) == NULL) {
-				SUBMENU_ITEM(calc->variables[i]->category().c_str(), sub2)
-//				MENU_TEAROFF
-				g_hash_table_insert(hash, (gpointer) calc->variables[i]->category().c_str(), (gpointer) sub);
-			} else {
-				sub = GTK_WIDGET(g_hash_table_lookup(hash, (gconstpointer) calc->variables[i]->category().c_str()));
-			}
+	Variable *v;
+	list<tree_struct>::iterator it, it2;
+	for(it = variable_cats.begin(); it != variable_cats.end(); ++it) {
+		SUBMENU_ITEM(it->item.c_str(), sub2)
+		GtkWidget *sub3 = sub;
+		for(int i = 0; i < it->objects.size(); i++) {
+			v = (Variable*) it->objects[i];
+			MENU_ITEM_WITH_STRING(v->name().c_str(), insert_variable, v->name().c_str())			
+		}				
+		for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
+			SUBMENU_ITEM(it2->item.c_str(), sub3)
+			for(int i = 0; i < it2->objects.size(); i++) {
+				v = (Variable*) it2->objects[i];
+				MENU_ITEM_WITH_STRING(v->name().c_str(), insert_variable, v->name().c_str())				
+			}			
 		}
-		MENU_ITEM_WITH_STRING(calc->variables[i]->name().c_str(), insert_variable, calc->variables[i]->name().c_str())
-	}
-	g_hash_table_destroy(hash);
+	}		
 	sub = sub2;
+	for(int i = 0; i < uc_variables.size(); i++) {
+		v = (Variable*) uc_variables[i];
+		MENU_ITEM_WITH_STRING(v->name().c_str(), insert_variable, v->name().c_str())
+	}	
+	MENU_SEPARATOR	
 	MENU_ITEM(_("Create new variable"), new_variable);
 	MENU_ITEM(_("Manage variables"), manage_variables);
 	MENU_ITEM_SET_ACCEL(GDK_m);
@@ -829,7 +1138,6 @@ void create_pmenu() {
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
 	SUBMENU_ITEM_INSERT(_("Prefixes"), gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression"))), 4)
-//	MENU_TEAROFF
 	vector<l_type::iterator> its;
 	bool no_larger = false;
 	l_type::iterator it1;
@@ -861,7 +1169,6 @@ void create_pmenu2() {
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
 	SUBMENU_ITEM_INSERT(_("Set prefix"), gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_result"))), 2)
-//	MENU_TEAROFF
 	vector<l_type::iterator> its;
 	bool no_larger = false;
 	l_type::iterator it1;
@@ -890,6 +1197,7 @@ void create_pmenu2() {
 */
 void update_vmenu() {
 	gtk_widget_destroy(v_menu);
+	generate_variables_tree_struct();
 	create_vmenu();
 	update_variables_tree(variables_window);
 }
@@ -903,29 +1211,42 @@ void create_fmenu() {
 	GHashTable *hash;
 	SUBMENU_ITEM_INSERT(_("Functions"), gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression"))), 2)
 	f_menu = item;
-//	MENU_TEAROFF
 	sub2 = sub;
-	hash = g_hash_table_new(g_str_hash, g_str_equal);
-	for(int i = 0; i < calc->functions.size(); i++) {
-		if(calc->functions[i]->category().empty()) {
-			sub = sub2;
-		} else {
-			if(g_hash_table_lookup(hash, (gconstpointer) calc->functions[i]->category().c_str()) == NULL) {
-				SUBMENU_ITEM(calc->functions[i]->category().c_str(), sub2)
-//				MENU_TEAROFF
-				g_hash_table_insert(hash, (gpointer) calc->functions[i]->category().c_str(), (gpointer) sub);
+	Function *f;
+	list<tree_struct>::iterator it, it2;
+	for(it = function_cats.begin(); it != function_cats.end(); ++it) {
+		SUBMENU_ITEM(it->item.c_str(), sub2)
+		GtkWidget *sub3 = sub;
+		for(int i = 0; i < it->objects.size(); i++) {
+			f = (Function*) it->objects[i];
+			if(f->title().empty()) {
+				MENU_ITEM_WITH_STRING(f->name().c_str(), insert_function, f->name().c_str())
 			} else {
-				sub = GTK_WIDGET(g_hash_table_lookup(hash, (gconstpointer) calc->functions[i]->category().c_str()));
+				MENU_ITEM_WITH_STRING(f->title().c_str(), insert_function, f->name().c_str())
 			}
+		}				
+		for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
+			SUBMENU_ITEM(it2->item.c_str(), sub3)
+			for(int i = 0; i < it2->objects.size(); i++) {
+				f = (Function*) it2->objects[i];
+				if(f->title().empty()) {
+					MENU_ITEM_WITH_STRING(f->name().c_str(), insert_function, f->name().c_str())
+				} else {
+					MENU_ITEM_WITH_STRING(f->title().c_str(), insert_function, f->name().c_str())
+				}		
+			}			
 		}
-		if(calc->functions[i]->title().empty()) {
-			MENU_ITEM_WITH_STRING(calc->functions[i]->name().c_str(), insert_function, calc->functions[i]->name().c_str())
-		} else {
-			MENU_ITEM_WITH_STRING(calc->functions[i]->title().c_str(), insert_function, calc->functions[i]->name().c_str())
-		}
-	}
-	g_hash_table_destroy(hash);
+	}		
 	sub = sub2;
+	for(int i = 0; i < uc_functions.size(); i++) {
+		f = (Function*) uc_functions[i];
+		if(f->title().empty()) {
+			MENU_ITEM_WITH_STRING(f->name().c_str(), insert_function, f->name().c_str())
+		} else {
+			MENU_ITEM_WITH_STRING(f->title().c_str(), insert_function, f->name().c_str())
+		}				
+	}		
+	MENU_SEPARATOR
 	MENU_ITEM(_("Create new function"), new_function);
 	MENU_ITEM(_("Manage functions"), manage_functions);
 	MENU_ITEM_SET_ACCEL(GDK_f);
@@ -942,6 +1263,7 @@ void create_fmenu() {
 */
 void update_fmenu() {
 	gtk_widget_destroy(f_menu);
+	generate_functions_tree_struct();
 	create_fmenu();
 	update_functions_tree(functions_window);
 }
@@ -956,6 +1278,7 @@ string get_value_string(Manager *mngr_, bool rlabel = false, long double prefix_
 	unitflags = unitflags | UNIT_FORMAT_BEAUTIFY;
 	unitflags = unitflags | UNIT_FORMAT_NONASCII;
 	if(use_short_units) unitflags = unitflags | UNIT_FORMAT_SHORT;
+	else unitflags = unitflags | UNIT_FORMAT_LONG;
 	if(rlabel) {
 		unitflags = unitflags | UNIT_FORMAT_TAGS;
 		unitflags = unitflags | UNIT_FORMAT_ALLOW_NOT_USABLE;
@@ -1246,7 +1569,6 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural")), "");
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short")), "");
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_internal")), "");	
-	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category")), "");
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc")), "");
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base")), "");
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_spinbutton_exp")), 1);
@@ -1274,16 +1596,20 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc")), u->title().c_str());
 		
 		if(!u->isUserUnit()) {
-			gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "unit_edit_entry_name"), FALSE);
+			gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular"), FALSE);
 		}
 
 		switch(u->type()) {
 			case 'A': {
 				AliasUnit *au = (AliasUnit*) u;
-				if(use_short_units)
-					gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base")), au->firstShortBaseName().c_str());
-				else
-					gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base")), au->firstBaseName().c_str());
+				if(au->firstBaseUnit()->type() == 'D') {
+					gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base")), ((CompositeUnit*) (au->firstBaseUnit()))->internalName().c_str());
+				} else {
+					if(use_short_units)
+						gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base")), au->firstShortBaseName().c_str());
+					else
+						gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base")), au->firstBaseName().c_str());	
+				}		
 				gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_spinbutton_exp")), au->firstBaseExp());
 				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_relation")), au->expression().c_str());
 				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_reversed")), au->reverseExpression().c_str());
@@ -1360,6 +1686,7 @@ run_unit_edit_dialog:
 					}
 					AliasUnit *au = (AliasUnit*) u;
 					Unit *bu = calc->getUnit(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"))));
+					if(!bu) bu = calc->getCompositeUnit(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"))));
 					if(!bu) {
 						show_message(_("Base unit does not exist."), dialog);
 						goto run_unit_edit_dialog;
@@ -1389,13 +1716,13 @@ run_unit_edit_dialog:
 					break;
 				}
 			}
-			if(u && u->type() != COMPOSITE_UNIT) {
+			if(u && u->type() != 'D') {
 				u->name(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular"))));
 				u->plural(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural"))));
 				u->shortName(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short"))));
-				u->title(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc"))));
-				u->category(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category"))));
 			}
+			u->title(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc"))));
+			u->category(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category"))));			
 			u->setUserUnit(true);
 		}
 		if(!u) {
@@ -1403,6 +1730,7 @@ run_unit_edit_dialog:
 			switch(gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "unit_edit_optionmenu_class")))) {
 				case ALIAS_UNIT: {
 					Unit *bu = calc->getUnit(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"))));
+					if(!bu) bu = calc->getCompositeUnit(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"))));
 					if(!bu) {
 						show_message(_("Base unit does not exist."), dialog);
 						goto run_unit_edit_dialog;
@@ -2142,7 +2470,7 @@ void load_preferences() {
 				v = s2i(svalue);
 				if(svar == "save_mode_on_exit")
 					save_mode_on_exit = v;
-				else if(svar == "save_deinitions_on_exit")
+				else if(svar == "save_definitions_on_exit")
 					save_defs_on_exit = v;
 				else if(svar == "load_global_definitions")
 					load_global_defs = v;
@@ -2943,8 +3271,7 @@ void on_units_button_insert_clicked(GtkButton *button, gpointer user_data) {
 void on_units_button_convert_to_clicked(GtkButton *button, gpointer user_data) {
 	Unit *u = get_selected_unit();
 	if(u) {
-		mngr->convert(u);
-		mngr->finalize();
+		calc->convert(mngr, u);
 		setResult(gtk_label_get_text(GTK_LABEL(result)));
 		gtk_widget_grab_focus(expression);
 	}

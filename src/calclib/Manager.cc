@@ -1180,7 +1180,7 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 			str += str2;
 			mngr->unref();
 		} else {
-			if(unitflags & UNIT_FORMAT_SHORT) {
+			if(!(unitflags & UNIT_FORMAT_LONG)) {
 				if(unitflags & UNIT_FORMAT_NONASCII) {
 						if(o_unit->name() == "euro") str += SIGN_EURO;
 						else if(o_unit->shortName() == "oC") str += SIGN_POWER_0 "C";
@@ -1339,6 +1339,12 @@ bool Manager::testDissolveCompositeUnit(Unit *u) {
 			}
 		} else if(o_unit->type() == 'A' && o_unit->baseUnit()->type() == 'D') {
 			if(((CompositeUnit*) (o_unit->baseUnit()))->containsRelativeTo(u)) {
+/*				Manager *mngr = o_unit->baseUnit()->convert(o_unit);
+				Manager *mngr2 = ((CompositeUnit*) o_unit->baseUnit())->generateManager();
+				moveto(mngr2);
+				mngr2->unref();
+				add(mngr, MULTIPLICATION_CH);
+				mngr->unref();*/
 				convert(o_unit->baseUnit());
 				convert(u);
 				return true;
@@ -1413,19 +1419,33 @@ void gatherInformation(Manager *mngr, vector<Unit*> &base_units, vector<AliasUni
 void Manager::syncUnits() {
 	vector<Unit*> base_units;
 	vector<AliasUnit*> alias_units;
+	vector<CompositeUnit*> composite_units;	
 	gatherInformation(this, base_units, alias_units);
 	CompositeUnit *cu;
 	bool b = false;
 	for(int i = 0; i < alias_units.size(); i++) {
 		if(alias_units[i]->baseUnit()->type() == 'D') {
+			b = false;
 			cu = (CompositeUnit*) alias_units[i]->baseUnit();
 			for(int i2 = 0; i2 < base_units.size(); i2++) {
 				if(cu->containsRelativeTo(base_units[i2])) {
+					for(int i = 0; i < composite_units.size(); i++) {
+						if(composite_units[i] == cu) {
+							b = true;
+						}
+					}
+					if(!b) composite_units.push_back(cu);					
 					goto erase_alias_unit_1;
 				}
 			}
 			for(int i2 = 0; i2 < alias_units.size(); i2++) {
 				if(cu->containsRelativeTo(alias_units[i2])) {
+					for(int i = 0; i < composite_units.size(); i++) {
+						if(composite_units[i] == cu) {
+							b = true;
+						}
+					}
+					if(!b) composite_units.push_back(cu);				
 					goto erase_alias_unit_1;
 				}
 			}					
@@ -1509,6 +1529,10 @@ void Manager::syncUnits() {
 		true;
 	}
 	
+	for(int i = 0; i < composite_units.size(); i++) {	
+		convert(composite_units[i]);
+	}	
+	dissolveAllCompositeUnits();
 	for(int i = 0; i < base_units.size(); i++) {	
 		convert(base_units[i]);
 	}
@@ -1588,7 +1612,10 @@ bool Manager::convert(Unit *u) {
 		}
 	} else if(c_type == UNIT_MANAGER) {
 		if(u == o_unit) return false;
-		if(testDissolveCompositeUnit(u)) return convert(u);
+		if(testDissolveCompositeUnit(u)) {
+			convert(u);
+			return true;
+		}
 		Manager *exp = new Manager(calc, 1.0L);
 		Manager *mngr = u->convert(o_unit, NULL, exp, &b);
 		if(b) {
@@ -1612,7 +1639,8 @@ bool Manager::convert(Unit *u) {
 			if(u == mngrs[0]->o_unit) return false;
 			if(mngrs[0]->testDissolveCompositeUnit(u)) {
 				powerclean();
-				return convert(u);			
+				convert(u);			
+				return true;
 			}
 			Manager *mngr = u->convert(mngrs[0]->o_unit, NULL, mngrs[1], &b);
 			if(b) {
@@ -1625,14 +1653,15 @@ bool Manager::convert(Unit *u) {
 		}
 		return b;
 	} else if(c_type == MULTIPLICATION_MANAGER) {
+		bool c = false;
 		for(int i = 0; i < mngrs.size(); i++) {
 			if(mngrs[i]->testDissolveCompositeUnit(u)) {
 				multiclean();			
-				b = convert(u);
+				b = true;
+				convert(u);
 				multiclean();
-				return b;
-			}
-			if(mngrs[i]->type() == UNIT_MANAGER && mngrs[i]->o_unit != u) {
+				if(b) c = true;
+			} else if(mngrs[i]->type() == UNIT_MANAGER && mngrs[i]->o_unit != u) {
 				Manager *mngr = new Manager(this);
 				Manager *exp = new Manager(calc, 1.0L);				
 				mngr->add(mngrs[i], DIVISION_CH);
@@ -1643,8 +1672,7 @@ bool Manager::convert(Unit *u) {
 						add(exp, POWER_CH);
 					}
 					add(mngr, MULTIPLICATION_CH);
-					mngr->unref();
-					return true;
+					c = true;
 				}
 				mngr->unref();
 			} else if(mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->c_type == UNIT_MANAGER && mngrs[i]->mngrs[0]->o_unit != u) {
@@ -1658,24 +1686,25 @@ bool Manager::convert(Unit *u) {
 					add(mngr2, POWER_CH);
 					mngr2->unref();
 					add(mngr, MULTIPLICATION_CH);
-					mngr->unref();
-					return true;
+					c = true;
 				}			
 				mngr->unref();			
 			}
 		}
+		if(c) return c;
 		for(int i = 0; i < mngrs.size(); i++) {
-			if(mngrs[i]->testDissolveCompositeUnit(u)) return convert(u);
-			if(mngrs[i]->convert(u)) b = true;
+			if(mngrs[i]->testDissolveCompositeUnit(u)) {
+				 convert(u); c = true;
+			} else if(mngrs[i]->convert(u)) b = true;
 		}
 		if(b) {
 			for(int i = 0; i < mngrs.size(); i++) {
 				if(mngrs[i]->testDissolveCompositeUnit(u)) {
-					b = convert(u);
+					b = true;
+					convert(u);
 					multiclean();
-					return b;
-				}				
-				if(mngrs[i]->type() == UNIT_MANAGER) {
+					c = true;
+				} else if(mngrs[i]->type() == UNIT_MANAGER) {
 					Manager *mngr = new Manager(this);
 					Manager *exp = new Manager(calc, 1.0L);
 					mngr->add(mngrs[i], DIVISION_CH);
@@ -1686,8 +1715,7 @@ bool Manager::convert(Unit *u) {
 							add(exp, POWER_CH);
 						}
 						add(mngr, MULTIPLICATION_CH);
-						mngr->unref();
-						return true;
+						c = true;
 					}
 					mngr->unref();
 				} else if(mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->c_type == UNIT_MANAGER && mngrs[i]->mngrs[0]->o_unit != u) {
@@ -1699,16 +1727,16 @@ bool Manager::convert(Unit *u) {
 						mngr2->ref();
 						set(u);
 						add(mngr2, POWER_CH);
-						mngr2->unref();
 						add(mngr, MULTIPLICATION_CH);
 						mngr->unref();
-						return true;
+						c = true;
 					}			
 					mngr->unref();			
 				}
 			}			
+			c = true;
 		}
-		return b;			
+		return c;			
 	}
 }
 void Manager::unref() {

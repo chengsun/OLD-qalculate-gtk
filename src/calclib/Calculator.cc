@@ -108,8 +108,8 @@ Calculator::Calculator() {
 	sprintf(ILLEGAL_IN_NAMES, "%s%s%s%s%s", RESERVED_S, OPERATORS_S, SPACE_S, DOT_S, BRACKETS_S);
 	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = (char*) malloc(sizeof(char) * (strlen(RESERVED_S) + strlen(OPERATORS_S) + strlen(DOT_S) + strlen(BRACKETS_S) + 1));
 	sprintf(ILLEGAL_IN_NAMES_MINUS_SPACE_STR, "%s%s%s%s\t\n", RESERVED_S, OPERATORS_S, DOT_S, BRACKETS_S);	
-	ILLEGAL_IN_UNITNAMES = (char*) malloc(sizeof(char) * (strlen(ILLEGAL_IN_NAMES) + strlen(NAME_NUMBER_PRE_S) + strlen(NUMBERS_S) + 1));
-	sprintf(ILLEGAL_IN_UNITNAMES, "%s%s%s", ILLEGAL_IN_NAMES, NAME_NUMBER_PRE_S, NUMBERS_S);			
+	ILLEGAL_IN_UNITNAMES = (char*) malloc(sizeof(char) * (strlen(ILLEGAL_IN_NAMES) + strlen(NUMBERS_S) + 1));
+	sprintf(ILLEGAL_IN_UNITNAMES, "%s%s", ILLEGAL_IN_NAMES, NUMBERS_S);			
 	
 	srand48(time(0));
 	angleMode(RADIANS);
@@ -511,14 +511,15 @@ Manager *Calculator::convert(string str, Unit *from_unit, Unit *to_unit) {
 }
 Manager *Calculator::convert(Manager *mngr, Unit *to_unit, bool always_convert) {
 	if(to_unit->type() == 'D') return convertToCompositeUnit(mngr, (CompositeUnit*) to_unit, always_convert);
-	if(to_unit->type() != 'A' || ((AliasUnit*) to_unit)->baseUnit()->type() != 'D') {
+	if(to_unit->type() != 'A' || (((AliasUnit*) to_unit)->baseUnit()->type() != 'D' && ((AliasUnit*) to_unit)->baseExp() == 1.0L)) {
 		Manager *mngr_old = new Manager(mngr);
 		mngr->finalize();
 		if(!mngr->convert(to_unit)) {
 			mngr->moveto(mngr_old);
+		} else {
+			mngr_old->unref();
+			return mngr;
 		}
-		mngr_old->unref();
-		return mngr;
 	}
 	mngr->finalize();
 	if(mngr->type() == ADDITION_MANAGER) {
@@ -1477,10 +1478,9 @@ bool Calculator::save(const char* file_name) {
 					fprintf(file, "0\t");
 				else
 					fprintf(file, "%s", units[i]->title().c_str());
-				cu->sort();
-				for(int i2 = 0; i2 < cu->sorted.size(); i2++) {
+				for(int i2 = 0; i2 < cu->units.size(); i2++) {
 //					fprintf(file, "\t%s\t%s\t%LG", cu->units[cu->sorted[i2]]->firstBaseUnit()->shortName().c_str(), cu->units[cu->sorted[i2]]->firstBaseExp()->print().c_str(), cu->units[cu->sorted[i2]]->prefixValue());
-					fprintf(file, "\t%s\t%s\t%LG", cu->units[cu->sorted[i2]]->firstBaseUnit()->shortName().c_str(), d2s(cu->units[cu->sorted[i2]]->firstBaseExp()).c_str(), cu->units[cu->sorted[i2]]->prefixValue());
+					fprintf(file, "\t%s\t%s\t%LG", cu->units[i2]->firstBaseUnit()->shortName().c_str(), d2s(cu->units[i2]->firstBaseExp()).c_str(), cu->units[i2]->prefixValue());
 				}
 			} else {
 				fprintf(file, "%s\t", units[i]->name().c_str());
@@ -1499,7 +1499,11 @@ bool Calculator::save(const char* file_name) {
 			}
 			if(units[i]->type() == 'A') {
 //				fprintf(file, "\t%s\t%s\t%s", au->firstShortBaseName().c_str(), au->expression().c_str(), au->firstBaseExp()->print().c_str());
-				fprintf(file, "\t%s\t%s\t%s", au->firstShortBaseName().c_str(), au->expression().c_str(), d2s(au->firstBaseExp()).c_str());
+				if(au->firstBaseUnit()->type() == 'D') {
+					fprintf(file, "\t%s\t%s\t%s", ((CompositeUnit*) (au->firstBaseUnit()))->internalName().c_str(), au->expression().c_str(), d2s(au->firstBaseExp()).c_str());
+				} else {
+					fprintf(file, "\t%s\t%s\t%s", au->firstShortBaseName().c_str(), au->expression().c_str(), d2s(au->firstBaseExp()).c_str());
+				}	
 				if(!au->reverseExpression().empty())
 					fprintf(file, "\t%s", au->reverseExpression().c_str());
 			}

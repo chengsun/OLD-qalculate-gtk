@@ -2419,7 +2419,6 @@
 
 		  <child>
 		    <widget class="GtkHBox" id="units_hbox9">
-		      <property name="width_request">115</property>
 		      <property name="visible">True</property>
 		      <property name="homogeneous">False</property>
 		      <property name="spacing">6</property>
@@ -2447,8 +2446,9 @@
 
 		      <child>
 			<widget class="GtkLabel" id="units_label_from_unit">
+			  <property name="width_request">80</property>
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">m</property>
+			  <property name="label" translatable="yes">angstrom</property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>

@@ -1,3 +1,12 @@
+2003-08-14  Niklas Knutsson  <nq@altern.org>
+
+	* Sorting menus
+	* Tree lists implemented for units, variables and functions dialogs
+	* Submenus implemented for unit, variable and function menus
+	* Connect "convert to"-button in unit managaer to new conversion system
+	* Complete set of SI units
+	* Various fixes
+
 2003-08-13  Niklas Knutsson  <nq@altern.org>
 
 	* Remove duplicate functions

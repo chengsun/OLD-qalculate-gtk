@@ -117,8 +117,6 @@ class CompositeUnit : public Unit {
 	public:
 		//--------internal-------------//
 		vector<AliasUnit_Composite*> units;
-		vector<int> sorted;
-		bool bsorted;
 		//-----------------------------//
 
 		CompositeUnit(Calculator *calc_, string cat_, string name_, string title_ = "", string base_expression_ = "", bool is_user_unit = true);
@@ -130,7 +128,6 @@ class CompositeUnit : public Unit {
 		virtual string name(void);
 		virtual string plural(void);
 		virtual string shortName(bool plural_ = false);
-		virtual void sort(void);
 		virtual bool hasShortName(void);
 		virtual bool hasPlural(void);
 		virtual char type() const;

@@ -36,17 +36,17 @@ extern GladeXML *glade_xml;
 GtkWidget *tFunctionCategories;
 GtkWidget *tFunctions;
 GtkListStore *tFunctions_store;
-GtkListStore *tFunctionCategories_store;
+GtkTreeStore *tFunctionCategories_store;
 
 GtkWidget *tVariableCategories;
 GtkWidget *tVariables;
 GtkListStore *tVariables_store;
-GtkListStore *tVariableCategories_store;
+GtkTreeStore *tVariableCategories_store;
 
 GtkWidget *tUnitCategories;
 GtkWidget *tUnits;
 GtkListStore *tUnits_store;
-GtkListStore *tUnitCategories_store;
+GtkTreeStore *tUnitCategories_store;
 
 GtkCellRenderer *renderer;
 GtkTreeViewColumn *column;
@@ -259,7 +259,7 @@ create_functions_dialog (void)
 
 
 
-	tFunctionCategories_store = gtk_list_store_new(1, G_TYPE_STRING);
+	tFunctionCategories_store = gtk_tree_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tFunctionCategories), GTK_TREE_MODEL(tFunctionCategories_store));
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctionCategories));
 	gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
@@ -303,7 +303,7 @@ create_variables_dialog (void)
 
 	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(tVariables), TRUE);
 
-	tVariableCategories_store = gtk_list_store_new(1, G_TYPE_STRING);
+	tVariableCategories_store = gtk_tree_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tVariableCategories), GTK_TREE_MODEL(tVariableCategories_store));
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tVariableCategories));
 	gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
@@ -356,7 +356,7 @@ create_units_dialog (void)
 
 	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(tUnits), TRUE);
 
-	tUnitCategories_store = gtk_list_store_new(1, G_TYPE_STRING);
+	tUnitCategories_store = gtk_tree_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tUnitCategories), GTK_TREE_MODEL(tUnitCategories_store));
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnitCategories));
 	gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);

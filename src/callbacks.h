@@ -18,6 +18,10 @@ void create_fmenu(void);
 void create_pmenu(void);
 void create_pmenu2(void);
 
+void generate_functions_tree_struct();
+void generate_variables_tree_struct();
+void generate_units_tree_struct();
+
 gboolean on_display_errors_timeout(gpointer data);
 
 void update_functions_tree(GtkWidget *wfun);
