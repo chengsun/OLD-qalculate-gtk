@@ -98,7 +98,7 @@ class Calculator {
 	void setFunctions(string &str);
 	void delFunction(Function *f);		
 	Function* getFunction(string name_);	
-	void error(bool critical, int count,...);
+	void error(bool critical, const char *TEMPLATE,...);
 	Error* error(void);
 	Error* nextError(void);
 	bool variableNameIsValid(string name_);

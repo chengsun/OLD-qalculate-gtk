@@ -25,12 +25,12 @@ Manager *IFFunction::calculate(const string &argv) {
 	int itmp = args(argv, str);
 	if(itmp >= minargs()) {
 		if(itmp > maxargs() && maxargs() >= 0)
-			calc->error(false, 3, "To many arguments for ", name().c_str(), "() (ignored)");
+			calc->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str(), NULL);
 		unsigned int i = str[0].find_first_of("<=>", 0);
 		bool result = false;
 		int com = 0;
 		if(i == string::npos) {
-			calc->error(false, 3, "Condition contains no comparison, interpreting as \"", str[0].c_str(), " > 0\"");
+			calc->error(false, _("Condition contains no comparison, interpreting as \"%s > 0\"."), str[0].c_str(), NULL);
 			str[0] += " > 0";
 			i = str[0].find_first_of("<=>", 0);
 		} 
@@ -69,7 +69,7 @@ Manager *IFFunction::calculate(const string &argv) {
 					result = mngr1->value() <= 0L; 
 			}
 		} else {
-			calc->error(true, 1, "Coparison is not solvable, treating as FALSE");
+			calc->error(true, _("Comparison is not solvable, treating as FALSE."), NULL);
 		}
 		mngr1->unref();
 		mngr2->unref();
@@ -81,7 +81,7 @@ Manager *IFFunction::calculate(const string &argv) {
 //		calculate2(mngr);
 //		calc->checkFPExceptions(sname.c_str());
 	} else {
-		calc->error(true, 4, "You need ", i2s(minargs()).c_str(), " arguments in function ", name().c_str());
+		calc->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str(), NULL);
 		Manager *mngr = new Manager(calc, this, NULL);
 	}
 //	for(unsigned int i = 0; i < vargs.size(); i++) {
@@ -137,7 +137,7 @@ void RemFunction::calculate2(Manager *mngr) {
 	else if(vargs[1]->type() != VALUE_MANAGER && vargs[1]->type() != NULL_MANAGER) mngr->set(this, vargs[0], vargs[1], NULL);	
 	else {
 		if(vargs[1] == 0) {
-			calc->error(true, 1, "The denominator in rem function cannot be zero");
+			calc->error(true, _("The denominator in rem function cannot be zero"), NULL);
 			mngr->set(this, vargs[0], vargs[1], NULL);
 		} else {
 			mngr->set(dreml(vargs[0]->value(), vargs[1]->value()));
@@ -153,7 +153,7 @@ void ModFunction::calculate2(Manager *mngr) {
 	else if(vargs[1]->type() != VALUE_MANAGER && vargs[1]->type() != NULL_MANAGER) mngr->set(this, vargs[0], vargs[1], NULL);	
 	else {
 		if(vargs[1] == 0) {
-			calc->error(true, 1, "The denominator in mod function cannot be zero");
+			calc->error(true, _("The denominator in mod function cannot be zero"), NULL);
 			mngr->set(this, vargs[0], vargs[1], NULL);
 		} else {
 			mngr->set(fmodl(vargs[0]->value(), vargs[1]->value()));
@@ -267,12 +267,12 @@ SqrtFunction::SqrtFunction(Calculator *calc_) : Function(calc_, "Exponents and L
 	addArgName("Non-negative number");
 }
 void SqrtFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->negative()) {
-		calc->error(true, 1, "Trying to calculate the square root of a negative number");
-		mngr->set(this, vargs[0], NULL);
-		return;
-	}
 	if(vargs[0]->type() == VALUE_MANAGER) {
+		if(vargs[0]->value() < 0) {
+			calc->error(true, _("Trying to calculate the square root of a negative number (%s)."), d2s(vargs[0]->value()).c_str(), NULL);
+			mngr->set(this, vargs[0], NULL);
+			return;
+		}
 		mngr->set(sqrtl(vargs[0]->value()));
 	} else if(vargs[0]->type() != NULL_MANAGER) {
 		mngr->set(vargs[0]);
@@ -467,12 +467,12 @@ Manager *BASEFunction::calculate(const string &eq) {
 	int itmp;
 	if((itmp = stringArgs(eq)) >= minargs()) {
 		if(itmp > maxargs())
-			calc->error(false, 3, "To many arguments for ", name().c_str(), "() (ignored)");
+			calc->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str(), NULL);			
 		Manager *mngr = calc->calculate(svargs[1]);	
 		int base = (int) mngr->value();
 		long double value = 0;
 		if(base < 2 || base > 36) {
-			calc->error(false, 3, "Base must be between 2 and 36 (was ", i2s(base).c_str(), ") for function BASE");
+			calc->error(false, _("Base must be between 2 and 36 (was %s) for function %s()."), i2s(base).c_str(), name().c_str(), NULL);
 			mngr->unref();
 		} else {
 			value = (long double) strtol(svargs[0].c_str(), NULL, base);
@@ -481,7 +481,7 @@ Manager *BASEFunction::calculate(const string &eq) {
 			return mngr;
 		}
 	} else {
-		calc->error(true, 4, "You need ", i2s(minargs()).c_str(), " arguments in function ", name().c_str());
+		calc->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str(), NULL);
 	}
 	Manager *mngr = new Manager(calc, this, NULL);
 	for(int i = 0; i < itmp; i++) {

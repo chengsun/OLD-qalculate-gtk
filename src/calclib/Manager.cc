@@ -215,7 +215,7 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 	}
 	if(sign == DIVISION_CH) {
 		if(mngr->c_type == 0) {
-		 	calc->error(true, 3, "Trying to divide \"", print().c_str(), "\" with zero");
+		 	calc->error(true, _("Trying to divide \"%s\" with zero."), print().c_str(), NULL);
 			if(negative()) set(-INFINITY);
 			else set(INFINITY);
 			mngr->unref();
@@ -693,7 +693,7 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 	} else if(sign == POWER_CH) {
 		if(mngr->c_type == 0) {
 			if(c_type == 0) {
-				calc->error(false, 1, "0^0 is undefined");
+				calc->error(false, _("0^0 is undefined"), NULL);
 				if(!translate_) {mngr->unref(); return false;}
 				transform(mngr, POWER_CH, sign);
 			} else {
@@ -999,7 +999,7 @@ bool Manager::compatible(Manager *mngr) {
 }
 void Manager::add(long double value_, char sign) {
 	if(value_ == 0.0L && sign == DIVISION_CH) {
-	 	calc->error(true, 3, "Trying to divide \"", print().c_str(), "\" with zero");
+	 	calc->error(true, _("Trying to divide \"%s\" with zero."), print().c_str());
 		if(negative()) set(-INFINITY);
 		else set(INFINITY);		
 	} else if(c_type == 0 && value_ != 0 && (sign != POWER_CH || value_ > 0)) {

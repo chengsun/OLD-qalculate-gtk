@@ -176,12 +176,12 @@ Manager *Function::calculate(const string &argv) {
 	int itmp = args(argv);
 	if(itmp >= minargs()) {
 		if(itmp > maxargs() && maxargs() >= 0)
-			calc->error(false, 3, "To many arguments for ", name().c_str(), "() (ignored)");
+			calc->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str());						
 		mngr = new Manager(calc);
 		calculate2(mngr);
 		calc->checkFPExceptions(sname.c_str());
 	} else {
-		calc->error(true, 4, "You need ", i2s(minargs()).c_str(), " arguments in function ", name().c_str());
+		calc->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str());
 		mngr = new Manager(calc, this, NULL);
 		for(int i = 0; i < itmp; i++) {
 			mngr->addFunctionArg(vargs[i]);
@@ -279,7 +279,7 @@ Manager *UserFunction::calculate(const string &argv) {
 		int itmp;
 		if((itmp = stringArgs(argv)) >= minargs()) {
 			if(itmp > maxargs())
-				calc->error(false, 3, "To many arguments for ", name().c_str(), "() (ignored)");
+				calc->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str());						
 			string stmp = eq_calc;
 			string svar;
 			int i2 = 0;
@@ -301,7 +301,7 @@ Manager *UserFunction::calculate(const string &argv) {
 			Manager *mngr = calc->calculate(stmp);
 			return mngr;
 		} else {
-			calc->error(true, 4, "You need ", i2s(minargs()).c_str(), " arguments in function ", name().c_str());
+			calc->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str());		
 			Manager *mngr = new Manager(calc, this, NULL);
 			for(int i = 0; i < itmp; i++) {
 				Manager *mngr2 = calc->calculate(svargs[i]);

@@ -63,17 +63,17 @@ EqNumber::EqNumber(string str, Calculator *parent, char operation_) : EqItem(ope
 	bool btmp = false;
 	int itmp;
 	//	    if(str.substr(0, 3) == "NAN" || str.substr(0, 3) == "INF") {
-	//		calc->error(true, 1, "Math error");
+	//		calc->error(true, "Math error", NULL);
 	//	    	return;
 	//	    }
 	if(str.empty() || ((itmp = str.find_first_not_of(" ")) == (int) string::npos)) {
-		//		  calc->error(true, 1, "Empty expression");
+		//		  calc->error(true, "Empty expression", NULL);
 		mngr->set(value);
 		return;
 	}
 	if(str.substr(0, 3) == NAN_STR) {
 		mngr->set(NAN);
-		//			calc->error(true, 1, "Math error");
+		//			calc->error(true, "Math error", NULL);
 		str[0] = ZERO_CH;
 		str[1] = ZERO_CH;
 		str[2] = ZERO_CH;
@@ -97,11 +97,11 @@ EqNumber::EqNumber(string str, Calculator *parent, char operation_) : EqItem(ope
 
 		if(itmp == 0) {
 			value = 1;
-			calc->error(true, 3, "\"", ssave.c_str(), "\" is not a valid variable/function/unit");
+			calc->error(true, _("\"%s\" is not a valid variable/function/unit."), ssave.c_str(), NULL);
 			mngr->set(value);
 			return;
 		} else {
-			calc->error(true, 3, "Trailing characters in expression \"", ssave.c_str(), "\" was ignored.\n(Unknown variable/function/unit");
+			calc->error(true, _("Trailing characters in expression \"%s\" was ignored (unknown variable/function/unit)."), ssave.c_str(), NULL);
 		}
 	}
 	//if(s == '-') str.insert(0, "-");

@@ -370,15 +370,20 @@ void Calculator::addBuiltinFunctions() {
 }
 void Calculator::addBuiltinUnits() {
 }
-void Calculator::error(bool critical, int count,...)	{
-	string stmp;
+void Calculator::error(bool critical, const char *TEMPLATE, ...) {
+	string error_str = TEMPLATE;
 	va_list ap;
-	va_start(ap, count);
-	for (int i = 0; i < count; i++) {
-		stmp += va_arg(ap, const char*);
+	va_start(ap, TEMPLATE);
+	const char *str;
+	while(true) {
+		int i = error_str.find("%s");
+		if(i == string::npos) break;	
+		str = va_arg(ap, const char*);
+		if(!str) break;
+		error_str.replace(i, 2, str);
 	}
 	va_end(ap);
-	errors.push(new Error(stmp, critical));
+	errors.push(new Error(error_str, critical));
 }
 Error* Calculator::error(void) {
 	if(!errors.empty()) {
@@ -433,9 +438,9 @@ Manager *Calculator::calculate(string str) {
 	mngr->ref();
 /*	int vtype = fpclassify(value);
 	if(vtype == FP_NAN)
-		error(true, 1, "Math error: not a number");
+		error(true, _("Math error: not a number"), NULL);
 	else if(vtype == FP_INFINITE)
-		error(true, 1, "Math error: infinite");*/
+		error(true, _("Math error: infinite"), NULL);*/
 	checkFPExceptions();
 	delete e;
 	return mngr;
@@ -443,23 +448,23 @@ Manager *Calculator::calculate(string str) {
 void Calculator::checkFPExceptions() {
 	int raised = fetestexcept(FE_ALL_EXCEPT);
 #ifdef FE_INEXACT
-	//		if(raised & FE_INEXACT) error(true, 1, "Floating point error: inexact rounded result");
+	//		if(raised & FE_INEXACT) error(true, _("Floating point error: inexact rounded result"), NULL);
 #endif
 #ifdef FE_DIVBYZERO
 
 	if(raised & FE_DIVBYZERO)
-		error(true, 1, "Floating point error: division by zero");
+		error(true, _("Floating point error: division by zero."), NULL);
 #endif
 #ifdef FE_UNDERFLOW
-	//		if(raised & FE_UNDERFLOW) error(true, 1, "Floating point error: underflow");
+	//		if(raised & FE_UNDERFLOW) error(true, _("Floating point error: underflow"), NULL);
 #endif
 #ifdef FE_OVERFLOW
-	//		if(raised & FE_OVERFLOW) error(true, 1, "Floating point error: overflow");
+	//		if(raised & FE_OVERFLOW) error(true, _("Floating point error: overflow"), NULL);
 #endif
 #ifdef FE_INVALID
 
 	if(raised & FE_INVALID)
-		error(true, 1, "Floating point error: invalid operation");
+		error(true, _("Floating point error: invalid operation."), NULL);
 #endif
 
 	feclearexcept(FE_ALL_EXCEPT);
@@ -467,23 +472,23 @@ void Calculator::checkFPExceptions() {
 void Calculator::checkFPExceptions(const char *str) {
 	int raised = fetestexcept(FE_ALL_EXCEPT);
 #ifdef FE_INEXACT
-	//		if(raised & FE_INEXACT) error(true, 2, "Floating point error: inexact rounded result in ", str);
+	//		if(raised & FE_INEXACT) error(true, "Floating point error: inexact rounded result in \"%s\"", str, NULL);
 #endif
 #ifdef FE_DIVBYZERO
 
 	if(raised & FE_DIVBYZERO)
-		error(true, 2, "Floating point error: division by zero in ", str);
+		error(true, _("Floating point error: division by zero in \"%s\"."), str, NULL);
 #endif
 #ifdef FE_UNDERFLOW
-	//		if(raised & FE_UNDERFLOW) error(true, 2, "Floating point error: underflow in ", str);
+	//		if(raised & FE_UNDERFLOW) error(true, _("Floating point error: underflow in \"%s\"."), str, NULL);
 #endif
 #ifdef FE_OVERFLOW
-	//		if(raised & FE_OVERFLOW) error(true, 2, "Floating point error: overflow in ", str);
+	//		if(raised & FE_OVERFLOW) error(true, _("Floating point error: overflow in \"%s\"."), str, NULL);
 #endif
 #ifdef FE_INVALID
 
 	if(raised & FE_INVALID)
-		error(true, 2, "Floating point error: invalid operation in ", str);
+		error(true, _("Floating point error: invalid operation in \"%s\n."), str, NULL);
 #endif
 
 	feclearexcept(FE_ALL_EXCEPT);
@@ -1259,7 +1264,7 @@ string Calculator::getName(string name, void *object, bool force, bool always_ap
 		}
 	}
 	if(i2 > 1 && !always_append)
-		error(false, 4, "Name exists: ", name.c_str(), ", new name: ", stmp.c_str());
+		error(false, _("Name \"%s\" is in use. Replacing with \"%s\"."), name.c_str(), stmp.c_str(), NULL);
 	return stmp;
 }
 string Calculator::getUnitName(string name, Unit *object, bool force, bool always_append) {
@@ -1285,7 +1290,7 @@ string Calculator::getUnitName(string name, Unit *object, bool force, bool alway
 		}
 	}
 	if(i2 > 1 && !always_append)
-		error(false, 4, "Name exists: ", name.c_str(), ", new name: ", stmp.c_str());
+		error(false, _("Name \"%s\" is in use. Replacing with \"%s\"."), name.c_str(), stmp.c_str(), NULL);
 	return stmp;
 }
 bool Calculator::save(const char* file_name) {

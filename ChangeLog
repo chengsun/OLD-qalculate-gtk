@@ -1,5 +1,8 @@
 2003-08-10  Niklas Knutsson  <nq@altern.org>
 
+	* Updated swedish translation.
+	* Gettextized error messages.
+	* Updaterad Calculator::error().
 	* Only enable prefixes in front of units
 	* Fix disable/enable variables/functions/units/unknown
 	* Found true evil in Manager::sort(). This should solve many problems. :-)
