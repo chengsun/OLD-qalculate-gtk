@@ -28,14 +28,14 @@ dnl | check for compiler characteristics |-------------------------------------
 dnl  ------------------------------------
 
 dnl Use -Wall if we have gcc.
-dnl changequote(,)dnl
-dnl if test "x$GCC" = "xyes"; then
-dnl  case " $CFLAGS " in
-dnl  *[\ \ ]-Wall[\ \      ]*) ;;
-dnl  *) CFLAGS="$CFLAGS -Wall" ;;
-dnl  esac
-dnl fi
-dnl changequote(,)dnl
+changequote(,)dnl
+if test "x$GCC" = "xyes"; then
+  case " $CFLAGS " in
+    *[\ \	]-Wall[\ \	]*) ;;
+    *) CFLAGS="$CFLAGS -Wall" ;;
+  esac
+fi
+changequote([,])dnl
 
 dnl  --------------------------------
 dnl | check for neccessary libraries |-----------------------------------------

@@ -166,31 +166,13 @@ extern bool use_short_units, save_mode_on_exit, save_defs_on_exit, load_global_d
 
 
 void
-create_window (void) {
-	GtkWidget *tab1label;
-	GtkWidget *vbox;
-	GtkWidget *vbox1;
-	GtkWidget *hbox1;
-	GtkWidget *hbox3;
-	GtkWidget *hbuttonbox2;
-	GtkWidget *hbuttonbox1;
-	GtkWidget *hbox2;
-	GtkWidget *vbox3;
-	GtkWidget *table2;
-	GtkWidget *tab2label;
-	GtkWidget *table1;
-
-	GtkWidget *item, *item2, *item3, *item4;
-	GtkWidget *sub, *sub2;
-	GHashTable *hash;
-
+create_window (void)
+{
 	/* make sure we get a valid main window */
 	g_assert (NULL != glade_xml_get_widget (glade_xml, "main_window"));
 
 	accel_group = gtk_accel_group_new ();
 
-	sub  = glade_xml_get_widget (glade_xml, "menu_expression");
-	/* FIXME remove these three globally */
 	mDeg = glade_xml_get_widget (glade_xml, "menu_item_degrees");
 	mRad = glade_xml_get_widget (glade_xml, "menu_item_radians");
 	gtk_radio_menu_item_set_group(
@@ -223,10 +205,9 @@ create_window (void) {
 		break;
 	}
 
-	/* FIXME - remove the macros here somewhen */
-	RADIO_MENU_ITEM_WITH_INT_2(mDeg, set_angle_mode, DEGREES)
-	RADIO_MENU_ITEM_WITH_INT_2(mRad, set_angle_mode, RADIANS)
-	RADIO_MENU_ITEM_WITH_INT_2(mGra, set_angle_mode, GRADIANS)
+	g_signal_connect (G_OBJECT (mDeg), "activate", GTK_SIGNAL_FUNC(set_angle_mode), GINT_TO_POINTER (DEGREES));
+	g_signal_connect (G_OBJECT (mRad), "activate", GTK_SIGNAL_FUNC(set_angle_mode), GINT_TO_POINTER (RADIANS));
+	g_signal_connect (G_OBJECT (mGra), "activate", GTK_SIGNAL_FUNC(set_angle_mode), GINT_TO_POINTER (GRADIANS));
 
 	g_signal_connect (
 			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_addition")),
@@ -319,10 +300,9 @@ create_window (void) {
 		break;
 	}
 
-	/* FIXME remove these macros */
-	RADIO_MENU_ITEM_WITH_INT_2(glade_xml_get_widget (glade_xml, "menu_item_octal"), set_number_base, BASE_HEX);
-	RADIO_MENU_ITEM_WITH_INT_2(glade_xml_get_widget (glade_xml, "menu_item_decimal"), set_number_base, BASE_OCTAL);
-	RADIO_MENU_ITEM_WITH_INT_2(glade_xml_get_widget (glade_xml, "menu_item_hexadecimal"), set_number_base, BASE_DECI);
+	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_hexadecimal")), "activate", GTK_SIGNAL_FUNC(set_number_base), GINT_TO_POINTER (BASE_HEX));
+	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_octal")), "activate", GTK_SIGNAL_FUNC(set_number_base), GINT_TO_POINTER (BASE_OCTAL));
+	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_decimal")), "activate", GTK_SIGNAL_FUNC(set_number_base), GINT_TO_POINTER (BASE_DECI));
 
 	gtk_radio_menu_item_set_group (
 			GTK_RADIO_MENU_ITEM (
@@ -390,11 +370,10 @@ create_window (void) {
 		break;
 	}
 	
-	/* FIXME remove these macros */
-	RADIO_MENU_ITEM_WITH_INT_2(glade_xml_get_widget (glade_xml, "menu_item_display_normal"), set_display_mode, MODE_NORMAL);
-	RADIO_MENU_ITEM_WITH_INT_2(glade_xml_get_widget (glade_xml, "menu_item_display_scientific"), set_display_mode, MODE_SCIENTIFIC);
-	RADIO_MENU_ITEM_WITH_INT_2(glade_xml_get_widget (glade_xml, "menu_item_display_non_scientific"), set_display_mode, MODE_DECIMALS);
-	RADIO_MENU_ITEM_WITH_INT_2(glade_xml_get_widget (glade_xml, "menu_item_display_prefixes"), set_display_mode, MODE_PREFIXES);
+	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_display_normal")), "activate", G_CALLBACK(set_display_mode), GINT_TO_POINTER (MODE_NORMAL));
+	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_display_scientific")), "activate", G_CALLBACK(set_display_mode), GINT_TO_POINTER (MODE_SCIENTIFIC));
+	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_display_non_scientific")), "activate", G_CALLBACK(set_display_mode), GINT_TO_POINTER (MODE_DECIMALS));
+	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_display_prefixes")), "activate", G_CALLBACK(set_display_mode), GINT_TO_POINTER (MODE_PREFIXES));
 
 
 	g_signal_connect (
@@ -413,7 +392,6 @@ create_window (void) {
 			G_CALLBACK(select_decimals),
 			NULL);
 
-	vbox1 = glade_xml_get_widget (glade_xml, "main_vbox");
 	tableT = glade_xml_get_widget (glade_xml, "top_table");
 	bMenuE = glade_xml_get_widget (glade_xml, "togglebutton_expression");
 	arrow1 = glade_xml_get_widget (glade_xml, "togglebutton_expression_arrow");
@@ -439,12 +417,7 @@ create_window (void) {
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(history)), "red_foreground", "foreground", "red", NULL);
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(history)), "blue_foreground", "foreground", "blue", NULL);
 
-	tab1label = glade_xml_get_widget (glade_xml, "history_label");
-	hbox2 = glade_xml_get_widget (glade_xml, "buttons_page");
-	vbox3 = glade_xml_get_widget (glade_xml, "vbox3");
-
 	/* the function table */
-	table2 = glade_xml_get_widget (glade_xml, "table2");
 	bSQRT	= glade_xml_get_widget (glade_xml, "button_sqrt");
 	bXY	= glade_xml_get_widget (glade_xml, "button_xy");
 	gtk_label_set_use_markup (
@@ -463,9 +436,6 @@ create_window (void) {
 			GTK_LABEL (gtk_bin_get_child (GTK_BIN(bX2))),
 			TRUE);
 	bHyp	= glade_xml_get_widget (glade_xml, "button_hyp");
-
-	/* the mode selection */
-	hbox3	= glade_xml_get_widget (glade_xml, "hbox3");
 
 	rDeg	= glade_xml_get_widget (glade_xml, "radiobutton_degrees");
 	rRad	= glade_xml_get_widget (glade_xml, "radiobutton_radians");
@@ -488,7 +458,6 @@ create_window (void) {
 	}
 
 	/* the standard input table */
-	table1	= glade_xml_get_widget (glade_xml, "table3");
 	b0	= glade_xml_get_widget (glade_xml, "button_zero");
 	b1	= glade_xml_get_widget (glade_xml, "button_one");
 	b2      = glade_xml_get_widget (glade_xml, "button_two");
@@ -510,11 +479,6 @@ create_window (void) {
 	bAns	= glade_xml_get_widget (glade_xml, "button_ans");
 	bEquals	= glade_xml_get_widget (glade_xml, "button_equals");
 
-	tab2label = glade_xml_get_widget (glade_xml, "buttons_label");
-
-	hbox1	= glade_xml_get_widget (glade_xml, "hbox3");
-	hbuttonbox2 = glade_xml_get_widget (glade_xml, "hbuttonbox2");
-
 	if(show_buttons)
 	{
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(tabs), 1);
@@ -534,8 +498,6 @@ create_window (void) {
 				_("More >>"));
 	}
 	
-	hbuttonbox1 = glade_xml_get_widget (glade_xml, "hbuttonbox1");
-
 	bClose	= glade_xml_get_widget (glade_xml, "button_close");
 	bEXE	= glade_xml_get_widget (glade_xml, "button_execute");
 
@@ -837,9 +799,7 @@ create_wFunctions (void) {
 GtkWidget*
 create_wVariables (void) {
 
-	GtkWidget *label1_v;
 	GtkWidget *dialog_action_area1_v;
-	GtkWidget *frame1_v;
 	GtkWidget *vbox1_v;
 	GtkWidget *hbox1_v;
 	GtkWidget *scrolledwindow1_v;
@@ -1021,9 +981,7 @@ create_wVariables (void) {
 GtkWidget*
 create_wUnits (void) {
 
-	GtkWidget *label1_u;
 	GtkWidget *dialog_action_area1_u;
-	GtkWidget *frame1_u;
 	GtkWidget *vbox1_u;
 	GtkWidget *hbox1_u;
 	GtkWidget *scrolledwindow1_u;
@@ -1416,7 +1374,6 @@ create_wEditUnit (void) {
 	GtkWidget *item15;
 	GtkWidget *item16;
 	GtkWidget *item17;
-	GtkWidget *item18;
 	GtkWidget *hbox4;
 	GtkWidget *dialog_action_area4;
 	GtkWidget *cancelbutton1;

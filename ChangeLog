@@ -1,5 +1,11 @@
 2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
 
+	* configure.in: added -Wall stuff again (was just a typo)
+	* src/interface.cc: removed some unneccessary variables from
+	create_window 
+
+2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
+
 	* data/qalculate.glade: includes the complete main window now
 	* src/callbacks.cc: removed the GtkHSeparator (the're not used anymore)
 	* src/interface.cc: moved the whole main window to the glade file
