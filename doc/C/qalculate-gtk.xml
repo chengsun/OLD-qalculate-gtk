@@ -318,7 +318,7 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
                 <tbody>
 			<row valign="top">
 				<entry><para>Number Base</para></entry>
-				<entry><para>Submenu which switches between binary, octal, decimal, hexadecimal and sexagesimal (normal or time format) bases, and roman numerals in result.</para></entry>
+				<entry><para>Submenu which switches between binary, octal, decimal, hexadecimal, sexagesimal (normal or time format), and other bases, and roman numerals in result.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Numerical Display</para></entry>
@@ -768,7 +768,7 @@ Qalculate! provides flexible calculation output and result display. There are se
 <varlistentry>
 <term>Number Bases</term>
 <listitem><para>
-Non-decimal bases can be selected for display of numbers in the result. This include regular number bases (binary, octal, hexadecimal, sexagesimal) as well as sexagesimal time format and roman numerals. Note that this only affects the display of the result and not entered numbers. The convert number bases dialog (see <xref linkend="qalculate-convert-number-bases-dialog"/>) is more efficient for other purposes.
+Non-decimal bases can be selected for display of numbers in the result. This include regular number bases (binary, octal, hexadecimal, sexagesimal) as well as sexagesimal time format and roman numerals. All number bases between 2 and 36 can be selected from a dialog window accessed from <menuchoice><guimenu>Mode</guimenu><guimenu>Number Base</guimenu><guimenuitem>Other...</guimenuitem></menuchoice>. Note that this only affects the display of the result and not entered numbers. The convert number bases dialog (see <xref linkend="qalculate-convert-number-bases-dialog"/>) is more efficient for other purposes.
 </para></listitem>
 </varlistentry>
 <varlistentry>

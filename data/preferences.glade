@@ -134,6 +134,26 @@
 	  </child>
 
 	  <child>
+	    <widget class="GtkCheckButton" id="preferences_checkbutton_lower_case_numbers">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">If lower case letters should be used in numbers with non-decimal base</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Use lower case in numbers</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_lower_case_numbers_toggled" last_modification_time="Tue, 13 Jul 2004 05:06:29 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
 	    <widget class="GtkCheckButton" id="preferences_checkbutton_custom_result_font">
 	      <property name="visible">True</property>
 	      <property name="tooltip" translatable="yes">If you want to use a font other than the default in the result display</property>

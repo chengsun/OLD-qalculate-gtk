@@ -40,7 +40,7 @@
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image962">
+			<widget class="GtkImage" id="image1007">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-new</property>
 			  <property name="icon_size">1</property>
@@ -120,7 +120,7 @@
 		      <signal name="activate" handler="on_menu_item_import_csv_file_activate" last_modification_time="Wed, 10 Mar 2004 15:40:44 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image963">
+			<widget class="GtkImage" id="image1008">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -142,7 +142,7 @@
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image964">
+			<widget class="GtkImage" id="image1009">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -170,7 +170,7 @@
 		      <signal name="activate" handler="on_menu_item_save_defs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image965">
+			<widget class="GtkImage" id="image1010">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -192,7 +192,7 @@
 		      <signal name="activate" handler="on_menu_item_fetch_exchange_rates_activate" last_modification_time="Mon, 06 Oct 2003 21:06:00 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image966">
+			<widget class="GtkImage" id="image1011">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-refresh</property>
 			  <property name="icon_size">1</property>
@@ -229,7 +229,7 @@
 		      <accelerator key="B" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image967">
+			<widget class="GtkImage" id="image1012">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -257,7 +257,7 @@
 		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image968">
+			<widget class="GtkImage" id="image1013">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -335,7 +335,7 @@
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image969">
+			<widget class="GtkImage" id="image1014">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -365,7 +365,7 @@
 		      <accelerator key="T" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image970">
+			<widget class="GtkImage" id="image1015">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -386,7 +386,7 @@
 		      <signal name="activate" handler="on_menu_item_convert_to_base_units_activate" last_modification_time="Sun, 21 Mar 2004 08:14:57 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image971">
+			<widget class="GtkImage" id="image1016">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -407,7 +407,7 @@
 		      <signal name="activate" handler="on_menu_item_convert_to_best_unit_activate" last_modification_time="Sun, 21 Mar 2004 08:14:57 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image972">
+			<widget class="GtkImage" id="image1017">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -435,7 +435,7 @@
 		      <accelerator key="C" modifiers="GDK_CONTROL_MASK | GDK_MOD1_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image973">
+			<widget class="GtkImage" id="image1018">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-copy</property>
 			  <property name="icon_size">1</property>
@@ -462,7 +462,7 @@
 		      <signal name="activate" handler="on_menu_item_edit_prefs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image974">
+			<widget class="GtkImage" id="image1019">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -537,6 +537,17 @@
 			      <property name="active">False</property>
 			      <property name="group">menu_item_binary</property>
 			      <signal name="activate" handler="on_menu_item_hexadecimal_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkRadioMenuItem" id="menu_item_custom_base">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Other...</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <property name="group">menu_item_binary</property>
+			      <signal name="activate" handler="on_menu_item_custom_base_activate" last_modification_time="Mon, 12 Jul 2004 18:08:33 GMT"/>
 			    </widget>
 			  </child>
 
@@ -762,7 +773,7 @@
 			      <signal name="activate" handler="on_menu_item_denominator_prefixes_activate" last_modification_time="Thu, 04 Mar 2004 14:36:19 GMT"/>
 			    </widget>
 			  </child>
-			  
+
 			  <child>
 			    <widget class="GtkCheckMenuItem" id="menu_item_place_units_separately">
 			      <property name="visible">True</property>
@@ -770,7 +781,7 @@
 			      <property name="label" translatable="yes">Place Units Separately</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">False</property>
-			      <signal name="activate" handler="on_menu_item_place_units_separately_activate" last_modification_time="Thu, 18 Jun 2004 14:58:33 GMT"/>
+			      <signal name="activate" handler="on_menu_item_place_units_separately_activate" last_modification_time="Fri, 18 Jun 2004 14:58:33 GMT"/>
 			    </widget>
 			  </child>
 			</widget>
@@ -965,7 +976,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Unknown</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
+			      <property name="active">True</property>
 			      <signal name="activate" handler="on_menu_item_assumptions_none_activate" last_modification_time="Wed, 16 Jun 2004 10:14:23 GMT"/>
 			    </widget>
 			  </child>
@@ -997,7 +1008,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Real</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">True</property>
+			      <property name="active">False</property>
 			      <property name="group">menu_item_assumptions_none</property>
 			      <signal name="activate" handler="on_menu_item_assumptions_real_activate" last_modification_time="Wed, 16 Jun 2004 10:14:23 GMT"/>
 			    </widget>
@@ -1155,7 +1166,7 @@
 		      <signal name="activate" handler="on_menu_item_save_mode_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image975">
+			<widget class="GtkImage" id="image1020">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -1214,7 +1225,7 @@
 		      <accelerator key="F1" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image976">
+			<widget class="GtkImage" id="image1021">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
@@ -1235,7 +1246,7 @@
 		      <signal name="activate" handler="on_menu_item_about_activate" last_modification_time="Thu, 14 Aug 2003 22:31:50 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image977">
+			<widget class="GtkImage" id="image1022">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-dialog-info</property>
 			  <property name="icon_size">1</property>
@@ -2486,7 +2497,7 @@
       <signal name="activate" handler="on_menu_item_copy_activate" last_modification_time="Sat, 20 Mar 2004 09:40:15 GMT"/>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image897">
+	<widget class="GtkImage" id="image1027">
 	  <property name="visible">True</property>
 	  <property name="stock">gtk-copy</property>
 	  <property name="icon_size">1</property>
@@ -2507,7 +2518,7 @@
       <signal name="activate" handler="on_menu_item_save_activate" last_modification_time="Sun, 21 Mar 2004 20:46:44 GMT"/>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image898">
+	<widget class="GtkImage" id="image1028">
 	  <property name="visible">True</property>
 	  <property name="stock">gtk-save</property>
 	  <property name="icon_size">1</property>
@@ -2667,6 +2678,17 @@
   </child>
 
   <child>
+    <widget class="GtkRadioMenuItem" id="popup_menu_item_custom_base">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Other...</property>
+      <property name="use_underline">True</property>
+      <property name="active">False</property>
+      <property name="group">popup_menu_item_binary</property>
+      <signal name="activate" handler="on_popup_menu_item_custom_base_activate" last_modification_time="Mon, 12 Jul 2004 19:03:24 GMT"/>
+    </widget>
+  </child>
+
+  <child>
     <widget class="GtkMenuItem" id="separator_popup_fraction">
       <property name="visible">True</property>
     </widget>
@@ -2729,7 +2751,7 @@
       <signal name="activate" handler="on_menu_item_convert_to_unit_expression_activate" last_modification_time="Sat, 20 Mar 2004 09:40:15 GMT"/>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image899">
+	<widget class="GtkImage" id="image1029">
 	  <property name="visible">True</property>
 	  <property name="stock">gtk-convert</property>
 	  <property name="icon_size">1</property>
@@ -2750,7 +2772,7 @@
       <signal name="activate" handler="on_menu_item_convert_to_base_units_activate" last_modification_time="Sun, 21 Mar 2004 20:29:28 GMT"/>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image900">
+	<widget class="GtkImage" id="image1030">
 	  <property name="visible">True</property>
 	  <property name="stock">gtk-convert</property>
 	  <property name="icon_size">1</property>
@@ -2771,7 +2793,7 @@
       <signal name="activate" handler="on_menu_item_convert_to_best_unit_activate" last_modification_time="Sun, 21 Mar 2004 20:29:28 GMT"/>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image901">
+	<widget class="GtkImage" id="image1031">
 	  <property name="visible">True</property>
 	  <property name="stock">gtk-convert</property>
 	  <property name="icon_size">1</property>
@@ -2827,6 +2849,108 @@
       <property name="use_underline">True</property>
       <property name="active">False</property>
       <signal name="activate" handler="on_popup_menu_item_denominator_prefixes_activate" last_modification_time="Sun, 21 Mar 2004 21:37:18 GMT"/>
+    </widget>
+  </child>
+</widget>
+
+<widget class="GtkDialog" id="number_base_dialog">
+  <property name="border_width">5</property>
+  <property name="title" translatable="yes">Number Base</property>
+  <property name="type">GTK_WINDOW_TOPLEVEL</property>
+  <property name="window_position">GTK_WIN_POS_NONE</property>
+  <property name="modal">False</property>
+  <property name="resizable">False</property>
+  <property name="destroy_with_parent">False</property>
+  <property name="has_separator">False</property>
+  <signal name="delete_event" handler="gtk_widget_hide" object="number_base_dialog" last_modification_time="Mon, 12 Jul 2004 20:52:47 GMT"/>
+  <signal name="destroy_event" handler="gtk_widget_hide" object="number_base_dialog" last_modification_time="Mon, 12 Jul 2004 20:52:57 GMT"/>
+
+  <child internal-child="vbox">
+    <widget class="GtkVBox" id="vbox59">
+      <property name="visible">True</property>
+      <property name="homogeneous">False</property>
+      <property name="spacing">0</property>
+
+      <child internal-child="action_area">
+	<widget class="GtkHButtonBox" id="hbuttonbox6">
+	  <property name="visible">True</property>
+	  <property name="layout_style">GTK_BUTTONBOX_END</property>
+
+	  <child>
+	    <widget class="GtkButton" id="number_base_button_close">
+	      <property name="visible">True</property>
+	      <property name="can_default">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label">gtk-close</property>
+	      <property name="use_stock">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="response_id">-7</property>
+	      <signal name="clicked" handler="gtk_widget_hide" object="number_base_dialog" last_modification_time="Mon, 12 Jul 2004 20:53:29 GMT"/>
+	    </widget>
+	  </child>
+	</widget>
+	<packing>
+	  <property name="padding">0</property>
+	  <property name="expand">False</property>
+	  <property name="fill">True</property>
+	  <property name="pack_type">GTK_PACK_END</property>
+	</packing>
+      </child>
+
+      <child>
+	<widget class="GtkHBox" id="hbox59">
+	  <property name="border_width">6</property>
+	  <property name="visible">True</property>
+	  <property name="homogeneous">True</property>
+	  <property name="spacing">6</property>
+
+	  <child>
+	    <widget class="GtkLabel" id="label1">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">Number Base</property>
+	      <property name="use_underline">False</property>
+	      <property name="use_markup">False</property>
+	      <property name="justify">GTK_JUSTIFY_LEFT</property>
+	      <property name="wrap">False</property>
+	      <property name="selectable">False</property>
+	      <property name="xalign">0.5</property>
+	      <property name="yalign">0.5</property>
+	      <property name="xpad">0</property>
+	      <property name="ypad">0</property>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkSpinButton" id="number_base_spinbutton_base">
+	      <property name="visible">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="climb_rate">1</property>
+	      <property name="digits">0</property>
+	      <property name="numeric">True</property>
+	      <property name="update_policy">GTK_UPDATE_ALWAYS</property>
+	      <property name="snap_to_ticks">False</property>
+	      <property name="wrap">False</property>
+	      <property name="adjustment">10 2 36 1 10 10</property>
+	      <signal name="value_changed" handler="on_number_base_spinbutton_base_value_changed" last_modification_time="Mon, 12 Jul 2004 20:46:45 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">True</property>
+	      <property name="fill">True</property>
+	    </packing>
+	  </child>
+	</widget>
+	<packing>
+	  <property name="padding">0</property>
+	  <property name="expand">False</property>
+	  <property name="fill">False</property>
+	</packing>
+      </child>
     </widget>
   </child>
 </widget>

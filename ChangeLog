@@ -1,3 +1,11 @@
+2004-07-13 Niklas Knutsson  <nq@altern.org>
+
+	* Ability to set all number bases from 2 to 36 from GUI
+	* Documentation updates
+	* Alternative to use lower case letters in numbers
+	* Fix double decimal point with integers
+	* Fix decimal reduction approximation
+
 2004-07-12 Niklas Knutsson  <nq@altern.org>
 
 	* Update documentation

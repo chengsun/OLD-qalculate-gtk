@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-07-12 14:11+0200\n"
+"POT-Creation-Date: 2004-07-12 23:31+0200\n"
 "PO-Revision-Date: 2003-10-27 12:29+0100\n"
 "Last-Translator: Niklas Knutsson <nq@altern.org>\n"
 "Language-Team: Swedish\n"
@@ -27,7 +27,7 @@ msgstr ""
 msgid "Powerful and easy to use calculator"
 msgstr "Kraftfull och användarvänlig miniräknare"
 
-#: data/qalculate.desktop.in.h:2 data/main.glade.h:114
+#: data/qalculate.desktop.in.h:2 data/main.glade.h:115
 msgid "Qalculate!"
 msgstr "Qalculate!"
 
@@ -111,8 +111,8 @@ msgstr "inkludera lika med"
 #: data/csvimport.glade.h:2 data/functionedit.glade.h:11
 #: data/functions.glade.h:3 data/matrixedit.glade.h:4 data/unitedit.glade.h:10
 #: data/units.glade.h:5 data/unknownedit.glade.h:3 data/variableedit.glade.h:3
-#: data/variables.glade.h:3 src/interface.cc:423 src/interface.cc:481
-#: src/interface.cc:542 src/calclib/data/functions.xml.in.h:57
+#: data/variables.glade.h:3 src/interface.cc:429 src/interface.cc:487
+#: src/interface.cc:548 src/calclib/data/functions.xml.in.h:57
 msgid "Category"
 msgstr "Kategori"
 
@@ -184,7 +184,7 @@ msgid "Includes headings"
 msgstr "Inkludera kolumner"
 
 #: data/csvimport.glade.h:19 data/matrixedit.glade.h:13 src/callbacks.cc:5011
-#: src/callbacks.cc:6668
+#: src/callbacks.cc:6676
 msgid "Matrices"
 msgstr "Matriser"
 
@@ -195,7 +195,7 @@ msgstr "Matris"
 
 #: data/csvimport.glade.h:21 data/functionedit.glade.h:33
 #: data/matrixedit.glade.h:15 data/unknownedit.glade.h:9
-#: data/variableedit.glade.h:8 src/interface.cc:518 src/interface.cc:656
+#: data/variableedit.glade.h:8 src/interface.cc:524 src/interface.cc:662
 #: src/calclib/data/functions.xml.in.h:257
 msgid "Name"
 msgstr "Namn"
@@ -239,7 +239,7 @@ msgstr "Första raden som innehåller data att importera"
 msgid "Title displayed in menus and in variable manager"
 msgstr "Rubrik som skall visas i menyer och variabelhanteraren"
 
-#: data/csvimport.glade.h:31 src/callbacks.cc:5018 src/callbacks.cc:6671
+#: data/csvimport.glade.h:31 src/callbacks.cc:5018 src/callbacks.cc:6679
 msgid "Vectors"
 msgstr "Vektorer"
 
@@ -350,8 +350,8 @@ msgstr "Redigera funktion"
 msgid "Edit conditions for selected argument"
 msgstr "Modifiera villkor vald parameter"
 
-#: data/functionedit.glade.h:23 data/plot.glade.h:21 src/interface.cc:672
-#: src/interface.cc:969 src/calclib/data/functions.xml.in.h:152
+#: data/functionedit.glade.h:23 data/plot.glade.h:21 src/interface.cc:678
+#: src/interface.cc:975 src/calclib/data/functions.xml.in.h:152
 msgid "Expression"
 msgstr "Uttryck"
 
@@ -360,7 +360,7 @@ msgid "Free"
 msgstr "Valfri"
 
 #: data/functionedit.glade.h:26 data/functions.glade.h:10 data/main.glade.h:78
-#: data/plot.glade.h:22 src/interface.cc:411
+#: data/plot.glade.h:22 src/interface.cc:417
 #: src/calclib/data/functions.xml.in.h:177
 msgid "Function"
 msgstr "Funktion"
@@ -423,7 +423,7 @@ msgstr "Positivt heltal"
 msgid "Positive number"
 msgstr "Positivt nummer"
 
-#: data/functionedit.glade.h:43 src/interface.cc:675
+#: data/functionedit.glade.h:43 src/interface.cc:681
 msgid "Precalculate"
 msgstr "Förberäkna"
 
@@ -459,17 +459,17 @@ msgstr "Kategorin som funktionen tillhör"
 msgid "Title displayed in menus and in function manager"
 msgstr "Rubrik som skall visas i menyer och funktionshanteraren"
 
-#: data/functionedit.glade.h:52 data/main.glade.h:145 data/units.glade.h:16
-#: src/interface.cc:522 src/interface.cc:526
+#: data/functionedit.glade.h:52 data/main.glade.h:146 data/units.glade.h:16
+#: src/interface.cc:528 src/interface.cc:532
 msgid "Unit"
 msgstr "Enhet"
 
-#: data/functionedit.glade.h:53 data/main.glade.h:154 data/plot.glade.h:52
-#: data/variables.glade.h:10 src/interface.cc:462
+#: data/functionedit.glade.h:53 data/main.glade.h:155 data/plot.glade.h:52
+#: data/variables.glade.h:10 src/interface.cc:468
 msgid "Variable"
 msgstr "Variabel"
 
-#: data/functionedit.glade.h:54 data/main.glade.h:156
+#: data/functionedit.glade.h:54 data/main.glade.h:157
 #: data/matrixedit.glade.h:21 src/calclib/data/functions.xml.in.h:473
 msgid "Vector"
 msgstr "Vektor"
@@ -519,7 +519,7 @@ msgstr "Sätt in (eller exekvera) vald funktion i uttrycket"
 msgid "No description available."
 msgstr "Ingen beskrivning tillgänglig."
 
-#: data/functions.glade.h:14 data/main.glade.h:164 data/units.glade.h:21
+#: data/functions.glade.h:14 data/main.glade.h:165 data/units.glade.h:21
 #: data/variables.glade.h:12
 msgid "_Edit"
 msgstr "_Redigera"
@@ -938,310 +938,314 @@ msgid "Open variable manager"
 msgstr "Öppna variabelhanteraren"
 
 #: data/main.glade.h:107
+msgid "Other..."
+msgstr "Annan..."
+
+#: data/main.glade.h:108
 msgid "Place Units Separately"
 msgstr "Placera enheter separat"
 
-#: data/main.glade.h:108
+#: data/main.glade.h:109
 msgid "Plot Functions/Data"
 msgstr "Rita funktions-/datadiagram"
 
-#: data/main.glade.h:109 data/unknownedit.glade.h:16
+#: data/main.glade.h:110 data/unknownedit.glade.h:16
 msgid "Positive"
 msgstr "Positiv"
 
-#: data/main.glade.h:110
+#: data/main.glade.h:111
 msgid "Previous result"
 msgstr "Föregående resultat"
 
-#: data/main.glade.h:111
+#: data/main.glade.h:112
 msgid "Progress..."
 msgstr "Framåtskridande..."
 
-#: data/main.glade.h:112
+#: data/main.glade.h:113
 msgid "Purel_y Scientific"
 msgstr "Fu_llt vetenskapligt"
 
-#: data/main.glade.h:113
+#: data/main.glade.h:114
 msgid "Purely Scientific"
 msgstr "Fullt vetenskapligt"
 
-#: data/main.glade.h:115
+#: data/main.glade.h:116
 msgid "RPN Mode"
 msgstr "RPN läge"
 
-#: data/main.glade.h:116 src/calclib/data/units.xml.in.h:212
+#: data/main.glade.h:117 src/calclib/data/units.xml.in.h:212
 msgid "Rad"
 msgstr "Rad"
 
-#: data/main.glade.h:117 src/calclib/data/functions.xml.in.h:319
+#: data/main.glade.h:118 src/calclib/data/functions.xml.in.h:319
 msgid "Radians"
 msgstr "Radianer"
 
-#: data/main.glade.h:118 src/calclib/data/functions.xml.in.h:322
+#: data/main.glade.h:119 src/calclib/data/functions.xml.in.h:322
 msgid "Raise"
 msgstr "Upphöj"
 
-#: data/main.glade.h:119
+#: data/main.glade.h:120
 msgid "Rational"
 msgstr "Rationell"
 
-#: data/main.glade.h:120
+#: data/main.glade.h:121
 msgid "Real"
 msgstr "Reell"
 
-#: data/main.glade.h:121
+#: data/main.glade.h:122
 msgid "Result"
 msgstr "Resultat"
 
-#: data/main.glade.h:122
+#: data/main.glade.h:123
 msgid "Right parenthesis"
 msgstr "Höger parentes"
 
-#: data/main.glade.h:123
+#: data/main.glade.h:124
 msgid "Roman"
 msgstr "Romersk"
 
-#: data/main.glade.h:124
+#: data/main.glade.h:125
 msgid "Roman Numerals"
 msgstr "Romerska siffror"
 
-#: data/main.glade.h:125
+#: data/main.glade.h:126
 msgid "SQRT"
 msgstr "SQRT"
 
-#: data/main.glade.h:126
+#: data/main.glade.h:127
 msgid "STO"
 msgstr "STO"
 
-#: data/main.glade.h:127
+#: data/main.glade.h:128
 msgid "Save _Mode"
 msgstr "Spara _programläge"
 
-#: data/main.glade.h:128
+#: data/main.glade.h:129
 msgid "Save local functions, variables and units"
 msgstr "Spara lokala funktioner, variabler och enheter"
 
-#: data/main.glade.h:129
+#: data/main.glade.h:130
 msgid "Sc_ientific"
 msgstr "Vetenskapl_ig"
 
-#: data/main.glade.h:130
+#: data/main.glade.h:131
 msgid "Scientific"
 msgstr "Vetenskaplig"
 
-#: data/main.glade.h:131
+#: data/main.glade.h:132
 msgid "Set Prefix"
 msgstr "Sätt prefix"
 
-#: data/main.glade.h:132
+#: data/main.glade.h:133
 msgid "Sexagesimal"
 msgstr "Sexagesimal"
 
-#: data/main.glade.h:133 src/interface.cc:274 src/callbacks.cc:6281
+#: data/main.glade.h:134 src/interface.cc:280 src/callbacks.cc:6289
 msgid "Show keypad"
 msgstr "Visa knappsats"
 
-#: data/main.glade.h:134
+#: data/main.glade.h:135
 msgid "Simp_le"
 msgstr "Enke_lt"
 
-#: data/main.glade.h:135
+#: data/main.glade.h:136
 msgid "Simple"
 msgstr "Enkelt"
 
-#: data/main.glade.h:136 src/calclib/data/functions.xml.in.h:412
+#: data/main.glade.h:137 src/calclib/data/functions.xml.in.h:412
 msgid "Sine"
 msgstr "Sinus"
 
-#: data/main.glade.h:137
+#: data/main.glade.h:138
 msgid "Square root"
 msgstr "Kvadratrot"
 
-#: data/main.glade.h:138
+#: data/main.glade.h:139
 msgid "Store result"
 msgstr "Spara resultatet"
 
-#: data/main.glade.h:139 src/calclib/data/functions.xml.in.h:433
+#: data/main.glade.h:140 src/calclib/data/functions.xml.in.h:433
 msgid "Subtract"
 msgstr "Subtrahera"
 
-#: data/main.glade.h:140 src/calclib/data/functions.xml.in.h:442
+#: data/main.glade.h:141 src/calclib/data/functions.xml.in.h:442
 msgid "Tangent"
 msgstr "Tangens"
 
-#: data/main.glade.h:141
+#: data/main.glade.h:142
 msgid "Time Format"
 msgstr "Tidsformat"
 
-#: data/main.glade.h:142
+#: data/main.glade.h:143
 msgid "Toggle fractional display"
 msgstr "(Av)aktivera bråktalsvisning"
 
-#: data/main.glade.h:143
+#: data/main.glade.h:144
 msgid "Toggle hyperbolic functions"
 msgstr "(Av)aktivera hyperbola funktioner"
 
-#: data/main.glade.h:144
+#: data/main.glade.h:145
 msgid "Try Exact"
 msgstr "Försök exakt"
 
-#: data/main.glade.h:146
+#: data/main.glade.h:147
 msgid "Unit Display"
 msgstr "Enehetsvisning"
 
-#: data/main.glade.h:147 data/units.glade.h:18
+#: data/main.glade.h:148 data/units.glade.h:18
 msgid "Units"
 msgstr "Enheter"
 
-#: data/main.glade.h:148 data/unknownedit.glade.h:23
+#: data/main.glade.h:149 data/unknownedit.glade.h:23
 msgid "Unknown"
 msgstr "Okänd"
 
-#: data/main.glade.h:149
+#: data/main.glade.h:150
 msgid "Unknown Variable"
 msgstr "Okänd variabel"
 
-#: data/main.glade.h:150
+#: data/main.glade.h:151
 msgid "Unknowns"
 msgstr "Okända"
 
-#: data/main.glade.h:151
+#: data/main.glade.h:152
 msgid "Update Exchange Rates"
 msgstr "Updatera växelkurser"
 
-#: data/main.glade.h:152
+#: data/main.glade.h:153
 msgid "Use Abbreviations"
 msgstr "Använd förkortningar"
 
-#: data/main.glade.h:153
+#: data/main.glade.h:154
 msgid "Use _Abbreviations"
 msgstr "Använd f_örkortningar"
 
-#: data/main.glade.h:155 data/variables.glade.h:11
+#: data/main.glade.h:156 data/variables.glade.h:11
 msgid "Variables"
 msgstr "Variabler"
 
-#: data/main.glade.h:157
+#: data/main.glade.h:158
 msgid "_About"
 msgstr "_Om"
 
-#: data/main.glade.h:158
+#: data/main.glade.h:159
 msgid "_Binary"
 msgstr "_Binär"
 
-#: data/main.glade.h:159
+#: data/main.glade.h:160
 msgid "_Contents"
 msgstr "_Innehåll"
 
-#: data/main.glade.h:160
+#: data/main.glade.h:161
 msgid "_Copy"
 msgstr "_Kopiera"
 
-#: data/main.glade.h:161
+#: data/main.glade.h:162
 msgid "_Copy Result"
 msgstr "_Kopiera resultatet"
 
-#: data/main.glade.h:162
+#: data/main.glade.h:163
 msgid "_Decimal"
 msgstr "_Decimal"
 
-#: data/main.glade.h:163
+#: data/main.glade.h:164
 msgid "_Decimals"
 msgstr "_Decimaler"
 
-#: data/main.glade.h:165
+#: data/main.glade.h:166
 msgid "_Factorize"
 msgstr "_Faktorisera"
 
-#: data/main.glade.h:166
+#: data/main.glade.h:167
 msgid "_File"
 msgstr "_Fil"
 
-#: data/main.glade.h:167
+#: data/main.glade.h:168
 msgid "_Help"
 msgstr "_Hjälp"
 
-#: data/main.glade.h:168
+#: data/main.glade.h:169
 msgid "_Hexadecimal"
 msgstr "_Hexadecimal"
 
-#: data/main.glade.h:169
+#: data/main.glade.h:170
 msgid "_Mode"
 msgstr "_Läge"
 
-#: data/main.glade.h:170
+#: data/main.glade.h:171
 msgid "_New"
 msgstr "_Ny"
 
-#: data/main.glade.h:171
+#: data/main.glade.h:172
 msgid "_Normal"
 msgstr "_Normal"
 
-#: data/main.glade.h:172
+#: data/main.glade.h:173
 msgid "_Octal"
 msgstr "_Oktal"
 
-#: data/main.glade.h:173
+#: data/main.glade.h:174
 msgid "_Precision"
 msgstr "_Precision"
 
-#: data/main.glade.h:174
+#: data/main.glade.h:175
 msgid "_Preferences"
 msgstr "_Inställningar"
 
-#: data/main.glade.h:175
+#: data/main.glade.h:176
 msgid "_Quit"
 msgstr "_Avsluta"
 
-#: data/main.glade.h:176
+#: data/main.glade.h:177
 msgid "_Save Definitions"
 msgstr "_Spara definitioner"
 
-#: data/main.glade.h:177
+#: data/main.glade.h:178
 msgid "_Store Result..."
 msgstr "_Spara resultatet---"
 
-#: data/main.glade.h:178
+#: data/main.glade.h:179
 msgid "_Store..."
 msgstr "_Spara..."
 
-#: data/main.glade.h:179
+#: data/main.glade.h:180
 msgid "_Units"
 msgstr "_Enheter"
 
-#: data/main.glade.h:180
+#: data/main.glade.h:181
 msgid "_Variables"
 msgstr "_Variabler"
 
-#: data/main.glade.h:181
+#: data/main.glade.h:182
 msgid "change angle unit used in trigonometric functions"
 msgstr "ändra vinkelenhet för trigonometriska funktioner"
 
-#: data/main.glade.h:182
+#: data/main.glade.h:183
 msgid "cos"
 msgstr "cos"
 
-#: data/main.glade.h:183
+#: data/main.glade.h:184
 msgid "hyp"
 msgstr "hyp"
 
-#: data/main.glade.h:184
+#: data/main.glade.h:185
 msgid "ln"
 msgstr "ln"
 
-#: data/main.glade.h:185
+#: data/main.glade.h:186
 msgid "log"
 msgstr "log"
 
-#: data/main.glade.h:186
+#: data/main.glade.h:187
 msgid "sin"
 msgstr "sin"
 
-#: data/main.glade.h:187
+#: data/main.glade.h:188
 msgid "tan"
 msgstr "tan"
 
-#: data/main.glade.h:188
+#: data/main.glade.h:189
 msgid "x<sup>y</sup>"
 msgstr "x<sup>y</sup>"
 
@@ -1269,7 +1273,7 @@ msgstr "Avbryt skapande/modifiering av matrisen/vektorn"
 msgid "Edit Matrix"
 msgstr "Redigera matris"
 
-#: data/matrixedit.glade.h:11 src/callbacks.cc:7753 src/callbacks.cc:7760
+#: data/matrixedit.glade.h:11 src/callbacks.cc:7820 src/callbacks.cc:7827
 #: src/calclib/data/functions.xml.in.h:145
 msgid "Elements"
 msgstr "Element"
@@ -1475,7 +1479,7 @@ msgstr "Stil"
 msgid "The variable name used in expression"
 msgstr "Variabel namn använt i uttryck"
 
-#: data/plot.glade.h:49 src/interface.cc:966
+#: data/plot.glade.h:49 src/interface.cc:972
 #: src/calclib/data/functions.xml.in.h:449
 msgid "Title"
 msgstr "Titel"
@@ -1850,7 +1854,7 @@ msgstr "Sigma"
 msgid "The category this unknown variable belongs to"
 msgstr "Kategorin som den okända variabeln tillhör"
 
-#: data/unknownedit.glade.h:22 src/interface.cc:659
+#: data/unknownedit.glade.h:22 src/interface.cc:665
 #: src/calclib/data/functions.xml.in.h:463
 msgid "Type"
 msgstr "Typ"
@@ -1879,7 +1883,7 @@ msgstr "Huruvida värdet är exakt"
 msgid "The category this variable belongs to"
 msgstr "Kategorin som variabeln tillhör"
 
-#: data/variableedit.glade.h:12 src/interface.cc:466 src/callbacks.cc:3607
+#: data/variableedit.glade.h:12 src/interface.cc:472 src/callbacks.cc:3607
 #: src/calclib/data/functions.xml.in.h:468
 msgid "Value"
 msgstr "Värde"
@@ -1946,15 +1950,15 @@ msgstr "Svar"
 msgid "All"
 msgstr "Alla"
 
-#: src/interface.cc:271 src/callbacks.cc:6287
+#: src/interface.cc:277 src/callbacks.cc:6295
 msgid "Hide keypad"
 msgstr "Göm knappsatsen"
 
-#: src/interface.cc:343
+#: src/interface.cc:349
 msgid "Keypad"
 msgstr "Knappsats"
 
-#: src/interface.cc:669
+#: src/interface.cc:675
 msgid "Reference"
 msgstr "Referens"
 
@@ -2145,11 +2149,11 @@ msgstr "Redigera funktion (systemvid)"
 msgid "New Function"
 msgstr "Ny funktion"
 
-#: src/callbacks.cc:4283 src/callbacks.cc:7858 src/callbacks.cc:7869
+#: src/callbacks.cc:4283 src/callbacks.cc:7925 src/callbacks.cc:7936
 msgid "yes"
 msgstr "ja"
 
-#: src/callbacks.cc:4285 src/callbacks.cc:7860 src/callbacks.cc:7871
+#: src/callbacks.cc:4285 src/callbacks.cc:7927 src/callbacks.cc:7938
 msgid "no"
 msgstr "nej"
 
@@ -2240,8 +2244,8 @@ msgstr ""
 "Kunde inte importera fil: \n"
 "%s"
 
-#: src/callbacks.cc:4995 src/callbacks.cc:5003 src/callbacks.cc:6662
-#: src/callbacks.cc:6665
+#: src/callbacks.cc:4995 src/callbacks.cc:5003 src/callbacks.cc:6670
+#: src/callbacks.cc:6673
 msgid "My Variables"
 msgstr "Mina variabler"
 
@@ -2267,11 +2271,11 @@ msgid "Select expression font"
 msgstr "Välj teckensnitt"
 
 #. do not delete units that are used by other units
-#: src/callbacks.cc:7282
+#: src/callbacks.cc:7349
 msgid "Cannot delete unit as it is needed by other units."
 msgstr "Kan inte ta bort enheten eftersom den används av andra enheter."
 
-#: src/callbacks.cc:7624
+#: src/callbacks.cc:7691
 #, c-format
 msgid ""
 "Could not display help for Qalculate!.\n"
@@ -2280,36 +2284,36 @@ msgstr ""
 "Kunde inte visa hjälp för Qalculate!.\n"
 "%s"
 
-#: src/callbacks.cc:7755 src/callbacks.cc:7762
+#: src/callbacks.cc:7822 src/callbacks.cc:7829
 msgid "Components (in horizontal order)"
 msgstr "Komponenter (från vänster till höger)"
 
-#: src/callbacks.cc:7774 src/callbacks.cc:7783 src/callbacks.cc:7807
-#: src/callbacks.cc:7816
+#: src/callbacks.cc:7841 src/callbacks.cc:7850 src/callbacks.cc:7874
+#: src/callbacks.cc:7883
 msgid "Select file to import"
 msgstr "Välj fil att importera"
 
-#: src/callbacks.cc:7792
+#: src/callbacks.cc:7859
 msgid "Select date"
 msgstr "Välj datum"
 
-#: src/callbacks.cc:8049
+#: src/callbacks.cc:8116
 msgid "No functions defined."
 msgstr "Inga funktioner är definierade."
 
-#: src/callbacks.cc:8184 src/callbacks.cc:8207
+#: src/callbacks.cc:8251 src/callbacks.cc:8274
 msgid "Select file to export"
 msgstr "Välj fil att exporta till"
 
-#: src/callbacks.cc:8186
+#: src/callbacks.cc:8253
 msgid "Allowed File Types"
 msgstr "Tillåtna filtyper"
 
-#: src/callbacks.cc:8196
+#: src/callbacks.cc:8263
 msgid "All Files"
 msgstr "All filer"
 
-#: src/callbacks.cc:8248 src/callbacks.cc:8281
+#: src/callbacks.cc:8315 src/callbacks.cc:8348
 msgid "Empty expression."
 msgstr "Tomt uttryck."
 

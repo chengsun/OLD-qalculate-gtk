@@ -29,7 +29,7 @@ void cln::cl_abort() {
 	}
 }
 
-string printCL_I(cl_I integ, int base = 10, bool display_sign = true, bool display_base_indicator = true) {
+string printCL_I(cl_I integ, int base = 10, bool display_sign = true, bool display_base_indicator = true, bool lower_case = false) {
 	if(base == BASE_ROMAN_NUMERALS) {
 		if(!zerop(integ) && integ < 10000 && integ > -10000) {
 			string str;
@@ -42,58 +42,77 @@ string printCL_I(cl_I integ, int base = 10, bool display_sign = true, bool displ
 			}
 			int times = value / 1000;
 			for(; times > 0; times--) {
-				str += "M";
+				if(lower_case) str += "m";
+				else str += "M";
 			}
 			value = value % 1000;
 			times = value / 100;
 			if(times == 9) {
-				str += "C";
-				str += "M";
+				if(lower_case) str += "c";
+				else str += "C";
+				if(lower_case) str += "m";
+				else str += "M";
 				times = 0;
 			} else if(times >= 5) {
-				str += "D";
+				if(lower_case) str += "d";
+				else str += "D";
 				times -= 5;
 			} else if(times == 4) {
 				times = 0;
-				str += "C";
-				str += "D";
+				if(lower_case) str += "c";
+				else str += "C";
+				if(lower_case) str += "d";
+				else str += "D";
 			}
 			for(; times > 0; times--) {
-				str += "C";
+				if(lower_case) str += "c";
+				else str += "C";
 			}
 			value = value % 100;
 			times = value / 10;
 			if(times == 9) {
-				str += "X";
-				str += "C";
+				if(lower_case) str += "x";
+				else str += "X";
+				if(lower_case) str += "c";
+				else str += "C";
 				times = 0;
 			} else if(times >= 5) {
-				str += "L";
+				if(lower_case) str += "l";
+				else str += "L";
 				times -= 5;
 			} else if(times == 4) {
 				times = 0;
-				str += "X";
-				str += "L";
+				if(lower_case) str += "x";
+				else str += "X";
+				if(lower_case) str += "l";
+				else str += "L";
 			}
 			for(; times > 0; times--) {
-				str += "X";
+				if(lower_case) str += "x";
+				else str += "X";
 			}
 			value = value % 10;
 			times = value;
 			if(times == 9) {
-				str += "I";
-				str += "X";
+				if(lower_case) str += "i";
+				else str += "I";
+				if(lower_case) str += "x";
+				else str += "X";
 				times = 0;
 			} else if(times >= 5) {
-				str += "V";
+				if(lower_case) str += "v";
+				else str += "V";
 				times -= 5;
 			} else if(times == 4) {
 				times = 0;
-				str += "I";
-				str += "V";
+				if(lower_case) str += "i";
+				else str += "I";
+				if(lower_case) str += "v";
+				else str += "V";
 			}
 			for(; times > 0; times--) {
-				str += "I";
+				if(lower_case) str += "i";
+				else str += "I";
 			}
 			return str;
 		}
@@ -104,6 +123,13 @@ string printCL_I(cl_I integ, int base = 10, bool display_sign = true, bool displ
 	ostringstream stream;
 	print_integer(stream, flags, integ);
 	string cl_str = stream.str();
+	if(lower_case) {
+		for(unsigned int i = 0; i < cl_str.length(); i++) {
+			if(cl_str[i] >= 'A' && cl_str[i] <= 'Z') {
+				cl_str[i] += 32;
+			}
+		}
+	}
 	if(minusp(integ)) {
 		cl_str.erase(0, 1);
 	}	
@@ -1714,17 +1740,17 @@ bool Number::add(const Number &o, MathOperation op) {
 	}
 	return false;	
 }
-string Number::printNumerator(int base, bool display_sign, bool display_base_indicator) const {
-	return printCL_I(cln::numerator(cln::rational(cln::realpart(value))), base, display_sign, display_base_indicator);
+string Number::printNumerator(int base, bool display_sign, bool display_base_indicator, bool lower_case) const {
+	return printCL_I(cln::numerator(cln::rational(cln::realpart(value))), base, display_sign, display_base_indicator, lower_case);
 }
-string Number::printDenominator(int base, bool display_sign, bool display_base_indicator) const {
-	return printCL_I(cln::denominator(cln::rational(cln::realpart(value))), base, display_sign, display_base_indicator);
+string Number::printDenominator(int base, bool display_sign, bool display_base_indicator, bool lower_case) const {
+	return printCL_I(cln::denominator(cln::rational(cln::realpart(value))), base, display_sign, display_base_indicator, lower_case);
 }
-string Number::printImaginaryNumerator(int base, bool display_sign, bool display_base_indicator) const {
-	return printCL_I(cln::numerator(cln::rational(cln::imagpart(value))), base, display_sign, display_base_indicator);
+string Number::printImaginaryNumerator(int base, bool display_sign, bool display_base_indicator, bool lower_case) const {
+	return printCL_I(cln::numerator(cln::rational(cln::imagpart(value))), base, display_sign, display_base_indicator, lower_case);
 }
-string Number::printImaginaryDenominator(int base, bool display_sign, bool display_base_indicator) const {
-	return printCL_I(cln::denominator(cln::rational(cln::imagpart(value))), base, display_sign, display_base_indicator);
+string Number::printImaginaryDenominator(int base, bool display_sign, bool display_base_indicator, bool lower_case) const {
+	return printCL_I(cln::denominator(cln::rational(cln::imagpart(value))), base, display_sign, display_base_indicator, lower_case);
 }
 
 string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
@@ -1806,7 +1832,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(po.base <= 1 && po.base != BASE_ROMAN_NUMERALS && po.base != BASE_TIME) base = 10;
 	else if(po.base > 36 && po.base != BASE_SEXAGESIMAL) base = 36;
 	else base = po.base;
-	if(isApproximate() && base == BASE_ROMAN_NUMERALS) base = 10;
+	if(isApproximateType() && base == BASE_ROMAN_NUMERALS) base = 10;
 
 	if(isComplex()) {
 		bool bre = hasRealPart();
@@ -1847,7 +1873,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		
 		cl_I ivalue = cln::numerator(cln::rational(cln::realpart(value)));
 		bool neg = cln::minusp(ivalue);
-		string mpz_str = printCL_I(ivalue, base, false, true);
+		string mpz_str = printCL_I(ivalue, base, false, true, po.lower_case_numbers);
+
 		int expo = 0;
 		if(base == 10) {
 			if(mpz_str.length() > 0 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
@@ -1904,6 +1931,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						}
 					}
 					mpz_str = mpz_str.substr(0, PRECISION + 1);
+					if(mpz_str[mpz_str.length() - 1] == po.decimalpoint()[0]) mpz_str.erase(mpz_str.end() - 1);
 					if(po.is_approximate) *po.is_approximate = true;
 				}
 			} else if(po.number_fraction_format == FRACTION_DECIMAL_EXACT) {
@@ -2010,7 +2038,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		str += ")";
 	} else {
-		if(base != BASE_ROMAN_NUMERALS && (isApproximate() || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
+		if(base != BASE_ROMAN_NUMERALS && (isApproximateType() || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 			cln::cl_I num, d = cln::denominator(cln::rational(cln::realpart(value))), remainder = 0, remainder2 = 0, exp = 0;
 			cln::cl_I_div_t div;
 			bool neg = cln::minusp(cln::realpart(value));
@@ -2092,7 +2120,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 				if(po.is_approximate) *po.is_approximate = true;
 			}
-			str = printCL_I(num, base, true, false);
+			str = printCL_I(num, base, true, false, po.lower_case_numbers);
 			
 			int expo = str.length() - l10 - 1;
 			if(str.empty() || base != 10) expo = 0;
@@ -2137,23 +2165,22 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals < decimals) {
 				if(po.number_fraction_format == FRACTION_DECIMAL) {
 					int i = (str.length() - decimals) + po.max_decimals;
-					if(str[i] >= '0' + (base / 2 + base % 2) - 1) {
+					int base_breakpoint = (base / 2 + base % 2);
+					int dp = -1;
+					if((base_breakpoint < 10 && str[i] >= '0' + base_breakpoint) || (base_breakpoint >= 10 && ((str[i] <= 'Z' && str[i] >= 'A' + base_breakpoint - 10) || str[i] >= 'a' + base_breakpoint - 10))) {
 						while(true) {
 							if(i - 1 >= 0 && str[i - 1] == po.decimalpoint()[0]) {
-								decimals++;
+								dp = i - 1;
 								i--;
 							}
 							if(i - 1 < 0) {
 								str.insert(str.begin(), '1');
-								str[1] = po.decimalpoint()[0];
-								str[2] = '0';
-								decimals++;
 								i++;
-								expo++;
+								if(dp >= 0) dp++;
 								break;
 							}
 							str[i - 1]++;
-							if((base <= 10 && str[i - 1] > '0' + (base - 1)) || (base > 10 && str[i - 1] > 'A' + (base - 10))) {
+							if((base <= 10 && str[i - 1] > '0' + (base - 1)) || (base > 10 && ((str[i - 1] <= 'Z' && str[i - 1] > 'A' + (base - 11)) || str[i - 1] > 'a' + (base - 11)))) {
 								str[i - 1] = '0';
 								i--;
 							} else {
@@ -2161,7 +2188,12 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 							}
 						}
 					}
-					decimals -= str.length() - i;
+					if(dp >= 0) {
+						i = dp; 
+						decimals = 0;
+					} else {
+						decimals -= str.length() - i;
+					}
 					str = str.substr(0, i);
 					if(po.is_approximate) *po.is_approximate = true;
 				}
