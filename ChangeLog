@@ -1,0 +1,6 @@
+	* Implemented if...then...else function
+	* "config" -> "definition"
+	* Added Execute button to insert function dialog
+	* Added some financial functions
+v 0.1
+	* First public release
