@@ -118,129 +118,66 @@ create_main_window (void)
 	accel_group = gtk_accel_group_new();
 
 
-	switch (CALCULATOR->angleMode())
-	{
-	case DEGREES:
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_degrees")), TRUE);
-		break;
-	case RADIANS:
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_radians")), TRUE);
-		break;
-	case GRADIANS:
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_gradians")), TRUE);
-		break;
-	default:
-		g_assert_not_reached ();
-		break;
+	switch (CALCULATOR->angleMode()) {
+		case DEGREES: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_degrees")), TRUE);
+			break;
+		}
+		case RADIANS: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_radians")), TRUE);
+			break;
+		}
+		case GRADIANS: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_gradians")), TRUE);
+			break;
+		}
 	}
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_rpn_mode")), CALCULATOR->inRPNMode());
 
-	switch (number_base)
-	{
-	case BASE_OCTAL:
-		gtk_check_menu_item_set_active(
-				GTK_CHECK_MENU_ITEM(
-					glade_xml_get_widget (main_glade, "menu_item_octal")
-				),
-				TRUE);
-		break;
-	case BASE_DECI:
-		gtk_check_menu_item_set_active(
-				GTK_CHECK_MENU_ITEM(
-					glade_xml_get_widget (main_glade, "menu_item_decimal")
-				),
-				TRUE);
-		break;
-	case BASE_HEX:
-		gtk_check_menu_item_set_active(
-				GTK_CHECK_MENU_ITEM(
-					glade_xml_get_widget (main_glade, "menu_item_hexadecimal")
-				),
-				TRUE);
-		break;
-	case BASE_BIN:
-		gtk_check_menu_item_set_active(
-				GTK_CHECK_MENU_ITEM(
-					glade_xml_get_widget (main_glade, "menu_item_binary")
-				),
-				TRUE);
-		break;
-	default:
-		g_assert_not_reached ();
-		break;
+	switch (number_base) {
+		case BASE_OCTAL: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_octal")), TRUE);
+			break;
+		}
+		case BASE_DECI: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_decimal")), TRUE);
+			break;
+		}
+		case BASE_HEX: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_hexadecimal")), TRUE);
+			break;
+		}
+		case BASE_BIN: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_binary")), TRUE);
+			break;
+		}
+	}
+	switch (display_mode) {
+		case MODE_NORMAL: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_normal")), TRUE);
+			break;
+		}
+		case MODE_SCIENTIFIC: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_scientific")), TRUE);
+			break;
+		}
+		case MODE_SCIENTIFIC_PURE: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_purely_scientific")), TRUE);
+			break;
+		}
+		case MODE_DECIMALS: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_non_scientific")), TRUE);
+			break;
+		}
 	}
 
-	switch (display_mode)
-	{
-	case MODE_NORMAL:
-		gtk_check_menu_item_set_active(
-				GTK_CHECK_MENU_ITEM(
-					glade_xml_get_widget (main_glade, "menu_item_display_normal")
-					),
-				TRUE);
-		break;
-	case MODE_SCIENTIFIC:
-		gtk_check_menu_item_set_active(
-				GTK_CHECK_MENU_ITEM(
-					glade_xml_get_widget (main_glade, "menu_item_display_scientific")
-					),
-				TRUE);
-		break;
-	case MODE_SCIENTIFIC_PURE:
-		gtk_check_menu_item_set_active(
-				GTK_CHECK_MENU_ITEM(
-					glade_xml_get_widget (main_glade, "menu_item_display_purely_scientific")
-					),
-				TRUE);
-		break;
-	case MODE_DECIMALS:
-		gtk_check_menu_item_set_active(
-				GTK_CHECK_MENU_ITEM(
-					glade_xml_get_widget (main_glade, "menu_item_display_non_scientific")
-					),
-				TRUE);
-		break;
-	default:
-		g_assert_not_reached ();
-		break;
-	}
-
-	gtk_check_menu_item_set_active(
-			GTK_CHECK_MENU_ITEM(
-				glade_xml_get_widget (main_glade, "menu_item_indicate_infinite_series")
-				),
-			indicate_infinite_series);
-
-	gtk_check_menu_item_set_active(
-			GTK_CHECK_MENU_ITEM(
-				glade_xml_get_widget (main_glade, "menu_item_display_prefixes")
-				),
-			use_prefixes);
-
-	gtk_check_menu_item_set_active(
-			GTK_CHECK_MENU_ITEM(
-				glade_xml_get_widget (main_glade, "menu_item_all_prefixes")
-				),
-			CALCULATOR->allPrefixesEnabled());
-
-	gtk_check_menu_item_set_active(
-			GTK_CHECK_MENU_ITEM(
-				glade_xml_get_widget (main_glade, "menu_item_denominator_prefixes")
-				),
-			CALCULATOR->denominatorPrefixEnabled());
-
-	gtk_check_menu_item_set_active(
-			GTK_CHECK_MENU_ITEM(
-				glade_xml_get_widget (main_glade, "menu_item_short_units")
-				),
-			use_short_units);
-
-	gtk_check_menu_item_set_active(
-			GTK_CHECK_MENU_ITEM(
-				glade_xml_get_widget (main_glade, "menu_item_multiple_roots")
-				),
-			CALCULATOR->multipleRootsEnabled());
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_indicate_infinite_series")), indicate_infinite_series);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_prefixes")), use_prefixes);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_all_prefixes")), CALCULATOR->allPrefixesEnabled());
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_denominator_prefixes")), CALCULATOR->denominatorPrefixEnabled());
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_short_units")), use_short_units);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_multiple_roots")), CALCULATOR->multipleRootsEnabled());
 			
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_enable_variables")), CALCULATOR->variablesEnabled());
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_enable_functions")), CALCULATOR->functionsEnabled());
@@ -248,48 +185,34 @@ create_main_window (void)
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_enable_unknown_variables")), CALCULATOR->unknownVariablesEnabled());
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_calculate_variables")), !CALCULATOR->donotCalculateVariables());
 
-	switch (fractional_mode)
-	{
-	case FRACTIONAL_MODE_DECIMAL:
-		gtk_check_menu_item_set_active(
-				GTK_CHECK_MENU_ITEM(
-					glade_xml_get_widget (main_glade, "menu_item_fraction_decimal")
-					),
-				TRUE);
-		break;
-	case FRACTIONAL_MODE_COMBINED:
-		gtk_check_menu_item_set_active(
-				GTK_CHECK_MENU_ITEM(
-					glade_xml_get_widget (main_glade, "menu_item_fraction_combined")
-					),
-				TRUE);
-		break;		
-	case FRACTIONAL_MODE_FRACTION:
-		gtk_check_menu_item_set_active(
-				GTK_CHECK_MENU_ITEM(
-					glade_xml_get_widget (main_glade, "menu_item_fraction_fraction")
-					),
-				TRUE);
-		break;		
-	default:
-		g_assert_not_reached ();
-		break;
+	switch (fractional_mode) {
+		case FRACTIONAL_MODE_DECIMAL: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_fraction_decimal")), TRUE);
+			break;
+		}
+		case FRACTIONAL_MODE_COMBINED: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_fraction_combined")), TRUE);
+			break;		
+		}
+		case FRACTIONAL_MODE_FRACTION: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_fraction_fraction")), TRUE);
+			break;		
+		}
 	}
 
-	switch (CALCULATOR->angleMode())
-	{
-	case RADIANS:
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_radians")), TRUE);
-		break;
-	case DEGREES:
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_degrees")), TRUE);
-		break;
-	case GRADIANS:
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_gradians")), TRUE);
-		break;
-	default:
-		g_assert_not_reached ();
-		break;
+	switch(CALCULATOR->angleMode()) {
+		case RADIANS: {
+			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_radians")), TRUE);
+			break;
+		}
+		case DEGREES: {
+			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_degrees")), TRUE);
+			break;
+		}
+		case GRADIANS: {
+			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_gradians")), TRUE);
+			break;
+		}
 	}
 
 #if GTK_MINOR_VERSION < 3
