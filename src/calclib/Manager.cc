@@ -586,7 +586,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 							if(!b) {
 								for(unsigned int i2 = 0; i2 < mngr->mngrs.size(); i2++) {
 									if(mngr->mngrs[i2]->isNumber()) {
-										if(mngr->mngrs[i2]->value() == -1) {
+										if(mngr->mngrs[i2]->number()->isMinusOne()) {
 											clear();
 										} else {
 											push_back(new Manager(1, 1));
@@ -624,9 +624,9 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 									Manager *mngr2 = new Manager(1, 1);
 									mngrs[i]->add(mngr2, op);
 									mngr2->unref();
-									if(mngrs[i]->value() == 0) {
+									if(mngrs[i]->number()->isZero()) {
 										clear();
-									} else if(mngrs[i]->isOne()) {
+									} else if(mngrs[i]->number()->isOne()) {
 										mngrs[i]->unref();
 										mngrs.erase(mngrs.begin());
 										if(mngrs.size() == 1) {
@@ -833,6 +833,90 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 		} else if(isOne()) {
 			set(mngr);
 			return true;
+		}
+		if(mngr->isPower() && !isNumber()) {
+			if(mngr->base()->isAddition() && mngr->exponent()->isNumber() && mngr->exponent()->number()->isMinusOne()) {
+				Manager *mngr2 = mngr->base();
+				//polynomial division
+				Manager div;
+				Manager ans;
+				Manager rem;
+				Manager *cur_mngr;
+				bool b2 = false;
+				unsigned int i = 0;
+				while(true) {
+					if(isAddition()) {
+						if(i < mngrs.size()) {
+							cur_mngr = mngrs[i];
+							i++;
+						} else {
+							break;
+						}
+					} else {
+						if(i > 0) {
+							break;
+						}
+						i++;
+						cur_mngr = this;
+					}
+					bool b = false;
+					if(rem.isAddition()) {
+						for(unsigned int i2 = 0; i2 < rem.countChilds(); i2++) {
+							div.set(cur_mngr);
+							div.add(rem.getChild(i2), OPERATION_SUBTRACT);
+							if(!div.isAddition()) {
+								cur_mngr->set(&div);
+								rem.getChild(i2)->clear();
+							}
+						}
+						rem.typeclean();
+					} else if(!rem.isZero()) {
+						div.set(cur_mngr);
+						div.add(&rem, OPERATION_SUBTRACT);
+						if(!div.isAddition()) {
+							cur_mngr->set(&div);
+							rem.clear();
+						}
+					}
+					for(unsigned int i2 = 0; i2 < mngr2->countChilds(); i2++) {
+						b = true;
+						if(!mngr2->getChild(i2)->isNumber()) {
+							div.set(cur_mngr);
+							div.add(mngr2->getChild(i2), OPERATION_DIVIDE);
+							if(div.isMultiplication()) {
+								for(unsigned int i3 = 0; i3 < div.countChilds(); i3++) {
+									if(div.getChild(i3)->isPower() && (!div.getChild(i3)->exponent()->isNumber() || !div.getChild(i3)->exponent()->number()->isPositive() || !div.getChild(i3)->exponent()->number()->isInteger())) {
+										b = false;
+										break;
+									}
+								}
+							} else if(div.isPower() && (!div.exponent()->isNumber() || !div.exponent()->number()->isPositive() || !div.exponent()->number()->isInteger())) {
+								b = false;
+							}
+							if(b) {
+								b2 = true;
+								ans.add(&div, OPERATION_ADD);
+								div.add(mngr2, OPERATION_MULTIPLY);
+								div.add(cur_mngr, OPERATION_SUBTRACT);
+								rem.add(&div, OPERATION_ADD);
+								break;
+							} else {
+								break;
+							}
+						}
+					}
+					if(!b) {
+						rem.add(cur_mngr, OPERATION_SUBTRACT);
+					}
+				}
+				if(b2) {
+					rem.add(mngr2, OPERATION_DIVIDE);
+					set(&ans);
+					add(&rem, OPERATION_SUBTRACT);
+					sort();
+					return true;
+				}
+			}
 		}
 		switch(c_type) {
 			case ADDITION_MANAGER: {
@@ -1210,11 +1294,11 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 			}
 			case NUMBER_MANAGER: {
 				if(isNull()) {
-					if(mngr->isNumber() && mngr->value() < 0) {
+					if(mngr->isNumber() && mngr->number()->isNegative()) {
 						if(!translate_) {
 							return false;
 						}
-						if(mngr->value() == -1) {
+						if(mngr->number()->isMinusOne()) {
 							transform(mngr, POWER_MANAGER, op);
 						} else {
 							Manager *mngr2 = new Manager(-1, 1);
@@ -1263,6 +1347,11 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 								}
 								delete img;
 							}
+						}
+					} else if(mngr->isFunction() && mngr->function() == CALCULATOR->getLnFunction() && mngr->countChilds() == 1 && mngr->getChild(0)->isNumber()) {
+						if(!mngr->getChild(0)->number()->isZero()) {
+							set(mngr->getChild(0));
+							break;
 						}
 					}
 				}
@@ -1386,7 +1475,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 //	printf("PRESORT [%s]\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str());	
 	sort();
 //	printf("POSTSORT [%s]\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str());	
-	CALCULATOR->checkFPExceptions();
+//	CALCULATOR->checkFPExceptions();
 
 	return true;
 }
@@ -2211,7 +2300,7 @@ bool Manager::convert(const Unit *u) {
 		Manager *mngr = u->convert(o_unit, NULL, exp, &b);
 		if(b) {
 			o_unit = (Unit*) u;
-			if(!exp->isNumber() || exp->value() != 1.0L) {
+			if(!exp->isNumber() || !exp->number()->isOne()) {
 				add(exp, OPERATION_RAISE);
 			}
 			add(mngr, OPERATION_MULTIPLY);
@@ -2270,7 +2359,7 @@ bool Manager::convert(const Unit *u) {
 				u->convert(mngrs[i]->unit(), mngr, exp, &b);
 				if(b) {
 					set(u);
-					if(!exp->isNumber() || exp->value() != 1.0L) {
+					if(!exp->isNumber() || !exp->number()->isOne()) {
 						add(exp, OPERATION_RAISE);
 					}
 					add(mngr, OPERATION_MULTIPLY);										
@@ -2326,7 +2415,7 @@ bool Manager::convert(const Unit *u) {
 					u->convert(mngrs[i]->unit(), mngr, exp, &b);
 					if(b) {
 						set(u);
-						if(!exp->isNumber() || exp->value() != 1.0L) {
+						if(!exp->isNumber() || !exp->number()->isOne()) {
 							add(exp, OPERATION_RAISE);
 						}
 						add(mngr, OPERATION_MULTIPLY);
@@ -2854,34 +2943,64 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 		}
 		case NUMBER_MANAGER: {
 
+			bool b_imag = true;
+			bool b_real = true;
+			if(number()->isApproximate() && number()->isComplex()) {
+				Number exp_prec(1, 1, CALCULATOR->getPrecision() + 2);
+				Number *nr_real = number()->realPart();
+				Number *nr_im = number()->imaginaryPart();
+				nr_real->setNegative(false);
+				nr_im->setNegative(false);
+				if(nr_real->isGreaterThan(nr_im)) {
+					nr_im->multiply(&exp_prec);
+					if(nr_real->isGreaterThan(nr_im)) {
+						b_imag = false;
+					}
+				} else {
+					nr_real->multiply(&exp_prec);
+					if(nr_im->isGreaterThan(nr_real)) {
+						b_real = false;
+					}
+				}
+				delete nr_real;
+				delete nr_im;
+			}
+
 			if(number()->isComplex()) {
 				Number *nr_im = number()->imaginaryPart();
-				if(number()->hasRealPart()) {
+				if(b_real && number()->hasRealPart()) {
 					Number *nr_real = number()->realPart();
 					Manager mngr(nr_real);
 					delete nr_real;
-					str += mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, in_composite, in_power, true, print_equals, in_multiplication, false, false, NULL, in_div, false, NULL, prefix1, prefix2);
-					str += " ";
-					if(nr_im->isNegative()) {
-						if(displayflags & DISPLAY_FORMAT_NONASCII) {
-							str += SIGN_MINUS;				
-						} else {
-							str += MINUS;
-						}						
-					} else  {
-						if(displayflags & DISPLAY_FORMAT_NONASCII) {
-							str += SIGN_PLUS;
-						} else {
-							str += PLUS;
+					str += mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, in_composite, in_power, true, print_equals, in_multiplication, false, false, NULL, in_div, false, NULL, prefix1, prefix2);	
+					if(b_imag) {
+						str += " ";
+						if(nr_im->isNegative()) {
+							if(displayflags & DISPLAY_FORMAT_NONASCII) {
+								str += SIGN_MINUS;				
+							} else {
+								str += MINUS;
+							}						
+						} else  {
+							if(displayflags & DISPLAY_FORMAT_NONASCII) {
+								str += SIGN_PLUS;
+							} else {
+								str += PLUS;
+							}
 						}
+						str += " ";
 					}
-					str += " ";
-					if(!toplevel && wrap) wrap_all = true;
+					if(!toplevel && wrap && b_imag) wrap_all = true;
 				}
-				Manager mngr(nr_im);
-				delete nr_im;
-				str += mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, in_composite, in_power, (draw_minus || toplevel) && !number()->hasRealPart(), print_equals, in_multiplication, true, false, NULL, in_div, true, NULL, prefix1, prefix2);
-				str += "i";
+				if(b_imag) {
+					Manager mngr(nr_im);
+					delete nr_im;
+					string str2 = mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, in_composite, in_power, !number()->hasRealPart(), print_equals, in_multiplication, false, false, NULL, in_div, true, NULL, prefix1, prefix2);
+					if(str2 == SIGN_MINUS "1") str += SIGN_MINUS;
+					else if(str2 == MINUS "1") str += MINUS;
+					else str += str2;
+					str += "i";
+				}
 				break;
 			}
 

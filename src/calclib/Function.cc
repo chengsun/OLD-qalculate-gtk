@@ -888,18 +888,51 @@ bool Argument::test(const Manager *value, int index, Function *f) const {
 Manager *Argument::evaluate(const string &str) const {
 	if(b_text) {
 		int pars = 0;
-		while((int) str.length() >= 2 + pars * 2 && str[pars] == LEFT_PARENTHESIS_CH && str[str.length() - 1 - pars] == RIGHT_PARENTHESIS_CH) {
-			pars++;
+		while(true) {
+			int pars2 = 1;
+			unsigned int i = pars;
+			if((int) str.length() >= 2 + pars * 2 && str[pars] == LEFT_PARENTHESIS_CH && str[str.length() - 1 - pars] == RIGHT_PARENTHESIS_CH) {
+				while(true) {
+					i = str.find_first_of(LEFT_PARENTHESIS RIGHT_PARENTHESIS, i + 1);
+					if(i >= str.length() - 1 - pars) {
+						break;
+					} else if(str[i] == LEFT_PARENTHESIS_CH) {
+						pars2++;
+					} else if(str[i] == RIGHT_PARENTHESIS_CH) {
+						pars2--;
+						if(pars2 == 0) {
+							break;
+						}
+					}
+				}
+				if(pars2 > 0) {
+					pars++;
+				}
+			} else {
+				break;
+			}
+			if(pars2 == 0) break;
 		}
 		if((int) str.length() >= 2 + pars * 2) {
-			if(str[pars] == ID_WRAP_LEFT_CH && str[str.length() - 1 - pars] == ID_WRAP_RIGHT_CH) {
+			if(str[pars] == ID_WRAP_LEFT_CH && str[str.length() - 1 - pars] == ID_WRAP_RIGHT_CH && str.find(ID_WRAP_RIGHT, pars + 1) == str.length() - 1 - pars) {
 				return CALCULATOR->calculate(str.substr(pars, str.length() - pars * 2));
 			}
 			if(str[pars] == '\\' && str[str.length() - 1 - pars] == '\\') {
 				return CALCULATOR->calculate(str.substr(1 + pars, str.length() - 2 - pars * 2));
 			}	
 			if((str[pars] == '\"' && str[str.length() - 1 - pars] == '\"') || (str[pars] == '\'' && str[str.length() - 1 - pars] == '\'')) {
-				return new Manager(str.substr(1 + pars, str.length() - 2 - pars * 2));
+				unsigned int i = pars + 1, cits = 0;
+				while(i < str.length() - 1 - pars) {
+					i = str.find(str[pars], i);
+					if(i >= str.length() - 1 - pars) {
+						break;
+					}
+					cits++;
+					i++;
+				}
+				if((cits / 2) % 2 == 0) {
+					return new Manager(str.substr(1 + pars, str.length() - 2 - pars * 2));
+				}
 			}
 		}
 		return new Manager(str.substr(pars, str.length() - pars * 2));

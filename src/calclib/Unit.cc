@@ -219,11 +219,21 @@ Manager *AliasUnit::baseValue(Manager *value_, Manager *exp_) const {
 Manager *AliasUnit::convertToBase(Manager *value_, Manager *exp_) const {
 	if(!exp_) exp_ = new Manager(1, 1);		
 	else exp_->ref();
-	exp_->add(exp_mngr, OPERATION_DIVIDE);	
-	convertToFirstBase(value_, exp_);	
-	exp_->add(exp_mngr, OPERATION_MULTIPLY);		
-	unit->convertToBase(value_, exp_);
-	exp_->add(exp_mngr, OPERATION_DIVIDE);		
+	Unit *u = (Unit*) baseUnit();
+	AliasUnit *u2;
+	while(true) {
+		u2 = (AliasUnit*) this;
+		while(true) {
+			if(u2->firstBaseUnit() == u) {
+				break;
+			} else {
+				u2 = (AliasUnit*) u2->firstBaseUnit();
+			}
+		}
+		u = u2;
+		u2->convertToFirstBase(value_, exp_);
+		if(u == this) break;
+	}	
 	exp_->unref();	
 	return value_;
 }
@@ -236,6 +246,7 @@ Manager *AliasUnit::convertToFirstBase(Manager *value_, Manager *exp_) const {
 	else exp_->ref();
 	bool was_rpn = CALCULATOR->inRPNMode();
 	CALCULATOR->setRPNMode(false);
+	exp_->add(exp_mngr, OPERATION_DIVIDE);		
 	if(rvalue.empty()) {
 		if(value.find("\\x") != string::npos) {
 			string stmp = value;
@@ -455,7 +466,7 @@ Manager *AliasUnit_Composite::convertToFirstBase(Manager *value_, Manager *exp_)
 	if(!value_) value_ = new Manager(1, 1);
 	if(!exp_) exp_ = new Manager(1, 1);		
 	else exp_->ref();
-	exp_->add(exp_mngr, OPERATION_MULTIPLY);
+//	exp_->add(exp_mngr, OPERATION_MULTIPLY);
 	Manager *mngr = new Manager(1, 1);
 //	mngr->add(exp_, RAISE);
 	value_->add(mngr, OPERATION_DIVIDE);

@@ -1534,6 +1534,7 @@ void update_umenus() {
 	recreate_recent_units();
 	create_umenu2();
 	update_units_tree();
+	update_completion();
 }
 
 /*
@@ -2123,7 +2124,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				draw_background(pixmap, w, h);			
 				gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 0, 0, layout);
 				g_object_unref(layout);
-				if(!toplevel && wrap) wrap_all = true;
+				if(!toplevel && wrap && m->number()->hasRealPart()) wrap_all = true;
 				break;
 			}
 			bool minus, exp_minus;

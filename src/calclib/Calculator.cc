@@ -781,6 +781,8 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new TruncFunction());
 	addFunction(new RoundFunction());
 	addFunction(new FracFunction());
+	addFunction(new ImaginaryPartFunction());
+	addFunction(new RealPartFunction());
 	addFunction(new IntFunction());	
 	addFunction(new ModFunction());
 	addFunction(new RemFunction());

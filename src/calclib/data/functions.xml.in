@@ -1,21 +1,32 @@
 <?xml version="1.0"?>
 <QALCULATE version="0.3">
   <category>
-    <_title>Algebra</_title>
-    <builtin_function name="sum">
-      <_title>Sum</_title>
+    <_title>Analysis</_title>
+    <function name="arg" active="false">
+      <_title>Complex Argument</_title>
+      <expression>atan(im(\x)/re(\x))</expression>
+      <argument type="free" index="1">
+        <_title>Complex Number</_title>
+      </argument>
+    </function>
+    <builtin_function name="re">
+      <_title>Real Part</_title>
       <argument index="1">
-        <_title>Lower limit (i)</_title>
-      </argument>
-      <argument index="2">
-        <_title>Upper limit (n)</_title>
-      </argument>
-      <argument index="3">
-        <_title>Term expression</_title>
+        <_title>Complex Number</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="im">
+      <_title>Imaginary Part</_title>
+      <argument index="1">
+        <_title>Complex Number</_title>
+      </argument>
+    </builtin_function>
+  </category>
+  <category>
+    <_title>Algebra</_title>
     <builtin_function name="product">
       <_title>Product</_title>
+      <_description>Corresponds to the product symbol. Multiplies factors for each i (represented by \i in the expression) ranging from the lower to the upper limit. Use \j for the second index in a nested product.</_description>
       <argument index="1">
         <_title>Lower limit (i)</_title>
       </argument>
@@ -24,6 +35,19 @@
       </argument>
       <argument index="3">
         <_title>Factor expression</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="sum">
+      <_title>Sum</_title>
+      <_description>Corresponds to the sum symbol. Adds terms for each i (represented by \i in the expression) ranging from the lower to the upper limit. Use \j for the second index in a nested sum.</_description>
+      <argument index="1">
+        <_title>Lower limit (i)</_title>
+      </argument>
+      <argument index="2">
+        <_title>Upper limit (n)</_title>
+      </argument>
+      <argument index="3">
+        <_title>Term expression</_title>
       </argument>
     </builtin_function>
   </category>

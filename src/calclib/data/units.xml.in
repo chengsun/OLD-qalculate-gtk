@@ -734,16 +734,6 @@
       </base>
       <_title>Hour</_title>
     </unit>
-    <unit type="alias" name="d" active="false">
-      <_singular>day</_singular>
-      <_plural>days</_plural>
-      <base>
-        <unit>h</unit>
-        <relation>24</relation>
-        <exponent>1</exponent>
-      </base>
-      <_title>Day</_title>
-    </unit>
     <unit type="alias" name="year">
       <_singular>year</_singular>
       <_plural>years</_plural>
@@ -1350,6 +1340,265 @@
   </category>
   <category>
     <_title>Volume</_title>
+    <category>
+      <_title>Cooking</_title>
+      <unit type="alias" name="teaspoon">
+        <_singular>teaspoon</_singular>
+        <_plural>teaspoons</_plural>
+        <base>
+          <unit>l</unit>
+          <relation>0.005</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Teaspoon</_title>
+      </unit>
+      <unit type="alias" name="dessertspoon">
+        <_singular>dessertspoon</_singular>
+        <_plural>dessertspoons</_plural>
+        <base>
+          <unit>teaspoon</unit>
+          <relation>2</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Dessertspoon</_title>
+      </unit>
+      <unit type="alias" name="tablespoon">
+        <_singular>tablespoon</_singular>
+        <_plural>tablespoons</_plural>
+        <base>
+          <unit>teaspoon</unit>
+          <relation>3</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Tablespoon</_title>
+      </unit>
+      <unit type="alias" name="cup">
+        <_singular>cup</_singular>
+        <_plural>cups</_plural>
+        <base>
+          <unit>l</unit>
+          <relation>0.250</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Cup</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Imperial Capacity</_title>
+      <unit type="alias" name="UK_bu">
+        <_singular>imperial_bushel</_singular>
+        <_plural>imperial_bushels</_plural>
+        <base>
+          <unit>UK_gal</unit>
+          <relation>8</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Imperial Bushel</_title>
+      </unit>
+      <unit type="alias" name="UK_fl_oz">
+        <_singular>imperial_fluid_ounce</_singular>
+        <_plural>imperial_fluid_ounces</_plural>
+        <base>
+          <unit>l</unit>
+          <relation>0.0284130625</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Imperial Fluid Ounce</_title>
+      </unit>
+      <unit type="alias" name="imperial_gill">
+        <_singular>imperial_gill</_singular>
+        <_plural>imperial_gills</_plural>
+        <base>
+          <unit>UK_fl_oz</unit>
+          <relation>5</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Imperial Gill</_title>
+      </unit>
+      <unit type="alias" name="UK_pt">
+        <_singular>imperial_pint</_singular>
+        <_plural>imperial_pints</_plural>
+        <base>
+          <unit>imperial_gill</unit>
+          <relation>4</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Imperial Pint</_title>
+      </unit>
+      <unit type="alias" name="UK_qt">
+        <_singular>imperial_quart</_singular>
+        <_plural>imperial_quarts</_plural>
+        <base>
+          <unit>UK_pt</unit>
+          <relation>2</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Imperial Quart</_title>
+      </unit>
+      <unit type="alias" name="UK_gal">
+        <_singular>imperial_gallon</_singular>
+        <_plural>imperial_gallons</_plural>
+        <base>
+          <unit>UK_qt</unit>
+          <relation>4</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Imperial Gallon</_title>
+      </unit>
+      <unit type="alias" name="imperial_minim">
+        <_singular>imperial_minim</_singular>
+        <_plural>imperial_minims</_plural>
+        <base>
+          <unit>UK_fl_oz</unit>
+          <relation>1/480</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Imperial Minim</_title>
+      </unit>
+      <unit type="alias" name="imperial_fluid_scuple">
+        <_singular>imperial_fluid_scuple</_singular>
+        <_plural>imperial_fluid_scuples</_plural>
+        <base>
+          <unit>imperial_minim</unit>
+          <relation>20</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Imperial Fluid Scuple</_title>
+      </unit>
+      <unit type="alias" name="UK_fl_dr">
+        <_singular>imperial_fluid_drachm</_singular>
+        <_plural>imperial_fluid_drachms</_plural>
+        <base>
+          <unit>imperial_fluid_scuple</unit>
+          <relation>3</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Imperial Fluid Drachm</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>U.S. Capacity</_title>
+      <unit type="alias" name="gal">
+        <_singular>gallon</_singular>
+        <_plural>gallons</_plural>
+        <base>
+          <unit>liq_qt</unit>
+          <relation>4</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>U.S. Gallon</_title>
+      </unit>
+      <unit type="alias" name="fl_oz">
+        <_singular>fluid_ounce</_singular>
+        <_plural>fluid_ounces</_plural>
+        <base>
+          <unit>in</unit>
+          <relation>231/128</relation>
+          <exponent>3</exponent>
+        </base>
+        <_title>U.S. Fluid Ounce</_title>
+      </unit>
+      <unit type="alias" name="gi">
+        <_singular>gill</_singular>
+        <_plural>gills</_plural>
+        <base>
+          <unit>fl_oz</unit>
+          <relation>4</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>U.S. Gill</_title>
+      </unit>
+      <unit type="alias" name="liq_pt">
+        <_singular>luquid_pint</_singular>
+        <_plural>liquid_pints</_plural>
+        <base>
+          <unit>gi</unit>
+          <relation>4</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>U.S. Liquid Pints</_title>
+      </unit>
+      <unit type="alias" name="liq_qt">
+        <_singular>liquid_quart</_singular>
+        <_plural>liquid_quarts</_plural>
+        <base>
+          <unit>liq_pt</unit>
+          <relation>2</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>U.S. Liquid Quarts</_title>
+      </unit>
+      <unit type="alias" name="minim">
+        <_singular>minim</_singular>
+        <_plural>minims</_plural>
+        <base>
+          <unit>fl_oz</unit>
+          <relation>1/480</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>U.S. Minim</_title>
+      </unit>
+      <unit type="alias" name="fl_dr">
+        <_singular>fluid_drachm</_singular>
+        <_plural>fluid_drachms</_plural>
+        <base>
+          <unit>minim</unit>
+          <relation>60</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>U.S. Fluid Drachm</_title>
+      </unit>
+      <unit type="alias" name="bbl">
+        <_singular>barrell</_singular>
+        <_plural>barrells</_plural>
+        <base>
+          <unit>gal</unit>
+          <relation>42</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>U.S. Barrell (oil)</_title>
+      </unit>
+      <unit type="alias" name="dry_pt">
+        <_singular>dry_pint</_singular>
+        <_plural>dry_pints</_plural>
+        <base>
+          <unit>in</unit>
+          <relation>33.6003125</relation>
+          <exponent>3</exponent>
+        </base>
+        <_title>U.S. Dry Pint</_title>
+      </unit>
+      <unit type="alias" name="dry_qt">
+        <_singular>dry_quart</_singular>
+        <_plural>dry_quarts</_plural>
+        <base>
+          <unit>dry_pt</unit>
+          <relation>2</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>U.S. Dry Quart</_title>
+      </unit>
+      <unit type="alias" name="pk">
+        <_singular>peck</_singular>
+        <_plural>pecks</_plural>
+        <base>
+          <unit>dry_qt</unit>
+          <relation>8</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>U.S. Peck</_title>
+      </unit>
+      <unit type="alias" name="bu">
+        <_singular>bushel</_singular>
+        <_plural>bushels</_plural>
+        <base>
+          <unit>pk</unit>
+          <relation>4</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>U.S. Bushel</_title>
+      </unit>
+    </category>
     <unit type="composite" name="cum">
       <part>
         <unit>m</unit>
@@ -1377,76 +1626,6 @@
         <exponent>3</exponent>
       </base>
       <_title>Litre</_title>
-    </unit>
-    <unit type="alias" name="fl_oz" active="false">
-      <_singular>fluid_ounce</_singular>
-      <_plural>fluid_ounces</_plural>
-      <base>
-        <unit>m</unit>
-        <relation>0.0000284130625</relation>
-        <exponent>3</exponent>
-      </base>
-      <_title>Fluid Ounce</_title>
-    </unit>
-    <unit type="alias" name="gill" active="false">
-      <_singular>gill</_singular>
-      <_plural>gills</_plural>
-      <base>
-        <unit>fl_oz</unit>
-        <relation>5</relation>
-        <exponent>1</exponent>
-      </base>
-      <_title>Gill</_title>
-    </unit>
-    <unit type="alias" name="pt" active="false">
-      <_singular>pint</_singular>
-      <_plural>pints</_plural>
-      <base>
-        <unit>gill</unit>
-        <relation>4</relation>
-        <exponent>1</exponent>
-      </base>
-      <_title>Pint</_title>
-    </unit>
-    <unit type="alias" name="qt" active="false">
-      <_singular>quart</_singular>
-      <_plural>quarts</_plural>
-      <base>
-        <unit>pt</unit>
-        <relation>2</relation>
-        <exponent>1</exponent>
-      </base>
-      <_title>Quart</_title>
-    </unit>
-    <unit type="alias" name="gal" active="false">
-      <_singular>gallon</_singular>
-      <_plural>gallons</_plural>
-      <base>
-        <unit>qt</unit>
-        <relation>4</relation>
-        <exponent>1</exponent>
-      </base>
-      <_title>Gallon</_title>
-    </unit>
-    <unit type="alias" name="pk" active="false">
-      <_singular>peck</_singular>
-      <_plural>pecks</_plural>
-      <base>
-        <unit>gal</unit>
-        <relation>2</relation>
-        <exponent>1</exponent>
-      </base>
-      <_title>Peck</_title>
-    </unit>
-    <unit type="alias" name="bu" active="false">
-      <_singular>bushel</_singular>
-      <_plural>bushels</_plural>
-      <base>
-        <unit>gal</unit>
-        <relation>8</relation>
-        <exponent>1</exponent>
-      </base>
-      <_title>Bushel</_title>
     </unit>
     <unit type="composite" name="cuin">
       <part>

@@ -208,8 +208,32 @@ void SumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 
 	string action = vargs[2]->text();
 
-	gsub("\\i", "\"\\i\"", action);		
 	Manager mngr_i("\\i");
+	Manager mngr_j("\\j");
+	Manager mngr_k("\\k");
+
+	int i_id = CALCULATOR->addId(&mngr_i, true);
+	string str = LEFT_PARENTHESIS;
+	str += ID_WRAP_LEFT;
+	str += i2s(i_id);
+	str += ID_WRAP_RIGHT;
+	str += RIGHT_PARENTHESIS;
+	gsub("\\i", str, action);		
+	int j_id = CALCULATOR->addId(&mngr_j, true);
+	str = LEFT_PARENTHESIS;
+	str += ID_WRAP_LEFT;
+	str += i2s(j_id);
+	str += ID_WRAP_RIGHT;
+	str += RIGHT_PARENTHESIS;
+	gsub("\\j", str, action);
+	int k_id = CALCULATOR->addId(&mngr_k, true);
+	str = LEFT_PARENTHESIS;
+	str += ID_WRAP_LEFT;
+	str += i2s(k_id);
+	str += ID_WRAP_RIGHT;
+	str += RIGHT_PARENTHESIS;
+	gsub("\\k", str, action);
+	
 	
 	CALCULATOR->beginTemporaryStopErrors();
 	Manager *action_mngr = CALCULATOR->calculate(action);
@@ -217,25 +241,22 @@ void SumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 
 	Manager i_mngr(vargs[0]->number());
 
-	i_mngr.protect();
-	int i_id = CALCULATOR->addId(&i_mngr, true);
-	string str = LEFT_PARENTHESIS;
-	str += ID_WRAP_LEFT;
-	str += i2s(i_id);
-	str += ID_WRAP_RIGHT;
-	str += RIGHT_PARENTHESIS;
 	Manager mngr_calc;
 	mngr->clear();
 	while(i_mngr.number()->isLessThanOrEqualTo(vargs[1]->number())) {	
 		mngr_calc.set(action_mngr);
 		mngr_calc.replace(&mngr_i, &i_mngr);
+		mngr_calc.replace(&mngr_j, &mngr_i);
+		mngr_calc.replace(&mngr_k, &mngr_j);
 		mngr_calc.recalculateFunctions();
 		mngr_calc.clean();
 		mngr->add(&mngr_calc, OPERATION_ADD);		
 		i_mngr.number()->add(1, 1);
 	}
-	CALCULATOR->delId(i_id, true);
 	action_mngr->unref();
+	CALCULATOR->delId(i_id, true);
+	CALCULATOR->delId(j_id, true);
+	CALCULATOR->delId(k_id, true);
 }
 ProductFunction::ProductFunction() : Function("Algebra", "product", 3, "Product") {
 	setArgumentDefinition(1, new IntegerArgument());
@@ -247,8 +268,32 @@ void ProductFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 
 	string action = vargs[2]->text();
 
-	gsub("\\i", "\"\\i\"", action);		
 	Manager mngr_i("\\i");
+	Manager mngr_j("\\j");
+	Manager mngr_k("\\k");
+
+	int i_id = CALCULATOR->addId(&mngr_i, true);
+	string str = LEFT_PARENTHESIS;
+	str += ID_WRAP_LEFT;
+	str += i2s(i_id);
+	str += ID_WRAP_RIGHT;
+	str += RIGHT_PARENTHESIS;
+	gsub("\\i", str, action);		
+	int j_id = CALCULATOR->addId(&mngr_j, true);
+	str = LEFT_PARENTHESIS;
+	str += ID_WRAP_LEFT;
+	str += i2s(j_id);
+	str += ID_WRAP_RIGHT;
+	str += RIGHT_PARENTHESIS;
+	gsub("\\j", str, action);
+	int k_id = CALCULATOR->addId(&mngr_k, true);
+	str = LEFT_PARENTHESIS;
+	str += ID_WRAP_LEFT;
+	str += i2s(k_id);
+	str += ID_WRAP_RIGHT;
+	str += RIGHT_PARENTHESIS;
+	gsub("\\k", str, action);
+	
 	
 	CALCULATOR->beginTemporaryStopErrors();
 	Manager *action_mngr = CALCULATOR->calculate(action);
@@ -256,31 +301,28 @@ void ProductFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 
 	Manager i_mngr(vargs[0]->number());
 
-	i_mngr.protect();
-	int i_id = CALCULATOR->addId(&i_mngr, true);
-	string str = LEFT_PARENTHESIS;
-	str += ID_WRAP_LEFT;
-	str += i2s(i_id);
-	str += ID_WRAP_RIGHT;
-	str += RIGHT_PARENTHESIS;
 	Manager mngr_calc;
 	mngr->clear();
 	bool started = false;
 	while(i_mngr.number()->isLessThanOrEqualTo(vargs[1]->number())) {	
 		mngr_calc.set(action_mngr);
 		mngr_calc.replace(&mngr_i, &i_mngr);
+		mngr_calc.replace(&mngr_j, &mngr_i);
+		mngr_calc.replace(&mngr_k, &mngr_j);
 		mngr_calc.recalculateFunctions();
 		mngr_calc.clean();
-		if(!started) {
-			mngr->add(&mngr_calc, OPERATION_ADD);
-		} else {
+		if(started) {
 			mngr->add(&mngr_calc, OPERATION_MULTIPLY);
+		} else {
+			mngr->add(&mngr_calc, OPERATION_ADD);
+			started = true;
 		}
 		i_mngr.number()->add(1, 1);
-		started = true;
 	}
-	CALCULATOR->delId(i_id, true);
 	action_mngr->unref();
+	CALCULATOR->delId(i_id, true);
+	CALCULATOR->delId(j_id, true);
+	CALCULATOR->delId(k_id, true);
 }
 
 ProcessFunction::ProcessFunction() : Function("Utilities", "process", 1, "Process components", "", -1) {
@@ -1037,6 +1079,24 @@ void FracFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->number()->frac();
 	mngr->setPrecise(!mngr->number()->isApproximate());
 }
+ImaginaryPartFunction::ImaginaryPartFunction() : Function("Analysis", "im", 1, "Imaginary Part") {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+}
+void ImaginaryPartFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	Number *imag = vargs[0]->number()->imaginaryPart();
+	mngr->set(imag);
+	delete imag;
+	mngr->setPrecise(!mngr->number()->isApproximate());
+}
+RealPartFunction::RealPartFunction() : Function("Analysis", "re", 1, "Real Part") {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+}
+void RealPartFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	Number *real = vargs[0]->number()->realPart();
+	mngr->set(real);
+	delete real;
+	mngr->setPrecise(!mngr->number()->isApproximate());
+}
 IntFunction::IntFunction() : Function("Arithmetics", "int", 1, "Extract integer part") {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
@@ -1230,9 +1290,26 @@ void LogFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 	if(vargs[0]->isVariable() && vargs[0]->variable() == CALCULATOR->getE()) {
 		mngr->set(1, 1);
-	} else {
-		mngr->set(this, vargs[0], NULL);	
-	}		
+		return;
+	} else if(vargs[0]->isPower() && vargs[0]->base()->isVariable() && vargs[0]->base()->variable() == CALCULATOR->getE() && vargs[0]->exponent()->isNumber()) {
+		if(!vargs[0]->exponent()->number()->isComplex()) {
+			mngr->set(vargs[0]->exponent());
+			return;
+		} else {
+			Number pi_nr(CALCULATOR->getPI()->get()->number());
+			Number *img_part = vargs[0]->exponent()->number()->imaginaryPart();
+			if(img_part->isLessThanOrEqualTo(&pi_nr)) {
+				pi_nr.negate();
+				if(img_part->isGreaterThan(&pi_nr)) {
+					mngr->set(vargs[0]->exponent());
+					delete img_part;
+					return;
+				}
+			}
+			delete img_part;
+		}
+	}
+	mngr->set(this, vargs[0], NULL);			
 }
 LognFunction::LognFunction() : Function("Exponents and Logarithms", "log", 2, "Base-N Logarithm") {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
