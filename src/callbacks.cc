@@ -776,7 +776,7 @@ void create_umenu() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT("Units", glade_xml_get_widget (glade_xml, "menu_expression"), 6)
+	SUBMENU_ITEM_INSERT("Units", glade_xml_get_widget (glade_xml, "menu_expression"), 5)
 	u_menu = item;
 	MENU_TEAROFF
 	sub2 = sub;
@@ -819,7 +819,7 @@ void create_umenu2() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT("Convert to unit", glade_xml_get_widget (glade_xml, "menu_result"), 3)
+	SUBMENU_ITEM_INSERT("Convert to unit", glade_xml_get_widget (glade_xml, "menu_result"), 2)
 	u_menu2 = item;
 	MENU_TEAROFF
 	sub2 = sub;
@@ -867,7 +867,7 @@ void create_vmenu() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT("Variables", glade_xml_get_widget (glade_xml, "menu_expression"), 4)
+	SUBMENU_ITEM_INSERT("Variables", glade_xml_get_widget (glade_xml, "menu_expression"), 3)
 	v_menu = item;
 	MENU_TEAROFF
 	sub2 = sub;
@@ -906,7 +906,7 @@ void create_pmenu() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT("Prefixes", glade_xml_get_widget (glade_xml, "menu_expression"), 5)
+	SUBMENU_ITEM_INSERT("Prefixes", glade_xml_get_widget (glade_xml, "menu_expression"), 4)
 	MENU_TEAROFF
 	vector<l_type::iterator> its;
 	bool no_larger = false;
@@ -947,7 +947,7 @@ void create_fmenu() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT("Functions", glade_xml_get_widget (glade_xml, "menu_expression"), 3)
+	SUBMENU_ITEM_INSERT("Functions", glade_xml_get_widget (glade_xml, "menu_expression"), 2)
 	f_menu = item;
 	MENU_TEAROFF
 	sub2 = sub;
@@ -1765,6 +1765,7 @@ void convert_to_unit(GtkMenuItem *w, gpointer user_data)
 	}
 	//result is stored in Manager *mngr
 	mngr->convert(u);
+	mngr->finalize();
 	setResult(gtk_label_get_text(GTK_LABEL(result)));
 	gtk_widget_grab_focus(expression);
 }
@@ -1794,6 +1795,7 @@ void convert_to_custom_unit(GtkMenuItem *w, gpointer user_data)
 	gtk_widget_show_all(dialog);
 	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
 		mngr->convert(gtk_entry_get_text(GTK_ENTRY(entry1)));
+		mngr->finalize();
 		setResult(gtk_label_get_text(GTK_LABEL(result)));
 	}
 	gtk_widget_destroy(dialog);
@@ -2562,6 +2564,7 @@ void on_bConvertToUnit_clicked(GtkButton *button, gpointer user_data) {
 	Unit *u = get_selected_unit();
 	if(u) {
 		mngr->convert(u);
+		mngr->finalize();
 		setResult(gtk_label_get_text(GTK_LABEL(result)));
 		gtk_widget_grab_focus(expression);
 	}
