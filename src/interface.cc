@@ -618,7 +618,6 @@ GtkWidget*
 create_wVariables (void) {
 
 	GtkWidget *dialog_action_area1_v;
-	GtkWidget *vbox1_v;
 	GtkWidget *hbox1_v;
 	GtkWidget *scrolledwindow1_v;
 	GtkWidget *scrolledwindow2_v;
@@ -633,41 +632,13 @@ create_wVariables (void) {
 	GtkWidget *label2_v;
 	GtkWidget *dialog_vbox1_v;
 
-	wVariables = gtk_dialog_new ();
-	gtk_window_set_title (GTK_WINDOW (wVariables), _("Variables"));
-
+	wVariables = glade_xml_get_widget (glade_xml, "variables_dialog");
 	dialog_vbox1_v = GTK_DIALOG (wVariables)->vbox;
-	gtk_widget_show (dialog_vbox1_v);
-
-	vbox1_v = gtk_vbox_new (FALSE, 5);
-	gtk_widget_show (vbox1_v);
-	gtk_box_pack_start (GTK_BOX (dialog_vbox1_v), vbox1_v, TRUE, TRUE, 0);
-	gtk_container_set_border_width (GTK_CONTAINER (vbox1_v), 5);
-
-	hbox1_v = gtk_hbox_new (FALSE, 5);
-	gtk_widget_show (hbox1_v);
-	gtk_box_pack_start (GTK_BOX (vbox1_v), hbox1_v, TRUE, TRUE, 0);
-
-	scrolledwindow1_v = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_set_size_request (scrolledwindow1_v, 160, 1);
-	gtk_widget_show (scrolledwindow1_v);
-	gtk_box_pack_start (GTK_BOX (hbox1_v), scrolledwindow1_v, FALSE, TRUE, 0);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow1_v), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow1_v), GTK_SHADOW_IN);
-
-	tVariableCategories = gtk_tree_view_new ();
-	gtk_widget_show (tVariableCategories);
-	gtk_container_add (GTK_CONTAINER (scrolledwindow1_v), tVariableCategories);
-
-	scrolledwindow2_v = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_show (scrolledwindow2_v);
-	gtk_box_pack_start (GTK_BOX (hbox1_v), scrolledwindow2_v, TRUE, TRUE, 0);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow2_v), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow2_v), GTK_SHADOW_IN);
-
-	tVariables = gtk_tree_view_new ();
-	gtk_widget_show (tVariables);
-	gtk_container_add (GTK_CONTAINER (scrolledwindow2_v), tVariables);
+	hbox1_v = glade_xml_get_widget (glade_xml, "variables_hbox1");
+	scrolledwindow1_v = glade_xml_get_widget (glade_xml, "variables_scrolledwindow1");
+	tVariableCategories = glade_xml_get_widget (glade_xml, "variables_tree_view1");
+	scrolledwindow2_v = glade_xml_get_widget (glade_xml, "variables_scrolledwindow2");
+	tVariables = glade_xml_get_widget (glade_xml, "variables_tree_view2");
 
 	tVariables_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tVariables), GTK_TREE_MODEL(tVariables_store));
@@ -700,74 +671,20 @@ create_wVariables (void) {
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(tVariableCategories_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(tVariableCategories_store), 0, GTK_SORT_ASCENDING);
 
-	vbuttonbox1_v = gtk_vbutton_box_new ();
-	gtk_widget_show (vbuttonbox1_v);
-	gtk_box_pack_start (GTK_BOX (hbox1_v), vbuttonbox1_v, FALSE, TRUE, 0);
-	gtk_button_box_set_layout (GTK_BUTTON_BOX (vbuttonbox1_v), GTK_BUTTONBOX_START);
-	gtk_box_set_spacing (GTK_BOX (vbuttonbox1_v), 5);
-
-	bNewVariable = gtk_button_new_from_stock ("gtk-new");
-	gtk_widget_show (bNewVariable);
-	gtk_container_add (GTK_CONTAINER (vbuttonbox1_v), bNewVariable);
-	GTK_WIDGET_SET_FLAGS (bNewVariable, GTK_CAN_DEFAULT);
-
-	bEditVariable = gtk_button_new ();
-	gtk_widget_show (bEditVariable);
-	gtk_container_add (GTK_CONTAINER (vbuttonbox1_v), bEditVariable);
-	GTK_WIDGET_SET_FLAGS (bEditVariable, GTK_CAN_DEFAULT);
-
-	alignment2_v = gtk_alignment_new (0.5, 0.5, 0, 0);
-	gtk_widget_show (alignment2_v);
-	gtk_container_add (GTK_CONTAINER (bEditVariable), alignment2_v);
-
-	hbox3_v = gtk_hbox_new (FALSE, 2);
-	gtk_widget_show (hbox3_v);
-	gtk_container_add (GTK_CONTAINER (alignment2_v), hbox3_v);
-
-	image2_v = gtk_image_new_from_stock ("gtk-preferences", GTK_ICON_SIZE_BUTTON);
-	gtk_widget_show (image2_v);
-	gtk_box_pack_start (GTK_BOX (hbox3_v), image2_v, FALSE, FALSE, 0);
-
-	label3_v = gtk_label_new_with_mnemonic (_("_Edit"));
-	gtk_widget_show (label3_v);
-	gtk_box_pack_start (GTK_BOX (hbox3_v), label3_v, FALSE, FALSE, 0);
-	gtk_label_set_justify (GTK_LABEL (label3_v), GTK_JUSTIFY_LEFT);
-
-	bInsertVariable = gtk_button_new ();
-	gtk_widget_show (bInsertVariable);
-	gtk_container_add (GTK_CONTAINER (vbuttonbox1_v), bInsertVariable);
-	GTK_WIDGET_SET_FLAGS (bInsertVariable, GTK_CAN_DEFAULT);
-
-	alignment1_v = gtk_alignment_new (0.5, 0.5, 0, 0);
-	gtk_widget_show (alignment1_v);
-	gtk_container_add (GTK_CONTAINER (bInsertVariable), alignment1_v);
-
-	hbox2_v = gtk_hbox_new (FALSE, 2);
-	gtk_widget_show (hbox2_v);
-	gtk_container_add (GTK_CONTAINER (alignment1_v), hbox2_v);
-
-	image1_v = gtk_image_new_from_stock ("gtk-go-forward", GTK_ICON_SIZE_BUTTON);
-	gtk_widget_show (image1_v);
-	gtk_box_pack_start (GTK_BOX (hbox2_v), image1_v, FALSE, FALSE, 0);
-
-	label2_v = gtk_label_new_with_mnemonic (_("_Insert"));
-	gtk_widget_show (label2_v);
-	gtk_box_pack_start (GTK_BOX (hbox2_v), label2_v, FALSE, FALSE, 0);
-	gtk_label_set_justify (GTK_LABEL (label2_v), GTK_JUSTIFY_LEFT);
-
-	bDeleteVariable = gtk_button_new_from_stock ("gtk-delete");
-	gtk_widget_show (bDeleteVariable);
-	gtk_container_add (GTK_CONTAINER (vbuttonbox1_v), bDeleteVariable);
-	GTK_WIDGET_SET_FLAGS (bDeleteVariable, GTK_CAN_DEFAULT);
-
-	dialog_action_area1_v = GTK_DIALOG (wVariables)->action_area;
-	gtk_widget_show (dialog_action_area1_v);
-	gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area1_v), GTK_BUTTONBOX_END);
-
-	bCloseVariables = gtk_button_new_from_stock ("gtk-close");
-	gtk_widget_show (bCloseVariables);
-	gtk_dialog_add_action_widget (GTK_DIALOG (wVariables), bCloseVariables, GTK_RESPONSE_CLOSE);
-	GTK_WIDGET_SET_FLAGS (bCloseVariables, GTK_CAN_DEFAULT);
+	vbuttonbox1_v	= glade_xml_get_widget (glade_xml, "variables_vbuttonbox1");
+	bNewVariable	= glade_xml_get_widget (glade_xml, "variables_button_new");
+	bEditVariable	= glade_xml_get_widget (glade_xml, "variables_button_edit");
+	alignment2_v	= glade_xml_get_widget (glade_xml, "variables_button_edit_alignment");
+	hbox3_v		= glade_xml_get_widget (glade_xml, "variables_button_edit_hbox");
+	image2_v	= glade_xml_get_widget (glade_xml, "variables_button_edit_image");
+	label3_v	= glade_xml_get_widget (glade_xml, "variables_button_edit_label");
+	bInsertVariable = glade_xml_get_widget (glade_xml, "variables_button_insert");
+	alignment1_v	= glade_xml_get_widget (glade_xml, "variables_button_insert_alignment");
+	hbox2_v		= glade_xml_get_widget (glade_xml, "variables_button_insert_hbox");
+	image1_v	= glade_xml_get_widget (glade_xml, "variables_button_insert_image");
+	label2_v	= glade_xml_get_widget (glade_xml, "variables_button_insert_label");
+	bDeleteVariable	= glade_xml_get_widget (glade_xml, "variables_button_delete");
+	bCloseVariables = glade_xml_get_widget (glade_xml, "variables_button_close");
 
 	g_signal_connect ((gpointer) wVariables, "delete_event",
 	                  G_CALLBACK (on_wVariables_delete_event),
