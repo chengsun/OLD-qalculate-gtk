@@ -1748,6 +1748,36 @@ void ReplaceFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->replace(vargs[1], vargs[2]);
 }
 
+RadiansToDefaultAngleUnitFunction::RadiansToDefaultAngleUnitFunction() : Function("Trigonometry", "radtodef", 1, "Radians To Default Angle Unit") {
+}
+void RadiansToDefaultAngleUnitFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	mngr->set(vargs[0]);
+	switch(CALCULATOR->angleMode()) {
+		case DEGREES: {
+			Manager mngr_pi;
+			if(CALCULATOR->alwaysExact()) {
+				mngr_pi.set(CALCULATOR->getPI());
+			} else {
+				mngr_pi.set(CALCULATOR->getPI()->get());
+			}
+			mngr->addInteger(180, OPERATION_MULTIPLY);
+	    		mngr->add(&mngr_pi, OPERATION_DIVIDE);
+			break;
+		}
+		case GRADIANS: {
+			Manager mngr_pi;
+			if(CALCULATOR->alwaysExact()) {
+				mngr_pi.set(CALCULATOR->getPI());
+			} else {
+				mngr_pi.set(CALCULATOR->getPI()->get());
+			}
+			mngr->addInteger(200, OPERATION_MULTIPLY);
+	    		mngr->add(&mngr_pi, OPERATION_DIVIDE);
+			break;
+		}
+	}
+}
+
 #ifdef HAVE_GIAC
 GiacFunction::GiacFunction() : Function("Calculus", "giac", 1, "Giac expression") {
 	setArgumentDefinition(1, new TextArgument());
@@ -1792,7 +1822,7 @@ void GiacDeriveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		return;
 	}
 }
-GiacSolveFunction::GiacSolveFunction() : Function("Calculus", "solve", 1, "Solve equation", "", 2) {
+GiacSolveFunction::GiacSolveFunction() : Function("Calculus", "giac_solve", 1, "Solve equation (giac)", "", 2) {
 	setArgumentDefinition(1, new GiacArgument());
 	setArgumentDefinition(2, new TextArgument());
 	setDefaultValue(2, "\"x\"");		

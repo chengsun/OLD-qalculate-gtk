@@ -49,6 +49,7 @@ bool Manager::clearPrefixes() {
 }
 void Manager::init() {
 	i_refcount = 1;
+	sync_id = -1;
 	b_exact = true;
 	b_protect = false;
 	o_number = new Number();
@@ -243,6 +244,18 @@ bool Manager::typeclean() {
 	switch(c_type) {
 		case ALTERNATIVE_MANAGER: {
 			int i, i2;
+			for(i = 0; i < (int) mngrs.size(); i++) {
+				if(mngrs[i]->isAlternatives()) {
+					for(i2 = 0; i2 < (int) mngrs[i]->mngrs.size(); i2++) {
+						mngrs[i]->mngrs[i2]->ref();
+						mngrs.push_back(mngrs[i]->mngrs[i2]);
+					}
+					mngrs[i]->unref();
+					mngrs.erase(mngrs.begin() + i);
+					i--;
+					changed = true;
+				}
+			}
 			for(i = 0; i + 1 < (int) mngrs.size(); i++) {	
 				for(i2 = i + 1; i2 < (int) mngrs.size(); i2++) {	
 					if(mngrs[i]->equals(mngrs[i2])) {
@@ -256,6 +269,8 @@ bool Manager::typeclean() {
 			if(mngrs.size() == 1) {
 				moveto(mngrs[0]);
 				changed = true;
+			} else if(changed) {
+				sort();
 			}
 			break;
 		}
@@ -290,6 +305,8 @@ bool Manager::typeclean() {
 			} else if(mngrs.size() < 1) {
 				clear();
 				changed = true;
+			} else if(changed) {
+				sort();
 			}
 			break;
 		}
@@ -311,6 +328,8 @@ bool Manager::typeclean() {
 			} else if(mngrs.size() < 1) {	
 				clear();
 				changed = true;
+			} else if(changed) {
+				sort();
 			}
 			break;	
 		}
@@ -351,6 +370,8 @@ bool Manager::typeclean() {
 			} else if(mngrs.size() < 1) {	
 				clear();
 				changed = true;
+			} else if(changed) {
+				sort();
 			}
 			break;	
 		}
@@ -423,6 +444,7 @@ void Manager::addAlternative(const Manager *mngr) {
 		c_type = ALTERNATIVE_MANAGER;
 	}
 	push_back(new Manager(mngr));
+	sort();
 }
 bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 	if(!mngr) return true;
@@ -457,7 +479,15 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 			return true;
 		}
 	} else if(mngr->type() == MATRIX_MANAGER) {
-		return reverseadd(mngr, op, translate_);
+		if(op == OPERATION_RAISE) {
+			if(!translate_) {
+				return false;
+			}
+			transform(mngr, POWER_MANAGER, op, true);
+			return true;
+		} else {
+			return reverseadd(mngr, op, translate_);
+		}
 	}	
 	if(op == OPERATION_SUBTRACT) {
 		op = OPERATION_ADD;
@@ -491,31 +521,36 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 		return b;		
 	}
 	if(c_type == ALTERNATIVE_MANAGER) {
-		if(mngr->type() == ALTERNATIVE_MANAGER) {
-			for(unsigned int i = 0; i < mngr->countChilds(); i++) {
-				push_back(new Manager(mngr->getChild(i)));
-			}
-		} else {
-			int is = mngrs.size();
-			for(int i = 0; i < is; i++) {
-				mngrs[i]->add(mngr, op);
-				if(!mngrs[i]->isPrecise()) setPrecise(false);
-				if(mngrs[i]->type() == ALTERNATIVE_MANAGER) {
-					for(unsigned int i2 = 0; i2 < mngrs[i]->countChilds(); i2++) {
-						mngrs[i]->getChild(i2)->ref();
-						push_back(mngrs[i]->getChild(i2));
-					}
-					mngrs[i]->unref();
-					mngrs.erase(mngrs.begin() + i);
-					i--;
-					is--;
+		int is = mngrs.size();
+		for(int i = 0; i < is; i++) {
+			mngrs[i]->add(mngr, op);
+			if(!mngrs[i]->isPrecise()) setPrecise(false);
+			if(mngrs[i]->type() == ALTERNATIVE_MANAGER) {
+				for(unsigned int i2 = 0; i2 < mngrs[i]->countChilds(); i2++) {
+					mngrs[i]->getChild(i2)->ref();
+					push_back(mngrs[i]->getChild(i2));
 				}
+				mngrs[i]->unref();
+				mngrs.erase(mngrs.begin() + i);
+				i--;
+				is--;
 			}
 		}
 		typeclean();
+		sort();
 		return true;
 	} else if(mngr->type() == ALTERNATIVE_MANAGER) {
-		return reverseadd(mngr, op, translate_);
+		Manager this_mngr(this);
+		clear();
+		c_type = ALTERNATIVE_MANAGER;
+		for(unsigned int i = 0; i < mngr->countChilds(); i++) {
+			mngrs.push_back(new Manager(&this_mngr));
+			mngrs[i]->add(mngr->getChild(i), op);
+			if(!mngrs[i]->isPrecise()) setPrecise(false);
+		}
+		clean();
+		sort();
+		return true;
 	}
 	if(op == OPERATION_ADD) {
 		if(mngr->isNull()) {
@@ -4372,50 +4407,179 @@ void Manager::move_x_to_one_side(string x_var) {
 			}
 		}
 		if(mngr_new.isAddition()) {
-			int degree = 0;
-			Manager *exp_mngr = NULL;
-			Manager fac_mngr;
-			Manager fac_mngr1;
-			Manager fac_mngr2;
-			bool multiple = false;
+
+			Manager *base_x = NULL;
+			Number exp_num;
+			bool end = false;
 			for(unsigned int i = 0; i < mngr_new.countChilds(); i++) {
 				if(mngr_new.getChild(i)->isPower()) {
-					if(mngr_new.getChild(i)->base()->equals(&mngr_x)) {
-						if(!exp_mngr && mngr_new.getChild(i)->exponent()->isNumber() && mngr_new.getChild(i)->exponent()->number()->isInteger() && mngr_new.getChild(i)->exponent()->number()->isPositive()) {
-							int d = mngr_new.getChild(i)->exponent()->number()->intValue();
-							if(degree != 0 && degree != d) {
-								multiple = true;
-							} else {
-								fac_mngr.addInteger(1, OPERATION_ADD);
+					if(base_x && !mngr_new.getChild(i)->base()->equals(base_x)) {
+						end = true;
+						break;	
+					}
+					base_x = mngr_new.getChild(i)->base();
+					if(mngr_new.getChild(i)->exponent()->isNumber()) {
+						if(mngr_new.getChild(i)->exponent()->number()->isNegative() && mngr_new.getChild(i)->base()->contains(&mngr_x)) {
+							if(mngr_new.getChild(i)->exponent()->number()->isLessThan(&exp_num)) {
+								exp_num.set(mngr_new.getChild(i)->exponent()->number());
 							}
-							if(d > degree) {
-								degree = d;
-							}
-							if(degree <= 2) {
-								if(d == 1) {
-									fac_mngr1.addInteger(1, OPERATION_ADD);
-								} else if(d == 2) {
-									fac_mngr2.addInteger(1, OPERATION_ADD);
-								}
-							}
-						} else if(!degree && !exp_mngr || exp_mngr->equals(mngr_new.getChild(i)->exponent())) {
-							exp_mngr = mngr_new.getChild(i)->exponent();
-							fac_mngr.addInteger(1);
-						} else {
-							degree = -1;
-							break;
 						}
 					}
 				} else if(mngr_new.getChild(i)->isMultiplication()) {
 					bool b = false;
 					for(unsigned int i2 = 0; i2 < mngr_new.getChild(i)->countChilds(); i2++) {
 						if(mngr_new.getChild(i)->getChild(i2)->isPower()) {
-							if(mngr_new.getChild(i)->getChild(i2)->base()->equals(&mngr_x)) {
-								if(!exp_mngr && mngr_new.getChild(i)->getChild(i2)->exponent()->isNumber() && mngr_new.getChild(i)->getChild(i2)->exponent()->number()->isInteger() && mngr_new.getChild(i)->getChild(i2)->exponent()->number()->isPositive()) {
+							if(mngr_new.getChild(i)->getChild(i2)->base()->contains(&mngr_x)) {
+								if(base_x && !mngr_new.getChild(i)->getChild(i2)->base()->equals(base_x)) {
+									end = true;
+									break;	
+								}
+								base_x = mngr_new.getChild(i)->getChild(i2)->base();
+								if(mngr_new.getChild(i)->getChild(i2)->exponent()->isNumber() && mngr_new.getChild(i)->getChild(i2)->exponent()->number()->isNegative()) {
+									if(mngr_new.getChild(i)->getChild(i2)->exponent()->number()->isLessThan(&exp_num)) {
+										exp_num.set(mngr_new.getChild(i)->getChild(i2)->exponent()->number());
+									}
+								}
+								b = true;
+							}
+						} else if(mngr_new.getChild(i)->getChild(i2)->contains(&mngr_x)) {
+							if(base_x && !mngr_new.getChild(i)->getChild(i2)->equals(base_x)) {
+								end = true;
+								break;	
+							}
+							base_x = mngr_new.getChild(i)->getChild(i2);
+							b = true;
+						}
+					}
+					if(!b) {
+						end = true;
+						break;	
+					}
+				} else if(base_x && !mngr_new.getChild(i)->equals(base_x)) {
+					end = true;
+					break;
+				} else {
+					base_x = mngr_new.getChild(i);
+				}
+			}
+			
+			if(end) {
+				mngrs[0]->set(&mngr_new);
+				return;
+			}
+			if(!exp_num.isZero()) {
+				exp_num.setNegative(false);
+				Manager mngr(&exp_num);
+				mngr_x.add(&mngr, OPERATION_RAISE);
+				mngrs[0]->set(&mngr_new);
+				mngrs[0]->add(mngrs[1], OPERATION_SUBTRACT);
+				mngrs[1]->clear();
+				mngrs[0]->add(&mngr_x, OPERATION_MULTIPLY);
+				move_x_to_one_side(x_var);
+				return;
+			}
+			
+			base_x = NULL;
+			Manager fac_mngr;
+			exp_num.clear();
+			for(unsigned int i = 0; i < mngr_new.countChilds(); i++) {
+				if(mngr_new.getChild(i)->isPower()) {
+					if(mngr_new.getChild(i)->exponent()->isNumber()) {
+						if(mngr_new.getChild(i)->exponent()->number()->isPositive() && !mngr_new.getChild(i)->exponent()->number()->isInteger() && mngr_new.getChild(i)->base()->contains(&mngr_x)) {
+							if(exp_num.isZero() || mngr_new.getChild(i)->exponent()->number()->equals(&exp_num)) {
+								fac_mngr.add(mngr_new.getChild(i), OPERATION_ADD);
+								exp_num.set(mngr_new.getChild(i)->exponent()->number());
+							}
+						}
+					}
+				} else if(mngr_new.getChild(i)->isMultiplication()) {
+					for(unsigned int i2 = 0; i2 < mngr_new.getChild(i)->countChilds(); i2++) {
+						if(mngr_new.getChild(i)->getChild(i2)->isPower()) {
+							if(mngr_new.getChild(i)->getChild(i2)->exponent()->number()->isPositive() && !mngr_new.getChild(i)->getChild(i2)->exponent()->number()->isInteger() && mngr_new.getChild(i)->getChild(i2)->base()->contains(&mngr_x)) {
+								if(exp_num.isZero() || mngr_new.getChild(i)->getChild(i2)->exponent()->number()->equals(&exp_num)) {
+									fac_mngr.add(mngr_new.getChild(i), OPERATION_ADD);
+									exp_num.set(mngr_new.getChild(i)->getChild(i2)->exponent()->number());
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			if(!exp_num.isZero()) {
+				Number *den = exp_num.denominator();
+				Manager mngr(den);
+				delete den;
+				mngrs[0]->set(&mngr_new);
+				Manager mngr0(mngrs[0]);
+				Manager mngr1(mngrs[1]);
+				mngrs[0]->add(&fac_mngr, OPERATION_SUBTRACT);
+				mngrs[1]->add(mngrs[0], OPERATION_SUBTRACT);
+				mngrs[0]->set(&fac_mngr);
+				mngrs[0]->add(&mngr, OPERATION_RAISE);
+				mngrs[1]->add(&mngr, OPERATION_RAISE);
+				mngrs[0]->add(mngrs[1], OPERATION_SUBTRACT);
+				mngrs[1]->clear();
+				move_x_to_one_side(x_var);
+				return;
+			}
+		
+			int degree = 0;
+			Manager *exp_mngr = NULL;
+			Manager *exp_mngr_x = NULL;
+			Manager *base_mngr = NULL;
+			fac_mngr.clear();
+			Manager fac_mngr1;
+			Manager fac_mngr2;
+			Manager fac_mngr3;
+			bool multiple = false;
+			for(unsigned int i = 0; i < mngr_new.countChilds(); i++) {
+				if(mngr_new.getChild(i)->isPower()) {
+					if(mngr_new.getChild(i)->base()->contains(&mngr_x)) {
+						if(!exp_mngr_x && !exp_mngr && mngr_new.getChild(i)->exponent()->isNumber() && mngr_new.getChild(i)->exponent()->number()->isInteger() && mngr_new.getChild(i)->exponent()->number()->isPositive()) {
+							int d = mngr_new.getChild(i)->exponent()->number()->intValue();
+							if(degree != 0 && degree != d) {
+								multiple = true;
+							} else if(!multiple) {
+								fac_mngr.addInteger(1, OPERATION_ADD);
+							}
+							if(d > degree) {
+								degree = d;
+							}
+							if(d == 1) {
+								fac_mngr1.addInteger(1, OPERATION_ADD);
+							} else if(d == 2) {
+								fac_mngr2.addInteger(1, OPERATION_ADD);
+							} else if(d == 3) {
+								fac_mngr3.addInteger(1, OPERATION_ADD);
+							}
+						} else if(!exp_mngr_x && !degree && (!exp_mngr || exp_mngr->equals(mngr_new.getChild(i)->exponent())) && !mngr_new.getChild(i)->exponent()->contains(&mngr_x)) {
+							exp_mngr = mngr_new.getChild(i)->exponent();
+							fac_mngr.addInteger(1);
+						} else {
+							degree = -1;
+							break;
+						}
+					} else if(mngr_new.getChild(i)->exponent()->contains(&mngr_x)) {
+						if(degree || exp_mngr || mngr_new.getChild(i)->base()->contains(&mngr_x) || (exp_mngr_x && !mngr_new.getChild(i)->exponent()->equals(exp_mngr_x)) || (base_mngr && !mngr_new.getChild(i)->base()->equals(base_mngr))) {
+							degree = -1;
+							break;
+						}
+						fac_mngr.addInteger(1, OPERATION_ADD);
+						exp_mngr_x = mngr_new.getChild(i)->exponent();
+						base_mngr = mngr_new.getChild(i)->base();
+					}
+				} else if(mngr_new.getChild(i)->isMultiplication()) {
+					bool b = false;
+					bool b2 = false;
+					for(unsigned int i2 = 0; i2 < mngr_new.getChild(i)->countChilds(); i2++) {
+						if(mngr_new.getChild(i)->getChild(i2)->isPower()) {
+							if(mngr_new.getChild(i)->getChild(i2)->base()->contains(&mngr_x)) {
+								if(!b2 && !exp_mngr_x && !exp_mngr && mngr_new.getChild(i)->getChild(i2)->exponent()->isNumber() && mngr_new.getChild(i)->getChild(i2)->exponent()->number()->isInteger() && mngr_new.getChild(i)->getChild(i2)->exponent()->number()->isPositive()) {
 									int d = mngr_new.getChild(i)->getChild(i2)->exponent()->number()->intValue();
 									if(degree != 0 && degree != d) {
 										multiple = true;
-									} else {
+									} else if(!multiple) {
 										Manager mngr_mul(mngr_new.getChild(i));
 										mngr_mul.add(mngr_new.getChild(i)->getChild(i2), OPERATION_DIVIDE);
 										fac_mngr.add(&mngr_mul, OPERATION_ADD);
@@ -4423,17 +4587,17 @@ void Manager::move_x_to_one_side(string x_var) {
 									if(d > degree) {
 										degree = d;
 									}
-									if(degree <= 2) {
-										Manager mngr_mul(mngr_new.getChild(i));
-										mngr_mul.add(mngr_new.getChild(i)->getChild(i2), OPERATION_DIVIDE);
-										if(d == 1) {
-											fac_mngr1.add(&mngr_mul, OPERATION_ADD);
-										} else if(d == 2) {
-											fac_mngr2.add(&mngr_mul, OPERATION_ADD);
-										}
+									Manager mngr_mul(mngr_new.getChild(i));
+									mngr_mul.add(mngr_new.getChild(i)->getChild(i2), OPERATION_DIVIDE);
+									if(d == 1) {
+										fac_mngr1.add(&mngr_mul, OPERATION_ADD);
+									} else if(d == 2) {
+										fac_mngr2.add(&mngr_mul, OPERATION_ADD);
+									} else if(d == 3) {
+										fac_mngr3.add(&mngr_mul, OPERATION_ADD);
 									}
 									b = true;
-								} else if(!degree && !exp_mngr || exp_mngr->equals(mngr_new.getChild(i)->getChild(i2)->exponent())) {
+								} else if(!b2 && !exp_mngr_x && !degree && (!exp_mngr || exp_mngr->equals(mngr_new.getChild(i)->getChild(i2)->exponent())) && !mngr_new.getChild(i)->getChild(i2)->exponent()->contains(&mngr_x)) {
 									exp_mngr = mngr_new.getChild(i)->getChild(i2)->exponent();
 									Manager mngr_mul(mngr_new.getChild(i));
 									mngr_mul.add(mngr_new.getChild(i)->getChild(i2), OPERATION_DIVIDE);
@@ -4441,74 +4605,92 @@ void Manager::move_x_to_one_side(string x_var) {
 									b = true;
 								} else {
 									b = false;
+									break;
 								}
-								break;
-							}
-						} else if(!exp_mngr && mngr_new.getChild(i)->getChild(i2)->equals(&mngr_x)) {
-							if(degree != 0 && degree != 1) {
-								multiple = true;
-							} else {
+								b2 = true;
+							} else if(mngr_new.getChild(i)->getChild(i2)->exponent()->contains(&mngr_x)) {
+								if(b2 || degree || exp_mngr || mngr_new.getChild(i)->getChild(i2)->base()->contains(&mngr_x) || (exp_mngr_x && !mngr_new.getChild(i)->getChild(i2)->exponent()->equals(exp_mngr_x)) || (base_mngr && !mngr_new.getChild(i)->getChild(i2)->base()->equals(base_mngr))) {
+									b = false;
+									break;
+								}
 								Manager mngr_mul(mngr_new.getChild(i));
 								mngr_mul.add(mngr_new.getChild(i)->getChild(i2), OPERATION_DIVIDE);
 								fac_mngr.add(&mngr_mul, OPERATION_ADD);
+								exp_mngr_x = mngr_new.getChild(i)->getChild(i2)->exponent();
+								base_mngr = mngr_new.getChild(i)->getChild(i2)->base();
+								b = true;
+								b2 = true;
 							}
-							if(degree < 1) {
-								degree = 1;
-							}
-							if(degree <= 2) {
+						} else if(mngr_new.getChild(i)->getChild(i2)->contains(&mngr_x)) {
+							if(b2 || exp_mngr_x || exp_mngr) {
+								b = false;
+								break;
+							} else {
+								if(degree != 0 && degree != 1) {
+									multiple = true;
+								} else if(!multiple) {
+									Manager mngr_mul(mngr_new.getChild(i));
+									mngr_mul.add(mngr_new.getChild(i)->getChild(i2), OPERATION_DIVIDE);
+									fac_mngr.add(&mngr_mul, OPERATION_ADD);
+								}
+								if(degree == 0) {
+									degree = 1;
+								}
 								Manager mngr_mul(mngr_new.getChild(i));
 								mngr_mul.add(mngr_new.getChild(i)->getChild(i2), OPERATION_DIVIDE);
 								fac_mngr1.add(&mngr_mul, OPERATION_ADD);
+								b = true;
+								b2 = true;
 							}
-							b = true;
-							break;
 						}
 					}
 					if(!b) {
 						degree = -1;
 						break;
 					}
-				} else if(!exp_mngr && mngr_new.getChild(i)->equals(&mngr_x)) {
+				} else if(!exp_mngr_x && !exp_mngr && mngr_new.getChild(i)->contains(&mngr_x)) {
 					if(degree != 0 && degree != 1) {
 						multiple = true;
-					} else {
+					} else if(!multiple) {
 						fac_mngr.addInteger(1, OPERATION_ADD);
 					}
-					if(degree < 1) {
+					if(degree == 0) {
 						degree = 1;
 					}
-					if(degree <= 2) {
-						fac_mngr1.addInteger(1, OPERATION_ADD);
-					}
+					fac_mngr1.addInteger(1, OPERATION_ADD);
 				} else {
 					degree = -1;
 					break;
 				}
 			}
-			if(!multiple && degree != -1) {
+			if(!multiple && degree >= 0) {
 				mngrs[1]->add(&fac_mngr, OPERATION_DIVIDE);
-				Manager exp_mngr2;
-				if(exp_mngr) {
-					exp_mngr2.set(exp_mngr);
+				if(exp_mngr_x) {
+					Manager exp_mngr2(exp_mngr_x);
+					Manager base_mngr2(base_mngr);
+					mngr_new.set(&base_mngr2);
+					mngr_new.add(&exp_mngr2, OPERATION_RAISE);
 				} else {
-					exp_mngr2.set(degree, 1);
+					Manager exp_mngr2;
+					if(exp_mngr) {
+						exp_mngr2.set(exp_mngr);
+					} else {
+						exp_mngr2.set(degree, 1);
+					}
+					mngr_new.set(x_var);
+					mngr_new.add(&exp_mngr2, OPERATION_RAISE);
 				}
-				mngr_new.set(x_var);
-				mngr_new.add(&exp_mngr2, OPERATION_RAISE);
-			} else if(degree == 2) {
+				b = true;
+			} else if(multiple && degree == 2) {
 				Manager b2(&fac_mngr1);
 				b2.addInteger(2, OPERATION_RAISE);
 				Manager ac;
 				ac.add(mngrs[1], OPERATION_SUBTRACT);
-				printf("(%s)x^2+(%s)x+(%s)\n", fac_mngr2.print().c_str(), fac_mngr1.print().c_str(), ac.print().c_str());
 				ac.add(&fac_mngr2, OPERATION_MULTIPLY);
 				ac.addInteger(4, OPERATION_MULTIPLY);
-				printf("b2-1 %s\n", b2.print().c_str());
 				b2.add(&ac, OPERATION_SUBTRACT);
-				printf("b2-2 %s\n", b2.print().c_str());
 				Manager half_mngr(1, 2);
 				b2.add(&half_mngr, OPERATION_RAISE);
-				printf("b2-3 %s\n", b2.print().c_str());
 				ac.set(&b2);
 				ac.addInteger(-1, OPERATION_MULTIPLY);
 				b2.addAlternative(&ac);
@@ -4516,9 +4698,11 @@ void Manager::move_x_to_one_side(string x_var) {
 				b2.add(&fac_mngr1, OPERATION_ADD);
 				fac_mngr2.addInteger(2, OPERATION_MULTIPLY);
 				b2.add(&fac_mngr2, OPERATION_DIVIDE);
+				b2.sort();
 				mngrs[0]->set(x_var);
 				mngrs[1]->set(&b2);
 				b = false;
+			} else if(multiple && degree == 3) {
 			}
 		}
 		if(b) {
@@ -4544,12 +4728,57 @@ void Manager::move_x_to_one_side(string x_var) {
 	} else if(mngrs[0]->isPower()) {
 		Manager mngr_x(x_var);
 		if(mngrs[0]->base()->contains(&mngr_x)) {
-			Manager exp(1, 1);
-			exp.add(mngrs[0]->exponent(), OPERATION_DIVIDE);
-			mngrs[1]->add(&exp, OPERATION_RAISE);
-			Manager bas(mngrs[0]->base());
-			mngrs[0]->set(&bas);
+			if(!mngrs[0]->exponent()->contains(&mngr_x)) {
+				Manager exp(1, 1);
+				exp.add(mngrs[0]->exponent(), OPERATION_DIVIDE);
+				mngrs[1]->add(&exp, OPERATION_RAISE);
+				Manager bas(mngrs[0]->base());
+				mngrs[0]->set(&bas);
+				move_x_to_one_side(x_var);
+			}
+		} else if(mngrs[0]->exponent()->contains(&mngr_x)) {
+			vector<Manager*> vargs;
+			vargs.push_back(mngrs[1]);
+			vargs.push_back(mngrs[0]->base());
+			Manager *mngr = CALCULATOR->getLogFunction()->calculate(vargs);
+			mngrs[1]->set(mngr);
+			mngr->unref();
+			Manager exp(mngrs[0]->exponent());
+			mngrs[0]->set(&exp);
 			move_x_to_one_side(x_var);
+		}
+	} else if(mngrs[0]->isFunction()) {
+		if(mngrs[0]->function() == CALCULATOR->getLnFunction() && mngrs[0]->countChilds() == 1) {
+			Manager mngr_x(x_var);
+			if(mngrs[0]->getChild(0)->contains(&mngr_x)) {
+				Manager val(mngrs[0]->getChild(0));
+				mngrs[0]->set(&val);
+				Manager mngr(CALCULATOR->getE());
+				mngr.add(mngrs[1], OPERATION_RAISE);
+				mngrs[1]->set(&mngr);
+				printf("%s\n", print().c_str());
+				move_x_to_one_side(x_var);
+			}
+		} else if(mngrs[0]->function() == CALCULATOR->getLogFunction() && mngrs[0]->countChilds() == 2) {
+			Manager mngr_x(x_var);
+			if(mngrs[0]->getChild(0)->contains(&mngr_x)) {
+				Manager val(mngrs[0]->getChild(0));
+				mngrs[0]->set(&val);
+				Manager mngr(mngrs[0]->getChild(1));
+				mngr.add(mngrs[1], OPERATION_RAISE);
+				mngrs[1]->set(&mngr);
+				move_x_to_one_side(x_var);
+			}
+		} else if(mngrs[0]->function() == CALCULATOR->getAbsFunction() && mngrs[0]->countChilds() == 1) {
+			Manager mngr_x(x_var);
+			if(mngrs[0]->getChild(0)->contains(&mngr_x)) {
+				Manager mngr(mngrs[1]);
+				mngr.addInteger(-1, OPERATION_MULTIPLY);
+				mngrs[1]->addAlternative(&mngr);
+				mngr.set(mngrs[0]->getChild(0));
+				mngrs[0]->set(&mngr);
+				move_x_to_one_side(x_var);
+			}
 		}
 	}
 }
@@ -4561,23 +4790,6 @@ void Manager::solve(string x_var) {
 	move_x_to_one_side(x_var);
 }
 
-/*void Manager::differentiate(string x_var) {
-	Manager *a_mngr = new Manager(this);
-	Manager *replace_this = new Manager(x_var);
-	Manager *replace_with = new Manager(x_var);
-	Manager *h_mngr = new Manager("limit");
-	replace_with->add(h_mngr, OPERATION_ADD);
-	replace(replace_this, replace_with);
-	add(a_mngr, OPERATION_SUBTRACT);
-	add(h_mngr, OPERATION_DIVIDE);
-	Manager *null_mngr = new Manager(0, 1, 0);
-	replace(h_mngr, null_mngr);
-	a_mngr->unref();
-	replace_this->unref();
-	replace_with->unref();
-	h_mngr->unref();
-	null_mngr->unref();
-}*/
 
 /*
 

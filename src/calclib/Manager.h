@@ -50,6 +50,8 @@ class Manager {
 		bool b_protect;
 		ComparisonType comparison_type;
 		Prefix *o_prefix;
+		
+		int sync_id;
 
 		void init();
 	

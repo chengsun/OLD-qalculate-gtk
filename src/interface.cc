@@ -328,6 +328,7 @@ create_main_window (void)
 	gtk_entry_completion_set_match_func(completion, &completion_match_func, NULL, NULL);
 	g_signal_connect((gpointer) completion, "match-selected", G_CALLBACK(on_completion_match_selected), NULL);
 #endif
+	gtk_widget_hide(glade_xml_get_widget(main_glade, "menu_item_multiple_roots"));
 
 	gtk_widget_show (glade_xml_get_widget (main_glade, "main_window"));
 

@@ -1,5 +1,20 @@
+2004-04-02 Niklas Knutsson  <nq@altern.org>
+
+	* Do not crash on i^4
+	* Disable broken multiple roots
+
+2004-04-01 Niklas Knutsson  <nq@altern.org>
+
+	* Hyperbolic and inverse does not take angle arguments
+	* Fix raise by matrix
+	* Fix raise by alternatives
+	* Fix drawing of function
+
 2004-03-31 Niklas Knutsson  <nq@altern.org>
 
+	* More solve work
+	* Fix sorting of alternatives
+	* Fix wrong add alternatives to alternatives logic
 	* Clean after multiplication raise... (serious bug)
 	* Quadratic equations
 	* Non-giac solve function and automatic "solving" of comparisons

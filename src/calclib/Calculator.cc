@@ -188,7 +188,7 @@ Calculator::Calculator() {
 	angleMode(RADIANS);
 	pi_var = NULL;
 	e_var = NULL;
-	ln_func = NULL, matrix_func = NULL, vector_func = NULL, abs_func = NULL, diff_func = NULL, base_func = NULL, bin_func = NULL, oct_func = NULL, hex_func = NULL, integrate_func = NULL;
+	ln_func = NULL, log_func = NULL, matrix_func = NULL, vector_func = NULL, abs_func = NULL, diff_func = NULL, base_func = NULL, bin_func = NULL, oct_func = NULL, hex_func = NULL, integrate_func = NULL;
 	addBuiltinVariables();
 	addBuiltinFunctions();
 	addBuiltinUnits();
@@ -234,6 +234,7 @@ Function *Calculator::getOctalFunction() const {return oct_func;}
 Function *Calculator::getHexadecimalFunction() const {return hex_func;}
 Function *Calculator::getBaseFunction() const {return base_func;}
 Function *Calculator::getLnFunction() const {return ln_func;}
+Function *Calculator::getLogFunction() const {return log_func;}
 Function *Calculator::getAbsFunction() const {return abs_func;}
 Function *Calculator::getDiffFunction() const {return diff_func;}
 Function *Calculator::getIntegrateFunction() const {return integrate_func;}
@@ -668,6 +669,48 @@ void Calculator::delId(unsigned int id, bool force) {
 		ids_p.erase(id);		
 	}
 }
+
+unsigned int Calculator::addAlternativeSyncId() {
+	for(unsigned int i = 1; ; i++) {
+		if(!ids.count(i)) {
+			alternative_syncs[i] = vector<Manager*>();
+			alternative_locks[i] = 0;
+			return i;
+		}
+	}
+	return 1;
+}
+void Calculator::addAlternativeSync(unsigned int sync_id, Manager *mngr) {
+	if(alternative_syncs.count(sync_id)) {
+		alternative_syncs[sync_id].push_back(mngr);
+	}
+}
+void Calculator::delAlternativeSync(unsigned int sync_id, Manager *mngr) {
+	if(alternative_syncs.count(sync_id)) {
+		for(unsigned int i = 0; i < alternative_syncs[sync_id].size(); i++) {
+			if(alternative_syncs[sync_id][i] == mngr) {
+				alternative_syncs[sync_id].erase(alternative_syncs[sync_id].begin() + i);
+				i--;
+			}
+		}
+		if(alternative_syncs[sync_id].size() == 0) {
+			alternative_syncs.erase(sync_id);
+			alternative_locks.erase(sync_id);
+		}
+	}
+}
+void Calculator::lockAlternative(unsigned int sync_id, int alternative) {
+	if(alternative_locks.count(sync_id)) {
+		alternative_locks[sync_id] = alternative;
+	}
+}
+int Calculator::getAlternativeLock(unsigned int sync_id) {
+	if(alternative_locks.count(sync_id)) {
+		return alternative_locks[sync_id];
+	}
+	return 0;
+}
+
 bool Calculator::allPrefixesEnabled() const {
 	return b_use_all_prefixes;
 }
@@ -745,6 +788,7 @@ void Calculator::addBuiltinFunctions() {
 #ifdef HAVE_LIBCLN
 	addFunction(new ZetaFunction());
 #endif	
+	addFunction(new RadiansToDefaultAngleUnitFunction());
 	addFunction(new WarningFunction());
 	addFunction(new ErrorFunction());
 	addFunction(new ForFunction());
@@ -800,7 +844,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new ModFunction());
 	addFunction(new RemFunction());
 	ln_func = addFunction(new LogFunction());
-	addFunction(new LognFunction());
+	log_func = addFunction(new LognFunction());
 	addFunction(new PercentileFunction());
 	addFunction(new TotalFunction());
 	addFunction(new MinFunction());
@@ -821,12 +865,13 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new ReplaceFunction());
 #ifdef HAVE_GIAC
 	addFunction(new GiacFunction());
-	addFunction(new SolveFunction());
+	addFunction(new GiacSolveFunction());
 	integrate_func = addFunction(new IntegrateFunction());
 	addFunction(new GiacDeriveFunction());
 #else
 	integrate_func = addFunction(new IntegrateFunction());
 #endif
+	addFunction(new SolveFunction());
 	diff_func = addFunction(new DeriveFunction());
 	addFunction(new LoadFunction());
 }
@@ -4010,9 +4055,7 @@ Manager *Calculator::setAngleValue(Manager *mngr) {
 				if(alwaysExact()) {
 					mngr_pi.set(getPI());
 				} else {
-					Number nr;
-					nr.pi();
-					mngr_pi.set(&nr);
+					mngr_pi.set(getPI()->get());
 				}
 		    		mngr->add(&mngr_pi, OPERATION_MULTIPLY);
 	    			mngr->addInteger(180, OPERATION_DIVIDE);			
@@ -4023,9 +4066,7 @@ Manager *Calculator::setAngleValue(Manager *mngr) {
 				if(alwaysExact()) {
 					mngr_pi.set(getPI());
 				} else {
-					Number nr;
-					nr.pi();
-					mngr_pi.set(&nr);
+					mngr_pi.set(getPI()->get());
 				}
 		    		mngr->add(&mngr_pi, OPERATION_MULTIPLY);			
 	    			mngr->addInteger(200, OPERATION_DIVIDE);		

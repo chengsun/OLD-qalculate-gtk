@@ -1986,6 +1986,8 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			
 			uh += 2;
 			dh += 2;
+			if(uh > dh) dh = uh;
+			else uh = dh;
 			h = uh + dh;
 			central_point = dh;
 			arc_h = dh * 2;
@@ -4303,9 +4305,13 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	for(int i = 0; i < args; i++) {
 		arg = f->getArgumentDefinition(i + 1);
 		if(!arg || arg->name().empty()) {
-			argstr = _("Argument");
-			argstr += " ";
-			argstr += i2s(i + 1);
+			if(args == 1) {
+				argstr = _("Value");
+			} else {
+				argstr = _("Argument");
+				argstr += " ";
+				argstr += i2s(i + 1);
+			}
 		} else {
 			argstr = arg->name();
 		}
@@ -5886,8 +5892,8 @@ void load_preferences() {
 					CALCULATOR->angleMode(v);
 				else if(svar == "hyp_is_on")
 					hyp_is_on = v;
-				else if(svar == "multiple_roots_enabled")
-					CALCULATOR->setMultipleRootsEnabled(v);					
+//				else if(svar == "multiple_roots_enabled")
+//					CALCULATOR->setMultipleRootsEnabled(v);					
 				else if(svar == "functions_enabled")
 					CALCULATOR->setFunctionsEnabled(v);
 				else if(svar == "variables_enabled")
@@ -6063,7 +6069,7 @@ void save_preferences(bool mode)
 	fprintf(file, "use_short_units=%i\n", use_short_units);
 	fprintf(file, "all_prefixes_enabled=%i\n", CALCULATOR->allPrefixesEnabled());
 	fprintf(file, "denominator_prefix_enabled=%i\n", CALCULATOR->denominatorPrefixEnabled());
-	fprintf(file, "multiple_roots_enabled=%i\n", CALCULATOR->multipleRootsEnabled());
+//	fprintf(file, "multiple_roots_enabled=%i\n", CALCULATOR->multipleRootsEnabled());
 	fprintf(file, "use_unicode_signs=%i\n", use_unicode_signs);	
 	fprintf(file, "use_custom_result_font=%i\n", use_custom_result_font);	
 	fprintf(file, "use_custom_expression_font=%i\n", use_custom_expression_font);	

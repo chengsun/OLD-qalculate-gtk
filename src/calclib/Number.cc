@@ -328,10 +328,10 @@ Number *Number::complexDenominator() const {
 }
 
 bool Number::hasRealPart() const {
-	return !cln::zerop(realpart(value));
+	return !cln::zerop(cln::realpart(value));
 }
 bool Number::isComplex() const {
-	return !cln::zerop(imagpart(value));
+	return !cln::zerop(cln::imagpart(value));
 }
 bool Number::isInteger() const {
 	return !isComplex() && cln::zerop(cln::truncate2(cln::realpart(value)).remainder);
@@ -350,13 +350,13 @@ bool Number::isOne() const {
 	return value == 1;
 }
 bool Number::isI() const {
-	return cln::zerop(realpart(value)) && imagpart(value) == 1;
+	return cln::zerop(cln::realpart(value)) && cln::imagpart(value) == 1;
 }
 bool Number::isMinusOne() const {
 	return value == -1;
 }
 bool Number::isMinusI() const {
-	return cln::zerop(realpart(value)) && imagpart(value) == -1;
+	return cln::zerop(cln::realpart(value)) && cln::imagpart(value) == -1;
 }
 bool Number::isNegative() const {
 	return !isComplex() && cln::minusp(cln::realpart(value));
@@ -402,21 +402,21 @@ int Number::compareRealParts(const Number *o) const {
 	return cln::compare(cln::realpart(o->clnNumber()), cln::realpart(value));
 }
 bool Number::isGreaterThan(const Number *o) const {
-	return !isComplex() && !o->isComplex() && realpart(value) > realpart(o->clnNumber());
+	return !isComplex() && !o->isComplex() && cln::realpart(value) > cln::realpart(o->clnNumber());
 }
 bool Number::isLessThan(const Number *o) const {
-	return !isComplex() && !o->isComplex() && realpart(value) < realpart(o->clnNumber());
+	return !isComplex() && !o->isComplex() && cln::realpart(value) < cln::realpart(o->clnNumber());
 }
 bool Number::isGreaterThanOrEqualTo(const Number *o) const {
 	if(!isComplex()) {
-		return realpart(value) >= realpart(o->clnNumber());
+		return cln::realpart(value) >= cln::realpart(o->clnNumber());
 	} else {
 		return equals(o);
 	}
 }
 bool Number::isLessThanOrEqualTo(const Number *o) const {
 	if(!isComplex()) {
-		return realpart(value) <= realpart(o->clnNumber());
+		return cln::realpart(value) <= cln::realpart(o->clnNumber());
 	} else {
 		return equals(o);
 	}
@@ -429,7 +429,7 @@ bool Number::equals(long int num, long int den) const {
 int Number::compare(long int num, long int den) const {
 	if(den == 1) {
 		if(!isComplex()) {
-			return cln::compare(num, realpart(value));
+			return cln::compare(num, cln::realpart(value));
 		} else {
 			if(equals(num)) return 0;
 			return -2;
@@ -439,19 +439,19 @@ int Number::compare(long int num, long int den) const {
 	return compare(&o);
 }
 bool Number::isGreaterThan(long int num, long int den) const {
-	if(den == 1) return !isComplex() && realpart(value) > num;
+	if(den == 1) return !isComplex() && cln::realpart(value) > num;
 	Number o(num, den);
 	return isGreaterThan(&o);
 }
 bool Number::isLessThan(long int num, long int den) const {
-	if(den == 1) return !isComplex() && realpart(value) < num;
+	if(den == 1) return !isComplex() && cln::realpart(value) < num;
 	Number o(num, den);
 	return isLessThan(&o);
 }
 bool Number::isGreaterThanOrEqualTo(long int num, long int den) const {
 	if(den == 1) {
 		if(!isComplex()) {
-			return realpart(value) >= num;
+			return cln::realpart(value) >= num;
 		} else {
 			return equals(num);
 		}
@@ -462,7 +462,7 @@ bool Number::isGreaterThanOrEqualTo(long int num, long int den) const {
 bool Number::isLessThanOrEqualTo(long int num, long int den) const {
 	if(den == 1) {
 		if(!isComplex()) {
-			return realpart(value) <= num;
+			return cln::realpart(value) <= num;
 		} else {
 			return equals(num);
 		}
@@ -544,12 +544,12 @@ int Number::raise(const Number *o, int solution) {
 	}
 	if(!isApproximate() && !o->isApproximate() && !o->isComplex()) {
 		if(o->isInteger()) {
-			cl_I exponent = cln::numerator(cln::rational(realpart(o->clnNumber())));
+			cl_I exponent = cln::numerator(cln::rational(cln::realpart(o->clnNumber())));
 			value = expt(value, exponent);
 			return 1;
 		} else if(!isComplex()) {
-			cl_RA base = cln::rational(realpart(value));
-			cl_RA exponent = cln::rational(realpart(o->clnNumber()));
+			cl_RA base = cln::rational(cln::realpart(value));
+			cl_RA exponent = cln::rational(cln::realpart(o->clnNumber()));
 			cl_I exp_num = cln::numerator(exponent);
 			cl_I exp_den = cln::denominator(exponent);
 			if(cln::abs(exp_den) < 10000) {
@@ -675,7 +675,7 @@ bool Number::negate() {
 	return true;
 }
 void Number::setNegative(bool is_negative) {
-	if(!isZero() && minusp(realpart(value)) != is_negative) {
+	if(!isZero() && minusp(cln::realpart(value)) != is_negative) {
 		value = cln::complex(-cln::realpart(value), cln::imagpart(value));
 	}
 }
@@ -729,19 +729,19 @@ bool Number::trunc(const Number *o) {
 }
 bool Number::mod(const Number *o) {
 	if(isComplex() || o->isComplex()) return false;
-	value = cln::mod(realpart(value), realpart(o->clnNumber()));
+	value = cln::mod(cln::realpart(value), cln::realpart(o->clnNumber()));
 	if(o->isApproximate()) setApproximate();
 	return true;
 }	
 bool Number::frac() {
 	if(isComplex()) return false;
-	cl_N whole_value = cln::truncate1(realpart(value));
+	cl_N whole_value = cln::truncate1(cln::realpart(value));
 	value -= whole_value;
 	return true;
 }
 bool Number::rem(const Number *o) {
 	if(isComplex() || o->isComplex()) return false;
-	value = cln::rem(realpart(value), realpart(o->clnNumber()));
+	value = cln::rem(cln::realpart(value), cln::realpart(o->clnNumber()));
 	if(o->isApproximate()) setApproximate();
 	return true;
 }
@@ -943,13 +943,13 @@ bool Number::log(const Number *o) {
 	}
 	if(!isApproximate() && !o->isApproximate() && !isComplex() && !o->isComplex()) {		
 		bool b_minus = false;
-		cl_RA ra_value = rational(realpart(value));
+		cl_RA ra_value = rational(cln::realpart(value));
 		if(ra_value < 1 && ra_value > -1) {
 			//logp sets clns to zero when result is negative (when this < 1) !!?! 
 			b_minus = true;
 			ra_value = cln::recip(ra_value);
 		}
-		cl_RA ra_base = rational(realpart(o->clnNumber()));
+		cl_RA ra_base = rational(cln::realpart(o->clnNumber()));
 		if(logp(ra_value, ra_base, &ra_value)) {
 			value = ra_value;
 			if(b_minus) {
@@ -1319,6 +1319,8 @@ void Number::getPrintObjects(bool &minus, string &whole_, string &numerator_, st
 				CALCULATOR->setAlwaysExact(false);	
 				if(exp_pre.isLessThan(1)) {
 					exp_pre.setCln(-cln::log(cln::recip(exp_pre.clnNumber()), 10));
+				} else if(exp_pre.isOne()) {
+					exp_pre.clear();
 				} else {
 					exp_pre.setCln(cln::log(exp_pre.clnNumber(), 10));
 				}

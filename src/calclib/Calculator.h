@@ -80,7 +80,10 @@ class Calculator {
 	bool local_to;
 	
 	Variable *pi_var, *e_var;
-	Function *ln_func, *vector_func, *matrix_func, *abs_func, *diff_func, *bin_func, *oct_func, *hex_func, *base_func, *integrate_func;
+	Function *ln_func, *log_func, *vector_func, *matrix_func, *abs_func, *diff_func, *bin_func, *oct_func, *hex_func, *base_func, *integrate_func;
+	
+	Sgi::hash_map<unsigned int, vector<Manager*> > alternative_syncs;
+	Sgi::hash_map<unsigned int, int> alternative_locks;
 
   public:
   
@@ -112,10 +115,21 @@ class Calculator {
 
 	void beginTemporaryStopErrors();
 	void endTemporaryStopErrors();	
+	
+	int addId(Manager *mngr, bool persistent = false);
+	Manager *getId(unsigned int id);	
+	void delId(unsigned int id, bool force = false);
+	
+	unsigned int addAlternativeSyncId();
+	void addAlternativeSync(unsigned int sync_id, Manager *mngr);
+	void delAlternativeSync(unsigned int sync_id, Manager *mngr);
+	void lockAlternative(unsigned int sync_id, int alternative);
+	int getAlternativeLock(unsigned int sync_id);
 
 	Variable *getPI() const;
 	Variable *getE() const;
 	Function *getLnFunction() const;
+	Function *getLogFunction() const;
 	Function *getOctalFunction() const;
 	Function *getHexadecimalFunction() const;
 	Function *getBinaryFunction() const;
@@ -144,9 +158,7 @@ class Calculator {
 	const char *getComma() const;	
 	void setLocale();
 	void unsetLocale();
-	int addId(Manager *mngr, bool persistent = false);
-	Manager *getId(unsigned int id);	
-	void delId(unsigned int id, bool force = false);
+	
 	bool allPrefixesEnabled() const;
 	void setAllPrefixesEnabled(bool enable);
 	bool functionsEnabled() const;
