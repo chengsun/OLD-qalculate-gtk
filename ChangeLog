@@ -1,3 +1,10 @@
+2004-09-25 Niklas Knutsson  <nq@altern.org>
+
+	* unitedit_glade was used in variable dialogs
+	* Use factorization in isolate_x()
+	* Improve isolate_x()
+	* Check if terms is equal (or a = -b) with the current precision in subtract and add to be able to find very small numbers that really are zero
+
 2004-09-24 Niklas Knutsson  <nq@altern.org>
 
 	* Include both "liter" and "litre" to avoid confusion

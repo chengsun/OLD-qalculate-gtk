@@ -5331,7 +5331,7 @@ void edit_unknown(const char *category, Variable *var, GtkWidget *win) {
 		//fill in default values
 		string v_name = CALCULATOR->getName();
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_name")), v_name.c_str());
-		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (unitedit_glade, "unknown_edit_label_names")), "");
+		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (unknownedit_glade, "unknown_edit_label_names")), "");
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_category")), category);
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_desc")), "");
 		gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_type")), CALCULATOR->defaultAssumptions()->numberType());
@@ -5411,6 +5411,7 @@ run_unknown_edit_dialog:
 	creates new variable if v == NULL, mstruct_ is forced value, win is parent window
 */
 void edit_variable(const char *category, Variable *var, MathStructure *mstruct_, GtkWidget *win) {
+
 	if(var != NULL && !var->isKnown()) {
 		edit_unknown(category, var, win);
 		return;
@@ -5460,7 +5461,7 @@ void edit_variable(const char *category, Variable *var, MathStructure *mstruct_,
 		//fill in default values
 		string v_name = CALCULATOR->getName();
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_name")), v_name.c_str());
-		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (unitedit_glade, "variable_edit_label_names")), "");
+		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (variableedit_glade, "variable_edit_label_names")), "");
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_value")), get_value_string(*mstruct).c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_category")), category);
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_desc")), "");		
@@ -5634,7 +5635,7 @@ void edit_matrix(const char *category, Variable *var, MathStructure *mstruct_, G
 	
 		//fill in default values
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_name")), "");
-		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (unitedit_glade, "matrix_edit_label_names")), "");
+		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (matrixedit_glade, "matrix_edit_label_names")), "");
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_category")), category);
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_desc")), "");		
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (matrixedit_glade, "matrix_edit_spinbutton_rows")), 3);		

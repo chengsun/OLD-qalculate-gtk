@@ -126,6 +126,7 @@ class Number {
 		bool imaginaryPartIsPositive() const;
 		bool hasNegativeSign() const;
 		bool hasPositiveSign() const;
+		bool equalsZero() const;
 		bool equals(const Number &o) const;
 		ComparisonResult compare(const Number &o) const;
 		ComparisonResult compareImaginaryParts(const Number &o) const;

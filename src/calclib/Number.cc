@@ -804,10 +804,19 @@ bool Number::hasPositiveSign() const {
 	if(hasRealPart()) return realPartIsPositive();
 	return imaginaryPartIsPositive();
 }
+bool Number::equalsZero() const {
+	if(isZero()) return true;
+	if(isApproximateType() && !isComplex()) {
+		return REAL_PRECISION_FLOAT_RE(value + 1) == cln::cl_float(1, cln::float_format(PRECISION + 1));
+	}
+	return false;
+}
 bool Number::equals(const Number &o) const {
 	if(b_inf) return false;
-	if(b_pinf) return o.isPlusInfinity();
-	if(b_minf) return o.isMinusInfinity();
+	//if(b_pinf) return o.isPlusInfinity();
+	//if(b_minf) return o.isMinusInfinity();
+	if(b_pinf) return false;
+	if(b_minf) return false;
 	if(o.isInfinite()) return false;
 	if(isApproximateType() || o.isApproximateType()) {
 		if(!isComplex() && !o.isComplex()) {
@@ -950,6 +959,21 @@ bool Number::add(const Number &o) {
 		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
+	if(isApproximateType() || o.isApproximateType()) {
+		if(!isComplex() && !o.isComplex()) {
+			if(REAL_PRECISION_FLOAT_RE(value) == -REAL_PRECISION_FLOAT_RE(o.internalNumber())) {
+				value = 0;
+				setPrecisionAndApproximateFrom(o);
+				return true;
+			}
+		} else if(isComplex() && o.isComplex()) {
+			if(REAL_PRECISION_FLOAT_RE(value) == -REAL_PRECISION_FLOAT_RE(o.internalNumber()) && REAL_PRECISION_FLOAT_IM(value) == -REAL_PRECISION_FLOAT_IM(o.internalNumber())) {
+				value = 0;
+				setPrecisionAndApproximateFrom(o);
+				return true;
+			}
+		}
+	}
 	value = value + o.internalNumber();
 	removeFloatZeroPart();
 	setPrecisionAndApproximateFrom(o);
@@ -980,6 +1004,21 @@ bool Number::subtract(const Number &o) {
 		setMinusInfinity();
 		setPrecisionAndApproximateFrom(o);
 		return true;
+	}
+	if(isApproximateType() || o.isApproximateType()) {
+		if(!isComplex() && !o.isComplex()) {
+			if(REAL_PRECISION_FLOAT_RE(value) == REAL_PRECISION_FLOAT_RE(o.internalNumber())) {
+				value = 0;
+				setPrecisionAndApproximateFrom(o);
+				return true;
+			}
+		} else if(isComplex() && o.isComplex()) {
+			if(REAL_PRECISION_FLOAT_RE(value) == REAL_PRECISION_FLOAT_RE(o.internalNumber()) && REAL_PRECISION_FLOAT_IM(value) == REAL_PRECISION_FLOAT_IM(o.internalNumber())) {
+				value = 0;
+				setPrecisionAndApproximateFrom(o);
+				return true;
+			}
+		}
 	}
 	value = value - o.internalNumber();
 	removeFloatZeroPart();

@@ -1976,6 +1976,7 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	mstruct = vargs[0];
 	EvaluationOptions eo2 = eo;
 	eo2.simplify_addition_powers = false;
+	eo2.assume_denominators_nonzero = false;
 	mstruct.eval(eo2);
 
 	test_comparison:
