@@ -22,14 +22,14 @@ class ExpressionItem {
 
   protected:
 
-	string sname, scat, stitle, sdescr;
+	string sname, uname, scat, stitle, sdescr;
 	bool b_local, b_changed, b_builtin, b_approx, b_active, b_registered, b_hidden, b_destroyed;
 	int i_ref;
 	vector<ExpressionItem*> v_refs;
 
   public:
 
-	ExpressionItem(string cat_, string name_, string title_ = "", string descr_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	ExpressionItem(string cat_, string name_, string title_ = "", string descr_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true, string unicode_name = "");
 	ExpressionItem();
 	virtual ~ExpressionItem();
 	
@@ -42,11 +42,13 @@ class ExpressionItem {
 	void setRegistered(bool is_registered);
 
 	virtual void setName(string name_, bool force = true);
+	virtual void setUnicodeName(string name_, bool force = true);
 	
-	virtual const string &name() const;
+	virtual const string &name(bool use_unicode = false) const;
+	virtual const string &unicodeName(bool return_name_if_no_unicode = true) const;
 	virtual const string &referenceName() const;
 	
-	virtual const string &title(bool return_name_if_no_title = true) const;
+	virtual const string &title(bool return_name_if_no_title = true, bool use_unicode = false) const;
 	
 	virtual void setTitle(string title_);		
 	

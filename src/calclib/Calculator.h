@@ -94,6 +94,7 @@ class Calculator {
 	string NAME_NUMBER_PRE_S, NAME_NUMBER_PRE_STR, DOT_STR, DOT_S, COMMA_S, COMMA_STR, ILLEGAL_IN_NAMES, ILLEGAL_IN_UNITNAMES, ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
 
 	bool b_argument_errors;
+	bool exchange_rates_warning_issued;
 
 	bool b_gnuplot_open;
 	string gnuplot_cmdline;
@@ -275,6 +276,7 @@ class Calculator {
 	bool canFetch();
 	bool loadExchangeRates();
 	bool fetchExchangeRates();
+	bool checkExchangeRatesDate();
 	
 	bool canPlot();
 	MathStructure expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL, string x_var = "\\x");

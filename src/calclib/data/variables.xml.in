@@ -11,26 +11,27 @@
     <builtin_variable name="euler">
       <_title>Euler's Constant</_title>
     </builtin_variable>
-    <builtin_variable name="apery">
+    <variable name="apery">
       <_title>Apery's Constant</_title>
-    </builtin_variable>
+      <value>zeta(3)</value>
+    </variable>
     <builtin_variable name="catalan">
       <_title>Catalan's Constant</_title>
     </builtin_variable>
-    <builtin_variable name="pythagoras">
+    <variable name="pythagoras">
       <_title>Pythagora's Constant (sqrt 2)</_title>
-    </builtin_variable>
-    <builtin_variable name="golden">
+      <value>sqrt(2)</value>
+    </variable>
+    <variable name="golden">
+      <unicode>φ</unicode>
       <_title>The Golden Ratio</_title>
-    </builtin_variable>
+      <value>(1+sqrt(5))/2</value>
+    </variable>
   </category>
   <category>
     <_title>Numbers</_title>
-    <variable name="%">
-      <_title>Procent</_title>
-      <value>1/100</value>
-    </variable>
     <variable name="procent">
+      <unicode>%</unicode>
       <_title>Procent</_title>
       <value>1/100</value>
     </variable>

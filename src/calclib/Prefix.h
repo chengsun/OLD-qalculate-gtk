@@ -16,16 +16,18 @@
 
 class Prefix {
   protected:
-	string l_name, s_name;
+	string l_name, s_name, u_name;
 	int exp;
   public:
-  	Prefix(int exp10, string long_name, string short_name = "");
+  	Prefix(int exp10, string long_name, string short_name = "", string unicode_name = "");
 	~Prefix();
-	const string &shortName(bool return_long_if_no_short = true) const;
-	const string &longName(bool return_short_if_no_long = true) const;
+	const string &shortName(bool return_long_if_no_short = true, bool use_unicode = false) const;
+	const string &longName(bool return_short_if_no_long = true, bool use_unicode = false) const;
+	const string &unicodeName(bool return_short_if_no_uni = true) const;
 	void setShortName(string short_name);
 	void setLongName(string long_name);
-	const string &name(bool short_default = true) const;
+	void setUnicodeName(string unicode_name);
+	const string &name(bool short_default = true, bool use_unicode = false) const;
 	int exponent(int iexp = 1) const;
 	Number exponent(const Number &nexp) const;	
 	void setExponent(int iexp);	

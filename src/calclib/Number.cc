@@ -1214,7 +1214,9 @@ bool Number::zeta() {
 		CALCULATOR->error(true, _("Integral point for Riemann's zeta must be an integer > 1."), NULL);
 		return false;
 	}
-	if(isGreaterThan(INT_MAX)) {
+	bool overflow = false;
+	int i = intValue(&overflow);
+	if(overflow) {
 		CALCULATOR->error(true, _("Integral point for Riemann's zeta is too large."), NULL);
 		return false;
 	}

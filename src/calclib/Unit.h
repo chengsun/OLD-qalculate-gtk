@@ -26,10 +26,11 @@ class Unit : public ExpressionItem {
   protected:
 
 	string ssingular, splural;
+	bool b_currency;
 
   public:
 
-	Unit(string cat_, string name_, string plural_ = "", string singular_ = "", string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	Unit(string cat_, string name_, string plural_ = "", string singular_ = "", string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true, string unicode_name = "");
 	Unit();	
 	Unit(const Unit *unit);	
 	virtual ~Unit();
@@ -37,11 +38,13 @@ class Unit : public ExpressionItem {
 	virtual ExpressionItem *copy() const;
 	virtual void set(const ExpressionItem *item);
 	
+	bool isCurrency() const;
+	void setAsCurrency(bool is_currency = true);
 	void setPlural(string name_, bool force = true);
 	void setSingular(string name_, bool force = true);
-	virtual const string &plural(bool return_singular_if_no_plural = true) const;
-	virtual const string &singular(bool return_short_if_no_singular = true) const;
-	virtual const string &shortName() const;
+	virtual const string &plural(bool return_singular_if_no_plural = true, bool use_unicode = false) const;
+	virtual const string &singular(bool return_short_if_no_singular = true, bool use_unicode = false) const;
+	virtual const string &shortName(bool use_unicode = false) const;
 	virtual bool isUsedByOtherUnits() const;
 	virtual Unit* baseUnit() const;
 	virtual MathStructure &baseValue(MathStructure &mvalue, MathStructure &mexp) const;
@@ -72,7 +75,7 @@ class AliasUnit : public Unit {
 
   public:
 
-	AliasUnit(string cat_, string name_, string plural_, string singular_, string title_, Unit *alias, string relation = "1", int exp_ = 1, string reverse = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	AliasUnit(string cat_, string name_, string plural_, string singular_, string title_, Unit *alias, string relation = "1", int exp_ = 1, string reverse = "", bool is_local = true, bool is_builtin = false, bool is_active = true, string unicode_name = "");
 	AliasUnit(const AliasUnit *unit);		
 	AliasUnit();			
 	virtual ~AliasUnit();

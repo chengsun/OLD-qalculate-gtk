@@ -125,6 +125,9 @@ class MathStructure {
 		
 		const Number &number() const;
 		Number &number();
+		void numberUpdated();
+		void childUpdated(unsigned int index);
+		void childrenUpdated();
 		const string &symbol() const;
 #ifdef HAVE_GIAC
 		const giac::gen *unknown() const;
@@ -247,9 +250,12 @@ class MathStructure {
 
 		int type() const;
 		
-		void sort(int sortflags = SORT_SCIENTIFIC);
+		void sort(const SortOptions &so = default_sort_options);
+		void evalSort();
 		void setPrefixes(const PrintOptions &po = default_print_options, const MathStructure *parent = NULL, unsigned int pindex = 0);
-		void format(const PrintOptions &po = default_print_options, const MathStructure *parent = NULL, unsigned int pindex = 0);
+		void prefixCurrencies();
+		void format(const PrintOptions &po = default_print_options);
+		void formatsub(const PrintOptions &po = default_print_options, const MathStructure *parent = NULL, unsigned int pindex = 0);
 		void postFormatUnits(const PrintOptions &po = default_print_options, const MathStructure *parent = NULL, unsigned int pindex = 0);
 		void unformat(const EvaluationOptions &eo = default_evaluation_options);
 		bool needsParenthesis(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, unsigned int index, bool flat_division = true, bool flat_power = true) const;

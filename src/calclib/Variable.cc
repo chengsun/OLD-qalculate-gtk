@@ -79,7 +79,7 @@ const Number *Assumptions::max() const {
 }
 
 
-Variable::Variable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active) {
+Variable::Variable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active, string unicode_name) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active, unicode_name) {
 	setChanged(false);
 }
 Variable::Variable() : ExpressionItem() {}
@@ -90,7 +90,7 @@ void Variable::set(const ExpressionItem *item) {
 }
 
 
-UnknownVariable::UnknownVariable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
+UnknownVariable::UnknownVariable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active, string unicode_name) : Variable(cat_, name_, title_, is_local, is_builtin, is_active, unicode_name) {
 	setChanged(false);
 }
 UnknownVariable::UnknownVariable() : Variable() {
@@ -153,14 +153,14 @@ bool UnknownVariable::isNonZero() {
 	return CALCULATOR->defaultAssumptions()->isNonZero();
 }
 
-KnownVariable::KnownVariable(string cat_, string name_, const MathStructure &o, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
+KnownVariable::KnownVariable(string cat_, string name_, const MathStructure &o, string title_, bool is_local, bool is_builtin, bool is_active, string unicode_name) : Variable(cat_, name_, title_, is_local, is_builtin, is_active, unicode_name) {
 	mstruct = new MathStructure(o);
 	b_expression = false;
 	sexpression = "";
 	calculated_precision = 0;
 	setChanged(false);
 }
-KnownVariable::KnownVariable(string cat_, string name_, string expression_, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
+KnownVariable::KnownVariable(string cat_, string name_, string expression_, string title_, bool is_local, bool is_builtin, bool is_active, string unicode_name) : Variable(cat_, name_, title_, is_local, is_builtin, is_active, unicode_name) {
 	mstruct = NULL;
 	calculated_precision = 0;
 	set(expression_);
@@ -229,7 +229,7 @@ bool KnownVariable::isRational() {return get().representsRational();}
 bool KnownVariable::isReal() {return get().representsReal();}
 bool KnownVariable::isNonZero() {return get().representsNonZero();}
 
-DynamicVariable::DynamicVariable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : KnownVariable(cat_, name_, MathStructure(), title_, is_local, is_builtin, is_active) {
+DynamicVariable::DynamicVariable(string cat_, string name_, string title_, string unicode_name, bool is_local, bool is_builtin, bool is_active) : KnownVariable(cat_, name_, MathStructure(), title_, is_local, is_builtin, is_active, unicode_name) {
 	mstruct = NULL;
 	calculated_precision = 0;
 	setApproximate();
@@ -268,7 +268,7 @@ int DynamicVariable::calculatedPrecision() const {
 }
 
 
-PiVariable::PiVariable() : DynamicVariable("Constants", "pi", "Archimede's Constant (pi)") {}
+PiVariable::PiVariable() : DynamicVariable("Constants", "pi", "Archimede's Constant (pi)", SIGN_PI) {}
 void PiVariable::calculate() const {
 	Number nr; nr.pi(); mstruct->set(nr);
 }
@@ -276,7 +276,7 @@ EVariable::EVariable() : DynamicVariable("Constants", "e", "The Base of Natural 
 void EVariable::calculate() const {
 	Number nr; nr.e(); mstruct->set(nr);
 }
-EulerVariable::EulerVariable() : DynamicVariable("Constants", "euler", "Euler's Constant") {}
+EulerVariable::EulerVariable() : DynamicVariable("Constants", "euler", "Euler's Constant", SIGN_GAMMA) {}
 void EulerVariable::calculate() const {
 	Number nr; nr.euler(); mstruct->set(nr);
 }

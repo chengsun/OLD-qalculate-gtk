@@ -280,7 +280,7 @@ bool InverseFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	return !mstruct.isUndefined();;
 }
 
-ZetaFunction::ZetaFunction() : Function("zeta", 1) {
+ZetaFunction::ZetaFunction() : Function("zeta", 1, 1, SIGN_ZETA) {
 	setArgumentDefinition(1, new IntegerArgument());
 }
 bool ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
@@ -438,7 +438,7 @@ bool ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	return true;
 }
 
-SqrtFunction::SqrtFunction() : Function("sqrt", 1) {
+SqrtFunction::SqrtFunction() : Function("sqrt", 1, 1, SIGN_SQRT) {
 }
 bool SqrtFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
@@ -1645,7 +1645,7 @@ bool ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	return true;
 
 }
-SumFunction::SumFunction() : Function("sum", 3, 4) {
+SumFunction::SumFunction() : Function("sum", 3, 4, SIGN_CAPITAL_SIGMA) {
 	setArgumentDefinition(2, new IntegerArgument());
 	setArgumentDefinition(3, new IntegerArgument());	
 	setArgumentDefinition(4, new SymbolicArgument());
@@ -1673,7 +1673,7 @@ bool SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	return true;
 	
 }
-ProductFunction::ProductFunction() : Function("product", 3, 4) {
+ProductFunction::ProductFunction() : Function("product", 3, 4, SIGN_CAPITAL_PI) {
 	setArgumentDefinition(2, new IntegerArgument());
 	setArgumentDefinition(3, new IntegerArgument());	
 	setArgumentDefinition(4, new SymbolicArgument());

@@ -15,7 +15,7 @@
 #include "MathStructure.h"
 #include "Prefix.h"
 
-Unit::Unit(string cat_, string name_, string plural_, string singular_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active) {
+Unit::Unit(string cat_, string name_, string plural_, string singular_, string title_, bool is_local, bool is_builtin, bool is_active, string unicode_name) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active, unicode_name) {
 	remove_blank_ends(plural_);
 	remove_blank_ends(singular_);
 	ssingular = singular_;
@@ -61,20 +61,20 @@ void Unit::setSingular(string name_, bool force) {
 	CALCULATOR->unitSingularChanged(this);
 
 }
-const string &Unit::singular(bool return_short_if_no_singular) const {
+const string &Unit::singular(bool return_short_if_no_singular, bool use_unicode) const {
 	if(return_short_if_no_singular && ssingular.empty()) {
-		return shortName();
+		return shortName(use_unicode);
 	}
 	return ssingular;
 }
-const string &Unit::plural(bool return_singular_if_no_plural) const {
+const string &Unit::plural(bool return_singular_if_no_plural, bool use_unicode) const {
 	if(return_singular_if_no_plural && splural.empty()) {
-		return singular();
+		return singular(use_unicode);
 	}
 	return splural;
 }
-const string &Unit::shortName() const {
-	return name();
+const string &Unit::shortName(bool use_unicode) const {
+	return name(use_unicode);
 }
 Unit* Unit::baseUnit() const {
 	return (Unit*) this;
@@ -138,6 +138,9 @@ MathStructure &Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp
 		u->baseValue(mvalue, mexp);
 		convertToBase(mvalue, mexp);
 		b = true;
+		if(baseUnit() == CALCULATOR->u_euro) {
+			CALCULATOR->checkExchangeRatesDate();
+		}
 	} else if(u->unitType() == COMPOSITE_UNIT) {
 		bool b2 = false;
 		CompositeUnit *cu = (CompositeUnit*) u;
@@ -151,7 +154,7 @@ MathStructure &Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp
 	return mvalue;
 }
 
-AliasUnit::AliasUnit(string cat_, string name_, string plural_, string short_name_, string title_, Unit *alias, string relation, int exp_, string reverse, bool is_local, bool is_builtin, bool is_active) : Unit(cat_, name_, plural_, short_name_, title_, is_local, is_builtin, is_active) {
+AliasUnit::AliasUnit(string cat_, string name_, string plural_, string short_name_, string title_, Unit *alias, string relation, int exp_, string reverse, bool is_local, bool is_builtin, bool is_active, string unicode_name) : Unit(cat_, name_, plural_, short_name_, title_, is_local, is_builtin, is_active, unicode_name) {
 	unit = (Unit*) alias;
 	remove_blank_ends(relation);
 	remove_blank_ends(reverse);
@@ -648,7 +651,6 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	ParseOptions po;
 	po.variables_enabled = false;
 	po.functions_enabled = false;
-	po.units_enabled = false;
 	po.unknowns_enabled = false;
 	MathStructure mstruct(CALCULATOR->parse(base_expression_, po));
 	mstruct.eval(eo);

@@ -13,13 +13,14 @@
 #include "Calculator.h"
 #include "util.h"
 
-ExpressionItem::ExpressionItem(string cat_, string name_, string title_, string descr_, bool is_local, bool is_builtin, bool is_active) {
+ExpressionItem::ExpressionItem(string cat_, string name_, string title_, string descr_, bool is_local, bool is_builtin, bool is_active, string unicode_name) {
 	b_local = is_local;
 	b_builtin = is_builtin;
 	remove_blank_ends(name_);
 	remove_blank_ends(cat_);
 	remove_blank_ends(title_);
 	sname = name_;
+	uname = unicode_name;
 	stitle = title_;
 	scat = cat_;
 	sdescr = descr_;
@@ -48,8 +49,9 @@ void ExpressionItem::set(const ExpressionItem *item) {
 	b_changed = item->hasChanged();
 	b_approx = item->isApproximate();
 	b_active = item->isActive();
-	sname = item->name();
-	stitle = item->title();
+	sname = item->name(false);
+	uname = item->unicodeName(false);
+	stitle = item->title(false);
 	scat = item->category();
 	sdescr = item->description();
 	b_local = item->isLocal();
@@ -73,9 +75,9 @@ bool ExpressionItem::isRegistered() const {
 void ExpressionItem::setRegistered(bool is_registered) {
 	b_registered = is_registered;
 }
-const string &ExpressionItem::title(bool return_name_if_no_title) const {
+const string &ExpressionItem::title(bool return_name_if_no_title, bool use_unicode) const {
 	if(return_name_if_no_title && stitle.empty()) {
-		return name();
+		return name(use_unicode);
 	}
 	return stitle;
 }
@@ -104,8 +106,21 @@ void ExpressionItem::setName(string name_, bool force) {
 	}
 	CALCULATOR->nameChanged(this);
 }
-const string &ExpressionItem::name() const {
+void ExpressionItem::setUnicodeName(string name_, bool force) {
+	remove_blank_ends(name_);
+	if(name_ != uname) {
+		uname = CALCULATOR->getName(name_, this, force);
+		b_changed = true;
+	}
+	CALCULATOR->nameChanged(this);
+}
+const string &ExpressionItem::name(bool use_unicode) const {
+	if(use_unicode && !uname.empty()) return uname;
 	return sname;
+}
+const string &ExpressionItem::unicodeName(bool return_name_if_no_unicode) const {
+	if(return_name_if_no_unicode && uname.empty()) return sname;
+	return uname;
 }
 const string &ExpressionItem::referenceName() const {
 	return name();

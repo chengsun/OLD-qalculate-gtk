@@ -87,7 +87,7 @@ class Variable : public ExpressionItem {
 
   public:
 
-	Variable(string cat_, string name_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	Variable(string cat_, string name_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true, string unicode_name = "");
 	Variable();
 	Variable(const Variable *variable);
 	virtual ~Variable();
@@ -116,7 +116,7 @@ class UnknownVariable : public Variable {
   
   public:
 
-	UnknownVariable(string cat_, string name_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	UnknownVariable(string cat_, string name_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true, string unicode_name = "");
 	UnknownVariable();
 	UnknownVariable(const UnknownVariable *variable);
 	virtual ~UnknownVariable();
@@ -149,8 +149,8 @@ class KnownVariable : public Variable {
 
   public:
   
-	KnownVariable(string cat_, string name_, const MathStructure &o, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
-	KnownVariable(string cat_, string name_, string expression_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);	
+	KnownVariable(string cat_, string name_, const MathStructure &o, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true, string unicode_name = "");
+	KnownVariable(string cat_, string name_, string expression_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true, string unicode_name = "");	
 	KnownVariable();
 	KnownVariable(const KnownVariable *variable);
 	virtual ~KnownVariable();
@@ -186,7 +186,7 @@ class DynamicVariable : public KnownVariable {
   	
   public:
 
-	DynamicVariable(string cat_, string name_, string title_ = "", bool is_local = false, bool is_builtin = true, bool is_active = true);
+	DynamicVariable(string cat_, string name_, string title_ = "", string unicode_name = "", bool is_local = false, bool is_builtin = true, bool is_active = true);
 	DynamicVariable(const DynamicVariable *variable);
 	DynamicVariable();
 	virtual ~DynamicVariable();
