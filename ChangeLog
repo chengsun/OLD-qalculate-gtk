@@ -1,3 +1,15 @@
+2004-06-24 Niklas Knutsson  <nq@altern.org>
+
+	* definitions -> subfunctions
+	* save subfunctions
+	* Function::countSubfunctions()
+	* Fix for()
+	* Fix creation of vectors with zero or one component
+	* Pass parse options to function parsing
+	* Variables might contain functions
+	* Fix approximate integer printing
+	* Fix try exact
+
 2004-06-23 Niklas Knutsson  <nq@altern.org>
 
 	* Release v. 0.6

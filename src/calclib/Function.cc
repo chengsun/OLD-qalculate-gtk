@@ -355,9 +355,12 @@ MathStructure Function::createFunctionMathStructureFromSVArgs(vector<string> &sv
 	return mstruct;
 }
 MathStructure Function::calculate(const string &argv, const EvaluationOptions &eo) {
-	MathStructure vargs;
+/*	MathStructure vargs;
 	args(argv, vargs, eo.parse_options);
-	return calculate(vargs, eo);
+	return calculate(vargs, eo);*/
+	MathStructure fmstruct(parse(argv, eo.parse_options));
+	fmstruct.calculateFunctions(eo);
+	return fmstruct;
 }
 MathStructure Function::parse(const string &argv, const ParseOptions &po) {
 	MathStructure vargs;
@@ -639,9 +642,9 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				w_str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;							
 			}
 		}
-		for(unsigned int i = 0; i < v_definitions.size(); i++) {
-			if(definitionPrecalculated(i + 1)) {
-				string str = v_definitions[i];
+		for(unsigned int i = 0; i < v_subs.size(); i++) {
+			if(subfunctionPrecalculated(i + 1)) {
+				string str = v_subs[i];
 				for(int i3 = 0; i3 < i_args; i3++) {
 					svar = '\\';
 					if('x' + i > 'z') {
@@ -717,7 +720,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						if(i2 != 0 && stmp[i2 - 1] == '\\') {
 							i2 += svar.size();
 						} else {
-							stmp.replace(i2, svar.size(), v_definitions[i]);
+							stmp.replace(i2, svar.size(), v_subs[i]);
 						}
 					} else {
 						break;
@@ -895,35 +898,38 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 	argc = argc_;
 	max_argc = max_argc_;	
 }
-void UserFunction::addDefinition(string definition, bool precalculate) {
-	v_definitions.push_back(definition);
+void UserFunction::addSubfunction(string subfunction, bool precalculate) {
+	v_subs.push_back(subfunction);
 	v_precalculate.push_back(precalculate);
 }
-void UserFunction::setDefinition(unsigned int index, string definition) {
-	if(index > 0 && index <= v_definitions.size()) {
-		v_definitions[index - 1] = definition;
+void UserFunction::setSubfunction(unsigned int index, string subfunction) {
+	if(index > 0 && index <= v_subs.size()) {
+		v_subs[index - 1] = subfunction;
 	}
 }
-void UserFunction::delDefinition(unsigned int index) {
-	if(index > 0 && index <= v_definitions.size()) {
-		v_definitions.erase(v_definitions.begin() + (index - 1));
+void UserFunction::delSubfunction(unsigned int index) {
+	if(index > 0 && index <= v_subs.size()) {
+		v_subs.erase(v_subs.begin() + (index - 1));
 	}
 	if(index > 0 && index <= v_precalculate.size()) {
 		v_precalculate.erase(v_precalculate.begin() + (index - 1));
 	}
 }
-void UserFunction::setDefinitionPrecalculated(unsigned int index, bool precalculate) {
+void UserFunction::setSubfunctionPrecalculated(unsigned int index, bool precalculate) {
 	if(index > 0 && index <= v_precalculate.size()) {
 		v_precalculate[index - 1] = precalculate;
 	}
 }
-const string &UserFunction::getDefinition(unsigned int index) const {
-	if(index > 0 && index <= v_definitions.size()) {
-		return v_definitions[index - 1];
+unsigned int UserFunction::countSubfunctions() const {
+	return v_subs.size();
+}
+const string &UserFunction::getSubfunction(unsigned int index) const {
+	if(index > 0 && index <= v_subs.size()) {
+		return v_subs[index - 1];
 	}
 	return empty_string;
 }
-bool UserFunction::definitionPrecalculated(unsigned int index) const {
+bool UserFunction::subfunctionPrecalculated(unsigned int index) const {
 	if(index > 0 && index <= v_precalculate.size()) {
 		return v_precalculate[index - 1];
 	}

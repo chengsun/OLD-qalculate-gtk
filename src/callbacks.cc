@@ -2698,7 +2698,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			arc_w = arc_h / 6;
 			w += arc_w * 2 + 2;
 			w += 2;
-
+			printf("%i %i\n", w, h);
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
 			draw_background(pixmap, w, h);
 			
@@ -6250,6 +6250,8 @@ gboolean on_gcalc_exit(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
 	if(save_defs_on_exit) {
 		save_defs();
 	}
+	pthread_cancel(view_thread);
+	CALCULATOR->terminateThreads();
 	gtk_main_quit();
 	return FALSE;
 }

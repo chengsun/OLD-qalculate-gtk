@@ -113,9 +113,9 @@ class UserFunction : public Function {
   protected:
   
 	string eq, eq_calc;
-	vector<string> v_definitions;
+	vector<string> v_subs;
 	vector<bool> v_precalculate;
-	unsigned int last_def_index;
+	unsigned int last_sub_index;
 	
   public:
   
@@ -127,12 +127,13 @@ class UserFunction : public Function {
 	string internalEquation() const;
 	int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);	
 	void setEquation(string new_eq, int argc_ = -1, int max_argc_ = 0);
-	void addDefinition(string definition, bool precalculate = true);
-	void setDefinition(unsigned int index, string definition);
-	void delDefinition(unsigned int index);
-	void setDefinitionPrecalculated(unsigned int index, bool precalculate);
-	const string &getDefinition(unsigned int index) const;
-	bool definitionPrecalculated(unsigned int index) const;
+	void addSubfunction(string subfunction, bool precalculate = true);
+	void setSubfunction(unsigned int index, string subfunction);
+	void delSubfunction(unsigned int index);
+	unsigned int countSubfunctions() const;
+	void setSubfunctionPrecalculated(unsigned int index, bool precalculate);
+	const string &getSubfunction(unsigned int index) const;
+	bool subfunctionPrecalculated(unsigned int index) const;
 	
 };
 

@@ -209,8 +209,7 @@ class MathStructure {
 		int merge_addition(const MathStructure &mstruct, const EvaluationOptions &eo);
 		int merge_multiplication(const MathStructure &mstruct, const EvaluationOptions &eo);
 		int merge_power(const MathStructure &mstruct, const EvaluationOptions &eo);
-		void calculate();
-		bool calculatesub(const EvaluationOptions &eo);
+		bool calculatesub(const EvaluationOptions &eo, const EvaluationOptions &feo);
 		bool calculateFunctions(const EvaluationOptions &eo);			
 		MathStructure &eval(const EvaluationOptions &eo = default_evaluation_options);
 		void factorize(const EvaluationOptions &eo = default_evaluation_options);

@@ -315,18 +315,23 @@
         <_title>Initial value of counter</_title>
       </argument>
       <argument index="2">
-        <_title>For condition</_title>
+        <_title>Counter variable</_title>
       </argument>
       <argument index="3">
-        <_title>Counter update expression</_title>
+        <_title>For condition</_title>
       </argument>
       <argument index="4">
-        <_title>Initial value</_title>
+        <_title>Counter update expression</_title>
       </argument>
       <argument index="5">
+        <_title>Initial value</_title>
+      </argument>
+      <argument index="6">
         <_title>Do expression</_title>
       </argument>
-      <_description>Repeats an expression updating '\y' while a condition for '\x' is fulfilled.</_description>
+      <argument index="7">
+        <_title>Value variable</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="if">
       <_title>If...Then...Else</_title>
@@ -1487,7 +1492,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="varp">
         <_title>Variance (entire population)</_title>
-	<definition precalculate="true">mean(\x)</definition>
+	<subfunction precalculate="true">mean(\x)</subfunction>
         <expression>csum(1,-1,0,&quot;y&quot;+(&quot;x&quot;-\1)^2,&quot;x&quot;,&quot;y&quot;,\x)/components(\x)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
@@ -1495,7 +1500,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="var">
         <_title>Variance (random sampling)</_title>
-	<definition precalculate="true">mean(\x)</definition>
+	<subfunction precalculate="true">mean(\x)</subfunction>
         <expression>csum(1,-1,0,&quot;y&quot;+(&quot;x&quot;-\1)^2,&quot;x&quot;,&quot;y&quot;,\x)/(components(\x)-1)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
@@ -1510,7 +1515,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="meandev">
         <_title>Mean deviation</_title>
-	<definition precalculate="true">mean(\x)</definition>
+	<subfunction precalculate="true">mean(\x)</subfunction>
         <expression>csum(1,-1,0,&quot;y&quot;+abs(&quot;x&quot;-\1),&quot;x&quot;,&quot;y&quot;,\x)/components(\x)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
@@ -1518,7 +1523,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="covar">
         <_title>Covariance</_title>
-	<definition precalculate="true">mean(\x)</definition>
+	<subfunction precalculate="true">mean(\x)</subfunction>
         <expression>csum(1,min(components(\x),components(\y)),0,&quot;y&quot;+(&quot;x&quot;-\1)*(component(&quot;i&quot;+components(\x),&quot;v&quot;)-mean(\y)),&quot;x&quot;,&quot;y&quot;,mergevectors(\x,\y),&quot;i&quot;,&quot;v&quot;)/min(components(\x),components(\y))</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
@@ -1529,8 +1534,8 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </function>
       <function name="poolvar">
         <_title>Pooled variance</_title>
-	<definition precalculate="true">mean(\x)</definition>
-	<definition precalculate="true">mean(\y)^2</definition>
+	<subfunction precalculate="true">mean(\x)</subfunction>
+	<subfunction precalculate="true">mean(\y)^2</subfunction>
         <expression>(csum(1,-1,0,&quot;y&quot;+(&quot;x&quot;-\1)^2,&quot;x&quot;,&quot;y&quot;,\x)+csum(1,-1,0,&quot;y&quot;+(&quot;x&quot;-\2)^2,&quot;x&quot;,&quot;y&quot;,\y))/(components(\x)+components(\y)-2)</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
@@ -1594,7 +1599,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       <_title>Statistical Tests</_title>
       <function name="ttest">
         <_title>Unpaired t-test</_title>
-	<definition precalculate="true">poolvar(\x,\y)^2</definition>
+	<subfunction precalculate="true">poolvar(\x,\y)^2</subfunction>
         <expression>(mean(\x)-mean(\y))/abs(((\1)/components(\x)+(\1)/components(\y))^(1/2))</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>

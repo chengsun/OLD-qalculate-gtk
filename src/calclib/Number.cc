@@ -152,7 +152,7 @@ Number::~Number() {
 
 void Number::set(string number, int base) {
 
-	b_inf = false; b_pinf = false; b_minf = false;
+	b_inf = false; b_pinf = false; b_minf = false; b_approx = false;
 
 	if(base == BASE_ROMAN_NUMERALS) {
 		remove_blanks(number);
@@ -365,14 +365,14 @@ void Number::set(string number, int base) {
 			numbers_started = true;
 		} else if(base > 10 && number[index] >= 'a' && number[index] <= 'z') {
 			num = num * base;
-			num = num + number[index] - 'a';
+			num = num + (number[index] - 'a' + 10);
 			if(in_decimals) {
 				den = den * base;
 			}
 			numbers_started = true;
 		} else if(base > 10 && number[index] >= 'A' && number[index] <= 'Z') {
 			num = num * base;
-			num = num + number[index] - 'A';
+			num = num + (number[index] - 'A' + 10);
 			if(in_decimals) {
 				den = den * base;
 			}
@@ -448,7 +448,7 @@ void Number::set(string number, int base) {
 	}
 }
 void Number::set(int numerator, int denominator, int exp_10) {
-	b_inf = false; b_pinf = false; b_minf = false;
+	b_inf = false; b_pinf = false; b_minf = false; b_approx = false;
 	value = numerator;
 	if(denominator) {
 		value = value / denominator;
@@ -458,15 +458,17 @@ void Number::set(int numerator, int denominator, int exp_10) {
 	}	
 }
 void Number::setFloat(double d_value) {
-	b_inf = false; b_pinf = false; b_minf = false;
+	b_inf = false; b_pinf = false; b_minf = false; b_approx = true;
 	value = d_value;
 }
 void Number::setInternal(const cl_N &cln_value) {
-	b_inf = false; b_pinf = false; b_minf = false;
+	b_inf = false; b_pinf = false; b_minf = false; b_approx = false;
 	value = cln_value;
+	testApproximate();
 }
 void Number::setImaginaryPart(const Number &o) {
 	value = cln::complex(cln::realpart(value), cln::realpart(o.internalNumber()));
+	testApproximate();
 }
 void Number::setImaginaryPart(int numerator, int denominator, int exp_10) {
 	Number o(numerator, denominator, exp_10);
@@ -477,27 +479,31 @@ void Number::set(const Number &o) {
 	b_pinf = o.isPlusInfinity(); 
 	b_minf = o.isMinusInfinity();
 	value = o.internalNumber();
+	b_approx = o.isApproximate();
 }
 void Number::setInfinity() {
 	b_inf = true;
 	b_pinf = false;
 	b_minf = false;
+	b_approx = false;
 	value = 0;
 }
 void Number::setPlusInfinity() {
 	b_inf = false;
 	b_pinf = true;
 	b_minf = false;
+	b_approx = false;
 	value = 0;
 }
 void Number::setMinusInfinity() {
 	b_inf = false; 
 	b_pinf = false;
 	b_minf = true;
+	b_approx = false;
 	value = 0;
 }
 void Number::clear() {
-	b_inf = false; b_pinf = false; b_minf = false;
+	b_inf = false; b_pinf = false; b_minf = false; b_approx = false;
 	value = 0;
 }
 
@@ -521,6 +527,9 @@ int Number::intValue(bool *overflow) const {
 }
 
 bool Number::isApproximate() const {
+	return b_approx || isApproximateType();	
+}
+bool Number::isApproximateType() const {
 	return !isInfinite() && (!cln::instanceof(cln::realpart(value), cln::cl_RA_ring) || (isComplex() && !cln::instanceof(cln::imagpart(value), cln::cl_RA_ring)));	
 }
 void Number::setApproximate(bool is_approximate) {
@@ -528,8 +537,10 @@ void Number::setApproximate(bool is_approximate) {
 		if(is_approximate) {
 			value = cln::complex(cln::cl_float(cln::realpart(value)), cln::cl_float(cln::imagpart(value)));
 			removeFloatZeroPart();
+			b_approx = true;
 		} else {
 			value = cln::complex(cln::rational(cln::realpart(value)), cln::rational(cln::imagpart(value)));
+			b_approx = false;
 		}
 	}
 }
@@ -620,16 +631,27 @@ void Number::removeFloatZeroPart() {
 		}
 	}
 }
+void Number::testApproximate() {
+	if(!b_approx && isApproximateType()) b_approx = true;
+}
+void Number::testInteger() {
+	if(isApproximateType() && !isInfinite() && !isComplex() && cln::zerop(cln::truncate2(REAL_PRECISION_FLOAT_RE(value)).remainder)) {
+		value = cln::round1(cln::realpart(value));
+	}
+}
 bool Number::isComplex() const {
 	return !isInfinite() && !cln::zerop(cln::imagpart(value));
+}
+Number Number::integer() const {
+	Number nr(*this);
+	nr.round();
+	return nr;
 }
 bool Number::isInteger() const {
 	if(isInfinite()) return false;
 	if(isComplex()) return false;
-	if(isApproximate()) {
-		return cln::zerop(cln::truncate2(REAL_PRECISION_FLOAT_RE(value)).remainder);
-	}
-	return cln::zerop(cln::truncate2(cln::realpart(value)).remainder);
+	if(isApproximate()) return false;
+	return cln::denominator(cln::rational(cln::realpart(value))) == 1;
 }
 bool Number::isRational() const {
 	return !isInfinite() && !isComplex() && !isApproximate();
@@ -1008,11 +1030,16 @@ bool Number::raise(const Number &o, int solution) {
 		neg = true;
 		value = cln::abs(value);
 	}
+	
 	value = expt(value, o.internalNumber());
+	
 	if(neg) {
 		value = -value;
 	}
 	removeFloatZeroPart();
+	testApproximate();
+	testInteger();
+	
 	return true;
 }
 bool Number::exp10(const Number &o) {
@@ -1229,6 +1256,8 @@ bool Number::sin() {
 	if(isZero()) return true;
 	value = cln::sin(value);
 	removeFloatZeroPart();
+	testApproximate();
+	testInteger();
 	return true;
 }
 bool Number::asin() {
@@ -1236,6 +1265,8 @@ bool Number::asin() {
 	if(isZero()) return true;
 	value = cln::asin(value);
 	removeFloatZeroPart();
+	testApproximate();
+	testInteger();
 	return true;
 }
 bool Number::sinh() {
@@ -1243,6 +1274,8 @@ bool Number::sinh() {
 	if(isZero()) return true;
 	value = cln::sinh(value);
 	removeFloatZeroPart();
+	testApproximate();
+	testInteger();
 	return true;
 }
 bool Number::asinh() {
@@ -1250,6 +1283,8 @@ bool Number::asinh() {
 	if(isZero()) return true;
 	value = cln::asinh(value);
 	removeFloatZeroPart();
+	testApproximate();
+	testInteger();
 	return true;
 }
 bool Number::cos() {
@@ -1260,6 +1295,8 @@ bool Number::cos() {
 	}
 	value = cln::cos(value);
 	removeFloatZeroPart();
+	testApproximate();
+	testInteger();
 	return true;
 }	
 bool Number::acos() {
@@ -1270,6 +1307,8 @@ bool Number::acos() {
 	}
 	value = cln::acos(value);
 	removeFloatZeroPart();
+	testApproximate();
+	testInteger();
 	return true;
 }
 bool Number::cosh() {
@@ -1284,6 +1323,8 @@ bool Number::cosh() {
 	}
 	value = cln::cosh(value);
 	removeFloatZeroPart();
+	testApproximate();
+	testInteger();
 	return true;
 }
 bool Number::acosh() {
@@ -1291,6 +1332,8 @@ bool Number::acosh() {
 	if(isMinusInfinity()) return false;
 	value = cln::acosh(value);
 	removeFloatZeroPart();
+	testApproximate();
+	testInteger();
 	return true;
 }
 bool Number::tan() {
@@ -1298,6 +1341,8 @@ bool Number::tan() {
 	if(isZero()) return true;
 	value = cln::tan(value);
 	removeFloatZeroPart();
+	testApproximate();
+	testInteger();
 	return true;
 }
 bool Number::atan() {
@@ -1311,6 +1356,8 @@ bool Number::atan() {
 	}
 	value = cln::atan(value);
 	removeFloatZeroPart();
+	testApproximate();
+	testInteger();
 	return true;
 }
 bool Number::tanh() {
@@ -1320,6 +1367,8 @@ bool Number::tanh() {
 	if(isZero()) return true;
 	value = cln::tanh(value);
 	removeFloatZeroPart();
+	testApproximate();
+	testInteger();
 	return true;
 }
 bool Number::atanh() {
@@ -1335,6 +1384,8 @@ bool Number::atanh() {
 	}
 	value = cln::atanh(value);
 	removeFloatZeroPart();
+	testApproximate();
+	testInteger();
 	return true;
 }
 bool Number::ln() {
@@ -1350,6 +1401,8 @@ bool Number::ln() {
 	}
 	value = cln::log(value);
 	removeFloatZeroPart();
+	testApproximate();
+	testInteger();
 	return true;
 }
 bool Number::log(const Number &o) {
@@ -1378,6 +1431,8 @@ bool Number::log(const Number &o) {
 		value = cln::log(value, o.internalNumber());
 	}
 	removeFloatZeroPart();
+	testApproximate();
+	testInteger();
 	return true;
 }
 bool Number::exp() {
@@ -1388,6 +1443,8 @@ bool Number::exp() {
 		return true;
 	}
 	value = cln::exp(value);
+	testApproximate();
+	testInteger();
 	return true;
 }
 bool Number::gcd(const Number &o) {
@@ -1731,9 +1788,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(po.is_approximate) *po.is_approximate = isApproximate();
 		if(ips.num) *ips.num = str;
 	} else if(isInteger()) {
-
-		bool neg = cln::minusp(cln::realpart(value));
-		string mpz_str = printCL_I(cln::numerator(cln::rational(cln::realpart(value))), base, false, true);
+		
+		cl_I ivalue = cln::numerator(cln::rational(cln::realpart(value)));
+		bool neg = cln::minusp(ivalue);
+		string mpz_str = printCL_I(ivalue, base, false, true);
 		int expo = 0;
 		if(base == 10) {
 			if(mpz_str.length() > 0 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
@@ -1897,7 +1955,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		str += ")";
 	} else {
 		if(base != BASE_ROMAN_NUMERALS && (isApproximate() || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
-
 			cln::cl_I num, d = cln::denominator(cln::rational(cln::realpart(value))), remainder = 0, remainder2 = 0, exp = 0;
 			cln::cl_I_div_t div;
 			bool neg = cln::minusp(cln::realpart(value));

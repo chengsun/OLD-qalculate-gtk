@@ -26,12 +26,12 @@
 #define NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(i)		NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
 
 
-VectorFunction::VectorFunction() : Function("vector", 0, 1) {
-	setArgumentDefinition(1, new VectorArgument());
+VectorFunction::VectorFunction() : Function("vector", -1) {
 }
 int VectorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct = vargs[0];
-	return 1 ;
+	mstruct = vargs;
+	mstruct.setType(STRUCT_VECTOR);
+	return 1;
 }
 MatrixFunction::MatrixFunction() : Function("matrix", 3) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
@@ -757,7 +757,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi) {
 		if(mstruct[0].number().isInteger()) {
-			if(mstruct[0].number().numeratorIsEven()) {
+			if(mstruct[0].number().isEven()) {
 				mstruct = -1;
 			} else {
 				mstruct = 1;
@@ -1545,7 +1545,7 @@ ForFunction::ForFunction() : Function("for", 7) {
 }
 int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
-	mstruct = vargs[6];
+	mstruct = vargs[4];
 	MathStructure mcounter = vargs[0];
 	MathStructure mtest;
 	MathStructure mcount;
@@ -1559,12 +1559,12 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			break;
 		}
 		
-		mupdate = vargs[4];
+		mupdate = vargs[5];
 		mupdate.replace(vargs[1], mcounter);
-		mupdate.replace(vargs[5], mstruct);
+		mupdate.replace(vargs[6], mstruct);
 		mstruct = mupdate;
 		
-		mcount = vargs[2];
+		mcount = vargs[3];
 		mcount.replace(vargs[1], mcounter);
 		mcounter = mcount;
 	}

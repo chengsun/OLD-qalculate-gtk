@@ -887,7 +887,7 @@ ComparisonResult MathStructure::compare(const MathStructure &o) const {
 	mtest -= o;
 	EvaluationOptions eo = default_evaluation_options;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
-	mtest.calculatesub(eo);
+	mtest.calculatesub(eo, eo);
 	bool incomp = false;
 	if(mtest.isAddition()) {
 		for(unsigned int i = 1; i < mtest.size(); i++) {
@@ -1155,7 +1155,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 						if(CHILD(0).representsNonZero() || (CHILD(1).representsPositive() && mstruct[1].representsPositive())) {
 							MathStructure mstruct2(CHILD(1));
 							mstruct2 += mstruct[1];
-							if(mstruct2.calculatesub(eo)) {
+							if(mstruct2.calculatesub(eo, eo)) {
 								CHILD(1) = mstruct2;
 								return 1;
 							}
@@ -1163,7 +1163,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 					} else if(mstruct[1] == CHILD(1)) {
 						MathStructure mstruct2(CHILD(0));
 						mstruct2 *= mstruct[0];
-						if(mstruct2.calculatesub(eo)) {
+						if(mstruct2.calculatesub(eo, eo)) {
 							CHILD(0) = mstruct2;
 							return 1;
 						}
@@ -1419,7 +1419,7 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 				for(unsigned int i = 0; i < mstruct.size(); i++) {
 					if(i == 0) mthis.raise(mstruct[i]);
 					else mthis[1] = mstruct[i];
-					if(mthis.calculatesub(eo)) {
+					if(mthis.calculatesub(eo, eo)) {
 						set(mthis);
 						if(mstruct.size() == 2) {
 							if(i == 0) raise(mstruct[1]);
@@ -1438,9 +1438,7 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 	return -1;
 }
 
-void MathStructure::calculate() {
-}
-bool MathStructure::calculatesub(const EvaluationOptions &eo) {
+bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOptions &feo) {
 	bool b = true;
 	bool c = false;
 	while(b) {
@@ -1450,14 +1448,15 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo) {
 				if(eo.calculate_variables && o_variable->isKnown()) {
 					if(eo.approximation == APPROXIMATION_APPROXIMATE || !o_variable->isApproximate()) {
 						set(((KnownVariable*) o_variable)->get());
+						if(eo.calculate_functions) calculateFunctions(feo);
 						b = true;
 					}
 				}
 				break;
 			}
 			case STRUCT_POWER: {
-				CHILD(0).calculatesub(eo);
-				CHILD(1).calculatesub(eo);
+				CHILD(0).calculatesub(eo, feo);
+				CHILD(1).calculatesub(eo, feo);
 				childrenUpdated();
 				if(CHILD(0).merge_power(CHILD(1), eo) == 1) {
 					MathStructure new_this(CHILD(0));
@@ -1468,7 +1467,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo) {
 			}
 			case STRUCT_ADDITION: {
 				for(unsigned int i = 0; i < SIZE; i++) {
-					CHILD(i).calculatesub(eo);
+					CHILD(i).calculatesub(eo, feo);
 				}
 				childrenUpdated();
 				evalSort();
@@ -1498,7 +1497,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo) {
 			}
 			case STRUCT_MULTIPLICATION: {
 				for(unsigned int i = 0; i < SIZE; i++) {
-					CHILD(i).calculatesub(eo);
+					CHILD(i).calculatesub(eo, feo);
 				}
 				childrenUpdated();
 				evalSort();
@@ -1528,7 +1527,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo) {
 			}
 			case STRUCT_AND: {
 				for(unsigned int i = 0; i < SIZE; i++) {
-					CHILD(i).calculatesub(eo);
+					CHILD(i).calculatesub(eo, feo);
 				}
 				childrenUpdated();
 				bool is_true = true;
@@ -1557,7 +1556,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo) {
 			}
 			case STRUCT_OR: {
 				for(unsigned int i = 0; i < SIZE; i++) {
-					CHILD(i).calculatesub(eo);
+					CHILD(i).calculatesub(eo, feo);
 				}
 				childrenUpdated();
 				bool is_false = true;
@@ -1586,7 +1585,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo) {
 			}
 			case STRUCT_XOR: {
 				for(unsigned int i = 0; i < SIZE; i++) {
-					CHILD(i).calculatesub(eo);
+					CHILD(i).calculatesub(eo, feo);
 				}
 				childrenUpdated();
 				bool is_false = true;
@@ -1634,7 +1633,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo) {
 				break;
 			}
 			case STRUCT_NOT: {
-				CHILD(0).calculatesub(eo);
+				CHILD(0).calculatesub(eo, feo);
 				childrenUpdated();
 				if(CHILD(0).representsNonPositive()) {
 					clear();
@@ -1647,8 +1646,8 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo) {
 			}
 			case STRUCT_COMPARISON: {
 				if(!eo.test_comparisons) {
-					CHILD(0).calculatesub(eo);
-					CHILD(1).calculatesub(eo);
+					CHILD(0).calculatesub(eo, feo);
+					CHILD(1).calculatesub(eo, feo);
 					childrenUpdated();
 					b = false;
 					break;
@@ -1666,11 +1665,11 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo) {
 				}
 				if(!CHILD(1).isZero()) {
 					CHILD(0) -= CHILD(1);
-					CHILD(0).calculatesub(eo);
+					CHILD(0).calculatesub(eo, feo);
 					CHILD(1).clear();
 					b = true;
 				} else {
-					CHILD(0).calculatesub(eo);
+					CHILD(0).calculatesub(eo, feo);
 				}
 				childrenUpdated();
 				bool incomp = false;
@@ -1765,7 +1764,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo) {
 			}
 			default: {
 				for(unsigned int i = 0; i < SIZE; i++) {
-					if(CHILD(i).calculatesub(eo)) c = true;
+					if(CHILD(i).calculatesub(eo, feo)) c = true;
 				}
 				childrenUpdated();
 			}
@@ -1786,6 +1785,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo) {
 		m_type = STRUCT_VECTOR;
 		Argument *arg = NULL, *last_arg = NULL;
 		int last_i = 0;
+
 		for(unsigned int i = 0; i < SIZE; i++) {
 			arg = o_function->getArgumentDefinition(i + 1);
 			if(arg) {
@@ -1797,6 +1797,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo) {
 				}
 			}
 		}
+
 		if(last_arg && o_function->maxargs() < 0 && last_i >= o_function->minargs()) {
 			for(unsigned int i = last_i + 1; i < SIZE; i++) {
 				if(!last_arg->test(CHILD(i), i + 1, o_function, eo)) {
@@ -1805,10 +1806,12 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo) {
 				}
 			}
 		}
+
 		if(!o_function->testCondition(*this)) {
 			m_type = STRUCT_FUNCTION;
 			return false;
 		}
+
 		MathStructure mstruct;
 		int i = o_function->calculate(mstruct, *this, eo);
 		if(i > 0) {
@@ -2238,10 +2241,11 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	if(eo2.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo3 = eo2;
 		eo3.approximation = APPROXIMATION_EXACT;
+		calculatesub(eo3, eo);
 		eo3.approximation = APPROXIMATION_APPROXIMATE;
-		calculatesub(eo3);
+		calculatesub(eo3, eo);
 	} else {
-		calculatesub(eo2);
+		calculatesub(eo2, eo);
 	}
 	if(eo2.isolate_x) {
 		isolate_x(eo2);
@@ -2252,9 +2256,9 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			if(eo2.approximation == APPROXIMATION_TRY_EXACT) {
 				EvaluationOptions eo3 = eo2;
 				eo3.approximation = APPROXIMATION_APPROXIMATE;
-				calculatesub(eo3);
+				calculatesub(eo3, eo);
 			} else {
-				calculatesub(eo2);
+				calculatesub(eo2, eo);
 			}
 			if(eo2.isolate_x) {
 				isolate_x(eo2);
@@ -2267,11 +2271,11 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			if(eo2.approximation == APPROXIMATION_TRY_EXACT) {
 				EvaluationOptions eo3 = eo2;
 				eo3.approximation = APPROXIMATION_EXACT;
-				calculatesub(eo3);
+				calculatesub(eo3, eo);
 				eo3.approximation = APPROXIMATION_APPROXIMATE;
-				calculatesub(eo3);
+				calculatesub(eo3, eo);
 			} else {
-				calculatesub(eo2);
+				calculatesub(eo2, eo);
 			}
 			if(eo2.isolate_x) {
 				isolate_x(eo2);

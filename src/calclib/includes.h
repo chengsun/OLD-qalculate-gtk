@@ -40,7 +40,6 @@ using namespace std;
 #include <stdlib.h>
 #include <stdio.h>
 
-
 #ifdef __GNUC__
 #   if __GNUC__ < 3
 #      include <hash_map.h>

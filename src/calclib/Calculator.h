@@ -201,6 +201,7 @@ class Calculator {
 	void abort();
 	void abort_this();
 	bool busy();
+	void terminateThreads();
 	
 	string localizeExpression(string str) const;
 	string unlocalizeExpression(string str) const;

@@ -25,9 +25,12 @@ class Number {
 	protected:
 	
 		void removeFloatZeroPart();
+		void testApproximate();
+		void testInteger();
 
 		cln::cl_N value;
 		bool b_inf, b_pinf, b_minf;
+		bool b_approx;
 
 	public:
 	
@@ -57,6 +60,7 @@ class Number {
 		int intValue(bool *overflow = NULL) const;
 		
 		bool isApproximate() const;
+		bool isApproximateType() const;
 		void setApproximate(bool is_approximate = true);
 		
 		bool isUndefined() const;
@@ -98,6 +102,7 @@ class Number {
 		bool hasImaginaryPart() const;
 		bool isComplex() const;
 		bool isInteger() const;
+		Number integer() const;
 		bool isRational() const;
 		bool isReal() const;
 		bool isFraction() const;

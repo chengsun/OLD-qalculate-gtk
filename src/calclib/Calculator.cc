@@ -165,16 +165,16 @@ Calculator::Calculator() {
 	addStringAlternative(SIGN_POWER_2, "^2");
 	addStringAlternative(SIGN_POWER_3, "^3");
 	addStringAlternative(SIGN_INFINITY, "infinity");
-	addStringAlternative("(+infinity)", "plus_infinity");
-	addStringAlternative("(-infinity)", "minus_infinity");
 	addStringAlternative(SIGN_DIVISION, DIVISION);	
 	addStringAlternative(SIGN_MULTIPLICATION, MULTIPLICATION);		
 	addStringAlternative(SIGN_MULTIDOT, MULTIPLICATION);			
 	addStringAlternative(SIGN_MINUS, MINUS);		
-	addStringAlternative(SIGN_PLUS, PLUS);		
+	addStringAlternative(SIGN_PLUS, PLUS);
 	addStringAlternative(SIGN_NOT_EQUAL, " " NOT EQUALS);		
 	addStringAlternative(SIGN_GREATER_OR_EQUAL, GREATER EQUALS);	
-	addStringAlternative(SIGN_LESS_OR_EQUAL, LESS EQUALS);			
+	addStringAlternative(SIGN_LESS_OR_EQUAL, LESS EQUALS);
+	addStringAlternative("(+infinity)", "plus_infinity");
+	addStringAlternative("(-infinity)", "minus_infinity");
 	addStringAlternative(";", COMMA);
 	addStringAlternative("\t", SPACE);
 	addStringAlternative("\n", SPACE);
@@ -1031,6 +1031,11 @@ void Calculator::abort_this() {
 bool Calculator::busy() {
 	return b_busy;
 }
+void Calculator::terminateThreads() {
+	pthread_cancel(calculate_thread);
+	pthread_cancel(print_thread);
+}
+
 string Calculator::localizeExpression(string str) const {
 	if(DOT_STR == DOT && COMMA_STR == COMMA) return str;
 	vector<unsigned int> q_begin;
@@ -2430,7 +2435,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 					stmp2 = str.substr(str_index + 1, i3 - str_index - 1);
 					stmp = LEFT_PARENTHESIS_CH;
 					stmp += ID_WRAP_LEFT_CH;
-					stmp += i2s(addId(f_vector->calculate(stmp2)));
+					stmp += i2s(addId(f_vector->parse(stmp2, po)));
 					stmp += ID_WRAP_RIGHT_CH;
 					str.replace(str_index, i3 + 1 - str_index, stmp);
 					str_index += stmp.length() - 1;
@@ -2490,7 +2495,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 				if(!stmp2.empty()) {
 					stmp = LEFT_PARENTHESIS_CH;
 					stmp += ID_WRAP_LEFT_CH;
-					stmp += i2s(addId(f_factorial->parse(stmp2)));
+					stmp += i2s(addId(f_factorial->parse(stmp2, po)));
 					stmp += ID_WRAP_RIGHT_CH;
 					stmp += RIGHT_PARENTHESIS_CH;
 					str.replace(str_index - stmp2.length(), stmp2.length() + 1, stmp);
@@ -2611,7 +2616,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 								}
 								stmp = LEFT_PARENTHESIS_CH;
 								stmp += ID_WRAP_LEFT_CH;
-								stmp += i2s(addId(f->parse("")));
+								stmp += i2s(addId(f->parse("", po)));
 								stmp += ID_WRAP_RIGHT_CH;
 								stmp += RIGHT_PARENTHESIS_CH;
 								if(i4 < 0) i4 = name_length;
@@ -2624,7 +2629,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 								}
 								stmp = LEFT_PARENTHESIS_CH;
 								stmp += ID_WRAP_LEFT_CH;
-								stmp += i2s(addId(f->parse(stmp2)));
+								stmp += i2s(addId(f->parse(stmp2, po)));
 								stmp += ID_WRAP_RIGHT_CH;
 								stmp += RIGHT_PARENTHESIS_CH;
 								if(i5 == (int) string::npos) {
@@ -2652,9 +2657,8 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 											if(i5 == 2) {
 												b = true;
 											}
-										} else if(is_in(OPERATORS, str[str_index + name_length + i6])) {
+										} else if(i5 == 2 && is_in(OPERATORS, str[str_index + name_length + i6])) {
 											b = true;
-											i5 = 2;
 										} else {
 											//if(i6 > 0) {
 												i5 = 2;
@@ -2669,7 +2673,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 									stmp2 = str.substr(str_index + name_length, i6 - 1);
 									stmp = LEFT_PARENTHESIS_CH;
 									stmp += ID_WRAP_LEFT_CH;
-									stmp += i2s(addId(f->parse(stmp2)));
+									stmp += i2s(addId(f->parse(stmp2, po)));
 									stmp += ID_WRAP_RIGHT_CH;
 									stmp += RIGHT_PARENTHESIS_CH;
 									i4 = i6 + 1 + name_length - 2;
@@ -2700,7 +2704,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 									stmp2 = str.substr(str_index + name_length + i9, i6 - (str_index + name_length + i9));
 									stmp = LEFT_PARENTHESIS_CH;
 									stmp += ID_WRAP_LEFT_CH;
-									stmp += i2s(addId(f->parse(stmp2)));
+									stmp += i2s(addId(f->parse(stmp2, po)));
 									stmp += ID_WRAP_RIGHT_CH;
 									stmp += RIGHT_PARENTHESIS_CH;
 									i4 = i6 + 1 - str_index;
@@ -3557,11 +3561,11 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "hidden")) {	
 							XML_GET_TRUE_FROM_TEXT(child, hidden);
-						} else if(!xmlStrcmp(child->name, (const xmlChar*) "definition")) {
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "subfunction")) {
 							XML_GET_FALSE_FROM_PROP(child, "precalculate", b);
 							value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1); 
-							if(value) ((UserFunction*) f)->addDefinition((char*) value, b); 
-							else ((UserFunction*) f)->addDefinition("", true); 
+							if(value) ((UserFunction*) f)->addSubfunction((char*) value, b); 
+							else ((UserFunction*) f)->addSubfunction("", true); 
 							if(value) xmlFree(value);
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "argument")) {
 							farg = NULL; iarg = NULL;
@@ -4648,6 +4652,12 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 						} else {
 							xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
 						}
+					}
+					for(unsigned int i2 = 1; i2 <= ((UserFunction*) functions[i])->countSubfunctions(); i2++) {
+						newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "subfunction", (xmlChar*) ((UserFunction*) functions[i])->getSubfunction(i2).c_str());
+						if(((UserFunction*) functions[i])->subfunctionPrecalculated(i2)) xmlNewProp(newnode2, (xmlChar*) "precalculate", (xmlChar*) "true");
+						else xmlNewProp(newnode2, (xmlChar*) "precalculate", (xmlChar*) "false");
+						
 					}
 					newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "expression", (xmlChar*) ((UserFunction*) functions[i])->equation().c_str());
 					if(functions[i]->isApproximate()) xmlNewProp(newnode2, (xmlChar*) "approximate", (xmlChar*) "true");
