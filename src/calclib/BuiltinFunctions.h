@@ -33,6 +33,7 @@ DECLARE_BUILTIN_FUNCTION(AperyFunction);
 DECLARE_BUILTIN_FUNCTION(PythagorasFunction);
 DECLARE_BUILTIN_FUNCTION(GoldenFunction);
 DECLARE_BUILTIN_FUNCTION(ZetaFunction);
+DECLARE_BUILTIN_FUNCTION(ForFunction);
 DECLARE_BUILTIN_FUNCTION(ProcessFunction);
 DECLARE_BUILTIN_FUNCTION(CustomSumFunction);
 DECLARE_BUILTIN_FUNCTION(FunctionFunction);
@@ -109,15 +110,8 @@ DECLARE_BUILTIN_FUNCTION(BINFunction);
 DECLARE_BUILTIN_FUNCTION(HEXFunction);
 DECLARE_BUILTIN_FUNCTION(OCTFunction);
 DECLARE_BUILTIN_FUNCTION(TitleFunction);
-
-class IFFunction : public Function {
-  protected:
-	Manager *calculate(const string &argv);  
-	Manager *calculate(vector<Manager*> &vargs);  
-  public:
-	IFFunction();
-	IFFunction(const IFFunction *function) {set(function);}
-	ExpressionItem *copy() const {return new IFFunction(this);}
-};
+DECLARE_BUILTIN_FUNCTION(IFFunction);
+DECLARE_BUILTIN_FUNCTION(ErrorFunction);
+DECLARE_BUILTIN_FUNCTION(MessageFunction);
 
 #endif

@@ -180,7 +180,7 @@ Calculator::Calculator() {
 //	COMMA_S = ",;";
 	NUMBERS_S = "0123456789";
 	SIGNS_S = "+-*/^";
-	OPERATORS_S = "+-*/^";
+	OPERATORS_S = "+-*/^!<>|=";
 	BRACKETS_S = "()[]";
 	LEFT_BRACKET_S = "([";
 	LEFT_BRACKET_STR = "(";
@@ -188,7 +188,7 @@ Calculator::Calculator() {
 	RIGHT_BRACKET_STR = ")";
 	SPACE_S = " \t\n";
 	SPACE_STR = " ";
-	RESERVED_S = "@?!\\{}&:<>|\",;";
+	RESERVED_S = "@?\\{}:\",;";
 	PLUS_S = "+";
 	PLUS_STR = "+";
 	MINUS_S = "-";
@@ -681,6 +681,8 @@ void Calculator::addBuiltinFunctions() {
 #ifdef HAVE_LIBCLN
 	addFunction(new ZetaFunction());
 #endif	
+	addFunction(new ErrorFunction());
+	addFunction(new ForFunction());
 	addFunction(new ProcessFunction());
 	addFunction(new CustomSumFunction());
 	addFunction(new FunctionFunction());
@@ -1068,8 +1070,9 @@ void Calculator::delUFV(void *object) {
 			--it;
 			halt = false;
 		}
-		if(it == ufv.end())
+		if(it == ufv.end()) {
 			break;
+		}
 		if(*it == object) {
 			if(it == ufv.begin()) {
 				ufv.erase(it);
@@ -1871,6 +1874,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 			str.replace(i, 1, stmp);
 		}
 	}
+	gsub("!=", "<>", str);	
 	f = getFunction("factorial");
 	while(f) {
 		i = str.find("!", i);	
@@ -2144,6 +2148,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						XML_DO_FROM_TEXT(child, ((UserFunction*) f)->setEquation);
 						XML_GET_FALSE_FROM_PROP(child, "precise", b)
 						f->setPrecise(b);
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "condition")) {
+						XML_DO_FROM_TEXT(child, f->setCondition);
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
 						XML_DO_FROM_TEXT(child, f->setDescription);
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "argument")) {
@@ -2252,15 +2258,16 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				XML_GET_FALSE_FROM_PROP(cur, "active", active)
 				svalue = "";
 				child = cur->xmlChildrenNode;
+				b = true;
 				while(child != NULL) {
 					if(!xmlStrcmp(child->name, (const xmlChar*) "value")) {
 						XML_GET_STRING_FROM_TEXT(child, svalue);
 						XML_GET_FALSE_FROM_PROP(child, "precise", b)
-						v->setPrecise(b);
 					}
 					child = child->next;
 				}
 				v = addVariable(new Variable("", name, svalue, "", is_user_defs, false, active));
+				v->setPrecise(b);
 				done_something = true;
 				XML_DO_FROM_PROP(cur, "category", v->setCategory)
 				XML_DO_FROM_PROP(cur, "title", v->setTitle)
@@ -2659,6 +2666,9 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 				newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "expression", (xmlChar*) ((UserFunction*) functions[i])->equation().c_str());
 				if(functions[i]->isActive()) xmlNewProp(newnode2, (xmlChar*) "precise", (xmlChar*) "true");
 				else xmlNewProp(newnode2, (xmlChar*) "precise", (xmlChar*) "false");			
+				if(!functions[i]->condition().empty()) {
+					xmlNewTextChild(newnode, NULL, (xmlChar*) "condition", (xmlChar*) functions[i]->condition().c_str());
+				}
 				cur = newnode;
 				for(int i2 = 1; i2 <= functions[i]->lastArgumentDefinitionIndex(); i2++) {
 					arg = functions[i]->getArgumentDefinition(i2);
@@ -2898,7 +2908,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 	fclose(file);
 	setLocale();
 }*/
-bool Calculator::load(const char* file_name, bool is_user_defs) {
+/*bool Calculator::load(const char* file_name, bool is_user_defs) {
 	FILE *file = fopen(file_name, "r");
 	if(file == NULL)
 		return false;
@@ -3282,7 +3292,7 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 		return false;
 	}	
 	return true;
-}
+}*/
 
 long double Calculator::getAngleValue(long double value) {
 	switch(angleMode()) {
@@ -3471,3 +3481,14 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 	}
 	return true;
 }
+bool Calculator::testCondition(string expression) {
+	Manager *mngr = calculate(expression);
+	if(mngr->isFraction() && mngr->fraction()->isPositive()) {
+		mngr->unref();
+		return true;
+	}
+	mngr->unref();
+	return false;
+}
+
+

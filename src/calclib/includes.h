@@ -199,32 +199,45 @@ extern char *NUMBERS_S_AND_MINUS_S_AND_DOT_S;*/
 #define COMMA_CH		','
 #define NAME_NUMBER_PRE_CH	'_'
 #define UNIT_DIVISION_CH	'/'
+#define	AND_CH			'&'
+#define	OR_CH			'|'
+#define	LESS_CH			'<'
+#define	GREATER_CH		'>'
+#define	NOT_CH			'!'
+#define EQUALS_CH		'='
 
 #define ID_WRAP_LEFT	"{"	
 #define ID_WRAP_RIGHT	"}"	
 #define ID_WRAPS	"{}"	
 #define DOT		"."
 #define COMMA		","
+#define COMMAS		",;"
 #define NUMBERS		"0123456789"
 #define SIGNS		"+-*/^"
-#define OPERATORS	"+-*/^"
+#define OPERATORS	"+-*/^&|!<>="
 #define	BRACKETS	"()"
 #define LEFT_BRACKET	"("
 #define	RIGHT_BRACKET	")"
 #define	SPACES		" \t\n"
 #define SPACE		" "
-#define RESERVED	"@?!\\{}&:<>|\""
+#define RESERVED	"@?\\{}:\""
 #define PLUS		"+"
 #define MINUS		"-"
 #define MULTIPLICATION	"*"
 #define DIVISION	"/"
 #define EXP		"E"
 #define	POWER		"^"
+#define	AND		"&"
+#define	OR		"|"
+#define	LESS		"<"
+#define	GREATER		">"
+#define	NOT		"!"
+#define	EQUALS		"="
 #define SINF		"INF"
 #define SNAN		"NAN"
 #define UNDERSCORE	"_"
 
-#define NOT_IN_NAMES 	RESERVED OPERATORS SPACES DOT BRACKETS ";" COMMA
+#define NOT_IN_NAMES 	RESERVED OPERATORS SPACES DOT BRACKETS COMMAS
 
 using namespace std;
 

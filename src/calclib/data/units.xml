@@ -482,40 +482,40 @@
     <base unit="kelvin" precise="true" relation="(2298.35+5\x)/9" reverse-relation="(9\x-2298.35)/5" exponent="1"/>
   </unit>
   <unit type="base" name="euro" plural="euros" abbreviation="" category="Currency" title="Euro" active="true"/>
-  <unit type="alias" name="bef" plural="" abbreviation="" category="Currency" title="Belgian franc" active="true">
+  <unit type="alias" name="BEF" plural="" abbreviation="" category="Currency" title="Belgian franc" active="true">
     <base unit="euro" precise="true" relation="1/40.3399" exponent="1"/>
   </unit>
-  <unit type="alias" name="grd" plural="" abbreviation="" category="Currency" title="Greek drachma" active="true">
+  <unit type="alias" name="GRD" plural="" abbreviation="" category="Currency" title="Greek drachma" active="true">
     <base unit="euro" precise="true" relation="1/340.750" exponent="1"/>
   </unit>
-  <unit type="alias" name="frf" plural="" abbreviation="" category="Currency" title="French franc" active="true">
+  <unit type="alias" name="FRF" plural="" abbreviation="" category="Currency" title="French franc" active="true">
     <base unit="euro" precise="true" relation="1/6.55957" exponent="1"/>
   </unit>
-  <unit type="alias" name="itl" plural="" abbreviation="" category="Currency" title="Italian lira" active="true">
+  <unit type="alias" name="ITL" plural="" abbreviation="" category="Currency" title="Italian lira" active="true">
     <base unit="euro" precise="true" relation="1/1936.27" exponent="1"/>
   </unit>
-  <unit type="alias" name="nlg" plural="" abbreviation="" category="Currency" title="Dutch guilder" active="true">
+  <unit type="alias" name="NLG" plural="" abbreviation="" category="Currency" title="Dutch guilder" active="true">
     <base unit="euro" precise="true" relation="1/2.20371" exponent="1"/>
   </unit>
-  <unit type="alias" name="pte" plural="" abbreviation="" category="Currency" title="Portuguese escudo" active="true">
+  <unit type="alias" name="PTE" plural="" abbreviation="" category="Currency" title="Portuguese escudo" active="true">
     <base unit="euro" precise="true" relation="1/200.482" exponent="1"/>
   </unit>
-  <unit type="alias" name="dem" plural="" abbreviation="" category="Currency" title="Deutche Mark" active="true">
+  <unit type="alias" name="DEM" plural="" abbreviation="" category="Currency" title="Deutche Mark" active="true">
     <base unit="euro" precise="true" relation="1/1.95583" exponent="1"/>
   </unit>
-  <unit type="alias" name="esp" plural="" abbreviation="" category="Currency" title="Spanish peseta" active="true">
+  <unit type="alias" name="ESP" plural="" abbreviation="" category="Currency" title="Spanish peseta" active="true">
     <base unit="euro" precise="true" relation="1/166.386" exponent="1"/>
   </unit>
-  <unit type="alias" name="iep" plural="" abbreviation="" category="Currency" title="Irish pound" active="true">
+  <unit type="alias" name="IEP" plural="" abbreviation="" category="Currency" title="Irish pound" active="true">
     <base unit="euro" precise="true" relation="1/0.787564" exponent="1"/>
   </unit>
-  <unit type="alias" name="luf" plural="" abbreviation="" category="Currency" title="Luxembourg franc" active="true">
+  <unit type="alias" name="LUF" plural="" abbreviation="" category="Currency" title="Luxembourg franc" active="true">
     <base unit="euro" precise="true" relation="1/40.3399" exponent="1"/>
   </unit>
-  <unit type="alias" name="ats" plural="" abbreviation="" category="Currency" title="Austrian shilling" active="true">
+  <unit type="alias" name="ATS" plural="" abbreviation="" category="Currency" title="Austrian shilling" active="true">
     <base unit="euro" precise="true" relation="1/13.7603" exponent="1"/>
   </unit>
-  <unit type="alias" name="fim" plural="" abbreviation="" category="Currency" title="Finnish markka" active="true">
+  <unit type="alias" name="FIM" plural="" abbreviation="" category="Currency" title="Finnish markka" active="true">
     <base unit="euro" precise="true" relation="1/5.94573" exponent="1"/>
   </unit>
 </QALCULATE>

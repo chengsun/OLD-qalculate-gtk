@@ -51,6 +51,7 @@ class Function : public ExpressionItem {
 	bool testArguments(vector<Manager*> &vargs);
 	virtual Manager *createFunctionManagerFromVArgs(vector<Manager*> &vargs);
 	virtual Manager *createFunctionManagerFromSVArgs(vector<string> &svargs);	
+	string scondition;
 	
   public:
 	Function(string cat_, string name_, int argc_, string title_ = "", string descr_ = "", int max_argc_ = 0, bool is_active = true);
@@ -64,6 +65,9 @@ class Function : public ExpressionItem {
 	
 	virtual Manager *calculate(const string &eq);
 	virtual Manager *calculate(vector<Manager*> &vargs, int counted_args = -1);	
+	string condition() const;
+	void setCondition(string expression);
+	bool testCondition(vector<Manager*> &vargs);
 	int args() const;
 	int minargs() const;	
 	int maxargs() const;		

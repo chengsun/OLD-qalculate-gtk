@@ -116,18 +116,17 @@ bool ExpressionItem::setLocal(bool is_local, int will_be_active) {
 			bool was_active = b_active;
 			b_active = false;	
 			ExpressionItem *item = copy();
-			b_local = is_local;
-			if(will_be_active < 0) {
-				b_active = was_active;
-			} else if(will_be_active) {
-				b_active = was_active;
+			b_local = is_local;	
+			b_active = was_active;
+			if(will_be_active) {
 				setActive(true);
-			} else {
-				b_active = was_active;
+			} else if(will_be_active == 0) {
 				setActive(false);
 			}
-			CALCULATOR->addExpressionItem(item);	
-			if(was_active && b_active) item->setChanged(true);
+			CALCULATOR->addExpressionItem(item);		
+			if(was_active != item->isActive()) {
+				item->setChanged(true);
+			}
 			if(was_active && will_be_active == 0) {
 				item->setActive(true);
 			}

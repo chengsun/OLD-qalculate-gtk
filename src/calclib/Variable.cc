@@ -29,6 +29,7 @@ Variable::Variable() : ExpressionItem() {
 	mngr = NULL;
 }
 Variable::Variable(const Variable *variable) {
+	mngr = NULL;
 	set(variable);
 }
 Variable::~Variable() {

@@ -110,8 +110,8 @@
   <builtin-function name="if" category="Logical" title="If...Then...Else" active="true">
     <description>Tests a condition and returns a value depending on the result.</description>
     <argument index="1">Condition (use &lt;, &lt;=, =, &lt;&gt;, =&gt; or &gt;)</argument>
-    <argument index="2">Value if condition met</argument>
-    <argument index="3">Value if condition NOT met</argument>
+    <argument index="2">Expression if condition met</argument>
+    <argument index="3">Expression if condition NOT met</argument>
   </builtin-function>
   <builtin-function name="diff" category="Experimental" title="Differentiate" active="true">
     <description></description>
@@ -895,20 +895,20 @@
   </function>
   <function name="rayleigh" category="Statistics" title="Rayleigh distribution" active="true">
     <description>Returns the probability density p(x) at x for a Rayleigh distribution with scale parameter sigma. (from Gnumeric)</description>
-    <expression precise="true">if(&quot;\x &lt; 0&quot;,0,(\x/\y)/\y*exp(-(\x/\y)*(\x/\y)/2))</expression>
+    <expression precise="true">if(&quot;\x &lt; 0&quot;,&quot;0&quot;,&quot;(\x/\y)/\y*exp(-(\x/\y)*(\x/\y)/2)&quot;)</expression>
     <argument type="free" index="1">X</argument>
     <argument type="number" index="2">Sigma<min include-equals="false">0</min></argument>
   </function>
   <function name="rayleightail" category="Statistics" title="Rayleigh tail distribution" active="true">
     <description>Returns the probability density p(x) at x for a Rayleigh tail distribution with scale parameter sigma and a lower limit. (from Gnumeric)</description>
-    <expression precise="true">if(&quot;\x &lt; \y&quot;, 0, (\x/\z)/\z*exp(((\y/\z)+(\x/\z))*((\y/\z)-(\x/\z))/2))</expression>
+    <expression precise="true">if(&quot;\x &lt; \y&quot;,&quot;0&quot;,&quot;(\x/\z)/\z*exp(((\y/\z)+(\x/\z))*((\y/\z)-(\x/\z))/2)&quot;)</expression>
     <argument type="free" index="1">X</argument>
     <argument type="free" index="2">Lower limit</argument>
     <argument type="number" index="3">Sigma<min include-equals="false">0</min></argument>
   </function>
   <function name="pareto" category="Statistics" title="Pareto distribution" active="true">
     <description>Returns the probability density p(x) at x for a Pareto distribution with exponent and scale. (from Gnumeric)</description>
-    <expression precise="true">if(&quot;\x &lt; \z&quot;,0,(\y/\z)/(\x/\z)^(\y+1))</expression>
+    <expression precise="true">if(&quot;\x &lt; \z&quot;,&quot;0&quot;,&quot;(\y/\z)/(\x/\z)^(\y+1)&quot;)</expression>
     <argument type="free" index="1">X</argument>
     <argument type="number" index="2">Exponent<min include-equals="false">0</min></argument>
     <argument type="number" index="3">Scale<min include-equals="false">0</min></argument>

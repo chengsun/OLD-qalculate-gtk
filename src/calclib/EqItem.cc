@@ -178,8 +178,171 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 		str2 += ID_WRAP_RIGHT_CH;
 		str.replace(i, i2 - i + 1, str2);
 	}
+	if((i = str.find(AND)) != string::npos) {
+		bool b = false;
+		while(i != string::npos) {
+			if(i > 0) {
+				str2 = str.substr(0, i);
+				EqContainer eq_c(str2, ADD);
+				Manager *mngr2 = eq_c.calculate();
+				if(mngr2->isFraction() && mngr2->fraction()->isPositive()) {
+					str = str.substr(i + 1, str.length() - (i + 1));	
+				} else {
+					if(!mngr2->isFraction()) {
+						CALCULATOR->error(true, _("Comparison \"%s\" is not solvable, treating as FALSE."), str2.c_str(), NULL);
+					}
+					mngr->clear();
+					return;
+				}
+			} else {
+				str.erase(str.begin());
+			}
+			i = str.find_first_of(AND, 0);
+			b = true;
+		}
+		if(b) {
+			EqContainer eq_c(str, ADD);
+			Manager *mngr2 = eq_c.calculate();
+			if(mngr2->isFraction() && mngr2->fraction()->isPositive()) {
+				mngr->set(1, 1);
+			} else {
+				if(!mngr2->isFraction()) {
+					CALCULATOR->error(true, _("Comparison \"%s\" is not solvable, treating as FALSE."), str2.c_str(), NULL);
+				}
+				mngr->clear();
+			}		
+			return;
+		}
+	}
+	if((i = str.find(OR)) != string::npos) {
+		bool b = false;
+		while(i != string::npos) {
+			if(i > 0) {
+				str2 = str.substr(0, i);
+				EqContainer eq_c(str2, ADD);
+				Manager *mngr2 = eq_c.calculate();
+				if(mngr2->isFraction() && mngr2->fraction()->isPositive()) {
+					mngr->set(1, 1);
+					return;
+				} else {
+					if(!mngr2->isFraction()) {
+						CALCULATOR->error(true, _("Comparison \"%s\" is not solvable, treating as FALSE."), str2.c_str(), NULL);
+					}
+					str = str.substr(i + 1, str.length() - (i + 1));
+				}
+			} else {
+				str.erase(str.begin());
+			}
+			i = str.find_first_of(OR, 0);
+			b = true;
+		}
+		if(b) {
+			EqContainer eq_c(str, ADD);
+			Manager *mngr2 = eq_c.calculate();
+			if(mngr2->isFraction() && mngr2->fraction()->isPositive()) {
+				mngr->set(1, 1);
+			} else {
+				if(!mngr2->isFraction()) {
+					CALCULATOR->error(true, _("Comparison \"%s\" is not solvable, treating as FALSE."), str2.c_str(), NULL);
+				}
+				mngr->clear();
+			}		
+			return;
+		}
+	}
+	if((i = str.find_first_of(LESS GREATER EQUALS NOT, 0)) != string::npos) {
+		bool c = false;
+		while(i != string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {
+			i++;
+			if(i + 1 == str.length()) {
+				c == true;
+			}
+		}
+		Manager *mngr1 = NULL;
+		while(!c) {
+			if(i == string::npos) {
+				str2 = str.substr(0, str.length());
+			} else {
+				str2 = str.substr(0, i);
+			}
+			EqContainer eq_c(str2, ADD);
+			Manager *mngr2 = eq_c.calculate();			
+			if(mngr1) {
+				mngr1->add(mngr2, SUBTRACT);
+				mngr1->finalize();	
+				bool b = false;
+				if(!mngr1->isFraction()) {
+					CALCULATOR->error(true, _("Comparison \"%s\" is not solvable, treating as FALSE."), str.c_str(), NULL);
+				} else {			
+					switch(i3) {
+						case EQUALS_CH: {
+							b = mngr1->fraction()->isZero();
+							break;
+						}
+						case GREATER_CH: {
+							b = mngr1->fraction()->isPositive();
+							break;
+						}
+						case LESS_CH: {
+							b = mngr1->fraction()->isNegative();
+							break;
+						}
+						case GREATER_CH * EQUALS_CH: {
+							b = !mngr1->fraction()->isNegative();
+							break;
+						}
+						case LESS_CH * EQUALS_CH: {
+							b = !mngr1->fraction()->isPositive();
+							break;
+						}
+						case GREATER_CH * LESS_CH: {
+							b = !mngr1->fraction()->isZero();
+							break;
+						}
+					}
+				}
+				mngr1->unref();
+				if(!b) {
+					mngr->clear();
+					return;
+				} else {
+					mngr->set(1, 1);
+				}
+			}
+			if(i == string::npos) {
+				return;
+			}
+			mngr1 = mngr2;
+			mngr1->ref();
+			if(str.length() > i + 1 && is_in(LESS GREATER NOT EQUALS, str[i + 1])) {
+				if(str[i] == str[i + 1]) {
+					i3 = str[i];
+				} else {
+					i3 = str[i] * str[i + 1];
+					if(i3 == NOT_CH * EQUALS_CH) {
+						i3 = GREATER_CH * LESS_CH;
+					} else if(i3 == NOT_CH * LESS_CH) {
+						i3 = GREATER_CH;
+					} else if(i3 == NOT_CH * GREATER_CH) {
+						i3 = LESS_CH;
+					}
+				}
+				i++;
+			} else {
+				i3 = str[i];
+			}
+			str = str.substr(i + 1, str.length() - (i + 1));
+			i = str.find_first_of(LESS GREATER NOT EQUALS, 0);
+			while(i != string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {
+				i++;
+				if(i + 1 == str.length()) {
+					i = string::npos;
+				}
+			}
+		}
+	}		
 	i = 0;
-	i3 = 0;
+	i3 = 0;	
 	if(CALCULATOR->inRPNMode()) {
 		while(true) {
 			i = str.find_first_of(OPERATORS SPACE, i3 + 1);

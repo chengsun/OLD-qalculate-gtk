@@ -149,7 +149,7 @@ class Calculator {
 	bool unitIsUsedByOtherUnits(const Unit *u) const;	
 	string getName(string name = "", ExpressionItem *object = NULL, bool force = false, bool always_append = false);
 	string getUnitName(string name = "", Unit *object = NULL, bool force = false, bool always_append = false);	
-	bool load(const char* file_name, bool is_user_defs = true);
+	//bool load(const char* file_name, bool is_user_defs = true);
 	bool loadGlobalDefinitions();
 	bool loadLocalDefinitions();
 	int loadDefinitions(const char* file_name, bool is_user_defs = true);
@@ -161,7 +161,8 @@ class Calculator {
 	long double getAngleValue(long double value);
 	Manager *setAngleValue(Manager *mngr);	
 	bool importCSV(const char *file_name, int first_row = 1, bool headers = true, string delimiter = ",", bool to_matrix = false, string name = "", string title = "", string category = "");
-	
+	bool testCondition(string expression);
+		
 };
 
 #endif

@@ -39,7 +39,9 @@ Function::Function() {
 	max_argc = 0;
 	last_argdef_index = 0;
 }
-Function::~Function() {}
+Function::~Function() {
+	clearArgumentDefinitions();
+}
 
 //ExpressionItem *Function::copy() const {return new Function(this);}
 void Function::set(const ExpressionItem *item) {
@@ -52,9 +54,12 @@ void Function::set(const ExpressionItem *item) {
 			setDefaultValue(i, f->getDefaultValue(i));
 		}
 		last_argdef_index = f->lastArgumentDefinitionIndex();
+		scondition = f->condition();
 		clearArgumentDefinitions();
 		for(int i = 1; i <= f->lastArgumentDefinitionIndex(); i++) {
-			setArgumentDefinition(i, f->getArgumentDefinition(i)->copy());
+			if(f->getArgumentDefinition(i)) {
+				setArgumentDefinition(i, f->getArgumentDefinition(i)->copy());
+			}
 		}
 	}
 	ExpressionItem::set(item);
@@ -71,6 +76,70 @@ int Function::minargs() const {
 }
 int Function::maxargs() const {
 	return max_argc;
+}
+string Function::condition() const {
+	return scondition;
+}
+void Function::setCondition(string expression) {
+	scondition = expression;
+	remove_blank_ends(scondition);
+}
+bool Function::testCondition(vector<Manager*> &vargs) {
+	if(scondition.empty()) {
+		return true;
+	}
+	UserFunction test_function("", "CONDITION_TEST_FUNCTION", scondition, false, argc, "", "", max_argc);
+	Manager *mngr = test_function.calculate(vargs);
+	if(!mngr->isFraction() || !mngr->fraction()->isPositive()) {
+		string str = scondition;
+		string svar, argstr;
+		Argument *arg;
+		int i_args = maxargs();
+		if(i_args < 0) {
+			i_args = minargs() + 2;
+		}
+		for(int i = 0; i < i_args; i++) {
+			svar = '\\';
+			if(maxargs() < 0 && i >= minargs()) {
+				svar += (char) ('v' + i - minargs());
+			} else { 
+				if('x' + i > 'z') {
+					svar += (char) ('a' + i - 3);
+				} else {
+					svar += 'x' + i;
+				}
+			}
+			int i2 = 0;
+			while(true) {
+				if((i2 = str.find(svar, i2)) != string::npos) {
+					if(maxargs() < 0 && i > minargs()) {
+						arg = getArgumentDefinition(i);
+					} else {
+						arg = getArgumentDefinition(i + 1);
+					}
+					argstr = "\"";
+					if(!arg || arg->name().empty()) {
+						argstr += _("argument");
+						argstr += " ";
+						if(maxargs() < 0 && i > minargs()) {
+							argstr += i2s(i);
+						} else {
+							argstr += i2s(i + 1);
+						}
+					} else {
+						argstr += arg->name();
+					}
+					argstr += "\"";
+					str.replace(i2, 2, argstr);
+				} else {
+					break;
+				}
+			}
+		}
+		CALCULATOR->error(true, "%s() requires that %s", name().c_str(), str.c_str(), NULL);
+		return false;
+	}
+	return true;
 }
 int Function::args(const string &str, vector<Manager*> &vargs) {
 	int itmp = 0, i = 0, i2 = 0, i3 = 0, i4 = 0;
@@ -197,7 +266,7 @@ bool Function::testArguments(vector<Manager*> &vargs) {
 			return false;
 		}
 	}
-	return true;
+	return testCondition(vargs);
 }
 Manager *Function::calculate(vector<Manager*> &vargs, int itmp) {
 	Manager *mngr = NULL;
@@ -445,8 +514,8 @@ void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 			v_str = LEFT_BRACKET ID_WRAP_LEFT;
 			v_str += i2s(v_id[v_id.size() - 1]);
 			v_str += ID_WRAP_RIGHT RIGHT_BRACKET;			
-			while(1) {
-				if((i2 = stmp.find(svar, i2)) != (int) string::npos) {
+			while(true) {
+				if((i2 = stmp.find(svar, i2)) != string::npos) {
 					if(i2 != 0 && stmp[i2 - 1] == '\\') {
 						i2 += 2;
 					} else {
@@ -682,7 +751,22 @@ bool Argument::test(const Manager *value, int index, Function *f) const {
 		}
 		return false;
 	}
-	//test condition here
+	if(!scondition.empty()) {
+		string expression = scondition;
+		Manager *mngr = (Manager*) value;
+		mngr->protect(true);
+		int id = CALCULATOR->addId(mngr, true);
+		string ids = LEFT_BRACKET;
+		ids += ID_WRAP_LEFT;
+		ids += i2s(id);
+		ids += ID_WRAP_RIGHT;
+		ids += RIGHT_BRACKET;
+		gsub("\\x", ids, expression);
+		bool result = CALCULATOR->testCondition(expression);
+		CALCULATOR->delId(id, true);
+		mngr->protect(false);
+		return result;
+	}
 	return true;
 }
 bool Argument::subtest(const Manager *value) const {
@@ -747,7 +831,11 @@ FractionArgument::FractionArgument(string name_, ArgumentMinMaxPreDefinition min
 		}		
 	}
 }
-FractionArgument::FractionArgument(const FractionArgument *arg) {set(arg);}
+FractionArgument::FractionArgument(const FractionArgument *arg) {
+	fmin = NULL;
+	fmax = NULL;
+	set(arg);
+}
 FractionArgument::~FractionArgument() {
 	if(fmin) {
 		delete fmin;
@@ -909,7 +997,11 @@ IntegerArgument::IntegerArgument(string name_, ArgumentMinMaxPreDefinition minma
 		}		
 	}	
 }
-IntegerArgument::IntegerArgument(const IntegerArgument *arg) {set(arg);}
+IntegerArgument::IntegerArgument(const IntegerArgument *arg) {
+	imin = NULL;
+	imax = NULL;
+	set(arg);
+}
 IntegerArgument::~IntegerArgument() {
 	if(imin) {
 		delete imin;

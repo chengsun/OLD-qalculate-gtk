@@ -221,6 +221,7 @@ void generate_units_tree_struct() {
 	string str;
 	unit_cats.clear();
 	uc_units.clear();
+	ia_units.clear();
 	Unit *u;
 	list<tree_struct>::iterator it;	
 	for(int i = 0; i < CALCULATOR->units.size(); i++) {
@@ -325,6 +326,7 @@ void generate_variables_tree_struct() {
 	Variable *v;
 	variable_cats.clear();
 	uc_variables.clear();
+	ia_variables.clear();
 	list<tree_struct>::iterator it;	
 	for(int i = 0; i < CALCULATOR->variables.size(); i++) {
 		if(CALCULATOR->variables[i]->category().empty()) {
@@ -430,6 +432,7 @@ void generate_functions_tree_struct() {
 	Function *f;
 	function_cats.clear();
 	uc_functions.clear();
+	ia_functions.clear();
 	list<tree_struct>::iterator it;
 	for(int i = 0; i < CALCULATOR->functions.size(); i++) {
 		if(CALCULATOR->functions[i]->category().empty()) {
@@ -3629,7 +3632,7 @@ run_function_edit_dialog:
 			f->setTitle(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_desc"))));
 			f->setDescription(gtk_text_buffer_get_text(description_buffer, &d_iter_s, &d_iter_e, FALSE));
 			if(!f->isBuiltin()) {
-				((UserFunction*) f)->setEquation(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_expression"))));
+				((UserFunction*) f)->setEquation(str2);
 				f->clearArgumentDefinitions();
 			}	
 		} else {
@@ -5690,8 +5693,9 @@ void on_functions_button_delete_clicked(GtkButton *button, gpointer user_data) {
 			GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
 			string str = selected_function_category;
 			update_fmenu();
-			if(str == selected_function_category)
+			if(str == selected_function_category) {
 				gtk_tree_selection_select_path(gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctions)), path);
+			}
 			g_free(path);
 		} else {
 			update_fmenu();

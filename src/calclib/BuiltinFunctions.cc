@@ -99,6 +99,99 @@ void ZetaFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	FR_FUNCTION(zeta)
 }
 #endif
+
+ErrorFunction::ErrorFunction() : Function("", "error", 1, "Display error", "", 2) {
+	setArgumentDefinition(1, new TextArgument());
+	setArgumentDefinition(2, new BooleanArgument());
+	setDefaultValue(2, "1");
+}
+void ErrorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	CALCULATOR->error(vargs[1]->fraction()->isPositive(), vargs[0]->text().c_str(), NULL);
+}
+MessageFunction::MessageFunction() : Function("", "message", 1, "Display a message", "", -1) {
+	setArgumentDefinition(1, new TextArgument());
+}
+void MessageFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	CALCULATOR->error(false, vargs[0]->text().c_str(), NULL);
+}
+
+ForFunction::ForFunction() : Function("Logical", "for", 5, "for...do") {
+	setArgumentDefinition(2, new TextArgument());
+	setArgumentDefinition(3, new TextArgument());	
+	setArgumentDefinition(5, new TextArgument());
+}
+void ForFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+
+	string condition = vargs[1]->text();
+	string counter = vargs[2]->text();
+	string action = vargs[4]->text();
+
+	gsub("\\x", "\"\\x\"", action);	
+	gsub("\\y", "\"\\y\"", action);		
+	gsub("\\i", "\"\\i\"", action);		
+	Manager mngr_x("\\x");
+	Manager mngr_y("\\y");
+	Manager mngr_i("\\i");
+	
+	CALCULATOR->beginTemporaryStopErrors();
+	Manager *action_mngr = CALCULATOR->calculate(action);
+	CALCULATOR->endTemporaryStopErrors();	
+
+	Manager x_mngr(vargs[0]);
+	Manager y_mngr(vargs[3]);
+	Manager i_mngr(1, 1);
+
+	x_mngr.protect();
+	y_mngr.protect();
+	i_mngr.protect();
+	int x_id = CALCULATOR->addId(&x_mngr, true);
+	string str = LEFT_BRACKET;
+	str += ID_WRAP_LEFT;
+	str += i2s(x_id);
+	str += ID_WRAP_RIGHT;
+	str += RIGHT_BRACKET;
+	gsub("\\x", str, condition);
+	gsub("\\x", str, counter);
+	int y_id = CALCULATOR->addId(&y_mngr, true);
+	str = LEFT_BRACKET;
+	str += ID_WRAP_LEFT;
+	str += i2s(y_id);
+	str += ID_WRAP_RIGHT;
+	str += RIGHT_BRACKET;
+	gsub("\\y", str, condition);	
+	gsub("\\y", str, counter);
+	int i_id = CALCULATOR->addId(&i_mngr, true);
+	str = LEFT_BRACKET;
+	str += ID_WRAP_LEFT;
+	str += i2s(i_id);
+	str += ID_WRAP_RIGHT;
+	str += RIGHT_BRACKET;
+	gsub("\\i", str, condition);	
+	gsub("\\i", str, counter);	
+	Manager mngr_calc;
+	Manager *calced = NULL;
+	int i = 1;
+	while(CALCULATOR->testCondition(condition)) {	
+		mngr_calc.set(action_mngr);
+		mngr_calc.replace(&mngr_x, &x_mngr);
+		mngr_calc.replace(&mngr_y, &y_mngr);		
+		mngr_calc.replace(&mngr_i, &i_mngr);
+		mngr_calc.recalculateFunctions();
+		mngr_calc.clean();
+		y_mngr.set(&mngr_calc);		
+		calced = CALCULATOR->calculate(counter);
+		x_mngr.set(calced);
+		calced->unref();
+		i++;
+		i_mngr.set(i, 1);
+	}
+	CALCULATOR->delId(x_id, true);
+	CALCULATOR->delId(y_id, true);
+	CALCULATOR->delId(i_id, true);
+	action_mngr->unref();
+	mngr->set(&y_mngr);
+}
+
 ProcessFunction::ProcessFunction() : Function("Utilities", "process", 1, "Process components", "", -1) {
 	setArgumentDefinition(1, new MatrixArgument("", false));
 }
@@ -678,100 +771,24 @@ void InverseFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 IFFunction::IFFunction() : Function("Logical", "if", 3, "If...Then...Else") {
 	setArgumentDefinition(1, new TextArgument());
+	setArgumentDefinition(2, new TextArgument());
+	setArgumentDefinition(3, new TextArgument());
 }
-Manager *IFFunction::calculate(vector<Manager*> &vargs) {
-	string argv = "";
-	for(int i = 0; i < vargs.size(); i++) {
-		if(i != 0) {
-			argv += COMMA;
-		}
-		argv += vargs[i]->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTIONAL_ONLY | DISPLAY_FORMAT_ALWAYS_DISPLAY_EXACT | DISPLAY_FORMAT_SCIENTIFIC);
-	}
-	return calculate(argv);
-}
-Manager *IFFunction::calculate(const string &argv) {
-	Manager *mngr = NULL;
-	argc = 1;
-	max_argc = 1;
-	vector<Manager*> vargs;
-	args(argv, vargs);	
-	argc = 3;
-	max_argc = 3;
-	vector<string> svargs;
-	int itmp = stringArgs(argv, svargs);	
-	if(testArgumentCount(itmp)) {
-		string expr;
-		if(!vargs[0]->isText()) {
-			CALCULATOR->error(true, _("You need to put expression in quotes for %s()."), name().c_str(), NULL);		
-			mngr = createFunctionManagerFromSVArgs(svargs);
-			for(int i = 0; i < vargs.size(); i++) {
-				vargs[i]->unref();
-			}
-			svargs.clear();
-			return mngr;	
-		}
-		expr = vargs[0]->text();
-		unsigned int i = expr.find_first_of("<=>", 0);
-		bool result = false;
-		int com = 0;
-		if(i == string::npos) {
-//			CALCULATOR->error(false, _("Condition contains no comparison, interpreting as \"%s > 0\"."), expr.c_str(), NULL);
-			expr += " > 0";
-			i = expr.find_first_of("<=>", 0);
-		} 
-		string str1 = expr.substr(0, i);
-		string str2 = expr.substr(i + 1, expr.length() - i + 1);			
-		remove_blank_ends(str2);
-		char sign1 = expr[i], sign2 = 0;
-		if(str2[0] == '>' || str2[0] == '=' || str2[0] == '<') {
-			if(str2[0] != sign1) sign2 = str2[0];
-			str2.erase(str2.begin());
-		}
-		Manager *mngr1 = CALCULATOR->calculate(str1);
-		Manager *mngr2 = CALCULATOR->calculate(str2);			
-		mngr1->add(mngr2, SUBTRACT);
-		if(mngr1->isFraction()) {
-			if(sign1 == '=') {
-				if(sign2 == 0) 
-					result = mngr1->fraction()->isZero();
-				else if(sign2 == '>') 
-					result = !mngr1->fraction()->isNegative();
-				else if(sign2 == '<') 
-					result = !mngr1->fraction()->isPositive();
-			} else if(sign1 == '>') {
-				if(sign2 == 0) 
-					result = mngr1->fraction()->isPositive();
-				else if(sign2 == '=') 
-					result = !mngr1->fraction()->isNegative();
-				else if(sign2 == '<') 
-					result = !mngr1->fraction()->isZero(); 
-			} else if(sign1 == '<') {
-				if(sign2 == 0) 
-					result = mngr1->fraction()->isNegative();
-				else if(sign2 == '>') 
-					result = !mngr1->fraction()->isZero();
-				else if(sign2 == '=') 
-					result = !mngr1->fraction()->isPositive();
-			}
-		} else {
-			CALCULATOR->error(true, _("Comparison is not solvable, treating as FALSE."), NULL);
-		}
-		mngr1->unref();
-		mngr2->unref();
-		
-		if(result) {			
-			mngr = CALCULATOR->calculate(svargs[1]);
-		} else {			
-			mngr = CALCULATOR->calculate(svargs[2]);		
-		}			
+void IFFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	bool result;
+	if(vargs[0]->isText()) {
+		result = CALCULATOR->testCondition(vargs[0]->text());
 	} else {
-		mngr = createFunctionManagerFromSVArgs(svargs);
+		result = vargs[0]->isFraction() && vargs[0]->fraction()->isPositive();
 	}
-	for(int i = 0; i < vargs.size(); i++) {
-		vargs[i]->unref();
-	}
-	svargs.clear();
-	return mngr;
+	Manager *mngr2;
+	if(result) {			
+		mngr2 = CALCULATOR->calculate(vargs[1]->text());
+	} else {			
+		mngr2 = CALCULATOR->calculate(vargs[2]->text());		
+	}	
+	mngr->set(mngr2);
+	mngr2->unref();		
 }
 GCDFunction::GCDFunction() : Function("Arithmetics", "gcd", 2, "Greatest Common Divisor") {
 	setArgumentDefinition(1, new FractionArgument());

@@ -1,3 +1,12 @@
+2003-09-25  Niklas Knutsson  <nq@altern.org>
+
+	* New condition for functions which can test the relation between arguments
+	* Error function
+	* Boolean operators
+	* For (loop) function
+	* Fix crash on delete inactive definition in GUI
+	* Definition edit fixes
+
 2003-09-24  Niklas Knutsson  <nq@altern.org>
 
 	* Move defintions to library and PACKAGE_DATA_DIR/qalculate

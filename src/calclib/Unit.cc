@@ -171,6 +171,7 @@ AliasUnit::AliasUnit() {
 	exp_mngr = new Manager(exp, 1);	
 }
 AliasUnit::AliasUnit(const AliasUnit *unit) {
+	exp_mngr = new Manager(exp, 1);
 	set(unit);
 }
 AliasUnit::~AliasUnit() {
