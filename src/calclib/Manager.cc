@@ -1733,23 +1733,17 @@ void Manager::differentiate(string x_var) {
 			mngr2->differentiate(x_var);
 			add(mngr2, MULTIPLICATION_CH);
 			mngr2->unref();
-			multiclean();
 			break;
 		}
 		case MULTIPLICATION_MANAGER: {
 			Manager *mngr = new Manager(mngrs[0]);
 			Manager *mngr2 = new Manager(mngrs[1]);
 			mngr->differentiate(x_var);
-			printf("1. %s => %s\n", mngrs[0]->print().c_str(), mngr->print().c_str());
 			mngr2->differentiate(x_var);			
-			printf("2. %s => %s\n", mngrs[1]->print().c_str(), mngr2->print().c_str());			
-			mngr->add(mngrs[1], MULTIPLICATION_CH);
-			printf("3. %s\n", mngr->print().c_str());						
+			mngr->add(mngrs[1], MULTIPLICATION_CH);					
 			mngr2->add(mngrs[0], MULTIPLICATION_CH);
-			printf("4. %s\n", mngr2->print().c_str());			
 			moveto(mngr);
 			add(mngr2, PLUS_CH);
-			printf("5. %s\n", mngr->print().c_str());			
 			mngr2->unref();			
 			break;
 		}		
