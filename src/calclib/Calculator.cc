@@ -145,6 +145,10 @@ Calculator::Calculator() {
 	addStringAlternative(SIGN_POWER_2, "^2");
 	addStringAlternative(SIGN_POWER_3, "^3");
 	addStringAlternative(SIGN_EURO, "euro");
+	addStringAlternative("$", "dollar");
+	addStringAlternative(SIGN_YEN, "yen");
+	addStringAlternative(SIGN_CENT, "cent");
+	addStringAlternative(SIGN_POUND, "GBP");
 	addStringAlternative(SIGN_MICRO, "micro");
 	addStringAlternative(SIGN_PI, "pi");	
 	addStringAlternative(SIGN_SQRT, "sqrt ");	
@@ -1985,7 +1989,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						case 'Y': {
 							replace_text_by_unit_place:
 							u = (Unit*) ufv[ufv_index];
-							if((int) str.length() > str_index + name_length && is_in(NUMBERS, str[str_index + name_length])) {
+							if((int) str.length() > str_index + name_length && is_in(NUMBERS, str[str_index + name_length]) && u->category() != _("Currency")) {
 								str.insert(str_index + name_length, 1, POWER_CH);
 							}
 							mngr = new Manager(u, prefix_exp);

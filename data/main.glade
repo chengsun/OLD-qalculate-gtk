@@ -183,7 +183,7 @@
 		      <signal name="activate" handler="on_menu_item_save_defs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image268">
+			<widget class="GtkImage" id="image300">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -204,7 +204,7 @@
 		      <signal name="activate" handler="on_menu_item_save_mode_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image269">
+			<widget class="GtkImage" id="image301">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -225,7 +225,7 @@
 		      <signal name="activate" handler="on_menu_item_fetch_exchange_rates_activate" last_modification_time="Mon, 06 Oct 2003 21:06:00 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image270">
+			<widget class="GtkImage" id="image302">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-refresh</property>
 			  <property name="icon_size">1</property>
@@ -246,7 +246,7 @@
 		      <signal name="activate" handler="on_menu_item_edit_prefs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image271">
+			<widget class="GtkImage" id="image303">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -260,7 +260,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator125">
+		    <widget class="GtkMenuItem" id="separator12">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -273,7 +273,7 @@
 		      <signal name="activate" handler="on_menu_item_about_activate" last_modification_time="Thu, 14 Aug 2003 22:31:50 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image272">
+			<widget class="GtkImage" id="image304">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-dialog-info</property>
 			  <property name="icon_size">1</property>
@@ -295,7 +295,7 @@
 		      <accelerator key="F1" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image273">
+			<widget class="GtkImage" id="image305">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
@@ -308,8 +308,8 @@
 		    </widget>
 		  </child>
 
-                  <child>
-		    <widget class="GtkMenuItem" id="trennlinie1">
+		  <child>
+		    <widget class="GtkMenuItem" id="separator13">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -323,7 +323,7 @@
 		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image274">
+			<widget class="GtkImage" id="image306">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -516,7 +516,6 @@
 			      <signal name="activate" handler="on_menu_item_fraction_fraction_activate" last_modification_time="Thu, 04 Mar 2004 16:38:33 GMT"/>
 			    </widget>
 			  </child>
-
 			</widget>
 		      </child>
 		    </widget>
@@ -600,7 +599,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator_factorize">
+		    <widget class="GtkMenuItem" id="separator14">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -615,7 +614,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator11">
+		    <widget class="GtkMenuItem" id="separator15">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -637,7 +636,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator9">
+		    <widget class="GtkMenuItem" id="separator16">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -650,7 +649,7 @@
 		      <signal name="activate" handler="on_menu_item_save_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image275">
+			<widget class="GtkImage" id="image307">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -672,7 +671,7 @@
 		      <accelerator key="C" modifiers="GDK_CONTROL_MASK | GDK_MOD1_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image276">
+			<widget class="GtkImage" id="image308">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-copy</property>
 			  <property name="icon_size">1</property>
@@ -686,7 +685,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator3">
+		    <widget class="GtkMenuItem" id="separator17">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>

@@ -1,3 +1,12 @@
+2004-03-08 Niklas Knutsson  <nq@altern.org>
+
+	* Release 0.4.2
+	* Proofread manual
+	* Allow currencies to be put in front of quantity
+	* Cent, yen, pound and dollar signs
+	* Remove debug output related to Giac 
+	* Fix some troubles printing complex numbers
+
 2004-03-07 Niklas Knutsson  <nq@altern.org>
 
 	* Update Swedish translation

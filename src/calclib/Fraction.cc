@@ -918,6 +918,10 @@ bool Fraction::log(Fraction *fr, bool tryexact) {
 		CALCULATOR->error(true, _("Logarithms is infinite for zero."), NULL);
 		return false;
 	}
+	if(fr->isZero()) {
+		CALCULATOR->error(true, _("Logarithms with zero base is undefined."), NULL);
+		return false;
+	}
 #ifdef HAVE_LIBCLN
 	cl_RA clbase = fr->numerator()->getCL_I() / fr->denominator()->getCL_I();	
 	if(tryexact) {		
@@ -948,6 +952,10 @@ bool Fraction::log(Fraction *fr, bool tryexact) {
 		}
 		if(CALCULATOR->alwaysExact()) return false;
 	} else {
+		if(num.isZero()) {
+			CALCULATOR->error(true, "Critical error. Qalculate! bug.", NULL);
+			return false;
+		}
 		bool b_minus = false;
 		if(den.isGreaterThan(&num)) {
 			b_minus = true;
@@ -1699,17 +1707,16 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 				Integer num_test(&num);				
 				while(num_test.div10()) {	
 					exp.add(1);		
-				}		
+				}			
 			} else {
 				Integer den_test(&den);
 				while(den_test.div10()) {	
 					exp.add(-1);
-				}
+				}		
 			}
 		}
 	}
 	Integer exp_spec(&exp);
-
 	minus = isNegative();
 	whole_ = "";
 	numerator_ = "";

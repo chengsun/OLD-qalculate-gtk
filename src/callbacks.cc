@@ -2014,6 +2014,10 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				if(displayflags & DISPLAY_FORMAT_SHORT_UNITS) {
 					if(displayflags & DISPLAY_FORMAT_NONASCII) {
 						if(m->unit()->name() == "EUR") str += SIGN_EURO;
+//						else if(m->unit()->name() == "USD") str += "$";
+//						else if(m->unit()->name() == "GBP") str += SIGN_POUND;
+//						else if(m->unit()->name() == "cent") str += SIGN_CENT;
+//						else if(m->unit()->name() == "JPY") str += SIGN_YEN;
 						else if(m->unit()->name() == "oC") str += SIGN_POWER_0 "C";
 						else if(m->unit()->name() == "oF") str += SIGN_POWER_0 "F";
 						else if(m->unit()->name() == "oR") str += SIGN_POWER_0 "R";
@@ -2772,7 +2776,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					} 
 					if(!div && div_count > 0) {
 						if(!in_power) {
-							if(m->getChild(0)->isFraction() && ((displayflags & DISPLAY_FORMAT_FRACTION) || (displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY))) {
+							if(m->getChild(0)->isFraction() && !m->getChild(0)->fraction()->isComplex() && ((displayflags & DISPLAY_FORMAT_FRACTION) || (displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY))) {
 								if(!no_prefix) {
 									for(unsigned int i = 0; i < m->countChilds(); i++) {
 										m_i = m->getChild(i);
@@ -3149,7 +3153,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				bool do_num_frac = false, do_den_frac = false;
 				for(unsigned int i = 0; i < m->countChilds(); i++) {
 					m_i = m->getChild(i);
-					if(i == 0 && m_i->isFraction()) {
+					if(i == 0 && m_i->isFraction() && !m_i->fraction()->isComplex()) {
 						if(m_i->fraction()->isNegative()) {
 							first_is_minus = draw_minus || toplevel;
 						}

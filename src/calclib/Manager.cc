@@ -2528,6 +2528,10 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				if(displayflags & DISPLAY_FORMAT_SHORT_UNITS) {
 					if(displayflags & DISPLAY_FORMAT_NONASCII) {
 						if(unit()->name() == "EUR") str += SIGN_EURO;
+//						else if(unit()->name() == "USD") str += "$";
+//						else if(unit()->name() == "GBP") str += SIGN_POUND;
+//						else if(unit()->name() == "cent") str += SIGN_CENT;
+//						else if(unit()->name() == "JPY") str += SIGN_YEN;
 						else if(unit()->name() == "oC") str += SIGN_POWER_0 "C";
 						else if(unit()->name() == "oF") str += SIGN_POWER_0 "F";
 						else if(unit()->name() == "oR") str += SIGN_POWER_0 "R";
@@ -2546,6 +2550,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			break;
 		}
 		case FRACTION_MANAGER: {
+
 			if(fraction()->isComplex()) {
 				Fraction fr_im(fraction()->complexNumerator(), fraction()->complexDenominator());
 				if(!fraction()->numerator()->isZero()) {
@@ -2574,6 +2579,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				str += "i";
 				break;
 			}
+
 			bool minus, exp_minus;
 			string whole_, numerator_, denominator_, exponent_, prefix_;
 			fraction()->getPrintObjects(minus, whole_, numerator_, denominator_, exp_minus, exponent_, prefix_, nrformat, displayflags, min_decimals, max_decimals, set_prefix, in_exact, usable, false, plural, l_exp, in_composite || no_add_one, in_power, l_exp2, prefix1, prefix2);
@@ -3026,7 +3032,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				bool do_num_frac = false, do_den_frac = false;
 				for(unsigned int i = 0; i < countChilds(); i++) {
 					m_i = getChild(i);
-					if(i == 0 && m_i->isFraction()) {
+					if(i == 0 && m_i->isFraction() && !m_i->fraction()->isComplex()) {
 						if(m_i->fraction()->isNegative()) {
 							first_is_minus = draw_minus || toplevel;
 						}
@@ -3470,45 +3476,45 @@ void Manager::set(const giac::gen &giac_gen, bool in_retry) {
 	clear();
 	switch(giac_gen.type) {
 		case giac::_INT_: {
-			printf("_INT_: %s\n", giac_gen.print().c_str());
+//			printf("_INT_: %s\n", giac_gen.print().c_str());
 			set(giac_gen.val, 1);
 			break;
 		}
 		case giac::_DOUBLE_: {
-			printf("_DOUBLE_: %s\n", giac_gen.print().c_str());
+//			printf("_DOUBLE_: %s\n", giac_gen.print().c_str());
 			set(giac_gen._DOUBLE_val);
 			setPrecise(false);
 			break;
 		}
 		case giac::_ZINT: {
-			printf("_ZINT: %s\n", giac_gen.print().c_str());
+//			printf("_ZINT: %s\n", giac_gen.print().c_str());
 			Fraction fr(giac_gen.print());
 			set(&fr);
 			break;
 		}
 		case giac::_REAL: {
-			printf("_REAL: %s\n", giac_gen.print().c_str());
+//			printf("_REAL: %s\n", giac_gen.print().c_str());
 			Fraction fr(giac_gen.print());
 			set(&fr);
 			setPrecise(false);
 			break;
 		}
 		case giac::_CPLX: {
-			printf("_CPLX: %s\n", giac_gen.print().c_str());
+//			printf("_CPLX: %s\n", giac_gen.print().c_str());
 			set(giac_gen._CPLXptr[0]);
 			Manager mngr(giac_gen._CPLXptr[1]);
 			fr->setComplex(mngr.fraction());
 			break;
 		}
 		case giac::_POLY: {
-			printf("_POLY: %s\n", giac_gen.print().c_str());
+//			printf("_POLY: %s\n", giac_gen.print().c_str());
 			CALCULATOR->error(true, _("Cannot yet handle polynomes: %s."), giac_gen.print().c_str(), NULL);
 			c_type = GIAC_MANAGER;
 			g_gen = new giac::gen(giac_gen);
 			break;
 		}
 		case giac::_IDNT: {
-			printf("_IDNT: %s\n", giac_gen.print().c_str());
+//			printf("_IDNT: %s\n", giac_gen.print().c_str());
 			if(giac_gen._IDNTptr->name->length() > 6 && giac_gen._IDNTptr->name->substr(0, 6) == "_unit_") {
 				set(CALCULATOR->getUnit(giac_gen._IDNTptr->name->substr(6, giac_gen._IDNTptr->name->length() - 6)));
 			} else if(giac_gen._IDNTptr->name->length() > 10 && giac_gen._IDNTptr->name->substr(0, 10) == "_function_") {
@@ -3545,7 +3551,7 @@ void Manager::set(const giac::gen &giac_gen, bool in_retry) {
 			break;
 		}
 		case giac::_VECT: {
-			printf("_VECT: %s\n", giac_gen.print().c_str());
+//			printf("_VECT: %s\n", giac_gen.print().c_str());
 			if(giac_gen._VECTptr->empty()) {
 			} else if(ckmatrix(giac_gen)) {
 				c_type = MATRIX_MANAGER;
@@ -3567,9 +3573,9 @@ void Manager::set(const giac::gen &giac_gen, bool in_retry) {
 			break;
 		}
 		case giac::_SYMB: {
-			printf("_SYMB: %s\n", giac_gen.print().c_str());
-			printf("%s\n", giac_gen._SYMBptr->sommet.ptr->s.c_str());
-			printf("%s\n", giac_gen._SYMBptr->feuille.print().c_str());
+//			printf("_SYMB: %s\n", giac_gen.print().c_str());
+//			printf("%s\n", giac_gen._SYMBptr->sommet.ptr->s.c_str());
+//			printf("%s\n", giac_gen._SYMBptr->feuille.print().c_str());
 			Function *f = NULL;
 			int t = -1;
 			bool b_sort = false, b_two = false, trig = false;
@@ -3760,61 +3766,61 @@ void Manager::set(const giac::gen &giac_gen, bool in_retry) {
 			break;
 		}
 		case giac::_SPOL1: {
-			printf("_SPOL1: %s\n", giac_gen.print().c_str());
+//			printf("_SPOL1: %s\n", giac_gen.print().c_str());
 			CALCULATOR->error(true, _("Cannot yet handle sparse polynomes: %s."), giac_gen.print().c_str(), NULL);
 			c_type = GIAC_MANAGER;
 			g_gen = new giac::gen(giac_gen);
 			break;
 		}
 		case giac::_FRAC: {
-			printf("_FRAC: %s\n", giac_gen.print().c_str());
+//			printf("_FRAC: %s\n", giac_gen.print().c_str());
 			set(giac_gen._FRACptr->num);
 			Manager mngr(giac_gen._FRACptr->den);
 			add(&mngr, OPERATION_DIVIDE);
 			break;
 		}
 		case giac::_EXT: {
-			printf("_EXT: %s\n", giac_gen.print().c_str());
+//			printf("_EXT: %s\n", giac_gen.print().c_str());
 			CALCULATOR->error(true, _("Cannot yet handle giac alg. extensions: %s."), giac_gen.print().c_str(), NULL);
 			c_type = GIAC_MANAGER;
 			g_gen = new giac::gen(giac_gen);
 			break;
 		}
 		case giac::_STRNG: {
-			printf("_STRNG: %s\n", giac_gen.print().c_str());
+//			printf("_STRNG: %s\n", giac_gen.print().c_str());
 			set(*giac_gen._STRNGptr);
 			break;
 		}
 		case giac::_FUNC: {
-			printf("_FUNC: %s\n", giac_gen.print().c_str());
+//			printf("_FUNC: %s\n", giac_gen.print().c_str());
 			CALCULATOR->error(true, _("Cannot yet handle giac functions: %s."), giac_gen.print().c_str(), NULL);
 			c_type = GIAC_MANAGER;
 			g_gen = new giac::gen(giac_gen);
 			break;
 		}
 		case giac::_ROOT: {
-			printf("_ROOT: %s\n", giac_gen.print().c_str());
+//			printf("_ROOT: %s\n", giac_gen.print().c_str());
 			CALCULATOR->error(true, _("Cannot yet handle real complex root of: %s."), giac_gen.print().c_str(), NULL);
 			c_type = GIAC_MANAGER;
 			g_gen = new giac::gen(giac_gen);
 			break;
 		}
 		case giac::_MOD: {
-			printf("_MOD: %s\n", giac_gen.print().c_str());
+//			printf("_MOD: %s\n", giac_gen.print().c_str());
 			CALCULATOR->error(true, _("Cannot yet handle giac mod: %s."), giac_gen.print().c_str(), NULL);
 			c_type = GIAC_MANAGER;
 			g_gen = new giac::gen(giac_gen);
 			break;
 		}
 		case giac::_USER: {
-			printf("_USER: %s\n", giac_gen.print().c_str());
+//			printf("_USER: %s\n", giac_gen.print().c_str());
 			CALCULATOR->error(true, _("Cannot handle giac user objects: %s."), giac_gen.print().c_str(), NULL);
 			c_type = GIAC_MANAGER;
 			g_gen = new giac::gen(giac_gen);
 			break;
 		}
 		default: {
-			printf("unknown: %s\n", giac_gen.print().c_str());
+//			printf("unknown: %s\n", giac_gen.print().c_str());
 			CALCULATOR->error(true, _("Unknown giac object: %s."), giac_gen.print().c_str(), NULL);
 			c_type = GIAC_MANAGER;
 			g_gen = new giac::gen(giac_gen);
