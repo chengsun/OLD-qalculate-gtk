@@ -103,6 +103,12 @@ class Calculator {
 	
 	Assumptions *default_assumptions;
 	
+	vector<Variable*> deleted_variables;
+	vector<Function*> deleted_functions;	
+	vector<Unit*> deleted_units;
+	
+	bool b_save_called;
+	
   public:
 
 	KnownVariable *v_pi, *v_e, *v_i, *v_inf, *v_pinf, *v_minf;
@@ -133,6 +139,8 @@ class Calculator {
 	string expression_to_calculate, tmp_print_result;
 	PrintOptions tmp_printoptions;
 	EvaluationOptions tmp_evaluationoptions;
+	MathStructure *tmp_parsedstruct;
+	string *tmp_tostr;
 	
 	PrintOptions save_printoptions;	
   
@@ -205,8 +213,8 @@ class Calculator {
 	
 	string localizeExpression(string str) const;
 	string unlocalizeExpression(string str) const;
-	bool calculate(MathStructure &mstruct, string str, int usecs, const EvaluationOptions &eo = default_evaluation_options);
-	MathStructure calculate(string str, const EvaluationOptions &eo = default_evaluation_options);
+	bool calculate(MathStructure &mstruct, string str, int usecs, const EvaluationOptions &eo = default_evaluation_options, MathStructure *parsed_struct = NULL, string *to_str = NULL);
+	MathStructure calculate(string str, const EvaluationOptions &eo = default_evaluation_options, MathStructure *parsed_struct = NULL, string *to_str = NULL);
 	string printMathStructureTimeOut(const MathStructure &mstruct, int usecs = 100000, const PrintOptions &op = default_print_options);
 	
 	MathStructure parse(string str, const ParseOptions &po = default_parse_options);
@@ -235,6 +243,11 @@ class Calculator {
 	bool hasVariable(Variable *v);
 	bool hasUnit(Unit *u);
 	bool hasFunction(Function *f);
+	bool stillHasVariable(Variable *v);
+	bool stillHasUnit(Unit *u);
+	bool stillHasFunction(Function *f);
+	void saveFunctionCalled();
+	bool checkSaveFunctionCalled();
 	ExpressionItem *getActiveExpressionItem(string name, ExpressionItem *item = NULL);
 	ExpressionItem *getInactiveExpressionItem(string name, ExpressionItem *item = NULL);	
 	ExpressionItem *getActiveExpressionItem(ExpressionItem *item);

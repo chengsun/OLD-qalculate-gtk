@@ -725,8 +725,10 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		MathStructure mstruct2(CALCULATOR->f_sin, &mstruct[0], NULL);
 		mstruct = mstruct2;
 		mstruct.negate();
+		if(CALCULATOR->u_rad) mstruct[0] *= CALCULATOR->u_rad;
 		return 1 ;
 	}
+	if(CALCULATOR->u_rad) mstruct *= CALCULATOR->u_rad;
 	return -1;
 }
 CosFunction::CosFunction() : Function("cos", 1) {
@@ -831,6 +833,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			return 1 ;
 		}
 	}
+	if(CALCULATOR->u_rad) mstruct *= CALCULATOR->u_rad;
 	return -1;
 }
 TanFunction::TanFunction() : Function("tan", 1) {
@@ -1831,6 +1834,7 @@ SaveFunction::SaveFunction() : Function("save", 2, 4) {
 }
 int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	CALCULATOR->addVariable(new KnownVariable(vargs[2].symbol(), vargs[1].symbol(), vargs[0], vargs[3].symbol()));
+	CALCULATOR->saveFunctionCalled();
 	return 1 ;
 }
 

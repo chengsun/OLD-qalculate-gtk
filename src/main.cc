@@ -27,7 +27,8 @@
 #include "callbacks.h"
 #include "main.h"
 
-MathStructure *mstruct;
+MathStructure *mstruct, *parsed_mstruct;
+string *parsed_to_str;
 KnownVariable *vans, *vAns;
 GtkWidget *functions_window;
 string selected_function_category;
@@ -35,7 +36,7 @@ Function *selected_function;
 GtkWidget *variables_window;
 string selected_variable_category;
 Variable *selected_variable;
-string result_text;
+string result_text, parsed_text;
 GtkWidget *units_window;
 string selected_unit_category;
 Unit *selected_unit, *selected_to_unit;
@@ -102,6 +103,8 @@ int main (int argc, char **argv) {
 	load_preferences();
 
 	mstruct = new MathStructure();
+	parsed_mstruct = new MathStructure();
+	parsed_to_str = new string;
 
 	/*gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", "tmp", "messages", NULL);
 	freopen(gstr, "w+", stdout);
@@ -172,6 +175,7 @@ int main (int argc, char **argv) {
 	selected_to_unit = NULL;
 	omToUnit_menu = NULL;
 	result_text = "0";
+	parsed_text = "0";
 	pixmap_result = NULL;
 	pixbuf_result = NULL;
 

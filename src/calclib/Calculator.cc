@@ -135,7 +135,9 @@ void *calculate_proc(void *pipe) {
 		fread(&x, sizeof(void*), 1, calculate_pipe);
 		MathStructure *mstruct = (MathStructure*) x;
 		mstruct->set(_("aborted"));
-		mstruct->set(CALCULATOR->calculate(CALCULATOR->expression_to_calculate, CALCULATOR->tmp_evaluationoptions));
+		if(CALCULATOR->tmp_parsedstruct) CALCULATOR->tmp_parsedstruct->set(_("aborted"));
+		if(CALCULATOR->tmp_tostr) *CALCULATOR->tmp_tostr = "";
+		mstruct->set(CALCULATOR->calculate(CALCULATOR->expression_to_calculate, CALCULATOR->tmp_evaluationoptions, CALCULATOR->tmp_parsedstruct, CALCULATOR->tmp_tostr));
 		CALCULATOR->b_busy = false;
 	}
 	return NULL;
@@ -212,6 +214,8 @@ Calculator::Calculator() {
 	default_assumptions->setSign(ASSUMPTION_SIGN_NONZERO);
 	
 	u_rad = NULL;
+	
+	b_save_called = false;
 
 	saved_locale = strdup(setlocale(LC_NUMERIC, NULL));
 	setlocale(LC_NUMERIC, "C");
@@ -297,6 +301,34 @@ bool Calculator::hasFunction(Function *f) {
 	}
 	return false;
 }
+bool Calculator::stillHasVariable(Variable *v) {
+	for(vector<Variable*>::iterator it = deleted_variables.begin(); it != deleted_variables.end(); ++it) {
+		if(*it == v) return false;
+	}
+	return true;
+}
+bool Calculator::stillHasUnit(Unit *u) {
+	for(vector<Unit*>::iterator it = deleted_units.begin(); it != deleted_units.end(); ++it) {
+		if(*it == u) return false;
+	}
+	return true;
+}
+bool Calculator::stillHasFunction(Function *f) {
+	for(vector<Function*>::iterator it = deleted_functions.begin(); it != deleted_functions.end(); ++it) {
+		if(*it == f) return false;
+	}
+	return true;
+}
+void Calculator::saveFunctionCalled() {
+	b_save_called = true;
+}
+bool Calculator::checkSaveFunctionCalled() {
+	if(b_save_called) {
+		b_save_called = false;
+		return true;
+	}
+	return false;
+};
 ExpressionItem *Calculator::getActiveExpressionItem(ExpressionItem *item) {
 	if(!item) return NULL;
 	string name;
@@ -1230,7 +1262,7 @@ string Calculator::unlocalizeExpression(string str) const {
 	}
 	return str;
 }
-bool Calculator::calculate(MathStructure &mstruct, string str, int usecs, const EvaluationOptions &eo) {
+bool Calculator::calculate(MathStructure &mstruct, string str, int usecs, const EvaluationOptions &eo, MathStructure *parsed_struct, string *to_str) {
 	mstruct = string(_("calculating..."));
 	saveState();
 	b_busy = true;
@@ -1241,6 +1273,8 @@ bool Calculator::calculate(MathStructure &mstruct, string str, int usecs, const 
 	bool had_usecs = usecs > 0;
 	expression_to_calculate = str;
 	tmp_evaluationoptions = eo;
+	tmp_parsedstruct = parsed_struct;
+	tmp_tostr = to_str;
 	void *x = (void*) &mstruct;
 	fwrite(&x, sizeof(void*), 1, calculate_pipe_w);
 	fflush(calculate_pipe_w);
@@ -1258,7 +1292,7 @@ bool Calculator::calculate(MathStructure &mstruct, string str, int usecs, const 
 	}
 	return true;
 }
-MathStructure Calculator::calculate(string str, const EvaluationOptions &eo) {
+MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, MathStructure *parsed_struct, string *to_str) {
 	unsigned int i = 0; 
 	string str2 = "";
 	if(eo.parse_options.units_enabled && (i = str.find(_(" to "))) != string::npos) {
@@ -1276,7 +1310,9 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo) {
 			str = str.substr(0, i);
 		}
 	}
+	if(to_str) *to_str = str2;
 	MathStructure mstruct(parse(str, eo.parse_options));
+	if(parsed_struct) *parsed_struct = mstruct;
 	mstruct.eval(eo);
 	if(!str2.empty()) {
 		return convert(mstruct, str2, eo);
@@ -1805,6 +1841,12 @@ Unit* Calculator::addUnit(Unit *u, bool force) {
 	} else {	
 		units.push_back(u);
 	}
+	for(vector<Unit*>::iterator it = deleted_units.begin(); it != deleted_units.end(); ++it) {
+		if(*it == u) {
+			deleted_units.erase(it);
+			break;
+		}
+	}
 	u->setRegistered(true);
 	u->setChanged(false);
 	return u;
@@ -1877,6 +1919,12 @@ Variable* Calculator::addVariable(Variable *v, bool force) {
 	} else {
 		variables.push_back(v);
 	}
+	for(vector<Variable*>::iterator it = deleted_variables.begin(); it != deleted_variables.end(); ++it) {
+		if(*it == v) {
+			deleted_variables.erase(it);
+			break;
+		}
+	}
 	v->setRegistered(true);
 	v->setChanged(false);
 	return v;
@@ -1897,6 +1945,7 @@ void Calculator::expressionItemDeleted(ExpressionItem *item) {
 			for(vector<Variable*>::iterator it = variables.begin(); it != variables.end(); ++it) {
 				if(*it == item) {
 					variables.erase(it);
+					deleted_variables.push_back((Variable*) item);
 					break;
 				}
 			}
@@ -1906,6 +1955,7 @@ void Calculator::expressionItemDeleted(ExpressionItem *item) {
 			for(vector<Function*>::iterator it = functions.begin(); it != functions.end(); ++it) {
 				if(*it == item) {
 					functions.erase(it);
+					deleted_functions.push_back((Function*) item);
 					break;
 				}
 			}
@@ -1915,6 +1965,7 @@ void Calculator::expressionItemDeleted(ExpressionItem *item) {
 			for(vector<Unit*>::iterator it = units.begin(); it != units.end(); ++it) {
 				if(*it == item) {
 					units.erase(it);
+					deleted_units.push_back((Unit*) item);
 					break;
 				}
 			}		
@@ -2322,6 +2373,12 @@ Function* Calculator::addFunction(Function *f, bool force) {
 		functions.insert(functions.begin(), f);
 	} else {
 		functions.push_back(f);
+	}
+	for(vector<Function*>::iterator it = deleted_functions.begin(); it != deleted_functions.end(); ++it) {
+		if(*it == f) {
+			deleted_functions.erase(it);
+			break;
+		}
 	}
 	f->setRegistered(true);
 	f->setChanged(false);
@@ -2975,21 +3032,36 @@ MathStructure Calculator::parseNumber(string str, const ParseOptions &po) {
 	MathStructure mstruct;
 	string ssave = str;
 	char s = PLUS_CH;
-	for(int i = 0; i < (int) str.length() - 1; i++) {
-		if(str[i] == PLUS_CH || str[i] == SPACE_CH) {
-			str.erase(i, 1);
-			i--;
-		} else if(str[i] == MINUS_CH) {
+	bool has_sign = false;
+	for(int i = 0; i < (int) str.length(); i++) {
+		if(str[i] == MINUS_CH) {
+			has_sign = true;
 			if(s == MINUS_CH)
 				s = PLUS_CH;
 			else
 				s = MINUS_CH;
 			str.erase(i, 1);
 			i--;
+		} else if(str[i] == PLUS_CH) {
+			has_sign = true;
+			str.erase(i, 1);
+			i--;
+		} else if(str[i] == SPACE_CH) {
+			str.erase(i, 1);
+			i--;
 		} else if(is_in(OPERATORS, str[i])) {
 			error(false, _("Misplaced '%s' ignored"), str.substr(0, 1).c_str(), NULL);
 			str.erase(i, 1);
 			i--;
+		}
+	}
+	if(str.empty()) {
+		if(!has_sign) {
+			return mstruct;
+		} else if(s == MINUS_CH) {
+			mstruct.set(-1, 1);
+		} else {
+			mstruct.set(1, 1);
 		}
 	}
 	for(int i = str.length() - 1; i >= 0; i--) {	
@@ -3405,7 +3477,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
 		parseAdd(str, mstruct, po, OPERATION_EXP10);
-	} else if((i = str.find(ID_WRAP_LEFT_CH, 1)) != (int) string::npos && i != (int) str.length() - 1 && str.find(ID_WRAP_RIGHT_CH, i + 1)) {
+	} else if((i = str.find(ID_WRAP_LEFT_CH, 1)) != (int) string::npos && i != (int) str.length() - 1 && str.find(ID_WRAP_RIGHT_CH, i + 1) && (int) str.find_first_not_of(PLUS MINUS, 0) != i) {
 		str2 = str.substr(0, i);
 		str = str.substr(i, str.length() - i);
 		parseAdd(str2, mstruct, po);

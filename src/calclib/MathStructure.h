@@ -267,7 +267,6 @@ class MathStructure {
 		
 		string print(const PrintOptions &po = default_print_options, const InternalPrintStruct &ips = top_ips) const;
 		
-		
 //vector
 	
 		MathStructure &flattenVector(MathStructure &mstruct) const;

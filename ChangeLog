@@ -1,3 +1,12 @@
+2004-07-17 Niklas Knutsson  <nq@altern.org>
+
+	* Update variable lists in GUI after save function has been called
+	* Do not let the user type any braces in the expression entry
+	* Select added plot series and let enter in plot expression entry modify selected (if any selected)
+	* Fix rad unit being dropped in unsolved sin/cos function
+	* Fix plus/minus before id
+	* Show precalculation result in history view
+
 2004-07-16 Niklas Knutsson  <nq@altern.org>
 
 	* Oops! operators does not include parenthesis

@@ -30,6 +30,10 @@ void create_fmenu(void);
 void create_pmenu(GtkWidget *item);
 void create_pmenu2(void);
 
+void update_vmenu();
+void update_fmenu();
+void update_umenu();
+
 void update_completion();
 
 void generate_functions_tree_struct();
