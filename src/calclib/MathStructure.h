@@ -208,7 +208,7 @@ class MathStructure {
 		int merge_power(const MathStructure &mstruct, const EvaluationOptions &eo);
 		void calculate();
 		bool calculatesub(const EvaluationOptions &eo);
-		void calculateFunctions(const EvaluationOptions &eo);
+		bool calculateFunctions(const EvaluationOptions &eo);
 		
 		void evalQalculateFunctions(const EvaluationOptions &eo);
 		void evalf();
@@ -304,13 +304,12 @@ class MathStructure {
 //units
 
 		bool isUnitCompatible(const MathStructure &mstruct);
-		void syncUnits();		
+		bool syncUnits(bool sync_complex_relations = false);
 		bool testDissolveCompositeUnit(Unit *u);
 		bool testCompositeUnit(Unit *u);	
 		bool dissolveAllCompositeUnits();			
-		bool convert(Unit *u);
-		bool convert(string unit_str);		
-		bool convert(const MathStructure unit_mstruct);	
+		bool convert(Unit *u, bool convert_complex_relations = false);
+		bool convert(const MathStructure unit_mstruct, bool convert_complex_relations = false);	
 		
 		
 		bool contains(const MathStructure &mstruct) const;
@@ -320,7 +319,7 @@ class MathStructure {
 		MathStructure generateVector(MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL, const EvaluationOptions &eo = default_evaluation_options);
 		MathStructure generateVector(MathStructure x_mstruct, const MathStructure &x_vector, const EvaluationOptions &eo = default_evaluation_options);
 		
-		bool differentiate(const MathStructure &x_var);
+		bool differentiate(const MathStructure &x_var, const EvaluationOptions &eo);
 
 };
 

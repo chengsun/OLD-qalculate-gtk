@@ -26,7 +26,6 @@
 #define NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(i)		NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
 
 
-
 VectorFunction::VectorFunction() : Function("vector", 0, 1) {
 	setArgumentDefinition(1, new VectorArgument());
 }
@@ -1590,10 +1589,13 @@ bool LengthFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	return true;
 }
 
-ReplaceFunction::ReplaceFunction() : Function("replace", 3) {
+ReplaceFunction::ReplaceFunction() : Function("replace", 3, 4) {
+	setArgumentDefinition(4, new BooleanArgument());
+	setDefaultValue(4, "0");
 }
 bool ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
+	if(vargs[3].number().getBoolean()) mstruct.eval(eo);
 	mstruct.replace(vargs[1], vargs[2]);
 	return true;
 }
@@ -1883,7 +1885,7 @@ bool DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	mstruct = vargs[0];
 	bool b = false;
 	while(i) {
-		if(!b && !mstruct.differentiate(vargs[1])) {
+		if(!b && !mstruct.differentiate(vargs[1], eo)) {
 			return false;
 		}
 		b = true;

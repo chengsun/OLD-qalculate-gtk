@@ -259,6 +259,7 @@ void on_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer user_data)
 void on_menu_item_fraction_fraction_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_all_prefixes_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_denominator_prefixes_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_place_units_separately_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_multiple_roots_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_short_units_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_always_exact_activate(GtkMenuItem *w, gpointer user_data);

@@ -590,6 +590,14 @@
 			  </child>
 
 			  <child>
+			    <widget class="GtkMenuItem" id="item15_2">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Symbol</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
 			    <widget class="GtkMenuItem" id="item16">
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Text</property>

@@ -1322,6 +1322,10 @@ void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gp
 					menu_index = MENU_ARGUMENT_TYPE_TEXT;
 					break;
 				}
+				case ARGUMENT_TYPE_SYMBOLIC: {
+					menu_index = MENU_ARGUMENT_TYPE_SYMBOLIC;
+					break;
+				}
 				case ARGUMENT_TYPE_DATE: {
 					menu_index = MENU_ARGUMENT_TYPE_DATE;				
 					break;
@@ -2728,17 +2732,33 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 		case STRUCT_VARIABLE: {
 			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
 			string str;
-			if(ips.power_depth > 0) {
-				str = "<i>" TEXT_TAGS_SMALL;
+			if(m.variable() == CALCULATOR->v_i) {
+				if(ips.power_depth > 0) {
+					str = TEXT_TAGS_SMALL;
+				} else {
+					str = TEXT_TAGS;
+				}
 			} else {
-				str = "<i>" TEXT_TAGS;
+				if(ips.power_depth > 0) {
+					str = "<i>" TEXT_TAGS_SMALL;
+				} else {
+					str = "<i>" TEXT_TAGS;
+				}
 			}
 			str += m.variable()->name(po.use_unicode_signs);
-			if(ips.power_depth > 0) {
-				str += TEXT_TAGS_SMALL_END "</i>";
+			if(m.variable() == CALCULATOR->v_i) {
+				if(ips.power_depth > 0) {
+					str += TEXT_TAGS_SMALL_END;
+				} else {
+					str += TEXT_TAGS_END;
+				}
 			} else {
-				str += TEXT_TAGS_END "</i>";
-			}
+				if(ips.power_depth > 0) {
+					str += TEXT_TAGS_SMALL_END "</i>";
+				} else {
+					str += TEXT_TAGS_END "</i>";
+				}
+			} 
 			pango_layout_set_markup(layout, str.c_str(), -1);
 			PangoRectangle rect;
 			pango_layout_get_pixel_size(layout, &w, &h);
@@ -3502,7 +3522,10 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	gtk_container_add(GTK_CONTAINER(vbox_pre), table);	
 	GtkWidget *label[args];
 	GtkWidget *entry[args];
-	GtkWidget *type_label[args];		
+	GtkWidget *type_label[args];
+	vector<GtkWidget*> boolean_buttons;
+	int boolean_index[args];
+	int bindex = 0;
 	GtkWidget *descr, *descr_box, *descr_frame;
 	string argstr, typestr; 
 	string argtype;
@@ -3552,9 +3575,17 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 					break;
 				}
 				case ARGUMENT_TYPE_BOOLEAN: {
-					entry[i] = gtk_spin_button_new_with_range(0, 1, 1);
+					/*entry[i] = gtk_spin_button_new_with_range(0, 1, 1);
 					gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(entry[i]), FALSE);
-					gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 0);
+					gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 0);*/
+					boolean_index[i] = bindex;
+					bindex += 2;
+					entry[i] = gtk_hbox_new(TRUE, 6);
+					boolean_buttons.push_back(gtk_radio_button_new_with_label(NULL, "True"));
+					gtk_box_pack_start(GTK_BOX(entry[i]), boolean_buttons[boolean_buttons.size() - 1], TRUE, TRUE, 0);
+					boolean_buttons.push_back(gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(boolean_buttons[boolean_buttons.size() - 1]), "False"));
+					gtk_box_pack_end(GTK_BOX(entry[i]), boolean_buttons[boolean_buttons.size() - 1], TRUE, TRUE, 0);
+					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(boolean_buttons[boolean_buttons.size() - 1]), TRUE);
 					break;
 				}									
 				default: {
@@ -3610,15 +3641,21 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 			gtk_misc_set_alignment(GTK_MISC(type_label[i]), 1, 0.5);
 		}
 		argstr = f->getDefaultValue(i + 1);
-		if(argstr.length() >= 2 && argstr[0] == '\"' && argstr[argstr.length() - 1] == '\"') {
+		if(arg && (arg->suggestsQuotes() || arg->type() == ARGUMENT_TYPE_TEXT) && argstr.length() >= 2 && argstr[0] == '\"' && argstr[argstr.length() - 1] == '\"') {
 			argstr = argstr.substr(1, argstr.length() - 2);
 		}
-		gtk_entry_set_text(GTK_ENTRY(entry[i]), argstr.c_str());
-		//insert selection in expression entry into the first argument entry
-		if(i == 0) {
-			gchar *gstr = gtk_editable_get_chars(GTK_EDITABLE(expression), start, end);
-			gtk_entry_set_text(GTK_ENTRY(entry[i]), gstr);
-			g_free(gstr);
+		if(arg && arg->type() == ARGUMENT_TYPE_BOOLEAN) {
+			if(argstr == "1") {
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(boolean_buttons[boolean_buttons.size() - 2]), TRUE);
+			}
+		} else {
+			gtk_entry_set_text(GTK_ENTRY(entry[i]), argstr.c_str());
+			//insert selection in expression entry into the first argument entry
+			if(i == 0) {
+				gchar *gstr = gtk_editable_get_chars(GTK_EDITABLE(expression), start, end);
+				gtk_entry_set_text(GTK_ENTRY(entry[i]), gstr);
+				g_free(gstr);
+			}
 		}
 		gtk_table_attach(GTK_TABLE(table), label[i], 0, 1, i, i + 1, (GtkAttachOptions) (GTK_FILL), GTK_FILL, 0, 0);
 		gtk_table_attach(GTK_TABLE(table), entry[i], 1, 2, i, i + 1, (GtkAttachOptions) (GTK_FILL | GTK_EXPAND), GTK_FILL, 0, 0);
@@ -3641,7 +3678,15 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 		
 		string str = f->name(printops.use_unicode_signs) + "(", str2;
 		for(int i = 0; i < args; i++) {
-			str2 = gtk_entry_get_text(GTK_ENTRY(entry[i]));
+			if(f->getArgumentDefinition(i + 1) && f->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_BOOLEAN) {
+				if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(boolean_buttons[boolean_index[i]]))) {
+					str2 = "1";
+				} else {
+					str2 = "0";
+				}
+			} else {
+				str2 = gtk_entry_get_text(GTK_ENTRY(entry[i]));
+			}
 
 			//if the minimum number of function arguments have been filled, do not add anymore if entry is empty
 			if(i >= f->minargs()) {
@@ -5141,6 +5186,7 @@ void load_preferences() {
 	printops.base = 10;
 	printops.min_exp = EXP_PRECISION;
 	printops.negative_exponents = false;
+	printops.sort_options.minus_last = true;
 	printops.indicate_infinite_series = false;
 	printops.number_fraction_format = FRACTION_DECIMAL;
 	printops.abbreviate_units = true;
@@ -5215,7 +5261,9 @@ void load_preferences() {
 				else if(svar == "min_exp")
 					printops.min_exp = v;
 				else if(svar == "negative_exponentes")
-					printops.negative_exponents = v;	
+					printops.negative_exponents = v;
+				else if(svar == "negative_exponentes")
+					printops.sort_options.minus_last = v;		
 				else if(svar == "spacious")
 					printops.spacious = v;	
 				else if(svar == "excessive_parenthesis")
@@ -5229,21 +5277,25 @@ void load_preferences() {
 						case 1: {
 							printops.min_exp = EXP_PRECISION;
 							printops.negative_exponents = false;
+							printops.sort_options.minus_last = true;
 							break;
 						}
 						case 2: {
 							printops.min_exp = EXP_SCIENTIFIC;
 							printops.negative_exponents = true;
+							printops.sort_options.minus_last = false;
 							break;
 						}
 						case 3: {
 							printops.min_exp = EXP_PURE;
 							printops.negative_exponents = true;
+							printops.sort_options.minus_last = false;
 							break;
 						}
 						case 4: {
 							printops.min_exp = EXP_NONE;
 							printops.negative_exponents = false;
+							printops.sort_options.minus_last = true;
 							break;
 						}
 					}
@@ -5504,6 +5556,7 @@ void save_preferences(bool mode)
 	fprintf(file, "precision=%i\n", saved_precision);
 	fprintf(file, "min_exp=%i\n", saved_printops.min_exp);
 	fprintf(file, "negative_exponents=%i\n", saved_printops.negative_exponents);
+	fprintf(file, "sort_minus_last=%i\n", saved_printops.sort_options.minus_last);
 	fprintf(file, "number_fraction_format=%i\n", saved_printops.number_fraction_format);	
 	fprintf(file, "use_prefixes=%i\n", saved_printops.use_unit_prefixes);
 	fprintf(file, "use_short_units=%i\n", saved_printops.abbreviate_units);
@@ -6578,6 +6631,10 @@ void on_menu_item_denominator_prefixes_activate(GtkMenuItem *w, gpointer user_da
 	printops.use_denominator_prefix = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	setResult();
 }
+void on_menu_item_place_units_separately_activate(GtkMenuItem *w, gpointer user_data) {
+	printops.place_units_separately = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
+	setResult();
+}
 void on_menu_item_multiple_roots_activate(GtkMenuItem *w, gpointer user_data) {
 	//CALCULATOR->setMultipleRootsEnabled(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
 	execute_expression();
@@ -6771,6 +6828,7 @@ void on_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data) {
 		return;
 	printops.min_exp = EXP_PRECISION;
 	printops.negative_exponents = false;
+	printops.sort_options.minus_last = true;
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
@@ -6779,6 +6837,7 @@ void on_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer user_data
 		return;
 	printops.min_exp = EXP_SCIENTIFIC;
 	printops.negative_exponents = true;
+	printops.sort_options.minus_last = false;
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
@@ -6787,6 +6846,7 @@ void on_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer us
 		return;
 	printops.min_exp = EXP_PURE;
 	printops.negative_exponents = true;
+	printops.sort_options.minus_last = false;
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
@@ -6795,6 +6855,7 @@ void on_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer user_
 		return;
 	printops.min_exp = EXP_NONE;
 	printops.negative_exponents = false;
+	printops.sort_options.minus_last = true;
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
@@ -7647,6 +7708,7 @@ void on_function_edit_button_add_argument_clicked(GtkButton *w, gpointer user_da
 		int menu_index = gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (functionedit_glade, "function_edit_optionmenu_argument_type")));
 		switch(menu_index) {
 			case MENU_ARGUMENT_TYPE_TEXT: {arg = new TextArgument(); break;}
+			case MENU_ARGUMENT_TYPE_SYMBOLIC: {arg = new SymbolicArgument(); break;}
 			case MENU_ARGUMENT_TYPE_DATE: {arg = new DateArgument(); break;}
 			case MENU_ARGUMENT_TYPE_NONNEGATIVE_INTEGER: {arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE); break;}
 			case MENU_ARGUMENT_TYPE_POSITIVE_INTEGER: {arg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE); break;}
@@ -7700,6 +7762,7 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 			int menu_index = gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (functionedit_glade, "function_edit_optionmenu_argument_type")));
 			switch(menu_index) {
 				case MENU_ARGUMENT_TYPE_TEXT: {argtype = ARGUMENT_TYPE_TEXT; break;}
+				case MENU_ARGUMENT_TYPE_SYMBOLIC: {argtype = ARGUMENT_TYPE_SYMBOLIC; break;}
 				case MENU_ARGUMENT_TYPE_DATE: {argtype = ARGUMENT_TYPE_DATE; break;}
 				case MENU_ARGUMENT_TYPE_NONNEGATIVE_INTEGER: {}
 				case MENU_ARGUMENT_TYPE_POSITIVE_INTEGER: {}
@@ -7727,6 +7790,7 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 				}
 				switch(menu_index) {
 					case MENU_ARGUMENT_TYPE_TEXT: {selected_argument = new TextArgument(); break;}
+					case MENU_ARGUMENT_TYPE_SYMBOLIC: {selected_argument = new SymbolicArgument(); break;}
 					case MENU_ARGUMENT_TYPE_DATE: {selected_argument = new DateArgument(); break;}
 					case MENU_ARGUMENT_TYPE_NONNEGATIVE_INTEGER: {selected_argument = new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE); break;}
 					case MENU_ARGUMENT_TYPE_POSITIVE_INTEGER: {selected_argument = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE); break;}

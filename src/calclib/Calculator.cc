@@ -1209,7 +1209,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 	if(to_unit->unitType() == COMPOSITE_UNIT) return convertToCompositeUnit(mstruct, (CompositeUnit*) to_unit, eo, always_convert);
 	if(to_unit->unitType() != ALIAS_UNIT || (((AliasUnit*) to_unit)->baseUnit()->unitType() != COMPOSITE_UNIT && ((AliasUnit*) to_unit)->baseExp() == 1)) {
 		MathStructure mstruct_new(mstruct);
-		if(!mstruct_new.convert(to_unit)) {
+		if(!mstruct_new.convert(to_unit, true)) {
 			mstruct_new = mstruct;
 		} else {
 			mstruct_new.eval(eo);
@@ -1281,7 +1281,7 @@ MathStructure Calculator::convertToBaseUnits(const MathStructure &mstruct, const
 	MathStructure mstruct_new(mstruct);
 	for(unsigned int i = 0; i < units.size(); i++) {
 		if(units[i]->unitType() == BASE_UNIT) {
-			mstruct_new.convert(units[i]);
+			mstruct_new.convert(units[i], true);
 		}
 	}
 	EvaluationOptions eo2 = eo;
@@ -1606,7 +1606,7 @@ MathStructure Calculator::convertToCompositeUnit(const MathStructure &mstruct, C
 		mstruct_new.eval(eo2);
 	} else {
 		bool b = false;
-		if(mstruct_new.convert(cu) || always_convert) {	
+		if(mstruct_new.convert(cu, true) || always_convert) {	
 			b = true;
 		} else {
 			switch(mstruct_new.type()) {
@@ -3509,6 +3509,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							XML_GET_STRING_FROM_PROP(child, "type", type);
 							if(type == "text") {
 								arg = new TextArgument();
+							} else if(type == "symbol") {
+								arg = new SymbolicArgument();
 							} else if(type == "date") {
 								arg = new DateArgument();
 							} else if(type == "integer") {
@@ -4011,7 +4013,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						u->setPlural(plural);
 					}
 					if(!uname.empty()) {
-						u->setUnicodeName(plural);
+						u->setUnicodeName(uname);
 					}	
 					u->setCategory(category);
 					u->setDescription(description);
@@ -4022,6 +4024,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				}
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "prefix")) {
 				child = cur->xmlChildrenNode;
+				uname = "";
 				while(child != NULL) {
 					if(!xmlStrcmp(child->name, (const xmlChar*) "name")) {
 						XML_GET_STRING_FROM_TEXT(child, name);
@@ -4613,6 +4616,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 							}
 							switch(arg->type()) {
 								case ARGUMENT_TYPE_TEXT: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "text"); break;}
+								case ARGUMENT_TYPE_SYMBOLIC: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "symbol"); break;}
 								case ARGUMENT_TYPE_DATE: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "date"); break;}
 								case ARGUMENT_TYPE_INTEGER: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "integer"); break;}
 								case ARGUMENT_TYPE_NUMBER: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "number"); break;}

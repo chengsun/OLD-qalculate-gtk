@@ -199,7 +199,8 @@ typedef enum {
 
 static const struct SortOptions {
 	bool prefix_currencies;
-	SortOptions() : prefix_currencies(true) {}
+	bool minus_last;
+	SortOptions() : prefix_currencies(true), minus_last(true) {}
 } default_sort_options;
 
 static const struct PrintOptions {
@@ -256,10 +257,10 @@ static const struct ParseOptions {
 
 static const struct EvaluationOptions {
 	ApproximationMode approximation;
-	bool sync_units, keep_prefixes, calculate_variables, calculate_functions;
+	bool sync_units, sync_complex_unit_relations, keep_prefixes, calculate_variables, calculate_functions;
 	StructuringMode structuring;
 	ParseOptions parse_options;
-	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), structuring(STRUCTURING_SIMPLIFY) {}
+	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), structuring(STRUCTURING_SIMPLIFY) {}
 } default_evaluation_options;
 
 #define DEFAULT_PRECISION	8
@@ -354,7 +355,7 @@ static const struct EvaluationOptions {
 #define	RIGHT_VECTOR_WRAP	"]"
 #define	SPACES			" \t\n"
 #define SPACE			" "
-#define RESERVED		"\'@?\\{}:\"$"
+#define RESERVED		"\'@?\\{}:\""
 #define PLUS			"+"
 #define MINUS			"-"
 #define MULTIPLICATION		"*"

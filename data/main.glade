@@ -762,6 +762,17 @@
 			      <signal name="activate" handler="on_menu_item_denominator_prefixes_activate" last_modification_time="Thu, 04 Mar 2004 14:36:19 GMT"/>
 			    </widget>
 			  </child>
+			  
+			  <child>
+			    <widget class="GtkCheckMenuItem" id="menu_item_place_units_separately">
+			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Enables separate placement of units</property>
+			      <property name="label" translatable="yes">Place Units Separately</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <signal name="activate" handler="on_menu_item_place_units_separately_activate" last_modification_time="Thu, 18 Jun 2004 14:58:33 GMT"/>
+			    </widget>
+			  </child>
 			</widget>
 		      </child>
 		    </widget>
