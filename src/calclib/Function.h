@@ -91,7 +91,7 @@ class Function : public ExpressionItem {
 	
 	bool testArgumentCount(int itmp);
 	virtual MathStructure calculate(const string &eq, const EvaluationOptions &eo = default_evaluation_options);
-	virtual MathStructure parse(const string &eq);
+	virtual MathStructure parse(const string &eq, const ParseOptions &po = default_parse_options);
 	virtual MathStructure calculate(MathStructure &vargs, const EvaluationOptions &eo = default_evaluation_options);	
 	virtual bool calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);	
 	string condition() const;
@@ -101,7 +101,7 @@ class Function : public ExpressionItem {
 	int args() const;
 	int minargs() const;	
 	int maxargs() const;		
-	int args(const string &str, MathStructure &vargs);
+	int args(const string &str, MathStructure &vargs, const ParseOptions &po = default_parse_options);
 	unsigned int lastArgumentDefinitionIndex() const;
 	Argument *getArgumentDefinition(unsigned int index);
 	void clearArgumentDefinitions();
@@ -152,9 +152,9 @@ class Argument {
 	string printlong() const;
 	
 	bool test(MathStructure &value, int index, Function *f, const EvaluationOptions &eo = default_evaluation_options) const;
-	virtual MathStructure evaluate(const string &str, bool keep_exact = true) const;
+	//virtual MathStructure evaluate(const string &str, bool keep_exact = true) const;
 	virtual void evaluate(MathStructure &mstruct, const EvaluationOptions &eo) const;
-	virtual MathStructure parse(const string &str) const;
+	virtual MathStructure parse(const string &str, const ParseOptions &po = default_parse_options) const;
 	
 	string name() const;
 	void setName(string name_);
@@ -299,8 +299,8 @@ class GiacArgument : public Argument {
 	virtual ~GiacArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
-	virtual MathStructure evaluate(const string &str, bool keep_exact = true) const;
-	virtual MathStructure parse(const string &str) const;
+	//virtual MathStructure evaluate(const string &str, bool keep_exact = true) const;
+	virtual MathStructure parse(const string &str, const ParseOptions &po = default_parse_options) const;
 };
 
 class DateArgument : public Argument {
@@ -441,8 +441,8 @@ class AngleArgument : public Argument {
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
-	virtual MathStructure evaluate(const string &str, bool keep_exact = true) const;
-	virtual MathStructure parse(const string &str) const;
+	//virtual MathStructure evaluate(const string &str, bool keep_exact = true) const;
+	virtual MathStructure parse(const string &str, const ParseOptions &po = default_parse_options) const;
 };
 class VariableArgument : public Argument {
 

@@ -1618,7 +1618,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(ips.re) *ips.re = "";
 	if(ips.im) *ips.im = "";
 	if(po.is_approximate) *po.is_approximate = isApproximate();
-	
 	if((po.base == BASE_SEXAGESIMAL || po.base == BASE_TIME) && isReal()) {
 		Number nr(*this);
 		bool neg = nr.isNegative();
@@ -1683,7 +1682,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	int base;
 	int min_decimals = po.min_decimals;
 	if(min_decimals < 0 || !po.use_min_decimals) min_decimals = 0;
-	if(po.base <= 0 && po.base != BASE_ROMAN_NUMERALS && po.base != BASE_TIME) base = 10;
+	if(po.base <= 1 && po.base != BASE_ROMAN_NUMERALS && po.base != BASE_TIME) base = 10;
 	else if(po.base > 36 && po.base != BASE_SEXAGESIMAL) base = 36;
 	else base = po.base;
 	if(isApproximate() && base == BASE_ROMAN_NUMERALS) base = 10;
@@ -1727,7 +1726,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		string mpz_str = printCL_I(cln::numerator(cln::rational(cln::realpart(value))), base, false, true);
 		int expo = 0;
 		if(base == 10) {
-			if(mpz_str.length() > 0 && po.number_fraction_format == FRACTION_DECIMAL) {
+			if(mpz_str.length() > 0 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 				expo = mpz_str.length() - 1;
 			} else if(mpz_str.length() > 0) {
 				for(int i = mpz_str.length() - 1; i >= 0; i--) {
@@ -1788,7 +1787,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			if(str[str.length() - 1] == '.') str.erase(str.end() - 1);
 		}
-		if(base != BASE_ROMAN_NUMERALS && po.number_fraction_format == FRACTION_DECIMAL && min_decimals > 0) {
+		if(base != BASE_ROMAN_NUMERALS && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT) && min_decimals > 0) {
 			str += ".";
 			for(int i = min_decimals; i > 0; i--) {
 				str += "0";
@@ -1833,7 +1832,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		str += ")";
 	} else {
 		if(base != BASE_ROMAN_NUMERALS && (isApproximate() || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
-		
 			cln::cl_I num, d = cln::denominator(cln::rational(cln::realpart(value))), remainder = 0, remainder2 = 0, exp = 0;
 			cln::cl_I_div_t div;
 			bool neg = cln::minusp(cln::realpart(value));

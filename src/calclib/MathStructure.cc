@@ -378,6 +378,7 @@ bool MathStructure::isDivision() const {return m_type == STRUCT_DIVISION;}
 bool MathStructure::isNegate() const {return m_type == STRUCT_NEGATE;}
 bool MathStructure::isInfinity() const {return m_type == STRUCT_NUMBER && o_number.isInfinite();}
 bool MathStructure::isUndefined() const {return m_type == STRUCT_UNDEFINED || (m_type == STRUCT_NUMBER && o_number.isUndefined());}
+bool MathStructure::isInteger() const {return m_type == STRUCT_NUMBER && o_number.isInteger();};
 bool MathStructure::isNumber() const {return m_type == STRUCT_NUMBER;}
 bool MathStructure::isZero() const {return m_type == STRUCT_NUMBER && o_number.isZero();}
 bool MathStructure::isOne() const {return m_type == STRUCT_NUMBER && o_number.isOne();}
@@ -1107,6 +1108,10 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 							return 1;
 						}
 					}
+					if(mstruct.isZero()) {
+						clear(); 
+						return 1;
+					}
 					break;
 				}
 			}
@@ -1279,7 +1284,6 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 					if(CHILD(1).number().numeratorIsEven()) {
 						MathStructure mstruct_base(CHILD(0));
 						CHILD(0).set(CALCULATOR->f_abs, &mstruct_base, NULL);
-						CHILD(0).calculateFunctions(default_evaluation_options);
 					}
 					CHILD(1) *= mstruct;
 					return 1;
@@ -2440,7 +2444,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo) {
 		b = false;
 		switch(m_type) {
 			case STRUCT_VARIABLE: {
-				if(o_variable->isKnown()) {
+				if(eo.calculate_variables && o_variable->isKnown()) {
 					if(eo.approximation == APPROXIMATION_APPROXIMATE || !o_variable->isApproximate()) {
 						set(((KnownVariable*) o_variable)->get());
 						b = true;
@@ -2722,6 +2726,13 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo) {
 					}
 				}
 				break;
+			}
+			case STRUCT_FUNCTION: {
+				if(o_function == CALCULATOR->f_abs) {
+					calculateFunctions(eo);
+					b = m_type != STRUCT_FUNCTION;
+					break;
+				}
 			}
 			default: {
 				for(unsigned int i = 0; i < SIZE; i++) {
@@ -3166,9 +3177,14 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		CALCULATOR->error(true, _("Giac error: %s.\n"), err.what(), NULL);
 	}
 #else
-	unformat();
-	syncUnits();
-	calculateFunctions(eo);
+	if(eo.structuring == STRUCTURING_NONE) return *this;
+	unformat(eo);
+	if(eo.sync_units) {
+		syncUnits();
+	}
+	if(eo.calculate_functions) {
+		calculateFunctions(eo);
+	}
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
@@ -3638,9 +3654,9 @@ void MathStructure::addAlternative(const MathStructure &o) {
 int MathStructure::type() const {
 	return m_type;
 }
-void MathStructure::unformat() {
+void MathStructure::unformat(const EvaluationOptions &eo) {
 	for(unsigned int i = 0; i < SIZE; i++) {
-		CHILD(i).unformat();
+		CHILD(i).unformat(eo);
 	}
 	switch(m_type) {
 		case STRUCT_INVERSE: {
@@ -3656,12 +3672,16 @@ void MathStructure::unformat() {
 			m_type = STRUCT_MULTIPLICATION;
 		}
 		case STRUCT_UNIT: {
-			if(o_prefix) {
-				Unit *u = o_unit;
-				Prefix *p = o_prefix;
-				set(10);
-				raise(p->exponent());
-				multiply(u);
+			if(o_prefix && !eo.keep_prefixes) {
+				if(o_prefix == CALCULATOR->null_prefix) {
+					o_prefix = NULL;
+				} else {
+					Unit *u = o_unit;
+					Prefix *p = o_prefix;
+					set(10);
+					raise(p->exponent());
+					multiply(u);
+				}
 			}
 			b_plural = false;
 		}
@@ -4117,6 +4137,22 @@ void MathStructure::format(const PrintOptions &po, const MathStructure *parent, 
 				o_number.negate();
 				transform(STRUCT_NEGATE);
 				format(po, parent, pindex);
+			} else if(po.number_fraction_format == FRACTION_COMBINED && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger()) {
+				if(o_number.isFraction()) {
+					Number num(o_number.numerator());
+					Number den(o_number.denominator());
+					clear();
+					m_type = STRUCT_DIVISION;
+					APPEND(num);
+					APPEND(den);
+				} else {
+					Number frac(o_number);
+					frac.frac();
+					MathStructure num(frac.numerator());
+					num.transform(STRUCT_DIVISION, frac.denominator());
+					o_number.trunc();
+					add(num);
+				}
 			} else if((po.number_fraction_format == FRACTION_FRACTIONAL || po.base == BASE_ROMAN_NUMERALS) && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger()) {
 				Number num(o_number.numerator());
 				Number den(o_number.denominator());
@@ -4580,7 +4616,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 				}
 				print_str += o_unit->shortName();
 			} else {
-				if(o_prefix) {
+				if(o_prefix && o_prefix) {
 					print_str = o_prefix->longName();
 				}
 				if(b_plural) {
@@ -4642,10 +4678,77 @@ MathStructure &MathStructure::flattenVector(MathStructure &mstruct) const {
 	return mstruct;
 }
 bool MathStructure::rankVector(bool ascending) {
-	return false;
+	vector<int> ranked;
+	vector<bool> ranked_equals_prev;	
+	bool b;
+	for(unsigned int index = 0; index < SIZE; index++) {
+		b = false;
+		for(unsigned int i = 0; i < ranked.size(); i++) {
+			ComparisonResult cmp = CHILD(index).compare(CHILD(ranked[i]));
+			if(COMPARISON_NOT_FULLY_KNOWN(cmp)) {
+				CALCULATOR->error(true, _("Unsolvable comparison at component %s when trying to rank matrix/vector."), i2s(index).c_str(), NULL);
+				return false;
+			}
+			if((ascending && cmp == COMPARISON_RESULT_GREATER) || cmp == COMPARISON_RESULT_EQUAL || (!ascending && cmp == COMPARISON_RESULT_LESS)) {
+				if(cmp == COMPARISON_RESULT_EQUAL) {
+					ranked.insert(ranked.begin() + i + 1, index);
+					ranked_equals_prev.insert(ranked_equals_prev.begin() + i + 1, true);
+				} else {
+					ranked.insert(ranked.begin() + i, index);
+					ranked_equals_prev.insert(ranked_equals_prev.begin() + i, false);
+				}
+				b = true;
+				break;
+			}
+		}
+		if(!b) {
+			ranked.push_back(index);
+			ranked_equals_prev.push_back(false);
+		}
+	}	
+	int n_rep = 0;
+	for(int i = (int) ranked.size() - 1; i >= 0; i--) {
+		if(ranked_equals_prev[i]) {
+			n_rep++;
+		} else {
+			if(n_rep) {
+				MathStructure v(i + 1 + n_rep, 1);
+				v += i + 1;
+				v *= MathStructure(1, 2);
+				for(; n_rep >= 0; n_rep--) {
+					CHILD(ranked[i + n_rep]) = v;
+				}
+			} else {
+				CHILD(ranked[i]).set(i + 1, 1);
+			}
+			n_rep = 0;
+		}
+	}
+	return true;
 }
 bool MathStructure::sortVector(bool ascending) {
-	return false;
+	vector<unsigned int> ranked_mstructs;
+	bool b;
+	for(unsigned int index = 0; index < SIZE; index++) {
+		b = false;
+		for(unsigned int i = 0; i < ranked_mstructs.size(); i++) {
+			ComparisonResult cmp = CHILD(index).compare(v_subs[ranked_mstructs[i]]);
+			if(COMPARISON_MIGHT_BE_LESS_OR_GREATER(cmp)) {
+				CALCULATOR->error(true, _("Unsolvable comparison at component %s when trying to sort matrix/vector."), i2s(index).c_str(), NULL);
+				return false;
+			}
+			if((ascending && COMPARISON_IS_EQUAL_OR_GREATER(cmp)) || (!ascending && COMPARISON_IS_EQUAL_OR_LESS(cmp))) {
+				ranked_mstructs.insert(ranked_mstructs.begin() + i, v_order[index]);
+				b = true;
+				break;
+			}
+		}
+		if(!b) {
+			ranked_mstructs.push_back(v_order[index]);
+		}
+	}	
+	v_order = ranked_mstructs;
+	return true;
 }
 MathStructure &MathStructure::getRange(int start, int end, MathStructure &mstruct) const {
 	if(!isVector()) {
@@ -5213,7 +5316,6 @@ bool MathStructure::dissolveAllCompositeUnits() {
 	return false;
 }
 bool MathStructure::convert(Unit *u) {
-	if(m_type == STRUCT_NUMBER || m_type == STRUCT_SYMBOLIC || m_type == STRUCT_VARIABLE || m_type == STRUCT_UNKNOWN) return false;
 	bool b = false;	
 	if(m_type == STRUCT_UNIT && o_unit == u) return false;
 	if(u->unitType() == COMPOSITE_UNIT && !(m_type == STRUCT_UNIT && o_unit->baseUnit() == u)) {
@@ -5230,10 +5332,12 @@ bool MathStructure::convert(Unit *u) {
 		u->convert(o_unit, mstruct, exp, &b);
 		if(b) {
 			o_unit = u;
-			if(!exp.isNumber() || !exp.number().isOne()) {
+			if(!exp.isOne()) {
 				raise(exp);
 			}
-			multiply(mstruct);
+			if(!mstruct.isOne()) {
+				multiply(mstruct);
+			}
 		}
 		return b;
 	} else {
@@ -5285,40 +5389,39 @@ bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto
 	return b;
 }
 
-MathStructure MathStructure::generateVector(string x_var, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector) {
+MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, const EvaluationOptions &eo) {
 	if(steps < 1) {
 		steps = 1;
 	}
 	MathStructure x_value(min);
-	MathStructure x_mstruct(x_var);
 	MathStructure y_value;
 	MathStructure y_vector;
 	y_vector.clearVector();
 	MathStructure step(max);
 	step -= min;
 	step /= steps;
-	step.eval();
+	step.eval(eo);
 	for(int i = 0; i <= steps; i++) {
 		if(x_vector) {
 			x_vector->addComponent(x_value);
 		}
 		y_value = *this;
 		y_value.replace(x_mstruct, x_value);
-		y_value.eval();
+		y_value.eval(eo);
 		y_vector.addComponent(y_value);
 		x_value += step;
+		x_value.eval(eo);
 	}
 	return y_vector;
 }
-MathStructure MathStructure::generateVector(string x_var, const MathStructure &x_vector) {
+MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathStructure &x_vector, const EvaluationOptions &eo) {
 	MathStructure y_value;
-	MathStructure x_mstruct(x_var);
 	MathStructure y_vector;
 	y_vector.clearVector();
 	for(unsigned int i = 1; i <= x_vector.components(); i++) {
 		y_value = *this;
 		y_value.replace(x_mstruct, x_vector.getComponent(i));
-		y_value.eval();
+		y_value.eval(eo);
 		y_vector.addComponent(y_value);
 	}
 	return y_vector;

@@ -124,6 +124,7 @@ bool Calculator::delDefaultStringAlternative(string replacement, string standard
 Calculator *calculator;
 
 MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one;
+EvaluationOptions no_evaluation;
 
 void *calculate_proc(void *x) {
 	CALCULATOR->b_busy = true;
@@ -196,6 +197,8 @@ Calculator::Calculator() {
 	string str = _(" to ");
 	local_to = (str != " to ");
 	
+	null_prefix = new Prefix(0, "", "");
+	
 	PrintOptions po;
 	po.number_fraction_format = FRACTION_FRACTIONAL;
 	po.short_multiplication = false;
@@ -205,6 +208,9 @@ Calculator::Calculator() {
 	m_empty_matrix.clearMatrix();
 	m_zero.clear();
 	m_one.set(1, 1);
+	no_evaluation.approximation = APPROXIMATION_EXACT;
+	no_evaluation.structuring = STRUCTURING_NONE;
+	no_evaluation.sync_units = false;
 
 	default_assumptions = new Assumptions;
 	
@@ -216,18 +222,12 @@ Calculator::Calculator() {
 	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = DOT_S + RESERVED OPERATORS PARENTHESISS VECTOR_WRAPS;	
 	ILLEGAL_IN_UNITNAMES = ILLEGAL_IN_NAMES + NUMBERS;			
 	b_argument_errors = true;
-	b_rpn = false;
 	calculator = this;
 	srand48(time(0));
 	angleMode(RADIANS);
 	addBuiltinVariables();
 	addBuiltinFunctions();
 	addBuiltinUnits();
-	b_functions = true;
-	b_variables = true;
-	b_units = true;
-	b_unknown = true;
-	b_calcvars = true;
 	disable_errors_ref = 0;
 	b_busy = false;
 	b_gnuplot_open = false;
@@ -255,12 +255,6 @@ bool Calculator::utf8_pos_is_valid_in_name(char *pos) {
 	return true;
 }
 
-void Calculator::setRPNMode(bool enable) {
-	b_rpn = enable;
-}
-bool Calculator::inRPNMode() const {
-	return b_rpn;
-}
 bool Calculator::showArgumentErrors() const {
 	return b_argument_errors;
 }
@@ -711,36 +705,6 @@ void Calculator::delId(unsigned int id, bool force) {
 	}
 }
 
-bool Calculator::functionsEnabled() const {
-	return b_functions;
-}
-void Calculator::setFunctionsEnabled(bool enable) {
-	b_functions = enable;
-}
-bool Calculator::variablesEnabled() const {
-	return b_variables;
-}
-void Calculator::setVariablesEnabled(bool enable) {
-	b_variables = enable;
-}
-bool Calculator::unknownVariablesEnabled() const {
-	return b_unknown;
-}
-void Calculator::setUnknownVariablesEnabled(bool enable) {
-	b_unknown = enable;
-}
-bool Calculator::donotCalculateVariables() const {
-	return !b_calcvars;
-}
-void Calculator::setDonotCalculateVariables(bool enable) {
-	b_calcvars = !enable;
-}
-bool Calculator::unitsEnabled() const {
-	return b_units;
-}
-void Calculator::setUnitsEnabled(bool enable) {
-	b_units = enable;
-}
 int Calculator::angleMode() const {
 	return ianglemode;
 }
@@ -1066,10 +1030,8 @@ void Calculator::deleteUnitName(string name_, Unit *object) {
 	}
 }
 void Calculator::saveState() {
-	b_functions_was = b_functions; b_variables_was = b_variables; b_units_was = b_units; b_unknown_was = b_unknown; b_calcvars_was = b_calcvars; b_rpn_was = b_rpn;
 }
 void Calculator::restoreState() {
-	b_functions = b_functions_was; b_variables = b_variables_was; b_units = b_units_was; b_unknown = b_unknown_was; b_calcvars = b_calcvars_was; b_rpn = b_rpn_was;
 }
 void Calculator::clearBuffers() {
 	for(unsigned int i = 0; i < ids.size(); i++) {
@@ -1234,14 +1196,14 @@ bool Calculator::calculate(MathStructure &mstruct, string str, int usecs, const 
 MathStructure Calculator::calculate(string str, const EvaluationOptions &eo) {
 	unsigned int i = 0; 
 	string str2 = "";
-	if(unitsEnabled() && (i = str.find(_(" to "))) != string::npos) {
+	if(eo.parse_options.units_enabled && (i = str.find(_(" to "))) != string::npos) {
 		int l = strlen(_(" to "));
 		str2 = str.substr(i + l, str.length() - i - l);		
 		remove_blank_ends(str2);
 		if(!str2.empty()) {
 			str = str.substr(0, i);
 		}
-	} else if(local_to && unitsEnabled() && (i = str.find(" to ")) != string::npos) {
+	} else if(local_to && eo.parse_options.units_enabled && (i = str.find(" to ")) != string::npos) {
 		int l = strlen(" to ");
 		str2 = str.substr(i + l, str.length() - i - l);		
 		remove_blank_ends(str2);
@@ -1249,10 +1211,10 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo) {
 			str = str.substr(0, i);
 		}
 	}
-	MathStructure mstruct(parse(str));
+	MathStructure mstruct(parse(str, eo.parse_options));
 	mstruct.eval(eo);
 	if(!str2.empty()) {
-		convert(mstruct, str2);
+		return convert(mstruct, str2, eo);
 	}
 	return mstruct;
 }
@@ -1274,34 +1236,31 @@ string Calculator::printMathStructureTimeOut(const MathStructure &mstruct, int u
 	return tmp_print_result;
 }
 
-MathStructure Calculator::convert(double value, Unit *from_unit, Unit *to_unit) {
-	string str = d2s(value);
-	return convert(str, from_unit, to_unit);
+MathStructure Calculator::convert(double value, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo) {
+	return convert(value, from_unit, to_unit, eo);
 }
-MathStructure Calculator::convert(string str, Unit *from_unit, Unit *to_unit) {
-	MathStructure mstruct(calculate(str));
+MathStructure Calculator::convert(string str, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo) {
+	MathStructure mstruct(parse(str, eo.parse_options));
 	mstruct *= from_unit;
-	from_unit->hasComplexRelationTo(to_unit);
-	mstruct.convert(to_unit);
 	mstruct /= to_unit;
-//	mstruct.finalize();	
+	mstruct.eval(eo);
 	return mstruct;
 }
-MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, bool always_convert) {
-	if(to_unit->unitType() == COMPOSITE_UNIT) return convertToCompositeUnit(mstruct, (CompositeUnit*) to_unit, always_convert);
-	if(to_unit->unitType() != ALIAS_UNIT || (((AliasUnit*) to_unit)->baseUnit()->unitType() != COMPOSITE_UNIT && ((AliasUnit*) to_unit)->baseExp() == 1.0L)) {
+MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert) {
+	if(to_unit->unitType() == COMPOSITE_UNIT) return convertToCompositeUnit(mstruct, (CompositeUnit*) to_unit, eo, always_convert);
+	if(to_unit->unitType() != ALIAS_UNIT || (((AliasUnit*) to_unit)->baseUnit()->unitType() != COMPOSITE_UNIT && ((AliasUnit*) to_unit)->baseExp() == 1)) {
 		MathStructure mstruct_new(mstruct);
 		if(!mstruct_new.convert(to_unit)) {
 			mstruct_new = mstruct;
 		} else {
-			//mstruct_new.finalize();
+			mstruct_new.eval(eo);
 			return mstruct_new;
 		}
 	}
 	MathStructure mstruct_new(mstruct);
 	if(mstruct_new.isAddition()) {
 		for(unsigned int i = 1; i <= mstruct_new.countChilds(); i++) {
-			convert(*mstruct_new.getChild(i), to_unit, false);
+			convert(*mstruct_new.getChild(i), to_unit, eo, false);
 			if(mstruct_new.getChild(i)->isApproximate()) mstruct_new.setApproximate();
 		}
 	} else {
@@ -1350,14 +1309,16 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, b
 	}
 	return mstruct_new;
 }
-MathStructure Calculator::convertToBaseUnits(const MathStructure &mstruct) {
+MathStructure Calculator::convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	MathStructure mstruct_new(mstruct);
 	for(unsigned int i = 0; i < units.size(); i++) {
 		if(units[i]->unitType() == BASE_UNIT) {
 			mstruct_new.convert(units[i]);
 		}
 	}
-	//mstruct_new.finalize();
+	EvaluationOptions eo2 = eo;
+	eo2.calculate_functions = false;
+	mstruct_new.eval(eo2);
 	return mstruct_new;
 }
 Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
@@ -1600,7 +1561,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 	}
 	return u;	
 }
-MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct) {
+MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	switch(mstruct.type()) {
 		case STRUCT_NOT: {}
 		case STRUCT_OR: {}
@@ -1612,7 +1573,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct) {
 		case STRUCT_ADDITION: {
 			MathStructure mstruct_new(mstruct);
 			for(unsigned int i = 0; i < mstruct_new.size(); i++) {
-				mstruct_new[i] = convertToBestUnit(mstruct_new[i]);
+				mstruct_new[i] = convertToBestUnit(mstruct_new[i], eo);
 			}
 			//mstruct_new.clean();
 			return mstruct_new;
@@ -1622,20 +1583,20 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct) {
 			if(mstruct_new.base()->isUnit() && mstruct_new.exponent()->isNumber() && mstruct_new.exponent()->number().isInteger()) {
 				CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
 				cu->add(mstruct_new.base()->unit(), mstruct_new.exponent()->number().intValue());
-				mstruct_new = convert(mstruct_new, getBestUnit(cu), true);
+				mstruct_new = convert(mstruct_new, getBestUnit(cu), eo, true);
 				delete cu;
 			} else {
-				mstruct_new[0] = convertToBestUnit(mstruct_new.base());
-				mstruct_new[1] = convertToBestUnit(mstruct_new.exponent());
+				mstruct_new[0] = convertToBestUnit(mstruct_new.base(), eo);
+				mstruct_new[1] = convertToBestUnit(mstruct_new.exponent(), eo);
 				//mstruct_new.clean();
 			}
 			return mstruct_new;
 		}
 		case STRUCT_UNIT: {
-			return convert(mstruct, getBestUnit(mstruct.unit()), true);
+			return convert(mstruct, getBestUnit(mstruct.unit()), eo, true);
 		}
 		case STRUCT_MULTIPLICATION: {
-			MathStructure mstruct_new(convertToBaseUnits(mstruct));
+			MathStructure mstruct_new(convertToBaseUnits(mstruct, eo));
 			CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
 			bool b = false;
 			for(unsigned int i = 1; i <= mstruct_new.countChilds(); i++) {
@@ -1649,7 +1610,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct) {
 					mstruct_new[i - 1] = convertToBestUnit(*mstruct_new.getChild(i));
 				}
 			}
-			if(b) mstruct_new = convert(mstruct_new, getBestUnit(cu), true);
+			if(b) mstruct_new = convert(mstruct_new, getBestUnit(cu), eo, true);
 			delete cu;
 			//mstruct_new.clean();
 			return mstruct_new;
@@ -1657,13 +1618,13 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct) {
 	}
 	return mstruct;
 }
-MathStructure Calculator::convertToCompositeUnit(const MathStructure &mstruct, CompositeUnit *cu, bool always_convert) {
-	MathStructure mstruct3 = cu->generateMathStructure(true);
+MathStructure Calculator::convertToCompositeUnit(const MathStructure &mstruct, CompositeUnit *cu, const EvaluationOptions &eo, bool always_convert) {
+	MathStructure mstruct_cu(cu->generateMathStructure());
 	MathStructure mstruct_new(mstruct);
 	//mstruct_new.finalize();
 	if(mstruct_new.isAddition()) {
 		for(unsigned int i = 0; i < mstruct_new.size(); i++) {
-			mstruct_new[i] = convertToCompositeUnit(mstruct_new[i], cu, false);
+			mstruct_new[i] = convertToCompositeUnit(mstruct_new[i], cu, eo, false);
 			if(mstruct_new[i].isApproximate()) mstruct_new[i].setApproximate();
 		}
 	} else {
@@ -1698,42 +1659,20 @@ MathStructure Calculator::convertToCompositeUnit(const MathStructure &mstruct, C
 			}
 		}
 		if(b) {	
-			mstruct_new.divide(mstruct3);
-			//mstruct_new.finalize();	
-			if(!mstruct_new.isOne() && !mstruct_new.isMultiplication()) {
-				MathStructure mstruct2(mstruct_new);
-				mstruct_new.transform(STRUCT_MULTIPLICATION, mstruct2);
-			}
-			unsigned int i = 0;
-			Prefix *p = NULL;
-			int exp = 1;
-			Unit *u = NULL;
-			while(true) {
-				u = cu->get(i, &exp, &p);
-				if(!u) {
-					break;
-				}
-				MathStructure mstruct2(u);
-				//mstruct2.setPrefix(p);
-				mstruct2.raise(exp);
-				if(!mstruct_new.isMultiplication()) {
-					mstruct_new.transform(STRUCT_MULTIPLICATION, mstruct2);
-				} else {
-					mstruct_new.addChild(mstruct2);
-				}
-				i++;
-			}
-			if(mstruct_new.countChilds() == 1) {
-				MathStructure mstruct2(*mstruct_new.getChild(1));
-				mstruct_new = mstruct2;
-			} else if(mstruct_new.countChilds() == 0) {
-				mstruct_new.clear();
-			}
+			mstruct_new.divide(mstruct_cu);
+			EvaluationOptions eo2 = eo;
+			eo2.calculate_functions = false;
+			mstruct_new.eval(eo2);
+			if(mstruct_new.isOne()) mstruct_new = mstruct_cu;
+			else mstruct_new.multiply(mstruct_cu, true);
+			eo2.sync_units = false;
+			eo2.keep_prefixes = true;
+			mstruct_new.eval(eo2);
 		}
 	}
 	return mstruct_new;
 }
-MathStructure Calculator::convert(const MathStructure &mstruct, string composite_) {
+MathStructure Calculator::convert(const MathStructure &mstruct, string composite_, const EvaluationOptions &eo) {
 	remove_blank_ends(composite_);
 	if(composite_.empty()) return mstruct;
 	Unit *u = getUnit(composite_);
@@ -1744,9 +1683,9 @@ MathStructure Calculator::convert(const MathStructure &mstruct, string composite
 			break;
 		}
 	}
-	if(u) return convert(mstruct, u);
+	if(u) return convert(mstruct, u, eo);
 	CompositeUnit cu("", "temporary_composite_convert", "", composite_);
-	return convertToCompositeUnit(mstruct, &cu);
+	return convertToCompositeUnit(mstruct, &cu, eo);
 }
 Unit* Calculator::addUnit(Unit *u, bool force) {
 	if(u->unitType() == COMPOSITE_UNIT) {
@@ -2230,7 +2169,7 @@ bool Calculator::unitIsUsedByOtherUnits(const Unit *u) const {
 	}
 	return false;
 }
-MathStructure Calculator::parse(string str) {
+MathStructure Calculator::parse(string str, const ParseOptions &po) {
 	const string *name;
 	string stmp, stmp2;
 	bool b, moved_forward;
@@ -2383,43 +2322,43 @@ MathStructure Calculator::parse(string str) {
 				name = NULL;
 				switch(ufv_t[ufv_index]) {
 					case 'v': {
-						if(b_variables) {
+						if(po.variables_enabled) {
 							name = &((ExpressionItem*) ufv[ufv_index])->name();
 						}
 						break;
 					}
 					case 'f': {
-						if(b_functions && found_function_index < 0) {
+						if(po.functions_enabled && found_function_index < 0) {
 							name = &((ExpressionItem*) ufv[ufv_index])->name();
 						}
 						break;
 					}
 					case 'U': {
-						if(b_units) {
+						if(po.units_enabled) {
 							name = &((ExpressionItem*) ufv[ufv_index])->name();
 						}
 						break;
 					}
 					case 'u': {
-						if(b_units) {
+						if(po.units_enabled) {
 							name = &((Unit*) ufv[ufv_index])->singular();
 						}
 						break;
 					}
 					case 'Y': {
-						if(b_units) {
+						if(po.units_enabled) {
 							name = &((Unit*) ufv[ufv_index])->plural();
 						}
 						break;
 					}
 					case 'p': {
-						if(!p && b_units) {
+						if(!p && po.units_enabled) {
 							name = &((Prefix*) ufv[ufv_index])->shortName();
 						}
 						break;
 					}
 					case 'P': {
-						if(!p && b_units) {
+						if(!p && po.units_enabled) {
 							name = &((Prefix*) ufv[ufv_index])->longName();
 						}
 						break;
@@ -2467,7 +2406,7 @@ MathStructure Calculator::parse(string str) {
 								stmp += ID_WRAP_RIGHT_CH;
 								stmp += RIGHT_PARENTHESIS_CH;
 								if(i4 < 0) i4 = name_length;
-							} else if(b_rpn && f->args() == 1 && str_index > 0 && str[str_index - 1] == SPACE_CH && (str_index + name_length >= (int) str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != (int) string::npos) {
+							} else if(po.rpn && f->args() == 1 && str_index > 0 && str[str_index - 1] == SPACE_CH && (str_index + name_length >= (int) str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != (int) string::npos) {
 								i5 = str.rfind(SPACE, i6);	
 								if(i5 == (int) string::npos) {
 									stmp2 = str.substr(0, i6 + 1);	
@@ -2634,7 +2573,7 @@ MathStructure Calculator::parse(string str) {
 				goto set_function;
 			}
 			if(!moved_forward) {
-				if(b_unknown && str[str_index] != EXP_CH) {
+				if(po.unknowns_enabled && str[str_index] != EXP_CH) {
 					int i = 1;
 					while(i <= chars_left && str[str_index + i] < 0) {
 						i++;
@@ -2650,7 +2589,7 @@ MathStructure Calculator::parse(string str) {
 			}
 		}
 	}
-	if(b_rpn) {
+	if(po.rpn) {
 		unsigned int rpn_i = str.find(SPACE, 0);
 		while(rpn_i != string::npos) {
 			if(rpn_i == 0 || is_in(OPERATORS, str[rpn_i - 1]) || rpn_i + 1 == str.length() || is_in(SPACE OPERATORS, str[rpn_i + 1])) {
@@ -2663,11 +2602,11 @@ MathStructure Calculator::parse(string str) {
 	} else {
 		remove_blanks(str);
 	}
-	return parseOperators(str);
+	return parseOperators(str, po);
 
 }
 
-MathStructure Calculator::parseNumber(string str) {
+MathStructure Calculator::parseNumber(string str, const ParseOptions &po) {
 	MathStructure mstruct;
 	string ssave = str;
 	char s = PLUS_CH;
@@ -2748,7 +2687,7 @@ void Calculator::parseAdd(string &str, MathStructure &mstruct, MathOperation s) 
 	}
 }
 
-MathStructure Calculator::parseOperators(string str) {
+MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 	MathStructure mstruct;
 	int i = 0, i2 = 0, i3 = 0;
 	string str2, str3;
@@ -2789,7 +2728,7 @@ MathStructure Calculator::parseOperators(string str) {
 			}
 		}
 		if(i > 0 && is_in(NUMBER_ELEMENTS ID_WRAPS, str[i - 1])) {
-			if(inRPNMode()) {
+			if(po.rpn) {
 				str.insert(i2 + 1, MULTIPLICATION);	
 				str.insert(i, SPACE);
 				i++;
@@ -2801,7 +2740,7 @@ MathStructure Calculator::parseOperators(string str) {
 			}
 		}
 		if(i2 < (int) str.length() - 1 && is_in(NUMBER_ELEMENTS ID_WRAPS, str[i2 + 1])) {
-			if(inRPNMode()) {
+			if(po.rpn) {
 				i3 = str.find(SPACE, i2 + 1);
 				if(i3 == (int) string::npos) {
 					str += MULTIPLICATION;
@@ -2813,11 +2752,11 @@ MathStructure Calculator::parseOperators(string str) {
 				str.insert(i2 + 1, MULTIPLICATION_2);
 			}
 		}
-		if(inRPNMode() && i > 0 && i2 + 1 == (int) str.length() && is_in(NUMBER_ELEMENTS OPERATORS ID_WRAPS, str[i - 1])) {
+		if(po.rpn && i > 0 && i2 + 1 == (int) str.length() && is_in(NUMBER_ELEMENTS OPERATORS ID_WRAPS, str[i - 1])) {
 			str += MULTIPLICATION_CH;	
 		}
 		str2 = str.substr(i + 1, i2 - (i + 1));
-		mstruct.set(parseOperators(str2));
+		mstruct.set(parseOperators(str2, po));
 		str2 = ID_WRAP_LEFT_CH;
 		str2 += i2s(addId(mstruct));
 		str2 += ID_WRAP_RIGHT_CH;
@@ -2941,7 +2880,7 @@ MathStructure Calculator::parseOperators(string str) {
 	}		
 	i = 0;
 	i3 = 0;	
-/*	if(inRPNMode()) {
+/*	if(po.rpn) {
 		while(true) {
 			i = str.find_first_of(OPERATORS SPACE, i3 + 1);
 			if(i == (int) string::npos) {
@@ -3103,7 +3042,7 @@ MathStructure Calculator::parseOperators(string str) {
 		parseAdd(str2, mstruct);
 		parseAdd(str, mstruct, OPERATION_EXP10);
 	} else {
-		return parseNumber(str);
+		return parseNumber(str, po);
 	}
 	return mstruct;
 }
@@ -3320,8 +3259,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 		xmlFreeDoc(doc);
 		return false;
 	}
-	bool functions_was = b_functions, variables_was = b_variables, units_was = b_units, unknown_was = b_unknown, calcvars_was = b_calcvars, rpn_was = b_rpn;
-	b_functions = true; b_variables = true; b_units = true; b_unknown = true; b_calcvars = true; b_rpn = false;
+	ParseOptions po;
 
 	vector<xmlNodePtr> unfinished_nodes;
 	vector<string> unfinished_cats;
@@ -3890,7 +3828,6 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 			break;
 		} 
 	}
-	b_functions = functions_was; b_variables = variables_was; b_units = units_was; b_unknown = unknown_was; b_calcvars = calcvars_was; b_rpn = rpn_was;
 	xmlFreeDoc(doc);
 	return true;
 }
@@ -4794,37 +4731,46 @@ bool Calculator::canPlot() {
 	return pclose(pipe) == 0;
 }
 MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, string x_var) {
-
-	if(x_var[0] == '\\') {
+	/*if(x_var[0] == '\\') {
 		string x_var_sub = "\"";
 		x_var_sub += x_var;
 		x_var_sub += "\"";
 		gsub(x_var, x_var_sub, expression);	
-	}
-	
-	return parse(expression).generateVector(x_var, min, max, steps, x_vector);
-	
+	}*/
+	Variable *v = getVariable(x_var);
+	MathStructure x_mstruct;
+	if(v) x_mstruct = v;
+	else x_mstruct = x_var;
+	EvaluationOptions eo;
+	eo.approximation = APPROXIMATION_APPROXIMATE;
+	return parse(expression).generateVector(x_mstruct, min, max, steps, x_vector, eo);
 }
 MathStructure Calculator::expressionToPlotVector(string expression, float min, float max, int steps, MathStructure *x_vector, string x_var) {
 	MathStructure min_mstruct(min), max_mstruct(max);
-	return expressionToPlotVector(expression, min_mstruct, max_mstruct, steps, x_vector, x_var).eval();
+	EvaluationOptions eo;
+	eo.approximation = APPROXIMATION_APPROXIMATE;
+	return expressionToPlotVector(expression, min_mstruct, max_mstruct, steps, x_vector, x_var).eval(eo);
 }
 MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &x_vector, string x_var) {
-
-	if(x_var[0] == '\\') {
+	/*if(x_var[0] == '\\') {
 		string x_var_sub = "\"";
 		x_var_sub += x_var;
 		x_var_sub += "\"";
 		gsub(x_var, x_var_sub, expression);		
-	}
-	
-	return parse(expression).generateVector(x_var, x_vector).eval();
+	}*/
+	Variable *v = getVariable(x_var);
+	MathStructure x_mstruct;
+	if(v) x_mstruct = v;
+	else x_mstruct = x_var;
+	EvaluationOptions eo;
+	eo.approximation = APPROXIMATION_APPROXIMATE;
+	return parse(expression).generateVector(x_mstruct, x_vector, eo).eval(eo);
 }
-bool Calculator::plotVectors(plot_parameters *param, const MathStructure *y_vector, ...) {
+/*bool Calculator::plotVectors(plot_parameters *param, const MathStructure *y_vector, ...) {
 
 	plot_data_parameters *pdp;
-	vector<const MathStructure*> y_vectors;
-	vector<const MathStructure*> x_vectors;
+	vector<MathStructure*> y_vectors;
+	vector<MathStructure*> x_vectors;
 	vector<plot_data_parameters*> pdps;
 	const MathStructure *v;
 	y_vectors.push_back(y_vector);
@@ -4844,9 +4790,9 @@ bool Calculator::plotVectors(plot_parameters *param, const MathStructure *y_vect
 	va_end(ap);	
 
 	return plotVectors(param, y_vectors, x_vectors, pdps);
-}
+}*/
 
-bool Calculator::plotVectors(plot_parameters *param, const vector<const MathStructure*> &y_vectors, const vector<const MathStructure*> &x_vectors, vector<plot_data_parameters*> &pdps, bool persistent) {
+bool Calculator::plotVectors(plot_parameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<plot_data_parameters*> &pdps, bool persistent) {
 
 	string homedir = "";
 	string filename;
@@ -4868,7 +4814,6 @@ bool Calculator::plotVectors(plot_parameters *param, const vector<const MathStru
 		param = &pp;
 	}
 	
-	const MathStructure *x_vector, *y_vector;
 	string plot;
 	
 	if(param->filename.empty()) {
@@ -5029,7 +4974,7 @@ bool Calculator::plotVectors(plot_parameters *param, const vector<const MathStru
 	}
 	plot += "plot ";
 	for(unsigned int i = 0; i < y_vectors.size(); i++) {
-		if(y_vectors[i]) {
+		if(!y_vectors[i].isUndefined()) {
 			if(i != 0) {
 				plot += ",";
 			}
@@ -5086,13 +5031,7 @@ bool Calculator::plotVectors(plot_parameters *param, const vector<const MathStru
 	PrintOptions po;
 	po.number_fraction_format = FRACTION_DECIMAL;
 	for(unsigned int serie = 0; serie < y_vectors.size(); serie++) {
-		y_vector = y_vectors[serie];
-		if(serie < x_vectors.size()) {
-			x_vector = x_vectors[serie];
-		} else {
-			x_vector = NULL;
-		}
-		if(y_vector) {
+		if(!y_vectors[serie].isUndefined()) {
 			filename_data = homedir;
 			filename_data += "gnuplot_data";
 			filename_data += i2s(serie + 1);
@@ -5102,12 +5041,12 @@ bool Calculator::plotVectors(plot_parameters *param, const vector<const MathStru
 				return false;
 			}
 			plot_data = "";
-			for(unsigned int i = 1; i <= y_vector->components(); i++) {
-				if(x_vector && x_vector->components() == y_vector->components()) {
-					plot_data += x_vector->getComponent(i)->print(po);
+			for(unsigned int i = 1; i <= y_vectors[serie].components(); i++) {
+				if(serie < x_vectors.size() && !x_vectors[serie].isUndefined() && x_vectors[serie].components() == y_vectors[serie].components()) {
+					plot_data += x_vectors[serie].getComponent(i)->print(po);
 					plot_data += " ";
 				}
-				plot_data += y_vector->getComponent(i)->print(po);
+				plot_data += y_vectors[serie].getComponent(i)->print(po);
 				plot_data += "\n";	
 				if(getDecimalPoint() != ".") {
 					gsub(getDecimalPoint(), ".", plot_data);

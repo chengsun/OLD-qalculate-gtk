@@ -64,6 +64,7 @@ class CalculatorError {
 };
 
 extern MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one;
+extern EvaluationOptions no_evaluation;
 
 class Calculator {
   protected:
@@ -72,7 +73,6 @@ class Calculator {
 	int ianglemode;
 	int i_precision;
 	char vbuffer[200];
-	bool b_functions, b_variables, b_units, b_unknown, b_calcvars, b_rpn;
 	vector<void*> ufv;
 	vector<char> ufv_t;	
 	
@@ -126,6 +126,7 @@ class Calculator {
 	Function *f_for, *f_sum, *f_product, *f_process, *f_process_matrix, *f_csum;
 	Function *f_diff;
 	Unit *u_rad, *u_euro;
+	Prefix *null_prefix;
   
   	bool b_busy;
 	string expression_to_calculate, tmp_print_result;
@@ -182,18 +183,6 @@ class Calculator {
 	void setLocale();
 	void unsetLocale();
 	
-	bool functionsEnabled() const;
-	void setFunctionsEnabled(bool enable);
-	bool variablesEnabled() const;
-	void setVariablesEnabled(bool enable);	
-	bool unknownVariablesEnabled() const;
-	void setUnknownVariablesEnabled(bool enable);		
-	bool donotCalculateVariables() const;	
-	void setDonotCalculateVariables(bool enable);			
-	bool unitsEnabled() const;
-	void setUnitsEnabled(bool enable);
-	void setRPNMode(bool enable);
-	bool inRPNMode() const;
 	int angleMode() const;
 	void angleMode(int mode_);
 	void resetVariables();
@@ -216,20 +205,20 @@ class Calculator {
 	MathStructure calculate(string str, const EvaluationOptions &eo = default_evaluation_options);
 	string printMathStructureTimeOut(const MathStructure &mstruct, int usecs = 100000, const PrintOptions &op = default_print_options);
 	
-	MathStructure parse(string str);
-	MathStructure parseNumber(string str);
-	MathStructure parseOperators(string str);
+	MathStructure parse(string str, const ParseOptions &po = default_parse_options);
+	MathStructure parseNumber(string str, const ParseOptions &po = default_parse_options);
+	MathStructure parseOperators(string str, const ParseOptions &po = default_parse_options);
 	void parseAdd(string &str, MathStructure &mstruct, MathOperation s);
 	void parseAdd(string &str, MathStructure &mstruct);
 	
-	MathStructure convert(double value, Unit *from_unit, Unit *to_unit);
-	MathStructure convert(string str, Unit *from_unit, Unit *to_unit);	
-	MathStructure convert(const MathStructure &mstruct, Unit *to_unit, bool always_convert = true);		
-	MathStructure convert(const MathStructure &mstruct, string composite_);
-	MathStructure convertToBaseUnits(const MathStructure &mstruct);
+	MathStructure convert(double value, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_evaluation_options);
+	MathStructure convert(string str, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_evaluation_options);
+	MathStructure convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo = default_evaluation_options, bool always_convert = true);
+	MathStructure convert(const MathStructure &mstruct, string composite_, const EvaluationOptions &eo = default_evaluation_options);
+	MathStructure convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options);
 	Unit *getBestUnit(Unit *u, bool allow_only_div = false);
-	MathStructure convertToBestUnit(const MathStructure &mstruct);
-	MathStructure convertToCompositeUnit(const MathStructure &mstruct, CompositeUnit *cu, bool always_convert = true);		
+	MathStructure convertToBestUnit(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options);
+	MathStructure convertToCompositeUnit(const MathStructure &mstruct, CompositeUnit *cu, const EvaluationOptions &eo = default_evaluation_options, bool always_convert = true);
 	
 	void expressionItemActivated(ExpressionItem *item);
 	void expressionItemDeactivated(ExpressionItem *item);
@@ -291,8 +280,8 @@ class Calculator {
 	MathStructure expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL, string x_var = "\\x");
 	MathStructure expressionToPlotVector(string expression, float min, float max, int steps, MathStructure *x_vector = NULL, string x_var = "\\x");
 	MathStructure expressionToPlotVector(string expression, const MathStructure &x_vector, string x_var = "\\x");
-	bool plotVectors(plot_parameters *param, const MathStructure *y_vector, ...);
-	bool plotVectors(plot_parameters *param, const vector<const MathStructure*> &y_vectors, const vector<const MathStructure*> &x_vectors, vector<plot_data_parameters*> &pdps, bool persistent = false);
+	//bool plotVectors(plot_parameters *param, const MathStructure *y_vector, ...);
+	bool plotVectors(plot_parameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<plot_data_parameters*> &pdps, bool persistent = false);
 	bool invokeGnuplot(string commands, string commandline_extra = "", bool persistent = false);
 	bool closeGnuplot();
 	bool gnuplotOpen();

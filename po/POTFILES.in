@@ -15,6 +15,7 @@ data/preferences.glade
 data/unit.glade
 data/unitedit.glade
 data/units.glade
+data/unknownedit.glade
 data/variableedit.glade
 data/variables.glade
 src/main.cc

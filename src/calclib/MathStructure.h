@@ -251,7 +251,7 @@ class MathStructure {
 		void setPrefixes(const PrintOptions &po = default_print_options, const MathStructure *parent = NULL, unsigned int pindex = 0);
 		void format(const PrintOptions &po = default_print_options, const MathStructure *parent = NULL, unsigned int pindex = 0);
 		void postFormatUnits(const PrintOptions &po = default_print_options, const MathStructure *parent = NULL, unsigned int pindex = 0);
-		void unformat();
+		void unformat(const EvaluationOptions &eo = default_evaluation_options);
 		bool needsParenthesis(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, unsigned int index, bool flat_division = true, bool flat_power = true) const;
 
 		int neededMultiplicationSign(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, unsigned int index, bool par, bool par_prev, bool flat_division = true, bool flat_power = true) const;
@@ -311,8 +311,8 @@ class MathStructure {
 		bool containsType(int mtype) const;
 		bool replace(const MathStructure &mfrom, const MathStructure &mto);
 		
-		MathStructure generateVector(string x_var, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL);
-		MathStructure generateVector(string x_var, const MathStructure &x_vector);
+		MathStructure generateVector(MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL, const EvaluationOptions &eo = default_evaluation_options);
+		MathStructure generateVector(MathStructure x_mstruct, const MathStructure &x_vector, const EvaluationOptions &eo = default_evaluation_options);
 		
 		bool differentiate(const MathStructure &x_var);
 

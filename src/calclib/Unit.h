@@ -113,7 +113,7 @@ class AliasUnit_Composite : public AliasUnit {
 	Prefix *prefixv;
 
   public:
-	AliasUnit_Composite(Unit *alias, int exp_ = 1, const Prefix *prefix_ = NULL);
+	AliasUnit_Composite(Unit *alias, int exp_ = 1, Prefix *prefix_ = NULL);
 	AliasUnit_Composite(const AliasUnit_Composite *unit);			
 	virtual ~AliasUnit_Composite();
 
@@ -122,9 +122,9 @@ class AliasUnit_Composite : public AliasUnit {
 	
 	virtual string print(bool plural_) const;
 	virtual string printShort(bool plural_) const;
-	virtual const Prefix *prefix() const;
+	virtual Prefix *prefix() const;
 	virtual int prefixExponent() const;	
-	virtual void set(Unit *u, int exp_ = 1, const Prefix *prefix_ = NULL);
+	virtual void set(Unit *u, int exp_ = 1, Prefix *prefix_ = NULL);
 	virtual MathStructure &firstBaseValue(MathStructure &mvalue, MathStructure &mexp) const;
 	virtual MathStructure &convertToFirstBase(MathStructure &mvalue, MathStructure &mexp) const;
 
@@ -146,10 +146,10 @@ class CompositeUnit : public Unit {
 		virtual ~CompositeUnit();
 		virtual ExpressionItem *copy() const;
 		virtual void set(const ExpressionItem *item);		
-		virtual void add(Unit *u, int exp_ = 1, const Prefix *prefix = NULL);
+		virtual void add(Unit *u, int exp_ = 1, Prefix *prefix = NULL);
 		virtual Unit *get(unsigned int index, int *exp_ = NULL, Prefix **prefix = NULL) const;
 		virtual void setExponent(unsigned int index, int exp_);
-		virtual void setPrefix(unsigned int index, const Prefix *prefix);
+		virtual void setPrefix(unsigned int index, Prefix *prefix);
 		virtual unsigned int countUnits() const;
 		virtual void del(Unit *u);
 		virtual string print(bool plural_, bool short_) const;
@@ -158,7 +158,7 @@ class CompositeUnit : public Unit {
 		virtual const string &shortName() const;
 		virtual int unitType() const;
 		virtual bool containsRelativeTo(Unit *u) const;
-		virtual MathStructure generateMathStructure(bool cleaned = true) const;		
+		virtual MathStructure generateMathStructure() const;
 		virtual void setBaseExpression(string base_expression_);		
 		virtual void updateNames();
 		virtual void clear();

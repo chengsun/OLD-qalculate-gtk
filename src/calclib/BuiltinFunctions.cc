@@ -63,14 +63,14 @@ RankFunction::RankFunction() : Function("rank", 1) {
 	setArgumentDefinition(1, new VectorArgument(""));
 }
 bool RankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct = vargs;
+	mstruct = vargs[0];
 	return mstruct.rankVector();
 }
 SortFunction::SortFunction() : Function("sort", 1) {
 	setArgumentDefinition(1, new VectorArgument(""));
 }
 bool SortFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct = vargs;
+	mstruct = vargs[0];
 	return mstruct.sortVector();
 }
 MergeVectorsFunction::MergeVectorsFunction() : Function("mergevectors", -1) {

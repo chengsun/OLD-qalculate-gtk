@@ -1,3 +1,11 @@
+2004-06-14 Niklas Knutsson  <nq@altern.org>
+
+	* Continue converting to new internal structures
+
+2004-05-25 Niklas Knutsson  <nq@altern.org>
+
+	* Converting to new internal structures
+
 2004-05-12 Niklas Knutsson  <nq@altern.org>
 
 	* New internal structures (Manager -> MathStructure)

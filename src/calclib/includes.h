@@ -88,12 +88,13 @@ enum {
 	TYPE_UNIT
 };
 
-#define COMPARISON_NOT_FULLY_KNOWN(i)		i == COMPARISON_RESULT_UNKNOWN || i == COMPARISON_RESULT_NOT_EQUAL || i == COMPARISON_RESULT_EQUAL_OR_LESS || i == COMPARISON_RESULT_EQUAL_OR_GREATER
-#define COMPARISON_IS_EQUAL_OR_GREATER(i)	i == COMPARISON_RESULT_EQUAL || i == COMPARISON_RESULT_GREATER || i == COMPARISON_RESULT_EQUAL_OR_GREATER
-#define COMPARISON_IS_EQUAL_OR_LESS(i)		i == COMPARISON_RESULT_EQUAL || i == COMPARISON_RESULT_LESS || i == COMPARISON_RESULT_EQUAL_OR_LESS
-#define COMPARISON_IS_NOT_EQUAL(i)		i == COMPARISON_RESULT_NOT_EQUAL || i == COMPARISON_RESULT_LESS || i == COMPARISON_RESULT_GREATER
-#define COMPARISON_MIGHT_BE_EQUAL(i)		i == COMPARISON_RESULT_UNKNOWN || i == COMPARISON_RESULT_EQUAL_OR_LESS || i == COMPARISON_RESULT_EQUAL_OR_GREATER
-#define COMPARISON_MIGHT_BE_NOT_EQUAL(i)	i == COMPARISON_RESULT_UNKNOWN || i == COMPARISON_RESULT_EQUAL_OR_LESS || i == COMPARISON_RESULT_EQUAL_OR_GREATER
+#define COMPARISON_MIGHT_BE_LESS_OR_GREATER(i)	(i == COMPARISON_RESULT_UNKNOWN || i == COMPARISON_RESULT_NOT_EQUAL)
+#define COMPARISON_NOT_FULLY_KNOWN(i)		(i == COMPARISON_RESULT_UNKNOWN || i == COMPARISON_RESULT_NOT_EQUAL || i == COMPARISON_RESULT_EQUAL_OR_LESS || i == COMPARISON_RESULT_EQUAL_OR_GREATER)
+#define COMPARISON_IS_EQUAL_OR_GREATER(i)	(i == COMPARISON_RESULT_EQUAL || i == COMPARISON_RESULT_GREATER || i == COMPARISON_RESULT_EQUAL_OR_GREATER)
+#define COMPARISON_IS_EQUAL_OR_LESS(i)		(i == COMPARISON_RESULT_EQUAL || i == COMPARISON_RESULT_LESS || i == COMPARISON_RESULT_EQUAL_OR_LESS)
+#define COMPARISON_IS_NOT_EQUAL(i)		(i == COMPARISON_RESULT_NOT_EQUAL || i == COMPARISON_RESULT_LESS || i == COMPARISON_RESULT_GREATER)
+#define COMPARISON_MIGHT_BE_EQUAL(i)		(i == COMPARISON_RESULT_UNKNOWN || i == COMPARISON_RESULT_EQUAL_OR_LESS || i == COMPARISON_RESULT_EQUAL_OR_GREATER)
+#define COMPARISON_MIGHT_BE_NOT_EQUAL(i)	(i == COMPARISON_RESULT_UNKNOWN || i == COMPARISON_RESULT_EQUAL_OR_LESS || i == COMPARISON_RESULT_EQUAL_OR_GREATER)
 
 typedef enum {
 	COMPARISON_RESULT_EQUAL,
@@ -241,11 +242,18 @@ typedef enum {
 	STRUCTURING_FACTORIZE
 } StructuringMode;
 
+static const struct ParseOptions {
+	bool variables_enabled, functions_enabled, unknowns_enabled, units_enabled;
+	bool rpn;
+	ParseOptions() : variables_enabled(true), functions_enabled(true), unknowns_enabled(true), units_enabled(true), rpn(false) {}
+} default_parse_options;
+
 static const struct EvaluationOptions {
 	ApproximationMode approximation;
-	bool sync_units;
+	bool sync_units, keep_prefixes, calculate_variables, calculate_functions;
 	StructuringMode structuring;
-	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), structuring(STRUCTURING_SIMPLIFY) {}
+	ParseOptions parse_options;
+	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), structuring(STRUCTURING_SIMPLIFY) {}
 } default_evaluation_options;
 
 #define DEFAULT_PRECISION	8

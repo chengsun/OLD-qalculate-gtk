@@ -223,6 +223,7 @@ void on_popup_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpoin
 void on_popup_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_display_prefixes_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_fraction_decimal_activate(GtkMenuItem *w, gpointer user_data);
+void on_popup_menu_item_fraction_decimal_exact_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_fraction_fraction_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_binary_activate(GtkMenuItem *w, gpointer user_data);
@@ -241,13 +242,16 @@ void on_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer us
 void on_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_display_prefixes_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_fraction_decimal_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_fraction_decimal_exact_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_fraction_fraction_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_all_prefixes_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_denominator_prefixes_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_multiple_roots_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_short_units_activate(GtkMenuItem *w, gpointer user_data);
-void on_menu_item_exact_mode_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_always_exact_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_try_exact_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_approximate_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_save_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_copy_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_precision_activate(GtkMenuItem *w, gpointer user_data);

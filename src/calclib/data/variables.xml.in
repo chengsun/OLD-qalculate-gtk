@@ -25,7 +25,7 @@
     </builtin_variable>
   </category>
   <category>
-    <_title>General</_title>
+    <_title>Numbers</_title>
     <variable name="%">
       <_title>Procent</_title>
       <value>1/100</value>
@@ -37,6 +37,90 @@
     <variable name="promille">
       <_title>Promille</_title>
       <value>1/1000</value>
+    </variable>
+    <variable name="million">
+      <_title>Million</_title>
+      <value>1E6</value>
+    </variable>
+    <variable name="billion">
+      <_title>Billion</_title>
+      <value>1E9</value>
+    </variable>
+    <variable name="trillion">
+      <_title>Trillion</_title>
+      <value>1E12</value>
+    </variable>
+    <variable name="quadrillion">
+      <_title>Quadrillion</_title>
+      <value>1E15</value>
+    </variable>
+    <variable name="quintillion">
+      <_title>Quintillion</_title>
+      <value>1E18</value>
+    </variable>
+    <variable name="sextillion">
+      <_title>Sextillion</_title>
+      <value>1E21</value>
+    </variable>
+    <variable name="septillion">
+      <_title>Septillion</_title>
+      <value>1E24</value>
+    </variable>
+    <variable name="octillion">
+      <_title>Octillion</_title>
+      <value>1E27</value>
+    </variable>
+    <variable name="nonillion">
+      <_title>Nonillion</_title>
+      <value>1E30</value>
+    </variable>
+    <variable name="decillion">
+      <_title>Deillion</_title>
+      <value>1E33</value>
+    </variable>
+    <variable name="undecillion">
+      <_title>Undecillion</_title>
+      <value>1E36</value>
+    </variable>
+    <variable name="duodecillion">
+      <_title>Duodecillion</_title>
+      <value>1E39</value>
+    </variable>
+    <variable name="tredecillion">
+      <_title>Tredecillion</_title>
+      <value>1E42</value>
+    </variable>
+    <variable name="quattuordecillion">
+      <_title>Quattuordecillion</_title>
+      <value>1E45</value>
+    </variable>
+    <variable name="quindecillion">
+      <_title>Quindecillion</_title>
+      <value>1E48</value>
+    </variable>
+    <variable name="sexdecillion">
+      <_title>Sexdecillion</_title>
+      <value>1E51</value>
+    </variable>
+    <variable name="septendecillion">
+      <_title>Septendecillion</_title>
+      <value>1E54</value>
+    </variable>
+    <variable name="octodecillion">
+      <_title>Octodecillion</_title>
+      <value>1E57</value>
+    </variable>
+    <variable name="novemdecillion">
+      <_title>Novemdecillion</_title>
+      <value>1E60</value>
+    </variable>
+    <variable name="vigintillion">
+      <_title>Vigintillion</_title>
+      <value>1E63</value>
+    </variable>
+    <variable name="centillion">
+      <_title>Centillion</_title>
+      <value>1E303</value>
     </variable>
   </category>
 </QALCULATE>

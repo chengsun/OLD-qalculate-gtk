@@ -264,9 +264,7 @@ int AliasUnit::baseExp(int exp_) const {
 	return unit->baseExp(exp_ * exp);
 }
 MathStructure &AliasUnit::convertToFirstBase(MathStructure &mvalue, MathStructure &mexp) const {
-	bool was_rpn = CALCULATOR->inRPNMode();
-	CALCULATOR->setRPNMode(false);
-	mexp /= exp;
+	if(exp != 1) mexp /= exp;
 	if(rvalue.empty()) {
 		if(value.find("\\x") != string::npos) {
 			string stmp = value;
@@ -285,7 +283,7 @@ MathStructure &AliasUnit::convertToFirstBase(MathStructure &mvalue, MathStructur
 			CALCULATOR->delId(y_id, true);
 		} else {
 			MathStructure mstruct = CALCULATOR->parse(value);
-			mstruct ^= mexp;
+			if(!mexp.isOne()) mstruct ^= mexp;
 			mvalue /= mstruct;
 		}
 	} else {
@@ -306,17 +304,14 @@ MathStructure &AliasUnit::convertToFirstBase(MathStructure &mvalue, MathStructur
 			CALCULATOR->delId(y_id, true);			
 		} else {
 			MathStructure mstruct = CALCULATOR->parse(rvalue);
-			mstruct ^= mexp;
+			if(!mexp.isOne()) mstruct ^= mexp;
 			mvalue *= mstruct;
 		}
 	}
-	CALCULATOR->setRPNMode(was_rpn);		
 	if(isApproximate()) mvalue.setApproximate();
 	return mvalue;
 }
 MathStructure &AliasUnit::firstBaseValue(MathStructure &mvalue, MathStructure &mexp) const {
-	bool was_rpn = CALCULATOR->inRPNMode();
-	CALCULATOR->setRPNMode(false);
 	if(value.find("\\x") != string::npos) {
 		string stmp = value;
 		string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
@@ -334,11 +329,10 @@ MathStructure &AliasUnit::firstBaseValue(MathStructure &mvalue, MathStructure &m
 		CALCULATOR->delId(y_id, true);
 	} else {
 		MathStructure mstruct = CALCULATOR->parse(value);
-		mstruct ^= mexp;
+		if(!mexp.isOne()) mstruct ^= mexp;
 		mstruct *= mvalue;
 		mvalue = mstruct;
 	}
-	CALCULATOR->setRPNMode(was_rpn);	
 	if(isApproximate()) mvalue.setApproximate();	
 	return mvalue;
 }
@@ -401,7 +395,7 @@ bool AliasUnit::hasComplexRelationTo(Unit *u) const {
 	}
 }
 
-AliasUnit_Composite::AliasUnit_Composite(Unit *alias, int exp_, const Prefix *prefix_) : AliasUnit("", alias->name(), alias->plural(false), alias->singular(false), "", alias, "", exp_, "") {
+AliasUnit_Composite::AliasUnit_Composite(Unit *alias, int exp_, Prefix *prefix_) : AliasUnit("", alias->name(), alias->plural(false), alias->singular(false), "", alias, "", exp_, "") {
 	prefixv = (Prefix*) prefix_;
 }
 AliasUnit_Composite::AliasUnit_Composite(const AliasUnit_Composite *unit) {
@@ -443,14 +437,14 @@ string AliasUnit_Composite::print(bool plural_) const {
 	}
 	return str;
 }
-const Prefix *AliasUnit_Composite::prefix() const {
+Prefix *AliasUnit_Composite::prefix() const {
 	return prefixv;
 }
 int AliasUnit_Composite::prefixExponent() const {
 	if(prefixv) return prefixv->exponent();
 	return 0;
 }
-void AliasUnit_Composite::set(Unit *u, int exp_, const Prefix *prefix_) {
+void AliasUnit_Composite::set(Unit *u, int exp_, Prefix *prefix_) {
 	setBaseUnit(u);
 	setExponent(exp_);
 	prefixv = (Prefix*) prefix_;
@@ -497,7 +491,7 @@ void CompositeUnit::set(const ExpressionItem *item) {
 		ExpressionItem::set(item);
 	}
 }
-void CompositeUnit::add(Unit *u, int exp_, const Prefix *prefix) {
+void CompositeUnit::add(Unit *u, int exp_, Prefix *prefix) {
 	bool b = false;
 	for(unsigned int i = 0; i < units.size(); i++) {
 		if(exp_ > units[i]->firstBaseExp()) {
@@ -524,7 +518,7 @@ void CompositeUnit::setExponent(unsigned int index, int exp_) {
 		units[index]->setExponent(exp_);
 	}
 }
-void CompositeUnit::setPrefix(unsigned int index, const Prefix *prefix) {
+void CompositeUnit::setPrefix(unsigned int index, Prefix *prefix) {
 	if(index >= 0 && index < units.size()) {
 		units[index]->set(units[index]->firstBaseUnit(), units[index]->firstBaseExp(), prefix);
 	}
@@ -617,34 +611,27 @@ bool CompositeUnit::containsRelativeTo(Unit *u) const {
 	}	
 	return false;
 }
-MathStructure CompositeUnit::generateMathStructure(bool cleaned) const {
-	if(cleaned) {
-		return CALCULATOR->parse(print(false, true));
-	} else {
-		MathStructure mstruct;
-		for(unsigned int i = 0; i < units.size(); i++) {
-			if(units[i]->firstBaseExp() != 1) {
-				MathStructure mstruct2;
-				if(units[i]->prefix()) {
-					mstruct2.set(1, 1, units[i]->prefix()->exponent());
-					mstruct2 *= units[i]->firstBaseUnit();
-				} else {				
-					mstruct2.set(units[i]->firstBaseUnit());
-				}
-				mstruct2 ^= units[i]->firstBaseExp();
-				if(i == 0) mstruct = mstruct2;
-				else mstruct *= mstruct2;
-			} else {
-				if(units[i]->prefix()) {
-					if(i == 0) mstruct.set(1, 1, units[i]->prefix()->exponent());
-					else mstruct *= MathStructure(1, 1, units[i]->prefix()->exponent());
-				}
-				if(i == 0 && !units[i]->prefix()) mstruct.set(units[i]->firstBaseUnit());
-				else mstruct *= units[i]->firstBaseUnit();
-			}
+MathStructure CompositeUnit::generateMathStructure() const {
+	MathStructure mstruct;
+	bool has_p = false;
+	for(unsigned int i = 0; i < units.size(); i++) {
+		if(units[i]->prefix()) {
+			has_p = true;
+			break;
 		}
-		return mstruct;
 	}
+	for(unsigned int i = 0; i < units.size(); i++) {
+		MathStructure mstruct2;
+		if(!has_p || units[i]->prefix()) {
+			mstruct2.set(units[i]->firstBaseUnit(), units[i]->prefix());
+		} else {				
+			mstruct2.set(units[i]->firstBaseUnit(), CALCULATOR->null_prefix);
+		}
+		if(units[i]->firstBaseExp() != 1) mstruct2 ^= units[i]->firstBaseExp();
+		if(i == 0) mstruct = mstruct2;
+		else mstruct *= mstruct2;
+	}
+	return mstruct;
 }
 void CompositeUnit::setBaseExpression(string base_expression_) {
 	clear();
@@ -653,79 +640,35 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 		updateNames();
 		return;
 	}
-	bool b_var = CALCULATOR->variablesEnabled();
-	CALCULATOR->setVariablesEnabled(false);
-	bool b_var_u = CALCULATOR->unknownVariablesEnabled();
-	CALCULATOR->setUnknownVariablesEnabled(false);	
-	bool b_func = CALCULATOR->functionsEnabled();
-	CALCULATOR->setFunctionsEnabled(false);	
-	bool b_unit = CALCULATOR->unitsEnabled();
-	CALCULATOR->setUnitsEnabled(true);		
 	//fix!
-	CALCULATOR->parse(base_expression_);
-	int div_place = base_expression_.find(DIVISION_CH);
-	bool div = false;
-	Prefix *prefix = NULL;
-	int exp = 1;
-	int i = 0, i2 = 0, id;
-	const MathStructure *mstruct;
-	while(true) {
-		i = base_expression_.find(ID_WRAP_LEFT_CH, i2);
-		if(i == (int) string::npos) {
-			if(i2 == 0) {
-				CALCULATOR->error(false, _("Error in unitexpression: \"%s\"."), base_expression_.c_str(), NULL);
-			} else if((int) base_expression_.length() > i2 + 2) {
-				CALCULATOR->error(false, _("Error in unitexpression: \"%s\"."), base_expression_.substr(i2 + 2, base_expression_.length() - i2 - 2).c_str(), NULL);
-			}
-			break;
-		}
-		if(i > i2 + 3) {
-			if(!(i - i2 - 3 == 1 && is_in(OPERATORS, base_expression_[i2 + 2])))
-				CALCULATOR->error(false, _("Error in unitexpression: \"%s\"."), base_expression_.substr(i2 + 2, i - i2 - 3).c_str(), NULL);
-		} else if(i2 == 0 && i > 1) {
-			if(!(i == 2 && is_in(OPERATORS, base_expression_[0])))
-				CALCULATOR->error(false, _("Error in unitexpression: \"%s\"."), base_expression_.substr(0, i - 1).c_str(), NULL);
-		}
-		i2 = base_expression_.find(ID_WRAP_RIGHT_CH, i);		
-		if(i2 == (int) string::npos) {
-			break;
-		}
-		id = s2i(base_expression_.substr(i + 1, i2 - i - 1));
-		if(!div && div_place != (int) string::npos && i > div_place) {
-			div = true;
-		}		
-		mstruct = CALCULATOR->getId(id);
-		if(mstruct) {
-			prefix = NULL;
-			exp = 1;
-			if(mstruct->isMultiplication() && mstruct->countChilds() == 2 && mstruct->getChild(0)->isNumber() && mstruct->getChild(1)->isUnit()) {
-				prefix = CALCULATOR->getExactPrefix(mstruct->getChild(0)->number());
-				mstruct = mstruct->getChild(1);
-			} 
-			if(mstruct->isUnit()) {
-				if((int) base_expression_.length() > i2 + 3 && base_expression_[i2 + 2] == POWER_CH) {
-					if(is_in(NUMBERS, base_expression_[i2 + 3])) {
-						exp = s2i(base_expression_.substr(i2 + 3, 1));
-						i2 += 2;
-					} else if((int) base_expression_.length() > i2 + 4 && is_in(MINUS PLUS, base_expression_[i2 + 3]) && is_in(NUMBERS, base_expression_[i2 + 4])) {
-						exp = s2i(base_expression_.substr(i2 + 3, 2));
-						i2 += 3;
-					}
-				}
-				if(div) {
-					exp = -exp;
-				}
-				add(mstruct->unit(), exp, prefix);
+	EvaluationOptions eo;
+	eo.approximation = APPROXIMATION_EXACT;
+	eo.sync_units = false;
+	eo.keep_prefixes = true;
+	ParseOptions po;
+	po.variables_enabled = false;
+	po.functions_enabled = false;
+	po.units_enabled = false;
+	po.unknowns_enabled = false;
+	MathStructure mstruct(CALCULATOR->parse(base_expression_, po));
+	mstruct.eval(eo);
+	if(mstruct.isUnit()) {
+		add(mstruct.unit(), 1, mstruct.prefix());
+	} else if(mstruct.isPower() && mstruct[0].isUnit() && mstruct[1].isInteger()) {
+		add(mstruct[0].unit(), mstruct[1].number().intValue(), mstruct[0].prefix());
+	} else if(mstruct.isMultiplication()) {
+		for(unsigned int i = 0; i < mstruct.size(); i++) {
+			if(mstruct[i].isUnit()) {
+				add(mstruct[i].unit(), 1, mstruct[i].prefix());
+			} else if(mstruct[i].isPower() && mstruct[i][0].isUnit() && mstruct[i][1].isInteger()) {
+				add(mstruct[i][0].unit(), mstruct[i][1].number().intValue(), mstruct[i][0].prefix());
 			} else {
-				CALCULATOR->error(false, _("Error in unitexpression: \"%s\"."), mstruct->print().c_str(), NULL);
+				CALCULATOR->error(false, _("Error in unitexpression."), NULL);
 			}
-			CALCULATOR->delId(id);
 		}
+	} else {
+		CALCULATOR->error(false, _("Error in unitexpression."), NULL);
 	}
-	CALCULATOR->setVariablesEnabled(b_var);
-	CALCULATOR->setUnknownVariablesEnabled(b_var_u);	
-	CALCULATOR->setFunctionsEnabled(b_func);	
-	CALCULATOR->setUnitsEnabled(b_unit);			
 	setChanged(true);
 	updateNames();
 }
