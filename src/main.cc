@@ -40,8 +40,6 @@ GladeXML * glade_xml;
 
 int main (int argc, char **argv) {
 
-	GtkWidget *window;
-
 #ifdef ENABLE_NLS
 	bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
@@ -119,7 +117,7 @@ int main (int argc, char **argv) {
 	g_timeout_add(100, on_display_errors_timeout, NULL);
 
 	//create main window
-	window = create_window();
+	create_window();
 	
 	//create dynamic menus
 	create_fmenu();
@@ -128,8 +126,6 @@ int main (int argc, char **argv) {
 	create_umenu();
 	create_umenu2();
 	
-	gtk_widget_show(window);
-
 	gtk_main ();
 	return 0;
 }

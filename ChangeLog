@@ -1,5 +1,13 @@
 2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
 
+	* src/interface.cc,
+	* src/interface.h,
+	* src/main.cc: as the return value of create_window was only used to
+	display the widget, made create_window a void method and display
+	widget from there
+
+2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
+
 	* configure.in: added libglade dependency
 	* data/Makefile.am: added glade file
 	* data/qalculate.glade: user interface definition

@@ -167,9 +167,8 @@ extern Calculator *calc;
 extern bool use_short_units, save_mode_on_exit, save_defs_on_exit, load_global_defs;
 
 
-GtkWidget*
+void
 create_window (void) {
-	GtkWidget *window;
 	GtkWidget *tab1label;
 	GtkWidget *vbox;
 	GtkWidget *vbox1;
@@ -187,9 +186,10 @@ create_window (void) {
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
 
-	accel_group = gtk_accel_group_new ();
+	/* make sure we get a valid main window */
+	g_assert (NULL != glade_xml_get_widget (glade_xml, "main_window"));
 
-	window = glade_xml_get_widget (glade_xml, "main_window");
+	accel_group = gtk_accel_group_new ();
 
 	menu_e = gtk_menu_new();
 	gtk_widget_show (menu_e);
@@ -294,7 +294,11 @@ create_window (void) {
 
 	vbox1 = gtk_vbox_new (FALSE, 0);
 	gtk_widget_show (vbox1);
-	gtk_container_add (GTK_CONTAINER (window), vbox1);
+	gtk_container_add (
+			GTK_CONTAINER (
+				glade_xml_get_widget (glade_xml, "main_window")
+			),
+			vbox1);
 	gtk_container_set_border_width (GTK_CONTAINER (vbox1), 5);
 	gtk_box_set_spacing (GTK_BOX (vbox1), 5);
 
@@ -677,12 +681,20 @@ create_window (void) {
 	g_signal_connect (G_OBJECT (bSTO), "clicked", G_CALLBACK (on_bSTO_clicked), NULL);
 
 
-	g_signal_connect ((gpointer) window, "delete_event",
-	                  G_CALLBACK (on_gcalc_exit),
-	                  NULL);
-	g_signal_connect ((gpointer) window, "destroy_event",
-	                  G_CALLBACK (on_gcalc_exit),
-	                  NULL);
+	g_signal_connect (
+			G_OBJECT (
+				glade_xml_get_widget (glade_xml, "main_window")
+			),
+			"delete_event",
+	                G_CALLBACK (on_gcalc_exit),
+	                NULL);
+	g_signal_connect (
+			G_OBJECT (
+				glade_xml_get_widget (glade_xml, "main_window")
+			),
+			"destroy_event",
+	                G_CALLBACK (on_gcalc_exit),
+	                NULL);
 	g_signal_connect (G_OBJECT (rRad), "toggled",
 	                  G_CALLBACK (on_rRad_toggled),
 	                  NULL);
@@ -720,13 +732,16 @@ create_window (void) {
 	                  G_CALLBACK (on_expression_changed),
 	                  NULL);
 
-	gtk_window_add_accel_group (GTK_WINDOW (window), accel_group);
+	gtk_window_add_accel_group (
+			GTK_WINDOW (
+				glade_xml_get_widget (glade_xml, "main_window")
+			),
+			accel_group);
 	gtk_widget_grab_focus(expression);
 	GTK_WIDGET_SET_FLAGS(expression, GTK_CAN_DEFAULT);
 	gtk_widget_grab_default(expression);
 
-	g_assert (GTK_IS_WIDGET (window));
-	return window;
+	gtk_widget_show (glade_xml_get_widget (glade_xml, "main_window"));
 }
 
 GtkWidget*

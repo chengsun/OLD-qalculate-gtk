@@ -39,7 +39,7 @@ enum {
 	COMPOSITE_UNIT
 };
 
-GtkWidget* create_window (void);
+void create_window (void);
 GtkWidget* create_wFunctions (void);
 GtkWidget* create_wVariables (void);
 GtkWidget* create_wUnits (void);
