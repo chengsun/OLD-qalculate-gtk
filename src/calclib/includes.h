@@ -55,6 +55,7 @@ enum {
 };
 
 #define BASE_ROMAN_NUMERALS	-1
+#define BASE_TIME
 
 typedef enum {
 	PLOT_LEGEND_NONE,
@@ -93,7 +94,9 @@ typedef enum {
 	NUMBER_FORMAT_HEX,
 	NUMBER_FORMAT_OCTAL,
 	NUMBER_FORMAT_BIN,
-	NUMBER_FORMAT_ROMAN
+	NUMBER_FORMAT_ROMAN,
+	NUMBER_FORMAT_SEXAGESIMAL,
+	NUMBER_FORMAT_TIME
 } NumberFormat;
 
 typedef enum {
@@ -271,9 +274,11 @@ using namespace std;
 #define ID_WRAP_RIGHT		"}"	
 #define ID_WRAPS		"{}"	
 #define DOT			"."
+#define SEXADOT			":"
 #define COMMA			","
 #define COMMAS			",;"
 #define NUMBERS			"0123456789"
+#define NUMBER_ELEMENTS		"0123456789.:"
 #define SIGNS			"+-*/^"
 #define OPERATORS		"+-*/^&|!<>="
 #define	PARENTHESISS		"()"

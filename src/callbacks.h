@@ -211,6 +211,8 @@ void on_menu_item_octal_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_decimal_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_roman_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_sexagesimal_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_time_format_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_convert_number_bases_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer user_data);
@@ -222,6 +224,8 @@ void on_popup_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer user
 void on_popup_menu_item_fraction_fraction_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_binary_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_roman_activate(GtkMenuItem *w, gpointer user_data);
+void on_popup_menu_item_sexagesimal_activate(GtkMenuItem *w, gpointer user_data);
+void on_popup_menu_item_time_format_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_octal_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_decimal_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer user_data);

@@ -653,35 +653,6 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 				}
 				break;
 			}
-			case POWER_MANAGER: {
-				switch(mngr->type()) {
-					case ADDITION_MANAGER: {}
-					case MULTIPLICATION_MANAGER: {
-						if(!reverseadd(mngr, op, translate_)) {
-							return false;
-						}
-						break;
-					}
-					case POWER_MANAGER: {
-						if(equals(mngr)) {
-							Manager *mngr2 = new Manager(this);
-							clear();
-							push_back(new Manager(2, 1));
-							push_back(mngr2);
-							c_type = MULTIPLICATION_MANAGER;
-							break;
-						}					
-					}
-					default: {
-						if(!translate_) {			
-							return false;
-						}
-						transform(mngr, ADDITION_MANAGER, op);
-						break;
-					}
-				}
-				break;
-			}
 			case NUMBER_MANAGER: {
 				switch(mngr->type()) {
 					case ADDITION_MANAGER: {
@@ -700,129 +671,31 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 				}
 				break;
 			}
-			case UNIT_MANAGER: {
-				switch(mngr->type()) {
-					case ADDITION_MANAGER: {}
-					case MULTIPLICATION_MANAGER: {
-						if(!reverseadd(mngr, op, translate_)) {
-							return false;
-						}
-						break;
-					}
-					case UNIT_MANAGER: {
-						if(equals(mngr)) {
-							Manager *mngr2 = new Manager(this);
-							clear();
-							push_back(new Manager(2, 1));
-							push_back(mngr2);
-							c_type = MULTIPLICATION_MANAGER;
-							break;
-						}					
-					}
-					default: {
-						if(!translate_) {
-							return false;
-						}
-						transform(mngr, ADDITION_MANAGER, op);
-						break;
-					}
-				}
-				break;
-			}
-			case STRING_MANAGER: {
-				switch(mngr->type()) {
-					case ADDITION_MANAGER: {}
-					case MULTIPLICATION_MANAGER: {
-						if(!reverseadd(mngr, op, translate_)) {
-							return false;
-						}
-						break;
-					}
-					case STRING_MANAGER: {
-						if(s_var == mngr->text()) {
-							Manager *mngr2 = new Manager(this);
-							clear();
-							push_back(new Manager(2, 1));
-							push_back(mngr2);
-							c_type = MULTIPLICATION_MANAGER;
-							break;
-						}
-					}
-					default: {
-						if(!translate_) {
-							return false;
-						}
-						transform(mngr, ADDITION_MANAGER, op);
-						break;
-					}
-				}
-				break;
-			}
-			case VARIABLE_MANAGER: {
-				switch(mngr->type()) {
-					case ADDITION_MANAGER: {}
-					case MULTIPLICATION_MANAGER: {
-						if(!reverseadd(mngr, op, translate_)) {
-							return false;
-						}
-						break;
-					}
-					case VARIABLE_MANAGER: {
-						if(equals(mngr)) {
-							Manager *mngr2 = new Manager(this);
-							clear();
-							push_back(new Manager(2, 1));
-							push_back(mngr2);
-							c_type = MULTIPLICATION_MANAGER;
-							break;
-						}
-					}
-					default: {
-						if(!translate_) {
-							return false;
-						}
-						transform(mngr, ADDITION_MANAGER, op);
-						break;
-					}
-				}
-				break;
-			}
-			case FUNCTION_MANAGER: {
-				switch(mngr->type()) {
-					case ADDITION_MANAGER: {}
-					case MULTIPLICATION_MANAGER: {
-						if(!reverseadd(mngr, op, translate_)) {
-							return false;
-						}
-						break;
-					}
-					case FUNCTION_MANAGER: {
-						if(equals(mngr)) {
-							Manager *mngr2 = new Manager(this);
-							clear();
-							push_back(new Manager(2, 1));
-							push_back(mngr2);
-							c_type = MULTIPLICATION_MANAGER;
-							break;
-						}
-					}
-					default: {
-						if(!translate_) {
-							return false;
-						}
-						transform(mngr, ADDITION_MANAGER, op);
-						break;
-					}
-				}
-				break;			
-			}
 			default: {
-				if(!translate_) {
-					return false;
-				}
-				transform(mngr, ADDITION_MANAGER, op);
-				break;
-			}			
+				switch(mngr->type()) {
+					case ADDITION_MANAGER: {}
+					case MULTIPLICATION_MANAGER: {
+						if(!reverseadd(mngr, op, translate_)) {
+							return false;
+						}
+						break;
+					}
+					default: {
+						if(equals(mngr)) {
+							Manager *mngr2 = new Manager(this);
+							clear();
+							push_back(new Manager(2, 1));
+							push_back(mngr2);
+							c_type = MULTIPLICATION_MANAGER;
+							break;
+						}
+						if(!translate_) {
+							return false;
+						}
+						transform(mngr, ADDITION_MANAGER, op);
+					}
+				}	
+			}		
 		}
 	} else if(op == OPERATION_MULTIPLY) {
 		if(isNull() || mngr->isNull()) {
@@ -837,6 +710,77 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 		if(mngr->isPower() && !isNumber()) {
 			if(mngr->base()->isAddition() && mngr->exponent()->isNumber() && mngr->exponent()->number()->isMinusOne()) {
 				Manager *mngr2 = mngr->base();
+				Manager *prev_base = NULL, *this_base = NULL;
+				bool poly = true;
+				if(mngr2->countChilds() < 2 || mngr2->getChild(0)->isNumber()) {
+					poly = false;
+				} else {
+					for(unsigned int i = 0; i < mngr2->countChilds(); i++) {
+						if(mngr2->getChild(i)->isNumber()) {
+							prev_base = NULL;
+							this_base = NULL;
+						} else if(mngr2->getChild(i)->isPower()) {
+							this_base = mngr2->getChild(i)->base();
+						} else if(mngr2->getChild(i)->isMultiplication() && mngr2->getChild(i)->countChilds() > 1 && mngr2->getChild(i)->getChild(0)->isNumber()) {
+							if(mngr2->getChild(i)->countChilds() == 2) {
+								if(mngr2->getChild(i)->getChild(1)->isPower()) {
+									this_base = mngr2->getChild(i)->getChild(1)->base();
+								} else {
+									this_base = mngr2->getChild(i)->getChild(1);
+								}
+							} else {
+								this_base = mngr2->getChild(i);
+							}
+						} else {
+							this_base = mngr2->getChild(i);
+						}
+						if(prev_base && prev_base->isMultiplication() && this_base->isMultiplication()) {
+							int first1 = 0, first2 = 0;
+							if(prev_base->countChilds() > 0 && prev_base->getChild(0)->isNumber()) {
+								first1 = 1;
+							}
+							if(this_base->countChilds() > 0 && this_base->getChild(0)->isNumber()) {
+								first2 = 1;
+							}
+							if(prev_base->countChilds() - first1 != this_base->countChilds() - first2) {
+								poly = false;
+								break;
+							}
+							for(unsigned int i2 = first1; i2 < prev_base->countChilds(); i2++) {
+								if(prev_base->getChild(i2)->isPower()) {
+									if(this_base->getChild(i2 - first1 + first2)->isPower()) {
+										if(!prev_base->getChild(i2)->base()->equals(this_base->getChild(i2 - first1 + first2)->base())) {
+											poly = false;
+											break;
+										}
+									} else {
+										if(!prev_base->getChild(i2)->base()->equals(this_base->getChild(i2 - first1 + first2))) {
+											poly = false;
+											break;
+										}
+									}
+								} else {
+									if(this_base->getChild(i2 - first1 + first2)->isPower()) {
+										if(!prev_base->getChild(i2)->equals(this_base->getChild(i2 - first1 + first2)->base())) {
+											poly = false;
+											break;
+										}
+									} else {
+										if(!prev_base->getChild(i2)->equals(this_base->getChild(i2 - first1 + first2))) {
+											poly = false;
+											break;
+										}
+									}
+								}
+							}
+							if(!poly) break;
+						} else if(prev_base && !this_base->compatible(prev_base)) {
+							poly = false;
+							break;
+						}
+						prev_base = this_base;
+					}
+				}
 				//polynomial division
 				Manager div;
 				Manager ans;
@@ -844,7 +788,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 				Manager *cur_mngr;
 				bool b2 = false;
 				unsigned int i = 0;
-				while(true) {
+				while(poly) {
 					if(isAddition()) {
 						if(i < mngrs.size()) {
 							cur_mngr = mngrs[i];
@@ -1032,132 +976,32 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 				}
 				break;
 			}
-			case UNIT_MANAGER: {
-				switch(mngr->type()) {
-					case ADDITION_MANAGER: {}
-					case MULTIPLICATION_MANAGER: {}
-					case POWER_MANAGER: {
-						if(!reverseadd(mngr, op, translate_)) {
-							return false;
-						}
-						break;
-					}
-					case UNIT_MANAGER: {
-						if(o_unit == mngr->o_unit) {
-							Manager *mngr2 = new Manager(this);
-							clear();
-							push_back(mngr2);
-							push_back(new Manager(2, 1));
-							c_type = POWER_MANAGER;
-							break;
-						}
-					}
-					default: {
-						if(!translate_) {
-							return false;
-						}
-						transform(mngr, MULTIPLICATION_MANAGER, op);
-						break;
-					}
-				}
-				break;
-			}
-			case STRING_MANAGER: {
-				switch(mngr->type()) {
-					case ADDITION_MANAGER: {}
-					case MULTIPLICATION_MANAGER: {}
-					case POWER_MANAGER: {
-						if(!reverseadd(mngr, op, translate_)) {
-							return false;
-						}
-						break;
-					}
-					case STRING_MANAGER: {
-						if(s_var == mngr->s_var) {
-							Manager *mngr2 = new Manager(this);
-							clear();
-							push_back(mngr2);
-							push_back(new Manager(2, 1));
-							c_type = POWER_MANAGER;
-							break;
-						}
-					}
-					default: {
-						if(!translate_) {
-							return false;
-						}
-						transform(mngr, MULTIPLICATION_MANAGER, op);
-						break;
-					}
-				}
-				break;
-			}
-			case VARIABLE_MANAGER: {
-				switch(mngr->type()) {
-					case ADDITION_MANAGER: {}
-					case MULTIPLICATION_MANAGER: {}
-					case POWER_MANAGER: {
-						if(!reverseadd(mngr, op, translate_)) {
-							return false;
-						}
-						break;
-					}
-					case VARIABLE_MANAGER: {
-						if(equals(mngr)) {
-							Manager *mngr2 = new Manager(this);
-							clear();
-							push_back(mngr2);
-							push_back(new Manager(2, 1));
-							c_type = POWER_MANAGER;
-							break;
-						}
-					}
-					default: {
-						if(!translate_) {
-							return false;
-						}
-						transform(mngr, MULTIPLICATION_MANAGER, op);
-						break;
-					}
-				}
-				break;
-			}
-			case FUNCTION_MANAGER: {
-				switch(mngr->type()) {
-					case ADDITION_MANAGER: {}
-					case MULTIPLICATION_MANAGER: {}
-					case POWER_MANAGER: {
-						if(!reverseadd(mngr, op, translate_)) {
-							return false;
-						}
-						break;
-					}
-					case FUNCTION_MANAGER: {
-						if(equals(mngr)) {
-							Manager *mngr2 = new Manager(this);
-							clear();
-							push_back(mngr2);
-							push_back(new Manager(2, 1));
-							c_type = POWER_MANAGER;
-							break;
-						}
-					}
-					default: {
-						if(!translate_) {
-							return false;
-						}
-						transform(mngr, MULTIPLICATION_MANAGER, op);
-						break;
-					}
-				}
-				break;
-			}			
 			default: {
-				if(!translate_) {
-					return false;
+				switch(mngr->type()) {
+					case ADDITION_MANAGER: {}
+					case MULTIPLICATION_MANAGER: {}
+					case POWER_MANAGER: {
+						if(!reverseadd(mngr, op, translate_)) {
+							return false;
+						}
+						break;
+					}
+					default: {
+						if(equals(mngr)) {
+							Manager *mngr2 = new Manager(this);
+							clear();
+							push_back(mngr2);
+							push_back(new Manager(2, 1));
+							c_type = POWER_MANAGER;
+							break;
+						}
+						if(!translate_) {
+							return false;
+						}
+						transform(mngr, MULTIPLICATION_MANAGER, op);
+						break;
+					}
 				}
-				transform(mngr, MULTIPLICATION_MANAGER, op);
-				break;
 			}			
 		}
 	} else if(op == OPERATION_RAISE) {
@@ -1742,6 +1586,7 @@ void Manager::moveto(Manager *term) {
 	term->unref();
 }
 bool Manager::equals(const Manager *mngr) const {
+	if(!mngr) return false;
 	if(c_type == mngr->type()) {
 		if(isNull()) {
 			return true;
@@ -1784,17 +1629,7 @@ bool Manager::equals(const Manager *mngr) const {
 bool Manager::compatible(const Manager *mngr) {
 	if(isNumber() || mngr->isNumber()) return true;
 	if(c_type == mngr->type()) {
-		if(c_type == UNIT_MANAGER) {
-			if(o_unit == mngr->unit()) return true;
-		} else if(c_type == STRING_MANAGER) {
-			if(s_var == mngr->text()) return true;
-		} else if(c_type == VARIABLE_MANAGER) {
-			return equals(mngr);
-		} else if(c_type == FUNCTION_MANAGER) {
-			return equals(mngr);
-		} else if(c_type == MATRIX_MANAGER) {
-			return equals(mngr);
-		} else if(c_type == MULTIPLICATION_MANAGER) {
+		if(c_type == MULTIPLICATION_MANAGER) {
 			if(mngrs[0]->isNumber() && !mngr->mngrs[0]->isNumber()) {
 				if(mngrs.size() != mngr->mngrs.size() + 1) return false;
 				for(unsigned int i = 1; i < mngrs.size(); i++) {
@@ -1812,14 +1647,8 @@ bool Manager::compatible(const Manager *mngr) {
 				}
 			}
 			return true;
-		} else if(c_type == ADDITION_MANAGER) {
-			if(mngrs.size() != mngr->mngrs.size()) return false;
-			for(unsigned int i = 0; i < mngrs.size(); i++) {
-				if(!mngrs[i]->equals(mngr->mngrs[i])) return false;
-			}
-			return true;
-		} else if(c_type == POWER_MANAGER) {
-			return mngrs[0]->equals(mngr->mngrs[0]) && mngrs[1]->equals(mngr->mngrs[1]);
+		} else {
+			return equals(mngr);
 		}
 	} else if(c_type == MULTIPLICATION_MANAGER) {
 		if(!mngr->isNumber()) {
@@ -2580,12 +2409,12 @@ void Manager::differentiate(string x_var) {
 			} else if(function() == CALCULATOR->getDiffFunction() && mngrs.size() == 3) {
 				mngrs[2]->addInteger(1, OPERATION_ADD);
 			} else if(function() == CALCULATOR->getDiffFunction() && mngrs.size() == 2) {
-				Manager *mngr = new Manager(1, 1);
+				Manager *mngr = new Manager(2, 1);
 				push_back(mngr);
 			} else if(function() == CALCULATOR->getDiffFunction() && mngrs.size() == 1) {
 				Manager *mngr = new Manager(x_var);
 				push_back(mngr);
-				mngr = new Manager(1, 1);
+				mngr = new Manager(2, 1);
 				push_back(mngr);
 			} else {
 				Manager *mngr2 = new Manager(x_var);

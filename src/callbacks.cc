@@ -1786,6 +1786,8 @@ void getFormat(NumberFormat &numberformat, int &displayflags, int &min_decimals,
 	else if(number_base == BASE_HEX) numberformat = NUMBER_FORMAT_HEX;
 	else if(number_base == BASE_BIN) numberformat = NUMBER_FORMAT_BIN;
 	else if(number_base == BASE_ROMAN) numberformat = NUMBER_FORMAT_ROMAN;
+	else if(number_base == BASE_SEXA) numberformat = NUMBER_FORMAT_SEXAGESIMAL;
+	else if(number_base == BASE_TIMEF) numberformat = NUMBER_FORMAT_TIME;
 	else {
 		switch(display_mode) {
 			case MODE_SCIENTIFIC: {numberformat = NUMBER_FORMAT_EXP; displayflags = displayflags | DISPLAY_FORMAT_SCIENTIFIC; break;}
@@ -6388,6 +6390,8 @@ void update_resultview_popup() {
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_hexadecimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_hexadecimal_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_binary"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_binary_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_roman"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_roman_activate, NULL);
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_sexagesimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_sexagesimal_activate, NULL);
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_time_format"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_time_format_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_normal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_normal_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_scientific"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_scientific_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_purely_scientific"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_purely_scientific_activate, NULL);
@@ -6414,6 +6418,8 @@ void update_resultview_popup() {
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_hexadecimal"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_binary"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_roman"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_sexagesimal"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_time_format"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_base"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_normal"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_scientific"));
@@ -6437,6 +6443,8 @@ void update_resultview_popup() {
 		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_hexadecimal"));
 		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_binary"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_roman"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_sexagesimal"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_time_format"));
 		gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_base"));
 		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_display_normal"));
 		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_display_scientific"));
@@ -6470,6 +6478,14 @@ void update_resultview_popup() {
 		}
 		case BASE_ROMAN: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_roman")), TRUE);
+			break;
+		}
+		case BASE_SEXA: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_sexagesimal")), TRUE);
+			break;
+		}
+		case BASE_TIMEF: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_time_format")), TRUE);
 			break;
 		}
 	}
@@ -6514,6 +6530,8 @@ void update_resultview_popup() {
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_hexadecimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_hexadecimal_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_binary"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_binary_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_roman"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_roman_activate, NULL);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_sexagesimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_sexagesimal_activate, NULL);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_time_format"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_time_format_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_normal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_normal_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_scientific"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_scientific_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_purely_scientific"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_purely_scientific_activate, NULL);
@@ -7014,6 +7032,20 @@ void on_menu_item_roman_activate(GtkMenuItem *w, gpointer user_data) {
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
+void on_menu_item_sexagesimal_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
+		return;
+	number_base = BASE_SEXA;
+	setResult();
+	gtk_widget_grab_focus(expression);
+}
+void on_menu_item_time_format_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
+		return;
+	number_base = BASE_TIMEF;
+	setResult();
+	gtk_widget_grab_focus(expression);
+}
 void on_menu_item_short_units_activate(GtkMenuItem *w, gpointer user_data) {
 	use_short_units = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	setResult();
@@ -7179,6 +7211,14 @@ void on_popup_menu_item_binary_activate(GtkMenuItem *w, gpointer user_data) {
 void on_popup_menu_item_roman_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_roman")), TRUE);
+}
+void on_popup_menu_item_sexagesimal_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_sexagesimal")), TRUE);
+}
+void on_popup_menu_item_time_format_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_time_format")), TRUE);
 }
 void on_popup_menu_item_octal_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;

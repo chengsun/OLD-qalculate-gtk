@@ -74,7 +74,7 @@ EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 //		CALCULATOR->error(true, _("Empty expression"), NULL);
 		return;
 	}
-	if((itmp = str.find_first_not_of(NUMBERS MINUS DOT, 0)) != (int) string::npos) {
+	if((itmp = str.find_first_not_of(NUMBER_ELEMENTS MINUS, 0)) != (int) string::npos) {
 		string stmp = str.substr(itmp, str.length() - itmp);
 		str.erase(itmp, str.length() - itmp);
 
@@ -147,7 +147,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 				break;
 			}
 		}
-		if(i > 0 && is_in(NUMBERS DOT ID_WRAPS, str[i - 1])) {
+		if(i > 0 && is_in(NUMBER_ELEMENTS ID_WRAPS, str[i - 1])) {
 			if(CALCULATOR->inRPNMode()) {
 				str.insert(i2 + 1, MULTIPLICATION);	
 				str.insert(i, SPACE);
@@ -159,7 +159,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 				i2++;
 			}
 		}
-		if(i2 < (int) str.length() - 1 && is_in(NUMBERS DOT ID_WRAPS, str[i2 + 1])) {
+		if(i2 < (int) str.length() - 1 && is_in(NUMBER_ELEMENTS ID_WRAPS, str[i2 + 1])) {
 			if(CALCULATOR->inRPNMode()) {
 				i3 = str.find(SPACE, i2 + 1);
 				if(i3 == (int) string::npos) {
@@ -172,7 +172,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 				str.insert(i2 + 1, MULTIPLICATION_2);
 			}
 		}
-		if(CALCULATOR->inRPNMode() && i > 0 && i2 + 1 == (int) str.length() && is_in(NUMBERS DOT OPERATORS ID_WRAPS, str[i - 1])) {
+		if(CALCULATOR->inRPNMode() && i > 0 && i2 + 1 == (int) str.length() && is_in(NUMBER_ELEMENTS OPERATORS ID_WRAPS, str[i - 1])) {
 			str += MULTIPLICATION_CH;	
 		}
 		str2 = str.substr(i + 1, i2 - (i + 1));
@@ -437,7 +437,7 @@ void EqContainer::add(string &str, MathOperation s) {
 	if(str.length() > 0) {
 		string stmp = str;
 		if(str.find_first_not_of(OPERATORS EXP) != string::npos) {
-			if((str.find_first_not_of(NUMBERS DOT ID_WRAPS, 1) != string::npos && str.find_first_not_of(NUMBERS DOT ID_WRAPS PLUS MINUS, 0) != 0) || (str.length() > 0 && str[0] == NOT_CH)) {
+			if((str.find_first_not_of(NUMBER_ELEMENTS ID_WRAPS, 1) != string::npos && str.find_first_not_of(NUMBER_ELEMENTS ID_WRAPS PLUS MINUS, 0) != 0) || (str.length() > 0 && str[0] == NOT_CH)) {
 				add(new EqContainer(str, s));
 			} else {
 				add(new EqNumber(str, s));

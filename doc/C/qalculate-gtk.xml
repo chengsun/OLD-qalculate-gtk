@@ -314,7 +314,7 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
                 <tbody>
 			<row valign="top">
 				<entry><para>Number Base</para></entry>
-				<entry><para>Submenu which switches between binary, octal, decimal and hexadecimal numbers in result.</para></entry>
+				<entry><para>Submenu which switches between binary, octal, decimal and hexadecimal bases, and roman numerals in result.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Numerical Display</para></entry>
@@ -541,7 +541,7 @@ In Qalculate! mathematical entities, such as numbers and variables, are referred
 	<varlistentry>
 		<term>Numbers</term>
 		<listitem><para>
-		These are the regular numbers composed by digits 0-9 and a decimal point — a dot, and a comma if it is the default decimal point in the locale/language used. Separators (ex. <quote>1,000.00</quote>), usually comma or dot whichever is not the decimal point, are not allowed. Numbers include integers, real numbers, and complex numbers. The imaginary part of complex numbers are written with as regular number followed by the special variable <quote>i</quote>, which represents the square root of -1 (ex. <quote>2 + 3i</quote>). Spaces between digits are ignored (<quote>5  5 = 55</quote>). <quote>E</quote> can be considered as a shortcut for writing many zeros and is equivalent to multiplication by 10 raised to the power of the right-hand value (ex. <quote>5E3 = 5000</quote>).
+		These are the regular numbers composed by digits 0-9 and a decimal point — a dot, and a comma if it is the default decimal point in the locale/language used. Separators (ex. <quote>1,000.00</quote>), usually comma or dot whichever is not the decimal point, are not allowed. Numbers include integers, real numbers, and complex numbers. The imaginary part of complex numbers are written with as regular number followed by the special variable <quote>i</quote>, which represents the square root of -1 (ex. <quote>2 + 3i</quote>). Spaces between digits are ignored (<quote>5  5 = 55</quote>). <quote>E</quote> can be considered as a shortcut for writing many zeros and is equivalent to multiplication by 10 raised to the power of the right-hand value (ex. <quote>5E3 = 5000</quote>). Sexagesimal numbers (and time) can be entered directly using colons (ex. <quote>5:30 = 5.5</quote>).
 		</para></listitem>
 	</varlistentry>
 	<varlistentry>
@@ -663,7 +663,7 @@ The following operators are defined in Qalculate! and may be used in expressions
 			</row>
 			<row valign="top">
 				<entry><para>Parenthesis</para></entry>
-				<entry align="center"><para>( and ) or [ and ]</para></entry>
+				<entry align="center"><para>( and )</para></entry>
 				<entry><para>Evaluates the expression in parenthesis first.</para></entry>
 				<entry align="center"><para>5 * (1 + 1)</para></entry>
 				<entry align="right"><para>10</para></entry>

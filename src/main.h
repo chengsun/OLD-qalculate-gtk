@@ -35,7 +35,9 @@ enum {
 	BASE_BIN = 2,		
 	BASE_OCTAL = 3,
 	BASE_HEX = 4,
-	BASE_ROMAN = 5
+	BASE_SEXA = 5,
+	BASE_TIMEF = 6,
+	BASE_ROMAN = 7
 };
 
 #include "qalculate.h"

@@ -185,6 +185,37 @@ void Number::set(string number) {
 			break;
 		} else if(number[index] == '.') {
 			in_decimals = true;
+		} else if(number[index] == ':') {
+			if(in_decimals) {
+				CALCULATOR->error(true, _("\':\' in decimal number ignored (decimal point detected)."), NULL);
+			} else {
+				vector<cl_I> nums;
+				nums.push_back(num);
+				num = 0;
+				for(index++; index < number.size(); index++) {
+					if(number[index] >= '0' && number[index] <= '9') {				
+						num *= 10;
+						num += number[index] - '0';
+					} else if(number[index] == ':') {
+						nums.push_back(num);
+						num = 0;
+					} else if(number[index] == 'E')	{
+						index--;
+						break;
+					} else if(number[index] == '.') {
+						CALCULATOR->error(true, _("Decimal point in sexagesimal number treated as \':\'."), NULL);
+						nums.push_back(num);
+						num = 0;
+					} else if(number[index] == 'i') {
+						b_cplx = true;
+					}
+				}
+				for(int i = nums.size() - 1; i >= 0; i--) {
+					den *= 60;
+					nums[i] *= den;
+					num += nums[i];
+				}
+			}
 		} else if(!numbers_started && number[index] == '-') {
 			minus = !minus;
 		} else if(number[index] == 'i') {
@@ -1239,7 +1270,7 @@ void Number::getPrintObjects(bool &minus, string &whole_, string &numerator_, st
 	cl_I exp = 0;
 	cl_I num = cln::numerator(cln::rational(cln::realpart(value)));
 	cl_I den = cln::denominator(cln::rational(cln::realpart(value)));
-	if(nrformat != NUMBER_FORMAT_DECIMALS && !isZero()) {
+	if(!isZero() && nrformat != NUMBER_FORMAT_SEXAGESIMAL && nrformat != NUMBER_FORMAT_TIME) {
 		if(!isZero()) {
 			if((!(displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY))) {		
 				Number exp_pre(this);
@@ -1249,24 +1280,6 @@ void Number::getPrintObjects(bool &minus, string &whole_, string &numerator_, st
 				if(exp_pre.isLessThan(1)) {
 					exp_pre.setCln(-cln::log(cln::recip(exp_pre.clnNumber()), 10));
 				} else {
-/*					cl_print_flags flags;
-					ostringstream stream;
-					print_real(stream, flags, cln::realpart(exp_pre.clnNumber()));
-					string cl_str = stream.str();
-					unsigned int i = cl_str.find("/");
-					if(i != string::npos) {
-						exp = cl_str.length() - (cl_str.length() - i) * 2 + 1;
-					} else {
-						i = cl_str.find_first_not_of("0123456789.");
-						if(i != string::npos) {
-							unsigned int i2 = cl_str.find(".");
-							if(i2 != string::npos) {
-								
-							}
-						} else {
-							exp = cl_str.length() - 1;
-						}
-					}*/
 					exp_pre.setCln(cln::log(exp_pre.clnNumber(), 10));
 				}
 				exp_pre.floor();
@@ -1307,7 +1320,7 @@ void Number::getPrintObjects(bool &minus, string &whole_, string &numerator_, st
 	prefix_ = "";	
 	bool force_rational = false;
 	int base = 10;
-	if(displayflags & DISPLAY_FORMAT_USE_PREFIXES) {
+	if(displayflags & DISPLAY_FORMAT_USE_PREFIXES && nrformat != NUMBER_FORMAT_SEXAGESIMAL && nrformat != NUMBER_FORMAT_TIME) {
 		Prefix *p;
 		if(l_exp) {
 			Number tmp_exp;
@@ -1435,6 +1448,9 @@ void Number::getPrintObjects(bool &minus, string &whole_, string &numerator_, st
 				exp_spec = 0;
 			}
 			break;
+		}
+		default: {
+			break;
 		}		
 	}
 	cl_I den_spec = den;	
@@ -1452,6 +1468,55 @@ void Number::getPrintObjects(bool &minus, string &whole_, string &numerator_, st
 	}
 	if(in_composite && exponent_.empty() && whole == den_spec) {
 		return;
+	} else if(nrformat == NUMBER_FORMAT_SEXAGESIMAL || nrformat == NUMBER_FORMAT_TIME) {
+		Number nr(this);
+		nr.trunc();
+		whole_ = nr.printNumerator(10, false);
+		if(nrformat == NUMBER_FORMAT_SEXAGESIMAL) {
+			if(displayflags & DISPLAY_FORMAT_NONASCII) {
+				whole_ += SIGN_POWER_0;
+			} else {
+				whole_ += "o";
+			}	
+		}
+		nr.set(this);
+		nr.frac();
+		nr.multiply(60);
+		Number nr2(&nr);
+		nr.trunc();
+		if(nrformat == NUMBER_FORMAT_TIME) {
+			whole_ += ":";
+			if(nr.isLessThan(10)) {
+				whole_ += "0";
+			}
+		}
+		whole_ += nr.printNumerator(10, false);
+		if(nrformat == NUMBER_FORMAT_SEXAGESIMAL) {
+			whole_ += "'";
+		}	
+		nr2.frac();
+		if(!nr2.isZero() || nrformat == NUMBER_FORMAT_SEXAGESIMAL) {
+			nr2.multiply(60);
+			nr.set(&nr2);
+			nr.trunc();
+			nr2.frac();
+			if(!nr2.isZero()) {
+				if(in_exact) *in_exact = true;
+				if(nr2.isGreaterThanOrEqualTo(1, 2)) {
+					nr.add(1);
+				}
+			}
+			if(nrformat == NUMBER_FORMAT_TIME) {
+				whole_ += ":";
+				if(nr.isLessThan(10)) {
+					whole_ += "0";
+				}
+			}
+			whole_ += nr.printNumerator(10, false);
+			if(nrformat == NUMBER_FORMAT_SEXAGESIMAL) {
+				whole_ += "\"";
+			}
+		}
 	} else if(!force_rational && !(displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY)) {
 		Number nr;
 		nr.setCln(whole / den_spec);

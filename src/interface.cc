@@ -156,6 +156,14 @@ create_main_window (void)
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_roman")), TRUE);
 			break;
 		}
+		case BASE_SEXA: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_sexagesimal")), TRUE);
+			break;
+		}
+		case BASE_TIMEF: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_time_format")), TRUE);
+			break;
+		}
 	}
 	switch (display_mode) {
 		case MODE_NORMAL: {
