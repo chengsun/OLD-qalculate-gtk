@@ -52,6 +52,11 @@ long int s2li(const char *str);
 string li2s(long int value);
 string &li2s(long int &value, string &str);
 
+string date2s(int year, int month, int day);
+int week(string str, bool start_sunday = false);
+int weekday(string str);
+void now(int &hour, int &min, int &sec);
+void today(int &year, int &month, int &day);
 bool s2date(string str, int &year, int &month, int &day);
 bool isLeapYear(int year);
 int daysPerYear(int year, int basis = 0);

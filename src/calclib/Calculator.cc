@@ -173,6 +173,9 @@ Calculator::Calculator() {
 
 	NAME_NUMBER_PRE_S = "_~#";
 	NAME_NUMBER_PRE_STR = "_";
+	
+	string str = _(" to ");
+	local_to = (str != " to ");
 
 	saved_locale = strdup(setlocale(LC_NUMERIC, NULL));
 	setlocale(LC_NUMERIC, "C");
@@ -776,6 +779,12 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new IFFunction());
 	addFunction(new DaysFunction());		
 	addFunction(new YearFracFunction());		
+	addFunction(new WeekFunction());
+	addFunction(new WeekdayFunction());
+	addFunction(new MonthFunction());
+	addFunction(new DayFunction());
+	addFunction(new YearFunction());
+	addFunction(new TimeFunction());
 	addFunction(new GCDFunction());	
 	addFunction(new FactorialFunction());
 	//addFunction(new BinomialFunction());		
@@ -1065,6 +1074,13 @@ Manager *Calculator::calculate(string str, bool enable_abort, int usecs) {
 		string str2 = "";
 		if(unitsEnabled() && (i = str.find(_(" to "))) != string::npos) {
 			int l = strlen(_(" to "));
+			str2 = str.substr(i + l, str.length() - i - l);		
+			remove_blank_ends(str2);
+			if(!str2.empty()) {
+				str = str.substr(0, i);
+			}
+		} else if(local_to && unitsEnabled() && (i = str.find(" to ")) != string::npos) {
+			int l = strlen(" to ");
 			str2 = str.substr(i + l, str.length() - i - l);		
 			remove_blank_ends(str2);
 			if(!str2.empty()) {

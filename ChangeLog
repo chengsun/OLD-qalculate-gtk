@@ -1,5 +1,9 @@
 2004-03-26 Niklas Knutsson  <nq@altern.org>
 
+	* time()
+	* week(), weekday(), year(), month(), day()
+	* Allow "today" for dates
+	* Use both localized and non-localized "to"
 	* Sexagesimal number display
 	* Fix prefixes with simple display format
 	* Sexagesimal number input

@@ -77,6 +77,8 @@ class Calculator {
 	string gnuplot_cmdline;
 	FILE *gnuplot_pipe;
 	
+	bool local_to;
+	
 	Variable *pi_var, *e_var;
 	Function *ln_func, *vector_func, *matrix_func, *sin_func, *cos_func, *diff_func, *bin_func, *oct_func, *hex_func, *base_func;
 

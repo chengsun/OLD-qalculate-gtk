@@ -320,7 +320,8 @@ Manager *Function::createFunctionManagerFromSVArgs(vector<string> &svargs) {
 Manager *Function::calculate(const string &argv) {
 	vector<Manager*> vargs;
 	int itmp = args(argv, vargs);	
-	Manager *mngr = calculate(vargs, itmp);
+//	Manager *mngr = calculate(vargs, itmp);
+	Manager *mngr = calculate(vargs);
 	for(unsigned int i = 0; i < vargs.size(); i++) {
 		vargs[i]->unref();
 	}	

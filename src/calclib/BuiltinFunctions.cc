@@ -1009,6 +1009,81 @@ void YearFracFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 	delete fr;
 }
+WeekFunction::WeekFunction() : Function("Date & Time", "week", 0, "Week of Year", "", 2) {
+	setArgumentDefinition(1, new DateArgument());
+	setArgumentDefinition(2, new BooleanArgument());	
+	setDefaultValue(1, "\"today\"");
+}
+void WeekFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	int w = week(vargs[0]->text(), vargs[1]->number()->getBoolean());
+	if(w < 0) {
+		mngr->set(this, vargs[0], vargs[1], NULL);
+	} else {
+		mngr->set(w, 1);
+	}
+}
+WeekdayFunction::WeekdayFunction() : Function("Date & Time", "weekday", 0, "Day of Week", "", 1) {
+	setArgumentDefinition(1, new DateArgument());
+	setDefaultValue(1, "\"today\"");
+}
+void WeekdayFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	int w = weekday(vargs[0]->text());
+	if(w < 0) {
+		mngr->set(this, vargs[0], vargs[1], NULL);
+	} else {
+		mngr->set(w, 1);
+	}
+}
+MonthFunction::MonthFunction() : Function("Date & Time", "month", 0, "Month", "", 1) {
+	setArgumentDefinition(1, new DateArgument());
+	setDefaultValue(1, "\"today\"");
+}
+void MonthFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	int year, month, day;
+	bool b = s2date(vargs[0]->text(), year, month, day);
+	if(!b) {
+		mngr->set(this, vargs[0], vargs[1], NULL);
+	} else {
+		mngr->set(month, 1);
+	}
+}
+DayFunction::DayFunction() : Function("Date & Time", "day", 0, "Day of Month", "", 1) {
+	setArgumentDefinition(1, new DateArgument());
+	setDefaultValue(1, "\"today\"");
+}
+void DayFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	int year, month, day;
+	bool b = s2date(vargs[0]->text(), year, month, day);
+	if(!b) {
+		mngr->set(this, vargs[0], vargs[1], NULL);
+	} else {
+		mngr->set(day, 1);
+	}
+}
+YearFunction::YearFunction() : Function("Date & Time", "year", 0, "Year", "", 1) {
+	setArgumentDefinition(1, new DateArgument());
+	setDefaultValue(1, "\"today\"");
+}
+void YearFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	int year, month, day;
+	bool b = s2date(vargs[0]->text(), year, month, day);
+	if(!b) {
+		mngr->set(this, vargs[0], vargs[1], NULL);
+	} else {
+		mngr->set(year, 1);
+	}
+}
+TimeFunction::TimeFunction() : Function("Date & Time", "time", 0, "Current Time", "") {
+}
+void TimeFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	int hour, min, sec;
+	now(hour, min, sec);
+	mngr->set(sec, 1);
+	mngr->number()->divide(60);
+	mngr->number()->add(min);
+	mngr->number()->divide(60);
+	mngr->number()->add(hour);
+}
 FactorialFunction::FactorialFunction() : Function("Arithmetics", "factorial", 1, "Factorial") {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, false));
 }

@@ -15,6 +15,7 @@
 #include "Number.h"
 
 #include <glib.h>
+#include <time.h>
 
 
 bool eqstr::operator()(const char *s1, const char *s2) const {
@@ -23,29 +24,103 @@ bool eqstr::operator()(const char *s1, const char *s2) const {
 
 char buffer[20000];
 
-bool s2date(string str, GDate *time) {
+string date2s(int year, int month, int day) {
+	string str = i2s(year);
+	str += "-";
+	if(month < 10) {
+		str += "0";
+	}
+	str += i2s(month);
+	str += "-";
+	if(day < 10) {
+		str += "0";
+	}
+	str += i2s(day);
+	return str;
+}
+void now(int &hour, int &min, int &sec) {
+	time_t t = time(NULL);
+	struct tm *lt = localtime(&t);
+	hour = lt->tm_hour;
+	min = lt->tm_min;
+	sec = lt->tm_sec;
+}
+void today(int &year, int &month, int &day) {
+	GDate *gtime = g_date_new();
+	g_date_set_time(gtime, time(NULL));
+	year = g_date_get_year(gtime);
+	month = g_date_get_month(gtime);
+	day = g_date_get_day(gtime);
+	g_date_free(gtime);
+}
+bool s2date(string str, GDate *gtime) {
 /*	if(strptime(str.c_str(), "%x", time) || strptime(str.c_str(), "%Ex", time) || strptime(str.c_str(), "%Y-%m-%d", time) || strptime(str.c_str(), "%m/%d/%Y", time) || strptime(str.c_str(), "%m/%d/%y", time)) {
 		return true;
 	}*/
 	//char *date_format = nl_langinfo(D_FMT);
-	g_date_set_parse(time, str.c_str());
-	return g_date_valid(time);
+	g_date_set_parse(gtime, str.c_str());
+	return g_date_valid(gtime);
+}
+
+int week(string str, bool start_sunday) {
+	remove_blank_ends(str);
+	GDate *gtime = g_date_new();
+	bool b;
+	if(str == _("today") || str == "today") {
+		g_date_set_time(gtime, time(NULL));
+		b = true;
+	} else {
+		b = s2date(str, gtime);
+	}
+	int week = -1;
+	if(b) {
+		if(start_sunday) {
+			week = g_date_get_sunday_week_of_year(gtime);
+		} else {
+			week = g_date_get_monday_week_of_year(gtime);
+		}
+	}
+	g_date_free(gtime);
+	return week;
+}
+int weekday(string str) {
+	remove_blank_ends(str);
+	GDate *gtime = g_date_new();
+	bool b;
+	if(str == _("today") || str == "today") {
+		g_date_set_time(gtime, time(NULL));
+		b = true;
+	} else {
+		b = s2date(str, gtime);
+	}
+	int day = -1;
+	if(b) {
+		day = g_date_get_weekday(gtime);
+	}
+	g_date_free(gtime);
+	return day;
 }
 
 bool s2date(string str, int &year, int &month, int &day) {
 	//struct tm time;
-	GDate *time = g_date_new();
-	bool b = s2date(str, time);
+	remove_blank_ends(str);
+	if(str == _("today") || str == "today") {
+		today(year, month, day);
+		return true;
+	}
+	GDate *gtime = g_date_new();
+	bool b = s2date(str, gtime);
 	if(b) {
 /*		year = time.tm_year + 1900;
 		month = time.tm_mon + 1;
 		day = time.tm_mday;	*/
-		year = g_date_get_year(time);
-		month = g_date_get_month(time);
-		day = g_date_get_day(time);
+		year = g_date_get_year(gtime);
+		month = g_date_get_month(gtime);
+		day = g_date_get_day(gtime);
+		g_date_free(gtime);
 		return true;
 	}
-	g_date_free(time);
+	g_date_free(gtime);
 	return false;
 }
 bool isLeapYear(int year) {
