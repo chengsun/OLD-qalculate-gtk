@@ -2783,7 +2783,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							ufvt = 'f';
 							name = &((MathFunction*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
 							name_length = name->length();
-							case_sensitive = &((MathFunction*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
+							case_sensitive = ((MathFunction*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
 							vt3++;
 							break;
 						}
@@ -2797,7 +2797,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								ufvt = 'u';					
 								name = &((Unit*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
 								name_length = name->length();
-								case_sensitive = &((Unit*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
+								case_sensitive = ((Unit*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
 							}
 							vt3++;
 							break;
@@ -2811,7 +2811,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							ufvt = 'v';
 							name = &((Variable*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
 							name_length = name->length();
-							case_sensitive = &((Variable*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
+							case_sensitive = ((Variable*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
 							vt3++;
 							break;
 						}						

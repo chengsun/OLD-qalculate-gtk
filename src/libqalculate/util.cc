@@ -493,7 +493,7 @@ string& remove_duplicate_blanks(string &str) {
 string& remove_blank_ends(string &str) {
 	unsigned int i = str.find_first_not_of(SPACES);
 	unsigned int i2 = str.find_last_not_of(SPACES);
-	if(i != string::npos && i2 != string::npos)
+	if(i != string::npos && i2 != string::npos && (i > 0 || i2 < str.length() - 1))
 		str = str.substr(i, i2 - i + 1);
 	else
 		str.resize(0);

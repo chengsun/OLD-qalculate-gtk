@@ -160,7 +160,7 @@ extern pthread_attr_t view_thread_attr;
 #define MARKUP_STRING(str, text)	if(ips.power_depth > 0) {str = TEXT_TAGS_SMALL;} else {str = TEXT_TAGS;} str += text; if(ips.power_depth > 0) {str += TEXT_TAGS_SMALL_END;} else {str += TEXT_TAGS_END;}			
 #define CALCULATE_SPACE_W		gint space_w, space_h; PangoLayout *layout_space = gtk_widget_create_pango_layout(resultview, NULL); if(ips.power_depth > 0) {pango_layout_set_markup(layout_space, TEXT_TAGS_SMALL " " TEXT_TAGS_SMALL_END, -1);} else {pango_layout_set_markup(layout_space, TEXT_TAGS " " TEXT_TAGS_END, -1);} pango_layout_get_pixel_size(layout_space, &space_w, &space_h); g_object_unref(layout_space);
 
-PangoCoverageLevel get_least_coverage(const gchar *gstr, PangoCoverage *coverage) {
+/*PangoCoverageLevel get_least_coverage(const gchar *gstr, PangoCoverage *coverage) {
 
 	if(!coverage) return PANGO_COVERAGE_EXACT;
 	PangoCoverageLevel level = PANGO_COVERAGE_EXACT;
@@ -206,7 +206,7 @@ const ExpressionName &get_preferred_input_name(GtkWidget *widget, ExpressionItem
 		}
 	}
 	return item->preferredInputName(abbreviation, false, plural, reference);
-}
+}*/
 
 
 struct tree_struct {
@@ -1276,7 +1276,7 @@ void on_tVariables_selection_changed(GtkTreeSelection *treeselection, gpointer u
 		for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
 			if(CALCULATOR->variables[i] == selected_variable) {
 				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_edit"), !is_answer_variable(CALCULATOR->variables[i]));
-				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_insert"), CALCULATOR->variables[i]->isActive() && !is_answer_variable(CALCULATOR->variables[i]));
+				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_insert"), CALCULATOR->variables[i]->isActive());
 				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_deactivate"), !is_answer_variable(CALCULATOR->variables[i]));
 				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_export"), CALCULATOR->variables[i]->isKnown());
 				if(CALCULATOR->variables[i]->isActive()) {
@@ -8259,7 +8259,7 @@ void on_button_divide_clicked(GtkButton *w, gpointer user_data) {
 	}
 }
 void on_button_ans_clicked(GtkButton *w, gpointer user_data) {
-	insert_text("Ans");
+	insert_text(vans[0]->preferredInputName(printops.abbreviate_names, printops.use_unicode_signs).name.c_str());
 }
 void on_button_exp_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
@@ -8463,7 +8463,7 @@ void on_menu_item_limit_implicit_multiplication_activate(GtkMenuItem *w, gpointe
 	result_format_updated();
 }
 void fetch_exchange_rates(int timeout) {
-	GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO, GTK_BUTTONS_NONE, "Fetching exchange rates.");
+	GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO, GTK_BUTTONS_NONE, _("Fetching exchange rates."));
 	gtk_widget_show_now(dialog);
 	while(gtk_events_pending()) gtk_main_iteration();
 	CALCULATOR->fetchExchangeRates(timeout);
