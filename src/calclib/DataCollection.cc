@@ -15,16 +15,21 @@
 #include "Calculator.h"
 #include "MathStructure.h"
 #include "Number.h"
+#include <libxml/xmlmemory.h>
+#include <libxml/parser.h>
+
+#define XML_GET_STRING_FROM_PROP(node, name, str)	value = xmlGetProp(node, (xmlChar*) name); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = ""; 
+#define XML_GET_STRING_FROM_TEXT(node, str)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = "";
 
 DataObject::DataObject(DataCollection *parent_collection) {
 	parent = parent_collection;
-	b_approximate = false;
 }
 
-void DataObject::setProperty(DataProperty *property, string s_value) {
+void DataObject::setProperty(DataProperty *property, string s_value, int is_approximate) {
 	for(unsigned int i = 0; i < properties.size(); i++) {
 		if(properties[i] == property) {
 			s_properties[i] = s_value;
+			a_properties[i] = is_approximate;
 			if(m_properties[i]) {
 				delete m_properties[i];
 				m_properties[i] = NULL;
@@ -35,16 +40,44 @@ void DataObject::setProperty(DataProperty *property, string s_value) {
 	properties.push_back(property);
 	s_properties.push_back(s_value);
 	m_properties.push_back(NULL);
+	a_properties.push_back(is_approximate);
+	s_nonlocalized_properties.push_back("");
 }
-const string &DataObject::getProperty(DataProperty *property) {
+void DataObject::setNonlocalizedKeyProperty(DataProperty *property, string s_value) {
 	for(unsigned int i = 0; i < properties.size(); i++) {
 		if(properties[i] == property) {
+			s_nonlocalized_properties[i] = s_value;
+			return;
+		}
+	}
+	properties.push_back(property);
+	s_properties.push_back("");
+	m_properties.push_back(NULL);
+	a_properties.push_back(-1);
+	s_nonlocalized_properties.push_back(s_value);
+}
+	
+const string &DataObject::getProperty(DataProperty *property, int *is_approximate) {
+	if(!property) return empty_string;
+	for(unsigned int i = 0; i < properties.size(); i++) {
+		if(properties[i] == property) {
+			if(is_approximate) *is_approximate = a_properties[i];
 			return s_properties[i];
 		}
 	}
 	return empty_string;
 }
+const string &DataObject::getNonlocalizedKeyProperty(DataProperty *property) {
+	if(!property) return empty_string;
+	for(unsigned int i = 0; i < properties.size(); i++) {
+		if(properties[i] == property) {
+			return s_nonlocalized_properties[i];
+		}
+	}
+	return empty_string;
+}
 string DataObject::getPropertyInputString(DataProperty *property) {
+	if(!property) return empty_string;
 	for(unsigned int i = 0; i < properties.size(); i++) {
 		if(properties[i] == property) {
 			return property->getInputString(s_properties[i]);
@@ -53,6 +86,7 @@ string DataObject::getPropertyInputString(DataProperty *property) {
 	return empty_string;
 }
 string DataObject::getPropertyDisplayString(DataProperty *property) {
+	if(!property) return empty_string;
 	for(unsigned int i = 0; i < properties.size(); i++) {
 		if(properties[i] == property) {
 			return property->getDisplayString(s_properties[i]);
@@ -61,17 +95,21 @@ string DataObject::getPropertyDisplayString(DataProperty *property) {
 	return empty_string;
 }
 const MathStructure *DataObject::getPropertyStruct(DataProperty *property) {
+	if(!property) return NULL;
 	for(unsigned int i = 0; i < properties.size(); i++) {
 		if(properties[i] == property) {
 			if(!m_properties[i]) {
-				m_properties.push_back(property->generateStruct(s_properties[i], b_approximate));
+				m_properties[i] = property->generateStruct(s_properties[i], a_properties[i]);
 			}
 			return m_properties[i];
 		}
 	}
 	return NULL;
 }
-
+	
+DataCollection *DataObject::parentCollection() const {
+	return parent;
+}
 
 DataProperty::DataProperty(DataCollection *parent_collection, string s_name, string s_title, string s_description) {
 	if(!s_name.empty()) names.push_back(s_name);
@@ -91,13 +129,26 @@ void DataProperty::setName(string s_name) {
 void DataProperty::clearNames() {
 	names.clear();
 }
-void DataProperty::addName(string s_name) {
+void DataProperty::addName(string s_name, unsigned int index) {
 	if(s_name.empty()) return;
-	names.push_back(s_name);
+	if(index < 1 || index > names.size()) {
+		names.push_back(s_name);
+	} else {
+		names.insert(names.begin() + (index - 1), s_name);
+	}
 }
 const string &DataProperty::getName(unsigned int index) const {
 	if(index < 1 || index > names.size()) return empty_string;
 	return names[index - 1];
+}
+bool DataProperty::hasName(const string &s_name) {
+	for(unsigned int i = 0; i < names.size(); i++) {
+		if(equalsIgnoreCase(s_name, names[i])) return true;
+	}
+	return false;
+}
+unsigned int DataProperty::countNames() const {
+	return names.size();
 }
 const string &DataProperty::title(bool return_name_if_no_title) const {
 	if(return_name_if_no_title && stitle.empty()) {
@@ -132,7 +183,7 @@ const MathStructure *DataProperty::getUnitStruct() {
 }
 string DataProperty::getInputString(const string &valuestr) {
 	string str;
-	if(b_brackets && valuestr[0] == '[' && valuestr[valuestr.length() - 1] == ']') {
+	if(b_brackets && valuestr.length() > 1 && valuestr[0] == '[' && valuestr[valuestr.length() - 1] == ']') {
 		str = valuestr.substr(1, valuestr.length() - 2);
 	} else {
 		str = valuestr;
@@ -157,21 +208,28 @@ MathStructure *DataProperty::generateStruct(const string &valuestr, int is_appro
 		case PROPERTY_EXPRESSION: {
 			ParseOptions po;
 			if((b_approximate && is_approximate < 0) || is_approximate) po.read_precision = ALWAYS_READ_PRECISION;
-			mstruct = new MathStructure(CALCULATOR->parse(valuestr, po));
+			if(b_brackets && valuestr.length() > 1 && valuestr[0] == '[' && valuestr[valuestr.length() - 1] == ']') mstruct = new MathStructure(CALCULATOR->parse(valuestr.substr(1, valuestr.length() - 2), po));
+			else mstruct = new MathStructure(CALCULATOR->parse(valuestr, po));
 			break;
 		}
 		case PROPERTY_NUMBER: {
-			if((b_approximate && is_approximate < 0) || is_approximate) mstruct = new MathStructure(Number(valuestr, 10, ALWAYS_READ_PRECISION));
-			else mstruct = new MathStructure(Number(valuestr));
+			if(b_brackets && valuestr.length() > 1 && valuestr[0] == '[' && valuestr[valuestr.length() - 1] == ']') {
+				if((b_approximate && is_approximate < 0) || is_approximate) mstruct = new MathStructure(Number(valuestr.substr(1, valuestr.length() - 2), 10, ALWAYS_READ_PRECISION));
+				else mstruct = new MathStructure(Number(valuestr.substr(1, valuestr.length() - 2)));
+			} else {
+				if((b_approximate && is_approximate < 0) || is_approximate) mstruct = new MathStructure(Number(valuestr, 10, ALWAYS_READ_PRECISION));
+				else mstruct = new MathStructure(Number(valuestr));
+			}
 			break;
 		}
 		case PROPERTY_STRING: {
-			mstruct = new MathStructure(valuestr);
+			if(b_brackets && valuestr.length() > 1 && valuestr[0] == '[' && valuestr[valuestr.length() - 1] == ']') mstruct = new MathStructure(valuestr.substr(1, valuestr.length() - 2));
+			else mstruct = new MathStructure(valuestr);
 			break;
 		}
 	}
 	if(getUnitStruct()) {
-		mstruct->multiply(getUnitStruct());
+		mstruct->multiply(*getUnitStruct());
 	}
 	return mstruct;
 }
@@ -188,20 +246,28 @@ bool DataProperty::isApproximate() const {return b_approximate;}
 void DataProperty::setPropertyType(PropertyType property_type) {ptype = property_type;}
 PropertyType DataProperty::propertyType() const {return ptype;}
 
+DataCollection *DataProperty::parentCollection() const {
+	return parent;
+}
 
 DataCollection::DataCollection(string s_category, string s_name, string s_default_file, string s_title, string s_description) : Function(s_name, 1, 2, s_category, s_title, s_description) {
 	sfile = s_default_file;
-	setArgumentDefinition(1, new TextArgument(_("Object")));
+	b_loaded = false;
+	setArgumentDefinition(1, new DataObjectArgument(this, _("Object")));
 	setArgumentDefinition(2, new DataPropertyArgument(this, _("Property")));
-	setDefaultValue(2, "info");
+	setDefaultValue(2, _("info"));
 }
 DataCollection::DataCollection(const DataCollection *o) {
+	b_loaded = false;
 	set(o);
 }
 	
 ExpressionItem *DataCollection::copy() const {return new DataCollection(this);}
 void DataCollection::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_FUNCTION && item->subtype() == SUBTYPE_DATA_COLLECTION) {
+		DataCollection *dc = (DataCollection*) item;
+		sfile = dc->defaultDataFile();
+		scopyright = dc->copyright();
 	}
 	Function::set(item);
 }
@@ -210,7 +276,35 @@ int DataCollection::subtype() const {
 }
 	
 int DataCollection::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	DataObject *o = getObject(vargs[0]);
+	if(!o) {
+		CALCULATOR->error(true, _("Object %s not available in data collection."), vargs[0].symbol().c_str(), NULL);
+		return 0;
+	}
+	if(equalsIgnoreCase(vargs[1].symbol(), string("info")) || equalsIgnoreCase(vargs[1].symbol(), string(_("info")))) {
+		string str = printProperties(o);
+		CALCULATOR->message(MESSAGE_INFORMATION, str.c_str(), NULL);
+		return 1;
+	}
+	DataProperty *dp = getProperty(vargs[1].symbol());
+	if(!dp) {
+		CALCULATOR->error(true, _("Property %s not available in data collection."), vargs[1].symbol().c_str(), NULL);
+		return 0;
+	}
+	const MathStructure *pmstruct = o->getPropertyStruct(dp);
+	if(!pmstruct) {
+		CALCULATOR->error(true, _("Property %s not defined for object %s."), vargs[1].symbol().c_str(), vargs[0].symbol().c_str(), NULL);
+		return 0;
+	}
+	mstruct.set(*pmstruct);
 	return 1;
+}
+
+void DataCollection::setDefaultProperty(string property) {
+	setDefaultValue(2, property);
+}
+const string &DataCollection::defaultProperty() const {
+	return getDefaultValue(2);
 }
 
 void DataCollection::setCopyright(string s_copyright) {
@@ -219,54 +313,385 @@ void DataCollection::setCopyright(string s_copyright) {
 const string &DataCollection::copyright() const {
 	return scopyright;
 }
+void DataCollection::setDefaultDataFile(string s_file) {
+	sfile = s_file;
+}
+const string &DataCollection::defaultDataFile() const {
+	return sfile;
+}
 	
-bool DataCollection::loadObjects(const char *filename) {
+bool DataCollection::loadObjects(const char *file_name) {
+	string filename;
+	if(file_name) {
+		filename = file_name;
+	} else if(sfile.empty()) {
+		return false;
+	} else if(sfile.find("/") != string::npos) {
+		filename = sfile;
+	} else {
+		filename = PACKAGE_DATA_DIR;
+		filename += "/qalculate/";
+		filename += sfile;
+	}
+	xmlDocPtr doc;
+	xmlNodePtr cur, child;
+
+	string locale, lang_tmp;
+	char *clocale = setlocale(LC_MESSAGES, "");
+	if(clocale) {
+		locale = clocale;
+		if(locale == "POSIX" || locale == "C") {
+			locale = "";
+		}
+	}
+
+	string localebase;
+	if(locale.length() > 2) {
+		localebase = locale.substr(0, 2);
+	} else {
+		localebase = locale;
+	}
+	while(localebase.length() < 2) localebase += " ";
+
+	doc = xmlParseFile(filename.c_str());
+	if(doc == NULL) {
+		CALCULATOR->error(true, _("Unable to load data objects in %s."), filename.c_str(), NULL);
+		return false;
+	}
+	cur = xmlDocGetRootElement(doc);
+	if(cur == NULL) {
+		xmlFreeDoc(doc);
+		CALCULATOR->error(true, _("Unable to load data objects in %s."), filename.c_str(), NULL);
+		return false;
+	}
+	string version;
+	xmlChar *value, *lang;
+	while(cur != NULL) {
+		if(!xmlStrcmp(cur->name, (const xmlChar*) "QALCULATE")) {
+			XML_GET_STRING_FROM_PROP(cur, "version", version)
+			break;
+		}
+		cur = cur->next;
+	}
+	if(cur == NULL) {
+		CALCULATOR->error(true, _("File not identified as Qalculate! definitions file: %s."), filename.c_str(), NULL);
+		xmlFreeDoc(doc);
+		return false;
+	}
+	int version_numbers[] = {0, 0, 0};
+	for(unsigned int i = 0; i < 3; i++) {
+		unsigned int dot_i = version.find(".");
+		if(dot_i == string::npos) {
+			version_numbers[i] = s2i(version);
+			break;
+		}
+		version_numbers[i] = s2i(version.substr(0, dot_i));
+		version = version.substr(dot_i + 1, version.length() - (dot_i + 1));
+	}
+	DataObject *o;
+	cur = cur->xmlChildrenNode;
+	string str;
+	vector<DataProperty*> lang_status_p;
+	vector<int> lang_status;
+	int ils;
+	int i_approx;
+	while(cur) {
+		bool b = false;
+		if(!xmlStrcmp(cur->name, (const xmlChar*) "object")) {
+			b = true;
+		} else if(xmlStrcmp(cur->name, (const xmlChar*) "text")) {
+			for(unsigned int i = 1; i <= countNames(); i++) {
+				if(!xmlStrcmp(cur->name, (const xmlChar*) properties[i]->getName(i).c_str())) {
+					b = true;
+					break;
+				}
+			}
+		}
+		if(b) {
+			lang_status_p.clear();
+			lang_status.clear();
+			o = new DataObject(this);
+			for(unsigned int i = 0; i < properties.size(); i++) {
+				if(properties[i]->isKey()) {
+					for(unsigned int i2 = 1; i2 <= properties[i]->countNames(); i2++) {
+						XML_GET_STRING_FROM_PROP(cur, properties[i]->getName(i2).c_str(), str)
+						remove_blank_ends(str);
+						if(!str.empty()) {
+							o->setProperty(properties[i], str);
+						}
+					}
+				}	
+			}
+			child = cur->xmlChildrenNode;
+			while(child) {
+				b = false;
+				for(unsigned int i = 0; i < properties.size(); i++) {
+					for(unsigned int i2 = 1; i2 <= properties[i]->countNames(); i2++) {
+						if(!xmlStrcmp(child->name, (const xmlChar*) properties[i]->getName(i2).c_str())) {
+							value = xmlGetProp(child, (xmlChar*) "approximate"); 
+							if(value) {
+								if(!xmlStrcmp(value, (const xmlChar*) "false")) {
+									i_approx = 0;
+								} else if(value && !xmlStrcmp(value, (const xmlChar*) "true")) {
+									i_approx = 1;
+								}
+								xmlFree(value);
+							} else {
+								i_approx = -1;
+							}
+							if(properties[i]->propertyType() == PROPERTY_STRING) {
+								value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1); 
+								lang = xmlNodeGetLang(child); 
+								ils = -1;
+								for(int i3 = lang_status_p.size() - 1; i3 > 0; i3--) {
+									if(lang_status_p[i3] == properties[i3]) {
+										ils = i3;
+										break;
+									}
+								}
+								if(!lang && (ils < 0 || lang_status[ils] < 1 || properties[i]->isKey())) {
+									if(value) {
+										str = (char*) value;
+										remove_blank_ends(str);
+									} else {
+										str = ""; 
+									}
+									if(ils < 0 || lang_status[ils] < 1) {
+										o->setProperty(properties[i], str, i_approx); 
+									} else {
+										o->setNonlocalizedKeyProperty(properties[i], str); 
+									}
+								} else if(!locale.empty() && (ils < 0 || lang_status[ils] < 2)) {
+									if(locale == (char*) lang) {
+										if(ils < 0) {
+											lang_status_p.push_back(properties[i]);
+											lang_status.push_back(2);
+										} else {
+											lang_status[ils] = 2;
+										}
+										if(value) {
+											str = (char*) value; 
+											remove_blank_ends(str);
+										} else {
+											str = "";
+										}
+										o->setProperty(properties[i], str, i_approx);
+									} else if((ils < 0 || lang_status[ils] < 1) && strlen((char*) lang) >= 2 && lang[0] == localebase[0] && lang[1] == localebase[1]) {
+										if(ils < 0) {
+											lang_status_p.push_back(properties[i]);
+											lang_status.push_back(1);
+										} else {
+											lang_status[ils] = 1;
+										}
+										if(value) {
+											str = (char*) value; 
+											remove_blank_ends(str);
+										} else {
+											str = "";
+										}
+										o->setProperty(properties[i], str, i_approx);
+									}	
+								} 
+								if(value) xmlFree(value); 
+								if(lang) xmlFree(lang);
+							} else {
+								XML_GET_STRING_FROM_TEXT(child, str)
+								remove_blank_ends(str);
+								o->setProperty(properties[i], str, i_approx);
+							}
+							b = true;
+							break;
+						}
+					}
+					if(b) break;
+				}
+				child = child->next;
+			}
+			objects.push_back(o);
+		}
+		cur = cur->next;
+	}
+	xmlFreeDoc(doc);
+	b_loaded = true;
+	if(!scopyright.empty()) {
+		CALCULATOR->message(MESSAGE_INFORMATION, "%s", scopyright.c_str(), NULL);
+	}
 	return true;
 }
 bool DataCollection::objectsLoaded() const {
-	return objects.size() > 0;
+	return b_loaded || sfile.empty();
 }
 	
-DataProperty *DataCollection::getProperty(string property) const {
+void DataCollection::addProperty(DataProperty *dp) {
+	properties.push_back(dp);
+}
+DataProperty *DataCollection::getPrimaryKeyProperty() {
+	for(unsigned int i = 0; i < properties.size(); i++) {
+		if(properties[i]->isKey()) return properties[i];
+	}
 	return NULL;
 }
-DataProperty *DataCollection::getFirstProperty(DataPropertyIter *it) const {
+DataProperty *DataCollection::getProperty(string property) {
+	if(property.empty()) return NULL;
+	for(unsigned int i = 0; i < properties.size(); i++) {
+		if(properties[i]->hasName(property)) return properties[i];
+	}
 	return NULL;
 }
-DataProperty *DataCollection::getNextProperty(DataPropertyIter *it) const {
+DataProperty *DataCollection::getFirstProperty(DataPropertyIter *it) {
+	*it = properties.begin();
+	if(*it != properties.end()) return **it;
 	return NULL;
 }
-const string &DataCollection::getFirstPropertyName(DataPropertyIter *it) const {
+DataProperty *DataCollection::getNextProperty(DataPropertyIter *it) {
+	++(*it);
+	if(*it != properties.end()) return **it;
+	return NULL;
+}
+const string &DataCollection::getFirstPropertyName(DataPropertyIter *it) {
+	*it = properties.begin();
+	if(*it != properties.end()) return (**it)->getName();
 	return empty_string;
 }
-const string &DataCollection::getNextPropertyName(DataPropertyIter *it) const {
+const string &DataCollection::getNextPropertyName(DataPropertyIter *it) {
+	++(*it);
+	if(*it != properties.end()) return (**it)->getName();
 	return empty_string;
 }
-	
-DataObject *DataCollection::getObject(string object) const {
+
+void DataCollection::addObject(DataObject *o) {
+	objects.push_back(o);
+}	
+DataObject *DataCollection::getObject(string object) {
+	if(!objectsLoaded()) loadObjects();
+	if(object.empty()) return NULL;
+	DataProperty *dp;
+	for(unsigned int i = 0; i < properties.size(); i++) {
+		if(properties[i]->isKey()) {
+			dp = properties[i];
+			if(dp->isCaseSensitive()) {
+				for(unsigned int i2 = 0; i2 < objects.size(); i2++) {
+					if(object == objects[i2]->getProperty(dp) || object == objects[i2]->getNonlocalizedKeyProperty(dp)) {
+						return objects[i2];
+					}
+				}
+			} else {
+				for(unsigned int i2 = 0; i2 < objects.size(); i2++) {
+					if(equalsIgnoreCase(object, objects[i2]->getProperty(dp)) || equalsIgnoreCase(object, objects[i2]->getNonlocalizedKeyProperty(dp))) {
+						return objects[i2];
+					}
+				}
+			}
+		}
+	}
 	return NULL;
 }
-DataObject *DataCollection::getFirstObject(DataObjectIter *it) const {
+DataObject *DataCollection::getObject(const MathStructure &object) {
+	if(object.isSymbolic()) return getObject(object.symbol());
+	if(!objectsLoaded()) loadObjects();
+	DataProperty *dp;
+	for(unsigned int i = 0; i < properties.size(); i++) {
+		if(properties[i]->isKey()) {
+			dp = properties[i];
+			if(dp->propertyType() != PROPERTY_STRING) {
+				const MathStructure *mstruct;
+				for(unsigned int i2 = 0; i2 < objects.size(); i2++) {
+					mstruct = objects[i2]->getPropertyStruct(dp);
+					if(mstruct && object.equals(*mstruct)) {
+						return objects[i2];
+					}
+				}
+			}
+		}
+	}
 	return NULL;
 }
-DataObject *DataCollection::getNextObject(DataObjectIter *it) const {
+DataObject *DataCollection::getFirstObject(DataObjectIter *it) {
+	*it = objects.begin();
+	if(*it != objects.end()) return **it;
+	return NULL;
+}
+DataObject *DataCollection::getNextObject(DataObjectIter *it) {
+	++(*it);
+	if(*it != objects.end()) return **it;
 	return NULL;
 }
 	
 const MathStructure *DataCollection::getObjectProperyStruct(string property, string object) {
+	DataObject *o = getObject(object);
+	DataProperty *dp = getProperty(property);
+	if(o && dp) {
+		return o->getPropertyStruct(dp);
+	}
 	return NULL;
 }
-const string &DataCollection::getObjectProperty(string property, string object) const {
+const string &DataCollection::getObjectProperty(string property, string object) {
+	DataObject *o = getObject(object);
+	DataProperty *dp = getProperty(property);
+	if(o && dp) {
+		return o->getProperty(dp);
+	}
 	return empty_string;
 }
-string DataCollection::getObjectPropertyInputString(string property, string object) const {
+string DataCollection::getObjectPropertyInputString(string property, string object) {
+	DataObject *o = getObject(object);
+	DataProperty *dp = getProperty(property);
+	if(o && dp) {
+		return o->getPropertyInputString(dp);
+	}
 	return empty_string;
 }
-string DataCollection::getObjectPropertyDisplayString(string property, string object) const {
+string DataCollection::getObjectPropertyDisplayString(string property, string object) {
+	DataObject *o = getObject(object);
+	DataProperty *dp = getProperty(property);
+	if(o && dp) {
+		return o->getPropertyDisplayString(dp);
+	}
 	return empty_string;
 }
 	
-string DataCollection::printProperties(string object) const {
+string DataCollection::printProperties(string object) {
+	return printProperties(getObject(object));
+}
+string DataCollection::printProperties(DataObject *o) {
+	if(o) {
+		string str, stmp;
+		unsigned int l, lmax = 0;
+		for(unsigned int i = 0; i < properties.size(); i++) {
+			if(!properties[i]->isHidden() && properties[i]->title().length() > lmax) {
+				lmax = properties[i]->title().length();
+			}	
+		}
+		for(unsigned int i = 0; i < properties.size(); i++) {
+			if(!properties[i]->isHidden() && properties[i]->isKey()) {
+				stmp = o->getPropertyDisplayString(properties[i]);
+				if(!stmp.empty()) {
+					if(!str.empty()) str += '\n';
+					str += properties[i]->title();
+					l = lmax - properties[i]->title().length() + 1;
+					for(unsigned int i2 = 0; i2 < l; i2 += 6) {
+						str += '\t';
+					}
+					str += stmp;
+				}
+			}
+		}
+		for(unsigned int i = 0; i < properties.size(); i++) {
+			if(!properties[i]->isHidden() && !properties[i]->isKey()) {
+				stmp = o->getPropertyDisplayString(properties[i]);
+				if(!stmp.empty()) {
+					if(!str.empty()) str += '\n';
+					str += properties[i]->title();
+					l = lmax - properties[i]->title().length() + 1;
+					for(unsigned int i2 = 0; i2 < l; i2 += 6) {
+						str += '\t';
+					}
+					str += stmp;
+				}
+			}
+		}
+		return str;
+	}
 	return empty_string;
 }
 
@@ -280,7 +705,7 @@ bool DataPropertyArgument::subtest(MathStructure &value, const EvaluationOptions
 	if(!value.isSymbolic()) {
 		value.eval(eo);
 	}
-	return value.isSymbolic() && o_data && o_data->getProperty(value.symbol());
+	return value.isSymbolic() && o_data && (o_data->getProperty(value.symbol()) || equalsIgnoreCase(value.symbol(), string("info")) || equalsIgnoreCase(value.symbol(), string(_("info"))));
 }
 int DataPropertyArgument::type() const {return ARGUMENT_TYPE_DATA_PROPERTY;}
 Argument *DataPropertyArgument::copy() const {return new DataPropertyArgument(this);}
@@ -296,11 +721,18 @@ string DataPropertyArgument::subprintlong() const {
 	if(!o) {
 		str += _("no properties available");
 	} else {
+		bool had_nonhidden = false;
 		while(true) {
-			str += o->getName();
+			if(had_nonhidden && !o->isHidden()) str += ", ";
+			if(!o->isHidden()) {
+				str += o->getName();
+				had_nonhidden = true;
+			}
 			o = o_data->getNextProperty(&it);
 			if(!o) break;
-			str += ", ";
+		}
+		if(!had_nonhidden) {
+			str += _("no properties available");
 		}
 	}
 	str += ")";
@@ -309,4 +741,38 @@ string DataPropertyArgument::subprintlong() const {
 DataCollection *DataPropertyArgument::dataCollection() const {return o_data;}
 void DataPropertyArgument::setDataCollection(DataCollection *data_collection) {o_data = data_collection;}
 
+DataObjectArgument::DataObjectArgument(DataCollection *data_collection, string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
+	b_text = true;
+	o_data = data_collection;
+}
+DataObjectArgument::DataObjectArgument(const DataObjectArgument *arg) {set(arg); b_text = true; o_data = arg->dataCollection();}
+DataObjectArgument::~DataObjectArgument() {}
+bool DataObjectArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
+	if(value.isSymbolic()) return true;
+	value.eval(eo);
+	if(value.isSymbolic()) return true;
+	if(!o_data) return false;
+	DataPropertyIter it;
+	DataProperty *dp = o_data->getFirstProperty(&it);
+	while(dp) {
+		if(dp->isKey() && (dp->propertyType() == PROPERTY_EXPRESSION || (value.isNumber() && dp->propertyType() == PROPERTY_NUMBER))) {
+			return true;
+		}
+		dp = o_data->getNextProperty(&it);
+	}
+	CALCULATOR->error(true, _("Data collection \"%s\" has no object key that supports the provided argument type."), o_data->title().c_str(), NULL);
+	return false;
+}
+int DataObjectArgument::type() const {return ARGUMENT_TYPE_DATA_OBJECT;}
+Argument *DataObjectArgument::copy() const {return new DataObjectArgument(this);}
+string DataObjectArgument::print() const {return _("data object");}
+string DataObjectArgument::subprintlong() const {
+	string str = _("an object from");
+	str += "\"";
+	str += o_data->title();
+	str += "\"";
+	return str;
+}
+DataCollection *DataObjectArgument::dataCollection() const {return o_data;}
+void DataObjectArgument::setDataCollection(DataCollection *data_collection) {o_data = data_collection;}
 

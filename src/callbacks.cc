@@ -1559,6 +1559,10 @@ void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gp
 					menu_index = MENU_ARGUMENT_TYPE_ANGLE;
 					break;
 				}
+				case ARGUMENT_TYPE_DATA_OBJECT: {
+					menu_index = MENU_ARGUMENT_TYPE_DATA_OBJECT;
+					break;
+				}
 				case ARGUMENT_TYPE_DATA_PROPERTY: {
 					menu_index = MENU_ARGUMENT_TYPE_DATA_PROPERTY;
 					break;
@@ -8740,6 +8744,7 @@ void on_function_edit_button_add_argument_clicked(GtkButton *w, gpointer user_da
 			case MENU_ARGUMENT_TYPE_FILE: {arg = new FileArgument(); break;}
 			case MENU_ARGUMENT_TYPE_BOOLEAN: {arg = new BooleanArgument(); break;}	
 			case MENU_ARGUMENT_TYPE_ANGLE: {arg = new AngleArgument(); break;}	
+			case MENU_ARGUMENT_TYPE_DATA_OBJECT: {arg = new DataObjectArgument(NULL, ""); break;}
 			case MENU_ARGUMENT_TYPE_DATA_PROPERTY: {arg = new DataPropertyArgument(NULL, ""); break;}
 //			case MENU_ARGUMENT_TYPE_GIAC: {arg = new GiacArgument(); break;}
 			default: {arg = new Argument();}
@@ -8795,6 +8800,7 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 				case MENU_ARGUMENT_TYPE_FILE: {argtype = ARGUMENT_TYPE_FILE; break;}
 				case MENU_ARGUMENT_TYPE_BOOLEAN: {argtype = ARGUMENT_TYPE_BOOLEAN; break;}	
 				case MENU_ARGUMENT_TYPE_ANGLE: {argtype = ARGUMENT_TYPE_ANGLE; break;}	
+				case MENU_ARGUMENT_TYPE_DATA_OBJECT: {argtype = ARGUMENT_TYPE_DATA_OBJECT; break;}
 				case MENU_ARGUMENT_TYPE_DATA_PROPERTY: {argtype = ARGUMENT_TYPE_DATA_PROPERTY; break;}	
 //				case MENU_ARGUMENT_TYPE_GIAC: {argtype = ARGUMENT_TYPE_GIAC; break;}	
 			}			
@@ -8824,6 +8830,7 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 					case MENU_ARGUMENT_TYPE_FILE: {selected_argument = new FileArgument(); break;}
 					case MENU_ARGUMENT_TYPE_BOOLEAN: {selected_argument = new BooleanArgument(); break;}	
 					case MENU_ARGUMENT_TYPE_ANGLE: {selected_argument = new AngleArgument(); break;}
+					case MENU_ARGUMENT_TYPE_DATA_OBJECT: {selected_argument = new DataObjectArgument(NULL, ""); break;}
 					case MENU_ARGUMENT_TYPE_DATA_PROPERTY: {selected_argument = new DataPropertyArgument(NULL, ""); break;}
 //					case MENU_ARGUMENT_TYPE_GIAC: {selected_argument = new GiacArgument(); break;}	
 					default: {selected_argument = new Argument();}
@@ -9290,23 +9297,52 @@ void on_unit_dialog_entry_unit_activate(GtkEntry *entry, gpointer user_data) {
 	on_unit_dialog_button_ok_clicked(GTK_BUTTON(glade_xml_get_widget (unit_glade, "unit_dialog_button_ok")), NULL);
 }
 
-void on_element_button_weight_clicked(GtkButton *w, gpointer user_data) {
-	Element *e = (Element*) user_data;
-	if(e) {
-		string str = CALCULATOR->f_atomic_weight->preferredDisplayName(printops.abbreviate_names, printops.use_unicode_signs).name;
+
+vector<GtkWidget*> ewindows;
+vector<DataObject*> eobjects;
+
+void on_element_button_function_clicked(GtkButton *w, gpointer user_data) {
+	DataProperty *dp = (DataProperty*) user_data;
+	DataCollection *dc = NULL;
+	DataObject *o = NULL;
+	GtkWidget *win = gtk_widget_get_toplevel(GTK_WIDGET(w));
+	for(unsigned int i = 0; i < ewindows.size(); i++) {
+		if(ewindows[i] == win) {
+			o = eobjects[i];
+			break;
+		}
+	}
+	if(dp) dc = dp->parentCollection();
+	if(dc && o) {
+		string str = dc->preferredDisplayName(printops.abbreviate_names, printops.use_unicode_signs).name;
 		str += "(";
-		str += e->symbol;
+		str += o->getProperty(dc->getPrimaryKeyProperty());
+		str += CALCULATOR->getComma();
+		str += " ";
+		str += dp->getName();
 		str += ")";
 		insert_text(str.c_str());
 	}
 }
 void on_element_button_close_clicked(GtkButton *w, gpointer user_data) {
+	GtkWidget *win = gtk_widget_get_toplevel(GTK_WIDGET(w));
+	for(unsigned int i = 0; i < ewindows.size(); i++) {
+		if(ewindows[i] == win) {
+			ewindows.erase(ewindows.begin() + i);
+			eobjects.erase(eobjects.begin() + i);
+			break;
+		}
+	}
 	gtk_widget_destroy((GtkWidget*) user_data);
 }
 void on_element_button_clicked(GtkButton *w, gpointer user_data) {
-	Element *e = (Element*) user_data;
+	DataObject *e = (DataObject*) user_data;
 	if(e) {
+		DataCollection *dc = e->parentCollection();
+		if(!dc) return;
 		GtkWidget *dialog = gtk_dialog_new();
+		ewindows.push_back(dialog);
+		eobjects.push_back(e);
 		GtkWidget *close_button = gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
 		g_signal_connect((gpointer) close_button, "clicked", G_CALLBACK(on_element_button_close_clicked), (gpointer) dialog);
 		gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
@@ -9319,34 +9355,43 @@ void on_element_button_clicked(GtkButton *w, gpointer user_data) {
 		
 		GtkWidget *vbox2 = gtk_vbox_new(FALSE, 0);
 		gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, TRUE, 0);
+		
+		DataProperty *p_number = dc->getProperty("number");
+		DataProperty *p_symbol = dc->getProperty("symbol");
+		DataProperty *p_class = dc->getProperty("class");
+		DataProperty *p_name = dc->getProperty("name");
 
 		GtkWidget *label;
 		label = gtk_label_new(NULL);
-		string str = "<span size=\"large\">"; str += i2s(e->number); str += "</span>";
+		string str = "<span size=\"large\">"; str += e->getProperty(p_number); str += "</span>";
 		gtk_label_set_markup(GTK_LABEL(label), str.c_str()); gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5); gtk_label_set_selectable(GTK_LABEL(label), TRUE);
 		gtk_box_pack_start(GTK_BOX(vbox2), label, FALSE, TRUE, 0);
 		label = gtk_label_new(NULL);
-		str = "<span size=\"xx-large\">"; str += e->symbol; str += "</span>";
+		str = "<span size=\"xx-large\">"; str += e->getProperty(p_symbol); str += "</span>";
 		gtk_label_set_markup(GTK_LABEL(label), str.c_str()); gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5); gtk_label_set_selectable(GTK_LABEL(label), TRUE);
 		gtk_box_pack_start(GTK_BOX(vbox2), label, FALSE, TRUE, 0);
 		label = gtk_label_new(NULL);
-		str = "<span size=\"x-large\">"; str += e->name; str += "</span>  "; 
+		str = "<span size=\"x-large\">"; str += e->getProperty(p_name); str += "</span>  "; 
 		gtk_label_set_markup(GTK_LABEL(label), str.c_str()); gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5); gtk_label_set_selectable(GTK_LABEL(label), TRUE);
 		gtk_box_pack_start(GTK_BOX(vbox2), label, FALSE, TRUE, 0);
 
 		GtkWidget *button;
-		GtkWidget *ptable = gtk_table_new(2, 3, FALSE);
+		GtkWidget *ptable = gtk_table_new(0, 3, FALSE);
 		gtk_table_set_col_spacing(GTK_TABLE(ptable), 0, 15);
 		gtk_table_set_col_spacing(GTK_TABLE(ptable), 1, 6);
 		gtk_box_pack_start(GTK_BOX(vbox), ptable, FALSE, TRUE, 0);
+		int rows = 0;
 
-		if(e->group > 0) {
+		int group = s2i(e->getProperty(p_class));
+		if(group > 0) {
+			rows++;
+			gtk_table_resize(GTK_TABLE(ptable), rows, 3);
 			label = gtk_label_new(NULL);
 			str = "<span weight=\"bold\">"; str += _("Classification"); str += ":"; str += "</span>";
 			gtk_label_set_markup(GTK_LABEL(label), str.c_str()); gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5); gtk_label_set_selectable(GTK_LABEL(label), FALSE);
-			gtk_table_attach_defaults(GTK_TABLE(ptable), label, 0, 1, 0, 1);
+			gtk_table_attach_defaults(GTK_TABLE(ptable), label, 0, 1, rows - 1, rows);
 			label = gtk_label_new(NULL);
-			switch(e->group) {
+			switch(group) {
 				case ALKALI_METALS: {gtk_label_set_markup(GTK_LABEL(label), _("Alkali Metal")); break;}
 				case ALKALI_EARTH_METALS: {gtk_label_set_markup(GTK_LABEL(label), _("Alkaline-Earth Metal")); break;}
 				case LANTHANIDES: {gtk_label_set_markup(GTK_LABEL(label), _("Lanthanide")); break;}
@@ -9361,22 +9406,32 @@ void on_element_button_clicked(GtkButton *w, gpointer user_data) {
 				default: {gtk_label_set_markup(GTK_LABEL(label), _("Unknown")); break;}
 			}
 			gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5); gtk_label_set_selectable(GTK_LABEL(label), TRUE);
-			gtk_table_attach_defaults(GTK_TABLE(ptable), label, 1, 2, 0, 1);
+			gtk_table_attach_defaults(GTK_TABLE(ptable), label, 1, 2, rows - 1, rows);
 		}
 		
-		if(!e->weight.empty()) {
-			label = gtk_label_new(NULL);
-			str = "<span weight=\"bold\">"; str += _("Weight"); str += ":"; str += "</span>";
-			gtk_label_set_markup(GTK_LABEL(label), str.c_str()); gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5); gtk_label_set_selectable(GTK_LABEL(label), FALSE);
-			gtk_table_attach_defaults(GTK_TABLE(ptable), label, 0, 1, 1, 2);
-			label = gtk_label_new(NULL);
-			str = e->weight; str += " u";
-			gtk_label_set_markup(GTK_LABEL(label), str.c_str()); gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5); gtk_label_set_selectable(GTK_LABEL(label), TRUE);
-			gtk_table_attach_defaults(GTK_TABLE(ptable), label, 1, 2, 1, 2);
-			button = gtk_button_new();
-			gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock("gtk-paste", GTK_ICON_SIZE_BUTTON));
-			gtk_table_attach_defaults(GTK_TABLE(ptable), button, 2, 3, 1, 2);
-			g_signal_connect((gpointer) button, "clicked", G_CALLBACK(on_element_button_weight_clicked), (gpointer) e);
+		DataPropertyIter it;
+		DataProperty *dp = dc->getFirstProperty(&it);
+		string sval;
+		while(dp) {
+			if(!dp->isHidden() && dp != p_number && dp != p_class && dp != p_symbol && dp != p_name) {
+				sval = e->getPropertyDisplayString(dp);
+				if(!sval.empty()) {
+					rows++;
+					gtk_table_resize(GTK_TABLE(ptable), rows, 3);
+					label = gtk_label_new(NULL);
+					str = "<span weight=\"bold\">"; str += dp->title(); str += ":"; str += "</span>";
+					gtk_label_set_markup(GTK_LABEL(label), str.c_str()); gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5); gtk_label_set_selectable(GTK_LABEL(label), FALSE);
+					gtk_table_attach_defaults(GTK_TABLE(ptable), label, 0, 1, rows - 1, rows);
+					label = gtk_label_new(NULL);
+					gtk_label_set_markup(GTK_LABEL(label), sval.c_str()); gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5); gtk_label_set_selectable(GTK_LABEL(label), TRUE);
+					gtk_table_attach_defaults(GTK_TABLE(ptable), label, 1, 2, rows - 1, rows);
+					button = gtk_button_new();
+					gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock("gtk-paste", GTK_ICON_SIZE_BUTTON));
+					gtk_table_attach_defaults(GTK_TABLE(ptable), button, 2, 3, rows - 1, rows);
+					g_signal_connect((gpointer) button, "clicked", G_CALLBACK(on_element_button_function_clicked), (gpointer) dp);
+				}
+			}
+			dp = dc->getNextProperty(&it);
 		}
 		
 		gtk_widget_show_all(dialog);

@@ -33,6 +33,7 @@ enum {
 	ARGUMENT_TYPE_ANGLE,
 	ARGUMENT_TYPE_GIAC,
 	ARGUMENT_TYPE_SET,
+	ARGUMENT_TYPE_DATA_OBJECT,
 	ARGUMENT_TYPE_DATA_PROPERTY
 };
 
@@ -98,7 +99,7 @@ class Function : public ExpressionItem {
 	void setArgumentDefinition(unsigned int index, Argument *argdef);
 	int stringArgs(const string &str, vector<string> &svargs);		
 	void setDefaultValue(unsigned int arg_, string value_);
-	string getDefaultValue(unsigned int arg_) const;	
+	const string &getDefaultValue(unsigned int arg_) const;	
 	MathStructure produceVector(const MathStructure &vargs, int begin = -1, int end = -1);
 	MathStructure produceArgumentsVector(const MathStructure &vargs, int begin = -1, int end = -1);
 	

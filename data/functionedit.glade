@@ -818,6 +818,22 @@
 			      <property name="use_underline">True</property>
 			    </widget>
 			  </child>
+			  
+			  <child>
+			    <widget class="GtkMenuItem" id="itemDO">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Data Object</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+			  
+			  <child>
+			    <widget class="GtkMenuItem" id="itemDP">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Data Property</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
 
 			</widget>
 		      </child>

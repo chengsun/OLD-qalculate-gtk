@@ -23,20 +23,25 @@ class DataObject {
 
 	vector<DataProperty*> properties;
 	vector<string> s_properties;
+	vector<string> s_nonlocalized_properties;
 	vector<MathStructure*> m_properties;
+	vector<int> a_properties;
 	DataCollection *parent;
-	int b_approximate;
 	
   public:
   
-  	DataObject(DataCollection *parent_collection);
+	DataObject(DataCollection *parent_collection);
 
-	void setProperty(DataProperty *property, string s_value);
+	void setProperty(DataProperty *property, string s_value, int is_approximate = -1);
+	void setNonlocalizedKeyProperty(DataProperty *property, string s_value);
 	
 	const MathStructure *getPropertyStruct(DataProperty *property);
-	const string &getProperty(DataProperty *property);
+	const string &getProperty(DataProperty *property, int *is_approximate = NULL);
+	const string &getNonlocalizedKeyProperty(DataProperty *property);
 	string getPropertyInputString(DataProperty *property);
 	string getPropertyDisplayString(DataProperty *property);
+	
+	DataCollection *parentCollection() const;
 
 };
 
@@ -59,11 +64,13 @@ class DataProperty {
 	
   public:
   
-  	DataProperty(DataCollection *parent_collection, string s_name = "", string s_title = "", string s_description = "");
+	DataProperty(DataCollection *parent_collection, string s_name = "", string s_title = "", string s_description = "");
 	
 	void setName(string s_name);
 	void clearNames();
-	void addName(string s_name);
+	void addName(string s_name, unsigned int index = 0);
+	bool hasName(const string &s_name);
+	unsigned int countNames() const;
 	const string &getName(unsigned int index = 1) const;
 	void setTitle(string s_title);
 	const string &title(bool return_name_if_no_title = true) const;
@@ -87,6 +94,7 @@ class DataProperty {
 	bool isApproximate() const;
 	void setPropertyType(PropertyType property_type);
 	PropertyType propertyType() const;
+	DataCollection *parentCollection() const;
 	
 };
 
@@ -98,10 +106,9 @@ class DataCollection : public Function {
   protected:
   
 	string sfile, scopyright;
+	bool b_loaded;
 	vector<DataProperty*> properties;
-	Sgi::hash_map<const char*, DataObject*> h_properties;
 	vector<DataObject*> objects;
-	Sgi::hash_map<const char*, DataObject*> h_objects;
 	
   public:
   
@@ -114,28 +121,38 @@ class DataCollection : public Function {
 	
 	void setCopyright(string s_copyright);
 	const string &copyright() const;
+	void setDefaultDataFile(string s_file);
+	const string &defaultDataFile() const;
+	
+	void setDefaultProperty(string property);
+	const string &defaultProperty() const;
 	
 	int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);
 	
-	bool loadObjects(const char *filename = NULL);
+	bool loadObjects(const char *file_name = NULL);
 	bool objectsLoaded() const;
 	
-	DataProperty *getProperty(string property) const;
-	DataProperty *getFirstProperty(DataPropertyIter *it) const;
-	DataProperty *getNextProperty(DataPropertyIter *it) const;
-	const string &getFirstPropertyName(DataPropertyIter *it) const;
-	const string &getNextPropertyName(DataPropertyIter *it) const;
+	void addProperty(DataProperty *dp);
+	DataProperty *getPrimaryKeyProperty();
+	DataProperty *getProperty(string property);
+	DataProperty *getFirstProperty(DataPropertyIter *it);
+	DataProperty *getNextProperty(DataPropertyIter *it);
+	const string &getFirstPropertyName(DataPropertyIter *it);
+	const string &getNextPropertyName(DataPropertyIter *it);
 	
-	DataObject *getObject(string object) const;
-	DataObject *getFirstObject(DataObjectIter *it) const;
-	DataObject *getNextObject(DataObjectIter *it) const;
+	void addObject(DataObject *o);
+	DataObject *getObject(string object);
+	DataObject *getObject(const MathStructure &object);
+	DataObject *getFirstObject(DataObjectIter *it);
+	DataObject *getNextObject(DataObjectIter *it);
 	
 	const MathStructure *getObjectProperyStruct(string property, string object);
-	const string &getObjectProperty(string property, string object) const;
-	string getObjectPropertyInputString(string property, string object) const;
-	string getObjectPropertyDisplayString(string property, string object) const;
+	const string &getObjectProperty(string property, string object);
+	string getObjectPropertyInputString(string property, string object);
+	string getObjectPropertyDisplayString(string property, string object);
 	
-	string printProperties(string object) const;
+	string printProperties(string object);
+	string printProperties(DataObject *o);
 		
 };
 
@@ -153,6 +170,28 @@ class DataPropertyArgument : public Argument {
   	DataPropertyArgument(DataCollection *data_collection, string name_ = "", bool does_test = true, bool does_error = true);
 	DataPropertyArgument(const DataPropertyArgument *arg);
 	~DataPropertyArgument();
+	int type() const;
+	Argument *copy() const;
+	string print() const;
+	DataCollection *dataCollection() const;
+	void setDataCollection(DataCollection *data_collection);
+	
+};
+
+class DataObjectArgument : public Argument {
+
+  protected:
+  
+  	DataCollection *o_data;
+  
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
+	virtual string subprintlong() const;
+
+  public:
+  
+  	DataObjectArgument(DataCollection *data_collection, string name_ = "", bool does_test = true, bool does_error = true);
+	DataObjectArgument(const DataObjectArgument *arg);
+	~DataObjectArgument();
 	int type() const;
 	Argument *copy() const;
 	string print() const;

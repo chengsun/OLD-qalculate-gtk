@@ -484,11 +484,11 @@ void Function::setDefaultValue(unsigned int arg_, string value_) {
 		default_values[arg_ - argc - 1] = value_;
 	}
 }
-string Function::getDefaultValue(unsigned int arg_) const {
+const string &Function::getDefaultValue(unsigned int arg_) const {
 	if((int) arg_ > argc && (int) arg_ <= max_argc && (int) default_values.size() >= (int) arg_ - argc) {
 		return default_values[arg_ - argc - 1];
 	}
-	return "";
+	return empty_string;
 }
 int Function::stringArgs(const string &argstr, vector<string> &svargs) {
 	svargs.clear();

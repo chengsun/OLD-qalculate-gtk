@@ -1895,6 +1895,17 @@ int DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	}
 	return 1 ;
 }
+IntegrateFunction::IntegrateFunction() : Function("integrate", 1, 2) {
+	setArgumentDefinition(2, new SymbolicArgument());
+	setDefaultValue(2, "x");
+}
+int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	if(!mstruct.integrate(vargs[1], eo)) {
+		return 0;
+	}
+	return 1 ;
+}
 SolveFunction::SolveFunction() : Function("solve", 1, 2) {
 	setArgumentDefinition(2, new SymbolicArgument());
 	setDefaultValue(2, "x");
@@ -1935,96 +1946,3 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	
 }
 
-#define GET_ELEMENT			Element *e = CALCULATOR->getElement(vargs[0].symbol());\
-					if(!e) {\
-						CALCULATOR->error(true, _("Unable to find element %s."), vargs[0].symbol().c_str(), NULL);\
-						return 0;\
-					}
-					
-#define SET_ATOMIC_STRING_VALUE(x)	if(e->x.empty()) {\
-						CALCULATOR->error(true, _("Property not defined for element %s."), e->symbol.c_str(), NULL);\
-						return 0;\
-					}\
-					unsigned int i = e->x.find_first_of("(");\
-					ParseOptions po; po.read_precision = ALWAYS_READ_PRECISION;\
-					if(i != string::npos) mstruct = CALCULATOR->parse(e->x.substr(0, i), po);\
-					else mstruct = CALCULATOR->parse(e->x, po);
-					
-#define SET_ATOMIC_STRING_VALUE_NO_APPROX(x)	if(e->x.empty()) {\
-						CALCULATOR->error(true, _("Property not defined for element %s."), e->symbol.c_str(), NULL);\
-						return 0;\
-					}\
-					unsigned int i = e->x.find_first_of("(");\
-					if(i != string::npos) mstruct = CALCULATOR->parse(e->x.substr(0, i));\
-					else mstruct = CALCULATOR->parse(e->x);
-					
-#define SET_ATOMIC_STRING(x)		if(e->x.empty()) {\
-						CALCULATOR->error(true, _("Property not defined for element %s."), e->symbol.c_str(), NULL);\
-						return 0;\
-					}\
-					unsigned int i = e->x.find_first_of("(");\
-					if(i != string::npos) mstruct = e->x.substr(0, i);\
-					else mstruct = e->x;
-
-AtomicSymbolFunction::AtomicSymbolFunction() : Function("atomic_symbol", 1) {
-	setArgumentDefinition(1, new TextArgument());
-}
-int AtomicSymbolFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT
-	mstruct = e->symbol;
-	return 1;
-}
-AtomicNumberFunction::AtomicNumberFunction() : Function("atomic_number", 1) {
-	setArgumentDefinition(1, new TextArgument());
-}
-int AtomicNumberFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT
-	mstruct = e->number;
-	return 1;
-}
-AtomicNameFunction::AtomicNameFunction() : Function("atomic_name", 1) {setArgumentDefinition(1, new TextArgument());}
-int AtomicNameFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT SET_ATOMIC_STRING(name)
-	return 1;
-}
-AtomicWeightFunction::AtomicWeightFunction() : Function("atomic_weight", 1) {setArgumentDefinition(1, new TextArgument());}
-int AtomicWeightFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT
-	if(e->weight.empty()) {
-		CALCULATOR->error(true, _("Weight not defined for element %s."), e->symbol.c_str(), NULL);
-		return 0;
-	}
-	if(e->weight.length() > 1 && e->weight[0] == '[') mstruct.set(Number(e->weight.substr(1, e->weight.length() - 2), 10, ALWAYS_READ_PRECISION));
-	else mstruct.set(Number(e->weight, 10, ALWAYS_READ_PRECISION));
-	mstruct *= CALCULATOR->getUnit("u");
-	return 1;
-}
-
-AtomInfoFunction::AtomInfoFunction() : Function("atom", 1) {setArgumentDefinition(1, new TextArgument());}
-int AtomInfoFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT
-	string message;
-	message += _("Name"); message +=":\t\t\t"; message += e->name; message += "\n";
-	message += _("Symbol"); message +=":\t\t\t"; message += e->symbol; message += "\n";
-	message += _("Number"); message +=":\t\t\t"; message += i2s(e->number);
-	if(e->group > 0) {
-		message += "\n"; message += _("Classification"); message +=":\t\t";
-		switch(e->group) {
-			case ALKALI_METALS: {message += _("Alkali Metal"); break;}
-			case ALKALI_EARTH_METALS: {message += _("Alkaline-Earth Metal"); break;}
-			case LANTHANIDES: {message += _("Lanthanide"); break;}
-			case ACTINIDES: {message += _("Actinide"); break;}
-			case TRANSITION_METALS: {message += _("Transition Metal"); break;}
-			case METALS: {message += _("Metal"); break;}
-			case METALLOIDS: {message += _("Metalloid"); break;}
-			case NONMETALS: {message += _("Non-Metal"); break;}
-			case HALOGENS: {message += _("Halogen"); break;}
-			case NOBLE_GASES: {message += _("Noble Gas"); break;}
-			case TRANSACTINIDES: {message += _("Transactinide"); break;}
-			default: {message += _("Unknown"); break;}
-		}
-	}
-	if(!e->weight.empty()) {message += "\n"; message += _("Atomic Weight"); message +=":\t\t"; message += e->weight; message += " u";}
-	CALCULATOR->message(MESSAGE_INFORMATION, message.c_str(), NULL);
-	return 1;
-}

@@ -37,6 +37,7 @@ src/calclib/Prefix.cc
 src/calclib/Unit.cc
 src/calclib/Variable.cc
 src/calclib/util.cc
+src/calclib/data/datacollections.xml.in
 src/calclib/data/elements.xml.in
 src/calclib/data/functions.xml.in
 src/calclib/data/prefixes.xml.in

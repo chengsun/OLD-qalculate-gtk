@@ -1,3 +1,13 @@
+2004-08-24 Niklas Knutsson  <nq@altern.org>
+
+	* Complete most of the data collection stuff
+	* Move elements to data collection format
+
+2004-08-23 Niklas Knutsson  <nq@altern.org>
+
+	* Fix diff() with variables and functions that contains x
+	* Simple integration
+
 2004-08-22 Niklas Knutsson  <nq@altern.org>
 
 	* ans2, ans3, ans4 and ans5

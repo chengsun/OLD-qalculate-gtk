@@ -100,7 +100,6 @@ class Calculator {
 	vector<char> ufv_t;
 	vector<unsigned int> ufv_i;
 	
-	vector<Element*> elements;
 	vector<DataCollection*> data_collections;
 	
 	Sgi::hash_map<unsigned int, MathStructure> id_structs;
@@ -159,9 +158,8 @@ class Calculator {
 	Function *f_length, *f_concatenate;
 	Function *f_replace;
 	Function *f_for, *f_sum, *f_product, *f_process, *f_process_matrix, *f_csum, *f_if, *f_function;
-	Function *f_diff, *f_solve;
+	Function *f_diff, *f_integrate, *f_solve;
 	Function *f_error, *f_warning, *f_message, *f_save, *f_load, *f_export, *f_title;
-	Function *f_atomic_symbol, *f_atomic_number, *f_atomic_name, *f_atomic_weight, *f_atom;
 	Unit *u_rad, *u_euro;
 	Prefix *null_prefix;
 
@@ -296,6 +294,8 @@ class Calculator {
 	ExpressionItem *addExpressionItem(ExpressionItem *item, bool force = true);
 	Function* addFunction(Function *f, bool force = true);
 	DataCollection* addDataCollection(DataCollection *dc, bool force = true);
+	DataCollection* getDataCollection(unsigned int index);
+	DataCollection* getDataCollection(string name);
 	Function* getFunction(string name_);	
 	Function* getActiveFunction(string name_);	
 	void error(bool critical, const char *TEMPLATE,...);
@@ -345,12 +345,6 @@ class Calculator {
 	bool invokeGnuplot(string commands, string commandline_extra = "", bool persistent = false);
 	bool closeGnuplot();
 	bool gnuplotOpen();
-	
-	bool loadElements(const char *file_name = NULL);
-	bool elementsLoaded() const;
-	Element *getElement(int e_number);
-	Element *getElement(string e_symname);
-	Element *getElementByIndex(unsigned int index);
 		
 };
 

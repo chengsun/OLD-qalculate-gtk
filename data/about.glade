@@ -54,7 +54,7 @@
 	  <child>
 	    <widget class="GtkLabel" id="about_label_about">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">&lt;span weight=&quot;bold&quot; size=&quot;xx-large&quot;&gt;&lt;span foreground=&quot;#cc4499&quot;&gt;Q&lt;/span&gt;alculate!&lt;/span&gt; (v. 0.6.3)
+	      <property name="label" translatable="yes">&lt;span weight=&quot;bold&quot; size=&quot;xx-large&quot;&gt;&lt;span foreground=&quot;#cc4499&quot;&gt;Q&lt;/span&gt;alculate!&lt;/span&gt; (v. 0.6.4)
 &lt;span size=&quot;large&quot;&gt;- the queer calculator&lt;/span&gt;
 
 &lt;i&gt;http://qalculate.sourceforge.net/&lt;/i&gt;

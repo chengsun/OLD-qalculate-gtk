@@ -318,7 +318,7 @@ class MathStructure {
 		bool convert(const MathStructure unit_mstruct, bool convert_complex_relations = false);	
 		
 		
-		bool contains(const MathStructure &mstruct) const;
+		bool contains(const MathStructure &mstruct, bool check_variables = false, bool check_functions = false) const;
 		bool containsType(int mtype) const;
 		bool containsAdditionPower() const;
 		bool replace(const MathStructure &mfrom, const MathStructure &mto);
@@ -327,6 +327,7 @@ class MathStructure {
 		MathStructure generateVector(MathStructure x_mstruct, const MathStructure &x_vector, const EvaluationOptions &eo = default_evaluation_options);
 		
 		bool differentiate(const MathStructure &x_var, const EvaluationOptions &eo);
+		bool integrate(const MathStructure &x_var, const EvaluationOptions &eo);
 		
 		const MathStructure &find_x_var() const;
 		bool isolate_x(const EvaluationOptions &eo, const MathStructure &x_var = m_undefined);

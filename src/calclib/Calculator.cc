@@ -53,7 +53,7 @@ using namespace cln;
 #define XML_DO_FROM_TEXT(node, action)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {action((char*) value); xmlFree(value);} else action("");
 #define XML_GET_INT_FROM_PROP(node, name, i)		value = xmlGetProp(node, (xmlChar*) name); if(value) {i = s2i((char*) value); xmlFree(value);}
 #define XML_GET_INT_FROM_TEXT(node, i)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {i = s2i((char*) value); xmlFree(value);}
-#define XML_GET_LOCALE_STRING_FROM_TEXT(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {lang_tmp = (char*) lang; if(lang_tmp == locale) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && lang_tmp.length() >= 2 && lang_tmp.substr(0, 2) == localebase) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
+#define XML_GET_LOCALE_STRING_FROM_TEXT(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {if(locale == (char*) lang) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && strlen((char*) lang) >= 2 && lang[0] == localebase[0] && lang[1] == localebase[1]) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
 
 const string &PrintOptions::comma() const {if(comma_sign.empty()) return CALCULATOR->getComma(); return comma_sign;}
 const string &PrintOptions::decimalpoint() const {if(decimalpoint_sign.empty()) return CALCULATOR->getDecimalPoint(); return decimalpoint_sign;}
@@ -911,14 +911,9 @@ void Calculator::addBuiltinFunctions() {
 	f_export = addFunction(new ExportFunction());
 
 	f_diff = addFunction(new DeriveFunction());
+	f_integrate = addFunction(new IntegrateFunction());
 	f_solve = addFunction(new SolveFunction());
 	
-	f_atomic_symbol = addFunction(new AtomicSymbolFunction());
-	f_atomic_number = addFunction(new AtomicNumberFunction());
-	f_atomic_name = addFunction(new AtomicNameFunction());
-	f_atomic_weight = addFunction(new AtomicWeightFunction());
-	f_atom = addFunction(new AtomInfoFunction());
-
 }
 void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
@@ -2030,6 +2025,21 @@ DataCollection* Calculator::addDataCollection(DataCollection *dc, bool force) {
 	addFunction(dc, force);
 	data_collections.push_back(dc);
 	return dc;
+}
+DataCollection* Calculator::getDataCollection(unsigned int index) {
+	if(index > 0 && index <= data_collections.size()) {
+		return data_collections[index - 1];
+	}
+	return 0;
+}
+DataCollection* Calculator::getDataCollection(string name) {
+	if(name.empty()) return NULL;
+	for(unsigned int i = 0; i < data_collections.size(); i++) {
+		if(data_collections[i]->hasName(name)) {
+			return data_collections[i];
+		}
+	}
+	return NULL;
 }
 Function* Calculator::getFunction(string name_) {
 	if(name_.empty()) return NULL;
@@ -3280,6 +3290,11 @@ bool Calculator::loadGlobalDefinitions() {
 		return false;
 	}
 	filename = dir;
+	filename += "datacollections.xml";	
+	if(!loadDefinitions(filename.c_str(), false)) {
+		return false;
+	}
+	filename = dir;
 	filename += "variables.xml";
 	if(!loadDefinitions(filename.c_str(), false)) {
 		return false;
@@ -3569,14 +3584,16 @@ bool Calculator::loadLocalDefinitions() {
 int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 
 	xmlDocPtr doc;
-	xmlNodePtr cur, child, child2;
-	string version, stmp, lang_tmp, name, uname, type, svalue, plural, singular, category_title, category, description, title, reverse, base, argname;
+	xmlNodePtr cur, child, child2, child3;
+	string version, stmp, name, uname, type, svalue, plural, singular, category_title, category, description, title, reverse, base, argname;
 	bool best_title, next_best_title, best_category_title, next_best_category_title, best_description, next_best_description;
 	bool best_plural, next_best_plural, best_singular, next_best_singular, best_argname, next_best_argname;
-	bool best_propname, next_best_propname, best_proptitle, next_best_proptitle, best_propdescr, next_best_propdescr;
-	string propname, proptitle, propdescr;
+	bool best_proptitle, next_best_proptitle, best_propdescr, next_best_propdescr;
+	string proptitle, propdescr;
 	ExpressionName names[10];
 	ExpressionName ref_names[10];
+	string prop_names[10];
+	string ref_prop_names[10];
 	bool best_name[10];
 	bool nextbest_name[10];
 	int name_index, prec;
@@ -3597,6 +3614,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 	} else {
 		localebase = locale;
 	}
+	while(localebase.length() < 2) localebase += " ";
 
 	int exponent = 1, litmp = 0;
 	bool active = false, hidden = false, b = false;
@@ -3757,6 +3775,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							arg = new ExpressionItemArgument();
 						} else if(type == "angle") {
 							arg = new AngleArgument();
+						} else if(type == "data-object") {
+							arg = new DataObjectArgument(NULL, "");
 						} else if(type == "data-property") {
 							arg = new DataPropertyArgument(NULL, "");
 /*						} else if(type == "giac") {
@@ -3837,14 +3857,64 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					if(!xmlStrcmp(child->name, (const xmlChar*) "property")) {
 						dp = new DataProperty(dc);
 						child2 = child->xmlChildrenNode;
-						propname = ""; best_propname = false; next_best_propname = false;
+						for(unsigned int i = 0; i < 10; i++) {
+							best_name[i] = false;
+							nextbest_name[i] = false;
+						}
 						proptitle = ""; best_proptitle = false; next_best_proptitle = false;
 						propdescr = ""; best_propdescr = false; next_best_propdescr = false;
 						while(child2 != NULL) {
 							if(!xmlStrcmp(child2->name, (const xmlChar*) "title")) {
 								XML_GET_LOCALE_STRING_FROM_TEXT(child2, proptitle, best_proptitle, next_best_proptitle)
 							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "name")) {
-								XML_GET_LOCALE_STRING_FROM_TEXT(child2, propname, best_propname, next_best_propname)
+								name_index = 1;
+								XML_GET_INT_FROM_PROP(child2, "index", name_index)
+								if(name_index > 0 && name_index <= 10) {
+									name_index--;
+									prop_names[name_index] = "";
+									ref_prop_names[name_index] = "";
+									value2 = NULL;
+									child3 = child2->xmlChildrenNode;
+									while(child3 != NULL) {
+										if((!best_name[name_index] || (ref_prop_names[name_index].empty() && !locale.empty())) && !xmlStrcmp(child3->name, (const xmlChar*) "name")) {
+											lang = xmlNodeGetLang(child3);
+											if(!lang) {
+												value2 = xmlNodeListGetString(doc, child3->xmlChildrenNode, 1);
+												if(locale.empty()) {
+													best_name[name_index] = true;
+													if(value2) prop_names[name_index] = (char*) value2;
+													else prop_names[name_index] = "";
+												} else {
+													if(!best_name[name_index] && !nextbest_name[name_index]) {
+														if(value2) prop_names[name_index] = (char*) value2;
+														else prop_names[name_index] = "";
+													}
+													if(value2) ref_prop_names[name_index] = (char*) value2;
+													else ref_prop_names[name_index] = "";
+												}
+											} else if(!best_name[name_index] && !locale.empty()) {
+												if(locale == (char*) lang) {
+													value2 = xmlNodeListGetString(doc, child3->xmlChildrenNode, 1);
+													best_name[name_index] = true;
+													if(value2) prop_names[name_index] = (char*) value2;
+													else prop_names[name_index] = "";
+												} else if(!nextbest_name[name_index] && strlen((char*) lang) >= 2 && lang[0] == localebase[0] && lang[1] == localebase[1]) {
+													value2 = xmlNodeListGetString(doc, child3->xmlChildrenNode, 1);
+													nextbest_name[name_index] = true;
+													if(value2) prop_names[name_index] = (char*) value2;
+													else prop_names[name_index] = "";
+												}
+											}
+											if(value2) xmlFree(value2);
+											if(lang) xmlFree(lang);
+											value2 = NULL; lang = NULL;
+										}
+										child3 = child3->next;
+									}
+									if(!ref_prop_names[name_index].empty() && ref_prop_names[name_index] == prop_names[name_index]) {
+										ref_prop_names[name_index] = "";
+									}
+								}
 							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "description")) {
 								XML_GET_LOCALE_STRING_FROM_TEXT(child2, propdescr, best_propdescr, next_best_propdescr)
 							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "unit")) {
@@ -3878,6 +3948,22 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						}
 						dp->setTitle(proptitle);
 						dp->setDescription(propdescr);
+						for(unsigned int i = 0; i < 10; i++) {
+							if(!prop_names[i].empty()) {
+								dp->addName(prop_names[i], i + 1);
+								prop_names[i] = "";
+							} else if(!ref_prop_names[i].empty()) {
+								dp->addName(ref_prop_names[i], i + 1);
+								ref_prop_names[i] = "";
+							}
+						}
+						for(unsigned int i = 0; i < 10; i++) {
+							if(!ref_prop_names[i].empty()) {
+								dp->addName(ref_prop_names[i]);
+								ref_prop_names[i] = "";
+							}
+						}
+						dc->addProperty(dp);
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "argument")) {
 						child2 = child->xmlChildrenNode;
 						argname = ""; best_argname = false; next_best_argname = false;
@@ -3918,8 +4004,12 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						if(f->getArgumentDefinition(itmp)) {
 							f->getArgumentDefinition(itmp)->setName(argname);
 						}
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "default_property")) {
+						XML_DO_FROM_TEXT(child, dc->setDefaultProperty)
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "copyright")) {
 						XML_DO_FROM_TEXT(child, dc->setCopyright)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "datafile")) {
+						XML_DO_FROM_TEXT(child, dc->setDefaultDataFile)
 					} else ITEM_READ_NAME(functionNameIsValid)
 					 else ITEM_READ_DTH
 					child = child->next;
@@ -4970,6 +5060,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 								case ARGUMENT_TYPE_VARIABLE: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "variable"); break;}
 								case ARGUMENT_TYPE_EXPRESSION_ITEM: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "object"); break;}
 								case ARGUMENT_TYPE_ANGLE: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "angle"); break;}
+								case ARGUMENT_TYPE_DATA_OBJECT: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "data-object"); break;}
 								case ARGUMENT_TYPE_DATA_PROPERTY: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "data-property"); break;}
 //								case ARGUMENT_TYPE_GIAC: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "giac"); break;}
 								default: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "free");}
@@ -5842,137 +5933,3 @@ bool Calculator::gnuplotOpen() {
 	return b_gnuplot_open && gnuplot_pipe;
 }
 
-bool Calculator::loadElements(const char *file_name) {
-	string filename;
-	if(file_name) {
-		filename = file_name;
-	} else {
-		filename = PACKAGE_DATA_DIR;
-		filename += "/qalculate/";
-		filename += "elements.xml";
-	}
-	xmlDocPtr doc;
-	xmlNodePtr cur, child;
-
-	string locale, lang_tmp;
-	char *clocale = setlocale(LC_MESSAGES, "");
-	if(clocale) {
-		locale = clocale;
-		if(locale == "POSIX" || locale == "C") {
-			locale = "";
-		}
-	}
-
-	string localebase;
-	if(locale.length() > 2) {
-		localebase = locale.substr(0, 2);
-	} else {
-		localebase = locale;
-	}
-
-	doc = xmlParseFile(filename.c_str());
-	if(doc == NULL) {
-		error(true, _("Unable to load elements in %s."), filename.c_str(), NULL);
-		return false;
-	}
-	cur = xmlDocGetRootElement(doc);
-	if(cur == NULL) {
-		xmlFreeDoc(doc);
-		error(true, _("Unable to load elements in %s."), filename.c_str(), NULL);
-		return false;
-	}
-	string version;
-	xmlChar *value, *lang;
-	while(cur != NULL) {
-		if(!xmlStrcmp(cur->name, (const xmlChar*) "QALCULATE")) {
-			XML_GET_STRING_FROM_PROP(cur, "version", version)
-			break;
-		}
-		cur = cur->next;
-	}
-	if(cur == NULL) {
-		error(true, _("File not identified as Qalculate! definitions file: %s."), file_name, NULL);
-		xmlFreeDoc(doc);
-		return false;
-	}
-	int version_numbers[] = {0, 0, 0};
-	for(unsigned int i = 0; i < 3; i++) {
-		unsigned int dot_i = version.find(".");
-		if(dot_i == string::npos) {
-			version_numbers[i] = s2i(version);
-			break;
-		}
-		version_numbers[i] = s2i(version.substr(0, dot_i));
-		version = version.substr(dot_i + 1, version.length() - (dot_i + 1));
-	}
-	
-	int e_number; 
-	string e_symbol;
-	Element *element;
-	cur = cur->xmlChildrenNode;
-	string str;
-	string ename = ""; bool best_ename = false; bool next_best_ename = false;
-	while(cur) {
-		if(!xmlStrcmp(cur->name, (const xmlChar*) "element")) {
-			e_number = -1; e_symbol = "";
-			XML_GET_STRING_FROM_PROP(cur, "symbol", e_symbol);
-			XML_GET_INT_FROM_PROP(cur, "number", e_number);
-			if(!e_symbol.empty() && e_number > 0) {
-				element = new Element();
-				element->number = e_number;
-				element->symbol = e_symbol;
-				ename = ""; best_ename = false; next_best_ename = false;
-				child = cur->xmlChildrenNode;
-				while(child) {
-					if(!xmlStrcmp(child->name, (const xmlChar*) "name")) {
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, ename, best_ename, next_best_ename)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "class")) {
-						XML_GET_INT_FROM_TEXT(child, element->group)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "weight")) {
-						XML_GET_STRING_FROM_TEXT(child, element->weight)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "x_pos")) {
-						XML_GET_INT_FROM_TEXT(child, element->x_pos)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "y_pos")) {
-						XML_GET_INT_FROM_TEXT(child, element->y_pos)
-					}
-					child = child->next;
-				}
-				element->name = ename;
-				elements.push_back(element);	
-			}
-		}
-		cur = cur->next;
-	}
-	xmlFreeDoc(doc);
-	return true;
-}
-
-bool Calculator::elementsLoaded() const {
-	return elements.size() > 0;
-}
-Element *Calculator::getElement(int e_number) {
-	if(!elementsLoaded()) {
-		if(!loadElements()) return NULL;
-	}
-	for(unsigned int i = 0; i < elements.size(); i++) {
-		if(elements[i]->number == e_number) return elements[i];
-	}
-	return NULL;
-}
-Element *Calculator::getElement(string e_symname) {
-	if(!elementsLoaded()) {
-		if(!loadElements()) return NULL;
-	}
-	if(e_symname.find_first_not_of("0123456789") == string::npos) return getElement(s2i(e_symname));
-	for(unsigned int i = 0; i < elements.size(); i++) {
-		if(elements[i]->symbol == e_symname || equalsIgnoreCase(e_symname, elements[i]->name)) return elements[i];
-	}
-	return NULL;
-}
-Element *Calculator::getElementByIndex(unsigned int index) {
-	if(!elementsLoaded()) {
-		if(!loadElements()) return NULL;
-	}
-	if(index > 0 && index <= elements.size()) return elements[index - 1];
-	return NULL;
-}

@@ -2175,6 +2175,19 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <_title>Order</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="integrate">
+      <_title>Integrate</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>integrate</_name>
+      </name>
+      <argument index="1">
+        <_title>Expression</_title>
+      </argument>
+      <argument index="2">
+        <_title>Variable of Integration</_title>
+      </argument>
+    </builtin_function>
     <function>
       <_title>Extreme Values</_title>
       <name index="1">

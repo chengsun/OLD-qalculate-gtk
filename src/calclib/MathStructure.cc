@@ -5062,10 +5062,19 @@ bool MathStructure::convert(const MathStructure unit_mstruct, bool convert_compl
 	return b;
 }
 
-bool MathStructure::contains(const MathStructure &mstruct) const {
+bool MathStructure::contains(const MathStructure &mstruct, bool check_variables, bool check_functions) const {
 	if(equals(mstruct)) return true;
 	for(unsigned int i = 0; i < SIZE; i++) {
-		if(CHILD(i).contains(mstruct)) return true;
+		if(CHILD(i).contains(mstruct, check_variables, check_functions)) return true;
+	}
+	if(check_variables && m_type == STRUCT_VARIABLE && o_variable->isKnown()) {
+		return ((KnownVariable*) o_variable)->get().contains(mstruct, check_variables, check_functions);
+	} else if(check_functions && m_type == STRUCT_FUNCTION) {
+		EvaluationOptions eo;
+		eo.approximation = APPROXIMATION_APPROXIMATE;
+		MathStructure mstruct2(*this);
+		mstruct2.calculateFunctions(eo);
+		return mstruct2.contains(mstruct, check_variables, check_functions);
 	}
 	return false;
 }
@@ -5162,8 +5171,8 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				set(base_copy);
 				return differentiate(x_var, eo);
 			}
-			bool x_in_base = CHILD(0).contains(x_var);
-			bool x_in_exp = CHILD(1).contains(x_var);
+			bool x_in_base = CHILD(0).contains(x_var, true, true);
+			bool x_in_exp = CHILD(1).contains(x_var, true, true);
 			if(x_in_base && !x_in_exp) {
 				MathStructure exp_mstruct(CHILD(1));
 				MathStructure base_mstruct(CHILD(0));
@@ -5211,6 +5220,9 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				negate();
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct, true);
+			} else if(o_function == CALCULATOR->f_integrate && SIZE == 2 && CHILD(1) == x_var) {
+				MathStructure mstruct(CHILD(0));
+				set(mstruct);
 			} else if(o_function == CALCULATOR->f_diff && SIZE == 3 && CHILD(1) == x_var) {
 				CHILD(2) += 1;
 			} else if(o_function == CALCULATOR->f_diff && SIZE == 2 && CHILD(1) == x_var) {
@@ -5260,32 +5272,32 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 			break;
 		}
 		case STRUCT_SYMBOLIC: {
-			clear();
-			break;
-		}
-		case STRUCT_VARIABLE: {
 			if(representsNumber()) {
 				clear();
 			} else {
-				bool b = false;
-				if(eo.calculate_variables && o_variable->isKnown()) {
-					if(eo.approximation == APPROXIMATION_APPROXIMATE || !o_variable->isApproximate()) {
-						set(((KnownVariable*) o_variable)->get());
-						b = true;
-					}
-				}
-				if(!b) {
+				MathStructure mstruct3(1);
+				MathStructure mstruct(CALCULATOR->f_diff, this, &x_var, &mstruct3, NULL);
+				set(mstruct);
+				return false;
+			}
+			break;
+		}
+		case STRUCT_VARIABLE: {
+			if(eo.calculate_variables && o_variable->isKnown()) {
+				if(eo.approximation != APPROXIMATION_EXACT || !o_variable->isApproximate()) {
+					set(((KnownVariable*) o_variable)->get());
+					return differentiate(x_var, eo);
+				} else if(contains(x_var, true, true)) {
 					MathStructure mstruct3(1);
 					MathStructure mstruct(CALCULATOR->f_diff, this, &x_var, &mstruct3, NULL);
 					set(mstruct);
 					return false;
-				} else {
-					EvaluationOptions eo2 = eo;
-					eo2.calculate_variables = false;
-					return differentiate(x_var, eo2);
 				}
 			}
-			break;
+			if(representsNumber()) {
+				clear();
+				break;
+			}
 		}		
 		default: {
 			MathStructure mstruct3(1);
@@ -5296,6 +5308,188 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 	}
 	return true;
 }
+
+bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions &eo) {
+	if(equals(x_var)) {
+		raise(2);
+		multiply(MathStructure(1, 2));
+		return true;
+	}
+	if(!contains(x_var, true, true)) {
+		multiply(x_var);
+		return true;
+	}
+	switch(m_type) {
+		case STRUCT_ADDITION: {
+			for(unsigned int i = 0; i < SIZE; i++) {
+				CHILD(i).integrate(x_var, eo);
+			}
+			break;
+		}
+		case STRUCT_ALTERNATIVES: {
+			for(unsigned int i = 0; i < SIZE; i++) {
+				CHILD(i).integrate(x_var, eo);
+			}
+			break;
+		}
+		case STRUCT_AND: {}
+		case STRUCT_OR: {}
+		case STRUCT_XOR: {}
+		case STRUCT_COMPARISON: {}
+		case STRUCT_UNIT: {}
+		case STRUCT_NUMBER: {
+			multiply(x_var);
+			break;
+		}
+		case STRUCT_POWER: {
+			if(CHILD(0).equals(x_var)) {
+				if(CHILD(1).isNumber() && CHILD(1).number().isMinusOne()) {
+					MathStructure mstruct(CALCULATOR->f_abs, &x_var, NULL);
+					set(CALCULATOR->f_ln, &mstruct, NULL);
+					break;
+				} else if(CHILD(1).isNumber() || (!CHILD(1).contains(x_var, true, true) && CHILD(1).representsNonNegative())) {
+					CHILD(1) += 1;
+					MathStructure mstruct(CHILD(1));
+					divide(mstruct);
+					break;
+				}
+			} else if(CHILD(0).isVariable() && CHILD(0).variable() == CALCULATOR->v_e) {
+				if(CHILD(1).equals(x_var)) {
+					break;
+				} else if(CHILD(1).isMultiplication()) {
+					bool b = false;
+					unsigned int i = 0;
+					for(; i < CHILD(1).size(); i++) {
+						if(CHILD(1)[i].equals(x_var)) {
+							b = true;
+							break;
+						}
+					}
+					if(b) {
+						MathStructure mstruct;
+						if(CHILD(1).size() == 2) {
+							if(i == 0) {
+								mstruct = CHILD(1)[1];
+							} else {
+								mstruct = CHILD(1)[0];
+							}
+						} else {
+							mstruct = CHILD(1);
+							mstruct.delChild(i + 1);
+						}
+						if(mstruct.representsNonZero() && !mstruct.contains(x_var, true, true)) {
+							divide(mstruct);
+							break;
+						}
+					}
+				}
+			} else if(CHILD(1).equals(x_var) && !CHILD(0).contains(x_var, true, true) && CHILD(0).representsPositive()) {
+				MathStructure mstruct(CALCULATOR->f_ln, &CHILD(0), NULL);
+				CHILD(1) *= mstruct;
+				CHILD(0) = CALCULATOR->v_e;
+				return integrate(x_var, eo);
+			}
+			MathStructure mstruct(CALCULATOR->f_integrate, this, &x_var, NULL);
+			set(mstruct);
+			break;
+		}
+		case STRUCT_FUNCTION: {
+			if(o_function == CALCULATOR->f_ln && SIZE == 1 && CHILD(0) == x_var) {
+				multiply(x_var);
+				subtract(x_var);
+			} else if(o_function == CALCULATOR->f_sin && SIZE == 1 && CHILD(0) == x_var) {
+				o_function = CALCULATOR->f_cos;
+				multiply(-1);
+			} else if(o_function == CALCULATOR->f_cos && SIZE == 1 && CHILD(0) == x_var) {
+				o_function = CALCULATOR->f_sin;
+			} else if(o_function == CALCULATOR->f_diff && SIZE == 3 && CHILD(1) == x_var) {
+				if(CHILD(2).isOne()) {
+					MathStructure mstruct(CHILD(0));
+					set(mstruct);
+				} else {
+					CHILD(2) -= 1;
+				}
+			} else if(o_function == CALCULATOR->f_diff && SIZE == 2 && CHILD(1) == x_var) {
+				MathStructure mstruct(CHILD(0));
+				set(mstruct);
+			} else {
+				if(!eo.calculate_functions || !calculateFunctions(eo)) {
+					MathStructure mstruct(CALCULATOR->f_integrate, this, &x_var, NULL);
+					set(mstruct);
+					return false;
+				} else {
+					EvaluationOptions eo2 = eo;
+					eo2.calculate_functions = false;
+					return integrate(x_var, eo2);
+				}
+			}
+			break;
+		}
+		case STRUCT_MULTIPLICATION: {
+			MathStructure mstruct;
+			bool b = false;
+			for(unsigned int i = 0; i < SIZE; i++) {
+				if(!CHILD(i).contains(x_var)) {
+					if(b) {
+						mstruct *= CHILD(i);
+					} else {
+						mstruct = CHILD(i);
+						b = true;
+					}
+					ERASE(i);
+				}
+			}
+			if(b) {
+				if(SIZE == 1) {
+					MathStructure msave(CHILD(0));
+					set(msave);
+				} else if(SIZE == 0) {
+					set(mstruct);
+					break;	
+				}
+				integrate(x_var, eo);
+				multiply(mstruct);
+			} else {
+				return false;
+			}
+			break;
+		}
+		case STRUCT_SYMBOLIC: {
+			if(representsNumber()) {
+				multiply(x_var);
+			} else {
+				MathStructure mstruct(CALCULATOR->f_integrate, this, &x_var, NULL);
+				set(mstruct);
+				return false;
+			}
+			break;
+		}
+		case STRUCT_VARIABLE: {
+			if(eo.calculate_variables && o_variable->isKnown()) {
+				if(eo.approximation != APPROXIMATION_EXACT || !o_variable->isApproximate()) {
+					set(((KnownVariable*) o_variable)->get());
+					return integrate(x_var, eo);
+				} else if(contains(x_var, true, true)) {
+					MathStructure mstruct3(1);
+					MathStructure mstruct(CALCULATOR->f_integrate, this, &x_var, &mstruct3, NULL);
+					set(mstruct);
+					return false;
+				}
+			}
+			if(representsNumber()) {
+				multiply(x_var);
+				break;
+			}
+		}		
+		default: {
+			MathStructure mstruct(CALCULATOR->f_integrate, this, &x_var, NULL);
+			set(mstruct);
+			return false;
+		}	
+	}
+	return true;
+}
+
 
 const MathStructure &MathStructure::find_x_var() const {
 	if(isSymbolic()) {

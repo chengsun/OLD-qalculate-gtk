@@ -1177,7 +1177,12 @@ GtkWidget* get_periodic_dialog (void) {
 		
 		glade_xml_signal_autoconnect(periodictable_glade);
 		
-		Element *e;
+		DataCollection *dc = CALCULATOR->getDataCollection("atom");
+		if(!dc) {
+			return glade_xml_get_widget (periodictable_glade, "periodic_dialog");
+		}
+		
+		DataObject *e;
 		GtkWidget *e_button;
 		GtkTable *e_table = GTK_TABLE(glade_xml_get_widget (periodictable_glade, "periodic_table"));
 		periodic_tooltips = gtk_tooltips_new();
@@ -1188,11 +1193,23 @@ GtkWidget* get_periodic_dialog (void) {
 		c_black.red = 0x0000;
 		c_black.green = 0x0000;
 		c_black.blue = 0x0000;
-		for(unsigned int i = 1; ; i++) {
-			e = CALCULATOR->getElementByIndex(i);
-			if(!e) break;
-			if(e->x_pos > 0 && e->x_pos <= 18 && e->y_pos > 0 && e->y_pos <= 10) {
-				e_button = gtk_button_new_with_label(e->symbol.c_str());
+		DataProperty *p_xpos = dc->getProperty("x_pos");
+		DataProperty *p_ypos = dc->getProperty("y_pos");
+		DataProperty *p_weight = dc->getProperty("weight");
+		DataProperty *p_number = dc->getProperty("number");
+		DataProperty *p_symbol = dc->getProperty("symbol");
+		DataProperty *p_class = dc->getProperty("class");
+		DataProperty *p_name = dc->getProperty("name");
+		int x_pos, y_pos, group;
+		string weight;
+		for(unsigned int i = 1; i < 120; i++) {
+			e = dc->getObject(i2s(i));
+			if(e) {
+				x_pos = s2i(e->getProperty(p_xpos));
+				y_pos = s2i(e->getProperty(p_ypos));
+			}
+			if(e && x_pos > 0 && x_pos <= 18 && y_pos > 0 && y_pos <= 10) {
+				e_button = gtk_button_new_with_label(e->getProperty(p_symbol).c_str());
 				gtk_button_set_relief(GTK_BUTTON(e_button), GTK_RELIEF_HALF);
 				if(!e_style[0]) {
 					l_style = gtk_style_copy(gtk_widget_get_style(gtk_bin_get_child(GTK_BIN(e_button))));
@@ -1279,18 +1296,19 @@ GtkWidget* get_periodic_dialog (void) {
 						}
 					}
 				}
-				if(e->group > 0 && e->group <= 11) gtk_widget_set_style(e_button, e_style[e->group - 1]);
+				group = s2i(e->getProperty(p_class));
+				if(group > 0 && group <= 11) gtk_widget_set_style(e_button, e_style[group - 1]);
 				else gtk_widget_set_style(e_button, e_style[11]);
 				gtk_widget_set_style(gtk_bin_get_child(GTK_BIN(e_button)), l_style);
-				if(e->x_pos > 2) gtk_table_attach_defaults(e_table, e_button, e->x_pos + 1, e->x_pos + 2, e->y_pos, e->y_pos + 1);
-				else gtk_table_attach_defaults(e_table, e_button, e->x_pos, e->x_pos + 1, e->y_pos, e->y_pos + 1);
-				tip = i2s(e->number);
+				if(x_pos > 2) gtk_table_attach_defaults(e_table, e_button, x_pos + 1, x_pos + 2, y_pos, y_pos + 1);
+				else gtk_table_attach_defaults(e_table, e_button, x_pos, x_pos + 1, y_pos, y_pos + 1);
+				tip = e->getProperty(p_number);
 				tip += " ";
-				tip += e->name;
-				if(!e->weight.empty() && e->weight != "-") {
+				tip += e->getProperty(p_name);
+				weight = e->getPropertyDisplayString(p_weight);
+				if(!weight.empty() && weight != "-") {
 					tip += "\n";
-					tip += e->weight;
-					tip += " u";
+					tip += weight;
 				}
 				gtk_tooltips_set_tip(periodic_tooltips, e_button, tip.c_str(), "");
 				gtk_widget_show(e_button);

@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<QALCULATE version="0.6.4">
+  <category>
+    <_title>Data Collections</_title>
+    <data_collection>
+      <_title>Elements</_title>
+      <datafile>elements.xml</datafile>
+      <name index="1">
+        <reference>true</reference>
+        <_name>atom</_name>
+      </name>
+      <object_argument>
+        <_title>Element</_title>
+      </object_argument>
+      <property>
+        <_title>Symbol</_title>
+	<type>text</type>
+	<key>true</key>
+	<name index="1">
+          <_name>symbol</_name>
+        </name>
+      </property>
+      <property>
+        <_title>Number</_title>
+	<type>number</type>
+	<key>true</key>
+	<name index="1">
+          <_name>number</_name>
+        </name>
+      </property>
+      <property>
+        <_title>Name</_title>
+	<type>text</type>
+	<key>true</key>
+	<name index="1">
+          <_name>name</_name>
+        </name>
+      </property>
+      <property>
+        <_title>Classification</_title>
+	<type>text</type>
+	<name index="1">
+          <_name>class</_name>
+        </name>
+      </property>
+      <property>
+        <_title>Weight</_title>
+	<type>number</type>
+	<brackets>true</brackets>
+	<unit>u</unit>
+	<approximate>true</approximate>
+	<name index="1">
+          <_name>weight</_name>
+        </name>
+	<name index="2">
+          <_name>mass</_name>
+        </name>
+      </property>
+      <property>
+        <_title>X Position</_title>
+	<type>number</type>
+	<hidden>true</hidden>
+	<name index="1">
+          <_name>x_pos</_name>
+        </name>
+      </property>
+      <property>
+        <_title>Y Position</_title>
+	<type>number</type>
+	<hidden>true</hidden>
+	<name index="1">
+          <_name>y_pos</_name>
+        </name>
+      </property>
+    </data_collection>
+  </category>
+</QALCULATE>
+
