@@ -35,7 +35,6 @@ EqNumber::EqNumber(Manager *value_, MathOperation operation_) : EqItem(operation
 EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 	string ssave = str;
 	char s = PLUS_CH;
-	printf("%s\n", str.c_str());
 	for(int i = 0; i < (int) str.length() - 1; i++) {
 		if(str[i] == PLUS_CH || str[i] == SPACE_CH) {
 			str.erase(i, 1);

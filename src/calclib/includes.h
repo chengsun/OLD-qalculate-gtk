@@ -16,6 +16,13 @@
 #  include <config.h>
 #endif
 
+#ifdef HAVE_GIAC
+#  include <giac/giac.h>
+#  ifdef HAVE_CONFIG_H
+#    include <config.h>
+#  endif
+#endif
+
 class Calculator;
 class Manager;
 class Unit;
@@ -126,15 +133,16 @@ typedef enum {
 	DISPLAY_FORMAT_FRACTIONAL_ONLY		= 1 << 3,	
 	DISPLAY_FORMAT_DECIMAL_ONLY		= 1 << 4,	
 	DISPLAY_FORMAT_BEAUTIFY			= 1 << 5,
-	DISPLAY_FORMAT_NONASCII			= 1 << 6,
-	DISPLAY_FORMAT_TAGS			= 1 << 7,
-	DISPLAY_FORMAT_ALLOW_NOT_USABLE		= 1 << 8,
-	DISPLAY_FORMAT_USE_PREFIXES		= 1 << 9,
-	DISPLAY_FORMAT_SHORT_UNITS		= 1 << 10,
-	DISPLAY_FORMAT_LONG_UNITS		= 1 << 11,	
-	DISPLAY_FORMAT_HIDE_UNITS		= 1 << 12,
-	DISPLAY_FORMAT_INDICATE_INFINITE_SERIES	= 1 << 13,
-	DISPLAY_FORMAT_ALWAYS_DISPLAY_EXACT	= 1 << 14	
+	DISPLAY_FORMAT_DEFINITE			= 1 << 6,
+	DISPLAY_FORMAT_NONASCII			= 1 << 7,
+	DISPLAY_FORMAT_TAGS			= 1 << 8,
+	DISPLAY_FORMAT_ALLOW_NOT_USABLE		= 1 << 9,
+	DISPLAY_FORMAT_USE_PREFIXES		= 1 << 10,
+	DISPLAY_FORMAT_SHORT_UNITS		= 1 << 11,
+	DISPLAY_FORMAT_LONG_UNITS		= 1 << 12,	
+	DISPLAY_FORMAT_HIDE_UNITS		= 1 << 13,
+	DISPLAY_FORMAT_INDICATE_INFINITE_SERIES	= 1 << 14,
+	DISPLAY_FORMAT_ALWAYS_DISPLAY_EXACT	= 1 << 15	
 } DisplayFormatFlags;
 
 typedef enum {
@@ -195,6 +203,7 @@ using namespace std;
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
+
 
 #ifdef __GNUC__
 #   if __GNUC__ < 3

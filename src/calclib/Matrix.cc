@@ -696,7 +696,7 @@ string Vector::print(NumberFormat nrformat, int displayflags, int min_decimals, 
 			str += CALCULATOR->getComma();
 			str += " ";
 		}
-		str += get(index)->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
+		str += get(index)->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true);
 	}	
 	str += ")";
 	return str;

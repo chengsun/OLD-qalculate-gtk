@@ -7,7 +7,7 @@ dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
 AC_INIT(configure.in)
-AM_INIT_AUTOMAKE(qalculate-gtk, 0.3)
+AM_INIT_AUTOMAKE(qalculate-gtk, 0.3.1)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
@@ -78,6 +78,11 @@ AC_PATH_CLN(1.1.0, [
      	CPPFLAGS="$CPPFLAGS $CLN_CPPFLAGS"
   	AC_DEFINE(HAVE_LIBCLN,1,[If CLN can be used])
 ], AC_MSG_ERROR([No suitable installed version of CLN could be found.]))
+
+AC_CHECK_LIB(giac, main, [
+	LIBS="$LIBS -lgiac"
+	AC_DEFINE(HAVE_GIAC,1,[If giac can be used])
+], AC_MSG_WARN([No suitable installed version of giac could be found.]))
 
 dnl  -------------------------------------
 dnl | internationalization (i18n) support |------------------------------------

@@ -2263,11 +2263,11 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			for(unsigned int index = 0; index < mngrs.size(); index++) {
 				if(l_exp) delete l_exp;
 				l_exp = NULL;			
-				str += mngrs[index]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, set_prefix, false, NULL, l_exp, in_composite, in_power, true, print_equals);
 				if(index > 0) {
 					str += CALCULATOR->getComma();
 					str += " ";
-				}				
+				}
+				str += mngrs[index]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, set_prefix, false, NULL, l_exp, in_composite, in_power, true, print_equals, false, false);				
 			}
 			str += RIGHT_PARENTHESIS;
 			
@@ -2375,6 +2375,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 		}	
 		case MATRIX_MANAGER: {
 			str += mtrx->print(nrformat, displayflags, min_decimals, max_decimals, set_prefix, in_exact, usable, false, plural, l_exp, in_composite, in_power);
+			break;
 		}
 		case NOT_MANAGER: {
 			str += NOT;
@@ -2537,7 +2538,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			if(!in_power && displayflags & DISPLAY_FORMAT_TAGS) {
 				str += "</sup>";
 			}
-			if(!toplevel && wrap) wrap_all = true;
+			//if(!toplevel && wrap) wrap_all = true;
 			break;
 		} 
 		case MULTIPLICATION_MANAGER: {
@@ -2644,7 +2645,9 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 					
 					if(!m_i_prev) {
 						if(!string_fr.empty() || prepend_one) {
-							if(f_has_parenthesis[i]) {
+							if(displayflags & DISPLAY_FORMAT_DEFINITE) {
+								do_space.push_back(2);
+							} else if(f_has_parenthesis[i]) {
 								do_space.push_back(0);
 							} else {
 								if(m_i->isText() && (text_length_is_one(m_i->text()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->text() == "pi" || m_i->text() == "euler" || m_i->text() == "golden")))) {
@@ -2659,7 +2662,9 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 							do_space.push_back(0);
 						}
 					} else {
-						if(m_i_prev->countChilds() > 1 && !m_i_prev->isPower()) {
+						if(displayflags & DISPLAY_FORMAT_DEFINITE) {
+							do_space.push_back(2);
+						} else if(m_i_prev->countChilds() > 1 && !m_i_prev->isPower()) {
 							do_space.push_back(2);
 						} else if(f_has_parenthesis[i - 1]) {
 							if(f_has_parenthesis[i]) {
@@ -2673,6 +2678,8 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 							} else {
 								do_space.push_back(0);
 							}
+						} else if(m_i->isFunction() || m_i->isMatrix()) {
+							do_space.push_back(2);
 						} else if(m_i_prev->isFraction()) {
 							if(m_i->isText() && (text_length_is_one(m_i->text()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->text() == "pi" || m_i->text() == "euler" || m_i->text() == "golden")))) {
 								do_space.push_back(0);
@@ -2690,10 +2697,12 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 								do_space.push_back(2);
 							}
 						} else if(m_i_prev->isText() && (text_length_is_one(m_i_prev->text()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i_prev->text() == "pi" || m_i_prev->text() == "euler" || m_i_prev->text() == "golden")))) {
-							if(m_i->isUnit_exp()) {
+							if(m_i->isText() && (text_length_is_one(m_i->text()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->text() == "pi" || m_i->text() == "euler" || m_i->text() == "golden")))) {		
+								do_space.push_back(0);
+							} else if(m_i->isUnit_exp() || m_i->isPower() || m_i->isText()) {
 								do_space.push_back(1);
 							} else {
-								do_space.push_back(0);
+								do_space.push_back(2);
 							}
 						} else {
 							do_space.push_back(2);
@@ -2830,7 +2839,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 						num_mngrs[i]->ref();
 						num_mngr->push_back(num_mngrs[i]);
 					}
-					num_string = num_mngr->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, l_exp, in_composite, in_power, false, print_equals, true, true, false, NULL, 1, in_composite, NULL, &prefix_1, NULL, string_num_fr);
+					num_string = num_mngr->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, l_exp, in_composite, in_power, false, print_equals, true, false, false, NULL, 1, in_composite, NULL, &prefix_1, NULL, string_num_fr);
 					num_mngr->unref();
 				}
 				if(first_is_copy) {
@@ -2857,6 +2866,8 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				}
 				if(!num_string.empty()) {
 					str += num_string;
+				} else if(do_num_frac) {
+					str += string_num_fr;
 				} else {
 					str += "1";
 				}
@@ -2869,6 +2880,8 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				str += " ";
 				if(!den_string.empty()) {
 					str += den_string;
+				} else if(do_den_frac) {
+					str += string_den_fr;
 				} else {
 					str += "1";
 				}
@@ -2911,6 +2924,8 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			if(!toplevel && wrap) wrap_all = true;
 			
 			toplevel = false;
+			
+			break;
 		}		
 	}
 	if(wrap_all && !str.empty()) {
@@ -2999,6 +3014,461 @@ void Manager::replace_no_copy(Manager *replace_this, Manager *replace_with) {
 	}
 	clean();
 }
+
+#ifdef HAVE_GIAC
+giac::gen Manager::toGiac(bool *failed) const {
+	if(failed) *failed = false;
+	giac::unary_function_ptr *ufp = NULL;
+	switch(type()) {
+		case FRACTION_MANAGER: {
+			if(fr->isInteger()) {
+				return giac::gen(fr->numerator()->print());
+			} else {
+				return giac::fraction(fr->numerator()->print(), fr->denominator()->print());
+			}
+		} 
+		case STRING_MANAGER: {
+			return giac::identificateur(text());
+		}
+		case UNIT_MANAGER: {
+			string id = "_unit_";
+			id += unit()->name();
+			return giac::identificateur(id);
+		}
+		case FUNCTION_MANAGER: {
+			if(function()->name() == "ln") ufp = &giac::at_ln;
+			else if(function()->name() == "log10") ufp = &giac::at_log10;
+			else if(function()->name() == "exp") ufp = &giac::at_exp;
+			else if(function()->name() == "sqrt") ufp = &giac::at_sqrt;
+			else if(function()->name() == "floor") ufp = &giac::at_floor;
+			else if(function()->name() == "ceil") ufp = &giac::at_ceil;
+			else if(function()->name() == "round") ufp = &giac::at_round;
+			else if(function()->name() == "gcd") ufp = &giac::at_gcd;
+			else if(function()->name() == "min") ufp = &giac::at_min;
+			else if(function()->name() == "max") ufp = &giac::at_max;
+			else if(function()->name() == "sin") ufp = &giac::at_sin;
+			else if(function()->name() == "cos") ufp = &giac::at_cos;
+			else if(function()->name() == "tan") ufp = &giac::at_tan;
+			else if(function()->name() == "asin") ufp = &giac::at_asin;
+			else if(function()->name() == "acos") ufp = &giac::at_acos;
+			else if(function()->name() == "atan") ufp = &giac::at_atan;
+			else if(function()->name() == "sinh") ufp = &giac::at_sinh;
+			else if(function()->name() == "cosh") ufp = &giac::at_cosh;
+			else if(function()->name() == "tanh") ufp = &giac::at_tanh;
+			else if(function()->name() == "asinh") ufp = &giac::at_asinh;
+			else if(function()->name() == "acosh") ufp = &giac::at_acosh;
+			else if(function()->name() == "atanh") ufp = &giac::at_atanh;
+			if(!ufp) {
+				string id = "_function_";
+				id += print();
+				return giac::identificateur(id);
+			}
+		}
+		case POWER_MANAGER: {}
+		case AND_MANAGER: {}
+		case OR_MANAGER: {}
+		case COMPARISON_MANAGER: {}
+		case MULTIPLICATION_MANAGER: {} 
+		case NOT_MANAGER: {} 
+		case ALTERNATIVE_MANAGER: {}
+		case ADDITION_MANAGER: {
+			giac::gen v_g;
+			bool b_failed;
+			if(mngrs.size() == 1 && !mngrs[0]->isMatrix()) {
+				bool b_failed;
+				v_g = mngrs[0]->toGiac(&b_failed);
+				if(b_failed) {
+					if(failed) *failed = true;
+					giac::gen g;
+					return g;
+				}
+			} else {
+				giac::vecteur v;
+				for(unsigned int i = 0; i < mngrs.size(); i++) {
+					giac::gen f = mngrs[i]->toGiac(&b_failed);
+					if(b_failed) {
+				
+					} else {
+						v.push_back(f);
+					}
+				}
+				if(v.size() == 0) {
+					if(failed) *failed = true;
+					giac::gen g;
+					return g;
+				}
+				v_g = v;
+			}
+			if(isPower()) {
+				return giac::symbolic(giac::at_pow, v_g);
+			} else if(isAddition()) {
+				return giac::symbolic(giac::at_plus, v_g);
+			} else if(isMultiplication()) {
+				return giac::symbolic(giac::at_prod, v_g);
+			} else if(isAND()) {
+				return giac::symbolic(giac::at_and, v_g);
+			} else if(isOR()) {
+				return giac::symbolic(giac::at_ou, v_g);
+			} else if(isNOT()) {
+				return giac::symbolic(giac::at_not, v_g);
+			} else if(isComparison()) {
+				switch(comparison_type) {
+					case COMPARISON_EQUALS: return giac::symbolic(giac::at_equal, v_g);
+					case COMPARISON_NOT_EQUALS: return giac::symbolic(giac::at_different, v_g);
+					case COMPARISON_LESS: return giac::symbolic(giac::at_inferieur, v_g);
+					case COMPARISON_GREATER: return giac::symbolic(giac::at_superieur, v_g);
+					case COMPARISON_EQUALS_LESS: return giac::symbolic(giac::at_inf_ou_egal, v_g);
+					case COMPARISON_EQUALS_GREATER: return giac::symbolic(giac::at_sup_ou_egal, v_g);
+				}
+			} else if(isFunction()) {
+				return giac::symbolic(*ufp, v_g);
+			} else if(isAlternatives()) {
+				return v_g;
+			}
+		}
+		case MATRIX_MANAGER: {		
+			bool b_failed;
+			if(mtrx->isVector()) {
+				giac::vecteur v;
+				for(unsigned int i = 1; i <= ((Vector*) mtrx)->components(); i++) {
+					giac::gen f = ((Vector*) mtrx)->get(i)->toGiac(&b_failed);
+					if(b_failed) {
+				
+					} else {
+						v.push_back(f);
+					}
+				}
+				return v;
+			} else {
+				giac::vecteur v;
+				for(unsigned int index_r = 1; index_r <= mtrx->rows(); index_r++) {
+					giac::vecteur v_r;
+					for(unsigned int index_c = 1; index_c <= mtrx->columns(); index_c++) {
+						giac::gen f = mtrx->get(index_r, index_c)->toGiac(&b_failed);
+						if(b_failed) {
+				
+						} else {
+							v.push_back(f);
+						}
+					}
+					v.push_back(v_r);
+				}
+				return v;
+			}
+		}
+		default: {
+			if(failed) *failed = true;
+			giac::gen g;
+			return g;
+		}
+	}
+}
+Manager::Manager(const giac::gen &giac_gen) {
+	init();
+	set(giac_gen);
+}
+
+void Manager::set(const giac::gen &giac_gen) {
+	clear();
+	switch(giac_gen.type) {
+		case giac::_INT_: {
+			printf("_INT_: %s\n", giac_gen.print().c_str());
+			set(giac_gen.val, 1);
+			break;
+		}
+		case giac::_DOUBLE_: {
+			printf("_DOUBLE_: %s\n", giac_gen.print().c_str());
+			set(giac_gen._DOUBLE_val);
+			setPrecise(false);
+			break;
+		}
+		case giac::_ZINT: {
+			printf("_ZINT: %s\n", giac_gen.print().c_str());
+			Fraction fr(giac_gen.print());
+			set(&fr);
+			break;
+		}
+		case giac::_REAL: {
+			printf("_REAL: %s\n", giac_gen.print().c_str());
+			Fraction fr(giac_gen.print());
+			set(&fr);
+			setPrecise(false);
+			break;
+		}
+		case giac::_CPLX: {
+			printf("_CPLX: %s\n", giac_gen.print().c_str());
+			CALCULATOR->error(true, _("Cannot yet handle complex numbers. The imaginary part (%s) is note used."), giac_gen._CPLXptr[1].print().c_str(), NULL);
+			set(giac_gen._CPLXptr[0]);
+			break;
+		}
+		case giac::_POLY: {
+			printf("_POLY: %s\n", giac_gen.print().c_str());
+			CALCULATOR->error(true, _("Cannot yet handle polynomes. %s wad ignored."), giac_gen.print().c_str(), NULL);
+			break;
+		}
+		case giac::_IDNT: {
+			printf("_IDNT: %s\n", giac_gen.print().c_str());
+			if(giac_gen._IDNTptr->name->length() > 6 && giac_gen._IDNTptr->name->substr(0, 6) == "_unit_") {
+				set(CALCULATOR->getUnit(giac_gen._IDNTptr->name->substr(6, giac_gen._IDNTptr->name->length() - 6)));
+			} else if(giac_gen._IDNTptr->name->length() > 10 && giac_gen._IDNTptr->name->substr(0, 10) == "_function_") {
+				CALCULATOR->beginTemporaryStopErrors();
+				Manager *mngr = CALCULATOR->calculate(giac_gen._IDNTptr->name->substr(10, giac_gen._IDNTptr->name->length() - 10));
+				CALCULATOR->endTemporaryStopErrors();
+				set(mngr);
+				mngr->unref();
+			} else {
+				set(*giac_gen._IDNTptr->name);
+			}
+			break;
+		}
+		case giac::_VECT: {
+			printf("_VECT: %s\n", giac_gen.print().c_str());
+			if(ckmatrix(giac_gen)) {
+				c_type = MATRIX_MANAGER;
+				mtrx = new Matrix(giac_gen._VECTptr->size(), (*giac_gen._VECTptr)[0]._VECTptr->size());
+				for(unsigned int i = 0; i < giac_gen._VECTptr->size(); i++) {
+					for(unsigned int i2 = 0; i2 < (*giac_gen._VECTptr)[i]._VECTptr->size(); i2++) {
+						mtrx->get(i + 1, i2 + 1)->set((*(*giac_gen._VECTptr)[i]._VECTptr)[i2]);
+					}
+				}
+				if(!mtrx->isPrecise()) setPrecise(false);
+			} else {
+				c_type = MATRIX_MANAGER;
+				mtrx = new Vector(giac_gen._VECTptr->size());
+				for(unsigned int i = 0; i < giac_gen._VECTptr->size(); i++) {
+					((Vector*) mtrx)->get(i + 1)->set((*giac_gen._VECTptr)[i]);
+				}
+				if(!mtrx->isPrecise()) setPrecise(false);
+			}
+			break;
+		}
+		case giac::_SYMB: {
+			printf("_SYMB: %s\n", giac_gen.print().c_str());
+			printf("%s\n", giac_gen._SYMBptr->sommet.ptr->s.c_str());
+			printf("%s\n", giac_gen._SYMBptr->feuille.print().c_str());
+			Function *f = NULL;
+			int t = -1;
+			bool b_sort = false, b_two = false, trig = false;
+			if(giac_gen._SYMBptr->sommet == giac::at_prod) {
+				b_sort = true;
+				b_two = true;
+				t = MULTIPLICATION_MANAGER;
+			} else if(giac_gen._SYMBptr->sommet == giac::at_pow) {
+				if(giac_gen._SYMBptr->feuille.type == giac::_VECT  && !ckmatrix(giac_gen._SYMBptr->feuille) && giac_gen._SYMBptr->feuille._VECTptr->size() == 2) {
+					c_type = POWER_MANAGER;
+					push_back(new Manager((*giac_gen._SYMBptr->feuille._VECTptr)[0]));
+					push_back(new Manager((*giac_gen._SYMBptr->feuille._VECTptr)[1]));
+				} else {
+					f = CALCULATOR->getFunction("pow");
+				}
+			} else if(giac_gen._SYMBptr->sommet == giac::at_plus) {
+				b_sort = true;
+				b_two = true;
+				t = ADDITION_MANAGER;
+			} else if(giac_gen._SYMBptr->sommet == giac::at_division) {
+				if(giac_gen._SYMBptr->feuille.type == giac::_VECT  && !ckmatrix(giac_gen._SYMBptr->feuille) && giac_gen._SYMBptr->feuille._VECTptr->size() == 2) {
+					if(is_one((*giac_gen._SYMBptr->feuille._VECTptr)[0])) {
+						c_type = POWER_MANAGER;
+						push_back(new Manager((*giac_gen._SYMBptr->feuille._VECTptr)[1]));
+						push_back(new Manager(-1, 1));
+					} else {
+						c_type = MULTIPLICATION_MANAGER;				
+						push_back(new Manager((*giac_gen._SYMBptr->feuille._VECTptr)[0]));
+						Manager *mngr = new Manager();
+						mngr->setType(POWER_MANAGER);
+						mngr->push_back(new Manager((*giac_gen._SYMBptr->feuille._VECTptr)[1]));
+						mngr->push_back(new Manager(-1, 1));
+						push_back(mngr);
+						sort();
+					}
+				} else {
+					f = CALCULATOR->getFunction("div");
+				}
+			} else if(giac_gen._SYMBptr->sommet == giac::at_neg) {
+				if(giac_gen._SYMBptr->feuille.type == giac::_VECT && !ckmatrix(giac_gen._SYMBptr->feuille)) {
+					f = CALCULATOR->getFunction("neg");
+				} else {
+					c_type = MULTIPLICATION_MANAGER;
+					push_back(new Manager(-1, 1));
+					push_back(new Manager(giac_gen._SYMBptr->feuille));
+				}
+			} else if(giac_gen._SYMBptr->sommet == giac::at_inv) {
+				if(giac_gen._SYMBptr->feuille.type == giac::_VECT && !ckmatrix(giac_gen._SYMBptr->feuille)) {
+					f = CALCULATOR->getFunction("inv");
+				} else {
+					c_type = POWER_MANAGER;
+					push_back(new Manager(giac_gen._SYMBptr->feuille));
+					push_back(new Manager(-1, 1));
+				}
+			} else if(giac_gen._SYMBptr->sommet == giac::at_and) {
+				b_sort = true;
+				b_two = true;
+				t = AND_MANAGER;
+			} else if(giac_gen._SYMBptr->sommet == giac::at_ou) {
+				b_sort = true;
+				b_two = true;
+				t = OR_MANAGER;
+			} else if(giac_gen._SYMBptr->sommet == giac::at_equal) {
+				comparison_type = COMPARISON_EQUALS;
+				b_sort = true;
+				b_two = true;
+				t = COMPARISON_MANAGER;
+			} else if(giac_gen._SYMBptr->sommet == giac::at_different) {
+				comparison_type = COMPARISON_NOT_EQUALS;
+				b_sort = true;
+				b_two = true;
+				t = COMPARISON_MANAGER;
+			} else if(giac_gen._SYMBptr->sommet == giac::at_inferieur) {
+				comparison_type = COMPARISON_LESS;
+				b_sort = true;
+				b_two = true;
+				t = COMPARISON_MANAGER;
+			} else if(giac_gen._SYMBptr->sommet == giac::at_superieur) {
+				comparison_type = COMPARISON_GREATER;
+				b_sort = true;
+				b_two = true;
+				t = COMPARISON_MANAGER;
+			} else if(giac_gen._SYMBptr->sommet == giac::at_sup_ou_egal) {
+				comparison_type = COMPARISON_EQUALS_GREATER;
+				b_sort = true;
+				b_two = true;
+				t = COMPARISON_MANAGER;
+			} else if(giac_gen._SYMBptr->sommet == giac::at_inf_ou_egal) {
+				comparison_type = COMPARISON_EQUALS_LESS;
+				b_sort = true;
+				b_two = true;
+				t = COMPARISON_MANAGER;
+			} else if(giac_gen._SYMBptr->sommet == giac::at_sqrt) {
+				if(giac_gen._SYMBptr->feuille.type == giac::_VECT && !ckmatrix(giac_gen._SYMBptr->feuille)) {
+					f = CALCULATOR->getFunction("sqrt");
+				} else {
+					c_type = POWER_MANAGER;
+					push_back(new Manager(giac_gen._SYMBptr->feuille));
+					push_back(new Manager(1, 2));
+				}
+			} else if(giac_gen._SYMBptr->sommet == giac::at_sq) {
+				if(giac_gen._SYMBptr->feuille.type == giac::_VECT && !ckmatrix(giac_gen._SYMBptr->feuille)) {
+					f = CALCULATOR->getFunction("sq");
+				} else {
+					c_type = POWER_MANAGER;
+					push_back(new Manager(giac_gen._SYMBptr->feuille));
+					push_back(new Manager(2, 1));
+				}
+			} else if(giac_gen._SYMBptr->sommet == giac::at_not) {
+				if(giac_gen._SYMBptr->feuille.type == giac::_VECT && !ckmatrix(giac_gen._SYMBptr->feuille)) {
+					f = CALCULATOR->getFunction("not");
+				} else {
+					c_type = NOT_MANAGER;
+					push_back(new Manager(giac_gen._SYMBptr->feuille));
+				}
+			} 
+			else if(giac_gen._SYMBptr->sommet == giac::at_ln) f = CALCULATOR->getFunction("ln");
+			else if(giac_gen._SYMBptr->sommet == giac::at_min) f = CALCULATOR->getFunction("min");
+			else if(giac_gen._SYMBptr->sommet == giac::at_max) f = CALCULATOR->getFunction("max");
+			else if(giac_gen._SYMBptr->sommet == giac::at_log10) f = CALCULATOR->getFunction("log10");
+			else if(giac_gen._SYMBptr->sommet == giac::at_exp) f = CALCULATOR->getFunction("exp");
+			else if(giac_gen._SYMBptr->sommet == giac::at_floor) f = CALCULATOR->getFunction("floor");
+			else if(giac_gen._SYMBptr->sommet == giac::at_ceil) f = CALCULATOR->getFunction("ceil");
+			else if(giac_gen._SYMBptr->sommet == giac::at_round) f = CALCULATOR->getFunction("round");
+			else if(giac_gen._SYMBptr->sommet == giac::at_gcd) f = CALCULATOR->getFunction("gcd");
+			else if(giac_gen._SYMBptr->sommet == giac::at_sin) {trig = true; f = CALCULATOR->getFunction("sin");}
+			else if(giac_gen._SYMBptr->sommet == giac::at_cos) {trig = true; f = CALCULATOR->getFunction("cos");}
+			else if(giac_gen._SYMBptr->sommet == giac::at_tan) {trig = true; f = CALCULATOR->getFunction("tan");}
+			else if(giac_gen._SYMBptr->sommet == giac::at_asin) {trig = true; f = CALCULATOR->getFunction("asin");}
+			else if(giac_gen._SYMBptr->sommet == giac::at_acos) {trig = true; f = CALCULATOR->getFunction("acos");}
+			else if(giac_gen._SYMBptr->sommet == giac::at_atan) {trig = true; f = CALCULATOR->getFunction("atan");}
+			else if(giac_gen._SYMBptr->sommet == giac::at_sinh) {trig = true; f = CALCULATOR->getFunction("sinh");}
+			else if(giac_gen._SYMBptr->sommet == giac::at_cosh) {trig = true; f = CALCULATOR->getFunction("cosh");}
+			else if(giac_gen._SYMBptr->sommet == giac::at_tanh) {trig = true; f = CALCULATOR->getFunction("tanh");}
+			else if(giac_gen._SYMBptr->sommet == giac::at_asinh) {trig = true; f = CALCULATOR->getFunction("asinh");}
+			else if(giac_gen._SYMBptr->sommet == giac::at_acosh) {trig = true; f = CALCULATOR->getFunction("acosh");}
+			else if(giac_gen._SYMBptr->sommet == giac::at_atanh) {trig = true; f = CALCULATOR->getFunction("atanh");}
+			
+			if(f || t >= 0) {
+				if(f) {
+					set(f, NULL); 
+				} else {
+					c_type = t;
+				}
+				if(giac_gen._SYMBptr->feuille.type == giac::_VECT && !ckmatrix(giac_gen._SYMBptr->feuille)) {
+					if(giac_gen._SYMBptr->feuille._VECTptr->size() == 1 && b_two) {
+						set((*giac_gen._SYMBptr->feuille._VECTptr)[0]);
+					} else {
+						for(unsigned int i = 0; i < giac_gen._SYMBptr->feuille._VECTptr->size(); i++) {
+							push_back(new Manager((*giac_gen._SYMBptr->feuille._VECTptr)[i]));
+						}
+					}
+				} else {
+					if(b_two) {
+						set(giac_gen._SYMBptr->feuille);
+					} else if(trig) {
+						Manager *mngr = new Manager(); 
+						mngr->setType(MULTIPLICATION_MANAGER); 
+						mngr->push_back(new Manager(giac_gen._SYMBptr->feuille)); 
+						mngr->push_back(new Manager(CALCULATOR->getUnit("rad")));
+						push_back(mngr);
+					} else {
+						push_back(new Manager(giac_gen._SYMBptr->feuille));
+					}
+				}
+				if(b_sort) {
+					sort();
+				}
+			}
+			break;
+		}
+		case giac::_SPOL1: {
+			printf("_SPOL1: %s\n", giac_gen.print().c_str());
+			CALCULATOR->error(true, _("Cannot yet handle sparse polynomes. %s was ignored."), giac_gen.print().c_str(), NULL);
+			break;
+		}
+		case giac::_FRAC: {
+			printf("_FRAC: %s\n", giac_gen.print().c_str());
+			set(giac_gen._FRACptr->num);
+			Manager mngr(giac_gen._FRACptr->den);
+			add(&mngr, OPERATION_DIVIDE);
+			break;
+		}
+		case giac::_EXT: {
+			printf("_EXT: %s\n", giac_gen.print().c_str());
+			CALCULATOR->error(true, _("Cannot yet handle giac alg. extensions. %s was ignored."), giac_gen.print().c_str(), NULL);
+			break;
+		}
+		case giac::_STRNG: {
+			printf("_STRNG: %s\n", giac_gen.print().c_str());
+			set(*giac_gen._STRNGptr);
+			break;
+		}
+		case giac::_FUNC: {
+			printf("_FUNC: %s\n", giac_gen.print().c_str());
+			CALCULATOR->error(true, _("Cannot yet handle giac functions. %s was ignored."), giac_gen.print().c_str(), NULL);
+			break;
+		}
+		case giac::_ROOT: {
+			printf("_ROOT: %s\n", giac_gen.print().c_str());
+			CALCULATOR->error(true, _("Cannot yet handle real complex root of. %s was ignored."), giac_gen.print().c_str(), NULL);
+			break;
+		}
+		case giac::_MOD: {
+			printf("_MOD: %s\n", giac_gen.print().c_str());
+			CALCULATOR->error(true, _("Cannot yet handle giac mod. %s was ignored."), giac_gen.print().c_str(), NULL);
+			break;
+		}
+		case giac::_USER: {
+			printf("_USER: %s\n", giac_gen.print().c_str());
+			CALCULATOR->error(true, _("Cannot handle giac user objects. %s was ignored."), giac_gen.print().c_str(), NULL);
+			break;
+		}
+	}	
+}
+
+void Manager::simplify() {
+	set(giac::simplify(toGiac()));
+}
+void Manager::factor() {
+	set(giac::factor(toGiac()));
+}
+#endif
 
 /*void Manager::differentiate(string x_var) {
 	Manager *a_mngr = new Manager(this);

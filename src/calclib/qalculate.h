@@ -12,6 +12,7 @@
 #ifndef QALCULATE_H
 #define QALCULATE_H
 
+#include "config.h"
 #include "includes.h"
 #include "util.h"
 #include "Calculator.h"

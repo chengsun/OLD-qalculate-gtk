@@ -89,6 +89,10 @@ create_main_window (void)
 	/* make sure we get a valid main window */
 	g_assert (glade_xml_get_widget (main_glade, "main_window") != NULL);
 
+#ifndef HAVE_GIAC
+	gtk_widget_destroy(glade_xml_get_widget(main_glade, "menu_item_factorize"));
+#endif
+
 	expression = glade_xml_get_widget (main_glade, "expression");
 	resultview = glade_xml_get_widget (main_glade, "resultview");
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "red_foreground", "foreground", "red", NULL);
@@ -540,6 +544,7 @@ get_preferences_dialog (void)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_unicode_signs")), use_unicode_signs);	
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_custom_font")), use_custom_font);		
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_all_prefixes")), CALCULATOR->allPrefixesEnabled());
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_denominator_prefix")), CALCULATOR->denominatorPrefixEnabled());
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_multiple_roots")), CALCULATOR->multipleRootsEnabled());
 		gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_font"), use_custom_font);	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_button_font")), custom_font.c_str());

@@ -1842,7 +1842,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			for(unsigned int index = 0; index < m->countChilds(); index++) {
 				if(l_exp) delete l_exp;
 				l_exp = NULL;			
-				pixmap_args.push_back(draw_manager(m->getChild(index), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &ctmp));
+				pixmap_args.push_back(draw_manager(m->getChild(index), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &ctmp, false, false));
 				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_args[index]), &wtmp, &htmp);
 				hpa.push_back(htmp);
 				cpa.push_back(ctmp);				
@@ -2899,6 +2899,8 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							} else {
 								do_space.push_back(0);
 							}
+						} else if(m_i->isFunction()) {	
+							do_space.push_back(2);
 						} else if(m_i_prev->isFraction()) {
 							if(m_i->isText() && (text_length_is_one(m_i->text()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->text() == "pi" || m_i->text() == "euler" || m_i->text() == "golden")))) {
 								do_space.push_back(0);
@@ -2916,10 +2918,12 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 								do_space.push_back(2);
 							}
 						} else if(m_i_prev->isText() && (text_length_is_one(m_i_prev->text()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i_prev->text() == "pi" || m_i_prev->text() == "euler" || m_i_prev->text() == "golden")))) {
-							if(m_i->isUnit_exp()) {
+							if(m_i->isText() && (text_length_is_one(m_i->text()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->text() == "pi" || m_i->text() == "euler" || m_i->text() == "golden")))) {		
+								do_space.push_back(0);
+							} else if(m_i->isUnit_exp() || m_i->isPower() || m_i->isText()) {
 								do_space.push_back(1);
 							} else {
-								do_space.push_back(0);
+								do_space.push_back(2);
 							}
 						} else {
 							do_space.push_back(2);
@@ -3131,7 +3135,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						num_mngrs[i]->ref();
 						num_mngr->push_back(num_mngrs[i]);
 					}
-					num_pixmap = draw_manager(num_mngr, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, l_exp, in_composite, in_power, false, &num_dh, true, div == 1 && in_power, false, NULL, 1, in_composite, NULL, &prefix_1, NULL, pixmap_num_fr);
+					num_pixmap = draw_manager(num_mngr, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, l_exp, in_composite, in_power, false, &num_dh, true, false, false, NULL, 1, in_composite, NULL, &prefix_1, NULL, pixmap_num_fr);
 					num_mngr->unref();
 				}
 				if(first_is_copy) {
@@ -3148,6 +3152,16 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					}
 					den_pixmap = draw_manager(den_mngr, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, l_exp, in_composite, in_power, false, &den_dh, true, div == 1 && in_power, false, NULL, 2, true, NULL, &prefix_2, NULL, pixmap_den_fr);
 					den_mngr->unref();
+				}
+				if(!num_pixmap && do_num_frac) {
+					num_pixmap = pixmap_num_fr;
+					gdk_drawable_get_size(GDK_DRAWABLE(num_pixmap), &num_w, &h);
+					num_dh = h / 2;
+				}
+				if(!den_pixmap && do_den_frac) {
+					den_pixmap = pixmap_den_fr;
+					gdk_drawable_get_size(GDK_DRAWABLE(den_pixmap), &den_w, &h);
+					den_dh = h / 2;
 				}
 				if(num_pixmap) {
 					gdk_drawable_get_size(GDK_DRAWABLE(num_pixmap), &num_w, &h);
@@ -3352,6 +3366,8 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			if(!toplevel && wrap) wrap_all = true;
 			
 			toplevel = false;
+			
+			break;
 		}		
 	}
 	if(wrap_all && pixmap) {
@@ -4155,17 +4171,17 @@ run_unit_edit_dialog:
 
 		//unit with the same name exists -- overwrite or open the dialog again
 		if(type == UNIT_CLASS_COMPOSITE_UNIT) {
-			if((!u || u->referenceName() != gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_internal")))) && CALCULATOR->nameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_internal"))), u) && !ask_question(_("A variable or unit with the same internal name already exists.\nOverwrite unit?"), dialog)) {
+			if((!u || u->referenceName() != gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_internal")))) && CALCULATOR->nameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_internal"))), u) && !ask_question(_("A variable or unit with the same internal name already exists.\nDo you want to overwrite it?"), dialog)) {
 				goto run_unit_edit_dialog;
 			}		
 		} else {
-			if((!u || u->name() != gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_name")))) && CALCULATOR->nameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_name"))), u) && !ask_question(_("A variable or unit with the same name already exists.\nOverwrite unit?"), dialog)) {
+			if((!u || u->name() != gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_name")))) && CALCULATOR->nameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_name"))), u) && !ask_question(_("A variable or unit with the same name already exists.\nDo you want to overwrite it?"), dialog)) {
 				goto run_unit_edit_dialog;
 			}
-			if((!u || u->plural(false) != gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_plural")))) && CALCULATOR->nameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_plural"))), u) && !ask_question(_("A variable or unit with the same plural name already exists.\nOverwrite unit?"), dialog)) {
+			if((!u || u->plural(false) != gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_plural")))) && CALCULATOR->nameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_plural"))), u) && !ask_question(_("A variable or unit with the same plural name already exists.\nDo you want to overwrite it?"), dialog)) {
 				goto run_unit_edit_dialog;
 			}
-			if((!u || u->singular(false) != gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_singular")))) && CALCULATOR->nameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_singular"))), u) && !ask_question(_("A variable or unit with the same singular name already exists.\nOverwrite unit?"), dialog)) {
+			if((!u || u->singular(false) != gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_singular")))) && CALCULATOR->nameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_singular"))), u) && !ask_question(_("A variable or unit with the same singular name already exists.\nDo you want to overwrite it?"), dialog)) {
 				goto run_unit_edit_dialog;
 			}
 		}
@@ -4486,7 +4502,7 @@ run_function_edit_dialog:
 		gtk_text_buffer_get_start_iter(description_buffer, &d_iter_s);
 		gtk_text_buffer_get_end_iter(description_buffer, &d_iter_e);
 		//function with the same name exists -- overwrite or open the dialog again
-		if((!f || str != f->name()) && CALCULATOR->nameTaken(str, f) && !ask_question(_("A function with the same name already exists.\nOverwrite function?"), dialog)) {
+		if((!f || str != f->name()) && CALCULATOR->nameTaken(str, f) && !ask_question(_("A function with the same name already exists.\nDo you want to overwrite the function?"), dialog)) {
 			goto run_function_edit_dialog;
 		}	
 		if(f) {
@@ -4678,7 +4694,7 @@ run_variable_edit_dialog:
 		}
 
 		//variable with the same name exists -- overwrite or open dialog again
-		if((!v || str != v->name()) && CALCULATOR->nameTaken(str, v) && !ask_question(_("An unit or variable with the same name already exists.\nOverwrite unit/variable?"), dialog)) {
+		if((!v || str != v->name()) && CALCULATOR->nameTaken(str, v) && !ask_question(_("An unit or variable with the same name already exists.\nDo you want to overwrite it?"), dialog)) {
 			goto run_variable_edit_dialog;
 		}
 		if(!v) {
@@ -4868,7 +4884,7 @@ run_matrix_edit_dialog:
 		}
 
 		//variable with the same name exists -- overwrite or open dialog again
-		if((!v || str != v->name()) && CALCULATOR->nameTaken(str) && !ask_question(_("An unit or variable with the same name already exists.\nOverwrite unit/variable?"), dialog)) {
+		if((!v || str != v->name()) && CALCULATOR->nameTaken(str) && !ask_question(_("An unit or variable with the same name already exists.\nDo you want to overwrite it?"), dialog)) {
 			goto run_matrix_edit_dialog;
 		}
 		if(!v) {
@@ -6220,6 +6236,13 @@ void on_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer user_data) {
 	number_base = BASE_HEX;
 	setResult(result_text.c_str());
 	gtk_widget_grab_focus(expression);
+}
+void on_menu_item_factorize_activate(GtkMenuItem *w, gpointer user_data) {
+#ifdef HAVE_GIAC
+	mngr->factor();
+	setResult(result_text.c_str());
+	gtk_widget_grab_focus(expression);
+#endif
 }
 void on_menu_item_convert_number_bases_activate(GtkMenuItem *w, gpointer user_data) {
 	changing_in_nbases_dialog = false;

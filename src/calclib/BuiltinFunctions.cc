@@ -20,8 +20,8 @@
 #include <sstream>
 
 #define TRIG_FUNCTION(FUNC)	mngr->set(vargs[0]); CALCULATOR->setAngleValue(mngr); if(!mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);} else {mngr->setPrecise(mngr->fraction()->isPrecise());}
-#define FR_FUNCTION(FUNC)	mngr->set(vargs[0]); if(!mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);}
-#define FR_FUNCTION_2(FUNC)	mngr->set(vargs[0]); if(!mngr->fraction()->FUNC(vargs[1]->fraction())) {mngr->set(this, vargs[0], vargs[1], NULL);}
+#define FR_FUNCTION(FUNC)	mngr->set(vargs[0]); if(!mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);} else {mngr->setPrecise(mngr->fraction()->isPrecise());}
+#define FR_FUNCTION_2(FUNC)	mngr->set(vargs[0]); if(!mngr->fraction()->FUNC(vargs[1]->fraction())) {mngr->set(this, vargs[0], vargs[1], NULL);} else {mngr->setPrecise(mngr->fraction()->isPrecise());}
 
 
 
@@ -1387,3 +1387,71 @@ void LengthFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]->text().length());
 }
 
+#ifdef HAVE_GIAC
+SolveFunction::SolveFunction() : Function("CAS", "solve", 1, "Solve equation", "", 2) {
+	setArgumentDefinition(2, new TextArgument());
+	setDefaultValue(2, "\"x\"");		
+}
+void SolveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	bool failed = false;
+	giac::gen v1 = vargs[0]->toGiac(&failed);
+	if(failed) {
+		CALCULATOR->error(true, _("Conversion to Giac failed."), NULL);
+		mngr->set(this, vargs[0], vargs[1], NULL);
+		return;
+	}
+	giac::identificateur id(vargs[1]->text());
+	giac::vecteur v;
+	giac::solve(v1, id, &v);
+	if(v.empty()) {
+		CALCULATOR->error(false, _("No solution could be found."), NULL);
+		mngr->set(this, vargs[0], vargs[1], NULL);
+	} else {
+		v[0] = simplify(v);
+		mngr->set(v[0]);
+		for(unsigned int i = 1; i < v.size(); i++) {
+			v[1] = simplify(v[1]);
+			Manager alt_mngr(v[1]);
+			mngr->addAlternative(&alt_mngr);
+		}
+	}
+}
+DeriveFunction::DeriveFunction() : Function("CAS", "diff", 1, "Derive", "", 3) {
+	setArgumentDefinition(2, new TextArgument());
+	setDefaultValue(2, "\"x\"");
+	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setDefaultValue(3, "1");		
+}
+void DeriveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	bool failed = false;
+	giac::gen v1 = vargs[0]->toGiac(&failed);
+	if(failed) {
+		CALCULATOR->error(true, _("Conversion to Giac failed."), NULL);
+		mngr->set(this, vargs[0], vargs[1], NULL);
+		return;
+	}
+	giac::identificateur id(vargs[1]->text());
+	giac::gen vars = id;
+	giac::gen nderiv = vargs[2]->toGiac();
+	giac::gen ans = giac::derive(v1, vars, nderiv);
+	ans = simplify(ans);
+	mngr->set(ans);
+}
+IntegrateFunction::IntegrateFunction() : Function("CAS", "integrate", 1, "Integrate", "", 2) {
+	setArgumentDefinition(2, new TextArgument());
+	setDefaultValue(2, "\"x\"");
+}
+void IntegrateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	bool failed = false;
+	giac::gen v1 = vargs[0]->toGiac(&failed);
+	if(failed) {
+		CALCULATOR->error(true, _("Conversion to Giac failed."), NULL);
+		mngr->set(this, vargs[0], vargs[1], NULL);
+		return;
+	}
+	giac::identificateur id(vargs[1]->text());
+	giac::gen ans = giac::integrate(v1, id);
+	ans = simplify(ans);
+	mngr->set(ans);
+}
+#endif

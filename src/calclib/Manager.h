@@ -154,6 +154,14 @@ class Manager {
 		bool isProtected() const;
 		int type() const;
 		
+#ifdef HAVE_GIAC
+		giac::gen toGiac(bool *isnull = NULL) const;
+		Manager::Manager(const giac::gen &giac_gen);
+		void Manager::set(const giac::gen &giac_gen);
+		void Manager::simplify();
+		void Manager::factor();
+#endif
+		
 		void replace(Manager *replace_this, Manager *replace_with);
 		void replace_no_copy(Manager *replace_this, Manager *replace_with);
 		void differentiate(string x_var);

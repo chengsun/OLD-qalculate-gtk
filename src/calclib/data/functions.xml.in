@@ -314,18 +314,6 @@
     </function>
   </category>
   <category>
-    <_title>Experimental</_title>
-    <builtin_function name="diff" active="false">
-      <_title>Differentiate</_title>
-      <argument index="1">
-        <_title>Expression</_title>
-      </argument>
-      <argument index="2">
-        <_title>With respect to</_title>
-      </argument>
-    </builtin_function>
-  </category>
-  <category>
     <_title>Date &amp; Time</_title>
     <builtin_function name="days">
       <_title>Days between two dates</_title>

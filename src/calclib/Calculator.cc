@@ -23,7 +23,6 @@
 #include "Integer.h"
 #include "Matrix.h"
 #include "Fraction.h"
-#include <config.h>
 
 #ifndef HAVE_LIBCLN
 #include <fenv.h>
@@ -731,7 +730,6 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new AdjointFunction());
 	addFunction(new InverseFunction());
 	addFunction(new IFFunction());
-	addFunction(new DifferentiateFunction());	
 	addFunction(new DaysFunction());		
 	addFunction(new YearFracFunction());		
 	addFunction(new GCDFunction());	
@@ -782,6 +780,11 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new SaveFunction());
 	addFunction(new ConcatenateFunction());
 	addFunction(new LengthFunction());
+#ifdef HAVE_GIAC
+	addFunction(new SolveFunction());
+	addFunction(new DeriveFunction());
+	addFunction(new IntegrateFunction());
+#endif
 }
 void Calculator::addBuiltinUnits() {
 	addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true));

@@ -198,6 +198,7 @@ void on_menu_item_save_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_precision_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_decimals_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_plot_functions_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_factorize_activate(GtkMenuItem *w, gpointer user_data);
 void on_unit_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 void on_unit_edit_optionmenu_class_changed(GtkOptionMenu *om, gpointer user_data);
 void on_units_button_new_clicked(GtkButton *button, gpointer user_data);

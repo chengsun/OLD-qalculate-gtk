@@ -1,5 +1,18 @@
-2003-10-27  Niklas Knutsson  <nq@altern.org>
+2003-10-29  Niklas Knutsson  <nq@altern.org>
 
+	* Factorize in result menu
+	* New functions: diff, integrate, solve
+	* Giac support
+	* Do not crash when printing a manager with matrix
+
+2003-10-27  Niklas Knutsson  <nq@altern.org>
+	
+	* Release Qalculate-GTK version 0.3.1
+	* Left over missing setPrecise() in builtin functions
+	* Fix printing of function manager
+	* Fix display of only number in numerator
+	* Parenthesis adjustments
+	* Update swedish translation
 	* More extensive error handling for misplaced operators
 	* Replace "**" with "^"
 	* Fix parenthesis in Manager::print()
