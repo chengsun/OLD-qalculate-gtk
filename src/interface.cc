@@ -175,20 +175,8 @@ create_window (void)
 
 	mDeg = glade_xml_get_widget (glade_xml, "menu_item_degrees");
 	mRad = glade_xml_get_widget (glade_xml, "menu_item_radians");
-/*	gtk_radio_menu_item_set_group(
-			GTK_RADIO_MENU_ITEM(mRad),
-			gtk_radio_menu_item_get_group(
-				GTK_RADIO_MENU_ITEM(mDeg)
-			)
-		);
-*/	mGra = glade_xml_get_widget (glade_xml, "menu_item_gradians");
-/*	gtk_radio_menu_item_set_group(
-			GTK_RADIO_MENU_ITEM(mGra),
-			gtk_radio_menu_item_get_group(
-				GTK_RADIO_MENU_ITEM(mDeg)
-			)
-		);
-*/
+	mGra = glade_xml_get_widget (glade_xml, "menu_item_gradians");
+
 	switch (calc->angleMode())
 	{
 	case DEGREES:
@@ -257,21 +245,6 @@ create_window (void)
 			GTK_SIGNAL_FUNC(edit_preferences),
 			NULL);
 
-	/*gtk_radio_menu_item_set_group(
-			GTK_RADIO_MENU_ITEM(
-				glade_xml_get_widget (glade_xml, "menu_item_decimal")
-				),
-			gtk_radio_menu_item_get_group(
-				GTK_RADIO_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_octal"))
-				)
-			);
-	gtk_radio_menu_item_set_group(
-			GTK_RADIO_MENU_ITEM(
-				glade_xml_get_widget (glade_xml, "menu_item_hexadecimal")
-				),
-			gtk_radio_menu_item_get_group( GTK_RADIO_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_octal")) )
-			);*/
-
 	switch (number_base)
 	{
 	case BASE_OCTAL:
@@ -304,37 +277,6 @@ create_window (void)
 	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_octal")), "activate", GTK_SIGNAL_FUNC(set_number_base), GINT_TO_POINTER (BASE_OCTAL));
 	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_decimal")), "activate", GTK_SIGNAL_FUNC(set_number_base), GINT_TO_POINTER (BASE_DECI));
 
-/*	gtk_radio_menu_item_set_group (
-			GTK_RADIO_MENU_ITEM (
-				glade_xml_get_widget (glade_xml, "menu_item_display_scientific")
-				),
-			gtk_radio_menu_item_get_group (
-				GTK_RADIO_MENU_ITEM (
-					glade_xml_get_widget (glade_xml, "menu_item_display_normal")
-					)
-				)
-			);
-	gtk_radio_menu_item_set_group (
-			GTK_RADIO_MENU_ITEM (
-				glade_xml_get_widget (glade_xml, "menu_item_display_non_scientific")
-				),
-			gtk_radio_menu_item_get_group (
-				GTK_RADIO_MENU_ITEM (
-					glade_xml_get_widget (glade_xml, "menu_item_display_normal")
-					)
-				)
-			);
-	gtk_radio_menu_item_set_group (
-			GTK_RADIO_MENU_ITEM (
-				glade_xml_get_widget (glade_xml, "menu_item_display_prefixes")
-				),
-			gtk_radio_menu_item_get_group (
-				GTK_RADIO_MENU_ITEM (
-					glade_xml_get_widget (glade_xml, "menu_item_display_normal")
-					)
-				)
-			);
-*/
 	switch (display_mode)
 	{
 	case MODE_NORMAL:
@@ -600,34 +542,10 @@ create_window (void)
 }
 
 GtkWidget*
-create_wFunctions (void) {
-
-	GtkWidget *label1_f;
-	GtkWidget *dialog_action_area1_f;
-	GtkWidget *frame1_f;
-	GtkWidget *vbox1_f;
-	GtkWidget *hbox1_f;
-	GtkWidget *scrolledwindow1_f;
-	GtkWidget *scrolledwindow2_f;
-	GtkWidget *vbuttonbox1_f;
-	GtkWidget *alignment2_f;
-	GtkWidget *hbox3_f;
-	GtkWidget *image2_f;
-	GtkWidget *label3_f;
-	GtkWidget *alignment1_f;
-	GtkWidget *hbox2_f;
-	GtkWidget *image1_f;
-	GtkWidget *label2_f;
-	GtkWidget *dialog_vbox1_f;
-
-
-
+create_wFunctions (void)
+{
 	wFunctions	= glade_xml_get_widget (glade_xml, "wFunctions");
-	dialog_vbox1_f	= glade_xml_get_widget (glade_xml, "dialog-vbox1");
-	hbox1_f		= glade_xml_get_widget (glade_xml, "hbox1");
-	scrolledwindow1_f = glade_xml_get_widget (glade_xml, "scrolledwindow1");
 	tFunctionCategories = glade_xml_get_widget (glade_xml, "tFunctionCategories");
-	scrolledwindow2_f = glade_xml_get_widget (glade_xml, "scrolledwindow1");
 	tFunctions	= glade_xml_get_widget (glade_xml, "tFunctions");
 
 
@@ -660,23 +578,11 @@ create_wFunctions (void) {
 
 
 
-	vbuttonbox1_f	= glade_xml_get_widget (glade_xml, "vbuttonbox1");
 	bNewFunction	= glade_xml_get_widget (glade_xml, "bNewFunction");
 	bEditFunction	= glade_xml_get_widget (glade_xml, "bEditFunction");
-	alignment2_f	= glade_xml_get_widget (glade_xml, "alignment2");
-	hbox3_f		= glade_xml_get_widget (glade_xml, "hbox3");
-	image2_f	= glade_xml_get_widget (glade_xml, "image2");
-	label3_f	= glade_xml_get_widget (glade_xml, "label3");
 	bInsertFunction	= glade_xml_get_widget (glade_xml, "bInsertFunction");
-	alignment1_f	= glade_xml_get_widget (glade_xml, "alignment1");
-	hbox2_f		= glade_xml_get_widget (glade_xml, "hbox2");
-	image1_f	= glade_xml_get_widget (glade_xml, "image1");
-	label2_f	= glade_xml_get_widget (glade_xml, "label2");
 	bDeleteFunction	= glade_xml_get_widget (glade_xml, "bDeleteFunction");
-	frame1_f	= glade_xml_get_widget (glade_xml, "frame1");
 	lFunctionDescription = glade_xml_get_widget (glade_xml, "lFunctionDescription");
-	label1_f	= glade_xml_get_widget (glade_xml, "label1");
-	dialog_action_area1_f = GTK_DIALOG (wFunctions)->action_area;
 	bCloseFunctions	= glade_xml_get_widget (glade_xml, "bCloseFunctions");
 
 
@@ -703,11 +609,7 @@ create_wFunctions (void) {
 	                  G_CALLBACK (on_bCloseFunctions_clicked),
 	                  NULL);
 
-
-
 	update_functions_tree(wFunctions);
-
-
 
 	return wFunctions;
 }

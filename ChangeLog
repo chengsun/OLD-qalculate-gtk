@@ -1,5 +1,9 @@
 2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
 
+	* src/interface.cc: removed unneccessary variables
+
+2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
+
 	* data/qalculate.glade,
 	* src/callbacks.cc,
 	* src/interface.cc: finished moving the menus
