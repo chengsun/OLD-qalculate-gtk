@@ -27,6 +27,7 @@ ExpressionItem::ExpressionItem(string cat_, string name_, string title_, string 
 	b_exact = true;
 	b_active = is_active;
 	b_registered = false;
+	b_hidden = false;
 }
 ExpressionItem::ExpressionItem() {
 	b_changed = false;
@@ -35,6 +36,7 @@ ExpressionItem::ExpressionItem() {
 	b_local = true;
 	b_builtin = false;
 	b_registered = false;	
+	b_hidden = false;
 }
 ExpressionItem::~ExpressionItem() {
 }
@@ -48,6 +50,7 @@ void ExpressionItem::set(const ExpressionItem *item) {
 	sdescr = item->description();
 	b_local = item->isLocal();
 	b_builtin = item->isBuiltin();
+	b_hidden = item->isHidden();
 }
 bool ExpressionItem::destroy() {
 	CALCULATOR->expressionItemDeleted(this);
@@ -167,6 +170,15 @@ void ExpressionItem::setActive(bool is_active) {
 				CALCULATOR->expressionItemDeactivated(this);
 			}
 		}
+		b_changed = true;
+	}
+}
+bool ExpressionItem::isHidden() const {
+	return b_hidden;
+}
+void ExpressionItem::setHidden(bool is_hidden) {
+	if(is_hidden != b_hidden) {
+		b_hidden = is_hidden;			
 		b_changed = true;
 	}
 }

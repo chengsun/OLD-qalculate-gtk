@@ -836,7 +836,9 @@ void update_variables_tree() {
 void setVariableTreeItem(GtkTreeIter &iter2, Variable *v) {
 	gtk_list_store_append(tVariables_store, &iter2);
 	string value = "";
-	if(v->isExpression()) {
+	if(v == vans || v == vAns) {
+		value = _("the previous result");
+	} else if(v->isExpression()) {
 		value = v->expression();
 		if(value.length() > 13) {
 			value = value.substr(0, 10);
@@ -926,17 +928,16 @@ void on_tVariables_selection_changed(GtkTreeSelection *treeselection, gpointer u
 		selected_variable = v;
 		for(int i = 0; i < CALCULATOR->variables.size(); i++) {
 			if(CALCULATOR->variables[i] == selected_variable) {
-				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variables_button_edit"), TRUE);
-				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variables_button_insert"), CALCULATOR->variables[i]->isActive());
-				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variables_button_deactivate"), TRUE);
+				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variables_button_edit"), CALCULATOR->variables[i] != vans && CALCULATOR->variables[i] != vAns);
+				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variables_button_insert"), CALCULATOR->variables[i]->isActive() && CALCULATOR->variables[i] != vans && CALCULATOR->variables[i] != vAns);
+				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variables_button_deactivate"), CALCULATOR->variables[i] != vans && CALCULATOR->variables[i] != vAns);
 				if(CALCULATOR->variables[i]->isActive()) {
 					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (glade_xml, "variables_buttonlabel_deactivate")), _("Deactivate"));
 				} else {
 					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (glade_xml, "variables_buttonlabel_deactivate")), _("Activate"));
 				}
-
 				//user cannot delete global definitions
-				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variables_button_delete"), CALCULATOR->variables[i]->isLocal());
+				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variables_button_delete"), CALCULATOR->variables[i]->isLocal() && CALCULATOR->variables[i] != vans && CALCULATOR->variables[i] != vAns);
 			}
 		}
 	} else {
@@ -1387,7 +1388,7 @@ void create_umenu() {
 		sub3 = sub;
 		for(int i = 0; i < titem->objects.size(); i++) {
 			u = (Unit*) titem->objects[i];
-			if(u->isActive()) {
+			if(u->isActive() && !u->isHidden()) {
 				MENU_ITEM_WITH_POINTER(u->title(true).c_str(), insert_unit, u)
 			}
 		}
@@ -1406,7 +1407,7 @@ void create_umenu() {
 	sub = sub2;
 	for(int i = 0; i < unit_cats.objects.size(); i++) {
 		u = (Unit*) unit_cats.objects[i];
-		if(u->isActive()) {
+		if(u->isActive() && !u->isHidden()) {
 			MENU_ITEM_WITH_POINTER(u->title(true).c_str(), insert_unit, u)
 		}
 	}			
@@ -1453,7 +1454,7 @@ void create_umenu2() {
 		sub3 = sub;
 		for(int i = 0; i < titem->objects.size(); i++) {
 			u = (Unit*) titem->objects[i];
-			if(u->isActive()) {
+			if(u->isActive() && !u->isHidden()) {
 				MENU_ITEM_WITH_POINTER(u->title(true).c_str(), convert_to_unit, u)
 			}
 		}
@@ -1472,7 +1473,7 @@ void create_umenu2() {
 	sub = sub2;
 	for(int i = 0; i < unit_cats.objects.size(); i++) {
 		u = (Unit*) unit_cats.objects[i];
-		if(u->isActive()) {
+		if(u->isActive() && !u->isHidden()) {
 			MENU_ITEM_WITH_POINTER(u->title(true).c_str(), convert_to_unit, u)
 		}
 	}		
@@ -1530,7 +1531,7 @@ void create_vmenu() {
 		sub3 = sub;
 		for(int i = 0; i < titem->objects.size(); i++) {
 			v = (Variable*) titem->objects[i];
-			if(v->isActive()) {
+			if(v->isActive() && !v->isHidden()) {
 				MENU_ITEM_WITH_POINTER(v->title(true).c_str(), insert_variable, v);
 			}
 		}
@@ -1551,7 +1552,7 @@ void create_vmenu() {
 
 	for(int i = 0; i < variable_cats.objects.size(); i++) {
 		v = (Variable*) variable_cats.objects[i];
-		if(v->isActive()) {
+		if(v->isActive() && !v->isHidden()) {
 			MENU_ITEM_WITH_POINTER(v->title(true).c_str(), insert_variable, v);
 		}
 	}		
@@ -1671,7 +1672,7 @@ void create_fmenu() {
 		sub3 = sub;
 		for(int i = 0; i < titem->objects.size(); i++) {
 			f = (Function*) titem->objects[i];
-			if(f->isActive()) {
+			if(f->isActive() && !f->isHidden()) {
 				MENU_ITEM_WITH_POINTER(f->title(true).c_str(), insert_function, f)
 			}
 		}
@@ -1690,7 +1691,7 @@ void create_fmenu() {
 	sub = sub2;
 	for(int i = 0; i < function_cats.objects.size(); i++) {
 		f = (Function*) function_cats.objects[i];
-		if(f->isActive()) {
+		if(f->isActive() && !f->isHidden()) {
 			MENU_ITEM_WITH_POINTER(f->title(true).c_str(), insert_function, f)
 		}
 	}		
@@ -3433,7 +3434,7 @@ void *view_proc(void *x) {
 	b_busy = false;
 }
 gboolean on_event(GtkWidget *w, GdkEvent *e, gpointer user_data) {
-	if(e->type == GDK_EXPOSE || e->type == GDK_PROPERTY_NOTIFY || e->type == GDK_CONFIGURE) {
+	if(e->type == GDK_EXPOSE || e->type == GDK_PROPERTY_NOTIFY || e->type == GDK_CONFIGURE || e->type == GDK_FOCUS_CHANGE || e->type == GDK_VISIBILITY_NOTIFY) {
 		return FALSE;
 	}
 	return TRUE;
@@ -4054,6 +4055,8 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 			gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "unit_edit_entry_name"), !u->isBuiltin());
 		}
 
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_checkbutton_hidden")), u->isHidden());
+		
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural")), u->plural(false).c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular")), u->singular(false).c_str());
 
@@ -4095,6 +4098,7 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 		}
 	} else {
 		//default values
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_checkbutton_hidden")), false);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_checkbutton_exact")), TRUE);
 		gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "unit_edit_optionmenu_class")), UNIT_CLASS_ALIAS_UNIT);
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_relation")), "1");
@@ -4231,15 +4235,18 @@ run_unit_edit_dialog:
 				CALCULATOR->addUnit(u);
 			}
 		}
-		//select the new unit
-		selected_unit = u;
-		if(!u->isActive()) {
-			selected_unit_category = _("Inactive");
-		} else if(u->category().empty()) {
-			selected_unit_category = _("Uncategorized");
-		} else {
-			selected_unit_category = "/";
-			selected_unit_category += u->category();
+		if(u) {
+			u->setHidden(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "function_edit_checkbutton_hidden"))));
+			//select the new unit
+			selected_unit = u;
+			if(!u->isActive()) {
+				selected_unit_category = _("Inactive");
+			} else if(u->category().empty()) {
+				selected_unit_category = _("Uncategorized");
+			} else {
+				selected_unit_category = "/";
+				selected_unit_category += u->category();
+			}
 		}
 		update_umenus();
 	}
@@ -4412,6 +4419,7 @@ void edit_function(const char *category = "", Function *f = NULL, GtkWidget *win
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_desc")), "");
 	gtk_text_buffer_set_text(description_buffer, "", -1);
 	gtk_text_buffer_set_text(expression_buffer, "", -1);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "function_edit_checkbutton_hidden")), false);
 
 	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "function_edit_button_ok"), TRUE);	
 	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "function_edit_optionmenu_argument_type"), !f || !f->isBuiltin());
@@ -4426,6 +4434,7 @@ void edit_function(const char *category = "", Function *f = NULL, GtkWidget *win
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_category")), f->category().c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_desc")), f->title(false).c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_condition")), f->condition().c_str());
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "function_edit_checkbutton_hidden")), f->isHidden());
 		gtk_text_buffer_set_text(description_buffer, f->description().c_str(), -1);
 	}
 	update_function_arguments_list(f);
@@ -4493,17 +4502,19 @@ run_function_edit_dialog:
 				b = gtk_tree_model_iter_next(GTK_TREE_MODEL(tFunctionArguments_store), &iter);
 				i++;
 			}		
+			f->setHidden(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "function_edit_checkbutton_hidden"))));
+			if(!f->isActive()) {
+				selected_function_category = _("Inactive");
+			} else if(f->category().empty()) {
+				selected_function_category = _("Uncategorized");
+			} else {
+				selected_function_category = "/";
+				selected_function_category += f->category();
+			}
+			//select the new function
+			selected_function = f;
 		}
-		//select the new function
-		selected_function = f;
-		if(!f->isActive()) {
-			selected_function_category = _("Inactive");
-		} else if(f->category().empty()) {
-			selected_function_category = _("Uncategorized");
-		} else {
-			selected_function_category = "/";
-			selected_function_category += f->category();
-		}
+		
 		update_fmenu();	
 	}
 	edited_function = NULL;
@@ -4678,15 +4689,17 @@ run_variable_edit_dialog:
 				v->setPrecise(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "variable_edit_checkbutton_exact"))));
 			}
 		}
-		//select the new variable
-		selected_variable = v;
-		if(!v->isActive()) {
-			selected_variable_category = _("Inactive");
-		} else if(v->category().empty()) {
-			selected_variable_category = _("Uncategorized");
-		} else {
-			selected_variable_category = "/";
-			selected_variable_category += v->category();
+		if(v) {
+			//select the new variable
+			selected_variable = v;
+			if(!v->isActive()) {
+				selected_variable_category = _("Inactive");
+			} else if(v->category().empty()) {
+				selected_variable_category = _("Uncategorized");
+			} else {
+				selected_variable_category = "/";
+				selected_variable_category += v->category();
+			}
 		}
 		update_vmenu();
 	}
@@ -4900,15 +4913,17 @@ run_matrix_edit_dialog:
 				delete mtrx;
 			}
 		}
-		//select the new variable
-		selected_variable = v;
-		if(!v->isActive()) {
-			selected_variable_category = _("Inactive");
-		} else if(v->category().empty()) {
-			selected_variable_category = _("Uncategorized");
-		} else {
-			selected_variable_category = "/";
-			selected_variable_category += v->category();
+		if(v) {
+			//select the new variable
+			selected_variable = v;
+			if(!v->isActive()) {
+				selected_variable_category = _("Inactive");
+			} else if(v->category().empty()) {
+				selected_variable_category = _("Uncategorized");
+			} else {
+				selected_variable_category = "/";
+				selected_variable_category += v->category();
+			}
 		}
 		update_vmenu();
 	}
@@ -5037,7 +5052,7 @@ void on_import_csv_file_activated(GtkMenuItem *w, gpointer user_data) {
 /*
 	insert one-argument function when button clicked
 */
-void insertButtonFunction(gchar *text) {
+void insertButtonFunction(gchar *text, bool append_space = true) {
 	gint start = 0, end = 0;
 	if(gtk_editable_get_selection_bounds(GTK_EDITABLE(expression), &start, &end)) {
 		//set selection as argument
@@ -5047,8 +5062,13 @@ void insertButtonFunction(gchar *text) {
 		g_free(gstr);
 		g_free(gstr2);
 	} else {
+		gchar *gstr2;
 		//one-argument functions do not need parenthesis
-		gchar *gstr2 = g_strdup_printf("%s ", text);
+		if(append_space) {
+			gstr2 = g_strdup_printf("%s ", text);
+		} else {
+			gstr2 = g_strdup_printf("%s", text);
+		}
 //		gchar *gstr2 = g_strdup_printf("%s()", text);
 		insert_text(gstr2);
 //		gtk_editable_set_position(GTK_EDITABLE(expression), gtk_editable_get_position(GTK_EDITABLE(expression)) - 1);
@@ -6109,7 +6129,7 @@ void on_button_square_clicked(GtkButton *w, gpointer user_data) {
 	Button clicked -- insert corresponding function
 */
 void on_button_sqrt_clicked(GtkButton *w, gpointer user_data) {
-	if(use_unicode_signs) insert_text(SIGN_SQRT);
+	if(use_unicode_signs) insertButtonFunction(SIGN_SQRT, false);
 	else insertButtonFunction("sqrt");
 }
 void on_button_log_clicked(GtkButton *w, gpointer user_data) {

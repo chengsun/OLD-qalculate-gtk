@@ -1,3 +1,18 @@
+2003-10-18  Niklas Knutsson  <nq@altern.org>
+
+	* Do not delete selection on sqrt button clicked but act as with the other functions
+	* Make answer variables a special case which cannot be edited and does not display result in variable dialog
+	* Change "first"/"second" axis to "primary"/"secondary"
+	* Put axis after smooth
+	* Fix rms(), stdev(), stdevp()
+	* Fix error in setFunctionsAndVariables that stopped unknown variables after something was set
+	* Remove CVS version title
+	* Write something in AUTHORS and NEWS
+	* Hidden property in function and unit edit dialogs
+	* Hide some annoying composite units (m/m and m2/m2)
+	* Hide hidden items in menus
+	* New hidden property for ExpressionItem (meant for some composite units and sub functions)
+
 2003-10-17  Niklas Knutsson  <nq@altern.org>
 
 	* Finally implement angle units and allow direct specification of angle unit in trigonometric functions

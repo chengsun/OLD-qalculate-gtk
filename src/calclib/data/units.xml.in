@@ -443,6 +443,7 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
+	<hidden>true</hidden>
         <_title>Meter per Meter</_title>
       </unit>
       <unit type="alias" name="rad">
@@ -489,6 +490,7 @@
           <prefix>0</prefix>
           <exponent>-2</exponent>
         </part>
+	<hidden>true</hidden>
         <_title>Square Meter per Square Meter</_title>
       </unit>
       <unit type="alias" name="sr">

@@ -23,7 +23,7 @@ class ExpressionItem {
   protected:
 
 	string sname, scat, stitle, sdescr;
-	bool b_local, b_changed, b_builtin, b_exact, b_active, b_registered;
+	bool b_local, b_changed, b_builtin, b_exact, b_active, b_registered, b_hidden;
 
   public:
 
@@ -89,6 +89,9 @@ class ExpressionItem {
 	
 	virtual bool isActive() const;
 	virtual void setActive(bool is_active);
+	
+	virtual bool isHidden() const;
+	virtual void setHidden(bool is_hidden);
 	
 	virtual int type() const = 0;
 };

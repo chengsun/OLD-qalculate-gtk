@@ -1014,7 +1014,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     </function>
     <function name="rms">
       <_title>Quadratic Mean (RMS)</_title>
-      <expression>abs(csum(1,-1,0,&quot;\\y+\\x^2&quot;,\v)/elements(\v)^(1/2))</expression>
+      <expression>abs((csum(1,-1,0,&quot;\\y+\\x^2&quot;,\v)/elements(\v))^(1/2))</expression>
       <argument type="vector" index="1">
         <_title>Data</_title>
         <test>false</test>
@@ -1031,7 +1031,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     </function>
     <function name="stdevp">
       <_title>Standard Deviation (entire population)</_title>
-      <expression>abs(csum(1,-1,0,&quot;\\y+(\\x-mean(\v))^2&quot;,\v)/elements(\v)^(1/2))</expression>
+      <expression>abs(varp(\v)^(1/2))</expression>
       <argument type="vector" index="1">
         <_title>Data</_title>
         <test>false</test>
@@ -1039,7 +1039,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     </function>
     <function name="stdev">
       <_title>Standard Deviation (random sampling)</_title>
-      <expression>abs(csum(1,-1,0,&quot;\\y+(\\x-mean(\v))^2&quot;,\v)/(elements(\v)-1)^(1/2))</expression>
+      <expression>abs(var(\v)^(1/2))</expression>
       <argument type="vector" index="1">
         <_title>Data</_title>
         <test>false</test>

@@ -1670,6 +1670,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 						else if(o_unit->name() == "oC") str += SIGN_POWER_0 "C";
 						else if(o_unit->name() == "oF") str += SIGN_POWER_0 "F";
 						else if(o_unit->name() == "oR") str += SIGN_POWER_0 "R";
+						else if(o_unit->name() == "deg") str += SIGN_POWER_0;
 						else str += o_unit->name();
 				} else {
 					str += o_unit->name();

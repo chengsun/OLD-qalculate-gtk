@@ -1537,6 +1537,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 	}
 	for(int str_index = 0; str_index < str.length(); str_index++) {
 		chars_left = str.length() - str_index;
+		moved_forward = false;
 		if(str[str_index] == '\"' || str[str_index] == '\'') {
 			if(str_index == str.length() - 1) {
 				str.erase(str_index, 1);
@@ -2075,7 +2076,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 	string localebase = locale.substr(0, 2);
 
 	long int exponent, litmp;
-	bool precise, active, b;
+	bool precise, active, hidden, b;
 	Fraction fr;
 	Function *f;
 	Variable *v;
@@ -2168,6 +2169,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					f = addFunction(new UserFunction(category, name, "", is_user_defs, 0, "", "", 0, active));
 					done_something = true;
 					child = cur->xmlChildrenNode;
+					hidden = false;
 					title = ""; best_title = false; next_best_title = false;
 					description = ""; best_description = false; next_best_description = false;
 					while(child != NULL) {
@@ -2181,6 +2183,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							XML_DO_FROM_TEXT(child, f->setCondition);
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "hidden")) {	
+							XML_GET_TRUE_FROM_TEXT(child, hidden);
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "argument")) {
 							farg = NULL; iarg = NULL;
 							XML_GET_STRING_FROM_PROP(child, "type", type);
@@ -2263,6 +2267,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					}
 					f->setDescription(description);
 					f->setTitle(title);
+					f->setHidden(hidden);
 					f->setChanged(false);
 				}
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "builtin_function")) {
@@ -2272,6 +2277,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					XML_GET_FALSE_FROM_PROP(cur, "active", active)
 					f->setLocal(is_user_defs, active);
 					child = cur->xmlChildrenNode;
+					hidden = false;
 					title = ""; best_title = false; next_best_title = false;
 					description = ""; best_description = false; next_best_description = false;
 					while(child != NULL) {
@@ -2295,12 +2301,15 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							} else {
 								f->setArgumentDefinition(itmp, new Argument(argname, false));
 							}
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "hidden")) {	
+							XML_GET_TRUE_FROM_TEXT(child, hidden);
 						}
 						child = child->next;
 					}
 					f->setDescription(description);
 					f->setTitle(title);
 					f->setCategory(category);
+					f->setHidden(hidden);
 					f->setChanged(false);
 					done_something = true;
 				}
@@ -2313,6 +2322,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					done_something = true;
 					child = cur->xmlChildrenNode;
 					b = true;
+					hidden = false;
 					title = ""; best_title = false; next_best_title = false;
 					description = ""; best_description = false; next_best_description = false;
 					while(child != NULL) {
@@ -2325,11 +2335,14 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "hidden")) {	
+							XML_GET_TRUE_FROM_TEXT(child, hidden);
 						}
 						child = child->next;
 					}
 					v->setDescription(description);
 					v->setTitle(title);
+					v->setHidden(hidden);
 					v->setChanged(false);
 				}
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "builtin_variable")) {
@@ -2339,6 +2352,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					XML_GET_FALSE_FROM_PROP(cur, "active", active)
 					v->setLocal(is_user_defs, active);
 					child = cur->xmlChildrenNode;
+					hidden = false;
 					title = ""; best_title = false; next_best_title = false;
 					description = ""; best_description = false; next_best_description = false;
 					while(child != NULL) {
@@ -2346,12 +2360,15 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "hidden")) {	
+							XML_GET_TRUE_FROM_TEXT(child, hidden);
 						}
 						child = child->next;
 					}		
 					v->setCategory(category);
 					v->setDescription(description);
-					v->setTitle(title);		
+					v->setTitle(title);	
+					v->setHidden(hidden);	
 					v->setChanged(false);
 					done_something = true;
 				}
@@ -2365,10 +2382,13 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						singular = ""; best_singular = false; next_best_singular = false;
 						plural = ""; best_plural = false; next_best_plural = false;
 						title = ""; best_title = false; next_best_title = false;
+						hidden = false;
 						description = ""; best_description = false; next_best_description = false;
 						while(child != NULL) {
 							if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
 								XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
+							} else if(!xmlStrcmp(child->name, (const xmlChar*) "hidden")) {	
+								XML_GET_TRUE_FROM_TEXT(child, hidden);
 							} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
 								XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
 							} else if(!xmlStrcmp(child->name, (const xmlChar*) "singular")) {
@@ -2386,6 +2406,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						}		
 						u = addUnit(new Unit(category, name, plural, singular, title, is_user_defs, false, active));		
 						u->setDescription(description);
+						u->setHidden(hidden);
 						u->setChanged(false);
 						done_something = true;
 					}
@@ -2394,6 +2415,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					XML_GET_FALSE_FROM_PROP(cur, "active", active)
 					u = NULL;
 					child = cur->xmlChildrenNode;
+					hidden = false;
 					singular = ""; best_singular = false; next_best_singular = false;
 					plural = ""; best_plural = false; next_best_plural = false;
 					title = ""; best_title = false; next_best_title = false;
@@ -2427,6 +2449,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 								}
 								child2 = child2->next;
 							}
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "hidden")) {	
+							XML_GET_TRUE_FROM_TEXT(child, hidden);
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
@@ -2453,6 +2477,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						au = new AliasUnit(category, name, plural, singular, title, u, svalue, exponent, reverse, is_user_defs, false, active);
 						au->setDescription(description);
 						au->setPrecise(b);
+						au->setHidden(hidden);
 						addUnit(au);
 						au->setChanged(false);
 						done_something = true;
@@ -2517,6 +2542,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 									}
 									break;
 								}
+							} else if(!xmlStrcmp(child->name, (const xmlChar*) "hidden")) {	
+								XML_GET_TRUE_FROM_TEXT(child, hidden);
 							} else if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
 								XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
 							} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
@@ -2528,6 +2555,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							cu->setCategory(category);
 							cu->setTitle(title);
 							cu->setDescription(description);
+							cu->setHidden(hidden);
 							addUnit(cu);
 							cu->setChanged(false);
 							done_something = true;
@@ -2548,11 +2576,14 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					description = ""; best_description = false; next_best_description = false;
 					singular = ""; best_singular = false; next_best_singular = false;
 					plural = ""; best_plural = false; next_best_plural = false;
+					hidden = false;
 					while(child != NULL) {
 						if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "hidden")) {	
+							XML_GET_TRUE_FROM_TEXT(child, hidden);
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "singular")) {	
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular);
 							if(!unitNameIsValid(singular)) {
@@ -2574,7 +2605,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					}	
 					u->setCategory(category);
 					u->setDescription(description);
-					u->setTitle(title);		
+					u->setTitle(title);
+					u->setHidden(hidden);		
 					u->setChanged(false);
 					done_something = true;
 				}
@@ -2775,6 +2807,7 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 				} else {
 					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) variables[i]->name().c_str());
 				}
+				if(variables[i]->isHidden()) xmlNewTextChild(newnode, NULL, (xmlChar*) "hidden", (xmlChar*) "true");
 				if(!variables[i]->title(false).empty()) {
 					if(save_global) {
 						xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) variables[i]->title(false).c_str());
@@ -2944,6 +2977,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 						xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) li2s(au->firstBaseExp()).c_str());
 					}
 				}
+				if(units[i]->isHidden()) xmlNewTextChild(newnode, NULL, (xmlChar*) "hidden", (xmlChar*) "true");
 				if(!units[i]->title(false).empty()) {
 					if(save_global) {
 						xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) units[i]->title(false).c_str());
@@ -3034,7 +3068,8 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 				if(functions[i]->isBuiltin()) {
 					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "builtin_function", NULL);
 					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) functions[i]->referenceName().c_str());
-					if(!functions[i]->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");			
+					if(!functions[i]->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");
+					if(functions[i]->isHidden()) xmlNewTextChild(newnode, NULL, (xmlChar*) "hidden", (xmlChar*) "true");
 					if(!functions[i]->title(false).empty()) {
 						if(save_global) {
 							xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) functions[i]->title(false).c_str());
@@ -3067,6 +3102,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "function", NULL);
 					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) functions[i]->name().c_str());
 					if(!functions[i]->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");
+					if(functions[i]->isHidden()) xmlNewTextChild(newnode, NULL, (xmlChar*) "hidden", (xmlChar*) "true");
 					if(!functions[i]->title(false).empty()) {
 						if(save_global) {
 							xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) functions[i]->title(false).c_str());
@@ -3732,18 +3768,18 @@ bool Calculator::plotVectors(plot_parameters *param, vector<Vector*> &y_vectors,
 			plot += i2s(i + 1);
 			plot += "\"";
 			if(i < pdps.size()) {
+				switch(pdps[i]->smoothing) {
+					case PLOT_SMOOTHING_UNIQUE: {plot += " smooth unique"; break;}
+					case PLOT_SMOOTHING_CSPLINES: {plot += " smooth csplines"; break;}
+					case PLOT_SMOOTHING_BEZIER: {plot += " smooth bezier"; break;}
+					case PLOT_SMOOTHING_SBEZIER: {plot += " smooth sbezier"; break;}
+				}
 				if(pdps[i]->xaxis2 && pdps[i]->yaxis2) {
 					plot += " axis x2y2";
 				} else if(pdps[i]->xaxis2) {
 					plot += " axis x2y1";
 				} else if(pdps[i]->yaxis2) {
 					plot += " axis x1y2";
-				}
-				switch(pdps[i]->smoothing) {
-					case PLOT_SMOOTHING_UNIQUE: {plot += " smooth unique"; break;}
-					case PLOT_SMOOTHING_CSPLINES: {plot += " smooth csplines"; break;}
-					case PLOT_SMOOTHING_BEZIER: {plot += " smooth bezier"; break;}
-					case PLOT_SMOOTHING_SBEZIER: {plot += " smooth sbezier"; break;}
 				}
 				if(!pdps[i]->title.empty()) {
 					plot += " title \"";
