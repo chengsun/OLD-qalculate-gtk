@@ -268,12 +268,20 @@ create_window (void)
 				),
 				TRUE);
 		break;
+	case BASE_BIN:
+		gtk_check_menu_item_set_active(
+				GTK_CHECK_MENU_ITEM(
+					glade_xml_get_widget (glade_xml, "menu_item_binary")
+				),
+				TRUE);
+		break;		
 	default:
 		g_assert_not_reached ();
 		break;
 	}
 
 	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_hexadecimal")), "activate", GTK_SIGNAL_FUNC(set_number_base), GINT_TO_POINTER (BASE_HEX));
+	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_binary")), "activate", GTK_SIGNAL_FUNC(set_number_base), GINT_TO_POINTER (BASE_BIN));	
 	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_octal")), "activate", GTK_SIGNAL_FUNC(set_number_base), GINT_TO_POINTER (BASE_OCTAL));
 	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_decimal")), "activate", GTK_SIGNAL_FUNC(set_number_base), GINT_TO_POINTER (BASE_DECI));
 

@@ -26,8 +26,9 @@ enum {
 
 enum {
 	BASE_DECI = 1,
-	BASE_OCTAL = 2,
-	BASE_HEX = 3
+	BASE_BIN = 2,		
+	BASE_OCTAL = 3,
+	BASE_HEX = 4
 };
 
 #include "Calculator.h"

@@ -226,11 +226,22 @@
 			<widget class="GtkMenu" id="menu_item_number_base_menu">
 
 			  <child>
+			    <widget class="GtkRadioMenuItem" id="menu_item_binary">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Binary</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <signal name="activate" handler="on_menu_item_hexadecimal_activate" last_modification_time="Fri, 08 Aug 2003 11:39:41 GMT"/>
+			    </widget>
+			  </child>			  
+
+			  <child>
 			    <widget class="GtkRadioMenuItem" id="menu_item_octal">
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Octal</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">True</property>
+			      <property name="active">False</property>
+			      <property name="group">menu_item_binary</property>			      
 			      <signal name="activate" handler="on_menu_item_octal_activate" last_modification_time="Fri, 08 Aug 2003 11:39:41 GMT"/>
 			    </widget>
 			  </child>
@@ -240,8 +251,8 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Decimal</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
-			      <property name="group">menu_item_octal</property>
+			      <property name="active">True</property>
+			      <property name="group">menu_item_binary</property>			      
 			      <signal name="activate" handler="on_menu_item_decimal_activate" last_modification_time="Fri, 08 Aug 2003 11:39:41 GMT"/>
 			    </widget>
 			  </child>
@@ -252,10 +263,11 @@
 			      <property name="label" translatable="yes">Hexadecimal</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">False</property>
-			      <property name="group">menu_item_octal</property>
+			      <property name="group">menu_item_binary</property>			      
 			      <signal name="activate" handler="on_menu_item_hexadecimal_activate" last_modification_time="Fri, 08 Aug 2003 11:39:41 GMT"/>
 			    </widget>
 			  </child>
+			  
 			</widget>
 		      </child>
 		    </widget>

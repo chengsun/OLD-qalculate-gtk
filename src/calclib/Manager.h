@@ -65,6 +65,7 @@ class Manager {
 		void set(long double value_);		
 		void set(string var_);				
 		void set(Unit *u, long double value_ = 1);				
+		void addFunctionArg(Manager *mngr);
 		bool add(Manager *mngr, char sign = MULTIPLICATION_CH, bool translate_ = true);	
 		void add(Unit *u, char sign = MULTIPLICATION_CH);		
 		void add(long double value_, char sign = MULTIPLICATION_CH);			

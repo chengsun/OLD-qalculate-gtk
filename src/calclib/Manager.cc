@@ -94,6 +94,11 @@ void Manager::set(Function *f, ...) {
 	o_function = f;
 	c_type = FUNCTION_MANAGER;
 }
+void Manager::addFunctionArg(Manager *mngr) {
+	if(c_type == FUNCTION_MANAGER) {
+		mngrs.push_back(new Manager(mngr));
+	}
+}
 void Manager::set(Unit *u, long double value_) {
 	clear();
 	if(value_ == 0) return;
@@ -1124,6 +1129,10 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 				str2 = calc->value2str_octal(d_value, precision);
 				break;
 			}
+			case NUMBER_FORMAT_BIN: {
+				str2 = calc->value2str_bin(d_value, precision);
+				break;
+			}			
 		}	
 		calc->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
 		str += str2;

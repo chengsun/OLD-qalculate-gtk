@@ -1049,6 +1049,7 @@ string get_value_string(Manager *mngr_, bool rlabel = false) {
 	NumberFormat numberformat;
 	if(number_base == BASE_OCTAL) numberformat = NUMBER_FORMAT_OCTAL;
 	else if(number_base == BASE_HEX) numberformat = NUMBER_FORMAT_HEX;	
+	else if(number_base == BASE_BIN) numberformat = NUMBER_FORMAT_BIN;		
 	else {
 		switch(display_mode) {
 			case MODE_SCIENTIFIC: {numberformat = NUMBER_FORMAT_EXP_PURE; unitflags = unitflags | UNIT_FORMAT_SCIENTIFIC; break;}

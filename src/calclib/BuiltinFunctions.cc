@@ -82,6 +82,7 @@ Manager *IFFunction::calculate(const string &argv) {
 //		calc->checkFPExceptions(sname.c_str());
 	} else {
 		calc->error(true, 4, "You need ", i2s(minargs()).c_str(), " arguments in function ", name().c_str());
+		Manager *mngr = new Manager(calc, this, NULL);
 	}
 //	for(unsigned int i = 0; i < vargs.size(); i++) {
 //		vargs[i]->unref();
@@ -451,43 +452,49 @@ void StdDevSFunction::calculate2(Manager *mngr) {
 RandomFunction::RandomFunction(Calculator *calc_) : Function(calc_, "General", "rand", 0, "Random Number", "Generates a pseudo-random number between 0 and 1") {}
 Manager *RandomFunction::calculate(const string &eq) {
 	Manager *mngr = new Manager(calc);
-	mngr->value(drand48());
+	mngr->set(drand48());
 	return mngr;
 }
 
 BASEFunction::BASEFunction(Calculator *calc_) : Function(calc_, "General", "BASE", 2, "Number Base", "Returns a decimal integer from a number of specified base between 2 and 36") {
-	addArgName("Base");
 	addArgName("Number");
+	addArgName("Base");	
 }
 Manager *BASEFunction::calculate(const string &eq) {
 	int itmp;
 	if((itmp = stringArgs(eq)) >= minargs()) {
 		if(itmp > maxargs())
 			calc->error(false, 3, "To many arguments for ", name().c_str(), "() (ignored)");
-		Manager *mngr = calc->calculate(svargs[0]);	
+		Manager *mngr = calc->calculate(svargs[1]);	
 		int base = (int) mngr->value();
-		delete mngr;
 		long double value = 0;
 		if(base < 2 || base > 36) {
 			calc->error(false, 3, "Base must be between 2 and 36 (was ", i2s(base).c_str(), ") for function BASE");
+			mngr->unref();
 		} else {
-			value = (long double) strtol(svargs[1].c_str(), NULL, base);
+			value = (long double) strtol(svargs[0].c_str(), NULL, base);
+			svargs.clear();
+			mngr->set(value);
+			return mngr;
 		}
-		svargs.clear();
-		mngr->set(value);
-		return mngr;
 	} else {
 		calc->error(true, 4, "You need ", i2s(minargs()).c_str(), " arguments in function ", name().c_str());
-		svargs.clear();
-		return NULL;
 	}
+	Manager *mngr = new Manager(calc, this, NULL);
+	for(int i = 0; i < itmp; i++) {
+		Manager *mngr2 = new Manager(calc, svargs[i]);
+		mngr->addFunctionArg(mngr2);
+		mngr2->unref();
+	}
+	svargs.clear();
+	return mngr;			
 }
 BINFunction::BINFunction(Calculator *calc_) : Function(calc_, "General", "BIN", 1, "Binary", "Returns a decimal integer from a binary number") {
 	addArgName("Binary number");
 }
 Manager *BINFunction::calculate(const string &eq) {
 	Manager *mngr = new Manager(calc);
-	mngr->value((long double) strtol(eq.c_str(), NULL, 2));
+	mngr->set((long double) strtol(eq.c_str(), NULL, 2));
 	return mngr;
 }
 OCTFunction::OCTFunction(Calculator *calc_) : Function(calc_, "General", "OCT", 1, "Octal", "Returns a decimal integer from an octal number") {
@@ -495,7 +502,7 @@ OCTFunction::OCTFunction(Calculator *calc_) : Function(calc_, "General", "OCT", 
 }
 Manager *OCTFunction::calculate(const string &eq) {
 	Manager *mngr = new Manager(calc);
-	mngr->value((long double) strtol(eq.c_str(), NULL, 8));
+	mngr->set((long double) strtol(eq.c_str(), NULL, 8));
 	return mngr;
 }
 HEXFunction::HEXFunction(Calculator *calc_) : Function(calc_, "General", "HEX", 1, "Hexadecimal", "Returns a decimal value from a hexadecimal number") {
@@ -510,7 +517,7 @@ Manager *HEXFunction::calculate(const string &eq) {
 		stmp += eq;
 	}
 	Manager *mngr = new Manager(calc);
-	mngr->value(strtold(stmp.c_str(), NULL));
+	mngr->set(strtold(stmp.c_str(), NULL));
 	return mngr;
 }
 

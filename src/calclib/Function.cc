@@ -180,6 +180,10 @@ Manager *Function::calculate(const string &argv) {
 		calc->checkFPExceptions(sname.c_str());
 	} else {
 		calc->error(true, 4, "You need ", i2s(minargs()).c_str(), " arguments in function ", name().c_str());
+		mngr = new Manager(calc, this, NULL);
+		for(int i = 0; i < itmp; i++) {
+			mngr->addFunctionArg(vargs[i]);
+		}
 	}
 	for(unsigned int i = 0; i < vargs.size(); i++) {
 		vargs[i]->unref();
@@ -232,11 +236,11 @@ int Function::stringArgs(const string &str) {
 						break;
 				} else {
 					if(itmp <= args() || args() < 0) {
-						stmp = LEFT_BRACKET_STR;
+/*						stmp = LEFT_BRACKET_STR;
 						stmp += str.substr(i2, i - i2);
 						stmp += RIGHT_BRACKET_STR;
-						svargs.push_back(stmp);
-//						svargs.push_back(str.substr(i2, i - i2));
+						svargs.push_back(stmp);*/
+						svargs.push_back(str.substr(i2, i - i2));
 					}
 					i++;
 					i2 = i;
@@ -245,24 +249,25 @@ int Function::stringArgs(const string &str) {
 				}
 			} else {
 				if(itmp <= args() || args() < 0) {
-					stmp = LEFT_BRACKET_STR;
+/*					stmp = LEFT_BRACKET_STR;
 					stmp += str.substr(i2, str.length() - i2);
 					stmp += RIGHT_BRACKET_STR;
-					svargs.push_back(stmp);
-//					svargs.push_back(str.substr(i2, str.length() - i2));					
+					svargs.push_back(stmp);*/
+					svargs.push_back(str.substr(i2, str.length() - i2));					
 				}
 				break;
 			}
 		}
 	}
 	if(itmp < maxargs() && itmp >= minargs()) {
-		while(itmp < maxargs()) {
-			stmp = LEFT_BRACKET_STR;
-			stmp += default_values[itmp - minargs()];
+		int itmp2 = itmp;
+		while(itmp2 < maxargs()) {
+/*			stmp = LEFT_BRACKET_STR;
+			stmp += default_values[itmp2 - minargs()];
 			stmp += RIGHT_BRACKET_STR;
-			svargs.push_back(stmp);
-//			svargs.push_back(default_values[itmp - minargs()]);			
-			itmp++;
+			svargs.push_back(stmp);*/
+			svargs.push_back(default_values[itmp - minargs()]);			
+			itmp2++;
 		}
 	}	
 	return itmp;
@@ -270,7 +275,7 @@ int Function::stringArgs(const string &str) {
 Manager *UserFunction::calculate(const string &argv) {
 	if(args() > 0) {
 		int itmp;
-		if((itmp = stringArgs(argv)) >= maxargs()) {
+		if((itmp = stringArgs(argv)) >= minargs()) {
 			if(itmp > maxargs())
 				calc->error(false, 3, "To many arguments for ", name().c_str(), "() (ignored)");
 			string stmp = eq_calc;
@@ -295,8 +300,14 @@ Manager *UserFunction::calculate(const string &argv) {
 			return mngr;
 		} else {
 			calc->error(true, 4, "You need ", i2s(minargs()).c_str(), " arguments in function ", name().c_str());
+			Manager *mngr = new Manager(calc, this, NULL);
+			for(int i = 0; i < itmp; i++) {
+				Manager *mngr2 = calc->calculate(svargs[i]);
+				mngr->addFunctionArg(mngr2);
+				mngr2->unref();
+			}
 			svargs.clear();
-			return NULL;
+			return mngr;
 		}
 	} else {
 		Manager *mngr = calc->calculate(eq_calc);

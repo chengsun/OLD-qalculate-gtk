@@ -121,7 +121,8 @@ class Calculator {
 	const char *getLPrefix(long double value);		
 	bool save(const char* file_name);	
 	string value2str(long double &value, int precision = PRECISION);	
-	string value2str_decimals(long double &value, int precision = PRECISION);		
+	string value2str_decimals(long double &value, int precision = PRECISION);	
+	string value2str_bin(long double &value, int precision = PRECISION);				
 	string value2str_octal(long double &value, int precision = PRECISION);		
 	string value2str_hex(long double &value, int precision = PRECISION);			
 	string value2str_prefix(long double &value, long double &exp, int precision = PRECISION, bool use_short_prefixes = true, long double *new_value = NULL);

@@ -951,13 +951,17 @@ void Calculator::setFunctionsAndVariables(string &str) {
 				if((i = str.find(f->name(), i3)) != (int) string::npos) {
 					i4 = -1;
 					if(f->args() == 0) {
-						stmp = LEFT_BRACKET_STR;
-						stmp += ID_WRAP_LEFT_STR;
 						mngr =  f->calculate("");
-						stmp += i2s(addId(mngr));
-						mngr->unref();
-						stmp += ID_WRAP_RIGHT_STR;
-						stmp += RIGHT_BRACKET_STR;
+						if(mngr) {
+							stmp = LEFT_BRACKET_STR;
+							stmp += ID_WRAP_LEFT_STR;
+							stmp += i2s(addId(mngr));
+							mngr->unref();
+							stmp += ID_WRAP_RIGHT_STR;
+							stmp += RIGHT_BRACKET_STR;
+						} else {
+							stmp = "";
+						}
 						i4 = f->name().length();
 					} else {
 						b = false;
@@ -993,14 +997,18 @@ void Calculator::setFunctionsAndVariables(string &str) {
 
 							stmp2 = str.substr(i + f->name().length(), i6 - 1);
 
-							stmp = LEFT_BRACKET_STR;
-							stmp += ID_WRAP_LEFT_STR;
 							mngr =  f->calculate(stmp2);
-							stmp += i2s(addId(mngr));
-							mngr->unref();
-							stmp += ID_WRAP_RIGHT_STR;
-							stmp += RIGHT_BRACKET_STR;
-
+							if(mngr) {
+								stmp = LEFT_BRACKET_STR;
+								stmp += ID_WRAP_LEFT_STR;
+								stmp += i2s(addId(mngr));
+								mngr->unref();
+								stmp += ID_WRAP_RIGHT_STR;
+								stmp += RIGHT_BRACKET_STR;
+							} else {
+								stmp = "";
+							}
+							
 							i4 = i6 + 1 + f->name().length() - 2;
 							b = false;
 						}
@@ -1026,13 +1034,18 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						}
 						if(b) {
 							stmp2 = str.substr(i + f->name().length() + i9, i6 - (i + f->name().length() + i9));
-							stmp = LEFT_BRACKET_STR;
-							stmp += ID_WRAP_LEFT_STR;
+							
 							mngr =  f->calculate(stmp2);
-							stmp += i2s(addId(mngr));
-							mngr->unref();
-							stmp += ID_WRAP_RIGHT_STR;
-							stmp += RIGHT_BRACKET_STR;
+							if(mngr) {
+								stmp = LEFT_BRACKET_STR;
+								stmp += ID_WRAP_LEFT_STR;
+								stmp += i2s(addId(mngr));
+								mngr->unref();
+								stmp += ID_WRAP_RIGHT_STR;
+								stmp += RIGHT_BRACKET_STR;
+							} else {
+								stmp = "";
+							}							
 
 							i4 = i6 + 1 - i;
 						}
@@ -1771,6 +1784,18 @@ string Calculator::value2str(long double &value, int precision) {
 string Calculator::value2str_decimals(long double &value, int precision) {
 	sprintf(vbuffer, "%.*Lf", precision, value);
 	string stmp = vbuffer;
+	return stmp;
+}
+string Calculator::value2str_bin(long double &value, int precision) {
+	if(value > 255) return value2str(value, precision);
+	string stmp;
+	long int val = lroundl(value);
+	int mask = 128;
+	while(mask) {
+		if(mask & val) stmp += "1";
+		else stmp += "0";
+		mask /= 2;
+	}
 	return stmp;
 }
 string Calculator::value2str_octal(long double &value, int precision) {
