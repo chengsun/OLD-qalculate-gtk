@@ -352,7 +352,7 @@ void on_tFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer u
 		selected_function = gstr;
 		for(int i = 0; i < calc->functions.size(); i++) {
 			if(calc->functions[i]->name() == selected_function) {
-				gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (glade_xml, "functions_label_description")), calc->functions[i]->description().c_str());
+				gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (glade_xml, "functions_textview_description"))), calc->functions[i]->description().c_str(), -1);
 				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "functions_button_edit"), TRUE);
 				//enable only delete button if function is defined in definitions file and not in source (builtin)
 				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "functions_button_delete"), calc->functions[i]->isUserFunction());
@@ -1005,6 +1005,7 @@ void execute_expression() {
 	//unreference previous result (deletes the object if it is not used anywhere else
 	mngr->unref();
 	mngr = calc->calculate(str);
+	display_errors();
 	setResult(gtk_entry_get_text(GTK_ENTRY(expression)));
 	gtk_widget_grab_focus(expression);
 	//gtk_editable_set_position(GTK_EDITABLE(expression), -1);
@@ -1949,7 +1950,6 @@ void manage_variables(GtkMenuItem *w, gpointer user_data) {
 	if(!variables_window) {
 		//if not previously created, do so now
 		variables_window = create_variables_dialog();
-		gtk_window_resize(GTK_WINDOW(variables_window), 500, 400);
 		gtk_widget_show(variables_window);
 	} else {
 		gtk_widget_show(variables_window);
@@ -1979,7 +1979,6 @@ void manage_units(GtkMenuItem *w, gpointer user_data) {
 	if(!units_window) {
 		//if not previously created, do so now
 		units_window = create_units_dialog();
-		gtk_window_resize(GTK_WINDOW(units_window), 600, 400);
 		gtk_widget_show(units_window);
 	} else {
 		gtk_widget_show(units_window);

@@ -1,5 +1,6 @@
 2003-08-11  Niklas Knutsson  <nq@altern.org>
 
+	* Beautification of dialogs
 	* Huge gladeification of signals and widget references
 
 2003-08-10  Sven Herzberg  <herzi@gnome-de.org>

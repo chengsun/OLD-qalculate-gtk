@@ -84,8 +84,6 @@ create_main_window (void)
 
 	accel_group = gtk_accel_group_new ();
 
-	glade_xml_signal_autoconnect(glade_xml);
-
 
 	switch (calc->angleMode())
 	{
@@ -232,6 +230,8 @@ create_main_window (void)
 	gtk_widget_grab_focus(expression);
 	GTK_WIDGET_SET_FLAGS(expression, GTK_CAN_DEFAULT);
 	gtk_widget_grab_default(expression);
+
+	glade_xml_signal_autoconnect(glade_xml);
 
 	gtk_widget_show (glade_xml_get_widget (glade_xml, "main_window"));
 }
