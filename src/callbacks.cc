@@ -10427,9 +10427,9 @@ void on_plot_button_modify_clicked(GtkButton *w, gpointer user_data) {
 		y_vector = NULL;
 		generate_plot_series(&x_vector, &y_vector, type, expression, str_x);
 		rows = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (plot_glade, "plot_checkbutton_rows")));
-		gtk_list_store_set(tPlotFunctions_store, &iter, 0, title.c_str(), 1, expression.c_str(), 2, gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (plot_glade, "plot_optionmenu_style"))), 3, gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (plot_glade, "plot_optionmenu_smoothing"))), 4, type, 5, axis, 6, rows, 7, &x_vector, 8, &y_vector, 9, str_x.c_str(), -1);
+		gtk_list_store_set(tPlotFunctions_store, &iter, 0, title.c_str(), 1, expression.c_str(), 2, gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (plot_glade, "plot_optionmenu_style"))), 3, gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (plot_glade, "plot_optionmenu_smoothing"))), 4, type, 5, axis, 6, rows, 7, x_vector, 8, y_vector, 9, str_x.c_str(), -1);
+		update_plot();
 	}
-	update_plot();
 }
 void on_plot_button_remove_clicked(GtkButton *w, gpointer user_data) {
 	GtkTreeModel *model;
@@ -10441,10 +10441,10 @@ void on_plot_button_remove_clicked(GtkButton *w, gpointer user_data) {
 		if(x_vector) delete x_vector;
 		if(y_vector) delete y_vector;
 		gtk_list_store_remove(tPlotFunctions_store, &iter);
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_expression")), "");
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_title")), "");	
+		update_plot();
 	}
-	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_expression")), "");
-	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_title")), "");	
-	update_plot();
 }
 
 void on_plot_checkbutton_xlog_toggled(GtkToggleButton *w, gpointer user_data) {
@@ -10499,7 +10499,7 @@ void on_plot_button_range_apply_clicked(GtkButton *w, gpointer user_data) {
 		generate_plot_series(&x_vector, &y_vector, type, gstr2, gstr3);
 		g_free(gstr2);
 		g_free(gstr3);
-		gtk_list_store_set(tPlotFunctions_store, &iter, 7, &x_vector, 8, &y_vector, -1);
+		gtk_list_store_set(tPlotFunctions_store, &iter, 7, x_vector, 8, y_vector, -1);
 		b = gtk_tree_model_iter_next(GTK_TREE_MODEL(tPlotFunctions_store), &iter);
 	}
 	update_plot();
