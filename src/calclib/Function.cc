@@ -14,6 +14,7 @@
 
 Function::Function(string cat_, string name_, int argc_, string title_, string descr_, bool priviliged_, int max_argc_) {
 	b_user = false;
+	b_exact = true;
 	bpriv = priviliged_;
 	remove_blank_ends(cat_);
 	remove_blank_ends(title_);
@@ -222,6 +223,7 @@ Manager *Function::calculate(const string &argv) {
 	if(testArgCount(itmp)) {
 		mngr = new Manager();
 		calculate2(mngr);
+		if(!isPrecise()) mngr->setPrecise(false);
 		CALCULATOR->checkFPExceptions(sname.c_str());	
 	} else {
 		mngr = createFunctionManagerFromVArgs(itmp);
@@ -263,6 +265,12 @@ string Function::getDefaultValue(int arg_) {
 		return default_values[arg_ - argc - 1];
 	}
 	return "";
+}
+bool Function::isPrecise() const {
+	return b_exact;
+}
+void Function::setPrecise(bool is_precise) {
+	b_exact = is_precise;
 }
 
 UserFunction::UserFunction(string cat_, string name_, string eq_, bool is_user_function, int argc_, string title_, string descr_, int max_argc_) : Function(cat_, name_, argc_, title_, descr_, false, max_argc_) {
@@ -359,6 +367,7 @@ Manager *UserFunction::calculate(const string &argv) {
 			}
 			svargs.clear();
 			Manager *mngr = CALCULATOR->calculate(stmp);
+			if(!isPrecise()) mngr->setPrecise(false);
 			return mngr;
 		} else {
 			CALCULATOR->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str());		
@@ -373,6 +382,7 @@ Manager *UserFunction::calculate(const string &argv) {
 		}
 	} else {
 		Manager *mngr = CALCULATOR->calculate(eq_calc);
+		if(!isPrecise()) mngr->setPrecise(false);
 		return mngr;
 	}
 }

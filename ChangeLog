@@ -1,3 +1,8 @@
+2003-09-02  Niklas Knutsson  <nq@altern.org>
+	
+	* Beginning of matrix support
+	* Fix zero division
+
 2003-09-01  Niklas Knutsson  <nq@altern.org>
 	
 	* factorial function and !

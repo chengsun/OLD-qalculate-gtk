@@ -400,7 +400,10 @@ void AtanhFunction::calculate2(Manager *mngr) {
 }
 LogFunction::LogFunction() : Function("Exponents and Logarithms", "ln", 1, "Natural Logarithm") {}
 void LogFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->isFraction()) {
+	if(vargs[0]->isZero()) {
+		CALCULATOR->error(true, _("It is not possible to calculate the logarithm of zero."), NULL);
+		mngr->set(this, vargs[0], NULL);
+	} else if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
 		mngr->fraction()->log();		
 	} else {
@@ -409,7 +412,10 @@ void LogFunction::calculate2(Manager *mngr) {
 }
 Log10Function::Log10Function() : Function("Exponents and Logarithms", "log", 1, "Base-10 Logarithm") {}
 void Log10Function::calculate2(Manager *mngr) {
-	if(vargs[0]->isFraction()) {
+	if(vargs[0]->isZero()) {
+		CALCULATOR->error(true, _("It is not possible to calculate the logarithm of zero."), NULL);
+		mngr->set(this, vargs[0], NULL);
+	} else if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
 		mngr->fraction()->log10();		
 	} else {
@@ -418,7 +424,10 @@ void Log10Function::calculate2(Manager *mngr) {
 }
 Log2Function::Log2Function() : Function("Exponents and Logarithms", "log2", 1, "Base-2 Logarithm") {}
 void Log2Function::calculate2(Manager *mngr) {
-	if(vargs[0]->isFraction()) {
+	if(vargs[0]->isZero()) {
+		CALCULATOR->error(true, _("It is not possible to calculate the logarithm of zero."), NULL);
+		mngr->set(this, vargs[0], NULL);
+	} else if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
 		mngr->fraction()->log2();		
 	} else {

@@ -19,6 +19,7 @@ class UserFunction;
 
 class Function {
   protected:
+  	bool b_exact;
 	int argc;
 	int max_argc;
 	vector<string> default_values;
@@ -65,7 +66,8 @@ class Function {
 	int stringArgs(const string &str);		
 	void setDefaultValue(int arg_, string value_);
 	string getDefaultValue(int arg_);	
-	
+	bool isPrecise() const;
+	void setPrecise(bool is_precise);	
 };
 
 class UserFunction : public Function {

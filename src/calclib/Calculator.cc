@@ -1390,7 +1390,12 @@ void Calculator::setFunctionsAndVariables(string &str) {
 					stmp = LEFT_BRACKET_CH;
 					stmp += ID_WRAP_LEFT_CH;
 					if(b_calcvars) {
-						stmp += i2s(addId(v->get()));
+						mngr = new Manager(v->get());
+						if(!v->isPrecise()) {
+							mngr->setPrecise(false);
+						}
+						stmp += i2s(addId(mngr));
+						mngr->unref();
 					} else {
 						mngr = new Manager(v->name());
 						stmp += i2s(addId(mngr));
@@ -1830,6 +1835,8 @@ bool Calculator::save(const char* file_name) {
 				fprintf(file, "0\t");
 			else
 				fprintf(file, "%s\t", variables[i]->title(false).c_str());
+			if(!variables[i]->isBuiltinVariable())	
+				fprintf(file, "%i", variables[i]->isPrecise());
 			fprintf(file, "\n");
 		}
 	}
@@ -1847,7 +1854,7 @@ bool Calculator::save(const char* file_name) {
 			else
 				fprintf(file, "%s\t", functions[i]->category().c_str());
 			if(!functions[i]->isBuiltinFunction())
-				fprintf(file, "%s\t%s\t", functions[i]->name().c_str(), ((UserFunction*) functions[i])->equation().c_str());
+				fprintf(file, "%s\t%s\t%i\t", functions[i]->name().c_str(), ((UserFunction*) functions[i])->equation().c_str(), functions[i]->isPrecise());
 			if(functions[i]->title(false).empty())
 				fprintf(file, "0\t");
 			else
@@ -1916,6 +1923,7 @@ bool Calculator::save(const char* file_name) {
 					fprintf(file, "%s", units[i]->title(false).c_str());
 			}
 			if(units[i]->type() == 'A') {
+				fprintf(file, "\t%i", au->isPrecise());
 				if(au->firstBaseUnit()->type() == 'D') {
 					fprintf(file, "\t%s\t%s\t%s", ((CompositeUnit*) (au->firstBaseUnit()))->internalName().c_str(), au->expression().c_str(), li2s(au->firstBaseExp()).c_str());
 				} else {
@@ -1985,10 +1993,10 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 								}
 								if(variableNameIsValid(ntmp)) {
 									mngr = calculate(vtmp);
+									v = addVariable(new Variable(ctmp, ntmp, mngr, ttmp, is_user_defs));
 									READ_TAB_DELIMITED_SET_BOOL(b)
-										mngr->setPrecise(b);	
-									}
-									addVariable(new Variable(ctmp, ntmp, mngr, ttmp, is_user_defs));
+										if(v) v->setPrecise(b);	
+									}									
 									mngr->unref();
 								}
 							}
@@ -2020,16 +2028,19 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 								TEST_TAB_DELIMITED
 									vtmp = stmp.substr(i, i2 - i);
 									func = addFunction(new UserFunction(ctmp, ntmp, vtmp, is_user_defs));
-									READ_TAB_DELIMITED_SET_0(shtmp)
-										func->setTitle(shtmp);
+									READ_TAB_DELIMITED_SET_BOOL(b)
+										func->setPrecise(b);	
 										READ_TAB_DELIMITED_SET_0(shtmp)
-											gsub("\\", "\n", shtmp);
-											func->setDescription(shtmp);
-											while(1) {
-												TEST_TAB_DELIMITED
-													func->addArgName(stmp.substr(i, i2 - i));
-												} else {
-													break;
+											func->setTitle(shtmp);
+											READ_TAB_DELIMITED_SET_0(shtmp)
+												gsub("\\", "\n", shtmp);
+												func->setDescription(shtmp);
+												while(1) {
+													TEST_TAB_DELIMITED
+														func->addArgName(stmp.substr(i, i2 - i));
+													} else {
+														break;
+													}
 												}
 											}
 										}
@@ -2163,29 +2174,32 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 							READ_TAB_DELIMITED_SET_0(etmp)
 								READ_TAB_DELIMITED_SET_0(shtmp)
 									READ_TAB_DELIMITED_SET_0(ttmp)
-										READ_TAB_DELIMITED(vtmp)
-											u = getUnit(vtmp);
-											if(!u) {
-												u = getCompositeUnit(vtmp);
-											}
-											if(!u && !rerun) {
-												unfinished_units.push_back(stmp);
-											}
-											if(u && (unitNameIsValid(ntmp) && unitNameIsValid(etmp) && unitNameIsValid(shtmp))) {
-												au = new AliasUnit(ctmp, ntmp, etmp, shtmp, ttmp, u);
-												TEST_TAB_DELIMITED
-													au->setExpression(stmp.substr(i, i2 - i));
+										READ_TAB_DELIMITED_SET_BOOL(b)
+											READ_TAB_DELIMITED(vtmp)
+												u = getUnit(vtmp);
+												if(!u) {
+													u = getCompositeUnit(vtmp);
+												}
+												if(!u && !rerun) {
+													unfinished_units.push_back(stmp);
+												}
+												if(u && (unitNameIsValid(ntmp) && unitNameIsValid(etmp) && unitNameIsValid(shtmp))) {
+													au = new AliasUnit(ctmp, ntmp, etmp, shtmp, ttmp, u);
 													TEST_TAB_DELIMITED
-														au->setExponent(s2li(stmp.substr(i, i2 - i)));
+														au->setExpression(stmp.substr(i, i2 - i));
 														TEST_TAB_DELIMITED
-															au->setReverseExpression(stmp.substr(i, i2 - i));
+															au->setExponent(s2li(stmp.substr(i, i2 - i)));
+															TEST_TAB_DELIMITED
+																au->setReverseExpression(stmp.substr(i, i2 - i));
+															}
 														}
 													}
+													addUnit(au);
+													au->setUserUnit(is_user_defs);
+													au->setPrecise(b);
+													au->setChanged(false);
+													unit_added = true;
 												}
-												addUnit(au);
-												au->setUserUnit(is_user_defs);
-												au->setChanged(false);
-												unit_added = true;
 											}
 										}
 									}

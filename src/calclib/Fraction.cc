@@ -199,9 +199,9 @@ Integer *Fraction::getInteger() const {
 bool Fraction::isZero() const {
 	return num.isZero();
 }
-void Fraction::subtract(const Fraction *fr) {
+bool Fraction::subtract(const Fraction *fr) {
 	if(!fr->isPrecise()) b_exact = false;
-	if(fr->isZero()) {return;}	
+	if(fr->isZero()) {return true;}	
 	num.multiply(fr->denominator());
 	Integer num2(fr->numerator());
 	num2.multiply(&den);		
@@ -209,41 +209,43 @@ void Fraction::subtract(const Fraction *fr) {
 	num.add(&num2);
 	den.multiply(fr->denominator());			
 	clean();
+	return true;
 }
-void Fraction::add(const Fraction *fr) {
+bool Fraction::add(const Fraction *fr) {
 	if(!fr->isPrecise()) b_exact = false;
-	if(fr->isZero()) {return;}	
+	if(fr->isZero()) {return true;}	
 	num.multiply(fr->denominator());
 	Integer num2(fr->numerator());
 	num2.multiply(&den);		
 	num.add(&num2);
 	den.multiply(fr->denominator());			
 	clean();
+	return true;	
 }
-void Fraction::multiply(const Fraction *fr) {
+bool Fraction::multiply(const Fraction *fr) {
 	if(!fr->isPrecise()) b_exact = false;
-	if(fr->isZero()) {clear(); return;}
+	if(fr->isZero()) {clear(); return true;}
 	den.multiply(fr->denominator());
 	num.multiply(fr->numerator());
 	clean();
+	return true;
 }
-void Fraction::divide(const Fraction *fr) {
+bool Fraction::divide(const Fraction *fr) {
 	if(!fr->isPrecise()) b_exact = false;
 	if(fr->isZero()) {
 		//division by zero!!!
-		clear(); 
-		return;
+		return false;
 	}
 	num.multiply(fr->denominator());
 	den.multiply(fr->numerator());	
 	clean();
+	return true;
 }
-void Fraction::gcd(const Fraction *fr) {
+bool Fraction::gcd(const Fraction *fr) {
 	if(!fr->isPrecise()) b_exact = false;
 	if(fr->isZero()) {
-		//division by zero!!!
 		clear(); 
-		return;
+		return true;
 	}
 	num.multiply(fr->denominator());
 	den.multiply(fr->numerator());		
@@ -251,84 +253,108 @@ void Fraction::gcd(const Fraction *fr) {
 	num.gcd(&den, &divisor);
 	set(divisor);
 	delete divisor;
+	return true;
 }
-void Fraction::sin() {
+bool Fraction::sin() {
 	setFloat(sinl(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::asin() {
+bool Fraction::asin() {
 	setFloat(asinl(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::sinh() {
+bool Fraction::sinh() {
 	setFloat(sinhl(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::asinh() {
+bool Fraction::asinh() {
 	setFloat(asinhl(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::cos() {
+bool Fraction::cos() {
 	setFloat(cosl(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::acos() {
+bool Fraction::acos() {
 	setFloat(acosl(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::cosh() {
+bool Fraction::cosh() {
 	setFloat(coshl(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::acosh() {
+bool Fraction::acosh() {
 	setFloat(acoshl(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::tan() {
+bool Fraction::tan() {
 	setFloat(tanl(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::atan() {
+bool Fraction::atan() {
 	setFloat(atanl(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::tanh() {
+bool Fraction::tanh() {
 	setFloat(tanhl(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::atanh() {
+bool Fraction::atanh() {
 	setFloat(atanhl(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::sqrt() {
+bool Fraction::sqrt() {
+	if(isNegative()) return false;
 	setFloat(sqrtl(value()));
 	b_exact = false;
+	return true;
 }	
-void Fraction::cbrt() {
+bool Fraction::cbrt() {
 	setFloat(cbrtl(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::log() {
+bool Fraction::log() {
+	if(isZero()) return false;
 	setFloat(logl(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::log2() {
+bool Fraction::log2() {
+	if(isZero()) return false;
 	setFloat(log2l(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::log10() {
+bool Fraction::log10() {
+	if(isZero()) return false;
 	setFloat(log10l(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::exp() {
+bool Fraction::exp() {
 	setFloat(expl(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::exp2() {
+bool Fraction::exp2() {
 	setFloat(exp2l(value()));
 	b_exact = false;
+	return true;
 }
-void Fraction::exp10(const Fraction *fr) {
+bool Fraction::exp10(const Fraction *fr) {
 	Fraction ten(10);
 	if(fr) {
 		ten.pow(fr);
@@ -337,37 +363,30 @@ void Fraction::exp10(const Fraction *fr) {
 		ten.pow(this);
 		set(&ten);
 	}
+	return true;
 }
 bool Fraction::add(MathOperation op, const Fraction *fr) {
 	if(!fr) return false;
-//	printf("FRPRE [%s] %c [%s]\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), op2ch(op), fr->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str());		
 	switch(op) {
 		case SUBTRACT: {
-			subtract(fr);
-			break;
+			return subtract(fr);
 		}
 		case ADD: {
-			add(fr);
-			break;
+			return add(fr);
 		} 
 		case MULTIPLY: {
-			multiply(fr);
-			break;
+			return multiply(fr);
 		}
 		case DIVIDE: {
-			divide(fr);
-			break;
+			return divide(fr);
 		}		
 		case RAISE: {
-			pow(fr);
-			break;
+			return pow(fr);
 		}
 		case EXP10: {
-			exp10(fr);
-			break;
+			return exp10(fr);
 		}
 	}
-//	printf("FRPOST [%s] %c [%s]\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), op2ch(op), fr->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str());	
 	return true;	
 }
 void Fraction::clean() {
@@ -388,7 +407,7 @@ void Fraction::clean() {
 	}
 	delete divisor;	
 }
-void Fraction::round() {
+bool Fraction::round() {
 	Integer *reminder;
 	bool was_negative = num.isNegative();
 	if(!num.divide(&den, &reminder)) {
@@ -401,11 +420,13 @@ void Fraction::round() {
 	}
 	den.set(1);
 	delete reminder;
+	return true;
 }
-void Fraction::abs() {
+bool Fraction::abs() {
 	num.setNegative(false);
+	return true;
 }
-void Fraction::floor() {
+bool Fraction::floor() {
 	if(num.isNegative()) {
 		if(!num.divide(&den)) {
 			num.add(-1);
@@ -414,8 +435,9 @@ void Fraction::floor() {
 	} else {
 		trunc();
 	}
+	return true;
 }
-void Fraction::ceil() {
+bool Fraction::ceil() {
 	if(num.isNegative()) {
 		trunc();	
 	} else {
@@ -424,19 +446,22 @@ void Fraction::ceil() {
 		}
 		den.set(1);
 	}
+	return true;
 }
-void Fraction::trunc() {
+bool Fraction::trunc() {
 	num.divide(&den);
 	den.set(1);
+	return true;
 }
-void Fraction::mod() {
+bool Fraction::mod() {
 	Integer *reminder;
 	num.divide(&den, &reminder);
 	num.set(reminder);
 	den.set(1);
 	delete reminder;
+	return true;
 }
-void Fraction::rem() {
+bool Fraction::rem() {
 	Integer *reminder;
 	Integer *chosen;
 	if(!num.divide(&den, &reminder)) {
@@ -452,14 +477,18 @@ void Fraction::rem() {
 	num.set(chosen);
 	den.set(1);
 	delete reminder;
+	return true;
 }
-void Fraction::pow(const Fraction *fr) {
+bool Fraction::pow(const Fraction *fr) {
+	if(isZero() && fr->isNegative()) {
+		return false;
+	}
 	if(!fr->isPrecise()) b_exact = false;
 	if(fr->isZero()) {
 		set(1);
-		return;
+		return true;
 	} 
-	if(fr->isOne()) return;
+	if(fr->isOne()) return true;
 	if(fr->denominator()->isOne()) {
 //	root(fr->denominator());
 		Integer exp(fr->numerator());
@@ -476,9 +505,10 @@ void Fraction::pow(const Fraction *fr) {
 		setFloat(powl(value(), fr->value()));
 		b_exact = false;
 	}
+	return true;	
 }
-void Fraction::root(const Integer *nth) {
-	if(nth->isOne()) return;
+bool Fraction::root(const Integer *nth) {
+	if(nth->isOne()) return true;
 	Fraction *x = this;
 	Fraction a(this);
 	Fraction n(nth);
@@ -497,10 +527,11 @@ void Fraction::root(const Integer *nth) {
 	}
 	clean();
 	b_exact = false;
+	return true;
 }
-void Fraction::root(long int nth) {
+bool Fraction::root(long int nth) {
 	Integer n(nth);
-	root(&n);
+	return root(&n);
 }
 
 bool Fraction::floatify(int precision) {
@@ -536,15 +567,32 @@ string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals
 	if(max_decimals < 0) max_decimals = PRECISION;
 	if(in_exact && !isPrecise()) *in_exact = true;
 	Integer exp;
-	Integer exp_spec;
+
 	if(nrformat != NUMBER_FORMAT_DECIMALS && !isZero()) {
-		Fraction exp_pre(this);
-		exp_pre.setNegative(false);
-		exp_pre.log10();
-		exp_pre.trunc();
-		exp.set(exp_pre.numerator());
-		exp_spec.set(&exp);
+		if((!(displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY))) {
+			Fraction exp_pre(this);
+			exp_pre.setNegative(false);
+			if(exp_pre.log10()) {
+				exp_pre.floor();
+				exp.set(exp_pre.numerator());
+
+			}
+		} else {
+			if(num.mod10()) {
+				Integer num_test(&num);				
+				while(num_test.div10()) {	
+					exp.add(1);		
+				}		
+			} else {
+				Integer den_test(&den);
+				while(den_test.div10()) {	
+					exp.add(-1);
+				}
+			}
+		}
 	}
+	Integer exp_spec(&exp);
+
 	string str_spec = "", str_prefix = "";	
 	bool force_fractional = false;
 	int base = 10;
@@ -558,7 +606,7 @@ string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals
 				prefix = CALCULATOR->getBestPrefix(&exp, l_exp);
 				Integer test_exp(&exp);
 				test_exp.subtract(prefix->exponent(l_exp, &tmp_exp));
-				if((exp.isPositive() && !exp.isOne() && exp.compare(&test_exp) == -1) || (!exp.isPositive() && exp.compare(&test_exp) == 1)) {
+				if((exp.isPositive() && exp.compare(&test_exp) == -1) || (exp.isNegative() && exp.compare(&test_exp) == 1)) {
 					exp_spec.set(&test_exp);
 					str_prefix = prefix->name(displayflags & DISPLAY_FORMAT_SHORT_UNITS);
 				}
@@ -623,7 +671,6 @@ string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals
 		den_spec.exp10(&exp);
 	}
 	string str_base = "";
-
 	if(!force_fractional && !(displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY)) {
 		Fraction fr(&whole, &den_spec);
 		fr.floatify(max_decimals);
@@ -675,6 +722,12 @@ string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals
 		} else {
 			whole.divide(&den_spec, &part);	
 		}
+		Integer *divisor;
+		if(part->gcd(&den_spec, &divisor)) {
+			part->divide(divisor);
+			den_spec.divide(divisor);
+		}
+		delete divisor;		
 		if(!whole.isZero()) {
 			if(whole.isNegative()) {
 				if(displayflags & DISPLAY_FORMAT_NONASCII) {
@@ -687,7 +740,6 @@ string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals
 			string str_whole = whole.print(base);
 			str_base += str_whole;
 		}
-
 		if(!part->isZero()) {
 			if(part->isNegative()) {
 				if(whole.isZero()) {

@@ -174,6 +174,7 @@ AliasUnit::AliasUnit(string cat_, string name_, string plural_, string short_nam
 	exp = exp_;
 	exp_mngr = new Manager(exp, 1);
 	b_changed = false;
+	b_exact = true;
 }
 AliasUnit::~AliasUnit() {
 	exp_mngr->unref();
@@ -329,6 +330,7 @@ Manager *AliasUnit::convertToFirstBase(Manager *value_, Manager *exp_) {
 		}
 	}
 	exp_->unref();
+	if(!isPrecise()) value_->setPrecise(false);
 	return value_;
 }
 Manager *AliasUnit::firstBaseValue(Manager *value_, Manager *exp_) {
@@ -356,6 +358,7 @@ Manager *AliasUnit::firstBaseValue(Manager *value_, Manager *exp_) {
 		mngr->unref();
 	}
 	exp_->unref();
+	if(!isPrecise()) value_->setPrecise(false);	
 	return value_;
 }
 void AliasUnit::setExponent(long int exp_) {
@@ -416,6 +419,12 @@ bool AliasUnit::hasComplexRelationTo(Unit *u) {
 	} else {
 		return hasComplexRelationTo(baseUnit()) || u->hasComplexRelationTo(u->baseUnit());
 	}
+}
+bool AliasUnit::isPrecise() const {
+	return b_exact;
+}
+void AliasUnit::setPrecise(bool is_precise) {
+	b_exact = is_precise;
 }
 
 AliasUnit_Composite::AliasUnit_Composite(Unit *alias, long int exp_, Prefix *prefix_) : AliasUnit("", alias->name(), alias->plural(false), alias->shortName(false), "", alias, "", exp_, "") {

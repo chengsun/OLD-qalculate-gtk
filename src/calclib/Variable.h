@@ -24,7 +24,7 @@ class Variable {
   protected:
 	string sname, scat, stitle;
 	Manager *mngr;
-	bool b_user, b_changed, b_builtin;
+	bool b_user, b_changed, b_builtin, b_exact;
   public:
 	Variable(string cat_, string name_, Manager *mngr_, string title_ = "", bool uservariable_ = true, bool is_builtin = false);
 	Variable(string cat_, string name_, long double value_, string title_ = "", bool uservariable_ = true, bool is_builtin = false);	
@@ -78,7 +78,8 @@ class Variable {
 	bool setUserVariable(bool is_user_var);
 	bool setChanged(bool has_changed);
 	bool isBuiltinVariable();
-
+	bool isPrecise() const;
+	void setPrecise(bool is_precise);
 };
 
 #endif

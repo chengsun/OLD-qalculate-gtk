@@ -13,9 +13,9 @@ libcalculate_la_SOURCES = \
 	Fraction.cc	Fraction.h \
 	Integer.cc	Integer.h \
 	Manager.cc	Manager.h \
+	Matrix.cc	Matrix.h \
 	Prefix.cc	Prefix.h \
 	util.cc		util.h \
 	includes.h \
 	Unit.cc		Unit.h \
 	BuiltinFunctions.cc BuiltinFunctions.h
-

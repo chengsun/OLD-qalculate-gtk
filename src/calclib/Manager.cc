@@ -227,9 +227,10 @@ void Manager::transform(Manager *mngr, char type_, MathOperation op, bool revers
 bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 	printf("[%s] %c [%s] (%i)\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), op2ch(op), mngr->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), translate_);
 	if(mngr->type() == FRACTION_MANAGER && c_type == FRACTION_MANAGER) {
-		fr->add(op, mngr->fraction());
-		if(!fr->isPrecise() || !mngr->isPrecise()) setPrecise(false);
-		return true;
+		if(fr->add(op, mngr->fraction())) {
+			if(!fr->isPrecise() || !mngr->isPrecise()) setPrecise(false);
+			return true;
+		}
 	}
 	mngr->ref();
 	if(op == SUBTRACT) {
@@ -252,11 +253,11 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 	}
 	if(op == DIVIDE) {
 		if(mngr->isNull()) {
-		 	CALCULATOR->error(true, _("Trying to divide \"%s\" with zero."), print().c_str(), NULL);
-			if(negative()) set(-INFINITY);
-			else set(INFINITY);
-			mngr->unref();
-			return true;
+//		 	CALCULATOR->error(true, _("Trying to divide \"%s\" with zero."), print().c_str(), NULL);
+//			if(negative()) set(-INFINITY);
+//			else set(INFINITY);
+//			mngr->unref();
+//			return false;
 		} else if(mngr->isOne()) {
 			mngr->unref();
 			return true;
@@ -558,6 +559,14 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 				}
 				break;			
 			}
+			default: {
+				if(!translate_) {
+					mngr->unref(); 
+					return false;
+				}
+				transform(mngr, ADDITION_MANAGER, op);
+				break;
+			}			
 		}
 	} else if(op == MULTIPLY) {
 		if(isNull() || mngr->isNull()) {
@@ -788,10 +797,18 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 				}
 				break;
 			}			
+			default: {
+				if(!translate_) {
+					mngr->unref(); 
+					return false;
+				}
+				transform(mngr, MULTIPLICATION_MANAGER, op);
+				break;
+			}			
 		}
 	} else if(op == RAISE) {
 		if(mngr->isNull()) {
-			if(isNull()) {
+/*			if(isNull()) {
 				CALCULATOR->error(false, _("0^0 is undefined"), NULL);
 				if(!translate_) {
 					mngr->unref(); 
@@ -799,12 +816,14 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 				}
 				transform(mngr, POWER_MANAGER, op);
 				return true;
-			} else {
+			} else {*/
 				set(1, 1);
 				mngr->unref(); return true;
-			}
+//			}
 		} else if(mngr->isOne()) {
 			mngr->unref(); return true;
+		} else if(isZero() && mngr->isFraction() && mngr->fraction()->isNegative()) {
+			if(translate_) {CALCULATOR->error(true, _("Division by zero."), NULL);}
 		}
 		switch(c_type) {
 			case MULTIPLICATION_MANAGER: {

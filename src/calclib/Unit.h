@@ -64,6 +64,7 @@ class AliasUnit : public Unit {
 	long int exp;
 	Manager *exp_mngr;
 	Unit *unit;
+	bool b_exact;
   public:
 	AliasUnit(string cat_, string name_, string plural_, string short_name_, string title_, Unit *alias, string relation = "1", long int exp_ = 1, string reverse = "", bool is_user_unit = true);
 	~AliasUnit(void);
@@ -94,6 +95,8 @@ class AliasUnit : public Unit {
 	virtual bool isParentOf(Unit *u);
 	virtual bool hasComplexExpression(void);
 	virtual bool hasComplexRelationTo(Unit *u);
+	virtual bool isPrecise() const;
+	virtual void setPrecise(bool is_precise);	
 //	virtual Manager *convert(Unit *u, Manager *value_ = NULL, long double exp_ = 1.0L);
 };
 

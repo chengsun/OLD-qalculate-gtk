@@ -95,3 +95,10 @@ bool Variable::setUserVariable(bool is_user_var) {
 bool Variable::setChanged(bool has_changed) {
 	b_changed = has_changed;
 }
+bool Variable::isPrecise() const {
+	return b_exact;
+}
+void Variable::setPrecise(bool is_precise) {
+	b_exact = is_precise;
+}
+
