@@ -331,7 +331,7 @@ string& remove_blanks(string &str) {
 string& remove_duplicate_blanks(string &str) {
 	int i = str.find_first_of(SPACE_S, 0);
 	while(i != string::npos) {
-		if(i == 0 && is_in(str[i - 1], SPACE_S)) {
+		if(i == 0 && is_in(SPACE_S, str[i - 1])) {
 			str.erase(i, 1);
 		} else {
 			i++;
@@ -631,6 +631,20 @@ bool is_in(const char *str, char c) {
 }
 bool is_not_in(const char *str, char c) {
 	for(int i = 0; i < strlen(str); i++) {
+		if(str[i] == c)
+			return false;
+	}
+	return true;
+}
+bool is_in(const string &str, char c) {
+	for(int i = 0; i < str.length(); i++) {
+		if(str[i] == c)
+			return true;
+	}
+	return false;
+}
+bool is_not_in(const string &str, char c) {
+	for(int i = 0; i < str.length(); i++) {
 		if(str[i] == c)
 			return false;
 	}

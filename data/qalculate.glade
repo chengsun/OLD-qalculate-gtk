@@ -6321,7 +6321,7 @@ Copyright (c) 2003 Niklas Knutsson
   <property name="title" translatable="yes">Precision</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
-  <property name="modal">True</property>
+  <property name="modal">False</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
   <property name="has_separator">False</property>
@@ -6347,6 +6347,7 @@ Copyright (c) 2003 Niklas Knutsson
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="response_id">-7</property>
+	      <signal name="clicked" handler="gtk_widget_hide" object="precision_dialog" last_modification_time="Wed, 01 Oct 2003 08:54:59 GMT"/>
 	    </widget>
 	  </child>
 	</widget>
@@ -6422,7 +6423,7 @@ Copyright (c) 2003 Niklas Knutsson
   <property name="title" translatable="yes">Decimals</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
-  <property name="modal">True</property>
+  <property name="modal">False</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
   <property name="has_separator">False</property>
@@ -6448,6 +6449,7 @@ Copyright (c) 2003 Niklas Knutsson
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="response_id">-7</property>
+	      <signal name="clicked" handler="gtk_widget_hide" object="decimals_dialog" last_modification_time="Wed, 01 Oct 2003 09:05:15 GMT"/>
 	    </widget>
 	  </child>
 	</widget>

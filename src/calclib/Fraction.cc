@@ -1400,7 +1400,7 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 					whole_ += '0';
 				}
 			} else {
-				index += strlen(DOT_STR);
+				index += DOT_STR.length();
 				index = whole_.length() - index;
 				index = min_decimals - index;
 				for(int i = 0; i < index; i++) {

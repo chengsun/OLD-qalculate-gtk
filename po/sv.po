@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "POT-Creation-Date: 2003-09-27 11:22+0200\n"
-"PO-Revision-Date: 2003-09-26 17:54+0200\n"
+"PO-Revision-Date: 2003-10-01 17:58+0200\n"
 "Last-Translator: Niklas Knutsson <nq@altern.org>\n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -33,19 +33,16 @@ msgid "("
 msgstr "("
 
 #: data/qalculate.glade.h:3
-#, fuzzy
 msgid "(De)activate the selected function"
-msgstr "Ta bort vald funktion"
+msgstr "(Av)aktivera vald funktion"
 
 #: data/qalculate.glade.h:4
-#, fuzzy
 msgid "(De)activate the selected unit"
-msgstr "Ta bort vald enhet"
+msgstr "(Av)aktivera vald enhet"
 
 #: data/qalculate.glade.h:5
-#, fuzzy
 msgid "(De)activate the selected variable"
-msgstr "Ta bort vald variabler"
+msgstr "(Av)aktivera vald variabel"
 
 #: data/qalculate.glade.h:6
 msgid ")"
@@ -186,9 +183,8 @@ msgid "Accept the modification of argument rules"
 msgstr "Godkänn modifiering av parameterregler"
 
 #: data/qalculate.glade.h:47
-#, fuzzy
 msgid "Add entered argument definition"
-msgstr "Lägg till paramaterdefinitionen"
+msgstr "Lägg till parameterdefinitionen"
 
 #: data/qalculate.glade.h:48
 msgid "Alias"
@@ -345,10 +341,9 @@ msgstr "Omvandla"
 
 #: data/qalculate.glade.h:85 src/calclib/data/functions.xml.in.h:58
 msgid "Cosine"
-msgstr "Cosine"
+msgstr "Cosinus"
 
 #: data/qalculate.glade.h:86
-#, fuzzy
 msgid "Create a new function"
 msgstr "Skapa en ny funktion"
 
@@ -620,13 +615,11 @@ msgid "If a matrix or vectors shall be generated from the contents of the file"
 msgstr "huruvida en matris eller vektor ska genereras från filinnehållet"
 
 #: data/qalculate.glade.h:152
-msgid ""
-"If a matrix or vectors shall be generated from the contents of the file "
+msgid "If a matrix or vectors shall be generated from the contents of the file "
 msgstr "huruvida en matris eller vektor skall genereras från filinnehållet"
 
 #: data/qalculate.glade.h:153
-msgid ""
-"If changes to functions, units and variables shall be saved automatically"
+msgid "If changes to functions, units and variables shall be saved automatically"
 msgstr ""
 "om modifieringar av funktioner, enheter och variabler skall sparas "
 "automatiskt"
@@ -656,10 +649,8 @@ msgid "If this is a matrix or vector"
 msgstr "huruvida det är en matris eller vektor"
 
 #: data/qalculate.glade.h:160
-msgid ""
-"If you want the abbreviation of unit names to be displayed in the result"
-msgstr ""
-"huruvida du vill att förkortningar för enhetsnamn skall visas i resultat"
+msgid "If you want the abbreviation of unit names to be displayed in the result"
+msgstr "huruvida du vill att förkortningar för enhetsnamn skall visas i resultat"
 
 #: data/qalculate.glade.h:161
 msgid "If you want to use a font other than the default in the result display"
@@ -757,10 +748,8 @@ msgid "Name"
 msgstr "Namn"
 
 #: data/qalculate.glade.h:184
-msgid ""
-"Name (or name prefix) used to reference generated variable(s) in expressions"
-msgstr ""
-"Namn (eller namnprefix) för referenser till genererade variabler i uttryck"
+msgid "Name (or name prefix) used to reference generated variable(s) in expressions"
+msgstr "Namn (eller namnprefix) för referenser till genererade variabler i uttryck"
 
 #: data/qalculate.glade.h:185
 msgid "Name of the data file to import"
@@ -983,9 +972,8 @@ msgid "Semicolon"
 msgstr "Semikolon"
 
 #: data/qalculate.glade.h:240
-#, fuzzy
 msgid "Short (reference)"
-msgstr "Inställningar"
+msgstr "Kort (referens)"
 
 #: data/qalculate.glade.h:241
 msgid "Short unit format"
@@ -1001,7 +989,7 @@ msgstr "Enkelt"
 
 #: data/qalculate.glade.h:244 src/calclib/data/functions.xml.in.h:271
 msgid "Sine"
-msgstr "Sine"
+msgstr "Sinus"
 
 #: data/qalculate.glade.h:245
 msgid "Singular"
@@ -1029,7 +1017,7 @@ msgstr "Tabulator"
 
 #: data/qalculate.glade.h:251 src/calclib/data/functions.xml.in.h:292
 msgid "Tangent"
-msgstr "Tangent"
+msgstr "Tangens"
 
 #: data/qalculate.glade.h:252
 msgid "Text"
@@ -1494,12 +1482,11 @@ msgstr ""
 "Vill du ersätta den?"
 
 #: src/callbacks.cc:3546
-#, fuzzy
 msgid ""
 "A unit with the same singular name already exists.\n"
 "Overwrite unit?"
 msgstr ""
-"En enhet med samma namn finns redan.\n"
+"En enhet med samma singularis finns redan.\n"
 "Vill du ersätta den?"
 
 #: src/callbacks.cc:3565 src/callbacks.cc:3609
@@ -1863,8 +1850,7 @@ msgstr "Kunder inte beräkna determinanten för inversen."
 msgid ""
 "The adjoint can only be calculated for matrices with an equal number of rows "
 "and columns."
-msgstr ""
-"Adjoint kan enbart beräknas för matriser med lika antal rader och kolumner."
+msgstr "Adjoint kan enbart beräknas för matriser med lika antal rader och kolumner."
 
 #: src/calclib/Matrix.cc:139
 #, c-format
@@ -1892,108 +1878,97 @@ msgstr "Fel i enhetsuttrycket: \"%s\"."
 
 #: src/calclib/data/functions.xml.in.h:1
 msgid "10 raised the to power X"
-msgstr ""
+msgstr "10 upphöjt med X"
 
 #: src/calclib/data/functions.xml.in.h:2
-#, fuzzy
 msgid "1st Number"
-msgstr "Nummer"
+msgstr "1:a siffran"
 
 #: src/calclib/data/functions.xml.in.h:3
 msgid "2 raised the to power X"
-msgstr ""
+msgstr "2 upphöjt med X"
 
 #: src/calclib/data/functions.xml.in.h:4
-#, fuzzy
 msgid "2nd Number"
-msgstr "Nummer"
+msgstr "2:a siffran"
 
 #: src/calclib/data/functions.xml.in.h:5
-#, fuzzy
 msgid "Absolute Value"
-msgstr "Om Qalculate!"
+msgstr "Absolut Värde"
 
 #: src/calclib/data/functions.xml.in.h:6
 msgid "Accrued interest of security paying at maturity"
-msgstr ""
+msgstr "Ränta för en säkerhet från start till mognad"
 
 #: src/calclib/data/functions.xml.in.h:7
 msgid "Accrued interest of security with periodic interest payments"
-msgstr ""
+msgstr "Ränta för en säkerhet med periodisk ränta"
 
 #: src/calclib/data/functions.xml.in.h:8
 msgid "Adjoint"
-msgstr ""
+msgstr "Adjungerad"
 
 #: src/calclib/data/functions.xml.in.h:9
 msgid "Amortizement period"
-msgstr ""
+msgstr "Amorteringsperiod"
 
 #: src/calclib/data/functions.xml.in.h:10
 msgid "Amount received at maturity for a security bond"
-msgstr ""
+msgstr "Erhållet belopp för en säkerhet vid mognad"
 
 #: src/calclib/data/functions.xml.in.h:12
 #, no-c-format
 msgid "Annual coupon rate (%)"
-msgstr ""
+msgstr "Årlig kupongränta (%)"
 
 #: src/calclib/data/functions.xml.in.h:13
 msgid "Annual rate of security"
-msgstr ""
+msgstr "Årlig hastighet"
 
 #: src/calclib/data/functions.xml.in.h:14
 msgid "Annual yield"
-msgstr ""
+msgstr "Årlig avkastning"
 
 #: src/calclib/data/functions.xml.in.h:16
 #, no-c-format
 msgid "Annualized yield (%)"
-msgstr ""
+msgstr "Årlig avkastning (%)"
 
 #: src/calclib/data/functions.xml.in.h:17
-#, fuzzy
 msgid "Arccosine"
-msgstr "Cosine"
+msgstr "Arcuscosinus"
 
 #: src/calclib/data/functions.xml.in.h:18
-#, fuzzy
 msgid "Arcsine"
-msgstr "Precision"
+msgstr "Arcussinus"
 
 #: src/calclib/data/functions.xml.in.h:19
-#, fuzzy
 msgid "Arctangent"
-msgstr "Tangent"
+msgstr "Arcustangens"
 
 #: src/calclib/data/functions.xml.in.h:20
 msgid "Arithmetics"
-msgstr ""
+msgstr "Aritmetik"
 
 #: src/calclib/data/functions.xml.in.h:21
-#, fuzzy
 msgid "Base"
-msgstr "Upphöj"
+msgstr "Bas"
 
 #: src/calclib/data/functions.xml.in.h:22
-#, fuzzy
 msgid "Base N Logrithm"
-msgstr "Bas-10-logaritm"
+msgstr "Bas-N-logaritm"
 
 #: src/calclib/data/functions.xml.in.h:23
-#, fuzzy
 msgid "Base-10 Logarithm"
 msgstr "Bas-10-logaritm"
 
 #: src/calclib/data/functions.xml.in.h:24
-#, fuzzy
 msgid "Base-2 Logarithm"
-msgstr "Bas-10-logaritm"
+msgstr "Bas-2-logaritm"
 
 #: src/calclib/data/functions.xml.in.h:26
-#, fuzzy
 msgid "Binary number"
-msgstr "ett nummer"
+msgstr "Binärt nummer"
 
 #: src/calclib/data/functions.xml.in.h:27
 msgid ""
@@ -2001,7 +1976,7 @@ msgid ""
 "security does not pay interest at maturity. \\Basis is the type of day "
 "counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
 "days/360, 3: real days/365 or 4: European 30/365."
-msgstr ""
+msgstr "Beräknar och returnerar priset per $100 värde av en säkerhet. Säkerheten betalar inte ränta vid mognad. \\Dagsräkningssystem kan vara: 0: Amerikanskt 30/360 (förvald), 1: verkliga dagar, 2: verkliga dagar/360, 3: verkliga dagar/365, eller 4: Europeiskt 30/360"
 
 #: src/calclib/data/functions.xml.in.h:28
 msgid ""
@@ -2009,7 +1984,7 @@ msgid ""
 "security pays interest at maturity.\\Basis is the type of day counting you "
 "want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real "
 "days/365 or 4: European 30/365."
-msgstr ""
+msgstr "Beräknar och returnerar priset per $100 värde av en säkerhet. Säkerheten betalar ränta vid mognad. \\Dagsräkningssystem kan vara: 0: Amerikanskt 30/360 (förvald), 1: verkliga dagar, 2: verkliga dagar/360, 3: verkliga dagar/365, eller 4: Europeiskt 30/360"
 
 #: src/calclib/data/functions.xml.in.h:29
 msgid ""
@@ -2017,47 +1992,47 @@ msgid ""
 "payments and a constant interest rate.\\Type defines the due date. 1 for "
 "payment at the beginning of a period and 0 (default) for payment at the end "
 "of a period."
-msgstr ""
+msgstr "Beräknar anatalet perioder för investering baserad på periodiska, konstanta betalningar och konstant ränta. \\Typ anger när betalningarna sker. 1 för betalning i början av perioden och 0 (förvald) för betalning i slutet av perioden."
 
 #: src/calclib/data/functions.xml.in.h:30
 msgid ""
 "Calculates the amount of a payment of an annuity going towards interest."
 "\\Type defines the due date. 1 for payment at the beginning of a period and "
 "0 (default) for payment at the end of a period."
-msgstr ""
+msgstr "Beräknar summan av en betalning på en livränta som går mot ränta. \\Typ anger när betalningarna sker. 1 för betalning i början av perioden och 0 (förvald) för betalning i slutet av perioden."
 
 #: src/calclib/data/functions.xml.in.h:31
 msgid ""
 "Calculates the amount of a payment of an annuity going towards principal."
 "\\Type defines the due date. 1 for payment at the beginning of a period and "
 "0 (default) for payment at the end of a period."
-msgstr ""
+msgstr "Beräknar summan av en betalning på en livränta som går mot kapital. \\Typ anger när betalningarna sker. 1 för betalning i början av perioden och 0 (förvald) för betalning i slutet av perioden."
 
 #: src/calclib/data/functions.xml.in.h:32
 msgid "Calculates the area of a circle using the diameter"
-msgstr ""
+msgstr "Beräknar omkretsen för en cirkel."
 
 #: src/calclib/data/functions.xml.in.h:33
 msgid "Calculates the area of a circle using the radius"
-msgstr ""
+msgstr "Beräknar arean för en cirkel."
 
 #: src/calclib/data/functions.xml.in.h:34
 msgid "Calculates the duration of a security."
-msgstr ""
+msgstr "Beräknar livslängden på en säkerhet."
 
 #: src/calclib/data/functions.xml.in.h:35
 msgid "Calculates the effective interest for a given nominal rate."
-msgstr ""
+msgstr "Beräknar den effektiva räntan från en given nominell räntesats."
 
 #: src/calclib/data/functions.xml.in.h:36
 msgid "Calculates the interest paid on a given period of an investment."
-msgstr ""
+msgstr "Beräknar den betalda räntan för en viss period av en investering."
 
 #: src/calclib/data/functions.xml.in.h:37
 msgid ""
 "Calculates the nominal interest rate from a given effective interest rate "
 "compounded at given intervals."
-msgstr ""
+msgstr "Beräknar den nominella räntesatsen från en given effektiv ränta."
 
 #: src/calclib/data/functions.xml.in.h:38
 msgid ""
@@ -2086,33 +2061,28 @@ msgid "Calculates the value of a level-coupon bond."
 msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:42
-#, fuzzy
 msgid "Circle Area"
-msgstr "Kvadratroten"
+msgstr "Cirkelarea"
 
 #: src/calclib/data/functions.xml.in.h:43
 msgid "Circle Circumference"
-msgstr ""
+msgstr "Cirkelomkrets"
 
 #: src/calclib/data/functions.xml.in.h:44
-#, fuzzy
 msgid "Cofactor"
-msgstr "Kategori"
+msgstr "Kofaktor"
 
 #: src/calclib/data/functions.xml.in.h:46
-#, fuzzy
 msgid "Component"
-msgstr "Exponent"
+msgstr "Komponent"
 
 #: src/calclib/data/functions.xml.in.h:47
-#, fuzzy
 msgid "Components"
-msgstr "Exponent"
+msgstr "Komponenter"
 
 #: src/calclib/data/functions.xml.in.h:48
-#, fuzzy
 msgid "Compound"
-msgstr "Kombinerad"
+msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:49
 msgid ""
@@ -2124,31 +2094,26 @@ msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:50
 msgid "Condition (use &lt;, &lt;=, =, &lt;&gt;, =&gt; or &gt;)"
-msgstr ""
+msgstr "Villkor"
 
 #: src/calclib/data/functions.xml.in.h:51
-#, fuzzy
 msgid "Cone Volume"
-msgstr "Omvandla"
+msgstr "Konvolym"
 
 #: src/calclib/data/functions.xml.in.h:52
-#, fuzzy
 msgid "Construct Matrix"
-msgstr "Omvandla till enhet"
+msgstr "Skapa matris"
 
 #: src/calclib/data/functions.xml.in.h:53
-#, fuzzy
 msgid "Construct Vector"
-msgstr "Omvandla till enhet"
+msgstr "Skapa vektor"
 
 #: src/calclib/data/functions.xml.in.h:54
-#, fuzzy
 msgid "Convert Matrix to Vector"
-msgstr "Omvandla till enhet"
+msgstr "Omvandla matris till vektor"
 
 #: src/calclib/data/functions.xml.in.h:55
-msgid ""
-"Converts a decimal dollar price into a dollar price expressed as a fraction."
+msgid "Converts a decimal dollar price into a dollar price expressed as a fraction."
 msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:56
@@ -2158,115 +2123,96 @@ msgid ""
 msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:57
-#, fuzzy
 msgid "Correlation Coefficient"
-msgstr "förhållandet är exakt"
+msgstr "Korrelationskoefficient"
 
 #: src/calclib/data/functions.xml.in.h:59
-#, fuzzy
 msgid "Cost"
-msgstr "Cosine"
+msgstr "Kostnad"
 
 #: src/calclib/data/functions.xml.in.h:60
-#, fuzzy
 msgid "Coupon rate"
-msgstr "Exponent"
+msgstr "Kupongränta"
 
 #: src/calclib/data/functions.xml.in.h:61
 msgid "Coupons per year"
-msgstr ""
+msgstr "Antal kuponger per år"
 
 #: src/calclib/data/functions.xml.in.h:62
-#, fuzzy
 msgid "Covariance"
-msgstr "variabel"
+msgstr "Kovarians"
 
 #: src/calclib/data/functions.xml.in.h:63
-#, fuzzy
 msgid "Cube Root"
-msgstr "Kvadratroten"
+msgstr "Kubikroten"
 
 #: src/calclib/data/functions.xml.in.h:64
-#, fuzzy
 msgid "Cube Volume"
-msgstr "Omvandla"
+msgstr "Kubvolym"
 
 #: src/calclib/data/functions.xml.in.h:65
-#, fuzzy
 msgid "Custom sum of components"
-msgstr "Anpassad teckensnitt för resultat"
+msgstr "Anpassad komponentsumma"
 
 #: src/calclib/data/functions.xml.in.h:66
-#, fuzzy
 msgid "Cylinder Volume"
-msgstr "Omvandla"
+msgstr "Cylindervolym"
 
 #: src/calclib/data/functions.xml.in.h:67
-#, fuzzy
 msgid "Data"
-msgstr "Datum"
+msgstr "Data"
 
 #: src/calclib/data/functions.xml.in.h:68
-#, fuzzy
 msgid "Data 1"
-msgstr "Datum"
+msgstr "Data 1"
 
 #: src/calclib/data/functions.xml.in.h:69
-#, fuzzy
 msgid "Data 2"
-msgstr "Datum"
+msgstr "Data 2"
 
 #: src/calclib/data/functions.xml.in.h:70
 msgid "Date & Time"
-msgstr ""
+msgstr "Datum & Tid"
 
 #: src/calclib/data/functions.xml.in.h:71
 msgid "Day counting basis"
-msgstr ""
+msgstr "Dagsräkningssystem"
 
 #: src/calclib/data/functions.xml.in.h:72
 msgid "Days between two dates"
-msgstr ""
+msgstr "Antal dagar mellan två datum"
 
 #: src/calclib/data/functions.xml.in.h:73
-#, fuzzy
 msgid "Decile"
-msgstr "Decimal"
+msgstr "Decil"
 
 #: src/calclib/data/functions.xml.in.h:74
-#, fuzzy
 msgid "Decimal dollar"
-msgstr "Decimalt värde"
+msgstr "Decimala dollar"
 
 #: src/calclib/data/functions.xml.in.h:76
-#, fuzzy
 msgid "Degrees to Gradians"
-msgstr "Grader"
+msgstr "Grader till gradienter"
 
 #: src/calclib/data/functions.xml.in.h:77
-#, fuzzy
 msgid "Degrees to Radians"
-msgstr "Grader"
+msgstr "Grader till radianer"
 
 #: src/calclib/data/functions.xml.in.h:78
-#, fuzzy
 msgid "Denominator"
-msgstr "Avgränsare"
+msgstr "Nämnare"
 
 #: src/calclib/data/functions.xml.in.h:79
-#, fuzzy
 msgid "Denominator of fraction"
-msgstr "Bråktal"
+msgstr "Bråktalets nämnare "
 
 #: src/calclib/data/functions.xml.in.h:80
-#, fuzzy
 msgid "Desired future value"
-msgstr "ett valfritt värde"
+msgstr "Önskat framtida värde"
 
 #: src/calclib/data/functions.xml.in.h:81
-#, fuzzy
 msgid "Determinant"
-msgstr "Avgränsare"
+msgstr "Determinanten"
 
 #: src/calclib/data/functions.xml.in.h:82
 msgid ""
@@ -2277,138 +2223,121 @@ msgid ""
 msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:83
-#, fuzzy
 msgid "Diameter"
-msgstr "Avgränsare"
+msgstr "Diameter"
 
 #: src/calclib/data/functions.xml.in.h:84
-#, fuzzy
 msgid "Differentiate"
-msgstr "Avaktivera"
+msgstr "Differentiera"
 
 #: src/calclib/data/functions.xml.in.h:85
 msgid "Discount"
-msgstr ""
+msgstr "Diskonto"
 
 #: src/calclib/data/functions.xml.in.h:86
 msgid "Discount rate"
-msgstr ""
+msgstr "Reduceringshastighet"
 
 #: src/calclib/data/functions.xml.in.h:87
 msgid "Discount rate for a security"
-msgstr ""
+msgstr "Reduceringshastighet för säkerhet"
 
 #: src/calclib/data/functions.xml.in.h:88
 msgid "Display error"
-msgstr ""
+msgstr "Visningsfel"
 
 #: src/calclib/data/functions.xml.in.h:89
-#, fuzzy
 msgid "Dollar decimal"
-msgstr "Decimal"
+msgstr "Dollar decimal"
 
 #: src/calclib/data/functions.xml.in.h:90
-#, fuzzy
 msgid "Dollar fraction"
-msgstr "Bråktal"
+msgstr "Dollar bråktal"
 
 #: src/calclib/data/functions.xml.in.h:91
-#, fuzzy
 msgid "Duration"
-msgstr "Bråktal"
+msgstr "Duration"
 
 #: src/calclib/data/functions.xml.in.h:92
-#, fuzzy
 msgid "Durbin-Watson"
-msgstr "Bråktal"
+msgstr "Durbin-Watson"
 
 #: src/calclib/data/functions.xml.in.h:93
-#, fuzzy
 msgid "Effective interest rate"
-msgstr "Internt namn"
+msgstr "Effektiv räntesats"
 
 #: src/calclib/data/functions.xml.in.h:94
-#, fuzzy
 msgid "Element"
 msgstr "Element"
 
 #: src/calclib/data/functions.xml.in.h:96
-#, fuzzy
 msgid "Experimental"
-msgstr "Exponent"
+msgstr "Experimentell"
 
 #: src/calclib/data/functions.xml.in.h:98
 msgid "Exponents and Logarithms"
-msgstr ""
+msgstr "Exponenter och logaritmer"
 
 #: src/calclib/data/functions.xml.in.h:100
 msgid "Expression if condition NOT met"
-msgstr ""
+msgstr "Uttryck om villkor INTE uppfylls"
 
 #: src/calclib/data/functions.xml.in.h:101
 msgid "Expression if condition met"
-msgstr ""
+msgstr "Uttryck om villkor uppfylls"
 
 #: src/calclib/data/functions.xml.in.h:102
 msgid "Extract Column as Vector"
-msgstr ""
+msgstr "Skapa vektor från kolumn"
 
 #: src/calclib/data/functions.xml.in.h:103
 msgid "Extract Row as Vector"
-msgstr ""
+msgstr "Skapa vektor från rad"
 
 #: src/calclib/data/functions.xml.in.h:104
-#, fuzzy
 msgid "Extract fractional part"
-msgstr "ett heltal"
+msgstr "Extrahera bråkdel"
 
 #: src/calclib/data/functions.xml.in.h:105
-#, fuzzy
 msgid "Extract integer part"
-msgstr "ett heltal"
+msgstr "Extrahera heltal"
 
 #: src/calclib/data/functions.xml.in.h:106
-#, fuzzy
 msgid "Face value"
-msgstr "ett valfritt värde"
+msgstr "Nominellt värde"
 
 #: src/calclib/data/functions.xml.in.h:107
 msgid "Factorial"
-msgstr ""
+msgstr "Fakultet"
 
 #: src/calclib/data/functions.xml.in.h:108
 msgid "Financial"
-msgstr ""
+msgstr "Finans"
 
 #: src/calclib/data/functions.xml.in.h:109
 msgid "First interest"
-msgstr ""
+msgstr "Första ränteinbetalning"
 
 #: src/calclib/data/functions.xml.in.h:110
-#, fuzzy
 msgid "Fractional dollar"
-msgstr "Bråktalsvisning"
+msgstr "Bråktalsdollar"
 
 #: src/calclib/data/functions.xml.in.h:111
-#, fuzzy
 msgid "Frequency"
-msgstr "Valfri"
+msgstr "Frekvens"
 
 #: src/calclib/data/functions.xml.in.h:113
-#, fuzzy
 msgid "Function Title"
-msgstr "Funktion"
+msgstr "Funktionstitel"
 
 #: src/calclib/data/functions.xml.in.h:114
-#, fuzzy
 msgid "Future value"
-msgstr "ett valfritt värde"
+msgstr "Framtida värde"
 
 #: src/calclib/data/functions.xml.in.h:115
 #: src/calclib/data/variables.xml.in.h:6
-#, fuzzy
 msgid "General"
-msgstr "Gra"
+msgstr "Generella"
 
 #: src/calclib/data/functions.xml.in.h:116
 msgid "Generates a pseudo-random number between 0 and 1"
@@ -2416,300 +2345,271 @@ msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:117
 msgid "Geometric Mean"
-msgstr ""
+msgstr "Geometriskt medelvärde"
 
 #: src/calclib/data/functions.xml.in.h:118
 msgid "Geometry/Circle"
-msgstr ""
+msgstr "Geometri/Cirkel"
 
 #: src/calclib/data/functions.xml.in.h:119
 msgid "Geometry/Cone"
-msgstr ""
+msgstr "Geometri/Kon"
 
 #: src/calclib/data/functions.xml.in.h:120
 msgid "Geometry/Cube"
-msgstr ""
+msgstr "Geometri/Kub"
 
 #: src/calclib/data/functions.xml.in.h:121
 msgid "Geometry/Cylinder"
-msgstr ""
+msgstr "Geometri/Cylinder"
 
 #: src/calclib/data/functions.xml.in.h:122
 msgid "Geometry/Parallelogram"
-msgstr ""
+msgstr "Geometri/Parallelogram"
 
 #: src/calclib/data/functions.xml.in.h:123
 msgid "Geometry/Prism"
-msgstr ""
+msgstr "Geometri/Prism"
 
 #: src/calclib/data/functions.xml.in.h:124
 msgid "Geometry/Pyramid"
-msgstr ""
+msgstr "Geometri/Pyramid"
 
 #: src/calclib/data/functions.xml.in.h:125
 msgid "Geometry/Rectangle"
-msgstr ""
+msgstr "Geometri/Rektangel"
 
 #: src/calclib/data/functions.xml.in.h:126
 msgid "Geometry/Sphere"
-msgstr ""
+msgstr "Geometri/Sfär"
 
 #: src/calclib/data/functions.xml.in.h:127
 msgid "Geometry/Square"
-msgstr ""
+msgstr "Geometri/Kvadrat"
 
 #: src/calclib/data/functions.xml.in.h:128
 msgid "Geometry/Trapezoid"
-msgstr ""
+msgstr "Geometri/Trapetsoid"
 
 #: src/calclib/data/functions.xml.in.h:129
 msgid "Geometry/Triangle"
-msgstr ""
+msgstr "Geometri/Triangel"
 
 #: src/calclib/data/functions.xml.in.h:131
-#, fuzzy
 msgid "Gradians to Degrees"
-msgstr "Gradienter"
+msgstr "Gradienter till grader"
 
 #: src/calclib/data/functions.xml.in.h:132
-#, fuzzy
 msgid "Gradians to Radians"
-msgstr "Gradienter"
+msgstr "Gradienter till radianer"
 
 #: src/calclib/data/functions.xml.in.h:133
 msgid "Greatest Common Divisor"
-msgstr ""
+msgstr "Största gemensamma divisor"
 
 #: src/calclib/data/functions.xml.in.h:134
 msgid "Harmonic Mean"
-msgstr ""
+msgstr "Harmoniskt medelvärde"
 
 #: src/calclib/data/functions.xml.in.h:135
 msgid "Height"
-msgstr ""
+msgstr "Höjd"
 
 #: src/calclib/data/functions.xml.in.h:137
-#, fuzzy
 msgid "Hexadecimal number"
-msgstr "Hexadecimalt värde"
+msgstr "Hexadecimalt nummer"
 
 #: src/calclib/data/functions.xml.in.h:138
 msgid "Hyperbolic arccosine"
-msgstr ""
+msgstr "Hyperbolisk arcuscosinus"
 
 #: src/calclib/data/functions.xml.in.h:139
 msgid "Hyperbolic arcsine"
-msgstr ""
+msgstr "Hyperbolisk arcussinus"
 
 #: src/calclib/data/functions.xml.in.h:140
 msgid "Hyperbolic arctangent"
-msgstr ""
+msgstr "Hyperbolisk arcustangens"
 
 #: src/calclib/data/functions.xml.in.h:141
-#, fuzzy
 msgid "Hyperbolic cosine"
-msgstr "Cosine"
+msgstr "Hyperbolisk cosinus"
 
 #: src/calclib/data/functions.xml.in.h:142
 msgid "Hyperbolic sine"
-msgstr ""
+msgstr "Hyperbolisk sinus"
 
 #: src/calclib/data/functions.xml.in.h:143
-#, fuzzy
 msgid "Hyperbolic tangent"
-msgstr "Tangent"
+msgstr "Hyperbolisk tangens"
 
 #: src/calclib/data/functions.xml.in.h:144
 msgid "Hypotenuse"
-msgstr ""
+msgstr "Hypotenusa"
 
 #: src/calclib/data/functions.xml.in.h:145
 msgid "Identity"
-msgstr ""
+msgstr "Identitetsmatris"
 
 #: src/calclib/data/functions.xml.in.h:146
 msgid "If...Then...Else"
-msgstr ""
+msgstr "Om...då...annars"
 
 #: src/calclib/data/functions.xml.in.h:147
 msgid "Interest paid on a given period of an investment (ISPMT)"
 msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:148
-#, fuzzy
 msgid "Interest rate"
-msgstr "Internt namn"
+msgstr "Räntesats"
 
 #: src/calclib/data/functions.xml.in.h:149
 msgid "Interest rate for a fully invested security"
 msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:150
-#, fuzzy
 msgid "Interquartile Range"
-msgstr "Internt namn"
+msgstr "Kvartilavstånd"
 
 #: src/calclib/data/functions.xml.in.h:151
-#, fuzzy
 msgid "Inverse"
-msgstr "Internt namn"
+msgstr "Inversen"
 
 #: src/calclib/data/functions.xml.in.h:152
 msgid "Investment"
-msgstr ""
+msgstr "Investering"
 
 #: src/calclib/data/functions.xml.in.h:153
-#, fuzzy
 msgid "Issue Date"
-msgstr "ett datum inom citationstecken"
+msgstr "Avräkningsdatum"
 
 #: src/calclib/data/functions.xml.in.h:154
-#, fuzzy
 msgid "Issue date"
-msgstr "ett datum inom citationstecken"
+msgstr "Avräkningsdatum"
 
 #: src/calclib/data/functions.xml.in.h:155 src/calclib/data/units.xml.in.h:126
 msgid "Length"
-msgstr ""
+msgstr "Längd"
 
 #: src/calclib/data/functions.xml.in.h:156
 msgid "Length of base"
-msgstr ""
+msgstr "Basens längd"
 
 #: src/calclib/data/functions.xml.in.h:157
 msgid "Length of side"
-msgstr ""
+msgstr "Sidans längd"
 
 #: src/calclib/data/functions.xml.in.h:158
 msgid "Level-coupon bond"
 msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:159
-#, fuzzy
 msgid "Life"
-msgstr "heltal"
+msgstr "Livslängd"
 
 #: src/calclib/data/functions.xml.in.h:160
 msgid "Limits"
-msgstr ""
+msgstr "Gränser"
 
 #: src/calclib/data/functions.xml.in.h:161
 msgid "Logical"
-msgstr ""
+msgstr "Logik"
 
 #: src/calclib/data/functions.xml.in.h:162
 msgid "Logistic distribution"
-msgstr ""
+msgstr "Logistisk distribution"
 
 #: src/calclib/data/functions.xml.in.h:163
-#, fuzzy
 msgid "Lower limit"
-msgstr "Avgränsare"
+msgstr "Undre gräns"
 
 #: src/calclib/data/functions.xml.in.h:164
-#, fuzzy
 msgid "Market interest rate"
-msgstr "Internt namn"
+msgstr "Marknadsränta"
 
 #: src/calclib/data/functions.xml.in.h:166
-#, fuzzy
 msgid "Maturity date"
-msgstr "ett datum inom citationstecken"
+msgstr "Mognadsdatum"
 
 #: src/calclib/data/functions.xml.in.h:168
-#, fuzzy
 msgid "Mean"
-msgstr "Min"
+msgstr "Medelvärde"
 
 #: src/calclib/data/functions.xml.in.h:169
-#, fuzzy
 msgid "Mean Deviation"
-msgstr "Omvänd relation"
+msgstr "Medelavvikelse"
 
 #: src/calclib/data/functions.xml.in.h:170
-#, fuzzy
 msgid "Median"
-msgstr "Min"
+msgstr "Median"
 
 #: src/calclib/data/functions.xml.in.h:172
-#, fuzzy
 msgid "Mode"
-msgstr "RPN läge"
+msgstr "Typvärde"
 
 #: src/calclib/data/functions.xml.in.h:173
-#, fuzzy
 msgid "Natural Logarithm"
 msgstr "Naturlig logaritm"
 
 #: src/calclib/data/functions.xml.in.h:174
-#, fuzzy
 msgid "Nominal Interest Rate"
-msgstr "Internt namn"
+msgstr "Nominell räntesats"
 
 #: src/calclib/data/functions.xml.in.h:175
-#, fuzzy
 msgid "Nominal interest rate"
-msgstr "Internt namn"
+msgstr "Nominell räntesats"
 
 #: src/calclib/data/functions.xml.in.h:177
-#, fuzzy
 msgid "Non-negative value"
 msgstr "Icke-negativt nummer"
 
 #: src/calclib/data/functions.xml.in.h:178
 msgid "Norm (length)"
-msgstr ""
+msgstr "Normal"
 
 #: src/calclib/data/functions.xml.in.h:179
-#, fuzzy
 msgid "Nth Root (abs)"
-msgstr "Kvadratroten"
+msgstr "N:te roten (abs)"
 
 #: src/calclib/data/functions.xml.in.h:183
-#, fuzzy
 msgid "Number of coupons to be paid"
-msgstr "Nummerbaser"
+msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:184
 msgid "Number of payments per year"
 msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:185
-#, fuzzy
 msgid "Number of periods"
-msgstr "Nummerbaser"
+msgstr "Antal perioder"
 
 #: src/calclib/data/functions.xml.in.h:186
-#, fuzzy
 msgid "Numerator"
-msgstr "Nummer"
+msgstr "Täljare"
 
 #: src/calclib/data/functions.xml.in.h:188
-#, fuzzy
 msgid "Octal number"
-msgstr "ett nummer"
+msgstr "Oktalt nummer"
 
 #: src/calclib/data/functions.xml.in.h:189
 msgid "Paired T-Test"
-msgstr ""
+msgstr "Parvist t-test"
 
 #: src/calclib/data/functions.xml.in.h:190
-#, fuzzy
 msgid "Par value"
-msgstr "ett valfritt värde"
+msgstr "Parvärde"
 
 #: src/calclib/data/functions.xml.in.h:191
 msgid "Parallelogram Area"
-msgstr ""
+msgstr "Parallelogramarea"
 
 #: src/calclib/data/functions.xml.in.h:192
-#, fuzzy
 msgid "Parallelogram Perimeter"
-msgstr "Kvadratroten"
+msgstr "Parallelogramomkrets"
 
 #: src/calclib/data/functions.xml.in.h:193
 msgid "Pareto distribution"
-msgstr ""
+msgstr "Paretofördelning"
 
 #: src/calclib/data/functions.xml.in.h:194
 msgid "Payment for a loan"
@@ -2717,7 +2617,7 @@ msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:195
 msgid "Payment made each period"
-msgstr ""
+msgstr "Periodisk avbetalning "
 
 #: src/calclib/data/functions.xml.in.h:196
 msgid "Payment of an annuity going towards interest (IPMT)"
@@ -2728,27 +2628,24 @@ msgid "Payment of an annuity going towards principal (PPMT)"
 msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:198
-#, fuzzy
 msgid "Pearson Correlation"
-msgstr "Omvänd relation"
+msgstr "Pearsons korrelationskoefficient"
 
 #: src/calclib/data/functions.xml.in.h:199
-#, fuzzy
 msgid "Percentile"
-msgstr "Decimal"
+msgstr "Percentil"
 
 #: src/calclib/data/functions.xml.in.h:200
 msgid "Period"
-msgstr ""
+msgstr "Period"
 
 #: src/calclib/data/functions.xml.in.h:201
-#, fuzzy
 msgid "Periodic interest rate"
-msgstr "Internt namn"
+msgstr "Periodisk räntesats"
 
 #: src/calclib/data/functions.xml.in.h:202
 msgid "Periods"
-msgstr ""
+msgstr "Antal perioder"
 
 #: src/calclib/data/functions.xml.in.h:203
 msgid "Periods for investment to attain desired value"
@@ -2760,21 +2657,19 @@ msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:205
 msgid "Periods per Year"
-msgstr ""
+msgstr "Perioder per år"
 
 #: src/calclib/data/functions.xml.in.h:206
-#, fuzzy
 msgid "Pooled Variance"
-msgstr "variabel"
+msgstr "Gemensam varians"
 
 #: src/calclib/data/functions.xml.in.h:207
 msgid "Power (abs)"
-msgstr ""
+msgstr "Upphöjt med (abs)"
 
 #: src/calclib/data/functions.xml.in.h:208
-#, fuzzy
 msgid "Present value"
-msgstr "ett valfritt värde"
+msgstr "Nuvärde"
 
 #: src/calclib/data/functions.xml.in.h:209
 msgid "Price per $100 face value"
@@ -2793,88 +2688,76 @@ msgid "Principal"
 msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:213
-#, fuzzy
 msgid "Process components"
-msgstr "Exponent"
+msgstr "Modifiera komponenter"
 
 #: src/calclib/data/functions.xml.in.h:214
-#, fuzzy
 msgid "Pyramid Volume"
-msgstr "Värde"
+msgstr "Pyramidvolym"
 
 #: src/calclib/data/functions.xml.in.h:215
 msgid "Quadratic Mean (RMS)"
-msgstr ""
+msgstr "Kvadratiskt medelvärde"
 
 #: src/calclib/data/functions.xml.in.h:216
-#, fuzzy
 msgid "Quartile"
-msgstr "Variabel"
+msgstr "Kvartil"
 
 #: src/calclib/data/functions.xml.in.h:218
-#, fuzzy
 msgid "Radians to Degrees"
-msgstr "Radianer"
+msgstr "Radianer till grader"
 
 #: src/calclib/data/functions.xml.in.h:219
-#, fuzzy
 msgid "Radians to Gradians"
-msgstr "Gradienter"
+msgstr "Radianer till gradienter"
 
 #: src/calclib/data/functions.xml.in.h:220
-#, fuzzy
 msgid "Radius"
-msgstr "Radianer"
+msgstr "Radie"
 
 #: src/calclib/data/functions.xml.in.h:221
-#, fuzzy
 msgid "Random Number"
-msgstr "ett nummer"
+msgstr "Slumptal"
 
 #: src/calclib/data/functions.xml.in.h:222
-#, fuzzy
 msgid "Range"
-msgstr "Tangent"
+msgstr "Omfång"
 
 #: src/calclib/data/functions.xml.in.h:223
-#, fuzzy
 msgid "Rank"
-msgstr "Tangent"
+msgstr "Rangordna"
 
 #: src/calclib/data/functions.xml.in.h:224
-#, fuzzy
 msgid "Rate"
-msgstr "Datum"
+msgstr "Räntesats"
 
 #: src/calclib/data/functions.xml.in.h:225
 msgid "Rayleigh distribution"
-msgstr ""
+msgstr "Rayleighfördelning"
 
 #: src/calclib/data/functions.xml.in.h:226
 msgid "Rayleigh tail distribution"
-msgstr ""
+msgstr "Rayleighsvansfördelning"
 
 #: src/calclib/data/functions.xml.in.h:227
 msgid "Rectangle Area"
-msgstr ""
+msgstr "Rektangelarea"
 
 #: src/calclib/data/functions.xml.in.h:228
-#, fuzzy
 msgid "Rectangle Perimeter"
-msgstr "Kvadratroten"
+msgstr "Rektangelomkrets"
 
 #: src/calclib/data/functions.xml.in.h:229
-#, fuzzy
 msgid "Redemption"
-msgstr "Relation"
+msgstr "Utlösande summa"
 
 #: src/calclib/data/functions.xml.in.h:230
 msgid "Reminder (mod)"
-msgstr ""
+msgstr "Rest (mod)"
 
 #: src/calclib/data/functions.xml.in.h:231
 msgid "Reminder (rem)"
-msgstr ""
+msgstr "Rest (rem)"
 
 #: src/calclib/data/functions.xml.in.h:232
 msgid "Return on continuously compounded interest"
@@ -2885,8 +2768,7 @@ msgid "Returns a decimal integer from a binary number"
 msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:234
-msgid ""
-"Returns a decimal integer from a number of specified base between 2 and 36"
+msgid "Returns a decimal integer from a number of specified base between 2 and 36"
 msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:235
@@ -2930,9 +2812,8 @@ msgid ""
 msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:241
-#, fuzzy
 msgid "Returns the base n logarithm."
-msgstr "Naturlig logaritm"
+msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:242
 msgid "Returns the bond equivalent for a treasury bill."
@@ -3017,122 +2898,107 @@ msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:256
 msgid "Riemann Zeta"
-msgstr ""
+msgstr "Riemanns Zeta"
 
 #: src/calclib/data/functions.xml.in.h:257
-#, fuzzy
 msgid "Round"
-msgstr "Kolumner"
+msgstr "Avrunda"
 
 #: src/calclib/data/functions.xml.in.h:258
 msgid "Round downwards"
-msgstr ""
+msgstr "Avrunda neråt"
 
 #: src/calclib/data/functions.xml.in.h:259
 msgid "Round towards zero"
-msgstr ""
+msgstr "Avrunda mot noll"
 
 #: src/calclib/data/functions.xml.in.h:260
 msgid "Round upwards"
-msgstr ""
+msgstr "Avrunda uppåt"
 
 #: src/calclib/data/functions.xml.in.h:262
-#, fuzzy
 msgid "Salvage value"
-msgstr "Oktalt värde"
+msgstr "Slutvärde"
 
 #: src/calclib/data/functions.xml.in.h:263
-#, fuzzy
 msgid "Scale"
-msgstr "Värde"
+msgstr "Skala"
 
 #: src/calclib/data/functions.xml.in.h:264
-#, fuzzy
 msgid "Settlement Date"
-msgstr "Välj datum"
+msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:265
-#, fuzzy
 msgid "Settlement date"
-msgstr "Välj datum"
+msgstr "Avräkningsdatum"
 
 #: src/calclib/data/functions.xml.in.h:266
 msgid "Side 1 of triangle"
-msgstr ""
+msgstr "Sida 1"
 
 #: src/calclib/data/functions.xml.in.h:267
 msgid "Side 2 of triangle"
-msgstr ""
+msgstr "Sida 2"
 
 #: src/calclib/data/functions.xml.in.h:268
-#, fuzzy
 msgid "Side A"
-msgstr "Sine"
+msgstr "Sida A"
 
 #: src/calclib/data/functions.xml.in.h:269
-#, fuzzy
 msgid "Side B"
-msgstr "Sine"
+msgstr "Sida B"
 
 #: src/calclib/data/functions.xml.in.h:270
-#, fuzzy
 msgid "Sigma"
-msgstr "Singularform"
+msgstr "Sigma"
 
 #: src/calclib/data/functions.xml.in.h:272
-#, fuzzy
 msgid "Sort"
-msgstr "eller"
+msgstr "Sortera"
 
 #: src/calclib/data/functions.xml.in.h:273
 msgid "Spearman's Rho"
-msgstr ""
+msgstr "Spearmans Rho"
 
 #: src/calclib/data/functions.xml.in.h:274
-#, fuzzy
 msgid "Sphere Volume"
-msgstr "Omvandla"
+msgstr "Sfärvolym"
 
 #: src/calclib/data/functions.xml.in.h:275
-#, fuzzy
 msgid "Square Area"
-msgstr "Kvadratroten"
+msgstr "Kvadratarea"
 
 #: src/calclib/data/functions.xml.in.h:276
-#, fuzzy
 msgid "Square Perimeter"
-msgstr "Kvadratroten"
+msgstr "Kvadratomkrets"
 
 #: src/calclib/data/functions.xml.in.h:277
-#, fuzzy
 msgid "Square Root (abs)"
-msgstr "Kvadratroten"
+msgstr "Kvadratrot (abs)"
 
 #: src/calclib/data/functions.xml.in.h:278
-#, fuzzy
 msgid "Square Root (x * pi)"
-msgstr "Kvadratroten"
+msgstr "Kvadratrot (x * pi)"
 
 #: src/calclib/data/functions.xml.in.h:279
 msgid "Standard Deviation (entire population)"
-msgstr ""
+msgstr "Standardavvikelse (komplett population)"
 
 #: src/calclib/data/functions.xml.in.h:280
 msgid "Standard Deviation (random sampling)"
-msgstr ""
+msgstr "Standardavvikelse (slumpmässigt urval)"
 
 #: src/calclib/data/functions.xml.in.h:281
 msgid "Standard Error"
-msgstr ""
+msgstr "Standardfel"
 
 #: src/calclib/data/functions.xml.in.h:282
-#, fuzzy
 msgid "Statistical Correlation"
-msgstr "Omvänd relation"
+msgstr "Statistisk korrelation"
 
 #: src/calclib/data/functions.xml.in.h:283
 msgid "Statistics"
-msgstr ""
+msgstr "Statistik"
 
 #: src/calclib/data/functions.xml.in.h:284
 msgid "Straight line depreciation"
@@ -3140,7 +3006,7 @@ msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:285
 msgid "Sum"
-msgstr ""
+msgstr "Summa"
 
 #: src/calclib/data/functions.xml.in.h:286
 msgid "Sum-of-years digits depreciation"
@@ -3148,23 +3014,23 @@ msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:287
 msgid "Surface Are of Rectangular Prism"
-msgstr ""
+msgstr "Ytarea för en rektangulär prism"
 
 #: src/calclib/data/functions.xml.in.h:288
 msgid "Surface Area of Cone"
-msgstr ""
+msgstr "Ytarea för en kon"
 
 #: src/calclib/data/functions.xml.in.h:289
 msgid "Surface Area of Cube"
-msgstr ""
+msgstr "Ytarea för en kuba"
 
 #: src/calclib/data/functions.xml.in.h:290
 msgid "Surface Area of Cylinder"
-msgstr ""
+msgstr "Ytarea för en cylinder"
 
 #: src/calclib/data/functions.xml.in.h:291
 msgid "Surface Area of Sphere"
-msgstr ""
+msgstr "Ytarea för en sfär"
 
 #: src/calclib/data/functions.xml.in.h:293
 msgid "Tests a condition and returns a value depending on the result."
@@ -3172,11 +3038,11 @@ msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:294
 msgid "Transpose"
-msgstr ""
+msgstr "Transponera"
 
 #: src/calclib/data/functions.xml.in.h:295
 msgid "Trapezoid Area"
-msgstr ""
+msgstr "Trapetsoidarea"
 
 #: src/calclib/data/functions.xml.in.h:296
 msgid "Treasury bill equivalent"
@@ -3192,94 +3058,91 @@ msgstr ""
 
 #: src/calclib/data/functions.xml.in.h:299
 msgid "Triangle Area"
-msgstr ""
+msgstr "Triangelarea"
 
 #: src/calclib/data/functions.xml.in.h:300
-#, fuzzy
 msgid "Triangle Perimeter"
-msgstr "Kvadratroten"
+msgstr "Triangelomkrets"
 
 #: src/calclib/data/functions.xml.in.h:301
 msgid "Trigonometry"
-msgstr ""
+msgstr "Trigonometri"
 
 #: src/calclib/data/functions.xml.in.h:302
 msgid "Trimmed Mean"
-msgstr ""
+msgstr "Trimmat medelvärde"
 
 #: src/calclib/data/functions.xml.in.h:303
 msgid "Trimmed percentage"
-msgstr ""
+msgstr "Trimmad procent"
 
 #: src/calclib/data/functions.xml.in.h:305
 msgid "Unpaired T-Test"
-msgstr ""
+msgstr "T-test"
 
 #: src/calclib/data/functions.xml.in.h:306
-#, fuzzy
 msgid "Utilities"
 msgstr "Verktyg"
 
 #: src/calclib/data/functions.xml.in.h:308
 msgid "Variance (entire population)"
-msgstr ""
+msgstr "Varians (komplett population)"
 
 #: src/calclib/data/functions.xml.in.h:309
 msgid "Variance (random sampling)"
-msgstr ""
+msgstr "Varians (slumpmässigt urval)"
 
 #: src/calclib/data/functions.xml.in.h:311
 msgid "Volume of Rectangular Prism"
-msgstr ""
+msgstr "Volym för en rektangulär prism"
 
 #: src/calclib/data/functions.xml.in.h:312
 msgid "Volume of Triangular Prism"
-msgstr ""
+msgstr "Volym för en triangulär prism"
 
 #: src/calclib/data/functions.xml.in.h:313
 msgid "Weighted Mean"
-msgstr ""
+msgstr "Viktat medelvärde"
 
 #: src/calclib/data/functions.xml.in.h:314
 msgid "Weights"
-msgstr ""
+msgstr "Vikter"
 
 #: src/calclib/data/functions.xml.in.h:315
 msgid "Width"
-msgstr ""
+msgstr "Bredd"
 
 #: src/calclib/data/functions.xml.in.h:316
 msgid "Width of base"
-msgstr ""
+msgstr "Basens bredd"
 
 #: src/calclib/data/functions.xml.in.h:317
 msgid "Winsorized Mean"
-msgstr ""
+msgstr "Winsor medelvärde"
 
 #: src/calclib/data/functions.xml.in.h:318
 msgid "With respect to"
-msgstr ""
+msgstr "Med avseende till"
 
 #: src/calclib/data/functions.xml.in.h:319
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #: src/calclib/data/functions.xml.in.h:320
-#, fuzzy
 msgid "Years"
-msgstr "Matriser"
+msgstr "Antal år"
 
 #: src/calclib/data/functions.xml.in.h:321
 msgid "Years between two dates"
-msgstr ""
+msgstr "Antal är mellan två datum"
 
 #: src/calclib/data/functions.xml.in.h:322
 msgid "Zero coupon"
-msgstr ""
+msgstr "Nollkupong"
 
 #: src/calclib/data/functions.xml.in.h:323
 msgid "e raised to the power X"
-msgstr ""
+msgstr "e upphöjt med X"
 
 #: src/calclib/data/functions.xml.in.h:324
 msgid "for...do"
@@ -3298,32 +3161,28 @@ msgid "ATS"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:4
-#, fuzzy
 msgid "Acre"
-msgstr "Mellanslag"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:5
-#, fuzzy
 msgid "Ampere"
-msgstr "Namn"
+msgstr "Ampere"
 
 #: src/calclib/data/units.xml.in.h:6
 msgid "Ampere per Meter"
-msgstr ""
+msgstr "Ampere per meter"
 
 #: src/calclib/data/units.xml.in.h:7
-#, fuzzy
 msgid "Ampere per Square Meter"
-msgstr "Kvadratroten"
+msgstr "Ampere per kvadratmeter"
 
 #: src/calclib/data/units.xml.in.h:8
 msgid "Ampere per Volt"
-msgstr ""
+msgstr "Ampere per volt"
 
 #: src/calclib/data/units.xml.in.h:9
-#, fuzzy
 msgid "Are"
-msgstr "Precision"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:10
 msgid "Area"
@@ -3334,27 +3193,24 @@ msgid "Astronomical Unit"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:12
-#, fuzzy
 msgid "Atmosphere"
-msgstr "Namn"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:13
 msgid "Austrian shilling"
-msgstr ""
+msgstr "Australiska shilling"
 
 #: src/calclib/data/units.xml.in.h:14
 msgid "BEF"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:15
-#, fuzzy
 msgid "Bar"
-msgstr "Binär"
+msgstr "Bar"
 
 #: src/calclib/data/units.xml.in.h:16
-#, fuzzy
 msgid "Barn"
-msgstr "Binär"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:17
 msgid "Becquerel"
@@ -3362,7 +3218,7 @@ msgstr ""
 
 #: src/calclib/data/units.xml.in.h:18
 msgid "Belgian franc"
-msgstr ""
+msgstr "Belgiska franc"
 
 #: src/calclib/data/units.xml.in.h:19
 msgid "British Thermal Unit (IT)"
@@ -3373,246 +3229,224 @@ msgid "Btu"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:21
-#, fuzzy
 msgid "Bushel"
-msgstr "Upphöj"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:22
-#, fuzzy
 msgid "Calorie"
-msgstr "Kategorier:"
+msgstr "Kalorier"
 
 #: src/calclib/data/units.xml.in.h:23
-#, fuzzy
 msgid "Calorie (15 degrees Celcius)"
-msgstr "Grader"
+msgstr "Kalorier (15 grader Celcius)"
 
 #: src/calclib/data/units.xml.in.h:24
 msgid "Calorie (capital C)"
-msgstr ""
+msgstr "Kalorier (med stort K)"
 
 #: src/calclib/data/units.xml.in.h:25
 msgid "Calorie (international table)"
-msgstr ""
+msgstr "Kalorier (international table)"
 
 #: src/calclib/data/units.xml.in.h:26
-#, fuzzy
 msgid "Calorie (mean)"
-msgstr "Kategorier:"
+msgstr "Kalorier (medel)"
 
 #: src/calclib/data/units.xml.in.h:27
 msgid "Calorie (thermochemical)"
-msgstr ""
+msgstr "Kalorier (termokemiska)"
 
 #: src/calclib/data/units.xml.in.h:28
-#, fuzzy
 msgid "Calories"
-msgstr "Kategorier:"
+msgstr "Kalorier"
 
 #: src/calclib/data/units.xml.in.h:29
-#, fuzzy
 msgid "Candela"
-msgstr "och"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:30
-#, fuzzy
 msgid "Candela per Square Meter"
-msgstr "Kvadratroten"
+msgstr "Candela per kvadratmeter"
 
 #: src/calclib/data/units.xml.in.h:31
-#, fuzzy
 msgid "Carat"
-msgstr "Kvadratroten"
+msgstr "Karat"
 
 #: src/calclib/data/units.xml.in.h:32
-#, fuzzy
 msgid "Cental"
-msgstr "Oktal"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:33
-#, fuzzy
 msgid "Chain"
-msgstr "Radianer"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:34
 msgid "Coloumb per Kilogram"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:35
-#, fuzzy
 msgid "Coulomb"
-msgstr "kolumn"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:36
 msgid "Coulomb per Cubic Meter"
-msgstr ""
+msgstr "Coulomb per cubikmeter"
 
 #: src/calclib/data/units.xml.in.h:37
-#, fuzzy
 msgid "Coulomb per Square Meter"
-msgstr "Kvadratroten"
+msgstr "Coulomb per kvadratmeter"
 
 #: src/calclib/data/units.xml.in.h:38
 msgid "Coulomb per Volt"
-msgstr ""
+msgstr "Coloumb per volt"
 
 #: src/calclib/data/units.xml.in.h:39
 msgid "Cubic Inch"
-msgstr ""
+msgstr "Kubiktum"
 
 #: src/calclib/data/units.xml.in.h:40
-#, fuzzy
 msgid "Cubic Meter"
-msgstr "Annan"
+msgstr "Kubikmeter"
 
 #: src/calclib/data/units.xml.in.h:41
 msgid "Cubic Meter per Kilogram"
-msgstr ""
+msgstr "Kubikmeter per kilogram"
 
 #: src/calclib/data/units.xml.in.h:42
-#, fuzzy
 msgid "Curie"
-msgstr "Kategorier:"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:43
 msgid "Currency"
-msgstr ""
+msgstr "Valuta"
 
 #: src/calclib/data/units.xml.in.h:44
-#, fuzzy
 msgid "DEM"
-msgstr "DEL"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:45
 msgid "Day"
-msgstr ""
+msgstr "Dag"
 
 #: src/calclib/data/units.xml.in.h:46
-#, fuzzy
 msgid "Degree Celcius"
-msgstr "Grader"
+msgstr "Grader Celcius"
 
 #: src/calclib/data/units.xml.in.h:47
-#, fuzzy
 msgid "Degrees Fahrenheit"
-msgstr "Grader"
+msgstr "Grader Fahrenheit"
 
 #: src/calclib/data/units.xml.in.h:48
-#, fuzzy
 msgid "Degrees Rankine"
-msgstr "Grader"
+msgstr "Grader Rankine"
 
 #: src/calclib/data/units.xml.in.h:49
 msgid "Deutche Mark"
-msgstr ""
+msgstr "Tyska mark"
 
 #: src/calclib/data/units.xml.in.h:50
-#, fuzzy
 msgid "Dram"
-msgstr "Gra"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:51
 msgid "Dutch guilder"
-msgstr ""
+msgstr "Gulden"
 
 #: src/calclib/data/units.xml.in.h:52
-#, fuzzy
 msgid "ESP"
-msgstr "EXP"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:53
 msgid "Electricity/Capacitance"
-msgstr ""
+msgstr "Elektricitet/Kapacitans"
 
 #: src/calclib/data/units.xml.in.h:54
 msgid "Electricity/Current Density"
-msgstr ""
+msgstr "Elektricitet/Strömtäthet"
 
 #: src/calclib/data/units.xml.in.h:55
 msgid "Electricity/Electric Charge"
-msgstr ""
+msgstr "Elektricitet/Elektrisk laddning"
 
 #: src/calclib/data/units.xml.in.h:56
 msgid "Electricity/Electric Charge Density"
-msgstr ""
+msgstr "Elektricitet/Laddningstäthet"
 
 #: src/calclib/data/units.xml.in.h:57
 msgid "Electricity/Electric Conductance"
-msgstr ""
+msgstr "Elektricitet/Ledningsförmåga"
 
 #: src/calclib/data/units.xml.in.h:58
 msgid "Electricity/Electric Current"
-msgstr ""
+msgstr "Elektricitet/Elektrisk ström"
 
 #: src/calclib/data/units.xml.in.h:59
 msgid "Electricity/Electric Field Strength"
-msgstr ""
+msgstr "Elektricitet/Elektrisk fältstyrka"
 
 #: src/calclib/data/units.xml.in.h:60
 msgid "Electricity/Electric Flux Density"
-msgstr ""
+msgstr "Elektricitet/Elektrisk flödestäthet"
 
 #: src/calclib/data/units.xml.in.h:61
 msgid "Electricity/Electric Potential"
-msgstr ""
+msgstr "Elektricitet/Elektrisk potential"
 
 #: src/calclib/data/units.xml.in.h:62
 msgid "Electricity/Electric Resistance"
-msgstr ""
+msgstr "Elektricitet/Resistans"
 
 #: src/calclib/data/units.xml.in.h:63
 msgid "Electricity/Inductance"
-msgstr ""
+msgstr "Elektricitet/Induktion"
 
 #: src/calclib/data/units.xml.in.h:64
 msgid "Electricity/Permeability"
-msgstr ""
+msgstr "Elektricitet/Permeabilitet"
 
 #: src/calclib/data/units.xml.in.h:65
 msgid "Electricity/Permittivity"
-msgstr ""
+msgstr "Elektricitet/Permitivitet"
 
 #: src/calclib/data/units.xml.in.h:66
 msgid "Electron Volt"
-msgstr ""
+msgstr "Elektronvolt"
 
 #: src/calclib/data/units.xml.in.h:67
-#, fuzzy
 msgid "Energy"
-msgstr "Deg"
+msgstr "Energi"
 
 #: src/calclib/data/units.xml.in.h:68
 msgid "Energy/Energy Density"
-msgstr ""
+msgstr "Energi/Energitäthet"
 
 #: src/calclib/data/units.xml.in.h:69
 msgid "Energy/Entropy"
-msgstr ""
+msgstr "Energi/Entropi"
 
 #: src/calclib/data/units.xml.in.h:70
 msgid "Energy/Molar Energy"
-msgstr ""
+msgstr "Energi/Molarenergi"
 
 #: src/calclib/data/units.xml.in.h:71
 msgid "Energy/Molar Entropy"
-msgstr ""
+msgstr "Energi/Molarentropi"
 
 #: src/calclib/data/units.xml.in.h:72
 msgid "Energy/Power"
-msgstr ""
+msgstr "Energi/Kapacitet"
 
 #: src/calclib/data/units.xml.in.h:73
 msgid "Energy/Specific Entropy"
-msgstr ""
+msgstr "Energi/Specifik entropi"
 
 #: src/calclib/data/units.xml.in.h:74
 msgid "Energy/Thermal Conductivity"
-msgstr ""
+msgstr "Energi/Termisk konduktivitet"
 
 #: src/calclib/data/units.xml.in.h:75
-#, fuzzy
 msgid "Erg"
-msgstr "Deg"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:76
 msgid "Euro"
@@ -3627,57 +3461,52 @@ msgid "FRF"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:79
-#, fuzzy
 msgid "Farad"
-msgstr "och"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:80
-#, fuzzy
 msgid "Farad per Meter"
-msgstr "Kvadratroten"
+msgstr "Farad per meter"
 
 #: src/calclib/data/units.xml.in.h:81
 msgid "Fathom"
-msgstr ""
+msgstr "Famn"
 
 #: src/calclib/data/units.xml.in.h:82
 msgid "Finnish markka"
-msgstr ""
+msgstr "Finska mark"
 
 #: src/calclib/data/units.xml.in.h:83
 msgid "Fluid Ounce"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:84
-#, fuzzy
 msgid "Foot"
-msgstr "Teckensnitt"
+msgstr "Fot"
 
 #: src/calclib/data/units.xml.in.h:85
-#, fuzzy
 msgid "Force"
-msgstr "Valfri"
+msgstr "Kraft"
 
 #: src/calclib/data/units.xml.in.h:86
 msgid "Force/Dynamic Viscosity"
-msgstr ""
+msgstr "Kraft/Dynamisk viskositet"
 
 #: src/calclib/data/units.xml.in.h:87
 msgid "Force/Pressure"
-msgstr ""
+msgstr "Kraft/Tryck"
 
 #: src/calclib/data/units.xml.in.h:88
 msgid "Force/Surface Tension"
-msgstr ""
+msgstr "Kraft/Ytspänning"
 
 #: src/calclib/data/units.xml.in.h:89
 msgid "French franc"
-msgstr ""
+msgstr "Franska franc"
 
 #: src/calclib/data/units.xml.in.h:90
-#, fuzzy
 msgid "Furlong"
-msgstr "log"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:91
 msgid "GRD"
@@ -3696,182 +3525,164 @@ msgid "Gill"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:95
-#, fuzzy
 msgid "Grain"
-msgstr "Gradienter"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:96
-#, fuzzy
 msgid "Gram"
-msgstr "Gra"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:97
-#, fuzzy
 msgid "Gray"
-msgstr "Gra"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:98
 msgid "Gray per Second"
-msgstr ""
+msgstr "Gray per sekund"
 
 #: src/calclib/data/units.xml.in.h:99
 msgid "Greek drachma"
-msgstr ""
+msgstr "Grekiska drachmer"
 
 #: src/calclib/data/units.xml.in.h:100
-#, fuzzy
 msgid "Hand"
-msgstr "och"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:101
-#, fuzzy
 msgid "Hectare"
-msgstr "Vektor"
+msgstr "Hektar"
 
 #: src/calclib/data/units.xml.in.h:102
-#, fuzzy
 msgid "Henry"
-msgstr "Annan"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:103
 msgid "Henry per Meter"
-msgstr ""
+msgstr "Henry per meter"
 
 #: src/calclib/data/units.xml.in.h:104
-#, fuzzy
 msgid "Hertz"
-msgstr "Annan"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:105
 msgid "Horse Power"
-msgstr ""
+msgstr "Hästkraft"
 
 #: src/calclib/data/units.xml.in.h:106
-#, fuzzy
 msgid "Hour"
-msgstr "eller"
+msgstr "Timme"
 
 #: src/calclib/data/units.xml.in.h:107
-#, fuzzy
 msgid "IEP"
-msgstr "EXP"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:108
 msgid "ITL"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:109
-#, fuzzy
 msgid "Inch"
-msgstr "Sine"
+msgstr "Tum"
 
 #: src/calclib/data/units.xml.in.h:110
 msgid "Irish pound"
-msgstr ""
+msgstr "Irländska pund"
 
 #: src/calclib/data/units.xml.in.h:111
 msgid "Italian lira"
-msgstr ""
+msgstr "Italienska lire"
 
 #: src/calclib/data/units.xml.in.h:112
-#, fuzzy
 msgid "Joule"
-msgstr "Villkor"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:113
 msgid "Joule per Cubic Meter"
-msgstr ""
+msgstr "Joule per kubikmeter"
 
 #: src/calclib/data/units.xml.in.h:114
 msgid "Joule per Kelvin"
-msgstr ""
+msgstr "Joule per Kelvin"
 
 #: src/calclib/data/units.xml.in.h:115
 msgid "Joule per Kilogram"
-msgstr ""
+msgstr "Joule per kilogram"
 
 #: src/calclib/data/units.xml.in.h:116
 msgid "Joule per Kilogram Kelvin"
-msgstr ""
+msgstr "Joule per kilogram kelvin"
 
 #: src/calclib/data/units.xml.in.h:117
 msgid "Joule per Mole"
-msgstr ""
+msgstr "Joule per mol"
 
 #: src/calclib/data/units.xml.in.h:118
 msgid "Joule per Mole Kelvin"
-msgstr ""
+msgstr "Joule per mol kelvin"
 
 #: src/calclib/data/units.xml.in.h:119
 msgid "Joule per Second"
-msgstr ""
+msgstr "Joule per sekund"
 
 #: src/calclib/data/units.xml.in.h:120
-#, fuzzy
 msgid "Katal"
-msgstr "Oktal"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:121
 msgid "Katal per Cubic Meter"
-msgstr ""
+msgstr "Katal per kubikmeter"
 
 #: src/calclib/data/units.xml.in.h:122
-#, fuzzy
 msgid "Kelvin"
-msgstr "ln"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:123
 msgid "Kilogram per Cubic Meter"
-msgstr ""
+msgstr "Kilogram per kubikmeter"
 
 #: src/calclib/data/units.xml.in.h:124
-#, fuzzy
 msgid "Knot"
-msgstr "Enheter"
+msgstr "Knop"
 
 #: src/calclib/data/units.xml.in.h:125
 msgid "LUF"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:127
-#, fuzzy
 msgid "Light Year"
-msgstr "heltal"
+msgstr "Ljusår"
 
 #: src/calclib/data/units.xml.in.h:128
 msgid "Light/Illuminance"
-msgstr ""
+msgstr "Ljus/Illuminans"
 
 #: src/calclib/data/units.xml.in.h:129
 msgid "Light/Irradiance"
-msgstr ""
+msgstr "Ljus/Irradians"
 
 #: src/calclib/data/units.xml.in.h:130
 msgid "Light/Luminance"
-msgstr ""
+msgstr "Ljus/Luminans"
 
 #: src/calclib/data/units.xml.in.h:131
 msgid "Light/Luminous Flux"
-msgstr ""
+msgstr "Ljus/Luminansflöde"
 
 #: src/calclib/data/units.xml.in.h:132
 msgid "Light/Luminous Intensity"
-msgstr ""
+msgstr "Ljus/Luminansintensitet"
 
 #: src/calclib/data/units.xml.in.h:133
-#, fuzzy
 msgid "Link"
-msgstr "ln"
+msgstr "Länk"
 
 #: src/calclib/data/units.xml.in.h:134
-#, fuzzy
 msgid "Liter"
-msgstr "heltal"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:135
-#, fuzzy
 msgid "Litre"
-msgstr "heltal"
+msgstr "Liter"
 
 #: src/calclib/data/units.xml.in.h:136
 msgid "Long Hundredweight"
@@ -3882,14 +3693,12 @@ msgid "Long Ton"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:138
-#, fuzzy
 msgid "Lumen"
-msgstr "Parameter"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:139
-#, fuzzy
 msgid "Lumen per Square Meter"
-msgstr "Kvadratroten"
+msgstr "Lumen per kvadratmeter"
 
 #: src/calclib/data/units.xml.in.h:140
 msgid "Lux"
@@ -3897,122 +3706,107 @@ msgstr ""
 
 #: src/calclib/data/units.xml.in.h:141
 msgid "Luxembourg franc"
-msgstr ""
+msgstr "Luxemburg franc"
 
 #: src/calclib/data/units.xml.in.h:142
 msgid "Magnetism/Magnetic Field Strength"
-msgstr ""
+msgstr "Magnetism/Magnetisk fältstyrka"
 
 #: src/calclib/data/units.xml.in.h:143
-#, fuzzy
 msgid "Magnetism/Magnetic Flux"
-msgstr "Icke-negativt nummer"
+msgstr "Magnetism/Magnetiskt flöde"
 
 #: src/calclib/data/units.xml.in.h:144
 msgid "Magnetism/Magnetic Flux Density"
-msgstr ""
+msgstr "Magnetism/Magnetisk flödestäthet"
 
 #: src/calclib/data/units.xml.in.h:145
-#, fuzzy
 msgid "Magnetism/Wave Number"
-msgstr "Icke-negativt nummer"
+msgstr "Magnetism/Vågtal"
 
 #: src/calclib/data/units.xml.in.h:146
-#, fuzzy
 msgid "Mass"
-msgstr "Klass"
+msgstr "Massa"
 
 #: src/calclib/data/units.xml.in.h:147
 msgid "Mass/Density"
-msgstr ""
+msgstr "Massa/Densitet"
 
 #: src/calclib/data/units.xml.in.h:148
-#, fuzzy
 msgid "Meter"
-msgstr "Annan"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:149
 msgid "Meter Kilogram per Square Second"
-msgstr ""
+msgstr "Meter kilogram per kvadratsekund"
 
 #: src/calclib/data/units.xml.in.h:150
 msgid "Meter per Second"
-msgstr ""
+msgstr "Meter per sekund"
 
 #: src/calclib/data/units.xml.in.h:151
 msgid "Meter per Square Second"
-msgstr ""
+msgstr "Meter per kvadratsekund"
 
 #: src/calclib/data/units.xml.in.h:152
 msgid "Metric Ton"
-msgstr ""
+msgstr "Ton"
 
 #: src/calclib/data/units.xml.in.h:153
-#, fuzzy
 msgid "Mile"
-msgstr "Fil"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:154
-#, fuzzy
 msgid "Mils"
-msgstr "Fil"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:155
-#, fuzzy
 msgid "Minute"
-msgstr "Min"
+msgstr "Minut"
 
 #: src/calclib/data/units.xml.in.h:156
-#, fuzzy
 msgid "Mole"
-msgstr "RPN läge"
+msgstr "Mol"
 
 #: src/calclib/data/units.xml.in.h:157
 msgid "Mole per Cubic Meter"
-msgstr ""
+msgstr "Mol per kubikmeter"
 
 #: src/calclib/data/units.xml.in.h:158
 msgid "NLG"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:159
-#, fuzzy
 msgid "Nautical Mile"
-msgstr "Numerisk visning"
+msgstr "Sjömil"
 
 #: src/calclib/data/units.xml.in.h:160
-#, fuzzy
 msgid "Nautical Mile per Hour"
-msgstr "Numerisk visning"
+msgstr "Sjömil per timme"
 
 #: src/calclib/data/units.xml.in.h:161
-#, fuzzy
 msgid "Newton"
-msgstr "Ny funktion"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:162
-#, fuzzy
 msgid "Newton Meter"
-msgstr "Ny matris"
+msgstr "Newtonmeter"
 
 #: src/calclib/data/units.xml.in.h:163
-#, fuzzy
 msgid "Newton per Meter"
-msgstr "Ny matris"
+msgstr "Newton per meter"
 
 #: src/calclib/data/units.xml.in.h:164
-#, fuzzy
 msgid "Newton per Square Meter"
-msgstr "Ny matris"
+msgstr "Newton per kvadratmeter"
 
 #: src/calclib/data/units.xml.in.h:165
 msgid "Ohm"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:166
-#, fuzzy
 msgid "Ounce"
-msgstr "Kolumner"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:167
 msgid "Ounce (troy)"
@@ -4023,18 +3817,16 @@ msgid "PTE"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:169
-#, fuzzy
 msgid "Parsec"
-msgstr "Matriser"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:170
 msgid "Pascal"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:171
-#, fuzzy
 msgid "Pascal Second"
-msgstr "Semikolon"
+msgstr "Pascalsekund"
 
 #: src/calclib/data/units.xml.in.h:172
 msgid "Peck"
@@ -4053,60 +3845,56 @@ msgid "Pfund"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:176
-#, fuzzy
 msgid "Pint"
-msgstr "Radianer"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:177
 msgid "Portuguese escudo"
-msgstr ""
+msgstr "Portugisiska escudos"
 
 #: src/calclib/data/units.xml.in.h:178
-#, fuzzy
 msgid "Pound"
-msgstr "Kolumner"
+msgstr "Pund"
 
 #: src/calclib/data/units.xml.in.h:179
 msgid "Pound (troy)"
-msgstr ""
+msgstr "Pund (troy)"
 
 #: src/calclib/data/units.xml.in.h:180
-#, fuzzy
 msgid "Quart"
-msgstr "_Avsluta"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:181
-#, fuzzy
 msgid "Quarter"
-msgstr "_Avsluta"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:183
 msgid "Radioactivity"
-msgstr ""
+msgstr "Radioaktivitet"
 
 #: src/calclib/data/units.xml.in.h:184
 msgid "Radioactivity/Absorbed Dose"
-msgstr ""
+msgstr "Radioaktivitet/Absorberad dos"
 
 #: src/calclib/data/units.xml.in.h:185
 msgid "Radioactivity/Absorbed Dose Rate"
-msgstr ""
+msgstr "Radioaktivitet/Absorberad dosrat"
 
 #: src/calclib/data/units.xml.in.h:186
 msgid "Radioactivity/Dose Equivalent"
-msgstr ""
+msgstr "Radioaktivitet/Dosekvivalent"
 
 #: src/calclib/data/units.xml.in.h:187
 msgid "Radioactivity/Exposure"
-msgstr ""
+msgstr "Radioaktivitet/Exponering"
 
 #: src/calclib/data/units.xml.in.h:188
 msgid "Reciprocal Meter"
-msgstr ""
+msgstr "Reciproka meter"
 
 #: src/calclib/data/units.xml.in.h:189
 msgid "Reciprocal Seconds Mole"
-msgstr ""
+msgstr "Reciproka sekundmol"
 
 #: src/calclib/data/units.xml.in.h:190
 msgid "Rem"
@@ -4117,42 +3905,36 @@ msgid "Rod (pole/perch)"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:192
-#, fuzzy
 msgid "Roentgen"
-msgstr "Tangent"
+msgstr "Röntgen"
 
 #: src/calclib/data/units.xml.in.h:193
 msgid "Rood"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:194
-#, fuzzy
 msgid "Second"
-msgstr "Semikolon"
+msgstr "Sekund"
 
 #: src/calclib/data/units.xml.in.h:195
-#, fuzzy
 msgid "Second Ampere"
-msgstr "Semikolon"
+msgstr "Sekundampere"
 
 #: src/calclib/data/units.xml.in.h:196
-#, fuzzy
 msgid "Section"
-msgstr "funktion"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:197
 msgid "Short Hundredweight"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:198
-#, fuzzy
 msgid "Short Ton"
-msgstr "Kortform"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:199
-#, fuzzy
 msgid "Siemens"
-msgstr "Tecken"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:200
 msgid "Sievert"
@@ -4160,80 +3942,71 @@ msgstr ""
 
 #: src/calclib/data/units.xml.in.h:201
 msgid "Spanish peseta"
-msgstr ""
+msgstr "Spanska pesetas"
 
 #: src/calclib/data/units.xml.in.h:202
-#, fuzzy
 msgid "Speed"
-msgstr "Mellanslag"
+msgstr "Hastighet"
 
 #: src/calclib/data/units.xml.in.h:203
 msgid "Speed/Acceleration"
-msgstr ""
+msgstr "Hastighet/Acceleration"
 
 #: src/calclib/data/units.xml.in.h:204
-#, fuzzy
 msgid "Square Foot"
-msgstr "Kvadratroten"
+msgstr "Kvadratfor"
 
 #: src/calclib/data/units.xml.in.h:205
-#, fuzzy
 msgid "Square Meter"
-msgstr "Kvadratroten"
+msgstr "Kvadratmeter"
 
 #: src/calclib/data/units.xml.in.h:206
-#, fuzzy
 msgid "Stone"
-msgstr "Sine"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:207
 msgid "Substance"
-msgstr ""
+msgstr "Substans"
 
 #: src/calclib/data/units.xml.in.h:208
 msgid "Substance/Catalytic Activity"
-msgstr ""
+msgstr "Sabstans/Katalytisk aktivitet"
 
 #: src/calclib/data/units.xml.in.h:209
 msgid "Substance/Catalytic Concentration"
-msgstr ""
+msgstr "Substans/Katalytisk aktivitet"
 
 #: src/calclib/data/units.xml.in.h:210
 msgid "Substance/Substance Concentration"
-msgstr ""
+msgstr "Substans/Substanskoncentration"
 
 #: src/calclib/data/units.xml.in.h:211
-#, fuzzy
 msgid "Temperature"
-msgstr "Temporära"
+msgstr "Temperatur"
 
 #: src/calclib/data/units.xml.in.h:212
 msgid "Tesla"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:213
-#, fuzzy
 msgid "Time"
-msgstr "Enkelt"
+msgstr "Tid"
 
 #: src/calclib/data/units.xml.in.h:214
-#, fuzzy
 msgid "Time/Frequency"
-msgstr "Valfri"
+msgstr "Tid/Frekvens"
 
 #: src/calclib/data/units.xml.in.h:215
-#, fuzzy
 msgid "Torr"
-msgstr "eller"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:216
 msgid "Township"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:217
-#, fuzzy
 msgid "U.S. Survey Foot"
-msgstr "Kvadratroten"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:218
 msgid "U.S. Survey Inch"
@@ -4252,51 +4025,44 @@ msgid "US_foot"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:222
-#, fuzzy
 msgid "US_inch"
-msgstr "Sine"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:223
-#, fuzzy
 msgid "US_inches"
-msgstr "Sine"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:224
-#, fuzzy
 msgid "US_mile"
-msgstr "Enkelt"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:225
-#, fuzzy
 msgid "US_miles"
-msgstr "Enkelt"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:226
-#, fuzzy
 msgid "Volt"
-msgstr "Värde"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:227
-#, fuzzy
 msgid "Volt Seconds"
-msgstr "Semikolon"
+msgstr "Voltsekund"
 
 #: src/calclib/data/units.xml.in.h:228
 msgid "Volt per Ampere"
-msgstr ""
+msgstr "Volt per ampere"
 
 #: src/calclib/data/units.xml.in.h:229
 msgid "Volt per Meter"
-msgstr ""
+msgstr "Volt per meter"
 
 #: src/calclib/data/units.xml.in.h:230
-#, fuzzy
 msgid "Volume"
-msgstr "Värde"
+msgstr "Volym"
 
 #: src/calclib/data/units.xml.in.h:231
 msgid "Volume/Specific Volume"
-msgstr ""
+msgstr "Volym/Specifik volym"
 
 #: src/calclib/data/units.xml.in.h:232
 msgid "Watt"
@@ -4304,69 +4070,59 @@ msgstr ""
 
 #: src/calclib/data/units.xml.in.h:233
 msgid "Watt per Ampere"
-msgstr ""
+msgstr "Watt per ampere"
 
 #: src/calclib/data/units.xml.in.h:234
 msgid "Watt per Meter Kelvin"
-msgstr ""
+msgstr "Watt per meter kelvin"
 
 #: src/calclib/data/units.xml.in.h:235
-#, fuzzy
 msgid "Watt per Square Meter"
-msgstr "Kvadratroten"
+msgstr "Watt per kvadratmeter"
 
 #: src/calclib/data/units.xml.in.h:236
-#, fuzzy
 msgid "Weber"
-msgstr "Annan"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:237
 msgid "Weber per Ampere"
-msgstr ""
+msgstr "Weber per ampere"
 
 #: src/calclib/data/units.xml.in.h:238
-#, fuzzy
 msgid "Weber per Square Meter"
-msgstr "Kvadratroten"
+msgstr "Weber per kvadratmeter"
 
 #: src/calclib/data/units.xml.in.h:239
 msgid "Yard"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:240
-#, fuzzy
 msgid "Zentner"
-msgstr "Annan"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:241
-#, fuzzy
 msgid "acre"
-msgstr "Mellanslag"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:242
-#, fuzzy
 msgid "acres"
-msgstr "Matriser"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:243
-#, fuzzy
 msgid "ampere"
-msgstr "Namn"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:244
-#, fuzzy
 msgid "amperes"
-msgstr "Namn"
+msgstr "ampere"
 
 #: src/calclib/data/units.xml.in.h:245
-#, fuzzy
 msgid "are"
-msgstr "Matriser"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:246
-#, fuzzy
 msgid "ares"
-msgstr "Matriser"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:247
 msgid "astronomical_unit"
@@ -4377,34 +4133,28 @@ msgid "astronomical_units"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:249
-#, fuzzy
 msgid "atmosphere"
-msgstr "Namn"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:250
-#, fuzzy
 msgid "atmospheres"
-msgstr "Namn"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:251
-#, fuzzy
 msgid "bar"
-msgstr "Binär"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:252
-#, fuzzy
 msgid "barn"
-msgstr "Binär"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:253
-#, fuzzy
 msgid "barns"
-msgstr "Matriser"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:254
-#, fuzzy
 msgid "bars"
-msgstr "Matriser"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:255
 msgid "becquerel"
@@ -4423,124 +4173,104 @@ msgid "bushels"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:259
-#, fuzzy
 msgid "calorie"
-msgstr "Okategoriserad"
+msgstr "kalori"
 
 #: src/calclib/data/units.xml.in.h:260
-#, fuzzy
 msgid "calorie_fifteen"
-msgstr "Okategoriserad"
+msgstr "kalori_femton"
 
 #: src/calclib/data/units.xml.in.h:261
-#, fuzzy
 msgid "calories"
-msgstr "Kategorier:"
+msgstr "kalorier"
 
 #: src/calclib/data/units.xml.in.h:262
-#, fuzzy
 msgid "calories_fifteen"
-msgstr "Kategorier:"
+msgstr "kalorier_femton"
 
 #: src/calclib/data/units.xml.in.h:263
-#, fuzzy
 msgid "candela"
-msgstr "och"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:264
-#, fuzzy
 msgid "candelas"
-msgstr "och"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:265
-#, fuzzy
 msgid "carat"
-msgstr "Kvadratroten"
+msgstr "karat"
 
 #: src/calclib/data/units.xml.in.h:266
-#, fuzzy
 msgid "carats"
-msgstr "Matriser"
+msgstr "karat"
 
 #: src/calclib/data/units.xml.in.h:267
 msgid "celcius"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:268
-#, fuzzy
 msgid "cental"
-msgstr "Oktal"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:269
-#, fuzzy
 msgid "centals"
-msgstr "Oktal"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:270
-#, fuzzy
 msgid "chain"
-msgstr "Radianer"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:271
-#, fuzzy
 msgid "chains"
-msgstr "Radianer"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:272
-#, fuzzy
 msgid "coulomb"
-msgstr "kolumn"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:273
-#, fuzzy
 msgid "coulombs"
-msgstr "kolumn"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:274
-#, fuzzy
 msgid "curie"
-msgstr "Okategoriserad"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:275
-#, fuzzy
 msgid "curies"
-msgstr "Matriser"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:276
 msgid "day"
-msgstr ""
+msgstr "dag"
 
 #: src/calclib/data/units.xml.in.h:277
 msgid "days"
-msgstr ""
+msgstr "dagar"
 
 #: src/calclib/data/units.xml.in.h:278
-#, fuzzy
 msgid "dram"
-msgstr "Gra"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:279
-#, fuzzy
 msgid "drams"
-msgstr "Gra"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:280
 msgid "electron_volt"
-msgstr ""
+msgstr "elektronvolt"
 
 #: src/calclib/data/units.xml.in.h:281
 msgid "electron_volts"
-msgstr ""
+msgstr "elektronvolt"
 
 #: src/calclib/data/units.xml.in.h:282
-#, fuzzy
 msgid "erg"
-msgstr "Deg"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:283
-#, fuzzy
 msgid "ergs"
-msgstr "Deg"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:284
 msgid "euro"
@@ -4551,155 +4281,132 @@ msgid "euros"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:286
-#, fuzzy
 msgid "fahrenheit"
-msgstr "Vänster parentes"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:287
-#, fuzzy
 msgid "farad"
-msgstr "och"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:288
-#, fuzzy
 msgid "farads"
-msgstr "och"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:289
 msgid "fathom"
-msgstr ""
+msgstr "famn"
 
 #: src/calclib/data/units.xml.in.h:290
 msgid "fathoms"
-msgstr ""
+msgstr "famnar"
 
 #: src/calclib/data/units.xml.in.h:291
 msgid "feet"
-msgstr ""
+msgstr "fot"
 
 #: src/calclib/data/units.xml.in.h:292
 msgid "fluid_ounce"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:293
-#, fuzzy
 msgid "fluid_ounces"
-msgstr "Kolumner"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:294
-#, fuzzy
 msgid "foot"
-msgstr "Teckensnitt"
+msgstr "fot"
 
 #: src/calclib/data/units.xml.in.h:295
-#, fuzzy
 msgid "furlong"
-msgstr "log"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:296
-#, fuzzy
 msgid "furlongs"
-msgstr "log"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:297
 msgid "galileo"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:298
-#, fuzzy
 msgid "galileos"
-msgstr "Kategorier:"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:299
 msgid "gallon"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:300
-#, fuzzy
 msgid "gallons"
-msgstr "Gradienter"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:301
 msgid "gill"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:302
-#, fuzzy
 msgid "gills"
-msgstr "Fil"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:303
-#, fuzzy
 msgid "grain"
-msgstr "Bråktal"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:304
-#, fuzzy
 msgid "grains"
-msgstr "Gradienter"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:305
-#, fuzzy
 msgid "gram"
-msgstr "Gra"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:306
-#, fuzzy
 msgid "grams"
-msgstr "Gradienter"
+msgstr "gram"
 
 #: src/calclib/data/units.xml.in.h:307
-#, fuzzy
 msgid "gray"
-msgstr "Gra"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:308
-#, fuzzy
 msgid "grays"
-msgstr "Gradienter"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:309
-#, fuzzy
 msgid "hand"
-msgstr "och"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:310
-#, fuzzy
 msgid "hands"
-msgstr "och"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:311
-#, fuzzy
 msgid "henry"
-msgstr "Annan"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:312
-#, fuzzy
 msgid "henrys"
-msgstr "Annan"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:313
-#, fuzzy
 msgid "hertz"
-msgstr "Annan"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:314
 msgid "horsepower"
-msgstr ""
+msgstr "hästkraft"
 
 #: src/calclib/data/units.xml.in.h:315
 msgid "horsepowers"
-msgstr ""
+msgstr "hästkrafter"
 
 #: src/calclib/data/units.xml.in.h:316
-#, fuzzy
 msgid "hour"
-msgstr "eller"
+msgstr "timme"
 
 #: src/calclib/data/units.xml.in.h:317
-#, fuzzy
 msgid "hours"
-msgstr "eller"
+msgstr "timmar"
 
 #: src/calclib/data/units.xml.in.h:318
 msgid "hundredweight"
@@ -4710,94 +4417,76 @@ msgid "hundredweights"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:320
-#, fuzzy
 msgid "inch"
-msgstr "Sine"
+msgstr "tum"
 
 #: src/calclib/data/units.xml.in.h:321
-#, fuzzy
 msgid "inches"
-msgstr "Sine"
+msgstr "tum"
 
 #: src/calclib/data/units.xml.in.h:322
-#, fuzzy
 msgid "joule"
-msgstr "Villkor"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:323
-#, fuzzy
 msgid "joules"
-msgstr "Villkor"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:324
-#, fuzzy
 msgid "katal"
-msgstr "Oktal"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:325
-#, fuzzy
 msgid "katals"
-msgstr "Oktal"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:326
-#, fuzzy
 msgid "kelvin"
-msgstr "ln"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:327
-#, fuzzy
 msgid "kelvins"
-msgstr "Tecken"
+msgstr "kelvin"
 
 #: src/calclib/data/units.xml.in.h:328
-#, fuzzy
 msgid "knot"
-msgstr "Enheter"
+msgstr "knop"
 
 #: src/calclib/data/units.xml.in.h:329
-#, fuzzy
 msgid "knots"
-msgstr "Enheter"
+msgstr "knop"
 
 #: src/calclib/data/units.xml.in.h:330
-#, fuzzy
 msgid "light_year"
-msgstr "Avgränsare"
+msgstr "ljusår"
 
 #: src/calclib/data/units.xml.in.h:331
-#, fuzzy
 msgid "light_years"
-msgstr "Avgränsare"
+msgstr "ljusår"
 
 #: src/calclib/data/units.xml.in.h:332
-#, fuzzy
 msgid "link"
-msgstr "ln"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:333
-#, fuzzy
 msgid "links"
-msgstr "Tecken"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:334
-#, fuzzy
 msgid "liter"
-msgstr "Avgränsare"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:335
-#, fuzzy
 msgid "liters"
-msgstr "Avgränsare"
+msgstr "liter"
 
 #: src/calclib/data/units.xml.in.h:336
-#, fuzzy
 msgid "litre"
-msgstr "Avgränsare"
+msgstr "liter"
 
 #: src/calclib/data/units.xml.in.h:337
-#, fuzzy
 msgid "litres"
-msgstr "Avgränsare"
+msgstr "liter"
 
 #: src/calclib/data/units.xml.in.h:338
 msgid "long_hundredweight"
@@ -4812,103 +4501,84 @@ msgid "long_ton"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:341
-#, fuzzy
 msgid "long_tons"
-msgstr "Funktioner"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:342
-#, fuzzy
 msgid "lumen"
-msgstr "kolumn"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:343
-#, fuzzy
 msgid "lumens"
-msgstr "Kolumner"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:344
 msgid "lux"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:345
-#, fuzzy
 msgid "mean_calorie"
-msgstr "Okategoriserad"
+msgstr "medelkalori"
 
 #: src/calclib/data/units.xml.in.h:346
-#, fuzzy
 msgid "mean_calories"
-msgstr "Kategorier:"
+msgstr "medelkalorier"
 
 #: src/calclib/data/units.xml.in.h:347
-#, fuzzy
 msgid "meter"
-msgstr "Annan"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:348
-#, fuzzy
 msgid "meters"
-msgstr "Vektorer"
+msgstr "meter"
 
 #: src/calclib/data/units.xml.in.h:349
-#, fuzzy
 msgid "mil"
-msgstr "Fil"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:350
-#, fuzzy
 msgid "mile"
-msgstr "Fil"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:351
-#, fuzzy
 msgid "miles"
-msgstr "Fil"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:352
-#, fuzzy
 msgid "mils"
-msgstr "Fil"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:353
-#, fuzzy
 msgid "minute"
-msgstr "heltal"
+msgstr "minut"
 
 #: src/calclib/data/units.xml.in.h:354
-#, fuzzy
 msgid "minutes"
-msgstr "heltal"
+msgstr "minuter"
 
 #: src/calclib/data/units.xml.in.h:355
-#, fuzzy
 msgid "mole"
-msgstr "Enkelt"
+msgstr "mol"
 
 #: src/calclib/data/units.xml.in.h:356
-#, fuzzy
 msgid "moles"
-msgstr "Villkor"
+msgstr "mol"
 
 #: src/calclib/data/units.xml.in.h:357
-#, fuzzy
 msgid "nautical_mile"
-msgstr "Numerisk visning"
+msgstr "sjömil"
 
 #: src/calclib/data/units.xml.in.h:358
-#, fuzzy
 msgid "nautical_miles"
-msgstr "Numerisk visning"
+msgstr "sjömil"
 
 #: src/calclib/data/units.xml.in.h:359
-#, fuzzy
 msgid "newton"
-msgstr "Funktioner"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:360
-#, fuzzy
 msgid "newtons"
-msgstr "Funktioner"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:361
 msgid "ohm"
@@ -4919,19 +4589,16 @@ msgid "ohms"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:363
-#, fuzzy
 msgid "ounce"
-msgstr "Kolumner"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:364
-#, fuzzy
 msgid "ounces"
-msgstr "Kolumner"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:365
-#, fuzzy
 msgid "parsec"
-msgstr "Matriser"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:366
 msgid "pascal"
@@ -4942,9 +4609,8 @@ msgid "pascals"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:368
-#, fuzzy
 msgid "pasecs"
-msgstr "cos"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:369
 msgid "peck"
@@ -4967,74 +4633,60 @@ msgid "pferdest&#xE4;rke"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:374
-#, fuzzy
 msgid "pfund"
-msgstr "Kolumner"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:375
-#, fuzzy
 msgid "pint"
-msgstr "Radianer"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:376
-#, fuzzy
 msgid "pints"
-msgstr "Radianer"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:377
-#, fuzzy
 msgid "pound"
-msgstr "Kolumner"
+msgstr "pund"
 
 #: src/calclib/data/units.xml.in.h:378
-#, fuzzy
 msgid "pounds"
-msgstr "Kolumner"
+msgstr "pund"
 
 #: src/calclib/data/units.xml.in.h:379
-#, fuzzy
 msgid "quaert"
-msgstr "Kvadratroten"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:380
-#, fuzzy
 msgid "quart"
-msgstr "Kvadratroten"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:381
-#, fuzzy
 msgid "quarters"
-msgstr "Kvadratroten"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:382
-#, fuzzy
 msgid "quarts"
-msgstr "Kvadratroten"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:383
-#, fuzzy
 msgid "rad"
-msgstr "och"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:384
-#, fuzzy
 msgid "rankine"
-msgstr "Bråktal"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:385
-#, fuzzy
 msgid "rem_unit"
-msgstr "enhet"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:386
-#, fuzzy
 msgid "rod"
-msgstr "och"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:387
-#, fuzzy
 msgid "rods"
-msgstr "Kolumner"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:388
 msgid "roentgen"
@@ -5053,58 +4705,48 @@ msgid "roods"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:392
-#, fuzzy
 msgid "second"
-msgstr "cos"
+msgstr "sekund"
 
 #: src/calclib/data/units.xml.in.h:393
-#, fuzzy
 msgid "seconds"
-msgstr "cos"
+msgstr "sekunder"
 
 #: src/calclib/data/units.xml.in.h:394
-#, fuzzy
 msgid "section"
-msgstr "funktion"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:395
-#, fuzzy
 msgid "sections"
-msgstr "Funktioner"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:396
-#, fuzzy
 msgid "short_ton"
-msgstr "Kortform"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:397
-#, fuzzy
 msgid "short_tons"
-msgstr "Kortform"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:398
-#, fuzzy
 msgid "siemens"
-msgstr "Element"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:399
 msgid "sievert"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:400
-#, fuzzy
 msgid "sieverts"
-msgstr "Element"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:401
-#, fuzzy
 msgid "stone"
-msgstr "Knappsats"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:402
-#, fuzzy
 msgid "stones"
-msgstr "Knappsats"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:403
 msgid "tesla"
@@ -5115,73 +4757,60 @@ msgid "teslas"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:405
-#, fuzzy
 msgid "thermo_calorie"
-msgstr "Okategoriserad"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:406
-#, fuzzy
 msgid "thermo_calories"
-msgstr "Kategorier:"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:407
-#, fuzzy
 msgid "ton"
-msgstr "tan"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:408
-#, fuzzy
 msgid "tons"
-msgstr "Knappsats"
+msgstr "ton"
 
 #: src/calclib/data/units.xml.in.h:409
-#, fuzzy
 msgid "torr"
-msgstr "eller"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:410
-#, fuzzy
 msgid "torrs"
-msgstr "Vektorer"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:411
-#, fuzzy
 msgid "township"
-msgstr "Knappsats"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:412
-#, fuzzy
 msgid "townships"
-msgstr "Knappsats"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:413
-#, fuzzy
 msgid "troy_ounce"
-msgstr "Kolumner"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:414
-#, fuzzy
 msgid "troy_ounces"
-msgstr "Kolumner"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:415
-#, fuzzy
 msgid "troy_pound"
-msgstr "Kombinerad"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:416
-#, fuzzy
 msgid "troy_pounds"
-msgstr "Kolumner"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:417
 msgid "volt"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:418
-#, fuzzy
 msgid "volts"
-msgstr "Villkor"
+msgstr "volt"
 
 #: src/calclib/data/units.xml.in.h:419
 msgid "watt"
@@ -5189,88 +4818,65 @@ msgstr ""
 
 #: src/calclib/data/units.xml.in.h:420
 msgid "watts"
-msgstr ""
+msgstr "watt"
 
 #: src/calclib/data/units.xml.in.h:421
-#, fuzzy
 msgid "weber"
-msgstr "Annan"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:422
-#, fuzzy
 msgid "webers"
-msgstr "Vektorer"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:423
 msgid "yard"
 msgstr ""
 
 #: src/calclib/data/units.xml.in.h:424
-#, fuzzy
 msgid "yards"
-msgstr "Matriser"
+msgstr ""
 
 #: src/calclib/data/units.xml.in.h:425
-#, fuzzy
 msgid "zentner"
-msgstr "Annan"
+msgstr ""
 
 #: src/calclib/data/variables.xml.in.h:1
 msgid "Apery's Constant"
-msgstr ""
+msgstr "Aperys konstant"
 
 #: src/calclib/data/variables.xml.in.h:2
 msgid "Archimede's Constant (pi)"
-msgstr ""
+msgstr "Archimedes konstant (pi)"
 
 #: src/calclib/data/variables.xml.in.h:3
 msgid "Catalan's Constant"
-msgstr ""
+msgstr "Catalans konstant"
 
 #: src/calclib/data/variables.xml.in.h:4
-#, fuzzy
 msgid "Constants"
-msgstr "Exponent"
+msgstr "Konstanter"
 
 #: src/calclib/data/variables.xml.in.h:5
 msgid "Euler's Constant"
-msgstr ""
+msgstr "Eulers konstant"
 
 #: src/calclib/data/variables.xml.in.h:7
-#, fuzzy
 msgid "Procent"
-msgstr "Oktal"
+msgstr ""
 
 #: src/calclib/data/variables.xml.in.h:8
-#, fuzzy
 msgid "Promille"
-msgstr "Fil"
+msgstr ""
 
 #: src/calclib/data/variables.xml.in.h:9
 msgid "Pythagora's Constant (sqrt 2)"
-msgstr ""
+msgstr "Pythagoras konstant (sqrt 2)"
 
 #: src/calclib/data/variables.xml.in.h:10
-#, fuzzy
 msgid "The Base of Natural Logarithms (e)"
-msgstr "Naturlig logaritm"
+msgstr "Basen för naturliga logaritmer (e)"
 
 #: src/calclib/data/variables.xml.in.h:11
 msgid "The Golden Ratio"
-msgstr ""
+msgstr "Golden ratio"
 
-#~ msgid "Activate/deactivate the selected function"
-#~ msgstr "(Av)aktivera vald funktion"
-
-#~ msgid "Activate/deactivate the selected unit"
-#~ msgstr "(Av)aktivera vald enhet"
-
-#~ msgid "Activate/deactivate the selected variable"
-#~ msgstr "(Av)aktivera vald variabel"
-
-#~ msgid ""
-#~ "A unit with the same short format already exists.\n"
-#~ "Overwrite unit?"
-#~ msgstr ""
-#~ "En enhet med samma kortform finns redan.\n"
-#~ "Vill du ersätta den?"

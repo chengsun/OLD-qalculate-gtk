@@ -144,55 +144,70 @@ typedef enum {
 #define ID_WRAP_LEFT_CH		'{'
 #define ID_WRAP_RIGHT_CH	'}'
 
-extern char *ID_WRAP_LEFT_STR;
-extern char *ID_WRAP_RIGHT_STR;
-extern char *ID_WRAP_S;
-extern char *NUMBERS_S;
-extern char *SIGNS_S;
-extern char *OPERATORS_S;
-extern char *BRACKETS_S;
-extern char *LEFT_BRACKET_S;
-extern char *LEFT_BRACKET_STR;
-extern char *RIGHT_BRACKET_S;
-extern char *RIGHT_BRACKET_STR;
-extern char *DOT_STR;
-extern char *DOT_S;
-extern char *SPACE_S;
-extern char *SPACE_STR;
-extern char *RESERVED_S;
-extern char *PLUS_S;
-extern char *PLUS_STR;
-extern char *MINUS_S;
-extern char *MINUS_STR;
-extern char *MULTIPLICATION_S;
-extern char *MULTIPLICATION_STR;
-extern char *DIVISION_S;
-extern char *DIVISION_STR;
-extern char *EXP_S;
-extern char *EXP_STR;
-extern char *POWER_STR;
-extern char *POWER_S;
-extern char *INF_STR;
-extern char *NAN_STR;
-extern char *COMMA_S;
-extern char *COMMA_STR;
-extern char *UNDERSCORE_STR;
-extern char *UNDERSCORE_S;
-extern char *NAME_NUMBER_PRE_S;
-extern char *NAME_NUMBER_PRE_STR;
-extern char *FUNCTION_VAR_PRE_STR;
-extern char *FUNCTION_VAR_X;
-extern char *FUNCTION_VAR_Y;
-extern char *ZERO_STR;
-extern char *ONE_STR;
-extern char *ILLEGAL_IN_NAMES;
-extern char *ILLEGAL_IN_UNITNAMES;
-extern char *ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
-/*extern char *ILLEGAL_IN_NAMES_MINUS_SPACE_STR_PLUS_NUMBERS_S;
-extern char *BRACKETS_S_AND_OPERATORS_S;
-extern char *NUMBERS_S_AND_OPERATORS_S_AND_BRACKETS_S_AND_SPACE_S;
-extern char *PLUS_S_AND_SPACE_S;
-extern char *NUMBERS_S_AND_MINUS_S_AND_DOT_S;*/
+using namespace std;
+
+#include <vector>
+#include <string>
+#include <stack>
+#include <list>
+#include <ext/hash_map>
+#include <math.h>
+#include <float.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+using namespace __gnu_cxx;
+
+extern string ID_WRAP_LEFT_STR;
+extern string ID_WRAP_RIGHT_STR;
+extern string ID_WRAP_S;
+extern string NUMBERS_S;
+extern string SIGNS_S;
+extern string OPERATORS_S;
+extern string BRACKETS_S;
+extern string LEFT_BRACKET_S;
+extern string LEFT_BRACKET_STR;
+extern string RIGHT_BRACKET_S;
+extern string RIGHT_BRACKET_STR;
+extern string DOT_STR;
+extern string DOT_S;
+extern string SPACE_S;
+extern string SPACE_STR;
+extern string RESERVED_S;
+extern string PLUS_S;
+extern string PLUS_STR;
+extern string MINUS_S;
+extern string MINUS_STR;
+extern string MULTIPLICATION_S;
+extern string MULTIPLICATION_STR;
+extern string DIVISION_S;
+extern string DIVISION_STR;
+extern string EXP_S;
+extern string EXP_STR;
+extern string POWER_STR;
+extern string POWER_S;
+extern string INF_STR;
+extern string NAN_STR;
+extern string COMMA_S;
+extern string COMMA_STR;
+extern string UNDERSCORE_STR;
+extern string UNDERSCORE_S;
+extern string NAME_NUMBER_PRE_S;
+extern string NAME_NUMBER_PRE_STR;
+extern string FUNCTION_VAR_PRE_STR;
+extern string FUNCTION_VAR_X;
+extern string FUNCTION_VAR_Y;
+extern string ZERO_STR;
+extern string ONE_STR;
+extern string ILLEGAL_IN_NAMES;
+extern string ILLEGAL_IN_UNITNAMES;
+extern string ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
+/*extern string ILLEGAL_IN_NAMES_MINUS_SPACE_STR_PLUS_NUMBERS_S;
+extern string BRACKETS_S_AND_OPERATORS_S;
+extern string NUMBERS_S_AND_OPERATORS_S_AND_BRACKETS_S_AND_SPACE_S;
+extern string PLUS_S_AND_SPACE_S;
+extern string NUMBERS_S_AND_MINUS_S_AND_DOT_S;*/
 
 #define DOT_CH			'.'
 #define ZERO_CH			'0'
@@ -258,20 +273,5 @@ extern char *NUMBERS_S_AND_MINUS_S_AND_DOT_S;*/
 #define UNDERSCORE	"_"
 
 #define NOT_IN_NAMES 	RESERVED OPERATORS SPACES DOT BRACKETS COMMAS
-
-using namespace std;
-
-#include <vector>
-#include <string>
-#include <stack>
-#include <list>
-#include <ext/hash_map>
-#include <math.h>
-#include <float.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-
-using namespace __gnu_cxx;
 
 #endif

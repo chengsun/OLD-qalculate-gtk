@@ -1440,7 +1440,7 @@
   </unit>
   <unit type="alias" name="par" active="true">
     <_singular>parsec</_singular>
-    <_plural>pasecs</_plural>
+    <_plural>parsecs</_plural>
     <base>
       <unit>m</unit>
       <relation precise="true">30856770000000000</relation>

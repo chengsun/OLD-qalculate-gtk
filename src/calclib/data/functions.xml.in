@@ -318,10 +318,10 @@
     <_category>Geometry/Triangle</_category>
     <_title>Hypotenuse</_title>
     <argument index="1">
-      <_title>Side 1 of triangle</_title>
+      <_title>Side 1</_title>
     </argument>
     <argument index="2">
-      <_title>Side 2 of triangle</_title>
+      <_title>Side 2</_title>
     </argument>
   </builtin_function>
   <builtin_function name="percentile" active="true">
@@ -980,7 +980,7 @@ If type = 1 then the payment is made at the beginning of the period, If type = 0
       <_title>Principal</_title>
     </argument>
     <argument type="free" index="2">
-      <_title>Nominal Interest Rate</_title>
+      <_title>Nominal interest rate</_title>
     </argument>
     <argument type="free" index="3">
       <_title>Periods per Year</_title>
@@ -1123,10 +1123,10 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
 Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
     <expression precise="true">\A{1000}*\z*yearfrac(\x,\y,\B{0},1)</expression>
     <argument type="date" index="1">
-      <_title>Issue Date</_title>
+      <_title>Issue date</_title>
     </argument>
     <argument type="date" index="2">
-      <_title>Settlement Date</_title>
+      <_title>Settlement date</_title>
     </argument>
     <argument type="free" index="3">
       <_title>Annual rate of security</_title>

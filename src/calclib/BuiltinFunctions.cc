@@ -15,6 +15,7 @@
 #include "Manager.h"
 #include "Fraction.h"
 #include "Calculator.h"
+#include "Variable.h"
 
 #include <sstream>
 
@@ -1367,7 +1368,7 @@ void HEXFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 	mngr->set(strtold(expr.c_str(), NULL));
 }
-TitleFunction::TitleFunction() : Function("Utilities", "title", 1, "Object Title") {
+TitleFunction::TitleFunction() : Function("Utilities", "title", 1, "Object title") {
 	setArgumentDefinition(1, new ExpressionItemArgument());
 }
 void TitleFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
@@ -1379,3 +1380,32 @@ void TitleFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		mngr->set(item->title());
 	}
 }
+SaveFunction::SaveFunction() : Function("Utilities", "save", 2, "Save as variable", "", 4) {
+	setArgumentDefinition(2, new TextArgument());
+	setArgumentDefinition(3, new TextArgument());	
+	setArgumentDefinition(4, new TextArgument());		
+	setDefaultValue(3, "\"Temporary\"");
+	setDefaultValue(4, "\"\"");	
+}
+void SaveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	CALCULATOR->addVariable(new Variable(vargs[2]->text(), vargs[1]->text(), vargs[0], vargs[3]->text()));
+}
+ConcatenateFunction::ConcatenateFunction() : Function("Utilities", "concatenate", 2, "Concatenate strings", "", -1) {
+	setArgumentDefinition(1, new TextArgument());
+	setArgumentDefinition(2, new TextArgument());	
+	setArgumentDefinition(3, new TextArgument());		
+}
+void ConcatenateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	string str;
+	for(int i = 0; i < vargs.size(); i++) {
+		str += vargs[i]->text();
+	}
+	mngr->set(str);
+}
+LengthFunction::LengthFunction() : Function("Utilities", "len", 1, "Length of string") {
+	setArgumentDefinition(1, new TextArgument());
+}
+void LengthFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	mngr->set(vargs[0]->text().length());
+}
+

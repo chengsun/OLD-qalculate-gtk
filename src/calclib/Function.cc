@@ -141,67 +141,76 @@ bool Function::testCondition(vector<Manager*> &vargs) {
 	}
 	return true;
 }
-int Function::args(const string &str, vector<Manager*> &vargs) {
-	int itmp = 0, i = 0, i2 = 0, i3 = 0, i4 = 0;
-	string str2;
+int Function::args(const string &argstr, vector<Manager*> &vargs) {
 	vargs.clear();
 	Manager *mngr;
-	if(!str.empty()) {
-		itmp = 1;
-		while(true) {
-			if((i = str.find(COMMA_CH, i)) != (int) string::npos) {
-				if((i3 = str.find(LEFT_BRACKET_CH, i4)) < i && i3 >= 0) {
-/*					i = str.find(RIGHT_BRACKET_CH, i3);
-					i4 = i;
-					if(i == (int) string::npos)
-						break;*/
-					i4 = i3;
-					while(1) {
-						i = str.find(RIGHT_BRACKET_CH, i4);
-						if(i == string::npos) {
-							i4 = i;
-							break;	
-						}
-						i3 = str.find(LEFT_BRACKET_CH, i3 + 1);
-						if(i3 == string::npos || i3 > i) {		
-							i4 = i;
-							break;
-						}
-						i4 = i + 1;			
-					}
-					if(i4 == string::npos)
-						break;
-					i = i4;						
-				} else {
+	int start_pos = 0;
+	bool in_cit1 = false, in_cit2 = false;
+	int pars = 0;
+	int itmp = 0;
+	string str = argstr, stmp;
+	remove_blank_ends(str);
+	for(int str_index = 0; str_index < str.length(); str_index++) {
+		switch(str[str_index]) {
+			case LEFT_BRACKET_CH: {
+				if(!in_cit1 && !in_cit2) {
+					pars++;
+				}
+				break;
+			}
+			case RIGHT_BRACKET_CH: {
+				if(!in_cit1 && !in_cit2 && pars > 0) {
+					pars--;
+				}
+				break;
+			}
+			case '\"': {
+				if(in_cit1) {
+					in_cit1 = false;
+				} else if(!in_cit2) {
+					in_cit1 = true;
+				}
+				break;
+			}
+			case '\'': {
+				if(in_cit2) {
+					in_cit2 = false;
+				} else if(!in_cit1) {
+					in_cit1 = true;
+				}
+				break;
+			}
+			case COMMA_CH: {
+				if(pars == 0 && !in_cit1 && !in_cit2) {
+					itmp++;
 					if(itmp <= maxargs() || args() < 0) {
-						str2 = str.substr(i2, i - i2);
-						remove_blank_ends(str2);
-						if(str2.empty()) {
+						stmp = str.substr(start_pos, str_index - start_pos);
+						remove_blank_ends(stmp);
+						if(stmp.empty()) {
 							mngr = CALCULATOR->calculate(getDefaultValue(itmp));
 						} else {
-							mngr = CALCULATOR->calculate(str2);
+							mngr = CALCULATOR->calculate(stmp);
 						}
 						vargs.push_back(mngr);
 					}
-					i++;
-					i2 = i;
-					i4 = i;
-					itmp++;
-				}
-			} else {
-				if(itmp <= args() || args() < 0) {
-					str2 = str.substr(i2, str.length() - i2);
-					remove_blank_ends(str2);
-					if(str2.empty()) {
-						mngr = CALCULATOR->calculate(getDefaultValue(itmp));
-					} else {
-						mngr = CALCULATOR->calculate(str2);
-					}				
-					vargs.push_back(mngr);			
+					start_pos = str_index + 1;
 				}
 				break;
 			}
 		}
+	}
+	if(!str.empty()) {
+		itmp++;
+		if(itmp <= maxargs() || args() < 0) {
+			stmp = str.substr(start_pos, str.length() - start_pos);
+			remove_blank_ends(stmp);
+			if(stmp.empty()) {
+				mngr = CALCULATOR->calculate(getDefaultValue(itmp));
+			} else {
+				mngr = CALCULATOR->calculate(stmp);
+			}
+			vargs.push_back(mngr);
+		}	
 	}
 	if(itmp < maxargs() && itmp >= minargs()) {
 		int itmp2 = itmp;
@@ -275,9 +284,20 @@ Manager *Function::calculate(const string &argv) {
 	return mngr;
 }
 bool Function::testArguments(vector<Manager*> &vargs) {
+	int last = 0;
 	for(hash_map<int, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
+		if(it->first > last) {
+			last = it->first;
+		}
 		if(it->second && it->first > 0 && it->first <= vargs.size() && !it->second->test(vargs[it->first - 1], it->first, this)) {
 			return false;
+		}
+	}
+	if(max_argc < 0 && last > argc) {
+		for(int i = last + 1; last <= vargs.size(); i++) {
+			if(argdefs[last]->test(vargs[i - 1], i, this)) {
+				return false;
+			}
 		}
 	}
 	return testCondition(vargs);
@@ -353,39 +373,49 @@ string Function::getDefaultValue(int arg_) const {
 	}
 	return "";
 }
-int Function::stringArgs(const string &str, vector<string> &svargs) {
-	int itmp = 0, i = 0, i2 = 0, i3 = 0, i4 = 0;
-	string stmp;
+int Function::stringArgs(const string &argstr, vector<string> &svargs) {
 	svargs.clear();
-	if(!str.empty()) {
-		itmp = 1;
-		while(1) {
-			if((i = str.find(COMMA_CH, i)) != (int) string::npos) {
-				if((i3 = str.find(LEFT_BRACKET_CH, i4)) < i && i3 != string::npos) {
-					i4 = i3;
-					while(1) {
-						i = str.find(RIGHT_BRACKET_CH, i4);
-						if(i == string::npos) {
-							i4 = i;
-							break;	
-						}
-						i3 = str.find(LEFT_BRACKET_CH, i3 + 1);
-						if(i3 == string::npos || i3 > i) {		
-							i4 = i;
-							break;
-						}
-						i4 = i + 1;			
-					}
-					if(i4 == string::npos)
-						break;
-					i = i4;
-				} else {
-					if(itmp <= args() || args() < 0) {
-/*						stmp = LEFT_BRACKET_STR;
-						stmp += str.substr(i2, i - i2);
-						stmp += RIGHT_BRACKET_STR;
-						svargs.push_back(stmp);*/
-						stmp = str.substr(i2, i - i2);
+	int start_pos = 0;
+	bool in_cit1 = false, in_cit2 = false;
+	int pars = 0;
+	int itmp = 0;
+	string str = argstr, stmp;
+	remove_blank_ends(str);
+	for(int str_index = 0; str_index < str.length(); str_index++) {
+		switch(str[str_index]) {
+			case LEFT_BRACKET_CH: {
+				if(!in_cit1 && !in_cit2) {
+					pars++;
+				}
+				break;
+			}
+			case RIGHT_BRACKET_CH: {
+				if(!in_cit1 && !in_cit2 && pars > 0) {
+					pars--;
+				}
+				break;
+			}
+			case '\"': {
+				if(in_cit1) {
+					in_cit1 = false;
+				} else if(!in_cit2) {
+					in_cit1 = true;
+				}
+				break;
+			}
+			case '\'': {
+				if(in_cit2) {
+					in_cit2 = false;
+				} else if(!in_cit1) {
+					in_cit1 = true;
+				}
+				break;
+			}
+			case COMMA_CH: {
+				if(pars == 0 && !in_cit1 && !in_cit2) {
+					itmp++;
+					if(itmp <= maxargs() || args() < 0) {
+						stmp = str.substr(start_pos, str_index - start_pos);
 						remove_blank_ends(stmp);																				
 						remove_brackets(stmp);						
 						remove_blank_ends(stmp);
@@ -394,41 +424,32 @@ int Function::stringArgs(const string &str, vector<string> &svargs) {
 						}
 						svargs.push_back(stmp);
 					}
-					i++;
-					i2 = i;
-					i4 = i;
-					itmp++;
-				}
-			} else {
-				if(itmp <= args() || args() < 0) {
-/*					stmp = LEFT_BRACKET_STR;
-					stmp += str.substr(i2, str.length() - i2);
-					stmp += RIGHT_BRACKET_STR;
-					svargs.push_back(stmp);*/
-					stmp = str.substr(i2, str.length() - i2);
-					remove_blank_ends(stmp);					
-					remove_brackets(stmp);									
-					remove_blank_ends(stmp);
-					if(stmp.empty()) {
-						stmp = getDefaultValue(itmp);
-					}
-					svargs.push_back(stmp);
+					start_pos = str_index + 1;
 				}
 				break;
 			}
 		}
 	}
+	if(!str.empty()) {
+		itmp++;
+		if(itmp <= maxargs() || args() < 0) {
+			stmp = str.substr(start_pos, str.length() - start_pos);
+			remove_blank_ends(stmp);																				
+			remove_brackets(stmp);						
+			remove_blank_ends(stmp);
+			if(stmp.empty()) {
+				stmp = getDefaultValue(itmp);
+			}
+			svargs.push_back(stmp);
+		}	
+	}
 	if(itmp < maxargs() && itmp >= minargs()) {
 		int itmp2 = itmp;
 		while(itmp2 < maxargs()) {
-/*			stmp = LEFT_BRACKET_STR;
-			stmp += default_values[itmp2 - minargs()];
-			stmp += RIGHT_BRACKET_STR;
-			svargs.push_back(stmp);*/
-			svargs.push_back(default_values[itmp2 - minargs()]);			
+			svargs.push_back(default_values[itmp2 - minargs()]);	
 			itmp2++;
 		}
-	}	
+	}
 	return itmp;
 }
 

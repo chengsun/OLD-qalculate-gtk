@@ -1,3 +1,15 @@
+2003-10-01  Niklas Knutsson  <nq@altern.org>
+
+	* Updated swedish translation
+	* Do not actually lower the precision below 10 to prohibit overflow
+	* Do not act when setting the initial value of spinbuttons
+	* Precision and decimals dialog need not be modal
+	* Actually load the correct nodes for the locale
+	* New simpler algorithm for reading function arguments, which handles citations correctly
+	* Accept zero length strings
+	* Concatenate and Length functions
+	* Save function
+
 2003-09-30  Niklas Knutsson  <nq@altern.org>
 
 	* Execute expression when updating result display if expression has changed

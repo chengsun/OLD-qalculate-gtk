@@ -93,6 +93,8 @@ bool is_in(char c, ...);
 bool is_not_in(char c, ...);
 bool is_in(const char *str, char c);
 bool is_not_in(const char *str, char c);
+bool is_in(const string &str, char c);
+bool is_not_in(const string &str, char c);
 int sign_place(string *str, unsigned int start = 0);
 long long int gcd(long long int i1, long long int i2);
 long double gcd_d(long double i1, long double i2);

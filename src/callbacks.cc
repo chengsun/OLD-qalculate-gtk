@@ -115,9 +115,9 @@ void wrap_expression_selection() {
 	gint start = 0, end = 0;
 	if(gtk_editable_get_selection_bounds(GTK_EDITABLE(expression), &start, &end)) {			
 		gtk_editable_select_region(GTK_EDITABLE(expression), end, end);
-		gtk_editable_insert_text(GTK_EDITABLE(expression), LEFT_BRACKET_STR, 1, &start);
+		gtk_editable_insert_text(GTK_EDITABLE(expression), LEFT_BRACKET_STR.c_str(), 1, &start);
 		end++;
-		gtk_editable_insert_text(GTK_EDITABLE(expression), RIGHT_BRACKET_STR, 1, &end);				
+		gtk_editable_insert_text(GTK_EDITABLE(expression), RIGHT_BRACKET_STR.c_str(), 1, &end);				
 		gtk_editable_set_position(GTK_EDITABLE(expression), end);				
 	}
 }
@@ -2342,7 +2342,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			PangoLayout *layout_power = NULL;
 			if(in_power) {
 				layout_power = gtk_widget_create_pango_layout(resultview, NULL);
-				pango_layout_set_markup(layout_power, POWER_STR, -1);
+				pango_layout_set_markup(layout_power, TEXT_TAGS_SMALL POWER TEXT_TAGS_SMALL_END, -1);
 				pango_layout_get_pixel_size(layout_power, &power_w, &power_h);			
 			}
 			if(!(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY) && (displayflags & DISPLAY_FORMAT_FRACTION)) {
@@ -5291,12 +5291,12 @@ void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpoint
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_sqrt")), SIGN_SQRT);	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_dot")), SIGN_MULTIDOT);	
 	} else {
-		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_sub")), MINUS_STR);
-		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_add")), PLUS_STR);
-		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_times")), MULTIPLICATION_STR);	
-		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_divide")), DIVISION_STR);	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_sub")), MINUS);
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_add")), PLUS);
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_times")), MULTIPLICATION);	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_divide")), DIVISION);	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_sqrt")), "SQRT");	
-		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_dot")), DOT_STR);	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_dot")), CALCULATOR->getDecimalPoint());	
 	}
 	setResult(result_text.c_str());
 }
@@ -5643,50 +5643,50 @@ void on_button_nine_clicked(GtkButton *w, gpointer user_data) {
 	insert_text("9");
 }
 void on_button_dot_clicked(GtkButton *w, gpointer user_data) {
-	insert_text(DOT_STR);
+	insert_text(CALCULATOR->getDecimalPoint());
 }
 void on_button_brace_open_clicked(GtkButton *w, gpointer user_data) {
-	insert_text(LEFT_BRACKET_STR);
+	insert_text(LEFT_BRACKET_STR.c_str());
 }
 void on_button_brace_close_clicked(GtkButton *w, gpointer user_data) {
-	insert_text(RIGHT_BRACKET_STR);
+	insert_text(RIGHT_BRACKET_STR.c_str());
 }
 void on_button_times_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
 	if(use_unicode_signs) insert_text(SIGN_MULTIDOT);
-	else insert_text(MULTIPLICATION_STR);
+	else insert_text(MULTIPLICATION_STR.c_str());
 }
 void on_button_add_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
 //	if(use_unicode_signs) insert_text(SIGN_PLUS);
 //	else 
-	insert_text(PLUS_STR);
+	insert_text(PLUS_STR.c_str());
 }
 void on_button_sub_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
 	if(use_unicode_signs) insert_text(SIGN_MINUS);
-	else insert_text(MINUS_STR);
+	else insert_text(MINUS_STR.c_str());
 }
 void on_button_divide_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
 //	if(use_unicode_signs) insert_text(SIGN_DIVISION);
 //	else 
-	insert_text(DIVISION_STR);
+	insert_text(DIVISION_STR.c_str());
 }
 void on_button_ans_clicked(GtkButton *w, gpointer user_data) {
 	insert_text("Ans");
 }
 void on_button_exp_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
-	insert_text(EXP_STR);
+	insert_text(EXP_STR.c_str());
 }
 void on_button_xy_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
-	insert_text(POWER_STR);
+	insert_text(POWER_STR.c_str());
 }
 void on_button_square_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
-	insert_text(POWER_STR);
+	insert_text(POWER_STR.c_str());
 	insert_text("2");
 }
 
@@ -5705,22 +5705,22 @@ void on_button_ln_clicked(GtkButton *w, gpointer user_data) {
 }
 
 void on_menu_item_addition_activate(GtkMenuItem *w, gpointer user_data) {
-	insert_text(PLUS_STR);
+	insert_text(PLUS_STR.c_str());
 }
 void on_menu_item_subtraction_activate(GtkMenuItem *w, gpointer user_data) {
-	insert_text(MINUS_STR);
+	insert_text(MINUS_STR.c_str());
 }
 void on_menu_item_multiplication_activate(GtkMenuItem *w, gpointer user_data) {
-	insert_text(MULTIPLICATION_STR);
+	insert_text(MULTIPLICATION_STR.c_str());
 }
 void on_menu_item_division_activate(GtkMenuItem *w, gpointer user_data) {
-	insert_text(DIVISION_STR);
+	insert_text(DIVISION_STR.c_str());
 }
 void on_menu_item_power_activate(GtkMenuItem *w, gpointer user_data) {
-	insert_text(POWER_STR);
+	insert_text(POWER_STR.c_str());
 }
 void on_menu_item_exponent_activate(GtkMenuItem *w, gpointer user_data) {
-	insert_text(EXP_STR);
+	insert_text(EXP_STR.c_str());
 }
 void on_menu_item_rpn_mode_activate(GtkMenuItem *w, gpointer user_data) {
 	CALCULATOR->setRPNMode(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
@@ -5876,23 +5876,29 @@ void on_menu_item_save_activate(GtkMenuItem *w, gpointer user_data) {
 void on_menu_item_precision_activate(GtkMenuItem *w, gpointer user_data) {
 	GtkWidget *dialog = glade_xml_get_widget (glade_xml, "precision_dialog");
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (glade_xml, "main_window")));
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget (glade_xml, "precision_dialog_spinbutton_precision"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_precision_dialog_spinbutton_precision_value_changed, NULL);
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "precision_dialog_spinbutton_precision")), PRECISION);	
-	gtk_dialog_run(GTK_DIALOG(dialog));
-	gtk_widget_hide(dialog);
-	gtk_widget_grab_focus(expression);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget (glade_xml, "precision_dialog_spinbutton_precision"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_precision_dialog_spinbutton_precision_value_changed, NULL);
+	gtk_widget_show(dialog);
 }
 void on_menu_item_decimals_activate(GtkMenuItem *w, gpointer user_data) {
 	GtkWidget *dialog = glade_xml_get_widget (glade_xml, "decimals_dialog");
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (glade_xml, "main_window")));
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget (glade_xml, "decimals_dialog_checkbutton_max"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_decimals_dialog_checkbutton_max_toggled, NULL);
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget (glade_xml, "decimals_dialog_checkbutton_min"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_decimals_dialog_checkbutton_min_toggled, NULL);
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget (glade_xml, "decimals_dialog_spinbutton_max"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_decimals_dialog_spinbutton_max_value_changed, NULL);
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget (glade_xml, "decimals_dialog_spinbutton_min"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_decimals_dialog_spinbutton_min_value_changed, NULL);	
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (glade_xml, "decimals_dialog_checkbutton_min")), use_min_deci);
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (glade_xml, "decimals_dialog_checkbutton_max")), use_max_deci);	
 	gtk_widget_set_sensitive (glade_xml_get_widget (glade_xml, "decimals_dialog_spinbutton_min"), use_min_deci);
 	gtk_widget_set_sensitive (glade_xml_get_widget (glade_xml, "decimals_dialog_spinbutton_max"), use_max_deci);	
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "decimals_dialog_spinbutton_min")), min_deci);
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "decimals_dialog_spinbutton_max")), max_deci);	
-	gtk_dialog_run(GTK_DIALOG(dialog));
-	gtk_widget_hide(dialog);
-	gtk_widget_grab_focus(expression);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget (glade_xml, "decimals_dialog_checkbutton_max"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_decimals_dialog_checkbutton_max_toggled, NULL);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget (glade_xml, "decimals_dialog_checkbutton_min"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_decimals_dialog_checkbutton_min_toggled, NULL);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget (glade_xml, "decimals_dialog_spinbutton_max"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_decimals_dialog_spinbutton_max_value_changed, NULL);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget (glade_xml, "decimals_dialog_spinbutton_min"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_decimals_dialog_spinbutton_min_value_changed, NULL);	
+	gtk_widget_show(dialog);
 }
 
 /*
@@ -6411,7 +6417,7 @@ void on_decimals_dialog_spinbutton_max_value_changed(GtkSpinButton *w, gpointer 
 	setResult(result_text.c_str());
 }
 void on_decimals_dialog_spinbutton_min_value_changed(GtkSpinButton *w, gpointer user_data) {
-	min_deci = gtk_spin_button_get_value_as_int(w);
+	min_deci = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
 	setResult(result_text.c_str());
 }
 void on_decimals_dialog_checkbutton_max_toggled(GtkToggleButton *w, gpointer user_data) {
@@ -6431,7 +6437,7 @@ gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointe
 			gint end = 0;
 			wrap_expression_selection();
 			end = gtk_editable_get_position(GTK_EDITABLE(expression));
-			gtk_editable_insert_text(GTK_EDITABLE(expression), POWER_STR, strlen(POWER_STR), &end);				
+			gtk_editable_insert_text(GTK_EDITABLE(expression), POWER_STR.c_str(), -1, &end);				
 			gtk_editable_set_position(GTK_EDITABLE(expression), end);							
 			return TRUE;
 		}

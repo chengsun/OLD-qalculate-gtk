@@ -145,7 +145,7 @@ void Manager::set(long int numerator_, long int denominator_, long int fraction_
 }
 void Manager::set(string var_) {
 	clear();
-	if(var_.empty()) return;
+//	if(var_.empty()) return;
 	s_var = var_;
 	c_type = STRING_MANAGER;
 }
@@ -1758,8 +1758,8 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			str2 = mngrs[i]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
 			if(i > 0 && displayflags & DISPLAY_FORMAT_NONASCII && str2.substr(0, strlen(SIGN_MINUS)) == SIGN_MINUS) {
 				str2 = str2.substr(strlen(SIGN_MINUS), str2.length() - strlen(SIGN_MINUS));
-			} else if(i > 0 && str2.substr(0, strlen(MINUS_STR)) == MINUS_STR) {
-				str2 = str2.substr(strlen(MINUS_STR), str2.length() - strlen(MINUS_STR));
+			} else if(i > 0 && str2.substr(0, MINUS_STR.length()) == MINUS_STR) {
+				str2 = str2.substr(MINUS_STR.length(), str2.length() - MINUS_STR.length());
 			}
 			str += str2;
 		}
@@ -1842,7 +1842,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 					str += LEFT_BRACKET_STR;
 				}
 				if(b && is_unit)  {
-					if(!prefix || is_in(str[str.length() - 1], NUMBERS_S, MINUS_S, NULL) || (mngrs[i - 1]->type() == FRACTION_MANAGER && !mngrs[i - 1]->fraction()->isInteger() && str[str.length() - 1] == '>')) {					
+					if(!prefix || is_in(NUMBERS_S + MINUS_S, str[str.length() - 1]) || (mngrs[i - 1]->type() == FRACTION_MANAGER && !mngrs[i - 1]->fraction()->isInteger() && str[str.length() - 1] == '>')) {					
 						str += " ";
 						if(had_div_unit) {
 							if(displayflags & DISPLAY_FORMAT_NONASCII) {
@@ -1898,7 +1898,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 					}
 					str += " ";								
 				} else if(i > 0 && is_unit)  {
-					if(!prefix_ || is_in(str[str.length() - 1], NUMBERS_S, NULL) || (mngrs[i - 1]->type() == FRACTION_MANAGER && !mngrs[i - 1]->fraction()->isInteger() && str[str.length() - 1] == '>')) {
+					if(!prefix_ || is_in(NUMBERS_S, str[str.length() - 1]) || (mngrs[i - 1]->type() == FRACTION_MANAGER && !mngrs[i - 1]->fraction()->isInteger() && str[str.length() - 1] == '>')) {
 						str += " ";
 						if(had_unit) {
 							if(displayflags & DISPLAY_FORMAT_NONASCII) {
