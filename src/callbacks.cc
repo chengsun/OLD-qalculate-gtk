@@ -1385,23 +1385,55 @@ void insert_unit(GtkMenuItem *w, gpointer user_data) {
 /*
 	selected unit type in edit/new unit dialog has changed
 */
-void on_omUnitType_changed(GtkOptionMenu *om, gpointer user_data) {
-	gtk_widget_hide(boxAlias);
+void on_omUnitType_changed(GtkOptionMenu *om, gpointer user_data)
+{
 	gtk_widget_set_sensitive(eUnitPlural, TRUE);
 	gtk_widget_set_sensitive(eShortUnitFormat, TRUE);
 	gtk_widget_set_sensitive(eUnitName, TRUE);
-	switch(gtk_option_menu_get_history(om)) {
-	case ALIAS_UNIT: {
-			gtk_widget_show(boxAlias);
-			break;
-		}
-	case COMPOSITE_UNIT: {
-		//unfinished
-			gtk_widget_set_sensitive(eUnitPlural, FALSE);
-			gtk_widget_set_sensitive(eShortUnitFormat, FALSE);
-			gtk_widget_set_sensitive(eUnitName, FALSE);
-			break;
-		}
+
+	gchar *composite[7] = {
+		"unit_edit_label_plural",
+		"unit_edit_entry_plural",
+		"unit_edit_label_short",
+		"unit_edit_entry_short",
+		"unit_edit_label_singular",
+		"unit_edit_entry_singular",
+		NULL
+	};
+
+	gchar *alias[12] = {
+		"unit_edit_label_relation_title",
+		"unit_edit_label_base",
+		"unit_edit_combo_base",
+		"unit_edit_label_exp",
+		"unit_edit_spinbutton_exp",
+		"unit_edit_label_relation",
+		"unit_edit_entry_relation",
+		"unit_edit_label_reversed",
+		"unit_edit_entry_reversed",
+		"unit_edit_label_info1",
+		"unit_edit_label_info2",
+		NULL
+	};
+
+	gchar **pointer;
+
+	/* making the non-composite widgets (un)sensitive */
+	for (pointer = composite; *pointer != NULL; pointer++)
+	{
+		gtk_widget_set_sensitive (
+				glade_xml_get_widget (glade_xml, *pointer),
+				(gtk_option_menu_get_history(om) == COMPOSITE_UNIT) ? FALSE : TRUE
+				);
+	}
+
+	/* making the alias widgets (un)sensitive */
+	for (pointer = alias; *pointer != NULL; pointer++)
+	{
+		gtk_widget_set_sensitive (
+				glade_xml_get_widget (glade_xml, *pointer),
+				(gtk_option_menu_get_history(om) == ALIAS_UNIT) ? TRUE : FALSE
+				);
 	}
 }
 
@@ -1409,14 +1441,18 @@ void on_omUnitType_changed(GtkOptionMenu *om, gpointer user_data) {
 	display edit/new unit dialog
 	creates new unit if u == NULL, win is parent window
 */
-void edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL) {
+void
+edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
+{
 	GtkWidget *dialog = create_wEditUnit();
+
 	if(u)
 		gtk_window_set_title(GTK_WINDOW(dialog), _("Edit unit"));
 	else
 		gtk_window_set_title(GTK_WINDOW(dialog), _("New unit"));
+
 	gtk_entry_set_text(GTK_ENTRY(eUnitCat), category);
-	
+
 	if(u) {
 		//fill in original parameters
 		if(u->type() == 'U')
@@ -1425,13 +1461,17 @@ void edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 			gtk_option_menu_set_history(GTK_OPTION_MENU(omUnitType), ALIAS_UNIT);
 		else if(u->type() == 'D')
 			gtk_option_menu_set_history(GTK_OPTION_MENU(omUnitType), COMPOSITE_UNIT);
+
 		gtk_entry_set_text(GTK_ENTRY(eUnitName), u->name().c_str());
+
 		if(u->hasPlural())
 			gtk_entry_set_text(GTK_ENTRY(eUnitPlural), u->plural().c_str());
 		if(u->hasShortName())
 			gtk_entry_set_text(GTK_ENTRY(eShortUnitFormat), u->shortName().c_str());
+
 		gtk_entry_set_text(GTK_ENTRY(eUnitCat), u->category().c_str());
 		gtk_entry_set_text(GTK_ENTRY(eDescrUnitName), u->title().c_str());
+
 		switch(u->type()) {
 		case 'A': {
 				AliasUnit *au = (AliasUnit*) u;
@@ -1445,11 +1485,13 @@ void edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 				break;
 			}
 		}
+
 	} else {
 		//default values
 		gtk_option_menu_set_history(GTK_OPTION_MENU(omUnitType), ALIAS_UNIT);
 		gtk_entry_set_text(GTK_ENTRY(eRelation), "1");
 	}
+
 run_unit_edit_dialog:
 	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
 		//clicked "OK"

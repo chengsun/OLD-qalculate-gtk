@@ -1,3 +1,10 @@
+2003-08-10  Sven Herzberg  <herzi@gnome-de.org>
+
+	* data/qalculate.glade: don't know what exactly, but i'm sure that we
+	got rid of one c dialog more
+	* src/callbacks.cc:
+	* src/interface.cc:
+
 2003-08-10  Niklas Knutsson  <nq@altern.org>
 
 	* Updated swedish translation.

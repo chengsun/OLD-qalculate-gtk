@@ -749,7 +749,7 @@ create_wUnits (void)
 
 	tbToTo		= glade_xml_get_widget (glade_xml, "units_toggle_button_to");
 	eToValue	= glade_xml_get_widget (glade_xml, "units_entry_to_val");
-	omToUnit	= glade_xml_get_widget (glade_xml, "units_option_menu_to_unit");
+	omToUnit	= glade_xml_get_widget (glade_xml, "units_optionmenu_to_unit");
 
 	bNewUnit	= glade_xml_get_widget (glade_xml, "units_button_new");
 	bEditUnit	= glade_xml_get_widget (glade_xml, "units_button_edit");
@@ -811,19 +811,13 @@ GtkWidget*
 create_wPreferences (void)
 {
 	GtkWidget *wPreferences;
-	GtkWidget *dialog_vbox3;
-	GtkWidget *vbox2_pr;
 	GtkWidget *cbSaveModeOnExit;
 	GtkWidget *cbSaveDefsOnExit;
 	GtkWidget *cbLoadGlobalDefs;
-	GtkWidget *hseparator1;
 	GtkWidget *cbUseShortUnits;
-	GtkWidget *dialog_action_area3;
 	GtkWidget *bClose_pr;
 
 	wPreferences	= glade_xml_get_widget (glade_xml, "preferences_dialog");
-	dialog_vbox3 = GTK_DIALOG (wPreferences)->vbox;
-	vbox2_pr	= glade_xml_get_widget (glade_xml, "preferences_vbox2");
 	cbLoadGlobalDefs= glade_xml_get_widget (glade_xml, "preferences_checkbutton_load_defs");
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(cbLoadGlobalDefs), load_global_defs);
 	cbSaveModeOnExit= glade_xml_get_widget (glade_xml, "preferences_checkbutton_save_mode");
@@ -845,170 +839,31 @@ create_wPreferences (void)
 }
 
 GtkWidget*
-create_wEditUnit (void) {
-	GtkWidget *dialog_vbox4;
-	GtkWidget *vbox3;
-	GtkWidget *menu1;
-	GtkWidget *item15;
-	GtkWidget *item16;
-	GtkWidget *item17;
-	GtkWidget *hbox4;
-	GtkWidget *dialog_action_area4;
-	GtkWidget *cancelbutton1;
-	GtkWidget *okbutton1;
-	GtkWidget *infowidget1;
-	GtkWidget *infowidget2;
+create_wEditUnit (void)
+{
+	/* FIXME populate the combo menus */
 
-	wEditUnit = gtk_dialog_new ();
-	gtk_window_set_title (GTK_WINDOW (wEditUnit), _("New unit"));
-	gtk_window_set_resizable (GTK_WINDOW (wEditUnit), FALSE);
-
-	dialog_vbox4 = GTK_DIALOG (wEditUnit)->vbox;
-	gtk_widget_show (dialog_vbox4);
-
-	vbox3 = gtk_vbox_new (FALSE, 5);
-	gtk_widget_show (vbox3);
-	gtk_box_pack_start (GTK_BOX (dialog_vbox4), vbox3, TRUE, TRUE, 0);
-	gtk_container_set_border_width (GTK_CONTAINER (vbox3), 5);
-
-	lUnitType = gtk_label_new (_("Type"));
-	gtk_widget_show (lUnitType);
-	gtk_box_pack_start (GTK_BOX (vbox3), lUnitType, FALSE, FALSE, 0);
-	gtk_label_set_justify (GTK_LABEL (lUnitType), GTK_JUSTIFY_LEFT);
-	gtk_misc_set_alignment (GTK_MISC (lUnitType), 0, 0.5);
-
-	omUnitType = gtk_option_menu_new ();
-	gtk_widget_show (omUnitType);
-	gtk_box_pack_start (GTK_BOX (vbox3), omUnitType, FALSE, FALSE, 0);
-
-	menu1 = gtk_menu_new ();
-
-	item15 = gtk_menu_item_new_with_mnemonic (_("BASE UNIT"));
-	gtk_widget_show (item15);
-	gtk_container_add (GTK_CONTAINER (menu1), item15);
-
-	item16 = gtk_menu_item_new_with_mnemonic (_("ALIAS"));
-	gtk_widget_show (item16);
-	gtk_container_add (GTK_CONTAINER (menu1), item16);
-
-	item17 = gtk_menu_item_new_with_mnemonic (_("COMPOSITE UNIT"));
-	gtk_widget_show (item17);
-	gtk_container_add (GTK_CONTAINER (menu1), item17);
-
-	gtk_option_menu_set_menu (GTK_OPTION_MENU (omUnitType), menu1);
-
-	lUnitName = gtk_label_new (_("* Name"));
-	gtk_widget_show (lUnitName);
-	gtk_box_pack_start (GTK_BOX (vbox3), lUnitName, FALSE, FALSE, 0);
-	gtk_label_set_justify (GTK_LABEL (lUnitName), GTK_JUSTIFY_LEFT);
-	gtk_misc_set_alignment (GTK_MISC (lUnitName), 0, 0.5);
-
-	eUnitName = gtk_entry_new ();
-	gtk_widget_show (eUnitName);
-	gtk_box_pack_start (GTK_BOX (vbox3), eUnitName, FALSE, FALSE, 0);
-
-	lUnitPlural = gtk_label_new (_("Plural form"));
-	gtk_widget_show (lUnitPlural);
-	gtk_box_pack_start (GTK_BOX (vbox3), lUnitPlural, FALSE, FALSE, 0);
-	gtk_label_set_justify (GTK_LABEL (lUnitPlural), GTK_JUSTIFY_LEFT);
-	gtk_misc_set_alignment (GTK_MISC (lUnitPlural), 0, 0.5);
-
-	eUnitPlural = gtk_entry_new ();
-	gtk_widget_show (eUnitPlural);
-	gtk_box_pack_start (GTK_BOX (vbox3), eUnitPlural, FALSE, FALSE, 0);
-
-	lShortUnitFormat = gtk_label_new (_("Short format"));
-	gtk_widget_show (lShortUnitFormat);
-	gtk_box_pack_start (GTK_BOX (vbox3), lShortUnitFormat, FALSE, FALSE, 0);
-	gtk_label_set_justify (GTK_LABEL (lShortUnitFormat), GTK_JUSTIFY_LEFT);
-	gtk_misc_set_alignment (GTK_MISC (lShortUnitFormat), 0, 0.5);
-
-	eShortUnitFormat = gtk_entry_new ();
-	gtk_widget_show (eShortUnitFormat);
-	gtk_box_pack_start (GTK_BOX (vbox3), eShortUnitFormat, FALSE, FALSE, 0);
-
-	boxAlias = gtk_vbox_new (FALSE, 5);
-	gtk_box_pack_start (GTK_BOX (vbox3), boxAlias, TRUE, TRUE, 0);
-
-	lBaseUnit = gtk_label_new (_("* Base unit (unit/exponent)"));
-	gtk_widget_show (lBaseUnit);
-	gtk_box_pack_start (GTK_BOX (boxAlias), lBaseUnit, FALSE, FALSE, 0);
-	gtk_label_set_justify (GTK_LABEL (lBaseUnit), GTK_JUSTIFY_LEFT);
-	gtk_misc_set_alignment (GTK_MISC (lBaseUnit), 0, 0.5);
-
-	hbox4 = gtk_hbox_new (FALSE, 0);
-	gtk_widget_show (hbox4);
-	gtk_box_pack_start (GTK_BOX (boxAlias), hbox4, FALSE, FALSE, 0);
-
-	eBaseUnit = gtk_entry_new ();
-	gtk_widget_show (eBaseUnit);
-	gtk_box_pack_start (GTK_BOX (hbox4), eBaseUnit, TRUE, TRUE, 0);
-
-	sbBaseExp_adj = gtk_adjustment_new (1, -100, 100, 1, 10, 10);
-	sbBaseExp = gtk_spin_button_new (GTK_ADJUSTMENT (sbBaseExp_adj), 1, 0);
-	gtk_widget_show (sbBaseExp);
-	gtk_box_pack_start (GTK_BOX (hbox4), sbBaseExp, TRUE, TRUE, 0);
-	gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (sbBaseExp), TRUE);
-
-	lRelation = gtk_label_new (_("Relation"));
-	gtk_widget_show (lRelation);
-	gtk_box_pack_start (GTK_BOX (boxAlias), lRelation, FALSE, FALSE, 0);
-	gtk_label_set_justify (GTK_LABEL (lRelation), GTK_JUSTIFY_LEFT);
-	gtk_misc_set_alignment (GTK_MISC (lRelation), 0, 0.5);
-
-	eRelation = gtk_entry_new ();
-	gtk_widget_show (eRelation);
-	gtk_box_pack_start (GTK_BOX (boxAlias), eRelation, FALSE, FALSE, 0);
-
-	infowidget1 = create_InfoWidget(_("If non-fixed relation, replace value with \\x and exponent with \\y"));
-	gtk_box_pack_start (GTK_BOX (boxAlias), infowidget1, FALSE, FALSE, 0);
-
-	lReverse = gtk_label_new (_("Reversed relation"));
-	gtk_widget_show (lReverse);
-	gtk_box_pack_start (GTK_BOX (boxAlias), lReverse, FALSE, FALSE, 0);
-	gtk_label_set_justify (GTK_LABEL (lReverse), GTK_JUSTIFY_LEFT);
-	gtk_misc_set_alignment (GTK_MISC (lReverse), 0, 0.5);
-
-	eReverse = gtk_entry_new ();
-	gtk_widget_show (eReverse);
-	gtk_box_pack_start (GTK_BOX (boxAlias), eReverse, FALSE, FALSE, 0);
-
-	infowidget2 = create_InfoWidget(_("Not needed for fixed relations."));
-	gtk_box_pack_start (GTK_BOX (boxAlias), infowidget2, FALSE, FALSE, 0);
-
-	lUnitCat = gtk_label_new (_("Category"));
-	gtk_widget_show (lUnitCat);
-	gtk_box_pack_start (GTK_BOX (vbox3), lUnitCat, FALSE, FALSE, 0);
-	gtk_label_set_justify (GTK_LABEL (lUnitCat), GTK_JUSTIFY_LEFT);
-	gtk_misc_set_alignment (GTK_MISC (lUnitCat), 0, 0.5);
-
-	eUnitCat = gtk_entry_new ();
-	gtk_widget_show (eUnitCat);
-	gtk_box_pack_start (GTK_BOX (vbox3), eUnitCat, FALSE, FALSE, 0);
-
-	lDescrUnitName = gtk_label_new (_("Descriptive name"));
-	gtk_widget_show (lDescrUnitName);
-	gtk_box_pack_start (GTK_BOX (vbox3), lDescrUnitName, FALSE, FALSE, 0);
-	gtk_label_set_justify (GTK_LABEL (lDescrUnitName), GTK_JUSTIFY_LEFT);
-	gtk_misc_set_alignment (GTK_MISC (lDescrUnitName), 0, 0.5);
-
-	eDescrUnitName = gtk_entry_new ();
-	gtk_widget_show (eDescrUnitName);
-	gtk_box_pack_start (GTK_BOX (vbox3), eDescrUnitName, FALSE, FALSE, 0);
-
-	dialog_action_area4 = GTK_DIALOG (wEditUnit)->action_area;
-	gtk_widget_show (dialog_action_area4);
-	gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area4), GTK_BUTTONBOX_END);
-
-	cancelbutton1 = gtk_button_new_from_stock ("gtk-cancel");
-	gtk_widget_show (cancelbutton1);
-	gtk_dialog_add_action_widget (GTK_DIALOG (wEditUnit), cancelbutton1, GTK_RESPONSE_CANCEL);
-	GTK_WIDGET_SET_FLAGS (cancelbutton1, GTK_CAN_DEFAULT);
-
-	okbutton1 = gtk_button_new_from_stock ("gtk-ok");
-	gtk_widget_show (okbutton1);
-	gtk_dialog_add_action_widget (GTK_DIALOG (wEditUnit), okbutton1, GTK_RESPONSE_OK);
-	GTK_WIDGET_SET_FLAGS (okbutton1, GTK_CAN_DEFAULT);
+	wEditUnit	= glade_xml_get_widget (glade_xml, "unit_edit_dialog");
+	lUnitType	= glade_xml_get_widget (glade_xml, "unit_edit_label_class");
+	omUnitType	= glade_xml_get_widget (glade_xml, "unit_edit_optionmenu_class");
+	lUnitName	= glade_xml_get_widget (glade_xml, "unit_edit_label_singular");
+	eUnitName	= glade_xml_get_widget (glade_xml, "unit_edit_entry_singular");
+	lUnitPlural	= glade_xml_get_widget (glade_xml, "unit_edit_label_plural");
+	eUnitPlural	= glade_xml_get_widget (glade_xml, "unit_edit_entry_plural");
+	lShortUnitFormat = glade_xml_get_widget (glade_xml, "unit_edit_label_short");
+	eShortUnitFormat = glade_xml_get_widget (glade_xml, "unit_edit_entry_short");
+	lBaseUnit	= glade_xml_get_widget (glade_xml, "unit_edit_label_base");
+	eBaseUnit	= GTK_COMBO (glade_xml_get_widget (glade_xml, "unit_edit_combo_base"))->entry;
+	sbBaseExp	= glade_xml_get_widget (glade_xml, "unit_edit_spinbutton_exp");
+	lRelation	= glade_xml_get_widget (glade_xml, "unit_edit_label_relation");
+	eRelation	= glade_xml_get_widget (glade_xml, "unit_edit_entry_relation");
+	lReverse	= glade_xml_get_widget (glade_xml, "unit_edit_label_reversed");
+	eReverse	= glade_xml_get_widget (glade_xml, "unit_edit_entry_reversed");
+	lUnitCat	= glade_xml_get_widget (glade_xml, "unit_edit_label_category");
+	eUnitCat	= GTK_COMBO (glade_xml_get_widget (glade_xml, "unit_edit_combo_category"))->entry;
+	lDescrUnitName	= glade_xml_get_widget (glade_xml, "unit_edit_label_desc");
+	eDescrUnitName	= glade_xml_get_widget (glade_xml, "unit_edit_entry_desc");
+	boxAlias	= glade_xml_get_widget (glade_xml, "unit_edit_vbox_alias");
 
 	g_signal_connect ((gpointer) omUnitType, "changed",
 	                  G_CALLBACK (on_omUnitType_changed),
