@@ -341,10 +341,6 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Toggles exact mode on/off.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Calculate Multiple Roots</para></entry>
-				<entry><para>Toggles calculation of multiple results for even roots on/off.</para></entry>
-			</row>
-			<row valign="top">
 				<entry><para>RPN Mode</para></entry>
 				<entry><para>Toggles use of Reverse Polish Notation syntax in expressions on/off.</para></entry>
 			</row>
@@ -802,12 +798,6 @@ This mode affects both the display and calculation. When exact mode is on, the c
 </para></listitem>
 </varlistentry>
 <varlistentry>
-<term>Calculate Multiple Roots</term>
-<listitem><para>
-If this alternative is selected, Qalculate! will return both the negative and positive results of an even root (ex. <quote>sqrt(9) = 3 or -3</quote>. This does not yet work with complex numbers.
-</para></listitem>
-</varlistentry>
-<varlistentry>
 <term>Precision</term>
 <listitem><para>
 Precision controls the precision in approximate numbers and the number of significant digits.
@@ -953,13 +943,13 @@ Here the main function categories and some of their members are described, to gi
 <varlistentry>
 <term>Algebra</term>
 <listitem><para>
-Contains <command>sum()</command> and <command>productive()</command>, which corresponds to the sum and product signs.
+Contains <command>sum()</command> and <command>productive()</command>, which corresponds to the sum and product signs. </command>solve()</command> solves equations (ex. <quote>solve(x * 2 = 8)</quote> returns <quote>4</quote> meaning that x equals 4).
 </para></listitem>
 </varlistentry>
 <varlistentry>
 <term>Calculus</term>
 <listitem><para>
-Includes <command>diff()</command> which calculates the derivative of an expression with optional arguments <quote>with respect to</quote> (default x) and <quote>order</quote> (default 1), <command>integrate()</command> which is the former reversed, and <command>solve()</command> which solves an equation (ex. <quote>solve(x * 2 = 8)</quote> returns <quote>4</quote> meaning that x equals 4). The last two are only available if Qalculate! was installed with Giac support. There is also a generic Giac function, which passes a text argument directly to Giac.
+Includes <command>diff()</command> which calculates the derivative of an expression with optional arguments <quote>with respect to</quote> (default x) and <quote>order</quote> (default 1), and <command>integrate()</command>.  Integrate are very limited without Giac support. There is also a generic Giac function, which passes a text argument directly to Giac.
 </para></listitem>
 </varlistentry>
 <varlistentry>

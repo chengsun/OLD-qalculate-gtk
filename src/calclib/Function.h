@@ -49,6 +49,7 @@ class Function : public ExpressionItem {
 	int max_argc;
 	vector<string> default_values;
 	Sgi::hash_map<unsigned int, Argument*> argdefs;
+	Sgi::hash_map<unsigned int, int> argoccs;
 	unsigned int last_argdef_index;		
 	bool testArgumentCount(int itmp);
 	bool testArguments(vector<Manager*> &vargs);
@@ -73,6 +74,7 @@ class Function : public ExpressionItem {
 	string condition() const;
 	void setCondition(string expression);
 	bool testCondition(vector<Manager*> &vargs);
+	int countArgOccurence(unsigned int arg_);
 	int args() const;
 	int minargs() const;	
 	int maxargs() const;		
@@ -129,7 +131,7 @@ class Argument {
 	string printlong() const;
 	
 	bool test(const Manager *value, int index, Function *f) const;
-	virtual Manager *evaluate(const string &str) const;
+	virtual Manager *evaluate(const string &str, bool keep_exact = true) const;
 	
 	string name() const;
 	void setName(string name_);
@@ -257,7 +259,7 @@ class GiacArgument : public Argument {
 	virtual ~GiacArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
-	virtual Manager *evaluate(const string &str) const;
+	virtual Manager *evaluate(const string &str, bool keep_exact = true) const;
 };
 class DateArgument : public Argument {
 
@@ -386,7 +388,7 @@ class AngleArgument : public Argument {
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
-	virtual Manager *evaluate(const string &str) const;
+	virtual Manager *evaluate(const string &str, bool keep_exact = true) const;
 };
 class VariableArgument : public Argument {
 

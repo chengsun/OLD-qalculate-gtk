@@ -1,5 +1,19 @@
+2004-04-05 Niklas Knutsson  <nq@altern.org>
+
+	* MatrixArgument->type should not return TEXT_ARGUMENT
+	* Multiple roots updates
+
+2004-04-04 Niklas Knutsson  <nq@altern.org>
+
+	* Put in some restrictions and enable multiple roots
+	* Disable multiple roots
+	* Remove 0 == any number from Manager->equals
+	* try x^(y+z) = x^y*x^z and x^(yz) = x^y^z
+
 2004-04-03 Niklas Knutsson  <nq@altern.org>
 
+	* Capitulate in search for exact as long as possible to fix alternatives
+	* Recalculate directly on angle unit change
 	* Enable multiple roots again
 	* Do not ignore unsolvable comparison
 	* Remove imaginary or real part present because of approximate floating point numbers

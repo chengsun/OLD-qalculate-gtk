@@ -73,7 +73,8 @@ class Calculator {
 	bool b_functions_was, b_variables_was, b_units_was, b_unknown_was, b_calcvars_was, b_always_exact_was, b_rpn_was;
 	string NAME_NUMBER_PRE_S, NAME_NUMBER_PRE_STR, DOT_STR, DOT_S, COMMA_S, COMMA_STR, ILLEGAL_IN_NAMES, ILLEGAL_IN_UNITNAMES, ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
 
-	bool b_argument_errors;
+	bool b_argument_errors, b_temp_exact;
+	bool toplevel_calc;
 
 	bool b_gnuplot_open;
 	string gnuplot_cmdline;
@@ -116,6 +117,7 @@ class Calculator {
 	void setMultipleRootsEnabled(bool enable_multiple_roots);
 
 	bool showArgumentErrors() const;
+	bool alwaysExactIsTemporary() const;
 	
 	void beginTemporaryStopErrors();
 	void endTemporaryStopErrors();	
@@ -198,6 +200,7 @@ class Calculator {
 	string localizeExpression(string str) const;
 	string unlocalizeExpression(string str) const;
 	Manager *calculate(string str, bool enable_abort = false, int usecs = -1);
+	Manager *calculate_sub(const string &str, bool hold_exact = true);
 	string printManagerTimeOut(Manager *mngr, int usecs = 100000, NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *prefix = NULL);
 	Manager *convert(double value, Unit *from_unit, Unit *to_unit);
 	Manager *convert(string str, Unit *from_unit, Unit *to_unit);	
@@ -249,7 +252,6 @@ class Calculator {
 	bool nameTaken(string name, ExpressionItem *object = NULL);
 	bool unitIsUsedByOtherUnits(const Unit *u) const;	
 	string getName(string name = "", ExpressionItem *object = NULL, bool force = false, bool always_append = false);
-	//bool load(const char* file_name, bool is_user_defs = true);
 	bool loadGlobalDefinitions();
 	bool loadLocalDefinitions();
 	int loadDefinitions(const char* file_name, bool is_user_defs = true);

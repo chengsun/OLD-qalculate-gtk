@@ -4441,7 +4441,7 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 			if(i >= f->minargs()) {
 				remove_blank_ends(str2);
 			}
-			if(!(i >= f->minargs() && str2.empty()) && f->getArgumentDefinition(i + 1) && (f->getArgumentDefinition(i + 1)->suggestsQuotes() || (f->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_TEXT && str2.find(CALCULATOR->getComma()) != string::npos))) {
+			if((i < f->minargs() || !str2.empty()) && f->getArgumentDefinition(i + 1) && (f->getArgumentDefinition(i + 1)->suggestsQuotes() || (f->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_TEXT && str2.find(CALCULATOR->getComma()) != string::npos))) {
 				if(str2.length() < 1 || (str2[0] != '\"' && str[0] != '\'')) { 
 					str2.insert(0, "\"");
 					str2 += "\"";
@@ -5588,7 +5588,7 @@ void button_function_pressed(GtkButton *w, gpointer user_data) {
 void set_angle_item() {
 	GtkWidget *mi = NULL;
 	switch(CALCULATOR->angleMode()) {
-	case RADIANS: {
+		case RADIANS: {
 			mi = glade_xml_get_widget (main_glade, "menu_item_radians");
 			g_signal_handlers_block_matched((gpointer) mi, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_radians_activate, NULL);	
 			if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(mi)))
@@ -5596,7 +5596,7 @@ void set_angle_item() {
 			g_signal_handlers_unblock_matched((gpointer) mi, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_radians_activate, NULL);						
 			break;
 		}
-	case GRADIANS: {
+		case GRADIANS: {
 			mi = glade_xml_get_widget (main_glade, "menu_item_gradians");
 			g_signal_handlers_block_matched((gpointer) mi, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_gradians_activate, NULL);	
 			if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(mi)))
@@ -5604,7 +5604,7 @@ void set_angle_item() {
 			g_signal_handlers_unblock_matched((gpointer) mi, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_gradians_activate, NULL);						
 			break;
 		}
-	case DEGREES: {
+		case DEGREES: {
 			mi = glade_xml_get_widget (main_glade, "menu_item_degrees");
 			g_signal_handlers_block_matched((gpointer) mi, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_degrees_activate, NULL);	
 			if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(mi)))
@@ -6652,18 +6652,21 @@ void on_radiobutton_radians_toggled(GtkToggleButton *togglebutton, gpointer user
 	if(gtk_toggle_button_get_active(togglebutton)) {
 		CALCULATOR->angleMode(RADIANS);
 		set_angle_item();
+		execute_expression();
 	}
 }
 void on_radiobutton_degrees_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
 	if(gtk_toggle_button_get_active(togglebutton)) {
 		CALCULATOR->angleMode(DEGREES);
 		set_angle_item();
+		execute_expression();
 	}
 }
 void on_radiobutton_gradians_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
 	if(gtk_toggle_button_get_active(togglebutton)) {
 		CALCULATOR->angleMode(GRADIANS);
 		set_angle_item();
+		execute_expression();
 	}
 }
 /*
@@ -7046,6 +7049,7 @@ void on_menu_item_degrees_activate(GtkMenuItem *w, gpointer user_data) {
 		gint i = DEGREES;
 		CALCULATOR->angleMode(i);
 		set_angle_button();
+		execute_expression();
 	}
 }
 void on_menu_item_radians_activate(GtkMenuItem *w, gpointer user_data) {
@@ -7053,6 +7057,7 @@ void on_menu_item_radians_activate(GtkMenuItem *w, gpointer user_data) {
 		gint i = RADIANS;
 		CALCULATOR->angleMode(i);
 		set_angle_button();
+		execute_expression();
 	}
 }
 void on_menu_item_gradians_activate(GtkMenuItem *w, gpointer user_data) {
@@ -7060,6 +7065,7 @@ void on_menu_item_gradians_activate(GtkMenuItem *w, gpointer user_data) {
 		gint i = GRADIANS;
 		CALCULATOR->angleMode(i);
 		set_angle_button();
+		execute_expression();
 	}
 }
 void on_menu_item_binary_activate(GtkMenuItem *w, gpointer user_data) {

@@ -346,6 +346,7 @@ bool Manager::typeclean() {
 				mngrs.erase(mngrs.begin() + 1);
 				changed = true;
 			}
+			
 			if(mngrs.size() == 1) {
 				moveto(mngrs[0]);
 				changed = true;
@@ -457,7 +458,7 @@ void Manager::addAlternative(const Manager *mngr) {
 }
 bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 	if(!mngr) return true;
-//	printf("[%s] %c [%s] (%i)\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), op2ch(op), mngr->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), translate_);
+//	printf("[%s] %c [%s] (%i)\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION | DISPLAY_FORMAT_SCIENTIFIC).c_str(), op2ch(op), mngr->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), translate_);
 	if(!mngr->isPrecise()) setPrecise(false);
 	if(mngr->type() == NUMBER_MANAGER && c_type == NUMBER_MANAGER) {
 		Number nr_save(o_number);
@@ -530,20 +531,9 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 		return b;		
 	}
 	if(c_type == ALTERNATIVE_MANAGER) {
-		int is = mngrs.size();
-		for(int i = 0; i < is; i++) {
+		for(unsigned int i = 0; i < mngrs.size(); i++) {
 			mngrs[i]->add(mngr, op);
 			if(!mngrs[i]->isPrecise()) setPrecise(false);
-			if(mngrs[i]->type() == ALTERNATIVE_MANAGER) {
-				for(unsigned int i2 = 0; i2 < mngrs[i]->countChilds(); i2++) {
-					mngrs[i]->getChild(i2)->ref();
-					push_back(mngrs[i]->getChild(i2));
-				}
-				mngrs[i]->unref();
-				mngrs.erase(mngrs.begin() + i);
-				i--;
-				is--;
-			}
 		}
 		typeclean();
 		sort();
@@ -557,7 +547,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 			mngrs[i]->add(mngr->getChild(i), op);
 			if(!mngrs[i]->isPrecise()) setPrecise(false);
 		}
-		clean();
+		typeclean();
 		sort();
 		return true;
 	}
@@ -603,7 +593,9 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 					}
 					case MULTIPLICATION_MANAGER: {
 						bool b = false;
-						if(compatible(mngr)) {
+						if(CALCULATOR->multipleRootsEnabled() && containsType(POWER_MANAGER) && mngr->containsType(POWER_MANAGER)) {
+						
+						} else if(compatible(mngr)) {
 							for(unsigned int i = 0; i < mngrs.size(); i++) {
 								if(mngrs[i]->isNumber()) {
 									for(unsigned int i2 = 0; i2 < mngr->mngrs.size(); i2++) {
@@ -654,9 +646,16 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 						transform(mngr, ADDITION_MANAGER, op);
 						break;
 					}
-					case UNIT_MANAGER: {
-					}
 					case POWER_MANAGER: {
+						if(CALCULATOR->multipleRootsEnabled() && containsType(POWER_MANAGER)) {
+							if(!translate_) {
+								return false;
+							}
+							transform(mngr, ADDITION_MANAGER, op);
+							break;
+						}
+					}
+					case UNIT_MANAGER: {
 					}
 					case FUNCTION_MANAGER: {
 					}
@@ -716,6 +715,15 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 					}					
 				}
 				break;
+			}
+			case POWER_MANAGER: {
+				if(CALCULATOR->multipleRootsEnabled() && mngr->isPower()) {
+					if(!translate_) {
+						return false;
+					}
+					transform(mngr, ADDITION_MANAGER, op);
+					break;
+				}
 			}
 			default: {
 				switch(mngr->type()) {
@@ -971,7 +979,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 						break;
 					}
 					case POWER_MANAGER: {
-						if(mngr->mngrs[0]->equals(mngrs[0])) {
+						if((!CALCULATOR->multipleRootsEnabled() || (mngrs[1]->isNumber() && mngrs[1]->number()->isInteger() && mngr->mngrs[1]->isNumber() && mngr->mngrs[1]->number()->isInteger())) && mngr->mngrs[0]->equals(mngrs[0])) {
 							mngrs[1]->add(mngr->mngrs[1], OPERATION_ADD);
 							if(mngrs[1]->isNull()) {
 								set(1, 1);
@@ -1065,6 +1073,26 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 		} else if(isZero() && mngr->isNumber() && mngr->number()->isNegative()) {
 			if(translate_) {CALCULATOR->error(true, _("Division by zero."), NULL);}
 		}
+		bool b_trans = false;
+		if((c_type == ADDITION_MANAGER || CALCULATOR->multipleRootsEnabled()) && mngr->isNumber() && !mngr->number()->isInteger() && !mngr->number()->isComplex()) {
+			Number *num = mngr->number()->numerator();
+			if(!num->isOne() && (CALCULATOR->multipleRootsEnabled() || !num->isMinusOne())) {
+				Manager mngr2(num);
+				bool b = add(&mngr2, op, translate_);
+				Number *den = mngr->number()->denominator();
+				den->recip();
+				mngr2.set(den);
+				if(!b) {
+					b = add(&mngr2, op, translate_);
+				} else {
+					add(&mngr2, op, translate_);
+				}
+				
+				delete den;
+				return b;
+			}
+			delete num;
+		}
 		switch(c_type) {
 			case MULTIPLICATION_MANAGER: {
 				for(unsigned int i = 0; i < mngrs.size(); i++) {
@@ -1156,36 +1184,34 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 							}
 							break;
 						}
-						if(!translate_) {
-							return false;
-						}	
-						transform(mngr, POWER_MANAGER, op);
+						b_trans = true;
 						break;						
 					}
 					default: {
-						if(!translate_) {
-							return false;
-						}	
-						transform(mngr, POWER_MANAGER, op);
+						b_trans = true;
 						break;
 					}
 				}
 				break;
 			}
 			case POWER_MANAGER: {
-				switch(mngr->type()) {
-					default: {
-						mngrs[1]->add(mngr, OPERATION_MULTIPLY);
-						if(mngrs[1]->isNull()) {
-							set(1, 1);
-						} else if(mngrs[1]->isNumber() && mngrs[0]->isNumber()) {
-							mngrs[0]->add(mngrs[1], OPERATION_RAISE);
-							moveto(mngrs[0]);
-						} else if(mngrs[1]->isOne()) {
-							moveto(mngrs[0]);
-						}
+				if(!CALCULATOR->multipleRootsEnabled() || (mngr->isNumber() && mngr->number()->isMinusOne()) || (mngrs[1]->isNumber() && mngrs[1]->number()->isInteger() && mngr->isNumber() && mngr->number()->isInteger())) {
+					if(mngrs[0]->add(mngr, OPERATION_RAISE, false)) {
+						mngrs[0]->add(mngrs[1], OPERATION_RAISE);
+						moveto(mngrs[0]);
 						break;
 					}
+					mngrs[1]->add(mngr, OPERATION_MULTIPLY);
+					if(mngrs[1]->isNull()) {
+						set(1, 1);
+					} else if(mngrs[1]->isNumber() && mngrs[0]->isNumber()) {
+						mngrs[0]->add(mngrs[1], OPERATION_RAISE);
+						moveto(mngrs[0]);
+					} else if(mngrs[1]->isOne()) {
+						moveto(mngrs[0]);
+					}
+				} else {
+					b_trans = true;
 				}
 				break;
 			}
@@ -1208,15 +1234,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 				if(o_number->isOne()) {
 					return true;
 				}
-				switch(mngr->type()) {
-					default: {
-						if(!translate_) {
-							return false;
-						}
-						transform(mngr, POWER_MANAGER, op);
-						break;
-					}
-				}
+				b_trans = true;
 				break;
 			}
 			case VARIABLE_MANAGER: {
@@ -1257,11 +1275,80 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 				}
 			}	
 			default: {
+				b_trans = true;
+			}
+		}
+		if(b_trans) {
+			if(!CALCULATOR->multipleRootsEnabled() && mngr->isMultiplication()) {
+				bool b = false;
+				unsigned int i;
+				for(i = 0; i < mngr->mngrs.size(); i++) {
+					if(add(mngr->mngrs[i], OPERATION_RAISE, false)) {
+						b = true;
+						break;
+					}
+				}
+				if(b) {
+					sort();
+					if(mngr->mngrs.size() == 2) {
+						if(i == 0) {
+							add(mngr->mngrs[1], OPERATION_RAISE);
+						} else {
+							add(mngr->mngrs[0], OPERATION_RAISE);
+						}
+					} else if(mngr->mngrs.size() > 2) {
+						Manager mngr2;
+						mngr2.setType(MULTIPLICATION_MANAGER);
+						for(unsigned int i2 = 0; i2 < mngr->mngrs.size(); i2++) {
+							if(i2 != i) {
+								mngr->mngrs[i2]->ref();
+								mngr2.push_back(mngr->mngrs[i2]);
+							}
+						}
+						add(&mngr2, OPERATION_RAISE);
+					}
+					b_trans = false;
+				}
+			} else if(!CALCULATOR->multipleRootsEnabled() && mngr->isAddition()) {
+				bool b = false;
+				unsigned int i;
+				Manager mngr3(this);
+				for(i = 0; i < mngr->mngrs.size(); i++) {
+					if(add(mngr->mngrs[i], OPERATION_RAISE, false)) {
+						b = true;
+						break;
+					}
+				}
+				if(b) {
+					sort();
+					if(mngr->mngrs.size() == 2) {
+						if(i == 0) {
+							mngr3.add(mngr->mngrs[1], OPERATION_RAISE);
+						} else {
+							mngr3.add(mngr->mngrs[0], OPERATION_RAISE);
+						}
+					} else if(mngr->mngrs.size() > 2) {
+						Manager mngr2;
+						mngr2.setType(ADDITION_MANAGER);
+						for(unsigned int i2 = 0; i2 < mngr->mngrs.size(); i2++) {
+							if(i2 != i) {
+								mngr->mngrs[i2]->ref();
+								mngr2.push_back(mngr->mngrs[i2]);
+							}
+						}
+						mngr3.add(&mngr2, OPERATION_RAISE);
+					} else {
+						mngr3.set(1, 1);
+					}
+					add(&mngr3, OPERATION_MULTIPLY);
+					b_trans = false;
+				}
+			}
+			if(b_trans) {
 				if(!translate_) {
 					return false;
 				}
 				transform(mngr, POWER_MANAGER, op);
-				break;
 			}
 		}
 	} else if(op == OPERATION_EQUALS || op == OPERATION_LESS || op == OPERATION_GREATER || op == OPERATION_NOT_EQUALS || op == OPERATION_EQUALS_LESS || op == OPERATION_EQUALS_GREATER) {
@@ -1372,11 +1459,10 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 			}
 		}
 	}
-//	printf("PRESORT [%s]\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str());	
+//	printf("PRESORT [%s]\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION | DISPLAY_FORMAT_SCIENTIFIC).c_str());	
 	sort();
-//	printf("POSTSORT [%s]\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str());	
+//	printf("POSTSORT [%s]\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION | DISPLAY_FORMAT_SCIENTIFIC).c_str());	
 //	CALCULATOR->checkFPExceptions();
-
 	return true;
 }
 bool Manager::setNOT(bool translate_) {
@@ -1662,9 +1748,7 @@ void Manager::moveto(Manager *term) {
 bool Manager::equals(const Manager *mngr) const {
 	if(!mngr) return false;
 	if(c_type == mngr->type()) {
-		if(isNull()) {
-			return true;
-		} else if(c_type == NUMBER_MANAGER) {
+		if(c_type == NUMBER_MANAGER) {
 			return mngr->number()->equals(o_number);
 		} else if(c_type == MATRIX_MANAGER) {
 			return mngr->matrix()->equals(mtrx);
@@ -2185,7 +2269,7 @@ bool Manager::dissolveAllCompositeUnits() {
 	return false;
 }
 bool Manager::convert(string unit_str) {
-	Manager *mngr = CALCULATOR->calculate(unit_str);
+	Manager *mngr = CALCULATOR->calculate_sub(unit_str);
 	bool b = convert(mngr);
 	mngr->unref();
 	return b;
@@ -3880,7 +3964,7 @@ void Manager::set(const giac::gen &giac_gen, bool in_retry) {
 				set(CALCULATOR->getUnit(giac_gen._IDNTptr->name->substr(6, giac_gen._IDNTptr->name->length() - 6)));
 			} else if(giac_gen._IDNTptr->name->length() > 10 && giac_gen._IDNTptr->name->substr(0, 10) == "_function_") {
 				CALCULATOR->beginTemporaryStopErrors();
-				Manager *mngr = CALCULATOR->calculate(giac_gen._IDNTptr->name->substr(10, giac_gen._IDNTptr->name->length() - 10));
+				Manager *mngr = CALCULATOR->calculate_sub(giac_gen._IDNTptr->name->substr(10, giac_gen._IDNTptr->name->length() - 10));
 				CALCULATOR->endTemporaryStopErrors();
 				set(mngr);
 				mngr->unref();
@@ -4691,9 +4775,11 @@ void Manager::move_x_to_one_side(string x_var) {
 				b2.add(&ac, OPERATION_SUBTRACT);
 				Manager half_mngr(1, 2);
 				b2.add(&half_mngr, OPERATION_RAISE);
-				ac.set(&b2);
-				ac.addInteger(-1, OPERATION_MULTIPLY);
-				b2.addAlternative(&ac);
+				if(!CALCULATOR->multipleRootsEnabled()) {
+					ac.set(&b2);
+					ac.addInteger(-1, OPERATION_MULTIPLY);
+					b2.addAlternative(&ac);
+				}
 				fac_mngr1.addInteger(-1, OPERATION_MULTIPLY);
 				b2.add(&fac_mngr1, OPERATION_ADD);
 				fac_mngr2.addInteger(2, OPERATION_MULTIPLY);
@@ -4738,9 +4824,28 @@ void Manager::move_x_to_one_side(string x_var) {
 		Manager mngr_x(x_var);
 		if(mngrs[0]->base()->contains(&mngr_x)) {
 			if(!mngrs[0]->exponent()->contains(&mngr_x)) {
+				bool multiple = false;
+				if(!CALCULATOR->multipleRootsEnabled() && mngrs[0]->exponent()->isNumber() && !mngrs[0]->exponent()->number()->isComplex()) {
+					if(mngrs[0]->exponent()->number()->isInteger()) {
+						if(mngrs[0]->exponent()->number()->isEven()) {	
+							multiple = true;	
+						}
+					} else {
+						Number *exp_num = mngrs[0]->exponent()->number()->numerator();
+						if(exp_num->isEven()) {
+							multiple = true;
+						}
+						delete exp_num;
+					}
+				}
 				Manager exp(1, 1);
 				exp.add(mngrs[0]->exponent(), OPERATION_DIVIDE);
 				mngrs[1]->add(&exp, OPERATION_RAISE);
+				if(multiple) {
+					Manager mngr(mngrs[1]);
+					mngr.addInteger(-1, OPERATION_MULTIPLY);
+					mngrs[1]->addAlternative(&mngr);
+				}
 				Manager bas(mngrs[0]->base());
 				mngrs[0]->set(&bas);
 				move_x_to_one_side(x_var);

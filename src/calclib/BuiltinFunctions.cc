@@ -52,8 +52,10 @@ void WarningFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 
 ForFunction::ForFunction() : Function("Logical", "for", 5, "for...do") {
+	argoccs[1] = -1;
 	setArgumentDefinition(2, new TextArgument());
 	setArgumentDefinition(3, new TextArgument());	
+	argoccs[4] = -1;
 	setArgumentDefinition(5, new TextArgument());
 }
 void ForFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
@@ -70,7 +72,7 @@ void ForFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	Manager mngr_i("\\i");
 	
 	CALCULATOR->beginTemporaryStopErrors();
-	Manager *action_mngr = CALCULATOR->calculate(action);
+	Manager *action_mngr_pre = CALCULATOR->calculate_sub(action, false);
 	CALCULATOR->endTemporaryStopErrors();	
 
 	Manager x_mngr(vargs[0]);
@@ -104,28 +106,57 @@ void ForFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	str += RIGHT_PARENTHESIS;
 	gsub("\\i", str, condition);	
 	gsub("\\i", str, counter);	
-	Manager mngr_calc;
-	Manager *calced = NULL;
-	int i = 1;
-	while(CALCULATOR->testCondition(condition)) {	
-		mngr_calc.set(action_mngr);
-		mngr_calc.replace(&mngr_x, &x_mngr);
-		mngr_calc.replace(&mngr_y, &y_mngr);		
-		mngr_calc.replace(&mngr_i, &i_mngr);
-		mngr_calc.recalculateFunctions();
-		mngr_calc.clean();
-		y_mngr.set(&mngr_calc);		
-		calced = CALCULATOR->calculate(counter);
-		x_mngr.set(calced);
-		calced->unref();
-		i++;
-		i_mngr.set(i, 1);
+	
+	mngr->clear();
+
+	Manager *action_mngr;
+	Manager *cur_mngr = mngr;
+	unsigned int count = 1;
+	if(action_mngr_pre->isAlternatives()) {
+		count = action_mngr_pre->countChilds();
 	}
+	for(unsigned int i2 = 0; i2 < count; i2++) {
+		if(action_mngr_pre->isAlternatives()) {
+			if(i2 > 0) {
+				Manager mngr2;
+				mngr->addAlternative(&mngr2);
+				cur_mngr = mngr->getChild(i2);
+				i_mngr.set(1, 1);
+				x_mngr.set(vargs[0]);
+				y_mngr.set(vargs[3]);
+			}
+			action_mngr = action_mngr_pre->getChild(i2);
+		} else {
+			action_mngr = action_mngr_pre;
+		}
+
+		
+		Manager mngr_calc;
+	
+		Manager *calced = NULL;
+		int i = 1;
+		while(CALCULATOR->testCondition(condition)) {	
+			mngr_calc.set(action_mngr);
+			mngr_calc.replace(&mngr_x, &x_mngr);
+			mngr_calc.replace(&mngr_y, &y_mngr);		
+			mngr_calc.replace(&mngr_i, &i_mngr);
+			mngr_calc.recalculateFunctions();
+			mngr_calc.clean();
+			y_mngr.set(&mngr_calc);		
+			calced = CALCULATOR->calculate_sub(counter, false);
+			x_mngr.set(calced);
+			calced->unref();
+			i++;
+			i_mngr.set(i, 1);
+		}
+		cur_mngr->set(&y_mngr);
+		
+	}
+	action_mngr_pre->unref();
 	CALCULATOR->delId(x_id, true);
 	CALCULATOR->delId(y_id, true);
 	CALCULATOR->delId(i_id, true);
-	action_mngr->unref();
-	mngr->set(&y_mngr);
+
 }
 SumFunction::SumFunction() : Function("Algebra", "sum", 3, "Sum") {
 	setArgumentDefinition(1, new IntegerArgument());
@@ -165,24 +196,44 @@ void SumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	
 	
 	CALCULATOR->beginTemporaryStopErrors();
-	Manager *action_mngr = CALCULATOR->calculate(action);
+	Manager *action_mngr_pre = CALCULATOR->calculate_sub(action, false);
 	CALCULATOR->endTemporaryStopErrors();	
 
-	Manager i_mngr(vargs[0]->number());
-
-	Manager mngr_calc;
 	mngr->clear();
-	while(i_mngr.number()->isLessThanOrEqualTo(vargs[1]->number())) {	
-		mngr_calc.set(action_mngr);
-		mngr_calc.replace(&mngr_i, &i_mngr);
-		mngr_calc.replace(&mngr_j, &mngr_i);
-		mngr_calc.replace(&mngr_k, &mngr_j);
-		mngr_calc.recalculateFunctions();
-		mngr_calc.clean();
-		mngr->add(&mngr_calc, OPERATION_ADD);		
-		i_mngr.number()->add(1, 1);
+
+	Manager *action_mngr;
+	Manager *cur_mngr = mngr;
+	unsigned int count = 1;
+	if(action_mngr_pre->isAlternatives()) {
+		count = action_mngr_pre->countChilds();
 	}
-	action_mngr->unref();
+	for(unsigned int i = 0; i < count; i++) {
+		if(action_mngr_pre->isAlternatives()) {
+			if(i > 0) {
+				Manager mngr2;
+				mngr->addAlternative(&mngr2);
+				cur_mngr = mngr->getChild(i);
+			}
+			action_mngr = action_mngr_pre->getChild(i);
+		} else {
+			action_mngr = action_mngr_pre;
+		}
+
+		Manager i_mngr(vargs[0]->number());
+		Manager mngr_calc;
+	
+		while(i_mngr.number()->isLessThanOrEqualTo(vargs[1]->number())) {	
+			mngr_calc.set(action_mngr);
+			mngr_calc.replace(&mngr_i, &i_mngr);
+			mngr_calc.replace(&mngr_j, &mngr_i);
+			mngr_calc.replace(&mngr_k, &mngr_j);
+			mngr_calc.recalculateFunctions();
+			mngr_calc.clean();
+			cur_mngr->add(&mngr_calc, OPERATION_ADD);		
+			i_mngr.number()->add(1, 1);
+		}
+	}
+	action_mngr_pre->unref();
 	CALCULATOR->delId(i_id, true);
 	CALCULATOR->delId(j_id, true);
 	CALCULATOR->delId(k_id, true);
@@ -225,38 +276,58 @@ void ProductFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	
 	
 	CALCULATOR->beginTemporaryStopErrors();
-	Manager *action_mngr = CALCULATOR->calculate(action);
+	Manager *action_mngr_pre = CALCULATOR->calculate_sub(action, false);
 	CALCULATOR->endTemporaryStopErrors();	
 
-	Manager i_mngr(vargs[0]->number());
-
-	Manager mngr_calc;
 	mngr->clear();
-	bool started = false;
-	while(i_mngr.number()->isLessThanOrEqualTo(vargs[1]->number())) {	
-		mngr_calc.set(action_mngr);
-		mngr_calc.replace(&mngr_i, &i_mngr);
-		mngr_calc.replace(&mngr_j, &mngr_i);
-		mngr_calc.replace(&mngr_k, &mngr_j);
-		mngr_calc.recalculateFunctions();
-		mngr_calc.clean();
-		if(started) {
-			mngr->add(&mngr_calc, OPERATION_MULTIPLY);
-		} else {
-			mngr->add(&mngr_calc, OPERATION_ADD);
-			started = true;
-		}
-		i_mngr.number()->add(1, 1);
+
+	Manager *action_mngr;
+	Manager *cur_mngr = mngr;
+	unsigned int count = 1;
+	if(action_mngr_pre->isAlternatives()) {
+		count = action_mngr_pre->countChilds();
 	}
-	action_mngr->unref();
+	for(unsigned int i = 0; i < count; i++) {
+		if(action_mngr_pre->isAlternatives()) {
+			if(i > 0) {
+				Manager mngr2;
+				mngr->addAlternative(&mngr2);
+				cur_mngr = mngr->getChild(i);
+			}
+			action_mngr = action_mngr_pre->getChild(i);
+		} else {
+			action_mngr = action_mngr_pre;
+		}
+		Manager i_mngr(vargs[0]->number());
+		Manager mngr_calc;
+		bool started = false;
+		while(i_mngr.number()->isLessThanOrEqualTo(vargs[1]->number())) {	
+			mngr_calc.set(action_mngr);
+			mngr_calc.replace(&mngr_i, &i_mngr);
+			mngr_calc.replace(&mngr_j, &mngr_i);
+			mngr_calc.replace(&mngr_k, &mngr_j);
+			mngr_calc.recalculateFunctions();
+			mngr_calc.clean();
+			if(started) {
+				cur_mngr->add(&mngr_calc, OPERATION_MULTIPLY);
+			} else {
+				cur_mngr->add(&mngr_calc, OPERATION_ADD);
+				started = true;
+			}
+			i_mngr.number()->add(1, 1);
+		}
+	}
+	action_mngr_pre->unref();
 	CALCULATOR->delId(i_id, true);
 	CALCULATOR->delId(j_id, true);
 	CALCULATOR->delId(k_id, true);
+	
 }
 
 ProcessFunction::ProcessFunction() : Function("Utilities", "process", 1, "Process components", "", -1) {
 	setArgumentDefinition(1, new TextArgument("", false));
 	setArgumentDefinition(2, new MatrixArgument("", false));
+	argoccs[2] = -1;
 }
 void ProcessFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 
@@ -313,84 +384,105 @@ void ProcessFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	Manager mngr_r("\\r");			
 	
 	CALCULATOR->beginTemporaryStopErrors();
-	Manager *sarg_mngr = CALCULATOR->calculate(sarg);
+	Manager *sarg_mngr_pre = CALCULATOR->calculate_sub(sarg, false);
 	CALCULATOR->endTemporaryStopErrors();	
+
+	Manager *sarg_mngr;
+	Manager *cur_mngr = mngr;
+	unsigned int count = 1;
+	if(sarg_mngr_pre->isAlternatives()) {
+		count = sarg_mngr_pre->countChilds();
+	}
+	for(unsigned int i2 = 0; i2 < count; i2++) {
+		if(sarg_mngr_pre->isAlternatives()) {
+			if(i2 > 0) {
+				Manager mngr2;
+				mngr->addAlternative(&mngr2);
+				cur_mngr = mngr->getChild(i2);
+			}
+			sarg_mngr = sarg_mngr_pre->getChild(i2);
+		} else {
+			sarg_mngr = sarg_mngr_pre;
+		}
+
 	
-	if(vargs.size() == 1) {
-	} else if(vargs.size() > 2 || (vargs[1]->isMatrix() && vargs[1]->matrix()->isVector())) {
+		if(vargs.size() == 1) {
+			break;
+		} else if(vargs.size() > 2 || (vargs[1]->isMatrix() && vargs[1]->matrix()->isVector())) {
 
-		Vector *v = produceVector(vargs);
-
-		Manager x_mngr(v);
-		Manager i_mngr;
-		Manager z_mngr;		
-		Manager n_mngr(v->components(), 1);
-		Manager r_mngr(1, 1);
-		Manager mngr_calc;
-		x_mngr.protect();
-		sarg_mngr->replace(&mngr_n, &n_mngr);
-		sarg_mngr->replace(&mngr_r, &r_mngr);
-		for(unsigned int index = 1; index <= v->components(); index++) {
-			i_mngr.set(index, 1);
-			z_mngr.set(v->get(index));
-			mngr_calc.set(sarg_mngr);
-			mngr_calc.replace_no_copy(&mngr_x, &x_mngr);
-			mngr_calc.replace(&mngr_z, &z_mngr);
-			mngr_calc.replace(&mngr_i, &i_mngr);
-			mngr_calc.replace(&mngr_c, &i_mngr);
-			mngr_calc.recalculateFunctions();
-			mngr_calc.finalize();
-			v->set(&mngr_calc, index);		
-		}		
-		mngr->set(v);
-		delete v;		
-	} else if(vargs[1]->isMatrix()) {
-
-		Matrix *mtrx = new Matrix(vargs[1]->matrix());	
-		
-		Manager x_mngr(mtrx);
-		Manager z_mngr;
-		Manager i_mngr;
-		Manager r_mngr;
-		Manager c_mngr;
-		Manager n_mngr(mtrx->rows() * mtrx->columns(), 1);
-		x_mngr.protect();
-		sarg_mngr->replace(&mngr_n, &n_mngr);
-		Manager mngr_calc;
-		for(unsigned int index_r = 1; index_r <= mtrx->rows(); index_r++) {
-			r_mngr.set(index_r, 1);						
-			for(unsigned int index_c = 1; index_c <= mtrx->columns(); index_c++) {		
-				z_mngr.set(mtrx->get(index_r, index_c));
-				i_mngr.set((index_r - 1) * mtrx->columns() + index_c, 1);
-				c_mngr.set(index_c, 1);				
+			Vector *v = produceVector(vargs);
+	
+			Manager x_mngr(v);
+			Manager i_mngr;
+			Manager z_mngr;		
+			Manager n_mngr(v->components(), 1);
+			Manager r_mngr(1, 1);
+			Manager mngr_calc;
+			x_mngr.protect();
+			sarg_mngr->replace(&mngr_n, &n_mngr);
+			sarg_mngr->replace(&mngr_r, &r_mngr);
+			for(unsigned int index = 1; index <= v->components(); index++) {
+				i_mngr.set(index, 1);
+				z_mngr.set(v->get(index));
 				mngr_calc.set(sarg_mngr);
 				mngr_calc.replace_no_copy(&mngr_x, &x_mngr);
 				mngr_calc.replace(&mngr_z, &z_mngr);
 				mngr_calc.replace(&mngr_i, &i_mngr);
-				mngr_calc.replace(&mngr_c, &c_mngr);
-				mngr_calc.replace(&mngr_r, &r_mngr);					
+				mngr_calc.replace(&mngr_c, &i_mngr);
 				mngr_calc.recalculateFunctions();
 				mngr_calc.finalize();
-				mtrx->set(&mngr_calc, index_r, index_c);					
-			}
-		}	
-		mngr->set(mtrx);
-		delete mtrx;			
-	} else {
-		Manager x_mngr(vargs[1]);
-		Manager i_mngr(1, 1);
-		Manager mngr_calc;
-		sarg_mngr->replace(&mngr_n, &i_mngr);
-		sarg_mngr->replace(&mngr_r, &i_mngr);
-		sarg_mngr->replace(&mngr_c, &i_mngr);
-		sarg_mngr->replace(&mngr_i, &i_mngr);		
-		sarg_mngr->replace(&mngr_x, &x_mngr);
-		sarg_mngr->replace(&mngr_z, &x_mngr);
-		sarg_mngr->recalculateFunctions();
-		sarg_mngr->finalize();
-		mngr->set(sarg_mngr);				
+				v->set(&mngr_calc, index);		
+			}		
+			cur_mngr->set(v);
+			delete v;		
+		} else if(vargs[1]->isMatrix()) {
+
+			Matrix *mtrx = new Matrix(vargs[1]->matrix());	
+		
+			Manager x_mngr(mtrx);
+			Manager z_mngr;
+			Manager i_mngr;
+			Manager r_mngr;
+			Manager c_mngr;
+			Manager n_mngr(mtrx->rows() * mtrx->columns(), 1);
+			x_mngr.protect();
+			sarg_mngr->replace(&mngr_n, &n_mngr);
+			Manager mngr_calc;
+			for(unsigned int index_r = 1; index_r <= mtrx->rows(); index_r++) {
+				r_mngr.set(index_r, 1);						
+				for(unsigned int index_c = 1; index_c <= mtrx->columns(); index_c++) {		
+					z_mngr.set(mtrx->get(index_r, index_c));
+					i_mngr.set((index_r - 1) * mtrx->columns() + index_c, 1);
+					c_mngr.set(index_c, 1);				
+					mngr_calc.set(sarg_mngr);
+					mngr_calc.replace_no_copy(&mngr_x, &x_mngr);
+					mngr_calc.replace(&mngr_z, &z_mngr);
+					mngr_calc.replace(&mngr_i, &i_mngr);
+					mngr_calc.replace(&mngr_c, &c_mngr);
+					mngr_calc.replace(&mngr_r, &r_mngr);					
+					mngr_calc.recalculateFunctions();
+					mngr_calc.finalize();
+					mtrx->set(&mngr_calc, index_r, index_c);					
+				}
+			}	
+			cur_mngr->set(mtrx);
+			delete mtrx;			
+		} else {
+			Manager x_mngr(vargs[1]);
+			Manager i_mngr(1, 1);
+			Manager mngr_calc;
+			sarg_mngr->replace(&mngr_n, &i_mngr);
+			sarg_mngr->replace(&mngr_r, &i_mngr);
+			sarg_mngr->replace(&mngr_c, &i_mngr);
+			sarg_mngr->replace(&mngr_i, &i_mngr);		
+			sarg_mngr->replace(&mngr_x, &x_mngr);
+			sarg_mngr->replace(&mngr_z, &x_mngr);
+			sarg_mngr->recalculateFunctions();
+			sarg_mngr->finalize();
+			cur_mngr->set(sarg_mngr);				
+		}
 	}
-	sarg_mngr->unref();
+	sarg_mngr_pre->unref();
 }
 
 CustomSumFunction::CustomSumFunction() : Function("Utilities", "csum", 4, "Custom sum of components", "", -1) {
@@ -398,6 +490,8 @@ CustomSumFunction::CustomSumFunction() : Function("Utilities", "csum", 4, "Custo
 	setArgumentDefinition(2, new IntegerArgument());
 	setArgumentDefinition(4, new TextArgument());
 	setArgumentDefinition(5, new VectorArgument("", false));
+	argoccs[3] = -1;
+	argoccs[5] = -1;
 }
 void CustomSumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 
@@ -461,106 +555,127 @@ void CustomSumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	Manager mngr_r("\\r");			
 	
 	CALCULATOR->beginTemporaryStopErrors();
-	Manager *sarg_mngr = CALCULATOR->calculate(sarg);
+	Manager *sarg_mngr_pre = CALCULATOR->calculate_sub(sarg, false);
 	CALCULATOR->endTemporaryStopErrors();	
 
-	Manager *y_mngr = new Manager(vargs[2]);
-	if(vargs.size() == 4) {
-	} else if(vargs.size() > 5 || (vargs[4]->isMatrix() && vargs[4]->matrix()->isVector())) {
-
-		Vector *v = produceVector(vargs);
-
-		int n = v->components();
-		if(start > n) start = n;
-		if(end < 1 || end > n) end = n;
-		else if(end < start) end = start;	
-
-		Manager x_mngr(v);
-		Manager i_mngr;
-		Manager z_mngr;		
-		Manager n_mngr(v->components(), 1);
-		Manager r_mngr(1, 1);
-		Manager mngr_calc;
-		x_mngr.protect();
-		sarg_mngr->replace(&mngr_n, &n_mngr);
-		sarg_mngr->replace(&mngr_r, &r_mngr);
-		for(int index = start; index <= end; index++) {	
-			i_mngr.set(index, 1);
-			z_mngr.set(v->get(index));
-			mngr_calc.set(sarg_mngr);
-			mngr_calc.replace_no_copy(&mngr_x, &x_mngr);
-			mngr_calc.replace(&mngr_y, y_mngr);
-			mngr_calc.replace(&mngr_z, &z_mngr);
-			mngr_calc.replace(&mngr_i, &i_mngr);
-			mngr_calc.replace(&mngr_c, &i_mngr);
-			mngr_calc.recalculateFunctions();
-			mngr_calc.clean();
-			y_mngr->set(&mngr_calc);
-		}		
-		delete v;		
-	} else if(vargs[4]->isMatrix()) {
-		Matrix *mtrx = new Matrix(vargs[4]->matrix());	
-		
-		int n = mtrx->columns() * mtrx->rows();
-		if(start > n) start = n;
-		if(end < 1) end = n;
-		else if(end > n) end = n;
-		else if(end < start) end = start;		
-		
-		Manager x_mngr(mtrx);
-		Manager z_mngr;
-		Manager i_mngr;
-		Manager r_mngr;
-		Manager c_mngr;
-		Manager n_mngr(mtrx->rows() * mtrx->columns(), 1);
-		x_mngr.protect();
-		sarg_mngr->replace(&mngr_n, &n_mngr);
-		Manager mngr_calc;
-		int i;
-		for(unsigned int index_r = 1; index_r <= mtrx->rows(); index_r++) {
-			r_mngr.set(index_r, 1);						
-			for(unsigned int index_c = 1; index_c <= mtrx->columns(); index_c++) {		
-				i = (index_r - 1) * mtrx->columns() + index_c;
-				if(i >= start && i <= end) {
-					z_mngr.set(mtrx->get(index_r, index_c));
-					i_mngr.set(i, 1);
-					c_mngr.set(index_c, 1);				
-					mngr_calc.set(sarg_mngr);
-					mngr_calc.replace_no_copy(&mngr_x, &x_mngr);
-					mngr_calc.replace(&mngr_y, y_mngr);
-					mngr_calc.replace(&mngr_z, &z_mngr);
-					mngr_calc.replace(&mngr_i, &i_mngr);
-					mngr_calc.replace(&mngr_c, &c_mngr);
-					mngr_calc.replace(&mngr_r, &r_mngr);					
-					mngr_calc.recalculateFunctions();
-					mngr_calc.clean();
-					y_mngr->set(&mngr_calc);					
-				}
-			}
-		}	
-		delete mtrx;			
-	} else {
-		Manager x_mngr(vargs[4]);
-		Manager i_mngr(1, 1);
-		Manager mngr_calc;
-		sarg_mngr->replace(&mngr_n, &i_mngr);
-		sarg_mngr->replace(&mngr_r, &i_mngr);
-		sarg_mngr->replace(&mngr_c, &i_mngr);
-		sarg_mngr->replace(&mngr_i, &i_mngr);		
-		sarg_mngr->replace(&mngr_y, y_mngr);
-		sarg_mngr->replace(&mngr_x, &x_mngr);
-		sarg_mngr->replace(&mngr_z, &x_mngr);
-		sarg_mngr->recalculateFunctions();
-		sarg_mngr->clean();
-		y_mngr->set(sarg_mngr);				
+	Manager *sarg_mngr;
+	Manager *cur_mngr = mngr;
+	unsigned int count = 1;
+	if(sarg_mngr_pre->isAlternatives()) {
+		count = sarg_mngr_pre->countChilds();
 	}
-	sarg_mngr->unref();
-	mngr->set(y_mngr);
-	y_mngr->unref();	
+	for(unsigned int i2 = 0; i2 < count; i2++) {
+		if(sarg_mngr_pre->isAlternatives()) {
+			if(i2 > 0) {
+				Manager mngr2;
+				mngr->addAlternative(&mngr2);
+				cur_mngr = mngr->getChild(i2);
+			}
+			sarg_mngr = sarg_mngr_pre->getChild(i2);
+		} else {
+			sarg_mngr = sarg_mngr_pre;
+		}
+
+
+		Manager *y_mngr = new Manager(vargs[2]);
+		if(vargs.size() == 4) {
+		} else if(vargs.size() > 5 || (vargs[4]->isMatrix() && vargs[4]->matrix()->isVector())) {
+
+			Vector *v = produceVector(vargs);
+
+			int n = v->components();
+			if(start > n) start = n;
+			if(end < 1 || end > n) end = n;
+			else if(end < start) end = start;	
+
+			Manager x_mngr(v);
+			Manager i_mngr;
+			Manager z_mngr;		
+			Manager n_mngr(v->components(), 1);
+			Manager r_mngr(1, 1);
+			Manager mngr_calc;
+			x_mngr.protect();
+			sarg_mngr->replace(&mngr_n, &n_mngr);
+			sarg_mngr->replace(&mngr_r, &r_mngr);
+			for(int index = start; index <= end; index++) {	
+				i_mngr.set(index, 1);
+				z_mngr.set(v->get(index));
+				mngr_calc.set(sarg_mngr);
+				mngr_calc.replace_no_copy(&mngr_x, &x_mngr);
+				mngr_calc.replace(&mngr_y, y_mngr);
+				mngr_calc.replace(&mngr_z, &z_mngr);
+				mngr_calc.replace(&mngr_i, &i_mngr);
+				mngr_calc.replace(&mngr_c, &i_mngr);
+				mngr_calc.recalculateFunctions();
+				mngr_calc.clean();
+				y_mngr->set(&mngr_calc);
+			}		
+			delete v;		
+		} else if(vargs[4]->isMatrix()) {
+			Matrix *mtrx = new Matrix(vargs[4]->matrix());	
+		
+			int n = mtrx->columns() * mtrx->rows();
+			if(start > n) start = n;
+			if(end < 1) end = n;
+			else if(end > n) end = n;
+			else if(end < start) end = start;		
+		
+			Manager x_mngr(mtrx);
+			Manager z_mngr;
+			Manager i_mngr;
+			Manager r_mngr;
+			Manager c_mngr;
+			Manager n_mngr(mtrx->rows() * mtrx->columns(), 1);
+			x_mngr.protect();
+			sarg_mngr->replace(&mngr_n, &n_mngr);
+			Manager mngr_calc;
+			int i;
+			for(unsigned int index_r = 1; index_r <= mtrx->rows(); index_r++) {
+				r_mngr.set(index_r, 1);						
+				for(unsigned int index_c = 1; index_c <= mtrx->columns(); index_c++) {		
+					i = (index_r - 1) * mtrx->columns() + index_c;
+					if(i >= start && i <= end) {
+						z_mngr.set(mtrx->get(index_r, index_c));
+						i_mngr.set(i, 1);
+						c_mngr.set(index_c, 1);				
+						mngr_calc.set(sarg_mngr);
+						mngr_calc.replace_no_copy(&mngr_x, &x_mngr);
+						mngr_calc.replace(&mngr_y, y_mngr);
+						mngr_calc.replace(&mngr_z, &z_mngr);
+						mngr_calc.replace(&mngr_i, &i_mngr);
+						mngr_calc.replace(&mngr_c, &c_mngr);
+						mngr_calc.replace(&mngr_r, &r_mngr);					
+						mngr_calc.recalculateFunctions();
+						mngr_calc.clean();
+						y_mngr->set(&mngr_calc);					
+					}
+				}
+			}	
+			delete mtrx;			
+		} else {
+			Manager x_mngr(vargs[4]);
+			Manager i_mngr(1, 1);
+			Manager mngr_calc;
+			sarg_mngr->replace(&mngr_n, &i_mngr);
+			sarg_mngr->replace(&mngr_r, &i_mngr);
+			sarg_mngr->replace(&mngr_c, &i_mngr);
+			sarg_mngr->replace(&mngr_i, &i_mngr);		
+			sarg_mngr->replace(&mngr_y, y_mngr);
+			sarg_mngr->replace(&mngr_x, &x_mngr);
+			sarg_mngr->replace(&mngr_z, &x_mngr);
+			sarg_mngr->recalculateFunctions();
+			sarg_mngr->clean();
+			y_mngr->set(sarg_mngr);				
+		}
+		cur_mngr->set(y_mngr);
+		y_mngr->unref();	
+	}
+	sarg_mngr_pre->unref();
 }
 
 FunctionFunction::FunctionFunction() : Function("Utilities", "function", 1, "Function", "", -1) {
 	setArgumentDefinition(1, new TextArgument());
+	argoccs[2] = -1;
 }
 void FunctionFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	UserFunction f("", "Generated Function", vargs[0]->text());
@@ -602,6 +717,7 @@ void VectorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 RankFunction::RankFunction() : Function("Matrices", "rank", -1, "Rank") {
 	setArgumentDefinition(1, new VectorArgument("", false));
+	argoccs[1] = -1;
 }
 void RankFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() > 1) {
@@ -627,6 +743,7 @@ void RankFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 SortFunction::SortFunction() : Function("Matrices", "sort", -1, "Sort") {
 	setArgumentDefinition(1, new VectorArgument("", false));
+	argoccs[1] = -1;
 }
 void SortFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() > 1) {
@@ -753,7 +870,11 @@ void ComponentFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		mngr->set(vargs[1]);
 	}
 }
-RangeFunction::RangeFunction() : Function("Matrices", "range", 3, "Range") {}
+RangeFunction::RangeFunction() : Function("Matrices", "range", 3, "Range") {
+	argoccs[1] = -1;
+	argoccs[2] = -1;
+	argoccs[3] = -1;
+}
 void RangeFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	Vector v;
 	Manager x_value(vargs[0]);
@@ -813,6 +934,7 @@ void IdentityFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 DeterminantFunction::DeterminantFunction() : Function("Matrices", "det", 1, "Determinant") {
 	setArgumentDefinition(1, new MatrixArgument());
+	argoccs[1] = -1;
 }
 void DeterminantFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	Manager *det = vargs[0]->matrix()->determinant();
@@ -825,6 +947,7 @@ void DeterminantFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 PermanentFunction::PermanentFunction() : Function("Matrices", "permanent", 1, "Permanent") {
 	setArgumentDefinition(1, new MatrixArgument());
+	argoccs[1] = -1;
 }
 void PermanentFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	Manager *per = vargs[0]->matrix()->permanent();
@@ -851,6 +974,7 @@ void CofactorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 AdjointFunction::AdjointFunction() : Function("Matrices", "adj", 1, "Adjoint") {
 	setArgumentDefinition(1, new MatrixArgument());
+	argoccs[1] = -1;
 }
 void AdjointFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -860,6 +984,7 @@ void AdjointFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 InverseFunction::InverseFunction() : Function("Matrices", "inverse", 1, "Inverse") {
 	setArgumentDefinition(1, new MatrixArgument());
+	argoccs[1] = -1;
 }
 void InverseFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -875,11 +1000,11 @@ IFFunction::IFFunction() : Function("Logical", "if", 3, "If...Then...Else") {
 void IFFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	int result = vargs[0]->number()->getBoolean();
 	if(result) {			
-		Manager *mngr2 = CALCULATOR->calculate(vargs[1]->text());
+		Manager *mngr2 = CALCULATOR->calculate_sub(vargs[1]->text());
 		mngr->set(mngr2);
 		mngr2->unref();		
 	} else if(result == 0) {			
-		Manager *mngr2 = CALCULATOR->calculate(vargs[2]->text());		
+		Manager *mngr2 = CALCULATOR->calculate_sub(vargs[2]->text());		
 		mngr->set(mngr2);
 		mngr2->unref();		
 	} else {
@@ -1327,6 +1452,8 @@ PercentileFunction::PercentileFunction() : Function("Statistics", "percentile", 
 	arg->setIncludeEqualsMax(false);
 	setArgumentDefinition(1, arg);
 	setArgumentDefinition(2, new VectorArgument("", false));
+	argoccs[1] = -1;
+	argoccs[2] = -1;
 }
 void PercentileFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() < 1) {

@@ -168,6 +168,7 @@ Calculator::Calculator() {
 	addStringAlternative("\n", SPACE);
 	addStringAlternative("**", POWER);	
 
+	toplevel_calc = true;
 
 	setLocale();
 
@@ -199,8 +200,9 @@ Calculator::Calculator() {
 	b_unknown = true;
 	b_calcvars = true;
 	b_always_exact = false;
+	b_temp_exact = false;
 	b_use_all_prefixes = false;
-	b_multiple_roots = true;
+	b_multiple_roots = false;
 	disable_errors_ref = 0;
 	b_busy = false;
 	b_gnuplot_open = false;
@@ -248,6 +250,9 @@ bool Calculator::inRPNMode() const {
 }
 bool Calculator::showArgumentErrors() const {
 	return b_argument_errors;
+}
+bool Calculator::alwaysExactIsTemporary() const {
+	return b_temp_exact;
 }
 bool Calculator::alwaysExact() const {
 	return b_always_exact;
@@ -872,7 +877,7 @@ void Calculator::addBuiltinFunctions() {
 #ifdef HAVE_GIAC
 	addFunction(new GiacFunction());
 	addFunction(new GiacSolveFunction());
-	integrate_func = addFunction(new IntegrateFunction());
+	integrate_func = addFunction(new GiacIntegrateFunction());
 	addFunction(new GiacDeriveFunction());
 #else
 	integrate_func = addFunction(new IntegrateFunction());
@@ -1120,39 +1125,62 @@ Manager *Calculator::calculate(string str, bool enable_abort, int usecs) {
 			return NULL;
 		}
 	} else {
-		unsigned int i = 0; 
-		string str2 = "";
-		if(unitsEnabled() && (i = str.find(_(" to "))) != string::npos) {
-			int l = strlen(_(" to "));
-			str2 = str.substr(i + l, str.length() - i - l);		
-			remove_blank_ends(str2);
-			if(!str2.empty()) {
-				str = str.substr(0, i);
+		if(toplevel_calc) {
+			unsigned int i = 0; 
+			string str2 = "";
+			if(unitsEnabled() && (i = str.find(_(" to "))) != string::npos) {
+				int l = strlen(_(" to "));
+				str2 = str.substr(i + l, str.length() - i - l);		
+				remove_blank_ends(str2);
+				if(!str2.empty()) {
+					str = str.substr(0, i);
+				}
+			} else if(local_to && unitsEnabled() && (i = str.find(" to ")) != string::npos) {
+				int l = strlen(" to ");
+				str2 = str.substr(i + l, str.length() - i - l);		
+				remove_blank_ends(str2);
+				if(!str2.empty()) {
+					str = str.substr(0, i);
+				}
 			}
-		} else if(local_to && unitsEnabled() && (i = str.find(" to ")) != string::npos) {
-			int l = strlen(" to ");
-			str2 = str.substr(i + l, str.length() - i - l);		
-			remove_blank_ends(str2);
+			toplevel_calc = false;
+			b_temp_exact = !alwaysExact();
+			setAlwaysExact(true);
+			bool bae_was = b_argument_errors;
+			b_argument_errors = false;
+			setFunctionsAndVariables(str);
+			EqContainer *e = new EqContainer(str, OPERATION_ADD);
+			mngr = e->calculate();
+			b_argument_errors = bae_was;
+			setAlwaysExact(!b_temp_exact);
+			b_temp_exact = false;
+			mngr->finalize();
 			if(!str2.empty()) {
-				str = str.substr(0, i);
+				convert(mngr, str2);
 			}
+			mngr->ref();
+			delete e;
+			toplevel_calc = true;
+		} else {
+			setFunctionsAndVariables(str);
+			EqContainer *e = new EqContainer(str, OPERATION_ADD);
+			mngr = e->calculate();
+			mngr->finalize();
+			mngr->ref();
+			delete e;
 		}
-		bool was_exact = alwaysExact();
+	}
+	return mngr;
+}
+Manager *Calculator::calculate_sub(const string &str, bool hold_exact) {
+	bool b = false;
+	if(multipleRootsEnabled() && !hold_exact && alwaysExact() && alwaysExactIsTemporary()) {
+		setAlwaysExact(false);
+		b = true;
+	}
+	Manager *mngr = calculate(str);
+	if(b) {
 		setAlwaysExact(true);
-		bool bae_was = b_argument_errors;
-		b_argument_errors = false;
-		setFunctionsAndVariables(str);
-		EqContainer *e = new EqContainer(str, OPERATION_ADD);
-		mngr = e->calculate();
-		b_argument_errors = bae_was;
-		setAlwaysExact(was_exact);
-		mngr->finalize();
-		if(!str2.empty()) {
-			convert(mngr, str2);
-		}
-		mngr->ref();
-		delete e;
-		checkFPExceptions();
 	}
 	return mngr;
 }
@@ -4325,7 +4353,7 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 	return true;
 }
 int Calculator::testCondition(string expression) {
-	Manager *mngr = calculate(expression);
+	Manager *mngr = calculate_sub(expression, false);
 	if(mngr->isNumber()) {
 		if(mngr->number()->isPositive()) {
 			mngr->unref();

@@ -412,13 +412,13 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 		}
 		add(str);		
 	} else if((i = str.find(POWER_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
-		while(i != (int) string::npos && i != (int) str.length() - 1) {
+//		while(i != (int) string::npos && i != (int) str.length() - 1) {
 			s = OPERATION_RAISE;
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
 			add(str2, s);
-			i = str.find(POWER_CH, 1);
-		}
+//			i = str.find(POWER_CH, 1);
+//		}
 		add(str);
 	} else if((i = str.find(EXP_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
 		while(i != (int) string::npos && i != (int) str.length() - 1) {

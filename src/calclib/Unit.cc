@@ -260,13 +260,13 @@ Manager *AliasUnit::convertToFirstBase(Manager *value_, Manager *exp_) const {
 			stmp2 += i2s(y_id);
 			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 			gsub("\\y", stmp2, stmp);
-			Manager *mngr = CALCULATOR->calculate(stmp);
+			Manager *mngr = CALCULATOR->calculate_sub(stmp);
 			CALCULATOR->delId(x_id, true);
 			CALCULATOR->delId(y_id, true);
 			value_->moveto(mngr);
 			mngr->unref();
 		} else {
-			Manager *mngr = CALCULATOR->calculate(value);
+			Manager *mngr = CALCULATOR->calculate_sub(value);
 			mngr->add(exp_, OPERATION_RAISE);
 			value_->add(mngr, OPERATION_DIVIDE);
 			mngr->unref();
@@ -284,13 +284,13 @@ Manager *AliasUnit::convertToFirstBase(Manager *value_, Manager *exp_) const {
 			stmp2 += i2s(y_id);
 			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 			gsub("\\y", stmp2, stmp);
-			Manager *mngr = CALCULATOR->calculate(stmp);
+			Manager *mngr = CALCULATOR->calculate_sub(stmp);
 			CALCULATOR->delId(x_id, true);
 			CALCULATOR->delId(y_id, true);			
 			value_->moveto(mngr);
 			mngr->unref();
 		} else {
-			Manager *mngr = CALCULATOR->calculate(rvalue);
+			Manager *mngr = CALCULATOR->calculate_sub(rvalue);
 			mngr->add(exp_, OPERATION_RAISE);
 			value_->add(mngr, OPERATION_MULTIPLY);
 			mngr->unref();
@@ -319,13 +319,13 @@ Manager *AliasUnit::firstBaseValue(Manager *value_, Manager *exp_) const {
 		stmp2 += i2s(y_id);
 		stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 		gsub("\\y", stmp2, stmp);
-		Manager *mngr = CALCULATOR->calculate(stmp);
+		Manager *mngr = CALCULATOR->calculate_sub(stmp);
 		CALCULATOR->delId(x_id, true);
 		CALCULATOR->delId(y_id, true);
 		value_->moveto(mngr);
 		mngr->unref();
 	} else {
-		Manager *mngr = CALCULATOR->calculate(value);
+		Manager *mngr = CALCULATOR->calculate_sub(value);
 		mngr->add(exp_, OPERATION_RAISE);
 		mngr->add(value_, OPERATION_MULTIPLY);
 		value_->moveto(mngr);
@@ -624,7 +624,7 @@ bool CompositeUnit::containsRelativeTo(const Unit *u) const {
 }
 Manager *CompositeUnit::generateManager(bool cleaned) const {
 	if(cleaned) {
-		return CALCULATOR->calculate(print(false, true));
+		return CALCULATOR->calculate_sub(print(false, true));
 	} else {
 		Manager *mngr = new Manager();
 		if(units.size() > 0) mngr->setType(MULTIPLICATION_MANAGER);

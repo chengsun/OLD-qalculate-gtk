@@ -89,7 +89,7 @@ Manager *Variable::get() {
 		if(mngr) {
 			mngr->unref();
 		}
-		mngr = CALCULATOR->calculate(sexpression);
+		mngr = CALCULATOR->calculate_sub(sexpression);
 	}
 	return mngr;
 }

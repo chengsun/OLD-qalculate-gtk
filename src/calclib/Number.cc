@@ -345,10 +345,6 @@ void Number::removeFloatZeroPart() {
 	}
 }
 bool Number::isComplex() const {
-/*	if(isApproximate()) {
-		cl_F f_value = REAL_PRECISION_FLOAT_RE(value) + REAL_PRECISION_FLOAT_IM(value);
-		return REAL_PRECISION_FLOAT(f_value) != REAL_PRECISION_FLOAT_RE(value);
-	}*/
 	return !cln::zerop(cln::imagpart(value));
 }
 bool Number::isInteger() const {
@@ -529,11 +525,13 @@ bool Number::isOdd() const {
 bool Number::add(const Number *o) {
 	if(o->isApproximate()) setApproximate();
 	value += o->clnNumber();
+	removeFloatZeroPart();
 	return true;
 }
 bool Number::subtract(const Number *o) {
 	if(o->isApproximate()) setApproximate();
 	value -= o->clnNumber();
+	removeFloatZeroPart();
 	return true;
 }
 bool Number::multiply(const Number *o) {
@@ -544,6 +542,7 @@ bool Number::multiply(const Number *o) {
 	}
 	if(o->isApproximate()) setApproximate();
 	value *= o->clnNumber();
+	removeFloatZeroPart();
 	return true;
 }
 bool Number::divide(const Number *o) {
@@ -556,6 +555,7 @@ bool Number::divide(const Number *o) {
 	}
 	if(o->isApproximate()) setApproximate();
 	value /= o->clnNumber();
+	removeFloatZeroPart();
 	return true;
 }
 bool Number::recip() {
@@ -564,6 +564,7 @@ bool Number::recip() {
 		return false;
 	}
 	value = cln::recip(value);
+	removeFloatZeroPart();
 	return true;
 }
 int Number::raise(const Number *o, int solution) {
@@ -610,16 +611,19 @@ int Number::raise(const Number *o, int solution) {
 						base = cln::abs(base);
 						b_minus = true;
 					} else {
+						base = cln::abs(base);
 						b_complex = true;
 					}
 				}
 				if(rootp(base, exp_den, &base)) {
-					if(b_minus) {
+					if(b_complex) {
+						value = cln::complex(0, base);
+					} else if(b_minus) {
 						value = -base;
 					} else {
 						value = base;
 					}
-					if(!b_complex && evenp(exp_den)) {
+					if(evenp(exp_den)) {
 						if(solution == 2) {
 							value = -value;
 						}
@@ -632,13 +636,15 @@ int Number::raise(const Number *o, int solution) {
 					if(CALCULATOR->alwaysExact()) return false;
 					setApproximate();
 					value = expt(base, cln::recip(exp_den));
-					if(b_minus) {
+					if(b_complex) {
+						value = cln::complex(0, cln::realpart(value));
+					} else if(b_minus) {
 						value = -value;
 					} else {
 						value = value;
 					}
 					removeFloatZeroPart();
-					if(!b_complex && evenp(exp_den)) {
+					if(evenp(exp_den)) {
 						if(solution == 2) {
 							value = -value;
 						}
@@ -657,6 +663,7 @@ int Number::raise(const Number *o, int solution) {
 			cl_I exp_den = cln::denominator(exponent);
 			if(cln::abs(exp_den) < 10000 && cln::abs(exp_num) < 10000) {
 				value = expt(value, exp_num);
+				removeFloatZeroPart();
 				bool b_complex = isComplex(), b_minus = false;
 				if(!b_complex && minusp(cln::realpart(value))) {
 					if(oddp(exp_den)) {
@@ -673,7 +680,7 @@ int Number::raise(const Number *o, int solution) {
 					value = value;
 				}
 				removeFloatZeroPart();
-				if(!b_complex && evenp(exp_den)) {
+				if(evenp(exp_den)) {
 					if(solution == 2) {
 						value = -value;
 					}

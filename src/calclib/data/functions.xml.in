@@ -2298,5 +2298,15 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
         <_title>With respect to</_title>
       </argument>
     </builtin_function>
+    <function name="extremum">
+      <_title>Extreme Values</_title>
+      <expression>solve(diff(\x, \Y{"x"})=0, \Y)</expression>
+      <argument type="free" index="1">
+        <_title>Function</_title>
+      </argument>
+      <argument type="text" index="2">
+        <_title>With respect to</_title>
+      </argument>
+    </function>
   </category>
 </QALCULATE>

@@ -69,6 +69,15 @@ int Function::type() const {
 	return TYPE_FUNCTION;
 }
 
+int Function::countArgOccurence(unsigned int arg_) {
+	if((int) arg_ > argc && max_argc < 0) {
+		arg_ = argc + 1;
+	}
+	if(argoccs.count(arg_) > 0) {
+		return argoccs[arg_];
+	}
+	return 1;
+}
 int Function::args() const {
 	return max_argc;
 }
@@ -195,15 +204,15 @@ int Function::args(const string &argstr, vector<Manager*> &vargs) {
 						arg = getArgumentDefinition(itmp);
 						if(stmp.empty()) {
 							if(arg) {
-								mngr = arg->evaluate(getDefaultValue(itmp));
+								mngr = arg->evaluate(getDefaultValue(itmp), countArgOccurence(itmp) == 1);
 							} else {
-								mngr = CALCULATOR->calculate(getDefaultValue(itmp));
+								mngr = CALCULATOR->calculate_sub(getDefaultValue(itmp), countArgOccurence(itmp) == 1);
 							}
 						} else {
 							if(arg) {
-								mngr = arg->evaluate(stmp);
+								mngr = arg->evaluate(stmp, countArgOccurence(itmp) == 1);
 							} else {
-								mngr = CALCULATOR->calculate(stmp);
+								mngr = CALCULATOR->calculate_sub(stmp, countArgOccurence(itmp) == 1);
 							}
 						}
 						vargs.push_back(mngr);
@@ -222,15 +231,15 @@ int Function::args(const string &argstr, vector<Manager*> &vargs) {
 			arg = getArgumentDefinition(itmp);
 			if(stmp.empty()) {
 				if(arg) {
-					mngr = arg->evaluate(getDefaultValue(itmp));
+					mngr = arg->evaluate(getDefaultValue(itmp), countArgOccurence(itmp) == 1);
 				} else {
-					mngr = CALCULATOR->calculate(getDefaultValue(itmp));
+					mngr = CALCULATOR->calculate_sub(getDefaultValue(itmp), countArgOccurence(itmp) == 1);
 				}
 			} else {
 				if(arg) {
-					mngr = arg->evaluate(stmp);
+					mngr = arg->evaluate(stmp, countArgOccurence(itmp) == 1);
 				} else {
-					mngr = CALCULATOR->calculate(stmp);
+					mngr = CALCULATOR->calculate_sub(stmp, countArgOccurence(itmp) == 1);
 				}
 			}
 			vargs.push_back(mngr);
@@ -239,7 +248,7 @@ int Function::args(const string &argstr, vector<Manager*> &vargs) {
 	if(itmp < maxargs() && itmp >= minargs()) {
 		int itmp2 = itmp;
 		while(itmp2 < maxargs()) {
-			mngr = CALCULATOR->calculate(default_values[itmp2 - minargs()]);
+			mngr = CALCULATOR->calculate_sub(default_values[itmp2 - minargs()], countArgOccurence(itmp) == 1);
 			vargs.push_back(mngr);
 			itmp2++;
 		}
@@ -354,7 +363,7 @@ Manager *Function::calculate(vector<Manager*> &vargs, int itmp) {
 	if(testArgumentCount(itmp)) {
 		itmp = vargs.size();
 		while(itmp < maxargs()) {
-			mngr = CALCULATOR->calculate(default_values[itmp - minargs()]);
+			mngr = CALCULATOR->calculate_sub(default_values[itmp - minargs()], countArgOccurence(itmp + 1) == 1);
 			vargs.push_back(mngr);
 			itmp++;
 		}
@@ -402,6 +411,7 @@ Manager *Function::calculate(vector<Manager*> &vargs, int itmp) {
 					mngr->moveto(mngr2);
 				} else {
 					mngr->addAlternative(mngr2);
+					mngr2->unref();
 				}
 				b = false;	 			
 			}
@@ -683,7 +693,7 @@ void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		}
 		bool was_rpn = CALCULATOR->inRPNMode();
 		CALCULATOR->setRPNMode(false);
-		Manager *mngr2 = CALCULATOR->calculate(stmp);
+		Manager *mngr2 = CALCULATOR->calculate_sub(stmp);
 		CALCULATOR->setRPNMode(was_rpn);
 		mngr->set(mngr2);
 		mngr2->unref();
@@ -695,7 +705,7 @@ void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	} else {
 		bool was_rpn = CALCULATOR->inRPNMode();
 		CALCULATOR->setRPNMode(false);
-		Manager *mngr2 = CALCULATOR->calculate(eq_calc);
+		Manager *mngr2 = CALCULATOR->calculate_sub(eq_calc);
 		CALCULATOR->setRPNMode(was_rpn);
 		mngr->set(mngr2);
 		mngr2->unref();
@@ -749,11 +759,23 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 					new_eq.replace(i2, 2, svar);
 				}				
 				optionals = true;
+				argoccs[i + 1] = 1;
+				while((i2 = new_eq.find(svar, i2 + 2)) != string::npos) {
+					if(new_eq[i2 - 1] != '\\') {
+						argoccs[i + 1]++;
+					}
+				}
 			} else if((i2 = new_eq.find(svar, i5)) != string::npos) {
 				if(i2 > 0 && new_eq[i2 - 1] == '\\') {
 					i5 = i2 + 2;
 					goto before_find_in_set_equation;
-				}			
+				}
+				argoccs[i + 1] = 1;
+				while((i2 = new_eq.find(svar, i2 + 2)) != string::npos) {
+					if(new_eq[i5 - 1] != '\\') {
+						argoccs[i + 1]++;
+					}
+				}
 			} else {
 				if(i < 24 && !optionals) {
 					i = 24;
@@ -892,7 +914,7 @@ bool Argument::test(const Manager *value, int index, Function *f) const {
 	}
 	return true;
 }
-Manager *Argument::evaluate(const string &str) const {
+Manager *Argument::evaluate(const string &str, bool keep_exact) const {
 	if(b_text) {
 		int pars = 0;
 		while(true) {
@@ -922,10 +944,10 @@ Manager *Argument::evaluate(const string &str) const {
 		}
 		if((int) str.length() >= 2 + pars * 2) {
 			if(str[pars] == ID_WRAP_LEFT_CH && str[str.length() - 1 - pars] == ID_WRAP_RIGHT_CH && str.find(ID_WRAP_RIGHT, pars + 1) == str.length() - 1 - pars) {
-				return CALCULATOR->calculate(str.substr(pars, str.length() - pars * 2));
+				return CALCULATOR->calculate_sub(str.substr(pars, str.length() - pars * 2), keep_exact);
 			}
 			if(str[pars] == '\\' && str[str.length() - 1 - pars] == '\\') {
-				return CALCULATOR->calculate(str.substr(1 + pars, str.length() - 2 - pars * 2));
+				return CALCULATOR->calculate_sub(str.substr(1 + pars, str.length() - 2 - pars * 2), keep_exact);
 			}	
 			if((str[pars] == '\"' && str[str.length() - 1 - pars] == '\"') || (str[pars] == '\'' && str[str.length() - 1 - pars] == '\'')) {
 				unsigned int i = pars + 1, cits = 0;
@@ -944,7 +966,7 @@ Manager *Argument::evaluate(const string &str) const {
 		}
 		return new Manager(str.substr(pars, str.length() - pars * 2));
 	} else {
-		return CALCULATOR->calculate(str);
+		return CALCULATOR->calculate_sub(str, keep_exact);
 	}
 }
 bool Argument::subtest(const Manager *value) const {
@@ -1302,11 +1324,8 @@ GiacArgument::~GiacArgument() {}
 int GiacArgument::type() const {return ARGUMENT_TYPE_GIAC;}
 Argument *GiacArgument::copy() const {return new GiacArgument(this);}
 string GiacArgument::subprintlong() const {return _("a free value (giac adjusted)");}
-Manager *GiacArgument::evaluate(const string &str) const {
-	bool was_exact = CALCULATOR->alwaysExact();
-	CALCULATOR->setAlwaysExact(true);
-	Manager *mngr = CALCULATOR->calculate(str);
-	CALCULATOR->setAlwaysExact(was_exact);
+Manager *GiacArgument::evaluate(const string &str, bool keep_exact) const {
+	Manager *mngr = CALCULATOR->calculate_sub(str, keep_exact);
 	return mngr;
 }
 
@@ -1347,7 +1366,7 @@ MatrixArgument::MatrixArgument(string name_, bool does_test, bool does_error) : 
 MatrixArgument::MatrixArgument(const MatrixArgument *arg) {set(arg);}
 MatrixArgument::~MatrixArgument() {}
 bool MatrixArgument::subtest(const Manager *value) const {return value->isMatrix();}
-int MatrixArgument::type() const {return ARGUMENT_TYPE_TEXT;}
+int MatrixArgument::type() const {return ARGUMENT_TYPE_MATRIX;}
 Argument *MatrixArgument::copy() const {return new MatrixArgument(this);}
 string MatrixArgument::print() const {return _("matrix");}
 string MatrixArgument::subprintlong() const {return _("a matrix");}
@@ -1433,10 +1452,10 @@ int AngleArgument::type() const {return ARGUMENT_TYPE_ANGLE;}
 Argument *AngleArgument::copy() const {return new AngleArgument(this);}
 string AngleArgument::print() const {return _("angle");}
 string AngleArgument::subprintlong() const {return _("an angle or a number (using the default angle unit)");}
-Manager *AngleArgument::evaluate(const string &str) const {
+Manager *AngleArgument::evaluate(const string &str, bool keep_exact) const {
 	bool was_cv = CALCULATOR->donotCalculateVariables();
 	CALCULATOR->setDonotCalculateVariables(true);
-	Manager *mngr = CALCULATOR->calculate(str);
+	Manager *mngr = CALCULATOR->calculate_sub(str, keep_exact);
 	CALCULATOR->setAngleValue(mngr);
 	CALCULATOR->setDonotCalculateVariables(was_cv);
 	return mngr;
