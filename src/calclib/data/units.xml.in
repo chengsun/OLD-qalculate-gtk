@@ -397,12 +397,12 @@
       </base>
       <_title>Mils</_title>
     </unit>
-    <unit type="alias" name="au">
+    <unit type="alias" name="AU">
       <_singular>astronomical_unit</_singular>
       <_plural>astronomical_units</_plural>
       <base>
         <unit>m</unit>
-        <relation>149578700000</relation>
+        <relation>149578706600</relation>
         <exponent>1</exponent>
       </base>
       <_title>Astronomical Unit</_title>
@@ -412,17 +412,17 @@
       <_plural>light_years</_plural>
       <base>
         <unit>m</unit>
-        <relation>9.46E15</relation>
+        <relation>9460536207068016</relation>
         <exponent>1</exponent>
       </base>
       <_title>Light Year</_title>
     </unit>
-    <unit type="alias" name="par">
+    <unit type="alias" name="pc">
       <_singular>parsec</_singular>
       <_plural>parsecs</_plural>
       <base>
-        <unit>m</unit>
-        <relation>30856770000000000</relation>
+        <unit>AU</unit>
+        <relation>648000/pi</relation>
         <exponent>1</exponent>
       </base>
       <_title>Parsec</_title>
@@ -743,6 +743,26 @@
         <exponent>1</exponent>
       </base>
       <_title>Day</_title>
+    </unit>
+    <unit type="alias" name="year">
+      <_singular>year</_singular>
+      <_plural>years</_plural>
+      <base>
+        <unit>d</unit>
+        <relation>365.2425</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Year</_title>
+    </unit>
+    <unit type="alias" name="century">
+      <_singular>century</_singular>
+      <_plural>centuries</_plural>
+      <base>
+        <unit>year</unit>
+        <relation>100</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Century</_title>
     </unit>
     <category>
       <_title>Frequency</_title>
@@ -1679,8 +1699,8 @@
         <_singular>torr</_singular>
         <_plural>torrs</_plural>
         <base>
-          <unit>Pa</unit>
-          <relation>1.333224</relation>
+          <unit>atm</unit>
+          <relation>1/760</relation>
           <exponent>1</exponent>
         </base>
         <_title>Torr</_title>

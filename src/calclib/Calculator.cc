@@ -192,6 +192,7 @@ Calculator::Calculator() {
 	disable_errors_ref = 0;
 	b_busy = false;
 	b_gnuplot_open = false;
+	b_den_prefix = false;
 	gnuplot_pipe = NULL;
 	pthread_attr_init(&calculate_thread_attr);	    	
 }
@@ -216,6 +217,12 @@ bool Calculator::multipleRootsEnabled() const {
 }
 void Calculator::setMultipleRootsEnabled(bool enable_multiple_roots) {
 	b_multiple_roots = enable_multiple_roots;
+}
+bool Calculator::denominatorPrefixEnabled() const {
+	return b_den_prefix;
+}
+void Calculator::setDenominatorPrefixEnabled(bool enable) {
+	b_den_prefix = enable;
 }
 void Calculator::beginTemporaryStopErrors() {
 	disable_errors_ref++;
@@ -388,7 +395,11 @@ Prefix *Calculator::getExactPrefix(const Fraction *fr, long int exp) const {
 }
 Prefix *Calculator::getNearestPrefix(long int exp10, long int exp) const {
 	if(prefixes.size() <= 0) return NULL;
-	for(unsigned int i = 0; i < prefixes.size(); i++) {
+	int i = 0;
+	if(exp < 0) {
+		i = prefixes.size() - 1;
+	}
+	while((exp < 0 && i >= 0) || (exp >= 0 && i < (int) prefixes.size())) {	
 		if(prefixes[i]->exponent(exp) == exp10) {
 			return prefixes[i];
 		} else if(prefixes[i]->exponent(exp) > exp10) {
@@ -400,13 +411,22 @@ Prefix *Calculator::getNearestPrefix(long int exp10, long int exp) const {
 				return prefixes[i];
 			}
 		}
+		if(exp < 0) {
+			i--;
+		} else {
+			i++;
+		}
 	}
 	return prefixes[prefixes.size() - 1];
 }
 Prefix *Calculator::getBestPrefix(long int exp10, long int exp) const {
 	if(prefixes.size() <= 0) return NULL;
 	int prev_i = 0;
-	for(unsigned int i = 0; i < prefixes.size(); i++) {
+	int i = 0;
+	if(exp < 0) {
+		i = prefixes.size() - 1;
+	}
+	while((exp < 0 && i >= 0) || (exp >= 0 && i < (int) prefixes.size())) {	
 		if(b_use_all_prefixes || prefixes[i]->exponent() % 3 == 0) {
 			if(prefixes[i]->exponent(exp) == exp10) {
 				return prefixes[i];
@@ -421,6 +441,11 @@ Prefix *Calculator::getBestPrefix(long int exp10, long int exp) const {
 			}
 			prev_i = i;
 		}
+		if(exp < 0) {
+			i--;
+		} else {
+			i++;
+		}
 	}
 	return prefixes[prev_i];
 }
@@ -428,7 +453,11 @@ Prefix *Calculator::getBestPrefix(const Integer *exp10, const Integer *exp) cons
 	if(prefixes.size() <= 0) return NULL;
 	Integer tmp_exp;
 	int prev_i = 0;
-	for(unsigned int i = 0; i < prefixes.size(); i++) {
+	int i = 0;
+	if(exp->isNegative()) {
+		i = prefixes.size() - 1;
+	}
+	while((exp->isNegative() && i >= 0) || (!exp->isNegative() && i < (int) prefixes.size())) {
 		if(b_use_all_prefixes || prefixes[i]->exponent() % 3 == 0) {
 			if(exp10->equals(prefixes[i]->exponent(exp, &tmp_exp))) {
 				return prefixes[i];
@@ -449,6 +478,11 @@ Prefix *Calculator::getBestPrefix(const Integer *exp10, const Integer *exp) cons
 				}
 			}
 			prev_i = i;
+		}
+		if(exp->isNegative()) {
+			i--;
+		} else {
+			i++;
 		}
 	}
 	return prefixes[prev_i];
@@ -595,43 +629,43 @@ void Calculator::delId(unsigned int id, bool force) {
 		ids_p.erase(id);		
 	}
 }
-bool Calculator::allPrefixesEnabled() {
+bool Calculator::allPrefixesEnabled() const {
 	return b_use_all_prefixes;
 }
 void Calculator::setAllPrefixesEnabled(bool enable) {
 	b_use_all_prefixes = enable;
 }
-bool Calculator::functionsEnabled() {
+bool Calculator::functionsEnabled() const {
 	return b_functions;
 }
 void Calculator::setFunctionsEnabled(bool enable) {
 	b_functions = enable;
 }
-bool Calculator::variablesEnabled() {
+bool Calculator::variablesEnabled() const {
 	return b_variables;
 }
 void Calculator::setVariablesEnabled(bool enable) {
 	b_variables = enable;
 }
-bool Calculator::unknownVariablesEnabled() {
+bool Calculator::unknownVariablesEnabled() const {
 	return b_unknown;
 }
 void Calculator::setUnknownVariablesEnabled(bool enable) {
 	b_unknown = enable;
 }
-bool Calculator::donotCalculateVariables() {
+bool Calculator::donotCalculateVariables() const {
 	return !b_calcvars;
 }
 void Calculator::setDonotCalculateVariables(bool enable) {
 	b_calcvars = !enable;
 }
-bool Calculator::unitsEnabled() {
+bool Calculator::unitsEnabled() const {
 	return b_units;
 }
 void Calculator::setUnitsEnabled(bool enable) {
 	b_units = enable;
 }
-int Calculator::angleMode() {
+int Calculator::angleMode() const {
 	return ianglemode;
 }
 void Calculator::angleMode(int mode_) {
@@ -1076,14 +1110,46 @@ Manager *Calculator::convertToCompositeUnit(Manager *mngr, CompositeUnit *cu, bo
 		}
 		if(b) {	
 			mngr->add(mngr3, OPERATION_DIVIDE);
-			mngr->finalize();			
-			Manager *mngr2 = new Manager(cu);
+			mngr->finalize();	
+			if(mngr->isOne()) {
+				mngr->clear();		
+				mngr->setType(MULTIPLICATION_MANAGER);
+			} else if(!mngr->isMultiplication()) {
+				Manager *mngr2 = new Manager(mngr);
+				mngr->clear();
+				mngr->setType(MULTIPLICATION_MANAGER);
+				mngr->push_back(mngr2);
+			}
+			
+			unsigned int i = 0;
+			Prefix *p = NULL;
+			long int exp = 1;
+			Unit *u = NULL;
+			while(true) {
+				u = cu->get(i, &exp, &p);
+				if(!u) {
+					break;
+				}
+				Manager *mngr2 = new Manager(u);
+				mngr2->setPrefix(p);
+				mngr2->addInteger(exp, OPERATION_RAISE);
+				mngr->push_back(mngr2);
+				i++;
+			}
+			if(mngr->countChilds() == 1) {
+				Manager *mngr2 = new Manager(mngr->getChild(0));
+				mngr->set(mngr2);
+				mngr2->unref();
+			} else if(mngr->countChilds() == 0) {
+				mngr->clear();
+			}
+			/*Manager *mngr2 = new Manager(cu);
 			if(mngr->type() == MULTIPLICATION_MANAGER) {
 				mngr->push_back(mngr2);
 			} else {
 				mngr->transform(mngr2, MULTIPLICATION_MANAGER, OPERATION_MULTIPLY);
 				mngr2->unref();		
-			}
+			}*/
 			mngr->sort();
 		}
 	}
@@ -2124,7 +2190,7 @@ bool Calculator::loadLocalDefinitions() {
 	}
 	homedir += ".qalculate/";
 	homedir += "definitions/";	
-	list<const char*> eps;
+	list<string> eps;
 	struct dirent *ep;
 	DIR *dp;
 	dp = opendir(homedir.c_str());
@@ -2143,7 +2209,7 @@ bool Calculator::loadLocalDefinitions() {
 		closedir(dp);
 	}
 	eps.sort();
-	for(list<const char*>::iterator it = eps.begin(); it != eps.end(); ++it) {
+	for(list<string>::iterator it = eps.begin(); it != eps.end(); ++it) {
 		filename = homedir;
 		filename += *it;
 		loadDefinitions(filename.c_str(), true);

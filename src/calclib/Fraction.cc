@@ -284,6 +284,14 @@ bool Fraction::isGreaterThan(const Fraction *fr) const {
 bool Fraction::isLessThan(const Fraction *fr) const {
 	return compare(fr) == 1;
 }
+bool Fraction::isPlural() const {
+	if(isNegative()) {
+		Integer num_p(&num);
+		return num_p.isGreaterThan(&den);
+	} else {
+		return num.isGreaterThan(&den);
+	}
+}
 const Integer *Fraction::numerator() const {
 	return &num;
 }
@@ -1248,7 +1256,7 @@ string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals
 	}
 	return str;
 }
-void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, string &denominator_, bool &exp_minus, string &exponent_, string &prefix_, NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) const {
+void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, string &denominator_, bool &exp_minus, string &exponent_, string &prefix_, NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power, Integer *l_exp2, Prefix **prefix1, Prefix **prefix2) const {
 	if(CALCULATOR->alwaysExact()) max_decimals = -1;
 	if(in_exact && !isPrecise()) *in_exact = true;
 	Integer exp;
@@ -1297,18 +1305,66 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 	bool force_fractional = false;
 	int base = 10;
 	if(displayflags & DISPLAY_FORMAT_USE_PREFIXES) {
+		Prefix *p;
 		if(l_exp) {
 			Integer tmp_exp;
 			if(prefix) {
 				exp_spec.subtract(prefix->exponent(l_exp, &tmp_exp));
 				prefix_ = prefix->name(displayflags & DISPLAY_FORMAT_SHORT_UNITS);
+				if(prefix1) *prefix1 = prefix;
 			} else {
-				prefix = CALCULATOR->getBestPrefix(&exp, l_exp);
+				tmp_exp.set(&exp);
+				if(l_exp2 && prefix2 && CALCULATOR->denominatorPrefixEnabled()) {	
+					tmp_exp.divide(l_exp);
+					tmp_exp.setNegative(false);
+					if(tmp_exp.isGreaterThan(5)) {
+						tmp_exp.set(&exp);
+						tmp_exp.divide(2);
+						if(!tmp_exp.isEven()) {
+							if(tmp_exp.isNegative()) tmp_exp.add(-1);
+							else tmp_exp.add(1);
+						}
+					} else {
+						tmp_exp.set(&exp);
+					}
+				}
+				p = CALCULATOR->getBestPrefix(&tmp_exp, l_exp);
 				Integer test_exp(&exp);
-				test_exp.subtract(prefix->exponent(l_exp, &tmp_exp));
+				test_exp.subtract(p->exponent(l_exp, &tmp_exp));
 				if((exp.isPositive() && exp.compare(&test_exp) == -1) || (exp.isNegative() && exp.compare(&test_exp) == 1)) {
 					exp_spec.set(&test_exp);
-					prefix_ = prefix->name(displayflags & DISPLAY_FORMAT_SHORT_UNITS);
+					prefix_ = p->name(displayflags & DISPLAY_FORMAT_SHORT_UNITS);
+					if(prefix1) *prefix1 = p;
+				}
+			}
+			if((displayflags & DISPLAY_FORMAT_SHORT_UNITS) && (displayflags & DISPLAY_FORMAT_NONASCII)) {
+				gsub("micro", SIGN_MICRO, prefix_);
+			}
+			if(l_exp2 && prefix2 && CALCULATOR->denominatorPrefixEnabled()) {
+				l_exp2->setNegative(!l_exp2->isNegative());
+				p = CALCULATOR->getBestPrefix(&exp_spec, l_exp2);
+				Integer test_exp(&exp_spec);
+				test_exp.subtract(p->exponent(l_exp2, &tmp_exp));
+				if((exp_spec.isPositive() && exp_spec.compare(&test_exp) == -1) || (exp_spec.isNegative() && exp_spec.compare(&test_exp) == 1)) {
+					exp_spec.set(&test_exp);
+					if(prefix2) *prefix2 = p;
+				}
+			}
+		} else if(l_exp2) {
+			Integer tmp_exp;
+			l_exp2->setNegative(true);
+			if(prefix) {
+				exp_spec.subtract(prefix->exponent(l_exp2, &tmp_exp));
+				prefix_ = prefix->name(displayflags & DISPLAY_FORMAT_SHORT_UNITS);
+				if(prefix2) *prefix2 = prefix;
+			} else {
+				p = CALCULATOR->getBestPrefix(&exp, l_exp2);
+				Integer test_exp(&exp);
+				test_exp.subtract(p->exponent(l_exp2, &tmp_exp));
+				if((exp.isPositive() && exp.compare(&test_exp) == -1) || (exp.isNegative() && exp.compare(&test_exp) == 1)) {
+					exp_spec.set(&test_exp);
+					prefix_ = p->name(displayflags & DISPLAY_FORMAT_SHORT_UNITS);
+					if(prefix2) *prefix2 = p;
 				}
 			}
 			if((displayflags & DISPLAY_FORMAT_SHORT_UNITS) && (displayflags & DISPLAY_FORMAT_NONASCII)) {
@@ -1369,6 +1425,9 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 		den_spec.divide(divisor);
 	}	
 	delete divisor;*/
+	if(plural) {
+		*plural = whole.isGreaterThan(&den_spec);
+	}
 	if(in_composite && whole.equals(&den_spec)) {
 		return;
 	} else if(!force_fractional && !(displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY)) {

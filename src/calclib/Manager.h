@@ -46,6 +46,7 @@ class Manager {
 		bool b_exact;
 		bool b_protect;
 		ComparisonType comparison_type;
+		Prefix *o_prefix;
 
 		void init();
 	
@@ -53,6 +54,10 @@ class Manager {
 		
 		//dangerous
 		void setType(int mngr_type);
+		
+		void setPrefix(Prefix *p);
+		Prefix *prefix() const;
+		bool clearPrefixes();
 		
 		void transform(const Manager *mngr, char type_, MathOperation op, bool reverse_ = false);		
 		bool typeclean();
@@ -120,7 +125,9 @@ class Manager {
 		bool isFunction() const;
 		bool isPower() const;
 		bool isNumber() const;
-		bool isFraction() const;		
+		bool isNumber_exp() const;
+		bool isFraction() const;
+		bool isFraction_exp() const;		
 		bool isMatrix() const;				
 		bool isNull() const;		
 		bool isZero() const;				
@@ -140,7 +147,7 @@ class Manager {
 		bool convert(const Unit*);
 		bool convert(string unit_str);		
 		bool convert(const Manager *unit_mngr);				
-		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *prefix = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false) const;
+		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *set_prefix = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false, bool draw_minus = false, bool print_equals = false, bool in_multiplication = false, bool wrap = true, bool wrap_all = false, bool *has_parenthesis = NULL, bool in_div = false, bool no_add_one = false, Integer *l_exp2 = NULL, Prefix **prefix1 = NULL, Prefix **prefix2 = NULL, string string_fr = "") const;
 		void ref();
 		void unref();
 		void protect(bool do_protect = true);

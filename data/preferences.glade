@@ -2,6 +2,7 @@
 <!DOCTYPE glade-interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
 
 <glade-interface>
+<requires lib="gnome"/>
 
 <widget class="GtkDialog" id="preferences_dialog">
   <property name="border_width">5</property>
@@ -164,6 +165,26 @@
 	      <property name="inconsistent">False</property>
 	      <property name="draw_indicator">True</property>
 	      <signal name="toggled" handler="on_preferences_checkbutton_all_prefixes_toggled" last_modification_time="Thu, 02 Oct 2003 10:43:35 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkCheckButton" id="preferences_checkbutton_denominator_prefix">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">enables automatic setting of prefix for denominator in addition to the numerator</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Enable denominator prefix</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_denominator_prefix_toggled" last_modification_time="Mon, 27 Oct 2003 09:37:22 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>

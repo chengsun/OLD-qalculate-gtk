@@ -1,3 +1,16 @@
+2003-10-27  Niklas Knutsson  <nq@altern.org>
+
+	* Recreated Manager::print() from gtk drawing function
+	* Optional prefix for denominator
+	* Reworked composite unit printing
+	* Reworked prefix handling
+	* Reworked drawing of MULTIPLICATION_MANAGER
+	* Fix loadLocalDefinitions()
+	* Year and Century units
+	* Fix parsec, light year, astronomical unit, and torr
+	* Plural fixes
+	* Draw unit names with "_" replaced by space
+
 2003-10-24  Niklas Knutsson  <nq@altern.org>
 
 	* Compability fixes for Unit.cc
