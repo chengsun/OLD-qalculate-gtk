@@ -8073,12 +8073,14 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				MathStructure mstruct(CHILD(0));
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
+				if(CALCULATOR->getRadUnit()) divide(CALCULATOR->getRadUnit());
 			} else if(o_function == CALCULATOR->f_cos && SIZE == 1) {
 				o_function = CALCULATOR->f_sin;
 				MathStructure mstruct(CHILD(0));
 				negate();
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct, true);
+				if(CALCULATOR->getRadUnit()) divide(CALCULATOR->getRadUnit());
 			} else if(o_function == CALCULATOR->f_integrate && SIZE == 2 && CHILD(1) == x_var) {
 				setToChild(1, true);
 			} else if(o_function == CALCULATOR->f_diff && SIZE == 3 && CHILD(1) == x_var) {
@@ -8256,10 +8258,10 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 			if(o_function == CALCULATOR->f_ln && SIZE == 1 && CHILD(0) == x_var) {
 				multiply(x_var);
 				subtract(x_var);
-			} else if(o_function == CALCULATOR->f_sin && SIZE == 1 && CHILD(0) == x_var) {
+			} else if(o_function == CALCULATOR->f_sin && SIZE == 1 && CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0] == x_var && CHILD(0)[1] == CALCULATOR->getRadUnit()) {
 				o_function = CALCULATOR->f_cos;
 				multiply(m_minus_one);
-			} else if(o_function == CALCULATOR->f_cos && SIZE == 1 && CHILD(0) == x_var) {
+			} else if(o_function == CALCULATOR->f_cos && SIZE == 1 && CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0] == x_var && CHILD(0)[1] == CALCULATOR->getRadUnit()) {
 				o_function = CALCULATOR->f_sin;
 			} else if(o_function == CALCULATOR->f_diff && SIZE == 3 && CHILD(1) == x_var) {
 				if(CHILD(2).isOne()) {

@@ -113,7 +113,7 @@ create_main_window (void)
 	
 	/* make sure we get a valid main window */
 	g_assert (glade_xml_get_widget (main_glade, "main_window") != NULL);
-	
+
 	accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group (GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), accel_group);
 
@@ -371,7 +371,7 @@ create_main_window (void)
 /*	Expander	*/
 	expander = glade_xml_get_widget(main_glade, "expander_keypad");
 	gtk_expander_set_expanded(GTK_EXPANDER(expander), show_buttons);
-	
+
 /*	Completion	*/	
 	completion = gtk_entry_completion_new();
 	gtk_entry_set_completion(GTK_ENTRY(expression), completion);

@@ -5001,7 +5001,7 @@ run_unit_edit_dialog:
 		gnome_help_display("qalculate", "qalculate-unit-creation", &error);
 		if(error) {
 			gchar *error_str = g_locale_to_utf8(error->message, -1, NULL, NULL, NULL);
-			GtkWidget *d = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (unitedit_glade, "unit_edit_dialog")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help.\n%s"), error_str);
+			GtkWidget *d = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (unitedit_glade, "unit_edit_dialog")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help.\n%s"), error_str);			
 			gtk_dialog_run(GTK_DIALOG(d));
 			gtk_widget_destroy(d);
 			g_free(error_str);
@@ -8523,7 +8523,11 @@ void on_menu_item_limit_implicit_multiplication_activate(GtkMenuItem *w, gpointe
 	result_format_updated();
 }
 void fetch_exchange_rates(int timeout) {
+#if GTK_MINOR_VERSION == 6
+	GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE, _("Fetching exchange rates."));
+#else	
 	GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO, GTK_BUTTONS_NONE, _("Fetching exchange rates."));
+#endif	
 	gtk_widget_show_now(dialog);
 	while(gtk_events_pending()) gtk_main_iteration();
 	CALCULATOR->fetchExchangeRates(timeout);

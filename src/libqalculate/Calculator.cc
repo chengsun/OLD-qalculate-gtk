@@ -3298,7 +3298,7 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				str.insert(i2 + 1, MULTIPLICATION);	
 				str.insert(i, SPACE);
 				i++;
-				i2++;					
+				i2++;		
 			} else {
 				str.insert(i, MULTIPLICATION_2);
 				i++;
@@ -3319,7 +3319,7 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			}
 		}
 		if(po.rpn && i > 0 && i2 + 1 == str.length() && is_not_in(PARENTHESISS SPACE, str[i - 1])) {
-			str += MULTIPLICATION_CH;	
+			str += MULTIPLICATION_CH;
 		}
 		str2 = str.substr(i + 1, i2 - (i + 1));
 		MathStructure *mstruct2 = new MathStructure();
@@ -3469,7 +3469,7 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				if(!str2.empty()) {
 					error(true, _("RPN syntax error. Values left at the end of the RPN expression."), NULL);
 				} else if(mstack.size() > 1) {
-					if(last_operator = 0) {
+					if(last_operator == 0) {
 						error(false, _("Unused stack values."), NULL);
 					} else {
 						while(mstack.size() > 1) {
@@ -3503,11 +3503,10 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			}
 			if(str[i] != SPACE_CH) {
 				if(mstack.size() < 1) {
-					error(true, _("RPN syntax error. Stack is empty."), NULL);		
+					error(true, _("RPN syntax error. Stack is empty."), NULL);
+				} else if(mstack.size() < 2) {
+					error(false, _("RPN syntax error. Operator ignored as there where only one stack value."), NULL);
 				} else {
-					if(mstack.size() < 2) {
-						mstack.push_back(new MathStructure(mstack.back()));
-					}
 					switch(str[i]) {
 						case PLUS_CH: {mstack[mstack.size() - 2]->add_nocopy(mstack.back()); mstack.pop_back(); break;}
 						case MINUS_CH: {mstack[mstack.size() - 2]->subtract_nocopy(mstack.back()); mstack.pop_back(); break;}
