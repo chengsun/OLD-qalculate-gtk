@@ -1114,6 +1114,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 							stmp += ID_WRAP_RIGHT_STR;
 							stmp += RIGHT_BRACKET_STR;
 							if(!b) str.replace(i, 1 + i7, stmp);
+							else str.replace(i, 1, stmp);
 						} else {
 							stmp += ch;
 							i3 = i + 1;
@@ -1128,6 +1129,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						stmp += ID_WRAP_RIGHT_STR;
 						stmp += RIGHT_BRACKET_STR;
 						if(!b) str.replace(i, strlen(ch) + i7, stmp);
+						else str.replace(i, strlen(ch), stmp);						
 					}
 				} else {
 					break;
