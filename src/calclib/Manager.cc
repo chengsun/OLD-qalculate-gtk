@@ -81,7 +81,7 @@ void Manager::set(const Manager *mngr) {
 }
 void Manager::set(Fraction *fraction_) {
 	clear();
-	if(!fraction_) return;
+	if(!fraction_ || fraction_->isZero()) return;
 	fr = fraction_;
 	c_type = FRACTION_MANAGER;
 }
@@ -95,7 +95,10 @@ void Manager::set(long long int numerator_, long long int denominator_, long lon
 	clear();
 	if(numerator_ == 0) return;
 	fr = new Fraction(numerator_, denominator_, fraction_exp_);
-	c_type = FRACTION_MANAGER;
+	c_type = FRACTION_MANAGER;	
+	if(fr->isZero()) {
+		clear();
+	}
 }
 void Manager::set(string var_) {
 	clear();
@@ -282,11 +285,11 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 	}
 
 	if(op == ADD) {
-		if(mngr->type() == 0) {
+		if(mngr->type() == NULL_MANAGER) {
 			mngr->unref(); 
 			return true;
 		}
-		if(c_type == 0) {
+		if(c_type == NULL_MANAGER) {
 			set(mngr);
 			mngr->unref(); 
 			return true;
@@ -454,10 +457,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 				}
 				break;
 			}
-			case NULL_MANAGER: {
-				set(mngr);
-				break;
-			}
 			case FRACTION_MANAGER: {}
 			case VALUE_MANAGER: {
 				switch(mngr->type()) {
@@ -574,9 +573,15 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 			}
 		}
 	} else if(op == MULTIPLY) {
-		if(mngr->type() == NULL_MANAGER) {
-			clear(); mngr->unref(); return true;
+		if(c_type == NULL_MANAGER || mngr->type() == NULL_MANAGER) {
+			clear(); 
+			mngr->unref(); 
+			return true;
 		} else if(mngr->isOne()) {
+			mngr->unref();
+			return true;
+		} else if(isOne()) {
+			set(mngr);
 			mngr->unref();
 			return true;
 		}
@@ -586,11 +591,11 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					case ADDITION_MANAGER: {
 						Manager *mngr3 = new Manager(this);
 						clear();
-						c_type = ADDITION_MANAGER;
 						for(int i = 0; i < mngr->mngrs.size(); i++) {
 							Manager *mngr2 = new Manager(mngr3);
 							mngr2->add(mngr->mngrs[i], op);
-							mngrs.push_back(mngr2);
+							add(mngr2, ADD);
+							mngr2->unref();
 						}
 						mngr3->unref();
 						break;
@@ -675,9 +680,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 						break;
 					}
 				}
-				break;
-			}
-			case NULL_MANAGER: {
 				break;
 			}
 			case FRACTION_MANAGER: {}
@@ -815,7 +817,9 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 				set(1, 1);
 				mngr->unref(); return true;
 			}
-		} else if(mngr->isOne()) {mngr->unref(); return true;}
+		} else if(mngr->isOne()) {
+			mngr->unref(); return true;
+		}
 		switch(c_type) {
 			case MULTIPLICATION_MANAGER: {
 				for(int i = 0; i < mngrs.size(); i++) {
@@ -843,6 +847,12 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 							}
 							break;
 						}
+						if(!translate_) {
+							mngr->unref(); 
+							return false;
+						}	
+						transform(mngr, POWER_MANAGER, op);
+						break;						
 					}
 					case VALUE_MANAGER: {
 						if(mngr->d_value != -1 && fmodl(mngr->value(), 1.0L) == 0) {
@@ -878,7 +888,7 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					default: {
 						mngrs[1]->add(mngr, MULTIPLY);
 						if(mngrs[1]->type() == NULL_MANAGER) {
-							set(1);
+							set(1, 1);
 						} else if(mngrs[1]->isNumber() && mngrs[0]->isNumber()) {
 							mngrs[0]->add(mngrs[1], RAISE);
 							moveto(mngrs[0]);
@@ -944,9 +954,9 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 			}
 		}
 	}
-	printf("PRESORT [%s] %c [%s] (%i)\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), op2ch(op), mngr->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), translate_);	
+	printf("PRESORT [%s]\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str());	
 	sort();
-	printf("POSTSORT [%s] %c [%s] (%i)\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), op2ch(op), mngr->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), translate_);	
+	printf("POSTSORT [%s]\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str());	
 	CALCULATOR->checkFPExceptions();
 	mngr->unref();
 	return true;
@@ -1341,7 +1351,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int precision, in
 			int max_decimals = -1;			
 			if(decimals_decrease) max_decimals = decimals_to_keep;
 			if(decimals_expand) min_decimals = decimals_to_keep;			
-			str += fr->internalPrint(nrformat, displayflags, precision, min_decimals, max_decimals, prefix, usable, false, NULL, l_exp, in_composite, in_power);
+			str += fr->print(nrformat, displayflags, precision, min_decimals, max_decimals, prefix, usable, false, NULL, l_exp, in_composite, in_power);
 		} else {
 			Manager *mngr = new Manager();
 			mngr->c_type = VALUE_MANAGER;
@@ -1599,10 +1609,10 @@ string Manager::print(NumberFormat nrformat, int displayflags, int precision, in
 		}
 		if(mngrs[0]->mngrs.size() > 0 && !in_composite) {
 			str += LEFT_BRACKET_STR;
-			str += mngrs[0]->print(nrformat, displayflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix, false, NULL, NULL, in_composite, true);
+			str += mngrs[0]->print(nrformat, displayflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix, false, NULL, NULL, in_composite, in_power);
 			str += RIGHT_BRACKET_STR;
 		} else {
-			str += mngrs[0]->print(nrformat, displayflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix, false, NULL, NULL, in_composite, true);
+			str += mngrs[0]->print(nrformat, displayflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix, false, NULL, NULL, in_composite, in_power);
 		}
 		if(displayflags & DISPLAY_FORMAT_TAGS) {
 			if(!in_power) {
@@ -2120,7 +2130,7 @@ void Manager::differentiate(string x_var) {
 		}
 		case FUNCTION_MANAGER: {
 			Manager *mngr2 = new Manager(x_var);
-			Manager *mngr = new Manager(CALCULATOR->getFunction("differentiate"), this, mngr2, NULL);
+			Manager *mngr = new Manager(CALCULATOR->getFunction("diff"), this, mngr2, NULL);
 			mngr2->unref();
 			moveto(mngr);
 			break;

@@ -82,6 +82,59 @@ void GCDFunction::calculate2(Manager *mngr) {
 	if(!vargs[1]->isNumber()) mngr->set(this, vargs[0], vargs[1], NULL);	
 	else mngr->set(gcd_d(vargs[0]->value(), vargs[1]->value()));
 }
+DaysFunction::DaysFunction() : Function("Date & Time", "daysto", 2, "Days to date") {
+}
+Manager *DaysFunction::calculate(const string &argv) {
+	int itmp = stringArgs(argv);
+	if(testArgCount(itmp)) {
+		int days = daysBetweenDates(svargs[0], svargs[1], 1);
+		if(days < 0) {
+			CALCULATOR->error(false, _("Error in date format for function %s()."), name().c_str(), NULL);
+		} else {
+			Manager *mngr = new Manager(days, 1, 0);
+			return mngr;
+		}	
+	}
+	Manager *mngr = createFunctionManagerFromSVArgs(itmp);
+	clearSVArgs();
+	return mngr;			
+}
+DaysBetweenDatesFunction::DaysBetweenDatesFunction() : Function("Date & Time", "days_between_dates", 2, "Days between two dates", "", false, 3) {
+}
+Manager *DaysBetweenDatesFunction::calculate(const string &argv) {
+	int itmp = stringArgs(argv);
+	if(testArgCount(itmp)) {
+		int basis = s2i(svargs[2]);
+		int days = daysBetweenDates(svargs[0], svargs[1], basis);
+		if(days < 0) {
+			CALCULATOR->error(false, _("Error in date format for function %s()."), name().c_str(), NULL);
+		} else {
+			Manager *mngr = new Manager(days, 1, 0);
+			return mngr;
+		}		
+	}
+	Manager *mngr = createFunctionManagerFromSVArgs(itmp);
+	clearSVArgs();
+	return mngr;			
+}
+YearsBetweenDatesFunction::YearsBetweenDatesFunction() : Function("Date & Time", "years_between_dates", 2, "Years between two dates", "", false, 3) {
+}
+Manager *YearsBetweenDatesFunction::calculate(const string &argv) {
+	int itmp = stringArgs(argv);
+	if(testArgCount(itmp)) {
+		int basis = s2i(svargs[2]);
+		Fraction *fr = yearsBetweenDates(svargs[0], svargs[1], basis);
+		if(!fr) {
+			CALCULATOR->error(false, _("Error in date format for function %s()."), name().c_str(), NULL);
+		} else {
+			Manager *mngr = new Manager(fr);
+			return mngr;
+		}		
+	}
+	Manager *mngr = createFunctionManagerFromSVArgs(itmp);
+	clearSVArgs();
+	return mngr;			
+}
 DifferentiateFunction::DifferentiateFunction() : Function("Experimental", "diff", 2, "Differentiate") {
 }
 Manager *DifferentiateFunction::calculate(const string &argv) {
@@ -113,7 +166,7 @@ CeilFunction::CeilFunction() : Function("Arithmetics", "ceil", 1, "Round upwards
 }
 void CeilFunction::calculate2(Manager *mngr) {
 	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == VALUE_MANAGER) mngr->set(ceill(vargs[0]->value()));
+	else if(vargs[0]->type() == VALUE_MANAGER) mngr->set(ceill((double) vargs[0]->value()));
 	else mngr->set(vargs[0]);
 }
 FloorFunction::FloorFunction() : Function("Arithmetics", "floor", 1, "Round downwards") {
@@ -121,7 +174,7 @@ FloorFunction::FloorFunction() : Function("Arithmetics", "floor", 1, "Round down
 }
 void FloorFunction::calculate2(Manager *mngr) {
 	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
- 	else if(vargs[0]->type() == VALUE_MANAGER) mngr->set(floorl(vargs[0]->value()));
+ 	else if(vargs[0]->type() == VALUE_MANAGER) mngr->set(floorl((double) vargs[0]->value()));
 	else mngr->set(vargs[0]);	
 }
 TruncFunction::TruncFunction() : Function("Arithmetics", "trunc", 1, "Round towards zero") {
@@ -129,7 +182,7 @@ TruncFunction::TruncFunction() : Function("Arithmetics", "trunc", 1, "Round towa
 }
 void TruncFunction::calculate2(Manager *mngr) {
 	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == VALUE_MANAGER) mngr->set(truncl(vargs[0]->value()));
+	else if(vargs[0]->type() == VALUE_MANAGER) mngr->set(truncl((double) vargs[0]->value()));
 	else mngr->set(vargs[0]);
 }
 RoundFunction::RoundFunction() : Function("Arithmetics", "round", 1, "Round") {

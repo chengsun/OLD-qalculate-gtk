@@ -293,6 +293,8 @@ int Function::stringArgs(const string &str) {
 						stmp += RIGHT_BRACKET_STR;
 						svargs.push_back(stmp);*/
 						stmp = str.substr(i2, i - i2);
+						remove_blank_ends(stmp);						
+						remove_brackets(stmp);						
 						remove_blank_ends(stmp);
 						svargs.push_back(stmp);
 					}
@@ -308,6 +310,8 @@ int Function::stringArgs(const string &str) {
 					stmp += RIGHT_BRACKET_STR;
 					svargs.push_back(stmp);*/
 					stmp = str.substr(i2, str.length() - i2);
+					remove_blank_ends(stmp);					
+					remove_brackets(stmp);						
 					remove_blank_ends(stmp);
 					svargs.push_back(stmp);
 				}
@@ -345,6 +349,8 @@ Manager *UserFunction::calculate(const string &argv) {
 					svar += 'x' + i;
 				while(1) {
 					if((i2 = stmp.find(svar)) != (int) string::npos) {
+						svargs[i].insert(0, LEFT_BRACKET_STR);
+						svargs[i] += RIGHT_BRACKET_STR;						
 						stmp.replace(i2, 2, svargs[i]);
 					} else {
 						break;

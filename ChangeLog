@@ -1,3 +1,9 @@
+2003-08-24  Niklas Knutsson  <nq@altern.org>
+
+	* Decimal string to fraction
+	* Date functions (for financial functions)
+	* Fixes
+
 2003-08-23  Niklas Knutsson  <nq@altern.org>
 
 	* Localized dot and more

@@ -32,24 +32,68 @@ void Fraction::set(long long int numerator_, long long int denominator_, long lo
 	num = numerator_;
 	den = denominator_;
 	exp = exp10_;
-	while(num % 10 == 0) {
+	if(den < 0) {
+		num = -num;
+		den = -den;
+	}
+	long long int divisor = gcd(num, den);
+	if(divisor != 1 && divisor != 0) {
+		num /= divisor;
+		den /= divisor;
+	}
+	while(den != 1 && exp > 0) {
+		num *= 10;
+		divisor = gcd(num, den);
+		if(divisor != 1 && divisor != 0) {
+			exp--;
+			num /= divisor;
+			den /= divisor;			
+		} else {
+			num /= 10;
+			break;
+		}
+	}
+	while(num != 1 && exp < 0) {
+		den *= 10;
+		divisor = gcd(num, den);
+		if(divisor != 1 && divisor != 0) {
+			exp++;
+			num /= divisor;
+			den /= divisor;			
+		} else {
+			den /= 10;
+			break;
+		}
+	}	
+	while(num != 0 && num % 10 == 0) {
 		num /= 10;
 		exp++;
 	}
-	while(den % 10 == 0) {
+	while(den != 0 && den % 10 == 0) {
 		den /= 10;
 		exp--;
 	}	
 }
-void Fraction::set(string str) {
+bool Fraction::set(string str) {
 	den = 1;
 	num = 0;
 	exp = 0;	
+	int decimals = -1;
+	remove_blank_ends(str);
+	bool b = false;
+	if(str.find(".") != string::npos) b = true;
+	while(str[str.length() - 1] == '0') {
+		str.erase(str.end() - 1);
+		if(!b) exp++;
+	}
+	long long int max_div_10 = LONG_LONG_MAX / 10;
 	bool numbers_started = false, minus = false;
 	for(int index = 0; index < str.size(); index++) {
 		if(str[index] >= '0' && str[index] <= '9') {
+			if(num > max_div_10) return false;
 			num *= 10;
 			num += str[index] - '0';
+			if(decimals > -1) decimals++;
 			numbers_started = true;
 		} else if(str[index] == 'E') {
 			index++;
@@ -57,6 +101,7 @@ void Fraction::set(string str) {
 			bool exp_minus = false;
 			while(index < str.size()) {
 				if(str[index] >= '0' && str[index] <= '9') {				
+					if(exp > max_div_10) return false;				
 					exp *= 10;
 					exp += str[index] - '0';
 					numbers_started = true;
@@ -67,16 +112,19 @@ void Fraction::set(string str) {
 			}
 			if(exp_minus) exp = -exp;
 			break;
+		} else if(str[index] == '.') {
+			decimals = 0;
 		} else if(!numbers_started && str[index] == '-') {
 			minus = !minus;
 		}
 	}
+	if(decimals) exp -= decimals;
 	if(minus) num = -num;
-	while(num % 10 == 0) {
+	while(num != 0 && num % 10 == 0) {
 		num /= 10;
 		exp++;
 	}
-	while(den % 10 == 0) {
+	while(den != 0 && den % 10 == 0) {
 		den /= 10;
 		exp--;
 	}	
@@ -129,15 +177,9 @@ long long int Fraction::getInteger(bool &overflow) const {
 bool Fraction::isZero() const {
 	return num == 0;
 }
-long double Fraction::getIntegerPart() const {
-	
-}
-long double Fraction::getFractionPart() const {
-
-}
 bool Fraction::add(MathOperation op, Fraction *fr) {
 	if(!fr) return false;
-	printf("FRPRE [%s] %c [%s]\n", internalPrint(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), op2ch(op), fr->internalPrint(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str());		
+	printf("FRPRE [%s] %c [%s]\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), op2ch(op), fr->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str());		
 	switch(op) {
 		case SUBTRACT: {}
 		case ADD: {
@@ -307,14 +349,14 @@ bool Fraction::add(MathOperation op, Fraction *fr) {
 		den = -den;
 	}
 	long long int divisor = gcd(num, den);
-	if(divisor != 1) {
+	if(divisor != 1 && divisor != 0) {
 		num /= divisor;
 		den /= divisor;
 	}
 	while(den != 1 && exp > 0) {
 		num *= 10;
 		divisor = gcd(num, den);
-		if(divisor != 1) {
+		if(divisor != 1 && divisor != 0) {
 			exp--;
 			num /= divisor;
 			den /= divisor;			
@@ -326,7 +368,7 @@ bool Fraction::add(MathOperation op, Fraction *fr) {
 	while(num != 1 && exp < 0) {
 		den *= 10;
 		divisor = gcd(num, den);
-		if(divisor != 1) {
+		if(divisor != 1 && divisor != 0) {
 			exp++;
 			num /= divisor;
 			den /= divisor;			
@@ -335,24 +377,26 @@ bool Fraction::add(MathOperation op, Fraction *fr) {
 			break;
 		}
 	}	
-	while(num % 10 == 0) {
+	while(num != 0 && num % 10 == 0) {
 		num /= 10;
 		exp++;
 	}
-	while(den % 10 == 0) {
+	while(den != 0 && den % 10 == 0) {
 		den /= 10;
 		exp--;
 	}
-	printf("FRPOST [%s] %c [%s]\n", internalPrint(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), op2ch(op), fr->internalPrint(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str());	
+	printf("FRPOST [%s] %c [%s]\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), op2ch(op), fr->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str());	
 	return true;	
 }
 
-string Fraction::internalPrint(NumberFormat nrformat, int displayflags, int precision, int min_decimals, int max_decimals, Prefix *prefix, bool *usable, bool toplevel, bool *plural, long int *l_exp, bool in_composite, bool in_power) {
+string Fraction::print(NumberFormat nrformat, int displayflags, int precision, int min_decimals, int max_decimals, Prefix *prefix, bool *usable, bool toplevel, bool *plural, long int *l_exp, bool in_composite, bool in_power) {
+
 	long long int whole = num / den;
 	long long int part = num % den;
 	long long int den_spec = den;
 	long long int exp_spec = exp;	
 	string str_spec = "", str_prefix = "";
+
 	switch(nrformat) {
 		case NUMBER_FORMAT_PREFIX: {
 			if(l_exp) {
@@ -423,6 +467,7 @@ string Fraction::internalPrint(NumberFormat nrformat, int displayflags, int prec
 			break;
 		}		
 	}
+
 	string str_base = "";
 	if(whole != 0) {
 		if(whole < 0) {
@@ -437,6 +482,7 @@ string Fraction::internalPrint(NumberFormat nrformat, int displayflags, int prec
 //		remove_trailing_zeros(str_whole);
 		str_base += str_whole;
 	}
+
 	if(part != 0) {
 		if(part < 0) {
 			if(whole == 0) {
@@ -448,8 +494,10 @@ string Fraction::internalPrint(NumberFormat nrformat, int displayflags, int prec
 			}
 			part = -part;
 		}
+
 		string str_num = lli2s(part);
 		string str_den = lli2s(den_spec);
+
 		if(whole != 0) str_base += " ";
 		if(displayflags & DISPLAY_FORMAT_TAGS) {	
 			str_base += "<sup>";
@@ -458,11 +506,13 @@ string Fraction::internalPrint(NumberFormat nrformat, int displayflags, int prec
 		} else {
 			str_base += str_num;
 		}
+
 		if(displayflags & DISPLAY_FORMAT_NONASCII) {
 			str_base += SIGN_DIVISION;
 		} else {
-			str_base += DIVISION_STR;
+			str_base += DIVISION_STR;	
 		}
+
 		if(displayflags & DISPLAY_FORMAT_TAGS) {	
 			str_base += "<small>";
 	 		str_base += str_den;
@@ -471,13 +521,12 @@ string Fraction::internalPrint(NumberFormat nrformat, int displayflags, int prec
 			str_base += str_den;
 		}	
 	}
+
 	if(!str_prefix.empty()) {
 		str_spec += " ";
 		str_spec += str_prefix;
 	}
+
 	return str_base + str_spec;	
-}
-string Fraction::print(NumberFormat nrformat, int displayflags, int precision, Prefix *prefix, bool *usable) {
-	internalPrint(nrformat, displayflags, precision, -1, -1, prefix, usable, true);
 }
 

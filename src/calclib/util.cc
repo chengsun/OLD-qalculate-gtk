@@ -21,7 +21,7 @@ char buffer[20000];
 
 bool s2date(string str, int &year, int &month, int &day) {
 	struct tm time;
-	if(strptime(str.c_str(), "%x", &time) || strptime(str.c_str(), "%Ex", &time) || strptime(str.c_str(), "%Y-%m-%d", &time) || strptime(str.c_str(), "%m/%d/%y", &time)) {
+	if(strptime(str.c_str(), "%x", &time) || strptime(str.c_str(), "%Ex", &time) || strptime(str.c_str(), "%Y-%m-%d", &time) || strptime(str.c_str(), "%m/%d/%Y", &time) || strptime(str.c_str(), "%m/%d/%y", &time)) {
 		year = time.tm_year + 1900;
 		month = time.tm_mon + 1;
 		day = time.tm_mday;	
@@ -30,10 +30,170 @@ bool s2date(string str, int &year, int &month, int &day) {
 	return false;
 }
 bool s2date(string str, struct tm *time) {
-	if(strptime(str.c_str(), "%x", time) || strptime(str.c_str(), "%Ex", time) || strptime(str.c_str(), "%Y-%m-%d", time) || strptime(str.c_str(), "%m/%d/%y", time)) {
+	if(strptime(str.c_str(), "%x", time) || strptime(str.c_str(), "%Ex", time) || strptime(str.c_str(), "%Y-%m-%d", time) || strptime(str.c_str(), "%m/%d/%Y", time) || strptime(str.c_str(), "%m/%d/%y", time)) {
 		return true;
 	}
 	return false;
+}
+bool isLeapYear(int year) {
+	return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+}
+int daysPerYear(int year, int basis) {
+	switch(basis) {
+		case 0: {
+			return 360;
+		}
+		case 1: {
+			if(isLeapYear(year)) {
+				return 366;
+			} else {
+				return 365;
+			}
+		}
+		case 2: {
+			return 360;
+		}		
+		case 3: {
+			return 365;
+		} 
+		case 4: {
+			return 360;
+		}
+	}
+	return -1;
+}
+
+Fraction *yearsBetweenDates(string date1, string date2, int basis) {
+	if(basis < 0 || basis > 4) return NULL;
+	if(basis == 1) {
+		int day1, day2, month1, month2, year1, year2;
+		if(!s2date(date1, year1, month1, day1)) {
+  			return NULL;
+		}
+		if(!s2date(date2, year2, month2, day2)) {
+  			return NULL;
+		}		
+		if(year1 > year2 || (year1 == year2 && month1 > month2) || (year1 == year2 && month1 == month2 && day1 > day2)) {
+			int year3 = year1, month3 = month1, day3 = day1;
+			year1 = year2; month1 = month2; day1 = day2;
+			year2 = year3; month2 = month3; day2 = day3;		
+		}		
+		int days;
+		if(year1 == year2) {
+			days = daysBetweenDates(year1, month1, day1, year2, month2, day2, basis);
+			if(days < 0) return NULL;
+			return new Fraction(days, daysPerYear(year1, basis));
+		}
+		days = daysBetweenDates(year1, month1, day1, year1 + 1, 1, 1, basis);
+		if(days < 0) return NULL;
+		int days_of_years = daysPerYear(year1, basis);
+		int years = year2 - year1;
+		for(year1++; year1 < year2; year1++) {
+			days_of_years += daysPerYear(year1, basis);
+			days += daysPerYear(year1, basis);
+		}
+		int days2 = daysBetweenDates(year2, 1, 1, year2, month2, day2, basis);
+		if(days2 < 0) return NULL;		
+		days += days2;
+		days_of_years += daysPerYear(year2, basis);
+		Fraction *fr = new Fraction(days, days_of_years);		
+		Fraction *fr2 = new Fraction(years);
+		fr->add(MULTIPLY, fr2);
+		delete fr2;
+		return fr;
+	} else {
+		int days = daysBetweenDates(date1, date2, basis);
+		if(days < 0) return NULL;
+		Fraction *fr = new Fraction(days, daysPerYear(0, basis));	
+		return fr;
+	}
+	return NULL;
+}
+int daysBetweenDates(string date1, string date2, int basis) {
+	int day1, day2, month1, month2, year1, year2;
+	if(!s2date(date1, year1, month1, day1)) {
+  		return -1;
+	}
+	if(!s2date(date2, year2, month2, day2)) {
+  		return -1;
+	}
+	return daysBetweenDates(year1, month1, day1, year2, month2, day2, basis);	
+}
+int daysBetweenDates(int year1, int month1, int day1, int year2, int month2, int day2, int basis) {
+	if(basis < 0 || basis > 4) return -1;
+	bool isleap = false;
+	int days, months, years;
+
+	if(year1 > year2 || (year1 == year2 && month1 > month2) || (year1 == year2 && month1 == month2 && day1 > day2)) {
+		int year3 = year1, month3 = month1, day3 = day1;
+		year1 = year2; month1 = month2; day1 = day2;
+		year2 = year3; month2 = month3; day2 = day3;		
+	}
+
+	years = year2  - year1;
+	months = month2 - month1 + years * 12;
+	days = day2 - day1;
+
+	isleap = isLeapYear(year1);
+
+	switch(basis) {
+		case 0: {
+			if(month1 == 2 && month2 != 2 && year1 == year2) {
+				if(isleap) return months * 30 + days - 1;
+				else return months * 30 + days - 2;
+			}
+			return months * 30 + days;
+		}
+		case 1: {}
+		case 2: {}		
+		case 3: {
+			int month4 = month2;
+			bool b;
+			if(years > 0) {
+				month4 = 12;
+				b = true;
+			} else {
+				b = false;
+			}
+			for(; month1 < month4 || b; month1++) {
+				if(month1 > month4 && b) {
+					b = false;
+					month1 = 1;
+					month4 = month2;
+					if(month1 == month2) break;
+				}			
+				switch(month1) {
+					case 1: {} case 3: {} case 5: {} case 7: {} case 8: {} case 10: {} case 12: {
+						days += 31;
+						break;
+					}
+					case 2:	{
+						if((!b && isLeapYear(year2)) || (b && isLeapYear(year1))) days += 29;
+						else days += 28;
+						break;
+					}				
+					default: {
+						days += 30;
+					}
+				}	
+			}
+			if(years == 0) return days;
+			if(basis == 1) {
+				for(year1 += 1; year1 < year2; year1++) {
+					if(isLeapYear(year1)) days += 366;
+					else days += 365;
+				} 
+				return days;
+			}
+			if(basis == 2) return (years - 1) * 360 + days;		
+			if(basis == 3) return (years - 1) * 365 + days;
+		} 
+		case 4: {
+			return months * 30 + days;
+		}
+	}
+	return -1;
+	
 }
 
 int find_first_not_of(const string &str, int pos, ...) {
@@ -162,6 +322,31 @@ string& remove_blank_ends(string &str) {
 		str = str.substr(i, i2 - i + 1);
 	else
 		str.resize(0);
+	return str;
+}
+string& remove_brackets(string &str) {
+	if(str[0] == LEFT_BRACKET_CH || str[str.length() - 1] == RIGHT_BRACKET_CH) {
+		bool b = true;
+		int i1 = 1, i2 = 1;
+		while(true) {
+			i1 = str.find(RIGHT_BRACKET_CH, i2);
+			i2 = str.find(LEFT_BRACKET_CH, i2);
+			if(i1 == str.length() - 1) {
+				if(i2 != string::npos) {
+					b = false;
+				}
+				break;
+			}
+			if(i1 != string::npos && (i2 == string::npos || i2 > i1)) {
+				b = false;
+				break;
+			}
+		}
+		if(b) {
+			str = str.substr(1, str.length() - 2);
+			return remove_brackets(str);
+		}
+	}
 	return str;
 }
 

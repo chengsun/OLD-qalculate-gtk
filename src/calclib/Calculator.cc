@@ -524,6 +524,9 @@ void Calculator::addBuiltinVariables() {
 void Calculator::addBuiltinFunctions() {
 	addFunction(new IFFunction());
 	addFunction(new DifferentiateFunction());	
+	addFunction(new DaysFunction());		
+	addFunction(new DaysBetweenDatesFunction());		
+	addFunction(new YearsBetweenDatesFunction());		
 	addFunction(new GCDFunction());	
 	addFunction(new AbsFunction());
 	addFunction(new CeilFunction());

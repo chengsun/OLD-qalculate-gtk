@@ -85,13 +85,21 @@ EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 		str[1] = ZERO_CH;
 		str[2] = ZERO_CH;
 	} else {
-		if(s == MINUS_CH)
+		if(s == MINUS_CH) {
 			str.insert(0, 1, MINUS_CH);
-		if(str.find(DOT_CH) == string::npos) {
+		}
+		Fraction *fr = new Fraction();
+		if(fr->set(str)) {
+			mngr->set(fr);
+			return;
+/*		if(str.find(DOT_CH) == string::npos) {
 			mngr->set(new Fraction(str));
 			return;
+		}*/
+		} else {
+			delete fr;
+			value = strtold(str.c_str(), NULL);
 		}
-		value = strtold(str.c_str(), NULL);
 	}
 	if((itmp = str.find_first_not_of(NUMBERS MINUS DOT, 0)) != (int) string::npos) {
 		string stmp = str.substr(itmp, str.length() - itmp);

@@ -32,6 +32,24 @@ class GCDFunction : public Function {
   public:
 	GCDFunction();
 };
+class DaysFunction : public Function {
+  protected:
+	Manager *calculate(const string &argv);    
+  public:
+	DaysFunction();
+};
+class DaysBetweenDatesFunction : public Function {
+  protected:
+	Manager *calculate(const string &argv);    
+  public:
+	DaysBetweenDatesFunction();
+};
+class YearsBetweenDatesFunction : public Function {
+  protected:
+	Manager *calculate(const string &argv);    
+  public:
+	YearsBetweenDatesFunction();
+};
 class AbsFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  

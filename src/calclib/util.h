@@ -14,6 +14,7 @@
 
 #include "includes.h"
 #include <time.h>
+#include "Fraction.h"
 
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
@@ -63,6 +64,12 @@ string ld2s(long double value);
 
 bool s2date(string str, int &year, int &month, int &day);
 bool s2date(string str, struct tm *time);
+bool isLeapYear(int year);
+int daysPerYear(int year, int basis = 0);
+Fraction *yearsBetweenDates(string date1, string date2, int basis);
+int daysBetweenDates(string date1, string date2, int basis = 0);
+int daysBetweenDates(int year1, int month1, int day1, int year2, int month2, int day2, int basis);
+
 
 char op2ch(MathOperation op);
 
@@ -83,6 +90,7 @@ long double gra2deg(long double &value);
 string& wrap_p(string &str);
 string& remove_blanks(string &str);
 string& remove_blank_ends(string &str);
+string& remove_brackets(string &str);
 
 bool is_in(char c, ...);
 bool is_not_in(char c, ...);
