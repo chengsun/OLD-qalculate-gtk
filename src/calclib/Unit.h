@@ -116,7 +116,7 @@ class CompositeUnit : public Unit {
 		bool bsorted;
 		//-----------------------------//
 
-		CompositeUnit(Calculator *calc_, string cat_, string name_, string title_ = "");
+		CompositeUnit(Calculator *calc_, string cat_, string name_, string title_ = "", string base_expression_ = "");
 		virtual ~CompositeUnit(void);
 		virtual void add(Unit *u, long double exp_ = 1.0L, long double prefix = 1.0L);
 		virtual Unit *get(int index, long double *exp_ = NULL, long double *prefix = NULL);
@@ -132,6 +132,7 @@ class CompositeUnit : public Unit {
 		virtual bool containsRelativeTo(Unit *u);
 		virtual Manager *generateManager();		
 		virtual string internalName();
+		virtual void baseExpression(string base_expression_);		
 };
 
 #endif

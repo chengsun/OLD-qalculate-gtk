@@ -325,6 +325,8 @@ void Calculator::addBuiltinVariables() {
 }
 void Calculator::addBuiltinFunctions() {
 	addFunction(new IFFunction(this));
+	addFunction(new DifferentiateFunction(this));	
+	addFunction(new GCDFunction(this));	
 	addFunction(new AbsFunction(this));
 	addFunction(new CeilFunction(this));
 	addFunction(new FloorFunction(this));

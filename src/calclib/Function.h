@@ -30,6 +30,11 @@ class Function {
 	vector<string> svargs;	
 	virtual void calculate2(Manager *mngr);	
 	virtual long double calculate3(void);		
+	bool testArgCount(int itmp);
+	virtual Manager *createFunctionManagerFromVArgs(int itmp);
+	virtual Manager *createFunctionManagerFromSVArgs(int itmp);	
+	virtual void clearVArgs();
+	virtual void clearSVArgs();	
   public:
 	Function(Calculator *calc_, string cat_, string name_, int argc_, string title_ = "", string descr_ = "", bool priviliged_ = false, int max_argc_ = -1);
 	virtual ~Function(void);	
@@ -56,6 +61,7 @@ class Function {
 	int stringArgs(const string &str);		
 	void setDefaultValue(int arg_, string value_);
 	string getDefaultValue(int arg_);	
+	
 };
 
 class UserFunction : public Function {

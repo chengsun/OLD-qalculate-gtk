@@ -236,108 +236,19 @@ int sign_place(string *str, unsigned int start) {
 	else
 		return -1;
 }
-/*string &remove_trailing_zeros(string &str, int decimals_to_keep, bool expand, bool decrease) {
-	int i2 = str.find_first_of(DOT_S);
-	if(i2 != string::npos) {
-		string str2 = "";
-		int i4 = str.find_first_not_of(NUMBERS_S, i2 + 1);
-		if(i4 != string::npos) {
-			str2 = str.substr(i4, str.length() - i4);
-			str = str.substr(0, i4);
-		}
-		int expands = 0;
-		int decimals = str.length() - i2 - 1;
-		int i3 = 1;
-		while(str[str.length() - i3] == ZERO_CH) {
-			i3++;
-		}
-		i3--;
-		int dtk = decimals_to_keep;
-		if(decimals_to_keep) {
-			decimals_to_keep = decimals_to_keep - (decimals - i3);
-			if(decimals_to_keep > 0) {
-				expands = decimals_to_keep - i3;
-				if(expands < 0)
-					expands = 0;
-				i3 -= decimals_to_keep;
-				if(i3 < 0)
-					i3 = 0;
-			}
-		}
-		if(expand && expands) {
-			while(expands > 0) {
-				str += ZERO_CH;
-				expands--;
-			}
-		} else {
-			if(is_in(DOT_S, str[str.length() - i3]))
-				i3++;
-			if(i3) {
-				str = str.substr(0, str.length() - i3);
-			}
-		}
-		if(decrease) {
-			if(dtk > 0) {
-				if(i2 + dtk + 1 < str.length()) {
-					if(str.length() > i2 + dtk + 1 && str[i2 + dtk + 1] >= FIVE_CH) {
-						i3 = dtk;
-						while(i3 + i2 >= 0) {
-							if(str[i2 + i3] == NINE_CH)  {
-								str[i2 + i3] = ZERO_CH;
-								if(i3 + i2 == 0) {
-									str.insert(0, 1, ONE_CH);
-									i2++;
-									break;
-								}
-							} else {
-								str[i2 + i3] = str[i2 + i3] + 1;
-								break;
-							}
-							i3--;
-							if(i3 == 0)
-								i3--;
-						}
-					}
-					str = str.substr(0, i2 + dtk + 1);
-				}
-			} else {
-				if(str.length() > i2 + 1 && str[i2 + 1] >= FIVE_CH) {
-					i3 = i2 - 1;
-					while(i3 >= 0) {
-						if(str[i3] == NINE_CH)  {
-							str[i3] = ZERO_CH;
-							if(i3 == 0) {
-								str.insert(0, 1, ONE_CH);
-								i2++;
-								break;
-							}
-						} else {
-							str[i3] = str[i3] + 1;
-							break;
-						}
-						i3--;
-					}
-				}
-				str = str.substr(0, i2);
-			}
-		}
-		if(is_in(DOT_S, str[str.length() - 1]))
-			str = str.substr(0, str.length() - 1);
-		str += str2;
-	} else if(expand) {
-		string str2 = "";
-		int i4 = str.find_first_not_of(NUMBERS_S, 0);
-		if(i4 != string::npos) {
-			str2 = str.substr(i4, str.length() - i4);
-			str = str.substr(0, i4);
-		}
-		if(decimals_to_keep > 0)
-			str += DOT_STR;
-		while(decimals_to_keep > 0) {
-			str += ZERO_CH;
-			decimals_to_keep--;
-		}
-		str += str2;
+
+long double gcd(long double i1, long double i2) {
+	if(i1 == i2) return i2;
+	long double i3;
+	if(i2 > i1) {
+		i3 = i2;
+		i2 = i1;
+		i1 = i3;
 	}
-	return str;
-}*/
+	while((i3 =fmodl(i1, i2)) != 0.0L) {
+		i1 = i2;
+		i2 = i3;
+	}
+	return i2;
+}
+

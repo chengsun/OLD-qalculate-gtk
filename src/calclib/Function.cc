@@ -171,26 +171,51 @@ bool Function::setArgName(string name_, int index) {
 	}
 	return false;
 }
-Manager *Function::calculate(const string &argv) {
-	Manager *mngr = NULL;
-	int itmp = args(argv);
+bool Function::testArgCount(int itmp) {
 	if(itmp >= minargs()) {
 		if(itmp > maxargs() && maxargs() >= 0)
 			calc->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str());						
-		mngr = new Manager(calc);
-		calculate2(mngr);
-		calc->checkFPExceptions(sname.c_str());
-	} else {
-		calc->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str());
-		mngr = new Manager(calc, this, NULL);
-		for(int i = 0; i < itmp; i++) {
-			mngr->addFunctionArg(vargs[i]);
-		}
+		return true;	
 	}
+	calc->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str());
+	return false;
+}
+Manager *Function::createFunctionManagerFromVArgs(int itmp) {
+	Manager *mngr = new Manager(calc, this, NULL);
+	for(int i = 0; i < itmp; i++) {
+		mngr->addFunctionArg(vargs[i]);
+	}
+	return mngr;
+}
+Manager *Function::createFunctionManagerFromSVArgs(int itmp) {
+	Manager *mngr = new Manager(calc, this, NULL); 
+	for(int i = 0; i < itmp; i++) {
+		Manager *mngr2 = new Manager(calc, svargs[i]);
+		mngr->addFunctionArg(mngr2);
+		mngr2->unref();
+	}
+	return mngr;
+}
+void Function::clearVArgs() {
 	for(unsigned int i = 0; i < vargs.size(); i++) {
 		vargs[i]->unref();
 	}
 	vargs.clear();
+}
+void Function::clearSVArgs() {
+	svargs.clear();
+}
+Manager *Function::calculate(const string &argv) {
+	Manager *mngr = NULL;
+	int itmp = args(argv);
+	if(testArgCount(itmp)) {
+		mngr = new Manager(calc);
+		calculate2(mngr);
+		calc->checkFPExceptions(sname.c_str());	
+	} else {
+		mngr = createFunctionManagerFromVArgs(itmp);
+	}
+	clearVArgs();
 	return mngr;
 }
 void Function::calculate2(Manager *mngr) {

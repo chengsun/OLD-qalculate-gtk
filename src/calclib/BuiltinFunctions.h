@@ -20,6 +20,18 @@ class IFFunction : public Function {
   public:
 	IFFunction(Calculator *calc_);
 };
+class DifferentiateFunction : public Function {
+  protected:
+	Manager *calculate(const string &argv);    
+  public:
+	DifferentiateFunction(Calculator *calc_);
+};
+class GCDFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	GCDFunction(Calculator *calc_);
+};
 class AbsFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  

@@ -18,26 +18,20 @@ IFFunction::IFFunction(Calculator *calc_) : Function(calc_, "Logical", "if", 3, 
 }
 Manager *IFFunction::calculate(const string &argv) {
 	Manager *mngr = NULL;
-	string str[3];
-	str[0] = "";
-	str[1] = "";
-	str[2] = "";
-	int itmp = args(argv, str);
-	if(itmp >= minargs()) {
-		if(itmp > maxargs() && maxargs() >= 0)
-			calc->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str(), NULL);
-		unsigned int i = str[0].find_first_of("<=>", 0);
+	int itmp = stringArgs(argv);
+	if(testArgCount(itmp)) {
+		unsigned int i = svargs[0].find_first_of("<=>", 0);
 		bool result = false;
 		int com = 0;
 		if(i == string::npos) {
-			calc->error(false, _("Condition contains no comparison, interpreting as \"%s > 0\"."), str[0].c_str(), NULL);
-			str[0] += " > 0";
-			i = str[0].find_first_of("<=>", 0);
+			calc->error(false, _("Condition contains no comparison, interpreting as \"%s > 0\"."), svargs[0].c_str(), NULL);
+			svargs[0] += " > 0";
+			i = svargs[0].find_first_of("<=>", 0);
 		} 
-		string str1 = str[0].substr(0, i);
-		string str2 = str[0].substr(i + 1, str[0].length() - i + 1);			
+		string str1 = svargs[0].substr(0, i);
+		string str2 = svargs[0].substr(i + 1, svargs[0].length() - i + 1);			
 		remove_blank_ends(str2);
-		char sign1 = str[0][i], sign2 = 0;
+		char sign1 = svargs[0][i], sign2 = 0;
 		if(str2[0] != sign1 && (str2[0] == '>' || str2[0] == '=' || str2[0] == '<')) {
 			sign2 = str2[0];
 			str2.erase(0);
@@ -74,22 +68,43 @@ Manager *IFFunction::calculate(const string &argv) {
 		mngr1->unref();
 		mngr2->unref();
 		if(result) {			
-			mngr = calc->calculate(str[1]);
+			mngr = calc->calculate(svargs[1]);
 		} else {			
-			mngr = calc->calculate(str[2]);		
-		}		
-//		calculate2(mngr);
-//		calc->checkFPExceptions(sname.c_str());
+			mngr = calc->calculate(svargs[2]);		
+		}			
 	} else {
-		calc->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str(), NULL);
-		Manager *mngr = new Manager(calc, this, NULL);
+		mngr = createFunctionManagerFromSVArgs(itmp);
 	}
-//	for(unsigned int i = 0; i < vargs.size(); i++) {
-//		vargs[i]->unref();
-//	}
-//	vargs.clear();
+	clearSVArgs();
 	return mngr;
 }
+GCDFunction::GCDFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "gcd", 2, "Greatest Common Divisor") {
+	addArgName("Number 1");
+	addArgName("Number 2");	
+}
+void GCDFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], vargs[1], NULL);
+	if(vargs[1]->type() != VALUE_MANAGER && vargs[1]->type() != NULL_MANAGER) mngr->set(this, vargs[0], vargs[1], NULL);	
+	else mngr->set(gcd(vargs[0]->value(), vargs[1]->value()));
+}
+DifferentiateFunction::DifferentiateFunction(Calculator *calc_) : Function(calc_, "Experimental", "differentiate", 2, "Differentiate") {
+	addArgName("Expression");
+	addArgName("With respect to");	
+}
+Manager *DifferentiateFunction::calculate(const string &argv) {
+	calc->error(true, _("%s() is an experimental unfinished function!"), name().c_str(), NULL);
+	Manager *mngr = NULL;
+	int itmp = stringArgs(argv);
+	if(testArgCount(itmp)) {
+		mngr = calc->calculate(svargs[0]);
+		mngr->differentiate(svargs[1]);
+	} else {
+		mngr = createFunctionManagerFromSVArgs(itmp);
+	}
+	clearSVArgs();
+	return mngr;	
+}
+
 AbsFunction::AbsFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "abs", 1, "Absolute Value") {
 	addArgName("Number");
 }
@@ -464,32 +479,27 @@ BASEFunction::BASEFunction(Calculator *calc_) : Function(calc_, "General", "BASE
 	addArgName("Base");	
 }
 Manager *BASEFunction::calculate(const string &eq) {
-	int itmp;
-	if((itmp = stringArgs(eq)) >= minargs()) {
-		if(itmp > maxargs())
-			calc->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str(), NULL);			
+	int itmp = stringArgs(eq);
+	if(testArgCount(itmp)) {
 		Manager *mngr = calc->calculate(svargs[1]);	
 		int base = (int) mngr->value();
 		long double value = 0;
 		if(base < 2 || base > 36) {
 			calc->error(false, _("Base must be between 2 and 36 (was %s) for function %s()."), i2s(base).c_str(), name().c_str(), NULL);
-			mngr->unref();
+			Manager *mngr2 = new Manager(calc, base);
+			Manager *mngr3 = new Manager(calc, svargs[0]);			
+			mngr->set(this, mngr3, mngr2, NULL);
+			mngr2->unref();
+			mngr3->unref();
 		} else {
 			value = (long double) strtol(svargs[0].c_str(), NULL, base);
-			svargs.clear();
+			clearSVArgs();
 			mngr->set(value);
-			return mngr;
 		}
-	} else {
-		calc->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str(), NULL);
+		return mngr;
 	}
-	Manager *mngr = new Manager(calc, this, NULL);
-	for(int i = 0; i < itmp; i++) {
-		Manager *mngr2 = new Manager(calc, svargs[i]);
-		mngr->addFunctionArg(mngr2);
-		mngr2->unref();
-	}
-	svargs.clear();
+	Manager *mngr = createFunctionManagerFromSVArgs(itmp);
+	clearSVArgs();
 	return mngr;			
 }
 BINFunction::BINFunction(Calculator *calc_) : Function(calc_, "General", "BIN", 1, "Binary", "Returns a decimal integer from a binary number") {

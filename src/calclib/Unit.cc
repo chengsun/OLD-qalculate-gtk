@@ -473,8 +473,8 @@ Manager *AliasUnit_Composite::convertToFirstBase(Manager *value_, Manager *exp_)
 	return value_;
 }
 
-CompositeUnit::CompositeUnit(Calculator *calc_, string cat_, string name_, string title_) : Unit(calc_, cat_, name_, "", "", title_) {
-	units.clear();
+CompositeUnit::CompositeUnit(Calculator *calc_, string cat_, string name_, string title_, string base_expression_) : Unit(calc_, cat_, name_, "", "", title_) {
+	baseExpression(base_expression_);
 }
 CompositeUnit::~CompositeUnit(void) {
 	for(int i = 0; i < units.size(); i++)
@@ -598,5 +598,60 @@ Manager *CompositeUnit::generateManager() {
 }
 string CompositeUnit::internalName() {
 	return sname;
+}
+void CompositeUnit::baseExpression(string base_expression_) {
+	units.clear();
+	bool b_var = calc->variablesEnabled();
+	calc->setVariablesEnabled(false);
+	bool b_var_u = calc->unknownVariablesEnabled();
+	calc->setUnknownVariablesEnabled(false);	
+	bool b_func = calc->functionsEnabled();
+	calc->setFunctionsEnabled(false);	
+	bool b_unit = calc->unitsEnabled();
+	calc->setUnitsEnabled(true);		
+	calc->setFunctionsAndVariables(base_expression_);
+	int div_place = base_expression_.find_first_of(DIVISION_S);
+	bool div = false;
+	long double prefix = 1.0L;
+	long double exp = 1.0L;
+	int i = 0, i2 = 0, id;
+	Manager *mngr;
+	while(1) {
+		i = base_expression_.find(ID_WRAP_LEFT_STR, i2);
+		if(i == string::npos) {
+			break;
+		}
+		i2 = base_expression_.find(ID_WRAP_RIGHT_STR, i);		
+		if(i2 == string::npos) {
+			break;
+		}
+		id = s2i(base_expression_.substr(i + 1, i2 - i - 1));
+		if(!div && div_place != string::npos && i > div_place) {
+			div = true;
+		}		
+		mngr = calc->getId(id);
+		if(mngr) {
+			prefix = 1.0L;
+			exp = 1.0L;
+			if(mngr->type() == MULTIPLICATION_MANAGER && mngr->mngrs.size() == 2 && mngr->mngrs[0]->type() == VALUE_MANAGER && mngr->mngrs[1]->type() == UNIT_MANAGER) {
+				prefix = mngr->mngrs[0]->value();
+				mngr = mngr->mngrs[1];
+			} 
+			if(mngr->type() == UNIT_MANAGER) {
+				if(base_expression_.length() > i2 + 3 && is_in(base_expression_[i2 + 2], POWER_S, NULL) && is_in(base_expression_[i2 + 3], NUMBERS_S, NULL)) {
+					exp = (long double) s2i(base_expression_.substr(i2 + 3, 1));
+				}
+				if(div) {
+					exp = -exp;
+				}
+				add(mngr->o_unit, exp, prefix);
+			}
+			calc->delId(id);
+		}
+	}
+	calc->setVariablesEnabled(b_var);
+	calc->setUnknownVariablesEnabled(b_var_u);	
+	calc->setFunctionsEnabled(b_func);	
+	calc->setUnitsEnabled(b_unit);			
 }
 

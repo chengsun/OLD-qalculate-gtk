@@ -711,14 +711,14 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 			case PLUS_CH: {
 				switch(mngr->c_type) {
 					case 'v': {
-						if(fmodl(mngr->d_value, 1) == 0) {
+						if(mngr->d_value != -1 && fmodl(mngr->d_value, 1) == 0) {
 							long double d = mngr->d_value;
 							if(d < 0) d = -d;
 							Manager *mngr2 = new Manager(this);
 							for(long double i = 1; i < d; i++) {
 								add(mngr2, MULTIPLICATION_CH);
 							}
-							if(mngr2->d_value < 0) {
+							if(mngr->d_value < 0) {
 								mngr2->unref();
 								mngr2 = new Manager(calc, 1);
 								mngr2->add(this, DIVISION_CH);
@@ -869,7 +869,7 @@ int Manager::compare(Manager *mngr) {
 				}
 			} else if(mngr->type() != ADDITION_MANAGER) {
 				int i = mngrs[0]->compare(mngr);
-				if(i == 0) return -1;
+				if(i == 0) return mngrs[1]->negative();
 				return i;
 			}
 			return 1;
@@ -1250,10 +1250,10 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 			if(!(unitflags & UNIT_FORMAT_SCIENTIFIC) && i > 0 && mngrs[i]->c_type == POWER_CH && mngrs[i]->mngrs[1]->negative()) {
 				Manager *mngr = new Manager(mngrs[i]);
 				mngr->add(-1, POWER_CH);
-				if(!b) str += DIVISION_CH;
-				if(!b && i < mngrs.size() - 1) str += LEFT_BRACKET_STR;
+				if(!b) str += DIVISION_STR;
+				if(!b && (i < mngrs.size() - 1 || mngr->type() == ADDITION_MANAGER)) str += LEFT_BRACKET_STR;
 				str += mngr->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, false, &plural_, d_exp);
-				if(b && i == mngrs.size() - 1) str += RIGHT_BRACKET_STR;
+				if((b || mngr->type() == ADDITION_MANAGER) && i == mngrs.size() - 1) str += RIGHT_BRACKET_STR;
 				b = true;
 //			} else if(mngrs[i]->c_type == PLUS_CH || ((mngrs[i]->c_type == POWER_CH && i == 0) || (i > 0 && mngrs[i - 1]->c_type == POWER_CH))) {
 			} else if(mngrs[i]->c_type == PLUS_CH) {
@@ -1700,6 +1700,61 @@ char Manager::type() const {
 	return c_type;
 }
 
+void Manager::differentiate(string x_var) {
+	switch(c_type) {
+		case ADDITION_MANAGER: {
+			for(int i = 0; i < mngrs.size(); i++) {
+				mngrs[i]->differentiate(x_var);
+			}
+			plusclean();
+			break;
+		}
+		case VALUE_MANAGER: {
+			clear();
+			break;
+		}
+		case FUNCTION_MANAGER: {
+			Manager *mngr = new Manager(calc, calc->getFunction("differentiate"), this);
+			moveto(mngr);
+			break;
+		}
+		case STRING_MANAGER: {
+			if(s_var == x_var) set(1.0L);
+			else clear();
+			break;
+		}
+		case POWER_MANAGER: {
+			Manager *mngr = new Manager(mngrs[1]);
+			Manager *mngr2 = new Manager(mngrs[0]);
+			mngrs[1]->add(-1, PLUS_CH);
+			powerclean();
+			add(mngr, MULTIPLICATION_CH);
+			mngr->unref();
+			mngr2->differentiate(x_var);
+			add(mngr2, MULTIPLICATION_CH);
+			mngr2->unref();
+			multiclean();
+			break;
+		}
+		case MULTIPLICATION_MANAGER: {
+			Manager *mngr = new Manager(mngrs[0]);
+			Manager *mngr2 = new Manager(mngrs[1]);
+			mngr->differentiate(x_var);
+			printf("1. %s => %s\n", mngrs[0]->print().c_str(), mngr->print().c_str());
+			mngr2->differentiate(x_var);			
+			printf("2. %s => %s\n", mngrs[1]->print().c_str(), mngr2->print().c_str());			
+			mngr->add(mngrs[1], MULTIPLICATION_CH);
+			printf("3. %s\n", mngr->print().c_str());						
+			mngr2->add(mngrs[0], MULTIPLICATION_CH);
+			printf("4. %s\n", mngr2->print().c_str());			
+			moveto(mngr);
+			add(mngr2, PLUS_CH);
+			printf("5. %s\n", mngr->print().c_str());			
+			mngr2->unref();			
+			break;
+		}		
+	}
+}
 
 /*
 

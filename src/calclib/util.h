@@ -71,6 +71,7 @@ string& remove_blank_ends(string &str);
 bool is_in(char c, ...);
 bool is_not_in(char c, ...);
 int sign_place(string *str, unsigned int start = 0);
+long double gcd(long double i1, long double i2);
 //string &remove_trailing_zeros(string &str, int decimals_to_keep = 0, bool expand = false, bool decrease = false);
 
 #endif

@@ -90,6 +90,8 @@ class Manager {
 		void ref(void);
 		void unref(void);
 		char type(void) const;
+		
+		void differentiate(string x_var);
 
 };
 
