@@ -127,8 +127,10 @@ void on_preferences_checkbutton_fetch_exchange_rates_toggled(GtkToggleButton *w,
 void on_preferences_checkbutton_save_defs_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_save_mode_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_load_defs_toggled(GtkToggleButton *w, gpointer user_data);
-void on_preferences_checkbutton_custom_font_toggled(GtkToggleButton *w, gpointer user_data);
-void on_preferences_button_font_toggled(GtkButton *w, gpointer user_data);
+void on_preferences_checkbutton_custom_result_font_toggled(GtkToggleButton *w, gpointer user_data);
+void on_preferences_checkbutton_custom_expression_font_toggled(GtkToggleButton *w, gpointer user_data);
+void on_preferences_button_result_font_toggled(GtkButton *w, gpointer user_data);
+void on_preferences_button_expression_font_toggled(GtkButton *w, gpointer user_data);
 void on_units_togglebutton_from_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 void on_units_button_convert_clicked(GtkButton *button, gpointer user_data);
 void on_units_togglebutton_to_toggled(GtkToggleButton *togglebutton, gpointer user_data);

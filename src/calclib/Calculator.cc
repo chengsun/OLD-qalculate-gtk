@@ -906,6 +906,12 @@ void Calculator::abort() {
 	clearBuffers();
 	b_busy = false;
 }
+void Calculator::abort_this() {
+	restoreState();
+	clearBuffers();
+	b_busy = false;
+	pthread_exit(PTHREAD_CANCELED);
+}
 bool Calculator::busy() {
 	return b_busy;
 }
@@ -2448,6 +2454,9 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 										Number integ(stmp);
 										iarg->setMax(&integ);
 									}
+								} else if(farg && !xmlStrcmp(child2->name, (const xmlChar*) "complex_allowed")) {
+									XML_GET_FALSE_FROM_TEXT(child2, b);
+									farg->setComplexAllowed(b);
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "condition")) {
 									XML_DO_FROM_TEXT(child2, arg->setCustomCondition);	
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "matrix_allowed")) {
@@ -3398,6 +3407,9 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 										} else {
 											xmlNewProp(newnode2, (xmlChar*) "include_equals", (xmlChar*) "false");
 										}
+									}
+									if(!farg->complexAllowed()) {
+										xmlNewTextChild(newnode, NULL, (xmlChar*) "complex_allowed", (xmlChar*) "false");
 									}
 									break;						
 								}

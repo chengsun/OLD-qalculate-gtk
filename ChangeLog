@@ -1,5 +1,15 @@
+2004-03-16 Niklas Knutsson  <nq@altern.org>
+
+	* huh! do not sort functions.
+	* "European 30/365" -> "European 30/360"
+	* Fix date calculations
+	* Add "allow_complex" property for number arguments
+	* Fix abs (for complex numbers)
+
 2004-03-15 Niklas Knutsson  <nq@altern.org>
 
+	* Handle CLN errors better
+	* Font selection for expression entry
 	* Replace Fraction and Integer with new Number class
 
 2004-03-12 Niklas Knutsson  <nq@altern.org>

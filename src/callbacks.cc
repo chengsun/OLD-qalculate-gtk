@@ -77,8 +77,8 @@ bool save_mode_on_exit;
 bool save_defs_on_exit;
 bool saved_in_rpn_mode;
 int fractional_mode, saved_fractional_mode;
-bool use_custom_font;
-string custom_font;
+bool use_custom_result_font, use_custom_expression_font;
+string custom_result_font, custom_expression_font;
 bool saved_always_exact;
 bool hyp_is_on, saved_hyp_is_on;
 bool use_min_deci, use_max_deci;
@@ -3794,12 +3794,18 @@ void on_abort_calculation(GtkDialog *w, gint arg1, gpointer user_data) {
 */
 void execute_expression() {
 	expression_has_changed = false;
-	if(expression_history.size() >= 10) {
+	string str = gtk_entry_get_text(GTK_ENTRY(expression));
+	for(unsigned int i = 0; i < expression_history.size(); i++) {
+		if(expression_history[i] == str) {
+			expression_history.erase(expression_history.begin() + i);
+			break;
+		}
+	}
+	if(expression_history.size() >= 15) {
 		expression_history.pop_back();
 	}
-	expression_history.insert(expression_history.begin(), gtk_entry_get_text(GTK_ENTRY(expression)));
+	expression_history.insert(expression_history.begin(), str);
 	expression_history_index = 0;
-	string str = gtk_entry_get_text(GTK_ENTRY(expression));
 	//unreference previous result (deletes the object if it is not used anywhere else
 	mngr->unref();
 	b_busy = true;
@@ -5623,8 +5629,10 @@ void load_preferences() {
 	indicate_infinite_series = false;
 	hyp_is_on = false;
 	fractional_mode = FRACTIONAL_MODE_DECIMAL;
-	use_custom_font = false;
-	custom_font = "";
+	use_custom_result_font = false;
+	use_custom_expression_font = false;
+	custom_result_font = "";
+	custom_expression_font = "";
 	show_buttons = true;
 	use_short_units = true;
 	use_unicode_signs = true;
@@ -5706,10 +5714,14 @@ void load_preferences() {
 					CALCULATOR->setDenominatorPrefixEnabled(v);		
 				else if(svar == "use_unicode_signs")
 					use_unicode_signs = v;	
-				else if(svar == "use_custom_font")
-					use_custom_font = v;										
-				else if(svar == "custom_font")
-					custom_font = svalue;
+				else if(svar == "use_custom_result_font")
+					use_custom_result_font = v;
+				else if(svar == "use_custom_expression_font")
+					use_custom_expression_font = v;											
+				else if(svar == "custom_result_font")
+					custom_result_font = svalue;
+				else if(svar == "custom_expression_font")
+					custom_expression_font = svalue;	
 				else if(svar == "indicate_infinite_series")
 					indicate_infinite_series = v;											
 				else if(svar == "always_exact")
@@ -5858,8 +5870,10 @@ void save_preferences(bool mode)
 	fprintf(file, "denominator_prefix_enabled=%i\n", CALCULATOR->denominatorPrefixEnabled());
 	fprintf(file, "multiple_roots_enabled=%i\n", CALCULATOR->multipleRootsEnabled());
 	fprintf(file, "use_unicode_signs=%i\n", use_unicode_signs);	
-	fprintf(file, "use_custom_font=%i\n", use_custom_font);	
-	fprintf(file, "custom_font=%s\n", custom_font.c_str());		
+	fprintf(file, "use_custom_result_font=%i\n", use_custom_result_font);	
+	fprintf(file, "use_custom_expression_font=%i\n", use_custom_expression_font);	
+	fprintf(file, "custom_result_font=%s\n", custom_result_font.c_str());	
+	fprintf(file, "custom_expression_font=%s\n", custom_expression_font.c_str());		
 	for(unsigned int i = 0; i < expression_history.size(); i++) {
 		fprintf(file, "expression_history=%s\n", expression_history[i].c_str()); 
 	}	
@@ -6109,11 +6123,11 @@ void on_preferences_checkbutton_load_defs_toggled(GtkToggleButton *w, gpointer u
 void on_preferences_checkbutton_fetch_exchange_rates_toggled(GtkToggleButton *w, gpointer user_data) {
 	fetch_exchange_rates_at_startup = gtk_toggle_button_get_active(w);
 }
-void on_preferences_checkbutton_custom_font_toggled(GtkToggleButton *w, gpointer user_data) {
-	use_custom_font = gtk_toggle_button_get_active(w);
-	gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_font"), use_custom_font);
-	if(use_custom_font) {
-		PangoFontDescription *font = pango_font_description_from_string(custom_font.c_str());
+void on_preferences_checkbutton_custom_result_font_toggled(GtkToggleButton *w, gpointer user_data) {
+	use_custom_result_font = gtk_toggle_button_get_active(w);
+	gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_result_font"), use_custom_result_font);
+	if(use_custom_result_font) {
+		PangoFontDescription *font = pango_font_description_from_string(custom_result_font.c_str());
 		gtk_widget_modify_font(resultview, font);
 		pango_font_description_free(font);
 		viewresult(NULL);		
@@ -6125,14 +6139,43 @@ void on_preferences_checkbutton_custom_font_toggled(GtkToggleButton *w, gpointer
 		viewresult(NULL);			
 	}
 }
-void on_preferences_button_font_clicked(GtkButton *w, gpointer user_data) {
+void on_preferences_checkbutton_custom_expression_font_toggled(GtkToggleButton *w, gpointer user_data) {
+	use_custom_expression_font = gtk_toggle_button_get_active(w);
+	gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_expression_font"), use_custom_expression_font);
+	if(use_custom_expression_font) {
+		PangoFontDescription *font = pango_font_description_from_string(custom_expression_font.c_str());
+		gtk_widget_modify_font(expression, font);
+		pango_font_description_free(font);
+		viewresult(NULL);		
+	} else {
+		PangoFontDescription *font = pango_font_description_from_string("");
+//		pango_font_description_set_weight(font, PANGO_WEIGHT_BOLD);		
+		gtk_widget_modify_font(expression, font);
+		pango_font_description_free(font);
+		viewresult(NULL);			
+	}
+}
+void on_preferences_button_result_font_clicked(GtkButton *w, gpointer user_data) {
 	GtkWidget *d = gtk_font_selection_dialog_new(_("Select result font"));
-	gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(d), custom_font.c_str());
+	gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(d), custom_result_font.c_str());
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
-		custom_font = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(d));
-		gtk_button_set_label(w, custom_font.c_str());
-		PangoFontDescription *font = pango_font_description_from_string(custom_font.c_str());
+		custom_result_font = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(d));
+		gtk_button_set_label(w, custom_result_font.c_str());
+		PangoFontDescription *font = pango_font_description_from_string(custom_result_font.c_str());
 		gtk_widget_modify_font(resultview, font);
+		pango_font_description_free(font);
+		viewresult(NULL);
+	}
+	gtk_widget_destroy(d);
+}
+void on_preferences_button_expression_font_clicked(GtkButton *w, gpointer user_data) {
+	GtkWidget *d = gtk_font_selection_dialog_new(_("Select expression font"));
+	gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(d), custom_expression_font.c_str());
+	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
+		custom_expression_font = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(d));
+		gtk_button_set_label(w, custom_expression_font.c_str());
+		PangoFontDescription *font = pango_font_description_from_string(custom_expression_font.c_str());
+		gtk_widget_modify_font(expression, font);
 		pango_font_description_free(font);
 		viewresult(NULL);
 	}

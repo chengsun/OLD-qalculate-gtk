@@ -18,9 +18,9 @@
 using namespace cln;
 
 void cln::cl_abort() {
-	CALCULATOR->error(true, "CLN Error (probably too large number)", NULL);
+	CALCULATOR->error(true, "CLN Error: see terminal output (probably too large number)", NULL);
 	if(CALCULATOR->busy()) {
-		CALCULATOR->abort();
+		CALCULATOR->abort_this();
 	} else {
 		exit(0);
 	}
@@ -511,7 +511,7 @@ void Number::setNegative(bool is_negative) {
 	}
 }
 bool Number::abs() {
-	cln::abs(value);
+	value = cln::abs(value);
 	return true;
 }
 bool Number::round(const Number *o) {
@@ -1138,6 +1138,24 @@ void Number::getPrintObjects(bool &minus, string &whole_, string &numerator_, st
 				if(exp_pre.isLessThan(1)) {
 					exp_pre.setCln(-cln::log(cln::recip(exp_pre.clnNumber()), 10));
 				} else {
+/*					cl_print_flags flags;
+					ostringstream stream;
+					print_real(stream, flags, cln::realpart(exp_pre.clnNumber()));
+					string cl_str = stream.str();
+					unsigned int i = cl_str.find("/");
+					if(i != string::npos) {
+						exp = cl_str.length() - (cl_str.length() - i) * 2 + 1;
+					} else {
+						i = cl_str.find_first_not_of("0123456789.");
+						if(i != string::npos) {
+							unsigned int i2 = cl_str.find(".");
+							if(i2 != string::npos) {
+								
+							}
+						} else {
+							exp = cl_str.length() - 1;
+						}
+					}*/
 					exp_pre.setCln(cln::log(exp_pre.clnNumber(), 10));
 				}
 				exp_pre.floor();
@@ -1313,11 +1331,6 @@ void Number::getPrintObjects(bool &minus, string &whole_, string &numerator_, st
 	} else if(cln::plusp(exp)) {
 		den_spec *= expt_pos(cl_I(10), exp);
 	}
-/*	Integer divisor;
-	if(whole.gcd(&den_spec, &divisor)) {
-		whole.divide(&divisor);
-		den_spec.divide(&divisor);
-	}*/
 	if(plural) {
 		*plural = whole > den_spec;
 	}
@@ -1406,7 +1419,7 @@ void Number::getPrintObjects(bool &minus, string &whole_, string &numerator_, st
 		if(!cln::zerop(part)) {
 			numerator_ = printCL_I(part, base, false);
 			denominator_ = printCL_I(den_spec, base, false);
-		}		
+		}	
 	}
 	if(whole_.empty() && numerator_.empty() && denominator_.empty() && exponent_.empty() && prefix_.empty()) {
 		whole_ = "0";

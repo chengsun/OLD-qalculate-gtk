@@ -937,6 +937,7 @@ NumberArgument::NumberArgument(string name_, ArgumentMinMaxPreDefinition minmax,
 	fmax = NULL;
 	b_incl_min = true;
 	b_incl_max = true;
+	b_complex = true;
 	switch(minmax) {
 		case ARGUMENT_MIN_MAX_POSITIVE: {
 			fmin = new Number();
@@ -1017,8 +1018,14 @@ bool NumberArgument::includeEqualsMax() const {
 const Number *NumberArgument::max() const {
 	return fmax;
 }
+bool NumberArgument::complexAllowed() const {
+	return b_complex;
+}
+void NumberArgument::setComplexAllowed(bool allow_complex) {
+	b_complex = allow_complex;
+}
 bool NumberArgument::subtest(const Manager *value) const {
-	if(!value->isNumber()) {
+	if(!value->isNumber() || (!b_complex && value->number()->isComplex())) {
 		return false;
 	}
 	if(fmin) {
@@ -1046,6 +1053,7 @@ void NumberArgument::set(const Argument *arg) {
 		const NumberArgument *farg = (const NumberArgument*) arg;
 		b_incl_min = farg->includeEqualsMin();
 		b_incl_max = farg->includeEqualsMax();
+		b_complex = farg->complexAllowed();
 		if(fmin) {
 			delete fmin;
 			fmin = NULL;
@@ -1067,7 +1075,12 @@ string NumberArgument::print() const {
 	return _("number");
 }
 string NumberArgument::subprintlong() const {
-	string str = _("a number");
+	string str;
+	if(b_complex) {
+		str += _("a number");
+	} else {
+		str += _("a real number");
+	}
 	if(fmin) {
 		str += " ";
 		if(b_incl_min) {

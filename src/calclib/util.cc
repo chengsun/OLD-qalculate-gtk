@@ -218,15 +218,15 @@ int daysBetweenDates(int year1, int month1, int day1, int year2, int month2, int
 				}
 			}
 			if(years == 0) return days;
-			if(basis == 1) {
+			//if(basis == 1) {
 				for(year1 += 1; year1 < year2; year1++) {
 					if(isLeapYear(year1)) days += 366;
 					else days += 365;
 				} 
 				return days;
-			}
-			if(basis == 2) return (years - 1) * 360 + days;		
-			if(basis == 3) return (years - 1) * 365 + days;
+			//}
+			//if(basis == 2) return (years - 1) * 360 + days;		
+			//if(basis == 3) return (years - 1) * 365 + days;
 		} 
 		case 4: {
 			if(date_func) {
@@ -492,8 +492,8 @@ string &lli2s(long int &value, string &str)  {
 int find_ending_bracket(const string &str, int start, int *missing) {
 	int i_l = 1;
 	while(true) {
-		unsigned start = str.find_first_of(LEFT_PARENTHESIS RIGHT_PARENTHESIS, start);
-		if(start == string::npos) {
+		start = str.find_first_of(LEFT_PARENTHESIS RIGHT_PARENTHESIS, start);
+		if(start == (int) string::npos) {
 			if(missing) *missing = i_l;
 			return string::npos;
 		}

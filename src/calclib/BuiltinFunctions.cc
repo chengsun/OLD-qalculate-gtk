@@ -23,6 +23,9 @@
 #define FR_FUNCTION(FUNC)	mngr->set(vargs[0]); if(!mngr->number()->FUNC()) {mngr->set(this, vargs[0], NULL);} else {mngr->setPrecise(!mngr->number()->isApproximate());}
 #define FR_FUNCTION_2(FUNC)	mngr->set(vargs[0]); if(!mngr->number()->FUNC(vargs[1]->number())) {mngr->set(this, vargs[0], vargs[1], NULL);} else {mngr->setPrecise(!mngr->number()->isApproximate());}
 
+#define NON_COMPLEX_NUMBER_ARGUMENT(i)				NumberArgument *arg_non_complex##i = new NumberArgument(); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
+#define NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(i)			NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
+#define NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(i)		NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
 
 
 
@@ -387,7 +390,6 @@ void CustomSumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		}
 		i = sarg.find("\\x", i);
 	}	
-
 	gsub("\\x", "\"\\x\"", sarg);	
 	gsub("\\y", "\"\\y\"", sarg);	
 	gsub("\\z", "\"\\z\"", sarg);		
@@ -787,7 +789,7 @@ void InverseFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 IFFunction::IFFunction() : Function("Logical", "if", 3, "If...Then...Else") {
-	setArgumentDefinition(1, new NumberArgument());
+	NON_COMPLEX_NUMBER_ARGUMENT(1)
 	setArgumentDefinition(2, new TextArgument());
 	setArgumentDefinition(3, new TextArgument());
 }
@@ -806,8 +808,8 @@ void IFFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}	
 }
 GCDFunction::GCDFunction() : Function("Arithmetics", "gcd", 2, "Greatest Common Divisor") {
-	setArgumentDefinition(1, new NumberArgument());
-	setArgumentDefinition(2, new NumberArgument());
+	NON_COMPLEX_NUMBER_ARGUMENT(1)
+	NON_COMPLEX_NUMBER_ARGUMENT(2)
 }
 void GCDFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -896,11 +898,13 @@ AbsFunction::AbsFunction() : Function("Arithmetics", "abs", 1, "Absolute Value")
 }
 void AbsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
-	mngr->number()->setNegative(false);
+	if(!mngr->number()->abs()) {
+		mngr->set(this, vargs[0], NULL);	
+	}
 	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 CeilFunction::CeilFunction() : Function("Arithmetics", "ceil", 1, "Round upwards") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
 void CeilFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -908,7 +912,7 @@ void CeilFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 FloorFunction::FloorFunction() : Function("Arithmetics", "floor", 1, "Round downwards") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
 void FloorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -916,7 +920,7 @@ void FloorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 TruncFunction::TruncFunction() : Function("Arithmetics", "trunc", 1, "Round towards zero") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
 void TruncFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -924,7 +928,7 @@ void TruncFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 RoundFunction::RoundFunction() : Function("Arithmetics", "round", 1, "Round") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
 void RoundFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -932,7 +936,7 @@ void RoundFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 FracFunction::FracFunction() : Function("Arithmetics", "frac", 1, "Extract numberal part") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
 void FracFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -940,7 +944,7 @@ void FracFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 IntFunction::IntFunction() : Function("Arithmetics", "int", 1, "Extract integer part") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
 void IntFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -948,8 +952,8 @@ void IntFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 RemFunction::RemFunction() : Function("Arithmetics", "rem", 2, "Reminder (rem)") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
-	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false));
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(2)
 }
 void RemFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);	
@@ -957,8 +961,8 @@ void RemFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 ModFunction::ModFunction() : Function("Arithmetics", "mod", 2, "Reminder (mod)") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
-	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false));
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(2)
 }
 void ModFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);	
@@ -1119,7 +1123,7 @@ void LogFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 LognFunction::LognFunction() : Function("Exponents and Logarithms", "log", 2, "Base-N Logarithm") {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
-	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_POSITIVE, false, false));
+	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
 }
 void LognFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->isNumber() && vargs[1]->isNumber()) {
@@ -1145,7 +1149,7 @@ void Log10Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}		
 }
 Log2Function::Log2Function() : Function("Exponents and Logarithms", "log2", 1, "Base-2 Logarithm") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
 }
 void Log2Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);

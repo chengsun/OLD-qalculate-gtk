@@ -1552,7 +1552,7 @@ int Manager::sortCompare(const Manager *mngr, int sortflags) const {
 }
 
 void Manager::sort(int sortflags) {
-	if(c_type == POWER_MANAGER || c_type == COMPARISON_MANAGER || mngrs.size() < 2) return;
+	if(c_type == POWER_MANAGER || c_type == COMPARISON_MANAGER || c_type == FUNCTION_MANAGER || mngrs.size() < 2) return;
 	vector<Manager*> sorted;
 	bool b;
 	for(unsigned int i = 0; i < mngrs.size(); i++) {

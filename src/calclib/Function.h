@@ -160,6 +160,7 @@ class NumberArgument : public Argument {
   
 	Number *fmin, *fmax;
 	bool b_incl_min, b_incl_max;
+	bool b_complex;
 
   protected:
   
@@ -185,6 +186,9 @@ class NumberArgument : public Argument {
 	void setIncludeEqualsMax(bool include_equals);
 	bool includeEqualsMax() const;	
 	const Number *max() const;	
+	
+	bool complexAllowed() const;
+	void setComplexAllowed(bool allow_complex);
 
 	virtual int type() const;
 

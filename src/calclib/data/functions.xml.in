@@ -364,7 +364,7 @@
       </argument>      
       <_description>Returns the number of days between two dates.
 
-Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
+Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
     </builtin_function>
     <builtin_function name="yearfrac">
       <_title>Years between two dates</_title>
@@ -382,7 +382,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>      
       <_description>Returns the number of years (fractional) between two dates.
 
-Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
+Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
     </builtin_function>
   </category>
   <category>
@@ -1703,7 +1703,7 @@ Type defines the due date. 1 for payment at the beginning of a period and 0 (def
       <_title>Interest rate for a fully invested security</_title>
       <_description>Returns the interest rate for a fully invested security. 
     
-Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
+Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
       <expression>(\a-\z)/\z/yearfrac(\x,\y,\B{0},1)</expression>
       <argument type="date" index="1">
         <_title>Settlement date</_title>
@@ -1750,7 +1750,7 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
       <_title>Amount received at maturity for a security bond</_title>
       <_description>Returns the amount received at the maturity date for an invested security. 
 
-Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365. The settlement date must be before maturity date.</_description>
+Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360. The settlement date must be before maturity date.</_description>
       <expression>\z/(1-\a*yearfrac(\x,\y,\B{0},1))</expression>
       <argument type="date" index="1">
         <_title>Settlement date</_title>
@@ -1773,7 +1773,7 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
       <_title>Discount rate for a security</_title>
       <_description>Returns the discount rate for a security.
     
-Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
+Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
       <expression>(\a-\z)/\a/yearfrac(\x,\y,\B{0},1))</expression>
       <argument type="date" index="1">
         <_title>Settlement date</_title>
@@ -1796,7 +1796,7 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
       <_title>Accrued interest of security paying at maturity</_title>
       <_description>Returns the accrued interest for a security which pays interest at maturity date.
     
-Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
+Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
       <expression>\A{1000}*\z*yearfrac(\x,\y,\B{0},1)</expression>
       <argument type="date" index="1">
         <_title>Issue date</_title>
@@ -1819,7 +1819,7 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
       <_title>Accrued interest of security with periodic interest payments</_title>
       <_description>Returns accrued interest for a security which pays periodic interest.
     
-Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
+Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
       <expression>\b*\a/\c*\c*yearfrac(\x,\z,\D{0},1)+\y*0</expression>
       <argument type="date" index="1">
         <_title>Issue date</_title>
@@ -1849,7 +1849,7 @@ Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis is t
       <_title>Number of coupons to be paid</_title>
       <_description>Returns the number of coupons to be paid between the settlement and the maturity.
     
-Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
+Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
       <expression>trunc(yearfrac(\x,\y,\A{0},1)*\z)</expression>
       <argument type="date" index="1">
         <_title>Settlement date</_title>
@@ -1870,7 +1870,7 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
       <_title>Price per $100 face value of a security bond</_title>
       <_description>Calculates and returns the price per $100 face value of a security bond. The security does not pay interest at maturity.
     
-Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
+Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
       <expression>\a-\z*\a*yearfrac(\x,\y,\B{0},1)</expression>
       <argument type="date" index="1">
         <_title>Settlement date</_title>
@@ -1893,7 +1893,7 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
       <_title>Price per $100 face value of a security</_title>
       <_description>Calculates and returns the price per $100 face value of a security. The security pays interest at maturity.
     
-Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
+Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
       <expression>(100+yearfrac(\z,\y,\C{0},1)*\a*100)/(1+yearfrac(\x,\y,\C,1)*\b)-yearfrac(\z,\x,\C,1)*\a*100</expression>
       <argument type="date" index="1">
         <_title>Settlement date</_title>

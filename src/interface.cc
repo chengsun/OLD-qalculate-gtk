@@ -74,8 +74,8 @@ GtkAccelGroup *accel_group;
 extern int display_mode, number_base, fractional_mode;
 extern bool show_buttons;
 extern bool use_short_units, save_mode_on_exit, save_defs_on_exit, load_global_defs, use_unicode_signs, hyp_is_on, fraction_is_on, use_prefixes;
-extern bool use_custom_font, indicate_infinite_series;
-extern string custom_font;
+extern bool use_custom_result_font, use_custom_expression_font, indicate_infinite_series;
+extern string custom_result_font, custom_expression_font;
 
 extern vector<vector<GtkWidget*> > element_entries;
 extern vector<string> initial_history;
@@ -235,17 +235,26 @@ create_main_window (void)
 //		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_inexact")), SIGN_APPROXIMATELY_EQUAL);			
 	}
 
-	if(use_custom_font) {
-		PangoFontDescription *font = pango_font_description_from_string(custom_font.c_str());
+	if(use_custom_result_font) {
+		PangoFontDescription *font = pango_font_description_from_string(custom_result_font.c_str());
 		gtk_widget_modify_font(resultview, font);
 		pango_font_description_free(font);
 	} else {
-		PangoFontDescription *font = pango_font_description_copy(resultview->style->font_desc);
+/*		PangoFontDescription *font = pango_font_description_copy(resultview->style->font_desc);
 //		pango_font_description_set_weight(font, PANGO_WEIGHT_BOLD);
 		gtk_widget_modify_font(resultview, font);
-		pango_font_description_free(font);		
-		if(custom_font.empty()) {
-			custom_font = pango_font_description_to_string(resultview->style->font_desc);
+		pango_font_description_free(font);	*/	
+		if(custom_result_font.empty()) {
+			custom_result_font = pango_font_description_to_string(resultview->style->font_desc);
+		}		
+	}
+	if(use_custom_expression_font) {
+		PangoFontDescription *font = pango_font_description_from_string(custom_expression_font.c_str());
+		gtk_widget_modify_font(expression, font);
+		pango_font_description_free(font);
+	} else {
+		if(custom_expression_font.empty()) {
+			custom_expression_font = pango_font_description_to_string(expression->style->font_desc);
 		}		
 	}
 	
@@ -518,9 +527,12 @@ get_preferences_dialog (void)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_save_mode")), save_mode_on_exit);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_unicode_signs")), use_unicode_signs);	
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_save_defs")), save_defs_on_exit);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_custom_font")), use_custom_font);		
-		gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_font"), use_custom_font);	
-		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_button_font")), custom_font.c_str());
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_custom_result_font")), use_custom_result_font);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_custom_expression_font")), use_custom_expression_font);		
+		gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_result_font"), use_custom_result_font);	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_button_result_font")), custom_result_font.c_str());
+		gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_expression_font"), use_custom_expression_font);	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_button_expression_font")), custom_expression_font.c_str());
 		
 		glade_xml_signal_autoconnect(preferences_glade);
 		
