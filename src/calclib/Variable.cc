@@ -36,7 +36,7 @@ Variable::Variable(string cat_, string name_, long double value_, string title_,
 Variable::~Variable(void) {
 	if(mngr) mngr->unref();
 }
-string Variable::title(bool return_name_if_no_title) {
+string Variable::title(bool return_name_if_no_title) const {
 	if(return_name_if_no_title && stitle.empty()) {
 		return name();
 	}
@@ -56,6 +56,9 @@ void Variable::set(Manager *mngr_) {
 Manager *Variable::get(void) {
 	return mngr;
 }
+const Manager *Variable::get(void) const {
+	return mngr;
+}
 void Variable::setName(string name_, bool force) {
 	remove_blank_ends(name_);
 	if(name_ != sname) {
@@ -64,7 +67,7 @@ void Variable::setName(string name_, bool force) {
 	}
 	CALCULATOR->variableNameChanged(this);
 }
-string Variable::name(void) {
+string Variable::name(void) const {
 	return sname;
 }
 void Variable::setValue(long double value_) {
@@ -73,20 +76,20 @@ void Variable::setValue(long double value_) {
 	mngr_->unref();
 	b_changed = true;
 }
-string Variable::category(void) {
+string Variable::category(void) const {
 	return scat;
 }
 void Variable::setCategory(string cat_) {
 	remove_blank_ends(cat_);
 	scat = cat_;
 }
-bool Variable::isUserVariable() {
+bool Variable::isUserVariable() const {
 	return b_user;
 }
-bool Variable::isBuiltinVariable() {
+bool Variable::isBuiltinVariable() const {
 	return b_builtin;
 }
-bool Variable::hasChanged() {
+bool Variable::hasChanged() const {
 	return b_changed;
 }
 bool Variable::setUserVariable(bool is_user_var) {

@@ -170,6 +170,9 @@ const Integer *Fraction::denominator() const {
 long double Fraction::value() const {
 	return strtold(print(NUMBER_FORMAT_DECIMALS, DISPLAY_FORMAT_DECIMAL_ONLY, CALCULATOR->getPrecision() + 5).c_str(), NULL);			
 }
+bool Fraction::isPositive() const {
+	return !isZero() && !isNegative();
+}
 bool Fraction::isNegative() const {
 	return num.isNegative();
 }
@@ -193,7 +196,9 @@ void Fraction::setPrecise(bool is_precise) {
 }
 Integer *Fraction::getInteger() const {
 	Integer *integer = new Integer(&num);
-	integer->divide(&den);		
+	if(!den.isOne()) {
+		integer->divide(&den);		
+	}
 	return integer;
 }
 bool Fraction::isZero() const {
@@ -365,7 +370,7 @@ bool Fraction::exp10(const Fraction *fr) {
 	}
 	return true;
 }
-bool Fraction::add(MathOperation op, const Fraction *fr) {
+int Fraction::add(MathOperation op, const Fraction *fr, int solution) {
 	if(!fr) return false;
 	switch(op) {
 		case SUBTRACT: {
@@ -381,13 +386,13 @@ bool Fraction::add(MathOperation op, const Fraction *fr) {
 			return divide(fr);
 		}		
 		case RAISE: {
-			return pow(fr);
+			return pow(fr, solution);
 		}
 		case EXP10: {
 			return exp10(fr);
 		}
 	}
-	return true;	
+	return 1;	
 }
 void Fraction::clean() {
 	if(den.isZero()) {
@@ -479,16 +484,16 @@ bool Fraction::rem() {
 	delete reminder;
 	return true;
 }
-bool Fraction::pow(const Fraction *fr) {
+int Fraction::pow(const Fraction *fr, int solution) {
 	if(isZero() && fr->isNegative()) {
 		return false;
 	}
 	if(!fr->isPrecise()) b_exact = false;
 	if(fr->isZero()) {
 		set(1);
-		return true;
+		return 1;
 	} 
-	if(fr->isOne()) return true;
+	if(fr->isOne()) return 1;
 	if(fr->denominator()->isOne()) {
 //	root(fr->denominator());
 		Integer exp(fr->numerator());
@@ -504,8 +509,12 @@ bool Fraction::pow(const Fraction *fr) {
 	} else {
 		setFloat(powl(value(), fr->value()));
 		b_exact = false;
+		if(fr->denominator()->isEven()) {
+			if(solution == 2) setNegative(true);
+			return 2;
+		}
 	}
-	return true;	
+	return 1;	
 }
 bool Fraction::root(const Integer *nth) {
 	if(nth->isOne()) return true;

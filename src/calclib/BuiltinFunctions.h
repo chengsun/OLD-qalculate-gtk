@@ -14,6 +14,48 @@
 
 #include "Function.h"
 
+class MatrixFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	MatrixFunction();
+};
+class RowsFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	RowsFunction();
+};
+class ColumnsFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	ColumnsFunction();
+};
+class ElementFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	ElementFunction();
+};
+class TransposeFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	TransposeFunction();
+};
+class IdentityFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	IdentityFunction();
+};
+class DeterminantFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	DeterminantFunction();
+};
 class IFFunction : public Function {
   protected:
 	Manager *calculate(const string &argv);  

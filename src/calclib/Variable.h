@@ -40,6 +40,7 @@ class Variable {
 	* Returns the value of the variable.
 	*/	
 	Manager *get(void);
+	const Manager *get(void) const;	
 	/**
 	* Sets the name of the variable.
 	*/	
@@ -47,11 +48,11 @@ class Variable {
 	/**
 	* Returns the name of the variable.
 	*/		
-	string name(void);
+	string name(void) const;
 	/**
 	* Returns the title/descriptive name of the variable.
 	*/		
-	string title(bool return_name_if_no_title = true);
+	string title(bool return_name_if_no_title = true) const;
 	/**
 	* Sets the title/descriptive name of the variable.
 	*/			
@@ -65,7 +66,7 @@ class Variable {
 	/**
 	* Returns the category of the variable.
 	*/			
-	string category(void);
+	string category(void) const;
 	/**
 	* Sets the category of the variable.
 	*/			
@@ -73,11 +74,11 @@ class Variable {
 	/**
 	* Tells if the variable is editable for the end user.
 	*/			
-	bool isUserVariable(void);
-	bool hasChanged();
+	bool isUserVariable(void) const;
+	bool hasChanged() const;
 	bool setUserVariable(bool is_user_var);
 	bool setChanged(bool has_changed);
-	bool isBuiltinVariable();
+	bool isBuiltinVariable() const;
 	bool isPrecise() const;
 	void setPrecise(bool is_precise);
 };

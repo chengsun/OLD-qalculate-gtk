@@ -1,3 +1,9 @@
+2003-09-03  Niklas Knutsson  <nq@altern.org>
+
+	* Matrix functions: determinant (det), identity, transpose, element, columns, rows, matrix
+	* Multiple solutions (4^0.5 = 2 or -2)
+	* More work on matrices
+
 2003-09-02  Niklas Knutsson  <nq@altern.org>
 	
 	* Beginning of matrix support

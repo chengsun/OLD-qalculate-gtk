@@ -16,6 +16,7 @@ void Manager::init() {
 	refcount = 1;
 	b_exact = true;
 	fr = new Fraction();
+	mtrx = NULL;
 }
 Manager::Manager(void) {
 	init();
@@ -33,7 +34,7 @@ Manager::Manager(string var_) {
 	init();
 	set(var_);
 }
-Manager::Manager(Function *f, ...) {
+Manager::Manager(const Function *f, ...) {
 	init();
 	Manager *mngr;
 	va_list ap;
@@ -44,10 +45,10 @@ Manager::Manager(Function *f, ...) {
 		push_back(new Manager(mngr));
 	}
 	va_end(ap);	
-	o_function = f;
+	o_function = (Function*) f;
 	c_type = FUNCTION_MANAGER;
 }
-Manager::Manager(Unit *u, long int value_) {
+Manager::Manager(const Unit *u, long int value_) {
 	init();
 	set(u, value_);
 }
@@ -58,6 +59,10 @@ Manager::Manager(const Manager *mngr) {
 Manager::Manager(const Fraction *fraction_) {
 	init();
 	set(fraction_);
+}
+Manager::Manager(const Matrix *matrix_) {
+	init();
+	set(matrix_);
 }
 Manager::~Manager() {
 	clear();
@@ -72,6 +77,9 @@ void Manager::set(const Manager *mngr) {
 		o_unit = mngr->o_unit;
 		s_var = mngr->s_var;
 		o_function = mngr->o_function;
+		if(mngr->matrix()) {
+			mtrx = new Matrix(mngr->matrix());
+		}
 		fr->set(mngr->fraction());
 		for(int i = 0; i < mngr->mngrs.size(); i++) {
 			mngrs.push_back(new Manager(mngr->mngrs[i]));
@@ -85,6 +93,12 @@ void Manager::set(const Fraction *fraction_) {
 	fr->set(fraction_);
 	setPrecise(fr->isPrecise());
 	c_type = FRACTION_MANAGER;
+}
+void Manager::set(const Matrix *matrix_) {
+	clear();
+	mtrx = new Matrix(matrix_);	
+	setPrecise(mtrx->isPrecise());
+	c_type = MATRIX_MANAGER;
 }
 void Manager::set(long double value_) {
 	clear();
@@ -104,7 +118,7 @@ void Manager::set(string var_) {
 	s_var = var_;
 	c_type = STRING_MANAGER;
 }
-void Manager::set(Function *f, ...) {
+void Manager::set(const Function *f, ...) {
 	clear();
 	Manager *mngr;
 	va_list ap;
@@ -115,10 +129,10 @@ void Manager::set(Function *f, ...) {
 		push_back(new Manager(mngr));
 	}
 	va_end(ap);	
-	o_function = f;
+	o_function = (Function*) f;
 	c_type = FUNCTION_MANAGER;
 }
-void Manager::addFunctionArg(Manager *mngr) {
+void Manager::addFunctionArg(const Manager *mngr) {
 	if(c_type == FUNCTION_MANAGER) {
 		push_back(new Manager(mngr));
 	}
@@ -127,15 +141,28 @@ void Manager::push_back(Manager *mngr) {
 	if(!mngr->isPrecise()) setPrecise(false);
 	mngrs.push_back(mngr);	
 }
-void Manager::set(Unit *u, long int exp10) {
+void Manager::set(const Unit *u, long int exp10) {
 	clear();
 	if(exp10 == 0) {
-		o_unit = u;
+		o_unit = (Unit*) u;
 		c_type = UNIT_MANAGER;
 	} else {
 		push_back(new Manager(1, 1, exp10));
 		push_back(new Manager(u));
 		c_type = MULTIPLICATION_MANAGER;
+	}
+}
+void Manager::altclean() {
+	if(c_type != ALTERNATIVE_MANAGER) return;
+	int i, i2;
+	for(i = 0; i < ((int) mngrs.size()) - 1; i++) {	
+		for(i2 = i + 1; i2 < mngrs.size(); i2++) {	
+			if(mngrs[i]->equals(mngrs[i2])) {
+				mngrs[i2]->unref();
+				mngrs.erase(mngrs.begin() + i2);				
+				i2--;			
+			}	
+		}
 	}
 }
 void Manager::plusclean() {
@@ -199,7 +226,7 @@ void Manager::powerclean() {
 		clear();
 	}
 }
-bool Manager::reverseadd(Manager *mngr, MathOperation op, bool translate_) {
+bool Manager::reverseadd(const Manager *mngr, MathOperation op, bool translate_) {
 	Manager *mngr2 = new Manager(mngr);
 	if(!mngr2->add(this, op, translate_)) {
 		mngr2->unref();
@@ -209,7 +236,7 @@ bool Manager::reverseadd(Manager *mngr, MathOperation op, bool translate_) {
 	mngr2->unref();
 	return true;
 }
-void Manager::transform(Manager *mngr, char type_, MathOperation op, bool reverse_) {
+void Manager::transform(const Manager *mngr, char type_, MathOperation op, bool reverse_) {
 	Manager *mngr2 = new Manager(this);
 	clear();
 	Manager *mngr3 = new Manager(mngr);
@@ -223,32 +250,64 @@ void Manager::transform(Manager *mngr, char type_, MathOperation op, bool revers
 	c_type = type_;
 }
 
-
-bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
+void Manager::addAlternative(const Manager *mngr) {
+	if(c_type != ALTERNATIVE_MANAGER) {
+		Manager *mngr2 = new Manager(this);
+		clear();
+		push_back(mngr2);
+		c_type = ALTERNATIVE_MANAGER;
+	}
+	push_back(new Manager(mngr));
+}
+bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 	printf("[%s] %c [%s] (%i)\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), op2ch(op), mngr->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), translate_);
 	if(mngr->type() == FRACTION_MANAGER && c_type == FRACTION_MANAGER) {
-		if(fr->add(op, mngr->fraction())) {
+		Fraction fr_save(fr);
+		int solutions = fr->add(op, mngr->fraction());
+		if(solutions == 1) {
 			if(!fr->isPrecise() || !mngr->isPrecise()) setPrecise(false);
+			return true;
+		} else if(solutions > 1) {
+			if(!fr->isPrecise() || !mngr->isPrecise()) setPrecise(false);
+			Manager mngr2;
+			for(int i = 2; i <= solutions; i++) {
+				mngr2.set(&fr_save);
+				mngr2.fraction()->add(op, mngr->fraction(), i);
+				addAlternative(&mngr2);
+			}
 			return true;
 		}
 	}
-	mngr->ref();
+	if(c_type == MATRIX_MANAGER) {
+		if(mtrx->add(op, mngr)) {
+			if(!mtrx->isPrecise() || !mngr->isPrecise()) setPrecise(false);
+			return true;
+		}
+	} else if(mngr->type() == MATRIX_MANAGER) {
+		return reverseadd(mngr, op, translate_);
+	}
+	if(c_type == ALTERNATIVE_MANAGER) {
+		for(int i = 0; i < mngrs.size(); i++) {
+			mngrs[i]->add(mngr, op);
+			if(!mngrs[i]->isPrecise()) setPrecise(false);
+		}
+		altclean();
+		return true;
+	} else if(mngr->type() == ALTERNATIVE_MANAGER) {
+		return reverseadd(mngr, op, translate_);
+	}	
 	if(op == SUBTRACT) {
 		op = ADD;
-		Manager *mngr2 = new Manager(mngr);
-		mngr->unref();
-		mngr2->addInteger(-1, MULTIPLY);
-		bool b = add(mngr2, op);
-		mngr2->unref();
+		Manager mngr2(mngr);
+		mngr2.addInteger(-1, MULTIPLY);
+		bool b = add(&mngr2, op);
 		return b;
 	}
 	if(op == EXP10) {
 		op = MULTIPLY;
-		Manager *mngr2 = new Manager(10, 1);
-		mngr2->add(mngr, RAISE);
-		mngr->unref();
-		bool b = add(mngr2, op);
-		mngr2->unref();
+		Manager mngr2(10, 1);
+		mngr2.add(mngr, RAISE);
+		bool b = add(&mngr2, op);
 		return b;		
 	}
 	if(op == DIVIDE) {
@@ -259,28 +318,22 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 //			mngr->unref();
 //			return false;
 		} else if(mngr->isOne()) {
-			mngr->unref();
 			return true;
 		}
 		op = MULTIPLY;
-		Manager *mngr2 = new Manager(mngr);
-		mngr->unref();
-		mngr = new Manager(-1, 1);
-		mngr2->add(mngr, RAISE);
-		mngr->unref();
-		bool b = add(mngr2, op);
-		mngr2->unref();
+		Manager mngr2(mngr);
+		Manager mngr3(-1, 1);
+		mngr2.add(&mngr3, RAISE);
+		bool b = add(&mngr2, op);
 		return b;		
 	}
 
 	if(op == ADD) {
 		if(mngr->isNull()) {
-			mngr->unref(); 
 			return true;
 		}
 		if(isNull()) {
 			set(mngr);
-			mngr->unref(); 
 			return true;
 		}		
 		switch(c_type) {
@@ -294,7 +347,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 							}
 						}
 						if(!b) {
-							mngr->unref();
 							return false;
 						}
 						break;
@@ -312,7 +364,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 				switch(mngr->type()) {
 					case ADDITION_MANAGER: {
 						if(!reverseadd(mngr, op, translate_)) {
-							mngr->unref(); 
 							return false;
 						}
 						break;
@@ -365,7 +416,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 							break;							
 						}
 						if(!translate_) {
-							mngr->unref(); 
 							return false;
 						}
 						transform(mngr, ADDITION_MANAGER, op);
@@ -406,7 +456,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					}					
 					default: {
 						if(!translate_) {
-							mngr->unref(); 
 							return false;
 						}
 						transform(mngr, ADDITION_MANAGER, op);
@@ -420,7 +469,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					case ADDITION_MANAGER: {}
 					case MULTIPLICATION_MANAGER: {
 						if(!reverseadd(mngr, op, translate_)) {
-							mngr->unref(); 
 							return false;
 						}
 						break;
@@ -437,7 +485,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					}
 					default: {
 						if(!translate_) {			
-							mngr->unref(); 
 							return false;
 						}
 						transform(mngr, ADDITION_MANAGER, op);
@@ -450,14 +497,12 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 				switch(mngr->type()) {
 					case ADDITION_MANAGER: {
 						if(!reverseadd(mngr, op, translate_)) {
-							mngr->unref(); 
 							return false;
 						}
 						break;
 					}
 					default: {
 						if(!translate_) {
-							mngr->unref(); 
 							return false;
 						}
 						transform(mngr, ADDITION_MANAGER, op, true);
@@ -471,7 +516,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					case ADDITION_MANAGER: {}
 					case MULTIPLICATION_MANAGER: {
 						if(!reverseadd(mngr, op, translate_)) {
-							mngr->unref(); 
 							return false;
 						}
 						break;
@@ -488,7 +532,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					}
 					default: {
 						if(!translate_) {
-							mngr->unref(); 
 							return false;
 						}
 						transform(mngr, ADDITION_MANAGER, op);
@@ -502,7 +545,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					case ADDITION_MANAGER: {}
 					case MULTIPLICATION_MANAGER: {
 						if(!reverseadd(mngr, op, translate_)) {
-							mngr->unref(); 
 							return false;
 						}
 						break;
@@ -519,7 +561,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					}
 					default: {
 						if(!translate_) {
-							mngr->unref(); 
 							return false;
 						}
 						transform(mngr, ADDITION_MANAGER, op);
@@ -533,7 +574,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					case ADDITION_MANAGER: {}
 					case MULTIPLICATION_MANAGER: {
 						if(!reverseadd(mngr, op, translate_)) {
-							mngr->unref(); 
 							return false;
 						}
 						break;
@@ -550,7 +590,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					}
 					default: {
 						if(!translate_) {
-							mngr->unref(); 
 							return false;
 						}
 						transform(mngr, ADDITION_MANAGER, op);
@@ -561,7 +600,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 			}
 			default: {
 				if(!translate_) {
-					mngr->unref(); 
 					return false;
 				}
 				transform(mngr, ADDITION_MANAGER, op);
@@ -571,14 +609,11 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 	} else if(op == MULTIPLY) {
 		if(isNull() || mngr->isNull()) {
 			clear(); 
-			mngr->unref(); 
 			return true;
 		} else if(mngr->isOne()) {
-			mngr->unref();
 			return true;
 		} else if(isOne()) {
 			set(mngr);
-			mngr->unref();
 			return true;
 		}
 		switch(c_type) {
@@ -610,7 +645,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 				switch(mngr->type()) {
 					case ADDITION_MANAGER: {
 						if(!reverseadd(mngr, op, translate_)) {
-							mngr->unref(); 
 							return false;
 						}
 						break;
@@ -636,7 +670,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					case MULTIPLICATION_MANAGER: {}
 					case ADDITION_MANAGER: {
 						if(!reverseadd(mngr, op, translate_)) {
-							mngr->unref(); 
 							return false;
 						}
 						break;
@@ -651,7 +684,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 							}
 						} else {
 							if(!translate_) {
-								mngr->unref(); 
 								return false;
 							}
 							transform(mngr, MULTIPLICATION_MANAGER, op);
@@ -668,7 +700,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 							}
 						} else {
 							if(!translate_) {
-								mngr->unref(); 
 								return false;
 							}
 							transform(mngr, MULTIPLICATION_MANAGER, op);
@@ -679,20 +710,18 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 				break;
 			}
 			case FRACTION_MANAGER: {
-				if(fr->isOne()) {set(mngr); mngr->unref(); return true;}
+				if(fr->isOne()) {set(mngr); return true;}
 				switch(mngr->type()) {
 					case ADDITION_MANAGER: {}
 					case MULTIPLICATION_MANAGER: {}
 					case POWER_MANAGER: {
 						if(!reverseadd(mngr, op, translate_)) {
-							mngr->unref(); 
 							return false;
 						}
 						break;
 					}
 					default: {
 						if(!translate_) {
-							mngr->unref(); 
 							return false;
 						}
 						transform(mngr, MULTIPLICATION_MANAGER, op, true);
@@ -707,7 +736,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					case MULTIPLICATION_MANAGER: {}
 					case POWER_MANAGER: {
 						if(!reverseadd(mngr, op, translate_)) {
-							mngr->unref(); 
 							return false;
 						}
 						break;
@@ -724,7 +752,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					}
 					default: {
 						if(!translate_) {
-							mngr->unref(); 
 							return false;
 						}
 						transform(mngr, MULTIPLICATION_MANAGER, op);
@@ -739,7 +766,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					case MULTIPLICATION_MANAGER: {}
 					case POWER_MANAGER: {
 						if(!reverseadd(mngr, op, translate_)) {
-							mngr->unref(); 
 							return false;
 						}
 						break;
@@ -756,7 +782,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					}
 					default: {
 						if(!translate_) {
-							mngr->unref(); 
 							return false;
 						}
 						transform(mngr, MULTIPLICATION_MANAGER, op);
@@ -771,7 +796,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					case MULTIPLICATION_MANAGER: {}
 					case POWER_MANAGER: {
 						if(!reverseadd(mngr, op, translate_)) {
-							mngr->unref(); 
 							return false;
 						}
 						break;
@@ -788,7 +812,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					}
 					default: {
 						if(!translate_) {
-							mngr->unref(); 
 							return false;
 						}
 						transform(mngr, MULTIPLICATION_MANAGER, op);
@@ -799,7 +822,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 			}			
 			default: {
 				if(!translate_) {
-					mngr->unref(); 
 					return false;
 				}
 				transform(mngr, MULTIPLICATION_MANAGER, op);
@@ -811,17 +833,16 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 /*			if(isNull()) {
 				CALCULATOR->error(false, _("0^0 is undefined"), NULL);
 				if(!translate_) {
-					mngr->unref(); 
 					return false;
 				}
 				transform(mngr, POWER_MANAGER, op);
 				return true;
 			} else {*/
 				set(1, 1);
-				mngr->unref(); return true;
+				return true;
 //			}
 		} else if(mngr->isOne()) {
-			mngr->unref(); return true;
+			return true;
 		} else if(isZero() && mngr->isFraction() && mngr->fraction()->isNegative()) {
 			if(translate_) {CALCULATOR->error(true, _("Division by zero."), NULL);}
 		}
@@ -853,7 +874,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 							break;
 						}
 						if(!translate_) {
-							mngr->unref(); 
 							return false;
 						}	
 						transform(mngr, POWER_MANAGER, op);
@@ -861,7 +881,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					}
 					default: {
 						if(!translate_) {
-							mngr->unref(); 
 							return false;
 						}	
 						transform(mngr, POWER_MANAGER, op);
@@ -891,7 +910,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 				if(isNull()) {
 					if(mngr->isNumber() && mngr->value() < 0) {
 						if(!translate_) {
-							mngr->unref(); 
 							return false;
 						}
 						if(mngr->value() == -1) {
@@ -904,11 +922,12 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 					}
 					break;
 				}
-				if(fr->isOne()) {mngr->unref(); return true;}
+				if(fr->isOne()) {
+					return true;
+				}
 				switch(mngr->type()) {
 					default: {
 						if(!translate_) {
-							mngr->unref(); 
 							return false;
 						}
 						transform(mngr, POWER_MANAGER, op);
@@ -919,7 +938,6 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 			}						
 			default: {
 				if(!translate_) {
-					mngr->unref(); 
 					return false;
 				}
 				transform(mngr, POWER_MANAGER, op);
@@ -931,10 +949,10 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 	sort();
 //	printf("POSTSORT [%s]\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str());	
 	CALCULATOR->checkFPExceptions();
-	mngr->unref();
+
 	return true;
 }
-void Manager::addUnit(Unit *u, MathOperation op) {
+void Manager::addUnit(const Unit *u, MathOperation op) {
 	Manager *mngr = new Manager(u);
 	mngr->finalize();
 	add(mngr, op);
@@ -945,13 +963,19 @@ void Manager::addInteger(long int value_, MathOperation op) {
 	add(mngr, op);
 	mngr->unref();
 }
-int Manager::compare(Manager *mngr) {
+int Manager::compare(const Manager *mngr) const {
 	if(c_type != mngr->type()) {
 		if(mngr->type() == ADDITION_MANAGER) return -mngr->compare(this);	
 		if(mngr->type() == MULTIPLICATION_MANAGER && c_type != ADDITION_MANAGER) return -mngr->compare(this);		
 		if(mngr->type() == POWER_MANAGER && c_type != ADDITION_MANAGER && c_type != MULTIPLICATION_MANAGER) return -mngr->compare(this);		
 	}
 	switch(c_type) {
+		case ALTERNATIVE_MANAGER: {
+			return 1;
+		}
+		case MATRIX_MANAGER: {
+			return 1;
+		}
 		case FRACTION_MANAGER: {
 			if(mngr->isNull()) {
 				if(isNull()) return 0;
@@ -1092,6 +1116,7 @@ void Manager::moveto(Manager *term) {
 	s_var = term->s_var;
 	o_function = term->o_function;
 	fr->set(term->fraction());
+	if(term->matrix()) mtrx = new Matrix(term->matrix());
 	for(int i = 0; i < term->mngrs.size(); i++) {
 		term->mngrs[i]->ref();
 		mngrs.push_back(term->mngrs[i]);
@@ -1100,12 +1125,14 @@ void Manager::moveto(Manager *term) {
 	c_type = term->type();
 	term->unref();
 }
-bool Manager::equals(Manager *mngr) {
+bool Manager::equals(const Manager *mngr) const {
 	if(c_type == mngr->type()) {
 		if(isNull()) {
 			return true;
 		} else if(c_type == FRACTION_MANAGER) {
 			return mngr->fraction()->equals(fr);
+		} else if(c_type == MATRIX_MANAGER) {
+			return mngr->matrix()->equals(mtrx);
 		} else if(c_type == UNIT_MANAGER) {
 			return o_unit == mngr->o_unit;
 		} else if(c_type == STRING_MANAGER) {
@@ -1117,13 +1144,7 @@ bool Manager::equals(Manager *mngr) {
 				if(!mngrs[i]->equals(mngr->mngrs[i])) return false;
 			}			
 			return true;
-		} else if(c_type == MULTIPLICATION_MANAGER) {
-			if(mngrs.size() != mngr->mngrs.size()) return false;
-			for(int i = 0; i < mngrs.size(); i++) {
-				if(!mngrs[i]->equals(mngr->mngrs[i])) return false;
-			}
-			return true;
-		} else if(c_type == ADDITION_MANAGER) {
+		} else if(c_type == MULTIPLICATION_MANAGER || c_type == ADDITION_MANAGER || c_type == ALTERNATIVE_MANAGER) {
 			if(mngrs.size() != mngr->mngrs.size()) return false;
 			for(int i = 0; i < mngrs.size(); i++) {
 				if(!mngrs[i]->equals(mngr->mngrs[i])) return false;
@@ -1135,7 +1156,7 @@ bool Manager::equals(Manager *mngr) {
 	}
 	return false;
 }
-bool Manager::compatible(Manager *mngr) {
+bool Manager::compatible(const Manager *mngr) {
 	if(isNumber() || mngr->isNumber()) return true;
 	if(c_type == mngr->type()) {
 		if(c_type == UNIT_MANAGER) {
@@ -1143,6 +1164,8 @@ bool Manager::compatible(Manager *mngr) {
 		} else if(c_type == STRING_MANAGER) {
 			if(s_var == mngr->s_var) return true;
 		} else if(c_type == FUNCTION_MANAGER) {
+			return equals(mngr);
+		} else if(c_type == MATRIX_MANAGER) {
 			return equals(mngr);
 		} else if(c_type == MULTIPLICATION_MANAGER) {
 			if(mngrs[0]->isNumber() && !mngr->mngrs[0]->isNumber()) {
@@ -1217,21 +1240,23 @@ void Manager::clear() {
 	o_unit = NULL;
 	s_var = "";
 	o_function = NULL;
+	if(mtrx) delete mtrx;
+	mtrx = NULL;
 	for(int i = 0; i < mngrs.size(); i++) {
 		mngrs[i]->unref();
 	}
 	mngrs.clear();
 	c_type = FRACTION_MANAGER;
 }
-long double Manager::value() {
+long double Manager::value() const {
 	if(c_type == FRACTION_MANAGER) return fr->value();
 	return 0;
 }
-void Manager::value(long double value_) {
-	set(value_);
-}
 Fraction *Manager::fraction() const {
 	return fr;
+}
+Matrix *Manager::matrix() const {
+	return mtrx;
 }
 bool Manager::isPrecise() const {
 	return b_exact;
@@ -1240,29 +1265,29 @@ void Manager::setPrecise(bool is_precise) {
 	b_exact = is_precise;
 	if(isFraction()) {
 		fraction()->setPrecise(b_exact);
-	}	
+	} else if(isMatrix()) {
+		matrix()->setPrecise(b_exact);
+	}
 }
-bool Manager::isNumber() {return c_type == FRACTION_MANAGER;}
-bool Manager::isFraction() {return c_type == FRACTION_MANAGER;}
-bool Manager::isNull() {
+bool Manager::isNumber() const {return c_type == FRACTION_MANAGER;}
+bool Manager::isFraction() const {return c_type == FRACTION_MANAGER;}
+bool Manager::isMatrix() const {return c_type == MATRIX_MANAGER;}
+bool Manager::isNull() const {
 	return c_type == FRACTION_MANAGER && fr->isZero();
 }
-bool Manager::isZero() {
+bool Manager::isZero() const {
 	return isNull();
 }
-Unit *Manager::unit() {
+const Unit *Manager::unit() const {
 	return o_unit;
 }
-bool Manager::isOne() {return c_type == FRACTION_MANAGER && fr->isOne();}
-void Manager::unit(Unit *u, long int value_) {
-	set(u, value_);
-}
-bool Manager::negative() {
+bool Manager::isOne() const {return c_type == FRACTION_MANAGER && fr->isOne();}
+bool Manager::negative() const {
 	if(c_type == FRACTION_MANAGER) return fr->isNegative();	
 	else if(c_type == MULTIPLICATION_MANAGER || c_type == POWER_MANAGER) return mngrs[0]->negative();
 	return false;
 }
-string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_keep, bool decimals_expand, bool decimals_decrease, bool *in_exact, bool *usable, Prefix *prefix, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) {
+string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, bool *in_exact, bool *usable, Prefix *prefix, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) const {
 	if(in_exact && !isPrecise()) *in_exact = true;
 	string str, str2;
 	if(toplevel && (displayflags & DISPLAY_FORMAT_TAGS)) {
@@ -1314,7 +1339,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 			str2 = str2.substr(strlen(MINUS_STR), str2.length() - strlen(MINUS_STR));
 			minus = true;
 		}
-		if(!in_composite) CALCULATOR->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
+		if(!in_composite) CALCULATOR->remove_trailing_zeros(str2, decimals_to_keep, max_decimals);
 		if(minus) {
 			if(displayflags & DISPLAY_FORMAT_NONASCII) {
 				str2.insert(0, SIGN_MINUS);
@@ -1332,22 +1357,20 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 		if(plural) *plural = (new_value > 1 || new_value < -1);
 	} else */
 	if(c_type == FRACTION_MANAGER) {
-		int min_decimals = 0;
-		int max_decimals = -1;			
-		if(decimals_decrease) max_decimals = decimals_to_keep;
-		if(decimals_expand) min_decimals = decimals_to_keep;					
 		str += fr->print(nrformat, displayflags, min_decimals, max_decimals, prefix, in_exact, usable, false, NULL, l_exp, in_composite, in_power);
+	} else if(c_type == MATRIX_MANAGER) {
+		str += mtrx->print(nrformat, displayflags, min_decimals, max_decimals, prefix, in_exact, usable, false, NULL, l_exp, in_composite, in_power);		
 	} else if(c_type == UNIT_MANAGER) {
 		if(!in_composite && toplevel) {
 			str2 = "1";
-			CALCULATOR->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
+			CALCULATOR->remove_trailing_zeros(str2, min_decimals, max_decimals);
 			str += str2; str += " ";
 		}
 		if(o_unit->type() == 'D') {
 			Manager *mngr = ((CompositeUnit*) o_unit)->generateManager(false);
 			int displayflags_d = displayflags;
 			if(!(displayflags_d & DISPLAY_FORMAT_USE_PREFIXES)) displayflags_d = displayflags_d | DISPLAY_FORMAT_USE_PREFIXES;
-			str2 = mngr->print(nrformat, displayflags_d, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, NULL, NULL, true, in_power);		
+			str2 = mngr->print(nrformat, displayflags_d, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, true, in_power);		
 			str += str2;
 			mngr->unref();
 		} else {
@@ -1372,6 +1395,13 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 			str += s_var;
 		}
 		if(plural) *plural = true;
+	} else if(c_type == ALTERNATIVE_MANAGER) {
+		for(int i = 0; i < mngrs.size(); i++) {
+			if(i > 0) {
+				str += "\nor ";		
+			}
+			str += mngrs[i]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
+		}
 	} else if(c_type == FUNCTION_MANAGER) {
 		str += o_function->name();
 		str += LEFT_BRACKET_STR;
@@ -1380,7 +1410,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 				str += COMMA_STR;
 				str += SPACE_STR;
 			}
-			str += mngrs[i]->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
+			str += mngrs[i]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
 		}
 		str += RIGHT_BRACKET_STR;		
 	} else if(c_type == ADDITION_MANAGER) {
@@ -1400,10 +1430,10 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 			l_exp = NULL;
 			if(toplevel && !in_composite && (mngrs[i]->type() == UNIT_MANAGER || (mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->type() == UNIT_MANAGER))) {
 				str2 = "1";
-				CALCULATOR->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
+				CALCULATOR->remove_trailing_zeros(str2, min_decimals, max_decimals);
 				str += str2; str += " ";
 			}
-			str2 = mngrs[i]->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
+			str2 = mngrs[i]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
 			if(i > 0 && displayflags & DISPLAY_FORMAT_NONASCII && str2.substr(0, strlen(SIGN_MINUS)) == SIGN_MINUS) {
 				str2 = str2.substr(strlen(SIGN_MINUS), str2.length() - strlen(SIGN_MINUS));
 			} else if(i > 0 && str2.substr(0, strlen(MINUS_STR)) == MINUS_STR) {
@@ -1462,7 +1492,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 			}
 			if(!in_composite && i == 0 && (mngrs[i]->type() == UNIT_MANAGER || (mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->type() == UNIT_MANAGER))) {
 				str2 = "1";
-				CALCULATOR->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
+				CALCULATOR->remove_trailing_zeros(str2, min_decimals, max_decimals);
 				str += str2; str += " ";
 			}
 			if(!b && mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[1]->negative() && mngrs[i]->mngrs[0]->type() == UNIT_MANAGER && !had_unit) {
@@ -1507,7 +1537,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 				if(is_unit) {
 					had_div_unit = true;
 				}								
-				str += mngr->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, &plural_, l_exp, in_composite, in_power);
+				str += mngr->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, &plural_, l_exp, in_composite, in_power);
 				if(c && i == mngrs.size() - 1) {
 					str += RIGHT_BRACKET_STR;
 				}
@@ -1521,7 +1551,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 				}
 				str += " ";								
 				str += LEFT_BRACKET_STR;
-				str += mngrs[i]->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, &plural_, l_exp, in_composite, in_power);
+				str += mngrs[i]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, &plural_, l_exp, in_composite, in_power);
 				str += RIGHT_BRACKET_STR;
 			} else {
 				if(mngrs[i]->type() == POWER_MANAGER && (mngrs[i]->mngrs[0]->isNumber() || had_unit)) {
@@ -1571,7 +1601,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 					}
 					str += " ";					
 				}					
-				str += mngrs[i]->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, &plural_, l_exp, in_composite, in_power);
+				str += mngrs[i]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, &plural_, l_exp, in_composite, in_power);
 			}
 			if(plural_ && (mngrs[i]->type() == UNIT_MANAGER || (mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->type() == UNIT_MANAGER))) {
 				plural_ = false;
@@ -1585,15 +1615,15 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 	} else if(c_type == POWER_MANAGER) {
 		if(!in_composite && toplevel && mngrs[0]->type() == UNIT_MANAGER) {
 			str2 = "1";
-			CALCULATOR->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
+			CALCULATOR->remove_trailing_zeros(str2, min_decimals, max_decimals);
 			str += str2; str += " ";
 		}
 		if(mngrs[0]->mngrs.size() > 0 && !in_composite) {
 			str += LEFT_BRACKET_STR;
-			str += mngrs[0]->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, NULL, NULL, in_composite, in_power);
+			str += mngrs[0]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, in_composite, in_power);
 			str += RIGHT_BRACKET_STR;
 		} else {
-			str += mngrs[0]->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, NULL, NULL, in_composite, in_power);
+			str += mngrs[0]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, in_composite, in_power);
 		}
 		if(displayflags & DISPLAY_FORMAT_TAGS) {
 			if(!in_power) {
@@ -1606,10 +1636,10 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 		else str += POWER_STR;
 		if(mngrs[1]->mngrs.size() > 0) {
 			str += LEFT_BRACKET_STR;
-			str += mngrs[1]->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, NULL, NULL, in_composite, true);
+			str += mngrs[1]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, in_composite, true);
 			str += RIGHT_BRACKET_STR;
 		} else {
-			str += mngrs[1]->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, NULL, NULL, in_composite, true);
+			str += mngrs[1]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, in_composite, true);
 		}
 		if(displayflags & DISPLAY_FORMAT_TAGS) {
 			if(!in_power) {
@@ -1619,13 +1649,12 @@ string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_k
 		}
 	} else {
 		str2 = "0";
-		CALCULATOR->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
 		str += str2;
 	}
 	if(toplevel && (displayflags & DISPLAY_FORMAT_TAGS)) str += "</big></b>";
 	return str;
 }
-bool Manager::testDissolveCompositeUnit(Unit *u) {
+bool Manager::testDissolveCompositeUnit(const Unit *u) {
 	if(c_type == UNIT_MANAGER) {
 		if(o_unit->type() == 'D') {
 			if(((CompositeUnit*) o_unit)->containsRelativeTo(u)) {
@@ -1650,7 +1679,7 @@ bool Manager::testDissolveCompositeUnit(Unit *u) {
 	}
 	return false; 
 }
-bool Manager::testCompositeUnit(Unit *u) {
+bool Manager::testCompositeUnit(const Unit *u) {
 	if(c_type == UNIT_MANAGER) {
 		if(o_unit->type() == 'D') {
 			if(((CompositeUnit*) o_unit)->containsRelativeTo(u)) {
@@ -1680,13 +1709,17 @@ void Manager::clean() {
 		case ADDITION_MANAGER: {
 			plusclean();
 			break;
-		}		
+		}
+		case ALTERNATIVE_MANAGER: {
+			altclean();
+			break;
+		}				
 	}
 }
 void Manager::finalize() {
 	dissolveAllCompositeUnits();		
 	syncUnits();
-	clean();
+	clean();	
 }
 void gatherInformation(Manager *mngr, vector<Unit*> &base_units, vector<AliasUnit*> &alias_units) {
 	switch(mngr->type()) {
@@ -1718,12 +1751,21 @@ void gatherInformation(Manager *mngr, vector<Unit*> &base_units, vector<AliasUni
 			}
 			break;
 		}
+		case ALTERNATIVE_MANAGER: {}
 		case POWER_MANAGER: {}
 		case ADDITION_MANAGER: {}
 		case FUNCTION_MANAGER: {}
 		case MULTIPLICATION_MANAGER: {
 			for(int i = 0; i < mngr->mngrs.size(); i++) {
 				gatherInformation(mngr->mngrs[i], base_units, alias_units);
+			}
+			break;
+		}
+		case MATRIX_MANAGER: {
+			for(int i = 1; i <= mngr->matrix()->rows(); i++) {
+				for(int i2 = 1; i2 <= mngr->matrix()->columns(); i2++) {
+					gatherInformation(mngr->matrix()->get(i, i2), base_units, alias_units);
+				}	
 			}
 			break;
 		}
@@ -1777,7 +1819,7 @@ void Manager::syncUnits() {
 							break;
 						}
 					}
-					if(!b) base_units.push_back(cu->units[i2]->firstBaseUnit());
+					if(!b) base_units.push_back((Unit*) cu->units[i2]->firstBaseUnit());
 					break;
 				}
 				case 'A': {
@@ -1815,7 +1857,7 @@ void Manager::syncUnits() {
 							break;
 						}
 					}
-					if(!b) base_units.push_back(alias_units[i]->baseUnit());
+					if(!b) base_units.push_back((Unit*) alias_units[i]->baseUnit());
 					goto erase_alias_unit_2;
 				}
 			}
@@ -1865,6 +1907,7 @@ bool Manager::dissolveAllCompositeUnits() {
 			}
 			break;
 		}
+		case ALTERNATIVE_MANAGER: {}
 		case POWER_MANAGER: {}
 		case MULTIPLICATION_MANAGER: {} 
 		case ADDITION_MANAGER: {
@@ -1874,6 +1917,15 @@ bool Manager::dissolveAllCompositeUnits() {
 			}
 			return b;
 		}
+		case MATRIX_MANAGER: {
+			bool b = false;
+			for(int i = 1; i <= mtrx->rows(); i++) {
+				for(int i2 = 1; i2 <= mtrx->columns(); i2++) {
+					if(mtrx->get(i, i2)->dissolveAllCompositeUnits()) b = true;
+				}
+			}
+			return b;		
+		}		
 	}		
 	return false;
 }
@@ -1883,8 +1935,7 @@ bool Manager::convert(string unit_str) {
 	mngr->unref();
 	return b;
 }
-bool Manager::convert(Manager *unit_mngr) {
-	unit_mngr->ref();
+bool Manager::convert(const Manager *unit_mngr) {
 	bool b = false;
 	switch(unit_mngr->type()) {
 		case UNIT_MANAGER: {
@@ -1900,11 +1951,10 @@ bool Manager::convert(Manager *unit_mngr) {
 			break;
 		}
 	}	
-	unit_mngr->unref();
 	return b;
 }
 
-bool Manager::convert(Unit *u) {
+bool Manager::convert(const Unit *u) {
 	if(isNumber() || c_type == STRING_MANAGER) return false;
 	bool b = false;	
 	if(c_type == UNIT_MANAGER && o_unit == u) return false;
@@ -1925,6 +1975,19 @@ bool Manager::convert(Unit *u) {
 			if(mngrs[i]->convert(u)) b = true;
 		}
 		return b;
+	} else if(c_type == ALTERNATIVE_MANAGER) {
+		for(int i = 0; i < mngrs.size(); i++) {
+			if(mngrs[i]->convert(u)) b = true;
+		}
+		altclean();
+		return b;		
+	} else if(c_type == MATRIX_MANAGER) {
+		for(int i = 1; i <= mtrx->rows(); i++) {
+			for(int i2 = 1; i2 <= mtrx->columns(); i2++) {
+				if(mtrx->get(i, i2)->convert(u)) b = true;
+			}
+		}
+		return b;		
 	} else if(c_type == UNIT_MANAGER) {
 		if(u == o_unit) return false;
 		if(testDissolveCompositeUnit(u)) {
@@ -1934,7 +1997,7 @@ bool Manager::convert(Unit *u) {
 		Manager *exp = new Manager(1, 1);
 		Manager *mngr = u->convert(o_unit, NULL, exp, &b);
 		if(b) {
-			o_unit = u;
+			o_unit = (Unit*) u;
 			if(!exp->isNumber() || exp->value() != 1.0L) {
 				add(exp, RAISE);
 			}
@@ -1959,7 +2022,7 @@ bool Manager::convert(Unit *u) {
 			}
 			Manager *mngr = u->convert(mngrs[0]->o_unit, NULL, mngrs[1], &b);
 			if(b) {
-				mngrs[0]->o_unit = u;
+				mngrs[0]->o_unit = (Unit*) u;
 				add(mngr, MULTIPLY);
 			}			
 			mngr->unref();
@@ -2103,10 +2166,6 @@ void Manager::differentiate(string x_var) {
 			plusclean();
 			break;
 		}
-		case FRACTION_MANAGER: {
-			clear();
-			break;
-		}
 		case FUNCTION_MANAGER: {
 			Manager *mngr2 = new Manager(x_var);
 			Manager *mngr = new Manager(CALCULATOR->getFunction("diff"), this, mngr2, NULL);
@@ -2143,6 +2202,10 @@ void Manager::differentiate(string x_var) {
 			mngr2->unref();			
 			break;
 		}		
+		default: {
+			clear();
+			break;
+		}	
 	}
 }
 

@@ -23,7 +23,7 @@ class Matrix;
 
 class Matrix {
   protected:
-	vector<vector<Manager> > elements;
+	vector<vector<Manager*> > elements;
 	bool b_exact;
   public:
   
@@ -47,6 +47,18 @@ class Matrix {
 	
 	~Matrix();
 
+	void set(const Matrix *matrix);
+	
+	void setToIdentityMatrix(int rows_columns);
+	
+	Matrix *getIdentityMatrix() const;
+	
+	void transpose();
+	
+	bool isSymmetric() const;
+	bool isOrthogonal() const;
+	Manager *determinant() const;
+
 	/**
 	* Returns the number of rows in the matrix.
 	*
@@ -65,7 +77,7 @@ class Matrix {
 	/**
 	* Sets the number of rows in the matrix.
 	*
-	* setRows will delete elements that do not fit with the new dimensions.
+	* setRows will delete elements that do not fit with the new order.
 	*
 	* @param nr_of_rows New number of rows (> 0).
 	* @see #setColumns
@@ -74,7 +86,7 @@ class Matrix {
 	/**
 	* Sets the number of columns in the matrix.
 	*
-	* setColumns will delete elements that do not fit with the new dimensions.
+	* setColumns will delete elements that do not fit with the new order.
 	*
 	* @param nr_of_columns New number of columns (> 0).
 	* @see #setColumns
@@ -103,7 +115,7 @@ class Matrix {
 	* @param row Specifies the row in the matrix where the element resides.
 	* @param column Specifies the column in the matrix where the element resides.
 	*/
-	void set(Manager *mngr, int row, int column);
+	void set(const Manager *mngr, int row, int column);
 	
 	/**
 	* Returns the value of an element in the given row and column.
@@ -113,6 +125,7 @@ class Matrix {
 	* @return Element at row,column.
 	*/	
 	Manager *get(int row, int column);	
+	const Manager *get(int row, int column) const;		
 	
 	/**
 	* Add a matrix using the specified mathematical operation.
@@ -173,7 +186,7 @@ class Matrix {
 	* @param mngr The manager to add.
 	* @return If the operation was successful or not.
 	*/
-	bool add(MathOperation op, Manager *mngr);
+	bool add(MathOperation op, const Manager *mngr);
 
 	/**
 	* Adds a manager.
@@ -181,45 +194,49 @@ class Matrix {
 	* @param mngr Term to add.
 	* @return If the operation was successful or not.
 	*/
-	bool add(Manager *mngr);
+	bool add(const Manager *mngr);
 	/**
 	* Subtracts a manager.
 	*
 	* @param mngr Term to subtract.
 	* @return If the operation was successful or not.
 	*/
-	bool subtract(Manager *mngr);
+	bool subtract(const Manager *mngr);
 	/**
 	* Multiplies with a manager.
 	*
 	* @param mngr Factor to multiply with.
 	* @return If the operation was successful or not.
 	*/
-	bool multiply(Manager *mngr);
+	bool multiply(const Manager *mngr);
 	/**
 	* Divides with a manager.
 	*
 	* @param mngr The denominator.
 	* @return If the operation was successful or not.
 	*/
-	bool divide(Manager *mngr);
+	bool divide(const Manager *mngr);
 	/**
 	* Raise with manager as exponent.
 	*
 	* @param mngr The exponent.
 	* @return If the operation was successful or not.
 	*/
-	bool raise(Manager *mngr);
+	bool raise(const Manager *mngr);
 	/**
 	* Multiplies with 10 raised to manager.
 	*
 	* @param mngr The exponent.
 	* @return If the operation was successful or not.
 	*/
-	bool exp10(Manager *mngr);
+	bool exp10(const Manager *mngr);
 	
-	bool isPrecies() const;
-	void setPrecise(bool is_precies);
+	bool equals(const Matrix *matrix) const;
+	
+	bool isPrecise() const;
+	void setPrecise(bool is_precise);
+	
+	string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, Prefix *prefix = NULL, bool *in_exact = NULL, bool *usable = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false) const;
 
 };
 

@@ -43,6 +43,7 @@ class Fraction {
 	const Integer *numerator() const;
 	const Integer *denominator() const;
 	long double value() const;
+	bool isPositive() const;
 	bool isNegative() const;
 	void setNegative(bool is_negative);	
 	bool isInteger() const;
@@ -82,14 +83,14 @@ class Fraction {
 	bool trunc();
 	bool mod();	
 	bool rem();
-	bool pow(const Fraction *fr);
+	int pow(const Fraction *fr, int solution = 1);
 	bool root(const Integer *nth);	
 	bool root(long int nth = 2);
 	bool floatify(int precision = DEFAULT_PRECISION);
 	bool isZero() const;
 	bool isOne() const;	
 	bool isMinusOne() const;	
-	bool add(MathOperation op, const Fraction *fr); 
+	int add(MathOperation op, const Fraction *fr, int solution = 1); 
 	string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, Prefix *prefix = NULL, bool *in_exact = NULL, bool *usable = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false) const;
 };
 

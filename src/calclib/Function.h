@@ -37,35 +37,35 @@ class Function {
 	virtual void clearVArgs();
 	virtual void clearSVArgs();	
   public:
-	Function(string cat_, string name_, int argc_, string title_ = "", string descr_ = "", bool priviliged_ = false, int max_argc_ = -1);
+	Function(string cat_, string name_, int argc_, string title_ = "", string descr_ = "", bool priviliged_ = false, int max_argc_ = 0);
 	virtual ~Function(void);	
 	virtual Manager *calculate(const string &eq);
-	bool priviliged(void);
-	int args(void);
-	int minargs(void);	
-	int maxargs(void);		
-	string name(void);
+	bool priviliged(void) const;
+	int args(void) const;
+	int minargs(void) const;	
+	int maxargs(void) const;		
+	string name(void) const;
 	void setName(string new_name, bool force = true);
 	int args(const string &str);
 	int args(const string &str, string *buffer);	
-	string category(void);
+	string category(void) const;
 	void setCategory(string cat_);	
-	string description(void);
+	string description(void) const;
 	void setDescription(string descr_);
-	string title(bool return_name_if_no_title = true);
+	string title(bool return_name_if_no_title = true) const;
 	void setTitle(string title_);	
-	string argName(int index);
+	string argName(int index) const;
 	void clearArgNames(void);
 	void addArgName(string name_);
 	bool setArgName(string name_, int index);
-	virtual bool isUserFunction(void);	
-	virtual bool isBuiltinFunction(void);		
-	virtual bool hasChanged(void);
+	virtual bool isUserFunction(void) const;	
+	virtual bool isBuiltinFunction(void) const;		
+	virtual bool hasChanged(void) const;
 	virtual void setUserFunction(bool is_user_function);	
 	virtual void setChanged(bool has_changed);	
 	int stringArgs(const string &str);		
 	void setDefaultValue(int arg_, string value_);
-	string getDefaultValue(int arg_);	
+	string getDefaultValue(int arg_) const;	
 	bool isPrecise() const;
 	void setPrecise(bool is_precise);	
 };
@@ -74,11 +74,11 @@ class UserFunction : public Function {
   protected:
 	string eq, eq_calc;	
   public:
-	UserFunction(string cat_, string name_, string eq_, bool is_user_function = true, int argc_ = -1, string title_ = "", string descr_ = "", int max_argc_ = -1);
-	string equation(void);
+	UserFunction(string cat_, string name_, string eq_, bool is_user_function = true, int argc_ = -1, string title_ = "", string descr_ = "", int max_argc_ = 0);
+	string equation(void) const;
 	Manager *calculate(const string &argv);	
-	void setEquation(string new_eq, int argc_ = -1, int max_argc_ = -1);	
-	bool isBuiltinFunction(void);
+	void setEquation(string new_eq, int argc_ = -1, int max_argc_ = 0);	
+	bool isBuiltinFunction(void) const;
 };
 
 #endif

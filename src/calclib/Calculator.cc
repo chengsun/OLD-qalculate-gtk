@@ -599,6 +599,13 @@ void Calculator::addBuiltinVariables() {
 	addVariable(v);
 }
 void Calculator::addBuiltinFunctions() {
+	addFunction(new MatrixFunction());
+	addFunction(new RowsFunction());
+	addFunction(new ColumnsFunction());
+	addFunction(new ElementFunction());
+	addFunction(new TransposeFunction());
+	addFunction(new IdentityFunction());
+	addFunction(new DeterminantFunction());
 	addFunction(new IFFunction());
 	addFunction(new DifferentiateFunction());	
 	addFunction(new DaysFunction());		
@@ -1324,8 +1331,8 @@ bool Calculator::unitNameTaken(string name_, Unit *unit) {
 	u = getCompositeUnit(name_);
 	return u && u != unit;	
 }
-bool Calculator::unitIsUsedByOtherUnits(Unit *u) {
-	Unit *u2;
+bool Calculator::unitIsUsedByOtherUnits(const Unit *u) const {
+	const Unit *u2;
 	for(int i = 0; i < units.size(); i++) {
 		if(units[i] != u) {
 			u2 = units[i];

@@ -123,6 +123,8 @@ class Integer {
 	bool isZero() const;
 	bool isOne() const;
 	bool isMinusOne() const;
+	long int getLongInt() const;
+	int getInt() const;	
 	string print(int base = 10) const;
 
 };

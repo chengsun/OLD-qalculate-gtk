@@ -1348,7 +1348,9 @@ string get_value_string(Manager *mngr_, bool rlabel = false, Prefix *prefix = NU
 			default: {numberformat = NUMBER_FORMAT_NORMAL;}
 		}
 	}
-	return mngr_->print(numberformat, displayflags, decimals, true, deci_mode == DECI_FIXED, in_exact, NULL, prefix);
+	int max_decimals = -1;
+	if(deci_mode == DECI_FIXED) max_decimals = decimals;
+	return mngr_->print(numberformat, displayflags, decimals, max_decimals, in_exact, NULL, prefix);
 }
 
 /*

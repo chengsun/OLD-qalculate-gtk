@@ -25,8 +25,11 @@ Function::Function(string cat_, string name_, int argc_, string title_, string d
 	setDescription(descr_);
 	setCategory(cat_);
 	argc = argc_;
-	if(max_argc_ < argc) max_argc = argc;
-	else {
+	if(max_argc_ < 0 || argc < 0) {
+		max_argc = -1;
+	} else if(max_argc_ < argc) {
+		max_argc = argc;
+	} else {
 		max_argc = max_argc_;
 		for(int i = 0; i < max_argc - argc; i++) {
 			default_values.push_back("0");
@@ -36,19 +39,19 @@ Function::Function(string cat_, string name_, int argc_, string title_, string d
 	b_changed = false;
 }
 Function::~Function(void) {}
-bool Function::priviliged(void) {
+bool Function::priviliged(void) const {
 	return bpriv;
 }
-int Function::args(void) {
+int Function::args(void) const {
 	return max_argc;
 }
-int Function::minargs(void) {
+int Function::minargs(void) const {
 	return argc;
 }
-int Function::maxargs(void) {
+int Function::maxargs(void) const {
 	return max_argc;
 }
-string Function::name(void) {
+string Function::name(void) const {
 	return sname;
 }
 void Function::setName(string new_name, bool force) {
@@ -135,7 +138,7 @@ int Function::args(const string &str, string *buffer) {
 	}	
 	return itmp;
 }
-string Function::category(void) {
+string Function::category(void) const {
 	return scat;
 }
 void Function::setCategory(string cat_) {
@@ -143,7 +146,7 @@ void Function::setCategory(string cat_) {
 	scat = cat_;
 	b_changed = true;
 }
-string Function::description(void) {
+string Function::description(void) const {
 	return sdescr;
 }
 void Function::setDescription(string descr_) {
@@ -151,7 +154,7 @@ void Function::setDescription(string descr_) {
 	sdescr = descr_;
 	b_changed = true;
 }
-string Function::title(bool return_name_if_no_title) {
+string Function::title(bool return_name_if_no_title) const {
 	if(return_name_if_no_title && stitle.empty()) {
 		return name();
 	}
@@ -162,7 +165,7 @@ void Function::setTitle(string title_) {
 	stitle = title_;
 	b_changed = true;
 }
-string Function::argName(int index) {
+string Function::argName(int index) const {
 	if(index > 0 && index <= sargs.size())
 		return sargs[index - 1];
 	return "";
@@ -222,7 +225,52 @@ Manager *Function::calculate(const string &argv) {
 	int itmp = args(argv);
 	if(testArgCount(itmp)) {
 		mngr = new Manager();
-		calculate2(mngr);
+		bool b = false;
+		for(int i = 0; i < vargs.size(); i++) {
+			if(vargs[i]->type() == ALTERNATIVE_MANAGER) {
+				b = true;
+				break;
+			}
+		} 
+		if(b) {
+			vector<Manager*> vargs_copy(vargs);
+			vector<int> solutions;
+			solutions.reserve(vargs.size());
+			for(int i = 0; i < vargs.size(); i++) {
+				solutions.push_back(0);
+			}
+			b = true;
+			while(true) {
+				for(int i = 0; i < vargs.size(); i++) {
+					vargs[i] = vargs_copy[i];
+				}
+				for(int i = 0; i < vargs.size(); i++) {
+					if(vargs[i]->type() == ALTERNATIVE_MANAGER) {
+						if(!b && solutions[i] < vargs[i]->mngrs.size()) {
+							vargs[i] = vargs[i]->mngrs[solutions[i]];
+							solutions[i]++;
+							b = true;
+						} else {
+							solutions[i] = 0;
+							vargs[i] = vargs[i]->mngrs[solutions[i]];
+						}
+					}
+				}
+				if(!b) break;
+				Manager *mngr2 = new Manager();
+				calculate2(mngr2);
+				if(!isPrecise()) mngr2->setPrecise(false);
+				if(mngr->isNull()) {
+					mngr->moveto(mngr2);
+				} else {
+					mngr->addAlternative(mngr2);
+				}
+				b = false;	 			
+			}
+			mngr->altclean();
+		} else {
+			calculate2(mngr);
+		}
 		if(!isPrecise()) mngr->setPrecise(false);
 		CALCULATOR->checkFPExceptions(sname.c_str());	
 	} else {
@@ -235,18 +283,18 @@ void Function::calculate2(Manager *mngr) {
 /*	if(u)
 		u->add
 		(uargs[0]);*/
-	mngr->value(calculate3());	
+	mngr->set(calculate3());	
 }
 long double Function::calculate3() {
 	return 0;
 }
-bool Function::isBuiltinFunction(void) {
+bool Function::isBuiltinFunction(void) const {
 	return true;
 }
-bool Function::isUserFunction(void) {
+bool Function::isUserFunction(void) const {
 	return b_user;
 }
-bool Function::hasChanged(void) {
+bool Function::hasChanged(void) const {
 	return b_changed;
 }
 void Function::setUserFunction(bool is_user_function) {
@@ -260,7 +308,7 @@ void Function::setDefaultValue(int arg_, string value_) {
 		default_values[arg_ - argc - 1] = value_;
 	}
 }
-string Function::getDefaultValue(int arg_) {
+string Function::getDefaultValue(int arg_) const {
 	if(arg_ > argc && arg_ <= max_argc && default_values.size() >= arg_ - argc) {
 		return default_values[arg_ - argc - 1];
 	}
@@ -278,7 +326,7 @@ UserFunction::UserFunction(string cat_, string name_, string eq_, bool is_user_f
 	setEquation(eq_, argc_, max_argc_);
 	b_changed = false;	
 }
-string UserFunction::equation(void) {
+string UserFunction::equation(void) const {
 	return eq;
 }
 int Function::stringArgs(const string &str) {
@@ -437,19 +485,20 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 			}
 		}
 	}
-	if(argc_ > 26)
+	if(argc_ > 26) {
 		argc_ = 26;
-	if(max_argc_ > 26)
+	}
+	if(max_argc_ > 26) {
 		max_argc_ = 26;
+	}
 	while(default_values.size() < max_argc_ - argc_) {
 		default_values.push_back("0");
 	}
 	default_values.resize(max_argc_ - argc_);
-
 	eq_calc = new_eq;
 	argc = argc_;
 	max_argc = max_argc_;	
 }
-bool UserFunction::isBuiltinFunction(void) {
+bool UserFunction::isBuiltinFunction(void) const {
 	return false;
 }

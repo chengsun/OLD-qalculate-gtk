@@ -11,6 +11,96 @@
 
 #include "BuiltinFunctions.h"
 
+MatrixFunction::MatrixFunction() : Function("Matrices", "matrix", 2, "Construct Matrix", "", false, -1) {}
+void MatrixFunction::calculate2(Manager *mngr) {
+	if(!vargs[0]->isFraction() || !vargs[0]->fraction()->isInteger() || !vargs[0]->fraction()->isPositive() || !vargs[1]->isFraction() || !vargs[1]->fraction()->isInteger() || !vargs[1]->fraction()->isPositive()) {
+		Manager *mngr2 = createFunctionManagerFromVArgs(vargs.size());	
+		mngr->set(mngr2);
+		delete mngr2;
+		CALCULATOR->error(true, _("The number of rows and columns in matrix must be positive integers."), NULL);
+		return;
+	}
+	Matrix mtrx(vargs[0]->fraction()->numerator()->getInt(), vargs[1]->fraction()->numerator()->getInt());
+	int r = 1, c = 1;
+	for(int i = 2; i < vargs.size(); i++) {
+		if(r > mtrx.rows()) {
+			CALCULATOR->error(false, _("Too many elements (%s) for the order (%sx%s) of the matrix."), i2s(vargs.size() - 2).c_str(), i2s(mtrx.rows()).c_str(), i2s(mtrx.columns()).c_str(), NULL);
+			break;
+		}
+		mtrx.set(vargs[i], r, c);	
+		if(c == mtrx.columns()) {
+			c = 1;
+			r++;
+		} else {
+			c++;
+		}
+	}
+	mngr->set(&mtrx);
+}
+RowsFunction::RowsFunction() : Function("Matrices", "rows", 1, "Rows") {}
+void RowsFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isMatrix()) {
+		mngr->set(vargs[0]->matrix()->rows(), 1);
+	} else {
+		mngr->set(1, 1);
+	}
+}
+ColumnsFunction::ColumnsFunction() : Function("Matrices", "columns", 1, "Columns") {}
+void ColumnsFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isMatrix()) {
+		mngr->set(vargs[0]->matrix()->columns(), 1);
+	} else {
+		mngr->set(1, 1);
+	}
+}
+ElementFunction::ElementFunction() : Function("Matrices", "element", 3, "Element") {}
+void ElementFunction::calculate2(Manager *mngr) {
+	if(!vargs[0]->isFraction() || !vargs[0]->fraction()->isInteger() || !vargs[0]->fraction()->isPositive() || !vargs[1]->isFraction() || !vargs[1]->fraction()->isInteger() || !vargs[1]->fraction()->isPositive()) {
+		Manager *mngr2 = createFunctionManagerFromVArgs(vargs.size());	
+		mngr->set(mngr2);
+		delete mngr2;
+		CALCULATOR->error(true, _("Row and column in matrix must be positive integers."), NULL);
+		return;
+	}
+	if(vargs[2]->isMatrix()) {
+		mngr->set(vargs[2]->matrix()->get(vargs[0]->fraction()->numerator()->getInt(), vargs[1]->fraction()->numerator()->getInt()));
+	} else {
+		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
+	}
+}
+TransposeFunction::TransposeFunction() : Function("Matrices", "transpose", 1, "Transpose") {}
+void TransposeFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isMatrix()) {
+		mngr->set(vargs[0]->matrix());
+		mngr->matrix()->transpose();
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
+}
+IdentityFunction::IdentityFunction() : Function("Matrices", "identity", 1, "Identity") {}
+void IdentityFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isMatrix()) {
+		Matrix *mtrx = vargs[0]->matrix()->getIdentityMatrix();
+		mngr->set(mtrx);
+		delete mtrx;
+	} else if(vargs[0]->isFraction() && vargs[0]->fraction()->isInteger() && vargs[0]->fraction()->isPositive()) {
+		Matrix mtrx;
+		mtrx.setToIdentityMatrix(vargs[0]->fraction()->numerator()->getInt());
+		mngr->set(&mtrx);
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
+}
+DeterminantFunction::DeterminantFunction() : Function("Matrices", "det", 1, "Determinant") {}
+void DeterminantFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isMatrix()) {
+		Manager *det = vargs[0]->matrix()->determinant();
+		mngr->set(det);
+		delete det;	
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
+}
 IFFunction::IFFunction() : Function("Logical", "if", 3, "If...Then...Else") {
 }
 Manager *IFFunction::calculate(const string &argv) {
@@ -538,13 +628,13 @@ void MedianFunction::calculate2(Manager *mngr) {
 	    ++it;
 	}	
 	if(vargs.size() % 2 == 0) {
-		mngr->value(*it);
+		mngr->set(*it);
 		++it;
 		mngr->addFloat(*it, ADD);
 		mngr->addFloat(2, DIVIDE);
 	} else {
 		++it;
-		mngr->value(*it);
+		mngr->set(*it);
 	}
 }
 MinFunction::MinFunction() : Function("Statistics", "min", -1, "Min") {}

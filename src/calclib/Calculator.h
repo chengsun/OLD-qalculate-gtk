@@ -145,7 +145,7 @@ class Calculator {
 	string convertToValidUnitName(string name_);		
 	bool nameTaken(string name_, void *object = NULL);
 	bool unitNameTaken(string name_, Unit *u = NULL);
-	bool unitIsUsedByOtherUnits(Unit *u);	
+	bool unitIsUsedByOtherUnits(const Unit *u) const;	
 	string getName(string name = "", void *object = NULL, bool force = false, bool always_append = false);
 	string getUnitName(string name = "", Unit *object = NULL, bool force = false, bool always_append = false);	
 	bool load(const char* file_name, bool is_user_defs = true);

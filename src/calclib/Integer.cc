@@ -963,6 +963,34 @@ bool Integer::isMinusOne() const {
 	return b_neg && bits.size() == 1 && bits[0] == 1;
 #endif
 }
+long int Integer::getLongInt() const {
+#ifdef HAVE_LIBGMP
+	return mpz_get_si(integ);
+#else
+	if(bits.size() == 0) {
+		return 0;
+	} else if(bits.size() > 1 && bits[1] / BIT_SIZE < LONG_MAX / BIT_SIZE) {
+		if(isNegative()) {
+			return -(bits[0] + bits[1] * BIT_SIZE);
+		} else {
+			return bits[0] + bits[1] * BIT_SIZE;
+		}	
+	} else {
+		if(isNegative()) {
+			return -bits[0];
+		} else {
+			return bits[0];
+		}
+	}
+	return 0;
+#endif
+}
+int Integer::getInt() const {
+	long int li = getLongInt();
+	if(li > INT_MAX) return INT_MAX;
+	if(li < INT_MIN) return INT_MIN;	
+	return (int) li;
+}
 string Integer::print(int base) const {
 #ifdef HAVE_LIBGMP
 	char *c_str = mpz_get_str(NULL, base, integ);
