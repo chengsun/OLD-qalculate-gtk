@@ -456,10 +456,23 @@ void Calculator::deleteUnitName(string name_, Unit *object) {
 	}
 }
 Manager *Calculator::calculate(string str) {
+	int i = 0; 
+	string str2 = "";
+	if(unitsEnabled() && (i = str.find(_(" to "))) != string::npos) {
+		int l = strlen(_(" to "));
+		str2 = str.substr(i + l, str.length() - i - l);		
+		remove_blank_ends(str2);
+		if(!str2.empty()) {
+			str = str.substr(0, i);
+		}
+	}
 	setFunctionsAndVariables(str);
 	EqContainer *e = new EqContainer(str, this, PLUS_CH);
 	Manager *mngr = e->calculate();
 	mngr->finalize();
+	if(!str2.empty()) {
+		convert(mngr, str2);
+	}
 	mngr->ref();
 /*	int vtype = fpclassify(value);
 	if(vtype == FP_NAN)

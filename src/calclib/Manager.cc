@@ -1176,7 +1176,8 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 		if(o_unit->type() == 'D') {
 			Manager *mngr = ((CompositeUnit*) o_unit)->generateManager(false);
 			str2 = mngr->print(NUMBER_FORMAT_PREFIX, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, NULL, true);		
-			if(str2.substr(0, 2) == "1 ") str2 = str2.substr(2, str2.length() - 2);
+			gsub("1 ", "", str2);
+//			if(str2.substr(0, 2) == "1 ") str2 = str2.substr(2, str2.length() - 2);
 			str += str2;
 			mngr->unref();
 		} else {
