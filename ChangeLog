@@ -1,3 +1,21 @@
+2003-09-18  Niklas Knutsson  <nq@altern.org>
+
+	* Big restructuring to fix editing of global definitions, including deactivation 
+	  of definitions and a new virtual ExpressionItem class 
+	* More error messages in matrix functions
+	* Check if matrix operations were successful
+	* Correct bad setPrecise(false) call in matrix
+	* Speed up csum function for large vectors in statistical functions
+	* Fix addition^integer
+	* Fix display of 1/-x
+	* Fix sqrt()
+	* Fix display of fraction with 'E'
+	* Fix display of 5*5^x
+	* Fix detection of long prefixes
+	* Fix 'E' (now we can have it in names)
+	* Type label, spin buttons, date picker etc. in insert function dialog
+	* Argument type
+
 2003-09-15  Niklas Knutsson  <nq@altern.org>
 
 	* Fix insert function dialog
