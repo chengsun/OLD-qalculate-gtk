@@ -1,3 +1,7 @@
+2004-11-30 Niklas Knutsson  <nq@altern.org>
+
+	* Show base (if not decimal, hexadecimal or non-standard) as subscript
+
 2004-11-26 Niklas Knutsson  <nq@altern.org>
 
 	* Fix "Convert result" button

@@ -2469,6 +2469,21 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 				}
 				str += exp;
 			}
+			if(po.base != BASE_DECIMAL && po.base != BASE_HEXADECIMAL && po.base > 0 && po.base <= 36) {
+				if(ips.power_depth > 0) {
+					str += TEXT_TAGS_XSMALL;
+				} else {
+					str += TEXT_TAGS_SMALL;
+				}
+				str += "<sub>";
+				str += i2s(po.base);
+				str += "</sub>";
+				if(ips.power_depth > 0) {
+					str += TEXT_TAGS_XSMALL_END;
+				} else {
+					str += TEXT_TAGS_SMALL_END;
+				}
+			}
 			if(ips.power_depth > 0) {
 				str += TEXT_TAGS_SMALL_END;
 			} else {
