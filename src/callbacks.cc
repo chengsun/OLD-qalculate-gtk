@@ -1051,11 +1051,16 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	gtk_widget_show_all(dialog);
 	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
 	if(response == GTK_RESPONSE_ACCEPT || response == GTK_RESPONSE_APPLY) {
-		string str = f->name() + "(";
+		string str = f->name() + "(", str2;
 		for(int i = 0; i < args; i++) {
-			str += gtk_entry_get_text(GTK_ENTRY(entry[i]));
-			if(i + 1 < args)
-				str += ",";
+			str2 = gtk_entry_get_text(GTK_ENTRY(entry[i]));
+			if(i >= f->minargs()) {
+				remove_blank_ends(str2);
+				if(str2.empty()) break;
+			}
+			if(i > 0)
+				str += ",";			
+			str += str2;			
 		}
 		if(args < 0)
 			str += gtk_entry_get_text(GTK_ENTRY(entry1));

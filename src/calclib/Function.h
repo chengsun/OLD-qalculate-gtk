@@ -22,7 +22,7 @@ class Function {
 	Calculator *calc;
 	int argc;
 	int max_argc;
-	vector<long double> default_values;
+	vector<string> default_values;
 	string sname, stitle, sdescr, scat;
 	bool bpriv;
 	vector<string> sargs;
@@ -54,8 +54,8 @@ class Function {
 	bool setArgName(string name_, int index);
 	virtual bool isUserFunction(void);	
 	int stringArgs(const string &str);		
-	void setDefaultValue(int arg_, long double value_);
-	long double getDefaultValue(int arg_);	
+	void setDefaultValue(int arg_, string value_);
+	string getDefaultValue(int arg_);	
 };
 
 class UserFunction : public Function {

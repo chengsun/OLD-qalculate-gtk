@@ -28,7 +28,7 @@ Function::Function(Calculator *calc_, string cat_, string name_, int argc_, stri
 	else {
 		max_argc = max_argc_;
 		for(int i = 0; i < max_argc - argc; i++) {
-			default_values.push_back(0.0L);
+			default_values.push_back("0");
 		}
 	}
 	sargs.clear();
@@ -93,8 +93,7 @@ int Function::args(const string &str) {
 	}
 	if(itmp < maxargs() && itmp >= minargs()) {
 		while(itmp < maxargs()) {
-			Manager *mngr = new Manager(calc, default_values[itmp]);
-			mngr->ref();
+			Manager *mngr = calc->calculate(default_values[itmp - minargs()]);
 			vargs.push_back(mngr);
 			itmp++;
 		}
@@ -129,7 +128,7 @@ int Function::args(const string &str, string *buffer) {
 	}
 	if(itmp < maxargs() && itmp >= minargs()) {
 		while(itmp < maxargs()) {
-			buffer[itmp] = d2s(default_values[itmp]);
+			buffer[itmp] = default_values[itmp - minargs()];
 			itmp++;
 		}
 	}	
@@ -204,16 +203,16 @@ long double Function::calculate3() {
 bool Function::isUserFunction(void) {
 	return false;
 }
-void Function::setDefaultValue(int arg_, long double value_) {
+void Function::setDefaultValue(int arg_, string value_) {
 	if(arg_ > argc && arg_ <= max_argc && default_values.size() >= arg_ - argc) {
 		default_values[arg_ - argc - 1] = value_;
 	}
 }
-long double Function::getDefaultValue(int arg_) {
+string Function::getDefaultValue(int arg_) {
 	if(arg_ > argc && arg_ <= max_argc && default_values.size() >= arg_ - argc) {
 		return default_values[arg_ - argc - 1];
 	}
-	return 0.0L;
+	return "";
 }
 
 UserFunction::UserFunction(Calculator *calc_, string cat_, string name_, string eq_, int argc_, string title_, string descr_, int max_argc_) : Function(calc_, cat_, name_, argc_, title_, descr_, false, max_argc_) {
@@ -263,10 +262,10 @@ int Function::stringArgs(const string &str) {
 	if(itmp < maxargs() && itmp >= minargs()) {
 		while(itmp < maxargs()) {
 			stmp = LEFT_BRACKET_CH;
-			stmp += d2s(default_values[itmp]);
+			stmp += default_values[itmp - minargs()];
 			stmp += RIGHT_BRACKET_CH;
 			svargs.push_back(stmp);
-//			svargs.push_back(d2s(default_values[itmp]));			
+//			svargs.push_back(default_values[itmp - minargs()]);			
 			itmp++;
 		}
 	}	
@@ -317,7 +316,7 @@ void UserFunction::equation(string new_eq, int argc_, int max_argc_) {
 	default_values.clear();
 	if(argc_ < 0) {
 		argc_ = 0, max_argc_ = 0;
-		string svar, svar_o;
+		string svar, svar_o, svar_v;
 		bool optionals = false;
 		int i2 = 0;
 		unsigned int i3 = 0;
@@ -337,18 +336,19 @@ void UserFunction::equation(string new_eq, int argc_, int max_argc_) {
 				i3 = 0;
 				if(new_eq.length() > i2 + 2 && new_eq[i2 + 2] == ID_WRAP_LEFT_CH) {
 					if((i3 = new_eq.find(ID_WRAP_RIGHT_CH, i2 + 2)) != string::npos) {
-						svar_o = new_eq.substr(i2 + 3, i3 - (i2 + 3));	
+						svar_v = new_eq.substr(i2 + 3, i3 - (i2 + 3));	
 						i3 -= i2 + 1;
 					} else i3 = 0;
 				}
 				if(i3) {
-					Manager *mngr = calc->calculate(svar_o);
-					default_values.push_back(mngr->value());
-					mngr->unref();
+					default_values.push_back(svar_v);
 				} else {
-					default_values.push_back(0.0L);
+					default_values.push_back("0");
 				}
 				new_eq.replace(i2, 2 + i3, svar);
+				while((i2 = new_eq.find(svar_o, i2 + 1)) != (int) string::npos) {
+					new_eq.replace(i2, 2, svar);
+				}				
 				optionals = true;
 			} else if((i2 = new_eq.find(svar)) == (int) string::npos) {
 				break;
@@ -366,7 +366,7 @@ void UserFunction::equation(string new_eq, int argc_, int max_argc_) {
 	if(max_argc_ > 26)
 		max_argc_ = 26;
 	while(default_values.size() < max_argc_ - argc_) {
-		default_values.push_back(0.0L);
+		default_values.push_back("0");
 	}
 	default_values.resize(max_argc_ - argc_);
 
