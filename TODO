@@ -1,4 +1,4 @@
-* Fix memory leak on convert unit
+* Infinity
 * Free temporary composite units
 * Limit fraction precision
 * Do not recalculate plot data when it has not changed

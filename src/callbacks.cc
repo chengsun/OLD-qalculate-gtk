@@ -1785,6 +1785,7 @@ void getFormat(NumberFormat &numberformat, int &displayflags, int &min_decimals,
 	if(number_base == BASE_OCTAL) numberformat = NUMBER_FORMAT_OCTAL;
 	else if(number_base == BASE_HEX) numberformat = NUMBER_FORMAT_HEX;
 	else if(number_base == BASE_BIN) numberformat = NUMBER_FORMAT_BIN;
+	else if(number_base == BASE_ROMAN) numberformat = NUMBER_FORMAT_ROMAN;
 	else {
 		switch(display_mode) {
 			case MODE_SCIENTIFIC: {numberformat = NUMBER_FORMAT_EXP; displayflags = displayflags | DISPLAY_FORMAT_SCIENTIFIC; break;}
@@ -6386,6 +6387,7 @@ void update_resultview_popup() {
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_decimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_decimal_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_hexadecimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_hexadecimal_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_binary"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_binary_activate, NULL);
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_roman"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_roman_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_normal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_normal_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_scientific"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_scientific_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_purely_scientific"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_purely_scientific_activate, NULL);
@@ -6411,6 +6413,7 @@ void update_resultview_popup() {
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_decimal"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_hexadecimal"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_binary"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_roman"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_base"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_normal"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_scientific"));
@@ -6433,11 +6436,12 @@ void update_resultview_popup() {
 		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_decimal"));
 		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_hexadecimal"));
 		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_binary"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_roman"));
 		gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_base"));
 		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_display_normal"));
 		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_display_scientific"));
-		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_display_purely_scientific"));
-		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_display_non_scientific"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_purely_scientific"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_non_scientific"));
 		gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_display"));
 		if(mngr && mngr->countChilds() > 0) {
 			gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_factorize"));
@@ -6462,6 +6466,10 @@ void update_resultview_popup() {
 		}
 		case BASE_BIN: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_binary")), TRUE);
+			break;
+		}
+		case BASE_ROMAN: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_roman")), TRUE);
 			break;
 		}
 	}
@@ -6505,6 +6513,7 @@ void update_resultview_popup() {
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_decimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_decimal_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_hexadecimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_hexadecimal_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_binary"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_binary_activate, NULL);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_roman"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_roman_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_normal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_normal_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_scientific"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_scientific_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_purely_scientific"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_purely_scientific_activate, NULL);
@@ -6998,6 +7007,13 @@ void on_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer user_data) {
 	setResult();
 	gtk_widget_grab_focus(expression);
 }
+void on_menu_item_roman_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
+		return;
+	number_base = BASE_ROMAN;
+	setResult();
+	gtk_widget_grab_focus(expression);
+}
 void on_menu_item_short_units_activate(GtkMenuItem *w, gpointer user_data) {
 	use_short_units = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	setResult();
@@ -7159,6 +7175,10 @@ void on_popup_menu_item_fraction_fraction_activate(GtkMenuItem *w, gpointer user
 void on_popup_menu_item_binary_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_binary")), TRUE);
+}
+void on_popup_menu_item_roman_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_roman")), TRUE);
 }
 void on_popup_menu_item_octal_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
@@ -7734,7 +7754,7 @@ void on_nbases_entry_decimal_changed(GtkEditable *editable, gpointer user_data) 
 void on_nbases_entry_binary_changed(GtkEditable *editable, gpointer user_data) {
 	if(changing_in_nbases_dialog) return;
 	Manager *value;
-	Function *func = CALCULATOR->getFunction("BIN");	
+	Function *func = CALCULATOR->getBinaryFunction();	
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
 	if(str.empty()) return;
@@ -7750,7 +7770,7 @@ void on_nbases_entry_binary_changed(GtkEditable *editable, gpointer user_data) {
 void on_nbases_entry_octal_changed(GtkEditable *editable, gpointer user_data) {
 	if(changing_in_nbases_dialog) return;
 	Manager *value;
-	Function *func = CALCULATOR->getFunction("OCT");	
+	Function *func = CALCULATOR->getOctalFunction();	
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
 	if(str.empty()) return;	
@@ -7766,7 +7786,7 @@ void on_nbases_entry_octal_changed(GtkEditable *editable, gpointer user_data) {
 void on_nbases_entry_hexadecimal_changed(GtkEditable *editable, gpointer user_data) {
 	if(changing_in_nbases_dialog) return;
 	Manager *value;
-	Function *func = CALCULATOR->getFunction("HEX");	
+	Function *func = CALCULATOR->getHexadecimalFunction();	
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
 	str.insert(0, "\"");

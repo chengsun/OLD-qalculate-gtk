@@ -78,7 +78,7 @@ class Calculator {
 	FILE *gnuplot_pipe;
 	
 	Variable *pi_var, *e_var;
-	Function *ln_func, *vector_func, *matrix_func, *sin_func, *cos_func, *diff_func;
+	Function *ln_func, *vector_func, *matrix_func, *sin_func, *cos_func, *diff_func, *bin_func, *oct_func, *hex_func, *base_func;
 
   public:
   
@@ -114,6 +114,10 @@ class Calculator {
 	Variable *getPI() const;
 	Variable *getE() const;
 	Function *getLnFunction() const;
+	Function *getOctalFunction() const;
+	Function *getHexadecimalFunction() const;
+	Function *getBinaryFunction() const;
+	Function *getBaseFunction() const;
 	Function *getSinFunction() const;
 	Function *getCosFunction() const;
 	Function *getDiffFunction() const;

@@ -1628,7 +1628,7 @@ void RandomFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(drand48());
 }
 
-BASEFunction::BASEFunction() : Function("General", "BASE", 2, "Number Base") {
+BASEFunction::BASEFunction() : Function("General", "base", 2, "Number Base") {
 	setArgumentDefinition(1, new TextArgument());
 	IntegerArgument *arg = new IntegerArgument();
 	Number integ(2, 1);
@@ -1642,7 +1642,7 @@ void BASEFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	remove_blanks(str);
 	mngr->set(strtol(str.c_str(), NULL, vargs[1]->number()->intValue()), 1);
 }
-BINFunction::BINFunction() : Function("General", "BIN", 1, "Binary") {
+BINFunction::BINFunction() : Function("General", "bin", 1, "Binary") {
 	setArgumentDefinition(1, new TextArgument());
 }
 void BINFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
@@ -1650,7 +1650,7 @@ void BINFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	remove_blanks(str);
 	mngr->set(strtol(str.c_str(), NULL, 2), 1);
 }
-OCTFunction::OCTFunction() : Function("General", "OCT", 1, "Octal") {
+OCTFunction::OCTFunction() : Function("General", "oct", 1, "Octal") {
 	setArgumentDefinition(1, new TextArgument());
 }
 void OCTFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
@@ -1658,7 +1658,7 @@ void OCTFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	remove_blanks(str);
 	mngr->set(strtol(str.c_str(), NULL, 8), 1);
 }
-HEXFunction::HEXFunction() : Function("General", "HEX", 1, "Hexadecimal") {
+HEXFunction::HEXFunction() : Function("General", "hex", 1, "Hexadecimal") {
 	setArgumentDefinition(1, new TextArgument());
 }
 void HEXFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
@@ -1671,6 +1671,90 @@ void HEXFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	string str = vargs[0]->text();
 	remove_blanks(str);
 	mngr->set(strtol(str.c_str(), NULL, 16), 1);
+}
+RomanFunction::RomanFunction() : Function("General", "roman", 1, "Roman Number") {
+	setArgumentDefinition(1, new TextArgument());
+}
+void RomanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	string str = vargs[0]->text();
+	remove_blanks(str);
+	Number nr;
+	int prev = 0;
+	int cur = 0;
+	bool sub = false, large = false;
+	for(int i = str.length() - 1; i >= 0; i--) {
+		prev = cur;
+		switch(str[i]) {
+			case 'i': {}
+			case 'I': {
+				cur = 1;
+				break;
+			}
+			case 'v': {}
+			case 'V': {
+				cur = 5;
+				break;
+			}
+			case 'x': {}
+			case 'X': {
+				cur = 10;
+				break;
+			}
+			case 'l': {}
+			case 'L': {
+				cur = 50;
+				break;
+			}
+			case 'c': {}
+			case 'C': {
+				cur = 100;
+				break;
+			}
+			case 'd': {}
+			case 'D': {
+				cur = 500;
+				break;
+			}
+			case 'm': {}
+			case 'M': {
+				cur = 1000;
+				break;
+			}
+			case '|': {
+				if(large) {
+					cur = -1;
+					large = false;
+					break;
+				} else if(i > 2 || str[i - 2] == '|') {
+					cur = -1;
+					large = true;
+					break;
+				}
+			}
+			default: {
+				cur = -1;
+				CALCULATOR->error(true, "Unknown roman numeral: %s.", str.substr(i, 1).c_str(), NULL);
+			}
+		}
+		if(cur < 1) {
+			cur = prev;
+		} else {
+			if(large) {
+				cur *= 100000;
+			}
+			if(prev > cur) {
+				sub = true;
+			} else if(prev < cur) {
+				sub = false;
+			}
+			if(sub) {
+				nr.subtract(cur);
+			} else {
+				nr.add(cur);
+			}
+		}
+	}
+	mngr->set(&nr);
 }
 TitleFunction::TitleFunction() : Function("Utilities", "title", 1, "Object title") {
 	setArgumentDefinition(1, new ExpressionItemArgument());

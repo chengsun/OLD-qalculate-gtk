@@ -946,7 +946,7 @@ The argument can be restricted by further conditions. For example that a number 
 Here the main function categories and some of their members are described, to give an overview of available functions. The right place for a complete list and information about separate functions is however in the function manager.
 <variablelist>
 <varlistentry>
-<term>Calculus</term>
+<term>Algebra</term>
 <listitem><para>
 Contains <command>sum()</command> and <command>productive()</command>, which corresponds to the sum and product signs.
 </para></listitem>
@@ -1011,7 +1011,7 @@ A category for functions that do not fit elsewhere.
 <varlistentry>
 <term>Number Theory</term>
 <listitem><para>
-Contains subcategories arithmetics, number bases, and rounding, in addition to functions such as <command>abs()</command>, which returns the absolute value of a number, and <command>gcd()</command>, the greatest common divisor. <command>round()</command> is the standard rounding function. The functions for number bases translates a text string, representing a number in a different base, to a decimal number. Includes <command>BIN()</command> for binary numbers, <command>HEX()</command> for hexadecimal numbers, <command>OCT()</command> for octal numbers and <command>BASE()</command> for numbers in a base between 2 and 36 specified in the second argument.
+Contains subcategories arithmetics, number bases, and rounding, in addition to functions such as <command>abs()</command>, which returns the absolute value of a number, and <command>gcd()</command>, the greatest common divisor. <command>round()</command> is the standard rounding function. The functions for number bases translates a text string, representing a number in a different base, to a decimal number. Includes <command>bin()</command> for binary numbers, <command>hex()</command> for hexadecimal numbers, <command>oct()</command> for octal numbers and <command>base()</command> for numbers in a base between 2 and 36 specified in the second argument.
 </para></listitem>
 </varlistentry>
 <varlistentry>

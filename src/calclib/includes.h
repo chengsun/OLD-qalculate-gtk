@@ -54,6 +54,8 @@ enum {
 	TYPE_UNIT
 };
 
+#define BASE_ROMAN_NUMERALS	-1
+
 typedef enum {
 	PLOT_LEGEND_NONE,
 	PLOT_LEGEND_TOP_LEFT,
@@ -90,7 +92,8 @@ typedef enum {
 	NUMBER_FORMAT_EXP_PURE,
 	NUMBER_FORMAT_HEX,
 	NUMBER_FORMAT_OCTAL,
-	NUMBER_FORMAT_BIN
+	NUMBER_FORMAT_BIN,
+	NUMBER_FORMAT_ROMAN
 } NumberFormat;
 
 typedef enum {

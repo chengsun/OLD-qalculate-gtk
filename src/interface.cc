@@ -135,7 +135,7 @@ create_main_window (void)
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_rpn_mode")), CALCULATOR->inRPNMode());
 
-	switch (number_base) {
+	switch(number_base) {
 		case BASE_OCTAL: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_octal")), TRUE);
 			break;
@@ -150,6 +150,10 @@ create_main_window (void)
 		}
 		case BASE_BIN: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_binary")), TRUE);
+			break;
+		}
+		case BASE_ROMAN: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_roman")), TRUE);
 			break;
 		}
 	}

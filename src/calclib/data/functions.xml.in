@@ -131,7 +131,7 @@
     </category>
     <category>
       <_title>Number Bases</_title>
-      <builtin_function name="BASE">
+      <builtin_function name="base">
         <_title>Number base</_title>
         <_description>Returns a decimal integer from a number of specified base between 2 and 36</_description>
         <argument index="1">
@@ -141,21 +141,21 @@
           <_title>Base</_title>
         </argument>
       </builtin_function>
-      <builtin_function name="BIN">
+      <builtin_function name="bin">
         <_title>Binary</_title>
         <_description>Returns a decimal integer from a binary number</_description>
         <argument index="1">
           <_title>Binary number</_title>
         </argument>
       </builtin_function>
-      <builtin_function name="OCT">
+      <builtin_function name="oct">
         <_title>Octal</_title>
         <_description>Returns a decimal integer from an octal number</_description>
         <argument index="1">
           <_title>Octal number</_title>
         </argument>
       </builtin_function>
-      <builtin_function name="HEX">
+      <builtin_function name="hex">
         <_title>Hexadecimal</_title>
         <_description>Returns a decimal value from a hexadecimal number</_description>
         <argument index="1">
@@ -1647,6 +1647,12 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       <_title>Riemann Zeta</_title>
       <argument index="1">
         <_title>Integral point</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="roman">
+      <_title>Roman Number</_title>
+      <argument index="1">
+        <_title>Roman number</_title>
       </argument>
     </builtin_function>
   </category>

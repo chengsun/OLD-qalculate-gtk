@@ -185,7 +185,7 @@ Calculator::Calculator() {
 	angleMode(RADIANS);
 	pi_var = NULL;
 	e_var = NULL;
-	ln_func = NULL, matrix_func = NULL, vector_func = NULL, sin_func = NULL, cos_func = NULL, diff_func = NULL;
+	ln_func = NULL, matrix_func = NULL, vector_func = NULL, sin_func = NULL, cos_func = NULL, diff_func = NULL, base_func = NULL, bin_func = NULL, oct_func = NULL, hex_func = NULL;
 	addBuiltinVariables();
 	addBuiltinFunctions();
 	addBuiltinUnits();
@@ -226,6 +226,10 @@ bool Calculator::utf8_pos_is_valid_in_name(char *pos) {
 
 Variable *Calculator::getPI() const {return pi_var;}
 Variable *Calculator::getE() const {return e_var;}
+Function *Calculator::getBinaryFunction() const {return bin_func;}
+Function *Calculator::getOctalFunction() const {return oct_func;}
+Function *Calculator::getHexadecimalFunction() const {return hex_func;}
+Function *Calculator::getBaseFunction() const {return base_func;}
 Function *Calculator::getLnFunction() const {return ln_func;}
 Function *Calculator::getSinFunction() const {return sin_func;}
 Function *Calculator::getCosFunction() const {return cos_func;}
@@ -801,10 +805,11 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new MaxFunction());
 	addFunction(new ModeFunction());
 	addFunction(new RandomFunction());
-	addFunction(new BASEFunction());
-	addFunction(new BINFunction());
-	addFunction(new OCTFunction());
-	addFunction(new HEXFunction());
+	base_func = addFunction(new BASEFunction());
+	bin_func = addFunction(new BINFunction());
+	oct_func = addFunction(new OCTFunction());
+	hex_func = addFunction(new HEXFunction());
+	addFunction(new RomanFunction());
 	addFunction(new TitleFunction());
 	addFunction(new SaveFunction());
 	addFunction(new ConcatenateFunction());

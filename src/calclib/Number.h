@@ -159,10 +159,10 @@ class Number {
 		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, Prefix *prefix = NULL, bool *in_exact = NULL, bool *usable = NULL, bool toplevel = true, bool *plural = NULL, Number *l_exp = NULL, bool in_composite = false, bool in_power = false) const;
 		void getPrintObjects(bool &minus, string &whole_, string &numerator_, string &denominator_, bool &exp_minus, string &exponent_, string &prefix_, NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, Prefix *prefix = NULL, bool *in_exact = NULL, bool *usable = NULL, bool toplevel = true, bool *plural = NULL, Number *l_exp = NULL, bool in_composite = false, bool in_power = false, Number *l_exp2 = NULL, Prefix **prefix1 = NULL, Prefix **prefix2 = NULL) const;
 		
-		string printNumerator(unsigned int base = 10, bool display_sign = true) const;
-		string printDenominator(unsigned int base = 10, bool display_sign = true) const;
-		string printImaginaryNumerator(unsigned int base = 10, bool display_sign = true) const;
-		string printImaginaryDenominator(unsigned int base = 10, bool display_sign = true) const;
+		string printNumerator(int base = 10, bool display_sign = true) const;
+		string printDenominator(int base = 10, bool display_sign = true) const;
+		string printImaginaryNumerator(int base = 10, bool display_sign = true) const;
+		string printImaginaryDenominator(int base = 10, bool display_sign = true) const;
 	
 };
 

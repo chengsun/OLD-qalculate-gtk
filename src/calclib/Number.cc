@@ -26,7 +26,76 @@ void cln::cl_abort() {
 	}
 }
 
-string printCL_I(cl_I integ, unsigned int base = 10, bool display_sign = true) {
+string printCL_I(cl_I integ, int base = 10, bool display_sign = true) {
+	if(base == BASE_ROMAN_NUMERALS) {
+		if(!zerop(integ) && integ < 10000 && integ > -10000) {
+			string str;
+			int value = cl_I_to_int(integ);
+			if(value < 0) {
+				value = -value;
+				if(display_sign) {
+					str += "-";
+				}
+			}
+			int times = value / 1000;
+			for(; times > 0; times--) {
+				str += "M";
+			}
+			value = value % 1000;
+			times = value / 100;
+			if(times == 9) {
+				str += "C";
+				str += "M";
+				times = 0;
+			} else if(times >= 5) {
+				str += "D";
+				times -= 5;
+			} else if(times == 4) {
+				times = 0;
+				str += "C";
+				str += "D";
+			}
+			for(; times > 0; times--) {
+				str += "C";
+			}
+			value = value % 100;
+			times = value / 10;
+			if(times == 9) {
+				str += "X";
+				str += "C";
+				times = 0;
+			} else if(times >= 5) {
+				str += "L";
+				times -= 5;
+			} else if(times == 4) {
+				times = 0;
+				str += "X";
+				str += "L";
+			}
+			for(; times > 0; times--) {
+				str += "X";
+			}
+			value = value % 10;
+			times = value;
+			if(times == 9) {
+				str += "I";
+				str += "X";
+				times = 0;
+			} else if(times >= 5) {
+				str += "V";
+				times -= 5;
+			} else if(times == 4) {
+				times = 0;
+				str += "I";
+				str += "V";
+			}
+			for(; times > 0; times--) {
+				str += "I";
+			}
+			return str;
+		}
+		base = 10;
+	}
 	cl_print_flags flags;
 	flags.rational_base = base;
 	ostringstream stream;
@@ -1344,6 +1413,11 @@ void Number::getPrintObjects(bool &minus, string &whole_, string &numerator_, st
 			base = 2;
 			force_rational = true;
 			break;
+		}
+		case NUMBER_FORMAT_ROMAN: {
+			base = BASE_ROMAN_NUMERALS;
+			force_rational = true;
+			break;
 		}					
 		case NUMBER_FORMAT_NORMAL: {
 			if(exp_spec > -PRECISION && exp_spec < PRECISION) { 
@@ -1472,15 +1546,15 @@ void Number::getPrintObjects(bool &minus, string &whole_, string &numerator_, st
 	}
 }
 
-string Number::printNumerator(unsigned int base, bool display_sign) const {
+string Number::printNumerator(int base, bool display_sign) const {
 	return printCL_I(cln::numerator(cln::rational(cln::realpart(value))), base, display_sign);
 }
-string Number::printDenominator(unsigned int base, bool display_sign) const {
+string Number::printDenominator(int base, bool display_sign) const {
 	return printCL_I(cln::denominator(cln::rational(cln::realpart(value))), base, display_sign);
 }
-string Number::printImaginaryNumerator(unsigned int base, bool display_sign) const {
+string Number::printImaginaryNumerator(int base, bool display_sign) const {
 	return printCL_I(cln::numerator(cln::rational(cln::imagpart(value))), base, display_sign);
 }
-string Number::printImaginaryDenominator(unsigned int base, bool display_sign) const {
+string Number::printImaginaryDenominator(int base, bool display_sign) const {
 	return printCL_I(cln::denominator(cln::rational(cln::imagpart(value))), base, display_sign);
 }
