@@ -921,8 +921,8 @@ bool Manager::mergable(Manager *mngr, char type_) {
 	return false;
 }
 bool Manager::compatible(Manager *mngr) {
-	if(c_type == 0 || mngr->c_type == 0) return true;
-	if(c_type == mngr->c_type) {
+	if(c_type == NULL_MANAGER || mngr->type() == NULL_MANAGER) return true;
+	if(c_type == mngr->type()) {
 		if(c_type == 'v') {
 			return true;
 		} else if(c_type == 'u') {
@@ -957,8 +957,9 @@ bool Manager::compatible(Manager *mngr) {
 			return mngrs[0]->equal(mngr->mngrs[0]) && mngrs[1]->equal(mngr->mngrs[1]);
 		}
 	} else if(c_type == MULTIPLICATION_CH) {
-		if(mngr->c_type != 'v') {
+		if(mngr->type() != VALUE_MANAGER) {
 			if(mngrs.size() != 2) return false;
+			if(!mngrs[0]->type() != VALUE_MANAGER) return false;			
 			if(!mngrs[1]->compatible(mngr)) return false;
 			return true;
 		}
