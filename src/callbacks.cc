@@ -3206,23 +3206,6 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 			argstr = f->argumentName(i + 1);
 		}
 		typestr = "";
-		if(i >= f->minargs() && !has_vector) {
-			typestr = "(";
-			typestr += _("optional");
-		}		
-		if(typestr.empty()) {
-			typestr = "(";
-		} else {
-			typestr += " ";
-		}
-		argtype = f->argumentTypeString(i + 1);
-		if(argtype) {
-			typestr += argtype;
-		}
-		typestr += ")";		
-		if(typestr.length() == 2) {
-			typestr = "";
-		}
 		label[i] = gtk_label_new(argstr.c_str());
 		gtk_misc_set_alignment(GTK_MISC(label[i]), 0, 0.5);
 		switch(f->argumentType(i + 1)) {
@@ -3245,13 +3228,42 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 				entry[i] = gtk_spin_button_new_with_range(-1000000, 1000000, 1);
 				gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 1);
 				break;
-			}						
+			}
+			case ARGUMENT_TYPE_BOOLEAN: {
+				entry[i] = gtk_spin_button_new_with_range(0, 1, 1);
+				gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 0);
+				break;
+			}									
 			default: {
+				if(i >= f->minargs() && !has_vector) {
+					typestr = "(";
+					typestr += _("optional");
+				}
+				argtype = f->argumentTypeString(i + 1);		
+				if(typestr.empty()) {
+					typestr = "(";
+				} else if(argtype) {
+					typestr += " ";
+				}
+				if(argtype) {
+					typestr += argtype;
+				}
+				typestr += ")";		
+				if(typestr.length() == 2) {
+					typestr = "";
+				}
+			
 				entry[i] = gtk_entry_new();
 			}
 		}
+		if(typestr.empty() && i >= f->minargs() && !has_vector) {
+			typestr = "(";
+			typestr += _("optional");
+			typestr += ")";			
+		}		
 		switch(f->argumentType(i + 1)) {		
 			case ARGUMENT_TYPE_DATE: {
+				typestr = typestr.substr(1, typestr.length() - 2);
 				type_label[i] = gtk_button_new_with_label(typestr.c_str());
 				g_signal_connect((gpointer) type_label[i], "clicked", G_CALLBACK(on_type_label_date_clicked), (gpointer) entry[i]);
 				break;
@@ -6054,7 +6066,7 @@ void on_type_label_date_clicked(GtkButton *w, gpointer user_data) {
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
 		guint year = 0, month = 0, day = 0;
 		gtk_calendar_get_date(GTK_CALENDAR(date_w), &year, &month, &day);
-		gchar *gstr = g_strdup_printf("%i-%02i-%02i", year, month, day);
+		gchar *gstr = g_strdup_printf("%i-%02i-%02i", year, month + 1, day);
 		gtk_entry_set_text(GTK_ENTRY(user_data), gstr);
 		g_free(gstr);
 	}
@@ -6107,6 +6119,7 @@ void on_function_edit_button_add_argument_clicked(GtkButton *w, gpointer user_da
 		default: {str = _("Free");}
 	}			
 	gtk_list_store_set(tFunctionArguments_store, &iter, 0, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_argument_name"))), 1, str.c_str(), 2, menu_index, -1);
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_argument_name")), "");
 }
 void on_function_edit_button_remove_argument_clicked(GtkButton *w, gpointer user_data) {
 	GtkTreeModel *model;
@@ -6115,6 +6128,7 @@ void on_function_edit_button_remove_argument_clicked(GtkButton *w, gpointer user
 	if(gtk_tree_selection_get_selected(select, &model, &iter)) {
 		gtk_list_store_remove(tFunctionArguments_store, &iter);
 	}
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_argument_name")), "");
 }
 void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user_data) {
 	GtkTreeModel *model;
@@ -6143,6 +6157,9 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 		}			
 		gtk_list_store_set(tFunctionArguments_store, &iter, 0, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_argument_name"))), 1, str.c_str(), 2, menu_index, -1);
 	}
+}
+void on_function_edit_entry_argument_name_activate(GtkEntry *entry, gpointer user_data) {
+	on_function_edit_button_add_argument_clicked(GTK_BUTTON(glade_xml_get_widget (glade_xml, "function_edit_button_add_argument_")), NULL);
 }
 
 }

@@ -842,59 +842,57 @@ void GCDFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
 	mngr->fraction()->gcd(vargs[1]->fraction());
 }
-DaysFunction::DaysFunction() : Function("Date & Time", "daysto", 2, "Days to date") {
+DaysFunction::DaysFunction() : Function("Date & Time", "days", 2, "Days between two dates", "", 4) {
 	setArgumentType(ARGUMENT_TYPE_DATE, 1);
 	setArgumentType(ARGUMENT_TYPE_DATE, 2);	
+	setArgumentType(ARGUMENT_TYPE_NONNEGATIVE_INTEGER, 3);	
+	setArgumentType(ARGUMENT_TYPE_BOOLEAN, 4);				
+	setDefaultValue(3, "1"); 
 }
 void DaysFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TEST_TEXT(0)
 	TEST_TEXT(1)	
-	int days = daysBetweenDates(vargs[0]->text(), vargs[1]->text(), 1);
-	if(days < 0) {
-		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
-		mngr->set(this, vargs[0], vargs[1], NULL);
-	} else {
-		mngr->set(days, 1, 0);
+	if(!vargs[2]->isFraction() || !vargs[2]->fraction()->isInteger() || vargs[2]->fraction()->isNegative()) {
+		CALCULATOR->error(true, _("Basis for %s() must be a non-negative integer."), name().c_str(), NULL);
+		mngr->set(this, vargs[0], vargs[1], vargs[2], vargs[3], NULL);
+		return;
+	}
+	if(!vargs[3]->isFraction() || !(vargs[3]->fraction()->isOne() || vargs[3]->fraction()->isZero())) {
+		CALCULATOR->error(true, _("If in financial function for %s() must be zero or one."), name().c_str(), NULL);
+		mngr->set(this, vargs[0], vargs[1], vargs[2], vargs[3], NULL);
+		return;
 	}	
-}
-DaysBetweenDatesFunction::DaysBetweenDatesFunction() : Function("Date & Time", "days_between_dates", 2, "Days between two dates", "", 3) {
-	setArgumentType(ARGUMENT_TYPE_DATE, 1);
-	setArgumentType(ARGUMENT_TYPE_DATE, 2);	
-	setArgumentType(ARGUMENT_TYPE_INTEGER, 3);	
-}
-void DaysBetweenDatesFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TEST_TEXT(0)
-	TEST_TEXT(1)	
-	if(!vargs[2]->isFraction() || !vargs[2]->fraction()->isInteger() || vargs[2]->fraction()->isNegative()) {
-		CALCULATOR->error(true, _("Basis for %s() must be a non-negative integer."), name().c_str(), NULL);
-		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
-		return;
-	}
-	int days = daysBetweenDates(vargs[0]->text(), vargs[1]->text(), vargs[2]->fraction()->numerator()->getInt());
+	int days = daysBetweenDates(vargs[0]->text(), vargs[1]->text(), vargs[2]->fraction()->numerator()->getInt(), vargs[3]->fraction()->isZero());
 	if(days < 0) {
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
-		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);			
+		mngr->set(this, vargs[0], vargs[1], vargs[2], vargs[3], NULL);			
 	} else {
 		mngr->set(days, 1, 0);
-	}		
+	}			
 }
-YearsBetweenDatesFunction::YearsBetweenDatesFunction() : Function("Date & Time", "years_between_dates", 2, "Years between two dates", "", 3) {
+YearFracFunction::YearFracFunction() : Function("Date & Time", "yearfrac", 2, "Years between two dates", "", 4) {
 	setArgumentType(ARGUMENT_TYPE_DATE, 1);
 	setArgumentType(ARGUMENT_TYPE_DATE, 2);	
-	setArgumentType(ARGUMENT_TYPE_INTEGER, 3);	
+	setArgumentType(ARGUMENT_TYPE_NONNEGATIVE_INTEGER, 3);	
+	setArgumentType(ARGUMENT_TYPE_BOOLEAN, 4);		
 }
-void YearsBetweenDatesFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+void YearFracFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TEST_TEXT(0)
 	TEST_TEXT(1)	
 	if(!vargs[2]->isFraction() || !vargs[2]->fraction()->isInteger() || vargs[2]->fraction()->isNegative()) {
 		CALCULATOR->error(true, _("Basis for %s() must be a non-negative integer."), name().c_str(), NULL);
-		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
+		mngr->set(this, vargs[0], vargs[1], vargs[2], vargs[3], NULL);
 		return;
 	}
-	Fraction *fr = yearsBetweenDates(vargs[0]->text(), vargs[1]->text(), vargs[2]->fraction()->numerator()->getInt());
+	if(!vargs[3]->isFraction() || !(vargs[3]->fraction()->isOne() || vargs[3]->fraction()->isZero())) {
+		CALCULATOR->error(true, _("If in financial function for %s() must be zero or one."), name().c_str(), NULL);
+		mngr->set(this, vargs[0], vargs[1], vargs[2], vargs[3], NULL);
+		return;
+	}
+	Fraction *fr = yearsBetweenDates(vargs[0]->text(), vargs[1]->text(), vargs[2]->fraction()->numerator()->getInt(), vargs[3]->fraction()->isZero());
 	if(!fr) {
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
-		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);			
+		mngr->set(this, vargs[0], vargs[1], vargs[2], vargs[3], NULL);			
 	} else {
 		mngr->set(fr);
 	}
@@ -991,7 +989,7 @@ FracFunction::FracFunction() : Function("Arithmetics", "frac", 1, "Extract fract
 void FracFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-		mngr->fraction()->mod();		
+		mngr->fraction()->frac();		
 	} else {
 		mngr->set(this, vargs[0], NULL);
 	}

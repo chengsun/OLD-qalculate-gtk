@@ -257,6 +257,7 @@ void on_units_button_deactivate_clicked(GtkButton *w, gpointer user_data);
 void on_function_edit_button_add_argument_clicked(GtkButton *w, gpointer user_data);
 void on_function_edit_button_remove_argument_clicked(GtkButton *w, gpointer user_data);
 void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user_data);
+void on_function_edit_entry_argument_name_activate(GtkEntry *entry, gpointer user_data);
 
 }
 

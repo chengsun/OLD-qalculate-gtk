@@ -685,8 +685,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new IFFunction());
 	addFunction(new DifferentiateFunction());	
 	addFunction(new DaysFunction());		
-	addFunction(new DaysBetweenDatesFunction());		
-	addFunction(new YearsBetweenDatesFunction());		
+	addFunction(new YearFracFunction());		
 	addFunction(new GCDFunction());	
 	addFunction(new FactorialFunction());		
 	addFunction(new AbsFunction());
@@ -1518,7 +1517,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 								i4 = i5 - i + 1;
 							}
 						}
-						mngr =  f->calculate("");
+						mngr = f->calculate("");
 						if(mngr) {
 							stmp = LEFT_BRACKET_CH;
 							stmp += ID_WRAP_LEFT_CH;
@@ -1530,25 +1529,48 @@ void Calculator::setFunctionsAndVariables(string &str) {
 							stmp = "";
 						}
 						if(i4 < 0) i4 = f->name().length();
+					} else if(b_rpn && f->args() == 1 && i > 0 && str[i - 1] == SPACE_CH && (i + f->name().length() >= str.length() || str[i + f->name().length()] != LEFT_BRACKET_CH) && (i6 = str.find_last_not_of(SPACE, i - 1)) != string::npos) {
+						i5 = str.rfind(SPACE, i6);	
+						if(i5 == string::npos) {
+							stmp = str.substr(0, i6 + 1);	
+						} else {
+							stmp = str.substr(i5 + 1, i6 - i5);
+						}
+						mngr =  f->calculate(stmp);
+						if(mngr) {
+							stmp = LEFT_BRACKET_CH;
+							stmp += ID_WRAP_LEFT_CH;
+							stmp += i2s(addId(mngr));
+							mngr->unref();
+							stmp += ID_WRAP_RIGHT_CH;
+							stmp += RIGHT_BRACKET_CH;
+						} else {
+							stmp = "";
+						}
+						if(i5 == string::npos) {
+							str.replace(0, i + f->name().length(), stmp);
+						} else {
+							str.replace(i5 + 1, i + f->name().length() - i5 - 1, stmp);
+						}
 					} else {
 						b = false;
 						i5 = 1;
 						i6 = 0;
 						while(i5 > 0 && !b) {
-							if(i6 + i + (int) f->name().length() >= (int) str.length()) {
+							if(i6 + i + f->name().length() >= str.length()) {
 								b = true;
 								i5 = 2;
 								i6++;
 								break;
 							} else {
-								char c = str[i + (int) f->name().length() + i6];
+								char c = str[i + f->name().length() + i6];
 								if(c == LEFT_BRACKET_CH && i5 != 2) {
 									b = true;
 								} else if(c == ' ') {
 									if(i5 == 2) {
 										b = true;
 									}
-								} else if(i5 == 2 && is_in(OPERATORS, str[i + (int) f->name().length() + i6])) {
+								} else if(i5 == 2 && is_in(OPERATORS, str[i + f->name().length() + i6])) {
 									b = true;
 								} else {
 									if(i6 > 0) {

@@ -2234,8 +2234,8 @@
 			  <property name="justification">GTK_JUSTIFY_LEFT</property>
 			  <property name="wrap_mode">GTK_WRAP_WORD</property>
 			  <property name="cursor_visible">False</property>
-			  <property name="pixels_above_lines">5</property>
-			  <property name="pixels_below_lines">5</property>
+			  <property name="pixels_above_lines">0</property>
+			  <property name="pixels_below_lines">0</property>
 			  <property name="pixels_inside_wrap">0</property>
 			  <property name="left_margin">5</property>
 			  <property name="right_margin">5</property>
@@ -5129,6 +5129,7 @@
 		      <property name="has_frame">True</property>
 		      <property name="invisible_char" translatable="yes">*</property>
 		      <property name="activates_default">False</property>
+		      <signal name="activate" handler="on_function_edit_entry_argument_name_activate" last_modification_time="Sat, 20 Sep 2003 23:47:50 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>

@@ -299,6 +299,8 @@ Manager *AliasUnit::convertToFirstBase(Manager *value_, Manager *exp_) const {
 	if(!value_) value_ = new Manager(1, 1);
 	if(!exp_) exp_ = new Manager(1, 1);		
 	else exp_->ref();
+	bool was_rpn = CALCULATOR->inRPNMode();
+	CALCULATOR->setRPNMode(false);
 	if(rvalue.empty()) {
 		if(value.find(FUNCTION_VAR_X) != string::npos) {
 			string stmp = value;
@@ -345,6 +347,7 @@ Manager *AliasUnit::convertToFirstBase(Manager *value_, Manager *exp_) const {
 			mngr->unref();
 		}
 	}
+	CALCULATOR->setRPNMode(was_rpn);		
 	exp_->unref();
 	if(!isPrecise()) value_->setPrecise(false);
 	return value_;
@@ -353,6 +356,8 @@ Manager *AliasUnit::firstBaseValue(Manager *value_, Manager *exp_) const {
 	if(!value_) value_ = new Manager(1, 1);
 	if(!exp_) exp_ = new Manager(1, 1);		
 	else exp_->ref();
+	bool was_rpn = CALCULATOR->inRPNMode();
+	CALCULATOR->setRPNMode(false);
 	if(value.find(FUNCTION_VAR_X) != string::npos) {
 		string stmp = value;
 		string stmp2 = LEFT_BRACKET;
@@ -373,6 +378,7 @@ Manager *AliasUnit::firstBaseValue(Manager *value_, Manager *exp_) const {
 		value_->moveto(mngr);
 		mngr->unref();
 	}
+	CALCULATOR->setRPNMode(was_rpn);	
 	exp_->unref();
 	if(!isPrecise()) value_->setPrecise(false);	
 	return value_;

@@ -112,6 +112,8 @@ create_main_window (void)
 		break;
 	}
 
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_rpn_mode")), CALCULATOR->inRPNMode());
+
 	switch (number_base)
 	{
 	case BASE_OCTAL:

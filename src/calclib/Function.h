@@ -61,7 +61,7 @@ class Function : public ExpressionItem {
 	virtual int type() const;	
 	
 	virtual Manager *calculate(const string &eq);
-	virtual Manager *calculate(vector<Manager*> &vargs);	
+	virtual Manager *calculate(vector<Manager*> &vargs, int counted_args = -1);	
 	int args() const;
 	int minargs() const;	
 	int maxargs() const;		

@@ -64,7 +64,7 @@ int daysPerYear(int year, int basis) {
 	return -1;
 }
 
-Fraction *yearsBetweenDates(string date1, string date2, int basis) {
+Fraction *yearsBetweenDates(string date1, string date2, int basis, bool date_func) {
 	if(basis < 0 || basis > 4) return NULL;
 	if(basis == 1) {
 		int day1, day2, month1, month2, year1, year2;
@@ -81,11 +81,11 @@ Fraction *yearsBetweenDates(string date1, string date2, int basis) {
 		}		
 		int days;
 		if(year1 == year2) {
-			days = daysBetweenDates(year1, month1, day1, year2, month2, day2, basis);
+			days = daysBetweenDates(year1, month1, day1, year2, month2, day2, basis, date_func);
 			if(days < 0) return NULL;
 			return new Fraction(days, daysPerYear(year1, basis));
 		}
-		days = daysBetweenDates(year1, month1, day1, year1 + 1, 1, 1, basis);
+		days = daysBetweenDates(year1, month1, day1, year1 + 1, 1, 1, basis, date_func);
 		if(days < 0) return NULL;
 		int days_of_years = daysPerYear(year1, basis);
 		int years = year2 - year1;
@@ -93,7 +93,7 @@ Fraction *yearsBetweenDates(string date1, string date2, int basis) {
 			days_of_years += daysPerYear(year1, basis);
 			days += daysPerYear(year1, basis);
 		}
-		int days2 = daysBetweenDates(year2, 1, 1, year2, month2, day2, basis);
+		int days2 = daysBetweenDates(year2, 1, 1, year2, month2, day2, basis, date_func);
 		if(days2 < 0) return NULL;		
 		days += days2;
 		days_of_years += daysPerYear(year2, basis);
@@ -103,14 +103,14 @@ Fraction *yearsBetweenDates(string date1, string date2, int basis) {
 		delete fr2;
 		return fr;
 	} else {
-		int days = daysBetweenDates(date1, date2, basis);
+		int days = daysBetweenDates(date1, date2, basis, date_func);
 		if(days < 0) return NULL;
 		Fraction *fr = new Fraction(days, daysPerYear(0, basis));	
 		return fr;
 	}
 	return NULL;
 }
-int daysBetweenDates(string date1, string date2, int basis) {
+int daysBetweenDates(string date1, string date2, int basis, bool date_func) {
 	int day1, day2, month1, month2, year1, year2;
 	if(!s2date(date1, year1, month1, day1)) {
   		return -1;
@@ -118,9 +118,9 @@ int daysBetweenDates(string date1, string date2, int basis) {
 	if(!s2date(date2, year2, month2, day2)) {
   		return -1;
 	}
-	return daysBetweenDates(year1, month1, day1, year2, month2, day2, basis);	
+	return daysBetweenDates(year1, month1, day1, year2, month2, day2, basis, date_func);	
 }
-int daysBetweenDates(int year1, int month1, int day1, int year2, int month2, int day2, int basis) {
+int daysBetweenDates(int year1, int month1, int day1, int year2, int month2, int day2, int basis, bool date_func) {
 	if(basis < 0 || basis > 4) return -1;
 	bool isleap = false;
 	int days, months, years;
@@ -139,9 +139,17 @@ int daysBetweenDates(int year1, int month1, int day1, int year2, int month2, int
 
 	switch(basis) {
 		case 0: {
-			if(month1 == 2 && month2 != 2 && year1 == year2) {
-				if(isleap) return months * 30 + days - 1;
-				else return months * 30 + days - 2;
+			if(date_func) {
+				if(month1 == 2 && ((day1 == 28 && !isleap) || (day1 == 29 && isleap)) && !(month2 == month1 && day1 == day2 && year1 == year2)) {
+					if(isleap) return months * 30 + days - 1;
+					else return months * 30 + days - 2;
+				}
+				if(day1 == 31 && day2 < 31) days++;
+			} else {
+				if(month1 == 2 && month2 != 2 && year1 == year2) {
+					if(isleap) return months * 30 + days - 1;
+					else return months * 30 + days - 2;
+				}			
 			}
 			return months * 30 + days;
 		}
@@ -190,6 +198,10 @@ int daysBetweenDates(int year1, int month1, int day1, int year2, int month2, int
 			if(basis == 3) return (years - 1) * 365 + days;
 		} 
 		case 4: {
+			if(date_func) {
+				if(day2 == 31 && day1 < 31) days--;
+				if(day1 == 31 && day2 < 31) days++;
+			}
 			return months * 30 + days;
 		}
 	}

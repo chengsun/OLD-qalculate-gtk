@@ -809,6 +809,12 @@ bool Fraction::abs() {
 	num.setNegative(false);
 	return true;
 }
+bool Fraction::frac() {
+	Integer num_copy(&num);
+	num_copy.divide(&den);
+	Fraction fr(&num_copy);
+	return subtract(&fr);
+}
 bool Fraction::floor() {
 	if(num.isNegative()) {
 		if(!num.divide(&den)) {
@@ -837,30 +843,36 @@ bool Fraction::trunc() {
 	return true;
 }
 bool Fraction::mod() {
-	Integer *remainder;
-	num.divide(&den, &remainder);
-	num.set(remainder);
+#ifdef HAVE_LIBCLN
+	cl_I cli = cln::mod(num.getCL_I(), den.getCL_I());
+	num.set(cli); 
 	den.set(1);
-	delete remainder;
 	return true;
+#else	
+	Fraction fr(this);
+	fr.floor();
+	Integer sub(fr.numerator());
+	sub.multiply(&den);
+	num.subtract(&sub);
+	den.set(1);
+	return true;
+#endif
 }
 bool Fraction::rem() {
-	Integer *remainder;
-	Integer *chosen;
-	if(!num.divide(&den, &remainder)) {
-		chosen = remainder;
-		den.subtract(remainder);
-		int comp = den.compare(remainder);
-		if(comp > 0) {	
-			chosen = &den;
-		}
-	} else {
-		chosen = remainder;
-	}
-	num.set(chosen);
+#ifdef HAVE_LIBCLN
+	cl_I cli = cln::rem(num.getCL_I(), den.getCL_I());
+	num.set(cli); 
 	den.set(1);
-	delete remainder;
 	return true;
+#else	
+	Fraction fr(this);
+	fr.truncate();
+	Integer sub(fr.numerator());
+	sub.multiply(&den);
+	num.subtract(&sub);
+	den.set(1);
+	return true;
+#endif
 }
 int Fraction::pow(const Fraction *fr, int solution) {
 	if(isZero() && fr->isNegative()) {

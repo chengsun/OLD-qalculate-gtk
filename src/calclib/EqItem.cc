@@ -128,12 +128,32 @@ goto_place1:
 				i3 = str.find(LEFT_BRACKET_CH, i3 + 1);
 			}
 			if(i > 0 && is_in(NUMBERS DOT ID_WRAPS, str[i - 1])) {
-				str.insert(i, 1, MULTIPLICATION_2_CH);
-				i++;
-				i2++;
+				if(CALCULATOR->inRPNMode()) {
+					str.insert(i2 + 1, 1, MULTIPLICATION_CH);	
+					str.insert(i, 1, SPACE_CH);
+					i++;
+					i2++;					
+				} else {		
+					str.insert(i, 1, MULTIPLICATION_2_CH);
+					i++;
+					i2++;
+				}
 			}
-			if(i2 < (int) str.length() - 1 && is_in(NUMBERS DOT ID_WRAPS, str[i2 + 1])) {
-				str.insert(i2 + 1, 1, MULTIPLICATION_2_CH);
+			if(i2 < str.length() - 1 && is_in(NUMBERS DOT ID_WRAPS, str[i2 + 1])) {
+				if(CALCULATOR->inRPNMode()) {
+					i3 = str.find(SPACE, i2 + 1);
+					if(i3 == string::npos) {
+						str += MULTIPLICATION;
+					} else {
+						str.replace(i3, 1, MULTIPLICATION);
+					}
+					str.insert(i2 + 1, 1, SPACE_CH);
+				} else {
+					str.insert(i2 + 1, 1, MULTIPLICATION_2_CH);
+				}
+			}
+			if(CALCULATOR->inRPNMode() && i > 0 && i2 + 1 == str.length() && is_in(NUMBERS DOT OPERATORS ID_WRAPS, str[i - 1])) {
+				str += MULTIPLICATION_CH;	
 			}
 			str2 = str.substr(i + 1, i2 - (i + 1));
 			EqContainer eq_c(str2, ADD);
@@ -150,12 +170,23 @@ goto_place1:
 			}			
 		}
 	}
+	gsub(RIGHT_BRACKET, "", str);
 	i = 0;
 	i3 = 0;
 	if(CALCULATOR->inRPNMode()) {
 		while(true) {
 			i = str.find_first_of(OPERATORS SPACE, i3 + 1);
 			if(i == string::npos) {
+				if(i3 != 0) {
+					str2 = str.substr(i3 + 1, str.length() - i3 - 1);
+				} else {
+					str2 = str.substr(i3, str.length() - i3);
+				}			
+				if(str2.length() > 0) {
+					CALCULATOR->setRPNMode(false);				
+					add(str2, ADD);
+					CALCULATOR->setRPNMode(true);								
+				}
 				if(items.size() > 1) {
 					CALCULATOR->error(true, _("RPN syntax error."), NULL);
 					while(items.size() > 1) {
@@ -170,7 +201,13 @@ goto_place1:
 			} else {
 				str2 = str.substr(i3, i - i3);
 			}
+/*			i2 = str2.find(EXP_CH);
+			if(i2 > 0 && i2 < str.length() - 1) {
+			
+			}*/
+			CALCULATOR->setRPNMode(false);
 			add(str2, ADD);
+			CALCULATOR->setRPNMode(true);			
 			if(str[i] != SPACE_CH) {
 				switch(str[i]) {
 					case PLUS_CH: {s = ADD; break;}
@@ -178,7 +215,6 @@ goto_place1:
 					case MULTIPLICATION_CH: {s = MULTIPLY; break;}
 					case DIVISION_CH: {s = DIVIDE; break;}
 					case POWER_CH: {s = RAISE; break;}
-					case EXP_CH: {s = EXP10; break;}
 				}
 				if(items.size() < 2) {
 					CALCULATOR->error(true, _("RPN syntax error."), NULL);

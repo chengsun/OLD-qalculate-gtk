@@ -230,17 +230,11 @@ class DaysFunction : public Function {
   public:
 	DaysFunction();
 };
-class DaysBetweenDatesFunction : public Function {
+class YearFracFunction : public Function {
   protected:
 	void calculate(Manager *mngr, vector<Manager*> &vargs);  
   public:
-	DaysBetweenDatesFunction();
-};
-class YearsBetweenDatesFunction : public Function {
-  protected:
-	void calculate(Manager *mngr, vector<Manager*> &vargs);  
-  public:
-	YearsBetweenDatesFunction();
+	YearFracFunction();
 };
 class FactorialFunction : public Function {
   protected:

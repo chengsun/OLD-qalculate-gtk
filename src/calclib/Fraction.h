@@ -89,6 +89,7 @@ class Fraction {
 	bool ceil();
 	bool trunc();
 	bool mod();	
+	bool frac();		
 	bool rem();
 	int pow(const Fraction *fr, int solution = 1);
 	bool root(const Integer *nth);	

@@ -163,11 +163,11 @@ const char *Function::argumentTypeString(int index) {
 			case ARGUMENT_TYPE_POSITIVE: {return "positive";}
 			case ARGUMENT_TYPE_NONNEGATIVE: {return "non-negative";}
 			case ARGUMENT_TYPE_NONZERO: {return "non-zero";}			
-			case ARGUMENT_TYPE_INTEGER: {return "integer";}
+			case ARGUMENT_TYPE_FRACTION: {return "number";}
 			case ARGUMENT_TYPE_POSITIVE_INTEGER: {return "positive integer";}
 			case ARGUMENT_TYPE_NONNEGATIVE_INTEGER: {return "non-negative integer";}
 			case ARGUMENT_TYPE_NONZERO_INTEGER: {return "non-zero integer";}			
-			case ARGUMENT_TYPE_FRACTION: {return "number";}
+			case ARGUMENT_TYPE_INTEGER: {return "integer";}			
 			case ARGUMENT_TYPE_VECTOR: {return "vector";}
 			case ARGUMENT_TYPE_MATRIX: {return "matrix";}
 			case ARGUMENT_TYPE_FUNCTION: {return "function";}
@@ -228,16 +228,17 @@ Manager *Function::createFunctionManagerFromSVArgs(vector<string> &svargs) {
 }
 Manager *Function::calculate(const string &argv) {
 	vector<Manager*> vargs;
-	args(argv, vargs);	
-	Manager *mngr = calculate(vargs);
+	int itmp = args(argv, vargs);	
+	Manager *mngr = calculate(vargs, itmp);
 	for(int i = 0; i < vargs.size(); i++) {
 		vargs[i]->unref();
 	}	
 	return mngr;
 }
-Manager *Function::calculate(vector<Manager*> &vargs) {
+Manager *Function::calculate(vector<Manager*> &vargs, int itmp) {
 	Manager *mngr = NULL;
-	if(testArgumentCount(vargs.size())) {
+	if(itmp < 0) itmp = vargs.size();
+	if(testArgumentCount(itmp)) {
 		mngr = new Manager();
 		bool b = false;
 		for(int i = 0; i < vargs.size(); i++) {
@@ -371,7 +372,7 @@ int Function::stringArgs(const string &str, vector<string> &svargs) {
 			stmp += default_values[itmp2 - minargs()];
 			stmp += RIGHT_BRACKET_STR;
 			svargs.push_back(stmp);*/
-			svargs.push_back(default_values[itmp - minargs()]);			
+			svargs.push_back(default_values[itmp2 - minargs()]);			
 			itmp2++;
 		}
 	}	
@@ -507,7 +508,10 @@ void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 				break;
 			}
 		}
+		bool was_rpn = CALCULATOR->inRPNMode();
+		CALCULATOR->setRPNMode(false);
 		Manager *mngr2 = CALCULATOR->calculate(stmp);
+		CALCULATOR->setRPNMode(was_rpn);
 		mngr->set(mngr2);
 		mngr2->unref();
 		for(int i = 0; i < v_id.size(); i++) {
@@ -516,7 +520,10 @@ void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		}
 		if(!isPrecise()) mngr->setPrecise(false);
 	} else {
+		bool was_rpn = CALCULATOR->inRPNMode();
+		CALCULATOR->setRPNMode(false);
 		Manager *mngr2 = CALCULATOR->calculate(eq_calc);
+		CALCULATOR->setRPNMode(was_rpn);
 		mngr->set(mngr2);
 		mngr2->unref();
 		if(!isPrecise()) mngr->setPrecise(false);

@@ -1,3 +1,12 @@
+2003-09-21  Niklas Knutsson  <nq@altern.org>
+
+	* Fix error message when too many arguments
+	* Change "years_between_dates" to "yearfrac"
+	* Fix day counting basis (hopefully gnumeric has done it right)
+	* More financial functions
+	* Fix mod, rem and frac
+	* Better RPN support
+
 2003-09-20  Niklas Knutsson  <nq@altern.org>
 
 	* RPN Mode
