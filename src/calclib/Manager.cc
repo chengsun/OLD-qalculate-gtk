@@ -321,7 +321,7 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 							break;							
 						}
 						if(!translate_) {
-							//mngr->unref(); 
+							mngr->unref(); 
 							return false;
 						}
 						transform(mngr, PLUS_CH, sign);
@@ -865,10 +865,11 @@ int Manager::compare(Manager *mngr) {
 	return 1;
 }
 void Manager::sort() {
-	if(c_type == 'v' || c_type == 'u' || c_type == 's' || c_type == POWER_CH) return;
+	if(c_type == POWER_CH || mngrs.size() < 2) return;
 	vector<Manager*> sorted;
-	bool b = false;
+	bool b;
 	for(int i = 0; i < mngrs.size(); i++) {
+		b = false;
 		for(int i2 = 0; i2 < sorted.size(); i2++) {
 			if((c_type == PLUS_CH && mngrs[i]->compare(sorted[i2]) < 0) || (c_type == MULTIPLICATION_CH && mngrs[i]->compare(sorted[i2]) > 0)) {
 				sorted.insert(sorted.begin() + i2, mngrs[i]);
