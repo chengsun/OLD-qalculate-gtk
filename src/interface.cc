@@ -284,7 +284,7 @@ create_variables_dialog (void)
 	tVariableCategories = glade_xml_get_widget (glade_xml, "variables_tree_view1");
 	tVariables = glade_xml_get_widget (glade_xml, "variables_tree_view2");
 
-	tVariables_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	tVariables_store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tVariables), GTK_TREE_MODEL(tVariables_store));
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tVariables));
 	gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);

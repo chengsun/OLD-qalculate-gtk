@@ -343,8 +343,8 @@ void Calculator::reset() {
 	resetUnits();
 }
 void Calculator::addBuiltinVariables() {
-	addVariable(new Variable(this, "General", "pi", PI_VALUE, "", false, true));
-	addVariable(new Variable(this, "General", "e", E_VALUE, "", false, true));
+	addVariable(new Variable(this, "Constants", "pi", PI_VALUE, "Pi", false, true));
+	addVariable(new Variable(this, "Constants", "e", E_VALUE, "Natural Logarithmic Base", false, true));
 }
 void Calculator::addBuiltinFunctions() {
 	addFunction(new IFFunction(this));
@@ -567,7 +567,38 @@ Manager *Calculator::convert(Manager *mngr, Unit *to_unit, bool always_convert) 
 		}
 		mngr->sort();
 	} else {
-		if(mngr->convert(to_unit) || always_convert) {
+		bool b = false;
+		if(mngr->convert(to_unit) || always_convert) {	
+			b = true;
+		} else if(to_unit->type() == 'A' && ((AliasUnit*) to_unit)->baseUnit()->type() == 'D') {
+			CompositeUnit *cu = (CompositeUnit*) ((AliasUnit*) to_unit)->baseUnit();
+			switch(mngr->type()) {
+				case UNIT_MANAGER: {
+					if(cu->containsRelativeTo(mngr->o_unit)) {
+						b = true;
+					}
+					break;
+				} 
+				case MULTIPLICATION_MANAGER: {
+					for(int i = 0; i < mngr->mngrs.size(); i++) {
+						if(mngr->mngrs[i]->type() == UNIT_MANAGER && cu->containsRelativeTo(mngr->mngrs[i]->o_unit)) {
+							b = true;
+						}
+						if(mngr->mngrs[i]->type() == POWER_MANAGER && mngr->mngrs[i]->mngrs[0]->type() == UNIT_MANAGER && cu->containsRelativeTo(mngr->mngrs[i]->mngrs[0]->o_unit)) {
+							b = true;
+						}
+					}
+					break;
+				}
+				case POWER_MANAGER: {
+					if(mngr->mngrs[0]->type() == UNIT_MANAGER && cu->containsRelativeTo(mngr->mngrs[0]->o_unit)) {
+						b = true;
+					}
+					break;				
+				}
+			}
+		}
+		if(b) {			
 			mngr->add(to_unit, DIVISION_CH);
 			mngr->finalize();			
 			Manager *mngr2 = new Manager(this, to_unit);
@@ -591,7 +622,37 @@ Manager *Calculator::convertToCompositeUnit(Manager *mngr, CompositeUnit *cu, bo
 		}
 		mngr->sort();
 	} else {
+		bool b = false;
 		if(mngr->convert(cu) || always_convert) {	
+			b = true;
+		} else {
+			switch(mngr->type()) {
+				case UNIT_MANAGER: {
+					if(cu->containsRelativeTo(mngr->o_unit)) {
+						b = true;
+					}
+					break;
+				} 
+				case MULTIPLICATION_MANAGER: {
+					for(int i = 0; i < mngr->mngrs.size(); i++) {
+						if(mngr->mngrs[i]->type() == UNIT_MANAGER && cu->containsRelativeTo(mngr->mngrs[i]->o_unit)) {
+							b = true;
+						}
+						if(mngr->mngrs[i]->type() == POWER_MANAGER && mngr->mngrs[i]->mngrs[0]->type() == UNIT_MANAGER && cu->containsRelativeTo(mngr->mngrs[i]->mngrs[0]->o_unit)) {
+							b = true;
+						}
+					}
+					break;
+				}
+				case POWER_MANAGER: {
+					if(mngr->mngrs[0]->type() == UNIT_MANAGER && cu->containsRelativeTo(mngr->mngrs[0]->o_unit)) {
+						b = true;
+					}
+					break;				
+				}
+			}
+		}
+		if(b) {	
 			mngr->add(mngr3, DIVISION_CH);
 			mngr->finalize();			
 			Manager *mngr2 = new Manager(this, cu);
@@ -1452,7 +1513,7 @@ bool Calculator::save(const char* file_name) {
 			else
 				fprintf(file, "%s\t", variables[i]->category().c_str());
 			if(!variables[i]->isBuiltinVariable())
-				fprintf(file, "%s\t%s\t", variables[i]->name().c_str(), variables[i]->get()->print().c_str());
+				fprintf(file, "%s\t%s\t", variables[i]->name().c_str(), variables[i]->get()->print(NUMBER_FORMAT_NORMAL, UNIT_FORMAT_DEFAULT, 100).c_str());
 			if(variables[i]->title().empty())
 				fprintf(file, "0\t");
 			else

@@ -1,5 +1,10 @@
 2003-08-17  Niklas Knutsson  <nq@altern.org>
 
+	* More energy and pressure units
+	* Some constants
+	* Write variables to file with maximum precision
+	* Show variable title in menu and tree
+	* Unit expression conversion fixes
 	* Make operators wrap selection in parenthesis instead of deleting it, thus they operate on the result after execute
 	* Insert ^ directly instead of waiting for another key press.
 	* Fix annoying repositioning of text cursor in n-bases dialog

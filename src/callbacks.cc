@@ -754,10 +754,11 @@ void setVariableTreeItem(GtkTreeIter &iter2, Variable *v) {
 	string str, str2;
 	gtk_list_store_append(tVariables_store, &iter2);
 	//display name...
-	str = v->name();
+	if(v->title().empty()) str = v->name();
+	else str = v->title();
 	//...and value
 	str2 = v->get()->print();
-	gtk_list_store_set(tVariables_store, &iter2, 0, str.c_str(), 1, str2.c_str(), -1);
+	gtk_list_store_set(tVariables_store, &iter2, 0, str.c_str(), 1, str2.c_str(), 2, v->name().c_str(), -1);
 	if(str == selected_variable) {
 		gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tVariables)), &iter2);
 	}
@@ -827,7 +828,7 @@ void on_tVariables_selection_changed(GtkTreeSelection *treeselection, gpointer u
 	bool no_cat = false, b_all = false;
 	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
 		gchar *gstr;
-		gtk_tree_model_get(model, &iter, 0, &gstr, -1);
+		gtk_tree_model_get(model, &iter, 2, &gstr, -1);
 		//remember selection
 		selected_variable = gstr;
 		for(int i = 0; i < calc->variables.size(); i++) {
@@ -1232,20 +1233,32 @@ void create_vmenu() {
 		GtkWidget *sub3 = sub;
 		for(int i = 0; i < it->objects.size(); i++) {
 			v = (Variable*) it->objects[i];
-			MENU_ITEM_WITH_STRING(v->name().c_str(), insert_variable, v->name().c_str())			
+			if(v->title().empty()) {
+				MENU_ITEM_WITH_STRING(v->name().c_str(), insert_variable, v->name().c_str());			
+			} else {
+				MENU_ITEM_WITH_STRING(v->title().c_str(), insert_variable, v->name().c_str());
+			}
 		}				
 		for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
 			SUBMENU_ITEM(it2->item.c_str(), sub3)
 			for(int i = 0; i < it2->objects.size(); i++) {
 				v = (Variable*) it2->objects[i];
-				MENU_ITEM_WITH_STRING(v->name().c_str(), insert_variable, v->name().c_str())				
+				if(v->title().empty()) {
+					MENU_ITEM_WITH_STRING(v->name().c_str(), insert_variable, v->name().c_str());			
+				} else {
+					MENU_ITEM_WITH_STRING(v->title().c_str(), insert_variable, v->name().c_str());
+				}
 			}			
 		}
 	}		
 	sub = sub2;
 	for(int i = 0; i < uc_variables.size(); i++) {
 		v = (Variable*) uc_variables[i];
-		MENU_ITEM_WITH_STRING(v->name().c_str(), insert_variable, v->name().c_str())
+		if(v->title().empty()) {
+			MENU_ITEM_WITH_STRING(v->name().c_str(), insert_variable, v->name().c_str());			
+		} else {
+			MENU_ITEM_WITH_STRING(v->title().c_str(), insert_variable, v->name().c_str());
+		}		
 	}	
 	MENU_SEPARATOR	
 	MENU_ITEM(_("Create new variable"), new_variable);

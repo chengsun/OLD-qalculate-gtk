@@ -1232,7 +1232,7 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 			} else str += mngrs[i]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, d_exp, in_composite);
 		}
 	} else if(c_type == MULTIPLICATION_CH) {
-		bool b = false;
+		bool b = false, c = false;
 		bool plural_ = true;
 		int prefix = 0;
 		for(int i = 0; i < mngrs.size(); i++) {
@@ -1260,14 +1260,19 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 				Manager *mngr = new Manager(mngrs[i]);
 				mngr->add(-1, POWER_CH);
 				if(!b) str += DIVISION_STR;
-				if(!b && (i < mngrs.size() - 1 || mngr->type() == ADDITION_MANAGER)) str += LEFT_BRACKET_STR;
+				if(!b && (i < mngrs.size() - 1 || mngr->type() == ADDITION_MANAGER) && (i + 1 != mngrs.size() - 1 || mngr->type() != VALUE_MANAGER || mngr->type() == ADDITION_MANAGER)) {
+					c = true;
+					str += LEFT_BRACKET_STR;
+				}
 				if(b && mngrs[i]->mngrs[0]->c_type == 'u')  {
 					if(!prefix || is_in(str[str.length() - 1], NUMBERS_S, NULL)) {
 						str += " ";
 					}
 				}				
 				str += mngr->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, &plural_, d_exp, in_composite);
-				if((b || mngr->type() == ADDITION_MANAGER) && i == mngrs.size() - 1) str += RIGHT_BRACKET_STR;
+				if(c && i == mngrs.size() - 1) {
+					str += RIGHT_BRACKET_STR;
+				}
 				b = true;
 //			} else if(mngrs[i]->c_type == PLUS_CH || ((mngrs[i]->c_type == POWER_CH && i == 0) || (i > 0 && mngrs[i - 1]->c_type == POWER_CH))) {
 			} else if(mngrs[i]->c_type == PLUS_CH) {
