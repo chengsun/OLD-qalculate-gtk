@@ -211,7 +211,7 @@ static const struct PrintOptions {
 	int base;
 	bool lower_case_numbers;
 	NumberFractionFormat number_fraction_format;
-	bool indicate_infinite_series;
+	bool indicate_infinite_series, show_ending_zeroes;
 	bool abbreviate_names, use_reference_names;
 	bool place_units_separately;
 	bool use_unit_prefixes;
@@ -234,7 +234,7 @@ static const struct PrintOptions {
 	bool *is_approximate;
 	SortOptions sort_options;
 	string comma_sign, decimalpoint_sign;
-	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), lower_case_numbers(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), allow_non_usable(false), use_unicode_signs(false), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), prefix(NULL), is_approximate(NULL) {}
+	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), lower_case_numbers(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), show_ending_zeroes(false), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), allow_non_usable(false), use_unicode_signs(false), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), prefix(NULL), is_approximate(NULL) {}
 	const string &comma() const;
 	const string &decimalpoint() const;
 } default_print_options;
@@ -265,12 +265,18 @@ typedef enum {
 	POST_CONVERSION_BASE
 } AutoPostConversion;
 
+typedef enum {
+	DONT_READ_PRECISION,
+	ALWAYS_READ_PRECISION,
+	READ_PRECISION_WHEN_DECIMALS
+} ReadPrecisionMode;
+
 static const struct ParseOptions {
 	bool variables_enabled, functions_enabled, unknowns_enabled, units_enabled;
 	bool rpn;
 	int base;
-	bool read_precision;
-	ParseOptions() : variables_enabled(true), functions_enabled(true), unknowns_enabled(true), units_enabled(true), rpn(false), base(BASE_DECIMAL), read_precision(false) {}
+	ReadPrecisionMode read_precision;
+	ParseOptions() : variables_enabled(true), functions_enabled(true), unknowns_enabled(true), units_enabled(true), rpn(false), base(BASE_DECIMAL), read_precision(DONT_READ_PRECISION) {}
 } default_parse_options;
 
 static const struct EvaluationOptions {

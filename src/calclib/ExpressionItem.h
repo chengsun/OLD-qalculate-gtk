@@ -56,8 +56,6 @@ class ExpressionItem {
 	bool isRegistered() const;
 	void setRegistered(bool is_registered);
 
-	virtual void setName(string name_, bool force = true);
-	
 	virtual const string &name(bool use_unicode = false) const;
 	virtual const string &referenceName() const;
 	

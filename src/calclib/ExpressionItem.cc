@@ -137,30 +137,6 @@ void ExpressionItem::setDescription(string descr_) {
 		b_changed = true;
 	}
 }
-void ExpressionItem::setName(string name_, bool force) {
-	remove_blank_ends(name_);
-	int index = -1;
-	for(unsigned int i = 0; i < names.size(); i++) {
-		if(!names[i].unicode) index = i;
-	}
-	if(index < 0) {
-		names.insert(names.begin(), empty_expression_name);
-		index = 0;
-	}
-	if(names[index].name != name_) {
-		if(b_registered) names[index].name = CALCULATOR->getName(name_, this, force);
-		else names[index].name = name_;
-		names[index].unicode = false;
-		names[index].abbreviation = false;
-		names[index].case_sensitive = text_length_is_one(names[index].name);
-		names[index].suffix = false;
-		names[index].avoid_input = false;
-		names[index].reference = true;
-		names[index].plural = false;
-		b_changed = true;
-		if(b_registered) CALCULATOR->nameChanged(this);
-	}
-}
 const string &ExpressionItem::name(bool use_unicode) const {
 	for(unsigned int i = 0; i < names.size(); i++) {
 		if(names[i].unicode == use_unicode) {

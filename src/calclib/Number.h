@@ -26,6 +26,7 @@ class Number {
 		void removeFloatZeroPart();
 		void testApproximate();
 		void testInteger();
+		void setPrecisionAndApproximateFrom(const Number &o);
 
 		cln::cl_N value;
 		bool b_inf, b_pinf, b_minf;
@@ -35,12 +36,12 @@ class Number {
 	public:
 	
 		Number();
-		Number(string number, int base = 10, bool read_precision = false);
+		Number(string number, int base = 10, ReadPrecisionMode read_precision = DONT_READ_PRECISION);
 		Number(int numerator, int denominator = 1, int exp_10 = 0);
 		Number(const Number &o);
 		virtual ~Number();
 		
-		void set(string number, int base = 10, bool read_precision = false);
+		void set(string number, int base = 10, ReadPrecisionMode read_precision = DONT_READ_PRECISION);
 		void set(int numerator, int denominator = 1, int exp_10 = 0);
 		void setInfinity();
 		void setPlusInfinity();
@@ -62,6 +63,9 @@ class Number {
 		bool isApproximate() const;
 		bool isApproximateType() const;
 		void setApproximate(bool is_approximate = true);
+		
+		int precision() const;
+		void setPrecision(int prec);
 		
 		bool isUndefined() const;
 		bool isInfinite() const;

@@ -165,7 +165,7 @@ string printCL_I(cl_I integ, int base = 10, bool display_sign = true, bool displ
 Number::Number() {
 	clear();
 }
-Number::Number(string number, int base, bool read_precision) {
+Number::Number(string number, int base, ReadPrecisionMode read_precision) {
 	set(number, base, read_precision);
 }
 Number::Number(int numerator, int denominator, int exp_10) {
@@ -177,7 +177,7 @@ Number::Number(const Number &o) {
 Number::~Number() {
 }
 
-void Number::set(string number, int base, bool read_precision) {
+void Number::set(string number, int base, ReadPrecisionMode read_precision) {
 
 	b_inf = false; b_pinf = false; b_minf = false; b_approx = false;
 
@@ -384,7 +384,7 @@ void Number::set(string number, int base, bool read_precision) {
 	int readprec = 0;
 	bool numbers_started = false, minus = false, in_decimals = false, b_cplx = false;
 	for(unsigned int index = 0; index < number.size(); index++) {
-		if(number[index] >= '0' && (base >= 10 && number[index] <= '9') || (base < 10 && number[index] < '0' + base)) {
+		if(number[index] >= '0' && ((base >= 10 && number[index] <= '9') || (base < 10 && number[index] < '0' + base))) {
 			num = num * base;
 			num = num + number[index] - '0';
 			if(in_decimals) {
@@ -479,8 +479,20 @@ void Number::set(string number, int base, bool read_precision) {
 	} else {
 		value = num / den;
 	}
-	if(read_precision) i_precision = readprec;
-	else i_precision = -1;
+	if(read_precision == ALWAYS_READ_PRECISION || (in_decimals && read_precision == READ_PRECISION_WHEN_DECIMALS)) {
+		if(base != 10) {
+			Number precmax(10);
+			precmax.raise(readprec);
+			precmax--;
+			precmax.log(base);
+			precmax.floor();
+			readprec = precmax.intValue();
+		}
+		i_precision = readprec;
+		b_approx = true;
+	} else {
+		i_precision = -1;
+	}
 }
 void Number::set(int numerator, int denominator, int exp_10) {
 	b_inf = false; b_pinf = false; b_minf = false; b_approx = false;
@@ -518,7 +530,7 @@ void Number::set(const Number &o) {
 	b_minf = o.isMinusInfinity();
 	value = o.internalNumber();
 	b_approx = o.isApproximate();
-	i_precision = -1;
+	i_precision = o.precision();
 }
 void Number::setInfinity() {
 	b_inf = true;
@@ -578,15 +590,27 @@ bool Number::isApproximateType() const {
 void Number::setApproximate(bool is_approximate) {
 	if(!isInfinite() && is_approximate != isApproximate()) {
 		if(is_approximate) {
-			value = cln::complex(cln::cl_float(cln::realpart(value)), cln::cl_float(cln::imagpart(value)));
-			removeFloatZeroPart();
+			//value = cln::complex(cln::cl_float(cln::realpart(value)), cln::cl_float(cln::imagpart(value)));
+			//removeFloatZeroPart();
+			i_precision = PRECISION;
 			b_approx = true;
 		} else {
-			value = cln::complex(cln::rational(cln::realpart(value)), cln::rational(cln::imagpart(value)));
+			if(isApproximateType()) {
+				value = cln::complex(cln::rational(cln::realpart(value)), cln::rational(cln::imagpart(value)));
+			}
+			i_precision = -1;
 			b_approx = false;
 		}
 	}
 }
+
+int Number::precision() const {
+	return i_precision;
+}
+void Number::setPrecision(int prec) {
+	i_precision = prec;
+}
+
 bool Number::isUndefined() const {
 	return false;
 }
@@ -675,13 +699,21 @@ void Number::removeFloatZeroPart() {
 	}
 }
 void Number::testApproximate() {
-	if(!b_approx && isApproximateType()) b_approx = true;
+	if(!b_approx && isApproximateType()) {
+		i_precision = PRECISION;
+		b_approx = true;
+	}
 }
 void Number::testInteger() {
 	if(isApproximateType() && !isInfinite() && !isComplex() && cln::zerop(cln::truncate2(REAL_PRECISION_FLOAT_RE(value)).remainder)) {
 		value = cln::round1(cln::realpart(value));
 	}
 }
+void Number::setPrecisionAndApproximateFrom(const Number &o) {
+	if(o.precision() > 0 && (i_precision < 1 || o.precision() < i_precision)) i_precision = o.precision();
+	if(o.isApproximate()) b_approx = true;
+}
+
 bool Number::isComplex() const {
 	return !isInfinite() && !cln::zerop(cln::imagpart(value));
 }
@@ -885,7 +917,7 @@ bool Number::add(const Number &o) {
 	if(o.isInfinity()) {
 		if(isInfinite()) return false;
 		setInfinity();
-		if(o.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	if(b_minf) return !o.isPlusInfinity();
@@ -893,18 +925,18 @@ bool Number::add(const Number &o) {
 	if(o.isInfinity()) {
 		b_pinf = true;
 		value = 0;
-		if(o.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	if(o.isMinusInfinity()) {
 		b_minf = true;
 		value = 0;
-		if(o.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	value = value + o.internalNumber();
 	removeFloatZeroPart();
-	if(o.isApproximate()) b_approx = true;
+	setPrecisionAndApproximateFrom(o);
 	return true;
 }
 bool Number::subtract(const Number &o) {
@@ -913,7 +945,7 @@ bool Number::subtract(const Number &o) {
 	}
 	if(o.isInfinity()) {
 		if(isInfinite()) return false;
-		if(o.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(o);
 		setInfinity();
 		return true;
 	}
@@ -925,17 +957,17 @@ bool Number::subtract(const Number &o) {
 	}
 	if(o.isPlusInfinity()) {
 		setPlusInfinity();
-		if(o.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	if(o.isMinusInfinity()) {
 		setMinusInfinity();
-		if(o.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	value = value - o.internalNumber();
 	removeFloatZeroPart();
-	if(o.isApproximate()) b_approx = true;
+	setPrecisionAndApproximateFrom(o);
 	return true;
 }
 bool Number::multiply(const Number &o) {
@@ -956,31 +988,31 @@ bool Number::multiply(const Number &o) {
 		if(o.isNegative()) {
 			b_pinf = !b_pinf;
 			b_minf = !b_minf;
-			if(o.isApproximate()) b_approx = true;
+			setPrecisionAndApproximateFrom(o);
 		}
 		return true;
 	}
 	if(o.isPlusInfinity()) {
 		if(isNegative()) setMinusInfinity();
 		else setPlusInfinity();
-		if(o.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	if(o.isMinusInfinity()) {
 		if(isNegative()) setPlusInfinity();
 		else setMinusInfinity();
-		if(o.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	if(isZero()) return true;
 	if(o.isZero()) {
 		clear();
-		if(o.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	value = value * o.internalNumber();
 	removeFloatZeroPart();
-	if(o.isApproximate()) b_approx = true;
+	setPrecisionAndApproximateFrom(o);
 	return true;
 }
 bool Number::divide(const Number &o) {
@@ -1002,7 +1034,7 @@ bool Number::divide(const Number &o) {
 			b_pinf = !b_pinf;
 			b_minf = !b_minf;
 		}
-		if(o.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	if(o.isZero()) {
@@ -1013,12 +1045,12 @@ bool Number::divide(const Number &o) {
 		return false;
 	}
 	if(isZero()) {
-		if(o.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	value = value / o.internalNumber();
 	removeFloatZeroPart();
-	if(o.isApproximate()) b_approx = true;
+	setPrecisionAndApproximateFrom(o);
 	return true;
 }
 bool Number::recip() {
@@ -1065,7 +1097,7 @@ bool Number::raise(const Number &o, int solution) {
 		} else {
 			clear();
 		}
-		if(o.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	if(o.isPlusInfinity()) {
@@ -1075,7 +1107,7 @@ bool Number::raise(const Number &o, int solution) {
 		} else {
 			setPlusInfinity();
 		}
-		if(o.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	if(isZero() && o.isNegative()) {
@@ -1104,7 +1136,7 @@ bool Number::raise(const Number &o, int solution) {
 		value = -value;
 	}
 	removeFloatZeroPart();
-	if(o.isApproximate()) b_approx = true;
+	setPrecisionAndApproximateFrom(o);
 	testApproximate();
 	testInteger();
 	return true;
@@ -1112,7 +1144,7 @@ bool Number::raise(const Number &o, int solution) {
 bool Number::exp10(const Number &o) {
 	if(isZero()) return true;
 	if(o.isZero()) {
-		if(o.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	Number ten(10, 1);
@@ -1137,7 +1169,7 @@ bool Number::exp10() {
 bool Number::exp2(const Number &o) {
 	if(isZero()) return true;
 	if(o.isZero()) {
-		if(o.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	Number two(2, 1);
@@ -1201,9 +1233,11 @@ bool Number::round() {
 	if(b_approx) {
 		if(isInteger()) {
 			if(!cln::zerop(cln::rem(cln::realpart(value), 10))) {
+				i_precision = -1;
 				b_approx = false;
 			}
 		} else {
+			i_precision = -1;
 			b_approx = false;
 		}
 	}
@@ -1235,7 +1269,7 @@ bool Number::round(const Number &o) {
 	if(isComplex()) return false;
 	if(o.isComplex()) return false;
 	value = cln::round1(cln::realpart(value), cln::realpart(o.internalNumber()));
-	if(o.isApproximate()) b_approx = true;
+	setPrecisionAndApproximateFrom(o);
 	return true;
 }
 bool Number::floor(const Number &o) {
@@ -1245,7 +1279,7 @@ bool Number::floor(const Number &o) {
 	if(isComplex()) return false;
 	if(o.isComplex()) return false;
 	value = cln::floor1(cln::realpart(value), cln::realpart(o.internalNumber()));
-	if(o.isApproximate()) b_approx = true;
+	setPrecisionAndApproximateFrom(o);
 	return true;
 }
 bool Number::ceil(const Number &o) {
@@ -1255,7 +1289,7 @@ bool Number::ceil(const Number &o) {
 	if(isComplex()) return false;
 	if(o.isComplex()) return false;
 	value = cln::ceiling1(cln::realpart(value), cln::realpart(o.internalNumber()));
-	if(o.isApproximate()) b_approx = true;
+	setPrecisionAndApproximateFrom(o);
 	return true;
 }
 bool Number::trunc(const Number &o) {
@@ -1265,14 +1299,14 @@ bool Number::trunc(const Number &o) {
 	if(isComplex()) return false;
 	if(o.isComplex()) return false;
 	value = cln::truncate1(cln::realpart(value), cln::realpart(o.internalNumber()));
-	if(o.isApproximate()) b_approx = true;
+	setPrecisionAndApproximateFrom(o);
 	return true;
 }
 bool Number::mod(const Number &o) {
 	if(isInfinite() || o.isInfinite()) return false;
 	if(isComplex() || o.isComplex()) return false;
 	value = cln::mod(cln::realpart(value), cln::realpart(o.internalNumber()));
-	if(o.isApproximate()) b_approx = true;
+	setPrecisionAndApproximateFrom(o);
 	return true;
 }	
 bool Number::frac() {
@@ -1285,7 +1319,7 @@ bool Number::rem(const Number &o) {
 	if(isInfinite() || o.isInfinite()) return false;
 	if(isComplex() || o.isComplex()) return false;
 	value = cln::rem(cln::realpart(value), cln::realpart(o.internalNumber()));
-	if(o.isApproximate()) b_approx = true;
+	setPrecisionAndApproximateFrom(o);
 	return true;
 }
 
@@ -1511,7 +1545,7 @@ bool Number::log(const Number &o) {
 	}
 	if(o.isZero()) {
 		clear();
-		if(o.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	if(o.isOne()) {
@@ -1525,7 +1559,7 @@ bool Number::log(const Number &o) {
 		value = cln::log(value, o.internalNumber());
 	}
 	removeFloatZeroPart();
-	if(o.isApproximate()) b_approx = true;
+	setPrecisionAndApproximateFrom(o);
 	testApproximate();
 	testInteger();
 	return true;
@@ -1553,7 +1587,7 @@ bool Number::gcd(const Number &o) {
 	cl_I num = cln::numerator(cln::rational(cln::realpart(value)));
 	cl_I num_o = cln::numerator(cln::rational(cln::realpart(o.internalNumber())));
 	value = cln::gcd(num, num_o);
-	if(o.isApproximate()) b_approx = true;
+	setPrecisionAndApproximateFrom(o);
 	return true;
 }
 
@@ -1589,10 +1623,11 @@ bool Number::binomial(const Number &m, const Number &k) {
 		set(1);
 	} else if(k.isOne()) {
 		set(m);
-		if(k.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(k);
 	} else if(m.equals(k)) {
 		set(1);
-		if(m.isApproximate() || k.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(m);
+		setPrecisionAndApproximateFrom(k);
 	} else {
 		clear();
 		cl_I im = cln::numerator(cln::rational(cln::realpart(m.internalNumber())));
@@ -1611,7 +1646,8 @@ bool Number::binomial(const Number &m, const Number &k) {
 		} else {
 			value = cln::binomial(cl_I_to_uint(im), cl_I_to_uint(ik));
 		}
-		if(m.isApproximate() || k.isApproximate()) b_approx = true;
+		setPrecisionAndApproximateFrom(m);
+		setPrecisionAndApproximateFrom(k);
 	}
 	return true;
 }
@@ -1855,13 +1891,20 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	else if(po.base > 36 && po.base != BASE_SEXAGESIMAL) base = 36;
 	else base = po.base;
 	if(isApproximateType() && base == BASE_ROMAN_NUMERALS) base = 10;
-
+	
+	int precision = PRECISION;
+	if(b_approx && i_precision > 0 && i_precision < PRECISION) precision = i_precision;
+	
 	if(isComplex()) {
 		bool bre = hasRealPart();
 		if(bre) {
 			Number re, im;
 			re.setInternal(cln::realpart(value));
 			im.setInternal(cln::imagpart(value));
+			if(isApproximate()) {
+				re.setApproximate();
+				im.setApproximate();
+			}
 			str = re.print(po, ips);
 			if(ips.re) *ips.re = str;
 			InternalPrintStruct ips_n = ips;
@@ -1878,6 +1921,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		} else {
 			Number im;
 			im.setInternal(cln::imagpart(value));
+			if(isApproximate()) {
+				im.setApproximate();
+			}
 			str = im.print(po, ips);
 			if(ips.im) *ips.im = str;
 		}
@@ -1927,19 +1973,19 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		} else {
 			expo = 0;
 		}
-
+		bool exact = true, dp_added = false;
 		if(!rerun && !cln::zerop(ivalue)) {
-			int precision = PRECISION;
+			int precision2 = precision;
 			if(base != 10) {
 				Number precmax(10);
-				precmax.raise(PRECISION);
+				precmax.raise(precision);
 				precmax--;
 				precmax.log(base);
 				precmax.floor();
-				precision = precmax.intValue();
+				precision2 = precmax.intValue();
 			}
-			precision -= mpz_str.length();
-			if(po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals < expo && po.max_decimals - expo < precision) {
+			precision2 -= mpz_str.length();
+			if(po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals < expo && po.max_decimals - expo < precision2) {
 				cln::cl_RA_div_t div = cln::floor2(ivalue / cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo)));
 				if(!cln::zerop(div.remainder)) {
 					ivalue = div.quotient;
@@ -1953,12 +1999,12 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						}
 					}
 					ivalue *= cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo));
-					if(po.is_approximate) *po.is_approximate = true;
+					exact = false;
 					rerun = true;
 					goto integer_rerun;
 				}
-			} else if(precision < 0) {
-				cln::cl_RA_div_t div = cln::floor2(ivalue / cln::expt_pos(cln::cl_I(base), -precision));
+			} else if(precision2 < 0) {
+				cln::cl_RA_div_t div = cln::floor2(ivalue / cln::expt_pos(cln::cl_I(base), -precision2));
 				if(!cln::zerop(div.remainder)) {
 					ivalue = div.quotient;
 					if(po.round_halfway_to_even && cln::evenp(ivalue)) {
@@ -1970,8 +2016,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 							ivalue++;
 						}
 					}
-					ivalue *= cln::expt_pos(cln::cl_I(base), -precision);
-					if(po.is_approximate) *po.is_approximate = true;
+					ivalue *= cln::expt_pos(cln::cl_I(base), -precision2);
+					exact = false;
 					rerun = true;
 					goto integer_rerun;
 				}
@@ -1982,9 +2028,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(expo > 0) {
 			if(po.number_fraction_format == FRACTION_DECIMAL) {
 				mpz_str.insert(mpz_str.length() - expo, po.decimalpoint());
+				dp_added = true;
 				decimals = expo;
 			} else if(po.number_fraction_format == FRACTION_DECIMAL_EXACT) {
 				mpz_str.insert(mpz_str.length() - expo, po.decimalpoint());
+				dp_added = true;
 				decimals = expo;
 			} else {
 				mpz_str = mpz_str.substr(0, mpz_str.length() - expo);
@@ -2008,12 +2056,36 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(min_decimals > decimals) {
 				if(decimals <= 0) {
 					str += po.decimalpoint();
+					dp_added = true;
 				}
 				for(int i = min_decimals - decimals; i > 0; i--) {
 					str += "0";
 				}
 			}
-			if(str[str.length() - 1] == po.decimalpoint()[0]) str.erase(str.end() - 1);
+			if(str[str.length() - 1] == po.decimalpoint()[0]) {
+				str.erase(str.end() - 1);
+				dp_added = false;
+			}
+		}
+		if(!exact && po.is_approximate) *po.is_approximate = true;
+		if(po.show_ending_zeroes && (isApproximate() || !exact)) {
+			if(base != 10) {
+				Number precmax(10);
+				precmax.raise(precision);
+				precmax--;
+				precmax.log(base);
+				precmax.floor();
+				precision = precmax.intValue();
+			}
+			precision -= str.length();
+			if(dp_added) {
+				precision += 1;
+			} else if(precision > 0) {
+				str += po.decimalpoint();
+			}
+			for(; precision > 0; precision--) {
+				str += "0";
+			}
 		}
 		if(expo != 0) { 
 			if(ips.exp) {
@@ -2072,10 +2144,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			bool exact = cln::zerop(remainder);
 			vector<cln::cl_I> remainders;
 			bool infinite_series = false;
-			int precision = PRECISION;
+
 			if(base != 10) {
 				Number precmax(10);
-				precmax.raise(PRECISION);
+				precmax.raise(precision);
 				precmax--;
 				precmax.log(base);
 				precmax.floor();
@@ -2084,6 +2156,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			
 			bool started = false;
 			int expo = 0;
+			int precision2 = precision;
 			if(!cln::zerop(num)) {
 				str = printCL_I(num, base, true, false);
 				if(base != 10) {
@@ -2102,8 +2175,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						expo = 0;
 					}
 				}
-				precision -= str.length();
-				if(po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals < expo && po.max_decimals - expo < precision) {
+				precision2 -= str.length();
+				if(po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals < expo && po.max_decimals - expo < precision2) {
 					cln::cl_R_div_t divr = cln::floor2(cln::realpart(value) / cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo)));
 					if(!cln::zerop(divr.remainder)) {
 						num = divr.quotient;
@@ -2121,8 +2194,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						if(neg) num = -num;
 					}
 					remainder = 0;
-				} else if(precision < 0) {
-					cln::cl_R_div_t divr = cln::floor2(cln::realpart(value) / cln::expt_pos(cln::cl_I(base), -precision));
+				} else if(precision2 < 0) {
+					cln::cl_R_div_t divr = cln::floor2(cln::realpart(value) / cln::expt_pos(cln::cl_I(base), -precision2));
 					if(!cln::zerop(divr.remainder)) {
 						num = divr.quotient;
 						if(po.round_halfway_to_even && cln::evenp(num)) {
@@ -2134,7 +2207,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 								num++;
 							}
 						}
-						num *= cln::expt_pos(cln::cl_I(base), -precision);
+						num *= cln::expt_pos(cln::cl_I(base), -precision2);
 						exact = false;
 						if(neg) num = -num;
 					}
@@ -2142,8 +2215,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 				started = true;
 			}
-			if(!exact && po.use_max_decimals && po.max_decimals >= 0 && precision > po.max_decimals - expo) precision = po.max_decimals - expo;
-			while(!exact && precision > 0) {
+			if(!exact && po.use_max_decimals && po.max_decimals >= 0 && precision2 > po.max_decimals - expo) precision2 = po.max_decimals - expo;
+			while(!exact && precision2 > 0) {
 				if(po.indicate_infinite_series && !infinite_series) {
 					remainders.push_back(remainder);
 				}
@@ -2170,7 +2243,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					}
 				}
 				if(started) {
-					precision--;
+					precision2--;
 				}
 			}
 			remainders.clear();
@@ -2190,7 +2263,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 			}
 			if(!exact && !infinite_series) {
-				if(po.number_fraction_format == FRACTION_DECIMAL_EXACT) {
+				if(po.number_fraction_format == FRACTION_DECIMAL_EXACT && !isApproximate()) {
 					PrintOptions po2 = po;
 					po2.number_fraction_format = FRACTION_FRACTIONAL;
 					return print(po2, ips);
@@ -2250,6 +2323,18 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					str += "0";
 				}
 			}
+			if(po.show_ending_zeroes && !infinite_series && (isApproximate() || !exact)) {
+				precision -= str.length();
+				if(decimals > 0) {
+					precision += 1;
+				} else if(precision > 0) {
+					str += po.decimalpoint();
+				}
+				for(; precision > 0; precision--) {
+					str += "0";
+				}
+			}
+			
 			if(str[str.length() - 1] == po.decimalpoint()[0]) {
 				str.erase(str.end() - 1);
 			}
@@ -2284,6 +2369,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			Number num, den;
 			num.setInternal(cln::numerator(cln::rational(cln::realpart(value))));
 			den.setInternal(cln::denominator(cln::rational(cln::realpart(value))));
+			if(isApproximate()) {
+				num.setApproximate();
+				den.setApproximate();
+			}
 			str = num.print(po, ips);
 			if(ips.num) *ips.num = str;
 			str += " / ";

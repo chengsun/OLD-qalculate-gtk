@@ -318,7 +318,9 @@ int AliasUnit::baseExp(int exp_) const {
 MathStructure &AliasUnit::convertToFirstBase(MathStructure &mvalue, MathStructure &mexp) const {
 	if(exp != 1) mexp /= exp;
 	ParseOptions po;
-	po.read_precision = isApproximate();
+	if(isApproximate()) {
+		po.read_precision = ALWAYS_READ_PRECISION;
+	}
 	if(rvalue.empty()) {
 		if(value.find("\\x") != string::npos) {
 			string stmp = value;
@@ -367,7 +369,9 @@ MathStructure &AliasUnit::convertToFirstBase(MathStructure &mvalue, MathStructur
 }
 MathStructure &AliasUnit::firstBaseValue(MathStructure &mvalue, MathStructure &mexp) const {
 	ParseOptions po;
-	po.read_precision = isApproximate();
+	if(isApproximate()) {
+		po.read_precision = ALWAYS_READ_PRECISION;
+	}
 	if(value.find("\\x") != string::npos) {
 		string stmp = value;
 		string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;

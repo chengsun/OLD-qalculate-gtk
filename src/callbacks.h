@@ -263,8 +263,6 @@ void on_popup_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer use
 void on_popup_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_display_prefixes_activate(GtkMenuItem *w, gpointer user_data);
-void on_popup_menu_item_indicate_infinite_series_activate(GtkMenuItem *w, gpointer user_data);
-void on_popup_menu_item_round_halfway_to_even_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_fraction_decimal_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_fraction_decimal_exact_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer user_data);

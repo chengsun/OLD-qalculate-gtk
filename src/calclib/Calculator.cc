@@ -195,10 +195,6 @@ Calculator::Calculator() {
 	
 	null_prefix = new Prefix(0, "", "");
 	
-	PrintOptions po;
-	po.number_fraction_format = FRACTION_FRACTIONAL;
-	po.short_multiplication = false;
-	
 	m_undefined.setUndefined();
 	m_empty_vector.clearVector();
 	m_empty_matrix.clearMatrix();
@@ -211,6 +207,9 @@ Calculator::Calculator() {
 	save_printoptions.decimalpoint_sign = ".";
 	save_printoptions.comma_sign = ",";
 	save_printoptions.use_reference_names = true;
+	save_printoptions.show_ending_zeroes = true;
+	save_printoptions.number_fraction_format = FRACTION_DECIMAL_EXACT;
+	save_printoptions.short_multiplication = false;
 
 	default_assumptions = new Assumptions;
 	default_assumptions->setNumberType(ASSUMPTION_NUMBER_REAL);
@@ -2245,6 +2244,7 @@ bool compare_name_no_case(const string &name, const string &str, const int &name
 }
 
 MathStructure Calculator::parse(string str, const ParseOptions &po) {
+
 	const string *name;
 	string stmp, stmp2;
 	bool b, moved_forward;
@@ -2275,7 +2275,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 		q_end.push_back(i3);
 		i3++;
 	}
-	
+
 	for(unsigned int i = 0; i < signs.size(); i++) {
 		//gsub(signs[i], real_signs[i], str);
 		unsigned int ui = str.find(signs[i]);
@@ -2683,6 +2683,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 	} else {
 		remove_blanks(str);
 	}
+
 	return parseOperators(str, po);
 
 }
@@ -2729,6 +2730,7 @@ MathStructure Calculator::parseNumber(string str, const ParseOptions &po) {
 			str.erase(i, 1);
 		}
 	}
+
 	if(str[0] == ID_WRAP_LEFT_CH && str.length() > 2 && str[str.length() - 1] == ID_WRAP_RIGHT_CH) {
 		int id = s2i(str.substr(1, str.length() - 2));
 		mstruct.set(*getId(id));
@@ -2773,7 +2775,7 @@ void Calculator::parseAdd(string &str, MathStructure &mstruct, const ParseOption
 		} else {
 			mstruct.set(parseOperators(str, po));
 		}
-	}
+	}	
 }
 void Calculator::parseAdd(string &str, MathStructure &mstruct, const ParseOptions &po, MathOperation s) {
 	if(str.length() > 0) {
@@ -3047,6 +3049,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 			i3 = i;
 		}
 	}
+
 	if((i = str.find_first_of(PLUS MINUS, 0)) != (int) string::npos && i != (int) str.length() - 1) {
 		bool b = false, c = false;
 		bool min = false;
@@ -3141,9 +3144,9 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 		}
 	} else if((i = str.find(POWER_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
 		str2 = str.substr(0, i);
-		str = str.substr(i + 1, str.length() - (i + 1));
+		str = str.substr(i + 1, str.length() - (i + 1));		
 		parseAdd(str2, mstruct, po);
-		parseAdd(str, mstruct, po, OPERATION_RAISE);
+		parseAdd(str, mstruct, po, OPERATION_RAISE);		
 	} else if(po.base >= 2 && po.base <= 10 && (i = str.find(EXP_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
 		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));

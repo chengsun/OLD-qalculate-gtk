@@ -214,7 +214,9 @@ void KnownVariable::set(const MathStructure &o) {
 	setChanged(true);
 }
 void KnownVariable::set(string expression_) {
-	if(mstruct) delete mstruct;
+	if(mstruct) {
+		delete mstruct;
+	}	
 	mstruct = NULL;
 	b_expression = true;
 	sexpression = expression_;
@@ -224,7 +226,11 @@ void KnownVariable::set(string expression_) {
 }
 const MathStructure &KnownVariable::get() {
 	if(b_expression && !mstruct) {
-		mstruct = new MathStructure(CALCULATOR->parse(sexpression));
+		ParseOptions po;
+		if(isApproximate()) {
+			po.read_precision = ALWAYS_READ_PRECISION;
+		}
+		mstruct = new MathStructure(CALCULATOR->parse(sexpression, po));
 	}
 	return *mstruct;
 }

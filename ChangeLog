@@ -1,3 +1,11 @@
+2004-08-08 Niklas Knutsson  <nq@altern.org>
+
+	* Finish names GUI
+	* Finish new number precision system
+	* Menu item for read precision
+	* Option to show ending decimals (to see actual precision)
+	* Fix parsing of numbers with base < 10 and decimal point
+
 2004-08-07 Niklas Knutsson  <nq@altern.org>
 
 	* Initial work on GUI for new name system
