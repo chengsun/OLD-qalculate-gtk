@@ -6,6 +6,8 @@
 	* Fix double decimal point with integers
 	* Fix decimal reduction rounding
 	* Fix precision rounding
+	* Fix approximate indication with multiple numbers
+	* Fix printing of empty vector
 
 2004-07-12 Niklas Knutsson  <nq@altern.org>
 

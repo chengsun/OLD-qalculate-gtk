@@ -1766,7 +1766,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(ips.exp) *ips.exp = "";
 	if(ips.re) *ips.re = "";
 	if(ips.im) *ips.im = "";
-	if(po.is_approximate) *po.is_approximate = isApproximate();
+	if(po.is_approximate && isApproximate()) *po.is_approximate = true;
 	if((po.base == BASE_SEXAGESIMAL || po.base == BASE_TIME) && isReal()) {
 		Number nr(*this);
 		bool neg = nr.isNegative();
@@ -1872,10 +1872,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 		}
 		str += "i";
-		if(po.is_approximate) *po.is_approximate = isApproximate();
+		if(po.is_approximate && isApproximate()) *po.is_approximate = true;
 		if(ips.num) *ips.num = str;
 	} else if(isInteger()) {
-		
+
 		cl_I ivalue = cln::numerator(cln::rational(cln::realpart(value)));
 		bool neg = cln::minusp(ivalue);
 		string mpz_str;
@@ -1898,6 +1898,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				} 
 			}
 		}
+
 		if(po.min_exp < 0) {
 			if(expo > -PRECISION && expo < PRECISION) { 
 				expo = 0;
@@ -1921,11 +1922,13 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				precision = precmax.intValue();
 			}
 			precision -= mpz_str.length();
-			if(po.use_max_decimals && po.max_decimals < expo && po.max_decimals - expo < precision) {
+			if(po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals < expo && po.max_decimals - expo < precision) {
 				cln::cl_RA_div_t div = cln::floor2(ivalue / cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo)));
 				if(!cln::zerop(div.remainder)) {
 					ivalue = div.quotient;
-					if(div.remainder * base >= cln::cl_I(base) / cln::cl_I(2)) ivalue++;
+					if(div.remainder * base >= cln::cl_I(base) / cln::cl_I(2)) {
+						ivalue++;
+					}
 					ivalue *= cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo));
 					if(po.is_approximate) *po.is_approximate = true;
 					rerun = true;
@@ -1935,7 +1938,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				cln::cl_RA_div_t div = cln::floor2(ivalue / cln::expt_pos(cln::cl_I(base), -precision));
 				if(!cln::zerop(div.remainder)) {
 					ivalue = div.quotient;
-					if(div.remainder * base >= cln::cl_I(base) / cln::cl_I(2)) ivalue++;
+					if(div.remainder * base >= cln::cl_I(base) / cln::cl_I(2)) {
+						ivalue++;
+					}
 					ivalue *= cln::expt_pos(cln::cl_I(base), -precision);
 					if(po.is_approximate) *po.is_approximate = true;
 					rerun = true;
@@ -1943,7 +1948,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 			}
 		}
-
 		
 		int decimals = 0;
 		if(expo > 0) {
@@ -2053,34 +2057,51 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			int expo = 0;
 			if(!cln::zerop(num)) {
 				str = printCL_I(num, base, true, false);
-				if(base != 10) expo = 0;
-				else expo = str.length() - 1;
-				if(po.min_exp < 0) {
-					if(expo > -PRECISION && expo < PRECISION) { 
-						expo = 0;
-					}
-				} else if(po.min_exp != 0) {
-					if(expo > -po.min_exp && expo < po.min_exp) { 
-						expo = 0;
-					}
-				} else {
+				if(base != 10) {
 					expo = 0;
+				} else {
+					expo = str.length() - 1;
+					if(po.min_exp < 0) {
+						if(expo > -PRECISION && expo < PRECISION) { 
+							expo = 0;
+						}
+					} else if(po.min_exp != 0) {
+						if(expo > -po.min_exp && expo < po.min_exp) { 
+							expo = 0;
+						}
+					} else {
+						expo = 0;
+					}
 				}
 				precision -= str.length();
-				if(po.use_max_decimals && po.max_decimals < expo && po.max_decimals - expo < precision) {
-					num = cln::round1(cln::realpart(value) / cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo))) * cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo));
-					if(neg) num = -num;
+				if(po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals < expo && po.max_decimals - expo < precision) {
+					cln::cl_R_div_t divr = cln::floor2(cln::realpart(value) / cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo)));
+					if(!cln::zerop(divr.remainder)) {
+						num = divr.quotient;
+						if(divr.remainder * base >= cln::cl_I(base) / cln::cl_I(2)) {
+							num++;
+						}
+						num *= cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo));
+						exact = false;
+						if(neg) num = -num;
+					}
 					remainder = 0;
-					exact = false;
 				} else if(precision < 0) {
-					num = cln::round1(cln::realpart(value) / cln::expt_pos(cln::cl_I(base), -precision)) * cln::expt_pos(cln::cl_I(base), -precision);
-					if(neg) num = -num;
+					cln::cl_R_div_t divr = cln::floor2(cln::realpart(value) / cln::expt_pos(cln::cl_I(base), -precision));
+					if(!cln::zerop(divr.remainder)) {
+						num = divr.quotient;
+						if(divr.remainder * base >= cln::cl_I(base) / cln::cl_I(2)) {
+							num++;
+						}
+						num *= cln::expt_pos(cln::cl_I(base), -precision);
+						exact = false;
+						if(neg) num = -num;
+					}
 					remainder = 0;
-					exact = false;
 				}
 				started = true;
 			}
-			if(!exact && po.use_max_decimals && precision > po.max_decimals - expo) precision = po.max_decimals - expo;
+			if(!exact && po.use_max_decimals && po.max_decimals >= 0 && precision > po.max_decimals - expo) precision = po.max_decimals - expo;
 			while(!exact && precision > 0) {
 				if(po.indicate_infinite_series && !infinite_series) {
 					remainders.push_back(remainder);
@@ -2130,6 +2151,20 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(po.is_approximate) *po.is_approximate = true;
 			}
 			str = printCL_I(num, base, true, false, po.lower_case_numbers);
+			if(base == 10) {
+				expo = str.length() - l10 - 1;
+				if(po.min_exp < 0) {
+					if(expo > -PRECISION && expo < PRECISION) { 
+						expo = 0;
+					}
+				} else if(po.min_exp != 0) {
+					if(expo > -po.min_exp && expo < po.min_exp) { 
+						expo = 0;
+					}
+				} else {
+					expo = 0;
+				}
+			}
 			if(expo != 0) {
 				l10 += expo;
 			}
@@ -2210,7 +2245,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			string str2 = den.print(po, ips_n);
 			if(ips.den) *ips.den = str2;
 			str += str2;
-			if(po.is_approximate) *po.is_approximate = isApproximate();
+			if(po.is_approximate && isApproximate()) *po.is_approximate = true;
 		}
 	}
 	return str;

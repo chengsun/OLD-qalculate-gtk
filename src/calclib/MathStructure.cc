@@ -3947,6 +3947,7 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 }
 
 string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
+	if(ips.depth == 0 && po.is_approximate) *po.is_approximate = false;
 	string print_str;
 	InternalPrintStruct ips_n = ips;
 	switch(m_type) {

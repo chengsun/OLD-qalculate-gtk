@@ -1832,6 +1832,8 @@ void draw_background(GdkPixmap *pixmap, gint w, gint h) {
 }
 GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_options, InternalPrintStruct ips = top_ips, gint *point_central = NULL) {
 
+	if(ips.depth == 0 && po.is_approximate) *po.is_approximate = false;
+
 	GdkPixmap *pixmap = NULL;
 	gint w, h;
 	gint central_point = 0;
@@ -2695,6 +2697,16 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			pango_layout_set_markup(layout_comma, str.c_str(), -1);		
 			pango_layout_get_pixel_size(layout_comma, &comma_w, &comma_h);
 
+			if(m.size() == 0) {
+				PangoLayout *layout_one = gtk_widget_create_pango_layout(resultview, NULL);
+				MARKUP_STRING(str, "1")
+				pango_layout_set_markup(layout_one, str.c_str(), -1);
+				pango_layout_get_pixel_size(layout_one, &w, &h);
+				uh = h / 2 + h % 2;
+				dh = h / 2;
+				w = 2;
+				g_object_unref(layout_one);
+			}
 			for(unsigned int index = 0; index < m.size(); index++) {
 				ips_n.wrap = m[index].needsParenthesis(po, ips_n, m, index + 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
 				pixmap_args.push_back(draw_structure(m[index], po, ips_n, &ctmp));
@@ -2714,7 +2726,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 					uh = htmp - ctmp;
 				}				
 			}
-			
+		
 			uh += 2;
 			dh += 2;
 			if(uh > dh) dh = uh;
@@ -2725,10 +2737,8 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			arc_w = arc_h / 6;
 			w += arc_w * 2 + 2;
 			w += 2;
-			printf("%i %i\n", w, h);
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
 			draw_background(pixmap, w, h);
-			
 			GdkGC *line_gc = gdk_gc_new(GDK_DRAWABLE(pixmap));
 			gdk_gc_copy(line_gc, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)]);
 			if(ips.power_depth > 0) {
@@ -2739,6 +2749,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			w = 0;
 			gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w + 1, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);	
 			w += arc_w + 2;
+			if(m.size() == 0) w += 2;
 			for(unsigned int index = 0; index < m.size(); index++) {
 				if(index > 0) {
 					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - comma_h / 2 - comma_h % 2, layout_comma);	
