@@ -12,7 +12,7 @@
 #include "Function.h"
 #include "util.h"
 
-Function::Function(Calculator *calc_, string cat_, string name_, int argc_, string title_, string descr_, bool priviliged_) {
+Function::Function(Calculator *calc_, string cat_, string name_, int argc_, string title_, string descr_, bool priviliged_, int max_argc_) {
 	calc = calc_;
 	bpriv = priviliged_;
 	remove_blank_ends(cat_);
@@ -24,6 +24,13 @@ Function::Function(Calculator *calc_, string cat_, string name_, int argc_, stri
 	description(descr_);
 	category(cat_);
 	argc = argc_;
+	if(max_argc_ < argc) max_argc = argc;
+	else {
+		max_argc = max_argc_;
+		for(int i = 0; i < max_argc - argc; i++) {
+			default_values.push_back(0.0L);
+		}
+	}
 	sargs.clear();
 }
 Function::~Function(void) {}
@@ -31,7 +38,13 @@ bool Function::priviliged(void) {
 	return bpriv;
 }
 int Function::args(void) {
+	return max_argc;
+}
+int Function::minargs(void) {
 	return argc;
+}
+int Function::maxargs(void) {
+	return max_argc;
 }
 string Function::name(void) {
 	return sname;
@@ -78,6 +91,14 @@ int Function::args(const string &str) {
 			}
 		}
 	}
+	if(itmp < maxargs() && itmp >= minargs()) {
+		while(itmp < maxargs()) {
+			Manager *mngr = new Manager(calc, default_values[itmp]);
+			mngr->ref();
+			vargs.push_back(mngr);
+			itmp++;
+		}
+	}
 	return itmp;
 }
 int Function::args(const string &str, string *buffer) {
@@ -106,6 +127,12 @@ int Function::args(const string &str, string *buffer) {
 			}
 		}
 	}
+	if(itmp < maxargs() && itmp >= minargs()) {
+		while(itmp < maxargs()) {
+			buffer[itmp] = d2s(default_values[itmp]);
+			itmp++;
+		}
+	}	
 	return itmp;
 }
 string Function::category(void) {
@@ -150,14 +177,14 @@ bool Function::setArgName(string name_, int index) {
 Manager *Function::calculate(const string &argv) {
 	Manager *mngr = NULL;
 	int itmp = args(argv);
-	if(itmp >= args()) {
-		if(itmp > args() && args() >= 0)
+	if(itmp >= minargs()) {
+		if(itmp > maxargs() && maxargs() >= 0)
 			calc->error(false, 3, "To many arguments for ", name().c_str(), "() (ignored)");
 		mngr = new Manager(calc);
 		calculate2(mngr);
 		calc->checkFPExceptions(sname.c_str());
 	} else {
-		calc->error(true, 4, "You need ", i2s(args()).c_str(), " arguments in function ", name().c_str());
+		calc->error(true, 4, "You need ", i2s(minargs()).c_str(), " arguments in function ", name().c_str());
 	}
 	for(unsigned int i = 0; i < vargs.size(); i++) {
 		vargs[i]->unref();
@@ -177,9 +204,20 @@ long double Function::calculate3() {
 bool Function::isUserFunction(void) {
 	return false;
 }
+void Function::setDefaultValue(int arg_, long double value_) {
+	if(arg_ > argc && arg_ <= max_argc && default_values.size() >= arg_ - argc) {
+		default_values[arg_ - argc - 1] = value_;
+	}
+}
+long double Function::getDefaultValue(int arg_) {
+	if(arg_ > argc && arg_ <= max_argc && default_values.size() >= arg_ - argc) {
+		return default_values[arg_ - argc - 1];
+	}
+	return 0.0L;
+}
 
-UserFunction::UserFunction(Calculator *calc_, string cat_, string name_, string eq_, int argc_, string title_, string descr_) : Function(calc_, cat_, name_, argc_, title_, descr_) {
-	equation(eq_, argc_);
+UserFunction::UserFunction(Calculator *calc_, string cat_, string name_, string eq_, int argc_, string title_, string descr_, int max_argc_) : Function(calc_, cat_, name_, argc_, title_, descr_, false, max_argc_) {
+	equation(eq_, argc_, max_argc_);
 }
 string UserFunction::equation(void) {
 	return eq;
@@ -203,6 +241,7 @@ int Function::stringArgs(const string &str) {
 						stmp += str.substr(i2, i - i2);
 						stmp += RIGHT_BRACKET_CH;
 						svargs.push_back(stmp);
+//						svargs.push_back(str.substr(i2, i - i2));
 					}
 					i++;
 					i2 = i;
@@ -215,20 +254,31 @@ int Function::stringArgs(const string &str) {
 					stmp += str.substr(i2, str.length() - i2);
 					stmp += RIGHT_BRACKET_CH;
 					svargs.push_back(stmp);
+//					svargs.push_back(str.substr(i2, str.length() - i2));					
 				}
 				break;
 			}
 		}
 	}
+	if(itmp < maxargs() && itmp >= minargs()) {
+		while(itmp < maxargs()) {
+			stmp = LEFT_BRACKET_CH;
+			stmp += d2s(default_values[itmp]);
+			stmp += RIGHT_BRACKET_CH;
+			svargs.push_back(stmp);
+//			svargs.push_back(d2s(default_values[itmp]));			
+			itmp++;
+		}
+	}	
 	return itmp;
 }
 Manager *UserFunction::calculate(const string &argv) {
 	if(args() > 0) {
 		int itmp;
-		if((itmp = stringArgs(argv)) >= args()) {
-			if(itmp > args())
+		if((itmp = stringArgs(argv)) >= maxargs()) {
+			if(itmp > maxargs())
 				calc->error(false, 3, "To many arguments for ", name().c_str(), "() (ignored)");
-			string stmp = equation();
+			string stmp = eq_calc;
 			string svar;
 			int i2 = 0;
 			printf("UserFunction 1: %s\n", stmp.c_str());
@@ -253,37 +303,76 @@ Manager *UserFunction::calculate(const string &argv) {
 			Manager *mngr = calc->calculate(stmp);
 			return mngr;
 		} else {
-			calc->error(true, 4, "You need ", i2s(args()).c_str(), " arguments in function ", name().c_str());
+			calc->error(true, 4, "You need ", i2s(minargs()).c_str(), " arguments in function ", name().c_str());
 			svargs.clear();
 			return NULL;
 		}
 	} else {
-		Manager *mngr = calc->calculate(equation());
+		Manager *mngr = calc->calculate(eq_calc);
 		return mngr;
 	}
 }
-void UserFunction::equation(string new_eq, int argc_) {
+void UserFunction::equation(string new_eq, int argc_, int max_argc_) {
+	eq = new_eq;
+	default_values.clear();
 	if(argc_ < 0) {
-		argc_ = 0;
-		string svar;
+		argc_ = 0, max_argc_ = 0;
+		string svar, svar_o;
+		bool optionals = false;
 		int i2 = 0;
+		unsigned int i3 = 0;
 		for(int i = 0; i < 26; i++) {
 			svar = '\\';
+			svar_o = '\\';
 			if('x' + i > 'z')
 				svar += (char) ('a' + i - 3);
 			else
 				svar += 'x' + i;
-			if((i2 = new_eq.find(svar)) == (int) string::npos) {
+			if('X' + i > 'Z')
+				svar_o += (char) ('A' + i - 3);
+			else
+				svar_o += 'X' + i;
+				
+			if((i2 = new_eq.find(svar_o)) != (int) string::npos) {				
+				i3 = 0;
+				if(new_eq.length() > i2 + 2 && new_eq[i2 + 2] == ID_WRAP_LEFT_CH) {
+					if((i3 = new_eq.find(ID_WRAP_RIGHT_CH, i2 + 2)) != string::npos) {
+						svar_o = new_eq.substr(i2 + 3, i3 - (i2 + 3));	
+						i3 -= i2 + 1;
+					} else i3 = 0;
+				}
+				if(i3) {
+					Manager *mngr = calc->calculate(svar_o);
+					default_values.push_back(mngr->value());
+					mngr->unref();
+				} else {
+					default_values.push_back(0.0L);
+				}
+				new_eq.replace(i2, 2 + i3, svar);
+				optionals = true;
+			} else if((i2 = new_eq.find(svar)) == (int) string::npos) {
 				break;
 			}
-			argc_++;
+			if(optionals) {
+				max_argc_++;
+			} else {
+				max_argc_++;
+				argc_++;
+			}
 		}
 	}
 	if(argc_ > 26)
 		argc_ = 26;
+	if(max_argc_ > 26)
+		max_argc_ = 26;
+	while(default_values.size() < max_argc_ - argc_) {
+		default_values.push_back(0.0L);
+	}
+	default_values.resize(max_argc_ - argc_);
 
-	eq = new_eq;
+	eq_calc = new_eq;
 	argc = argc_;
+	max_argc = max_argc_;	
 }
 bool UserFunction::isUserFunction(void) {
 	return true;

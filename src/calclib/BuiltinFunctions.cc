@@ -23,8 +23,8 @@ Manager *IFFunction::calculate(const string &argv) {
 	str[1] = "";
 	str[2] = "";
 	int itmp = args(argv, str);
-	if(itmp >= args()) {
-		if(itmp > args() && args() >= 0)
+	if(itmp >= minargs()) {
+		if(itmp > maxargs() && maxargs() >= 0)
 			calc->error(false, 3, "To many arguments for ", name().c_str(), "() (ignored)");
 		unsigned int i = str[0].find_first_of("<=>", 0);
 		bool result = false;
@@ -81,7 +81,7 @@ Manager *IFFunction::calculate(const string &argv) {
 //		calculate2(mngr);
 //		calc->checkFPExceptions(sname.c_str());
 	} else {
-		calc->error(true, 4, "You need ", i2s(args()).c_str(), " arguments in function ", name().c_str());
+		calc->error(true, 4, "You need ", i2s(minargs()).c_str(), " arguments in function ", name().c_str());
 	}
 //	for(unsigned int i = 0; i < vargs.size(); i++) {
 //		vargs[i]->unref();
@@ -456,8 +456,8 @@ BASEFunction::BASEFunction(Calculator *calc_) : Function(calc_, "General", "BASE
 }
 Manager *BASEFunction::calculate(const string &eq) {
 	int itmp;
-	if((itmp = stringArgs(eq)) >= args()) {
-		if(itmp > args())
+	if((itmp = stringArgs(eq)) >= minargs()) {
+		if(itmp > maxargs())
 			calc->error(false, 3, "To many arguments for ", name().c_str(), "() (ignored)");
 		Manager *mngr = calc->calculate(svargs[0]);	
 		int base = (int) mngr->value();
@@ -472,7 +472,7 @@ Manager *BASEFunction::calculate(const string &eq) {
 		mngr->value(value);
 		return mngr;
 	} else {
-		calc->error(true, 4, "You need ", i2s(args()).c_str(), " arguments in function ", name().c_str());
+		calc->error(true, 4, "You need ", i2s(minargs()).c_str(), " arguments in function ", name().c_str());
 		svargs.clear();
 		return NULL;
 	}
