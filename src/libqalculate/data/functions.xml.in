@@ -2247,7 +2247,7 @@
         <_name>solve2</_name>
       </name>
       <_description>Solves two equations with two unknown variables. Returns the value of the first variable.</_description>
-      <expression>solve(replace(\y,\A{y},solve(\x,\A)),\Z{x})</expression>
+      <expression>solve(replace(\x,\A{y},solve(\y,\A)),\Z{x})</expression>
       <argument index="1" type="free">
         <_title>Equation 1</_title>
       </argument>

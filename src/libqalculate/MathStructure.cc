@@ -3982,6 +3982,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		}
 	}
 	EvaluationOptions eo2 = eo;
+	//eo2.parse_options.angle_unit = ANGLE_UNIT_NONE;
 	eo2.simplify_addition_powers = false;
 	eo2.do_polynomial_division = false;
 	eo2.reduce_divisions = false;
@@ -8886,6 +8887,24 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 			break;
 		}
 		case STRUCT_FUNCTION: {
+			/*if(CHILD(0).function() == CALCULATOR->f_sin && CHILD(0).size() == 1) {
+				if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) {
+					break;
+				}
+				if(CHILD(0)[0].contains(x_var)) {
+					MathStructure msave(CHILD(1));
+					CHILD(1).set(CALCULATOR->f_asin, &msave, NULL);
+					EvaluationOptions eo3 = eo2;
+					eo3.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
+					CHILD(1).calculateFunctions(eo3, false);
+					CHILD(0).setToChild(1, true);
+					if(CALCULATOR->getRadUnit()) CHILD(0) /= CALCULATOR->getRadUnit();
+					CHILD(0).eval(eo2);
+					CHILDREN_UPDATED;
+					isolate_x(eo, x_var);
+					return true;
+				}
+			} else */
 			if(CHILD(0).function() == CALCULATOR->f_ln && CHILD(0).size() == 1) {
 				if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) {
 					break;

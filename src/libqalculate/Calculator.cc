@@ -2662,6 +2662,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 //				} else if(compare_name_no_case(XOR_str, str, XOR_str_len, str_index + 1)) {
 				}
 			}
+		} else if(str_index > 0 && po.base >= 2 && po.base <= 10 && is_in(EXPS, str[str_index]) && str_index + 1 < str.length() && is_in(NUMBERS, str[str_index + 1])) {
+			
 		} else if(po.base >= 2 && po.base <= 10 && is_not_in(NUMBERS NOT_IN_NAMES, str[str_index])) {
 			bool moved_forward = false;
 			const string *found_function_name = NULL;
@@ -3089,7 +3091,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			}
 			if(!moved_forward) {
 				if(po.limit_implicit_multiplication) {
-					if(po.unknowns_enabled && (unit_chars_left > 1 || str[str_index] != EXP_CH)) {
+					if(po.unknowns_enabled && (unit_chars_left > 1 || (str[str_index] != EXP_CH && str[str_index] != EXP2_CH))) {
 						stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 						stmp += i2s(addId(new MathStructure(str.substr(str_index, unit_chars_left))));
 						stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
@@ -3098,7 +3100,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					} else {
 						str_index += unit_chars_left - 1;
 					}
-				} else if(po.unknowns_enabled && str[str_index] != EXP_CH) {
+				} else if(po.unknowns_enabled && str[str_index] != EXP_CH && str[str_index] != EXP2_CH) {
 					size_t i = 1;
 					while(i <= unit_chars_left && str[str_index + i] < 0) {
 						i++;
@@ -3213,7 +3215,7 @@ void Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 	if(str.length() > 0) {
 		size_t i;
 		if(po.base >= 2 && po.base <= 10) {
-			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS EXP ID_WRAP_LEFT, 1);
+			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS EXPS ID_WRAP_LEFT, 1);
 		} else {
 			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
 		}
@@ -3228,7 +3230,7 @@ void Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 	if(str.length() > 0) {
 		size_t i;
 		if(po.base >= 2 && po.base <= 10) {
-			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS EXP ID_WRAP_LEFT, 1);
+			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS EXPS ID_WRAP_LEFT, 1);
 		} else {
 			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
 		}
@@ -3293,7 +3295,7 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				break;
 			}
 		}
-		if(i > 0 && is_not_in(MULTIPLICATION_2 OPERATORS PARENTHESISS SPACE, str[i - 1]) && (po.base > 10 || po.base < 2 || str[i - 1] != EXP_CH)) {
+		if(i > 0 && is_not_in(MULTIPLICATION_2 OPERATORS PARENTHESISS SPACE, str[i - 1]) && (po.base > 10 || po.base < 2 || (str[i - 1] != EXP_CH && str[i - 1] != EXP2_CH))) {
 			if(po.rpn) {
 				str.insert(i2 + 1, MULTIPLICATION);	
 				str.insert(i, SPACE);
@@ -3305,7 +3307,7 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				i2++;
 			}
 		}
-		if(i2 + 1 < str.length() && is_not_in(MULTIPLICATION_2 OPERATORS PARENTHESISS SPACE, str[i2 + 1]) && (po.base > 10 || po.base < 2 || str[i2 + 1] != EXP_CH)) {
+		if(i2 + 1 < str.length() && is_not_in(MULTIPLICATION_2 OPERATORS PARENTHESISS SPACE, str[i2 + 1]) && (po.base > 10 || po.base < 2 || (str[i2 + 1] != EXP_CH && str[i2 + 1] != EXP2_CH))) {
 			if(po.rpn) {
 				i3 = str.find(SPACE, i2 + 1);
 				if(i3 == string::npos) {
@@ -3525,7 +3527,7 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		bool b = false, c = false;
 		bool min = false;
 		while(i != string::npos && i + 1 != str.length()) {
-			if(i < 1 || is_not_in(MULTIPLICATION_2 OPERATORS EXP, str[i - 1])) {
+			if(i < 1 || is_not_in(MULTIPLICATION_2 OPERATORS EXPS, str[i - 1])) {
 				str2 = str.substr(0, i);
 				if(!c && b) {
 					if(min) {
@@ -3618,7 +3620,7 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		str = str.substr(i + 1, str.length() - (i + 1));		
 		parseAdd(str2, mstruct, po);
 		parseAdd(str, mstruct, po, OPERATION_RAISE);
-	} else if(po.base >= 2 && po.base <= 10 && (i = str.find(EXP_CH, 1)) != string::npos && i + 1 != str.length()) {
+	} else if(po.base >= 2 && po.base <= 10 && (i = str.find_first_of(EXPS, 1)) != string::npos && i + 1 != str.length()) {
 		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);

@@ -423,6 +423,7 @@ extern Calculator *calculator;
 #define MULTIPLICATION_2_CH	' '
 #define DIVISION_CH		'/'
 #define EXP_CH			'E'
+#define EXP2_CH			'e'
 #define POWER_CH		'^'
 #define SPACE_CH		' '
 #define LEFT_PARENTHESIS_CH	'('
@@ -466,6 +467,7 @@ extern Calculator *calculator;
 #define MULTIPLICATION_2	" "
 #define DIVISION		"/"
 #define EXP			"E"
+#define EXPS			"Ee"
 #define	POWER			"^"
 #define	AND			"&"
 #define	OR			"|"
