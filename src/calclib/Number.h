@@ -34,7 +34,7 @@ class Number {
 	public:
 	
 		Number();
-		Number(string number, int base = 10);
+		Number(string number, int base = 10, bool read_precision = false);
 		Number(int numerator, int denominator = 1, int exp_10 = 0);
 		Number(const Number &o);
 		virtual ~Number();

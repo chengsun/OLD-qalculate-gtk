@@ -288,6 +288,9 @@ void on_menu_item_fraction_fraction_activate(GtkMenuItem *w, gpointer user_data)
 void on_menu_item_all_prefixes_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_denominator_prefixes_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_place_units_separately_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_post_conversion_none_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_post_conversion_base_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_post_conversion_best_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_multiple_roots_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_short_units_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_always_exact_activate(GtkMenuItem *w, gpointer user_data);
@@ -299,6 +302,8 @@ void on_menu_item_precision_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_decimals_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_plot_functions_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_factorize_activate(GtkMenuItem *w, gpointer user_data);
+gboolean on_main_window_focus_in_event(GtkWidget *w, GdkEventFocus *e, gpointer user_data);
+
 void on_unit_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 void on_unit_edit_optionmenu_class_changed(GtkOptionMenu *om, gpointer user_data);
 void on_units_button_new_clicked(GtkButton *button, gpointer user_data);

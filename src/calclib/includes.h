@@ -258,11 +258,18 @@ typedef enum {
 	STRUCTURING_FACTORIZE
 } StructuringMode;
 
+typedef enum {
+	POST_CONVERSION_NONE,
+	POST_CONVERSION_BEST,
+	POST_CONVERSION_BASE
+} AutoPostConversion;
+
 static const struct ParseOptions {
 	bool variables_enabled, functions_enabled, unknowns_enabled, units_enabled;
 	bool rpn;
 	int base;
-	ParseOptions() : variables_enabled(true), functions_enabled(true), unknowns_enabled(true), units_enabled(true), rpn(false), base(BASE_DECIMAL) {}
+	bool read_precision;
+	ParseOptions() : variables_enabled(true), functions_enabled(true), unknowns_enabled(true), units_enabled(true), rpn(false), base(BASE_DECIMAL), read_precision(false) {}
 } default_parse_options;
 
 static const struct EvaluationOptions {
@@ -271,9 +278,10 @@ static const struct EvaluationOptions {
 	bool calculate_variables, calculate_functions, test_comparisons, isolate_x;
 	bool simplify_addition_powers;
 	bool allow_complex, allow_infinite;
+	AutoPostConversion auto_post_conversion;
 	StructuringMode structuring;
 	ParseOptions parse_options;
-	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), simplify_addition_powers(true), allow_complex(true), allow_infinite(true), structuring(STRUCTURING_SIMPLIFY) {}
+	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), simplify_addition_powers(true), allow_complex(true), allow_infinite(true), auto_post_conversion(POST_CONVERSION_NONE), structuring(STRUCTURING_SIMPLIFY) {}
 } default_evaluation_options;
 
 extern MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one;

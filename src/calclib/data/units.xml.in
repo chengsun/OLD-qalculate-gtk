@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="0.3">
+<QALCULATE version="0.6.2">
   <category>
     <_title>Currency</_title>
     <builtin_unit name="EUR">
@@ -238,6 +238,7 @@
   <category>
     <_title>Length</_title>
     <unit type="base" name="m">
+      <system>si</system>
       <_singular>meter</_singular>
       <_plural>meters</_plural>
       <_title>Meter</_title>
@@ -451,6 +452,7 @@
         <_title>Meter per Meter</_title>
       </unit>
       <unit type="alias" name="rad">
+        <system>si</system>
         <_singular>radian</_singular>
         <_plural>radians</_plural>
         <base>
@@ -499,6 +501,7 @@
         <_title>Square Meter per Square Meter</_title>
       </unit>
       <unit type="alias" name="sr">
+        <system>si</system>
         <_singular>steradian</_singular>
         <_plural>steradians</_plural>
         <base>
@@ -509,10 +512,45 @@
         <_title>Steradian</_title>
       </unit>
     </category>
+    <category>
+      <_title>Angular Acceleration</_title>
+      <unit type="composite" name="rad_p_sqs">
+        <system>si</system>
+        <part>
+          <unit>rad</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-2</exponent>
+        </part>
+        <_title>Radians per Square Second</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Angular Velocity</_title>
+      <unit type="composite" name="rad_p_s">
+        <system>si</system>
+        <part>
+          <unit>rad</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Radians per Second</_title>
+      </unit>
+    </category>
   </category>
   <category>
     <_title>Mass</_title>
     <unit type="base" name="g">
+      <system>si</system>
       <_singular>gram</_singular>
       <_plural>grams</_plural>
       <_title>Gram</_title>
@@ -667,7 +705,7 @@
       </base>
       <_title>Cental</_title>
     </unit>
-    <unit type="alias" name="c">
+    <unit type="alias" name="carat">
       <_singular>carat</_singular>
       <_plural>carats</_plural>
       <base>
@@ -698,6 +736,7 @@
     <category>
       <_title>Density</_title>
       <unit type="composite" name="kg_p_cum">
+        <system>si</system>
         <part>
           <unit>g</unit>
           <prefix>3</prefix>
@@ -711,10 +750,28 @@
         <_title>Kilogram per Cubic Meter</_title>
       </unit>
     </category>
+    <category>
+      <_title>Mass Fraction</_title>
+      <unit type="composite" name="kg_p_kg">
+        <system>si</system>
+        <part>
+          <unit>g</unit>
+          <prefix>3</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>g</unit>
+          <prefix>3</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Kilogram per Kilogram</_title>
+      </unit>
+    </category>
   </category>
   <category>
     <_title>Time</_title>
     <unit type="base" name="s">
+      <system>si</system>
       <_singular>second</_singular>
       <_plural>seconds</_plural>
       <_title>Second</_title>
@@ -762,6 +819,7 @@
     <category>
       <_title>Frequency</_title>
       <unit type="alias" name="Hz">
+        <system>si</system>
         <_singular>hertz</_singular>
         <_plural>hertz</_plural>
         <base>
@@ -778,6 +836,7 @@
     <category>
       <_title>Electric Current</_title>
       <unit type="base" name="A">
+        <system>si</system>
         <_singular>ampere</_singular>
         <_plural>amperes</_plural>
         <_title>Ampere</_title>
@@ -786,6 +845,7 @@
     <category>
       <_title>Current Density</_title>
       <unit type="composite" name="A_p_sqm">
+        <system>si</system>
         <part>
           <unit>A</unit>
           <prefix>0</prefix>
@@ -815,6 +875,7 @@
         <_title>Second Ampere</_title>
       </unit>
       <unit type="alias" name="C">
+        <system>si</system>
         <_singular>coulomb</_singular>
         <_plural>coulombs</_plural>
         <base>
@@ -828,6 +889,7 @@
     <category>
       <_title>Electric Charge Density</_title>
       <unit type="composite" name="C_p_cum">
+        <system>si</system>
         <part>
           <unit>C</unit>
           <prefix>0</prefix>
@@ -844,6 +906,7 @@
     <category>
       <_title>Electric Flux Density</_title>
       <unit type="composite" name="C_p_sqm">
+        <system>si</system>
         <part>
           <unit>C</unit>
           <prefix>0</prefix>
@@ -873,6 +936,7 @@
         <_title>Watt per Ampere</_title>
       </unit>
       <unit type="alias" name="V">
+        <system>si</system>
         <_singular>volt</_singular>
         <_plural>volts</_plural>
         <base>
@@ -925,6 +989,7 @@
         <_title>Volt per Ampere</_title>
       </unit>
       <unit type="alias" name="ohm">
+        <system>si</system>
         <_singular>ohm</_singular>
         <_plural>ohms</_plural>
 	<unicode>Ω</unicode>
@@ -952,6 +1017,7 @@
         <_title>Ampere per Volt</_title>
       </unit>
       <unit type="alias" name="S">
+        <system>si</system>
         <_singular>siemens</_singular>
         <_plural>siemens</_plural>
         <base>
@@ -965,6 +1031,7 @@
     <category>
       <_title>Electric Field Strength</_title>
       <unit type="composite" name="V_p_m">
+        <system>si</system>
         <part>
           <unit>V</unit>
           <prefix>0</prefix>
@@ -981,6 +1048,7 @@
     <category>
       <_title>Permittivity</_title>
       <unit type="composite" name="F_p_m">
+        <system>si</system>
         <part>
           <unit>F</unit>
           <prefix>0</prefix>
@@ -1010,6 +1078,7 @@
         <_title>Weber per Ampere</_title>
       </unit>
       <unit type="alias" name="H">
+        <system>si</system>
         <_singular>henry</_singular>
         <_plural>henrys</_plural>
         <base>
@@ -1023,6 +1092,7 @@
     <category>
       <_title>Permeability</_title>
       <unit type="composite" name="H_p_m">
+        <system>si</system>
         <part>
           <unit>H</unit>
           <prefix>0</prefix>
@@ -1040,11 +1110,13 @@
   <category>
     <_title>Temperature</_title>
     <unit type="base" name="K">
+      <system>si</system>
       <_singular>kelvin</_singular>
       <_plural>kelvins</_plural>
       <_title>Kelvin</_title>
     </unit>
     <unit type="alias" name="oC">
+      <system>si</system>
       <_singular>celcius</_singular>
       <_plural>celcius</_plural>
       <unicode>°C</unicode>
@@ -1082,6 +1154,7 @@
   <category>
     <_title>Substance</_title>
     <unit type="base" name="mol">
+      <system>si</system>
       <_singular>mole</_singular>
       <_plural>moles</_plural>
       <_title>Mole</_title>
@@ -1089,6 +1162,7 @@
     <category>
       <_title>Substance Concentration</_title>
       <unit type="composite" name="mol_p_cum">
+        <system>si</system>
         <part>
           <unit>mol</unit>
           <prefix>0</prefix>
@@ -1118,6 +1192,7 @@
         <_title>Reciprocal Seconds Mole</_title>
       </unit>
       <unit type="alias" name="kat">
+        <system>si</system>
         <_singular>katal</_singular>
         <_plural>katals</_plural>
         <base>
@@ -1131,6 +1206,7 @@
     <category>
       <_title>Catalytic Concentration</_title>
       <unit type="composite" name="kat_p_cum">
+        <system>si</system>
         <part>
           <unit>kat</unit>
           <prefix>0</prefix>
@@ -1150,6 +1226,7 @@
     <category>
       <_title>Luminous Intensity</_title>
       <unit type="base" name="cd">
+        <system>si</system>
         <_singular>candela</_singular>
         <_plural>candelas</_plural>
         <_title>Candela</_title>
@@ -1158,6 +1235,7 @@
     <category>
       <_title>Luminance</_title>
       <unit type="composite" name="cd_p_sqm">
+        <system>si</system>
         <part>
           <unit>cd</unit>
           <prefix>0</prefix>
@@ -1169,6 +1247,17 @@
           <exponent>-2</exponent>
         </part>
         <_title>Candela per Square Meter</_title>
+      </unit>
+      <unit type="alias" name="sb">
+        <system>cgs</system>
+        <_singular>stilb</_singular>
+        <_plural>stilbs</_plural>
+        <base>
+          <unit>cd_p_sqm</unit>
+          <relation>10000</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Stilb</_title>
       </unit>
     </category>
     <category>
@@ -1187,6 +1276,7 @@
         <_title>Candela Steradian</_title>
       </unit>
       <unit type="alias" name="lm">
+        <system>si</system>
         <_singular>lumen</_singular>
         <_plural>lumens</_plural>
         <base>
@@ -1213,6 +1303,7 @@
         <_title>Lumen per Square Meter</_title>
       </unit>
       <unit type="alias" name="lx">
+        <system>si</system>
         <_singular>lux</_singular>
         <base>
           <unit>lm_p_sqm</unit>
@@ -1221,9 +1312,20 @@
         </base>
         <_title>Lux</_title>
       </unit>
+      <unit type="alias" name="ph">
+        <system>cgs</system>
+        <_singular>phot</_singular>
+        <_plural>phots</_plural>
+        <base>
+          <unit>lx</unit>
+          <relation>10000</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Phot</_title>
+      </unit>
     </category>
     <category>
-      <_title>Radiant Flux</_title>
+      <_title>Radiant Intensity</_title>
       <unit type="composite" name="W_p_sr">
         <part>
           <unit>W</unit>
@@ -1240,7 +1342,25 @@
     </category>    
     <category>
       <_title>Irradiance</_title>
+      <unit type="composite" name="W_p_sqm">
+        <system>si</system>
+        <part>
+          <unit>W</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-2</exponent>
+        </part>
+        <_title>Watt per Square Meter</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Radiance</_title>
       <unit type="composite" name="W_p_sqm_sr">
+        <system>si</system>
         <part>
           <unit>W</unit>
           <prefix>0</prefix>
@@ -1263,6 +1383,7 @@
   <category>
     <_title>Area</_title>
     <unit type="composite" name="sqm">
+      <system>si</system>
       <part>
         <unit>m</unit>
         <prefix>0</prefix>
@@ -1609,6 +1730,7 @@
       </unit>
     </category>
     <unit type="composite" name="cum">
+      <system>si</system>
       <part>
         <unit>m</unit>
         <prefix>0</prefix>
@@ -1637,6 +1759,7 @@
     <category>
       <_title>Specific Volume</_title>
       <unit type="composite" name="cum_p_kg">
+        <system>si</system>
         <part>
           <unit>m</unit>
           <prefix>0</prefix>
@@ -1654,6 +1777,7 @@
   <category>
     <_title>Speed</_title>
     <unit type="composite" name="m_p_s">
+      <system>si</system>
       <part>
         <unit>m</unit>
         <prefix>0</prefix>
@@ -1692,6 +1816,7 @@
     <category>
       <_title>Acceleration</_title>
       <unit type="composite" name="m_p_sqs">
+        <system>si</system>
         <part>
           <unit>m</unit>
           <prefix>0</prefix>
@@ -1721,6 +1846,7 @@
     <category>
       <_title>Wave Number</_title>
       <unit type="composite" name="recm">
+        <system>si</system>
         <part>
           <unit>m</unit>
           <prefix>0</prefix>
@@ -1732,6 +1858,7 @@
     <category>
       <_title>Magnetic Field Strength</_title>
       <unit type="composite" name="A_p_m">
+        <system>si</system>
         <part>
           <unit>A</unit>
           <prefix>0</prefix>
@@ -1743,6 +1870,17 @@
           <exponent>-1</exponent>
         </part>
         <_title>Ampere per Meter</_title>
+      </unit>
+      <unit type="alias" name="Oe">
+        <system>cgs</system>
+        <_singular>oersted</_singular>
+        <_plural>oersteds</_plural>
+        <base>
+          <unit>A_p_m</unit>
+          <relation>1000/(4*pi)</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Oersted</_title>
       </unit>
     </category>
     <category>
@@ -1761,6 +1899,7 @@
         <_title>Volt Seconds</_title>
       </unit>
       <unit type="alias" name="Wb">
+        <system>si</system>
         <_singular>weber</_singular>
         <_plural>webers</_plural>
         <base>
@@ -1769,6 +1908,17 @@
           <exponent>1</exponent>
         </base>
         <_title>Weber</_title>
+      </unit>
+      <unit type="alias" name="Mx">
+        <system>cgs</system>
+        <_singular>maxwell</_singular>
+        <_plural>maxwells</_plural>
+        <base>
+          <unit>Wb</unit>
+          <relation>1E-8</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Maxwell</_title>
       </unit>
     </category>
     <category>
@@ -1787,6 +1937,7 @@
         <_title>Weber per Square Meter</_title>
       </unit>
       <unit type="alias" name="T">
+        <system>si</system>
         <_singular>tesla</_singular>
         <_plural>teslas</_plural>
         <base>
@@ -1795,6 +1946,17 @@
           <exponent>1</exponent>
         </base>
         <_title>Tesla</_title>
+      </unit>
+      <unit type="alias" name="gauss">
+        <system>cgs</system>
+        <_singular>gauss</_singular>
+        <_plural>gauss</_plural>
+        <base>
+          <unit>T</unit>
+          <relation>0.0001</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Gauss</_title>
       </unit>
     </category>
   </category>
@@ -1819,6 +1981,7 @@
       <_title>Meter Kilogram per Square Second</_title>
     </unit>
     <unit type="alias" name="N">
+      <system>si</system>
       <_singular>newton</_singular>
       <_plural>newtons</_plural>
       <base>
@@ -1828,6 +1991,34 @@
       </base>
       <_title>Newton</_title>
     </unit>
+    <unit type="alias" name="dyn">
+      <system>cgs</system>
+      <_singular>dyne</_singular>
+      <_plural>dynes</_plural>
+      <base>
+        <unit>N</unit>
+        <relation>1E-5</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Dyne</_title>
+    </unit>
+    <category>
+      <_title>Moment of Force</_title>
+      <unit type="composite" name="N_m">
+        <system>si</system>
+        <part>
+          <unit>N</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <_title>Newton Meter</_title>
+      </unit>
+    </category>
     <category>
       <_title>Pressure</_title>
       <unit type="composite" name="N_p_sqm">
@@ -1844,6 +2035,7 @@
         <_title>Newton per Square Meter</_title>
       </unit>
       <unit type="alias" name="Pa">
+        <system>si</system>
         <_singular>pascal</_singular>
         <_plural>pascals</_plural>
         <base>
@@ -1887,6 +2079,7 @@
     <category>
       <_title>Dynamic Viscosity</_title>
       <unit type="composite" name="Pa_s">
+        <system>si</system>
         <part>
           <unit>Pa</unit>
           <prefix>0</prefix>
@@ -1899,10 +2092,49 @@
         </part>
         <_title>Pascal Second</_title>
       </unit>
+      <unit type="alias" name="P">
+        <system>cgs</system>
+        <_singular>poise</_singular>
+        <_plural>poises</_plural>
+        <base>
+          <unit>Pa_s</unit>
+          <relation>0.1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Poise</_title>
+      </unit>
+    </category>
+    <category>
+      <title>Kinematic Viscosity</title>
+      <unit type="composite" name="sqm_p_s">
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>2</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Square Meter per Second</_title>
+      </unit>
+      <unit type="alias" name="St">
+        <system>cgs</system>
+        <_singular>stokes</_singular>
+        <_plural>stokes</_plural>
+        <base>
+          <unit>sqm_p_s</unit>
+          <relation>0.0001</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Stokes</_title>
+      </unit>
     </category>
     <category>
       <_title>Surface Tension</_title>
       <unit type="composite" name="N_p_m">
+        <system>si</system>
         <part>
           <unit>N</unit>
           <prefix>0</prefix>
@@ -1919,20 +2151,8 @@
   </category>
   <category>
     <_title>Energy</_title>
-    <unit type="composite" name="N_m">
-      <part>
-        <unit>N</unit>
-        <prefix>0</prefix>
-        <exponent>1</exponent>
-      </part>
-      <part>
-        <unit>m</unit>
-        <prefix>0</prefix>
-        <exponent>1</exponent>
-      </part>
-      <_title>Newton Meter</_title>
-    </unit>
     <unit type="alias" name="J">
+      <system>si</system>
       <_singular>joule</_singular>
       <_plural>joules</_plural>
       <base>
@@ -1977,7 +2197,7 @@
       <_plural>calories_fifteen</_plural>
       <base>
         <unit>J</unit>
-        <relation precise="false">4.185880</relation>
+        <relation approximate="true">4.185880</relation>
         <exponent>1</exponent>
       </base>
       <_title>Calorie (15 degrees Celcius)</_title>
@@ -1987,7 +2207,7 @@
       <_plural>mean_calories</_plural>
       <base>
         <unit>J</unit>
-        <relation precise="false">4.19002</relation>
+        <relation approximate="true">4.19002</relation>
         <exponent>1</exponent>
       </base>
       <_title>Calorie (mean)</_title>
@@ -2006,12 +2226,13 @@
       <_plural>electron_volts</_plural>
       <base>
         <unit>J</unit>
-        <relation>1.602177E-19</relation>
+        <relation approximate="true">1.602177E-19</relation>
         <exponent>1</exponent>
       </base>
       <_title>Electron Volt</_title>
     </unit>
     <unit type="alias" name="erg">
+      <system>cgs</system>
       <_singular>erg</_singular>
       <_plural>ergs</_plural>
       <base>
@@ -2021,6 +2242,23 @@
       </base>
       <_title>Erg</_title>
     </unit>
+    <category>
+      <_title>Specific Energy</_title>
+      <unit type="composite" name="J_p_kg">
+        <system>si</system>
+        <part>
+          <unit>J</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>g</unit>
+          <prefix>3</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Joule per Kilogram</_title>
+      </unit>
+    </category>
     <category>
       <_title>Power</_title>
       <unit type="composite" name="J_p_s">
@@ -2037,6 +2275,7 @@
         <_title>Joule per Second</_title>
       </unit>
       <unit type="alias" name="W">
+        <system>si</system>
         <_singular>watt</_singular>
         <_plural>watts</_plural>
         <base>
@@ -2069,6 +2308,7 @@
     <category>
       <_title>Entropy</_title>
       <unit type="composite" name="J_p_K">
+        <system>si</system>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -2085,6 +2325,7 @@
     <category>
       <_title>Specific Entropy</_title>
       <unit type="composite" name="J_p_kg_K">
+        <system>si</system>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -2106,6 +2347,7 @@
     <category>
       <_title>Thermal Conductivity</_title>
       <unit type="composite" name="W_p_m_K">
+        <system>si</system>
         <part>
           <unit>W</unit>
           <prefix>0</prefix>
@@ -2127,6 +2369,7 @@
     <category>
       <_title>Energy Density</_title>
       <unit type="composite" name="J_p_cum">
+        <system>si</system>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -2143,6 +2386,7 @@
     <category>
       <_title>Molar Energy</_title>
       <unit type="composite" name="J_p_mol">
+        <system>si</system>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -2159,6 +2403,7 @@
     <category>
       <_title>Molar Entropy</_title>
       <unit type="composite" name="J_p_mol_K">
+        <system>si</system>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -2181,6 +2426,7 @@
   <category>
     <_title>Radioactivity</_title>
     <unit type="alias" name="Bq">
+      <system>si</system>
       <_singular>becquerel</_singular>
       <_plural>becquerels</_plural>
       <base>
@@ -2202,20 +2448,8 @@
     </unit>
     <category>
       <_title>Absorbed Dose</_title>
-      <unit type="composite" name="J_p_kg">
-        <part>
-          <unit>J</unit>
-          <prefix>0</prefix>
-          <exponent>1</exponent>
-        </part>
-        <part>
-          <unit>g</unit>
-          <prefix>3</prefix>
-          <exponent>-1</exponent>
-        </part>
-        <_title>Joule per Kilogram</_title>
-      </unit>
       <unit type="alias" name="Gy">
+        <system>si</system>
         <_singular>gray</_singular>
         <_plural>grays</_plural>
         <base>
@@ -2238,6 +2472,7 @@
     <category>
       <_title>Dose Equivalent</_title>
       <unit type="alias" name="Sv">
+        <system>si</system>
         <_singular>sievert</_singular>
         <_plural>sieverts</_plural>
         <base>
@@ -2260,6 +2495,7 @@
     <category>
       <_title>Exposure</_title>
       <unit type="composite" name="C_p_kg">
+        <system>si</system>
         <part>
           <unit>C</unit>
           <prefix>0</prefix>
@@ -2270,7 +2506,7 @@
           <prefix>3</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Coloumb per Kilogram</_title>
+        <_title>Coulomb per Kilogram</_title>
       </unit>
       <unit type="alias" name="R">
         <_singular>roentgen</_singular>
@@ -2286,6 +2522,7 @@
     <category>
       <_title>Absorbed Dose Rate</_title>
       <unit type="composite" name="Gy_p_s">
+        <system>si</system>
         <part>
           <unit>Gy</unit>
           <prefix>0</prefix>

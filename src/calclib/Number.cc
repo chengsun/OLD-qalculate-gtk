@@ -177,7 +177,7 @@ Number::Number(const Number &o) {
 Number::~Number() {
 }
 
-void Number::set(string number, int base) {
+void Number::set(string number, int base, bool read_precision) {
 
 	b_inf = false; b_pinf = false; b_minf = false; b_approx = false;
 
@@ -381,6 +381,7 @@ void Number::set(string number, int base) {
 	}
 	if(base > 36) base = 36;
 	if(base < 0) base = 10;
+	readprec = 0;
 	bool numbers_started = false, minus = false, in_decimals = false, b_cplx = false;
 	for(unsigned int index = 0; index < number.size(); index++) {
 		if(number[index] >= '0' && (base >= 10 && number[index] <= '9') || (base < 10 && number[index] < '0' + base)) {
@@ -389,6 +390,7 @@ void Number::set(string number, int base) {
 			if(in_decimals) {
 				den = den * base;
 			}
+			readprec++;
 			numbers_started = true;
 		} else if(base > 10 && number[index] >= 'a' && number[index] < 'a' + base - 10) {
 			num = num * base;
@@ -396,6 +398,7 @@ void Number::set(string number, int base) {
 			if(in_decimals) {
 				den = den * base;
 			}
+			readprec++;
 			numbers_started = true;
 		} else if(base > 10 && number[index] >= 'A' && number[index] < 'A' + base - 10) {
 			num = num * base;
@@ -403,6 +406,7 @@ void Number::set(string number, int base) {
 			if(in_decimals) {
 				den = den * base;
 			}
+			readprec++;
 			numbers_started = true;
 		} else if(number[index] == 'E' && base <= 10) {
 			index++;
@@ -475,6 +479,7 @@ void Number::set(string number, int base) {
 	} else {
 		value = num / den;
 	}
+	if(read_precision) i_precision = readprec;
 }
 void Number::set(int numerator, int denominator, int exp_10) {
 	b_inf = false; b_pinf = false; b_minf = false; b_approx = false;

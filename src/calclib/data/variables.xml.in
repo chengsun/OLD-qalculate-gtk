@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<QALCULATE version="0.3">
+<QALCULATE version="0.6.2">
   <category>
-    <_title>Constants</_title>
+    <_title>Basic Constants</_title>
     <builtin_variable name="e">
       <_title>The Base of Natural Logarithms (e)</_title>
     </builtin_variable>
@@ -28,6 +28,75 @@
       <value>(1+sqrt(5))/2</value>
     </variable>
   </category>
+  <category>
+    <_title>Physical Constants</_title>
+    <category>
+      <_title>Universal Constants</_title>
+      <variable name="characteristic_impedance">
+        <_title>Characteristic Impedance of Vacuum</_title>
+        <value>magnetic_constant*c</value>
+	<_name suffix="true">characteristic_impedance</_name>
+        <name abbreviation="true" suffix="true">Z_0</name>
+      </variable>
+      <variable name="magnetic_constant">
+        <_title>Magnetic Constant (Permeability of Free Space)</_title>
+        <value>4E-7*pi*N*A^(-2)</value>
+	<_name suffix="true">magnetic_constant</_name>
+        <name abbreviation="true" suffix="true" unicode="true">μ_0</name>
+      </variable>
+      <variable name="electric_constant">
+        <_title>Electric Constant (Permittivity of Free Space)</_title>
+        <value>1/(magnetic_constant*c^2)</value>
+	<_name suffix="true">electric_constant</_name>
+        <name abbreviation="true" suffix="true" unicode="true">ε_0</name>
+      </variable>
+      <variable name="newtonian_constant">
+        <_title>Newtonian Constant of Gravitation</_title>
+        <value approximate="true">6.6742E-11*m^3*kg^(-1)*s^(-2)</value>
+        <_name>newtonian_constant</_name>
+	<name abbreviation="true">G</name>
+      </variable>
+      <variable name="planck">
+        <_title>Planck Constant</_title>
+        <value approximate="true">6.626 0693E-34*J*s</value>
+	<_name>planck</_name>
+      </variable>
+      <variable name="planck2pi">
+        <_title>Planck Constant over 2 pi</_title>
+        <value>planck/(2*pi)</value>
+	<_name>planck2pi</_name>
+      </variable>
+      <variable name="planck_length">
+        <_title>Planck Length</_title>
+        <value>planck2pi/(m_p*c)</value>
+        <_name abbreviation="true" suffix="true">l_p</_name>
+	<_name>planck_length</_name>
+      </variable>
+      <variable name="planck_mass">
+        <_title>Planck Mass</_title>
+        <value>(planck+c/newtonian_constant)^(1/2)</value>
+        <_name abbreviation="true" suffix="true">m_p</_name>
+	<_name>planck_mass</_name>
+      </variable>
+      <variable name="planck_temperature">
+        <_title>Planck Temperature</_title>
+        <value>m_p*c^2/k</value>
+        <_name abbreviation="true" suffix="true">T_p</_name>
+	<_name>planck_temperature</_name>
+      </variable>
+      <variable name="planck_time">
+        <_title>Planck Time</_title>
+        <value>l_p/c</value>
+        <_name abbreviation="true" suffix="true">t_p</_name>
+	<_name>planck_time</_name>
+      </variable>
+      <variable name="c">
+        <_title>Speed of Light in Vacuum</_title>
+        <value>299792458*m*s^(-1)</value>
+        <_name>speed_of_light</_name>
+      </variable>
+    </category>
+  </category>  
   <category>
     <_title>Large Numbers</_title>
     <variable name="million">

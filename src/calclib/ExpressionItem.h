@@ -18,6 +18,15 @@
 * Base class for functions, variables and units.
 */
 
+struct ExpressionName {
+	bool abbreviation, suffix, unicode, plural;
+	bool avoid_input;
+	bool ignore_case;
+	int rank;
+	string name;
+	ExpressionName() : abbreviation(false), suffix(false), unicode(false), plural(false), avoid_input(false), ignore_case(true), rank(1) {}
+};
+
 class ExpressionItem {
 
   protected:

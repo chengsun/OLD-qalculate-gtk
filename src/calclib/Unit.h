@@ -26,7 +26,7 @@ class Unit : public ExpressionItem {
   protected:
 
 	string ssingular, splural;
-	bool b_currency;
+	bool b_si;
 
   public:
 
@@ -37,11 +37,13 @@ class Unit : public ExpressionItem {
 
 	virtual ExpressionItem *copy() const;
 	virtual void set(const ExpressionItem *item);
-	
+
+	bool isSIUnit() const;
+	void setAsSIUnit(bool is_SI = true);
 	bool isCurrency() const;
-	void setAsCurrency(bool is_currency = true);
 	void setPlural(string name_, bool force = true);
 	void setSingular(string name_, bool force = true);
+	virtual string print(bool plural_, bool short_, bool use_unicode = false) const;
 	virtual const string &plural(bool return_singular_if_no_plural = true, bool use_unicode = false) const;
 	virtual const string &singular(bool return_short_if_no_singular = true, bool use_unicode = false) const;
 	virtual const string &shortName(bool use_unicode = false) const;
@@ -123,8 +125,7 @@ class AliasUnit_Composite : public AliasUnit {
 	virtual ExpressionItem *copy() const;
 	virtual void set(const ExpressionItem *item);
 	
-	virtual string print(bool plural_) const;
-	virtual string printShort(bool plural_) const;
+	virtual string print(bool plural_, bool short_, bool use_unicode = false) const;
 	virtual Prefix *prefix() const;
 	virtual int prefixExponent() const;	
 	virtual void set(Unit *u, int exp_ = 1, Prefix *prefix_ = NULL);
@@ -155,10 +156,10 @@ class CompositeUnit : public Unit {
 		virtual void setPrefix(unsigned int index, Prefix *prefix);
 		virtual unsigned int countUnits() const;
 		virtual void del(Unit *u);
-		virtual string print(bool plural_, bool short_) const;
-		virtual const string &plural(bool return_singular_if_no_plural = true) const;
-		virtual const string &singular(bool return_short_if_no_singular = true) const;
-		virtual const string &shortName() const;
+		virtual string print(bool plural_, bool short_, bool use_unicode = false) const;
+		virtual const string &plural(bool return_singular_if_no_plural = true, bool use_unicode = false) const;
+		virtual const string &singular(bool return_short_if_no_singular = true, bool use_unicode = false) const;
+		virtual const string &shortName(bool use_unicode = false) const;
 		virtual int unitType() const;
 		virtual bool containsRelativeTo(Unit *u) const;
 		virtual MathStructure generateMathStructure() const;

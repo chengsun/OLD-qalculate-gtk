@@ -132,7 +132,21 @@ create_main_window (void)
 			break;
 		}
 	}
-
+	
+	switch(evalops.auto_post_conversion) {
+		case POST_CONVERSION_BEST: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_post_conversion_best")), TRUE);
+			break;
+		}
+		case POST_CONVERSION_BASE: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_post_conversion_base")), TRUE);
+			break;
+		}
+		default: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_post_conversion_none")), TRUE);
+			break;
+		}
+	}
 
 	accel_group = gtk_accel_group_new();
 

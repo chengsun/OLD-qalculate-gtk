@@ -12,6 +12,7 @@
   <property name="destroy_with_parent">False</property>
   <signal name="delete_event" handler="on_gcalc_exit" last_modification_time="Sun, 10 Aug 2003 21:34:28 GMT"/>
   <signal name="destroy_event" handler="on_gcalc_exit" last_modification_time="Sun, 10 Aug 2003 21:34:39 GMT"/>
+  <signal name="focus_in_event" handler="on_main_window_focus_in_event" last_modification_time="Tue, 20 Jul 2004 00:20:56 GMT"/>
 
   <child>
     <widget class="GtkVBox" id="top_vbox">
@@ -829,6 +830,45 @@
 			      <signal name="activate" handler="on_menu_item_place_units_separately_activate" last_modification_time="Fri, 18 Jun 2004 14:58:33 GMT"/>
 			    </widget>
 			  </child>
+			  
+			  <child>
+			    <widget class="GtkMenuItem" id="separatorS1">
+			      <property name="visible">True</property>
+			    </widget>
+			  </child>
+			  
+			  <child>
+			    <widget class="GtkRadioMenuItem" id="menu_item_post_conversion_none">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">No Additional Conversion</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">True</property>
+			      <signal name="activate" handler="on_menu_item_post_conversion_none_activate" last_modification_time="Sat, 31 Jul 2004 22:20:27 GMT"/>
+			    </widget>
+			  </child>
+			  
+			  <child>
+			    <widget class="GtkRadioMenuItem" id="menu_item_post_conversion_base">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Convert To Base Units</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <property name="group">menu_item_post_conversion_none</property>
+			      <signal name="activate" handler="on_menu_item_post_conversion_base_activate" last_modification_time="Sat, 31 Jul 2004 22:20:27 GMT"/>
+			    </widget>
+			  </child>
+			  
+			  <child>
+			    <widget class="GtkRadioMenuItem" id="menu_item_post_conversion_best">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Convert To Best Unit</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <property name="group">menu_item_post_conversion_none</property>
+			      <signal name="activate" handler="on_menu_item_post_conversion_best_activate" last_modification_time="Sat, 31 Jul 2004 22:20:27 GMT"/>
+			    </widget>
+			  </child>
+			  
 			</widget>
 		      </child>
 		    </widget>
@@ -951,13 +991,13 @@
 			      <signal name="activate" handler="on_menu_item_calculate_variables_activate" last_modification_time="Wed, 10 Mar 2004 15:32:15 GMT"/>
 			    </widget>
 			  </child>
-			  
+
 			  <child>
 			    <widget class="GtkMenuItem" id="separator29">
 			      <property name="visible">True</property>
 			    </widget>
 			  </child>
-			  
+
 			  <child>
 			    <widget class="GtkCheckMenuItem" id="menu_item_allow_complex">
 			      <property name="visible">True</property>
@@ -965,10 +1005,10 @@
 			      <property name="label" translatable="yes">Allow Complex Result</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">True</property>
-			      <signal name="activate" handler="on_menu_item_allow_complex_activate" last_modification_time="Wed, 18 Jul 2004 23:32:15 GMT"/>
+			      <signal name="activate" handler="on_menu_item_allow_complex_activate" last_modification_time="Sun, 18 Jul 2004 23:32:15 GMT"/>
 			    </widget>
 			  </child>
-			  
+
 			  <child>
 			    <widget class="GtkCheckMenuItem" id="menu_item_allow_infinite">
 			      <property name="visible">True</property>
@@ -976,10 +1016,9 @@
 			      <property name="label" translatable="yes">Allow Infinite Result</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">True</property>
-			      <signal name="activate" handler="on_menu_item_allow_infinite_activate" last_modification_time="Wed, 18 Jul 2004 23:42:15 GMT"/>
+			      <signal name="activate" handler="on_menu_item_allow_infinite_activate" last_modification_time="Sun, 18 Jul 2004 23:42:15 GMT"/>
 			    </widget>
 			  </child>
-			  
 			</widget>
 		      </child>
 		    </widget>

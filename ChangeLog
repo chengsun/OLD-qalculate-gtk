@@ -1,3 +1,31 @@
+2004-07-31 Niklas Knutsson  <nq@altern.org>
+
+	* System property for units ("si" value only used for now)
+	* Optional automatic conversion to best or base units
+	* Update version number in global definition files
+	* Add CGS units
+
+2004-07-30 Niklas Knutsson  <nq@altern.org>
+
+	* Mark SI units
+	* Convert to best unit now only converts to SI units
+	* Mass Fraction (kg/kg)
+	* Fix insert and edit composite unit
+
+2004-07-29 Niklas Knutsson  <nq@altern.org>
+
+	* Electron Volt is approximate
+
+2004-07-21 Niklas Knutsson  <nq@altern.org>
+
+	* Fix arg()
+	* ...and disable it as it does not work correctly
+	* Fix i being display multiple times
+
+2004-07-20 Niklas Knutsson  <nq@altern.org>
+
+	* Focus tweaks
+
 2004-07-19 Niklas Knutsson  <nq@altern.org>
 
 	* -5^2 = (-5)^2 -> = -(5^2)

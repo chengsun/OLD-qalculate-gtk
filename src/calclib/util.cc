@@ -668,7 +668,9 @@ int gcd(int i1, int i2) {
 }
 
 bool text_length_is_one(const string &str) {
-	for(unsigned int i = 0; i < str.length() - 1; i++) {
+	if(str.empty()) return false;
+	if(str.length() == 1) return true;
+	for(unsigned int i = 0; i < str.length(); i++) {
 		if(str[i] > 0) {
 			return false;
 		}

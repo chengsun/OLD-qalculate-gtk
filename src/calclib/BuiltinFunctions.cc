@@ -436,9 +436,37 @@ ArgFunction::ArgFunction() : Function("arg", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
 int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isNumber()) {
+		if(vargs[0].number().isOne()) {
+			mstruct.clear();
+			return 1;
+		} else if(vargs[0].number().isMinusOne()) {
+			mstruct = CALCULATOR->v_pi;
+			return 1;
+		} else {
+			Number nr(vargs[0].number().imaginaryPart());
+			if(nr.isOne()) {
+				nr = vargs[0].number().realPart();
+				if(nr.isOne()) {
+					mstruct = CALCULATOR->v_pi;
+					mstruct /= 4;
+					return 1;
+				} else if(nr.isZero()) {
+					mstruct = CALCULATOR->v_pi;
+					mstruct /= 2;
+					return 1;
+				}
+			} else if(nr.isMinusOne()) {
+				mstruct = CALCULATOR->v_pi;
+				mstruct /= -2;
+				return 1;
+			}
+		}
+	}
 	MathStructure m_re(CALCULATOR->f_re, &vargs[0], NULL);
-	MathStructure m_im(CALCULATOR->f_re, &vargs[0], NULL);
-	mstruct.set(CALCULATOR->f_atan, &m_im, &m_re, NULL);
+	MathStructure m_im(CALCULATOR->f_im, &vargs[0], NULL);
+	m_im /= m_re;
+	mstruct.set(CALCULATOR->f_atan, &m_im, NULL);
 	return 1 ;
 }
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-07-19 21:16+0200\n"
+"POT-Creation-Date: 2004-07-29 11:57+0200\n"
 "PO-Revision-Date: 2003-10-27 12:29+0100\n"
 "Last-Translator: Niklas Knutsson <nq@altern.org>\n"
 "Language-Team: Swedish\n"
@@ -213,8 +213,8 @@ msgstr "Importera filen"
 msgid "Includes headings"
 msgstr "Inkludera kolumner"
 
-#: data/csvimport.glade.h:19 data/matrixedit.glade.h:13 src/callbacks.cc:5241
-#: src/callbacks.cc:6952
+#: data/csvimport.glade.h:19 data/matrixedit.glade.h:13 src/callbacks.cc:5233
+#: src/callbacks.cc:6942
 msgid "Matrices"
 msgstr "Matriser"
 
@@ -253,7 +253,7 @@ msgstr "Första raden som innehåller data att importera"
 msgid "Title displayed in menus and in variable manager"
 msgstr "Rubrik som skall visas i menyer och variabelhanteraren"
 
-#: data/csvimport.glade.h:31 src/callbacks.cc:5248 src/callbacks.cc:6955
+#: data/csvimport.glade.h:31 src/callbacks.cc:5240 src/callbacks.cc:6945
 msgid "Vectors"
 msgstr "Vektorer"
 
@@ -356,7 +356,7 @@ msgstr "Beskrivning av funktionen"
 msgid "Do not create/modify this function"
 msgstr "Avbryt skapande/modifiering av funktionen"
 
-#: data/functionedit.glade.h:21 src/callbacks.cc:4360
+#: data/functionedit.glade.h:21 src/callbacks.cc:4358
 msgid "Edit Function"
 msgstr "Redigera funktion"
 
@@ -1087,7 +1087,7 @@ msgstr "Sätt prefix"
 msgid "Sexagesimal"
 msgstr "Sexagesimal"
 
-#: data/main.glade.h:142 src/interface.cc:285 src/callbacks.cc:6553
+#: data/main.glade.h:142 src/interface.cc:285 src/callbacks.cc:6545
 msgid "Show keypad"
 msgstr "Visa knappsats"
 
@@ -1315,11 +1315,11 @@ msgstr "Skapa/modifiera matrisen/vektorn"
 msgid "Do not create/modify this matrix/vector"
 msgstr "Avbryt skapande/modifiering av matrisen/vektorn"
 
-#: data/matrixedit.glade.h:10 src/callbacks.cc:4861
+#: data/matrixedit.glade.h:10 src/callbacks.cc:4856
 msgid "Edit Matrix"
 msgstr "Redigera matris"
 
-#: data/matrixedit.glade.h:11 src/callbacks.cc:8181 src/callbacks.cc:8188
+#: data/matrixedit.glade.h:11 src/callbacks.cc:8150 src/callbacks.cc:8157
 #: src/calclib/data/functions.xml.in.h:145
 msgid "Elements"
 msgstr "Element"
@@ -1888,7 +1888,7 @@ msgstr "Komplext nummer"
 msgid "Do not create/modify this unknown variable"
 msgstr "Avbryt skapande/modifiering av den okända variabeln"
 
-#: data/unknownedit.glade.h:7 src/callbacks.cc:4578
+#: data/unknownedit.glade.h:7 src/callbacks.cc:4575
 msgid "Edit Unknown Variable"
 msgstr "Modifiera okänd variabel"
 
@@ -1929,7 +1929,7 @@ msgstr "Godkänn skapande/modifiering av variabeln"
 msgid "Do not create/modify this variable"
 msgstr "Avbryt skapande/modifiering av variabeln"
 
-#: data/variableedit.glade.h:6 src/callbacks.cc:4712
+#: data/variableedit.glade.h:6 src/callbacks.cc:4708
 msgid "Edit Variable"
 msgstr "Redigera variabel"
 
@@ -1995,7 +1995,7 @@ msgstr "Fel vid inhämtande av systemvida definitioner!\n"
 msgid "ans"
 msgstr ""
 
-#: src/main.cc:158 src/main.cc:163 src/callbacks.cc:5220
+#: src/main.cc:158 src/main.cc:163 src/callbacks.cc:5212
 #: src/calclib/Calculator.cc:4457
 msgid "Temporary"
 msgstr "Temporära"
@@ -2012,7 +2012,7 @@ msgstr "Svar"
 msgid "All"
 msgstr "Alla"
 
-#: src/interface.cc:282 src/callbacks.cc:6559
+#: src/interface.cc:282 src/callbacks.cc:6551
 msgid "Hide keypad"
 msgstr "Göm knappsatsen"
 
@@ -2027,16 +2027,16 @@ msgstr "Referens"
 #: src/callbacks.cc:611 src/callbacks.cc:612 src/callbacks.cc:663
 #: src/callbacks.cc:872 src/callbacks.cc:873 src/callbacks.cc:969
 #: src/callbacks.cc:1098 src/callbacks.cc:1099 src/callbacks.cc:1197
-#: src/callbacks.cc:4197 src/callbacks.cc:4502 src/callbacks.cc:4677
-#: src/callbacks.cc:4810 src/callbacks.cc:5033
+#: src/callbacks.cc:4197 src/callbacks.cc:4500 src/callbacks.cc:4674
+#: src/callbacks.cc:4806 src/callbacks.cc:5028
 msgid "Uncategorized"
 msgstr "Okategoriserad"
 
 #: src/callbacks.cc:620 src/callbacks.cc:621 src/callbacks.cc:665
 #: src/callbacks.cc:881 src/callbacks.cc:882 src/callbacks.cc:971
 #: src/callbacks.cc:1106 src/callbacks.cc:1107 src/callbacks.cc:1199
-#: src/callbacks.cc:4195 src/callbacks.cc:4500 src/callbacks.cc:4675
-#: src/callbacks.cc:4808 src/callbacks.cc:5031
+#: src/callbacks.cc:4195 src/callbacks.cc:4498 src/callbacks.cc:4672
+#: src/callbacks.cc:4804 src/callbacks.cc:5026
 msgid "Inactive"
 msgstr "Inaktiva"
 
@@ -2108,8 +2108,8 @@ msgstr "okänd"
 msgid "default assumptions"
 msgstr "förvalda antaganden"
 
-#: src/callbacks.cc:1009 src/callbacks.cc:3934 src/callbacks.cc:7721
-#: src/callbacks.cc:7736 src/callbacks.cc:7754 src/callbacks.cc:7786
+#: src/callbacks.cc:1009 src/callbacks.cc:3934 src/callbacks.cc:7695
+#: src/callbacks.cc:7710 src/callbacks.cc:7728 src/callbacks.cc:7760
 msgid "Variable does not exist anymore."
 msgstr "Variables existerar inte längre."
 
@@ -2117,11 +2117,11 @@ msgstr "Variables existerar inte längre."
 msgid "Prefixes"
 msgstr "Prefix"
 
-#: src/callbacks.cc:2969 src/calclib/MathStructure.cc:4209
+#: src/callbacks.cc:2969 src/calclib/MathStructure.cc:4210
 msgid "undefined"
 msgstr "odefinierad"
 
-#: src/callbacks.cc:3027 src/callbacks.cc:3305 src/callbacks.cc:3322
+#: src/callbacks.cc:3027 src/callbacks.cc:3304 src/callbacks.cc:3321
 msgid "approx."
 msgstr "ca"
 
@@ -2142,7 +2142,7 @@ msgstr "avbruten"
 msgid "calculation was aborted"
 msgstr "beräkningarna avbröts"
 
-#: src/callbacks.cc:3232
+#: src/callbacks.cc:3231
 msgid "result processing was aborted"
 msgstr "resultatbehandlingen avbröts"
 
@@ -2167,8 +2167,8 @@ msgid "Empty internal name field."
 msgstr "Tomt fält för internt namn."
 
 #. no singular unit name either -- open dialog again
-#: src/callbacks.cc:4078 src/callbacks.cc:4432 src/callbacks.cc:4632
-#: src/callbacks.cc:4763 src/callbacks.cc:4969
+#: src/callbacks.cc:4078 src/callbacks.cc:4430 src/callbacks.cc:4629
+#: src/callbacks.cc:4759 src/callbacks.cc:4964
 msgid "Empty name field."
 msgstr "Tomt namnfält"
 
@@ -2208,29 +2208,29 @@ msgstr ""
 msgid "Base unit does not exist."
 msgstr "Angiven grundenhet finns inte."
 
-#: src/callbacks.cc:4362
+#: src/callbacks.cc:4360
 msgid "Edit Function (global)"
 msgstr "Redigera funktion (systemvid)"
 
-#: src/callbacks.cc:4364
+#: src/callbacks.cc:4362
 msgid "New Function"
 msgstr "Ny funktion"
 
-#: src/callbacks.cc:4412 src/callbacks.cc:8314 src/callbacks.cc:8325
+#: src/callbacks.cc:4410 src/callbacks.cc:8283 src/callbacks.cc:8294
 msgid "yes"
 msgstr "ja"
 
-#: src/callbacks.cc:4414 src/callbacks.cc:8316 src/callbacks.cc:8327
+#: src/callbacks.cc:4412 src/callbacks.cc:8285 src/callbacks.cc:8296
 msgid "no"
 msgstr "nej"
 
 #. no expression/relation -- open dialog again
-#: src/callbacks.cc:4443
+#: src/callbacks.cc:4441
 msgid "Empty expression field."
 msgstr "Tom uttrycksfält."
 
 #. function with the same name exists -- overwrite or open the dialog again
-#: src/callbacks.cc:4450
+#: src/callbacks.cc:4448
 msgid ""
 "A function with the same name already exists.\n"
 "Do you want to overwrite the function?"
@@ -2238,20 +2238,20 @@ msgstr ""
 "En funktion med samma namn finns redan.\n"
 "Vill du ersätta den?"
 
-#: src/callbacks.cc:4554
+#: src/callbacks.cc:4551
 msgid "Unit does not exist"
 msgstr "Enheten finns inte"
 
-#: src/callbacks.cc:4580
+#: src/callbacks.cc:4577
 msgid "Edit Unknown Variable (global)"
 msgstr "Redigera okänd variabel (systemvid)"
 
-#: src/callbacks.cc:4582
+#: src/callbacks.cc:4579
 msgid "New Unknown Variable"
 msgstr "Ny okänd variabel"
 
 #. unknown with the same name exists -- overwrite or open dialog again
-#: src/callbacks.cc:4637 src/callbacks.cc:4772 src/callbacks.cc:4974
+#: src/callbacks.cc:4634 src/callbacks.cc:4768 src/callbacks.cc:4969
 msgid ""
 "An unit or variable with the same name already exists.\n"
 "Do you want to overwrite it?"
@@ -2259,50 +2259,50 @@ msgstr ""
 "En enhet eller variabel med samma namn finns redan.\n"
 "Vill du ersätta den?"
 
-#: src/callbacks.cc:4714
+#: src/callbacks.cc:4710
 msgid "Edit Variable (global)"
 msgstr "Redigera variabel (systemvid)"
 
-#: src/callbacks.cc:4716
+#: src/callbacks.cc:4712
 msgid "New Variable"
 msgstr "Ny variabel"
 
 #. no value -- open dialog again
-#: src/callbacks.cc:4768
+#: src/callbacks.cc:4764
 msgid "Empty value field."
 msgstr "Tomt värdefält."
 
-#: src/callbacks.cc:4852
+#: src/callbacks.cc:4847
 msgid "Edit Vector"
 msgstr "Redigera vektor"
 
-#: src/callbacks.cc:4854
+#: src/callbacks.cc:4849
 msgid "Edit Vector (global)"
 msgstr "Redigera vektor (systemvid)"
 
-#: src/callbacks.cc:4856
+#: src/callbacks.cc:4851
 msgid "New Vector"
 msgstr "Ny vektor"
 
-#: src/callbacks.cc:4863
+#: src/callbacks.cc:4858
 msgid "Edit Matrix (global)"
 msgstr "Redigera matris (systemvid)"
 
-#: src/callbacks.cc:4865
+#: src/callbacks.cc:4860
 msgid "New Matrix"
 msgstr "Ny matris"
 
 #. no filename -- open dialog again
-#: src/callbacks.cc:5062 src/callbacks.cc:5138
+#: src/callbacks.cc:5056 src/callbacks.cc:5131
 msgid "No file name entered."
 msgstr "Filnamn måste anges"
 
 #. no filename -- open dialog again
-#: src/callbacks.cc:5090 src/callbacks.cc:5166
+#: src/callbacks.cc:5084 src/callbacks.cc:5159
 msgid "No delimiter selected."
 msgstr "En avgränsare måste anges"
 
-#: src/callbacks.cc:5101
+#: src/callbacks.cc:5095
 #, c-format
 msgid ""
 "Could not import from file \n"
@@ -2311,15 +2311,15 @@ msgstr ""
 "Kunde inte importera fil: \n"
 "%s"
 
-#: src/callbacks.cc:5178
+#: src/callbacks.cc:5171
 msgid "No variable name entered."
 msgstr "Inget variabelnamn angivet."
 
-#: src/callbacks.cc:5189
+#: src/callbacks.cc:5182
 msgid "No known variable with entered name found."
 msgstr "Fann ingen känd variabel med angivet namn."
 
-#: src/callbacks.cc:5202
+#: src/callbacks.cc:5195
 #, c-format
 msgid ""
 "Could not export to file \n"
@@ -2328,16 +2328,16 @@ msgstr ""
 "Kunde inte exportera till fil: \n"
 "%s"
 
-#: src/callbacks.cc:5225 src/callbacks.cc:5233 src/callbacks.cc:6946
-#: src/callbacks.cc:6949
+#: src/callbacks.cc:5217 src/callbacks.cc:5225 src/callbacks.cc:6936
+#: src/callbacks.cc:6939
 msgid "My Variables"
 msgstr "Mina variabler"
 
-#: src/callbacks.cc:5484
+#: src/callbacks.cc:5476
 msgid "Couldn't write definitions"
 msgstr "Kunde inte spara definitioner"
 
-#: src/callbacks.cc:5855
+#: src/callbacks.cc:5847
 #, c-format
 msgid ""
 "Couldn't write preferences to\n"
@@ -2346,20 +2346,20 @@ msgstr ""
 "Kunde inte spara inställningar till\n"
 "%s"
 
-#: src/callbacks.cc:6224
+#: src/callbacks.cc:6214
 msgid "Select result font"
 msgstr "Välj teckensnitt"
 
-#: src/callbacks.cc:6237
+#: src/callbacks.cc:6227
 msgid "Select expression font"
 msgstr "Välj teckensnitt"
 
 #. do not delete units that are used by other units
-#: src/callbacks.cc:7675
+#: src/callbacks.cc:7649
 msgid "Cannot delete unit as it is needed by other units."
 msgstr "Kan inte ta bort enheten eftersom den används av andra enheter."
 
-#: src/callbacks.cc:8048
+#: src/callbacks.cc:8018
 #, c-format
 msgid ""
 "Could not display help for Qalculate!.\n"
@@ -2368,40 +2368,40 @@ msgstr ""
 "Kunde inte visa hjälp för Qalculate!.\n"
 "%s"
 
-#: src/callbacks.cc:8183 src/callbacks.cc:8190
+#: src/callbacks.cc:8152 src/callbacks.cc:8159
 msgid "Components (in horizontal order)"
 msgstr "Komponenter (från vänster till höger)"
 
-#: src/callbacks.cc:8202 src/callbacks.cc:8211 src/callbacks.cc:8263
-#: src/callbacks.cc:8272
+#: src/callbacks.cc:8171 src/callbacks.cc:8180 src/callbacks.cc:8232
+#: src/callbacks.cc:8241
 msgid "Select file to import"
 msgstr "Välj fil att importera"
 
-#: src/callbacks.cc:8224 src/callbacks.cc:8233
+#: src/callbacks.cc:8193 src/callbacks.cc:8202
 msgid "Select file to export to"
 msgstr "Välj fil att exportera till"
 
-#: src/callbacks.cc:8248
+#: src/callbacks.cc:8217
 msgid "Select date"
 msgstr "Välj datum"
 
-#: src/callbacks.cc:8505
+#: src/callbacks.cc:8474
 msgid "No functions defined."
 msgstr "Inga funktioner är definierade."
 
-#: src/callbacks.cc:8640 src/callbacks.cc:8663
+#: src/callbacks.cc:8609 src/callbacks.cc:8632
 msgid "Select file to export"
 msgstr "Välj fil att exporta till"
 
-#: src/callbacks.cc:8642
+#: src/callbacks.cc:8611
 msgid "Allowed File Types"
 msgstr "Tillåtna filtyper"
 
-#: src/callbacks.cc:8652
+#: src/callbacks.cc:8621
 msgid "All Files"
 msgstr "All filer"
 
-#: src/callbacks.cc:8704 src/callbacks.cc:8738
+#: src/callbacks.cc:8673 src/callbacks.cc:8707
 msgid "Empty expression."
 msgstr "Tomt uttryck."
 
@@ -2430,27 +2430,27 @@ msgstr "Kolumn %s finns inte i matrisen."
 msgid "Component %s does not exist in vector."
 msgstr "Komponent %s finns inte i vektorn."
 
-#: src/calclib/BuiltinFunctions.cc:1174 src/calclib/BuiltinFunctions.cc:1217
+#: src/calclib/BuiltinFunctions.cc:1202 src/calclib/BuiltinFunctions.cc:1245
 #, c-format
 msgid "Unsolvable comparison in %s()."
 msgstr "Olöslig jämförelse i %s()."
 
-#: src/calclib/BuiltinFunctions.cc:1312 src/calclib/BuiltinFunctions.cc:1333
+#: src/calclib/BuiltinFunctions.cc:1340 src/calclib/BuiltinFunctions.cc:1361
 #, c-format
 msgid "Error in date format for function %s()."
 msgstr "Felaktigt datumformat för %s()."
 
-#: src/calclib/BuiltinFunctions.cc:1821
+#: src/calclib/BuiltinFunctions.cc:1849
 #, c-format
 msgid "Object %s does not exist."
 msgstr "Okjektet %s finns inte."
 
-#: src/calclib/BuiltinFunctions.cc:1880
+#: src/calclib/BuiltinFunctions.cc:1908
 #, c-format
 msgid "Unable to isolate %s."
 msgstr "Kan inte isolera %s."
 
-#: src/calclib/BuiltinFunctions.cc:1894
+#: src/calclib/BuiltinFunctions.cc:1922
 msgid "No comparison to solve."
 msgstr "Ingen jämförelse att lösa."
 
@@ -2544,21 +2544,21 @@ msgstr ""
 "Den andra matrisen måste ha lika många rader (var %s) som den första har "
 "kolumner (var %s) för matrismultiplikation."
 
-#: src/calclib/MathStructure.cc:4248
+#: src/calclib/MathStructure.cc:4249
 #, c-format
 msgid "Unsolvable comparison at component %s when trying to rank vector."
 msgstr "Olöslig jämförelse vid komponent %s vid rangordning av vektor."
 
-#: src/calclib/MathStructure.cc:4296
+#: src/calclib/MathStructure.cc:4297
 #, c-format
 msgid "Unsolvable comparison at component %s when trying to sort vector."
 msgstr "Olöslig jämförelse vid komponent %s vid sortering av vektor."
 
-#: src/calclib/MathStructure.cc:4462
+#: src/calclib/MathStructure.cc:4463
 msgid "The determinant can only be calculated for symmetric matrices."
 msgstr "Determinanten kan enbart beräknas för symmetriska matriser."
 
-#: src/calclib/MathStructure.cc:4517
+#: src/calclib/MathStructure.cc:4518
 msgid "The permanent can only be calculated for symmetric matrices."
 msgstr "Permanenten kan enbart beräknas för symmetriska matriser."
 
@@ -7045,21 +7045,22 @@ msgid "Archimede's Constant (pi)"
 msgstr "Archimedes konstant (pi)"
 
 #: src/calclib/data/variables.xml.in.h:3
+#, fuzzy
+msgid "Basic Constants"
+msgstr "Konstanter"
+
+#: src/calclib/data/variables.xml.in.h:4
 msgid "Billion"
 msgstr "Miljard"
 
-#: src/calclib/data/variables.xml.in.h:4
+#: src/calclib/data/variables.xml.in.h:5
 msgid "Catalan's Constant"
 msgstr "Catalans konstant"
 
-#: src/calclib/data/variables.xml.in.h:5
+#: src/calclib/data/variables.xml.in.h:6
 #, fuzzy
 msgid "Centillion"
 msgstr "Förutsättning"
-
-#: src/calclib/data/variables.xml.in.h:6
-msgid "Constants"
-msgstr "Konstanter"
 
 #: src/calclib/data/variables.xml.in.h:7
 #, fuzzy
@@ -7072,141 +7073,155 @@ msgid "Duodecillion"
 msgstr "Beskrivning"
 
 #: src/calclib/data/variables.xml.in.h:9
+#, fuzzy
+msgid "Electron Mass"
+msgstr "Elektronvolt"
+
+#: src/calclib/data/variables.xml.in.h:10
 msgid "Euler's Constant"
 msgstr "Eulers konstant"
 
-#: src/calclib/data/variables.xml.in.h:10
+#: src/calclib/data/variables.xml.in.h:11
 #, fuzzy
 msgid "Google"
 msgstr "Boolsk"
 
-#: src/calclib/data/variables.xml.in.h:11
+#: src/calclib/data/variables.xml.in.h:12
 msgid "Googleplex"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:12
+#: src/calclib/data/variables.xml.in.h:13
 msgid "Imaginary i (sqrt -1)"
 msgstr "Imaginärt i (sqrt -1)"
 
-#: src/calclib/data/variables.xml.in.h:13
+#: src/calclib/data/variables.xml.in.h:14
 msgid "Infinity"
 msgstr "Oändlighet"
 
-#: src/calclib/data/variables.xml.in.h:14
+#: src/calclib/data/variables.xml.in.h:15
 msgid "Large Numbers"
 msgstr "Stora tal"
 
-#: src/calclib/data/variables.xml.in.h:15
+#: src/calclib/data/variables.xml.in.h:16
 msgid "Million"
 msgstr "Miljon"
 
-#: src/calclib/data/variables.xml.in.h:16
+#: src/calclib/data/variables.xml.in.h:17
 msgid "Negative Infinity"
 msgstr "Negativ oändlighet"
 
-#: src/calclib/data/variables.xml.in.h:17
+#: src/calclib/data/variables.xml.in.h:18
 #, fuzzy
 msgid "Nonillion"
 msgstr "Förutsättning"
 
-#: src/calclib/data/variables.xml.in.h:18
+#: src/calclib/data/variables.xml.in.h:19
 msgid "Novemdecillion"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:19
+#: src/calclib/data/variables.xml.in.h:20
 #, fuzzy
 msgid "Octillion"
 msgstr "Åtgärd"
 
-#: src/calclib/data/variables.xml.in.h:20
+#: src/calclib/data/variables.xml.in.h:21
 msgid "Octodecillion"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:21
+#: src/calclib/data/variables.xml.in.h:22
+#, fuzzy
+msgid "Physical Constants"
+msgstr "Konstanter"
+
+#: src/calclib/data/variables.xml.in.h:23
 msgid "Positive Infinity"
 msgstr "Positiv oändlighet"
 
-#: src/calclib/data/variables.xml.in.h:22
+#: src/calclib/data/variables.xml.in.h:24
 msgid "Procent"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:23
+#: src/calclib/data/variables.xml.in.h:25
 msgid "Promille"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:24
+#: src/calclib/data/variables.xml.in.h:26
 msgid "Pythagora's Constant (sqrt 2)"
 msgstr "Pythagoras konstant (sqrt 2)"
 
-#: src/calclib/data/variables.xml.in.h:25
+#: src/calclib/data/variables.xml.in.h:27
 #, fuzzy
 msgid "Quadrillion"
 msgstr "Kvartil"
 
-#: src/calclib/data/variables.xml.in.h:26
+#: src/calclib/data/variables.xml.in.h:28
 msgid "Quattuordecillion"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:27
-msgid "Quindecillion"
-msgstr ""
-
-#: src/calclib/data/variables.xml.in.h:28
-#, fuzzy
-msgid "Quintillion"
-msgstr "funktion"
-
 #: src/calclib/data/variables.xml.in.h:29
-msgid "Septendecillion"
+msgid "Quindecillion"
 msgstr ""
 
 #: src/calclib/data/variables.xml.in.h:30
 #, fuzzy
+msgid "Quintillion"
+msgstr "funktion"
+
+#: src/calclib/data/variables.xml.in.h:31
+msgid "Septendecillion"
+msgstr ""
+
+#: src/calclib/data/variables.xml.in.h:32
+#, fuzzy
 msgid "Septillion"
 msgstr "Semikolon"
 
-#: src/calclib/data/variables.xml.in.h:31
+#: src/calclib/data/variables.xml.in.h:33
 #, fuzzy
 msgid "Sexdecillion"
 msgstr "Hexadecimal"
 
-#: src/calclib/data/variables.xml.in.h:32
+#: src/calclib/data/variables.xml.in.h:34
 #, fuzzy
 msgid "Sextillion"
 msgstr "Semikolon"
 
-#: src/calclib/data/variables.xml.in.h:33
+#: src/calclib/data/variables.xml.in.h:35
 msgid "Small Numbers"
 msgstr "Små tal"
 
-#: src/calclib/data/variables.xml.in.h:34
+#: src/calclib/data/variables.xml.in.h:36
 msgid "Special Numbers"
 msgstr "Speciella nummer"
 
-#: src/calclib/data/variables.xml.in.h:35
+#: src/calclib/data/variables.xml.in.h:37
+msgid "Speed of Light in Vacuum"
+msgstr ""
+
+#: src/calclib/data/variables.xml.in.h:38
 msgid "The Base of Natural Logarithms (e)"
 msgstr "Basen för naturliga logaritmer (e)"
 
-#: src/calclib/data/variables.xml.in.h:36
+#: src/calclib/data/variables.xml.in.h:39
 msgid "The Golden Ratio"
 msgstr "Golden ratio"
 
-#: src/calclib/data/variables.xml.in.h:37
+#: src/calclib/data/variables.xml.in.h:40
 #, fuzzy
 msgid "Tredecillion"
 msgstr "Precision"
 
-#: src/calclib/data/variables.xml.in.h:38
+#: src/calclib/data/variables.xml.in.h:41
 #, fuzzy
 msgid "Trillion"
 msgstr "shilling"
 
-#: src/calclib/data/variables.xml.in.h:39
+#: src/calclib/data/variables.xml.in.h:42
 #, fuzzy
 msgid "Undecillion"
 msgstr "Precision"
 
-#: src/calclib/data/variables.xml.in.h:40
+#: src/calclib/data/variables.xml.in.h:43
 msgid "Vigintillion"
 msgstr ""
 

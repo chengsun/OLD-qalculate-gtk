@@ -32,6 +32,7 @@
 #include <wait.h>
 #include <queue>
 #include <stack>
+#include <glib.h>
 
 #define WANT_OBFUSCATING_OPERATORS
 #include <cln/cln.h>
@@ -944,7 +945,7 @@ void Calculator::addBuiltinFunctions() {
 
 	f_re = addFunction(new ReFunction());
 	f_im = addFunction(new ImFunction());
-	f_arg = addFunction(new ArgFunction());
+	//f_arg = addFunction(new ArgFunction());
 
 	f_sqrt = addFunction(new SqrtFunction());
 	f_sq = addFunction(new SquareFunction());
@@ -1316,6 +1317,16 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	mstruct.eval(eo);
 	if(!str2.empty()) {
 		return convert(mstruct, str2, eo);
+	} else {
+		switch(eo.auto_post_conversion) {
+			case POST_CONVERSION_BEST: {
+				return convertToBestUnit(mstruct, eo);
+			}
+			case POST_CONVERSION_BASE: {
+				return convertToBaseUnits(mstruct, eo);
+			}
+			default: {}
+		}
 	}
 	return mstruct;
 }
@@ -1491,6 +1502,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 							break;
 						}
 					}
+				} else if(!units[i]->isSIUnit()) {
 				} else if(units[i]->unitType() == ALIAS_UNIT) {
 					au = (AliasUnit*) units[i];
 					bu = (Unit*) au->baseUnit();
@@ -2550,6 +2562,61 @@ bool Calculator::unitIsUsedByOtherUnits(const Unit *u) const {
 	}
 	return false;
 }
+
+bool compare_name(const string &name, const string &str, const int &name_length, const int &str_index, const int &chars_left) {
+	if(name_length == 0) return false;
+	if(name[0] != str[str_index]) return false;
+	if(name_length == 1) return true;
+	if(name_length > chars_left) return false;
+	for(int i = 1; i < name_length; i++) {
+		if(name[i] != str[str_index + i]) return false;
+	}
+	return true;
+}
+bool compare_name_no_case(const string &name, const string &str, const int &name_length, const int &str_index, const int &chars_left) {
+	if(name_length == 0) return false;
+	if(name[0] < 0 && name_length > 1) {
+		if(str[str_index] >= 0) return false;
+		if(name_length > chars_left) return false;
+		int i2 = 1;
+		while(i2 < name_length && name[i2] < 0) {
+			if(str[str_index + i2] >= 0) return false;
+			i2++;
+		}
+		gchar *gstr1 = g_utf8_strdown(name.substr(0, i2).c_str(), -1);
+		gchar *gstr2 = g_utf8_strdown(str.substr(str_index, i2).c_str(), -1);
+		if(strcmp(gstr1, gstr2) != 0) return false;
+		g_free(gstr1);
+		g_free(gstr2);
+	} else if(name[0] != str[str_index] && !((name[0] >= 'a' && name[0] <= 'z') && name[0] == str[str_index] - 32) && !((name[0] <= 'Z' && name[0] >= 'A') && name[0] == str[str_index] + 32)) {
+		return false;
+	}
+	if(name_length == 1) return true;
+	if(name_length > chars_left) return false;
+	int i = 1;
+	while(name[i - 1] < 0 && i <= name_length) {
+		i++;
+	}
+	for(; i < name_length; i++) {
+		if(name[i] < 0 && i + 1 < name_length) {
+			if(str[str_index + i] >= 0) return false;
+			int i2 = 1;
+			while(i2 + i < name_length && name[i2 + i] < 0) {
+				if(str[str_index + i2 + i] >= 0) return false;
+				i2++;
+			}
+			gchar *gstr1 = g_utf8_strdown(name.substr(i, i2).c_str(), -1);
+			gchar *gstr2 = g_utf8_strdown(str.substr(str_index + i, i2).c_str(), -1);
+			if(strcmp(gstr1, gstr2) != 0) return false;
+			g_free(gstr1);
+			g_free(gstr2);
+		} else if(name[i] != str[str_index + i] && !((name[i] >= 'a' && name[i] <= 'z') && name[i] == str[str_index + i] - 32) && !((name[i] <= 'Z' && name[i] >= 'A') && name[i] == str[str_index + i] + 32)) {
+			return false;
+		}
+	}
+	return true;
+}
+
 MathStructure Calculator::parse(string str, const ParseOptions &po) {
 	const string *name;
 	string stmp, stmp2;
@@ -2925,7 +2992,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 						case 'Y': {
 							replace_text_by_unit_place:
 							u = (Unit*) ufv[ufv_index];
-							if((int) str.length() > str_index + name_length && is_in(NUMBERS, str[str_index + name_length]) && u->baseUnit() != u_euro) {
+							if((int) str.length() > str_index + name_length && is_in(NUMBERS, str[str_index + name_length]) && !u->isCurrency()) {
 								str.insert(str_index + name_length, 1, POWER_CH);
 							}
 							stmp = LEFT_PARENTHESIS_CH;					
@@ -3095,7 +3162,7 @@ MathStructure Calculator::parseNumber(string str, const ParseOptions &po) {
 	if(s == MINUS_CH) {
 		str.insert(str.begin(), 1, MINUS_CH);
 	}
-	Number nr(str, po.base);
+	Number nr(str, po.base, po.read_precision);
 	mstruct.set(nr);
 	return mstruct;
 	
@@ -4063,6 +4130,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				}
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "unit")) {
 				XML_GET_STRING_FROM_PROP(cur, "type", type)
+				bool b_si = false;
 				if(type == "base") {	
 					XML_GET_STRING_FROM_PROP(cur, "name", name)
 					XML_GET_FALSE_FROM_PROP(cur, "active", active)
@@ -4079,6 +4147,16 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 								XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
 							} else if(!xmlStrcmp(child->name, (const xmlChar*) "hidden")) {	
 								XML_GET_TRUE_FROM_TEXT(child, hidden);
+							} else if(!xmlStrcmp(child->name, (const xmlChar*) "system")) {	
+								value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1); 
+								if(value) {
+									if(!xmlStrcmp(value, (const xmlChar*) "si")) {
+										b_si = true;
+									} else {
+										b_si = false;
+									}
+									xmlFree(value);
+								}
 							} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
 								XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
 							} else if(!xmlStrcmp(child->name, (const xmlChar*) "unicode")) {	
@@ -4096,9 +4174,10 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							}
 							child = child->next;
 						}		
-						u = addUnit(new Unit(category, name, plural, singular, title, is_user_defs, false, active, uname));		
+						u = addUnit(new Unit(category, name, plural, singular, title, is_user_defs, false, active, uname));
 						u->setDescription(description);
 						u->setHidden(hidden);
+						u->setAsSIUnit(b_si);
 						u->setChanged(false);
 						done_something = true;
 					}
@@ -4144,7 +4223,17 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							}
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "hidden")) {	
 							XML_GET_TRUE_FROM_TEXT(child, hidden);
-						} else if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "system")) {	
+								value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1); 
+								if(value) {
+									if(!xmlStrcmp(value, (const xmlChar*) "si")) {
+										b_si = true;
+									} else {
+										b_si = false;
+									}
+									xmlFree(value);
+								}
+							} else if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
@@ -4173,6 +4262,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						au->setDescription(description);
 						au->setApproximate(b);
 						au->setHidden(hidden);
+						au->setAsSIUnit(b_si);
 						addUnit(au);
 						au->setChanged(false);
 						done_something = true;
@@ -4223,7 +4313,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 										}
 									}
 									child2 = child2->next;
-								}		
+								}	
 								if(u) {
 									if(!cu) {
 										cu = new CompositeUnit("", name, "", "", is_user_defs, false, active);
@@ -4240,6 +4330,16 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 								}
 							} else if(!xmlStrcmp(child->name, (const xmlChar*) "hidden")) {	
 								XML_GET_TRUE_FROM_TEXT(child, hidden);
+							} else if(!xmlStrcmp(child->name, (const xmlChar*) "system")) {
+								value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1); 
+								if(value) {
+									if(!xmlStrcmp(value, (const xmlChar*) "si")) {
+										b_si = true;
+									} else {
+										b_si = false;
+									}
+									xmlFree(value);
+								} 
 							} else if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
 								XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
 							} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
@@ -4252,6 +4352,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							cu->setTitle(title);
 							cu->setDescription(description);
 							cu->setHidden(hidden);
+							cu->setAsSIUnit(b_si);
 							addUnit(cu);
 							cu->setChanged(false);
 							done_something = true;

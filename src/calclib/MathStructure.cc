@@ -2972,7 +2972,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, const MathStructure *par
 						b = false;
 						return;
 					}
-					if(po.use_prefixes_for_currencies || (CHILD(i2).isPower() && CHILD(i2)[0].unit()->baseUnit() != CALCULATOR->u_euro) || (CHILD(i2).isUnit() && CHILD(i2).unit()->baseUnit() != CALCULATOR->u_euro)) {
+					if(po.use_prefixes_for_currencies || (CHILD(i2).isPower() && !CHILD(i2)[0].unit()->isCurrency()) || (CHILD(i2).isUnit() && !CHILD(i2).unit()->isCurrency())) {
 						b = true;
 						if(i > i2) i = i2;
 						break;
@@ -3358,7 +3358,7 @@ void MathStructure::prefixCurrencies() {
 		int index = -1;
 		for(unsigned int i = 0; i < SIZE; i++) {
 			if(CHILD(i).isUnit_exp()) {
-				if(CHILD(i).isUnit() && CHILD(i).unit()->baseUnit() == CALCULATOR->u_euro) {
+				if(CHILD(i).isUnit() && CHILD(i).unit()->isCurrency()) {
 					if(index >= 0) {
 						index = -1;
 						break;
@@ -3642,8 +3642,9 @@ void MathStructure::formatsub(const PrintOptions &po, const MathStructure *paren
 					MathStructure mstruct(im);
 					if(im.isOne()) {
 						mstruct = CALCULATOR->v_i;
+					} else {
+						mstruct.multiply(CALCULATOR->v_i);
 					}
-					mstruct.multiply(CALCULATOR->v_i);
 					o_number = re;
 					add(mstruct);
 					formatsub(po, parent, pindex);

@@ -20,10 +20,12 @@ Unit::Unit(string cat_, string name_, string plural_, string singular_, string t
 	remove_blank_ends(singular_);
 	ssingular = singular_;
 	splural = plural_;
+	b_si = false;
 }
 Unit::Unit() {
 	ssingular = "";
 	splural = "";
+	b_si = false;
 }
 Unit::Unit(const Unit *unit) {
 	set(unit);
@@ -36,8 +38,21 @@ void Unit::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_UNIT) {
 		splural = ((Unit*) item)->plural(false);
 		ssingular = ((Unit*) item)->singular(false);
+		b_si = ((Unit*) item)->isSIUnit();
 	}
 	ExpressionItem::set(item);
+}
+bool Unit::isSIUnit() const {
+	return b_si;
+}
+void Unit::setAsSIUnit(bool is_SI) {
+	if(b_si != is_SI) {
+		b_si = is_SI;
+		setChanged(true);
+	}
+}
+bool Unit::isCurrency() const {
+	return baseUnit() == CALCULATOR->u_euro;
 }
 bool Unit::isUsedByOtherUnits() const {
 	return CALCULATOR->unitIsUsedByOtherUnits(this);
@@ -60,6 +75,11 @@ void Unit::setSingular(string name_, bool force) {
 	setChanged(true);
 	CALCULATOR->unitSingularChanged(this);
 
+}
+string Unit::print(bool plural_, bool short_, bool use_unicode) const {
+	if(short_) return shortName(use_unicode);
+	else if(plural_) return plural(true, use_unicode);
+	return singular(true, use_unicode);
 }
 const string &Unit::singular(bool return_short_if_no_singular, bool use_unicode) const {
 	if(return_short_if_no_singular && ssingular.empty()) {
@@ -138,7 +158,7 @@ MathStructure &Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp
 		u->baseValue(mvalue, mexp);
 		convertToBase(mvalue, mexp);
 		b = true;
-		if(baseUnit() == CALCULATOR->u_euro) {
+		if(isCurrency()) {
 			CALCULATOR->checkExchangeRatesDate();
 		}
 	} else if(u->unitType() == COMPOSITE_UNIT) {
@@ -268,6 +288,8 @@ int AliasUnit::baseExp(int exp_) const {
 }
 MathStructure &AliasUnit::convertToFirstBase(MathStructure &mvalue, MathStructure &mexp) const {
 	if(exp != 1) mexp /= exp;
+	ParseOptions po;
+	po.read_precision = isApproximate();
 	if(rvalue.empty()) {
 		if(value.find("\\x") != string::npos) {
 			string stmp = value;
@@ -281,11 +303,11 @@ MathStructure &AliasUnit::convertToFirstBase(MathStructure &mvalue, MathStructur
 			stmp2 += i2s(y_id);
 			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 			gsub("\\y", stmp2, stmp);
-			mvalue = CALCULATOR->parse(stmp);
+			mvalue = CALCULATOR->parse(stmp, po);
 			CALCULATOR->delId(x_id, true);
 			CALCULATOR->delId(y_id, true);
 		} else {
-			MathStructure mstruct = CALCULATOR->parse(value);
+			MathStructure mstruct = CALCULATOR->parse(value, po);
 			if(!mexp.isOne()) mstruct ^= mexp;
 			mvalue.divide(mstruct, true);
 		}
@@ -302,11 +324,11 @@ MathStructure &AliasUnit::convertToFirstBase(MathStructure &mvalue, MathStructur
 			stmp2 += i2s(y_id);
 			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 			gsub("\\y", stmp2, stmp);
-			mvalue = CALCULATOR->parse(stmp);
+			mvalue = CALCULATOR->parse(stmp, po);
 			CALCULATOR->delId(x_id, true);
 			CALCULATOR->delId(y_id, true);			
 		} else {
-			MathStructure mstruct = CALCULATOR->parse(rvalue);
+			MathStructure mstruct = CALCULATOR->parse(rvalue, po);
 			if(!mexp.isOne()) mstruct ^= mexp;
 			mvalue.multiply(mstruct, true);
 		}
@@ -315,6 +337,8 @@ MathStructure &AliasUnit::convertToFirstBase(MathStructure &mvalue, MathStructur
 	return mvalue;
 }
 MathStructure &AliasUnit::firstBaseValue(MathStructure &mvalue, MathStructure &mexp) const {
+	ParseOptions po;
+	po.read_precision = isApproximate();
 	if(value.find("\\x") != string::npos) {
 		string stmp = value;
 		string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
@@ -327,11 +351,11 @@ MathStructure &AliasUnit::firstBaseValue(MathStructure &mvalue, MathStructure &m
 		stmp2 += i2s(y_id);
 		stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 		gsub("\\y", stmp2, stmp);
-		mvalue = CALCULATOR->parse(stmp);
+		mvalue = CALCULATOR->parse(stmp, po);
 		CALCULATOR->delId(x_id, true);
 		CALCULATOR->delId(y_id, true);
 	} else {
-		MathStructure mstruct = CALCULATOR->parse(value);
+		MathStructure mstruct = CALCULATOR->parse(value, po);
 		if(!mexp.isOne()) mstruct ^= mexp;
 		mstruct.multiply(mvalue, true);
 		mvalue = mstruct;
@@ -420,23 +444,17 @@ void AliasUnit_Composite::set(const ExpressionItem *item) {
 		ExpressionItem::set(item);
 	}
 }
-string AliasUnit_Composite::printShort(bool plural_) const {
+string AliasUnit_Composite::print(bool plural_, bool short_, bool use_unicode) const {
 	string str = "";
 	if(prefixv) {
-		str += prefixv->name(true);
+		str += prefixv->name(short_, use_unicode);
 	}
-	str += firstBaseUnit()->shortName();
-	return str;
-}
-string AliasUnit_Composite::print(bool plural_) const {
-	string str = "";
-	if(prefixv) {
-		str += prefixv->name(false);
-	}
-	if(plural_) {
-		str += firstBaseUnit()->plural();
+	if(short_) {
+		str += firstBaseUnit()->shortName(use_unicode);
+	} else if(plural_) {
+		str += firstBaseUnit()->plural(true, use_unicode);
 	} else {
-		str += firstBaseUnit()->singular();
+		str += firstBaseUnit()->singular(true, use_unicode);
 	}
 	return str;
 }
@@ -538,7 +556,7 @@ void CompositeUnit::del(Unit *u) {
 	}
 	updateNames();
 }
-string CompositeUnit::print(bool plural_, bool short_) const {
+string CompositeUnit::print(bool plural_, bool short_, bool use_unicode) const {
 	string str = "";
 	bool b = false, b2 = false;
 	for(unsigned int i = 0; i < units.size(); i++) {
@@ -554,18 +572,10 @@ string CompositeUnit::print(bool plural_, bool short_) const {
 //				if(i > 0) str += "*";
 				if(i > 0) str += " ";
 			}
-			if(short_) {
-				if(plural_ && i == 0 && units[i]->firstBaseExp() > 0) {
-					str += units[i]->printShort(true);
-				} else {
-					str += units[i]->printShort(false);
-				}
+			if(plural_ && i == 0 && units[i]->firstBaseExp() > 0) {
+				str += units[i]->print(true, short_, use_unicode);
 			} else {
-				if(plural_ && i == 0 && units[i]->firstBaseExp() > 0) {
-					str += units[i]->print(true);
-				} else {
-					str += units[i]->print(false);
-				}
+				str += units[i]->print(false, short_, use_unicode);
 			}
 			if(b) {
 				if(units[i]->firstBaseExp() != -1) {
@@ -583,13 +593,13 @@ string CompositeUnit::print(bool plural_, bool short_) const {
 	if(b2) str += ")";
 	return str;
 }
-const string &CompositeUnit::plural(bool return_name_if_no_plural) const {
+const string &CompositeUnit::plural(bool return_singular_if_no_plural, bool use_unicode) const {
 	return splural;
 }
-const string &CompositeUnit::singular(bool return_short_if_no_singular) const {
+const string &CompositeUnit::singular(bool return_short_if_no_singular, bool use_unicode) const {
 	return ssingular;
 }
-const string &CompositeUnit::shortName() const {
+const string &CompositeUnit::shortName(bool use_unicode) const {
 	return sshort;
 }
 int CompositeUnit::unitType() const {
@@ -675,9 +685,9 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	updateNames();
 }
 void CompositeUnit::updateNames() {
-	sshort = print(false, true);
+/*	sshort = print(false, true);
 	splural = print(true, false);
-	ssingular = print(false, false);
+	ssingular = print(false, false);*/
 }
 void CompositeUnit::clear() {
 	for(unsigned int i = 0; i < units.size(); i++) {
