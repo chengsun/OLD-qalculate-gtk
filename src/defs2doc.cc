@@ -520,7 +520,11 @@ void print_unit(Unit *u) {
 					base_unit += POWER;
 					base_unit += i2s(au->firstBaseExp());
 				}
-				relation = fix(CALCULATOR->localizeExpression(au->expression()).c_str());
+				if(au->firstBaseUnit() == CALCULATOR->u_euro && au->isBuiltin()) {
+					relation = "exchange rate";
+				} else {
+					relation = fix(CALCULATOR->localizeExpression(au->expression()).c_str());
+				}
 				if(u->isApproximate()) {
 					relation += " (";
 					relation += _("approximate");

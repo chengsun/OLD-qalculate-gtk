@@ -89,6 +89,8 @@ struct Element {
 	int x_pos, y_pos;
 };
 
+#define UFV_LENGTHS	20
+
 class Calculator {
   protected:
 	vector<CalculatorMessage> messages;
@@ -96,9 +98,11 @@ class Calculator {
 	int ianglemode;
 	int i_precision;
 	char vbuffer[200];
-	vector<void*> ufv;
-	vector<char> ufv_t;
-	vector<unsigned int> ufv_i;
+	vector<void*> ufvl;
+	vector<char> ufvl_t;
+	vector<unsigned int> ufvl_i;
+	vector<void*> ufv[4][UFV_LENGTHS];
+	vector<unsigned int> ufv_i[4][UFV_LENGTHS];
 	
 	vector<DataSet*> data_sets;
 	
@@ -218,7 +222,7 @@ class Calculator {
 	Prefix *getBestPrefix(int exp10, int exp = 1, bool all_prefixes = true) const;		
 	Prefix *getBestPrefix(const Number &exp10, const Number &exp, bool all_prefixes = true) const;
 	Prefix *addPrefix(Prefix *p);
-	void prefixNameChanged(Prefix *p);	
+	void prefixNameChanged(Prefix *p, bool new_item = false);	
 
 	void setPrecision(int precision = DEFAULT_PRECISION);
 	int getPrecision() const;
@@ -267,11 +271,12 @@ class Calculator {
 	void expressionItemActivated(ExpressionItem *item);
 	void expressionItemDeactivated(ExpressionItem *item);
 	void expressionItemDeleted(ExpressionItem *item);
-	void nameChanged(ExpressionItem *item);
+	void nameChanged(ExpressionItem *item, bool new_item = false);
 	void deleteName(string name_, ExpressionItem *object = NULL);
 	void deleteUnitName(string name_, Unit *object = NULL);	
-	Unit* addUnit(Unit *u, bool force = true);
-	void delUFV(void *object);		
+	Unit* addUnit(Unit *u, bool force = true, bool check_names = true);
+	void delPrefixUFV(Prefix *object);
+	void delUFV(ExpressionItem *object);		
 	bool hasVariable(Variable *v);
 	bool hasUnit(Unit *u);
 	bool hasFunction(MathFunction *f);
@@ -287,17 +292,15 @@ class Calculator {
 	Unit* getUnit(string name_);
 	Unit* getActiveUnit(string name_);
 	Unit* getCompositeUnit(string internal_name_);	
-	Variable* addVariable(Variable *v, bool force = true);
-	void variableNameChanged(Variable *v);
-	void functionNameChanged(MathFunction *f);	
-	void unitNameChanged(Unit *u);	
-	void unitSingularChanged(Unit *u);	
-	void unitPluralChanged(Unit *u);	
+	Variable* addVariable(Variable *v, bool force = true, bool check_names = true);
+	void variableNameChanged(Variable *v, bool new_item = false);
+	void functionNameChanged(MathFunction *f, bool new_item = false);
+	void unitNameChanged(Unit *u, bool new_item = false);	
 	Variable* getVariable(string name_);
 	Variable* getActiveVariable(string name_);
 	ExpressionItem *addExpressionItem(ExpressionItem *item, bool force = true);
-	MathFunction* addFunction(MathFunction *f, bool force = true);
-	DataSet* addDataSet(DataSet *dc, bool force = true);
+	MathFunction* addFunction(MathFunction *f, bool force = true, bool check_names = true);
+	DataSet* addDataSet(DataSet *dc, bool force = true, bool check_names = true);
 	DataSet* getDataSet(unsigned int index);
 	DataSet* getDataSet(string name);
 	MathFunction* getFunction(string name_);	

@@ -721,6 +721,10 @@ get_unit_edit_dialog (void)
 	
 		g_assert (glade_xml_get_widget (unitedit_glade, "unit_edit_dialog") != NULL);
 		
+#ifndef HAVE_LIBGNOME
+		gtk_widget_hide(glade_xml_get_widget (unitedit_glade, "unit_edit_button_help"));
+#endif				
+		
 		glade_xml_signal_autoconnect(unitedit_glade);
 	
 	}
@@ -788,6 +792,10 @@ get_function_edit_dialog (void)
 		gtk_tree_view_append_column(GTK_TREE_VIEW(tSubfunctions), column);
 		g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tSubfunctions_selection_changed), NULL);
 		
+#ifndef HAVE_LIBGNOME
+		gtk_widget_hide(glade_xml_get_widget (functionedit_glade, "function_edit_button_help"));
+#endif		
+		
 		glade_xml_signal_autoconnect(functionedit_glade);
 	
 	}
@@ -822,8 +830,12 @@ get_variable_edit_dialog (void)
 		variableedit_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(variableedit_glade != NULL);
 		g_free(gstr);
-	
+			
 		g_assert (glade_xml_get_widget (variableedit_glade, "variable_edit_dialog") != NULL);
+		
+#ifndef HAVE_LIBGNOME
+		gtk_widget_hide(glade_xml_get_widget (variableedit_glade, "variable_edit_button_help"));
+#endif		
 		
 		glade_xml_signal_autoconnect(variableedit_glade);
 	
@@ -863,6 +875,10 @@ get_unknown_edit_dialog (void)
 	
 		g_assert (glade_xml_get_widget (unknownedit_glade, "unknown_edit_dialog") != NULL);
 		
+#ifndef HAVE_LIBGNOME
+		gtk_widget_hide(glade_xml_get_widget (unknownedit_glade, "unknown_edit_button_help"));
+#endif		
+		
 		glade_xml_signal_autoconnect(unknownedit_glade);
 	
 	}
@@ -899,6 +915,10 @@ get_matrix_edit_dialog (void)
 		g_free(gstr);
 	
 		g_assert (glade_xml_get_widget (matrixedit_glade, "matrix_edit_dialog") != NULL);
+		
+#ifndef HAVE_LIBGNOME
+		gtk_widget_hide(glade_xml_get_widget (matrixedit_glade, "matrix_edit_button_help"));
+#endif		
 		
 		glade_xml_signal_autoconnect(matrixedit_glade);
 
@@ -1264,6 +1284,10 @@ GtkWidget* get_plot_dialog (void) {
 		column = gtk_tree_view_column_new_with_attributes(_("Expression"), renderer, "text", 1, NULL);
 		gtk_tree_view_append_column(GTK_TREE_VIEW(tPlotFunctions), column);	
 		g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tPlotFunctions_selection_changed), NULL);
+		
+#ifndef HAVE_LIBGNOME
+		gtk_widget_hide(glade_xml_get_widget (plot_glade, "plot_button_help"));
+#endif		
 
 		glade_xml_signal_autoconnect(plot_glade);
 		

@@ -22,7 +22,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Radians per Square Second</para></entry>
-<entry><para></para></entry>
+<entry><para>(rad_p_sqs)</para></entry>
 <entry><para>rad/s^2</para></entry>
 <entry><para></para></entry>
 </row>
@@ -50,7 +50,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Radians per Second</para></entry>
-<entry><para></para></entry>
+<entry><para>(rad_p_s)</para></entry>
 <entry><para>rad/s</para></entry>
 <entry><para></para></entry>
 </row>
@@ -90,7 +90,7 @@
 </row>
 <row valign="top">
 <entry><para>Meter per Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(m_p_m)</para></entry>
 <entry><para>m/m</para></entry>
 <entry><para></para></entry>
 </row>
@@ -124,7 +124,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Square Meter per Square Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(sqm_p_sqm)</para></entry>
 <entry><para>m^2/m^2</para></entry>
 <entry><para></para></entry>
 </row>
@@ -177,7 +177,7 @@
 </row>
 <row valign="top">
 <entry><para>Hectare</para></entry>
-<entry><para></para></entry>
+<entry><para>(ha)</para></entry>
 <entry><para>ha</para></entry>
 <entry><para></para></entry>
 </row>
@@ -195,13 +195,13 @@
 </row>
 <row valign="top">
 <entry><para>Square Foot</para></entry>
-<entry><para></para></entry>
+<entry><para>(sqft)</para></entry>
 <entry><para>ft^2</para></entry>
 <entry><para></para></entry>
 </row>
 <row valign="top">
 <entry><para>Square Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(sqm)</para></entry>
 <entry><para>m^2</para></entry>
 <entry><para></para></entry>
 </row>
@@ -237,7 +237,7 @@
 <entry><para>Australian Dollars</para></entry>
 <entry><para>AUD</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/1.7151</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Austrian shilling</para></entry>
@@ -255,19 +255,19 @@
 <entry><para>British Pounds</para></entry>
 <entry><para>GBP / £</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/0.69095</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Bulgarian Lev</para></entry>
 <entry><para>lev / BGN</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/1.9559</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Canadian Dollars</para></entry>
 <entry><para>CAD</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/1.5661</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Cent (USD)</para></entry>
@@ -279,19 +279,19 @@
 <entry><para>Cypriot Pound</para></entry>
 <entry><para>CYP</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/0.57550</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Czech Koruna</para></entry>
 <entry><para>CZK</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/31.618</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Danish Kroner</para></entry>
 <entry><para>DKK</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/7.4404</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Deutche Mark</para></entry>
@@ -309,7 +309,7 @@
 <entry><para>Estonian Kroon</para></entry>
 <entry><para>EEK</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/15.6466</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Euro Cent</para></entry>
@@ -345,19 +345,19 @@
 <entry><para>Hong Kong Dollars</para></entry>
 <entry><para>HKD</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/9.6786</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Hungarian Forint</para></entry>
 <entry><para>forint / HUF</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/246.25</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Icelandic Krona</para></entry>
 <entry><para>ISK</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/87.87</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Irish pound</para></entry>
@@ -375,19 +375,19 @@
 <entry><para>Japanese Yen</para></entry>
 <entry><para>JPY / ¥ / yen</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/136.85</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Latvian Lat</para></entry>
 <entry><para>lat / LVL</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/0.6675</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Lithuanian Lit</para></entry>
 <entry><para>lit / LTL</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/3.4528</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Luxembourg franc</para></entry>
@@ -399,25 +399,25 @@
 <entry><para>Maltese Lira</para></entry>
 <entry><para>MTL</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/0.4294</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>New Zealand Dollars</para></entry>
 <entry><para>NZD</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/1.8449</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Norwegian Kroner</para></entry>
 <entry><para>NOK</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/8.3280</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Polish Zloty</para></entry>
 <entry><para>zloty / PLN</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/4.3634</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Portuguese escudo</para></entry>
@@ -429,37 +429,37 @@
 <entry><para>Romanian Leu</para></entry>
 <entry><para>leu / ROL</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/41187</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Singapore Dollars</para></entry>
 <entry><para>SGD</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/2.0908</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Slovakian Koruna</para></entry>
 <entry><para>SKK</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/40.075</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Slovenian Tolar</para></entry>
 <entry><para>tolar / SIT</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/239.9900</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>South African Rand</para></entry>
 <entry><para>ZAR</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/8.0434</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>South Korean Won</para></entry>
 <entry><para>KRW</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/1426.13</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Spanish peseta</para></entry>
@@ -471,25 +471,25 @@
 <entry><para>Swedish Krona</para></entry>
 <entry><para>SEK</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/9.0288</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Swiss Francs</para></entry>
 <entry><para>CHF</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/1.5495</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Turkish Lira</para></entry>
 <entry><para>TRL</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/1870400</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>U.S. Dollars</para></entry>
 <entry><para>$ / USD / dollar / dollars</para></entry>
 <entry><para>€</para></entry>
-<entry><para>1/1.2413</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 </tbody>
 </tgroup>
@@ -517,7 +517,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Coulomb per Volt</para></entry>
-<entry><para></para></entry>
+<entry><para>(C_p_V)</para></entry>
 <entry><para>C/V</para></entry>
 <entry><para></para></entry>
 </row>
@@ -551,7 +551,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Ampere per Square Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(A_p_sqm)</para></entry>
 <entry><para>A/m^2</para></entry>
 <entry><para></para></entry>
 </row>
@@ -585,7 +585,7 @@
 </row>
 <row valign="top">
 <entry><para>Second Ampere</para></entry>
-<entry><para></para></entry>
+<entry><para>(s_A)</para></entry>
 <entry><para>s A</para></entry>
 <entry><para></para></entry>
 </row>
@@ -613,7 +613,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Coulomb per Cubic Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(C_p_cum)</para></entry>
 <entry><para>C/m^3</para></entry>
 <entry><para></para></entry>
 </row>
@@ -641,7 +641,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Ampere per Volt</para></entry>
-<entry><para></para></entry>
+<entry><para>(A_p_V)</para></entry>
 <entry><para>A/V</para></entry>
 <entry><para></para></entry>
 </row>
@@ -703,7 +703,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Volt per Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(V_p_m)</para></entry>
 <entry><para>V/m</para></entry>
 <entry><para></para></entry>
 </row>
@@ -731,7 +731,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Coulomb per Square Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(C_p_sqm)</para></entry>
 <entry><para>C/m^2</para></entry>
 <entry><para></para></entry>
 </row>
@@ -765,7 +765,7 @@
 </row>
 <row valign="top">
 <entry><para>Watt per Ampere</para></entry>
-<entry><para></para></entry>
+<entry><para>(W_p_A)</para></entry>
 <entry><para>W/A</para></entry>
 <entry><para></para></entry>
 </row>
@@ -799,7 +799,7 @@
 </row>
 <row valign="top">
 <entry><para>Volt per Ampere</para></entry>
-<entry><para></para></entry>
+<entry><para>(V_p_A)</para></entry>
 <entry><para>V/A</para></entry>
 <entry><para></para></entry>
 </row>
@@ -833,7 +833,7 @@
 </row>
 <row valign="top">
 <entry><para>Weber per Ampere</para></entry>
-<entry><para></para></entry>
+<entry><para>(Wb_p_A)</para></entry>
 <entry><para>Wb/A</para></entry>
 <entry><para></para></entry>
 </row>
@@ -861,7 +861,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Henry per Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(H_p_m)</para></entry>
 <entry><para>H/m</para></entry>
 <entry><para></para></entry>
 </row>
@@ -889,7 +889,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Farad per Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(F_p_m)</para></entry>
 <entry><para>F/m</para></entry>
 <entry><para></para></entry>
 </row>
@@ -993,7 +993,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Joule per Cubic Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(J_p_cum)</para></entry>
 <entry><para>J/m^3</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1021,7 +1021,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Joule per Kelvin</para></entry>
-<entry><para></para></entry>
+<entry><para>(J_p_K)</para></entry>
 <entry><para>J/K</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1049,7 +1049,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Joule per Mole</para></entry>
-<entry><para></para></entry>
+<entry><para>(J_p_mol)</para></entry>
 <entry><para>J/mol</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1077,7 +1077,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Joule per Mole Kelvin</para></entry>
-<entry><para></para></entry>
+<entry><para>(J_p_mol_K)</para></entry>
 <entry><para>J/(mol K)</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1111,7 +1111,7 @@
 </row>
 <row valign="top">
 <entry><para>Joule per Second</para></entry>
-<entry><para></para></entry>
+<entry><para>(J_p_s)</para></entry>
 <entry><para>J/s</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1151,7 +1151,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Joule per Kilogram</para></entry>
-<entry><para></para></entry>
+<entry><para>(J_p_kg)</para></entry>
 <entry><para>J/kg</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1179,7 +1179,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Joule per Kilogram Kelvin</para></entry>
-<entry><para></para></entry>
+<entry><para>(J_p_kg_K)</para></entry>
 <entry><para>J/(kg K)</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1207,7 +1207,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Watt per Meter Kelvin</para></entry>
-<entry><para></para></entry>
+<entry><para>(W_p_m_K)</para></entry>
 <entry><para>W/(m K)</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1242,7 +1242,7 @@
 </row>
 <row valign="top">
 <entry><para>Meter Kilogram per Square Second</para></entry>
-<entry><para></para></entry>
+<entry><para>(m_kg_p_sqs)</para></entry>
 <entry><para>m kg/s^2</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1275,7 +1275,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Pascal Second</para></entry>
-<entry><para></para></entry>
+<entry><para>(Pa_s)</para></entry>
 <entry><para>Pa s</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1309,7 +1309,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Square Meter per Second</para></entry>
-<entry><para></para></entry>
+<entry><para>(sqm_p_s)</para></entry>
 <entry><para>m^2/s</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1343,7 +1343,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Newton Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(N_m)</para></entry>
 <entry><para>N m</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1383,7 +1383,7 @@
 </row>
 <row valign="top">
 <entry><para>Newton per Square Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(N_p_sqm)</para></entry>
 <entry><para>N/m^2</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1423,7 +1423,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Newton per Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(N_p_m)</para></entry>
 <entry><para>N/m</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1596,7 +1596,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Lumen per Square Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(lm_p_sqm)</para></entry>
 <entry><para>lm/m^2</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1636,7 +1636,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Watt per Square Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(W_p_sqm)</para></entry>
 <entry><para>W/m^2</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1664,7 +1664,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Candela per Square Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(cd_p_sqm)</para></entry>
 <entry><para>cd/m^2</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1698,7 +1698,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Candela Steradian</para></entry>
-<entry><para></para></entry>
+<entry><para>(cd_sr)</para></entry>
 <entry><para>cd sr</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1760,7 +1760,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Watt per Square Meter Steradian</para></entry>
-<entry><para></para></entry>
+<entry><para>(W_p_sqm_sr)</para></entry>
 <entry><para>W/(sr m^2)</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1788,7 +1788,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Watt per Steradian</para></entry>
-<entry><para></para></entry>
+<entry><para>(W_p_sr)</para></entry>
 <entry><para>W/sr</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1819,7 +1819,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Ampere per Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(A_p_m)</para></entry>
 <entry><para>A/m</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1859,7 +1859,7 @@
 </row>
 <row valign="top">
 <entry><para>Volt Seconds</para></entry>
-<entry><para></para></entry>
+<entry><para>(V_s)</para></entry>
 <entry><para>V s</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1905,7 +1905,7 @@
 </row>
 <row valign="top">
 <entry><para>Weber per Square Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(Wb_p_sqm)</para></entry>
 <entry><para>Wb/m^2</para></entry>
 <entry><para></para></entry>
 </row>
@@ -1933,7 +1933,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Reciprocal Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(recm)</para></entry>
 <entry><para>m^-1</para></entry>
 <entry><para></para></entry>
 </row>
@@ -2097,13 +2097,13 @@
 </row>
 <row valign="top">
 <entry><para>Gram per Mole</para></entry>
-<entry><para></para></entry>
+<entry><para>(g_p_mol)</para></entry>
 <entry><para>g/mol</para></entry>
 <entry><para></para></entry>
 </row>
 <row valign="top">
 <entry><para>Kilogram per Cubic Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(kg_p_cum)</para></entry>
 <entry><para>kg/m^3</para></entry>
 <entry><para></para></entry>
 </row>
@@ -2131,7 +2131,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Kilogram per Kilogram</para></entry>
-<entry><para></para></entry>
+<entry><para>(kg_p_kg)</para></entry>
 <entry><para>kg/kg</para></entry>
 <entry><para></para></entry>
 </row>
@@ -2227,7 +2227,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Gray per Second</para></entry>
-<entry><para></para></entry>
+<entry><para>(Gy_p_s)</para></entry>
 <entry><para>Gy/s</para></entry>
 <entry><para></para></entry>
 </row>
@@ -2289,7 +2289,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Coulomb per Kilogram</para></entry>
-<entry><para></para></entry>
+<entry><para>(C_p_kg)</para></entry>
 <entry><para>C/kg</para></entry>
 <entry><para></para></entry>
 </row>
@@ -2330,13 +2330,13 @@
 </row>
 <row valign="top">
 <entry><para>Meter per Second</para></entry>
-<entry><para></para></entry>
+<entry><para>(m_p_s)</para></entry>
 <entry><para>m/s</para></entry>
 <entry><para></para></entry>
 </row>
 <row valign="top">
 <entry><para>Nautical Mile per Hour</para></entry>
-<entry><para></para></entry>
+<entry><para>(nautical_mile_p_h)</para></entry>
 <entry><para>nautical_mile/h</para></entry>
 <entry><para></para></entry>
 </row>
@@ -2369,7 +2369,7 @@
 </row>
 <row valign="top">
 <entry><para>Meter per Square Second</para></entry>
-<entry><para></para></entry>
+<entry><para>(m_p_sqs)</para></entry>
 <entry><para>m/s^2</para></entry>
 <entry><para></para></entry>
 </row>
@@ -2431,7 +2431,7 @@
 </row>
 <row valign="top">
 <entry><para>Reciprocal Seconds Mole</para></entry>
-<entry><para></para></entry>
+<entry><para>(recs_mol)</para></entry>
 <entry><para>mol/s</para></entry>
 <entry><para></para></entry>
 </row>
@@ -2459,7 +2459,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Katal per Cubic Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(kat_p_cum)</para></entry>
 <entry><para>kat/m^3</para></entry>
 <entry><para></para></entry>
 </row>
@@ -2487,7 +2487,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Mole per Cubic Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(mol_p_cum)</para></entry>
 <entry><para>mol/m^3</para></entry>
 <entry><para></para></entry>
 </row>
@@ -2642,13 +2642,13 @@
 <tbody>
 <row valign="top">
 <entry><para>Cubic Inch</para></entry>
-<entry><para></para></entry>
+<entry><para>(cuin)</para></entry>
 <entry><para>in^3</para></entry>
 <entry><para></para></entry>
 </row>
 <row valign="top">
 <entry><para>Cubic Meter</para></entry>
-<entry><para></para></entry>
+<entry><para>(cum)</para></entry>
 <entry><para>m^3</para></entry>
 <entry><para></para></entry>
 </row>
@@ -2803,7 +2803,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Cubic Meter per Kilogram</para></entry>
-<entry><para></para></entry>
+<entry><para>(cum_p_kg)</para></entry>
 <entry><para>m^3/kg</para></entry>
 <entry><para></para></entry>
 </row>

@@ -1,3 +1,9 @@
+2004-10-11 Niklas Knutsson  <nq@altern.org>
+
+	* Help buttons in variable edit, unit edit, function edit and plot dialogs
+	* Make definitions loading more than twice as fast
+	* -set command line option for qalc
+
 2004-10-10 Niklas Knutsson  <nq@altern.org>
 
 	* defs2doc program for generation of definition list in help

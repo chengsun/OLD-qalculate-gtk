@@ -612,105 +612,127 @@ Prefix *Calculator::getBestPrefix(const Number &exp10, const Number &exp, bool a
 }
 Prefix *Calculator::addPrefix(Prefix *p) {
 	prefixes.push_back(p);
-	prefixNameChanged(p);
+	prefixNameChanged(p, true);
 	return p;	
 }
-void Calculator::prefixNameChanged(Prefix *p) {
-	unsigned int l, i = 0;
-	delUFV((void*) p);
+void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
+	unsigned int l2;
+	if(!new_item) delPrefixUFV(p);
 	if(!p->longName(false).empty()) {
-		for(vector<void*>::iterator it = ufv.begin(); ; ++it) {
-			l = 0;
-			if(it != ufv.end()) {
-				if(ufv_t[i] == 'v')
-					l = ((Variable*) (*it))->getName(ufv_i[i]).name.length();
-				else if(ufv_t[i] == 'f')
-					l = ((MathFunction*) (*it))->getName(ufv_i[i]).name.length();
-				else if(ufv_t[i] == 'u')
-					l = ((Unit*) (*it))->getName(ufv_i[i]).name.length();
-				else if(ufv_t[i] == 'p')
-					l = ((Prefix*) (*it))->shortName(false).length();
-				else if(ufv_t[i] == 'P')
-					l = ((Prefix*) (*it))->longName(false).length();
-				else if(ufv_t[i] == 'q')
-					l = ((Prefix*) (*it))->unicodeName(false).length();
+		l2 = p->longName(false).length();
+		if(l2 > UFV_LENGTHS) {
+			unsigned int i = 0, l;
+			for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
+				l = 0;
+				if(it != ufvl.end()) {
+					if(ufvl_t[i] == 'v')
+						l = ((Variable*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'f')
+						l = ((MathFunction*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'u')
+						l = ((Unit*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'p')
+						l = ((Prefix*) (*it))->shortName(false).length();
+					else if(ufvl_t[i] == 'P')
+						l = ((Prefix*) (*it))->longName(false).length();
+					else if(ufvl_t[i] == 'q')
+						l = ((Prefix*) (*it))->unicodeName(false).length();
+				}
+				if(it == ufvl.end()) {
+					ufvl.push_back((void*) p);
+					ufvl_t.push_back('P');
+					ufvl_i.push_back(1);
+					break;
+				} else if(l <= l2) {			
+					ufvl.insert(it, (void*) p);
+					ufvl_t.insert(ufvl_t.begin() + i, 'P');
+					ufvl_i.insert(ufvl_i.begin() + i, 1);
+					break;
+				}
+				i++;
 			}
-			if(it == ufv.end()) {
-				ufv.push_back((void*) p);
-				ufv_t.push_back('P');
-				ufv_i.push_back(1);
-				break;
-			} else if(l <= p->longName(false).length()) {			
-				ufv.insert(it, (void*) p);
-				ufv_t.insert(ufv_t.begin() + i, 'P');
-				ufv_i.insert(ufv_i.begin() + i, 1);
-				break;
-			}
-			i++;
+		} else if(l2 > 0) {
+			l2--;
+			ufv[0][l2].push_back((void*) p);
+			ufv_i[0][l2].push_back(1);
 		}
 	}
-	i = 0;
 	if(!p->shortName(false).empty()) {
-		for(vector<void*>::iterator it = ufv.begin(); ; ++it) {
-			l = 0;
-			if(it != ufv.end()) {
-				if(ufv_t[i] == 'v')
-					l = ((Variable*) (*it))->getName(ufv_i[i]).name.length();
-				else if(ufv_t[i] == 'f')
-					l = ((MathFunction*) (*it))->getName(ufv_i[i]).name.length();
-				else if(ufv_t[i] == 'u')
-					l = ((Unit*) (*it))->getName(ufv_i[i]).name.length();
-				else if(ufv_t[i] == 'p')
-					l = ((Prefix*) (*it))->shortName(false).length();
-				else if(ufv_t[i] == 'P')
-					l = ((Prefix*) (*it))->longName(false).length();
-				else if(ufv_t[i] == 'q')
-					l = ((Prefix*) (*it))->unicodeName(false).length();
+		l2 = p->shortName(false).length();
+		if(l2 > UFV_LENGTHS) {
+			unsigned int i = 0, l;
+			for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
+				l = 0;
+				if(it != ufvl.end()) {
+					if(ufvl_t[i] == 'v')
+						l = ((Variable*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'f')
+						l = ((MathFunction*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'u')
+						l = ((Unit*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'p')
+						l = ((Prefix*) (*it))->shortName(false).length();
+					else if(ufvl_t[i] == 'P')
+						l = ((Prefix*) (*it))->longName(false).length();
+					else if(ufvl_t[i] == 'q')
+						l = ((Prefix*) (*it))->unicodeName(false).length();
+				}
+				if(it == ufvl.end()) {
+					ufvl.push_back((void*) p);
+					ufvl_t.push_back('p');
+					ufvl_i.push_back(1);
+					break;
+				} else if(l <= l2) {			
+					ufvl.insert(it, (void*) p);
+					ufvl_t.insert(ufvl_t.begin() + i, 'p');
+					ufvl_i.insert(ufvl_i.begin() + i, 1);
+					break;
+				}
+				i++;
 			}
-			if(it == ufv.end()) {
-				ufv.push_back((void*) p);
-				ufv_t.push_back('p');
-				ufv_i.push_back(1);
-				break;
-			} else if(l <= p->shortName(false).length()) {
-				ufv.insert(it, (void*) p);
-				ufv_t.insert(ufv_t.begin() + i, 'p');
-				ufv_i.insert(ufv_i.begin() + i, 1);
-				break;
-			}
-			i++;
+		} else if(l2 > 0) {
+			l2--;
+			ufv[0][l2].push_back((void*) p);
+			ufv_i[0][l2].push_back(2);
 		}
 	}
-	i = 0;
 	if(!p->unicodeName(false).empty()) {
-		for(vector<void*>::iterator it = ufv.begin(); ; ++it) {
-			l = 0;
-			if(it != ufv.end()) {
-				if(ufv_t[i] == 'v')
-					l = ((Variable*) (*it))->getName(ufv_i[i]).name.length();
-				else if(ufv_t[i] == 'f')
-					l = ((MathFunction*) (*it))->getName(ufv_i[i]).name.length();
-				else if(ufv_t[i] == 'u')
-					l = ((Unit*) (*it))->getName(ufv_i[i]).name.length();
-				else if(ufv_t[i] == 'p')
-					l = ((Prefix*) (*it))->shortName(false).length();
-				else if(ufv_t[i] == 'P')
-					l = ((Prefix*) (*it))->longName(false).length();
-				else if(ufv_t[i] == 'q')
-					l = ((Prefix*) (*it))->unicodeName(false).length();
+		l2 = p->unicodeName(false).length();
+		if(l2 > UFV_LENGTHS) {
+			unsigned int i = 0, l;
+			for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
+				l = 0;
+				if(it != ufvl.end()) {
+					if(ufvl_t[i] == 'v')
+						l = ((Variable*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'f')
+						l = ((MathFunction*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'u')
+						l = ((Unit*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'p')
+						l = ((Prefix*) (*it))->shortName(false).length();
+					else if(ufvl_t[i] == 'P')
+						l = ((Prefix*) (*it))->longName(false).length();
+					else if(ufvl_t[i] == 'q')
+						l = ((Prefix*) (*it))->unicodeName(false).length();
+				}
+				if(it == ufvl.end()) {
+					ufvl.push_back((void*) p);
+					ufvl_t.push_back('q');
+					ufvl_i.push_back(1);
+					break;
+				} else if(l <= l2) {			
+					ufvl.insert(it, (void*) p);
+					ufvl_t.insert(ufvl_t.begin() + i, 'q');
+					ufvl_i.insert(ufvl_i.begin() + i, 1);
+					break;
+				}
+				i++;
 			}
-			if(it == ufv.end()) {
-				ufv.push_back((void*) p);
-				ufv_t.push_back('q');
-				ufv_i.push_back(1);
-				break;
-			} else if(l <= p->unicodeName(false).length()) {
-				ufv.insert(it, (void*) p);
-				ufv_t.insert(ufv_t.begin() + i, 'q');
-				ufv_i.insert(ufv_i.begin() + i, 1);
-				break;
-			}
-			i++;
+		} else if(l2 > 0) {
+			l2--;
+			ufv[0][l2].push_back((void*) p);
+			ufv_i[0][l2].push_back(3);
 		}
 	}
 }
@@ -1818,16 +1840,18 @@ MathStructure Calculator::convert(const MathStructure &mstruct, string composite
 	CompositeUnit cu("", "temporary_composite_convert", "", composite_);
 	return convertToCompositeUnit(mstruct, &cu, eo);
 }
-Unit* Calculator::addUnit(Unit *u, bool force) {
-	for(unsigned int i = 1; i <= u->countNames(); i++) {
-		u->setName(getName(u->getName(i).name, u, force), i);
+Unit* Calculator::addUnit(Unit *u, bool force, bool check_names) {
+	if(check_names) {
+		for(unsigned int i = 1; i <= u->countNames(); i++) {
+			u->setName(getName(u->getName(i).name, u, force), i);
+		}
 	}
 	if(!u->isLocal() && units.size() > 0 && units[units.size() - 1]->isLocal()) {
 		units.insert(units.begin(), u);
 	} else {	
 		units.push_back(u);
 	}
-	unitNameChanged(u);
+	unitNameChanged(u, true);
 	for(vector<Unit*>::iterator it = deleted_units.begin(); it != deleted_units.end(); ++it) {
 		if(*it == u) {
 			deleted_units.erase(it);
@@ -1838,21 +1862,76 @@ Unit* Calculator::addUnit(Unit *u, bool force) {
 	u->setChanged(false);
 	return u;
 }
-void Calculator::delUFV(void *object) {
+void Calculator::delPrefixUFV(Prefix *object) {
 	int i = 0;
-	for(vector<void*>::iterator it = ufv.begin(); ; ++it) {
-		del_ufv:
-		if(it == ufv.end()) {
+	for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
+		del_ufvl:
+		if(it == ufvl.end()) {
 			break;
 		}
 		if(*it == object) {
-			it = ufv.erase(it);
-			ufv_t.erase(ufv_t.begin() + i);
-			ufv_i.erase(ufv_i.begin() + i);
-			if(it == ufv.end()) break;
-			goto del_ufv;
+			it = ufvl.erase(it);
+			ufvl_t.erase(ufvl_t.begin() + i);
+			ufvl_i.erase(ufvl_i.begin() + i);
+			if(it == ufvl.end()) break;
+			goto del_ufvl;
 		}
 		i++;
+	}
+	for(unsigned int i2 = 0; i2 < UFV_LENGTHS; i2++) {
+		i = 0;
+		for(vector<void*>::iterator it = ufv[0][i2].begin(); ; ++it) {
+			del_ufv:
+			if(it == ufv[0][i2].end()) {
+				break;
+			}
+			if(*it == object) {
+				it = ufv[0][i2].erase(it);
+				ufv_i[0][i2].erase(ufv_i[0][i2].begin() + i);
+				if(it == ufv[0][i2].end()) break;
+				goto del_ufv;
+			}
+			i++;
+		}
+	}
+}
+void Calculator::delUFV(ExpressionItem *object) {
+	int i = 0;
+	for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
+		del_ufvl:
+		if(it == ufvl.end()) {
+			break;
+		}
+		if(*it == object) {
+			it = ufvl.erase(it);
+			ufvl_t.erase(ufvl_t.begin() + i);
+			ufvl_i.erase(ufvl_i.begin() + i);
+			if(it == ufvl.end()) break;
+			goto del_ufvl;
+		}
+		i++;
+	}
+	int i3 = 0;
+	switch(object->type()) {
+		case TYPE_FUNCTION: {i3 = 1; break;}
+		case TYPE_UNIT: {i3 = 2; break;}
+		case TYPE_VARIABLE: {i3 = 3; break;}
+	}
+	for(unsigned int i2 = 0; i2 < UFV_LENGTHS; i2++) {
+		i = 0;
+		for(vector<void*>::iterator it = ufv[i3][i2].begin(); ; ++it) {
+			del_ufv:
+			if(it == ufv[i3][i2].end()) {
+				break;
+			}
+			if(*it == object) {
+				it = ufv[i3][i2].erase(it);
+				ufv_i[i3][i2].erase(ufv_i[i3][i2].begin() + i);
+				if(it == ufv[i3][i2].end()) break;
+				goto del_ufv;
+			}
+			i++;
+		}
 	}
 }
 Unit* Calculator::getUnit(string name_) {
@@ -1883,16 +1962,18 @@ Unit* Calculator::getCompositeUnit(string internal_name_) {
 	return NULL;
 }
 
-Variable* Calculator::addVariable(Variable *v, bool force) {
-	for(unsigned int i = 1; i <= v->countNames(); i++) {
-		v->setName(getName(v->getName(i).name, v, force), i);
+Variable* Calculator::addVariable(Variable *v, bool force, bool check_names) {
+	if(check_names) {
+		for(unsigned int i = 1; i <= v->countNames(); i++) {
+			v->setName(getName(v->getName(i).name, v, force), i);
+		}
 	}
 	if(!v->isLocal() && variables.size() > 0 && variables[variables.size() - 1]->isLocal()) {
 		variables.insert(variables.begin(), v);
 	} else {
 		variables.push_back(v);
 	}
-	variableNameChanged(v);
+	variableNameChanged(v, true);
 	for(vector<Variable*>::iterator it = deleted_variables.begin(); it != deleted_variables.end(); ++it) {
 		if(*it == v) {
 			deleted_variables.erase(it);
@@ -1904,7 +1985,7 @@ Variable* Calculator::addVariable(Variable *v, bool force) {
 	return v;
 }
 void Calculator::expressionItemDeactivated(ExpressionItem *item) {
-	delUFV((void*) item);
+	delUFV(item);
 }
 void Calculator::expressionItemActivated(ExpressionItem *item) {
 	ExpressionItem *item2 = getActiveExpressionItem(item);
@@ -1946,100 +2027,91 @@ void Calculator::expressionItemDeleted(ExpressionItem *item) {
 			break;
 		}		
 	}
-	delUFV((void*) item);
+	delUFV(item);
 }
-void Calculator::nameChanged(ExpressionItem *item) {
+void Calculator::nameChanged(ExpressionItem *item, bool new_item) {
 	if(!item->isActive() || item->countNames() == 0) return;
 	if(item->type() == TYPE_UNIT && ((Unit*) item)->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 		return;
 	}
-	unsigned int l, i = 0;
-	bool b = false;
-	delUFV((void*) item);
-	bool name_ins[item->countNames()];
-	for(unsigned int i = 0; i < item->countNames(); i++) {
-		name_ins[i] = false;
-	}
-	for(vector<void*>::iterator it = ufv.begin(); ; ++it) {
-		name_changed_loop:
-		l = 0;
-		if(it != ufv.end()) {
-			if(ufv_t[i] == 'v')
-				l = ((Variable*) (*it))->getName(ufv_i[i]).name.length();
-			else if(ufv_t[i] == 'f')
-				l = ((MathFunction*) (*it))->getName(ufv_i[i]).name.length();
-			else if(ufv_t[i] == 'u')
-				l = ((Unit*) (*it))->getName(ufv_i[i]).name.length();
-			else if(ufv_t[i] == 'p')
-				l = ((Prefix*) (*it))->shortName(false).length();
-			else if(ufv_t[i] == 'P')
-				l = ((Prefix*) (*it))->longName(false).length();				
-			else if(ufv_t[i] == 'q')
-				l = ((Prefix*) (*it))->unicodeName(false).length();
-		}
-		if(it == ufv.end()) {
-			for(unsigned int i2 = 0; i2 < item->countNames(); i2++) {
-				if(!name_ins[i2]) {
-					ufv.push_back((void*) item);
-					it = ufv.end();
-					switch(item->type()) {
-						case TYPE_VARIABLE: {ufv_t.push_back('v'); break;}
-						case TYPE_FUNCTION: {ufv_t.push_back('f'); break;}		
-						case TYPE_UNIT: {ufv_t.push_back('u'); break;}		
-					}
-					ufv_i.push_back(i2 + 1);
-					name_ins[i2] = true;
-					if(i2 == item->countNames() - 1) return;
-					--it;
-					goto name_changed_loop;
-					break;
+	unsigned int l2;
+	if(!new_item) delUFV(item);
+	for(unsigned int i2 = 1; i2 <= item->countNames(); i2++) {
+		l2 = item->getName(i2).name.length();
+		if(l2 > UFV_LENGTHS) {
+			unsigned int i = 0, l;
+			for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
+				if(it != ufvl.end()) {
+					if(ufvl_t[i] == 'v')
+						l = ((Variable*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'f')
+						l = ((MathFunction*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'u')
+						l = ((Unit*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'p')
+						l = ((Prefix*) (*it))->shortName(false).length();
+					else if(ufvl_t[i] == 'P')
+						l = ((Prefix*) (*it))->longName(false).length();				
+					else if(ufvl_t[i] == 'q')
+						l = ((Prefix*) (*it))->unicodeName(false).length();
 				}
-			}
-		} else {
-			for(unsigned int i2 = 0; i2 < item->countNames(); i2++) {	
-				if(!name_ins[i2] && (l < item->getName(i2 + 1).name.length() 
-				|| (item->type() == TYPE_VARIABLE && l == item->getName(i2 + 1).name.length() && ufv_t[i] == 'v')
-				|| (item->type() == TYPE_FUNCTION && l == item->getName(i2 + 1).name.length() && (ufv_t[i] != 'p' && ufv_t[i] != 'P' && ufv_t[i] != 'q'))
-				|| (item->type() == TYPE_UNIT && l == item->getName(i2 + 1).name.length() && (ufv_t[i] != 'p' && ufv_t[i] != 'P' && ufv_t[i] != 'q' && ufv_t[i] != 'f'))
-				)) {
-					it = ufv.insert(it, (void*) item);
+				if(it == ufvl.end()) {
+					ufvl.push_back((void*) item);
 					switch(item->type()) {
-						case TYPE_VARIABLE: {ufv_t.insert(ufv_t.begin() + i, 'v'); break;}
-						case TYPE_FUNCTION: {ufv_t.insert(ufv_t.begin() + i, 'f'); break;}		
-						case TYPE_UNIT: {ufv_t.insert(ufv_t.begin() + i, 'u'); break;}		
+						case TYPE_VARIABLE: {ufvl_t.push_back('v'); break;}
+						case TYPE_FUNCTION: {ufvl_t.push_back('f'); break;}		
+						case TYPE_UNIT: {ufvl_t.push_back('u'); break;}		
 					}
-					ufv_i.insert(ufv_i.begin() + i, i2 + 1);
-					name_ins[i2] = true;
-					b = true;
-					for(unsigned int i3 = 0; i3 < item->countNames(); i3++) {
-						if(!name_ins[i3]) {
-							b = false;
-							break;
+					ufvl_i.push_back(i2);
+					break;
+				} else {
+					if(l < l2 
+					|| (item->type() == TYPE_VARIABLE && l == l2 && ufvl_t[i] == 'v')
+					|| (item->type() == TYPE_FUNCTION && l == l2 && (ufvl_t[i] != 'p' && ufvl_t[i] != 'P' && ufvl_t[i] != 'q'))
+					|| (item->type() == TYPE_UNIT && l == l2 && (ufvl_t[i] != 'p' && ufvl_t[i] != 'P' && ufvl_t[i] != 'q' && ufvl_t[i] != 'f'))
+					) {
+						ufvl.insert(it, (void*) item);
+						switch(item->type()) {
+							case TYPE_VARIABLE: {ufvl_t.insert(ufvl_t.begin() + i, 'v'); break;}
+							case TYPE_FUNCTION: {ufvl_t.insert(ufvl_t.begin() + i, 'f'); break;}		
+							case TYPE_UNIT: {ufvl_t.insert(ufvl_t.begin() + i, 'u'); break;}		
 						}
+						ufvl_i.insert(ufvl_i.begin() + i, i2);
+						break;
 					}
-					if(b) return;
-					goto name_changed_loop;
+				}
+				i++;
+			}
+		} else if(l2 > 0) {
+			l2--;
+			switch(item->type()) {			
+				case TYPE_VARIABLE: {
+					ufv[3][l2].push_back((void*) item);
+					ufv_i[3][l2].push_back(i2);
 					break;
 				}
-			}
+				case TYPE_FUNCTION:  {
+					ufv[1][l2].push_back((void*) item);
+					ufv_i[1][l2].push_back(i2);
+					break;
+				}
+				case TYPE_UNIT:  {
+					ufv[2][l2].push_back((void*) item);
+					ufv_i[2][l2].push_back(i2);
+					break;
+				}
+			}			
 		}
-		i++;
 	}
 }
-void Calculator::variableNameChanged(Variable *v) {
-	nameChanged(v);
+void Calculator::variableNameChanged(Variable *v, bool new_item) {
+	nameChanged(v, new_item);
 }
-void Calculator::functionNameChanged(MathFunction *f) {
-	nameChanged(f);
+void Calculator::functionNameChanged(MathFunction *f, bool new_item) {
+	nameChanged(f, new_item);
 }
-void Calculator::unitNameChanged(Unit *u) {
-	nameChanged(u);
-}
-void Calculator::unitSingularChanged(Unit *u) {
-	unitNameChanged(u);
-}
-void Calculator::unitPluralChanged(Unit *u) {
-	unitNameChanged(u);
+void Calculator::unitNameChanged(Unit *u, bool new_item) {
+	nameChanged(u, new_item);
 }
 
 Variable* Calculator::getVariable(string name_) {
@@ -2074,16 +2146,18 @@ ExpressionItem* Calculator::addExpressionItem(ExpressionItem *item, bool force) 
 	}
 	return NULL;
 }
-MathFunction* Calculator::addFunction(MathFunction *f, bool force) {
-	for(unsigned int i = 1; i <= f->countNames(); i++) {
-		f->setName(getName(f->getName(i).name, f, force), i);
+MathFunction* Calculator::addFunction(MathFunction *f, bool force, bool check_names) {
+	if(check_names) {
+		for(unsigned int i = 1; i <= f->countNames(); i++) {
+			f->setName(getName(f->getName(i).name, f, force), i);
+		}
 	}
 	if(!f->isLocal() && functions.size() > 0 && functions[functions.size() - 1]->isLocal()) {
 		functions.insert(functions.begin(), f);
 	} else {
 		functions.push_back(f);
 	}
-	functionNameChanged(f);
+	functionNameChanged(f, true);
 	for(vector<MathFunction*>::iterator it = deleted_functions.begin(); it != deleted_functions.end(); ++it) {
 		if(*it == f) {
 			deleted_functions.erase(it);
@@ -2094,8 +2168,8 @@ MathFunction* Calculator::addFunction(MathFunction *f, bool force) {
 	f->setChanged(false);
 	return f;
 }
-DataSet* Calculator::addDataSet(DataSet *dc, bool force) {
-	addFunction(dc, force);
+DataSet* Calculator::addDataSet(DataSet *dc, bool force, bool check_names) {
+	addFunction(dc, force, check_names);
 	data_sets.push_back(dc);
 	return dc;
 }
@@ -2341,7 +2415,9 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 	int chars_left = 0;
 	int name_length = 0, name_length_old = 0;
 	int found_function_index = 0, found_function_name_length = 0;
-	int ufv_index = 0;
+	int ufv_index = 0, vt2;
+	char ufvt;
+	void *object;
 	bool case_sensitive = false;
 	MathFunction *f = NULL;
 	Variable *v = NULL;
@@ -2523,62 +2599,150 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 				}
 			}
 		} else if(po.base >= 2 && po.base <= 10 && is_not_in(NUMBERS NOT_IN_NAMES, str[str_index])) {
-			found_function_index = -1;
+			const string *found_function_name = NULL;
 			found_function_name_length = -1;
-			for(ufv_index = 0; ufv_index < (int) ufv.size(); ufv_index++) {
+			void *found_function = NULL;
+			vt2 = -1;
+			unsigned int vt3 = 0;
+			if(chars_left <= UFV_LENGTHS) {
+				ufv_index = chars_left - 1;
+				vt2 = 0;
+			} else {
+				ufv_index = 0;
+			}
+			while(ufv_index >= 0) {
 				name = NULL;
 				p = NULL;
-				switch(ufv_t[ufv_index]) {
-					case 'v': {
-						if(po.variables_enabled) {
-							name = &((ExpressionItem*) ufv[ufv_index])->getName(ufv_i[ufv_index]).name;
-							case_sensitive = ((ExpressionItem*) ufv[ufv_index])->getName(ufv_i[ufv_index]).case_sensitive;
+				switch(vt2) {
+					case -1: {
+						if(ufv_index < (int) ufvl.size()) {
+							switch(ufvl_t[ufv_index]) {
+								case 'v': {
+									if(po.variables_enabled) {
+										name = &((ExpressionItem*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).name;
+										case_sensitive = ((ExpressionItem*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).case_sensitive;
+									}
+									break;
+								}
+								case 'f': {
+									if(po.functions_enabled && found_function_index < 0) {
+										name = &((ExpressionItem*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).name;
+										case_sensitive = ((ExpressionItem*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).case_sensitive;
+									}
+									break;
+								}
+								case 'u': {
+									if(po.units_enabled) {
+										name = &((ExpressionItem*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).name;
+										case_sensitive = ((ExpressionItem*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).case_sensitive;
+									}
+									break;
+								}
+								case 'p': {
+									if(!p && po.units_enabled) {
+										name = &((Prefix*) ufvl[ufv_index])->shortName();
+									}
+									case_sensitive = true;
+									break;
+								}
+								case 'P': {
+									if(!p && po.units_enabled) {
+										name = &((Prefix*) ufvl[ufv_index])->longName();
+									}
+									case_sensitive = false;
+									break;
+								}
+								case 'q': {
+									if(!p && po.units_enabled) {
+										name = &((Prefix*) ufvl[ufv_index])->unicodeName();
+									}
+									case_sensitive = true;
+									break;
+								}
+							}
+							ufvt = ufvl_t[ufv_index];
+							object = ufvl[ufv_index];
+							ufv_index++;
+							break;
+						} else {
+							vt2 = 0;
+							vt3 = 0;
+							ufv_index = UFV_LENGTHS - 1;
 						}
-						break;
 					}
-					case 'f': {
-						if(po.functions_enabled && found_function_index < 0) {
-							name = &((ExpressionItem*) ufv[ufv_index])->getName(ufv_i[ufv_index]).name;
-							case_sensitive = ((ExpressionItem*) ufv[ufv_index])->getName(ufv_i[ufv_index]).case_sensitive;
+					case 0: {
+						if(po.units_enabled && vt3 < ufv[vt2][ufv_index].size()) {
+							object = ufv[vt2][ufv_index][vt3];
+							switch(ufv_i[vt2][ufv_index][vt3]) {
+								case 1: {
+									ufvt = 'P';
+									name = &((Prefix*) object)->longName();
+									case_sensitive = false;
+									break;
+								}
+								case 2: {
+									ufvt = 'p';
+									name = &((Prefix*) object)->shortName();
+									case_sensitive = true;
+									break;
+								}
+								case 3: {
+									ufvt = 'q';
+									name = &((Prefix*) object)->unicodeName();
+									case_sensitive = true;
+									break;
+								}
+							}
+							vt3++;
+							break;
 						}
-						break;
+						vt2 = 1;
+						vt3 = 0;
 					}
-					case 'u': {
-						if(po.units_enabled) {
-							name = &((ExpressionItem*) ufv[ufv_index])->getName(ufv_i[ufv_index]).name;
-							case_sensitive = ((ExpressionItem*) ufv[ufv_index])->getName(ufv_i[ufv_index]).case_sensitive;
+					case 1: {
+						if(po.functions_enabled && vt3 < ufv[vt2][ufv_index].size()) {
+							object = ufv[vt2][ufv_index][vt3];
+							ufvt = 'f';
+							name = &((MathFunction*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
+							case_sensitive = &((MathFunction*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
+							vt3++;
+							break;
 						}
-						break;
+						vt2 = 2;
+						vt3 = 0;
 					}
-					case 'p': {
-						if(!p && po.units_enabled) {
-							name = &((Prefix*) ufv[ufv_index])->shortName();
+					case 2: {
+						if(po.units_enabled && vt3 < ufv[vt2][ufv_index].size()) {
+							object = ufv[vt2][ufv_index][vt3];
+							ufvt = 'u';
+							name = &((Unit*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
+							case_sensitive = &((Unit*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
+							vt3++;
+							break;
 						}
-						case_sensitive = true;
-						break;
+						vt2 = 3;
+						vt3 = 0;
 					}
-					case 'P': {
-						if(!p && po.units_enabled) {
-							name = &((Prefix*) ufv[ufv_index])->longName();
+					case 3: {
+						if(po.units_enabled && vt3 < ufv[vt2][ufv_index].size()) {
+							object = ufv[vt2][ufv_index][vt3];
+							ufvt = 'v';
+							name = &((Variable*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
+							case_sensitive = &((Variable*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
+							vt3++;
+							break;
 						}
-						case_sensitive = false;
-						break;
-					}
-					case 'q': {
-						if(!p && po.units_enabled) {
-							name = &((Prefix*) ufv[ufv_index])->unicodeName();
-						}
-						case_sensitive = true;
-						break;
+						vt2 = 0;
+						vt3 = 0;
+						ufv_index--;
 					}
 				}
 				if(name) name_length = name->length();
 				if(name && (int) name_length >= found_function_name_length && ((case_sensitive && compare_name(*name, str, name_length, str_index, chars_left)) || (!case_sensitive && compare_name_no_case(*name, str, name_length, str_index, chars_left)))) {
 					moved_forward = false;
-					switch(ufv_t[ufv_index]) {
-						case 'w': {}
+					switch(ufvt) {
 						case 'v': {
-							v = (Variable*) ufv[ufv_index];
+							v = (Variable*) object;
 							stmp = LEFT_PARENTHESIS_CH;
 							stmp += ID_WRAP_LEFT_CH;
 							stmp += i2s(addId(v));
@@ -2589,16 +2753,16 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 							moved_forward = true;
 							break;
 						}
-						case 'g': {}
 						case 'f': {
 							i5 = str.find_first_not_of(SPACES, str_index + name_length);
 							if(i5 == (int) string::npos || str[i5] != LEFT_PARENTHESIS_CH) {
-								found_function_index = ufv_index;
+								found_function = object;
+								found_function_name = name;
 								found_function_name_length = name_length;
 								break;
 							}
 							set_function:
-							f = (MathFunction*) ufv[ufv_index];
+							f = (MathFunction*) object;
 							b = false;
 							i4 = -1;
 							if(f->args() == 0) {
@@ -2715,12 +2879,9 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 							}
 							break;
 						}
-						case 'U': {}
-						case 'u': {}
-						case 'z': {}
-						case 'Y': {
+						case 'u': {
 							replace_text_by_unit_place:
-							u = (Unit*) ufv[ufv_index];
+							u = (Unit*) object;
 							if((int) str.length() > str_index + name_length && is_in(NUMBERS, str[str_index + name_length]) && !u->isCurrency()) {
 								str.insert(str_index + name_length, 1, POWER_CH);
 							}
@@ -2741,15 +2902,15 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 							if(str_index + name_length == (int) str.length() || is_in(NOT_IN_NAMES, str[str_index + name_length])) {
 								break;
 							}
-							p = (Prefix*) ufv[ufv_index];
+							p = (Prefix*) object;
 							str_index += name_length;
 							chars_left = str.length() - str_index;
 							name_length_old = name_length;
-							for(int ufv_index2 = 0; ufv_index2 < (int) ufv.size(); ufv_index2++) {
+							for(int ufv_index2 = 0; ufv_index2 < (int) ufvl.size(); ufv_index2++) {
 								name = NULL;
-								switch(ufv_t[ufv_index2]) {
+								switch(ufvl_t[ufv_index2]) {
 									case 'u': {
-										name = &((Unit*) ufv[ufv_index2])->getName(ufv_i[ufv_index2]).name;
+										name = &((Unit*) ufvl[ufv_index2])->getName(ufvl_i[ufv_index2]).name;
 										break;
 									}
 								}
@@ -2757,8 +2918,20 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 								if(name && (*name)[0] == str[str_index] && (name_length == 1 || (name_length <= chars_left && (*name)[1] == str[str_index + 1] && *name == str.substr(str_index, name_length)))) {
 									str.erase(str_index - name_length_old, name_length_old);
 									str_index -= name_length_old;
-									ufv_index = ufv_index2;
+									object = ufvl[ufv_index2];
 									goto replace_text_by_unit_place;
+								}
+							}
+							for(int index = UFV_LENGTHS - 1; index >= 0; index--) {
+								for(int ufv_index2 = 0; ufv_index2 < (int) ufv[2][index].size(); ufv_index2++) {
+									name = &((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).name;
+									name_length = name->length();
+									if((*name)[0] == str[str_index] && (name_length == 1 || (name_length <= chars_left && (*name)[1] == str[str_index + 1] && *name == str.substr(str_index, name_length)))) {
+										str.erase(str_index - name_length_old, name_length_old);
+										str_index -= name_length_old;
+										object = ufv[2][index][ufv_index2];
+										goto replace_text_by_unit_place;
+									}
 								}
 							}
 							str_index -= name_length_old;
@@ -2772,9 +2945,9 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 					}
 				}
 			}
-			if(!moved_forward && found_function_index >= 0) {
-				ufv_index = found_function_index;
-				name = &((ExpressionItem*) ufv[ufv_index])->name();
+			if(!moved_forward && found_function) {
+				object = found_function;
+				name = found_function_name;
 				name_length = found_function_name_length;
 				goto set_function;
 			}
@@ -3386,7 +3559,7 @@ string Calculator::getName(string name, ExpressionItem *object, bool force, bool
 	return stmp;
 }
 
-bool Calculator::loadGlobalDefinitions() {
+/*bool Calculator::loadGlobalDefinitions() {
 	string dir = PACKAGE_DATA_DIR;
 	string filename;
 	dir += "/qalculate/";
@@ -3397,6 +3570,37 @@ bool Calculator::loadGlobalDefinitions() {
 	}	
 	filename = dir;
 	filename += "units.xml";	
+	if(!loadDefinitions(filename.c_str(), false)) {
+		return false;
+	}
+	filename = dir;
+	filename += "functions.xml";	
+	if(!loadDefinitions(filename.c_str(), false)) {
+		return false;
+	}
+	filename = dir;
+	filename += "datasets.xml";	
+	if(!loadDefinitions(filename.c_str(), false)) {
+		return false;
+	}
+	filename = dir;
+	filename += "variables.xml";
+	if(!loadDefinitions(filename.c_str(), false)) {
+		return false;
+	}
+	return true;
+}*/
+bool Calculator::loadGlobalDefinitions() {
+	string dir = PACKAGE_DATA_DIR;
+	string filename;
+	dir += "/qalculate/";
+	filename = dir;
+	filename += "prefixes.xml";
+	if(!loadDefinitions(filename.c_str(), false)) {
+		return false;
+	}	
+	filename = dir;
+	filename += "units.xml";
 	if(!loadDefinitions(filename.c_str(), false)) {
 		return false;
 	}
@@ -3633,7 +3837,7 @@ bool Calculator::loadLocalDefinitions() {
 						item->addName(ename);\
 					}
 					
-#define BUILTIN_NAMES_1			item->setRegistered(false);\
+#define BUILTIN_NAMES_1			if(!is_user_defs) item->setRegistered(false);\
 					bool has_ref_name;\
 					for(unsigned int i = 1; i <= item->countNames(); i++) {\
 						if(item->getName(i).reference) {\
@@ -3656,7 +3860,7 @@ bool Calculator::loadLocalDefinitions() {
 					}\
 					item->clearNames();
 
-#define BUILTIN_UNIT_NAMES_1		item->setRegistered(false);\
+#define BUILTIN_UNIT_NAMES_1		if(!is_user_defs) item->setRegistered(false);\
 					bool has_ref_name;\
 					for(unsigned int i = 1; i <= item->countNames(); i++) {\
 						if(item->getName(i).reference) {\
@@ -3679,8 +3883,8 @@ bool Calculator::loadLocalDefinitions() {
 					}\
 					item->clearNames(); 
 					
-#define BUILTIN_NAMES_2			item->setRegistered(true);\
-					nameChanged(item);
+#define BUILTIN_NAMES_2			if(!is_user_defs) {item->setRegistered(true);\
+					nameChanged(item);}
 					
 #define ITEM_CLEAR_NAMES		for(unsigned int i = 0; i < 10; i++) {\
 						if(!names[i].name.empty()) {\
@@ -3832,7 +4036,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				} else {
 					name = "";
 				}
-				XML_GET_FALSE_FROM_PROP(cur, "active", active)
+				XML_GET_FALSE_FROM_PROP(cur, "active", active)				
 				f = new UserFunction(category, "", "", is_user_defs, 0, "", "", 0, active);
 				item = f;
 				done_something = true;
@@ -3954,7 +4158,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				ITEM_SET_NAME_3
 				ITEM_SET_DTH
 				f->setChanged(false);
-				addFunction(f);
+				addFunction(f, true, is_user_defs);
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "dataset") || !xmlStrcmp(cur->name, (const xmlChar*) "builtin_dataset")) {
 				bool builtin = !xmlStrcmp(cur->name, (const xmlChar*) "builtin_dataset");
 				XML_GET_FALSE_FROM_PROP(cur, "active", active)
@@ -4143,13 +4347,17 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					 else ITEM_READ_DTH
 					child = child->next;
 				}
-				if(builtin) BUILTIN_NAMES_1
+				if(builtin) {
+					BUILTIN_NAMES_1
+				}
 				ITEM_SET_NAME_2
 				ITEM_SET_NAME_3
 				ITEM_SET_DTH
-				if(builtin) BUILTIN_NAMES_2
+				if(builtin) {
+					BUILTIN_NAMES_2
+				}
 				dc->setChanged(builtin && is_user_defs);
-				if(!builtin) addDataSet(dc);
+				if(!builtin) addDataSet(dc, true, is_user_defs);
 				done_something = true;
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "builtin_function")) {
 				XML_GET_STRING_FROM_PROP(cur, "name", name)
@@ -4238,7 +4446,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					if(v->getName(i).name == "y") {v_y->destroy(); v_y = (UnknownVariable*) v; break;}
 					if(v->getName(i).name == "z") {v_z->destroy(); v_z = (UnknownVariable*) v; break;}
 				}
-				addVariable(v);
+				addVariable(v, true, is_user_defs);
 				v->setChanged(false);
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "variable")) {
 				if(version_numbers[1] < 6 || version_numbers[2] < 3) {
@@ -4270,7 +4478,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				ITEM_SET_NAME_2
 				ITEM_SET_NAME_3
 				ITEM_SET_DTH
-				addVariable(v);
+				addVariable(v, true, is_user_defs);
 				item->setChanged(false);
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "builtin_variable")) {
 				XML_GET_STRING_FROM_PROP(cur, "name", name)
@@ -4335,7 +4543,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					ITEM_SET_NAME_2
 					ITEM_SET_NAME_3
 					ITEM_SET_DTH
-					addUnit(u);
+					addUnit(u, true, is_user_defs);
 					u->setChanged(false);
 					done_something = true;
 				} else if(type == "alias") {	
@@ -4426,11 +4634,11 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						}
 						ITEM_SET_NAME_2
 						ITEM_SET_NAME_3
-						addUnit(au);
+						addUnit(au, true, is_user_defs);
 						au->setChanged(false);
 						done_something = true;	
 					}
-				} else if(type == "composite") {	
+				} else if(type == "composite") {
 					if(version_numbers[1] < 6 || version_numbers[2] < 3) {
 						XML_GET_STRING_FROM_PROP(cur, "name", name)
 					} else {
@@ -4450,7 +4658,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							exponent = 1;							
 							while(child2 != NULL) {
 								if(!xmlStrcmp(child2->name, (const xmlChar*) "unit")) {
-									XML_GET_STRING_FROM_TEXT(child2, base);
+									XML_GET_STRING_FROM_TEXT(child2, base);									
 									u = getUnit(base);
 									if(!u) {
 										u = getCompositeUnit(base);
@@ -4508,7 +4716,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						ITEM_SET_NAME_2
 						ITEM_SET_NAME_3
 						ITEM_SET_DTH
-						addUnit(cu);
+						addUnit(cu, true, is_user_defs);
 						cu->setChanged(false);
 						done_something = true;
 					} else {
@@ -4595,7 +4803,9 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				done_something = false;
 			}
 		}
-		if(in_unfinished) break;
+		if(in_unfinished) {
+			break;
+		}
 		while(!nodes.empty() && nodes.back().empty()) {
 			unsigned int cat_i = category.rfind("/");
 			if(cat_i == string::npos) {

@@ -11,6 +11,11 @@
   <property name="modal">True</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
+  <property name="decorated">True</property>
+  <property name="skip_taskbar_hint">False</property>
+  <property name="skip_pager_hint">False</property>
+  <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
+  <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="has_separator">False</property>
 
   <child internal-child="vbox">
@@ -25,14 +30,28 @@
 	  <property name="layout_style">GTK_BUTTONBOX_END</property>
 
 	  <child>
-	    <widget class="GtkButton" id="button3">
+	    <widget class="GtkButton" id="variable_edit_button_help">
 	      <property name="visible">True</property>
-	      <property name="tooltip" translatable="yes">Do not create/modify this variable</property>
+	      <property name="can_default">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label">gtk-help</property>
+	      <property name="use_stock">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="focus_on_click">True</property>
+	      <property name="response_id">-11</property>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkButton" id="variable_edit_button_cancel">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Accept the creation/modification of this variable</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-cancel</property>
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-6</property>
 	    </widget>
 	  </child>
@@ -40,12 +59,12 @@
 	  <child>
 	    <widget class="GtkButton" id="variable_edit_button_ok">
 	      <property name="visible">True</property>
-	      <property name="tooltip" translatable="yes">Accept the creation/modification of this variable</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-ok</property>
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-5</property>
 	    </widget>
 	  </child>
@@ -145,6 +164,10 @@
 			  <property name="yalign">0.5</property>
 			  <property name="xscale">0</property>
 			  <property name="yscale">1</property>
+			  <property name="top_padding">0</property>
+			  <property name="bottom_padding">0</property>
+			  <property name="left_padding">0</property>
+			  <property name="right_padding">0</property>
 
 			  <child>
 			    <widget class="GtkHBox" id="hbox55">
@@ -180,6 +203,7 @@
 				  <property name="label" translatable="yes">Names Details</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
+				  <property name="focus_on_click">True</property>
 				  <signal name="clicked" handler="on_variable_edit_button_names_clicked" last_modification_time="Fri, 06 Aug 2004 14:46:46 GMT"/>
 				</widget>
 				<packing>
@@ -280,6 +304,10 @@
 	      <property name="yalign">0.5</property>
 	      <property name="xscale">0</property>
 	      <property name="yscale">1</property>
+	      <property name="top_padding">0</property>
+	      <property name="bottom_padding">0</property>
+	      <property name="left_padding">0</property>
+	      <property name="right_padding">0</property>
 
 	      <child>
 		<widget class="GtkCheckButton" id="variable_edit_checkbutton_exact">
@@ -289,6 +317,7 @@
 		  <property name="label" translatable="yes">value is exact</property>
 		  <property name="use_underline">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
 		  <property name="active">True</property>
 		  <property name="inconsistent">False</property>
 		  <property name="draw_indicator">True</property>

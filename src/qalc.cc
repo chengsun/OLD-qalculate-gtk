@@ -174,10 +174,6 @@ void set_assumption(const string &str, bool first_of_two = false) {
 	}
 }
 
-#define SET_BOOL_D(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v; result_display_updated();}}
-#define SET_BOOL_E(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v; expression_format_updated();}}
-
-
 vector<const string*> matches;
 
 #ifdef __cplusplus
@@ -313,9 +309,282 @@ int countRows(const char *str, int cols) {
 #	define INIT_SCREEN_CHECK
 #endif
 
+#define SET_BOOL_D(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v; result_display_updated();}}
+#define SET_BOOL_E(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v; expression_format_updated();}}
+
+void set_option(string str) {
+	remove_blank_ends(str);
+	string svalue, svar;
+	unsigned int index;
+	if((index = str.find_first_of(SPACES)) != string::npos) {
+		svalue = str.substr(index + 1, str.length() - (index + 1));
+		remove_blank_ends(svalue);
+	}
+	svar = str.substr(0, index);
+	remove_blank_ends(svar);
+	gsub("_", " ", svar);
+	set_option_place:
+	if(EQUALS_IGNORECASE_AND_LOCAL(svar, "base", _("base")) || EQUALS_IGNORECASE_AND_LOCAL(svar, "input base", _("input base")) || EQUALS_IGNORECASE_AND_LOCAL(svar, "output base", _("output base"))) {
+		int v = 0;
+		bool b_in = EQUALS_IGNORECASE_AND_LOCAL(svar, "input base", _("input base"));
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "roman", _("roman"))) v = BASE_ROMAN_NUMERALS;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "time", _("time"))) {if(b_in) v = 0; else v = BASE_TIME;}
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "hex", _("hex")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "hexadecimal", _("hexadecimal"))) v = BASE_HEXADECIMAL;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "bin", _("bin")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "binary", _("binary"))) v = BASE_BINARY;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "oct", _("oct")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "octal", _("octal"))) v = BASE_HEXADECIMAL;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "dec", _("dec")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "decimal", _("decimal"))) v = BASE_DECIMAL;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "sex", _("sex")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "sexagesimal", _("sexagesimal"))) {if(b_in) v = 0; else v = BASE_SEXAGESIMAL;}
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+			if((v < 2 || v > 36) && (b_in || v != 60)) {
+				v = 0;
+			}
+		}
+		if(v == 0) {
+			PUTS_UNICODE(_("Illegal base."));
+		} else if(b_in) {
+			evalops.parse_options.base = v;
+			expression_format_updated();
+		} else {
+			printops.base = v;
+			result_format_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "assumptions", _("assumptions"))) {
+		unsigned int i = svalue.find_first_of(SPACES);
+		if(i != string::npos) {
+			set_assumption(svalue.substr(i + 1, svalue.length() - (i + 1)), true);
+			set_assumption(svalue.substr(0, i), false);
+		} else {
+			set_assumption(svalue, false);
+		}
+		expression_format_updated();
+	}
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "all prefixes", _("all prefixes"))) SET_BOOL_D(printops.use_all_prefixes)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "complex numbers", _("complex numbers"))) SET_BOOL_E(evalops.allow_complex)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "excessive parenthises", _("excessive parenthesis"))) SET_BOOL_D(printops.excessive_parenthesis)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "functions", _("functions"))) SET_BOOL_E(evalops.parse_options.functions_enabled)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "infinite numbers", _("infinite numbers"))) SET_BOOL_E(evalops.allow_infinite)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "show negative exponents", _("show negative exponents"))) SET_BOOL_D(printops.negative_exponents)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "assume nonzero denominators", _("assume nonzero denominators"))) SET_BOOL_E(evalops.assume_denominators_nonzero)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "prefixes", _("prefixes"))) SET_BOOL_D(printops.use_unit_prefixes)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "denominator prefixes", _("denominator prefixes"))) SET_BOOL_D(printops.use_denominator_prefix)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "place units separately", _("place units separately"))) SET_BOOL_D(printops.place_units_separately)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "calculate variables", _("calculate variables"))) SET_BOOL_E(evalops.calculate_variables)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "calculate functions", _("calculate functions"))) SET_BOOL_E(evalops.calculate_functions)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "sync units", _("sync units"))) SET_BOOL_E(evalops.sync_units)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "round to even", _("round to even"))) SET_BOOL_D(printops.round_halfway_to_even)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn", _("rpn"))) SET_BOOL_E(evalops.parse_options.rpn)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "short multiplication", _("short multiplication"))) SET_BOOL_D(printops.short_multiplication)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "spacious", _("spacious"))) SET_BOOL_D(printops.spacious)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unicode", _("unicode"))) {
+		int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {printops.use_unicode_signs = v; result_display_updated();}
+		enable_unicode = -1;
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "units", _("units"))) SET_BOOL_E(evalops.parse_options.units_enabled)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unknowns", _("unknowns"))) SET_BOOL_E(evalops.parse_options.unknowns_enabled)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "variables", _("variables"))) SET_BOOL_E(evalops.parse_options.variables_enabled)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "abbreviations", _("abbreviations"))) SET_BOOL_D(printops.abbreviate_names)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "show ending zeroes", _("show ending zeroes"))) SET_BOOL_D(printops.show_ending_zeroes)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "indicate infinite series", _("indicate infinite series"))) SET_BOOL_D(printops.indicate_infinite_series)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "angle unit", _("angle unit"))) {
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "rad", _("rad")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "radians", _("radians"))) v = RADIANS;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "deg", _("deg")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "degrees", _("degrees"))) v = DEGREES;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "gra", _("gra")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "gradians", _("gradians"))) v = GRADIANS;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v < 0 || v > 2) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			evalops.angle_unit = (AngleUnit) v;
+			expression_format_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "multiplication sign", _("multiplication sign"))) {
+		int v = -1;
+		if(svalue == SIGN_MULTIDOT || svalue == ".") v = MULTIPLICATION_SIGN_DOT;
+		else if(svalue == SIGN_MULTIPLICATION || svalue == "x") v = MULTIPLICATION_SIGN_X;
+		else if(svalue == "*") v = MULTIPLICATION_SIGN_ASTERISK;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v < 0 || v > 2) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			printops.multiplication_sign = (MultiplicationSign) v;
+			result_display_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "division sign", _("division sign"))) {
+		int v = -1;
+		if(svalue == SIGN_DIVISION_SLASH) v = DIVISION_SIGN_DIVISION_SLASH;
+		else if(svalue == SIGN_DIVISION) v = DIVISION_SIGN_DIVISION;
+		else if(svalue == "/") v = DIVISION_SIGN_SLASH;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v < 0 || v > 2) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			printops.division_sign = (DivisionSign) v;
+			result_display_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "approximation", _("approximation"))) {
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exact", _("exact"))) v = APPROXIMATION_EXACT;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "try exact", _("try exact"))) v = APPROXIMATION_TRY_EXACT;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "approximate", _("approximate"))) v = APPROXIMATION_APPROXIMATE;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v < 0 || v > 2) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			evalops.approximation = (ApproximationMode) v;
+			expression_format_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "autoconversion", _("autoconversion"))) {
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = POST_CONVERSION_NONE;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "best", _("best"))) v = POST_CONVERSION_BEST;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "base", _("base"))) v = POST_CONVERSION_BASE;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v < 0 || v > 2) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			evalops.auto_post_conversion = (AutoPostConversion) v;
+			expression_format_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "exact", _("exact"))) {
+		int v = s2b(svalue); 
+		if(v < 0) {
+			PUTS_UNICODE(_("Illegal value")); 
+		} else if(v > 0) {
+			evalops.approximation = APPROXIMATION_EXACT; 
+			expression_format_updated();
+		} else {
+			evalops.approximation = APPROXIMATION_TRY_EXACT; 
+			expression_format_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "save mode", _("save mode"))) {
+		int v = s2b(svalue); 
+		if(v < 0) {
+			PUTS_UNICODE(_("Illegal value")); 
+		} else if(v > 0) {
+			save_mode_on_exit = true;
+		} else {
+			save_mode_on_exit = false;
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "save definitions", _("save definitions"))) {
+		int v = s2b(svalue); 
+		if(v < 0) {
+			PUTS_UNICODE(_("Illegal value")); 
+		} else if(v > 0) {
+			save_defs_on_exit = true;
+		} else {
+			save_defs_on_exit = false;
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "exp mode", _("exp mode"))) {
+		int v = -2;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = EXP_NONE;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "auto", _("auto"))) v = EXP_PRECISION;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "pure", _("pure"))) v = EXP_PURE;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "scientific", _("scientific"))) v = EXP_SCIENTIFIC;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+			if(v < 0) v = -2;
+		}
+		if(v <= -2) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			printops.min_exp = v;
+			result_format_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "precision", _("precision"))) {
+		int v = 0;
+		if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
+		if(v < 1) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			CALCULATOR->setPrecision(v);
+			expression_format_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "max decimals", _("max decimals"))) {
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = -1;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
+		if(v < 0) {
+			printops.use_max_decimals = false;
+			result_format_updated();
+		} else {
+			printops.max_decimals = v;
+			printops.use_max_decimals = true;
+			result_format_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "min decimals", _("min decimals"))) {
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = -1;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
+		if(v < 0) {
+			printops.min_decimals = 0;
+			printops.use_min_decimals = false;
+			result_format_updated();
+		} else {
+			printops.min_decimals = v;
+			printops.use_min_decimals = true;
+			result_format_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "fractions", _("fractions"))) {
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = FRACTION_DECIMAL;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exact", _("exact"))) v = FRACTION_DECIMAL_EXACT;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = FRACTION_FRACTIONAL;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "combined", _("combined"))) v = FRACTION_COMBINED;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v < 0 || v > 3) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			printops.number_fraction_format = (NumberFractionFormat) v;
+			result_format_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "read precision", _("read precision"))) {
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = DONT_READ_PRECISION;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "always", _("always"))) v = ALWAYS_READ_PRECISION;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "when decimals", _("when decimals")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = READ_PRECISION_WHEN_DECIMALS;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v < 0 || v > 2) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			evalops.parse_options.read_precision = (ReadPrecisionMode) v;
+			expression_format_updated();
+		}
+	} else {
+		if(index != string::npos) {
+			if((index = svalue.find_first_of(SPACES)) != string::npos) {
+				str = svalue;
+				svalue = str.substr(index + 1, str.length() - (index + 1));
+				remove_blank_ends(svalue);
+				svar += " ";
+				str = str.substr(0, index);
+				remove_blank_ends(str);
+				svar += str;
+				gsub("_", " ", svar);
+				goto set_option_place;
+			}
+		}
+		PUTS_UNICODE(_("Unrecognized option."));
+	}
+}
+
 int main (int argc, char *argv[]) {
 
 	string calc_arg;
+	vector<string> set_option_strings;
 	bool calc_arg_begun = false;
 	for(int i = 1; i < argc; i++) {
 		if(calc_arg_begun) {
@@ -325,14 +594,23 @@ int main (int argc, char *argv[]) {
 			PUTS_UNICODE(_("usage: qalc [options] [expression]"));
 			printf("\n");
 			PUTS_UNICODE(_("where options are:"));
-			printf("\n-/+u8\t");
+			fputs("\n-/+u8\n", stdout);
 			PUTS_UNICODE(_("turn on/off unicode support"));
-			printf("\n");
+			fputs("\n-set", stdout); fputs(" \"", stdout); FPUTS_UNICODE(_("OPTION"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("VALUE"), stdout); fputs("\"\n", stdout);
+			PUTS_UNICODE(_("as set command in interactive program session (ex. -set \"base 16\")"));
+			puts("");
 			return 0;
 		} else if(!calc_arg_begun && strcmp(argv[i], "-u8") == 0) {
 			enable_unicode = 1;
 		} else if(!calc_arg_begun && strcmp(argv[i], "+u8") == 0) {
 			enable_unicode = 0;
+		} else if(!calc_arg_begun && (strcmp(argv[i], "-set") == 0 || strcmp(argv[i], "--set") == 0)) {
+			i++;
+			if(i < argc) {
+				set_option_strings.push_back(argv[i]);
+			} else {
+				puts(_("No option and value specified for set command."));
+			}
 		} else {
 			if(strlen(argv[i]) >= 2 && ((argv[i][0] == '\"' && argv[i][strlen(argv[i] - 1)] == '\"') || (argv[i][0] == '\'' && argv[i][strlen(argv[i] - 1)] == '\''))) {
 				calc_arg += argv[i] + 1;
@@ -357,6 +635,11 @@ int main (int argc, char *argv[]) {
 
 	//load application specific preferences
 	load_preferences();
+
+	for(unsigned int i = 0; i < set_option_strings.size(); i++) {
+		set_option(set_option_strings[i]);
+	}
+
 	if(enable_unicode >= 0) {
 		if(printops.use_unicode_signs == enable_unicode) {
 			enable_unicode = -1;
@@ -450,8 +733,8 @@ int main (int argc, char *argv[]) {
 	rl_bind_key('\t', rlcom_tab);
 #endif
 	
-	string svar, svalue, scom;
-	unsigned int index, slen, ispace;
+	string scom;
+	unsigned int slen, ispace;
 	
 	while(true) {
 #ifdef HAVE_LIBREADLINE
@@ -493,273 +776,7 @@ int main (int argc, char *argv[]) {
 		}
 		if(EQUALS_IGNORECASE_AND_LOCAL(scom, "set", _("set"))) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
-			remove_blank_ends(str);
-			svalue = "";
-			if((index = str.find_first_of(SPACES)) != string::npos) {
-				svalue = str.substr(index + 1, str.length() - (index + 1));
-				remove_blank_ends(svalue);
-			}
-			svar = str.substr(0, index);
-			remove_blank_ends(svar);
-			gsub("_", " ", svar);
-			set_option:
-			if(EQUALS_IGNORECASE_AND_LOCAL(svar, "base", _("base")) || EQUALS_IGNORECASE_AND_LOCAL(svar, "input base", _("input base")) || EQUALS_IGNORECASE_AND_LOCAL(svar, "output base", _("output base"))) {
-				set_base:
-				int v = 0;
-				bool b_in = EQUALS_IGNORECASE_AND_LOCAL(svar, "input base", _("input base"));
-				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "roman", _("roman"))) v = BASE_ROMAN_NUMERALS;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "time", _("time"))) {if(b_in) v = 0; else v = BASE_TIME;}
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "hex", _("hex")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "hexadecimal", _("hexadecimal"))) v = BASE_HEXADECIMAL;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "bin", _("bin")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "binary", _("binary"))) v = BASE_BINARY;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "oct", _("oct")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "octal", _("octal"))) v = BASE_HEXADECIMAL;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "dec", _("dec")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "decimal", _("decimal"))) v = BASE_DECIMAL;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "sex", _("sex")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "sexagesimal", _("sexagesimal"))) {if(b_in) v = 0; else v = BASE_SEXAGESIMAL;}
-				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
-					v = s2i(svalue);
-					if((v < 2 || v > 36) && (b_in || v != 60)) {
-						v = 0;
-					}
-				}
-				if(v == 0) {
-					PUTS_UNICODE(_("Illegal base."));
-				} else if(b_in) {
-					evalops.parse_options.base = v;
-					expression_format_updated();
-				} else {
-					printops.base = v;
-					result_format_updated();
-				}
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "assumptions", _("assumptions"))) {
-				set_assumptions:
-				unsigned int i = svalue.find_first_of(SPACES);
-				if(i != string::npos) {
-					set_assumption(svalue.substr(i + 1, svalue.length() - (i + 1)), true);
-					set_assumption(svalue.substr(0, i), false);
-				} else {
-					set_assumption(svalue, false);
-				}
-				expression_format_updated();
-			}
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "all prefixes", _("all prefixes"))) SET_BOOL_D(printops.use_all_prefixes)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "complex numbers", _("complex numbers"))) SET_BOOL_E(evalops.allow_complex)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "excessive parenthises", _("excessive parenthesis"))) SET_BOOL_D(printops.excessive_parenthesis)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "functions", _("functions"))) SET_BOOL_E(evalops.parse_options.functions_enabled)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "infinite numbers", _("infinite numbers"))) SET_BOOL_E(evalops.allow_infinite)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "show negative exponents", _("show negative exponents"))) SET_BOOL_D(printops.negative_exponents)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "assume nonzero denominators", _("assume nonzero denominators"))) SET_BOOL_E(evalops.assume_denominators_nonzero)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "prefixes", _("prefixes"))) SET_BOOL_D(printops.use_unit_prefixes)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "denominator prefixes", _("denominator prefixes"))) SET_BOOL_D(printops.use_denominator_prefix)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "place units separately", _("place units separately"))) SET_BOOL_D(printops.place_units_separately)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "calculate variables", _("calculate variables"))) SET_BOOL_E(evalops.calculate_variables)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "calculate functions", _("calculate functions"))) SET_BOOL_E(evalops.calculate_functions)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "sync units", _("sync units"))) SET_BOOL_E(evalops.sync_units)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "round to even", _("round to even"))) SET_BOOL_D(printops.round_halfway_to_even)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn", _("rpn"))) SET_BOOL_E(evalops.parse_options.rpn)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "short multiplication", _("short multiplication"))) SET_BOOL_D(printops.short_multiplication)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "spacious", _("spacious"))) SET_BOOL_D(printops.spacious)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unicode", _("unicode"))) {
-				int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {printops.use_unicode_signs = v; result_display_updated();}
-				enable_unicode = -1;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "units", _("units"))) SET_BOOL_E(evalops.parse_options.units_enabled)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unknowns", _("unknowns"))) SET_BOOL_E(evalops.parse_options.unknowns_enabled)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "variables", _("variables"))) SET_BOOL_E(evalops.parse_options.variables_enabled)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "abbreviations", _("abbreviations"))) SET_BOOL_D(printops.abbreviate_names)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "show ending zeroes", _("show ending zeroes"))) SET_BOOL_D(printops.show_ending_zeroes)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "indicate infinite series", _("indicate infinite series"))) SET_BOOL_D(printops.indicate_infinite_series)
-			else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "angle unit", _("angle unit"))) {
-				int v = -1;
-				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "rad", _("rad")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "radians", _("radians"))) v = RADIANS;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "deg", _("deg")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "degrees", _("degrees"))) v = DEGREES;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "gra", _("gra")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "gradians", _("gradians"))) v = GRADIANS;
-				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
-					v = s2i(svalue);
-				}
-				if(v < 0 || v > 2) {
-					PUTS_UNICODE(_("Illegal value."));
-				} else {
-					evalops.angle_unit = (AngleUnit) v;
-					expression_format_updated();
-				}
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "multiplication sign", _("multiplication sign"))) {
-				int v = -1;
-				if(svalue == SIGN_MULTIDOT || svalue == ".") v = MULTIPLICATION_SIGN_DOT;
-				else if(svalue == SIGN_MULTIPLICATION || svalue == "x") v = MULTIPLICATION_SIGN_X;
-				else if(svalue == "*") v = MULTIPLICATION_SIGN_ASTERISK;
-				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
-					v = s2i(svalue);
-				}
-				if(v < 0 || v > 2) {
-					PUTS_UNICODE(_("Illegal value."));
-				} else {
-					printops.multiplication_sign = (MultiplicationSign) v;
-					result_display_updated();
-				}
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "division sign", _("division sign"))) {
-				int v = -1;
-				if(svalue == SIGN_DIVISION_SLASH) v = DIVISION_SIGN_DIVISION_SLASH;
-				else if(svalue == SIGN_DIVISION) v = DIVISION_SIGN_DIVISION;
-				else if(svalue == "/") v = DIVISION_SIGN_SLASH;
-				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
-					v = s2i(svalue);
-				}
-				if(v < 0 || v > 2) {
-					PUTS_UNICODE(_("Illegal value."));
-				} else {
-					printops.division_sign = (DivisionSign) v;
-					result_display_updated();
-				}
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "approximation", _("approximation"))) {
-				int v = -1;
-				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exact", _("exact"))) v = APPROXIMATION_EXACT;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "try exact", _("try exact"))) v = APPROXIMATION_TRY_EXACT;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "approximate", _("approximate"))) v = APPROXIMATION_APPROXIMATE;
-				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
-					v = s2i(svalue);
-				}
-				if(v < 0 || v > 2) {
-					PUTS_UNICODE(_("Illegal value."));
-				} else {
-					evalops.approximation = (ApproximationMode) v;
-					expression_format_updated();
-				}
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "autoconversion", _("autoconversion"))) {
-				int v = -1;
-				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = POST_CONVERSION_NONE;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "best", _("best"))) v = POST_CONVERSION_BEST;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "base", _("base"))) v = POST_CONVERSION_BASE;
-				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
-					v = s2i(svalue);
-				}
-				if(v < 0 || v > 2) {
-					PUTS_UNICODE(_("Illegal value."));
-				} else {
-					evalops.auto_post_conversion = (AutoPostConversion) v;
-					expression_format_updated();
-				}
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "exact", _("exact"))) {
-				int v = s2b(svalue); 
-				if(v < 0) {
-					PUTS_UNICODE(_("Illegal value")); 
-				} else if(v > 0) {
-					evalops.approximation = APPROXIMATION_EXACT; 
-					expression_format_updated();
-				} else {
-					evalops.approximation = APPROXIMATION_TRY_EXACT; 
-					expression_format_updated();
-				}
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "save mode", _("save mode"))) {
-				int v = s2b(svalue); 
-				if(v < 0) {
-					PUTS_UNICODE(_("Illegal value")); 
-				} else if(v > 0) {
-					save_mode_on_exit = true;
-				} else {
-					save_mode_on_exit = false;
-				}
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "save definitions", _("save definitions"))) {
-				int v = s2b(svalue); 
-				if(v < 0) {
-					PUTS_UNICODE(_("Illegal value")); 
-				} else if(v > 0) {
-					save_defs_on_exit = true;
-				} else {
-					save_defs_on_exit = false;
-				}
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "exp mode", _("exp mode"))) {
-				int v = -2;
-				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = EXP_NONE;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "auto", _("auto"))) v = EXP_PRECISION;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "pure", _("pure"))) v = EXP_PURE;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "scientific", _("scientific"))) v = EXP_SCIENTIFIC;
-				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
-					v = s2i(svalue);
-					if(v < 0) v = -2;
-				}
-				if(v <= -2) {
-					PUTS_UNICODE(_("Illegal value."));
-				} else {
-					printops.min_exp = v;
-					result_format_updated();
-				}
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "precision", _("precision"))) {
-				int v = 0;
-				if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
-				if(v < 1) {
-					PUTS_UNICODE(_("Illegal value."));
-				} else {
-					CALCULATOR->setPrecision(v);
-					expression_format_updated();
-				}
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "max decimals", _("max decimals"))) {
-				int v = -1;
-				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = -1;
-				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
-				if(v < 0) {
-					printops.use_max_decimals = false;
-					result_format_updated();
-				} else {
-					printops.max_decimals = v;
-					printops.use_max_decimals = true;
-					result_format_updated();
-				}
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "min decimals", _("min decimals"))) {
-				int v = -1;
-				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = -1;
-				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
-				if(v < 0) {
-					printops.min_decimals = 0;
-					printops.use_min_decimals = false;
-					result_format_updated();
-				} else {
-					printops.min_decimals = v;
-					printops.use_min_decimals = true;
-					result_format_updated();
-				}
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "fractions", _("fractions"))) {
-				int v = -1;
-				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = FRACTION_DECIMAL;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exact", _("exact"))) v = FRACTION_DECIMAL_EXACT;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = FRACTION_FRACTIONAL;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "combined", _("combined"))) v = FRACTION_COMBINED;
-				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
-					v = s2i(svalue);
-				}
-				if(v < 0 || v > 3) {
-					PUTS_UNICODE(_("Illegal value."));
-				} else {
-					printops.number_fraction_format = (NumberFractionFormat) v;
-					result_format_updated();
-				}
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "read precision", _("read precision"))) {
-				int v = -1;
-				if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = DONT_READ_PRECISION;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "always", _("always"))) v = ALWAYS_READ_PRECISION;
-				else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "when decimals", _("when decimals"))) v = READ_PRECISION_WHEN_DECIMALS;
-				else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
-					v = s2i(svalue);
-				}
-				if(v < 0 || v > 2) {
-					PUTS_UNICODE(_("Illegal value."));
-				} else {
-					evalops.parse_options.read_precision = (ReadPrecisionMode) v;
-					expression_format_updated();
-				}
-			} else {
-				if(index != string::npos) {
-					if((index = svalue.find_first_of(SPACES)) != string::npos) {
-						str = svalue;
-						svalue = str.substr(index + 1, str.length() - (index + 1));
-						remove_blank_ends(svalue);
-						svar += " ";
-						str = str.substr(0, index);
-						remove_blank_ends(str);
-						svar += str;
-						gsub("_", " ", svar);
-						goto set_option;
-					}
-				}
-				PUTS_UNICODE(_("Unrecognized option."));
-			}
+			set_option(str);
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "save", _("save")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "store", _("store"))) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
@@ -847,15 +864,10 @@ int main (int argc, char *argv[]) {
 				}
 			}
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "assume", _("assume"))) {
-			svalue = str.substr(ispace + 1, slen - (ispace + 1));
-			remove_blank_ends(svalue);
-			svar = "assumptions";
-			goto set_assumptions;
+			string str2 = "assumptions ";
+			set_option(str2 + str.substr(ispace + 1, slen - (ispace + 1)));
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "base", _("base"))) {
-			svalue = str.substr(ispace + 1, slen - (ispace + 1));
-			remove_blank_ends(svalue);
-			svar = "base";
-			goto set_base;
+			set_option(str);
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "exrates", _("exrates"))) {
 			CALCULATOR->fetchExchangeRates(15);
 			CALCULATOR->loadExchangeRates();

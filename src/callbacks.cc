@@ -4839,7 +4839,8 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 	}
 
 run_unit_edit_dialog:
-	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
+	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+	if(response == GTK_RESPONSE_OK) {
 		//clicked "OK"
 		string str;
 		str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_name")));
@@ -4956,6 +4957,20 @@ run_unit_edit_dialog:
 		}
 		update_umenus();
 		unit_inserted(u);
+	} else if(response == GTK_RESPONSE_HELP) {
+#ifdef HAVE_LIBGNOME
+		GError *error = NULL;
+		gnome_help_display("qalculate", "qalculate-unit-creation", &error);
+		if(error) {
+			gchar *error_str = g_locale_to_utf8(error->message, -1, NULL, NULL, NULL);
+			GtkWidget *d = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (unitedit_glade, "unit_edit_dialog")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help.\n%s"), error_str);
+			gtk_dialog_run(GTK_DIALOG(d));
+			gtk_widget_destroy(d);
+			g_free(error_str);
+			g_error_free(error);
+		}
+#endif	
+		goto run_unit_edit_dialog;
 	}
 	edited_unit = NULL;
 	names_edited = false;
@@ -5186,7 +5201,8 @@ void edit_function(const char *category = "", MathFunction *f = NULL, GtkWidget 
 	update_function_arguments_list(f);
 	
 run_function_edit_dialog:
-	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
+	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+	if(response == GTK_RESPONSE_OK) {
 		//clicked "OK"
 		string str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_name")));
 		remove_blank_ends(str);
@@ -5275,6 +5291,20 @@ run_function_edit_dialog:
 		}
 		update_fmenu();	
 		function_inserted(f);
+	} else if(response == GTK_RESPONSE_HELP) {
+#ifdef HAVE_LIBGNOME
+		GError *error = NULL;
+		gnome_help_display("qalculate", "qalculate-function-creation", &error);
+		if(error) {
+			gchar *error_str = g_locale_to_utf8(error->message, -1, NULL, NULL, NULL);
+			GtkWidget *d = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (functionedit_glade, "function_edit_dialog")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help.\n%s"), error_str);
+			gtk_dialog_run(GTK_DIALOG(d));
+			gtk_widget_destroy(d);
+			g_free(error_str);
+			g_error_free(error);
+		}
+#endif	
+		goto run_function_edit_dialog;
 	}
 	edited_function = NULL;
 	names_edited = false;
@@ -5394,7 +5424,8 @@ void edit_unknown(const char *category, Variable *var, GtkWidget *win) {
 	}
 
 run_unknown_edit_dialog:
-	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
+	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+	if(response == GTK_RESPONSE_OK) {
 		//clicked "OK"
 		string str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_name")));
 		remove_blank_ends(str);
@@ -5452,6 +5483,20 @@ run_unknown_edit_dialog:
 		}
 		update_vmenu();
 		variable_inserted(v);
+	} else if(response == GTK_RESPONSE_HELP) {
+#ifdef HAVE_LIBGNOME
+		GError *error = NULL;
+		gnome_help_display("qalculate", "qalculate-variable-creation", &error);
+		if(error) {
+			gchar *error_str = g_locale_to_utf8(error->message, -1, NULL, NULL, NULL);
+			GtkWidget *d = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (unknownedit_glade, "unknown_edit_dialog")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help.\n%s"), error_str);
+			gtk_dialog_run(GTK_DIALOG(d));
+			gtk_widget_destroy(d);
+			g_free(error_str);
+			g_error_free(error);
+		}
+#endif	
+		goto run_unknown_edit_dialog;
 	}
 	edited_unknown = NULL;
 	names_edited = false;
@@ -5531,7 +5576,8 @@ void edit_variable(const char *category, Variable *var, MathStructure *mstruct_,
 	}
 
 run_variable_edit_dialog:
-	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
+	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+	if(response == GTK_RESPONSE_OK) {
 		//clicked "OK"
 		string str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_name")));
 		string str2 = CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_value"))));
@@ -5600,6 +5646,20 @@ run_variable_edit_dialog:
 		}
 		update_vmenu();
 		variable_inserted(v);
+	} else if(response == GTK_RESPONSE_HELP) {
+#ifdef HAVE_LIBGNOME
+		GError *error = NULL;
+		gnome_help_display("qalculate", "qalculate-variable-creation", &error);
+		if(error) {
+			gchar *error_str = g_locale_to_utf8(error->message, -1, NULL, NULL, NULL);
+			GtkWidget *d = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (variableedit_glade, "variable_edit_dialog")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help.\n%s"), error_str);
+			gtk_dialog_run(GTK_DIALOG(d));
+			gtk_widget_destroy(d);
+			g_free(error_str);
+			g_error_free(error);
+		}
+#endif	
+		goto run_variable_edit_dialog;
 	}
 	edited_variable = NULL;
 	names_edited = false;
@@ -5754,7 +5814,8 @@ void edit_matrix(const char *category, Variable *var, MathStructure *mstruct_, G
 		}
 	}		
 run_matrix_edit_dialog:
-	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
+	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+	if(response == GTK_RESPONSE_OK) {
 		//clicked "OK"
 		string str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_name")));
 		remove_blank_ends(str);
@@ -5838,6 +5899,20 @@ run_matrix_edit_dialog:
 		}
 		update_vmenu();
 		variable_inserted(v);
+	} else if(response == GTK_RESPONSE_HELP) {
+#ifdef HAVE_LIBGNOME
+		GError *error = NULL;
+		gnome_help_display("qalculate", "qalculate-vectors-matrices", &error);
+		if(error) {
+			gchar *error_str = g_locale_to_utf8(error->message, -1, NULL, NULL, NULL);
+			GtkWidget *d = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (matrixedit_glade, "matrix_edit_dialog")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help.\n%s"), error_str);
+			gtk_dialog_run(GTK_DIALOG(d));
+			gtk_widget_destroy(d);
+			g_free(error_str);
+			g_error_free(error);
+		}
+#endif	
+		goto run_matrix_edit_dialog;
 	}
 	edited_matrix = NULL;
 	names_edited = false;
@@ -10177,6 +10252,20 @@ bool generate_plot(plot_parameters &pp, vector<MathStructure> &y_vectors, vector
 	pp.color = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (plot_glade, "plot_radiobutton_color")));
 	pp.show_all_borders = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (plot_glade, "plot_checkbutton_full_border")));
 	return true;
+}
+void on_plot_button_help_clicked(GtkButton *w, gpointer user_data) {
+#ifdef HAVE_LIBGNOME
+	GError *error = NULL;
+	gnome_help_display("qalculate", "qalculate-plotting", &error);
+	if(error) {
+		gchar *error_str = g_locale_to_utf8(error->message, -1, NULL, NULL, NULL);
+		GtkWidget *d = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (plot_glade, "plot_dialog")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help.\n%s"), error_str);
+		gtk_dialog_run(GTK_DIALOG(d));
+		gtk_widget_destroy(d);
+		g_free(error_str);
+		g_error_free(error);
+	}
+#endif	
 }
 void on_plot_button_save_clicked(GtkButton *w, gpointer user_data) {
 	GtkWidget *d;

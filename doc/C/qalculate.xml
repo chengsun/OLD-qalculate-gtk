@@ -901,6 +901,9 @@ The ans variable, which always contains the last calculated result, is another s
 <para>
 The unknown variables x, y and z are predefined. They cannot be deleted, but changed. By default they use the default assumptions.
 </para>
+<para>
+For a complete list of available variables see <xref linkend="qalculate-definitions-variables"/> or the variable manager.
+</para>
 <sect1 id="qalculate-variable-creation">
 <title>Variable creation/editing</title>
 <figure id="qalculate-FIG-store-variable">
@@ -1018,7 +1021,7 @@ The argument can be restricted by further conditions. For example that a number 
 <sect1 id="qalculate-available-functions">
 <title>Available Functions</title>
 <para>
-Here the main function categories and some of their members are described, to give an overview of available functions. The right place for a complete list and information about separate functions is however in the function manager.
+Here the main function categories and some of their members are described, to give an overview of available functions. For information about separate functions and a complete list of all available functions see <xref linkend="qalculate-definitions-functions"/> or the function manager.
 <variablelist>
 <varlistentry>
 <term>Algebra</term>
@@ -1164,6 +1167,7 @@ Global, system-wide functions can not actually be changed by the user, but if on
 <title>Units</title>
 <para>
 Units give numbers meaning in the real world. They specify what is measured by the numbers and the scale used. Qalculate! fully incorporates units in calculations and includes all standard SI units as well as many non-standard local units.
+For a complete list of available units see <xref linkend="qalculate-definitions-units"/> or the unit manager.
 </para>
 <sect1 id="qalculate-currency">
 <title>Currency</title>
