@@ -946,7 +946,7 @@ The argument can be restricted by further conditions. For example that a number 
 Here the main function categories and some of their members are described, to give an overview of available functions. The right place for a complete list and information about separate functions is however in the function manager.
 <variablelist>
 <varlistentry>
-<term>Algebra</term>
+<term>Calculus</term>
 <listitem><para>
 Contains <command>sum()</command> and <command>productive()</command>, which corresponds to the sum and product signs.
 </para></listitem>
