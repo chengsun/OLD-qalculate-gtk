@@ -966,6 +966,7 @@ void Calculator::addBuiltinFunctions() {
 	f_diff = addFunction(new DeriveFunction());
 	f_integrate = addFunction(new IntegrateFunction());
 	f_solve = addFunction(new SolveFunction());
+	f_multisolve = addFunction(new SolveMultipleFunction());
 	
 }
 void Calculator::addBuiltinUnits() {
@@ -5756,10 +5757,16 @@ bool Calculator::loadExchangeRates() {
 	return true;
 }
 bool Calculator::canFetch() {
-	if(system("wget --version") == 0) {
+	gchar *gstr = g_find_program_in_path("wget");
+	if(gstr) {
+		g_free(gstr);
 		return true;
 	}
 	return false;
+	/*if(system("wget --version") == 0) {
+		return true;
+	}
+	return false;*/
 }
 bool Calculator::fetchExchangeRates(int timeout) {
 	pid_t pid;
@@ -5807,7 +5814,7 @@ bool Calculator::checkExchangeRatesDate() {
 }
 
 bool Calculator::canPlot() {
-	FILE *pipe = popen("gnuplot -", "w");
+	/*FILE *pipe = popen("gnuplot -", "w");
 	if(!pipe) {
 		return false;
 	}
@@ -5817,7 +5824,13 @@ bool Calculator::canPlot() {
 		return false;
 	}
 	fputs("show version\n", pipe);
-	return pclose(pipe) == 0;
+	return pclose(pipe) == 0;*/
+	gchar *gstr = g_find_program_in_path("gnuplot");
+	if(gstr) {
+		g_free(gstr);
+		return true;
+	}
+	return false;
 }
 MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, string x_var) {
 	/*if(x_var[0] == '\\') {
@@ -6126,13 +6139,27 @@ bool Calculator::plotVectors(plot_parameters *param, const vector<MathStructure>
 				return false;
 			}
 			plot_data = "";
+			bool non_numerical = false;
 			for(unsigned int i = 1; i <= y_vectors[serie].components(); i++) {
 				if(serie < x_vectors.size() && !x_vectors[serie].isUndefined() && x_vectors[serie].components() == y_vectors[serie].components()) {
+					if(!non_numerical && !x_vectors[serie].getComponent(i)->isNumber()) {
+						non_numerical = true;
+					}
 					plot_data += x_vectors[serie].getComponent(i)->print(po);
 					plot_data += " ";
 				}
+				if(!non_numerical && !y_vectors[serie].getComponent(i)->isNumber()) {
+					non_numerical = true;
+				}
 				plot_data += y_vectors[serie].getComponent(i)->print(po);
 				plot_data += "\n";	
+			}
+			if(non_numerical) {
+				if(serie < pdps.size() && !pdps[serie]->title.empty()) {
+					error(true, _("\"%s\" contains non-numerical data which can not be properly plotted."), pdps[serie]->title.c_str(), NULL);
+				} else {
+					error(true, _("Series %s contains non-numerical data which can not be properly plotted."), i2s(serie).c_str(), NULL);
+				}
 			}
 			fputs(plot_data.c_str(), fdata);
 			fflush(fdata);

@@ -350,7 +350,8 @@ static const struct EvaluationOptions {
 	StructuringMode structuring;
 	ParseOptions parse_options;
 	AngleUnit angle_unit;
-	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), simplify_addition_powers(true), reduce_divisions(true), do_polynomial_division(true), allow_complex(true), allow_infinite(true), assume_denominators_nonzero(false), split_squares(true), auto_post_conversion(POST_CONVERSION_NONE), structuring(STRUCTURING_SIMPLIFY), angle_unit(RADIANS) {}
+	const MathStructure *isolate_var;
+	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), simplify_addition_powers(true), reduce_divisions(true), do_polynomial_division(true), allow_complex(true), allow_infinite(true), assume_denominators_nonzero(false), split_squares(true), auto_post_conversion(POST_CONVERSION_NONE), structuring(STRUCTURING_SIMPLIFY), angle_unit(RADIANS), isolate_var(NULL) {}
 } default_evaluation_options;
 
 extern MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minus_one;

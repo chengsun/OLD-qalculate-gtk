@@ -107,57 +107,61 @@ bool Function::testCondition(const MathStructure &vargs) {
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	mstruct.eval(eo);
 	if(!mstruct.isNumber() || !mstruct.number().isPositive()) {
-		string str = scondition;
-		string svar, argstr;
-		Argument *arg;
-		int i_args = maxargs();
-		if(i_args < 0) {
-			i_args = minargs() + 2;
-		}
-		for(int i = 0; i < i_args; i++) {
-			svar = '\\';
-			if(maxargs() < 0 && i >= minargs()) {
-				svar += (char) ('v' + i - minargs());
-			} else { 
-				if('x' + i > 'z') {
-					svar += (char) ('a' + i - 3);
-				} else {
-					svar += 'x' + i;
-				}
-			}
-			unsigned int i2 = 0;
-			while(true) {
-				if((i2 = str.find(svar, i2)) != string::npos) {
-					if(maxargs() < 0 && i > minargs()) {
-						arg = getArgumentDefinition(i);
-					} else {
-						arg = getArgumentDefinition(i + 1);
-					}
-					argstr = "\"";
-					if(!arg || arg->name().empty()) {
-						argstr += _("argument");
-						argstr += " ";
-						if(maxargs() < 0 && i > minargs()) {
-							argstr += i2s(i);
-						} else {
-							argstr += i2s(i + 1);
-						}
-					} else {
-						argstr += arg->name();
-					}
-					argstr += "\"";
-					str.replace(i2, 2, argstr);
-				} else {
-					break;
-				}
-			}
-		}
 		if(CALCULATOR->showArgumentErrors()) {
-			CALCULATOR->error(true, _("%s() requires that %s"), name().c_str(), str.c_str(), NULL);
+			CALCULATOR->error(true, _("%s() requires that %s"), name().c_str(), printCondition().c_str(), NULL);
 		}
 		return false;
 	}
 	return true;
+}
+string Function::printCondition() {
+	if(scondition.empty() || last_argdef_index == 0) return scondition;
+	string str = scondition;
+	string svar, argstr;
+	Argument *arg;
+	int i_args = maxargs();
+	if(i_args < 0) {
+		i_args = minargs() + 2;
+	}
+	for(int i = 0; i < i_args; i++) {
+		svar = '\\';
+		if(maxargs() < 0 && i >= minargs()) {
+			svar += (char) ('v' + i - minargs());
+		} else { 
+			if('x' + i > 'z') {
+				svar += (char) ('a' + i - 3);
+			} else {
+				svar += 'x' + i;
+			}
+		}
+		unsigned int i2 = 0;
+		while(true) {
+			if((i2 = str.find(svar, i2)) != string::npos) {
+				if(maxargs() < 0 && i > minargs()) {
+					arg = getArgumentDefinition(i);
+				} else {
+					arg = getArgumentDefinition(i + 1);
+				}
+				argstr = "\"";
+				if(!arg || arg->name().empty()) {
+					argstr += _("argument");
+					argstr += " ";
+					if(maxargs() < 0 && i > minargs()) {
+						argstr += i2s(i);
+					} else {
+						argstr += i2s(i + 1);
+					}
+				} else {
+					argstr += arg->name();
+				}
+				argstr += "\"";
+				str.replace(i2, 2, argstr);
+			} else {
+				break;
+			}
+		}
+	}
+	return str;
 }
 int Function::args(const string &argstr, MathStructure &vargs, const ParseOptions &po) {
 	vargs.clearVector();

@@ -86,6 +86,7 @@ class Function : public ExpressionItem {
 	virtual MathStructure calculate(MathStructure &vargs, const EvaluationOptions &eo = default_evaluation_options);	
 	virtual int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);	
 	string condition() const;
+	string printCondition();
 	void setCondition(string expression);
 	bool testCondition(const MathStructure &vargs);
 	int countArgOccurence(unsigned int arg_);

@@ -1975,26 +1975,14 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 
 	mstruct = vargs[0];
 	EvaluationOptions eo2 = eo;
-	eo2.simplify_addition_powers = false;
 	eo2.assume_denominators_nonzero = false;
+	eo2.isolate_var = &vargs[1];
 	mstruct.eval(eo2);
 
-	test_comparison:
 	if(mstruct.isComparison()) {
 		if(mstruct[0] != vargs[1]) {
-			if(eo.simplify_addition_powers && !eo2.simplify_addition_powers) {
-				eo2.simplify_addition_powers = true;
-				eo2.calculate_functions = false;
-				mstruct.eval(eo2);
-				goto test_comparison;
-			}
 			CALCULATOR->error(true, _("Unable to isolate %s."), vargs[1].print().c_str(), NULL);
 		} else {
-			if(eo.simplify_addition_powers && !eo2.simplify_addition_powers) {
-				eo2.simplify_addition_powers = true;
-				eo2.calculate_functions = false;
-				mstruct[1].eval(eo2);
-			}
 			if(mstruct.comparisonType() == COMPARISON_EQUALS) {
 				MathStructure msave(mstruct[1]);
 				mstruct = msave;	
@@ -2005,6 +1993,85 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		CALCULATOR->error(true, _("No comparison to solve. The reason might be:\n\n1. The entered expression to solve is not correct (ex. \"x + 5 = 3\" is correct)\n\n2. The expression evaluates FALSE. There is no valid solution with the current assumptions (ex. \"x = -5\" with x assumed positive).\n\n3. The expression evaluates TRUE (ex. \"2x = 2x\")"), NULL);
 	}
 	return -1;
+	
+}
+SolveMultipleFunction::SolveMultipleFunction() : Function("multisolve", 2) {
+	setArgumentDefinition(1, new VectorArgument());
+	VectorArgument *arg = new VectorArgument();
+	arg->addArgument(new SymbolicArgument());
+	arg->setReoccuringArguments(true);
+	setArgumentDefinition(2, arg);
+	setCondition("dimension(\\x)=dimension(\\y)");
+}
+int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+
+	mstruct.clearVector();
+	
+	if(vargs[1].size() < 1) return 1;
+	
+	bool eleft[vargs[0].size()];
+	for(unsigned int i = 0; i < vargs[0].size(); i++) eleft[i] = true;
+	vector<unsigned int> eorder;
+	bool b = false;
+	for(unsigned int i = 0; i < vargs[1].size(); i++) {
+		b = false;
+		for(unsigned int i2 = 0; i2 < vargs[0].size(); i2++) {
+			if(eleft[i2] && vargs[0][i2].contains(vargs[1][i], true)) {
+				eorder.push_back(i2);
+				eleft[i2] = false;
+				b = true;
+				break;
+			}
+		}
+		if(!b) {
+			eorder.clear();
+			for(unsigned int i2 = 0; i2 < vargs[0].size(); i2++) {
+				eorder.push_back(i2);
+			}
+			break;
+		}
+	}
+	
+	for(unsigned int i = 0; i < eorder.size(); i++) {
+		MathStructure msolve(vargs[0][eorder[i]]);
+		EvaluationOptions eo2 = eo;
+		eo2.assume_denominators_nonzero = false;
+		eo2.isolate_var = &vargs[1][i];
+		for(unsigned int i2 = 0; i2 < i; i2++) {
+			msolve.replace(vargs[1][i2], mstruct[i2]);
+		}
+		msolve.eval(eo2);
+
+		if(msolve.isComparison()) {
+			if(msolve[0] != vargs[1][i]) {
+				if(!b) {
+					CALCULATOR->error(true, _("Unable to isolate %s.\n\nYou might need to place the equations and variables in an appropriate order so that so that each equation at least contains the corresponding variable (if automatic reordering failed)."), vargs[1][i].print().c_str(), NULL);
+				} else {
+					CALCULATOR->error(true, _("Unable to isolate %s."), vargs[1][i].print().c_str(), NULL);
+				}
+				return 0;
+			} else {
+				if(msolve.comparisonType() == COMPARISON_EQUALS) {
+					mstruct.addItem(msolve[1]);
+				} else {
+					CALCULATOR->error(true, _("Only equals comparison is allowed in the equations in %s()."), preferredName().name.c_str(), NULL);
+					return 0;
+				}
+			}
+		} else {
+			CALCULATOR->error(true, _("No comparison to solve. The reason might be:\n\n1. The entered expression to solve is not correct (ex. \"x + 5 = 3\" is correct)\n\n2. The expression evaluates FALSE. There is no valid solution with the current assumptions (ex. \"x = -5\" with x assumed positive).\n\n3. The expression evaluates TRUE (ex. \"2x = 2x\")"), NULL);
+			return 0;
+		}
+		for(unsigned int i2 = 0; i2 < i; i2++) {
+			for(unsigned int i3 = 0; i3 <= i; i3++) {
+				if(i2 != i3) {
+					mstruct[i2].replace(vargs[1][i3], mstruct[i3]);
+				}
+			}
+		}
+	}
+	
+	return 1;
 	
 }
 

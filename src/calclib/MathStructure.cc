@@ -3139,7 +3139,12 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 	return 0;
 }
 
-void MathStructure::evalSort() {
+void MathStructure::evalSort(bool recursive) {
+	if(recursive) {
+		for(unsigned int i = 0; i < SIZE; i++) {
+			CHILD(i).evalSort(true);
+		}
+	}
 	if(m_type != STRUCT_ADDITION && m_type != STRUCT_MULTIPLICATION && m_type != STRUCT_AND && m_type != STRUCT_OR && m_type != STRUCT_XOR) return;
 	vector<unsigned int> sorted;
 	bool b;
@@ -4165,7 +4170,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo) {
 									}
 								}
 							}
-							mleft.factorize();
+							mleft.factorize(eo);
 							vector<int> powers;
 							vector<unsigned int> powers_i;
 							int dupsfound = 0;
@@ -4211,15 +4216,26 @@ bool MathStructure::factorize(const EvaluationOptions &eo) {
 								if(pi < powers_i.size() && powers_i[pi] == i) {
 									mcur->raise(MathStructure(powers[pi], 1));
 									mcur = &(*mcur)[0];
+									if(zeroes[i].isInteger()) {
+										mcur->add(zeroes[i]);
+									} else {
+										Number nr(zeroes[i].denominator());
+										mcur->add(zeroes[i].numerator());
+										(*mcur)[0] *= xvar2;
+										(*mcur)[0][0].number() = nr;
+										nr.raise(powers[pi]);
+										nrmul->divide(nr);										
+									}
 									pi++;
-								}
-								if(zeroes[i].isInteger()) {
-									mcur->add(zeroes[i]);
 								} else {
-									nrmul->divide(zeroes[i].denominator());
-									mcur->add(zeroes[i].numerator());
-									(*mcur)[0] *= xvar2;
-									(*mcur)[0][0].number() = zeroes[i].denominator();
+									if(zeroes[i].isInteger()) {
+										mcur->add(zeroes[i]);
+									} else {
+										nrmul->divide(zeroes[i].denominator());
+										mcur->add(zeroes[i].numerator());
+										(*mcur)[0] *= xvar2;
+										(*mcur)[0][0].number() = zeroes[i].denominator();
+									}
 								}
 							}
 							if(CHILD(0).isNumber() && CHILD(0).number().isOne()) {
@@ -4234,14 +4250,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo) {
 									CHILD(0).delChild(1);
 								}
 							}
-							for(unsigned int i = 0; i < SIZE; i++) {
-								if(CHILD(i).isPower()) {
-									CHILD(i)[0].evalSort();
-								} else {
-									CHILD(i).evalSort();
-								}
-							}
-							evalSort();
+							evalSort(true);
 							Number dupspow;
 							for(unsigned int i = 0; i < SIZE - 1; i++) {
 								mcur = NULL;
@@ -4290,7 +4299,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo) {
 		}
 		default: {
 			for(unsigned int i = 0; i < SIZE; i++) {
-				CHILD(i).factorize();
+				CHILD(i).factorize(eo);
 			}
 		}
 	}
@@ -7743,22 +7752,24 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 		return b;
 	}
 	if(x_varp.isUndefined()) {
-		const MathStructure &x_var2 = find_x_var();
-		if(x_var2.isUndefined()) return false;
+		const MathStructure *x_var2;
+		if(eo.isolate_var) x_var2 = eo.isolate_var;
+		else x_var2 = &find_x_var();
+		if(x_var2->isUndefined()) return false;
 		if(CHILD(1).isZero() && CHILD(0).isAddition()) {
 			bool found_1x = false;
 			for(unsigned int i = 0; i < CHILD(0).size(); i++) {
-				if(CHILD(0)[i] == x_var2) {
+				if(CHILD(0)[i] == *x_var2) {
 					found_1x = true;
-				} else if(CHILD(0)[i].contains(x_var2)) {
+				} else if(CHILD(0)[i].contains(*x_var2)) {
 					found_1x = false;
 					break;
 				}
 			}
-			if(found_1x) return isolate_x(eo, x_var2);
+			if(found_1x) return isolate_x(eo, *x_var2);
 		}
 		if(containsType(STRUCT_VECTOR)) return false;
-		MathStructure x_var(x_var2);
+		MathStructure x_var(*x_var2);
 		MathStructure msave(*this);
 		if(isolate_x(eo, x_var)) {	
 			if(isComparison() && CHILD(0) == x_var) {
@@ -7778,8 +7789,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 						mtest.eval(eo2);
 						if(mtest.isComparison()) {
 							mtest = msave;
-							mtest[0].replace(x_var, CHILD(1)[i2]);
-							mtest[0].eval(eo2);
+							mtest.replace(x_var, CHILD(1)[i2]);
 							CALCULATOR->beginTemporaryStopErrors();
 							mtest.eval(eo2);
 							CALCULATOR->endTemporaryStopErrors();
@@ -7809,7 +7819,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 					mtest.eval(eo2);
 					if(mtest.isComparison()) {
 						mtest = msave;
-						mtest[0].replace(x_var, CHILD(1));
+						mtest.replace(x_var, CHILD(1));
 						CALCULATOR->beginTemporaryStopErrors();
 						mtest.eval(eo2);
 						CALCULATOR->endTemporaryStopErrors();
@@ -7989,8 +7999,8 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 					}
 				}
 			}
+			CHILD(1).eval(eo2);
 			if(b) {
-				CHILD(1).eval(eo2);
 				if(CHILD(0).size() == 1) {
 					MathStructure msave(CHILD(0)[0]);
 					CHILD(0) = msave;

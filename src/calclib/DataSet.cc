@@ -501,7 +501,8 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	int ils;
 	int i_approx;
 	bool cmp;
-	bool b;
+	bool b, old_object;
+	unsigned int objects_before = objects.size();
 	vector<DataProperty*> p_refs;
 	vector<string> s_refs;
 	while(cur) {
@@ -519,7 +520,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 		if(b) {
 			lang_status_p.clear();
 			lang_status.clear();
-			if(is_user_defs) {
+			if(is_user_defs && objects_before > 0) {
 				s_refs.clear();
 				p_refs.clear();
 			} else {
@@ -537,7 +538,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 						}
 						remove_blank_ends(str);
 						if(!str.empty()) {
-							if(is_user_defs) {
+							if(is_user_defs && objects_before > 0) {
 								s_refs.push_back(str);
 								p_refs.push_back(properties[i]);
 							} else {
@@ -547,19 +548,19 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 					}
 				}	
 			}
-			if(is_user_defs) {
-				b = false;
+			old_object = false;
+			if(is_user_defs && objects_before > 0) {
 				for(unsigned int i = 0; i < p_refs.size(); i++) {
-					for(unsigned int i2 = 0; i2 < objects.size(); i2++) {
+					for(unsigned int i2 = 0; i2 < objects_before; i2++) {
 						if(s_refs[i] == objects[i2]->getProperty(p_refs[i]) || s_refs[i] == objects[i2]->getNonlocalizedKeyProperty(p_refs[i])) {
 							o = objects[i2];
-							b = true;
+							old_object = true;
 							break;
 						}
 					}
-					if(b) break;
+					if(old_object) break;
 				}
-				if(!b) o = new DataObject(this);
+				if(!old_object) o = new DataObject(this);
 				for(unsigned int i = 0; i < p_refs.size(); i++) {
 					o->setProperty(p_refs[i], s_refs[i]);
 				}	
@@ -656,7 +657,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 				}
 				child = child->next;
 			}
-			objects.push_back(o);
+			if(!old_object) objects.push_back(o);
 		}
 		cur = cur->next;
 	}
@@ -920,12 +921,6 @@ string DataSet::printProperties(string object) {
 string DataSet::printProperties(DataObject *o) {
 	if(o) {
 		string str, stmp;
-		unsigned int l, lmax = 0;
-		for(unsigned int i = 0; i < properties.size(); i++) {
-			if(!properties[i]->isHidden() && properties[i]->title().length() > lmax) {
-				lmax = properties[i]->title().length();
-			}	
-		}
 		str = "-------------------------------------\n";
 		bool started = false;
 		for(unsigned int i = 0; i < properties.size(); i++) {

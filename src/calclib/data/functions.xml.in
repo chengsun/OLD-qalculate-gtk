@@ -2140,6 +2140,19 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <_title>Index Variable</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="multisolve">
+      <_title>Solve for multiple variables</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>multisolve</_name>
+      </name>
+      <argument index="1">
+        <_title>Equation Vector</_title>
+      </argument>
+      <argument index="2">
+        <_title>Variable Vector</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="solve">
       <_title>Solve equation</_title>
       <name index="1">
@@ -2153,6 +2166,27 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <_title>With respect to</_title>
       </argument>
     </builtin_function>
+    <function>
+      <_title>Solve for two variables</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>solve2</_name>
+      </name>
+      <_description>Solves two equations with two unknown variables. Returns the value of the first variable.</_description>
+      <expression>solve(replace(\y,\A{y},solve(\x,\A)),\Z{x})</expression>
+      <argument index="1" type="free">
+        <_title>Equation 1</_title>
+      </argument>
+      <argument index="2" type="free">
+        <_title>Equation 2</_title>
+      </argument>
+      <argument index="3" type="symbol">
+        <_title>Variable 1</_title>
+      </argument>
+      <argument index="4" type="symbol">
+        <_title>Variable 2</_title>
+      </argument>
+    </function>
     <function>
       <_title>Find Linear Function</_title>
       <name index="1">

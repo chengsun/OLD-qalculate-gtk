@@ -4,7 +4,7 @@
   <!ENTITY legal SYSTEM "legal.xml">
   <!ENTITY appversion "0.6.4">
   <!ENTITY manrevision "0.6.4">
-  <!ENTITY date "August 2004">
+  <!ENTITY date "September 2004">
   <!ENTITY app "Qalculate!">    
 ]>
 <article>
@@ -75,7 +75,7 @@ Although use of Qalculate! for simple calculations should be natural and self-ex
 	</screenshot>
 </figure>
 <para>
-The main window provides a menu bar, the expression entry, the result display and a calculator keypad which can be shown/hidden by clicking on <guilabel>Keypad</guilabel>. There are two small buttons to right of the expression entry and the result display. The upper button performs calculation of the entered expression (same as <keycap>Enter</keycap>), while the one below opens a window showing previous calculations.
+The main window provides a menu bar, the expression entry, the result display and a calculator keypad which can be shown/hidden by clicking on <guilabel>Keypad</guilabel>. There are two small buttons to right of the expression entry and the result display. The upper button performs calculation of the entered expression (same as <keycap>Enter</keycap>), while the one below opens a window showing previous calculations. When non-default options for the interpretion of expressions have been selected, the choice will be indicated in a small status area below the expression entry.
 </para>
 </sect2>
 <sect2 id="qalculate-expression-entry">
@@ -1023,7 +1023,7 @@ Here the main function categories and some of their members are described, to gi
 <varlistentry>
 <term>Algebra</term>
 <listitem><para>
-Contains <command>sum()</command> and <command>productive()</command>, which corresponds to the sum and product signs. <command>solve()</command> solves equations (ex. <quote>solve(x * 2 = 8)</quote> returns <quote>4</quote> meaning that x equals 4).
+Contains <command>sum()</command> and <command>productive()</command>, which corresponds to the sum and product signs. <command>solve()</command> solves equations (ex. <quote>solve(x * 2 = 8)</quote> returns <quote>4</quote> meaning that x equals 4). Use <command>solve2()</command> and <command>multisolve()</command> to solve multiple equations with multiple variables.
 </para></listitem>
 </varlistentry>
 <varlistentry>

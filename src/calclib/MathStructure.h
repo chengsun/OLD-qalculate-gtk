@@ -260,7 +260,7 @@ class MathStructure {
 		int type() const;
 		
 		void sort(const PrintOptions &po = default_print_options, bool recursive = true);
-		void evalSort();
+		void evalSort(bool recursive = false);
 		bool improve_division_multipliers(const PrintOptions &po = default_print_options);
 		void setPrefixes(const PrintOptions &po = default_print_options, MathStructure *parent = NULL, unsigned int pindex = 0);
 		void prefixCurrencies();

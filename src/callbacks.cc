@@ -955,6 +955,15 @@ void on_tFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer u
 						gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, str2.c_str(), -1, "italic", NULL);
 					}
 				}
+				if(!f->condition().empty()) {
+					str = "\n";
+					str += _("Requirement");
+					str += ": ";
+					str += f->printCondition();
+					str += "\n";
+					gtk_text_buffer_get_end_iter(buffer, &iter);
+					gtk_text_buffer_insert(buffer, &iter, str.c_str(), -1);
+				}
 				if(f->subtype() == SUBTYPE_DATA_SET) {
 					DataSet *ds = (DataSet*) f;
 					str = "\n";
@@ -4006,14 +4015,8 @@ void on_abort_calculation(GtkDialog *w, gint arg1, gpointer user_data) {
 	CALCULATOR->abort();
 }
 
-/*
-	calculate entered expression and display result
-*/
-void execute_expression(bool force) {
-	string str = gtk_entry_get_text(GTK_ENTRY(expression));
-	if(!force && (expression_has_changed || str.find_first_not_of(SPACES) == string::npos)) return;
-	do_timeout = false;
-	expression_has_changed = false;
+
+void add_to_expression_history(string str) {
 	for(unsigned int i = 0; i < expression_history.size(); i++) {
 		if(expression_history[i] == str) {
 			expression_history.erase(expression_history.begin() + i);
@@ -4025,6 +4028,19 @@ void execute_expression(bool force) {
 	}
 	expression_history.insert(expression_history.begin(), str);
 	expression_history_index = 0;
+}
+
+/*
+	calculate entered expression and display result
+*/
+void execute_expression(bool force) {
+	string str = gtk_entry_get_text(GTK_ENTRY(expression));
+	if(!force && (expression_has_changed || str.find_first_not_of(SPACES) == string::npos)) return;
+	do_timeout = false;
+	expression_has_changed = false;
+	
+	add_to_expression_history(str);
+	
 
 	b_busy = true;
 	gulong handler_id = g_signal_connect(G_OBJECT(glade_xml_get_widget (main_glade, "main_window")), "event", G_CALLBACK(on_event), NULL);
@@ -5634,7 +5650,8 @@ void edit_matrix(const char *category, Variable *var, MathStructure *mstruct_, G
 		gtk_widget_set_sensitive(glade_xml_get_widget (matrixedit_glade, "matrix_edit_radiobutton_vector"), TRUE);								
 	
 		//fill in default values
-		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_name")), "");
+		string v_name = CALCULATOR->getName();
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_name")), v_name.c_str());
 		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (matrixedit_glade, "matrix_edit_label_names")), "");
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_category")), category);
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_desc")), "");		
@@ -10495,7 +10512,9 @@ void on_menu_item_set_unknowns_activate(GtkMenuItem *w, gpointer user_data) {
 					MathStructure mp(*mstruct);
 					mp.format(printops);
 					g_signal_handlers_block_matched((gpointer) expression, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_expression_changed, NULL);
-					gtk_entry_set_text(GTK_ENTRY(expression), mp.print(printops).c_str());
+					str = mp.print(printops);
+					gtk_entry_set_text(GTK_ENTRY(expression), str.c_str());
+					add_to_expression_history(str);
 					g_signal_handlers_unblock_matched((gpointer) expression, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_expression_changed, NULL);
 					gtk_widget_grab_focus(expression);
 					gtk_editable_select_region(GTK_EDITABLE(expression), 0, -1);
