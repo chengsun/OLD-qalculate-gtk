@@ -48,7 +48,6 @@ class Function {
 	string name(void) const;
 	void setName(string new_name, bool force = true);
 	int args(const string &str);
-	int args(const string &str, string *buffer);	
 	string category(void) const;
 	void setCategory(string cat_);	
 	string description(void) const;

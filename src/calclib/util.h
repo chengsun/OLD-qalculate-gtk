@@ -70,6 +70,7 @@ Fraction *yearsBetweenDates(string date1, string date2, int basis);
 int daysBetweenDates(string date1, string date2, int basis = 0);
 int daysBetweenDates(int year1, int month1, int day1, int year2, int month2, int day2, int basis);
 
+int find_ending_bracket(const string &str, int start, int *missing = NULL);
 
 char op2ch(MathOperation op);
 

@@ -98,12 +98,15 @@ void Manager::set(const Manager *mngr) {
 }
 void Manager::set(const Fraction *fraction_) {
 	clear();
-	fr->set(fraction_);
-	setPrecise(fr->isPrecise());
-	c_type = FRACTION_MANAGER;
+	if(fraction_) {
+		fr->set(fraction_);
+		setPrecise(fr->isPrecise());
+		c_type = FRACTION_MANAGER;
+	}
 }
 void Manager::set(const Matrix *matrix_) {
 	clear();
+	if(!matrix_) return;
 	if(matrix_->isVector()) {
 		mtrx = new Vector(matrix_);	
 	} else {
@@ -114,6 +117,7 @@ void Manager::set(const Matrix *matrix_) {
 }
 void Manager::set(const Vector *vector_) {
 	clear();
+	if(!vector_) return;
 	mtrx = new Vector(vector_);	
 	setPrecise(mtrx->isPrecise());
 	c_type = MATRIX_MANAGER;
@@ -138,6 +142,7 @@ void Manager::set(string var_) {
 }
 void Manager::set(const Function *f, ...) {
 	clear();
+	if(!f) return;
 	Manager *mngr;
 	va_list ap;
 	va_start(ap, f); 
@@ -278,7 +283,8 @@ void Manager::addAlternative(const Manager *mngr) {
 	push_back(new Manager(mngr));
 }
 bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
-	printf("[%s] %c [%s] (%i)\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), op2ch(op), mngr->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), translate_);
+	if(!mngr) return true;
+//	printf("[%s] %c [%s] (%i)\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), op2ch(op), mngr->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), translate_);
 	if(mngr->type() == FRACTION_MANAGER && c_type == FRACTION_MANAGER) {
 		Fraction fr_save(fr);
 		int solutions = fr->add(op, mngr->fraction());

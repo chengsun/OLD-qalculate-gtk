@@ -1,3 +1,17 @@
+2003-09-15  Niklas Knutsson  <nq@altern.org>
+
+	* Fix insert function dialog
+	* Add scrollbars to table in matrix edit dialog
+	* CSV file import
+	* Lots of statistical functions: range, harmonic mean, geometric mean, trimmed mean, 
+	  winsorized mean, quadratic mean, quartile, decile, percentile, interquartile range, 
+	  variance, standard error, mean deviation, pearson, spearman's rho, 
+	  covariance, correlation, pooled variance, paired t-test, unpaired t-test...
+	* Add limits to custom sum function and allow references to other than current element (x_i-1)
+	* Limits
+	* Clean up base conversion functions
+	* Fix If function
+
 2003-09-11  Niklas Knutsson  <nq@altern.org>
 
 	* Sort function
@@ -9,7 +23,7 @@
 2003-09-10  Niklas Knutsson  <nq@altern.org>
 
 	* Change behavior of decimals settings
-	* CLN support (requirement for now)
+	* CLN support (requirement for now, in place of GMP)
 	* Disable gnome support in glade file
 
 2003-09-09  Niklas Knutsson  <nq@altern.org>

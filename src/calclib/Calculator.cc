@@ -643,7 +643,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new FunctionFunction());
 	addFunction(new MatrixFunction());
 	addFunction(new VectorFunction());	
-	addFunction(new ComponentsFunction());	
+	addFunction(new ElementsFunction());	
 	addFunction(new SortFunction());	
 	addFunction(new RankFunction());
 	addFunction(new MatrixToVectorFunction());	
@@ -652,6 +652,9 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new RowsFunction());
 	addFunction(new ColumnsFunction());
 	addFunction(new ElementFunction());
+	addFunction(new ComponentsFunction());	
+	addFunction(new ComponentFunction());	
+	addFunction(new LimitsFunction());	
 	addFunction(new TransposeFunction());
 	addFunction(new IdentityFunction());
 	addFunction(new DeterminantFunction());
@@ -694,8 +697,11 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new Exp10Function());
 	addFunction(new SqrtFunction());
 	addFunction(new CbrtFunction());
+	addFunction(new RootFunction());	
+	addFunction(new PowFunction());	
 	addFunction(new HypotFunction());
-	addFunction(new MedianFunction());
+//	addFunction(new MedianFunction());
+	addFunction(new PercentileFunction());
 	addFunction(new MinFunction());
 	addFunction(new MaxFunction());
 	addFunction(new ModeFunction());
@@ -2453,4 +2459,163 @@ Manager *Calculator::setAngleValue(Manager *mngr) {
 		}
 	}
 	return mngr;
+}
+
+bool Calculator::importCSV(const char *file_name, int first_row, bool headers, string delimiter, bool to_matrix, string name, string title, string category) {
+	FILE *file = fopen(file_name, "r");
+	if(file == NULL) {
+		return false;
+	}
+	if(first_row < 1) {
+		first_row = 1;
+	}
+	string filestr = file_name;
+	int i = filestr.find_last_of("/");
+	if(i != string::npos) {
+		filestr = filestr.substr(i + 1, filestr.length() - (i + 1));
+	}
+	if(name.empty()) {
+		int i = filestr.find_last_of(".");
+		name = filestr.substr(0, i);
+	}
+	char line[10000];
+	string stmp, str1, str2;
+	int row = 0;
+	int columns = 1;
+	int column;
+	vector<string> header;
+	vector<Vector*> vectors;
+	Matrix *mtrx;
+	Manager *mngr;
+	int is, is_n;
+	bool v_added = false;
+	while(fgets(line, 10000, file)) {
+		row++;
+		if(row >= first_row) {	
+			stmp = line;
+			remove_blank_ends(stmp);
+			if(row == first_row) {
+				if(stmp.empty()) {
+					row--;
+				} else {
+					is = 0;
+					while((is_n = stmp.find(delimiter, is)) != string::npos) {		
+						columns++;
+						if(headers) {
+							str1 = stmp.substr(is, is_n - is);
+							remove_blank_ends(str1);
+							header.push_back(str1);
+						}
+						if(!to_matrix) {
+							vectors.push_back(new Vector());
+						}
+						is = is_n + delimiter.length();
+					}
+					if(headers) {
+						str1 = stmp.substr(is, stmp.length() - is);
+						remove_blank_ends(str1);
+						header.push_back(str1);
+					}
+					if(to_matrix) {
+						mtrx = new Matrix(1, columns);
+					} else {
+						vectors.push_back(new Vector());
+					}
+				}
+			}
+			if((!headers || row > first_row) && !stmp.empty()) {
+				if(to_matrix && v_added) {
+					mtrx->addRow();
+				}
+				is = 0;
+				column = 1;
+				while(column <= columns) {
+					is_n = stmp.find(delimiter, is);
+					if(is_n == string::npos) {
+						str1 = stmp.substr(is, stmp.length() - is);
+					} else {
+						str1 = stmp.substr(is, is_n - is);
+						is = is_n + delimiter.length();
+					}
+					mngr = CALCULATOR->calculate(str1);
+					if(to_matrix) {
+						mtrx->set(mngr, mtrx->rows(), column);
+					} else {
+						if(v_added) {
+							vectors[column - 1]->addComponent();
+						}
+						vectors[column - 1]->set(mngr, vectors[column - 1]->components());
+					}
+					mngr->unref();
+					column++;
+					if(is_n == string::npos) {
+						break;
+					}
+				}
+				for(; column <= columns; column++) {
+					if(to_matrix) {
+						mtrx->set(NULL, mtrx->rows(), column);
+					} else {
+						if(v_added) {
+							vectors[column - 1]->addComponent();
+						}
+						vectors[column - 1]->set(NULL, vectors[column - 1]->components());
+					}				
+				}
+				v_added = true;
+			}
+		}
+	}
+	if(to_matrix) {
+		mngr = new Manager(mtrx);
+		delete mtrx;
+		addVariable(new Variable(category, name, mngr, title));
+		mngr->unref();
+	} else {
+		if(vectors.size() > 1) {
+			if(!category.empty()) {
+				category += "/";	
+			}
+			category += name;
+		}
+		for(int i = 0; i < vectors.size(); i++) {
+			mngr = new Manager(vectors[i]);
+			delete vectors[i];
+			str1 = "";
+			str2 = "";
+			if(vectors.size() > 1) {
+				str1 += name;
+				str1 += "_";
+				if(title.empty()) {
+					str2 += name;
+					str2 += " ";
+				} else {
+					str2 += title;
+					str2 += " ";
+				}		
+				if(i < header.size()) {
+					str1 += header[i];
+					str2 += header[i];
+				} else {
+					str1 += _("column");
+					str1 += "_";
+					str1 += i2s(i + 1);
+					str2 += _("Column ");
+					str2 += i2s(i + 1);				
+				}
+				gsub(" ", "_", str1);				
+			} else {
+				str1 = name;
+				str2 = title;
+				if(i < header.size()) {
+					str2 += " (";
+					str2 += header[i];
+					str2 += ")";
+				}
+			}
+			addVariable(new Variable(category, str1, mngr, str2));
+			mngr->unref();			
+		}
+	}
+	return true;
 }

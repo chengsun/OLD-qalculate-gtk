@@ -1087,7 +1087,7 @@ void create_umenu() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT(_("Units"), gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression"))), 5)
+	SUBMENU_ITEM_INSERT(_("Units"), gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression"))), 4)
 	u_menu = item;
 	sub2 = sub;
 	Unit *u;
@@ -1210,7 +1210,10 @@ void create_vmenu() {
 	MENU_ITEM(_("Create new variable"), new_variable);
 	MENU_ITEM(_("Create new matrix"), new_matrix);	
 	MENU_ITEM(_("Create new vector"), new_vector);		
+	MENU_ITEM(_("Import CSV file"), on_import_csv_file_activated);	
+	MENU_SEPARATOR		
 	MENU_ITEM(_("Manage variables"), manage_variables);
+	MENU_SEPARATOR
 	MENU_ITEM_SET_ACCEL(GDK_m);
 	if(CALCULATOR->variablesEnabled()) {
 		MENU_ITEM(_("Disable variables"), set_variables_enabled)
@@ -1239,7 +1242,7 @@ void create_pmenu() {
 	GtkWidget *item, *item2;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT(_("Prefixes"), gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression"))), 4)
+	SUBMENU_ITEM_INSERT(_("Prefixes"), gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression"))), 5)
 	int index = 0;
 	Prefix *p = CALCULATOR->getPrefix(index);
 	while(p) {
@@ -1259,7 +1262,7 @@ void create_pmenu2() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT(_("Set prefix"), gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_result"))), 3)
+	SUBMENU_ITEM_INSERT(_("Set prefix"), gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_result"))), 4)
 	int index = 0;
 	Prefix *p = CALCULATOR->getPrefix(index);
 	while(p) {
@@ -2910,9 +2913,8 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	gint start = 0, end = 0;
 	gtk_editable_get_selection_bounds(GTK_EDITABLE(expression), &start, &end);
 	GtkWidget *dialog;
-	int args = f->args();
 	//if function takes no arguments, do not display dialog and insert function directly
-	if(args == 0) {
+	if(f->args() == 0) {
 		string str = f->name() + "()";
 		gchar *gstr = g_strdup(str.c_str());
 		insert_text(gstr);
@@ -2935,18 +2937,40 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	gtk_misc_set_alignment(GTK_MISC(title_label), 0.0, 0.5);
 	gtk_container_add(GTK_CONTAINER(vbox_pre), title_label);	
 	gtk_container_add(GTK_CONTAINER(vbox_pre), vbox);	
+	int args;
+	bool has_vector = false;
+	if(f->args() > 0) {
+		args = f->args();
+	} else if(f->minargs() > 0) {
+		args = f->minargs() + 1;
+		has_vector = true;
+	} else {
+		args = 1;
+		has_vector = true;
+	}
 	GtkWidget *label[args];
-	GtkWidget *entry[args];
-	GtkWidget *descr, *entry1, *label1;
-	gchar *title[args];
-	gchar *title1;
+	GtkWidget *entry[args];	
+	GtkWidget *descr;
+	string argstr; 
 	//create argument entries
 	for(int i = 0; i < args; i++) {
-		if(f->argName(i + 1).empty())
-			title[i] = g_strdup_printf(_("Argument %i"), i + 1);
-		else
-			title[i] = g_strdup(f->argName(i + 1).c_str());
-		label[i] = gtk_label_new(title[i]);
+		if(f->argName(i + 1).empty()) {
+			argstr = _("Argument");
+			argstr += " ";
+			argstr += i2s(i + 1);
+		} else {
+			argstr = f->argName(i + 1).c_str();
+		}
+		if(has_vector && i + 1 == args) {
+			argstr += " (";
+			argstr += _("list");
+			argstr += ")";		
+		} else if(i >= f->minargs()) {
+			argstr += " (";
+			argstr += _("optional");
+			argstr += ")";
+		}
+		label[i] = gtk_label_new(argstr.c_str());
 		entry[i] = gtk_entry_new();
 		//insert selection in expression entry into the first argument entry
 		if(i == 0) {
@@ -2960,20 +2984,6 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 		gtk_container_add(GTK_CONTAINER(hbox), entry[i]);
 		gtk_misc_set_alignment(GTK_MISC(label[i]), 0, 0.5);
 	}
-	//arguments is defined as less than zero, the function requests an vector of undefined length
-	if(args < 0) {
-		if(f->argName(1).empty())
-			title1 = g_strdup(_("Vector (1,2,3,4...)"));
-		else
-			title1 = g_strdup(f->argName(1).c_str());
-		label1 = gtk_label_new(title1);
-		entry1 = gtk_entry_new();
-		GtkWidget *hbox = gtk_hbox_new(TRUE, 6);
-		gtk_container_add(GTK_CONTAINER(vbox), hbox);		
-		gtk_container_add(GTK_CONTAINER(hbox), label1);
-		gtk_container_add(GTK_CONTAINER(hbox), entry1);
-		gtk_misc_set_alignment(GTK_MISC(label1), 0, 0.5);
-	}
 	//display function description
 	if(!f->description().empty()) {
 		descr = gtk_label_new(f->description().c_str());
@@ -2984,6 +2994,7 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	gtk_widget_show_all(dialog);
 	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
 	if(response == GTK_RESPONSE_ACCEPT || response == GTK_RESPONSE_APPLY) {
+		
 		string str = f->name() + LEFT_BRACKET_STR, str2;
 		for(int i = 0; i < args; i++) {
 			str2 = gtk_entry_get_text(GTK_ENTRY(entry[i]));
@@ -2998,25 +3009,20 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 				str += CALCULATOR->getComma();
 			str += str2;
 		}
-		if(args < 0)
-			str += gtk_entry_get_text(GTK_ENTRY(entry1));
 		str += RIGHT_BRACKET_STR;
+		
 		//redo selection if "OK" was clicked, clear expression entry "Execute"
-		if(response == GTK_RESPONSE_ACCEPT)
+		if(response == GTK_RESPONSE_ACCEPT) {
 			gtk_editable_select_region(GTK_EDITABLE(expression), start, end);
-		else
+		} else {
 			gtk_editable_delete_text(GTK_EDITABLE(expression), 0, -1);
-		gchar *gstr = g_strdup(str.c_str());
-		insert_text(gstr);
-		g_free(gstr);
+		}
+		
+		insert_text(str.c_str());
 		//Calculate directly when "Execute" was clicked
 		if(response == GTK_RESPONSE_APPLY)
 			execute_expression();
 	}
-	for(int i = 0; i < args; i++)
-		g_free(title[i]);
-	if(args < 0)
-		g_free(title1);
 	gtk_widget_destroy(dialog);
 }
 
@@ -3845,6 +3851,73 @@ run_matrix_edit_dialog:
 	gtk_widget_grab_focus(expression);
 }
 
+void import_csv_file(GtkWidget *win) {
+
+	GtkWidget *dialog = create_csv_import_dialog();
+	if(win) gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(win));
+
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "csv_import_entry_name")), "");
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "csv_import_entry_file")), "");	
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "csv_import_entry_desc")), "");
+
+run_csv_import_dialog:
+	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
+		//clicked "OK"
+		string str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "csv_import_entry_file")));
+		remove_blank_ends(str);
+		if(str.empty()) {
+			//no filename -- open dialog again
+			show_message(_("No file name entered."), dialog);
+			goto run_csv_import_dialog;
+		}
+		string delimiter = "";
+		switch(gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "csv_import_optionmenu_delimiter")))) {
+			case DELIMITER_COMMA: {
+				delimiter = ",";
+				break;
+			}
+			case DELIMITER_TABULATOR: {
+				delimiter = "\t";
+				break;
+			}			
+			case DELIMITER_SEMICOLON: {
+				delimiter = ";";
+				break;
+			}		
+			case DELIMITER_SPACE: {
+				delimiter = " ";
+				break;
+			}				
+			case DELIMITER_OTHER: {
+				delimiter = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "csv_import_entry_delimiter_other")));
+				break;
+			}			
+		}
+		if(delimiter.empty()) {
+			//no filename -- open dialog again
+			show_message(_("No delimiter selected."), dialog);
+			goto run_csv_import_dialog;
+		}		
+		if(!CALCULATOR->importCSV(str.c_str(), gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "csv_import_spinbutton_first_row"))), gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "csv_import_checkbutton_headers"))), delimiter, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "csv_import_radiobutton_matrix"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "csv_import_entry_name"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "csv_import_entry_desc"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "csv_import_entry_category"))))) {
+			GtkWidget *edialog = gtk_message_dialog_new(
+				GTK_WINDOW(
+					glade_xml_get_widget (glade_xml, "main_window")
+				),
+				GTK_DIALOG_DESTROY_WITH_PARENT,
+				GTK_MESSAGE_ERROR,
+				GTK_BUTTONS_CLOSE,
+				_("Could not import from file \n%s"),
+				str.c_str()
+			);
+			gtk_dialog_run(GTK_DIALOG(edialog));
+			gtk_widget_destroy(edialog);
+		}
+		update_vmenu();
+	}
+	gtk_widget_hide(dialog);
+	gtk_widget_grab_focus(expression);
+}
+
 /*
 	add a new variable (from menu) with the value of result
 */
@@ -3890,6 +3963,10 @@ void new_vector(GtkMenuItem *w, gpointer user_data)
 			NULL,
 			NULL,
 			glade_xml_get_widget (glade_xml, "main_window"), TRUE);
+}
+
+void on_import_csv_file_activated(GtkMenuItem *w, gpointer user_data) {
+	import_csv_file(glade_xml_get_widget (glade_xml, "main_window"));
 }
 
 /*
@@ -5430,7 +5507,7 @@ void on_matrix_edit_spinbutton_columns_value_changed(GtkSpinButton *w, gpointer 
 				if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "matrix_edit_radiobutton_matrix")))) {
 					gtk_entry_set_text(GTK_ENTRY(entry), "0");
 				}
-				gtk_entry_set_width_chars(GTK_ENTRY(entry), 6);
+//				gtk_entry_set_width_chars(GTK_ENTRY(entry), 8);
 				gtk_table_attach(table, entry, index_c, index_c + 1, index_r, index_r + 1, (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), GTK_FILL, 0, 0);
 				gtk_widget_show(entry);			
 				element_entries[index_r].push_back(entry);
@@ -5456,7 +5533,7 @@ void on_matrix_edit_spinbutton_rows_value_changed(GtkSpinButton *w, gpointer use
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "matrix_edit_radiobutton_matrix")))) {
 				gtk_entry_set_text(GTK_ENTRY(entry), "0");
 			}		
-			gtk_entry_set_width_chars(GTK_ENTRY(entry), 6);
+//			gtk_entry_set_width_chars(GTK_ENTRY(entry), 8);
 			gtk_table_attach(table, entry, index_c, index_c + 1, index_r, index_r + 1, (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), GTK_FILL, 0, 0);
 			gtk_widget_show(entry);
 			element_entries[index_r].push_back(entry);
@@ -5673,6 +5750,20 @@ void on_matrix_edit_radiobutton_vector_toggled(GtkToggleButton *w, gpointer user
 	} else {
 		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (glade_xml, "matrix_edit_label_elements")), _("Components (in horizontal order)"));
 	}
+}
+void on_csv_import_radiobutton_matrix_toggled(GtkToggleButton *w, gpointer user_data) {
+}
+void on_csv_import_radiobutton_vectors_toggled(GtkToggleButton *w, gpointer user_data) {
+}
+void on_csv_import_optionmenu_delimiter_changed(GtkOptionMenu *w, gpointer user_data) {
+	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "csv_import_entry_delimiter_other"), gtk_option_menu_get_history(w) == DELIMITER_OTHER);
+}
+void on_csv_import_button_file_clicked(GtkButton *button, gpointer user_data) {
+	GtkWidget *d = gtk_file_selection_new(_("Select file to import"));
+	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "csv_import_entry_file")), gtk_file_selection_get_filename(GTK_FILE_SELECTION(d)));
+	}
+	gtk_widget_destroy(d);
 }
 
 }

@@ -243,6 +243,7 @@ class Matrix {
 	bool isPrecise() const;
 	void setPrecise(bool is_precise);
 	
+	Vector *getRange(int start = 1, int end = -1);
 	Vector *toVector();
 	Vector *rowToVector(int row);	
 	Vector *columnToVector(int column);		

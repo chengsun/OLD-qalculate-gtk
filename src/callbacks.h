@@ -87,10 +87,12 @@ void new_variable(GtkMenuItem *w, gpointer user_data);
 void new_matrix(GtkMenuItem *w, gpointer user_data);
 void new_vector(GtkMenuItem *w, gpointer user_data);
 void new_unit(GtkMenuItem *w, gpointer user_data);
+void on_import_csv_file_activated(GtkMenuItem *w, gpointer user_data);
 void add_as_variable();
 
 void edit_variable(const char *category = "", Variable *v = NULL, Manager *mngr_ = NULL, GtkWidget *win = NULL);
 void edit_matrix(const char *category = "", Variable *v = NULL, Manager *mngr_ = NULL, GtkWidget *win = NULL, gboolean create_vector = FALSE);
+void import_csv_file(GtkWidget *win = NULL);
 
 extern "C" {
 
@@ -236,6 +238,11 @@ void on_matrix_edit_spinbutton_rows_value_changed(GtkSpinButton *w, gpointer use
 
 void on_matrix_edit_radiobutton_matrix_toggled(GtkToggleButton *w, gpointer user_data);
 void on_matrix_edit_radiobutton_vector_toggled(GtkToggleButton *w, gpointer user_data);
+
+void on_csv_import_radiobutton_matrix_toggled(GtkToggleButton *w, gpointer user_data);
+void on_csv_import_radiobutton_vectors_toggled(GtkToggleButton *w, gpointer user_data);
+void on_csv_import_optionmenu_delimiter_changed(GtkOptionMenu *w, gpointer user_data);
+void on_csv_import_button_file_clicked(GtkButton *button, gpointer user_data);
 
 }
 

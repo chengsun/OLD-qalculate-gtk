@@ -1038,8 +1038,8 @@ bool Fraction::floatify(int precision, int max_decimals, bool *infinite_series) 
 			if(num.isNegative()) num.add(-1);
 			else num.add(1);			
 		}
-		b_exact = false;
 	}
+	if(!exact) b_exact = false;
 	if(remainder2) delete remainder2;
 	return exact;	
 }

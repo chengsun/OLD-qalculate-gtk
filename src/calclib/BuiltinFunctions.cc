@@ -10,6 +10,7 @@
 */
 
 #include "BuiltinFunctions.h"
+#include <sstream>
 
 #define TRIG_FUNCTION(FUNC)	if(vargs[0]->isFraction()) {mngr->set(vargs[0]); CALCULATOR->setAngleValue(mngr); if(!mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);} } else {mngr->set(this, vargs[0], NULL);}
 #define FR_FUNCTION(FUNC)	if(vargs[0]->isFraction()) {mngr->set(vargs[0]); if(!mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);} } else {mngr->set(this, vargs[0], NULL);}
@@ -82,18 +83,60 @@ void ZetaFunction::calculate2(Manager *mngr) {
 ProcessFunction::ProcessFunction() : Function("Utilities", "process", 1, "Process components", "", false, -1) {
 }
 void ProcessFunction::calculate2(Manager *mngr) {
+
 	string sarg = vargs[0]->text();
 	string argv = "";
 	Manager *mngr2;	
-	if(vargs.size() > 2 || (vargs[1]->isMatrix() && vargs[1]->matrix()->isVector())) {
+
+	int i = sarg.find("\\x");
+	int i_length;
+	while(i != string::npos) {
+		if(i + 2 < sarg.length() && sarg[i + 2] == '_' && i + 3 < sarg.length()) {
+			string index_str = "component(";
+			if(sarg[i + 3] == LEFT_BRACKET_CH) {
+				int missing = 0;
+				int i2 = find_ending_bracket(sarg, i + 4, &missing);
+				if(i2 == string::npos) {
+					for(int i3 = 1; i3 < missing; i3++) {
+						sarg += RIGHT_BRACKET;
+					}
+					index_str += sarg.substr(i + 4, sarg.length() - (i + 4));
+					i_length += sarg.length() - i;
+				} else {
+					index_str += sarg.substr(i + 4, i2 - (i + 4));
+					i_length = i2 + 1 - i;					
+				}
+			} else {
+				int i2 = sarg.find_first_of(OPERATORS, i + 3);
+				if(i2 = string::npos) {
+					index_str += sarg.substr(i + 3, sarg.length() - (i + 3));
+					i_length = sarg.length() - i;
+				} else {
+					index_str += sarg.substr(i + 3, i2 - (i + 3));
+					i_length += i2 - i;
+				}
+			}
+			index_str += ",\\x)";
+			sarg.replace(i, i_length, index_str);
+			i += index_str.length();
+		} else {
+			sarg.replace(i, 2, "component(\\i,\\x)");
+			i += 16;
+		}
+		i = sarg.find("\\x", i);
+	}	
+	
+	if(vargs.size() == 1) {
+	} else if(vargs.size() > 2 || (vargs[1]->isMatrix() && vargs[1]->matrix()->isVector())) {
 		Vector *v = produceVector();
 		clearVArgs();			
+
 		gsub("\\i", "\\y", sarg);
 		gsub("\\c", "\\y", sarg);		
 		gsub("\\r", LEFT_BRACKET "1" RIGHT_BRACKET, sarg);		
 		gsub("\\n", "\\z", sarg);				
 		UserFunction f("", "Processing Function", sarg, false, 3);
-		Manager *x_mngr = new Manager();
+		Manager *x_mngr = new Manager(v);
 		argv += LEFT_BRACKET ID_WRAP_LEFT;
 		int x_id = CALCULATOR->addId(x_mngr, true);
 		argv += i2s(x_id);
@@ -111,7 +154,7 @@ void ProcessFunction::calculate2(Manager *mngr) {
 		argv += i2s(n_id);
 		argv += ID_WRAP_RIGHT RIGHT_BRACKET;	
 		for(int index = 1; index <= v->components(); index++) {
-			x_mngr->set(v->get(index));
+//			x_mngr->set(v->get(index));
 			i_mngr->set(index, 1);
 			mngr2 = f.calculate(argv);
 			v->set(mngr2, index);		
@@ -133,7 +176,7 @@ void ProcessFunction::calculate2(Manager *mngr) {
 		gsub("\\c", "\\a", sarg);		
 		gsub("\\n", "\\b", sarg);	
 		UserFunction f("", "Processing Function", sarg, false, 5);
-		Manager *x_mngr = new Manager();
+		Manager *x_mngr = new Manager(mtrx);
 		argv += LEFT_BRACKET ID_WRAP_LEFT;
 		int x_id = CALCULATOR->addId(x_mngr, true);
 		argv += i2s(x_id);
@@ -165,7 +208,7 @@ void ProcessFunction::calculate2(Manager *mngr) {
 		for(int index_r = 1; index_r <= mtrx->rows(); index_r++) {
 			r_mngr->set(index_r, 1);						
 			for(int index_c = 1; index_c <= mtrx->columns(); index_c++) {		
-				x_mngr->set(mtrx->get(index_r, index_c));
+//				x_mngr->set(mtrx->get(index_r, index_c));
 				i_mngr->set((index_r - 1) * mtrx->columns() + index_c, 1);
 				c_mngr->set(index_c, 1);				
 				mngr2 = f.calculate(argv);
@@ -204,22 +247,79 @@ void ProcessFunction::calculate2(Manager *mngr) {
 		x_mngr->unref();		
 	}
 }
-CustomSumFunction::CustomSumFunction() : Function("Utilities", "csum", 2, "Custom sum of components", "", false, -1) {
+CustomSumFunction::CustomSumFunction() : Function("Utilities", "csum", 4, "Custom sum of components", "", false, -1) {
 }
 void CustomSumFunction::calculate2(Manager *mngr) {
-	string sarg = vargs[0]->text();
+
+	int start = 1;
+	int end = -1;
+	if(!vargs[0]->isFraction() || !vargs[0]->fraction()->isInteger() || !vargs[1]->isFraction() || !vargs[1]->fraction()->isInteger()) {
+		CALCULATOR->error(true, _("The upper and lower limits must be integers."), NULL);
+	} else {
+		start = vargs[0]->fraction()->numerator()->getInt();
+		if(start < 1) start = 1;
+		end = vargs[1]->fraction()->numerator()->getInt();
+	}
+
+	string sarg = vargs[3]->text();
 	string argv = "";
 	Manager *mngr2;	
-	Manager *y_mngr = new Manager(vargs[1]);
-	if(vargs.size() > 3 || (vargs[2]->isMatrix() && vargs[2]->matrix()->isVector())) {
+	int i = sarg.find("\\x");
+	int i_length;
+	while(i != string::npos) {
+		if(i + 2 < sarg.length() && sarg[i + 2] == '_' && i + 3 < sarg.length()) {
+			string index_str = "component(";
+			if(sarg[i + 3] == LEFT_BRACKET_CH) {
+				int missing = 0;
+				int i2 = find_ending_bracket(sarg, i + 4, &missing);
+				if(i2 == string::npos) {
+					for(int i3 = 1; i3 < missing; i3++) {
+						sarg += RIGHT_BRACKET;
+					}
+					index_str += sarg.substr(i + 4, sarg.length() - (i + 4));
+					i_length += sarg.length() - i;
+				} else {
+					index_str += sarg.substr(i + 4, i2 - (i + 4));
+					i_length = i2 + 1 - i;					
+				}
+			} else {
+				int i2 = sarg.find_first_of(OPERATORS, i + 3);
+				if(i2 = string::npos) {
+					index_str += sarg.substr(i + 3, sarg.length() - (i + 3));
+					i_length = sarg.length() - i;
+				} else {
+					index_str += sarg.substr(i + 3, i2 - (i + 3));
+					i_length += i2 - i;
+				}
+			}
+			index_str += ",\\x)";
+			sarg.replace(i, i_length, index_str);
+			i += index_str.length();
+		} else {
+			sarg.replace(i, 2, "component(\\i,\\x)");
+			i += 16;
+		}
+		i = sarg.find("\\x", i);
+	}	
+
+	Manager *y_mngr = new Manager(vargs[2]);
+	if(vargs.size() == 4) {
+	} else if(vargs.size() > 5 || (vargs[4]->isMatrix() && vargs[4]->matrix()->isVector())) {
+
 		Vector *v = produceVector();
-		clearVArgs();			
+		clearVArgs();		
+
+		int n = v->components();
+		if(start > n) start = n;
+		if(end < 1 || end > n) end = n;
+		else if(end < start) end = start;	
 		gsub("\\i", "\\z", sarg);
 		gsub("\\c", "\\z", sarg);		
 		gsub("\\r", LEFT_BRACKET "1" RIGHT_BRACKET, sarg);		
 		gsub("\\n", "\\a", sarg);				
+
 		UserFunction f("", "Processing Function", sarg, false, 4);
-		Manager *x_mngr = new Manager();
+		Manager *x_mngr = new Manager(v);
 		argv += LEFT_BRACKET ID_WRAP_LEFT;
 		int x_id = CALCULATOR->addId(x_mngr, true);
 		argv += i2s(x_id);
@@ -241,8 +341,9 @@ void CustomSumFunction::calculate2(Manager *mngr) {
 		int n_id = CALCULATOR->addId(n_mngr, true);
 		argv += i2s(n_id);
 		argv += ID_WRAP_RIGHT RIGHT_BRACKET;	
-		for(int index = 1; index <= v->components(); index++) {
-			x_mngr->set(v->get(index));
+
+		for(int index = start; index <= end; index++) {
+//			x_mngr->set(v->get(index));
 			i_mngr->set(index, 1);
 			mngr2 = f.calculate(argv);
 			y_mngr->set(mngr2);
@@ -256,15 +357,23 @@ void CustomSumFunction::calculate2(Manager *mngr) {
 		i_mngr->unref();
 		n_mngr->unref();
 		delete v;		
-	} else if(vargs[2]->isMatrix()) {
-		Matrix *mtrx = new Matrix(vargs[2]->matrix());	
+
+	} else if(vargs[4]->isMatrix()) {
+		Matrix *mtrx = new Matrix(vargs[4]->matrix());	
 		clearVArgs();			
+		
+		int n = mtrx->columns() * mtrx->rows();
+		if(start > n) start = n;
+		if(end < 1) end = n;
+		else if(end > n) end = n;
+		else if(end < start) end = start;		
+		
 		gsub("\\i", "\\z", sarg);
 		gsub("\\r", "\\a", sarg);		
 		gsub("\\c", "\\b", sarg);		
 		gsub("\\n", "\\c", sarg);	
 		UserFunction f("", "Processing Function", sarg, false, 6);
-		Manager *x_mngr = new Manager();
+		Manager *x_mngr = new Manager(mtrx);
 		argv += LEFT_BRACKET ID_WRAP_LEFT;
 		int x_id = CALCULATOR->addId(x_mngr, true);
 		argv += i2s(x_id);
@@ -298,15 +407,19 @@ void CustomSumFunction::calculate2(Manager *mngr) {
 		int n_id = CALCULATOR->addId(n_mngr, true);
 		argv += i2s(n_id);
 		argv += ID_WRAP_RIGHT RIGHT_BRACKET;			
+		int i;
 		for(int index_r = 1; index_r <= mtrx->rows(); index_r++) {
 			r_mngr->set(index_r, 1);						
 			for(int index_c = 1; index_c <= mtrx->columns(); index_c++) {		
-				x_mngr->set(mtrx->get(index_r, index_c));
-				i_mngr->set((index_r - 1) * mtrx->columns() + index_c, 1);
-				c_mngr->set(index_c, 1);				
-				mngr2 = f.calculate(argv);
-				y_mngr->set(mngr2);
-				mngr2->unref();
+				i = (index_r - 1) * mtrx->columns() + index_c;
+				if(i >= start && i <= end) {
+					x_mngr->set(mtrx->get(index_r, index_c));
+					i_mngr->set((index_r - 1) * mtrx->columns() + index_c, 1);
+					c_mngr->set(index_c, 1);				
+					mngr2 = f.calculate(argv);
+					y_mngr->set(mngr2);
+					mngr2->unref();
+				}
 			}
 		}	
 		CALCULATOR->delId(x_id, true);
@@ -322,7 +435,7 @@ void CustomSumFunction::calculate2(Manager *mngr) {
 		n_mngr->unref();
 		delete mtrx;			
 	} else {
-		Manager *x_mngr = new Manager(vargs[2]);
+		Manager *x_mngr = new Manager(vargs[4]);
 		clearVArgs();			
 		argv += LEFT_BRACKET ID_WRAP_LEFT;
 		int x_id = CALCULATOR->addId(x_mngr, true);
@@ -499,8 +612,8 @@ void ColumnsFunction::calculate2(Manager *mngr) {
 		mngr->set(1, 1);
 	}
 }
-ComponentsFunction::ComponentsFunction() : Function("Matrices", "components", 1, "Components") {}
-void ComponentsFunction::calculate2(Manager *mngr) {
+ElementsFunction::ElementsFunction() : Function("Matrices", "elements", 1, "Elements") {}
+void ElementsFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->isMatrix()) {
 		mngr->set(vargs[0]->matrix()->columns() * vargs[0]->matrix()->rows(), 1);
 	} else {
@@ -518,9 +631,48 @@ void ElementFunction::calculate2(Manager *mngr) {
 	}
 	if(vargs[2]->isMatrix()) {
 		mngr->set(vargs[2]->matrix()->get(vargs[0]->fraction()->numerator()->getInt(), vargs[1]->fraction()->numerator()->getInt()));
-	} else {
-		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
+	} else if(vargs[0]->fraction()->isOne() && vargs[1]->fraction()->isOne()) {
+		mngr->set(vargs[2]);
 	}
+}
+ComponentsFunction::ComponentsFunction() : Function("Matrices", "components", 1, "Components") {}
+void ComponentsFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isMatrix()) {
+		mngr->set(vargs[0]->matrix()->columns() * vargs[0]->matrix()->rows(), 1);
+	} else {
+		mngr->set(1, 1);
+	}
+}
+ComponentFunction::ComponentFunction() : Function("Matrices", "component", 2, "Component") {}
+void ComponentFunction::calculate2(Manager *mngr) {
+	if(!vargs[0]->isFraction() || !vargs[0]->fraction()->isInteger() || !vargs[0]->fraction()->isPositive()) {
+		Manager *mngr2 = createFunctionManagerFromVArgs(vargs.size());	
+		mngr->set(mngr2);
+		delete mngr2;
+		CALCULATOR->error(true, _("Row and column in matrix must be positive integers."), NULL);
+		return;
+	}
+	if(vargs[1]->isMatrix()) {
+		mngr->set(vargs[1]->matrix()->get((vargs[0]->fraction()->numerator()->getInt() - 1) / vargs[1]->matrix()->columns() + 1, (vargs[0]->fraction()->numerator()->getInt() - 1) % vargs[1]->matrix()->columns() + 1));
+	} else if(vargs[0]->fraction()->isOne()) {
+		mngr->set(vargs[1]);
+	}
+}
+LimitsFunction::LimitsFunction() : Function("Matrices", "limits", 2, "Limits", "", false, -1) {}
+void LimitsFunction::calculate2(Manager *mngr) {
+	if(!vargs[0]->isFraction() || !vargs[0]->fraction()->isInteger() || !vargs[1]->isFraction() || !vargs[1]->fraction()->isInteger()) {
+		Manager *mngr2 = createFunctionManagerFromVArgs(vargs.size());	
+		mngr->set(mngr2);
+		delete mngr2;
+		CALCULATOR->error(true, _("The upper and lower limits must be integers."), NULL);
+		return;
+	}
+	int i = vargs[0]->fraction()->numerator()->getInt(), n = vargs[1]->fraction()->numerator()->getInt();	
+	Vector *v = produceVector();
+	Vector *vctr = v->getRange(i, n);
+	mngr->set(vctr);
+	delete vctr;
+	delete v;
 }
 TransposeFunction::TransposeFunction() : Function("Matrices", "transpose", 1, "Transpose") {}
 void TransposeFunction::calculate2(Manager *mngr) {
@@ -594,63 +746,83 @@ IFFunction::IFFunction() : Function("Logical", "if", 3, "If...Then...Else") {
 }
 Manager *IFFunction::calculate(const string &argv) {
 	Manager *mngr = NULL;
-	int itmp = stringArgs(argv);
+	argc = 1;
+	max_argc = 1;
+	args(argv);	
+	argc = 3;
+	max_argc = 3;
+	int itmp = stringArgs(argv);	
 	if(testArgCount(itmp)) {
-		unsigned int i = svargs[0].find_first_of("<=>", 0);
+		string expr;
+		if(vargs[0]->isText()) {
+			expr = vargs[0]->text();
+		} else {
+			expr = svargs[0];
+		}
+		unsigned int i = expr.find_first_of("<=>", 0);
 		bool result = false;
 		int com = 0;
 		if(i == string::npos) {
-			CALCULATOR->error(false, _("Condition contains no comparison, interpreting as \"%s > 0\"."), svargs[0].c_str(), NULL);
-			svargs[0] += " > 0";
-			i = svargs[0].find_first_of("<=>", 0);
+//			CALCULATOR->error(false, _("Condition contains no comparison, interpreting as \"%s > 0\"."), expr.c_str(), NULL);
+			expr += " > 0";
+			i = expr.find_first_of("<=>", 0);
 		} 
-		string str1 = svargs[0].substr(0, i);
-		string str2 = svargs[0].substr(i + 1, svargs[0].length() - i + 1);			
+		string str1 = expr.substr(0, i);
+		string str2 = expr.substr(i + 1, expr.length() - i + 1);			
 		remove_blank_ends(str2);
-		char sign1 = svargs[0][i], sign2 = 0;
-		if(str2[0] != sign1 && (str2[0] == '>' || str2[0] == '=' || str2[0] == '<')) {
-			sign2 = str2[0];
-			str2.erase(0);
+		char sign1 = expr[i], sign2 = 0;
+		if(str2[0] == '>' || str2[0] == '=' || str2[0] == '<') {
+			if(str2[0] != sign1) sign2 = str2[0];
+			str2.erase(str2.begin());
 		}
 		Manager *mngr1 = CALCULATOR->calculate(str1);
 		Manager *mngr2 = CALCULATOR->calculate(str2);			
 		mngr1->add(mngr2, SUBTRACT);
-		if(mngr1->isNumber()) {
+		if(mngr1->isFraction()) {
 			if(sign1 == '=') {
 				if(sign2 == 0) 
-					result = mngr1->value() == 0L;
+					result = mngr1->fraction()->isZero();
 				else if(sign2 == '>') 
-					result = mngr1->value() >= 0L;
+					result = !mngr1->fraction()->isNegative();
 				else if(sign2 == '<') 
-					result = mngr1->value() <= 0L; 
+					result = !mngr1->fraction()->isPositive();
 			} else if(sign1 == '>') {
 				if(sign2 == 0) 
-					result = mngr1->value() > 0L;
+					result = mngr1->fraction()->isPositive();
 				else if(sign2 == '=') 
-					result = mngr1->value() >= 0L;
+					result = !mngr1->fraction()->isNegative();
 				else if(sign2 == '<') 
-					result = mngr1->value() != 0L; 
+					result = !mngr1->fraction()->isZero(); 
 			} else if(sign1 == '<') {
 				if(sign2 == 0) 
-					result = mngr1->value() < 0L;
+					result = mngr1->fraction()->isNegative();
 				else if(sign2 == '>') 
-					result = mngr1->value() != 0L;
+					result = !mngr1->fraction()->isZero();
 				else if(sign2 == '=') 
-					result = mngr1->value() <= 0L; 
+					result = !mngr1->fraction()->isPositive();
 			}
 		} else {
 			CALCULATOR->error(true, _("Comparison is not solvable, treating as FALSE."), NULL);
 		}
 		mngr1->unref();
 		mngr2->unref();
+		
 		if(result) {			
+			//mngr = new Manager(vargs[1]);
 			mngr = CALCULATOR->calculate(svargs[1]);
 		} else {			
+			//mngr = new Manager(vargs[2]);
 			mngr = CALCULATOR->calculate(svargs[2]);		
 		}			
 	} else {
-		mngr = createFunctionManagerFromSVArgs(itmp);
+		if(vargs[0]->isText()) {
+			mngr = createFunctionManagerFromVArgs(itmp);
+		} else {
+			stringArgs(argv);
+			mngr = createFunctionManagerFromSVArgs(itmp);
+		}	
 	}
+	clearVArgs();
 	clearSVArgs();
 	return mngr;
 }
@@ -982,6 +1154,33 @@ void CbrtFunction::calculate2(Manager *mngr) {
 		mngr2->unref();	
 	}
 }
+RootFunction::RootFunction() : Function("Exponents and Logarithms", "root", 2, "Nth Root") {}
+void RootFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isFraction() && vargs[1]->isFraction()) {
+		mngr->set(vargs[0]);
+		Fraction fr(1);
+		fr.divide(vargs[1]->fraction());
+		if(mngr->fraction()->pow(&fr)) {
+			return;
+		}		
+	} 
+	mngr->set(vargs[0]);
+	Manager *mngr2 = new Manager(1, 1);		
+	mngr2->add(vargs[1], DIVIDE);
+	mngr->add(mngr2, RAISE);
+	mngr2->unref();	
+}
+PowFunction::PowFunction() : Function("Exponents and Logarithms", "pow", 2, "Power") {}
+void PowFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isFraction() && vargs[1]->isFraction()) {
+		mngr->set(vargs[0]);
+		if(mngr->fraction()->pow(vargs[1]->fraction())) {
+			return;
+		}		
+	}
+	mngr->set(vargs[0]);
+	mngr->add(vargs[1], RAISE);
+}
 HypotFunction::HypotFunction() : Function("Geometry", "hypot", 2, "Hypotenuse") {
 
 }
@@ -1029,19 +1228,64 @@ void MedianFunction::calculate2(Manager *mngr) {
 	}
 	delete v;
 }
+PercentileFunction::PercentileFunction() : Function("Statistics", "percentile", 1, "Percentile", "", false, -1) {}
+void PercentileFunction::calculate2(Manager *mngr) {
+	if(vargs.size() <= 1) {
+		return;
+	}
+	Fraction fr100(100);
+	if(!vargs[0]->isFraction() || !vargs[0]->fraction()->isPositive() || !vargs[0]->fraction()->isLessThan(&fr100)) {
+		Manager *mngr2 = createFunctionManagerFromVArgs(vargs.size());	
+		mngr->set(mngr2);
+		delete mngr2;	
+		CALCULATOR->error(true, _("Percentile must be supplied a positive value lower than 100."), NULL);
+		return;
+	}
+	Vector *v = produceVector();	
+	if(!v->sort()) {
+		Manager *mngr2 = createFunctionManagerFromVArgs(vargs.size());
+		mngr->set(mngr2);
+		mngr2->unref();	
+	} else {
+		Fraction nfr(v->components() + 1);		
+		Fraction pfr(vargs[0]->fraction());		
+		pfr.divide(&fr100);
+		pfr.multiply(&nfr);
+/*		Fraction cfr(v->components());		
+		if(pfr.isZero() || pfr.numerator()->isLessThan(pfr.denominator()) || pfr.isGreaterThan(&cfr)) {
+			CALCULATOR->error(true, _("Not enough samples."), NULL);
+		}*/
+		if(pfr.isInteger()) {
+			mngr->set(v->get(pfr.numerator()->getInt()));
+		} else {
+			Fraction ufr(&pfr);
+			ufr.ceil();
+			Fraction lfr(&pfr);
+			lfr.floor();
+			pfr.subtract(&lfr);
+			Manager gap(v->get(ufr.numerator()->getInt()));
+			gap.add(v->get(lfr.numerator()->getInt()), SUBTRACT);
+			Manager pfr_mngr(&pfr);
+			gap.add(&pfr_mngr, MULTIPLY);
+			mngr->set(v->get(lfr.numerator()->getInt()));
+			mngr->add(&gap, ADD);
+		}
+	}
+	delete v;
+}
 MinFunction::MinFunction() : Function("Statistics", "min", -1, "Min") {}
 void MinFunction::calculate2(Manager *mngr) {
 	if(vargs.size() <= 0)
 		return;
 	Vector *v = produceVector();		
 	Fraction *fr = NULL;
-	for(int index = 1; index < v->components(); index++) {
+	for(int index = 1; index <= v->components(); index++) {
 		if(v->get(index)->isFraction()) {
 			if(!fr || v->get(index)->fraction()->isLessThan(fr)) {
 				fr = v->get(index)->fraction();
 			}
 		} else {
-			CALCULATOR->error(true, "%s() can only compare numbers.", name().c_str(), NULL);
+			CALCULATOR->error(true, _("%s() can only compare numbers."), name().c_str(), NULL);
 			Manager *mngr2 = createFunctionManagerFromVArgs(vargs.size());
 			mngr->set(mngr2);
 			mngr2->unref();
@@ -1058,13 +1302,13 @@ void MaxFunction::calculate2(Manager *mngr) {
 		return;
 	Vector *v = produceVector();		
 	Fraction *fr = NULL;
-	for(int index = 1; index < v->components(); index++) {
+	for(int index = 1; index <= v->components(); index++) {
 		if(v->get(index)->isFraction()) {
 			if(!fr || v->get(index)->fraction()->isGreaterThan(fr)) {
 				fr = v->get(index)->fraction();
 			}
 		} else {
-			CALCULATOR->error(true, "%s() function can only compare numbers.", name().c_str(), NULL);
+			CALCULATOR->error(true, _("%s() function can only compare numbers."), name().c_str(), NULL);
 			Manager *mngr2 = createFunctionManagerFromVArgs(vargs.size());
 			mngr->set(mngr2);
 			mngr2->unref();
@@ -1086,7 +1330,7 @@ void ModeFunction::calculate2(Manager *mngr) {
 	vector<Manager*> vargs_nodup;
 	vector<int> is;
 	Manager *value = NULL;
-	for(int index_c = 1; index_c < v->components(); index_c++) {
+	for(int index_c = 1; index_c <= v->components(); index_c++) {
 		b = true;
 		for(int index = 0; index < vargs_nodup.size(); index++) {
 			if(vargs_nodup[index]->equals(v->get(index_c))) {
@@ -1164,60 +1408,100 @@ BASEFunction::BASEFunction() : Function("General", "BASE", 2, "Number Base") {
 
 }
 Manager *BASEFunction::calculate(const string &eq) {
-	int itmp = stringArgs(eq);
+	int itmp = args(eq);
 	if(testArgCount(itmp)) {
-		Manager *mngr = CALCULATOR->calculate(svargs[1]);	
-		int base = (int) mngr->value();
-		long double value = 0;
+		string expr;
+		if(vargs[0]->isText()) {
+			expr = vargs[0]->text();
+		} else {
+			stringArgs(eq);
+			expr = svargs[0];
+			clearSVArgs();
+		}
+		int base = (int) vargs[1]->value();
+		long int value = 0;
+		Manager *mngr;
 		if(base < 2 || base > 36) {
 			CALCULATOR->error(false, _("Base must be between 2 and 36 (was %s) for function %s()."), i2s(base).c_str(), name().c_str(), NULL);
-			Manager *mngr2 = new Manager(base);
-			Manager *mngr3 = new Manager(svargs[0]);			
-			mngr->set(this, mngr3, mngr2, NULL);
+			Manager *mngr2 = new Manager(base, 1);
+			Manager *mngr3 = new Manager(expr);			
+			mngr = new Manager(this, mngr3, mngr2, NULL);
 			mngr2->unref();
 			mngr3->unref();
 		} else {
-			value = (long double) strtol(svargs[0].c_str(), NULL, base);
-			clearSVArgs();
-			mngr->set(value);
+			value = strtol(expr.c_str(), NULL, base);
+			mngr = new Manager(value, 1);
 		}
+		clearVArgs();
 		return mngr;
 	}
-	Manager *mngr = createFunctionManagerFromSVArgs(itmp);
-	clearSVArgs();
+	Manager *mngr;
+	if(itmp >= 1 && vargs[0]->isText()) {
+		mngr = createFunctionManagerFromVArgs(itmp);
+	} else {
+		itmp = stringArgs(eq);
+		mngr = createFunctionManagerFromSVArgs(itmp);
+		clearSVArgs();
+	}
+	clearVArgs();
 	return mngr;			
 }
 BINFunction::BINFunction() : Function("General", "BIN", 1, "Binary") {
 
 }
 Manager *BINFunction::calculate(const string &eq) {
-	Manager *mngr = new Manager();
-	string str = eq;
-	remove_blanks(str);
-	mngr->set((long double) strtol(str.c_str(), NULL, 2));
-	return mngr;
+	int itmp = args(eq);	
+	Manager *mngr = new Manager();	
+	if(testArgCount(itmp)) {
+		string expr;
+		if(vargs[0]->isText()) {
+			expr = vargs[0]->text();
+		} else {
+			expr = eq;
+		}
+		mngr->set(strtol(expr.c_str(), NULL, 2), 1);
+	}
+	clearVArgs();	
+	return mngr;	
 }
 OCTFunction::OCTFunction() : Function("General", "OCT", 1, "Octal") {
 
 }
 Manager *OCTFunction::calculate(const string &eq) {
-	Manager *mngr = new Manager();
-	mngr->set((long double) strtol(eq.c_str(), NULL, 8));
+	int itmp = args(eq);	
+	Manager *mngr = new Manager();	
+	if(testArgCount(itmp)) {
+		string expr;
+		if(vargs[0]->isText()) {
+			expr = vargs[0]->text();
+		} else {
+			expr = eq;
+		}
+		mngr->set(strtol(expr.c_str(), NULL, 8), 1);
+	}
+	clearVArgs();	
 	return mngr;
 }
 HEXFunction::HEXFunction() : Function("General", "HEX", 1, "Hexadecimal") {
 
 }
 Manager *HEXFunction::calculate(const string &eq) {
-	string stmp;
-	if(eq.length() >= 2 && eq[0] == '0' && (eq[1] == 'x' || eq[1] == 'X'))
-		stmp = eq;
-	else {
-		stmp = "0x";
-		stmp += eq;
+	int itmp = args(eq);	
+	Manager *mngr = new Manager();	
+	if(testArgCount(itmp)) {
+		string expr;
+		if(vargs[0]->isText()) {
+			expr = vargs[0]->text();
+		} else {
+			expr = eq;
+		}		
+		if(expr.length() >= 2 && expr[0] == '0' && (expr[1] == 'x' || expr[1] == 'X')) {
+		} else {
+			expr.insert(0, "0x");
+		}
+		mngr->set(strtold(expr.c_str(), NULL));
 	}
-	Manager *mngr = new Manager();
-	mngr->set(strtold(stmp.c_str(), NULL));
+	clearVArgs();
 	return mngr;
 }
 

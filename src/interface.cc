@@ -564,6 +564,29 @@ create_matrix_edit_dialog (void)
 
 	return glade_xml_get_widget (glade_xml, "matrix_edit_dialog");
 }
+GtkWidget*
+create_csv_import_dialog (void)
+{
+	/* populate combo menu */
+	
+	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
+	GList *items = NULL;
+	for(int i = 0; i < CALCULATOR->variables.size(); i++) {
+		if(!CALCULATOR->variables[i]->category().empty()) {
+			//add category if not present
+			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->variables[i]->category().c_str()) == NULL) {
+				items = g_list_append(items, (gpointer) CALCULATOR->variables[i]->category().c_str());
+				//remember added categories
+				g_hash_table_insert(hash, (gpointer) CALCULATOR->variables[i]->category().c_str(), (gpointer) hash);
+			}
+		}
+	}
+	gtk_combo_set_popdown_strings(GTK_COMBO(glade_xml_get_widget (glade_xml, "csv_import_combo_category")), items);
+	g_hash_table_destroy(hash);	
+	g_list_free(items);
+
+	return glade_xml_get_widget (glade_xml, "csv_import_dialog");
+}
 
 GtkWidget*
 create_nbases_dialog (void)

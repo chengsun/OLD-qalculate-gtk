@@ -70,10 +70,27 @@ int Function::args(const string &str) {
 		while(1) {
 			if((i = str.find(COMMA_CH, i)) != (int) string::npos) {
 				if((i3 = str.find(LEFT_BRACKET_CH, i4)) < i && i3 >= 0) {
-					i = str.find(RIGHT_BRACKET_CH, i3);
+/*					i = str.find(RIGHT_BRACKET_CH, i3);
 					i4 = i;
 					if(i == (int) string::npos)
+						break;*/
+					i4 = i3;
+					while(1) {
+						i = str.find(RIGHT_BRACKET_CH, i4);
+						if(i == string::npos) {
+							i4 = i;
+							break;	
+						}
+						i3 = str.find(LEFT_BRACKET_CH, i3 + 1);
+						if(i3 == string::npos || i3 > i) {		
+							i4 = i;
+							break;
+						}
+						i4 = i + 1;			
+					}
+					if(i4 == string::npos)
 						break;
+					i = i4;						
 				} else {
 					if(itmp <= maxargs() || args() < 0) {
 						Manager *mngr = CALCULATOR->calculate(str.substr(i2, i - i2));
@@ -101,41 +118,6 @@ int Function::args(const string &str) {
 			itmp2++;
 		}
 	}
-	return itmp;
-}
-int Function::args(const string &str, string *buffer) {
-	int itmp = 0, i = 0, i2 = 0, i3 = 0;
-	if(!str.empty()) {
-		itmp = 1;
-		while(1) {
-			if((i = str.find(COMMA_CH, i)) != (int) string::npos) {
-				if((i3 = str.find(LEFT_BRACKET_CH, i2)) < i && i3 >= 0) {
-					i = str.find(RIGHT_BRACKET_CH, i3);
-					if(i == (int) string::npos)
-						break;
-				} else {
-					if(itmp <= args()) {
-						buffer[itmp - 1] = str.substr(i2, i - i2);
-					}
-					i++;
-					i2 = i;
-					itmp++;
-				}
-			} else {
-				if(itmp <= args()) {
-					buffer[itmp - 1] = str.substr(i2, str.length() - i2);
-				}
-				break;
-			}
-		}
-	}
-	if(itmp < maxargs() && itmp >= minargs()) {
-		int itmp2 = itmp;
-		while(itmp2 < maxargs()) {
-			buffer[itmp2] = default_values[itmp2 - minargs()];
-			itmp2++;
-		}
-	}	
 	return itmp;
 }
 string Function::category(void) const {
@@ -426,56 +408,71 @@ int Function::stringArgs(const string &str) {
 	return itmp;
 }
 Manager *UserFunction::calculate(const string &argv) {
+
 	if(args() != 0) {
 		int itmp;
-		if((itmp = stringArgs(argv)) >= minargs()) {
+		if((itmp = args(argv)) >= minargs()) {
+
 			if(itmp > maxargs() && maxargs() >= 0)
 				CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str());						
 			string stmp = eq_calc;
 			string svar;
+			string v_str;
+			vector<int> v_id;
 			int i2 = 0;
 			int i_args = maxargs();
 			if(i_args < 0) {
 				i_args = minargs();
 			}
+
+			vector<Manager*> mngr_v;										
 			for(int i = 0; i < i_args; i++) {
+
 				svar = '\\';
-				if('x' + i > 'z')
+				if('x' + i > 'z') {
 					svar += (char) ('a' + i - 3);
-				else
+				} else {
 					svar += 'x' + i;
+				}
+				i2 = 0;	
+				mngr_v.push_back(new Manager(vargs[i]));
+				v_id.push_back(CALCULATOR->addId(mngr_v[i], true));
+				v_str = LEFT_BRACKET ID_WRAP_LEFT;
+				v_str += i2s(v_id[v_id.size() - 1]);
+				v_str += ID_WRAP_RIGHT RIGHT_BRACKET;			
 				while(1) {
-					if((i2 = stmp.find(svar)) != (int) string::npos) {
+
+					if((i2 = stmp.find(svar, i2)) != (int) string::npos) {
 						if(i2 != 0 && stmp[i2 - 1] == '\\') {
 							i2 += 2;
 						} else {
-							svargs[i].insert(0, LEFT_BRACKET_STR);
-							svargs[i] += RIGHT_BRACKET_STR;						
-							stmp.replace(i2, 2, svargs[i]);
+//							svargs[i].insert(0, LEFT_BRACKET_STR);
+//							svargs[i] += RIGHT_BRACKET_STR;						
+//							stmp.replace(i2, 2, svargs[i]);
+							stmp.replace(i2, 2, v_str);
 						}
 					} else {
 						break;
 					}
 				}
+
 			}
-			clearSVArgs();
-			vector<Manager*> mngr_v;
-			vector<int> v_id;
+
 			if(maxargs() < 0) {
-				args(argv);				
 				Vector *v = produceVector();			
-				clearVArgs();
-				string v_str;
+				mngr_v.push_back(new Manager(v));	
+				v_id.push_back(CALCULATOR->addId(mngr_v[mngr_v.size() - 1], true));
+				v_str = LEFT_BRACKET ID_WRAP_LEFT;
+				v_str += i2s(v_id[v_id.size() - 1]);
+				v_str += ID_WRAP_RIGHT RIGHT_BRACKET;	
+
 				while(1) {
 					if((i2 = stmp.find("\\v")) != (int) string::npos) {					
 						if(i2 != 0 && stmp[i2 - 1] == '\\') {
 							i2 += 2;
 						} else {
-							mngr_v.push_back(new Manager(v));	
-							v_id.push_back(CALCULATOR->addId(mngr_v[mngr_v.size() - 1], true));
-							v_str = LEFT_BRACKET ID_WRAP_LEFT;
-							v_str += i2s(v_id[v_id.size() - 1]);
-							v_str += ID_WRAP_RIGHT RIGHT_BRACKET;	
+//							mngr_v.push_back(new Manager(v));	
+//							v_id.push_back(CALCULATOR->addId(mngr_v[mngr_v.size() - 1], true));
 							stmp.replace(i2, 2, v_str);
 						}
 					} else {
@@ -483,7 +480,8 @@ Manager *UserFunction::calculate(const string &argv) {
 					}
 				}
 				delete v;
-			} 
+			} 		
+
 			while(1) {
 				if((i2 = stmp.find("\\\\")) != (int) string::npos) {
 					stmp.replace(i2, 2, "\\");
@@ -491,8 +489,9 @@ Manager *UserFunction::calculate(const string &argv) {
 					break;
 				}
 			}
+			clearVArgs();							
 			Manager *mngr = CALCULATOR->calculate(stmp);
-			for(int i = 0; i < mngr_v.size(); i++) {
+			for(int i = 0; i < v_id.size(); i++) {
 				CALCULATOR->delId(v_id[i], true);
 				mngr_v[i]->unref();
 			}

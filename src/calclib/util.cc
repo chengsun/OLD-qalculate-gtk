@@ -522,6 +522,27 @@ long long int llpow(long long int base, long long int exp, bool &overflow) {
 	return value;
 }
 
+int find_ending_bracket(const string &str, int start, int *missing) {
+	int i_l = 1;
+	while(true) {
+		start = str.find_first_of(LEFT_BRACKET RIGHT_BRACKET, start);
+		if(start == string::npos) {
+			if(missing) *missing = i_l;
+			return string::npos;
+		}
+		if(str[start] == LEFT_BRACKET_CH) {
+			i_l++;
+		} else {
+			i_l--;
+			if(!i_l) {
+				if(missing) *missing = i_l;
+				return start;
+			}
+		}
+		start++;
+	}
+}
+
 char op2ch(MathOperation op) {
 	switch(op) {
 		case ADD: return PLUS_CH;

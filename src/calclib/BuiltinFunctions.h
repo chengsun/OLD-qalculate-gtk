@@ -102,6 +102,12 @@ class MatrixToVectorFunction : public Function {
   public:
 	MatrixToVectorFunction();
 };
+class LimitsFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	LimitsFunction();
+};
 class RankFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
@@ -138,17 +144,29 @@ class ColumnFunction : public Function {
   public:
 	ColumnFunction();
 };
-class ComponentsFunction : public Function {
+class ElementsFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	ComponentsFunction();
+	ElementsFunction();
 };
 class ElementFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
 	ElementFunction();
+};
+class ComponentsFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	ComponentsFunction();
+};
+class ComponentFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	ComponentFunction();
 };
 class TransposeFunction : public Function {
   protected:
@@ -402,6 +420,18 @@ class CbrtFunction : public Function {
   public:
 	CbrtFunction();
 };
+class RootFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	RootFunction();
+};
+class PowFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	PowFunction();
+};
 class HypotFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
@@ -425,6 +455,12 @@ class MedianFunction : public Function {
 	void calculate2(Manager *mngr);  
   public:
 	MedianFunction();
+};
+class PercentileFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	PercentileFunction();
 };
 class MinFunction : public Function {
   protected:

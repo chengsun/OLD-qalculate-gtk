@@ -126,10 +126,10 @@ int main (int argc, char **argv) {
 	generate_variables_tree_struct();
 	create_fmenu();
 	create_vmenu();	
-	create_pmenu();	
-	create_pmenu2();		
 	create_umenu();
+	create_pmenu();	
 	create_umenu2();
+	create_pmenu2();			
 	
 	gtk_main ();
 	return 0;

@@ -41,6 +41,14 @@ enum {
 	COMPOSITE_UNIT
 };
 
+enum {
+	DELIMITER_COMMA,
+	DELIMITER_TABULATOR,	
+	DELIMITER_SEMICOLON,
+	DELIMITER_SPACE,
+	DELIMITER_OTHER
+};
+
 void create_main_window (void);
 GtkWidget* create_functions_dialog (void);
 GtkWidget* create_variables_dialog (void);
@@ -50,6 +58,7 @@ GtkWidget* create_unit_edit_dialog (void);
 GtkWidget* create_function_edit_dialog (void);
 GtkWidget* create_variable_edit_dialog (void);
 GtkWidget* create_matrix_edit_dialog (void);
+GtkWidget* create_csv_import_dialog (void);
 GtkWidget* create_nbases_dialog (void);
 GtkWidget *create_InfoWidget(const gchar *text);
 

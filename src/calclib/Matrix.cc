@@ -550,6 +550,24 @@ bool Matrix::isPrecise() const {
 void Matrix::setPrecise(bool is_precise) {
 	b_exact = is_precise;
 }
+Vector *Matrix::getRange(int start, int end) {
+	int n = columns() * rows();
+	if(start < 1) start = 1;
+	else if(start > n) start = n;
+	if(end < 1 || end > n) end = n;
+	else if(end < start) end = start;	
+	Vector *vctr = new Vector(end + 1 - start);
+	int i;
+	for(int index_r = 1; index_r <= rows(); index_r++) {
+		for(int index_c = 1; index_c <= columns(); index_c++) {
+			i = (index_r - 1) * columns() + index_c;
+			if(i >= start && i <= end) {
+				vctr->set(get(index_r, index_c), i + 1 - start);
+			}
+		}			
+	}
+	return vctr;
+}
 Vector *Matrix::toVector() {
 	Vector *vctr = new Vector(columns() * rows());
 	for(int index_r = 1; index_r <= rows(); index_r++) {
