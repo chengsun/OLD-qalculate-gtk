@@ -1,3 +1,7 @@
+2004-03-15 Niklas Knutsson  <nq@altern.org>
+
+	* Replace Fraction and Integer with new Number class
+
 2004-03-12 Niklas Knutsson  <nq@altern.org>
 	
 	* Set selected font in custom font dialog

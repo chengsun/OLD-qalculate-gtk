@@ -18,7 +18,7 @@ enum {
 	MULTIPLICATION_MANAGER,
 	ADDITION_MANAGER,
 	POWER_MANAGER,
-	FRACTION_MANAGER,
+	NUMBER_MANAGER,
 	UNIT_MANAGER,
 	NULL_MANAGER,
 	STRING_MANAGER,
@@ -44,7 +44,7 @@ class Manager {
 		string s_var;
 		Function *o_function;
 		Variable *o_variable;
-		Fraction *fr;
+		Number *o_number;
 		Matrix *mtrx;
 		bool b_exact;
 		bool b_protect;
@@ -75,27 +75,25 @@ class Manager {
 		
 		
 		Manager();
-		Manager(long double value_);		
-		Manager(long int numerator_, long int denominator_, long int fraction_exp_ = 0);		
+		Manager(double value_);		
+		Manager(long int numerator_, long int denominator_, long int number_exp_ = 0);		
 		Manager(string var_);	
 		Manager(const Variable *v);
 		Manager(const Function *f, ...);							
 		Manager(const Unit *u, long int exp10 = 0);				
 		Manager(const Manager *mngr);	
-		Manager(const Fraction *fraction_);
-		Manager(const Integer *integ_);
+		Manager(const Number *o);
 		Manager(const Matrix *matrix_);					
 		Manager(const Vector *vector_);
 		~Manager();
 		void setNull();
 		void set(const Manager *mngr);
 		void set(const Function *f, ...);		
-		void set(const Fraction *fraction_);
-		void set(const Integer *integ_);				
+		void set(const Number *o);
 		void set(const Matrix *matrix_);
 		void set(const Vector *vector_);
-		void set(long double value_);		
-		void set(long int numerator_, long int denominator_, long int fraction_exp_ = 0);		
+		void set(double value_);		
+		void set(long int numerator_, long int denominator_, long int number_exp_ = 0);		
 		void set(string var_);		
 		void set(const Variable *v);		
 		void set(const Unit *u, long int exp10 = 0);				
@@ -103,7 +101,7 @@ class Manager {
 		bool add(const Manager *mngr, MathOperation op = OPERATION_MULTIPLY, bool translate_ = true);	
 		bool setNOT(bool translate_ = true);
 		void addUnit(const Unit *u, MathOperation op = OPERATION_MULTIPLY);		
-		void addFloat(long double value_, MathOperation op = OPERATION_MULTIPLY);			
+		void addFloat(double value_, MathOperation op = OPERATION_MULTIPLY);			
 		void addInteger(long int value_, MathOperation op = OPERATION_MULTIPLY);					
 		void addAlternative(const Manager *mngr);
 		int compare(const Manager *mngr) const;
@@ -111,8 +109,8 @@ class Manager {
 		void sort(int sortflags = SORT_SCIENTIFIC);					
 		void clear();
 		bool equals(const Manager *mngr) const;
-		long double value() const;
-		Fraction *fraction() const;
+		double value() const;
+		Number *number() const;
 		Matrix *matrix() const;		
 		const string &text() const;
 		Unit *unit() const;
@@ -140,8 +138,6 @@ class Manager {
 		bool isPower() const;
 		bool isNumber() const;
 		bool isNumber_exp() const;
-		bool isFraction() const;
-		bool isFraction_exp() const;		
 		bool isMatrix() const;				
 		bool isNull() const;		
 		bool isZero() const;				
@@ -161,7 +157,7 @@ class Manager {
 		bool convert(const Unit*);
 		bool convert(string unit_str);		
 		bool convert(const Manager *unit_mngr);				
-		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *set_prefix = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false, bool draw_minus = false, bool print_equals = false, bool in_multiplication = false, bool wrap = true, bool wrap_all = false, bool *has_parenthesis = NULL, bool in_div = false, bool no_add_one = false, Integer *l_exp2 = NULL, Prefix **prefix1 = NULL, Prefix **prefix2 = NULL, string string_fr = "") const;
+		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *set_prefix = NULL, bool toplevel = true, bool *plural = NULL, Number *l_exp = NULL, bool in_composite = false, bool in_power = false, bool draw_minus = false, bool print_equals = false, bool in_multiplication = false, bool wrap = true, bool wrap_all = false, bool *has_parenthesis = NULL, bool in_div = false, bool no_add_one = false, Number *l_exp2 = NULL, Prefix **prefix1 = NULL, Prefix **prefix2 = NULL, string string_fr = "") const;
 		void ref();
 		void unref();
 		void protect(bool do_protect = true);

@@ -20,9 +20,8 @@
 #include "EqItem.h"
 #include "Error.h"
 #include "Prefix.h"
-#include "Integer.h"
 #include "Matrix.h"
-#include "Fraction.h"
+#include "Number.h"
 
 #ifndef HAVE_LIBCLN
 #include <fenv.h>
@@ -409,12 +408,12 @@ Prefix *Calculator::getExactPrefix(long int exp10, long int exp) const {
 	}
 	return NULL;
 }
-Prefix *Calculator::getExactPrefix(const Fraction *fr, long int exp) const {
-	Fraction tmp_exp;
+Prefix *Calculator::getExactPrefix(const Number *o, long int exp) const {
+	Number tmp_exp;
 	for(unsigned int i = 0; i < prefixes.size(); i++) {
-		if(fr->equals(prefixes[i]->value(exp, &tmp_exp))) {
+		if(o->equals(prefixes[i]->value(exp, &tmp_exp))) {
 			return prefixes[i];
-		} else if(fr->isLessThan(prefixes[i]->value(exp, &tmp_exp))) {
+		} else if(o->isLessThan(prefixes[i]->value(exp, &tmp_exp))) {
 			break;
 		}
 	}
@@ -476,9 +475,9 @@ Prefix *Calculator::getBestPrefix(long int exp10, long int exp) const {
 	}
 	return prefixes[prev_i];
 }
-Prefix *Calculator::getBestPrefix(const Integer *exp10, const Integer *exp) const {
+Prefix *Calculator::getBestPrefix(const Number *exp10, const Number *exp) const {
 	if(prefixes.size() <= 0) return NULL;
-	Integer tmp_exp;
+	Number tmp_exp;
 	int prev_i = 0;
 	int i = 0;
 	if(exp->isNegative()) {
@@ -492,9 +491,9 @@ Prefix *Calculator::getBestPrefix(const Integer *exp10, const Integer *exp) cons
 				if(i == 0) {
 					return prefixes[i];
 				}
-				Integer exp10_1(exp10);
+				Number exp10_1(exp10);
 				exp10_1.subtract(prefixes[i - 1]->exponent(exp, &tmp_exp));
-				Integer exp10_2(prefixes[i]->exponent(exp, &tmp_exp));
+				Number exp10_2(prefixes[i]->exponent(exp, &tmp_exp));
 				exp10_2.subtract(exp10);
 				exp10_2.multiply(2);
 				exp10_2.add(2);
@@ -720,8 +719,8 @@ void Calculator::addBuiltinVariables() {
 	e_var = addVariable(new EVariable());
 	pi_var = addVariable(new PiVariable());	
 	Manager *mngr = new Manager();
-	Fraction fr(1, 1);
-	mngr->fraction()->setComplex(&fr);
+	Number nr(1, 1);
+	mngr->number()->setImaginaryPart(&nr);
 	addVariable(new Variable("", "i", mngr, "Imaginary i (sqrt(-1))", false, true));
 	addVariable(new PythagorasVariable());
 	addVariable(new EulerVariable());
@@ -1026,7 +1025,7 @@ void Calculator::checkFPExceptions(const char *str) {
 #endif
 }
 
-Manager *Calculator::convert(long double value, Unit *from_unit, Unit *to_unit) {
+Manager *Calculator::convert(double value, Unit *from_unit, Unit *to_unit) {
 	string str = d2s(value);
 	return convert(str, from_unit, to_unit);
 }
@@ -2281,7 +2280,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 
 	long int exponent, litmp;
 	bool active, hidden, b;
-	Fraction fr;
+	Number nr;
 	Function *f;
 	Variable *v;
 	Unit *u;
@@ -2291,7 +2290,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 	Argument *arg;
 	int itmp;
 	IntegerArgument *iarg;
-	FractionArgument *farg;	
+	NumberArgument *farg;	
 	xmlChar *value, *lang;
 	int in_unfinished = 0;
 	bool done_something = false;
@@ -2399,7 +2398,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 								iarg = new IntegerArgument();
 								arg = iarg;
 							} else if(type == "number") {
-								farg = new FractionArgument();
+								farg = new NumberArgument();
 								arg = farg;
 							} else if(type == "vector") {
 								arg = new VectorArgument();
@@ -2429,24 +2428,24 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 									XML_GET_LOCALE_STRING_FROM_TEXT(child2, argname, best_argname, next_best_argname);
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "min")) {
 									if(farg) {
-										XML_DO_FROM_TEXT(child2, fr.set);
-										farg->setMin(&fr);
+										XML_DO_FROM_TEXT(child2, nr.set);
+										farg->setMin(&nr);
 										XML_GET_FALSE_FROM_PROP(child, "include_equals", b)
 										farg->setIncludeEqualsMin(b);
 									} else if(iarg) {
 										XML_GET_STRING_FROM_TEXT(child2, stmp);
-										Integer integ(stmp);
+										Number integ(stmp);
 										iarg->setMin(&integ);
 									}
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "max")) {
 									if(farg) {
-										XML_DO_FROM_TEXT(child2, fr.set);
-										farg->setMax(&fr);
+										XML_DO_FROM_TEXT(child2, nr.set);
+										farg->setMax(&nr);
 										XML_GET_FALSE_FROM_PROP(child, "include_equals", b)
 										farg->setIncludeEqualsMax(b);
 									} else if(iarg) {
 										XML_GET_STRING_FROM_TEXT(child2, stmp);
-										Integer integ(stmp);
+										Number integ(stmp);
 										iarg->setMax(&integ);
 									}
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "condition")) {
@@ -3223,7 +3222,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 	string cat, cat_sub;
 	Argument *arg;
 	IntegerArgument *iarg;
-	FractionArgument *farg;
+	NumberArgument *farg;
 	string str;
 	for(unsigned int i = 0; i < functions.size(); i++) {
 		if(save_global || functions[i]->isLocal() || functions[i]->hasChanged()) {	
@@ -3346,7 +3345,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 								case ARGUMENT_TYPE_TEXT: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "text"); break;}
 								case ARGUMENT_TYPE_DATE: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "date"); break;}
 								case ARGUMENT_TYPE_INTEGER: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "integer"); break;}
-								case ARGUMENT_TYPE_FRACTION: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "number"); break;}
+								case ARGUMENT_TYPE_NUMBER: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "number"); break;}
 								case ARGUMENT_TYPE_VECTOR: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "vector"); break;}
 								case ARGUMENT_TYPE_MATRIX: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "matrix"); break;}
 								case ARGUMENT_TYPE_BOOLEAN: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "boolean"); break;}
@@ -3382,8 +3381,8 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 									}
 									break;
 								}
-								case ARGUMENT_TYPE_FRACTION: {
-									farg = (FractionArgument*) arg;
+								case ARGUMENT_TYPE_NUMBER: {
+									farg = (NumberArgument*) arg;
 									if(farg->min()) {
 										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "min", (xmlChar*) farg->min()->print().c_str()); 
 										if(farg->includeEqualsMin()) {
@@ -3418,7 +3417,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 	return returnvalue;
 }
 
-long double Calculator::getAngleValue(long double value) {
+double Calculator::getAngleValue(double value) {
 	switch(angleMode()) {
 	    case DEGREES: {return deg2rad(value);}
 	    case GRADIANS: {return gra2rad(value);}
@@ -3444,12 +3443,12 @@ Manager *Calculator::setAngleValue(Manager *mngr) {
 				if(alwaysExact()) {
 					mngr_pi.set(getPI());
 				} else {
-					Fraction fr;
-					fr.pi();
-					mngr_pi.set(&fr);
+					Number nr;
+					nr.pi();
+					mngr_pi.set(&nr);
 				}
 		    		mngr->add(&mngr_pi, OPERATION_MULTIPLY);
-	    			mngr->addFloat(180, OPERATION_DIVIDE);			
+	    			mngr->addInteger(180, OPERATION_DIVIDE);			
 				break;
 			}
 			case GRADIANS: {
@@ -3457,12 +3456,12 @@ Manager *Calculator::setAngleValue(Manager *mngr) {
 				if(alwaysExact()) {
 					mngr_pi.set(getPI());
 				} else {
-					Fraction fr;
-					fr.pi();
-					mngr_pi.set(&fr);
+					Number nr;
+					nr.pi();
+					mngr_pi.set(&nr);
 				}
 		    		mngr->add(&mngr_pi, OPERATION_MULTIPLY);			
-	    			mngr->addFloat(200, OPERATION_DIVIDE);		
+	    			mngr->addInteger(200, OPERATION_DIVIDE);		
 				break;
 			}
 		}
@@ -3710,8 +3709,8 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 }
 int Calculator::testCondition(string expression) {
 	Manager *mngr = calculate(expression);
-	if(mngr->isFraction()) {
-		if(mngr->fraction()->isPositive()) {
+	if(mngr->isNumber()) {
+		if(mngr->number()->isPositive()) {
 			mngr->unref();
 			return 1;
 		} else {

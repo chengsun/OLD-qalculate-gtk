@@ -21,7 +21,7 @@ enum {
 	ARGUMENT_TYPE_DATE,
 	ARGUMENT_TYPE_FILE,
 	ARGUMENT_TYPE_INTEGER,	
-	ARGUMENT_TYPE_FRACTION,
+	ARGUMENT_TYPE_NUMBER,
 	ARGUMENT_TYPE_VECTOR,	
 	ARGUMENT_TYPE_MATRIX,
 	ARGUMENT_TYPE_EXPRESSION_ITEM,
@@ -154,11 +154,11 @@ class Argument {
 
 };
 
-class FractionArgument : public Argument {
+class NumberArgument : public Argument {
 
   protected:
   
-	Fraction *fmin, *fmax;
+	Number *fmin, *fmax;
 	bool b_incl_min, b_incl_max;
 
   protected:
@@ -168,23 +168,23 @@ class FractionArgument : public Argument {
 
   public:
   
-  	FractionArgument(string name_ = "", ArgumentMinMaxPreDefinition minmax = ARGUMENT_MIN_MAX_NONE, bool does_test = true, bool does_error = true);
-	FractionArgument(const FractionArgument *arg);
-	virtual ~FractionArgument();
+  	NumberArgument(string name_ = "", ArgumentMinMaxPreDefinition minmax = ARGUMENT_MIN_MAX_NONE, bool does_test = true, bool does_error = true);
+	NumberArgument(const NumberArgument *arg);
+	virtual ~NumberArgument();
 	
 	virtual void set(const Argument *arg);
 	virtual Argument *copy() const;
 
 	virtual string print() const;	
 	
-	void setMin(const Fraction *min_);	
+	void setMin(const Number *min_);	
 	void setIncludeEqualsMin(bool include_equals);
 	bool includeEqualsMin() const;	
-	const Fraction *min() const;
-	void setMax(const Fraction *max_);	
+	const Number *min() const;
+	void setMax(const Number *max_);	
 	void setIncludeEqualsMax(bool include_equals);
 	bool includeEqualsMax() const;	
-	const Fraction *max() const;	
+	const Number *max() const;	
 
 	virtual int type() const;
 
@@ -194,7 +194,7 @@ class IntegerArgument : public Argument {
 
   protected:
   
-	Integer *imin, *imax;
+	Number *imin, *imax;
 
   protected:
   
@@ -212,10 +212,10 @@ class IntegerArgument : public Argument {
 
 	virtual string print() const;	
 
-	void setMin(const Integer *min_);	
-	const Integer *min() const;
-	void setMax(const Integer *max_);	
-	const Integer *max() const;
+	void setMin(const Number *min_);	
+	const Number *min() const;
+	void setMax(const Number *max_);	
+	const Number *max() const;
 	
 	virtual int type() const;
 

@@ -14,8 +14,7 @@
 #include "Calculator.h"
 #include "Matrix.h"
 #include "Manager.h"
-#include "Integer.h"
-#include "Fraction.h"
+#include "Number.h"
 #include "Unit.h"
 
 Function::Function(string cat_, string name_, int argc_, string title_, string descr_, int max_argc_, bool is_active) : ExpressionItem(cat_, name_, title_, descr_, false, true, is_active) {
@@ -92,7 +91,7 @@ bool Function::testCondition(vector<Manager*> &vargs) {
 	}
 	UserFunction test_function("", "CONDITION_TEST_FUNCTION", scondition, false, argc, "", "", max_argc);
 	Manager *mngr = test_function.calculate(vargs);
-	if(!mngr->isFraction() || !mngr->fraction()->isPositive()) {
+	if(!mngr->isNumber() || !mngr->number()->isPositive()) {
 		string str = scondition;
 		string svar, argstr;
 		Argument *arg;
@@ -933,24 +932,24 @@ int Argument::type() const {
 bool Argument::matrixAllowed() const {return b_matrix;}
 void Argument::setMatrixAllowed(bool allow_matrix) {b_matrix = allow_matrix;}
 
-FractionArgument::FractionArgument(string name_, ArgumentMinMaxPreDefinition minmax, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
+NumberArgument::NumberArgument(string name_, ArgumentMinMaxPreDefinition minmax, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
 	fmin = NULL;
 	fmax = NULL;
 	b_incl_min = true;
 	b_incl_max = true;
 	switch(minmax) {
 		case ARGUMENT_MIN_MAX_POSITIVE: {
-			fmin = new Fraction();
+			fmin = new Number();
 			b_incl_min = false;
 			break;
 		}
 		case ARGUMENT_MIN_MAX_NEGATIVE: {
-			fmax = new Fraction();
+			fmax = new Number();
 			b_incl_max = false;
 			break;
 		}
 		case ARGUMENT_MIN_MAX_NONNEGATIVE: {
-			fmin = new Fraction();
+			fmin = new Number();
 			break;
 		}
 		case ARGUMENT_MIN_MAX_NONZERO: {
@@ -960,12 +959,12 @@ FractionArgument::FractionArgument(string name_, ArgumentMinMaxPreDefinition min
 		default: {}
 	}
 }
-FractionArgument::FractionArgument(const FractionArgument *arg) {
+NumberArgument::NumberArgument(const NumberArgument *arg) {
 	fmin = NULL;
 	fmax = NULL;
 	set(arg);
 }
-FractionArgument::~FractionArgument() {
+NumberArgument::~NumberArgument() {
 	if(fmin) {
 		delete fmin;
 	}
@@ -974,7 +973,7 @@ FractionArgument::~FractionArgument() {
 	}
 }
 	
-void FractionArgument::setMin(const Fraction *min_) {
+void NumberArgument::setMin(const Number *min_) {
 	if(!min_) {
 		if(fmin) {
 			delete fmin;
@@ -982,21 +981,21 @@ void FractionArgument::setMin(const Fraction *min_) {
 		return;
 	}
 	if(!fmin) {
-		fmin = new Fraction(min_);
+		fmin = new Number(min_);
 	} else {
 		fmin->set(min_);
 	}
 }
-void FractionArgument::setIncludeEqualsMin(bool include_equals) {
+void NumberArgument::setIncludeEqualsMin(bool include_equals) {
 	b_incl_min = include_equals;
 }
-bool FractionArgument::includeEqualsMin() const {
+bool NumberArgument::includeEqualsMin() const {
 	return b_incl_min;
 }
-const Fraction *FractionArgument::min() const {
+const Number *NumberArgument::min() const {
 	return fmin;
 }
-void FractionArgument::setMax(const Fraction *max_) {
+void NumberArgument::setMax(const Number *max_) {
 	if(!max_) {
 		if(fmax) {
 			delete fmax;
@@ -1004,41 +1003,47 @@ void FractionArgument::setMax(const Fraction *max_) {
 		return;
 	}
 	if(!fmax) {
-		fmax = new Fraction(max_);
+		fmax = new Number(max_);
 	} else {
 		fmax->set(max_);
 	}
 }
-void FractionArgument::setIncludeEqualsMax(bool include_equals) {
+void NumberArgument::setIncludeEqualsMax(bool include_equals) {
 	b_incl_max = include_equals;
 }
-bool FractionArgument::includeEqualsMax() const {
+bool NumberArgument::includeEqualsMax() const {
 	return b_incl_max;
 }
-const Fraction *FractionArgument::max() const {
+const Number *NumberArgument::max() const {
 	return fmax;
 }
-bool FractionArgument::subtest(const Manager *value) const {
-	if(!value->isFraction()) {
+bool NumberArgument::subtest(const Manager *value) const {
+	if(!value->isNumber()) {
 		return false;
 	}
-	if(fmin && (b_incl_min && value->fraction()->compare(fmin) > 0) || (!b_incl_min && value->fraction()->compare(fmin) >= 0)) {
-		return false;
+	if(fmin) {
+		int cmpr = value->number()->compare(fmin);
+		if(cmpr <= -2 || (b_incl_min && cmpr > 0) || (!b_incl_min && cmpr >= 0)) {
+			return false;
+		}
 	}
-	if(fmax && (b_incl_max && value->fraction()->compare(fmax) < 0) || (!b_incl_max && value->fraction()->compare(fmax) <= 0)) {
-		return false;
+	if(fmax) {
+		int cmpr = value->number()->compare(fmax);
+		if(cmpr <= -2 || (b_incl_max && cmpr < 0) || (!b_incl_max && cmpr <= 0)) {
+			return false;
+		}
 	}	
 	return true;
 }
-int FractionArgument::type() const {
-	return ARGUMENT_TYPE_FRACTION;
+int NumberArgument::type() const {
+	return ARGUMENT_TYPE_NUMBER;
 }
-Argument *FractionArgument::copy() const {
-	return new FractionArgument(this);
+Argument *NumberArgument::copy() const {
+	return new NumberArgument(this);
 }
-void FractionArgument::set(const Argument *arg) {
-	if(arg->type() == ARGUMENT_TYPE_FRACTION) {
-		const FractionArgument *farg = (const FractionArgument*) arg;
+void NumberArgument::set(const Argument *arg) {
+	if(arg->type() == ARGUMENT_TYPE_NUMBER) {
+		const NumberArgument *farg = (const NumberArgument*) arg;
 		b_incl_min = farg->includeEqualsMin();
 		b_incl_max = farg->includeEqualsMax();
 		if(fmin) {
@@ -1050,18 +1055,18 @@ void FractionArgument::set(const Argument *arg) {
 			fmax = NULL;
 		}
 		if(farg->min()) {
-			fmin = new Fraction(farg->min());
+			fmin = new Number(farg->min());
 		}
 		if(farg->max()) {
-			fmax = new Fraction(farg->max());
+			fmax = new Number(farg->max());
 		}		
 	}
 	Argument::set(arg);
 }
-string FractionArgument::print() const {
+string NumberArgument::print() const {
 	return _("number");
 }
-string FractionArgument::subprintlong() const {
+string NumberArgument::subprintlong() const {
 	string str = _("a number");
 	if(fmin) {
 		str += " ";
@@ -1095,15 +1100,15 @@ IntegerArgument::IntegerArgument(string name_, ArgumentMinMaxPreDefinition minma
 	imax = NULL;
 	switch(minmax) {
 		case ARGUMENT_MIN_MAX_POSITIVE: {
-			imin = new Integer(1);
+			imin = new Number(1, 1);
 			break;
 		}
 		case ARGUMENT_MIN_MAX_NEGATIVE: {
-			imax = new Integer(-1);
+			imax = new Number(-1, 1);
 			break;
 		}
 		case ARGUMENT_MIN_MAX_NONNEGATIVE: {
-			imin = new Integer();
+			imin = new Number();
 			break;
 		}
 		case ARGUMENT_MIN_MAX_NONZERO: {
@@ -1127,7 +1132,7 @@ IntegerArgument::~IntegerArgument() {
 	}
 }
 	
-void IntegerArgument::setMin(const Integer *min_) {
+void IntegerArgument::setMin(const Number *min_) {
 	if(!min_) {
 		if(imin) {
 			delete imin;
@@ -1135,15 +1140,15 @@ void IntegerArgument::setMin(const Integer *min_) {
 		return;
 	}
 	if(!imin) {
-		imin = new Integer(min_);
+		imin = new Number(min_);
 	} else {
 		imin->set(min_);
 	}
 }
-const Integer *IntegerArgument::min() const {
+const Number *IntegerArgument::min() const {
 	return imin;
 }
-void IntegerArgument::setMax(const Integer *max_) {
+void IntegerArgument::setMax(const Number *max_) {
 	if(!max_) {
 		if(imax) {
 			delete imax;
@@ -1151,22 +1156,22 @@ void IntegerArgument::setMax(const Integer *max_) {
 		return;
 	}
 	if(!imax) {
-		imax = new Integer(max_);
+		imax = new Number(max_);
 	} else {
 		imax->set(max_);
 	}
 }
-const Integer *IntegerArgument::max() const {
+const Number *IntegerArgument::max() const {
 	return imax;
 }
 bool IntegerArgument::subtest(const Manager *value) const {
-	if(!value->isFraction() || !value->fraction()->isInteger()) {
+	if(!value->isNumber() || !value->number()->isInteger()) {
 		return false;
 	}
-	if(imin && value->fraction()->numerator()->compare(imin) > 0) {
+	if(imin && value->number()->compare(imin) > 0) {
 		return false;
 	}
-	if(imax && value->fraction()->numerator()->compare(imax) < 0) {
+	if(imax && value->number()->compare(imax) < 0) {
 		return false;
 	}	
 	return true;
@@ -1189,10 +1194,10 @@ void IntegerArgument::set(const Argument *arg) {
 			imax = NULL;
 		}
 		if(iarg->min()) {
-			imin = new Integer(iarg->min());
+			imin = new Number(iarg->min());
 		}
 		if(iarg->max()) {
-			imax = new Integer(iarg->max());
+			imax = new Number(iarg->max());
 		}		
 	}
 	Argument::set(arg);
@@ -1335,12 +1340,12 @@ AngleArgument::AngleArgument(string name_, bool does_test, bool does_error) : Ar
 AngleArgument::AngleArgument(const AngleArgument *arg) {set(arg);}
 AngleArgument::~AngleArgument() {}
 bool AngleArgument::subtest(const Manager *value) const {
-	if(value->isFraction()) {
+	if(value->isNumber()) {
 		return true;
 	} else if(value->isUnit()) {
 		Unit *rad = CALCULATOR->getUnit("rad");
 		return value->unit() == rad || value->unit()->isChildOf(rad);
-	} else if(value->isMultiplication() && value->countChilds() == 2 && value->getChild(0)->isFraction() && value->getChild(1)->isUnit()) {
+	} else if(value->isMultiplication() && value->countChilds() == 2 && value->getChild(0)->isNumber() && value->getChild(1)->isUnit()) {
 		Unit *rad = CALCULATOR->getUnit("rad");
 		return value->getChild(1)->unit() == rad || value->getChild(1)->unit()->isChildOf(rad);
 	} else {
@@ -1351,7 +1356,7 @@ bool AngleArgument::subtest(const Manager *value) const {
 		Manager mngr(value);
 		mngr.addUnit(rad, OPERATION_DIVIDE);
 		mngr.finalize();
-		return mngr.isFraction();
+		return mngr.isNumber();
 	}
 }
 int AngleArgument::type() const {return ARGUMENT_TYPE_ANGLE;}

@@ -11,8 +11,7 @@
 
 #include "Prefix.h"
 #include "Calculator.h"
-#include "Integer.h"
-#include "Fraction.h"
+#include "Number.h"
 
 Prefix::Prefix(long int exp10, string long_name, string short_name) {
 	exp = exp10;
@@ -48,10 +47,10 @@ const string &Prefix::name(bool short_default) const {
 long int Prefix::exponent(long int exp_) const {
 	return exp * exp_;
 }
-Integer *Prefix::exponent(const Integer *exp_, Integer *buffer) const {
-	Integer *integer;
+Number *Prefix::exponent(const Number *exp_, Number *buffer) const {
+	Number *integer;
 	if(buffer) integer = buffer;
-	else integer = new Integer();
+	else integer = new Number();
 	integer->set(exp_);
 	integer->multiply(exp);
 	return integer;
@@ -59,20 +58,20 @@ Integer *Prefix::exponent(const Integer *exp_, Integer *buffer) const {
 void Prefix::setExponent(long int exp_) {
 	exp = exp_;
 }
-Fraction *Prefix::value(const Integer *exp_, Fraction *buffer) const {
-	Fraction *fr;
-	if(buffer) fr = buffer;
-	else fr = new Fraction();
-	Integer tmp_exp;
-	fr->set(exponent(exp_, &tmp_exp));
-	fr->exp10();
-	return fr;
+Number *Prefix::value(const Number *exp_, Number *buffer) const {
+	Number *nr;
+	if(buffer) nr = buffer;
+	else nr = new Number();
+	Number tmp_exp;
+	nr->set(exponent(exp_, &tmp_exp));
+	nr->exp10();
+	return nr;
 }
-Fraction *Prefix::value(long int exp_, Fraction *buffer) const {
-	Fraction *fr;
-	if(buffer) fr = buffer;
-	else fr = new Fraction();
-	fr->set(exponent(exp_));
-	fr->exp10();
-	return fr;
+Number *Prefix::value(long int exp_, Number *buffer) const {
+	Number *nr;
+	if(buffer) nr = buffer;
+	else nr = new Number();
+	nr->set(exponent(exp_));
+	nr->exp10();
+	return nr;
 }

@@ -13,15 +13,15 @@
 #include "util.h"
 #include "Matrix.h"
 #include "Manager.h"
-#include "Fraction.h"
+#include "Number.h"
 #include "Calculator.h"
 #include "Variable.h"
 
 #include <sstream>
 
-#define TRIG_FUNCTION(FUNC)	mngr->set(vargs[0]); mngr->recalculateVariables(); if(!mngr->isFraction() || !mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);} else {mngr->setPrecise(mngr->fraction()->isPrecise());}
-#define FR_FUNCTION(FUNC)	mngr->set(vargs[0]); if(!mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);} else {mngr->setPrecise(mngr->fraction()->isPrecise());}
-#define FR_FUNCTION_2(FUNC)	mngr->set(vargs[0]); if(!mngr->fraction()->FUNC(vargs[1]->fraction())) {mngr->set(this, vargs[0], vargs[1], NULL);} else {mngr->setPrecise(mngr->fraction()->isPrecise());}
+#define TRIG_FUNCTION(FUNC)	mngr->set(vargs[0]); mngr->recalculateVariables(); if(!mngr->isNumber() || !mngr->number()->FUNC()) {mngr->set(this, vargs[0], NULL);} else {mngr->setPrecise(!mngr->number()->isApproximate());}
+#define FR_FUNCTION(FUNC)	mngr->set(vargs[0]); if(!mngr->number()->FUNC()) {mngr->set(this, vargs[0], NULL);} else {mngr->setPrecise(!mngr->number()->isApproximate());}
+#define FR_FUNCTION_2(FUNC)	mngr->set(vargs[0]); if(!mngr->number()->FUNC(vargs[1]->number())) {mngr->set(this, vargs[0], vargs[1], NULL);} else {mngr->setPrecise(!mngr->number()->isApproximate());}
 
 
 
@@ -32,7 +32,7 @@ void PiFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 //		mngr->set(name());
 		mngr->set(this, NULL);
 	} else {
-		Fraction fr; fr.pi(); mngr->set(&fr);
+		Number fr; fr.pi(); mngr->set(&fr);
 	}
 }
 EFunction::EFunction() : Function("Constants", "EXP0", 0, "The Base of Natural Logarithms (e)") {}
@@ -41,7 +41,7 @@ void EFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 //		mngr->set(name());
 		mngr->set(this, NULL);		
 	} else {
-		Fraction fr; fr.e(); mngr->set(&fr);
+		Number fr; fr.e(); mngr->set(&fr);
 	}
 }
 PythagorasFunction::PythagorasFunction() : Function("Constants", "PYTHAGORAS", 0, "Pythagora's Constant (sqrt 2)") {}
@@ -50,7 +50,7 @@ void PythagorasFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 //		mngr->set(name());
 		mngr->set(this, NULL);		
 	} else {
-		Fraction fr; fr.pythagoras(); mngr->set(&fr);
+		Number fr; fr.pythagoras(); mngr->set(&fr);
 	}
 }
 EulerFunction::EulerFunction() : Function("Constants", "EULER", 0, "Euler's Constant") {}
@@ -59,7 +59,7 @@ void EulerFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 //		mngr->set(name());
 		mngr->set(this, NULL);		
 	} else {
-		Fraction fr; fr.euler(); mngr->set(&fr);
+		Number fr; fr.euler(); mngr->set(&fr);
 	}
 }
 GoldenFunction::GoldenFunction() : Function("Constants", "GOLDEN", 0, "The Golden Ratio") {}
@@ -68,7 +68,7 @@ void GoldenFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 //		mngr->set(name());
 		mngr->set(this, NULL);		
 	} else {
-		Fraction fr; fr.golden(); mngr->set(&fr);
+		Number fr; fr.golden(); mngr->set(&fr);
 	}
 }
 AperyFunction::AperyFunction() : Function("Constants", "APERY", 0, "Apery's Constant") {}
@@ -77,7 +77,7 @@ void AperyFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 //		mngr->set(name());
 		mngr->set(this, NULL);		
 	} else {
-		Fraction fr; fr.apery(); mngr->set(&fr);
+		Number fr; fr.apery(); mngr->set(&fr);
 	}
 }
 CatalanFunction::CatalanFunction() : Function("Constants", "CATALAN", 0, "Catalan's Constant") {}
@@ -86,7 +86,7 @@ void CatalanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 //		mngr->set(name());
 		mngr->set(this, NULL);		
 	} else {
-		Fraction fr; fr.catalan(); mngr->set(&fr);
+		Number fr; fr.catalan(); mngr->set(&fr);
 	}
 }
 
@@ -345,9 +345,9 @@ void CustomSumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 
 	int start = 1;
 	int end = -1;
-	start = vargs[0]->fraction()->numerator()->getInt();
+	start = vargs[0]->number()->intValue();
 	if(start < 1) start = 1;
-	end = vargs[1]->fraction()->numerator()->getInt();
+	end = vargs[1]->number()->intValue();
 
 	string sarg = vargs[3]->text();
 	int i = sarg.find("\\x");
@@ -518,7 +518,7 @@ MatrixFunction::MatrixFunction() : Function("Matrices", "matrix", 2, "Construct 
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));	
 }
 void MatrixFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Matrix mtrx(vargs[0]->fraction()->numerator()->getInt(), vargs[1]->fraction()->numerator()->getInt());
+	Matrix mtrx(vargs[0]->number()->intValue(), vargs[1]->number()->intValue());
 	unsigned int r = 1, c = 1;
 	for(unsigned int i = 2; i < vargs.size(); i++) {
 		if(r > mtrx.rows()) {
@@ -610,7 +610,7 @@ RowFunction::RowFunction() : Function("Matrices", "row", 2, "Extract Row as Vect
 	setArgumentDefinition(2, new MatrixArgument());	
 }
 void RowFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Vector *v = vargs[1]->matrix()->rowToVector(vargs[0]->fraction()->numerator()->getInt());
+	Vector *v = vargs[1]->matrix()->rowToVector(vargs[0]->number()->intValue());
 	if(!v) {
 		CALCULATOR->error(true, _("Row %s does not exist in matrix."), vargs[0]->print().c_str(), NULL);
 		mngr->set(this, vargs[0], vargs[1], NULL);
@@ -624,7 +624,7 @@ ColumnFunction::ColumnFunction() : Function("Matrices", "column", 2, "Extract Co
 	setArgumentDefinition(2, new MatrixArgument());	
 }
 void ColumnFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Vector *v = vargs[1]->matrix()->columnToVector(vargs[0]->fraction()->numerator()->getInt());
+	Vector *v = vargs[1]->matrix()->columnToVector(vargs[0]->number()->intValue());
 	if(!v) {
 		CALCULATOR->error(true, _("Column %s does not exist in matrix."), vargs[0]->print().c_str(), NULL);
 		mngr->set(this, vargs[0], vargs[1], NULL);
@@ -670,8 +670,8 @@ ElementFunction::ElementFunction() : Function("Matrices", "element", 3, "Element
 }
 void ElementFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[2]->isMatrix()) {
-		mngr->set(vargs[2]->matrix()->get(vargs[0]->fraction()->numerator()->getInt(), vargs[1]->fraction()->numerator()->getInt()));
-	} else if(vargs[0]->fraction()->isOne() && vargs[1]->fraction()->isOne()) {
+		mngr->set(vargs[2]->matrix()->get(vargs[0]->number()->intValue(), vargs[1]->number()->intValue()));
+	} else if(vargs[0]->number()->isOne() && vargs[1]->number()->isOne()) {
 		mngr->set(vargs[2]);
 	}
 }
@@ -691,8 +691,8 @@ ComponentFunction::ComponentFunction() : Function("Matrices", "component", 2, "C
 }
 void ComponentFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[1]->isMatrix()) {
-		mngr->set(vargs[1]->matrix()->get((vargs[0]->fraction()->numerator()->getInt() - 1) / vargs[1]->matrix()->columns() + 1, (vargs[0]->fraction()->numerator()->getInt() - 1) % vargs[1]->matrix()->columns() + 1));
-	} else if(vargs[0]->fraction()->isOne()) {
+		mngr->set(vargs[1]->matrix()->get((vargs[0]->number()->intValue() - 1) / vargs[1]->matrix()->columns() + 1, (vargs[0]->number()->intValue() - 1) % vargs[1]->matrix()->columns() + 1));
+	} else if(vargs[0]->number()->isOne()) {
 		mngr->set(vargs[1]);
 	}
 }
@@ -714,7 +714,7 @@ LimitsFunction::LimitsFunction() : Function("Matrices", "limits", 2, "Limits", "
 	setArgumentDefinition(3, new VectorArgument("", false));	
 }
 void LimitsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	int i = vargs[0]->fraction()->numerator()->getInt(), n = vargs[1]->fraction()->numerator()->getInt();	
+	int i = vargs[0]->number()->intValue(), n = vargs[1]->number()->intValue();	
 	Vector *v = produceVector(vargs);
 	Vector *vctr = v->getRange(i, n);
 	mngr->set(vctr);
@@ -734,9 +734,9 @@ void IdentityFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		Matrix *mtrx = vargs[0]->matrix()->getIdentityMatrix();
 		mngr->set(mtrx);
 		delete mtrx;
-	} else if(vargs[0]->isFraction() && vargs[0]->fraction()->isInteger() && vargs[0]->fraction()->isPositive()) {
+	} else if(vargs[0]->isNumber() && vargs[0]->number()->isInteger() && vargs[0]->number()->isPositive()) {
 		Matrix mtrx;
-		mtrx.setToIdentityMatrix(vargs[0]->fraction()->numerator()->getInt());
+		mtrx.setToIdentityMatrix(vargs[0]->number()->intValue());
 		mngr->set(&mtrx);
 	} else {
 		mngr->set(this, vargs[0], NULL);
@@ -760,7 +760,7 @@ CofactorFunction::CofactorFunction() : Function("Matrices", "cofactor", 3, "Cofa
 	setArgumentDefinition(3, new MatrixArgument());
 }
 void CofactorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Manager *mngr2 = vargs[2]->matrix()->cofactor(vargs[0]->fraction()->numerator()->getInt(), vargs[1]->fraction()->numerator()->getInt());
+	Manager *mngr2 = vargs[2]->matrix()->cofactor(vargs[0]->number()->intValue(), vargs[1]->number()->intValue());
 	if(!mngr2) {
 		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
 		return;
@@ -787,12 +787,12 @@ void InverseFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 IFFunction::IFFunction() : Function("Logical", "if", 3, "If...Then...Else") {
-	setArgumentDefinition(1, new FractionArgument());
+	setArgumentDefinition(1, new NumberArgument());
 	setArgumentDefinition(2, new TextArgument());
 	setArgumentDefinition(3, new TextArgument());
 }
 void IFFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	int result = vargs[0]->fraction()->getBoolean();
+	int result = vargs[0]->number()->getBoolean();
 	if(result) {			
 		Manager *mngr2 = CALCULATOR->calculate(vargs[1]->text());
 		mngr->set(mngr2);
@@ -806,28 +806,28 @@ void IFFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}	
 }
 GCDFunction::GCDFunction() : Function("Arithmetics", "gcd", 2, "Greatest Common Divisor") {
-	setArgumentDefinition(1, new FractionArgument());
-	setArgumentDefinition(2, new FractionArgument());
+	setArgumentDefinition(1, new NumberArgument());
+	setArgumentDefinition(2, new NumberArgument());
 }
 void GCDFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
-	mngr->fraction()->gcd(vargs[1]->fraction());
-	mngr->setPrecise(mngr->fraction()->isPrecise());
+	mngr->number()->gcd(vargs[1]->number());
+	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 DaysFunction::DaysFunction() : Function("Date & Time", "days", 2, "Days between two dates", "", 4) {
 	setArgumentDefinition(1, new DateArgument());
 	setArgumentDefinition(2, new DateArgument());	
 	IntegerArgument *arg = new IntegerArgument();
-	Integer integ;
+	Number integ;
 	arg->setMin(&integ);
-	integ.set(4);
+	integ.set(4, 1);
 	arg->setMax(&integ);
 	setArgumentDefinition(3, arg);	
 	setArgumentDefinition(4, new BooleanArgument());				
 	setDefaultValue(3, "1"); 
 }
 void DaysFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	int days = daysBetweenDates(vargs[0]->text(), vargs[1]->text(), vargs[2]->fraction()->numerator()->getInt(), vargs[3]->fraction()->isZero());
+	int days = daysBetweenDates(vargs[0]->text(), vargs[1]->text(), vargs[2]->number()->intValue(), vargs[3]->number()->isZero());
 	if(days < 0) {
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		mngr->set(this, vargs[0], vargs[1], vargs[2], vargs[3], NULL);			
@@ -839,16 +839,16 @@ YearFracFunction::YearFracFunction() : Function("Date & Time", "yearfrac", 2, "Y
 	setArgumentDefinition(1, new DateArgument());
 	setArgumentDefinition(2, new DateArgument());	
 	IntegerArgument *arg = new IntegerArgument();
-	Integer integ;
+	Number integ;
 	arg->setMin(&integ);
-	integ.set(4);
+	integ.set(4, 1);
 	arg->setMax(&integ);
 	setArgumentDefinition(3, arg);	
 	setArgumentDefinition(4, new BooleanArgument());		
 	setDefaultValue(3, "1");
 }
 void YearFracFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Fraction *fr = yearsBetweenDates(vargs[0]->text(), vargs[1]->text(), vargs[2]->fraction()->numerator()->getInt(), vargs[3]->fraction()->isZero());
+	Number *fr = yearsBetweenDates(vargs[0]->text(), vargs[1]->text(), vargs[2]->number()->intValue(), vargs[3]->number()->isZero());
 	if(!fr) {
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		mngr->set(this, vargs[0], vargs[1], vargs[2], vargs[3], NULL);			
@@ -875,10 +875,10 @@ FactorialFunction::FactorialFunction() : Function("Arithmetics", "factorial", 1,
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, false));
 }
 void FactorialFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->fraction()->isZero()) mngr->set(1, 1);
-	Integer integ(vargs[0]->fraction()->numerator());
-	integ.factorial();
-	mngr->set(&integ);
+	mngr->set(vargs[0]);
+	if(!mngr->number()->factorial()) {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 BinomialFunction::BinomialFunction() : Function("Arithmetics", "binomial", 2, "Binomial") {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true));
@@ -886,85 +886,84 @@ BinomialFunction::BinomialFunction() : Function("Arithmetics", "binomial", 2, "B
 	setCondition("\\x>=\\y");
 }
 void BinomialFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Integer integ;
-	integ.binomial(vargs[0]->fraction()->numerator(), vargs[1]->fraction()->numerator());
-	mngr->set(&integ);
+	mngr->clear();
+	if(!mngr->number()->binomial(vargs[0]->number(), vargs[1]->number())) {
+		mngr->set(this, vargs[0], vargs[1], NULL);
+	}
 }
 AbsFunction::AbsFunction() : Function("Arithmetics", "abs", 1, "Absolute Value") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 void AbsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
-	mngr->fraction()->setNegative(false);
-	mngr->setPrecise(mngr->fraction()->isPrecise());
+	mngr->number()->setNegative(false);
+	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 CeilFunction::CeilFunction() : Function("Arithmetics", "ceil", 1, "Round upwards") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 void CeilFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
-	mngr->fraction()->ceil();
-	mngr->setPrecise(mngr->fraction()->isPrecise());
+	mngr->number()->ceil();
+	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 FloorFunction::FloorFunction() : Function("Arithmetics", "floor", 1, "Round downwards") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 void FloorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
-	mngr->fraction()->floor();
-	mngr->setPrecise(mngr->fraction()->isPrecise());
+	mngr->number()->floor();
+	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 TruncFunction::TruncFunction() : Function("Arithmetics", "trunc", 1, "Round towards zero") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 void TruncFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
-	mngr->fraction()->trunc();
-	mngr->setPrecise(mngr->fraction()->isPrecise());
+	mngr->number()->trunc();
+	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 RoundFunction::RoundFunction() : Function("Arithmetics", "round", 1, "Round") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 void RoundFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
-	mngr->fraction()->round();
-	mngr->setPrecise(mngr->fraction()->isPrecise());
+	mngr->number()->round();
+	mngr->setPrecise(!mngr->number()->isApproximate());
 }
-FracFunction::FracFunction() : Function("Arithmetics", "frac", 1, "Extract fractional part") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+FracFunction::FracFunction() : Function("Arithmetics", "frac", 1, "Extract numberal part") {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 void FracFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
-	mngr->fraction()->frac();
-	mngr->setPrecise(mngr->fraction()->isPrecise());
+	mngr->number()->frac();
+	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 IntFunction::IntFunction() : Function("Arithmetics", "int", 1, "Extract integer part") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 void IntFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
-	mngr->fraction()->trunc();
-	mngr->setPrecise(mngr->fraction()->isPrecise());
+	mngr->number()->trunc();
+	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 RemFunction::RemFunction() : Function("Arithmetics", "rem", 2, "Reminder (rem)") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
-	setArgumentDefinition(2, new FractionArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false));
 }
 void RemFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);	
-	mngr->fraction()->divide(vargs[1]->fraction());
-	mngr->fraction()->rem();
-	mngr->setPrecise(mngr->fraction()->isPrecise());
+	mngr->number()->rem(vargs[1]->number());
+	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 ModFunction::ModFunction() : Function("Arithmetics", "mod", 2, "Reminder (mod)") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
-	setArgumentDefinition(2, new FractionArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false));
 }
 void ModFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);	
-	mngr->fraction()->divide(vargs[1]->fraction());
-	mngr->fraction()->mod();
-	mngr->setPrecise(mngr->fraction()->isPrecise());
+	mngr->number()->mod(vargs[1]->number());
+	mngr->setPrecise(!mngr->number()->isApproximate());
 }
 
 SinFunction::SinFunction() : Function("Trigonometry", "sin", 1, "Sine") {setArgumentDefinition(1, new AngleArgument("", false));}
@@ -973,17 +972,19 @@ void SinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(mngr->isVariable() && mngr->variable() == CALCULATOR->getPI()) {
 		mngr->clear();
 		return;
-	} else if(mngr->isMultiplication() && mngr->countChilds() == 2 && mngr->getChild(0)->isFraction() && mngr->getChild(1)->isVariable() && mngr->getChild(1)->variable() == CALCULATOR->getPI()) {
-		if(mngr->getChild(0)->fraction()->isInteger()) {
+	} else if(mngr->isMultiplication() && mngr->countChilds() == 2 && mngr->getChild(0)->isNumber() && mngr->getChild(1)->isVariable() && mngr->getChild(1)->variable() == CALCULATOR->getPI()) {
+		if(mngr->getChild(0)->number()->isInteger()) {
 			mngr->clear();
 			return;
-		} else if(!mngr->getChild(0)->fraction()->isComplex()) {
-			Fraction fr(mngr->getChild(0)->fraction());
+		} else if(!mngr->getChild(0)->number()->isComplex()) {
+			Number fr(mngr->getChild(0)->number());
 			fr.frac();
-			if((fr.numerator()->isOne() || fr.numerator()->isMinusOne()) && fr.denominator()->equals(2)) {
-				fr.set(mngr->getChild(0)->fraction());
+			fr.setNegative(false);
+			Number half_nr(1, 2);
+			if(fr.equals(&half_nr)) {
+				fr.set(mngr->getChild(0)->number());
 				fr.floor();
-				if(fr.numerator()->isEven()) {
+				if(fr.isEven()) {
 					mngr->set(1, 1);
 				} else {
 					mngr->set(-1, 1);
@@ -993,11 +994,11 @@ void SinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		}
 	}
 	mngr->recalculateVariables();
-	if(!mngr->isFraction() || !mngr->fraction()->sin()) {
+	if(!mngr->isNumber() || !mngr->number()->sin()) {
 		vargs[0]->recalculateVariables();
 		mngr->set(this, vargs[0], NULL);
 	} else {
-		mngr->setPrecise(mngr->fraction()->isPrecise());
+		mngr->setPrecise(!mngr->number()->isApproximate());
 	}
 }
 CosFunction::CosFunction() : Function("Trigonometry", "cos", 1, "Cosine") {setArgumentDefinition(1, new AngleArgument("", false));}
@@ -1006,29 +1007,31 @@ void CosFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(mngr->isVariable() && mngr->variable() == CALCULATOR->getPI()) {
 		mngr->set(1, 1);
 		return;
-	} else if(mngr->isMultiplication() && mngr->countChilds() == 2 && mngr->getChild(0)->isFraction() && mngr->getChild(1)->isVariable() && mngr->getChild(1)->variable() == CALCULATOR->getPI()) {
-		if(mngr->getChild(0)->fraction()->isInteger()) {
-			if(mngr->getChild(0)->fraction()->numerator()->isEven()) {
+	} else if(mngr->isMultiplication() && mngr->countChilds() == 2 && mngr->getChild(0)->isNumber() && mngr->getChild(1)->isVariable() && mngr->getChild(1)->variable() == CALCULATOR->getPI()) {
+		if(mngr->getChild(0)->number()->isInteger()) {
+			if(mngr->getChild(0)->number()->isEven()) {
 				mngr->set(-1, 1);
 			} else {
 				mngr->set(1, 1);
 			}
 			return;
-		} else if(!mngr->getChild(0)->fraction()->isComplex()) {
-			Fraction fr(mngr->getChild(0)->fraction());
+		} else if(!mngr->getChild(0)->number()->isComplex()) {
+			Number fr(mngr->getChild(0)->number());
 			fr.frac();
-			if((fr.numerator()->isOne() || fr.numerator()->isMinusOne()) && fr.denominator()->equals(2)) {
+			fr.setNegative(false);
+			Number half_nr(1, 2);
+			if(fr.equals(&half_nr)) {
 				mngr->clear();
 				return;
 			}
 		}
 	}
 	mngr->recalculateVariables();
-	if(!mngr->isFraction() || !mngr->fraction()->cos()) {
+	if(!mngr->isNumber() || !mngr->number()->cos()) {
 		vargs[0]->recalculateVariables();
 		mngr->set(this, vargs[0], NULL);
 	} else {
-		mngr->setPrecise(mngr->fraction()->isPrecise());
+		mngr->setPrecise(!mngr->number()->isApproximate());
 	}
 }
 TanFunction::TanFunction() : Function("Trigonometry", "tan", 1, "Tangent") {setArgumentDefinition(1, new AngleArgument("", false));}
@@ -1050,18 +1053,18 @@ void TanhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 AsinFunction::AsinFunction() : Function("Trigonometry", "asin", 1, "Arcsine") {setArgumentDefinition(1, new AngleArgument("", false));}
 void AsinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]); mngr->recalculateVariables();
-	if(mngr->isFraction() && mngr->fraction()->isOne()) {
+	if(mngr->isNumber() && mngr->number()->isOne()) {
 		mngr->set(1, 2);
 		Manager mngr2(CALCULATOR->getPI());
 		mngr->add(&mngr2, OPERATION_MULTIPLY);
-	} else if(mngr->isFraction() && mngr->fraction()->isMinusOne()) {
+	} else if(mngr->isNumber() && mngr->number()->isMinusOne()) {
 		mngr->set(-1, 2);
 		Manager mngr2(CALCULATOR->getPI());
 		mngr->add(&mngr2, OPERATION_MULTIPLY);
-	} else if(!mngr->isFraction() || !mngr->fraction()->asin()) {
+	} else if(!mngr->isNumber() || !mngr->number()->asin()) {
 		mngr->set(this, vargs[0], NULL);
 	} else {
-		mngr->setPrecise(mngr->fraction()->isPrecise());
+		mngr->setPrecise(!mngr->number()->isApproximate());
 	}
 }
 AcosFunction::AcosFunction() : Function("Trigonometry", "acos", 1, "Arccosine") {setArgumentDefinition(1, new AngleArgument("", false));}
@@ -1072,13 +1075,13 @@ void AcosFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		Manager mngr2(CALCULATOR->getPI());
 		mngr->add(&mngr2, OPERATION_MULTIPLY);
 		return;
-	} else if(mngr->isFraction() && mngr->fraction()->isMinusOne()) {
+	} else if(mngr->isNumber() && mngr->number()->isMinusOne()) {
 		mngr->set(CALCULATOR->getPI());
 		return;
-	} else if(!mngr->isFraction() || !mngr->fraction()->acos()) {
+	} else if(!mngr->isNumber() || !mngr->number()->acos()) {
 		mngr->set(this, vargs[0], NULL);
 	} else {
-		mngr->setPrecise(mngr->fraction()->isPrecise());
+		mngr->setPrecise(!mngr->number()->isApproximate());
 	}
 }
 AtanFunction::AtanFunction() : Function("Trigonometry", "atan", 1, "Arctangent") {setArgumentDefinition(1, new AngleArgument("", false));}
@@ -1098,13 +1101,13 @@ void AtanhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(atanh)
 }
 LogFunction::LogFunction() : Function("Exponents and Logarithms", "ln", 1, "Natural Logarithm") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false));
 }
 void LogFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
+	if(vargs[0]->isNumber()) {
 		mngr->set(vargs[0]);
-		if(mngr->fraction()->log()) {
-			mngr->setPrecise(mngr->fraction()->isPrecise());
+		if(mngr->number()->ln()) {
+			mngr->setPrecise(!mngr->number()->isApproximate());
 			return;
 		}
 	}
@@ -1115,14 +1118,14 @@ void LogFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}		
 }
 LognFunction::LognFunction() : Function("Exponents and Logarithms", "log", 2, "Base-N Logarithm") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
-	setArgumentDefinition(2, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, false, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
+	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_POSITIVE, false, false));
 }
 void LognFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction() && vargs[1]->isFraction()) {
+	if(vargs[0]->isNumber() && vargs[1]->isNumber()) {
 		mngr->set(vargs[0]);
-		if(mngr->fraction()->log(vargs[1]->fraction())) {
-			mngr->setPrecise(mngr->fraction()->isPrecise());
+		if(mngr->number()->log(vargs[1]->number())) {
+			mngr->setPrecise(!mngr->number()->isApproximate());
 			return;
 		}
 	}
@@ -1131,50 +1134,50 @@ void LognFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->add(&mngr2, OPERATION_DIVIDE);		
 }
 Log10Function::Log10Function() : Function("Exponents and Logarithms", "log10", 1, "Base-10 Logarithm") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
 }
 void Log10Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
-	if(!mngr->isFraction() || !mngr->fraction()->log10()) {
+	if(!mngr->isNumber() || !mngr->number()->log(10)) {
 		mngr->set(this, vargs[0], NULL);
 	} else {
-		mngr->setPrecise(mngr->fraction()->isPrecise());
+		mngr->setPrecise(!mngr->number()->isApproximate());
 	}		
 }
 Log2Function::Log2Function() : Function("Exponents and Logarithms", "log2", 1, "Base-2 Logarithm") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, false));
 }
 void Log2Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
-	if(!mngr->isFraction() || !mngr->fraction()->log2()) {
+	if(!mngr->isNumber() || !mngr->number()->log(2)) {
 		mngr->set(this, vargs[0], NULL);
 	} else {
-		mngr->setPrecise(mngr->fraction()->isPrecise());
+		mngr->setPrecise(!mngr->number()->isApproximate());
 	}		
 }
 ExpFunction::ExpFunction() : Function("Exponents and Logarithms", "exp", 1, "e raised to the power X") {}
 void ExpFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
+	if(vargs[0]->isNumber()) {
 		mngr->set(vargs[0]);
-		if(!mngr->fraction()->exp()) {
+		if(!mngr->number()->exp()) {
 			mngr->set(this, vargs[0], NULL);
 		} else {
-			mngr->setPrecise(mngr->fraction()->isPrecise());
+			mngr->setPrecise(!mngr->number()->isApproximate());
 		}		
 	} else {
-		mngr->fraction()->e();
-		mngr->setPrecise(mngr->fraction()->isPrecise());
+		mngr->number()->e();
+		mngr->setPrecise(!mngr->number()->isApproximate());
 		mngr->add(vargs[0], OPERATION_RAISE);	
 	}
 }
 Exp10Function::Exp10Function() : Function("Exponents and Logarithms", "exp10", 1, "10 raised the to power X") {}
 void Exp10Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
+	if(vargs[0]->isNumber()) {
 		mngr->set(vargs[0]);
-		if(!mngr->fraction()->exp10()) {
+		if(!mngr->number()->exp10()) {
 			mngr->set(this, vargs[0], NULL);
 		} else {
-			mngr->setPrecise(mngr->fraction()->isPrecise());
+			mngr->setPrecise(!mngr->number()->isApproximate());
 		}		
 	} else {
 		mngr->set(10, 1);
@@ -1183,12 +1186,12 @@ void Exp10Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 Exp2Function::Exp2Function() : Function("Exponents and Logarithms", "exp2", 1, "2 raised the to power X") {}
 void Exp2Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
+	if(vargs[0]->isNumber()) {
 		mngr->set(vargs[0]);
-		if(!mngr->fraction()->exp2()) {
+		if(!mngr->number()->exp2()) {
 			mngr->set(this, vargs[0], NULL);
 		} else {
-			mngr->setPrecise(mngr->fraction()->isPrecise());
+			mngr->setPrecise(!mngr->number()->isApproximate());
 		}		
 	} else {
 		mngr->set(2, 1);
@@ -1196,7 +1199,7 @@ void Exp2Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 SqrtFunction::SqrtFunction() : Function("Exponents and Logarithms", "sqrt", 1, "Square Root") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
 }
 void SqrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -1205,30 +1208,30 @@ void SqrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr2->unref();
 }
 AbsSqrtFunction::AbsSqrtFunction() : Function("Exponents and Logarithms", "abssqrt", 1, "Square Root (abs)") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
 }
 void AbsSqrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
+	if(vargs[0]->isNumber()) {
 		mngr->set(vargs[0]);
-		if(!mngr->fraction()->sqrt()) {
+		if(!mngr->number()->raise(1, 2)) {
 			mngr->set(this, vargs[0], NULL);
 		} else {
-			mngr->setPrecise(mngr->fraction()->isPrecise());
+			mngr->setPrecise(!mngr->number()->isApproximate());
 		}
 	} else {
 		mngr->set(this, vargs[0], NULL);
 	}
 }
 CbrtFunction::CbrtFunction() : Function("Exponents and Logarithms", "cbrt", 1, "Cube Root") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
 }
 void CbrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
+	if(vargs[0]->isNumber()) {
 		mngr->set(vargs[0]);
-		if(!mngr->fraction()->cbrt()) {
+		if(!mngr->number()->raise(1, 3)) {
 			mngr->set(this, vargs[0], NULL);
 		} else {
-			mngr->setPrecise(mngr->fraction()->isPrecise());
+			mngr->setPrecise(!mngr->number()->isApproximate());
 		}		
 	} else {
 		mngr->set(vargs[0]);
@@ -1247,12 +1250,12 @@ void RootFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 AbsRootFunction::AbsRootFunction() : Function("Exponents and Logarithms", "absroot", 2, "Nth Root (abs)") {}
 void AbsRootFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction() && vargs[1]->isFraction()) {
+	if(vargs[0]->isNumber() && vargs[1]->isNumber()) {
 		mngr->set(vargs[0]);
-		Fraction fr(1);
-		fr.divide(vargs[1]->fraction());
-		if(mngr->fraction()->pow(&fr)) {
-			mngr->setPrecise(mngr->fraction()->isPrecise());
+		Number fr(1);
+		fr.divide(vargs[1]->number());
+		if(mngr->number()->raise(&fr)) {
+			mngr->setPrecise(!mngr->number()->isApproximate());
 			return;
 		}		
 	} 
@@ -1260,10 +1263,10 @@ void AbsRootFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 PowFunction::PowFunction() : Function("Exponents and Logarithms", "pow", 2, "Power") {}
 void PowFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-/*	if(vargs[0]->isFraction() && vargs[1]->isFraction()) {
+/*	if(vargs[0]->isNumber() && vargs[1]->isNumber()) {
 		mngr->set(vargs[0]);
-		if(mngr->fraction()->pow(vargs[1]->fraction())) {
-			mngr->setPrecise(mngr->fraction()->isPrecise());
+		if(mngr->number()->pow(vargs[1]->number())) {
+			mngr->setPrecise(!mngr->number()->isApproximate());
 			return;
 		}		
 	}*/
@@ -1295,8 +1298,8 @@ void SumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 PercentileFunction::PercentileFunction() : Function("Statistics", "percentile", 1, "Percentile", "", -1) {
-	FractionArgument *arg = new FractionArgument();
-	Fraction fr;
+	NumberArgument *arg = new NumberArgument();
+	Number fr;
 	arg->setMin(&fr);
 	fr.set(99, 1);
 	arg->setMax(&fr);
@@ -1309,34 +1312,34 @@ void PercentileFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() < 1) {
 		return;
 	}
-	Fraction fr100(100);
+	Number fr100(100);
 	Vector *v = produceVector(vargs);	
 	if(!v->sort()) {
 		Manager *mngr2 = createFunctionManagerFromVArgs(vargs);
 		mngr->set(mngr2);
 		mngr2->unref();	
 	} else {
-		Fraction nfr(v->components() + 1);		
-		Fraction pfr(vargs[0]->fraction());		
+		Number nfr(v->components() + 1);		
+		Number pfr(vargs[0]->number());		
 		pfr.divide(&fr100);
 		pfr.multiply(&nfr);
-/*		Fraction cfr(v->components());		
+/*		Number cfr(v->components());		
 		if(pfr.isZero() || pfr.numerator()->isLessThan(pfr.denominator()) || pfr.isGreaterThan(&cfr)) {
 			CALCULATOR->error(true, _("Not enough samples."), NULL);
 		}*/
 		if(pfr.isInteger()) {
-			mngr->set(v->get(pfr.numerator()->getInt()));
+			mngr->set(v->get(pfr.intValue()));
 		} else {
-			Fraction ufr(&pfr);
+			Number ufr(&pfr);
 			ufr.ceil();
-			Fraction lfr(&pfr);
+			Number lfr(&pfr);
 			lfr.floor();
 			pfr.subtract(&lfr);
-			Manager gap(v->get(ufr.numerator()->getInt()));
-			gap.add(v->get(lfr.numerator()->getInt()), OPERATION_SUBTRACT);
+			Manager gap(v->get(ufr.intValue()));
+			gap.add(v->get(lfr.intValue()), OPERATION_SUBTRACT);
 			Manager pfr_mngr(&pfr);
 			gap.add(&pfr_mngr, OPERATION_MULTIPLY);
-			mngr->set(v->get(lfr.numerator()->getInt()));
+			mngr->set(v->get(lfr.intValue()));
 			mngr->add(&gap, OPERATION_ADD);
 		}
 	}
@@ -1434,16 +1437,16 @@ void RandomFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 BASEFunction::BASEFunction() : Function("General", "BASE", 2, "Number Base") {
 	setArgumentDefinition(1, new TextArgument());
 	IntegerArgument *arg = new IntegerArgument();
-	Integer integ(2);
+	Number integ(2, 1);
 	arg->setMin(&integ);
-	integ.set(36);
+	integ.set(36, 1);
 	arg->setMax(&integ);
 	setArgumentDefinition(2, arg);
 }
 void BASEFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	string str = vargs[0]->text();
 	remove_blanks(str);
-	mngr->set(strtol(str.c_str(), NULL, vargs[1]->fraction()->numerator()->getInt()), 1);
+	mngr->set(strtol(str.c_str(), NULL, vargs[1]->number()->intValue()), 1);
 }
 BINFunction::BINFunction() : Function("General", "BIN", 1, "Binary") {
 	setArgumentDefinition(1, new TextArgument());
@@ -1631,7 +1634,7 @@ void LoadFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[2]->text() == "tab") {
 		vargs[2]->set("\t");
 	}
-	Matrix *mtrx = CALCULATOR->importCSV(vargs[0]->text().c_str(), vargs[1]->fraction()->numerator()->getInt(), vargs[2]->text());
+	Matrix *mtrx = CALCULATOR->importCSV(vargs[0]->text().c_str(), vargs[1]->number()->intValue(), vargs[2]->text());
 	if(!mtrx) {
 		CALCULATOR->error(true, "Failed to load %s.", vargs[0]->text().c_str(), NULL);
 	}

@@ -13,7 +13,7 @@
 #include "util.h"
 #include "Calculator.h"
 #include "Manager.h"
-#include "Fraction.h"
+#include "Number.h"
 
 Variable::Variable(string cat_, string name_, Manager *mngr_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active) {
 	mngr = mngr_;
@@ -140,30 +140,30 @@ int DynamicVariable::calculatedPrecision() const {
 
 PiVariable::PiVariable() : DynamicVariable("Constants", "pi", "Archimede's Constant (pi)") {}
 void PiVariable::calculate() const {
-	Fraction fr; fr.pi(); mngr->set(&fr);
+	Number nr; nr.pi(); mngr->set(&nr);
 }
 EVariable::EVariable() : DynamicVariable("Constants", "e", "The Base of Natural Logarithms (e)") {}
 void EVariable::calculate() const {
-	Fraction fr; fr.e(); mngr->set(&fr);
+	Number nr; nr.e(); mngr->set(&nr);
 }
 PythagorasVariable::PythagorasVariable() : DynamicVariable("Constants", "pythagoras", "Pythagora's Constant (sqrt 2)") {}
 void PythagorasVariable::calculate() const {
-	Fraction fr; fr.pythagoras(); mngr->set(&fr);
+	Number nr; nr.pythagoras(); mngr->set(&nr);
 }
 EulerVariable::EulerVariable() : DynamicVariable("Constants", "euler", "Euler's Constant") {}
 void EulerVariable::calculate() const {
-	Fraction fr; fr.euler(); mngr->set(&fr);
+	Number nr; nr.euler(); mngr->set(&nr);
 }
 GoldenVariable::GoldenVariable() : DynamicVariable("Constants", "golden", "The Golden Ratio") {}
 void GoldenVariable::calculate() const {
-	Fraction fr; fr.golden(); mngr->set(&fr);
+	Number nr; nr.golden(); mngr->set(&nr);
 }
 AperyVariable::AperyVariable() : DynamicVariable("Constants", "apery", "Apery's Constant") {}
 void AperyVariable::calculate() const {
-	Fraction fr; fr.apery(); mngr->set(&fr);
+	Number nr; nr.apery(); mngr->set(&nr);
 }
 CatalanVariable::CatalanVariable() : DynamicVariable("Constants", "catalan", "Catalan's Constant") {}
 void CatalanVariable::calculate() const {
-	Fraction fr; fr.catalan(); mngr->set(&fr);
+	Number nr; nr.catalan(); mngr->set(&nr);
 }
 

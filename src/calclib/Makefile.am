@@ -13,8 +13,7 @@ libcalculate_la_SOURCES = \
 	EqItem.cc	EqItem.h \
 	Error.cc	Error.h \
 	ExpressionItem.cc	ExpressionItem.h \
-	Fraction.cc	Fraction.h \
-	Integer.cc	Integer.h \
+	Number.cc	Number.h \
 	Manager.cc	Manager.h \
 	Matrix.cc	Matrix.h \
 	Prefix.cc	Prefix.h \

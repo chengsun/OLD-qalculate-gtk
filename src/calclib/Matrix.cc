@@ -12,8 +12,7 @@
 #include "Matrix.h"
 #include "Calculator.h"
 #include "Manager.h"
-#include "Integer.h"
-#include "Fraction.h"
+#include "Number.h"
 #include "util.h"
 
 /**
@@ -540,18 +539,19 @@ bool Matrix::raise(const Manager *mngr) {
 	}
 	if(mngr->isMatrix()) {
 		return raise(mngr->matrix());
-	} else if(mngr->isFraction() && mngr->fraction()->isMinusOne()) {
+	} else if(mngr->isNumber() && mngr->number()->isMinusOne()) {
 		return inverse();
-	} else if(mngr->isFraction() && mngr->fraction()->isInteger()) {
-		if(mngr->fraction()->isNegative()) {
+	} else if(mngr->isNumber() && mngr->number()->isInteger()) {
+		if(mngr->number()->isNegative()) {
 			return false;
 		} else {
-			Integer integer(mngr->fraction()->numerator());
+			Number *integer = mngr->number()->numerator();
 			Matrix mtrx(this);
-			integer.add(-1);
-			for(; integer.isPositive(); integer.add(-1)) {
+			integer->add(-1);
+			for(; integer->isPositive(); integer->add(-1)) {
 				multiply(&mtrx);
 			}
+			delete integer;
 			return true;
 		}
 	}
@@ -648,7 +648,7 @@ void Matrix::recalculateVariables() {
 		}
 	} 	
 }
-string Matrix::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) const {
+string Matrix::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Number *l_exp, bool in_composite, bool in_power) const {
 	string str = "matrix(";
 	str += i2s(rows());
 	str += CALCULATOR->getComma();
@@ -693,7 +693,7 @@ unsigned int Vector::components() const {
 void Vector::addComponent() {
 	Matrix::addColumn();
 }
-string Vector::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) const {
+string Vector::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Number *l_exp, bool in_composite, bool in_power) const {
 	if(!isVector()) {
 		return Matrix::print(nrformat, displayflags, min_decimals, max_decimals, prefix, in_exact, usable, toplevel, plural, l_exp, in_composite, in_power);
 	}

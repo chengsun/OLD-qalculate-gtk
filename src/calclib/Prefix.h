@@ -27,10 +27,10 @@ class Prefix {
 	void setLongName(string long_name);
 	const string &name(bool short_default = true) const;
 	long int exponent(long int exp_ = 1) const;
-	Integer *exponent(const Integer *exp_, Integer *buffer = NULL) const;	
+	Number *exponent(const Number *exp_, Number *buffer = NULL) const;	
 	void setExponent(long int exp_);	
-	Fraction *value(const Integer *exp_, Fraction *buffer = NULL) const;
-	Fraction *value(long int exp_ = 1, Fraction *buffer = NULL) const;
+	Number *value(const Number *exp_, Number *buffer = NULL) const;
+	Number *value(long int exp_ = 1, Number *buffer = NULL) const;
 	
 };
 

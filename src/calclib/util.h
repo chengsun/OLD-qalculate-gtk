@@ -43,23 +43,20 @@ struct eqstr {
 
 string& gsub(const string &pattern, const string &sub, string &str);
 string& gsub(const char *pattern, const char *sub, string &str);
-string d2s(long double value, int precision = 100);
+string d2s(double value, int precision = 100);
 string i2s(int value);
 int s2i(const string& str);
 int s2i(const char *str);
 long int s2li(const string& str);
 long int s2li(const char *str);
-long long int s2lli(const string& str);
-long long int s2lli(const char *str);
-string lli2s(long long int value);
 string li2s(long int value);
-string &lli2s(long long int &value, string &str);
+string &li2s(long int &value, string &str);
 
 bool s2date(string str, int &year, int &month, int &day);
 bool isLeapYear(int year);
 int daysPerYear(int year, int basis = 0);
 int daysPerMonth(int month, int year);
-Fraction *yearsBetweenDates(string date1, string date2, int basis, bool date_func = true);
+Number *yearsBetweenDates(string date1, string date2, int basis, bool date_func = true);
 int daysBetweenDates(string date1, string date2, int basis, bool date_func = true);
 int daysBetweenDates(int year1, int month1, int day1, int year2, int month2, int day2, int basis, bool date_func = true);
 
@@ -72,12 +69,12 @@ int find_first_of(const string &str, unsigned int pos, ...);
 int find_last_not_of(const string &str, unsigned int pos, ...);
 int find_last_of(const string &str, unsigned int pos, ...);
 
-long double rad2deg(long double &value);
-long double deg2rad(long double &value);
-long double rad2gra(long double &value);
-long double gra2rad(long double &value);
-long double deg2gra(long double &value);
-long double gra2deg(long double &value);
+double rad2deg(double &value);
+double deg2rad(double &value);
+double rad2gra(double &value);
+double gra2rad(double &value);
+double deg2gra(double &value);
+double gra2deg(double &value);
 
 string& wrap_p(string &str);
 string& remove_blanks(string &str);
@@ -92,8 +89,7 @@ bool is_not_in(const char *str, char c);
 bool is_in(const string &str, char c);
 bool is_not_in(const string &str, char c);
 int sign_place(string *str, unsigned int start = 0);
-long long int gcd(long long int i1, long long int i2);
-//long double gcd_d(long double i1, long double i2);
+long int gcd(long int i1, long int i2);
 
 bool text_length_is_one(const string &str);
 

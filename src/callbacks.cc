@@ -1310,8 +1310,8 @@ void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gp
 					menu_index = MENU_ARGUMENT_TYPE_INTEGER;
 					break;
 				}
-				case ARGUMENT_TYPE_FRACTION: {
-					menu_index = MENU_ARGUMENT_TYPE_FRACTION;
+				case ARGUMENT_TYPE_NUMBER: {
+					menu_index = MENU_ARGUMENT_TYPE_NUMBER;
 					break;
 				}
 				case ARGUMENT_TYPE_VECTOR: {
@@ -1817,7 +1817,7 @@ void draw_background(GdkPixmap *pixmap, gint w, gint h) {
 //	}
 }
 
-GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *prefix = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false, bool draw_minus = false, gint *point_central = NULL, bool in_multiplication = false, bool wrap = true, bool wrap_all = false, bool *has_parenthesis = NULL, int in_div = 0, bool no_add_one = false, Integer *l_exp2 = NULL, Prefix **prefix1 = NULL, Prefix **prefix2 = NULL, GdkPixmap *pixmap_fr = NULL) {
+GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *prefix = NULL, bool toplevel = true, bool *plural = NULL, Number *l_exp = NULL, bool in_composite = false, bool in_power = false, bool draw_minus = false, gint *point_central = NULL, bool in_multiplication = false, bool wrap = true, bool wrap_all = false, bool *has_parenthesis = NULL, int in_div = 0, bool no_add_one = false, Number *l_exp2 = NULL, Prefix **prefix1 = NULL, Prefix **prefix2 = NULL, GdkPixmap *pixmap_fr = NULL) {
 
 	GdkPixmap *pixmap = NULL;
 	gint w, h;
@@ -2079,8 +2079,8 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			}
 			break;
 		}
-		case FRACTION_MANAGER: {
-			if(m->fraction()->isComplex()) {
+		case NUMBER_MANAGER: {
+			if(m->number()->isComplex()) {
 				string str;
 				PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
 				if(in_power) {
@@ -2108,7 +2108,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			}
 			bool minus, exp_minus;
 			string whole_, numerator_, denominator_, exponent_, prefix_;
-			m->fraction()->getPrintObjects(minus, whole_, numerator_, denominator_, exp_minus, exponent_, prefix_, nrformat, displayflags, min_decimals, max_decimals, prefix, in_exact, usable, false, plural, l_exp, in_composite || no_add_one, in_power, l_exp2, prefix1, prefix2);
+			m->number()->getPrintObjects(minus, whole_, numerator_, denominator_, exp_minus, exponent_, prefix_, nrformat, displayflags, min_decimals, max_decimals, prefix, in_exact, usable, false, plural, l_exp, in_composite || no_add_one, in_power, l_exp2, prefix1, prefix2);
 			PangoLayout *layout_whole = NULL, *layout_num = NULL, *layout_den = NULL, *layout_prefix = NULL, *layout_exp = NULL;
 			gint pw = 0, ph = 0, wlw, hlw, wln, hln, wld, hld, wlp, hlp, hfr, wfr, wle, hle;
 			CALCULATE_SPACE_W
@@ -2659,7 +2659,8 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 		}	
 		case POWER_MANAGER: {
 			if(!(displayflags & DISPLAY_FORMAT_SCIENTIFIC)) {
-				if(m->exponent()->isFraction() && m->exponent()->fraction()->numerator()->equals(1) && m->exponent()->fraction()->denominator()->equals(2)) {
+				Number half_nr(1, 2);
+				if(m->exponent()->isNumber() && m->exponent()->number()->equals(&half_nr)) {
 					Function *sqrt = CALCULATOR->getFunction("sqrt");
 					if(sqrt) {
 						Manager *m2 = new Manager(sqrt, m->base(), NULL);
@@ -2677,7 +2678,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					return pixmap;
 				}
 			}
-			if(prefix && m->base()->isUnit() && m->exponent()->isFraction() && m->exponent()->fraction()->isInteger()) {
+			if(prefix && m->base()->isUnit() && m->exponent()->isNumber() && m->exponent()->number()->isInteger()) {
 				Manager *mngr_d = new Manager();
 				mngr_d->setType(MULTIPLICATION_MANAGER);
 				mngr_d->push_back(new Manager(1, 1));
@@ -2696,7 +2697,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_one), &one_w, &one_h);
 			}
 			bool wrap_base = false;
-			if((m->base()->hasNegativeSign() || (m->base()->isFraction() && !m->base()->fraction()->isInteger() && ((displayflags & DISPLAY_FORMAT_FRACTION) || (displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY))))) {
+			if((m->base()->hasNegativeSign() || (m->base()->isNumber() && !m->base()->number()->isInteger() && ((displayflags & DISPLAY_FORMAT_FRACTION) || (displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY))))) {
 				wrap_base = true;
 			}
 			GdkPixmap *pixmap_base = draw_manager(m->base(), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, in_composite, in_power, true, &central_point, false, true, wrap_base, NULL, 0, true);			
@@ -2810,20 +2811,20 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					} 
 					if(!div && div_count > 0) {
 						if(!in_power) {
-							if(m->getChild(0)->isFraction() && !m->getChild(0)->fraction()->isComplex() && ((displayflags & DISPLAY_FORMAT_FRACTION) || (displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY))) {
+							if(m->getChild(0)->isNumber() && !m->getChild(0)->number()->isComplex() && ((displayflags & DISPLAY_FORMAT_FRACTION) || (displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY))) {
 								if(!no_prefix) {
 									for(unsigned int i = 0; i < m->countChilds(); i++) {
 										m_i = m->getChild(i);
 										if(m_i->isUnit()) {
-											if(!l_exp) l_exp = new Integer(1);
+											if(!l_exp) l_exp = new Number(1, 1);
 										} else if(m_i->isUnit_exp()) {
-											if(m_i->exponent()->isFraction() && m_i->exponent()->fraction()->isInteger()) {
-												if(m_i->exponent()->fraction()->isNegative()) {
-													l_exp2 = new Integer(m_i->exponent()->fraction()->numerator());
+											if(m_i->exponent()->isNumber() && m_i->exponent()->number()->isInteger()) {
+												if(m_i->exponent()->number()->isNegative()) {
+													l_exp2 = new Number(m_i->exponent()->number());
 													l_exp2->setNegative(false);
 													break;
 												} else if(!l_exp) {
-													l_exp = new Integer(m_i->exponent()->fraction()->numerator());
+													l_exp = new Number(m_i->exponent()->number());
 												}
 											}
 										}
@@ -2833,7 +2834,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 								if(!(displayflags_d & DISPLAY_FORMAT_FRACTIONAL_ONLY)) {
 									displayflags_d = displayflags_d | DISPLAY_FORMAT_FRACTIONAL_ONLY;
 								}	
-								m->getChild(0)->fraction()->getPrintObjects(minus, whole_, numerator_, denominator_, exp_minus, exponent_, prefix_, nrformat, displayflags_d, min_decimals, max_decimals, prefix, in_exact, usable, false, NULL, l_exp, in_composite, in_power, l_exp2, &prefix_1, &prefix_2);
+								m->getChild(0)->number()->getPrintObjects(minus, whole_, numerator_, denominator_, exp_minus, exponent_, prefix_, nrformat, displayflags_d, min_decimals, max_decimals, prefix, in_exact, usable, false, NULL, l_exp, in_composite, in_power, l_exp2, &prefix_1, &prefix_2);
 								if(!denominator_.empty() || (exp_minus && !exponent_.empty())) {
 									div = 2;
 								}
@@ -2925,18 +2926,18 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						for(unsigned int i = 0; i < m->countChilds(); i++) {
 							m_i = m->getChild(i);
 							if(m_i->isUnit()) {
-								l_exp = new Integer(1);
+								l_exp = new Number(1, 1);
 								break;
 							} else if(m_i->isUnit_exp()) {
-								if(m_i->exponent()->isFraction() && m_i->exponent()->fraction()->isInteger()) {
-									l_exp = new Integer(m_i->exponent()->fraction()->numerator());
+								if(m_i->exponent()->isNumber() && m_i->exponent()->number()->isInteger()) {
+									l_exp = new Number(m_i->exponent()->number());
 								}
 								break;
 							}
 						}
 					}
 				}
-				if(!pixmap_fr && !prefix_1 && prefix && !m->getChild(0)->isFraction() && l_exp) {
+				if(!pixmap_fr && !prefix_1 && prefix && !m->getChild(0)->isNumber() && l_exp) {
 					m_i = new Manager(1, 1);
 					pixmap_fr = draw_manager(m_i, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, &plural_, l_exp, in_composite, in_power, draw_minus || toplevel, &hetmp, true, true, false, &tmp_par, 0, false, NULL, &prefix_1);
 					m_i->unref();
@@ -2959,7 +2960,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				}
 				for(unsigned int i = 0; i < m->countChilds(); i++) {
 					m_i = m->getChild(i);
-					if(i == 0 && m_i->isFraction() && m_i->fraction()->isMinusOne() && m->countChilds() > 1 && !m->getChild(1)->isUnit_exp()) {
+					if(i == 0 && m_i->isNumber() && m_i->number()->isMinusOne() && m->countChilds() > 1 && !m->getChild(1)->isUnit_exp()) {
 						first_is_minus = true;
 						pixmap_factors.push_back(NULL);
 						do_space.push_back(0);			
@@ -2998,7 +2999,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						plural_ = false;
 						next_plural = true;
 					}
-					if(m_i->isFraction()) {
+					if(m_i->isNumber()) {
 						pixmap_factors.push_back(draw_manager(m_i, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, &plural_, l_exp, false, in_power, draw_minus || toplevel || i, &hetmp, true, true, false, &tmp_par, 0, no_add_one, NULL, &prefix_1));
 						if(l_exp) delete l_exp;
 						l_exp = NULL;
@@ -3008,7 +3009,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					f_has_parenthesis.push_back(tmp_par);
 					
 					gdk_drawable_get_size(GDK_DRAWABLE(pixmap_factors[i]), &wtmp, &htmp);
-					if(m_i->isFraction() && wtmp == 1 && htmp == 1) {
+					if(m_i->isNumber() && wtmp == 1 && htmp == 1) {
 						g_object_unref(pixmap_factors[i]);
 						pixmap_factors[i] = NULL;
 						wtmp = 0;
@@ -3024,7 +3025,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 									do_space.push_back(0);
 								} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable() == CALCULATOR->getPI() || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {
 									do_space.push_back(0);
-								} else if(m_i->isPower() && m_i->base()->isFraction()) {
+								} else if(m_i->isPower() && m_i->base()->isNumber()) {
 									do_space.push_back(2);
 								} else {
 									do_space.push_back(1);
@@ -3050,12 +3051,12 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							}
 						} else if(m_i->isFunction()) {	
 							do_space.push_back(2);
-						} else if(m_i_prev->isFraction()) {
+						} else if(m_i_prev->isNumber()) {
 							if(m_i->isText() && text_length_is_one(m_i->text())) {
 								do_space.push_back(0);
 							} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable() == CALCULATOR->getPI() || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {	
 								do_space.push_back(0);
-							} else if(m_i->isPower() && m_i->base()->isFraction()) {
+							} else if(m_i->isPower() && m_i->base()->isNumber()) {
 								do_space.push_back(2);
 							} else {
 								do_space.push_back(1);
@@ -3187,8 +3188,8 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				bool do_num_frac = false, do_den_frac = false;
 				for(unsigned int i = 0; i < m->countChilds(); i++) {
 					m_i = m->getChild(i);
-					if(i == 0 && m_i->isFraction() && !m_i->fraction()->isComplex()) {
-						if(m_i->fraction()->isNegative()) {
+					if(i == 0 && m_i->isNumber() && !m_i->number()->isComplex()) {
+						if(m_i->number()->isNegative()) {
 							first_is_minus = draw_minus || toplevel;
 						}
 						if(!done_fr) {
@@ -3197,15 +3198,15 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 								for(unsigned int i2 = 0; i2 < m->countChilds(); i2++) {
 									m_i2 = m->getChild(i2);
 									if(m_i2->isUnit()) {
-										if(!l_exp) l_exp = new Integer(1);
+										if(!l_exp) l_exp = new Number(1, 1);
 									} else if(m_i2->isUnit_exp()) {
-										if(m_i2->exponent()->isFraction() && m_i2->exponent()->fraction()->isInteger()) {
-											if(m_i2->exponent()->fraction()->isNegative()) {
-												l_exp2 = new Integer(m_i2->exponent()->fraction()->numerator());
+										if(m_i2->exponent()->isNumber() && m_i2->exponent()->number()->isInteger()) {
+											if(m_i2->exponent()->number()->isNegative()) {
+												l_exp2 = new Number(m_i2->exponent()->number());
 												l_exp2->setNegative(false);
 												break;
 											} else if(!l_exp) {
-												l_exp = new Integer(m_i2->exponent()->fraction()->numerator());
+												l_exp = new Number(m_i2->exponent()->number());
 											}
 										}
 									}
@@ -3215,7 +3216,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							if((displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags_d & DISPLAY_FORMAT_FRACTIONAL_ONLY)) {
 								displayflags_d = displayflags_d | DISPLAY_FORMAT_FRACTIONAL_ONLY;
 							}	
-							m_i->fraction()->getPrintObjects(minus, whole_, numerator_, denominator_, exp_minus, exponent_, prefix_, nrformat, displayflags_d, min_decimals, max_decimals, prefix, in_exact, usable, false, NULL, l_exp, in_composite, in_power, l_exp2, &prefix_1, &prefix_2);
+							m_i->number()->getPrintObjects(minus, whole_, numerator_, denominator_, exp_minus, exponent_, prefix_, nrformat, displayflags_d, min_decimals, max_decimals, prefix, in_exact, usable, false, NULL, l_exp, in_composite, in_power, l_exp2, &prefix_1, &prefix_2);
 							if(l_exp) delete l_exp;
 							l_exp = NULL;
 							if(l_exp2) delete l_exp2;
@@ -4123,10 +4124,10 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 					IntegerArgument *iarg = (IntegerArgument*) arg;
 					gdouble min = -1000000, max = 1000000;
 					if(iarg->min()) {
-						min = iarg->min()->getInt();
+						min = iarg->min()->intValue();
 					}
 					if(iarg->max()) {
-						max = iarg->max()->getInt();
+						max = iarg->max()->intValue();
 					}				
 					entry[i] = gtk_spin_button_new_with_range(min, max, 1);
 					gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(entry[i]), FALSE);
@@ -4568,8 +4569,8 @@ void edit_argument(Argument *arg) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (argumentrules_glade, "argument_rules_entry_condition"), !arg->getCustomCondition().empty());
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_checkbutton_forbid_zero")), arg->zeroForbidden());
 	switch(arg->type()) {
-		case ARGUMENT_TYPE_FRACTION: {
-			FractionArgument *farg = (FractionArgument*) arg;
+		case ARGUMENT_TYPE_NUMBER: {
+			NumberArgument *farg = (NumberArgument*) arg;
 			gtk_widget_set_sensitive(glade_xml_get_widget (argumentrules_glade, "argument_rules_box_min"), TRUE);
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_checkbutton_enable_min")), farg->min() != NULL);
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_checkbutton_min_include_equals")), farg->includeEqualsMin());
@@ -4603,7 +4604,7 @@ void edit_argument(Argument *arg) {
 			gtk_widget_set_sensitive(glade_xml_get_widget (argumentrules_glade, "argument_rules_checkbutton_min_include_equals"), FALSE);
 			gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_spinbutton_min")), TRUE);
 			if(iarg->min()) {
-				gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_spinbutton_min")), iarg->min()->getInt());		
+				gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_spinbutton_min")), iarg->min()->intValue());		
 			} else {
 				gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_spinbutton_min")), 0);
 			}
@@ -4614,7 +4615,7 @@ void edit_argument(Argument *arg) {
 			gtk_widget_set_sensitive(glade_xml_get_widget (argumentrules_glade, "argument_rules_checkbutton_max_include_equals"), FALSE);
 			gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_spinbutton_max")), TRUE);
 			if(iarg->max()) {
-				gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_spinbutton_max")), iarg->max()->getInt());		
+				gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_spinbutton_max")), iarg->max()->intValue());		
 			} else {
 				gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_spinbutton_max")), 0);
 			}	
@@ -4643,20 +4644,20 @@ void edit_argument(Argument *arg) {
 		} else {
 			arg->setCustomCondition("");
 		}
-		if(arg->type() == ARGUMENT_TYPE_FRACTION) {
-			FractionArgument *farg = (FractionArgument*) arg;
+		if(arg->type() == ARGUMENT_TYPE_NUMBER) {
+			NumberArgument *farg = (NumberArgument*) arg;
 			farg->setIncludeEqualsMin(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_checkbutton_min_include_equals"))));
 			farg->setIncludeEqualsMax(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_checkbutton_max_include_equals"))));
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_checkbutton_enable_min")))) {
 				Manager *mngr2 = CALCULATOR->calculate(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (argumentrules_glade, "argument_rules_spinbutton_min"))));
-				farg->setMin(mngr2->fraction());
+				farg->setMin(mngr2->number());
 				mngr2->unref();
 			} else {
 				farg->setMin(NULL);
 			}
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_checkbutton_enable_max")))) {
 				Manager *mngr2 = CALCULATOR->calculate(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (argumentrules_glade, "argument_rules_spinbutton_max"))));
-				farg->setMax(mngr2->fraction());
+				farg->setMax(mngr2->number());
 				mngr2->unref();
 			} else {
 				farg->setMax(NULL);
@@ -4664,13 +4665,13 @@ void edit_argument(Argument *arg) {
 		} else if(arg->type() == ARGUMENT_TYPE_INTEGER) {
 			IntegerArgument *iarg = (IntegerArgument*) arg;
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_checkbutton_enable_min")))) {
-				Integer integ(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_spinbutton_min"))));
+				Number integ(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_spinbutton_min"))), 1);
 				iarg->setMin(&integ);
 			} else {
 				iarg->setMin(NULL);
 			}
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_checkbutton_enable_max")))) {
-				Integer integ(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_spinbutton_max"))));
+				Number integ(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (argumentrules_glade, "argument_rules_spinbutton_max"))), 1);
 				iarg->setMax(&integ);
 			} else {
 				iarg->setMax(NULL);
@@ -7770,10 +7771,10 @@ void on_function_edit_button_add_argument_clicked(GtkButton *w, gpointer user_da
 			case MENU_ARGUMENT_TYPE_POSITIVE_INTEGER: {arg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE); break;}
 			case MENU_ARGUMENT_TYPE_NONZERO_INTEGER: {arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONZERO); break;}
 			case MENU_ARGUMENT_TYPE_INTEGER: {arg = new IntegerArgument(); break;}
-			case MENU_ARGUMENT_TYPE_NONNEGATIVE: {arg = new FractionArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE); break;}
-			case MENU_ARGUMENT_TYPE_POSITIVE: {arg = new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE); break;}
-			case MENU_ARGUMENT_TYPE_NONZERO: {arg = new FractionArgument("", ARGUMENT_MIN_MAX_NONZERO); break;}
-			case MENU_ARGUMENT_TYPE_FRACTION: {arg = new FractionArgument(); break;}
+			case MENU_ARGUMENT_TYPE_NONNEGATIVE: {arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE); break;}
+			case MENU_ARGUMENT_TYPE_POSITIVE: {arg = new NumberArgument("", ARGUMENT_MIN_MAX_POSITIVE); break;}
+			case MENU_ARGUMENT_TYPE_NONZERO: {arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO); break;}
+			case MENU_ARGUMENT_TYPE_NUMBER: {arg = new NumberArgument(); break;}
 			case MENU_ARGUMENT_TYPE_VECTOR: {arg = new VectorArgument(); break;}
 			case MENU_ARGUMENT_TYPE_MATRIX: {arg = new MatrixArgument(); break;}
 			case MENU_ARGUMENT_TYPE_EXPRESSION_ITEM: {arg = new ExpressionItemArgument(); break;}
@@ -7826,7 +7827,7 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 				case MENU_ARGUMENT_TYPE_NONNEGATIVE: {}
 				case MENU_ARGUMENT_TYPE_POSITIVE: {}
 				case MENU_ARGUMENT_TYPE_NONZERO: {}
-				case MENU_ARGUMENT_TYPE_FRACTION: {argtype = ARGUMENT_TYPE_FRACTION; break;}
+				case MENU_ARGUMENT_TYPE_NUMBER: {argtype = ARGUMENT_TYPE_NUMBER; break;}
 				case MENU_ARGUMENT_TYPE_VECTOR: {argtype = ARGUMENT_TYPE_VECTOR; break;}
 				case MENU_ARGUMENT_TYPE_MATRIX: {argtype = ARGUMENT_TYPE_MATRIX; break;}
 				case MENU_ARGUMENT_TYPE_EXPRESSION_ITEM: {argtype = ARGUMENT_TYPE_EXPRESSION_ITEM; break;}
@@ -7850,10 +7851,10 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 					case MENU_ARGUMENT_TYPE_POSITIVE_INTEGER: {selected_argument = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE); break;}
 					case MENU_ARGUMENT_TYPE_NONZERO_INTEGER: {selected_argument = new IntegerArgument("", ARGUMENT_MIN_MAX_NONZERO); break;}
 					case MENU_ARGUMENT_TYPE_INTEGER: {selected_argument = new IntegerArgument(); break;}
-					case MENU_ARGUMENT_TYPE_NONNEGATIVE: {selected_argument = new FractionArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE); break;}
-					case MENU_ARGUMENT_TYPE_POSITIVE: {selected_argument = new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE); break;}
-					case MENU_ARGUMENT_TYPE_NONZERO: {selected_argument = new FractionArgument("", ARGUMENT_MIN_MAX_NONZERO); break;}
-					case MENU_ARGUMENT_TYPE_FRACTION: {selected_argument = new FractionArgument(); break;}
+					case MENU_ARGUMENT_TYPE_NONNEGATIVE: {selected_argument = new NumberArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE); break;}
+					case MENU_ARGUMENT_TYPE_POSITIVE: {selected_argument = new NumberArgument("", ARGUMENT_MIN_MAX_POSITIVE); break;}
+					case MENU_ARGUMENT_TYPE_NONZERO: {selected_argument = new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO); break;}
+					case MENU_ARGUMENT_TYPE_NUMBER: {selected_argument = new NumberArgument(); break;}
 					case MENU_ARGUMENT_TYPE_VECTOR: {selected_argument = new VectorArgument(); break;}
 					case MENU_ARGUMENT_TYPE_MATRIX: {selected_argument = new MatrixArgument(); break;}
 					case MENU_ARGUMENT_TYPE_EXPRESSION_ITEM: {selected_argument = new ExpressionItemArgument(); break;}

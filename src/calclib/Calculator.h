@@ -121,10 +121,10 @@ class Calculator {
 	Prefix *getPrefix(unsigned int index) const;	
 	Prefix *getPrefix(string name_) const;		
 	Prefix *getExactPrefix(long int exp10, long int exp = 1) const;			
-	Prefix *getExactPrefix(const Fraction *fr, long int exp = 1) const;				
+	Prefix *getExactPrefix(const Number *fr, long int exp = 1) const;				
 	Prefix *getNearestPrefix(long int exp10, long int exp = 1) const;		
 	Prefix *getBestPrefix(long int exp10, long int exp = 1) const;		
-	Prefix *getBestPrefix(const Integer *exp10, const Integer *exp) const;				
+	Prefix *getBestPrefix(const Number *exp10, const Number *exp) const;				
 	Prefix *addPrefix(Prefix *p);
 	void prefixNameChanged(Prefix *p);	
 
@@ -170,7 +170,7 @@ class Calculator {
 	bool busy();
 	Manager *calculate(string str, bool enable_abort = false, int usecs = -1);
 	string printManagerTimeOut(Manager *mngr, int usecs = 100000, NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *prefix = NULL);
-	Manager *convert(long double value, Unit *from_unit, Unit *to_unit);
+	Manager *convert(double value, Unit *from_unit, Unit *to_unit);
 	Manager *convert(string str, Unit *from_unit, Unit *to_unit);	
 	Manager *convert(Manager *mngr, Unit *to_unit, bool always_convert = true);		
 	Manager *convert(Manager *mngr, string composite_);	
@@ -226,7 +226,7 @@ class Calculator {
 	int saveVariables(const char* file_name, bool save_global = false);	
 	int saveUnits(const char* file_name, bool save_global = false);	
 	int saveFunctions(const char* file_name, bool save_global = false);	
-	long double getAngleValue(long double value);
+	double getAngleValue(double value);
 	Manager *setAngleValue(Manager *mngr);	
 	Matrix *importCSV(const char *file_name, int first_row = 1, string delimiter = ",", vector<string> *headers = NULL);
 	bool importCSV(const char *file_name, int first_row = 1, bool headers = true, string delimiter = ",", bool to_matrix = false, string name = "", string title = "", string category = "");

@@ -13,7 +13,7 @@
 #include "Calculator.h"
 #include "Manager.h"
 #include "util.h"
-#include "Fraction.h"
+#include "Number.h"
 
 EqItem::EqItem(MathOperation operation_) {
 	op = operation_;
@@ -89,8 +89,8 @@ EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 	if(s == MINUS_CH) {
 		str.insert(str.begin(), 1, MINUS_CH);
 	}
-	Fraction fr(str);
-	mngr->set(&fr);
+	Number nr(str);
+	mngr->set(&nr);
 	return;
 	
 }
@@ -189,7 +189,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 			str2 = str.substr(0, i);
 			EqContainer eq_c(str2, OPERATION_ADD);
 			Manager *mngr2 = eq_c.calculate();
-			if(mngr2->isFraction() && !mngr2->fraction()->getBoolean()) {
+			if(mngr2->isNumber() && !mngr2->number()->getBoolean()) {
 				mngr->clear();
 				for(unsigned int ii = 0; ii < items.size(); ii++) {
 					delete items[ii];
@@ -213,7 +213,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 			str2 = str.substr(0, i);
 			EqContainer eq_c(str2, OPERATION_ADD);
 			Manager *mngr2 = eq_c.calculate();
-			if(mngr2->isFraction() && mngr2->fraction()->getBoolean()) {
+			if(mngr2->isNumber() && mngr2->number()->getBoolean()) {
 				mngr->set(1, 1);
 				for(unsigned int ii = 0; ii < items.size(); ii++) {
 					delete items[ii];

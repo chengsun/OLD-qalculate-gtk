@@ -86,34 +86,6 @@ Although use of Qalculate! for simple calculations should be natural and self-ex
 </figure>
 <variablelist>
 <varlistentry>
-<term>Expression Entry</term>
-<listitem>
-<para>
-The expression entry is the most important part of the Qalculate! user interface. The normal calculation procedure in Qalculate! is to type in a mathematical expression (ex. <quote>5+5</quote>) and press <keycap>Enter</keycap> (or click <guibutton>Execute</guibutton>). The result (<quote>10</quote>) is then displayed below the expression entry in the result display.
-</para>
-<para>
-After execution of an expression, the whole expression will be marked. This normally means that if something new is entered, the old expression will be overwritten. If, however, an operator (+, −, *, /, ^) is entered first, the old expression will instead be the target of action. The operator will then apply to the whole expression, which is put in parenthesis. This works on all marked ranges, meaning that this way an expression can conveniently be put in parenthesis. Functions set the selection as their first argument.
-</para>
-<para>
-The <keycap>Up</keycap> and <keycap>Down</keycap> keys will access previously entered expressions. With focus in the expression entry, <keycap>Up</keycap> traverses backwards in the expression history and <keycap>Down</keycap> forward. 
-</para>
-</listitem>
-</varlistentry>
-<varlistentry>
-<term>Result Display</term>
-<listitem>
-<para>
-The result of calculations is displayed in the open area below the expression entry. The font used for the result display can be selected in the preferences dialog (<menuchoice><guimenu>Expression Menu</guimenu><guimenuitem>Preferences</guimenuitem></menuchoice>). Use of Unicode signs can be turned off in the same dialog, in case of problems with missing characters. Otherwise Qalculate! will try to make the result as fancy as possible and print π for pi, √ for sqrt, € for euro, and so on. Information about customization of the mathematical result output is available in <xref linkend="qalculate-result"/>.
-</para>
-<para>
-In front of the result an equals or approximately equals sign is shown. This indicates whether Qalculate! was able to calculate/display the result exact or only approximate, in the current mode.
-</para>
-<para>
-To copy the result, either select <menuchoice><guimenu>Result Menu</guimenu><guimenuitem>Copy Result</guimenuitem></menuchoice>, press <keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>C</keycap></keycombo>, or copy the text from the history tab.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry>
 <term>Buttons</term>
 <listitem>
 <para>
@@ -131,12 +103,52 @@ Two small buttons with arrows are placed right of the expression entry and the r
 </varlistentry>
 </variablelist>
 </sect2>
+<sect2 id="qalculate-expression-entry">
+<title>Expression Entry</title>
+<para>
+The expression entry is the most important part of the Qalculate! user interface. The normal calculation procedure in Qalculate! is to type in a mathematical expression (ex. <quote>5+5</quote>) and press <keycap>Enter</keycap> (or click <guibutton>Execute</guibutton>). The result (<quote>10</quote>) is then displayed below the expression entry in the result display.
+</para>
+<figure id="qalculate-FIG-completion">
+	<title>Completion</title>
+	<screenshot>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="figures/completion.png" format="PNG"/>
+			</imageobject>
+		</mediaobject>
+	</screenshot>
+</figure>
+<para>
+Qalculate! helps out with the expression by giving a list of possible endings to words representing functions, variables and units. The list will narrow with each letter typed. Select an item in the list and the name will be completed. If a function was selected, parenthesis will be added and the position moved for immediate entry of arguments.
+</para>
+<para>
+After execution of an expression, the whole expression will be marked. This normally means that if something new is entered, the old expression will be overwritten. If, however, an operator (+, −, *, /, ^) is entered first, the old expression will instead be the target of action. The operator will then apply to the whole expression, which is put in parenthesis. This works on all marked ranges, meaning that this way an expression can conveniently be put in parenthesis. Functions set the selection as their first argument.
+</para>
+<para>
+The <keycap>Up</keycap> and <keycap>Down</keycap> keys will access previously entered expressions. With focus in the expression entry, <keycap>Up</keycap> traverses backwards in the expression history and <keycap>Down</keycap> forward. 
+</para>
+</sect2>
+<sect2 id="qalculate-result-display">
+<title>Result Display</title>
+<para>
+The result of calculations is displayed in the open area below the expression entry. The font used for the result display can be selected in the preferences dialog (<menuchoice><guimenu>Expression Menu</guimenu><guimenuitem>Preferences</guimenuitem></menuchoice>). Use of Unicode signs can be turned off in the same dialog, in case of problems with missing characters. Otherwise Qalculate! will try to make the result as fancy as possible and print π for pi, √ for sqrt, € for euro, and so on. Information about customization of the mathematical result output is available in <xref linkend="qalculate-result"/>.
+</para>
+<para>
+In front of the result an equals or approximately equals sign is shown. This indicates whether Qalculate! was able to calculate/display the result exact or only approximate, in the current mode.
+</para>
+<para>
+Context menu.
+</para>
+<para>
+To copy the result, either select <menuchoice><guimenu>Result Menu</guimenu><guimenuitem>Copy Result</guimenuitem></menuchoice>, press <keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>C</keycap></keycombo>, or copy the text from the history tab.
+</para>
+</sect2>
 <sect2 id="qalculate-calculator-buttons">
-<title>Calculator Buttons</title>
+<title>Keypad</title>
 <para>
 The buttons tab provides access to a fairly small set of traditional calculator buttons, which work as expected. The <guibutton>Convert</guibutton> button in the top left corner opens the convert to unit dialog (see <xref linkend="qalculate-unit-conversion"/>), while the buttons to the right open the functions, variables and units managers (see <xref linkend="qalculate-managers"/>).
 <figure id="qalculate-FIG-calculator-buttons">
-	<title>Calculator Buttons</title>
+	<title>Keypad</title>
 	<screenshot>
 		<mediaobject>
 			<imageobject>

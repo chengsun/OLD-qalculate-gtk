@@ -12,7 +12,7 @@
 #include "util.h"
 #include <stdarg.h>
 //#include <langinfo.h>
-#include "Fraction.h"
+#include "Number.h"
 
 #include <glib.h>
 
@@ -91,7 +91,7 @@ int daysPerMonth(int month, int year) {
 	}
 }	
 
-Fraction *yearsBetweenDates(string date1, string date2, int basis, bool date_func) {
+Number *yearsBetweenDates(string date1, string date2, int basis, bool date_func) {
 	if(basis < 0 || basis > 4) return NULL;
 	if(basis == 1) {
 		int day1, day2, month1, month2, year1, year2;
@@ -110,17 +110,17 @@ Fraction *yearsBetweenDates(string date1, string date2, int basis, bool date_fun
 		if(year1 == year2) {
 			days = daysBetweenDates(year1, month1, day1, year2, month2, day2, basis, date_func);
 			if(days < 0) return NULL;
-			return new Fraction(days, daysPerYear(year1, basis));
+			return new Number(days, daysPerYear(year1, basis));
 		}
 		for(int month = 12; month > month1; month--) {
 			days += daysPerMonth(month, year1);
 		}
 		days += daysPerMonth(month1, year1) - day1 + 1;
-/*		Fraction *fr = new Fraction(days, daysPerYear(year1, basis));
+/*		Number *nr = new Number(days, daysPerYear(year1, basis));
 		year1++;
 		if(year1 != year2) {
-			Fraction yfr(year2 - year1);
-			fr->add(&yfr);
+			Number yfr(year2 - year1);
+			nr->add(&yfr);
 		}
 		days = 0;*/
 		for(int month = 1; month < month2; month++) {
@@ -134,19 +134,19 @@ Fraction *yearsBetweenDates(string date1, string date2, int basis, bool date_fun
 				days += daysPerYear(year, basis);
 			}
 		}
-		Fraction year_frac(days_of_years, year2 + 1 - year1);
+		Number year_frac(days_of_years, year2 + 1 - year1);
 /*		if(days > 0) {
-			Fraction fr2(days, daysPerYear(year2, basis));
-			fr->add(&fr2);
+			Number nr2(days, daysPerYear(year2, basis));
+			nr->add(&nr2);
 		}*/
-		Fraction *fr = new Fraction(days);
-		fr->divide(&year_frac);
-		return fr;
+		Number *nr = new Number(days);
+		nr->divide(&year_frac);
+		return nr;
 	} else {
 		int days = daysBetweenDates(date1, date2, basis, date_func);
 		if(days < 0) return NULL;
-		Fraction *fr = new Fraction(days, daysPerYear(0, basis));	
-		return fr;
+		Number *nr = new Number(days, daysPerYear(0, basis));	
+		return nr;
 	}
 	return NULL;
 }
@@ -389,28 +389,28 @@ string& remove_parenthesis(string &str) {
 	return str;
 }
 
-long double rad2deg(long double &value) {
+double rad2deg(double &value) {
 	return value * 180 / PI_VALUE;
 }
-long double deg2rad(long double &value) {
+double deg2rad(double &value) {
 	return value * PI_VALUE / 180;
 }
-long double rad2gra(long double &value) {
+double rad2gra(double &value) {
 	return value * 200 / PI_VALUE;
 }
-long double gra2rad(long double &value) {
+double gra2rad(double &value) {
 	return value * PI_VALUE / 200;
 }
-long double deg2gra(long double &value) {
+double deg2gra(double &value) {
 	return value * 400 / 360;
 }
-long double gra2deg(long double &value) {
+double gra2deg(double &value) {
 	return value * 360 / 400;
 }
 
-string d2s(long double value, int precision) {
+string d2s(double value, int precision) {
 	//	  qgcvt(value, precision, buffer);
-	sprintf(buffer, "%.*LG", precision, value);
+	sprintf(buffer, "%.*G", precision, value);
 	string stmp = buffer;
 	//	  gsub("e", "E", stmp);
 	return stmp;
@@ -424,21 +424,6 @@ string i2s(int value) {
 }
 long int s2li(const string& str) {
 	long int li = 0;
-	bool numbers_started = false, minus = false;		
-	for(unsigned int index = 0; index < str.size(); index++) {
-		if(str[index] >= '0' && str[index] <= '9') {
-			li *= 10;
-			li += str[index] - '0';
-			numbers_started = true;
-		} else if(!numbers_started && str[index] == '-') {
-			minus = !minus;
-		}
-	}
-	if(minus) li = -li;		
-	return li;
-}
-long long int s2lli(const string& str) {
-	long long int li = 0;
 	bool numbers_started = false, minus = false;		
 	for(unsigned int index = 0; index < str.size(); index++) {
 		if(str[index] >= '0' && str[index] <= '9') {
@@ -467,21 +452,6 @@ long int s2li(const char *str) {
 	if(minus) li = -li;	
 	return li;
 }
-long long int s2lli(const char *str) {
-	long long int li = 0;
-	bool numbers_started = false, minus = false;	
-	for(unsigned int index = 0; str[index] != '\0'; index++) {
-		if(str[index] >= '0' && str[index] <= '9') {
-			li *= 10;
-			li += str[index] - '0';
-			numbers_started = true;
-		} else if(!numbers_started && str[index] == '-') {
-			minus = !minus;
-		}
-	}
-	if(minus) li = -li;	
-	return li;
-}
 int s2i(const string& str) {
 	return strtol(str.c_str(), NULL, 10);
 }
@@ -489,19 +459,6 @@ int s2i(const char *str) {
 	return strtol(str, NULL, 10);
 }
 
-string lli2s(long long int value) {
-	if(value == 0) return "0";
-	string str = "";
-	bool minus = value < 0;
-	if(minus) value =- value;
-	while(true) {
-		str.insert(str.begin(), 1, '0' + value % 10);
-		value /= 10;						
-		if(value == 0) break;
-	}
-	if(minus) str.insert(str.begin(), 1, '-');
-	return str;
-}
 string li2s(long int value) {
 	if(value == 0) return "0";
 	string str = "";
@@ -515,7 +472,7 @@ string li2s(long int value) {
 	if(minus) str.insert(str.begin(), 1, '-');
 	return str;
 }
-string &lli2s(long long int &value, string &str)  {
+string &lli2s(long int &value, string &str)  {
 	if(value == 0) {
 		str = "0";
 		return str;
@@ -643,11 +600,11 @@ int sign_place(string *str, unsigned int start) {
 		return -1;
 }
 
-long long int gcd(long long int i1, long long int i2) {
+long int gcd(long int i1, long int i2) {
 	if(i1 < 0) i1 = -i1;
 	if(i2 < 0) i2 = -i2;
 	if(i1 == i2) return i2;
-	long long int i3;
+	long int i3;
 	if(i2 > i1) {
 		i3 = i2;
 		i2 = i1;
@@ -659,23 +616,6 @@ long long int gcd(long long int i1, long long int i2) {
 	}
 	return i2;
 }
-
-/*long double gcd_d(long double i1, long double i2) {
-	if(i1 < 0) i1 = -i1;
-	if(i2 < 0) i2 = -i2;
-	if(i1 == i2) return i2;
-	long double i3;
-	if(i2 > i1) {
-		i3 = i2;
-		i2 = i1;
-		i1 = i3;
-	}
-	while((i3 =fmodl(i1, i2)) != 0.0L) {
-		i1 = i2;
-		i2 = i3;
-	}
-	return i2;
-}*/
 
 bool text_length_is_one(const string &str) {
 	for(unsigned int i = 0; i < str.length() - 1; i++) {

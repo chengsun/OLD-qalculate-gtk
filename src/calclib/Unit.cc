@@ -685,8 +685,8 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 		if(mngr) {
 			prefix = NULL;
 			exp = 1;
-			if(mngr->isMultiplication() && mngr->countChilds() == 2 && mngr->getChild(0)->isFraction() && mngr->getChild(1)->isUnit()) {
-				prefix = CALCULATOR->getExactPrefix(mngr->getChild(0)->fraction());
+			if(mngr->isMultiplication() && mngr->countChilds() == 2 && mngr->getChild(0)->isNumber() && mngr->getChild(1)->isUnit()) {
+				prefix = CALCULATOR->getExactPrefix(mngr->getChild(0)->number());
 				mngr = mngr->getChild(1);
 			} 
 			if(mngr->isUnit()) {

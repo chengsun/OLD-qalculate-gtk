@@ -15,8 +15,7 @@
 #include "Unit.h"
 #include "Function.h"
 #include "Variable.h"
-#include "Fraction.h"
-#include "Integer.h"
+#include "Number.h"
 #include "Matrix.h"
 #include "Prefix.h"
 #include "util.h"
@@ -39,10 +38,10 @@ bool Manager::clearPrefixes() {
 		clean();
 	}
 	if(o_prefix) {
-		Fraction fr;
-		o_prefix->value(1, &fr);
+		Number nr;
+		o_prefix->value(1, &nr);
 		o_prefix = NULL;
-		Manager mngr(&fr);
+		Manager mngr(&nr);
 		add(&mngr, OPERATION_MULTIPLY);
 		b = true;
 	}
@@ -52,7 +51,7 @@ void Manager::init() {
 	refcount = 1;
 	b_exact = true;
 	b_protect = false;
-	fr = new Fraction();
+	o_number = new Number();
 	mtrx = NULL;
 	o_prefix = NULL;
 	o_function = NULL;
@@ -67,13 +66,13 @@ Manager::Manager() {
 	init();
 	clear();
 }
-Manager::Manager(long double value_) {
+Manager::Manager(double value_) {
 	init();
 	set(value_);
 }
-Manager::Manager(long int numerator_, long int denominator_, long int fraction_exp_) {
+Manager::Manager(long int numerator_, long int denominator_, long int number_exp_) {
 	init();
-	set(numerator_, denominator_, fraction_exp_);
+	set(numerator_, denominator_, number_exp_);
 }
 Manager::Manager(string var_) {
 	init();
@@ -105,13 +104,9 @@ Manager::Manager(const Manager *mngr) {
 	init();
 	set(mngr);
 }
-Manager::Manager(const Fraction *fraction_) {
+Manager::Manager(const Number *o) {
 	init();
-	set(fraction_);
-}
-Manager::Manager(const Integer *integ_) {
-	init();
-	set(integ_);
+	set(o);
 }
 Manager::Manager(const Matrix *matrix_) {
 	init();
@@ -123,7 +118,7 @@ Manager::Manager(const Vector *vector_) {
 }
 Manager::~Manager() {
 	clear();
-	delete fr;
+	delete o_number;
 #ifdef HAVE_GIAC	
 	if(g_gen) delete g_gen;
 #endif
@@ -150,7 +145,7 @@ void Manager::set(const Manager *mngr) {
 				mtrx = new Matrix(mngr->matrix());
 			}
 		}
-		fr->set(mngr->fraction());
+		o_number->set(mngr->number());
 		for(unsigned int i = 0; i < mngr->countChilds(); i++) {
 			mngrs.push_back(new Manager(mngr->getChild(i)));
 		}	
@@ -158,20 +153,12 @@ void Manager::set(const Manager *mngr) {
 		c_type = mngr->type();
 	}
 }
-void Manager::set(const Fraction *fraction_) {
+void Manager::set(const Number *o) {
 	clear();
-	if(fraction_) {
-		fr->set(fraction_);
-		setPrecise(fr->isPrecise());
-		c_type = FRACTION_MANAGER;
-	}
-}
-void Manager::set(const Integer *integ_) {
-	clear();
-	if(integ_) {
-		fr->set(integ_);
-		setPrecise(fr->isPrecise());
-		c_type = FRACTION_MANAGER;
+	if(o) {
+		o_number->set(o);
+		setPrecise(!o_number->isApproximate());
+		c_type = NUMBER_MANAGER;
 	}
 }
 void Manager::set(const Matrix *matrix_) {
@@ -192,17 +179,17 @@ void Manager::set(const Vector *vector_) {
 	setPrecise(mtrx->isPrecise());
 	c_type = MATRIX_MANAGER;
 }
-void Manager::set(long double value_) {
+void Manager::set(double value_) {
 	clear();
-	fr->setFloat(value_);
-	setPrecise(fr->isPrecise());	
-	c_type = FRACTION_MANAGER;
+	o_number->setFloat(value_);
+	setPrecise(!o_number->isApproximate());	
+	c_type = NUMBER_MANAGER;
 }
-void Manager::set(long int numerator_, long int denominator_, long int fraction_exp_) {
+void Manager::set(long int numerator_, long int denominator_, long int number_exp_) {
 	clear();
-	fr->set(numerator_, denominator_, fraction_exp_);
-	setPrecise(fr->isPrecise());	
-	c_type = FRACTION_MANAGER;	
+	o_number->set(numerator_, denominator_, number_exp_);
+	setPrecise(!o_number->isApproximate());	
+	c_type = NUMBER_MANAGER;	
 }
 void Manager::set(string var_) {
 	clear();
@@ -392,8 +379,8 @@ bool Manager::typeclean() {
 			break;	
 		}
 		case NOT_MANAGER: {
-			if(mngrs.size() && mngrs[0]->isFraction()) {
-				mngrs[0]->fraction()->setNOT();
+			if(mngrs.size() && mngrs[0]->isNumber()) {
+				mngrs[0]->number()->setNOT();
 				moveto(mngrs[0]);
 				changed = true;
 			}
@@ -439,19 +426,19 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 	if(!mngr) return true;
 //	printf("[%s] %c [%s] (%i)\n", print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), op2ch(op), mngr->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), translate_);
 	if(!mngr->isPrecise()) setPrecise(false);
-	if(mngr->type() == FRACTION_MANAGER && c_type == FRACTION_MANAGER) {
-		Fraction fr_save(fr);
-		int solutions = fr->add(op, mngr->fraction());
+	if(mngr->type() == NUMBER_MANAGER && c_type == NUMBER_MANAGER) {
+		Number nr_save(o_number);
+		int solutions = o_number->add(op, mngr->number());
 		if(solutions == 1) {
-			if(!fr->isPrecise() || !mngr->isPrecise()) setPrecise(false);
+			if(o_number->isApproximate() || !mngr->isPrecise()) setPrecise(false);
 			return true;
 		} else if(solutions > 1) {
-			if(!fr->isPrecise() || !mngr->isPrecise()) setPrecise(false);
+			if(o_number->isApproximate() || !mngr->isPrecise()) setPrecise(false);
 			Manager mngr2;
 			for(int i = 2; i <= solutions; i++) {
-				mngr2.set(&fr_save);
-				mngr2.fraction()->add(op, mngr->fraction(), i);
-				if(!mngr2.fraction()->isPrecise()) mngr2.setPrecise(false);
+				mngr2.set(&nr_save);
+				mngr2.number()->add(op, mngr->number(), i);
+				if(mngr2.number()->isApproximate()) mngr2.setPrecise(false);
 				addAlternative(&mngr2);
 			}
 			return true;
@@ -695,7 +682,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 				}
 				break;
 			}
-			case FRACTION_MANAGER: {
+			case NUMBER_MANAGER: {
 				switch(mngr->type()) {
 					case ADDITION_MANAGER: {
 						if(!reverseadd(mngr, op, translate_)) {
@@ -940,8 +927,8 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 				}
 				break;
 			}
-			case FRACTION_MANAGER: {
-				if(fr->isOne()) {set(mngr); return true;}
+			case NUMBER_MANAGER: {
+				if(o_number->isOne()) {set(mngr); return true;}
 				switch(mngr->type()) {
 					case ADDITION_MANAGER: {}
 					case MULTIPLICATION_MANAGER: {}
@@ -1095,7 +1082,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 			return true;
 		} else if(mngr->isOne()) {
 			return true;
-		} else if(isZero() && mngr->isFraction() && mngr->fraction()->isNegative()) {
+		} else if(isZero() && mngr->isNumber() && mngr->number()->isNegative()) {
 			if(translate_) {CALCULATOR->error(true, _("Division by zero."), NULL);}
 		}
 		switch(c_type) {
@@ -1107,9 +1094,9 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 			}		
 			case ADDITION_MANAGER: {
 				switch(mngr->type()) {
-					case FRACTION_MANAGER: {
-						if(mngr->fraction()->isInteger() && !mngr->fraction()->isMinusOne()) {
-							Integer n(mngr->fraction()->numerator());
+					case NUMBER_MANAGER: {
+						if(mngr->number()->isInteger() && !mngr->number()->isMinusOne()) {
+							Number n(mngr->number());
 							n.setNegative(false);
 							/*Manager *mngr2 = new Manager(this);
 							n->add(-1);
@@ -1117,11 +1104,12 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 								add(mngr2, OPERATION_MULTIPLY);
 							}*/
 							Manager n_mngr(&n);
-							Integer bn;
+							Number bn;
 							Manager bn_mngr;
-							Integer i(&n);
+							Number i(&n);
 							bool b_even = i.isEven();
-							i.divide(2);
+							Number n_two(2, 1);
+							i.trunc(&n_two);
 							Manager second_mngr;
 							if(mngrs.size() == 2) {
 								second_mngr.set(mngrs[1]);
@@ -1137,8 +1125,8 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 							Manager *mngr2 = new Manager(&second_mngr);
 							mngr2->add(&n_mngr, OPERATION_RAISE);
 							mngr_new->add(mngr2, OPERATION_ADD);
-							Integer i2(1);
-							Integer n2(&n);
+							Number i2(1, 1);
+							Number n2(&n);
 							n2.add(-1);
 							n_mngr.set(&n2);
 							Manager mngr_a, mngr_b, i_mngr(&i2);
@@ -1178,7 +1166,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 							}
 							moveto(mngr_new);
 							mngr_new->unref();
-							if(mngr->fraction()->isNegative()) {
+							if(mngr->number()->isNegative()) {
 								//mngr2->unref();
 								mngr2 = new Manager(1, 1);
 								mngr2->add(this, OPERATION_DIVIDE);
@@ -1220,7 +1208,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 				}
 				break;
 			}
-			case FRACTION_MANAGER: {
+			case NUMBER_MANAGER: {
 				if(isNull()) {
 					if(mngr->isNumber() && mngr->value() < 0) {
 						if(!translate_) {
@@ -1236,7 +1224,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 					}
 					break;
 				}
-				if(fr->isOne()) {
+				if(o_number->isOne()) {
 					return true;
 				}
 				switch(mngr->type()) {
@@ -1263,12 +1251,12 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 		if(s > -2) {
 			clear();
 			switch(op) {
-				case OPERATION_EQUALS: {fr->setTrue(s == 0); break;}
-				case OPERATION_LESS: {fr->setTrue(s > 0); break;}
-				case OPERATION_GREATER: {fr->setTrue(s < 0); break;}
-				case OPERATION_EQUALS_LESS: {fr->setTrue(s >= 0); break;}
-				case OPERATION_EQUALS_GREATER: {fr->setTrue(s <= 0); break;}
-				case OPERATION_NOT_EQUALS: {fr->setTrue(s != 0); break;}
+				case OPERATION_EQUALS: {o_number->setTrue(s == 0); break;}
+				case OPERATION_LESS: {o_number->setTrue(s > 0); break;}
+				case OPERATION_GREATER: {o_number->setTrue(s < 0); break;}
+				case OPERATION_EQUALS_LESS: {o_number->setTrue(s >= 0); break;}
+				case OPERATION_EQUALS_GREATER: {o_number->setTrue(s <= 0); break;}
+				case OPERATION_NOT_EQUALS: {o_number->setTrue(s != 0); break;}
 				default: {}
 			}
 		} else {
@@ -1374,8 +1362,8 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 	return true;
 }
 bool Manager::setNOT(bool translate_) {
-	if(isFraction()) {
-		fr->setNOT();
+	if(isNumber()) {
+		o_number->setNOT();
 	} else {
 		if(!translate_) {
 			return false;
@@ -1399,26 +1387,26 @@ void Manager::addInteger(long int value_, MathOperation op) {
 	mngr->unref();
 }
 int Manager::compare(const Manager *mngr) const {
-	if(isFraction() && mngr->isFraction()) {
-		return fraction()->compare(mngr->fraction());
-	} else if(isFraction() != mngr->isFraction()) {
+	if(isNumber() && mngr->isNumber()) {
+		return number()->compare(mngr->number());
+	} else if(isNumber() != mngr->isNumber()) {
 		return -2;
-	} else if(isMultiplication() && mngrs.size() == 2 && mngr->isMultiplication() && mngr->countChilds() == 2 && mngrs[0]->isFraction() && mngr->getChild(0)->isFraction() && mngrs[1]->isUnit_exp() && mngr->getChild(1)->isUnit_exp() && mngrs[1]->equals(mngr->getChild(1))) {
-		return mngrs[0]->fraction()->compare(mngr->getChild(0)->fraction());
+	} else if(isMultiplication() && mngrs.size() == 2 && mngr->isMultiplication() && mngr->countChilds() == 2 && mngrs[0]->isNumber() && mngr->getChild(0)->isNumber() && mngrs[1]->isUnit_exp() && mngr->getChild(1)->isUnit_exp() && mngrs[1]->equals(mngr->getChild(1))) {
+		return mngrs[0]->number()->compare(mngr->getChild(0)->number());
 	} else if(equals(mngr)) {
 		return 0;
 	} else {
 		Manager mngr2(this);
 		mngr2.add(mngr, OPERATION_SUBTRACT);
 		mngr2.finalize();
-		if(mngr2.isFraction()) {
-			Fraction fr;
-			return mngr2.fraction()->compare(&fr);
+		if(mngr2.isNumber()) {
+			Number nr;
+			return mngr2.number()->compare(&nr);
 		} else if(mngr2.isUnit()) {
 			return -1;
-		} else if(mngr2.isMultiplication() && mngr2.countChilds() == 2 && mngr2.getChild(0)->isFraction() && mngr2.getChild(1)->isUnit_exp()) {
-			Fraction fr;
-			return mngr2.getChild(0)->fraction()->compare(&fr);
+		} else if(mngr2.isMultiplication() && mngr2.countChilds() == 2 && mngr2.getChild(0)->isNumber() && mngr2.getChild(1)->isUnit_exp()) {
+			Number nr;
+			return mngr2.getChild(0)->number()->compare(&nr);
 		}
 	}
 	return -2;
@@ -1430,7 +1418,7 @@ int Manager::sortCompare(const Manager *mngr, int sortflags) const {
 		if(mngr->type() == POWER_MANAGER && c_type != ADDITION_MANAGER && c_type != MULTIPLICATION_MANAGER) return -mngr->sortCompare(this, sortflags);		
 	}
 	switch(c_type) {
-		case FRACTION_MANAGER: {
+		case NUMBER_MANAGER: {
 			if(mngr->isNull()) {
 				if(isNull()) return 0;
 				return -1;
@@ -1440,8 +1428,8 @@ int Manager::sortCompare(const Manager *mngr, int sortflags) const {
 				if(mngr->type() == FUNCTION_MANAGER) return -1;					
 				return 1;			
 			}
-			if(mngr->isFraction()) {
-				return fr->compare(mngr->fraction());
+			if(mngr->isNumber()) {
+				return o_number->compare(mngr->number());
 			}
 			if(mngr->type() == FUNCTION_MANAGER) return -1;
 			return 1;
@@ -1619,7 +1607,7 @@ void Manager::moveto(Manager *term) {
 	if(term->g_gen) g_gen = new giac::gen(*term->g_gen);
 #endif
 	comparison_type = term->comparisonType();
-	fr->set(term->fraction());
+	o_number->set(term->number());
 	if(term->matrix()) {
 		if(term->matrix()->isVector()) {
 			mtrx = new Vector(term->matrix());
@@ -1639,8 +1627,8 @@ bool Manager::equals(const Manager *mngr) const {
 	if(c_type == mngr->type()) {
 		if(isNull()) {
 			return true;
-		} else if(c_type == FRACTION_MANAGER) {
-			return mngr->fraction()->equals(fr);
+		} else if(c_type == NUMBER_MANAGER) {
+			return mngr->number()->equals(o_number);
 		} else if(c_type == MATRIX_MANAGER) {
 			return mngr->matrix()->equals(mtrx);
 		} else if(c_type == UNIT_MANAGER) {
@@ -1725,13 +1713,13 @@ bool Manager::compatible(const Manager *mngr) {
 	}
 	return false;
 }
-void Manager::addFloat(long double value_, MathOperation op) {
+void Manager::addFloat(double value_, MathOperation op) {
 	Manager *mngr = new Manager(value_);
 	add(mngr, op);
 	mngr->unref();
 }
 void Manager::clear() {
-	fr->clear();
+	o_number->clear();
 	o_unit = NULL;
 	s_var = "";
 	o_variable = NULL;
@@ -1747,14 +1735,14 @@ void Manager::clear() {
 		mngrs[i]->unref();
 	}
 	mngrs.clear();
-	c_type = FRACTION_MANAGER;
+	c_type = NUMBER_MANAGER;
 }
-long double Manager::value() const {
-	if(c_type == FRACTION_MANAGER) return fr->value();
+double Manager::value() const {
+	if(c_type == NUMBER_MANAGER) return o_number->floatValue();
 	return 0;
 }
-Fraction *Manager::fraction() const {
-	return fr;
+Number *Manager::number() const {
+	return o_number;
 }
 Matrix *Manager::matrix() const {
 	return mtrx;
@@ -1764,8 +1752,8 @@ bool Manager::isPrecise() const {
 }
 void Manager::setPrecise(bool is_precise) {
 	b_exact = is_precise;
-	if(isFraction()) {
-		fraction()->setPrecise(b_exact);
+	if(isNumber()) {
+		number()->setApproximate(!b_exact);
 	} else if(isMatrix()) {
 		matrix()->setPrecise(b_exact);
 	}
@@ -1799,37 +1787,35 @@ bool Manager::isAddition() const {return c_type == ADDITION_MANAGER;}
 bool Manager::isMultiplication() const {return c_type == MULTIPLICATION_MANAGER;}
 bool Manager::isFunction() const {return c_type == FUNCTION_MANAGER;}
 bool Manager::isPower() const {return c_type == POWER_MANAGER;}
-bool Manager::isNumber_exp() const {return c_type == FRACTION_MANAGER || (c_type == POWER_MANAGER && mngrs[0]->type() == FRACTION_MANAGER);}
-bool Manager::isNumber() const {return c_type == FRACTION_MANAGER;}
-bool Manager::isFraction_exp() const {return c_type == FRACTION_MANAGER || (c_type == POWER_MANAGER && mngrs[0]->type() == FRACTION_MANAGER);}
-bool Manager::isFraction() const {return c_type == FRACTION_MANAGER;}
+bool Manager::isNumber_exp() const {return c_type == NUMBER_MANAGER || (c_type == POWER_MANAGER && mngrs[0]->type() == NUMBER_MANAGER);}
+bool Manager::isNumber() const {return c_type == NUMBER_MANAGER;}
 bool Manager::isMatrix() const {return c_type == MATRIX_MANAGER;}
 bool Manager::isAND() const {return c_type == AND_MANAGER;}
 bool Manager::isOR() const {return c_type == OR_MANAGER;}
 bool Manager::isNOT() const {return c_type == NOT_MANAGER;}
 bool Manager::isComparison() const {return c_type == COMPARISON_MANAGER;}
 bool Manager::isNull() const {
-	return c_type == FRACTION_MANAGER && fr->isZero();
+	return c_type == NUMBER_MANAGER && o_number->isZero();
 }
 bool Manager::isZero() const {
 	return isNull();
 }
-bool Manager::isOne() const {return c_type == FRACTION_MANAGER && fr->isOne();}
+bool Manager::isOne() const {return c_type == NUMBER_MANAGER && o_number->isOne();}
 bool Manager::negative() const {
-	if(c_type == FRACTION_MANAGER) return fr->isNegative();	
+	if(c_type == NUMBER_MANAGER) return o_number->isNegative();	
 	else if(c_type == MULTIPLICATION_MANAGER || c_type == POWER_MANAGER) return mngrs[0]->negative();
 	return false;
 }
 bool Manager::hasNegativeSign() const {
-	if(c_type == FRACTION_MANAGER) return fr->isNegative();	
+	if(c_type == NUMBER_MANAGER) return o_number->isNegative();	
 	else if(c_type == MULTIPLICATION_MANAGER || c_type == POWER_MANAGER) return mngrs[0]->negative();
 	return false;
 }
 int Manager::signedness() const {
-	if(c_type == FRACTION_MANAGER) {
-		if(fr->isPositive()) {
+	if(c_type == NUMBER_MANAGER) {
+		if(o_number->isPositive()) {
 			return 1;
-		} else if(fr->isZero()) {
+		} else if(o_number->isZero()) {
 			return 0;
 		} else {
 			return -1;
@@ -2423,7 +2409,7 @@ void Manager::differentiate(string x_var) {
 	}
 }
 
-string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, bool *in_exact, bool *usable, Prefix *set_prefix, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power, bool draw_minus, bool print_equals, bool in_multiplication, bool wrap, bool wrap_all, bool *has_parenthesis, bool in_div, bool no_add_one, Integer *l_exp2, Prefix **prefix1, Prefix **prefix2, string string_fr) const {
+string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, bool *in_exact, bool *usable, Prefix *set_prefix, bool toplevel, bool *plural, Number *l_exp, bool in_composite, bool in_power, bool draw_minus, bool print_equals, bool in_multiplication, bool wrap, bool wrap_all, bool *has_parenthesis, bool in_div, bool no_add_one, Number *l_exp2, Prefix **prefix1, Prefix **prefix2, string string_fr) const {
 
 	string str = "";
 	if(has_parenthesis) *has_parenthesis = false;
@@ -2549,16 +2535,17 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			}
 			break;
 		}
-		case FRACTION_MANAGER: {
+		case NUMBER_MANAGER: {
 
-			if(fraction()->isComplex()) {
-				Fraction fr_im(fraction()->complexNumerator(), fraction()->complexDenominator());
-				if(!fraction()->numerator()->isZero()) {
-					Fraction fr_real(fraction()->numerator(), fraction()->denominator());
-					Manager mngr(&fr_real);
+			if(number()->isComplex()) {
+				Number *nr_im = number()->imaginaryPart();
+				if(number()->hasRealPart()) {
+					Number *nr_real = number()->realPart();
+					Manager mngr(nr_real);
+					delete nr_real;
 					str += mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, in_composite, in_power, true, print_equals, in_multiplication, false, false, NULL, in_div, false, NULL, prefix1, prefix2);
 					str += " ";
-					if(fr_im.isNegative()) {
+					if(nr_im->isNegative()) {
 						if(displayflags & DISPLAY_FORMAT_NONASCII) {
 							str += SIGN_MINUS;				
 						} else {
@@ -2574,15 +2561,16 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 					str += " ";
 					if(!toplevel && wrap) wrap_all = true;
 				}
-				Manager mngr(&fr_im);
-				str += mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, in_composite, in_power, (draw_minus || toplevel) && fraction()->numerator()->isZero(), print_equals, in_multiplication, true, false, NULL, in_div, true, NULL, prefix1, prefix2);
+				Manager mngr(nr_im);
+				delete nr_im;
+				str += mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, in_composite, in_power, (draw_minus || toplevel) && !number()->hasRealPart(), print_equals, in_multiplication, true, false, NULL, in_div, true, NULL, prefix1, prefix2);
 				str += "i";
 				break;
 			}
 
 			bool minus, exp_minus;
 			string whole_, numerator_, denominator_, exponent_, prefix_;
-			fraction()->getPrintObjects(minus, whole_, numerator_, denominator_, exp_minus, exponent_, prefix_, nrformat, displayflags, min_decimals, max_decimals, set_prefix, in_exact, usable, false, plural, l_exp, in_composite || no_add_one, in_power, l_exp2, prefix1, prefix2);
+			number()->getPrintObjects(minus, whole_, numerator_, denominator_, exp_minus, exponent_, prefix_, nrformat, displayflags, min_decimals, max_decimals, set_prefix, in_exact, usable, false, plural, l_exp, in_composite || no_add_one, in_power, l_exp2, prefix1, prefix2);
 			if(!whole_.empty()) {
 				if(minus && (toplevel || draw_minus)) {
 					if(displayflags & DISPLAY_FORMAT_NONASCII) {
@@ -2749,7 +2737,8 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 		}	
 		case POWER_MANAGER: {
 			if(!(displayflags & DISPLAY_FORMAT_SCIENTIFIC)) {
-				if(exponent()->isFraction() && exponent()->fraction()->numerator()->equals(1) && exponent()->fraction()->denominator()->equals(2)) {
+				Number half_nr(1, 2);
+				if(exponent()->isNumber() && exponent()->number()->equals(&half_nr)) {
 					Function *sqrt = CALCULATOR->getFunction("sqrt");
 					if(sqrt) {
 						Manager *m2 = new Manager(sqrt, base(), NULL);
@@ -2767,7 +2756,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 					return str;
 				}
 			}
-			if(set_prefix && base()->isUnit() && exponent()->isFraction() && exponent()->fraction()->isInteger()) {
+			if(set_prefix && base()->isUnit() && exponent()->isNumber() && exponent()->number()->isInteger()) {
 				Manager *mngr_d = new Manager();
 				mngr_d->setType(MULTIPLICATION_MANAGER);
 				mngr_d->push_back(new Manager(1, 1));
@@ -2781,7 +2770,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				str += "1 ";
 			}
 			bool wrap_base = false;
-			if((base()->hasNegativeSign() || (base()->isFraction() && !base()->fraction()->isInteger() && ((displayflags & DISPLAY_FORMAT_FRACTION) || (displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY))))) {
+			if((base()->hasNegativeSign() || (base()->isNumber() && !base()->number()->isInteger() && ((displayflags & DISPLAY_FORMAT_FRACTION) || (displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY))))) {
 				wrap_base = true;
 			}
 			str += base()->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, set_prefix, false, NULL, NULL, in_composite, in_power, true, print_equals, false, true, wrap_base, NULL, 0, true);			
@@ -2855,25 +2844,25 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 						for(unsigned int i = 0; i < countChilds(); i++) {
 							m_i = getChild(i);
 							if(m_i->isUnit()) {
-								l_exp = new Integer(1);
+								l_exp = new Number(1, 1);
 								break;
 							} else if(m_i->isUnit_exp()) {
-								if(m_i->exponent()->isFraction() && m_i->exponent()->fraction()->isInteger()) {
-									l_exp = new Integer(m_i->exponent()->fraction()->numerator());
+								if(m_i->exponent()->isNumber() && m_i->exponent()->number()->isInteger()) {
+									l_exp = new Number(m_i->exponent()->number());
 								}
 								break;
 							}
 						}
 					}
 				}
-				if(string_fr.empty() && !prefix_1 && set_prefix && !getChild(0)->isFraction() && l_exp) {
+				if(string_fr.empty() && !prefix_1 && set_prefix && !getChild(0)->isNumber() && l_exp) {
 					m_i = new Manager(1, 1);
 					string_fr = m_i->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, set_prefix, false, &plural_, l_exp, in_composite, in_power, draw_minus || toplevel, print_equals, true, true, false, &tmp_par, 0, false, NULL, &prefix_1);
 					m_i->unref();
 				}
 				for(unsigned int i = 0; i < countChilds(); i++) {
 					m_i = getChild(i);
-					if(i == 0 && m_i->isFraction() && m_i->fraction()->isMinusOne() && countChilds() > 1 && !getChild(1)->isUnit_exp()) {
+					if(i == 0 && m_i->isNumber() && m_i->number()->isMinusOne() && countChilds() > 1 && !getChild(1)->isUnit_exp()) {
 						first_is_minus = true;
 						string_factors.push_back("");
 						do_space.push_back(0);			
@@ -2895,7 +2884,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 						plural_ = false;
 						next_plural = true;
 					}
-					if(m_i->isFraction()) {
+					if(m_i->isNumber()) {
 						string_factors.push_back(m_i->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, set_prefix, false, &plural_, l_exp, false, in_power, draw_minus || toplevel || i, print_equals, true, true, false, &tmp_par, 0, no_add_one, NULL, &prefix_1));
 						if(l_exp) delete l_exp;
 						l_exp = NULL;
@@ -2915,7 +2904,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 									do_space.push_back(0);
 								} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable() == CALCULATOR->getPI() || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {
 									do_space.push_back(0);
-								} else if(m_i->isPower() && m_i->base()->isFraction()) {
+								} else if(m_i->isPower() && m_i->base()->isNumber()) {
 									do_space.push_back(2);
 								} else {
 									do_space.push_back(1);
@@ -2943,12 +2932,12 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 							}
 						} else if(m_i->isFunction() || m_i->isMatrix()) {
 							do_space.push_back(2);
-						} else if(m_i_prev->isFraction()) {
+						} else if(m_i_prev->isNumber()) {
 							if(m_i->isText() && text_length_is_one(m_i->text())) {
 								do_space.push_back(0);
 							} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable() == CALCULATOR->getPI() || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {	
 								do_space.push_back(0);
-							} else if(m_i->isPower() && m_i->base()->isFraction()) {
+							} else if(m_i->isPower() && m_i->base()->isNumber()) {
 								do_space.push_back(2);
 							} else {
 								do_space.push_back(1);
@@ -3032,8 +3021,8 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				bool do_num_frac = false, do_den_frac = false;
 				for(unsigned int i = 0; i < countChilds(); i++) {
 					m_i = getChild(i);
-					if(i == 0 && m_i->isFraction() && !m_i->fraction()->isComplex()) {
-						if(m_i->fraction()->isNegative()) {
+					if(i == 0 && m_i->isNumber() && !m_i->number()->isComplex()) {
+						if(m_i->number()->isNegative()) {
 							first_is_minus = draw_minus || toplevel;
 						}
 						bool exp_minus = false;
@@ -3044,15 +3033,15 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 							for(unsigned int i2 = 0; i2 < countChilds(); i2++) {
 								m_i2 = getChild(i2);
 								if(m_i2->isUnit()) {
-									if(!l_exp) l_exp = new Integer(1);
+									if(!l_exp) l_exp = new Number(1, 1);
 								} else if(m_i2->isUnit_exp()) {
-									if(m_i2->exponent()->isFraction() && m_i2->exponent()->fraction()->isInteger()) {
-										if(m_i2->exponent()->fraction()->isNegative()) {
-											l_exp2 = new Integer(m_i2->exponent()->fraction()->numerator());
+									if(m_i2->exponent()->isNumber() && m_i2->exponent()->number()->isInteger()) {
+										if(m_i2->exponent()->number()->isNegative()) {
+											l_exp2 = new Number(m_i2->exponent()->number());
 											l_exp2->setNegative(false);
 											break;
 										} else if(!l_exp) {
-											l_exp = new Integer(m_i2->exponent()->fraction()->numerator());
+											l_exp = new Number(m_i2->exponent()->number());
 										}
 									}
 								}
@@ -3062,7 +3051,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 						if((displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags_d & DISPLAY_FORMAT_FRACTIONAL_ONLY)) {
 							displayflags_d = displayflags_d | DISPLAY_FORMAT_FRACTIONAL_ONLY;
 						}	
-						m_i->fraction()->getPrintObjects(minus, whole_, numerator_, denominator_, exp_minus, exponent_, prefix_, nrformat, displayflags_d, min_decimals, max_decimals, set_prefix, in_exact, usable, false, NULL, l_exp, in_composite, in_power, l_exp2, &prefix_1, &prefix_2);
+						m_i->number()->getPrintObjects(minus, whole_, numerator_, denominator_, exp_minus, exponent_, prefix_, nrformat, displayflags_d, min_decimals, max_decimals, set_prefix, in_exact, usable, false, NULL, l_exp, in_composite, in_power, l_exp2, &prefix_1, &prefix_2);
 						if(l_exp) delete l_exp;
 						l_exp = NULL;
 						if(l_exp2) delete l_exp2;
@@ -3287,30 +3276,25 @@ giac::gen Manager::toGiac(bool *failed) const {
 	if(failed) *failed = false;
 	giac::unary_function_ptr *ufp = NULL;
 	switch(type()) {
-		case FRACTION_MANAGER: {
-			if(fr->isComplex()) {
+		case NUMBER_MANAGER: {
+			if(o_number->isComplex()) {
 				string str;
-				if(fr->denominator()->isOne()) {
-					str += fr->numerator()->print();
-				} else {
-					str += fr->numerator()->print();
+				if(o_number->hasRealPart()) {
+					str += o_number->printNumerator();
 					str += "/";
-					str += fr->denominator()->print();
+					str += o_number->printDenominator();
+					str += "+";
 				}
-				if(fr->complexDenominator()->isOne()) {
-					str += fr->complexNumerator()->print();
-				} else {
-					str += fr->complexNumerator()->print();
-					str += "/";
-					str += fr->complexDenominator()->print();
-				}
+				str += o_number->printImaginaryNumerator();
+				str += "/";
+				str += o_number->printImaginaryDenominator();
 				str += "*i";
 				return giac::gen(str);
 			} else {
-				if(fr->isInteger()) {
-					return giac::gen(fr->numerator()->print());
+				if(o_number->isInteger()) {
+					return giac::gen(o_number->printNumerator());
 				} else {
-					return giac::fraction(fr->numerator()->print(), fr->denominator()->print());
+					return giac::fraction(o_number->printNumerator(), o_number->printDenominator());
 				}
 			}
 		} 
@@ -3488,14 +3472,14 @@ void Manager::set(const giac::gen &giac_gen, bool in_retry) {
 		}
 		case giac::_ZINT: {
 //			printf("_ZINT: %s\n", giac_gen.print().c_str());
-			Fraction fr(giac_gen.print());
-			set(&fr);
+			Number nr(giac_gen.print());
+			set(&nr);
 			break;
 		}
 		case giac::_REAL: {
 //			printf("_REAL: %s\n", giac_gen.print().c_str());
-			Fraction fr(giac_gen.print());
-			set(&fr);
+			Number nr(giac_gen.print());
+			set(&nr);
 			setPrecise(false);
 			break;
 		}
@@ -3503,7 +3487,7 @@ void Manager::set(const giac::gen &giac_gen, bool in_retry) {
 //			printf("_CPLX: %s\n", giac_gen.print().c_str());
 			set(giac_gen._CPLXptr[0]);
 			Manager mngr(giac_gen._CPLXptr[1]);
-			fr->setComplex(mngr.fraction());
+			o_number->setImaginaryPart(mngr.number());
 			break;
 		}
 		case giac::_POLY: {
