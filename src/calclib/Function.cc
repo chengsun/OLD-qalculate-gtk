@@ -209,6 +209,9 @@ int Function::args(const string &argstr, MathStructure &vargs, const ParseOption
 						stmp = str.substr(start_pos, str_index - start_pos);
 						remove_blank_ends(stmp);
 						arg = getArgumentDefinition(itmp);
+						if(!arg && itmp > argc && args() < 0 && itmp > (int) last_argdef_index && last_argdef_index > 0) {
+							 arg = argdefs[last_argdef_index];
+						}
 						if(stmp.empty()) {
 							if(arg) {
 								vargs.addItem(arg->parse(getDefaultValue(itmp), po));
@@ -249,6 +252,9 @@ int Function::args(const string &argstr, MathStructure &vargs, const ParseOption
 			stmp = str.substr(start_pos, str.length() - start_pos);
 			remove_blank_ends(stmp);
 			arg = getArgumentDefinition(itmp);
+			if(!arg && itmp > argc && args() < 0 && itmp > (int) last_argdef_index && last_argdef_index > 0) {
+				 arg = argdefs[last_argdef_index];
+			}
 			if(stmp.empty()) {
 				if(arg) {
 					vargs.addItem(arg->parse(getDefaultValue(itmp), po));
@@ -1689,7 +1695,7 @@ Argument *VectorArgument::copy() const {return new VectorArgument(this);}
 string VectorArgument::print() const {return _("vector");}
 string VectorArgument::subprintlong() const {
 	if(subargs.size() > 0) {
-		string str = _("a vector with");
+		string str = _("a vector with ");
 		for(unsigned int i = 0; i < subargs.size(); i++) {
 			if(i > 0) {
 				str += ", ";

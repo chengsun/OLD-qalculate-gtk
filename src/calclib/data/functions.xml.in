@@ -89,6 +89,12 @@
         <reference>true</reference>
         <_name>mergevectors</_name>
       </name>
+      <argument index="1">
+        <_title>Vector 1</_title>
+      </argument>
+      <argument index="2">
+        <_title>Vector 2</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="matrix">
       <_title>Construct Matrix</_title>
@@ -1842,10 +1848,10 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <_name>concatenate</_name>
       </name>
       <argument index="1">
-        <_title>Text 1</_title>
+        <_title>Text String 1</_title>
       </argument>
       <argument index="2">
-        <_title>Text 2</_title>
+        <_title>Text String 2</_title>
       </argument>
     </builtin_function>
     <builtin_function name="replace">

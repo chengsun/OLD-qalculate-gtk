@@ -3849,7 +3849,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							XML_GET_INT_FROM_PROP(child, "index", itmp);
 							if(f->getArgumentDefinition(itmp)) {
 								f->getArgumentDefinition(itmp)->setName(argname);
-							} else {
+							} else if(itmp <= f->maxargs() || itmp <= f->minargs()) {
 								f->setArgumentDefinition(itmp, new Argument(argname, false));
 							}
 						} else ITEM_READ_NAME(functionNameIsValid)

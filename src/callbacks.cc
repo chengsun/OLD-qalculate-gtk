@@ -8313,7 +8313,10 @@ gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointe
 			if(expression_history_index + 1 < (int) expression_history.size()) {
 				expression_history_index++;
 				dont_change_index = true;
-				gtk_entry_set_text(GTK_ENTRY(expression), expression_history[expression_history_index].c_str());
+				gtk_entry_set_text(GTK_ENTRY(expression), "");
+				gint pos = 0;
+				gtk_editable_insert_text(GTK_EDITABLE(expression), expression_history[expression_history_index].c_str(), -1, &pos);
+				gtk_editable_set_position(GTK_EDITABLE(expression), pos);
 				dont_change_index = false;
 			}
 			return TRUE;
@@ -8324,8 +8327,14 @@ gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointe
 				dont_change_index = true;
 				if(expression_history_index < 0) {
 					gtk_entry_set_text(GTK_ENTRY(expression), "");
+					gint pos = 0;
+					gtk_editable_insert_text(GTK_EDITABLE(expression), " ", -1, &pos);
+					gtk_entry_set_text(GTK_ENTRY(expression), "");
 				} else {
-					gtk_entry_set_text(GTK_ENTRY(expression), expression_history[expression_history_index].c_str());
+					gtk_entry_set_text(GTK_ENTRY(expression), "");
+					gint pos = 0;
+					gtk_editable_insert_text(GTK_EDITABLE(expression), expression_history[expression_history_index].c_str(), -1, &pos);
+					gtk_editable_set_position(GTK_EDITABLE(expression), pos);
 				}
 				dont_change_index = false;
 			}

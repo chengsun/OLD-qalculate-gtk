@@ -162,6 +162,7 @@ int main (int argc, char **argv) {
 	vans = (KnownVariable*) CALCULATOR->getVariable(_("ans"));
 	if(!vans) {
 		vans = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), _("ans"), *mstruct, _("Answer"), false));
+		vans->addName(_("answer"));
 	} else {
 		vans->set(*mstruct);
 	}

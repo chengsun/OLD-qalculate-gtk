@@ -76,8 +76,9 @@ int SortFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstruct = vargs[0];
 	return mstruct.sortVector(vargs[1].number().getBoolean());
 }
-MergeVectorsFunction::MergeVectorsFunction() : Function("mergevectors", -1) {
+MergeVectorsFunction::MergeVectorsFunction() : Function("mergevectors", 1, -1) {
 	setArgumentDefinition(1, new VectorArgument(""));
+	setArgumentDefinition(2, new VectorArgument(""));
 }
 int MergeVectorsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct.clearVector();
@@ -1538,10 +1539,9 @@ int CharFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	return 1 ;
 }
 
-ConcatenateFunction::ConcatenateFunction() : Function("concatenate", 1) {
-	VectorArgument *arg = new VectorArgument();
-	arg->addArgument(new TextArgument());
-	setArgumentDefinition(1, arg);	
+ConcatenateFunction::ConcatenateFunction() : Function("concatenate", 1, -1) {
+	setArgumentDefinition(1, new TextArgument());
+	setArgumentDefinition(2, new TextArgument());
 }
 int ConcatenateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	string str;
@@ -1926,7 +1926,7 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			return 1 ;
 		}
 	} else {
-		CALCULATOR->error(true, _("No comparison to solve."), NULL);
+		CALCULATOR->error(true, _("No comparison to solve. The reason might be:\n\n1. You did not enter a correct expression to solve (ex. \"x + 5 = 3\" is correct)\n\n2. The expression evaluates FALSE. There is no valid solution with the current assumptions (ex. \"x = -5\" with x assumed positive).\n\n3. The expression evaluates TRUE (ex. \"2x = 2x\")"), NULL);
 	}
 	return -1;
 	

@@ -2468,7 +2468,7 @@ void MathStructure::factorize(const EvaluationOptions &eo) {
 					i++;
 				}
 			}
-			if(!factor_mstruct.isOne()) {
+			if(!factor_mstruct.isOne() && factor_mstruct.representsNonZero()) {
 				MathStructure msave(*this);
 				msave /= factor_mstruct;
 				EvaluationOptions eo2 = eo;
@@ -3084,33 +3084,36 @@ void MathStructure::setPrefixes(const PrintOptions &po, const MathStructure *par
 						if(b2) {
 							exp10 = CHILD(0).number();
 							exp10.log(10);
-							exp10.trunc();
+							exp10.floor();
 						}
 					} else if(po.use_unit_prefixes && CHILD(0).isNumber() && exp.isInteger()) {
 						exp10 = CHILD(0).number();
 						exp10.log(10);
-						exp10.trunc();
+						exp10.floor();
 						if(b2) {	
 							Number tmp_exp(exp10);
-							Number texp(exp);
-							texp -= exp2;
-							tmp_exp.trunc(texp);
 							tmp_exp.setNegative(false);
-							if(tmp_exp.isGreaterThan(2)) {
-								tmp_exp = exp10;
-								tmp_exp /= texp;
-								tmp_exp *= exp2;
-								tmp_exp.setNegative(false);
-								texp = exp2;
-								texp *= 3;
-								tmp_exp.trunc(texp);
-								tmp_exp *= texp;
-								exp10 -= tmp_exp;
-								if(exp10.isEven()) {
-									if(exp10.isNegative()) exp10--;
-									else exp10++;
+							Number e1(3, 1);
+							e1 *= exp;
+							Number e2(3, 1);
+							e2 *= exp2;
+							e2.setNegative(false);
+							int i = 0;
+							while(true) {
+								tmp_exp -= e1;
+								if(!tmp_exp.isPositive()) {
+									break;
 								}
+								if(exp10.isNegative()) i++;
+								tmp_exp -= e2;
+								if(tmp_exp.isNegative()) {
+									break;
+								}
+								if(!exp10.isNegative())	i++;
 							}
+							e2.setNegative(exp10.isNegative());
+							e2 *= i;
+							exp10 -= e2;
 						}
 						Prefix *p = CALCULATOR->getBestPrefix(exp10, exp, po.use_all_prefixes);
 						if(p) {
@@ -3128,7 +3131,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, const MathStructure *par
 					if(b2 && CHILD(0).isNumber() && (po.prefix || po.use_unit_prefixes)) {
 						exp10 = CHILD(0).number();
 						exp10.log(10);
-						exp10.trunc();
+						exp10.floor();
 						Prefix *p = CALCULATOR->getBestPrefix(exp10, exp2, po.use_all_prefixes);
 						if(p) {
 							Number test_exp(exp10);

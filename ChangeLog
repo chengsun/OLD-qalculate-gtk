@@ -1,3 +1,17 @@
+2004-08-14 Niklas Knutsson  <nq@altern.org>
+
+	* Make no comparison to solve error message more informative
+	* Do not factorize if factor is not non-zero
+	* Fix prefix selection with negative exponent prefixes
+	* Fix prefix selection with denominator prefix enabled
+
+2004-08-13 Niklas Knutsson  <nq@altern.org>
+
+	* Fix concatenate()
+	* Add localized full name to ans variable
+	* Make sure that completion pops down when going back in history
+	* Set minimum arguments to 1 for mergevectors()
+
 2004-08-12 Niklas Knutsson  <nq@altern.org>
 
 	* Fix derangements() which was broken due to changed interpretion of -1^x

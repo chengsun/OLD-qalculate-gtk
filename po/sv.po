@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-12 11:27+0200\n"
+"POT-Creation-Date: 2004-08-13 00:32+0200\n"
 "PO-Revision-Date: 2003-10-27 12:29+0100\n"
 "Last-Translator: Niklas Knutsson <nq@altern.org>\n"
 "Language-Team: Swedish\n"
@@ -216,7 +216,7 @@ msgid "Includes headings"
 msgstr "Inkludera kolumner"
 
 #: data/csvimport.glade.h:19 data/matrixedit.glade.h:13 src/callbacks.cc:5473
-#: src/callbacks.cc:7206
+#: src/callbacks.cc:7211
 msgid "Matrices"
 msgstr "Matriser"
 
@@ -229,7 +229,7 @@ msgstr "Matris"
 #: data/matrixedit.glade.h:15 data/namesedit.glade.h:5
 #: data/unitedit.glade.h:19 data/unknownedit.glade.h:9
 #: data/variableedit.glade.h:8 src/interface.cc:551 src/interface.cc:690
-#: src/interface.cc:874 src/calclib/BuiltinFunctions.cc:2004
+#: src/interface.cc:874 src/calclib/BuiltinFunctions.cc:2006
 #: src/calclib/data/functions.xml.in.h:265
 msgid "Name"
 msgstr "Namn"
@@ -257,7 +257,7 @@ msgstr "Första raden som innehåller data att importera"
 msgid "Title displayed in menus and in variable manager"
 msgstr "Rubrik som skall visas i menyer och variabelhanteraren"
 
-#: data/csvimport.glade.h:31 src/callbacks.cc:5480 src/callbacks.cc:7209
+#: data/csvimport.glade.h:31 src/callbacks.cc:5480 src/callbacks.cc:7214
 msgid "Vectors"
 msgstr "Vektorer"
 
@@ -431,7 +431,7 @@ msgid "Non-zero number"
 msgstr "Icke-noll nummer"
 
 #: data/functionedit.glade.h:40 data/main.glade.h:106
-#: data/unknownedit.glade.h:16 src/calclib/BuiltinFunctions.cc:2006
+#: data/unknownedit.glade.h:16 src/calclib/BuiltinFunctions.cc:2008
 #: src/calclib/data/functions.xml.in.h:274
 msgid "Number"
 msgstr "Nummer"
@@ -468,7 +468,7 @@ msgstr "Villkor"
 msgid "Sub-Functions"
 msgstr "Subfunktioner"
 
-#: data/functionedit.glade.h:49 src/calclib/BuiltinFunctions.cc:2005
+#: data/functionedit.glade.h:49 src/calclib/BuiltinFunctions.cc:2007
 msgid "Symbol"
 msgstr "Symbol"
 
@@ -1122,7 +1122,7 @@ msgstr "Sexagesimal"
 msgid "Show Ending Zeroes"
 msgstr "Visa avslutande nollor"
 
-#: data/main.glade.h:147 src/interface.cc:307 src/callbacks.cc:6802
+#: data/main.glade.h:147 src/interface.cc:307 src/callbacks.cc:6807
 msgid "Show keypad"
 msgstr "Visa knappsats"
 
@@ -1178,7 +1178,8 @@ msgstr "Enehetsvisning"
 msgid "Units"
 msgstr "Enheter"
 
-#: data/main.glade.h:162 data/unknownedit.glade.h:24 src/callbacks.cc:9190
+#: data/main.glade.h:162 data/unknownedit.glade.h:24 src/callbacks.cc:9195
+#: src/calclib/BuiltinFunctions.cc:2023
 msgid "Unknown"
 msgstr "Okänd"
 
@@ -1186,7 +1187,7 @@ msgstr "Okänd"
 msgid "Unknown Variable"
 msgstr "Okänd variabel"
 
-#: data/main.glade.h:164 src/calclib/data/variables.xml.in.h:97
+#: data/main.glade.h:164 src/calclib/data/variables.xml.in.h:98
 msgid "Unknowns"
 msgstr "Okända"
 
@@ -1350,7 +1351,7 @@ msgstr "Avbryt skapande/modifiering av matrisen/vektorn"
 msgid "Edit Matrix"
 msgstr "Redigera matris"
 
-#: data/matrixedit.glade.h:11 src/callbacks.cc:8372 src/callbacks.cc:8379
+#: data/matrixedit.glade.h:11 src/callbacks.cc:8377 src/callbacks.cc:8384
 #: src/calclib/data/functions.xml.in.h:152
 msgid "Elements"
 msgstr "Element"
@@ -1626,7 +1627,7 @@ msgid "if you want to split matrix in rows instead of columns"
 msgstr "huruvida du vill dela matriser i rader istället för kolumner"
 
 #: data/plot.glade.h:58 data/preferences.glade.h:22
-#: src/calclib/data/variables.xml.in.h:189
+#: src/calclib/data/variables.xml.in.h:191
 #, fuzzy
 msgid "x"
 msgstr "2"
@@ -2031,7 +2032,7 @@ msgstr "Fel vid inhämtande av systemvida definitioner!\n"
 msgid "ans"
 msgstr ""
 
-#: src/main.cc:164 src/callbacks.cc:5452 src/calclib/Calculator.cc:4393
+#: src/main.cc:164 src/callbacks.cc:5452 src/calclib/Calculator.cc:4395
 msgid "Temporary"
 msgstr "Temporära"
 
@@ -2039,15 +2040,19 @@ msgstr "Temporära"
 msgid "Answer"
 msgstr "Svar"
 
+#: src/main.cc:165
+msgid "answer"
+msgstr "svar"
+
 #. if no category has been selected (previously selected has been renamed/deleted), select "All"
-#: src/main.cc:170 src/main.cc:173 src/main.cc:176 src/callbacks.cc:593
+#: src/main.cc:171 src/main.cc:174 src/main.cc:177 src/callbacks.cc:593
 #: src/callbacks.cc:654 src/callbacks.cc:688 src/callbacks.cc:858
 #: src/callbacks.cc:922 src/callbacks.cc:1001 src/callbacks.cc:1091
 #: src/callbacks.cc:1151 src/callbacks.cc:1219
 msgid "All"
 msgstr "Alla"
 
-#: src/interface.cc:304 src/callbacks.cc:6808
+#: src/interface.cc:304 src/callbacks.cc:6813
 msgid "Hide keypad"
 msgstr "Göm knappsatsen"
 
@@ -2111,7 +2116,7 @@ msgstr "ej negativ"
 msgid "non-zero"
 msgstr "ej noll"
 
-#: src/callbacks.cc:962 src/calclib/Function.cc:1519
+#: src/callbacks.cc:962 src/calclib/Function.cc:1573
 msgid "integer"
 msgstr "heltal"
 
@@ -2127,7 +2132,7 @@ msgstr "reell"
 msgid "complex"
 msgstr "komplex"
 
-#: src/callbacks.cc:966 src/calclib/Function.cc:1366
+#: src/callbacks.cc:966 src/calclib/Function.cc:1420
 #: src/calclib/data/functions.xml.in.h:637
 msgid "number"
 msgstr "nummer"
@@ -2140,8 +2145,8 @@ msgstr "okänd"
 msgid "default assumptions"
 msgstr "förvalda antaganden"
 
-#: src/callbacks.cc:1046 src/callbacks.cc:4091 src/callbacks.cc:7917
-#: src/callbacks.cc:7932 src/callbacks.cc:7950 src/callbacks.cc:7982
+#: src/callbacks.cc:1046 src/callbacks.cc:4091 src/callbacks.cc:7922
+#: src/callbacks.cc:7937 src/callbacks.cc:7955 src/callbacks.cc:7987
 msgid "Variable does not exist anymore."
 msgstr "Variables existerar inte längre."
 
@@ -2150,6 +2155,7 @@ msgid "Prefixes"
 msgstr "Prefix"
 
 #: src/callbacks.cc:3127 src/calclib/MathStructure.cc:4227
+#: src/calclib/data/variables.xml.in.h:188
 msgid "undefined"
 msgstr "odefinierad"
 
@@ -2166,7 +2172,7 @@ msgstr ""
 "se historiken"
 
 #: src/callbacks.cc:3262 src/calclib/Calculator.cc:141
-#: src/calclib/Calculator.cc:142 src/calclib/Calculator.cc:1214
+#: src/calclib/Calculator.cc:142 src/calclib/Calculator.cc:1209
 msgid "aborted"
 msgstr "avbruten"
 
@@ -2206,7 +2212,7 @@ msgstr "Ny enhet"
 
 #. no name given
 #: src/callbacks.cc:4247 src/callbacks.cc:4584 src/callbacks.cc:4791
-#: src/callbacks.cc:4928 src/callbacks.cc:5147 src/callbacks.cc:8733
+#: src/callbacks.cc:4928 src/callbacks.cc:5147 src/callbacks.cc:8738
 msgid "Empty name field."
 msgstr "Tomt namnfält"
 
@@ -2231,12 +2237,12 @@ msgstr "Redigera funktion (systemvid)"
 msgid "New Function"
 msgstr "Ny funktion"
 
-#: src/callbacks.cc:4563 src/callbacks.cc:8505 src/callbacks.cc:8516
+#: src/callbacks.cc:4563 src/callbacks.cc:8510 src/callbacks.cc:8521
 #: src/calclib/util.cc:526
 msgid "Yes"
 msgstr "Ja"
 
-#: src/callbacks.cc:4565 src/callbacks.cc:8507 src/callbacks.cc:8518
+#: src/callbacks.cc:4565 src/callbacks.cc:8512 src/callbacks.cc:8523
 #: src/calclib/util.cc:527
 msgid "No"
 msgstr "Nej"
@@ -2345,8 +2351,8 @@ msgstr ""
 "Kunde inte exportera till fil: \n"
 "%s"
 
-#: src/callbacks.cc:5457 src/callbacks.cc:5465 src/callbacks.cc:7200
-#: src/callbacks.cc:7203
+#: src/callbacks.cc:5457 src/callbacks.cc:5465 src/callbacks.cc:7205
+#: src/callbacks.cc:7208
 msgid "My Variables"
 msgstr "Mina variabler"
 
@@ -2363,20 +2369,20 @@ msgstr ""
 "Kunde inte spara inställningar till\n"
 "%s"
 
-#: src/callbacks.cc:6471
+#: src/callbacks.cc:6476
 msgid "Select result font"
 msgstr "Välj teckensnitt"
 
-#: src/callbacks.cc:6484
+#: src/callbacks.cc:6489
 msgid "Select expression font"
 msgstr "Välj teckensnitt"
 
 #. do not delete units that are used by other units
-#: src/callbacks.cc:7871
+#: src/callbacks.cc:7876
 msgid "Cannot delete unit as it is needed by other units."
 msgstr "Kan inte ta bort enheten eftersom den används av andra enheter."
 
-#: src/callbacks.cc:8240
+#: src/callbacks.cc:8245
 #, c-format
 msgid ""
 "Could not display help for Qalculate!.\n"
@@ -2385,24 +2391,24 @@ msgstr ""
 "Kunde inte visa hjälp för Qalculate!.\n"
 "%s"
 
-#: src/callbacks.cc:8374 src/callbacks.cc:8381
+#: src/callbacks.cc:8379 src/callbacks.cc:8386
 msgid "Components (in horizontal order)"
 msgstr "Komponenter (från vänster till höger)"
 
-#: src/callbacks.cc:8393 src/callbacks.cc:8402 src/callbacks.cc:8454
-#: src/callbacks.cc:8463
+#: src/callbacks.cc:8398 src/callbacks.cc:8407 src/callbacks.cc:8459
+#: src/callbacks.cc:8468
 msgid "Select file to import"
 msgstr "Välj fil att importera"
 
-#: src/callbacks.cc:8415 src/callbacks.cc:8424
+#: src/callbacks.cc:8420 src/callbacks.cc:8429
 msgid "Select file to export to"
 msgstr "Välj fil att exportera till"
 
-#: src/callbacks.cc:8439
+#: src/callbacks.cc:8444
 msgid "Select date"
 msgstr "Välj datum"
 
-#: src/callbacks.cc:8743 src/callbacks.cc:8765
+#: src/callbacks.cc:8748 src/callbacks.cc:8770
 msgid ""
 "A conflicting object with the same name exists. If you proceed and save "
 "changes, the conflicting object will be overwritten or deactivated.\n"
@@ -2413,75 +2419,75 @@ msgstr ""
 "deaktiveras.\n"
 "Vill du fortsätta?"
 
-#: src/callbacks.cc:8823
+#: src/callbacks.cc:8828
 msgid "No functions defined."
 msgstr "Inga funktioner är definierade."
 
-#: src/callbacks.cc:8958 src/callbacks.cc:8981
+#: src/callbacks.cc:8963 src/callbacks.cc:8986
 msgid "Select file to export"
 msgstr "Välj fil att exporta till"
 
-#: src/callbacks.cc:8960
+#: src/callbacks.cc:8965
 msgid "Allowed File Types"
 msgstr "Tillåtna filtyper"
 
-#: src/callbacks.cc:8970
+#: src/callbacks.cc:8975
 msgid "All Files"
 msgstr "All filer"
 
-#: src/callbacks.cc:9022 src/callbacks.cc:9056
+#: src/callbacks.cc:9027 src/callbacks.cc:9061
 msgid "Empty expression."
 msgstr "Tomt uttryck."
 
-#: src/callbacks.cc:9174
+#: src/callbacks.cc:9179 src/calclib/BuiltinFunctions.cc:2010
 msgid "Classification"
 msgstr "Klassificering"
 
-#: src/callbacks.cc:9179
+#: src/callbacks.cc:9184 src/calclib/BuiltinFunctions.cc:2012
 msgid "Alkali Metal"
 msgstr "Alkalimetall"
 
-#: src/callbacks.cc:9180
+#: src/callbacks.cc:9185 src/calclib/BuiltinFunctions.cc:2013
 msgid "Alkaline-Earth Metal"
 msgstr "Jordalkalimetall"
 
-#: src/callbacks.cc:9181
+#: src/callbacks.cc:9186 src/calclib/BuiltinFunctions.cc:2014
 msgid "Lanthanide"
 msgstr "Lantanid"
 
-#: src/callbacks.cc:9182
+#: src/callbacks.cc:9187 src/calclib/BuiltinFunctions.cc:2015
 msgid "Actinide"
 msgstr "Aktinid"
 
-#: src/callbacks.cc:9183
+#: src/callbacks.cc:9188 src/calclib/BuiltinFunctions.cc:2016
 msgid "Transition Metal"
 msgstr "Övergångsmetall"
 
-#: src/callbacks.cc:9184
+#: src/callbacks.cc:9189 src/calclib/BuiltinFunctions.cc:2017
 msgid "Metal"
 msgstr "Metall"
 
-#: src/callbacks.cc:9185
+#: src/callbacks.cc:9190 src/calclib/BuiltinFunctions.cc:2018
 msgid "Metalloid"
 msgstr "Halvmetall"
 
-#: src/callbacks.cc:9186
+#: src/callbacks.cc:9191 src/calclib/BuiltinFunctions.cc:2019
 msgid "Non-Metal"
 msgstr "Icke-metall"
 
-#: src/callbacks.cc:9187
+#: src/callbacks.cc:9192 src/calclib/BuiltinFunctions.cc:2020
 msgid "Halogen"
 msgstr ""
 
-#: src/callbacks.cc:9188
+#: src/callbacks.cc:9193 src/calclib/BuiltinFunctions.cc:2021
 msgid "Noble Gas"
 msgstr "Ädelgas"
 
-#: src/callbacks.cc:9189
+#: src/callbacks.cc:9194 src/calclib/BuiltinFunctions.cc:2022
 msgid "Transactinide"
 msgstr "Transaktinid"
 
-#: src/callbacks.cc:9198 src/calclib/data/functions.xml.in.h:490
+#: src/callbacks.cc:9203 src/calclib/data/functions.xml.in.h:490
 msgid "Weight"
 msgstr "Vikt"
 
@@ -2520,114 +2526,120 @@ msgstr "Olöslig jämförelse i %s()."
 msgid "Error in date format for function %s()."
 msgstr "Felaktigt datumformat för %s()."
 
-#: src/calclib/BuiltinFunctions.cc:1856
+#: src/calclib/BuiltinFunctions.cc:1858
 #, c-format
 msgid "Object %s does not exist."
 msgstr "Okjektet %s finns inte."
 
-#: src/calclib/BuiltinFunctions.cc:1915
+#: src/calclib/BuiltinFunctions.cc:1917
 #, c-format
 msgid "Unable to isolate %s."
 msgstr "Kan inte isolera %s."
 
-#: src/calclib/BuiltinFunctions.cc:1929
+#: src/calclib/BuiltinFunctions.cc:1931
 msgid "No comparison to solve."
 msgstr "Ingen jämförelse att lösa."
 
-#: src/calclib/BuiltinFunctions.cc:1937
+#: src/calclib/BuiltinFunctions.cc:1939
 #, c-format
 msgid "Unable to find element %s."
 msgstr "Kunde inte finna grundämnet %s."
 
-#: src/calclib/BuiltinFunctions.cc:1942 src/calclib/BuiltinFunctions.cc:1951
-#: src/calclib/BuiltinFunctions.cc:1959
+#: src/calclib/BuiltinFunctions.cc:1944 src/calclib/BuiltinFunctions.cc:1953
+#: src/calclib/BuiltinFunctions.cc:1961
 #, c-format
 msgid "Property not defined for element %s."
 msgstr "Egenskap inte definierad för grundämnet %s."
 
-#: src/calclib/BuiltinFunctions.cc:1991
+#: src/calclib/BuiltinFunctions.cc:1993
 #, c-format
 msgid "Weight not defined for element %s."
 msgstr "Vikt inte definierad för grundämnet %s."
 
-#: src/calclib/BuiltinFunctions.cc:2007 src/calclib/data/functions.xml.in.h:29
+#: src/calclib/BuiltinFunctions.cc:2026 src/calclib/data/functions.xml.in.h:29
 msgid "Atomic Weight"
 msgstr "Atomvikt"
 
-#: src/calclib/Calculator.cc:195 src/calclib/Calculator.cc:1222
-#: src/calclib/Calculator.cc:1223
+#: src/calclib/Calculator.cc:195 src/calclib/Calculator.cc:1217
+#: src/calclib/Calculator.cc:1218
 msgid " to "
 msgstr " till "
 
-#: src/calclib/Calculator.cc:924 src/calclib/Calculator.cc:5257
+#: src/calclib/Calculator.cc:926 src/calclib/Calculator.cc:5259
 #: src/calclib/data/units.xml.in.h:82
 msgid "Currency"
 msgstr "Valuta"
 
-#: src/calclib/Calculator.cc:1190
+#: src/calclib/Calculator.cc:1185
 msgid "calculating..."
 msgstr "beräknar..."
 
-#: src/calclib/Calculator.cc:2713 src/calclib/Calculator.cc:2729
+#: src/calclib/Calculator.cc:2709 src/calclib/Calculator.cc:2725
 #, c-format
 msgid "Misplaced '%s' ignored"
 msgstr "Malplacerat '%s' ignorerades"
 
-#: src/calclib/Calculator.cc:2749
+#: src/calclib/Calculator.cc:2734 src/calclib/Function.cc:1192
+#: src/calclib/Function.cc:1220
+#, c-format
+msgid "Internal id %s does not exist."
+msgstr "Internt id %s finns inte."
+
+#: src/calclib/Calculator.cc:2750
 #, c-format
 msgid "\"%s\" is not a valid variable/function/unit."
 msgstr "\"%s\" motsvarar inte någon giltig variabel/funktion/enhet."
 
-#: src/calclib/Calculator.cc:2753
+#: src/calclib/Calculator.cc:2754
 #, c-format
 msgid "Trailing characters in expression \"%s\" was ignored."
 msgstr "Överblivna tecken i uttrycket \"%s\" ignorerades."
 
-#: src/calclib/Calculator.cc:3019 src/calclib/Calculator.cc:3038
+#: src/calclib/Calculator.cc:3021 src/calclib/Calculator.cc:3040
 msgid "RPN syntax error."
 msgstr "RPN syntaxfel."
 
-#: src/calclib/Calculator.cc:3261
+#: src/calclib/Calculator.cc:3263
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr "Namnet \"%s\" är upptaget. Ändrar till \"%s\"."
 
-#: src/calclib/Calculator.cc:3637 src/calclib/Calculator.cc:5786
+#: src/calclib/Calculator.cc:3639 src/calclib/Calculator.cc:5788
 #, c-format
 msgid "File not identified as Qalculate! definitions file: %s."
 msgstr "Filen identifierades inte som en Qalculate! definitionsfil: %s."
 
-#: src/calclib/Calculator.cc:5156 src/calclib/data/functions.xml.in.h:540
+#: src/calclib/Calculator.cc:5158 src/calclib/data/functions.xml.in.h:540
 msgid "column"
 msgstr "kolumn"
 
-#: src/calclib/Calculator.cc:5159
+#: src/calclib/Calculator.cc:5161
 msgid "Column "
 msgstr "Kolumn"
 
-#: src/calclib/Calculator.cc:5314
+#: src/calclib/Calculator.cc:5316
 msgid "Failed to download exchange rates from ECB."
 msgstr "Misslyckades med att ladda ner växelkurser från ECB."
 
-#: src/calclib/Calculator.cc:5335
+#: src/calclib/Calculator.cc:5337
 msgid ""
 "It has been more than one week since the exchange rates last were updated."
 msgstr "Det var mer än en vecka sedan växelkurserna senast updaterades."
 
-#: src/calclib/Calculator.cc:5454
+#: src/calclib/Calculator.cc:5456
 msgid "No extension in file name. Saving as PNG image."
 msgstr "Inget tillägg i filnamnet. Sparar som PNG-bild."
 
-#: src/calclib/Calculator.cc:5471
+#: src/calclib/Calculator.cc:5473
 msgid "Unknown extension in file name. Saving as PNG image."
 msgstr "Okänt tillägg i filnamnet. Sparar som PNG-bild."
 
-#: src/calclib/Calculator.cc:5663
+#: src/calclib/Calculator.cc:5665
 #, c-format
 msgid "Could not create temporary file %s"
 msgstr "Kunde inte skapa temporär fil %s"
 
-#: src/calclib/Calculator.cc:5697
+#: src/calclib/Calculator.cc:5699
 msgid ""
 "Failed to invoke gnuplot. Make sure that you have gnuplot installed in your "
 "path."
@@ -2635,7 +2647,7 @@ msgstr ""
 "Misslyckades med att aktivera gnuplot. Se till att du har gnuplot "
 "installerat i sökvägen för program."
 
-#: src/calclib/Calculator.cc:5767 src/calclib/Calculator.cc:5773
+#: src/calclib/Calculator.cc:5769 src/calclib/Calculator.cc:5775
 #, c-format
 msgid "Unable to load elements in %s."
 msgstr "Kunde inhämte grundämnen i %s."
@@ -2672,8 +2684,8 @@ msgstr "Permanenten kan enbart beräknas för symmetriska matriser."
 msgid "%s() requires that %s"
 msgstr "%s() kräver att %s"
 
-#: src/calclib/Function.cc:238 src/calclib/Function.cc:278
-#: src/calclib/Function.cc:325
+#: src/calclib/Function.cc:241 src/calclib/Function.cc:284
+#: src/calclib/Function.cc:331
 #, c-format
 msgid ""
 "Additional arguments for function %s() was ignored. Function can only use %s "
@@ -2682,180 +2694,180 @@ msgstr ""
 "Övertaliga parametrar för funktionen %s() ignorerades. Funktionen kan inte "
 "använda fler än %s parametrar."
 
-#: src/calclib/Function.cc:346
+#: src/calclib/Function.cc:352
 #, c-format
 msgid "You need at least %s argument(s) (%s) in function %s()."
 msgstr "Det krävs minst %s parametrar (%s) i funktionen %s()."
 
-#: src/calclib/Function.cc:348
+#: src/calclib/Function.cc:354
 #, c-format
 msgid "You need at least %s argument(s) in function %s()."
 msgstr "Det krävs minst %s parametrar i funktionen %s()."
 
-#: src/calclib/Function.cc:994
+#: src/calclib/Function.cc:1000
 msgid "a free value"
 msgstr "ett valfritt värde"
 
-#: src/calclib/Function.cc:999
+#: src/calclib/Function.cc:1005
 msgid "that is nonzero"
 msgstr "som är icke-noll"
 
-#: src/calclib/Function.cc:1004 src/calclib/Function.cc:1388
-#: src/calclib/Function.cc:1532
+#: src/calclib/Function.cc:1010 src/calclib/Function.cc:1442
+#: src/calclib/Function.cc:1586
 msgid "and"
 msgstr "och"
 
-#: src/calclib/Function.cc:1007
+#: src/calclib/Function.cc:1013
 msgid "that fulfills the condition:"
 msgstr "som uppfyller villkoret:"
 
-#: src/calclib/Function.cc:1056
+#: src/calclib/Function.cc:1062
 #, c-format
 msgid "Argument %s in %s() must be %s."
 msgstr "Parameter %s i %s() måste vara %s."
 
-#: src/calclib/Function.cc:1058
+#: src/calclib/Function.cc:1064
 #, c-format
 msgid "Argument %s, %s, in %s() must be %s."
 msgstr "Parameter %s, %s, i %s() måste vara %s."
 
-#: src/calclib/Function.cc:1371
+#: src/calclib/Function.cc:1425
 msgid "a number"
 msgstr "ett nummer"
 
-#: src/calclib/Function.cc:1373
+#: src/calclib/Function.cc:1427
 msgid "a real number"
 msgstr "ett reelt nummer"
 
-#: src/calclib/Function.cc:1378 src/calclib/Function.cc:1525
+#: src/calclib/Function.cc:1432 src/calclib/Function.cc:1579
 msgid ">="
 msgstr ">="
 
-#: src/calclib/Function.cc:1380
+#: src/calclib/Function.cc:1434
 msgid ">"
 msgstr ">"
 
-#: src/calclib/Function.cc:1392 src/calclib/Function.cc:1535
+#: src/calclib/Function.cc:1446 src/calclib/Function.cc:1589
 msgid "<="
 msgstr "<="
 
-#: src/calclib/Function.cc:1394
+#: src/calclib/Function.cc:1448
 msgid "<"
 msgstr "<"
 
-#: src/calclib/Function.cc:1522
+#: src/calclib/Function.cc:1576
 msgid "an integer"
 msgstr "ett heltal"
 
-#: src/calclib/Function.cc:1547
+#: src/calclib/Function.cc:1601
 msgid "a free value (giac adjusted)"
 msgstr "ett valfritt värde (giac justerat)"
 
-#: src/calclib/Function.cc:1567
+#: src/calclib/Function.cc:1621
 msgid "symbol"
 msgstr "symbol"
 
-#: src/calclib/Function.cc:1568
+#: src/calclib/Function.cc:1622
 msgid "an unknown variable/symbol"
 msgstr "en okänd variabel/symbol"
 
-#: src/calclib/Function.cc:1581
+#: src/calclib/Function.cc:1635
 msgid "text"
 msgstr "text"
 
-#: src/calclib/Function.cc:1582
+#: src/calclib/Function.cc:1636
 msgid "a text string"
 msgstr "en textsträng"
 
-#: src/calclib/Function.cc:1597
+#: src/calclib/Function.cc:1651
 msgid "date"
 msgstr "datum"
 
-#: src/calclib/Function.cc:1598
+#: src/calclib/Function.cc:1652
 msgid "a date"
 msgstr "ett datum"
 
-#: src/calclib/Function.cc:1641 src/calclib/data/functions.xml.in.h:722
+#: src/calclib/Function.cc:1695 src/calclib/data/functions.xml.in.h:722
 msgid "vector"
 msgstr "vektor"
 
-#: src/calclib/Function.cc:1644
-msgid "a vector with"
-msgstr "en vektor med"
+#: src/calclib/Function.cc:1698
+msgid "a vector with "
+msgstr "en vektor med "
 
-#: src/calclib/Function.cc:1656
+#: src/calclib/Function.cc:1710
 msgid "a vector"
 msgstr "en vektor"
 
-#: src/calclib/Function.cc:1702 src/calclib/data/functions.xml.in.h:620
+#: src/calclib/Function.cc:1756 src/calclib/data/functions.xml.in.h:620
 msgid "matrix"
 msgstr "matris"
 
-#: src/calclib/Function.cc:1705
+#: src/calclib/Function.cc:1759
 msgid "a symmetric matrix"
 msgstr "en symmetrisk matris"
 
-#: src/calclib/Function.cc:1707
+#: src/calclib/Function.cc:1761
 msgid "a matrix"
 msgstr "en matris"
 
-#: src/calclib/Function.cc:1722
+#: src/calclib/Function.cc:1776
 msgid "object"
 msgstr "objekt"
 
-#: src/calclib/Function.cc:1723
+#: src/calclib/Function.cc:1777
 msgid "a valid function, unit or variable name"
 msgstr "ett giltigt funktions, enhets eller variabelnamn"
 
-#: src/calclib/Function.cc:1736 src/calclib/data/functions.xml.in.h:591
+#: src/calclib/Function.cc:1790 src/calclib/data/functions.xml.in.h:591
 msgid "function"
 msgstr "funktion"
 
-#: src/calclib/Function.cc:1737
+#: src/calclib/Function.cc:1791
 msgid "a valid function name"
 msgstr "ett giltigt funktionsnamn"
 
-#: src/calclib/Function.cc:1750
+#: src/calclib/Function.cc:1804
 msgid "unit"
 msgstr "enhet"
 
-#: src/calclib/Function.cc:1751
+#: src/calclib/Function.cc:1805
 msgid "a valid unit name"
 msgstr "ett giltigt enhetsnamn"
 
-#: src/calclib/Function.cc:1764
+#: src/calclib/Function.cc:1818
 msgid "variable"
 msgstr "variabel"
 
-#: src/calclib/Function.cc:1765
+#: src/calclib/Function.cc:1819
 msgid "a valid variable name"
 msgstr "ett giltigt variabelnamn"
 
-#: src/calclib/Function.cc:1778
+#: src/calclib/Function.cc:1832
 msgid "file"
 msgstr "fil"
 
-#: src/calclib/Function.cc:1779
+#: src/calclib/Function.cc:1833
 msgid "a valid file name"
 msgstr "ett giltigt filnamn"
 
-#: src/calclib/Function.cc:1792
+#: src/calclib/Function.cc:1846
 msgid "boolean"
 msgstr "boolskt värde"
 
-#: src/calclib/Function.cc:1793
+#: src/calclib/Function.cc:1847
 msgid "a boolean (0 or 1)"
 msgstr "ett boolskt värde (0 eller 1)"
 
-#: src/calclib/Function.cc:1820
+#: src/calclib/Function.cc:1874
 msgid "angle"
 msgstr "vinkel"
 
-#: src/calclib/Function.cc:1821
+#: src/calclib/Function.cc:1875
 msgid "an angle or a number (using the default angle unit)"
 msgstr "en vinkel eller ett tal (som använder inställd vinkelenhet)"
 
-#: src/calclib/Function.cc:1866 src/calclib/Function.cc:1882
+#: src/calclib/Function.cc:1920 src/calclib/Function.cc:1936
 msgid "or"
 msgstr "eller"
 
@@ -2914,7 +2926,7 @@ msgid "Integral point for Riemann's zeta is too large."
 msgstr "Integralpunkten för Riemanns zeta är för stor."
 
 #: src/calclib/Number.cc:2117 src/calclib/Number.cc:2125
-#: src/calclib/Number.cc:2134 src/calclib/data/variables.xml.in.h:134
+#: src/calclib/Number.cc:2134 src/calclib/data/variables.xml.in.h:135
 msgid "infinity"
 msgstr "oändlighet"
 
@@ -4043,14 +4055,12 @@ msgid "Element"
 msgstr "Element"
 
 #: src/calclib/data/functions.xml.in.h:149
-#, fuzzy
 msgid "Element Info"
-msgstr "Element"
+msgstr "Grundämnesinfo"
 
 #: src/calclib/data/functions.xml.in.h:150
-#, fuzzy
 msgid "Element Number"
-msgstr "Romerskt tal"
+msgstr "Grundämnesnumber"
 
 #: src/calclib/data/functions.xml.in.h:151
 msgid "Element Variable"
@@ -4481,9 +4491,8 @@ msgid "Month"
 msgstr "Månad"
 
 #: src/calclib/data/functions.xml.in.h:266
-#, fuzzy
 msgid "Name of Element"
-msgstr "Antal element"
+msgstr "Grundämnets namn"
 
 #: src/calclib/data/functions.xml.in.h:267
 msgid "Natural Logarithm"
@@ -5287,9 +5296,8 @@ msgid "Surface area of sphere"
 msgstr "Ytarea för en sfär"
 
 #: src/calclib/data/functions.xml.in.h:451
-#, fuzzy
 msgid "Symbol of Element"
-msgstr "Antal element"
+msgstr "Grundämnessymbol"
 
 #: src/calclib/data/functions.xml.in.h:453
 msgid "Term expression"
@@ -5304,12 +5312,12 @@ msgid "Tests a condition and returns a value depending on the result."
 msgstr "Testar ett villkor och returnerar ett värde beroende av result."
 
 #: src/calclib/data/functions.xml.in.h:457
-msgid "Text 1"
-msgstr "Text 1"
+msgid "Text String 1"
+msgstr "Textsträng 1"
 
 #: src/calclib/data/functions.xml.in.h:458
-msgid "Text 2"
-msgstr "Text 2"
+msgid "Text String 2"
+msgstr "Textsträng 2"
 
 #: src/calclib/data/functions.xml.in.h:460
 msgid "Top"
@@ -5558,7 +5566,7 @@ msgid "atom"
 msgstr "famn"
 
 #: src/calclib/data/functions.xml.in.h:522
-#: src/calclib/data/variables.xml.in.h:103
+#: src/calclib/data/variables.xml.in.h:104
 msgid "atomic_mass"
 msgstr "atommassa"
 
@@ -9860,428 +9868,439 @@ msgstr "Precision"
 
 #: src/calclib/data/variables.xml.in.h:96
 #, fuzzy
+msgid "Undefined"
+msgstr "odefinierad"
+
+#: src/calclib/data/variables.xml.in.h:97
+#, fuzzy
 msgid "Universal Constants"
 msgstr "Konstanter"
 
-#: src/calclib/data/variables.xml.in.h:98
+#: src/calclib/data/variables.xml.in.h:99
 msgid "Vigintillion"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:99
+#: src/calclib/data/variables.xml.in.h:100
 msgid "Z_0"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:100
+#: src/calclib/data/variables.xml.in.h:101
 msgid "a_o"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:101
+#: src/calclib/data/variables.xml.in.h:102
 msgid "alpha_particle_mass"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:102
+#: src/calclib/data/variables.xml.in.h:103
 #, fuzzy
 msgid "apery"
 msgstr "ampere"
 
-#: src/calclib/data/variables.xml.in.h:104
+#: src/calclib/data/variables.xml.in.h:105
 msgid "avogadro"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:105
+#: src/calclib/data/variables.xml.in.h:106
 #, fuzzy
 msgid "billion"
 msgstr "Miljon"
 
-#: src/calclib/data/variables.xml.in.h:106
+#: src/calclib/data/variables.xml.in.h:107
 msgid "bohr_magneton"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:107
+#: src/calclib/data/variables.xml.in.h:108
 msgid "bohr_radius"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:108
+#: src/calclib/data/variables.xml.in.h:109
 #, fuzzy
 msgid "boltzmann"
 msgstr "boolskt värde"
 
-#: src/calclib/data/variables.xml.in.h:109
+#: src/calclib/data/variables.xml.in.h:110
 msgid "c"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:110
+#: src/calclib/data/variables.xml.in.h:111
 msgid "c_1"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:111
+#: src/calclib/data/variables.xml.in.h:112
 msgid "c_2"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:112
+#: src/calclib/data/variables.xml.in.h:113
 #, fuzzy
 msgid "catalan"
 msgstr "Oktal"
 
-#: src/calclib/data/variables.xml.in.h:113
+#: src/calclib/data/variables.xml.in.h:114
 #, fuzzy
 msgid "centillion"
 msgstr "Förutsättning"
 
-#: src/calclib/data/variables.xml.in.h:114
+#: src/calclib/data/variables.xml.in.h:115
 msgid "characteristic_impedance"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:115
+#: src/calclib/data/variables.xml.in.h:116
 msgid "classical_electron_radius"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:116
+#: src/calclib/data/variables.xml.in.h:117
 #, fuzzy
 msgid "compton_wavelength"
 msgstr "komponent"
 
-#: src/calclib/data/variables.xml.in.h:117
+#: src/calclib/data/variables.xml.in.h:118
 #, fuzzy
 msgid "conductance_quantum"
 msgstr "Induktans"
 
-#: src/calclib/data/variables.xml.in.h:118
+#: src/calclib/data/variables.xml.in.h:119
 #, fuzzy
 msgid "decillion"
 msgstr "Precision"
 
-#: src/calclib/data/variables.xml.in.h:119
+#: src/calclib/data/variables.xml.in.h:120
 #, fuzzy
 msgid "duodecillion"
 msgstr "Beskrivning"
 
-#: src/calclib/data/variables.xml.in.h:120
+#: src/calclib/data/variables.xml.in.h:121
 msgid "e"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:121
+#: src/calclib/data/variables.xml.in.h:122
 #, fuzzy
 msgid "e_charge"
 msgstr "Hektar"
 
-#: src/calclib/data/variables.xml.in.h:122
+#: src/calclib/data/variables.xml.in.h:123
 #, fuzzy
 msgid "electric_constant"
 msgstr "Induktion"
 
-#: src/calclib/data/variables.xml.in.h:123
+#: src/calclib/data/variables.xml.in.h:124
 #, fuzzy
 msgid "electron_mass"
 msgstr "Elektronvolt"
 
-#: src/calclib/data/variables.xml.in.h:124
+#: src/calclib/data/variables.xml.in.h:125
 #, fuzzy
 msgid "elementary_charge"
 msgstr "Elektrisk laddning"
 
-#: src/calclib/data/variables.xml.in.h:125
+#: src/calclib/data/variables.xml.in.h:126
 #, fuzzy
 msgid "euler"
 msgstr "gulden"
 
-#: src/calclib/data/variables.xml.in.h:126
+#: src/calclib/data/variables.xml.in.h:127
 msgid "false"
 msgstr "falskt"
 
-#: src/calclib/data/variables.xml.in.h:127
+#: src/calclib/data/variables.xml.in.h:128
 #, fuzzy
 msgid "faraday"
 msgstr "årsdag"
 
-#: src/calclib/data/variables.xml.in.h:128
+#: src/calclib/data/variables.xml.in.h:129
 #, fuzzy
 msgid "first_radiation"
 msgstr "steradian"
 
-#: src/calclib/data/variables.xml.in.h:129
+#: src/calclib/data/variables.xml.in.h:130
 #, fuzzy
 msgid "golden"
 msgstr "Boolskt värde"
 
-#: src/calclib/data/variables.xml.in.h:130
+#: src/calclib/data/variables.xml.in.h:131
 #, fuzzy
 msgid "google"
 msgstr "Boolsk"
 
-#: src/calclib/data/variables.xml.in.h:131
+#: src/calclib/data/variables.xml.in.h:132
 #, fuzzy
 msgid "googleplex"
 msgstr "Boolsk"
 
-#: src/calclib/data/variables.xml.in.h:132
+#: src/calclib/data/variables.xml.in.h:133
 msgid "helion_mass"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:133
+#: src/calclib/data/variables.xml.in.h:134
 msgid "i"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:135
+#: src/calclib/data/variables.xml.in.h:136
 msgid "josephson"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:136
+#: src/calclib/data/variables.xml.in.h:137
 msgid "klitzing"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:137
+#: src/calclib/data/variables.xml.in.h:138
 msgid "l_P"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:138
+#: src/calclib/data/variables.xml.in.h:139
 msgid "m_&#x3B1;"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:139
+#: src/calclib/data/variables.xml.in.h:140
 msgid "m_&#x3C4;"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:140
+#: src/calclib/data/variables.xml.in.h:141
 msgid "m_P"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:141
+#: src/calclib/data/variables.xml.in.h:142
 #, fuzzy
 msgid "m_e"
 msgstr "Enke_lt"
 
-#: src/calclib/data/variables.xml.in.h:142
+#: src/calclib/data/variables.xml.in.h:143
 msgid "m_h"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:143
+#: src/calclib/data/variables.xml.in.h:144
 #, fuzzy
 msgid "m_n"
 msgstr "minut"
 
-#: src/calclib/data/variables.xml.in.h:144
+#: src/calclib/data/variables.xml.in.h:145
 msgid "m_p"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:145
+#: src/calclib/data/variables.xml.in.h:146
 msgid "m_u"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:146
+#: src/calclib/data/variables.xml.in.h:147
 #, fuzzy
 msgid "magnetic_constant"
 msgstr "Konstanter"
 
-#: src/calclib/data/variables.xml.in.h:147
+#: src/calclib/data/variables.xml.in.h:148
 #, fuzzy
 msgid "magnetic_flux_quantum"
 msgstr "Konstanter"
 
-#: src/calclib/data/variables.xml.in.h:148
+#: src/calclib/data/variables.xml.in.h:149
 #, fuzzy
 msgid "million"
 msgstr "Miljon"
 
-#: src/calclib/data/variables.xml.in.h:149
+#: src/calclib/data/variables.xml.in.h:150
 #, fuzzy
 msgid "minus_infinity"
 msgstr "oändlighet"
 
-#: src/calclib/data/variables.xml.in.h:150
+#: src/calclib/data/variables.xml.in.h:151
 #, fuzzy
 msgid "neutron_mass"
 msgstr "Elektronvolt"
 
-#: src/calclib/data/variables.xml.in.h:151
+#: src/calclib/data/variables.xml.in.h:152
 #, fuzzy
 msgid "newtonian_constant"
 msgstr "Konstanter"
 
-#: src/calclib/data/variables.xml.in.h:152
+#: src/calclib/data/variables.xml.in.h:153
 msgid "no"
 msgstr "nej"
 
-#: src/calclib/data/variables.xml.in.h:153
+#: src/calclib/data/variables.xml.in.h:154
 #, fuzzy
 msgid "nonillion"
 msgstr "Förutsättning"
 
-#: src/calclib/data/variables.xml.in.h:154
+#: src/calclib/data/variables.xml.in.h:155
 #, fuzzy
 msgid "novemdecillion"
 msgstr "Precision"
 
-#: src/calclib/data/variables.xml.in.h:155
+#: src/calclib/data/variables.xml.in.h:156
 msgid "nuclear_magneton"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:156
+#: src/calclib/data/variables.xml.in.h:157
 #, fuzzy
 msgid "octillion"
 msgstr "Åtgärd"
 
-#: src/calclib/data/variables.xml.in.h:157
+#: src/calclib/data/variables.xml.in.h:158
 #, fuzzy
 msgid "octodecillion"
 msgstr "Beskrivning"
 
-#: src/calclib/data/variables.xml.in.h:158
+#: src/calclib/data/variables.xml.in.h:159
 msgid "pi"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:159
+#: src/calclib/data/variables.xml.in.h:160
 #, fuzzy
 msgid "planck"
 msgstr "Ersätt"
 
-#: src/calclib/data/variables.xml.in.h:160
+#: src/calclib/data/variables.xml.in.h:161
 #, fuzzy
 msgid "planck_length"
 msgstr "Längd"
 
-#: src/calclib/data/variables.xml.in.h:161
+#: src/calclib/data/variables.xml.in.h:162
 msgid "planck_mass"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:162
+#: src/calclib/data/variables.xml.in.h:163
 #, fuzzy
 msgid "planck_temperature"
 msgstr "Temperatur"
 
-#: src/calclib/data/variables.xml.in.h:163
+#: src/calclib/data/variables.xml.in.h:164
 msgid "planck_time"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:164
+#: src/calclib/data/variables.xml.in.h:165
 #, fuzzy
 msgid "plus_infinity"
 msgstr "oändlighet"
 
-#: src/calclib/data/variables.xml.in.h:165
+#: src/calclib/data/variables.xml.in.h:166
 #, fuzzy
 msgid "procent"
 msgstr "eurocent"
 
-#: src/calclib/data/variables.xml.in.h:166
+#: src/calclib/data/variables.xml.in.h:167
 #, fuzzy
 msgid "promille"
 msgstr "positiv"
 
-#: src/calclib/data/variables.xml.in.h:167
+#: src/calclib/data/variables.xml.in.h:168
 msgid "proton_mass"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:168
+#: src/calclib/data/variables.xml.in.h:169
 msgid "pythagoras"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:169
+#: src/calclib/data/variables.xml.in.h:170
 #, fuzzy
 msgid "quadrillion"
 msgstr "Kvartil"
 
-#: src/calclib/data/variables.xml.in.h:170
+#: src/calclib/data/variables.xml.in.h:171
 #, fuzzy
 msgid "quattuordecillion"
 msgstr "Beskrivning"
 
-#: src/calclib/data/variables.xml.in.h:171
+#: src/calclib/data/variables.xml.in.h:172
 #, fuzzy
 msgid "quindecillion"
 msgstr "Precision"
 
-#: src/calclib/data/variables.xml.in.h:172
+#: src/calclib/data/variables.xml.in.h:173
 #, fuzzy
 msgid "quintillion"
 msgstr "funktion"
 
-#: src/calclib/data/variables.xml.in.h:173
+#: src/calclib/data/variables.xml.in.h:174
 #, fuzzy
 msgid "r_e"
 msgstr "reell"
 
-#: src/calclib/data/variables.xml.in.h:174
+#: src/calclib/data/variables.xml.in.h:175
 #, fuzzy
 msgid "rydberg"
 msgstr "Ordning"
 
-#: src/calclib/data/variables.xml.in.h:175
+#: src/calclib/data/variables.xml.in.h:176
 #, fuzzy
 msgid "second_radiation"
 msgstr "Förutsättning"
 
-#: src/calclib/data/variables.xml.in.h:176
+#: src/calclib/data/variables.xml.in.h:177
 #, fuzzy
 msgid "septendecillion"
 msgstr "Precision"
 
-#: src/calclib/data/variables.xml.in.h:177
+#: src/calclib/data/variables.xml.in.h:178
 #, fuzzy
 msgid "septillion"
 msgstr "Semikolon"
 
-#: src/calclib/data/variables.xml.in.h:178
+#: src/calclib/data/variables.xml.in.h:179
 #, fuzzy
 msgid "sexdecillion"
 msgstr "Hexadecimal"
 
-#: src/calclib/data/variables.xml.in.h:179
+#: src/calclib/data/variables.xml.in.h:180
 #, fuzzy
 msgid "sextillion"
 msgstr "Semikolon"
 
-#: src/calclib/data/variables.xml.in.h:180
+#: src/calclib/data/variables.xml.in.h:181
 msgid "speed_of_light"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:181
+#: src/calclib/data/variables.xml.in.h:182
 msgid "t_P"
 msgstr ""
 
-#: src/calclib/data/variables.xml.in.h:182
+#: src/calclib/data/variables.xml.in.h:183
 #, fuzzy
 msgid "tau_mass"
 msgstr "Massa"
 
-#: src/calclib/data/variables.xml.in.h:183
+#: src/calclib/data/variables.xml.in.h:184
 #, fuzzy
 msgid "tredecillion"
 msgstr "Precision"
 
-#: src/calclib/data/variables.xml.in.h:184
+#: src/calclib/data/variables.xml.in.h:185
 #, fuzzy
 msgid "trillion"
 msgstr "shilling"
 
-#: src/calclib/data/variables.xml.in.h:185
+#: src/calclib/data/variables.xml.in.h:186
 msgid "true"
 msgstr "sant"
 
-#: src/calclib/data/variables.xml.in.h:186
+#: src/calclib/data/variables.xml.in.h:187
 #, fuzzy
 msgid "undecillion"
 msgstr "Precision"
 
-#: src/calclib/data/variables.xml.in.h:187
+#: src/calclib/data/variables.xml.in.h:189
 #, fuzzy
 msgid "vigintillion"
 msgstr "funktion"
 
-#: src/calclib/data/variables.xml.in.h:188
+#: src/calclib/data/variables.xml.in.h:190
 #, fuzzy
 msgid "von Klitzing Constant"
 msgstr "Konstanter"
 
-#: src/calclib/data/variables.xml.in.h:190
+#: src/calclib/data/variables.xml.in.h:192
 #, fuzzy
 msgid "y"
 msgstr "2"
 
-#: src/calclib/data/variables.xml.in.h:191
+#: src/calclib/data/variables.xml.in.h:193
 msgid "yes"
 msgstr "ja"
 
-#: src/calclib/data/variables.xml.in.h:192
+#: src/calclib/data/variables.xml.in.h:194
 msgid "z"
 msgstr ""
+
+#~ msgid "Text 1"
+#~ msgstr "Text 1"
+
+#~ msgid "Text 2"
+#~ msgstr "Text 2"
