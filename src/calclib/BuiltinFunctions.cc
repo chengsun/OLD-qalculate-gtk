@@ -272,10 +272,13 @@ void SqrtFunction::calculate2(Manager *mngr) {
 		mngr->set(this, vargs[0], NULL);
 		return;
 	}
-	if(vargs[0]->type() == VALUE_MANAGER) mngr->set(sqrtl(vargs[0]->value()));
-	else if(vargs[0]->type() != NULL_MANAGER) {
+	if(vargs[0]->type() == VALUE_MANAGER) {
+		mngr->set(sqrtl(vargs[0]->value()));
+	} else if(vargs[0]->type() != NULL_MANAGER) {
 		mngr->set(vargs[0]);
 		mngr->add(0.5L, POWER_CH);
+	} else {
+		mngr->set(0.0L);
 	}	
 }
 CbrtFunction::CbrtFunction(Calculator *calc_) : Function(calc_, "Exponents and Logarithms", "cbrt", 1, "Cube Root") {}

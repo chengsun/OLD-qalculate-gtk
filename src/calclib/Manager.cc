@@ -702,6 +702,12 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 			}
 		} else if(mngr->c_type == 'v' && mngr->d_value == 1) {mngr->unref(); return true;}
 		switch(c_type) {
+			case MULTIPLICATION_CH: {
+				for(int i = 0; i < mngrs.size(); i++) {
+					mngrs[i]->add(mngr, sign);
+				}
+				break;
+			}		
 			case PLUS_CH: {
 				switch(mngr->c_type) {
 					case 'v': {
@@ -725,17 +731,6 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 					default: {
 						if(!translate_) {mngr->unref(); return false;}	
 						transform(mngr, POWER_CH, sign);
-						break;
-					}
-				}
-				break;
-			}
-			case MULTIPLICATION_CH: {
-				switch(mngr->c_type) {
-					default: {
-						for(int i = 0; i < mngrs.size(); i++) {
-							mngrs[i]->add(mngr, sign);
-						}
 						break;
 					}
 				}
@@ -785,36 +780,11 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 				}
 				break;
 			}
-			case 'u': {
-				switch(mngr->c_type) {
-					default: {
-						if(!translate_) {mngr->unref(); return false;}
-						transform(mngr, POWER_CH, sign);
-						break;
-					}
-				}
+			default: {
+				if(!translate_) {mngr->unref(); return false;}
+				transform(mngr, POWER_CH, sign);
 				break;
 			}
-			case 's': {
-				switch(mngr->c_type) {
-					default: {
-						if(!translate_) {mngr->unref(); return false;}
-						transform(mngr, POWER_CH, sign);
-						break;
-					}
-				}
-				break;
-			}
-			case FUNCTION_MANAGER: {
-				switch(mngr->c_type) {
-					default: {
-						if(!translate_) {mngr->unref(); return false;}
-						transform(mngr, POWER_CH, sign);
-						break;
-					}
-				}
-				break;
-			}			
 		}
 	}
 	sort();

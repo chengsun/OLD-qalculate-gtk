@@ -69,7 +69,7 @@ int Function::args(const string &str) {
 					if(i == (int) string::npos)
 						break;
 				} else {
-					if(itmp <= args() || args() < 0) {
+					if(itmp <= maxargs() || args() < 0) {
 						Manager *mngr = calc->calculate(str.substr(i2, i - i2));
 						vargs.push_back(mngr);
 					}
@@ -88,10 +88,11 @@ int Function::args(const string &str) {
 		}
 	}
 	if(itmp < maxargs() && itmp >= minargs()) {
-		while(itmp < maxargs()) {
-			Manager *mngr = calc->calculate(default_values[itmp - minargs()]);
+		int itmp2 = itmp;
+		while(itmp2 < maxargs()) {
+			Manager *mngr = calc->calculate(default_values[itmp2 - minargs()]);
 			vargs.push_back(mngr);
-			itmp++;
+			itmp2++;
 		}
 	}
 	return itmp;
@@ -123,9 +124,10 @@ int Function::args(const string &str, string *buffer) {
 		}
 	}
 	if(itmp < maxargs() && itmp >= minargs()) {
-		while(itmp < maxargs()) {
-			buffer[itmp] = default_values[itmp - minargs()];
-			itmp++;
+		int itmp2 = itmp;
+		while(itmp2 < maxargs()) {
+			buffer[itmp2] = default_values[itmp2 - minargs()];
+			itmp2++;
 		}
 	}	
 	return itmp;
