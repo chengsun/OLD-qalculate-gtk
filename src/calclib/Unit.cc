@@ -235,48 +235,51 @@ Manager *AliasUnit::convertToFirstBase(Manager *value_, Manager *exp_) const {
 	bool was_rpn = CALCULATOR->inRPNMode();
 	CALCULATOR->setRPNMode(false);
 	if(rvalue.empty()) {
-		if(value.find(FUNCTION_VAR_X) != string::npos) {
+		if(value.find("\\x") != string::npos) {
 			string stmp = value;
-			string stmp2 = LEFT_BRACKET;
-			stmp2 += value_->print();
-			stmp2 += RIGHT_BRACKET_CH;
-			gsub(FUNCTION_VAR_X, stmp2, stmp);
-			stmp2 = LEFT_BRACKET;
-			stmp2 += exp_->print();
-			stmp2 += RIGHT_BRACKET_CH;
-			gsub(FUNCTION_VAR_Y, stmp2, stmp);
+			string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+			int x_id = CALCULATOR->addId(value_, true);
+			stmp2 += i2s(x_id);
+			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+			gsub("\\x", stmp2, stmp);
+			stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+			int y_id = CALCULATOR->addId(exp_, true);
+			stmp2 += i2s(y_id);
+			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+			gsub("\\y", stmp2, stmp);
 			Manager *mngr = CALCULATOR->calculate(stmp);
-//			value_->add(mngr, OPERATION_DIVIDE);
+			CALCULATOR->delId(x_id, true);
+			CALCULATOR->delId(y_id, true);
 			value_->moveto(mngr);
 			mngr->unref();
 		} else {
 			Manager *mngr = CALCULATOR->calculate(value);
 			mngr->add(exp_, OPERATION_RAISE);
 			value_->add(mngr, OPERATION_DIVIDE);
-//			value_->moveto(mngr);
 			mngr->unref();
 		}
 	} else {
-		if(rvalue.find(FUNCTION_VAR_X) != string::npos) {
+		if(rvalue.find("\\x") != string::npos) {
 			string stmp = rvalue;
-			string stmp2 = LEFT_BRACKET;
-			stmp2 += value_->print();
-			stmp2 += RIGHT_BRACKET_CH;
-			gsub(FUNCTION_VAR_X, stmp2, stmp);
-			stmp2 = LEFT_BRACKET;
-			stmp2 += exp_->print();
-			stmp2 += RIGHT_BRACKET_CH;
-			gsub(FUNCTION_VAR_Y, stmp2, stmp);
+			string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+			int x_id = CALCULATOR->addId(value_, true);
+			stmp2 += i2s(x_id);
+			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+			gsub("\\x", stmp2, stmp);
+			stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+			int y_id = CALCULATOR->addId(exp_, true);
+			stmp2 += i2s(y_id);
+			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+			gsub("\\y", stmp2, stmp);
 			Manager *mngr = CALCULATOR->calculate(stmp);
-//			value_->add(mngr, OPERATION_MULTIPLY);
+			CALCULATOR->delId(x_id, true);
+			CALCULATOR->delId(y_id, true);			
 			value_->moveto(mngr);
 			mngr->unref();
 		} else {
 			Manager *mngr = CALCULATOR->calculate(rvalue);
 			mngr->add(exp_, OPERATION_RAISE);
 			value_->add(mngr, OPERATION_MULTIPLY);
-//			mngr->add(value_, OPERATION_MULTIPLY);
-//			value_->moveto(mngr);
 			mngr->unref();
 		}
 	}
@@ -291,17 +294,21 @@ Manager *AliasUnit::firstBaseValue(Manager *value_, Manager *exp_) const {
 	else exp_->ref();
 	bool was_rpn = CALCULATOR->inRPNMode();
 	CALCULATOR->setRPNMode(false);
-	if(value.find(FUNCTION_VAR_X) != string::npos) {
+	if(value.find("\\x") != string::npos) {
 		string stmp = value;
-		string stmp2 = LEFT_BRACKET;
-		stmp2 += value_->print();
-		stmp2 += RIGHT_BRACKET_CH;
-		gsub(FUNCTION_VAR_X, stmp2, stmp);
-		stmp2 = LEFT_BRACKET;
-		stmp2 += exp_->print();
-		stmp2 += RIGHT_BRACKET_CH;
-		gsub(FUNCTION_VAR_Y, stmp2, stmp);
+		string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+		int x_id = CALCULATOR->addId(value_, true);
+		stmp2 += i2s(x_id);
+		stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+		gsub("\\x", stmp2, stmp);
+		stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+		int y_id = CALCULATOR->addId(exp_, true);
+		stmp2 += i2s(y_id);
+		stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+		gsub("\\y", stmp2, stmp);
 		Manager *mngr = CALCULATOR->calculate(stmp);
+		CALCULATOR->delId(x_id, true);
+		CALCULATOR->delId(y_id, true);
 		value_->moveto(mngr);
 		mngr->unref();
 	} else {
@@ -350,7 +357,7 @@ bool AliasUnit::isParentOf(const Unit *u) const {
 	return false;
 }
 bool AliasUnit::hasComplexExpression() const {
-	return value.find(FUNCTION_VAR_X) != string::npos;
+	return value.find("\\x") != string::npos;
 }
 bool AliasUnit::hasComplexRelationTo(const Unit *u) const {
 	if(u == this || u->baseUnit() != baseUnit()) return false;
@@ -524,14 +531,14 @@ string CompositeUnit::print(bool plural_, bool short_) const {
 	for(int i = 0; i < units.size(); i++) {
 		if(units[i]->firstBaseExp() != 0) {
 			if(!b && units[i]->firstBaseExp() < 0 && i > 0) {
-				str += DIVISION_STR;
+				str += "/";
 				b = true;
 				if(i < units.size() - 1) {
 					b2 = true;
-					str += LEFT_BRACKET_STR;
+					str += "(";
 				}				
 			} else {
-//				if(i > 0) str += MULTIPLICATION_STR;
+//				if(i > 0) str += "*";
 				if(i > 0) str += " ";
 			}
 			if(short_) {
@@ -549,18 +556,18 @@ string CompositeUnit::print(bool plural_, bool short_) const {
 			}
 			if(b) {
 				if(units[i]->firstBaseExp() != -1) {
-					str += POWER_STR;
+					str += "^";
 					str += li2s(-units[i]->firstBaseExp());
 				}
 			} else {
 				if(units[i]->firstBaseExp() != 1) {
-					str += POWER_STR;
+					str += "^";
 					str += li2s(units[i]->firstBaseExp());
 				}
 			}
 		}
 	}
-	if(b2) str += RIGHT_BRACKET_STR;
+	if(b2) str += ")";
 	return str;
 }
 const string &CompositeUnit::plural(bool return_name_if_no_plural) const {

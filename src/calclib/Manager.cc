@@ -955,6 +955,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 				transform(mngr, POWER_MANAGER, op);
 				return true;
 			} else {*/
+				CALCULATOR->error(false, _("0^0 might be considered undefined"), NULL);
 				set(1, 1);
 				return true;
 //			}
@@ -1453,32 +1454,6 @@ void Manager::addFloat(long double value_, MathOperation op) {
 	Manager *mngr = new Manager(value_);
 	add(mngr, op);
 	mngr->unref();
-/*	if(value_ == 0.0L && op == OPERATION_DIVIDE) {
-	 	CALCULATOR->error(true, _("Trying to divide \"%s\" with zero."), print().c_str());
-		if(negative()) set(-INFINITY);
-		else set(INFINITY);		
-	} else if(c_type == NULL_MANAGER && value_ != 0 && (op != OPERATION_RAISE || value_ > 0)) {
-		switch(op) {
-			case OPERATION_ADD: {d_value = value_; c_type = VALUE_MANAGER; break;}
-			case OPERATION_SUBTRACT: {d_value = -value_; c_type = VALUE_MANAGER; break;}
-		}
-		CALCULATOR->checkFPExceptions();
-	} else if(c_type == VALUE_MANAGER) {
-		switch(op) {
-			case OPERATION_ADD: {d_value += value_; break;}
-			case OPERATION_SUBTRACT: {d_value -= value_; break;}
-			case OPERATION_MULTIPLY: {d_value *= value_; break;}
-			case OPERATION_DIVIDE: {d_value /= value_; break;}
-			case OPERATION_EXP10: {d_value *= exp10l(value_); break;}
-			case OPERATION_RAISE: {d_value = powl(d_value, value_); break;}
-		}
-		if(d_value == 0) c_type = NULL_MANAGER;
-		CALCULATOR->checkFPExceptions();
-	} else {
-		Manager *mngr = new Manager(value_);
-		add(mngr, op);
-		mngr->unref();
-	}*/
 }
 void Manager::clear() {
 	fr->clear();
@@ -1579,7 +1554,9 @@ int Manager::signedness() const {
 		int s = 0, s2;
 		for(int i = 0; i < mngrs.size(); i++) {
 			s2 = mngrs[i]->signedness();
-			if((s2 < 0 && s > 0) || (s2 > 0 && s < 0)) {
+			if(s2 < -1) {
+				return -2;
+			} else if((s2 < 0 && s > 0) || (s2 > 0 && s < 0)) {
 				return -2;
 			} else if(s2 != 0) {
 				s = s2;
@@ -1617,7 +1594,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 		if(!in_composite && toplevel) {
 			str2 = "1";
 			if(min_decimals > 0) {
-				str2 += DOT_STR;
+				str2 += CALCULATOR->getDecimalPoint();
 				for(int i = 0; i < min_decimals; i++) {
 					str2 += '0';
 				}
@@ -1662,56 +1639,56 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 		}			
 		if(plural) *plural = true;
 	} else if(c_type == NOT_MANAGER) {			
-		str += NOT;
-		str += LEFT_BRACKET_STR;
+		str += "!";
+		str += "(";
 		str += mngrs[0]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
-		str += RIGHT_BRACKET_STR;	
+		str += ")";	
 	} else if(c_type == AND_MANAGER) {			
 		for(int i = 0; i < mngrs.size(); i++) {
 			if(i > 0) {
-				str += " " AND " ";		
+				str += " & ";		
 			}
-			if(mngrs[i]->countChilds()) str += LEFT_BRACKET_STR;
+			if(mngrs[i]->countChilds()) str += "(";
 			str += mngrs[i]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
-			if(mngrs[i]->countChilds()) str += RIGHT_BRACKET_STR;
+			if(mngrs[i]->countChilds()) str += ")";
 		}
 	} else if(c_type == OR_MANAGER) {			
 		for(int i = 0; i < mngrs.size(); i++) {
 			if(i > 0) {
-				str += " " OR " ";		
+				str += " | ";		
 			}
-			if(mngrs[i]->countChilds()) str += LEFT_BRACKET_STR;
+			if(mngrs[i]->countChilds()) str += "(";
 			str += mngrs[i]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
-			if(mngrs[i]->countChilds()) str += RIGHT_BRACKET_STR;
+			if(mngrs[i]->countChilds()) str += ")";
 		}
 	} else if(c_type == COMPARISON_MANAGER) {			
-		if(mngrs[0]->countChilds()) str += LEFT_BRACKET_STR;
+		if(mngrs[0]->countChilds()) str += "(";
 		str += mngrs[0]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
-		if(mngrs[0]->countChilds()) str += RIGHT_BRACKET_STR;
+		if(mngrs[0]->countChilds()) str += ")";
 		str += " ";
 		if(displayflags & DISPLAY_FORMAT_NONASCII) {
 			switch(comparison_type) {
-				case COMPARISON_EQUALS: {str += EQUALS EQUALS; break;}
+				case COMPARISON_EQUALS: {str += "=="; break;}
 				case COMPARISON_NOT_EQUALS: {str += SIGN_NOT_EQUAL; break;}
-				case COMPARISON_LESS: {str += LESS; break;}
-				case COMPARISON_GREATER: {str += GREATER; break;}
+				case COMPARISON_LESS: {str += "<"; break;}
+				case COMPARISON_GREATER: {str += ">"; break;}
 				case COMPARISON_EQUALS_LESS: {str += SIGN_LESS_OR_EQUAL; break;}
 				case COMPARISON_EQUALS_GREATER: {str += SIGN_GREATER_OR_EQUAL; break;}
 			}
 		} else {
 			switch(comparison_type) {
-				case COMPARISON_EQUALS: {str += EQUALS EQUALS; break;}
-				case COMPARISON_NOT_EQUALS: {str += NOT EQUALS; break;}
-				case COMPARISON_LESS: {str += LESS; break;}
-				case COMPARISON_GREATER: {str += GREATER; break;}
-				case COMPARISON_EQUALS_LESS: {str += LESS EQUALS; break;}
-				case COMPARISON_EQUALS_GREATER: {str += GREATER EQUALS; break;}
+				case COMPARISON_EQUALS: {str += "=="; break;}
+				case COMPARISON_NOT_EQUALS: {str += "!="; break;}
+				case COMPARISON_LESS: {str += "<"; break;}
+				case COMPARISON_GREATER: {str += ">"; break;}
+				case COMPARISON_EQUALS_LESS: {str += "<="; break;}
+				case COMPARISON_EQUALS_GREATER: {str += ">="; break;}
 			}
 		}
 		str += " ";
-		if(mngrs[1]->countChilds()) str += LEFT_BRACKET_STR;
+		if(mngrs[1]->countChilds()) str += "(";
 		str += mngrs[1]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
-		if(mngrs[1]->countChilds()) str += RIGHT_BRACKET_STR;		
+		if(mngrs[1]->countChilds()) str += ")";		
 	} else if(c_type == ALTERNATIVE_MANAGER) {
 		for(int i = 0; i < mngrs.size(); i++) {
 			if(i > 0) {
@@ -1721,15 +1698,15 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 		}
 	} else if(c_type == FUNCTION_MANAGER) {
 		str += o_function->name();
-		str += LEFT_BRACKET_STR;
+		str += "(";
 		for(int i = 0; i < mngrs.size(); i++) {
 			if(i > 0) {
-				str += COMMA_STR;
-				str += SPACE_STR;
+				str += CALCULATOR->getComma();
+				str += " ";
 			}
 			str += mngrs[i]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
 		}
-		str += RIGHT_BRACKET_STR;		
+		str += ")";		
 	} else if(c_type == ADDITION_MANAGER) {
 		for(int i = 0; i < mngrs.size(); i++) {
 			if(i > 0) {
@@ -1738,8 +1715,8 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 					if(mngrs[i]->negative()) str += SIGN_MINUS;
 					else str += SIGN_PLUS;
 				} else {
-					if(mngrs[i]->negative()) str += MINUS_STR;
-					else str += PLUS_STR;
+					if(mngrs[i]->negative()) str += "_";
+					else str += "+";
 				}
 				str += " ";				
 			}
@@ -1748,7 +1725,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			if(toplevel && !in_composite && (mngrs[i]->type() == UNIT_MANAGER || (mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->type() == UNIT_MANAGER))) {
 				str2 = "1";
 				if(min_decimals > 0) {
-					str2 += DOT_STR;
+					str2 += CALCULATOR->getDecimalPoint();
 					for(int i = 0; i < min_decimals; i++) {
 						str2 += '0';
 					}
@@ -1757,9 +1734,9 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			}
 			str2 = mngrs[i]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
 			if(i > 0 && displayflags & DISPLAY_FORMAT_NONASCII && str2.substr(0, strlen(SIGN_MINUS)) == SIGN_MINUS) {
-				str2 = str2.substr(strlen(SIGN_MINUS), str2.length() - strlen(SIGN_MINUS));
-			} else if(i > 0 && str2.substr(0, MINUS_STR.length()) == MINUS_STR) {
-				str2 = str2.substr(MINUS_STR.length(), str2.length() - MINUS_STR.length());
+				str2.erase(0, strlen(SIGN_MINUS));
+			} else if(i > 0 && str2[0] == '-') {
+				str2.erase(str2.begin());
 			}
 			str += str2;
 		}
@@ -1787,7 +1764,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				if(displayflags & DISPLAY_FORMAT_NONASCII) {
 					str += SIGN_MINUS;
 				} else {
-					str += MINUS_STR;
+					str += "-";
 				}
 				i++;
 			}
@@ -1815,7 +1792,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			if(!in_composite && i == 0 && (mngrs[i]->type() == UNIT_MANAGER || (mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->type() == UNIT_MANAGER))) {
 				str2 = "1";
 				if(min_decimals > 0) {
-					str2 += DOT_STR;
+					str2 += CALCULATOR->getDecimalPoint();
 					for(int i = 0; i < min_decimals; i++) {
 						str2 += '0';
 					}
@@ -1834,21 +1811,21 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 						str += SIGN_DIVISION;
 						str += " ";
 					} else {
-						str += DIVISION_STR;
+						str += "/";
 					}
 				}
 				if(!b && (i < mngrs.size() - 1 || mngr->type() == ADDITION_MANAGER) && (i + 1 != mngrs.size() - 1 || mngr->type() != FRACTION_MANAGER || mngr->type() == ADDITION_MANAGER)) {
 					c = true;
-					str += LEFT_BRACKET_STR;
+					str += "(";
 				}
 				if(b && is_unit)  {
-					if(!prefix || is_in(NUMBERS_S + MINUS_S, str[str.length() - 1]) || (mngrs[i - 1]->type() == FRACTION_MANAGER && !mngrs[i - 1]->fraction()->isInteger() && str[str.length() - 1] == '>')) {					
+					if(!prefix || is_in("123456789-", str[str.length() - 1]) || (mngrs[i - 1]->type() == FRACTION_MANAGER && !mngrs[i - 1]->fraction()->isInteger() && str[str.length() - 1] == '>')) {					
 						str += " ";
 						if(had_div_unit) {
 							if(displayflags & DISPLAY_FORMAT_NONASCII) {
 								str += SIGN_MULTIDOT;
 							} else {
-								str += MULTIPLICATION_STR;
+								str += "*";
 							}
 							str += " ";					
 						}						
@@ -1857,7 +1834,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 					if(displayflags & DISPLAY_FORMAT_NONASCII) {
 						str += SIGN_MULTIDOT;
 					} else {
-						str += MULTIPLICATION_STR;
+						str += "*";
 					}
 					str += " ";					
 				}						
@@ -1866,7 +1843,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				}								
 				str += mngr->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, &plural_, l_exp, in_composite, in_power);
 				if(c && i == mngrs.size() - 1) {
-					str += RIGHT_BRACKET_STR;
+					str += "(";
 				}
 				b = true;
 			} else if(mngrs[i]->type() == ADDITION_MANAGER) {
@@ -1874,19 +1851,19 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				if(displayflags & DISPLAY_FORMAT_NONASCII) {
 					str += SIGN_MULTIDOT;
 				} else {
-					str += MULTIPLICATION_STR;
+					str += "*";
 				}
 				str += " ";								
-				str += LEFT_BRACKET_STR;
+				str += "(";
 				str += mngrs[i]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, &plural_, l_exp, in_composite, in_power);
-				str += RIGHT_BRACKET_STR;
+				str += ")";
 			} else {
 				if(mngrs[i]->type() == POWER_MANAGER && (mngrs[i]->mngrs[0]->isNumber() || had_unit)) {
 					str += " ";
 					if(displayflags & DISPLAY_FORMAT_NONASCII) {
 						str += SIGN_MULTIDOT;
 					} else {
-						str += MULTIPLICATION_STR;
+						str += "*";
 					}
 					str += " ";												
 				} else if(i > 0 && (mngrs[i]->type() == FUNCTION_MANAGER || mngrs[i - 1]->type() == FUNCTION_MANAGER)) {
@@ -1894,17 +1871,17 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 					if(displayflags & DISPLAY_FORMAT_NONASCII) {
 						str += SIGN_MULTIDOT;
 					} else {
-						str += MULTIPLICATION_STR;
+						str += "*";
 					}
 					str += " ";								
 				} else if(i > 0 && is_unit)  {
-					if(!prefix_ || is_in(NUMBERS_S, str[str.length() - 1]) || (mngrs[i - 1]->type() == FRACTION_MANAGER && !mngrs[i - 1]->fraction()->isInteger() && str[str.length() - 1] == '>')) {
+					if(!prefix_ || is_in("123456789", str[str.length() - 1]) || (mngrs[i - 1]->type() == FRACTION_MANAGER && !mngrs[i - 1]->fraction()->isInteger() && str[str.length() - 1] == '>')) {
 						str += " ";
 						if(had_unit) {
 							if(displayflags & DISPLAY_FORMAT_NONASCII) {
 								str += SIGN_MULTIDOT;
 							} else {
-								str += MULTIPLICATION_STR;
+								str += "*";
 							}
 							str += " ";					
 						}
@@ -1915,7 +1892,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 						if(displayflags & DISPLAY_FORMAT_NONASCII) {
 							str += SIGN_MULTIDOT;
 						} else {
-							str += MULTIPLICATION_STR;
+							str += "*";
 						}
 						str += " ";					
 					}
@@ -1924,7 +1901,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 					if(displayflags & DISPLAY_FORMAT_NONASCII) {
 						str += SIGN_MULTIDOT;
 					} else {
-						str += MULTIPLICATION_STR;
+						str += "*";
 					}
 					str += " ";					
 				}					
@@ -1943,7 +1920,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 		if(!in_composite && toplevel && mngrs[0]->type() == UNIT_MANAGER) {
 			str2 = "1";
 			if(min_decimals > 0) {
-				str2 += DOT_STR;
+				str2 += CALCULATOR->getDecimalPoint();
 				for(int i = 0; i < min_decimals; i++) {
 					str2 += '0';
 				}
@@ -1951,9 +1928,9 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			str += str2; str += " ";
 		}
 		if(mngrs[0]->mngrs.size() > 0 && !in_composite) {
-			str += LEFT_BRACKET_STR;
+			str += "(";
 			str += mngrs[0]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, in_composite, in_power);
-			str += RIGHT_BRACKET_STR;
+			str += ")";
 		} else {
 			str += mngrs[0]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, in_composite, in_power);
 		}
@@ -1962,14 +1939,15 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				str += "</big>";
 				str += "<sup>";
 			} else {
-				str += POWER_STR;
+				str += "^";
 			}
+		} else {
+			str += "^";
 		}
-		else str += POWER_STR;
 		if(mngrs[1]->mngrs.size() > 0) {
-			str += LEFT_BRACKET_STR;
+			str += "(";
 			str += mngrs[1]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, in_composite, true);
-			str += RIGHT_BRACKET_STR;
+			str += ")";
 		} else {
 			str += mngrs[1]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, in_composite, true);
 		}

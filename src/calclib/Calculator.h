@@ -29,7 +29,7 @@ class Calculator {
 	int ianglemode;
 	int i_precision;
 	char vbuffer[200];
-	bool b_functions, b_variables, b_units, b_unknown, b_calcvars, b_always_exact, b_rpn;
+	bool b_functions, b_variables, b_units, b_unknown, b_calcvars, b_always_exact, b_rpn, b_use_all_prefixes;
 	vector<void*> ufv;
 	vector<char> ufv_t;	
 	hash_map<int, Manager*> ids;
@@ -43,6 +43,7 @@ class Calculator {
 	pthread_t calculate_thread;
 	pthread_attr_t calculate_thread_attr;
 	bool b_functions_was, b_variables_was, b_units_was, b_unknown_was, b_calcvars_was, b_always_exact_was, b_rpn_was;
+	string NAME_NUMBER_PRE_S, NAME_NUMBER_PRE_STR, DOT_STR, DOT_S, COMMA_S, COMMA_STR, ILLEGAL_IN_NAMES, ILLEGAL_IN_UNITNAMES, ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
 
   public:
   
@@ -60,7 +61,9 @@ class Calculator {
 	~Calculator();
 
 	void addStringAlternative(string replacement, string standard);
-	void addDefauktStringAlternative(string replacement, string standard);
+	bool delStringAlternative(string replacement, string standard);
+	void addDefaultStringAlternative(string replacement, string standard);
+	bool delDefaultStringAlternative(string replacement, string standard);
 
 	bool alwaysExact() const;
 	void setAlwaysExact(bool always_exact);
@@ -92,6 +95,8 @@ class Calculator {
 	int addId(Manager *mngr, bool persistent = false);
 	Manager *getId(int id);	
 	void delId(int id, bool force = false);
+	bool allPrefixesEnabled();
+	void setAllPrefixesEnabled(bool enable);
 	bool functionsEnabled();
 	void setFunctionsEnabled(bool enable);
 	bool variablesEnabled();

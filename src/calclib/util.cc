@@ -320,30 +320,30 @@ string& gsub(const char *pattern, const char *sub, string &str) {
 }
 
 string& remove_blanks(string &str) {
-	int i = str.find_first_of(SPACE_S, 0);
+	int i = str.find_first_of(SPACES, 0);
 	while(i != string::npos) {
 		str.erase(i, 1);
-		i = str.find_first_of(SPACE_S, i);
+		i = str.find_first_of(SPACES, i);
 	}
 	return str;
 }
 
 string& remove_duplicate_blanks(string &str) {
-	int i = str.find_first_of(SPACE_S, 0);
+	int i = str.find_first_of(SPACES, 0);
 	while(i != string::npos) {
-		if(i == 0 && is_in(SPACE_S, str[i - 1])) {
+		if(i == 0 && is_in(SPACES, str[i - 1])) {
 			str.erase(i, 1);
 		} else {
 			i++;
 		}
-		i = str.find_first_of(SPACE_S, i);
+		i = str.find_first_of(SPACES, i);
 	}
 	return str;
 }
 
 string& remove_blank_ends(string &str) {
-	unsigned int i = str.find_first_not_of(SPACE_S);
-	unsigned int i2 = str.find_last_not_of(SPACE_S);
+	unsigned int i = str.find_first_not_of(SPACES);
+	unsigned int i2 = str.find_last_not_of(SPACES);
 	if(i != string::npos && i2 != string::npos)
 		str = str.substr(i, i2 - i + 1);
 	else
@@ -351,7 +351,7 @@ string& remove_blank_ends(string &str) {
 	return str;
 }
 string& remove_brackets(string &str) {
-	if(str[0] == LEFT_BRACKET_CH && str[str.length() - 1] == RIGHT_BRACKET_CH) {
+	if(str[0] == LEFT_PARENTHESIS_CH && str[str.length() - 1] == RIGHT_PARENTHESIS_CH) {
 		str = str.substr(1, str.length() - 2);
 		return remove_brackets(str);
 	}
@@ -551,12 +551,12 @@ long long int llpow(long long int base, long long int exp, bool &overflow) {
 int find_ending_bracket(const string &str, int start, int *missing) {
 	int i_l = 1;
 	while(true) {
-		start = str.find_first_of(LEFT_BRACKET RIGHT_BRACKET, start);
+		start = str.find_first_of(LEFT_PARENTHESIS RIGHT_PARENTHESIS, start);
 		if(start == string::npos) {
 			if(missing) *missing = i_l;
 			return string::npos;
 		}
-		if(str[start] == LEFT_BRACKET_CH) {
+		if(str[start] == LEFT_PARENTHESIS_CH) {
 			i_l++;
 		} else {
 			i_l--;
@@ -582,8 +582,8 @@ char op2ch(MathOperation op) {
 }
 
 string& wrap_p(string &str) {
-	str.insert(0, LEFT_BRACKET_STR);
-	str.append(RIGHT_BRACKET_STR);
+	str.insert(0, LEFT_PARENTHESIS);
+	str.append(RIGHT_PARENTHESIS);
 	return str;
 }
 bool is_in(char c, ...) {
@@ -652,7 +652,7 @@ bool is_not_in(const string &str, char c) {
 }
 
 int sign_place(string *str, unsigned int start) {
-	int i = str->find_first_of(OPERATORS_S, start);
+	int i = str->find_first_of(OPERATORS, start);
 	if(i != (int) string::npos)
 		return i;
 	else

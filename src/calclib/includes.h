@@ -159,56 +159,6 @@ using namespace std;
 
 using namespace __gnu_cxx;
 
-extern string ID_WRAP_LEFT_STR;
-extern string ID_WRAP_RIGHT_STR;
-extern string ID_WRAP_S;
-extern string NUMBERS_S;
-extern string SIGNS_S;
-extern string OPERATORS_S;
-extern string BRACKETS_S;
-extern string LEFT_BRACKET_S;
-extern string LEFT_BRACKET_STR;
-extern string RIGHT_BRACKET_S;
-extern string RIGHT_BRACKET_STR;
-extern string DOT_STR;
-extern string DOT_S;
-extern string SPACE_S;
-extern string SPACE_STR;
-extern string RESERVED_S;
-extern string PLUS_S;
-extern string PLUS_STR;
-extern string MINUS_S;
-extern string MINUS_STR;
-extern string MULTIPLICATION_S;
-extern string MULTIPLICATION_STR;
-extern string DIVISION_S;
-extern string DIVISION_STR;
-extern string EXP_S;
-extern string EXP_STR;
-extern string POWER_STR;
-extern string POWER_S;
-extern string INF_STR;
-extern string NAN_STR;
-extern string COMMA_S;
-extern string COMMA_STR;
-extern string UNDERSCORE_STR;
-extern string UNDERSCORE_S;
-extern string NAME_NUMBER_PRE_S;
-extern string NAME_NUMBER_PRE_STR;
-extern string FUNCTION_VAR_PRE_STR;
-extern string FUNCTION_VAR_X;
-extern string FUNCTION_VAR_Y;
-extern string ZERO_STR;
-extern string ONE_STR;
-extern string ILLEGAL_IN_NAMES;
-extern string ILLEGAL_IN_UNITNAMES;
-extern string ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
-/*extern string ILLEGAL_IN_NAMES_MINUS_SPACE_STR_PLUS_NUMBERS_S;
-extern string BRACKETS_S_AND_OPERATORS_S;
-extern string NUMBERS_S_AND_OPERATORS_S_AND_BRACKETS_S_AND_SPACE_S;
-extern string PLUS_S_AND_SPACE_S;
-extern string NUMBERS_S_AND_MINUS_S_AND_DOT_S;*/
-
 #define DOT_CH			'.'
 #define ZERO_CH			'0'
 #define ONE_CH			'1'
@@ -228,8 +178,8 @@ extern string NUMBERS_S_AND_MINUS_S_AND_DOT_S;*/
 #define EXP_CH			'E'
 #define POWER_CH		'^'
 #define SPACE_CH		' '
-#define LEFT_BRACKET_CH		'('
-#define RIGHT_BRACKET_CH	')'
+#define LEFT_PARENTHESIS_CH	'('
+#define RIGHT_PARENTHESIS_CH	')'
 #define FUNCTION_VAR_PRE_CH	'\\'
 #define COMMA_CH		','
 #define NAME_NUMBER_PRE_CH	'_'
@@ -241,37 +191,37 @@ extern string NUMBERS_S_AND_MINUS_S_AND_DOT_S;*/
 #define	NOT_CH			'!'
 #define EQUALS_CH		'='
 
-#define ID_WRAP_LEFT	"{"	
-#define ID_WRAP_RIGHT	"}"	
-#define ID_WRAPS	"{}"	
-#define DOT		"."
-#define COMMA		","
-#define COMMAS		",;"
-#define NUMBERS		"0123456789"
-#define SIGNS		"+-*/^"
-#define OPERATORS	"+-*/^&|!<>="
-#define	BRACKETS	"()"
-#define LEFT_BRACKET	"("
-#define	RIGHT_BRACKET	")"
-#define	SPACES		" \t\n"
-#define SPACE		" "
-#define RESERVED	"\'@?\\{}:\""
-#define PLUS		"+"
-#define MINUS		"-"
-#define MULTIPLICATION	"*"
-#define DIVISION	"/"
-#define EXP		"E"
-#define	POWER		"^"
-#define	AND		"&"
-#define	OR		"|"
-#define	LESS		"<"
-#define	GREATER		">"
-#define	NOT		"!"
-#define	EQUALS		"="
-#define SINF		"INF"
-#define SNAN		"NAN"
-#define UNDERSCORE	"_"
+#define ID_WRAP_LEFT		"{"	
+#define ID_WRAP_RIGHT		"}"	
+#define ID_WRAPS		"{}"	
+#define DOT			"."
+#define COMMA			","
+#define COMMAS			",;"
+#define NUMBERS			"0123456789"
+#define SIGNS			"+-*/^"
+#define OPERATORS		"+-*/^&|!<>="
+#define	PARENTHESISS		"()[]"
+#define LEFT_PARENTHESIS		"("
+#define	RIGHT_PARENTHESIS		")"
+#define	SPACES			" \t\n"
+#define SPACE			" "
+#define RESERVED		"\'@?\\{}:\""
+#define PLUS			"+"
+#define MINUS			"-"
+#define MULTIPLICATION		"*"
+#define DIVISION		"/"
+#define EXP			"E"
+#define	POWER			"^"
+#define	AND			"&"
+#define	OR			"|"
+#define	LESS			"<"
+#define	GREATER			">"
+#define	NOT			"!"
+#define	EQUALS			"="
+#define SINF			"INF"
+#define SNAN			"NAN"
+#define UNDERSCORE		"_"
 
-#define NOT_IN_NAMES 	RESERVED OPERATORS SPACES DOT BRACKETS COMMAS
+#define NOT_IN_NAMES 	RESERVED OPERATORS SPACES DOT PARENTHESISS COMMAS
 
 #endif

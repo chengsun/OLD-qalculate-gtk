@@ -136,7 +136,7 @@ bool Function::testCondition(vector<Manager*> &vargs) {
 				}
 			}
 		}
-		CALCULATOR->error(true, "%s() requires that %s", name().c_str(), str.c_str(), NULL);
+		CALCULATOR->error(true, _("%s() requires that %s"), name().c_str(), str.c_str(), NULL);
 		return false;
 	}
 	return true;
@@ -152,13 +152,13 @@ int Function::args(const string &argstr, vector<Manager*> &vargs) {
 	remove_blank_ends(str);
 	for(int str_index = 0; str_index < str.length(); str_index++) {
 		switch(str[str_index]) {
-			case LEFT_BRACKET_CH: {
+			case LEFT_PARENTHESIS_CH: {
 				if(!in_cit1 && !in_cit2) {
 					pars++;
 				}
 				break;
 			}
-			case RIGHT_BRACKET_CH: {
+			case RIGHT_PARENTHESIS_CH: {
 				if(!in_cit1 && !in_cit2 && pars > 0) {
 					pars--;
 				}
@@ -383,13 +383,13 @@ int Function::stringArgs(const string &argstr, vector<string> &svargs) {
 	remove_blank_ends(str);
 	for(int str_index = 0; str_index < str.length(); str_index++) {
 		switch(str[str_index]) {
-			case LEFT_BRACKET_CH: {
+			case LEFT_PARENTHESIS_CH: {
 				if(!in_cit1 && !in_cit2) {
 					pars++;
 				}
 				break;
 			}
-			case RIGHT_BRACKET_CH: {
+			case RIGHT_PARENTHESIS_CH: {
 				if(!in_cit1 && !in_cit2 && pars > 0) {
 					pars--;
 				}
@@ -552,9 +552,9 @@ void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 			i2 = 0;	
 			mngr_v.push_back(new Manager(vargs[i]));
 			v_id.push_back(CALCULATOR->addId(mngr_v[i], true));
-			v_str = LEFT_BRACKET ID_WRAP_LEFT;
+			v_str = LEFT_PARENTHESIS ID_WRAP_LEFT;
 			v_str += i2s(v_id[v_id.size() - 1]);
-			v_str += ID_WRAP_RIGHT RIGHT_BRACKET;			
+			v_str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;			
 			while(true) {
 				if((i2 = stmp.find(svar, i2)) != string::npos) {
 					if(i2 != 0 && stmp[i2 - 1] == '\\') {
@@ -575,17 +575,17 @@ void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 				v = produceVector(vargs);			
 				mngr_v.push_back(new Manager(v));	
 				v_id.push_back(CALCULATOR->addId(mngr_v[mngr_v.size() - 1], true));
-				v_str = LEFT_BRACKET ID_WRAP_LEFT;
+				v_str = LEFT_PARENTHESIS ID_WRAP_LEFT;
 				v_str += i2s(v_id[v_id.size() - 1]);
-				v_str += ID_WRAP_RIGHT RIGHT_BRACKET;					
+				v_str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;					
 			}
 			if(stmp.find("\\w") != string::npos) {
 				w = produceArgumentsVector(vargs);	
 				mngr_v.push_back(new Manager(w));	
 				v_id.push_back(CALCULATOR->addId(mngr_v[mngr_v.size() - 1], true));
-				w_str = LEFT_BRACKET ID_WRAP_LEFT;
+				w_str = LEFT_PARENTHESIS ID_WRAP_LEFT;
 				w_str += i2s(v_id[v_id.size() - 1]);
-				w_str += ID_WRAP_RIGHT RIGHT_BRACKET;							
+				w_str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;							
 			}			
 			while(true) {
 				if((i2 = stmp.find("\\v")) != string::npos) {					
@@ -779,17 +779,17 @@ bool Argument::test(const Manager *value, int index, Function *f) const {
 	}
 	if(!b_zero && value->isZero()) {
 		if(sname.empty()) {
-			CALCULATOR->error(true, "Argument %s in %s() must be %s.", i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
+			CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
 		} else {
-			CALCULATOR->error(true, "Argument %s, %s, in %s() must be %s.", i2s(index).c_str(), sname.c_str(), f->name().c_str(), printlong().c_str(), NULL);
+			CALCULATOR->error(true, _("Argument %s, %s, in %s() must be %s."), i2s(index).c_str(), sname.c_str(), f->name().c_str(), printlong().c_str(), NULL);
 		}
 		return false;
 	}
 	if(!(b_matrix && value->isMatrix()) && !subtest(value)) {
 		if(sname.empty()) {
-			CALCULATOR->error(true, "Argument %s in %s() must be %s.", i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
+			CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
 		} else {
-			CALCULATOR->error(true, "Argument %s, %s, in %s() must be %s.", i2s(index).c_str(), sname.c_str(), f->name().c_str(), printlong().c_str(), NULL);
+			CALCULATOR->error(true, _("Argument %s, %s, in %s() must be %s."), i2s(index).c_str(), sname.c_str(), f->name().c_str(), printlong().c_str(), NULL);
 		}
 		return false;
 	}
@@ -798,11 +798,11 @@ bool Argument::test(const Manager *value, int index, Function *f) const {
 		Manager *mngr = (Manager*) value;
 		mngr->protect(true);
 		int id = CALCULATOR->addId(mngr, true);
-		string ids = LEFT_BRACKET;
+		string ids = LEFT_PARENTHESIS;
 		ids += ID_WRAP_LEFT;
 		ids += i2s(id);
 		ids += ID_WRAP_RIGHT;
-		ids += RIGHT_BRACKET;
+		ids += RIGHT_PARENTHESIS;
 		gsub("\\x", ids, expression);
 		bool result = CALCULATOR->testCondition(expression);
 		CALCULATOR->delId(id, true);

@@ -720,6 +720,23 @@ bool Integer::divide(long int value, Integer **remainder) {
 #endif
 }
 bool Integer::divide(const Integer *integer, Integer **remainder) {
+	if(integer->isZero()) {
+		if(remainder) *remainder = new Integer();
+		return true;
+	}	
+	if(isZero()) {
+		if(remainder) *remainder = new Integer();
+		return true;	
+	}
+	if(integer->isOne()) {
+		if(remainder) *remainder = new Integer();
+		return true;	
+	}	
+	if(integer->isMinusOne()) {
+		if(remainder) *remainder = new Integer();
+		setNegative(!isNegative());
+		return true;	
+	}	
 #ifdef HAVE_LIBCLN
 	cl_I_div_t div = truncate2(integ, integer->getCL_I());
 	if(remainder) {
@@ -742,25 +759,6 @@ bool Integer::divide(const Integer *integer, Integer **remainder) {
 	mpz_clear(rem);
 	return true;
 #else
-//	printf("A %s : %s\n", print().c_str(), integer->print().c_str());
-	if(integer->isZero()) {
-		//division by zero error
-		if(remainder) *remainder = new Integer();
-		return true;
-	}	
-	if(isZero()) {
-		if(remainder) *remainder = new Integer();
-		return true;	
-	}
-	if(integer->isOne()) {
-		if(remainder) *remainder = new Integer();
-		return true;	
-	}	
-	if(integer->isMinusOne()) {
-		if(remainder) *remainder = new Integer();
-		setNegative(!isNegative());
-		return true;	
-	}	
 	bool neg = isNegative() != integer->isNegative();		
 	Integer *rem = new Integer(this);
 	rem->setNegative(false);

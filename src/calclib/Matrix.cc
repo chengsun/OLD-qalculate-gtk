@@ -636,12 +636,12 @@ void Matrix::recalculateFunctions() {
 string Matrix::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) const {
 	string str = "matrix(";
 	str += i2s(rows());
-	str += COMMA_STR;
+	str += CALCULATOR->getComma();
 	str += " ";
 	str += i2s(columns());
 	for(int index_r = 0; index_r < elements.size(); index_r++) {
 		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
-			str += COMMA_STR;
+			str += CALCULATOR->getComma();
 			str += " ";
 			str += elements[index_r][index_c]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
 		}
@@ -682,7 +682,7 @@ string Vector::print(NumberFormat nrformat, int displayflags, int min_decimals, 
 	string str = "vector(";
 	for(int index = 1; index <= components(); index++) {
 		if(index != 1) {
-			str += COMMA_STR;
+			str += CALCULATOR->getComma();
 			str += " ";
 		}
 		str += get(index)->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);

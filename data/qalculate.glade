@@ -3577,6 +3577,26 @@
 	  </child>
 
 	  <child>
+	    <widget class="GtkCheckButton" id="preferences_checkbutton_all_prefixes">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">enables automatic use of hekto, deka, deci and centi when prefixes is enabled</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Enable automatic use of all prefixes</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_all_prefixes_toggled" last_modification_time="Thu, 02 Oct 2003 10:43:35 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
 	    <widget class="GtkCheckButton" id="preferences_checkbutton_unicode_signs">
 	      <property name="visible">True</property>
 	      <property name="tooltip" translatable="yes">Disable this if you have problems with some fancy characters</property>

@@ -63,7 +63,7 @@ EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 	mngr = new Manager();
 	int itmp;
 	if(str.empty() || ((itmp = str.find_first_not_of(" ")) == (int) string::npos)) {
-//		CALCULATOR->error(true, "Empty expression", NULL);
+//		CALCULATOR->error(true, _("Empty expression"), NULL);
 		return;
 	}
 	if((itmp = str.find_first_not_of(NUMBERS MINUS DOT, 0)) != (int) string::npos) {
@@ -108,33 +108,33 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 	MathOperation s = OPERATION_ADD;
 	while(true) {
 		//find first right parenthesis and then the last left parenthesis before
-		i2 = str.find(RIGHT_BRACKET_CH);
+		i2 = str.find(RIGHT_PARENTHESIS_CH);
 		if(i2 == string::npos) {
-			i = str.rfind(LEFT_BRACKET_CH);	
+			i = str.rfind(LEFT_PARENTHESIS_CH);	
 			if(i == string::npos) {
 				//if no parenthesis break
 				break;
 			} else {
 				//right parenthesis missing -- append
-				str += RIGHT_BRACKET_CH;
+				str += RIGHT_PARENTHESIS_CH;
 				i2 = str.length() - 1;
 			}
 		} else {
 			if(i2 > 0) {
-				i = str.rfind(LEFT_BRACKET_CH, i2 - 1);
+				i = str.rfind(LEFT_PARENTHESIS_CH, i2 - 1);
 			} else {
 				i = string::npos;
 			}
 			if(i == string::npos) {
 				//left parenthesis missing -- prepend
-				str.insert(0, 1, LEFT_BRACKET_CH);
+				str.insert(0, 1, LEFT_PARENTHESIS_CH);
 				i = 0;
 				i2++;
 			}
 		}
 		while(true) {
 			//remove unnecessary double parenthesis and the found parenthesis
-			if(i > 0 && i2 < str.length() - 1 && str[i - 1] == LEFT_BRACKET_CH && str[i2 + 1] == RIGHT_BRACKET_CH) {
+			if(i > 0 && i2 < str.length() - 1 && str[i - 1] == LEFT_PARENTHESIS_CH && str[i2 + 1] == RIGHT_PARENTHESIS_CH) {
 				str.erase(str.begin() + (i - 1));
 				i--; i2--;
 				str.erase(str.begin() + (i2 + 1));
@@ -306,184 +306,6 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 			}
 		}
 	}		
-	
-/*	if((i = str.find(AND)) != string::npos) {
-		bool b = false;
-		while(i != string::npos) {
-			if(i > 0) {
-				str2 = str.substr(0, i);
-				EqContainer eq_c(str2, OPERATION_ADD);
-				Manager *mngr2 = eq_c.calculate();
-				if(mngr2->isFraction() && mngr2->fraction()->isPositive()) {
-					str = str.substr(i + 1, str.length() - (i + 1));	
-				} else {
-					if(!mngr2->isFraction()) {
-						CALCULATOR->error(true, _("Comparison \"%s\" is not solvable, treating as FALSE."), str2.c_str(), NULL);
-					}
-					mngr->clear();
-					return;
-				}
-			} else {
-				str.erase(str.begin());
-			}
-			i = str.find_first_of(AND, 0);
-			b = true;
-		}
-		if(b) {
-			EqContainer eq_c(str, OPERATION_ADD);
-			Manager *mngr2 = eq_c.calculate();
-			if(mngr2->isFraction() && mngr2->fraction()->isPositive()) {
-				mngr->set(1, 1);
-			} else {
-				if(!mngr2->isFraction()) {
-					CALCULATOR->error(true, _("Comparison \"%s\" is not solvable, treating as FALSE."), str2.c_str(), NULL);
-				}
-				mngr->clear();
-			}		
-			return;
-		}
-	}
-	if((i = str.find(OR)) != string::npos) {
-		bool b = false;
-		while(i != string::npos) {
-			if(i > 0) {
-				str2 = str.substr(0, i);
-				EqContainer eq_c(str2, OPERATION_ADD);
-				Manager *mngr2 = eq_c.calculate();
-				if(mngr2->isFraction() && mngr2->fraction()->isPositive()) {
-					mngr->set(1, 1);
-					return;
-				} else {
-					if(!mngr2->isFraction()) {
-						CALCULATOR->error(true, _("Comparison \"%s\" is not solvable, treating as FALSE."), str2.c_str(), NULL);
-					}
-					str = str.substr(i + 1, str.length() - (i + 1));
-				}
-			} else {
-				str.erase(str.begin());
-			}
-			i = str.find_first_of(OR, 0);
-			b = true;
-		}
-		if(b) {
-			EqContainer eq_c(str, OPERATION_ADD);
-			Manager *mngr2 = eq_c.calculate();
-			if(mngr2->isFraction() && mngr2->fraction()->isPositive()) {
-				mngr->set(1, 1);
-			} else {
-				if(!mngr2->isFraction()) {
-					CALCULATOR->error(true, _("Comparison \"%s\" is not solvable, treating as FALSE."), str2.c_str(), NULL);
-				}
-				mngr->clear();
-			}		
-			return;
-		}
-	}
-	if(str[0] == NOT_CH) {
-		str.erase(str.begin());
-		EqContainer eq_c(str, OPERATION_ADD);
-		Manager *mngr2 = eq_c.calculate();
-		if(mngr2->isFraction() && mngr2->fraction()->isPositive()) {
-			mngr->clear();
-		} else {
-			if(!mngr2->isFraction()) {
-				CALCULATOR->error(true, _("Comparison \"%s\" is not solvable, treating as FALSE."), str2.c_str(), NULL);
-			}
-			mngr->set(1, 1);
-		}
-		return;
-	}*/	
-/*	if((i = str.find_first_of(LESS GREATER EQUALS NOT, 0)) != string::npos) {
-		bool c = false;
-		while(i != string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {
-			i++;
-			if(i + 1 == str.length()) {
-				c == true;
-			}
-		}
-		Manager *mngr1 = NULL;
-		while(!c) {
-			if(i == string::npos) {
-				str2 = str.substr(0, str.length());
-			} else {
-				str2 = str.substr(0, i);
-			}
-			EqContainer eq_c(str2, OPERATION_ADD);
-			Manager *mngr2 = eq_c.calculate();			
-			if(mngr1) {
-				mngr1->add(mngr2, OPERATION_SUBTRACT);
-				mngr1->finalize();	
-				bool b = false;
-				if(!mngr1->isFraction()) {
-					CALCULATOR->error(true, _("Comparison \"%s\" is not solvable, treating as FALSE."), str.c_str(), NULL);
-				} else {			
-					switch(i3) {
-						case EQUALS_CH: {
-							b = mngr1->fraction()->isZero();
-							break;
-						}
-						case GREATER_CH: {
-							b = mngr1->fraction()->isPositive();
-							break;
-						}
-						case LESS_CH: {
-							b = mngr1->fraction()->isNegative();
-							break;
-						}
-						case GREATER_CH * EQUALS_CH: {
-							b = !mngr1->fraction()->isNegative();
-							break;
-						}
-						case LESS_CH * EQUALS_CH: {
-							b = !mngr1->fraction()->isPositive();
-							break;
-						}
-						case GREATER_CH * LESS_CH: {
-							b = !mngr1->fraction()->isZero();
-							break;
-						}
-					}
-				}
-				mngr1->unref();
-				if(!b) {
-					mngr->clear();
-					return;
-				} else {
-					mngr->set(1, 1);
-				}
-			}
-			if(i == string::npos) {
-				return;
-			}
-			mngr1 = mngr2;
-			mngr1->ref();
-			if(str.length() > i + 1 && is_in(LESS GREATER NOT EQUALS, str[i + 1])) {
-				if(str[i] == str[i + 1]) {
-					i3 = str[i];
-				} else {
-					i3 = str[i] * str[i + 1];
-					if(i3 == NOT_CH * EQUALS_CH) {
-						i3 = GREATER_CH * LESS_CH;
-					} else if(i3 == NOT_CH * LESS_CH) {
-						i3 = GREATER_CH;
-					} else if(i3 == NOT_CH * GREATER_CH) {
-						i3 = LESS_CH;
-					}
-				}
-				i++;
-			} else {
-				i3 = str[i];
-			}
-			str = str.substr(i + 1, str.length() - (i + 1));
-			i = str.find_first_of(LESS GREATER NOT EQUALS, 0);
-			while(i != string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {
-				i++;
-				if(i + 1 == str.length()) {
-					i = string::npos;
-				}
-			}
-		}
-	}		*/
 	i = 0;
 	i3 = 0;	
 	if(CALCULATOR->inRPNMode()) {
@@ -611,7 +433,7 @@ void EqContainer::add(string &str, MathOperation s) {
 	if(str.length() > 0) {
 		string stmp = str;
 		if(str.find_first_not_of(OPERATORS EXP) != string::npos) {
-			if(str.find_first_not_of(NUMBERS DOT ID_WRAPS, 1) != string::npos && str.find_first_not_of(NUMBERS DOT ID_WRAPS PLUS MINUS, 0) != 0) {
+			if((str.find_first_not_of(NUMBERS DOT ID_WRAPS, 1) != string::npos && str.find_first_not_of(NUMBERS DOT ID_WRAPS PLUS MINUS, 0) != 0) || (str.length() > 0 && str[0] == NOT_CH)) {
 				add(new EqContainer(str, s));
 			} else {
 				add(new EqNumber(str, s));

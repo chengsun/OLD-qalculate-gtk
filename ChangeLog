@@ -1,3 +1,19 @@
+2003-10-02  Niklas Knutsson  <nq@altern.org>
+
+	* Use &amp; for &
+	* Fix NOT
+	* Fix signedness function (and comparisons)
+	* Replace "<" with "&lt;" and ">" with "&gt;"
+	* Display NOT_MANAGER
+	* Make it configurable in preferences
+	* Do not use annoying prefixes (hekto, deka, centi, deci) by default
+	* Change unit conversion from printing value to using a value id as was originally intended
+	* Delete string alternative "," when switching locale
+	* #ifdef out fenv.h and floating point exceptions as they are only obstructing portability when using CLN
+	* Cleanup
+	* Warning function
+	* Disable message function for now
+
 2003-10-01  Niklas Knutsson  <nq@altern.org>
 
 	* Updated swedish translation

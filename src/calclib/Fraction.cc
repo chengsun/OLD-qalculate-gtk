@@ -237,11 +237,11 @@ void Fraction::golden() {
 #ifdef HAVE_LIBCLN
 bool Fraction::zeta() {
 	if(isNegative() || !isInteger() || isZero() || isOne()) {
-		CALCULATOR->error(true, "Integral point for Riemann's zeta must be an integer > 1.", NULL);
+		CALCULATOR->error(true, _("Integral point for Riemann's zeta must be an integer > 1."), NULL);
 		return false;
 	}
 	if(num.isGreaterThan(INT_MAX)) {
-		CALCULATOR->error(true, "Integral point for Riemann's zeta is too large.", NULL);
+		CALCULATOR->error(true, _("Integral point for Riemann's zeta is too large."), NULL);
 		return false;
 	}
 	if(CALCULATOR->alwaysExact()) return false;
@@ -408,7 +408,7 @@ bool Fraction::asin() {
 	Integer abs_num(&num);
 	abs_num.setNegative(false);
 	if(den.isLessThan(&abs_num)) {
-		CALCULATOR->error(true, "The arc sine is only defined for -1 to 1.", NULL);
+		CALCULATOR->error(true, _("The arc sine is only defined for -1 to 1."), NULL);
 		return false;
 	}
 	if(CALCULATOR->alwaysExact()) return false;
@@ -468,7 +468,7 @@ bool Fraction::acos() {
 	Integer abs_num(&num);
 	abs_num.setNegative(false);	
 	if(den.isLessThan(&abs_num)) {
-		CALCULATOR->error(true, "The arc cosine is only defined for -1 to 1.", NULL);
+		CALCULATOR->error(true, _("The arc cosine is only defined for -1 to 1."), NULL);
 		return false;
 	}
 	if(CALCULATOR->alwaysExact()) return false;
@@ -498,7 +498,7 @@ bool Fraction::cosh() {
 }
 bool Fraction::acosh() {
 	if(isNegative() || den.compare(&num) == -1) {
-		CALCULATOR->error(true, "The inverse hyperbolic cosine is undefined for x < 1.", NULL);
+		CALCULATOR->error(true, _("The inverse hyperbolic cosine is undefined for x < 1."), NULL);
 		return false;
 	}
 	if(CALCULATOR->alwaysExact()) return false;
@@ -560,7 +560,7 @@ bool Fraction::atanh() {
 	Integer abs_num(&num);
 	abs_num.setNegative(false);
 	if(!den.isGreaterThan(&abs_num)) {
-		CALCULATOR->error(true, "The inverse hyperbolic tangent is undefined for x > 1 or x < -1 and infinite for 1 and -1.", NULL);
+		CALCULATOR->error(true, _("The inverse hyperbolic tangent is undefined for x > 1 or x < -1 and infinite for 1 and -1."), NULL);
 		return false;
 	}
 	if(CALCULATOR->alwaysExact()) return false;
@@ -577,7 +577,7 @@ int Fraction::sqrt(int solution) {
 /*	setFloat(sqrtl(value()));
 	b_exact = false;*/
 	if(isNegative()) {
-		CALCULATOR->error(true, "The square root is undefined for negative numbers.", NULL);	
+		CALCULATOR->error(true, _("The square root is undefined for negative numbers."), NULL);	
 		return false;
 	}
 	if(!root(2)) {
@@ -599,7 +599,7 @@ bool Fraction::log() {
 		return true;
 	}
 	if(isZero() || isNegative()) {
-		CALCULATOR->error(true, "The natural logarithm is undefined for negative numbers and infinite for zero.", NULL);
+		CALCULATOR->error(true, _("The natural logarithm is undefined for negative numbers and infinite for zero."), NULL);
 		return false;
 	}
 	if(CALCULATOR->alwaysExact()) return false;
@@ -618,11 +618,11 @@ bool Fraction::log(Fraction *fr, bool tryexact) {
 		return true;
 	}
 	if(isZero() || isNegative()) {
-		CALCULATOR->error(true, "Logarithms is undefined for negative numbers and infinite for zero.", NULL);
+		CALCULATOR->error(true, _("Logarithms is undefined for negative numbers and infinite for zero."), NULL);
 		return false;
 	}
 	if(fr->isZero() || fr->isNegative()) {
-		CALCULATOR->error(true, "Logarithms with a negative or zero base is undefined.", NULL);
+		CALCULATOR->error(true, _("Logarithms with a negative or zero base is undefined."), NULL);
 		return false;	
 	}
 #ifdef HAVE_LIBCLN
@@ -685,7 +685,7 @@ bool Fraction::log2() {
 		return true;
 	}
 	if(isZero() || isNegative()) {
-		CALCULATOR->error(true, "Logarithms is undefined for negative numbers and infinite for zero.", NULL);
+		CALCULATOR->error(true, _("Logarithms is undefined for negative numbers and infinite for zero."), NULL);
 		return false;
 	}
 #ifdef HAVE_LIBCLN
@@ -714,7 +714,7 @@ bool Fraction::log10() {
 		return true;
 	}
 	if(isZero() || isNegative()) {
-		CALCULATOR->error(true, "Logarithms is undefined for negative numbers and infinite for zero.", NULL);
+		CALCULATOR->error(true, _("Logarithms is undefined for negative numbers and infinite for zero."), NULL);
 		return false;
 	}
 #ifdef HAVE_LIBCLN
@@ -955,7 +955,7 @@ bool Fraction::rem() {
 }
 int Fraction::pow(const Fraction *fr, int solution) {
 	if(isZero() && fr->isNegative()) {
-		CALCULATOR->error(true, "Division by zero.", NULL);
+		CALCULATOR->error(true, _("Division by zero."), NULL);
 		return false;
 	}
 	if(isZero()) {
@@ -970,7 +970,7 @@ int Fraction::pow(const Fraction *fr, int solution) {
 	if(fr->isOne()) return 1;
 	if(isNegative()) {
 		if(fr->denominator()->isEven()) {
-			CALCULATOR->error(true, "An even root is undefined for negative numbers.", NULL);	
+			CALCULATOR->error(true, _("An even root is undefined for negative numbers."), NULL);	
 			return false;
 		} else {
 			num.setNegative(false);
@@ -1170,7 +1170,7 @@ string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals
 		if(displayflags & DISPLAY_FORMAT_NONASCII) {
 			str += SIGN_MINUS;
 		} else {
-			str += MINUS_STR;
+			str += "-";
 		}			
 	}
 	str += whole_;
@@ -1188,7 +1188,7 @@ string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals
 		if(displayflags & DISPLAY_FORMAT_NONASCII) {
 			str += SIGN_DIVISION;
 		} else {
-			str += DIVISION_STR;	
+			str += "/";	
 		}
 
 		if(displayflags & DISPLAY_FORMAT_TAGS) {	
@@ -1203,7 +1203,7 @@ string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals
 			if(displayflags & DISPLAY_FORMAT_NONASCII) {
 				str += SIGN_MULTIDOT;
 			} else {
-				str += MULTIPLICATION_STR;
+				str += "*";
 			}
 			str += " 1";				
 		}		
@@ -1220,7 +1220,7 @@ string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals
 			if(displayflags & DISPLAY_FORMAT_NONASCII) {
 				str += SIGN_MINUS;
 			} else {
-				str += MINUS_STR;
+				str += "-";
 			}					
 		}
 		str += exponent_;		
@@ -1390,17 +1390,17 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 			for(; l10 < 1; l10++) {
 				whole_.insert(0, 1, '0');
 			}
-			whole_.insert(l10, DOT_STR);
+			whole_.insert(l10, CALCULATOR->getDecimalPoint());
 		}
 		if(min_decimals > 0) {
-			int index = whole_.find(DOT_STR);
+			int index = whole_.find(CALCULATOR->getDecimalPoint());
 			if(index == string::npos) {
-				whole_ += DOT_STR;
+				whole_ += CALCULATOR->getDecimalPoint();
 				for(int i = 0; i < min_decimals; i++) {
 					whole_ += '0';
 				}
 			} else {
-				index += DOT_STR.length();
+				index += strlen(CALCULATOR->getDecimalPoint());
 				index = whole_.length() - index;
 				index = min_decimals - index;
 				for(int i = 0; i < index; i++) {

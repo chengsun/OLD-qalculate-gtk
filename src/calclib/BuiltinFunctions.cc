@@ -23,7 +23,6 @@
 #define FR_FUNCTION(FUNC)	mngr->set(vargs[0]); if(!mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);}
 #define FR_FUNCTION_2(FUNC)	mngr->set(vargs[0]); if(!mngr->fraction()->FUNC(vargs[1]->fraction())) {mngr->set(this, vargs[0], vargs[1], NULL);}
 
-#define TEST_TEXT(i)		if(!vargs[i]->isText()) {CALCULATOR->error(true, _("You need to put expression in quotes for %s()."), name().c_str(), NULL); Manager *mngr2 = createFunctionManagerFromVArgs(vargs); mngr->set(mngr2); mngr2->unref(); return;}
 
 
 
@@ -101,13 +100,17 @@ void ZetaFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 #endif
 
-ErrorFunction::ErrorFunction() : Function("", "error", 1, "Display error", "", 2) {
+ErrorFunction::ErrorFunction() : Function("", "error", 1, "Display error") {
 	setArgumentDefinition(1, new TextArgument());
-	setArgumentDefinition(2, new BooleanArgument());
-	setDefaultValue(2, "1");
 }
 void ErrorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	CALCULATOR->error(vargs[1]->fraction()->isPositive(), vargs[0]->text().c_str(), NULL);
+	CALCULATOR->error(true, vargs[0]->text().c_str(), NULL);
+}
+WarningFunction::WarningFunction() : Function("", "warning", 1, "Display warning") {
+	setArgumentDefinition(1, new TextArgument());
+}
+void WarningFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	CALCULATOR->error(false, vargs[0]->text().c_str(), NULL);
 }
 MessageFunction::MessageFunction() : Function("", "message", 1, "Display a message", "", -1) {
 	setArgumentDefinition(1, new TextArgument());
@@ -146,27 +149,27 @@ void ForFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	y_mngr.protect();
 	i_mngr.protect();
 	int x_id = CALCULATOR->addId(&x_mngr, true);
-	string str = LEFT_BRACKET;
+	string str = LEFT_PARENTHESIS;
 	str += ID_WRAP_LEFT;
 	str += i2s(x_id);
 	str += ID_WRAP_RIGHT;
-	str += RIGHT_BRACKET;
+	str += RIGHT_PARENTHESIS;
 	gsub("\\x", str, condition);
 	gsub("\\x", str, counter);
 	int y_id = CALCULATOR->addId(&y_mngr, true);
-	str = LEFT_BRACKET;
+	str = LEFT_PARENTHESIS;
 	str += ID_WRAP_LEFT;
 	str += i2s(y_id);
 	str += ID_WRAP_RIGHT;
-	str += RIGHT_BRACKET;
+	str += RIGHT_PARENTHESIS;
 	gsub("\\y", str, condition);	
 	gsub("\\y", str, counter);
 	int i_id = CALCULATOR->addId(&i_mngr, true);
-	str = LEFT_BRACKET;
+	str = LEFT_PARENTHESIS;
 	str += ID_WRAP_LEFT;
 	str += i2s(i_id);
 	str += ID_WRAP_RIGHT;
-	str += RIGHT_BRACKET;
+	str += RIGHT_PARENTHESIS;
 	gsub("\\i", str, condition);	
 	gsub("\\i", str, counter);	
 	Manager mngr_calc;
@@ -204,12 +207,12 @@ void ProcessFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	while(i != string::npos) {
 		if(i + 2 < sarg.length() && sarg[i + 2] == '_' && i + 3 < sarg.length()) {
 			string index_str = "component(";
-			if(sarg[i + 3] == LEFT_BRACKET_CH) {
+			if(sarg[i + 3] == LEFT_PARENTHESIS_CH) {
 				int missing = 0;
 				int i2 = find_ending_bracket(sarg, i + 4, &missing);
 				if(i2 == string::npos) {
 					for(int i3 = 1; i3 < missing; i3++) {
-						sarg += RIGHT_BRACKET;
+						sarg += RIGHT_PARENTHESIS;
 					}
 					index_str += sarg.substr(i + 4, sarg.length() - (i + 4));
 					i_length += sarg.length() - i;
@@ -351,12 +354,12 @@ void CustomSumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	while(i != string::npos) {
 		if(i + 2 < sarg.length() && sarg[i + 2] == '_' && i + 3 < sarg.length()) {
 			string index_str = "component(";
-			if(sarg[i + 3] == LEFT_BRACKET_CH) {
+			if(sarg[i + 3] == LEFT_PARENTHESIS_CH) {
 				int missing = 0;
 				int i2 = find_ending_bracket(sarg, i + 4, &missing);
 				if(i2 == string::npos) {
 					for(int i3 = 1; i3 < missing; i3++) {
-						sarg += RIGHT_BRACKET;
+						sarg += RIGHT_PARENTHESIS;
 					}
 					index_str += sarg.substr(i + 4, sarg.length() - (i + 4));
 					i_length += sarg.length() - i;
@@ -608,7 +611,7 @@ RowFunction::RowFunction() : Function("Matrices", "row", 2, "Extract Row as Vect
 void RowFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	Vector *v = vargs[1]->matrix()->rowToVector(vargs[0]->fraction()->numerator()->getInt());
 	if(!v) {
-		CALCULATOR->error(true, "Row %s does not exist in matrix.", vargs[0]->print().c_str(), NULL);
+		CALCULATOR->error(true, _("Row %s does not exist in matrix."), vargs[0]->print().c_str(), NULL);
 		mngr->set(this, vargs[0], vargs[1], NULL);
 	} else {
 		mngr->set(v);
@@ -622,7 +625,7 @@ ColumnFunction::ColumnFunction() : Function("Matrices", "column", 2, "Extract Co
 void ColumnFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	Vector *v = vargs[1]->matrix()->columnToVector(vargs[0]->fraction()->numerator()->getInt());
 	if(!v) {
-		CALCULATOR->error(true, "Column %s does not exist in matrix.", vargs[0]->print().c_str(), NULL);
+		CALCULATOR->error(true, _("Column %s does not exist in matrix."), vargs[0]->print().c_str(), NULL);
 		mngr->set(this, vargs[0], vargs[1], NULL);
 	} else {
 		mngr->set(v);
