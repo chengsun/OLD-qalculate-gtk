@@ -11,6 +11,13 @@
 
 #include <gtk/gtk.h>
 
+#define EXPAND_TO_ITER(model, view, iter)		GtkTreePath *path = gtk_tree_model_get_path(model, &iter); \
+							gtk_tree_view_expand_to_path(GTK_TREE_VIEW(view), path); \
+							gtk_tree_path_free(path);
+#define EXPAND_ITER(model, view, iter)			GtkTreePath *path = gtk_tree_model_get_path(model, &iter); \
+							gtk_tree_view_expand_row(GTK_TREE_VIEW(view), path, false); \
+							gtk_tree_path_free(path);							
+
 void create_umenu(void);
 void create_umenu2(void);
 void create_vmenu(void);
