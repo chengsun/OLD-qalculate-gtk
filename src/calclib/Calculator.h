@@ -47,7 +47,9 @@ class Calculator {
   public:
   
   	bool b_busy;
-	string expression_to_calculate;
+	string expression_to_calculate, tmp_print_result;
+	NumberFormat tmp_nrformat; int tmp_displayflags; int tmp_min_decimals; 
+	int tmp_max_decimals; bool *tmp_in_exact; bool *tmp_usable; Prefix *tmp_prefix;	
   
 	vector<Variable*> variables;
 	vector<Function*> functions;	
@@ -116,7 +118,8 @@ class Calculator {
 	void clearBuffers();
 	void abort();
 	bool busy();
-	Manager *calculate(string str, bool enable_abort = false);
+	Manager *calculate(string str, bool enable_abort = false, int usecs = -1);
+	string printManagerTimeOut(Manager *mngr, int usecs = 100000, NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *prefix = NULL);
 	Manager *convert(long double value, Unit *from_unit, Unit *to_unit);
 	Manager *convert(string str, Unit *from_unit, Unit *to_unit);	
 	Manager *convert(Manager *mngr, Unit *to_unit, bool always_convert = true);		

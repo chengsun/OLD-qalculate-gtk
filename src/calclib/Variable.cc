@@ -18,10 +18,14 @@
 Variable::Variable(string cat_, string name_, Manager *mngr_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active) {
 	mngr = mngr_;
 	if(mngr) mngr->ref();
+	b_expression = false;
+	sexpression = "";
+	calculated_precision = 0;
 	setChanged(false);
 }
 Variable::Variable(string cat_, string name_, string expression_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active) {
 	mngr = NULL;
+	calculated_precision = 0;
 	set(expression_);
 	setChanged(false);
 }
@@ -38,9 +42,20 @@ Variable::~Variable() {
 ExpressionItem *Variable::copy() const {
 	return new Variable(this);
 }
+bool Variable::isExpression() const {
+	return b_expression;
+}
+string Variable::expression() const {
+	return sexpression;
+}
 void Variable::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_VARIABLE) {
-		set(new Manager(((Variable*) item)->get()));
+		calculated_precision = 0;
+		sexpression = ((Variable*) item)->expression();
+		b_expression = ((Variable*) item)->isExpression();
+		if(!b_expression) {
+			set(((Variable*) item)->copyManager());
+		}
 	}
 	ExpressionItem::set(item);
 }
@@ -51,21 +66,35 @@ void Variable::set(Manager *mngr_) {
 	if(mngr) mngr->unref();
 	mngr = mngr_;
 	mngr->ref();
+	calculated_precision = 0;
+	b_expression = false;
+	sexpression = "";
 	setChanged(true);
 }
 void Variable::set(string expression_) {
-	if(mngr) mngr->unref();
+	b_expression = true;
+	sexpression = expression_;
+	remove_blank_ends(sexpression);
+	calculated_precision = 0;
+/*	if(mngr) mngr->unref();
 	bool b_always_exact = CALCULATOR->alwaysExact();
 	CALCULATOR->setAlwaysExact(true);
 	mngr = CALCULATOR->calculate(expression_);
-	CALCULATOR->setAlwaysExact(b_always_exact);
+	CALCULATOR->setAlwaysExact(b_always_exact);*/
 	setChanged(true);
 }
 Manager *Variable::get() {
+	if(b_expression && (calculated_precision != CALCULATOR->getPrecision() || !mngr)) {
+		calculated_precision = CALCULATOR->getPrecision();
+		if(mngr) {
+			mngr->unref();
+		}
+		mngr = CALCULATOR->calculate(sexpression);
+	}
 	return mngr;
 }
-const Manager *Variable::get() const {
-	return mngr;
+Manager *Variable::copyManager() const {
+	return new Manager(mngr);
 }
 
 DynamicVariable::DynamicVariable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, new Manager(), title_, is_local, is_builtin, is_active) {
@@ -86,22 +115,23 @@ DynamicVariable::DynamicVariable() : Variable() {
 }
 DynamicVariable::~DynamicVariable() {}
 void DynamicVariable::set(const ExpressionItem *item) {
-	calculated_precision = 0;
+//	calculated_precision = 0;
 	ExpressionItem::set(item);
 }
 void DynamicVariable::set(Manager *mngr_) {}
 void DynamicVariable::set(string expression_) {}
 Manager *DynamicVariable::get() {
 	if(calculated_precision != CALCULATOR->getPrecision()) {
+		calculated_precision = CALCULATOR->getPrecision();
 		calculate();
 	}
-	return Variable::get();
+	return mngr;
 }
-const Manager *DynamicVariable::get() const {
-	if(calculated_precision != CALCULATOR->getPrecision() || !mngr) {
+Manager *DynamicVariable::copyManager() const {
+	if(calculated_precision != CALCULATOR->getPrecision()) {
 		calculate();
 	}
-	return Variable::get();
+	return new Manager(mngr);
 }
 int DynamicVariable::calculatedPrecision() const {
 	return calculated_precision;

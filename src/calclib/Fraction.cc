@@ -29,11 +29,11 @@ using namespace cln;
 Fraction::Fraction() {
 	clear();
 }
-Fraction::Fraction(long int numerator_, long int denominator_, long int exp10_) {
-	set(numerator_, denominator_, exp10_);
+Fraction::Fraction(long int numerator_, long int denominator_, long int exp10_, bool nogcd) {
+	set(numerator_, denominator_, exp10_, nogcd);
 }
-Fraction::Fraction(const Integer *numerator_, const Integer *denominator_, const Integer *exp10_) {
-	set(numerator_, denominator_, exp10_);
+Fraction::Fraction(const Integer *numerator_, const Integer *denominator_, const Integer *exp10_, bool nogcd) {
+	set(numerator_, denominator_, exp10_, nogcd);
 }
 Fraction::Fraction(const Fraction *fr) {
 	set(fr);
@@ -49,30 +49,32 @@ void Fraction::clear() {
 	num.clear();
 	den.set(1);
 }
-void Fraction::set(long int numerator_, long int denominator_, long int exp10_) {
+void Fraction::set(long int numerator_, long int denominator_, long int exp10_, bool nogcd) {
 	num.set(numerator_);
 	den.set(denominator_);
 	if(den.isNegative()) {
 		num.setNegative(!num.isNegative());
 		den.setNegative(false);
 	}
-	Integer *divisor;
-	if(num.gcd(&den, &divisor)) {
-		num.divide(divisor);
-		den.divide(divisor);
-	}
 	if(exp10_ < 0) {
 		den.exp10(-exp10_);
 	} else {
 		num.exp10(exp10_);
 	}	
-	delete divisor;
+	if(!nogcd) {
+		Integer *divisor;
+		if(num.gcd(&den, &divisor)) {
+			num.divide(divisor);
+			den.divide(divisor);
+		}
+		delete divisor;
+	}
 	b_exact = true;
 }
 void Fraction::setFloat(long double value_) {
 	set(d2s(value_));
 }
-void Fraction::set(const Integer *numerator_, const Integer *denominator_, const Integer *exp10_) {
+void Fraction::set(const Integer *numerator_, const Integer *denominator_, const Integer *exp10_, bool nogcd) {
 	if(numerator_) num.set(numerator_);
 	else num.set(1);
 	if(denominator_) den.set(denominator_);
@@ -80,11 +82,6 @@ void Fraction::set(const Integer *numerator_, const Integer *denominator_, const
 	if(den.isNegative()) {
 		num.setNegative(!num.isNegative());
 		den.setNegative(false);
-	}
-	Integer *divisor;
-	if(num.gcd(&den, &divisor)) {
-		num.divide(divisor);
-		den.divide(divisor);
 	}
 	if(exp10_) {
 		if(exp10_->isNegative()) {
@@ -94,8 +91,15 @@ void Fraction::set(const Integer *numerator_, const Integer *denominator_, const
 		} else {
 			num.exp10(exp10_);
 		}	
+	}	
+	if(!nogcd) {
+		Integer *divisor;
+		if(num.gcd(&den, &divisor)) {
+			num.divide(divisor);
+			den.divide(divisor);
+		}
+		delete divisor;
 	}
-	delete divisor;
 	b_exact = true;
 }
 bool Fraction::set(string str) {
@@ -608,7 +612,7 @@ bool Fraction::log() {
 	return true;
 #endif	
 }
-bool Fraction::log(Fraction *fr) {
+bool Fraction::log(Fraction *fr, bool tryexact) {
 	if(isOne()) {
 		clear();
 		return true;
@@ -632,17 +636,19 @@ bool Fraction::log(Fraction *fr) {
 	}
 	cl_RA clfr = num.getCL_I() / den.getCL_I();
 	cl_RA clbase = fr->numerator()->getCL_I() / fr->denominator()->getCL_I();	
-	cl_RA clns;
-	if(logp(clfr, clbase, &clns)) {
-		num.set(cln::numerator(clns));
-		den.set(cln::denominator(clns));	
-		if(b_minus) {
-			num.setNegative(true);
+	if(tryexact) {		
+		cl_RA clns;
+		if(logp(clfr, clbase, &clns)) {
+			num.set(cln::numerator(clns));
+			den.set(cln::denominator(clns));	
+			if(b_minus) {
+				num.setNegative(true);
+			}
+			return true;
 		}
-		return true;
-	}
-	if(CALCULATOR->alwaysExact()) return false;
-	b_exact = false;
+		if(CALCULATOR->alwaysExact()) return false;
+		b_exact = false;
+	}	
 	cl_R clr = cln::log(clfr, clbase);
 	clfr = cln::rational(clr);
 	num.set(cln::numerator(clfr));
@@ -1077,9 +1083,17 @@ bool Fraction::floatify(int precision, int max_decimals, bool *infinite_series) 
 		bool b_always_exact = CALCULATOR->alwaysExact();
 		CALCULATOR->setAlwaysExact(false);
 		exp_test.setNegative(false);
-		exp_test.log10();
+		Fraction fr10(10);
+		exp_test.log(&fr10, false);
 		exp_test.floor();
 		exp.set(exp_test.numerator());
+/*		exp_test.floor();
+		Integer expdiv(exp_test.numerator());
+		expdiv.div10();
+		while(!expdiv.isZero()) {
+			exp.add(1);
+			expdiv.div10();
+		}*/
 		exp.add(1);
 		if(exp.isGreaterThan(precision)) {
 			exp.subtract(precision);
@@ -1232,7 +1246,15 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 			exp_pre.setNegative(false);
 			bool b_always_exact = CALCULATOR->alwaysExact();
 			CALCULATOR->setAlwaysExact(false);	
-			if(exp_pre.log10()) {
+/*			exp_pre.floor();
+			Integer expdiv(exp_pre.numerator());
+			expdiv.div10();
+			while(!expdiv.isZero()) {
+				exp.add(1);
+				expdiv.div10();
+			}*/
+			Fraction fr10(10);
+			if(exp_pre.log(&fr10, false)) {
 				exp_pre.floor();
 				exp.set(exp_pre.numerator());
 			}
@@ -1329,16 +1351,16 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 	} else if(exp.isPositive()) {
 		den_spec.exp10(&exp);
 	}
-	Integer *divisor;
+/*	Integer *divisor;
 	if(whole.gcd(&den_spec, &divisor)) {
 		whole.divide(divisor);
 		den_spec.divide(divisor);
 	}	
-	delete divisor;
-	if(in_composite && whole.isOne() && den_spec.isOne()) {
+	delete divisor;*/
+	if(in_composite && whole.equals(&den_spec)) {
 		return;
 	} else if(!force_fractional && !(displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY)) {
-		Fraction fr(&whole, &den_spec);
+		Fraction fr(&whole, &den_spec, NULL, true);
 		bool infinite_series = false;
 		if(displayflags & DISPLAY_FORMAT_INDICATE_INFINITE_SERIES) {
 			fr.floatify(PRECISION, max_decimals, &infinite_series);
@@ -1391,11 +1413,13 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 		}
 	} else {
 		Integer *part;
-		if((displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY) && !den_spec.isOne()) {
-			part = new Integer(&whole);
+		Integer whole_test(&whole);
+		bool b = whole_test.divide(&den_spec, &part);	
+		if((displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY) && !b) {
+			part->set(&whole);
 			whole.clear();
 		} else {
-			whole.divide(&den_spec, &part);	
+			whole.set(&whole_test);
 		}
 		Integer *divisor;
 		if(part->gcd(&den_spec, &divisor)) {

@@ -6673,13 +6673,14 @@ Copyright (c) 2003 Niklas Knutsson
 		      <property name="has_frame">True</property>
 		      <property name="invisible_char" translatable="yes">*</property>
 		      <property name="activates_default">False</property>
-		      <property name="width_chars">8</property>
+		      <property name="width_chars">10</property>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">0</property>
 		      <property name="right_attach">1</property>
 		      <property name="top_attach">0</property>
 		      <property name="bottom_attach">1</property>
+		      <property name="x_options"></property>
 		      <property name="y_options"></property>
 		    </packing>
 		  </child>

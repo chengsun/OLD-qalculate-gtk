@@ -259,12 +259,16 @@ bool Matrix::isOrthogonal() const {
 	delete identity;
 	return b;
 }
-Manager *Matrix::determinant() const {
+Manager *Matrix::determinant(Manager *mngr) const {
 	if(columns() != rows()) {
 		CALCULATOR->error(true, _("The determinant can only be calculated for matrices with an equal number of rows and columns."), NULL);
 		return NULL;
 	}
-	Manager *mngr = new Manager();
+	if(!mngr) {
+		mngr = new Manager();
+	} else {
+		mngr->clear();
+	}
 	if(rows() == 1) {
 		mngr->set(get(1, 1));
 	} else if(rows() == 2) {
@@ -275,11 +279,25 @@ Manager *Matrix::determinant() const {
 		tmp.add(get(1, 2), OPERATION_MULTIPLY);
 		mngr->add(&tmp, OPERATION_SUBTRACT);
 	} else {
-		for(int index_c = 1; index_c <= columns(); index_c++) {
-			Manager *tmp = cofactor(1, index_c);
-			tmp->add(get(1, index_c), OPERATION_MULTIPLY);
-			mngr->add(tmp, OPERATION_ADD);
-			delete tmp;
+		Manager tmp;
+		Matrix mtrx(elements.size() - 1, elements[0].size() - 1);
+		for(int index_c = 0; index_c < elements[0].size(); index_c++) {
+			for(int index_r2 = 1; index_r2 < elements.size(); index_r2++) {
+				for(int index_c2 = 0; index_c2 < elements[index_r2].size(); index_c2++) {
+					if(index_c2 > index_c) {
+						mtrx.set(elements[index_r2][index_c2], index_r2, index_c2);
+					} else if(index_c2 < index_c) {
+						mtrx.set(elements[index_r2][index_c2], index_r2, index_c2 + 1);
+					}
+				}
+			}
+			mtrx.determinant(&tmp);	
+			if(index_c % 2 == 1) {
+				tmp.addInteger(-1, OPERATION_MULTIPLY);
+			}
+			
+			tmp.add(elements[0][index_c], OPERATION_MULTIPLY);
+			mngr->add(&tmp, OPERATION_ADD);
 		}
 	}
 	return mngr;

@@ -1,8 +1,18 @@
+2003-09-30  Niklas Knutsson  <nq@altern.org>
+
+	* Execute expression when updating result display if expression has changed
+	* Do not display more than 1500 digits in result display widget and not more than 500000 digits in history (works for me at least)
+	* Restrict display time in variables dialog
+	* Restrict value length if variables dialog
+	* Delay calculation of variables
+	* Remove signs menu
+	* Try to speed up determinant (not very succeful)
+
 2003-09-29  Niklas Knutsson  <nq@altern.org>
 
 	* A little icon for the window
 	* Update display outside of thread
-	* Do not reverse order when transforming managar
+	* Do not reverse order when transforming manager
 	* Merge boolean operations into Manager class to enable unsolved operations
 	* Make sure that thread actually is canceled before resuming
 	* Change log to log10 and logn to log

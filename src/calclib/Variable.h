@@ -34,6 +34,9 @@ class Variable : public ExpressionItem {
   protected:
 
 	Manager *mngr;
+	bool b_expression;
+ 	int calculated_precision;
+	string sexpression;
 
   public:
   
@@ -46,6 +49,8 @@ class Variable : public ExpressionItem {
 	virtual ExpressionItem *copy() const;
 	virtual void set(const ExpressionItem *item);
 	virtual int type() const;
+	virtual bool isExpression() const;
+	virtual string expression() const;
 
 	/**
 	* Sets the value of the variable.
@@ -63,16 +68,12 @@ class Variable : public ExpressionItem {
 	/**
 	* Returns the value of the variable.
 	*/	
-	virtual const Manager *get() const;	
+	virtual Manager *copyManager() const;	
 
 };
 
 class DynamicVariable : public Variable {
 
-  private:
-  
-  	int calculated_precision;
-	
   protected:
   
   	virtual void calculate() const = 0;
@@ -91,11 +92,8 @@ class DynamicVariable : public Variable {
 	* Returns the value of the variable.
 	*/	
 	Manager *get();
-
-	/**
-	* Returns the value of the variable.
-	*/	
-	const Manager *get() const;	
+	
+	virtual Manager *copyManager() const;		
 
 	void set(Manager *mngr_);
 	void set(string expression_);	

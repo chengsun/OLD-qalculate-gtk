@@ -157,6 +157,14 @@ void *calculate_proc(void *x) {
 	mngr2->unref();
 	CALCULATOR->b_busy = false;
 }
+void *print_proc(void *x) {
+	CALCULATOR->b_busy = true;
+	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+	Manager *mngr = (Manager*) x;
+	CALCULATOR->tmp_print_result = mngr->print(CALCULATOR->tmp_nrformat, CALCULATOR->tmp_displayflags, CALCULATOR->tmp_min_decimals, CALCULATOR->tmp_max_decimals, CALCULATOR->tmp_in_exact, CALCULATOR->tmp_usable, CALCULATOR->tmp_prefix);
+	CALCULATOR->b_busy = false;
+}
 
 Calculator::Calculator() {
 
@@ -864,16 +872,25 @@ void Calculator::abort() {
 bool Calculator::busy() {
 	return b_busy;
 }
-Manager *Calculator::calculate(string str, bool enable_abort) {
+Manager *Calculator::calculate(string str, bool enable_abort, int usecs) {
 	Manager *mngr;
-	if(enable_abort) {
+	if(enable_abort || usecs > 0) {
 		saveState();
 		b_busy = true;
+		bool had_usecs = usecs > 0;
 		mngr = new Manager();
 		expression_to_calculate = str;
 		while(!pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, mngr) == 0) {
 			usleep(100);
+		}
+		while(usecs > 0 && b_busy) {
+			usleep(1000);
+			usecs -= 1000;
 		}	
+		if(had_usecs && b_busy) {
+			abort();
+			return NULL;
+		}
 	} else {
 		int i = 0; 
 		string str2 = "";
@@ -902,6 +919,24 @@ Manager *Calculator::calculate(string str, bool enable_abort) {
 		error(true, _("Math error: not a number"), NULL);
 	else if(vtype == FP_INFINITE)
 		error(true, _("Math error: infinite"), NULL);*/		
+}
+string Calculator::printManagerTimeOut(Manager *mngr, int usecs, NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, bool *in_exact, bool *usable, Prefix *prefix) {
+	if(!mngr) return "";
+	tmp_nrformat = nrformat; tmp_displayflags = displayflags; tmp_min_decimals = min_decimals; tmp_max_decimals = max_decimals; tmp_in_exact = in_exact; tmp_usable = usable; tmp_prefix = prefix;
+	saveState();
+	b_busy = true;
+	while(!pthread_create(&calculate_thread, &calculate_thread_attr, print_proc, mngr) == 0) {
+		usleep(100);
+	}
+	while(usecs > 0 && b_busy) {
+		usleep(1000);
+		usecs -= 1000;
+	}	
+	if(b_busy) {
+		abort();
+		tmp_print_result = "timed out";
+	}		
+	return tmp_print_result;
 }
 void Calculator::checkFPExceptions() {
 	int raised = fetestexcept(FE_ALL_EXCEPT);

@@ -58,7 +58,7 @@ class Matrix {
 	
 	bool isSymmetric() const;
 	bool isOrthogonal() const;
-	Manager *determinant() const;
+	Manager *determinant(Manager *mngr = NULL) const;
 	Manager *cofactor(int row, int column) const;
 
 	/**

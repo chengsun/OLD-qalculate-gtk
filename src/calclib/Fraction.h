@@ -21,14 +21,14 @@ class Fraction {
 	bool b_exact;
   public:
   	Fraction();
-	Fraction(long int numerator_, long int denominator_ = 1, long int exp10_ = 0);
-	Fraction(const Integer *numerator_, const Integer *denominator_ = NULL, const Integer *exp10_ = NULL);	
+	Fraction(long int numerator_, long int denominator_ = 1, long int exp10_ = 0, bool nogcd = false);
+	Fraction(const Integer *numerator_, const Integer *denominator_ = NULL, const Integer *exp10_ = NULL, bool nogcd = false);	
 	Fraction(const Fraction *fr);
 	Fraction(string str);
 	~Fraction();
-	void set(long int numerator_, long int denominator_ = 1, long int exp10_ = 0);
+	void set(long int numerator_, long int denominator_ = 1, long int exp10_ = 0, bool nogcd = false);
 	void setFloat(long double value_);		
-	void set(const Integer *numerator_ = NULL, const Integer *denominator_ = NULL, const Integer *exp10_ = NULL);	
+	void set(const Integer *numerator_ = NULL, const Integer *denominator_ = NULL, const Integer *exp10_ = NULL, bool nogcd = false);	
 	void set(const Fraction *fr);
 	bool set(string str);	
 	void e();
@@ -76,7 +76,7 @@ class Fraction {
 	int sqrt(int solution = 1);	
 	bool cbrt();	
 	bool log();	
-	bool log(Fraction *fr);		
+	bool log(Fraction *fr, bool tryexact = true);		
 	bool log2();	
 	bool log10();	
 	bool exp();

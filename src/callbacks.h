@@ -46,6 +46,8 @@ void on_tVariableCategories_selection_changed(GtkTreeSelection *treeselection, g
 void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 
+void execute_expression();
+
 void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void update_function_arguments_list(Function *f);
 
