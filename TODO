@@ -1,5 +1,4 @@
 * Implement signals for deleted variables etc.
-* Mode without implicit multiplication
 * Sort out when small floats really are zero due to limited precision
 * Quoted ")" in function
 * Do not recalculate plot data when it has not changed

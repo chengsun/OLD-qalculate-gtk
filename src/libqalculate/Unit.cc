@@ -324,8 +324,8 @@ MathStructure &AliasUnit::convertToFirstBase(MathStructure &mvalue, MathStructur
 			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 			gsub("\\y", stmp2, stmp);
 			CALCULATOR->parse(&mvalue, stmp, po);
-			CALCULATOR->delId(x_id, true);
-			CALCULATOR->delId(y_id, true);
+			CALCULATOR->delId(x_id);
+			CALCULATOR->delId(y_id);
 		} else {
 			MathStructure *mstruct = new MathStructure();
 			CALCULATOR->parse(mstruct, value, po);
@@ -346,8 +346,8 @@ MathStructure &AliasUnit::convertToFirstBase(MathStructure &mvalue, MathStructur
 			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 			gsub("\\y", stmp2, stmp);
 			CALCULATOR->parse(&mvalue, stmp, po);
-			CALCULATOR->delId(x_id, true);
-			CALCULATOR->delId(y_id, true);			
+			CALCULATOR->delId(x_id);
+			CALCULATOR->delId(y_id);			
 		} else {
 			MathStructure *mstruct = new MathStructure();
 			CALCULATOR->parse(mstruct, rvalue, po);
@@ -377,8 +377,8 @@ MathStructure &AliasUnit::firstBaseValue(MathStructure &mvalue, MathStructure &m
 		stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 		gsub("\\y", stmp2, stmp);
 		CALCULATOR->parse(&mvalue, stmp, po);
-		CALCULATOR->delId(x_id, true);
-		CALCULATOR->delId(y_id, true);
+		CALCULATOR->delId(x_id);
+		CALCULATOR->delId(y_id);
 	} else {
 		MathStructure *mstruct = new MathStructure();
 		CALCULATOR->parse(mstruct, value, po);

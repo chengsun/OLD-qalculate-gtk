@@ -854,7 +854,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 		CALCULATOR->parse(&mstruct, stmp, po);
 		for(unsigned int i = 0; i < v_id.size(); i++) {
-			CALCULATOR->delId(v_id[i], true);
+			CALCULATOR->delId(v_id[i]);
 		}
 		if(precision() > 0) mstruct.setPrecision(precision());
 		if(isApproximate()) mstruct.setApproximate();
@@ -1157,7 +1157,7 @@ bool Argument::test(MathStructure &value, int index, MathFunction *f, const Eval
 		ids += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 		gsub("\\x", ids, expression);
 		b = CALCULATOR->testCondition(expression);
-		CALCULATOR->delId(id, true);
+		CALCULATOR->delId(id);
 	}
 	if(!b) {
 		if(b_error) {

@@ -77,17 +77,7 @@
     <dataset>
       <_title>Planets</_title>
       <datafile>planets.xml</datafile>
-      <copyright>This data uses material from the Wikipedia articles
-"Earth" (http://www.wikipedia.org/wiki/Earth),
-"Jupiter (planet)" (http://www.wikipedia.org/wiki/Jupiter_(planet)),
-"Mars (planet)" (http://www.wikipedia.org/wiki/Mars_(planet)),
-"Mercury (planet)" (http://www.wikipedia.org/wiki/Mercury_(planet)),
-"Neptune (planet)" (http://www.wikipedia.org/wiki/Neptune_(planet)),
-"Pluto (planet)" (http://www.wikipedia.org/wiki/Pluto_(planet)),
-"Saturn (planet)" (http://www.wikipedia.org/wiki/Saturn_(planet)),
-"Uranus (planet)" (http://www.wikipedia.org/wiki/Uranus_(planet)), and
-"Venus (planet)" (http://en.wikipedia.org/wiki/Venus_(planet)),
-licensed under the GNU Free Documentation License (http://www.gnu.org/copyleft/fdl.html)</copyright>
+      <copyright>This data uses material from the Wikipedia articles&#10;"Earth" (http://www.wikipedia.org/wiki/Earth),&#10;"Jupiter (planet)" (http://www.wikipedia.org/wiki/Jupiter_(planet)),&#10;"Mars (planet)" (http://www.wikipedia.org/wiki/Mars_(planet)),&#10;"Mercury (planet)" (http://www.wikipedia.org/wiki/Mercury_(planet)),&#10;"Neptune (planet)" (http://www.wikipedia.org/wiki/Neptune_(planet)),&#10;"Pluto (planet)" (http://www.wikipedia.org/wiki/Pluto_(planet)),&#10;"Saturn (planet)" (http://www.wikipedia.org/wiki/Saturn_(planet)),&#10;"Uranus (planet)" (http://www.wikipedia.org/wiki/Uranus_(planet)), and&#10;"Venus (planet)" (http://en.wikipedia.org/wiki/Venus_(planet)),&#10;licensed under the GNU Free Documentation License (http://www.gnu.org/copyleft/fdl.html)</copyright>
       <name index="1">
         <reference>true</reference>
         <_name>planet</_name>

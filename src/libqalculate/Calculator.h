@@ -207,7 +207,7 @@ class Calculator {
 	unsigned int parseAddIdAppend(MathFunction *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent = false);
 	unsigned int parseAddVectorId(const string &str, const ParseOptions &po, bool persistent = false);
 	MathStructure *getId(unsigned int id);	
-	void delId(unsigned int id, bool force = false);
+	void delId(unsigned int id);
 
 	Variable *getVariable(unsigned int index) const;
 	Unit *getUnit(unsigned int index) const;	

@@ -1,3 +1,8 @@
+2004-10-17 Niklas Knutsson  <nq@altern.org>
+
+	* Disable plural forms not at the end of text strings (metersqrt(5) = meter * sqrt(5) instead of meters * qrt(5))
+	* Replace new lines with &#10; in definition xml files until we have a better solution
+
 2004-10-14 Niklas Knutsson  <nq@altern.org>
 
 	* Speed-up csum when component(i, "v") is used

@@ -1169,14 +1169,7 @@
       <name index="1">
         <_name>bmi</_name>
       </name>
-      <_description>Calculates the Body Mass Index. The resulting BMI-value is interpreted as follows:
-
-Underweight		&lt; 18.5
-Normal weight		18.5-25
-Overweight		25-30
-Obesity			&gt; 30
-
-Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_description>
+      <_description>Calculates the Body Mass Index. The resulting BMI-value is interpreted as follows:&#10;&#10;Underweight&#9;&#9;&lt; 18.5&#10;Normal weight&#9;&#9;18.5-25&#10;Overweight&#9;&#9;25-30&#10;Obesity&#9;&#9;&#9;&gt; 30&#10;&#10;Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_description>
       <expression>(\x/(1000g))/(\y/m)^2</expression>
       <argument type="free" index="1">
         <_title>Weight</_title>
@@ -1752,9 +1745,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
         <reference>true</reference>
         <_name>days</_name>
       </name>
-      <_description>Returns the number of days between two dates.
-
-Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
+      <_description>Returns the number of days between two dates.&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
       <argument index="1">
         <_title>First Date</_title>
       </argument>
@@ -1774,9 +1765,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <reference>true</reference>
         <_name>yearfrac</_name>
       </name>
-      <_description>Returns the number of years (fractional) between two dates.
-
-Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
+      <_description>Returns the number of years (fractional) between two dates.&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
       <argument index="1">
         <_title>First Date</_title>
       </argument>
@@ -2692,9 +2681,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
           <reference>true</reference>
           <_name>elasticity</_name>
         </name>
-        <_description>Calculates the demand elesticity. Also works for supply elasticity, income elasticity, cross-price elasticity, etc. Just replace demand, with supply, or price with income...
-	
-Ex. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 for the function "Q = 100 - x^2" where x is the default price variable.</_description>
+        <_description>Calculates the demand elesticity. Also works for supply elasticity, income elasticity, cross-price elasticity, etc. Just replace demand, with supply, or price with income...&#10;&#10;Ex. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 for the function "Q = 100 - x^2" where x is the default price variable.</_description>
         <expression>replace(diff(\x,\Z{x}),\Z,\y,1)*\y/replace(\x,\Z,\y)</expression>
         <argument type="free" index="1">
           <_title>Demand Function</_title>
@@ -2772,9 +2759,7 @@ Ex. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 
           <reference>true</reference>
           <_name>sln</_name>
         </name>
-        <_description>Determines the straight line depreciation of an asset for a single period.
-    
-Cost is the amount you paid for the asset. Salvage is the value of the asset at the end of the period. Life is the number of periods over which the asset is depreciated. SLN divides the cost evenly over the life of an asset.</_description>
+        <_description>Determines the straight line depreciation of an asset for a single period.&#10;&#10;Cost is the amount you paid for the asset. Salvage is the value of the asset at the end of the period. Life is the number of periods over which the asset is depreciated. SLN divides the cost evenly over the life of an asset.</_description>
         <expression>(\x-\y)/\z</expression>
         <argument type="free" index="1">
           <_title>Cost</_title>
@@ -2792,9 +2777,7 @@ Cost is the amount you paid for the asset. Salvage is the value of the asset at 
           <reference>true</reference>
           <_name>pv</_name>
         </name>
-        <_description>Returns the present value of an investment.
-    
-If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</_description>
+        <_description>Returns the present value of an investment.&#10;&#10;If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</_description>
         <expression>(-\A{0}-\z*(1+\x*\B{0})*(((1+\x)^\y-1)/\x))/((1+\x)^\y)</expression>
         <argument type="free" index="1">
           <_title>Interest Rate</_title>
@@ -2928,9 +2911,7 @@ If type = 1 then the payment is made at the beginning of the period, If type = 0
           <reference>true</reference>
           <_name>pmt</_name>
         </name>
-        <_description>Returns the amount of payment for a loan based on a constant interest rate and constant payments (each payment is equal amount).
-    
-If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</_description>
+        <_description>Returns the amount of payment for a loan based on a constant interest rate and constant payments (each payment is equal amount).&#10;&#10;If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</_description>
         <expression>(-\z*((1+\x)^\y)-\A{0})/((1+\x*\B{0})*(((1+\x)^\y-1)/\x))</expression>
         <argument type="free" index="1">
           <_title>Rate</_title>
@@ -2954,9 +2935,7 @@ If type = 1 then the payment is made at the beginning of the period, If type = 0
           <reference>true</reference>
           <_name>nper</_name>
         </name>
-        <_description>Calculates number of periods of an investment based on periodic constant payments and a constant interest rate.
-    
-Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</_description>
+        <_description>Calculates number of periods of an investment based on periodic constant payments and a constant interest rate.&#10;&#10;Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</_description>
         <expression>ln((\y*(1+\x*\B{0})-\A{0}*\x)/(\z*\x+\y*(1+\x*\B)))/ln(1+\x)</expression>
         <argument type="free" index="1">
           <_title>Interest Rate</_title>
@@ -3026,9 +3005,7 @@ Type defines the due date. 1 for payment at the beginning of a period and 0 (def
           <reference>true</reference>
           <_name>ppmt</_name>
         </name>
-        <_description>Calculates the amount of a payment of an annuity going towards principal.
-    
-Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</_description>
+        <_description>Calculates the amount of a payment of an annuity going towards principal.&#10;&#10;Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</_description>
         <expression>((-\a*(pow(1+\x,\z))-\B{0})/((1+\x*\C{0})*((pow(1+\x,\z)-1)/\x)))+(\a*pow(1+\x,(\y-1))+((-\a*(pow(1+\x,\z))-\B)/((1+\x*\C)*((pow(1+\x,\z)-1)/\x)))*((pow(1+\x,(\y-1))-1)/\x))*\x</expression>
         <argument type="free" index="1">
           <_title>Periodic Interest Rate</_title>
@@ -3072,9 +3049,7 @@ Type defines the due date. 1 for payment at the beginning of a period and 0 (def
           <reference>true</reference>
           <_name>fv</_name>
         </name>
-        <_description>Computes the future value of an investment. This is based on periodic, constant payments and a constant interest rate.
-    
-If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</_description>
+        <_description>Computes the future value of an investment. This is based on periodic, constant payments and a constant interest rate.&#10;&#10;If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</_description>
         <expression>-(\A{0}*((1+\x)^\y)+\z*(1+\x*\B{0})*(((1+\x)^\y-1)/\x))</expression>
         <argument type="free" index="1">
           <_title>Interest Rate</_title>
@@ -3137,9 +3112,7 @@ If type = 1 then the payment is made at the beginning of the period, If type = 0
           <reference>true</reference>
           <_name>ipmt</_name>
         </name>
-        <_description>Calculates the amount of a payment of an annuity going towards interest.
-    
-Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</_description>
+        <_description>Calculates the amount of a payment of an annuity going towards interest.&#10;&#10;Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</_description>
         <expression>-(\a*pow(1+\x,(\y-1))+((-\a*(pow(1+\x,\z))-\B)/((1+\x*\C)*((pow(1+\x,\z)-1)/\x)))*((pow(1+\x,(\y-1))-1)/\x))*\x</expression>
         <argument type="free" index="1">
           <_title>Periodic Interest Rate</_title>
@@ -3168,9 +3141,7 @@ Type defines the due date. 1 for payment at the beginning of a period and 0 (def
           <reference>true</reference>
           <_name>intrate</_name>
         </name>
-        <_description>Returns the interest rate for a fully invested security. 
-    
-Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
+        <_description>Returns the interest rate for a fully invested security.&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
         <expression>(\a-\z)/\z/yearfrac(\x,\y,\B{0},1)</expression>
         <argument type="date" index="1">
           <_title>Settlement Date</_title>
@@ -3227,9 +3198,7 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
           <reference>true</reference>
           <_name>received</_name>
         </name>
-        <_description>Returns the amount received at the maturity date for an invested security. 
-
-Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360. The settlement date must be before maturity date.</_description>
+        <_description>Returns the amount received at the maturity date for an invested security.&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360. The settlement date must be before maturity date.</_description>
         <expression>\z/(1-\a*yearfrac(\x,\y,\B{0},1))</expression>
         <argument type="date" index="1">
           <_title>Settlement Date</_title>
@@ -3254,9 +3223,7 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
           <reference>true</reference>
           <_name>disc</_name>
         </name>
-        <_description>Returns the discount rate for a security.
-    
-Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
+        <_description>Returns the discount rate for a security.&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
         <expression>(\a-\z)/\a/yearfrac(\x,\y,\B{0},1))</expression>
         <argument type="date" index="1">
           <_title>Settlement Date</_title>
@@ -3281,9 +3248,7 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
           <reference>true</reference>
           <_name>accrintm</_name>
         </name>
-        <_description>Returns the accrued interest for a security which pays interest at maturity date.
-    
-Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
+        <_description>Returns the accrued interest for a security which pays interest at maturity date.&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
         <expression>\A{1000}*\z*yearfrac(\x,\y,\B{0},1)</expression>
         <argument type="date" index="1">
           <_title>Issue Date</_title>
@@ -3308,9 +3273,7 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
           <reference>true</reference>
           <_name>accrint</_name>
         </name>
-        <_description>Returns accrued interest for a security which pays periodic interest.
-    
-Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
+        <_description>Returns accrued interest for a security which pays periodic interest.&#10;&#10;Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
         <expression>\b*\a/\c*\c*yearfrac(\x,\z,\D{0},1)+\y*0</expression>
         <argument type="date" index="1">
           <_title>Issue Date</_title>
@@ -3342,9 +3305,7 @@ Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis is t
           <reference>true</reference>
           <_name>coupnum</_name>
         </name>
-        <_description>Returns the number of coupons to be paid between the settlement and the maturity.
-    
-Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
+        <_description>Returns the number of coupons to be paid between the settlement and the maturity.&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
         <expression>trunc(yearfrac(\x,\y,\A{0},1)*\z)</expression>
         <argument type="date" index="1">
           <_title>Settlement Date</_title>
@@ -3367,9 +3328,7 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
           <reference>true</reference>
           <_name>pricedisc</_name>
         </name>
-        <_description>Calculates and returns the price per $100 face value of a security bond. The security does not pay interest at maturity.
-    
-Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
+        <_description>Calculates and returns the price per $100 face value of a security bond. The security does not pay interest at maturity.&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
         <expression>\a-\z*\a*yearfrac(\x,\y,\B{0},1)</expression>
         <argument type="date" index="1">
           <_title>Settlement Date</_title>
@@ -3394,9 +3353,7 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
           <reference>true</reference>
           <_name>pricemat</_name>
         </name>
-        <_description>Calculates and returns the price per $100 face value of a security. The security pays interest at maturity.
-    
-Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
+        <_description>Calculates and returns the price per $100 face value of a security. The security pays interest at maturity.&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
         <expression>(100+yearfrac(\z,\y,\C{0},1)*\a*100)/(1+yearfrac(\x,\y,\C,1)*\b)-yearfrac(\z,\x,\C,1)*\a*100</expression>
         <argument type="date" index="1">
           <_title>Settlement Date</_title>

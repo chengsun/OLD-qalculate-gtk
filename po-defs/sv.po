@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-10-14 01:08+0200\n"
+"POT-Creation-Date: 2004-10-18 01:38+0200\n"
 "PO-Revision-Date: 2003-10-27 12:29+0100\n"
 "Last-Translator: Niklas Knutsson <nq@altern.org>\n"
 "Language-Team: Swedish\n"
@@ -875,16 +875,17 @@ msgstr ""
 "perioden."
 
 #: src/libqalculate/data/functions.xml.in.h:43
+#, fuzzy
 msgid ""
 "Calculates the Body Mass Index. The resulting BMI-value is interpreted as "
-"follows: Underweight &lt; 18.5 Normal weight 18.5-25 Overweight 25-30 "
-"Obesity &gt; 30 Note that you must use units for weight (ex. 59kg) and "
-"length (ex. 174cm)."
+"follows:&#10;&#10;Underweight&#9;&#9;&lt; 18.5&#10;Normal weight&#9;&#9;18.5-"
+"25&#10;Overweight&#9;&#9;25-30&#10;Obesity&#9;&#9;&#9;&gt; 30&#10;&#10;Note "
+"that you must use units for weight (ex. 59kg) and length (ex. 174cm)."
 msgstr ""
 "Beräknar BMI (Body Mass Index). Det resulterande BMI-värdet tolkas som "
-"följer: Undervikt &lt; 18.5 Idealvikt 18.5-25 Åvervikt 25-30 Fetma &gt; 30 "
-"Notera att du måste använda enheter för vikt (ex. 59kg) och längd (ex. "
-"174cm)."
+"följer:&#10;&#10;Undervikt&#9;&#9;&lt; 18.5&#10;Idealvikt&#9;&#9;18.5-"
+"25&#10;Åvervikt&#9;&#9;25-30&#10;Fetma&#9;&#9;&#9;&gt; 30&#10;&#10;Notera "
+"att du måste använda enheter för vikt (ex. 59kg) och längd (ex. 174cm)."
 
 #: src/libqalculate/data/functions.xml.in.h:44
 #, fuzzy

@@ -857,14 +857,12 @@ MathStructure *Calculator::getId(unsigned int id) {
 	return NULL;
 }
 
-void Calculator::delId(unsigned int id, bool force) {
+void Calculator::delId(unsigned int id) {
 	if(ids_p.find(id) != ids_p.end()) {	
-		if(!ids_p[id] || force) {
-			freed_ids.push_back(id);
-			id_structs[id]->unref();
-			id_structs.erase(id);
-			ids_p.erase(id);
-		}
+		freed_ids.push_back(id);
+		id_structs[id]->unref();
+		id_structs.erase(id);
+		ids_p.erase(id);
 	}
 }
 
@@ -2687,7 +2685,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										name_length = name->length();
 										if(name_length < found_function_name_length) {
 											name = NULL;
-										} else if(po.limit_implicit_multiplication) {
+										} else if(po.limit_implicit_multiplication || ((ExpressionItem*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).plural) {
 											if(name_length != unit_chars_left) name = NULL;
 										} else if(name_length > unit_chars_left) {
 											name = NULL;
@@ -2793,12 +2791,14 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						vt3 = 0;
 					}
 					case 2: {
-						if(po.units_enabled && (!po.limit_implicit_multiplication || ufv_index + 1 == unit_chars_left) && ufv_index < unit_chars_left && vt3 < ufv[vt2][ufv_index].size()) {
+						if(po.units_enabled && (!po.limit_implicit_multiplication || ufv_index + 1 == unit_chars_left) && ufv_index < unit_chars_left && vt3 < ufv[vt2][ufv_index].size()) {							
 							object = ufv[vt2][ufv_index][vt3];
-							ufvt = 'u';
-							name = &((Unit*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
-							name_length = name->length();
-							case_sensitive = &((Unit*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
+							if(ufv_index + 1 == unit_chars_left || !((Unit*) object)->getName(ufv_i[vt2][ufv_index][vt3]).plural) {
+								ufvt = 'u';					
+								name = &((Unit*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
+								name_length = name->length();
+								case_sensitive = &((Unit*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
+							}
 							vt3++;
 							break;
 						}
@@ -2982,7 +2982,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 											name = &((Unit*) ufvl[ufv_index2])->getName(ufvl_i[ufv_index2]).name;
 											case_sensitive = ((Unit*) ufvl[ufv_index2])->getName(ufvl_i[ufv_index2]).case_sensitive;
 											name_length = name->length();
-											if(po.limit_implicit_multiplication) {
+											if(po.limit_implicit_multiplication || ((Unit*) ufvl[ufv_index2])->getName(ufvl_i[ufv_index2]).plural) {
 												if(name_length != unit_chars_left) name = NULL;
 											} else if(name_length > unit_chars_left) {
 												name = NULL;
@@ -3011,11 +3011,13 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									name = &((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).name;
 									case_sensitive = ((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).case_sensitive;
 									name_length = name->length();
-									if(name_length <= unit_chars_left && ((case_sensitive && compare_name(*name, str, name_length, str_index)) || (!case_sensitive && compare_name_no_case(*name, str, name_length, str_index)))) {
-										str.erase(str_index - name_length_old, name_length_old);
-										str_index -= name_length_old;
-										object = ufv[2][index][ufv_index2];
-										goto replace_text_by_unit_place;
+									if(ufv_index2 + 1 == unit_chars_left || !((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).plural) {
+										if(name_length <= unit_chars_left && ((case_sensitive && compare_name(*name, str, name_length, str_index)) || (!case_sensitive && compare_name_no_case(*name, str, name_length, str_index)))) {
+											str.erase(str_index - name_length_old, name_length_old);
+											str_index -= name_length_old;
+											object = ufv[2][index][ufv_index2];
+											goto replace_text_by_unit_place;
+										}
 									}
 								}
 								if(po.limit_implicit_multiplication) {
@@ -3135,7 +3137,6 @@ void Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		mstruct->set_nocopy(*m_temp);
 		m_temp->unref();
 		if(s == MINUS_CH) mstruct->negate();
-		//delId(id);
 		return;
 	}
 	int itmp;
@@ -3670,37 +3671,6 @@ string Calculator::getName(string name, ExpressionItem *object, bool force, bool
 	return stmp;
 }
 
-/*bool Calculator::loadGlobalDefinitions() {
-	string dir = PACKAGE_DATA_DIR;
-	string filename;
-	dir += "/qalculate/";
-	filename = dir;
-	filename += "prefixes.xml";
-	if(!loadDefinitions(filename.c_str(), false)) {
-		return false;
-	}	
-	filename = dir;
-	filename += "units.xml";	
-	if(!loadDefinitions(filename.c_str(), false)) {
-		return false;
-	}
-	filename = dir;
-	filename += "functions.xml";	
-	if(!loadDefinitions(filename.c_str(), false)) {
-		return false;
-	}
-	filename = dir;
-	filename += "datasets.xml";	
-	if(!loadDefinitions(filename.c_str(), false)) {
-		return false;
-	}
-	filename = dir;
-	filename += "variables.xml";
-	if(!loadDefinitions(filename.c_str(), false)) {
-		return false;
-	}
-	return true;
-}*/
 bool Calculator::loadGlobalDefinitions() {
 	string dir = PACKAGE_DATA_DIR;
 	string filename;
@@ -5661,10 +5631,11 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
 					}
 				}
 				if(!ds->description().empty()) {
+					str = ds->description();
 					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) ds->description().c_str());
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
 					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) ds->description().c_str());
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
 					}
 				}
 				if((save_global || ds->isLocal()) && !ds->copyright().empty()) {
@@ -5749,10 +5720,11 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
 							}
 						}
 						if(!dp->description().empty()) {
+							str = dp->description();
 							if(save_global) {
-								xmlNewTextChild(newnode2, NULL, (xmlChar*) "_description", (xmlChar*) dp->description().c_str());
+								xmlNewTextChild(newnode2, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
 							} else {
-								xmlNewTextChild(newnode2, NULL, (xmlChar*) "description", (xmlChar*) dp->description().c_str());
+								xmlNewTextChild(newnode2, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
 							}
 						}
 					}

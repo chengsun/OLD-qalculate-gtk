@@ -410,7 +410,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Days between two dates</emphasis></term>
 <listitem>
 <para><command>days(First Date, Second Date[, Day Counting Basis][, Financial function mode])</command></para>
-<para>Returns the number of days between two dates. Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<para>Returns the number of days between two dates.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>First Date: a date</para></listitem>
@@ -459,7 +459,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Years between two dates</emphasis></term>
 <listitem>
 <para><command>yearfrac(First Date, Second Date[, Day Counting Basis][, Financial function mode])</command></para>
-<para>Returns the number of years (fractional) between two dates. Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<para>Returns the number of years (fractional) between two dates.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>First Date: a date</para></listitem>
@@ -481,7 +481,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Accrued interest of security paying at maturity</emphasis></term>
 <listitem>
 <para><command>accrintm(Issue Date, Settlement Date, Annual Rate of Security[, Par Value][, Day Counting Basis])</command></para>
-<para>Returns the accrued interest for a security which pays interest at maturity date. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<para>Returns the accrued interest for a security which pays interest at maturity date.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Issue Date: a date</para></listitem>
@@ -497,7 +497,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Accrued interest of security with periodic interest payments</emphasis></term>
 <listitem>
 <para><command>accrint(Issue Date, First Interest, Settlement Date, Annual Rate of Security, Par Value, Number of payments per year[, Day Counting Basis])</command></para>
-<para>Returns accrued interest for a security which pays periodic interest. Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<para>Returns accrued interest for a security which pays periodic interest.</para><para></para><para>Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Issue Date: a date</para></listitem>
@@ -515,7 +515,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Amount received at maturity for a security bond</emphasis></term>
 <listitem>
 <para><command>received(Settlement Date, Maturity Date, Investment, Discount Rate[, Day Counting Basis])</command></para>
-<para>Returns the amount received at the maturity date for an invested security. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360. The settlement date must be before maturity date.</para>
+<para>Returns the amount received at the maturity date for an invested security.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360. The settlement date must be before maturity date.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Settlement Date: a date</para></listitem>
@@ -546,7 +546,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Discount rate for a security</emphasis></term>
 <listitem>
 <para><command>disc(Settlement Date, Maturity Date, Price per $100 face value, Redemption[, Day Counting Basis])</command></para>
-<para>Returns the discount rate for a security. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<para>Returns the discount rate for a security.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Settlement Date: a date</para></listitem>
@@ -601,7 +601,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Future Value</emphasis></term>
 <listitem>
 <para><command>fv(Interest Rate, Number of Periods, Payment made each period[, Present Value][, Type])</command></para>
-<para>Computes the future value of an investment. This is based on periodic, constant payments and a constant interest rate. If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</para>
+<para>Computes the future value of an investment. This is based on periodic, constant payments and a constant interest rate.</para><para></para><para>If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Interest Rate: a free value</para></listitem>
@@ -632,7 +632,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Interest rate for a fully invested security</emphasis></term>
 <listitem>
 <para><command>intrate(Settlement Date, Maturity Date, Investment, Redemption[, Day Counting Basis])</command></para>
-<para>Returns the interest rate for a fully invested security. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<para>Returns the interest rate for a fully invested security.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Settlement Date: a date</para></listitem>
@@ -677,7 +677,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Number of coupons to be paid</emphasis></term>
 <listitem>
 <para><command>coupnum(Settlement Date, Maturity Date, Frequency[, Day Counting Basis])</command></para>
-<para>Returns the number of coupons to be paid between the settlement and the maturity. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<para>Returns the number of coupons to be paid between the settlement and the maturity.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Settlement Date: a date</para></listitem>
@@ -692,7 +692,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Payment for a loan</emphasis></term>
 <listitem>
 <para><command>pmt(Rate, Number of Periods, Present Value[, Future Value][, Type])</command></para>
-<para>Returns the amount of payment for a loan based on a constant interest rate and constant payments (each payment is equal amount). If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</para>
+<para>Returns the amount of payment for a loan based on a constant interest rate and constant payments (each payment is equal amount).</para><para></para><para>If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Rate: a free value</para></listitem>
@@ -708,7 +708,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Payment of an annuity going towards interest (IPMT)</emphasis></term>
 <listitem>
 <para><command>ipmt(Periodic Interest Rate, Period, Number of Periods, Present Value[, Future Value][, Type])</command></para>
-<para>Calculates the amount of a payment of an annuity going towards interest. Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</para>
+<para>Calculates the amount of a payment of an annuity going towards interest.</para><para></para><para>Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Periodic Interest Rate: a free value</para></listitem>
@@ -725,7 +725,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Payment of an annuity going towards principal (PPMT)</emphasis></term>
 <listitem>
 <para><command>ppmt(Periodic Interest Rate, Amortizement Period, Number of Periods, Present Value[, Desired Future Value][, Type])</command></para>
-<para>Calculates the amount of a payment of an annuity going towards principal. Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</para>
+<para>Calculates the amount of a payment of an annuity going towards principal.</para><para></para><para>Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Periodic Interest Rate: a free value</para></listitem>
@@ -756,7 +756,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Periods of an investment</emphasis></term>
 <listitem>
 <para><command>nper(Interest Rate, Payment made each period, Present Value[, Future Value][, Type])</command></para>
-<para>Calculates number of periods of an investment based on periodic constant payments and a constant interest rate. Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</para>
+<para>Calculates number of periods of an investment based on periodic constant payments and a constant interest rate.</para><para></para><para>Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Interest Rate: a free value</para></listitem>
@@ -772,7 +772,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Present Value</emphasis></term>
 <listitem>
 <para><command>pv(Interest Rate, Number of Periods, Payment made each period[, Future Value][, Type])</command></para>
-<para>Returns the present value of an investment. If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</para>
+<para>Returns the present value of an investment.</para><para></para><para>If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Interest Rate: a free value</para></listitem>
@@ -788,7 +788,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Price per $100 face value of a security</emphasis></term>
 <listitem>
 <para><command>pricemat(Settlement Date, Maturity Date, Issue Date, Discount Rate, Annual Yield[, Day Counting Basis])</command></para>
-<para>Calculates and returns the price per $100 face value of a security. The security pays interest at maturity. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<para>Calculates and returns the price per $100 face value of a security. The security pays interest at maturity.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Settlement Date: a date</para></listitem>
@@ -805,7 +805,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Price per $100 face value of a security bond</emphasis></term>
 <listitem>
 <para><command>pricedisc(Settlement Date, Maturity Date, Discount, Redemption[, Day Counting Basis])</command></para>
-<para>Calculates and returns the price per $100 face value of a security bond. The security does not pay interest at maturity. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
+<para>Calculates and returns the price per $100 face value of a security bond. The security does not pay interest at maturity.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Settlement Date: a date</para></listitem>
@@ -835,7 +835,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Straight Line Depreciation</emphasis></term>
 <listitem>
 <para><command>sln(Cost, Salvage value, Life)</command></para>
-<para>Determines the straight line depreciation of an asset for a single period. Cost is the amount you paid for the asset. Salvage is the value of the asset at the end of the period. Life is the number of periods over which the asset is depreciated. SLN divides the cost evenly over the life of an asset.</para>
+<para>Determines the straight line depreciation of an asset for a single period.</para><para></para><para>Cost is the amount you paid for the asset. Salvage is the value of the asset at the end of the period. Life is the number of periods over which the asset is depreciated. SLN divides the cost evenly over the life of an asset.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Cost: a free value</para></listitem>
@@ -925,7 +925,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Elasticity</emphasis></term>
 <listitem>
 <para><command>elasticity(Demand Function, Price[, Price Variable])</command></para>
-<para>Calculates the demand elesticity. Also works for supply elasticity, income elasticity, cross-price elasticity, etc. Just replace demand, with supply, or price with income... Ex. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 for the function "Q = 100 - x^2" where x is the default price variable.</para>
+<para>Calculates the demand elesticity. Also works for supply elasticity, income elasticity, cross-price elasticity, etc. Just replace demand, with supply, or price with income...</para><para></para><para>Ex. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 for the function "Q = 100 - x^2" where x is the default price variable.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Demand Function: a free value</para></listitem>
@@ -1834,7 +1834,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Body Mass Index (BMI)</emphasis></term>
 <listitem>
 <para><command>bmi(Weight, Length)</command></para>
-<para>Calculates the Body Mass Index. The resulting BMI-value is interpreted as follows: Underweight &lt; 18.5 Normal weight 18.5-25 Overweight 25-30 Obesity &gt; 30 Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</para>
+<para>Calculates the Body Mass Index. The resulting BMI-value is interpreted as follows:</para><para></para><para>Underweight		&lt; 18.5</para><para>Normal weight		18.5-25</para><para>Overweight		25-30</para><para>Obesity			&gt; 30</para><para></para><para>Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Weight: a free value</para></listitem>
