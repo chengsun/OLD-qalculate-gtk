@@ -35,6 +35,7 @@ extern bool do_timeout;
 extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *nbexpression_glade, *decimals_glade;
 extern GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *namesedit_glade, *nbases_glade, *plot_glade, *precision_glade;
 extern GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
+extern GladeXML *periodictable_glade;
 
 bool changing_in_nbases_dialog;
 
@@ -7437,6 +7438,11 @@ void on_menu_item_convert_number_bases_activate(GtkMenuItem *w, gpointer user_da
 	gtk_widget_show(dialog);
 	gtk_window_present(GTK_WINDOW(dialog));
 }
+void on_menu_item_periodic_table_activate(GtkMenuItem *w, gpointer user_data) {
+	GtkWidget *dialog = get_periodic_dialog();
+	gtk_widget_show(dialog);
+	gtk_window_present(GTK_WINDOW(dialog));
+}
 void on_menu_item_plot_functions_activate(GtkMenuItem *w, gpointer user_data) {
 	GtkWidget *dialog = get_plot_dialog();
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_expression")), gtk_entry_get_text(GTK_ENTRY(expression)));
@@ -9074,6 +9080,24 @@ void on_unit_dialog_button_apply_clicked(GtkButton *w, gpointer user_data) {
 }
 void on_unit_dialog_entry_unit_activate(GtkEntry *entry, gpointer user_data) {
 	on_unit_dialog_button_ok_clicked(GTK_BUTTON(glade_xml_get_widget (unit_glade, "unit_dialog_button_ok")), NULL);
+}
+
+void on_element_button_clicked(GtkButton *w, gpointer user_data) {
+	unsigned int index = GPOINTER_TO_UINT(user_data);
+	Element *e = CALCULATOR->getElementByIndex(index);
+	if(e) {
+		if(!e->weight.empty()) {
+			string str;
+			if(e->weight.length() > 1 && e->weight[0] == '[') {
+				str = e->weight.substr(1, e->weight.length() - 2);
+			} else {
+				str = e->weight;
+			}
+			str += " u";
+			insert_text(str.c_str());
+		}
+		
+	}
 }
 
 #ifdef __cplusplus

@@ -67,12 +67,24 @@ class CalculatorMessage {
 
 #include <MathStructure.h>
 
+enum {
+	ALKALI_METALS,
+	ALKALI_EARTH_METALS,
+	LANTHANIDES,
+	ACTINIDES,
+	TRANSITION_METALS,
+	METALS,
+	METALLOIDS,
+	NONMETALS,
+	HALOGENS,
+	NOBLE_GASES,
+	TRANSACTINIDES
+};
+
 struct Element {
 	string symbol, name;
-	int number;
-	string weight, density, melting_point, boiling_point, atomic_radius, covalent_radius, ionic_radius, atomic_volume;
-	string specific_heat, fusion_heat, evaporation_heat, termal_conductivity, pauling, ionising_energy;
-	string oxidation_states; string electronic_configuration;
+	int number, group;
+	string weight;
 	int x_pos, y_pos;
 };
 
@@ -147,9 +159,7 @@ class Calculator {
 	Function *f_for, *f_sum, *f_product, *f_process, *f_process_matrix, *f_csum, *f_if, *f_function;
 	Function *f_diff, *f_solve;
 	Function *f_error, *f_warning, *f_message, *f_save, *f_load, *f_export, *f_title;
-	Function *f_atomic_symbol, *f_atomic_number, *f_atomic_name, *f_atomic_weight, *f_atomic_density, *f_melting_point, *f_boiling_point, *f_atomic_radius;
-	Function *f_covalent_radius, *f_ionic_radius, *f_atomic_volume, *f_specific_heat, *f_fusion_heat, *f_evaporation_heat;
-	Function *f_termal_conductivity, *f_pauling, *f_ionising_energy, *f_oxidation_states, *f_electronic_configuration, *f_atom;
+	Function *f_atomic_symbol, *f_atomic_number, *f_atomic_name, *f_atomic_weight, *f_atom;
 	Unit *u_rad, *u_euro;
 	Prefix *null_prefix;
 
@@ -339,6 +349,7 @@ class Calculator {
 	bool elementsLoaded() const;
 	Element *getElement(int e_number);
 	Element *getElement(string e_symname);
+	Element *getElementByIndex(unsigned int index);
 		
 };
 

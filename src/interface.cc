@@ -34,6 +34,7 @@
 extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *nbexpression_glade, *decimals_glade;
 extern GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *namesedit_glade, *nbases_glade, *plot_glade, *precision_glade;
 extern GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
+extern GladeXML *periodictable_glade;
 
 GtkWidget *tFunctionCategories;
 GtkWidget *tFunctions;
@@ -87,6 +88,8 @@ extern EvaluationOptions evalops, saved_evalops;
 
 extern vector<vector<GtkWidget*> > element_entries;
 extern vector<string> initial_history;
+
+GtkTooltips *periodic_tooltips;
 
 gint compare_categories(gconstpointer a, gconstpointer b) {
 	return strcasecmp((const char*) a, (const char*) b);
@@ -1157,4 +1160,144 @@ GtkWidget* get_unit_dialog (void) {
 
 	return glade_xml_get_widget (unit_glade, "unit_dialog");
 }
+GtkWidget* get_periodic_dialog (void) {
+	if(!periodictable_glade) {
+	
+		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "periodictable.glade", NULL);
+		periodictable_glade = glade_xml_new(gstr, NULL, NULL);
+		g_assert(periodictable_glade != NULL);
+		g_free(gstr);
+	
+		g_assert (glade_xml_get_widget (periodictable_glade, "periodic_dialog") != NULL);
+		
+		glade_xml_signal_autoconnect(periodictable_glade);
+		
+		Element *e;
+		GtkWidget *e_button;
+		GtkTable *e_table = GTK_TABLE(glade_xml_get_widget (periodictable_glade, "periodic_table"));
+		periodic_tooltips = gtk_tooltips_new();
+		string tip;
+		GtkStyle *e_style[] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+		GtkStyle *l_style;
+		GdkColor c_black;
+		c_black.red = 0x0000;
+		c_black.green = 0x0000;
+		c_black.blue = 0x0000;
+		for(unsigned int i = 1; ; i++) {
+			e = CALCULATOR->getElementByIndex(i);
+			if(!e) break;
+			if(e->x_pos > 0 && e->x_pos <= 18 && e->y_pos > 0 && e->y_pos <= 10) {
+				e_button = gtk_button_new_with_label(e->symbol.c_str());
+				gtk_button_set_relief(GTK_BUTTON(e_button), GTK_RELIEF_HALF);
+				if(!e_style[0]) {
+					l_style = gtk_style_copy(gtk_widget_get_style(gtk_bin_get_child(GTK_BIN(e_button))));
+					for(unsigned int i2 = 0; i2 < 5; i2++) {
+						l_style->text[i2] = c_black;
+						l_style->fg[i2] = c_black;
+					}
+					for(unsigned int i3 = 0; i3 < 12; i3++) {
+						e_style[i3] = gtk_style_copy(gtk_widget_get_style(e_button));
+						for(unsigned int i2 = 0; i2 < 5; i2++) {
+							e_style[i3]->bg_pixmap[i2] = NULL;
+							e_style[i3]->text[i2] = c_black;
+							switch(i3) {
+								case 0: {
+									e_style[i3]->bg[i2].red = 0xeeee;
+									e_style[i3]->bg[i2].green = 0xcccc;
+									e_style[i3]->bg[i2].blue = 0xeeee;
+									break;
+								}
+								case 1: {
+									e_style[i3]->bg[i2].red = 0xdddd;
+									e_style[i3]->bg[i2].green = 0xcccc;
+									e_style[i3]->bg[i2].blue = 0xeeee;
+									break;
+								}
+								case 2: {
+									e_style[i3]->bg[i2].red = 0xcccc;
+									e_style[i3]->bg[i2].green = 0xdddd;
+									e_style[i3]->bg[i2].blue = 0xffff;
+									break;
+								}
+								case 3: {
+									e_style[i3]->bg[i2].red = 0xdddd;
+									e_style[i3]->bg[i2].green = 0xeeee;
+									e_style[i3]->bg[i2].blue = 0xffff;
+									break;
+								}
+								case 4: {
+									e_style[i3]->bg[i2].red = 0xcccc;
+									e_style[i3]->bg[i2].green = 0xeeee;
+									e_style[i3]->bg[i2].blue = 0xeeee;
+									break;
+								}
+								case 5: {
+									e_style[i3]->bg[i2].red = 0xbbbb;
+									e_style[i3]->bg[i2].green = 0xffff;
+									e_style[i3]->bg[i2].blue = 0xbbbb;
+									break;
+								}
+								case 6: {
+									e_style[i3]->bg[i2].red = 0xeeee;
+									e_style[i3]->bg[i2].green = 0xffff;
+									e_style[i3]->bg[i2].blue = 0xdddd;
+									break;
+								}
+								case 7: {
+									e_style[i3]->bg[i2].red = 0xffff;
+									e_style[i3]->bg[i2].green = 0xffff;
+									e_style[i3]->bg[i2].blue = 0xaaaa;
+									break;
+								}
+								case 8: {
+									e_style[i3]->bg[i2].red = 0xffff;
+									e_style[i3]->bg[i2].green = 0xdddd;
+									e_style[i3]->bg[i2].blue = 0xaaaa;
+									break;
+								}
+								case 9: {
+									e_style[i3]->bg[i2].red = 0xffff;
+									e_style[i3]->bg[i2].green = 0xcccc;
+									e_style[i3]->bg[i2].blue = 0xdddd;
+									break;
+								}
+								case 10: {
+									e_style[i3]->bg[i2].red = 0xaaaa;
+									e_style[i3]->bg[i2].green = 0xeeee;
+									e_style[i3]->bg[i2].blue = 0xdddd;
+									break;
+								}
+								case 11: {
+									break;
+								}
+							}
+						}
+					}
+				}
+				if(e->group > 0 && e->group <= 11) gtk_widget_set_style(e_button, e_style[e->group - 1]);
+				else gtk_widget_set_style(e_button, e_style[11]);
+				gtk_widget_set_style(gtk_bin_get_child(GTK_BIN(e_button)), l_style);
+				if(e->x_pos > 2) gtk_table_attach_defaults(e_table, e_button, e->x_pos + 1, e->x_pos + 2, e->y_pos, e->y_pos + 1);
+				else  gtk_table_attach_defaults(e_table, e_button, e->x_pos, e->x_pos + 1, e->y_pos, e->y_pos + 1);
+				tip = i2s(e->number);
+				tip += " ";
+				tip += e->name;
+				if(!e->weight.empty() && e->weight != "-") {
+					tip += "\n";
+					tip += e->weight;
+					tip += " u";
+				}
+				gtk_tooltips_set_tip(periodic_tooltips, e_button, tip.c_str(), "");
+				/*int style_nr = e->color_type;
+				if(style_nr < 1 || style_nr > 8) style_nr = 1;
+				style_nr--;
+				if(!e_style[style_nr*/
+				gtk_widget_show(e_button);
+				g_signal_connect((gpointer) e_button, "clicked", G_CALLBACK(on_element_button_clicked), (gpointer) i);
+			}
+		}
+	
+	}
 
+	return glade_xml_get_widget (periodictable_glade, "periodic_dialog");
+}

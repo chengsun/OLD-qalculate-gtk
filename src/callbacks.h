@@ -246,6 +246,7 @@ void on_number_base_expression_radiobutton_custom_base_toggled(GtkToggleButton *
 void on_number_base_expression_spinbutton_base_value_changed(GtkSpinButton *w, gpointer user_data);
 void on_number_base_expression_radiobutton_roman_toggled(GtkToggleButton *w, gpointer user_data);
 void on_menu_item_convert_number_bases_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_periodic_table_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_assumptions_integer_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_assumptions_rational_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_assumptions_real_activate(GtkMenuItem *w, gpointer user_data);
@@ -418,6 +419,8 @@ void on_plot_entry_expression_activate(GtkEntry *entry, gpointer user_data);
 void on_unit_dialog_button_apply_clicked(GtkButton *w, gpointer user_data);
 void on_unit_dialog_button_ok_clicked(GtkButton *w, gpointer user_data);
 void on_unit_dialog_entry_unit_activate(GtkEntry *entry, gpointer user_data);
+
+void on_element_button_clicked(GtkButton *w, gpointer user_data);
 
 #ifdef __cplusplus
 }

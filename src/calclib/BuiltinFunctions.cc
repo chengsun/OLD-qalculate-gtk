@@ -1941,9 +1941,6 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 #define SET_ATOMIC_STRING_VALUE(x)	if(e->x.empty()) {\
 						CALCULATOR->error(true, _("Property not defined for element %s."), e->symbol.c_str(), NULL);\
 						return 0;\
-					} else if(e->x == "-") {\
-						CALCULATOR->error(true, _("Property not defined for element %s."), e->symbol.c_str(), NULL);\
-						return 0;\
 					}\
 					unsigned int i = e->x.find_first_of("(");\
 					ParseOptions po; po.read_precision = ALWAYS_READ_PRECISION;\
@@ -1951,9 +1948,6 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 					else mstruct = CALCULATOR->parse(e->x, po);
 					
 #define SET_ATOMIC_STRING_VALUE_NO_APPROX(x)	if(e->x.empty()) {\
-						CALCULATOR->error(true, _("Property not defined for element %s."), e->symbol.c_str(), NULL);\
-						return 0;\
-					} else if(e->x == "-") {\
 						CALCULATOR->error(true, _("Property not defined for element %s."), e->symbol.c_str(), NULL);\
 						return 0;\
 					}\
@@ -1992,147 +1986,25 @@ int AtomicNameFunction::calculate(MathStructure &mstruct, const MathStructure &v
 }
 AtomicWeightFunction::AtomicWeightFunction() : Function("atomic_weight", 1) {setArgumentDefinition(1, new TextArgument());}
 int AtomicWeightFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT SET_ATOMIC_STRING_VALUE(weight)
+	GET_ELEMENT
+	if(e->weight.empty()) {
+		CALCULATOR->error(true, _("Weight not defined for element %s."), e->symbol.c_str(), NULL);
+		return 0;
+	}
+	if(e->weight.length() > 1 && e->weight[0] == '[') mstruct.set(Number(e->weight.substr(1, e->weight.length() - 2), 10, ALWAYS_READ_PRECISION));
+	else mstruct.set(Number(e->weight, 10, ALWAYS_READ_PRECISION));
 	mstruct *= CALCULATOR->getUnit("u");
 	return 1;
 }
-AtomicDensityFunction::AtomicDensityFunction() : Function("atomic_density", 1) {setArgumentDefinition(1, new TextArgument());}
-int AtomicDensityFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT SET_ATOMIC_STRING_VALUE(density)
-	mstruct *= CALCULATOR->getUnit("g");
-	MathStructure mstruct_unit(1, 100);
-	mstruct_unit *= CALCULATOR->getUnit("m");
-	mstruct_unit ^= 3;
-	mstruct /= mstruct_unit;
-	return 1;
-}
-MeltingPointFunction::MeltingPointFunction() : Function("melting_point", 1) {setArgumentDefinition(1, new TextArgument());}
-int MeltingPointFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT SET_ATOMIC_STRING_VALUE(melting_point)
-	mstruct *= CALCULATOR->getUnit("K");
-	return 1;
-}
-BoilingPointFunction::BoilingPointFunction() : Function("boiling_point", 1) {setArgumentDefinition(1, new TextArgument());}
-int BoilingPointFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT SET_ATOMIC_STRING_VALUE(boiling_point)
-	mstruct *= CALCULATOR->getUnit("K");
-	return 1;
-}
-AtomicRadiusFunction::AtomicRadiusFunction() : Function("atomic_radius", 1) {setArgumentDefinition(1, new TextArgument());}
-int AtomicRadiusFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT SET_ATOMIC_STRING_VALUE(atomic_radius)
-	Number nr(10);
-	nr.raise(-12);
-	mstruct *= nr;
-	mstruct *= CALCULATOR->getUnit("m");
-	return 1;
-}
-CovalentRadiusFunction::CovalentRadiusFunction() : Function("covalent_radius", 1) {setArgumentDefinition(1, new TextArgument());}
-int CovalentRadiusFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT SET_ATOMIC_STRING_VALUE(covalent_radius)
-	Number nr(10);
-	nr.raise(-12);
-	mstruct *= nr;
-	mstruct *= CALCULATOR->getUnit("m");
-	return 1;
-}
-IonicRadiusFunction::IonicRadiusFunction() : Function("ionic_radius", 1) {setArgumentDefinition(1, new TextArgument());}
-int IonicRadiusFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT SET_ATOMIC_STRING_VALUE(ionic_radius)
-	Number nr(10);
-	nr.raise(-12);
-	mstruct *= nr;
-	mstruct *= CALCULATOR->getUnit("m");
-	return 1;
-}
-AtomicVolumeFunction::AtomicVolumeFunction() : Function("atomic_volume", 1) {setArgumentDefinition(1, new TextArgument());}
-int AtomicVolumeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT SET_ATOMIC_STRING_VALUE(atomic_volume)
-	MathStructure mstruct_unit(1, 100);
-	mstruct_unit *= CALCULATOR->getUnit("m");
-	mstruct_unit ^= 3;
-	mstruct *= mstruct_unit;
-	mstruct /= CALCULATOR->getUnit("mol");
-	return 1;
-}
-SpecificHeatFunction::SpecificHeatFunction() : Function("specific_heat", 1) {setArgumentDefinition(1, new TextArgument());}
-int SpecificHeatFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT SET_ATOMIC_STRING_VALUE(specific_heat)
-	mstruct *= CALCULATOR->getUnit("J");
-	mstruct /= CALCULATOR->getUnit("g");
-	mstruct *= CALCULATOR->getUnit("mol");
-	return 1;
-}
-FusionHeatFunction::FusionHeatFunction() : Function("fusion_heat", 1) {setArgumentDefinition(1, new TextArgument());}
-int FusionHeatFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT SET_ATOMIC_STRING_VALUE(fusion_heat)
-	mstruct *= 1000;
-	mstruct *= CALCULATOR->getUnit("J");
-	mstruct /= CALCULATOR->getUnit("mol");
-	return 1;
-}
-EvaporationHeatFunction::EvaporationHeatFunction() : Function("evaporation_heat", 1) {setArgumentDefinition(1, new TextArgument());}
-int EvaporationHeatFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT SET_ATOMIC_STRING_VALUE(evaporation_heat)
-	mstruct *= 1000;
-	mstruct *= CALCULATOR->getUnit("J");
-	mstruct /= CALCULATOR->getUnit("mol");
-	return 1;
-}
-TermalConductivityFunction::TermalConductivityFunction() : Function("termal_conductivity", 1) {setArgumentDefinition(1, new TextArgument());}
-int TermalConductivityFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT SET_ATOMIC_STRING_VALUE(termal_conductivity)
-	mstruct *= CALCULATOR->getUnit("W");
-	mstruct /= CALCULATOR->getUnit("m");
-	mstruct /= CALCULATOR->getUnit("K");
-	return 1;
-}
-PaulingFunction::PaulingFunction() : Function("pauling", 1) {setArgumentDefinition(1, new TextArgument());}
-int PaulingFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT SET_ATOMIC_STRING_VALUE(pauling)
-	return 1;
-}
-IonisingEnergyFunction::IonisingEnergyFunction() : Function("ionising_energy", 1) {setArgumentDefinition(1, new TextArgument());}
-int IonisingEnergyFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT SET_ATOMIC_STRING_VALUE(ionising_energy)
-	mstruct *= 1000;
-	mstruct *= CALCULATOR->getUnit("J");
-	mstruct /= CALCULATOR->getUnit("mol");
-	return 1;
-}
-OxidationStatesFunction::OxidationStatesFunction() : Function("oxidation_states", 1) {setArgumentDefinition(1, new TextArgument());}
-int OxidationStatesFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT SET_ATOMIC_STRING_VALUE_NO_APPROX(oxidation_states)
-	return 1;
-}
-ElectronicConfigurationFunction::ElectronicConfigurationFunction() : Function("electronic_configuration", 1) {setArgumentDefinition(1, new TextArgument());}
-int ElectronicConfigurationFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	GET_ELEMENT SET_ATOMIC_STRING(electronic_configuration)
-	return 1;
-}
+
 AtomInfoFunction::AtomInfoFunction() : Function("atom", 1) {setArgumentDefinition(1, new TextArgument());}
 int AtomInfoFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	GET_ELEMENT
 	string message;
-	message += _("Name"); message +=":\t\t\t\t\t\t\t"; message += e->name; message += "\n";
-	message += _("Symbol"); message +=":\t\t\t\t\t\t\t"; message += e->symbol; message += "\n";
-	message += _("Number"); message +=":\t\t\t\t\t\t\t"; message += i2s(e->number); message += "\n";
-	if(!e->weight.empty()) {message += _("Atomic Weight"); message +=":\t\t\t\t\t\t"; message += e->weight; if(e->weight != "-") message += " u"; message += "\n";}
-	if(!e->density.empty()) {message += _("Density"); message += ":\t\t\t\t\t\t\t"; message += e->density; if(e->density != "-")  message += " g/cm^3"; message += "\n";}
-	if(!e->melting_point.empty()) {message += _("Melting Point"); message += ":\t\t\t\t\t\t"; message += e->melting_point; if(e->melting_point != "-")  message += " K"; message += "\n";}
-	if(!e->boiling_point.empty()) {message += _("Boiling Point"); message += ":\t\t\t\t\t\t"; message += e->boiling_point; if(e->boiling_point != "-")  message += " K"; message += "\n";}
-	if(!e->atomic_radius.empty()) {message += _("Atomic Radius"); message += ":\t\t\t\t\t\t"; message += e->atomic_radius; if(e->atomic_radius != "-")  message += " pm"; message += "\n";}
-	if(!e->covalent_radius.empty()) {message += _("Covalent Radius"); message += ":\t\t\t\t\t"; message += e->covalent_radius; if(e->covalent_radius != "-")  message += " pm"; message += "\n";}
-	if(!e->ionic_radius.empty()) {message += _("Ionic Radius"); message += ":\t\t\t\t\t\t"; message += e->ionic_radius; if(e->ionic_radius != "-")  message += " pm"; message += "\n";}
-	if(!e->atomic_volume.empty()) {message += _("Atomic Volume"); message += ":\t\t\t\t\t"; message += e->atomic_volume; if(e->atomic_volume != "-")  message += " cm^3/mol"; message += "\n";}
-	if(!e->specific_heat.empty()) {message += _("Specific Heat (at 20 degree C)"); message += ":\t\t"; message += e->specific_heat; if(e->specific_heat != "-")  message += " J/(g mol)"; message += "\n";}
-	if(!e->fusion_heat.empty()) {message += _("Fusion Heat"); message += ":\t\t\t\t\t\t"; message += e->fusion_heat; if(e->fusion_heat != "-")  message += " kJ/mol"; message += "\n";}
-	if(!e->evaporation_heat.empty()) {message += _("Evaporation Heat"); message += ":\t\t\t\t\t"; message += e->evaporation_heat; if(e->evaporation_heat != "-")  message += " kJ/mol"; message += "\n";}
-	if(!e->termal_conductivity.empty()) {message += _("Termal Conductivity (at 25 degree C)"); message += ":\t"; message += e->termal_conductivity; if(e->termal_conductivity != "-")  message += " W/(m K)"; message += "\n";}
-	if(!e->pauling.empty()) {message += _("Pauling Negativity Number"); message += ":\t\t\t"; message += e->pauling; message += "\n";}
-	if(!e->ionising_energy.empty()) {message += _("First Ionising Energy"); message += ":\t\t\t\t"; message += e->ionising_energy; if(e->ionising_energy != "-")  message += " kJ/mol"; message += "\n";}
-	if(!e->oxidation_states.empty()) {message += _("Oxidation States"); message += ":\t\t\t\t\t"; message += e->oxidation_states; message += "\n";}
-	if(!e->electronic_configuration.empty()) {message += _("Electronic Configuration"); message += ":\t\t\t\t"; message += e->electronic_configuration; message += "\n";}
+	message += _("Name"); message +=":\t\t\t"; message += e->name; message += "\n";
+	message += _("Symbol"); message +=":\t\t\t"; message += e->symbol; message += "\n";
+	message += _("Number"); message +=":\t\t\t"; message += i2s(e->number);
+	if(!e->weight.empty()) {message += "\n"; message += _("Atomic Weight"); message +=":\t\t"; message += e->weight; message += " u";}
 	CALCULATOR->message(MESSAGE_INFORMATION, message.c_str(), NULL);
 	return 1;
 }

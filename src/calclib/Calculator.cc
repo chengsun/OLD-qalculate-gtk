@@ -947,21 +947,6 @@ void Calculator::addBuiltinFunctions() {
 	f_atomic_number = addFunction(new AtomicNumberFunction());
 	f_atomic_name = addFunction(new AtomicNameFunction());
 	f_atomic_weight = addFunction(new AtomicWeightFunction());
-	f_atomic_density = addFunction(new AtomicDensityFunction());
-	f_melting_point = addFunction(new MeltingPointFunction());
-	f_boiling_point = addFunction(new BoilingPointFunction());
-	f_atomic_radius = addFunction(new AtomicRadiusFunction());
-	f_covalent_radius = addFunction(new CovalentRadiusFunction());
-	f_ionic_radius = addFunction(new IonicRadiusFunction());
-	f_atomic_volume = addFunction(new AtomicVolumeFunction());
-	f_specific_heat = addFunction(new SpecificHeatFunction());
-	f_fusion_heat = addFunction(new FusionHeatFunction());
-	f_evaporation_heat = addFunction(new EvaporationHeatFunction());
-	f_termal_conductivity = addFunction(new TermalConductivityFunction());
-	f_pauling = addFunction(new PaulingFunction());
-	f_ionising_energy = addFunction(new IonisingEnergyFunction());
-	f_oxidation_states = addFunction(new OxidationStatesFunction());
-	f_electronic_configuration = addFunction(new ElectronicConfigurationFunction());
 	f_atom = addFunction(new AtomInfoFunction());
 
 }
@@ -5858,44 +5843,10 @@ bool Calculator::loadElements(const char *file_name) {
 				while(child) {
 					if(!xmlStrcmp(child->name, (const xmlChar*) "name")) {
 						XML_GET_LOCALE_STRING_FROM_TEXT(child, ename, best_ename, next_best_ename)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "class")) {
+						XML_GET_INT_FROM_TEXT(child, element->group)
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "weight")) {
 						XML_GET_STRING_FROM_TEXT(child, element->weight)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "density")) {
-						XML_GET_STRING_FROM_TEXT(child, element->density)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "melting_point")) {
-						XML_GET_STRING_FROM_TEXT(child, element->melting_point)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "boiling_point")) {
-						XML_GET_STRING_FROM_TEXT(child, element->boiling_point)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "atomic_radius")) {
-						XML_GET_STRING_FROM_TEXT(child, element->atomic_radius)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "covalent_radius")) {
-						XML_GET_STRING_FROM_TEXT(child, element->covalent_radius)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "ionic_radius")) {
-						XML_GET_STRING_FROM_TEXT(child, element->ionic_radius)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "atomic_volume")) {
-						XML_GET_STRING_FROM_TEXT(child, element->atomic_volume)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "specific_heat")) {
-						XML_GET_STRING_FROM_TEXT(child, element->specific_heat)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "fusion_heat")) {
-						XML_GET_STRING_FROM_TEXT(child, element->fusion_heat)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "evaporation_heat")) {
-						XML_GET_STRING_FROM_TEXT(child, element->evaporation_heat)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "termal_conductivity")) {
-						XML_GET_STRING_FROM_TEXT(child, element->termal_conductivity)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "pauling")) {
-						XML_GET_STRING_FROM_TEXT(child, element->pauling)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "ionising_energy")) {
-						XML_GET_STRING_FROM_TEXT(child, element->ionising_energy)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "oxidation_states")) {
-						XML_GET_STRING_FROM_TEXT(child, str)
-						if(!str.empty()) {
-							if(str == "-") str = "";
-							element->oxidation_states = "[";
-							element->oxidation_states += str;
-							element->oxidation_states += "]";
-						}
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "electronic_configuration")) {
-						XML_GET_STRING_FROM_TEXT(child, element->electronic_configuration)
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "x_pos")) {
 						XML_GET_INT_FROM_TEXT(child, element->x_pos)
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "y_pos")) {
@@ -5935,4 +5886,10 @@ Element *Calculator::getElement(string e_symname) {
 	}
 	return NULL;
 }
-
+Element *Calculator::getElementByIndex(unsigned int index) {
+	if(!elementsLoaded()) {
+		if(!loadElements()) return NULL;
+	}
+	if(index > 0 && index <= elements.size()) return elements[index - 1];
+	return NULL;
+}

@@ -3255,4 +3255,60 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
       </function>
     </category>
   </category>
+  <category>
+    <_title>Elements</_title>
+    <builtin_function name="atomic_symbol">
+      <_title>Symbol of Element</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>atomic_symbol</_name>
+      </name>
+      <argument index="1">
+        <_title>Element</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="atomic_number">
+      <_title>Element Number</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>atomic_number</_name>
+      </name>
+      <argument index="1">
+        <_title>Element</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="atomic_name">
+      <_title>Name of Element</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>atomic_name</_name>
+      </name>
+      <argument index="1">
+        <_title>Element</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="atomic_weight">
+      <_title>Atomic Weight</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>atomic_weight</_name>
+      </name>
+      <name index="2">
+        <_name>atomic_mass</_name>
+      </name>
+      <argument index="1">
+        <_title>Element</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="atom">
+      <_title>Element Info</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>atom</_name>
+      </name>
+      <argument index="1">
+        <_title>Element</_title>
+      </argument>
+    </builtin_function>
+  </category>
 </QALCULATE>
