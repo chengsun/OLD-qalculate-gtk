@@ -205,13 +205,13 @@ void ProcessFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	string sarg = vargs[0]->text();
 	int i = sarg.find("\\x");
 	int i_length;
-	while(i != string::npos) {
-		if(i + 2 < sarg.length() && sarg[i + 2] == '_' && i + 3 < sarg.length()) {
+	while(i != (int) string::npos) {
+		if(i + 2 < (int) sarg.length() && sarg[i + 2] == '_' && i + 3 < (int) sarg.length()) {
 			string index_str = "component(";
 			if(sarg[i + 3] == LEFT_PARENTHESIS_CH) {
 				int missing = 0;
 				int i2 = find_ending_bracket(sarg, i + 4, &missing);
-				if(i2 == string::npos) {
+				if(i2 == (int) string::npos) {
 					for(int i3 = 1; i3 < missing; i3++) {
 						sarg += RIGHT_PARENTHESIS;
 					}
@@ -223,7 +223,7 @@ void ProcessFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 				}
 			} else {
 				int i2 = sarg.find_first_of(OPERATORS, i + 3);
-				if(i2 = string::npos) {
+				if(i2 == (int) string::npos) {
 					index_str += sarg.substr(i + 3, sarg.length() - (i + 3));
 					i_length = sarg.length() - i;
 				} else {
@@ -272,7 +272,7 @@ void ProcessFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		x_mngr.protect();
 		sarg_mngr->replace(&mngr_n, &n_mngr);
 		sarg_mngr->replace(&mngr_r, &r_mngr);
-		for(int index = 1; index <= v->components(); index++) {
+		for(unsigned int index = 1; index <= v->components(); index++) {
 			i_mngr.set(index, 1);
 			z_mngr.set(v->get(index));
 			mngr_calc.set(sarg_mngr);
@@ -299,9 +299,9 @@ void ProcessFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		x_mngr.protect();
 		sarg_mngr->replace(&mngr_n, &n_mngr);
 		Manager mngr_calc;
-		for(int index_r = 1; index_r <= mtrx->rows(); index_r++) {
+		for(unsigned int index_r = 1; index_r <= mtrx->rows(); index_r++) {
 			r_mngr.set(index_r, 1);						
-			for(int index_c = 1; index_c <= mtrx->columns(); index_c++) {		
+			for(unsigned int index_c = 1; index_c <= mtrx->columns(); index_c++) {		
 				z_mngr.set(mtrx->get(index_r, index_c));
 				i_mngr.set((index_r - 1) * mtrx->columns() + index_c, 1);
 				c_mngr.set(index_c, 1);				
@@ -352,13 +352,13 @@ void CustomSumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	string sarg = vargs[3]->text();
 	int i = sarg.find("\\x");
 	int i_length;
-	while(i != string::npos) {
-		if(i + 2 < sarg.length() && sarg[i + 2] == '_' && i + 3 < sarg.length()) {
+	while(i != (int) string::npos) {
+		if(i + 2 < (int) sarg.length() && sarg[i + 2] == '_' && i + 3 < (int) sarg.length()) {
 			string index_str = "component(";
 			if(sarg[i + 3] == LEFT_PARENTHESIS_CH) {
 				int missing = 0;
 				int i2 = find_ending_bracket(sarg, i + 4, &missing);
-				if(i2 == string::npos) {
+				if(i2 == (int) string::npos) {
 					for(int i3 = 1; i3 < missing; i3++) {
 						sarg += RIGHT_PARENTHESIS;
 					}
@@ -370,7 +370,7 @@ void CustomSumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 				}
 			} else {
 				int i2 = sarg.find_first_of(OPERATORS, i + 3);
-				if(i2 = string::npos) {
+				if(i2 == (int) string::npos) {
 					index_str += sarg.substr(i + 3, sarg.length() - (i + 3));
 					i_length = sarg.length() - i;
 				} else {
@@ -460,9 +460,9 @@ void CustomSumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		sarg_mngr->replace(&mngr_n, &n_mngr);
 		Manager mngr_calc;
 		int i;
-		for(int index_r = 1; index_r <= mtrx->rows(); index_r++) {
+		for(unsigned int index_r = 1; index_r <= mtrx->rows(); index_r++) {
 			r_mngr.set(index_r, 1);						
-			for(int index_c = 1; index_c <= mtrx->columns(); index_c++) {		
+			for(unsigned int index_c = 1; index_c <= mtrx->columns(); index_c++) {		
 				i = (index_r - 1) * mtrx->columns() + index_c;
 				if(i >= start && i <= end) {
 					z_mngr.set(mtrx->get(index_r, index_c));
@@ -519,8 +519,8 @@ MatrixFunction::MatrixFunction() : Function("Matrices", "matrix", 2, "Construct 
 }
 void MatrixFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	Matrix mtrx(vargs[0]->fraction()->numerator()->getInt(), vargs[1]->fraction()->numerator()->getInt());
-	int r = 1, c = 1;
-	for(int i = 2; i < vargs.size(); i++) {
+	unsigned int r = 1, c = 1;
+	for(unsigned int i = 2; i < vargs.size(); i++) {
 		if(r > mtrx.rows()) {
 			CALCULATOR->error(false, _("Too many elements (%s) for the order (%sx%s) of the matrix."), i2s(vargs.size() - 2).c_str(), i2s(mtrx.rows()).c_str(), i2s(mtrx.columns()).c_str(), NULL);
 			break;
@@ -538,7 +538,7 @@ void MatrixFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 VectorFunction::VectorFunction() : Function("Matrices", "vector", -1, "Construct Vector") {}
 void VectorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	Vector vctr(vargs.size());
-	for(int i = 0; i < vargs.size(); i++) {
+	for(unsigned int i = 0; i < vargs.size(); i++) {
 		vctr.set(vargs[i], i + 1);	
 	}
 	mngr->set(&vctr);
@@ -1162,7 +1162,7 @@ void SumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() <= 0)
 		return;
 	Vector *v = produceVector(vargs);
-	for(int index = 1; index <= v->components(); index++) {
+	for(unsigned int index = 1; index <= v->components(); index++) {
 		mngr->add(v->get(index), OPERATION_ADD);
 	}
 }
@@ -1223,7 +1223,7 @@ void MinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	Vector *v = produceVector(vargs);		
 	int cmp;
 	Manager *min = NULL;
-	for(int index = 1; index <= v->components(); index++) {
+	for(unsigned int index = 1; index <= v->components(); index++) {
 		if(min == NULL) {
 			min = v->get(index);
 		} else {
@@ -1247,7 +1247,7 @@ void MaxFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	Vector *v = produceVector(vargs);		
 	int cmp;
 	Manager *max = NULL;
-	for(int index = 1; index <= v->components(); index++) {
+	for(unsigned int index = 1; index <= v->components(); index++) {
 		if(max == NULL) {
 			max = v->get(index);
 		} else {
@@ -1275,9 +1275,9 @@ void ModeFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	vector<Manager*> vargs_nodup;
 	vector<int> is;
 	Manager *value = NULL;
-	for(int index_c = 1; index_c <= v->components(); index_c++) {
+	for(unsigned int index_c = 1; index_c <= v->components(); index_c++) {
 		b = true;
-		for(int index = 0; index < vargs_nodup.size(); index++) {
+		for(unsigned int index = 0; index < vargs_nodup.size(); index++) {
 			if(vargs_nodup[index]->equals(v->get(index_c))) {
 				is[index]++;
 				b = false;
@@ -1289,7 +1289,7 @@ void ModeFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 			is.push_back(1);
 		}
 	}
-	for(int index = 0; index < is.size(); index++) {
+	for(unsigned int index = 0; index < is.size(); index++) {
 		if(is[index] > n) {
 			n = is[index];
 			value = vargs_nodup[index];
@@ -1313,25 +1313,32 @@ BASEFunction::BASEFunction() : Function("General", "BASE", 2, "Number Base") {
 	setArgumentDefinition(2, arg);
 }
 void BASEFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(strtol(vargs[0]->text().c_str(), NULL, vargs[1]->fraction()->numerator()->getInt()), 1);
+	string str = vargs[0]->text();
+	remove_blanks(str);
+	mngr->set(strtol(str.c_str(), NULL, vargs[1]->fraction()->numerator()->getInt()), 1);
 }
 BINFunction::BINFunction() : Function("General", "BIN", 1, "Binary") {
 	setArgumentDefinition(1, new TextArgument());
 }
 void BINFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(strtol(vargs[0]->text().c_str(), NULL, 2), 1);
+	string str = vargs[0]->text();
+	remove_blanks(str);
+	mngr->set(strtol(str.c_str(), NULL, 2), 1);
 }
 OCTFunction::OCTFunction() : Function("General", "OCT", 1, "Octal") {
 	setArgumentDefinition(1, new TextArgument());
 }
 void OCTFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(strtol(vargs[0]->text().c_str(), NULL, 8), 1);
+	string str = vargs[0]->text();
+	remove_blanks(str);
+	mngr->set(strtol(str.c_str(), NULL, 8), 1);
 }
 HEXFunction::HEXFunction() : Function("General", "HEX", 1, "Hexadecimal") {
 	setArgumentDefinition(1, new TextArgument());
 }
 void HEXFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	string expr = vargs[0]->text();
+	remove_blanks(expr);
 	if(!(expr.length() >= 2 && expr[0] == '0' && (expr[1] == 'x' || expr[1] == 'X'))) {
 		expr.insert(0, "0x");
 	}
@@ -1365,7 +1372,7 @@ ConcatenateFunction::ConcatenateFunction() : Function("Utilities", "concatenate"
 }
 void ConcatenateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	string str;
-	for(int i = 0; i < vargs.size(); i++) {
+	for(unsigned int i = 0; i < vargs.size(); i++) {
 		str += vargs[i]->text();
 	}
 	mngr->set(str);

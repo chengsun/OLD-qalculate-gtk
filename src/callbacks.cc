@@ -265,9 +265,8 @@ Unit *get_selected_to_unit() {
 }
 
 void generate_units_tree_struct() {
-	tree_struct *p_cat;
-	int i2, cat_i, cat_i_prev; 
-	bool b, no_cat = false;	
+	int cat_i, cat_i_prev; 
+	bool b;	
 	string str, cat, cat_sub;
 	Unit *u = NULL;
 	unit_cats.items.clear();
@@ -275,10 +274,10 @@ void generate_units_tree_struct() {
 	unit_cats.parent = NULL;	
 	ia_units.clear();
 	list<tree_struct>::iterator it;	
-	for(int i = 0; i < CALCULATOR->units.size(); i++) {
+	for(unsigned int i = 0; i < CALCULATOR->units.size(); i++) {
 		if(!CALCULATOR->units[i]->isActive()) {
 			b = false;
-			for(int i3 = 0; i3 < ia_units.size(); i3++) {
+			for(unsigned int i3 = 0; i3 < ia_units.size(); i3++) {
 				u = (Unit*) ia_units[i3];
 				if(CALCULATOR->units[i]->title() < u->title()) {
 					b = true;
@@ -294,7 +293,7 @@ void generate_units_tree_struct() {
 				cat_i = cat.find("/"); cat_i_prev = -1;
 				b = false;
 				while(true) {
-					if(cat_i == string::npos) {
+					if(cat_i == (int) string::npos) {
 						cat_sub = cat.substr(cat_i_prev + 1, cat.length() - 1 - cat_i_prev);
 					} else {
 						cat_sub = cat.substr(cat_i_prev + 1, cat_i - 1 - cat_i_prev);
@@ -316,7 +315,7 @@ void generate_units_tree_struct() {
 						item = &*it;
 						item->item = cat_sub;
 					}
-					if(cat_i == string::npos) {
+					if(cat_i == (int) string::npos) {
 						break;
 					}
 					cat_i_prev = cat_i;
@@ -324,7 +323,7 @@ void generate_units_tree_struct() {
 				}
 			}
 			b = false;
-			for(int i3 = 0; i3 < item->objects.size(); i3++) {
+			for(unsigned int i3 = 0; i3 < item->objects.size(); i3++) {
 				u = (Unit*) item->objects[i3];
 				if(CALCULATOR->units[i]->title() < u->title()) {
 					b = true;
@@ -341,9 +340,8 @@ void generate_units_tree_struct() {
 }
 void generate_variables_tree_struct() {
 
-	tree_struct *p_cat;
-	int i2, cat_i, cat_i_prev; 
-	bool b, no_cat = false;	
+	int cat_i, cat_i_prev; 
+	bool b;	
 	string str, cat, cat_sub;
 	Variable *v = NULL;
 	variable_cats.items.clear();
@@ -351,11 +349,11 @@ void generate_variables_tree_struct() {
 	variable_cats.parent = NULL;
 	ia_variables.clear();
 	list<tree_struct>::iterator it;	
-	for(int i = 0; i < CALCULATOR->variables.size(); i++) {
+	for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
 		if(!CALCULATOR->variables[i]->isActive()) {
 			//deactivated variable
 			b = false;
-			for(int i3 = 0; i3 < ia_variables.size(); i3++) {
+			for(unsigned int i3 = 0; i3 < ia_variables.size(); i3++) {
 				v = (Variable*) ia_variables[i3];
 				if(CALCULATOR->variables[i]->title() < v->title()) {
 					b = true;
@@ -371,7 +369,7 @@ void generate_variables_tree_struct() {
 				cat_i = cat.find("/"); cat_i_prev = -1;
 				b = false;
 				while(true) {
-					if(cat_i == string::npos) {
+					if(cat_i == (int) string::npos) {
 						cat_sub = cat.substr(cat_i_prev + 1, cat.length() - 1 - cat_i_prev);
 					} else {
 						cat_sub = cat.substr(cat_i_prev + 1, cat_i - 1 - cat_i_prev);
@@ -393,7 +391,7 @@ void generate_variables_tree_struct() {
 						item = &*it;
 						item->item = cat_sub;
 					}
-					if(cat_i == string::npos) {
+					if(cat_i == (int) string::npos) {
 						break;
 					}
 					cat_i_prev = cat_i;
@@ -401,7 +399,7 @@ void generate_variables_tree_struct() {
 				}
 			}
 			b = false;
-			for(int i3 = 0; i3 < item->objects.size(); i3++) {
+			for(unsigned int i3 = 0; i3 < item->objects.size(); i3++) {
 				v = (Variable*) item->objects[i3];
 				if(CALCULATOR->variables[i]->title() < v->title()) {
 					b = true;
@@ -417,9 +415,9 @@ void generate_variables_tree_struct() {
 
 }
 void generate_functions_tree_struct() {
-	tree_struct *p_cat;
-	int i2, cat_i, cat_i_prev; 
-	bool b, no_cat = false;	
+
+	int cat_i, cat_i_prev; 
+	bool b;	
 	string str, cat, cat_sub;
 	Function *f = NULL;
 	function_cats.items.clear();
@@ -427,11 +425,11 @@ void generate_functions_tree_struct() {
 	function_cats.parent = NULL;
 	ia_functions.clear();
 	list<tree_struct>::iterator it;
-	for(int i = 0; i < CALCULATOR->functions.size(); i++) {
+	for(unsigned int i = 0; i < CALCULATOR->functions.size(); i++) {
 		if(!CALCULATOR->functions[i]->isActive()) {
 			//deactivated function
 			b = false;
-			for(int i3 = 0; i3 < ia_functions.size(); i3++) {
+			for(unsigned int i3 = 0; i3 < ia_functions.size(); i3++) {
 				f = (Function*) ia_functions[i3];
 				if(CALCULATOR->functions[i]->title() < f->title()) {
 					b = true;
@@ -447,7 +445,7 @@ void generate_functions_tree_struct() {
 				cat_i = cat.find("/"); cat_i_prev = -1;
 				b = false;
 				while(true) {
-					if(cat_i == string::npos) {
+					if(cat_i == (int) string::npos) {
 						cat_sub = cat.substr(cat_i_prev + 1, cat.length() - 1 - cat_i_prev);
 					} else {
 						cat_sub = cat.substr(cat_i_prev + 1, cat_i - 1 - cat_i_prev);
@@ -469,7 +467,7 @@ void generate_functions_tree_struct() {
 						item = &*it;
 						item->item = cat_sub;
 					}
-					if(cat_i == string::npos) {
+					if(cat_i == (int) string::npos) {
 						break;
 					}
 					cat_i_prev = cat_i;
@@ -477,7 +475,7 @@ void generate_functions_tree_struct() {
 				}
 			}
 			b = false;
-			for(int i3 = 0; i3 < item->objects.size(); i3++) {
+			for(unsigned int i3 = 0; i3 < item->objects.size(); i3++) {
 				f = (Function*) item->objects[i3];
 				if(CALCULATOR->functions[i]->title() < f->title()) {
 					b = true;
@@ -530,7 +528,7 @@ void update_functions_tree() {
 		}
 		while(item && item->it == item->items.end()) {
 			int str_i = str.rfind("/");
-			if(str_i == string::npos) {
+			if(str_i == (int) string::npos) {
 				str = "";
 			} else {
 				str = str.substr(0, str_i);
@@ -610,13 +608,13 @@ void on_tFunctionCategories_selection_changed(GtkTreeSelection *treeselection, g
 		}
 		if(!b_all && !no_cat && !b_inactive && selected_function_category[0] == '/') {
 			string str = selected_function_category.substr(1, selected_function_category.length() - 1);
-			for(int i = 0; i < CALCULATOR->functions.size(); i++) {
+			for(unsigned int i = 0; i < CALCULATOR->functions.size(); i++) {
 				if(CALCULATOR->functions[i]->isActive() && CALCULATOR->functions[i]->category().substr(0, selected_function_category.length() - 1) == str) {
 					setFunctionTreeItem(iter2, CALCULATOR->functions[i]);
 				}
 			}
 		} else {			
-			for(int i = 0; i < CALCULATOR->functions.size(); i++) {
+			for(unsigned int i = 0; i < CALCULATOR->functions.size(); i++) {
 				if((b_inactive && !CALCULATOR->functions[i]->isActive()) || (CALCULATOR->functions[i]->isActive() && (b_all || (no_cat && CALCULATOR->functions[i]->category().empty()) || (!b_inactive && CALCULATOR->functions[i]->category() == selected_function_category)))) {
 					setFunctionTreeItem(iter2, CALCULATOR->functions[i]);
 				}
@@ -638,13 +636,12 @@ void on_tFunctionCategories_selection_changed(GtkTreeSelection *treeselection, g
 void on_tFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
-	bool no_cat = false, b_all = false;
 	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
 		Function *f;
 		gtk_tree_model_get(model, &iter, 1, &f, -1);
 		//remember the new selection
 		selected_function = f;
-		for(int i = 0; i < CALCULATOR->functions.size(); i++) {
+		for(unsigned int i = 0; i < CALCULATOR->functions.size(); i++) {
 			if(CALCULATOR->functions[i] == selected_function) {
 				GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (functions_glade, "functions_textview_description")));
 				gtk_text_buffer_set_text(buffer, "", -1);
@@ -792,7 +789,7 @@ void update_variables_tree() {
 		while(item && item->it == item->items.end()) {
 
 			int str_i = str.rfind("/");
-			if(str_i == string::npos) {
+			if(str_i == (int) string::npos) {
 				str = "";
 			} else {
 				str = str.substr(0, str_i);
@@ -895,13 +892,13 @@ void on_tVariableCategories_selection_changed(GtkTreeSelection *treeselection, g
 		}
 		if(!b_all && !no_cat && !b_inactive && selected_variable_category[0] == '/') {
 			string str = selected_variable_category.substr(1, selected_variable_category.length() - 1);
-			for(int i = 0; i < CALCULATOR->variables.size(); i++) {
+			for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
 				if(CALCULATOR->variables[i]->isActive() && CALCULATOR->variables[i]->category().substr(0, selected_variable_category.length() - 1) == str) {
 					setVariableTreeItem(iter2, CALCULATOR->variables[i]);
 				}
 			}			
 		} else {			
-			for(int i = 0; i < CALCULATOR->variables.size(); i++) {
+			for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
 				if((b_inactive && !CALCULATOR->variables[i]->isActive()) || (CALCULATOR->variables[i]->isActive() && (b_all || (no_cat && CALCULATOR->variables[i]->category().empty()) || (!b_inactive && CALCULATOR->variables[i]->category() == selected_variable_category)))) {
 					setVariableTreeItem(iter2, CALCULATOR->variables[i]);
 				}
@@ -924,13 +921,12 @@ void on_tVariableCategories_selection_changed(GtkTreeSelection *treeselection, g
 void on_tVariables_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
-	bool no_cat = false, b_all = false;
 	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
 		Variable *v;
 		gtk_tree_model_get(model, &iter, 2, &v, -1);
 		//remember selection
 		selected_variable = v;
-		for(int i = 0; i < CALCULATOR->variables.size(); i++) {
+		for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
 			if(CALCULATOR->variables[i] == selected_variable) {
 				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_edit"), CALCULATOR->variables[i] != vans && CALCULATOR->variables[i] != vAns);
 				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_insert"), CALCULATOR->variables[i]->isActive() && CALCULATOR->variables[i] != vans && CALCULATOR->variables[i] != vAns);
@@ -992,7 +988,7 @@ void update_units_tree() {
 		}
 		while(item && item->it == item->items.end()) {
 			int str_i = str.rfind("/");
-			if(str_i == string::npos) {
+			if(str_i == (int) string::npos) {
 				str = "";
 			} else {
 				str = str.substr(0, str_i);
@@ -1118,13 +1114,13 @@ void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpoin
 		}
 		if(!b_all && !no_cat && !b_inactive && selected_unit_category[0] == '/') {
 			string str = selected_unit_category.substr(1, selected_unit_category.length() - 1);
-			for(int i = 0; i < CALCULATOR->units.size(); i++) {	
+			for(unsigned int i = 0; i < CALCULATOR->units.size(); i++) {	
 				if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->category().substr(0, selected_unit_category.length() - 1) == str) {
 					setUnitTreeItem(iter2, CALCULATOR->units[i]);
 				}
 			}
 		} else {
-			for(int i = 0; i < CALCULATOR->units.size(); i++) {
+			for(unsigned int i = 0; i < CALCULATOR->units.size(); i++) {
 				if((b_inactive && !CALCULATOR->units[i]->isActive()) || (CALCULATOR->units[i]->isActive() && (b_all || (no_cat && CALCULATOR->units[i]->category().empty()) || (!b_inactive && CALCULATOR->units[i]->category() == selected_unit_category)))) {
 					setUnitTreeItem(iter2, CALCULATOR->units[i]);			
 				}
@@ -1193,12 +1189,11 @@ void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpoin
 void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
-	bool no_cat = false, b_all = false;
 	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
 		Unit *u;
 		gtk_tree_model_get(model, &iter, UNITS_POINTER_COLUMN, &u, -1);
 		selected_unit = u;
-		for(int i = 0; i < CALCULATOR->units.size(); i++) {
+		for(unsigned int i = 0; i < CALCULATOR->units.size(); i++) {
 			if(CALCULATOR->units[i] == selected_unit) {
 				gtk_widget_set_sensitive(glade_xml_get_widget (units_glade, "units_frame_convert"), TRUE);				
 				if(use_short_units) {
@@ -1336,6 +1331,7 @@ void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gp
 	}
 }
 void update_function_arguments_list(Function *f) {
+	if(!functionedit_glade) return;
 	selected_argument = NULL;
 	gtk_list_store_clear(tFunctionArguments_store);
 	gtk_widget_set_sensitive(glade_xml_get_widget (functionedit_glade, "function_edit_button_modify_argument"), FALSE);
@@ -1372,9 +1368,8 @@ void update_function_arguments_list(Function *f) {
 	menus are not sorted yet
 */
 void create_umenu() {
-	GtkWidget *item, *item2, *item3, *item4;
+	GtkWidget *item;
 	GtkWidget *sub, *sub2, *sub3;
-	GHashTable *hash;
 	item = glade_xml_get_widget (main_glade, "menu_item_expression_units");
 	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);	
 	u_menu = sub;
@@ -1396,7 +1391,7 @@ void create_umenu() {
 		SUBMENU_ITEM_PREPEND(titem->item.c_str(), sub3)
 		menus.push(sub);
 		sub3 = sub;
-		for(int i = 0; i < titem->objects.size(); i++) {
+		for(unsigned int i = 0; i < titem->objects.size(); i++) {
 			u = (Unit*) titem->objects[i];
 			if(u->isActive() && !u->isHidden()) {
 				MENU_ITEM_WITH_POINTER(u->title(true).c_str(), insert_unit, u)
@@ -1415,7 +1410,7 @@ void create_umenu() {
 		}
 	}
 	sub = sub2;
-	for(int i = 0; i < unit_cats.objects.size(); i++) {
+	for(unsigned int i = 0; i < unit_cats.objects.size(); i++) {
 		u = (Unit*) unit_cats.objects[i];
 		if(u->isActive() && !u->isHidden()) {
 			MENU_ITEM_WITH_POINTER(u->title(true).c_str(), insert_unit, u)
@@ -1437,9 +1432,8 @@ void create_umenu() {
 	generate unit submenu in result menu
 */
 void create_umenu2() {
-	GtkWidget *item, *item2, *item3, *item4;
+	GtkWidget *item;
 	GtkWidget *sub, *sub2, *sub3;
-	GHashTable *hash;
 	item = glade_xml_get_widget (main_glade, "menu_item_result_units");
 	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);	
 	u_menu2 = sub;
@@ -1461,7 +1455,7 @@ void create_umenu2() {
 		SUBMENU_ITEM_PREPEND(titem->item.c_str(), sub3)
 		menus.push(sub);
 		sub3 = sub;
-		for(int i = 0; i < titem->objects.size(); i++) {
+		for(unsigned int i = 0; i < titem->objects.size(); i++) {
 			u = (Unit*) titem->objects[i];
 			if(u->isActive() && !u->isHidden()) {
 				MENU_ITEM_WITH_POINTER(u->title(true).c_str(), convert_to_unit, u)
@@ -1480,7 +1474,7 @@ void create_umenu2() {
 		}
 	}
 	sub = sub2;
-	for(int i = 0; i < unit_cats.objects.size(); i++) {
+	for(unsigned int i = 0; i < unit_cats.objects.size(); i++) {
 		u = (Unit*) unit_cats.objects[i];
 		if(u->isActive() && !u->isHidden()) {
 			MENU_ITEM_WITH_POINTER(u->title(true).c_str(), convert_to_unit, u)
@@ -1510,9 +1504,8 @@ void update_umenus() {
 */
 void create_vmenu() {
 
-	GtkWidget *item, *item2, *item3, *item4;
+	GtkWidget *item;
 	GtkWidget *sub, *sub2, *sub3;
-	GHashTable *hash;
 	item = glade_xml_get_widget (main_glade, "menu_item_expression_variables");
 	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);
 	v_menu = sub;
@@ -1535,7 +1528,7 @@ void create_vmenu() {
 		SUBMENU_ITEM_PREPEND(titem->item.c_str(), sub3)
 		menus.push(sub);
 		sub3 = sub;
-		for(int i = 0; i < titem->objects.size(); i++) {
+		for(unsigned int i = 0; i < titem->objects.size(); i++) {
 			v = (Variable*) titem->objects[i];
 			if(v->isActive() && !v->isHidden()) {
 				MENU_ITEM_WITH_POINTER(v->title(true).c_str(), insert_variable, v);
@@ -1556,7 +1549,7 @@ void create_vmenu() {
 	}
 	sub = sub2;
 
-	for(int i = 0; i < variable_cats.objects.size(); i++) {
+	for(unsigned int i = 0; i < variable_cats.objects.size(); i++) {
 		v = (Variable*) variable_cats.objects[i];
 		if(v->isActive() && !v->isHidden()) {
 			MENU_ITEM_WITH_POINTER(v->title(true).c_str(), insert_variable, v);
@@ -1597,9 +1590,8 @@ void create_vmenu() {
 	generate prefixes submenu in expression menu
 */
 void create_pmenu() {
-	GtkWidget *item, *item2;
-	GtkWidget *sub, *sub2;
-	GHashTable *hash;
+	GtkWidget *item;
+	GtkWidget *sub;
 	item = glade_xml_get_widget (main_glade, "menu_item_expression_prefixes");
 	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);	
 	int index = 0;
@@ -1618,9 +1610,8 @@ void create_pmenu() {
 	generate prefixes submenu in result menu
 */
 void create_pmenu2() {
-	GtkWidget *item, *item2, *item3, *item4;
-	GtkWidget *sub, *sub2;
-	GHashTable *hash;
+	GtkWidget *item;
+	GtkWidget *sub;
 	item = glade_xml_get_widget (main_glade, "menu_item_result_prefixes");
 	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);	
 	int index = 0;
@@ -1649,9 +1640,8 @@ void update_vmenu() {
 	generate functions submenu in expression menu
 */
 void create_fmenu() {
-	GtkWidget *item, *item2, *item3, *item4;
+	GtkWidget *item;
 	GtkWidget *sub, *sub2, *sub3;
-	GHashTable *hash;
 	item = glade_xml_get_widget (main_glade, "menu_item_expression_functions");
 	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);
 	f_menu = sub;
@@ -1671,7 +1661,7 @@ void create_fmenu() {
 	sub3 = sub;
 	while(titem) {
 		SUBMENU_ITEM_PREPEND(titem->item.c_str(), sub3)
-		for(int i = 0; i < titem->objects.size(); i++) {
+		for(unsigned int i = 0; i < titem->objects.size(); i++) {
 			f = (Function*) titem->objects[i];
 			if(f->isActive() && !f->isHidden()) {
 				MENU_ITEM_WITH_POINTER(f->title(true).c_str(), insert_function, f)
@@ -1692,7 +1682,7 @@ void create_fmenu() {
 		}
 	}
 	sub = sub2;
-	for(int i = 0; i < function_cats.objects.size(); i++) {
+	for(unsigned int i = 0; i < function_cats.objects.size(); i++) {
 		f = (Function*) function_cats.objects[i];
 		if(f->isActive() && !f->isHidden()) {
 			MENU_ITEM_WITH_POINTER(f->title(true).c_str(), insert_function, f)
@@ -1849,7 +1839,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			uh = function_h / 2 + function_h % 2;
 			dh = function_h / 2;
 			
-			for(int index = 0; index < m->countChilds(); index++) {
+			for(unsigned int index = 0; index < m->countChilds(); index++) {
 				if(l_exp) delete l_exp;
 				l_exp = NULL;			
 				pixmap_args.push_back(draw_manager(m->getChild(index), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &ctmp));
@@ -1888,7 +1878,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);			
 			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w + 1, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);	
 			w += arc_w + 1;
-			for(int index = 0; index < m->countChilds(); index++) {
+			for(unsigned int index = 0; index < m->countChilds(); index++) {
 				if(index > 0) {
 					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - comma_h / 2 - comma_h % 2, layout_comma);	
 					w += comma_w;
@@ -1978,7 +1968,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					if(displayflags & DISPLAY_FORMAT_NONASCII) {
 						whole_.insert(0, SIGN_MINUS);
 					} else {
-						whole_.insert(0, "-");
+						whole_.insert(whole_.begin(), 1, '-');
 					}
 				}
 				MARKUP_STRING(str, whole_)
@@ -2166,7 +2156,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			break;
 		}	
 		case MATRIX_MANAGER: {
-			gint wtmp, htmp, ctmp = 0, order_w, order_h, w = 0, h = 0;
+			gint wtmp, htmp, ctmp = 0, w = 0, h = 0;
 			CALCULATE_SPACE_W
 			vector<gint> col_w;
 			vector<gint> row_h;
@@ -2180,8 +2170,8 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			element_h.resize(m->matrix()->rows());
 			element_c.resize(m->matrix()->rows());						
 			pixmap_elements.resize(m->matrix()->rows());
-			for(int index_r = 0; index_r < m->matrix()->rows(); index_r++) {
-				for(int index_c = 0; index_c < m->matrix()->columns(); index_c++) {
+			for(unsigned int index_r = 0; index_r < m->matrix()->rows(); index_r++) {
+				for(unsigned int index_c = 0; index_c < m->matrix()->columns(); index_c++) {
 					ctmp = 0;
 					pixmap_elements[index_r].push_back(draw_manager(m->matrix()->get(index_r + 1, index_c + 1), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &ctmp));					
 					gdk_drawable_get_size(GDK_DRAWABLE(pixmap_elements[index_r][index_c]), &wtmp, &htmp);
@@ -2212,7 +2202,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				}
 			}	
 			h += 4;
-			for(int i = 0; i < col_w.size(); i++) {
+			for(unsigned int i = 0; i < col_w.size(); i++) {
 				w += col_w[i];
 				if(i != 0) w += space_w * 2;
 			}
@@ -2229,9 +2219,9 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w, 0, wll * 2, h, 90 * 64, 180 * 64);			
 			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w + 1, 0, wll * 2, h, 90 * 64, 180 * 64);						
 			h = 2;
-			for(int index_r = 0; index_r < m->matrix()->rows(); index_r++) {
+			for(unsigned int index_r = 0; index_r < m->matrix()->rows(); index_r++) {
 				w = wll + 1;
-				for(int index_c = 0; index_c < m->matrix()->columns(); index_c++) {
+				for(unsigned int index_c = 0; index_c < m->matrix()->columns(); index_c++) {
 					gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_elements[index_r][index_c]), 0, 0, w + (col_w[index_c] - element_w[index_r][index_c]) / 2, h + row_uh[index_r] - (element_h[index_r][index_c] - element_c[index_r][index_c]), -1, -1);				
 					w += col_w[index_c];
 					w += space_w * 2;
@@ -2375,7 +2365,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			}
 			pango_layout_set_markup(layout_sign, str.c_str(), -1);
 			pango_layout_get_pixel_size(layout_sign, &sign_w, &sign_h);
-			for(int i = 0; i < m->countChilds(); i++) {
+			for(unsigned int i = 0; i < m->countChilds(); i++) {
 				if(l_exp) delete l_exp;
 				l_exp = NULL;	
 				hetmp = 0;		
@@ -2405,7 +2395,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
 			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);			
 			w = 0;
-			for(int i = 0; i < pixmap_terms.size(); i++) {
+			for(unsigned int i = 0; i < pixmap_terms.size(); i++) {
 				if(i > 0) {
 					w += space_w;
 					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - sign_h / 2 - sign_h % 2, layout_sign);
@@ -2455,7 +2445,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				}			
 			}
 			pango_layout_get_pixel_size(layout_minus, &minus_w, &minus_h);
-			for(int i = 0; i < m->countChilds(); i++) {
+			for(unsigned int i = 0; i < m->countChilds(); i++) {
 				if(l_exp) delete l_exp;
 				l_exp = NULL;	
 				hetmp = 0;		
@@ -2495,7 +2485,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
 			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);			
 			w = 0;
-			for(int i = 0; i < pixmap_terms.size(); i++) {
+			for(unsigned int i = 0; i < pixmap_terms.size(); i++) {
 				if(i == 0) {
 					if(m->getChild(i)->negative()) {
 						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - minus_h / 2 - minus_h % 2, layout_minus);
@@ -2658,7 +2648,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				m->sort(SORT_DEFAULT);
 			}
 
-			gint multi_w, multi_h, div_w, div_h, minus_w, minus_h, one_w, one_h, wtmp, htmp, hetmp, w = 0, w2 = 0, h = 0, h2 = 0, uh = 0, dh = 0, uh2 = 0, dh2 = 0, num_h = 0, num_w = 0, den_h = 0, den_w = 0, wfr = 0, cfr = 0, hfr = 0, num_dh = 0, num_uh = 0, den_dh = 0, den_uh = 0, dhfr = 0, uhfr = 0;
+			gint multi_w, multi_h, div_w, div_h, minus_w, minus_h, one_w, one_h, wtmp, htmp, hetmp, w = 0, w2 = 0, h = 0, uh = 0, dh = 0, uh2 = 0, dh2 = 0, num_h = 0, num_w = 0, den_h = 0, den_w = 0, wfr = 0, hfr = 0, num_dh = 0, num_uh = 0, den_dh = 0, den_uh = 0, dhfr = 0, uhfr = 0;
 			CALCULATE_SPACE_W
 			PangoLayout *layout_multi = gtk_widget_create_pango_layout(resultview, NULL);
 			if(displayflags & DISPLAY_FORMAT_NONASCII) {
@@ -2712,16 +2702,13 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			
 			Manager *m_i;
 
-			bool b = false, c = false, d = false;
-			bool plural_ = true;
 			int prefix_ = 0;
-			bool had_unit = false, had_div_unit = false, is_unit = false;
+			bool is_unit = false;
 			int unit_count = 0;
 			bool had_non_unit_div = false;
 			int div_count = 0;
 			bool do_div = false;
 			bool do_simple_unit_div = false;
-			bool num_non_unit = false;
 			bool prepend_one = false;
 			bool first_is_minus = false;
 			bool minus = false;
@@ -2745,7 +2732,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			vector<bool> f_needs_multi_space;
 			vector<bool> f_has_prefix;			
 			
-			for(int i = 0; i < m->countChilds(); i++) {
+			for(unsigned int i = 0; i < m->countChilds(); i++) {
 				m_i = m->getChild(i);
 				is_unit = false;
 				hetmp = 0;
@@ -2983,7 +2970,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			if(!(displayflags & DISPLAY_FORMAT_SCIENTIFIC)) {
 				if(!in_power && (had_non_unit_div || div_count > 1 || (div_count > 0 && (unit_count > 2 || layout_den)))) {
 					do_div = true;
-					int index = 0;
+					unsigned int index = 0;
 					h = 0;
 					uh = 0;
 					dh = 0;
@@ -3185,7 +3172,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			gint line_y = uh;
 			num_uh = uh - 2 - num_dh;
 			den_uh = uh + 3 + den_uh;
-			for(int i = 0; i < m->countChilds(); i++) {
+			for(int i = 0; i < (int) m->countChilds(); i++) {
 				if(i == 0 && first_is_minus) {
 					if(toplevel || draw_minus) {
 						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - minus_h / 2 - minus_h % 2, layout_minus);	
@@ -3232,7 +3219,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						}												
 						gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_factors_div[i]), 0, 0, w, den_uh - (hpf_div[i] - cpf_div[i]), -1, -1);
 						w += wpf_div[i];
-						if(f_needs_multi_space[i] && i + 1 < m->countChilds() && f_is_div[i + 1]) {
+						if(f_needs_multi_space[i] && i + 1 < (int) m->countChilds() && f_is_div[i + 1]) {
 							w += space_w;
 							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, den_uh - multi_h / 2 - multi_h % 2, layout_multi);
 							w += multi_w;
@@ -3250,7 +3237,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						if(i == 0 && layout_num) {						
 							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, num_uh - num_fract_h / 2 - num_fract_h % 2, layout_num);	
 							w += num_fract_w;						
-							if(f_needs_multi_space[i] && i + 1 < m->countChilds() && !f_is_div[i + 1]) {
+							if(f_needs_multi_space[i] && i + 1 < (int) m->countChilds() && !f_is_div[i + 1]) {
 								w += space_w;
 								gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, num_uh - multi_h / 2 - multi_h % 2, layout_multi);
 								w += multi_w;
@@ -3259,7 +3246,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						} else if(!layout_den || !m->getChild(i)->isFraction()) {						
 							gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_factors[i]), 0, 0, w, num_uh - (hpf[i] - cpf[i]), -1, -1);
 							w += wpf[i];
-							if(f_needs_multi_space[i] && i + 1 < m->countChilds() && !f_is_div[i + 1]) {
+							if(f_needs_multi_space[i] && i + 1 < (int) m->countChilds() && !f_is_div[i + 1]) {
 								w += space_w;
 								gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, num_uh - multi_h / 2 - multi_h % 2, layout_multi);
 								w += multi_w;
@@ -3324,7 +3311,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						do_one = true;
 					}
 					if(div_i == 2) div_i = 3;
-					if(do_simple_unit_div && div_i != 3 && i + 1 < m->countChilds() && f_is_div[i + 1]) {		
+					if(do_simple_unit_div && div_i != 3 && i + 1 < (int) m->countChilds() && f_is_div[i + 1]) {		
 						div_i = 2;
 						if(do_one) {
 							gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w, uh - one_h / 2 - one_h % 2, -1, -1);
@@ -3339,7 +3326,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - den_fract_h / 2 - den_fract_h % 2, layout_den);	
 							w += den_fract_w;
 						}
-					} else if(f_needs_multi_space[i] && i + 1 < m->countChilds()) {
+					} else if(f_needs_multi_space[i] && i + 1 < (int) m->countChilds()) {
 						w += space_w;
 						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - multi_h / 2 - multi_h % 2, layout_multi);
 						w += multi_w;
@@ -3394,7 +3381,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			pango_layout_set_markup(layout_or, str.c_str(), -1);
 			pango_layout_get_pixel_size(layout_or, &or_w, &or_h);
 
-			for(int i = 0; i < m->countChilds(); i++) {
+			for(unsigned int i = 0; i < m->countChilds(); i++) {
 
 				bool bie = false;
 				ctmp = 0;
@@ -3434,7 +3421,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
 			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);			
 			h = 0;
-			for(int i = 0; i < pixmap_terms.size(); i++) {
+			for(unsigned int i = 0; i < pixmap_terms.size(); i++) {
 				if(i > 0) {
 					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 0, h + hpt[i] - cpt[i] - or_h / 2 - or_h % 2, layout_or);
 				}				
@@ -3539,6 +3526,8 @@ void *view_proc(void *x) {
 	result_text = mngr->print(numberformat, displayflags, min_decimals, max_decimals, &tmp_in_exact, NULL, tmp_prefix);
 	
 	b_busy = false;
+	
+	return NULL;
 }
 gboolean on_event(GtkWidget *w, GdkEvent *e, gpointer user_data) {
 	if(e->type == GDK_EXPOSE || e->type == GDK_PROPERTY_NOTIFY || e->type == GDK_CONFIGURE || e->type == GDK_FOCUS_CHANGE || e->type == GDK_VISIBILITY_NOTIFY) {
@@ -3816,7 +3805,7 @@ void object_inserted(ExpressionItem *object) {
 	if(!object) {
 		return;
 	}
-	for(int i = 0; i < recent_objects.size(); i++) {
+	for(unsigned int i = 0; i < recent_objects.size(); i++) {
 		if(recent_objects[i] == object) {
 			recent_objects.erase(recent_objects.begin() + i);
 			gtk_widget_destroy(recent_items[i]);
@@ -4932,8 +4921,8 @@ void edit_matrix(const char *category, Variable *v, Manager *mngr_, GtkWidget *w
 	on_matrix_edit_spinbutton_rows_value_changed(GTK_SPIN_BUTTON(glade_xml_get_widget (matrixedit_glade, "matrix_edit_spinbutton_rows")), NULL);		
 
 	while(gtk_events_pending()) gtk_main_iteration();
-	for(int index_r = 0; index_r < element_entries.size(); index_r++) {
-		for(int index_c = 0; index_c < element_entries[index_r].size(); index_c++) {
+	for(unsigned int index_r = 0; index_r < element_entries.size(); index_r++) {
+		for(unsigned int index_c = 0; index_c < element_entries[index_r].size(); index_c++) {
 			if(create_vector) {
 				if(old_vctr && index_r * element_entries[index_r].size() + index_c < old_vctr->components()) {
 					gtk_entry_set_text(GTK_ENTRY(element_entries[index_r][index_c]), old_vctr->get(index_r * element_entries[index_r].size() + index_c + 1)->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DECIMAL_ONLY | DISPLAY_FORMAT_ALWAYS_DISPLAY_EXACT).c_str());
@@ -4976,8 +4965,8 @@ run_matrix_edit_dialog:
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (matrixedit_glade, "matrix_edit_radiobutton_vector")))) {
 				Vector *vctr = new Vector();
 				string str;
-				for(int index_r = 0; index_r < element_entries.size(); index_r++) {
-					for(int index_c = 0; index_c < element_entries[index_r].size(); index_c++) {
+				for(unsigned int index_r = 0; index_r < element_entries.size(); index_r++) {
+					for(unsigned int index_c = 0; index_c < element_entries[index_r].size(); index_c++) {
 						str = gtk_entry_get_text(GTK_ENTRY(element_entries[index_r][index_c]));
 						remove_blank_ends(str);
 						if(!str.empty()) {
@@ -4991,8 +4980,8 @@ run_matrix_edit_dialog:
 				mtrx = vctr;
 			} else {
 				mtrx = new Matrix(element_entries.size(), element_entries[0].size());
-				for(int index_r = 0; index_r < element_entries.size(); index_r++) {
-					for(int index_c = 0; index_c < element_entries[index_r].size(); index_c++) {
+				for(unsigned int index_r = 0; index_r < element_entries.size(); index_r++) {
+					for(unsigned int index_c = 0; index_c < element_entries[index_r].size(); index_c++) {
 						mngr_v = CALCULATOR->calculate(gtk_entry_get_text(GTK_ENTRY(element_entries[index_r][index_c])));
 						mtrx->set(mngr_v, index_r + 1, index_c + 1);
 						mngr_v->unref();
@@ -5607,7 +5596,7 @@ void load_preferences() {
 				else if(svar == "in_rpn_mode")
 					CALCULATOR->setRPNMode(v);
 				else if(svar == "recent") {
-					int v_i = 0;
+					unsigned int v_i = 0;
 					while(true) {
 						v_i = svalue.find(',');
 						if(v_i == string::npos) {
@@ -5702,7 +5691,7 @@ void save_preferences(bool mode)
 	fprintf(file, "use_custom_font=%i\n", use_custom_font);	
 	fprintf(file, "custom_font=%s\n", custom_font.c_str());		
 	fprintf(file, "recent="); 
-	for(int i = recent_objects.size() - 1; i >= 0; i--) {
+	for(int i = (int) (recent_objects.size()) - 1; i >= 0; i--) {
 		fprintf(file, "%s", recent_objects[i]->referenceName().c_str()); 
 		if(i != 0) fprintf(file, ","); 
 	}
@@ -6681,7 +6670,7 @@ void on_units_button_delete_clicked(GtkButton *button, gpointer user_data) {
 			show_message(_("Cannot delete unit as it is needed by other units."), glade_xml_get_widget (units_glade, "units_dialog"));
 			return;
 		}
-		for(int i = 0; i < recent_objects.size(); i++) {
+		for(unsigned int i = 0; i < recent_objects.size(); i++) {
 			if(recent_objects[i] == u) {
 				recent_objects.erase(recent_objects.begin() + i);
 				gtk_widget_destroy(recent_items[i]);
@@ -6747,7 +6736,7 @@ void on_variables_button_delete_clicked(GtkButton *button, gpointer user_data) {
 	GtkTreeIter iter;
 	Variable *v = get_selected_variable();
 	if(v && v->isLocal()) {
-		for(int i = 0; i < recent_objects.size(); i++) {
+		for(unsigned int i = 0; i < recent_objects.size(); i++) {
 			if(recent_objects[i] == v) {
 				recent_objects.erase(recent_objects.begin() + i);
 				gtk_widget_destroy(recent_items[i]);
@@ -6816,7 +6805,7 @@ void on_functions_button_delete_clicked(GtkButton *button, gpointer user_data) {
 	GtkTreeIter iter;
 	Function *f = get_selected_function();
 	if(f && f->isLocal()) {
-		for(int i = 0; i < recent_objects.size(); i++) {
+		for(unsigned int i = 0; i < recent_objects.size(); i++) {
 			if(recent_objects[i] == f) {
 				recent_objects.erase(recent_objects.begin() + i);
 				gtk_widget_destroy(recent_items[i]);
@@ -6950,14 +6939,11 @@ void on_nbases_button_close_clicked(GtkButton *button, gpointer user_data) {
 }
 void on_nbases_entry_decimal_changed(GtkEditable *editable, gpointer user_data) {	
 	if(changing_in_nbases_dialog) return;
-	Manager *value;
-	Function *func = CALCULATOR->getFunction("round");	
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
 	if(str.empty()) return;
 	changing_in_nbases_dialog = true;	
-	if(func) value = func->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
-	else value = CALCULATOR->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
+	Manager *value = CALCULATOR->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
 	update_nbases_entries(value, NUMBER_FORMAT_NORMAL);
 	value->unref();
 	changing_in_nbases_dialog = false;	
@@ -6969,9 +6955,11 @@ void on_nbases_entry_binary_changed(GtkEditable *editable, gpointer user_data) {
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
 	if(str.empty()) return;
+	str.insert(0, "\"");
+	str += "\"";
 	changing_in_nbases_dialog = true;	
-	if(func) value = func->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
-	else value = CALCULATOR->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
+	if(func) value = func->calculate(str);
+	else value = CALCULATOR->calculate(str);
 	update_nbases_entries(value, NUMBER_FORMAT_BIN);
 	value->unref();
 	changing_in_nbases_dialog = false;	
@@ -6983,9 +6971,11 @@ void on_nbases_entry_octal_changed(GtkEditable *editable, gpointer user_data) {
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
 	if(str.empty()) return;	
+	str.insert(0, "\"");
+	str += "\"";
 	changing_in_nbases_dialog = true;	
-	if(func) value = func->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
-	else value = CALCULATOR->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
+	if(func) value = func->calculate(str);
+	else value = CALCULATOR->calculate(str);
 	update_nbases_entries(value, NUMBER_FORMAT_OCTAL);
 	value->unref();
 	changing_in_nbases_dialog = false;	
@@ -6996,10 +6986,12 @@ void on_nbases_entry_hexadecimal_changed(GtkEditable *editable, gpointer user_da
 	Function *func = CALCULATOR->getFunction("HEX");	
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
+	str.insert(0, "\"");
+	str += "\"";
 	changing_in_nbases_dialog = true;	
 	if(str.empty()) return;	
-	if(func) value = func->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
-	else value = CALCULATOR->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
+	if(func) value = func->calculate(str);
+	else value = CALCULATOR->calculate(str);
 	update_nbases_entries(value, NUMBER_FORMAT_HEX);
 	value->unref();
 	changing_in_nbases_dialog = false;	
@@ -7352,13 +7344,13 @@ bool generate_plot(plot_parameters &pp, vector<Vector*> &y_vectors, vector<Vecto
 			} else if(mngr->isMatrix()) {
 				count = 0;
 				if(rows) {
-					for(int i = 1; i <= mngr->matrix()->rows(); i++) {
+					for(unsigned int i = 1; i <= mngr->matrix()->rows(); i++) {
 						y_vectors.push_back(mngr->matrix()->rowToVector(i));
 						x_vectors.push_back(NULL);
 						count++;
 					}
 				} else {
-					for(int i = 1; i <= mngr->matrix()->columns(); i++) {
+					for(unsigned int i = 1; i <= mngr->matrix()->columns(); i++) {
 						y_vectors.push_back(mngr->matrix()->columnToVector(i));
 						x_vectors.push_back(NULL);
 						count++;
@@ -7381,13 +7373,13 @@ bool generate_plot(plot_parameters &pp, vector<Vector*> &y_vectors, vector<Vecto
 			} else if(mngr->isMatrix()) {
 				count = 0;
 				if(rows) {
-					for(int i = 1; i <= mngr->matrix()->rows(); i += 2) {
+					for(unsigned int i = 1; i <= mngr->matrix()->rows(); i += 2) {
 						y_vectors.push_back(mngr->matrix()->rowToVector(i));
 						x_vectors.push_back(mngr->matrix()->rowToVector(i + 1));
 						count++;
 					}
 				} else {
-					for(int i = 1; i <= mngr->matrix()->columns(); i += 2) {
+					for(unsigned int i = 1; i <= mngr->matrix()->columns(); i += 2) {
 						y_vectors.push_back(mngr->matrix()->columnToVector(i));
 						x_vectors.push_back(mngr->matrix()->columnToVector(i + 1));
 						count++;
@@ -7472,7 +7464,7 @@ void on_plot_button_save_clicked(GtkButton *w, gpointer user_data) {
 			pp.filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(d));
 			pp.filetype = PLOT_FILETYPE_AUTO;
 			CALCULATOR->plotVectors(&pp, y_vectors, x_vectors, pdps);
-			for(int i = 0; i < y_vectors.size(); i++) {
+			for(unsigned int i = 0; i < y_vectors.size(); i++) {
 				if(y_vectors[i]) delete y_vectors[i];
 				if(x_vectors[i]) delete x_vectors[i];
 				if(pdps[i]) delete pdps[i];
@@ -7490,7 +7482,7 @@ void update_plot() {
 		return;
 	}
 	CALCULATOR->plotVectors(&pp, y_vectors, x_vectors, pdps);
-	for(int i = 0; i < y_vectors.size(); i++) {
+	for(unsigned int i = 0; i < y_vectors.size(); i++) {
 		if(y_vectors[i]) delete y_vectors[i];
 		if(x_vectors[i]) delete x_vectors[i];
 		if(pdps[i]) delete pdps[i];

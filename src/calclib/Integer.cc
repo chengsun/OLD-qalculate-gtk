@@ -175,7 +175,7 @@ void Integer::set(const Integer *integer) {
 bool Integer::set(string str) {
 	remove_blank_ends(str);
 	bool numbers_started = false, minus = false;
-	for(int index = 0; index < str.size(); index++) {
+	for(unsigned int index = 0; index < str.size(); index++) {
 		if(str[index] >= '0' && str[index] <= '9') {
 			multiply(10);
 			add(str[index] - '0');
@@ -206,6 +206,7 @@ bool Integer::set(string str) {
 		}
 	}
 	if(minus) setNegative(!isNegative());
+	return true;
 }
 
 int Integer::compare(const Integer *integer) const {
@@ -837,7 +838,7 @@ bool Integer::divide(const Integer *integer, Integer **remainder) {
 		for(int i = 0; i < remdiv.bits.size(); i++) {
 			rem->bits.push_back(remdiv.bits[i]);
 		}
-		for(int index = rem->bits.size() - 1; index >= 0; index--) {
+		for(int index = (int) rem->bits.size() - 1; index >= 0; index--) {
 			if(rem->bits[index] == 0) {
 				rem->bits.erase(rem->bits.begin() + index);
 			} else {
@@ -856,7 +857,7 @@ bool Integer::divide(const Integer *integer, Integer **remainder) {
 	set(&divided);
 	bool return_value = rem->isZero();
 	if(!remainder) delete rem;
-	for(int index = bits.size() - 1; index >= 0; index--) {
+	for(int index = (int) bits.size() - 1; index >= 0; index--) {
 		if(bits[index] == 0) {
 			bits.erase(bits.begin() + index);
 		} else {
@@ -895,7 +896,7 @@ bool Integer::div10(Integer **remainder, long int exp) {
 	bool return_value = true;	
 	if(exp == 1) {
 		long int q = 0, q2 = 0;
-		for(int i = bits.size() - 1; i >= 0; i--) {		
+		for(int i = (int) bits.size() - 1; i >= 0; i--) {		
 			q = bits[i] % 10;
 			bits[i] /= 10;
 			bits[i] += q2 * (BIT_SIZE / 10);
@@ -925,14 +926,14 @@ bool Integer::div10(Integer **remainder, long int exp) {
 			bits.erase(bits.begin());
 		}
 		long int q = 0, q2 = 0;
-		for(int i = bits.size() - 1; i >= 0; i--) {		
+		for(int i = (int) bits.size() - 1; i >= 0; i--) {		
 			q = bits[i] % div;
 			bits[i] /= div;
 			bits[i] += q2 * (BIT_SIZE / div);
 			q2 = q;
 		}		
 	}	
-	for(int index = bits.size() - 1; index >= 0; index--) {
+	for(int index = (int) bits.size() - 1; index >= 0; index--) {
 		if(bits[index] == 0) {
 			bits.erase(bits.begin() + index);
 		} else {
@@ -1229,15 +1230,15 @@ string Integer::print(int base, bool display_sign) const {
 	if(base == 2) {
 		int i2 = str.length() % 4;
 		if(i2 != 0) i2 = 4 - i2;
-		for(int i = str.length() - 4; i > 0; i -= 4) {
+		for(int i = (int) str.length() - 4; i > 0; i -= 4) {
 			str.insert(i, 1, ' ');
 		} 
 		for(; i2 > 0; i2--) {
-			str.insert(0, "0");
+			str.insert(str.begin(), 1, '0');
 		}
 	}
 	if(isNegative() && display_sign) {
-		str.insert(0, "-");
+		str.insert(str.begin(), 1, '-');
 	}		
 	return str;
 #else
@@ -1257,15 +1258,15 @@ string Integer::print(int base, bool display_sign) const {
 	if(base == 2) {
 		int i2 = str.length() % 4;
 		if(i2 != 0) i2 = 4 - i2;	
-		for(int i = str.length() - 4; i > 0; i -= 4) {
+		for(int i = (int) str.length() - 4; i > 0; i -= 4) {
 			str.insert(i, 1, ' ');
 		}
 		for(; i2 > 0; i2--) {
-			str.insert(0, "0");
+			str.insert(str.begin(), 1, '0');
 		}		 
 	}
 	if(isNegative() && display_sign) {
-		str.insert(0, "-");
+		str.insert(str.begin(), 1, '-');
 	}
 	free(c_str);
 	return str;
@@ -1276,7 +1277,7 @@ string Integer::print(int base, bool display_sign) const {
 	if(base == 10) {
 		if(isZero()) return "0";
 		bool keep_zeros = false;
-		for(int index = bits.size() - 1; index >= 0; index--) {
+		for(int index = (int) bits.size() - 1; index >= 0; index--) {
 			value = bits[index];
 			c = '0' + value / 100000000;
 			if(keep_zeros || c != '0') {keep_zeros = true; str += c;}
@@ -1331,15 +1332,15 @@ string Integer::print(int base, bool display_sign) const {
 		if(base == 2) {
 			int i2 = str.length() % 4;
 			if(i2 != 0) i2 = 4 - i2;		
-			for(int i = str.length() - 4; i > 0; i -= 4) {
+			for(int i = (int) str.length() - 4; i > 0; i -= 4) {
 				str.insert(i, 1, ' ');
 			} 
 			for(; i2 > 0; i2--) {
-				str.insert(0, "0");
+				str.insert(str.begin(), 1, '0');
 			}			
 		}		
 	}
-	if(b_neg && display_sign) str.insert(0, "-");	
+	if(b_neg && display_sign) str.insert(str.begin(), 1, '-');	
 	return str;
 #endif
 #endif

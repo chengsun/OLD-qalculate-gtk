@@ -212,9 +212,6 @@ namespace Sgi = ::__gnu_cxx;       // GCC 3.1 and later
 namespace Sgi = std;
 #endif
 
-//using namespace Sgi;
-//using namespace __gnu_cxx;
-
 #define DOT_CH			'.'
 #define ZERO_CH			'0'
 #define ONE_CH			'1'
@@ -265,6 +262,7 @@ namespace Sgi = std;
 #define PLUS			"+"
 #define MINUS			"-"
 #define MULTIPLICATION		"*"
+#define MULTIPLICATION_2	" "
 #define DIVISION		"/"
 #define EXP			"E"
 #define	POWER			"^"

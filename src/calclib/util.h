@@ -13,7 +13,14 @@
 #define UTIL_H
 
 #include "includes.h"
-#include <time.h>
+
+#ifndef __USE_XOPEN
+#  define __USE_XOPEN
+#  include <time.h>
+#  undef __USE_XOPEN
+#else
+#  include <time.h>
+#endif
 
 /*
  * Standard gettext macros.
@@ -70,12 +77,10 @@ int find_ending_bracket(const string &str, int start, int *missing = NULL);
 
 char op2ch(MathOperation op);
 
-long long int llpow(long long int base, long long int exp, bool &overflow);
-
-int find_first_not_of(const string &str, int pos, ...);
-int find_first_of(const string &str, int pos, ...);
-int find_last_not_of(const string &str, int pos, ...);
-int find_last_of(const string &str, int pos, ...);
+int find_first_not_of(const string &str, unsigned int pos, ...);
+int find_first_of(const string &str, unsigned int pos, ...);
+int find_last_not_of(const string &str, unsigned int pos, ...);
+int find_last_of(const string &str, unsigned int pos, ...);
 
 long double rad2deg(long double &value);
 long double deg2rad(long double &value);

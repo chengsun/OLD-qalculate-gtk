@@ -106,9 +106,8 @@ bool Fraction::set(string str) {
 	den.set(1);
 	num.clear();
 	remove_blank_ends(str);
-	bool b = false;
 	bool numbers_started = false, minus = false, in_decimals = false;
-	for(int index = 0; index < str.size(); index++) {
+	for(unsigned int index = 0; index < str.size(); index++) {
 		if(str[index] >= '0' && str[index] <= '9') {
 			num.multiply(10);
 			num.add(str[index] - '0');
@@ -152,6 +151,7 @@ bool Fraction::set(string str) {
 	}
 	delete divisor;
 	b_exact = true;
+	return true;
 }
 void Fraction::set(const Fraction *fr) {
 	if(!fr) return;
@@ -250,6 +250,7 @@ bool Fraction::zeta() {
 	num.set(cln::numerator(clfr)); 
 	den.set(cln::denominator(clfr)); 
 	b_exact = false;	
+	return true;
 }
 #endif
 
@@ -1143,7 +1144,7 @@ bool Fraction::floatify(int precision, int max_decimals, bool *infinite_series) 
 		delete remainder;
 		remainder = remainder2;
 		if(!exact && infinite_series && !(*infinite_series)) {
-			for(int i = 0; i < remainders.size(); i++) {
+			for(unsigned int i = 0; i < remainders.size(); i++) {
 				if(remainders[i]->equals(remainder)) {
 					*infinite_series = true;
 					break;
@@ -1152,7 +1153,7 @@ bool Fraction::floatify(int precision, int max_decimals, bool *infinite_series) 
 		}
 		precision--;
 	}
-	for(int i = 0; i < remainders.size(); i++) {
+	for(unsigned int i = 0; i < remainders.size(); i++) {
 		delete remainders[i];
 	}
 	if(!exact && !(infinite_series && *infinite_series)) {
@@ -1399,13 +1400,13 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 		if(l10) {
 			l10 = whole_.length() - l10;
 			for(; l10 < 1; l10++) {
-				whole_.insert(0, 1, '0');
+				whole_.insert(whole_.begin(), 1, '0');
 			}
 			whole_.insert(l10, CALCULATOR->getDecimalPoint());
 		}
 		if(min_decimals > 0) {
 			int index = whole_.find(CALCULATOR->getDecimalPoint());
-			if(index == string::npos) {
+			if(index == (int) string::npos) {
 				whole_ += CALCULATOR->getDecimalPoint();
 				for(int i = 0; i < min_decimals; i++) {
 					whole_ += '0';

@@ -126,7 +126,7 @@ Manager *Unit::convert(const Unit *u, Manager *value_, Manager *exp_, bool *conv
 		b = true;
 	} else if(u->unitType() == COMPOSITE_UNIT) {
 		CompositeUnit *cu = (CompositeUnit*) u;
-		for(int i = 0; i < cu->units.size(); i++) {
+		for(unsigned int i = 0; i < cu->units.size(); i++) {
 			if(convert(cu->units[i], value_, exp_)) b = true;
 		}
 	}
@@ -470,7 +470,7 @@ CompositeUnit::CompositeUnit(const CompositeUnit *unit) {
 	set(unit);
 }
 CompositeUnit::~CompositeUnit() {
-	for(int i = 0; i < units.size(); i++) {
+	for(unsigned int i = 0; i < units.size(); i++) {
 		delete units[i];
 	}
 }
@@ -482,7 +482,7 @@ void CompositeUnit::set(const ExpressionItem *item) {
 		Unit::set(item);
 		if(((Unit*) item)->unitType() == COMPOSITE_UNIT) {
 			CompositeUnit *u = (CompositeUnit*) item;
-			for(int i = 0; i < u->units.size(); i++) {
+			for(unsigned int i = 0; i < u->units.size(); i++) {
 				units.push_back(new AliasUnit_Composite(u->units[i]));
 			}
 		}
@@ -493,7 +493,7 @@ void CompositeUnit::set(const ExpressionItem *item) {
 }
 void CompositeUnit::add(const Unit *u, long int exp_, const Prefix *prefix) {
 	bool b = false;
-	for(int i = 0; i < (int) units.size(); i++) {
+	for(unsigned int i = 0; i < units.size(); i++) {
 		if(exp_ > units[i]->firstBaseExp()) {
 			units.insert(units.begin() + i, new AliasUnit_Composite(u, exp_, prefix));
 			b = true;
@@ -505,7 +505,7 @@ void CompositeUnit::add(const Unit *u, long int exp_, const Prefix *prefix) {
 	}
 	updateNames();
 }
-Unit *CompositeUnit::get(int index, long int *exp_, Prefix **prefix) const {
+Unit *CompositeUnit::get(unsigned int index, long int *exp_, Prefix **prefix) const {
 	if(index >= 0 && index < units.size()) {
 		if(exp_) *exp_ = units[index]->firstBaseExp();
 		if(prefix) *prefix = (Prefix*) units[index]->prefix();
@@ -513,11 +513,11 @@ Unit *CompositeUnit::get(int index, long int *exp_, Prefix **prefix) const {
 	}
 	return NULL;
 }
-int CompositeUnit::countUnits() const {
-	units.size();
+unsigned int CompositeUnit::countUnits() const {
+	return units.size();
 }
 void CompositeUnit::del(Unit *u) {
-	for(int i = 0; i < units.size(); i++) {
+	for(unsigned int i = 0; i < units.size(); i++) {
 		if(units[i]->firstBaseUnit() == u) {
 			delete units[i];
 			units.erase(units.begin() + i);
@@ -528,7 +528,7 @@ void CompositeUnit::del(Unit *u) {
 string CompositeUnit::print(bool plural_, bool short_) const {
 	string str = "";
 	bool b = false, b2 = false;
-	for(int i = 0; i < units.size(); i++) {
+	for(unsigned int i = 0; i < units.size(); i++) {
 		if(units[i]->firstBaseExp() != 0) {
 			if(!b && units[i]->firstBaseExp() < 0 && i > 0) {
 				str += "/";
@@ -585,7 +585,7 @@ int CompositeUnit::unitType() const {
 bool CompositeUnit::containsRelativeTo(const Unit *u) const {
 	if(u == this) return false;
 	CompositeUnit *cu;
-	for(int i = 0; i < units.size(); i++) {
+	for(unsigned int i = 0; i < units.size(); i++) {
 		if(u == units[i] || u->baseUnit() == units[i]->baseUnit()) return true;
 		if(units[i]->baseUnit()->unitType() == COMPOSITE_UNIT) {
 			cu = (CompositeUnit*) units[i]->baseUnit();
@@ -594,7 +594,7 @@ bool CompositeUnit::containsRelativeTo(const Unit *u) const {
 	}
 	if(u->unitType() == COMPOSITE_UNIT) {
 		cu = (CompositeUnit*) u;
-		for(int i = 0; i < cu->units.size(); i++) {	
+		for(unsigned int i = 0; i < cu->units.size(); i++) {	
 			if(containsRelativeTo(cu->units[i]->baseUnit())) return true;
 		}
 		return false;
@@ -607,7 +607,7 @@ Manager *CompositeUnit::generateManager(bool cleaned) const {
 	} else {
 		Manager *mngr = new Manager();
 		if(units.size() > 0) mngr->setType(MULTIPLICATION_MANAGER);
-		for(int i = 0; i < units.size(); i++) {
+		for(unsigned int i = 0; i < units.size(); i++) {
 			if(units[i]->firstBaseExp() != 1) {
 				Manager *mngr2 = new Manager();
 				mngr2->setType(POWER_MANAGER);
@@ -656,10 +656,10 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	Manager *mngr;
 	while(true) {
 		i = base_expression_.find(ID_WRAP_LEFT_CH, i2);
-		if(i == string::npos) {
+		if(i == (int) string::npos) {
 			if(i2 == 0) {
 				CALCULATOR->error(false, _("Error in unitexpression: \"%s\"."), base_expression_.c_str(), NULL);
-			} else if(base_expression_.length() > i2 + 2) {
+			} else if((int) base_expression_.length() > i2 + 2) {
 				CALCULATOR->error(false, _("Error in unitexpression: \"%s\"."), base_expression_.substr(i2 + 2, base_expression_.length() - i2 - 2).c_str(), NULL);
 			}
 			break;
@@ -672,11 +672,11 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 				CALCULATOR->error(false, _("Error in unitexpression: \"%s\"."), base_expression_.substr(0, i - 1).c_str(), NULL);
 		}
 		i2 = base_expression_.find(ID_WRAP_RIGHT_CH, i);		
-		if(i2 == string::npos) {
+		if(i2 == (int) string::npos) {
 			break;
 		}
 		id = s2i(base_expression_.substr(i + 1, i2 - i - 1));
-		if(!div && div_place != string::npos && i > div_place) {
+		if(!div && div_place != (int) string::npos && i > div_place) {
 			div = true;
 		}		
 		mngr = CALCULATOR->getId(id);
@@ -688,11 +688,11 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 				mngr = mngr->getChild(1);
 			} 
 			if(mngr->isUnit()) {
-				if(base_expression_.length() > i2 + 3 && base_expression_[i2 + 2] == POWER_CH) {
+				if((int) base_expression_.length() > i2 + 3 && base_expression_[i2 + 2] == POWER_CH) {
 					if(is_in(NUMBERS, base_expression_[i2 + 3])) {
 						exp = s2li(base_expression_.substr(i2 + 3, 1));
 						i2 += 2;
-					} else if(base_expression_.length() > i2 + 4 && is_in(MINUS PLUS, base_expression_[i2 + 3]) && is_in(NUMBERS, base_expression_[i2 + 4])) {
+					} else if((int) base_expression_.length() > i2 + 4 && is_in(MINUS PLUS, base_expression_[i2 + 3]) && is_in(NUMBERS, base_expression_[i2 + 4])) {
 						exp = s2li(base_expression_.substr(i2 + 3, 2));
 						i2 += 3;
 					}

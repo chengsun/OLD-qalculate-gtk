@@ -46,8 +46,8 @@ class Function : public ExpressionItem {
 	int argc;
 	int max_argc;
 	vector<string> default_values;
-	Sgi::hash_map<int, Argument*> argdefs;
-	int last_argdef_index;
+	Sgi::hash_map<unsigned int, Argument*> argdefs;
+	unsigned int last_argdef_index;
 	virtual void calculate(Manager *mngr, vector<Manager*> &vargs);			
 	bool testArgumentCount(int itmp);
 	bool testArguments(vector<Manager*> &vargs);
@@ -74,13 +74,13 @@ class Function : public ExpressionItem {
 	int minargs() const;	
 	int maxargs() const;		
 	int args(const string &str, vector<Manager*> &vargs);
-	int lastArgumentDefinitionIndex() const;
-	Argument *getArgumentDefinition(int index);
+	unsigned int lastArgumentDefinitionIndex() const;
+	Argument *getArgumentDefinition(unsigned int index);
 	void clearArgumentDefinitions();
-	void setArgumentDefinition(int index, Argument *argdef);
+	void setArgumentDefinition(unsigned int index, Argument *argdef);
 	int stringArgs(const string &str, vector<string> &svargs);		
-	void setDefaultValue(int arg_, string value_);
-	string getDefaultValue(int arg_) const;	
+	void setDefaultValue(unsigned int arg_, string value_);
+	string getDefaultValue(unsigned int arg_) const;	
 	Vector *produceVector(vector<Manager*> &vargs, int begin = -1, int end = -1);
 	Vector *produceArgumentsVector(vector<Manager*> &vargs, int begin = -1, int end = -1);
 };
@@ -117,6 +117,7 @@ class Argument {
   
 	Argument(string name_ = "", bool does_test = true);	
 	Argument(const Argument *arg);
+	virtual ~Argument();
 
 	virtual void set(const Argument *arg);
 	virtual Argument *copy() const;
@@ -163,7 +164,7 @@ class FractionArgument : public Argument {
   
   	FractionArgument(string name_ = "", ArgumentMinMaxPreDefinition minmax = ARGUMENT_MIN_MAX_NONE, bool does_test = true);
 	FractionArgument(const FractionArgument *arg);
-	~FractionArgument();
+	virtual ~FractionArgument();
 	
 	virtual void set(const Argument *arg);
 	virtual Argument *copy() const;
@@ -198,7 +199,7 @@ class IntegerArgument : public Argument {
   
   	IntegerArgument(string name_ = "", ArgumentMinMaxPreDefinition minmax = ARGUMENT_MIN_MAX_NONE, bool does_test = true);
 	IntegerArgument(const IntegerArgument *arg);
-	~IntegerArgument();
+	virtual ~IntegerArgument();
 
 	virtual void set(const Argument *arg);
 	virtual Argument *copy() const;
@@ -225,6 +226,7 @@ class TextArgument : public Argument {
   
   	TextArgument(string name_ = "", bool does_test = true);
 	TextArgument(const TextArgument *arg);
+	virtual ~TextArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
@@ -242,6 +244,7 @@ class DateArgument : public Argument {
   
   	DateArgument(string name_ = "", bool does_test = true);
 	DateArgument(const DateArgument *arg);
+	virtual ~DateArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
@@ -258,6 +261,7 @@ class VectorArgument : public Argument {
   
   	VectorArgument(string name_ = "", bool does_test = true, bool allow_matrix = false);
 	VectorArgument(const VectorArgument *arg);
+	virtual ~VectorArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
@@ -273,6 +277,7 @@ class MatrixArgument : public Argument {
   
   	MatrixArgument(string name_ = "", bool does_test = true);
 	MatrixArgument(const MatrixArgument *arg);
+	virtual ~MatrixArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
@@ -288,6 +293,7 @@ class ExpressionItemArgument : public Argument {
   
   	ExpressionItemArgument(string name_ = "", bool does_test = true);
 	ExpressionItemArgument(const ExpressionItemArgument *arg);
+	virtual ~ExpressionItemArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
@@ -304,6 +310,7 @@ class FunctionArgument : public Argument {
   
   	FunctionArgument(string name_ = "", bool does_test = true);
 	FunctionArgument(const FunctionArgument *arg);
+	virtual ~FunctionArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
@@ -320,6 +327,7 @@ class BooleanArgument : public Argument {
   
   	BooleanArgument(string name_ = "", bool does_test = true);
 	BooleanArgument(const BooleanArgument *arg);
+	virtual ~BooleanArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
@@ -335,6 +343,7 @@ class UnitArgument : public Argument {
   
   	UnitArgument(string name_ = "", bool does_test = true);
 	UnitArgument(const UnitArgument *arg);
+	virtual ~UnitArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
@@ -351,6 +360,7 @@ class AngleArgument : public Argument {
   
   	AngleArgument(string name_ = "", bool does_test = true);
 	AngleArgument(const AngleArgument *arg);
+	virtual ~AngleArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
@@ -366,6 +376,7 @@ class VariableArgument : public Argument {
   
   	VariableArgument(string name_ = "", bool does_test = true);
 	VariableArgument(const VariableArgument *arg);
+	virtual ~VariableArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;

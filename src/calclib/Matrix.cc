@@ -26,7 +26,7 @@ Matrix::Matrix() {
 	elements.resize(1);
 	elements[0].push_back(new Manager());
 }
-Matrix::Matrix(int nr_of_rows, int nr_of_columns) {
+Matrix::Matrix(unsigned int nr_of_rows, unsigned int nr_of_columns) {
 	b_exact = true;
 	elements.resize(1);
 	elements[0].push_back(new Manager());
@@ -39,8 +39,8 @@ Matrix::Matrix(const Matrix *matrix) {
 	set(matrix);
 }
 Matrix::~Matrix() {
-	for(int index_r = 0; index_r < elements.size(); index_r++) {
-		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
+	for(unsigned int index_r = 0; index_r < elements.size(); index_r++) {
+		for(unsigned int index_c = 0; index_c < elements[index_r].size(); index_c++) {
 			if(elements[index_r][index_c]) {
 				delete elements[index_r][index_c];
 			}
@@ -52,20 +52,20 @@ void Matrix::set(const Matrix *matrix) {
 	b_exact = matrix->isPrecise();
 	setColumns(matrix->columns());
 	setRows(matrix->rows());	
-	for(int index_r = 1; index_r <= matrix->rows(); index_r++) {
-		for(int index_c = 1; index_c <= matrix->columns(); index_c++) {
+	for(unsigned int index_r = 1; index_r <= matrix->rows(); index_r++) {
+		for(unsigned int index_c = 1; index_c <= matrix->columns(); index_c++) {
 			set(matrix->get(index_r, index_c), index_r, index_c);
 		}
 	} 
 }
-void Matrix::setToIdentityMatrix(int rows_columns) {
+void Matrix::setToIdentityMatrix(unsigned int rows_columns) {
 	b_vector = false;
 	if(rows_columns < 1) rows_columns = 1;
 	setColumns(rows_columns);
 	setRows(rows_columns);	
 	Manager mngr;
-	for(int index_r = 1; index_r <= rows(); index_r++) {
-		for(int index_c = 1; index_c <= columns(); index_c++) {
+	for(unsigned int index_r = 1; index_r <= rows(); index_r++) {
+		for(unsigned int index_c = 1; index_c <= columns(); index_c++) {
 			if(index_c == index_r) {
 				mngr.set(1, 1);
 			} else {
@@ -85,8 +85,8 @@ void Matrix::transpose() {
 	Matrix mtrx_save(this);
 	setColumns(mtrx_save.rows());
 	setRows(mtrx_save.columns());	
-	for(int index_r = 1; index_r <= rows(); index_r++) {
-		for(int index_c = 1; index_c <= columns(); index_c++) {
+	for(unsigned int index_r = 1; index_r <= rows(); index_r++) {
+		for(unsigned int index_c = 1; index_c <= columns(); index_c++) {
 			set(mtrx_save.get(index_c, index_r), index_r, index_c);
 		}
 	}	
@@ -116,8 +116,8 @@ bool Matrix::adjoint() {
 	b_vector = false;
 	Matrix mtrx(this);
 	Manager *mngr;
-	for(int index_r = 1; index_r <= rows(); index_r++) {
-		for(int index_c = 1; index_c <= columns(); index_c++) {
+	for(unsigned int index_r = 1; index_r <= rows(); index_r++) {
+		for(unsigned int index_c = 1; index_c <= columns(); index_c++) {
 			mngr = mtrx.cofactor(index_r, index_c);
 			set(mngr, index_r, index_c);
 			delete mngr;
@@ -132,11 +132,11 @@ bool Matrix::rank(bool ascending) {
 	vector<int> ranked_c;	
 	vector<Manager*> ranked_mngr;	
 	vector<bool> ranked_equals_prev;	
-	for(int index_r = 1; index_r <= rows(); index_r++) {
-		for(int index_c = 1; index_c <= columns(); index_c++) {
+	for(unsigned int index_r = 1; index_r <= rows(); index_r++) {
+		for(unsigned int index_c = 1; index_c <= columns(); index_c++) {
 			mngr = get(index_r, index_c);
 			bool b = false;
-			for(int i = 0; i < ranked_r.size(); i++) {
+			for(unsigned int i = 0; i < ranked_r.size(); i++) {
 				int cmp = mngr->compare(ranked_mngr[i]);
 				if(cmp < -1) {
 					CALCULATOR->error(true, _("Unsolvable comparison at element %s:%s when trying to rank matrix/vector."), i2s(index_r).c_str(), i2s(index_c).c_str(), NULL);
@@ -167,7 +167,7 @@ bool Matrix::rank(bool ascending) {
 		}
 	}	
 	int n_rep = 0;
-	for(int i = ranked_r.size() - 1; i >= 0; i--) {
+	for(int i = (int) ranked_r.size() - 1; i >= 0; i--) {
 		if(ranked_equals_prev[i]) {
 			n_rep++;
 		} else {
@@ -189,11 +189,11 @@ bool Matrix::rank(bool ascending) {
 bool Matrix::sort(bool ascending) {
 	Manager *mngr;
 	vector<Manager*> ranked_mngr;	
-	for(int index_r = 1; index_r <= rows(); index_r++) {
-		for(int index_c = 1; index_c <= columns(); index_c++) {
+	for(unsigned int index_r = 1; index_r <= rows(); index_r++) {
+		for(unsigned int index_c = 1; index_c <= columns(); index_c++) {
 			mngr = new Manager(get(index_r, index_c));
 			bool b = false;
-			for(int i = 0; i < ranked_mngr.size(); i++) {
+			for(unsigned int i = 0; i < ranked_mngr.size(); i++) {
 				int cmp = mngr->compare(ranked_mngr[i]);
 				if(cmp < -1) {
 					CALCULATOR->error(true, _("Unsolvable comparison at element %s:%s when trying to sort matrix/vector."), i2s(index_r).c_str(), i2s(index_c).c_str(), NULL);
@@ -210,19 +210,19 @@ bool Matrix::sort(bool ascending) {
 			}
 		}
 	}	
-	for(int i = ranked_mngr.size() - 1; i >= 0; i--) {
+	for(int i = (int) ranked_mngr.size() - 1; i >= 0; i--) {
 		set(ranked_mngr[i], i / columns() + 1, i % columns() + 1);
 		delete ranked_mngr[i];
 	}
 	return true;
 }
-Manager *Matrix::cofactor(int row, int column) const {
+Manager *Matrix::cofactor(unsigned int row, unsigned int column) const {
 	if(row < 1) row = 1;
 	if(column < 1) column = 1;
 	Matrix mtrx(rows() - 1, columns() - 1);
-	for(int index_r = 1; index_r <= rows(); index_r++) {
+	for(unsigned int index_r = 1; index_r <= rows(); index_r++) {
 		if(index_r != row) {
-			for(int index_c = 1; index_c <= columns(); index_c++) {
+			for(unsigned int index_c = 1; index_c <= columns(); index_c++) {
 				if(index_c > column) {
 					if(index_r > row) {
 						mtrx.set(get(index_r, index_c), index_r - 1, index_c - 1);
@@ -281,9 +281,9 @@ Manager *Matrix::determinant(Manager *mngr) const {
 	} else {
 		Manager tmp;
 		Matrix mtrx(elements.size() - 1, elements[0].size() - 1);
-		for(int index_c = 0; index_c < elements[0].size(); index_c++) {
-			for(int index_r2 = 1; index_r2 < elements.size(); index_r2++) {
-				for(int index_c2 = 0; index_c2 < elements[index_r2].size(); index_c2++) {
+		for(unsigned int index_c = 0; index_c < elements[0].size(); index_c++) {
+			for(unsigned int index_r2 = 1; index_r2 < elements.size(); index_r2++) {
+				for(unsigned int index_c2 = 0; index_c2 < elements[index_r2].size(); index_c2++) {
 					if(index_c2 > index_c) {
 						mtrx.set(elements[index_r2][index_c2], index_r2, index_c2);
 					} else if(index_c2 < index_c) {
@@ -302,31 +302,31 @@ Manager *Matrix::determinant(Manager *mngr) const {
 	}
 	return mngr;
 }
-int Matrix::rows() const {
+unsigned int Matrix::rows() const {
 	return elements.size();
 }
-int Matrix::columns() const {
+unsigned int Matrix::columns() const {
 	return elements[0].size();
 }
-void Matrix::setRows(int nr_of_rows) {
+void Matrix::setRows(unsigned int nr_of_rows) {
 	if(nr_of_rows < 1) nr_of_rows = 1;	
 	if(nr_of_rows > 1) b_vector = false;
-	for(int index_r = nr_of_rows; index_r < elements.size(); index_r++) {
-		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
+	for(unsigned int index_r = nr_of_rows; index_r < elements.size(); index_r++) {
+		for(unsigned int index_c = 0; index_c < elements[index_r].size(); index_c++) {
 			delete elements[index_r][index_c];
 		}		
 	}
 	elements.resize(nr_of_rows);
 	setColumns(columns());
 }
-void Matrix::setColumns(int nr_of_columns) {
+void Matrix::setColumns(unsigned int nr_of_columns) {
 	if(nr_of_columns < 1) nr_of_columns = 1;
-	for(int index_r = 0; index_r < elements.size(); index_r++) {
-		for(int index_c = nr_of_columns; index_c < elements[index_r].size(); index_c++) {
+	for(unsigned int index_r = 0; index_r < elements.size(); index_r++) {
+		for(unsigned int index_c = nr_of_columns; index_c < elements[index_r].size(); index_c++) {
 			delete elements[index_r][index_c];
 		}
 		elements[index_r].resize(nr_of_columns);	
-		for(int index_c = 0; index_c < nr_of_columns; index_c++) {
+		for(unsigned int index_c = 0; index_c < nr_of_columns; index_c++) {
 			if(!elements[index_r][index_c]) {
 				elements[index_r][index_c] = new Manager();
 			}
@@ -339,7 +339,8 @@ void Matrix::addRow() {
 void Matrix::addColumn() {
 	setColumns(columns() + 1);
 }
-void Matrix::set(const Manager *mngr, int row, int column) {
+void Matrix::set(const Manager *mngr, unsigned int row, unsigned int column) {
+	if(row == 0 || column == 0) return;
 	row--;
 	column--;
 	if(row < elements.size() && row >= 0 && column < elements[row].size() && column >= 0) {
@@ -347,7 +348,8 @@ void Matrix::set(const Manager *mngr, int row, int column) {
 		if(!elements[row][column]->isPrecise()) b_exact = false;
 	}
 }
-Manager *Matrix::get(int row, int column) {
+Manager *Matrix::get(unsigned int row, unsigned int column) {
+	if(row == 0 || column == 0) return NULL;
 	row--;
 	column--;
 	if(row < elements.size() && row >= 0 && column < elements[row].size() && column >= 0) {
@@ -355,7 +357,8 @@ Manager *Matrix::get(int row, int column) {
 	}
 	return NULL;
 }	
-const Manager *Matrix::get(int row, int column) const {
+const Manager *Matrix::get(unsigned int row, unsigned int column) const {
+	if(row == 0 || column == 0) return NULL;
 	row--;
 	column--;
 	if(row < elements.size() && row >= 0 && column < elements[row].size() && column >= 0) {
@@ -384,15 +387,17 @@ bool Matrix::add(MathOperation op, const Matrix *matrix) {
 		case OPERATION_EXP10: {
 			return exp10(matrix);
 		}
+		default: {
+			return false;			
+		}
 	}
-	return false;	
 }
 bool Matrix::add(const Matrix *matrix) {
 	if(columns() != matrix->columns() || rows() != matrix->rows()) {
 		return false;
 	}
-	for(int index_r = 0; index_r < elements.size(); index_r++) {
-		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
+	for(unsigned int index_r = 0; index_r < elements.size(); index_r++) {
+		for(unsigned int index_c = 0; index_c < elements[index_r].size(); index_c++) {
 			elements[index_r][index_c]->add(matrix->get(index_r + 1, index_c + 1), OPERATION_ADD);
 			if(!elements[index_r][index_c]->isPrecise()) b_exact = false;
 		}
@@ -403,8 +408,8 @@ bool Matrix::subtract(const Matrix *matrix) {
 	if(columns() != matrix->columns() || rows() != matrix->rows()) {
 		return false;
 	}
-	for(int index_r = 0; index_r < elements.size(); index_r++) {
-		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
+	for(unsigned int index_r = 0; index_r < elements.size(); index_r++) {
+		for(unsigned int index_c = 0; index_c < elements[index_r].size(); index_c++) {
 			elements[index_r][index_c]->add(matrix->get(index_r + 1, index_c + 1), OPERATION_SUBTRACT);
 			if(!elements[index_r][index_c]->isPrecise()) b_exact = false;
 		}
@@ -414,7 +419,7 @@ bool Matrix::subtract(const Matrix *matrix) {
 bool Matrix::multiply(const Matrix *matrix) {
 	if(columns() == 1 && matrix->columns() == 1 && rows() == matrix->rows()) {
 		Manager mngr;
-		for(int index_r = 1; index_r <= rows(); index_r++) {
+		for(unsigned int index_r = 1; index_r <= rows(); index_r++) {
 			Manager mngr2(get(index_r, 1));
 			mngr2.add(matrix->get(index_r, 1), OPERATION_MULTIPLY);
 			mngr.add(&mngr2, OPERATION_ADD);
@@ -425,7 +430,7 @@ bool Matrix::multiply(const Matrix *matrix) {
 		return true;
 	} else if(rows() == 1 && matrix->rows() == 1 && columns() == matrix->columns()) {
 		Manager mngr;
-		for(int index_c = 1; index_c <= columns(); index_c++) {
+		for(unsigned int index_c = 1; index_c <= columns(); index_c++) {
 			Manager mngr2(get(1, index_c));	
 			mngr2.add(matrix->get(1, index_c), OPERATION_MULTIPLY);
 			mngr.add(&mngr2, OPERATION_ADD);
@@ -441,9 +446,9 @@ bool Matrix::multiply(const Matrix *matrix) {
 		}	
 		Matrix product(rows(), matrix->columns());
 		Manager mngr;
-		for(int index_r = 1; index_r <= product.rows(); index_r++) {
-			for(int index_c = 1; index_c <= product.columns(); index_c++) {
-				for(int index = 1; index <= columns(); index++) {
+		for(unsigned int index_r = 1; index_r <= product.rows(); index_r++) {
+			for(unsigned int index_c = 1; index_c <= product.columns(); index_c++) {
+				for(unsigned int index = 1; index <= columns(); index++) {
 					mngr.set(get(index_r, index));
 					mngr.add(matrix->get(index, index_c), OPERATION_MULTIPLY);
 					product.get(index_r, index_c)->add(&mngr, OPERATION_ADD);
@@ -488,8 +493,10 @@ bool Matrix::add(MathOperation op, const Manager *mngr) {
 		case OPERATION_EXP10: {
 			return exp10(mngr);
 		}
+		default: {
+			return false;	
+		}
 	}
-	return false;	
 }
 bool Matrix::add(const Manager *mngr) {
 	if(mngr->isMatrix()) {
@@ -507,8 +514,8 @@ bool Matrix::multiply(const Manager *mngr) {
 	if(mngr->isMatrix()) {
 		return multiply(mngr->matrix());
 	}
-	for(int index_r = 0; index_r < elements.size(); index_r++) {
-		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
+	for(unsigned int index_r = 0; index_r < elements.size(); index_r++) {
+		for(unsigned int index_c = 0; index_c < elements[index_r].size(); index_c++) {
 			elements[index_r][index_c]->add(mngr, OPERATION_MULTIPLY);
 			if(!elements[index_r][index_c]->isPrecise()) b_exact = false;
 		}
@@ -519,8 +526,8 @@ bool Matrix::divide(const Manager *mngr) {
 	if(mngr->isMatrix()) {
 		return divide(mngr->matrix());
 	}
-	for(int index_r = 0; index_r < elements.size(); index_r++) {
-		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
+	for(unsigned int index_r = 0; index_r < elements.size(); index_r++) {
+		for(unsigned int index_c = 0; index_c < elements[index_r].size(); index_c++) {
 			elements[index_r][index_c]->add(mngr, OPERATION_DIVIDE);
 			if(!elements[index_r][index_c]->isPrecise()) b_exact = false;
 		}
@@ -554,8 +561,8 @@ bool Matrix::exp10(const Manager *mngr) {
 	if(mngr->isMatrix()) {
 		return exp10(mngr->matrix());
 	}
-	for(int index_r = 0; index_r < elements.size(); index_r++) {
-		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
+	for(unsigned int index_r = 0; index_r < elements.size(); index_r++) {
+		for(unsigned int index_c = 0; index_c < elements[index_r].size(); index_c++) {
 			elements[index_r][index_c]->add(mngr, OPERATION_EXP10);
 			if(!elements[index_r][index_c]->isPrecise()) b_exact = false;
 		}
@@ -564,8 +571,8 @@ bool Matrix::exp10(const Manager *mngr) {
 }
 bool Matrix::equals(const Matrix *matrix) const {
 	if(rows() != matrix->rows() || columns() != matrix->columns()) return false;
-	for(int index_r = 1; index_r <= rows(); index_r++) {
-		for(int index_c = 1; index_c <= columns(); index_c++) {
+	for(unsigned int index_r = 1; index_r <= rows(); index_r++) {
+		for(unsigned int index_c = 1; index_c <= columns(); index_c++) {
 			if(!get(index_r, index_c)->equals(matrix->get(index_r, index_c))) return false;
 		}
 	}	
@@ -585,8 +592,8 @@ Vector *Matrix::getRange(int start, int end) {
 	else if(end < start) end = start;	
 	Vector *vctr = new Vector(end + 1 - start);
 	int i;
-	for(int index_r = 1; index_r <= rows(); index_r++) {
-		for(int index_c = 1; index_c <= columns(); index_c++) {
+	for(unsigned int index_r = 1; index_r <= rows(); index_r++) {
+		for(unsigned int index_c = 1; index_c <= columns(); index_c++) {
 			i = (index_r - 1) * columns() + index_c;
 			if(i >= start && i <= end) {
 				vctr->set(get(index_r, index_c), i + 1 - start);
@@ -597,29 +604,29 @@ Vector *Matrix::getRange(int start, int end) {
 }
 Vector *Matrix::toVector() {
 	Vector *vctr = new Vector(columns() * rows());
-	for(int index_r = 1; index_r <= rows(); index_r++) {
-		for(int index_c = 1; index_c <= columns(); index_c++) {
+	for(unsigned int index_r = 1; index_r <= rows(); index_r++) {
+		for(unsigned int index_c = 1; index_c <= columns(); index_c++) {
 			vctr->set(get(index_r, index_c), (index_r - 1) * columns() + index_c);
 		}			
 	}
 	return vctr;
 }
-Vector *Matrix::rowToVector(int row) {
+Vector *Matrix::rowToVector(unsigned int row) {
 	if(row < 1 || row > rows()) {
 		return NULL;
 	}
 	Vector *vctr = new Vector(columns());
-	for(int index_c = 1; index_c <= columns(); index_c++) {
+	for(unsigned int index_c = 1; index_c <= columns(); index_c++) {
 		vctr->set(get(row, index_c), index_c);
 	}
 	return vctr;
 }
-Vector *Matrix::columnToVector(int column) {
+Vector *Matrix::columnToVector(unsigned int column) {
 	if(column < 1 || column > columns()) {
 		return NULL;
 	}
 	Vector *vctr = new Vector(rows());
-	for(int index_r = 1; index_r <= rows(); index_r++) {
+	for(unsigned int index_r = 1; index_r <= rows(); index_r++) {
 		vctr->set(get(index_r, column), index_r);
 	}
 	return vctr;
@@ -628,8 +635,8 @@ bool Matrix::isVector() const {
 	return b_vector;
 }
 void Matrix::recalculateFunctions() {
-	for(int index_r = 0; index_r < elements.size(); index_r++) {
-		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
+	for(unsigned int index_r = 0; index_r < elements.size(); index_r++) {
+		for(unsigned int index_c = 0; index_c < elements[index_r].size(); index_c++) {
 			elements[index_r][index_c]->recalculateFunctions();
 		}
 	} 	
@@ -640,8 +647,8 @@ string Matrix::print(NumberFormat nrformat, int displayflags, int min_decimals, 
 	str += CALCULATOR->getComma();
 	str += " ";
 	str += i2s(columns());
-	for(int index_r = 0; index_r < elements.size(); index_r++) {
-		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
+	for(unsigned int index_r = 0; index_r < elements.size(); index_r++) {
+		for(unsigned int index_c = 0; index_c < elements[index_r].size(); index_c++) {
 			str += CALCULATOR->getComma();
 			str += " ";
 			str += elements[index_r][index_c]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
@@ -655,7 +662,7 @@ string Matrix::print(NumberFormat nrformat, int displayflags, int min_decimals, 
 Vector::Vector() : Matrix() {
 	b_vector = true;
 }
-Vector::Vector(int components) : Matrix(1, components) {
+Vector::Vector(unsigned int components) : Matrix(1, components) {
 	b_vector = true;
 }
 Vector::Vector(const Matrix *vector) : Matrix(vector) {
@@ -664,16 +671,16 @@ Vector::Vector(const Matrix *vector) : Matrix(vector) {
 void Vector::set(const Vector *vector) {
 	Matrix::set(vector);
 }
-void Vector::set(const Manager *mngr, int component) {
+void Vector::set(const Manager *mngr, unsigned int component) {
 	Matrix::set(mngr, 1, component);
 }
-Manager *Vector::get(int component) {
+Manager *Vector::get(unsigned int component) {
 	return Matrix::get(1, component);
 }
-const Manager *Vector::get(int component) const {
+const Manager *Vector::get(unsigned int component) const {
 	return Matrix::get(1, component);
 }
-int Vector::components() const {
+unsigned int Vector::components() const {
 	return Matrix::columns();
 }
 void Vector::addComponent() {
@@ -684,7 +691,7 @@ string Vector::print(NumberFormat nrformat, int displayflags, int min_decimals, 
 		return Matrix::print(nrformat, displayflags, min_decimals, max_decimals, prefix, in_exact, usable, toplevel, plural, l_exp, in_composite, in_power);
 	}
 	string str = "vector(";
-	for(int index = 1; index <= components(); index++) {
+	for(unsigned int index = 1; index <= components(); index++) {
 		if(index != 1) {
 			str += CALCULATOR->getComma();
 			str += " ";

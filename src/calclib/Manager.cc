@@ -50,7 +50,7 @@ Manager::Manager(const Function *f, ...) {
 	Manager *mngr;
 	va_list ap;
 	va_start(ap, f); 
-	for(int i = 0; true; i++) {
+	while(true) {
 		mngr = va_arg(ap, Manager*);
 		if(mngr == NULL) break;
 		push_back(new Manager(mngr));
@@ -101,7 +101,7 @@ void Manager::set(const Manager *mngr) {
 			}
 		}
 		fr->set(mngr->fraction());
-		for(int i = 0; i < mngr->countChilds(); i++) {
+		for(unsigned int i = 0; i < mngr->countChilds(); i++) {
 			mngrs.push_back(new Manager(mngr->getChild(i)));
 		}	
 		setPrecise(mngr->isPrecise());
@@ -158,7 +158,7 @@ void Manager::set(const Function *f, ...) {
 	Manager *mngr;
 	va_list ap;
 	va_start(ap, f); 
-	for(int i = 0; true; i++) {
+	while(true) {
 		mngr = va_arg(ap, Manager*);
 		if(mngr == NULL) break;
 		push_back(new Manager(mngr));
@@ -192,8 +192,8 @@ bool Manager::typeclean() {
 	switch(c_type) {
 		case ALTERNATIVE_MANAGER: {
 			int i, i2;
-			for(i = 0; i + 1 < mngrs.size(); i++) {	
-				for(i2 = i + 1; i2 < mngrs.size(); i2++) {	
+			for(i = 0; i + 1 < (int) mngrs.size(); i++) {	
+				for(i2 = i + 1; i2 < (int) mngrs.size(); i2++) {	
 					if(mngrs[i]->equals(mngrs[i2])) {
 						mngrs[i2]->unref();
 						mngrs.erase(mngrs.begin() + i2);				
@@ -210,14 +210,14 @@ bool Manager::typeclean() {
 		}
 		case ADDITION_MANAGER: {
 			int i, i2;
-			for(i = 0; i + 1 < mngrs.size(); i++) {
+			for(i = 0; i + 1 < (int) mngrs.size(); i++) {
 				if(mngrs[i]->isNull()) {
 					mngrs[i]->unref();
 						mngrs.erase(mngrs.begin() + i);				
 					changed = true;
 					i--;
 				} else {
-					for(i2 = i + 1; i2 < mngrs.size(); i2++) {
+					for(i2 = i + 1; i2 < (int) mngrs.size(); i2++) {
 						if(mngrs[i2]->isNull()) {
 							mngrs[i2]->unref();
 							mngrs.erase(mngrs.begin() + i2);				
@@ -243,8 +243,8 @@ bool Manager::typeclean() {
 			break;
 		}
 		case MULTIPLICATION_MANAGER: {
-			for(int i = 0; i + 1 < mngrs.size(); i++) {
-				for(int i2 = i + 1; i2 < mngrs.size(); i2++) {
+			for(int i = 0; i + 1 < (int) mngrs.size(); i++) {
+				for(int i2 = i + 1; i2 < (int) mngrs.size(); i2++) {
 					if(mngrs[i]->add(mngrs[i2], OPERATION_MULTIPLY, false)) {
 						mngrs[i2]->unref();
 						mngrs.erase(mngrs.begin() + i2);
@@ -283,8 +283,8 @@ bool Manager::typeclean() {
 			MathOperation op;
 			if(c_type == OR_MANAGER) op = OPERATION_OR;
 			else op = OPERATION_AND;
-			for(int i = 0; i + 1 < mngrs.size(); i++) {
-				for(int i2 = i + 1; i2 < mngrs.size(); i2++) {
+			for(int i = 0; i + 1 < (int) mngrs.size(); i++) {
+				for(int i2 = i + 1; i2 < (int) mngrs.size(); i2++) {
 					if(mngrs[i]->add(mngrs[i2], op, false)) {
 						mngrs[i2]->unref();
 						mngrs.erase(mngrs.begin() + i2);
@@ -408,7 +408,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 	}
 	if(c_type == ALTERNATIVE_MANAGER) {
 		if(mngr->type() == ALTERNATIVE_MANAGER) {
-			for(int i = 0; i < mngr->countChilds(); i++) {
+			for(unsigned int i = 0; i < mngr->countChilds(); i++) {
 				push_back(new Manager(mngr->getChild(i)));
 			}
 		} else {
@@ -417,7 +417,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 				mngrs[i]->add(mngr, op);
 				if(!mngrs[i]->isPrecise()) setPrecise(false);
 				if(mngrs[i]->type() == ALTERNATIVE_MANAGER) {
-					for(int i2 = 0; i2 < mngrs[i]->countChilds(); i2++) {
+					for(unsigned int i2 = 0; i2 < mngrs[i]->countChilds(); i2++) {
 						mngrs[i]->getChild(i2)->ref();
 						push_back(mngrs[i]->getChild(i2));
 					}
@@ -478,7 +478,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 				switch(mngr->type()) {
 					case ADDITION_MANAGER: {
 						bool b = false;
-						for(int i = 0; i < mngr->mngrs.size(); i++) {
+						for(unsigned int i = 0; i < mngr->mngrs.size(); i++) {
 							if(add(mngr->mngrs[i], op, translate_)) {
 								b = true;
 							}
@@ -508,9 +508,9 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 					case MULTIPLICATION_MANAGER: {
 						bool b = false;
 						if(compatible(mngr)) {
-							for(int i = 0; i < mngrs.size(); i++) {
+							for(unsigned int i = 0; i < mngrs.size(); i++) {
 								if(mngrs[i]->isNumber()) {
-									for(int i2 = 0; i2 < mngr->mngrs.size(); i2++) {
+									for(unsigned int i2 = 0; i2 < mngr->mngrs.size(); i2++) {
 										if(mngr->mngrs[i2]->isNumber()) {
 											mngrs[i]->add(mngr->mngrs[i2], op);
 											b = true;
@@ -534,7 +534,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 								}
 							}
 							if(!b) {
-								for(int i2 = 0; i2 < mngr->mngrs.size(); i2++) {
+								for(unsigned int i2 = 0; i2 < mngr->mngrs.size(); i2++) {
 									if(mngr->mngrs[i2]->isNumber()) {
 										if(mngr->mngrs[i2]->value() == -1) {
 											clear();
@@ -567,7 +567,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 					case STRING_MANAGER: {
 						if(compatible(mngr)) {
 							bool b = false;
-							for(int i = 0; i < mngrs.size(); i++) {
+							for(unsigned int i = 0; i < mngrs.size(); i++) {
 								if(mngrs[i]->isNumber()) {
 									Manager *mngr2 = new Manager(1, 1);
 									mngrs[i]->add(mngr2, op);
@@ -759,7 +759,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 					case ADDITION_MANAGER: {
 						Manager *mngr3 = new Manager(this);
 						clear();
-						for(int i = 0; i < mngr->mngrs.size(); i++) {
+						for(unsigned int i = 0; i < mngr->mngrs.size(); i++) {
 							Manager *mngr2 = new Manager(mngr3);
 							mngr2->add(mngr->mngrs[i], op);
 							add(mngr2, OPERATION_ADD);
@@ -769,7 +769,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 						break;
 					}
 					default: {
-						for(int i = 0; i < mngrs.size(); i++) {
+						for(unsigned int i = 0; i < mngrs.size(); i++) {
 							mngrs[i]->add(mngr, op);
 						}
 						break;
@@ -787,7 +787,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 						break;
 					}
 					case MULTIPLICATION_MANAGER: {
-						for(int i = 0; i < mngr->mngrs.size(); i++) {
+						for(unsigned int i = 0; i < mngr->mngrs.size(); i++) {
 							add(mngr->mngrs[i], op);
 						}
 						typeclean();
@@ -976,7 +976,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 		}
 		switch(c_type) {
 			case MULTIPLICATION_MANAGER: {
-				for(int i = 0; i < mngrs.size(); i++) {
+				for(unsigned int i = 0; i < mngrs.size(); i++) {
 					mngrs[i]->add(mngr, op);
 				}
 				break;
@@ -1074,10 +1074,6 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 			}
 		}
 	} else if(op == OPERATION_EQUALS || op == OPERATION_LESS || op == OPERATION_GREATER || op == OPERATION_NOT_EQUALS || op == OPERATION_EQUALS_LESS || op == OPERATION_EQUALS_GREATER) {
-/*		Manager *mngr2 = new Manager(this);	
-		mngr2->add(mngr, OPERATION_SUBTRACT);
-		mngr2->finalize();
-		int s = mngr2->signedness();*/
 		int s = compare(mngr);
 		if(s > -2) {
 			clear();
@@ -1088,8 +1084,8 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 				case OPERATION_EQUALS_LESS: {fr->setTrue(s >= 0); break;}
 				case OPERATION_EQUALS_GREATER: {fr->setTrue(s <= 0); break;}
 				case OPERATION_NOT_EQUALS: {fr->setTrue(s != 0); break;}
+				default: {}
 			}
-//			mngr2->unref();
 		} else {
 		
 			if(!translate_) {
@@ -1110,6 +1106,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 				case OPERATION_EQUALS_LESS: {comparison_type = COMPARISON_EQUALS_LESS; break;}
 				case OPERATION_EQUALS_GREATER: {comparison_type = COMPARISON_EQUALS_GREATER; break;}
 				case OPERATION_NOT_EQUALS: {comparison_type = COMPARISON_NOT_EQUALS; break;}
+				default: {}
 			}
 			c_type = COMPARISON_MANAGER;
 		}
@@ -1161,7 +1158,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 			} else if(op == OPERATION_OR) {
 				if(mngr->type() == OR_MANAGER) {
 					transform(mngr->getChild(0), OR_MANAGER, op);
-					for(int i = 1; i < mngr->countChilds(); i++) {
+					for(unsigned int i = 1; i < mngr->countChilds(); i++) {
 						push_back(new Manager(mngr->getChild(i)));
 					}
 				} else {
@@ -1173,7 +1170,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 			} else {
 				if(mngr->type() == AND_MANAGER) {
 					transform(mngr->getChild(0), AND_MANAGER, op);
-					for(int i = 1; i < mngr->countChilds(); i++) {
+					for(unsigned int i = 1; i < mngr->countChilds(); i++) {
 						push_back(new Manager(mngr->getChild(i)));
 					}
 				} else {
@@ -1287,7 +1284,7 @@ int Manager::sortCompare(const Manager *mngr, int sortflags) const {
 			if(mngr->type() == FUNCTION_MANAGER) {
 				if(o_function->name() < mngr->o_function->name()) return -1;
 				if(o_function->name() == mngr->o_function->name()) {
-					for(int i = 0; i < mngr->mngrs.size(); i++) {
+					for(unsigned int i = 0; i < mngr->mngrs.size(); i++) {
 						if(i >= mngrs.size()) {
 							return -1;	
 						}
@@ -1326,14 +1323,14 @@ int Manager::sortCompare(const Manager *mngr, int sortflags) const {
 		case MULTIPLICATION_MANAGER: {
 			if(mngrs.size() < 1) return 1;
 			if(mngr->isNumber()) return -1;
-			int start = 0;
+			unsigned int start = 0;
 			if(mngrs[0]->isNumber() && mngrs.size() > 1) start = 1;
 			if(mngr->mngrs.size() < 1 || mngr->type() == POWER_MANAGER) return mngrs[start]->sortCompare(mngr, sortflags);
 			if(mngr->type() == MULTIPLICATION_MANAGER) {
 				if(mngr->mngrs.size() < 1) return -1;
-				int mngr_start = 0;
+				unsigned int mngr_start = 0;
 				if(mngr->mngrs[0]->isNumber() && mngr->mngrs.size() > 1) mngr_start = 1;			
-				for(int i = 0; ; i++) {
+				for(unsigned int i = 0; ; i++) {
 					if(i >= mngr->mngrs.size() - mngr_start && i >= mngrs.size() - start) return 0;
 					if(i >= mngr->mngrs.size() - mngr_start) return 1;
 					if(i >= mngrs.size() - start) return -1;
@@ -1349,7 +1346,7 @@ int Manager::sortCompare(const Manager *mngr, int sortflags) const {
 			if(mngr->isNumber()) return -1;
 			if(mngr->type() == ADDITION_MANAGER) {
 				if(mngr->mngrs.size() < 1) return -1;
-				for(int i = 0; ; i++) {
+				for(unsigned int i = 0; ; i++) {
 					if(i >= mngr->mngrs.size() && i >= mngrs.size()) return 0;
 					if(i >= mngr->mngrs.size()) return 1;
 					if(i >= mngrs.size()) return -1;
@@ -1370,12 +1367,12 @@ void Manager::sort(int sortflags) {
 	if(c_type == POWER_MANAGER || c_type == COMPARISON_MANAGER || mngrs.size() < 2) return;
 	vector<Manager*> sorted;
 	bool b;
-	for(int i = 0; i < mngrs.size(); i++) {
+	for(unsigned int i = 0; i < mngrs.size(); i++) {
 		b = false;
 		if(c_type == MULTIPLICATION_MANAGER && (mngrs[i]->isNumber())) {
 			sorted.insert(sorted.begin(), mngrs[i]);	
 		} else {		
-			for(int i2 = 0; i2 < sorted.size(); i2++) {
+			for(unsigned int i2 = 0; i2 < sorted.size(); i2++) {
 				if(c_type == ADDITION_MANAGER && !(sortflags & SORT_SCIENTIFIC) && mngrs[i]->hasNegativeSign() != sorted[i2]->hasNegativeSign()) {
 					if(sorted[i2]->hasNegativeSign()) {
 						sorted.insert(sorted.begin() + i2, mngrs[i]);
@@ -1391,7 +1388,7 @@ void Manager::sort(int sortflags) {
 			if(!b) sorted.push_back(mngrs[i]);
 		}
 	}
-	for(int i2 = 0; i2 < sorted.size(); i2++) {
+	for(unsigned int i2 = 0; i2 < sorted.size(); i2++) {
 		mngrs[i2] = sorted[i2];
 	}
 }
@@ -1410,7 +1407,7 @@ void Manager::moveto(Manager *term) {
 			mtrx = new Matrix(term->matrix());
 		}
 	}
-	for(int i = 0; i < term->mngrs.size(); i++) {
+	for(unsigned int i = 0; i < term->mngrs.size(); i++) {
 		term->mngrs[i]->ref();
 		mngrs.push_back(term->mngrs[i]);
 	}
@@ -1433,13 +1430,13 @@ bool Manager::equals(const Manager *mngr) const {
 		} else if(c_type == FUNCTION_MANAGER) {
 			if(o_function != mngr->function()) return false;
 			if(mngrs.size() != mngr->mngrs.size()) return false;			
-			for(int i = 0; i < mngrs.size(); i++) {
+			for(unsigned int i = 0; i < mngrs.size(); i++) {
 				if(!mngrs[i]->equals(mngr->mngrs[i])) return false;
 			}			
 			return true;
 		} else if(c_type == MULTIPLICATION_MANAGER || c_type == ADDITION_MANAGER || c_type == ALTERNATIVE_MANAGER || c_type == OR_MANAGER || c_type == AND_MANAGER) {
 			if(mngrs.size() != mngr->mngrs.size()) return false;
-			for(int i = 0; i < mngrs.size(); i++) {
+			for(unsigned int i = 0; i < mngrs.size(); i++) {
 				if(!mngrs[i]->equals(mngr->mngrs[i])) return false;
 			}
 			return true;
@@ -1448,7 +1445,7 @@ bool Manager::equals(const Manager *mngr) const {
 		} else if(c_type == COMPARISON_MANAGER) {
 			if(comparison_type != mngr->comparisonType()) return false;
 			if(mngrs.size() != mngr->mngrs.size()) return false;			
-			for(int i = 0; i < mngrs.size(); i++) {
+			for(unsigned int i = 0; i < mngrs.size(); i++) {
 				if(!mngrs[i]->equals(mngr->mngrs[i])) return false;
 			}			
 			return true;
@@ -1470,24 +1467,24 @@ bool Manager::compatible(const Manager *mngr) {
 		} else if(c_type == MULTIPLICATION_MANAGER) {
 			if(mngrs[0]->isNumber() && !mngr->mngrs[0]->isNumber()) {
 				if(mngrs.size() != mngr->mngrs.size() + 1) return false;
-				for(int i = 1; i < mngrs.size(); i++) {
+				for(unsigned int i = 1; i < mngrs.size(); i++) {
 					if(!mngrs[i]->compatible(mngr->mngrs[i - 1])) return false;
 				}
 			} else if(!mngrs[0]->isNumber() && mngr->mngrs[0]->isNumber()) {
 				if(mngrs.size() + 1 != mngr->mngrs.size()) return false;
-				for(int i = 1; i < mngr->mngrs.size(); i++) {
+				for(unsigned int i = 1; i < mngr->mngrs.size(); i++) {
 					if(!mngrs[i - 1]->compatible(mngr->mngrs[i])) return false;
 				}
 			} else {
 				if(mngrs.size() != mngr->mngrs.size()) return false;
-				for(int i = 0; i < mngrs.size(); i++) {
+				for(unsigned int i = 0; i < mngrs.size(); i++) {
 					if(!mngrs[i]->compatible(mngr->mngrs[i])) return false;
 				}
 			}
 			return true;
 		} else if(c_type == ADDITION_MANAGER) {
 			if(mngrs.size() != mngr->mngrs.size()) return false;
-			for(int i = 0; i < mngrs.size(); i++) {
+			for(unsigned int i = 0; i < mngrs.size(); i++) {
 				if(!mngrs[i]->equals(mngr->mngrs[i])) return false;
 			}
 			return true;
@@ -1516,7 +1513,7 @@ void Manager::clear() {
 	o_function = NULL;
 	if(mtrx) delete mtrx;
 	mtrx = NULL;
-	for(int i = 0; i < mngrs.size(); i++) {
+	for(unsigned int i = 0; i < mngrs.size(); i++) {
 		mngrs[i]->unref();
 	}
 	mngrs.clear();
@@ -1545,13 +1542,13 @@ void Manager::setPrecise(bool is_precise) {
 }
 const string &Manager::text() const {return s_var;}
 Unit *Manager::unit() const {return o_unit;}
-Manager *Manager::getChild(int index) const {
+Manager *Manager::getChild(unsigned int index) const {
 	if(index >= 0 && index < mngrs.size()) {
 		return mngrs[index];
 	}
 	return NULL;
 }
-int Manager::countChilds() const {return mngrs.size();}
+unsigned int Manager::countChilds() const {return mngrs.size();}
 Manager *Manager::base() const {
 	if(!isPower()) return NULL;
 	return mngrs[0];
@@ -1607,7 +1604,7 @@ int Manager::signedness() const {
 		return 1;
 	} else if(c_type == MULTIPLICATION_MANAGER || c_type == ADDITION_MANAGER || c_type == ALTERNATIVE_MANAGER) {
 		int s = 0, s2;
-		for(int i = 0; i < mngrs.size(); i++) {
+		for(unsigned int i = 0; i < mngrs.size(); i++) {
 			s2 = mngrs[i]->signedness();
 			if(s2 < -1) {
 				return -2;
@@ -1700,7 +1697,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 		str += mngrs[0]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
 		str += ")";	
 	} else if(c_type == AND_MANAGER) {			
-		for(int i = 0; i < mngrs.size(); i++) {
+		for(unsigned int i = 0; i < mngrs.size(); i++) {
 			if(i > 0) {
 				str += " & ";		
 			}
@@ -1709,7 +1706,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			if(mngrs[i]->countChilds()) str += ")";
 		}
 	} else if(c_type == OR_MANAGER) {			
-		for(int i = 0; i < mngrs.size(); i++) {
+		for(unsigned int i = 0; i < mngrs.size(); i++) {
 			if(i > 0) {
 				str += " | ";		
 			}
@@ -1746,7 +1743,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 		str += mngrs[1]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
 		if(mngrs[1]->countChilds()) str += ")";		
 	} else if(c_type == ALTERNATIVE_MANAGER) {
-		for(int i = 0; i < mngrs.size(); i++) {
+		for(unsigned int i = 0; i < mngrs.size(); i++) {
 			if(i > 0) {
 				str += " ";
 				str += _("or");		
@@ -1757,7 +1754,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 	} else if(c_type == FUNCTION_MANAGER) {
 		str += o_function->name();
 		str += "(";
-		for(int i = 0; i < mngrs.size(); i++) {
+		for(unsigned int i = 0; i < mngrs.size(); i++) {
 			if(i > 0) {
 				str += CALCULATOR->getComma();
 				str += " ";
@@ -1769,7 +1766,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 		if(!(displayflags & DISPLAY_FORMAT_SCIENTIFIC)) {
 			((Manager*) this)->sort(SORT_DEFAULT);
 		}
-		for(int i = 0; i < mngrs.size(); i++) {
+		for(unsigned int i = 0; i < mngrs.size(); i++) {
 			if(i > 0) {
 				str += " ";			
 				if(displayflags & DISPLAY_FORMAT_NONASCII) {
@@ -1812,12 +1809,12 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 		if(!(displayflags & DISPLAY_FORMAT_SCIENTIFIC)) {
 			((Manager*) this)->sort(SORT_DEFAULT);
 		}
-		for(int i = 0; i < mngrs.size(); i++) {
+		for(unsigned int i = 0; i < mngrs.size(); i++) {
 			is_unit = false;
 			if(mngrs[i]->type() == UNIT_MANAGER || (mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->type() == UNIT_MANAGER)) {
 				is_unit = true;
 			} else if(mngrs[i]->type() == POWER_MANAGER) {
-				for(int i2 = 0; i2 < mngrs[i]->mngrs[0]->mngrs.size(); i2++) {
+				for(unsigned int i2 = 0; i2 < mngrs[i]->mngrs[0]->mngrs.size(); i2++) {
 					if(mngrs[i]->mngrs[0]->mngrs[i2]->type() == UNIT_MANAGER) {
 						is_unit = true;
 						break;
@@ -2102,14 +2099,14 @@ bool Manager::testCompositeUnit(const Unit *u) {
 	return false; 
 }
 void Manager::clean() {
-	for(int i = 0; i < mngrs.size(); i++) {
+	for(unsigned int i = 0; i < mngrs.size(); i++) {
 		mngrs[i]->clean();
 		if(!mngrs[i]->isPrecise()) setPrecise(false);
 	}
 	typeclean();
 }
 void Manager::recalculateFunctions() {
-	for(int i = 0; i < mngrs.size(); i++) {
+	for(unsigned int i = 0; i < mngrs.size(); i++) {
 		mngrs[i]->recalculateFunctions();
 	}
 	switch(c_type) {
@@ -2135,7 +2132,7 @@ void gatherInformation(Manager *mngr, vector<Unit*> &base_units, vector<AliasUni
 		case UNIT_MANAGER: {
 			switch(mngr->unit()->unitType()) {
 				case BASE_UNIT: {
-					for(int i = 0; i < base_units.size(); i++) {
+					for(unsigned int i = 0; i < base_units.size(); i++) {
 						if(base_units[i] == mngr->unit()) {
 							return;
 						}
@@ -2144,7 +2141,7 @@ void gatherInformation(Manager *mngr, vector<Unit*> &base_units, vector<AliasUni
 					break;
 				}
 				case ALIAS_UNIT: {
-					for(int i = 0; i < alias_units.size(); i++) {
+					for(unsigned int i = 0; i < alias_units.size(); i++) {
 						if(alias_units[i] == mngr->unit()) {
 							return;
 						}
@@ -2161,15 +2158,15 @@ void gatherInformation(Manager *mngr, vector<Unit*> &base_units, vector<AliasUni
 			break;
 		}
 		case MATRIX_MANAGER: {
-			for(int i = 1; i <= mngr->matrix()->rows(); i++) {
-				for(int i2 = 1; i2 <= mngr->matrix()->columns(); i2++) {
+			for(unsigned int i = 1; i <= mngr->matrix()->rows(); i++) {
+				for(unsigned int i2 = 1; i2 <= mngr->matrix()->columns(); i2++) {
 					gatherInformation(mngr->matrix()->get(i, i2), base_units, alias_units);
 				}	
 			}
 			break;
 		}
 		default: {
-			for(int i = 0; i < mngr->countChilds(); i++) {
+			for(unsigned int i = 0; i < mngr->countChilds(); i++) {
 				gatherInformation(mngr->getChild(i), base_units, alias_units);
 			}
 			break;
@@ -2184,26 +2181,28 @@ void Manager::syncUnits() {
 	gatherInformation(this, base_units, alias_units);
 	CompositeUnit *cu;
 	bool b = false;
-	for(int i = 0; i < alias_units.size(); i++) {
+	for(int i = 0; i < (int) alias_units.size(); i++) {
 		if(alias_units[i]->baseUnit()->unitType() == COMPOSITE_UNIT) {
 			b = false;
 			cu = (CompositeUnit*) alias_units[i]->baseUnit();
-			for(int i2 = 0; i2 < base_units.size(); i2++) {
+			for(unsigned int i2 = 0; i2 < base_units.size(); i2++) {
 				if(cu->containsRelativeTo(base_units[i2])) {
-					for(int i = 0; i < composite_units.size(); i++) {
+					for(unsigned int i = 0; i < composite_units.size(); i++) {
 						if(composite_units[i] == cu) {
 							b = true;
+							break;
 						}
 					}
 					if(!b) composite_units.push_back(cu);					
 					goto erase_alias_unit_1;
 				}
 			}
-			for(int i2 = 0; i2 < alias_units.size(); i2++) {
+			for(unsigned int i2 = 0; i2 < alias_units.size(); i2++) {
 				if(cu->containsRelativeTo(alias_units[i2])) {
-					for(int i = 0; i < composite_units.size(); i++) {
+					for(unsigned int i = 0; i < composite_units.size(); i++) {
 						if(composite_units[i] == cu) {
 							b = true;
+							break;
 						}
 					}
 					if(!b) composite_units.push_back(cu);				
@@ -2214,11 +2213,11 @@ void Manager::syncUnits() {
 		goto dont_erase_alias_unit_1;
 		erase_alias_unit_1:
 		alias_units.erase(alias_units.begin() + i);
-		for(int i2 = 0; i2 < cu->units.size(); i2++) {
+		for(int i2 = 0; i2 < (int) cu->units.size(); i2++) {
 			b = false;
 			switch(cu->units[i2]->firstBaseUnit()->unitType()) {
 				case BASE_UNIT: {
-					for(int i = 0; i < base_units.size(); i++) {
+					for(unsigned int i = 0; i < base_units.size(); i++) {
 						if(base_units[i] == cu->units[i2]->firstBaseUnit()) {
 							b = true;
 							break;
@@ -2228,7 +2227,7 @@ void Manager::syncUnits() {
 					break;
 				}
 				case ALIAS_UNIT: {
-					for(int i = 0; i < alias_units.size(); i++) {
+					for(unsigned int i = 0; i < alias_units.size(); i++) {
 						if(alias_units[i] == cu->units[i2]->firstBaseUnit()) {
 							b = true;
 							break;
@@ -2246,17 +2245,17 @@ void Manager::syncUnits() {
 		}
 		i = -1;
 		dont_erase_alias_unit_1:
-		true;
+		;
 	}
-	for(int i = 0; i < alias_units.size(); i++) {
-		for(int i2 = 0; i2 < alias_units.size(); i2++) {
+	for(int i = 0; i < (int) alias_units.size(); i++) {
+		for(int i2 = 0; i2 < (int) alias_units.size(); i2++) {
 			if(i != i2 && alias_units[i]->baseUnit() == alias_units[i2]->baseUnit()) { 
 				if(alias_units[i2]->isParentOf(alias_units[i])) {
 					goto erase_alias_unit_2;
 				}
 				if(!alias_units[i]->isParentOf(alias_units[i2])) {
 					b = false;
-					for(int i3 = 0; i < base_units.size(); i3++) {
+					for(unsigned int i3 = 0; i3 < base_units.size(); i3++) {
 						if(base_units[i3] == alias_units[i2]->firstBaseUnit()) {
 							b = true;
 							break;
@@ -2272,11 +2271,11 @@ void Manager::syncUnits() {
 		alias_units.erase(alias_units.begin() + i);
 		i--;
 		dont_erase_alias_unit_2:
-		true;
+		;
 	}	
-	for(int i = 0; i < alias_units.size(); i++) {
+	for(int i = 0; i < (int) alias_units.size(); i++) {
 		if(alias_units[i]->baseUnit()->unitType() == BASE_UNIT) {
-			for(int i2 = 0; i2 < base_units.size(); i2++) {
+			for(unsigned int i2 = 0; i2 < base_units.size(); i2++) {
 				if(alias_units[i]->baseUnit() == base_units[i2]) {
 					goto erase_alias_unit_3;
 				}
@@ -2287,16 +2286,16 @@ void Manager::syncUnits() {
 		alias_units.erase(alias_units.begin() + i);
 		i--;
 		dont_erase_alias_unit_3:
-		true;
+		;
 	}
-	for(int i = 0; i < composite_units.size(); i++) {	
+	for(unsigned int i = 0; i < composite_units.size(); i++) {	
 		convert(composite_units[i]);
 	}	
 	dissolveAllCompositeUnits();
-	for(int i = 0; i < base_units.size(); i++) {	
+	for(unsigned int i = 0; i < base_units.size(); i++) {	
 		convert(base_units[i]);
 	}
-	for(int i = 0; i < alias_units.size(); i++) {	
+	for(unsigned int i = 0; i < alias_units.size(); i++) {	
 		convert(alias_units[i]);
 	}	
 }
@@ -2314,8 +2313,8 @@ bool Manager::dissolveAllCompositeUnits() {
 		}
 		case MATRIX_MANAGER: {
 			bool b = false;
-			for(int i = 1; i <= mtrx->rows(); i++) {
-				for(int i2 = 1; i2 <= mtrx->columns(); i2++) {
+			for(unsigned int i = 1; i <= mtrx->rows(); i++) {
+				for(unsigned int i2 = 1; i2 <= mtrx->columns(); i2++) {
 					if(mtrx->get(i, i2)->dissolveAllCompositeUnits()) b = true;
 				}
 			}
@@ -2323,7 +2322,7 @@ bool Manager::dissolveAllCompositeUnits() {
 		}
 		default: {
 			bool b = false;
-			for(int i = 0; i < mngrs.size(); i++) {
+			for(unsigned int i = 0; i < mngrs.size(); i++) {
 				if(mngrs[i]->dissolveAllCompositeUnits()) b = true;
 			}
 			return b;
@@ -2342,7 +2341,7 @@ bool Manager::convert(const Manager *unit_mngr) {
 	if(unit_mngr->type() == UNIT_MANAGER) {
 		if(convert(unit_mngr->unit())) b = true;
 	} else {
-		for(int i = 0; i < unit_mngr->mngrs.size(); i++) {
+		for(unsigned int i = 0; i < unit_mngr->mngrs.size(); i++) {
 			if(convert(unit_mngr->mngrs[i])) b = true;
 		}
 	}	
@@ -2360,8 +2359,8 @@ bool Manager::convert(const Unit *u) {
 		return b;
 	}
 	if(c_type == MATRIX_MANAGER) {
-		for(int i = 1; i <= mtrx->rows(); i++) {
-			for(int i2 = 1; i2 <= mtrx->columns(); i2++) {
+		for(unsigned int i = 1; i <= mtrx->rows(); i++) {
+			for(unsigned int i2 = 1; i2 <= mtrx->columns(); i2++) {
 				if(mtrx->get(i, i2)->convert(u)) b = true;
 			}
 		}
@@ -2410,7 +2409,7 @@ bool Manager::convert(const Unit *u) {
 		return b;
 	} else if(c_type == MULTIPLICATION_MANAGER) {
 		bool c = false;
-		for(int i = 0; i < mngrs.size(); i++) {
+		for(int i = 0; i < (int) mngrs.size(); i++) {
 			if(mngrs[i]->testDissolveCompositeUnit(u)) {
 				typeclean();			
 				b = true;
@@ -2422,7 +2421,7 @@ bool Manager::convert(const Unit *u) {
 				Manager *mngr;
 				if(mngrs[i]->unit()->hasComplexRelationTo(u)) {
 					int i3 = 0;
-					for(int i2 = 0; i2 < mngrs.size(); i2++) {
+					for(unsigned int i2 = 0; i2 < mngrs.size(); i2++) {
 						if(mngrs[i2]->type() == UNIT_MANAGER || (mngrs[i2]->type() == POWER_MANAGER && mngrs[i2]->mngrs[0]->type() == UNIT_MANAGER)) {
 							i3++;
 						}
@@ -2446,7 +2445,7 @@ bool Manager::convert(const Unit *u) {
 				Manager *mngr;
 				if(mngrs[i]->mngrs[0]->unit()->hasComplexRelationTo(u)) {
 					int i3 = 0;
-					for(int i2 = 0; i2 < mngrs.size(); i2++) {
+					for(unsigned int i2 = 0; i2 < mngrs.size(); i2++) {
 						if(mngrs[i2]->type() == UNIT_MANAGER || (mngrs[i2]->type() == POWER_MANAGER && mngrs[i2]->mngrs[0]->type() == UNIT_MANAGER)) {
 							i3++;
 						}
@@ -2467,17 +2466,15 @@ bool Manager::convert(const Unit *u) {
 				}		
 				mngr->unref();			
 			}
-			true;
+			;
 		}
-//		return c;
-//		if(c) return c;
-		for(int i = 0; i < mngrs.size(); i++) {
+		for(unsigned int i = 0; i < mngrs.size(); i++) {
 			if(mngrs[i]->testDissolveCompositeUnit(u)) {
 				 convert(u); c = true;
 			} else if(mngrs[i]->convert(u)) b = true;
 		}
 		if(b) {
-			for(int i = 0; i < mngrs.size(); i++) {
+			for(unsigned int i = 0; i < mngrs.size(); i++) {
 				if(mngrs[i]->testDissolveCompositeUnit(u)) {
 					b = true;
 					convert(u);
@@ -2523,7 +2520,7 @@ bool Manager::convert(const Unit *u) {
 		}
 		return c;			
 	} else {
-		for(int i = 0; i < mngrs.size(); i++) {
+		for(unsigned int i = 0; i < mngrs.size(); i++) {
 			if(mngrs[i]->convert(u)) b = true;
 		}
 		if(b) {
@@ -2556,7 +2553,7 @@ int Manager::type() const {
 void Manager::differentiate(string x_var) {
 	switch(c_type) {
 		case ADDITION_MANAGER: {
-			for(int i = 0; i < mngrs.size(); i++) {
+			for(unsigned int i = 0; i < mngrs.size(); i++) {
 				mngrs[i]->differentiate(x_var);
 			}
 			typeclean();
@@ -2653,7 +2650,7 @@ Vector *Manager::generateVector(string x_var, Vector *x_vector) {
 	Manager y_value;
 	Manager x_mngr(x_var);
 	Vector *y_vector = new Vector();
-	for(int i = 1; i <= x_vector->components(); i++) {
+	for(unsigned int i = 1; i <= x_vector->components(); i++) {
 		y_value.set(this);
 		y_value.replace(&x_mngr, x_vector->get(i));
 		y_value.recalculateFunctions();
@@ -2669,13 +2666,13 @@ void Manager::replace(Manager *replace_this, Manager *replace_with) {
 		set(replace_with);
 		return;
 	}
-	for(int i = 0; i < mngrs.size(); i++) {
+	for(unsigned int i = 0; i < mngrs.size(); i++) {
 		mngrs[i]->replace(replace_this, replace_with);
 	}
 	clean();
 }
 void Manager::replace_no_copy(Manager *replace_this, Manager *replace_with) {
-	for(int i = 0; i < mngrs.size(); i++) {
+	for(unsigned int i = 0; i < mngrs.size(); i++) {
 		if(mngrs[i]->equals(replace_this)) {
 			mngrs[i]->unref();
 			mngrs[i] = replace_with;

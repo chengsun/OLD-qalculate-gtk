@@ -60,8 +60,8 @@ class Calculator {
 	bool b_functions, b_variables, b_units, b_unknown, b_calcvars, b_always_exact, b_rpn, b_use_all_prefixes, b_multiple_roots;
 	vector<void*> ufv;
 	vector<char> ufv_t;	
-	Sgi::hash_map<int, Manager*> ids;
-	Sgi::hash_map<int, bool> ids_p;	
+	Sgi::hash_map<unsigned int, Manager*> ids;
+	Sgi::hash_map<unsigned int, bool> ids_p;	
 	vector<string> signs;	
 	vector<string> real_signs;
 	vector<string> default_signs;	
@@ -90,7 +90,7 @@ class Calculator {
 	vector<Prefix*> prefixes;
   
 	Calculator();
-	~Calculator();
+	virtual ~Calculator();
 
 	void addStringAlternative(string replacement, string standard);
 	bool delStringAlternative(string replacement, string standard);
@@ -106,11 +106,11 @@ class Calculator {
 	void beginTemporaryStopErrors();
 	void endTemporaryStopErrors();	
 
-	Variable *getVariable(int index) const;
-	Unit *getUnit(int index) const;	
-	Function *getFunction(int index) const;	
+	Variable *getVariable(unsigned int index) const;
+	Unit *getUnit(unsigned int index) const;	
+	Function *getFunction(unsigned int index) const;	
 
-	Prefix *getPrefix(int index) const;	
+	Prefix *getPrefix(unsigned int index) const;	
 	Prefix *getPrefix(string name_) const;		
 	Prefix *getExactPrefix(long int exp10, long int exp = 1) const;			
 	Prefix *getExactPrefix(const Fraction *fr, long int exp = 1) const;				
@@ -128,8 +128,8 @@ class Calculator {
 	void setLocale();
 	void unsetLocale();
 	int addId(Manager *mngr, bool persistent = false);
-	Manager *getId(int id);	
-	void delId(int id, bool force = false);
+	Manager *getId(unsigned int id);	
+	void delId(unsigned int id, bool force = false);
 	bool allPrefixesEnabled();
 	void setAllPrefixesEnabled(bool enable);
 	bool functionsEnabled();

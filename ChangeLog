@@ -1,3 +1,12 @@
+2003-10-24  Niklas Knutsson  <nq@altern.org>
+
+	* remove llpow() as it only creates problems
+	* __USE_XOPEN for strptime
+	* Replace insert(0, 1, ...) with insert(begin(), 1, ...)
+	* Fix ALL warnings
+	* Ignore blanks in BIN(), OCT(), HEX(), BASE()
+	* Fix number bases dialog
+
 2003-10-23  Niklas Knutsson  <nq@altern.org>
 
 	* Do not use scandir as Solaris does not support it

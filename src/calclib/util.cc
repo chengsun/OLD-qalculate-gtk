@@ -11,7 +11,6 @@
 
 #include "util.h"
 #include <stdarg.h>
-#include <time.h>
 #include "Fraction.h"
 
 bool eqstr::operator()(const char *s1, const char *s2) const {
@@ -228,7 +227,7 @@ int daysBetweenDates(int year1, int month1, int day1, int year2, int month2, int
 	
 }
 
-int find_first_not_of(const string &str, int pos, ...) {
+int find_first_not_of(const string &str, unsigned int pos, ...) {
 	char *strs[10];
 	va_list ap;
 	va_start(ap, pos); 
@@ -237,11 +236,11 @@ int find_first_not_of(const string &str, int pos, ...) {
 		if(strs[i] == NULL) break;
 	}
 	va_end(ap);	
-	for(int i = pos; i < str.length(); i++) {
+	for(unsigned int i = pos; i < str.length(); i++) {
 		bool b = true;
-		for(int i2 = 0; true; i2++) {
+		for(unsigned int i2 = 0; true; i2++) {
 			if(!strs[i2]) break;
-			for(int i3 = 0; i3 < strlen(strs[i2]); i3++) {
+			for(unsigned int i3 = 0; i3 < strlen(strs[i2]); i3++) {
 				if(str[i] == strs[i2][i3]) {
 					b = false;
 				}
@@ -253,19 +252,19 @@ int find_first_not_of(const string &str, int pos, ...) {
 	}
 	return string::npos;
 }
-int find_first_of(const string &str, int pos, ...) {
+int find_first_of(const string &str, unsigned int pos, ...) {
 	char *strs[10];
 	va_list ap;
 	va_start(ap, pos); 
-	for(int i = 0; true; i++) {
+	for(unsigned int i = 0; true; i++) {
 		strs[i] = va_arg(ap, char*);
 		if(strs[i] == NULL) break;
 	}
 	va_end(ap);	
-	for(int i = pos; i < str.length(); i++) {
-		for(int i2 = 0; true; i2++) {
+	for(unsigned int i = pos; i < str.length(); i++) {
+		for(unsigned int i2 = 0; true; i2++) {
 			if(!strs[i2]) break;
-			for(int i3 = 0; i3 < strlen(strs[i2]); i3++) {
+			for(unsigned int i3 = 0; i3 < strlen(strs[i2]); i3++) {
 				if(str[i] == strs[i2][i3]) {
 					return i;
 				}
@@ -274,7 +273,7 @@ int find_first_of(const string &str, int pos, ...) {
 	}
 	return string::npos;
 }
-int find_last_not_of(const string &str, int pos, ...) {
+int find_last_not_of(const string &str, unsigned int pos, ...) {
 	char *strs[10];
 	va_list ap;
 	va_start(ap, pos); 
@@ -286,9 +285,9 @@ int find_last_not_of(const string &str, int pos, ...) {
 	if(pos < 0) pos = str.length() - 1;		
 	for(int i = pos; i >= 0; i--) {
 		bool b = true;
-		for(int i2 = 0; true; i2++) {
+		for(unsigned int i2 = 0; true; i2++) {
 			if(!strs[i2]) break;
-			for(int i3 = 0; i3 < strlen(strs[i2]); i3++) {
+			for(unsigned int i3 = 0; i3 < strlen(strs[i2]); i3++) {
 				if(str[i] == strs[i2][i3]) {
 					b = false;
 				}
@@ -298,7 +297,7 @@ int find_last_not_of(const string &str, int pos, ...) {
 	}
 	return string::npos;
 }
-int find_last_of(const string &str, int pos, ...) {
+int find_last_of(const string &str, unsigned int pos, ...) {
 	char *strs[10];
 	va_list ap;
 	va_start(ap, pos); 
@@ -309,9 +308,9 @@ int find_last_of(const string &str, int pos, ...) {
 	va_end(ap);
 	if(pos < 0) pos = str.length() - 1;	
 	for(int i = pos; i >= 0; i--) {
-		for(int i2 = 0; true; i2++) {
+		for(unsigned int i2 = 0; true; i2++) {
 			if(!strs[i2]) break;
-			for(int i3 = 0; i3 < strlen(strs[i2]); i3++) {
+			for(unsigned int i3 = 0; i3 < strlen(strs[i2]); i3++) {
 				if(str[i] == strs[i2][i3]) {
 					return i;
 				}
@@ -339,7 +338,7 @@ string& gsub(const char *pattern, const char *sub, string &str) {
 }
 
 string& remove_blanks(string &str) {
-	int i = str.find_first_of(SPACES, 0);
+	unsigned int i = str.find_first_of(SPACES, 0);
 	while(i != string::npos) {
 		str.erase(i, 1);
 		i = str.find_first_of(SPACES, i);
@@ -348,9 +347,9 @@ string& remove_blanks(string &str) {
 }
 
 string& remove_duplicate_blanks(string &str) {
-	int i = str.find_first_of(SPACES, 0);
+	unsigned int i = str.find_first_of(SPACES, 0);
 	while(i != string::npos) {
-		if(i == 0 && is_in(SPACES, str[i - 1])) {
+		if(i == 0 || is_in(SPACES, str[i - 1])) {
 			str.erase(i, 1);
 		} else {
 			i++;
@@ -413,7 +412,7 @@ string i2s(int value) {
 long int s2li(const string& str) {
 	long int li = 0;
 	bool numbers_started = false, minus = false;		
-	for(int index = 0; index < str.size(); index++) {
+	for(unsigned int index = 0; index < str.size(); index++) {
 		if(str[index] >= '0' && str[index] <= '9') {
 			li *= 10;
 			li += str[index] - '0';
@@ -428,7 +427,7 @@ long int s2li(const string& str) {
 long long int s2lli(const string& str) {
 	long long int li = 0;
 	bool numbers_started = false, minus = false;		
-	for(int index = 0; index < str.size(); index++) {
+	for(unsigned int index = 0; index < str.size(); index++) {
 		if(str[index] >= '0' && str[index] <= '9') {
 			li *= 10;
 			li += str[index] - '0';
@@ -443,7 +442,7 @@ long long int s2lli(const string& str) {
 long int s2li(const char *str) {
 	long int li = 0;
 	bool numbers_started = false, minus = false;	
-	for(int index = 0; str[index] != '\0'; index++) {
+	for(unsigned int index = 0; str[index] != '\0'; index++) {
 		if(str[index] >= '0' && str[index] <= '9') {
 			li *= 10;
 			li += str[index] - '0';
@@ -458,7 +457,7 @@ long int s2li(const char *str) {
 long long int s2lli(const char *str) {
 	long long int li = 0;
 	bool numbers_started = false, minus = false;	
-	for(int index = 0; str[index] != '\0'; index++) {
+	for(unsigned int index = 0; str[index] != '\0'; index++) {
 		if(str[index] >= '0' && str[index] <= '9') {
 			li *= 10;
 			li += str[index] - '0';
@@ -483,11 +482,11 @@ string lli2s(long long int value) {
 	bool minus = value < 0;
 	if(minus) value =- value;
 	while(true) {
-		str.insert(0, 1, '0' + value % 10);
+		str.insert(str.begin(), 1, '0' + value % 10);
 		value /= 10;						
 		if(value == 0) break;
 	}
-	if(minus) str.insert(0, 1, '-');
+	if(minus) str.insert(str.begin(), 1, '-');
 	return str;
 }
 string li2s(long int value) {
@@ -496,11 +495,11 @@ string li2s(long int value) {
 	bool minus = value < 0;
 	if(minus) value =- value;
 	while(true) {
-		str.insert(0, 1, '0' + value % 10);
+		str.insert(str.begin(), 1, '0' + value % 10);
 		value /= 10;						
 		if(value == 0) break;
 	}
-	if(minus) str.insert(0, 1, '-');
+	if(minus) str.insert(str.begin(), 1, '-');
 	return str;
 }
 string &lli2s(long long int &value, string &str)  {
@@ -512,11 +511,11 @@ string &lli2s(long long int &value, string &str)  {
 	bool minus = value < 0;
 	if(minus) value =- value;
 	while(true) {
-		str.insert(pos, 1, '0' + value % 10);
+		str.insert(str.begin() + pos, 1, '0' + value % 10);
 		value /= 10;						
 		if(value == 0) break;
 	}
-	if(minus) str.insert(pos, 1, '-');
+	if(minus) str.insert(str.begin() + pos, 1, '-');
 	return str;
 }
 
@@ -530,12 +529,13 @@ string ld2s(long double value) {
 	value = modfl(value, &dtmp);
 	while(true) {
 		itmp = (int) fmodl(dtmp, 10);		
-		str.insert(0, 1, '0' + itmp);
+		char c = '0' + itmp;
+		str.insert(str.begin(), 1, c);
 		dtmp -= itmp;		
 		if(dtmp <= 0) break;		
 		dtmp /= 10;						
 	}
-	if(minus) str.insert(0, 1, '-');
+	if(minus) str.insert(str.begin(), 1, '-');
 	if(value != 0) {
 		str += ".";
 		while(true) {
@@ -548,29 +548,10 @@ string ld2s(long double value) {
 	return str;
 }
 
-long long int llpow(long long int base, long long int exp, bool &overflow) {
-	if(exp < 0) {
-		overflow = true;
-		return LONG_LONG_MIN;
-	}
-	if(exp == 0) return 1;
-	if(exp == 1) return base;
-	long double d_test = powl(base, exp);
-	if(d_test > LONG_LONG_MAX || d_test < LONG_LONG_MIN)  {
-		overflow = true;
-		return LONG_LONG_MAX;
-	}	
-	long long int value = base;				
-	for(; exp > 1; exp--) {
-		value *= base;
-	}
-	return value;
-}
-
 int find_ending_bracket(const string &str, int start, int *missing) {
 	int i_l = 1;
 	while(true) {
-		start = str.find_first_of(LEFT_PARENTHESIS RIGHT_PARENTHESIS, start);
+		unsigned start = str.find_first_of(LEFT_PARENTHESIS RIGHT_PARENTHESIS, start);
 		if(start == string::npos) {
 			if(missing) *missing = i_l;
 			return string::npos;
@@ -595,14 +576,14 @@ char op2ch(MathOperation op) {
 		case OPERATION_MULTIPLY: return MULTIPLICATION_CH;		
 		case OPERATION_DIVIDE: return DIVISION_CH;		
 		case OPERATION_RAISE: return POWER_CH;		
-		case OPERATION_EXP10: return EXP_CH;		
+		case OPERATION_EXP10: return EXP_CH;
+		default: return ' ';		
 	}
-	return ' ';
 }
 
 string& wrap_p(string &str) {
-	str.insert(0, LEFT_PARENTHESIS);
-	str.append(RIGHT_PARENTHESIS);
+	str.insert(str.begin(), 1, LEFT_PARENTHESIS_CH);
+	str += RIGHT_PARENTHESIS_CH;
 	return str;
 }
 bool is_in(char c, ...) {
@@ -616,7 +597,7 @@ bool is_in(char c, ...) {
 	va_end(ap);	
 	for(int i = 0; true; i++) {
 		if(!strs[i]) break;
-		for(int i2 = 0; i2 < strlen(strs[i]); i2++) { 
+		for(unsigned int i2 = 0; i2 < strlen(strs[i]); i2++) { 
 			if(strs[i][i2] == c)
 				return true;
 		}
@@ -634,7 +615,7 @@ bool is_not_in(char c, ...) {
 	va_end(ap);	
 	for(int i = 0; true; i++) {
 		if(!strs[i]) break;
-		for(int i2 = 0; i2 < strlen(strs[i]); i2++) { 
+		for(unsigned int i2 = 0; i2 < strlen(strs[i]); i2++) { 
 			if(strs[i][i2] == c)
 				return false;
 		}
@@ -642,28 +623,28 @@ bool is_not_in(char c, ...) {
 	return true;	
 }
 bool is_in(const char *str, char c) {
-	for(int i = 0; i < strlen(str); i++) {
+	for(unsigned int i = 0; i < strlen(str); i++) {
 		if(str[i] == c)
 			return true;
 	}
 	return false;
 }
 bool is_not_in(const char *str, char c) {
-	for(int i = 0; i < strlen(str); i++) {
+	for(unsigned int i = 0; i < strlen(str); i++) {
 		if(str[i] == c)
 			return false;
 	}
 	return true;
 }
 bool is_in(const string &str, char c) {
-	for(int i = 0; i < str.length(); i++) {
+	for(unsigned int i = 0; i < str.length(); i++) {
 		if(str[i] == c)
 			return true;
 	}
 	return false;
 }
 bool is_not_in(const string &str, char c) {
-	for(int i = 0; i < str.length(); i++) {
+	for(unsigned int i = 0; i < str.length(); i++) {
 		if(str[i] == c)
 			return false;
 	}
@@ -671,8 +652,8 @@ bool is_not_in(const string &str, char c) {
 }
 
 int sign_place(string *str, unsigned int start) {
-	int i = str->find_first_of(OPERATORS, start);
-	if(i != (int) string::npos)
+	unsigned int i = str->find_first_of(OPERATORS, start);
+	if(i != string::npos)
 		return i;
 	else
 		return -1;
@@ -713,7 +694,7 @@ long double gcd_d(long double i1, long double i2) {
 }
 
 bool text_length_is_one(const string &str) {
-	for(int i = 0; i < str.length() - 1; i++) {
+	for(unsigned int i = 0; i < str.length() - 1; i++) {
 		if(str[i] > 0) {
 			return false;
 		}

@@ -22,6 +22,7 @@
 * Split up interface code
 * Move unknown over to the other side in unsolved comparison
 * Sort out x^-y -- (1/3)/(x+y)=1/3(x+y) but 1/3(x+y)=1/(3x+3y)
+* Treat ** as ^
 
 * More functions
 * More units

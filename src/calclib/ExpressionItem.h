@@ -74,7 +74,7 @@ class ExpressionItem {
 	virtual void setCategory(string cat_);		
 
 	virtual bool hasChanged() const;
-	virtual bool setChanged(bool has_changed);
+	virtual void setChanged(bool has_changed);
 	
 	/**
 	* Tells if the ExpressionItem is edited/created bt the end user.

@@ -138,6 +138,7 @@ bool ExpressionItem::setLocal(bool is_local, int will_be_active) {
 	} else if(will_be_active >= 0) {
 		setActive(will_be_active);
 	}
+	return true;
 }
 bool ExpressionItem::isBuiltin() const {
 	return b_builtin;
@@ -145,7 +146,7 @@ bool ExpressionItem::isBuiltin() const {
 bool ExpressionItem::hasChanged() const {
 	return b_changed;
 }
-bool ExpressionItem::setChanged(bool has_changed) {
+void ExpressionItem::setChanged(bool has_changed) {
 	b_changed = has_changed;
 }
 bool ExpressionItem::isPrecise() const {

@@ -58,7 +58,7 @@ void Function::set(const ExpressionItem *item) {
 		last_argdef_index = f->lastArgumentDefinitionIndex();
 		scondition = f->condition();
 		clearArgumentDefinitions();
-		for(int i = 1; i <= f->lastArgumentDefinitionIndex(); i++) {
+		for(unsigned int i = 1; i <= f->lastArgumentDefinitionIndex(); i++) {
 			if(f->getArgumentDefinition(i)) {
 				setArgumentDefinition(i, f->getArgumentDefinition(i)->copy());
 			}
@@ -111,7 +111,7 @@ bool Function::testCondition(vector<Manager*> &vargs) {
 					svar += 'x' + i;
 				}
 			}
-			int i2 = 0;
+			unsigned int i2 = 0;
 			while(true) {
 				if((i2 = str.find(svar, i2)) != string::npos) {
 					if(maxargs() < 0 && i > minargs()) {
@@ -152,7 +152,7 @@ int Function::args(const string &argstr, vector<Manager*> &vargs) {
 	int itmp = 0;
 	string str = argstr, stmp;
 	remove_blank_ends(str);
-	for(int str_index = 0; str_index < str.length(); str_index++) {
+	for(unsigned int str_index = 0; str_index < str.length(); str_index++) {
 		switch(str[str_index]) {
 			case LEFT_PARENTHESIS_CH: {
 				if(!in_cit1 && !in_cit2) {
@@ -224,24 +224,24 @@ int Function::args(const string &argstr, vector<Manager*> &vargs) {
 	}
 	return itmp;
 }
-int Function::lastArgumentDefinitionIndex() const {
+unsigned int Function::lastArgumentDefinitionIndex() const {
 	return last_argdef_index;
 }
-Argument *Function::getArgumentDefinition(int index) {
+Argument *Function::getArgumentDefinition(unsigned int index) {
 	if(argdefs.count(index)) {
 		return argdefs[index];
 	}
 	return NULL;
 }
 void Function::clearArgumentDefinitions() {
-	for(Sgi::hash_map<int, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
+	for(Sgi::hash_map<unsigned int, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
 		delete it->second;
 	}
 	argdefs.clear();
 	last_argdef_index = 0;
 	setChanged(true);
 }
-void Function::setArgumentDefinition(int index, Argument *argdef) {
+void Function::setArgumentDefinition(unsigned int index, Argument *argdef) {
 	if(argdefs.count(index)) {
 		delete argdefs[index];
 	}
@@ -262,14 +262,14 @@ bool Function::testArgumentCount(int itmp) {
 }
 Manager *Function::createFunctionManagerFromVArgs(vector<Manager*> &vargs) {
 	Manager *mngr = new Manager(this, NULL);
-	for(int i = 0; i < vargs.size(); i++) {
+	for(unsigned int i = 0; i < vargs.size(); i++) {
 		mngr->addFunctionArg(vargs[i]);
 	}
 	return mngr;
 }
 Manager *Function::createFunctionManagerFromSVArgs(vector<string> &svargs) {
 	Manager *mngr = new Manager(this, NULL); 
-	for(int i = 0; i < svargs.size(); i++) {
+	for(unsigned int i = 0; i < svargs.size(); i++) {
 		Manager *mngr2 = new Manager(svargs[i]);
 		mngr->addFunctionArg(mngr2);
 		mngr2->unref();
@@ -280,14 +280,14 @@ Manager *Function::calculate(const string &argv) {
 	vector<Manager*> vargs;
 	int itmp = args(argv, vargs);	
 	Manager *mngr = calculate(vargs, itmp);
-	for(int i = 0; i < vargs.size(); i++) {
+	for(unsigned int i = 0; i < vargs.size(); i++) {
 		vargs[i]->unref();
 	}	
 	return mngr;
 }
 bool Function::testArguments(vector<Manager*> &vargs) {
-	int last = 0;
-	for(Sgi::hash_map<int, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
+	unsigned int last = 0;
+	for(Sgi::hash_map<unsigned int, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
 		if(it->first > last) {
 			last = it->first;
 		}
@@ -295,8 +295,8 @@ bool Function::testArguments(vector<Manager*> &vargs) {
 			return false;
 		}
 	}
-	if(max_argc < 0 && last > argc && argdefs.count(last)) {
-		for(int i = last + 1; i <= vargs.size(); i++) {
+	if(max_argc < 0 && (int) last > argc && argdefs.count(last)) {
+		for(unsigned int i = last + 1; i <= vargs.size(); i++) {
 			if(!argdefs[last]->test(vargs[i - 1], i, this)) {
 				return false;
 			}
@@ -310,7 +310,7 @@ Manager *Function::calculate(vector<Manager*> &vargs, int itmp) {
 	if(testArgumentCount(itmp)) {
 		mngr = new Manager();
 		bool b = false;
-		for(int i = 0; i < vargs.size(); i++) {
+		for(unsigned int i = 0; i < vargs.size(); i++) {
 			if(vargs[i]->type() == ALTERNATIVE_MANAGER) {
 				b = true;
 				break;
@@ -320,17 +320,17 @@ Manager *Function::calculate(vector<Manager*> &vargs, int itmp) {
 			vector<Manager*> vargs_copy(vargs);
 			vector<int> solutions;
 			solutions.reserve(vargs.size());
-			for(int i = 0; i < vargs.size(); i++) {
+			for(unsigned int i = 0; i < vargs.size(); i++) {
 				solutions.push_back(0);
 			}
 			b = true;
 			while(true) {
-				for(int i = 0; i < vargs.size(); i++) {
+				for(unsigned int i = 0; i < vargs.size(); i++) {
 					vargs[i] = vargs_copy[i];
 				}
-				for(int i = 0; i < vargs.size(); i++) {
+				for(unsigned int i = 0; i < vargs.size(); i++) {
 					if(vargs[i]->type() == ALTERNATIVE_MANAGER) {
-						if(!b && solutions[i] < vargs[i]->countChilds()) {
+						if(!b && solutions[i] < (int) vargs[i]->countChilds()) {
 							vargs[i] = vargs[i]->getChild(solutions[i]);
 							solutions[i]++;
 							b = true;
@@ -373,13 +373,13 @@ Manager *Function::calculate(vector<Manager*> &vargs, int itmp) {
 }
 void Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
-void Function::setDefaultValue(int arg_, string value_) {
-	if(arg_ > argc && arg_ <= max_argc && default_values.size() >= arg_ - argc) {
+void Function::setDefaultValue(unsigned int arg_, string value_) {
+	if((int) arg_ > argc && (int) arg_ <= max_argc && (int) default_values.size() >= (int) arg_ - argc) {
 		default_values[arg_ - argc - 1] = value_;
 	}
 }
-string Function::getDefaultValue(int arg_) const {
-	if(arg_ > argc && arg_ <= max_argc && default_values.size() >= arg_ - argc) {
+string Function::getDefaultValue(unsigned int arg_) const {
+	if((int) arg_ > argc && (int) arg_ <= max_argc && (int) default_values.size() >= (int) arg_ - argc) {
 		return default_values[arg_ - argc - 1];
 	}
 	return "";
@@ -392,7 +392,7 @@ int Function::stringArgs(const string &argstr, vector<string> &svargs) {
 	int itmp = 0;
 	string str = argstr, stmp;
 	remove_blank_ends(str);
-	for(int str_index = 0; str_index < str.length(); str_index++) {
+	for(unsigned int str_index = 0; str_index < str.length(); str_index++) {
 		switch(str[str_index]) {
 			case LEFT_PARENTHESIS_CH: {
 				if(!in_cit1 && !in_cit2) {
@@ -469,14 +469,14 @@ Vector *Function::produceVector(vector<Manager*> &vargs, int begin, int end) {
 		begin = minargs();
 		if(begin < 0) begin = 0;
 	}
-	if(end < 0 || end >= vargs.size()) {
+	if(end < 0 || end >= (int) vargs.size()) {
 		end = vargs.size() - 1;
 	}
 	Vector *v = new Vector();
 	for(int index = begin; index <= end; index++) {
 		if(vargs[index]->isMatrix()) {
-			for(int index_r = 1; index_r <= vargs[index]->matrix()->rows(); index_r++) {
-				for(int index_c = 1; index_c <= vargs[index]->matrix()->columns(); index_c++) {
+			for(unsigned int index_r = 1; index_r <= vargs[index]->matrix()->rows(); index_r++) {
+				for(unsigned int index_c = 1; index_c <= vargs[index]->matrix()->columns(); index_c++) {
 					if(!(index == begin && index_r == 1 && index_c == 1)) v->addComponent();
 					v->set(vargs[index]->matrix()->get(index_r, index_c), v->components());
 				}			
@@ -493,7 +493,7 @@ Vector *Function::produceArgumentsVector(vector<Manager*> &vargs, int begin, int
 		begin = minargs();
 		if(begin < 0) begin = 0;
 	}
-	if(end < 0 || end >= vargs.size()) {
+	if(end < 0 || end >= (int) vargs.size()) {
 		end = vargs.size() - 1;
 	}
 	Vector *v = new Vector();
@@ -535,10 +535,10 @@ void UserFunction::set(const ExpressionItem *item) {
 }
 
 Manager *UserFunction::calculate(vector<Manager*> &vargs) {
-	Function::calculate(vargs);
+	return Function::calculate(vargs);
 }
 Manager *UserFunction::calculate(const string &eq) {
-	Function::calculate(eq);
+	return Function::calculate(eq);
 }
 void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 
@@ -547,7 +547,7 @@ void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		string svar;
 		string v_str;
 		vector<int> v_id;
-		int i2 = 0;
+		unsigned int i2 = 0;
 		int i_args = maxargs();
 		if(i_args < 0) {
 			i_args = minargs();
@@ -637,7 +637,7 @@ void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		CALCULATOR->setRPNMode(was_rpn);
 		mngr->set(mngr2);
 		mngr2->unref();
-		for(int i = 0; i < v_id.size(); i++) {
+		for(unsigned int i = 0; i < v_id.size(); i++) {
 			CALCULATOR->delId(v_id[i], true);
 			mngr_v[i]->unref();
 		}
@@ -660,8 +660,8 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 		argc_ = 0, max_argc_ = 0;
 		string svar, svar_o, svar_v;
 		bool optionals = false;
-		int i2 = 0;
-		unsigned int i3 = 0, i4 = 0, i5 = 0;
+		int i3 = 0, i4 = 0, i5 = 0;
+		unsigned int i2 = 0;
 		for(int i = 0; i < 26; i++) {
 			begin_loop_in_set_equation:
 			i4 = 0; i5 = 0;
@@ -684,7 +684,7 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 				}				
 				i3 = 0;
 				if(new_eq.length() > i2 + 2 && new_eq[i2 + 2] == ID_WRAP_LEFT_CH) {
-					if((i3 = new_eq.find(ID_WRAP_RIGHT_CH, i2 + 2)) != string::npos) {
+					if((i3 = new_eq.find(ID_WRAP_RIGHT_CH, i2 + 2)) != (int) string::npos) {
 						svar_v = new_eq.substr(i2 + 3, i3 - (i2 + 3));	
 						i3 -= i2 + 1;
 					} else i3 = 0;
@@ -754,6 +754,7 @@ Argument::Argument(string name_, bool does_test) {
 	b_matrix = false;
 }
 Argument::Argument(const Argument *arg) {set(arg);}
+Argument::~Argument() {}
 Argument *Argument::copy() const {
 	return new Argument(this);
 }
@@ -882,7 +883,8 @@ FractionArgument::FractionArgument(string name_, ArgumentMinMaxPreDefinition min
 		case ARGUMENT_MIN_MAX_NONZERO: {
 			setZeroForbidden(true);
 			break;
-		}		
+		}
+		default: {}
 	}
 }
 FractionArgument::FractionArgument(const FractionArgument *arg) {
@@ -1034,7 +1036,8 @@ IntegerArgument::IntegerArgument(string name_, ArgumentMinMaxPreDefinition minma
 		case ARGUMENT_MIN_MAX_NONZERO: {
 			setZeroForbidden(true);
 			break;
-		}		
+		}	
+		default: {}	
 	}	
 }
 IntegerArgument::IntegerArgument(const IntegerArgument *arg) {
@@ -1147,6 +1150,7 @@ string IntegerArgument::subprintlong() const {
 
 TextArgument::TextArgument(string name_, bool does_test) : Argument(name_, does_test) {}
 TextArgument::TextArgument(const TextArgument *arg) {set(arg);}
+TextArgument::~TextArgument() {}
 bool TextArgument::subtest(const Manager *value) const {return value->isText();}
 int TextArgument::type() const {return ARGUMENT_TYPE_TEXT;}
 Argument *TextArgument::copy() const {return new TextArgument(this);}
@@ -1156,6 +1160,7 @@ bool TextArgument::needQuotes() const {return true;}
 
 DateArgument::DateArgument(string name_, bool does_test) : Argument(name_, does_test) {}
 DateArgument::DateArgument(const DateArgument *arg) {set(arg);}
+DateArgument::~DateArgument() {}
 bool DateArgument::subtest(const Manager *value) const {
 	int day = 0, year = 0, month = 0;
 	return value->isText() && s2date(value->text(), day, year, month);
@@ -1170,6 +1175,7 @@ VectorArgument::VectorArgument(string name_, bool does_test, bool allow_matrix) 
 	setMatrixAllowed(allow_matrix);
 }
 VectorArgument::VectorArgument(const VectorArgument *arg) {set(arg);}
+VectorArgument::~VectorArgument() {}
 bool VectorArgument::subtest(const Manager *value) const {return value->isMatrix() && value->matrix()->isVector();}
 int VectorArgument::type() const {return ARGUMENT_TYPE_VECTOR;}
 Argument *VectorArgument::copy() const {return new VectorArgument(this);}
@@ -1178,6 +1184,7 @@ string VectorArgument::subprintlong() const {return _("a vector");}
 
 MatrixArgument::MatrixArgument(string name_, bool does_test) : Argument(name_, does_test) {}
 MatrixArgument::MatrixArgument(const MatrixArgument *arg) {set(arg);}
+MatrixArgument::~MatrixArgument() {}
 bool MatrixArgument::subtest(const Manager *value) const {return value->isMatrix();}
 int MatrixArgument::type() const {return ARGUMENT_TYPE_TEXT;}
 Argument *MatrixArgument::copy() const {return new MatrixArgument(this);}
@@ -1186,6 +1193,7 @@ string MatrixArgument::subprintlong() const {return _("a matrix");}
 
 ExpressionItemArgument::ExpressionItemArgument(string name_, bool does_test) : Argument(name_, does_test) {}
 ExpressionItemArgument::ExpressionItemArgument(const ExpressionItemArgument *arg) {set(arg);}
+ExpressionItemArgument::~ExpressionItemArgument() {}
 bool ExpressionItemArgument::subtest(const Manager *value) const {return value->isText() && CALCULATOR->getExpressionItem(value->text());}
 int ExpressionItemArgument::type() const {return ARGUMENT_TYPE_EXPRESSION_ITEM;}
 Argument *ExpressionItemArgument::copy() const {return new ExpressionItemArgument(this);}
@@ -1195,6 +1203,7 @@ bool ExpressionItemArgument::needQuotes() const {return true;}
 
 FunctionArgument::FunctionArgument(string name_, bool does_test) : Argument(name_, does_test) {}
 FunctionArgument::FunctionArgument(const FunctionArgument *arg) {set(arg);}
+FunctionArgument::~FunctionArgument() {}
 bool FunctionArgument::subtest(const Manager *value) const {return value->isText() && CALCULATOR->getFunction(value->text());}
 int FunctionArgument::type() const {return ARGUMENT_TYPE_FUNCTION;}
 Argument *FunctionArgument::copy() const {return new FunctionArgument(this);}
@@ -1204,6 +1213,7 @@ bool FunctionArgument::needQuotes() const {return true;}
 
 UnitArgument::UnitArgument(string name_, bool does_test) : Argument(name_, does_test) {}
 UnitArgument::UnitArgument(const UnitArgument *arg) {set(arg);}
+UnitArgument::~UnitArgument() {}
 bool UnitArgument::subtest(const Manager *value) const {return value->isText() && CALCULATOR->getUnit(value->text());}
 int UnitArgument::type() const {return ARGUMENT_TYPE_UNIT;}
 Argument *UnitArgument::copy() const {return new UnitArgument(this);}
@@ -1213,6 +1223,7 @@ bool UnitArgument::needQuotes() const {return true;}
 
 VariableArgument::VariableArgument(string name_, bool does_test) : Argument(name_, does_test) {}
 VariableArgument::VariableArgument(const VariableArgument *arg) {set(arg);}
+VariableArgument::~VariableArgument() {}
 bool VariableArgument::subtest(const Manager *value) const {return value->isText() && CALCULATOR->getVariable(value->text());}
 int VariableArgument::type() const {return ARGUMENT_TYPE_VARIABLE;}
 Argument *VariableArgument::copy() const {return new VariableArgument(this);}
@@ -1222,6 +1233,7 @@ bool VariableArgument::needQuotes() const {return true;}
 
 BooleanArgument::BooleanArgument(string name_, bool does_test) : Argument(name_, does_test) {}
 BooleanArgument::BooleanArgument(const BooleanArgument *arg) {set(arg);}
+BooleanArgument::~BooleanArgument() {}
 bool BooleanArgument::subtest(const Manager *value) const {return value->isZero() || value->isOne();}
 int BooleanArgument::type() const {return ARGUMENT_TYPE_BOOLEAN;}
 Argument *BooleanArgument::copy() const {return new BooleanArgument(this);}
@@ -1230,6 +1242,7 @@ string BooleanArgument::subprintlong() const {return _("a boolean (0 or 1)");}
 
 AngleArgument::AngleArgument(string name_, bool does_test) : Argument(name_, does_test) {}
 AngleArgument::AngleArgument(const AngleArgument *arg) {set(arg);}
+AngleArgument::~AngleArgument() {}
 bool AngleArgument::subtest(const Manager *value) const {
 	if(value->isFraction()) {
 		return true;

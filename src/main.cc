@@ -116,11 +116,12 @@ int main (int argc, char **argv) {
 	result_text = "0";
 	pixmap_result = NULL;
 
-	//check for calculation errros regularly
-	g_timeout_add(100, on_display_errors_timeout, NULL);
 
 	//create main window
 	create_main_window();
+
+	//check for calculation errros regularly
+	g_timeout_add(100, on_display_errors_timeout, NULL);
 	
 	gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "menu_item_plot_functions"), canplot);
 	gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "menu_item_fetch_exchange_rates"), canfetch);

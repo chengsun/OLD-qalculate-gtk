@@ -138,8 +138,8 @@ class CompositeUnit : public Unit {
 		virtual ExpressionItem *copy() const;
 		virtual void set(const ExpressionItem *item);		
 		virtual void add(const Unit *u, long int exp_ = 1, const Prefix *prefix = NULL);
-		virtual Unit *get(int index, long int *exp_ = NULL, Prefix **prefix = NULL) const;
-		virtual int countUnits() const;
+		virtual Unit *get(unsigned int index, long int *exp_ = NULL, Prefix **prefix = NULL) const;
+		virtual unsigned int countUnits() const;
 		virtual void del(Unit *u);
 		virtual string print(bool plural_, bool short_) const;
 		virtual const string &plural(bool return_singular_if_no_plural = true) const;

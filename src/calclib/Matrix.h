@@ -35,7 +35,7 @@ class Matrix {
 	* @param nr_of_rows Number of initial rows (> 0).
 	* @param nr_of_columns Number of initial columns (> 0).	
 	*/	
-	Matrix(int nr_of_rows, int nr_of_columns = 1);	
+	Matrix(unsigned int nr_of_rows, unsigned int nr_of_columns = 1);	
 	
 	/**
 	* Constructs a copy of a matrix.
@@ -46,7 +46,7 @@ class Matrix {
 
 	void set(const Matrix *matrix);
 	
-	void setToIdentityMatrix(int rows_columns);
+	void setToIdentityMatrix(unsigned int rows_columns);
 	
 	Matrix *getIdentityMatrix() const;
 	
@@ -59,7 +59,7 @@ class Matrix {
 	bool isSymmetric() const;
 	bool isOrthogonal() const;
 	Manager *determinant(Manager *mngr = NULL) const;
-	Manager *cofactor(int row, int column) const;
+	Manager *cofactor(unsigned int row, unsigned int column) const;
 
 	/**
 	* Returns the number of rows in the matrix.
@@ -67,14 +67,14 @@ class Matrix {
 	* @see #columns
 	* @see #setRows
 	*/		
-	int rows() const;
+	unsigned int rows() const;
 	/**
 	* Returns the number of columns in the matrix.
 	*
 	* @see #rows
 	* @see #setColumns	
 	*/		
-	int columns() const;
+	unsigned int columns() const;
 	
 	/**
 	* Sets the number of rows in the matrix.
@@ -84,7 +84,7 @@ class Matrix {
 	* @param nr_of_rows New number of rows (> 0).
 	* @see #setColumns
 	*/
-	void setRows(int nr_of_rows);
+	void setRows(unsigned int nr_of_rows);
 	/**
 	* Sets the number of columns in the matrix.
 	*
@@ -93,7 +93,7 @@ class Matrix {
 	* @param nr_of_columns New number of columns (> 0).
 	* @see #setColumns
 	*/
-	void setColumns(int nr_of_columns);
+	void setColumns(unsigned int nr_of_columns);
 
 	/**
 	* Adds a new row to the matrix.
@@ -117,7 +117,7 @@ class Matrix {
 	* @param row Specifies the row in the matrix where the element resides.
 	* @param column Specifies the column in the matrix where the element resides.
 	*/
-	void set(const Manager *mngr, int row, int column);
+	void set(const Manager *mngr, unsigned int row, unsigned int column);
 	
 	/**
 	* Returns the value of an element in the given row and column.
@@ -126,8 +126,8 @@ class Matrix {
 	* @param column Specifies the column in the matrix where the element resides.	
 	* @return Element at row,column.
 	*/	
-	Manager *get(int row, int column);	
-	const Manager *get(int row, int column) const;		
+	Manager *get(unsigned int row, unsigned int column);	
+	const Manager *get(unsigned int row, unsigned int column) const;		
 	
 	/**
 	* Add a matrix using the specified mathematical operation.
@@ -240,8 +240,8 @@ class Matrix {
 	
 	Vector *getRange(int start = 1, int end = -1);
 	Vector *toVector();
-	Vector *rowToVector(int row);	
-	Vector *columnToVector(int column);		
+	Vector *rowToVector(unsigned int row);	
+	Vector *columnToVector(unsigned int column);		
 	
 	bool isVector() const;
 	
@@ -254,13 +254,13 @@ class Matrix {
 class Vector : public Matrix {
 	public:
 		Vector();
-		Vector(int components);	
+		Vector(unsigned int components);	
 		Vector(const Matrix *vector);		
 		void set(const Vector *vector);
-		void set(const Manager *mngr, int component);
-		Manager *get(int component);	
-		const Manager *get(int component) const;		
-		int components() const;
+		void set(const Manager *mngr, unsigned int component);
+		Manager *get(unsigned int component);	
+		const Manager *get(unsigned int component) const;		
+		unsigned int components() const;
 		void addComponent();
 		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, Prefix *prefix = NULL, bool *in_exact = NULL, bool *usable = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false) const;
 };

@@ -100,8 +100,8 @@ class Manager {
 		Matrix *matrix() const;		
 		const string &text() const;
 		Unit *unit() const;
-		Manager *getChild(int index) const;
-		int countChilds() const;
+		Manager *getChild(unsigned int index) const;
+		unsigned int countChilds() const;
 		Manager *base() const;
 		Manager *exponent() const;
 		Function *function() const;
