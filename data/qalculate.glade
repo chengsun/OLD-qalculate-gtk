@@ -192,7 +192,7 @@
 		      <signal name="activate" handler="on_menu_item_about_activate" last_modification_time="Thu, 14 Aug 2003 22:31:50 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image22">
+			<widget class="GtkImage" id="image23">
 			  <property name="visible">True</property>
 			  <property name="stock">gnome-stock-about</property>
 			  <property name="icon_size">1</property>
@@ -213,7 +213,7 @@
 		      <signal name="activate" handler="on_menu_item_quit_activate" last_modification_time="Fri, 08 Aug 2003 10:07:30 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image23">
+			<widget class="GtkImage" id="image24">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -376,6 +376,16 @@
 			      <property name="use_underline">True</property>
 			      <property name="active">True</property>
 			      <signal name="activate" handler="on_menu_item_display_prefixes_activate" last_modification_time="Fri, 08 Aug 2003 11:41:06 GMT"/>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkCheckMenuItem" id="menu_item_indicate_infinite_series">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Indicate infinite series</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <signal name="activate" handler="on_menu_item_indicate_infinite_series_activate" last_modification_time="Sun, 07 Sep 2003 23:09:27 GMT"/>
 			    </widget>
 			  </child>
 			</widget>
@@ -610,7 +620,7 @@
 	      <property name="border_width">4</property>
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
-	      <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+	      <property name="hscrollbar_policy">GTK_POLICY_NEVER</property>
 	      <property name="vscrollbar_policy">GTK_POLICY_NEVER</property>
 	      <property name="shadow_type">GTK_SHADOW_NONE</property>
 	      <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
@@ -634,6 +644,7 @@
 	      <property name="right_attach">2</property>
 	      <property name="top_attach">1</property>
 	      <property name="bottom_attach">2</property>
+	      <property name="x_options">fill</property>
 	      <property name="y_options">fill</property>
 	    </packing>
 	  </child>
@@ -3193,6 +3204,42 @@
 	      <property name="inconsistent">False</property>
 	      <property name="draw_indicator">True</property>
 	      <signal name="toggled" handler="on_preferences_checkbutton_unicode_signs_toggled" last_modification_time="Mon, 18 Aug 2003 06:14:15 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkCheckButton" id="preferences_checkbutton_custom_font">
+	      <property name="visible">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Custom result font</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_custom_font_toggled" last_modification_time="Sun, 07 Sep 2003 19:57:10 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkButton" id="preferences_button_font">
+	      <property name="visible">True</property>
+	      <property name="sensitive">False</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Font</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <signal name="clicked" handler="on_preferences_button_font_clicked" last_modification_time="Sun, 07 Sep 2003 19:59:08 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>

@@ -320,6 +320,29 @@ bool Function::isPrecise() const {
 void Function::setPrecise(bool is_precise) {
 	b_exact = is_precise;
 }
+Vector *Function::produceVector(int begin, int end) {	
+	if(begin < 0) {
+		begin = minargs();
+	}
+	if(end < 0 || end >= vargs.size()) {
+		end = vargs.size() - 1;
+	}
+	Vector *v = new Vector();
+	for(int index = begin; index <= end; index++) {
+		if(vargs[index]->isMatrix()) {
+			for(int index_r = 1; index_r <= vargs[index]->matrix()->rows(); index_r++) {
+				for(int index_c = 1; index_c <= vargs[index]->matrix()->columns(); index_c++) {
+					if(!(index == begin && index_r == 1 && index_c == 1)) v->addComponent();
+					v->set(vargs[index]->matrix()->get(index_r, index_c), v->components());
+				}			
+			}
+		} else {
+			if(index != begin) v->addComponent();
+			v->set(vargs[index], v->components());
+		}	
+	}
+	return v;
+}
 
 UserFunction::UserFunction(string cat_, string name_, string eq_, bool is_user_function, int argc_, string title_, string descr_, int max_argc_) : Function(cat_, name_, argc_, title_, descr_, false, max_argc_) {
 	b_user = is_user_function;
@@ -336,12 +359,33 @@ int Function::stringArgs(const string &str) {
 	if(!str.empty()) {
 		itmp = 1;
 		while(1) {
+				printf("H\n");
 			if((i = str.find(COMMA_CH, i)) != (int) string::npos) {
-				if((i3 = str.find(LEFT_BRACKET_CH, i4)) < i && i3 >= 0) {
-					i = str.find(RIGHT_BRACKET_CH, i3);
-					i4 = i;
-					if(i == (int) string::npos)
+								printf("I %s\n", str.c_str());
+				if((i3 = str.find(LEFT_BRACKET_CH, i4)) < i && i3 != string::npos) {
+					i4 = i3;
+					while(1) {
+					printf("A %s\n", str.substr(i3, i4 - i3).c_str());
+						i = str.find(RIGHT_BRACKET_CH, i4);
+						if(i == string::npos) {
+					printf("E\n");						
+							i4 = i;
+							break;	
+						}
+					printf("C %i %i %i\n", i, i3, i3 + 1);							
+						i3 = str.find(LEFT_BRACKET_CH, i3 + 1);
+					printf("C %i %i\n", i3, i3 + 1);																	
+						if(i3 == string::npos || i3 > i) {
+					printf("D\n");						
+							i4 = i;
+							break;
+						}
+						i4 = i + 1;
+					printf("B%i\n", i3);						
+					}
+					if(i4 == string::npos)
 						break;
+					i = i4;
 				} else {
 					if(itmp <= args() || args() < 0) {
 /*						stmp = LEFT_BRACKET_STR;
@@ -349,8 +393,11 @@ int Function::stringArgs(const string &str) {
 						stmp += RIGHT_BRACKET_STR;
 						svargs.push_back(stmp);*/
 						stmp = str.substr(i2, i - i2);
+					printf("3 %s\n", stmp.c_str());												
 						remove_blank_ends(stmp);						
+					printf("C\n");																	
 						remove_brackets(stmp);						
+					printf("4 %s\n", stmp.c_str());						
 						remove_blank_ends(stmp);
 						svargs.push_back(stmp);
 					}
@@ -361,20 +408,25 @@ int Function::stringArgs(const string &str) {
 				}
 			} else {
 				if(itmp <= args() || args() < 0) {
+									printf("F\n");
 /*					stmp = LEFT_BRACKET_STR;
 					stmp += str.substr(i2, str.length() - i2);
 					stmp += RIGHT_BRACKET_STR;
 					svargs.push_back(stmp);*/
 					stmp = str.substr(i2, str.length() - i2);
+					printf("1 %s\n", stmp.c_str());
 					remove_blank_ends(stmp);					
-					remove_brackets(stmp);						
+					remove_brackets(stmp);	
+					printf("2 %s\n", stmp.c_str());										
 					remove_blank_ends(stmp);
 					svargs.push_back(stmp);
+										printf("G\n");
 				}
 				break;
 			}
 		}
 	}
+						printf("J\n");
 	if(itmp < maxargs() && itmp >= minargs()) {
 		int itmp2 = itmp;
 		while(itmp2 < maxargs()) {
@@ -386,18 +438,23 @@ int Function::stringArgs(const string &str) {
 			itmp2++;
 		}
 	}	
+						printf("K\n");
 	return itmp;
 }
 Manager *UserFunction::calculate(const string &argv) {
-	if(args() > 0) {
+	if(args() != 0) {
 		int itmp;
 		if((itmp = stringArgs(argv)) >= minargs()) {
-			if(itmp > maxargs())
+			if(itmp > maxargs() && maxargs() >= 0)
 				CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str());						
 			string stmp = eq_calc;
 			string svar;
 			int i2 = 0;
-			for(int i = 0; i < args(); i++) {
+			int i_args = maxargs();
+			if(i_args < 0) {
+				i_args = minargs();
+			}
+			for(int i = 0; i < i_args; i++) {
 				svar = '\\';
 				if('x' + i > 'z')
 					svar += (char) ('a' + i - 3);
@@ -405,16 +462,56 @@ Manager *UserFunction::calculate(const string &argv) {
 					svar += 'x' + i;
 				while(1) {
 					if((i2 = stmp.find(svar)) != (int) string::npos) {
-						svargs[i].insert(0, LEFT_BRACKET_STR);
-						svargs[i] += RIGHT_BRACKET_STR;						
-						stmp.replace(i2, 2, svargs[i]);
+						if(i2 != 0 && stmp[i2 - 1] == '\\') {
+							i2 += 2;
+						} else {
+							svargs[i].insert(0, LEFT_BRACKET_STR);
+							svargs[i] += RIGHT_BRACKET_STR;						
+							stmp.replace(i2, 2, svargs[i]);
+						}
 					} else {
 						break;
 					}
 				}
 			}
-			svargs.clear();
+			clearSVArgs();
+			vector<Manager*> mngr_v;
+			vector<int> v_id;
+			if(maxargs() < 0) {
+				args(argv);				
+				Vector *v = produceVector();			
+				clearVArgs();
+				string v_str;
+				while(1) {
+					if((i2 = stmp.find("\\v")) != (int) string::npos) {					
+						if(i2 != 0 && stmp[i2 - 1] == '\\') {
+							i2 += 2;
+						} else {
+							mngr_v.push_back(new Manager(v));	
+							v_id.push_back(CALCULATOR->addId(mngr_v[mngr_v.size() - 1], true));
+							v_str = LEFT_BRACKET ID_WRAP_LEFT;
+							v_str += i2s(v_id[v_id.size() - 1]);
+							v_str += ID_WRAP_RIGHT RIGHT_BRACKET;	
+							stmp.replace(i2, 2, v_str);
+						}
+					} else {
+						break;
+					}
+				}
+				delete v;
+			} 
+			while(1) {
+				if((i2 = stmp.find("\\\\")) != (int) string::npos) {
+					stmp.replace(i2, 2, "\\");
+				} else {
+					break;
+				}
+			}
 			Manager *mngr = CALCULATOR->calculate(stmp);
+			for(int i = 0; i < mngr_v.size(); i++) {
+				CALCULATOR->delId(v_id[i], true);
+				mngr_v[i]->unref();
+			}
 			if(!isPrecise()) mngr->setPrecise(false);
 			return mngr;
 		} else {
@@ -425,7 +522,7 @@ Manager *UserFunction::calculate(const string &argv) {
 				mngr->addFunctionArg(mngr2);
 				mngr2->unref();
 			}
-			svargs.clear();
+			clearSVArgs();
 			return mngr;
 		}
 	} else {
@@ -443,8 +540,10 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 		string svar, svar_o, svar_v;
 		bool optionals = false;
 		int i2 = 0;
-		unsigned int i3 = 0;
-		for(int i = 0; i < 26; i++) {
+		unsigned int i3 = 0, i4 = 0, i5 = 0;
+		for(int i = 0; i < 25; i++) {
+			begin_loop_in_set_equation:
+			i4 = 0; i5 = 0;
 			svar = '\\';
 			svar_o = '\\';
 			if('x' + i > 'z')
@@ -456,7 +555,12 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 			else
 				svar_o += 'X' + i;
 				
-			if((i2 = new_eq.find(svar_o)) != (int) string::npos) {				
+			before_find_in_set_equation:	
+			if(i != 24 && (i2 = new_eq.find(svar_o, i4)) != (int) string::npos) {
+				if(i2 > 0 && new_eq[i2 - 1] == '\\') {
+					i4 = i2 + 2;
+					goto before_find_in_set_equation;
+				}				
 				i3 = 0;
 				if(new_eq.length() > i2 + 2 && new_eq[i2 + 2] == ID_WRAP_LEFT_CH) {
 					if((i3 = new_eq.find(ID_WRAP_RIGHT_CH, i2 + 2)) != string::npos) {
@@ -474,27 +578,46 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 					new_eq.replace(i2, 2, svar);
 				}				
 				optionals = true;
-			} else if((i2 = new_eq.find(svar)) == (int) string::npos) {
+			} else if((i2 = new_eq.find(svar, i5)) != (int) string::npos) {
+				if(i2 > 0 && new_eq[i2 - 1] == '\\') {
+					i5 = i2 + 2;
+					goto before_find_in_set_equation;
+				}			
+			} else {
+				if(i < 24 && !optionals) {
+					i = 24;
+					goto begin_loop_in_set_equation;
+				}
 				break;
 			}
-			if(optionals) {
-				max_argc_++;
+			if(i == 24) {
+				max_argc_ = -1;
 			} else {
-				max_argc_++;
-				argc_++;
+				if(optionals) {
+					max_argc_++;
+				} else {
+					max_argc_++;
+					argc_++;
+				}			
 			}
 		}
 	}
-	if(argc_ > 26) {
-		argc_ = 26;
+	if(argc_ > 25) {
+		argc_ = 25;
 	}
-	if(max_argc_ > 26) {
-		max_argc_ = 26;
+	if(max_argc_ > 25) {
+		max_argc_ = 25;
 	}
-	while(default_values.size() < max_argc_ - argc_) {
+	if(max_argc_ < 0 || argc_ < 0) {
+		max_argc_ = -1;
+	} else if(max_argc_ < argc_) {
+		max_argc_ = argc_;	
+	}
+	
+	while((int) default_values.size() < max_argc_ - argc_) {
 		default_values.push_back("0");
 	}
-	default_values.resize(max_argc_ - argc_);
+	if(max_argc_ > 0) default_values.resize(max_argc_ - argc_);
 	eq_calc = new_eq;
 	argc = argc_;
 	max_argc = max_argc_;	

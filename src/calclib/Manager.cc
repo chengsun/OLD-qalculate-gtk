@@ -64,6 +64,10 @@ Manager::Manager(const Matrix *matrix_) {
 	init();
 	set(matrix_);
 }
+Manager::Manager(const Vector *vector_) {
+	init();
+	set(vector_);
+}
 Manager::~Manager() {
 	clear();
 	delete fr;
@@ -74,16 +78,16 @@ void Manager::setNull() {
 void Manager::set(const Manager *mngr) {
 	clear();
 	if(mngr != NULL) {
-		o_unit = mngr->o_unit;
-		s_var = mngr->s_var;
-		o_function = mngr->o_function;
+		o_unit = mngr->unit();
+		s_var = mngr->text();	
+		o_function = mngr->function();
 		if(mngr->matrix()) {
 			mtrx = new Matrix(mngr->matrix());
 		}
 		fr->set(mngr->fraction());
-		for(int i = 0; i < mngr->mngrs.size(); i++) {
-			mngrs.push_back(new Manager(mngr->mngrs[i]));
-		}
+		for(int i = 0; i < mngr->countChilds(); i++) {
+			mngrs.push_back(new Manager(mngr->getChild(i)));
+		}	
 		setPrecise(mngr->isPrecise());
 		c_type = mngr->type();
 	}
@@ -96,7 +100,17 @@ void Manager::set(const Fraction *fraction_) {
 }
 void Manager::set(const Matrix *matrix_) {
 	clear();
-	mtrx = new Matrix(matrix_);	
+	if(matrix_->isVector()) {
+		mtrx = new Vector(matrix_);	
+	} else {
+		mtrx = new Matrix(matrix_);	
+	}
+	setPrecise(mtrx->isPrecise());
+	c_type = MATRIX_MANAGER;
+}
+void Manager::set(const Vector *vector_) {
+	clear();
+	mtrx = new Vector(vector_);	
 	setPrecise(mtrx->isPrecise());
 	c_type = MATRIX_MANAGER;
 }
@@ -281,7 +295,12 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 	}
 	if(c_type == MATRIX_MANAGER) {
 		if(mtrx->add(op, mngr)) {
-			if(!mtrx->isPrecise() || !mngr->isPrecise()) setPrecise(false);
+			bool b = !mtrx->isPrecise() || !mngr->isPrecise();
+			if(mtrx->rows() == 1 && mtrx->columns() == 1) {
+				Manager mngr2(mtrx->get(1, 1));
+				set(&mngr2);
+			}
+			if(b) setPrecise(false);
 			return true;
 		}
 	} else if(mngr->type() == MATRIX_MANAGER) {
@@ -1121,7 +1140,13 @@ void Manager::moveto(Manager *term) {
 	s_var = term->s_var;
 	o_function = term->o_function;
 	fr->set(term->fraction());
-	if(term->matrix()) mtrx = new Matrix(term->matrix());
+	if(term->matrix()) {
+		if(term->matrix()->isVector()) {
+			mtrx = new Vector(term->matrix());
+		} else {
+			mtrx = new Matrix(term->matrix());
+		}
+	}
 	for(int i = 0; i < term->mngrs.size(); i++) {
 		term->mngrs[i]->ref();
 		mngrs.push_back(term->mngrs[i]);

@@ -86,7 +86,7 @@ class Fraction {
 	int pow(const Fraction *fr, int solution = 1);
 	bool root(const Integer *nth);	
 	bool root(long int nth = 2);
-	bool floatify(int precision = DEFAULT_PRECISION);
+	bool floatify(int precision = DEFAULT_PRECISION, bool *infinite_series = NULL);
 	bool isZero() const;
 	bool isOne() const;	
 	bool isMinusOne() const;	

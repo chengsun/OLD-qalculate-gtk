@@ -16,6 +16,7 @@ class Function;
 class UserFunction;
 
 #include "Calculator.h"
+#include "Matrix.h"
 
 class Function {
   protected:
@@ -68,6 +69,7 @@ class Function {
 	string getDefaultValue(int arg_) const;	
 	bool isPrecise() const;
 	void setPrecise(bool is_precise);	
+	Vector *produceVector(int begin = -1, int end = -1);
 };
 
 class UserFunction : public Function {

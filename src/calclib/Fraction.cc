@@ -549,13 +549,20 @@ bool Fraction::root(long int nth) {
 	return root(&n);
 }
 
-bool Fraction::floatify(int precision) {
+bool Fraction::floatify(int precision, bool *infinite_series) {
 	//if log10=integer do nothing
 	Integer *reminder, *reminder2 = NULL;
 	Integer d(&den);
 	den.set(1);
 	bool exact = num.divide(&d, &reminder);
+	vector<Integer*> reminders;
+	if(infinite_series) {
+		*infinite_series = false;
+	}
 	while(!exact && precision) {
+		if(infinite_series && !(*infinite_series)) {
+			reminders.push_back(new Integer(reminder));
+		}
 		reminder->multiply(10);
 		exact = reminder->divide(&d, &reminder2);
 		num.multiply(10);	
@@ -563,9 +570,20 @@ bool Fraction::floatify(int precision) {
 		den.multiply(10);
 		delete reminder;
 		reminder = reminder2;
+		if(!exact && infinite_series && !(*infinite_series)) {
+			for(int i = 0; i < reminders.size(); i++) {
+				if(reminders[i]->equals(reminder)) {
+					*infinite_series = true;
+					break;
+				}
+			}
+		}
 		precision--;
 	}
-	if(!exact) {
+	for(int i = 0; i < reminders.size(); i++) {
+		delete reminders[i];
+	}
+	if(!exact && !(infinite_series && *infinite_series)) {
 		reminder->multiply(10);
 		reminder->divide(&d, &reminder2);
 		int comp = reminder->compare(5);
@@ -578,241 +596,7 @@ bool Fraction::floatify(int precision) {
 	if(reminder2) delete reminder2;
 	return exact;	
 }
-/*string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) const {
-	if(max_decimals < 0) max_decimals = PRECISION;
-	if(in_exact && !isPrecise()) *in_exact = true;
-	Integer exp;
 
-	if(nrformat != NUMBER_FORMAT_DECIMALS && !isZero()) {
-		if((!(displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY))) {
-			Fraction exp_pre(this);
-			exp_pre.setNegative(false);
-			if(exp_pre.log10()) {
-				exp_pre.floor();
-				exp.set(exp_pre.numerator());
-
-			}
-		} else {
-			if(num.mod10()) {
-				Integer num_test(&num);				
-				while(num_test.div10()) {	
-					exp.add(1);		
-				}		
-			} else {
-				Integer den_test(&den);
-				while(den_test.div10()) {	
-					exp.add(-1);
-				}
-			}
-		}
-	}
-	Integer exp_spec(&exp);
-
-	string str_spec = "", str_prefix = "";	
-	bool force_fractional = false;
-	int base = 10;
-	if(displayflags & DISPLAY_FORMAT_USE_PREFIXES) {
-		if(l_exp) {
-			Integer tmp_exp;
-			if(prefix) {
-				exp_spec.subtract(prefix->exponent(l_exp, &tmp_exp));
-				str_prefix = prefix->name(displayflags & DISPLAY_FORMAT_SHORT_UNITS);
-			} else {
-				prefix = CALCULATOR->getBestPrefix(&exp, l_exp);
-				Integer test_exp(&exp);
-				test_exp.subtract(prefix->exponent(l_exp, &tmp_exp));
-				if((exp.isPositive() && exp.compare(&test_exp) == -1) || (exp.isNegative() && exp.compare(&test_exp) == 1)) {
-					exp_spec.set(&test_exp);
-					str_prefix = prefix->name(displayflags & DISPLAY_FORMAT_SHORT_UNITS);
-				}
-			}
-			if((displayflags & DISPLAY_FORMAT_SHORT_UNITS) && (displayflags & DISPLAY_FORMAT_NONASCII)) {
-				gsub("micro", SIGN_MICRO, str_prefix);
-			}
-		}
-	}	
-	switch(nrformat) {
-		case NUMBER_FORMAT_DECIMALS: {
-			break;
-		}		
-		case NUMBER_FORMAT_HEX: {
-			base = 16;
-			force_fractional = true;
-			break;			
-		}
-		case NUMBER_FORMAT_OCTAL: {
-			base = 8;
-			force_fractional = true;
-			break;			
-		}
-		case NUMBER_FORMAT_BIN: {
-			base = 2;
-			force_fractional = true;
-			break;
-		}					
-		case NUMBER_FORMAT_NORMAL: {
-			if(exp_spec.isGreaterThan(-PRECISION) && exp_spec.isLessThan(PRECISION)) { 
-				break;
-			}
-		}			
-		case NUMBER_FORMAT_EXP: {
-			if(exp_spec.isGreaterThan(-3) && exp_spec.isLessThan(3)) { 
-				break;
-			}		
-		}
-		case NUMBER_FORMAT_EXP_PURE: {
-			if(!exp_spec.isZero()) {
-				if(displayflags & DISPLAY_FORMAT_TAGS) {	
-					str_spec += "<small>";
-				 	str_spec += "E";
-					str_spec += "</small>";		
-				} else {
-					str_spec += "E";
-				}
-				str_spec += exp_spec.print();
-				exp_spec.clear();
-			}
-			break;
-		}		
-	}
-
-	Integer den_spec(&den);	
-	Integer whole(&num);
-	exp.subtract(&exp_spec);
-	if(exp.isNegative()) {
-		exp.setNegative(false);
-		whole.exp10(&exp);	
-	} else if(exp.isPositive()) {
-		den_spec.exp10(&exp);
-	}
-	string str_base = "";
-	if(!force_fractional && !(displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY)) {
-		Fraction fr(&whole, &den_spec);
-		fr.floatify(max_decimals);
-		if(in_exact && !fr.isPrecise()) *in_exact = true;
-		str_base = fr.numerator()->print();
-		if(str_base[0] == '-') {
-			str_base.erase(0, 1);
-		}
-		int l10 = 0;
-		Integer d(fr.denominator());
-		while(d.div10()) {
-			l10++;
-		}
-		if(l10) {
-			l10 = str_base.length() - l10;
-			for(; l10 < 1; l10++) {
-				str_base.insert(0, 1, '0');
-			}
-			str_base.insert(l10, DOT_STR);
-		}
-		if(min_decimals > 0) {
-			int index = str_base.find(DOT_STR);
-			if(index == string::npos) {
-				str_base += DOT_STR;
-				for(int i = 0; i < min_decimals; i++) {
-					str_base += '0';
-				}
-			} else {
-				index += strlen(DOT_STR);
-				index = str_base.length() - index;
-				index = min_decimals - index;
-				for(int i = 0; i < index; i++) {
-					str_base += '0';
-				}				
-			}
-		}
-		if(fr.isNegative()) {
-			if(displayflags & DISPLAY_FORMAT_NONASCII) {
-				str_base.insert(0, SIGN_MINUS);
-			} else {
-				str_base.insert(0, MINUS_STR);
-			}			
-		}
-	} else {
-		Integer *part;
-		if(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY) {
-			part = new Integer(&whole);
-			whole.clear();
-		} else {
-			whole.divide(&den_spec, &part);	
-		}
-		Integer *divisor;
-		if(part->gcd(&den_spec, &divisor)) {
-			part->divide(divisor);
-			den_spec.divide(divisor);
-		}
-		delete divisor;		
-		if(!whole.isZero()) {
-			if(whole.isNegative()) {
-				if(displayflags & DISPLAY_FORMAT_NONASCII) {
-					str_base += SIGN_MINUS;
-				} else {
-					str_base += MINUS_STR;
-				}	
-				whole.setNegative(false);	
-			}
-			string str_whole = whole.print(base);
-			str_base += str_whole;
-		}
-		if(!part->isZero()) {
-			if(part->isNegative()) {
-				if(whole.isZero()) {
-					if(displayflags & DISPLAY_FORMAT_TAGS) {
-						str_base += SIGN_MINUS;
-					} else {
-						str_base += MINUS_STR;
-					}
-				}
-				part->setNegative(false);
-			}
-
-			string str_num = part->print(base);
-			string str_den = den_spec.print(base);
-
-			if(!whole.isZero()) str_base += " ";
-			if(displayflags & DISPLAY_FORMAT_TAGS) {	
-				str_base += "<sup>";
-			 	str_base += str_num;
-				str_base += "</sup>";		
-			} else {
-				str_base += str_num;
-			}
-	
-			if(displayflags & DISPLAY_FORMAT_NONASCII) {
-				str_base += SIGN_DIVISION;
-			} else {
-				str_base += DIVISION_STR;	
-			}
-
-			if(displayflags & DISPLAY_FORMAT_TAGS) {	
-				str_base += "<small>";
-	 			str_base += str_den;
-				str_base += "</small>";		
-			} else {
-				str_base += str_den;
-			}	
-			if(!str_spec.empty()) {
-				str_base += " ";
-				if(displayflags & DISPLAY_FORMAT_NONASCII) {
-					str_base += SIGN_MULTIDOT;
-				} else {
-					str_base += MULTIPLICATION_STR;
-				}
-				str_base += " 1";				
-			}		
-		}		
-		delete part;
-	}
-
-	if(!str_prefix.empty()) {
-		if(in_composite && str_spec.empty() && str_base == "1") return str_prefix;
-		str_spec += " ";
-		str_spec += str_prefix;
-	}
-	if(str_base.empty() && str_spec.empty()) str_base = "0";
-	return str_base + str_spec;	
-}*/
 string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) const {
 
 	bool minus, exp_minus;
@@ -1006,8 +790,15 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 		return;
 	} else if(!force_fractional && !(displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY)) {
 		Fraction fr(&whole, &den_spec);
-		fr.floatify(max_decimals);
-		if(in_exact && !fr.isPrecise()) *in_exact = true;
+		bool infinite_series = false;
+		if(displayflags & DISPLAY_FORMAT_INDICATE_INFINITE_SERIES) {
+			fr.floatify(max_decimals, &infinite_series);
+		} else {
+			fr.floatify(max_decimals);
+		}
+		if(in_exact && !fr.isPrecise() && !infinite_series) {
+			*in_exact = true;
+		}
 		whole_ = fr.numerator()->print(10, false);
 		int l10 = 0;
 		Integer d(fr.denominator());
@@ -1036,6 +827,9 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 					whole_ += '0';
 				}				
 			}
+		}
+		if(infinite_series) {
+			whole_ += "...";
 		}
 	} else {
 		Integer *part;

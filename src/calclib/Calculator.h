@@ -43,6 +43,7 @@ class Calculator {
 	vector<void*> ufv;
 	vector<char> ufv_t;	
 	hash_map<int, Manager*> ids;
+	hash_map<int, bool> ids_p;	
 	vector<string> signs;	
 	vector<string> real_signs;
 	vector<string> default_signs;	
@@ -83,9 +84,9 @@ class Calculator {
 	void setLocale();
 	void unsetLocale();
 	string &remove_trailing_zeros(string &str, int decimals_to_keep = 0, bool expand = false, bool decrease = false);	
-	int addId(Manager *mngr);
+	int addId(Manager *mngr, bool persistent = false);
 	Manager *getId(int id);	
-	void delId(int id);
+	void delId(int id, bool force = false);
 	bool functionsEnabled(void);
 	void setFunctionsEnabled(bool enable);
 	bool variablesEnabled(void);

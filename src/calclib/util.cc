@@ -325,27 +325,9 @@ string& remove_blank_ends(string &str) {
 	return str;
 }
 string& remove_brackets(string &str) {
-	if(str[0] == LEFT_BRACKET_CH || str[str.length() - 1] == RIGHT_BRACKET_CH) {
-		bool b = true;
-		int i1 = 1, i2 = 1;
-		while(true) {
-			i1 = str.find(RIGHT_BRACKET_CH, i2);
-			i2 = str.find(LEFT_BRACKET_CH, i2);
-			if(i1 == str.length() - 1) {
-				if(i2 != string::npos) {
-					b = false;
-				}
-				break;
-			}
-			if(i1 != string::npos && (i2 == string::npos || i2 > i1)) {
-				b = false;
-				break;
-			}
-		}
-		if(b) {
-			str = str.substr(1, str.length() - 2);
-			return remove_brackets(str);
-		}
+	if(str[0] == LEFT_BRACKET_CH && str[str.length() - 1] == RIGHT_BRACKET_CH) {
+		str = str.substr(1, str.length() - 2);
+		return remove_brackets(str);
 	}
 	return str;
 }

@@ -1,3 +1,15 @@
+2003-09-08  Niklas Knutsson  <nq@altern.org>
+
+	* Pearson Correlation and Spearman's rho (still needs rank function)
+	* Replace hardcoded statistical functions
+	* Utility functions: csum (Custom sum), process (Process vector components)
+	* Vector (\v) in user functions
+	* Function function for immediate creation and execution of a custom function
+	* Indicate infinite sequence of decimals (configurable)
+	* Custom font selection
+	* Vector
+	* Better alignment
+
 2003-09-07  Niklas Knutsson  <nq@altern.org>
 
 	* Use GtkDrawingArea to make result display nicer

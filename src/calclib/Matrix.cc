@@ -73,6 +73,7 @@ Matrix *Matrix::getIdentityMatrix() const {
 	return matrix;
 }	
 void Matrix::transpose() {
+	b_vector = false;
 	Matrix mtrx_save(this);
 	setColumns(mtrx_save.rows());
 	setRows(mtrx_save.columns());	
@@ -91,6 +92,7 @@ bool Matrix::inverse() {
 		delete mngr;
 		return false;
 	}
+	b_vector = false;
 	mngr->addInteger(-1, RAISE);
 	adjoint();
 	multiply(mngr);
@@ -101,6 +103,7 @@ bool Matrix::adjoint() {
 	if(columns() != rows()) {
 		return false;
 	}
+	b_vector = false;
 	Matrix mtrx(this);
 	Manager *mngr;
 	for(int index_r = 1; index_r <= rows(); index_r++) {
@@ -289,25 +292,50 @@ bool Matrix::subtract(const Matrix *matrix) {
 	return true;
 }
 bool Matrix::multiply(const Matrix *matrix) {
-	if(columns() != matrix->rows()) {
-		return false;
+	if(columns() == 1 && matrix->columns() == 1 && rows() == matrix->rows()) {
+		Manager mngr;
+		for(int index_r = 1; index_r <= rows(); index_r++) {
+			Manager mngr2(get(index_r, 1));
+			mngr2.add(matrix->get(index_r, 1), MULTIPLY);
+			mngr.add(&mngr2, ADD);
+		}
+		setRows(1);
+		setColumns(1);
+		set(&mngr, 1, 1);
+		return true;
+	} else if(rows() == 1 && matrix->rows() == 1 && columns() == matrix->columns()) {
+		Manager mngr;
+		for(int index_c = 1; index_c <= columns(); index_c++) {
+			Manager mngr2(get(1, index_c));	
+			mngr2.add(matrix->get(1, index_c), MULTIPLY);
+			mngr.add(&mngr2, ADD);
+		}
+		setRows(1);		
+		setColumns(1);
+		set(&mngr, 1, 1);	
+		return true;
+	} else {
+		if(columns() != matrix->rows()) {
+			return false;
+		}	
+		Matrix product(rows(), matrix->columns());
+		Manager mngr;
+		for(int index_r = 1; index_r <= product.rows(); index_r++) {
+			for(int index_c = 1; index_c <= product.columns(); index_c++) {
+				for(int index = 1; index <= columns(); index++) {
+					mngr.set(get(index_r, index));
+					mngr.add(matrix->get(index, index_c), MULTIPLY);
+					product.get(index_r, index_c)->add(&mngr, ADD);
+					if(product.get(index_r, index_c)->isPrecise()) {
+						product.setPrecise(false);
+					}	
+				}			
+			}		
+		}
+		set(&product);
+		return true;
 	}
-	Matrix product(rows(), matrix->columns());
-	Manager mngr;
-	for(int index_r = 1; index_r <= product.rows(); index_r++) {
-		for(int index_c = 1; index_c <= product.columns(); index_c++) {
-			for(int index = 1; index <= columns(); index++) {
-				mngr.set(get(index_r, index));
-				mngr.add(matrix->get(index, index_c), MULTIPLY);
-				product.get(index_r, index_c)->add(&mngr, ADD);
-				if(product.get(index_r, index_c)->isPrecise()) {
-					product.setPrecise(false);
-				}	
-			}			
-		}		
-	}
-	set(&product);
-	return true;
+	return false;
 }
 bool Matrix::divide(const Matrix *matrix) {
 	return false;
@@ -383,7 +411,17 @@ bool Matrix::raise(const Manager *mngr) {
 		return raise(mngr->matrix());
 	} else if(mngr->isFraction() && mngr->fraction()->isMinusOne()) {
 		return inverse();
-		return true;
+	} else if(mngr->isFraction() && mngr->fraction()->isInteger()) {
+		if(mngr->fraction()->isNegative()) {
+			return false;
+		} else {
+			Integer integer(mngr->fraction()->numerator());
+			Matrix mtrx(this);
+			for(; integer.isPositive(); integer.add(-1)) {
+				multiply(&mtrx);
+			}
+			return true;
+		}
 	}
 	return false;
 }
@@ -414,7 +452,9 @@ bool Matrix::isPrecise() const {
 void Matrix::setPrecise(bool is_precise) {
 	b_exact = is_precise;
 }
-
+bool Matrix::isVector() const {
+	return b_vector;
+}
 string Matrix::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) const {
 	string str = "matrix(";
 	str += i2s(rows());
@@ -431,3 +471,45 @@ string Matrix::print(NumberFormat nrformat, int displayflags, int min_decimals, 
 	str += ")";
 	return str;
 }
+
+
+Vector::Vector() : Matrix() {
+	b_vector = true;
+}
+Vector::Vector(int components) : Matrix(1, components) {
+	b_vector = true;
+}
+Vector::Vector(const Matrix *vector) : Matrix(vector) {
+	b_vector = true;
+}
+void Vector::set(const Manager *mngr, int component) {
+	Matrix::set(mngr, 1, component);
+}
+Manager *Vector::get(int component) {
+	return Matrix::get(1, component);
+}
+const Manager *Vector::get(int component) const {
+	return Matrix::get(1, component);
+}
+int Vector::components() const {
+	return Matrix::columns();
+}
+void Vector::addComponent() {
+	Matrix::addColumn();
+}
+string Vector::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power) const {
+	if(!isVector()) {
+		return Matrix::print(nrformat, displayflags, min_decimals, max_decimals, prefix, in_exact, usable, toplevel, plural, l_exp, in_composite, in_power);
+	}
+	string str = "vector(";
+	for(int index = 1; index <= components(); index++) {
+		if(index != 1) {
+			str += COMMA_STR;
+			str += " ";
+		}
+		str += get(index)->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
+	}	
+	str += ")";
+	return str;
+}
+

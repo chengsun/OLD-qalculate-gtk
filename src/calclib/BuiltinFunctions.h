@@ -14,11 +14,35 @@
 
 #include "Function.h"
 
+class ProcessFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	ProcessFunction();
+};
+class CustomSumFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	CustomSumFunction();
+};
+class FunctionFunction : public Function {
+  protected:
+	Manager *calculate(const string &eq);  
+  public:
+	FunctionFunction();
+};
 class MatrixFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
 	MatrixFunction();
+};
+class VectorFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	VectorFunction();
 };
 class RowsFunction : public Function {
   protected:
@@ -31,6 +55,12 @@ class ColumnsFunction : public Function {
 	void calculate2(Manager *mngr);  
   public:
 	ColumnsFunction();
+};
+class ComponentsFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	ComponentsFunction();
 };
 class ElementFunction : public Function {
   protected:

@@ -91,6 +91,8 @@ void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpoint
 void on_preferences_checkbutton_save_defs_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_save_mode_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_load_defs_toggled(GtkToggleButton *w, gpointer user_data);
+void on_preferences_checkbutton_custom_font_toggled(GtkToggleButton *w, gpointer user_data);
+void on_preferences_button_font_toggled(GtkButton *w, gpointer user_data);
 void on_units_togglebutton_from_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 void on_units_button_convert_clicked(GtkButton *button, gpointer user_data);
 void on_units_togglebutton_to_toggled(GtkToggleButton *togglebutton, gpointer user_data);

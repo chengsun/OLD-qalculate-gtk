@@ -514,10 +514,11 @@ string &Calculator::remove_trailing_zeros(string &str, int decimals_to_keep, boo
 	return str;
 }
 
-int Calculator::addId(Manager *mngr) {
+int Calculator::addId(Manager *mngr, bool persistent) {
 	for(int i = 0; ; i++) {
 		if(!ids.count(i)) {
 			ids[i] = mngr;
+			ids_p[i] = persistent;
 			mngr->ref();
 			return i;
 		}
@@ -527,13 +528,14 @@ int Calculator::addId(Manager *mngr) {
 Manager *Calculator::getId(int id) {
 	if(ids.count(id)) {
 		return ids[id];
-	}
+	} 
 	return NULL;
 }
-void Calculator::delId(int id) {
-	if(ids.count(id)) {
+void Calculator::delId(int id, bool force) {
+	if(ids.count(id) && (!ids_p[id] || force)) {
 		ids[id]->unref();
 		ids.erase(id);
+		ids_p.erase(id);		
 	}
 }
 bool Calculator::functionsEnabled(void) {
@@ -599,7 +601,12 @@ void Calculator::addBuiltinVariables() {
 	addVariable(v);
 }
 void Calculator::addBuiltinFunctions() {
+	addFunction(new ProcessFunction());
+	addFunction(new CustomSumFunction());
+	addFunction(new FunctionFunction());
 	addFunction(new MatrixFunction());
+	addFunction(new VectorFunction());	
+	addFunction(new ComponentsFunction());	
 	addFunction(new RowsFunction());
 	addFunction(new ColumnsFunction());
 	addFunction(new ElementFunction());
@@ -646,15 +653,10 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new SqrtFunction());
 	addFunction(new CbrtFunction());
 	addFunction(new HypotFunction());
-	addFunction(new SumFunction());
-	addFunction(new MeanFunction());
 	addFunction(new MedianFunction());
 	addFunction(new MinFunction());
 	addFunction(new MaxFunction());
 	addFunction(new ModeFunction());
-	addFunction(new NumberFunction());
-	addFunction(new StdDevFunction());
-	addFunction(new StdDevSFunction());
 	addFunction(new RandomFunction());
 	addFunction(new BASEFunction());
 	addFunction(new BINFunction());
@@ -734,6 +736,7 @@ Manager *Calculator::calculate(string str) {
 			str = str.substr(0, i);
 		}
 	}
+	
 	setFunctionsAndVariables(str);
 	EqContainer *e = new EqContainer(str, ADD);
 	Manager *mngr = e->calculate();
@@ -1389,6 +1392,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 		}
 	}	
 	gsub("\"", "", str);	
+	printf("F1 %s\n", str.c_str());
 	i = -1; i3 = 0; b = false;
 	for(int i2 = 0; i2 < (int) ufv.size(); i2++) {
 		i = 0, i3 = 0;
@@ -1499,6 +1503,15 @@ void Calculator::setFunctionsAndVariables(string &str) {
 							i6 = i6 + 1 + i + (int) f->name().length();
 							i7 = i6 - 1;
 							i8 = i7;
+/*							i8 = 0;
+							while(1) {
+								i5 = str.find_first_of(RIGHT_BRACKET LEFT_BRACKET, i7);
+								if(i5 == string::npos) {
+									for(int index = 0; index < i8; index++) {
+										str.append(1, RIGHT_BRACKET_CH);
+									}
+								}
+							}*/
 							while(1) {
 								i5 = str.find(RIGHT_BRACKET_CH, i7);
 								if(i5 == string::npos) {
@@ -1516,6 +1529,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						}
 						if(b) {
 							stmp2 = str.substr(i + f->name().length() + i9, i6 - (i + f->name().length() + i9));
+							printf("F2 %s\n", stmp2.c_str());
 							mngr =  f->calculate(stmp2);
 							if(mngr) {
 								stmp = LEFT_BRACKET_CH;

@@ -60,6 +60,8 @@ GtkAccelGroup *accel_group;
 extern int display_mode, number_base, fractional_mode;
 extern bool show_more, show_buttons;
 extern bool use_short_units, save_mode_on_exit, save_defs_on_exit, load_global_defs, use_unicode_signs, hyp_is_on, fraction_is_on, use_prefixes;
+extern bool use_custom_font, indicate_infinite_series;
+extern string custom_font;
 
 
 void
@@ -179,6 +181,12 @@ create_main_window (void)
 				),
 			use_prefixes);
 
+	gtk_check_menu_item_set_active(
+			GTK_CHECK_MENU_ITEM(
+				glade_xml_get_widget (glade_xml, "menu_item_indicate_infinite_series")
+				),
+			indicate_infinite_series);
+
 	switch (fractional_mode)
 	{
 	case FRACTIONAL_MODE_DECIMAL:
@@ -259,6 +267,20 @@ create_main_window (void)
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_dot")), SIGN_MULTIDOT);	
 	}
 
+	if(use_custom_font) {
+		PangoFontDescription *font = pango_font_description_from_string(custom_font.c_str());
+		gtk_widget_modify_font(resultview, font);
+		pango_font_description_free(font);
+	} else {
+		PangoFontDescription *font = pango_font_description_copy(resultview->style->font_desc);
+		pango_font_description_set_weight(font, PANGO_WEIGHT_BOLD);
+		gtk_widget_modify_font(resultview, font);
+		pango_font_description_free(font);		
+		if(custom_font.empty()) {
+			custom_font = pango_font_description_to_string(resultview->style->font_desc);
+		}		
+	}
+	
 	g_signal_connect (G_OBJECT (gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression")))), "deactivate",
 	                  G_CALLBACK (on_menu_e_deactivate),
 	                  NULL);
@@ -278,6 +300,7 @@ create_main_window (void)
 	glade_xml_signal_autoconnect(glade_xml);
 
 	gtk_widget_show (glade_xml_get_widget (glade_xml, "main_window"));
+	
 }
 
 GtkWidget*
@@ -429,6 +452,9 @@ create_preferences_dialog (void)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "preferences_checkbutton_save_defs")), save_defs_on_exit);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "preferences_checkbutton_short_units")), use_short_units);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "preferences_checkbutton_unicode_signs")), use_unicode_signs);	
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "preferences_checkbutton_custom_font")), use_custom_font);		
+	gtk_widget_set_sensitive(glade_xml_get_widget(glade_xml, "preferences_button_font"), use_custom_font);	
+	gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "preferences_button_font")), custom_font.c_str());			
 
 	return glade_xml_get_widget (glade_xml, "preferences_dialog");;
 }

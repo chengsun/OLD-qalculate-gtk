@@ -11,6 +11,128 @@
 
 #include "BuiltinFunctions.h"
 
+ProcessFunction::ProcessFunction() : Function("Utilities", "process", 1, "Process components", "", false, -1) {
+}
+void ProcessFunction::calculate2(Manager *mngr) {
+	string sarg = vargs[0]->text();
+	gsub("\\i", "\\y", sarg);
+	gsub("\\n", "\\z", sarg);				
+	UserFunction f("", "Processing Function", sarg, false, 3);
+	string argv = "";
+	Vector *v = produceVector();
+	clearVArgs();					
+	Manager *x_mngr = new Manager();
+	argv += LEFT_BRACKET ID_WRAP_LEFT;
+	int x_id = CALCULATOR->addId(x_mngr, true);
+	argv += i2s(x_id);
+	argv += ID_WRAP_RIGHT RIGHT_BRACKET;				
+	argv += COMMA;
+	Manager *i_mngr = new Manager();
+	argv += LEFT_BRACKET ID_WRAP_LEFT;
+	int i_id = CALCULATOR->addId(i_mngr, true);
+	argv += i2s(i_id);
+	argv += ID_WRAP_RIGHT RIGHT_BRACKET;
+	argv += COMMA;
+	Manager *n_mngr = new Manager(v->components(), 1);
+	argv += LEFT_BRACKET ID_WRAP_LEFT;
+	int n_id = CALCULATOR->addId(n_mngr, true);
+	argv += i2s(n_id);
+	argv += ID_WRAP_RIGHT RIGHT_BRACKET;	
+	Manager *mngr2;
+	for(int index = 1; index <= v->components(); index++) {
+		x_mngr->set(v->get(index));
+		i_mngr->set(index, 1);
+		mngr2 = f.calculate(argv);
+		v->set(mngr2, index);		
+		mngr2->unref();
+	}
+	CALCULATOR->delId(x_id, true);
+	CALCULATOR->delId(i_id, true);
+	CALCULATOR->delId(n_id, true);
+	x_mngr->unref();
+	i_mngr->unref();
+	n_mngr->unref();
+	mngr->set(v);
+}
+CustomSumFunction::CustomSumFunction() : Function("Utilities", "csum", 2, "Custom sum of components", "", false, -1) {
+}
+void CustomSumFunction::calculate2(Manager *mngr) {
+	string sarg = vargs[0]->text();
+	gsub("\\i", "\\z", sarg);
+	gsub("\\n", "\\a", sarg);				
+	UserFunction f("", "Processing Function", sarg, false, 4);
+	string argv = "";
+	Vector *v = produceVector();
+	Manager *y_mngr = new Manager(vargs[1]);		
+	clearVArgs();					
+	Manager *x_mngr = new Manager();
+	argv += LEFT_BRACKET ID_WRAP_LEFT;
+	int x_id = CALCULATOR->addId(x_mngr, true);
+	argv += i2s(x_id);
+	argv += ID_WRAP_RIGHT RIGHT_BRACKET;				
+	argv += COMMA;
+	argv += LEFT_BRACKET ID_WRAP_LEFT;
+	int y_id = CALCULATOR->addId(y_mngr, true);
+	argv += i2s(y_id);
+	argv += ID_WRAP_RIGHT RIGHT_BRACKET;				
+	argv += COMMA;		
+	Manager *i_mngr = new Manager();
+	argv += LEFT_BRACKET ID_WRAP_LEFT;
+	int i_id = CALCULATOR->addId(i_mngr, true);
+	argv += i2s(i_id);
+	argv += ID_WRAP_RIGHT RIGHT_BRACKET;
+	argv += COMMA;
+	Manager *n_mngr = new Manager(v->components(), 1);
+	argv += LEFT_BRACKET ID_WRAP_LEFT;
+	int n_id = CALCULATOR->addId(n_mngr, true);
+	argv += i2s(n_id);
+	argv += ID_WRAP_RIGHT RIGHT_BRACKET;	
+	Manager *mngr2;
+	for(int index = 1; index <= v->components(); index++) {
+		x_mngr->set(v->get(index));
+		i_mngr->set(index, 1);
+		mngr2 = f.calculate(argv);
+		y_mngr->set(mngr2);	
+		mngr2->unref();
+	}
+	CALCULATOR->delId(x_id, true);
+	CALCULATOR->delId(y_id, true);
+	CALCULATOR->delId(i_id, true);		
+	CALCULATOR->delId(n_id, true);
+	x_mngr->unref();
+	i_mngr->unref();
+	n_mngr->unref();
+	mngr->set(y_mngr);
+	delete v;			
+}
+
+FunctionFunction::FunctionFunction() : Function("Utilities", "function", 1, "Function", "", false, -1) {
+}
+Manager *FunctionFunction::calculate(const string &eq) {
+	int itmp = stringArgs(eq);
+	if(testArgCount(itmp)) {
+		args(eq);
+		UserFunction f("", "Generated Function", vargs[0]->text());
+		clearVArgs();			
+		if(svargs.size() <= f.minargs()) {
+			CALCULATOR->error(true, _("You need at least %s arguments in the generated function."), i2s(f.minargs()).c_str());		
+		} else {
+			string argv = "";
+			for(int i = 1; i < svargs.size(); i++) {
+				if(i != 1) {
+					argv += ",";
+				}
+				argv += svargs[i];
+			}
+			clearSVArgs();			
+			Manager *mngr = f.calculate(argv);	
+			return mngr;
+		}
+	}
+	Manager *mngr = createFunctionManagerFromSVArgs(itmp);
+	clearSVArgs();
+	return mngr;			
+}
 MatrixFunction::MatrixFunction() : Function("Matrices", "matrix", 2, "Construct Matrix", "", false, -1) {}
 void MatrixFunction::calculate2(Manager *mngr) {
 	if(!vargs[0]->isFraction() || !vargs[0]->fraction()->isInteger() || !vargs[0]->fraction()->isPositive() || !vargs[1]->isFraction() || !vargs[1]->fraction()->isInteger() || !vargs[1]->fraction()->isPositive()) {
@@ -37,6 +159,14 @@ void MatrixFunction::calculate2(Manager *mngr) {
 	}
 	mngr->set(&mtrx);
 }
+VectorFunction::VectorFunction() : Function("Matrices", "vector", -1, "Construct Vector") {}
+void VectorFunction::calculate2(Manager *mngr) {
+	Vector vctr(vargs.size());
+	for(int i = 0; i < vargs.size(); i++) {
+		vctr.set(vargs[i], i + 1);	
+	}
+	mngr->set(&vctr);
+}
 RowsFunction::RowsFunction() : Function("Matrices", "rows", 1, "Rows") {}
 void RowsFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->isMatrix()) {
@@ -49,6 +179,14 @@ ColumnsFunction::ColumnsFunction() : Function("Matrices", "columns", 1, "Columns
 void ColumnsFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->isMatrix()) {
 		mngr->set(vargs[0]->matrix()->columns(), 1);
+	} else {
+		mngr->set(1, 1);
+	}
+}
+ComponentsFunction::ComponentsFunction() : Function("Matrices", "components", 1, "Components") {}
+void ComponentsFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isMatrix()) {
+		mngr->set(vargs[0]->matrix()->columns() * vargs[0]->matrix()->rows(), 1);
 	} else {
 		mngr->set(1, 1);
 	}

@@ -13,9 +13,11 @@
 #define MATRIX_H
 
 class Matrix;
+class Vector;
 
 #include "Calculator.h"
 #include "Manager.h"
+#include "Integer.h"
 
 /**
 * Contains a matrix.
@@ -24,7 +26,7 @@ class Matrix;
 class Matrix {
   protected:
 	vector<vector<Manager*> > elements;
-	bool b_exact;
+	bool b_exact, b_vector;
   public:
   
 	/**
@@ -45,7 +47,7 @@ class Matrix {
 	*/		
 	Matrix(const Matrix *matrix);
 	
-	~Matrix();
+	virtual ~Matrix();
 
 	void set(const Matrix *matrix);
 	
@@ -239,8 +241,23 @@ class Matrix {
 	bool isPrecise() const;
 	void setPrecise(bool is_precise);
 	
-	string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, Prefix *prefix = NULL, bool *in_exact = NULL, bool *usable = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false) const;
+	bool isVector() const;
+	
+	virtual string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, Prefix *prefix = NULL, bool *in_exact = NULL, bool *usable = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false) const;
 
+};
+
+class Vector : public Matrix {
+	public:
+		Vector();
+		Vector(int components);	
+		Vector(const Matrix *vector);		
+		void set(const Manager *mngr, int component);
+		Manager *get(int component);	
+		const Manager *get(int component) const;		
+		int components() const;
+		void addComponent();
+		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, Prefix *prefix = NULL, bool *in_exact = NULL, bool *usable = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false) const;
 };
 
 #endif

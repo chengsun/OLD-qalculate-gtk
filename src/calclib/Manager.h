@@ -67,12 +67,14 @@ class Manager {
 		Manager(const Manager *mngr);	
 		Manager(const Fraction *fraction_);
 		Manager(const Matrix *matrix_);					
+		Manager(const Vector *vector_);
 		~Manager(void);
 		void setNull();
 		void set(const Manager *mngr);
 		void set(const Function *f, ...);		
 		void set(const Fraction *fraction_);				
 		void set(const Matrix *matrix_);
+		void set(const Vector *vector_);
 		void set(long double value_);		
 		void set(long int numerator_, long int denominator_, long int fraction_exp_ = 0);		
 		void set(string var_);				

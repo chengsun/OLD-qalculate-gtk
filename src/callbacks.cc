@@ -54,9 +54,12 @@ extern Unit *selected_to_unit;
 int saved_deci_mode, saved_decimals, saved_precision, saved_display_mode, saved_number_base, saved_angle_unit;
 bool use_short_units, use_unicode_signs, use_prefixes;
 bool saved_functions_enabled, saved_variables_enabled, saved_unknownvariables_enabled, saved_units_enabled, saved_donot_calcvars, saved_use_prefixes;
+bool saved_indicate_infinite_series, indicate_infinite_series;
 bool save_mode_on_exit;
 bool save_defs_on_exit;
 int fractional_mode, saved_fractional_mode;
+bool use_custom_font;
+string custom_font;
 bool hyp_is_on, saved_hyp_is_on;
 int deci_mode, decimals, display_mode, number_base;
 bool show_more, show_buttons;
@@ -68,8 +71,8 @@ extern string result_text;
 extern GtkWidget *resultview;
 extern GdkPixmap *pixmap_result;
 
-#define MARKUP_STRING(str, text)	if(in_power) {str = "<b><small>";} else {str = "<b><big>";} str += text; if(in_power) {str += "</small></b>";} else {str += "</big></b>";}			
-#define CALCULATE_SPACE_W		gint space_w, space_h; PangoLayout *layout_space = gtk_widget_create_pango_layout(resultview, NULL); if(in_power) {pango_layout_set_markup(layout_space, "<b><small> </small></b>", -1);} else {pango_layout_set_markup(layout_space, "<b><big> </big></b>", -1);} pango_layout_get_pixel_size(layout_space, &space_w, &space_h); g_object_unref(layout_space);
+#define MARKUP_STRING(str, text)	if(in_power) {str = "<small>";} else {str = "<big>";} str += text; if(in_power) {str += "</small>";} else {str += "</big>";}			
+#define CALCULATE_SPACE_W		gint space_w, space_h; PangoLayout *layout_space = gtk_widget_create_pango_layout(resultview, NULL); if(in_power) {pango_layout_set_markup(layout_space, "<small> </small>", -1);} else {pango_layout_set_markup(layout_space, "<big> </big>", -1);} pango_layout_get_pixel_size(layout_space, &space_w, &space_h); g_object_unref(layout_space);
 
 
 struct tree_struct {
@@ -1336,6 +1339,7 @@ void getFormat(NumberFormat &numberformat, int &displayflags, int &min_decimals,
 	if(use_short_units) displayflags = displayflags | DISPLAY_FORMAT_SHORT_UNITS;
 	else displayflags = displayflags | DISPLAY_FORMAT_LONG_UNITS;
 	if(use_unicode_signs) displayflags = displayflags | DISPLAY_FORMAT_NONASCII;	
+	if(indicate_infinite_series) displayflags = displayflags | DISPLAY_FORMAT_INDICATE_INFINITE_SERIES;		
 	if(use_prefixes || prefix) displayflags = displayflags | DISPLAY_FORMAT_USE_PREFIXES;	
 	if(rlabel) {
 		//displayflags = displayflags | DISPLAY_FORMAT_TAGS;
@@ -1364,14 +1368,14 @@ string get_value_string(Manager *mngr_, bool rlabel = false, Prefix *prefix = NU
 	return mngr_->print(numberformat, displayflags, decimals, max_decimals, in_exact, NULL, prefix);
 }
 
-GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *prefix = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false, bool draw_minus = false, gint *exp_height = NULL) {
+GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *prefix = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false, bool draw_minus = false, gint *point_central = NULL) {
 	GdkPixmap *pixmap = NULL;
 	gint w, h;
 	if(toplevel && !in_exact) {
 		bool bie = false;
 		in_exact = &bie;
 	}
-	gint height_exp = 0;
+	gint central_point = 0;
 	if(in_exact && !m->isPrecise()) {
 		*in_exact = true;
 	}
@@ -1380,20 +1384,21 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
 			string str;
 			if(in_power) {
-				str = "<i><b><small>";
+				str = "<i><small>";
 			} else {
-				str = "<i><b><big>";
+				str = "<i><big>";
 			}
 			if(m->text() == "pi") str += SIGN_PI;
 			else str += m->text();
 			if(in_power) {
-				str += "</small></b></i>";
+				str += "</small></i>";
 			} else {
-				str += "</big></b></i>";
+				str += "</big></i>";
 			}
 			w += 1;					
 			pango_layout_set_markup(layout, str.c_str(), -1);
 			pango_layout_get_pixel_size(layout, &w, &h);
+			central_point = h / 2;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
 			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
 			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
@@ -1401,9 +1406,10 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			break;
 		}
 		case FUNCTION_MANAGER: {
-			gint comma_w, comma_h, function_w, function_h, h, w, htmp, wtmp, arc_w, arc_h;
+			gint comma_w, comma_h, function_w, function_h, uh, dh, h, w, ctmp, htmp, wtmp, arc_w, arc_h;
 			vector<GdkPixmap*> pixmap_args;
 			vector<gint> hpa;
+			vector<gint> cpa;			
 			vector<gint> wpa;
 			
 			CALCULATE_SPACE_W
@@ -1417,27 +1423,35 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			pango_layout_set_markup(layout_function, str.c_str(), -1);			
 			pango_layout_get_pixel_size(layout_function, &function_w, &function_h);
 			w = function_w + 1;
-			h = function_h;
+			uh = function_h / 2 + function_h % 2;
+			dh = function_h / 2;
 			
 			for(int index = 0; index < m->countChilds(); index++) {
 				if(l_exp) delete l_exp;
 				l_exp = NULL;			
-				pixmap_args.push_back(draw_manager(m->getChild(index), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true));
+				pixmap_args.push_back(draw_manager(m->getChild(index), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &ctmp));
 				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_args[index]), &wtmp, &htmp);
 				hpa.push_back(htmp);
+				cpa.push_back(ctmp);				
 				wpa.push_back(wtmp);
 				if(index > 0) {
 					w += comma_w;
 					w += space_w;
 				}				
 				w += wtmp;
-				if(htmp > h) {
-					h = htmp;
+				if(ctmp > dh) {
+					dh = ctmp;
 				}
+				if(htmp - ctmp > uh) {
+					uh = htmp - ctmp;
+				}				
 			}
 			
-			h += 4;
-			arc_h = h;
+			uh += 2;
+			dh += 2;
+			h = uh + dh;
+			central_point = dh;
+			arc_h = dh * 2;
 			arc_w = arc_h / 6;
 			w += arc_w * 2 + 2;
 			w += 1;
@@ -1446,24 +1460,24 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
 			
 			w = 0;
-			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, (h - function_h) / 2, layout_function);	
+			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - function_h / 2 - function_h % 2, layout_function);	
 			w += function_w + 1;
-			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w, (h - arc_h) / 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);			
-			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w + 1, (h - arc_h) / 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);	
+			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);			
+			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w + 1, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);	
 			w += arc_w + 1;
 			for(int index = 0; index < m->countChilds(); index++) {
 				if(index > 0) {
-					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, (h - comma_h) / 2, layout_comma);	
+					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - comma_h / 2 - comma_h % 2, layout_comma);	
 					w += comma_w;
 					w += space_w;
 				}
-				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_args[index]), 0, 0, w, (h - hpa[index]) / 2, -1, -1);
+				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_args[index]), 0, 0, w, uh - (hpa[index] - cpa[index]), -1, -1);
 				w += wpa[index];
 				g_object_unref(pixmap_args[index]);
 			}	
 			w += 1;
-			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w - arc_w, (h - arc_h) / 2, arc_w * 2, arc_h, 270 * 64, 180 * 64);			
-			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w - 1 - arc_w, (h - arc_h) / 2, arc_w * 2, arc_h, 270 * 64, 180 * 64);	
+			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w - arc_w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 270 * 64, 180 * 64);			
+			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w - 1 - arc_w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 270 * 64, 180 * 64);	
 			w += arc_w;				
 		
 			
@@ -1478,14 +1492,14 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				if(!(displayflags_d & DISPLAY_FORMAT_USE_PREFIXES)) {
 					displayflags_d = displayflags_d | DISPLAY_FORMAT_USE_PREFIXES;
 				}
-				pixmap = draw_manager(mngr_d, nrformat, displayflags_d, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, true, in_power, true);		
+				pixmap = draw_manager(mngr_d, nrformat, displayflags_d, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, true, in_power, true, &central_point);		
 				mngr_d->unref();
 			} else {
 				string str, str2;
 				if(in_power) {
-					str = "<b><small>";
+					str = "<small>";
 				} else {
-					str = "<b><big>";
+					str = "<big>";
 				}
 				if(!in_composite && toplevel) {
 					str2 = "1";
@@ -1510,13 +1524,14 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				} else if(plural && *plural) str += m->unit()->plural();
 				else str += m->unit()->name();
 				if(in_power) {
-					str += "</small></b>";
+					str += "</small>";
 				} else {
-					str += "</big></b>";
+					str += "</big>";
 				}			
 				PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
 				pango_layout_set_markup(layout, str.c_str(), -1);
 				pango_layout_get_pixel_size(layout, &w, &h);
+				central_point = h / 2;
 				pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
 				gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
 				gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 0, 0, layout);	
@@ -1547,10 +1562,10 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				if(whole_.empty() && minus && (toplevel || draw_minus)) {
 					layout_whole = gtk_widget_create_pango_layout(resultview, NULL);
 					if(in_power) {
-						pango_layout_set_markup(layout_whole, "<b><small>" SIGN_MINUS "</small></b>", -1);				
+						pango_layout_set_markup(layout_whole, "<small>" SIGN_MINUS "</small>", -1);				
 						pango_layout_get_pixel_size(layout_whole, &wlw, &hlw);
 					} else {
-						pango_layout_set_markup(layout_whole, "<b><big>" SIGN_MINUS "</big></b>", -1);				
+						pango_layout_set_markup(layout_whole, "<big>" SIGN_MINUS "</big>", -1);				
 						pango_layout_get_pixel_size(layout_whole, &wlw, &hlw);
 					}
 					ph = hlw;
@@ -1558,22 +1573,22 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				}
 				if(in_power) {
 					layout_num = gtk_widget_create_pango_layout(resultview, NULL);
-					string str = "<b><small>";
+					string str = "<small>";
 					str += numerator_;
 					str += SIGN_DIVISION;
 					str += denominator_;
-					str += " </small></b>";
+					str += " </small>";
 					pango_layout_set_markup(layout_num, str.c_str(), -1);
 					pango_layout_get_pixel_size(layout_num, &wln, &hln);
 					hfr = hln;
 					wfr = wln;
 				} else {
-					numerator_.insert(0, "<b><big>");
-					numerator_ += "</big></b>";
+					numerator_.insert(0, "<big>");
+					numerator_ += "</big>";
 					layout_num = gtk_widget_create_pango_layout(resultview, NULL);
 					pango_layout_set_markup(layout_num, numerator_.c_str(), -1);
-					denominator_.insert(0, "<b><big>");
-					denominator_ += "</big></b>";
+					denominator_.insert(0, "<big>");
+					denominator_ += "</big>";
 					layout_den = gtk_widget_create_pango_layout(resultview, NULL);				
 					pango_layout_set_markup(layout_den, denominator_.c_str(), -1);
 					pango_layout_get_pixel_size(layout_den, &wld, &hld);
@@ -1602,15 +1617,13 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					if(layout_den) {
 						exponent_.insert(0, "<small> " SIGN_MULTIDOT " 1</small>");
 					}
-					exponent_.insert(0, "<b>");
-					exponent_ += "</small></b>";				
+					exponent_ += "</small>";				
 				} else {		
 					exponent_.insert(0, "E<big>");
 					if(layout_den) {
 						exponent_.insert(0, "<big> " SIGN_MULTIDOT " 1</big>");
 					}
-					exponent_.insert(0, "<b>");
-					exponent_ += "</big></b>";			
+					exponent_ += "</big>";			
 				}
 				layout_exp = gtk_widget_create_pango_layout(resultview, NULL);
 				pango_layout_set_markup(layout_exp, exponent_.c_str(), -1);
@@ -1622,11 +1635,11 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			}						
 			if(!prefix_.empty()) {
 				if(in_power) {
-					prefix_.insert(0, "<b><small>");
-					prefix_ += "</small></b>";				
+					prefix_.insert(0, "<small>");
+					prefix_ += "</small>";				
 				} else {
-					prefix_.insert(0, "<b><big>");
-					prefix_ += "</big></b>";			
+					prefix_.insert(0, "<big>");
+					prefix_ += "</big>";			
 				}
 				layout_prefix = gtk_widget_create_pango_layout(resultview, NULL);
 				pango_layout_set_markup(layout_prefix, prefix_.c_str(), -1);
@@ -1639,6 +1652,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				}
 				pw += wlp;
 			}	
+			central_point = ph / 2;
 			pixmap = gdk_pixmap_new(resultview->window, pw, ph, -1);			
 			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, pw, ph);	
 			gint x = 0;
@@ -1679,33 +1693,46 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			break;
 		}	
 		case MATRIX_MANAGER: {
-			gint wtmp, htmp, order_w, order_h, w = 0, h = 0;
+			gint wtmp, htmp, ctmp = 0, order_w, order_h, w = 0, h = 0;
 			CALCULATE_SPACE_W
 			vector<gint> col_w;
-			vector<gint> row_h;			
+			vector<gint> row_h;
+			vector<gint> row_uh;
+			vector<gint> row_dh;									
 			vector<vector<gint> > element_w;
 			vector<vector<gint> > element_h;
+			vector<vector<gint> > element_c;			
 			vector<vector<GdkPixmap*> > pixmap_elements;
 			element_w.resize(m->matrix()->rows());			
-			element_h.resize(m->matrix()->rows());			
+			element_h.resize(m->matrix()->rows());
+			element_c.resize(m->matrix()->rows());						
 			pixmap_elements.resize(m->matrix()->rows());
 			for(int index_r = 0; index_r < m->matrix()->rows(); index_r++) {
 				for(int index_c = 0; index_c < m->matrix()->columns(); index_c++) {
-					pixmap_elements[index_r].push_back(draw_manager(m->matrix()->get(index_r + 1, index_c + 1), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true));					
+					ctmp = 0;
+					pixmap_elements[index_r].push_back(draw_manager(m->matrix()->get(index_r + 1, index_c + 1), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &ctmp));					
 					gdk_drawable_get_size(GDK_DRAWABLE(pixmap_elements[index_r][index_c]), &wtmp, &htmp);
 					element_w[index_r].push_back(wtmp);
 					element_h[index_r].push_back(htmp);
+					element_c[index_r].push_back(ctmp);					
 					if(index_r == 0) {
 						col_w.push_back(wtmp);
 					} else if(wtmp > col_w[index_c]) {
 						col_w[index_c] = wtmp;
 					}
 					if(index_c == 0) {
-						row_h.push_back(htmp);
-					} else if(htmp > row_h[index_r]) {
-						row_h[index_r] = htmp;
+						row_uh.push_back(htmp - ctmp);
+						row_dh.push_back(ctmp);
+					} else {
+						if(ctmp > row_dh[index_r]) {
+							row_dh[index_r] = ctmp;
+						}
+						if(htmp - ctmp > row_uh[index_r]) {
+							row_uh[index_r] = htmp - ctmp;
+						}						
 					}
 				}
+				row_h.push_back(row_uh[index_r] + row_dh[index_r]);
 				h += row_h[index_r];
 				if(index_r != 0) {
 					h += 4;
@@ -1721,7 +1748,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			
 			w += wlr + 1;
 			w += wll + 1;
-
+			central_point = h / 2;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
 			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
 
@@ -1732,7 +1759,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			for(int index_r = 0; index_r < m->matrix()->rows(); index_r++) {
 				w = wll + 1;
 				for(int index_c = 0; index_c < m->matrix()->columns(); index_c++) {
-					gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_elements[index_r][index_c]), 0, 0, w + (col_w[index_c] - element_w[index_r][index_c]) / 2, h + (row_h[index_r] - element_h[index_r][index_c]) / 2, -1, -1);				
+					gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_elements[index_r][index_c]), 0, 0, w + (col_w[index_c] - element_w[index_r][index_c]) / 2, h + row_uh[index_r] - (element_h[index_r][index_c] - element_c[index_r][index_c]), -1, -1);				
 					w += col_w[index_c];
 					w += space_w * 2;
 					g_object_unref(pixmap_elements[index_r][index_c]);
@@ -1752,30 +1779,23 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			vector<GdkPixmap*> pixmap_terms;
 			vector<gint> hpt;
 			vector<gint> wpt;
-			vector<gint> hpt_exp;
-			gint plus_w, plus_h, minus_w, minus_h, minus_short_w, minus_short_h, wtmp, htmp, hetmp = 0, w = 0, h = 0;
+			vector<gint> cpt;
+			gint plus_w, plus_h, minus_w, minus_h, wtmp, htmp, hetmp = 0, w = 0, h = 0, dh = 0, uh = 0;
 			CALCULATE_SPACE_W
 			PangoLayout *layout_plus = gtk_widget_create_pango_layout(resultview, NULL);
 			if(in_power) {
-				pango_layout_set_markup(layout_plus, "<b><small>+</small></b>", -1);
+				pango_layout_set_markup(layout_plus, "<small>+</small>", -1);
 			} else {
-				pango_layout_set_markup(layout_plus, "<b><big>+</big></b>", -1);
+				pango_layout_set_markup(layout_plus, "<big>+</big>", -1);
 			}
 			pango_layout_get_pixel_size(layout_plus, &plus_w, &plus_h);
 			PangoLayout *layout_minus = gtk_widget_create_pango_layout(resultview, NULL);
 			if(in_power) {
-				pango_layout_set_markup(layout_minus, "<b><small>" SIGN_MINUS "</small></b>", -1);
+				pango_layout_set_markup(layout_minus, "<small>" SIGN_MINUS "</small>", -1);
 			} else {
-				pango_layout_set_markup(layout_minus, "<b><big>" SIGN_MINUS "</big></b>", -1);
+				pango_layout_set_markup(layout_minus, "<big>" SIGN_MINUS "</big>", -1);
 			}			
 			pango_layout_get_pixel_size(layout_minus, &minus_w, &minus_h);
-			PangoLayout *layout_minus_short = gtk_widget_create_pango_layout(resultview, NULL);
-			if(in_power) {
-				pango_layout_set_markup(layout_minus_short, "<b><small>" SIGN_MINUS "</small></b>", -1);
-			} else {
-				pango_layout_set_markup(layout_minus_short, "<b><big>" SIGN_MINUS "</big></b>", -1);
-			}			
-			pango_layout_get_pixel_size(layout_minus_short, &minus_short_w, &minus_short_h);												
 			for(int i = 0; i < m->countChilds(); i++) {
 				if(l_exp) delete l_exp;
 				l_exp = NULL;	
@@ -1783,64 +1803,66 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				pixmap_terms.push_back(draw_manager(m->getChild(i), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, false, &hetmp));
 				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_terms[i]), &wtmp, &htmp);
 				hpt.push_back(htmp);
-				hpt_exp.push_back(hetmp);
+				cpt.push_back(hetmp);
 				wpt.push_back(wtmp);
 				w += wtmp;
 				if(m->getChild(i)->hasNegativeSign()) {
-					if(i > 0) {
-						w += minus_w;
-						if(minus_h > h) {
-							h = minus_h;
-						}
-					} else {
-						w += minus_short_w;
-						if(minus_short_h > h) {
-							h = minus_short_h;
-						}					
+					w += minus_w;
+					if(minus_h / 2 > dh) {
+						dh = minus_h / 2;
 					}
+					if(minus_h / 2 + minus_h % 2 > uh) {
+						uh = minus_h / 2 + minus_h % 2;
+					}						
 				} else {
 					if(i > 0) w += plus_w;
-					if(plus_h > h) {
-						h = plus_h;
+					if(plus_h / 2 > dh) {
+						dh = plus_h / 2;
 					}
+					if(plus_h / 2 + plus_h % 2 > uh) {
+						uh = plus_h / 2 + plus_h % 2;
+					}					
 				}
-				if(htmp + hetmp > h) {
-					h = hetmp + htmp;
+				if(htmp - hetmp > uh) {
+					uh = htmp - hetmp;
 				}
+				if(hetmp > dh) {
+					dh = hetmp;
+				}				
 			}
 			w += space_w * (pixmap_terms.size() - 1) * 2;
-
+			central_point = dh;
+			h = dh + uh;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
 			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);			
 			w = 0;
 			for(int i = 0; i < pixmap_terms.size(); i++) {
 				if(i == 0) {
 					if(m->getChild(i)->negative()) {
-						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, (h - minus_short_h) / 2, layout_minus_short);
-						w += minus_short_w;
+						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - minus_h / 2 - minus_h % 2, layout_minus);
+						w += minus_w;
 					}
 				} else {
 					w += space_w;
 					if(m->getChild(i)->negative()) {
-						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, (h - minus_h) / 2, layout_minus);
+						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - minus_h / 2 - minus_h % 2, layout_minus);
 						w += minus_w;
 					} else {
-						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, (h - plus_h) / 2, layout_plus);
+						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - plus_h / 2 - plus_h % 2, layout_plus);
 						w += plus_w;
 					}	
 					w += space_w;			
 				}
-				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_terms[i]), 0, 0, w, (h - hpt[i] - hpt_exp[i]) / 2, -1, -1);
+				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_terms[i]), 0, 0, w, uh - (hpt[i] - cpt[i]), -1, -1);
 				w += wpt[i];
 				g_object_unref(pixmap_terms[i]);
 			}
 			g_object_unref(layout_minus);
-			g_object_unref(layout_minus_short);
 			g_object_unref(layout_plus);
 			break;
 		}	
 		case POWER_MANAGER: {
-			gint power_w, power_h, base_w, base_h, exp_w, exp_h, one_w, one_h, w = 0, h = 0;
+			gint power_w, power_h, base_w, base_h, exp_w, exp_h, one_w, one_h, w = 0, h = 0, ctmp = 0;
 			CALCULATE_SPACE_W
 			GdkPixmap *pixmap_one = NULL;
 			if(!in_composite && toplevel && m->base()->isUnit()) {
@@ -1855,7 +1877,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			if(m->exponent()->countChilds() > 0) {
 				wrap_exp = true;
 			}			
-			GdkPixmap *pixmap_base = draw_manager(m->base(), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, in_composite, in_power, true);			
+			GdkPixmap *pixmap_base = draw_manager(m->base(), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, in_composite, in_power, true, &central_point);			
 			gdk_drawable_get_size(GDK_DRAWABLE(pixmap_base), &base_w, &base_h);
 			
 			PangoLayout *layout_power = NULL;
@@ -1867,24 +1889,31 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			if(!(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY) && (displayflags & DISPLAY_FORMAT_FRACTION)) {
 				displayflags = displayflags | DISPLAY_FORMAT_FRACTIONAL_ONLY;
 			}			
-			GdkPixmap *pixmap_exp = draw_manager(m->exponent(), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, in_composite, true, true);
+			GdkPixmap *pixmap_exp = draw_manager(m->exponent(), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, in_composite, true, true, &ctmp);
 			gdk_drawable_get_size(GDK_DRAWABLE(pixmap_exp), &exp_w, &exp_h);
 			
 			h = base_h;
 			w = base_w;
+			gint arc_base_w = base_h / 6;
+			gint arc_exp_w = exp_h / 6;									
+			if(wrap_base) {
+				base_h += 4;
+				central_point += 2;
+				w += arc_base_w * 2 + 3;
+			}						
 			if(layout_power) {
 				w += power_w; 
+				if(exp_h > h) {
+					h = exp_h;
+				}
 			} else {
-				h += exp_h / 3;
-				height_exp = exp_h / 3;
+				if(exp_h < h) {
+					h += exp_h / 2;
+				} else {
+					h += exp_h - base_h / 2;
+				}
 			}
 			w += exp_w;
-			gint arc_base_w = base_h / 6;
-			gint arc_exp_w = exp_h / 6;			
-			if(wrap_base) {
-				h += 4;
-				w += arc_base_w * 2 + 3;
-			}			
 			if(wrap_exp) {
 				w += arc_exp_w * 2 + 3;
 			}
@@ -1900,14 +1929,12 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);			
 
 			w = 0;
-			gint base_h2 = base_h;
 			if(pixmap_one) {
 				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w, h - one_h, -1, -1);
 				w += one_w;
 				w += space_w;
 			}
 			if(wrap_base) {
-				base_h2 += 4;
 				gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w, h - base_h - 4, arc_base_w * 2, base_h + 4, 90 * 64, 180 * 64);			
 				gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w + 1, h - base_h - 4, arc_base_w * 2, base_h + 4, 90 * 64, 180 * 64);	
 				w += arc_base_w + 1;
@@ -1920,11 +1947,9 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_base), 0, 0, w, h - base_h, -1, -1);
 				w += base_w;
 			}
-			gint exp_hs = h - base_h2 + exp_h / 3 * 2;
 			if(layout_power) {
-				gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, h - base_h2, layout_power);
+				gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, 0, layout_power);
 				w += power_w;
-				exp_hs = h;
 			}	
 			if(wrap_exp) {
 				gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w, 0, arc_exp_w * 2, exp_h, 90 * 64, 180 * 64);			
@@ -1952,27 +1977,27 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				m->sort(SORT_DEFAULT);
 			}
 
-			gint multi_w, multi_h, div_w, div_h, minus_w, minus_h, one_w, one_h, wtmp, htmp, hetmp, w = 0, w2 = 0, h = 0, h2 = 0, num_h = 0, num_w = 0, den_h = 0, den_w = 0, hfr = 0, wfr = 0;
+			gint multi_w, multi_h, div_w, div_h, minus_w, minus_h, one_w, one_h, wtmp, htmp, hetmp, w = 0, w2 = 0, h = 0, h2 = 0, uh = 0, dh = 0, uh2 = 0, dh2 = 0, num_h = 0, num_w = 0, den_h = 0, den_w = 0, wfr = 0, cfr = 0, hfr = 0, num_dh = 0, num_uh = 0, den_dh = 0, den_uh = 0, dhfr = 0, uhfr = 0;
 			CALCULATE_SPACE_W
 			PangoLayout *layout_multi = gtk_widget_create_pango_layout(resultview, NULL);
 			if(in_power) {
-				pango_layout_set_markup(layout_multi, "<b><small>" SIGN_MULTIDOT "</small></b>", -1);
+				pango_layout_set_markup(layout_multi, "<small>" SIGN_MULTIDOT "</small>", -1);
 			} else {
-				pango_layout_set_markup(layout_multi, "<b><big>" SIGN_MULTIDOT "</big></b>", -1);
+				pango_layout_set_markup(layout_multi, "<big>" SIGN_MULTIDOT "</big>", -1);
 			}
 			pango_layout_get_pixel_size(layout_multi, &multi_w, &multi_h);
 			PangoLayout *layout_div = gtk_widget_create_pango_layout(resultview, NULL);
 			if(in_power) {
-				pango_layout_set_markup(layout_div, "<b><small>" SIGN_DIVISION "</small></b>", -1);
+				pango_layout_set_markup(layout_div, "<small>" SIGN_DIVISION "</small>", -1);
 			} else {
-				pango_layout_set_markup(layout_div, "<b><big>" SIGN_DIVISION "</big></b>", -1);
+				pango_layout_set_markup(layout_div, "<big>" SIGN_DIVISION "</big>", -1);
 			}
 			pango_layout_get_pixel_size(layout_div, &div_w, &div_h);
 			PangoLayout *layout_minus = gtk_widget_create_pango_layout(resultview, NULL);
 			if(in_power) {
-				pango_layout_set_markup(layout_minus, "<b><small>" SIGN_MINUS "</small></b>", -1);
+				pango_layout_set_markup(layout_minus, "<small>" SIGN_MINUS "</small>", -1);
 			} else {
-				pango_layout_set_markup(layout_minus, "<b><big>" SIGN_MINUS "</big></b>", -1);
+				pango_layout_set_markup(layout_minus, "<big>" SIGN_MINUS "</big>", -1);
 			}			
 			pango_layout_get_pixel_size(layout_minus, &minus_w, &minus_h);									
 			
@@ -1994,7 +2019,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			bool num_non_unit = false;
 			bool prepend_one = false;
 			bool first_is_minus = false;
-			bool minus;
+			bool minus = false;
 			
 			bool prefix_fract = false;
 			PangoLayout *layout_num = NULL;
@@ -2002,11 +2027,11 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			gint num_fract_h, num_fract_w, den_fract_h, den_fract_w;
 			vector<GdkPixmap*> pixmap_factors;
 			vector<GdkPixmap*> pixmap_factors_div;
-			vector<gint> hpf;
-			vector<gint> hpf_exp;			
+			vector<gint> hpf;			
+			vector<gint> cpf;			
 			vector<gint> wpf;
-			vector<gint> hpf_div;
-			vector<gint> hpf_div_exp;			
+			vector<gint> hpf_div;			
+			vector<gint> cpf_div;						
 			vector<gint> wpf_div;						
 			vector<bool> f_is_unit;
 			vector<bool> f_is_div;
@@ -2029,16 +2054,18 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						w = minus_w; w2 = minus_w;
 						hpf.push_back(minus_h);
 						wpf.push_back(minus_w);
-						h = minus_h;
-						h2 = minus_h;
+						dh = minus_h / 2;
+						uh = minus_h / 2 + minus_h % 2;
+						dh2 = dh;
+						uh2 = uh;
 					} else {
 						hpf.push_back(0);
 						wpf.push_back(0);					
 					}
 					hpf_div.push_back(0);
 					wpf_div.push_back(0);						
-					hpf_div_exp.push_back(0);
-					hpf_exp.push_back(0);
+					cpf_div.push_back(0);
+					cpf.push_back(dh);
 					f_has_prefix.push_back(false);
 					i++;
 					m_i = m->getChild(i);
@@ -2083,13 +2110,16 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					pixmap_factors_div.push_back(draw_manager(&mngr_i, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &hetmp));
 					gdk_drawable_get_size(GDK_DRAWABLE(pixmap_factors_div[i]), &wtmp, &htmp);
 					w2 += wtmp;
-					if(htmp + hetmp > h2) {
-						h2 = htmp + hetmp;
+					if(htmp - hetmp > uh2) {
+						uh2 = htmp - hetmp;
 					}
+					if(hetmp > dh2) {
+						dh2 = hetmp;
+					}					
 					f_is_div.push_back(true);
 					hpf_div.push_back(htmp);
 					wpf_div.push_back(wtmp);
-					hpf_div_exp.push_back(hetmp);					
+					cpf_div.push_back(hetmp);					
 					if(!is_unit) had_non_unit_div = true;
 					if(div_count == 0) {
 						if(i > 0 && f_needs_multi_space[i - 1]) {
@@ -2100,9 +2130,12 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						w2 += space_w;
 						w2 += div_w;
 						w2 += space_w;
-						if(div_h > h2) {
-							h2 = div_h;
+						if(div_h / 2 > dh2) {
+							dh2 = div_h / 2;
 						}
+						if(div_h / 2 + div_h % 2 > uh2) {
+							uh2 = div_h / 2 + div_h % 2;
+						}						
 					}
 					div_count++;
 				} else {		
@@ -2111,7 +2144,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						if(!(displayflags_d & DISPLAY_FORMAT_FRACTIONAL_ONLY)) {
 							displayflags_d = displayflags_d | DISPLAY_FORMAT_FRACTIONAL_ONLY;
 						}
-						bool exp_minus;
+						bool exp_minus = false;
 						string whole_, numerator_, denominator_, exponent_, prefix_;
 						m_i->fraction()->getPrintObjects(minus, whole_, numerator_, denominator_, exp_minus, exponent_, prefix_, nrformat, displayflags_d, min_decimals, max_decimals, prefix, in_exact, usable, false, NULL, l_exp, in_composite, in_power);
 						string str;						
@@ -2126,42 +2159,50 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							pango_layout_set_markup(layout_den, str.c_str(), -1);
 							pango_layout_get_pixel_size(layout_den, &den_fract_w, &den_fract_h);
 							w2 += den_fract_w;
-							if(den_fract_h > h2) {
-								h2 = den_fract_h;
+							if(den_fract_h / 2 > dh2) {
+								dh2 = den_fract_h / 2;
+							}
+							if(den_fract_h / 2 + den_fract_h % 2 > uh2) {
+								uh2 = den_fract_h / 2 + den_fract_h % 2;
 							}
 						}
 						if(numerator_.empty()) {
 							numerator_ = whole_;
 						}
-						if(numerator_ != "1" || !prefix_.empty()) {
-							layout_num = gtk_widget_create_pango_layout(resultview, NULL);
-							if(!exp_minus && !exponent_.empty()) {
-								exponent_.insert(0, "</big>E<big>");
-								numerator_ += exponent_;
-							}
-							if(!prefix_.empty()) {
-								prefix_fract = true;
-								numerator_ += " ";
-								numerator_ += prefix_;
-							}
-							MARKUP_STRING(str, numerator_)
-							pango_layout_set_markup(layout_num, str.c_str(), -1);
-							pango_layout_get_pixel_size(layout_num, &num_fract_w, &num_fract_h);
-							if(minus) {
-								w2 += minus_w;
-							}							
-							w2 += num_fract_w;
-							if(num_fract_h > h2) {
-								h2 = num_fract_h;
-							}							
+						if(numerator_ == "1") numerator_ = "";
+						layout_num = gtk_widget_create_pango_layout(resultview, NULL);
+						if(!exp_minus && !exponent_.empty()) {
+							if(numerator_.empty()) numerator_ = "1";
+							exponent_.insert(0, "</big>E<big>");
+							numerator_ += exponent_;
 						}
+						if(!prefix_.empty()) {
+							prefix_fract = true;
+							if(numerator_.empty() && !in_composite) numerator_ = "1";
+							if(!numerator_.empty()) numerator_ += " ";
+							numerator_ += prefix_;
+						}
+						MARKUP_STRING(str, numerator_)
+						pango_layout_set_markup(layout_num, str.c_str(), -1);
+						pango_layout_get_pixel_size(layout_num, &num_fract_w, &num_fract_h);
+						if(minus) {
+							w2 += minus_w;
+						}							
+						w2 += num_fract_w;
+						if(num_fract_h / 2 > dh2) {
+							dh2 = num_fract_h / 2;
+						}
+						if(num_fract_h / 2 + num_fract_h % 2 > uh2) {
+							uh2 = num_fract_h / 2 + num_fract_h % 2;
+						}											
 					}
 					pixmap_factors_div.push_back(NULL);
 					f_is_div.push_back(false);			
 					hpf_div.push_back(0);
-					hpf_div_exp.push_back(0);					
+					cpf_div.push_back(0);					
 					wpf_div.push_back(0);
 				}	
+				hetmp = 0;
 				pixmap_factors.push_back(draw_manager(m_i, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &hetmp));
 				f_has_prefix.push_back(prefix_ == 2 && l_exp && l_exp->isZero());
 				if(m_i->isText() && m_i->text().length() == 1 || m_i->isFraction() || (m_i->isPower() && !is_unit)) {
@@ -2177,66 +2218,87 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						w2 += space_w;
 						w += multi_w;
 						w2 += multi_w;
-						if(multi_h > h) {
-							h = multi_h;
+						if(multi_h / 2 > dh) {
+							dh = multi_h / 2;
 						}
-						if(multi_h > h2) {
-							h2 = multi_h;
-						}						
+						if(multi_h / 2 > dh2) {
+							dh2 = multi_h / 2;
+						}
+						if(multi_h / 2 + multi_h % 2 > uh) {
+							uh = multi_h / 2 + multi_h % 2;
+						}
+						if(multi_h / 2 + multi_h % 2 > uh2) {
+							uh2 = multi_h / 2 + multi_h % 2;
+						}												
 						w += space_w;
 						w2 += space_w;
 					}
 				}
 				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_factors[i]), &wtmp, &htmp);
 				hpf.push_back(htmp);				
-				hpf_exp.push_back(hetmp);								
+				cpf.push_back(hetmp);								
 				wpf.push_back(wtmp);
 				w += wtmp;
 				if(!f_is_div[i] && !(layout_num && i == 0)) {
 					w2 += wtmp;
-					if(htmp + hetmp > h2) {
-						h2 = htmp + hetmp;
-					}					
+					if(htmp - hetmp > uh2) {
+						uh2 = htmp - hetmp;
+					}
+					if(hetmp > dh2) {
+						dh2 = hetmp;
+					}										
 				}
-				if(htmp + hetmp > h) {
-					h = htmp + hetmp;
+				if(htmp - hetmp > uh) {
+					uh = htmp - hetmp;
 				}
+				if(hetmp > dh) {
+					dh = hetmp;
+				}				
 				if(l_exp) delete l_exp;
 				l_exp = NULL;
 			}
-
 			if(!(displayflags & DISPLAY_FORMAT_SCIENTIFIC)) {
 				if(!in_power && (had_non_unit_div || div_count > 1 || (div_count > 0 && (unit_count > 2 || layout_den)))) {
 					do_div = true;
 					int index = 0;
 					h = 0;
+					uh = 0;
+					dh = 0;
 					w = 0;
 					if(first_is_minus) {
 						w = minus_w;
 						w += 1;
-						h = minus_h;
+						uh = minus_h / 2 + minus_h % 2;
+						dh = minus_h;
 						index = 1;
 					}
 					if(minus) {
 						w = minus_w;
 						w += 1;
-						h = minus_h;
+						uh = minus_h / 2 + minus_h % 2;
+						dh = minus_h;
 					}
+					bool last_num = false;
 					if(layout_num) {
-						num_h = num_fract_h;
+						num_uh = num_fract_h / 2 + num_fract_h % 2;
+						num_dh = num_fract_h / 2;
 						num_w = num_fract_w;
 						index += 1;
+						last_num = true;
 					}					
 					if(layout_den) {
-						den_h = den_fract_h;
+						den_uh = den_fract_h / 2 + den_fract_h % 2;
+						den_dh = den_fract_h / 2;
 						den_w = den_fract_w;						
 					}
 					if(prepend_one) {
-						if(index == 0) {
-							num_h += one_h;
-							num_w += one_w;
-							num_w += space_w;
+						num_w += one_w;
+						if(one_h / 2 + one_h % 2 > num_uh) {
+							num_uh = one_h / 2 + one_h % 2;
 						}
+						if(one_h / 2 > num_dh) {
+							num_dh = one_h / 2;
+						}						
 					}
 					for(; index < m->countChilds(); index++) {
 						if(f_is_div[index]) {
@@ -2246,25 +2308,43 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							}
 							break;
 						}
-						num_w += wpf[index];
-						if(hpf[index] > num_h) {
-							num_h = hpf[index];
+						if(last_num && num_fract_w == 0 && f_is_unit[index]) {
+							prepend_one = true;						
+							num_w += one_w;
+							if(one_h / 2 + one_h % 2 > num_uh) {
+								num_uh = one_h / 2 + one_h % 2;
+							}
+							if(one_h / 2 > num_dh) {
+								num_dh = one_h / 2;
+							}							
 						}
+						last_num = false;
+						num_w += wpf[index];
+						if(hpf[index] - cpf[index] > num_uh) {
+							num_uh = hpf[index] - cpf[index];
+						}
+						if(cpf[index] > num_dh) {
+							num_dh = cpf[index];
+						}						
 						if(f_needs_multi_space[index] && index > 0 && !f_needs_multi_space[index - 1] && (index != 1 || !first_is_minus)) {
 							num_w += space_w;
 						}
 						if(f_needs_multi_space[index] && index + 1 < m->countChilds() && !f_is_div[index + 1]) {
 							num_w += space_w;
 							num_w += multi_w;
-							if(multi_h > num_h) {
-								num_h = multi_h;
+							if(multi_h / 2 + multi_h % 2 > num_uh) {
+								num_uh = multi_h / 2 + multi_h % 2;
+							}
+							if(multi_h / 2 > num_dh) {
+								num_dh = multi_h / 2;
 							}
 							num_w += space_w;
 						}						
 					}
 					if(num_w == 0) {
 						num_w = one_w;
-						num_h = one_h;
+						num_dh = one_h / 2;
+						num_uh = one_h / 2 + one_h % 2;
 					}
 					for(; index < m->countChilds(); index++) {
 						if(!f_is_div[index]) {
@@ -2274,23 +2354,32 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						if(hpf_div[index] > den_h) {
 							den_h = hpf_div[index];
 						}
-						if(f_needs_multi_space[index] && index > 0 && !f_needs_multi_space[index - 1] && f_is_div[index - 1]) {
+						if(hpf_div[index] - cpf_div[index] > den_uh) {
+							den_uh = hpf_div[index] - cpf_div[index];
+						}
+						if(cpf_div[index] > den_dh) {
+							den_dh = cpf_div[index];
+						}						
+						if(f_needs_multi_space[index] && ((index > 0 && !f_has_prefix[index - 1] && !f_needs_multi_space[index - 1] && f_is_div[index - 1]) || (layout_den && (index == 0 || !f_is_div[index - 1])))) {
 							den_w += space_w;
 						}
 						if(f_needs_multi_space[index] && index + 1 < m->countChilds() && f_is_div[index + 1]) {
 							den_w += space_w;
 							den_w += multi_w;
-							if(multi_h > den_h) {
-								den_h = multi_h;
+							if(multi_h / 2 + multi_h % 2 > den_uh) {
+								den_uh = multi_h / 2 + multi_h % 2;
 							}
+							if(multi_h / 2 > den_dh) {
+								den_dh = multi_h / 2;
+							}							
 							den_w += space_w;
 						}						
 					}
-					if(num_h > den_h) {	
-						hfr = num_h + num_h + 6;				
-					} else {
-						hfr = den_h + den_h + 6;
-					}
+					num_h = num_uh + num_dh;
+					den_h = den_uh + den_dh;
+					hfr = num_h + den_h + 6;
+					dhfr = den_h + 3;
+					uhfr = hfr - dhfr;
 					if(den_w > num_w) {
 						wfr = den_w;
 					} else {
@@ -2298,20 +2387,29 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					}
 					wfr += 2;
 					w += wfr;
-					if(hfr > h) {
-						h = hfr;
+					if(uhfr > uh) {
+						uh = uhfr;
+					}
+					if(dhfr > dh) {
+						dh = dhfr;
 					}
 					for(; index < m->countChilds(); index++) {
-						if(hpf[index] + hpf_exp[index] > h) {
-							h = hpf[index] + hpf_exp[index];
+						if(hpf[index] - cpf[index] > uh) {
+							uh = hpf[index] - cpf[index];
 						}
+						if(cpf[index] > dh) {
+							dh = cpf[index];
+						}						
 						w += wpf[index];
 						if(f_is_div[index - 1]) {
 							w += space_w;
 							w += multi_w;
-							if(multi_h > h) {
-								h = multi_h;
-							}								
+							if(multi_h / 2 + multi_h % 2 > uh) {
+								uh = multi_h / 2 + multi_h % 2;
+							}
+							if(multi_h / 2 > dh) {
+								dh = multi_h / 2;
+							}															
 							w += space_w;
 						} else if(f_needs_multi_space[index] && index > 0 && !f_needs_multi_space[index - 1]) {
 							w += space_w;
@@ -2319,18 +2417,25 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						if(f_needs_multi_space[index] && index + 1 < m->countChilds()) {
 							w += space_w;
 							w += multi_w;
-							if(multi_h > h) {
-								h = multi_h;
+							if(multi_h / 2 + multi_h % 2 > uh) {
+								uh = multi_h / 2 + multi_h % 2;
 							}
+							if(multi_h / 2 > dh) {
+								dh = multi_h / 2;
+							}							
 							w += space_w;
 						}						
 					}
 				} else if(div_count > 0) {
-					h = h2;
+					uh = uh2;
+					dh = dh2;
 					w = w2;
 					do_simple_unit_div = true;
 				}
 			}
+			h = uh + dh;
+			central_point = dh;
+			
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
 			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);			
 
@@ -2339,11 +2444,13 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			bool in_num = true;
 			int div_i = 0;
 			gint w_first_fract = 0;
-			gint line_y = (h - hfr) / 2 + hfr / 2;
+			gint line_y = uh;
+			num_uh = uh - 2 - num_dh;
+			den_uh = uh + 3 + den_uh;
 			for(int i = 0; i < m->countChilds(); i++) {
 				if(i == 0 && first_is_minus) {
 					if(toplevel || draw_minus) {
-						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, (h - minus_h) / 2, layout_minus);	
+						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - minus_h / 2 - minus_h % 2, layout_minus);	
 						w += minus_w;
 						if(do_div) w += 1;
 						w_first_fract = w;
@@ -2351,7 +2458,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				} else if(do_div) {
 					if(i == 0) {
 						if(minus && (toplevel || draw_minus)) {
-							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, (h - minus_h) / 2, layout_minus);	
+							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - minus_h / 2 - minus_h % 2, layout_minus);	
 							w += minus_w;
 							w += 1;
 							w_first_fract = w;						
@@ -2359,8 +2466,8 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						w = (wfr - num_w) / 2 + w_first_fract;
 					}
 					if(f_is_div[i]) {
-						if(i == 0 || (i == 1 && !layout_num)) {
-							gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w, line_y - one_h - 2, -1, -1);								
+						if(i == 0 || (i == 1 && num_fract_w == 0)) {
+							gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w, num_uh - one_h / 2 - one_h % 2, -1, -1);								
 							w += one_w;
 						}													
 						if(!in_den) {
@@ -2371,40 +2478,39 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							gdk_draw_line(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, line_y + 1, w + wfr, line_y + 1);
 							w = (wfr - den_w) / 2 + w_first_fract;
 						}
-						if(div_i > 0 && !f_has_prefix[i - 1] && f_needs_multi_space[i] && !f_needs_multi_space[i - 1] && (i != 1 || !first_is_minus)) {
-							w += space_w;
-						}						
 						if(div_i == 0 && layout_den) {						
-							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, line_y + den_h - den_fract_h + 2, layout_den);	
+							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, den_uh - den_fract_h / 2 - den_fract_h % 2, layout_den);	
 							w += den_fract_w;							
 						}						
-						gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_factors_div[i]), 0, 0, w, line_y + den_h - hpf_div[i] + 2, -1, -1);
+						if(f_needs_multi_space[i] && (((div_i == 0 || !f_is_div[i - 1]) && layout_den) || (div_i > 0 && !f_has_prefix[i - 1] && !f_needs_multi_space[i - 1] && f_is_div[i - 1]))) {
+							w += space_w;
+						}												
+						gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_factors_div[i]), 0, 0, w, den_uh - (hpf_div[i] - cpf_div[i]), -1, -1);
 						w += wpf_div[i];
 						if(f_needs_multi_space[i] && i + 1 < m->countChilds() && f_is_div[i + 1]) {
 							w += space_w;
-							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, line_y + den_h - multi_h + 2, layout_multi);
+							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, den_uh - multi_h / 2 - multi_h % 2, layout_multi);
 							w += multi_w;
 							w += space_w;
 						}								
 						div_i++;
 					} else if(in_num) {
 						if(i == 0 && prepend_one) {
-							gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w, line_y - one_h - 2, -1, -1);								
+							gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w, num_uh - one_h / 2 - one_h % 2, -1, -1);								
 							w += one_w;
-							w += space_w;
 						}					
 						if(i > 0 && f_needs_multi_space[i] && !f_has_prefix[i - 1] && !f_needs_multi_space[i - 1] && !(i == 1 && (first_is_minus || prefix_fract))) {
 							w += space_w;
 						}
 						if(i == 0 && layout_num) {						
-							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, line_y - num_fract_h - 2, layout_num);	
+							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, num_uh - num_fract_h / 2 - num_fract_h % 2, layout_num);	
 							w += num_fract_w;						
 						} else {						
-							gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_factors[i]), 0, 0, w, line_y - hpf[i] - 2, -1, -1);
+							gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_factors[i]), 0, 0, w, num_uh - (hpf[i] - cpf[i]), -1, -1);
 							w += wpf[i];
 							if(f_needs_multi_space[i] && i + 1 < m->countChilds() && !f_is_div[i + 1]) {
 								w += space_w;
-								gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, line_y - multi_h - 2, layout_multi);
+								gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, num_uh - multi_h / 2 - multi_h % 2, layout_multi);
 								w += multi_w;
 								w += space_w;
 							}							
@@ -2415,13 +2521,13 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						in_den = false;
 						w = wfr + w_first_fract;
 						w += space_w;
-						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, (h - multi_h) / 2, layout_multi);
+						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - multi_h / 2 - multi_h % 2, layout_multi);
 						w += multi_w;
 						w += space_w;						
 					}
 				} else {
 					if(i == 0 && prepend_one) {
-						gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w, (h - one_h) / 2, -1, -1);								
+						gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w, uh - one_h / 2 - one_h % 2, -1, -1);								
 						w += one_w;
 						w += space_w;
 					}		
@@ -2429,36 +2535,36 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						w += space_w;
 					}
 					if(do_simple_unit_div && f_is_div[i]) {
-						gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_factors_div[i]), 0, 0, w, (h - hpf_div[i] - hpf_div_exp[i]) / 2, -1, -1);							
+						gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_factors_div[i]), 0, 0, w, uh - (hpf_div[i] - cpf_div[i]), -1, -1);							
 						w += wpf_div[i];
 					} else 	if(do_simple_unit_div && i == 0 && layout_num) {						
 						if(minus) {
 							if(toplevel || draw_minus) {
-								gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, (h - minus_h) / 2, layout_minus);	
+								gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - minus_h / 2 - minus_h % 2, layout_minus);	
 								w += minus_w;
 							}						
 						}
-						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, (h - num_fract_h) / 2, layout_num);	
+						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - num_fract_h / 2 - num_fract_h % 2, layout_num);	
 						w += num_fract_w;
 					} else {
-						gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_factors[i]), 0, 0, w, (h - hpf[i] - hpf_exp[i]) / 2, -1, -1);
+						gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_factors[i]), 0, 0, w, uh - (hpf[i] - cpf[i]), -1, -1);
 						w += wpf[i];
 					}
 					if(div_i == 2) div_i = 3;
 					if(do_simple_unit_div && div_i != 2 && i + 1 < m->countChilds() && f_is_div[i + 1]) {		
 						div_i = 2;
 						w += space_w;
-						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, (h - div_h) / 2, layout_div);
+						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - div_h / 2 - div_h % 2, layout_div);
 						w += div_w;
 						w += space_w;							
 						if(layout_den) {
 							div_i = 3;						
-							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, (h - den_fract_h) / 2, layout_den);	
+							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - den_fract_h / 2 - den_fract_h % 2, layout_den);	
 							w += den_fract_w;
 						}
 					} else if(f_needs_multi_space[i] && i + 1 < m->countChilds()) {
 						w += space_w;
-						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, (h - multi_h) / 2, layout_multi);
+						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - multi_h / 2 - multi_h % 2, layout_multi);
 						w += multi_w;
 						w += space_w;
 					}
@@ -2479,28 +2585,31 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 		case ALTERNATIVE_MANAGER: {
 			vector<GdkPixmap*> pixmap_terms;
 			vector<gint> hpt;
+			vector<gint> cpt;			
 			vector<gint> hpth;			
 			vector<gint> wpt;
 			vector<bool> ie;
-			gint or_w, or_h, wtmp, htmp, w = 0, h = 0, wle, hle, wlae, hlae;
+			gint or_w, or_h, wtmp, htmp, w = 0, h = 0, ctmp = 0, wle, hle, wlae, hlae;
 			CALCULATE_SPACE_W
 			PangoLayout *layout_almost_equals = gtk_widget_create_pango_layout(resultview, NULL);
 			PangoLayout *layout_equals = gtk_widget_create_pango_layout(resultview, NULL);
-			pango_layout_set_markup(layout_almost_equals, "<b>" SIGN_ALMOST_EQUAL " </b>", -1);
-			pango_layout_set_markup(layout_equals, "<b>= </b>", -1);
+			pango_layout_set_markup(layout_almost_equals, "<big>" SIGN_ALMOST_EQUAL " </big>", -1);
+			pango_layout_set_markup(layout_equals, "<big>= </big>", -1);
 			pango_layout_get_pixel_size(layout_almost_equals, &wlae, &hlae);			
 			pango_layout_get_pixel_size(layout_equals, &wle, &hle);			
 			PangoLayout *layout_or = gtk_widget_create_pango_layout(resultview, NULL);
-			pango_layout_set_markup(layout_or, _("<b><big>or</big></b>"), -1);
+			pango_layout_set_markup(layout_or, _("<big>or</big>"), -1);
 			pango_layout_get_pixel_size(layout_or, &or_w, &or_h);
 			for(int i = 0; i < m->countChilds(); i++) {
 				bool bie = false;
-				pixmap_terms.push_back(draw_manager(m->getChild(i), nrformat, displayflags, min_decimals, max_decimals, &bie, usable, prefix, false, NULL, l_exp, in_composite, in_power, true));
+				ctmp = 0;
+				pixmap_terms.push_back(draw_manager(m->getChild(i), nrformat, displayflags, min_decimals, max_decimals, &bie, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &ctmp));
 				if(bie && in_exact) {
 					*in_exact = true;
 				}
 				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_terms[i]), &wtmp, &htmp);
 				hpt.push_back(htmp);
+				cpt.push_back(ctmp);
 				wpt.push_back(wtmp);
 				if(bie) {
 					wtmp += wlae;
@@ -2526,20 +2635,20 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			}
 			w += or_w;
 			w += space_w * 3;
-
+			central_point = h / 2;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
 			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);			
 			h = 0;
 			for(int i = 0; i < pixmap_terms.size(); i++) {
 				if(i > 0) {
-					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 0, h + (hpth[i] - or_h) / 2, layout_or);
+					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 0, h + hpt[i] - cpt[i] - or_h / 2 - or_h % 2, layout_or);
 				}				
 				if(ie[i]) {
-					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], or_w + space_w * 3, h + (hpth[i] - hlae) / 2, layout_almost_equals);
+					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], or_w + space_w * 3, h + hpt[i] - cpt[i] - hlae / 2 - hlae % 2, layout_almost_equals);
 				} else {
-					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], or_w + space_w * 3, h + (hpth[i] - hle) / 2, layout_equals);
+					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], or_w + space_w * 3, h + hpt[i] - cpt[i] - hle / 2 - hlae % 2, layout_equals);
 				}	
-				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_terms[i]), 0, 0, w - wpt[i], h + (hpth[i] - hpt[i]) / 2, -1, -1);								
+				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_terms[i]), 0, 0, w - wpt[i], h, -1, -1);								
 				g_object_unref(pixmap_terms[i]);
 				h += hpth[i];
 				h += 4;				
@@ -2556,28 +2665,24 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 		GdkPixmap *pixmap_old = pixmap;
 		PangoLayout *layout_equals = gtk_widget_create_pango_layout(resultview, NULL);
 		if((in_exact && *in_exact) || !m->isPrecise()) {
-			pango_layout_set_markup(layout_equals, "<b>" SIGN_ALMOST_EQUAL " </b>", -1);
+			pango_layout_set_markup(layout_equals, "<big>" SIGN_ALMOST_EQUAL " </big>", -1);
 		} else {
-			pango_layout_set_markup(layout_equals, "<b>= </b>", -1);
+			pango_layout_set_markup(layout_equals, "<big>= </big>", -1);
 		}
 		pango_layout_get_pixel_size(layout_equals, &wle, &hle);
 		w_new = w + wle;
-		if(hle > h) {
-			h_new = hle;
-		} else {
-			h_new = h;
-		}
+		h_new = h;
 		pixmap = gdk_pixmap_new(resultview->window, w_new, h_new, -1);			
 		gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w_new, h_new);	
-		gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 0, (h_new - hle) / 2 + height_exp, layout_equals);	
-		gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_old), 0, 0, wle, (h_new - h) / 2, -1, -1);
+		gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 0, h - central_point - hle / 2 - hle % 2, layout_equals);	
+		gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_old), 0, 0, wle, 0, -1, -1);
 		g_object_unref(pixmap_old);
 		g_object_unref(layout_equals);
 	}
 	if(!pixmap) {
 		pixmap = gdk_pixmap_new(resultview->window, 1, 1, -1);
 	}
-	if(exp_height) *exp_height = height_exp;
+	if(point_central) *point_central = central_point;
 	return pixmap;
 }
 void clearresult() {
@@ -2602,25 +2707,31 @@ void viewresult(Prefix *prefix = NULL) {
 	} else {
 		h_new = h;
 	}
-	if(w < glade_xml_get_widget(glade_xml, "scrolled_result")->allocation.width - 8) {
-		w_new = glade_xml_get_widget(glade_xml, "scrolled_result")->allocation.width - 8;
+	if(w < glade_xml_get_widget(glade_xml, "scrolled_result")->allocation.width - 20) {
+		w_new = glade_xml_get_widget(glade_xml, "scrolled_result")->allocation.width - 20;
 	} else {
 		w_new = w;
 	}	
 	gtk_widget_get_size_request(resultview, &wr, &hr);	
 	pixmap_result = NULL;
 	if(wr != w_new || hr != h_new) {
+		if(h_new > 200) {
+			if(w_new > glade_xml_get_widget(glade_xml, "scrolled_result")->allocation.width - 20) {
+				gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(glade_xml_get_widget(glade_xml, "scrolled_result")), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);		
+			} else {
+				gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(glade_xml_get_widget(glade_xml, "scrolled_result")), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+			}
+			gtk_widget_set_size_request(glade_xml_get_widget(glade_xml, "scrolled_result"), -1, 200);						
+		} else {
+			if(w_new > glade_xml_get_widget(glade_xml, "scrolled_result")->allocation.width - 20) {
+				gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(glade_xml_get_widget(glade_xml, "scrolled_result")), GTK_POLICY_AUTOMATIC, GTK_POLICY_NEVER);		
+			} else {
+				gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(glade_xml_get_widget(glade_xml, "scrolled_result")), GTK_POLICY_NEVER, GTK_POLICY_NEVER);
+			}	
+			gtk_widget_set_size_request(glade_xml_get_widget(glade_xml, "scrolled_result"), -1, -1);					
+		}							
 		gtk_widget_set_size_request(resultview, w_new, h_new);
 		while(gtk_events_pending()) gtk_main_iteration();
-		if(h_new > 200) {
-			gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(glade_xml_get_widget(glade_xml, "scrolled_result")), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-			wr = -1; hr = 200;
-			gtk_widget_get_size_request(glade_xml_get_widget(glade_xml, "scrolled_result"), &wr, &hr);						
-		} else {
-			gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(glade_xml_get_widget(glade_xml, "scrolled_result")), GTK_POLICY_AUTOMATIC, GTK_POLICY_NEVER);
-			wr = -1; hr = -1;
-			gtk_widget_get_size_request(glade_xml_get_widget(glade_xml, "scrolled_result"), &wr, &hr);					
-		}						
 	}
 	if(w_new > w) {
 		gdk_draw_drawable(resultview->window, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap), 0, 0, w_new - w, (h_new - h) / 2, -1, -1);
@@ -3812,6 +3923,7 @@ void set_saved_mode() {
 	saved_hyp_is_on = hyp_is_on;
 	saved_fractional_mode = fractional_mode;
 	saved_use_prefixes = use_prefixes;
+	saved_indicate_infinite_series = indicate_infinite_series;
 }
 
 /*
@@ -3825,8 +3937,11 @@ void load_preferences() {
 	number_base = BASE_DECI;
 	save_mode_on_exit = true;
 	save_defs_on_exit = true;
+	indicate_infinite_series = false;
 	hyp_is_on = false;
 	fractional_mode = FRACTIONAL_MODE_DECIMAL;
+	use_custom_font = false;
+	custom_font = "";
 	show_more = false;
 	show_buttons = false;
 	use_short_units = true;
@@ -3846,10 +3961,12 @@ void load_preferences() {
 			if(fgets(line, 10000, file) == NULL)
 				break;
 			stmp = line;
-			remove_blanks(stmp);
+			remove_blank_ends(stmp);
 			if((i = stmp.find_first_of("=")) != string::npos) {
 				svar = stmp.substr(0, i);
+				remove_blank_ends(svar);
 				svalue = stmp.substr(i + 1, stmp.length() - (i + 1));
+				remove_blank_ends(svalue);
 				v = s2i(svalue);
 				if(svar == "save_mode_on_exit")
 					save_mode_on_exit = v;
@@ -3892,7 +4009,13 @@ void load_preferences() {
 				else if(svar == "use_short_units")
 					use_short_units = v;
 				else if(svar == "use_unicode_signs")
-					use_unicode_signs = v;					
+					use_unicode_signs = v;	
+				else if(svar == "use_custom_font")
+					use_custom_font = v;										
+				else if(svar == "custom_font")
+					custom_font = svalue;
+				else if(svar == "indicate_infinite_series")
+					indicate_infinite_series = v;											
 			}
 		}
 	}
@@ -3937,6 +4060,8 @@ void save_preferences(bool mode)
 	fprintf(file, "show_buttons=%i\n", gtk_notebook_get_current_page(GTK_NOTEBOOK(glade_xml_get_widget (glade_xml, "notebook"))) == 1);
 	fprintf(file, "use_short_units=%i\n", use_short_units);
 	fprintf(file, "use_unicode_signs=%i\n", use_unicode_signs);	
+	fprintf(file, "use_custom_font=%i\n", use_custom_font);	
+	fprintf(file, "custom_font=%s\n", custom_font.c_str());		
 	if(mode)
 		set_saved_mode();
 	fprintf(file, "\n[Mode]\n");
@@ -3954,6 +4079,7 @@ void save_preferences(bool mode)
 	fprintf(file, "donot_calculate_variables=%i\n", saved_donot_calcvars);	
 	fprintf(file, "unknownvariables_enabled=%i\n", saved_unknownvariables_enabled);
 	fprintf(file, "units_enabled=%i\n", saved_units_enabled);
+	fprintf(file, "indicate_infinite_series=%i\n", saved_indicate_infinite_series);	
 	fclose(file);
 }
 
@@ -4050,6 +4176,35 @@ void on_preferences_checkbutton_save_mode_toggled(GtkToggleButton *w, gpointer u
 void on_preferences_checkbutton_load_defs_toggled(GtkToggleButton *w, gpointer user_data) {
 	load_global_defs = gtk_toggle_button_get_active(w);
 }
+void on_preferences_checkbutton_custom_font_toggled(GtkToggleButton *w, gpointer user_data) {
+	use_custom_font = gtk_toggle_button_get_active(w);
+	gtk_widget_set_sensitive(glade_xml_get_widget(glade_xml, "preferences_button_font"), use_custom_font);
+	if(use_custom_font) {
+		PangoFontDescription *font = pango_font_description_from_string(custom_font.c_str());
+		gtk_widget_modify_font(resultview, font);
+		pango_font_description_free(font);
+		viewresult(NULL);		
+	} else {
+		PangoFontDescription *font = pango_font_description_from_string("");
+		pango_font_description_set_weight(font, PANGO_WEIGHT_BOLD);		
+		gtk_widget_modify_font(resultview, font);
+		pango_font_description_free(font);
+		viewresult(NULL);			
+	}
+}
+void on_preferences_button_font_clicked(GtkButton *w, gpointer user_data) {
+	GtkWidget *d = gtk_font_selection_dialog_new(_("Select result font"));
+	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
+		custom_font = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(d));
+		gtk_button_set_label(w, custom_font.c_str());
+		PangoFontDescription *font = pango_font_description_from_string(custom_font.c_str());
+		gtk_widget_modify_font(resultview, font);
+		pango_font_description_free(font);
+		viewresult(NULL);
+	}
+	gtk_widget_destroy(d);
+}
+
 /*
 	hide unit manager when "Close" clicked
 */
@@ -4525,6 +4680,11 @@ void on_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer user_
 }
 void on_menu_item_display_prefixes_activate(GtkMenuItem *w, gpointer user_data) {
 	use_prefixes = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
+	setResult(result_text.c_str());
+	gtk_widget_grab_focus(expression);
+}
+void on_menu_item_indicate_infinite_series_activate(GtkMenuItem *w, gpointer user_data) {
+	indicate_infinite_series = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	setResult(result_text.c_str());
 	gtk_widget_grab_focus(expression);
 }
