@@ -1,5 +1,5 @@
 /*
-    Qalculate    
+    Qalculate
 
     Copyright (C) 2003  Niklas Knutsson (nq@altern.org)
 
@@ -33,130 +33,28 @@
 /* from main.cc */
 extern GladeXML *glade_xml;
 
-GtkWidget *wFunctions;
 GtkWidget *tFunctionCategories;
 GtkWidget *tFunctions;
-GtkWidget *bNewFunction;
-GtkWidget *bInsertFunction;
-GtkWidget *bEditFunction;
-GtkWidget *bDeleteFunction;
-GtkWidget *lFunctionDescription;
-GtkWidget *bCloseFunctions;
 GtkListStore *tFunctions_store;
 GtkListStore *tFunctionCategories_store;
 
-GtkWidget *wVariables;
 GtkWidget *tVariableCategories;
 GtkWidget *tVariables;
-GtkWidget *bNewVariable;
-GtkWidget *bInsertVariable;
-GtkWidget *bEditVariable;
-GtkWidget *bDeleteVariable;
-GtkWidget *bCloseVariables;
 GtkListStore *tVariables_store;
 GtkListStore *tVariableCategories_store;
 
-GtkWidget *wUnits;
 GtkWidget *tUnitCategories;
 GtkWidget *tUnits;
-GtkWidget *bNewUnit;
-GtkWidget *bInsertUnit;
-GtkWidget *bConvertToUnit;
-GtkWidget *bEditUnit;
-GtkWidget *bDeleteUnit;
-GtkWidget *bCloseUnits;
-GtkWidget *eFromValue;
-GtkWidget *lFromUnit;
-GtkWidget *tbToFrom;
-GtkWidget *tbToTo;
-GtkWidget *bConvertUnits;
-GtkWidget *eToValue;
-GtkWidget *omToUnit;
 GtkListStore *tUnits_store;
 GtkListStore *tUnitCategories_store;
-
-GtkWidget *wEditUnit;
-GtkWidget *lUnitType;
-GtkWidget *omUnitType;
-GtkWidget *lUnitName;
-GtkWidget *eUnitName;
-GtkWidget *lUnitPlural;
-GtkWidget *eUnitPlural;
-GtkWidget *lShortUnitFormat;
-GtkWidget *eShortUnitFormat;
-GtkWidget *boxAlias;
-GtkWidget *lBaseUnit;
-GtkWidget *eBaseUnit;
-GtkObject *sbBaseExp_adj;
-GtkWidget *sbBaseExp;
-GtkWidget *lRelation;
-GtkWidget *eRelation;
-GtkWidget *lReverse;
-GtkWidget *eReverse;
-GtkWidget *lUnitCat;
-GtkWidget *eUnitCat;
-GtkWidget *lDescrUnitName;
-GtkWidget *eDescrUnitName;
-
 
 GtkCellRenderer *renderer;
 GtkTreeViewColumn *column;
 GtkTreeSelection *selection;
 
-
-GtkWidget *tableT;
-GtkWidget *bClose;
-GtkWidget *history_scrolled;
-GtkWidget *history;
 GtkWidget *expression;
 GtkWidget *result;
-GtkWidget *bEXE;
-GtkWidget *bHistory;
 GtkWidget *f_menu ,*v_menu, *u_menu, *u_menu2;
-GtkWidget *bMenuE;
-GtkWidget *bMenuR;
-GtkWidget *tabs;
-GtkWidget *bSQRT;
-GtkWidget *bXY;
-GtkWidget *bLog;
-GtkWidget *bLn;
-GtkWidget *bSin;
-GtkWidget *bCos;
-GtkWidget *bTan;
-GtkWidget *bSTO;
-GtkWidget *bLeftP;
-GtkWidget *bRightP;
-GtkWidget *bX2;
-GtkWidget *bHyp;
-GtkWidget *b7;
-GtkWidget *b4;
-GtkWidget *b1;
-GtkWidget *b8;
-GtkWidget *b2;
-GtkWidget *b5;
-GtkWidget *b9;
-GtkWidget *b6;
-GtkWidget *b3;
-GtkWidget *b0;
-GtkWidget *bDot;
-GtkWidget *bEXP;
-GtkWidget *bDEL;
-GtkWidget *bAC;
-GtkWidget *bMulti;
-GtkWidget *bDivi;
-GtkWidget *bPlus;
-GtkWidget *bMinus;
-GtkWidget *bAns;
-GtkWidget *bEquals;
-GtkWidget *rRad;
-GtkWidget *rDeg;
-GtkWidget *rGra;
-GtkWidget *mRad;
-GtkWidget *mDeg;
-GtkWidget *mGra;
-GSList *dmode_group = NULL;
-GSList *bmode_group = NULL;
-GtkWidget *arrow1, *arrow2;
 GtkAccelGroup *accel_group;
 
 extern int display_mode, number_base;
@@ -166,84 +64,44 @@ extern bool use_short_units, save_mode_on_exit, save_defs_on_exit, load_global_d
 
 
 void
-create_window (void)
+create_main_window (void)
 {
 	/* make sure we get a valid main window */
 	g_assert (NULL != glade_xml_get_widget (glade_xml, "main_window"));
 
+	expression = glade_xml_get_widget (glade_xml, "expression");
+	result = glade_xml_get_widget (glade_xml, "result");
+	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (glade_xml, "history"))), "red_foreground", "foreground", "red", NULL);
+	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (glade_xml, "history"))), "blue_foreground", "foreground", "blue", NULL);
+
+	/* the function table */
+	gtk_label_set_use_markup (
+			GTK_LABEL (gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (glade_xml, "button_xy")))),
+			TRUE);
+	gtk_label_set_use_markup (
+			GTK_LABEL (gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (glade_xml, "button_square")))),
+			TRUE);
+
 	accel_group = gtk_accel_group_new ();
 
-	mDeg = glade_xml_get_widget (glade_xml, "menu_item_degrees");
-	mRad = glade_xml_get_widget (glade_xml, "menu_item_radians");
-	mGra = glade_xml_get_widget (glade_xml, "menu_item_gradians");
+	glade_xml_signal_autoconnect(glade_xml);
+
 
 	switch (calc->angleMode())
 	{
 	case DEGREES:
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mDeg), TRUE);
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_degrees")), TRUE);
 		break;
 	case RADIANS:
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mRad), TRUE);
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_radians")), TRUE);
 		break;
 	case GRADIANS:
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mGra), TRUE);
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_gradians")), TRUE);
 		break;
 	default:
 		g_assert_not_reached ();
 		break;
 	}
-
-	g_signal_connect (G_OBJECT (mDeg), "activate", GTK_SIGNAL_FUNC(set_angle_mode), GINT_TO_POINTER (DEGREES));
-	g_signal_connect (G_OBJECT (mRad), "activate", GTK_SIGNAL_FUNC(set_angle_mode), GINT_TO_POINTER (RADIANS));
-	g_signal_connect (G_OBJECT (mGra), "activate", GTK_SIGNAL_FUNC(set_angle_mode), GINT_TO_POINTER (GRADIANS));
-
-	g_signal_connect (
-			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_addition")),
-			"activate",
-			G_CALLBACK(insert_sign),
-			GINT_TO_POINTER ('+'));
-	g_signal_connect (
-			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_subtraction")),
-			"activate",
-			G_CALLBACK(insert_sign),
-			GINT_TO_POINTER ('-'));
-	g_signal_connect (
-			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_multiplication")),
-			"activate",
-			G_CALLBACK(insert_sign),
-			GINT_TO_POINTER ('*'));
-	g_signal_connect (
-			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_division")),
-			"activate",
-			G_CALLBACK(insert_sign),
-			GINT_TO_POINTER ('/'));
-	g_signal_connect (
-			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_power")),
-			"activate",
-			G_CALLBACK(insert_sign),
-			GINT_TO_POINTER ('^'));
-	g_signal_connect (
-			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_exponent")),
-			"activate",
-			G_CALLBACK(insert_sign),
-			GINT_TO_POINTER ('E'));
-	
-	//  CHECK_MENU_ITEM("Clean mode", set_clean_mode);
-	g_signal_connect (
-			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_save_defs")),
-			"activate",
-			GTK_SIGNAL_FUNC(save_defs),
-			NULL);
-	g_signal_connect (
-			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_save_mode")),
-			"activate",
-			GTK_SIGNAL_FUNC(save_mode),
-			NULL);
-	g_signal_connect (
-			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_edit_prefs")),
-			"activate",
-			GTK_SIGNAL_FUNC(edit_preferences),
-			NULL);
 
 	switch (number_base)
 	{
@@ -274,16 +132,11 @@ create_window (void)
 					glade_xml_get_widget (glade_xml, "menu_item_binary")
 				),
 				TRUE);
-		break;		
+		break;
 	default:
 		g_assert_not_reached ();
 		break;
 	}
-
-	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_hexadecimal")), "activate", GTK_SIGNAL_FUNC(set_number_base), GINT_TO_POINTER (BASE_HEX));
-	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_binary")), "activate", GTK_SIGNAL_FUNC(set_number_base), GINT_TO_POINTER (BASE_BIN));	
-	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_octal")), "activate", GTK_SIGNAL_FUNC(set_number_base), GINT_TO_POINTER (BASE_OCTAL));
-	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_decimal")), "activate", GTK_SIGNAL_FUNC(set_number_base), GINT_TO_POINTER (BASE_DECI));
 
 	switch (display_mode)
 	{
@@ -319,222 +172,56 @@ create_window (void)
 		g_assert_not_reached ();
 		break;
 	}
-	
-	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_display_normal")), "activate", G_CALLBACK(set_display_mode), GINT_TO_POINTER (MODE_NORMAL));
-	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_display_scientific")), "activate", G_CALLBACK(set_display_mode), GINT_TO_POINTER (MODE_SCIENTIFIC));
-	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_display_non_scientific")), "activate", G_CALLBACK(set_display_mode), GINT_TO_POINTER (MODE_DECIMALS));
-	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_display_prefixes")), "activate", G_CALLBACK(set_display_mode), GINT_TO_POINTER (MODE_PREFIXES));
 
 
-	g_signal_connect (
-			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_save")),
-			"activate",
-			G_CALLBACK(add_as_variable),
-			NULL);
-	g_signal_connect (
-			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_precision")),
-			"activate",
-			G_CALLBACK(select_precision),
-			NULL);
-	g_signal_connect (
-			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_decimals")),
-			"activate",
-			G_CALLBACK(select_decimals),
-			NULL);
-
-	tableT = glade_xml_get_widget (glade_xml, "top_table");
-	bMenuE = glade_xml_get_widget (glade_xml, "togglebutton_expression");
-	arrow1 = glade_xml_get_widget (glade_xml, "togglebutton_expression_arrow");
-	bMenuR = glade_xml_get_widget (glade_xml, "togglebutton_result");
-	arrow2 = glade_xml_get_widget (glade_xml, "togglebutton_result_arrow");
-	expression = glade_xml_get_widget (glade_xml, "expression");
-	result = glade_xml_get_widget (glade_xml, "result");
-
-	tabs = glade_xml_get_widget (glade_xml, "notebook");
-	
 	if(show_more)
 	{
-		gtk_widget_show (tabs);
+		gtk_widget_show (glade_xml_get_widget (glade_xml, "notebook"));
 	}
 	else
 	{
-		gtk_widget_hide (tabs);
+		gtk_widget_hide (glade_xml_get_widget (glade_xml, "notebook"));
 	}
-	
-
-	history_scrolled = glade_xml_get_widget (glade_xml, "history_page");
-	history = glade_xml_get_widget (glade_xml, "history");
-	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(history)), "red_foreground", "foreground", "red", NULL);
-	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(history)), "blue_foreground", "foreground", "blue", NULL);
-
-	/* the function table */
-	bSQRT	= glade_xml_get_widget (glade_xml, "button_sqrt");
-	bXY	= glade_xml_get_widget (glade_xml, "button_xy");
-	gtk_label_set_use_markup (
-			GTK_LABEL (gtk_bin_get_child (GTK_BIN(bXY))),
-			TRUE);
-	bLog	= glade_xml_get_widget (glade_xml, "button_log");
-	bLn	= glade_xml_get_widget (glade_xml, "button_ln");
-	bSin	= glade_xml_get_widget (glade_xml, "button_sine");
-	bCos	= glade_xml_get_widget (glade_xml, "button_cosine");
-	bTan	= glade_xml_get_widget (glade_xml, "button_tan");
-	bSTO	= glade_xml_get_widget (glade_xml, "button_store");
-	bLeftP	= glade_xml_get_widget (glade_xml, "button_brace_open");
-	bRightP = glade_xml_get_widget (glade_xml, "button_brace_close");
-	bX2	= glade_xml_get_widget (glade_xml, "button_square");
-	gtk_label_set_use_markup (
-			GTK_LABEL (gtk_bin_get_child (GTK_BIN(bX2))),
-			TRUE);
-	bHyp	= glade_xml_get_widget (glade_xml, "button_hyp");
-
-	rDeg	= glade_xml_get_widget (glade_xml, "radiobutton_degrees");
-	rRad	= glade_xml_get_widget (glade_xml, "radiobutton_radians");
-	rGra	= glade_xml_get_widget (glade_xml, "radiobutton_gradians");
 
 	switch (calc->angleMode())
 	{
 	case RADIANS:
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (rRad), TRUE);
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (glade_xml, "radiobutton_radians")), TRUE);
 		break;
 	case DEGREES:
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (rDeg), TRUE);
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (glade_xml, "radiobutton_degrees")), TRUE);
 		break;
 	case GRADIANS:
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (rGra), TRUE);
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (glade_xml, "radiobutton_gradians")), TRUE);
 		break;
 	default:
 		g_assert_not_reached ();
 		break;
 	}
 
-	/* the standard input table */
-	b0	= glade_xml_get_widget (glade_xml, "button_zero");
-	b1	= glade_xml_get_widget (glade_xml, "button_one");
-	b2      = glade_xml_get_widget (glade_xml, "button_two");
-	b3      = glade_xml_get_widget (glade_xml, "button_three");
-	b4	= glade_xml_get_widget (glade_xml, "button_four");
-	b5      = glade_xml_get_widget (glade_xml, "button_five");
-	b6      = glade_xml_get_widget (glade_xml, "button_six");
-	b7	= glade_xml_get_widget (glade_xml, "button_seven");
-	b8	= glade_xml_get_widget (glade_xml, "button_eight");
-	b9      = glade_xml_get_widget (glade_xml, "button_nine");
-	bDot	= glade_xml_get_widget (glade_xml, "button_dot");
-	bEXP	= glade_xml_get_widget (glade_xml, "button_exp");
-	bDEL	= glade_xml_get_widget (glade_xml, "button_del");
-	bAC	= glade_xml_get_widget (glade_xml, "button_ac");
-	bMulti	= glade_xml_get_widget (glade_xml, "button_times");
-	bDivi	= glade_xml_get_widget (glade_xml, "button_divide");
-	bPlus	= glade_xml_get_widget (glade_xml, "button_add");
-	bMinus	= glade_xml_get_widget (glade_xml, "button_sub");
-	bAns	= glade_xml_get_widget (glade_xml, "button_ans");
-	bEquals	= glade_xml_get_widget (glade_xml, "button_equals");
-
 	if(show_buttons)
 	{
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(tabs), 1);
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(glade_xml_get_widget (glade_xml, "notebook")), 1);
 	}
 
-	bHistory = glade_xml_get_widget (glade_xml, "button_less_more");
 	if(show_more)
 	{
 		gtk_button_set_label (
-				GTK_BUTTON(bHistory),
+				GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_less_more")),
 				_("<< Less"));
 	}
 	else
-	{		
+	{
 		gtk_button_set_label (
-				GTK_BUTTON(bHistory),
+				GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_less_more")),
 				_("More >>"));
 	}
-	
-	bClose	= glade_xml_get_widget (glade_xml, "button_close");
-	bEXE	= glade_xml_get_widget (glade_xml, "button_execute");
 
-	g_signal_connect (G_OBJECT (b0), "clicked", G_CALLBACK (button_pressed), (gpointer) "0");
-	g_signal_connect (G_OBJECT (b1), "clicked", G_CALLBACK (button_pressed), (gpointer) "1");
-	g_signal_connect (G_OBJECT (b2), "clicked", G_CALLBACK (button_pressed), (gpointer) "2");
-	g_signal_connect (G_OBJECT (b3), "clicked", G_CALLBACK (button_pressed), (gpointer) "3");
-	g_signal_connect (G_OBJECT (b4), "clicked", G_CALLBACK (button_pressed), (gpointer) "4");
-	g_signal_connect (G_OBJECT (b5), "clicked", G_CALLBACK (button_pressed), (gpointer) "5");
-	g_signal_connect (G_OBJECT (b6), "clicked", G_CALLBACK (button_pressed), (gpointer) "6");
-	g_signal_connect (G_OBJECT (b7), "clicked", G_CALLBACK (button_pressed), (gpointer) "7");
-	g_signal_connect (G_OBJECT (b8), "clicked", G_CALLBACK (button_pressed), (gpointer) "8");
-	g_signal_connect (G_OBJECT (b9), "clicked", G_CALLBACK (button_pressed), (gpointer) "9");
-	g_signal_connect (G_OBJECT (bDot), "clicked", G_CALLBACK (button_pressed), (gpointer) ".");
-	g_signal_connect (G_OBJECT (bEXP), "clicked", G_CALLBACK (button_pressed), (gpointer) "E");
-	g_signal_connect (G_OBJECT (bMulti), "clicked", G_CALLBACK (button_pressed), (gpointer) "*");
-	g_signal_connect (G_OBJECT (bDivi), "clicked", G_CALLBACK (button_pressed), (gpointer) "/");
-	g_signal_connect (G_OBJECT (bPlus), "clicked", G_CALLBACK (button_pressed), (gpointer) "+");
-	g_signal_connect (G_OBJECT (bMinus), "clicked", G_CALLBACK (button_pressed), (gpointer) "-");
-	g_signal_connect (G_OBJECT (bAns), "clicked", G_CALLBACK (button_pressed), (gpointer) "Ans");
-	g_signal_connect (G_OBJECT (bLog), "clicked", G_CALLBACK (button_function_pressed), (gpointer) "log");
-	g_signal_connect (G_OBJECT (bLn), "clicked", G_CALLBACK (button_function_pressed), (gpointer) "ln");
-	g_signal_connect (G_OBJECT (bXY), "clicked", G_CALLBACK (button_pressed), (gpointer) "^");
-	g_signal_connect (G_OBJECT (bX2), "clicked", G_CALLBACK (button_pressed), (gpointer) "^2");
-	g_signal_connect (G_OBJECT (bLeftP), "clicked", G_CALLBACK (button_pressed), (gpointer) "(");
-	g_signal_connect (G_OBJECT (bRightP), "clicked", G_CALLBACK (button_pressed), (gpointer) ")");
-	g_signal_connect (G_OBJECT (bSQRT), "clicked", G_CALLBACK (button_function_pressed), (gpointer) "sqrt");
-
-	g_signal_connect (G_OBJECT (bEquals), "clicked", G_CALLBACK (on_bEXE_clicked), NULL);
-	g_signal_connect (G_OBJECT (bAC), "clicked", G_CALLBACK (on_bAC_clicked), NULL);
-	g_signal_connect (G_OBJECT (bDEL), "clicked", G_CALLBACK (on_bDEL_clicked), NULL);
-	g_signal_connect (G_OBJECT (bHyp), "toggled", G_CALLBACK (on_bHyp_clicked), NULL);
-	g_signal_connect (G_OBJECT (bTan), "clicked", G_CALLBACK (on_bTan_clicked), NULL);
-	g_signal_connect (G_OBJECT (bSin), "clicked", G_CALLBACK (on_bSin_clicked), NULL);
-	g_signal_connect (G_OBJECT (bCos), "clicked", G_CALLBACK (on_bCos_clicked), NULL);
-	g_signal_connect (G_OBJECT (bSTO), "clicked", G_CALLBACK (on_bSTO_clicked), NULL);
-
-
-	g_signal_connect (
-			G_OBJECT (
-				glade_xml_get_widget (glade_xml, "main_window")
-			),
-			"delete_event",
-	                G_CALLBACK (on_gcalc_exit),
-	                NULL);
-	g_signal_connect (
-			G_OBJECT (
-				glade_xml_get_widget (glade_xml, "main_window")
-			),
-			"destroy_event",
-	                G_CALLBACK (on_gcalc_exit),
-	                NULL);
-	g_signal_connect (G_OBJECT (rRad), "toggled",
-	                  G_CALLBACK (on_rRad_toggled),
-	                  NULL);
-	g_signal_connect (G_OBJECT (rDeg), "toggled",
-	                  G_CALLBACK (on_rDeg_toggled),
-	                  NULL);
-	g_signal_connect (G_OBJECT (rGra), "toggled",
-	                  G_CALLBACK (on_rGra_toggled),
-	                  NULL);
-	g_signal_connect (G_OBJECT (expression), "activate",
-	                  G_CALLBACK (on_expression_activate),
-	                  NULL);
-	g_signal_connect (G_OBJECT (bHistory), "clicked",
-	                  G_CALLBACK (on_bHistory_clicked),
-	                  NULL);
-	g_signal_connect (G_OBJECT (bEXE), "clicked",
-	                  G_CALLBACK (on_bEXE_clicked),
-	                  NULL);
-	g_signal_connect (G_OBJECT (bClose), "clicked",
-	                  G_CALLBACK (on_bClose_clicked),
-	                  NULL);
-	g_signal_connect (G_OBJECT (bMenuE), "toggled",
-	                  G_CALLBACK (on_bMenuE_toggled),
-	                  NULL);
-	g_signal_connect (G_OBJECT (bMenuR), "toggled",
-	                  G_CALLBACK (on_bMenuR_toggled),
-	                  NULL);
 	g_signal_connect (G_OBJECT (gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression")))), "deactivate",
 	                  G_CALLBACK (on_menu_e_deactivate),
 	                  NULL);
 	g_signal_connect (G_OBJECT (gtk_menu_item_get_submenu(GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_result")))), "deactivate",
 	                  G_CALLBACK (on_menu_r_deactivate),
-	                  NULL);
-	g_signal_connect (G_OBJECT (expression), "changed",
-	                  G_CALLBACK (on_expression_changed),
 	                  NULL);
 
 	gtk_window_add_accel_group (
@@ -550,14 +237,14 @@ create_window (void)
 }
 
 GtkWidget*
-create_wFunctions (void)
+create_functions_dialog (void)
 {
-	wFunctions	= glade_xml_get_widget (glade_xml, "wFunctions");
+
 	tFunctionCategories = glade_xml_get_widget (glade_xml, "tFunctionCategories");
 	tFunctions	= glade_xml_get_widget (glade_xml, "tFunctions");
 
 
-	
+
 	tFunctions_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tFunctions), GTK_TREE_MODEL(tFunctions_store));
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctions));
@@ -585,47 +272,15 @@ create_wFunctions (void)
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(tFunctionCategories_store), 0, GTK_SORT_ASCENDING);
 
 
+	update_functions_tree(glade_xml_get_widget (glade_xml, "functions_dialog"));
 
-	bNewFunction	= glade_xml_get_widget (glade_xml, "bNewFunction");
-	bEditFunction	= glade_xml_get_widget (glade_xml, "bEditFunction");
-	bInsertFunction	= glade_xml_get_widget (glade_xml, "bInsertFunction");
-	bDeleteFunction	= glade_xml_get_widget (glade_xml, "bDeleteFunction");
-	lFunctionDescription = glade_xml_get_widget (glade_xml, "lFunctionDescription");
-	bCloseFunctions	= glade_xml_get_widget (glade_xml, "bCloseFunctions");
-
-
-
-	g_signal_connect ((gpointer) wFunctions, "delete_event",
-	                  G_CALLBACK (on_wFunctions_delete_event),
-	                  NULL);
-	g_signal_connect ((gpointer) wFunctions, "destroy_event",
-	                  G_CALLBACK (on_wFunctions_destroy_event),
-	                  NULL);
-	g_signal_connect ((gpointer) bNewFunction, "clicked",
-	                  G_CALLBACK (on_bNewFunction_clicked),
-	                  NULL);
-	g_signal_connect ((gpointer) bEditFunction, "clicked",
-	                  G_CALLBACK (on_bEditFunction_clicked),
-	                  NULL);
-	g_signal_connect ((gpointer) bInsertFunction, "clicked",
-	                  G_CALLBACK (on_bInsertFunction_clicked),
-	                  NULL);
-	g_signal_connect ((gpointer) bDeleteFunction, "clicked",
-	                  G_CALLBACK (on_bDeleteFunction_clicked),
-	                  NULL);
-	g_signal_connect ((gpointer) bCloseFunctions, "clicked",
-	                  G_CALLBACK (on_bCloseFunctions_clicked),
-	                  NULL);
-
-	update_functions_tree(wFunctions);
-
-	return wFunctions;
+	return glade_xml_get_widget (glade_xml, "functions_dialog");
 }
 
 GtkWidget*
-create_wVariables (void)
+create_variables_dialog (void)
 {
-	wVariables = glade_xml_get_widget (glade_xml, "variables_dialog");
+
 	tVariableCategories = glade_xml_get_widget (glade_xml, "variables_tree_view1");
 	tVariables = glade_xml_get_widget (glade_xml, "variables_tree_view2");
 
@@ -660,43 +315,15 @@ create_wVariables (void)
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(tVariableCategories_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(tVariableCategories_store), 0, GTK_SORT_ASCENDING);
 
-	bNewVariable	= glade_xml_get_widget (glade_xml, "variables_button_new");
-	bEditVariable	= glade_xml_get_widget (glade_xml, "variables_button_edit");
-	bInsertVariable = glade_xml_get_widget (glade_xml, "variables_button_insert");
-	bDeleteVariable	= glade_xml_get_widget (glade_xml, "variables_button_delete");
-	bCloseVariables = glade_xml_get_widget (glade_xml, "variables_button_close");
+	update_variables_tree(glade_xml_get_widget (glade_xml, "variables_dialog"));
 
-	g_signal_connect ((gpointer) wVariables, "delete_event",
-	                  G_CALLBACK (on_wVariables_delete_event),
-	                  NULL);
-	g_signal_connect ((gpointer) wVariables, "destroy_event",
-	                  G_CALLBACK (on_wVariables_destroy_event),
-	                  NULL);
-	g_signal_connect ((gpointer) bNewVariable, "clicked",
-	                  G_CALLBACK (on_bNewVariable_clicked),
-	                  NULL);
-	g_signal_connect ((gpointer) bEditVariable, "clicked",
-	                  G_CALLBACK (on_bEditVariable_clicked),
-	                  NULL);
-	g_signal_connect ((gpointer) bInsertVariable, "clicked",
-	                  G_CALLBACK (on_bInsertVariable_clicked),
-	                  NULL);
-	g_signal_connect ((gpointer) bDeleteVariable, "clicked",
-	                  G_CALLBACK (on_bDeleteVariable_clicked),
-	                  NULL);
-	g_signal_connect ((gpointer) bCloseVariables, "clicked",
-	                  G_CALLBACK (on_bCloseVariables_clicked),
-	                  NULL);
-
-	update_variables_tree(wVariables);
-
-	return wVariables;
+	return glade_xml_get_widget (glade_xml, "variables_dialog");
 }
 
 GtkWidget*
-create_wUnits (void)
+create_units_dialog (void)
 {
-	wUnits		= glade_xml_get_widget (glade_xml, "units_dialog");
+
 	tUnitCategories = glade_xml_get_widget (glade_xml, "units_tree_view1");
 	tUnits		= glade_xml_get_widget (glade_xml, "units_tree_view2");
 
@@ -741,144 +368,29 @@ create_wUnits (void)
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(tUnitCategories_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(tUnitCategories_store), 0, GTK_SORT_ASCENDING);
 
-	eFromValue	= glade_xml_get_widget (glade_xml, "units_entry_from_val");
-	lFromUnit	= glade_xml_get_widget (glade_xml, "units_label_from_unit");
-	tbToFrom	= glade_xml_get_widget (glade_xml, "units_toggle_button_from");
+	update_units_tree(glade_xml_get_widget (glade_xml, "units_dialog"));
 
-	bConvertUnits	= glade_xml_get_widget (glade_xml, "units_button_convert");
-
-	tbToTo		= glade_xml_get_widget (glade_xml, "units_toggle_button_to");
-	eToValue	= glade_xml_get_widget (glade_xml, "units_entry_to_val");
-	omToUnit	= glade_xml_get_widget (glade_xml, "units_optionmenu_to_unit");
-
-	bNewUnit	= glade_xml_get_widget (glade_xml, "units_button_new");
-	bEditUnit	= glade_xml_get_widget (glade_xml, "units_button_edit");
-	bInsertUnit	= glade_xml_get_widget (glade_xml, "units_button_insert");
-	bConvertToUnit	= glade_xml_get_widget (glade_xml, "units_button_convert_to");
-	bDeleteUnit	= glade_xml_get_widget (glade_xml, "units_button_delete");
-
-	bCloseUnits	= glade_xml_get_widget (glade_xml, "units_button_close");
-
-	g_signal_connect ((gpointer) wUnits, "delete_event",
-	                  G_CALLBACK (on_wUnits_delete_event),
-	                  NULL);
-	g_signal_connect ((gpointer) wUnits, "destroy_event",
-	                  G_CALLBACK (on_wUnits_destroy_event),
-	                  NULL);
-	g_signal_connect ((gpointer) bNewUnit, "clicked",
-	                  G_CALLBACK (on_bNewUnit_clicked),
-	                  NULL);
-	g_signal_connect ((gpointer) bEditUnit, "clicked",
-	                  G_CALLBACK (on_bEditUnit_clicked),
-	                  NULL);
-	g_signal_connect ((gpointer) bInsertUnit, "clicked",
-	                  G_CALLBACK (on_bInsertUnit_clicked),
-	                  NULL);
-	g_signal_connect ((gpointer) bConvertToUnit, "clicked",
-	                  G_CALLBACK (on_bConvertToUnit_clicked),
-	                  NULL);
-	g_signal_connect ((gpointer) bDeleteUnit, "clicked",
-	                  G_CALLBACK (on_bDeleteUnit_clicked),
-	                  NULL);
-	g_signal_connect ((gpointer) bCloseUnits, "clicked",
-	                  G_CALLBACK (on_bCloseUnits_clicked),
-	                  NULL);
-	g_signal_connect ((gpointer) tbToFrom, "toggled",
-	                  G_CALLBACK (on_tbToFrom_toggled),
-	                  NULL);
-	g_signal_connect ((gpointer) bConvertUnits, "clicked",
-	                  G_CALLBACK (on_bConvertUnits_clicked),
-	                  NULL);
-	g_signal_connect ((gpointer) tbToTo, "toggled",
-	                  G_CALLBACK (on_tbToTo_toggled),
-	                  NULL);
-	g_signal_connect ((gpointer) omToUnit, "changed",
-	                  G_CALLBACK (on_omToUnit_changed),
-	                  NULL);
-	g_signal_connect ((gpointer) eFromValue, "activate",
-	                  G_CALLBACK (on_eFromValue_activate),
-	                  NULL);
-	g_signal_connect ((gpointer) eToValue, "activate",
-	                  G_CALLBACK (on_eToValue_activate),
-	                  NULL);
-
-	update_units_tree(wUnits);
-
-	return wUnits;
+	return glade_xml_get_widget (glade_xml, "units_dialog");
 }
 
 GtkWidget*
-create_wPreferences (void)
+create_preferences_dialog (void)
 {
-	GtkWidget *wPreferences;
-	GtkWidget *cbSaveModeOnExit;
-	GtkWidget *cbSaveDefsOnExit;
-	GtkWidget *cbLoadGlobalDefs;
-	GtkWidget *cbUseShortUnits;
-	GtkWidget *bClose_pr;
 
-	wPreferences	= glade_xml_get_widget (glade_xml, "preferences_dialog");
-	cbLoadGlobalDefs= glade_xml_get_widget (glade_xml, "preferences_checkbutton_load_defs");
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(cbLoadGlobalDefs), load_global_defs);
-	cbSaveModeOnExit= glade_xml_get_widget (glade_xml, "preferences_checkbutton_save_mode");
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(cbSaveModeOnExit), save_mode_on_exit);
-	cbSaveDefsOnExit= glade_xml_get_widget (glade_xml, "preferences_checkbutton_save_defs");
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(cbSaveDefsOnExit), save_defs_on_exit);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "preferences_checkbutton_load_defs")), load_global_defs);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "preferences_checkbutton_save_mode")), save_mode_on_exit);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "preferences_checkbutton_save_defs")), save_defs_on_exit);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "preferences_checkbutton_short_units")), use_short_units);
 
-	cbUseShortUnits	= glade_xml_get_widget (glade_xml, "preferences_checkbutton_short_units");
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(cbUseShortUnits), use_short_units);
-
-	bClose_pr	= glade_xml_get_widget (glade_xml, "preferences_button_close");
-
-	g_signal_connect ((gpointer) cbLoadGlobalDefs, "toggled", G_CALLBACK (on_cbLoadGlobalDefs_toggled), NULL);
-	g_signal_connect ((gpointer) cbSaveModeOnExit, "toggled", G_CALLBACK (on_cbSaveModeOnExit_toggled), NULL);
-	g_signal_connect ((gpointer) cbSaveDefsOnExit, "toggled", G_CALLBACK (on_cbSaveDefsOnExit_toggled), NULL);
-	g_signal_connect ((gpointer) cbUseShortUnits, "toggled", G_CALLBACK (on_cbUseShortUnits_toggled), NULL);
-
-	return wPreferences;
+	return glade_xml_get_widget (glade_xml, "preferences_dialog");;
 }
 
 GtkWidget*
-create_wEditUnit (void)
+create_unit_edit_dialog (void)
 {
 	/* FIXME populate the combo menus */
 
-	wEditUnit	= glade_xml_get_widget (glade_xml, "unit_edit_dialog");
-	lUnitType	= glade_xml_get_widget (glade_xml, "unit_edit_label_class");
-	omUnitType	= glade_xml_get_widget (glade_xml, "unit_edit_optionmenu_class");
-	lUnitName	= glade_xml_get_widget (glade_xml, "unit_edit_label_singular");
-	eUnitName	= glade_xml_get_widget (glade_xml, "unit_edit_entry_singular");
-	lUnitPlural	= glade_xml_get_widget (glade_xml, "unit_edit_label_plural");
-	eUnitPlural	= glade_xml_get_widget (glade_xml, "unit_edit_entry_plural");
-	lShortUnitFormat = glade_xml_get_widget (glade_xml, "unit_edit_label_short");
-	eShortUnitFormat = glade_xml_get_widget (glade_xml, "unit_edit_entry_short");
-	lBaseUnit	= glade_xml_get_widget (glade_xml, "unit_edit_label_base");
-	eBaseUnit	= GTK_COMBO (glade_xml_get_widget (glade_xml, "unit_edit_combo_base"))->entry;
-	sbBaseExp	= glade_xml_get_widget (glade_xml, "unit_edit_spinbutton_exp");
-	lRelation	= glade_xml_get_widget (glade_xml, "unit_edit_label_relation");
-	eRelation	= glade_xml_get_widget (glade_xml, "unit_edit_entry_relation");
-	lReverse	= glade_xml_get_widget (glade_xml, "unit_edit_label_reversed");
-	eReverse	= glade_xml_get_widget (glade_xml, "unit_edit_entry_reversed");
-	lUnitCat	= glade_xml_get_widget (glade_xml, "unit_edit_label_category");
-	eUnitCat	= GTK_COMBO (glade_xml_get_widget (glade_xml, "unit_edit_combo_category"))->entry;
-	lDescrUnitName	= glade_xml_get_widget (glade_xml, "unit_edit_label_desc");
-	eDescrUnitName	= glade_xml_get_widget (glade_xml, "unit_edit_entry_desc");
-	boxAlias	= glade_xml_get_widget (glade_xml, "unit_edit_vbox_alias");
-
-	g_signal_connect ((gpointer) omUnitType, "changed",
-	                  G_CALLBACK (on_omUnitType_changed),
-	                  NULL);
-	g_signal_connect ((gpointer) eUnitName, "changed",
-	                  G_CALLBACK (on_unit_name_entry_changed),
-	                  NULL);
-	g_signal_connect ((gpointer) eUnitPlural, "changed",
-	                  G_CALLBACK (on_unit_name_entry_changed),
-	                  NULL);
-	g_signal_connect ((gpointer) eShortUnitFormat, "changed",
-	                  G_CALLBACK (on_unit_name_entry_changed),
-	                  NULL);
-
-	return wEditUnit;
+	return glade_xml_get_widget (glade_xml, "unit_edit_dialog");
 }
 
 

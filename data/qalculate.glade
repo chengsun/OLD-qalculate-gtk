@@ -11,6 +11,8 @@
   <property name="modal">False</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
+  <signal name="delete_event" handler="on_gcalc_exit" last_modification_time="Sun, 10 Aug 2003 21:34:28 GMT"/>
+  <signal name="destroy_event" handler="on_gcalc_exit" last_modification_time="Sun, 10 Aug 2003 21:34:39 GMT"/>
 
   <child>
     <widget class="GtkVBox" id="main_vbox">
@@ -44,8 +46,8 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Degrees</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">True</property>
-			      <signal name="activate" handler="on_degrees1_activate" last_modification_time="Fri, 08 Aug 2003 10:07:30 GMT"/>
+			      <property name="active">False</property>
+			      <signal name="activate" handler="on_menu_item_degrees_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 			    </widget>
 			  </child>
 
@@ -56,7 +58,7 @@
 			      <property name="use_underline">True</property>
 			      <property name="active">False</property>
 			      <property name="group">menu_item_degrees</property>
-			      <signal name="activate" handler="on_radians1_activate" last_modification_time="Fri, 08 Aug 2003 10:07:30 GMT"/>
+			      <signal name="activate" handler="on_menu_item_radians_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 			    </widget>
 			  </child>
 
@@ -65,9 +67,9 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Gradians</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
+			      <property name="active">True</property>
 			      <property name="group">menu_item_degrees</property>
-			      <signal name="activate" handler="on_gradians1_activate" last_modification_time="Fri, 08 Aug 2003 10:07:30 GMT"/>
+			      <signal name="activate" handler="on_menu_item_gradians_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 			    </widget>
 			  </child>
 			</widget>
@@ -89,7 +91,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">+ (addition)</property>
 			      <property name="use_underline">True</property>
-			      <signal name="activate" handler="on_+_(addition)1_activate" last_modification_time="Fri, 08 Aug 2003 10:10:38 GMT"/>
+			      <signal name="activate" handler="on_menu_item_addition_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 			    </widget>
 			  </child>
 
@@ -98,7 +100,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">- (subtraction)</property>
 			      <property name="use_underline">True</property>
-			      <signal name="activate" handler="on_-_(subtraction)1_activate" last_modification_time="Fri, 08 Aug 2003 10:10:38 GMT"/>
+			      <signal name="activate" handler="on_menu_item_subtraction_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 			    </widget>
 			  </child>
 
@@ -107,7 +109,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">* (multiplication)</property>
 			      <property name="use_underline">True</property>
-			      <signal name="activate" handler="on_*_(multiplication)1_activate" last_modification_time="Fri, 08 Aug 2003 10:10:38 GMT"/>
+			      <signal name="activate" handler="on_menu_item_multiplication_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 			    </widget>
 			  </child>
 
@@ -116,7 +118,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">/ (division)</property>
 			      <property name="use_underline">True</property>
-			      <signal name="activate" handler="on_/_(division)1_activate" last_modification_time="Fri, 08 Aug 2003 10:10:38 GMT"/>
+			      <signal name="activate" handler="on_menu_item_division_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 			    </widget>
 			  </child>
 
@@ -125,7 +127,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">^ (power)</property>
 			      <property name="use_underline">True</property>
-			      <signal name="activate" handler="on_^_(power)1_activate" last_modification_time="Fri, 08 Aug 2003 10:10:38 GMT"/>
+			      <signal name="activate" handler="on_menu_item_power_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 			    </widget>
 			  </child>
 
@@ -134,7 +136,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">E (exponent)</property>
 			      <property name="use_underline">True</property>
-			      <signal name="activate" handler="on_e_(exponent)1_activate" last_modification_time="Fri, 08 Aug 2003 10:10:38 GMT"/>
+			      <signal name="activate" handler="on_menu_item_exponent_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 			    </widget>
 			  </child>
 			</widget>
@@ -153,7 +155,7 @@
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Save definitions</property>
 		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_save_definitions1_activate" last_modification_time="Fri, 08 Aug 2003 10:35:20 GMT"/>
+		      <signal name="activate" handler="on_menu_item_save_defs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 		    </widget>
 		  </child>
 
@@ -162,7 +164,7 @@
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Save mode</property>
 		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_save_mode1_activate" last_modification_time="Fri, 08 Aug 2003 10:35:20 GMT"/>
+		      <signal name="activate" handler="on_menu_item_save_mode_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 		    </widget>
 		  </child>
 
@@ -171,7 +173,7 @@
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Preferences</property>
 		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_preferences1_activate" last_modification_time="Fri, 08 Aug 2003 10:35:20 GMT"/>
+		      <signal name="activate" handler="on_menu_item_edit_prefs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 		    </widget>
 		  </child>
 
@@ -189,7 +191,7 @@
 		      <signal name="activate" handler="on_menu_item_quit_activate" last_modification_time="Fri, 08 Aug 2003 10:07:30 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image4">
+			<widget class="GtkImage" id="image11">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -220,7 +222,6 @@
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Number Base</property>
 		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_item13_activate" last_modification_time="Fri, 08 Aug 2003 10:07:30 GMT"/>
 
 		      <child>
 			<widget class="GtkMenu" id="menu_item_number_base_menu">
@@ -231,7 +232,7 @@
 			      <property name="label" translatable="yes">Binary</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">False</property>
-			      <signal name="activate" handler="on_menu_item_hexadecimal_activate" last_modification_time="Fri, 08 Aug 2003 11:39:41 GMT"/>
+			      <signal name="activate" handler="on_menu_item_binary_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
 			    </widget>
 			  </child>
 
@@ -251,7 +252,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Decimal</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">True</property>
+			      <property name="active">False</property>
 			      <property name="group">menu_item_binary</property>
 			      <signal name="activate" handler="on_menu_item_decimal_activate" last_modification_time="Fri, 08 Aug 2003 11:39:41 GMT"/>
 			    </widget>
@@ -262,9 +263,9 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Hexadecimal</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
+			      <property name="active">True</property>
 			      <property name="group">menu_item_binary</property>
-			      <signal name="activate" handler="on_menu_item_hexadecimal_activate" last_modification_time="Fri, 08 Aug 2003 11:39:41 GMT"/>
+			      <signal name="activate" handler="on_menu_item_hexadecimal_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
 			    </widget>
 			  </child>
 			</widget>
@@ -277,7 +278,6 @@
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Display Mode</property>
 		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_item12_activate" last_modification_time="Fri, 08 Aug 2003 10:07:30 GMT"/>
 
 		      <child>
 			<widget class="GtkMenu" id="item12_menu">
@@ -287,7 +287,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Normal</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">True</property>
+			      <property name="active">False</property>
 			      <signal name="activate" handler="on_menu_item_display_normal_activate" last_modification_time="Fri, 08 Aug 2003 11:41:06 GMT"/>
 			    </widget>
 			  </child>
@@ -319,7 +319,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Use prefixes</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
+			      <property name="active">True</property>
 			      <property name="group">menu_item_display_normal</property>
 			      <signal name="activate" handler="on_menu_item_display_prefixes_activate" last_modification_time="Fri, 08 Aug 2003 11:41:06 GMT"/>
 			    </widget>
@@ -340,7 +340,7 @@
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Save Result</property>
 		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_item11_activate" last_modification_time="Fri, 08 Aug 2003 10:07:30 GMT"/>
+		      <signal name="activate" handler="on_menu_item_save_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
 		    </widget>
 		  </child>
 
@@ -355,7 +355,7 @@
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Precision</property>
 		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_item10_activate" last_modification_time="Fri, 08 Aug 2003 10:07:30 GMT"/>
+		      <signal name="activate" handler="on_menu_item_precision_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
 		    </widget>
 		  </child>
 
@@ -364,7 +364,7 @@
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Decimals</property>
 		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_item9_activate" last_modification_time="Fri, 08 Aug 2003 10:07:30 GMT"/>
+		      <signal name="activate" handler="on_menu_item_decimals_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
 		    </widget>
 		  </child>
 		</widget>
@@ -386,7 +386,6 @@
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">item6</property>
 		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_item6_activate" last_modification_time="Fri, 08 Aug 2003 10:07:30 GMT"/>
 		    </widget>
 		  </child>
 		</widget>
@@ -418,6 +417,7 @@
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="active">False</property>
 	      <property name="inconsistent">False</property>
+	      <signal name="toggled" handler="on_togglebutton_expression_toggled" last_modification_time="Sun, 10 Aug 2003 21:46:59 GMT"/>
 
 	      <child>
 		<widget class="GtkArrow" id="togglebutton_expression_arrow">
@@ -447,6 +447,7 @@
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="active">False</property>
 	      <property name="inconsistent">False</property>
+	      <signal name="toggled" handler="on_togglebutton_result_toggled" last_modification_time="Sun, 10 Aug 2003 21:47:07 GMT"/>
 
 	      <child>
 		<widget class="GtkArrow" id="togglebutton_result_arrow">
@@ -480,6 +481,8 @@
 	      <property name="has_frame">True</property>
 	      <property name="invisible_char" translatable="yes">*</property>
 	      <property name="activates_default">False</property>
+	      <signal name="activate" handler="on_expression_activate" last_modification_time="Sun, 10 Aug 2003 21:36:06 GMT"/>
+	      <signal name="changed" handler="on_expression_changed" last_modification_time="Sun, 10 Aug 2003 21:45:20 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="left_attach">0</property>
@@ -614,6 +617,7 @@
 			  <property name="label" translatable="yes">SQRT</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <signal name="clicked" handler="on_button_sqrt_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:02 GMT"/>
 			</widget>
 			<packing>
 			  <property name="left_attach">0</property>
@@ -630,6 +634,7 @@
 			  <property name="label" translatable="yes">log</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <signal name="clicked" handler="on_button_log_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:22 GMT"/>
 			</widget>
 			<packing>
 			  <property name="left_attach">0</property>
@@ -646,6 +651,7 @@
 			  <property name="label" translatable="yes">ln</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <signal name="clicked" handler="on_button_ln_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:29 GMT"/>
 			</widget>
 			<packing>
 			  <property name="left_attach">1</property>
@@ -662,6 +668,7 @@
 			  <property name="label" translatable="yes">sin</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <signal name="clicked" handler="on_button_sine_clicked" last_modification_time="Sun, 10 Aug 2003 21:46:02 GMT"/>
 			</widget>
 			<packing>
 			  <property name="left_attach">0</property>
@@ -678,6 +685,7 @@
 			  <property name="label" translatable="yes">cos</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <signal name="clicked" handler="on_button_cosine_clicked" last_modification_time="Sun, 10 Aug 2003 21:45:55 GMT"/>
 			</widget>
 			<packing>
 			  <property name="left_attach">1</property>
@@ -694,6 +702,7 @@
 			  <property name="label" translatable="yes">tan</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <signal name="clicked" handler="on_button_tan_clicked" last_modification_time="Sun, 10 Aug 2003 21:45:48 GMT"/>
 			</widget>
 			<packing>
 			  <property name="left_attach">2</property>
@@ -710,6 +719,7 @@
 			  <property name="label" translatable="yes">STO</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <signal name="clicked" handler="on_button_store_clicked" last_modification_time="Sun, 10 Aug 2003 21:46:09 GMT"/>
 			</widget>
 			<packing>
 			  <property name="left_attach">0</property>
@@ -726,6 +736,7 @@
 			  <property name="label" translatable="yes">(</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <signal name="clicked" handler="on_button_brace_open_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:42 GMT"/>
 			</widget>
 			<packing>
 			  <property name="left_attach">1</property>
@@ -742,6 +753,7 @@
 			  <property name="label" translatable="yes">)</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <signal name="clicked" handler="on_button_brace_close_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:34 GMT"/>
 			</widget>
 			<packing>
 			  <property name="left_attach">2</property>
@@ -760,6 +772,7 @@
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="active">False</property>
 			  <property name="inconsistent">False</property>
+			  <signal name="toggled" handler="on_button_hyp_toggled" last_modification_time="Sun, 10 Aug 2003 21:45:34 GMT"/>
 			</widget>
 			<packing>
 			  <property name="left_attach">2</property>
@@ -776,6 +789,7 @@
 			  <property name="label" translatable="yes">x&lt;sup&gt;y&lt;/sup&gt;</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <signal name="clicked" handler="on_button_xy_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:08 GMT"/>
 			</widget>
 			<packing>
 			  <property name="left_attach">1</property>
@@ -794,6 +808,7 @@
 			  <property name="label" translatable="yes">x&lt;sup&gt;2&lt;/sup&gt;</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <signal name="clicked" handler="on_button_square_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:15 GMT"/>
 			</widget>
 			<packing>
 			  <property name="left_attach">2</property>
@@ -829,6 +844,7 @@
 			  <property name="active">False</property>
 			  <property name="inconsistent">False</property>
 			  <property name="draw_indicator">True</property>
+			  <signal name="toggled" handler="on_radiobutton_degrees_toggled" last_modification_time="Sun, 10 Aug 2003 21:36:40 GMT"/>
 			</widget>
 			<packing>
 			  <property name="padding">0</property>
@@ -848,6 +864,7 @@
 			  <property name="inconsistent">False</property>
 			  <property name="draw_indicator">True</property>
 			  <property name="group">radiobutton_degrees</property>
+			  <signal name="toggled" handler="on_radiobutton_radians_toggled" last_modification_time="Sun, 10 Aug 2003 21:36:45 GMT"/>
 			</widget>
 			<packing>
 			  <property name="padding">0</property>
@@ -867,6 +884,7 @@
 			  <property name="inconsistent">False</property>
 			  <property name="draw_indicator">True</property>
 			  <property name="group">radiobutton_degrees</property>
+			  <signal name="toggled" handler="on_radiobutton_gradians_toggled" last_modification_time="Sun, 10 Aug 2003 21:36:51 GMT"/>
 			</widget>
 			<packing>
 			  <property name="padding">0</property>
@@ -906,6 +924,7 @@
 		      <property name="label" translatable="yes">7</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_seven_clicked" last_modification_time="Sun, 10 Aug 2003 21:58:29 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">0</property>
@@ -922,6 +941,7 @@
 		      <property name="label" translatable="yes">4</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_four_clicked" last_modification_time="Sun, 10 Aug 2003 21:58:35 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">0</property>
@@ -938,6 +958,7 @@
 		      <property name="label" translatable="yes">1</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_one_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:32 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">0</property>
@@ -954,6 +975,7 @@
 		      <property name="label" translatable="yes">8</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_eight_clicked" last_modification_time="Sun, 10 Aug 2003 21:58:17 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">1</property>
@@ -970,6 +992,7 @@
 		      <property name="label" translatable="yes">9</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_nine_clicked" last_modification_time="Sun, 10 Aug 2003 21:58:13 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">2</property>
@@ -986,6 +1009,7 @@
 		      <property name="label" translatable="yes">5</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_five_clicked" last_modification_time="Sun, 10 Aug 2003 21:58:40 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">1</property>
@@ -1002,6 +1026,7 @@
 		      <property name="label" translatable="yes">6</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_six_clicked" last_modification_time="Sun, 10 Aug 2003 21:58:45 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">2</property>
@@ -1018,6 +1043,7 @@
 		      <property name="label" translatable="yes">2</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_two_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:27 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">1</property>
@@ -1034,6 +1060,7 @@
 		      <property name="label" translatable="yes">3</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_three_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:22 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">2</property>
@@ -1050,6 +1077,7 @@
 		      <property name="label" translatable="yes">0</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_zero_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:38 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">0</property>
@@ -1066,6 +1094,7 @@
 		      <property name="label" translatable="yes">.</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_dot_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:45 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">1</property>
@@ -1082,6 +1111,7 @@
 		      <property name="label" translatable="yes">EXP</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_exp_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:51 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">2</property>
@@ -1098,6 +1128,7 @@
 		      <property name="label" translatable="yes">DEL</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_del_clicked" last_modification_time="Sun, 10 Aug 2003 21:46:21 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">3</property>
@@ -1114,6 +1145,7 @@
 		      <property name="label" translatable="yes">AC</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_ac_clicked" last_modification_time="Sun, 10 Aug 2003 21:46:27 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">4</property>
@@ -1130,6 +1162,7 @@
 		      <property name="label" translatable="yes">*</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_times_clicked" last_modification_time="Sun, 10 Aug 2003 21:58:51 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">3</property>
@@ -1146,6 +1179,7 @@
 		      <property name="label" translatable="yes">/</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_divide_clicked" last_modification_time="Sun, 10 Aug 2003 21:58:57 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">4</property>
@@ -1162,6 +1196,7 @@
 		      <property name="label" translatable="yes">+</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_add_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:09 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">3</property>
@@ -1178,6 +1213,7 @@
 		      <property name="label" translatable="yes">-</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_sub_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:03 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">4</property>
@@ -1194,6 +1230,7 @@
 		      <property name="label" translatable="yes">Ans</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_ans_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:56 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">3</property>
@@ -1210,6 +1247,7 @@
 		      <property name="label" translatable="yes">=</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_button_execute_clicked" last_modification_time="Sun, 10 Aug 2003 21:40:33 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">4</property>
@@ -1279,6 +1317,7 @@
 		  <property name="label" translatable="yes">more &gt;&gt;</property>
 		  <property name="use_underline">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <signal name="clicked" handler="on_button_less_more_clicked" last_modification_time="Sun, 10 Aug 2003 21:35:38 GMT"/>
 		</widget>
 	      </child>
 	    </widget>
@@ -1301,6 +1340,7 @@
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <signal name="clicked" handler="on_button_execute_clicked" last_modification_time="Sun, 10 Aug 2003 21:35:11 GMT"/>
 
 		  <child>
 		    <widget class="GtkAlignment" id="alignment8">
@@ -1368,6 +1408,7 @@
 		  <property name="label">gtk-close</property>
 		  <property name="use_stock">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <signal name="clicked" handler="on_button_close_clicked" last_modification_time="Sun, 10 Aug 2003 21:15:39 GMT"/>
 		</widget>
 	      </child>
 	    </widget>
@@ -1388,7 +1429,7 @@
   </child>
 </widget>
 
-<widget class="GtkDialog" id="wFunctions">
+<widget class="GtkDialog" id="functions_dialog">
   <property name="title" translatable="yes">Functions</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
@@ -1396,6 +1437,8 @@
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
   <property name="has_separator">True</property>
+  <signal name="delete_event" handler="on_functions_dialog_delete_event" last_modification_time="Mon, 11 Aug 2003 08:48:22 GMT"/>
+  <signal name="destroy_event" handler="on_functions_dialog_destroy_event" last_modification_time="Mon, 11 Aug 2003 08:48:30 GMT"/>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="dialog-vbox1">
@@ -1409,7 +1452,7 @@
 	  <property name="layout_style">GTK_BUTTONBOX_END</property>
 
 	  <child>
-	    <widget class="GtkButton" id="bCloseFunctions">
+	    <widget class="GtkButton" id="functions_button_close">
 	      <property name="visible">True</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
@@ -1417,7 +1460,7 @@
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="response_id">-7</property>
-	      <signal name="clicked" handler="on_bCloseFunctions_clicked" last_modification_time="Fri, 28 Feb 2003 17:51:38 GMT"/>
+	      <signal name="clicked" handler="on_functions_button_close_clicked" last_modification_time="Mon, 11 Aug 2003 08:51:34 GMT"/>
 	    </widget>
 	  </child>
 	</widget>
@@ -1505,27 +1548,27 @@
 		  <property name="spacing">5</property>
 
 		  <child>
-		    <widget class="GtkButton" id="bNewFunction">
+		    <widget class="GtkButton" id="functions_button_new">
 		      <property name="visible">True</property>
 		      <property name="can_default">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="label">gtk-new</property>
 		      <property name="use_stock">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
-		      <signal name="clicked" handler="on_bNewFunction_clicked" last_modification_time="Fri, 28 Feb 2003 17:51:55 GMT"/>
+		      <signal name="clicked" handler="on_functions_button_new_clicked" last_modification_time="Mon, 11 Aug 2003 08:49:11 GMT"/>
 		    </widget>
 		  </child>
 
 		  <child>
-		    <widget class="GtkButton" id="bEditFunction">
+		    <widget class="GtkButton" id="functions_button_edit">
 		      <property name="visible">True</property>
 		      <property name="can_default">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
-		      <signal name="clicked" handler="on_bEditFunction_clicked" last_modification_time="Fri, 28 Feb 2003 17:52:12 GMT"/>
+		      <signal name="clicked" handler="on_functions_button_edit_clicked" last_modification_time="Mon, 11 Aug 2003 08:50:30 GMT"/>
 
 		      <child>
-			<widget class="GtkAlignment" id="alignment2">
+			<widget class="GtkAlignment" id="alignment9">
 			  <property name="visible">True</property>
 			  <property name="xalign">0.5</property>
 			  <property name="yalign">0.5</property>
@@ -1533,13 +1576,13 @@
 			  <property name="yscale">0</property>
 
 			  <child>
-			    <widget class="GtkHBox" id="hbox3">
+			    <widget class="GtkHBox" id="hbox33">
 			      <property name="visible">True</property>
 			      <property name="homogeneous">False</property>
 			      <property name="spacing">2</property>
 
 			      <child>
-				<widget class="GtkImage" id="image2">
+				<widget class="GtkImage" id="image12">
 				  <property name="visible">True</property>
 				  <property name="stock">gtk-preferences</property>
 				  <property name="icon_size">4</property>
@@ -1556,7 +1599,7 @@
 			      </child>
 
 			      <child>
-				<widget class="GtkLabel" id="label3">
+				<widget class="GtkLabel" id="label25">
 				  <property name="visible">True</property>
 				  <property name="label" translatable="yes">_Edit</property>
 				  <property name="use_underline">True</property>
@@ -1583,12 +1626,12 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkButton" id="bInsertFunction">
+		    <widget class="GtkButton" id="functions_button_insert">
 		      <property name="visible">True</property>
 		      <property name="can_default">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
-		      <signal name="clicked" handler="on_bInsertFunction_clicked" last_modification_time="Fri, 28 Feb 2003 17:52:37 GMT"/>
+		      <signal name="clicked" handler="on_functions_button_insert_clicked" last_modification_time="Mon, 11 Aug 2003 08:50:57 GMT"/>
 
 		      <child>
 			<widget class="GtkAlignment" id="alignment1">
@@ -1649,14 +1692,14 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkButton" id="bDeleteFunction">
+		    <widget class="GtkButton" id="functions_button_delete">
 		      <property name="visible">True</property>
 		      <property name="can_default">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="label">gtk-delete</property>
 		      <property name="use_stock">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
-		      <signal name="clicked" handler="on_bDeleteFunction_clicked" last_modification_time="Fri, 28 Feb 2003 17:52:52 GMT"/>
+		      <signal name="clicked" handler="on_functions_button_delete_clicked" last_modification_time="Mon, 11 Aug 2003 08:51:13 GMT"/>
 		    </widget>
 		  </child>
 		</widget>
@@ -1684,7 +1727,7 @@
 	      <property name="shadow_type">GTK_SHADOW_ETCHED_IN</property>
 
 	      <child>
-		<widget class="GtkLabel" id="lFunctionDescription">
+		<widget class="GtkLabel" id="functions_label_description">
 		  <property name="visible">True</property>
 		  <property name="label" translatable="yes">no description</property>
 		  <property name="use_underline">False</property>
@@ -1743,6 +1786,8 @@
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
   <property name="has_separator">False</property>
+  <signal name="delete_event" handler="on_variables_dialog_delete_event" last_modification_time="Mon, 11 Aug 2003 08:40:06 GMT"/>
+  <signal name="destroy_event" handler="on_variables_dialog_destroy_event" last_modification_time="Mon, 11 Aug 2003 08:40:16 GMT"/>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="dialog-vbox2">
@@ -1764,6 +1809,7 @@
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="response_id">-7</property>
+	      <signal name="clicked" handler="on_variables_button_close_clicked" last_modification_time="Mon, 11 Aug 2003 08:38:26 GMT"/>
 	    </widget>
 	  </child>
 	</widget>
@@ -1849,6 +1895,7 @@
 		  <property name="label">gtk-new</property>
 		  <property name="use_stock">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <signal name="clicked" handler="on_variables_button_new_clicked" last_modification_time="Mon, 11 Aug 2003 08:37:56 GMT"/>
 		</widget>
 	      </child>
 
@@ -1858,6 +1905,7 @@
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <signal name="clicked" handler="on_variables_button_edit_clicked" last_modification_time="Mon, 11 Aug 2003 08:38:01 GMT"/>
 
 		  <child>
 		    <widget class="GtkAlignment" id="variables_button_edit_alignment">
@@ -1923,6 +1971,7 @@
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <signal name="clicked" handler="on_variables_button_insert_clicked" last_modification_time="Mon, 11 Aug 2003 08:38:10 GMT"/>
 
 		  <child>
 		    <widget class="GtkAlignment" id="variables_button_insert_alignment">
@@ -1990,6 +2039,7 @@
 		  <property name="label">gtk-delete</property>
 		  <property name="use_stock">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <signal name="clicked" handler="on_variables_button_delete_clicked" last_modification_time="Mon, 11 Aug 2003 08:38:16 GMT"/>
 		</widget>
 	      </child>
 	    </widget>
@@ -2018,6 +2068,8 @@
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
   <property name="has_separator">True</property>
+  <signal name="delete_event" handler="on_units_dialog_delete_event" last_modification_time="Sun, 10 Aug 2003 21:17:38 GMT"/>
+  <signal name="destroy_event" handler="on_units_dialog_destroy_event" last_modification_time="Sun, 10 Aug 2003 21:17:45 GMT"/>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="dialog-vbox3">
@@ -2039,6 +2091,7 @@
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="response_id">-7</property>
+	      <signal name="clicked" handler="on_units_button_close_clicked" last_modification_time="Sun, 10 Aug 2003 21:14:09 GMT"/>
 	    </widget>
 	  </child>
 	</widget>
@@ -2130,6 +2183,7 @@
 		      <property name="label">gtk-new</property>
 		      <property name="use_stock">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_units_button_new_clicked" last_modification_time="Mon, 11 Aug 2003 07:48:58 GMT"/>
 		    </widget>
 		  </child>
 
@@ -2139,6 +2193,7 @@
 		      <property name="can_default">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_units_button_edit_clicked" last_modification_time="Mon, 11 Aug 2003 07:49:09 GMT"/>
 
 		      <child>
 			<widget class="GtkAlignment" id="alignment5">
@@ -2204,6 +2259,7 @@
 		      <property name="can_default">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_units_button_insert_clicked" last_modification_time="Mon, 11 Aug 2003 07:49:23 GMT"/>
 
 		      <child>
 			<widget class="GtkAlignment" id="alignment6">
@@ -2269,6 +2325,7 @@
 		      <property name="can_default">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_units_button_convert_to_clicked" last_modification_time="Mon, 11 Aug 2003 07:49:32 GMT"/>
 
 		      <child>
 			<widget class="GtkAlignment" id="alignment7">
@@ -2336,6 +2393,7 @@
 		      <property name="label">gtk-delete</property>
 		      <property name="use_stock">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_units_button_delete_clicked" last_modification_time="Mon, 11 Aug 2003 07:49:43 GMT"/>
 		    </widget>
 		  </child>
 		</widget>
@@ -2377,6 +2435,7 @@
 		      <property name="invisible_char" translatable="yes">*</property>
 		      <property name="activates_default">False</property>
 		      <property name="width_chars">6</property>
+		      <signal name="activate" handler="on_units_entry_from_val_activate" last_modification_time="Sun, 10 Aug 2003 21:15:02 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
@@ -2413,6 +2472,7 @@
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		      <property name="active">False</property>
 		      <property name="inconsistent">False</property>
+		      <signal name="toggled" handler="on_units_toggle_button_from_toggled" last_modification_time="Sun, 10 Aug 2003 21:06:49 GMT"/>
 
 		      <child>
 			<widget class="GtkArrow" id="units_toggle_button_from_arrow">
@@ -2447,6 +2507,7 @@
 		  <property name="label">gtk-convert</property>
 		  <property name="use_stock">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <signal name="clicked" handler="on_units_button_convert_clicked" last_modification_time="Sun, 10 Aug 2003 20:37:24 GMT"/>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>
@@ -2468,6 +2529,7 @@
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		      <property name="active">False</property>
 		      <property name="inconsistent">False</property>
+		      <signal name="toggled" handler="on_units_toggle_button_to_toggled" last_modification_time="Sun, 10 Aug 2003 21:08:54 GMT"/>
 
 		      <child>
 			<widget class="GtkArrow" id="units_toggle_button_to_arrow">
@@ -2500,6 +2562,7 @@
 		      <property name="invisible_char" translatable="yes">*</property>
 		      <property name="activates_default">False</property>
 		      <property name="width_chars">6</property>
+		      <signal name="activate" handler="on_units_entry_to_val_activate" last_modification_time="Sun, 10 Aug 2003 21:15:14 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
@@ -2601,6 +2664,7 @@
 	      <property name="active">False</property>
 	      <property name="inconsistent">False</property>
 	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_load_defs_toggled" last_modification_time="Sun, 10 Aug 2003 21:18:48 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
@@ -2619,6 +2683,7 @@
 	      <property name="active">False</property>
 	      <property name="inconsistent">False</property>
 	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_save_mode_toggled" last_modification_time="Sun, 10 Aug 2003 21:19:02 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
@@ -2637,6 +2702,7 @@
 	      <property name="active">False</property>
 	      <property name="inconsistent">False</property>
 	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_save_defs_toggled" last_modification_time="Sun, 10 Aug 2003 21:19:15 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
@@ -2655,6 +2721,7 @@
 	      <property name="active">False</property>
 	      <property name="inconsistent">False</property>
 	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_short_units_toggled" last_modification_time="Sun, 10 Aug 2003 21:19:23 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
@@ -2831,6 +2898,7 @@
 			      <property name="has_frame">True</property>
 			      <property name="invisible_char" translatable="yes">*</property>
 			      <property name="activates_default">False</property>
+			      <signal name="changed" handler="on_unit_edit_entry_name_changed" last_modification_time="Mon, 11 Aug 2003 08:10:39 GMT"/>
 			    </widget>
 			    <packing>
 			      <property name="padding">0</property>
@@ -2884,6 +2952,7 @@
 			      <property name="has_frame">True</property>
 			      <property name="invisible_char" translatable="yes">*</property>
 			      <property name="activates_default">False</property>
+			      <signal name="changed" handler="on_unit_edit_entry_name_changed" last_modification_time="Mon, 11 Aug 2003 08:10:50 GMT"/>
 			    </widget>
 			    <packing>
 			      <property name="padding">0</property>
@@ -2937,6 +3006,7 @@
 			      <property name="has_frame">True</property>
 			      <property name="invisible_char" translatable="yes">*</property>
 			      <property name="activates_default">False</property>
+			      <signal name="changed" handler="on_unit_edit_entry_name_changed" last_modification_time="Mon, 11 Aug 2003 08:11:02 GMT"/>
 			    </widget>
 			    <packing>
 			      <property name="padding">0</property>
@@ -3117,7 +3187,8 @@
 			    <widget class="GtkOptionMenu" id="unit_edit_optionmenu_class">
 			      <property name="visible">True</property>
 			      <property name="can_focus">True</property>
-			      <property name="history">0</property>
+			      <property name="history">1</property>
+			      <signal name="changed" handler="on_unit_edit_optionmenu_class_changed" last_modification_time="Mon, 11 Aug 2003 08:11:29 GMT"/>
 
 			      <child>
 				<widget class="GtkMenu" id="menu1">
@@ -3127,7 +3198,6 @@
 				      <property name="visible">True</property>
 				      <property name="label" translatable="yes">Base Unit</property>
 				      <property name="use_underline">True</property>
-				      <signal name="activate" handler="on_base_unit2_activate" last_modification_time="Fri, 08 Aug 2003 16:13:39 GMT"/>
 				    </widget>
 				  </child>
 
@@ -3136,7 +3206,6 @@
 				      <property name="visible">True</property>
 				      <property name="label" translatable="yes">Alias</property>
 				      <property name="use_underline">True</property>
-				      <signal name="activate" handler="on_alias2_activate" last_modification_time="Fri, 08 Aug 2003 16:13:39 GMT"/>
 				    </widget>
 				  </child>
 
@@ -3145,7 +3214,6 @@
 				      <property name="visible">True</property>
 				      <property name="label" translatable="yes">Composite Unit</property>
 				      <property name="use_underline">True</property>
-				      <signal name="activate" handler="on_composite_unit2_activate" last_modification_time="Fri, 08 Aug 2003 16:13:39 GMT"/>
 				    </widget>
 				  </child>
 				</widget>
@@ -3202,7 +3270,7 @@
 			      <property name="enable_arrows_always">False</property>
 
 			      <child internal-child="entry">
-				<widget class="GtkEntry" id="combo-entry1">
+				<widget class="GtkEntry" id="unit_edit_entry_category">
 				  <property name="visible">True</property>
 				  <property name="can_focus">True</property>
 				  <property name="editable">True</property>
@@ -3354,7 +3422,7 @@
 			      <property name="enable_arrows_always">False</property>
 
 			      <child internal-child="entry">
-				<widget class="GtkEntry" id="entry14">
+				<widget class="GtkEntry" id="unit_edit_entry_base">
 				  <property name="visible">True</property>
 				  <property name="can_focus">True</property>
 				  <property name="editable">True</property>

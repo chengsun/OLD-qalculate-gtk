@@ -117,7 +117,7 @@ int main (int argc, char **argv) {
 	g_timeout_add(100, on_display_errors_timeout, NULL);
 
 	//create main window
-	create_window();
+	create_main_window();
 	
 	//create dynamic menus
 	create_fmenu();

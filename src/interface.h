@@ -39,12 +39,12 @@ enum {
 	COMPOSITE_UNIT
 };
 
-void create_window (void);
-GtkWidget* create_wFunctions (void);
-GtkWidget* create_wVariables (void);
-GtkWidget* create_wUnits (void);
-GtkWidget* create_wPreferences (void);
-GtkWidget* create_wEditUnit (void);
+void create_main_window (void);
+GtkWidget* create_functions_dialog (void);
+GtkWidget* create_variables_dialog (void);
+GtkWidget* create_units_dialog (void);
+GtkWidget* create_preferences_dialog (void);
+GtkWidget* create_unit_edit_dialog (void);
 GtkWidget *create_InfoWidget(const gchar *text);
 
 #endif /* INTERFACE_H */

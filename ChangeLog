@@ -1,3 +1,7 @@
+2003-08-11  Niklas Knutsson  <nq@altern.org>
+
+	* Huge gladeification of signals and widget references
+
 2003-08-10  Sven Herzberg  <herzi@gnome-de.org>
 
 	* data/qalculate.glade: don't know what exactly, but i'm sure that we
