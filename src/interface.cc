@@ -920,6 +920,13 @@ get_matrix_edit_dialog (void)
 
 	return glade_xml_get_widget (matrixedit_glade, "matrix_edit_dialog");
 }
+GtkWidget*
+get_dataobject_edit_dialog (void)
+{
+
+	return glade_xml_get_widget (datasets_glade, "dataobject_edit_dialog");
+}
+
 GtkWidget* 
 get_names_edit_dialog (void)
 {

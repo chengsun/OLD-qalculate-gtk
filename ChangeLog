@@ -1,3 +1,10 @@
+2004-08-28 Niklas Knutsson  <nq@altern.org>
+
+	* Edit and save data objects
+	* Finish system property of units
+	* Clean up some left over plural and singular stuff
+	* Add unit system to edit GUI
+
 2004-08-26 Niklas Knutsson  <nq@altern.org>
 
 	* Planets data set

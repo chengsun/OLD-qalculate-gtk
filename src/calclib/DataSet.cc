@@ -17,15 +17,33 @@
 #include "Number.h"
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #define XML_GET_STRING_FROM_PROP(node, name, str)	value = xmlGetProp(node, (xmlChar*) name); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = ""; 
 #define XML_GET_STRING_FROM_TEXT(node, str)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = "";
 
 DataObject::DataObject(DataSet *parent_set) {
 	parent = parent_set;
+	b_uchanged = false;
 }
 
+void DataObject::eraseProperty(DataProperty *property) {
+	for(unsigned int i = 0; i < properties.size(); i++) {
+		if(properties[i] == property) {
+			s_properties.erase(s_properties.begin() + i);
+			a_properties.erase(a_properties.begin() + i);
+			if(m_properties[i]) {
+				delete m_properties[i];
+			}
+			m_properties.erase(m_properties.begin() + i);
+			s_nonlocalized_properties.erase(s_nonlocalized_properties.begin() + i);
+		}
+	}
+}
 void DataObject::setProperty(DataProperty *property, string s_value, int is_approximate) {
+	if(s_value.empty()) eraseProperty(property);
 	for(unsigned int i = 0; i < properties.size(); i++) {
 		if(properties[i] == property) {
 			s_properties[i] = s_value;
@@ -106,13 +124,23 @@ const MathStructure *DataObject::getPropertyStruct(DataProperty *property) {
 	}
 	return NULL;
 }
+
+bool DataObject::isUserModified() const {
+	return b_uchanged;
+}
+void DataObject::setUserModified(bool user_modified) {
+	b_uchanged = user_modified;
+}
 	
 DataSet *DataObject::parentSet() const {
 	return parent;
 }
 
 DataProperty::DataProperty(DataSet *parent_set, string s_name, string s_title, string s_description) {
-	if(!s_name.empty()) names.push_back(s_name);
+	if(!s_name.empty()) {
+		names.push_back(s_name);
+		name_is_ref.push_back(false);
+	}
 	stitle = s_title;
 	sdescr = s_description;
 	parent = parent_set;
@@ -121,25 +149,43 @@ DataProperty::DataProperty(DataSet *parent_set, string s_name, string s_title, s
 	b_key = false; b_case = false; b_hide = false; b_brackets = false; b_approximate = false;
 }
 	
-void DataProperty::setName(string s_name) {
+void DataProperty::setName(string s_name, bool is_ref) {
 	if(s_name.empty()) return;
 	names.clear();
+	name_is_ref.clear();
 	names.push_back(s_name);
+	name_is_ref.push_back(is_ref);
+}
+void DataProperty::setNameIsReference(unsigned int index, bool is_ref) {
+	if(index > 0 && index <= name_is_ref.size()) name_is_ref[index - 1] = is_ref;
+}
+bool DataProperty::nameIsReference(unsigned int index) const {
+	if(index > 0 && index <= name_is_ref.size()) return name_is_ref[index - 1];
+	return false;
 }
 void DataProperty::clearNames() {
 	names.clear();
+	name_is_ref.clear();
 }
-void DataProperty::addName(string s_name, unsigned int index) {
+void DataProperty::addName(string s_name, bool is_ref, unsigned int index) {
 	if(s_name.empty()) return;
 	if(index < 1 || index > names.size()) {
 		names.push_back(s_name);
+		name_is_ref.push_back(is_ref);
 	} else {
 		names.insert(names.begin() + (index - 1), s_name);
+		name_is_ref.insert(name_is_ref.begin() + (index - 1), is_ref);
 	}
 }
 const string &DataProperty::getName(unsigned int index) const {
 	if(index < 1 || index > names.size()) return empty_string;
 	return names[index - 1];
+}
+const string &DataProperty::getReferenceName() const {
+	for(unsigned int i = 0; i < name_is_ref.size(); i++) {
+		if(name_is_ref[i]) return names[i];
+	}
+	return getName();
 }
 bool DataProperty::hasName(const string &s_name) {
 	for(unsigned int i = 0; i < names.size(); i++) {
@@ -320,7 +366,7 @@ const string &DataSet::defaultDataFile() const {
 	return sfile;
 }
 	
-bool DataSet::loadObjects(const char *file_name) {
+bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	string filename;
 	if(file_name) {
 		filename = file_name;
@@ -328,10 +374,27 @@ bool DataSet::loadObjects(const char *file_name) {
 		return false;
 	} else if(sfile.find("/") != string::npos) {
 		filename = sfile;
+		bool b = loadObjects(filename.c_str(), false);
+		unsigned int i = sfile.find_last_of("/");
+		if(i != sfile.length() - 1) {
+			filename = getLocalDir();
+			filename += "definitions/";
+			filename += "datasets/";
+			filename += sfile.substr(i + 1, sfile.length() - (i + 1));
+			loadObjects(filename.c_str(), true);
+		}
+		return b;
 	} else {
 		filename = PACKAGE_DATA_DIR;
 		filename += "/qalculate/";
 		filename += sfile;
+		bool b = loadObjects(filename.c_str(), false);
+		filename = getLocalDir();
+		filename += "definitions/";
+		filename += "datasets/";
+		filename += sfile;
+		loadObjects(filename.c_str(), true);
+		return b;
 	}
 	xmlDocPtr doc;
 	xmlNodePtr cur, child;
@@ -355,13 +418,17 @@ bool DataSet::loadObjects(const char *file_name) {
 
 	doc = xmlParseFile(filename.c_str());
 	if(doc == NULL) {
-		CALCULATOR->error(true, _("Unable to load data objects in %s."), filename.c_str(), NULL);
+		if(!is_user_defs) {
+			CALCULATOR->error(true, _("Unable to load data objects in %s."), filename.c_str(), NULL);
+		}
 		return false;
 	}
 	cur = xmlDocGetRootElement(doc);
 	if(cur == NULL) {
 		xmlFreeDoc(doc);
-		CALCULATOR->error(true, _("Unable to load data objects in %s."), filename.c_str(), NULL);
+		if(!is_user_defs) {
+			CALCULATOR->error(true, _("Unable to load data objects in %s."), filename.c_str(), NULL);
+		}
 		return false;
 	}
 	string version;
@@ -397,6 +464,8 @@ bool DataSet::loadObjects(const char *file_name) {
 	int i_approx;
 	bool cmp;
 	bool b;
+	vector<DataProperty*> p_refs;
+	vector<string> s_refs;
 	while(cur) {
 		b = false;
 		if(!xmlStrcmp(cur->name, (const xmlChar*) "object")) {
@@ -412,7 +481,12 @@ bool DataSet::loadObjects(const char *file_name) {
 		if(b) {
 			lang_status_p.clear();
 			lang_status.clear();
-			o = new DataObject(this);
+			if(is_user_defs) {
+				s_refs.clear();
+				p_refs.clear();
+			} else {
+				o = new DataObject(this);
+			}
 			for(unsigned int i = 0; i < properties.size(); i++) {
 				if(properties[i]->isKey()) {
 					for(unsigned int i2 = 1; i2 <= properties[i]->countNames(); i2++) {
@@ -425,9 +499,31 @@ bool DataSet::loadObjects(const char *file_name) {
 						}
 						remove_blank_ends(str);
 						if(!str.empty()) {
-							o->setProperty(properties[i], str);
+							if(is_user_defs) {
+								s_refs.push_back(str);
+								p_refs.push_back(properties[i]);
+							} else {
+								o->setProperty(properties[i], str);
+							}
 						}
 					}
+				}	
+			}
+			if(is_user_defs) {
+				b = false;
+				for(unsigned int i = 0; i < p_refs.size(); i++) {
+					for(unsigned int i2 = 0; i2 < objects.size(); i2++) {
+						if(s_refs[i] == objects[i2]->getProperty(p_refs[i]) || s_refs[i] == objects[i2]->getNonlocalizedKeyProperty(p_refs[i])) {
+							o = objects[i2];
+							b = true;
+							break;
+						}
+					}
+					if(b) break;
+				}
+				if(!b) o = new DataObject(this);
+				for(unsigned int i = 0; i < p_refs.size(); i++) {
+					o->setProperty(p_refs[i], s_refs[i]);
 				}	
 			}
 			child = cur->xmlChildrenNode;
@@ -533,12 +629,104 @@ bool DataSet::loadObjects(const char *file_name) {
 	}
 	return true;
 }
+int DataSet::saveObjects(const char *file_name, bool save_global) {
+	string str, filename;
+	if(!save_global && !file_name) {
+		filename = getLocalDir();
+		mkdir(filename.c_str(), S_IRWXU);
+		filename += "definitions/";
+		mkdir(filename.c_str(), S_IRWXU);
+		filename += "datasets/";
+		mkdir(filename.c_str(), S_IRWXU);
+		filename += sfile;
+	} else {
+		filename = file_name;
+	}
+	const string *vstr;
+	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");	
+	xmlNodePtr cur, newnode, newnode2;	
+	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);	
+	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
+	cur = doc->children;
+	DataObject *o;
+	int approx = false;
+	bool do_save = save_global;
+	for(unsigned int i = 0; i < objects.size(); i++) {
+		if(save_global || objects[i]->isUserModified()) {
+			do_save = true;
+			o = objects[i];
+			newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "object", NULL);
+			if(!save_global) {
+				for(unsigned int i2 = 0; i2 < properties.size(); i2++) {
+					if(properties[i2]->isKey()) {
+						vstr = &o->getProperty(properties[i2], &approx);
+						if(approx < 0 && !vstr->empty()) {
+							xmlNewProp(newnode, (xmlChar*) properties[i2]->getReferenceName().c_str(), (xmlChar*) vstr->c_str());
+						}
+					}
+				}
+			}
+			for(unsigned int i2 = 0; i2 < properties.size(); i2++) {
+				if(save_global && properties[i2]->isKey()) {
+					vstr = &o->getNonlocalizedKeyProperty(properties[i2]);
+					if(vstr->empty()) {
+						vstr = &o->getProperty(properties[i2], &approx);
+					} else {
+						o->getProperty(properties[i2], &approx);
+					}
+				} else {
+					vstr = &o->getProperty(properties[i2], &approx);
+				}
+				if(save_global || approx >= 0 || !properties[i2]->isKey()) {	
+					if(!vstr->empty()) {
+						if(properties[i2]->getReferenceName().find(' ') != string::npos) {
+							if(save_global && properties[i2]->propertyType() == PROPERTY_STRING) {
+								str = "_";
+							} else {
+								str = "";
+							}
+							str += properties[i2]->getReferenceName();
+							gsub(" ", "_", str);
+							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) str.c_str(), (xmlChar*) vstr->c_str());
+						} else {
+							if(save_global && properties[i2]->propertyType() == PROPERTY_STRING) {
+								str = "_";
+								str += properties[i2]->getReferenceName();
+								newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) str.c_str(), (xmlChar*) vstr->c_str());
+							} else {
+								newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) properties[i2]->getReferenceName().c_str(), (xmlChar*) vstr->c_str());
+							}
+						}
+						if(approx >= 0) {
+							xmlNewProp(newnode2, (xmlChar*) "approximate", (xmlChar*) b2tf(approx > 0));
+						}
+					}
+				}
+			}
+		}
+	}
+	int returnvalue = 1;
+	if(do_save) {
+		returnvalue = xmlSaveFormatFile(filename.c_str(), doc, 1);
+	}
+	xmlFreeDoc(doc);
+	return returnvalue;
+}
 bool DataSet::objectsLoaded() const {
 	return b_loaded || sfile.empty();
 }
 	
 void DataSet::addProperty(DataProperty *dp) {
 	properties.push_back(dp);
+}
+void DataSet::delProperty(DataProperty *dp) {
+	for(unsigned int i = 0; i < properties.size(); i++) {
+		if(properties[i] == dp) {
+			delete properties[i];
+			properties.erase(properties.begin() + i);
+			break;
+		}
+	}
 }
 DataProperty *DataSet::getPrimaryKeyProperty() {
 	for(unsigned int i = 0; i < properties.size(); i++) {
@@ -576,7 +764,16 @@ const string &DataSet::getNextPropertyName(DataPropertyIter *it) {
 
 void DataSet::addObject(DataObject *o) {
 	objects.push_back(o);
-}	
+}
+void DataSet::delObject(DataObject *o) {
+	for(unsigned int i = 0; i < objects.size(); i++) {
+		if(objects[i] == o) {
+			delete objects[i];
+			objects.erase(objects.begin() + i);
+			break;
+		}
+	}
+}
 DataObject *DataSet::getObject(string object) {
 	if(!objectsLoaded()) loadObjects();
 	if(object.empty()) return NULL;

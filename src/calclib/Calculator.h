@@ -321,6 +321,7 @@ class Calculator {
 	bool loadLocalDefinitions();
 	int loadDefinitions(const char *file_name, bool is_user_defs = true);
 	bool saveDefinitions();	
+	int saveDataObjects();
 	int savePrefixes(const char *file_name, bool save_global = false);	
 	int saveVariables(const char *file_name, bool save_global = false);	
 	int saveUnits(const char *file_name, bool save_global = false);	

@@ -465,7 +465,7 @@
   <category>
     <_title>Length</_title>
     <unit type="base">
-      <system>si</system>
+      <system>SI</system>
       <_title>Meter</_title>
       <abbreviation index="1">
         <reference>true</reference>
@@ -834,7 +834,7 @@
         </part>
       </unit>
       <unit type="alias">
-        <system>si</system>
+        <system>SI</system>
         <_title>Radian</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -914,7 +914,7 @@
         </part>
       </unit>
       <unit type="alias">
-        <system>si</system>
+        <system>SI</system>
         <_title>Steradian</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -936,7 +936,7 @@
     <category>
       <_title>Angular Acceleration</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Radians per Square Second</_title>
         <name index="1">
           <reference>true</reference>
@@ -957,7 +957,7 @@
     <category>
       <_title>Angular Velocity</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Radians per Second</_title>
         <name index="1">
           <reference>true</reference>
@@ -979,7 +979,7 @@
   <category>
     <_title>Mass</_title>
     <unit type="base">
-      <system>si</system>
+      <system>SI</system>
       <_title>Gram</_title>
       <abbreviation index="1">
         <reference>true</reference>
@@ -1318,7 +1318,7 @@
     <category>
       <_title>Density</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Kilogram per Cubic Meter</_title>
         <name index="1">
           <reference>true</reference>
@@ -1339,7 +1339,7 @@
     <category>
       <_title>Mass Fraction</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Kilogram per Kilogram</_title>
         <name index="1">
           <reference>true</reference>
@@ -1361,7 +1361,7 @@
   <category>
     <_title>Time</_title>
     <unit type="base">
-      <system>si</system>
+      <system>SI</system>
       <_title>Second</_title>
       <abbreviation index="1">
         <reference>true</reference>
@@ -1446,7 +1446,7 @@
     <category>
       <_title>Frequency</_title>
       <unit type="alias">
-        <system>si</system>
+        <system>SI</system>
         <_title>Hertz</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -1468,7 +1468,7 @@
     <category>
       <_title>Electric Current</_title>
       <unit type="base">
-        <system>si</system>
+        <system>SI</system>
         <_title>Ampere</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -1485,7 +1485,7 @@
     <category>
       <_title>Current Density</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Ampere per Square Meter</_title>
         <name index="1">
           <reference>true</reference>
@@ -1523,7 +1523,7 @@
         </part>
       </unit>
       <unit type="alias">
-        <system>si</system>
+        <system>SI</system>
         <_title>Coulomb</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -1545,7 +1545,7 @@
     <category>
       <_title>Electric Charge Density</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Coulomb per Cubic Meter</_title>
         <name index="1">
           <reference>true</reference>
@@ -1566,7 +1566,7 @@
     <category>
       <_title>Electric Flux Density</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Coulomb per Square Meter</_title>
         <name index="1">
           <reference>true</reference>
@@ -1604,7 +1604,7 @@
         </part>
       </unit>
       <unit type="alias">
-        <system>si</system>
+        <system>SI</system>
         <_title>Volt</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -1664,7 +1664,7 @@
     <category>
       <_title>Electric Resistance</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Volt per Ampere</_title>
         <name index="1">
           <reference>true</reference>
@@ -1721,7 +1721,7 @@
         </part>
       </unit>
       <unit type="alias">
-        <system>si</system>
+        <system>SI</system>
         <_title>Siemens</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -1743,7 +1743,7 @@
     <category>
       <_title>Electric Field Strength</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Volt per Meter</_title>
         <name index="1">
           <reference>true</reference>
@@ -1764,7 +1764,7 @@
     <category>
       <_title>Permittivity</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Farad per Meter</_title>
         <name index="1">
           <reference>true</reference>
@@ -1802,7 +1802,7 @@
         </part>
       </unit>
       <unit type="alias">
-        <system>si</system>
+        <system>SI</system>
         <_title>Henry</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -1824,7 +1824,7 @@
     <category>
       <_title>Permeability</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Henry per Meter</_title>
         <name index="1">
           <reference>true</reference>
@@ -1846,7 +1846,7 @@
   <category>
     <_title>Temperature</_title>
     <unit type="base">
-      <system>si</system>
+      <system>SI</system>
       <_title>Kelvin</_title>
       <abbreviation index="1">
         <reference>true</reference>
@@ -1860,7 +1860,7 @@
       </plural>
     </unit>
     <unit type="alias">
-      <system>si</system>
+      <system>SI</system>
       <_title>Degree Celcius</_title>
       <abbreviation index="1">
         <reference>true</reference>
@@ -1927,7 +1927,7 @@
   <category>
     <_title>Substance</_title>
     <unit type="base">
-      <system>si</system>
+      <system>SI</system>
       <_title>Mole</_title>
       <abbreviation index="1">
         <reference>true</reference>
@@ -1943,7 +1943,7 @@
     <category>
       <_title>Substance Concentration</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Mole per Cubic Meter</_title>
         <name index="1">
           <reference>true</reference>
@@ -1981,7 +1981,7 @@
         </part>
       </unit>
       <unit type="alias">
-        <system>si</system>
+        <system>SI</system>
         <_title>Katal</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -2003,7 +2003,7 @@
     <category>
       <_title>Catalytic Concentration</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Katal per Cubic Meter</_title>
         <name index="1">
           <reference>true</reference>
@@ -2027,7 +2027,7 @@
     <category>
       <_title>Luminous Intensity</_title>
       <unit type="base">
-        <system>si</system>
+        <system>SI</system>
         <_title>Candela</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -2044,7 +2044,7 @@
     <category>
       <_title>Luminance</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Candela per Square Meter</_title>
         <name index="1">
           <reference>true</reference>
@@ -2062,7 +2062,7 @@
         </part>
       </unit>
       <unit type="alias">
-        <system>cgs</system>
+        <system>CGS</system>
         <_title>Stilb</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -2101,7 +2101,7 @@
         </part>
       </unit>
       <unit type="alias">
-        <system>si</system>
+        <system>SI</system>
         <_title>Lumen</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -2140,7 +2140,7 @@
         </part>
       </unit>
       <unit type="alias">
-        <system>si</system>
+        <system>SI</system>
         <_title>Lux</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -2156,7 +2156,7 @@
         </base>
       </unit>
       <unit type="alias">
-        <system>cgs</system>
+        <system>CGS</system>
         <_title>Phot</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -2198,7 +2198,7 @@
     <category>
       <_title>Irradiance</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Watt per Square Meter</_title>
         <name index="1">
           <reference>true</reference>
@@ -2219,7 +2219,7 @@
     <category>
       <_title>Radiance</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Watt per Square Meter Steradian</_title>
         <name index="1">
           <reference>true</reference>
@@ -2246,7 +2246,7 @@
   <category>
     <_title>Area</_title>
     <unit type="composite">
-      <system>si</system>
+      <system>SI</system>
       <_title>Square Meter</_title>
       <name index="1">
         <reference>true</reference>
@@ -2382,7 +2382,7 @@
   <category>
     <_title>Volume</_title>
     <unit type="composite">
-      <system>si</system>
+      <system>SI</system>
       <_title>Cubic Meter</_title>
       <name index="1">
         <reference>true</reference>
@@ -2865,7 +2865,7 @@
     <category>
       <_title>Specific Volume</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Cubic Meter per Kilogram</_title>
         <name index="1">
           <reference>true</reference>
@@ -2887,7 +2887,7 @@
   <category>
     <_title>Speed</_title>
     <unit type="composite">
-      <system>si</system>
+      <system>SI</system>
       <_title>Meter per Second</_title>
       <name index="1">
         <reference>true</reference>
@@ -2939,7 +2939,7 @@
     <category>
       <_title>Acceleration</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Meter per Square Second</_title>
         <name index="1">
           <reference>true</reference>
@@ -2981,7 +2981,7 @@
     <category>
       <_title>Wave Number</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Reciprocal Meter</_title>
         <name index="1">
           <reference>true</reference>
@@ -2997,7 +2997,7 @@
     <category>
       <_title>Magnetic Field Strength</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Ampere per Meter</_title>
         <name index="1">
           <reference>true</reference>
@@ -3015,7 +3015,7 @@
         </part>
       </unit>
       <unit type="alias">
-        <system>cgs</system>
+        <system>CGS</system>
         <_title>Oersted</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -3054,7 +3054,7 @@
         </part>
       </unit>
       <unit type="alias">
-        <system>si</system>
+        <system>SI</system>
         <_title>Weber</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -3073,7 +3073,7 @@
         </base>
       </unit>
       <unit type="alias">
-        <system>cgs</system>
+        <system>CGS</system>
         <_title>Maxwell</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -3112,7 +3112,7 @@
         </part>
       </unit>
       <unit type="alias">
-        <system>si</system>
+        <system>SI</system>
         <_title>Tesla</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -3131,7 +3131,7 @@
         </base>
       </unit>
       <unit type="alias">
-        <system>cgs</system>
+        <system>CGS</system>
         <_title>Gauss</_title>
         <name index="1">
           <reference>true</reference>
@@ -3170,7 +3170,7 @@
       </part>
     </unit>
     <unit type="alias">
-      <system>si</system>
+      <system>SI</system>
       <_title>Newton</_title>
       <abbreviation index="1">
         <reference>true</reference>
@@ -3189,7 +3189,7 @@
       </base>
     </unit>
     <unit type="alias">
-      <system>cgs</system>
+      <system>CGS</system>
       <_title>Dyne</_title>
       <abbreviation index="1">
         <reference>true</reference>
@@ -3210,7 +3210,7 @@
     <category>
       <_title>Moment of Force</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Newton Meter</_title>
         <name index="1">
           <reference>true</reference>
@@ -3248,7 +3248,7 @@
         </part>
       </unit>
       <unit type="alias">
-        <system>si</system>
+        <system>SI</system>
         <_title>Pascal</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -3318,7 +3318,7 @@
     <category>
       <_title>Dynamic Viscosity</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Pascal Second</_title>
         <name index="1">
           <reference>true</reference>
@@ -3336,7 +3336,7 @@
         </part>
       </unit>
       <unit type="alias">
-        <system>cgs</system>
+        <system>CGS</system>
         <_title>Poise</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -3375,7 +3375,7 @@
         </part>
       </unit>
       <unit type="alias">
-        <system>cgs</system>
+        <system>CGS</system>
         <_title>Stokes</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -3397,7 +3397,7 @@
     <category>
       <_title>Surface Tension</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Newton per Meter</_title>
         <name index="1">
           <reference>true</reference>
@@ -3419,7 +3419,7 @@
   <category>
     <_title>Energy</_title>
     <unit type="alias">
-      <system>si</system>
+      <system>SI</system>
       <_title>Joule</_title>
       <abbreviation index="1">
         <reference>true</reference>
@@ -3556,7 +3556,7 @@
       </base>
     </unit>
     <unit type="alias">
-      <system>cgs</system>
+      <system>CGS</system>
       <_title>Erg</_title>
       <name index="1">
         <reference>true</reference>
@@ -3574,7 +3574,7 @@
     <category>
       <_title>Specific Energy</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Joule per Kilogram</_title>
         <name index="1">
           <reference>true</reference>
@@ -3612,7 +3612,7 @@
         </part>
       </unit>
       <unit type="alias">
-        <system>si</system>
+        <system>SI</system>
         <_title>Watt</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -3667,7 +3667,7 @@
     <category>
       <_title>Entropy</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Joule per Kelvin</_title>
         <name index="1">
           <reference>true</reference>
@@ -3688,7 +3688,7 @@
     <category>
       <_title>Specific Entropy</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Joule per Kilogram Kelvin</_title>
         <name index="1">
           <reference>true</reference>
@@ -3714,7 +3714,7 @@
     <category>
       <_title>Thermal Conductivity</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Watt per Meter Kelvin</_title>
         <name index="1">
           <reference>true</reference>
@@ -3740,7 +3740,7 @@
     <category>
       <_title>Energy Density</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Joule per Cubic Meter</_title>
         <name index="1">
           <reference>true</reference>
@@ -3761,7 +3761,7 @@
     <category>
       <_title>Molar Energy</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Joule per Mole</_title>
         <name index="1">
           <reference>true</reference>
@@ -3782,7 +3782,7 @@
     <category>
       <_title>Molar Entropy</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Joule per Mole Kelvin</_title>
         <name index="1">
           <reference>true</reference>
@@ -3809,7 +3809,7 @@
   <category>
     <_title>Radioactivity</_title>
     <unit type="alias">
-      <system>si</system>
+      <system>SI</system>
       <_title>Becquerel</_title>
       <abbreviation index="1">
         <reference>true</reference>
@@ -3848,7 +3848,7 @@
     <category>
       <_title>Absorbed Dose</_title>
       <unit type="alias">
-        <system>si</system>
+        <system>SI</system>
         <_title>Gray</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -3882,7 +3882,7 @@
     <category>
       <_title>Dose Equivalent</_title>
       <unit type="alias">
-        <system>si</system>
+        <system>SI</system>
         <_title>Sievert</_title>
         <abbreviation index="1">
           <reference>true</reference>
@@ -3916,7 +3916,7 @@
     <category>
       <_title>Exposure</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Coulomb per Kilogram</_title>
         <name index="1">
           <reference>true</reference>
@@ -3955,7 +3955,7 @@
     <category>
       <_title>Absorbed Dose Rate</_title>
       <unit type="composite">
-        <system>si</system>
+        <system>SI</system>
         <_title>Gray per Second</_title>
         <name index="1">
           <reference>true</reference>

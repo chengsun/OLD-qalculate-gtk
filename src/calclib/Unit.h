@@ -25,7 +25,7 @@ class Unit : public ExpressionItem {
 
   protected:
 
-	string ssingular, splural;
+	string ssystem;
 	bool b_si;
 
   public:
@@ -39,7 +39,9 @@ class Unit : public ExpressionItem {
 	virtual void set(const ExpressionItem *item);
 
 	bool isSIUnit() const;
-	void setAsSIUnit(bool is_SI = true);
+	void setAsSIUnit();
+	void setSystem(string s_system);
+	const string &system() const;
 	bool isCurrency() const;
 	void setPlural(string name_, bool force = true);
 	void setSingular(string name_, bool force = true);
@@ -157,9 +159,6 @@ class CompositeUnit : public Unit {
 		virtual unsigned int countUnits() const;
 		virtual void del(Unit *u);
 		virtual string print(bool plural_, bool short_, bool use_unicode = false) const;
-		virtual const string &plural(bool return_singular_if_no_plural = true, bool use_unicode = false) const;
-		virtual const string &singular(bool return_short_if_no_singular = true, bool use_unicode = false) const;
-		virtual const string &shortName(bool use_unicode = false) const;
 		virtual int subtype() const;
 		virtual bool containsRelativeTo(Unit *u) const;
 		virtual MathStructure generateMathStructure() const;

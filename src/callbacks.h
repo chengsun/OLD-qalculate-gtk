@@ -127,6 +127,8 @@ void edit_matrix(const char *category = "", Variable *v = NULL, MathStructure *m
 void import_csv_file(GtkWidget *win = NULL);
 void export_csv_file(KnownVariable *v = NULL, GtkWidget *win = NULL);
 
+void edit_dataobject(DataSet *ds, DataObject *o = NULL, GtkWidget *win = NULL);
+
 void edit_names(ExpressionItem *item = NULL, const gchar *namestr = NULL, GtkWidget *win = NULL);
 
 #ifdef __cplusplus
@@ -338,6 +340,13 @@ void on_datasets_button_close_clicked(GtkButton *button, gpointer user_data);
 void on_function_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 void on_variable_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 void on_unknown_edit_checkbutton_custom_assumptions_toggled(GtkToggleButton *w, gpointer user_data);
+
+void on_datasets_button_newset_clicked(GtkButton *button, gpointer user_data);
+void on_datasets_button_editset_clicked(GtkButton *button, gpointer user_data);
+void on_datasets_button_delset_clicked(GtkButton *button, gpointer user_data);
+void on_datasets_button_newobject_clicked(GtkButton *button, gpointer user_data);
+void on_datasets_button_editobject_clicked(GtkButton *button, gpointer user_data);
+void on_datasets_button_delobject_clicked(GtkButton *button, gpointer user_data);
 
 void on_nbases_button_close_clicked(GtkButton *button, gpointer user_data);
 void on_nbases_entry_decimal_changed(GtkEditable *editable, gpointer user_data);

@@ -16,6 +16,9 @@
 
 #include <glib.h>
 #include <time.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <pwd.h>
 
 
 bool eqstr::operator()(const char *s1, const char *s2) const {
@@ -706,4 +709,15 @@ bool equalsIgnoreCase(const string &str1, const string &str2) {
 		}
 	}
 	return true;
+}
+
+string getLocalDir() {
+	string homedir = "";
+	struct passwd *pw = getpwuid(getuid());
+	if(pw) {
+		homedir = pw->pw_dir;
+		homedir += "/";
+	}
+	homedir += ".qalculate/";
+	return homedir;
 }

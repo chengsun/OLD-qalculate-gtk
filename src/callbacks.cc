@@ -1560,7 +1560,7 @@ void on_tDatasets_selection_changed(GtkTreeSelection *treeselection, gpointer us
 			}
 			o = ds->getNextObject(&it);
 		}
-		if(b && !selected_dataobject || !gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(tDataObjects)), &model2, &iter2)) {
+		if(b && (!selected_dataobject || !gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(tDataObjects)), &model2, &iter2))) {
 			gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tDataObjects_store), &iter2);
 			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tDataObjects)), &iter2);
 		}
@@ -1669,10 +1669,22 @@ void on_tDatasets_selection_changed(GtkTreeSelection *treeselection, gpointer us
 			gtk_text_buffer_get_end_iter(buffer, &iter);
 			gtk_text_buffer_insert(buffer, &iter, str.c_str(), -1);
 		}
+		gtk_widget_set_sensitive(glade_xml_get_widget (datasets_glade, "datasets_button_editset"), TRUE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (datasets_glade, "datasets_button_delset"), ds->isLocal());
+		gtk_widget_set_sensitive(glade_xml_get_widget (datasets_glade, "datasets_button_newobject"), TRUE);
 	} else {
 		gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (datasets_glade, "datasets_textview_description"))), "", -1);
+		gtk_widget_set_sensitive(glade_xml_get_widget (datasets_glade, "datasets_button_editset"), FALSE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (datasets_glade, "datasets_button_delset"), FALSE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (datasets_glade, "datasets_button_newobject"), FALSE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (datasets_glade, "datasets_button_editobject"), FALSE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (datasets_glade, "datasets_button_delobject"), FALSE);
 		selected_dataset = NULL;
 	}
+}
+
+void update_dataobjects() {
+	on_tDatasets_selection_changed(gtk_tree_view_get_selection(GTK_TREE_VIEW(tDatasets)), NULL);
 }
 
 void on_dataset_button_function_clicked(GtkButton *w, gpointer user_data) {
@@ -1741,7 +1753,11 @@ void on_tDataObjects_selection_changed(GtkTreeSelection *treeselection, gpointer
 			dp = ds->getNextProperty(&it);
 		}
 		gtk_widget_show_all(ptable);
+		gtk_widget_set_sensitive(glade_xml_get_widget (datasets_glade, "datasets_button_editobject"), TRUE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (datasets_glade, "datasets_button_delobject"), o->isUserModified());
 	} else {
+		gtk_widget_set_sensitive(glade_xml_get_widget (datasets_glade, "datasets_button_editobject"), FALSE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (datasets_glade, "datasets_button_delobject"), FALSE);
 		selected_dataobject = NULL;
 	}
 }
@@ -4666,6 +4682,8 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (unitedit_glade, "unit_edit_spinbutton_exp")), 1);
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_relation")), "");
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_reversed")), "");
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_system")), "");
+	gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (unitedit_glade, "unit_edit_label_names")), "");
 
 	gtk_widget_set_sensitive(glade_xml_get_widget (unitedit_glade, "unit_edit_button_ok"), TRUE);
 
@@ -4686,6 +4704,9 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 		set_name_label_and_entry(u, glade_xml_get_widget (unitedit_glade, "unit_edit_entry_name"), glade_xml_get_widget (unitedit_glade, "unit_edit_label_names"));
 		
 		gtk_widget_set_sensitive(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_name"), !u->isBuiltin());
+		
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_system")), u->system().c_str());
+		gtk_widget_set_sensitive(glade_xml_get_widget (unitedit_glade, "unit_edit_combo_system"), !u->isBuiltin());
 
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (unitedit_glade, "unit_edit_checkbutton_hidden")), u->isHidden());
 		
@@ -4819,6 +4840,9 @@ run_unit_edit_dialog:
 		}
 		if(u) {
 			u->setHidden(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (unitedit_glade, "unit_edit_checkbutton_hidden"))));
+			if(!u->isBuiltin()) {
+				u->setSystem(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_system"))));
+			}
 			set_edited_names(u, str);
 			if(add_unit) {
 				CALCULATOR->addUnit(u);
@@ -5006,6 +5030,7 @@ void edit_function(const char *category = "", Function *f = NULL, GtkWidget *win
 
 	//clear entries
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_name")), "");
+	gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (unitedit_glade, "function_edit_label_names")), "");
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_condition")), "");
 	gtk_widget_set_sensitive(glade_xml_get_widget (functionedit_glade, "function_edit_entry_name"), !f || !f->isBuiltin());
 	gtk_widget_set_sensitive(glade_xml_get_widget (functionedit_glade, "function_edit_textview_expression"), !f || !f->isBuiltin());
@@ -5259,6 +5284,7 @@ void edit_unknown(const char *category, Variable *var, GtkWidget *win) {
 		//fill in default values
 		string v_name = CALCULATOR->getName();
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_name")), v_name.c_str());
+		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (unitedit_glade, "unknown_edit_label_names")), "");
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_category")), category);
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_desc")), "");
 		gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_type")), CALCULATOR->defaultAssumptions()->numberType());
@@ -5387,6 +5413,7 @@ void edit_variable(const char *category, Variable *var, MathStructure *mstruct_,
 		//fill in default values
 		string v_name = CALCULATOR->getName();
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_name")), v_name.c_str());
+		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (unitedit_glade, "variable_edit_label_names")), "");
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_value")), get_value_string(*mstruct).c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_category")), category);
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_desc")), "");		
@@ -5560,6 +5587,7 @@ void edit_matrix(const char *category, Variable *var, MathStructure *mstruct_, G
 	
 		//fill in default values
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_name")), "");
+		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (unitedit_glade, "matrix_edit_label_names")), "");
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_category")), category);
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_desc")), "");		
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (matrixedit_glade, "matrix_edit_spinbutton_rows")), 3);		
@@ -5711,6 +5739,86 @@ run_matrix_edit_dialog:
 	edited_matrix = NULL;
 	names_edited = false;
 	editing_matrix = false;
+	gtk_widget_hide(dialog);
+}
+
+void edit_dataobject(DataSet *ds, DataObject *o, GtkWidget *win) {
+	if(!ds) return;
+	GtkWidget *dialog = get_dataobject_edit_dialog();
+	if(win) gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(win));
+	GtkWidget *ptable = glade_xml_get_widget(datasets_glade, "dataobject_edit_table");
+	GList *childlist = gtk_container_get_children(GTK_CONTAINER(ptable));
+	for(guint i = 0; ; i++) {
+		GtkWidget *w = (GtkWidget*) g_list_nth_data(childlist, i);
+		if(!w) break;
+		gtk_widget_destroy(w);
+	}
+	g_list_free(childlist);
+	DataPropertyIter it;
+	DataProperty *dp = ds->getFirstProperty(&it);
+	string sval;
+	int rows = 1;
+	gtk_table_resize(GTK_TABLE(ptable), rows, 4);
+	gtk_table_set_col_spacing(GTK_TABLE(ptable), 0, 20);
+	GtkWidget *label, *entry, *menu, *om;
+	vector<GtkWidget*> value_entries;
+	vector<GtkWidget*> approx_menus;
+	string str;
+	while(dp) {
+		
+		gtk_table_resize(GTK_TABLE(ptable), rows, 4);
+		
+		label = gtk_label_new(dp->title().c_str()); gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+		gtk_table_attach(GTK_TABLE(ptable), label, 0, 1, rows - 1, rows, GTK_FILL, GTK_FILL, 0, 0);
+		
+		entry = gtk_entry_new();
+		value_entries.push_back(entry);
+		if(o) {
+			gtk_entry_set_text(GTK_ENTRY(entry), o->getProperty(dp).c_str());
+		}
+		gtk_table_attach(GTK_TABLE(ptable), entry, 1, 2, rows - 1, rows, GTK_FILL, GTK_FILL, 0, 0);
+		
+		label = gtk_label_new(dp->getUnitString().c_str()); gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+		gtk_table_attach(GTK_TABLE(ptable), label, 2, 3, rows - 1, rows, GTK_FILL, GTK_FILL, 0, 0);
+		
+		menu = gtk_menu_new();
+		approx_menus.push_back(menu);
+		om = gtk_option_menu_new();
+		gtk_option_menu_set_menu(GTK_OPTION_MENU(om), menu);
+		gtk_menu_append(GTK_MENU(menu), gtk_menu_item_new_with_label("Default"));
+		gtk_menu_append(GTK_MENU(menu), gtk_menu_item_new_with_label("Approximate"));
+		gtk_menu_append(GTK_MENU(menu), gtk_menu_item_new_with_label("Exact"));
+		gtk_option_menu_set_history(GTK_OPTION_MENU(om), 0);
+		gtk_table_attach(GTK_TABLE(ptable), om, 3, 4, rows - 1, rows, GTK_FILL, GTK_FILL, 0, 0);
+		
+		rows++;
+		dp = ds->getNextProperty(&it);
+	}
+	gtk_widget_show_all(ptable);
+	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
+		bool new_object = o != NULL;
+		if(!o) {
+			o = new DataObject(ds);
+			ds->addObject(o);
+		}
+		dp = ds->getFirstProperty(&it);
+		unsigned int i = 0;
+		string val;
+		while(dp) {
+			val = gtk_entry_get_text(GTK_ENTRY(value_entries[i]));
+			remove_blank_ends(val);
+			if(!val.empty()) {
+				o->setProperty(dp, val, gtk_option_menu_get_history(GTK_OPTION_MENU(approx_menus[i])) - 1);
+			} else if(!new_object) {
+				o->eraseProperty(dp);
+			}
+			dp = ds->getNextProperty(&it);
+			i++;
+		}
+		o->setUserModified();
+		selected_dataobject = o;
+		update_dataobjects();
+	}
 	gtk_widget_hide(dialog);
 }
 
@@ -7334,7 +7442,10 @@ gboolean on_gcalc_exit(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
 }
 
 void save_accels() {
-	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", "accelmap", NULL);
+	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", NULL);
+	mkdir(gstr, S_IRWXU);
+	g_free(gstr);
+	gstr = g_build_filename(g_get_home_dir(), ".qalculate", "accelmap", NULL);
 	gtk_accel_map_save(gstr);
 	g_free(gstr);
 }
@@ -8593,6 +8704,30 @@ void on_functions_button_close_clicked(GtkButton *button, gpointer user_data) {
 	gtk_widget_hide(glade_xml_get_widget (functions_glade, "functions_dialog"));
 }
 
+void on_datasets_button_newset_clicked(GtkButton *button, gpointer user_data) {	
+}
+void on_datasets_button_editset_clicked(GtkButton *button, gpointer user_data) {
+}
+void on_datasets_button_delset_clicked(GtkButton *button, gpointer user_data) {
+	if(selected_dataset && selected_dataset->isLocal()) {
+		selected_dataset->destroy();
+		selected_dataobject = NULL;
+		update_datasets_tree();
+	}
+}
+void on_datasets_button_newobject_clicked(GtkButton *button, gpointer user_data) {
+	edit_dataobject(selected_dataset, NULL, glade_xml_get_widget (datasets_glade, "datasets_dialog"));
+}
+void on_datasets_button_editobject_clicked(GtkButton *button, gpointer user_data) {
+	edit_dataobject(selected_dataset, selected_dataobject, glade_xml_get_widget (datasets_glade, "datasets_dialog"));
+}
+void on_datasets_button_delobject_clicked(GtkButton *button, gpointer user_data) {
+	if(selected_dataset && selected_dataobject) {
+		selected_dataset->delObject(selected_dataobject);
+		selected_dataobject = NULL;
+		update_dataobjects();
+	}
+}
 void on_datasets_button_close_clicked(GtkButton *button, gpointer user_data) {
 	gtk_widget_hide(glade_xml_get_widget (datasets_glade, "datasets_dialog"));
 }

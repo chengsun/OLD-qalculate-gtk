@@ -556,6 +556,110 @@
 			  <property name="fill">True</property>
 			</packing>
 		      </child>
+
+		      <child>
+			<widget class="GtkHBox" id="hbox56">
+			  <property name="visible">True</property>
+			  <property name="homogeneous">True</property>
+			  <property name="spacing">6</property>
+
+			  <child>
+			    <widget class="GtkLabel" id="label25">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">System</property>
+			      <property name="use_underline">False</property>
+			      <property name="use_markup">False</property>
+			      <property name="justify">GTK_JUSTIFY_LEFT</property>
+			      <property name="wrap">False</property>
+			      <property name="selectable">False</property>
+			      <property name="xalign">0</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xpad">0</property>
+			      <property name="ypad">0</property>
+			    </widget>
+			    <packing>
+			      <property name="padding">0</property>
+			      <property name="expand">True</property>
+			      <property name="fill">True</property>
+			    </packing>
+			  </child>
+
+			  <child>
+			    <widget class="GtkCombo" id="unit_edit_combo_system">
+			      <property name="visible">True</property>
+			      <property name="value_in_list">False</property>
+			      <property name="allow_empty">False</property>
+			      <property name="case_sensitive">False</property>
+			      <property name="enable_arrow_keys">True</property>
+			      <property name="enable_arrows_always">False</property>
+
+			      <child internal-child="entry">
+				<widget class="GtkEntry" id="unit_edit_entry_system">
+				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">The category this unit belongs to</property>
+				  <property name="can_focus">True</property>
+				  <property name="editable">True</property>
+				  <property name="visibility">True</property>
+				  <property name="max_length">0</property>
+				  <property name="text" translatable="yes">SI</property>
+				  <property name="has_frame">True</property>
+				  <property name="invisible_char" translatable="yes">*</property>
+				  <property name="activates_default">False</property>
+				</widget>
+			      </child>
+
+			      <child internal-child="list">
+				<widget class="GtkList" id="list1">
+				  <property name="visible">True</property>
+				  <property name="selection_mode">GTK_SELECTION_BROWSE</property>
+
+				  <child>
+				    <widget class="GtkListItem" id="listitem346">
+				      <property name="visible">True</property>
+				      <property name="can_focus">True</property>
+				      <property name="label" translatable="yes">SI</property>
+				    </widget>
+				  </child>
+
+				  <child>
+				    <widget class="GtkListItem" id="listitem347">
+				      <property name="visible">True</property>
+				      <property name="can_focus">True</property>
+				      <property name="label" translatable="yes">CGS</property>
+				    </widget>
+				  </child>
+
+				  <child>
+				    <widget class="GtkListItem" id="listitem348">
+				      <property name="visible">True</property>
+				      <property name="can_focus">True</property>
+				      <property name="label" translatable="yes">Imperial</property>
+				    </widget>
+				  </child>
+
+				  <child>
+				    <widget class="GtkListItem" id="listitem349">
+				      <property name="visible">True</property>
+				      <property name="can_focus">True</property>
+				      <property name="label" translatable="yes">US Survey</property>
+				    </widget>
+				  </child>
+				</widget>
+			      </child>
+			    </widget>
+			    <packing>
+			      <property name="padding">0</property>
+			      <property name="expand">True</property>
+			      <property name="fill">True</property>
+			    </packing>
+			  </child>
+			</widget>
+			<packing>
+			  <property name="padding">0</property>
+			  <property name="expand">True</property>
+			  <property name="fill">True</property>
+			</packing>
+		      </child>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>

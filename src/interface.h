@@ -131,6 +131,7 @@ GtkWidget* get_function_edit_dialog (void);
 GtkWidget* get_variable_edit_dialog (void);
 GtkWidget* get_unknown_edit_dialog (void);
 GtkWidget* get_matrix_edit_dialog (void);
+GtkWidget* get_dataobject_edit_dialog (void);
 GtkWidget* get_names_edit_dialog (void);
 GtkWidget* get_csv_import_dialog (void);
 GtkWidget* get_csv_export_dialog (void);

@@ -33,6 +33,7 @@ using namespace std;
 #include <string>
 #include <stack>
 #include <list>
+#include <errno.h>
 #include <stddef.h>
 #include <math.h>
 #include <float.h>

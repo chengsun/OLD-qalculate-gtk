@@ -3302,14 +3302,8 @@ bool Calculator::loadGlobalDefinitions() {
 	return true;
 }
 bool Calculator::loadLocalDefinitions() {
-	string homedir = "";
 	string filename;
-	struct passwd *pw = getpwuid(getuid());
-	if(pw) {
-		homedir = pw->pw_dir;
-		homedir += "/";
-	}
-	homedir += ".qalculate/";
+	string homedir = getLocalDir();
 	homedir += "definitions/";	
 	list<string> eps;
 	struct dirent *ep;
@@ -3320,7 +3314,7 @@ bool Calculator::loadLocalDefinitions() {
 #ifdef _DIRENT_HAVE_D_TYPE
 			if(ep->d_type != DT_DIR) {
 #endif
-				if(strcmp(ep->d_name, "..") != 0 && strcmp(ep->d_name, ".") != 0) {
+				if(strcmp(ep->d_name, "..") != 0 && strcmp(ep->d_name, ".") != 0 && strcmp(ep->d_name, "datasets") != 0) {
 					eps.push_back(ep->d_name);
 				}
 #ifdef _DIRENT_HAVE_D_TYPE			
@@ -3585,7 +3579,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 
 	xmlDocPtr doc;
 	xmlNodePtr cur, child, child2, child3;
-	string version, stmp, name, uname, type, svalue, plural, singular, category_title, category, description, title, reverse, base, argname;
+	string version, stmp, name, uname, type, svalue, plural, singular, category_title, category, description, title, reverse, base, argname, usystem;
 	bool best_title, next_best_title, best_category_title, next_best_category_title, best_description, next_best_description;
 	bool best_plural, next_best_plural, best_singular, next_best_singular, best_argname, next_best_argname;
 	bool best_proptitle, next_best_proptitle, best_propdescr, next_best_propdescr;
@@ -3948,18 +3942,26 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						}
 						dp->setTitle(proptitle);
 						dp->setDescription(propdescr);
+						bool b = false;
 						for(unsigned int i = 0; i < 10; i++) {
 							if(!prop_names[i].empty()) {
-								dp->addName(prop_names[i], i + 1);
+								if(!b && ref_prop_names[i].empty()) {
+									dp->addName(prop_names[i], true, i + 1);
+									b = true;
+								} else {
+									dp->addName(prop_names[i], false, i + 1);
+								}
 								prop_names[i] = "";
-							} else if(!ref_prop_names[i].empty()) {
-								dp->addName(ref_prop_names[i], i + 1);
-								ref_prop_names[i] = "";
 							}
 						}
 						for(unsigned int i = 0; i < 10; i++) {
 							if(!ref_prop_names[i].empty()) {
-								dp->addName(ref_prop_names[i]);
+								if(!b) {
+									dp->addName(ref_prop_names[i], true);
+									b = true;
+								} else {
+									dp->addName(ref_prop_names[i], false);
+								}
 								ref_prop_names[i] = "";
 							}
 						}
@@ -4183,15 +4185,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					ITEM_INIT_NAME
 					while(child != NULL) {
 						if(!xmlStrcmp(child->name, (const xmlChar*) "system")) {	
-							value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1); 
-							if(value) {
-								if(!xmlStrcmp(value, (const xmlChar*) "si")) {
-									b_si = true;
-								} else {
-									b_si = false;
-								}
-								xmlFree(value);
-							}
+							XML_DO_FROM_TEXT(child, u->setSystem)
 						} else if((version_numbers[1] < 6 || version_numbers[2] < 3) && !xmlStrcmp(child->name, (const xmlChar*) "singular")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular)
 							if(!unitNameIsValid(singular)) {
@@ -4212,7 +4206,6 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					ITEM_SET_NAME_2
 					ITEM_SET_NAME_3
 					ITEM_SET_DTH
-					u->setAsSIUnit(b_si);
 					addUnit(u);
 					u->setChanged(false);
 					done_something = true;
@@ -4227,6 +4220,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					child = cur->xmlChildrenNode;
 					singular = ""; best_singular = false; next_best_singular = false;
 					plural = ""; best_plural = false; next_best_plural = false;
+					usystem = "";
 					prec = -1;
 					ITEM_INIT_DTH
 					ITEM_INIT_NAME
@@ -4260,16 +4254,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 								}
 								child2 = child2->next;
 							}
-						} else if(!xmlStrcmp(child->name, (const xmlChar*) "system")) {	
-								value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1); 
-								if(value) {
-									if(!xmlStrcmp(value, (const xmlChar*) "si")) {
-										b_si = true;
-									} else {
-										b_si = false;
-									}
-									xmlFree(value);
-								}
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "system")) {
+							XML_GET_STRING_FROM_TEXT(child, usystem);
 						} else if((version_numbers[1] < 6 || version_numbers[2] < 3) && !xmlStrcmp(child->name, (const xmlChar*) "singular")) {	
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular)
 							if(!unitNameIsValid(singular)) {
@@ -4296,6 +4282,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						au->setPrecision(prec);
 						au->setApproximate(b);
 						au->setHidden(hidden);
+						au->setSystem(usystem);
 						item = au;
 						if(!u_rad) {
 							if(version_numbers[1] < 6 || version_numbers[2] < 3 && name == rad_str) {
@@ -4310,7 +4297,6 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						}
 						ITEM_SET_NAME_2
 						ITEM_SET_NAME_3
-						au->setAsSIUnit(b_si);
 						addUnit(au);
 						au->setChanged(false);
 						done_something = true;	
@@ -4323,6 +4309,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					}
 					XML_GET_FALSE_FROM_PROP(cur, "active", active)
 					child = cur->xmlChildrenNode;
+					usystem = "";
 					cu = NULL;
 					ITEM_INIT_DTH
 					ITEM_INIT_NAME
@@ -4379,15 +4366,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 								break;
 							}
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "system")) {
-							value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1); 
-							if(value) {
-								if(!xmlStrcmp(value, (const xmlChar*) "si")) {
-									b_si = true;
-								} else {
-									b_si = false;
-								}
-								xmlFree(value);
-							} 
+							XML_GET_STRING_FROM_TEXT(child, usystem);
 						} else ITEM_READ_NAME(unitNameIsValid)
 						 else ITEM_READ_DTH
 						child = child->next;
@@ -4395,11 +4374,11 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					if(cu) {
 						item = cu;
 						cu->setCategory(category);
+						cu->setSystem(usystem);
 						ITEM_SET_NAME_1(unitNameIsValid)
 						ITEM_SET_NAME_2
 						ITEM_SET_NAME_3
 						ITEM_SET_DTH
-						cu->setAsSIUnit(b_si);
 						addUnit(cu);
 						cu->setChanged(false);
 						done_something = true;
@@ -4518,14 +4497,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 	return true;
 }
 bool Calculator::saveDefinitions() {
-	string homedir = "";
 	string filename;
-	struct passwd *pw = getpwuid(getuid());
-	if(pw) {
-		homedir = pw->pw_dir;
-		homedir += "/";
-	}
-	homedir += ".qalculate/";
+	string homedir = getLocalDir();
 	mkdir(homedir.c_str(), S_IRWXU);	
 	homedir += "definitions/";	
 	mkdir(homedir.c_str(), S_IRWXU);
@@ -4544,6 +4517,9 @@ bool Calculator::saveDefinitions() {
 	if(!saveVariables(filename.c_str())) {
 		return false;
 	}
+	if(!saveDataObjects()) {
+		return false;
+	}
 	return true;
 }
 
@@ -4552,6 +4528,15 @@ struct node_tree_item {
 	string category;
 	vector<node_tree_item> items;
 };
+
+int Calculator::saveDataObjects() {
+	int returnvalue = 1;
+	for(unsigned int i = 0; i < data_sets.size(); i++) {
+		int rv = data_sets[i]->saveObjects(NULL, false);
+		if(rv <= 0) returnvalue = rv;
+	}
+	return returnvalue;
+}
 
 int Calculator::savePrefixes(const char* file_name, bool save_global) {
 	if(!save_global) {
@@ -4841,7 +4826,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 				}
 				if(!units[i]->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");
 				if(units[i]->isHidden()) xmlNewTextChild(newnode, NULL, (xmlChar*) "hidden", (xmlChar*) "true");
-				if(units[i]->isSIUnit()) xmlNewTextChild(newnode, NULL, (xmlChar*) "system", (xmlChar*) "si");
+				if(!units[i]->system().empty()) xmlNewTextChild(newnode, NULL, (xmlChar*) "system", (xmlChar*) units[i]->system().c_str());
 				if(!units[i]->title(false).empty()) {
 					if(save_global) {
 						xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) units[i]->title(false).c_str());
@@ -5421,13 +5406,8 @@ bool Calculator::loadExchangeRates() {
 	xmlDocPtr doc;
 	xmlNodePtr cur;
 	xmlChar *value;
-	string homedir = "", filename, currency, rate;
-	struct passwd *pw = getpwuid(getuid());
-	if(pw) {
-		homedir = pw->pw_dir;
-		homedir += "/";
-	}
-	homedir += ".qalculate/";
+	string filename, currency, rate;
+	string homedir = getLocalDir();
 	filename = homedir;
 	filename += "eurofxref-daily.xml";
 	doc = xmlParseFile(filename.c_str());
@@ -5484,13 +5464,8 @@ bool Calculator::canFetch() {
 bool Calculator::fetchExchangeRates(int timeout) {
 	pid_t pid;
 	int status;
-	string homedir = "", filename_arg;
-	struct passwd *pw = getpwuid(getuid());
-	if(pw) {
-		homedir = pw->pw_dir;
-		homedir += "/";
-	}
-	homedir += ".qalculate/";
+	string filename_arg;
+	string homedir = getLocalDir();
 	mkdir(homedir.c_str(), S_IRWXU);	
 	filename_arg =  "--output-document=";
 	filename_arg += homedir;
@@ -5515,13 +5490,7 @@ bool Calculator::fetchExchangeRates(int timeout) {
 }
 bool Calculator::checkExchangeRatesDate() {
 	if(exchange_rates_warning_issued) return true;
-	string homedir = "";
-	struct passwd *pw = getpwuid(getuid());
-	if(pw) {
-		homedir = pw->pw_dir;
-		homedir += "/";
-	}
-	homedir += ".qalculate/";
+	string homedir = getLocalDir();
 	homedir += "eurofxref-daily.xml";
 	bool up_to_date = false;
 	struct stat stats;
@@ -5614,14 +5583,8 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 
 bool Calculator::plotVectors(plot_parameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<plot_data_parameters*> &pdps, bool persistent) {
 
-	string homedir = "";
 	string filename;
-	struct passwd *pw = getpwuid(getuid());
-	if(pw) {
-		homedir = pw->pw_dir;
-		homedir += "/";
-	}
-	homedir += ".qalculate/";
+	string homedir = getLocalDir();
 	mkdir(homedir.c_str(), S_IRWXU);	
 	homedir += "tmp/";	
 	mkdir(homedir.c_str(), S_IRWXU);

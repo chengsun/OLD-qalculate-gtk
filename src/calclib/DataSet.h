@@ -27,11 +27,13 @@ class DataObject {
 	vector<MathStructure*> m_properties;
 	vector<int> a_properties;
 	DataSet *parent;
+	bool b_uchanged;
 	
   public:
   
 	DataObject(DataSet *parent_set);
 
+	void eraseProperty(DataProperty *property);
 	void setProperty(DataProperty *property, string s_value, int is_approximate = -1);
 	void setNonlocalizedKeyProperty(DataProperty *property, string s_value);
 	
@@ -40,6 +42,9 @@ class DataObject {
 	const string &getNonlocalizedKeyProperty(DataProperty *property);
 	string getPropertyInputString(DataProperty *property);
 	string getPropertyDisplayString(DataProperty *property);
+	
+	bool isUserModified() const;
+	void setUserModified(bool user_modified = true);
 	
 	DataSet *parentSet() const;
 
@@ -56,6 +61,7 @@ class DataProperty {
   protected:
 
 	vector<string> names;
+	vector<bool> name_is_ref;
 	string sdescr, stitle, sunit;
 	MathStructure *m_unit;
 	bool b_approximate, b_brackets, b_key, b_case, b_hide;
@@ -66,12 +72,15 @@ class DataProperty {
   
 	DataProperty(DataSet *parent_set, string s_name = "", string s_title = "", string s_description = "");
 	
-	void setName(string s_name);
+	void setName(string s_name, bool is_ref = false);
+	void setNameIsReference(unsigned int index = 1, bool is_ref = true);
+	bool nameIsReference(unsigned int index = 1) const;
 	void clearNames();
-	void addName(string s_name, unsigned int index = 0);
+	void addName(string s_name, bool is_ref = false, unsigned int index = 0);
 	bool hasName(const string &s_name);
 	unsigned int countNames() const;
 	const string &getName(unsigned int index = 1) const;
+	const string &getReferenceName() const;
 	void setTitle(string s_title);
 	const string &title(bool return_name_if_no_title = true) const;
 	void setDescription(string s_description);
@@ -129,10 +138,12 @@ class DataSet : public Function {
 	
 	int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);
 	
-	bool loadObjects(const char *file_name = NULL);
+	bool loadObjects(const char *file_name = NULL, bool is_user_defs = true);
+	int saveObjects(const char *file_name = NULL, bool save_global = false);
 	bool objectsLoaded() const;
 	
 	void addProperty(DataProperty *dp);
+	void delProperty(DataProperty *dp);
 	DataProperty *getPrimaryKeyProperty();
 	DataProperty *getProperty(string property);
 	DataProperty *getFirstProperty(DataPropertyIter *it);
@@ -141,6 +152,7 @@ class DataSet : public Function {
 	const string &getNextPropertyName(DataPropertyIter *it);
 	
 	void addObject(DataObject *o);
+	void delObject(DataObject *o);
 	DataObject *getObject(string object);
 	DataObject *getObject(const MathStructure &object);
 	DataObject *getFirstObject(DataObjectIter *it);

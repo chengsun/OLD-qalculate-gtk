@@ -54,8 +54,6 @@ Unit::Unit(string cat_, string name_, string plural_, string singular_, string t
 	b_si = false;
 }
 Unit::Unit() {
-	ssingular = "";
-	splural = "";
 	b_si = false;
 }
 Unit::Unit(const Unit *unit) {
@@ -68,17 +66,33 @@ ExpressionItem *Unit::copy() const {
 void Unit::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_UNIT) {
 		b_si = ((Unit*) item)->isSIUnit();
+		ssystem = ((Unit*) item)->system();
 	}
 	ExpressionItem::set(item);
 }
 bool Unit::isSIUnit() const {
 	return b_si;
 }
-void Unit::setAsSIUnit(bool is_SI) {
-	if(b_si != is_SI) {
-		b_si = is_SI;
+void Unit::setAsSIUnit() {
+	if(!b_si) {
+		b_si = true;
+		ssystem == "SI";
 		setChanged(true);
 	}
+}
+void Unit::setSystem(string s_system) {
+	if(s_system != ssystem) {
+		ssystem = s_system;
+		if(ssystem == "SI" || ssystem == "si" || ssystem == "Si") {
+			b_si = true;
+		} else {
+			b_si = false;
+		}
+		setChanged(true);
+	}
+}
+const string &Unit::system() const {
+	return ssystem;
 }
 bool Unit::isCurrency() const {
 	return baseUnit() == CALCULATOR->u_euro;
@@ -86,44 +100,17 @@ bool Unit::isCurrency() const {
 bool Unit::isUsedByOtherUnits() const {
 	return CALCULATOR->unitIsUsedByOtherUnits(this);
 }
-void Unit::setPlural(string name_, bool force) {
-	remove_blank_ends(name_);
-	if(name_ != splural) {
-		splural = CALCULATOR->getName(name_, this, force);
-		setChanged(true);
-	}
-	CALCULATOR->unitPluralChanged(this);
-}
-void Unit::setSingular(string name_, bool force) {
-	remove_blank_ends(name_);
-	if(name_.empty()) {
-		ssingular = name_;
-	} else if(name_ != ssingular) {
-		ssingular = CALCULATOR->getName(name_, this, force);
-	}
-	setChanged(true);
-	CALCULATOR->unitSingularChanged(this);
-
-}
 string Unit::print(bool plural_, bool short_, bool use_unicode) const {
-	if(short_) return shortName(use_unicode);
-	else if(plural_) return plural(true, use_unicode);
-	return singular(true, use_unicode);
-}
-const string &Unit::singular(bool return_short_if_no_singular, bool use_unicode) const {
-	if(return_short_if_no_singular && ssingular.empty()) {
-		return shortName(use_unicode);
-	}
-	return ssingular;
+	return preferredName(short_, use_unicode, plural_).name;
 }
 const string &Unit::plural(bool return_singular_if_no_plural, bool use_unicode) const {
-	if(return_singular_if_no_plural && splural.empty()) {
-		return singular(true, use_unicode);
-	}
-	return splural;
+	return preferredName(false, use_unicode, true).name;
+}
+const string &Unit::singular(bool return_short_if_no_singular, bool use_unicode) const {
+	return preferredName(false, use_unicode, false).name;
 }
 const string &Unit::shortName(bool use_unicode) const {
-	return name(use_unicode);
+	return preferredName(true, use_unicode, false).name;
 }
 Unit* Unit::baseUnit() const {
 	return (Unit*) this;
@@ -484,13 +471,7 @@ string AliasUnit_Composite::print(bool plural_, bool short_, bool use_unicode) c
 	if(prefixv) {
 		str += prefixv->name(short_, use_unicode);
 	}
-	if(short_) {
-		str += firstBaseUnit()->shortName(use_unicode);
-	} else if(plural_) {
-		str += firstBaseUnit()->plural(true, use_unicode);
-	} else {
-		str += firstBaseUnit()->singular(true, use_unicode);
-	}
+	str += preferredName(short_, use_unicode, plural_).name;
 	return str;
 }
 Prefix *AliasUnit_Composite::prefix() const {
@@ -628,15 +609,6 @@ string CompositeUnit::print(bool plural_, bool short_, bool use_unicode) const {
 	if(b2) str += ")";
 	return str;
 }
-const string &CompositeUnit::plural(bool return_singular_if_no_plural, bool use_unicode) const {
-	return splural;
-}
-const string &CompositeUnit::singular(bool return_short_if_no_singular, bool use_unicode) const {
-	return ssingular;
-}
-const string &CompositeUnit::shortName(bool use_unicode) const {
-	return sshort;
-}
 int CompositeUnit::subtype() const {
 	return SUBTYPE_COMPOSITE_UNIT;
 }
@@ -720,9 +692,6 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	updateNames();
 }
 void CompositeUnit::updateNames() {
-/*	sshort = print(false, true);
-	splural = print(true, false);
-	ssingular = print(false, false);*/
 }
 void CompositeUnit::clear() {
 	for(unsigned int i = 0; i < units.size(); i++) {
