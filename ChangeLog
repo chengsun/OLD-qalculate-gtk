@@ -4,7 +4,8 @@
 	* Documentation updates
 	* Alternative to use lower case letters in numbers
 	* Fix double decimal point with integers
-	* Fix decimal reduction approximation
+	* Fix decimal reduction rounding
+	* Fix precision rounding
 
 2004-07-12 Niklas Knutsson  <nq@altern.org>
 

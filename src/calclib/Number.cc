@@ -676,7 +676,7 @@ Number Number::integer() const {
 bool Number::isInteger() const {
 	if(isInfinite()) return false;
 	if(isComplex()) return false;
-	if(isApproximate()) return false;
+	if(isApproximateType()) return false;
 	return cln::denominator(cln::rational(cln::realpart(value))) == 1;
 }
 bool Number::isRational() const {
@@ -1754,6 +1754,11 @@ string Number::printImaginaryDenominator(int base, bool display_sign, bool displ
 }
 
 string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
+	if(isApproximateType() && !isInfinite() && !isComplex() && cln::zerop(cln::truncate2(REAL_PRECISION_FLOAT_RE(value)).remainder)) {
+		Number nr_copy(*this);
+		nr_copy.testInteger();
+		return nr_copy.print(po, ips);
+	}
 	if(ips.minus) *ips.minus = false;
 	if(ips.exp_minus) *ips.exp_minus = false;
 	if(ips.num) *ips.num = "";
@@ -1873,7 +1878,12 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		
 		cl_I ivalue = cln::numerator(cln::rational(cln::realpart(value)));
 		bool neg = cln::minusp(ivalue);
-		string mpz_str = printCL_I(ivalue, base, false, true, po.lower_case_numbers);
+		string mpz_str;
+		bool rerun = false;
+		
+		integer_rerun:
+		
+		mpz_str = printCL_I(ivalue, base, false, true, po.lower_case_numbers);
 
 		int expo = 0;
 		if(base == 10) {
@@ -1888,7 +1898,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				} 
 			}
 		}
-
 		if(po.min_exp < 0) {
 			if(expo > -PRECISION && expo < PRECISION) { 
 				expo = 0;
@@ -1900,40 +1909,47 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		} else {
 			expo = 0;
 		}
+
+		if(!rerun && !cln::zerop(ivalue)) {
+			int precision = PRECISION;
+			if(base != 10) {
+				Number precmax(10);
+				precmax.raise(PRECISION);
+				precmax--;
+				precmax.log(base);
+				precmax.floor();
+				precision = precmax.intValue();
+			}
+			precision -= mpz_str.length();
+			if(po.use_max_decimals && po.max_decimals < expo && po.max_decimals - expo < precision) {
+				cln::cl_RA_div_t div = cln::floor2(ivalue / cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo)));
+				if(!cln::zerop(div.remainder)) {
+					ivalue = div.quotient;
+					if(div.remainder * base >= cln::cl_I(base) / cln::cl_I(2)) ivalue++;
+					ivalue *= cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo));
+					if(po.is_approximate) *po.is_approximate = true;
+					rerun = true;
+					goto integer_rerun;
+				}
+			} else if(precision < 0) {
+				cln::cl_RA_div_t div = cln::floor2(ivalue / cln::expt_pos(cln::cl_I(base), -precision));
+				if(!cln::zerop(div.remainder)) {
+					ivalue = div.quotient;
+					if(div.remainder * base >= cln::cl_I(base) / cln::cl_I(2)) ivalue++;
+					ivalue *= cln::expt_pos(cln::cl_I(base), -precision);
+					if(po.is_approximate) *po.is_approximate = true;
+					rerun = true;
+					goto integer_rerun;
+				}
+			}
+		}
+
+		
 		int decimals = 0;
 		if(expo > 0) {
 			if(po.number_fraction_format == FRACTION_DECIMAL) {
 				mpz_str.insert(mpz_str.length() - expo, po.decimalpoint());
 				decimals = expo;
-				if((int) mpz_str.length() > PRECISION + 1) {
-					decimals -= mpz_str.length() - PRECISION - 1;
-					if(mpz_str[PRECISION + 1] >= '5') {
-						int i = 0;
-						while(true) {
-							if(PRECISION - i >= 0 && mpz_str[PRECISION - i] == po.decimalpoint()[0]) {
-								i++;
-							}
-							if(PRECISION - i < 0) {
-								mpz_str.insert(mpz_str.begin(), '1');
-								mpz_str[1] = po.decimalpoint()[0];
-								mpz_str[2] = '0';
-								decimals++;
-								expo++;
-								break;
-							}
-							mpz_str[PRECISION - i]++;
-							if(mpz_str[PRECISION - i] > '9') {
-								mpz_str[PRECISION - i] = '0';
-								i++;
-							} else {
-								break;
-							}
-						}
-					}
-					mpz_str = mpz_str.substr(0, PRECISION + 1);
-					if(mpz_str[mpz_str.length() - 1] == po.decimalpoint()[0]) mpz_str.erase(mpz_str.end() - 1);
-					if(po.is_approximate) *po.is_approximate = true;
-				}
 			} else if(po.number_fraction_format == FRACTION_DECIMAL_EXACT) {
 				mpz_str.insert(mpz_str.length() - expo, po.decimalpoint());
 				decimals = expo;
@@ -1956,38 +1972,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 			}
 			if(pos + 1 < (int) str.length()) str = str.substr(0, pos + 1);
-			if(po.use_max_decimals && po.max_decimals >= 0 && decimals > po.max_decimals) {
-				if(po.number_fraction_format == FRACTION_DECIMAL) {
-					int i = (str.length() - decimals) + po.max_decimals;
-					if(str[i] >= '5') {
-						while(true) {
-							if(i - 1 >= 0 && str[i - 1] == po.decimalpoint()[0]) {
-								decimals++;
-								i--;
-							}
-							if(i - 1 < 0) {
-								str.insert(str.begin(), '1');
-								str[1] = po.decimalpoint()[0];
-								str[2] = '0';
-								decimals++;
-								i++;
-								expo++;
-								break;
-							}
-							str[i - 1]++;
-							if(str[i - 1] > '9') {
-								str[i - 1] = '0';
-								i--;
-							} else {
-								break;
-							}
-						}
-					}
-					decimals -= str.length() - i;
-					str = str.substr(0, i);
-					if(po.is_approximate) *po.is_approximate = true;
-				}
-			}
 			if(min_decimals > decimals) {
 				if(decimals <= 0) {
 					str += po.decimalpoint();
@@ -1998,7 +1982,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			if(str[str.length() - 1] == po.decimalpoint()[0]) str.erase(str.end() - 1);
 		}
-
 		if(expo != 0) { 
 			if(ips.exp) {
 				if(ips.exp_minus) {
@@ -2067,11 +2050,37 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			
 			bool started = false;
+			int expo = 0;
 			if(!cln::zerop(num)) {
 				str = printCL_I(num, base, true, false);
+				if(base != 10) expo = 0;
+				else expo = str.length() - 1;
+				if(po.min_exp < 0) {
+					if(expo > -PRECISION && expo < PRECISION) { 
+						expo = 0;
+					}
+				} else if(po.min_exp != 0) {
+					if(expo > -po.min_exp && expo < po.min_exp) { 
+						expo = 0;
+					}
+				} else {
+					expo = 0;
+				}
 				precision -= str.length();
+				if(po.use_max_decimals && po.max_decimals < expo && po.max_decimals - expo < precision) {
+					num = cln::round1(cln::realpart(value) / cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo))) * cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo));
+					if(neg) num = -num;
+					remainder = 0;
+					exact = false;
+				} else if(precision < 0) {
+					num = cln::round1(cln::realpart(value) / cln::expt_pos(cln::cl_I(base), -precision)) * cln::expt_pos(cln::cl_I(base), -precision);
+					if(neg) num = -num;
+					remainder = 0;
+					exact = false;
+				}
 				started = true;
 			}
+			if(!exact && po.use_max_decimals && precision > po.max_decimals - expo) precision = po.max_decimals - expo;
 			while(!exact && precision > 0) {
 				if(po.indicate_infinite_series && !infinite_series) {
 					remainders.push_back(remainder);
@@ -2121,20 +2130,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(po.is_approximate) *po.is_approximate = true;
 			}
 			str = printCL_I(num, base, true, false, po.lower_case_numbers);
-			
-			int expo = str.length() - l10 - 1;
-			if(str.empty() || base != 10) expo = 0;
-			if(po.min_exp < 0) {
-				if(expo > -PRECISION && expo < PRECISION) { 
-					expo = 0;
-				}
-			} else if(po.min_exp != 0) {
-				if(expo > -po.min_exp && expo < po.min_exp) { 
-					expo = 0;
-				}
-			} else {
-				expo = 0;
-			}
 			if(expo != 0) {
 				l10 += expo;
 			}
@@ -2149,9 +2144,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				while(str[str.length() - 1 - l2] == '0') {
 					l2++;
 				}
-				if(l2 == l10) l2++;
 				if(l2 > 0) {
 					str = str.substr(0, str.length() - l2);
+				}
+				if(str[str.length() - 1] == po.decimalpoint()[0]) {
+					str.erase(str.end() - 1);
 				}
 			}
 			int decimals = 0;
@@ -2161,42 +2158,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 			if(str.empty()) {
 				str = "0";			
-			}
-			if(po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals < decimals) {
-				if(po.number_fraction_format == FRACTION_DECIMAL) {
-					int i = (str.length() - decimals) + po.max_decimals;
-					int base_breakpoint = (base / 2 + base % 2);
-					int dp = -1;
-					if((base_breakpoint < 10 && str[i] >= '0' + base_breakpoint) || (base_breakpoint >= 10 && ((str[i] <= 'Z' && str[i] >= 'A' + base_breakpoint - 10) || str[i] >= 'a' + base_breakpoint - 10))) {
-						while(true) {
-							if(i - 1 >= 0 && str[i - 1] == po.decimalpoint()[0]) {
-								dp = i - 1;
-								i--;
-							}
-							if(i - 1 < 0) {
-								str.insert(str.begin(), '1');
-								i++;
-								if(dp >= 0) dp++;
-								break;
-							}
-							str[i - 1]++;
-							if((base <= 10 && str[i - 1] > '0' + (base - 1)) || (base > 10 && ((str[i - 1] <= 'Z' && str[i - 1] > 'A' + (base - 11)) || str[i - 1] > 'a' + (base - 11)))) {
-								str[i - 1] = '0';
-								i--;
-							} else {
-								break;
-							}
-						}
-					}
-					if(dp >= 0) {
-						i = dp; 
-						decimals = 0;
-					} else {
-						decimals -= str.length() - i;
-					}
-					str = str.substr(0, i);
-					if(po.is_approximate) *po.is_approximate = true;
-				}
 			}
 			if(min_decimals > decimals) {
 				if(decimals <= 0) {
