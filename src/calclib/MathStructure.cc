@@ -3462,12 +3462,14 @@ unsigned int MathStructure::countTotalChilds(bool count_function_as_one) const {
 void try_isolate_x(MathStructure &mstruct, EvaluationOptions &eo3, const EvaluationOptions &eo);
 void try_isolate_x(MathStructure &mstruct, EvaluationOptions &eo3, const EvaluationOptions &eo) {
 	if(mstruct.isComparison()) {
-		MathStructure mtest(mstruct);
-		eo3.test_comparisons = false;
-		mtest.calculatesub(eo3, eo);
-		eo3.test_comparisons = eo.test_comparisons;
-		if(mtest.isolate_x(eo3)) {
-			mstruct = mtest;
+		if(mstruct.comparisonType() == COMPARISON_EQUALS || mstruct.comparisonType() == COMPARISON_NOT_EQUALS) {
+			MathStructure mtest(mstruct);
+			eo3.test_comparisons = false;
+			mtest.calculatesub(eo3, eo);
+			eo3.test_comparisons = eo.test_comparisons;
+			if(mtest.isolate_x(eo3)) {
+				mstruct = mtest;
+			}
 		}
 	} else {
 		for(unsigned int i = 0; i < mstruct.size(); i++) {
@@ -7756,6 +7758,9 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 		if(eo.isolate_var) x_var2 = eo.isolate_var;
 		else x_var2 = &find_x_var();
 		if(x_var2->isUndefined()) return false;
+		if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) {
+			return isolate_x(eo, *x_var2);
+		}
 		if(CHILD(1).isZero() && CHILD(0).isAddition()) {
 			bool found_1x = false;
 			for(unsigned int i = 0; i < CHILD(0).size(); i++) {
@@ -7793,7 +7798,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 							CALCULATOR->beginTemporaryStopErrors();
 							mtest.eval(eo2);
 							CALCULATOR->endTemporaryStopErrors();
-							if(!mtest.isNumber() || mtest.number().getBoolean() != 1) {
+							if(!mtest.isNumber() || (ct_comp == COMPARISON_EQUALS && mtest.number().getBoolean() < 1) || (ct_comp == COMPARISON_NOT_EQUALS && mtest.number().getBoolean() > 0)) {
 								CHILD(1).delChild(i2 + 1);
 								i2--;
 							}
@@ -7823,7 +7828,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 						CALCULATOR->beginTemporaryStopErrors();
 						mtest.eval(eo2);
 						CALCULATOR->endTemporaryStopErrors();
-						if(mtest.isNumber() && mtest.number().getBoolean() > 0) {
+						if(mtest.isNumber() && ((ct_comp == COMPARISON_EQUALS && mtest.number().getBoolean() > 0) || (ct_comp == COMPARISON_NOT_EQUALS && mtest.number().getBoolean() < 1))) {
 							return true;
 						}
 					} else {
@@ -8012,7 +8017,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 				isolate_x(eo, x_var);
 				childrenUpdated();
 				return true;
-			} else if(CHILD(1).isZero()) {
+			} else if(CHILD(1).isZero() && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
 				MathStructure mtest, mtest2, msol;
 				msol.clearVector();
 				for(unsigned int i = 0; i < CHILD(0).size(); i++) {
@@ -8037,7 +8042,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 										CALCULATOR->beginTemporaryStopErrors();
 										mtest2.eval(eo2);
 										CALCULATOR->endTemporaryStopErrors();
-										if(mtest2.isNumber() && mtest2.number().getBoolean() == 1) {
+										if(mtest2.isNumber() && ((ct_comp == COMPARISON_EQUALS && mtest2.number().getBoolean() > 0) || (ct_comp == COMPARISON_NOT_EQUALS && mtest2.number().getBoolean() < 1))) {
 											msol.addChild(mtest[1][i2]);
 										}
 									}
@@ -8051,7 +8056,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 									CALCULATOR->beginTemporaryStopErrors();
 									mtest2.eval(eo2);
 									CALCULATOR->endTemporaryStopErrors();
-									if(mtest2.isNumber() && mtest2.number().getBoolean() == 1) {
+									if(mtest2.isNumber() && ((ct_comp == COMPARISON_EQUALS && mtest2.number().getBoolean() > 0) || (ct_comp == COMPARISON_NOT_EQUALS && mtest2.number().getBoolean() < 1))) {
 										msol.addChild(mtest[1]);
 									}
 								}

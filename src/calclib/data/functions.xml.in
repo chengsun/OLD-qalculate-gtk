@@ -302,7 +302,7 @@
       </argument>
     </builtin_function>
     <builtin_function name="inverse">
-      <_title>Inverse</_title>
+      <_title>Matrix Inverse</_title>
       <name index="1">
         <reference>true</reference>
         <_name>inverse</_name>
@@ -1365,9 +1365,9 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <reference>true</reference>
           <_name>trimmean</_name>
         </name>
-        <expression>mean(limits(round(dimension(\y)/100*\x),round(dimension(\y)/100*(100-\x)),sort(\y)))</expression>
+        <expression>mean(limits(round(dimension(\y)/100*\x)+1,round(dimension(\y)/100*(100-\x)),sort(\y)))</expression>
         <argument type="free" index="1">
-          <_title>Trimmed Percentage</_title>
+          <_title>Trimmed Percentage (at each end)</_title>
         </argument>
         <argument type="vector" index="2">
           <_title>Data</_title>
@@ -1379,9 +1379,12 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <reference>true</reference>
           <_name>winsormean</_name>
         </name>
-        <expression>mean(limits(1,round(dimension(\y)/100*\x),sort(\y)),limits(round(dimension(\y)/100*\x),round(dimension(\y)/100*(100-\x)),sort(\y)),limits(round(dimension(\y)/100*(100-\x)),-1,sort(\y)))</expression>
+	<subfunction precalculate="true">sort(\y)</subfunction>
+	<subfunction precalculate="true">dimension(\y)</subfunction>
+	<subfunction precalculate="true">round(dimension(\y)/100*\x)</subfunction>
+        <expression>(component(\2-\3,\1)*\3+component(\3+1,\1)*\3+total(limits(\3+1,\2-\3,\1)))/dimension(\y)+\x*0</expression>
         <argument type="free" index="1">
-          <_title>Trimmed Percentage</_title>
+          <_title>Winsorized Percentage (at each end)</_title>
         </argument>
         <argument type="vector" index="2">
           <_title>Data</_title>
@@ -1619,7 +1622,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <_name>rayleigh</_name>
         </name>
         <_description>Returns the probability density p(x) at x for a Rayleigh distribution with scale parameter sigma. (from Gnumeric)</_description>
-        <expression>if(\x &lt; 0,"0","(\x/\y)/\y*exp(-(\x/\y)*(\x/\y)/2)")</expression>
+        <expression>if(\x &lt; 0,0,(\x/\y)/\y*exp(-(\x/\y)*(\x/\y)/2))</expression>
         <argument type="free" index="1">
           <_title>X</_title>
         </argument>
@@ -1635,7 +1638,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <_name>rayleightail</_name>
         </name>
         <_description>Returns the probability density p(x) at x for a Rayleigh tail distribution with scale parameter sigma and a lower limit. (from Gnumeric)</_description>
-        <expression>if(\x &lt; \y,"0","(\x/\z)/\z*exp(((\y/\z)+(\x/\z))*((\y/\z)-(\x/\z))/2)")</expression>
+        <expression>if(\x &lt; \y,0,(\x/\z)/\z*exp(((\y/\z)+(\x/\z))*((\y/\z)-(\x/\z))/2))</expression>
         <argument type="free" index="1">
           <_title>X</_title>
         </argument>
@@ -1654,7 +1657,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <_name>pareto</_name>
         </name>
         <_description>Returns the probability density p(x) at x for a Pareto distribution with exponent and scale. (from Gnumeric)</_description>
-        <expression>if(\x &lt; \z,"0","(\y/\z)/(\x/\z)^(\y+1)")</expression>
+        <expression>if(\x &lt; \z,0,(\y/\z)/(\x/\z)^(\y+1))</expression>
         <argument type="free" index="1">
           <_title>X</_title>
         </argument>

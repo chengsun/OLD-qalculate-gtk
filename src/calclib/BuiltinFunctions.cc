@@ -1853,15 +1853,13 @@ int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 }
 IFFunction::IFFunction() : Function("if", 3) {
 	NON_COMPLEX_NUMBER_ARGUMENT(1)
-	setArgumentDefinition(2, new TextArgument());
-	setArgumentDefinition(3, new TextArgument());
 }
 int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int result = vargs[0].number().getBoolean();
 	if(result) {			
-		mstruct = CALCULATOR->parse(vargs[1].symbol());
+		mstruct = vargs[1];
 	} else if(result == 0) {			
-		mstruct = CALCULATOR->parse(vargs[2].symbol());		
+		mstruct = vargs[2];
 	} else {
 		return 0;
 	}	

@@ -1,3 +1,13 @@
+2004-09-27 Niklas Knutsson  <nq@altern.org>
+
+	* "Inverse" -> "Matrix Inverse"
+	* Fix isolate_x() when comparison type is not equals
+	* Make plot non-numerical error more informative and include non-reals
+	* No use to have if() arguments as text, as they now only are parsed initially
+	* Fix trimmean() and winsormean()
+	* Localize "timed out"
+	* Version 0.6.4
+
 2004-09-26 Niklas Knutsson  <nq@altern.org>
 
 	* Fix selection of variable to solve

@@ -1,3 +1,4 @@
+* Allow arguments to only be used in sub functions
 * Implement signals for deleted variables etc.
 * Mode without implicit multiplication
 * Sort out when small floats really are zero due to limited precision

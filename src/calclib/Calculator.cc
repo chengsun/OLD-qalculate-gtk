@@ -1320,7 +1320,7 @@ string Calculator::printMathStructureTimeOut(const MathStructure &mstruct, int u
 		clearBuffers();
 		b_busy = false;
 		pthread_create(&print_thread, &print_thread_attr, print_proc, print_pipe_r);
-		tmp_print_result = "timed out";
+		tmp_print_result = _("timed out");
 	}
 	return tmp_print_result;
 }
@@ -6139,26 +6139,41 @@ bool Calculator::plotVectors(plot_parameters *param, const vector<MathStructure>
 				return false;
 			}
 			plot_data = "";
-			bool non_numerical = false;
+			int non_numerical = 0, non_real = 0;
+			string str = "";
 			for(unsigned int i = 1; i <= y_vectors[serie].components(); i++) {
 				if(serie < x_vectors.size() && !x_vectors[serie].isUndefined() && x_vectors[serie].components() == y_vectors[serie].components()) {
-					if(!non_numerical && !x_vectors[serie].getComponent(i)->isNumber()) {
-						non_numerical = true;
+					if(!x_vectors[serie].getComponent(i)->isNumber()) {
+						non_numerical++;
+						if(non_numerical == 1) str = x_vectors[serie].getComponent(i)->print(po);
+					} else if(!x_vectors[serie].getComponent(i)->number().isReal()) {
+						non_real++;
+						if(non_numerical + non_real == 1) str = x_vectors[serie].getComponent(i)->print(po);
 					}
 					plot_data += x_vectors[serie].getComponent(i)->print(po);
 					plot_data += " ";
 				}
-				if(!non_numerical && !y_vectors[serie].getComponent(i)->isNumber()) {
-					non_numerical = true;
+				if(!y_vectors[serie].getComponent(i)->isNumber()) {
+					non_numerical++;
+					if(non_numerical == 1) str = y_vectors[serie].getComponent(i)->print(po);
+				} else if(!y_vectors[serie].getComponent(i)->number().isReal()) {
+					non_real++;
+					if(non_numerical + non_real == 1) str = y_vectors[serie].getComponent(i)->print(po);
 				}
 				plot_data += y_vectors[serie].getComponent(i)->print(po);
 				plot_data += "\n";	
 			}
-			if(non_numerical) {
+			if(non_numerical > 0 || non_real > 0) {
+				string stitle;
 				if(serie < pdps.size() && !pdps[serie]->title.empty()) {
-					error(true, _("\"%s\" contains non-numerical data which can not be properly plotted."), pdps[serie]->title.c_str(), NULL);
+					stitle = pdps[serie]->title.c_str();
 				} else {
-					error(true, _("Series %s contains non-numerical data which can not be properly plotted."), i2s(serie).c_str(), NULL);
+					stitle = i2s(serie).c_str();
+				}
+				if(non_numerical > 0) {
+					error(true, _("Series %s contains non-numerical data (\"%s\" first of %s) which can not be properly plotted."), stitle.c_str(), str.c_str(), i2s(non_numerical).c_str(), NULL);
+				} else {
+					error(true, _("Series %s contains non-real data (\"%s\" first of %s) which can not be properly plotted."), stitle.c_str(), str.c_str(), i2s(non_real).c_str(), NULL);
 				}
 			}
 			fputs(plot_data.c_str(), fdata);
