@@ -56,7 +56,7 @@ int main (int argc, char **argv) {
 #endif
 
 #ifdef HAVE_LIBGNOME
-	GnomeProgram *app = gnome_program_init(PACKAGE, VERSION, LIBGNOME_MODULE, argc, argv, NULL, NULL, NULL);
+	gnome_program_init(PACKAGE, VERSION, LIBGNOME_MODULE, argc, argv, NULL, NULL, NULL);
 #endif
 	gtk_init(&argc, &argv);
 	glade_init();

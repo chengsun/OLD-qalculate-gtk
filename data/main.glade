@@ -599,7 +599,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator14">
+		    <widget class="GtkMenuItem" id="separator_factorize">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>

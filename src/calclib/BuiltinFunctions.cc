@@ -1619,6 +1619,7 @@ void IntegrateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		return;
 	}
 }
+#endif
 LoadFunction::LoadFunction() : Function("Utilities", "load", 1, "Load CSV file", "", 3) {
 	setArgumentDefinition(1, new FileArgument());
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
@@ -1626,7 +1627,6 @@ LoadFunction::LoadFunction() : Function("Utilities", "load", 1, "Load CSV file",
 	setArgumentDefinition(3, new TextArgument());
 	setDefaultValue(3, ",");	
 }
-#endif
 void LoadFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[2]->text() == "tab") {
 		vargs[2]->set("\t");

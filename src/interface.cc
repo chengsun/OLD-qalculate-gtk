@@ -350,21 +350,13 @@ create_main_window (void)
 
 	glade_xml_signal_autoconnect(main_glade);
 
-#ifndef HAVE_GIAC
-	gtk_widget_destroy(glade_xml_get_widget(main_glade, "menu_item_factorize"));
-	gtk_widget_destroy(glade_xml_get_widget(main_glade, "separator_factorize"));
-#endif
-#ifndef HAVE_LIBGNOME
-	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_help"), FALSE);
-#endif
-	
 //	gtk_widget_modify_bg(resultview, GTK_STATE_NORMAL, &glade_xml_get_widget(main_glade, "history")->style->base[GTK_WIDGET_STATE(glade_xml_get_widget(main_glade, "history"))]);	
 
 	recent_menu = gtk_menu_new(); gtk_menu_item_set_submenu(GTK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_expression_recent")), recent_menu);
 
 	GtkTextIter iter;
 	GtkTextBuffer *tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history")));
-	for(int i = 0; i < initial_history.size(); i++) {
+	for(unsigned int i = 0; i < initial_history.size(); i++) {
 		gtk_text_buffer_get_end_iter(tb, &iter);
 		if(i == 0 && initial_history[i] != "-----------------------") {
 			gtk_text_buffer_insert(tb, &iter, "-----------------------\n", -1);
@@ -377,6 +369,14 @@ create_main_window (void)
 	initial_history.clear();
 
 	gtk_widget_show (glade_xml_get_widget (main_glade, "main_window"));
+
+#ifndef HAVE_GIAC
+	gtk_widget_destroy(glade_xml_get_widget(main_glade, "menu_item_factorize"));
+	gtk_widget_destroy(glade_xml_get_widget(main_glade, "separator_factorize"));
+#endif
+#ifndef HAVE_LIBGNOME
+	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_help"), FALSE);
+#endif
 
 	GtkStyle *style;
 	GdkBitmap *bitmap;

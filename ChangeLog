@@ -1,3 +1,10 @@
+2004-03-10 Niklas Knutsson  <nq@altern.org>
+	
+	* Release 0.4.2a
+	* Set correct name on separator again
+	* Fix some compiler warnings
+	* Fix compilation without Giac
+
 2004-03-08 Niklas Knutsson  <nq@altern.org>
 
 	* Release 0.4.2
