@@ -273,7 +273,7 @@ void on_popup_menu_item_octal_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_decimal_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_custom_base_activate(GtkMenuItem *w, gpointer user_data);
-void on_popup_menu_item_short_units_activate(GtkMenuItem *w, gpointer user_data);
+void on_popup_menu_item_abbreviate_names_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_all_prefixes_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_denominator_prefixes_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data);
@@ -292,7 +292,7 @@ void on_menu_item_post_conversion_none_activate(GtkMenuItem *w, gpointer user_da
 void on_menu_item_post_conversion_base_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_post_conversion_best_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_multiple_roots_activate(GtkMenuItem *w, gpointer user_data);
-void on_menu_item_short_units_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_abbreviate_names_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_always_exact_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_try_exact_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_approximate_activate(GtkMenuItem *w, gpointer user_data);

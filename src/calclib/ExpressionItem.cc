@@ -191,7 +191,7 @@ const ExpressionName &ExpressionItem::preferredInputName(bool abbreviation, bool
 	if(names.size() == 1) return names[0];
 	int index = -1;
 	for(unsigned int i = 0; i < names.size(); i++) {
-		if(names[i].abbreviation == abbreviation && names[i].unicode == use_unicode && names[i].plural == plural) return names[i];
+		if(names[i].abbreviation == abbreviation && names[i].unicode == use_unicode && names[i].plural == plural && !names[i].avoid_input) return names[i];
 		if(index < 0) {
 			index = i;
 		} else if(!use_unicode && names[i].unicode != names[index].unicode) {

@@ -212,7 +212,7 @@ static const struct PrintOptions {
 	bool lower_case_numbers;
 	NumberFractionFormat number_fraction_format;
 	bool indicate_infinite_series;
-	bool abbreviate_units;
+	bool abbreviate_names;
 	bool place_units_separately;
 	bool use_unit_prefixes;
 	bool use_prefixes_for_currencies;
@@ -234,7 +234,7 @@ static const struct PrintOptions {
 	bool *is_approximate;
 	SortOptions sort_options;
 	string comma_sign, decimalpoint_sign;
-	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), lower_case_numbers(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), abbreviate_units(true), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), allow_non_usable(false), use_unicode_signs(false), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), prefix(NULL), is_approximate(NULL) {}
+	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), lower_case_numbers(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), abbreviate_names(true), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), allow_non_usable(false), use_unicode_signs(false), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), prefix(NULL), is_approximate(NULL) {}
 	const string &comma() const;
 	const string &decimalpoint() const;
 } default_print_options;

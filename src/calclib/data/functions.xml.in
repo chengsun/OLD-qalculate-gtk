@@ -44,7 +44,10 @@
       <argument index="4">
         <_title>Index Variable</_title>
       </argument>
-      <_name index="1" abbreviation="true" unicode="true">Π</_name>
+      <abbreviation index="2">
+        <unicode>true</unicode>
+        <_name>Π</_name>
+      </abbreviation>
     </builtin_function>
     <builtin_function name="sum">
       <_title>Sum</_title>
@@ -61,7 +64,10 @@
       <argument index="4">
         <_title>Index Variable</_title>
       </argument>
-      <_name index="1" abbreviation="true" unicode="true">Σ</_name>
+      <abbreviation index="2">
+        <unicode>true</unicode>
+        <_name>Σ</_name>
+      </abbreviation>
     </builtin_function>
     <builtin_function name="solve">
       <_title>Solve equation</_title>
@@ -1024,7 +1030,10 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       <argument index="1">
         <_title>Value</_title>
       </argument>
-      <_name index="1" abbreviation="true" unicode="true">√</_name>
+      <abbreviation index="2">
+        <unicode>true</unicode>
+        <_name>√</_name>
+      </abbreviation>
     </builtin_function>
     <function name="cbrt">
       <_title>Cube Root</_title>

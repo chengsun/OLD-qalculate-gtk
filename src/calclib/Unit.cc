@@ -15,9 +15,20 @@
 #include "MathStructure.h"
 #include "Prefix.h"
 
-Unit::Unit(string cat_, string name_, string plural_, string singular_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active) {
+Unit::Unit(string cat_, string name_, string plural_, string singular_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, "", title_, "", is_local, is_builtin, is_active) {
 	remove_blank_ends(plural_);
 	remove_blank_ends(singular_);
+	if(!name_.empty()) {
+		names.resize(1);
+		names[0].name = name_;
+		names[0].unicode = false;
+		names[0].abbreviation = true;
+		names[0].case_sensitive = true;
+		names[0].suffix = false;
+		names[0].avoid_input = false;
+		names[0].reference = true;
+		names[0].plural = false;
+	}
 	if(!singular_.empty()) {
 		names.resize(names.size() + 1);
 		names[names.size() - 1].name = name_;

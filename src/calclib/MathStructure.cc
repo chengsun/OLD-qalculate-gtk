@@ -3385,7 +3385,7 @@ void MathStructure::format(const PrintOptions &po) {
 	setPrefixes(po);
 	formatsub(po);
 	postFormatUnits(po);
-	if(po.sort_options.prefix_currencies && po.abbreviate_units) {
+	if(po.sort_options.prefix_currencies && po.abbreviate_names) {
 		prefixCurrencies();
 	}
 }
@@ -3672,11 +3672,11 @@ int namelen(const MathStructure &mstruct, const PrintOptions &po, const Internal
 	const string *str;
 	switch(mstruct.type()) {
 		case STRUCT_FUNCTION: {
-			str = &mstruct.function()->preferredDisplayName(po.abbreviate_units, po.use_unicode_signs).name;
+			str = &mstruct.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs).name;
 			break;
 		}
 		case STRUCT_VARIABLE:  {
-			str = &mstruct.variable()->preferredDisplayName(po.abbreviate_units, po.use_unicode_signs).name;
+			str = &mstruct.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs).name;
 			break;
 		}
 		case STRUCT_SYMBOLIC:  {
@@ -3684,7 +3684,7 @@ int namelen(const MathStructure &mstruct, const PrintOptions &po, const Internal
 			break;
 		}
 		case STRUCT_UNIT:  {
-			str = &mstruct.unit()->preferredDisplayName(po.abbreviate_units, po.use_unicode_signs, mstruct.isPlural()).name;
+			str = &mstruct.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct.isPlural()).name;
 			break;
 		}
 		default: {return 0;}
@@ -4164,18 +4164,18 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			break;
 		}
 		case STRUCT_UNIT: {
-			const ExpressionName *ename = &o_unit->preferredDisplayName(po.abbreviate_units, po.use_unicode_signs, b_plural);
-			if(o_prefix) print_str += o_prefix->name(po.abbreviate_units && ename->abbreviation, po.use_unicode_signs);
+			const ExpressionName *ename = &o_unit->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, b_plural);
+			if(o_prefix) print_str += o_prefix->name(po.abbreviate_names && ename->abbreviation, po.use_unicode_signs);
 			print_str += ename->name;
 			break;
 		}
 		case STRUCT_VARIABLE: {
-			print_str = o_variable->preferredDisplayName(po.abbreviate_units, po.use_unicode_signs).name;
+			print_str = o_variable->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs).name;
 			break;
 		}
 		case STRUCT_FUNCTION: {
 			ips_n.depth++;
-			print_str += o_function->preferredDisplayName(po.abbreviate_units, po.use_unicode_signs).name;
+			print_str += o_function->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs).name;
 			print_str += "(";
 			for(unsigned int i = 0; i < SIZE; i++) {
 				if(i > 0) {
@@ -5297,6 +5297,66 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 				isolate_x(eo, x_var);
 				childrenUpdated();
 				return true;
+			}
+			if(CHILD(0).size() == 2) {
+				bool sqpow = false;
+				bool nopow = false;
+				MathStructure mstruct_a, mstruct_b;
+				for(unsigned int i = 0; i < CHILD(0).size(); i++) {
+					if(!sqpow && CHILD(0)[i].isPower() && CHILD(0)[i][0] == x_var && CHILD(0)[i][1].isNumber() && CHILD(0)[i][1].number() == 2) {
+						sqpow = true;
+						mstruct_a.set(1, 1);
+					} else if(!nopow && CHILD(0)[i] == x_var) {
+						nopow = true;
+						mstruct_b.set(1, 1);
+					} else if(CHILD(0)[i].isMultiplication()) {
+						for(unsigned int i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
+							if(CHILD(0)[i][i2] == x_var) {
+								if(nopow) break;
+								nopow = true;
+								mstruct_b = CHILD(0)[i];
+								mstruct_b.delChild(i2 + 1);
+							} else if(CHILD(0)[i][i2].isPower() && CHILD(0)[i][i2][0] == x_var && CHILD(0)[i][i2][1].isNumber() && CHILD(0)[i][i2][1].number() == 2) {
+								if(sqpow) break;
+								sqpow = true;
+								mstruct_a = CHILD(0)[i];
+								mstruct_a.delChild(i2 + 1);
+							} else if(CHILD(0)[i][i2].contains(x_var)) {
+								sqpow = false;
+								nopow = false;
+								break;
+							}
+						}
+					}
+				}	
+				if(sqpow && nopow) {
+					MathStructure b2(mstruct_b);
+					b2 ^= 2;
+					MathStructure ac(4, 1);
+					ac *= mstruct_a;
+					ac *= CHILD(1);
+					b2 += ac;
+					b2 ^= MathStructure(1, 2);
+					mstruct_b.negate();
+					MathStructure mstruct_1(mstruct_b);
+					mstruct_1 += b2;
+					MathStructure mstruct_2(mstruct_b);
+					mstruct_2 -= b2;
+					mstruct_a *= 2;
+					mstruct_1 /= mstruct_a;
+					mstruct_2 /= mstruct_a;
+					mstruct_1.eval(eo2);
+					mstruct_2.eval(eo2);
+					CHILD(0) = x_var;
+					if(mstruct_1 != mstruct_2) {
+						CHILD(1).clearVector();
+						CHILD(1).addItem(mstruct_1);
+						CHILD(1).addItem(mstruct_2);
+					} else {
+						CHILD(1) = mstruct_1;
+					}
+					return true;
+				}
 			}
 			break;
 		}

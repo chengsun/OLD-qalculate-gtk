@@ -6,28 +6,63 @@
       <_singular>euro</_singular>
       <_plural>euros</_plural>
       <_title>European Euros</_title>
-      <_name index="1" abbreviation="true" unicode="true">€</_name>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>EUR</_name>
+      </abbreviation>
+      <abbreviation index="2">
+        <unicode>true</unicode>
+        <_name>€</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="USD">
       <_title>U.S. Dollars</_title>
-      <_name index="1" abbreviation="true">$</_name>
-      <_name index="2">dollar</_name>
-      <_name index="3" plural="true">dollars</_name>
+      <abbreviation index="1">
+        <_name>$</_name>
+      </abbreviation>
+      <abbreviation index="2">
+        <reference>true</reference>
+        <_name>USD</_name>
+      </abbreviation>
+      <name index="3">
+        <_name>dollar</_name>
+      </name>
+      <plural index="4">
+        <_name>dollars</_name>
+      </plural>
     </builtin_unit>
     <builtin_unit name="JPY">
       <_singular>yen</_singular>
       <_title>Japanese Yen</_title>
-      <_name index="1" abbreviation="true" unicode="true">¥</_name>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>JPY</_name>
+      </abbreviation>
+      <abbreviation index="2">
+        <unicode>true</unicode>
+        <_name>¥</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="DKK">
       <_title>Danish Kroner</_title>
     </builtin_unit>
     <builtin_unit name="GBP">
       <_title>British Pounds</_title>
-      <_name index="1" abbreviation="true" unicode="true">£</_name>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>GBP</_name>
+      </abbreviation>
+      <abbreviation index="2">
+        <unicode>true</unicode>
+        <_name>£</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="SEK">
       <_title>Swedish Krona</_title>
+      <abbreviation index="1">
+      	<reference>true</reference>
+      	<_name>SEK</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="CHF">
       <_title>Swiss Francs</_title>
@@ -124,10 +159,16 @@
         <exponent>1</exponent>
       </base>
       <_title>Cent (USD)</_title>
-      <_name index="1" abbreviation="true" unicode="true">¢</_name>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>cent</_name>
+      </abbreviation>
+      <abbreviation index="2">
+        <unicode>true</unicode>
+        <_name>¢</_name>
+      </abbreviation>
     </unit>
     <unit type="alias" name="BEF">
-      <_singular>BEF</_singular>
       <base>
         <unit>EUR</unit>
         <relation>1/40.3399</relation>
@@ -136,7 +177,6 @@
       <_title>Belgian franc</_title>
     </unit>
     <unit type="alias" name="GRD">
-      <_singular>GRD</_singular>
       <base>
         <unit>EUR</unit>
         <relation>1/340.750</relation>
@@ -463,16 +503,27 @@
         </base>
         <_title>Radian</_title>
       </unit>
-      <unit type="alias" name="deg">
-        <_singular>degree</_singular>
-        <_plural>degrees</_plural>
+      <unit type="alias">
         <base>
           <unit>rad</unit>
           <relation>pi/180</relation>
           <exponent>1</exponent>
         </base>
         <_title>Degree</_title>
-	<_name index="1" abbreviation="true" unicode="true">°</_name>
+	<abbreviation index="1">
+          <reference>true</reference>
+          <_name>deg</_name>
+        </abbreviation>
+        <abbreviation index="2">
+	  <unicode>true</unicode>
+          <_name>°</_name>
+        </abbreviation>
+	<name index="3">
+          <_name>degree</_name>
+        </name>
+	<plural index="4">
+          <_name>degrees</_name>
+        </plural>
       </unit>
       <unit type="alias" name="gra">
         <_singular>gradian</_singular>
@@ -989,17 +1040,25 @@
         </part>
         <_title>Volt per Ampere</_title>
       </unit>
-      <unit type="alias" name="ohm">
+      <unit type="alias">
         <system>si</system>
-        <_singular>ohm</_singular>
-        <_plural>ohms</_plural>
         <base>
           <unit>V_p_A</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
         <_title>Ohm</_title>
-	<_name index="1" abbreviation="true" unicode="true">Ω</_name>
+	<abbreviation index="1">
+	  <unicode>true</unicode>
+          <_name>Ω</_name>
+        </abbreviation>
+	<name index="2">
+	  <reference>true</reference>
+          <_name>ohm</_name>
+        </name>
+	<plural index="3">
+          <_name>ohms</_name>
+        </plural>
       </unit>
     </category>
     <category>
@@ -1116,10 +1175,8 @@
       <_plural>kelvins</_plural>
       <_title>Kelvin</_title>
     </unit>
-    <unit type="alias" name="oC">
+    <unit type="alias">
       <system>si</system>
-      <_singular>celcius</_singular>
-      <_plural>celcius</_plural>
       <base>
         <unit>K</unit>
         <relation>\x + 273.15</relation>
@@ -1127,10 +1184,20 @@
         <exponent>1</exponent>
       </base>
       <_title>Degree Celcius</_title>
-      <_name index="1" abbreviation="true" unicode="true">°C</_name>
+      <abbreviation index="1">
+      	<reference>true</reference>
+        <_name>oC</_name>
+      </abbreviation>
+      <abbreviation index="2">
+        <unicode>true</unicode>
+        <_name>°C</_name>
+      </abbreviation>
+      <name index="3">
+        <reference>true</reference>
+        <_name>celcius</_name>
+      </name>
     </unit>
-    <unit type="alias" name="oR">
-      <_singular>rankine</_singular>
+    <unit type="alias">
       <base>
         <unit>K</unit>
         <relation>5\x/9</relation>
@@ -1138,10 +1205,20 @@
         <exponent>1</exponent>
       </base>
       <_title>Degrees Rankine</_title>
-      <_name index="1" abbreviation="true" unicode="true">°R</_name>
+      <abbreviation index="1">
+      	<reference>true</reference>
+        <_name>oR</_name>
+      </abbreviation>
+      <abbreviation index="2">
+        <unicode>true</unicode>
+        <_name>°R</_name>
+      </abbreviation>
+      <name index="3">
+        <reference>true</reference>
+        <_name>rankine</_name>
+      </name>
     </unit>
-    <unit type="alias" name="oF">
-      <_singular>fahrenheit</_singular>
+    <unit type="alias">
       <base>
         <unit>K</unit>
         <relation>(2298.35+5\x)/9</relation>
@@ -1149,7 +1226,18 @@
         <exponent>1</exponent>
       </base>
       <_title>Degrees Fahrenheit</_title>
-      <_name index="1" abbreviation="true" unicode="true">°F</_name>
+      <abbreviation index="1">
+      	<reference>true</reference>
+        <_name>oF</_name>
+      </abbreviation>
+      <abbreviation index="2">
+        <unicode>true</unicode>
+        <_name>°F</_name>
+      </abbreviation>
+      <name index="3">
+        <reference>true</reference>
+        <_name>fahrenheit</_name>
+      </name>
     </unit>
   </category>
   <category>

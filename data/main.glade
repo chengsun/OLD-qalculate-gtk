@@ -40,7 +40,7 @@
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1175">
+			<widget class="GtkImage" id="image1207">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-new</property>
 			  <property name="icon_size">1</property>
@@ -120,7 +120,7 @@
 		      <signal name="activate" handler="on_menu_item_import_csv_file_activate" last_modification_time="Wed, 10 Mar 2004 15:40:44 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1176">
+			<widget class="GtkImage" id="image1208">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -141,7 +141,7 @@
 		      <signal name="activate" handler="on_menu_item_export_csv_file_activate" last_modification_time="Wed, 14 Jul 2004 17:15:07 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1177">
+			<widget class="GtkImage" id="image1209">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -163,7 +163,7 @@
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1178">
+			<widget class="GtkImage" id="image1210">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -191,7 +191,7 @@
 		      <signal name="activate" handler="on_menu_item_save_defs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1179">
+			<widget class="GtkImage" id="image1211">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -213,7 +213,7 @@
 		      <signal name="activate" handler="on_menu_item_fetch_exchange_rates_activate" last_modification_time="Mon, 06 Oct 2003 21:06:00 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1180">
+			<widget class="GtkImage" id="image1212">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-refresh</property>
 			  <property name="icon_size">1</property>
@@ -250,7 +250,7 @@
 		      <accelerator key="B" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1181">
+			<widget class="GtkImage" id="image1213">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -278,7 +278,7 @@
 		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1182">
+			<widget class="GtkImage" id="image1214">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -356,7 +356,7 @@
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1183">
+			<widget class="GtkImage" id="image1215">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -386,7 +386,7 @@
 		      <accelerator key="T" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1184">
+			<widget class="GtkImage" id="image1216">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -407,7 +407,7 @@
 		      <signal name="activate" handler="on_menu_item_convert_to_base_units_activate" last_modification_time="Sun, 21 Mar 2004 08:14:57 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1185">
+			<widget class="GtkImage" id="image1217">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -428,7 +428,7 @@
 		      <signal name="activate" handler="on_menu_item_convert_to_best_unit_activate" last_modification_time="Sun, 21 Mar 2004 08:14:57 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1186">
+			<widget class="GtkImage" id="image1218">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -456,7 +456,7 @@
 		      <accelerator key="C" modifiers="GDK_CONTROL_MASK | GDK_MOD1_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1187">
+			<widget class="GtkImage" id="image1219">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-copy</property>
 			  <property name="icon_size">1</property>
@@ -483,7 +483,7 @@
 		      <signal name="activate" handler="on_menu_item_edit_prefs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1188">
+			<widget class="GtkImage" id="image1220">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -778,17 +778,6 @@
 			<widget class="GtkMenu" id="item13_menu">
 
 			  <child>
-			    <widget class="GtkCheckMenuItem" id="menu_item_short_units">
-			      <property name="visible">True</property>
-			      <property name="tooltip" translatable="yes">Display abbreviations of unit names</property>
-			      <property name="label" translatable="yes">Use Abbreviations</property>
-			      <property name="use_underline">True</property>
-			      <property name="active">True</property>
-			      <signal name="activate" handler="on_menu_item_short_units_activate" last_modification_time="Thu, 04 Mar 2004 14:31:32 GMT"/>
-			    </widget>
-			  </child>
-
-			  <child>
 			    <widget class="GtkCheckMenuItem" id="menu_item_display_prefixes">
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Enable Prefixes</property>
@@ -830,13 +819,13 @@
 			      <signal name="activate" handler="on_menu_item_place_units_separately_activate" last_modification_time="Fri, 18 Jun 2004 14:58:33 GMT"/>
 			    </widget>
 			  </child>
-			  
+
 			  <child>
 			    <widget class="GtkMenuItem" id="separatorS1">
 			      <property name="visible">True</property>
 			    </widget>
 			  </child>
-			  
+
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="menu_item_post_conversion_none">
 			      <property name="visible">True</property>
@@ -846,7 +835,7 @@
 			      <signal name="activate" handler="on_menu_item_post_conversion_none_activate" last_modification_time="Sat, 31 Jul 2004 22:20:27 GMT"/>
 			    </widget>
 			  </child>
-			  
+
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="menu_item_post_conversion_base">
 			      <property name="visible">True</property>
@@ -857,7 +846,7 @@
 			      <signal name="activate" handler="on_menu_item_post_conversion_base_activate" last_modification_time="Sat, 31 Jul 2004 22:20:27 GMT"/>
 			    </widget>
 			  </child>
-			  
+
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="menu_item_post_conversion_best">
 			      <property name="visible">True</property>
@@ -868,7 +857,6 @@
 			      <signal name="activate" handler="on_menu_item_post_conversion_best_activate" last_modification_time="Sat, 31 Jul 2004 22:20:27 GMT"/>
 			    </widget>
 			  </child>
-			  
 			</widget>
 		      </child>
 		    </widget>
@@ -917,6 +905,16 @@
 			  </child>
 			</widget>
 		      </child>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkCheckMenuItem" id="menu_item_abbreviate_names">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Abbreviate Names</property>
+		      <property name="use_underline">True</property>
+		      <property name="active">False</property>
+		      <signal name="activate" handler="on_menu_item_abbreviate_names_activate" last_modification_time="Wed, 04 Aug 2004 13:25:20 GMT"/>
 		    </widget>
 		  </child>
 
@@ -1279,7 +1277,7 @@
 		      <signal name="activate" handler="on_menu_item_save_mode_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1189">
+			<widget class="GtkImage" id="image1221">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -1338,7 +1336,7 @@
 		      <accelerator key="F1" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1190">
+			<widget class="GtkImage" id="image1222">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
@@ -1359,7 +1357,7 @@
 		      <signal name="activate" handler="on_menu_item_about_activate" last_modification_time="Thu, 14 Aug 2003 22:31:50 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1191">
+			<widget class="GtkImage" id="image1223">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-dialog-info</property>
 			  <property name="icon_size">1</property>
@@ -2610,7 +2608,7 @@
       <signal name="activate" handler="on_menu_item_copy_activate" last_modification_time="Sat, 20 Mar 2004 09:40:15 GMT"/>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image1027">
+	<widget class="GtkImage" id="image1236">
 	  <property name="visible">True</property>
 	  <property name="stock">gtk-copy</property>
 	  <property name="icon_size">1</property>
@@ -2631,7 +2629,7 @@
       <signal name="activate" handler="on_menu_item_save_activate" last_modification_time="Sun, 21 Mar 2004 20:46:44 GMT"/>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image1028">
+	<widget class="GtkImage" id="image1237">
 	  <property name="visible">True</property>
 	  <property name="stock">gtk-save</property>
 	  <property name="icon_size">1</property>
@@ -2849,6 +2847,22 @@
       <signal name="activate" handler="on_popup_menu_item_fraction_fraction_activate" last_modification_time="Thu, 11 Mar 2004 08:34:34 GMT"/>
     </widget>
   </child>
+  
+  <child>
+    <widget class="GtkMenuItem" id="separator33">
+      <property name="visible">True</property>
+    </widget>
+  </child>
+  
+  <child>
+    <widget class="GtkCheckMenuItem" id="popup_menu_item_abbreviate_names">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">_Abbreviate Names</property>
+      <property name="use_underline">True</property>
+      <property name="active">False</property>
+      <signal name="activate" handler="on_popup_menu_item_abbreviate_names_activate" last_modification_time="Wed, 04 Aug 2004 13:26:53 GMT"/>
+    </widget>
+  </child>
 
   <child>
     <widget class="GtkMenuItem" id="separator_popup_units">
@@ -2864,7 +2878,7 @@
       <signal name="activate" handler="on_menu_item_convert_to_unit_expression_activate" last_modification_time="Sat, 20 Mar 2004 09:40:15 GMT"/>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image1029">
+	<widget class="GtkImage" id="image1238">
 	  <property name="visible">True</property>
 	  <property name="stock">gtk-convert</property>
 	  <property name="icon_size">1</property>
@@ -2885,7 +2899,7 @@
       <signal name="activate" handler="on_menu_item_convert_to_base_units_activate" last_modification_time="Sun, 21 Mar 2004 20:29:28 GMT"/>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image1030">
+	<widget class="GtkImage" id="image1239">
 	  <property name="visible">True</property>
 	  <property name="stock">gtk-convert</property>
 	  <property name="icon_size">1</property>
@@ -2906,7 +2920,7 @@
       <signal name="activate" handler="on_menu_item_convert_to_best_unit_activate" last_modification_time="Sun, 21 Mar 2004 20:29:28 GMT"/>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image1031">
+	<widget class="GtkImage" id="image1240">
 	  <property name="visible">True</property>
 	  <property name="stock">gtk-convert</property>
 	  <property name="icon_size">1</property>
@@ -2922,16 +2936,6 @@
   <child>
     <widget class="GtkMenuItem" id="separator_popup_unit_settings">
       <property name="visible">True</property>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkCheckMenuItem" id="popup_menu_item_short_units">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Use _Abbreviations</property>
-      <property name="use_underline">True</property>
-      <property name="active">False</property>
-      <signal name="activate" handler="on_popup_menu_item_short_units_activate" last_modification_time="Sun, 21 Mar 2004 21:37:18 GMT"/>
     </widget>
   </child>
 

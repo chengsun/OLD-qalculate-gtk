@@ -1,6 +1,7 @@
 2004-08-04 Niklas Knutsson  <nq@altern.org>
-	
+
 	* New system for variable, unit and function names
+	* Solve quadratic equations
 
 2004-07-31 Niklas Knutsson  <nq@altern.org>
 

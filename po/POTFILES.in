@@ -1,4 +1,5 @@
 # List of source files containing translatable strings.
+[encoding: UTF-8]
 data/qalculate.desktop.in
 data/about.glade
 data/argumentrules.glade
