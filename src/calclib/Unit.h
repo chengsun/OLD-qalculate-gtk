@@ -28,12 +28,12 @@ class Unit {
   public:
 	Unit(Calculator *calc_, string cat_, string name_, string plural_ = "", string short_name_ = "", string title_ = "", bool is_user_unit = true);
 	virtual ~Unit(void);
-	void title(string title_);
+	void setTitle(string title_);
 	string title(void);
-	void category(string cat_);
-	void name(string name_, bool force = true);
-	void plural(string name_, bool force = true);
-	void shortName(string name_, bool force = true);
+	void setCategory(string cat_);
+	void setName(string name_, bool force = true);
+	void setPlural(string name_, bool force = true);
+	void setShortName(string name_, bool force = true);
 	string category(void);
 	virtual string name(void);
 	virtual string plural(void);
@@ -78,17 +78,17 @@ class AliasUnit : public Unit {
 	virtual string firstShortBaseExpName(void);
 	virtual Unit* baseUnit(void);
 	virtual Unit* firstBaseUnit(void);
-	virtual void baseUnit(Unit *alias);
+	virtual void setBaseUnit(Unit *alias);
 	virtual string expression(void);
 	virtual string reverseExpression(void);
-	virtual void expression(string relation);
-	virtual void reverseExpression(string reverse);
+	virtual void setExpression(string relation);
+	virtual void setReverseExpression(string reverse);
 	virtual Manager *baseValue(Manager *value_ = NULL, Manager *exp_ = NULL);
 	virtual Manager *convertToBase(Manager *value_ = NULL, Manager *exp_ = NULL);
 	virtual Manager *firstBaseValue(Manager *value_ = NULL, Manager *exp_ = NULL);
 	virtual Manager *convertToFirstBase(Manager *value_ = NULL, Manager *exp_ = NULL);
 	virtual long double baseExp(long double exp_ = 1.0L);
-	virtual void exp(long double exp_);
+	virtual void setExponent(long double exp_);
 	virtual long double firstBaseExp(void);
 	virtual char type() const;
 	virtual bool isChildOf(Unit *u);
@@ -134,7 +134,7 @@ class CompositeUnit : public Unit {
 		virtual bool containsRelativeTo(Unit *u);
 		virtual Manager *generateManager(bool cleaned = true);		
 		virtual string internalName();
-		virtual void baseExpression(string base_expression_);		
+		virtual void setBaseExpression(string base_expression_);		
 };
 
 #endif

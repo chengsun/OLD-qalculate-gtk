@@ -23,6 +23,8 @@
 #include "interface.h"
 #include "main.h"
 
+bool changing_in_nbases_dialog;
+
 extern GladeXML *glade_xml;
 
 extern GtkWidget *expression;
@@ -74,6 +76,17 @@ struct tree_struct {
 };
 list<tree_struct> unit_cats, variable_cats, function_cats;
 vector<void*> uc_units, uc_variables, uc_functions;	
+
+void wrap_expression_selection() {
+	gint start = 0, end = 0;
+	if(gtk_editable_get_selection_bounds(GTK_EDITABLE(expression), &start, &end)) {			
+		gtk_editable_select_region(GTK_EDITABLE(expression), end, end);
+		gtk_editable_insert_text(GTK_EDITABLE(expression), LEFT_BRACKET_STR, 1, &start);
+		end++;
+		gtk_editable_insert_text(GTK_EDITABLE(expression), RIGHT_BRACKET_STR, 1, &end);				
+		gtk_editable_set_position(GTK_EDITABLE(expression), end);				
+	}
+}
 
 gulong get_signal_handler(GtkWidget *w) {
 	return g_signal_handler_find((gpointer) w, G_SIGNAL_MATCH_UNBLOCKED, 0, 0, NULL, NULL, NULL);
@@ -247,7 +260,7 @@ void generate_units_tree_struct() {
 				u = (Unit*) uc_units[i3];
 				if(calc->units[i]->title() < u->title()) {
 					b = true;
-					it->objects.insert(it->objects.begin() + i3, (void*) calc->units[i]);
+					uc_units.insert(uc_units.begin() + i3, (void*) calc->units[i]);
 					break;
 				}
 			}
@@ -340,7 +353,7 @@ void generate_variables_tree_struct() {
 				v = (Variable*) uc_variables[i3];
 				if(calc->variables[i]->title() < v->title()) {
 					b = true;
-					it->objects.insert(it->objects.begin() + i3, (void*) calc->variables[i]);
+					uc_variables.insert(uc_variables.begin() + i3, (void*) calc->variables[i]);
 					break;
 				}
 			}
@@ -433,7 +446,7 @@ void generate_functions_tree_struct() {
 				f = (Function*) uc_functions[i3];
 				if(calc->functions[i]->title() < f->title()) {
 					b = true;
-					it->objects.insert(it->objects.begin() + i3, (void*) calc->functions[i]);
+					uc_functions.insert(uc_functions.begin() + i3, (void*) calc->functions[i]);
 					break;
 				}
 			}
@@ -554,9 +567,9 @@ void update_functions_tree(GtkWidget *fwin) {
 	}
 	if(!uc_functions.empty()) {
 		//add "Uncategorized" category if there are functions without category
-		gtk_tree_store_append(tFunctionCategories_store, &iter, NULL);
+		gtk_tree_store_append(tFunctionCategories_store, &iter, &iter3);
 		EXPAND_TO_ITER(model, tFunctionCategories, iter)
-		gtk_tree_store_set(tFunctionCategories_store, &iter, 0, _("Uncategorized"), -1);
+		gtk_tree_store_set(tFunctionCategories_store, &iter, 0, _("Uncategorized"), 1, _("Uncategorized"), -1);
 		if(selected_function_category == _("Uncategorized")) {
 			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctionCategories)), &iter);
 		}
@@ -721,9 +734,9 @@ void update_variables_tree(GtkWidget *fwin) {
 	
 	if(!uc_variables.empty()) {
 		//add "Uncategorized" category if there are variables without category
-		gtk_tree_store_append(tVariableCategories_store, &iter, NULL);
+		gtk_tree_store_append(tVariableCategories_store, &iter, &iter3);
 		EXPAND_TO_ITER(model, tVariableCategories, iter)
-		gtk_tree_store_set(tVariableCategories_store, &iter, 0, _("Uncategorized"), -1);
+		gtk_tree_store_set(tVariableCategories_store, &iter, 0, _("Uncategorized"), 1, _("Uncategorized"), -1);
 		if(selected_variable_category == _("Uncategorized")) {
 			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tVariableCategories)), &iter);
 		}
@@ -888,7 +901,7 @@ void update_units_tree(GtkWidget *fwin) {
 	if(!uc_units.empty()) {
 		//add "Uncategorized" category if there are units without category
 		gtk_tree_store_append(tUnitCategories_store, &iter, &iter3);
-		gtk_tree_store_set(tUnitCategories_store, &iter, 0, _("Uncategorized"), -1);
+		gtk_tree_store_set(tUnitCategories_store, &iter, 0, _("Uncategorized"), 1, _("Uncategorized"), -1);
 		if(selected_unit_category == _("Uncategorized")) {
 			EXPAND_TO_ITER(model, tUnitCategories, iter)
 			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnitCategories)), &iter);
@@ -1820,10 +1833,10 @@ run_unit_edit_dialog:
 						show_message(_("Base unit does not exist."), dialog);
 						goto run_unit_edit_dialog;
 					}
-					au->baseUnit(bu);
-					au->expression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_relation"))));
-					au->reverseExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_reversed"))));
-					au->exp(gtk_spin_button_get_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_spinbutton_exp"))));
+					au->setBaseUnit(bu);
+					au->setExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_relation"))));
+					au->setReverseExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_reversed"))));
+					au->setExponent(gtk_spin_button_get_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_spinbutton_exp"))));
 					break;
 				}
 				case 'D': {
@@ -1832,8 +1845,8 @@ run_unit_edit_dialog:
 						u = NULL;
 						break;
 					}
-					u->name(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_internal"))));
-					((CompositeUnit*) u)->baseExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"))));					
+					u->setName(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_internal"))));
+					((CompositeUnit*) u)->setBaseExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"))));					
 					break;
 				}
 				case 'U': {
@@ -1846,12 +1859,12 @@ run_unit_edit_dialog:
 				}
 			}
 			if(u && u->type() != 'D') {
-				u->name(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular"))));
-				u->plural(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural"))));
-				u->shortName(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short"))));
+				u->setName(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular"))));
+				u->setPlural(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural"))));
+				u->setShortName(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short"))));
 			}
-			u->title(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc"))));
-			u->category(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category"))));			
+			u->setTitle(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc"))));
+			u->setCategory(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category"))));			
 			u->setUserUnit(true);
 		}
 		if(!u) {
@@ -1973,12 +1986,12 @@ run_function_edit_dialog:
 		if(f) {
 			//edited an existing function
 			if(!f->isBuiltinFunction())
-				f->name(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_name"))));
-			f->category(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_category"))));
-			f->title(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_desc"))));
-			f->description(gtk_text_buffer_get_text(buffer, &iter_s, &iter_e, FALSE));
+				f->setName(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_name"))));
+			f->setCategory(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_category"))));
+			f->setTitle(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_desc"))));
+			f->setDescription(gtk_text_buffer_get_text(buffer, &iter_s, &iter_e, FALSE));
 			if(!f->isBuiltinFunction())
-				((UserFunction*) f)->equation(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_expression"))));
+				((UserFunction*) f)->setEquation(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_expression"))));
 			str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_arguments")));
 			string str2;
 			unsigned int i = 0, i2 = 0;
@@ -2208,10 +2221,10 @@ run_variable_edit_dialog:
 					v->set(mngr_);
 					mngr_->unref();
 				}
-				v->name(str);
+				v->setName(str);
 			}
-			v->category(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_category"))));
-			v->title(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_desc"))));
+			v->setCategory(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_category"))));
+			v->setTitle(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_desc"))));
 			v->setUserVariable(true);
 		} else {
 			//new variable
@@ -2799,6 +2812,15 @@ void on_units_entry_to_val_activate(GtkEntry *entry, gpointer user_data) {
 	convert_in_wUnits(1);
 }
 
+gboolean on_units_entry_from_val_focus_out_event(GtkEntry *entry, GdkEventFocus *event, gpointer user_data) {
+	convert_in_wUnits(0);
+	return FALSE;
+}
+gboolean on_units_entry_to_val_focus_out_event(GtkEntry *entry, GdkEventFocus *event, gpointer user_data) {
+	convert_in_wUnits(1);
+	return FALSE;
+}
+
 /*
 	do not actually destroy the unit manager, only hide it so we need not recreate it later
 */
@@ -3037,27 +3059,34 @@ void on_button_brace_close_clicked(GtkButton *w, gpointer user_data) {
 	insert_text(RIGHT_BRACKET_STR);
 }
 void on_button_times_clicked(GtkButton *w, gpointer user_data) {
+	wrap_expression_selection();
 	insert_text(MULTIPLICATION_STR);
 }
 void on_button_add_clicked(GtkButton *w, gpointer user_data) {
+	wrap_expression_selection();
 	insert_text(PLUS_STR);
 }
 void on_button_sub_clicked(GtkButton *w, gpointer user_data) {
+	wrap_expression_selection();
 	insert_text(MINUS_STR);
 }
 void on_button_divide_clicked(GtkButton *w, gpointer user_data) {
+	wrap_expression_selection();
 	insert_text(DIVISION_STR);
 }
 void on_button_ans_clicked(GtkButton *w, gpointer user_data) {
 	insert_text("Ans");
 }
 void on_button_exp_clicked(GtkButton *w, gpointer user_data) {
+	wrap_expression_selection();
 	insert_text(EXP_STR);
 }
 void on_button_xy_clicked(GtkButton *w, gpointer user_data) {
+	wrap_expression_selection();
 	insert_text(POWER_STR);
 }
 void on_button_square_clicked(GtkButton *w, gpointer user_data) {
+	wrap_expression_selection();
 	insert_text(POWER_STR);
 	insert_text("2");
 }
@@ -3152,6 +3181,7 @@ void on_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer user_data) {
 	gtk_widget_grab_focus(expression);
 }
 void on_menu_item_convert_number_bases_activate(GtkMenuItem *w, gpointer user_data) {
+	changing_in_nbases_dialog = false;
 	create_nbases_dialog();
 }
 void on_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data) {
@@ -3585,48 +3615,60 @@ void on_nbases_button_close_clicked(GtkButton *button, gpointer user_data) {
 	gtk_widget_hide(glade_xml_get_widget (glade_xml, "nbases_dialog"));
 }
 void on_nbases_entry_decimal_changed(GtkEditable *editable, gpointer user_data) {	
+	if(changing_in_nbases_dialog) return;
 	Manager *value;
 	Function *func = calc->getFunction("round");	
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
 	if(str.empty()) return;
+	changing_in_nbases_dialog = true;	
 	if(func) value = func->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
 	else value = calc->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
 	update_nbases_entries(value, NUMBER_FORMAT_NORMAL);
 	value->unref();
+	changing_in_nbases_dialog = false;	
 }
 void on_nbases_entry_binary_changed(GtkEditable *editable, gpointer user_data) {
+	if(changing_in_nbases_dialog) return;
 	Manager *value;
 	Function *func = calc->getFunction("BIN");	
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
 	if(str.empty()) return;
+	changing_in_nbases_dialog = true;	
 	if(func) value = func->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
 	else value = calc->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
 	update_nbases_entries(value, NUMBER_FORMAT_BIN);
 	value->unref();
+	changing_in_nbases_dialog = false;	
 }
 void on_nbases_entry_octal_changed(GtkEditable *editable, gpointer user_data) {
+	if(changing_in_nbases_dialog) return;
 	Manager *value;
 	Function *func = calc->getFunction("OCT");	
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
 	if(str.empty()) return;	
+	changing_in_nbases_dialog = true;	
 	if(func) value = func->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
 	else value = calc->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
 	update_nbases_entries(value, NUMBER_FORMAT_OCTAL);
 	value->unref();
+	changing_in_nbases_dialog = false;	
 }
 void on_nbases_entry_hexadecimal_changed(GtkEditable *editable, gpointer user_data) {
+	if(changing_in_nbases_dialog) return;
 	Manager *value;
 	Function *func = calc->getFunction("HEX");	
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
+	changing_in_nbases_dialog = true;	
 	if(str.empty()) return;	
 	if(func) value = func->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
 	else value = calc->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
 	update_nbases_entries(value, NUMBER_FORMAT_HEX);
 	value->unref();
+	changing_in_nbases_dialog = false;	
 }
 
 void on_button_functions_clicked(GtkButton *button, gpointer user_data) {
@@ -3676,6 +3718,31 @@ void on_decimals_dialog_radiobutton_always_toggled(GtkToggleButton *w, gpointer 
 		deci_mode = DECI_FIXED;
 		setResult(gtk_label_get_text(GTK_LABEL(result)));
 	}
+}
+
+gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointer user_data) {
+	switch(event->keyval) {
+		case GDK_dead_circumflex: {
+			gint end = 0;
+			wrap_expression_selection();
+			end = gtk_editable_get_position(GTK_EDITABLE(expression));
+			gtk_editable_insert_text(GTK_EDITABLE(expression), POWER_STR, strlen(POWER_STR), &end);				
+			gtk_editable_set_position(GTK_EDITABLE(expression), end);							
+			return TRUE;
+		}
+		case GDK_KP_Divide: {}		
+		case GDK_KP_Multiply: {}				
+		case GDK_KP_Add: {}				
+		case GDK_KP_Subtract: {}				
+		case GDK_slash: {}		
+		case GDK_asterisk: {}				
+		case GDK_plus: {}				
+		case GDK_minus: {
+			wrap_expression_selection();
+			break;
+		}						
+	}
+	return FALSE;
 }
 
 }

@@ -31,6 +31,7 @@ EqNumber::EqNumber(long double value_, Calculator *parent, char operation_) : Eq
 EqNumber::EqNumber(string str, Calculator *parent, char operation_) : EqItem(operation_, parent) {
 	string ssave = str;
 	char s = PLUS_CH;
+	gsub(RIGHT_BRACKET, "", str);
 	for(int i = 0; i < (int) str.length() - 1; i++) {
 		if(str[i] == PLUS_CH || str[i] == SPACE_CH) {
 			str.erase(i, 1);
@@ -131,16 +132,20 @@ EqContainer::EqContainer(string str, Calculator *parent, char operation_) : EqIt
 	string str2, str3;
 	char s = PLUS_CH;
 goto_place1:
-	if((i = str.find(LEFT_BRACKET_CH)) != (int) string::npos && (i2 = str.find(RIGHT_BRACKET_CH)) > 0 && i2 != (int) string::npos && i2 > i) {
+	if((i = str.find(LEFT_BRACKET_CH)) != string::npos) {
+		i2 = str.find(RIGHT_BRACKET_CH);
+		if(i2 == string::npos) {
+			str.append(1, RIGHT_BRACKET_CH);
+			i2 = str.length() - 1;
+		}
 		while(1) {
-			if(i < 0 || i2 <= 0 || i2 < i)
-				break;
+			if(i == string::npos || i > i2) break;
 			i3 = str.find(LEFT_BRACKET_CH, i + 1);
 			while(i3 < i2 && i3 > -1) {
 				i2 = str.find(RIGHT_BRACKET_CH, i2 + 1);
-				if(i2 == (int) string::npos) {
-					str.erase(i, 1);
-					goto goto_place1;
+				if(i2 == string::npos) {
+					str.append(1, RIGHT_BRACKET_CH);				
+					i2 = str.length() - 1;				
 				}
 				i3 = str.find(LEFT_BRACKET_CH, i3 + 1);
 			}

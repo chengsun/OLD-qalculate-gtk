@@ -76,6 +76,7 @@ class Manager {
 		void unit(Unit *u, long double value_ = 1);		
 		bool negative();
 		void finalize();
+		void clean();
 		void syncUnits();		
 		bool testDissolveCompositeUnit(Unit *u);
 		bool testCompositeUnit(Unit *u);	

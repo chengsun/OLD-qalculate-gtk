@@ -41,7 +41,7 @@ Variable::~Variable(void) {
 string Variable::title(void) {
 	return stitle;
 }
-void Variable::title(string title_) {
+void Variable::setTitle(string title_) {
 	remove_blank_ends(title_);
 	stitle = title_;
 	b_changed = true;
@@ -55,7 +55,7 @@ void Variable::set(Manager *mngr_) {
 Manager *Variable::get(void) {
 	return mngr;
 }
-void Variable::name(string name_, bool force) {
+void Variable::setName(string name_, bool force) {
 	remove_blank_ends(name_);
 	if(name_ != sname) {
 		sname = calc->getName(name_, (void*) this, force);
@@ -66,7 +66,7 @@ void Variable::name(string name_, bool force) {
 string Variable::name(void) {
 	return sname;
 }
-void Variable::value(long double value_) {
+void Variable::setValue(long double value_) {
 	Manager *mngr_ = new Manager(calc, value_);
 	set(mngr_);
 	mngr_->unref();
@@ -75,7 +75,7 @@ void Variable::value(long double value_) {
 string Variable::category(void) {
 	return scat;
 }
-void Variable::category(string cat_) {
+void Variable::setCategory(string cat_) {
 	remove_blank_ends(cat_);
 	scat = cat_;
 }

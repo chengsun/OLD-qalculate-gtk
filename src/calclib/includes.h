@@ -139,7 +139,7 @@ extern char *NUMBERS_S_AND_MINUS_S_AND_DOT_S;*/
 #define	RIGHT_BRACKET	")"
 #define	SPACES		" \t\n"
 #define SPACE		" "
-#define RESERVED	"@?!\\{}&':<>|\""
+#define RESERVED	"@?!\\{}&:<>|\""
 #define PLUS		"+"
 #define MINUS		"-"
 #define MULTIPLICATION	"*"

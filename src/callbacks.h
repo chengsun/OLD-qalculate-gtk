@@ -94,6 +94,8 @@ void on_units_button_convert_clicked(GtkButton *button, gpointer user_data);
 void on_units_togglebutton_to_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 void on_units_entry_from_val_activate(GtkEntry *entry, gpointer user_data);
 void on_units_entry_to_val_activate(GtkEntry *entry, gpointer user_data);
+gboolean on_units_entry_from_val_focus_out_event(GtkEntry *entry, GdkEventFocus *event, gpointer user_data);
+gboolean on_units_entry_to_val_focus_out_event(GtkEntry *entry, GdkEventFocus *event, gpointer user_data);
 void on_units_button_close_clicked(GtkButton *button, gpointer user_data);
 gboolean on_units_dialog_destroy_event(GtkWidget *widget, GdkEvent *event, gpointer user_data);
 gboolean on_units_dialog_delete_event(GtkWidget *widget, GdkEvent *event, gpointer user_data);
@@ -203,6 +205,8 @@ void on_precision_dialog_spinbutton_precision_value_changed(GtkSpinButton *w, gp
 void on_decimals_dialog_spinbutton_decimals_value_changed(GtkSpinButton *w, gpointer user_data);
 void on_decimals_dialog_radiobutton_least_toggled(GtkToggleButton *w, gpointer user_data);
 void on_decimals_dialog_radiobutton_always_toggled(GtkToggleButton *w, gpointer user_data);
+
+gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointer user_data);
 
 }
 

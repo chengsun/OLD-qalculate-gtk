@@ -1368,12 +1368,29 @@ bool Manager::testCompositeUnit(Unit *u) {
 	}
 	return false; 
 }
+void Manager::clean() {
+	for(int i = 0; i < mngrs.size(); i++) {
+		mngrs[i]->clean();
+	}
+	switch(c_type) {
+		case MULTIPLICATION_MANAGER: {
+			multiclean();
+			break;
+		}
+		case POWER_MANAGER: {
+			powerclean();
+			break;
+		}
+		case ADDITION_MANAGER: {
+			plusclean();
+			break;
+		}		
+	}
+}
 void Manager::finalize() {
 	dissolveAllCompositeUnits();	
 	syncUnits();
-	plusclean();
-	powerclean();
-	multiclean();
+	clean();
 }
 void gatherInformation(Manager *mngr, vector<Unit*> &base_units, vector<AliasUnit*> &alias_units) {
 	switch(mngr->type()) {

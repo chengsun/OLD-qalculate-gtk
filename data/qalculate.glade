@@ -521,6 +521,7 @@
 	      <property name="activates_default">False</property>
 	      <signal name="activate" handler="on_expression_activate" last_modification_time="Sun, 10 Aug 2003 21:36:06 GMT"/>
 	      <signal name="changed" handler="on_expression_changed" last_modification_time="Sun, 10 Aug 2003 21:45:20 GMT"/>
+	      <signal name="key_press_event" handler="on_expression_key_press_event" last_modification_time="Sun, 17 Aug 2003 07:34:36 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="left_attach">0</property>
@@ -753,7 +754,7 @@
 				<widget class="GtkButton" id="button_sqrt">
 				  <property name="visible">True</property>
 				  <property name="can_focus">True</property>
-				  <property name="label" translatable="yes">SQRT</property>
+				  <property name="label" translatable="yes">√</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
 				  <signal name="clicked" handler="on_button_sqrt_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:02 GMT"/>
@@ -2776,6 +2777,7 @@
 		      <property name="activates_default">False</property>
 		      <property name="width_chars">8</property>
 		      <signal name="activate" handler="on_units_entry_from_val_activate" last_modification_time="Sun, 10 Aug 2003 21:15:02 GMT"/>
+		      <signal name="focus_out_event" handler="on_units_entry_from_val_focus_out_event" last_modification_time="Sun, 17 Aug 2003 08:01:56 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
@@ -2907,6 +2909,7 @@
 		      <property name="activates_default">False</property>
 		      <property name="width_chars">8</property>
 		      <signal name="activate" handler="on_units_entry_to_val_activate" last_modification_time="Sun, 10 Aug 2003 21:15:14 GMT"/>
+		      <signal name="focus_out_event" handler="on_units_entry_to_val_focus_out_event" last_modification_time="Sun, 17 Aug 2003 08:02:14 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>

@@ -19,7 +19,7 @@ Unit::Unit(Calculator *calc_, string cat_, string name_, string plural_, string 
 	remove_blank_ends(plural_);
 	remove_blank_ends(short_name_);
 	remove_blank_ends(cat_);
-	category(cat_);
+	setCategory(cat_);
 	sname = name_;
 	sshortname = short_name_;
 	stitle = title_;
@@ -30,7 +30,7 @@ Unit::~Unit() {}
 bool Unit::isUsedByOtherUnits(void) {
 	return calc->unitIsUsedByOtherUnits(this);
 }
-void Unit::title(string title_) {
+void Unit::setTitle(string title_) {
 	remove_blank_ends(title_);
 	stitle = title_;
 	b_changed = true;
@@ -38,12 +38,12 @@ void Unit::title(string title_) {
 string Unit::title(void) {
 	return stitle;
 }
-void Unit::category(string cat_) {
+void Unit::setCategory(string cat_) {
 	remove_blank_ends(cat_);
 	scategory = cat_;
 	b_changed = true;
 }
-void Unit::name(string name_, bool force) {
+void Unit::setName(string name_, bool force) {
 	remove_blank_ends(name_);
 	if(name_ != sname) {
 		sname = calc->getUnitName(name_, this, force);
@@ -51,7 +51,7 @@ void Unit::name(string name_, bool force) {
 	}
 	calc->unitNameChanged(this);
 }
-void Unit::plural(string name_, bool force) {
+void Unit::setPlural(string name_, bool force) {
 	remove_blank_ends(name_);
 	if(name_ != splural) {
 		splural = calc->getUnitName(name_, this, force);
@@ -59,11 +59,11 @@ void Unit::plural(string name_, bool force) {
 	}
 	calc->unitPluralChanged(this);
 }
-void Unit::shortName(string name_, bool force) {
+void Unit::setShortName(string name_, bool force) {
 	remove_blank_ends(name_);
-	if(name_.empty())
+	if(name_.empty()) {
 		sshortname = name_;
-	else if(name_ != sshortname) {
+	} else if(name_ != sshortname) {
 		sshortname = calc->getUnitName(name_, this, force);
 	}
 	b_changed = true;
@@ -234,7 +234,7 @@ string AliasUnit::firstShortBaseExpName() {
 Unit* AliasUnit::firstBaseUnit() {
 	return unit;
 }
-void AliasUnit::baseUnit(Unit *alias) {
+void AliasUnit::setBaseUnit(Unit *alias) {
 	unit = alias;
 	b_changed = true;
 }
@@ -244,7 +244,7 @@ string AliasUnit::expression() {
 string AliasUnit::reverseExpression() {
 	return rvalue;
 }
-void AliasUnit::expression(string relation) {
+void AliasUnit::setExpression(string relation) {
 	remove_blank_ends(relation);
 	if(relation.empty())
 		value = "1";
@@ -252,7 +252,7 @@ void AliasUnit::expression(string relation) {
 		value = relation;
 	b_changed = true;		
 }
-void AliasUnit::reverseExpression(string reverse) {
+void AliasUnit::setReverseExpression(string reverse) {
 	remove_blank_ends(reverse);
 	rvalue = reverse;
 	b_changed = true;
@@ -358,7 +358,7 @@ Manager *AliasUnit::firstBaseValue(Manager *value_, Manager *exp_) {
 	exp_->unref();
 	return value_;
 }
-void AliasUnit::exp(long double exp_) {
+void AliasUnit::setExponent(long double exp_) {
 	d_exp = exp_;
 	b_changed = true;
 }
@@ -460,8 +460,8 @@ long double AliasUnit_Composite::prefixValue(void) {
 	return prefixv;
 }
 void AliasUnit_Composite::set(Unit *u, long double exp_, long double prefix_) {
-	baseUnit(u);
-	exp(exp_);
+	setBaseUnit(u);
+	setExponent(exp_);
 	prefixv = prefix_;
 }
 Manager *AliasUnit_Composite::firstBaseValue(Manager *value_, Manager *exp_) {
@@ -490,7 +490,7 @@ Manager *AliasUnit_Composite::convertToFirstBase(Manager *value_, Manager *exp_)
 }
 
 CompositeUnit::CompositeUnit(Calculator *calc_, string cat_, string name_, string title_, string base_expression_, bool is_user_unit) : Unit(calc_, cat_, name_, "", "", title_, is_user_unit) {
-	baseExpression(base_expression_);
+	setBaseExpression(base_expression_);
 	b_changed = false;
 }
 CompositeUnit::~CompositeUnit(void) {
@@ -642,7 +642,7 @@ Manager *CompositeUnit::generateManager(bool cleaned) {
 string CompositeUnit::internalName() {
 	return sname;
 }
-void CompositeUnit::baseExpression(string base_expression_) {
+void CompositeUnit::setBaseExpression(string base_expression_) {
 	units.clear();
 	if(base_expression_.empty()) {
 		b_changed = true;

@@ -45,15 +45,15 @@ class Function {
 	int minargs(void);	
 	int maxargs(void);		
 	string name(void);
-	void name(string new_name, bool force = true);
+	void setName(string new_name, bool force = true);
 	int args(const string &str);
 	int args(const string &str, string *buffer);	
 	string category(void);
-	void category(string cat_);	
+	void setCategory(string cat_);	
 	string description(void);
-	void description(string descr_);
+	void setDescription(string descr_);
 	string title(void);
-	void title(string title_);	
+	void setTitle(string title_);	
 	string argName(int index);
 	void clearArgNames(void);
 	void addArgName(string name_);
@@ -76,7 +76,7 @@ class UserFunction : public Function {
 	UserFunction(Calculator *calc_, string cat_, string name_, string eq_, bool is_user_function = true, int argc_ = -1, string title_ = "", string descr_ = "", int max_argc_ = -1);
 	string equation(void);
 	Manager *calculate(const string &argv);	
-	void equation(string new_eq, int argc_ = -1, int max_argc_ = -1);	
+	void setEquation(string new_eq, int argc_ = -1, int max_argc_ = -1);	
 	bool isBuiltinFunction(void);
 };
 

@@ -1,5 +1,17 @@
-2003-08-16  Niklas Knutsson  <nq@altern.org>
+2003-08-17  Niklas Knutsson  <nq@altern.org>
 
+	* Make operators wrap selection in parenthesis instead of deleting it, thus they operate on the result after execute
+	* Insert ^ directly instead of waiting for another key press.
+	* Fix annoying repositioning of text cursor in n-bases dialog
+	* Update conversion in units dialog after focus out event in entries
+	* Remove empty parenthesis after zero argument functions
+	* Fix disabling of units
+	* Fix unclosed brackets
+	* restrict abs() to numbers
+	* Change Function::name(string), Unit::title(string), etc. to setTitle(), setName()
+
+2003-08-16  Niklas Knutsson  <nq@altern.org>
+	
 	* Google style in expression conversion (ex. 5 m to ft = 16.4 ft)
 	* Small unit conversion fix (1 km/1 kg => 1 km/kg).
 	* More units.

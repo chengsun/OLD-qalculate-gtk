@@ -91,13 +91,13 @@ int main (int argc, char **argv) {
 		vans = calc->addVariable(new Variable(calc, "Utility", "ans", 0.0, "Answer", false));
 		calc->addVariable(vans);		
 	} else {
-		vans->value(0);
+		vans->setValue(0);
 	}
 	if(!vAns) {
 		vAns = calc->addVariable(new Variable(calc, "Utility", "Ans", 0.0, "Answer", false));
 		calc->addVariable(vAns);
 	} else {
-		vAns->value(0);
+		vAns->setValue(0);
 	}	
 
 	//reset

@@ -44,7 +44,7 @@ class Variable {
 	/**
 	* Sets the name of the variable.
 	*/	
-	void name(string name_, bool force = true);
+	void setName(string name_, bool force = true);
 	/**
 	* Returns the name of the variable.
 	*/		
@@ -56,13 +56,13 @@ class Variable {
 	/**
 	* Sets the title/descriptive name of the variable.
 	*/			
-	void title(string title_);		
+	void setTitle(string title_);		
 	/**
 	* Sets the value of the variable.
 	*
 	* @see #set
 	*/			
-	void value(long double value_);
+	void setValue(long double value_);
 	/**
 	* Returns the category of the variable.
 	*/			
@@ -70,7 +70,7 @@ class Variable {
 	/**
 	* Sets the category of the variable.
 	*/			
-	void category(string cat_);		
+	void setCategory(string cat_);		
 	/**
 	* Tells if the variable is editable for the end user.
 	*/			

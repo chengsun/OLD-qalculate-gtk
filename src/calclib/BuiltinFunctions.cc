@@ -102,11 +102,8 @@ AbsFunction::AbsFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "ab
 
 }
 void AbsFunction::calculate2(Manager *mngr) {
-	//fabsl(vargs[0]->value());
-	mngr->set(vargs[0]);
-	if(mngr->negative()) {
-		mngr->add(-1.0L, MULTIPLICATION_CH);
-	}
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);	
+	else mngr->set(fabsl(vargs[0]->value()));
 }
 CeilFunction::CeilFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "ceil", 1, "Round upwards") {
 
@@ -496,7 +493,9 @@ BINFunction::BINFunction(Calculator *calc_) : Function(calc_, "General", "BIN", 
 }
 Manager *BINFunction::calculate(const string &eq) {
 	Manager *mngr = new Manager(calc);
-	mngr->set((long double) strtol(eq.c_str(), NULL, 2));
+	string str = eq;
+	remove_blanks(str);
+	mngr->set((long double) strtol(str.c_str(), NULL, 2));
 	return mngr;
 }
 OCTFunction::OCTFunction(Calculator *calc_) : Function(calc_, "General", "OCT", 1, "Octal") {

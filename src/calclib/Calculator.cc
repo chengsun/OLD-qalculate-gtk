@@ -100,7 +100,7 @@ Calculator::Calculator() {
 	RIGHT_BRACKET_STR = ")";
 	SPACE_S = " \t\n";
 	SPACE_STR = " ";
-	RESERVED_S = "@?!\\{}&':<>|\"";
+	RESERVED_S = "@?!\\{}&:<>|\"";
 	PLUS_S = "+";
 	PLUS_STR = "+";
 	MINUS_S = "-";
@@ -618,14 +618,14 @@ Manager *Calculator::convert(Manager *mngr, string composite_) {
 }
 Unit* Calculator::addUnit(Unit *u, bool force) {
 	if(u->type() == 'D') {
-		u->name(getUnitName(((CompositeUnit*) u)->internalName(), u, force));		
+		u->setName(getUnitName(((CompositeUnit*) u)->internalName(), u, force));		
 	} else {
-		u->name(getUnitName(u->name(), u, force));
+		u->setName(getUnitName(u->name(), u, force));
 		if(u->hasPlural()) {
-			u->plural(getUnitName(u->plural(), u, force));
+			u->setPlural(getUnitName(u->plural(), u, force));
 		}
 		if(u->hasShortName()) {
-			u->shortName(getUnitName(u->shortName(), u, force));
+			u->setShortName(getUnitName(u->shortName(), u, force));
 		}
 	}
 	units.push_back(u);
@@ -689,7 +689,7 @@ Unit* Calculator::getCompositeUnit(string internal_name_) {
 
 Variable* Calculator::addVariable(Variable *v, bool force) {
 	variables.push_back(v);
-	v->name(getName(v->name(), (void*) v, force));
+	v->setName(getName(v->name(), (void*) v, force));
 	v->setChanged(false);
 	return v;
 }
@@ -889,7 +889,7 @@ Variable* Calculator::getVariable(string name_) {
 	return NULL;
 }
 Function* Calculator::addFunction(Function *f, bool force) {
-	f->name(getName(f->name(), (void*) f, force));
+	f->setName(getName(f->name(), (void*) f, force));
 	functions.push_back(f);
 	f->setChanged(false);
 	return f;
@@ -1084,6 +1084,13 @@ void Calculator::setFunctionsAndVariables(string &str) {
 				if((i = str.find(f->name(), i3)) != (int) string::npos) {
 					i4 = -1;
 					if(f->args() == 0) {
+						i5 = str.find_first_not_of(SPACES, i + f->name().length());
+						if(i5 != string::npos && str[i5] == LEFT_BRACKET_CH) {
+							i5 = str.find_first_not_of(SPACES, i5 + 1);							
+							if(i5 != string::npos && str[i5] == RIGHT_BRACKET_CH) {
+								i4 = i5 - i + 1;
+							}
+						}
 						mngr =  f->calculate("");
 						if(mngr) {
 							stmp = LEFT_BRACKET_CH;
@@ -1095,7 +1102,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						} else {
 							stmp = "";
 						}
-						i4 = f->name().length();
+						if(i4 < 0) i4 = f->name().length();
 					} else {
 						b = false;
 						i5 = 1;
@@ -1152,17 +1159,18 @@ void Calculator::setFunctionsAndVariables(string &str) {
 							i7 = i6 - 1;
 							i8 = i7;
 							while(1) {
-								if((i5 = str.find(RIGHT_BRACKET_CH, i7)) != (int) string::npos) {
-									if(i5 < (i6 = str.find(LEFT_BRACKET_CH, i8)) || i6 == string::npos) {
-										i6 = i5;
-										b = true;
-										break;
-									}
-									i7 = i5 + 1;
-									i8 = i6 + 1;
-								} else {
+								i5 = str.find(RIGHT_BRACKET_CH, i7);
+								if(i5 == string::npos) {
+									str.append(1, RIGHT_BRACKET_CH);
+									i5 = str.length() - 1;
+								}
+								if(i5 < (i6 = str.find(LEFT_BRACKET_CH, i8)) || i6 == string::npos) {
+									i6 = i5;
+									b = true;
 									break;
 								}
+								i7 = i5 + 1;
+								i8 = i6 + 1;
 							}
 						}
 						if(b) {
@@ -1339,11 +1347,13 @@ void Calculator::setFunctionsAndVariables(string &str) {
 	}
 	remove_blanks(str);
 	i = 0;
+	if(!b_units && !b_unknown) return;	
+	u = NULL;
 	while(true) {
 		i = str.find_first_not_of(NUMBERS NOT_IN_NAMES DOT, i);
 		if(i == string::npos) break;
 		stmp = str[i];
-		u = getUnit(stmp);
+		if(b_units) u = getUnit(stmp);
 		if(u) {
 			mngr = new Manager(this, u);
 		} else if(b_unknown) {
@@ -1635,14 +1645,14 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 							if(ctmp == "0")
 								ctmp = "";
 							if(v)
-								v->category(ctmp);
+								v->setCategory(ctmp);
 							ttmp = "";
 							if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 								ttmp = stmp.substr(i, i2 - i);
 								if(ttmp == "0")
 									ttmp = "";
 								if(v)
-									v->title(ttmp);
+									v->setTitle(ttmp);
 							}
 						}
 						if(v) {
@@ -1664,13 +1674,13 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 									shtmp = stmp.substr(i, i2 - i);
 									if(shtmp == "0")
 										shtmp = "";
-									func->title(shtmp);
+									func->setTitle(shtmp);
 									if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 										shtmp = stmp.substr(i, i2 - i);
 										gsub("\\", "\n", shtmp);
 										if(shtmp == "0")
 											shtmp = "";
-										func->description(shtmp);
+										func->setDescription(shtmp);
 										while(1) {
 											if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 												func->addArgName(stmp.substr(i, i2 - i));
@@ -1693,20 +1703,20 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 							if(ctmp == "0")
 								ctmp = "";
 							if(func)
-								func->category(ctmp);
+								func->setCategory(ctmp);
 							if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 								shtmp = stmp.substr(i, i2 - i);
 								if(shtmp == "0")
 									shtmp = "";
 								if(func)
-									func->title(shtmp);
+									func->setTitle(shtmp);
 								if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 									shtmp = stmp.substr(i, i2 - i);
 									gsub("\\", "\n", shtmp);
 									if(shtmp == "0")
 										shtmp = "";
 									if(func)
-										func->description(shtmp);
+										func->setDescription(shtmp);
 									b = true;										
 									while(1) {
 										if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
@@ -1848,15 +1858,15 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 											if(u && (unitNameIsValid(ntmp) && unitNameIsValid(etmp) && unitNameIsValid(shtmp))) {
 												au = new AliasUnit(this, ctmp, ntmp, etmp, shtmp, ttmp, u);
 												if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-													au->expression(stmp.substr(i, i2 - i));
+													au->setExpression(stmp.substr(i, i2 - i));
 													if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 														//mngr = calculate(stmp.substr(i, i2 - i));
 														//au->exp(mngr);
 														//au->exp(mngr->value());
-														au->exp(strtold(stmp.substr(i, i2 - i).c_str(), NULL));
+														au->setExponent(strtold(stmp.substr(i, i2 - i).c_str(), NULL));
 														//mngr->unref();
 														if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-															au->reverseExpression(stmp.substr(i, i2 - i));
+															au->setReverseExpression(stmp.substr(i, i2 - i));
 														}
 													}
 												}

@@ -22,8 +22,8 @@ Function::Function(Calculator *calc_, string cat_, string name_, int argc_, stri
 	remove_blank_ends(name_);
 	sname = name_;
 	stitle = title_;
-	description(descr_);
-	category(cat_);
+	setDescription(descr_);
+	setCategory(cat_);
 	argc = argc_;
 	if(max_argc_ < argc) max_argc = argc;
 	else {
@@ -51,7 +51,7 @@ int Function::maxargs(void) {
 string Function::name(void) {
 	return sname;
 }
-void Function::name(string new_name, bool force) {
+void Function::setName(string new_name, bool force) {
 	remove_blank_ends(new_name);
 	if(new_name != sname) {
 		b_changed = true;
@@ -138,7 +138,7 @@ int Function::args(const string &str, string *buffer) {
 string Function::category(void) {
 	return scat;
 }
-void Function::category(string cat_) {
+void Function::setCategory(string cat_) {
 	remove_blank_ends(cat_);
 	scat = cat_;
 	b_changed = true;
@@ -146,7 +146,7 @@ void Function::category(string cat_) {
 string Function::description(void) {
 	return sdescr;
 }
-void Function::description(string descr_) {
+void Function::setDescription(string descr_) {
 	remove_blank_ends(descr_);
 	sdescr = descr_;
 	b_changed = true;
@@ -154,7 +154,7 @@ void Function::description(string descr_) {
 string Function::title(void) {
 	return stitle;
 }
-void Function::title(string title_) {
+void Function::setTitle(string title_) {
 	remove_blank_ends(title_);
 	stitle = title_;
 	b_changed = true;
@@ -265,7 +265,7 @@ string Function::getDefaultValue(int arg_) {
 
 UserFunction::UserFunction(Calculator *calc_, string cat_, string name_, string eq_, bool is_user_function, int argc_, string title_, string descr_, int max_argc_) : Function(calc_, cat_, name_, argc_, title_, descr_, false, max_argc_) {
 	b_user = is_user_function;
-	equation(eq_, argc_, max_argc_);
+	setEquation(eq_, argc_, max_argc_);
 	b_changed = false;	
 }
 string UserFunction::equation(void) {
@@ -364,7 +364,7 @@ Manager *UserFunction::calculate(const string &argv) {
 		return mngr;
 	}
 }
-void UserFunction::equation(string new_eq, int argc_, int max_argc_) {
+void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 	b_changed = true;
 	eq = new_eq;
 	default_values.clear();
