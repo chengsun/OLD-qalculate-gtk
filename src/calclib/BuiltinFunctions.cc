@@ -1926,7 +1926,7 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			return 1 ;
 		}
 	} else {
-		CALCULATOR->error(true, _("No comparison to solve. The reason might be:\n\n1. You did not enter a correct expression to solve (ex. \"x + 5 = 3\" is correct)\n\n2. The expression evaluates FALSE. There is no valid solution with the current assumptions (ex. \"x = -5\" with x assumed positive).\n\n3. The expression evaluates TRUE (ex. \"2x = 2x\")"), NULL);
+		CALCULATOR->error(true, _("No comparison to solve. The reason might be:\n\n1. The entered expression to solve is not correct (ex. \"x + 5 = 3\" is correct)\n\n2. The expression evaluates FALSE. There is no valid solution with the current assumptions (ex. \"x = -5\" with x assumed positive).\n\n3. The expression evaluates TRUE (ex. \"2x = 2x\")"), NULL);
 	}
 	return -1;
 	

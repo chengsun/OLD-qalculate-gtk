@@ -1,3 +1,11 @@
+2004-08-15 Niklas Knutsson  <nq@altern.org>
+
+	* Fix prefix selection when first positive/negative exponent prefix
+	* No prefix in result prefix menu
+	* Only left parenthesis where added around vector!
+	* Make the title for mils more descriptive
+	* FIx matrix multiplication
+
 2004-08-14 Niklas Knutsson  <nq@altern.org>
 
 	* Make no comparison to solve error message more informative

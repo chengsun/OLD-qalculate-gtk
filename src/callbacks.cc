@@ -1747,6 +1747,7 @@ void create_pmenu2() {
 	item = glade_xml_get_widget (main_glade, "menu_item_result_prefixes");
 	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);	
 	int index = 0;
+	MENU_ITEM_WITH_POINTER(_("No Prefix"), set_prefix, CALCULATOR->null_prefix)
 	Prefix *p = CALCULATOR->getPrefix(index);
 	while(p) {
 		gchar *gstr = g_strdup_printf("%s (10<sup>%i</sup>)", p->name(false, true).c_str(), p->exponent());

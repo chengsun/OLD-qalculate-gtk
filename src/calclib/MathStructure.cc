@@ -1095,7 +1095,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 						MathStructure mtmp;
 						for(unsigned int index_r = 0; index_r < SIZE; index_r++) {
 							for(unsigned int index_c = 0; index_c < CHILD(0).size(); index_c++) {
-								for(unsigned int index = 0; index <= msave[0].size(); index++) {
+								for(unsigned int index = 0; index < msave[0].size(); index++) {
 									mtmp = msave[index_r][index];
 									mtmp *= mstruct[index][index_c];
 									CHILD(index_r)[index_c] += mtmp;
@@ -3073,18 +3073,20 @@ void MathStructure::setPrefixes(const PrintOptions &po, const MathStructure *par
 				Number exp10;
 				if(b) {
 					if(po.prefix) {
-						if(CHILD(i).isUnit()) CHILD(i).setPrefix(po.prefix);
-						else CHILD(i)[0].setPrefix(po.prefix);
-						if(CHILD(0).isNumber()) {
-							CHILD(0).number() /= po.prefix->value(exp);
-						} else {
-							PREPEND(po.prefix->value(exp));
-							CHILD(0).number().recip();
-						}
-						if(b2) {
-							exp10 = CHILD(0).number();
-							exp10.log(10);
-							exp10.floor();
+						if(po.prefix != CALCULATOR->null_prefix)  {
+							if(CHILD(i).isUnit()) CHILD(i).setPrefix(po.prefix);
+							else CHILD(i)[0].setPrefix(po.prefix);
+							if(CHILD(0).isNumber()) {
+								CHILD(0).number() /= po.prefix->value(exp);
+							} else {
+								PREPEND(po.prefix->value(exp));
+								CHILD(0).number().recip();
+							}
+							if(b2) {
+								exp10 = CHILD(0).number();
+								exp10.log(10);
+								exp10.floor();
+							}
 						}
 					} else if(po.use_unit_prefixes && CHILD(0).isNumber() && exp.isInteger()) {
 						exp10 = CHILD(0).number();
@@ -3128,7 +3130,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, const MathStructure *par
 							}
 						}
 					}
-					if(b2 && CHILD(0).isNumber() && (po.prefix || po.use_unit_prefixes)) {
+					if(b2 && CHILD(0).isNumber() && ((po.prefix && po.prefix != CALCULATOR->null_prefix) || po.use_unit_prefixes)) {
 						exp10 = CHILD(0).number();
 						exp10.log(10);
 						exp10.floor();
@@ -3149,7 +3151,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, const MathStructure *par
 			}
 		}
 		case STRUCT_UNIT: {
-			if(!o_prefix && po.prefix) {
+			if(!o_prefix && (po.prefix && po.prefix != CALCULATOR->null_prefix)) {
 				Unit *u = o_unit;
 				clear();
 				APPEND(MathStructure(1));
@@ -3161,7 +3163,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, const MathStructure *par
 		}
 		case STRUCT_POWER: {
 			if(CHILD(0).isUnit()) {
-				if(CHILD(1).isNumber() && CHILD(1).number().isReal() && !o_prefix && po.prefix) {
+				if(CHILD(1).isNumber() && CHILD(1).number().isReal() && !o_prefix && (po.prefix && po.prefix != CALCULATOR->null_prefix)) {
 					MathStructure msave(*this);
 					clear();
 					APPEND(MathStructure(1));
@@ -3353,18 +3355,44 @@ void MathStructure::postFormatUnits(const PrintOptions &po, const MathStructure 
 				bool do_plural = !(CHILD(0).isZero() || CHILD(0).number().isOne() || CHILD(0).number().isMinusOne() || CHILD(0).number().isFraction());
 				unsigned int i = 2;
 				for(; i < SIZE; i++) {
-					if(!CHILD(i).isUnit_exp()) {
+					if(CHILD(i).isUnit()) {
+						CHILD(i).setPlural(false);
+					} else if(CHILD(i).isPower() && CHILD(i)[0].isUnit()) {
+						CHILD(i)[0].setPlural(false);
+					} else {
 						break;
 					}
 				}
-				i--;
-				if(CHILD(i).isUnit()) {
-					CHILD(i).setPlural(do_plural);
-				} else {
-					CHILD(i)[0].setPlural(do_plural);
+				if(do_plural) {
+					i--;
+					if(CHILD(i).isUnit()) {
+						CHILD(i).setPlural(true);
+					} else {
+						CHILD(i)[0].setPlural(true);
+					}
 				}
-				break;
+			} else if(SIZE > 0) {
+				int last_unit = -1;
+				for(unsigned int i = 0; i < SIZE; i++) {
+					if(CHILD(i).isUnit()) {
+						CHILD(i).setPlural(false);
+						last_unit = i;
+					} else if(CHILD(i).isPower() && CHILD(i)[0].isUnit()) {
+						CHILD(i)[0].setPlural(false);
+						last_unit = i;
+					} else if(last_unit >= 0) {
+						break;
+					}
+				}
+				if(last_unit > 0) {
+					if(CHILD(last_unit).isUnit()) {
+						CHILD(last_unit).setPlural(true);
+					} else {
+						CHILD(last_unit)[0].setPlural(true);
+					}
+				}
 			}
+			break;
 		}
 		case STRUCT_POWER: {
 			if(CHILD(0).isUnit()) {

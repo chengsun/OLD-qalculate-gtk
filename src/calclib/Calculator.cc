@@ -495,8 +495,8 @@ Prefix *Calculator::getBestPrefix(int exp10, int exp, bool all_prefixes) const {
 			} else if(prefixes[i]->exponent(exp) > exp10) {
 				if(i == 0) {
 					return prefixes[i];
-				} else if(exp10 - prefixes[i - 1]->exponent(exp) < (prefixes[i]->exponent(exp) - exp10) * 2 + 2) {
-					return prefixes[i - 1];
+				} else if(exp10 - prefixes[prev_i]->exponent(exp) < (prefixes[i]->exponent(exp) - exp10) * 2 + 2) {
+					return prefixes[prev_i];
 				} else {
 					return prefixes[i];
 				}
@@ -512,7 +512,7 @@ Prefix *Calculator::getBestPrefix(int exp10, int exp, bool all_prefixes) const {
 	return prefixes[prev_i];
 }
 Prefix *Calculator::getBestPrefix(const Number &exp10, const Number &exp, bool all_prefixes) const {
-	if(prefixes.size() <= 0) return NULL;
+	if(prefixes.size() <= 0 || exp10.isZero()) return NULL;
 	int prev_i = 0;
 	int i = 0;
 	ComparisonResult c;
@@ -529,12 +529,17 @@ Prefix *Calculator::getBestPrefix(const Number &exp10, const Number &exp, bool a
 					return prefixes[i];
 				}
 				Number exp10_1(exp10);
-				exp10_1 -= prefixes[i - 1]->exponent(exp);
+				if(prefixes[prev_i]->exponent() > 0 == prefixes[i]->exponent() > 0) {
+					exp10_1 -= prefixes[prev_i]->exponent(exp);
+				}
 				Number exp10_2(prefixes[i]->exponent(exp));
 				exp10_2 -= exp10;
 				exp10_2 *= 2;
 				exp10_2 += 2;
 				if(exp10_1.isLessThan(exp10_2)) {
+					if(prefixes[prev_i]->exponent() > 0 != prefixes[i]->exponent() > 0) {
+						return NULL;
+					}
 					return prefixes[prev_i];
 				} else {
 					return prefixes[i];
@@ -2279,7 +2284,6 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 	}
 
 	for(unsigned int i = 0; i < signs.size(); i++) {
-		//gsub(signs[i], real_signs[i], str);
 		unsigned int ui = str.find(signs[i]);
 		while(ui != string::npos) {
 			b = false;
@@ -2327,6 +2331,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 					stmp += ID_WRAP_LEFT_CH;
 					stmp += i2s(parseAddVectorId(stmp2, po));
 					stmp += ID_WRAP_RIGHT_CH;
+					stmp += RIGHT_PARENTHESIS_CH;
 					str.replace(str_index, i3 + 1 - str_index, stmp);
 					str_index += stmp.length() - 1;
 					break;

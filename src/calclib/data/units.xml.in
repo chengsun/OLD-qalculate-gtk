@@ -742,7 +742,7 @@
       </base>
     </unit>
     <unit type="alias">
-      <_title>Mils</_title>
+      <_title>Mil (1/1000 in)</_title>
       <name index="1">
         <reference>true</reference>
         <_name>mil</_name>
