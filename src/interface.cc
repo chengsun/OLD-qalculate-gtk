@@ -311,7 +311,7 @@ create_main_window (void)
 	
 //	gtk_widget_modify_bg(resultview, GTK_STATE_NORMAL, &glade_xml_get_widget(glade_xml, "history")->style->base[GTK_WIDGET_STATE(glade_xml_get_widget(glade_xml, "history"))]);	
 	tFunctionArguments = glade_xml_get_widget (glade_xml, "function_edit_treeview_arguments");
-	tFunctionArguments_store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
+	tFunctionArguments_store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tFunctionArguments), GTK_TREE_MODEL(tFunctionArguments_store));
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctionArguments));
 	gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);

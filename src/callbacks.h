@@ -93,6 +93,8 @@ void new_unit(GtkMenuItem *w, gpointer user_data);
 void on_import_csv_file_activated(GtkMenuItem *w, gpointer user_data);
 void add_as_variable();
 
+void edit_argument(Argument *arg = NULL);
+
 void edit_variable(const char *category = "", Variable *v = NULL, Manager *mngr_ = NULL, GtkWidget *win = NULL);
 void edit_matrix(const char *category = "", Variable *v = NULL, Manager *mngr_ = NULL, GtkWidget *win = NULL, gboolean create_vector = FALSE);
 void import_csv_file(GtkWidget *win = NULL);
@@ -258,6 +260,10 @@ void on_function_edit_button_add_argument_clicked(GtkButton *w, gpointer user_da
 void on_function_edit_button_remove_argument_clicked(GtkButton *w, gpointer user_data);
 void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user_data);
 void on_function_edit_entry_argument_name_activate(GtkEntry *entry, gpointer user_data);
+void on_function_edit_button_rules_clicked(GtkButton *w, gpointer user_data);
+void on_argument_rules_checkbutton_enable_min_toggled(GtkToggleButton *w, gpointer user_data);
+void on_argument_rules_checkbutton_enable_max_toggled(GtkToggleButton *w, gpointer user_data);
+void on_argument_rules_checkbutton_enable_condition_toggled(GtkToggleButton *w, gpointer user_data);
 
 }
 

@@ -1273,12 +1273,14 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 	} else if(exp.isPositive()) {
 		den_spec.exp10(&exp);
 	}
-	Integer *divisor;
+/*	Integer *divisor;
 	if(whole.gcd(&den_spec, &divisor)) {
+	printf("12\n");
 		whole.divide(divisor);
+	printf("13\n");		
 		den_spec.divide(divisor);
 	}	
-	delete divisor;
+	delete divisor;*/
 	if(in_composite && whole.isOne() && den_spec.isOne()) {
 		return;
 	} else if(!force_fractional && !(displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY)) {
@@ -1304,6 +1306,9 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 		while(d.div10()) {
 			l10++;
 		}
+/*		Fraction d(fr.denominator());
+		d.log10();
+		l10 = d.numerator()->getInt();*/
 		if(l10) {
 			l10 = whole_.length() - l10;
 			for(; l10 < 1; l10++) {

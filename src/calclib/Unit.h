@@ -25,11 +25,11 @@ class Unit : public ExpressionItem {
 
   protected:
 
-	string sshortname, splural;
+	string ssingular, splural;
 
   public:
 
-	Unit(string cat_, string name_, string plural_ = "", string short_name_ = "", string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	Unit(string cat_, string name_, string plural_ = "", string singular_ = "", string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
 	Unit();	
 	Unit(const Unit *unit);	
 	virtual ~Unit();
@@ -38,17 +38,12 @@ class Unit : public ExpressionItem {
 	virtual void set(const ExpressionItem *item);
 	
 	void setPlural(string name_, bool force = true);
-	void setShortName(string name_, bool force = true);
-	virtual string referenceName() const;
-	virtual string name() const;
-	virtual string plural(bool return_name_if_no_plural = true) const;
-	virtual string shortName(bool return_name_if_no_short = true, bool plural_ = false) const;
+	void setSingular(string name_, bool force = true);
+	virtual string plural(bool return_singular_if_no_plural = true) const;
+	virtual string singular(bool return_short_if_no_singular = true) const;
+	virtual string shortName() const;
 	virtual bool isUsedByOtherUnits() const;
 	virtual const Unit* baseUnit() const;
-	virtual string baseName() const;
-	virtual string baseExpName() const;
-	virtual string shortBaseName() const;
-	virtual string shortBaseExpName() const;
 	virtual Manager *baseValue(Manager *value_ = NULL, Manager *exp_ = NULL) const;
 	virtual Manager *convertToBase(Manager *value_ = NULL, Manager *exp_ = NULL) const;
 	virtual long int baseExp(long int exp_ = 1) const;
@@ -72,7 +67,7 @@ class AliasUnit : public Unit {
 
   public:
 
-	AliasUnit(string cat_, string name_, string plural_, string short_name_, string title_, const Unit *alias, string relation = "1", long int exp_ = 1, string reverse = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	AliasUnit(string cat_, string name_, string plural_, string singular_, string title_, const Unit *alias, string relation = "1", long int exp_ = 1, string reverse = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
 	AliasUnit(const AliasUnit *unit);		
 	AliasUnit();			
 	virtual ~AliasUnit();
@@ -80,14 +75,6 @@ class AliasUnit : public Unit {
 	virtual ExpressionItem *copy() const;
 	virtual void set(const ExpressionItem *item);
 	
-	virtual string baseName() const;
-	virtual string baseExpName() const;
-	virtual string shortBaseName() const;
-	virtual string shortBaseExpName() const;
-	virtual string firstBaseName() const;
-	virtual string firstBaseExpName() const;
-	virtual string firstShortBaseName() const;
-	virtual string firstShortBaseExpName() const;
 	virtual const Unit* baseUnit() const;
 	virtual const Unit* firstBaseUnit() const;
 	virtual void setBaseUnit(const Unit *alias);
@@ -151,13 +138,12 @@ class CompositeUnit : public Unit {
 		virtual int countUnits() const;
 		virtual void del(Unit *u);
 		virtual string print(bool plural_, bool short_) const;
-		virtual string name() const;
-		virtual string plural(bool return_name_if_no_plural = true) const;
-		virtual string shortName(bool return_name_if_no_short = true, bool plural_ = false) const;
+		virtual string plural(bool return_singular_if_no_plural = true) const;
+		virtual string singular(bool return_short_if_no_singular = true) const;
+		virtual string shortName() const;
 		virtual int unitType() const;
 		virtual bool containsRelativeTo(const Unit *u) const;
 		virtual Manager *generateManager(bool cleaned = true) const;		
-		virtual string referenceName() const;
 		virtual void setBaseExpression(string base_expression_);		
 };
 

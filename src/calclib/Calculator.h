@@ -14,6 +14,7 @@
 
 #include "includes.h"
 #include <ext/hash_map>
+#include <pthread.h>
 
 extern Calculator *calculator;
 
@@ -39,7 +40,14 @@ class Calculator {
 	vector<string> default_real_signs;	
 	char *saved_locale;
 	int disable_errors_ref;
+	pthread_t calculate_thread;
+	pthread_attr_t calculate_thread_attr;
+	bool b_functions_was, b_variables_was, b_units_was, b_unknown_was, b_calcvars_was, b_always_exact_was, b_rpn_was;
+
   public:
+  
+  	bool b_busy;
+	string expression_to_calculate;
   
 	vector<Variable*> variables;
 	vector<Function*> functions;	
@@ -103,7 +111,12 @@ class Calculator {
 	void addBuiltinVariables();	
 	void addBuiltinFunctions();
 	void addBuiltinUnits();	
-	Manager *calculate(string str);
+	void saveState();
+	void restoreState();
+	void clearBuffers();
+	void abort();
+	bool busy();
+	Manager *calculate(string str, bool enable_abort = false);
 	Manager *convert(long double value, Unit *from_unit, Unit *to_unit);
 	Manager *convert(string str, Unit *from_unit, Unit *to_unit);	
 	Manager *convert(Manager *mngr, Unit *to_unit, bool always_convert = true);		
@@ -129,7 +142,7 @@ class Calculator {
 	void variableNameChanged(Variable *v);
 	void functionNameChanged(Function *f, bool priviliged = false);	
 	void unitNameChanged(Unit *u);	
-	void unitShortNameChanged(Unit *u);	
+	void unitSingularChanged(Unit *u);	
 	void unitPluralChanged(Unit *u);		
 	void setFunctionsAndVariables(string &str);
 	Variable* getVariable(string name_);

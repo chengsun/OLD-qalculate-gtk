@@ -132,9 +132,9 @@ class Argument {
 	
 	bool tests() const;
 	void setTests(bool does_test);
-	
-	bool zeroAllowed() const;
-	void setZeroAllowed(bool accept_zero);
+
+	bool zeroForbidden() const;
+	void setZeroForbidden(bool forbid_zero);
 	
 	bool matrixAllowed() const;
 	void setMatrixAllowed(bool allow_matrix);
@@ -168,17 +168,15 @@ class FractionArgument : public Argument {
 
 	virtual string print() const;	
 	
-	void setMin(long int min_);
 	void setMin(const Fraction *min_);	
 	void setIncludeEqualsMin(bool include_equals);
 	bool includeEqualsMin() const;	
 	const Fraction *min() const;
-	void setMax(long int max_);
 	void setMax(const Fraction *max_);	
 	void setIncludeEqualsMax(bool include_equals);
 	bool includeEqualsMax() const;	
 	const Fraction *max() const;	
-	
+
 	virtual int type() const;
 
 };
@@ -205,12 +203,10 @@ class IntegerArgument : public Argument {
 
 	virtual string print() const;	
 
-	void setMin(long int min_);
 	void setMin(const Integer *min_);	
 	const Integer *min() const;
-	void setMax(long int max_);
 	void setMax(const Integer *max_);	
-	const Integer *max() const;	
+	const Integer *max() const;
 	
 	virtual int type() const;
 

@@ -1,3 +1,15 @@
+2003-09-27  Niklas Knutsson  <nq@altern.org>
+
+	* Safer threads
+	* Switch unit->name() to short name and add singular to enable translation
+	* Enable xml data translation
+	* Use less attributes in xml
+	* Implement GUI editing of argument rules
+	* Replace empty optional value with default value
+	* Fill in default values in insert function dialog
+	* Add ability to abort long calculations
+	* ...and slow result display
+
 2003-09-25  Niklas Knutsson  <nq@altern.org>
 
 	* New condition for functions which can test the relation between arguments

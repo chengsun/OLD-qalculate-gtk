@@ -250,6 +250,20 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 			return;
 		}
 	}
+	if(str[0] == NOT_CH) {
+		str.erase(str.begin());
+		EqContainer eq_c(str, ADD);
+		Manager *mngr2 = eq_c.calculate();
+		if(mngr2->isFraction() && mngr2->fraction()->isPositive()) {
+			mngr->clear();
+		} else {
+			if(!mngr2->isFraction()) {
+				CALCULATOR->error(true, _("Comparison \"%s\" is not solvable, treating as FALSE."), str2.c_str(), NULL);
+			}
+			mngr->set(1, 1);
+		}
+		return;
+	}	
 	if((i = str.find_first_of(LESS GREATER EQUALS NOT, 0)) != string::npos) {
 		bool c = false;
 		while(i != string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {

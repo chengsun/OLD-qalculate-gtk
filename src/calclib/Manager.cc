@@ -1033,8 +1033,8 @@ int Manager::compare(const Manager *mngr, int sortflags) const {
 		} 
 		case UNIT_MANAGER: {
 			if(mngr->type() == UNIT_MANAGER) {
-				if(o_unit->shortName(true) < mngr->o_unit->shortName(true)) return -1;
-				if(o_unit->shortName(true) == mngr->o_unit->shortName(true)) return 0;
+				if(o_unit->name() < mngr->o_unit->name()) return -1;
+				if(o_unit->name() == mngr->o_unit->name()) return 0;
 				return 1;
 			}
 			if(mngr->isNumber() || mngr->type() == FUNCTION_MANAGER) return -1;
@@ -1400,15 +1400,15 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			if(!(displayflags & DISPLAY_FORMAT_LONG_UNITS)) {
 				if(displayflags & DISPLAY_FORMAT_NONASCII) {
 						if(o_unit->name() == "euro") str += SIGN_EURO;
-						else if(o_unit->shortName(false) == "oC") str += SIGN_POWER_0 "C";
-						else if(o_unit->shortName(false) == "oF") str += SIGN_POWER_0 "F";
-						else if(o_unit->shortName(false) == "oR") str += SIGN_POWER_0 "R";
-						else str += o_unit->shortName(true, plural && *plural);
+						else if(o_unit->name() == "oC") str += SIGN_POWER_0 "C";
+						else if(o_unit->name() == "oF") str += SIGN_POWER_0 "F";
+						else if(o_unit->name() == "oR") str += SIGN_POWER_0 "R";
+						else str += o_unit->name();
 				} else {
-					str += o_unit->shortName(true, plural && *plural);
+					str += o_unit->name();
 				}
 			} else if(plural && *plural) str += o_unit->plural();
-			else str += o_unit->name();
+			else str += o_unit->singular();
 		}
 	} else if(c_type == STRING_MANAGER) {
 		if(displayflags & DISPLAY_FORMAT_TAGS) {

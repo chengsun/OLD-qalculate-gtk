@@ -1,7 +1,6 @@
 * More functions
 * More Units
 
-* Complete internationalisation
 * Separate library
 * Support non-glibc systems (Solaris)
 

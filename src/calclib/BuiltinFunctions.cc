@@ -804,7 +804,8 @@ DaysFunction::DaysFunction() : Function("Date & Time", "days", 2, "Days between 
 	IntegerArgument *arg = new IntegerArgument();
 	Integer integ;
 	arg->setMin(&integ);
-	arg->setMax(4);
+	integ.set(4);
+	arg->setMax(&integ);
 	setArgumentDefinition(3, arg);	
 	setArgumentDefinition(4, new BooleanArgument());				
 	setDefaultValue(3, "1"); 
@@ -824,7 +825,8 @@ YearFracFunction::YearFracFunction() : Function("Date & Time", "yearfrac", 2, "Y
 	IntegerArgument *arg = new IntegerArgument();
 	Integer integ;
 	arg->setMin(&integ);
-	arg->setMax(4);
+	integ.set(4);
+	arg->setMax(&integ);
 	setArgumentDefinition(3, arg);	
 	setArgumentDefinition(4, new BooleanArgument());		
 }
@@ -1148,7 +1150,8 @@ PercentileFunction::PercentileFunction() : Function("Statistics", "percentile", 
 	FractionArgument *arg = new FractionArgument();
 	Fraction fr;
 	arg->setMin(&fr);
-	arg->setMax(99);
+	fr.set(99, 1);
+	arg->setMax(&fr);
 	arg->setIncludeEqualsMin(false);
 	arg->setIncludeEqualsMax(false);
 	setArgumentDefinition(1, arg);
@@ -1335,8 +1338,10 @@ void RandomFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 BASEFunction::BASEFunction() : Function("General", "BASE", 2, "Number Base") {
 	setArgumentDefinition(1, new TextArgument());
 	IntegerArgument *arg = new IntegerArgument();
-	arg->setMin(2);
-	arg->setMax(36);
+	Integer integ(2);
+	arg->setMin(&integ);
+	integ.set(36);
+	arg->setMax(&integ);
 	setArgumentDefinition(2, arg);
 }
 void BASEFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {

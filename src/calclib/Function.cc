@@ -143,10 +143,12 @@ bool Function::testCondition(vector<Manager*> &vargs) {
 }
 int Function::args(const string &str, vector<Manager*> &vargs) {
 	int itmp = 0, i = 0, i2 = 0, i3 = 0, i4 = 0;
+	string str2;
 	vargs.clear();
+	Manager *mngr;
 	if(!str.empty()) {
 		itmp = 1;
-		while(1) {
+		while(true) {
 			if((i = str.find(COMMA_CH, i)) != (int) string::npos) {
 				if((i3 = str.find(LEFT_BRACKET_CH, i4)) < i && i3 >= 0) {
 /*					i = str.find(RIGHT_BRACKET_CH, i3);
@@ -172,7 +174,13 @@ int Function::args(const string &str, vector<Manager*> &vargs) {
 					i = i4;						
 				} else {
 					if(itmp <= maxargs() || args() < 0) {
-						Manager *mngr = CALCULATOR->calculate(str.substr(i2, i - i2));
+						str2 = str.substr(i2, i - i2);
+						remove_blank_ends(str2);
+						if(str2.empty()) {
+							mngr = CALCULATOR->calculate(getDefaultValue(itmp));
+						} else {
+							mngr = CALCULATOR->calculate(str2);
+						}
 						vargs.push_back(mngr);
 					}
 					i++;
@@ -182,7 +190,13 @@ int Function::args(const string &str, vector<Manager*> &vargs) {
 				}
 			} else {
 				if(itmp <= args() || args() < 0) {
-					Manager *mngr = CALCULATOR->calculate(str.substr(i2, str.length() - i2));
+					str2 = str.substr(i2, str.length() - i2);
+					remove_blank_ends(str2);
+					if(str2.empty()) {
+						mngr = CALCULATOR->calculate(getDefaultValue(itmp));
+					} else {
+						mngr = CALCULATOR->calculate(str2);
+					}				
 					vargs.push_back(mngr);			
 				}
 				break;
@@ -192,7 +206,7 @@ int Function::args(const string &str, vector<Manager*> &vargs) {
 	if(itmp < maxargs() && itmp >= minargs()) {
 		int itmp2 = itmp;
 		while(itmp2 < maxargs()) {
-			Manager *mngr = CALCULATOR->calculate(default_values[itmp2 - minargs()]);
+			mngr = CALCULATOR->calculate(default_values[itmp2 - minargs()]);
 			vargs.push_back(mngr);
 			itmp2++;
 		}
@@ -375,6 +389,9 @@ int Function::stringArgs(const string &str, vector<string> &svargs) {
 						remove_blank_ends(stmp);																				
 						remove_brackets(stmp);						
 						remove_blank_ends(stmp);
+						if(stmp.empty()) {
+							stmp = getDefaultValue(itmp);
+						}
 						svargs.push_back(stmp);
 					}
 					i++;
@@ -392,6 +409,9 @@ int Function::stringArgs(const string &str, vector<string> &svargs) {
 					remove_blank_ends(stmp);					
 					remove_brackets(stmp);									
 					remove_blank_ends(stmp);
+					if(stmp.empty()) {
+						stmp = getDefaultValue(itmp);
+					}
 					svargs.push_back(stmp);
 				}
 				break;
@@ -709,10 +729,11 @@ string Argument::subprintlong() const {return _("a free value");}
 string Argument::printlong() const {
 	string str = subprintlong();
 	if(!b_zero) {
+		str += " ";
 		str += _("that is nonzero");
 	}
 	if(!scondition.empty()) {
-		if(b_zero) {
+		if(!b_zero) {
 			str += " ";
 			str += _("and");
 		}
@@ -727,7 +748,7 @@ string Argument::printlong() const {
 void Argument::set(const Argument *arg) {
 	sname = arg->name();
 	scondition = arg->getCustomCondition();
-	b_zero = arg->zeroAllowed();
+	b_zero = !arg->zeroForbidden();
 	b_test = arg->tests();
 	b_matrix = arg->matrixAllowed();
 }
@@ -786,11 +807,11 @@ void Argument::setCustomCondition(string condition) {
 string Argument::getCustomCondition() const {
 	return scondition;
 }
-bool Argument::zeroAllowed() const {
-	return b_zero;
+bool Argument::zeroForbidden() const {
+	return !b_zero;
 }
-void Argument::setZeroAllowed(bool accept_zero) {
-	b_zero = accept_zero;
+void Argument::setZeroForbidden(bool forbid_zero) {
+	b_zero = !forbid_zero;
 }
 bool Argument::tests() const {
 	return b_test;
@@ -826,7 +847,7 @@ FractionArgument::FractionArgument(string name_, ArgumentMinMaxPreDefinition min
 			break;
 		}
 		case ARGUMENT_MIN_MAX_NONZERO: {
-			setZeroAllowed(false);
+			setZeroForbidden(true);
 			break;
 		}		
 	}
@@ -845,13 +866,6 @@ FractionArgument::~FractionArgument() {
 	}
 }
 	
-void FractionArgument::setMin(long int min_) {
-	if(!fmin) {
-		fmin = new Fraction(min_, 1);
-	} else {
-		fmin->set(min_, 1);
-	}
-}
 void FractionArgument::setMin(const Fraction *min_) {
 	if(!min_) {
 		if(fmin) {
@@ -873,13 +887,6 @@ bool FractionArgument::includeEqualsMin() const {
 }
 const Fraction *FractionArgument::min() const {
 	return fmin;
-}
-void FractionArgument::setMax(long int max_) {
-	if(!fmax) {
-		fmax = new Fraction(max_, 1);
-	} else {
-		fmax->set(max_, 1);
-	}
 }
 void FractionArgument::setMax(const Fraction *max_) {
 	if(!max_) {
@@ -953,7 +960,7 @@ string FractionArgument::subprintlong() const {
 		if(b_incl_min) {
 			str += _(">=");
 		} else {
-			str += _("=");
+			str += _(">");
 		}
 		str += " ";
 		str += fmin->print();
@@ -965,9 +972,9 @@ string FractionArgument::subprintlong() const {
 		}
 		str += " ";
 		if(b_incl_max) {
-			str += _(">=");
+			str += _("<=");
 		} else {
-			str += _("=");
+			str += _("<");
 		}
 		str += " ";
 		str += fmax->print();
@@ -992,7 +999,7 @@ IntegerArgument::IntegerArgument(string name_, ArgumentMinMaxPreDefinition minma
 			break;
 		}
 		case ARGUMENT_MIN_MAX_NONZERO: {
-			setZeroAllowed(false);
+			setZeroForbidden(true);
 			break;
 		}		
 	}	
@@ -1011,13 +1018,6 @@ IntegerArgument::~IntegerArgument() {
 	}
 }
 	
-void IntegerArgument::setMin(long int min_) {
-	if(!imin) {
-		imin = new Integer(min_);
-	} else {
-		imin->set(min_);
-	}
-}
 void IntegerArgument::setMin(const Integer *min_) {
 	if(!min_) {
 		if(imin) {
@@ -1033,13 +1033,6 @@ void IntegerArgument::setMin(const Integer *min_) {
 }
 const Integer *IntegerArgument::min() const {
 	return imin;
-}
-void IntegerArgument::setMax(long int max_) {
-	if(!imax) {
-		imax = new Integer(max_);
-	} else {
-		imax->set(max_);
-	}
 }
 void IntegerArgument::setMax(const Integer *max_) {
 	if(!max_) {
@@ -1112,7 +1105,7 @@ string IntegerArgument::subprintlong() const {
 			str += _("and");
 		}
 		str += " ";
-		str += _(">=");
+		str += _("<=");
 		str += " ";
 		str += imax->print();
 	}

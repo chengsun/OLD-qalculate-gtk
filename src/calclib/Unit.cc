@@ -15,14 +15,14 @@
 #include "Manager.h"
 #include "Prefix.h"
 
-Unit::Unit(string cat_, string name_, string plural_, string short_name_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active) {
+Unit::Unit(string cat_, string name_, string plural_, string singular_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active) {
 	remove_blank_ends(plural_);
-	remove_blank_ends(short_name_);
-	sshortname = short_name_;
+	remove_blank_ends(singular_);
+	ssingular = singular_;
 	splural = plural_;
 }
 Unit::Unit() {
-	sshortname = "";
+	ssingular = "";
 	splural = "";
 }
 Unit::Unit(const Unit *unit) {
@@ -35,7 +35,7 @@ ExpressionItem *Unit::copy() const {
 void Unit::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_UNIT) {
 		splural = ((Unit*) item)->plural(false);
-		sshortname = ((Unit*) item)->shortName(false);
+		ssingular = ((Unit*) item)->singular(false);
 	}
 	ExpressionItem::set(item);
 }
@@ -50,49 +50,31 @@ void Unit::setPlural(string name_, bool force) {
 	}
 	CALCULATOR->unitPluralChanged(this);
 }
-void Unit::setShortName(string name_, bool force) {
+void Unit::setSingular(string name_, bool force) {
 	remove_blank_ends(name_);
 	if(name_.empty()) {
-		sshortname = name_;
-	} else if(name_ != sshortname) {
-		sshortname = CALCULATOR->getUnitName(name_, this, force);
+		ssingular = name_;
+	} else if(name_ != ssingular) {
+		ssingular = CALCULATOR->getUnitName(name_, this, force);
 	}
 	setChanged(true);
-	CALCULATOR->unitShortNameChanged(this);
+	CALCULATOR->unitSingularChanged(this);
 
 }
-string Unit::name() const {
-	return sname;
+string Unit::singular(bool return_short_if_no_singular) const {
+	if(return_short_if_no_singular && ssingular.empty()) {
+		return shortName();
+	}
+	return ssingular;
 }
-string Unit::referenceName() const {
-	return name();
-}
-string Unit::plural(bool return_name_if_no_plural) const {
-	if(return_name_if_no_plural && splural.empty()) {
-		return name();
+string Unit::plural(bool return_singular_if_no_plural) const {
+	if(return_singular_if_no_plural && splural.empty()) {
+		return singular();
 	}
 	return splural;
 }
-string Unit::baseName() const {
+string Unit::shortName() const {
 	return name();
-}
-string Unit::baseExpName() const {
-	return name();
-}
-string Unit::shortName(bool return_name_if_no_short, bool plural_) const {
-	if(return_name_if_no_short && sshortname.empty()) {
-		if(plural_) {
-			return plural(true);
-		}
-		return name();
-	}
-	return sshortname;
-}
-string Unit::shortBaseName() const {
-	return shortName();
-}
-string Unit::shortBaseExpName() const {
-	return shortName();
 }
 const Unit* Unit::baseUnit() const {
 	return this;
@@ -195,58 +177,8 @@ void AliasUnit::set(const ExpressionItem *item) {
 		ExpressionItem::set(item);
 	}
 }
-string AliasUnit::baseName() const {
-	return unit->baseName();
-}
-string AliasUnit::baseExpName() const {
-	if(baseExp() != 1) {
-		string str = unit->baseName();
-		str += POWER_STR;
-		str += li2s(baseExp());
-		return str;
-	} else {
-		return unit->baseName();
-	}
-}
-string AliasUnit::shortBaseName() const {
-	return unit->shortBaseName();
-}
-string AliasUnit::shortBaseExpName() const {
-	if(baseExp() != 1) {
-		string str = unit->shortBaseName();
-		str += POWER_STR;
-		str += li2s(baseExp());
-		return str;
-	} else {
-		return unit->shortBaseName();
-	}
-}
 const Unit* AliasUnit::baseUnit() const {
 	return unit->baseUnit();
-}
-string AliasUnit::firstBaseName() const {
-	return unit->name();
-}
-string AliasUnit::firstBaseExpName() const {
-	if(exp != 1) {
-		string str = unit->name();
-		str += POWER_STR;
-		str += li2s(exp);
-		return str;
-	} else
-		return unit->name();
-}
-string AliasUnit::firstShortBaseName() const {
-	return unit->shortName(true);
-}
-string AliasUnit::firstShortBaseExpName() const {
-	if(exp != 1) {
-		string str = unit->shortName(true);
-		str += POWER_STR;
-		str += li2s(exp);
-		return str;
-	} else
-		return unit->shortName(true);
 }
 const Unit* AliasUnit::firstBaseUnit() const {
 	return unit;
@@ -444,7 +376,7 @@ bool AliasUnit::hasComplexRelationTo(const Unit *u) const {
 	}
 }
 
-AliasUnit_Composite::AliasUnit_Composite(const Unit *alias, long int exp_, const Prefix *prefix_) : AliasUnit("", alias->name(), alias->plural(false), alias->shortName(false), "", alias, "", exp_, "") {
+AliasUnit_Composite::AliasUnit_Composite(const Unit *alias, long int exp_, const Prefix *prefix_) : AliasUnit("", alias->name(), alias->plural(false), alias->singular(false), "", alias, "", exp_, "") {
 	prefixv = (Prefix*) prefix_;
 }
 AliasUnit_Composite::AliasUnit_Composite(const AliasUnit_Composite *unit) {
@@ -467,13 +399,11 @@ void AliasUnit_Composite::set(const ExpressionItem *item) {
 	}
 }
 string AliasUnit_Composite::printShort(bool plural_) const {
-	if(firstBaseUnit()->shortName(false).empty())
-		return print(plural_);
 	string str = "";
 	if(prefixv) {
 		str += prefixv->name(true);
 	}
-	str += firstBaseUnit()->shortName(true, plural_);
+	str += firstBaseUnit()->shortName();
 	return str;
 }
 string AliasUnit_Composite::print(bool plural_) const {
@@ -481,10 +411,11 @@ string AliasUnit_Composite::print(bool plural_) const {
 	if(prefixv) {
 		str += prefixv->name(false);
 	}
-	if(plural_)
+	if(plural_) {
 		str += firstBaseUnit()->plural();
-	else
-		str += firstBaseUnit()->name();
+	} else {
+		str += firstBaseUnit()->singular();
+	}
 	return str;
 }
 const Prefix *AliasUnit_Composite::prefix() const {
@@ -628,14 +559,14 @@ string CompositeUnit::print(bool plural_, bool short_) const {
 	if(b2) str += RIGHT_BRACKET_STR;
 	return str;
 }
-string CompositeUnit::name() const {
-	return print(false, false);
-}
 string CompositeUnit::plural(bool return_name_if_no_plural) const {
 	return print(true, false);
 }
-string CompositeUnit::shortName(bool return_name_if_no_short, bool plural_) const {
-	return print(plural_, true);
+string CompositeUnit::singular(bool return_short_if_no_singular) const {
+	return print(true, false);
+}
+string CompositeUnit::shortName() const {
+	return print(false, true);
 }
 int CompositeUnit::unitType() const {
 	return COMPOSITE_UNIT;
@@ -689,9 +620,6 @@ Manager *CompositeUnit::generateManager(bool cleaned) const {
 		}
 		return mngr;
 	}
-}
-string CompositeUnit::referenceName() const {
-	return sname;
 }
 void CompositeUnit::setBaseExpression(string base_expression_) {
 	units.clear();
