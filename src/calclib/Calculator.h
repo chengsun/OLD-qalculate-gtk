@@ -132,7 +132,7 @@ class Calculator {
 	Assumptions *default_assumptions;
 	
 	vector<Variable*> deleted_variables;
-	vector<Function*> deleted_functions;	
+	vector<MathFunction*> deleted_functions;	
 	vector<Unit*> deleted_units;
 	
 	bool b_save_called;
@@ -144,25 +144,25 @@ class Calculator {
 
 	KnownVariable *v_pi, *v_e, *v_i, *v_inf, *v_pinf, *v_minf, *v_undef;
 	UnknownVariable *v_x, *v_y, *v_z;
-	Function *f_vector, *f_sort, *f_rank, *f_limits, *f_component, *f_components, *f_merge_vectors;
-	Function *f_matrix, *f_matrix_to_vector, *f_area, *f_rows, *f_columns, *f_row, *f_column, *f_elements, *f_element, *f_transpose, *f_identity, *f_determinant, *f_permanent, *f_adjoint, *f_cofactor, *f_inverse; 
-	Function *f_factorial, *f_factorial2, *f_multifactorial, *f_binomial;
-	Function *f_abs, *f_gcd, *f_signum, *f_round, *f_floor, *f_ceil, *f_trunc, *f_int, *f_frac, *f_rem, *f_mod;
-	Function *f_re, *f_im, *f_arg;
-  	Function *f_sqrt, *f_sq;
-	Function *f_exp;
-	Function *f_ln, *f_logn;
-	Function *f_sin, *f_cos, *f_tan, *f_asin, *f_acos, *f_atan, *f_sinh, *f_cosh, *f_tanh, *f_asinh, *f_acosh, *f_atanh, *f_radians_to_default_angle_unit;
-	Function *f_zeta, *f_gamma, *f_beta;
-	Function *f_total, *f_percentile, *f_min, *f_max, *f_mode, *f_rand;
-	Function *f_days, *f_yearfrac, *f_week, *f_weekday, *f_month, *f_day, *f_year, *f_yearday, *f_time;
-	Function *f_bin, *f_oct, *f_hex, *f_base, *f_roman;
-	Function *f_ascii, *f_char;
-	Function *f_length, *f_concatenate;
-	Function *f_replace;
-	Function *f_for, *f_sum, *f_product, *f_process, *f_process_matrix, *f_csum, *f_if, *f_function, *f_select;
-	Function *f_diff, *f_integrate, *f_solve, *f_multisolve;
-	Function *f_error, *f_warning, *f_message, *f_save, *f_load, *f_export, *f_title;
+	MathFunction *f_vector, *f_sort, *f_rank, *f_limits, *f_component, *f_components, *f_merge_vectors;
+	MathFunction *f_matrix, *f_matrix_to_vector, *f_area, *f_rows, *f_columns, *f_row, *f_column, *f_elements, *f_element, *f_transpose, *f_identity, *f_determinant, *f_permanent, *f_adjoint, *f_cofactor, *f_inverse; 
+	MathFunction *f_factorial, *f_factorial2, *f_multifactorial, *f_binomial;
+	MathFunction *f_abs, *f_gcd, *f_signum, *f_round, *f_floor, *f_ceil, *f_trunc, *f_int, *f_frac, *f_rem, *f_mod;
+	MathFunction *f_re, *f_im, *f_arg;
+  	MathFunction *f_sqrt, *f_sq;
+	MathFunction *f_exp;
+	MathFunction *f_ln, *f_logn;
+	MathFunction *f_sin, *f_cos, *f_tan, *f_asin, *f_acos, *f_atan, *f_sinh, *f_cosh, *f_tanh, *f_asinh, *f_acosh, *f_atanh, *f_radians_to_default_angle_unit;
+	MathFunction *f_zeta, *f_gamma, *f_beta;
+	MathFunction *f_total, *f_percentile, *f_min, *f_max, *f_mode, *f_rand;
+	MathFunction *f_days, *f_yearfrac, *f_week, *f_weekday, *f_month, *f_day, *f_year, *f_yearday, *f_time;
+	MathFunction *f_bin, *f_oct, *f_hex, *f_base, *f_roman;
+	MathFunction *f_ascii, *f_char;
+	MathFunction *f_length, *f_concatenate;
+	MathFunction *f_replace;
+	MathFunction *f_for, *f_sum, *f_product, *f_process, *f_process_matrix, *f_csum, *f_if, *f_function, *f_select;
+	MathFunction *f_diff, *f_integrate, *f_solve, *f_multisolve;
+	MathFunction *f_error, *f_warning, *f_message, *f_save, *f_load, *f_export, *f_title;
 	Unit *u_rad, *u_euro;
 	Prefix *null_prefix;
 
@@ -178,7 +178,7 @@ class Calculator {
 	PrintOptions save_printoptions;	
   
 	vector<Variable*> variables;
-	vector<Function*> functions;	
+	vector<MathFunction*> functions;	
 	vector<Unit*> units;	
 	vector<Prefix*> prefixes;
   
@@ -197,15 +197,15 @@ class Calculator {
 	void endTemporaryStopErrors();	
 	
 	unsigned int addId(const MathStructure &m_struct, bool persistent = false);
-	unsigned int parseAddId(Function *f, const string &str, const ParseOptions &po, bool persistent = false);
-	unsigned int parseAddIdAppend(Function *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent = false);
+	unsigned int parseAddId(MathFunction *f, const string &str, const ParseOptions &po, bool persistent = false);
+	unsigned int parseAddIdAppend(MathFunction *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent = false);
 	unsigned int parseAddVectorId(const string &str, const ParseOptions &po, bool persistent = false);
 	const MathStructure *getId(unsigned int id);	
 	void delId(unsigned int id, bool force = false);
 
 	Variable *getVariable(unsigned int index) const;
 	Unit *getUnit(unsigned int index) const;	
-	Function *getFunction(unsigned int index) const;	
+	MathFunction *getFunction(unsigned int index) const;	
 	
 	void setDefaultAssumptions(Assumptions *ass);
 	Assumptions *defaultAssumptions();
@@ -274,10 +274,10 @@ class Calculator {
 	void delUFV(void *object);		
 	bool hasVariable(Variable *v);
 	bool hasUnit(Unit *u);
-	bool hasFunction(Function *f);
+	bool hasFunction(MathFunction *f);
 	bool stillHasVariable(Variable *v);
 	bool stillHasUnit(Unit *u);
-	bool stillHasFunction(Function *f);
+	bool stillHasFunction(MathFunction *f);
 	void saveFunctionCalled();
 	bool checkSaveFunctionCalled();
 	ExpressionItem *getActiveExpressionItem(string name, ExpressionItem *item = NULL);
@@ -289,19 +289,19 @@ class Calculator {
 	Unit* getCompositeUnit(string internal_name_);	
 	Variable* addVariable(Variable *v, bool force = true);
 	void variableNameChanged(Variable *v);
-	void functionNameChanged(Function *f);	
+	void functionNameChanged(MathFunction *f);	
 	void unitNameChanged(Unit *u);	
 	void unitSingularChanged(Unit *u);	
 	void unitPluralChanged(Unit *u);	
 	Variable* getVariable(string name_);
 	Variable* getActiveVariable(string name_);
 	ExpressionItem *addExpressionItem(ExpressionItem *item, bool force = true);
-	Function* addFunction(Function *f, bool force = true);
+	MathFunction* addFunction(MathFunction *f, bool force = true);
 	DataSet* addDataSet(DataSet *dc, bool force = true);
 	DataSet* getDataSet(unsigned int index);
 	DataSet* getDataSet(string name);
-	Function* getFunction(string name_);	
-	Function* getActiveFunction(string name_);	
+	MathFunction* getFunction(string name_);	
+	MathFunction* getActiveFunction(string name_);	
 	void error(bool critical, const char *TEMPLATE,...);
 	void message(MessageType mtype, const char *TEMPLATE,...);
 	CalculatorMessage *message();
@@ -318,7 +318,7 @@ class Calculator {
 	bool nameTaken(string name, ExpressionItem *object = NULL);
 	bool variableNameTaken(string name, Variable *object = NULL);
 	bool unitNameTaken(string name, Unit *object = NULL);
-	bool functionNameTaken(string name, Function *object = NULL);
+	bool functionNameTaken(string name, MathFunction *object = NULL);
 	bool unitIsUsedByOtherUnits(const Unit *u) const;	
 	string getName(string name = "", ExpressionItem *object = NULL, bool force = false, bool always_append = false);
 	bool loadGlobalDefinitions();

@@ -82,7 +82,7 @@ MathStructure::MathStructure(const MathStructure *o, ...) {
 	va_end(ap);	
 	m_type = STRUCT_VECTOR;
 }
-MathStructure::MathStructure(Function *o, ...) {
+MathStructure::MathStructure(MathFunction *o, ...) {
 	init();
 	clear();
 	va_list ap;
@@ -194,7 +194,7 @@ void MathStructure::set(const MathStructure *o, ...) {
 	va_end(ap);	
 	m_type = STRUCT_VECTOR;
 }
-void MathStructure::set(Function *o, ...) {
+void MathStructure::set(MathFunction *o, ...) {
 	clear();
 	va_list ap;
 	va_start(ap, o); 
@@ -378,7 +378,7 @@ bool MathStructure::isPlural() const {
 void MathStructure::setPlural(bool is_plural) {
 	if(isUnit()) b_plural = is_plural;
 }
-void MathStructure::setFunction(Function *f) {
+void MathStructure::setFunction(MathFunction *f) {
 	o_function = f;
 }
 void MathStructure::setUnit(Unit *u) {
@@ -387,7 +387,7 @@ void MathStructure::setUnit(Unit *u) {
 void MathStructure::setVariable(Variable *v) {
 	o_variable = v;
 }
-Function *MathStructure::function() const {
+MathFunction *MathStructure::function() const {
 	return o_function;
 }
 Variable *MathStructure::variable() const {
@@ -4460,7 +4460,7 @@ void MathStructure::set(const giac::gen &giac_gen, bool in_retry) {
 		case giac::_SYMB: {
 			bool b_two = false;
 			bool qf = false;
-			Function *f = NULL;
+			MathFunction *f = NULL;
 			int t = -1;
 			if(giac_gen._SYMBptr->sommet == giac::at_prod) {
 				b_two = true;
@@ -4630,7 +4630,7 @@ void MathStructure::set(const giac::gen &giac_gen, bool in_retry) {
 						for(unsigned int i = 0; i < giac_gen._SYMBptr->feuille._VECTptr->size(); i++) {
 							if(i == 0 && qf) {
 								if((*giac_gen._SYMBptr->feuille._VECTptr)[i].type == giac::_IDNT) {
-									o_function = (Function*) s2p(*(*giac_gen._SYMBptr->feuille._VECTptr)[i]._IDNTptr->name);
+									o_function = (MathFunction*) s2p(*(*giac_gen._SYMBptr->feuille._VECTptr)[i]._IDNTptr->name);
 								} else {
 									giac_unknown = new giac::gen(giac_gen);
 									m_type = STRUCT_UNKNOWN;
@@ -4646,7 +4646,7 @@ void MathStructure::set(const giac::gen &giac_gen, bool in_retry) {
 						set(giac_gen._SYMBptr->feuille);
 					} else if(qf) {
 						if(giac_gen.type == giac::_POINTER_) {
-							o_function = (Function*) giac_gen._POINTER_val;
+							o_function = (MathFunction*) giac_gen._POINTER_val;
 						} else {
 							giac_unknown = new giac::gen(giac_gen);
 							m_type = STRUCT_UNKNOWN;
@@ -5407,7 +5407,7 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure *paren
 							}
 						}
 					}
-					bool do_plural = true;
+					bool do_plural = po.short_multiplication;
 					switch(CHILD(0).type()) {
 						case STRUCT_NUMBER: {
 							if(CHILD(0).isZero() || CHILD(0).number().isOne() || CHILD(0).number().isMinusOne() || CHILD(0).number().isFraction()) {
@@ -5477,7 +5477,7 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure *paren
 		}
 		case STRUCT_MULTIPLICATION: {
 			if(SIZE > 1 && CHILD(1).isUnit_exp() && CHILD(0).isNumber()) {
-				bool do_plural = !(CHILD(0).isZero() || CHILD(0).number().isOne() || CHILD(0).number().isMinusOne() || CHILD(0).number().isFraction());
+				bool do_plural = po.short_multiplication && !(CHILD(0).isZero() || CHILD(0).number().isOne() || CHILD(0).number().isMinusOne() || CHILD(0).number().isFraction());
 				unsigned int i = 2;
 				for(; i < SIZE; i++) {
 					if(CHILD(i).isUnit()) {
@@ -5509,7 +5509,7 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure *paren
 						break;
 					}
 				}
-				if(last_unit > 0) {
+				if(po.short_multiplication && last_unit > 0) {
 					if(CHILD(last_unit).isUnit()) {
 						CHILD(last_unit).setPlural(true);
 					} else {

@@ -1,3 +1,12 @@
+2004-10-04 Niklas Knutsson  <nq@altern.org>
+
+	* Use readline for qalc
+	* Change class Function to MathFunction
+	* Only use plural name when short multiplication
+	* qalc completion
+	* Autoconf updates -- make compilation of qalc and qalculate-gtk optional as well as readline
+	* qalc save variable, set assumptions, and more
+
 2004-10-03 Niklas Knutsson  <nq@altern.org>
 
 	* Ask if exchange rates shall be downloaded the first qalculate run

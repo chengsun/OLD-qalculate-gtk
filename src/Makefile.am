@@ -9,9 +9,11 @@ INCLUDES = \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
 	-I./calclib \
 	@GNOME_UTILS_CFLAGS@ \
-	@PACKAGE_CFLAGS@
+	@GTK_CFLAGS@ \
+	@GLIB_CFLAGS@
 
-bin_PROGRAMS = qalculate-gtk qalc
+bin_PROGRAMS = @QALCULATE_GTK@ @QALCULATE_TEXT@
+EXTRA_PROGRAMS = qalculate-gtk qalc
 
 qalculate_gtk_SOURCES = \
 	main.cc		main.h		\
@@ -20,17 +22,18 @@ qalculate_gtk_SOURCES = \
 	callbacks.cc	callbacks.h
 
 qalculate_gtk_LDADD = \
-	@PACKAGE_LIBS@ \
+	@GLIB_LIBS@ \
+	@GTK_LIBS@ \
 	@GNOME_UTILS_LIBS@ \
 	calclib/libqalculate.la
 
 qalc_SOURCES = qalc.cc
 
 qalc_LDADD = \
-	@PACKAGE_LIBS@ \
-	@GNOME_UTILS_LIBS@ \
+	@GLIB_LIBS@ \
+	@READLINE_LIBS@ \
 	calclib/libqalculate.la
 
 install-exec-local:
-	cd $(DESTDIR)$(bindir) && rm -f qalculate; $(LN_S) qalculate-gtk qalculate
+	cd $(DESTDIR)$(bindir) && rm -f qalculate; $(LN_S) @LN_QALCULATE@ qalculate
 

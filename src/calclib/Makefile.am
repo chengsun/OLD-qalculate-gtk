@@ -28,4 +28,4 @@ libqalculate_la_LIBADD = $(INTLLIBS) $(DEPENDENT_LIBS)
 INCLUDES = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
-	@PACKAGE_CFLAGS@
+	@GLIB_CFLAGS@

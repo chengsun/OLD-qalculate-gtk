@@ -17,7 +17,7 @@
 #include "Number.h"
 #include "Unit.h"
 
-Function::Function(string name_, int argc_, int max_argc_, string cat_, string title_, string descr_, bool is_active) : ExpressionItem(cat_, name_, title_, descr_, false, true, is_active) {
+MathFunction::MathFunction(string name_, int argc_, int max_argc_, string cat_, string title_, string descr_, bool is_active) : ExpressionItem(cat_, name_, title_, descr_, false, true, is_active) {
 	argc = argc_;
 	if(max_argc_ < 0 || argc < 0) {
 		if(argc < 0) argc = 0;
@@ -32,21 +32,21 @@ Function::Function(string name_, int argc_, int max_argc_, string cat_, string t
 	}
 	last_argdef_index = 0;
 }
-Function::Function(const Function *function) {
+MathFunction::MathFunction(const MathFunction *function) {
 	set(function);
 }
-Function::Function() {
+MathFunction::MathFunction() {
 	argc = 0;
 	max_argc = 0;
 	last_argdef_index = 0;
 }
-Function::~Function() {
+MathFunction::~MathFunction() {
 	clearArgumentDefinitions();
 }
 
-void Function::set(const ExpressionItem *item) {
+void MathFunction::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_FUNCTION) {
-		Function *f = (Function*) item;
+		MathFunction *f = (MathFunction*) item;
 		argc = f->minargs();
 		max_argc = f->maxargs();
 		default_values.clear();
@@ -64,14 +64,14 @@ void Function::set(const ExpressionItem *item) {
 	}
 	ExpressionItem::set(item);
 }
-int Function::type() const {
+int MathFunction::type() const {
 	return TYPE_FUNCTION;
 }
-int Function::subtype() const {
+int MathFunction::subtype() const {
 	return SUBTYPE_FUNCTION;
 }
 
-/*int Function::countArgOccurence(unsigned int arg_) {
+/*int MathFunction::countArgOccurence(unsigned int arg_) {
 	if((int) arg_ > argc && max_argc < 0) {
 		arg_ = argc + 1;
 	}
@@ -80,29 +80,29 @@ int Function::subtype() const {
 	}
 	return 1;
 }*/
-int Function::args() const {
+int MathFunction::args() const {
 	return max_argc;
 }
-int Function::minargs() const {
+int MathFunction::minargs() const {
 	return argc;
 }
-int Function::maxargs() const {
+int MathFunction::maxargs() const {
 	return max_argc;
 }
-string Function::condition() const {
+string MathFunction::condition() const {
 	return scondition;
 }
-void Function::setCondition(string expression) {
+void MathFunction::setCondition(string expression) {
 	scondition = expression;
 	remove_blank_ends(scondition);
 }
-bool Function::testCondition(const MathStructure &vargs) {
+bool MathFunction::testCondition(const MathStructure &vargs) {
 	if(scondition.empty()) {
 		return true;
 	}
 	UserFunction test_function("", "CONDITION_TEST_FUNCTION", scondition, false, argc, "", "", max_argc);
 	MathStructure vargs2(vargs);
-	MathStructure mstruct(test_function.Function::calculate(vargs2));
+	MathStructure mstruct(test_function.MathFunction::calculate(vargs2));
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	mstruct.eval(eo);
@@ -114,7 +114,7 @@ bool Function::testCondition(const MathStructure &vargs) {
 	}
 	return true;
 }
-string Function::printCondition() {
+string MathFunction::printCondition() {
 	if(scondition.empty() || last_argdef_index == 0) return scondition;
 	string str = scondition;
 	string svar, argstr;
@@ -163,7 +163,7 @@ string Function::printCondition() {
 	}
 	return str;
 }
-int Function::args(const string &argstr, MathStructure &vargs, const ParseOptions &po) {
+int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOptions &po) {
 	vargs.clearVector();
 	int start_pos = 0;
 	bool in_cit1 = false, in_cit2 = false;
@@ -246,7 +246,7 @@ int Function::args(const string &argstr, MathStructure &vargs, const ParseOption
 						}
 						vargs.childUpdated(vargs.size());
 					} else {
-						CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s argument(s)."), name().c_str(), i2s(maxargs()).c_str());
+						CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. MathFunction can only use %s argument(s)."), name().c_str(), i2s(maxargs()).c_str());
 					}
 					start_pos = str_index + 1;
 				}
@@ -290,7 +290,7 @@ int Function::args(const string &argstr, MathStructure &vargs, const ParseOption
 			}
 			vargs.childUpdated(vargs.size());
 		} else {
-			CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s argument(s)."), name().c_str(), i2s(maxargs()).c_str());
+			CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. MathFunction can only use %s argument(s)."), name().c_str(), i2s(maxargs()).c_str());
 		}
 	}
 	if(itmp < maxargs() && itmp >= minargs()) {
@@ -307,16 +307,16 @@ int Function::args(const string &argstr, MathStructure &vargs, const ParseOption
 	}
 	return itmp;
 }
-unsigned int Function::lastArgumentDefinitionIndex() const {
+unsigned int MathFunction::lastArgumentDefinitionIndex() const {
 	return last_argdef_index;
 }
-Argument *Function::getArgumentDefinition(unsigned int index) {
+Argument *MathFunction::getArgumentDefinition(unsigned int index) {
 	if(argdefs.find(index) != argdefs.end()) {
 		return argdefs[index];
 	}
 	return NULL;
 }
-void Function::clearArgumentDefinitions() {
+void MathFunction::clearArgumentDefinitions() {
 	for(Sgi::hash_map<unsigned int, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
 		delete it->second;
 	}
@@ -324,7 +324,7 @@ void Function::clearArgumentDefinitions() {
 	last_argdef_index = 0;
 	setChanged(true);
 }
-void Function::setArgumentDefinition(unsigned int index, Argument *argdef) {
+void MathFunction::setArgumentDefinition(unsigned int index, Argument *argdef) {
 	if(argdefs.find(index) != argdefs.end()) {
 		delete argdefs[index];
 	}
@@ -334,10 +334,10 @@ void Function::setArgumentDefinition(unsigned int index, Argument *argdef) {
 	}
 	setChanged(true);
 }
-bool Function::testArgumentCount(int itmp) {
+bool MathFunction::testArgumentCount(int itmp) {
 	if(itmp >= minargs()) {
 		if(itmp > maxargs() && maxargs() >= 0) {
-			CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s argument(s)."), name().c_str(), i2s(maxargs()).c_str());
+			CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. MathFunction can only use %s argument(s)."), name().c_str(), i2s(maxargs()).c_str());
 		}
 		return true;	
 	}
@@ -364,21 +364,21 @@ bool Function::testArgumentCount(int itmp) {
 	}
 	return false;
 }
-MathStructure Function::createFunctionMathStructureFromVArgs(const MathStructure &vargs) {
+MathStructure MathFunction::createFunctionMathStructureFromVArgs(const MathStructure &vargs) {
 	MathStructure mstruct(this, NULL);
 	for(unsigned int i = 0; i < vargs.size(); i++) {
 		mstruct.addChild(vargs[i]);
 	}
 	return mstruct;
 }
-MathStructure Function::createFunctionMathStructureFromSVArgs(vector<string> &svargs) {
+MathStructure MathFunction::createFunctionMathStructureFromSVArgs(vector<string> &svargs) {
 	MathStructure mstruct(this, NULL); 
 	for(unsigned int i = 0; i < svargs.size(); i++) {
 		mstruct.addChild(svargs[i]);
 	}
 	return mstruct;
 }
-MathStructure Function::calculate(const string &argv, const EvaluationOptions &eo) {
+MathStructure MathFunction::calculate(const string &argv, const EvaluationOptions &eo) {
 /*	MathStructure vargs;
 	args(argv, vargs, eo.parse_options);
 	return calculate(vargs, eo);*/
@@ -386,7 +386,7 @@ MathStructure Function::calculate(const string &argv, const EvaluationOptions &e
 	fmstruct.calculateFunctions(eo);
 	return fmstruct;
 }
-MathStructure Function::parse(const string &argv, const ParseOptions &po) {
+MathStructure MathFunction::parse(const string &argv, const ParseOptions &po) {
 	MathStructure vargs;
 	args(argv, vargs, po);	
 	vargs.setType(STRUCT_FUNCTION);
@@ -394,12 +394,12 @@ MathStructure Function::parse(const string &argv, const ParseOptions &po) {
 	return vargs;
 	//return createFunctionMathStructureFromVArgs(vargs);
 }
-void Function::parse(MathStructure &mstruct, const string &argv, const ParseOptions &po) {
+void MathFunction::parse(MathStructure &mstruct, const string &argv, const ParseOptions &po) {
 	args(argv, mstruct, po);
 	mstruct.setType(STRUCT_FUNCTION);
 	mstruct.setFunction(this);
 }
-bool Function::testArguments(MathStructure &vargs) {
+bool MathFunction::testArguments(MathStructure &vargs) {
 	unsigned int last = 0;
 	for(Sgi::hash_map<unsigned int, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
 		if(it->first > last) {
@@ -418,7 +418,7 @@ bool Function::testArguments(MathStructure &vargs) {
 	}
 	return testCondition(vargs);
 }
-MathStructure Function::calculate(MathStructure &vargs, const EvaluationOptions &eo) {
+MathStructure MathFunction::calculate(MathStructure &vargs, const EvaluationOptions &eo) {
 	int itmp = vargs.size();
 	if(testArgumentCount(itmp)) {
 		while(itmp < maxargs()) {
@@ -481,22 +481,22 @@ MathStructure Function::calculate(MathStructure &vargs, const EvaluationOptions 
 		return createFunctionMathStructureFromVArgs(vargs);
 	}
 }
-int Function::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int MathFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	//mstruct = createFunctionMathStructureFromVArgs(vargs);
 	return 0;
 }
-void Function::setDefaultValue(unsigned int arg_, string value_) {
+void MathFunction::setDefaultValue(unsigned int arg_, string value_) {
 	if((int) arg_ > argc && (int) arg_ <= max_argc && (int) default_values.size() >= (int) arg_ - argc) {
 		default_values[arg_ - argc - 1] = value_;
 	}
 }
-const string &Function::getDefaultValue(unsigned int arg_) const {
+const string &MathFunction::getDefaultValue(unsigned int arg_) const {
 	if((int) arg_ > argc && (int) arg_ <= max_argc && (int) default_values.size() >= (int) arg_ - argc) {
 		return default_values[arg_ - argc - 1];
 	}
 	return empty_string;
 }
-int Function::stringArgs(const string &argstr, vector<string> &svargs) {
+int MathFunction::stringArgs(const string &argstr, vector<string> &svargs) {
 	svargs.clear();
 	int start_pos = 0;
 	bool in_cit1 = false, in_cit2 = false;
@@ -576,7 +576,7 @@ int Function::stringArgs(const string &argstr, vector<string> &svargs) {
 	return itmp;
 }
 
-MathStructure Function::produceVector(const MathStructure &vargs, int begin, int end) {	
+MathStructure MathFunction::produceVector(const MathStructure &vargs, int begin, int end) {	
 	if(begin < 1) {
 		begin = minargs() + 1;
 		if(begin < 1) begin = 1;
@@ -596,7 +596,7 @@ MathStructure Function::produceVector(const MathStructure &vargs, int begin, int
 	MathStructure mstruct2;
 	return mstruct.flattenVector(mstruct2);
 }
-MathStructure Function::produceArgumentsVector(const MathStructure &vargs, int begin, int end) {	
+MathStructure MathFunction::produceArgumentsVector(const MathStructure &vargs, int begin, int end) {	
 	if(begin < 1) {
 		begin = minargs() + 1;
 		if(begin < 1) begin = 1;
@@ -611,7 +611,7 @@ MathStructure Function::produceArgumentsVector(const MathStructure &vargs, int b
 	return vargs.getRange(begin, end, mstruct);
 }
 
-UserFunction::UserFunction(string cat_, string name_, string eq_, bool is_local, int argc_, string title_, string descr_, int max_argc_, bool is_active) : Function(name_, argc_, max_argc_, cat_, title_, descr_, is_active) {
+UserFunction::UserFunction(string cat_, string name_, string eq_, bool is_local, int argc_, string title_, string descr_, int max_argc_, bool is_active) : MathFunction(name_, argc_, max_argc_, cat_, title_, descr_, is_active) {
 	b_local = is_local;
 	b_builtin = false;
 	setEquation(eq_, argc_, max_argc_);
@@ -640,7 +640,7 @@ void UserFunction::set(const ExpressionItem *item) {
 			v_precalculate.push_back(((UserFunction*) item)->subfunctionPrecalculated(i));
 		}
 	}
-	Function::set(item);
+	MathFunction::set(item);
 }
 int UserFunction::subtype() const {
 	return SUBTYPE_USER_FUNCTION;
@@ -1098,7 +1098,7 @@ void Argument::set(const Argument *arg) {
 	b_test = arg->tests();
 	b_matrix = arg->matrixAllowed();
 }
-bool Argument::test(MathStructure &value, int index, Function *f, const EvaluationOptions &eo) const {
+bool Argument::test(MathStructure &value, int index, MathFunction *f, const EvaluationOptions &eo) const {
 	if(!b_test) {
 		return true;
 	}

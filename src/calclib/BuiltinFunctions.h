@@ -15,7 +15,7 @@
 #include "Function.h"
 #include "includes.h"
 
-#define DECLARE_BUILTIN_FUNCTION(x)	class x : public Function { \
+#define DECLARE_BUILTIN_FUNCTION(x)	class x : public MathFunction { \
 					  public: \
 						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
 						x(); \

@@ -52,7 +52,7 @@ enum {
 };
 
 
-class Function : public ExpressionItem {
+class MathFunction : public ExpressionItem {
 
   protected:
 
@@ -69,10 +69,10 @@ class Function : public ExpressionItem {
 	
   public:
   
-	Function(string name_, int argc_, int max_argc_ = 0, string cat_ = "", string title_ = "", string descr_ = "", bool is_active = true);
-	Function(const Function *function);
-	Function();
-	virtual ~Function();	
+	MathFunction(string name_, int argc_, int max_argc_ = 0, string cat_ = "", string title_ = "", string descr_ = "", bool is_active = true);
+	MathFunction(const MathFunction *function);
+	MathFunction();
+	virtual ~MathFunction();	
 
 	virtual ExpressionItem *copy() const = 0;
 	virtual void set(const ExpressionItem *item);
@@ -120,7 +120,7 @@ class Function : public ExpressionItem {
 	
 };
 
-class UserFunction : public Function {
+class UserFunction : public MathFunction {
   protected:
   
 	string eq, eq_calc;
@@ -169,7 +169,7 @@ class Argument {
 	virtual string print() const;
 	string printlong() const;
 	
-	bool test(MathStructure &value, int index, Function *f, const EvaluationOptions &eo = default_evaluation_options) const;
+	bool test(MathStructure &value, int index, MathFunction *f, const EvaluationOptions &eo = default_evaluation_options) const;
 	//virtual MathStructure evaluate(const string &str, bool keep_exact = true) const;
 	virtual void evaluate(MathStructure &mstruct, const EvaluationOptions &eo) const;
 	virtual MathStructure parse(const string &str, const ParseOptions &po = default_parse_options) const;

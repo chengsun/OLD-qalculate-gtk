@@ -60,7 +60,6 @@ using namespace std;
 
 static string empty_string;
 
-
 struct ExpressionName;
 class Calculator;
 class MathStructure;
@@ -77,7 +76,7 @@ class Prefix;
 class CompositeUnit;
 class AliasUnit;
 class AliasUnit_Composite;
-class Function;
+class MathFunction;
 class Matrix;
 class Vector;
 class UserFunction;

@@ -324,7 +324,7 @@ bool Calculator::hasUnit(Unit *u) {
 	}
 	return false;
 }
-bool Calculator::hasFunction(Function *f) {
+bool Calculator::hasFunction(MathFunction *f) {
 	for(unsigned int i = 0; i < functions.size(); i++) {
 		if(functions[i] == f) return true;
 	}
@@ -342,8 +342,8 @@ bool Calculator::stillHasUnit(Unit *u) {
 	}
 	return true;
 }
-bool Calculator::stillHasFunction(Function *f) {
-	for(vector<Function*>::iterator it = deleted_functions.begin(); it != deleted_functions.end(); ++it) {
+bool Calculator::stillHasFunction(MathFunction *f) {
+	for(vector<MathFunction*>::iterator it = deleted_functions.begin(); it != deleted_functions.end(); ++it) {
 		if(*it == f) return false;
 	}
 	return true;
@@ -410,7 +410,7 @@ ExpressionItem *Calculator::getExpressionItem(string name, ExpressionItem *item)
 	if(name.empty()) return NULL;
 	Variable *v = getVariable(name);
 	if(v && v != item) return v;
-	Function *f = getFunction(name);
+	MathFunction *f = getFunction(name);
 	if(f && f != item) return f;
 	Unit *u = getUnit(name);
 	if(u && u != item) return u;
@@ -424,7 +424,7 @@ Unit *Calculator::getUnit(unsigned int index) const {
 	}
 	return NULL;
 }
-Function *Calculator::getFunction(unsigned int index) const {
+MathFunction *Calculator::getFunction(unsigned int index) const {
 	if(index >= 0 && index < functions.size()) {
 		return functions[index];
 	}
@@ -622,7 +622,7 @@ void Calculator::prefixNameChanged(Prefix *p) {
 				if(ufv_t[i] == 'v')
 					l = ((Variable*) (*it))->getName(ufv_i[i]).name.length();
 				else if(ufv_t[i] == 'f')
-					l = ((Function*) (*it))->getName(ufv_i[i]).name.length();
+					l = ((MathFunction*) (*it))->getName(ufv_i[i]).name.length();
 				else if(ufv_t[i] == 'u')
 					l = ((Unit*) (*it))->getName(ufv_i[i]).name.length();
 				else if(ufv_t[i] == 'p')
@@ -654,7 +654,7 @@ void Calculator::prefixNameChanged(Prefix *p) {
 				if(ufv_t[i] == 'v')
 					l = ((Variable*) (*it))->getName(ufv_i[i]).name.length();
 				else if(ufv_t[i] == 'f')
-					l = ((Function*) (*it))->getName(ufv_i[i]).name.length();
+					l = ((MathFunction*) (*it))->getName(ufv_i[i]).name.length();
 				else if(ufv_t[i] == 'u')
 					l = ((Unit*) (*it))->getName(ufv_i[i]).name.length();
 				else if(ufv_t[i] == 'p')
@@ -686,7 +686,7 @@ void Calculator::prefixNameChanged(Prefix *p) {
 				if(ufv_t[i] == 'v')
 					l = ((Variable*) (*it))->getName(ufv_i[i]).name.length();
 				else if(ufv_t[i] == 'f')
-					l = ((Function*) (*it))->getName(ufv_i[i]).name.length();
+					l = ((MathFunction*) (*it))->getName(ufv_i[i]).name.length();
 				else if(ufv_t[i] == 'u')
 					l = ((Unit*) (*it))->getName(ufv_i[i]).name.length();
 				else if(ufv_t[i] == 'p')
@@ -763,7 +763,7 @@ unsigned int Calculator::addId(const MathStructure &m_struct, bool persistent) {
 	id_structs[id] = m_struct;
 	return id;
 }
-unsigned int Calculator::parseAddId(Function *f, const string &str, const ParseOptions &po, bool persistent) {
+unsigned int Calculator::parseAddId(MathFunction *f, const string &str, const ParseOptions &po, bool persistent) {
 	unsigned int id = 0;
 	if(freed_ids.size() > 0) {
 		id = freed_ids.back();
@@ -776,7 +776,7 @@ unsigned int Calculator::parseAddId(Function *f, const string &str, const ParseO
 	f->parse(id_structs[id], str, po);
 	return id;
 }
-unsigned int Calculator::parseAddIdAppend(Function *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent) {
+unsigned int Calculator::parseAddIdAppend(MathFunction *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent) {
 	unsigned int id = 0;
 	if(freed_ids.size() > 0) {
 		id = freed_ids.back();
@@ -1062,7 +1062,7 @@ void Calculator::deleteName(string name_, ExpressionItem *object) {
 	if(v2 != NULL) {
 		v2->destroy();
 	} else {
-		Function *f2 = getFunction(name_);
+		MathFunction *f2 = getFunction(name_);
 		if(f2 == object)
 			return;
 		if(f2 != NULL) {
@@ -1923,10 +1923,10 @@ void Calculator::expressionItemDeleted(ExpressionItem *item) {
 			break;
 		}
 		case TYPE_FUNCTION: {
-			for(vector<Function*>::iterator it = functions.begin(); it != functions.end(); ++it) {
+			for(vector<MathFunction*>::iterator it = functions.begin(); it != functions.end(); ++it) {
 				if(*it == item) {
 					functions.erase(it);
-					deleted_functions.push_back((Function*) item);
+					deleted_functions.push_back((MathFunction*) item);
 					break;
 				}
 			}
@@ -1964,7 +1964,7 @@ void Calculator::nameChanged(ExpressionItem *item) {
 			if(ufv_t[i] == 'v')
 				l = ((Variable*) (*it))->getName(ufv_i[i]).name.length();
 			else if(ufv_t[i] == 'f')
-				l = ((Function*) (*it))->getName(ufv_i[i]).name.length();
+				l = ((MathFunction*) (*it))->getName(ufv_i[i]).name.length();
 			else if(ufv_t[i] == 'u')
 				l = ((Unit*) (*it))->getName(ufv_i[i]).name.length();
 			else if(ufv_t[i] == 'p')
@@ -2026,7 +2026,7 @@ void Calculator::nameChanged(ExpressionItem *item) {
 void Calculator::variableNameChanged(Variable *v) {
 	nameChanged(v);
 }
-void Calculator::functionNameChanged(Function *f) {
+void Calculator::functionNameChanged(MathFunction *f) {
 	nameChanged(f);
 }
 void Calculator::unitNameChanged(Unit *u) {
@@ -2063,7 +2063,7 @@ ExpressionItem* Calculator::addExpressionItem(ExpressionItem *item, bool force) 
 			return addVariable((Variable*) item, force);
 		}
 		case TYPE_FUNCTION: {
-			return addFunction((Function*) item, force);
+			return addFunction((MathFunction*) item, force);
 		}		
 		case TYPE_UNIT: {
 			return addUnit((Unit*) item, force);
@@ -2071,7 +2071,7 @@ ExpressionItem* Calculator::addExpressionItem(ExpressionItem *item, bool force) 
 	}
 	return NULL;
 }
-Function* Calculator::addFunction(Function *f, bool force) {
+MathFunction* Calculator::addFunction(MathFunction *f, bool force) {
 	for(unsigned int i = 1; i <= f->countNames(); i++) {
 		f->setName(getName(f->getName(i).name, f, force), i);
 	}
@@ -2081,7 +2081,7 @@ Function* Calculator::addFunction(Function *f, bool force) {
 		functions.push_back(f);
 	}
 	functionNameChanged(f);
-	for(vector<Function*>::iterator it = deleted_functions.begin(); it != deleted_functions.end(); ++it) {
+	for(vector<MathFunction*>::iterator it = deleted_functions.begin(); it != deleted_functions.end(); ++it) {
 		if(*it == f) {
 			deleted_functions.erase(it);
 			break;
@@ -2111,7 +2111,7 @@ DataSet* Calculator::getDataSet(string name) {
 	}
 	return NULL;
 }
-Function* Calculator::getFunction(string name_) {
+MathFunction* Calculator::getFunction(string name_) {
 	if(name_.empty()) return NULL;
 	for(unsigned int i = 0; i < functions.size(); i++) {
 		if(functions[i]->hasName(name_)) {
@@ -2120,7 +2120,7 @@ Function* Calculator::getFunction(string name_) {
 	}
 	return NULL;
 }
-Function* Calculator::getActiveFunction(string name_) {
+MathFunction* Calculator::getActiveFunction(string name_) {
 	if(name_.empty()) return NULL;
 	for(unsigned int i = 0; i < functions.size(); i++) {
 		if(functions[i]->isActive() && functions[i]->hasName(name_)) {
@@ -2249,7 +2249,7 @@ bool Calculator::unitNameTaken(string name, Unit *object) {
 	}
 	return false;
 }
-bool Calculator::functionNameTaken(string name, Function *object) {
+bool Calculator::functionNameTaken(string name, MathFunction *object) {
 	if(name.empty()) return false;
 	for(unsigned int index = 0; index < functions.size(); index++) {
 		if(functions[index]->isActive() && functions[index]->hasName(name)) {
@@ -2339,7 +2339,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 	int found_function_index = 0, found_function_name_length = 0;
 	int ufv_index = 0;
 	bool case_sensitive = false;
-	Function *f = NULL;
+	MathFunction *f = NULL;
 	Variable *v = NULL;
 	Unit *u = NULL;
 	Prefix *p = NULL;
@@ -2594,7 +2594,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 								break;
 							}
 							set_function:
-							f = (Function*) ufv[ufv_index];
+							f = (MathFunction*) ufv[ufv_index];
 							b = false;
 							i4 = -1;
 							if(f->args() == 0) {
@@ -3726,7 +3726,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 	bool active = false, hidden = false, b = false;
 	Number nr;
 	ExpressionItem *item;
-	Function *f;
+	MathFunction *f;
 	Variable *v;
 	Unit *u;
 	AliasUnit *au;

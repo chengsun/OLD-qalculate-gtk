@@ -329,7 +329,7 @@ DataSet *DataProperty::parentSet() const {
 	return parent;
 }
 
-DataSet::DataSet(string s_category, string s_name, string s_default_file, string s_title, string s_description, bool is_local) : Function(s_name, 1, 2, s_category, s_title, s_description) {
+DataSet::DataSet(string s_category, string s_name, string s_default_file, string s_title, string s_description, bool is_local) : MathFunction(s_name, 1, 2, s_category, s_title, s_description) {
 	b_local = is_local;
 	sfile = s_default_file;
 	b_loaded = false;
@@ -350,7 +350,7 @@ void DataSet::set(const ExpressionItem *item) {
 		sfile = dc->defaultDataFile();
 		scopyright = dc->copyright();
 	}
-	Function::set(item);
+	MathFunction::set(item);
 }
 int DataSet::subtype() const {
 	return SUBTYPE_DATA_SET;

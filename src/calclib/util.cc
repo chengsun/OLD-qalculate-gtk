@@ -525,13 +525,29 @@ string i2s(int value) {
 	string stmp = buffer;
 	return stmp;
 }
-const char *b2yn(bool b) {
-	if(b) return _("Yes");
-	return _("No");
+const char *b2yn(bool b, bool capital) {
+	if(capital) {
+		if(b) return _("Yes");
+		return _("No");
+	}
+	if(b) return _("yes");
+	return _("no");
 }
-const char *b2tf(bool b) {
-	if(b) return _("True");
-	return _("False");
+const char *b2tf(bool b, bool capital) {
+	if(capital) {
+		if(b) return _("True");
+		return _("False");
+	}
+	if(b) return _("true");
+	return _("false");
+}
+const char *b2oo(bool b, bool capital) {
+	if(capital) {
+		if(b) return _("On");
+		return _("Off");
+	}
+	if(b) return _("on");
+	return _("off");
 }
 int s2i(const string& str) {
 	return strtol(str.c_str(), NULL, 10);

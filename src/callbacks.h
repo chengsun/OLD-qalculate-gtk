@@ -65,7 +65,7 @@ void insert_text(const gchar *name);
 void recreate_recent_functions();
 void recreate_recent_variables();
 void recreate_recent_units();
-void function_inserted(Function *object);
+void function_inserted(MathFunction *object);
 void variable_inserted(Variable *object);
 void unit_inserted(Unit *object);
 
@@ -73,7 +73,7 @@ void on_tPlotFunctions_selection_changed(GtkTreeSelection *treeselection, gpoint
 
 void on_tSubfunctions_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
-void update_function_arguments_list(Function *f);
+void update_function_arguments_list(MathFunction *f);
 
 void on_tNames_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 

@@ -71,11 +71,11 @@ extern GtkWidget *tNames;
 extern GtkListStore *tNames_store;
 extern GtkAccelGroup *accel_group;
 extern string selected_function_category;
-extern Function *selected_function;
+extern MathFunction *selected_function;
 DataObject *selected_dataobject = NULL;
 DataSet *selected_dataset = NULL;
 DataProperty *selected_dataproperty = NULL;
-Function *edited_function = NULL;
+MathFunction *edited_function = NULL;
 KnownVariable *edited_variable = NULL;
 UnknownVariable *edited_unknown = NULL;
 KnownVariable *edited_matrix = NULL;
@@ -189,7 +189,7 @@ vector<string> recent_units_pre;
 vector<GtkWidget*> recent_function_items;
 vector<GtkWidget*> recent_variable_items;
 vector<GtkWidget*> recent_unit_items;
-vector<Function*> recent_functions;
+vector<MathFunction*> recent_functions;
 vector<Variable*> recent_variables;
 vector<Unit*> recent_units;
 
@@ -420,11 +420,11 @@ void focus_keeping_selection() {
 	gtk_editable_select_region(GTK_EDITABLE(expression), start, end);
 }
 
-Function *get_selected_function() {
+MathFunction *get_selected_function() {
 	return selected_function;
 }
 
-Function *get_edited_function() {
+MathFunction *get_edited_function() {
 	return edited_function;
 }
 Unit *get_edited_unit() {
@@ -623,7 +623,7 @@ void generate_functions_tree_struct() {
 	int cat_i, cat_i_prev; 
 	bool b;	
 	string str, cat, cat_sub;
-	Function *f = NULL;
+	MathFunction *f = NULL;
 	function_cats.items.clear();
 	function_cats.objects.clear();
 	function_cats.parent = NULL;
@@ -635,7 +635,7 @@ void generate_functions_tree_struct() {
 			//deactivated function
 			b = false;
 			for(unsigned int i3 = 0; i3 < ia_functions.size(); i3++) {
-				f = (Function*) ia_functions[i3];
+				f = (MathFunction*) ia_functions[i3];
 				if(CALCULATOR->functions[i]->title() < f->title()) {
 					b = true;
 					ia_functions.insert(ia_functions.begin() + i3, (void*) CALCULATOR->functions[i]);
@@ -681,7 +681,7 @@ void generate_functions_tree_struct() {
 			}
 			b = false;
 			for(unsigned int i3 = 0; i3 < item->objects.size(); i3++) {
-				f = (Function*) item->objects[i3];
+				f = (MathFunction*) item->objects[i3];
 				if(CALCULATOR->functions[i]->title() < f->title()) {
 					b = true;
 					item->objects.insert(item->objects.begin() + i3, (void*) CALCULATOR->functions[i]);
@@ -776,7 +776,7 @@ void update_functions_tree() {
 	}
 }
 
-void setFunctionTreeItem(GtkTreeIter &iter2, Function *f) {
+void setFunctionTreeItem(GtkTreeIter &iter2, MathFunction *f) {
 	gtk_list_store_append(tFunctions_store, &iter2);
 	gtk_list_store_set(tFunctions_store, &iter2, 0, f->title(true).c_str(), 1, (gpointer) f, -1);
 	if(f == selected_function) {
@@ -841,7 +841,7 @@ void on_tFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer u
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
-		Function *f;
+		MathFunction *f;
 		gtk_tree_model_get(model, &iter, 1, &f, -1);
 		//remember the new selection
 		selected_function = f;
@@ -854,7 +854,7 @@ void on_tFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer u
 				Argument *arg;
 				Argument default_arg;
 				string str, str2;
-				const ExpressionName *ename = &f->preferredName(false, true);
+				const ExpressionName *ename = &f->preferredName(false, printops.use_unicode_signs);
 				str += ename->name;
 				gtk_text_buffer_get_end_iter(buffer, &iter);
 				gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, str.c_str(), -1, "bold", "italic", NULL);
@@ -1117,9 +1117,9 @@ void setVariableTreeItem(GtkTreeIter &iter2, Variable *v) {
 			}
 		} else {
 			if(((KnownVariable*) v)->get().isMatrix()) {
-				value = "matrix";
+				value = _("matrix");
 			} else if(((KnownVariable*) v)->get().isVector()) {
-				value = "vector";
+				value = _("vector");
 			} else {
 				value = CALCULATOR->printMathStructureTimeOut(((KnownVariable*) v)->get(), 30000);
 			}
@@ -1942,7 +1942,7 @@ void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gp
 		gtk_widget_set_sensitive(glade_xml_get_widget (functionedit_glade, "function_edit_button_rules"), FALSE);	
 	}
 }
-void update_function_arguments_list(Function *f) {
+void update_function_arguments_list(MathFunction *f) {
 	if(!functionedit_glade) return;
 	selected_argument = NULL;
 	gtk_list_store_clear(tFunctionArguments_store);
@@ -2254,7 +2254,7 @@ void create_fmenu() {
 	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);
 	f_menu = sub;
 	sub2 = sub;
-	Function *f;
+	MathFunction *f;
 	tree_struct *titem, *titem2;
 	function_cats.rit = function_cats.items.rbegin();
 	if(function_cats.rit != function_cats.items.rend()) {
@@ -2270,7 +2270,7 @@ void create_fmenu() {
 	while(titem) {
 		SUBMENU_ITEM_PREPEND(titem->item.c_str(), sub3)
 		for(unsigned int i = 0; i < titem->objects.size(); i++) {
-			f = (Function*) titem->objects[i];
+			f = (MathFunction*) titem->objects[i];
 			if(f->isActive() && !f->isHidden()) {
 				MENU_ITEM_WITH_POINTER(f->title(true).c_str(), insert_function, f)
 			}
@@ -2291,7 +2291,7 @@ void create_fmenu() {
 	}
 	sub = sub2;
 	for(unsigned int i = 0; i < function_cats.objects.size(); i++) {
-		f = (Function*) function_cats.objects[i];
+		f = (MathFunction*) function_cats.objects[i];
 		if(f->isActive() && !f->isHidden()) {
 			MENU_ITEM_WITH_POINTER(f->title(true).c_str(), insert_function, f)
 		}
@@ -2309,7 +2309,7 @@ void update_completion() {
 	string str;
 	for(unsigned int i = 0; i < CALCULATOR->functions.size(); i++) {
 		if(CALCULATOR->functions[i]->isActive()) {
-			str = CALCULATOR->functions[i]->preferredInputName(true, true).name;
+			str = CALCULATOR->functions[i]->preferredInputName(true, false).name;
 			str += "()";
 			gtk_list_store_append(completion_store, &iter);
 			gtk_list_store_set(completion_store, &iter, 0, str.c_str(), 1, CALCULATOR->functions[i]->title().c_str(), -1);
@@ -2318,13 +2318,13 @@ void update_completion() {
 	for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
 		if(CALCULATOR->variables[i]->isActive()) {
 			gtk_list_store_append(completion_store, &iter);
-			gtk_list_store_set(completion_store, &iter, 0, CALCULATOR->variables[i]->preferredInputName(true, true).name.c_str(), 1, CALCULATOR->variables[i]->title().c_str(), -1);
+			gtk_list_store_set(completion_store, &iter, 0, CALCULATOR->variables[i]->preferredInputName(true, false).name.c_str(), 1, CALCULATOR->variables[i]->title().c_str(), -1);
 		}
 	}
 	for(unsigned int i = 0; i < CALCULATOR->units.size(); i++) {
 		if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT) {
 			gtk_list_store_append(completion_store, &iter);
-			gtk_list_store_set(completion_store, &iter, 0, CALCULATOR->units[i]->preferredInputName(true, true).name.c_str(), 1, CALCULATOR->units[i]->title().c_str(), -1);
+			gtk_list_store_set(completion_store, &iter, 0, CALCULATOR->units[i]->preferredInputName(true, false).name.c_str(), 1, CALCULATOR->units[i]->title().c_str(), -1);
 		}
 	}
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(completion_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
@@ -4211,7 +4211,7 @@ void recreate_recent_units() {
 	}
 }
 
-void function_inserted(Function *object) {
+void function_inserted(MathFunction *object) {
 	if(!object) {
 		return;
 	}
@@ -4304,7 +4304,7 @@ void unit_inserted(Unit *object) {
 	pops up an argument entry dialog and inserts function into expression entry
 	parent is parent window
 */
-void insert_function(Function *f, GtkWidget *parent = NULL) {
+void insert_function(MathFunction *f, GtkWidget *parent = NULL) {
 	if(!f) {
 		return;
 	}
@@ -4620,7 +4620,7 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	called from function menu
 */
 void insert_function(GtkMenuItem *w, gpointer user_data) {
-	insert_function((Function*) user_data, glade_xml_get_widget (main_glade, "main_window"));
+	insert_function((MathFunction*) user_data, glade_xml_get_widget (main_glade, "main_window"));
 }
 
 /*
@@ -5054,7 +5054,7 @@ void edit_argument(Argument *arg) {
 	display edit/new function dialog
 	creates new function if f == NULL, win is parent window
 */
-void edit_function(const char *category = "", Function *f = NULL, GtkWidget *win = NULL) {
+void edit_function(const char *category = "", MathFunction *f = NULL, GtkWidget *win = NULL) {
 
 	if(f && f->subtype() == SUBTYPE_DATA_SET) {
 		edit_dataset((DataSet*) f, win);
@@ -6507,7 +6507,7 @@ void insertButtonFunction(const gchar *text, bool append_space = true) {
 		g_free(gstr2);
 	}
 }
-void insertButtonFunction(Function *f) {
+void insertButtonFunction(MathFunction *f) {
 	const ExpressionName *ename = &f->preferredInputName(printops.abbreviate_names, printops.use_unicode_signs);
 	insertButtonFunction(ename->name.c_str(), !text_length_is_one(ename->name));
 }
@@ -9099,7 +9099,7 @@ void on_functions_button_new_clicked(GtkButton *button, gpointer user_data) {
 	"Edit" button clicked in function manager -- open edit function dialog for selected function
 */
 void on_functions_button_edit_clicked(GtkButton *button, gpointer user_data) {
-	Function *f = get_selected_function();
+	MathFunction *f = get_selected_function();
 	if(f) {
 		edit_function("", f, glade_xml_get_widget (functions_glade, "functions_dialog"));
 	}
@@ -9118,7 +9118,7 @@ void on_functions_button_insert_clicked(GtkButton *button, gpointer user_data) {
 void on_functions_button_delete_clicked(GtkButton *button, gpointer user_data) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
-	Function *f = get_selected_function();
+	MathFunction *f = get_selected_function();
 	if(f && f->isLocal()) {
 		for(unsigned int i = 0; i < recent_functions.size(); i++) {
 			if(recent_functions[i] == f) {
@@ -9567,7 +9567,7 @@ void on_type_label_file_clicked(GtkButton *w, gpointer user_data) {
 }
 
 void on_functions_button_deactivate_clicked(GtkButton *w, gpointer user_data) {
-	Function *f = get_selected_function();
+	MathFunction *f = get_selected_function();
 	if(f) {
 		f->setActive(!f->isActive());
 		update_fmenu();

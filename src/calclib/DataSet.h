@@ -117,7 +117,7 @@ class DataProperty {
 typedef vector<DataProperty*>::iterator DataPropertyIter;
 typedef vector<DataObject*>::iterator DataObjectIter;
 
-class DataSet : public Function {
+class DataSet : public MathFunction {
 
   protected:
   
@@ -221,6 +221,5 @@ class DataObjectArgument : public Argument {
 	void setDataSet(DataSet *data_set);
 	
 };
-
 
 #endif

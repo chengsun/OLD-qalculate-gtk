@@ -33,7 +33,7 @@ string *parsed_to_str;
 KnownVariable *vans[5];
 GtkWidget *functions_window;
 string selected_function_category;
-Function *selected_function;
+MathFunction *selected_function;
 GtkWidget *variables_window;
 string selected_variable_category;
 Variable *selected_variable;
@@ -164,11 +164,6 @@ int main (int argc, char **argv) {
 	if(load_global_defs && !CALCULATOR->loadGlobalDefinitions()) {
 		g_print(_("Failed to load global definitions!\n"));
 	}
-	
-	/*CALCULATOR->savePrefixes("prefixes.xml.new", true);
-	CALCULATOR->saveUnits("units.xml.new", true);
-	CALCULATOR->saveVariables("variables.xml.new", true);
-	CALCULATOR->saveFunctions("functions.xml.new", true);*/
 
 	//load local definitions
 	CALCULATOR->loadLocalDefinitions();

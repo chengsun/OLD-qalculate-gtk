@@ -63,7 +63,7 @@ class MathStructure {
 		Prefix *o_prefix;
 		bool b_plural;
 		
-		Function *o_function;
+		MathFunction *o_function;
 		
 #ifdef HAVE_GIAC		
 		giac::gen *giac_unknown;
@@ -80,7 +80,7 @@ class MathStructure {
 		MathStructure(string sym);
 		MathStructure(double float_value);
 		MathStructure(const MathStructure *o, ...);
-		MathStructure(Function *o, ...);
+		MathStructure(MathFunction *o, ...);
 		MathStructure(Unit *u, Prefix *p = NULL);
 		MathStructure(Variable *o);
 		MathStructure(const Number &o);
@@ -91,7 +91,7 @@ class MathStructure {
 		void set(string sym);
 		void set(double float_value);
 		void set(const MathStructure *o, ...);
-		void set(Function *o, ...);
+		void set(MathFunction *o, ...);
 		void set(Unit *u, Prefix *p = NULL);
 		void set(Variable *o);
 		void set(const Number &o);
@@ -142,10 +142,10 @@ class MathStructure {
 		void setPrefix(Prefix *p);
 		bool isPlural() const;
 		void setPlural(bool is_plural);
-		void setFunction(Function *f);
+		void setFunction(MathFunction *f);
 		void setUnit(Unit *u);
 		void setVariable(Variable *v);
-		Function *function() const;
+		MathFunction *function() const;
 		Variable *variable() const;
 		
 		bool isAddition() const;
