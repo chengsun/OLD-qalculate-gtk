@@ -33,7 +33,7 @@
 
 extern bool do_timeout;
 
-extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *nbexpression_glade, *datasets_glade, *decimals_glade;
+extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *nbexpression_glade, *datasetedit_glade, *datasets_glade, *decimals_glade;
 extern GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *namesedit_glade, *nbases_glade, *plot_glade, *precision_glade;
 extern GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
 extern GladeXML *periodictable_glade;
@@ -66,6 +66,8 @@ extern GtkListStore *tUnits_store;
 extern GtkTreeStore *tUnitCategories_store;
 extern GtkWidget *tDataObjects, *tDatasets;
 extern GtkListStore *tDataObjects_store, *tDatasets_store;
+extern GtkWidget *tDataProperties;
+extern GtkListStore *tDataProperties_store;
 extern GtkWidget *tNames;
 extern GtkListStore *tNames_store;
 extern GtkAccelGroup *accel_group;
@@ -73,12 +75,15 @@ extern string selected_function_category;
 extern Function *selected_function;
 DataObject *selected_dataobject = NULL;
 DataSet *selected_dataset = NULL;
+DataProperty *selected_dataproperty = NULL;
 Function *edited_function = NULL;
 KnownVariable *edited_variable = NULL;
 UnknownVariable *edited_unknown = NULL;
 KnownVariable *edited_matrix = NULL;
 Unit *edited_unit = NULL;
-bool editing_variable = false, editing_unknown = false, editing_matrix = false, editing_unit = false, editing_function = false;
+DataSet *edited_dataset = NULL;
+DataProperty *edited_dataproperty = NULL;
+bool editing_variable = false, editing_unknown = false, editing_matrix = false, editing_unit = false, editing_function = false, editing_dataset = false, editing_dataproperty = false;
 unsigned int selected_subfunction;
 unsigned int last_subfunction_index;
 Argument *selected_argument;
@@ -111,6 +116,7 @@ bool expression_has_changed, current_object_has_changed;
 int history_width, history_height;
 AssumptionNumberType saved_assumption_type;
 AssumptionSign saved_assumption_sign;
+vector<DataProperty*> tmp_props;
 
 vector<string> initial_history;
 vector<string> expression_history;
@@ -425,6 +431,12 @@ Function *get_edited_function() {
 }
 Unit *get_edited_unit() {
 	return edited_unit;
+}
+DataSet *get_edited_dataset() {
+	return edited_dataset;
+}
+DataProperty *get_edited_dataproperty() {
+	return edited_dataproperty;
 }
 KnownVariable *get_edited_variable() {
 	return edited_variable;
@@ -1759,6 +1771,22 @@ void on_tDataObjects_selection_changed(GtkTreeSelection *treeselection, gpointer
 		gtk_widget_set_sensitive(glade_xml_get_widget (datasets_glade, "datasets_button_editobject"), FALSE);
 		gtk_widget_set_sensitive(glade_xml_get_widget (datasets_glade, "datasets_button_delobject"), FALSE);
 		selected_dataobject = NULL;
+	}
+}
+
+void on_tDataProperties_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	selected_dataproperty = NULL;
+	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
+		gtk_tree_model_get(model, &iter, 3, &selected_dataproperty, -1);
+	}
+	if(selected_dataproperty) {
+		gtk_widget_set_sensitive(glade_xml_get_widget (datasetedit_glade, "dataset_edit_button_edit_property"), selected_dataproperty->isUserModified());
+		gtk_widget_set_sensitive(glade_xml_get_widget (datasetedit_glade, "dataset_edit_button_del_property"), selected_dataproperty->isUserModified());
+	} else {
+		gtk_widget_set_sensitive(glade_xml_get_widget (datasetedit_glade, "dataset_edit_button_edit_property"), FALSE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (datasetedit_glade, "dataset_edit_button_del_property"), FALSE);
 	}
 }
 
@@ -5009,6 +5037,10 @@ void edit_argument(Argument *arg) {
 */
 void edit_function(const char *category = "", Function *f = NULL, GtkWidget *win = NULL) {
 
+	if(f && f->subtype() == SUBTYPE_DATA_SET) {
+		edit_dataset((DataSet*) f, win);
+	}
+
 	GtkWidget *dialog = get_function_edit_dialog();	
 	if(win) gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(win));
 
@@ -5030,7 +5062,7 @@ void edit_function(const char *category = "", Function *f = NULL, GtkWidget *win
 
 	//clear entries
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_name")), "");
-	gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (unitedit_glade, "function_edit_label_names")), "");
+	gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (functionedit_glade, "function_edit_label_names")), "");
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_condition")), "");
 	gtk_widget_set_sensitive(glade_xml_get_widget (functionedit_glade, "function_edit_entry_name"), !f || !f->isBuiltin());
 	gtk_widget_set_sensitive(glade_xml_get_widget (functionedit_glade, "function_edit_textview_expression"), !f || !f->isBuiltin());
@@ -5745,6 +5777,11 @@ run_matrix_edit_dialog:
 void edit_dataobject(DataSet *ds, DataObject *o, GtkWidget *win) {
 	if(!ds) return;
 	GtkWidget *dialog = get_dataobject_edit_dialog();
+	if(o) {
+		gtk_window_set_title(GTK_WINDOW(dialog), _("Edit Data Object"));
+	} else {
+		gtk_window_set_title(GTK_WINDOW(dialog), _("New Data Object"));
+	}
 	if(win) gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(win));
 	GtkWidget *ptable = glade_xml_get_widget(datasets_glade, "dataobject_edit_table");
 	GList *childlist = gtk_container_get_children(GTK_CONTAINER(ptable));
@@ -5781,10 +5818,9 @@ void edit_dataobject(DataSet *ds, DataObject *o, GtkWidget *win) {
 		label = gtk_label_new(dp->getUnitString().c_str()); gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 		gtk_table_attach(GTK_TABLE(ptable), label, 2, 3, rows - 1, rows, GTK_FILL, GTK_FILL, 0, 0);
 		
-		menu = gtk_menu_new();
-		approx_menus.push_back(menu);
 		om = gtk_option_menu_new();
-		gtk_option_menu_set_menu(GTK_OPTION_MENU(om), menu);
+		approx_menus.push_back(om);
+		menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(om));
 		gtk_menu_append(GTK_MENU(menu), gtk_menu_item_new_with_label("Default"));
 		gtk_menu_append(GTK_MENU(menu), gtk_menu_item_new_with_label("Approximate"));
 		gtk_menu_append(GTK_MENU(menu), gtk_menu_item_new_with_label("Exact"));
@@ -5796,8 +5832,8 @@ void edit_dataobject(DataSet *ds, DataObject *o, GtkWidget *win) {
 	}
 	gtk_widget_show_all(ptable);
 	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
-		bool new_object = o != NULL;
-		if(!o) {
+		bool new_object = (o == NULL);
+		if(new_object) {
 			o = new DataObject(ds);
 			ds->addObject(o);
 		}
@@ -5819,6 +5855,321 @@ void edit_dataobject(DataSet *ds, DataObject *o, GtkWidget *win) {
 		selected_dataobject = o;
 		update_dataobjects();
 	}
+	gtk_widget_hide(dialog);
+}
+
+void update_dataset_property_list(DataSet *ds) {
+	if(!datasetedit_glade) return;
+	selected_dataproperty = NULL;
+	gtk_list_store_clear(tDataProperties_store);
+	gtk_widget_set_sensitive(glade_xml_get_widget (datasetedit_glade, "dataset_edit_button_edit_property"), FALSE);
+	gtk_widget_set_sensitive(glade_xml_get_widget (datasetedit_glade, "dataset_edit_button_del_property"), FALSE);
+	if(ds) {
+		GtkTreeIter iter;
+		string str;
+		for(unsigned int i = 0; i < tmp_props.size(); i++) {
+			gtk_list_store_append(tDataProperties_store, &iter);
+			str = "";
+			switch(tmp_props[i]->propertyType()) {
+				case PROPERTY_STRING: {
+					str += _("text");
+					break;
+				}
+				case PROPERTY_NUMBER: {
+					if(tmp_props[i]->isApproximate()) {
+						str += _("approximate");
+						str += " ";
+					}
+					str += _("number");
+					break;
+				}
+				case PROPERTY_EXPRESSION: {
+					if(tmp_props[i]->isApproximate()) {
+						str += _("approximate");
+						str += " ";
+					}
+					str += _("expression");
+					break;
+				}
+			}
+			if(tmp_props[i]->isKey()) {
+				str += " (";
+				str += _("key");
+				str += ")";
+			}
+			gtk_list_store_set(tDataProperties_store, &iter, 0, tmp_props[i]->title(false).c_str(), 1, tmp_props[i]->getName().c_str(), 2, str.c_str(), 3, (gpointer) tmp_props[i], -1);
+		}
+	}
+}
+
+bool edit_dataproperty(DataProperty *dp) {
+
+	GtkWidget *dialog = get_dataproperty_edit_dialog();	
+	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (datasetedit_glade, "dataset_edit_dialog")));
+
+	edited_dataproperty = dp;	
+	names_edited = false;
+	editing_dataproperty = true;
+
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_entry_name")), dp->getName().c_str());
+	if(dp->countNames() > 1) {
+		string str = "+ ";
+		for(unsigned int i = 2; i <= dp->countNames(); i++) {
+			if(i > 2) str += ", ";
+			str += dp->getName(i);
+		}
+		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_label_names")), str.c_str());
+	} else {
+		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_label_names")), "");
+	}
+
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_entry_title")), dp->title(false).c_str());
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_entry_unit")), dp->getUnitString().c_str());
+
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_checkbutton_hide")), dp->isHidden());
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_checkbutton_key")), dp->isKey());
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_checkbutton_approximate")), dp->isApproximate());
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_checkbutton_case")), dp->isCaseSensitive());
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_checkbutton_brackets")), dp->usesBrackets());
+	
+	GtkTextBuffer *description_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_textview_description")));
+	gtk_text_buffer_set_text(description_buffer, dp->description().c_str(), -1);
+
+	switch(dp->propertyType()) {	
+		case PROPERTY_STRING: {
+			gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_optionmenu_type")), 0);
+			break;
+		}
+		case PROPERTY_NUMBER: {
+			gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_optionmenu_type")), 1);
+			break;
+		}
+		case PROPERTY_EXPRESSION: {
+			gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_optionmenu_type")), 2);
+			break;
+		}
+	}
+	
+	bool return_val = false;
+
+	run_dataproperty_edit_dialog:
+	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
+	
+		string str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_entry_name")));
+		remove_blank_ends(str);
+		GtkTreeIter iter;
+		if(str.empty() && (!names_edited || !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter))) {
+			//no name -- open dialog again
+			show_message(_("Empty name field."), dialog);
+			goto run_dataproperty_edit_dialog;
+		}
+	
+		dp->setTitle(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_entry_title"))));
+		dp->setUnit(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_entry_unit"))));
+		
+		dp->setHidden(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_checkbutton_hide"))));
+		dp->setKey(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_checkbutton_key"))));
+		dp->setApproximate(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_checkbutton_approximate"))));
+		dp->setCaseSensitive(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_checkbutton_case"))));
+		dp->setUsesBrackets(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_checkbutton_brackets"))));
+	
+		GtkTextIter e_iter_s, e_iter_e;
+		gtk_text_buffer_get_start_iter(description_buffer, &e_iter_s);
+		gtk_text_buffer_get_end_iter(description_buffer, &e_iter_e);			
+		dp->setDescription(gtk_text_buffer_get_text(description_buffer, &e_iter_s, &e_iter_e, FALSE));
+		
+		switch(gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_optionmenu_type")))) {
+			case 0: {
+				dp->setPropertyType(PROPERTY_STRING);
+				break;
+			}
+			case 1: {
+				dp->setPropertyType(PROPERTY_NUMBER);
+				break;
+			}
+			case 2: {
+				dp->setPropertyType(PROPERTY_EXPRESSION);
+				break;
+			}
+		}
+		if(names_edited) {
+			dp->clearNames();
+			GtkTreeIter iter;
+			if(gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter)) {
+				gchar *gstr;
+				while(true) {	
+					gboolean reference = FALSE;
+					gtk_tree_model_get(GTK_TREE_MODEL(tNames_store), &iter, NAMES_NAME_COLUMN, &gstr, NAMES_REFERENCE_COLUMN, &reference, -1);
+					dp->addName(gstr, reference);
+					g_free(gstr);
+					if(!gtk_tree_model_iter_next(GTK_TREE_MODEL(tNames_store), &iter)) break;
+				}
+			} else {
+				dp->addName(str);
+			}
+		} else {
+			dp->setName(str, 1);
+		}
+		
+		return_val = true;
+			
+	}
+	
+	names_edited = false;
+	editing_dataproperty = false;
+	edited_dataproperty = NULL;
+	
+	gtk_widget_hide(dialog);
+	
+	return return_val;
+	
+}
+
+
+void edit_dataset(DataSet *ds, GtkWidget *win) {
+	GtkWidget *dialog = get_dataset_edit_dialog();
+	if(win) gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(win));
+	
+	edited_dataset = ds;
+	names_edited = false;
+	editing_dataset = true;
+	
+	if(ds) {
+		if(ds->isLocal())
+			gtk_window_set_title(GTK_WINDOW(dialog), _("Edit Data Set"));
+		else
+			gtk_window_set_title(GTK_WINDOW(dialog), _("Edit Data Set (global)"));		
+	} else {
+		gtk_window_set_title(GTK_WINDOW(dialog), _("New Data Set"));
+	}
+
+	GtkTextBuffer *description_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (datasetedit_glade, "dataset_edit_textview_description")));
+	GtkTextBuffer *copyright_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (datasetedit_glade, "dataset_edit_textview_copyright")));
+
+	gtk_widget_set_sensitive(glade_xml_get_widget (datasetedit_glade, "dataset_edit_textview_copyright"), !ds || ds->isLocal());
+	gtk_widget_set_sensitive(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_file"), !ds || ds->isLocal());
+
+	//clear entries
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_name")), "");
+	gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (datasetedit_glade, "dataset_edit_label_names")), "");
+	gtk_widget_set_sensitive(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_name"), TRUE);
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_desc")), "");
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_file")), "");
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_object_name")), "");
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_property_name")), "");
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_default_property")), _("info"));
+	gtk_text_buffer_set_text(description_buffer, "", -1);
+	gtk_text_buffer_set_text(copyright_buffer, "", -1);
+
+	gtk_widget_set_sensitive(glade_xml_get_widget (datasetedit_glade, "dataset_edit_button_ok"), TRUE);	
+
+	gtk_list_store_clear(tDataProperties_store);
+	gtk_widget_set_sensitive(glade_xml_get_widget (datasetedit_glade, "dataset_edit_button_edit_property"), FALSE);
+	gtk_widget_set_sensitive(glade_xml_get_widget (datasetedit_glade, "dataset_edit_button_del_property"), FALSE);		
+	gtk_widget_set_sensitive(glade_xml_get_widget (datasetedit_glade, "dataset_edit_button_new_property"), TRUE);
+	
+	if(ds) {
+		//fill in original paramaters
+		set_name_label_and_entry(ds, glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_name"), glade_xml_get_widget (datasetedit_glade, "dataset_edit_label_names"));
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_desc")), ds->title(false).c_str());
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_file")), ds->defaultDataFile().c_str());
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_default_property")), ds->defaultProperty().c_str());
+		Argument *arg = ds->getArgumentDefinition(1);
+		if(arg) {
+			gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_object_name")), arg->name().c_str());
+		}
+		arg = ds->getArgumentDefinition(2);
+		if(arg) {
+			gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_property_name")), arg->name().c_str());
+		}
+		gtk_text_buffer_set_text(description_buffer, ds->description().c_str(), -1);
+		gtk_text_buffer_set_text(copyright_buffer, ds->copyright().c_str(), -1);
+		DataPropertyIter it;
+		DataProperty *dp = ds->getFirstProperty(&it);
+		while(dp) {
+			tmp_props.push_back(new DataProperty(*dp));
+			dp = ds->getNextProperty(&it);
+		}
+	}
+	update_dataset_property_list(ds);
+	
+	run_dataset_edit_dialog:
+	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
+		//clicked "OK"
+		string str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_name")));
+		remove_blank_ends(str);
+		GtkTreeIter iter;
+		if(str.empty() && (!names_edited || !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter))) {
+			//no name -- open dialog again
+			show_message(_("Empty name field."), dialog);
+			goto run_dataset_edit_dialog;
+		}
+		GtkTextIter d_iter_s, d_iter_e;
+		gtk_text_buffer_get_start_iter(description_buffer, &d_iter_s);
+		gtk_text_buffer_get_end_iter(description_buffer, &d_iter_e);
+		GtkTextIter c_iter_s, c_iter_e;
+		gtk_text_buffer_get_start_iter(copyright_buffer, &c_iter_s);
+		gtk_text_buffer_get_end_iter(copyright_buffer, &c_iter_e);
+		//dataset with the same name exists -- overwrite or open the dialog again
+		if((!ds || !ds->hasName(str)) && (!names_edited || !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter)) && CALCULATOR->functionNameTaken(str, ds) && !ask_question(_("A function with the same name already exists.\nDo you want to overwrite the function?"), dialog)) {
+			goto run_dataset_edit_dialog;
+		}
+		bool add_func = false;
+		if(ds) {
+			//edited an existing dataset
+			ds->setTitle(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_desc"))));
+			if(ds->isLocal()) ds->setDefaultDataFile(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_file"))));
+			ds->setDescription(gtk_text_buffer_get_text(description_buffer, &d_iter_s, &d_iter_e, FALSE));
+		} else {
+			//new dataset
+			ds = new DataSet(_("Data Sets"), "", gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_file"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_desc"))), gtk_text_buffer_get_text(description_buffer, &d_iter_s, &d_iter_e, FALSE), true);
+			add_func = true;
+		}
+		if(ds) {
+			Argument *arg = ds->getArgumentDefinition(1);
+			if(arg) {
+				arg->setName(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_object_name"))));
+			}
+			arg = ds->getArgumentDefinition(2);
+			if(arg) {
+				arg->setName(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_property_name"))));
+			}
+			ds->setDefaultProperty(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_default_property"))));
+			ds->setCopyright(gtk_text_buffer_get_text(copyright_buffer, &c_iter_s, &c_iter_e, FALSE));
+			DataPropertyIter it;
+			DataProperty *dp = ds->getFirstProperty(&it);
+			while(dp) {
+				if(dp->isUserModified()) {
+					ds->delProperty(&it);
+					dp = *it;
+				} else {
+					dp = ds->getNextProperty(&it);
+				}
+			}
+			for(unsigned int i = 0; i < tmp_props.size(); i++) {
+				if(tmp_props[i]->isUserModified()) {
+					ds->addProperty(tmp_props[i]);
+					tmp_props.erase(tmp_props.begin() + i);
+					i--;
+				}
+			}
+			set_edited_names(ds, str);
+			if(add_func) {
+				CALCULATOR->addDataSet(ds);
+			}
+			selected_dataset = ds;
+		}
+		update_fmenu();	
+		function_inserted(ds);
+		update_datasets_tree();
+	}
+	for(unsigned int i = 0; i < tmp_props.size(); i++) {
+		delete tmp_props[i];
+	}
+	tmp_props.clear();
+	edited_dataset = NULL;
+	editing_dataset = false;
+	names_edited = false;
 	gtk_widget_hide(dialog);
 }
 
@@ -5988,7 +6339,7 @@ run_csv_export_dialog:
 	
 }
 
-void edit_names(ExpressionItem *item, const gchar *namestr, GtkWidget *win) {
+void edit_names(ExpressionItem *item, const gchar *namestr, GtkWidget *win, bool is_dp, DataProperty *dp) {
 
 	GtkWidget *dialog = get_names_edit_dialog();
 	if(win) gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(win));
@@ -6007,10 +6358,17 @@ void edit_names(ExpressionItem *item, const gchar *namestr, GtkWidget *win) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_avoid_input")), FALSE);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_case_sensitive")), FALSE);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_unicode")), FALSE);
+		
+		gtk_widget_set_sensitive(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_abbreviation"), !is_dp);
+		gtk_widget_set_sensitive(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_plural"), !is_dp);
+		gtk_widget_set_sensitive(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_suffix"), !is_dp);
+		gtk_widget_set_sensitive(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_avoid_input"), !is_dp);
+		gtk_widget_set_sensitive(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_case_sensitive"), !is_dp);
+		gtk_widget_set_sensitive(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_unicode"), !is_dp);
 
 		gtk_list_store_clear(tNames_store);
 		
-		if(item) {
+		if(!is_dp && item && item->countNames() > 0) {
 			for(unsigned int i = 1; i <= item->countNames(); i++) {
 				const ExpressionName *ename = &item->getName(i);
 				gtk_list_store_append(tNames_store, &iter);
@@ -6019,10 +6377,22 @@ void edit_names(ExpressionItem *item, const gchar *namestr, GtkWidget *win) {
 					gtk_list_store_set(tNames_store, &iter, NAMES_NAME_COLUMN, namestr, -1);
 				}
 			}
+		} else if(is_dp && dp && dp->countNames() > 0) {
+			for(unsigned int i = 1; i <= dp->countNames(); i++) {
+				gtk_list_store_append(tNames_store, &iter);
+				gtk_list_store_set(tNames_store, &iter, NAMES_NAME_COLUMN, dp->getName(i).c_str(), NAMES_ABBREVIATION_STRING_COLUMN, "-", NAMES_PLURAL_STRING_COLUMN, "-", NAMES_REFERENCE_STRING_COLUMN, b2yn(dp->nameIsReference(i)), NAMES_ABBREVIATION_COLUMN, FALSE, NAMES_PLURAL_COLUMN, FALSE, NAMES_UNICODE_COLUMN, FALSE, NAMES_REFERENCE_COLUMN, dp->nameIsReference(i), NAMES_SUFFIX_COLUMN, FALSE, NAMES_AVOID_INPUT_COLUMN, FALSE, NAMES_CASE_SENSITIVE_COLUMN, FALSE, -1);
+				if(i == 1 && namestr && strlen(namestr) > 0) {
+					gtk_list_store_set(tNames_store, &iter, NAMES_NAME_COLUMN, namestr, -1);
+				}
+			}
 		} else if(namestr && strlen(namestr) > 0) {
-			ExpressionName ename(namestr);
 			gtk_list_store_append(tNames_store, &iter);
-			gtk_list_store_set(tNames_store, &iter, NAMES_NAME_COLUMN, ename.name.c_str(), NAMES_ABBREVIATION_STRING_COLUMN, b2yn(ename.abbreviation), NAMES_PLURAL_STRING_COLUMN, b2yn(ename.plural), NAMES_REFERENCE_STRING_COLUMN, b2yn(ename.reference), NAMES_ABBREVIATION_COLUMN, ename.abbreviation, NAMES_PLURAL_COLUMN, ename.plural, NAMES_UNICODE_COLUMN, ename.unicode, NAMES_REFERENCE_COLUMN, ename.reference, NAMES_SUFFIX_COLUMN, ename.suffix, NAMES_AVOID_INPUT_COLUMN, ename.avoid_input, NAMES_CASE_SENSITIVE_COLUMN, ename.case_sensitive, -1);
+			if(is_dp) {
+				gtk_list_store_set(tNames_store, &iter, NAMES_NAME_COLUMN, namestr, NAMES_ABBREVIATION_STRING_COLUMN, "-", NAMES_PLURAL_STRING_COLUMN, "-", NAMES_REFERENCE_STRING_COLUMN, b2yn(true), NAMES_ABBREVIATION_COLUMN, FALSE, NAMES_PLURAL_COLUMN, FALSE, NAMES_UNICODE_COLUMN, FALSE, NAMES_REFERENCE_COLUMN, TRUE, NAMES_SUFFIX_COLUMN, FALSE, NAMES_AVOID_INPUT_COLUMN, FALSE, NAMES_CASE_SENSITIVE_COLUMN, FALSE, -1);
+			} else {
+				ExpressionName ename(namestr);	
+				gtk_list_store_set(tNames_store, &iter, NAMES_NAME_COLUMN, ename.name.c_str(), NAMES_ABBREVIATION_STRING_COLUMN, b2yn(ename.abbreviation), NAMES_PLURAL_STRING_COLUMN, b2yn(ename.plural), NAMES_REFERENCE_STRING_COLUMN, b2yn(ename.reference), NAMES_ABBREVIATION_COLUMN, ename.abbreviation, NAMES_PLURAL_COLUMN, ename.plural, NAMES_UNICODE_COLUMN, ename.unicode, NAMES_REFERENCE_COLUMN, ename.reference, NAMES_SUFFIX_COLUMN, ename.suffix, NAMES_AVOID_INPUT_COLUMN, ename.avoid_input, NAMES_CASE_SENSITIVE_COLUMN, ename.case_sensitive, -1);
+			}
 		}
 	} else if(namestr && strlen(namestr) > 0) {
 		if(gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter)) {
@@ -7824,7 +8194,10 @@ void on_menu_item_new_vector_activate(GtkMenuItem *w, gpointer user_data) {
 	edit_matrix(_("Vectors"), NULL, NULL, glade_xml_get_widget (main_glade, "main_window"), TRUE);
 }
 void on_menu_item_new_function_activate(GtkMenuItem *w, gpointer user_data) {
-	edit_function("", NULL,	glade_xml_get_widget (main_glade, "main_window"));
+	edit_function("", NULL, glade_xml_get_widget (main_glade, "main_window"));
+}
+void on_menu_item_new_dataset_activate(GtkMenuItem *w, gpointer user_data) {
+	edit_dataset(NULL, glade_xml_get_widget (main_glade, "main_window"));
 }
 void on_menu_item_new_unit_activate(GtkMenuItem *w, gpointer user_data) {
 	edit_unit("", NULL, glade_xml_get_widget (main_glade, "main_window"));
@@ -8705,8 +9078,10 @@ void on_functions_button_close_clicked(GtkButton *button, gpointer user_data) {
 }
 
 void on_datasets_button_newset_clicked(GtkButton *button, gpointer user_data) {	
+	edit_dataset(NULL, glade_xml_get_widget (datasets_glade, "datasets_dialog"));
 }
 void on_datasets_button_editset_clicked(GtkButton *button, gpointer user_data) {
+	edit_dataset(selected_dataset, glade_xml_get_widget (datasets_glade, "datasets_dialog"));
 }
 void on_datasets_button_delset_clicked(GtkButton *button, gpointer user_data) {
 	if(selected_dataset && selected_dataset->isLocal()) {
@@ -9387,6 +9762,7 @@ void on_argument_rules_checkbutton_enable_condition_toggled(GtkToggleButton *w, 
 					}\
 				}\
 				gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (x, z)), str.c_str());
+				
 void on_variable_edit_button_names_clicked(GtkButton *w, gpointer user_data) {
 	edit_names(get_edited_variable(), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_name"))), glade_xml_get_widget (variableedit_glade, "variable_edit_dialog"));
 	SET_NAMES_LE(variableedit_glade, "variable_edit_entry_name", "variable_edit_label_names")
@@ -9422,12 +9798,14 @@ void on_names_edit_button_add_clicked(GtkButton *w, gpointer user_data) {
 	else if(editing_matrix && CALCULATOR->variableNameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), get_edited_matrix())) name_taken = true;
 	else if(editing_unit && CALCULATOR->unitNameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), get_edited_unit())) name_taken = true;
 	else if(editing_function && CALCULATOR->functionNameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), get_edited_function())) name_taken = true;
+	else if(editing_dataset && CALCULATOR->functionNameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), get_edited_dataset())) name_taken = true;
 	if(name_taken) {
 		if(!ask_question(_("A conflicting object with the same name exists. If you proceed and save changes, the conflicting object will be overwritten or deactivated.\nDo you want to proceed?"), glade_xml_get_widget (namesedit_glade, "names_edit_dialog"))) return;
 	}
 	GtkTreeIter iter;
 	gtk_list_store_append(tNames_store, &iter);
-	gtk_list_store_set(tNames_store, &iter, NAMES_NAME_COLUMN, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), NAMES_ABBREVIATION_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_abbreviation")))), NAMES_PLURAL_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_plural")))), NAMES_REFERENCE_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_reference")))), NAMES_ABBREVIATION_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_abbreviation"))), NAMES_PLURAL_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_plural"))), NAMES_UNICODE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_unicode"))), NAMES_REFERENCE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_reference"))), NAMES_SUFFIX_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_suffix"))), NAMES_AVOID_INPUT_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_avoid_input"))), NAMES_CASE_SENSITIVE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_case_sensitive"))), -1);
+	if(editing_dataproperty) gtk_list_store_set(tNames_store, &iter, NAMES_NAME_COLUMN, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), NAMES_ABBREVIATION_STRING_COLUMN, "-", NAMES_PLURAL_STRING_COLUMN, "-", NAMES_REFERENCE_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_reference")))), NAMES_ABBREVIATION_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_abbreviation"))), NAMES_PLURAL_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_plural"))), NAMES_UNICODE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_unicode"))), NAMES_REFERENCE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_reference"))), NAMES_SUFFIX_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_suffix"))), NAMES_AVOID_INPUT_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_avoid_input"))), NAMES_CASE_SENSITIVE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_case_sensitive"))), -1);
+	else gtk_list_store_set(tNames_store, &iter, NAMES_NAME_COLUMN, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), NAMES_ABBREVIATION_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_abbreviation")))), NAMES_PLURAL_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_plural")))), NAMES_REFERENCE_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_reference")))), NAMES_ABBREVIATION_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_abbreviation"))), NAMES_PLURAL_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_plural"))), NAMES_UNICODE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_unicode"))), NAMES_REFERENCE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_reference"))), NAMES_SUFFIX_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_suffix"))), NAMES_AVOID_INPUT_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_avoid_input"))), NAMES_CASE_SENSITIVE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_case_sensitive"))), -1);
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name")), "");
 }
 void on_names_edit_button_modify_clicked(GtkButton *w, gpointer user_data) {
@@ -9444,6 +9822,7 @@ void on_names_edit_button_modify_clicked(GtkButton *w, gpointer user_data) {
 			else if(editing_matrix && CALCULATOR->variableNameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), get_edited_matrix())) name_taken = true;
 			else if(editing_unit && CALCULATOR->unitNameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), get_edited_unit())) name_taken = true;
 			else if(editing_function && CALCULATOR->functionNameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), get_edited_function())) name_taken = true;
+			else if(editing_dataset && CALCULATOR->functionNameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), get_edited_dataset())) name_taken = true;
 			if(name_taken) {
 				if(!ask_question(_("A conflicting object with the same name exists. If you proceed and save changes, the conflicting object will be overwritten or deactivated.\nDo you want to proceed?"), glade_xml_get_widget (namesedit_glade, "names_edit_dialog"))) {
 					g_free(gstr);
@@ -9452,7 +9831,8 @@ void on_names_edit_button_modify_clicked(GtkButton *w, gpointer user_data) {
 			}
 		}
 		g_free(gstr);
-		gtk_list_store_set(tNames_store, &iter, NAMES_NAME_COLUMN, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), NAMES_ABBREVIATION_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_abbreviation")))), NAMES_PLURAL_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_plural")))), NAMES_REFERENCE_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_reference")))), NAMES_ABBREVIATION_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_abbreviation"))), NAMES_PLURAL_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_plural"))), NAMES_UNICODE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_unicode"))), NAMES_REFERENCE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_reference"))), NAMES_SUFFIX_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_suffix"))), NAMES_AVOID_INPUT_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_avoid_input"))), NAMES_CASE_SENSITIVE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_case_sensitive"))), -1);
+		if(editing_dataproperty) gtk_list_store_set(tNames_store, &iter, NAMES_NAME_COLUMN, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), NAMES_ABBREVIATION_STRING_COLUMN, "-", NAMES_PLURAL_STRING_COLUMN, "-", NAMES_REFERENCE_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_reference")))), NAMES_ABBREVIATION_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_abbreviation"))), NAMES_PLURAL_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_plural"))), NAMES_UNICODE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_unicode"))), NAMES_REFERENCE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_reference"))), NAMES_SUFFIX_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_suffix"))), NAMES_AVOID_INPUT_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_avoid_input"))), NAMES_CASE_SENSITIVE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_case_sensitive"))), -1);
+		else gtk_list_store_set(tNames_store, &iter, NAMES_NAME_COLUMN, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), NAMES_ABBREVIATION_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_abbreviation")))), NAMES_PLURAL_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_plural")))), NAMES_REFERENCE_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_reference")))), NAMES_ABBREVIATION_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_abbreviation"))), NAMES_PLURAL_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_plural"))), NAMES_UNICODE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_unicode"))), NAMES_REFERENCE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_reference"))), NAMES_SUFFIX_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_suffix"))), NAMES_AVOID_INPUT_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_avoid_input"))), NAMES_CASE_SENSITIVE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_case_sensitive"))), -1);
 	}
 }
 void on_names_edit_button_remove_clicked(GtkButton *w, gpointer user_data) {
@@ -9478,13 +9858,13 @@ void on_names_edit_entry_name_changed(GtkEditable *editable, gpointer user_data)
 			gtk_entry_set_text(GTK_ENTRY(editable), CALCULATOR->convertToValidUnitName(gtk_entry_get_text(GTK_ENTRY(editable))).c_str());
 			g_signal_handlers_unblock_matched((gpointer) editable, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_names_edit_entry_name_changed, NULL);
 		}
-	} else if(editing_function) {
+	} else if(editing_function || editing_dataset) {
 		if(!CALCULATOR->functionNameIsValid(gtk_entry_get_text(GTK_ENTRY(editable)))) {
 			g_signal_handlers_block_matched((gpointer) editable, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_names_edit_entry_name_changed, NULL);
 			gtk_entry_set_text(GTK_ENTRY(editable), CALCULATOR->convertToValidFunctionName(gtk_entry_get_text(GTK_ENTRY(editable))).c_str());
 			g_signal_handlers_unblock_matched((gpointer) editable, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_names_edit_entry_name_changed, NULL);
 		}
-	} else {
+	} else if(!editing_dataproperty) {
 		if(!CALCULATOR->variableNameIsValid(gtk_entry_get_text(GTK_ENTRY(editable)))) {
 			g_signal_handlers_block_matched((gpointer) editable, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_names_edit_entry_name_changed, NULL);
 			gtk_entry_set_text(GTK_ENTRY(editable), CALCULATOR->convertToValidVariableName(gtk_entry_get_text(GTK_ENTRY(editable))).c_str());
@@ -9943,6 +10323,55 @@ void on_element_button_clicked(GtkButton *w, gpointer user_data) {
 		
 	}
 }
+
+void on_dataset_edit_entry_name_changed(GtkEditable *editable, gpointer user_data) {
+	if(!CALCULATOR->functionNameIsValid(gtk_entry_get_text(GTK_ENTRY(editable)))) {
+		g_signal_handlers_block_matched((gpointer) editable, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_dataset_edit_entry_name_changed, NULL);
+		gtk_entry_set_text(GTK_ENTRY(editable), CALCULATOR->convertToValidFunctionName(gtk_entry_get_text(GTK_ENTRY(editable))).c_str());
+		g_signal_handlers_unblock_matched((gpointer) editable, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_dataset_edit_entry_name_changed, NULL);		
+	}
+}
+void on_dataset_edit_button_new_property_clicked(GtkButton *button, gpointer user_data) {
+	DataProperty *dp = new DataProperty(edited_dataset);
+	dp->setUserModified(true);
+	if(edit_dataproperty(dp)) {
+		printf("A\n");
+		tmp_props.push_back(dp);
+		printf("B\n");
+		update_dataset_property_list(edited_dataset);
+		printf("C\n");
+	} else {
+		delete dp;
+	}
+}
+void on_dataset_edit_button_edit_property_clicked(GtkButton *button, gpointer user_data) {
+	if(selected_dataproperty) {
+		if(edit_dataproperty(selected_dataproperty)) {
+			update_dataset_property_list(edited_dataset);
+		}
+	}
+}
+void on_dataset_edit_button_del_property_clicked(GtkButton *button, gpointer user_data) {
+	if(edited_dataset && selected_dataproperty && selected_dataproperty->isUserModified()) {
+		for(vector<DataProperty*>::iterator it = tmp_props.begin(); it != tmp_props.end(); ++it) {
+			if(*it == selected_dataproperty) {
+				tmp_props.erase(it);
+				break;
+			}
+		}
+		update_dataset_property_list(edited_dataset);
+	}
+}
+void on_dataset_edit_button_names_clicked(GtkButton *button, gpointer user_data) {
+	edit_names(get_edited_dataset(), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_name"))), glade_xml_get_widget (datasetedit_glade, "dataset_edit_dialog"));
+	SET_NAMES_LE(datasetedit_glade, "dataset_edit_entry_name", "dataset_edit_label_names")
+}
+
+void on_dataproperty_edit_button_names_clicked(GtkButton *button, gpointer user_data) {
+	edit_names(NULL, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_entry_name"))), glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_dialog"), TRUE, get_edited_dataproperty());
+	SET_NAMES_LE(datasetedit_glade, "dataproperty_edit_entry_name", "dataproperty_edit_label_names")
+}
+
 
 #ifdef __cplusplus
 }

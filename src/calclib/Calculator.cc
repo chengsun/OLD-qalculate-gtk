@@ -3839,9 +3839,19 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				ITEM_SET_DTH
 				f->setChanged(false);
 				addFunction(f);
-			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "dataset")) {
+			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "dataset") || !xmlStrcmp(cur->name, (const xmlChar*) "builtin_dataset")) {
+				bool builtin = !xmlStrcmp(cur->name, (const xmlChar*) "builtin_dataset");
 				XML_GET_FALSE_FROM_PROP(cur, "active", active)
-				dc = new DataSet(category, "", "", "", "");
+				if(builtin) {
+					XML_GET_STRING_FROM_PROP(cur, "name", name)
+					dc = getDataSet(name);
+					if(!dc) {
+						goto after_load_object;
+					}
+					dc->setCategory(category);
+				} else {
+					dc = new DataSet(category, "", "", "", "", is_user_defs);
+				}
 				item = dc;
 				done_something = true;
 				child = cur->xmlChildrenNode;
@@ -3965,6 +3975,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 								ref_prop_names[i] = "";
 							}
 						}
+						dp->setUserModified(is_user_defs);
 						dc->addProperty(dp);
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "argument")) {
 						child2 = child->xmlChildrenNode;
@@ -4008,19 +4019,22 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						}
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "default_property")) {
 						XML_DO_FROM_TEXT(child, dc->setDefaultProperty)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "copyright")) {
+					} else if(!builtin && !xmlStrcmp(child->name, (const xmlChar*) "copyright")) {
 						XML_DO_FROM_TEXT(child, dc->setCopyright)
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "datafile")) {
+					} else if(!builtin && !xmlStrcmp(child->name, (const xmlChar*) "datafile")) {
 						XML_DO_FROM_TEXT(child, dc->setDefaultDataFile)
 					} else ITEM_READ_NAME(functionNameIsValid)
 					 else ITEM_READ_DTH
 					child = child->next;
 				}
+				if(builtin) BUILTIN_NAMES_1
 				ITEM_SET_NAME_2
 				ITEM_SET_NAME_3
 				ITEM_SET_DTH
-				dc->setChanged(false);
-				addDataSet(dc);
+				if(builtin) BUILTIN_NAMES_2
+				dc->setChanged(builtin && is_user_defs);
+				if(!builtin) addDataSet(dc);
+				done_something = true;
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "builtin_function")) {
 				XML_GET_STRING_FROM_PROP(cur, "name", name)
 				f = getFunction(name);
@@ -4168,7 +4182,6 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				}
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "unit")) {
 				XML_GET_STRING_FROM_PROP(cur, "type", type)
-				bool b_si = false;
 				if(type == "base") {	
 					if(version_numbers[1] < 6 || version_numbers[2] < 3) {
 						XML_GET_STRING_FROM_PROP(cur, "name", name)
@@ -4445,6 +4458,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				addPrefix(new Prefix(s2i(svalue), name, stmp, uname));
 				done_something = true;
 			}
+			after_load_object:
 			cur = NULL;
 			if(in_unfinished) {
 				if(done_something) {
@@ -4515,6 +4529,11 @@ bool Calculator::saveDefinitions() {
 	filename = homedir;
 	filename += "variables.xml";
 	if(!saveVariables(filename.c_str())) {
+		return false;
+	}
+	filename = homedir;
+	filename += "datasets.xml";
+	if(!saveDataSets(filename.c_str())) {
 		return false;
 	}
 	if(!saveDataObjects()) {
@@ -4905,7 +4924,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 	NumberArgument *farg;
 	string str;
 	for(unsigned int i = 0; i < functions.size(); i++) {
-		if(save_global || functions[i]->isLocal() || functions[i]->hasChanged()) {	
+		if(functions[i]->subtype() != SUBTYPE_DATA_SET && (save_global || functions[i]->isLocal() || functions[i]->hasChanged())) {
 			item = &top;
 			if(!functions[i]->category().empty()) {
 				cat = functions[i]->category();
@@ -5103,6 +5122,204 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 							}
 						}
 					}
+				}
+			}
+		}
+	}
+	int returnvalue = xmlSaveFormatFile(file_name, doc, 1);
+	xmlFreeDoc(doc);
+	return returnvalue;
+}
+int Calculator::saveDataSets(const char* file_name, bool save_global) {
+	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");	
+	xmlNodePtr cur, newnode, newnode2, newnode3;	
+	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);	
+	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
+	const ExpressionName *ename;
+	node_tree_item top;
+	top.category = "";
+	top.node = doc->children;
+	node_tree_item *item;
+	string cat, cat_sub;
+	Argument *arg;
+	DataSet *ds;
+	DataProperty *dp;
+	string str;
+	for(unsigned int i = 0; i < functions.size(); i++) {
+		if(functions[i]->subtype() == SUBTYPE_DATA_SET && (save_global || functions[i]->isLocal() || functions[i]->hasChanged())) {
+			item = &top;
+			ds = (DataSet*) functions[i];
+			if(!ds->category().empty()) {
+				cat = ds->category();
+				unsigned int cat_i = cat.find("/"); int cat_i_prev = -1;
+				bool b = false;
+				while(true) {
+					if(cat_i == string::npos) {
+						cat_sub = cat.substr(cat_i_prev + 1, cat.length() - 1 - cat_i_prev);
+					} else {
+						cat_sub = cat.substr(cat_i_prev + 1, cat_i - 1 - cat_i_prev);
+					}
+					b = false;
+					for(unsigned int i2 = 0; i2 < item->items.size(); i2++) {
+						if(cat_sub == item->items[i2].category) {
+							item = &item->items[i2];
+							b = true;
+							break;
+						}
+					}
+					if(!b) {
+						item->items.resize(item->items.size() + 1);
+						item->items[item->items.size() - 1].node = xmlNewTextChild(item->node, NULL, (xmlChar*) "category", NULL);
+						item = &item->items[item->items.size() - 1];
+						item->category = cat_sub;
+						if(save_global) {
+							xmlNewTextChild(item->node, NULL, (xmlChar*) "_title", (xmlChar*) item->category.c_str());
+						} else {
+							xmlNewTextChild(item->node, NULL, (xmlChar*) "title", (xmlChar*) item->category.c_str());
+						}
+					}
+					if(cat_i == string::npos) {
+						break;
+					}
+					cat_i_prev = cat_i;
+					cat_i = cat.find("/", cat_i_prev + 1);
+				}
+			}
+			cur = item->node;
+			if(save_global || ds->isLocal() || ds->hasChanged()) {	
+				if(save_global || ds->isLocal()) {
+					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "dataset", NULL);
+				} else {
+					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "builtin_dataset", NULL);
+					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) ds->referenceName().c_str());
+				}
+				if(!ds->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");
+				if(ds->isHidden()) xmlNewTextChild(newnode, NULL, (xmlChar*) "hidden", (xmlChar*) "true");
+				if(!ds->title(false).empty()) {
+					if(save_global) {
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) ds->title(false).c_str());
+					} else {
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) ds->title(false).c_str());
+					}
+				}
+				if((save_global || ds->isLocal()) && !ds->defaultDataFile().empty()) {
+					xmlNewTextChild(newnode, NULL, (xmlChar*) "datafile", (xmlChar*) ds->defaultDataFile().c_str());
+				}
+				for(unsigned int i2 = 1; i2 <= ds->countNames(); i2++)  {
+					ename = &ds->getName(i2);
+					if(ename->abbreviation) newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "abbreviation", NULL);
+					else if(ename->plural) newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "plural", NULL);
+					else newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "name", NULL);
+					xmlNewProp(newnode2, (xmlChar*) "index", (xmlChar*) i2s(i2).c_str());
+					if(ename->reference) xmlNewTextChild(newnode2, NULL, (xmlChar*) "reference", (xmlChar*) "true");
+					if(ename->plural && ename->abbreviation) xmlNewTextChild(newnode2, NULL, (xmlChar*) "plural", (xmlChar*) "true");
+					if(ename->unicode) xmlNewTextChild(newnode2, NULL, (xmlChar*) "unicode", (xmlChar*) "true");
+					if(ename->avoid_input) xmlNewTextChild(newnode2, NULL, (xmlChar*) "avoid_input", (xmlChar*) "true");
+					if(ename->suffix) xmlNewTextChild(newnode2, NULL , (xmlChar*) "suffix", (xmlChar*) "true");
+					if(ename->case_sensitive != (ename->abbreviation || text_length_is_one(ename->name))) xmlNewTextChild(newnode2, NULL, (xmlChar*) "case_sensitive", (xmlChar*) "true");
+					if(save_global) {
+						xmlNewTextChild(newnode2, NULL, (xmlChar*) "_name", (xmlChar*) ename->name.c_str());
+					} else {
+						xmlNewTextChild(newnode2, NULL, (xmlChar*) "name", (xmlChar*) ename->name.c_str());
+					}
+				}
+				if(!ds->description().empty()) {
+					if(save_global) {
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) ds->description().c_str());
+					} else {
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) ds->description().c_str());
+					}
+				}
+				if((save_global || ds->isLocal()) && !ds->copyright().empty()) {
+					if(save_global) {
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "_copyright", (xmlChar*) ds->copyright().c_str());
+					} else {
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "copyright", (xmlChar*) ds->copyright().c_str());
+					}
+				}
+				arg = ds->getArgumentDefinition(1);
+				if(arg && ((!save_global && !ds->isLocal()) || arg->name() != _("Object"))) {
+					newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "object_argument", NULL);
+					if(save_global) {
+						xmlNewTextChild(newnode2, NULL, (xmlChar*) "_title", (xmlChar*) arg->name().c_str());
+					} else {
+						xmlNewTextChild(newnode2, NULL, (xmlChar*) "title", (xmlChar*) arg->name().c_str());
+					}
+				}
+				arg = ds->getArgumentDefinition(2);
+				if(arg && ((!save_global && !ds->isLocal()) || arg->name() != _("Property"))) {
+					newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "property_argument", NULL);
+					if(save_global) {
+						xmlNewTextChild(newnode2, NULL, (xmlChar*) "_title", (xmlChar*) arg->name().c_str());
+					} else {
+						xmlNewTextChild(newnode2, NULL, (xmlChar*) "title", (xmlChar*) arg->name().c_str());
+					}
+				}
+				if((!save_global && !ds->isLocal()) || ds->getDefaultValue(2) != _("info")) {
+					xmlNewTextChild(newnode, NULL, (xmlChar*) "default_property", (xmlChar*) ds->getDefaultValue(2).c_str());
+				}
+				DataPropertyIter it;
+				dp = ds->getFirstProperty(&it);
+				while(dp) {
+					if(save_global || ds->isLocal() || dp->isUserModified()) {
+						newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "property", NULL);
+						if(!dp->title(false).empty()) {
+							if(save_global) {
+								xmlNewTextChild(newnode2, NULL, (xmlChar*) "_title", (xmlChar*) dp->title().c_str());
+							} else {
+								xmlNewTextChild(newnode2, NULL, (xmlChar*) "title", (xmlChar*) dp->title().c_str());
+							}
+						}
+						switch(dp->propertyType()) {
+							case PROPERTY_STRING: {
+								xmlNewTextChild(newnode2, NULL, (xmlChar*) "type", (xmlChar*) "text");
+								break;
+							}
+							case PROPERTY_NUMBER: {
+								xmlNewTextChild(newnode2, NULL, (xmlChar*) "type", (xmlChar*) "number");
+								break;
+							}
+							case PROPERTY_EXPRESSION: {
+								xmlNewTextChild(newnode2, NULL, (xmlChar*) "type", (xmlChar*) "expression");
+								break;
+							}
+						}
+						if(dp->isHidden()) {
+							xmlNewTextChild(newnode2, NULL, (xmlChar*) "hidden", (xmlChar*) "true");
+						}
+						if(dp->isKey()) {
+							xmlNewTextChild(newnode2, NULL, (xmlChar*) "key", (xmlChar*) "true");
+						}
+						if(dp->isApproximate()) {
+							xmlNewTextChild(newnode2, NULL, (xmlChar*) "approximate", (xmlChar*) "true");
+						}
+						if(dp->usesBrackets()) {
+							xmlNewTextChild(newnode2, NULL, (xmlChar*) "brackets", (xmlChar*) "true");
+						}
+						if(dp->isCaseSensitive()) {
+							xmlNewTextChild(newnode2, NULL, (xmlChar*) "case_sensitive", (xmlChar*) "true");
+						}
+						if(!dp->getUnitString().empty()) {
+							xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) dp->getUnitString().c_str());
+						}
+						for(unsigned int i2 = 1; i2 <= dp->countNames(); i2++)  {
+							newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "name", NULL);
+							xmlNewProp(newnode2, (xmlChar*) "index", (xmlChar*) i2s(i2).c_str());
+							if(save_global) {
+								xmlNewTextChild(newnode3, NULL, (xmlChar*) "_name", (xmlChar*) dp->getName(i2).c_str());
+							} else {
+								xmlNewTextChild(newnode3, NULL, (xmlChar*) "name", (xmlChar*) dp->getName(i2).c_str());
+							}
+						}
+						if(!dp->description().empty()) {
+							if(save_global) {
+								xmlNewTextChild(newnode2, NULL, (xmlChar*) "_description", (xmlChar*) dp->description().c_str());
+							} else {
+								xmlNewTextChild(newnode2, NULL, (xmlChar*) "description", (xmlChar*) dp->description().c_str());
+							}
+						}
+					}
+					dp = ds->getNextProperty(&it);
 				}
 			}
 		}

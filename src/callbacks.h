@@ -56,6 +56,7 @@ void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer user_
 void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tDataObjects_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tDatasets_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
+void on_tDataProperties_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 
 void execute_expression(bool force = true);
 
@@ -128,8 +129,9 @@ void import_csv_file(GtkWidget *win = NULL);
 void export_csv_file(KnownVariable *v = NULL, GtkWidget *win = NULL);
 
 void edit_dataobject(DataSet *ds, DataObject *o = NULL, GtkWidget *win = NULL);
+void edit_dataset(DataSet *ds = NULL, GtkWidget *win = NULL);
 
-void edit_names(ExpressionItem *item = NULL, const gchar *namestr = NULL, GtkWidget *win = NULL);
+void edit_names(ExpressionItem *item = NULL, const gchar *namestr = NULL, GtkWidget *win = NULL, bool is_dp = false, DataProperty *dp = NULL);
 
 #ifdef __cplusplus
 extern "C" {
@@ -228,6 +230,7 @@ void on_menu_item_new_variable_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_new_matrix_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_new_vector_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_new_function_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_new_dataset_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_new_unit_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_rpn_mode_activate(GtkMenuItem *w, gpointer user_data);
 void fetch_exchange_rates(int timeout);
@@ -340,6 +343,12 @@ void on_datasets_button_close_clicked(GtkButton *button, gpointer user_data);
 void on_function_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 void on_variable_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 void on_unknown_edit_checkbutton_custom_assumptions_toggled(GtkToggleButton *w, gpointer user_data);
+
+void on_dataset_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
+void on_dataset_edit_button_new_property_clicked(GtkButton *button, gpointer user_data);
+void on_dataset_edit_button_edit_property_clicked(GtkButton *button, gpointer user_data);
+void on_dataset_edit_button_del_property_clicked(GtkButton *button, gpointer user_data);
+void on_dataset_edit_button_names_clicked(GtkButton *button, gpointer user_data);
 
 void on_datasets_button_newset_clicked(GtkButton *button, gpointer user_data);
 void on_datasets_button_editset_clicked(GtkButton *button, gpointer user_data);

@@ -30,7 +30,7 @@
 #include "main.h"
 #include "qalculate.h"
 
-extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *datasets_glade, *nbexpression_glade, *decimals_glade;
+extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *datasetedit_glade, *datasets_glade, *nbexpression_glade, *decimals_glade;
 extern GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *namesedit_glade, *nbases_glade, *plot_glade, *precision_glade;
 extern GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
 extern GladeXML *periodictable_glade;
@@ -54,6 +54,9 @@ GtkWidget *tDatasets;
 GtkWidget *tDataObjects;
 GtkListStore *tDatasets_store;
 GtkListStore *tDataObjects_store;
+
+GtkWidget *tDataProperties;
+GtkListStore *tDataProperties_store;
 
 GtkWidget *tNames;
 GtkListStore *tNames_store;
@@ -926,6 +929,63 @@ get_dataobject_edit_dialog (void)
 
 	return glade_xml_get_widget (datasets_glade, "dataobject_edit_dialog");
 }
+
+GtkWidget*
+get_dataset_edit_dialog (void)
+{
+
+	if(!datasetedit_glade) {
+
+		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "datasetedit.glade", NULL);
+		datasetedit_glade = glade_xml_new(gstr, NULL, NULL);
+		g_assert(datasetedit_glade != NULL);
+		g_free(gstr);
+
+		g_assert (glade_xml_get_widget (datasetedit_glade, "dataset_edit_dialog") != NULL);
+		
+		tDataProperties = glade_xml_get_widget (datasetedit_glade, "dataset_edit_treeview_properties");
+		tDataProperties_store = gtk_list_store_new(4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+		gtk_tree_view_set_model(GTK_TREE_VIEW(tDataProperties), GTK_TREE_MODEL(tDataProperties_store));
+		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tDataProperties));
+		gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes(_("Title"), renderer, "text", 0, NULL);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(tDataProperties), column);
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes(_("Name"), renderer, "text", 1, NULL);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(tDataProperties), column);
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes(_("Type"), renderer, "text", 2, NULL);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(tDataProperties), column);	
+		g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tDataProperties_selection_changed), NULL);
+		
+		glade_xml_signal_autoconnect(datasetedit_glade);
+	
+	}
+
+	return glade_xml_get_widget (datasetedit_glade, "dataset_edit_dialog");
+}
+
+GtkWidget*
+get_dataproperty_edit_dialog (void)
+{
+
+	if(!datasetedit_glade) {
+
+		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "datasetedit.glade", NULL);
+		datasetedit_glade = glade_xml_new(gstr, NULL, NULL);
+		g_assert(datasetedit_glade != NULL);
+		g_free(gstr);
+
+		g_assert (glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_dialog") != NULL);
+		
+		glade_xml_signal_autoconnect(datasetedit_glade);
+	
+	}
+
+	return glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_dialog");
+}
+
 
 GtkWidget* 
 get_names_edit_dialog (void)

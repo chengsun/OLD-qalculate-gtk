@@ -1,3 +1,11 @@
+2004-09-06 Niklas Knutsson  <nq@altern.org>
+
+	* Finish GUI and user modifications for data sets
+
+2004-09-01 Niklas Knutsson  <nq@altern.org>
+
+	* rm -f qalculate; $(LN_S) qalculate-gtk qalculate
+
 2004-08-28 Niklas Knutsson  <nq@altern.org>
 
 	* Edit and save data objects

@@ -325,7 +325,8 @@ class Calculator {
 	int savePrefixes(const char *file_name, bool save_global = false);	
 	int saveVariables(const char *file_name, bool save_global = false);	
 	int saveUnits(const char *file_name, bool save_global = false);	
-	int saveFunctions(const char *file_name, bool save_global = false);	
+	int saveFunctions(const char *file_name, bool save_global = false);
+	int saveDataSets(const char *file_name, bool save_global = false);
 	MathStructure setAngleValue(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options);	
 	bool importCSV(MathStructure &mstruct, const char *file_name, int first_row = 1, string delimiter = ",", vector<string> *headers = NULL);
 	bool importCSV(const char *file_name, int first_row = 1, bool headers = true, string delimiter = ",", bool to_matrix = false, string name = "", string title = "", string category = "");

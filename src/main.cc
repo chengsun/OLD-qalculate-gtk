@@ -52,7 +52,7 @@ extern vector<string> recent_units_pre;
 extern GtkWidget *expression;
 GdkPixbuf *icon_pixbuf;
 
-GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *nbexpression_glade, *datasets_glade, *decimals_glade;
+GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *nbexpression_glade, *datasetedit_glade, *datasets_glade, *decimals_glade;
 GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *namesedit_glade, *nbases_glade, *plot_glade, *precision_glade;
 GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
 GladeXML *periodictable_glade;
@@ -95,7 +95,7 @@ int main (int argc, char **argv) {
 	b_busy = false;
 	
 	main_glade = NULL; about_glade = NULL; argumentrules_glade = NULL; 
-	csvimport_glade = NULL; datasets_glade = NULL; decimals_glade = NULL; functionedit_glade = NULL; 
+	csvimport_glade = NULL; datasetedit_glade = NULL; datasets_glade = NULL; decimals_glade = NULL; functionedit_glade = NULL; 
 	functions_glade = NULL; matrixedit_glade = NULL; namesedit_glade = NULL; nbases_glade = NULL; plot_glade = NULL; 
 	precision_glade = NULL; preferences_glade = NULL; unit_glade = NULL; 
 	unitedit_glade = NULL; units_glade = NULL; unknownedit_glade = NULL; variableedit_glade = NULL; 

@@ -67,10 +67,12 @@ class DataProperty {
 	bool b_approximate, b_brackets, b_key, b_case, b_hide;
 	DataSet *parent;
 	PropertyType ptype;
+	bool b_uchanged;
 	
   public:
   
 	DataProperty(DataSet *parent_set, string s_name = "", string s_title = "", string s_description = "");
+	DataProperty(const DataProperty &dp);
 	
 	void setName(string s_name, bool is_ref = false);
 	void setNameIsReference(unsigned int index = 1, bool is_ref = true);
@@ -103,6 +105,10 @@ class DataProperty {
 	bool isApproximate() const;
 	void setPropertyType(PropertyType property_type);
 	PropertyType propertyType() const;
+	
+	bool isUserModified() const;
+	void setUserModified(bool user_modified = true);
+	
 	DataSet *parentSet() const;
 	
 };
@@ -121,7 +127,7 @@ class DataSet : public Function {
 	
   public:
   
-  	DataSet(string s_category = "", string s_name = "", string s_default_file = "", string s_title = "", string s_description = "");
+  	DataSet(string s_category = "", string s_name = "", string s_default_file = "", string s_title = "", string s_description = "", bool is_local = true);
 	DataSet(const DataSet *o);
 	
 	ExpressionItem *copy() const;
@@ -144,6 +150,7 @@ class DataSet : public Function {
 	
 	void addProperty(DataProperty *dp);
 	void delProperty(DataProperty *dp);
+	void delProperty(DataPropertyIter *it);
 	DataProperty *getPrimaryKeyProperty();
 	DataProperty *getProperty(string property);
 	DataProperty *getFirstProperty(DataPropertyIter *it);
@@ -153,6 +160,7 @@ class DataSet : public Function {
 	
 	void addObject(DataObject *o);
 	void delObject(DataObject *o);
+	void delObject(DataObjectIter *it);
 	DataObject *getObject(string object);
 	DataObject *getObject(const MathStructure &object);
 	DataObject *getFirstObject(DataObjectIter *it);

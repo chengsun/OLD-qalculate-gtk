@@ -25,5 +25,5 @@ qalculate_gtk_LDADD = \
 	calclib/libcalculate.la
 
 install-exec-local:
-	cd $(DESTDIR)$(bindir) && $(LN_S) qalculate-gtk qalculate
+	cd $(DESTDIR)$(bindir) && rm -f qalculate; $(LN_S) qalculate-gtk qalculate
 

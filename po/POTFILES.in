@@ -5,6 +5,7 @@ data/about.glade
 data/argumentrules.glade
 data/csvexport.glade
 data/csvimport.glade
+data/datasetedit.glade
 data/datasets.glade
 data/decimals.glade
 data/functionedit.glade

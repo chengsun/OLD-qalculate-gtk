@@ -147,7 +147,27 @@ DataProperty::DataProperty(DataSet *parent_set, string s_name, string s_title, s
 	m_unit = NULL;
 	ptype = PROPERTY_EXPRESSION;
 	b_key = false; b_case = false; b_hide = false; b_brackets = false; b_approximate = false;
+	b_uchanged = false;
 }
+DataProperty::DataProperty(const DataProperty &dp) {
+	stitle = dp.title(false);
+	sdescr = dp.description();
+	sunit = dp.getUnitString();
+	parent = dp.parentSet();
+	m_unit = NULL;
+	ptype = dp.propertyType();
+	b_key = dp.isKey(); 
+	b_case = dp.isCaseSensitive(); 
+	b_hide = dp.isHidden(); 
+	b_brackets = dp.usesBrackets(); 
+	b_approximate = dp.isApproximate();
+	b_uchanged = dp.isUserModified();
+	for(unsigned int i = 1; i <= dp.countNames(); i++) {
+		names.push_back(dp.getName(i));
+		name_is_ref.push_back(dp.nameIsReference(i));
+	}
+}
+
 	
 void DataProperty::setName(string s_name, bool is_ref) {
 	if(s_name.empty()) return;
@@ -292,16 +312,25 @@ bool DataProperty::isApproximate() const {return b_approximate;}
 void DataProperty::setPropertyType(PropertyType property_type) {ptype = property_type;}
 PropertyType DataProperty::propertyType() const {return ptype;}
 
+bool DataProperty::isUserModified() const {
+	return b_uchanged;
+}
+void DataProperty::setUserModified(bool user_modified) {
+	b_uchanged = user_modified;
+}
+
 DataSet *DataProperty::parentSet() const {
 	return parent;
 }
 
-DataSet::DataSet(string s_category, string s_name, string s_default_file, string s_title, string s_description) : Function(s_name, 1, 2, s_category, s_title, s_description) {
+DataSet::DataSet(string s_category, string s_name, string s_default_file, string s_title, string s_description, bool is_local) : Function(s_name, 1, 2, s_category, s_title, s_description) {
+	b_local = is_local;
 	sfile = s_default_file;
 	b_loaded = false;
 	setArgumentDefinition(1, new DataObjectArgument(this, _("Object")));
 	setArgumentDefinition(2, new DataPropertyArgument(this, _("Property")));
 	setDefaultValue(2, _("info"));
+	setChanged(false);
 }
 DataSet::DataSet(const DataSet *o) {
 	b_loaded = false;
@@ -348,6 +377,7 @@ int DataSet::calculate(MathStructure &mstruct, const MathStructure &vargs, const
 
 void DataSet::setDefaultProperty(string property) {
 	setDefaultValue(2, property);
+	setChanged(true);
 }
 const string &DataSet::defaultProperty() const {
 	return getDefaultValue(2);
@@ -355,12 +385,14 @@ const string &DataSet::defaultProperty() const {
 
 void DataSet::setCopyright(string s_copyright) {
 	scopyright = s_copyright;
+	setChanged(true);
 }
 const string &DataSet::copyright() const {
 	return scopyright;
 }
 void DataSet::setDefaultDataFile(string s_file) {
 	sfile = s_file;
+	setChanged(true);
 }
 const string &DataSet::defaultDataFile() const {
 	return sfile;
@@ -718,15 +750,20 @@ bool DataSet::objectsLoaded() const {
 	
 void DataSet::addProperty(DataProperty *dp) {
 	properties.push_back(dp);
+	setChanged(true);
 }
 void DataSet::delProperty(DataProperty *dp) {
 	for(unsigned int i = 0; i < properties.size(); i++) {
 		if(properties[i] == dp) {
 			delete properties[i];
 			properties.erase(properties.begin() + i);
+			setChanged(true);
 			break;
 		}
 	}
+}
+void DataSet::delProperty(DataPropertyIter *it) {
+	*it = properties.erase(*it);
 }
 DataProperty *DataSet::getPrimaryKeyProperty() {
 	for(unsigned int i = 0; i < properties.size(); i++) {
@@ -773,6 +810,9 @@ void DataSet::delObject(DataObject *o) {
 			break;
 		}
 	}
+}
+void DataSet::delObject(DataObjectIter *it) {
+	*it = objects.erase(*it);
 }
 DataObject *DataSet::getObject(string object) {
 	if(!objectsLoaded()) loadObjects();
