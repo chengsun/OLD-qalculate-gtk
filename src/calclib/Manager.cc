@@ -1664,7 +1664,13 @@ bool Manager::convert(Unit *u) {
 			} else if(mngrs[i]->type() == UNIT_MANAGER && mngrs[i]->o_unit != u) {
 				Manager *mngr;
 				if(mngrs[i]->o_unit->hasComplexRelationTo(u)) {
-					goto end_of_loop_convert_multi;
+					int i3 = 0;
+					for(int i2 = 0; i2 < mngrs.size(); i2++) {
+						if(mngrs[i2]->type() == UNIT_MANAGER || (mngrs[i2]->type() == POWER_MANAGER && mngrs[i2]->mngrs[0]->c_type == UNIT_MANAGER)) {
+							i3++;
+						}
+					}
+					if(i3 > 1) return false;
 				}
 				mngr = new Manager(this);
 				mngr->add(mngrs[i], DIVISION_CH);
@@ -1682,7 +1688,13 @@ bool Manager::convert(Unit *u) {
 			} else if(mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->c_type == UNIT_MANAGER && mngrs[i]->mngrs[0]->o_unit != u) {
 				Manager *mngr;
 				if(mngrs[i]->mngrs[0]->o_unit->hasComplexRelationTo(u)) {
-					goto end_of_loop_convert_multi;
+					int i3 = 0;
+					for(int i2 = 0; i2 < mngrs.size(); i2++) {
+						if(mngrs[i2]->type() == UNIT_MANAGER || (mngrs[i2]->type() == POWER_MANAGER && mngrs[i2]->mngrs[0]->c_type == UNIT_MANAGER)) {
+							i3++;
+						}
+					}
+					if(i3 > 1) return false;				
 				}
 				mngr = new Manager(this);
 				mngr->add(mngrs[i], DIVISION_CH);
@@ -1698,7 +1710,6 @@ bool Manager::convert(Unit *u) {
 				}		
 				mngr->unref();			
 			}
-			end_of_loop_convert_multi:
 			true;
 		}
 //		return c;
@@ -1717,7 +1728,7 @@ bool Manager::convert(Unit *u) {
 					c = true;
 				} else if(mngrs[i]->type() == UNIT_MANAGER) {
 					if(mngrs[i]->o_unit->hasComplexRelationTo(u)) {
-						goto end_of_loop_convert_multi2;
+						return true;
 					}				
 					Manager *mngr = new Manager(this);
 					Manager *exp = new Manager(calc, 1.0L);
@@ -1734,7 +1745,7 @@ bool Manager::convert(Unit *u) {
 					mngr->unref();
 				} else if(mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->c_type == UNIT_MANAGER && mngrs[i]->mngrs[0]->o_unit != u) {
 					if(mngrs[i]->mngrs[0]->o_unit->hasComplexRelationTo(u)) {
-						goto end_of_loop_convert_multi2;
+						return true;
 					}
 					Manager *mngr = new Manager(this);
 					mngr->add(mngrs[i], DIVISION_CH);
@@ -1750,8 +1761,7 @@ bool Manager::convert(Unit *u) {
 					}			
 					mngr->unref();			
 				}
-			}	
-			end_of_loop_convert_multi2:	
+			}		
 			c = true;
 		}
 		return c;			

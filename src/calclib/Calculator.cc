@@ -503,6 +503,8 @@ Manager *Calculator::convert(long double value, Unit *from_unit, Unit *to_unit) 
 Manager *Calculator::convert(string str, Unit *from_unit, Unit *to_unit) {
 	Manager *mngr = calculate(str);
 	mngr->add(from_unit, MULTIPLICATION_CH);
+	from_unit->hasComplexRelationTo(to_unit);
+	mngr->convert(to_unit);
 	mngr->finalize();	
 //	mngr->convert(to_unit);
 	mngr->add(to_unit, DIVISION_CH);
