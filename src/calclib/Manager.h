@@ -63,6 +63,7 @@ class Manager {
 		
 		//dangerous
 		void setType(int mngr_type);
+		void setComparisonType(ComparisonType comp_type);
 		
 		void setPrefix(Prefix *p);
 		Prefix *prefix() const;

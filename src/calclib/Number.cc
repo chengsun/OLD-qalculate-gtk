@@ -518,6 +518,9 @@ bool Number::isLessThanOrEqualTo(long int num, long int den) const {
 bool Number::isEven() const {
 	return isInteger() && evenp(cln::numerator(cln::rational(cln::realpart(value))));
 }
+bool Number::denominatorIsEven() const {
+	return !isComplex() && evenp(cln::denominator(cln::rational(cln::realpart(value))));
+}
 bool Number::isOdd() const {
 	return isInteger() && oddp(cln::numerator(cln::rational(cln::realpart(value))));
 }

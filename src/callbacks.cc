@@ -3731,6 +3731,10 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 void clearresult() {
 	//draw_background(resultview->window, resultview->allocation.width, resultview->allocation.height);
 	gdk_window_clear(resultview->window);
+	if(pixbuf_result) {
+		gdk_pixbuf_unref(pixbuf_result);
+		pixbuf_result = NULL;
+	}
 }
 
 void on_abort_display(GtkDialog *w, gint arg1, gpointer user_data) {
@@ -7952,6 +7956,10 @@ void on_menu_item_help_activate(GtkMenuItem *w, gpointer user_data) {
 */
 void on_precision_dialog_spinbutton_precision_value_changed(GtkSpinButton *w, gpointer user_data) {
 	CALCULATOR->setPrecision(gtk_spin_button_get_value_as_int(w));
+//	execute_expression();
+}
+void on_precision_dialog_button_recalculate_clicked(GtkButton *w, gpointer user_data) {
+	CALCULATOR->setPrecision(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (precision_glade, "precision_dialog_spinbutton_precision"))));
 	execute_expression();
 }
 

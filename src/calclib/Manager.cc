@@ -23,6 +23,9 @@
 void Manager::setType(int mngr_type) {
 	c_type = mngr_type;
 }
+void Manager::setComparisonType(ComparisonType comp_type) {
+	comparison_type = comp_type;
+}
 void Manager::setPrefix(Prefix *p) {
 	o_prefix = p;
 }
@@ -594,7 +597,74 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 					case MULTIPLICATION_MANAGER: {
 						bool b = false;
 						if(CALCULATOR->multipleRootsEnabled() && containsType(POWER_MANAGER) && mngr->containsType(POWER_MANAGER)) {
-						
+							if(compatible(mngr)) {
+								Manager num1(1, 1);
+								bool even_den = false;
+								bool nonnum = false;
+								for(unsigned int i = 0; i < mngrs.size(); i++) {
+									if(mngrs[i]->isNumber()) {
+										num1.add(mngrs[i], OPERATION_MULTIPLY);
+									} else if(mngrs[i]->isPower()) {
+										if(!mngrs[i]->exponent()->isNumber() || mngrs[i]->exponent()->number()->isComplex()) {
+											nonnum = true;
+											break;
+										} else if(!even_den && mngrs[i]->exponent()->number()->denominatorIsEven()) {
+											even_den = true;
+										}
+									}
+								}
+								if(nonnum) {
+									if(!translate_) {
+										return false;
+									}
+									transform(mngr, ADDITION_MANAGER, op);
+									break;
+								}
+								Manager num2(1, 1);
+								for(unsigned int i = 0; i < mngrs.size(); i++) {
+									if(mngr->mngrs[i]->isNumber()) {
+										num2.add(mngr->mngrs[i], OPERATION_MULTIPLY);
+									}
+								}
+								add(&num1, OPERATION_DIVIDE);
+								if(even_den) {	
+									Manager mngr_bak(this);
+									num1.number()->setNegative(false);
+									num2.number()->setNegative(false);
+									if(num1.equals(&num2)) {
+										num1.add(&num2, OPERATION_ADD);
+										add(&num1, OPERATION_MULTIPLY);
+										Manager mngr2(&mngr_bak);
+										num1.addInteger(-1, OPERATION_MULTIPLY);
+										mngr2.add(&num1, OPERATION_MULTIPLY);
+										addAlternative(&mngr2);
+										mngr2.clear();
+										addAlternative(&mngr2);
+									} else {
+										Manager num_temp(&num1);
+										num_temp.add(&num2, OPERATION_ADD);
+										add(&num_temp, OPERATION_MULTIPLY);
+										Manager mngr2(&mngr_bak);
+										num_temp.addInteger(-1, OPERATION_MULTIPLY);
+										mngr2.add(&num_temp, OPERATION_MULTIPLY);
+										addAlternative(&mngr2);
+										mngr2.set(&mngr_bak);
+										num_temp.set(&num1);
+										num_temp.addInteger(-1, OPERATION_MULTIPLY);
+										num_temp.add(&num2, OPERATION_ADD);
+										mngr2.add(&num_temp, OPERATION_MULTIPLY);
+										addAlternative(&mngr2);
+										mngr2.set(&mngr_bak);
+										num_temp.addInteger(-1, OPERATION_MULTIPLY);
+										mngr2.add(&num_temp, OPERATION_MULTIPLY);
+										addAlternative(&mngr2);
+									}
+								} else {
+									num1.add(&num2, OPERATION_ADD);
+									add(&num1, OPERATION_MULTIPLY);
+								}
+								break;
+							}
 						} else if(compatible(mngr)) {
 							for(unsigned int i = 0; i < mngrs.size(); i++) {
 								if(mngrs[i]->isNumber()) {
@@ -648,11 +718,72 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 					}
 					case POWER_MANAGER: {
 						if(CALCULATOR->multipleRootsEnabled() && containsType(POWER_MANAGER)) {
-							if(!translate_) {
-								return false;
+							if(mngr->mngrs[1]->isNumber() && !mngr->mngrs[1]->number()->isComplex() && compatible(mngr)) {
+								if(mngr->mngrs[1]->number()->denominatorIsEven()) {
+									bool b = false;
+									for(unsigned int i = 0; i < mngrs.size(); i++) {
+										if(mngrs[i]->isNumber()) {
+											Manager mngr_num(mngrs[i]);
+											mngrs[i]->unref();
+											mngrs.erase(mngrs.begin());
+											if(mngrs.size() == 1) {
+												moveto(mngrs[0]);
+											}
+											Manager mngr_bak(this);
+											Manager mngr_num2(&mngr_num);
+											mngr_num2.addInteger(1, op);
+											if(mngr_num2.isZero()) {
+												clear();
+											} else if(!mngr_num2.isOne()) {
+												add(&mngr_num2, OPERATION_MULTIPLY);
+											}
+											Manager mngr2(&mngr_bak);
+											mngr_num2.set(&mngr_num);
+											mngr_num2.addInteger(-1, op);
+											if(mngr_num2.isZero()) {
+												mngr2.clear();
+											} else if(!mngr_num2.isOne()) {
+												mngr2.add(&mngr_num2, OPERATION_MULTIPLY);	
+											}
+											addAlternative(&mngr2);
+											mngr2.set(&mngr_bak);
+											mngr_num.addInteger(-1, OPERATION_MULTIPLY);
+											mngr_num2.set(&mngr_num);
+											mngr_num2.addInteger(1, op);
+											if(mngr_num2.isZero()) {
+												mngr2.clear();
+											} else if(!mngr_num2.isOne()) {
+												mngr2.add(&mngr_num2, OPERATION_MULTIPLY);	
+											}
+											addAlternative(&mngr2);
+											mngr2.set(&mngr_bak);
+											mngr_num2.set(&mngr_num);
+											mngr_num2.addInteger(-1, op);
+											if(mngr_num2.isZero()) {
+												mngr2.clear();
+											} else if(!mngr_num2.isOne()) {
+												mngr2.add(&mngr_num2, OPERATION_MULTIPLY);	
+											}
+											addAlternative(&mngr2);
+											b = true;
+											break;
+										}
+									}
+									if(!b) {
+										if(!translate_) {
+											return false;
+										}
+										transform(mngr, ADDITION_MANAGER, op);
+									}
+									break;
+								}
+							} else {
+								if(!translate_) {
+									return false;
+								}
+								transform(mngr, ADDITION_MANAGER, op);
+								break;
 							}
-							transform(mngr, ADDITION_MANAGER, op);
-							break;
 						}
 					}
 					case UNIT_MANAGER: {
@@ -666,9 +797,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 							bool b = false;
 							for(unsigned int i = 0; i < mngrs.size(); i++) {
 								if(mngrs[i]->isNumber()) {
-									Manager *mngr2 = new Manager(1, 1);
-									mngrs[i]->add(mngr2, op);
-									mngr2->unref();
+									mngrs[i]->addInteger(1, op);
 									if(mngrs[i]->number()->isZero()) {
 										clear();
 									} else if(mngrs[i]->number()->isOne()) {
@@ -718,6 +847,28 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 			}
 			case POWER_MANAGER: {
 				if(CALCULATOR->multipleRootsEnabled() && mngr->isPower()) {
+					if(mngrs[1]->isNumber() && !mngrs[1]->number()->isComplex() && equals(mngr)) {
+						if(mngrs[1]->number()->denominatorIsEven()) {
+							Manager *mngr2 = new Manager(this);
+							clear();
+							push_back(new Manager(2, 1));
+							push_back(mngr2);
+							c_type = MULTIPLICATION_MANAGER;
+							Manager mngr3(this);
+							mngr3.addInteger(-1, OPERATION_MULTIPLY);
+							addAlternative(&mngr3);
+							mngr3.clear();
+							addAlternative(&mngr3);
+							break;
+						} else {
+							Manager *mngr2 = new Manager(this);
+							clear();
+							push_back(new Manager(2, 1));
+							push_back(mngr2);
+							c_type = MULTIPLICATION_MANAGER;
+							break;
+						}
+					}
 					if(!translate_) {
 						return false;
 					}
@@ -979,7 +1130,19 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 						break;
 					}
 					case POWER_MANAGER: {
-						if((!CALCULATOR->multipleRootsEnabled() || (mngrs[1]->isNumber() && mngrs[1]->number()->isInteger() && mngr->mngrs[1]->isNumber() && mngr->mngrs[1]->number()->isInteger())) && mngr->mngrs[0]->equals(mngrs[0])) {
+						if(CALCULATOR->multipleRootsEnabled() && mngrs[1]->isNumber() && mngr->mngrs[1]->isNumber() && mngrs[1]->number()->denominatorIsEven() && mngr->mngrs[1]->number()->denominatorIsEven() && mngr->mngrs[0]->equals(mngrs[0])) {
+							mngrs[1]->add(mngr->mngrs[1], OPERATION_ADD);
+							if(mngrs[1]->isNull()) {
+								set(1, 1);
+							} else if(mngrs[1]->isOne()) {
+								moveto(mngrs[0]);
+							}
+							if(!isPower() || !mngrs[1]->number()->denominatorIsEven()) {
+								Manager mngr2(this);
+								mngr2.addInteger(-1, OPERATION_MULTIPLY);
+								addAlternative(&mngr2);
+							}
+						} else if((!CALCULATOR->multipleRootsEnabled() || (mngrs[1]->isNumber() && !mngrs[1]->number()->isComplex() && mngr->mngrs[1]->isNumber() && !mngr->mngrs[1]->number()->isComplex())) && mngr->mngrs[0]->equals(mngrs[0])) {
 							mngrs[1]->add(mngr->mngrs[1], OPERATION_ADD);
 							if(mngrs[1]->isNull()) {
 								set(1, 1);
@@ -1085,7 +1248,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 				if(!b) {
 					b = add(&mngr2, op, translate_);
 				} else {
-					add(&mngr2, op, translate_);
+					add(&mngr2, op);
 				}
 				
 				delete den;
@@ -1201,17 +1364,15 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 						moveto(mngrs[0]);
 						break;
 					}
-					mngrs[1]->add(mngr, OPERATION_MULTIPLY);
-					if(mngrs[1]->isNull()) {
-						set(1, 1);
-					} else if(mngrs[1]->isNumber() && mngrs[0]->isNumber()) {
-						mngrs[0]->add(mngrs[1], OPERATION_RAISE);
-						moveto(mngrs[0]);
-					} else if(mngrs[1]->isOne()) {
-						moveto(mngrs[0]);
-					}
-				} else {
-					b_trans = true;
+				}
+				mngrs[1]->add(mngr, OPERATION_MULTIPLY);
+				if(mngrs[1]->isNull()) {
+					set(1, 1);
+				} else if(mngrs[1]->isNumber() && mngrs[0]->isNumber()) {
+					mngrs[0]->add(mngrs[1], OPERATION_RAISE);
+					moveto(mngrs[0]);
+				} else if(mngrs[1]->isOne()) {
+					moveto(mngrs[0]);
 				}
 				break;
 			}
@@ -1279,7 +1440,8 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 			}
 		}
 		if(b_trans) {
-			if(!CALCULATOR->multipleRootsEnabled() && mngr->isMultiplication()) {
+//			if(!CALCULATOR->multipleRootsEnabled() && mngr->isMultiplication()) {
+			if(mngr->isMultiplication()) {
 				bool b = false;
 				unsigned int i;
 				for(i = 0; i < mngr->mngrs.size(); i++) {
@@ -1309,7 +1471,8 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 					}
 					b_trans = false;
 				}
-			} else if(!CALCULATOR->multipleRootsEnabled() && mngr->isAddition()) {
+//			} else if(!CALCULATOR->multipleRootsEnabled() && mngr->isAddition()) {
+			} else if(mngr->isAddition()) {
 				bool b = false;
 				unsigned int i;
 				Manager mngr3(this);
@@ -1480,15 +1643,13 @@ bool Manager::setNOT(bool translate_) {
 	return true;
 }
 void Manager::addUnit(const Unit *u, MathOperation op) {
-	Manager *mngr = new Manager(u);
-	mngr->finalize();
-	add(mngr, op);
-	mngr->unref();
+	Manager mngr(u);
+	mngr.finalize();
+	add(&mngr, op);
 }
 void Manager::addInteger(long int value_, MathOperation op) {
-	Manager *mngr = new Manager(value_, 1);
-	add(mngr, op);
-	mngr->unref();
+	Manager mngr(value_, 1);
+	add(&mngr, op);
 }
 int Manager::compare(const Manager *mngr) const {
 	if(isNumber() && mngr->isNumber()) {
@@ -4475,7 +4636,23 @@ void Manager::move_x_to_one_side(string x_var) {
 		x_var = find_x_var();
 		if(x_var.empty()) return;
 	}
-	if(mngrs[0]->isAddition()) {
+	if(mngrs[0]->isAlternatives()) {
+		Manager *mngr2 = new Manager();
+		mngr2->setType(ALTERNATIVE_MANAGER);
+		for(unsigned int i = 0; i < mngrs[0]->countChilds(); i++) {
+			Manager *mngr = new Manager();
+			mngr->setType(COMPARISON_MANAGER);
+			mngr->setComparisonType(comparison_type);
+			mngr->push_back(new Manager(mngrs[0]->getChild(i)));
+			mngr->push_back(new Manager(mngrs[1]));
+			mngr->move_x_to_one_side(x_var);
+			mngr2->push_back(mngr);
+		}
+		mngr2->typeclean();
+		moveto(mngr2);
+		mngr2->unref();
+		return;
+	} else if(mngrs[0]->isAddition()) {
 		Manager mngr_x(x_var);
 		Manager mngr_new;
 		bool b = false;

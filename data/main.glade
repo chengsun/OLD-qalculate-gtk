@@ -882,8 +882,8 @@
 		  <child>
 		    <widget class="GtkCheckMenuItem" id="menu_item_multiple_roots">
 		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">Enables calculation of multiple results for even roots</property>
-		      <property name="label" translatable="yes">Calculate Multiple Roots</property>
+		      <property name="tooltip" translatable="yes">Enables calculation of multiple real results for even roots</property>
+		      <property name="label" translatable="yes">Calculate Multiple Real Roots</property>
 		      <property name="use_underline">True</property>
 		      <property name="active">False</property>
 		      <signal name="activate" handler="on_menu_item_multiple_roots_activate" last_modification_time="Thu, 04 Mar 2004 16:38:33 GMT"/>

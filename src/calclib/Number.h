@@ -96,6 +96,7 @@ class Number {
 		bool isGreaterThanOrEqualTo(long int num, long int den = 1) const;
 		bool isLessThanOrEqualTo(long int num, long int den = 1) const;
 		bool isEven() const;
+		bool denominatorIsEven() const;
 		bool isOdd() const;
 		
 		bool add(const Number *o);

@@ -1,5 +1,8 @@
 2004-04-05 Niklas Knutsson  <nq@altern.org>
 
+	* Do not automatically recalculate on precision spinbutton update and add recalculate button to avoid annoying problems
+	* More multiple root updates
+	* Do not just clear the window, clear the pixbuf too
 	* MatrixArgument->type should not return TEXT_ARGUMENT
 	* Multiple roots updates
 
