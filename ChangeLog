@@ -1,5 +1,6 @@
 2004-03-16 Niklas Knutsson  <nq@altern.org>
 
+	* Use Page Up and Page Down for expression history instead to allow completion to use Up and Down keys
 	* huh! do not sort functions.
 	* "European 30/365" -> "European 30/360"
 	* Fix date calculations

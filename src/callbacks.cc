@@ -7633,8 +7633,7 @@ gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointe
 			wrap_expression_selection();
 			break;
 		}
-		case GDK_KP_Up: {}		
-		case GDK_Up: {
+		case GDK_Page_Up: {
 			if(expression_history_index + 1 < (int) expression_history.size()) {
 				expression_history_index++;
 				dont_change_index = true;
@@ -7643,8 +7642,7 @@ gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointe
 			}
 			return TRUE;
 		}
-		case GDK_KP_Down: {}
-		case GDK_Down: {
+		case GDK_Page_Down: {
 			if(expression_history_index > -1) {
 				expression_history_index--;
 				dont_change_index = true;
