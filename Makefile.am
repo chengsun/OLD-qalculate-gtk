@@ -2,10 +2,7 @@
 
 SUBDIRS = src po
 
-EXTRA_DIST = \
-	autogen.sh \
-	qalculate-gtk.glade \
-	qalculate-gtk.gladep
+EXTRA_DIST =
 
 install-data-local:
 	@$(NORMAL_INSTALL)
@@ -36,10 +33,10 @@ dist-hook:
 	  done \
 	fi
 	if test -d data; then \
-	  mkdir $(distdir); \
+	  mkdir $(distdir)/data; \
 	  for data in data/*; do \
 	    if test -f $$data; then \
-	      cp -p $$data $(distdir); \
+	      cp -p $$data $(distdir)/data; \
 	    fi \
 	  done \
 	fi

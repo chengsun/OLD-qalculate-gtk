@@ -19,7 +19,7 @@ qalculate_gtk_SOURCES = \
 	calclib/includes.h \
 	calclib/Unit.cc calclib/Unit.h \
 	calclib/BuiltinFunctions.cc calclib/BuiltinFunctions.h \
-	main.cc \
+	main.cc main.h \
 	support.c support.h \
 	interface.cc interface.h \
 	callbacks.cc callbacks.h
