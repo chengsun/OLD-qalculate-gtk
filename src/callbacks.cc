@@ -1107,7 +1107,7 @@ void on_omUnitType_changed(GtkOptionMenu *om, gpointer user_data) {
 		}
 	}
 }
-void edit_unit(const char *category = "", Unit *u = NULL) {
+void edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL) {
 	GtkWidget *dialog = create_wEditUnit();
 	if(u)
 		gtk_window_set_title(GTK_WINDOW(dialog), "Edit unit");
@@ -1254,12 +1254,12 @@ run_unit_edit_dialog:
 	}
 	gtk_widget_destroy(dialog);
 }
-void edit_function(const char *category = "", Function *f = NULL) {
+void edit_function(const char *category = "", Function *f = NULL, GtkWidget *win = NULL) {
 	GtkWidget *dialog;
 	if(f)
-		dialog = gtk_dialog_new_with_buttons("Edit function", GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL);
+		dialog = gtk_dialog_new_with_buttons("Edit function", GTK_WINDOW(win), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL);
 	else
-		dialog = gtk_dialog_new_with_buttons("New function", GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL);
+		dialog = gtk_dialog_new_with_buttons("New function", GTK_WINDOW(win), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	GtkWidget *lName = gtk_label_new("* Name"), *eName = gtk_entry_new();
 	gtk_misc_set_alignment(GTK_MISC(lName), 0, 0.5);
@@ -1400,10 +1400,10 @@ run_function_edit_dialog:
 	gtk_widget_destroy(dialog);
 }
 void new_function(GtkMenuItem *w, gpointer user_data) {
-	edit_function("");
+	edit_function("", NULL, window);
 }
 void new_unit(GtkMenuItem *w, gpointer user_data) {
-	edit_unit("");
+	edit_unit("", NULL, window);
 }
 
 
@@ -1445,12 +1445,12 @@ void convert_to_custom_unit(GtkMenuItem *w, gpointer user_data) {
 	gtk_widget_destroy(dialog);
 	gtk_widget_grab_focus(expression);
 }
-void edit_variable(const char *category = "", Variable *v = NULL, Manager *mngr_ = NULL) {
+void edit_variable(const char *category = "", Variable *v = NULL, Manager *mngr_ = NULL, GtkWidget *win = NULL) {
 	GtkWidget *dialog;
 	if(v)
-		dialog = gtk_dialog_new_with_buttons("Edit variable", GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL);
+		dialog = gtk_dialog_new_with_buttons("Edit variable", GTK_WINDOW(win), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL);
 	else
-		dialog = gtk_dialog_new_with_buttons("New variable", GTK_WINDOW(window), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL);
+		dialog = gtk_dialog_new_with_buttons("New variable", GTK_WINDOW(win), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	GtkWidget *label1 = gtk_label_new("* Name");
 	GtkWidget *entry1 = gtk_entry_new();
@@ -1552,10 +1552,10 @@ run_variable_edit_dialog:
 	gtk_widget_grab_focus(expression);
 }
 void add_as_variable(GtkMenuItem *w, gpointer user_data) {
-	edit_variable("Temporary", NULL, mngr);
+	edit_variable("Temporary", NULL, mngr, window);
 }
 void new_variable(GtkMenuItem *w, gpointer user_data) {
-	edit_variable("Temporary");
+	edit_variable("Temporary", NULL, NULL, window);
 }
 
 void set_precision(GtkSpinButton *w, gpointer user_data) {
@@ -1848,14 +1848,14 @@ void manage_units(GtkMenuItem *w, gpointer user_data) {
 }
 void on_bNewFunction_clicked(GtkButton *button, gpointer user_data) {
 	if(selected_function_category == "All" || selected_function_category == "Uncategorized")
-		edit_function("");
+		edit_function("", NULL, functions_window);
 	else
-		edit_function(selected_function_category.c_str());
+		edit_function(selected_function_category.c_str(), NULL, functions_window);
 }
 void on_bEditFunction_clicked(GtkButton *button, gpointer user_data) {
 	Function *f = get_selected_function();
 	if(f) {
-		edit_function("", f);
+		edit_function("", f, functions_window);
 	}
 }
 void on_bInsertFunction_clicked(GtkButton *button, gpointer user_data) {
@@ -1892,14 +1892,14 @@ gboolean on_wFunctions_delete_event(GtkWidget *widget, GdkEvent *event, gpointer
 }
 void on_bNewVariable_clicked(GtkButton *button, gpointer user_data) {
 	if(selected_variable_category == "All" || selected_variable_category == "Uncategorized")
-		edit_variable("");
+		edit_variable("", NULL, NULL, variables_window);
 	else
-		edit_variable(selected_variable_category.c_str());
+		edit_variable(selected_variable_category.c_str(), NULL, NULL, variables_window);
 }
 void on_bEditVariable_clicked(GtkButton *button, gpointer user_data) {
 	Variable *v = get_selected_variable();
 	if(v) {
-		edit_variable("", v);
+		edit_variable("", v, NULL, variables_window);
 	}
 }
 void on_bInsertVariable_clicked(GtkButton *button, gpointer user_data) {
@@ -1941,14 +1941,14 @@ gboolean on_wVariables_delete_event(GtkWidget *widget, GdkEvent *event, gpointer
 }
 void on_bNewUnit_clicked(GtkButton *button, gpointer user_data) {
 	if(selected_unit_category == "All" || selected_unit_category == "Uncategorized")
-		edit_unit("");
+		edit_unit("", NULL, units_window);
 	else
-		edit_unit(selected_unit_category.c_str());
+		edit_unit(selected_unit_category.c_str(), NULL, units_window);
 }
 void on_bEditUnit_clicked(GtkButton *button, gpointer user_data) {
 	Unit *u = get_selected_unit();
 	if(u) {
-		edit_unit("", u);
+		edit_unit("", u, units_window);
 	}
 }
 void on_bInsertUnit_clicked(GtkButton *button, gpointer user_data) {
