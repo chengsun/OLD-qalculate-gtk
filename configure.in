@@ -7,7 +7,7 @@ dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
 AC_INIT(configure.in)
-AM_INIT_AUTOMAKE(qalculate-gtk, 0.4.2a)
+AM_INIT_AUTOMAKE(qalculate-gtk, 0.5)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
@@ -44,7 +44,8 @@ dnl  --------------------------------
 AC_CHECK_LIB(pthread, pthread_create, [LIBS="$LIBS -lpthread"])
 
 PKG_CHECK_MODULES(PACKAGE, [
-	gtk+-2.0 >= 1.3.13
+	gtk+-2.0
+	gdk-pixbuf-2.0
 	libglade-2.0
 	libxml-2.0
 	])
@@ -88,6 +89,16 @@ AC_CHECK_LIB(giac, main, [
 	LIBS="$LIBS -lgiac"
 	AC_DEFINE(HAVE_GIAC,1,[If giac can be used])
 ], AC_MSG_WARN([No suitable installed version of giac could be found.]))
+
+AC_MSG_CHECKING([if old Giac api])
+AC_TRY_COMPILE([#include <giac/giac.h>],[
+	giac::at_inf_ou_egal;],
+old_giac_api=yes, old_giac_api=no)
+AC_MSG_RESULT([$old_giac_api])
+if test $old_giac_api = yes; then
+	AC_DEFINE(OLD_GIAC_API,1,[If old giac version])
+fi
+
 
 dnl  -------------------------------------
 dnl | internationalization (i18n) support |------------------------------------

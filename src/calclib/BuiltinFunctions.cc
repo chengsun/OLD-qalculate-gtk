@@ -1616,7 +1616,11 @@ void IntegrateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 	giac::identificateur id(vargs[1]->text());
 	try {
+#ifdef OLD_GIAC_API
     		giac::gen ans = giac::integrate(v1, id);
+#else
+		giac::gen ans = giac::integrate(v1, id, NULL);
+#endif
 		ans = simplify(ans);
 		mngr->set(ans);
 		mngr->clean();

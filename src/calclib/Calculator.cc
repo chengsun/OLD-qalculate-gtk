@@ -134,8 +134,6 @@ Calculator::Calculator() {
 
 	setPrecision(DEFAULT_PRECISION);
 
-	setLocale();
-
 	addStringAlternative(SIGN_POWER_0 "C", "oC");
 	addStringAlternative(SIGN_POWER_0 "F", "oF");
 	addStringAlternative(SIGN_POWER_0 "R", "oR");
@@ -161,22 +159,22 @@ Calculator::Calculator() {
 	addStringAlternative(SIGN_PLUS, PLUS);		
 	addStringAlternative(SIGN_NOT_EQUAL, " " NOT EQUALS);		
 	addStringAlternative(SIGN_GREATER_OR_EQUAL, GREATER EQUALS);	
-	addStringAlternative(SIGN_LESS_OR_EQUAL, LESS EQUALS);		
-	addStringAlternative("[", LEFT_PARENTHESIS);	
-	addStringAlternative("]", RIGHT_PARENTHESIS);	
-	addStringAlternative(";", COMMA);	
-	addStringAlternative("\t", SPACE);	
+	addStringAlternative(SIGN_LESS_OR_EQUAL, LESS EQUALS);			
+	addStringAlternative(";", COMMA);
+	addStringAlternative("\t", SPACE);
 	addStringAlternative("\n", SPACE);
 	addStringAlternative("**", POWER);	
 
+
+	setLocale();
 
 	NAME_NUMBER_PRE_S = "_~#";
 	NAME_NUMBER_PRE_STR = "_";
 
 	saved_locale = strdup(setlocale(LC_NUMERIC, NULL));
 	setlocale(LC_NUMERIC, "C");
-	ILLEGAL_IN_NAMES = DOT_S + RESERVED OPERATORS SPACES PARENTHESISS;
-	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = DOT_S + RESERVED OPERATORS PARENTHESISS;	
+	ILLEGAL_IN_NAMES = DOT_S + RESERVED OPERATORS SPACES PARENTHESISS VECTOR_WRAPS;
+	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = DOT_S + RESERVED OPERATORS PARENTHESISS VECTOR_WRAPS;	
 	ILLEGAL_IN_UNITNAMES = ILLEGAL_IN_NAMES + NUMBERS;			
 	b_rpn = false;
 	calculator = this;
@@ -184,7 +182,7 @@ Calculator::Calculator() {
 	angleMode(RADIANS);
 	pi_var = NULL;
 	e_var = NULL;
-	ln_func = NULL;
+	ln_func = NULL, matrix_func = NULL, vector_func = NULL;
 	addBuiltinVariables();
 	addBuiltinFunctions();
 	addBuiltinUnits();
@@ -613,13 +611,15 @@ void Calculator::setLocale() {
 		DOT_S = ".,";	
 		COMMA_STR = ";";
 		COMMA_S = ";";		
-		addStringAlternative(",", DOT);			
+		//addStringAlternative(",", DOT);	
+		//signs.insert(signs.begin(), DOT);
+		//real_signs.insert(real_signs.begin(), ",");
 	} else {
 		DOT_STR = ".";	
 		DOT_S = ".";	
 		COMMA_STR = ",";
 		COMMA_S = ",;";		
-		delStringAlternative(",", DOT);	
+		//delStringAlternative(",", DOT);	
 	}
 	setlocale(LC_NUMERIC, "C");
 }
@@ -628,7 +628,7 @@ void Calculator::unsetLocale() {
 	COMMA_S = ",;";	
 	DOT_STR = ".";
 	DOT_S = ".";
-	delStringAlternative(",", DOT);
+	//delStringAlternative(",", DOT);
 }
 
 int Calculator::addId(Manager *mngr, bool persistent) {
@@ -738,8 +738,8 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new ProcessFunction());
 	addFunction(new CustomSumFunction());
 	addFunction(new FunctionFunction());
-	addFunction(new MatrixFunction());
-	addFunction(new VectorFunction());	
+	matrix_func = addFunction(new MatrixFunction());
+	vector_func = addFunction(new VectorFunction());	
 	addFunction(new ElementsFunction());	
 	addFunction(new SortFunction());	
 	addFunction(new RankFunction());
@@ -914,6 +914,116 @@ void Calculator::abort_this() {
 }
 bool Calculator::busy() {
 	return b_busy;
+}
+string Calculator::localizeExpression(string str) const {
+	if(DOT_STR == DOT && COMMA_STR == COMMA) return str;
+	vector<unsigned int> q_begin;
+	vector<unsigned int> q_end;
+	unsigned int i3 = 0;
+	while(true) {
+		i3 = str.find_first_of("\"\'", i3);
+		if(i3 == string::npos) {
+			break;
+		}
+		q_begin.push_back(i3);
+		i3 = str.find(str[i3], i3 + 1);
+		if(i3 == string::npos) {
+			q_end.push_back(str.length() - 1);
+			break;
+		}
+		q_end.push_back(i3);
+		i3++;
+	}
+	if(COMMA_STR != COMMA) {
+		unsigned int ui = str.find(COMMA);
+		while(ui != string::npos) {
+			bool b = false;
+			for(unsigned int ui2 = 0; ui2 < q_end.size(); ui2++) {
+				if(ui <= q_end[ui2] && ui >= q_begin[ui2]) {
+					ui = str.find(COMMA, q_end[ui2] + 1);
+					b = true;
+					break;
+				}
+			}
+			if(!b) {
+				str.replace(ui, strlen(COMMA), COMMA_STR);
+				ui = str.find(COMMA, ui + COMMA_STR.length());
+			}
+		}
+	}
+	if(DOT_STR != DOT) {
+		unsigned int ui = str.find(DOT);
+		while(ui != string::npos) {
+			bool b = false;
+			for(unsigned int ui2 = 0; ui2 < q_end.size(); ui2++) {
+				if(ui <= q_end[ui2] && ui >= q_begin[ui2]) {
+					ui = str.find(DOT, q_end[ui2] + 1);
+					b = true;
+					break;
+				}
+			}
+			if(!b) {
+				str.replace(ui, strlen(DOT), DOT_STR);
+				ui = str.find(DOT, ui + DOT_STR.length());
+			}
+		}
+	}
+	return str;
+}
+string Calculator::unlocalizeExpression(string str) const {
+	if(DOT_STR == DOT && COMMA_STR == COMMA) return str;
+	vector<unsigned int> q_begin;
+	vector<unsigned int> q_end;
+	unsigned int i3 = 0;
+	while(true) {
+		i3 = str.find_first_of("\"\'", i3);
+		if(i3 == string::npos) {
+			break;
+		}
+		q_begin.push_back(i3);
+		i3 = str.find(str[i3], i3 + 1);
+		if(i3 == string::npos) {
+			q_end.push_back(str.length() - 1);
+			break;
+		}
+		q_end.push_back(i3);
+		i3++;
+	}
+	if(DOT_STR != DOT) {
+		unsigned int ui = str.find(DOT_STR);
+		while(ui != string::npos) {
+			bool b = false;
+			for(unsigned int ui2 = 0; ui2 < q_end.size(); ui2++) {
+				if(ui <= q_end[ui2] && ui >= q_begin[ui2]) {
+					ui = str.find(DOT_STR, q_end[ui2] + 1);
+					b = true;
+					break;
+				}
+			}
+			if(!b) {
+				str.replace(ui, DOT_STR.length(), DOT);
+				ui = str.find(DOT_STR, ui + strlen(DOT));
+			}
+		}
+	}
+	if(COMMA_STR != COMMA) {
+		unsigned int ui = str.find(COMMA_STR);
+		while(ui != string::npos) {
+			bool b = false;
+			for(unsigned int ui2 = 0; ui2 < q_end.size(); ui2++) {
+				if(ui <= q_end[ui2] && ui >= q_begin[ui2]) {
+					ui = str.find(COMMA_STR, q_end[ui2] + 1);
+					b = true;
+					break;
+				}
+			}
+			if(!b) {
+				str.replace(ui, COMMA_STR.length(), COMMA);
+				ui = str.find(COMMA_STR, ui + strlen(COMMA));
+			}
+		}
+	}
+	return str;
 }
 Manager *Calculator::calculate(string str, bool enable_abort, int usecs) {
 	Manager *mngr;
@@ -1707,13 +1817,115 @@ void Calculator::setFunctionsAndVariables(string &str) {
 	Unit *u;
 	Prefix *p;
 	Manager *mngr;
+	vector<int> q_begin;
+	vector<int> q_end;
+	i3 = 0;
+	while(true) {
+		i3 = str.find_first_of("\"\'", i3);
+		if(i3 == (int) string::npos) {
+			break;
+		}
+		q_begin.push_back(i3);
+		i3 = str.find(str[i3], i3 + 1);
+		if(i3 == (int) string::npos) {
+			q_end.push_back(str.length() - 1);
+			break;
+		}
+		q_end.push_back(i3);
+		i3++;
+	}
 	for(unsigned int i = 0; i < signs.size(); i++) {
-		gsub(signs[i], real_signs[i], str);
+		//gsub(signs[i], real_signs[i], str);
+		unsigned int ui = str.find(signs[i]);
+		while(ui != string::npos) {
+			b = false;
+			for(unsigned int ui2 = 0; ui2 < q_end.size(); ui2++) {
+				if((int) ui <= q_end[ui2] && (int) ui >= q_begin[ui2]) {
+					ui = str.find(signs[i], q_end[ui2] + 1);
+					b = true;
+					break;
+				}
+			}
+			if(!b) {
+				str.replace(ui, signs[i].length(), real_signs[i]);
+				ui = str.find(signs[i], ui + real_signs[i].length());
+			}
+		}
 	}
 	for(int str_index = 0; str_index < (int) str.length(); str_index++) {
 		chars_left = str.length() - str_index;
 		moved_forward = false;
-		if(str[str_index] == '\"' || str[str_index] == '\'') {
+		if(str[str_index] == LEFT_VECTOR_WRAP_CH) {
+			i4 = 1;
+			i3 = str_index;
+			while(true) {
+				i3 = str.find_first_of(LEFT_VECTOR_WRAP RIGHT_VECTOR_WRAP, i3 + 1);
+				if(i3 == (int) string::npos) {
+					for(; i4 > 0; i4--) {
+						str += RIGHT_VECTOR_WRAP;
+					}
+					i3 = str.length() - 1;
+				} else if(str[i3] == LEFT_VECTOR_WRAP_CH) {
+					i4++;
+				} else if(str[i3] == RIGHT_VECTOR_WRAP_CH) {
+					i4--;
+					if(i4 > 0) {
+						i5 = str.find_first_not_of(SPACE, i3 + 1);
+						if(i5 != (int) string::npos && str[i5] == LEFT_VECTOR_WRAP_CH) {
+							str.insert(i5, COMMA);
+						}
+					}
+				}
+				if(i4 == 0) {
+					stmp2 = str.substr(str_index + 1, i3 - str_index - 1);
+					mngr = vector_func->calculate(stmp2);
+					if(mngr) {
+						if(mngr->isMatrix() && mngr->matrix()->isVector()) {
+							Vector *vctr = (Vector*) mngr->matrix();
+							b = true;
+							i6 = 0;
+							i7 = 0;
+							for(unsigned int ui = 1; ui <= vctr->components(); ui++) {
+								if(!vctr->get(ui) || !vctr->get(ui)->isMatrix() || !vctr->get(ui)->matrix()->isVector()) {
+									b = false;
+									break;
+								} else {
+									if((int) ((Vector*) vctr->get(ui)->matrix())->components() > i6) {
+										i6 = ((Vector*) vctr->get(ui)->matrix())->components();
+									}
+									i7++;
+								}
+							}
+							if(b) {
+								Matrix *mtrx = new Matrix(i7, i6);
+								Manager *mngr2 = new Manager(mtrx);
+								delete mtrx;
+								Vector *vctr2;
+								for(unsigned int ui = 1; ui <= vctr->components(); ui++) {
+									vctr2 = (Vector*) vctr->get(ui)->matrix();
+									for(unsigned int ui2 = 1; ui2 <= vctr2->components(); ui2++) {
+										mngr2->matrix()->set(vctr2->get(ui2), ui, ui2);
+									}
+								}
+								mngr->unref();
+								mngr = mngr2;
+							}
+						}
+						stmp = LEFT_PARENTHESIS_CH;
+						stmp += ID_WRAP_LEFT_CH;
+						stmp += i2s(addId(mngr));
+						mngr->unref();
+						stmp += ID_WRAP_RIGHT_CH;
+						stmp += RIGHT_PARENTHESIS_CH;
+					} else {
+						stmp = "";
+					}				
+					str.replace(str_index, i3 + 1 - str_index, stmp);
+					str_index += stmp.length() - 1;
+					break;
+				}
+			}	
+		} else if(str[str_index] == '\"' || str[str_index] == '\'') {
 			if(str_index == (int) (str.length()) - 1) {
 				str.erase(str_index, 1);
 			} else {

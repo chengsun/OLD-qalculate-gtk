@@ -78,7 +78,7 @@ class Calculator {
 	FILE *gnuplot_pipe;
 	
 	Variable *pi_var, *e_var;
-	Function *ln_func;
+	Function *ln_func, *vector_func, *matrix_func;
 
   public:
   
@@ -169,6 +169,8 @@ class Calculator {
 	void abort();
 	void abort_this();
 	bool busy();
+	string localizeExpression(string str) const;
+	string unlocalizeExpression(string str) const;
 	Manager *calculate(string str, bool enable_abort = false, int usecs = -1);
 	string printManagerTimeOut(Manager *mngr, int usecs = 100000, NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *prefix = NULL);
 	Manager *convert(double value, Unit *from_unit, Unit *to_unit);

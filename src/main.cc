@@ -15,6 +15,7 @@
 #endif
 
 #include <gtk/gtk.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 #include <glade/glade.h>
 #ifdef HAVE_LIBGNOME
 #include <libgnome/libgnome.h>
@@ -40,6 +41,7 @@ Unit *selected_unit, *selected_to_unit;
 bool load_global_defs, fetch_exchange_rates_at_startup, first_time;
 GtkWidget *omToUnit_menu;
 GdkPixmap *pixmap_result;
+GdkPixbuf *pixbuf_result;
 extern bool b_busy;
 extern vector<string> recent_functions_pre;
 extern vector<string> recent_variables_pre;
@@ -143,6 +145,7 @@ int main (int argc, char **argv) {
 	omToUnit_menu = NULL;
 	result_text = "0";
 	pixmap_result = NULL;
+	pixbuf_result = NULL;
 
 	//check for calculation errros regularly
 	g_timeout_add(100, on_display_errors_timeout, NULL);

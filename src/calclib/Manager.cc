@@ -2952,11 +2952,14 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 							}
 						} else if((m_i_prev->isText() && text_length_is_one(m_i_prev->text())) || (m_i_prev->isVariable() && (text_length_is_one(m_i_prev->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i_prev->variable() == CALCULATOR->getPI() || m_i_prev->variable()->name() == "euler" || m_i_prev->variable()->name() == "golden"))))) {
 							if(m_i->isText() && text_length_is_one(m_i->text())) {
-								do_space.push_back(0);
+								//do_space.push_back(0);
+								do_space.push_back(2);
 							} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable() == CALCULATOR->getPI() || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {
-								do_space.push_back(0);
+								//do_space.push_back(0);
+								do_space.push_back(2);
 							} else if(m_i->isUnit_exp() || m_i->isPower()) {
-								do_space.push_back(1);
+								//do_space.push_back(1);
+								do_space.push_back(2);
 							} else {
 								do_space.push_back(2);
 							}
@@ -3400,10 +3403,17 @@ giac::gen Manager::toGiac(bool *failed) const {
 				switch(comparison_type) {
 					case COMPARISON_EQUALS: return giac::symbolic(giac::at_equal, v_g);
 					case COMPARISON_NOT_EQUALS: return giac::symbolic(giac::at_different, v_g);
+#ifdef OLD_GIAC_API
 					case COMPARISON_LESS: return giac::symbolic(giac::at_inferieur, v_g);
 					case COMPARISON_GREATER: return giac::symbolic(giac::at_superieur, v_g);
 					case COMPARISON_EQUALS_LESS: return giac::symbolic(giac::at_inf_ou_egal, v_g);
 					case COMPARISON_EQUALS_GREATER: return giac::symbolic(giac::at_sup_ou_egal, v_g);
+#else
+					case COMPARISON_LESS: return giac::symbolic(giac::at_inferieur_strict, v_g);
+					case COMPARISON_GREATER: return giac::symbolic(giac::at_superieur_strict, v_g);
+					case COMPARISON_EQUALS_LESS: return giac::symbolic(giac::at_inferieur_egal, v_g);
+					case COMPARISON_EQUALS_GREATER: return giac::symbolic(giac::at_superieur_egal, v_g);
+#endif
 				}
 			} else if(isFunction()) {
 				return giac::symbolic(*ufp, v_g);
@@ -3637,6 +3647,7 @@ void Manager::set(const giac::gen &giac_gen, bool in_retry) {
 				b_sort = true;
 				b_two = true;
 				t = COMPARISON_MANAGER;
+#ifdef OLD_GIAC_API
 			} else if(giac_gen._SYMBptr->sommet == giac::at_inferieur) {
 				comparison_type = COMPARISON_LESS;
 				b_sort = true;
@@ -3657,6 +3668,28 @@ void Manager::set(const giac::gen &giac_gen, bool in_retry) {
 				b_sort = true;
 				b_two = true;
 				t = COMPARISON_MANAGER;
+#else				
+			} else if(giac_gen._SYMBptr->sommet == giac::at_inferieur_strict) {
+				comparison_type = COMPARISON_LESS;
+				b_sort = true;
+				b_two = true;
+				t = COMPARISON_MANAGER;
+			} else if(giac_gen._SYMBptr->sommet == giac::at_superieur_strict) {
+				comparison_type = COMPARISON_GREATER;
+				b_sort = true;
+				b_two = true;
+				t = COMPARISON_MANAGER;
+			} else if(giac_gen._SYMBptr->sommet == giac::at_superieur_egal) {
+				comparison_type = COMPARISON_EQUALS_GREATER;
+				b_sort = true;
+				b_two = true;
+				t = COMPARISON_MANAGER;
+			} else if(giac_gen._SYMBptr->sommet == giac::at_inferieur_egal) {
+				comparison_type = COMPARISON_EQUALS_LESS;
+				b_sort = true;
+				b_two = true;
+				t = COMPARISON_MANAGER;				
+#endif				
 			} else if(giac_gen._SYMBptr->sommet == giac::at_sqrt) {
 				if(giac_gen._SYMBptr->feuille.type == giac::_VECT && !ckmatrix(giac_gen._SYMBptr->feuille)) {
 					f = CALCULATOR->getFunction("sqrt");

@@ -1,5 +1,13 @@
+2004-03-17 Niklas Knutsson  <nq@altern.org>
+
+	* Limit width of result display text
+	* Use transparent pixbuf for result to not look ugly with pixmap themes
+	* Support newer Giac versions
+
 2004-03-16 Niklas Knutsson  <nq@altern.org>
 
+	* Serious try to fix the localized decimal point and comma once and for all
+	* Use [] for vectors and matrices
 	* Use Page Up and Page Down for expression history instead to allow completion to use Up and Down keys
 	* huh! do not sort functions.
 	* "European 30/365" -> "European 30/360"

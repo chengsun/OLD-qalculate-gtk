@@ -17,11 +17,11 @@
 #endif
 
 #ifdef HAVE_GIAC
-#undef PACKAGE
-#undef VERSION
+#  undef PACKAGE
+#  undef VERSION
 #  include <giac/giac.h>
-#undef PACKAGE
-#undef VERSION
+#  undef PACKAGE
+#  undef VERSION
 #  ifdef HAVE_CONFIG_H
 #    include <config.h>
 #  endif
@@ -248,6 +248,8 @@ using namespace std;
 #define SPACE_CH		' '
 #define LEFT_PARENTHESIS_CH	'('
 #define RIGHT_PARENTHESIS_CH	')'
+#define LEFT_VECTOR_WRAP_CH	'['
+#define RIGHT_VECTOR_WRAP_CH	']'
 #define FUNCTION_VAR_PRE_CH	'\\'
 #define COMMA_CH		','
 #define NAME_NUMBER_PRE_CH	'_'
@@ -268,9 +270,12 @@ using namespace std;
 #define NUMBERS			"0123456789"
 #define SIGNS			"+-*/^"
 #define OPERATORS		"+-*/^&|!<>="
-#define	PARENTHESISS		"()[]"
+#define	PARENTHESISS		"()"
 #define LEFT_PARENTHESIS	"("
 #define	RIGHT_PARENTHESIS	")"
+#define	VECTOR_WRAPS		"[]"
+#define LEFT_VECTOR_WRAP	"["
+#define	RIGHT_VECTOR_WRAP	"]"
 #define	SPACES			" \t\n"
 #define SPACE			" "
 #define RESERVED		"\'@?\\{}:\"$"
@@ -291,6 +296,6 @@ using namespace std;
 #define SNAN			"NAN"
 #define UNDERSCORE		"_"
 
-#define NOT_IN_NAMES 	RESERVED OPERATORS SPACES DOT PARENTHESISS COMMAS
+#define NOT_IN_NAMES 	RESERVED OPERATORS SPACES DOT VECTOR_WRAPS PARENTHESISS COMMAS
 
 #endif

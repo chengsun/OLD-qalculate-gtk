@@ -154,12 +154,14 @@ int Function::args(const string &argstr, vector<Manager*> &vargs) {
 	Argument *arg;
 	for(unsigned int str_index = 0; str_index < str.length(); str_index++) {
 		switch(str[str_index]) {
+			case LEFT_VECTOR_WRAP_CH: {}
 			case LEFT_PARENTHESIS_CH: {
 				if(!in_cit1 && !in_cit2) {
 					pars++;
 				}
 				break;
 			}
+			case RIGHT_VECTOR_WRAP_CH: {}
 			case RIGHT_PARENTHESIS_CH: {
 				if(!in_cit1 && !in_cit2 && pars > 0) {
 					pars--;

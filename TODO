@@ -1,11 +1,9 @@
-* Possibility to use [] for vector and matrix creation
 * Limit fraction precision
 * Do not recalculate plot data when it has not changed
 * Instant apply for all parameters in plot
 * Plot-functions
 * Sexagesimal numbers
 * Matrix area
-* Fix dates
 * Check if unit is used on delete
 * Replace pointers to unit when unit type has changed (a different object must be created)
 * Export to CSV file

@@ -311,7 +311,6 @@ create_main_window (void)
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(completion_store), 0, GTK_SORT_ASCENDING);
 	gtk_entry_completion_set_model(completion, GTK_TREE_MODEL(completion_store));
 	g_object_unref(completion_store);
-	//gtk_entry_completion_set_text_column(completion, 0);
 	GtkCellRenderer *cell = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(completion), cell, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(completion), cell, "text", 0);	
