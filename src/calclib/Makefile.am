@@ -2,6 +2,8 @@
 # src/calclib/MAkefile.am for qalculate
 #
 
+SUBDIRS = data
+
 noinst_LTLIBRARIES = libcalculate.la
 
 libcalculate_la_SOURCES = \
@@ -20,3 +22,8 @@ libcalculate_la_SOURCES = \
 	includes.h \
 	Unit.cc		Unit.h \
 	BuiltinFunctions.cc BuiltinFunctions.h
+
+INCLUDES = \
+	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
+	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
+	@PACKAGE_CFLAGS@

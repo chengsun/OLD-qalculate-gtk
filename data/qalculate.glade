@@ -5,7 +5,7 @@
 
 <widget class="GtkWindow" id="main_window">
   <property name="border_width">5</property>
-  <property name="title" translatable="yes">Qalculate!</property>
+  <property name="title" translatable="yes">Qalculate! (CVS version)</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -2234,11 +2234,11 @@
 			  <property name="justification">GTK_JUSTIFY_LEFT</property>
 			  <property name="wrap_mode">GTK_WRAP_WORD</property>
 			  <property name="cursor_visible">False</property>
-			  <property name="pixels_above_lines">0</property>
+			  <property name="pixels_above_lines">3</property>
 			  <property name="pixels_below_lines">0</property>
 			  <property name="pixels_inside_wrap">0</property>
-			  <property name="left_margin">5</property>
-			  <property name="right_margin">5</property>
+			  <property name="left_margin">3</property>
+			  <property name="right_margin">3</property>
 			  <property name="indent">0</property>
 			  <property name="text" translatable="yes">No description available.</property>
 			</widget>
@@ -4660,84 +4660,24 @@
 	  <property name="spacing">6</property>
 
 	  <child>
-	    <widget class="GtkVBox" id="vbox29">
+	    <widget class="GtkHBox" id="hbox35">
 	      <property name="visible">True</property>
-	      <property name="homogeneous">False</property>
+	      <property name="homogeneous">True</property>
 	      <property name="spacing">6</property>
 
 	      <child>
-		<widget class="GtkHBox" id="hbox34">
+		<widget class="GtkLabel" id="label33">
 		  <property name="visible">True</property>
-		  <property name="homogeneous">False</property>
-		  <property name="spacing">0</property>
-
-		  <child>
-		    <widget class="GtkVBox" id="vbox30">
-		      <property name="visible">True</property>
-		      <property name="homogeneous">False</property>
-		      <property name="spacing">3</property>
-
-		      <child>
-			<widget class="GtkHBox" id="hbox35">
-			  <property name="visible">True</property>
-			  <property name="homogeneous">True</property>
-			  <property name="spacing">6</property>
-
-			  <child>
-			    <widget class="GtkLabel" id="label33">
-			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Name</property>
-			      <property name="use_underline">False</property>
-			      <property name="use_markup">False</property>
-			      <property name="justify">GTK_JUSTIFY_LEFT</property>
-			      <property name="wrap">False</property>
-			      <property name="selectable">False</property>
-			      <property name="xalign">0</property>
-			      <property name="yalign">0.5</property>
-			      <property name="xpad">0</property>
-			      <property name="ypad">0</property>
-			    </widget>
-			    <packing>
-			      <property name="padding">0</property>
-			      <property name="expand">True</property>
-			      <property name="fill">True</property>
-			    </packing>
-			  </child>
-
-			  <child>
-			    <widget class="GtkEntry" id="function_edit_entry_name">
-			      <property name="visible">True</property>
-			      <property name="tooltip" translatable="yes">Name used to invoke this function in expressions</property>
-			      <property name="can_focus">True</property>
-			      <property name="editable">True</property>
-			      <property name="visibility">True</property>
-			      <property name="max_length">0</property>
-			      <property name="text" translatable="yes"></property>
-			      <property name="has_frame">True</property>
-			      <property name="invisible_char" translatable="yes">*</property>
-			      <property name="activates_default">False</property>
-			      <signal name="changed" handler="on_function_edit_entry_name_changed" last_modification_time="Mon, 11 Aug 2003 12:01:51 GMT"/>
-			    </widget>
-			    <packing>
-			      <property name="padding">0</property>
-			      <property name="expand">True</property>
-			      <property name="fill">True</property>
-			    </packing>
-			  </child>
-			</widget>
-			<packing>
-			  <property name="padding">0</property>
-			  <property name="expand">True</property>
-			  <property name="fill">True</property>
-			</packing>
-		      </child>
-		    </widget>
-		    <packing>
-		      <property name="padding">0</property>
-		      <property name="expand">True</property>
-		      <property name="fill">True</property>
-		    </packing>
-		  </child>
+		  <property name="label" translatable="yes">Name</property>
+		  <property name="use_underline">False</property>
+		  <property name="use_markup">False</property>
+		  <property name="justify">GTK_JUSTIFY_LEFT</property>
+		  <property name="wrap">False</property>
+		  <property name="selectable">False</property>
+		  <property name="xalign">0</property>
+		  <property name="yalign">0.5</property>
+		  <property name="xpad">0</property>
+		  <property name="ypad">0</property>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>
@@ -4745,105 +4685,20 @@
 		  <property name="fill">True</property>
 		</packing>
 	      </child>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">True</property>
-	      <property name="fill">True</property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkVBox" id="vbox31">
-	      <property name="visible">True</property>
-	      <property name="homogeneous">False</property>
-	      <property name="spacing">6</property>
 
 	      <child>
-		<widget class="GtkHBox" id="hbox39">
+		<widget class="GtkEntry" id="function_edit_entry_name">
 		  <property name="visible">True</property>
-		  <property name="homogeneous">False</property>
-		  <property name="spacing">0</property>
-
-		  <child>
-		    <widget class="GtkVBox" id="vbox32">
-		      <property name="visible">True</property>
-		      <property name="homogeneous">False</property>
-		      <property name="spacing">3</property>
-
-		      <child>
-			<widget class="GtkVBox" id="vbox35">
-			  <property name="visible">True</property>
-			  <property name="homogeneous">False</property>
-			  <property name="spacing">0</property>
-
-			  <child>
-			    <widget class="GtkHBox" id="hbox45">
-			      <property name="visible">True</property>
-			      <property name="homogeneous">True</property>
-			      <property name="spacing">6</property>
-
-			      <child>
-				<widget class="GtkLabel" id="label45">
-				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Expression</property>
-				  <property name="use_underline">False</property>
-				  <property name="use_markup">False</property>
-				  <property name="justify">GTK_JUSTIFY_LEFT</property>
-				  <property name="wrap">False</property>
-				  <property name="selectable">False</property>
-				  <property name="xalign">0</property>
-				  <property name="yalign">0.5</property>
-				  <property name="xpad">0</property>
-				  <property name="ypad">0</property>
-				</widget>
-				<packing>
-				  <property name="padding">0</property>
-				  <property name="expand">True</property>
-				  <property name="fill">True</property>
-				</packing>
-			      </child>
-
-			      <child>
-				<widget class="GtkEntry" id="function_edit_entry_expression">
-				  <property name="visible">True</property>
-				  <property name="tooltip" translatable="yes">Formula of this function. Replace arguments with \x, \y, \z, \a, \b... Capitals is used for optional arguments and the default value can be put in brackets (ex. \X{0}). \v is used to get a vector of undefined length from additional arguments put at the end.</property>
-				  <property name="can_focus">True</property>
-				  <property name="editable">True</property>
-				  <property name="visibility">True</property>
-				  <property name="max_length">0</property>
-				  <property name="text" translatable="yes"></property>
-				  <property name="has_frame">True</property>
-				  <property name="invisible_char" translatable="yes">*</property>
-				  <property name="activates_default">False</property>
-				</widget>
-				<packing>
-				  <property name="padding">0</property>
-				  <property name="expand">True</property>
-				  <property name="fill">True</property>
-				</packing>
-			      </child>
-			    </widget>
-			    <packing>
-			      <property name="padding">0</property>
-			      <property name="expand">True</property>
-			      <property name="fill">True</property>
-			    </packing>
-			  </child>
-			</widget>
-			<packing>
-			  <property name="padding">0</property>
-			  <property name="expand">True</property>
-			  <property name="fill">True</property>
-			</packing>
-		      </child>
-		    </widget>
-		    <packing>
-		      <property name="padding">0</property>
-		      <property name="expand">True</property>
-		      <property name="fill">True</property>
-		    </packing>
-		  </child>
+		  <property name="tooltip" translatable="yes">Name used to invoke this function in expressions</property>
+		  <property name="can_focus">True</property>
+		  <property name="editable">True</property>
+		  <property name="visibility">True</property>
+		  <property name="max_length">0</property>
+		  <property name="text" translatable="yes"></property>
+		  <property name="has_frame">True</property>
+		  <property name="invisible_char" translatable="yes">*</property>
+		  <property name="activates_default">False</property>
+		  <signal name="changed" handler="on_function_edit_entry_name_changed" last_modification_time="Mon, 11 Aug 2003 12:01:51 GMT"/>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>
@@ -5014,7 +4869,7 @@
 
 	      <child>
 		<widget class="GtkScrolledWindow" id="scrolledwindow5">
-		  <property name="height_request">125</property>
+		  <property name="height_request">100</property>
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
@@ -5034,8 +4889,78 @@
 		      <property name="pixels_above_lines">0</property>
 		      <property name="pixels_below_lines">0</property>
 		      <property name="pixels_inside_wrap">0</property>
-		      <property name="left_margin">0</property>
-		      <property name="right_margin">0</property>
+		      <property name="left_margin">3</property>
+		      <property name="right_margin">3</property>
+		      <property name="indent">0</property>
+		      <property name="text" translatable="yes"></property>
+		    </widget>
+		  </child>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">True</property>
+		  <property name="fill">True</property>
+		</packing>
+	      </child>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">True</property>
+	      <property name="fill">True</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkVBox" id="vbox55">
+	      <property name="visible">True</property>
+	      <property name="homogeneous">False</property>
+	      <property name="spacing">6</property>
+
+	      <child>
+		<widget class="GtkLabel" id="label79">
+		  <property name="visible">True</property>
+		  <property name="label" translatable="yes">Expression</property>
+		  <property name="use_underline">False</property>
+		  <property name="use_markup">False</property>
+		  <property name="justify">GTK_JUSTIFY_LEFT</property>
+		  <property name="wrap">False</property>
+		  <property name="selectable">False</property>
+		  <property name="xalign">0</property>
+		  <property name="yalign">0.07</property>
+		  <property name="xpad">0</property>
+		  <property name="ypad">0</property>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkScrolledWindow" id="scrolledwindow7">
+		  <property name="height_request">100</property>
+		  <property name="visible">True</property>
+		  <property name="can_focus">True</property>
+		  <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+		  <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+		  <property name="shadow_type">GTK_SHADOW_IN</property>
+		  <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
+
+		  <child>
+		    <widget class="GtkTextView" id="function_edit_textview_expression">
+		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Description of this function</property>
+		      <property name="can_focus">True</property>
+		      <property name="editable">True</property>
+		      <property name="justification">GTK_JUSTIFY_LEFT</property>
+		      <property name="wrap_mode">GTK_WRAP_WORD</property>
+		      <property name="cursor_visible">True</property>
+		      <property name="pixels_above_lines">3</property>
+		      <property name="pixels_below_lines">0</property>
+		      <property name="pixels_inside_wrap">0</property>
+		      <property name="left_margin">3</property>
+		      <property name="right_margin">3</property>
 		      <property name="indent">0</property>
 		      <property name="text" translatable="yes"></property>
 		    </widget>
@@ -5379,6 +5304,22 @@
 		      <property name="padding">0</property>
 		      <property name="expand">True</property>
 		      <property name="fill">True</property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkButton" id="function_edit_button_rules">
+		      <property name="visible">True</property>
+		      <property name="can_focus">True</property>
+		      <property name="label" translatable="yes">Rules</property>
+		      <property name="use_underline">True</property>
+		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <signal name="clicked" handler="on_function_edit_button_rules_clicked" last_modification_time="Tue, 23 Sep 2003 11:50:32 GMT"/>
+		    </widget>
+		    <packing>
+		      <property name="padding">0</property>
+		      <property name="expand">False</property>
+		      <property name="fill">False</property>
 		    </packing>
 		  </child>
 		</widget>

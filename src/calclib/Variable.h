@@ -15,6 +15,16 @@
 #include "ExpressionItem.h"
 #include "includes.h"
 
+#define DECLARE_BUILTIN_VARIABLE(x)	class x : public DynamicVariable { \
+					  private: \
+						void calculate() const;	\
+ 					  public: \
+						x(); \
+						x(const x *variable) {set(variable);} \
+						ExpressionItem *copy() const {return new x(this);} \
+					};
+
+
 /**
 * Contains a known variable.
 */
@@ -29,6 +39,7 @@ class Variable : public ExpressionItem {
   
 	Variable(string cat_, string name_, Manager *mngr_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
 	Variable(string cat_, string name_, string expression_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);	
+	Variable();
 	Variable(const Variable *variable);
 	~Variable();
 
@@ -55,5 +66,50 @@ class Variable : public ExpressionItem {
 	virtual const Manager *get() const;	
 
 };
+
+class DynamicVariable : public Variable {
+
+  private:
+  
+  	int calculated_precision;
+	
+  protected:
+  
+  	virtual void calculate() const = 0;
+  	
+  public:
+
+	DynamicVariable(string cat_, string name_, string title_ = "", bool is_local = false, bool is_builtin = true, bool is_active = true);
+	DynamicVariable(const DynamicVariable *variable);
+	DynamicVariable();
+	virtual ~DynamicVariable();
+
+	ExpressionItem *copy() const = 0;
+	void set(const ExpressionItem *item);
+
+	/**
+	* Returns the value of the variable.
+	*/	
+	Manager *get();
+
+	/**
+	* Returns the value of the variable.
+	*/	
+	const Manager *get() const;	
+
+	void set(Manager *mngr_);
+	void set(string expression_);	
+	
+	int calculatedPrecision() const;
+
+};
+
+DECLARE_BUILTIN_VARIABLE(PiVariable);
+DECLARE_BUILTIN_VARIABLE(EVariable);
+DECLARE_BUILTIN_VARIABLE(EulerVariable);
+DECLARE_BUILTIN_VARIABLE(CatalanVariable);
+DECLARE_BUILTIN_VARIABLE(AperyVariable);
+DECLARE_BUILTIN_VARIABLE(PythagorasVariable);
+DECLARE_BUILTIN_VARIABLE(GoldenVariable);
 
 #endif

@@ -15,25 +15,27 @@
 #include "ExpressionItem.h"
 #include "includes.h"
 
-typedef enum {
+enum {
 	ARGUMENT_TYPE_FREE,
 	ARGUMENT_TYPE_TEXT,
 	ARGUMENT_TYPE_DATE,
-	ARGUMENT_TYPE_POSITIVE,
-	ARGUMENT_TYPE_NONNEGATIVE,
-	ARGUMENT_TYPE_NONZERO,	
 	ARGUMENT_TYPE_INTEGER,	
-	ARGUMENT_TYPE_POSITIVE_INTEGER,
-	ARGUMENT_TYPE_NONNEGATIVE_INTEGER,	
-	ARGUMENT_TYPE_NONZERO_INTEGER,		
 	ARGUMENT_TYPE_FRACTION,
 	ARGUMENT_TYPE_VECTOR,	
 	ARGUMENT_TYPE_MATRIX,
 	ARGUMENT_TYPE_FUNCTION,	
 	ARGUMENT_TYPE_UNIT,
-	ARGUMENT_TYPE_BOOLEAN
-} ArgumentType;
+	ARGUMENT_TYPE_BOOLEAN,
+	ARGUMENT_TYPE_VARIABLE
+};
 
+typedef enum {
+	ARGUMENT_MIN_MAX_NONE,
+	ARGUMENT_MIN_MAX_POSITIVE,
+	ARGUMENT_MIN_MAX_NONZERO,
+	ARGUMENT_MIN_MAX_NONNEGATIVE,
+	ARGUMENT_MIN_MAX_NEGATIVE	
+} ArgumentMinMaxPreDefinition;
 
 class Function : public ExpressionItem {
 
@@ -42,11 +44,11 @@ class Function : public ExpressionItem {
 	int argc;
 	int max_argc;
 	vector<string> default_values;
-	hash_map<int, string> argnames;
-	hash_map<int, ArgumentType> argtypes;	
-	int last_arg_name_index, last_arg_type_index;
+	hash_map<int, Argument*> argdefs;
+	int last_argdef_index;
 	virtual void calculate(Manager *mngr, vector<Manager*> &vargs);			
 	bool testArgumentCount(int itmp);
+	bool testArguments(vector<Manager*> &vargs);
 	virtual Manager *createFunctionManagerFromVArgs(vector<Manager*> &vargs);
 	virtual Manager *createFunctionManagerFromSVArgs(vector<string> &svargs);	
 	
@@ -56,7 +58,7 @@ class Function : public ExpressionItem {
 	Function();
 	virtual ~Function();	
 
-	virtual ExpressionItem *copy() const;
+	virtual ExpressionItem *copy() const = 0;
 	virtual void set(const ExpressionItem *item);
 	virtual int type() const;	
 	
@@ -66,25 +68,24 @@ class Function : public ExpressionItem {
 	int minargs() const;	
 	int maxargs() const;		
 	int args(const string &str, vector<Manager*> &vargs);
-	int lastArgumentNameIndex() const;
-	int lastArgumentTypeIndex() const;	
-	string argumentName(int index);
-	ArgumentType argumentType(int index);	
-	const char *argumentTypeString(int index);		
-	void clearArgumentNames();
-	void clearArgumentTypes();	
-	void setArgumentName(string name_, int index);
-	void setArgumentType(ArgumentType type_, int index);	
+	int lastArgumentDefinitionIndex() const;
+	Argument *getArgumentDefinition(int index);
+	void clearArgumentDefinitions();
+	void setArgumentDefinition(int index, Argument *argdef);
 	int stringArgs(const string &str, vector<string> &svargs);		
 	void setDefaultValue(int arg_, string value_);
 	string getDefaultValue(int arg_) const;	
 	Vector *produceVector(vector<Manager*> &vargs, int begin = -1, int end = -1);
+	Vector *produceArgumentsVector(vector<Manager*> &vargs, int begin = -1, int end = -1);
 };
 
 class UserFunction : public Function {
   protected:
+  
 	string eq, eq_calc;	
+	
   public:
+  
 	UserFunction(string cat_, string name_, string eq_, bool is_local = true, int argc_ = -1, string title_ = "", string descr_ = "", int max_argc_ = 0, bool is_active = true);
 	UserFunction(const UserFunction *function);
 	void set(const ExpressionItem *item);
@@ -95,6 +96,247 @@ class UserFunction : public Function {
 	Manager *calculate(vector<Manager*> &vargs);	
 	Manager *calculate(const string &eq);	
 	void setEquation(string new_eq, int argc_ = -1, int max_argc_ = 0);	
+};
+
+class Argument {
+
+  protected:
+  
+  	string sname, scondition;
+	bool b_zero, b_test, b_matrix;
+	virtual bool subtest(const Manager *value) const;
+	virtual string subprintlong() const;
+	
+  public:
+  
+	Argument(string name_ = "", bool does_test = true);	
+	Argument(const Argument *arg);
+
+	virtual void set(const Argument *arg);
+	virtual Argument *copy() const;
+
+	virtual string print() const;
+	string printlong() const;
+	
+	bool test(const Manager *value, int index, Function *f) const;
+	
+	string name() const;
+	void setName(string name_);
+
+	void setCustomCondition(string condition);
+	string getCustomCondition() const;
+	
+	bool tests() const;
+	void setTests(bool does_test);
+	
+	bool zeroAllowed() const;
+	void setZeroAllowed(bool accept_zero);
+	
+	bool matrixAllowed() const;
+	void setMatrixAllowed(bool allow_matrix);
+	
+	virtual bool needQuotes() const;
+	
+	virtual int type() const;
+
+};
+
+class FractionArgument : public Argument {
+
+  protected:
+  
+	Fraction *fmin, *fmax;
+	bool b_incl_min, b_incl_max;
+
+  protected:
+  
+	virtual bool subtest(const Manager *value) const;  
+	virtual string subprintlong() const;
+
+  public:
+  
+  	FractionArgument(string name_ = "", ArgumentMinMaxPreDefinition minmax = ARGUMENT_MIN_MAX_NONE, bool does_test = true);
+	FractionArgument(const FractionArgument *arg);
+	~FractionArgument();
+	
+	virtual void set(const Argument *arg);
+	virtual Argument *copy() const;
+
+	virtual string print() const;	
+	
+	void setMin(long int min_);
+	void setMin(const Fraction *min_);	
+	void setIncludeEqualsMin(bool include_equals);
+	bool includeEqualsMin() const;	
+	const Fraction *min() const;
+	void setMax(long int max_);
+	void setMax(const Fraction *max_);	
+	void setIncludeEqualsMax(bool include_equals);
+	bool includeEqualsMax() const;	
+	const Fraction *max() const;	
+	
+	virtual int type() const;
+
+};
+
+class IntegerArgument : public Argument {
+
+  protected:
+  
+	Integer *imin, *imax;
+
+  protected:
+  
+	virtual bool subtest(const Manager *value) const;  
+	virtual string subprintlong() const;
+
+  public:
+  
+  	IntegerArgument(string name_ = "", ArgumentMinMaxPreDefinition minmax = ARGUMENT_MIN_MAX_NONE, bool does_test = true);
+	IntegerArgument(const IntegerArgument *arg);
+	~IntegerArgument();
+
+	virtual void set(const Argument *arg);
+	virtual Argument *copy() const;
+
+	virtual string print() const;	
+
+	void setMin(long int min_);
+	void setMin(const Integer *min_);	
+	const Integer *min() const;
+	void setMax(long int max_);
+	void setMax(const Integer *max_);	
+	const Integer *max() const;	
+	
+	virtual int type() const;
+
+};
+
+class TextArgument : public Argument {
+
+  protected:
+  
+	virtual bool subtest(const Manager *value) const;  
+	virtual string subprintlong() const;
+
+  public:
+  
+  	TextArgument(string name_ = "", bool does_test = true);
+	TextArgument(const TextArgument *arg);
+	virtual int type() const;
+	virtual Argument *copy() const;
+	virtual string print() const;
+	virtual bool needQuotes() const;
+	
+};
+class DateArgument : public Argument {
+
+  protected:
+  
+	virtual bool subtest(const Manager *value) const;  
+	virtual string subprintlong() const;
+
+  public:
+  
+  	DateArgument(string name_ = "", bool does_test = true);
+	DateArgument(const DateArgument *arg);
+	virtual int type() const;
+	virtual Argument *copy() const;
+	virtual string print() const;
+	virtual bool needQuotes() const;
+};
+class VectorArgument : public Argument {
+
+  protected:
+  
+	virtual bool subtest(const Manager *value) const;  
+	virtual string subprintlong() const;
+
+  public:
+  
+  	VectorArgument(string name_ = "", bool does_test = true, bool allow_matrix = false);
+	VectorArgument(const VectorArgument *arg);
+	virtual int type() const;
+	virtual Argument *copy() const;
+	virtual string print() const;
+};
+class MatrixArgument : public Argument {
+
+  protected:
+  
+	virtual bool subtest(const Manager *value) const;  
+	virtual string subprintlong() const;
+
+  public:
+  
+  	MatrixArgument(string name_ = "", bool does_test = true);
+	MatrixArgument(const MatrixArgument *arg);
+	virtual int type() const;
+	virtual Argument *copy() const;
+	virtual string print() const;
+};
+class FunctionArgument : public Argument {
+
+  protected:
+  
+	virtual bool subtest(const Manager *value) const;  
+	virtual string subprintlong() const;
+
+  public:
+  
+  	FunctionArgument(string name_ = "", bool does_test = true);
+	FunctionArgument(const FunctionArgument *arg);
+	virtual int type() const;
+	virtual Argument *copy() const;
+	virtual string print() const;
+	virtual bool needQuotes() const;
+};
+class BooleanArgument : public Argument {
+
+  protected:
+  
+	virtual bool subtest(const Manager *value) const;  
+	virtual string subprintlong() const;
+
+  public:
+  
+  	BooleanArgument(string name_ = "", bool does_test = true);
+	BooleanArgument(const BooleanArgument *arg);
+	virtual int type() const;
+	virtual Argument *copy() const;
+	virtual string print() const;
+};
+class UnitArgument : public Argument {
+
+  protected:
+  
+	virtual bool subtest(const Manager *value) const;  
+	virtual string subprintlong() const;
+
+  public:
+  
+  	UnitArgument(string name_ = "", bool does_test = true);
+	UnitArgument(const UnitArgument *arg);
+	virtual int type() const;
+	virtual Argument *copy() const;
+	virtual string print() const;
+	virtual bool needQuotes() const;
+};
+class VariableArgument : public Argument {
+
+  protected:
+  
+	virtual bool subtest(const Manager *value) const;  
+	virtual string subprintlong() const;
+
+  public:
+  
+  	VariableArgument(string name_ = "", bool does_test = true);
+	VariableArgument(const VariableArgument *arg);
+	virtual int type() const;
+	virtual Argument *copy() const;
+	virtual string print() const;
+	virtual bool needQuotes() const;
 };
 
 #endif

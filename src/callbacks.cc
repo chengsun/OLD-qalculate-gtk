@@ -1164,92 +1164,55 @@ void update_function_arguments_list(Function *f) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "function_edit_button_remove_argument"), FALSE);	
 	if(f) {
 		GtkTreeIter iter;
-		for(int i = 1; i <= f->lastArgumentTypeIndex() || i <= f->lastArgumentNameIndex(); i++) {
+		Argument *arg;
+		for(int i = 1; i <= f->lastArgumentDefinitionIndex(); i++) {
 			gtk_list_store_append(tFunctionArguments_store, &iter);
-			string str;
-			int menu_index = 0;
-			switch(f->argumentType(i)) {
-				case ARGUMENT_TYPE_TEXT: {
-					str = _("Text");
-					menu_index = MENU_ARGUMENT_TYPE_TEXT;
-					break;
-				}
-				case ARGUMENT_TYPE_DATE: {
-					str = _("Date");
-					menu_index = MENU_ARGUMENT_TYPE_DATE;				
-					break;
-				}
-				case ARGUMENT_TYPE_POSITIVE: {
-					str = _("Positive number");
-					menu_index = MENU_ARGUMENT_TYPE_POSITIVE;
-					break;
-				}
-				case ARGUMENT_TYPE_NONNEGATIVE: {
-					str = _("Non-negative number");
-					menu_index = MENU_ARGUMENT_TYPE_NONNEGATIVE;
-					break;
-				}
-				case ARGUMENT_TYPE_NONZERO: {
-					str = _("Non-zero number");
-					menu_index = MENU_ARGUMENT_TYPE_NONZERO;
-					break;
-				}						
-				case ARGUMENT_TYPE_INTEGER: {
-					str = _("Integer");
-					menu_index = MENU_ARGUMENT_TYPE_INTEGER;
-					break;
-				}
-				case ARGUMENT_TYPE_POSITIVE_INTEGER: {
-					str = _("Positive integer");
-					menu_index = MENU_ARGUMENT_TYPE_POSITIVE_INTEGER;
-					break;
-				}
-				case ARGUMENT_TYPE_NONNEGATIVE_INTEGER: {
-					str = _("Non-negative integer");
-					menu_index = MENU_ARGUMENT_TYPE_NONNEGATIVE_INTEGER;
-					break;
-				}
-				case ARGUMENT_TYPE_NONZERO_INTEGER: {
-					str = _("Non-zero integer");
-					menu_index = MENU_ARGUMENT_TYPE_NONZERO_INTEGER;
-					break;
-				}						
-				case ARGUMENT_TYPE_FRACTION: {
-					str = _("Number");
-					menu_index = MENU_ARGUMENT_TYPE_FRACTION;
-					break;
-				}
-				case ARGUMENT_TYPE_VECTOR: {
-					str = _("Vector");
-					menu_index = MENU_ARGUMENT_TYPE_VECTOR;
-					break;
-				}
-				case ARGUMENT_TYPE_MATRIX: {
-					str = _("Matrix");
-					menu_index = MENU_ARGUMENT_TYPE_MATRIX;
-					break;
-				}
-				case ARGUMENT_TYPE_FUNCTION: {
-					str = _("Function");
-					menu_index = MENU_ARGUMENT_TYPE_FUNCTION;
-					break;
-				}
-				case ARGUMENT_TYPE_UNIT: {
-					str = _("Unit");
-					menu_index = MENU_ARGUMENT_TYPE_UNIT;
-					break;
-				}
-				case ARGUMENT_TYPE_BOOLEAN: {
-					str = _("Boolean");
-					menu_index = MENU_ARGUMENT_TYPE_BOOLEAN;
-					break;
-				}						
-				default: {
-					str = _("Free");
-					menu_index = MENU_ARGUMENT_TYPE_FREE;
+			string str = "free", str2 = "";
+			int menu_index = MENU_ARGUMENT_TYPE_FREE;
+			arg = f->getArgumentDefinition(i);
+			if(arg) {
+				str = arg->printlong();
+				str2 = arg->name();
+				switch(arg->type()) {
+					case ARGUMENT_TYPE_TEXT: {
+						menu_index = MENU_ARGUMENT_TYPE_TEXT;
+						break;
+					}
+					case ARGUMENT_TYPE_DATE: {
+						menu_index = MENU_ARGUMENT_TYPE_DATE;				
+						break;
+					}
+					case ARGUMENT_TYPE_INTEGER: {
+						menu_index = MENU_ARGUMENT_TYPE_INTEGER;
+						break;
+					}
+					case ARGUMENT_TYPE_FRACTION: {
+						menu_index = MENU_ARGUMENT_TYPE_FRACTION;
+						break;
+					}
+					case ARGUMENT_TYPE_VECTOR: {
+						menu_index = MENU_ARGUMENT_TYPE_VECTOR;
+						break;
+					}
+					case ARGUMENT_TYPE_MATRIX: {
+						menu_index = MENU_ARGUMENT_TYPE_MATRIX;
+						break;
+					}
+					case ARGUMENT_TYPE_FUNCTION: {
+						menu_index = MENU_ARGUMENT_TYPE_FUNCTION;
+						break;
+					}
+					case ARGUMENT_TYPE_UNIT: {
+						menu_index = MENU_ARGUMENT_TYPE_UNIT;
+						break;
+					}
+					case ARGUMENT_TYPE_BOOLEAN: {
+						menu_index = MENU_ARGUMENT_TYPE_BOOLEAN;
+						break;
+					}						
 				}
 			}			
-			gtk_list_store_set(tFunctionArguments_store, &iter, 0, f->argumentName(i).c_str(), 1, str.c_str(), 2, menu_index, -1);
+			gtk_list_store_set(tFunctionArguments_store, &iter, 0, str2.c_str(), 1, str.c_str(), 2, menu_index, -1);
 		}
 	}
 }
@@ -1650,12 +1613,6 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			
 			if(func_str == "zeta") func_str = SIGN_ZETA;
 			else if(func_str == "sqrt") func_str = SIGN_SQRT;			
-			else if(func_str == "EXP0") func_str = "<i>e</i>";	
-			else if(func_str == "PI") func_str = "<i>" SIGN_PI "</i>";
-			else if(func_str == "EULER") func_str = "<i>" SIGN_GAMMA "</i>";
-			else if(func_str == "APERY") func_str = SIGN_ZETA LEFT_BRACKET "3" RIGHT_BRACKET;
-			else if(func_str == "PYTHAGORAS") func_str = SIGN_SQRT "2";
-			else if(func_str == "GOLDEN") func_str = "<i>" SIGN_PHI "</i>";
 
 			MARKUP_STRING(str, func_str)
 			pango_layout_set_markup(layout_function, str.c_str(), -1);			
@@ -1689,39 +1646,34 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			dh += 2;
 			h = uh + dh;
 			central_point = dh;
-			if(!m->function()->args() == 0) {
-				arc_h = dh * 2;
-				arc_w = arc_h / 6;
-				w += arc_w * 2 + 2;
-				w += 1;
-			}
+			arc_h = dh * 2;
+			arc_w = arc_h / 6;
+			w += arc_w * 2 + 2;
+			w += 1;
 
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
 			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
 			
 			w = 0;
 			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - function_h / 2 - function_h % 2, layout_function);	
-			if(!m->function()->args() == 0) {
-				w += function_w + 1;
-				gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);			
-				gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w + 1, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);	
-				w += arc_w + 1;
-				for(int index = 0; index < m->countChilds(); index++) {
-					if(index > 0) {
-						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - comma_h / 2 - comma_h % 2, layout_comma);	
-						w += comma_w;
-						w += space_w;
-					}
-					gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_args[index]), 0, 0, w, uh - (hpa[index] - cpa[index]), -1, -1);
-					w += wpa[index];
-					g_object_unref(pixmap_args[index]);
-				}	
-				w += 1;
-				gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w - arc_w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 270 * 64, 180 * 64);			
-				gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w - 1 - arc_w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 270 * 64, 180 * 64);	
-				w += arc_w;				
-			}
-		
+			w += function_w + 1;
+			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);			
+			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w + 1, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);	
+			w += arc_w + 1;
+			for(int index = 0; index < m->countChilds(); index++) {
+				if(index > 0) {
+					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - comma_h / 2 - comma_h % 2, layout_comma);	
+					w += comma_w;
+					w += space_w;
+				}
+				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_args[index]), 0, 0, w, uh - (hpa[index] - cpa[index]), -1, -1);
+				w += wpa[index];
+				g_object_unref(pixmap_args[index]);
+			}	
+			w += 1;
+			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w - arc_w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 270 * 64, 180 * 64);			
+			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w - 1 - arc_w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 270 * 64, 180 * 64);	
+			w += arc_w;				
 			
 			g_object_unref(layout_comma);
 			g_object_unref(layout_function);
@@ -1794,9 +1746,12 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					whole_.insert(0, SIGN_MINUS);
 				}
 				MARKUP_STRING(str, whole_)
-				if(!exponent_.empty() && !exp_minus) {
+				if(!exponent_.empty()) {
 					str += TEXT_TAGS_SMALL EXP TEXT_TAGS_SMALL_END;
 					str += TEXT_TAGS;
+					if(exp_minus) {
+						str += SIGN_MINUS;
+					}
 					str += exponent_;
 					str += TEXT_TAGS_END;
 				}
@@ -2400,7 +2355,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							if(denominator_.empty() && exp_minus) denominator_ = "1";
 							layout_den = gtk_widget_create_pango_layout(resultview, NULL);
 							if(exp_minus && !exponent_.empty()) {
-								exponent_.insert(0, TEXT_TAGS_END "E" TEXT_TAGS);
+								exponent_.insert(0, TEXT_TAGS_END TEXT_TAGS_SMALL "E" TEXT_TAGS_SMALL_END TEXT_TAGS);
 								denominator_ += exponent_;
 							}
 							MARKUP_STRING(str, denominator_)							
@@ -2453,7 +2408,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				hetmp = 0;
 				pixmap_factors.push_back(draw_manager(m_i, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &hetmp));
 				f_has_prefix.push_back(prefix_ == 2 && l_exp && l_exp->isZero());
-				if(m_i->isText() && m_i->text().length() == 1 || (m_i->isFraction() && !(i < m->countChilds() && m->getChild(i + 1)->isPower() && m->getChild(i + 1)->base()->isFraction())) || (m_i->isPower() && m_i->base()->isText())) {
+				if(m_i->isText() && (m_i->text().length() == 1 || m_i->text() == "pi" || m_i->text() == "euler" || m_i->text() == "golden") || (m_i->isFraction() && !(i < m->countChilds() && m->getChild(i + 1)->isPower() && m->getChild(i + 1)->base()->isFraction())) || (m_i->isPower() && m_i->base()->isText())) {
 					f_needs_multi_space.push_back(false);
 				} else {
 					f_needs_multi_space.push_back(true);
@@ -3195,42 +3150,51 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	GtkWidget *type_label[args];		
 	GtkWidget *descr;
 	string argstr, typestr; 
-	const char *argtype;
+	string argtype;
 	//create argument entries
+	Argument *arg;
 	for(int i = 0; i < args; i++) {
-		if(f->argumentName(i + 1).empty()) {
+		arg = f->getArgumentDefinition(i + 1);
+		if(!arg || arg->name().empty()) {
 			argstr = _("Argument");
 			argstr += " ";
 			argstr += i2s(i + 1);
 		} else {
-			argstr = f->argumentName(i + 1);
+			argstr = arg->name();
 		}
 		typestr = "";
+		argtype = "";
 		label[i] = gtk_label_new(argstr.c_str());
 		gtk_misc_set_alignment(GTK_MISC(label[i]), 0, 0.5);
-		switch(f->argumentType(i + 1)) {
+		if(arg)
+		switch(arg->type()) {
 			case ARGUMENT_TYPE_INTEGER: {
-				entry[i] = gtk_spin_button_new_with_range(-1000000, 1000000, 1);
-				gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 0);
-				break;
-			}
-			case ARGUMENT_TYPE_POSITIVE_INTEGER: {
-				entry[i] = gtk_spin_button_new_with_range(1, 1000000, 1);
-				gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 1);
-				break;
-			}
-			case ARGUMENT_TYPE_NONNEGATIVE_INTEGER: {
-				entry[i] = gtk_spin_button_new_with_range(0, 1000000, 1);
-				gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 0);
-				break;
-			}
-			case ARGUMENT_TYPE_NONZERO_INTEGER: {
-				entry[i] = gtk_spin_button_new_with_range(-1000000, 1000000, 1);
-				gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 1);
+				IntegerArgument *iarg = (IntegerArgument*) arg;
+				gdouble min = -1000000, max = 1000000;
+				if(iarg->min()) {
+					min = iarg->min()->getInt();
+				}
+				if(iarg->max()) {
+					max = iarg->max()->getInt();
+				}				
+				entry[i] = gtk_spin_button_new_with_range(min, max, 1);
+				gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(entry[i]), FALSE);
+				if(arg->zeroAllowed() && min <= 0 && max >= 0) {
+					gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 0);
+				} else {
+					if(max < 0) {
+						gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), max);
+					} else if(min <= 1) {
+						gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 1);
+					} else {
+						gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), min);
+					}
+				}
 				break;
 			}
 			case ARGUMENT_TYPE_BOOLEAN: {
 				entry[i] = gtk_spin_button_new_with_range(0, 1, 1);
+				gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(entry[i]), FALSE);
 				gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 0);
 				break;
 			}									
@@ -3239,13 +3203,13 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 					typestr = "(";
 					typestr += _("optional");
 				}
-				argtype = f->argumentTypeString(i + 1);		
+				argtype = arg->print();		
 				if(typestr.empty()) {
 					typestr = "(";
-				} else if(argtype) {
+				} else if(!argtype.empty()) {
 					typestr += " ";
 				}
-				if(argtype) {
+				if(!argtype.empty()) {
 					typestr += argtype;
 				}
 				typestr += ")";		
@@ -3261,7 +3225,8 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 			typestr += _("optional");
 			typestr += ")";			
 		}		
-		switch(f->argumentType(i + 1)) {		
+		if(arg)
+		switch(arg->type()) {		
 			case ARGUMENT_TYPE_DATE: {
 				typestr = typestr.substr(1, typestr.length() - 2);
 				type_label[i] = gtk_button_new_with_label(typestr.c_str());
@@ -3303,16 +3268,10 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 				remove_blank_ends(str2);
 				if(str2.empty()) break;
 			}
-
-			switch(f->argumentType(i + 1)) {
-				case ARGUMENT_TYPE_DATE: {}
-				case ARGUMENT_TYPE_FUNCTION: {}
-				case ARGUMENT_TYPE_TEXT: {
-					if(str2.length() < 1 || str2[0] != '\"') { 
-						str2.insert(0, "\"");
-						str2 += "\"";
-					}
-					break;
+			if(f->getArgumentDefinition(i + 1) && f->getArgumentDefinition(i + 1)->needQuotes()) {
+				if(str2.length() < 1 || str2[0] != '\"') { 
+					str2.insert(0, "\"");
+					str2 += "\"";
 				}
 			}
 			if(i > 0) {
@@ -3604,16 +3563,17 @@ void edit_function(const char *category = "", Function *f = NULL, GtkWidget *win
 		gtk_window_set_title(GTK_WINDOW(dialog), _("New Function"));
 	}
 
-	GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (glade_xml, "function_edit_textview_description")));
+	GtkTextBuffer *description_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (glade_xml, "function_edit_textview_description")));
+	GtkTextBuffer *expression_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (glade_xml, "function_edit_textview_expression")));	
 
 	//clear entries
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_name")), "");
-	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_expression")), "");
 	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "function_edit_entry_name"), TRUE);
-	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "function_edit_entry_expression"), TRUE);
+	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "function_edit_textview_expression"), TRUE);
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_category")), category);
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_desc")), "");
-	gtk_text_buffer_set_text(buffer, "", -1);
+	gtk_text_buffer_set_text(description_buffer, "", -1);
+	gtk_text_buffer_set_text(expression_buffer, "", -1);
 
 	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "function_edit_button_ok"), TRUE);	
 
@@ -3621,13 +3581,13 @@ void edit_function(const char *category = "", Function *f = NULL, GtkWidget *win
 		//fill in original paramaters
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_name")), f->name().c_str());
 		if(!f->isBuiltin()) {
-			gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_expression")), ((UserFunction*) f)->equation().c_str());
+			gtk_text_buffer_set_text(expression_buffer, ((UserFunction*) f)->equation().c_str(), -1);
 		}
 		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "function_edit_entry_name"), !f->isBuiltin());
-		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "function_edit_entry_expression"), !f->isBuiltin());
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "function_edit_textview_expression"), !f->isBuiltin());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_category")), f->category().c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_desc")), f->title(false).c_str());
-		gtk_text_buffer_set_text(buffer, f->description().c_str(), -1);
+		gtk_text_buffer_set_text(description_buffer, f->description().c_str(), -1);
 	}
 	update_function_arguments_list(f);
 
@@ -3641,16 +3601,20 @@ run_function_edit_dialog:
 			show_message(_("Empty name field."), dialog);
 			goto run_function_edit_dialog;
 		}
-		string str2 = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_expression")));
+		GtkTextIter e_iter_s, e_iter_e;
+		gtk_text_buffer_get_start_iter(expression_buffer, &e_iter_s);
+		gtk_text_buffer_get_end_iter(expression_buffer, &e_iter_e);		
+		string str2 = gtk_text_buffer_get_text(expression_buffer, &e_iter_s, &e_iter_e, FALSE);
 		remove_blank_ends(str2);
+		gsub("\n", " ", str2);
 		if(!(f && f->isBuiltin()) && str2.empty()) {
 			//no expression/relation -- open dialog again
 			show_message(_("Empty expression field."), dialog);
 			goto run_function_edit_dialog;
 		}
-		GtkTextIter iter_s, iter_e;
-		gtk_text_buffer_get_start_iter(buffer, &iter_s);
-		gtk_text_buffer_get_end_iter(buffer, &iter_e);
+		GtkTextIter d_iter_s, d_iter_e;
+		gtk_text_buffer_get_start_iter(description_buffer, &d_iter_s);
+		gtk_text_buffer_get_end_iter(description_buffer, &d_iter_e);
 		//function with the same name exists -- overwrite or open the dialog again
 		if((!f || str != f->name()) && CALCULATOR->nameTaken(str, f) && !ask_question(_("A function or variable with the same name already exists.\nOverwrite function/variable?"), dialog)) {
 			goto run_function_edit_dialog;
@@ -3663,14 +3627,14 @@ run_function_edit_dialog:
 			}
 			f->setCategory(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_category"))));
 			f->setTitle(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_desc"))));
-			f->setDescription(gtk_text_buffer_get_text(buffer, &iter_s, &iter_e, FALSE));
+			f->setDescription(gtk_text_buffer_get_text(description_buffer, &d_iter_s, &d_iter_e, FALSE));
 			if(!f->isBuiltin()) {
 				((UserFunction*) f)->setEquation(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_expression"))));
+				f->clearArgumentDefinitions();
 			}	
-			f->clearArgumentNames();
 		} else {
 			//new function
-			f = new UserFunction(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_category"))), str, str2, true, -1, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_desc"))), gtk_text_buffer_get_text(buffer, &iter_s, &iter_e, FALSE));
+			f = new UserFunction(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_category"))), str, str2, true, -1, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "function_edit_entry_desc"))), gtk_text_buffer_get_text(description_buffer, &d_iter_s, &d_iter_e, FALSE));
 			CALCULATOR->addFunction(f);
 		}
 		if(f) {
@@ -3678,9 +3642,8 @@ run_function_edit_dialog:
 			bool b = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tFunctionArguments_store), &iter);
 			int i = 1;
 			while(b) {
-				gchar *gstr;
+/*				gchar *gstr;
 				gint menu_index = 0;
-				ArgumentType type = ARGUMENT_TYPE_FREE;
 				gtk_tree_model_get(GTK_TREE_MODEL(tFunctionArguments_store), &iter, 0, &gstr, 2, &menu_index, -1);
 				f->setArgumentName(gstr, i);
 				switch(menu_index) {
@@ -3703,7 +3666,9 @@ run_function_edit_dialog:
 				}			
 				f->setArgumentType(type, i);
 				b = gtk_tree_model_iter_next(GTK_TREE_MODEL(tFunctionArguments_store), &iter);
-				g_free(gstr);
+				g_free(gstr);*/
+				b = false;
+				
 				i++;
 			}		
 		}
@@ -4530,11 +4495,7 @@ void convert_in_wUnits(int toFrom) {
 	the hard work is done in the Calculator class
 */
 void save_defs() {
-	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", NULL);
-	mkdir(gstr, S_IRWXU);
-	g_free(gstr);
-	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate.cfg", NULL);
-	if(!CALCULATOR->save(gstr2)) {
+	if(!CALCULATOR->saveDefinitions()) {
 		GtkWidget *edialog = gtk_message_dialog_new(
 				GTK_WINDOW(
 					glade_xml_get_widget (glade_xml, "main_window")
@@ -4542,12 +4503,10 @@ void save_defs() {
 				GTK_DIALOG_DESTROY_WITH_PARENT,
 				GTK_MESSAGE_ERROR,
 				GTK_BUTTONS_CLOSE,
-				_("Couldn't write definitions to\n%s"),
-				gstr2);
+				_("Couldn't write definitions"));
 		gtk_dialog_run(GTK_DIALOG(edialog));
 		gtk_widget_destroy(edialog);
 	}
-	g_free(gstr2);
 }
 
 /*
@@ -6103,13 +6062,7 @@ void on_function_edit_button_add_argument_clicked(GtkButton *w, gpointer user_da
 	switch(menu_index) {
 		case MENU_ARGUMENT_TYPE_TEXT: {str = _("Text"); break;}
 		case MENU_ARGUMENT_TYPE_DATE: {str = _("Date"); break;}
-		case MENU_ARGUMENT_TYPE_POSITIVE: {str = _("Positive number"); break;}
-		case MENU_ARGUMENT_TYPE_NONNEGATIVE: {str = _("Non-negative number"); break;}
-		case MENU_ARGUMENT_TYPE_NONZERO: {str = _("Non-zero number"); break;}
 		case MENU_ARGUMENT_TYPE_INTEGER: {str = _("Integer"); break;}
-		case MENU_ARGUMENT_TYPE_POSITIVE_INTEGER: {str = _("Positive integer"); break;}
-		case MENU_ARGUMENT_TYPE_NONNEGATIVE_INTEGER: {str = _("Non-negative integer"); break;}
-		case MENU_ARGUMENT_TYPE_NONZERO_INTEGER: {str = _("Non-zero integer"); break;}
 		case MENU_ARGUMENT_TYPE_FRACTION: {str = _("Number"); break;}
 		case MENU_ARGUMENT_TYPE_VECTOR: {str = _("Vector"); break;}
 		case MENU_ARGUMENT_TYPE_MATRIX: {str = _("Matrix"); break;}
@@ -6140,13 +6093,7 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 		switch(menu_index) {
 			case MENU_ARGUMENT_TYPE_TEXT: {str = _("Text"); break;}
 			case MENU_ARGUMENT_TYPE_DATE: {str = _("Date"); break;}
-			case MENU_ARGUMENT_TYPE_POSITIVE: {str = _("Positive number"); break;}
-			case MENU_ARGUMENT_TYPE_NONNEGATIVE: {str = _("Non-negative number"); break;}
-			case MENU_ARGUMENT_TYPE_NONZERO: {str = _("Non-zero number"); break;}
 			case MENU_ARGUMENT_TYPE_INTEGER: {str = _("Integer"); break;}
-			case MENU_ARGUMENT_TYPE_POSITIVE_INTEGER: {str = _("Positive integer"); break;}
-			case MENU_ARGUMENT_TYPE_NONNEGATIVE_INTEGER: {str = _("Non-negative integer"); break;}
-			case MENU_ARGUMENT_TYPE_NONZERO_INTEGER: {str = _("Non-zero integer"); break;}
 			case MENU_ARGUMENT_TYPE_FRACTION: {str = _("Number"); break;}
 			case MENU_ARGUMENT_TYPE_VECTOR: {str = _("Vector"); break;}
 			case MENU_ARGUMENT_TYPE_MATRIX: {str = _("Matrix"); break;}

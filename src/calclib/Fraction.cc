@@ -62,7 +62,7 @@ void Fraction::set(long int numerator_, long int denominator_, long int exp10_) 
 		den.divide(divisor);
 	}
 	if(exp10_ < 0) {
-		den.exp10(exp10_);
+		den.exp10(-exp10_);
 	} else {
 		num.exp10(exp10_);
 	}	
@@ -88,7 +88,9 @@ void Fraction::set(const Integer *numerator_, const Integer *denominator_, const
 	}
 	if(exp10_) {
 		if(exp10_->isNegative()) {
-			den.exp10(exp10_);
+			Integer exp10_pos(exp10_);
+			exp10_pos.setNegative(false);
+			den.exp10(&exp10_pos);
 		} else {
 			num.exp10(exp10_);
 		}	
@@ -126,6 +128,7 @@ bool Fraction::set(string str) {
 				index++;
 			}
 			if(exp_minus) {
+				exp.setNegative(false);
 				den.exp10(&exp);
 			} else {
 				num.exp10(&exp);
@@ -619,12 +622,23 @@ bool Fraction::log(Fraction *fr) {
 		return false;	
 	}
 #ifdef HAVE_LIBCLN
+	bool b_minus = false;
+	if(den.isGreaterThan(&num)) {
+		//logp sets clns to zero when result is negative (when this < 1) !!?! 
+		b_minus = true;
+		Integer den_save(&den);
+		den.set(&num);
+		num.set(&den_save);
+	}
 	cl_RA clfr = num.getCL_I() / den.getCL_I();
 	cl_RA clbase = fr->numerator()->getCL_I() / fr->denominator()->getCL_I();	
 	cl_RA clns;
 	if(logp(clfr, clbase, &clns)) {
 		num.set(cln::numerator(clns));
 		den.set(cln::denominator(clns));	
+		if(b_minus) {
+			num.setNegative(true);
+		}
 		return true;
 	}
 	if(CALCULATOR->alwaysExact()) return false;
@@ -633,6 +647,9 @@ bool Fraction::log(Fraction *fr) {
 	clfr = cln::rational(clr);
 	num.set(cln::numerator(clfr));
 	den.set(cln::denominator(clfr));
+	if(b_minus) {
+		num.setNegative(true);
+	}	
 	return true;
 #else
 	bool p = isPrecise();
@@ -886,13 +903,27 @@ int Fraction::pow(const Fraction *fr, int solution) {
 	if(fr->isZero()) {
 		set(1);
 		return 1;
-	} 		
+	} 	
+	bool b_minus = false;	
 	if(fr->isOne()) return 1;
-	if(isNegative() && fr->denominator()->isEven()) {
-		CALCULATOR->error(true, "An even root is undefined for negative numbers.", NULL);	
+	if(isNegative()) {
+		if(fr->denominator()->isEven()) {
+			CALCULATOR->error(true, "An even root is undefined for negative numbers.", NULL);	
+			return false;
+		} else {
+			num.setNegative(false);
+			b_minus = true;
+		}
+	}
+	if(!root(fr->denominator())) {
+		if(b_minus) {
+			num.setNegative(true);
+		}
 		return false;
 	}
-	if(!root(fr->denominator())) return false;
+	if(b_minus) {
+		num.setNegative(true);
+	}	
 	Integer exp(fr->numerator());
 	if(exp.isNegative()) {
 		exp.setNegative(false);

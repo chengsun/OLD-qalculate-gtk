@@ -26,6 +26,7 @@ ExpressionItem::ExpressionItem(string cat_, string name_, string title_, string 
 	b_changed = false;
 	b_exact = true;
 	b_active = is_active;
+	b_registered = false;
 }
 ExpressionItem::ExpressionItem() {
 	b_changed = false;
@@ -33,6 +34,7 @@ ExpressionItem::ExpressionItem() {
 	b_active = true;
 	b_local = true;
 	b_builtin = false;
+	b_registered = false;	
 }
 ExpressionItem::~ExpressionItem() {
 }
@@ -51,6 +53,12 @@ bool ExpressionItem::destroy() {
 	CALCULATOR->expressionItemDeleted(this);
 	delete this;
 	return true;
+}
+bool ExpressionItem::isRegistered() const {
+	return b_registered;
+}
+void ExpressionItem::setRegistered(bool is_registered) {
+	b_registered = is_registered;
 }
 string ExpressionItem::title(bool return_name_if_no_title) const {
 	if(return_name_if_no_title && stitle.empty()) {
@@ -142,7 +150,7 @@ bool ExpressionItem::isPrecise() const {
 	return b_exact;
 }
 void ExpressionItem::setPrecise(bool is_precise) {
-	if(is_precise == b_exact) {
+	if(is_precise != b_exact) {
 		b_exact = is_precise;
 		b_changed = true;	
 	}
@@ -150,16 +158,16 @@ void ExpressionItem::setPrecise(bool is_precise) {
 bool ExpressionItem::isActive() const {
 	return b_active;
 }
-void ExpressionItem::setActive(bool is_active, bool not_yet_added) {
+void ExpressionItem::setActive(bool is_active) {
 	if(is_active != b_active) {
-		if(!not_yet_added) {
+		b_active = is_active;			
+		if(b_registered) {
 			if(is_active) {
 				CALCULATOR->expressionItemActivated(this);		
 			} else {
 				CALCULATOR->expressionItemDeactivated(this);
 			}
 		}
-		b_active = is_active;		
 		b_changed = true;
 	}
 }

@@ -1,0 +1,521 @@
+<?xml version="1.0"?>
+<QALCULATE version="0.3">
+  <unit type="base" name="meter" plural="meters" abbreviation="m" category="Length" title="Meter" active="true"/>
+  <unit type="base" name="gram" plural="grams" abbreviation="g" category="Mass" title="Gram" active="true"/>
+  <unit type="base" name="second" plural="seconds" abbreviation="s" category="Time" title="Second" active="true"/>
+  <unit type="base" name="ampere" plural="amperes" abbreviation="A" category="Electricity/Electric Current" title="Ampere" active="true"/>
+  <unit type="base" name="kelvin" plural="kelvins" abbreviation="K" category="Temperature" title="Kelvin" active="true"/>
+  <unit type="base" name="mole" plural="moles" abbreviation="mol" category="Substance" title="Mole" active="true"/>
+  <unit type="base" name="candela" plural="candelas" abbreviation="cd" category="Light/Luminous Intensity" title="Candela" active="true"/>
+  <unit type="composite" name="sqm" category="Area" title="Square Meter" active="true">
+    <base unit="meter" prefix="0" exponent="2"/>
+  </unit>
+  <unit type="composite" name="cum" category="Volume" title="Cubic Meter" active="true">
+    <base unit="meter" prefix="0" exponent="3"/>
+  </unit>
+  <unit type="composite" name="m_p_s" category="Speed" title="Meter per Second" active="true">
+    <base unit="meter" prefix="0" exponent="1"/>
+    <base unit="second" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="composite" name="m_p_sqs" category="Speed/Acceleration" title="Meter per Square Second" active="true">
+    <base unit="meter" prefix="0" exponent="1"/>
+    <base unit="second" prefix="0" exponent="-2"/>
+  </unit>
+  <unit type="composite" name="recm" category="Magnetism/Wave Number" title="Reciprocal Meter" active="true">
+    <base unit="meter" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="composite" name="kg_p_cum" category="Mass/Density" title="Kilogram per Cubic Meter" active="true">
+    <base unit="gram" prefix="3" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-3"/>
+  </unit>
+  <unit type="composite" name="cum_p_kg" category="Volume/Specific Volume" title="Cubic Meter per Kilogram" active="true">
+    <base unit="meter" prefix="0" exponent="3"/>
+    <base unit="gram" prefix="3" exponent="-1"/>
+  </unit>
+  <unit type="composite" name="A_p_sqm" category="Electricity/Current Density" title="Ampere per Square Meter" active="true">
+    <base unit="ampere" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-2"/>
+  </unit>
+  <unit type="composite" name="A_p_m" category="Magnetism/Magnetic Field Strength" title="Ampere per Meter" active="true">
+    <base unit="ampere" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="composite" name="mol_p_cum" category="Substance/Substance Concentration" title="Mole per Cubic Meter" active="true">
+    <base unit="mole" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-3"/>
+  </unit>
+  <unit type="composite" name="cd_p_sqm" category="Light/Luminance" title="Candela per Square Meter" active="true">
+    <base unit="candela" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-2"/>
+  </unit>
+  <unit type="alias" name="hertz" plural="hertz" abbreviation="Hz" category="Time/Frequency" title="Hertz" active="true">
+    <base unit="second" precise="true" relation="1" exponent="-1"/>
+  </unit>
+  <unit type="composite" name="m_kg_p_sqs" category="Force" title="Meter Kilogram per Square Second" active="true">
+    <base unit="meter" prefix="0" exponent="1"/>
+    <base unit="gram" prefix="3" exponent="1"/>
+    <base unit="second" prefix="0" exponent="-2"/>
+  </unit>
+  <unit type="alias" name="newton" plural="newtons" abbreviation="N" category="Force" title="Newton" active="true">
+    <base unit="m_kg_p_sqs" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="composite" name="N_p_sqm" category="Force/Pressure" title="Newton per Square Meter" active="true">
+    <base unit="newton" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-2"/>
+  </unit>
+  <unit type="alias" name="pascal" plural="pascals" abbreviation="Pa" category="Force/Pressure" title="Pascal" active="true">
+    <base unit="N_p_sqm" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="composite" name="N_m" category="Energy" title="Newton Meter" active="true">
+    <base unit="newton" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="1"/>
+  </unit>
+  <unit type="alias" name="joule" plural="joules" abbreviation="J" category="Energy" title="Joule" active="true">
+    <base unit="N_m" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="alias" name="calorie" plural="calories" abbreviation="cal" category="Energy" title="Calorie (international table)" active="true">
+    <base unit="joule" precise="true" relation="4.1868" exponent="1"/>
+  </unit>
+  <unit type="alias" name="Calorie" plural="Calories" abbreviation="" category="Energy" title="Calorie (capital C)" active="true">
+    <base unit="calorie" precise="true" relation="1000" exponent="1"/>
+  </unit>
+  <unit type="alias" name="thermo_calorie" plural="thermo_calories" abbreviation="cal_th" category="Energy" title="Calorie (thermochemical)" active="true">
+    <base unit="joule" precise="true" relation="4.184" exponent="1"/>
+  </unit>
+  <unit type="alias" name="calorie_fifteen" plural="calories_fifteen" abbreviation="" category="Energy" title="Calorie (15 degrees Celcius)" active="true">
+    <base unit="joule" precise="false" relation="4.185880" exponent="1"/>
+  </unit>
+  <unit type="alias" name="mean_calorie" plural="mean_calories" abbreviation="cal_mean" category="Energy" title="Calorie (mean)" active="true">
+    <base unit="joule" precise="false" relation="4.19002" exponent="1"/>
+  </unit>
+  <unit type="alias" name="Btu" plural="" abbreviation="" category="Energy" title="British Thermal Unit (IT)" active="true">
+    <base unit="joule" precise="true" relation="1055.056" exponent="1"/>
+  </unit>
+  <unit type="alias" name="electron_volt" plural="electron_volts" abbreviation="eV" category="Energy" title="Electron Volt" active="true">
+    <base unit="joule" precise="true" relation="1.602177E-19" exponent="1"/>
+  </unit>
+  <unit type="alias" name="erg" plural="ergs" abbreviation="" category="Energy" title="Erg" active="true">
+    <base unit="joule" precise="true" relation="1E-7" exponent="1"/>
+  </unit>
+  <unit type="composite" name="J_p_s" category="Energy/Power" title="Joule per Second" active="true">
+    <base unit="joule" prefix="0" exponent="1"/>
+    <base unit="second" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="alias" name="watt" plural="watts" abbreviation="W" category="Energy/Power" title="Watt" active="true">
+    <base unit="J_p_s" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="composite" name="s_A" category="Electricity/Electric Charge" title="Second Ampere" active="true">
+    <base unit="second" prefix="0" exponent="1"/>
+    <base unit="ampere" prefix="0" exponent="1"/>
+  </unit>
+  <unit type="alias" name="coulomb" plural="coulombs" abbreviation="C" category="Electricity/Electric Charge" title="Coulomb" active="true">
+    <base unit="s_A" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="composite" name="W_p_A" category="Electricity/Electric Potential" title="Watt per Ampere" active="true">
+    <base unit="watt" prefix="0" exponent="1"/>
+    <base unit="ampere" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="alias" name="volt" plural="volts" abbreviation="V" category="Electricity/Electric Potential" title="Volt" active="true">
+    <base unit="W_p_A" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="composite" name="C_p_V" category="Electricity/Capacitance" title="Coulomb per Volt" active="true">
+    <base unit="coulomb" prefix="0" exponent="1"/>
+    <base unit="volt" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="alias" name="farad" plural="farads" abbreviation="F" category="Electricity/Capacitance" title="Farad" active="true">
+    <base unit="C_p_V" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="composite" name="V_p_A" category="Electricity/Electric Resistance" title="Volt per Ampere" active="true">
+    <base unit="volt" prefix="0" exponent="1"/>
+    <base unit="ampere" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="alias" name="ohm" plural="ohms" abbreviation="" category="Electricity/Electric Resistance" title="Ohm" active="true">
+    <base unit="V_p_A" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="composite" name="A_p_V" category="Electricity/Electric Conductance" title="Ampere per Volt" active="true">
+    <base unit="ampere" prefix="0" exponent="1"/>
+    <base unit="volt" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="alias" name="siemens" plural="siemens" abbreviation="S" category="Electricity/Electric Conductance" title="Siemens" active="true">
+    <base unit="A_p_V" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="composite" name="V_s" category="Magnetism/Magnetic Flux" title="Volt Seconds" active="true">
+    <base unit="volt" prefix="0" exponent="1"/>
+    <base unit="second" prefix="0" exponent="1"/>
+  </unit>
+  <unit type="alias" name="weber" plural="webers" abbreviation="Wb" category="Magnetism/Magnetic Flux" title="Weber" active="true">
+    <base unit="V_s" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="composite" name="Wb_p_sqm" category="Magnetism/Magnetic Flux Density" title="Weber per Square Meter" active="true">
+    <base unit="weber" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-2"/>
+  </unit>
+  <unit type="alias" name="tesla" plural="teslas" abbreviation="T" category="Magnetism/Magnetic Flux Density" title="Tesla" active="true">
+    <base unit="Wb_p_sqm" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="composite" name="Wb_p_A" category="Electricity/Inductance" title="Weber per Ampere" active="true">
+    <base unit="weber" prefix="0" exponent="1"/>
+    <base unit="ampere" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="alias" name="henry" plural="henrys" abbreviation="H" category="Electricity/Inductance" title="Henry" active="true">
+    <base unit="Wb_p_A" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="alias" name="lumen" plural="lumens" abbreviation="lm" category="Light/Luminous Flux" title="Lumen" active="true">
+    <base unit="candela" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="composite" name="lm_p_sqm" category="Light/Illuminance" title="Lumen per Square Meter" active="true">
+    <base unit="lumen" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-2"/>
+  </unit>
+  <unit type="alias" name="lux" plural="" abbreviation="lx" category="Light/Illuminance" title="Lux" active="true">
+    <base unit="lm_p_sqm" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="alias" name="becquerel" plural="becquerels" abbreviation="Bq" category="Radioactivity" title="Becquerel" active="true">
+    <base unit="second" precise="true" relation="1" exponent="-1"/>
+  </unit>
+  <unit type="composite" name="J_p_kg" category="Radioactivity/Absorbed Dose" title="Joule per Kilogram" active="true">
+    <base unit="joule" prefix="0" exponent="1"/>
+    <base unit="gram" prefix="3" exponent="-1"/>
+  </unit>
+  <unit type="alias" name="gray" plural="grays" abbreviation="Gy" category="Radioactivity/Absorbed Dose" title="Gray" active="true">
+    <base unit="J_p_kg" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="alias" name="sievert" plural="sieverts" abbreviation="Sv" category="Radioactivity/Dose Equivalent" title="Sievert" active="true">
+    <base unit="J_p_kg" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="composite" name="recs_mol" category="Substance/Catalytic Activity" title="Reciprocal Seconds Mole" active="true">
+    <base unit="mole" prefix="0" exponent="1"/>
+    <base unit="second" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="alias" name="katal" plural="katals" abbreviation="kat" category="Substance/Catalytic Activity" title="Katal" active="true">
+    <base unit="recs_mol" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="alias" name="celcius" plural="celcius" abbreviation="oC" category="Temperature" title="Degree Celcius" active="true">
+    <base unit="kelvin" precise="true" relation="\x + 273.15" reverse-relation="\x - 273.15" exponent="1"/>
+  </unit>
+  <unit type="alias" name="minute" plural="minutes" abbreviation="" category="Time" title="Minute" active="true">
+    <base unit="second" precise="true" relation="60" exponent="1"/>
+  </unit>
+  <unit type="alias" name="hour" plural="hours" abbreviation="h" category="Time" title="Hour" active="true">
+    <base unit="minute" precise="true" relation="60" exponent="1"/>
+  </unit>
+  <unit type="alias" name="day" plural="days" abbreviation="d" category="Time" title="Day" active="true">
+    <base unit="hour" precise="true" relation="24" exponent="1"/>
+  </unit>
+  <unit type="alias" name="liter" plural="liters" abbreviation="L" category="Volume" title="Liter" active="true">
+    <base unit="meter" precise="true" relation="0.001" exponent="3"/>
+  </unit>
+  <unit type="alias" name="litre" plural="litres" abbreviation="l" category="Volume" title="Litre" active="true">
+    <base unit="meter" precise="true" relation="0.001" exponent="3"/>
+  </unit>
+  <unit type="alias" name="fluid_ounce" plural="fluid_ounces" abbreviation="fl_oz" category="Volume" title="Fluid Ounce" active="false">
+    <base unit="meter" precise="true" relation="0.0000284130625" exponent="3"/>
+  </unit>
+  <unit type="alias" name="gill" plural="gills" abbreviation="" category="Volume" title="Gill" active="false">
+    <base unit="fluid_ounce" precise="true" relation="5" exponent="1"/>
+  </unit>
+  <unit type="alias" name="pint" plural="pints" abbreviation="pt" category="Volume" title="Pint" active="false">
+    <base unit="gill" precise="true" relation="4" exponent="1"/>
+  </unit>
+  <unit type="alias" name="quart" plural="quarts" abbreviation="qt" category="Volume" title="Quart" active="false">
+    <base unit="pint" precise="true" relation="2" exponent="1"/>
+  </unit>
+  <unit type="alias" name="gallon" plural="gallons" abbreviation="gal" category="Volume" title="Gallon" active="false">
+    <base unit="quart" precise="true" relation="4" exponent="1"/>
+  </unit>
+  <unit type="alias" name="peck" plural="pecks" abbreviation="pk" category="Volume" title="Peck" active="false">
+    <base unit="gallon" precise="true" relation="2" exponent="1"/>
+  </unit>
+  <unit type="alias" name="bushel" plural="bushels" abbreviation="bu" category="Volume" title="Bushel" active="false">
+    <base unit="gallon" precise="true" relation="8" exponent="1"/>
+  </unit>
+  <unit type="alias" name="ton" plural="tons" abbreviation="t" category="Mass" title="Metric Ton" active="true">
+    <base unit="gram" precise="true" relation="1000000" exponent="1"/>
+  </unit>
+  <unit type="alias" name="nautical_mile" plural="nautical_miles" abbreviation="" category="Length" title="Nautical Mile" active="true">
+    <base unit="meter" precise="true" relation="1852" exponent="1"/>
+  </unit>
+  <unit type="composite" name="nautical_mile_p_h" category="Speed" title="Nautical Mile per Hour" active="true">
+    <base unit="nautical_mile" prefix="0" exponent="1"/>
+    <base unit="hour" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="alias" name="knot" plural="knots" abbreviation="" category="Speed" title="Knot" active="true">
+    <base unit="nautical_mile_p_h" precise="true" relation="1" exponent="1"/>
+  </unit>
+  <unit type="alias" name="are" plural="ares" abbreviation="a" category="Area" title="Are" active="true">
+    <base unit="meter" precise="true" relation="100" exponent="2"/>
+  </unit>
+  <unit type="composite" name="ha" category="Area" title="Hectare" active="true">
+    <base unit="are" prefix="2" exponent="1"/>
+  </unit>
+  <unit type="alias" name="bar" plural="bars" abbreviation="" category="Force/Pressure" title="Bar" active="true">
+    <base unit="pascal" precise="true" relation="100000" exponent="1"/>
+  </unit>
+  <unit type="alias" name="atmosphere" plural="atmospheres" abbreviation="atm" category="Force/Pressure" title="Atmosphere" active="true">
+    <base unit="pascal" precise="true" relation="101325" exponent="1"/>
+  </unit>
+  <unit type="alias" name="torr" plural="torrs" abbreviation="" category="Force/Pressure" title="Torr" active="true">
+    <base unit="pascal" precise="true" relation="1.333224" exponent="1"/>
+  </unit>
+  <unit type="alias" name="&#xE5;ngstr&#xF6;m" plural="" abbreviation="&#xC5;" category="Length" title="&#xC5;ngstr&#xF6;m" active="true">
+    <base unit="meter" precise="true" relation="1E-10" exponent="1"/>
+  </unit>
+  <unit type="alias" name="barn" plural="barns" abbreviation="b" category="Area" title="Barn" active="true">
+    <base unit="meter" precise="true" relation="1E-28" exponent="2"/>
+  </unit>
+  <unit type="alias" name="curie" plural="curies" abbreviation="Ci" category="Radioactivity" title="Curie" active="true">
+    <base unit="becquerel" precise="true" relation="3.7E10" exponent="1"/>
+  </unit>
+  <unit type="composite" name="C_p_kg" category="Radioactivity/Exposure" title="Coloumb per Kilogram" active="true">
+    <base unit="coulomb" prefix="0" exponent="1"/>
+    <base unit="gram" prefix="3" exponent="-1"/>
+  </unit>
+  <unit type="alias" name="roentgen" plural="roentgens" abbreviation="R" category="Radioactivity/Exposure" title="Roentgen" active="true">
+    <base unit="C_p_kg" precise="true" relation="0.000258" exponent="1"/>
+  </unit>
+  <unit type="alias" name="rad" plural="" abbreviation="" category="Radioactivity/Absorbed Dose" title="Rad" active="true">
+    <base unit="gray" precise="true" relation="1/100" exponent="1"/>
+  </unit>
+  <unit type="alias" name="rem_unit" plural="" abbreviation="" category="Radioactivity/Dose Equivalent" title="Rem" active="true">
+    <base unit="sievert" precise="true" relation="1/100" exponent="1"/>
+  </unit>
+  <unit type="composite" name="Pa_s" category="Force/Dynamic Viscosity" title="Pascal Second" active="true">
+    <base unit="pascal" prefix="0" exponent="1"/>
+    <base unit="second" prefix="0" exponent="1"/>
+  </unit>
+  <unit type="composite" name="N_p_m" category="Force/Surface Tension" title="Newton per Meter" active="true">
+    <base unit="newton" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="composite" name="W_p_sqm" category="Light/Irradiance" title="Watt per Square Meter" active="true">
+    <base unit="watt" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-2"/>
+  </unit>
+  <unit type="composite" name="J_p_K" category="Energy/Entropy" title="Joule per Kelvin" active="true">
+    <base unit="joule" prefix="0" exponent="1"/>
+    <base unit="kelvin" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="composite" name="J_p_kg_K" category="Energy/Specific Entropy" title="Joule per Kilogram Kelvin" active="true">
+    <base unit="joule" prefix="0" exponent="1"/>
+    <base unit="gram" prefix="3" exponent="-1"/>
+    <base unit="kelvin" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="composite" name="W_p_m_K" category="Energy/Thermal Conductivity" title="Watt per Meter Kelvin" active="true">
+    <base unit="watt" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-1"/>
+    <base unit="kelvin" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="composite" name="J_p_cum" category="Energy/Energy Density" title="Joule per Cubic Meter" active="true">
+    <base unit="joule" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-3"/>
+  </unit>
+  <unit type="composite" name="V_p_m" category="Electricity/Electric Field Strength" title="Volt per Meter" active="true">
+    <base unit="volt" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="composite" name="C_p_cum" category="Electricity/Electric Charge Density" title="Coulomb per Cubic Meter" active="true">
+    <base unit="coulomb" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-3"/>
+  </unit>
+  <unit type="composite" name="C_p_sqm" category="Electricity/Electric Flux Density" title="Coulomb per Square Meter" active="true">
+    <base unit="coulomb" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-2"/>
+  </unit>
+  <unit type="composite" name="F_p_m" category="Electricity/Permittivity" title="Farad per Meter" active="true">
+    <base unit="farad" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="composite" name="H_p_m" category="Electricity/Permeability" title="Henry per Meter" active="true">
+    <base unit="henry" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="composite" name="J_p_mol" category="Energy/Molar Energy" title="Joule per Mole" active="true">
+    <base unit="joule" prefix="0" exponent="1"/>
+    <base unit="mole" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="composite" name="J_p_mol_K" category="Energy/Molar Entropy" title="Joule per Mole Kelvin" active="true">
+    <base unit="joule" prefix="0" exponent="1"/>
+    <base unit="mole" prefix="0" exponent="-1"/>
+    <base unit="kelvin" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="composite" name="Gy_p_s" category="Radioactivity/Absorbed Dose Rate" title="Gray per Second" active="true">
+    <base unit="gray" prefix="0" exponent="1"/>
+    <base unit="second" prefix="0" exponent="-1"/>
+  </unit>
+  <unit type="composite" name="kat_p_cum" category="Substance/Catalytic Concentration" title="Katal per Cubic Meter" active="true">
+    <base unit="katal" prefix="0" exponent="1"/>
+    <base unit="meter" prefix="0" exponent="-3"/>
+  </unit>
+  <unit type="alias" name="galileo" plural="galileos" abbreviation="Gal" category="Speed/Acceleration" title="Galileo" active="true">
+    <base unit="m_p_sqs" precise="true" relation="1/100" exponent="1"/>
+  </unit>
+  <unit type="alias" name="US_inch" plural="US_inches" abbreviation="US_in" category="Length" title="U.S. Survey Inch" active="true">
+    <base unit="meter" precise="true" relation="100/3937" exponent="1"/>
+  </unit>
+  <unit type="alias" name="inch" plural="inches" abbreviation="in" category="Length" title="Inch" active="true">
+    <base unit="meter" precise="true" relation="0.0254" exponent="1"/>
+  </unit>
+  <unit type="alias" name="hand" plural="hands" abbreviation="" category="Length" title="Hand" active="true">
+    <base unit="inch" precise="true" relation="4" exponent="1"/>
+  </unit>
+  <unit type="alias" name="foot" plural="feet" abbreviation="ft" category="Length" title="Foot" active="true">
+    <base unit="hand" precise="true" relation="3" exponent="1"/>
+  </unit>
+  <unit type="alias" name="US_foot" plural="US_feet" abbreviation="US_ft" category="Length" title="U.S. Survey Foot" active="true">
+    <base unit="US_inch" precise="true" relation="12" exponent="1"/>
+  </unit>
+  <unit type="alias" name="link" plural="links" abbreviation="li" category="Length" title="Link" active="true">
+    <base unit="foot" precise="true" relation="66/100" exponent="1"/>
+  </unit>
+  <unit type="alias" name="yard" plural="yards" abbreviation="yd" category="Length" title="Yard" active="true">
+    <base unit="foot" precise="true" relation="3" exponent="1"/>
+  </unit>
+  <unit type="alias" name="rod" plural="rods" abbreviation="rd" category="Length" title="Rod (pole/perch)" active="true">
+    <base unit="US_foot" precise="true" relation="16.5" exponent="1"/>
+  </unit>
+  <unit type="alias" name="fathom" plural="fathoms" abbreviation="" category="Length" title="Fathom" active="true">
+    <base unit="yard" precise="true" relation="2" exponent="1"/>
+  </unit>
+  <unit type="alias" name="chain" plural="chains" abbreviation="ch" category="Length" title="Chain" active="true">
+    <base unit="link" precise="true" relation="100" exponent="1"/>
+  </unit>
+  <unit type="alias" name="furlong" plural="furlongs" abbreviation="fur" category="Length" title="Furlong" active="true">
+    <base unit="yard" precise="true" relation="220" exponent="1"/>
+  </unit>
+  <unit type="alias" name="mile" plural="miles" abbreviation="mi" category="Length" title="Mile" active="true">
+    <base unit="chain" precise="true" relation="80" exponent="1"/>
+  </unit>
+  <unit type="alias" name="US_mile" plural="US_miles" abbreviation="US_mi" category="Length" title="U.S. Survey Mile" active="true">
+    <base unit="US_foot" precise="true" relation="5280" exponent="1"/>
+  </unit>
+  <unit type="alias" name="mil" plural="mils" abbreviation="" category="Length" title="Mils" active="true">
+    <base unit="inch" precise="true" relation="0.001" exponent="1"/>
+  </unit>
+  <unit type="alias" name="astronomical_unit" plural="astronomical_units" abbreviation="au" category="Length" title="Astronomical Unit" active="true">
+    <base unit="meter" precise="true" relation="149578700000" exponent="1"/>
+  </unit>
+  <unit type="alias" name="light_year" plural="light_years" abbreviation="ly" category="Length" title="Light Year" active="true">
+    <base unit="meter" precise="true" relation="9.46E15" exponent="1"/>
+  </unit>
+  <unit type="alias" name="parsec" plural="pasecs" abbreviation="par" category="Length" title="Parsec" active="true">
+    <base unit="meter" precise="true" relation="30856770000000000" exponent="1"/>
+  </unit>
+  <unit type="alias" name="rood" plural="roods" abbreviation="" category="Area" title="Rood" active="true">
+    <base unit="yard" precise="true" relation="1210" exponent="2"/>
+  </unit>
+  <unit type="alias" name="acre" plural="acres" abbreviation="" category="Area" title="Acre" active="true">
+    <base unit="chain" precise="true" relation="10" exponent="2"/>
+  </unit>
+  <unit type="alias" name="section" plural="sections" abbreviation="" category="Area" title="Section" active="true">
+    <base unit="mile" precise="true" relation="1" exponent="2"/>
+  </unit>
+  <unit type="alias" name="township" plural="townships" abbreviation="" category="Area" title="Township" active="true">
+    <base unit="section" precise="true" relation="36" exponent="1"/>
+  </unit>
+  <unit type="alias" name="grain" plural="grains" abbreviation="gr" category="Mass" title="Grain" active="true">
+    <base unit="gram" precise="true" relation="0.06479891" exponent="1"/>
+  </unit>
+  <unit type="alias" name="pennyweight" plural="pennyweights" abbreviation="pwt" category="Mass" title="Pennyweight" active="true">
+    <base unit="grain" precise="true" relation="24" exponent="1"/>
+  </unit>
+  <unit type="alias" name="troy_ounce" plural="troy_ounces" abbreviation="oz_t" category="Mass" title="Ounce (troy)" active="true">
+    <base unit="pennyweight" precise="true" relation="20" exponent="1"/>
+  </unit>
+  <unit type="alias" name="troy_pound" plural="troy_pounds" abbreviation="lb_t" category="Mass" title="Pound (troy)" active="true">
+    <base unit="troy_ounce" precise="true" relation="12" exponent="1"/>
+  </unit>
+  <unit type="alias" name="dram" plural="drams" abbreviation="dr" category="Mass" title="Dram" active="true">
+    <base unit="gram" precise="true" relation="1.7718451953125" exponent="1"/>
+  </unit>
+  <unit type="alias" name="ounce" plural="ounces" abbreviation="oz" category="Mass" title="Ounce" active="true">
+    <base unit="dram" precise="true" relation="16" exponent="1"/>
+  </unit>
+  <unit type="alias" name="pound" plural="pounds" abbreviation="lb" category="Mass" title="Pound" active="true">
+    <base unit="ounce" precise="true" relation="16" exponent="1"/>
+  </unit>
+  <unit type="alias" name="hundredweight" plural="hundredweights" abbreviation="cwt" category="Mass" title="Short Hundredweight" active="true">
+    <base unit="pound" precise="true" relation="100" exponent="1"/>
+  </unit>
+  <unit type="alias" name="long_hundredweight" plural="long_hundredweights" abbreviation="l_cwt" category="Mass" title="Long Hundredweight" active="true">
+    <base unit="pound" precise="true" relation="112" exponent="1"/>
+  </unit>
+  <unit type="alias" name="short_ton" plural="short_tons" abbreviation="s_ton" category="Mass" title="Short Ton" active="true">
+    <base unit="pound" precise="true" relation="2000" exponent="1"/>
+  </unit>
+  <unit type="alias" name="long_ton" plural="long_tons" abbreviation="l_ton" category="Mass" title="Long Ton" active="true">
+    <base unit="pound" precise="true" relation="2240" exponent="1"/>
+  </unit>
+  <unit type="alias" name="stone" plural="stones" abbreviation="" category="Mass" title="Stone" active="true">
+    <base unit="pound" precise="true" relation="14" exponent="1"/>
+  </unit>
+  <unit type="alias" name="quaert" plural="quarters" abbreviation="" category="Mass" title="Quarter" active="true">
+    <base unit="pound" precise="true" relation="28" exponent="1"/>
+  </unit>
+  <unit type="alias" name="cental" plural="centals" abbreviation="" category="Mass" title="Cental" active="true">
+    <base unit="pound" precise="true" relation="100" exponent="1"/>
+  </unit>
+  <unit type="alias" name="carat" plural="carats" abbreviation="c" category="Mass" title="Carat" active="true">
+    <base unit="gram" precise="true" relation="0.2" exponent="1"/>
+  </unit>
+  <unit type="alias" name="pfund" plural="" abbreviation="" category="Mass" title="Pfund" active="true">
+    <base unit="gram" precise="true" relation="500" exponent="1"/>
+  </unit>
+  <unit type="alias" name="zentner" plural="" abbreviation="" category="Mass" title="Zentner" active="true">
+    <base unit="pfund" precise="true" relation="100" exponent="1"/>
+  </unit>
+  <unit type="composite" name="cuin" category="Volume" title="Cubic Inch" active="true">
+    <base unit="inch" prefix="0" exponent="3"/>
+  </unit>
+  <unit type="composite" name="sqft" category="Area" title="Square Foot" active="true">
+    <base unit="foot" prefix="0" exponent="2"/>
+  </unit>
+  <unit type="alias" name="horsepower" plural="horsepowers" abbreviation="hp" category="Energy/Power" title="Horse Power" active="true">
+    <base unit="watt" precise="true" relation="745.699987158227022" exponent="1"/>
+  </unit>
+  <unit type="alias" name="pferdest&#xE4;rke" plural="" abbreviation="PS" category="Energy/Power" title="Pferdest&#xE4;rke" active="true">
+    <base unit="watt" precise="true" relation="735.49875" exponent="1"/>
+  </unit>
+  <unit type="alias" name="rankine" plural="" abbreviation="oR" category="Temperature" title="Degrees Rankine" active="true">
+    <base unit="kelvin" precise="true" relation="5\x/9" reverse-relation="9\x/5" exponent="1"/>
+  </unit>
+  <unit type="alias" name="fahrenheit" plural="" abbreviation="oF" category="Temperature" title="Degrees Fahrenheit" active="true">
+    <base unit="kelvin" precise="true" relation="(2298.35+5\x)/9" reverse-relation="(9\x-2298.35)/5" exponent="1"/>
+  </unit>
+  <unit type="base" name="euro" plural="euros" abbreviation="" category="Currency" title="Euro" active="true"/>
+  <unit type="alias" name="bef" plural="" abbreviation="" category="Currency" title="Belgian franc" active="true">
+    <base unit="euro" precise="true" relation="1/40.3399" exponent="1"/>
+  </unit>
+  <unit type="alias" name="grd" plural="" abbreviation="" category="Currency" title="Greek drachma" active="true">
+    <base unit="euro" precise="true" relation="1/340.750" exponent="1"/>
+  </unit>
+  <unit type="alias" name="frf" plural="" abbreviation="" category="Currency" title="French franc" active="true">
+    <base unit="euro" precise="true" relation="1/6.55957" exponent="1"/>
+  </unit>
+  <unit type="alias" name="itl" plural="" abbreviation="" category="Currency" title="Italian lira" active="true">
+    <base unit="euro" precise="true" relation="1/1936.27" exponent="1"/>
+  </unit>
+  <unit type="alias" name="nlg" plural="" abbreviation="" category="Currency" title="Dutch guilder" active="true">
+    <base unit="euro" precise="true" relation="1/2.20371" exponent="1"/>
+  </unit>
+  <unit type="alias" name="pte" plural="" abbreviation="" category="Currency" title="Portuguese escudo" active="true">
+    <base unit="euro" precise="true" relation="1/200.482" exponent="1"/>
+  </unit>
+  <unit type="alias" name="dem" plural="" abbreviation="" category="Currency" title="Deutche Mark" active="true">
+    <base unit="euro" precise="true" relation="1/1.95583" exponent="1"/>
+  </unit>
+  <unit type="alias" name="esp" plural="" abbreviation="" category="Currency" title="Spanish peseta" active="true">
+    <base unit="euro" precise="true" relation="1/166.386" exponent="1"/>
+  </unit>
+  <unit type="alias" name="iep" plural="" abbreviation="" category="Currency" title="Irish pound" active="true">
+    <base unit="euro" precise="true" relation="1/0.787564" exponent="1"/>
+  </unit>
+  <unit type="alias" name="luf" plural="" abbreviation="" category="Currency" title="Luxembourg franc" active="true">
+    <base unit="euro" precise="true" relation="1/40.3399" exponent="1"/>
+  </unit>
+  <unit type="alias" name="ats" plural="" abbreviation="" category="Currency" title="Austrian shilling" active="true">
+    <base unit="euro" precise="true" relation="1/13.7603" exponent="1"/>
+  </unit>
+  <unit type="alias" name="fim" plural="" abbreviation="" category="Currency" title="Finnish markka" active="true">
+    <base unit="euro" precise="true" relation="1/5.94573" exponent="1"/>
+  </unit>
+</QALCULATE>

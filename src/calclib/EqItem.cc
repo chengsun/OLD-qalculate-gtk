@@ -35,7 +35,6 @@ EqNumber::EqNumber(Manager *value_, MathOperation operation_) : EqItem(operation
 EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 	string ssave = str;
 	char s = PLUS_CH;
-	gsub(RIGHT_BRACKET, "", str);
 	for(int i = 0; i < (int) str.length() - 1; i++) {
 		if(str[i] == PLUS_CH || str[i] == SPACE_CH) {
 			str.erase(i, 1);
@@ -64,7 +63,7 @@ EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 	mngr = new Manager();
 	int itmp;
 	if(str.empty() || ((itmp = str.find_first_not_of(" ")) == (int) string::npos)) {
-		CALCULATOR->error(true, "Empty expression", NULL);
+//		CALCULATOR->error(true, "Empty expression", NULL);
 		return;
 	}
 	if((itmp = str.find_first_not_of(NUMBERS MINUS DOT, 0)) != (int) string::npos) {
@@ -107,70 +106,78 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 	int i = 0, i2 = 0, i3 = 0;
 	string str2, str3;
 	MathOperation s = ADD;
-goto_place1:
-	if((i = str.find(LEFT_BRACKET_CH)) != string::npos) {
+	while(true) {
+		//find first right parenthesis and then the last left parenthesis before
 		i2 = str.find(RIGHT_BRACKET_CH);
 		if(i2 == string::npos) {
-			str.append(1, RIGHT_BRACKET_CH);
-			i2 = str.length() - 1;
-		}
-		while(1) {
-			bool b = false;
-			if(i == string::npos || i > i2) break;
-			i3 = str.find(LEFT_BRACKET_CH, i + 1);
-			while(i3 < i2 && i3 > -1) {
-				i2 = str.find(RIGHT_BRACKET_CH, i2 + 1);
-				if(i2 == string::npos) {
-					str.append(1, RIGHT_BRACKET_CH);				
-					i2 = str.length() - 1;				
-					b = true;
-				}
-				i3 = str.find(LEFT_BRACKET_CH, i3 + 1);
-			}
-			if(i > 0 && is_in(NUMBERS DOT ID_WRAPS, str[i - 1])) {
-				if(CALCULATOR->inRPNMode()) {
-					str.insert(i2 + 1, 1, MULTIPLICATION_CH);	
-					str.insert(i, 1, SPACE_CH);
-					i++;
-					i2++;					
-				} else {		
-					str.insert(i, 1, MULTIPLICATION_2_CH);
-					i++;
-					i2++;
-				}
-			}
-			if(i2 < str.length() - 1 && is_in(NUMBERS DOT ID_WRAPS, str[i2 + 1])) {
-				if(CALCULATOR->inRPNMode()) {
-					i3 = str.find(SPACE, i2 + 1);
-					if(i3 == string::npos) {
-						str += MULTIPLICATION;
-					} else {
-						str.replace(i3, 1, MULTIPLICATION);
-					}
-					str.insert(i2 + 1, 1, SPACE_CH);
-				} else {
-					str.insert(i2 + 1, 1, MULTIPLICATION_2_CH);
-				}
-			}
-			if(CALCULATOR->inRPNMode() && i > 0 && i2 + 1 == str.length() && is_in(NUMBERS DOT OPERATORS ID_WRAPS, str[i - 1])) {
-				str += MULTIPLICATION_CH;	
-			}
-			str2 = str.substr(i + 1, i2 - (i + 1));
-			EqContainer eq_c(str2, ADD);
-			Manager *mngr2 = eq_c.calculate();
-			str2 = ID_WRAP_LEFT_CH;
-			str2 += i2s(CALCULATOR->addId(mngr2));
-			str2 += ID_WRAP_RIGHT_CH;
-			str.replace(i, i2 - i + 1, str2);
-			i = str.find(LEFT_BRACKET_CH);
-			i2 = str.find(RIGHT_BRACKET_CH);
-			if(!b && i2 == string::npos) {
-				str.append(1, RIGHT_BRACKET_CH);
+			i = str.rfind(LEFT_BRACKET_CH);	
+			if(i == string::npos) {
+				//if no parenthesis break
+				break;
+			} else {
+				//right parenthesis missing -- append
+				str += RIGHT_BRACKET_CH;
 				i2 = str.length() - 1;
-			}			
+			}
+		} else {
+			if(i2 > 0) {
+				i = str.rfind(LEFT_BRACKET_CH, i2 - 1);
+			} else {
+				i = string::npos;
+			}
+			if(i == string::npos) {
+				//left parenthesis missing -- prepend
+				str.insert(0, 1, LEFT_BRACKET_CH);
+				i = 0;
+				i2++;
+			}
 		}
+		while(true) {
+			//remove unnecessary double parenthesis and the found parenthesis
+			if(i > 0 && i2 < str.length() - 1 && str[i - 1] == LEFT_BRACKET_CH && str[i2 + 1] == RIGHT_BRACKET_CH) {
+				str.erase(str.begin() + (i - 1));
+				i--; i2--;
+				str.erase(str.begin() + (i2 + 1));
+			} else {
+				break;
+			}
+		}
+		if(i > 0 && is_in(NUMBERS DOT ID_WRAPS, str[i - 1])) {
+			if(CALCULATOR->inRPNMode()) {
+				str.insert(i2 + 1, 1, MULTIPLICATION_CH);	
+				str.insert(i, 1, SPACE_CH);
+				i++;
+				i2++;					
+			} else {		
+				str.insert(i, 1, MULTIPLICATION_2_CH);
+				i++;
+				i2++;
+			}
+		}
+		if(i2 < str.length() - 1 && is_in(NUMBERS DOT ID_WRAPS, str[i2 + 1])) {
+			if(CALCULATOR->inRPNMode()) {
+				i3 = str.find(SPACE, i2 + 1);
+				if(i3 == string::npos) {
+					str += MULTIPLICATION;
+				} else {
+					str.replace(i3, 1, MULTIPLICATION);
+				}
+				str.insert(i2 + 1, 1, SPACE_CH);
+			} else {
+				str.insert(i2 + 1, 1, MULTIPLICATION_2_CH);
+			}
+		}
+		if(CALCULATOR->inRPNMode() && i > 0 && i2 + 1 == str.length() && is_in(NUMBERS DOT OPERATORS ID_WRAPS, str[i - 1])) {
+			str += MULTIPLICATION_CH;	
+		}
+		str2 = str.substr(i + 1, i2 - (i + 1));
+		EqContainer eq_c(str2, ADD);
+		Manager *mngr2 = eq_c.calculate();
+		str2 = ID_WRAP_LEFT_CH;
+		str2 += i2s(CALCULATOR->addId(mngr2));
+		str2 += ID_WRAP_RIGHT_CH;
+		str.replace(i, i2 - i + 1, str2);
 	}
-	gsub(RIGHT_BRACKET, "", str);
 	i = 0;
 	i3 = 0;
 	if(CALCULATOR->inRPNMode()) {
@@ -235,7 +242,7 @@ goto_place1:
 	if((i = str.find_first_of(PLUS MINUS, 1)) != string::npos) {
 		bool b = false;
 		while(i != string::npos) {
-			if(is_not_in(OPERATORS, str[i - 1])) {
+			if(is_not_in(OPERATORS EXP, str[i - 1])) {
 				if(str[i] == PLUS_CH) s = ADD;
 				else s = SUBTRACT;
 				str2 = str.substr(0, i);
@@ -297,7 +304,7 @@ goto_place1:
 void EqContainer::add(string &str, MathOperation s) {
 	if(str.length() > 0) {
 		string stmp = str;
-		if(str.find_first_not_of(OPERATORS) != string::npos) {
+		if(str.find_first_not_of(OPERATORS EXP) != string::npos) {
 			if(str.find_first_not_of(NUMBERS DOT ID_WRAPS, 1) != string::npos && str.find_first_not_of(NUMBERS DOT ID_WRAPS PLUS MINUS, 0) != 0) {
 				add(new EqContainer(str, s));
 			} else {

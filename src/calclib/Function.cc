@@ -14,6 +14,8 @@
 #include "Calculator.h"
 #include "Matrix.h"
 #include "Manager.h"
+#include "Integer.h"
+#include "Fraction.h"
 
 Function::Function(string cat_, string name_, int argc_, string title_, string descr_, int max_argc_, bool is_active) : ExpressionItem(cat_, name_, title_, descr_, false, true, is_active) {
 	argc = argc_;
@@ -27,8 +29,7 @@ Function::Function(string cat_, string name_, int argc_, string title_, string d
 			default_values.push_back("0");
 		}
 	}
-	last_arg_name_index = 0;
-	last_arg_type_index = 0;
+	last_argdef_index = 0;
 }
 Function::Function(const Function *function) {
 	set(function);
@@ -36,14 +37,11 @@ Function::Function(const Function *function) {
 Function::Function() {
 	argc = 0;
 	max_argc = 0;
-	last_arg_name_index = 0;
-	last_arg_type_index = 0;
+	last_argdef_index = 0;
 }
 Function::~Function() {}
 
-ExpressionItem *Function::copy() const {
-	return new Function(this);
-}
+//ExpressionItem *Function::copy() const {return new Function(this);}
 void Function::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_FUNCTION) {
 		Function *f = (Function*) item;
@@ -53,16 +51,11 @@ void Function::set(const ExpressionItem *item) {
 		for(int i = argc + 1; i <= max_argc; i++) {
 			setDefaultValue(i, f->getDefaultValue(i));
 		}
-		last_arg_name_index = f->lastArgumentNameIndex();
-		last_arg_type_index = f->lastArgumentTypeIndex();
-		argnames.clear();
-		argtypes.clear();
-		for(int i = 1; i <= f->lastArgumentNameIndex(); i++) {
-			setArgumentName(f->argumentName(i), i);
+		last_argdef_index = f->lastArgumentDefinitionIndex();
+		clearArgumentDefinitions();
+		for(int i = 1; i <= f->lastArgumentDefinitionIndex(); i++) {
+			setArgumentDefinition(i, f->getArgumentDefinition(i)->copy());
 		}
-		for(int i = 1; i <= f->lastArgumentTypeIndex(); i++) {
-			setArgumentType(f->argumentType(i), i);
-		}		
 	}
 	ExpressionItem::set(item);
 }
@@ -137,68 +130,31 @@ int Function::args(const string &str, vector<Manager*> &vargs) {
 	}
 	return itmp;
 }
-int Function::lastArgumentNameIndex() const {
-	return last_arg_name_index;
+int Function::lastArgumentDefinitionIndex() const {
+	return last_argdef_index;
 }
-int Function::lastArgumentTypeIndex() const {	
-	return last_arg_type_index;
-}
-string Function::argumentName(int index) {
-	if(argnames.count(index)) {
-		return argnames[index];
-	}
-	return "";
-}
-ArgumentType Function::argumentType(int index) {
-	if(argtypes.count(index)) {
-		return argtypes[index];
-	}
-	return ARGUMENT_TYPE_FREE;
-}
-const char *Function::argumentTypeString(int index) {
-	if(argtypes.count(index)) {
-		switch(argtypes[index]) {
-			case ARGUMENT_TYPE_TEXT: {return "text";}
-			case ARGUMENT_TYPE_DATE: {return "date";}
-			case ARGUMENT_TYPE_POSITIVE: {return "positive";}
-			case ARGUMENT_TYPE_NONNEGATIVE: {return "non-negative";}
-			case ARGUMENT_TYPE_NONZERO: {return "non-zero";}			
-			case ARGUMENT_TYPE_FRACTION: {return "number";}
-			case ARGUMENT_TYPE_POSITIVE_INTEGER: {return "positive integer";}
-			case ARGUMENT_TYPE_NONNEGATIVE_INTEGER: {return "non-negative integer";}
-			case ARGUMENT_TYPE_NONZERO_INTEGER: {return "non-zero integer";}			
-			case ARGUMENT_TYPE_INTEGER: {return "integer";}			
-			case ARGUMENT_TYPE_VECTOR: {return "vector";}
-			case ARGUMENT_TYPE_MATRIX: {return "matrix";}
-			case ARGUMENT_TYPE_FUNCTION: {return "function";}
-			case ARGUMENT_TYPE_UNIT: {return "unit";}
-			case ARGUMENT_TYPE_BOOLEAN: {return "boolean";}
-		}
+Argument *Function::getArgumentDefinition(int index) {
+	if(argdefs.count(index)) {
+		return argdefs[index];
 	}
 	return NULL;
 }
-void Function::clearArgumentNames() {
-	argnames.clear();
-	last_arg_name_index = 0;
-	setChanged(true);
-}
-void Function::setArgumentName(string name_, int index) {
-	argnames[index] = name_;
-	if(index > last_arg_name_index) {
-		last_arg_name_index = index;
+void Function::clearArgumentDefinitions() {
+	for(hash_map<int, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
+		delete it->second;
 	}
+	argdefs.clear();
+	last_argdef_index = 0;
 	setChanged(true);
 }
-void Function::clearArgumentTypes() {
-	argtypes.clear();
-	last_arg_type_index = 0;
-	setChanged(true);
-}
-void Function::setArgumentType(ArgumentType type_, int index) {
-	argtypes[index] = type_;
-	if(index > last_arg_type_index) {
-		last_arg_type_index = index;
-	}		
+void Function::setArgumentDefinition(int index, Argument *argdef) {
+	if(argdefs.count(index)) {
+		delete argdefs[index];
+	}
+	argdefs[index] = argdef;
+	if(index > last_argdef_index) {
+		last_argdef_index = index;
+	}
 	setChanged(true);
 }
 bool Function::testArgumentCount(int itmp) {
@@ -235,10 +191,18 @@ Manager *Function::calculate(const string &argv) {
 	}	
 	return mngr;
 }
+bool Function::testArguments(vector<Manager*> &vargs) {
+	for(hash_map<int, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
+		if(it->second && it->first > 0 && it->first <= vargs.size() && !it->second->test(vargs[it->first - 1], it->first, this)) {
+			return false;
+		}
+	}
+	return true;
+}
 Manager *Function::calculate(vector<Manager*> &vargs, int itmp) {
 	Manager *mngr = NULL;
 	if(itmp < 0) itmp = vargs.size();
-	if(testArgumentCount(itmp)) {
+	if(testArgumentCount(itmp) && testArguments(vargs)) {
 		mngr = new Manager();
 		bool b = false;
 		for(int i = 0; i < vargs.size(); i++) {
@@ -403,6 +367,21 @@ Vector *Function::produceVector(vector<Manager*> &vargs, int begin, int end) {
 	}
 	return v;
 }
+Vector *Function::produceArgumentsVector(vector<Manager*> &vargs, int begin, int end) {	
+	if(begin < 0) {
+		begin = minargs();
+		if(begin < 0) begin = 0;
+	}
+	if(end < 0 || end >= vargs.size()) {
+		end = vargs.size() - 1;
+	}
+	Vector *v = new Vector();
+	for(int index = begin; index <= end; index++) {
+		if(index != begin) v->addComponent();
+		v->set(vargs[index], v->components());
+	}
+	return v;
+}
 
 UserFunction::UserFunction(string cat_, string name_, string eq_, bool is_local, int argc_, string title_, string descr_, int max_argc_, bool is_active) : Function(cat_, name_, argc_, title_, descr_, max_argc_, is_active) {
 	b_local = is_local;
@@ -480,15 +459,26 @@ void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		}
 
 		if(maxargs() < 0) {
-		
-			Vector *v = produceVector(vargs);			
-			mngr_v.push_back(new Manager(v));	
-			v_id.push_back(CALCULATOR->addId(mngr_v[mngr_v.size() - 1], true));
-			v_str = LEFT_BRACKET ID_WRAP_LEFT;
-			v_str += i2s(v_id[v_id.size() - 1]);
-			v_str += ID_WRAP_RIGHT RIGHT_BRACKET;	
-			while(1) {
-				if((i2 = stmp.find("\\v")) != (int) string::npos) {					
+			Vector *v = NULL, *w = NULL;
+			string w_str;
+			if(stmp.find("\\v") != string::npos) {
+				v = produceVector(vargs);			
+				mngr_v.push_back(new Manager(v));	
+				v_id.push_back(CALCULATOR->addId(mngr_v[mngr_v.size() - 1], true));
+				v_str = LEFT_BRACKET ID_WRAP_LEFT;
+				v_str += i2s(v_id[v_id.size() - 1]);
+				v_str += ID_WRAP_RIGHT RIGHT_BRACKET;					
+			}
+			if(stmp.find("\\w") != string::npos) {
+				w = produceArgumentsVector(vargs);	
+				mngr_v.push_back(new Manager(w));	
+				v_id.push_back(CALCULATOR->addId(mngr_v[mngr_v.size() - 1], true));
+				w_str = LEFT_BRACKET ID_WRAP_LEFT;
+				w_str += i2s(v_id[v_id.size() - 1]);
+				w_str += ID_WRAP_RIGHT RIGHT_BRACKET;							
+			}			
+			while(true) {
+				if((i2 = stmp.find("\\v")) != string::npos) {					
 					if(i2 != 0 && stmp[i2 - 1] == '\\') {
 						i2 += 2;
 					} else {
@@ -498,11 +488,23 @@ void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 					break;
 				}
 			}
-			delete v;
+			while(true) {
+				if((i2 = stmp.find("\\w")) != string::npos) {					
+					if(i2 != 0 && stmp[i2 - 1] == '\\') {
+						i2 += 2;
+					} else {
+						stmp.replace(i2, 2, w_str);
+					}
+				} else {
+					break;
+				}
+			}			
+			if(v) delete v;
+			if(w) delete w;
 		} 		
 
-		while(1) {
-			if((i2 = stmp.find("\\\\")) != (int) string::npos) {
+		while(true) {
+			if((i2 = stmp.find("\\\\")) != string::npos) {
 				stmp.replace(i2, 2, "\\");
 			} else {
 				break;
@@ -539,7 +541,7 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 		bool optionals = false;
 		int i2 = 0;
 		unsigned int i3 = 0, i4 = 0, i5 = 0;
-		for(int i = 0; i < 25; i++) {
+		for(int i = 0; i < 26; i++) {
 			begin_loop_in_set_equation:
 			i4 = 0; i5 = 0;
 			svar = '\\';
@@ -554,7 +556,7 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 				svar_o += 'X' + i;
 				
 			before_find_in_set_equation:	
-			if(i != 24 && (i2 = new_eq.find(svar_o, i4)) != (int) string::npos) {
+			if(i < 24 && (i2 = new_eq.find(svar_o, i4)) != string::npos) {
 				if(i2 > 0 && new_eq[i2 - 1] == '\\') {
 					i4 = i2 + 2;
 					goto before_find_in_set_equation;
@@ -572,11 +574,11 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 					default_values.push_back("0");
 				}
 				new_eq.replace(i2, 2 + i3, svar);
-				while((i2 = new_eq.find(svar_o, i2 + 1)) != (int) string::npos) {
+				while((i2 = new_eq.find(svar_o, i2 + 1)) != string::npos) {
 					new_eq.replace(i2, 2, svar);
 				}				
 				optionals = true;
-			} else if((i2 = new_eq.find(svar, i5)) != (int) string::npos) {
+			} else if((i2 = new_eq.find(svar, i5)) != string::npos) {
 				if(i2 > 0 && new_eq[i2 - 1] == '\\') {
 					i5 = i2 + 2;
 					goto before_find_in_set_equation;
@@ -588,7 +590,7 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 				}
 				break;
 			}
-			if(i == 24) {
+			if(i >= 24) {
 				max_argc_ = -1;
 			} else {
 				if(optionals) {
@@ -600,11 +602,11 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 			}
 		}
 	}
-	if(argc_ > 25) {
-		argc_ = 25;
+	if(argc_ > 24) {
+		argc_ = 24;
 	}
-	if(max_argc_ > 25) {
-		max_argc_ = 25;
+	if(max_argc_ > 24) {
+		max_argc_ = 24;
 	}
 	if(max_argc_ < 0 || argc_ < 0) {
 		max_argc_ = -1;
@@ -620,3 +622,482 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 	argc = argc_;
 	max_argc = max_argc_;	
 }
+
+Argument::Argument(string name_, bool does_test) {
+	sname = name_;
+	remove_blank_ends(sname);
+	scondition = "";
+	b_zero = true;
+	b_test = does_test;
+	b_matrix = false;
+}
+Argument::Argument(const Argument *arg) {set(arg);}
+Argument *Argument::copy() const {
+	return new Argument(this);
+}
+string Argument::print() const {return "";}
+string Argument::subprintlong() const {return _("a free value");}
+string Argument::printlong() const {
+	string str = subprintlong();
+	if(!b_zero) {
+		str += _("that is nonzero");
+	}
+	if(!scondition.empty()) {
+		if(b_zero) {
+			str += " ";
+			str += _("and");
+		}
+		str += " ";
+		str += _("that fulfills the condition:");
+		str += " \"";
+		str += scondition;
+		str += "\"";
+	}
+	return str;
+}
+void Argument::set(const Argument *arg) {
+	sname = arg->name();
+	scondition = arg->getCustomCondition();
+	b_zero = arg->zeroAllowed();
+	b_test = arg->tests();
+	b_matrix = arg->matrixAllowed();
+}
+bool Argument::test(const Manager *value, int index, Function *f) const {
+	if(!b_test) {
+		return true;
+	}
+	if(!b_zero && value->isZero()) {
+		if(sname.empty()) {
+			CALCULATOR->error(true, "Argument %s in %s() must be %s.", i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
+		} else {
+			CALCULATOR->error(true, "Argument %s, %s, in %s() must be %s.", i2s(index).c_str(), sname.c_str(), f->name().c_str(), printlong().c_str(), NULL);
+		}
+		return false;
+	}
+	if(!(b_matrix && value->isMatrix()) && !subtest(value)) {
+		if(sname.empty()) {
+			CALCULATOR->error(true, "Argument %s in %s() must be %s.", i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
+		} else {
+			CALCULATOR->error(true, "Argument %s, %s, in %s() must be %s.", i2s(index).c_str(), sname.c_str(), f->name().c_str(), printlong().c_str(), NULL);
+		}
+		return false;
+	}
+	//test condition here
+	return true;
+}
+bool Argument::subtest(const Manager *value) const {
+	return true;
+}
+string Argument::name() const {
+	return sname;
+}
+void Argument::setName(string name_) {
+	sname = name_;
+	remove_blank_ends(sname);
+}
+void Argument::setCustomCondition(string condition) {
+	scondition = condition;
+	remove_blank_ends(scondition);
+}
+string Argument::getCustomCondition() const {
+	return scondition;
+}
+bool Argument::zeroAllowed() const {
+	return b_zero;
+}
+void Argument::setZeroAllowed(bool accept_zero) {
+	b_zero = accept_zero;
+}
+bool Argument::tests() const {
+	return b_test;
+}
+void Argument::setTests(bool does_test) {
+	b_test = does_test;
+}
+bool Argument::needQuotes() const {return false;}
+int Argument::type() const {
+	return ARGUMENT_TYPE_FREE;
+}
+bool Argument::matrixAllowed() const {return b_matrix;}
+void Argument::setMatrixAllowed(bool allow_matrix) {b_matrix = allow_matrix;}
+
+FractionArgument::FractionArgument(string name_, ArgumentMinMaxPreDefinition minmax, bool does_test) : Argument(name_, does_test) {
+	fmin = NULL;
+	fmax = NULL;
+	b_incl_min = true;
+	b_incl_max = true;
+	switch(minmax) {
+		case ARGUMENT_MIN_MAX_POSITIVE: {
+			fmin = new Fraction();
+			b_incl_min = false;
+			break;
+		}
+		case ARGUMENT_MIN_MAX_NEGATIVE: {
+			fmax = new Fraction();
+			b_incl_max = false;
+			break;
+		}
+		case ARGUMENT_MIN_MAX_NONNEGATIVE: {
+			fmin = new Fraction();
+			break;
+		}
+		case ARGUMENT_MIN_MAX_NONZERO: {
+			setZeroAllowed(false);
+			break;
+		}		
+	}
+}
+FractionArgument::FractionArgument(const FractionArgument *arg) {set(arg);}
+FractionArgument::~FractionArgument() {
+	if(fmin) {
+		delete fmin;
+	}
+	if(fmax) {
+		delete fmax;
+	}
+}
+	
+void FractionArgument::setMin(long int min_) {
+	if(!fmin) {
+		fmin = new Fraction(min_, 1);
+	} else {
+		fmin->set(min_, 1);
+	}
+}
+void FractionArgument::setMin(const Fraction *min_) {
+	if(!min_) {
+		if(fmin) {
+			delete fmin;
+		}
+		return;
+	}
+	if(!fmin) {
+		fmin = new Fraction(min_);
+	} else {
+		fmin->set(min_);
+	}
+}
+void FractionArgument::setIncludeEqualsMin(bool include_equals) {
+	b_incl_min = include_equals;
+}
+bool FractionArgument::includeEqualsMin() const {
+	return b_incl_min;
+}
+const Fraction *FractionArgument::min() const {
+	return fmin;
+}
+void FractionArgument::setMax(long int max_) {
+	if(!fmax) {
+		fmax = new Fraction(max_, 1);
+	} else {
+		fmax->set(max_, 1);
+	}
+}
+void FractionArgument::setMax(const Fraction *max_) {
+	if(!max_) {
+		if(fmax) {
+			delete fmax;
+		}
+		return;
+	}
+	if(!fmax) {
+		fmax = new Fraction(max_);
+	} else {
+		fmax->set(max_);
+	}
+}
+void FractionArgument::setIncludeEqualsMax(bool include_equals) {
+	b_incl_max = include_equals;
+}
+bool FractionArgument::includeEqualsMax() const {
+	return b_incl_max;
+}
+const Fraction *FractionArgument::max() const {
+	return fmax;
+}
+bool FractionArgument::subtest(const Manager *value) const {
+	if(!value->isFraction()) {
+		return false;
+	}
+	if(fmin && (b_incl_min && value->fraction()->compare(fmin) > 0) || (!b_incl_min && value->fraction()->compare(fmin) >= 0)) {
+		return false;
+	}
+	if(fmax && (b_incl_max && value->fraction()->compare(fmax) < 0) || (!b_incl_max && value->fraction()->compare(fmax) <= 0)) {
+		return false;
+	}	
+	return true;
+}
+int FractionArgument::type() const {
+	return ARGUMENT_TYPE_FRACTION;
+}
+Argument *FractionArgument::copy() const {
+	return new FractionArgument(this);
+}
+void FractionArgument::set(const Argument *arg) {
+	if(arg->type() == ARGUMENT_TYPE_FRACTION) {
+		const FractionArgument *farg = (const FractionArgument*) arg;
+		b_incl_min = farg->includeEqualsMin();
+		b_incl_max = farg->includeEqualsMax();
+		if(fmin) {
+			delete fmin;
+			fmin = NULL;
+		}
+		if(fmax) {
+			delete fmax;
+			fmax = NULL;
+		}
+		if(farg->min()) {
+			fmin = new Fraction(farg->min());
+		}
+		if(farg->max()) {
+			fmax = new Fraction(farg->max());
+		}		
+	}
+	Argument::set(arg);
+}
+string FractionArgument::print() const {
+	return _("number");
+}
+string FractionArgument::subprintlong() const {
+	string str = _("a number");
+	if(fmin) {
+		str += " ";
+		if(b_incl_min) {
+			str += _(">=");
+		} else {
+			str += _("=");
+		}
+		str += " ";
+		str += fmin->print();
+	}
+	if(fmax) {
+		if(fmin) {
+			str += " ";
+			str += _("and");
+		}
+		str += " ";
+		if(b_incl_max) {
+			str += _(">=");
+		} else {
+			str += _("=");
+		}
+		str += " ";
+		str += fmax->print();
+	}
+	return str;
+}
+
+IntegerArgument::IntegerArgument(string name_, ArgumentMinMaxPreDefinition minmax, bool does_test) : Argument(name_, does_test) {
+	imin = NULL;
+	imax = NULL;
+	switch(minmax) {
+		case ARGUMENT_MIN_MAX_POSITIVE: {
+			imin = new Integer(1);
+			break;
+		}
+		case ARGUMENT_MIN_MAX_NEGATIVE: {
+			imax = new Integer(-1);
+			break;
+		}
+		case ARGUMENT_MIN_MAX_NONNEGATIVE: {
+			imin = new Integer();
+			break;
+		}
+		case ARGUMENT_MIN_MAX_NONZERO: {
+			setZeroAllowed(false);
+			break;
+		}		
+	}	
+}
+IntegerArgument::IntegerArgument(const IntegerArgument *arg) {set(arg);}
+IntegerArgument::~IntegerArgument() {
+	if(imin) {
+		delete imin;
+	}
+	if(imax) {
+		delete imax;
+	}
+}
+	
+void IntegerArgument::setMin(long int min_) {
+	if(!imin) {
+		imin = new Integer(min_);
+	} else {
+		imin->set(min_);
+	}
+}
+void IntegerArgument::setMin(const Integer *min_) {
+	if(!min_) {
+		if(imin) {
+			delete imin;
+		}
+		return;
+	}
+	if(!imin) {
+		imin = new Integer(min_);
+	} else {
+		imin->set(min_);
+	}
+}
+const Integer *IntegerArgument::min() const {
+	return imin;
+}
+void IntegerArgument::setMax(long int max_) {
+	if(!imax) {
+		imax = new Integer(max_);
+	} else {
+		imax->set(max_);
+	}
+}
+void IntegerArgument::setMax(const Integer *max_) {
+	if(!max_) {
+		if(imax) {
+			delete imax;
+		}
+		return;
+	}
+	if(!imax) {
+		imax = new Integer(max_);
+	} else {
+		imax->set(max_);
+	}
+}
+const Integer *IntegerArgument::max() const {
+	return imax;
+}
+bool IntegerArgument::subtest(const Manager *value) const {
+	if(!value->isFraction() || !value->fraction()->isInteger()) {
+		return false;
+	}
+	if(imin && value->fraction()->numerator()->compare(imin) > 0) {
+		return false;
+	}
+	if(imax && value->fraction()->numerator()->compare(imax) < 0) {
+		return false;
+	}	
+	return true;
+}
+int IntegerArgument::type() const {
+	return ARGUMENT_TYPE_INTEGER;
+}
+Argument *IntegerArgument::copy() const {
+	return new IntegerArgument(this);
+}
+void IntegerArgument::set(const Argument *arg) {
+	if(arg->type() == ARGUMENT_TYPE_INTEGER) {
+		const IntegerArgument *iarg = (const IntegerArgument*) arg;
+		if(imin) {
+			delete imin;
+			imin = NULL;
+		}
+		if(imax) {
+			delete imax;
+			imax = NULL;
+		}
+		if(iarg->min()) {
+			imin = new Integer(iarg->min());
+		}
+		if(iarg->max()) {
+			imax = new Integer(iarg->max());
+		}		
+	}
+	Argument::set(arg);
+}
+string IntegerArgument::print() const {
+	return _("integer");
+}
+string IntegerArgument::subprintlong() const {
+	string str = _("an integer");
+	if(imin) {
+		str += " ";
+		str += _(">=");
+		str += " ";
+		str += imin->print();
+	}
+	if(imax) {
+		if(imin) {
+			str += " ";
+			str += _("and");
+		}
+		str += " ";
+		str += _(">=");
+		str += " ";
+		str += imax->print();
+	}
+	return str;
+}
+
+TextArgument::TextArgument(string name_, bool does_test) : Argument(name_, does_test) {}
+TextArgument::TextArgument(const TextArgument *arg) {set(arg);}
+bool TextArgument::subtest(const Manager *value) const {return value->isText();}
+int TextArgument::type() const {return ARGUMENT_TYPE_TEXT;}
+Argument *TextArgument::copy() const {return new TextArgument(this);}
+string TextArgument::print() const {return _("text");}
+string TextArgument::subprintlong() const {return _("a text string");}
+bool TextArgument::needQuotes() const {return true;}
+
+DateArgument::DateArgument(string name_, bool does_test) : Argument(name_, does_test) {}
+DateArgument::DateArgument(const DateArgument *arg) {set(arg);}
+bool DateArgument::subtest(const Manager *value) const {
+	int day = 0, year = 0, month = 0;
+	return value->isText() && s2date(value->text(), day, year, month);
+}
+int DateArgument::type() const {return ARGUMENT_TYPE_DATE;}
+Argument *DateArgument::copy() const {return new DateArgument(this);}
+string DateArgument::print() const {return _("date");}
+string DateArgument::subprintlong() const {return _("a quoted date");}
+bool DateArgument::needQuotes() const {return true;}
+
+VectorArgument::VectorArgument(string name_, bool does_test, bool allow_matrix) : Argument(name_, does_test) {
+	setMatrixAllowed(allow_matrix);
+}
+VectorArgument::VectorArgument(const VectorArgument *arg) {set(arg);}
+bool VectorArgument::subtest(const Manager *value) const {return value->isMatrix() && value->matrix()->isVector();}
+int VectorArgument::type() const {return ARGUMENT_TYPE_VECTOR;}
+Argument *VectorArgument::copy() const {return new VectorArgument(this);}
+string VectorArgument::print() const {return _("vector");}
+string VectorArgument::subprintlong() const {return _("a vector");}
+
+MatrixArgument::MatrixArgument(string name_, bool does_test) : Argument(name_, does_test) {}
+MatrixArgument::MatrixArgument(const MatrixArgument *arg) {set(arg);}
+bool MatrixArgument::subtest(const Manager *value) const {return value->isMatrix();}
+int MatrixArgument::type() const {return ARGUMENT_TYPE_TEXT;}
+Argument *MatrixArgument::copy() const {return new MatrixArgument(this);}
+string MatrixArgument::print() const {return _("matrix");}
+string MatrixArgument::subprintlong() const {return _("a matrix");}
+
+FunctionArgument::FunctionArgument(string name_, bool does_test) : Argument(name_, does_test) {}
+FunctionArgument::FunctionArgument(const FunctionArgument *arg) {set(arg);}
+bool FunctionArgument::subtest(const Manager *value) const {return value->isText() && CALCULATOR->getFunction(value->text());}
+int FunctionArgument::type() const {return ARGUMENT_TYPE_FUNCTION;}
+Argument *FunctionArgument::copy() const {return new FunctionArgument(this);}
+string FunctionArgument::print() const {return _("function");}
+string FunctionArgument::subprintlong() const {return _("a quoted valid function");}
+bool FunctionArgument::needQuotes() const {return true;}
+
+UnitArgument::UnitArgument(string name_, bool does_test) : Argument(name_, does_test) {}
+UnitArgument::UnitArgument(const UnitArgument *arg) {set(arg);}
+bool UnitArgument::subtest(const Manager *value) const {return value->isText() && CALCULATOR->getUnit(value->text());}
+int UnitArgument::type() const {return ARGUMENT_TYPE_UNIT;}
+Argument *UnitArgument::copy() const {return new UnitArgument(this);}
+string UnitArgument::print() const {return _("unit");}
+string UnitArgument::subprintlong() const {return _("a quoted valid unit");}
+bool UnitArgument::needQuotes() const {return true;}
+
+VariableArgument::VariableArgument(string name_, bool does_test) : Argument(name_, does_test) {}
+VariableArgument::VariableArgument(const VariableArgument *arg) {set(arg);}
+bool VariableArgument::subtest(const Manager *value) const {return value->isText() && CALCULATOR->getVariable(value->text());}
+int VariableArgument::type() const {return ARGUMENT_TYPE_VARIABLE;}
+Argument *VariableArgument::copy() const {return new VariableArgument(this);}
+string VariableArgument::print() const {return _("variable");}
+string VariableArgument::subprintlong() const {return _("a quoted valid variable");}
+bool VariableArgument::needQuotes() const {return true;}
+
+BooleanArgument::BooleanArgument(string name_, bool does_test) : Argument(name_, does_test) {}
+BooleanArgument::BooleanArgument(const BooleanArgument *arg) {set(arg);}
+bool BooleanArgument::subtest(const Manager *value) const {return value->isZero() || value->isOne();}
+int BooleanArgument::type() const {return ARGUMENT_TYPE_BOOLEAN;}
+Argument *BooleanArgument::copy() const {return new BooleanArgument(this);}
+string BooleanArgument::print() const {return _("boolean");}
+string BooleanArgument::subprintlong() const {return _("a boolean (0 or 1)");}
+

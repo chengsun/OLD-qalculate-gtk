@@ -23,7 +23,7 @@ class ExpressionItem {
   protected:
 
 	string sname, scat, stitle, sdescr;
-	bool b_local, b_changed, b_builtin, b_exact, b_active;
+	bool b_local, b_changed, b_builtin, b_exact, b_active, b_registered;
 
   public:
 
@@ -35,6 +35,9 @@ class ExpressionItem {
 	virtual void set(const ExpressionItem *item);
 	
 	virtual bool destroy();
+
+	bool isRegistered() const;
+	void setRegistered(bool is_registered);
 
 	/**
 	* Sets the name of the ExpressionItem.
@@ -85,7 +88,7 @@ class ExpressionItem {
 	virtual void setPrecise(bool is_precise);
 	
 	virtual bool isActive() const;
-	virtual void setActive(bool is_active, bool not_yet_added = false);
+	virtual void setActive(bool is_active);
 	
 	virtual int type() const = 0;
 };

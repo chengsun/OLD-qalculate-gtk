@@ -66,6 +66,7 @@ class Integer {
 	* @param integer Integer to copy.
 	*/		
 	Integer(const Integer *integer);
+	Integer(string str);
 	~Integer();
 	
 	/**
@@ -117,6 +118,7 @@ class Integer {
 	void clear();
 	void set(long int value);
 	void set(const Integer *integer);	
+	bool set(string str);	
 	void add(long int value);
 	void add(const Integer *integer);	
 	void subtract(long int value);	

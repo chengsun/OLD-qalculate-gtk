@@ -7,7 +7,6 @@ Calculator.lo
 EqItem.lo
 Error.lo
 Function.lo
-Makefile.am
 Manager.lo
 Unit.lo
 Variable.lo

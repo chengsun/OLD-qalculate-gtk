@@ -1,3 +1,23 @@
+2003-09-24  Niklas Knutsson  <nq@altern.org>
+
+	* Move defintions to library and PACKAGE_DATA_DIR/qalculate
+	* Place local definitions in ~/.qalculate/definitions and load everything in that directory
+	* XML definitions files
+	* Update function edit dialog to new argument definitions, and turn function expression entry into a textview
+	* Furthering argument definitions: new Argument classes that tests type and value
+	* Fix parenthesis madness and handle missing left parenthesis
+
+2003-09-22  Niklas Knutsson  <nq@altern.org>
+
+	* ExpressionItem::isRegistered()
+	* Once again constants -- new DynamicVariable class that recalculates value when precision has changed
+	* Fix ...E-...
+	* Fix root for negative results
+	* Fix log for negative results
+	* Fix display of ...E...
+	* Fix infinite loop with prefixes <= 10E-1
+	* Check file format and version of definitions file
+
 2003-09-21  Niklas Knutsson  <nq@altern.org>
 
 	* Fix error message when too many arguments

@@ -18,9 +18,9 @@
 
 #include <sstream>
 
-#define TRIG_FUNCTION(FUNC)	if(vargs[0]->isFraction()) {mngr->set(vargs[0]); CALCULATOR->setAngleValue(mngr); if(!mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);} } else {mngr->set(this, vargs[0], NULL);}
-#define FR_FUNCTION(FUNC)	if(vargs[0]->isFraction()) {mngr->set(vargs[0]); if(!mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);} } else {mngr->set(this, vargs[0], NULL);}
-#define FR_FUNCTION_2(FUNC)	if(vargs[0]->isFraction() && vargs[1]->isFraction()) {mngr->set(vargs[0]); if(!mngr->fraction()->FUNC(vargs[1]->fraction())) {mngr->set(this, vargs[0], vargs[1], NULL);} } else {mngr->set(this, vargs[0], vargs[1], NULL);}
+#define TRIG_FUNCTION(FUNC)	mngr->set(vargs[0]); CALCULATOR->setAngleValue(mngr); if(!mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);}
+#define FR_FUNCTION(FUNC)	mngr->set(vargs[0]); if(!mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);}
+#define FR_FUNCTION_2(FUNC)	mngr->set(vargs[0]); if(!mngr->fraction()->FUNC(vargs[1]->fraction())) {mngr->set(this, vargs[0], vargs[1], NULL);}
 
 #define TEST_TEXT(i)		if(!vargs[i]->isText()) {CALCULATOR->error(true, _("You need to put expression in quotes for %s()."), name().c_str(), NULL); Manager *mngr2 = createFunctionManagerFromVArgs(vargs); mngr->set(mngr2); mngr2->unref(); return;}
 
@@ -93,14 +93,14 @@ void CatalanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 
 #ifdef HAVE_LIBCLN
 ZetaFunction::ZetaFunction() : Function("", "zeta", 1, "Riemann Zeta") {
-	setArgumentType(ARGUMENT_TYPE_POSITIVE_INTEGER, 1);
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 }
 void ZetaFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	FR_FUNCTION(zeta)
 }
 #endif
 ProcessFunction::ProcessFunction() : Function("Utilities", "process", 1, "Process components", "", -1) {
-	setArgumentType(ARGUMENT_TYPE_MATRIX, 1);
+	setArgumentDefinition(1, new MatrixArgument("", false));
 }
 void ProcessFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 
@@ -238,22 +238,18 @@ void ProcessFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 
 CustomSumFunction::CustomSumFunction() : Function("Utilities", "csum", 4, "Custom sum of components", "", -1) {
-	setArgumentType(ARGUMENT_TYPE_INTEGER, 1);
-	setArgumentType(ARGUMENT_TYPE_INTEGER, 2);
-	setArgumentType(ARGUMENT_TYPE_TEXT, 4);
-	setArgumentType(ARGUMENT_TYPE_VECTOR, 5);
+	setArgumentDefinition(1, new IntegerArgument());
+	setArgumentDefinition(2, new IntegerArgument());
+	setArgumentDefinition(4, new TextArgument());
+	setArgumentDefinition(5, new VectorArgument("", false));
 }
 void CustomSumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 
 	int start = 1;
 	int end = -1;
-	if(!vargs[0]->isFraction() || !vargs[0]->fraction()->isInteger() || !vargs[1]->isFraction() || !vargs[1]->fraction()->isInteger()) {
-		CALCULATOR->error(true, _("The upper and lower limits must be integers."), NULL);
-	} else {
-		start = vargs[0]->fraction()->numerator()->getInt();
-		if(start < 1) start = 1;
-		end = vargs[1]->fraction()->numerator()->getInt();
-	}
+	start = vargs[0]->fraction()->numerator()->getInt();
+	if(start < 1) start = 1;
+	end = vargs[1]->fraction()->numerator()->getInt();
 
 	string sarg = vargs[3]->text();
 	int i = sarg.find("\\x");
@@ -409,7 +405,7 @@ void CustomSumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 
 FunctionFunction::FunctionFunction() : Function("Utilities", "function", 1, "Function", "", -1) {
-	setArgumentType(ARGUMENT_TYPE_TEXT, 1);
+	setArgumentDefinition(1, new TextArgument());
 }
 void FunctionFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	UserFunction f("", "Generated Function", vargs[0]->text());
@@ -420,17 +416,10 @@ void FunctionFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr2->unref();
 }
 MatrixFunction::MatrixFunction() : Function("Matrices", "matrix", 2, "Construct Matrix", "", -1) {
-	setArgumentType(ARGUMENT_TYPE_POSITIVE_INTEGER, 1);
-	setArgumentType(ARGUMENT_TYPE_POSITIVE_INTEGER, 2);	
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));	
 }
 void MatrixFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(!vargs[0]->isFraction() || !vargs[0]->fraction()->isInteger() || !vargs[0]->fraction()->isPositive() || !vargs[1]->isFraction() || !vargs[1]->fraction()->isInteger() || !vargs[1]->fraction()->isPositive()) {
-		Manager *mngr2 = createFunctionManagerFromVArgs(vargs);	
-		mngr->set(mngr2);
-		mngr2->unref();
-		CALCULATOR->error(true, _("The number of rows and columns in matrix must be positive integers."), NULL);
-		return;
-	}
 	Matrix mtrx(vargs[0]->fraction()->numerator()->getInt(), vargs[1]->fraction()->numerator()->getInt());
 	int r = 1, c = 1;
 	for(int i = 2; i < vargs.size(); i++) {
@@ -457,7 +446,7 @@ void VectorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(&vctr);
 }
 RankFunction::RankFunction() : Function("Matrices", "rank", -1, "Rank") {
-	setArgumentType(ARGUMENT_TYPE_VECTOR, 1);
+	setArgumentDefinition(1, new VectorArgument("", false));
 }
 void RankFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() > 1) {
@@ -482,7 +471,7 @@ void RankFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 SortFunction::SortFunction() : Function("Matrices", "sort", -1, "Sort") {
-	setArgumentType(ARGUMENT_TYPE_VECTOR, 1);
+	setArgumentDefinition(1, new VectorArgument("", false));
 }
 void SortFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() > 1) {
@@ -506,8 +495,8 @@ void SortFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		}
 	}
 }
-MatrixToVectorFunction::MatrixToVectorFunction() : Function("Matrices", "matrixtovector", 1, "Convert Matrix to Vector") {
-	setArgumentType(ARGUMENT_TYPE_MATRIX, 1);
+MatrixToVectorFunction::MatrixToVectorFunction() : Function("Matrices", "matrix2vector", 1, "Convert Matrix to Vector") {
+	setArgumentDefinition(1, new MatrixArgument("", false));
 }
 void MatrixToVectorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->isMatrix()) {
@@ -519,43 +508,35 @@ void MatrixToVectorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 RowFunction::RowFunction() : Function("Matrices", "row", 2, "Extract Row as Vector") {
-	setArgumentType(ARGUMENT_TYPE_POSITIVE_INTEGER, 1);
-	setArgumentType(ARGUMENT_TYPE_MATRIX, 2);	
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setArgumentDefinition(2, new MatrixArgument());	
 }
 void RowFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction() && vargs[0]->fraction()->isPositive() && vargs[0]->fraction()->isInteger() && vargs[1]->isMatrix()) {
-		Vector *v = vargs[1]->matrix()->rowToVector(vargs[0]->fraction()->numerator()->getInt());
-		if(!v) {
-			CALCULATOR->error(true, "Row %s does not exist in matrix.", vargs[0]->print().c_str(), NULL);
-			mngr->set(this, vargs[0], vargs[1], NULL);
-		} else {
-			mngr->set(v);
-			delete v;
-		}
-	} else {
+	Vector *v = vargs[1]->matrix()->rowToVector(vargs[0]->fraction()->numerator()->getInt());
+	if(!v) {
+		CALCULATOR->error(true, "Row %s does not exist in matrix.", vargs[0]->print().c_str(), NULL);
 		mngr->set(this, vargs[0], vargs[1], NULL);
+	} else {
+		mngr->set(v);
+		delete v;
 	}
 }
 ColumnFunction::ColumnFunction() : Function("Matrices", "column", 2, "Extract Column as Vector") {
-	setArgumentType(ARGUMENT_TYPE_POSITIVE_INTEGER, 1);
-	setArgumentType(ARGUMENT_TYPE_MATRIX, 2);	
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setArgumentDefinition(2, new MatrixArgument());	
 }
 void ColumnFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction() && vargs[0]->fraction()->isPositive() && vargs[0]->fraction()->isInteger() && vargs[1]->isMatrix()) {
-		Vector *v = vargs[1]->matrix()->columnToVector(vargs[0]->fraction()->numerator()->getInt());
-		if(!v) {
-			CALCULATOR->error(true, "Column %s does not exist in matrix.", vargs[0]->print().c_str(), NULL);
-			mngr->set(this, vargs[0], vargs[1], NULL);
-		} else {
-			mngr->set(v);
-			delete v;
-		}
-	} else {
+	Vector *v = vargs[1]->matrix()->columnToVector(vargs[0]->fraction()->numerator()->getInt());
+	if(!v) {
+		CALCULATOR->error(true, "Column %s does not exist in matrix.", vargs[0]->print().c_str(), NULL);
 		mngr->set(this, vargs[0], vargs[1], NULL);
+	} else {
+		mngr->set(v);
+		delete v;
 	}
 }
 RowsFunction::RowsFunction() : Function("Matrices", "rows", 1, "Rows") {
-	setArgumentType(ARGUMENT_TYPE_MATRIX, 1);
+	setArgumentDefinition(1, new MatrixArgument("", false));
 }
 void RowsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->isMatrix()) {
@@ -565,7 +546,7 @@ void RowsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 ColumnsFunction::ColumnsFunction() : Function("Matrices", "columns", 1, "Columns") {
-	setArgumentType(ARGUMENT_TYPE_MATRIX, 1);
+	setArgumentDefinition(1, new MatrixArgument("", false));
 }
 void ColumnsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->isMatrix()) {
@@ -575,7 +556,7 @@ void ColumnsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 ElementsFunction::ElementsFunction() : Function("Matrices", "elements", 1, "Elements") {
-	setArgumentType(ARGUMENT_TYPE_MATRIX, 1);
+	setArgumentDefinition(1, new MatrixArgument("", false));
 }
 void ElementsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->isMatrix()) {
@@ -585,18 +566,11 @@ void ElementsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 ElementFunction::ElementFunction() : Function("Matrices", "element", 3, "Element") {
-	setArgumentType(ARGUMENT_TYPE_POSITIVE_INTEGER, 1);
-	setArgumentType(ARGUMENT_TYPE_POSITIVE_INTEGER, 2);
-	setArgumentType(ARGUMENT_TYPE_MATRIX, 3);
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setArgumentDefinition(3, new MatrixArgument("", false));
 }
 void ElementFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(!vargs[0]->isFraction() || !vargs[0]->fraction()->isInteger() || !vargs[0]->fraction()->isPositive() || !vargs[1]->isFraction() || !vargs[1]->fraction()->isInteger() || !vargs[1]->fraction()->isPositive()) {
-		Manager *mngr2 = createFunctionManagerFromVArgs(vargs);	
-		mngr->set(mngr2);
-		mngr2->unref();
-		CALCULATOR->error(true, _("Row and column in matrix must be positive integers."), NULL);
-		return;
-	}
 	if(vargs[2]->isMatrix()) {
 		mngr->set(vargs[2]->matrix()->get(vargs[0]->fraction()->numerator()->getInt(), vargs[1]->fraction()->numerator()->getInt()));
 	} else if(vargs[0]->fraction()->isOne() && vargs[1]->fraction()->isOne()) {
@@ -604,7 +578,7 @@ void ElementFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 ComponentsFunction::ComponentsFunction() : Function("Matrices", "components", 1, "Components") {
-	setArgumentType(ARGUMENT_TYPE_VECTOR, 1);
+	setArgumentDefinition(1, new VectorArgument("", false));
 }
 void ComponentsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->isMatrix()) {
@@ -614,17 +588,10 @@ void ComponentsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 ComponentFunction::ComponentFunction() : Function("Matrices", "component", 2, "Component") {
-	setArgumentType(ARGUMENT_TYPE_POSITIVE_INTEGER, 1);
-	setArgumentType(ARGUMENT_TYPE_VECTOR, 2);
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setArgumentDefinition(2, new VectorArgument("", false));
 }
 void ComponentFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(!vargs[0]->isFraction() || !vargs[0]->fraction()->isInteger() || !vargs[0]->fraction()->isPositive()) {
-		Manager *mngr2 = createFunctionManagerFromVArgs(vargs);	
-		mngr->set(mngr2);
-		mngr2->unref();
-		CALCULATOR->error(true, _("Component index in vector must be a positive integer."), NULL);
-		return;
-	}
 	if(vargs[1]->isMatrix()) {
 		mngr->set(vargs[1]->matrix()->get((vargs[0]->fraction()->numerator()->getInt() - 1) / vargs[1]->matrix()->columns() + 1, (vargs[0]->fraction()->numerator()->getInt() - 1) % vargs[1]->matrix()->columns() + 1));
 	} else if(vargs[0]->fraction()->isOne()) {
@@ -632,18 +599,11 @@ void ComponentFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 LimitsFunction::LimitsFunction() : Function("Matrices", "limits", 2, "Limits", "", -1) {
-	setArgumentType(ARGUMENT_TYPE_INTEGER, 1);
-	setArgumentType(ARGUMENT_TYPE_INTEGER, 2);	
-	setArgumentType(ARGUMENT_TYPE_VECTOR, 3);	
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));	
+	setArgumentDefinition(3, new VectorArgument("", false));	
 }
 void LimitsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(!vargs[0]->isFraction() || !vargs[0]->fraction()->isInteger() || !vargs[1]->isFraction() || !vargs[1]->fraction()->isInteger()) {
-		Manager *mngr2 = createFunctionManagerFromVArgs(vargs);	
-		mngr->set(mngr2);
-		mngr2->unref();
-		CALCULATOR->error(true, _("The upper and lower limits must be integers."), NULL);
-		return;
-	}
 	int i = vargs[0]->fraction()->numerator()->getInt(), n = vargs[1]->fraction()->numerator()->getInt();	
 	Vector *v = produceVector(vargs);
 	Vector *vctr = v->getRange(i, n);
@@ -652,15 +612,11 @@ void LimitsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	delete v;
 }
 TransposeFunction::TransposeFunction() : Function("Matrices", "transpose", 1, "Transpose") {
-	setArgumentType(ARGUMENT_TYPE_MATRIX, 1);
+	setArgumentDefinition(1, new MatrixArgument());
 }
 void TransposeFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isMatrix()) {
-		mngr->set(vargs[0]);
-		mngr->matrix()->transpose();
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	mngr->set(vargs[0]);
+	mngr->matrix()->transpose();
 }
 IdentityFunction::IdentityFunction() : Function("Matrices", "identity", 1, "Identity") {}
 void IdentityFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
@@ -677,68 +633,51 @@ void IdentityFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 DeterminantFunction::DeterminantFunction() : Function("Matrices", "det", 1, "Determinant") {
-	setArgumentType(ARGUMENT_TYPE_MATRIX, 1);
+	setArgumentDefinition(1, new MatrixArgument());
 }
 void DeterminantFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isMatrix()) {
-		Manager *det = vargs[0]->matrix()->determinant();
-		if(det) {
-			mngr->set(det);
-			det->unref();	
-			return;
-		}
-	}
-	mngr->set(this, vargs[0], NULL);
-}
-CofactorFunction::CofactorFunction() : Function("Matrices", "cofactor", 3, "Cofactor") {
-	setArgumentType(ARGUMENT_TYPE_MATRIX, 1);
-}
-void CofactorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(!vargs[0]->isFraction() || !vargs[0]->fraction()->isInteger() || !vargs[0]->fraction()->isPositive() || !vargs[1]->isFraction() || !vargs[1]->fraction()->isInteger() || !vargs[1]->fraction()->isPositive()) {
-		Manager *mngr2 = createFunctionManagerFromVArgs(vargs);	
-		mngr->set(mngr2);
-		mngr2->unref();
-		CALCULATOR->error(true, _("Row and column in matrix must be positive integers."), NULL);
+	Manager *det = vargs[0]->matrix()->determinant();
+	if(!det) {
+		mngr->set(this, vargs[0], NULL);
 		return;
 	}
-	if(vargs[2]->isMatrix()) {
-		Manager *mngr2 = vargs[2]->matrix()->cofactor(vargs[0]->fraction()->numerator()->getInt(), vargs[1]->fraction()->numerator()->getInt());
-		if(mngr2) {
-			mngr->set(mngr2);
-			mngr2->unref();
-			return;
-		}
+	mngr->set(det);
+	det->unref();	
+}
+CofactorFunction::CofactorFunction() : Function("Matrices", "cofactor", 3, "Cofactor") {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));	
+	setArgumentDefinition(3, new MatrixArgument());
+}
+void CofactorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	Manager *mngr2 = vargs[2]->matrix()->cofactor(vargs[0]->fraction()->numerator()->getInt(), vargs[1]->fraction()->numerator()->getInt());
+	if(!mngr2) {
+		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
+		return;
 	}
-	mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
+	mngr->set(mngr2);
+	mngr2->unref();	
 }
 AdjointFunction::AdjointFunction() : Function("Matrices", "adj", 1, "Adjoint") {
-	setArgumentType(ARGUMENT_TYPE_MATRIX, 1);
+	setArgumentDefinition(1, new MatrixArgument());
 }
 void AdjointFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isMatrix()) {
-		mngr->set(vargs[0]);
-		if(!mngr->matrix()->adjoint()) {
-			mngr->set(this, vargs[0], NULL);
-		}
-	} else {
+	mngr->set(vargs[0]);
+	if(!mngr->matrix()->adjoint()) {
 		mngr->set(this, vargs[0], NULL);
 	}
 }
 InverseFunction::InverseFunction() : Function("Matrices", "inverse", 1, "Inverse") {
-	setArgumentType(ARGUMENT_TYPE_MATRIX, 1);
+	setArgumentDefinition(1, new MatrixArgument());
 }
 void InverseFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isMatrix()) {
-		mngr->set(vargs[0]);
-		if(!mngr->matrix()->inverse()) {
-			mngr->set(this, vargs[0], NULL);
-		}
-	} else {
+	mngr->set(vargs[0]);
+	if(!mngr->matrix()->inverse()) {
 		mngr->set(this, vargs[0], NULL);
 	}
 }
 IFFunction::IFFunction() : Function("Logical", "if", 3, "If...Then...Else") {
-	setArgumentType(ARGUMENT_TYPE_TEXT, 1);
+	setArgumentDefinition(1, new TextArgument());
 }
 Manager *IFFunction::calculate(vector<Manager*> &vargs) {
 	string argv = "";
@@ -835,33 +774,25 @@ Manager *IFFunction::calculate(const string &argv) {
 	return mngr;
 }
 GCDFunction::GCDFunction() : Function("Arithmetics", "gcd", 2, "Greatest Common Divisor") {
+	setArgumentDefinition(1, new FractionArgument());
+	setArgumentDefinition(2, new FractionArgument());
 }
 void GCDFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(!vargs[0]->isFraction()) mngr->set(this, vargs[0], vargs[1], NULL);
-	if(!vargs[1]->isFraction()) mngr->set(this, vargs[0], vargs[1], NULL);	
 	mngr->set(vargs[0]);
 	mngr->fraction()->gcd(vargs[1]->fraction());
 }
 DaysFunction::DaysFunction() : Function("Date & Time", "days", 2, "Days between two dates", "", 4) {
-	setArgumentType(ARGUMENT_TYPE_DATE, 1);
-	setArgumentType(ARGUMENT_TYPE_DATE, 2);	
-	setArgumentType(ARGUMENT_TYPE_NONNEGATIVE_INTEGER, 3);	
-	setArgumentType(ARGUMENT_TYPE_BOOLEAN, 4);				
+	setArgumentDefinition(1, new DateArgument());
+	setArgumentDefinition(2, new DateArgument());	
+	IntegerArgument *arg = new IntegerArgument();
+	Integer integ;
+	arg->setMin(&integ);
+	arg->setMax(4);
+	setArgumentDefinition(3, arg);	
+	setArgumentDefinition(4, new BooleanArgument());				
 	setDefaultValue(3, "1"); 
 }
 void DaysFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TEST_TEXT(0)
-	TEST_TEXT(1)	
-	if(!vargs[2]->isFraction() || !vargs[2]->fraction()->isInteger() || vargs[2]->fraction()->isNegative()) {
-		CALCULATOR->error(true, _("Basis for %s() must be a non-negative integer."), name().c_str(), NULL);
-		mngr->set(this, vargs[0], vargs[1], vargs[2], vargs[3], NULL);
-		return;
-	}
-	if(!vargs[3]->isFraction() || !(vargs[3]->fraction()->isOne() || vargs[3]->fraction()->isZero())) {
-		CALCULATOR->error(true, _("If in financial function for %s() must be zero or one."), name().c_str(), NULL);
-		mngr->set(this, vargs[0], vargs[1], vargs[2], vargs[3], NULL);
-		return;
-	}	
 	int days = daysBetweenDates(vargs[0]->text(), vargs[1]->text(), vargs[2]->fraction()->numerator()->getInt(), vargs[3]->fraction()->isZero());
 	if(days < 0) {
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
@@ -871,24 +802,16 @@ void DaysFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}			
 }
 YearFracFunction::YearFracFunction() : Function("Date & Time", "yearfrac", 2, "Years between two dates", "", 4) {
-	setArgumentType(ARGUMENT_TYPE_DATE, 1);
-	setArgumentType(ARGUMENT_TYPE_DATE, 2);	
-	setArgumentType(ARGUMENT_TYPE_NONNEGATIVE_INTEGER, 3);	
-	setArgumentType(ARGUMENT_TYPE_BOOLEAN, 4);		
+	setArgumentDefinition(1, new DateArgument());
+	setArgumentDefinition(2, new DateArgument());	
+	IntegerArgument *arg = new IntegerArgument();
+	Integer integ;
+	arg->setMin(&integ);
+	arg->setMax(4);
+	setArgumentDefinition(3, arg);	
+	setArgumentDefinition(4, new BooleanArgument());		
 }
 void YearFracFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TEST_TEXT(0)
-	TEST_TEXT(1)	
-	if(!vargs[2]->isFraction() || !vargs[2]->fraction()->isInteger() || vargs[2]->fraction()->isNegative()) {
-		CALCULATOR->error(true, _("Basis for %s() must be a non-negative integer."), name().c_str(), NULL);
-		mngr->set(this, vargs[0], vargs[1], vargs[2], vargs[3], NULL);
-		return;
-	}
-	if(!vargs[3]->isFraction() || !(vargs[3]->fraction()->isOne() || vargs[3]->fraction()->isZero())) {
-		CALCULATOR->error(true, _("If in financial function for %s() must be zero or one."), name().c_str(), NULL);
-		mngr->set(this, vargs[0], vargs[1], vargs[2], vargs[3], NULL);
-		return;
-	}
 	Fraction *fr = yearsBetweenDates(vargs[0]->text(), vargs[1]->text(), vargs[2]->fraction()->numerator()->getInt(), vargs[3]->fraction()->isZero());
 	if(!fr) {
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
@@ -899,11 +822,10 @@ void YearFracFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	delete fr;
 }
 DifferentiateFunction::DifferentiateFunction() : Function("Experimental", "diff", 2, "Differentiate") {
-	setArgumentType(ARGUMENT_TYPE_TEXT, 2);
+	setArgumentDefinition(2, new TextArgument());
 }
 void DifferentiateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	CALCULATOR->error(true, _("%s() is an experimental unfinished function!"), name().c_str(), NULL);
-	TEST_TEXT(1)
 	if(vargs[0]->isText()) {
 		Manager *mngr2 = CALCULATOR->calculate(vargs[0]->text());
 		mngr->set(mngr2);
@@ -914,194 +836,146 @@ void DifferentiateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->differentiate(vargs[1]->text());
 }
 FactorialFunction::FactorialFunction() : Function("Arithmetics", "factorial", 1, "Factorial") {
-	setArgumentType(ARGUMENT_TYPE_NONNEGATIVE_INTEGER, 1);
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
 }
 void FactorialFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction() && !vargs[0]->fraction()->isNegative() && vargs[0]->fraction()->isInteger()) {
-		if(vargs[0]->fraction()->isZero()) mngr->set(1, 1);
-		mngr->set(vargs[0]);
-		while(!vargs[0]->fraction()->isOne()) {
-			vargs[0]->addInteger(-1, ADD);
-			mngr->add(vargs[0], MULTIPLY);
-		}
-	} else {
-		mngr->set(this, vargs[0], NULL);
+	if(vargs[0]->fraction()->isZero()) mngr->set(1, 1);
+	mngr->set(vargs[0]);
+	while(!vargs[0]->fraction()->isOne()) {
+		vargs[0]->addInteger(-1, ADD);
+		mngr->add(vargs[0], MULTIPLY);
 	}
 }
 AbsFunction::AbsFunction() : Function("Arithmetics", "abs", 1, "Absolute Value") {
-
+	setArgumentDefinition(1, new FractionArgument());
 }
 void AbsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		mngr->fraction()->setNegative(false);		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	mngr->set(vargs[0]);
+	mngr->fraction()->setNegative(false);		
 }
 CeilFunction::CeilFunction() : Function("Arithmetics", "ceil", 1, "Round upwards") {
-
+	setArgumentDefinition(1, new FractionArgument());
 }
 void CeilFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		mngr->fraction()->ceil();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	mngr->set(vargs[0]);
+	mngr->fraction()->ceil();		
 }
 FloorFunction::FloorFunction() : Function("Arithmetics", "floor", 1, "Round downwards") {
-
+	setArgumentDefinition(1, new FractionArgument());
 }
 void FloorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		mngr->fraction()->floor();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	mngr->set(vargs[0]);
+	mngr->fraction()->floor();		
 }
 TruncFunction::TruncFunction() : Function("Arithmetics", "trunc", 1, "Round towards zero") {
-
+	setArgumentDefinition(1, new FractionArgument());
 }
 void TruncFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		mngr->fraction()->trunc();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	mngr->set(vargs[0]);
+	mngr->fraction()->trunc();		
 }
 RoundFunction::RoundFunction() : Function("Arithmetics", "round", 1, "Round") {
-
+	setArgumentDefinition(1, new FractionArgument());
 }
 void RoundFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		mngr->fraction()->round();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	mngr->set(vargs[0]);
+	mngr->fraction()->round();		
 }
 FracFunction::FracFunction() : Function("Arithmetics", "frac", 1, "Extract fractional part") {
-
+	setArgumentDefinition(1, new FractionArgument());
 }
 void FracFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		mngr->fraction()->frac();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	mngr->set(vargs[0]);
+	mngr->fraction()->frac();		
 }
 IntFunction::IntFunction() : Function("Arithmetics", "int", 1, "Extract integer part") {
-
+	setArgumentDefinition(1, new FractionArgument());
 }
 void IntFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		mngr->fraction()->trunc();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	mngr->set(vargs[0]);
+	mngr->fraction()->trunc();		
 }
 RemFunction::RemFunction() : Function("Arithmetics", "rem", 2, "Reminder (rem)") {
-	setArgumentType(ARGUMENT_TYPE_NONZERO, 2);
+	setArgumentDefinition(1, new FractionArgument());
+	setArgumentDefinition(2, new FractionArgument("", ARGUMENT_MIN_MAX_NONZERO));
 }
 void RemFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
-		if(vargs[1]->isZero()) {
-			CALCULATOR->error(true, _("The denominator in rem function cannot be zero"), NULL);
-			mngr->set(this, vargs[0], vargs[1], NULL);		
-		} else {
-			mngr->set(vargs[0]);	
-			mngr->fraction()->divide(vargs[1]->fraction());
-			mngr->fraction()->rem();		
-		}
-	} else {
-		mngr->set(this, vargs[0], vargs[1], NULL);
-	}
+	mngr->set(vargs[0]);	
+	mngr->fraction()->divide(vargs[1]->fraction());
+	mngr->fraction()->rem();		
 }
 ModFunction::ModFunction() : Function("Arithmetics", "mod", 2, "Reminder (mod)") {
-	setArgumentType(ARGUMENT_TYPE_NONZERO, 2);
+	setArgumentDefinition(1, new FractionArgument());
+	setArgumentDefinition(2, new FractionArgument("", ARGUMENT_MIN_MAX_NONZERO));
 }
 void ModFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
-		if(vargs[1]->isZero()) {
-			CALCULATOR->error(true, _("The denominator in rem function cannot be zero"), NULL);
-			mngr->set(this, vargs[0], vargs[1], NULL);		
-		} else {
-			mngr->set(vargs[0]);	
-			mngr->fraction()->divide(vargs[1]->fraction());
-			mngr->fraction()->mod();		
-		}
-	} else {
-		mngr->set(this, vargs[0], vargs[1], NULL);
-	}
+	mngr->set(vargs[0]);	
+	mngr->fraction()->divide(vargs[1]->fraction());
+	mngr->fraction()->mod();		
 }
 
-SinFunction::SinFunction() : Function("Trigonometry", "sin", 1, "Sine") {}
+SinFunction::SinFunction() : Function("Trigonometry", "sin", 1, "Sine") {setArgumentDefinition(1, new FractionArgument());}
 void SinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(sin)
 }
-CosFunction::CosFunction() : Function("Trigonometry", "cos", 1, "Cosine") {}
+CosFunction::CosFunction() : Function("Trigonometry", "cos", 1, "Cosine") {setArgumentDefinition(1, new FractionArgument());}
 void CosFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(cos)
 }
-TanFunction::TanFunction() : Function("Trigonometry", "tan", 1, "Tangent") {}
+TanFunction::TanFunction() : Function("Trigonometry", "tan", 1, "Tangent") {setArgumentDefinition(1, new FractionArgument());}
 void TanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(tan)
 }
-SinhFunction::SinhFunction() : Function("Trigonometry", "sinh", 1, "Hyperbolic sine") {}
+SinhFunction::SinhFunction() : Function("Trigonometry", "sinh", 1, "Hyperbolic sine") {setArgumentDefinition(1, new FractionArgument());}
 void SinhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(sinh)
 }
-CoshFunction::CoshFunction() : Function("Trigonometry", "cosh", 1, "Hyperbolic cosine") {}
+CoshFunction::CoshFunction() : Function("Trigonometry", "cosh", 1, "Hyperbolic cosine") {setArgumentDefinition(1, new FractionArgument());}
 void CoshFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(cosh)
 }
-TanhFunction::TanhFunction() : Function("Trigonometry", "tanh", 1, "Hyperbolic tangent") {}
+TanhFunction::TanhFunction() : Function("Trigonometry", "tanh", 1, "Hyperbolic tangent") {setArgumentDefinition(1, new FractionArgument());}
 void TanhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(tanh)
 }
-AsinFunction::AsinFunction() : Function("Trigonometry", "asin", 1, "Arcsine") {}
+AsinFunction::AsinFunction() : Function("Trigonometry", "asin", 1, "Arcsine") {setArgumentDefinition(1, new FractionArgument());}
 void AsinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(asin)
 }
-AcosFunction::AcosFunction() : Function("Trigonometry", "acos", 1, "Arccosine") {}
+AcosFunction::AcosFunction() : Function("Trigonometry", "acos", 1, "Arccosine") {setArgumentDefinition(1, new FractionArgument());}
 void AcosFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(acos)
 }
-AtanFunction::AtanFunction() : Function("Trigonometry", "atan", 1, "Arctangent") {}
+AtanFunction::AtanFunction() : Function("Trigonometry", "atan", 1, "Arctangent") {setArgumentDefinition(1, new FractionArgument());}
 void AtanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(atan)
 }
-AsinhFunction::AsinhFunction() : Function("Trigonometry", "asinh", 1, "Hyperbolic arcsine") {}
+AsinhFunction::AsinhFunction() : Function("Trigonometry", "asinh", 1, "Hyperbolic arcsine") {setArgumentDefinition(1, new FractionArgument());}
 void AsinhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(asinh)
 }
-AcoshFunction::AcoshFunction() : Function("Trigonometry", "acosh", 1, "Hyperbolic arccosine") {}
+AcoshFunction::AcoshFunction() : Function("Trigonometry", "acosh", 1, "Hyperbolic arccosine") {setArgumentDefinition(1, new FractionArgument());}
 void AcoshFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(acosh)
 }
-AtanhFunction::AtanhFunction() : Function("Trigonometry", "atanh", 1, "Hyperbolic arctangent") {}
+AtanhFunction::AtanhFunction() : Function("Trigonometry", "atanh", 1, "Hyperbolic arctangent") {setArgumentDefinition(1, new FractionArgument());}
 void AtanhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(atanh)
 }
 LogFunction::LogFunction() : Function("Exponents and Logarithms", "ln", 1, "Natural Logarithm") {
-	setArgumentType(ARGUMENT_TYPE_POSITIVE, 1);
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 }
 void LogFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	FR_FUNCTION(log)
 }
 Log10Function::Log10Function() : Function("Exponents and Logarithms", "log", 1, "Base-10 Logarithm") {
-	setArgumentType(ARGUMENT_TYPE_POSITIVE, 1);
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 }
 void Log10Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	FR_FUNCTION(log10)
 }
 Log2Function::Log2Function() : Function("Exponents and Logarithms", "log2", 1, "Base-2 Logarithm") {
-	setArgumentType(ARGUMENT_TYPE_POSITIVE, 1);
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 }
 void Log2Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	FR_FUNCTION(log2)
@@ -1143,7 +1017,7 @@ void Exp2Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 SqrtFunction::SqrtFunction() : Function("Exponents and Logarithms", "sqrt", 1, "Square Root") {
-	setArgumentType(ARGUMENT_TYPE_NONNEGATIVE, 1);
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, false));
 }
 void SqrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->isFraction()) {
@@ -1158,7 +1032,9 @@ void SqrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		mngr2->unref();		
 	}
 }
-CbrtFunction::CbrtFunction() : Function("Exponents and Logarithms", "cbrt", 1, "Cube Root") {}
+CbrtFunction::CbrtFunction() : Function("Exponents and Logarithms", "cbrt", 1, "Cube Root") {
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, false));
+}
 void CbrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
@@ -1213,7 +1089,7 @@ void HypotFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr2->unref();
 }
 SumFunction::SumFunction() : Function("Statistics", "sum", -1, "Sum") {
-	setArgumentType(ARGUMENT_TYPE_VECTOR, 1);
+	setArgumentDefinition(1, new VectorArgument("", false));
 }
 void SumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	for(unsigned int i = 0; i < vargs.size(); i++) {
@@ -1221,7 +1097,7 @@ void SumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 MeanFunction::MeanFunction() : Function("Statistics", "mean", -1, "Mean") {
-	setArgumentType(ARGUMENT_TYPE_VECTOR, 1);
+	setArgumentDefinition(1, new VectorArgument("", false));
 }
 void MeanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() <= 0)
@@ -1232,7 +1108,7 @@ void MeanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->addInteger(vargs.size(), DIVIDE);	
 }
 MedianFunction::MedianFunction() : Function("Statistics", "median", -1, "Median") {
-	setArgumentType(ARGUMENT_TYPE_VECTOR, 1);
+	setArgumentDefinition(1, new VectorArgument("", false));
 }
 void MedianFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() <= 0)
@@ -1252,21 +1128,20 @@ void MedianFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	delete v;
 }
 PercentileFunction::PercentileFunction() : Function("Statistics", "percentile", 1, "Percentile", "", -1) {
-	setArgumentType(ARGUMENT_TYPE_POSITIVE, 1);
-	setArgumentType(ARGUMENT_TYPE_VECTOR, 2);	
+	FractionArgument *arg = new FractionArgument();
+	Fraction fr;
+	arg->setMin(&fr);
+	arg->setMax(99);
+	arg->setIncludeEqualsMin(false);
+	arg->setIncludeEqualsMax(false);
+	setArgumentDefinition(1, arg);
+	setArgumentDefinition(2, new VectorArgument("", false));
 }
 void PercentileFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() <= 1) {
 		return;
 	}
 	Fraction fr100(100);
-	if(!vargs[0]->isFraction() || !vargs[0]->fraction()->isPositive() || !vargs[0]->fraction()->isLessThan(&fr100)) {
-		Manager *mngr2 = createFunctionManagerFromVArgs(vargs);	
-		mngr->set(mngr2);
-		mngr2->unref();	
-		CALCULATOR->error(true, _("Percentile must be supplied a positive value lower than 100."), NULL);
-		return;
-	}
 	Vector *v = produceVector(vargs);	
 	if(!v->sort()) {
 		Manager *mngr2 = createFunctionManagerFromVArgs(vargs);
@@ -1300,7 +1175,7 @@ void PercentileFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	delete v;
 }
 MinFunction::MinFunction() : Function("Statistics", "min", -1, "Min") {
-	setArgumentType(ARGUMENT_TYPE_VECTOR, 1);
+	setArgumentDefinition(1, new VectorArgument("", false));
 }
 void MinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() <= 0)
@@ -1325,7 +1200,7 @@ void MinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	delete v;
 }
 MaxFunction::MaxFunction() : Function("Statistics", "max", -1, "Max") {
-	setArgumentType(ARGUMENT_TYPE_VECTOR, 1);
+	setArgumentDefinition(1, new VectorArgument("", false));
 }
 void MaxFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() <= 0)
@@ -1350,7 +1225,7 @@ void MaxFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	delete v;
 }
 ModeFunction::ModeFunction() : Function("Statistics", "mode", -1, "Mode") {
-	setArgumentType(ARGUMENT_TYPE_VECTOR, 1);
+	setArgumentDefinition(1, new VectorArgument("", false));
 }
 void ModeFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() <= 0) {
@@ -1386,13 +1261,13 @@ void ModeFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	delete v;
 }
 NumberFunction::NumberFunction() : Function("Statistics", "number", -1, "Number") {
-	setArgumentType(ARGUMENT_TYPE_VECTOR, 1);
+	setArgumentDefinition(1, new VectorArgument("", false));
 }
 void NumberFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs.size(), 1);
 }
 StdDevFunction::StdDevFunction() : Function("Statistics", "stddev", -1, "Standard Deviation") {
-	setArgumentType(ARGUMENT_TYPE_VECTOR, 1);
+	setArgumentDefinition(1, new VectorArgument("", false));
 }
 void StdDevFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() <= 0) {
@@ -1414,7 +1289,7 @@ void StdDevFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(&value);
 }
 StdDevSFunction::StdDevSFunction() : Function("Statistics", "stddevs", -1, "Standard Deviation (random sampling)") {
-	setArgumentType(ARGUMENT_TYPE_VECTOR, 1);
+	setArgumentDefinition(1, new VectorArgument("", false));
 }
 void StdDevSFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() <= 0) {
@@ -1441,49 +1316,41 @@ void RandomFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 
 BASEFunction::BASEFunction() : Function("General", "BASE", 2, "Number Base") {
-	setArgumentType(ARGUMENT_TYPE_TEXT, 1);
-	setArgumentType(ARGUMENT_TYPE_POSITIVE_INTEGER, 2);
+	setArgumentDefinition(1, new TextArgument());
+	IntegerArgument *arg = new IntegerArgument();
+	arg->setMin(2);
+	arg->setMax(36);
+	setArgumentDefinition(2, arg);
 }
 void BASEFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TEST_TEXT(0)
-	if(!vargs[1]->isFraction() || !vargs[1]->fraction()->isInteger() || !vargs[1]->fraction()->isPositive() || vargs[1]->fraction()->isOne() || vargs[1]->fraction()->numerator()->isGreaterThan(36)) {
-		CALCULATOR->error(true, _("Base must be an integer between 2 and 36 for %s()."), name().c_str(), NULL);
-		mngr->set(this, vargs[0], vargs[1], NULL);
-		return;
-	}
 	mngr->set(strtol(vargs[0]->text().c_str(), NULL, vargs[1]->fraction()->numerator()->getInt()), 1);
 }
 BINFunction::BINFunction() : Function("General", "BIN", 1, "Binary") {
-	setArgumentType(ARGUMENT_TYPE_TEXT, 1);
+	setArgumentDefinition(1, new TextArgument());
 }
 void BINFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TEST_TEXT(0)
 	mngr->set(strtol(vargs[0]->text().c_str(), NULL, 2), 1);
 }
 OCTFunction::OCTFunction() : Function("General", "OCT", 1, "Octal") {
-	setArgumentType(ARGUMENT_TYPE_TEXT, 1);
+	setArgumentDefinition(1, new TextArgument());
 }
 void OCTFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TEST_TEXT(0)
 	mngr->set(strtol(vargs[0]->text().c_str(), NULL, 8), 1);
 }
 HEXFunction::HEXFunction() : Function("General", "HEX", 1, "Hexadecimal") {
-	setArgumentType(ARGUMENT_TYPE_TEXT, 1);
+	setArgumentDefinition(1, new TextArgument());
 }
 void HEXFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TEST_TEXT(0)
 	string expr = vargs[0]->text();
-	if(expr.length() >= 2 && expr[0] == '0' && (expr[1] == 'x' || expr[1] == 'X')) {
-	} else {
+	if(!(expr.length() >= 2 && expr[0] == '0' && (expr[1] == 'x' || expr[1] == 'X'))) {
 		expr.insert(0, "0x");
 	}
 	mngr->set(strtold(expr.c_str(), NULL));
 }
 TitleFunction::TitleFunction() : Function("Utilities", "title", 1, "Function Title") {
-	setArgumentType(ARGUMENT_TYPE_FUNCTION, 1);
+	setArgumentDefinition(1, new FunctionArgument());
 }
 void TitleFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TEST_TEXT(0)
 	Function *f = CALCULATOR->getFunction(vargs[0]->text());
 	if(!f) {
 		CALCULATOR->error(true, _("Function %s() does not exist."), vargs[0]->text().c_str(), NULL);

@@ -150,7 +150,14 @@ class Calculator {
 	string getName(string name = "", ExpressionItem *object = NULL, bool force = false, bool always_append = false);
 	string getUnitName(string name = "", Unit *object = NULL, bool force = false, bool always_append = false);	
 	bool load(const char* file_name, bool is_user_defs = true);
-	bool save(const char* file_name);	
+	bool loadGlobalDefinitions();
+	bool loadLocalDefinitions();
+	int loadDefinitions(const char* file_name, bool is_user_defs = true);
+	bool saveDefinitions();	
+	int savePrefixes(const char* file_name, bool save_global = false);	
+	int saveVariables(const char* file_name, bool save_global = false);	
+	int saveUnits(const char* file_name, bool save_global = false);	
+	int saveFunctions(const char* file_name, bool save_global = false);	
 	long double getAngleValue(long double value);
 	Manager *setAngleValue(Manager *mngr);	
 	bool importCSV(const char *file_name, int first_row = 1, bool headers = true, string delimiter = ",", bool to_matrix = false, string name = "", string title = "", string category = "");

@@ -13,6 +13,7 @@
 #define BIT_EXP10		9
 
 #include "Integer.h"
+#include "util.h"
 #include <unistd.h>
 #include <sstream>
 
@@ -33,6 +34,15 @@ Integer::Integer(long int value) {
 #endif
 #endif
 	set(value);
+}
+Integer::Integer(string str) {
+#ifdef HAVE_LIBCLN
+#else
+#ifdef HAVE_LIBGMP
+	mpz_init(integ);
+#endif
+#endif
+	set(str);
 }
 Integer::Integer(const Integer *integer) {
 #ifdef HAVE_LIBCLN
@@ -162,6 +172,42 @@ void Integer::set(const Integer *integer) {
 #endif
 #endif
 }
+bool Integer::set(string str) {
+	remove_blank_ends(str);
+	bool numbers_started = false, minus = false;
+	for(int index = 0; index < str.size(); index++) {
+		if(str[index] >= '0' && str[index] <= '9') {
+			multiply(10);
+			add(str[index] - '0');
+			numbers_started = true;
+		} else if(str[index] == 'E') {
+			index++;
+			numbers_started = false;
+			bool exp_minus = false;
+			Integer exp;
+			while(index < str.size()) {
+				if(str[index] >= '0' && str[index] <= '9') {				
+					exp.multiply(10);
+					exp.add(str[index] - '0');
+					numbers_started = true;
+				} else if(!numbers_started && str[index] == '-') {
+					exp_minus = !exp_minus;
+				}
+				index++;
+			}
+			if(!exp_minus) {
+				exp10(&exp);
+			}
+			break;
+		} else if(str[index] == '.') {
+			break;
+		} else if(!numbers_started && str[index] == '-') {
+			minus = !minus;
+		}
+	}
+	if(minus) setNegative(!isNegative());
+}
+
 int Integer::compare(const Integer *integer) const {
 #ifdef HAVE_LIBCLN
 	return cln::compare(integer->getCL_I(), integ);
@@ -992,6 +1038,10 @@ void Integer::exp10(long int value) {
 	multiply(&exp10);
 }
 void Integer::pow(const Integer *exp) {
+	if(exp->isNegative()) {
+		//illegal instruction
+		return;
+	}	
 #ifdef HAVE_LIBCLN
 	if(exp->isZero()) {
 		set(1);
@@ -1014,6 +1064,10 @@ void Integer::pow(const Integer *exp) {
 #endif
 }
 void Integer::pow(long int exp) {
+	if(exp < 0) {
+		//illegal instruction
+		return;
+	}
 #ifdef HAVE_LIBCLN
 	if(exp == 0) {
 		set(1);

@@ -73,16 +73,12 @@ int main (int argc, char **argv) {
 	mngr = new Manager();
 
 	//load global definitions
-	gstr = g_build_filename(PACKAGE_DATA_DIR, PACKAGE, "qalculate.cfg", NULL);
-	if(load_global_defs && !CALCULATOR->load(gstr, false)) {
-		g_print(_("%s not found!\n"), gstr);
+	if(load_global_defs && !CALCULATOR->loadGlobalDefinitions()) {
+		g_print(_("Failed to load global definitions!\n"));
 	}
-	g_free(gstr);
 
 	//load local definitions
-	gstr = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate.cfg", NULL);
-	CALCULATOR->load(gstr, true);
-	g_free(gstr);
+	CALCULATOR->loadLocalDefinitions();
 
 	//get ans variable objects or create if they do not exist
 	vans = CALCULATOR->getVariable(_("ans"));

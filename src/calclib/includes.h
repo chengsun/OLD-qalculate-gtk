@@ -20,6 +20,7 @@ class Calculator;
 class Manager;
 class Unit;
 class Variable;
+class DynamicVariable;
 class ExpressionItem;
 class Function;
 class Prefix;
@@ -35,6 +36,7 @@ class UserFunction;
 class EqItem;
 class EqNumber;
 class EqContainer;
+class Argument;
 
 enum {
 	TYPE_VARIABLE,

@@ -2,9 +2,6 @@
 # data/Makefile.am for qalculate
 #
 
-config_DATA = qalculate.cfg
-configdir = $(datadir)/$(PACKAGE)
-
 glade_DATA = qalculate.glade
 gladedir = $(datadir)/$(PACKAGE)/glade
 
@@ -20,7 +17,6 @@ applnk_DATA = $(desktop_DATA)
 applnkdir = $(datadir)/applnk/Utilities
 
 EXTRA_DIST = \
-	$(config_DATA)		\
 	$(desktop_IN_FILES)	\
 	$(glade_DATA)
 
