@@ -193,6 +193,9 @@ typedef enum {
 #define	SIGN_LESS_OR_EQUAL		"≤"
 #define	SIGN_GREATER_OR_EQUAL		"≥"
 #define	SIGN_NOT_EQUAL			"≠"
+#define SIGN_CAPITAL_SIGMA		"Σ"
+#define SIGN_CAPITAL_PI			"Π"
+#define SIGN_CAPITAL_OMEGA		"Ω"
 
 #define ID_WRAP_LEFT_CH		'{'
 #define ID_WRAP_RIGHT_CH	'}'

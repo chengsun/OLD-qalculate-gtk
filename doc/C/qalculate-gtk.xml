@@ -946,6 +946,12 @@ The argument can be restricted by further conditions. For example that a number 
 Here the main function categories and some of their members are described, to give an overview of available functions. The right place for a complete list and information about separate functions is however in the function manager.
 <variablelist>
 <varlistentry>
+<term>Algebra</term>
+<listitem><para>
+Contains <command>sum()</command> and <command>productive()</command>, which corresponds to the sum and product signs.
+</para></listitem>
+</varlistentry>
+<varlistentry>
 <term>Calculus</term>
 <listitem><para>
 Includes <command>diff()</command> which calculates the derivative of an expression with optional arguments <quote>with respect to</quote> (default x) and <quote>order</quote> (default 1), <command>integrate()</command> which is the former reversed, and <command>solve()</command> which solves an equation (ex. <quote>solve(x * 2 = 8)</quote> returns <quote>4</quote> meaning that x equals 4). The last two are only available if Qalculate! was installed with Giac support. There is also a generic Giac function, which passes a text argument directly to Giac.
@@ -954,7 +960,7 @@ Includes <command>diff()</command> which calculates the derivative of an express
 <varlistentry>
 <term>Combinatorics</term>
 <listitem><para>
-Contains <command>perm()</command> for permutations, <command>comb()</command> for combinations, and <command>factorial()</command>.
+Contains functions such as <command>perm()</command> for permutations, <command>comb()</command> for combinations, and <command>factorial()</command>.
 </para></listitem>
 </varlistentry>
 <varlistentry>

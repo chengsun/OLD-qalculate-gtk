@@ -2826,6 +2826,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 						else if(unit()->name() == "oF") str += SIGN_POWER_0 "F";
 						else if(unit()->name() == "oR") str += SIGN_POWER_0 "R";
 						else if(unit()->name() == "deg") str += SIGN_POWER_0;
+						else if(unit()->name() == "ohm") str += SIGN_CAPITAL_OMEGA;
 						else str += unit()->name();
 					} else {
 						str += unit()->name();
@@ -3604,11 +3605,22 @@ Vector *Manager::generateVector(string x_var, Vector *x_vector) {
 }
 
 bool Manager::contains(Manager *mngr) const {
-	if(this->equals(mngr)) {
+	if(equals(mngr)) {
 		return true;
 	}
 	for(unsigned int i = 0; i < mngrs.size(); i++) {
 		if(mngrs[i]->contains(mngr)) {
+			return true;
+		}
+	}
+	return false;
+}
+bool Manager::containsType(int mtype) const {
+	if(type() == mtype) {
+		return true;
+	}
+	for(unsigned int i = 0; i < mngrs.size(); i++) {
+		if(mngrs[i]->containsType(mtype)) {
 			return true;
 		}
 	}

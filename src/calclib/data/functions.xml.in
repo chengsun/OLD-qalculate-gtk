@@ -1,31 +1,249 @@
 <?xml version="1.0"?>
 <QALCULATE version="0.3">
-  <builtin_function name="zeta">
-    <_title>Riemann Zeta</_title>
-    <argument index="1">
-      <_title>Integral point</_title>
-    </argument>
-  </builtin_function>
-  <function name="perm">
-    <_title>Permutations</_title>
-    <expression>\x!/(\x-\y)!</expression>
-    <argument type="free" index="1">
-      <_title>Objects</_title>
-    </argument>
-    <argument type="free" index="2">
-      <_title>Size</_title>
-    </argument>
-  </function>
-  <function name="comb">
-    <_title>Combinations</_title>
-    <expression>\x!/(\y!*(\x-\y)!)</expression>
-    <argument type="free" index="1">
-      <_title>Objects</_title>
-    </argument>
-    <argument type="free" index="2">
-      <_title>Size</_title>
-    </argument>
-  </function>
+  <category>
+    <_title>Algebra</_title>
+    <builtin_function name="sum">
+      <_title>Sum</_title>
+      <argument index="1">
+        <_title>Lower limit (i)</_title>
+      </argument>
+      <argument index="2">
+        <_title>Upper limit (n)</_title>
+      </argument>
+      <argument index="3">
+        <_title>Term expression</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="product">
+      <_title>Product</_title>
+      <argument index="1">
+        <_title>Lower limit (i)</_title>
+      </argument>
+      <argument index="2">
+        <_title>Upper limit (n)</_title>
+      </argument>
+      <argument index="3">
+        <_title>Factor expression</_title>
+      </argument>
+    </builtin_function>
+  </category>
+  <category>
+    <_title>Number Theory</_title>
+    <category>
+      <_title>Arithmetics</_title>
+      <builtin_function name="mod">
+        <_title>Reminder (mod)</_title>
+        <argument index="1">
+          <_title>Numerator</_title>
+        </argument>
+        <argument index="2">
+          <_title>Denominator</_title>
+        </argument>
+      </builtin_function>
+      <builtin_function name="rem">
+        <_title>Reminder (rem)</_title>
+        <argument index="1">
+          <_title>Numerator</_title>
+        </argument>
+        <argument index="2">
+          <_title>Denominator</_title>
+        </argument>
+      </builtin_function>
+      <function name="neg">
+        <_title>Negate</_title>
+          <expression>-\x</expression>
+        <argument index="1">
+          <_title>Value</_title>
+        </argument>
+      </function>
+      <function name="inv">
+        <_title>Reciprocal</_title>
+        <expression>\x^-1</expression>
+        <argument index="1">
+          <_title>Value</_title>
+        </argument>
+      </function>
+      <function name="multiply">
+        <_title>Multiply</_title>
+        <expression>csum(1,-1,1,\\y*\\x,\v)</expression>
+        <argument index="1">
+          <_title>Factors</_title>
+        </argument>
+      </function>
+      <function name="add">
+        <_title>Add</_title>
+        <expression>total(\v)</expression>
+        <argument index="1">
+          <_title>Terms</_title>
+        </argument>
+      </function>
+      <function name="subtract">
+        <_title>Subtract</_title>
+        <expression>csum(1,-1,0,\\y-\\x,\v)</expression>
+        <argument index="1">
+          <_title>Terms</_title>
+        </argument>
+      </function>
+      <function name="divide">
+        <_title>Divide</_title>
+        <expression>\x/\y</expression>
+        <argument index="1">
+          <_title>Numerator</_title>
+        </argument>
+        <argument index="2">
+          <_title>Denominator</_title>
+        </argument>
+      </function>
+      <function name="raise">
+        <_title>Raise</_title>
+        <expression>\x^\y</expression>
+        <argument index="1">
+          <_title>Base</_title>
+        </argument>
+        <argument index="2">
+          <_title>Exponent</_title>
+        </argument>
+      </function>
+    </category>
+    <category>
+      <_title>Number Bases</_title>
+      <builtin_function name="BASE">
+        <_title>Number base</_title>
+        <_description>Returns a decimal integer from a number of specified base between 2 and 36</_description>
+        <argument index="1">
+          <_title>Number</_title>
+        </argument>
+        <argument index="2">
+          <_title>Base</_title>
+        </argument>
+      </builtin_function>
+      <builtin_function name="BIN">
+        <_title>Binary</_title>
+        <_description>Returns a decimal integer from a binary number</_description>
+        <argument index="1">
+          <_title>Binary number</_title>
+        </argument>
+      </builtin_function>
+      <builtin_function name="OCT">
+        <_title>Octal</_title>
+        <_description>Returns a decimal integer from an octal number</_description>
+        <argument index="1">
+          <_title>Octal number</_title>
+        </argument>
+      </builtin_function>
+      <builtin_function name="HEX">
+        <_title>Hexadecimal</_title>
+        <_description>Returns a decimal value from a hexadecimal number</_description>
+        <argument index="1">
+          <_title>Hexadecimal number</_title>
+        </argument>
+      </builtin_function>
+    </category>
+    <category>
+      <_title>Rounding</_title>
+      <builtin_function name="ceil">
+        <_title>Round upwards</_title>
+        <argument index="1">
+            <_title>Value</_title>
+        </argument>
+      </builtin_function>
+      <builtin_function name="floor">
+        <_title>Round downwards</_title>
+        <argument index="1">
+            <_title>Value</_title>
+        </argument>
+      </builtin_function>
+      <builtin_function name="trunc">
+        <_title>Round towards zero</_title>
+        <argument index="1">
+          <_title>Value</_title>
+        </argument>
+      </builtin_function>
+      <builtin_function name="round">
+        <_title>Round</_title>
+        <argument index="1">
+          <_title>Value</_title>
+        </argument>
+      </builtin_function>
+      <builtin_function name="frac">
+        <_title>Extract fractional part</_title>
+        <argument index="1">
+          <_title>Value</_title>
+        </argument>
+      </builtin_function>
+      <builtin_function name="int">
+        <_title>Extract integer part</_title>
+        <argument index="1">
+          <_title>Value</_title>
+        </argument>
+      </builtin_function>
+    </category>
+    <builtin_function name="gcd">
+      <_title>Greatest common divisor</_title>
+      <argument index="1">
+        <_title>1st Number</_title>
+      </argument>
+      <argument index="2">
+        <_title>2nd Number</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="abs">
+      <_title>Absolute value</_title>
+      <argument index="1">
+          <_title>Value</_title>
+      </argument>
+    </builtin_function>
+  </category>  
+  <category>
+    <_title>Combinatorics</_title>
+    <function name="binomial">
+      <_title>Binomial coefficient</_title>
+      <expression>factorial(\x)/(factorial(\x-\y)*factorial(\y))</expression>
+      <argument type="integer" index="1">
+        <_title>Exponent</_title>
+	<min>1</min>
+      </argument>
+      <argument type="integer" index="2">
+        <_title>Index</_title>
+	<min>0</min>
+      </argument>
+      <condition>\x >= \y</condition>
+    </function>
+    <builtin_function name="factorial">
+      <_title>Factorial</_title>
+      <argument index="1">
+          <_title>Value</_title>
+      </argument>
+    </builtin_function>    
+    <function name="perm">
+      <_title>Permutations</_title>
+      <expression>\x!/(\x-\y)!</expression>
+      <argument type="free" index="1">
+        <_title>Objects</_title>
+      </argument>
+      <argument type="free" index="2">
+        <_title>Size</_title>
+      </argument>
+    </function>
+    <function name="comb">
+      <_title>Combinations</_title>
+      <expression>\x!/(\y!*(\x-\y)!)</expression>
+      <argument type="free" index="1">
+        <_title>Objects</_title>
+      </argument>
+      <argument type="free" index="2">
+        <_title>Size</_title>
+      </argument>
+    </function>
+    <function name="derangements">
+      <_title>Derangements</_title>
+      <expression>factorial(\x)*sum(0,\x,(-1^\\i)/factorial(\\i))</expression>
+      <argument type="integer" index="1">
+        <_title>Number of elements</_title>
+        <min>1</min>
+      </argument>
+    </function>
+  </category>
   <category>
     <_title>Logical</_title>
     <builtin_function name="for">
@@ -434,107 +652,6 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
 
 Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/360.</_description>
     </builtin_function>
-  </category>
-  <category>
-    <_title>Arithmetics</_title>
-    <builtin_function name="gcd">
-      <_title>Greatest common divisor</_title>
-      <argument index="1">
-        <_title>1st Number</_title>
-      </argument>
-      <argument index="2">
-        <_title>2nd Number</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="binomial">
-      <_title>Binomial coefficient</_title>
-      <argument index="1">
-          <_title>Exponent</_title>
-      </argument>
-      <argument index="2">
-          <_title>Index</_title>
-      </argument>
-    </builtin_function>    
-    <builtin_function name="factorial">
-      <_title>Factorial</_title>
-      <argument index="1">
-          <_title>Value</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="abs">
-      <_title>Absolute value</_title>
-      <argument index="1">
-          <_title>Value</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="ceil">
-      <_title>Round upwards</_title>
-      <argument index="1">
-          <_title>Value</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="floor">
-      <_title>Round downwards</_title>
-      <argument index="1">
-          <_title>Value</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="trunc">
-      <_title>Round towards zero</_title>
-      <argument index="1">
-          <_title>Value</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="round">
-      <_title>Round</_title>
-      <argument index="1">
-          <_title>Value</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="frac">
-      <_title>Extract fractional part</_title>
-      <argument index="1">
-          <_title>Value</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="int">
-      <_title>Extract integer part</_title>
-      <argument index="1">
-          <_title>Value</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="mod">
-      <_title>Reminder (mod)</_title>
-      <argument index="1">
-        <_title>Numerator</_title>
-      </argument>
-      <argument index="2">
-        <_title>Denominator</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="rem">
-      <_title>Reminder (rem)</_title>
-      <argument index="1">
-        <_title>Numerator</_title>
-      </argument>
-      <argument index="2">
-        <_title>Denominator</_title>
-      </argument>
-    </builtin_function>
-    <function name="neg">
-      <_title>Negate</_title>
-      <expression>-\x</expression>
-      <argument index="1">
-        <_title>Value</_title>
-      </argument>
-    </function>
-    <function name="inv">
-      <_title>Inverse</_title>
-      <expression>\x^-1</expression>
-      <argument index="1">
-        <_title>Value</_title>
-      </argument>
-    </function>    
   </category>
   <category>
     <_title>Trigonometry</_title>
@@ -1109,413 +1226,403 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
   </category>
   <category>
     <_title>Statistics</_title>
-    <function name="mean">
-      <_title>Mean</_title>
-      <expression>sum(\v)/elements(\v)</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="harmmean">
-      <_title>Harmonic mean</_title>
-      <expression>elements(\v)/csum(1,-1,0,&quot;\\y+1/\\x&quot;,\v)</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="geomean">
-      <_title>Geometric mean</_title>
-      <expression>abs(csum(1,-1,1,&quot;\\y*\\x&quot;,\v)^(1/elements(\v)))</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="trimmean">
-      <_title>Trimmed mean</_title>
-      <expression>mean(limits(round(elements(\v)/100*\x),round(elements(\v)/100*(100-\x)),sort(\v)))</expression>
-      <argument type="free" index="1">
-        <_title>Trimmed percentage</_title>
-      </argument>
-      <argument type="vector" index="2">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="winsormean">
-      <_title>Winsorized mean</_title>
-      <expression>mean(limits(1,round(elements(\v)/100*\x),sort(\v)),limits(round(elements(\v)/100*\x),round(elements(\v)/100*(100-\x)),sort(\v)),limits(round(elements(\v)/100*(100-\x)),-1,sort(\v)))</expression>
-      <argument type="free" index="1">
-        <_title>Trimmed percentage</_title>
-      </argument>
-      <argument type="vector" index="2">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>  
-    <function name="weighmean">
-      <_title>Weighted mean</_title>
-      <expression>csum(1,min(elements(\x),elements(\v)),0,&quot;\\y+\\x*\\x_(\\i+elements(\x))&quot;,\x,\v)/sum(limits(1,min(elements(\x),elements(\v)),\v))</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-      <argument type="vector" index="2">
-        <_title>Weights</_title>
-        <test>false</test>
-      </argument>
-    </function>  
-    <builtin_function name="sum">
-      <_title>Sum</_title>
-      <argument index="1">
-        <_title>Vector</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="percentile">
-      <_title>Percentile</_title>
-      <argument index="1">
-        <_title>Percentile (%)</_title>
-      </argument>
-      <argument index="2">
-        <_title>Vector</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="min">
-      <_title>Min</_title>
-      <_description>Returns the lowest value.</_description>
-      <argument index="1">
-        <_title>Vector</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="max">
-      <_title>Max</_title>
-      <_description>Returns the highest value.</_description>
-      <argument index="1">
-        <_title>Vector</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="mode">
-      <_title>Mode</_title>
-      <_description>Returns the most frequently occuring value.</_description>
-      <argument index="1">
-        <_title>Vector</_title>
-      </argument>
-    </builtin_function>
-    <function name="range">
-      <_title>Range</_title>
-      <expression>max(\v)-min(\v)</expression>
-      <_description>Calculates the difference between the min and max value.</_description>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="median">
-      <_title>Median</_title>
-      <expression>percentile(50,\v)</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="quartile">
-      <_title>Quartile</_title>
-      <expression>percentile(25*\x,\v)</expression>
-      <argument type="integer" index="1">
+    <category>
+      <_title>Means</_title>
+      <function name="mean">
+        <_title>Mean</_title>
+        <expression>total(\v)/elements(\v)</expression>
+        <argument type="vector" index="1">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="harmmean">
+        <_title>Harmonic mean</_title>
+        <expression>elements(\v)/csum(1,-1,0,&quot;\\y+1/\\x&quot;,\v)</expression>
+        <argument type="vector" index="1">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="geomean">
+        <_title>Geometric mean</_title>
+        <expression>abs(csum(1,-1,1,&quot;\\y*\\x&quot;,\v)^(1/elements(\v)))</expression>
+        <argument type="vector" index="1">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="trimmean">
+        <_title>Trimmed mean</_title>
+        <expression>mean(limits(round(elements(\v)/100*\x),round(elements(\v)/100*(100-\x)),sort(\v)))</expression>
+        <argument type="free" index="1">
+          <_title>Trimmed percentage</_title>
+        </argument>
+        <argument type="vector" index="2">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="winsormean">
+        <_title>Winsorized mean</_title>
+        <expression>mean(limits(1,round(elements(\v)/100*\x),sort(\v)),limits(round(elements(\v)/100*\x),round(elements(\v)/100*(100-\x)),sort(\v)),limits(round(elements(\v)/100*(100-\x)),-1,sort(\v)))</expression>
+        <argument type="free" index="1">
+          <_title>Trimmed percentage</_title>
+        </argument>
+        <argument type="vector" index="2">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>  
+      <function name="weighmean">
+        <_title>Weighted mean</_title>
+        <expression>csum(1,min(elements(\x),elements(\v)),0,&quot;\\y+\\x*\\x_(\\i+elements(\x))&quot;,\x,\v)/total(limits(1,min(elements(\x),elements(\v)),\v))</expression>
+        <argument type="vector" index="1">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+        <argument type="vector" index="2">
+          <_title>Weights</_title>
+          <test>false</test>
+        </argument>
+      </function>  
+      <function name="rms">
+        <_title>Quadratic mean (RMS)</_title>
+        <expression>abs((csum(1,-1,0,&quot;\\y+\\x^2&quot;,\v)/elements(\v))^(1/2))</expression>
+        <argument type="vector" index="1">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+    </category>
+    <category>
+      <_title>Descriptive Statistics</_title>
+      <builtin_function name="total">
+        <_title>Sum (total)</_title>
+        <argument index="1">
+          <_title>Vector</_title>
+        </argument>
+      </builtin_function>
+      <builtin_function name="percentile">
+        <_title>Percentile</_title>
+        <argument index="1">
+          <_title>Percentile (%)</_title>
+        </argument>
+        <argument index="2">
+          <_title>Vector</_title>
+        </argument>
+      </builtin_function>
+      <builtin_function name="min">
+        <_title>Min</_title>
+        <_description>Returns the lowest value.</_description>
+        <argument index="1">
+          <_title>Vector</_title>
+        </argument>
+      </builtin_function>
+      <builtin_function name="max">
+        <_title>Max</_title>
+        <_description>Returns the highest value.</_description>
+        <argument index="1">
+          <_title>Vector</_title>
+        </argument>
+      </builtin_function>
+      <builtin_function name="mode">
+        <_title>Mode</_title>
+        <_description>Returns the most frequently occuring value.</_description>
+        <argument index="1">
+          <_title>Vector</_title>
+        </argument>
+      </builtin_function>
+      <function name="range">
+        <_title>Range</_title>
+        <expression>max(\v)-min(\v)</expression>
+        <_description>Calculates the difference between the min and max value.</_description>
+        <argument type="vector" index="1">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="median">
+        <_title>Median</_title>
+        <expression>percentile(50,\v)</expression>
+        <argument type="vector" index="1">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="quartile">
         <_title>Quartile</_title>
-        <min>1</min>
-      </argument>
-      <argument type="vector" index="2">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="decile">
-      <_title>Decile</_title>
-      <expression>percentile(10*\x,\v)</expression>
-      <argument type="number" index="1">
+        <expression>percentile(25*\x,\v)</expression>
+        <argument type="integer" index="1">
+          <_title>Quartile</_title>
+          <min>1</min>
+        </argument>
+        <argument type="vector" index="2">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="decile">
         <_title>Decile</_title>
-        <min include_equals="true">0</min>
-      </argument>
-      <argument type="vector" index="2">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="iqr">
-      <_title>Interquartile range</_title>
-      <_description>Calculates the difference between the first and third quartile.</_description>
-      <expression>quartile(3,\v)-quartile(1,\v)</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="rms">
-      <_title>Quadratic mean (RMS)</_title>
-      <expression>abs((csum(1,-1,0,&quot;\\y+\\x^2&quot;,\v)/elements(\v))^(1/2))</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="number">
-      <_title>Number</_title>
-      <expression>elements(\v)</expression>
-      <_description>Returns the number of samples.</_description>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="stdevp">
-      <_title>Standard deviation (entire population)</_title>
-      <expression>abs(varp(\v)^(1/2))</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="stdev">
-      <_title>Standard deviation (random sampling)</_title>
-      <expression>abs(var(\v)^(1/2))</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="varp">
-      <_title>Variance (entire population)</_title>
-      <expression>csum(1,-1,0,&quot;\\y+(\\x-mean(\v))^2&quot;,\v)/elements(\v)</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="var">
-      <_title>Variance (random sampling)</_title>
-      <expression>csum(1,-1,0,&quot;\\y+(\\x-mean(\v))^2&quot;,\v)/(elements(\v)-1)</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="stderr">
-      <_title>Standard error</_title>
-      <expression>abs((var(\v)/elements(\v))^(1/2))</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="meandev">
-      <_title>Mean deviation</_title>
-      <expression>csum(1,-1,0,&quot;\\y+abs(\\x-mean(\v))&quot;,\v)/elements(\v)</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="durbinwatson" active="false">
-      <_title>Durbin-Watson</_title>
-      <expression precise="false">csum(2,-1,0,&quot;\\y+(\\x-\\x_(\\i-1))^2&quot;,0,\v)/csum(1,-1,0,&quot;\\y+\\x^2&quot;,\v)</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="pearson">
-      <_title>Pearson correlation</_title>
-      <expression>(\x*\v-sum(\x)*sum(\v)/elements(\x))/abs(((\x*\x-(sum(\x)^2)/elements(\x))*(\v*\v-(sum(\v)^2)/elements(\v)))^(1/2))</expression>
-      <argument type="vector" index="1">
-        <_title>Data 1</_title>
-        <test>false</test>
-      </argument>
-      <argument type="vector" index="2">
-        <_title>Data 2</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="spearman">
-      <_title>Spearman's Rho</_title>
-      <expression>pearson(rank(\x),rank(\v))</expression>
-      <argument type="vector" index="1">
-        <_title>Data 1</_title>
-        <test>false</test>
-      </argument>
-      <argument type="vector" index="2">
-        <_title>Data 2</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="covar">
-      <_title>Covariance</_title>
-      <expression>csum(1,min(elements(\x),elements(\v)),0,&quot;\\y+(\\x-mean(\x))*(\\x_(\\i+elements(\x))-mean(\v))&quot;,\x,\v)/min(elements(\x),elements(\v))</expression>
-      <argument type="vector" index="1">
-        <_title>Data 1</_title>
-        <test>false</test>
-      </argument>
-      <argument type="vector" index="2">
-        <_title>Data 2</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="cor">
-      <_title>Statistical correlation</_title>
-      <expression>covar(\x,\v)/(stdev(\x)*stdev(\v))</expression>
-      <argument type="vector" index="1">
-        <_title>Data 1</_title>
-        <test>false</test>
-      </argument>
-      <argument type="vector" index="2">
-        <_title>Data 2</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="correl">
-      <_title>Correlation coefficient</_title>
-      <expression>pearson(\x,\v)</expression>
-      <argument type="vector" index="1">
-        <_title>Data 1</_title>
-        <test>false</test>
-      </argument>
-      <argument type="vector" index="2">
-        <_title>Data 2</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="poolvar">
-      <_title>Pooled variance</_title>
-      <expression>(csum(1,-1,0,&quot;\\y+(\\x-mean(\x))^2&quot;,\x)+csum(1,-1,0,&quot;\\y+(\\x-mean(\v))^2&quot;,\v))/(elements(\x)+elements(\v)-2)</expression>
-      <argument type="vector" index="1">
-        <_title>Data 1</_title>
-        <test>false</test>
-      </argument>
-      <argument type="vector" index="2">
-        <_title>Data 2</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="ttest">
-      <_title>Unpaired t-test</_title>
-      <expression>(mean(\x)-mean(\v))/abs(((poolvar(\x,\v)^2)/elements(\x)+(poolvar(\x,\v)^2)/elements(\v))^(1/2))</expression>
-      <argument type="vector" index="1">
-        <_title>Data 1</_title>
-        <test>false</test>
-      </argument>
-      <argument type="vector" index="2">
-        <_title>Data 2</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="pttest">
-      <_title>Paired t-test</_title>
-      <expression>mean(\x-\v)/stderr(\x-\v)</expression>
-      <argument type="vector" index="1">
-        <_title>Data 1</_title>
-        <test>false</test>
-      </argument>
-      <argument type="vector" index="2">
-        <_title>Data 2</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="rayleigh">
-      <_title>Rayleigh distribution</_title>
-      <_description>Returns the probability density p(x) at x for a Rayleigh distribution with scale parameter sigma. (from Gnumeric)</_description>
-      <expression>if(\x &lt; 0,&quot;0&quot;,&quot;(\x/\y)/\y*exp(-(\x/\y)*(\x/\y)/2)&quot;)</expression>
-      <argument type="free" index="1">
-        <_title>X</_title>
-      </argument>
-      <argument type="number" index="2">
-        <_title>Sigma</_title>
-        <min include_equals="true">0</min>
-      </argument>
-    </function>
-    <function name="rayleightail">
-      <_title>Rayleigh tail distribution</_title>
-      <_description>Returns the probability density p(x) at x for a Rayleigh tail distribution with scale parameter sigma and a lower limit. (from Gnumeric)</_description>
-      <expression>if(\x &lt; \y,&quot;0&quot;,&quot;(\x/\z)/\z*exp(((\y/\z)+(\x/\z))*((\y/\z)-(\x/\z))/2)&quot;)</expression>
-      <argument type="free" index="1">
-        <_title>X</_title>
-      </argument>
-      <argument type="free" index="2">
-        <_title>Lower limit</_title>
-      </argument>
-      <argument type="number" index="3">
-        <_title>Sigma</_title>
-        <min include_equals="true">0</min>
-      </argument>
-    </function>
-    <function name="pareto">
-      <_title>Pareto distribution</_title>
-      <_description>Returns the probability density p(x) at x for a Pareto distribution with exponent and scale. (from Gnumeric)</_description>
-      <expression>if(\x &lt; \z,&quot;0&quot;,&quot;(\y/\z)/(\x/\z)^(\y+1)&quot;)</expression>
-      <argument type="free" index="1">
-        <_title>X</_title>
-      </argument>
-      <argument type="number" index="2">
-        <_title>Exponent</_title>
-        <min include_equals="true">0</min>
-      </argument>
-      <argument type="number" index="3">
-        <_title>Scale</_title>
-        <min include_equals="true">0</min>
-      </argument>
-    </function>
-    <function name="logistic">
-      <_title>Logistic distribution</_title>
-      <_description>Returns the probability density p(x) at x for a logistic distribution with scale parameter. (from Gnumeric)</_description>
-      <expression>exp(-abs(\x)/\y)/(abs(\y)*(1+exp(-abs(\x)/\y))^2)</expression>
-      <argument type="free" index="1">
-        <_title>X</_title>
-      </argument>
-      <argument type="number" index="2">
-        <_title>Scale</_title>
-        <min include_equals="true">0</min>
-      </argument>
-    </function>
-  </category>
-  <category>
-    <_title>General</_title>
+        <expression>percentile(10*\x,\v)</expression>
+        <argument type="number" index="1">
+          <_title>Decile</_title>
+          <min include_equals="true">0</min>
+        </argument>
+        <argument type="vector" index="2">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="iqr">
+        <_title>Interquartile range</_title>
+        <_description>Calculates the difference between the first and third quartile.</_description>
+        <expression>quartile(3,\v)-quartile(1,\v)</expression>
+        <argument type="vector" index="1">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="number">
+        <_title>Number</_title>
+        <expression>elements(\v)</expression>
+        <_description>Returns the number of samples.</_description>
+        <argument type="vector" index="1">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+    </category>
+    <category>
+      <_title>Moments</_title>
+      <function name="stdevp">
+        <_title>Standard deviation (entire population)</_title>
+        <expression>abs(varp(\v)^(1/2))</expression>
+        <argument type="vector" index="1">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="stdev">
+        <_title>Standard deviation (random sampling)</_title>
+        <expression>abs(var(\v)^(1/2))</expression>
+        <argument type="vector" index="1">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="varp">
+        <_title>Variance (entire population)</_title>
+        <expression>csum(1,-1,0,&quot;\\y+(\\x-mean(\v))^2&quot;,\v)/elements(\v)</expression>
+        <argument type="vector" index="1">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="var">
+        <_title>Variance (random sampling)</_title>
+        <expression>csum(1,-1,0,&quot;\\y+(\\x-mean(\v))^2&quot;,\v)/(elements(\v)-1)</expression>
+        <argument type="vector" index="1">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="stderr">
+        <_title>Standard error</_title>
+        <expression>abs((var(\v)/elements(\v))^(1/2))</expression>
+        <argument type="vector" index="1">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="meandev">
+        <_title>Mean deviation</_title>
+        <expression>csum(1,-1,0,&quot;\\y+abs(\\x-mean(\v))&quot;,\v)/elements(\v)</expression>
+        <argument type="vector" index="1">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="covar">
+        <_title>Covariance</_title>
+        <expression>csum(1,min(elements(\x),elements(\v)),0,&quot;\\y+(\\x-mean(\x))*(\\x_(\\i+elements(\x))-mean(\v))&quot;,\x,\v)/min(elements(\x),elements(\v))</expression>
+        <argument type="vector" index="1">
+          <_title>Data 1</_title>
+          <test>false</test>
+        </argument>
+        <argument type="vector" index="2">
+          <_title>Data 2</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="poolvar">
+        <_title>Pooled variance</_title>
+        <expression>(csum(1,-1,0,&quot;\\y+(\\x-mean(\x))^2&quot;,\x)+csum(1,-1,0,&quot;\\y+(\\x-mean(\v))^2&quot;,\v))/(elements(\x)+elements(\v)-2)</expression>
+        <argument type="vector" index="1">
+          <_title>Data 1</_title>
+          <test>false</test>
+        </argument>
+        <argument type="vector" index="2">
+          <_title>Data 2</_title>
+          <test>false</test>
+        </argument>
+      </function>
+    </category>
+    <category>
+      <_title>Regression</_title>
+      <function name="cor">
+        <_title>Statistical correlation</_title>
+        <expression>covar(\x,\v)/(stdev(\x)*stdev(\v))</expression>
+        <argument type="vector" index="1">
+          <_title>Data 1</_title>
+          <test>false</test>
+        </argument>
+        <argument type="vector" index="2">
+          <_title>Data 2</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="correl">
+        <_title>Correlation coefficient</_title>
+        <expression>pearson(\x,\v)</expression>
+        <argument type="vector" index="1">
+          <_title>Data 1</_title>
+          <test>false</test>
+        </argument>
+        <argument type="vector" index="2">
+          <_title>Data 2</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="pearson">
+        <_title>Pearson correlation</_title>
+        <expression>(\x*\v-sum(\x)*sum(\v)/elements(\x))/abs(((\x*\x-(sum(\x)^2)/elements(\x))*(\v*\v-(sum(\v)^2)/elements(\v)))^(1/2))</expression>
+        <argument type="vector" index="1">
+          <_title>Data 1</_title>
+          <test>false</test>
+        </argument>
+        <argument type="vector" index="2">
+          <_title>Data 2</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="spearman">
+        <_title>Spearman's Rho</_title>
+        <expression>pearson(rank(\x),rank(\v))</expression>
+        <argument type="vector" index="1">
+          <_title>Data 1</_title>
+          <test>false</test>
+        </argument>
+        <argument type="vector" index="2">
+          <_title>Data 2</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="durbinwatson" active="false">
+        <_title>Durbin-Watson</_title>
+        <expression precise="false">csum(2,-1,0,&quot;\\y+(\\x-\\x_(\\i-1))^2&quot;,0,\v)/csum(1,-1,0,&quot;\\y+\\x^2&quot;,\v)</expression>
+        <argument type="vector" index="1">
+          <_title>Data</_title>
+          <test>false</test>
+        </argument>
+      </function>
+    </category>
+    <category>
+      <_title>Statistical Tests</_title>
+      <function name="ttest">
+        <_title>Unpaired t-test</_title>
+        <expression>(mean(\x)-mean(\v))/abs(((poolvar(\x,\v)^2)/elements(\x)+(poolvar(\x,\v)^2)/elements(\v))^(1/2))</expression>
+        <argument type="vector" index="1">
+          <_title>Data 1</_title>
+          <test>false</test>
+        </argument>
+        <argument type="vector" index="2">
+          <_title>Data 2</_title>
+          <test>false</test>
+        </argument>
+      </function>
+      <function name="pttest">
+        <_title>Paired t-test</_title>
+        <expression>mean(\x-\v)/stderr(\x-\v)</expression>
+        <argument type="vector" index="1">
+          <_title>Data 1</_title>
+          <test>false</test>
+        </argument>
+        <argument type="vector" index="2">
+          <_title>Data 2</_title>
+          <test>false</test>
+        </argument>	
+      </function>
+    </category>
+    <category>
+      <_title>Distribution</_title>
+      <function name="rayleigh">
+        <_title>Rayleigh distribution</_title>
+        <_description>Returns the probability density p(x) at x for a Rayleigh distribution with scale parameter sigma. (from Gnumeric)</_description>
+        <expression>if(\x &lt; 0,&quot;0&quot;,&quot;(\x/\y)/\y*exp(-(\x/\y)*(\x/\y)/2)&quot;)</expression>
+        <argument type="free" index="1">
+          <_title>X</_title>
+        </argument>
+        <argument type="number" index="2">
+          <_title>Sigma</_title>
+          <min include_equals="true">0</min>
+        </argument>
+      </function>
+      <function name="rayleightail">
+        <_title>Rayleigh tail distribution</_title>
+        <_description>Returns the probability density p(x) at x for a Rayleigh tail distribution with scale parameter sigma and a lower limit. (from Gnumeric)</_description>
+        <expression>if(\x &lt; \y,&quot;0&quot;,&quot;(\x/\z)/\z*exp(((\y/\z)+(\x/\z))*((\y/\z)-(\x/\z))/2)&quot;)</expression>
+        <argument type="free" index="1">
+          <_title>X</_title>
+        </argument>
+        <argument type="free" index="2">
+          <_title>Lower limit</_title>
+        </argument>
+        <argument type="number" index="3">
+          <_title>Sigma</_title>
+          <min include_equals="true">0</min>
+        </argument>
+      </function>
+      <function name="pareto">
+        <_title>Pareto distribution</_title>
+        <_description>Returns the probability density p(x) at x for a Pareto distribution with exponent and scale. (from Gnumeric)</_description>
+        <expression>if(\x &lt; \z,&quot;0&quot;,&quot;(\y/\z)/(\x/\z)^(\y+1)&quot;)</expression>
+        <argument type="free" index="1">
+          <_title>X</_title>
+        </argument>
+        <argument type="number" index="2">
+          <_title>Exponent</_title>
+          <min include_equals="true">0</min>
+        </argument>
+        <argument type="number" index="3">
+          <_title>Scale</_title>
+          <min include_equals="true">0</min>
+        </argument>
+      </function>
+      <function name="logistic">
+        <_title>Logistic distribution</_title>
+        <_description>Returns the probability density p(x) at x for a logistic distribution with scale parameter. (from Gnumeric)</_description>
+        <expression>exp(-abs(\x)/\y)/(abs(\y)*(1+exp(-abs(\x)/\y))^2)</expression>
+        <argument type="free" index="1">
+          <_title>X</_title>
+        </argument>
+        <argument type="number" index="2">
+          <_title>Scale</_title>
+          <min include_equals="true">0</min>
+        </argument>
+      </function>
+    </category>
     <builtin_function name="rand">
       <_title>Random number</_title>
       <_description>Generates a pseudo-random number between 0 and 1</_description>
     </builtin_function>
   </category>
   <category>
-    <_title>Number Bases</_title>
-    <builtin_function name="BASE">
-      <_title>Number base</_title>
-      <_description>Returns a decimal integer from a number of specified base between 2 and 36</_description>
+    <_title>Miscellaneous</_title>
+    <builtin_function name="zeta">
+      <_title>Riemann Zeta</_title>
       <argument index="1">
-        <_title>Number</_title>
-      </argument>
-      <argument index="2">
-        <_title>Base</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="BIN">
-      <_title>Binary</_title>
-      <_description>Returns a decimal integer from a binary number</_description>
-      <argument index="1">
-        <_title>Binary number</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="OCT">
-      <_title>Octal</_title>
-      <_description>Returns a decimal integer from an octal number</_description>
-      <argument index="1">
-        <_title>Octal number</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="HEX">
-      <_title>Hexadecimal</_title>
-      <_description>Returns a decimal value from a hexadecimal number</_description>
-      <argument index="1">
-        <_title>Hexadecimal number</_title>
+        <_title>Integral point</_title>
       </argument>
     </builtin_function>
   </category>

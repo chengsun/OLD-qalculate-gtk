@@ -198,6 +198,90 @@ void ForFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	action_mngr->unref();
 	mngr->set(&y_mngr);
 }
+SumFunction::SumFunction() : Function("Algebra", "sum", 3, "Sum") {
+	setArgumentDefinition(1, new IntegerArgument());
+	setArgumentDefinition(2, new IntegerArgument());	
+	setArgumentDefinition(3, new TextArgument());
+	setCondition("\\y >= \\x");
+}
+void SumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+
+	string action = vargs[2]->text();
+
+	gsub("\\i", "\"\\i\"", action);		
+	Manager mngr_i("\\i");
+	
+	CALCULATOR->beginTemporaryStopErrors();
+	Manager *action_mngr = CALCULATOR->calculate(action);
+	CALCULATOR->endTemporaryStopErrors();	
+
+	Manager i_mngr(vargs[0]->number());
+
+	i_mngr.protect();
+	int i_id = CALCULATOR->addId(&i_mngr, true);
+	string str = LEFT_PARENTHESIS;
+	str += ID_WRAP_LEFT;
+	str += i2s(i_id);
+	str += ID_WRAP_RIGHT;
+	str += RIGHT_PARENTHESIS;
+	Manager mngr_calc;
+	mngr->clear();
+	while(i_mngr.number()->isLessThanOrEqualTo(vargs[1]->number())) {	
+		mngr_calc.set(action_mngr);
+		mngr_calc.replace(&mngr_i, &i_mngr);
+		mngr_calc.recalculateFunctions();
+		mngr_calc.clean();
+		mngr->add(&mngr_calc, OPERATION_ADD);		
+		i_mngr.number()->add(1, 1);
+	}
+	CALCULATOR->delId(i_id, true);
+	action_mngr->unref();
+}
+ProductFunction::ProductFunction() : Function("Algebra", "product", 3, "Product") {
+	setArgumentDefinition(1, new IntegerArgument());
+	setArgumentDefinition(2, new IntegerArgument());	
+	setArgumentDefinition(3, new TextArgument());
+	setCondition("\\y >= \\x");
+}
+void ProductFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+
+	string action = vargs[2]->text();
+
+	gsub("\\i", "\"\\i\"", action);		
+	Manager mngr_i("\\i");
+	
+	CALCULATOR->beginTemporaryStopErrors();
+	Manager *action_mngr = CALCULATOR->calculate(action);
+	CALCULATOR->endTemporaryStopErrors();	
+
+	Manager i_mngr(vargs[0]->number());
+
+	i_mngr.protect();
+	int i_id = CALCULATOR->addId(&i_mngr, true);
+	string str = LEFT_PARENTHESIS;
+	str += ID_WRAP_LEFT;
+	str += i2s(i_id);
+	str += ID_WRAP_RIGHT;
+	str += RIGHT_PARENTHESIS;
+	Manager mngr_calc;
+	mngr->clear();
+	bool started = false;
+	while(i_mngr.number()->isLessThanOrEqualTo(vargs[1]->number())) {	
+		mngr_calc.set(action_mngr);
+		mngr_calc.replace(&mngr_i, &i_mngr);
+		mngr_calc.recalculateFunctions();
+		mngr_calc.clean();
+		if(!started) {
+			mngr->add(&mngr_calc, OPERATION_ADD);
+		} else {
+			mngr->add(&mngr_calc, OPERATION_MULTIPLY);
+		}
+		i_mngr.number()->add(1, 1);
+		started = true;
+	}
+	CALCULATOR->delId(i_id, true);
+	action_mngr->unref();
+}
 
 ProcessFunction::ProcessFunction() : Function("Utilities", "process", 1, "Process components", "", -1) {
 	setArgumentDefinition(1, new TextArgument("", false));
@@ -1319,10 +1403,10 @@ void HypotFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->add(mngr2, OPERATION_RAISE);
 	mngr2->unref();
 }
-SumFunction::SumFunction() : Function("Statistics", "sum", -1, "Sum") {
+TotalFunction::TotalFunction() : Function("Statistics", "total", -1, "Sum (total)") {
 	setArgumentDefinition(1, new VectorArgument("", false));
 }
-void SumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+void TotalFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() <= 0)
 		return;
 	Vector *v = produceVector(vargs);

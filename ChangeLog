@@ -1,5 +1,6 @@
 2004-03-23 Niklas Knutsson  <nq@altern.org>
 
+	* Symbols for sum, product and ohm
 	* derangements()
 	* sum() and product() corresponding to the signs
 	* sum() -> total()

@@ -2061,6 +2061,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						else if(m->unit()->name() == "oF") str += SIGN_POWER_0 "F";
 						else if(m->unit()->name() == "oR") str += SIGN_POWER_0 "R";
 						else if(m->unit()->name() == "deg") str += SIGN_POWER_0;
+						else if(m->unit()->name() == "ohm") str += SIGN_CAPITAL_OMEGA;
 						else str += m->unit()->name();
 					} else {
 						str += m->unit()->name();
@@ -6390,9 +6391,61 @@ void update_resultview_popup() {
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_non_scientific"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_non_scientific_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_prefixes"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_prefixes_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_short_units"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_short_units_activate, NULL);
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_all_prefixes"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_denominator_prefixes_activate, NULL);
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_denominator_prefixes"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_all_prefixes_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_fraction_decimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_fraction_decimal_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_fraction_combined"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_fraction_combined_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_fraction_fraction"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_fraction_fraction_activate, NULL);
+	if(mngr && mngr->containsType(UNIT_MANAGER)) {
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_short_units"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_display_prefixes"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_all_prefixes"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_denominator_prefixes"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_unit_settings"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_convert_to_unit"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_convert_to_base_units"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_convert_to_best_unit"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_units"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_octal"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_decimal"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_hexadecimal"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_binary"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_base"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_normal"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_scientific"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_purely_scientific"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_non_scientific"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_display"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_factorize"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_factorize"));
+	} else {
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_short_units"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_prefixes"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_all_prefixes"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_denominator_prefixes"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_unit_settings"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_convert_to_unit"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_convert_to_base_units"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_convert_to_best_unit"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_units"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_octal"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_decimal"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_hexadecimal"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_binary"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_base"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_display_normal"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_display_scientific"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_display_purely_scientific"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_display_non_scientific"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_display"));
+		if(mngr && mngr->countChilds() > 0) {
+			gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_factorize"));
+			gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_factorize"));
+		} else {
+			gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_factorize"));
+			gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_factorize"));
+		}
+	}
 	switch (number_base) {
 		case BASE_OCTAL: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_octal")), TRUE);
@@ -6431,6 +6484,8 @@ void update_resultview_popup() {
 	}
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_display_prefixes")), use_prefixes);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_short_units")), use_short_units);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_all_prefixes")), CALCULATOR->allPrefixesEnabled());
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_denominator_prefixes")), CALCULATOR->denominatorPrefixEnabled());
 	switch (fractional_mode) {
 		case FRACTIONAL_MODE_DECIMAL: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_fraction_decimal")), TRUE);
@@ -6455,6 +6510,8 @@ void update_resultview_popup() {
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_non_scientific"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_non_scientific_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_prefixes"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_prefixes_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_short_units"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_short_units_activate, NULL);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_short_units"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_all_prefixes_activate, NULL);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_all_prefixes"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_denominator_prefixes_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_fraction_decimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_fraction_decimal_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_fraction_combined"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_fraction_combined_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_fraction_fraction"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_fraction_fraction_activate, NULL);
@@ -7116,6 +7173,12 @@ void on_popup_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer user_data)
 }
 void on_popup_menu_item_short_units_activate(GtkMenuItem *w, gpointer user_data) {
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_short_units")), gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+}
+void on_popup_menu_item_all_prefixes_activate(GtkMenuItem *w, gpointer user_data) {
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_all_prefixes")), gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+}
+void on_popup_menu_item_denominator_prefixes_activate(GtkMenuItem *w, gpointer user_data) {
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_denominator_prefixes")), gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
 }
 
 void on_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data) {

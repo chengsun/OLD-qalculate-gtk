@@ -556,6 +556,7 @@ bool Number::round(const Number *o) {
 	if(isComplex()) return false;
 	if(o) {
 		if(o->isComplex()) return false;
+		if(o->isApproximate()) setApproximate();
 		value = cln::round1(cln::realpart(value), cln::realpart(o->clnNumber()));
 	} else {
 		value = cln::round1(cln::realpart(value));
@@ -566,6 +567,7 @@ bool Number::floor(const Number *o) {
 	if(isComplex()) return false;
 	if(o) {
 		if(o->isComplex()) return false;
+		if(o->isApproximate()) setApproximate();
 		value = cln::floor1(cln::realpart(value), cln::realpart(o->clnNumber()));
 	} else {
 		value = cln::floor1(cln::realpart(value));
@@ -576,6 +578,7 @@ bool Number::ceil(const Number *o) {
 	if(isComplex()) return false;
 	if(o) {
 		if(o->isComplex()) return false;
+		if(o->isApproximate()) setApproximate();
 		value = cln::ceiling1(cln::realpart(value), cln::realpart(o->clnNumber()));
 	} else {
 		value = cln::ceiling1(cln::realpart(value));
@@ -586,6 +589,7 @@ bool Number::trunc(const Number *o) {
 	if(isComplex()) return false;
 	if(o) {
 		if(o->isComplex()) return false;
+		if(o->isApproximate()) setApproximate();
 		value = cln::truncate1(cln::realpart(value), cln::realpart(o->clnNumber()));
 	} else {
 		value = cln::truncate1(cln::realpart(value));

@@ -173,6 +173,7 @@ class Manager {
 #endif
 		
 		bool contains(Manager *mngr) const;
+		bool containsType(int mtype) const;
 		void replace(Manager *replace_this, Manager *replace_with);
 		void replace_no_copy(Manager *replace_this, Manager *replace_with);
 		void differentiate(string x_var);
