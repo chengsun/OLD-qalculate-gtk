@@ -474,6 +474,10 @@ bool Fraction::cos() {
 #endif	
 }
 bool Fraction::acos() {
+	if(isOne()) {
+		clear();
+		return true;
+	}
 	Integer abs_num(&num);
 	abs_num.setNegative(false);	
 	if(den.isLessThan(&abs_num)) {

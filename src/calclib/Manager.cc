@@ -2358,7 +2358,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				str += "<i>";
 			}
 			if(displayflags & DISPLAY_FORMAT_NONASCII) {
-				if(variable()->name() == "pi") str += SIGN_PI;
+				if(variable() == CALCULATOR->getPI()) str += SIGN_PI;
 				else if(variable()->name() == "euler") str += SIGN_GAMMA;
 				else if(variable()->name() == "apery") str += SIGN_ZETA "(3)";
 				else if(variable()->name() == "pythagoras") str += SIGN_SQRT "2";
@@ -2376,7 +2376,10 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 		}
 #ifdef HAVE_GIAC
 		case GIAC_MANAGER: {
+			str += "giac";
+			str += LEFT_PARENTHESIS_CH;
 			str += g_gen->print();
+			str += RIGHT_PARENTHESIS_CH;
 			if(plural) *plural = true;
 			if(!toplevel && wrap) wrap_all = true;
 			break;
@@ -2797,7 +2800,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 							} else {
 								if(m_i->isText() && text_length_is_one(m_i->text())) {
 									do_space.push_back(0);
-								} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable()->name() == "pi" || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {
+								} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable() == CALCULATOR->getPI() || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {
 									do_space.push_back(0);
 								} else if(m_i->isPower() && m_i->base()->isFraction()) {
 									do_space.push_back(2);
@@ -2830,7 +2833,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 						} else if(m_i_prev->isFraction()) {
 							if(m_i->isText() && text_length_is_one(m_i->text())) {
 								do_space.push_back(0);
-							} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable()->name() == "pi" || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {	
+							} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable() == CALCULATOR->getPI() || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {	
 								do_space.push_back(0);
 							} else if(m_i->isPower() && m_i->base()->isFraction()) {
 								do_space.push_back(2);
@@ -2845,10 +2848,10 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 							} else {
 								do_space.push_back(2);
 							}
-						} else if((m_i_prev->isText() && text_length_is_one(m_i_prev->text())) || (m_i_prev->isVariable() && (text_length_is_one(m_i_prev->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i_prev->variable()->name() == "pi" || m_i_prev->variable()->name() == "euler" || m_i_prev->variable()->name() == "golden"))))) {
+						} else if((m_i_prev->isText() && text_length_is_one(m_i_prev->text())) || (m_i_prev->isVariable() && (text_length_is_one(m_i_prev->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i_prev->variable() == CALCULATOR->getPI() || m_i_prev->variable()->name() == "euler" || m_i_prev->variable()->name() == "golden"))))) {
 							if(m_i->isText() && text_length_is_one(m_i->text())) {
 								do_space.push_back(0);
-							} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable()->name() == "pi" || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {
+							} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable() == CALCULATOR->getPI() || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {
 								do_space.push_back(0);
 							} else if(m_i->isUnit_exp() || m_i->isPower()) {
 								do_space.push_back(1);
@@ -3182,7 +3185,15 @@ giac::gen Manager::toGiac(bool *failed) const {
 			return giac::identificateur(text());
 		}
 		case VARIABLE_MANAGER: {
-			return giac::identificateur(variable()->name());
+			if(variable() == CALCULATOR->getPI()) {
+				return giac::_IDNT_pi;
+			} else if(variable() == CALCULATOR->getE()) {
+				return giac::identificateur("e");
+			} else {
+				string id = "_variable_";
+				id += variable()->name();
+				return giac::identificateur(id);
+			}
 		}
 		case UNIT_MANAGER: {
 			string id = "_unit_";
@@ -3190,7 +3201,7 @@ giac::gen Manager::toGiac(bool *failed) const {
 			return giac::identificateur(id);
 		}
 		case FUNCTION_MANAGER: {
-			if(function()->name() == "ln") ufp = &giac::at_ln;
+			if(function() == CALCULATOR->getLnFunction()) ufp = &giac::at_ln;
 			else if(function()->name() == "log10") ufp = &giac::at_log10;
 			else if(function()->name() == "exp") ufp = &giac::at_exp;
 			else if(function()->name() == "sqrt") ufp = &giac::at_sqrt;
@@ -3379,8 +3390,8 @@ void Manager::set(const giac::gen &giac_gen, bool in_retry) {
 				CALCULATOR->endTemporaryStopErrors();
 				set(mngr);
 				mngr->unref();
-			} else {
-				Variable *v = CALCULATOR->getVariable(*giac_gen._IDNTptr->name);
+			} else if(giac_gen._IDNTptr->name->length() > 10 && giac_gen._IDNTptr->name->substr(0, 10) == "_variable_") {	
+				Variable *v = CALCULATOR->getVariable(giac_gen._IDNTptr->name->substr(10, giac_gen._IDNTptr->name->length() - 10));
 				if(v) {
 					if(!v->isPrecise()) {
 						if(CALCULATOR->alwaysExact()) {
@@ -3392,6 +3403,14 @@ void Manager::set(const giac::gen &giac_gen, bool in_retry) {
 					} else {
 						set(v->get());
 					}
+				} else {
+					set(*giac_gen._IDNTptr->name);
+				}
+			} else {
+				if(*giac_gen._IDNTptr == giac::_IDNT_pi) {
+					set(CALCULATOR->getPI());
+				} else if(*giac_gen._IDNTptr->name == "e") {
+					set(CALCULATOR->getE());
 				} else {
 					set(*giac_gen._IDNTptr->name);
 				}
@@ -3545,7 +3564,7 @@ void Manager::set(const giac::gen &giac_gen, bool in_retry) {
 					push_back(new Manager(giac_gen._SYMBptr->feuille));
 				}
 			} 
-			else if(giac_gen._SYMBptr->sommet == giac::at_ln) f = CALCULATOR->getFunction("ln");
+			else if(giac_gen._SYMBptr->sommet == giac::at_ln) f = CALCULATOR->getLnFunction();
 			else if(giac_gen._SYMBptr->sommet == giac::at_min) f = CALCULATOR->getFunction("min");
 			else if(giac_gen._SYMBptr->sommet == giac::at_max) f = CALCULATOR->getFunction("max");
 			else if(giac_gen._SYMBptr->sommet == giac::at_log10) f = CALCULATOR->getFunction("log10");

@@ -961,12 +961,13 @@ void ModFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 SinFunction::SinFunction() : Function("Trigonometry", "sin", 1, "Sine") {setArgumentDefinition(1, new AngleArgument("", false));}
 void SinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]); 
-	if(mngr->isVariable() && mngr->variable()->name() == "pi") {
+	if(mngr->isVariable() && mngr->variable() == CALCULATOR->getPI()) {
 		mngr->clear();
 		return;
-	} else if(mngr->isMultiplication() && mngr->countChilds() == 2 && mngr->getChild(0)->isFraction() && mngr->getChild(1)->isVariable() && mngr->getChild(1)->variable()->name() == "pi") {
+	} else if(mngr->isMultiplication() && mngr->countChilds() == 2 && mngr->getChild(0)->isFraction() && mngr->getChild(1)->isVariable() && mngr->getChild(1)->variable() == CALCULATOR->getPI()) {
 		if(mngr->getChild(0)->fraction()->isInteger()) {
 			mngr->clear();
+			return;
 		} else {
 			Fraction fr(mngr->getChild(0)->fraction());
 			fr.frac();
@@ -993,16 +994,17 @@ void SinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 CosFunction::CosFunction() : Function("Trigonometry", "cos", 1, "Cosine") {setArgumentDefinition(1, new AngleArgument("", false));}
 void CosFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]); 
-	if(mngr->isVariable() && mngr->variable()->name() == "pi") {
+	if(mngr->isVariable() && mngr->variable() == CALCULATOR->getPI()) {
 		mngr->set(1, 1);
 		return;
-	} else if(mngr->isMultiplication() && mngr->countChilds() == 2 && mngr->getChild(0)->isFraction() && mngr->getChild(1)->isVariable() && mngr->getChild(1)->variable()->name() == "pi") {
+	} else if(mngr->isMultiplication() && mngr->countChilds() == 2 && mngr->getChild(0)->isFraction() && mngr->getChild(1)->isVariable() && mngr->getChild(1)->variable() == CALCULATOR->getPI()) {
 		if(mngr->getChild(0)->fraction()->isInteger()) {
 			if(mngr->getChild(0)->fraction()->numerator()->isEven()) {
 				mngr->set(-1, 1);
 			} else {
 				mngr->set(1, 1);
 			}
+			return;
 		} else {
 			Fraction fr(mngr->getChild(0)->fraction());
 			fr.frac();
@@ -1038,11 +1040,37 @@ void TanhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 AsinFunction::AsinFunction() : Function("Trigonometry", "asin", 1, "Arcsine") {setArgumentDefinition(1, new AngleArgument("", false));}
 void AsinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TRIG_FUNCTION(asin)
+	mngr->set(vargs[0]); mngr->recalculateVariables();
+	if(mngr->isFraction() && mngr->fraction()->isOne()) {
+		mngr->set(1, 2);
+		Manager mngr2(CALCULATOR->getPI());
+		mngr->add(&mngr2, OPERATION_MULTIPLY);
+	} else if(mngr->isFraction() && mngr->fraction()->isMinusOne()) {
+		mngr->set(-1, 2);
+		Manager mngr2(CALCULATOR->getPI());
+		mngr->add(&mngr2, OPERATION_MULTIPLY);
+	} else if(!mngr->isFraction() || !mngr->fraction()->asin()) {
+		mngr->set(this, vargs[0], NULL);
+	} else {
+		mngr->setPrecise(mngr->fraction()->isPrecise());
+	}
 }
 AcosFunction::AcosFunction() : Function("Trigonometry", "acos", 1, "Arccosine") {setArgumentDefinition(1, new AngleArgument("", false));}
 void AcosFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	TRIG_FUNCTION(acos)
+	mngr->set(vargs[0]); mngr->recalculateVariables();
+	if(mngr->isZero()) {
+		mngr->set(1, 2);
+		Manager mngr2(CALCULATOR->getPI());
+		mngr->add(&mngr2, OPERATION_MULTIPLY);
+		return;
+	} else if(mngr->isFraction() && mngr->fraction()->isMinusOne()) {
+		mngr->set(CALCULATOR->getPI());
+		return;
+	} else if(!mngr->isFraction() || !mngr->fraction()->acos()) {
+		mngr->set(this, vargs[0], NULL);
+	} else {
+		mngr->setPrecise(mngr->fraction()->isPrecise());
+	}
 }
 AtanFunction::AtanFunction() : Function("Trigonometry", "atan", 1, "Arctangent") {setArgumentDefinition(1, new AngleArgument("", false));}
 void AtanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
@@ -1064,19 +1092,41 @@ LogFunction::LogFunction() : Function("Exponents and Logarithms", "ln", 1, "Natu
 	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, false));
 }
 void LogFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	if(!mngr->fraction()->log()) {
-		mngr->set(this, vargs[0], NULL);
+	if(vargs[0]->isFraction()) {
+		mngr->set(vargs[0]);
+		if(mngr->fraction()->log()) {
+			mngr->setPrecise(mngr->fraction()->isPrecise());
+			return;
+		}
+	}
+	if(vargs[0]->isVariable() && vargs[0]->variable() == CALCULATOR->getE()) {
+		mngr->set(1, 1);
 	} else {
-		mngr->setPrecise(mngr->fraction()->isPrecise());
+		mngr->set(this, vargs[0], NULL);	
 	}		
+}
+LognFunction::LognFunction() : Function("Exponents and Logarithms", "log", 2, "Base-N Logarithm") {
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, false, false));
+	setArgumentDefinition(2, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, false, false));
+}
+void LognFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	if(vargs[0]->isFraction() && vargs[1]->isFraction()) {
+		mngr->set(vargs[0]);
+		if(mngr->fraction()->log(vargs[1]->fraction())) {
+			mngr->setPrecise(mngr->fraction()->isPrecise());
+			return;
+		}
+	}
+	mngr->set(CALCULATOR->getLnFunction(), vargs[0], NULL);
+	Manager mngr2(CALCULATOR->getLnFunction(), vargs[1], NULL);
+	mngr->add(&mngr2, OPERATION_DIVIDE);		
 }
 Log10Function::Log10Function() : Function("Exponents and Logarithms", "log10", 1, "Base-10 Logarithm") {
 	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, false));
 }
 void Log10Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
-	if(!mngr->fraction()->log10()) {
+	if(!mngr->isFraction() || !mngr->fraction()->log10()) {
 		mngr->set(this, vargs[0], NULL);
 	} else {
 		mngr->setPrecise(mngr->fraction()->isPrecise());
@@ -1087,7 +1137,7 @@ Log2Function::Log2Function() : Function("Exponents and Logarithms", "log2", 1, "
 }
 void Log2Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
-	if(!mngr->fraction()->log2()) {
+	if(!mngr->isFraction() || !mngr->fraction()->log2()) {
 		mngr->set(this, vargs[0], NULL);
 	} else {
 		mngr->setPrecise(mngr->fraction()->isPrecise());

@@ -178,6 +178,9 @@ Calculator::Calculator() {
 	calculator = this;
 	srand48(time(0));
 	angleMode(RADIANS);
+	pi_var = NULL;
+	e_var = NULL;
+	ln_func = NULL;
 	addBuiltinVariables();
 	addBuiltinFunctions();
 	addBuiltinUnits();
@@ -200,6 +203,9 @@ Calculator::~Calculator() {
 	closeGnuplot();
 }
 
+Variable *Calculator::getPI() const {return pi_var;}
+Variable *Calculator::getE() const {return e_var;}
+Function *Calculator::getLnFunction() const {return ln_func;}
 void Calculator::setRPNMode(bool enable) {
 	b_rpn = enable;
 }
@@ -690,8 +696,8 @@ void Calculator::reset() {
 	resetUnits();
 }
 void Calculator::addBuiltinVariables() {
-	addVariable(new EVariable());
-	addVariable(new PiVariable());	
+	e_var = addVariable(new EVariable());
+	pi_var = addVariable(new PiVariable());	
 	addVariable(new EulerVariable());
 	addVariable(new AperyVariable());	
 	addVariable(new CatalanVariable());
@@ -750,12 +756,8 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new AsinFunction());
 	addFunction(new AcosFunction());
 	addFunction(new AtanFunction());
-	addFunction(new LogFunction());
-	addFunction(new Log2Function());
-	addFunction(new Log10Function());
-	addFunction(new ExpFunction());
-	addFunction(new Exp2Function());
-	addFunction(new Exp10Function());
+	ln_func = addFunction(new LogFunction());
+	addFunction(new LognFunction());
 	addFunction(new SqrtFunction());
 	addFunction(new CbrtFunction());
 	addFunction(new RootFunction());	
@@ -3393,10 +3395,9 @@ Manager *Calculator::setAngleValue(Manager *mngr) {
 	if(!b) {
 		switch(angleMode()) {
 			case DEGREES: {
-				Variable *v;
 				Manager mngr_pi;
-				if(alwaysExact() && (v = CALCULATOR->getVariable("pi")) != NULL) {
-					mngr_pi.set(v);
+				if(alwaysExact()) {
+					mngr_pi.set(getPI());
 				} else {
 					Fraction fr;
 					fr.pi();
@@ -3407,10 +3408,9 @@ Manager *Calculator::setAngleValue(Manager *mngr) {
 				break;
 			}
 			case GRADIANS: {
-				Variable *v;
 				Manager mngr_pi;
-				if(alwaysExact() && (v = CALCULATOR->getVariable("pi")) != NULL) {
-					mngr_pi.set(v);
+				if(alwaysExact()) {
+					mngr_pi.set(getPI());
 				} else {
 					Fraction fr;
 					fr.pi();

@@ -1786,7 +1786,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				str = "<i>" TEXT_TAGS;
 			}
 			if(displayflags & DISPLAY_FORMAT_NONASCII) {
-				if(m->variable()->name() == "pi") str += SIGN_PI;
+				if(m->variable() == CALCULATOR->getPI()) str += SIGN_PI;
 				else if(m->variable()->name() == "euler") str += SIGN_GAMMA;
 				else if(m->variable()->name() == "apery") str += SIGN_ZETA "(3)";
 				else if(m->variable()->name() == "pythagoras") str += SIGN_SQRT "2";
@@ -1875,7 +1875,6 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			break;
 		}
 		case FUNCTION_MANAGER: {
-		printf("A\n");
 			gint comma_w, comma_h, function_w, function_h, uh, dh, h, w, ctmp, htmp, wtmp, arc_w, arc_h;
 			vector<GdkPixmap*> pixmap_args;
 			vector<gint> hpa;
@@ -1902,13 +1901,11 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			w = function_w + 1;
 			uh = function_h / 2 + function_h % 2;
 			dh = function_h / 2;
-			printf("B\n");
+
 			for(unsigned int index = 0; index < m->countChilds(); index++) {
 				if(l_exp) delete l_exp;
 				l_exp = NULL;			
-				printf("C\n");
 				pixmap_args.push_back(draw_manager(m->getChild(index), nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &ctmp, false, false));
-				printf("D\n");
 				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_args[index]), &wtmp, &htmp);
 				hpa.push_back(htmp);
 				cpa.push_back(ctmp);				
@@ -2825,7 +2822,6 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			gdk_drawable_get_size(GDK_DRAWABLE(pixmap_one), &one_w, &one_h);
 			
 			if(div == 0) {
-			printf("F\n");
 				vector<int> do_space;
 				gint dh = 0, uh = 0, w = 0, h = 0, hetmp, wtmp, htmp, cpfr = 0, hpfr, wpfr, cppr, hppr, wppr;
 				bool first_is_minus = false;
@@ -2942,7 +2938,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							} else {
 								if(m_i->isText() && text_length_is_one(m_i->text())) {
 									do_space.push_back(0);
-								} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable()->name() == "pi" || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {
+								} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable() == CALCULATOR->getPI() || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {
 									do_space.push_back(0);
 								} else if(m_i->isPower() && m_i->base()->isFraction()) {
 									do_space.push_back(2);
@@ -2973,7 +2969,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						} else if(m_i_prev->isFraction()) {
 							if(m_i->isText() && text_length_is_one(m_i->text())) {
 								do_space.push_back(0);
-							} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable()->name() == "pi" || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {	
+							} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable() == CALCULATOR->getPI() || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {	
 								do_space.push_back(0);
 							} else if(m_i->isPower() && m_i->base()->isFraction()) {
 								do_space.push_back(2);
@@ -2988,10 +2984,10 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							} else {
 								do_space.push_back(2);
 							}
-						} else if((m_i_prev->isText() && text_length_is_one(m_i_prev->text())) || (m_i_prev->isVariable() && (text_length_is_one(m_i_prev->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i_prev->variable()->name() == "pi" || m_i_prev->variable()->name() == "euler" || m_i_prev->variable()->name() == "golden"))))) {
+						} else if((m_i_prev->isText() && text_length_is_one(m_i_prev->text())) || (m_i_prev->isVariable() && (text_length_is_one(m_i_prev->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i_prev->variable() == CALCULATOR->getPI() || m_i_prev->variable()->name() == "euler" || m_i_prev->variable()->name() == "golden"))))) {
 							if(m_i->isText() && text_length_is_one(m_i->text())) {
 								do_space.push_back(0);
-							} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable()->name() == "pi" || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {
+							} else if(m_i->isVariable() && (text_length_is_one(m_i->variable()->name()) || (displayflags & DISPLAY_FORMAT_NONASCII && (m_i->variable() == CALCULATOR->getPI() || m_i->variable()->name() == "euler" || m_i->variable()->name() == "golden")))) {
 								do_space.push_back(0);
 							} else if(m_i->isUnit_exp() || m_i->isPower()) {
 								do_space.push_back(1);
@@ -3096,9 +3092,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					}
 					if(pixmap_factors[i]) g_object_unref(pixmap_factors[i]);
 				}
-				printf("G\n");
 			} else {
-			printf("H\n");
 				gint den_uh, den_w, den_dh, num_w, num_dh, num_uh, dh = 0, uh = 0, w = 0, h = 0, tmpw = 0, tmph = 0;
 				bool first_is_minus = false;
 				vector<Manager*> num_mngrs;
@@ -3336,7 +3330,6 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				}
 				if(num_pixmap) g_object_unref(num_pixmap);
 				if(den_pixmap) g_object_unref(den_pixmap);
-				printf("I\n");
 			}
 				
 			if(pixmap_one) g_object_unref(pixmap_one);

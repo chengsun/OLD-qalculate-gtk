@@ -276,7 +276,27 @@ bool Function::testArgumentCount(int itmp) {
 			CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str());						
 		return true;	
 	}
-	CALCULATOR->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str());
+	string str;
+	Argument *arg;
+	bool b = false;
+	for(int i = 1; i <= minargs(); i++) {
+		arg = getArgumentDefinition(i);
+		if(i > 1) {
+			str += CALCULATOR->getComma();
+			str += " ";
+		}
+		if(arg && !arg->name().empty()) {
+			str += arg->name();
+			b = true;
+		} else {
+			str += "?";
+		}
+	}
+	if(b) {
+		CALCULATOR->error(true, _("You need at least %s arguments (%s) in function %s()."), i2s(minargs()).c_str(), str.c_str(), name().c_str());
+	} else {
+		CALCULATOR->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str());
+	}
 	return false;
 }
 Manager *Function::createFunctionManagerFromVArgs(vector<Manager*> &vargs) {

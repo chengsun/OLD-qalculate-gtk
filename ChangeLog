@@ -1,5 +1,9 @@
 2003-10-30  Niklas Knutsson  <nq@altern.org>
 
+	* Show argument names when too few arguments
+	* Really no need to have exp, exp2 and exp10 as builtins
+	* Log tweaks
+	* More trigonometric tweaks
 	* Giac might actually return -1*1 (we prefer -1)
 	* Catch giac errors
 	* Define tan, asinh, acosh, atanh as sin(x)/cos(x), log(x+sqrt(x^2+1)), ...

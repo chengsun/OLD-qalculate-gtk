@@ -76,6 +76,9 @@ class Calculator {
 	bool b_gnuplot_open;
 	string gnuplot_cmdline;
 	FILE *gnuplot_pipe;
+	
+	Variable *pi_var, *e_var;
+	Function *ln_func;
 
   public:
   
@@ -106,6 +109,9 @@ class Calculator {
 	void beginTemporaryStopErrors();
 	void endTemporaryStopErrors();	
 
+	Variable *getPI() const;
+	Variable *getE() const;
+	Function *getLnFunction() const;
 	Variable *getVariable(unsigned int index) const;
 	Unit *getUnit(unsigned int index) const;	
 	Function *getFunction(unsigned int index) const;	
