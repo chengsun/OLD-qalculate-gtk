@@ -170,7 +170,7 @@ msgstr "="
 
 #: src/interface.cc:599
 msgid "Buttons"
-msgstr "Knöpfe"
+msgstr "Tasten"
 
 #: src/interface.cc:619 src/callbacks.cc:1002
 msgid "<< Less"

@@ -686,73 +686,11 @@ create_wVariables (void)
 }
 
 GtkWidget*
-create_wUnits (void) {
-
-	GtkWidget *dialog_action_area1_u;
-	GtkWidget *vbox1_u;
-	GtkWidget *hbox1_u;
-	GtkWidget *scrolledwindow1_u;
-	GtkWidget *scrolledwindow2_u;
-	GtkWidget *vbuttonbox1_u;
-	GtkWidget *alignment2_u;
-	GtkWidget *hbox3_u;
-	GtkWidget *image2_u;
-	GtkWidget *image3_u;
-	GtkWidget *label3_u;
-	GtkWidget *label4_u;
-	GtkWidget *alignment1_u;
-	GtkWidget *alignment3_u;
-	GtkWidget *hbox2_u;
-	GtkWidget *hbox4_u;
-	GtkWidget *image1_u;
-	GtkWidget *label2_u;
-	GtkWidget *dialog_vbox1_u;
-	GtkWidget *hbox6;
-	GtkWidget *alignment4;
-	GtkWidget *hbox7;
-	GtkWidget *arrow1;
-	GtkWidget *image4;
-	GtkWidget *alignment5;
-	GtkWidget *hbox8;
-	GtkWidget *arrow2;
-	GtkWidget *hbox9;
-	GtkWidget *hbox10;
-
-	wUnits = gtk_dialog_new ();
-	gtk_window_set_title (GTK_WINDOW (wUnits), _("Units"));
-
-	dialog_vbox1_u = GTK_DIALOG (wUnits)->vbox;
-	gtk_widget_show (dialog_vbox1_u);
-
-	vbox1_u = gtk_vbox_new (FALSE, 5);
-	gtk_widget_show (vbox1_u);
-	gtk_box_pack_start (GTK_BOX (dialog_vbox1_u), vbox1_u, TRUE, TRUE, 0);
-	gtk_container_set_border_width (GTK_CONTAINER (vbox1_u), 5);
-
-	hbox1_u = gtk_hbox_new (FALSE, 5);
-	gtk_widget_show (hbox1_u);
-	gtk_box_pack_start (GTK_BOX (vbox1_u), hbox1_u, TRUE, TRUE, 0);
-
-	scrolledwindow1_u = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_set_size_request (scrolledwindow1_u, 160, 1);
-	gtk_widget_show (scrolledwindow1_u);
-	gtk_box_pack_start (GTK_BOX (hbox1_u), scrolledwindow1_u, FALSE, TRUE, 0);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow1_u), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow1_u), GTK_SHADOW_IN);
-
-	tUnitCategories = gtk_tree_view_new ();
-	gtk_widget_show (tUnitCategories);
-	gtk_container_add (GTK_CONTAINER (scrolledwindow1_u), tUnitCategories);
-
-	scrolledwindow2_u = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_show (scrolledwindow2_u);
-	gtk_box_pack_start (GTK_BOX (hbox1_u), scrolledwindow2_u, TRUE, TRUE, 0);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow2_u), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow2_u), GTK_SHADOW_IN);
-
-	tUnits = gtk_tree_view_new ();
-	gtk_widget_show (tUnits);
-	gtk_container_add (GTK_CONTAINER (scrolledwindow2_u), tUnits);
+create_wUnits (void)
+{
+	wUnits		= glade_xml_get_widget (glade_xml, "units_dialog");
+	tUnitCategories = glade_xml_get_widget (glade_xml, "units_tree_view1");
+	tUnits		= glade_xml_get_widget (glade_xml, "units_tree_view2");
 
 	tUnits_store = gtk_list_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tUnits), GTK_TREE_MODEL(tUnits_store));
@@ -795,169 +733,23 @@ create_wUnits (void) {
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(tUnitCategories_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(tUnitCategories_store), 0, GTK_SORT_ASCENDING);
 
-	hbox6 = gtk_hbox_new (FALSE, 5);
-	gtk_widget_show (hbox6);
-	gtk_box_pack_start (GTK_BOX (vbox1_u), hbox6, FALSE, FALSE, 0);
-	gtk_box_set_homogeneous(GTK_BOX(hbox6), TRUE);
+	eFromValue	= glade_xml_get_widget (glade_xml, "units_entry_from_val");
+	lFromUnit	= glade_xml_get_widget (glade_xml, "units_label_from_unit");
+	tbToFrom	= glade_xml_get_widget (glade_xml, "units_toggle_button_from");
 
-	hbox9 = gtk_hbox_new (FALSE, 5);
-	gtk_widget_show (hbox9);
-	gtk_box_pack_start (GTK_BOX (hbox6), hbox9, FALSE, TRUE, 0);
+	bConvertUnits	= glade_xml_get_widget (glade_xml, "units_button_convert");
 
-	hbox10 = gtk_hbox_new (FALSE, 5);
-	gtk_widget_show (hbox10);
-	gtk_box_pack_start (GTK_BOX (hbox6), hbox10, FALSE, TRUE, 0);
+	tbToTo		= glade_xml_get_widget (glade_xml, "units_toggle_button_to");
+	eToValue	= glade_xml_get_widget (glade_xml, "units_entry_to_val");
+	omToUnit	= glade_xml_get_widget (glade_xml, "units_option_menu_to_unit");
 
-	eFromValue = gtk_entry_new ();
-	gtk_widget_show (eFromValue);
-	gtk_box_pack_start (GTK_BOX (hbox9), eFromValue, FALSE, TRUE, 0);
-	gtk_entry_set_text(GTK_ENTRY(eFromValue), "1");
+	bNewUnit	= glade_xml_get_widget (glade_xml, "units_button_new");
+	bEditUnit	= glade_xml_get_widget (glade_xml, "units_button_edit");
+	bInsertUnit	= glade_xml_get_widget (glade_xml, "units_button_insert");
+	bConvertToUnit	= glade_xml_get_widget (glade_xml, "units_button_convert_to");
+	bDeleteUnit	= glade_xml_get_widget (glade_xml, "units_button_delete");
 
-	lFromUnit = gtk_label_new (_("metres"));
-	gtk_widget_show (lFromUnit);
-	gtk_box_pack_start (GTK_BOX (hbox9), lFromUnit, FALSE, FALSE, 0);
-	gtk_label_set_justify (GTK_LABEL (lFromUnit), GTK_JUSTIFY_LEFT);
-
-	tbToFrom = gtk_toggle_button_new ();
-	gtk_widget_show (tbToFrom);
-	gtk_box_pack_start (GTK_BOX (hbox9), tbToFrom, FALSE, FALSE, 0);
-
-	alignment4 = gtk_alignment_new (0.5, 0.5, 0, 0);
-	gtk_widget_show (alignment4);
-	gtk_container_add (GTK_CONTAINER (tbToFrom), alignment4);
-
-	hbox7 = gtk_hbox_new (FALSE, 2);
-	gtk_widget_show (hbox7);
-	gtk_container_add (GTK_CONTAINER (alignment4), hbox7);
-
-	arrow1 = gtk_arrow_new (GTK_ARROW_LEFT, GTK_SHADOW_OUT);
-	gtk_widget_show (arrow1);
-	gtk_box_pack_start (GTK_BOX (hbox7), arrow1, FALSE, FALSE, 0);
-
-	bConvertUnits = gtk_button_new ();
-	gtk_widget_show (bConvertUnits);
-	gtk_box_pack_start (GTK_BOX (hbox10), bConvertUnits, FALSE, FALSE, 0);
-
-	image4 = gtk_image_new_from_stock ("gtk-convert", GTK_ICON_SIZE_BUTTON);
-	gtk_widget_show (image4);
-	gtk_container_add (GTK_CONTAINER (bConvertUnits), image4);
-
-	tbToTo = gtk_toggle_button_new ();
-	gtk_widget_show (tbToTo);
-	gtk_box_pack_start (GTK_BOX (hbox10), tbToTo, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (tbToTo), TRUE);
-
-	alignment5 = gtk_alignment_new (0.5, 0.5, 0, 0);
-	gtk_widget_show (alignment5);
-	gtk_container_add (GTK_CONTAINER (tbToTo), alignment5);
-
-	hbox8 = gtk_hbox_new (FALSE, 2);
-	gtk_widget_show (hbox8);
-	gtk_container_add (GTK_CONTAINER (alignment5), hbox8);
-
-	arrow2 = gtk_arrow_new (GTK_ARROW_RIGHT, GTK_SHADOW_OUT);
-	gtk_widget_show (arrow2);
-	gtk_box_pack_start (GTK_BOX (hbox8), arrow2, FALSE, FALSE, 0);
-
-	eToValue = gtk_entry_new ();
-	gtk_widget_show (eToValue);
-	gtk_box_pack_start (GTK_BOX (hbox10), eToValue, FALSE, TRUE, 0);
-	gtk_entry_set_text(GTK_ENTRY(eToValue), "1");
-
-	omToUnit = gtk_option_menu_new ();
-	gtk_widget_show (omToUnit);
-	gtk_box_pack_start (GTK_BOX (hbox10), omToUnit, FALSE, FALSE, 0);
-
-	vbuttonbox1_u = gtk_vbutton_box_new ();
-	gtk_widget_show (vbuttonbox1_u);
-	gtk_box_pack_start (GTK_BOX (hbox1_u), vbuttonbox1_u, FALSE, TRUE, 0);
-	gtk_button_box_set_layout (GTK_BUTTON_BOX (vbuttonbox1_u), GTK_BUTTONBOX_START);
-	gtk_box_set_spacing (GTK_BOX (vbuttonbox1_u), 5);
-
-	bNewUnit = gtk_button_new_from_stock ("gtk-new");
-	gtk_widget_show (bNewUnit);
-	gtk_container_add (GTK_CONTAINER (vbuttonbox1_u), bNewUnit);
-	GTK_WIDGET_SET_FLAGS (bNewUnit, GTK_CAN_DEFAULT);
-
-	bEditUnit = gtk_button_new ();
-	gtk_widget_show (bEditUnit);
-	gtk_container_add (GTK_CONTAINER (vbuttonbox1_u), bEditUnit);
-	GTK_WIDGET_SET_FLAGS (bEditUnit, GTK_CAN_DEFAULT);
-
-	alignment2_u = gtk_alignment_new (0.5, 0.5, 0, 0);
-	gtk_widget_show (alignment2_u);
-	gtk_container_add (GTK_CONTAINER (bEditUnit), alignment2_u);
-
-	hbox3_u = gtk_hbox_new (FALSE, 2);
-	gtk_widget_show (hbox3_u);
-	gtk_container_add (GTK_CONTAINER (alignment2_u), hbox3_u);
-
-	image2_u = gtk_image_new_from_stock ("gtk-preferences", GTK_ICON_SIZE_BUTTON);
-	gtk_widget_show (image2_u);
-	gtk_box_pack_start (GTK_BOX (hbox3_u), image2_u, FALSE, FALSE, 0);
-
-	label3_u = gtk_label_new_with_mnemonic (_("_Edit"));
-	gtk_widget_show (label3_u);
-	gtk_box_pack_start (GTK_BOX (hbox3_u), label3_u, FALSE, FALSE, 0);
-	gtk_label_set_justify (GTK_LABEL (label3_u), GTK_JUSTIFY_LEFT);
-
-	bInsertUnit = gtk_button_new ();
-	gtk_widget_show (bInsertUnit);
-	gtk_container_add (GTK_CONTAINER (vbuttonbox1_u), bInsertUnit);
-	GTK_WIDGET_SET_FLAGS (bInsertUnit, GTK_CAN_DEFAULT);
-
-	alignment1_u = gtk_alignment_new (0.5, 0.5, 0, 0);
-	gtk_widget_show (alignment1_u);
-	gtk_container_add (GTK_CONTAINER (bInsertUnit), alignment1_u);
-
-	hbox2_u = gtk_hbox_new (FALSE, 2);
-	gtk_widget_show (hbox2_u);
-	gtk_container_add (GTK_CONTAINER (alignment1_u), hbox2_u);
-
-	image1_u = gtk_image_new_from_stock ("gtk-go-forward", GTK_ICON_SIZE_BUTTON);
-	gtk_widget_show (image1_u);
-	gtk_box_pack_start (GTK_BOX (hbox2_u), image1_u, FALSE, FALSE, 0);
-
-	label2_u = gtk_label_new_with_mnemonic (_("_Insert"));
-	gtk_widget_show (label2_u);
-	gtk_box_pack_start (GTK_BOX (hbox2_u), label2_u, FALSE, FALSE, 0);
-	gtk_label_set_justify (GTK_LABEL (label2_u), GTK_JUSTIFY_LEFT);
-
-	bConvertToUnit = gtk_button_new ();
-	gtk_widget_show (bConvertToUnit);
-	gtk_container_add (GTK_CONTAINER (vbuttonbox1_u), bConvertToUnit);
-	GTK_WIDGET_SET_FLAGS (bConvertToUnit, GTK_CAN_DEFAULT);
-
-	alignment3_u = gtk_alignment_new (0.5, 0.5, 0, 0);
-	gtk_widget_show (alignment3_u);
-	gtk_container_add (GTK_CONTAINER (bConvertToUnit), alignment3_u);
-
-	hbox4_u = gtk_hbox_new (FALSE, 2);
-	gtk_widget_show (hbox4_u);
-	gtk_container_add (GTK_CONTAINER (alignment3_u), hbox4_u);
-
-	image3_u = gtk_image_new_from_stock ("gtk-convert", GTK_ICON_SIZE_BUTTON);
-	gtk_widget_show (image3_u);
-	gtk_box_pack_start (GTK_BOX (hbox4_u), image3_u, FALSE, FALSE, 0);
-
-	label4_u = gtk_label_new_with_mnemonic (_("_Convert to"));
-	gtk_widget_show (label4_u);
-	gtk_box_pack_start (GTK_BOX (hbox4_u), label4_u, FALSE, FALSE, 0);
-	gtk_label_set_justify (GTK_LABEL (label4_u), GTK_JUSTIFY_LEFT);
-
-	bDeleteUnit = gtk_button_new_from_stock ("gtk-delete");
-	gtk_widget_show (bDeleteUnit);
-	gtk_container_add (GTK_CONTAINER (vbuttonbox1_u), bDeleteUnit);
-	GTK_WIDGET_SET_FLAGS (bDeleteUnit, GTK_CAN_DEFAULT);
-
-	dialog_action_area1_u = GTK_DIALOG (wUnits)->action_area;
-	gtk_widget_show (dialog_action_area1_u);
-	gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area1_u), GTK_BUTTONBOX_END);
-
-	bCloseUnits = gtk_button_new_from_stock ("gtk-close");
-	gtk_widget_show (bCloseUnits);
-	gtk_dialog_add_action_widget (GTK_DIALOG (wUnits), bCloseUnits, GTK_RESPONSE_CLOSE);
-	GTK_WIDGET_SET_FLAGS (bCloseUnits, GTK_CAN_DEFAULT);
+	bCloseUnits	= glade_xml_get_widget (glade_xml, "units_button_close");
 
 	g_signal_connect ((gpointer) wUnits, "delete_event",
 	                  G_CALLBACK (on_wUnits_delete_event),
