@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-10-06 16:01+0200\n"
+"POT-Creation-Date: 2004-10-08 12:20+0200\n"
 "PO-Revision-Date: 2003-10-27 12:29+0100\n"
 "Last-Translator: Niklas Knutsson <nq@altern.org>\n"
 "Language-Team: Swedish\n"
@@ -69,7 +69,8 @@ msgstr "Ekvatoriell tyngdkraft"
 msgid "Inclination"
 msgstr "Inklination"
 
-#: src/libqalculate/data/datasets.xml.in.h:10 src/libqalculate/data/units.xml.in.h:228
+#: src/libqalculate/data/datasets.xml.in.h:10
+#: src/libqalculate/data/units.xml.in.h:228
 msgid "Mass"
 msgstr "Massa"
 
@@ -204,7 +205,8 @@ msgid "y_pos"
 msgstr ""
 
 #: src/libqalculate/data/datasets.xml.in.h:42
-#: src/libqalculate/data/functions.xml.in.h:769 src/libqalculate/data/units.xml.in.h:734
+#: src/libqalculate/data/functions.xml.in.h:769
+#: src/libqalculate/data/units.xml.in.h:734
 msgid "year"
 msgstr "år"
 
@@ -225,9 +227,8 @@ msgid "Antimony"
 msgstr "Antimon"
 
 #: src/libqalculate/data/elements.xml.in.h:5
-#, fuzzy
 msgid "Argon"
-msgstr "Parameter"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:6
 msgid "Arsenic"
@@ -238,9 +239,8 @@ msgid "Astatine"
 msgstr "Astat"
 
 #: src/libqalculate/data/elements.xml.in.h:8
-#, fuzzy
 msgid "Barium"
-msgstr "Bar"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:9
 msgid "Berkelium"
@@ -275,23 +275,20 @@ msgid "Calcium"
 msgstr "Kalcium"
 
 #: src/libqalculate/data/elements.xml.in.h:17
-#, fuzzy
 msgid "Californium"
-msgstr "Kalorier"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:18
 msgid "Carbon"
 msgstr "Kol"
 
 #: src/libqalculate/data/elements.xml.in.h:19
-#, fuzzy
 msgid "Cerium"
-msgstr "Termer"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:20
-#, fuzzy
 msgid "Cesium"
-msgstr "Summa"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:21
 msgid "Chlorine"
@@ -346,18 +343,16 @@ msgid "Fluorine"
 msgstr "Fluor"
 
 #: src/libqalculate/data/elements.xml.in.h:34
-#, fuzzy
 msgid "Francium"
-msgstr "Bråktal"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:35
 msgid "Gadolinium"
 msgstr "Gadolinium guld"
 
 #: src/libqalculate/data/elements.xml.in.h:36
-#, fuzzy
 msgid "Gallium"
-msgstr "Gra"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:37
 msgid "Germanium"
@@ -372,18 +367,16 @@ msgid "Hafnium"
 msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:40
-#, fuzzy
 msgid "Hassium"
-msgstr "Summa"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:41
 msgid "Helium"
 msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:42
-#, fuzzy
 msgid "Holmium"
-msgstr "kolumn"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:43
 msgid "Hydrogen"
@@ -430,9 +423,8 @@ msgid "Lutetium"
 msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:54
-#, fuzzy
 msgid "Magnesium"
-msgstr "Magnetism"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:55
 msgid "Manganese"
@@ -446,7 +438,8 @@ msgstr ""
 msgid "Mendelevium"
 msgstr ""
 
-#: src/libqalculate/data/elements.xml.in.h:58 src/libqalculate/data/planets.xml.in.h:4
+#: src/libqalculate/data/elements.xml.in.h:58
+#: src/libqalculate/data/planets.xml.in.h:4
 msgid "Mercury"
 msgstr "Kvicksilver"
 
@@ -459,18 +452,16 @@ msgid "Neodymium"
 msgstr "Neodym"
 
 #: src/libqalculate/data/elements.xml.in.h:61
-#, fuzzy
 msgid "Neon"
-msgstr "Ingen"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:62
 msgid "Neptunium"
 msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:63
-#, fuzzy
 msgid "Nickel"
-msgstr "tak"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:64
 msgid "Niobium"
@@ -485,9 +476,8 @@ msgid "Nobelium"
 msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:67
-#, fuzzy
 msgid "Osmium"
-msgstr "Summa"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:68
 msgid "Oxygen"
@@ -530,14 +520,12 @@ msgid "Protactinium"
 msgstr "Protaktinium"
 
 #: src/libqalculate/data/elements.xml.in.h:78
-#, fuzzy
 msgid "Radium"
-msgstr "Radie"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:79
-#, fuzzy
 msgid "Radon"
-msgstr "Rad"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:80
 msgid "Rhenium"
@@ -548,9 +536,8 @@ msgid "Rhodium"
 msgstr "Rodium"
 
 #: src/libqalculate/data/elements.xml.in.h:82
-#, fuzzy
 msgid "Roentgenium"
-msgstr "Röntgen"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:83
 msgid "Rubidium"
@@ -565,9 +552,8 @@ msgid "Rutherfordium"
 msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:86
-#, fuzzy
 msgid "Samarium"
-msgstr "en matris"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:87
 msgid "Scandium"
@@ -586,9 +572,8 @@ msgid "Silicon"
 msgstr "Kisel"
 
 #: src/libqalculate/data/elements.xml.in.h:91
-#, fuzzy
 msgid "Silver"
-msgstr "Enkelt"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:92
 msgid "Sodium"
@@ -615,9 +600,8 @@ msgid "Tellurium"
 msgstr "Tellur"
 
 #: src/libqalculate/data/elements.xml.in.h:98
-#, fuzzy
 msgid "Terbium"
-msgstr "Termer"
+msgstr ""
 
 #: src/libqalculate/data/elements.xml.in.h:99
 msgid "Thallium"
@@ -771,7 +755,8 @@ msgstr "Erhållet belopp för en säkerhet vid mognad"
 msgid "Analysis"
 msgstr "Analys"
 
-#: src/libqalculate/data/functions.xml.in.h:19 src/libqalculate/data/units.xml.in.h:26
+#: src/libqalculate/data/functions.xml.in.h:19
+#: src/libqalculate/data/units.xml.in.h:26
 msgid "Angle"
 msgstr "Vinkel"
 
@@ -1288,9 +1273,8 @@ msgid "Denominator of Fraction"
 msgstr "Bråktalets nämnare "
 
 #: src/libqalculate/data/functions.xml.in.h:127
-#, fuzzy
 msgid "Derangements"
-msgstr "Parametrar"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:128
 msgid "Derive"
@@ -1369,9 +1353,8 @@ msgid "Dollar Fraction"
 msgstr "Dollar bråktal"
 
 #: src/libqalculate/data/functions.xml.in.h:146
-#, fuzzy
 msgid "Double Factorial"
-msgstr "Fakultet"
+msgstr "Dubbelfakultet"
 
 #: src/libqalculate/data/functions.xml.in.h:147
 msgid "Duration"
@@ -1544,7 +1527,8 @@ msgstr "för...utför"
 msgid "Fractional Dollar"
 msgstr "Bråktalsdollar"
 
-#: src/libqalculate/data/functions.xml.in.h:191 src/libqalculate/data/units.xml.in.h:133
+#: src/libqalculate/data/functions.xml.in.h:191
+#: src/libqalculate/data/units.xml.in.h:133
 msgid "Frequency"
 msgstr "Frekvens"
 
@@ -1622,9 +1606,8 @@ msgid "Hyperbolic Tangent"
 msgstr "Tangens hyperbolicus"
 
 #: src/libqalculate/data/functions.xml.in.h:209
-#, fuzzy
 msgid "Hyperfactorial"
-msgstr "Fakultet"
+msgstr "Hyperfakultet"
 
 #: src/libqalculate/data/functions.xml.in.h:210
 msgid "Hypotenuse"
@@ -1746,7 +1729,8 @@ msgstr "Startdatum"
 msgid "Last Component"
 msgstr "Sista komponenten"
 
-#: src/libqalculate/data/functions.xml.in.h:240 src/libqalculate/data/units.xml.in.h:207
+#: src/libqalculate/data/functions.xml.in.h:240
+#: src/libqalculate/data/units.xml.in.h:207
 msgid "Length"
 msgstr "Längd"
 
@@ -1880,9 +1864,8 @@ msgid "Month"
 msgstr "Månad"
 
 #: src/libqalculate/data/functions.xml.in.h:273
-#, fuzzy
 msgid "Multifactorial"
-msgstr "Fakultet"
+msgstr "Multifakultet"
 
 #: src/libqalculate/data/functions.xml.in.h:274
 msgid "Multiply"
@@ -2733,9 +2716,8 @@ msgid "Sum-of-Years Digits Depreciation"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:463
-#, fuzzy
 msgid "Superfactorial"
-msgstr "Fakultet"
+msgstr "Suprtfakultet"
 
 #: src/libqalculate/data/functions.xml.in.h:464
 msgid "Supply Function"
@@ -2999,32 +2981,28 @@ msgid "abs"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:530
-#, fuzzy
 msgid "accrint"
-msgstr "forint"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:531
 msgid "accrintm"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:532
-#, fuzzy
 msgid "acos"
-msgstr "cos"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:533
-#, fuzzy
 msgid "acosh"
-msgstr "cos"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:534
 msgid "acot"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:535
-#, fuzzy
 msgid "acoth"
-msgstr "Månad"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:536
 msgid "acsc"
@@ -3035,47 +3013,39 @@ msgid "acsch"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:538
-#, fuzzy
 msgid "add"
-msgstr "och"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:539
-#, fuzzy
 msgid "adj"
-msgstr "och"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:541
-#, fuzzy
 msgid "asec"
-msgstr "Bas"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:542
-#, fuzzy
 msgid "asech"
-msgstr "Bas"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:543
-#, fuzzy
 msgid "asin"
-msgstr "sin"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:544
-#, fuzzy
 msgid "asinh"
-msgstr "sin"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:545
-#, fuzzy
 msgid "atan"
-msgstr "tan"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:546
-#, fuzzy
 msgid "atanh"
-msgstr "tan"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:548
-#: src/libqalculate/data/variables.xml.in.h:106
+#: src/libqalculate/data/variables.xml.in.h:107
 msgid "atomic_mass"
 msgstr "atommassa"
 
@@ -3100,28 +3070,24 @@ msgid "base"
 msgstr "bas"
 
 #: src/libqalculate/data/functions.xml.in.h:554
-#, fuzzy
 msgid "beta"
-msgstr "peseta"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:555
-#, fuzzy
 msgid "bin"
-msgstr "sin"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:556
 msgid "binomial"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:557
-#, fuzzy
 msgid "bmi"
-msgstr "minut"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:558
-#, fuzzy
 msgid "cbrt"
-msgstr "karat"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:559
 msgid "ceil"
@@ -3140,9 +3106,8 @@ msgid "circumference"
 msgstr "omkrets"
 
 #: src/libqalculate/data/functions.xml.in.h:563
-#, fuzzy
 msgid "cis"
-msgstr "cos"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:564
 msgid "code"
@@ -3161,9 +3126,8 @@ msgid "columns"
 msgstr "kolumner"
 
 #: src/libqalculate/data/functions.xml.in.h:568
-#, fuzzy
 msgid "comb"
-msgstr "kolumn"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:569
 msgid "component"
@@ -3174,9 +3138,8 @@ msgid "components"
 msgstr "komponenter"
 
 #: src/libqalculate/data/functions.xml.in.h:571
-#, fuzzy
 msgid "compound"
-msgstr "pund"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:572
 msgid "concatenate"
@@ -3191,67 +3154,56 @@ msgid "cone_sa"
 msgstr "konyta"
 
 #: src/libqalculate/data/functions.xml.in.h:575
-#, fuzzy
 msgid "cor"
-msgstr "eller"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:576
-#, fuzzy
 msgid "correl"
-msgstr "kalori"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:577
 msgid "cos"
 msgstr "cos"
 
 #: src/libqalculate/data/functions.xml.in.h:578
-#, fuzzy
 msgid "cosh"
-msgstr "cos"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:579
-#, fuzzy
 msgid "cot"
-msgstr "cos"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:580
-#, fuzzy
 msgid "coth"
-msgstr "Månad"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:581
-#, fuzzy
 msgid "countinuous"
-msgstr "Funktioner"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:582
-#, fuzzy
 msgid "coupnum"
-msgstr "kolumn"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:583
-#, fuzzy
 msgid "covar"
-msgstr "tolar"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:584
-#, fuzzy
 msgid "csc"
-msgstr "cos"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:585
 msgid "csch"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:586
-#, fuzzy
 msgid "csum"
-msgstr "kolumn"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:587
-#, fuzzy
 msgid "csurplus"
-msgstr "pund"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:588
 msgid "cube"
@@ -3262,19 +3214,20 @@ msgid "cube_sa"
 msgstr "kubyta"
 
 #: src/libqalculate/data/functions.xml.in.h:590
-#, fuzzy
 msgid "cylinder"
-msgstr "Cylinder"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:591
 msgid "cylinder_sa"
 msgstr "cylinderyta"
 
-#: src/libqalculate/data/functions.xml.in.h:592 src/libqalculate/data/units.xml.in.h:460
+#: src/libqalculate/data/functions.xml.in.h:592
+#: src/libqalculate/data/units.xml.in.h:460
 msgid "day"
 msgstr "dag"
 
-#: src/libqalculate/data/functions.xml.in.h:593 src/libqalculate/data/units.xml.in.h:461
+#: src/libqalculate/data/functions.xml.in.h:593
+#: src/libqalculate/data/units.xml.in.h:461
 msgid "days"
 msgstr "dagar"
 
@@ -3283,76 +3236,64 @@ msgid "decile"
 msgstr "decil"
 
 #: src/libqalculate/data/functions.xml.in.h:595
-#, fuzzy
 msgid "derangements"
-msgstr "Parametrar"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:596
-#, fuzzy
 msgid "det"
-msgstr "grad"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:597
 msgid "diff"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:598
-#, fuzzy
 msgid "dimension"
-msgstr "densitet"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:599
-#, fuzzy
 msgid "disc"
-msgstr "Radie"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:600
 msgid "divide"
 msgstr "dela"
 
 #: src/libqalculate/data/functions.xml.in.h:601
-#, fuzzy
 msgid "dollarde"
-msgstr "dollar"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:602
-#, fuzzy
 msgid "dollarfr"
-msgstr "dollar"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:603
-#, fuzzy
 msgid "duration"
-msgstr "Duration"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:604
-#, fuzzy
 msgid "durbinwatson"
-msgstr "Durbin-Watson"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:605
-#, fuzzy
 msgid "effect"
-msgstr "fot"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:606
 msgid "elasticity"
 msgstr "elasticitet"
 
 #: src/libqalculate/data/functions.xml.in.h:607
-#, fuzzy
 msgid "element"
-msgstr "Element"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:608
-#, fuzzy
 msgid "elements"
-msgstr "Element"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:609
-#, fuzzy
 msgid "error"
-msgstr "euro"
+msgstr "fel"
 
 #: src/libqalculate/data/functions.xml.in.h:610
 msgid "exp"
@@ -3363,9 +3304,8 @@ msgid "exp10"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:612
-#, fuzzy
 msgid "exp2"
-msgstr "2"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:613
 msgid "export"
@@ -3376,24 +3316,20 @@ msgid "extremum"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:615
-#, fuzzy
 msgid "factorial"
-msgstr "Fakultet"
+msgstr "fakultet"
 
 #: src/libqalculate/data/functions.xml.in.h:616
-#, fuzzy
 msgid "factorial2"
-msgstr "Fakultet"
+msgstr "fakultet2"
 
 #: src/libqalculate/data/functions.xml.in.h:617
-#, fuzzy
 msgid "floor"
-msgstr "fot"
+msgstr "golv"
 
 #: src/libqalculate/data/functions.xml.in.h:618
-#, fuzzy
 msgid "for"
-msgstr "eller"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:619
 msgid "frac"
@@ -3408,42 +3344,36 @@ msgid "fv"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:622
-#, fuzzy
 msgid "g_duration"
-msgstr "Duration"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:623
-#, fuzzy
 msgid "gamma"
-msgstr "gram"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:624
 msgid "gcd"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:625
-#, fuzzy
 msgid "geomean"
-msgstr "Romersk"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:626
-#, fuzzy
 msgid "harmmean"
-msgstr "Harmoniskt medelvärde"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:627
 msgid "hex"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:628
-#, fuzzy
 msgid "hyperfactorial"
-msgstr "Fakultet"
+msgstr "hyperfakultet"
 
 #: src/libqalculate/data/functions.xml.in.h:629
-#, fuzzy
 msgid "hypot"
-msgstr "hyp"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:630
 msgid "identity"
@@ -3454,66 +3384,56 @@ msgid "if"
 msgstr "om"
 
 #: src/libqalculate/data/functions.xml.in.h:632
-#, fuzzy
 msgid "im"
-msgstr "Tid"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:633
-#, fuzzy
 msgid "int"
-msgstr "minut"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:634
 msgid "integrate"
 msgstr "integrera"
 
 #: src/libqalculate/data/functions.xml.in.h:635
-#, fuzzy
 msgid "intrate"
-msgstr "Integrera"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:636
-#, fuzzy
 msgid "inv"
-msgstr "sin"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:637
-#, fuzzy
 msgid "inverse"
-msgstr "Inversen"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:638
-#, fuzzy
 msgid "ipmt"
-msgstr "Gränser"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:639
 msgid "iqr"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:640
-#, fuzzy
 msgid "ispmt"
-msgstr "Prism"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:641
 msgid "len"
 msgstr "längd"
 
 #: src/libqalculate/data/functions.xml.in.h:642
-#, fuzzy
 msgid "level_coupon"
-msgstr "Nollkupong"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:643
-#, fuzzy
 msgid "limits"
-msgstr "Gränser"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:644
-#, fuzzy
 msgid "linearfunction"
-msgstr "dölj funktionen"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:645
 msgid "ln"
@@ -3528,14 +3448,12 @@ msgid "log"
 msgstr "log"
 
 #: src/libqalculate/data/functions.xml.in.h:648
-#, fuzzy
 msgid "log10"
-msgstr "log"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:649
-#, fuzzy
 msgid "log2"
-msgstr "log"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:650
 msgid "logistic"
@@ -3546,43 +3464,37 @@ msgid "matrix"
 msgstr "matris"
 
 #: src/libqalculate/data/functions.xml.in.h:652
-#, fuzzy
 msgid "matrix2vector"
-msgstr "Matriser/Vektor"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:653
-#, fuzzy
 msgid "max"
-msgstr "matris"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:654
 msgid "mean"
 msgstr "medel"
 
 #: src/libqalculate/data/functions.xml.in.h:655
-#, fuzzy
 msgid "meandev"
-msgstr "och"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:656
-#, fuzzy
 msgid "median"
-msgstr "Median"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:657
-#, fuzzy
 msgid "mergevectors"
-msgstr "Sammanslå vektorer"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:658
-#, fuzzy
 msgid "message"
-msgstr "Meddelande"
+msgstr "meddelande"
 
-#: src/libqalculate/data/functions.xml.in.h:659 src/libqalculate/data/units.xml.in.h:623
-#, fuzzy
+#: src/libqalculate/data/functions.xml.in.h:659
+#: src/libqalculate/data/units.xml.in.h:623
 msgid "min"
-msgstr "minut"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:660
 msgid "mod"
@@ -3597,91 +3509,76 @@ msgid "month"
 msgstr "månad"
 
 #: src/libqalculate/data/functions.xml.in.h:663
-#, fuzzy
 msgid "multifactorial"
-msgstr "Fakultet"
+msgstr "multifakultet"
 
 #: src/libqalculate/data/functions.xml.in.h:664
-#, fuzzy
 msgid "multiply"
-msgstr "Multiplicera"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:665
-#, fuzzy
 msgid "multisolve"
-msgstr "lös"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:666
-#, fuzzy
 msgid "neg"
-msgstr "grad"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:667
-#, fuzzy
 msgid "nominal"
-msgstr "Nämnare"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:668
-#, fuzzy
 msgid "norm"
-msgstr "eller"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:669
-#, fuzzy
 msgid "nper"
-msgstr "Energi"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:671
-#, fuzzy
 msgid "oct"
-msgstr "objekt"
+msgstr "okt"
 
 #: src/libqalculate/data/functions.xml.in.h:672
-#, fuzzy
 msgid "parallelogram"
-msgstr "Parallelogram"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:673
 msgid "parallelogram_perimeter"
 msgstr "parallelogramomkrets"
 
 #: src/libqalculate/data/functions.xml.in.h:674
-#, fuzzy
 msgid "pareto"
-msgstr "Avskiljare"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:675
-#, fuzzy
 msgid "pearson"
-msgstr "år"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:676
 msgid "percentile"
 msgstr "percentil"
 
 #: src/libqalculate/data/functions.xml.in.h:677
-#, fuzzy
 msgid "perm"
-msgstr "Termer"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:678
-#, fuzzy
 msgid "permanent"
-msgstr "Permanent"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:679
 msgid "pmt"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:680
-#, fuzzy
 msgid "poolvar"
-msgstr "tolar"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:681
-#, fuzzy
 msgid "pow"
-msgstr "Rad"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:682
 msgid "ppmt"
@@ -3692,42 +3589,36 @@ msgid "pricedisc"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:684
-#, fuzzy
 msgid "pricemat"
-msgstr "Approximera"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:685
-#, fuzzy
 msgid "process"
-msgstr "eurocent"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:686
 msgid "processm"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:687
-#, fuzzy
 msgid "product"
-msgstr "Produkt"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:688
-#, fuzzy
 msgid "psurplus"
-msgstr "pund"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:689
-#, fuzzy
 msgid "pttest"
-msgstr "peseta"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:690
 msgid "pv"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:691
-#, fuzzy
 msgid "pyramid"
-msgstr "Pyramid"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:692
 msgid "quartile"
@@ -3738,9 +3629,8 @@ msgid "radtodef"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:694
-#, fuzzy
 msgid "raise"
-msgstr "Upphöj"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:695
 msgid "rand"
@@ -3751,9 +3641,8 @@ msgid "randbetween"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:697
-#, fuzzy
 msgid "range"
-msgstr "vinkel"
+msgstr "omfång"
 
 #: src/libqalculate/data/functions.xml.in.h:698
 msgid "rank"
@@ -3768,9 +3657,8 @@ msgid "rayleightail"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:701
-#, fuzzy
 msgid "re"
-msgstr "reell"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:702
 msgid "received"
@@ -3801,14 +3689,12 @@ msgid "replace"
 msgstr "ersätt"
 
 #: src/libqalculate/data/functions.xml.in.h:709
-#, fuzzy
 msgid "rms"
-msgstr "Termer"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:710
-#, fuzzy
 msgid "roman"
-msgstr "Romersk"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:711
 msgid "root"
@@ -3831,38 +3717,32 @@ msgid "save"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:716
-#, fuzzy
 msgid "sec"
-msgstr "sekund"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:717
-#, fuzzy
 msgid "sech"
-msgstr "sekund"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:718
-#, fuzzy
 msgid "select"
-msgstr "sekund"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:719
-#, fuzzy
 msgid "sgn"
-msgstr "sin"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:720
 msgid "sin"
 msgstr "sin"
 
 #: src/libqalculate/data/functions.xml.in.h:721
-#, fuzzy
 msgid "sinh"
-msgstr "sin"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:722
-#, fuzzy
 msgid "sln"
-msgstr "ln"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:723
 msgid "solve"
@@ -3877,9 +3757,8 @@ msgid "sort"
 msgstr "sortera"
 
 #: src/libqalculate/data/functions.xml.in.h:726
-#, fuzzy
 msgid "spearman"
-msgstr "Spearmans Rho"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:727
 msgid "sphere"
@@ -3894,9 +3773,8 @@ msgid "sq"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:730
-#, fuzzy
 msgid "sqrt"
-msgstr "Infoga"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:731
 msgid "sqrtpi"
@@ -3923,19 +3801,16 @@ msgid "stdevp"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:737
-#, fuzzy
 msgid "subtract"
-msgstr "Subtrahera"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:738
-#, fuzzy
 msgid "sum"
-msgstr "Summa"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:739
-#, fuzzy
 msgid "superfactorial"
-msgstr "Fakultet"
+msgstr "suprtfakultet"
 
 #: src/libqalculate/data/functions.xml.in.h:740
 msgid "syd"
@@ -3946,9 +3821,8 @@ msgid "tan"
 msgstr "tan"
 
 #: src/libqalculate/data/functions.xml.in.h:742
-#, fuzzy
 msgid "tanh"
-msgstr "tan"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:743
 msgid "tbilleq"
@@ -3971,14 +3845,12 @@ msgid "title"
 msgstr "titel"
 
 #: src/libqalculate/data/functions.xml.in.h:748
-#, fuzzy
 msgid "total"
-msgstr "Summa (total)"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:749
-#, fuzzy
 msgid "transpose"
-msgstr "Transponera"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:750
 msgid "trapezoid"
@@ -3997,23 +3869,20 @@ msgid "triangleprism"
 msgstr "triangelprism"
 
 #: src/libqalculate/data/functions.xml.in.h:754
-#, fuzzy
 msgid "trimmean"
-msgstr "Trimmat medelvärde"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:755
 msgid "trunc"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:756
-#, fuzzy
 msgid "ttest"
-msgstr "text"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:757
-#, fuzzy
 msgid "var"
-msgstr "Bar"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:758
 msgid "varp"
@@ -4024,9 +3893,8 @@ msgid "vector"
 msgstr "vektor"
 
 #: src/libqalculate/data/functions.xml.in.h:760
-#, fuzzy
 msgid "warning"
-msgstr "Visa varning"
+msgstr "varning"
 
 #: src/libqalculate/data/functions.xml.in.h:761
 msgid "week"
@@ -4037,90 +3905,76 @@ msgid "weekday"
 msgstr "veckodag"
 
 #: src/libqalculate/data/functions.xml.in.h:763
-#, fuzzy
 msgid "weighmean"
-msgstr "Viktat medelvärde"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:764
-#, fuzzy
 msgid "winsormean"
-msgstr "Winsor-medelvärde"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:765
-#, fuzzy
 msgid "x1"
-msgstr "1"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:766
-#, fuzzy
 msgid "x2"
-msgstr "2"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:767
-#, fuzzy
 msgid "y1"
-msgstr "1"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:768
-#, fuzzy
 msgid "y2"
-msgstr "2"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:770
 msgid "yearday"
 msgstr "årsdag"
 
 #: src/libqalculate/data/functions.xml.in.h:771
-#, fuzzy
 msgid "yearfrac"
-msgstr "år"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:772
-#, fuzzy
 msgid "zero_coupon"
-msgstr "Nollkupong"
+msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:773
-#, fuzzy
 msgid "zeta"
-msgstr "peseta"
+msgstr ""
 
 #: src/libqalculate/data/planets.xml.in.h:1
 msgid "Earth"
 msgstr "Jorden"
 
 #: src/libqalculate/data/planets.xml.in.h:2
-#, fuzzy
 msgid "Jupiter"
-msgstr "liter"
+msgstr ""
 
 #: src/libqalculate/data/planets.xml.in.h:3
-#, fuzzy
 msgid "Mars"
-msgstr "Massa"
+msgstr ""
 
 #: src/libqalculate/data/planets.xml.in.h:5
 msgid "Neptune"
 msgstr "Neptunus"
 
 #: src/libqalculate/data/planets.xml.in.h:6
-#, fuzzy
 msgid "Pluto"
-msgstr "Diagram"
+msgstr ""
 
 #: src/libqalculate/data/planets.xml.in.h:7
 msgid "Saturn"
 msgstr "Saturnus"
 
 #: src/libqalculate/data/planets.xml.in.h:8
-#, fuzzy
 msgid "Uranus"
-msgstr "Uran"
+msgstr ""
 
 #: src/libqalculate/data/planets.xml.in.h:9
-#, fuzzy
 msgid "Venus"
-msgstr "euro"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:1
 msgid "$"
@@ -4175,9 +4029,8 @@ msgid "&#xE5;ngstr&#xF6;m"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:14
-#, fuzzy
 msgid "A"
-msgstr "AC"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:15
 msgid "ATS"
@@ -4304,9 +4157,8 @@ msgid "Bulgarian Lev"
 msgstr "Bulgariska lev"
 
 #: src/libqalculate/data/units.xml.in.h:47
-#, fuzzy
 msgid "C"
-msgstr "AC"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:48
 msgid "CAD"
@@ -4397,9 +4249,8 @@ msgid "Chain"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:70
-#, fuzzy
 msgid "Ci"
-msgstr "Tak"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:71
 msgid "Cooking"
@@ -4462,9 +4313,8 @@ msgid "Czech Koruna"
 msgstr "Tjeckiska koruna"
 
 #: src/libqalculate/data/units.xml.in.h:86
-#, fuzzy
 msgid "DEM"
-msgstr "DEL"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:87
 msgid "DKK"
@@ -4527,14 +4377,12 @@ msgid "Dyne"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:102
-#, fuzzy
 msgid "EEK"
-msgstr "kr"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:103
-#, fuzzy
 msgid "ESP"
-msgstr "EXP"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:104
 msgid "EUR"
@@ -4665,18 +4513,16 @@ msgid "GRD"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:137
-#, fuzzy
 msgid "Gal"
-msgstr "Gra"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:138
 msgid "Galileo"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:139
-#, fuzzy
 msgid "Gauss"
-msgstr "Massa"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:140
 msgid "Gradian"
@@ -4767,9 +4613,8 @@ msgid "IEP"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:162
-#, fuzzy
 msgid "ISK"
-msgstr "kr"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:163
 msgid "ITL"
@@ -4808,18 +4653,16 @@ msgid "Imperial Gallon"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:172
-#, fuzzy
 msgid "Imperial Gill"
-msgstr "Numerisk visning"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:173
 msgid "Imperial Minim"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:174
-#, fuzzy
 msgid "Imperial Pint"
-msgstr "Decimalkomma"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:175
 msgid "Imperial Quart"
@@ -5030,14 +4873,12 @@ msgid "Maltese Lira"
 msgstr "Maltesiska lire"
 
 #: src/libqalculate/data/units.xml.in.h:229
-#, fuzzy
 msgid "Mass Fraction"
-msgstr "Bråktal"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:230
-#, fuzzy
 msgid "Maxwell"
-msgstr "Max"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:231
 msgid "Meter"
@@ -5096,9 +4937,8 @@ msgid "Moment of Force"
 msgstr "Kraftmoment"
 
 #: src/libqalculate/data/units.xml.in.h:245
-#, fuzzy
 msgid "Mx"
-msgstr "Max"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:246
 msgid "N"
@@ -5221,18 +5061,16 @@ msgid "Pfund"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:276
-#, fuzzy
 msgid "Phot"
-msgstr "Diagram"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:277
 msgid "Plane Angle"
 msgstr "Planvinkel"
 
 #: src/libqalculate/data/units.xml.in.h:278
-#, fuzzy
 msgid "Poise"
-msgstr "Punkter"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:279
 msgid "Polish Zloty"
@@ -5335,14 +5173,12 @@ msgid "SGD"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:304
-#, fuzzy
 msgid "SIT"
-msgstr "STO"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:305
-#, fuzzy
 msgid "SKK"
-msgstr "kr"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:306
 msgid "Second"
@@ -5433,23 +5269,20 @@ msgid "Square Meter per Square Meter"
 msgstr "Kvadratmeter per kvadratmeter"
 
 #: src/libqalculate/data/units.xml.in.h:328
-#, fuzzy
 msgid "St"
-msgstr "Sortera"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:329
 msgid "Steradian"
 msgstr "Steradian"
 
 #: src/libqalculate/data/units.xml.in.h:330
-#, fuzzy
 msgid "Stilb"
-msgstr "Stil"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:331
-#, fuzzy
 msgid "Stokes"
-msgstr "Steg"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:332
 msgid "Stone"
@@ -5544,9 +5377,8 @@ msgid "U.S. Dry Pint"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:355
-#, fuzzy
 msgid "U.S. Dry Quart"
-msgstr "Amerikanska dollar"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:356
 msgid "U.S. Fluid Drachm"
@@ -5557,14 +5389,12 @@ msgid "U.S. Fluid Ounce"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:358
-#, fuzzy
 msgid "U.S. Gallon"
-msgstr "Amerikanska dollar"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:359
-#, fuzzy
 msgid "U.S. Gill"
-msgstr "Amerikanska dollar"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:360
 msgid "U.S. Liquid Pints"
@@ -5635,9 +5465,8 @@ msgid "US_ft"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:377
-#, fuzzy
 msgid "US_in"
-msgstr "Sigma"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:378
 msgid "US_inch"
@@ -5784,9 +5613,8 @@ msgid "astronomical_units"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:414
-#, fuzzy
 msgid "atm"
-msgstr "famn"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:415
 msgid "atmosphere"
@@ -5857,14 +5685,12 @@ msgid "bushels"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:432
-#, fuzzy
 msgid "cal"
-msgstr "Oktal"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:433
-#, fuzzy
 msgid "cal_mean"
-msgstr "Skala"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:434
 msgid "cal_th"
@@ -5927,9 +5753,8 @@ msgid "cents"
 msgstr "cents"
 
 #: src/libqalculate/data/units.xml.in.h:449
-#, fuzzy
 msgid "ch"
-msgstr "tum"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:450
 msgid "chain"
@@ -5972,9 +5797,8 @@ msgid "d"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:462
-#, fuzzy
 msgid "deg"
-msgstr "grad"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:463
 msgid "degree"
@@ -6037,18 +5861,16 @@ msgid "dry_quarts"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:478
-#, fuzzy
 msgid "dyn"
-msgstr "ja"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:479
 msgid "dyne"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:480
-#, fuzzy
 msgid "dynes"
-msgstr "ja"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:481
 msgid "eV"
@@ -6091,9 +5913,8 @@ msgid "euros"
 msgstr "euro"
 
 #: src/libqalculate/data/units.xml.in.h:491
-#, fuzzy
 msgid "fahrenheit"
-msgstr "Grader Fahrenheit"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:492
 msgid "farad"
@@ -6152,9 +5973,8 @@ msgid "franc"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:506
-#, fuzzy
 msgid "ft"
-msgstr "fot"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:507
 msgid "fur"
@@ -6173,9 +5993,8 @@ msgid "g"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:511
-#, fuzzy
 msgid "gal"
-msgstr "Logik"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:512
 msgid "galileo"
@@ -6194,9 +6013,8 @@ msgid "gallons"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:516
-#, fuzzy
 msgid "gauss"
-msgstr "Massa"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:517
 msgid "gi"
@@ -6215,9 +6033,8 @@ msgid "gr"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:521
-#, fuzzy
 msgid "gra"
-msgstr "gram"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:522
 msgid "gradian"
@@ -6296,9 +6113,8 @@ msgid "hours"
 msgstr "timmar"
 
 #: src/libqalculate/data/units.xml.in.h:541
-#, fuzzy
 msgid "hp"
-msgstr "hyp"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:542
 msgid "hundredweight"
@@ -6381,9 +6197,8 @@ msgid "imperial_quarts"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:562
-#, fuzzy
 msgid "in"
-msgstr "Min"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:563
 msgid "inch"
@@ -6430,18 +6245,16 @@ msgid "knots"
 msgstr "knop"
 
 #: src/libqalculate/data/units.xml.in.h:574
-#, fuzzy
 msgid "l"
-msgstr "2"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:575
 msgid "l_cwt"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:576
-#, fuzzy
 msgid "l_ton"
-msgstr "ton"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:577
 msgid "lat"
@@ -6464,9 +6277,8 @@ msgid "lev"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:582
-#, fuzzy
 msgid "li"
-msgstr "lit"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:583
 msgid "light_year"
@@ -6485,14 +6297,12 @@ msgid "links"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:587
-#, fuzzy
 msgid "liq_pt"
-msgstr "lit"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:588
-#, fuzzy
 msgid "liq_qt"
-msgstr "lit"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:589
 msgid "liquid_pints"
@@ -6523,12 +6333,10 @@ msgid "liters"
 msgstr "liter"
 
 #: src/libqalculate/data/units.xml.in.h:596
-#, fuzzy
 msgid "litre"
-msgstr "lit"
+msgstr "liter"
 
 #: src/libqalculate/data/units.xml.in.h:597
-#, fuzzy
 msgid "litres"
 msgstr "liter"
 
@@ -6569,9 +6377,8 @@ msgid "lux"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:607
-#, fuzzy
 msgid "lx"
-msgstr "2"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:608
 msgid "ly"
@@ -6638,9 +6445,8 @@ msgid "minim"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:625
-#, fuzzy
 msgid "minims"
-msgstr "minuter"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:626
 msgid "minute"
@@ -6651,9 +6457,8 @@ msgid "minutes"
 msgstr "minuter"
 
 #: src/libqalculate/data/units.xml.in.h:628
-#, fuzzy
 msgid "mol"
-msgstr "mol"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:629
 msgid "mole"
@@ -6692,14 +6497,12 @@ msgid "oR"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:638
-#, fuzzy
 msgid "oersted"
-msgstr "avbruten"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:639
-#, fuzzy
 msgid "oersteds"
-msgstr "avbruten"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:640
 msgid "ohm"
@@ -6778,28 +6581,24 @@ msgid "pfund"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:659
-#, fuzzy
 msgid "ph"
-msgstr "Exportera"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:660
-#, fuzzy
 msgid "phot"
-msgstr "Exportera"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:661
-#, fuzzy
 msgid "phots"
-msgstr "Små punkter"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:662
 msgid "pk"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:663
-#, fuzzy
 msgid "poise"
-msgstr "positiv"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:664
 msgid "poises"
@@ -6818,9 +6617,8 @@ msgid "pwt"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:668
-#, fuzzy
 msgid "rad"
-msgstr "radian"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:669
 msgid "rad_radioactivity"
@@ -6835,9 +6633,8 @@ msgid "radians"
 msgstr "radianer"
 
 #: src/libqalculate/data/units.xml.in.h:672
-#, fuzzy
 msgid "rankine"
-msgstr "Grader Rankine"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:673
 msgid "rd"
@@ -6876,9 +6673,8 @@ msgid "s"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:682
-#, fuzzy
 msgid "s_ton"
-msgstr "ton"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:683
 msgid "sb"
@@ -6945,9 +6741,8 @@ msgid "stilbs"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:699
-#, fuzzy
 msgid "stokes"
-msgstr "ton"
+msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:700
 msgid "stone"
@@ -7002,12 +6797,10 @@ msgid "ton"
 msgstr ""
 
 #: src/libqalculate/data/units.xml.in.h:713
-#, fuzzy
 msgid "tonne"
 msgstr "ton"
 
 #: src/libqalculate/data/units.xml.in.h:714
-#, fuzzy
 msgid "tonnes"
 msgstr "ton"
 
@@ -7157,38 +6950,32 @@ msgid "Archimede's Constant (pi)"
 msgstr "Archimedes konstant (pi)"
 
 #: src/libqalculate/data/variables.xml.in.h:15
-#, fuzzy
 msgid "Atomic Mass Constant"
-msgstr "Konstanter"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:16
-#, fuzzy
 msgid "Atomic and Nuclear Constants"
-msgstr "Konstanter"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:17
-#, fuzzy
 msgid "Avogadro Constant"
-msgstr "Aperys konstant"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:18
-#, fuzzy
 msgid "Basic Constants"
-msgstr "Konstanter"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:19
 msgid "Billion"
 msgstr "Miljard"
 
 #: src/libqalculate/data/variables.xml.in.h:20
-#, fuzzy
 msgid "Bohr Radius"
-msgstr "Radie"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:21
-#, fuzzy
 msgid "Boltzmann Constant"
-msgstr "Konstanter"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:22
 msgid "Borh Magneton"
@@ -7199,9 +6986,8 @@ msgid "Catalan's Constant"
 msgstr "Catalans konstant"
 
 #: src/libqalculate/data/variables.xml.in.h:24
-#, fuzzy
 msgid "Centillion"
-msgstr "Förutsättning"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:25
 msgid "Characteristic Impedance of Vacuum"
@@ -7212,43 +6998,36 @@ msgid "Classical Electron Radius"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:27
-#, fuzzy
 msgid "Compton Wavelength"
-msgstr "Komponent"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:28
-#, fuzzy
 msgid "Conductance Quantum"
-msgstr "Induktans"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:29
-#, fuzzy
 msgid "Decillion"
-msgstr "Beskrivning"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:30
-#, fuzzy
 msgid "Duodecillion"
-msgstr "Beskrivning"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:31
 msgid "Electric Constant (Permittivity of Free Space)"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:32
-#, fuzzy
 msgid "Electromagnetic Constants"
-msgstr "Konstanter"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:33
-#, fuzzy
 msgid "Electron Mass"
-msgstr "Elektronvolt"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:34
-#, fuzzy
 msgid "Elementary Charge"
-msgstr "Elektrisk laddning"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:35
 msgid "Euler's Constant"
@@ -7259,14 +7038,12 @@ msgid "False"
 msgstr "Falskt"
 
 #: src/libqalculate/data/variables.xml.in.h:37
-#, fuzzy
 msgid "Faraday Constant"
-msgstr "Catalans konstant"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:38
-#, fuzzy
 msgid "First Radiation Constant"
-msgstr "Catalans konstant"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:39
 msgid "G"
@@ -7277,19 +7054,16 @@ msgid "G_0"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:41
-#, fuzzy
 msgid "Googol"
-msgstr "Boolsk"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:42
-#, fuzzy
 msgid "Googolplex"
-msgstr "Boolsk"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:43
-#, fuzzy
 msgid "Helion Mass"
-msgstr "Elektronvolt"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:44
 msgid "Hundred"
@@ -7304,9 +7078,8 @@ msgid "Infinity"
 msgstr "Oändlighet"
 
 #: src/libqalculate/data/variables.xml.in.h:47
-#, fuzzy
 msgid "Josephson Constant"
-msgstr "Aperys konstant"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:48
 msgid "K_J"
@@ -7321,9 +7094,8 @@ msgid "Magnetic Constant (Permeability of Free Space)"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:51
-#, fuzzy
 msgid "Magnetic Flux Quantum"
-msgstr "Magnetiskt flöde"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:52
 msgid "Million"
@@ -7338,18 +7110,16 @@ msgid "Negative Infinity"
 msgstr "Negativ oändlighet"
 
 #: src/libqalculate/data/variables.xml.in.h:55
-#, fuzzy
 msgid "Neutron Mass"
-msgstr "Elektronvolt"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:56
 msgid "Newtonian Constant of Gravitation"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:57
-#, fuzzy
 msgid "Nonillion"
-msgstr "Förutsättning"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:58
 msgid "Novemdecillion"
@@ -7360,624 +7130,565 @@ msgid "Nuclear Magneton"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:60
-#, fuzzy
 msgid "Octillion"
-msgstr "Åtgärd"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:61
 msgid "Octodecillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:62
-#, fuzzy
-msgid "Physical Constants"
-msgstr "Konstanter"
+msgid "Per Mille"
+msgstr "Promille"
 
 #: src/libqalculate/data/variables.xml.in.h:63
-#, fuzzy
-msgid "Physico-Chemical Constants"
-msgstr "Konstanter"
+msgid "Per Myriad"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:64
-#, fuzzy
-msgid "Planck Constant"
-msgstr "Konstanter"
+msgid "Physical Constants"
+msgstr "Fysiska konstanter"
 
 #: src/libqalculate/data/variables.xml.in.h:65
-#, fuzzy
-msgid "Planck Length"
-msgstr "Längd"
+msgid "Physico-Chemical Constants"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:66
-msgid "Planck Mass"
+msgid "Planck Constant"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:67
-#, fuzzy
-msgid "Planck Temperature"
-msgstr "Temperatur"
+msgid "Planck Length"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:68
-msgid "Planck Time"
+msgid "Planck Mass"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:69
-msgid "Positive Infinity"
-msgstr "Positiv oändlighet"
+msgid "Planck Temperature"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:70
-msgid "Procent"
+msgid "Planck Time"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:71
-msgid "Promille"
-msgstr ""
+msgid "Positive Infinity"
+msgstr "Positiv oändlighet"
 
 #: src/libqalculate/data/variables.xml.in.h:72
-#, fuzzy
-msgid "Proton Mass"
-msgstr "Elektronvolt"
+msgid "Procent"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:73
+msgid "Proton Mass"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:74
 msgid "Pythagora's Constant (sqrt 2)"
 msgstr "Pythagoras konstant (sqrt 2)"
 
-#: src/libqalculate/data/variables.xml.in.h:74
-#, fuzzy
-msgid "Quadrillion"
-msgstr "Kvartil"
-
 #: src/libqalculate/data/variables.xml.in.h:75
-msgid "Quattuordecillion"
+msgid "Quadrillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:76
-msgid "Quindecillion"
+msgid "Quattuordecillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:77
-#, fuzzy
-msgid "Quintillion"
-msgstr "funktion"
+msgid "Quindecillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:78
-msgid "R_&#x221E;"
+msgid "Quintillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:79
-msgid "R_K"
+msgid "R_&#x221E;"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:80
-#, fuzzy
-msgid "Rydberg Constant"
-msgstr "Aperys konstant"
+msgid "R_K"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:81
-#, fuzzy
-msgid "Second Radiation Constant"
-msgstr "Konstanter"
+msgid "Rydberg Constant"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:82
-msgid "Septendecillion"
+msgid "Second Radiation Constant"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:83
-#, fuzzy
-msgid "Septillion"
-msgstr "Semikolon"
+msgid "Septendecillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:84
-#, fuzzy
-msgid "Sexdecillion"
-msgstr "Hexadecimal"
+msgid "Septillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:85
-#, fuzzy
-msgid "Sextillion"
-msgstr "Semikolon"
+msgid "Sexdecillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:86
+msgid "Sextillion"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:87
 msgid "Small Numbers"
 msgstr "Små tal"
 
-#: src/libqalculate/data/variables.xml.in.h:87
+#: src/libqalculate/data/variables.xml.in.h:88
 msgid "Special Numbers"
 msgstr "Speciella nummer"
 
-#: src/libqalculate/data/variables.xml.in.h:88
+#: src/libqalculate/data/variables.xml.in.h:89
 msgid "Speed of Light in Vacuum"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:89
-#, fuzzy
-msgid "T_P"
-msgstr "Övre gräns"
-
 #: src/libqalculate/data/variables.xml.in.h:90
-#, fuzzy
-msgid "Tau Mass"
-msgstr "Massa"
+msgid "T_P"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:91
+msgid "Tau Mass"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:92
 msgid "The Base of Natural Logarithms (e)"
 msgstr "Basen för naturliga logaritmer (e)"
 
-#: src/libqalculate/data/variables.xml.in.h:92
+#: src/libqalculate/data/variables.xml.in.h:93
 msgid "The Golden Ratio"
 msgstr "Golden ratio"
 
-#: src/libqalculate/data/variables.xml.in.h:93
+#: src/libqalculate/data/variables.xml.in.h:94
 msgid "Thousand"
 msgstr "Tusen"
 
-#: src/libqalculate/data/variables.xml.in.h:94
-#, fuzzy
-msgid "Tredecillion"
-msgstr "Precision"
-
 #: src/libqalculate/data/variables.xml.in.h:95
-#, fuzzy
-msgid "Trillion"
-msgstr "shilling"
+msgid "Tredecillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:96
+msgid "Trillion"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:97
 msgid "True"
 msgstr "Sant"
 
-#: src/libqalculate/data/variables.xml.in.h:97
-#, fuzzy
-msgid "Undecillion"
-msgstr "Precision"
-
 #: src/libqalculate/data/variables.xml.in.h:98
+msgid "Undecillion"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:99
 msgid "Undefined"
 msgstr "Odefinierad"
 
-#: src/libqalculate/data/variables.xml.in.h:99
-#, fuzzy
-msgid "Universal Constants"
-msgstr "Konstanter"
-
 #: src/libqalculate/data/variables.xml.in.h:100
+msgid "Universal Constants"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:101
 msgid "Unknowns"
 msgstr "Okända"
 
-#: src/libqalculate/data/variables.xml.in.h:101
+#: src/libqalculate/data/variables.xml.in.h:102
 msgid "Vigintillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:102
+#: src/libqalculate/data/variables.xml.in.h:103
 msgid "Z_0"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:103
+#: src/libqalculate/data/variables.xml.in.h:104
 msgid "a_o"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:104
+#: src/libqalculate/data/variables.xml.in.h:105
 msgid "alpha_particle_mass"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:105
-#, fuzzy
+#: src/libqalculate/data/variables.xml.in.h:106
 msgid "apery"
-msgstr "ampere"
-
-#: src/libqalculate/data/variables.xml.in.h:107
-msgid "avogadro"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:108
+msgid "avogadro"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:109
 msgid "billion"
 msgstr "miljard"
 
-#: src/libqalculate/data/variables.xml.in.h:109
+#: src/libqalculate/data/variables.xml.in.h:110
 msgid "bohr_magneton"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:110
+#: src/libqalculate/data/variables.xml.in.h:111
 msgid "bohr_radius"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:111
-#, fuzzy
-msgid "boltzmann"
-msgstr "boolskt värde"
-
 #: src/libqalculate/data/variables.xml.in.h:112
-msgid "c"
+msgid "boltzmann"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:113
-msgid "c_1"
+msgid "c"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:114
-msgid "c_2"
+msgid "c_1"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:115
-#, fuzzy
-msgid "catalan"
-msgstr "Oktal"
+msgid "c_2"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:116
-#, fuzzy
-msgid "centillion"
-msgstr "Förutsättning"
+msgid "catalan"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:117
-msgid "characteristic_impedance"
+msgid "centillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:118
-msgid "classical_electron_radius"
+msgid "characteristic_impedance"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:119
-#, fuzzy
-msgid "compton_wavelength"
-msgstr "komponent"
+msgid "classical_electron_radius"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:120
-#, fuzzy
-msgid "conductance_quantum"
-msgstr "Induktans"
+msgid "compton_wavelength"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:121
-#, fuzzy
-msgid "decillion"
-msgstr "Precision"
+msgid "conductance_quantum"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:122
-#, fuzzy
-msgid "duodecillion"
-msgstr "Beskrivning"
+msgid "decillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:123
-msgid "e"
+msgid "duodecillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:124
-#, fuzzy
-msgid "e_charge"
-msgstr "Hektar"
+msgid "e"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:125
-#, fuzzy
-msgid "electric_constant"
-msgstr "Induktion"
+msgid "e_charge"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:126
-#, fuzzy
-msgid "electron_mass"
-msgstr "Elektronvolt"
+msgid "electric_constant"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:127
-#, fuzzy
-msgid "elementary_charge"
-msgstr "Elektrisk laddning"
+msgid "electron_mass"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:128
-#, fuzzy
-msgid "euler"
-msgstr "gulden"
+msgid "elementary_charge"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:129
+msgid "euler"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:130
 msgid "false"
 msgstr "falskt"
 
-#: src/libqalculate/data/variables.xml.in.h:130
-#, fuzzy
-msgid "faraday"
-msgstr "årsdag"
-
 #: src/libqalculate/data/variables.xml.in.h:131
-#, fuzzy
-msgid "first_radiation"
-msgstr "steradian"
+msgid "faraday"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:132
-#, fuzzy
-msgid "golden"
-msgstr "Boolskt värde"
+msgid "first_radiation"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:133
-#, fuzzy
-msgid "googol"
-msgstr "Boolsk"
+msgid "golden"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:134
-#, fuzzy
-msgid "googolplex"
-msgstr "Boolsk"
+msgid "googol"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:135
-msgid "helion_mass"
+msgid "googolplex"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:136
-msgid "i"
+msgid "helion_mass"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:137
+msgid "i"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:138
 msgid "infinity"
 msgstr "oändlighet"
 
-#: src/libqalculate/data/variables.xml.in.h:138
+#: src/libqalculate/data/variables.xml.in.h:139
 msgid "josephson"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:139
+#: src/libqalculate/data/variables.xml.in.h:140
 msgid "klitzing"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:140
+#: src/libqalculate/data/variables.xml.in.h:141
 msgid "l_P"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:141
+#: src/libqalculate/data/variables.xml.in.h:142
 msgid "m_&#x3B1;"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:142
+#: src/libqalculate/data/variables.xml.in.h:143
 msgid "m_&#x3C4;"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:143
+#: src/libqalculate/data/variables.xml.in.h:144
 msgid "m_P"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:144
-#, fuzzy
-msgid "m_e"
-msgstr "Enke_lt"
-
 #: src/libqalculate/data/variables.xml.in.h:145
-msgid "m_h"
+msgid "m_e"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:146
-#, fuzzy
-msgid "m_n"
-msgstr "minut"
+msgid "m_h"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:147
-msgid "m_p"
+msgid "m_n"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:148
-msgid "m_u"
+msgid "m_p"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:149
-#, fuzzy
-msgid "magnetic_constant"
-msgstr "Konstanter"
+msgid "m_u"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:150
-#, fuzzy
-msgid "magnetic_flux_quantum"
-msgstr "Konstanter"
+msgid "magnetic_constant"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:151
+msgid "magnetic_flux_quantum"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:152
 msgid "million"
 msgstr "miljon"
 
-#: src/libqalculate/data/variables.xml.in.h:152
-#, fuzzy
-msgid "minus_infinity"
-msgstr "oändlighet"
-
 #: src/libqalculate/data/variables.xml.in.h:153
-#, fuzzy
-msgid "neutron_mass"
-msgstr "Elektronvolt"
+msgid "minus_infinity"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:154
-#, fuzzy
-msgid "newtonian_constant"
-msgstr "Konstanter"
+msgid "neutron_mass"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:155
+msgid "newtonian_constant"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:156
 msgid "no"
 msgstr "nej"
 
-#: src/libqalculate/data/variables.xml.in.h:156
-#, fuzzy
-msgid "nonillion"
-msgstr "Förutsättning"
-
 #: src/libqalculate/data/variables.xml.in.h:157
-#, fuzzy
-msgid "novemdecillion"
-msgstr "Precision"
+msgid "nonillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:158
-msgid "nuclear_magneton"
+msgid "novemdecillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:159
-#, fuzzy
-msgid "octillion"
-msgstr "Åtgärd"
+msgid "nuclear_magneton"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:160
-#, fuzzy
-msgid "octodecillion"
-msgstr "Beskrivning"
+msgid "octillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:161
-msgid "pi"
+msgid "octodecillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:162
-#, fuzzy
-msgid "planck"
-msgstr "Ersätt"
+msgid "permille"
+msgstr "promille"
 
 #: src/libqalculate/data/variables.xml.in.h:163
-#, fuzzy
-msgid "planck_length"
-msgstr "Längd"
+msgid "permyriad"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:164
-msgid "planck_mass"
+msgid "pi"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:165
-#, fuzzy
-msgid "planck_temperature"
-msgstr "Temperatur"
+msgid "planck"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:166
-msgid "planck_time"
+msgid "planck_length"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:167
-#, fuzzy
-msgid "plus_infinity"
-msgstr "oändlighet"
+msgid "planck_mass"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:168
-#, fuzzy
-msgid "procent"
-msgstr "eurocent"
+msgid "planck_temperature"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:169
-#, fuzzy
-msgid "promille"
-msgstr "positiv"
+msgid "planck_time"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:170
-msgid "proton_mass"
+msgid "plus_infinity"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:171
-msgid "pythagoras"
+msgid "procent"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:172
-#, fuzzy
-msgid "quadrillion"
-msgstr "Kvartil"
+msgid "proton_mass"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:173
-#, fuzzy
-msgid "quattuordecillion"
-msgstr "Beskrivning"
+msgid "pythagoras"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:174
-#, fuzzy
-msgid "quindecillion"
-msgstr "Precision"
+msgid "quadrillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:175
-#, fuzzy
-msgid "quintillion"
-msgstr "funktion"
+msgid "quattuordecillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:176
-#, fuzzy
-msgid "r_e"
-msgstr "reell"
+msgid "quindecillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:177
-#, fuzzy
-msgid "rydberg"
-msgstr "Ordning"
+msgid "quintillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:178
-#, fuzzy
-msgid "second_radiation"
-msgstr "Förutsättning"
+msgid "r_e"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:179
-#, fuzzy
-msgid "septendecillion"
-msgstr "Precision"
+msgid "rydberg"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:180
-#, fuzzy
-msgid "septillion"
-msgstr "Semikolon"
+msgid "second_radiation"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:181
-#, fuzzy
-msgid "sexdecillion"
-msgstr "Hexadecimal"
+msgid "septendecillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:182
-#, fuzzy
-msgid "sextillion"
-msgstr "Semikolon"
+msgid "septillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:183
-msgid "speed_of_light"
+msgid "sexdecillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:184
-msgid "t_P"
+msgid "sextillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:185
-#, fuzzy
-msgid "tau_mass"
-msgstr "Massa"
+msgid "speed_of_light"
+msgstr "ljusets_hastighet"
 
 #: src/libqalculate/data/variables.xml.in.h:186
+msgid "t_P"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:187
+msgid "tau_mass"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:188
 msgid "thousand"
 msgstr "tusen"
 
-#: src/libqalculate/data/variables.xml.in.h:187
-#, fuzzy
-msgid "tredecillion"
-msgstr "Precision"
-
-#: src/libqalculate/data/variables.xml.in.h:188
-#, fuzzy
-msgid "trillion"
-msgstr "shilling"
-
 #: src/libqalculate/data/variables.xml.in.h:189
+msgid "tredecillion"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:190
+msgid "trillion"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:191
 msgid "true"
 msgstr "sant"
 
-#: src/libqalculate/data/variables.xml.in.h:190
-#, fuzzy
+#: src/libqalculate/data/variables.xml.in.h:192
 msgid "undecillion"
-msgstr "Precision"
+msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:191
+#: src/libqalculate/data/variables.xml.in.h:193
 msgid "undefined"
 msgstr "odefinierad"
 
-#: src/libqalculate/data/variables.xml.in.h:192
-#, fuzzy
-msgid "vigintillion"
-msgstr "funktion"
-
-#: src/libqalculate/data/variables.xml.in.h:193
-#, fuzzy
-msgid "von Klitzing Constant"
-msgstr "Konstanter"
-
 #: src/libqalculate/data/variables.xml.in.h:194
-#, fuzzy
-msgid "x"
-msgstr "2"
+msgid "vigintillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:195
-#, fuzzy
-msgid "y"
-msgstr "2"
+msgid "von Klitzing Constant"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:196
+msgid "x"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:197
+msgid "y"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:198
 msgid "yes"
 msgstr "ja"
 
-#: src/libqalculate/data/variables.xml.in.h:197
+#: src/libqalculate/data/variables.xml.in.h:199
 msgid "z"
 msgstr ""
 
+#: src/libqalculate/data/variables.xml.in.h:200
+msgid "‰"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:201
+msgid "‱"
+msgstr ""

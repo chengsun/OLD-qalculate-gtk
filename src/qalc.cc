@@ -401,6 +401,11 @@ int main (int argc, char *argv[]) {
 		PUTS_UNICODE(_("Failed to load global definitions!"));
 	}
 	
+	//CALCULATOR->savePrefixes("prefixes.xml.new", true);
+	//CALCULATOR->saveUnits("units.xml.new", true);
+	//CALCULATOR->saveVariables("variables.xml.new", true);
+	//CALCULATOR->saveFunctions("functions.xml.new", true);
+	
 	//load local definitions
 	CALCULATOR->loadLocalDefinitions();
 

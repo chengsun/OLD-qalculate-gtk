@@ -160,6 +160,54 @@ extern pthread_attr_t view_thread_attr;
 #define MARKUP_STRING(str, text)	if(ips.power_depth > 0) {str = TEXT_TAGS_SMALL;} else {str = TEXT_TAGS;} str += text; if(ips.power_depth > 0) {str += TEXT_TAGS_SMALL_END;} else {str += TEXT_TAGS_END;}			
 #define CALCULATE_SPACE_W		gint space_w, space_h; PangoLayout *layout_space = gtk_widget_create_pango_layout(resultview, NULL); if(ips.power_depth > 0) {pango_layout_set_markup(layout_space, TEXT_TAGS_SMALL " " TEXT_TAGS_SMALL_END, -1);} else {pango_layout_set_markup(layout_space, TEXT_TAGS " " TEXT_TAGS_END, -1);} pango_layout_get_pixel_size(layout_space, &space_w, &space_h); g_object_unref(layout_space);
 
+PangoCoverageLevel get_least_coverage(const gchar *gstr, PangoCoverage *coverage) {
+
+	if(!coverage) return PANGO_COVERAGE_EXACT;
+	PangoCoverageLevel level = PANGO_COVERAGE_EXACT;
+	while(gstr[0] != '\0') {
+		if(gstr[0] < 0) {
+			gunichar gu = g_utf8_get_char_validated(gstr, -1);
+			if(gu >= 0) {
+				if(pango_coverage_get(coverage, (int) gu) < level) {
+					level = pango_coverage_get(coverage, gu);
+				}
+			}
+		}
+		gstr = g_utf8_find_next_char(gstr, NULL);
+		if(!gstr) break;
+	}
+	return level;
+
+}
+
+PangoCoverageLevel get_least_coverage(const gchar *gstr, GtkWidget *widget) {
+
+	PangoContext *context = gtk_widget_get_pango_context(widget);
+	PangoFont *font = pango_context_load_font(context, gtk_widget_get_style(widget)->font_desc);
+	PangoLanguage *language = pango_context_get_language(context);
+	return get_least_coverage(gstr, pango_font_get_coverage(font, language));
+
+}
+
+const ExpressionName &get_preferred_display_name(GtkWidget *widget, ExpressionItem *item, bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false) {
+	if(use_unicode) {
+		const ExpressionName &ename = item->preferredDisplayName(abbreviation, true, plural, reference);
+		if(get_least_coverage(ename.name.c_str(), widget) >= PANGO_COVERAGE_APPROXIMATE) {
+			return ename;
+		}
+	}
+	return item->preferredDisplayName(abbreviation, false, plural, reference);
+}
+const ExpressionName &get_preferred_input_name(GtkWidget *widget, ExpressionItem *item, bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false) {
+	if(use_unicode) {
+		const ExpressionName &ename = item->preferredInputName(abbreviation, true, plural, reference);
+		if(get_least_coverage(ename.name.c_str(), widget) >= PANGO_COVERAGE_APPROXIMATE) {
+			return ename;
+		}
+	}
+	return item->preferredInputName(abbreviation, false, plural, reference);
+}
+
 
 struct tree_struct {
 	string item;
@@ -3324,6 +3372,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			}
 			
 			const ExpressionName *ename = &m.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, m.isPlural());
+			//const ExpressionName *ename = &get_preferred_display_name(resultview, m.unit(), po.abbreviate_names, po.use_unicode_signs, m.isPlural());
 			if(m.prefix() && po.abbreviate_names && ename->abbreviation && (ename->suffix || ename->name.find("_") == string::npos)) {
 				str += m.prefix()->shortName(true, po.use_unicode_signs);
 			} else if(m.prefix()) {
@@ -3396,6 +3445,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			}
 			
 			const ExpressionName *ename = &m.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs);
+			//const ExpressionName *ename = &get_preferred_display_name(resultview, m.variable(), po.abbreviate_names, po.use_unicode_signs);
 			if(ename->suffix && ename->name.length() > 1) {
 				unsigned int i = ename->name.rfind('_');
 				bool b = i == string::npos || i == ename->name.length() - 1 || i == 0;
@@ -3481,6 +3531,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			}
 			
 			const ExpressionName *ename = &m.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs);
+			//const ExpressionName *ename = &get_preferred_display_name(resultview, m.function(), po.abbreviate_names, po.use_unicode_signs);
 			if(ename->suffix && ename->name.length() > 1) {
 				unsigned int i = ename->name.rfind('_');
 				bool b = i == string::npos || i == ename->name.length() - 1 || i == 0;

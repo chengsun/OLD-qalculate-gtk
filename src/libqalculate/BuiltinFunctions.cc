@@ -1092,17 +1092,84 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		Number nr; nr.setInfinity();
 		mstruct *= nr;
 	} else if(vargs[0].number().isPlusInfinity()) {
-		mstruct.set(1, 2);
-		mstruct *= CALCULATOR->v_pi;
+		switch(eo.angle_unit) {
+			case DEGREES: {
+				mstruct.set(90, 1);
+				break;
+			}
+			case GRADIANS: {
+				mstruct.set(100, 1);
+				break;
+			}
+			default: {
+				mstruct.set(1, 2);
+				mstruct *= CALCULATOR->v_pi;
+			}
+		}
 	} else if(vargs[0].number().isMinusInfinity()) {
-		mstruct.set(-1, 2);
-		mstruct *= CALCULATOR->v_pi;
+		switch(eo.angle_unit) {
+			case DEGREES: {
+				mstruct.set(-90, 1);
+				break;
+			}
+			case GRADIANS: {
+				mstruct.set(-100, 1);
+				break;
+			}
+			default: {
+				mstruct.set(-1, 2);
+				mstruct *= CALCULATOR->v_pi;
+			}
+		}
+	} else if(vargs[0].number().isOne()) {
+		switch(eo.angle_unit) {
+			case DEGREES: {
+				mstruct.set(45, 1);
+				break;
+			}
+			case GRADIANS: {
+				mstruct.set(50, 1);
+				break;
+			}
+			default: {
+				mstruct.set(1, 4);
+				mstruct *= CALCULATOR->v_pi;
+			}
+		}
+	} else if(vargs[0].number().isMinusOne()) {
+		switch(eo.angle_unit) {
+			case DEGREES: {
+				mstruct.set(-45, 1);
+				break;
+			}
+			case GRADIANS: {
+				mstruct.set(-50, 1);
+				break;
+			}
+			default: {
+				mstruct.set(-1, 4);
+				mstruct *= CALCULATOR->v_pi;
+			}
+		}
 	} else {
 		Number nr = vargs[0].number();
 		if(!nr.atan() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) return 0;
 		mstruct = nr;
+		switch(eo.angle_unit) {
+			case DEGREES: {
+				mstruct *= 180;
+		    		mstruct /= CALCULATOR->v_pi;
+				break;
+			}
+			case GRADIANS: {
+				mstruct *= 200;
+	    			mstruct /= CALCULATOR->v_pi;
+				break;
+			}
+			default: {}
+		}
 	}
-	return 1 ;
+	return 1;
 	
 }
 SinhFunction::SinhFunction() : MathFunction("sinh", 1) {

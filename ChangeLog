@@ -1,3 +1,11 @@
+2004-10-09 Niklas Knutsson  <nq@altern.org>
+
+	* promille -> permille
+	* Permille sign
+	* permyriad
+	* Fix atan() ignoring angle unit
+	* Add exact value for atan(1) = 1/4 pi and atan(-1) = -1/4 pi
+
 2004-10-08 Niklas Knutsson  <nq@altern.org>
 
 	* Install headers

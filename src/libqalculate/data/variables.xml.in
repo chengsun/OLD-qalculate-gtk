@@ -3,12 +3,28 @@
   <category>
     <_title>Small Numbers</_title>
     <variable>
-      <_title>Promille</_title>
+      <_title>Per Mille</_title>
       <name index="1">
         <reference>true</reference>
-        <_name>promille</_name>
+        <_name>permille</_name>
       </name>
+      <abbreviation index="2">
+        <unicode>true</unicode>
+        <_name>&#x2030;</_name>
+      </abbreviation>
       <value>1/1000</value>
+    </variable>
+    <variable>
+      <_title>Per Myriad</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>permyriad</_name>
+      </name>
+      <abbreviation index="2">
+        <unicode>true</unicode>
+        <_name>&#x2031;</_name>
+      </abbreviation>
+      <value>1/10000</value>
     </variable>
     <variable>
       <_title>Procent</_title>
@@ -299,6 +315,14 @@
           <_name>planck</_name>
         </name>
         <value approximate="true">6.626 0693E-34*J*s</value>
+      </variable>
+      <variable>
+        <_title>Planck Constant over 2 pi</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>planck2pi</_name>
+        </name>
+        <value>planck/(2*pi)</value>
       </variable>
       <variable>
         <_title>Newtonian Constant of Gravitation</_title>

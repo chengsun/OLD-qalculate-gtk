@@ -7,7 +7,7 @@ dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
 AC_INIT(configure.in)
-AM_INIT_AUTOMAKE(qalculate, 0.7)
+AM_INIT_AUTOMAKE(qalculate, 0.7.0)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
