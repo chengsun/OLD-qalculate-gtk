@@ -10,7 +10,9 @@ libcalculate_la_SOURCES = \
 	Variable.cc	Variable.h \
 	EqItem.cc	EqItem.h \
 	Error.cc	Error.h \
+	Fraction.cc	Fraction.h \
 	Manager.cc	Manager.h \
+	Prefix.cc	Prefix.h \
 	util.cc		util.h \
 	includes.h \
 	Unit.cc		Unit.h \

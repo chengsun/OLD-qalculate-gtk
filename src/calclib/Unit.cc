@@ -12,9 +12,8 @@
 #include "Unit.h"
 #include "util.h"
 
-Unit::Unit(Calculator *calc_, string cat_, string name_, string plural_, string short_name_, string title_, bool is_user_unit) {
+Unit::Unit(string cat_, string name_, string plural_, string short_name_, string title_, bool is_user_unit) {
 	b_user = is_user_unit;
-	calc = calc_;
 	remove_blank_ends(name_);
 	remove_blank_ends(plural_);
 	remove_blank_ends(short_name_);
@@ -28,7 +27,7 @@ Unit::Unit(Calculator *calc_, string cat_, string name_, string plural_, string 
 }
 Unit::~Unit() {}
 bool Unit::isUsedByOtherUnits(void) {
-	return calc->unitIsUsedByOtherUnits(this);
+	return CALCULATOR->unitIsUsedByOtherUnits(this);
 }
 void Unit::setTitle(string title_) {
 	remove_blank_ends(title_);
@@ -46,28 +45,28 @@ void Unit::setCategory(string cat_) {
 void Unit::setName(string name_, bool force) {
 	remove_blank_ends(name_);
 	if(name_ != sname) {
-		sname = calc->getUnitName(name_, this, force);
+		sname = CALCULATOR->getUnitName(name_, this, force);
 		b_changed = true;
 	}
-	calc->unitNameChanged(this);
+	CALCULATOR->unitNameChanged(this);
 }
 void Unit::setPlural(string name_, bool force) {
 	remove_blank_ends(name_);
 	if(name_ != splural) {
-		splural = calc->getUnitName(name_, this, force);
+		splural = CALCULATOR->getUnitName(name_, this, force);
 		b_changed = true;
 	}
-	calc->unitPluralChanged(this);
+	CALCULATOR->unitPluralChanged(this);
 }
 void Unit::setShortName(string name_, bool force) {
 	remove_blank_ends(name_);
 	if(name_.empty()) {
 		sshortname = name_;
 	} else if(name_ != sshortname) {
-		sshortname = calc->getUnitName(name_, this, force);
+		sshortname = CALCULATOR->getUnitName(name_, this, force);
 	}
 	b_changed = true;
-	calc->unitShortNameChanged(this);
+	CALCULATOR->unitShortNameChanged(this);
 
 }
 string Unit::category() {
@@ -112,16 +111,16 @@ Unit* Unit::baseUnit() {
 	return this;
 }
 Manager *Unit::baseValue(Manager *value_, Manager *exp_) {
-	if(!value_) value_ = new Manager(calc, 1.0L);	
-//	value_->add(1, POWER_CH);
+	if(!value_) value_ = new Manager(1.0L);	
+//	value_->add(1, RAISE);
 	return value_;
 }
 Manager *Unit::convertToBase(Manager *value_, Manager *exp_) {
-	if(!value_) value_ = new Manager(calc, 1.0L);
-//	value_->add(-1, POWER_CH);
+	if(!value_) value_ = new Manager(1.0L);
+//	value_->add(-1, RAISE);
 	return value_;
 }
-long double Unit::baseExp(long double exp_) {
+long int Unit::baseExp(long int exp_) {
 	return exp_;
 }
 char Unit::type() const {
@@ -145,8 +144,8 @@ bool Unit::hasComplexRelationTo(Unit *u) {
 	}
 }
 Manager *Unit::convert(Unit *u, Manager *value_, Manager *exp_, bool *converted) {
-	if(!value_) value_ = new Manager(calc, 1.0L);
-	if(!exp_) exp_ = new Manager(calc, 1.0L);
+	if(!value_) value_ = new Manager(1, 1);
+	if(!exp_) exp_ = new Manager(1, 1);
 	else exp_->ref();
 	bool b = false;
 	if(u->baseUnit() == baseUnit()) {
@@ -168,16 +167,19 @@ bool Unit::hasChanged() {return b_changed;}
 void Unit::setUserUnit(bool is_user_unit) {b_user = is_user_unit;}
 void Unit::setChanged(bool has_changed) {b_changed = has_changed;}
 
-AliasUnit::AliasUnit(Calculator *calc_, string cat_, string name_, string plural_, string short_name_, string title_, Unit *alias, string relation, long double exp_, string reverse, bool is_user_unit) : Unit(calc_, cat_, name_, plural_, short_name_, title_, is_user_unit) {
+AliasUnit::AliasUnit(string cat_, string name_, string plural_, string short_name_, string title_, Unit *alias, string relation, long int exp_, string reverse, bool is_user_unit) : Unit(cat_, name_, plural_, short_name_, title_, is_user_unit) {
 	unit = alias;
 	remove_blank_ends(relation);
 	remove_blank_ends(reverse);
 	value = relation;
 	rvalue = reverse;
-	d_exp = exp_;
+	exp = exp_;
+	exp_mngr = new Manager(exp, 1);
 	b_changed = false;
 }
-AliasUnit::~AliasUnit() {}
+AliasUnit::~AliasUnit() {
+	exp_mngr->unref();
+}
 string AliasUnit::baseName() {
 	return unit->baseName();
 }
@@ -185,7 +187,7 @@ string AliasUnit::baseExpName() {
 	if(baseExp() != 1) {
 		string str = unit->baseName();
 		str += POWER_STR;
-		str += d2s(baseExp(), PRECISION);
+		str += li2s(baseExp());
 		return str;
 	} else {
 		return unit->baseName();
@@ -198,7 +200,7 @@ string AliasUnit::shortBaseExpName() {
 	if(baseExp() != 1) {
 		string str = unit->shortBaseName();
 		str += POWER_STR;
-		str += d2s(baseExp(), PRECISION);
+		str += li2s(baseExp());
 		return str;
 	} else {
 		return unit->shortBaseName();
@@ -211,10 +213,10 @@ string AliasUnit::firstBaseName() {
 	return unit->name();
 }
 string AliasUnit::firstBaseExpName() {
-	if(d_exp != 1) {
+	if(exp != 1) {
 		string str = unit->name();
 		str += POWER_STR;
-		str += d2s(d_exp, PRECISION);
+		str += li2s(exp);
 		return str;
 	} else
 		return unit->name();
@@ -223,10 +225,10 @@ string AliasUnit::firstShortBaseName() {
 	return unit->shortName();
 }
 string AliasUnit::firstShortBaseExpName() {
-	if(d_exp != 1) {
+	if(exp != 1) {
 		string str = unit->shortName();
 		str += POWER_STR;
-		str += d2s(d_exp, PRECISION);
+		str += li2s(exp);
 		return str;
 	} else
 		return unit->shortName();
@@ -258,29 +260,29 @@ void AliasUnit::setReverseExpression(string reverse) {
 	b_changed = true;
 }
 Manager *AliasUnit::baseValue(Manager *value_, Manager *exp_) {
-	if(!exp_) exp_ = new Manager(calc, 1.0L);		
+	if(!exp_) exp_ = new Manager(1, 1);		
 	else exp_->ref();
 	firstBaseValue(value_, exp_);
-	exp_->add(d_exp, MULTIPLICATION_CH);	
+	exp_->add(exp_mngr, MULTIPLY);	
 	unit->baseValue(value_, exp_);
 	exp_->unref();
 	return value_;
 }
 Manager *AliasUnit::convertToBase(Manager *value_, Manager *exp_) {
-	if(!exp_) exp_ = new Manager(calc, 1.0L);		
+	if(!exp_) exp_ = new Manager(1, 1);		
 	else exp_->ref();
-	exp_->add(d_exp, DIVISION_CH);	
+	exp_->add(exp_mngr, DIVIDE);	
 	convertToFirstBase(value_, exp_);	
 	unit->convertToBase(value_, exp_);
 	exp_->unref();	
 	return value_;
 }
-long double AliasUnit::baseExp(long double exp_) {
-	return unit->baseExp(exp_ * d_exp);
+long int AliasUnit::baseExp(long int exp_) {
+	return unit->baseExp(exp_ * exp);
 }
 Manager *AliasUnit::convertToFirstBase(Manager *value_, Manager *exp_) {
-	if(!value_) value_ = new Manager(calc, 1.0L);
-	if(!exp_) exp_ = new Manager(calc, 1.0L);		
+	if(!value_) value_ = new Manager(1, 1);
+	if(!exp_) exp_ = new Manager(1, 1);		
 	else exp_->ref();
 	if(rvalue.empty()) {
 		if(value.find(FUNCTION_VAR_X) != string::npos) {
@@ -293,14 +295,14 @@ Manager *AliasUnit::convertToFirstBase(Manager *value_, Manager *exp_) {
 			stmp2 += exp_->print();
 			stmp2 += RIGHT_BRACKET_CH;
 			gsub(FUNCTION_VAR_Y, stmp2, stmp);
-			Manager *mngr = calc->calculate(stmp);
-//			value_->add(mngr, DIVISION_CH);
+			Manager *mngr = CALCULATOR->calculate(stmp);
+//			value_->add(mngr, DIVIDE);
 			value_->moveto(mngr);
 			mngr->unref();
 		} else {
-			Manager *mngr = calc->calculate(value);
-			mngr->add(exp_, POWER_CH);
-			value_->add(mngr, DIVISION_CH);
+			Manager *mngr = CALCULATOR->calculate(value);
+			mngr->add(exp_, RAISE);
+			value_->add(mngr, DIVIDE);
 //			value_->moveto(mngr);
 			mngr->unref();
 		}
@@ -315,15 +317,15 @@ Manager *AliasUnit::convertToFirstBase(Manager *value_, Manager *exp_) {
 			stmp2 += exp_->print();
 			stmp2 += RIGHT_BRACKET_CH;
 			gsub(FUNCTION_VAR_Y, stmp2, stmp);
-			Manager *mngr = calc->calculate(stmp);
-//			value_->add(mngr, MULTIPLICATION_CH);
+			Manager *mngr = CALCULATOR->calculate(stmp);
+//			value_->add(mngr, MULTIPLY);
 			value_->moveto(mngr);
 			mngr->unref();
 		} else {
-			Manager *mngr = calc->calculate(rvalue);
-			mngr->add(exp_, POWER_CH);
-			value_->add(mngr, MULTIPLICATION_CH);
-//			mngr->add(value_, MULTIPLICATION_CH);
+			Manager *mngr = CALCULATOR->calculate(rvalue);
+			mngr->add(exp_, RAISE);
+			value_->add(mngr, MULTIPLY);
+//			mngr->add(value_, MULTIPLY);
 //			value_->moveto(mngr);
 			mngr->unref();
 		}
@@ -332,8 +334,8 @@ Manager *AliasUnit::convertToFirstBase(Manager *value_, Manager *exp_) {
 	return value_;
 }
 Manager *AliasUnit::firstBaseValue(Manager *value_, Manager *exp_) {
-	if(!value_) value_ = new Manager(calc, 1.0L);
-	if(!exp_) exp_ = new Manager(calc, 1.0L);		
+	if(!value_) value_ = new Manager(1, 1);
+	if(!exp_) exp_ = new Manager(1, 1);		
 	else exp_->ref();
 	if(value.find(FUNCTION_VAR_X) != string::npos) {
 		string stmp = value;
@@ -345,25 +347,26 @@ Manager *AliasUnit::firstBaseValue(Manager *value_, Manager *exp_) {
 		stmp2 += exp_->print();
 		stmp2 += RIGHT_BRACKET_CH;
 		gsub(FUNCTION_VAR_Y, stmp2, stmp);
-		Manager *mngr = calc->calculate(stmp);
+		Manager *mngr = CALCULATOR->calculate(stmp);
 		value_->moveto(mngr);
 		mngr->unref();
 	} else {
-		Manager *mngr = calc->calculate(value);
-		mngr->add(exp_, POWER_CH);
-		mngr->add(value_, MULTIPLICATION_CH);
+		Manager *mngr = CALCULATOR->calculate(value);
+		mngr->add(exp_, RAISE);
+		mngr->add(value_, MULTIPLY);
 		value_->moveto(mngr);
 		mngr->unref();
 	}
 	exp_->unref();
 	return value_;
 }
-void AliasUnit::setExponent(long double exp_) {
-	d_exp = exp_;
+void AliasUnit::setExponent(long int exp_) {
+	exp = exp_;
+	exp_mngr->set(exp, 1);
 	b_changed = true;
 }
-long double AliasUnit::firstBaseExp() {
-	return d_exp;
+long int AliasUnit::firstBaseExp() {
+	return exp;
 }
 char AliasUnit::type() const {
 	return 'A';
@@ -417,7 +420,7 @@ bool AliasUnit::hasComplexRelationTo(Unit *u) {
 	}
 }
 
-AliasUnit_Composite::AliasUnit_Composite(Calculator *calc_, Unit *alias, long double exp_, long double prefix_) : AliasUnit(calc_, "", alias->name(), alias->plural(), alias->shortName(), "", alias, "", exp_, "") {
+AliasUnit_Composite::AliasUnit_Composite(Unit *alias, long int exp_, Prefix *prefix_) : AliasUnit("", alias->name(), alias->plural(), alias->shortName(), "", alias, "", exp_, "") {
 	prefixv = prefix_;
 }
 AliasUnit_Composite::~AliasUnit_Composite(void) {}
@@ -425,30 +428,16 @@ string AliasUnit_Composite::printShort(bool plural_) {
 	if(!firstBaseUnit()->hasShortName())
 		return print(plural_);
 	string str = "";
-	if(prefixv != 1) {
-		char c = calc->getSPrefix(prefixv);
-		if(c > 0) {
-			str = c;
-		} else {
-			const char *c_str = calc->getLPrefix(prefixv);
-			if(c_str) str = c_str;
-			else str += d2s(prefixv);			
-		}
+	if(prefixv) {
+		str += prefixv->name(true);
 	}
 	str += firstBaseUnit()->shortName();
 	return str;
 }
 string AliasUnit_Composite::print(bool plural_) {
 	string str = "";
-	if(prefixv != 1) {
-		const char *c_str = calc->getLPrefix(prefixv);
-		if(c_str) {
-			str = c_str;
-		} else {
-			char c = calc->getSPrefix(prefixv);
-			if(c > 0) str = c;
-			else str += d2s(prefixv);
-		}
+	if(prefixv) {
+		str += prefixv->name(false);
 	}
 	if(plural_)
 		str += firstBaseUnit()->plural();
@@ -456,40 +445,44 @@ string AliasUnit_Composite::print(bool plural_) {
 		str += firstBaseUnit()->name();
 	return str;
 }
-long double AliasUnit_Composite::prefixValue(void) {
+Prefix *AliasUnit_Composite::prefix() const {
 	return prefixv;
 }
-void AliasUnit_Composite::set(Unit *u, long double exp_, long double prefix_) {
+long int AliasUnit_Composite::prefixExponent() const {
+	if(prefixv) return prefixv->exponent();
+	return 0;
+}
+void AliasUnit_Composite::set(Unit *u, long int exp_, Prefix *prefix_) {
 	setBaseUnit(u);
 	setExponent(exp_);
 	prefixv = prefix_;
 }
 Manager *AliasUnit_Composite::firstBaseValue(Manager *value_, Manager *exp_) {
-	if(!value_) value_ = new Manager(calc, 1.0L);
-	if(!exp_) exp_ = new Manager(calc, 1.0L);		
+	if(!value_) value_ = new Manager(1, 1);
+	if(!exp_) exp_ = new Manager(1, 1);		
 	else exp_->ref();	
-	exp_->add(d_exp, DIVISION_CH);		
-	Manager *mngr = new Manager(calc, 1.0L);
-//	mngr->add(exp_, POWER_CH);
-	value_->add(mngr, MULTIPLICATION_CH);
+	exp_->add(exp_mngr, DIVIDE);		
+	Manager *mngr = new Manager(1, 1);
+//	mngr->add(exp_, RAISE);
+	value_->add(mngr, MULTIPLY);
 	mngr->unref();
 	exp_->unref();
 	return value_;
 }
 Manager *AliasUnit_Composite::convertToFirstBase(Manager *value_, Manager *exp_) {
-	if(!value_) value_ = new Manager(calc, 1.0L);
-	if(!exp_) exp_ = new Manager(calc, 1.0L);		
+	if(!value_) value_ = new Manager(1, 1);
+	if(!exp_) exp_ = new Manager(1, 1);		
 	else exp_->ref();
-	exp_->add(d_exp, MULTIPLICATION_CH);
-	Manager *mngr = new Manager(calc, 1.0L);
-//	mngr->add(exp_, POWER_CH);
-	value_->add(mngr, DIVISION_CH);
+	exp_->add(exp_mngr, MULTIPLY);
+	Manager *mngr = new Manager(1, 1);
+//	mngr->add(exp_, RAISE);
+	value_->add(mngr, DIVIDE);
 	mngr->unref();
 	exp_->unref();
 	return value_;
 }
 
-CompositeUnit::CompositeUnit(Calculator *calc_, string cat_, string name_, string title_, string base_expression_, bool is_user_unit) : Unit(calc_, cat_, name_, "", "", title_, is_user_unit) {
+CompositeUnit::CompositeUnit(string cat_, string name_, string title_, string base_expression_, bool is_user_unit) : Unit(cat_, name_, "", "", title_, is_user_unit) {
 	setBaseExpression(base_expression_);
 	b_changed = false;
 }
@@ -497,23 +490,23 @@ CompositeUnit::~CompositeUnit(void) {
 	for(int i = 0; i < units.size(); i++)
 		delete units[i];
 }
-void CompositeUnit::add(Unit *u, long double exp_, long double prefix) {
+void CompositeUnit::add(Unit *u, long int exp_, Prefix *prefix) {
 	bool b = false;
 	for(int i = 0; i < (int) units.size(); i++) {
 		if(exp_ > units[i]->firstBaseExp()) {
-			units.insert(units.begin() + i, new AliasUnit_Composite(calc, u, exp_, prefix));
+			units.insert(units.begin() + i, new AliasUnit_Composite(u, exp_, prefix));
 			b = true;
 			break;
 		}
 	}
 	if(!b) {
-		units.push_back(new AliasUnit_Composite(calc, u, exp_, prefix));
+		units.push_back(new AliasUnit_Composite(u, exp_, prefix));
 	}
 }
-Unit *CompositeUnit::get(int index, long double *exp_, long double *prefix) {
+Unit *CompositeUnit::get(int index, long int *exp_, Prefix **prefix) {
 	if(index >= 0 && index < units.size()) {
 		if(exp_) *exp_ = units[index]->firstBaseExp();
-		if(prefix) *prefix = units[index]->prefixValue();
+		if(prefix) *prefix = units[index]->prefix();
 		return units[index];
 	}
 	return NULL;
@@ -558,12 +551,12 @@ string CompositeUnit::print(bool plural_, bool short_) {
 			if(b) {
 				if(units[i]->firstBaseExp() != -1) {
 					str += POWER_STR;
-					str += d2s(-units[i]->firstBaseExp());
+					str += li2s(-units[i]->firstBaseExp());
 				}
 			} else {
 				if(units[i]->firstBaseExp() != 1) {
 					str += POWER_STR;
-					str += d2s(units[i]->firstBaseExp());
+					str += li2s(units[i]->firstBaseExp());
 				}
 			}
 		}
@@ -610,30 +603,30 @@ bool CompositeUnit::containsRelativeTo(Unit *u) {
 }
 Manager *CompositeUnit::generateManager(bool cleaned) {
 	if(cleaned) {
-		return calc->calculate(print(false, true));
+		return CALCULATOR->calculate(print(false, true));
 	} else {
-		Manager *mngr = new Manager(calc);
+		Manager *mngr = new Manager();
 		if(units.size() > 0) mngr->c_type = MULTIPLICATION_MANAGER;
 		for(int i = 0; i < units.size(); i++) {
-			if(units[i]->firstBaseExp() != 1.0L) {
-				Manager *mngr2 = new Manager(calc);
+			if(units[i]->firstBaseExp() != 1) {
+				Manager *mngr2 = new Manager();
 				mngr2->c_type = POWER_MANAGER;
-				if(units[i]->prefixValue() != 1.0L) {
-					Manager *mngr3 = new Manager(calc);
+				if(units[i]->prefix()) {
+					Manager *mngr3 = new Manager();
 					mngr3->c_type = MULTIPLICATION_MANAGER;
-					mngr3->mngrs.push_back(new Manager(calc, units[i]->prefixValue()));
-					mngr3->mngrs.push_back(new Manager(calc, units[i]->firstBaseUnit()));
+					mngr3->mngrs.push_back(new Manager(1, 1, units[i]->prefix()->exponent()));
+					mngr3->mngrs.push_back(new Manager(units[i]->firstBaseUnit()));
 					mngr2->mngrs.push_back(mngr3);
 				} else {				
-					mngr2->mngrs.push_back(new Manager(calc, units[i]->firstBaseUnit()));
+					mngr2->mngrs.push_back(new Manager(units[i]->firstBaseUnit()));
 				}
-				mngr2->mngrs.push_back(new Manager(calc, units[i]->firstBaseExp()));
+				mngr2->mngrs.push_back(new Manager(units[i]->firstBaseExp(), 1));
 				mngr->mngrs.push_back(mngr2);				
 			} else {
-				if(units[i]->prefixValue() != 1.0L) {
-					mngr->mngrs.push_back(new Manager(calc, units[i]->prefixValue()));
+				if(units[i]->prefix()) {
+					mngr->mngrs.push_back(new Manager(1, 1, units[i]->prefix()->exponent()));
 				}
-				mngr->mngrs.push_back(new Manager(calc, units[i]->firstBaseUnit()));
+				mngr->mngrs.push_back(new Manager(units[i]->firstBaseUnit()));
 			}
 		}
 		return mngr;
@@ -648,35 +641,37 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 		b_changed = true;
 		return;
 	}
-	bool b_var = calc->variablesEnabled();
-	calc->setVariablesEnabled(false);
-	bool b_var_u = calc->unknownVariablesEnabled();
-	calc->setUnknownVariablesEnabled(false);	
-	bool b_func = calc->functionsEnabled();
-	calc->setFunctionsEnabled(false);	
-	bool b_unit = calc->unitsEnabled();
-	calc->setUnitsEnabled(true);		
-	calc->setFunctionsAndVariables(base_expression_);
+	bool b_var = CALCULATOR->variablesEnabled();
+	CALCULATOR->setVariablesEnabled(false);
+	bool b_var_u = CALCULATOR->unknownVariablesEnabled();
+	CALCULATOR->setUnknownVariablesEnabled(false);	
+	bool b_func = CALCULATOR->functionsEnabled();
+	CALCULATOR->setFunctionsEnabled(false);	
+	bool b_unit = CALCULATOR->unitsEnabled();
+	CALCULATOR->setUnitsEnabled(true);		
+	CALCULATOR->setFunctionsAndVariables(base_expression_);
 	int div_place = base_expression_.find(DIVISION_CH);
 	bool div = false;
-	long double prefix = 1.0L;
-	long double exp = 1.0L;
+	Prefix *prefix = NULL;
+	long int exp = 1;
 	int i = 0, i2 = 0, id;
 	Manager *mngr;
 	while(true) {
 		i = base_expression_.find(ID_WRAP_LEFT_CH, i2);
 		if(i == string::npos) {
-			if(base_expression_.length() > i2 + 2) {
-				calc->error(false, "Error in unitexpression: \"%s\".", base_expression_.substr(i2 + 2, base_expression_.length() - i2 - 2).c_str(), NULL);
+			if(i2 == 0) {
+				CALCULATOR->error(false, _("Error in unitexpression: \"%s\"."), base_expression_.c_str(), NULL);
+			} else if(base_expression_.length() > i2 + 2) {
+				CALCULATOR->error(false, _("Error in unitexpression: \"%s\"."), base_expression_.substr(i2 + 2, base_expression_.length() - i2 - 2).c_str(), NULL);
 			}
 			break;
 		}
 		if(i > i2 + 3) {
 			if(!(i - i2 - 3 == 1 && is_in(OPERATORS, base_expression_[i2 + 2])))
-				calc->error(false, "Error in unitexpression: \"%s\".", base_expression_.substr(i2 + 2, i - i2 - 3).c_str(), NULL);
+				CALCULATOR->error(false, _("Error in unitexpression: \"%s\"."), base_expression_.substr(i2 + 2, i - i2 - 3).c_str(), NULL);
 		} else if(i2 == 0 && i > 1) {
 			if(!(i == 2 && is_in(OPERATORS, base_expression_[0])))
-				calc->error(false, "Error in unitexpression: \"%s\".", base_expression_.substr(0, i - 1).c_str(), NULL);
+				CALCULATOR->error(false, _("Error in unitexpression: \"%s\"."), base_expression_.substr(0, i - 1).c_str(), NULL);
 		}
 		i2 = base_expression_.find(ID_WRAP_RIGHT_CH, i);		
 		if(i2 == string::npos) {
@@ -686,21 +681,21 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 		if(!div && div_place != string::npos && i > div_place) {
 			div = true;
 		}		
-		mngr = calc->getId(id);
+		mngr = CALCULATOR->getId(id);
 		if(mngr) {
-			prefix = 1.0L;
-			exp = 1.0L;
-			if(mngr->type() == MULTIPLICATION_MANAGER && mngr->mngrs.size() == 2 && mngr->mngrs[0]->type() == VALUE_MANAGER && mngr->mngrs[1]->type() == UNIT_MANAGER) {
-				prefix = mngr->mngrs[0]->value();
+			prefix = NULL;
+			exp = 1;
+			if(mngr->type() == MULTIPLICATION_MANAGER && mngr->mngrs.size() == 2 && mngr->mngrs[0]->type() == FRACTION_MANAGER && mngr->mngrs[1]->type() == UNIT_MANAGER) {
+				prefix = CALCULATOR->getExactPrefix(mngr->mngrs[0]->fraction()->exponent());
 				mngr = mngr->mngrs[1];
 			} 
 			if(mngr->type() == UNIT_MANAGER) {
 				if(base_expression_.length() > i2 + 3 && base_expression_[i2 + 2] == POWER_CH) {
 					if(is_in(NUMBERS, base_expression_[i2 + 3])) {
-						exp = (long double) s2i(base_expression_.substr(i2 + 3, 1));
+						exp = s2li(base_expression_.substr(i2 + 3, 1));
 						i2 += 2;
 					} else if(base_expression_.length() > i2 + 4 && is_in(MINUS PLUS, base_expression_[i2 + 3]) && is_in(NUMBERS, base_expression_[i2 + 4])) {
-						exp = (long double) s2i(base_expression_.substr(i2 + 3, 2));
+						exp = s2li(base_expression_.substr(i2 + 3, 2));
 						i2 += 3;
 					}
 				}
@@ -709,15 +704,15 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 				}
 				add(mngr->o_unit, exp, prefix);
 			} else {
-				calc->error(false, "Error in unitexpression: \"%s\".", mngr->print().c_str(), NULL);
+				CALCULATOR->error(false, _("Error in unitexpression: \"%s\"."), mngr->print().c_str(), NULL);
 			}
-			calc->delId(id);
+			CALCULATOR->delId(id);
 		}
 	}
-	calc->setVariablesEnabled(b_var);
-	calc->setUnknownVariablesEnabled(b_var_u);	
-	calc->setFunctionsEnabled(b_func);	
-	calc->setUnitsEnabled(b_unit);			
+	CALCULATOR->setVariablesEnabled(b_var);
+	CALCULATOR->setUnknownVariablesEnabled(b_var_u);	
+	CALCULATOR->setFunctionsEnabled(b_func);	
+	CALCULATOR->setUnitsEnabled(b_unit);			
 	b_changed = true;
 }
 

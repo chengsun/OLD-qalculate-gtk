@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
-"POT-Creation-Date: 2003-08-18 14:55+0200\n"
-"PO-Revision-Date: 2003-08-18 14:56+0200\n"
+"POT-Creation-Date: 2003-08-18 16:48+0200\n"
+"PO-Revision-Date: 2003-08-18 16:45+0200\n"
 "Last-Translator: Niklas Knutsson <nq@altern.org>\n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -921,3 +921,9 @@ msgstr ""
 #, c-format
 msgid "You need at least %s arguments in function %s()."
 msgstr "Det krävs minst %s parametrar i funktionen %s()."
+
+#: src/calclib/Unit.cc:670 src/calclib/Unit.cc:672 src/calclib/Unit.cc:678
+#: src/calclib/Unit.cc:681 src/calclib/Unit.cc:714
+#, c-format
+msgid "Error in unitexpression: \"%s\"."
+msgstr "Fel i enhetsuttrycket: \"%s\"."

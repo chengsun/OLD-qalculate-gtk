@@ -1,3 +1,24 @@
+2003-08-22  Niklas Knutsson  <nq@altern.org>
+
+	* Fractions and restructuring
+
+2003-08-20  Niklas Knutsson  <nq@altern.org>
+
+	* CALCULATOR macro (removes Calculator object from all classes)
+	* New Prefix class and new get/add prefix functions; prefixes stored in a sorted vector
+	* New get Function/Variable/Unit(index) functions
+
+2003-08-20  Niklas Knutsson  <nq@altern.org>
+
+	* Fraction button 
+	* Fraction Manager
+	* New Fraction class
+
+2003-08-19  Niklas Knutsson  <nq@altern.org>
+
+	* Add title label to insert function dialog
+	* Remove duplicate adding of answer variables, and remove from global definitions file... and gettextize
+
 2003-08-18  Niklas Knutsson  <nq@altern.org>
 
 	* Qalculate! version 0.2 released

@@ -12,8 +12,7 @@
 #include "Variable.h"
 #include "util.h"
 
-Variable::Variable(Calculator *calc_, string cat_, string name_, Manager *mngr_, string title_, bool uservariable_, bool is_builtin) : b_user(uservariable_), b_builtin(is_builtin) {
-	calc = calc_;
+Variable::Variable(string cat_, string name_, Manager *mngr_, string title_, bool uservariable_, bool is_builtin) : b_user(uservariable_), b_builtin(is_builtin) {
 	remove_blank_ends(name_);
 	remove_blank_ends(cat_);
 	remove_blank_ends(title_);
@@ -24,15 +23,14 @@ Variable::Variable(Calculator *calc_, string cat_, string name_, Manager *mngr_,
 	mngr->ref();
 	b_changed = false;
 }
-Variable::Variable(Calculator *calc_, string cat_, string name_, long double value_, string title_, bool uservariable_, bool is_builtin) : b_user(uservariable_), b_builtin(is_builtin) {
-	calc = calc_;
+Variable::Variable(string cat_, string name_, long double value_, string title_, bool uservariable_, bool is_builtin) : b_user(uservariable_), b_builtin(is_builtin) {
 	remove_blank_ends(name_);
 	remove_blank_ends(cat_);
 	remove_blank_ends(title_);
 	sname = name_;
 	stitle = title_;
 	scat = cat_;
-	mngr = new Manager(calc, value_);
+	mngr = new Manager(value_);
 	b_changed = false;
 }
 Variable::~Variable(void) {
@@ -58,16 +56,16 @@ Manager *Variable::get(void) {
 void Variable::setName(string name_, bool force) {
 	remove_blank_ends(name_);
 	if(name_ != sname) {
-		sname = calc->getName(name_, (void*) this, force);
+		sname = CALCULATOR->getName(name_, (void*) this, force);
 		b_changed = true;
 	}
-	calc->variableNameChanged(this);
+	CALCULATOR->variableNameChanged(this);
 }
 string Variable::name(void) {
 	return sname;
 }
 void Variable::setValue(long double value_) {
-	Manager *mngr_ = new Manager(calc, value_);
+	Manager *mngr_ = new Manager(value_);
 	set(mngr_);
 	mngr_->unref();
 	b_changed = true;

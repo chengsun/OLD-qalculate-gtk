@@ -18,6 +18,7 @@ class Manager;
 #define ADDITION_MANAGER	PLUS_CH
 #define POWER_MANAGER		POWER_CH
 #define VALUE_MANAGER		'v'
+#define FRACTION_MANAGER	'V'
 #define UNIT_MANAGER		'u'
 #define NULL_MANAGER		0
 #define STRING_MANAGER		's'
@@ -26,13 +27,13 @@ class Manager;
 #include "Calculator.h"
 #include "Unit.h"
 #include "Function.h"
+#include "Fraction.h"
 
 class Manager {
 
 	
 	public:
 	
-		Calculator *calc;
 		Unit* o_unit;
 		long double d_value;
 		vector<Manager*> mngrs;
@@ -40,40 +41,48 @@ class Manager {
 		int refcount;
 		string s_var;
 		Function *o_function;
+		Fraction *fr;
 		
-		void transform(Manager *mngr, char type_, char sign, bool reverse_ = false);		
+		void transform(Manager *mngr, char type_, MathOperation op, bool reverse_ = false);		
 		void plusclean();		
 		void multiclean();		
 		void powerclean();				
-		bool reverseadd(Manager *mngr, char sign, bool translate_ = true);
-		bool mergable(Manager *mngr, char type_);
+		bool reverseadd(Manager *mngr, MathOperation op, bool translate_ = true);
 		bool compatible(Manager *mngr);
 		void moveto(Manager *mngr);			
 		
-		Manager(Calculator *calc_);
-		Manager(Calculator *calc_, long double value_);		
-		Manager(Calculator *calc_, string var_);	
-		Manager(Calculator *calc_, Function *f, ...);							
-		Manager(Calculator *calc_, Unit *u, long double value_ = 1);				
+		Manager(void);
+		Manager(long double value_);		
+		Manager(long long int numerator_, long long int denominator_, long long int fraction_exp_ = 0);		
+		Manager(string var_);	
+		Manager(Function *f, ...);							
+		Manager(Unit *u, long long int exp10 = 0);				
 		Manager(const Manager *mngr);	
+		Manager(Fraction *fraction_);			
 		~Manager(void);
 		void set(const Manager *mngr);
 		void set(Function *f, ...);		
+		void set(Fraction *fraction_);				
 		void set(long double value_);		
+		void set(long long int numerator_, long long int denominator_, long long int fraction_exp_ = 0);		
 		void set(string var_);				
-		void set(Unit *u, long double value_ = 1);				
+		void set(Unit *u, long long int exp10 = 0);				
 		void addFunctionArg(Manager *mngr);
-		bool add(Manager *mngr, char sign = MULTIPLICATION_CH, bool translate_ = true);	
-		void add(Unit *u, char sign = MULTIPLICATION_CH);		
-		void add(long double value_, char sign = MULTIPLICATION_CH);			
+		bool add(Manager *mngr, MathOperation op = MULTIPLY, bool translate_ = true);	
+		void addUnit(Unit *u, MathOperation op = MULTIPLY);		
+		void addFloat(long double value_, MathOperation op = MULTIPLY);			
+		void addInteger(long long int value_, MathOperation op = MULTIPLY);					
 		int compare(Manager *mngr);
 		void sort(void);					
 		void clear(void);
 		bool equal(Manager *mngr);
 		long double value(void);
 		void value(long double value_);				
+		Fraction *fraction() const;
+		bool isNumber();
+		bool isNonNullNumber();
 		Unit *unit(void);
-		void unit(Unit *u, long double value_ = 1);		
+		void unit(Unit *u, long long int value_ = 1);		
 		bool negative();
 		void finalize();
 		void clean();
@@ -84,7 +93,7 @@ class Manager {
 		bool convert(Unit*);
 		bool convert(string unit_str);		
 		bool convert(Manager *unit_mngr);				
-		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int unitflags = UNIT_FORMAT_DEFAULT, int precision = PRECISION, int decimals_to_keep = 0, bool decimals_expand = true, bool decimals_decrease = false, bool *usable = NULL, long double prefix_ = -1.0L, bool toplevel = true, bool *plural = NULL, long double *d_exp = NULL, bool in_composite = false, bool in_power = false);
+		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int precision = PRECISION, int decimals_to_keep = 0, bool decimals_expand = true, bool decimals_decrease = false, bool *usable = NULL, Prefix *prefix = NULL, bool toplevel = true, bool *plural = NULL, long int *l_exp = NULL, bool in_composite = false, bool in_power = false);
 		void ref(void);
 		void unref(void);
 		char type(void) const;

@@ -19,7 +19,6 @@ class UserFunction;
 
 class Function {
   protected:
-	Calculator *calc;
 	int argc;
 	int max_argc;
 	vector<string> default_values;
@@ -37,7 +36,7 @@ class Function {
 	virtual void clearVArgs();
 	virtual void clearSVArgs();	
   public:
-	Function(Calculator *calc_, string cat_, string name_, int argc_, string title_ = "", string descr_ = "", bool priviliged_ = false, int max_argc_ = -1);
+	Function(string cat_, string name_, int argc_, string title_ = "", string descr_ = "", bool priviliged_ = false, int max_argc_ = -1);
 	virtual ~Function(void);	
 	virtual Manager *calculate(const string &eq);
 	bool priviliged(void);
@@ -73,7 +72,7 @@ class UserFunction : public Function {
   protected:
 	string eq, eq_calc;	
   public:
-	UserFunction(Calculator *calc_, string cat_, string name_, string eq_, bool is_user_function = true, int argc_ = -1, string title_ = "", string descr_ = "", int max_argc_ = -1);
+	UserFunction(string cat_, string name_, string eq_, bool is_user_function = true, int argc_ = -1, string title_ = "", string descr_ = "", int max_argc_ = -1);
 	string equation(void);
 	Manager *calculate(const string &argv);	
 	void setEquation(string new_eq, int argc_ = -1, int max_argc_ = -1);	

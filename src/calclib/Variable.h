@@ -22,13 +22,12 @@ class Variable;
 
 class Variable {
   protected:
-	Calculator *calc;  
 	string sname, scat, stitle;
 	Manager *mngr;
 	bool b_user, b_changed, b_builtin;
   public:
-	Variable(Calculator *calc_, string cat_, string name_, Manager *mngr_, string title_ = "", bool uservariable_ = true, bool is_builtin = false);
-	Variable(Calculator *calc_, string cat_, string name_, long double value_, string title_ = "", bool uservariable_ = true, bool is_builtin = false);	
+	Variable(string cat_, string name_, Manager *mngr_, string title_ = "", bool uservariable_ = true, bool is_builtin = false);
+	Variable(string cat_, string name_, long double value_, string title_ = "", bool uservariable_ = true, bool is_builtin = false);	
 	~Variable(void);
 
 	/**

@@ -12,8 +12,7 @@
 #include "Function.h"
 #include "util.h"
 
-Function::Function(Calculator *calc_, string cat_, string name_, int argc_, string title_, string descr_, bool priviliged_, int max_argc_) {
-	calc = calc_;
+Function::Function(string cat_, string name_, int argc_, string title_, string descr_, bool priviliged_, int max_argc_) {
 	b_user = false;
 	bpriv = priviliged_;
 	remove_blank_ends(cat_);
@@ -55,9 +54,9 @@ void Function::setName(string new_name, bool force) {
 	remove_blank_ends(new_name);
 	if(new_name != sname) {
 		b_changed = true;
-		sname = calc->getName(new_name, (void*) this, force);
+		sname = CALCULATOR->getName(new_name, (void*) this, force);
 	}
-	calc->functionNameChanged(this, bpriv);
+	CALCULATOR->functionNameChanged(this, bpriv);
 }
 int Function::args(const string &str) {
 	int itmp = 0, i = 0, i2 = 0, i3 = 0, i4 = 0;
@@ -73,7 +72,7 @@ int Function::args(const string &str) {
 						break;
 				} else {
 					if(itmp <= maxargs() || args() < 0) {
-						Manager *mngr = calc->calculate(str.substr(i2, i - i2));
+						Manager *mngr = CALCULATOR->calculate(str.substr(i2, i - i2));
 						vargs.push_back(mngr);
 					}
 					i++;
@@ -83,7 +82,7 @@ int Function::args(const string &str) {
 				}
 			} else {
 				if(itmp <= args() || args() < 0) {
-					Manager *mngr = calc->calculate(str.substr(i2, str.length() - i2));
+					Manager *mngr = CALCULATOR->calculate(str.substr(i2, str.length() - i2));
 					vargs.push_back(mngr);			
 				}
 				break;
@@ -93,7 +92,7 @@ int Function::args(const string &str) {
 	if(itmp < maxargs() && itmp >= minargs()) {
 		int itmp2 = itmp;
 		while(itmp2 < maxargs()) {
-			Manager *mngr = calc->calculate(default_values[itmp2 - minargs()]);
+			Manager *mngr = CALCULATOR->calculate(default_values[itmp2 - minargs()]);
 			vargs.push_back(mngr);
 			itmp2++;
 		}
@@ -183,23 +182,23 @@ bool Function::setArgName(string name_, int index) {
 bool Function::testArgCount(int itmp) {
 	if(itmp >= minargs()) {
 		if(itmp > maxargs() && maxargs() >= 0)
-			calc->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str());						
+			CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str());						
 		return true;	
 	}
-	calc->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str());
+	CALCULATOR->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str());
 	return false;
 }
 Manager *Function::createFunctionManagerFromVArgs(int itmp) {
-	Manager *mngr = new Manager(calc, this, NULL);
+	Manager *mngr = new Manager(this, NULL);
 	for(int i = 0; i < itmp; i++) {
 		mngr->addFunctionArg(vargs[i]);
 	}
 	return mngr;
 }
 Manager *Function::createFunctionManagerFromSVArgs(int itmp) {
-	Manager *mngr = new Manager(calc, this, NULL); 
+	Manager *mngr = new Manager(this, NULL); 
 	for(int i = 0; i < itmp; i++) {
-		Manager *mngr2 = new Manager(calc, svargs[i]);
+		Manager *mngr2 = new Manager(svargs[i]);
 		mngr->addFunctionArg(mngr2);
 		mngr2->unref();
 	}
@@ -218,9 +217,9 @@ Manager *Function::calculate(const string &argv) {
 	Manager *mngr = NULL;
 	int itmp = args(argv);
 	if(testArgCount(itmp)) {
-		mngr = new Manager(calc);
+		mngr = new Manager();
 		calculate2(mngr);
-		calc->checkFPExceptions(sname.c_str());	
+		CALCULATOR->checkFPExceptions(sname.c_str());	
 	} else {
 		mngr = createFunctionManagerFromVArgs(itmp);
 	}
@@ -263,7 +262,7 @@ string Function::getDefaultValue(int arg_) {
 	return "";
 }
 
-UserFunction::UserFunction(Calculator *calc_, string cat_, string name_, string eq_, bool is_user_function, int argc_, string title_, string descr_, int max_argc_) : Function(calc_, cat_, name_, argc_, title_, descr_, false, max_argc_) {
+UserFunction::UserFunction(string cat_, string name_, string eq_, bool is_user_function, int argc_, string title_, string descr_, int max_argc_) : Function(cat_, name_, argc_, title_, descr_, false, max_argc_) {
 	b_user = is_user_function;
 	setEquation(eq_, argc_, max_argc_);
 	b_changed = false;	
@@ -327,7 +326,7 @@ Manager *UserFunction::calculate(const string &argv) {
 		int itmp;
 		if((itmp = stringArgs(argv)) >= minargs()) {
 			if(itmp > maxargs())
-				calc->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str());						
+				CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str());						
 			string stmp = eq_calc;
 			string svar;
 			int i2 = 0;
@@ -346,13 +345,13 @@ Manager *UserFunction::calculate(const string &argv) {
 				}
 			}
 			svargs.clear();
-			Manager *mngr = calc->calculate(stmp);
+			Manager *mngr = CALCULATOR->calculate(stmp);
 			return mngr;
 		} else {
-			calc->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str());		
-			Manager *mngr = new Manager(calc, this, NULL);
+			CALCULATOR->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str());		
+			Manager *mngr = new Manager(this, NULL);
 			for(int i = 0; i < itmp; i++) {
-				Manager *mngr2 = calc->calculate(svargs[i]);
+				Manager *mngr2 = CALCULATOR->calculate(svargs[i]);
 				mngr->addFunctionArg(mngr2);
 				mngr2->unref();
 			}
@@ -360,7 +359,7 @@ Manager *UserFunction::calculate(const string &argv) {
 			return mngr;
 		}
 	} else {
-		Manager *mngr = calc->calculate(eq_calc);
+		Manager *mngr = CALCULATOR->calculate(eq_calc);
 		return mngr;
 	}
 }

@@ -51,6 +51,17 @@ string d2s(long double value, int precision = 100);
 string i2s(int value);
 int s2i(const string& str);
 int s2i(const char *str);
+long int s2li(const string& str);
+long int s2li(const char *str);
+long long int s2lli(const string& str);
+long long int s2lli(const char *str);
+string lli2s(long long int value);
+string li2s(long int value);
+string &lli2s(long long int &value, string &str);
+
+char op2ch(MathOperation op);
+
+long long int llpow(long long int base, long long int exp, bool &overflow);
 
 int find_first_not_of(const string &str, int pos, ...);
 int find_first_of(const string &str, int pos, ...);
@@ -73,7 +84,8 @@ bool is_not_in(char c, ...);
 bool is_in(const char *str, char c);
 bool is_not_in(const char *str, char c);
 int sign_place(string *str, unsigned int start = 0);
-long double gcd(long double i1, long double i2);
-//string &remove_trailing_zeros(string &str, int decimals_to_keep = 0, bool expand = false, bool decrease = false);
+long long int gcd(long long int i1, long long int i2);
+long double gcd_d(long double i1, long double i2);
+string &remove_trailing_zeros(string &str, int decimals_to_keep = 0, bool expand = false, bool decrease = false);
 
 #endif

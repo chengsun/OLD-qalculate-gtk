@@ -19,14 +19,14 @@ class CompositeUnit;
 
 #include "Calculator.h"
 #include "Manager.h"
+#include "Prefix.h"
 
 class Unit {
   protected:
 	string scategory, sname, sshortname, stitle, splural;
-	Calculator *calc;
 	bool b_user, b_changed;
   public:
-	Unit(Calculator *calc_, string cat_, string name_, string plural_ = "", string short_name_ = "", string title_ = "", bool is_user_unit = true);
+	Unit(string cat_, string name_, string plural_ = "", string short_name_ = "", string title_ = "", bool is_user_unit = true);
 	virtual ~Unit(void);
 	void setTitle(string title_);
 	string title(void);
@@ -48,7 +48,7 @@ class Unit {
 	virtual string shortBaseExpName(void);
 	virtual Manager *baseValue(Manager *value_ = NULL, Manager *exp_ = NULL);
 	virtual Manager *convertToBase(Manager *value_ = NULL, Manager *exp_ = NULL);
-	virtual long double baseExp(long double exp_ = 1.0L);
+	virtual long int baseExp(long int exp_ = 1);
 	virtual char type() const;
 	virtual bool isChildOf(Unit *u);
 	virtual bool isParentOf(Unit *u);
@@ -63,10 +63,11 @@ class Unit {
 class AliasUnit : public Unit {
   protected:
 	string value, rvalue;
-	long double d_exp;
+	long int exp;
+	Manager *exp_mngr;
 	Unit *unit;
   public:
-	AliasUnit(Calculator *calc_, string cat_, string name_, string plural_, string short_name_, string title_, Unit *alias, string relation = "1", long double exp_ = 1.0L, string reverse = "", bool is_user_unit = true);
+	AliasUnit(string cat_, string name_, string plural_, string short_name_, string title_, Unit *alias, string relation = "1", long int exp_ = 1, string reverse = "", bool is_user_unit = true);
 	~AliasUnit(void);
 	virtual string baseName(void);
 	virtual string baseExpName(void);
@@ -87,9 +88,9 @@ class AliasUnit : public Unit {
 	virtual Manager *convertToBase(Manager *value_ = NULL, Manager *exp_ = NULL);
 	virtual Manager *firstBaseValue(Manager *value_ = NULL, Manager *exp_ = NULL);
 	virtual Manager *convertToFirstBase(Manager *value_ = NULL, Manager *exp_ = NULL);
-	virtual long double baseExp(long double exp_ = 1.0L);
-	virtual void setExponent(long double exp_);
-	virtual long double firstBaseExp(void);
+	virtual long int baseExp(long int exp_ = 1);
+	virtual void setExponent(long int exp_);
+	virtual long int firstBaseExp(void);
 	virtual char type() const;
 	virtual bool isChildOf(Unit *u);
 	virtual bool isParentOf(Unit *u);
@@ -100,14 +101,15 @@ class AliasUnit : public Unit {
 
 class AliasUnit_Composite : public AliasUnit {
   protected:
-	long double prefixv;
+	Prefix *prefixv;
   public:
-	AliasUnit_Composite(Calculator *calc_, Unit *alias, long double exp_ = 1.0L, long double prefix = 1.0L);
+	AliasUnit_Composite(Unit *alias, long int exp_ = 1, Prefix *prefix_ = NULL);
 	virtual ~AliasUnit_Composite(void);
 	virtual string print(bool plural_);
 	virtual string printShort(bool plural_);
-	virtual long double prefixValue(void);
-	virtual void set(Unit *u, long double exp_ = 1.0L, long double prefix = 1.0L);
+	virtual Prefix *prefix() const;
+	virtual long int prefixExponent() const;	
+	virtual void set(Unit *u, long int exp_ = 1, Prefix *prefix_ = NULL);
 	virtual Manager *firstBaseValue(Manager *value_ = NULL, Manager *exp_ = NULL);
 	virtual Manager *convertToFirstBase(Manager *value_ = NULL, Manager *exp_ = NULL);
 };
@@ -119,10 +121,10 @@ class CompositeUnit : public Unit {
 		vector<AliasUnit_Composite*> units;
 		//-----------------------------//
 
-		CompositeUnit(Calculator *calc_, string cat_, string name_, string title_ = "", string base_expression_ = "", bool is_user_unit = true);
+		CompositeUnit(string cat_, string name_, string title_ = "", string base_expression_ = "", bool is_user_unit = true);
 		virtual ~CompositeUnit(void);
-		virtual void add(Unit *u, long double exp_ = 1.0L, long double prefix = 1.0L);
-		virtual Unit *get(int index, long double *exp_ = NULL, long double *prefix = NULL);
+		virtual void add(Unit *u, long int exp_ = 1, Prefix *prefix = NULL);
+		virtual Unit *get(int index, long int *exp_ = NULL, Prefix **prefix = NULL);
 		virtual void del(Unit *u);
 		virtual string print(bool plural_, bool short_);
 		virtual string name(void);

@@ -59,8 +59,7 @@ GtkAccelGroup *accel_group;
 
 extern int display_mode, number_base;
 extern bool show_more, show_buttons;
-extern Calculator *calc;
-extern bool use_short_units, save_mode_on_exit, save_defs_on_exit, load_global_defs, use_unicode_signs;
+extern bool use_short_units, save_mode_on_exit, save_defs_on_exit, load_global_defs, use_unicode_signs, hyp_is_on, fraction_is_on;
 
 
 void
@@ -79,13 +78,16 @@ create_main_window (void)
 			GTK_LABEL (gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (glade_xml, "button_xy")))),
 			TRUE);
 	gtk_label_set_use_markup (
-			GTK_LABEL (gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (glade_xml, "button_square")))),
+			GTK_LABEL (gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (glade_xml, "button_fraction")))),
 			TRUE);
+			
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (glade_xml, "button_hyp")), hyp_is_on);			
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (glade_xml, "button_fraction")), fraction_is_on);				
 
 	accel_group = gtk_accel_group_new ();
 
 
-	switch (calc->angleMode())
+	switch (CALCULATOR->angleMode())
 	{
 	case DEGREES:
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_degrees")), TRUE);
@@ -181,7 +183,7 @@ create_main_window (void)
 		gtk_widget_hide (glade_xml_get_widget (glade_xml, "notebook"));
 	}
 
-	switch (calc->angleMode())
+	switch (CALCULATOR->angleMode())
 	{
 	case RADIANS:
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (glade_xml, "radiobutton_radians")), TRUE);
@@ -405,13 +407,13 @@ create_unit_edit_dialog (void)
 	
 	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
 	GList *items = NULL;
-	for(int i = 0; i < calc->units.size(); i++) {
-		if(!calc->units[i]->category().empty()) {
+	for(int i = 0; i < CALCULATOR->units.size(); i++) {
+		if(!CALCULATOR->units[i]->category().empty()) {
 			//add category if not present
-			if(g_hash_table_lookup(hash, (gconstpointer) calc->units[i]->category().c_str()) == NULL) {
-				items = g_list_append(items, (gpointer) calc->units[i]->category().c_str());
+			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->units[i]->category().c_str()) == NULL) {
+				items = g_list_append(items, (gpointer) CALCULATOR->units[i]->category().c_str());
 				//remember added categories
-				g_hash_table_insert(hash, (gpointer) calc->units[i]->category().c_str(), (gpointer) hash);
+				g_hash_table_insert(hash, (gpointer) CALCULATOR->units[i]->category().c_str(), (gpointer) hash);
 			}
 		}
 	}
@@ -427,13 +429,13 @@ create_function_edit_dialog (void)
 	
 	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
 	GList *items = NULL;
-	for(int i = 0; i < calc->functions.size(); i++) {
-		if(!calc->functions[i]->category().empty()) {
+	for(int i = 0; i < CALCULATOR->functions.size(); i++) {
+		if(!CALCULATOR->functions[i]->category().empty()) {
 			//add category if not present
-			if(g_hash_table_lookup(hash, (gconstpointer) calc->functions[i]->category().c_str()) == NULL) {
-				items = g_list_append(items, (gpointer) calc->functions[i]->category().c_str());
+			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->functions[i]->category().c_str()) == NULL) {
+				items = g_list_append(items, (gpointer) CALCULATOR->functions[i]->category().c_str());
 				//remember added categories
-				g_hash_table_insert(hash, (gpointer) calc->functions[i]->category().c_str(), (gpointer) hash);
+				g_hash_table_insert(hash, (gpointer) CALCULATOR->functions[i]->category().c_str(), (gpointer) hash);
 			}
 		}
 	}
@@ -448,13 +450,13 @@ create_variable_edit_dialog (void)
 	
 	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
 	GList *items = NULL;
-	for(int i = 0; i < calc->variables.size(); i++) {
-		if(!calc->variables[i]->category().empty()) {
+	for(int i = 0; i < CALCULATOR->variables.size(); i++) {
+		if(!CALCULATOR->variables[i]->category().empty()) {
 			//add category if not present
-			if(g_hash_table_lookup(hash, (gconstpointer) calc->variables[i]->category().c_str()) == NULL) {
-				items = g_list_append(items, (gpointer) calc->variables[i]->category().c_str());
+			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->variables[i]->category().c_str()) == NULL) {
+				items = g_list_append(items, (gpointer) CALCULATOR->variables[i]->category().c_str());
 				//remember added categories
-				g_hash_table_insert(hash, (gpointer) calc->variables[i]->category().c_str(), (gpointer) hash);
+				g_hash_table_insert(hash, (gpointer) CALCULATOR->variables[i]->category().c_str(), (gpointer) hash);
 			}
 		}
 	}

@@ -11,24 +11,23 @@
 
 #include "EqItem.h"
 
-EqItem::EqItem(char operation_, Calculator *parent) {
-	operation = operation_;
-	calc = parent;
+EqItem::EqItem(MathOperation operation_) {
+	op = operation_;
 	mngr = NULL;
 }
 EqItem::~EqItem() {
 	if(mngr) mngr->unref();
 }
-char EqItem::sign() {
-	return operation;
+MathOperation EqItem::operation() {
+	return op;
 }
 
 
 
-EqNumber::EqNumber(long double value_, Calculator *parent, char operation_) : EqItem(operation_, parent) {
-	mngr = new Manager(calc, value_);
+EqNumber::EqNumber(long double value_, MathOperation operation_) : EqItem(operation_) {
+	mngr = new Manager(value_);
 }
-EqNumber::EqNumber(string str, Calculator *parent, char operation_) : EqItem(operation_, parent) {
+EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 	string ssave = str;
 	char s = PLUS_CH;
 	gsub(RIGHT_BRACKET, "", str);
@@ -49,32 +48,30 @@ EqNumber::EqNumber(string str, Calculator *parent, char operation_) : EqItem(ope
 	}	
 	if(str[0] == ID_WRAP_LEFT_CH && str[str.length() - 1] == ID_WRAP_RIGHT_CH) {
 		int id = s2i(str.substr(1, str.length() - 2));
-		mngr = calc->getId(id);
+		mngr = CALCULATOR->getId(id);
 		if(mngr) {
-			if(s == MINUS_CH) mngr->add(-1, MULTIPLICATION_CH);
+			if(s == MINUS_CH) mngr->addInteger(-1, MULTIPLY);
 			mngr->ref();
-			calc->delId(id);
+			CALCULATOR->delId(id);
 			return;
 		}
 	}
-	mngr = new Manager(calc);
-	if(operation_ == MINUS_CH || operation_ == PLUS_CH) value = 0;
+	mngr = new Manager();
+	if(operation_ == SUBTRACT || operation_ == ADD) value = 0;
 	else value = 1;
-	long double dtmp = 1;
-	bool btmp = false;
 	int itmp;
 	//	    if(str.substr(0, 3) == "NAN" || str.substr(0, 3) == "INF") {
-	//		calc->error(true, "Math error", NULL);
+	//		CALCULATOR->error(true, "Math error", NULL);
 	//	    	return;
 	//	    }
 	if(str.empty() || ((itmp = str.find_first_not_of(" ")) == (int) string::npos)) {
-		//		  calc->error(true, "Empty expression", NULL);
+		//		  CALCULATOR->error(true, "Empty expression", NULL);
 		mngr->set(value);
 		return;
 	}
 	if(str.substr(0, 3) == SNAN) {
 		mngr->set(NAN);
-		//			calc->error(true, "Math error", NULL);
+		//			CALCULATOR->error(true, "Math error", NULL);
 		str[0] = ZERO_CH;
 		str[1] = ZERO_CH;
 		str[2] = ZERO_CH;
@@ -90,6 +87,10 @@ EqNumber::EqNumber(string str, Calculator *parent, char operation_) : EqItem(ope
 	} else {
 		if(s == MINUS_CH)
 			str.insert(0, 1, MINUS_CH);
+		if(str.find(DOT_CH) == string::npos) {
+			mngr->set(new Fraction(str));
+			return;
+		}
 		value = strtold(str.c_str(), NULL);
 	}
 	if((itmp = str.find_first_not_of(NUMBERS MINUS DOT, 0)) != (int) string::npos) {
@@ -98,17 +99,15 @@ EqNumber::EqNumber(string str, Calculator *parent, char operation_) : EqItem(ope
 
 		if(itmp == 0) {
 			value = 1;
-			calc->error(true, _("\"%s\" is not a valid variable/function/unit."), ssave.c_str(), NULL);
+			CALCULATOR->error(true, _("\"%s\" is not a valid variable/function/unit."), ssave.c_str(), NULL);
 			mngr->set(value);
 			return;
 		} else {
-			calc->error(true, _("Trailing characters in expression \"%s\" was ignored (unknown variable/function/unit)."), ssave.c_str(), NULL);
+			CALCULATOR->error(true, _("Trailing characters in expression \"%s\" was ignored (unknown variable/function/unit)."), ssave.c_str(), NULL);
 		}
 	}
 	//if(s == '-') str.insert(0, "-");
 	//if(s == '-') value = -value;
-	if(btmp)
-		value = value * dtmp;
 	mngr->set(value);		
 }
 Manager *EqNumber::calculate() {
@@ -117,20 +116,20 @@ Manager *EqNumber::calculate() {
 
 
 
-EqContainer::EqContainer(char operation_, Calculator *parent) : EqItem(operation_, parent) {mngr = new Manager(calc);}
+EqContainer::EqContainer(MathOperation operation_) : EqItem(operation_) {mngr = new Manager();}
 EqContainer::~EqContainer() {
 	for(int i = 0; i < items.size(); i++) {
 		delete items[i];
 	}
 }
-EqContainer::EqContainer(string str, Calculator *parent, char operation_) : EqItem(operation_, parent) {
-	mngr = new Manager(calc);
+EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operation_) {
+	mngr = new Manager();
 	char buffer[100];
 	EqContainer *eq_c;
 	long double dtmp;
 	int i = 0, i2 = 0, i3 = 0, i4 = 0, i5 = 0;
 	string str2, str3;
-	char s = PLUS_CH;
+	MathOperation s = ADD;
 goto_place1:
 	if((i = str.find(LEFT_BRACKET_CH)) != string::npos) {
 		i2 = str.find(RIGHT_BRACKET_CH);
@@ -160,10 +159,10 @@ goto_place1:
 				str.insert(i2 + 1, 1, MULTIPLICATION_2_CH);
 			}
 			str2 = str.substr(i + 1, i2 - (i + 1));
-			eq_c = new EqContainer(str2, calc, PLUS_CH);
+			eq_c = new EqContainer(str2, ADD);
 			Manager *mngr2 = eq_c->calculate();
 			str2 = ID_WRAP_LEFT_CH;
-			str2 += i2s(calc->addId(mngr2));
+			str2 += i2s(CALCULATOR->addId(mngr2));
 			str2 += ID_WRAP_RIGHT_CH;
 			delete eq_c;
 			str.replace(i, i2 - i + 1, str2);
@@ -187,7 +186,8 @@ goto_place1:
 		bool b = false;
 		while(i > -1) {
 			if(is_not_in(OPERATORS, str[i - 1])) {
-				s = str[i];
+				if(str[i] == PLUS_CH) s = ADD;
+				else s = SUBTRACT;
 				str2 = str.substr(0, i);
 				str = str.substr(i + 1, str.length() - (i + 1));
 				add(str2, s);
@@ -205,7 +205,8 @@ goto_place1:
 	}
 	if((i = str.find_first_of(MULTIPLICATION DIVISION, 1)) > 0 && i != (int) string::npos) {
 		while(i > -1) {
-			s = str[i];
+			if(str[i] == MULTIPLICATION_CH) s = MULTIPLY;
+			else s = DIVIDE;			
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
 			add(str2, s);
@@ -214,7 +215,7 @@ goto_place1:
 		add(str);
 	} else if((i = str.find(MULTIPLICATION_2_CH, 1)) > 0 && i != (int) string::npos) {
 		while(i > -1) {
-			s = MULTIPLICATION_CH;
+			s = MULTIPLY;
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
 			add(str2, s);
@@ -223,7 +224,7 @@ goto_place1:
 		add(str);		
 	} else if((i = str.find(POWER_CH, 1)) > 0 && i != (int) string::npos) {
 		while(i > -1) {
-			s = str[i];
+			s = RAISE;
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
 			add(str2, s);
@@ -232,7 +233,7 @@ goto_place1:
 		add(str);
 	} else if((i = str.find(EXP_CH, 1)) > 0 && i != (int) string::npos) {
 		while(i > -1) {
-			s = str[i];
+			s = EXP10;
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
 			add(str2, s);
@@ -240,17 +241,17 @@ goto_place1:
 		}
 		add(str);
 	} else {
-		add(new EqNumber(str, calc));
+		add(new EqNumber(str));
 	}
 }
-void EqContainer::add(string &str, char s) {
+void EqContainer::add(string &str, MathOperation s) {
 	if(str.length() > 0) {
 		string stmp = str;
 		if(str.find_first_not_of(OPERATORS) != string::npos) {
 			if(str.find_first_not_of(NUMBERS DOT ID_WRAPS, 1) != string::npos && str.find_first_not_of(NUMBERS DOT ID_WRAPS PLUS MINUS, 0) != 0) {
-				add(new EqContainer(str, calc, s));
+				add(new EqContainer(str, s));
 			} else {
-				add(new EqNumber(str, calc, s));
+				add(new EqNumber(str, s));
 			}
 		}
 	}
@@ -260,10 +261,10 @@ void EqContainer::add(EqItem *e) {
 }
 Manager *EqContainer::calculate() {
 	long double value = 0, vtmp = 0;
-	char s = PLUS_CH;
+	MathOperation s = ADD;
 	for(unsigned int i = 0; i < items.size(); i++) {
 		mngr->add(items[i]->calculate(), s);
-		s = items[i]->sign();
+		s = items[i]->operation();
 	}
 	return mngr;
 }

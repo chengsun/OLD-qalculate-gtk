@@ -22,7 +22,6 @@
 #include "callbacks.h"
 #include "main.h"
 
-Calculator *calc;
 Manager *mngr;
 Variable *vans, *vAns;
 GtkWidget *functions_window;
@@ -64,38 +63,36 @@ int main (int argc, char **argv) {
 	g_free (gstr);
 
 	//create the almighty Calculator object
-	calc = new Calculator();
+	new Calculator();
 
 	//load application specific preferences
 	load_preferences();
 
 	//load global definitions
 	gstr = g_build_filename(PACKAGE_DATA_DIR, PACKAGE, "qalculate.cfg", NULL);
-	if(load_global_defs && !calc->load(gstr, false)) {
+	if(load_global_defs && !CALCULATOR->load(gstr, false)) {
 		g_print(_("%s not found!\n"), gstr);
 	}
 	g_free(gstr);
 
 	//load local definitions
 	gstr = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate.cfg", NULL);
-	calc->load(gstr, true);
+	CALCULATOR->load(gstr, true);
 	g_free(gstr);
 
-	mngr = new Manager(calc);
+	mngr = new Manager();
 
 
 	//get ans variable objects or create if they do not exist
-	vans = calc->getVariable("ans");
-	vAns = calc->getVariable("Ans");
+	vans = CALCULATOR->getVariable(_("ans"));
+	vAns = CALCULATOR->getVariable(_("Ans"));
 	if(!vans) {
-		vans = calc->addVariable(new Variable(calc, "Utility", "ans", 0.0, "Answer", false));
-		calc->addVariable(vans);		
+		vans = CALCULATOR->addVariable(new Variable(_("Utility"), _("ans"), 0.0, _("Answer"), false));
 	} else {
 		vans->setValue(0);
 	}
 	if(!vAns) {
-		vAns = calc->addVariable(new Variable(calc, "Utility", "Ans", 0.0, "Answer", false));
-		calc->addVariable(vAns);
+		vAns = CALCULATOR->addVariable(new Variable(_("Utility"), _("Ans"), 0.0, _("Answer"), false));
 	} else {
 		vAns->setValue(0);
 	}	

@@ -18,271 +18,271 @@ class IFFunction : public Function {
   protected:
 	Manager *calculate(const string &argv);  
   public:
-	IFFunction(Calculator *calc_);
+	IFFunction();
 };
 class DifferentiateFunction : public Function {
   protected:
 	Manager *calculate(const string &argv);    
   public:
-	DifferentiateFunction(Calculator *calc_);
+	DifferentiateFunction();
 };
 class GCDFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	GCDFunction(Calculator *calc_);
+	GCDFunction();
 };
 class AbsFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	AbsFunction(Calculator *calc_);
+	AbsFunction();
 };
 class CeilFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	CeilFunction(Calculator *calc_);
+	CeilFunction();
 };
 class FloorFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	FloorFunction(Calculator *calc_);
+	FloorFunction();
 };
 class TruncFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	TruncFunction(Calculator *calc_);
+	TruncFunction();
 };
 class RoundFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	RoundFunction(Calculator *calc_);
+	RoundFunction();
 };
 class RemFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	RemFunction(Calculator *calc_);
+	RemFunction();
 };
 class ModFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	ModFunction(Calculator *calc_);
+	ModFunction();
 };
 class SinFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	SinFunction(Calculator *calc_);
+	SinFunction();
 };
 class CosFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	CosFunction(Calculator *calc_);
+	CosFunction();
 };
 class TanFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	TanFunction(Calculator *calc_);
+	TanFunction();
 };
 class SinhFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	SinhFunction(Calculator *calc_);
+	SinhFunction();
 };
 class CoshFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	CoshFunction(Calculator *calc_);
+	CoshFunction();
 };
 class TanhFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	TanhFunction(Calculator *calc_);
+	TanhFunction();
 };
 class AsinFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	AsinFunction(Calculator *calc_);
+	AsinFunction();
 };
 class AcosFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	AcosFunction(Calculator *calc_);
+	AcosFunction();
 };
 class AtanFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	AtanFunction(Calculator *calc_);
+	AtanFunction();
 };
 class AsinhFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	AsinhFunction(Calculator *calc_);
+	AsinhFunction();
 };
 class AcoshFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	AcoshFunction(Calculator *calc_);
+	AcoshFunction();
 };
 class AtanhFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	AtanhFunction(Calculator *calc_);
+	AtanhFunction();
 };
 class LogFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	LogFunction(Calculator *calc_);
+	LogFunction();
 };
 class Log10Function : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	Log10Function(Calculator *calc_);
+	Log10Function();
 };
 class Log2Function : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	Log2Function(Calculator *calc_);
+	Log2Function();
 };
 class ExpFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	ExpFunction(Calculator *calc_);
+	ExpFunction();
 };
 class Exp10Function : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	Exp10Function(Calculator *calc_);
+	Exp10Function();
 };
 class Exp2Function : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	Exp2Function(Calculator *calc_);
+	Exp2Function();
 };
 class SqrtFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	SqrtFunction(Calculator *calc_);
+	SqrtFunction();
 };
 class CbrtFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	CbrtFunction(Calculator *calc_);
+	CbrtFunction();
 };
 class HypotFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	HypotFunction(Calculator *calc_);
+	HypotFunction();
 };
 class SumFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	SumFunction(Calculator *calc_);
+	SumFunction();
 };
 class MeanFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	MeanFunction(Calculator *calc_);
+	MeanFunction();
 };
 class MedianFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	MedianFunction(Calculator *calc_);
+	MedianFunction();
 };
 class MinFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	MinFunction(Calculator *calc_);
+	MinFunction();
 };
 class MaxFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	MaxFunction(Calculator *calc_);
+	MaxFunction();
 };
 class ModeFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	ModeFunction(Calculator *calc_);
+	ModeFunction();
 };
 class NumberFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	NumberFunction(Calculator *calc_);
+	NumberFunction();
 };
 class StdDevFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	StdDevFunction(Calculator *calc_);
+	StdDevFunction();
 };
 class StdDevSFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
   public:
-	StdDevSFunction(Calculator *calc_);
+	StdDevSFunction();
 };
 class RandomFunction : public Function {
   protected:
 	Manager *calculate(const string &eq);  
   public:
-	RandomFunction(Calculator *calc_);
+	RandomFunction();
 };
 class BASEFunction : public Function {
   protected:
 	Manager *calculate(const string &eq);  
   public:
-	BASEFunction(Calculator *calc_);
+	BASEFunction();
 };
 class BINFunction : public Function {
   protected:
 	Manager *calculate(const string &eq);  
   public:
-	BINFunction(Calculator *calc_);
+	BINFunction();
 };
 class HEXFunction : public Function {
   protected:
 	Manager *calculate(const string &eq);  
   public:
-	HEXFunction(Calculator *calc_);
+	HEXFunction();
 };
 class OCTFunction : public Function {
   protected:
 	Manager *calculate(const string &eq);  
   public:
-	OCTFunction(Calculator *calc_);
+	OCTFunction();
 };
 
 #endif

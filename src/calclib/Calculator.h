@@ -22,10 +22,14 @@ class Calculator;
 #include "Variable.h"
 #include "Function.h"
 #include "Error.h"
+#include "Prefix.h"
 #include <ext/hash_map>
 
-typedef hash_map<const char*, long double, hash<const char*>, eqstr> l_type;
-typedef hash_map<char, long double> s_type;
+extern Calculator *calculator;
+
+#define CALCULATOR	calculator
+
+typedef vector<Prefix*> p_type;
 
 class Calculator {
   protected:
@@ -46,14 +50,25 @@ class Calculator {
 	vector<Variable*> variables;
 	vector<Function*> functions;	
 	vector<Unit*> units;	
-	hash_map<const char*, long double, hash<const char*>, eqstr> l_prefix;
-	hash_map<char, long double> s_prefix;		
+	vector<Prefix*> prefixes;
   
 	Calculator(void);
 	~Calculator(void);
 
 	void addStringAlternative(string replacement, string standard);
 	void addDefauktStringAlternative(string replacement, string standard);
+
+	Variable *getVariable(int index) const;
+	Unit *getUnit(int index) const;	
+	Function *getFunction(int index) const;	
+
+	Prefix *getPrefix(int index) const;	
+	Prefix *getPrefix(string name_) const;		
+	Prefix *getExactPrefix(long int exp10, long int exp = 1) const;			
+	Prefix *getNearestPrefix(long int exp10, long int exp = 1) const;		
+	Prefix *getBestPrefix(long int exp10, long int exp = 1) const;		
+	Prefix *addPrefix(Prefix *p);
+	void prefixNameChanged(Prefix *p);	
 
 	const char *getDecimalPoint() const;
 	const char *getComma() const;	
@@ -126,19 +141,13 @@ class Calculator {
 	string getName(string name = "", void *object = NULL, bool force = false, bool always_append = false);
 	string getUnitName(string name = "", Unit *object = NULL, bool force = false, bool always_append = false);	
 	bool load(const char* file_name, bool is_user_defs = true);
-	void addPrefix(const string &ntmp, long double value);
-	bool getPrefix(const char *str, long double *value); 
-	bool getPrefix(const string &str, long double *value); 	
-	bool getPrefix(char c, long double *value);	
-	char getSPrefix(long double value);		
-	const char *getLPrefix(long double value);		
 	bool save(const char* file_name);	
 	string value2str(long double &value, int precision = PRECISION);	
 	string value2str_decimals(long double &value, int precision = PRECISION);	
 	string value2str_bin(long double &value, int precision = PRECISION);				
 	string value2str_octal(long double &value, int precision = PRECISION);		
 	string value2str_hex(long double &value, int precision = PRECISION);			
-	string value2str_prefix(long double &value, long double &exp, int precision = PRECISION, bool use_short_prefixes = true, long double *new_value = NULL, long double prefix_ = -1.0L, bool print_one = true);
+	string value2str_prefix(long double &value, long int &exp, int precision = PRECISION, bool use_short_prefixes = true, long double *new_value = NULL, Prefix *prefix = NULL, bool print_one = true);
 	string value2str_exp(long double &value, int precision = PRECISION);
 	string value2str_exp_pure(long double &value, int precision = PRECISION);	
 	long double getAngleValue(long double value);

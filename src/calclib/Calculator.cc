@@ -68,6 +68,8 @@ void Calculator::addDefauktStringAlternative(string replacement, string standard
 	default_real_signs.push_back(standard);
 }
 
+Calculator *calculator;
+
 Calculator::Calculator() {
 
 	addStringAlternative(SIGN_POWER_0, "o");
@@ -140,6 +142,8 @@ Calculator::Calculator() {
 	sprintf(ILLEGAL_IN_NAMES_MINUS_SPACE_STR, "%s%s%s%s\t\n", RESERVED_S, OPERATORS_S, DOT_S, BRACKETS_S);	
 	ILLEGAL_IN_UNITNAMES = (char*) malloc(sizeof(char) * (strlen(ILLEGAL_IN_NAMES) + strlen(NUMBERS_S) + 1));
 	sprintf(ILLEGAL_IN_UNITNAMES, "%s%s", ILLEGAL_IN_NAMES, NUMBERS_S);			
+
+	calculator = this;
 	
 	srand48(time(0));
 	angleMode(RADIANS);
@@ -151,8 +155,158 @@ Calculator::Calculator() {
 	b_units = true;
 	b_unknown = true;
 	b_calcvars = true;
+
 }
 Calculator::~Calculator(void) {}
+
+Variable *Calculator::getVariable(int index) const {
+	if(index >= 0 && index < variables.size()) {
+		return variables[index];
+	}
+	return NULL;
+}
+Unit *Calculator::getUnit(int index) const {
+	if(index >= 0 && index < units.size()) {
+		return units[index];
+	}
+	return NULL;
+}
+Function *Calculator::getFunction(int index) const {
+	if(index >= 0 && index < functions.size()) {
+		return functions[index];
+	}
+	return NULL;
+}
+Prefix *Calculator::getPrefix(int index) const {
+	if(index >= 0 && index < prefixes.size()) {
+		return prefixes[index];
+	}
+	return NULL;
+}
+Prefix *Calculator::getPrefix(string name_) const {
+	for(int i = 0; i < prefixes.size(); i++) {
+		if(prefixes[i]->shortName() == name_ || prefixes[i]->longName() == name_) {
+			return prefixes[i];
+		}
+	}
+	return NULL;
+}
+Prefix *Calculator::getExactPrefix(long int exp10, long int exp) const {
+	for(int i = 0; i < prefixes.size(); i++) {
+		if(prefixes[i]->exponent(exp) == exp10) {
+			return prefixes[i];
+		} else if(prefixes[i]->exponent(exp) > exp10) {
+			break;
+		}
+	}
+	return NULL;
+}
+Prefix *Calculator::getNearestPrefix(long int exp10, long int exp) const {
+	if(prefixes.size() <= 0) return NULL;
+	for(int i = 0; i < prefixes.size(); i++) {
+		if(prefixes[i]->exponent(exp) == exp10) {
+			return prefixes[i];
+		} else if(prefixes[i]->exponent(exp) > exp10) {
+			if(i == 0) {
+				return prefixes[i];
+			} else if(exp10 - prefixes[i - 1]->exponent(exp) < prefixes[i]->exponent(exp) - exp10) {
+				return prefixes[i - 1];
+			} else {
+				return prefixes[i];
+			}
+		}
+	}
+	return prefixes[prefixes.size() - 1];
+}
+Prefix *Calculator::getBestPrefix(long int exp10, long int exp) const {
+	if(prefixes.size() <= 0) return NULL;
+	for(int i = 0; i < prefixes.size(); i++) {
+		if(prefixes[i]->exponent(exp) == exp10) {
+			return prefixes[i];
+		} else if(prefixes[i]->exponent(exp) > exp10) {
+			if(i == 0) {
+				return prefixes[i];
+			} else if(exp10 - prefixes[i - 1]->exponent(exp) < (prefixes[i]->exponent(exp) - exp10) * 2 + 2) {
+				return prefixes[i - 1];
+			} else {
+				return prefixes[i];
+			}
+		}
+	}
+	return prefixes[prefixes.size() - 1];	
+}
+Prefix *Calculator::addPrefix(Prefix *p) {
+	prefixes.push_back(p);
+	prefixNameChanged(p);
+	return p;	
+}
+void Calculator::prefixNameChanged(Prefix *p) {
+	int l, i = 0;
+	delUFV((void*) p);
+	if(!p->longName().empty()) {
+		for(vector<void*>::iterator it = ufv.begin(); ; ++it) {
+			l = 0;
+			if(it != ufv.end()) {
+				if(ufv_t[i] == 'v')
+					l = ((Variable*) (*it))->name().length();
+				else if(ufv_t[i] == 'f')
+					l = ((Function*) (*it))->name().length();
+				else if(ufv_t[i] == 'U')
+					l = ((Unit*) (*it))->name().length();
+				else if(ufv_t[i] == 'Y')
+					l = ((Unit*) (*it))->plural().length();
+				else if(ufv_t[i] == 'u')
+					l = ((Unit*) (*it))->shortName().length();
+				else if(ufv_t[i] == 'p')
+					l = ((Prefix*) (*it))->shortName().length();
+				else if(ufv_t[i] == 'P')
+					l = ((Prefix*) (*it))->longName().length();
+			}
+			if(it == ufv.end()) {
+				ufv.push_back((void*) p);
+				ufv_t.push_back('P');
+				break;
+			} else if(l < p->longName().length() || (l == p->longName().length() && ufv_t[i] != 'u' && ufv_t[i] != 'U' && ufv_t[i] != 'Y')) {
+				ufv.insert(it, (void*) p);
+				ufv_t.insert(ufv_t.begin() + i, 'P');
+				break;
+			}
+			i++;
+		}
+	}
+	i = 0;
+	if(!p->shortName().empty()) {
+		for(vector<void*>::iterator it = ufv.begin(); ; ++it) {
+			l = 0;
+			if(it != ufv.end()) {
+				if(ufv_t[i] == 'v')
+					l = ((Variable*) (*it))->name().length();
+				else if(ufv_t[i] == 'f')
+					l = ((Function*) (*it))->name().length();
+				else if(ufv_t[i] == 'U')
+					l = ((Unit*) (*it))->name().length();
+				else if(ufv_t[i] == 'Y')
+					l = ((Unit*) (*it))->plural().length();
+				else if(ufv_t[i] == 'u')
+					l = ((Unit*) (*it))->shortName().length();
+				else if(ufv_t[i] == 'p')
+					l = ((Prefix*) (*it))->shortName().length();
+				else if(ufv_t[i] == 'P')
+					l = ((Prefix*) (*it))->longName().length();
+			}
+			if(it == ufv.end()) {
+				ufv.push_back((void*) p);
+				ufv_t.push_back('p');
+				break;
+			} else if(l < p->shortName().length() || (l == p->shortName().length() && ufv_t[i] != 'u' && ufv_t[i] != 'U' && ufv_t[i] != 'Y')) {
+				ufv.insert(it, (void*) p);
+				ufv_t.insert(ufv_t.begin() + i, 'p');
+				break;
+			}
+			i++;
+		}
+	}
+}
 
 const char *Calculator::getDecimalPoint() const {return DOT_STR;}
 const char *Calculator::getComma() const {return COMMA_STR;}	
@@ -357,55 +511,55 @@ void Calculator::reset() {
 	resetUnits();
 }
 void Calculator::addBuiltinVariables() {
-	addVariable(new Variable(this, "Constants", "pi", PI_VALUE, "Pi", false, true));
-	addVariable(new Variable(this, "Constants", "e", E_VALUE, "Natural Logarithmic Base", false, true));
+	addVariable(new Variable("Constants", "pi", PI_VALUE, "Pi", false, true));
+	addVariable(new Variable("Constants", "e", E_VALUE, "Natural Logarithmic Base", false, true));
 }
 void Calculator::addBuiltinFunctions() {
-	addFunction(new IFFunction(this));
-	addFunction(new DifferentiateFunction(this));	
-	addFunction(new GCDFunction(this));	
-	addFunction(new AbsFunction(this));
-	addFunction(new CeilFunction(this));
-	addFunction(new FloorFunction(this));
-	addFunction(new TruncFunction(this));
-	addFunction(new RoundFunction(this));
-	addFunction(new ModFunction(this));
-	addFunction(new RemFunction(this));
-	addFunction(new SinFunction(this));
-	addFunction(new CosFunction(this));
-	addFunction(new TanFunction(this));
-	addFunction(new SinhFunction(this));
-	addFunction(new CoshFunction(this));
-	addFunction(new TanhFunction(this));
-	addFunction(new AsinFunction(this));
-	addFunction(new AcosFunction(this));
-	addFunction(new AtanFunction(this));
-	addFunction(new AsinhFunction(this));
-	addFunction(new AcoshFunction(this));
-	addFunction(new AtanhFunction(this));
-	addFunction(new LogFunction(this));
-	addFunction(new Log2Function(this));
-	addFunction(new Log10Function(this));
-	addFunction(new ExpFunction(this));
-	addFunction(new Exp2Function(this));
-	addFunction(new Exp10Function(this));
-	addFunction(new SqrtFunction(this));
-	addFunction(new CbrtFunction(this));
-	addFunction(new HypotFunction(this));
-	addFunction(new SumFunction(this));
-	addFunction(new MeanFunction(this));
-	addFunction(new MedianFunction(this));
-	addFunction(new MinFunction(this));
-	addFunction(new MaxFunction(this));
-	addFunction(new ModeFunction(this));
-	addFunction(new NumberFunction(this));
-	addFunction(new StdDevFunction(this));
-	addFunction(new StdDevSFunction(this));
-	addFunction(new RandomFunction(this));
-	addFunction(new BASEFunction(this));
-	addFunction(new BINFunction(this));
-	addFunction(new OCTFunction(this));
-	addFunction(new HEXFunction(this));
+	addFunction(new IFFunction());
+	addFunction(new DifferentiateFunction());	
+	addFunction(new GCDFunction());	
+	addFunction(new AbsFunction());
+	addFunction(new CeilFunction());
+	addFunction(new FloorFunction());
+	addFunction(new TruncFunction());
+	addFunction(new RoundFunction());
+	addFunction(new ModFunction());
+	addFunction(new RemFunction());
+	addFunction(new SinFunction());
+	addFunction(new CosFunction());
+	addFunction(new TanFunction());
+	addFunction(new SinhFunction());
+	addFunction(new CoshFunction());
+	addFunction(new TanhFunction());
+	addFunction(new AsinFunction());
+	addFunction(new AcosFunction());
+	addFunction(new AtanFunction());
+	addFunction(new AsinhFunction());
+	addFunction(new AcoshFunction());
+	addFunction(new AtanhFunction());
+	addFunction(new LogFunction());
+	addFunction(new Log2Function());
+	addFunction(new Log10Function());
+	addFunction(new ExpFunction());
+	addFunction(new Exp2Function());
+	addFunction(new Exp10Function());
+	addFunction(new SqrtFunction());
+	addFunction(new CbrtFunction());
+	addFunction(new HypotFunction());
+	addFunction(new SumFunction());
+	addFunction(new MeanFunction());
+	addFunction(new MedianFunction());
+	addFunction(new MinFunction());
+	addFunction(new MaxFunction());
+	addFunction(new ModeFunction());
+	addFunction(new NumberFunction());
+	addFunction(new StdDevFunction());
+	addFunction(new StdDevSFunction());
+	addFunction(new RandomFunction());
+	addFunction(new BASEFunction());
+	addFunction(new BINFunction());
+	addFunction(new OCTFunction());
+	addFunction(new HEXFunction());
 }
 void Calculator::addBuiltinUnits() {
 }
@@ -481,7 +635,7 @@ Manager *Calculator::calculate(string str) {
 		}
 	}
 	setFunctionsAndVariables(str);
-	EqContainer *e = new EqContainer(str, this, PLUS_CH);
+	EqContainer *e = new EqContainer(str, ADD);
 	Manager *mngr = e->calculate();
 	mngr->finalize();
 	if(!str2.empty()) {
@@ -552,12 +706,12 @@ Manager *Calculator::convert(long double value, Unit *from_unit, Unit *to_unit) 
 }
 Manager *Calculator::convert(string str, Unit *from_unit, Unit *to_unit) {
 	Manager *mngr = calculate(str);
-	mngr->add(from_unit, MULTIPLICATION_CH);
+	mngr->addUnit(from_unit, MULTIPLY);
 	from_unit->hasComplexRelationTo(to_unit);
 	mngr->convert(to_unit);
 	mngr->finalize();	
 //	mngr->convert(to_unit);
-	mngr->add(to_unit, DIVISION_CH);
+	mngr->addUnit(to_unit, DIVIDE);
 	mngr->finalize();	
 	return mngr;
 }
@@ -613,13 +767,13 @@ Manager *Calculator::convert(Manager *mngr, Unit *to_unit, bool always_convert) 
 			}
 		}
 		if(b) {			
-			mngr->add(to_unit, DIVISION_CH);
+			mngr->addUnit(to_unit, DIVIDE);
 			mngr->finalize();			
-			Manager *mngr2 = new Manager(this, to_unit);
+			Manager *mngr2 = new Manager(to_unit);
 			if(mngr->type() == MULTIPLICATION_MANAGER) {
 				mngr->mngrs.push_back(mngr2);
 			} else {
-				mngr->transform(mngr2, MULTIPLICATION_MANAGER, MULTIPLICATION_CH);
+				mngr->transform(mngr2, MULTIPLICATION_MANAGER, MULTIPLY);
 				mngr2->unref();
 			}
 			mngr->sort();
@@ -667,13 +821,13 @@ Manager *Calculator::convertToCompositeUnit(Manager *mngr, CompositeUnit *cu, bo
 			}
 		}
 		if(b) {	
-			mngr->add(mngr3, DIVISION_CH);
+			mngr->add(mngr3, DIVIDE);
 			mngr->finalize();			
-			Manager *mngr2 = new Manager(this, cu);
+			Manager *mngr2 = new Manager(cu);
 			if(mngr->type() == MULTIPLICATION_MANAGER) {
 				mngr->mngrs.push_back(mngr2);
 			} else {
-				mngr->transform(mngr2, MULTIPLICATION_MANAGER, MULTIPLICATION_CH);
+				mngr->transform(mngr2, MULTIPLICATION_MANAGER, MULTIPLY);
 				mngr2->unref();		
 			}
 			mngr->sort();
@@ -687,7 +841,7 @@ Manager *Calculator::convert(Manager *mngr, string composite_) {
 	if(composite_.empty()) return mngr;
 	Unit *u = getUnit(composite_);
 	if(u) return convert(mngr, u);
-	CompositeUnit *cu = new CompositeUnit(this, "", "temporary_composite_convert", "", composite_);
+	CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert", "", composite_);
 	convertToCompositeUnit(mngr, cu);
 	return mngr;			
 }
@@ -1099,13 +1253,14 @@ void Calculator::setFunctionsAndVariables(string &str) {
 	bool b;
 	Variable *v;
 	Function *f;
+	Prefix *p;
 	Unit *u;
-	char *ch;
+	string ch;
 	vector<int> uss;
 	vector<int> ues;
 	vector<char> ut;
 	string stmp, stmp2;
-	long double value;
+	long long int value;
 	for(int i = 0; i < signs.size(); i++) gsub(signs[i], real_signs[i], str);
 	Manager *mngr;
 	b = false;
@@ -1122,7 +1277,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 		if(stmp.empty()) {
 			i = i3;
 		} else {
-			mngr = new Manager(this, stmp);
+			mngr = new Manager(stmp);
 			stmp = LEFT_BRACKET_CH;
 			stmp += ID_WRAP_LEFT_CH;
 			stmp += i2s(addId(mngr));
@@ -1147,7 +1302,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 					if(b_calcvars) {
 						stmp += i2s(addId(v->get()));
 					} else {
-						mngr = new Manager(this, v->name());
+						mngr = new Manager(v->name());
 						stmp += i2s(addId(mngr));
 						mngr->unref();
 					}
@@ -1281,10 +1436,15 @@ void Calculator::setFunctionsAndVariables(string &str) {
 				}
 			}
 		} else if(b_units && (ufv_t[i2] == 'p' || ufv_t[i2] == 'P')) {
-			ch = (char*) ufv[i2];
+			p = (Prefix*) ufv[i2];
+			if(ufv_t[i2] == 'p') {
+				ch = p->shortName();
+			} else {
+				ch = p->longName();
+			}
 			while(1) {
 				if((i = str.find(ch, i3)) != (int) string::npos) {
-					i4 = i + strlen(ch) - 1;
+					i4 = i + ch.length() - 1;
 					b = true;
 					if(b_units) {
 						i5 = str.find_first_of(NUMBERS OPERATORS BRACKETS SPACES, i4);
@@ -1323,36 +1483,20 @@ void Calculator::setFunctionsAndVariables(string &str) {
 							}
 						}
 					}
-					if(!b)
-					if(ufv_t[i2] == 'p') {
-						if(!b || i == str.length() - 1 || is_not_in(BRACKETS OPERATORS, *ch)) {
-							stmp = LEFT_BRACKET_CH;
-							stmp += ID_WRAP_LEFT_CH;
-							if(b) mngr = new Manager(this, s_prefix[*ch]);
-							else mngr = new Manager(this, u, s_prefix[*ch]);
-							stmp += i2s(addId(mngr));
-							mngr->unref();
-							stmp += ID_WRAP_RIGHT_CH;
-							stmp += RIGHT_BRACKET_CH;
-							if(!b) str.replace(i, 1 + i7, stmp);
-							else str.replace(i, 1, stmp);
-						} else {
-							//stmp += ch;
-							i3 = i + 1;
-						}
-					} else {
+					if(!b) {
 						stmp = LEFT_BRACKET_CH;
 						stmp += ID_WRAP_LEFT_CH;
-						if(b) mngr = new Manager(this, l_prefix[ch]);
-						else mngr = new Manager(this, u, l_prefix[ch]);
+						if(b) mngr = new Manager(1, 1, p->exponent());
+						else mngr = new Manager(u, p->exponent());
 						stmp += i2s(addId(mngr));
 						mngr->unref();
 						stmp += ID_WRAP_RIGHT_CH;
 						stmp += RIGHT_BRACKET_CH;
-						if(!b) str.replace(i, strlen(ch) + i7, stmp);
-						else str.replace(i, strlen(ch), stmp);						
+						if(!b) str.replace(i, ch.length() + i7, stmp);
+						else str.replace(i, ch.length(), stmp);						
+					} else {
+						i3 = i + 1;
 					}
-					else i3 = i + 1;
 				} else {
 					break;
 				}
@@ -1361,7 +1505,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 			u = (Unit*) ufv[i2];
 			while(u->type() != 'D') {
 				find_unit:
-				value = 1;
+				value = 0;
 				if((ufv_t[i2] == 'u' && (i = str.find(u->shortName(), i3)) != (int) string::npos) || (ufv_t[i2] == 'U' && (i = str.find(u->name(), i3)) != (int) string::npos) || (ufv_t[i2] == 'Y' && (i = str.find(u->plural(), i3)) != (int) string::npos)) {
 					if(ufv_t[i2] == 'u')
 						i4 = i + u->shortName().length() - 1;
@@ -1380,39 +1524,44 @@ void Calculator::setFunctionsAndVariables(string &str) {
 					else
 						i5++;
 					if(i5 != i) {
-						if(i5 == i - 1) {
-							for(hash_map<char, long double>::iterator it = s_prefix.begin(); it != s_prefix.end(); ++it) {
-								if(str[i5] == it->first) {
-									value = it->second;
-									i--;
-									break;
-								}
-							}
-						} else {
-							stmp = str.substr(i5, i - i5);
-							for(l_type::iterator it = l_prefix.begin(); it != l_prefix.end(); ++it) {
-								i7 = strlen(it->first);
-								if(i7 <= i - i5) {
-									b = true;
-									for(i6 = 1; i6 <= i7; i6++) {
-										if(str[i - i6] != it->first[i7 - i6]) {
-											b = false;
-											break;
-										}
-									}
-									if(b) {
-										value = it->second;
-										i -= i7;
+						stmp = str.substr(i5, i - i5);
+						for(int index = 0; index < prefixes.size(); index++) {
+							i7 = prefixes[index]->shortName().length();
+							if(i7 > 0 && i7 <= i - i5) {
+								b = true;
+								for(i6 = 1; i6 <= i7; i6++) {
+									if(str[i - i6] != prefixes[index]->shortName()[i7 - i6]) {
+										b = false;
 										break;
 									}
 								}
+								if(b) {
+									value = prefixes[index]->exponent();
+									i -= i7;
+									break;
+								}
 							}
+							i7 = prefixes[index]->longName().length();
+							if(i7 > 0 && i7 <= i - i5) {
+								b = true;
+								for(i6 = 1; i6 <= i7; i6++) {
+									if(str[i - i6] != prefixes[index]->longName()[i7 - i6]) {
+										b = false;
+										break;
+									}
+								}
+								if(b) {
+									value = prefixes[index]->exponent();
+									i -= i7;
+									break;
+								}
+							}							
 						}
 					}
 					if(str.length() > i4 + 1 && is_in(NUMBERS, str[i4 + 1])) {
 						str.insert(i4 + 1, 1, POWER_CH);
 					}
-					mngr = new Manager(this, u, value);
+					mngr = new Manager(u, value);
 					stmp = LEFT_BRACKET_CH;					
 					stmp += ID_WRAP_LEFT_CH;
 					stmp += i2s(addId(mngr));
@@ -1436,9 +1585,9 @@ void Calculator::setFunctionsAndVariables(string &str) {
 		stmp = str[i];
 		if(b_units) u = getUnit(stmp);
 		if(u) {
-			mngr = new Manager(this, u);
+			mngr = new Manager(u);
 		} else if(b_unknown) {
-			mngr = new Manager(this, stmp);
+			mngr = new Manager(stmp);
 		} else {
 			mngr = NULL;
 			i++;
@@ -1533,7 +1682,7 @@ bool Calculator::save(const char* file_name) {
 			else
 				fprintf(file, "%s\t", variables[i]->category().c_str());
 			if(!variables[i]->isBuiltinVariable())
-				fprintf(file, "%s\t%s\t", variables[i]->name().c_str(), variables[i]->get()->print(NUMBER_FORMAT_NORMAL, UNIT_FORMAT_DEFAULT, 100).c_str());
+				fprintf(file, "%s\t%s\t", variables[i]->name().c_str(), variables[i]->get()->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DEFAULT, 100).c_str());
 			if(variables[i]->title().empty())
 				fprintf(file, "0\t");
 			else
@@ -1606,8 +1755,7 @@ bool Calculator::save(const char* file_name) {
 				else
 					fprintf(file, "%s", units[i]->title().c_str());
 				for(int i2 = 0; i2 < cu->units.size(); i2++) {
-//					fprintf(file, "\t%s\t%s\t%LG", cu->units[cu->sorted[i2]]->firstBaseUnit()->shortName().c_str(), cu->units[cu->sorted[i2]]->firstBaseExp()->print().c_str(), cu->units[cu->sorted[i2]]->prefixValue());
-					fprintf(file, "\t%s\t%s\t%LG", cu->units[i2]->firstBaseUnit()->shortName().c_str(), d2s(cu->units[i2]->firstBaseExp()).c_str(), cu->units[i2]->prefixValue());
+					fprintf(file, "\t%s\t%s\t%s", cu->units[i2]->firstBaseUnit()->shortName().c_str(), li2s(cu->units[i2]->firstBaseExp()).c_str(), li2s(cu->units[i2]->prefixExponent()).c_str());
 				}
 			} else {
 				fprintf(file, "%s\t", units[i]->name().c_str());
@@ -1627,9 +1775,9 @@ bool Calculator::save(const char* file_name) {
 			if(units[i]->type() == 'A') {
 //				fprintf(file, "\t%s\t%s\t%s", au->firstShortBaseName().c_str(), au->expression().c_str(), au->firstBaseExp()->print().c_str());
 				if(au->firstBaseUnit()->type() == 'D') {
-					fprintf(file, "\t%s\t%s\t%s", ((CompositeUnit*) (au->firstBaseUnit()))->internalName().c_str(), au->expression().c_str(), d2s(au->firstBaseExp()).c_str());
+					fprintf(file, "\t%s\t%s\t%s", ((CompositeUnit*) (au->firstBaseUnit()))->internalName().c_str(), au->expression().c_str(), li2s(au->firstBaseExp()).c_str());
 				} else {
-					fprintf(file, "\t%s\t%s\t%s", au->firstShortBaseName().c_str(), au->expression().c_str(), d2s(au->firstBaseExp()).c_str());
+					fprintf(file, "\t%s\t%s\t%s", au->firstShortBaseName().c_str(), au->expression().c_str(), li2s(au->firstBaseExp()).c_str());
 				}	
 				if(!au->reverseExpression().empty())
 					fprintf(file, "\t%s", au->reverseExpression().c_str());
@@ -1639,10 +1787,10 @@ bool Calculator::save(const char* file_name) {
 	}
 /*	fprintf(file, "\n");
 	for(l_type::iterator it = l_prefix.begin(); it != l_prefix.end(); ++it) {
-		fprintf(file, "*Prefix\t%s\t%LG\n", it->first, it->second);
+		fprintf(file, "*Prefix\t%s\t%LLi\n", it->first, it->second);
 	}
-	for(hash_map<char, long double>::iterator it = s_prefix.begin(); it != s_prefix.end(); ++it) {
-		fprintf(file, "*Prefix\t%c\t%LG\n", it->first, it->second);
+	for(hash_map<char, long long int>::iterator it = s_prefix.begin(); it != s_prefix.end(); ++it) {
+		fprintf(file, "*Prefix\t%c\t%LLi\n", it->first, it->second);
 	}*/
 	fclose(file);
 	setLocale();
@@ -1658,6 +1806,7 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 	Variable *v;
 	Function *func;
 	Manager *mngr;
+	Prefix *p;
 	bool b;
 	bool unit_added = false, units_added = false, rerun = false;
 	int rerun_i = 0;
@@ -1711,7 +1860,7 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 								}
 								if(variableNameIsValid(ntmp)) {
 									mngr = calculate(vtmp);
-									addVariable(new Variable(this, ctmp, ntmp, mngr, ttmp, is_user_defs));
+									addVariable(new Variable(ctmp, ntmp, mngr, ttmp, is_user_defs));
 									mngr->unref();
 								}
 							}
@@ -1750,7 +1899,7 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 							ntmp = stmp.substr(i, i2 - i);
 							if(functionNameIsValid(ntmp) && ((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos)) {
 								vtmp = stmp.substr(i, i2 - i);
-								func = addFunction(new UserFunction(this, ctmp, ntmp, vtmp, is_user_defs));
+								func = addFunction(new UserFunction(ctmp, ntmp, vtmp, is_user_defs));
 								if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 									shtmp = stmp.substr(i, i2 - i);
 									if(shtmp == "0")
@@ -1845,7 +1994,7 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 								}
 							}
 							if(unitNameIsValid(ntmp) && unitNameIsValid(etmp) && unitNameIsValid(shtmp))
-								addUnit(new Unit(this, ctmp, ntmp, etmp, shtmp, ttmp, is_user_defs));
+								addUnit(new Unit(ctmp, ntmp, etmp, shtmp, ttmp, is_user_defs));
 						}
 					}
 				} else if(str == "*CompositeUnit") {
@@ -1868,25 +2017,33 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 												cutmp = stmp.substr(i, i2 - i);
 												if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 													rtmp = stmp.substr(i, i2 - i);
+													long int li_prefix = s2li(rtmp);
+													if(li_prefix == 0) {
+														p = NULL;
+													} else {
+														p = getExactPrefix(li_prefix);
+														if(!p) {
+															if(cu) delete cu;
+															cu = NULL;
+															break;
+														}												
+													}
 													u = getUnit(vtmp);
 													if(!u) u = getCompositeUnit(vtmp);
 													if(!u) {
-														unfinished_units.push_back(stmp);
+														if(!rerun) {
+															unfinished_units.push_back(stmp);
+														}
 														if(cu) delete cu;
 														cu = NULL;
 														break;
 													}
 													if(u) {
-														if(i3 == 0)
-															cu = new CompositeUnit(this, ctmp, ntmp, ttmp);
+														if(i3 == 0) {
+															cu = new CompositeUnit(ctmp, ntmp, ttmp);
+														}
 														if(cu) {
-															mngr = calculate(cutmp);
-															//cu->add(u, mngr, strtold(rtmp.c_str(), NULL));
-															//Manager *mngr2 = calculate(rtmp);
-															cu->add(u, mngr->value(), strtold(rtmp.c_str(), NULL));
-															//cu->add(u, mngr->value(), mngr2->value());
-															mngr->unref();
-															//mngr2->unref();
+															cu->add(u, s2li(cutmp), p);
 														}
 													}
 												} else
@@ -1933,19 +2090,15 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 											if(!u) {
 												u = getCompositeUnit(vtmp);
 											}
-											if(!u) {
+											if(!u && !rerun) {
 												unfinished_units.push_back(stmp);
 											}
 											if(u && (unitNameIsValid(ntmp) && unitNameIsValid(etmp) && unitNameIsValid(shtmp))) {
-												au = new AliasUnit(this, ctmp, ntmp, etmp, shtmp, ttmp, u);
+												au = new AliasUnit(ctmp, ntmp, etmp, shtmp, ttmp, u);
 												if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 													au->setExpression(stmp.substr(i, i2 - i));
 													if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-														//mngr = calculate(stmp.substr(i, i2 - i));
-														//au->exp(mngr);
-														//au->exp(mngr->value());
-														au->setExponent(strtold(stmp.substr(i, i2 - i).c_str(), NULL));
-														//mngr->unref();
+														au->setExponent(s2li(stmp.substr(i, i2 - i)));
 														if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 															au->setReverseExpression(stmp.substr(i, i2 - i));
 														}
@@ -1965,12 +2118,21 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 				} else if(str == "*Prefix") {
 					if((i = stmp.find_first_not_of("\t\n", i)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 						ntmp = stmp.substr(i, i2 - i);
+						if(ntmp == "0") {
+							ntmp = "";
+						}						
 						if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-							vtmp = stmp.substr(i, i2 - i);
-							//mngr = calculate(vtmp);
-							addPrefix(ntmp, strtold(vtmp.c_str(), NULL));
-							//addPrefix(ntmp, mngr->value());
-							//mngr->unref();
+							shtmp = stmp.substr(i, i2 - i);
+							if(shtmp == "0") {
+								shtmp = "";
+							}
+							if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
+								vtmp = stmp.substr(i, i2 - i);
+								//mngr = calculate(vtmp);
+								addPrefix(new Prefix(s2li(vtmp.c_str()), ntmp, shtmp));						
+								//addPrefix(ntmp, mngr->value());
+								//mngr->unref();
+							}
 						}
 					}
 				}
@@ -1980,85 +2142,6 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 	fclose(file);
 	setLocale();
 	return true;
-}
-bool Calculator::getPrefix(const char *str, long double *value) {
-	if(strlen(str) == 1)
-		return getPrefix(str[0], value);
-	if(l_prefix.count(str) > 0) {
-		if(value)
-			*value = l_prefix[str];
-		return true;
-	}
-	return false;
-}
-bool Calculator::getPrefix(const string &str, long double *value) {
-	return getPrefix(str.c_str(), value);
-}
-bool Calculator::getPrefix(char c, long double *value) {
-	if(s_prefix.count(c) > 0) {
-		if(value)
-			*value = s_prefix[c];
-		return true;
-	}
-	return false;
-}
-char Calculator::getSPrefix(long double value) {
-	for(s_type::iterator it = s_prefix.begin(); it != s_prefix.end(); ++it) {
-		if(it->second == value)
-			return it->first;
-	}
-	return 0;
-}
-const char *Calculator::getLPrefix(long double value) {
-	for(l_type::iterator it = l_prefix.begin(); it != l_prefix.end(); ++it) {
-		if(it->second == value)
-			return it->first;
-	}
-	return NULL;
-}
-
-void Calculator::addPrefix(const string &ntmp, long double value) {
-	char *str = (char*) malloc(sizeof(char) * ntmp.length() + 1);
-	char c;
-	strcpy(str, ntmp.c_str());
-	if(ntmp.length() == 1) {
-		s_prefix[ntmp[0]] = value;
-		c = 'p';
-	} else {
-		l_prefix[(const char*) str] = value;
-		c = 'P';
-	}
-	int l, i = 0;
-	for(vector<void*>::iterator it = ufv.begin(); ; ++it) {
-		l = 0;
-		if(it != ufv.end()) {
-			if(ufv_t[i] == 'v')
-				l = ((Variable*) (*it))->name().length();
-			else if(ufv_t[i] == 'f')
-				l = ((Function*) (*it))->name().length();
-			else if(ufv_t[i] == 'U')
-				l = ((Unit*) (*it))->name().length();
-			else if(ufv_t[i] == 'Y')
-				l = ((Unit*) (*it))->plural().length();
-			else if(ufv_t[i] == 'u')
-				l = ((Unit*) (*it))->shortName().length();
-			else if(ufv_t[i] == 'p')
-				l = 1;
-			else if(ufv_t[i] == 'P')
-				l = strlen((const char*) (*it));
-		}
-		if(it == ufv.end()) {
-			ufv.push_back((void*) str);
-			ufv_t.push_back(c);
-			break;
-		} else if(l < strlen(str) || (l == strlen(str) && ufv_t[i] != 'u' && ufv_t[i] != 'U' && ufv_t[i] != 'Y')) {
-			ufv.insert(it, (void*) str);
-			ufv_t.insert(ufv_t.begin() + i, c);
-			break;
-		}
-		i++;
-	}
-
 }
 
 string Calculator::value2str(long double &value, int precision) {
@@ -2124,90 +2207,30 @@ string Calculator::value2str_hex(long double &value, int precision) {
 	return stmp;
 }
 
-string Calculator::value2str_prefix(long double &value, long double &exp, int precision, bool use_short_prefixes, long double *new_value, long double prefix_, bool print_one) {
+string Calculator::value2str_prefix(long double &value, long int &exp, int precision, bool use_short_prefixes, long double *new_value, Prefix *prefix, bool print_one) {
 	long double d1;
-	if(prefix_ >= 0.0L) {
-		string str = "";
-		if(use_short_prefixes) {
-			char c = getSPrefix(prefix_);
-			if(!c) {
-				str = getLPrefix(prefix_);
-			} else {
-				str = c;
-			}
-		} else {
-			str = getLPrefix(prefix_);
-			if(str.empty()) {
-				char c = getSPrefix(prefix_);
-				if(!c) {
-					str = "";
-				} else {
-					str = c;
-				}
-			}		
-		}		
-		if(!str.empty()) {
-			d1 = powl(prefix_, exp);
-			d1 = value / d1;
-			string str2;
-			if(print_one || d1 != 1.0L) {
-				str2 = value2str(d1, precision);
-				str2 += ' ';
-			}
-			str2 += str;
-			if(new_value)
-				*new_value = d1;
-			return str2;
+	if(prefix) {
+		d1 = value / prefix->value(exp);
+		string str2;
+		if(print_one || d1 != 1.0L) {
+			str2 = value2str(d1, precision);
+			str2 += ' ';
 		}
+		str2 += prefix->name(use_short_prefixes);
 		if(new_value)
-			*new_value = value;	
-		if(!print_one && value == 1.0L) return "";	
-		return value2str(value, precision);		
+			*new_value = d1;
+		return str2;
 	}
-	long double d2, d3;
-	hash_map<char, long double>::iterator it, itt;
-	l_type::iterator it2, itt2;
 	if(value == 1.0L || value == 0.0L) {
 		if(new_value) 
 			*new_value = value;
 		if(value == 1.0L && !print_one) return "";
 		return value2str(value, precision);
 	}
-	for(it = s_prefix.begin(); it != s_prefix.end(); ++it) {
-		d1 = log10l(value / powl(it->second, exp));
-		if(d1 < 0) {
-			d1 = -(d1 * 2) + 2;				
-		}
-		if(it == s_prefix.begin() || d1 < d2) {
-			itt = it;
-			d2 = d1;
-		}
-	}
-	for(it2 = l_prefix.begin(); it2 != l_prefix.end(); ++it2) {
-		d1 = log10l(value / powl(it2->second, exp));
-		if(d1 < 0) {
-			d1 = -(d1 * 2) + 2;				
-		}
-		if(it2 == l_prefix.begin() || d1 < d3) {
-			itt2 = it2;
-			d3 = d1;
-		}
-	}
-	if(itt2->second == itt->second) {
-	} else if(d3 < d2) {
-		use_short_prefixes = false;
-	} else {
-		use_short_prefixes = true;
-	}
+	prefix = getBestPrefix((long int) log10l(value), exp);
 	string str;
-	if(use_short_prefixes) {
-		d1 = powl(itt->second, exp);
-		str = itt->first;
-	} else {
-		d1 = powl(itt2->second, exp);
-		str = itt2->first;
-	}
-	d1 = value / d1;
+	str = prefix->name(use_short_prefixes);
+	d1 = value / prefix->value(exp);
 	if((value > 1 && value > d1) || (value < 1 && value < d1)) {
 		string str2;
 		if(print_one || d1 != 1.0L) {
@@ -2269,13 +2292,13 @@ long double Calculator::getAngleValue(long double value) {
 Manager *Calculator::setAngleValue(Manager *mngr) {
 	switch(angleMode()) {
 		case DEGREES: {
-	    		mngr->add(PI_VALUE, MULTIPLICATION_CH);
-	    		mngr->add(180, DIVISION_CH);			
+	    		mngr->addFloat(PI_VALUE, MULTIPLY);
+	    		mngr->addFloat(180, DIVIDE);			
 			break;
 		}
 		case GRADIANS: {
-	    		mngr->add(PI_VALUE, MULTIPLICATION_CH);
-	    		mngr->add(200, DIVISION_CH);		
+	    		mngr->addFloat(PI_VALUE, MULTIPLY);
+	    		mngr->addFloat(200, DIVIDE);		
 			break;
 		}
 	}

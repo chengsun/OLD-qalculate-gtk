@@ -20,22 +20,21 @@ class EqContainer;
 
 class EqItem {
   protected:  
-	char operation;  
-	Calculator *calc;
+	MathOperation op;  
 	Manager *mngr;
   public:  
-	EqItem(char operation_, Calculator *parent);
+	EqItem(MathOperation operation_);
 	virtual ~EqItem(void);
 	virtual Manager *calculate(void) = 0; 	  
-	char sign(void);
+	MathOperation operation(void);
 };
 
 class EqNumber : public EqItem {
   private:	
 	long double value;	
   public:  
-	EqNumber(long double value_, Calculator *parent, char operation_ = PLUS_CH);
-	EqNumber(string str, Calculator *parent, char operation_ = PLUS_CH);
+	EqNumber(long double value_, MathOperation operation_ = ADD);
+	EqNumber(string str, MathOperation operation_ = ADD);
 	Manager *calculate(void);
 };
 
@@ -43,10 +42,10 @@ class EqContainer : public EqItem {
   private:
 	vector<EqItem*> items;
   public:
-	EqContainer(char operation_ = PLUS_CH, Calculator *parent = NULL);
+	EqContainer(MathOperation operation_ = ADD);
 	~EqContainer(void);
-	EqContainer(string str, Calculator *parent, char operation_ = PLUS_CH);
-	void add(string &str, char s = PLUS_CH);
+	EqContainer(string str, MathOperation operation_ = ADD);
+	void add(string &str, MathOperation s = ADD);
 	void add(EqItem *e);
 	Manager *calculate(void);
 };

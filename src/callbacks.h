@@ -111,6 +111,7 @@ void on_button_execute_clicked(GtkButton *button, gpointer user_data);
 void on_button_del_clicked(GtkButton *w, gpointer user_data);
 void on_button_ac_clicked(GtkButton *w, gpointer user_data);
 void on_button_hyp_toggled(GtkToggleButton *w, gpointer user_data);
+void on_button_fraction_toggled(GtkToggleButton *w, gpointer user_data);
 void on_button_tan_clicked(GtkButton *w, gpointer user_data);
 void on_button_sine_clicked(GtkButton *w, gpointer user_data);
 void on_button_cosine_clicked(GtkButton *w, gpointer user_data);
