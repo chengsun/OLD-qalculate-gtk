@@ -91,6 +91,7 @@ create_main_window (void)
 
 #ifndef HAVE_GIAC
 	gtk_widget_destroy(glade_xml_get_widget(main_glade, "menu_item_factorize"));
+	gtk_widget_destroy(glade_xml_get_widget(main_glade, "separator_factorize"));
 #endif
 
 	expression = glade_xml_get_widget (main_glade, "expression");

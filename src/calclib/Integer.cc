@@ -1088,12 +1088,11 @@ void Integer::pow(long int exp) {
 	}
 #endif
 }
-bool Integer::gcd(const Integer *integer, Integer **divisor) const {
+bool Integer::gcd(const Integer *integer, Integer *divisor) const {
 #ifdef HAVE_LIBCLN
 	cl_I div = cln::gcd(integ, integer->getCL_I());
 	if(divisor) {
-		*divisor = new Integer();
-		(*divisor)->set(div);
+		divisor->set(div);
 	}
 	if(div <= 1) {
 		return false;
@@ -1105,8 +1104,7 @@ bool Integer::gcd(const Integer *integer, Integer **divisor) const {
 	mpz_init(div);
 	mpz_gcd(div, integ, integer->integ);
 	if(divisor) {
-		*divisor = new Integer();
-		mpz_set((*divisor)->integ, div);	
+		mpz_set(divisor->integ, div);	
 	}
 	mpz_clear(div);		
 	if(mpz_cmp_ui(div, 1) == 0) {
@@ -1115,7 +1113,7 @@ bool Integer::gcd(const Integer *integer, Integer **divisor) const {
 	return true;
 #else
 	if(isZero() || integer->isZero()) {
-		if(divisor) *divisor = new Integer();
+		if(divisor) divisor.clear();
 		return false;
 	}
 	int comp = compare(integer);
@@ -1123,7 +1121,7 @@ bool Integer::gcd(const Integer *integer, Integer **divisor) const {
 		return integer->gcd(this, divisor);
 	}
 	if(comp == 0) {
-		if(divisor) *divisor = new Integer(this);
+		if(divisor) divisor->set(this);
 		return true;
 	}	
 	Integer int1(this), int2(integer);
@@ -1133,7 +1131,7 @@ bool Integer::gcd(const Integer *integer, Integer **divisor) const {
 		int2.set(int3);	
 		delete int3;		
 	}
-	if(divisor) *divisor = new Integer(&int2);
+	if(divisor) divisor->set(&int2);
 	return !int2.isZero() && !int2.isOne() && !int2.isMinusOne();	
 #endif
 #endif
@@ -1206,6 +1204,48 @@ int Integer::getInt() const {
 	if(li < INT_MIN) return INT_MIN;	
 	return (int) li;
 #endif
+}
+bool Integer::factorial() {
+	if(isZero()) {
+		set(1);
+		return true;
+	} else if(isOne()) {
+		return true;
+	} else if(isNegative()) {
+		return false;
+	}
+	Integer i(this);
+	i.add(-1);
+	for(; !i.isOne(); i.add(-1)) {
+		multiply(&i);
+	}
+	return true;
+}
+bool Integer::binomial(const Integer *m, const Integer *k) {
+	clear();
+	if(k->isNegative()) return false;
+	if(m->isZero() || m->isNegative()) return false;
+	if(k->isGreaterThan(m)) return false;
+	if(k->isZero()) {
+		set(1);
+	} else if(k->isOne()) {
+		set(m);
+	} else if(m->equals(k)) {
+		set(1);
+	} else {
+		Integer i(k);
+		i.add(-1);
+		Integer k_fac(k);
+		k_fac.factorial();
+		Integer mul_i(m);
+		set(m);
+		for(; !i.isZero(); i.add(-1)) {
+			mul_i.add(-1);
+			multiply(&mul_i);
+		}
+		divide(&k_fac);
+	}
+	return true;
 }
 string Integer::print(int base, bool display_sign) const {
 #ifdef HAVE_LIBCLN

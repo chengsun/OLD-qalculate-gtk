@@ -845,6 +845,7 @@ YearFracFunction::YearFracFunction() : Function("Date & Time", "yearfrac", 2, "Y
 	arg->setMax(&integ);
 	setArgumentDefinition(3, arg);	
 	setArgumentDefinition(4, new BooleanArgument());		
+	setDefaultValue(3, "1");
 }
 void YearFracFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	Fraction *fr = yearsBetweenDates(vargs[0]->text(), vargs[1]->text(), vargs[2]->fraction()->numerator()->getInt(), vargs[3]->fraction()->isZero());
@@ -875,11 +876,18 @@ FactorialFunction::FactorialFunction() : Function("Arithmetics", "factorial", 1,
 }
 void FactorialFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->fraction()->isZero()) mngr->set(1, 1);
-	mngr->set(vargs[0]);
-	while(!vargs[0]->fraction()->isOne()) {
-		vargs[0]->addInteger(-1, OPERATION_ADD);
-		mngr->add(vargs[0], OPERATION_MULTIPLY);
-	}
+	Integer integ(vargs[0]->fraction()->numerator());
+	integ.factorial();
+	mngr->set(&integ);
+}
+BinomialFunction::BinomialFunction() : Function("Arithmetics", "binomial", 2, "Binomial") {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, false));
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, false));
+}
+void BinomialFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	Integer integ;
+	integ.binomial(vargs[0]->fraction()->numerator(), vargs[1]->fraction()->numerator());
+	mngr->set(&integ);
 }
 AbsFunction::AbsFunction() : Function("Arithmetics", "abs", 1, "Absolute Value") {
 	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));

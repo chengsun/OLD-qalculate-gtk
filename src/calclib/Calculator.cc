@@ -191,7 +191,7 @@ Calculator::Calculator() {
 	b_calcvars = true;
 	b_always_exact = false;
 	b_use_all_prefixes = false;
-	b_multiple_roots = true;
+	b_multiple_roots = false;
 	disable_errors_ref = 0;
 	b_busy = false;
 	b_gnuplot_open = false;
@@ -698,6 +698,11 @@ void Calculator::reset() {
 void Calculator::addBuiltinVariables() {
 	e_var = addVariable(new EVariable());
 	pi_var = addVariable(new PiVariable());	
+	Manager *mngr = new Manager();
+	Fraction fr(1, 1);
+	mngr->fraction()->setComplex(&fr);
+	addVariable(new Variable("", "i", mngr, "Imaginary i (sqrt(-1))", false, true));
+	addVariable(new PythagorasVariable());
 	addVariable(new EulerVariable());
 	addVariable(new AperyVariable());	
 	addVariable(new CatalanVariable());
@@ -738,7 +743,8 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new DaysFunction());		
 	addFunction(new YearFracFunction());		
 	addFunction(new GCDFunction());	
-	addFunction(new FactorialFunction());		
+	addFunction(new FactorialFunction());
+	addFunction(new BinomialFunction());		
 	addFunction(new AbsFunction());
 	addFunction(new CeilFunction());
 	addFunction(new FloorFunction());
@@ -801,21 +807,28 @@ void Calculator::error(bool critical, const char *TEMPLATE, ...) {
 		error_str.replace(i, 2, str);
 	}
 	va_end(ap);
-	if(errors.size() == 0 || error_str != errors.top()->message()) {
-		errors.push(new Error(error_str, critical));
+	bool dup_error = false;
+	for(int i = 0; i < errors.size(); i++) {
+		if(error_str == errors[i]->message()) {
+			dup_error = true;
+			break;
+		}
+	}
+	if(!dup_error) {
+		errors.push_back(new Error(error_str, critical));
 	}
 }
 Error* Calculator::error() {
 	if(!errors.empty()) {
-		return errors.top();
+		return errors.back();
 	}
 	return NULL;
 }
 Error* Calculator::nextError() {
 	if(!errors.empty()) {
-		errors.pop();
+		errors.pop_back();
 		if(!errors.empty()) {
-			return errors.top();
+			return errors.back();
 		}
 	}
 	return NULL;

@@ -1763,6 +1763,14 @@ string get_value_string(Manager *mngr_, bool rlabel = false, Prefix *prefix = NU
 //	return mngr_->print(numberformat, displayflags, min_decimals, max_decimals, in_exact, NULL, prefix);
 }
 
+void draw_background(GdkPixmap *pixmap, gint w, gint h) {
+//	if(resultview->style->bg_pixmap[GTK_WIDGET_STATE(resultview)]) {
+//		gdk_draw_drawable(pixmap, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], resultview->style->bg_pixmap[GTK_WIDGET_STATE(resultview)], 0, 0, w, h, -1, -1);
+//	} else {
+		gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);
+//	}
+}
+
 GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *prefix = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false, bool draw_minus = false, gint *point_central = NULL, bool in_multiplication = false, bool wrap = true, bool wrap_all = false, bool *has_parenthesis = NULL, int in_div = 0, bool no_add_one = false, Integer *l_exp2 = NULL, Prefix **prefix1 = NULL, Prefix **prefix2 = NULL, GdkPixmap *pixmap_fr = NULL) {
 
 	GdkPixmap *pixmap = NULL;
@@ -1808,8 +1816,8 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			w = rect.width;
 			w += 1;
 			central_point = h / 2;
-			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
-			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);	
+			draw_background(pixmap, w, h);
 			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
 			g_object_unref(layout);
 			if(plural) *plural = true;
@@ -1838,7 +1846,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			w += 1;
 			central_point = h / 2;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
-			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
+			draw_background(pixmap, w, h);
 			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
 			g_object_unref(layout);
 			if(plural) *plural = true;
@@ -1868,7 +1876,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			w += 1;
 			central_point = h / 2;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
-			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
+			draw_background(pixmap, w, h);
 			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
 			g_object_unref(layout);
 			if(plural) *plural = true;
@@ -1933,7 +1941,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			w += 1;
 
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
-			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
+			draw_background(pixmap, w, h);
 			
 			w = 0;
 			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - function_h / 2 - function_h % 2, layout_function);	
@@ -1968,7 +1976,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				mngr_d->push_back(new Manager(1, 1));
 				m->ref();
 				mngr_d->push_back(m);
-				pixmap = draw_manager(mngr_d, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, true, in_power, in_composite, &central_point, in_multiplication, wrap, wrap_all, has_parenthesis, in_div, no_add_one, l_exp2, prefix1, prefix2);		
+				pixmap = draw_manager(mngr_d, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, toplevel, NULL, NULL, true, in_power, in_composite, &central_point, in_multiplication, wrap, wrap_all, has_parenthesis, in_div, no_add_one, l_exp2, prefix1, prefix2);		
 				mngr_d->unref();
 				return pixmap;
 			} else {
@@ -2015,13 +2023,39 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				pango_layout_get_pixel_size(layout, &w, &h);
 				central_point = h / 2;
 				pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
-				gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
+				draw_background(pixmap, w, h);
 				gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 0, 0, layout);	
 				g_object_unref(layout);
 			}
 			break;
 		}
 		case FRACTION_MANAGER: {
+			if(m->fraction()->isComplex()) {
+				string str;
+				PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
+				if(in_power) {
+					str += TEXT_TAGS_SMALL;
+				} else {
+					str += TEXT_TAGS;
+				}
+				str += m->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, toplevel, NULL, NULL, in_composite, in_power, draw_minus, false, in_multiplication, false, false, NULL, in_div, false, NULL, prefix1, prefix2);
+				gsub(SIGN_PLUS, "+", str);
+				if(in_power) {
+					str += TEXT_TAGS_SMALL_END;
+				} else {
+					str += TEXT_TAGS_END;
+				}
+				pango_layout_set_markup(layout, str.c_str(), -1);
+				gint w = 0, h = 0;
+				pango_layout_get_pixel_size(layout, &w, &h);
+				central_point = h / 2;
+				pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
+				draw_background(pixmap, w, h);			
+				gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 0, 0, layout);
+				g_object_unref(layout);
+				if(!toplevel && wrap) wrap_all = true;
+				break;
+			}
 			bool minus, exp_minus;
 			string whole_, numerator_, denominator_, exponent_, prefix_;
 			m->fraction()->getPrintObjects(minus, whole_, numerator_, denominator_, exp_minus, exponent_, prefix_, nrformat, displayflags, min_decimals, max_decimals, prefix, in_exact, usable, false, plural, l_exp, in_composite || no_add_one, in_power, l_exp2, prefix1, prefix2);
@@ -2187,7 +2221,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			central_point = ph / 2;
 			if(pw && ph) {
 				pixmap = gdk_pixmap_new(resultview->window, pw, ph, -1);			
-				gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, pw, ph);	
+				draw_background(pixmap, pw, ph);
 				gint x = 0;
 				if(layout_whole) {
 					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 0, (ph - hlw) / 2, layout_whole);	
@@ -2284,7 +2318,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			w += wll + 2;
 			central_point = h / 2;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
-			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
+			draw_background(pixmap, w, h);
 
 			w = 0;
 			gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w, 0, wll * 2, h, 90 * 64, 180 * 64);			
@@ -2344,7 +2378,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			central_point = dh;
 
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
-			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
+			draw_background(pixmap, w, h);
 			
 			w = 0;
 			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - not_h / 2 - not_h % 2, layout_not);	
@@ -2450,7 +2484,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			central_point = dh;
 			h = dh + uh;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
-			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);			
+			draw_background(pixmap, w, h);
 			w = 0;
 			for(unsigned int i = 0; i < pixmap_terms.size(); i++) {
 				if(i > 0) {
@@ -2541,7 +2575,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			central_point = dh;
 			h = dh + uh;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
-			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);			
+			draw_background(pixmap, w, h);			
 			w = 0;
 			for(unsigned int i = 0; i < pixmap_terms.size(); i++) {
 				if(i == 0) {
@@ -2654,7 +2688,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			}			
 			
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
-			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);			
+			draw_background(pixmap, w, h);
 
 			w = 0;
 			if(pixmap_one) {
@@ -3054,7 +3088,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				h = uh + dh;
 				central_point = dh;
 				pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
-				gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);			
+				draw_background(pixmap, w, h);
 				w = 0;
 				for(int i = 0; i < (int) m->countChilds(); i++) {
 					if(i == 0 && first_is_minus) {
@@ -3154,7 +3188,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							pango_layout_set_markup(layout_den, str.c_str(), -1);
 							pango_layout_get_pixel_size(layout_den, &tmpw, &tmph);
 							pixmap_den_fr = gdk_pixmap_new(resultview->window, tmpw, tmph, -1);			
-							gdk_draw_rectangle(pixmap_den_fr, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, tmpw, tmph);
+							draw_background(pixmap_den_fr, tmpw, tmph);
 							gdk_draw_layout(GDK_DRAWABLE(pixmap_den_fr), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 0, 0, layout_den);
 							g_object_unref(layout_den);
 						}
@@ -3179,7 +3213,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							pango_layout_set_markup(layout_num, str.c_str(), -1);
 							pango_layout_get_pixel_size(layout_num, &tmpw, &tmph);
 							pixmap_num_fr = gdk_pixmap_new(resultview->window, tmpw, tmph, -1);			
-							gdk_draw_rectangle(pixmap_num_fr, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, tmpw, tmph);
+							draw_background(pixmap_num_fr, tmpw, tmph);
 							gdk_draw_layout(GDK_DRAWABLE(pixmap_num_fr), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 0, 0, layout_num);
 							g_object_unref(layout_num);
 						}
@@ -3268,7 +3302,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					h = uh + dh;
 					central_point = dh;
 					pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
-					gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);
+					draw_background(pixmap, w, h);
 					w = 0;
 					if(first_is_minus) {
 						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - minus_h / 2 - minus_h % 2, layout_minus);	
@@ -3309,7 +3343,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					h = uh + dh;
 					central_point = dh;
 					pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
-					gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);
+					draw_background(pixmap, w, h);
 					w = 0;
 					if(first_is_minus) {
 						gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - minus_h / 2 - minus_h % 2, layout_minus);	
@@ -3412,7 +3446,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			w += space_w * 3;
 			central_point = h / 2;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
-			gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);			
+			draw_background(pixmap, w, h);
 			h = 0;
 			for(unsigned int i = 0; i < pixmap_terms.size(); i++) {
 				if(i > 0) {
@@ -3450,7 +3484,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 		w += arc_base_w * 2 + 3;
 		GdkPixmap *pixmap_old = pixmap;
 		pixmap = gdk_pixmap_new(resultview->window, w, h, -1);	
-		gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
+		draw_background(pixmap, w, h);
 		w = 0;
 		gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w, 0, arc_base_w * 2, h, 90 * 64, 180 * 64);			
 		if(!in_power) gdk_draw_arc(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], FALSE, w + 1, 0, arc_base_w * 2, h, 90 * 64, 180 * 64);	
@@ -3483,7 +3517,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 		w_new = w + wle;
 		h_new = h;
 		pixmap = gdk_pixmap_new(resultview->window, w_new, h_new, -1);			
-		gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w_new, h_new);	
+		draw_background(pixmap, w_new, h_new);
 		gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 0, h - central_point - hle / 2 - hle % 2, layout_equals);	
 		gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_old), 0, 0, wle, 0, -1, -1);
 		g_object_unref(pixmap_old);
@@ -3491,13 +3525,13 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 	}
 	if(!pixmap) {
 		pixmap = gdk_pixmap_new(resultview->window, 1, 1, -1);
-		gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, 1, 1);
+		draw_background(pixmap, 1, 1);
 	}
 	if(point_central) *point_central = central_point;
 	return pixmap;
 }
 void clearresult() {
-	gdk_draw_rectangle(resultview->window, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, resultview->allocation.width, resultview->allocation.height);
+	draw_background(resultview->window, resultview->allocation.width, resultview->allocation.height);
 }
 
 void on_abort_display(GtkDialog *w, gint arg1, gpointer user_data) {
@@ -4055,6 +4089,7 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 			}
 			if(i > 0) {
 				str += CALCULATOR->getComma();
+				str += " ";
 			}
 			str += str2;
 		}
@@ -6503,6 +6538,9 @@ void on_menu_item_fraction_fraction_activate(GtkMenuItem *w, gpointer user_data)
 
 void on_menu_item_save_activate(GtkMenuItem *w, gpointer user_data) {
 	add_as_variable();
+}
+void on_menu_item_copy_activate(GtkMenuItem *w, gpointer user_data) {
+	gtk_clipboard_set_text(gtk_clipboard_get(gdk_atom_intern("CLIPBOARD", FALSE)), result_text.c_str(), -1);
 }
 void on_menu_item_precision_activate(GtkMenuItem *w, gpointer user_data) {
 	GtkWidget *dialog = get_precision_dialog();

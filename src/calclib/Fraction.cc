@@ -14,6 +14,8 @@
 #include "Calculator.h"
 #include "Prefix.h"
 
+#include <iostream>
+
 #ifdef HAVE_LIBCLN
 #define WANT_OBFUSCATING_OPERATORS
 #include <cln/cln.h>
@@ -22,8 +24,10 @@ using namespace cln;
 
 #define TO_CL_RA		cl_RA clfr = num.getCL_I() / den.getCL_I();
 #define FROM_CL_RA		clfr = cln::rational(clr); num.set(cln::numerator(clfr)); den.set(cln::denominator(clfr));
-#define CLN_FUNCTION(FUNC)	cl_RA clfr = num.getCL_I() / den.getCL_I(); cl_R clr = cln::FUNC(clfr); clfr = cln::rational(clr); num.set(cln::numerator(clfr)); den.set(cln::denominator(clfr)); b_exact = false;
-#define CLN_COMPLEX_FUNCTION(FUNC)	cl_RA clfr = num.getCL_I() / den.getCL_I(); cl_N clr = cln::FUNC(clfr); clfr = cln::rational(cln::realpart(clr)); num.set(cln::numerator(clfr)); den.set(cln::denominator(clfr)); b_exact = false;
+#define CLN_NON_COMPLEX_FUNCTION(FUNC)	cl_RA clfr = num.getCL_I() / den.getCL_I(); cl_R clr = cln::FUNC(clfr); clfr = cln::rational(clr); num.set(cln::numerator(clfr)); den.set(cln::denominator(clfr)); b_exact = false;
+#define CLN_FUNCTION(FUNC)	cl_RA clfr = num.getCL_I() / den.getCL_I(); cl_RA cli = complex_num.getCL_I() / complex_den.getCL_I(); cl_N cln = cln::complex(clfr, cli); cl_N clr = cln::FUNC(cln); clfr = cln::rational(cln::realpart(clr)); num.set(cln::numerator(clfr)); den.set(cln::denominator(clfr)); cli = cln::rational(cln::imagpart(clr)); complex_num.set(cln::numerator(cli)); complex_den.set(cln::denominator(cli)); b_exact = false;
+//#define CLN_COMPLEX_FUNCTION(FUNC)	cl_RA clfr = num.getCL_I() / den.getCL_I(); cl_N clr = cln::FUNC(clfr); clfr = cln::rational(cln::realpart(clr)); num.set(cln::numerator(clfr)); den.set(cln::denominator(clfr)); b_exact = false;
+#define CLN_COMPLEX_FUNCTION(FUNC)	cl_RA clfr = num.getCL_I() / den.getCL_I(); cl_RA cli = complex_num.getCL_I() / complex_den.getCL_I(); cl_N cln = cln::complex(clfr, cli); cl_N clr = cln::FUNC(cln); clfr = cln::rational(cln::realpart(clr)); num.set(cln::numerator(clfr)); den.set(cln::denominator(clfr)); cli = cln::rational(cln::imagpart(clr)); complex_num.set(cln::numerator(cli)); complex_den.set(cln::denominator(cli)); b_exact = false;
 
 
 Fraction::Fraction() {
@@ -42,10 +46,11 @@ Fraction::Fraction(string str) {
 	set(str);
 }
 
-Fraction::~Fraction() {
-}
+Fraction::~Fraction() {}
 void Fraction::clear() {
 	b_exact = true;
+	complex_num.clear();
+	complex_den.set(1);
 	num.clear();
 	den.set(1);
 }
@@ -62,13 +67,14 @@ void Fraction::set(long int numerator_, long int denominator_, long int exp10_, 
 		num.exp10(exp10_);
 	}	
 	if(!nogcd) {
-		Integer *divisor;
+		Integer divisor;
 		if(num.gcd(&den, &divisor)) {
-			num.divide(divisor);
-			den.divide(divisor);
+			num.divide(&divisor);
+			den.divide(&divisor);
 		}
-		delete divisor;
 	}
+	complex_num.clear();
+	complex_den.set(1);
 	b_exact = true;
 }
 void Fraction::setFloat(long double value_) {
@@ -93,20 +99,23 @@ void Fraction::set(const Integer *numerator_, const Integer *denominator_, const
 		}	
 	}	
 	if(!nogcd) {
-		Integer *divisor;
+		Integer divisor;
 		if(num.gcd(&den, &divisor)) {
-			num.divide(divisor);
-			den.divide(divisor);
+			num.divide(&divisor);
+			den.divide(&divisor);
 		}
-		delete divisor;
 	}
+	complex_num.clear();
+	complex_den.set(1);
 	b_exact = true;
 }
 bool Fraction::set(string str) {
 	den.set(1);
 	num.clear();
+	complex_num.clear();
+	complex_den.set(1);
 	remove_blank_ends(str);
-	bool numbers_started = false, minus = false, in_decimals = false;
+	bool numbers_started = false, minus = false, in_decimals = false, b_cplx = false;
 	for(unsigned int index = 0; index < str.size(); index++) {
 		if(str[index] >= '0' && str[index] <= '9') {
 			num.multiply(10);
@@ -141,22 +150,31 @@ bool Fraction::set(string str) {
 			in_decimals = true;
 		} else if(!numbers_started && str[index] == '-') {
 			minus = !minus;
+		} else if(str[index] == 'i') {
+			b_cplx = true;
 		}
 	}
 	if(minus) num.setNegative(!num.isNegative());
-	Integer *divisor;
+	Integer divisor;
 	if(num.gcd(&den, &divisor)) {
-		num.divide(divisor);
-		den.divide(divisor);
+		num.divide(&divisor);
+		den.divide(&divisor);
 	}
-	delete divisor;
 	b_exact = true;
+	if(b_cplx) {
+		complex_num.set(&num);
+		complex_den.set(&den);
+		num.clear();
+		den.set(1);
+	}	
 	return true;
 }
 void Fraction::set(const Fraction *fr) {
 	if(!fr) return;
 	num.set(fr->numerator());
 	den.set(fr->denominator());
+	complex_num.set(fr->complexNumerator());
+	complex_den.set(fr->complexDenominator());
 	b_exact = fr->isPrecise();
 }
 void Fraction::e() {
@@ -165,6 +183,7 @@ void Fraction::e() {
 	cl_RA clfr = cln::rational(clf); 
 	num.set(cln::numerator(clfr)); 
 	den.set(cln::denominator(clfr)); 
+	setComplex(NULL);
 	b_exact = false;
 #else
 	set(E_STRING);	
@@ -177,6 +196,7 @@ void Fraction::pi() {
 	cl_RA clfr = cln::rational(clf); 
 	num.set(cln::numerator(clfr)); 
 	den.set(cln::denominator(clfr)); 
+	setComplex(NULL);
 	b_exact = false;
 #else
 	set(PI_STRING);	
@@ -188,7 +208,8 @@ void Fraction::catalan() {
 	cl_F clf = cln::catalanconst(); 
 	cl_RA clfr = cln::rational(clf); 
 	num.set(cln::numerator(clfr)); 
-	den.set(cln::denominator(clfr)); 
+	den.set(cln::denominator(clfr));
+	setComplex(NULL);
 	b_exact = false;
 #else
 	set(CATALAN_STRING);	
@@ -202,6 +223,7 @@ void Fraction::pythagoras() {
 	cl_RA clfr = cln::rational(clf); 
 	num.set(cln::numerator(clfr)); 
 	den.set(cln::denominator(clfr)); 
+	setComplex(NULL);
 	b_exact = false;
 #else
 	set(PYTHAGORAS_STRING);	
@@ -214,6 +236,7 @@ void Fraction::euler() {
 	cl_RA clfr = cln::rational(clf); 
 	num.set(cln::numerator(clfr)); 
 	den.set(cln::denominator(clfr)); 
+	setComplex(NULL);
 	b_exact = false;
 #else
 	set(EULER_STRING);	
@@ -249,6 +272,7 @@ bool Fraction::zeta() {
 	cl_RA clfr = cln::rational(clf); 
 	num.set(cln::numerator(clfr)); 
 	den.set(cln::denominator(clfr)); 
+	setComplex(NULL);
 	b_exact = false;	
 	return true;
 }
@@ -260,6 +284,7 @@ void Fraction::apery() {
 	cl_RA clfr = cln::rational(clf); 
 	num.set(cln::numerator(clfr)); 
 	den.set(cln::denominator(clfr)); 
+	setComplex(NULL);
 	b_exact = false;
 #else
 	set(APERY_STRING);	
@@ -267,8 +292,10 @@ void Fraction::apery() {
 #endif
 }
 bool Fraction::equals(const Fraction *fr) const {
-	if(!fr) return false;
-	return num.equals(fr->numerator()) && den.equals(fr->denominator());
+	if(!fr) {
+		return isZero();
+	}
+	return num.equals(fr->numerator()) && den.equals(fr->denominator()) && complex_num.equals(fr->complexNumerator()) && complex_den.equals(fr->complexDenominator());
 }
 int Fraction::compare(const Fraction *fr) const {
 	if(equals(fr)) return 0;
@@ -298,6 +325,24 @@ const Integer *Fraction::numerator() const {
 const Integer *Fraction::denominator() const {
 	return &den;
 }
+const Integer *Fraction::complexNumerator() const {
+	return &complex_num;
+}
+const Integer *Fraction::complexDenominator() const {
+	return &complex_den;
+}
+bool Fraction::isComplex() const {
+	return !complex_num.isZero();
+}
+void Fraction::setComplex(const Fraction *fr) {
+	if(fr) {
+		complex_num.set(fr->numerator());
+		complex_den.set(fr->denominator());
+	} else {
+		complex_num.clear();
+		complex_den.set(1);
+	}
+}
 long double Fraction::value() const {
 #ifdef HAVE_LIBCLN
 	cl_RA clfr = num.getCL_I() / den.getCL_I();
@@ -316,13 +361,13 @@ void Fraction::setNegative(bool is_negative) {
 	num.setNegative(is_negative);
 }
 bool Fraction::isOne() const {
-	return num.isOne() && den.isOne();
+	return num.isOne() && den.isOne() && !isComplex();
 }
 bool Fraction::isMinusOne() const {
-	return num.isMinusOne() && den.isOne();
+	return num.isMinusOne() && den.isOne() && !isComplex();
 }
 bool Fraction::isInteger() const {
-	return den.isOne();
+	return den.isOne() && !isComplex();
 }
 bool Fraction::isPrecise() const {
 	return b_exact;
@@ -338,47 +383,252 @@ Integer *Fraction::getInteger() const {
 	return integer;
 }
 bool Fraction::isZero() const {
-	return num.isZero();
+	return num.isZero() && !isComplex();
 }
 bool Fraction::subtract(const Fraction *fr) {
 	if(!fr->isPrecise()) b_exact = false;
-	if(fr->isZero()) {return true;}	
-	num.multiply(fr->denominator());
-	Integer num2(fr->numerator());
-	num2.multiply(&den);		
-	num2.setNegative(!num2.isNegative());
-	num.add(&num2);
-	den.multiply(fr->denominator());			
+	
+	if(!fr->numerator()->isZero()) {
+		num.multiply(fr->denominator());
+		Integer num2(fr->numerator());
+		num2.multiply(&den);		
+		num2.setNegative(!num2.isNegative());
+		num.add(&num2);
+		den.multiply(fr->denominator());
+	}
+	
+	if(fr->isComplex()) {
+		complex_num.multiply(fr->complexDenominator());
+		Integer num2(fr->complexNumerator());
+		num2.multiply(&complex_den);		
+		num2.setNegative(!num2.isNegative());
+		complex_num.add(&num2);
+		complex_den.multiply(fr->complexDenominator());
+	}
+	
 	clean();
 	return true;
 }
 bool Fraction::add(const Fraction *fr) {
 	if(!fr->isPrecise()) b_exact = false;
-	if(fr->isZero()) {return true;}	
-	num.multiply(fr->denominator());
-	Integer num2(fr->numerator());
-	num2.multiply(&den);		
-	num.add(&num2);
-	den.multiply(fr->denominator());			
+
+	if(!fr->numerator()->isZero()) {
+		num.multiply(fr->denominator());
+		Integer num2(fr->numerator());
+		num2.multiply(&den);		
+		num.add(&num2);
+		den.multiply(fr->denominator());
+	}
+	
+	if(fr->isComplex()) {
+		complex_num.multiply(fr->complexDenominator());
+		Integer num2(fr->complexNumerator());
+		num2.multiply(&complex_den);		
+		complex_num.add(&num2);
+		complex_den.multiply(fr->complexDenominator());
+	}
+	
 	clean();
 	return true;	
 }
 bool Fraction::multiply(const Fraction *fr) {
-	if(!fr->isPrecise()) b_exact = false;
-	if(fr->isZero()) {clear(); return true;}
-	den.multiply(fr->denominator());
-	num.multiply(fr->numerator());
+	
+	if(isZero()) {
+		return true;
+	}
+
+	if(!fr->isPrecise()) {
+	
+		b_exact = false;
+		
+	}
+		
+	if(fr->isZero()) {
+	
+		clear(); 
+		return true;
+		
+	}
+	
+/*	cl_RA clfr = num.getCL_I() / den.getCL_I();
+	cl_RA clfr_i = complex_num.getCL_I() / complex_den.getCL_I();
+	cl_N clc1 = cln::complex(clfr, clfr_i);
+	clfr = fr->numerator()->getCL_I() / fr->denominator()->getCL_I();
+	clfr_i = fr->complexNumerator()->getCL_I() / fr->complexDenominator()->getCL_I();
+	cl_N clc2 = cln::complex(clfr, clfr_i);
+	cl_N clc = clc1 * clc2;
+	cout << clc;
+	cout << "\n";*/
+	
+	if(isComplex() && fr->isComplex()) {
+		
+		Integer den_ad(&den);
+		Integer num_ad(&num);
+		if(!num.isZero()) {
+			den_ad.multiply(fr->complexDenominator());
+			num_ad.multiply(fr->complexNumerator());
+		}
+		
+		Integer den_bd(&complex_den);
+		Integer num_bd(&complex_num);
+		den_bd.multiply(fr->complexDenominator());
+		num_bd.multiply(fr->complexNumerator());
+		num_bd.setNegative(!num_bd.isNegative());
+		
+		if(!num.isZero()) {
+			den.multiply(fr->denominator());
+			num.multiply(fr->numerator());
+			if(num.isZero()) {
+				den.set(1);
+			}
+		}
+		
+		num.multiply(&den_bd);
+		num_bd.multiply(&den);		
+		num.add(&num_bd);
+		den.multiply(&den_bd);
+		
+		complex_den.multiply(fr->denominator());
+		complex_num.multiply(fr->numerator());
+		if(complex_num.isZero()) {
+			complex_den.set(1);
+		}
+		
+		complex_num.multiply(&den_ad);
+		num_ad.multiply(&complex_den);
+		complex_num.add(&num_ad);
+		complex_den.multiply(&den_ad);
+		
+	} else if(isComplex()) {
+		
+		if(!num.isZero()) {
+			den.multiply(fr->denominator());
+			num.multiply(fr->numerator());
+		}
+		
+		complex_den.multiply(fr->denominator());
+		complex_num.multiply(fr->numerator());
+	
+	} else if(fr->isComplex()) {
+		
+		complex_den.set(&den);
+		complex_num.set(&num);
+	
+		den.multiply(fr->denominator());
+		num.multiply(fr->numerator());
+		if(num.isZero()) {
+			den.set(1);
+		}
+		
+		complex_den.multiply(fr->complexDenominator());
+		complex_num.multiply(fr->complexNumerator());
+	
+	} else {
+	
+		den.multiply(fr->denominator());
+		num.multiply(fr->numerator());
+		
+	}	
+	
 	clean();
+	
 	return true;
+	
 }
 bool Fraction::divide(const Fraction *fr) {
-	if(!fr->isPrecise()) b_exact = false;
 	if(fr->isZero()) {
 		//division by zero!!!
 		return false;
 	}
-	num.multiply(fr->denominator());
-	den.multiply(fr->numerator());	
+	if(isZero()) {
+		return true;
+	}
+	if(!fr->isPrecise()) b_exact = false;
+
+/*	cl_RA clfr = num.getCL_I() / den.getCL_I();
+	cl_RA clfr_i = complex_num.getCL_I() / complex_den.getCL_I();
+	cl_N clc1 = cln::complex(clfr, clfr_i);
+	clfr = fr->numerator()->getCL_I() / fr->denominator()->getCL_I();
+	clfr_i = fr->complexNumerator()->getCL_I() / fr->complexDenominator()->getCL_I();
+	cl_N clc2 = cln::complex(clfr, clfr_i);
+	cl_N clc = clc1 / clc2;
+	cout << clc;
+	cout << "\n";*/
+	
+	if(fr->isComplex()) {
+
+		Integer den_ad(&den);
+		Integer num_ad(&num);
+		if(!num.isZero()) {
+			den_ad.multiply(fr->complexDenominator());
+			num_ad.multiply(fr->complexNumerator());
+		}
+		
+		Integer den_bd(&complex_den);
+		Integer num_bd(&complex_num);
+		if(!complex_num.isZero()) {
+			den_bd.multiply(fr->complexDenominator());
+			num_bd.multiply(fr->complexNumerator());
+		}
+		
+		if(!num.isZero()) {
+			den.multiply(fr->denominator());
+			num.multiply(fr->numerator());
+		}
+		
+		if(!num_bd.isZero()) {
+			num.multiply(&den_bd);
+			num_bd.multiply(&den);		
+			num.add(&num_bd);
+			den.multiply(&den_bd);
+		}
+		
+		if(!complex_num.isZero()) {
+			complex_den.multiply(fr->denominator());
+			complex_num.multiply(fr->numerator());
+			if(complex_num.isZero()) {
+				complex_den.set(1);
+			}
+		}
+		
+		if(!num_ad.isZero()) {
+			complex_num.multiply(&den_ad);
+			num_ad.multiply(&complex_den);		
+			num_ad.setNegative(!num_ad.isNegative());
+			complex_num.add(&num_ad);
+			complex_den.multiply(&den_ad);
+		}
+		
+		Fraction fr_d(fr->complexNumerator(), fr->complexDenominator(), NULL, true);
+		Fraction fr_dc(&fr_d);
+		fr_dc.multiply(&fr_d);
+		if(!fr->numerator()->isZero()) {
+			Fraction fr_c(fr->numerator(), fr->denominator(), NULL, true);
+			Fraction fr_cd(&fr_c);
+			fr_cd.multiply(&fr_c);
+			fr_dc.add(&fr_cd);
+		}
+		divide(&fr_dc);
+		
+		return true;
+		
+	} else if(isComplex()) {
+		
+		if(!num.isZero()) {
+			num.multiply(fr->denominator());
+			den.multiply(fr->numerator());
+		}
+		
+		complex_num.multiply(fr->denominator());
+		complex_den.multiply(fr->numerator());
+	
+	} else {
+	
+		num.multiply(fr->denominator());
+		den.multiply(fr->numerator());
+		
+	}
+	
 	clean();
 	return true;
 }
@@ -390,10 +640,9 @@ bool Fraction::gcd(const Fraction *fr) {
 	}
 	num.multiply(fr->denominator());
 	den.multiply(fr->numerator());		
-	Integer *divisor;
+	Integer divisor;
 	num.gcd(&den, &divisor);
-	set(divisor);
-	delete divisor;
+	set(&divisor);
 	return true;
 }
 bool Fraction::sin() {
@@ -416,10 +665,10 @@ bool Fraction::asin() {
 	}
 	Integer abs_num(&num);
 	abs_num.setNegative(false);
-	if(den.isLessThan(&abs_num)) {
+/*	if(den.isLessThan(&abs_num)) {
 		CALCULATOR->error(true, _("The arc sine is only defined for -1 to 1."), NULL);
 		return false;
-	}
+	}*/
 	if(CALCULATOR->alwaysExact()) return false;
 #ifdef HAVE_LIBCLN
 	CLN_COMPLEX_FUNCTION(asin)
@@ -478,12 +727,12 @@ bool Fraction::acos() {
 		clear();
 		return true;
 	}
-	Integer abs_num(&num);
+/*	Integer abs_num(&num);
 	abs_num.setNegative(false);	
 	if(den.isLessThan(&abs_num)) {
 		CALCULATOR->error(true, _("The arc cosine is only defined for -1 to 1."), NULL);
 		return false;
-	}
+	}*/
 	if(CALCULATOR->alwaysExact()) return false;
 #ifdef HAVE_LIBCLN
 	CLN_COMPLEX_FUNCTION(asin)
@@ -510,10 +759,10 @@ bool Fraction::cosh() {
 #endif	
 }
 bool Fraction::acosh() {
-	if(isNegative() || den.compare(&num) == -1) {
+/*	if(isNegative() || den.compare(&num) == -1) {
 		CALCULATOR->error(true, _("The inverse hyperbolic cosine is undefined for x < 1."), NULL);
 		return false;
-	}
+	}*/
 	if(CALCULATOR->alwaysExact()) return false;
 #ifdef HAVE_LIBCLN
 	CLN_COMPLEX_FUNCTION(acosh)
@@ -570,12 +819,12 @@ bool Fraction::atanh() {
 	if(isZero()) {
 		return true;
 	}
-	Integer abs_num(&num);
+/*	Integer abs_num(&num);
 	abs_num.setNegative(false);
 	if(!den.isGreaterThan(&abs_num)) {
 		CALCULATOR->error(true, _("The inverse hyperbolic tangent is undefined for x > 1 or x < -1 and infinite for 1 and -1."), NULL);
 		return false;
-	}
+	}*/
 	if(CALCULATOR->alwaysExact()) return false;
 #ifdef HAVE_LIBCLN
 	CLN_COMPLEX_FUNCTION(asin)
@@ -589,10 +838,10 @@ bool Fraction::atanh() {
 int Fraction::sqrt(int solution) {
 /*	setFloat(sqrtl(value()));
 	b_exact = false;*/
-	if(isNegative()) {
+/*	if(isNegative()) {
 		CALCULATOR->error(true, _("The square root is undefined for negative numbers."), NULL);	
 		return false;
-	}
+	}*/
 	if(!root(2)) {
 		return false;
 	}
@@ -611,13 +860,14 @@ bool Fraction::log() {
 		clear();
 		return true;
 	}
-	if(isZero() || isNegative()) {
+/*	if(isZero() || isNegative()) {
 		CALCULATOR->error(true, _("The natural logarithm is undefined for negative numbers and infinite for zero."), NULL);
 		return false;
-	}
+	}*/
 	if(CALCULATOR->alwaysExact()) return false;
 #ifdef HAVE_LIBCLN
-	CLN_FUNCTION(ln)
+//	CLN_NON_COMPLEX_FUNCTION(ln)
+	CLN_FUNCTION(log)
 	return true;
 #else
 	setFloat(logl(value()));
@@ -630,45 +880,57 @@ bool Fraction::log(Fraction *fr, bool tryexact) {
 		clear();
 		return true;
 	}
-	if(isZero() || isNegative()) {
+/*	if(isZero() || isNegative()) {
 		CALCULATOR->error(true, _("Logarithms is undefined for negative numbers and infinite for zero."), NULL);
 		return false;
 	}
 	if(fr->isZero() || fr->isNegative()) {
 		CALCULATOR->error(true, _("Logarithms with a negative or zero base is undefined."), NULL);
 		return false;	
-	}
+	}*/
 #ifdef HAVE_LIBCLN
-	bool b_minus = false;
-	if(den.isGreaterThan(&num)) {
-		//logp sets clns to zero when result is negative (when this < 1) !!?! 
-		b_minus = true;
-		Integer den_save(&den);
-		den.set(&num);
-		num.set(&den_save);
-	}
 	cl_RA clfr = num.getCL_I() / den.getCL_I();
 	cl_RA clbase = fr->numerator()->getCL_I() / fr->denominator()->getCL_I();	
 	if(tryexact) {		
-		cl_RA clns;
-		if(logp(clfr, clbase, &clns)) {
-			num.set(cln::numerator(clns));
-			den.set(cln::denominator(clns));	
-			if(b_minus) {
-				num.setNegative(true);
+		if(!isComplex() && !fr->isComplex()) {
+			bool b_minus = false;
+			if(den.isGreaterThan(&num)) {
+				//logp sets clns to zero when result is negative (when this < 1) !!?! 
+				b_minus = true;
+				Integer den_save(&den);
+				den.set(&num);
+				num.set(&den_save);
 			}
-			return true;
+			cl_RA clns;
+			if(logp(clfr, clbase, &clns)) {
+				num.set(cln::numerator(clns));
+				den.set(cln::denominator(clns));	
+				if(b_minus) {
+					num.setNegative(true);
+				}
+				return true;
+			}
+			if(b_minus) {
+				Integer den_save(&den);
+				den.set(&num);
+				num.set(&den_save);
+			}
 		}
 		if(CALCULATOR->alwaysExact()) return false;
 		b_exact = false;
-	}	
-	cl_R clr = cln::log(clfr, clbase);
-	clfr = cln::rational(clr);
+	}
+	cl_RA clfr_i = complex_num.getCL_I() / complex_den.getCL_I();
+	cl_N clc1 = cln::complex(clfr, clfr_i);	
+	clfr = fr->numerator()->getCL_I() / fr->denominator()->getCL_I();
+	clfr_i = fr->complexNumerator()->getCL_I() / fr->complexDenominator()->getCL_I();
+	cl_N clc2 = cln::complex(clfr, clfr_i);	
+	cl_N clc = cln::log(clc1, clc2);
+	clfr = cln::rational(cln::realpart(clc));
+	clfr_i = cln::rational(cln::imagpart(clc));
 	num.set(cln::numerator(clfr));
 	den.set(cln::denominator(clfr));
-	if(b_minus) {
-		num.setNegative(true);
-	}	
+	complex_num.set(cln::numerator(clfr_i));
+	complex_den.set(cln::denominator(clfr_i));
 	return true;
 #else
 	bool p = isPrecise();
@@ -868,19 +1130,36 @@ void Fraction::clean() {
 	if(den.isZero()) {
 		num.clear();
 		den.set(1);
-		return;
+	} else if(num.isZero()) {
+		den.set(1);
+	} else {
+		if(den.isNegative()) {
+			den.setNegative(false);
+			num.setNegative(!num.isNegative());
+		}
+		Integer divisor;
+		if(num.gcd(&den, &divisor)) {
+			num.divide(&divisor);
+			den.divide(&divisor);
+		}
 	}
-	if(num.isZero()) return;
-	if(den.isNegative()) {
-		den.setNegative(false);
-		num.setNegative(!num.isNegative());
+	
+	if(complex_den.isZero()) {
+		complex_num.clear();
+		complex_den.set(1);
+	} else if(complex_num.isZero()) {
+		complex_den.set(1);
+	} else {
+		if(complex_den.isNegative()) {
+			complex_den.setNegative(false);
+			complex_num.setNegative(!complex_num.isNegative());
+		}
+		Integer divisor;
+		if(complex_num.gcd(&complex_den, &divisor)) {
+			complex_num.divide(&divisor);
+			complex_den.divide(&divisor);
+		}
 	}
-	Integer *divisor;
-	if(num.gcd(&den, &divisor)) {
-		num.divide(divisor);
-		den.divide(divisor);
-	}
-	delete divisor;	
 }
 bool Fraction::round() {
 	Integer *remainder;
@@ -898,16 +1177,36 @@ bool Fraction::round() {
 	return true;
 }
 bool Fraction::abs() {
-	num.setNegative(false);
+	if(isComplex()) {
+		num.multiply(&num);
+		den.multiply(&den);
+		complex_num.multiply(&complex_num);
+		complex_den.multiply(&complex_den);
+		
+		num.multiply(&complex_den);
+		complex_num.multiply(&den);		
+		num.add(&complex_num);
+		den.multiply(&complex_den);	
+		
+		complex_num.clear();
+		complex_den.set(1);
+		clean();
+		
+		sqrt();
+	} else {
+		num.setNegative(false);
+	}
 	return true;
 }
 bool Fraction::frac() {
+	if(isComplex()) return false;
 	Integer num_copy(&num);
 	num_copy.divide(&den);
 	Fraction fr(&num_copy);
 	return subtract(&fr);
 }
 bool Fraction::floor() {
+	if(isComplex()) return false;
 	if(num.isNegative()) {
 		if(!num.divide(&den)) {
 			num.add(-1);
@@ -919,6 +1218,7 @@ bool Fraction::floor() {
 	return true;
 }
 bool Fraction::ceil() {
+	if(isComplex()) return false;
 	if(num.isNegative()) {
 		trunc();	
 	} else {
@@ -930,11 +1230,13 @@ bool Fraction::ceil() {
 	return true;
 }
 bool Fraction::trunc() {
+	if(isComplex()) return false;
 	num.divide(&den);
 	den.set(1);
 	return true;
 }
 bool Fraction::mod() {
+	if(isComplex()) return false;
 #ifdef HAVE_LIBCLN
 	cl_I cli = cln::mod(num.getCL_I(), den.getCL_I());
 	num.set(cli); 
@@ -951,6 +1253,7 @@ bool Fraction::mod() {
 #endif
 }
 bool Fraction::rem() {
+	if(isComplex()) return false;
 #ifdef HAVE_LIBCLN
 	cl_I cli = cln::rem(num.getCL_I(), den.getCL_I());
 	num.set(cli); 
@@ -966,9 +1269,26 @@ bool Fraction::rem() {
 	return true;
 #endif
 }
+void Fraction::pow_sub(Integer *exp) {
+	if(exp->isZero()) {
+		set(1);
+	} else if(!exp->isOne()) {
+		Fraction this_copy(this);	
+		bool even = exp->isEven();
+		exp->divide(2);
+		pow_sub(exp);
+		multiply(&this_copy);
+		if(!even) {
+			multiply(&this_copy);
+		}
+	}	
+}
 int Fraction::pow(const Fraction *fr, int solution) {
 	if(isZero() && fr->isNegative()) {
 		CALCULATOR->error(true, _("Division by zero."), NULL);
+		return false;
+	}
+	if(fr->isComplex()) {
 		return false;
 	}
 	if(isZero()) {
@@ -984,22 +1304,30 @@ int Fraction::pow(const Fraction *fr, int solution) {
 		set(1);
 		return 1;
 	} 	
-	bool b_minus = false;	
+	bool b_minus = false, b_cplx = false;	
 	if(fr->isOne()) return 1;
 	if(isNegative()) {
 		if(fr->denominator()->isEven()) {
-			CALCULATOR->error(true, _("An even root is undefined for negative numbers."), NULL);	
-			return false;
+			//CALCULATOR->error(true, _("An even root is undefined for negative numbers."), NULL);	
+			//return false;
+			num.setNegative(false);
+			b_cplx = true;
 		} else {
 			num.setNegative(false);
 			b_minus = true;
 		}
 	}
 	if(!root(fr->denominator())) {
-		if(b_minus) {
+		if(b_minus || b_cplx) {
 			num.setNegative(true);
 		}
 		return false;
+	}
+	if(b_cplx) {
+		complex_num.set(&num);
+		complex_den.set(&den);
+		num.clear();
+		den.set(1);
 	}
 	if(b_minus) {
 		num.setNegative(true);
@@ -1011,10 +1339,14 @@ int Fraction::pow(const Fraction *fr, int solution) {
 		den.set(&num);
 		num.set(&d);
 	}
-	num.pow(&exp);
-	den.pow(&exp);
+	if(isComplex()) {
+		pow_sub(&exp);
+	} else {
+		num.pow(&exp);
+		den.pow(&exp);
+	}
 	clean();
-	if(fr->denominator()->isEven() && !fr->numerator()->isEven()) {
+	if(!isComplex() && fr->denominator()->isEven() && !fr->numerator()->isEven()) {
 		if(solution == 2) setNegative(true);
 		if(CALCULATOR->multipleRootsEnabled()) return 2;
 	}
@@ -1023,22 +1355,42 @@ int Fraction::pow(const Fraction *fr, int solution) {
 bool Fraction::root(const Integer *nth) {
 	if(nth->isOne()) return true;
 #ifdef HAVE_LIBCLN
-	cl_RA clfr = num.getCL_I() / den.getCL_I();
-	cl_RA clns;
-	if(rootp(clfr, nth->getCL_I(), &clns)) {
-		num.set(cln::numerator(clns));
-		den.set(cln::denominator(clns));	
+	if(!isComplex()) {
+		cl_RA clfr = num.getCL_I() / den.getCL_I();
+		cl_RA clns;
+		if(rootp(clfr, nth->getCL_I(), &clns)) {
+			num.set(cln::numerator(clns));
+			den.set(cln::denominator(clns));	
+			return true;
+		}
+		if(CALCULATOR->alwaysExact()) return false;
+		b_exact = false;
+		cl_RA cl_y = cln::recip(nth->getCL_I());	
+		cl_R clr = cln::exp(cl_y * cln::ln(clfr));
+		clfr = cln::rational(clr);
+		num.set(cln::numerator(clfr));
+		den.set(cln::denominator(clfr));
+		return true;
+	} else {
+		if(CALCULATOR->alwaysExact()) return false;
+		cl_RA clfr = num.getCL_I() / den.getCL_I();
+		cl_RA clfr_i = complex_num.getCL_I() / complex_den.getCL_I();
+		cl_N clc = cln::complex(clfr, clfr_i);
+		b_exact = false;
+		cl_RA cl_y = cln::recip(nth->getCL_I());	
+		cl_N clr = cln::exp(cl_y * cln::log(clc));
+		clfr = cln::rational(cln::realpart(clr));
+		clfr_i = cln::rational(cln::imagpart(clr));
+		num.set(cln::numerator(clfr));
+		den.set(cln::denominator(clfr));
+		complex_num.set(cln::numerator(clfr_i));
+		complex_den.set(cln::denominator(clfr_i));
 		return true;
 	}
-	if(CALCULATOR->alwaysExact()) return false;
-	b_exact = false;
-	cl_RA cl_y = cln::recip(nth->getCL_I());	
-	cl_R clr = cln::exp(cl_y * cln::ln(clfr));
-	clfr = cln::rational(clr);
-	num.set(cln::numerator(clfr));
-	den.set(cln::denominator(clfr));
-	return true;
 #else
+	if(isComplex()) {
+		return false;
+	}
 	Fraction nth_fr(NULL, nth);
 	Fraction *x = this;
 	Fraction a(this);
@@ -1260,6 +1612,7 @@ string Fraction::print(NumberFormat nrformat, int displayflags, int min_decimals
 	}
 	return str;
 }
+//void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, string &denominator_, bool &exp_minus, string &exponent_, bool &cminus, string &cwhole_, string &cnumerator_, string &cdenominator_, bool &cexp_minus, string &cexponent_, Prefix **prefix1, Prefix **prefix2, NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, Integer *l_exp2, bool in_composite, bool in_power) const {
 void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, string &denominator_, bool &exp_minus, string &exponent_, string &prefix_, NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Integer *l_exp, bool in_composite, bool in_power, Integer *l_exp2, Prefix **prefix1, Prefix **prefix2) const {
 	if(CALCULATOR->alwaysExact()) max_decimals = -1;
 	if(in_exact && !isPrecise()) *in_exact = true;
@@ -1423,12 +1776,11 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 	} else if(exp.isPositive()) {
 		den_spec.exp10(&exp);
 	}
-/*	Integer *divisor;
+/*	Integer divisor;
 	if(whole.gcd(&den_spec, &divisor)) {
-		whole.divide(divisor);
-		den_spec.divide(divisor);
-	}	
-	delete divisor;*/
+		whole.divide(&divisor);
+		den_spec.divide(&divisor);
+	}*/
 	if(plural) {
 		*plural = whole.isGreaterThan(&den_spec);
 	}
@@ -1496,12 +1848,11 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 		} else {
 			whole.set(&whole_test);
 		}
-		Integer *divisor;
+		Integer divisor;
 		if(part->gcd(&den_spec, &divisor)) {
-			part->divide(divisor);
-			den_spec.divide(divisor);
+			part->divide(&divisor);
+			den_spec.divide(&divisor);
 		}
-		delete divisor;		
 		if(!whole.isZero()) {
 			whole_ = whole.print(base, false);
 		}

@@ -650,7 +650,7 @@ long long int gcd(long long int i1, long long int i2) {
 	return i2;
 }
 
-long double gcd_d(long double i1, long double i2) {
+/*long double gcd_d(long double i1, long double i2) {
 	if(i1 < 0) i1 = -i1;
 	if(i2 < 0) i2 = -i2;
 	if(i1 == i2) return i2;
@@ -665,7 +665,7 @@ long double gcd_d(long double i1, long double i2) {
 		i2 = i3;
 	}
 	return i2;
-}
+}*/
 
 bool text_length_is_one(const string &str) {
 	for(unsigned int i = 0; i < str.length() - 1; i++) {

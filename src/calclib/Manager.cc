@@ -109,6 +109,10 @@ Manager::Manager(const Fraction *fraction_) {
 	init();
 	set(fraction_);
 }
+Manager::Manager(const Integer *integ_) {
+	init();
+	set(integ_);
+}
 Manager::Manager(const Matrix *matrix_) {
 	init();
 	set(matrix_);
@@ -120,7 +124,9 @@ Manager::Manager(const Vector *vector_) {
 Manager::~Manager() {
 	clear();
 	delete fr;
+#ifdef HAVE_GIAC	
 	if(g_gen) delete g_gen;
+#endif
 }
 void Manager::setNull() {
 	clear();
@@ -132,7 +138,9 @@ void Manager::set(const Manager *mngr) {
 		s_var = mngr->text();	
 		o_variable = mngr->variable();	
 		o_function = mngr->function();
+#ifdef HAVE_GIAC
 		if(mngr->g_gen) g_gen = new giac::gen(*mngr->g_gen);
+#endif
 		o_prefix = mngr->prefix();
 		comparison_type = mngr->comparisonType();
 		if(mngr->matrix()) {
@@ -154,6 +162,14 @@ void Manager::set(const Fraction *fraction_) {
 	clear();
 	if(fraction_) {
 		fr->set(fraction_);
+		setPrecise(fr->isPrecise());
+		c_type = FRACTION_MANAGER;
+	}
+}
+void Manager::set(const Integer *integ_) {
+	clear();
+	if(integ_) {
+		fr->set(integ_);
 		setPrecise(fr->isPrecise());
 		c_type = FRACTION_MANAGER;
 	}
@@ -453,33 +469,6 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 		}
 	} else if(mngr->type() == MATRIX_MANAGER) {
 		return reverseadd(mngr, op, translate_);
-	}
-	if(c_type == ALTERNATIVE_MANAGER) {
-		if(mngr->type() == ALTERNATIVE_MANAGER) {
-			for(unsigned int i = 0; i < mngr->countChilds(); i++) {
-				push_back(new Manager(mngr->getChild(i)));
-			}
-		} else {
-			int is = mngrs.size();
-			for(int i = 0; i < is; i++) {
-				mngrs[i]->add(mngr, op);
-				if(!mngrs[i]->isPrecise()) setPrecise(false);
-				if(mngrs[i]->type() == ALTERNATIVE_MANAGER) {
-					for(unsigned int i2 = 0; i2 < mngrs[i]->countChilds(); i2++) {
-						mngrs[i]->getChild(i2)->ref();
-						push_back(mngrs[i]->getChild(i2));
-					}
-					mngrs[i]->unref();
-					mngrs.erase(mngrs.begin() + i);
-					i--;
-					is--;
-				}
-			}
-		}
-		typeclean();
-		return true;
-	} else if(mngr->type() == ALTERNATIVE_MANAGER) {
-		return reverseadd(mngr, op, translate_);
 	}	
 	if(op == OPERATION_SUBTRACT) {
 		op = OPERATION_ADD;
@@ -512,7 +501,33 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 		bool b = add(&mngr2, op);
 		return b;		
 	}
-
+	if(c_type == ALTERNATIVE_MANAGER) {
+		if(mngr->type() == ALTERNATIVE_MANAGER) {
+			for(unsigned int i = 0; i < mngr->countChilds(); i++) {
+				push_back(new Manager(mngr->getChild(i)));
+			}
+		} else {
+			int is = mngrs.size();
+			for(int i = 0; i < is; i++) {
+				mngrs[i]->add(mngr, op);
+				if(!mngrs[i]->isPrecise()) setPrecise(false);
+				if(mngrs[i]->type() == ALTERNATIVE_MANAGER) {
+					for(unsigned int i2 = 0; i2 < mngrs[i]->countChilds(); i2++) {
+						mngrs[i]->getChild(i2)->ref();
+						push_back(mngrs[i]->getChild(i2));
+					}
+					mngrs[i]->unref();
+					mngrs.erase(mngrs.begin() + i);
+					i--;
+					is--;
+				}
+			}
+		}
+		typeclean();
+		return true;
+	} else if(mngr->type() == ALTERNATIVE_MANAGER) {
+		return reverseadd(mngr, op, translate_);
+	}
 	if(op == OPERATION_ADD) {
 		if(mngr->isNull()) {
 			return true;
@@ -1094,21 +1109,82 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 				switch(mngr->type()) {
 					case FRACTION_MANAGER: {
 						if(mngr->fraction()->isInteger() && !mngr->fraction()->isMinusOne()) {
-							Integer *n = mngr->fraction()->getInteger();
-							n->setNegative(false);
-							Manager *mngr2 = new Manager(this);
+							Integer n(mngr->fraction()->numerator());
+							n.setNegative(false);
+							/*Manager *mngr2 = new Manager(this);
 							n->add(-1);
 							for(; n->isPositive(); n->add(-1)) {
 								add(mngr2, OPERATION_MULTIPLY);
+							}*/
+							Manager n_mngr(&n);
+							Integer bn;
+							Manager bn_mngr;
+							Integer i(&n);
+							bool b_even = i.isEven();
+							i.divide(2);
+							Manager second_mngr;
+							if(mngrs.size() == 2) {
+								second_mngr.set(mngrs[1]);
+							} else {
+								second_mngr.setType(ADDITION_MANAGER);
+								for(unsigned int i = 1; i < mngrs.size(); i++) {
+									mngrs[i]->ref();
+									second_mngr.push_back(mngrs[i]);
+								}
 							}
+							Manager *mngr_new = new Manager(mngrs[0]);
+							mngr_new->add(&n_mngr, OPERATION_RAISE);
+							Manager *mngr2 = new Manager(&second_mngr);
+							mngr2->add(&n_mngr, OPERATION_RAISE);
+							mngr_new->add(mngr2, OPERATION_ADD);
+							Integer i2(1);
+							Integer n2(&n);
+							n2.add(-1);
+							n_mngr.set(&n2);
+							Manager mngr_a, mngr_b, i_mngr(&i2);
+							int cmp = i2.compare(&i);
+							while(cmp >= 0) {
+								bn.binomial(&n, &i2);
+								bn_mngr.set(&bn);
+								mngr_a.set(mngrs[0]);
+								mngr_a.add(&n_mngr, OPERATION_RAISE);
+								bn_mngr.add(&mngr_a, OPERATION_MULTIPLY);
+								mngr_b.set(&second_mngr);
+								if(!i2.isOne()) {
+									mngr_b.add(&i_mngr, OPERATION_RAISE);
+								}
+								bn_mngr.add(&mngr_b, OPERATION_MULTIPLY);
+								mngr_new->add(&bn_mngr, OPERATION_ADD);
+								
+								if(!b_even || cmp != 0) {
+									bn_mngr.set(&bn);
+									mngr_a.set(&second_mngr);
+									mngr_a.add(&n_mngr, OPERATION_RAISE);
+									bn_mngr.add(&mngr_a, OPERATION_MULTIPLY);
+									mngr_b.set(mngrs[0]);
+									if(!i2.isOne()) {
+										mngr_b.add(&i_mngr, OPERATION_RAISE);
+									}
+									bn_mngr.add(&mngr_b, OPERATION_MULTIPLY);
+									mngr_new->add(&bn_mngr, OPERATION_ADD);
+								}
+								i2.add(1);
+								cmp = i2.compare(&i);
+								if(cmp >= 0) {
+									i_mngr.set(&i2);
+									n2.add(-1);
+									n_mngr.set(&n2);
+								}
+							}
+							moveto(mngr_new);
+							mngr_new->unref();
 							if(mngr->fraction()->isNegative()) {
-								mngr2->unref();
+								//mngr2->unref();
 								mngr2 = new Manager(1, 1);
 								mngr2->add(this, OPERATION_DIVIDE);
 								moveto(mngr2);
 								mngr2->unref();
 							}
-							delete n;
 							break;
 						}
 						if(!translate_) {
@@ -1540,7 +1616,9 @@ void Manager::moveto(Manager *term) {
 	s_var = term->text();
 	o_variable = term->variable();
 	o_function = term->function();
+#ifdef HAVE_GIAC	
 	if(term->g_gen) g_gen = new giac::gen(*term->g_gen);
+#endif
 	comparison_type = term->comparisonType();
 	fr->set(term->fraction());
 	if(term->matrix()) {
@@ -1660,8 +1738,10 @@ void Manager::clear() {
 	o_variable = NULL;
 	o_function = NULL;
 	o_prefix = NULL;
+#ifdef HAVE_GIAC	
 	if(g_gen) delete g_gen;
 	g_gen = NULL;
+#endif	
 	if(mtrx) delete mtrx;
 	mtrx = NULL;
 	for(unsigned int i = 0; i < mngrs.size(); i++) {
@@ -2429,7 +2509,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				mngr_d->push_back(new Manager(1, 1));
 				((Manager*) this)->ref();
 				mngr_d->push_back((Manager*) this);
-				str = mngr_d->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, set_prefix, false, NULL, NULL, true, in_power, in_composite, print_equals, in_multiplication, wrap, wrap_all, has_parenthesis, in_div, no_add_one, l_exp2, prefix1, prefix2);		
+				str = mngr_d->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, set_prefix, toplevel, NULL, NULL, in_composite, in_power, draw_minus, print_equals, in_multiplication, wrap, wrap_all, has_parenthesis, in_div, no_add_one, l_exp2, prefix1, prefix2);		
 				mngr_d->unref();
 				return str;
 			} else {
@@ -2467,6 +2547,34 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			break;
 		}
 		case FRACTION_MANAGER: {
+			if(fraction()->isComplex()) {
+				Fraction fr_im(fraction()->complexNumerator(), fraction()->complexDenominator());
+				if(!fraction()->numerator()->isZero()) {
+					Fraction fr_real(fraction()->numerator(), fraction()->denominator());
+					Manager mngr(&fr_real);
+					str += mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, in_composite, in_power, true, print_equals, in_multiplication, false, false, NULL, in_div, false, NULL, prefix1, prefix2);
+					str += " ";
+					if(fr_im.isNegative()) {
+						if(displayflags & DISPLAY_FORMAT_NONASCII) {
+							str += SIGN_MINUS;				
+						} else {
+							str += MINUS;
+						}						
+					} else  {
+						if(displayflags & DISPLAY_FORMAT_NONASCII) {
+							str += SIGN_PLUS;
+						} else {
+							str += PLUS;
+						}
+					}
+					str += " ";
+					if(!toplevel && wrap) wrap_all = true;
+				}
+				Manager mngr(&fr_im);
+				str += mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, in_composite, in_power, (draw_minus || toplevel) && fraction()->numerator()->isZero(), print_equals, in_multiplication, true, false, NULL, in_div, true, NULL, prefix1, prefix2);
+				str += "i";
+				break;
+			}
 			bool minus, exp_minus;
 			string whole_, numerator_, denominator_, exponent_, prefix_;
 			fraction()->getPrintObjects(minus, whole_, numerator_, denominator_, exp_minus, exponent_, prefix_, nrformat, displayflags, min_decimals, max_decimals, set_prefix, in_exact, usable, false, plural, l_exp, in_composite || no_add_one, in_power, l_exp2, prefix1, prefix2);
@@ -3175,10 +3283,30 @@ giac::gen Manager::toGiac(bool *failed) const {
 	giac::unary_function_ptr *ufp = NULL;
 	switch(type()) {
 		case FRACTION_MANAGER: {
-			if(fr->isInteger()) {
-				return giac::gen(fr->numerator()->print());
+			if(fr->isComplex()) {
+				string str;
+				if(fr->denominator()->isOne()) {
+					str += fr->numerator()->print();
+				} else {
+					str += fr->numerator()->print();
+					str += "/";
+					str += fr->denominator()->print();
+				}
+				if(fr->complexDenominator()->isOne()) {
+					str += fr->complexNumerator()->print();
+				} else {
+					str += fr->complexNumerator()->print();
+					str += "/";
+					str += fr->complexDenominator()->print();
+				}
+				str += "*i";
+				return giac::gen(str);
 			} else {
-				return giac::fraction(fr->numerator()->print(), fr->denominator()->print());
+				if(fr->isInteger()) {
+					return giac::gen(fr->numerator()->print());
+				} else {
+					return giac::fraction(fr->numerator()->print(), fr->denominator()->print());
+				}
 			}
 		} 
 		case STRING_MANAGER: {
@@ -3368,9 +3496,9 @@ void Manager::set(const giac::gen &giac_gen, bool in_retry) {
 		}
 		case giac::_CPLX: {
 			printf("_CPLX: %s\n", giac_gen.print().c_str());
-			CALCULATOR->error(true, _("Cannot yet handle complex numbers: %s."), giac_gen.print().c_str(), NULL);
-			c_type = GIAC_MANAGER;
-			g_gen = new giac::gen(giac_gen);
+			set(giac_gen._CPLXptr[0]);
+			Manager mngr(giac_gen._CPLXptr[1]);
+			fr->setComplex(mngr.fraction());
 			break;
 		}
 		case giac::_POLY: {

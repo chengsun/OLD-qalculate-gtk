@@ -1,3 +1,24 @@
+2004-02-08  Niklas Knutsson  <nq@altern.org>
+
+	* Complex numbers: log, pow, root
+
+2004-02-07  Niklas Knutsson  <nq@altern.org>
+
+	* Filter out all duplicate errors
+	* Fix compilation without giac
+	* Forward: "Copy Result" menu item
+	* Forward: Correctly calculate divison by root with multiple solutions.
+	* Forward: Remove unused non-portable function.
+
+2003-11-02  Niklas Knutsson  <nq@altern.org>
+
+	* Complex numbers...
+	* Complex number printing
+	* Use Newton's Binomial Formula for raised addition manager
+	* Binomial function
+	* Manager::set(const Integer*)
+	* Start work on complex numbers
+
 2003-10-30  Niklas Knutsson  <nq@altern.org>
 
 	* Show argument names when too few arguments

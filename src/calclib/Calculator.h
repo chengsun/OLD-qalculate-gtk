@@ -52,7 +52,7 @@ struct plot_data_parameters {
 
 class Calculator {
   protected:
-	stack<Error*> errors;
+	vector<Error*> errors;
 	int error_id;
 	int ianglemode;
 	int i_precision;

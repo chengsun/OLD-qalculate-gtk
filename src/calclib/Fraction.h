@@ -17,8 +17,9 @@
 
 class Fraction {
   protected:
-	Integer num, den;
+	Integer num, den, complex_num, complex_den;
 	bool b_exact;
+	void pow_sub(Integer *exp);
   public:
   	Fraction();
 	Fraction(long int numerator_, long int denominator_ = 1, long int exp10_ = 0, bool nogcd = false);
@@ -30,7 +31,11 @@ class Fraction {
 	void setFloat(long double value_);		
 	void set(const Integer *numerator_ = NULL, const Integer *denominator_ = NULL, const Integer *exp10_ = NULL, bool nogcd = false);	
 	void set(const Fraction *fr);
-	bool set(string str);	
+	bool set(string str);
+	void setComplex(const Fraction *fr);
+	bool isComplex() const;
+	const Integer *complexNumerator() const;
+	const Integer *complexDenominator() const;	
 	void e();
 	void pi();
 	void catalan();

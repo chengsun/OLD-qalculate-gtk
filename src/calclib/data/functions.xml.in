@@ -466,24 +466,30 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
 	<test>false</test>
       </argument>
     </function>
-    <builtin_function name="sinh">
+    <function name="sinh">
       <_title>Hyperbolic sine</_title>
-      <argument index="1">
+      <expression>(e^\x-e^(-\x))/2</expression>
+      <argument index="1" type="angle">
         <_title>Angle</_title>
+	<test>false</test>
       </argument>
-    </builtin_function>
-    <builtin_function name="cosh">
+    </function>
+    <function name="cosh">
       <_title>Hyperbolic cosine</_title>
-      <argument index="1">
+      <expression>(e^\x+e^(-\x))/2</expression>
+      <argument index="1" type="angle">
         <_title>Angle</_title>
+	<test>false</test>
       </argument>
-    </builtin_function>
-    <builtin_function name="tanh">
+    </function>
+    <function name="tanh">
       <_title>Hyperbolic tangent</_title>
-      <argument index="1">
+      <expression>(e^(2\x)-1)/(e^(-2\x)+1)</expression>
+      <argument index="1" type="angle">
         <_title>Angle</_title>
+	<test>false</test>
       </argument>
-    </builtin_function>
+    </function>
     <builtin_function name="asin">
       <_title>Arcsine</_title>
       <argument index="1">
@@ -535,36 +541,56 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <_title>Value</_title>
       </argument>
     </builtin_function>
-    <builtin_function name="log2">
-      <_title>Base-2 logarithm</_title>
+    <builtin_function name="log">
+      <_title>Base-N logarithm</_title>
       <argument index="1">
         <_title>Value</_title>
       </argument>
-    </builtin_function>
-    <builtin_function name="log10">
-      <_title>Base-10 logarithm</_title>
-      <argument index="1">
-        <_title>Value</_title>
+      <argument index="2">
+        <_title>Base</_title>
       </argument>
     </builtin_function>
-    <builtin_function name="exp">
+    <function name="log2">
+      <_title>Base-2 logrithm</_title>
+      <_description>Returns the base n logarithm.</_description>
+      <expression>log(\x,2)</expression>
+      <argument type="number" index="1">
+        <_title>Value</_title>
+        <min include_equals="false">0</min>
+	<test>false</test>
+      </argument>
+    </function>
+    <function name="log10">
+      <_title>Base-10 logrithm</_title>
+      <_description>Returns the base n logarithm.</_description>
+      <expression>log(\x,10)</expression>
+      <argument type="number" index="1">
+        <_title>Value</_title>
+        <min include_equals="false">0</min>
+	<test>false</test>
+      </argument>
+    </function>
+    <function name="exp">
       <_title>e raised to the power X</_title>
+      <expression>e^\x</expression>
       <argument index="1">
         <_title>Exponent</_title>
       </argument>
-    </builtin_function>
-    <builtin_function name="exp2">
+    </function>
+    <function name="exp2">
       <_title>2 raised the to power X</_title>
+      <expression>2^\x</expression>
       <argument index="1">
         <_title>Exponent</_title>
       </argument>
-    </builtin_function>
-    <builtin_function name="exp10">
+    </function>
+    <function name="exp10">
       <_title>10 raised the to power X</_title>
+      <expression>10^\x</expression>
       <argument index="1">
         <_title>Exponent</_title>
       </argument>
-    </builtin_function>
+    </function>
     <builtin_function name="sqrt">
       <_title>Square root</_title>
       <argument index="1">
@@ -601,18 +627,6 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       <expression>abs((\x*pi)^(1/2))</expression>
       <argument type="number" index="1">
         <_title>Non-negative value</_title>
-        <min include_equals="true">0</min>
-      </argument>
-    </function>
-    <function name="log">
-      <_title>Base-N logrithm</_title>
-      <_description>Returns the base n logarithm.</_description>
-      <expression>ln(\x)/ln(\y)</expression>
-      <argument type="free" index="1">
-        <_title>Value</_title>
-      </argument>
-      <argument type="number" index="2">
-        <_title>Base</_title>
         <min include_equals="true">0</min>
       </argument>
     </function>

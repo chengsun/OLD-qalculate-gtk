@@ -195,6 +195,7 @@ void on_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer user_data)
 void on_menu_item_fraction_fraction_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_exact_mode_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_save_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_copy_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_precision_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_decimals_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_plot_functions_activate(GtkMenuItem *w, gpointer user_data);

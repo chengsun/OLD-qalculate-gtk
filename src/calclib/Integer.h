@@ -134,7 +134,9 @@ class Integer {
 	void exp10(long int value);
 	void pow(const Integer *integer);
 	void pow(long int value);
-	bool gcd(const Integer *integer, Integer **divisor) const;
+	bool gcd(const Integer *integer, Integer *divisor = NULL) const;
+	bool factorial();
+	bool binomial(const Integer *m, const Integer *k);
 	bool isZero() const;
 	bool isOne() const;
 	bool isMinusOne() const;
