@@ -1118,14 +1118,14 @@
       <name index="1">
         <_name>bmi</_name>
       </name>
-      <description>Calculates the Body Mass Index. The resulting BMI-value is interpreted as follows:
+      <_description>Calculates the Body Mass Index. The resulting BMI-value is interpreted as follows:
 
 Underweight		&lt; 18.5
 Normal weight		18.5-25
 Overweight		25-30
 Obesity			&gt; 30
 
-Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</description>
+Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_description>
       <expression>(\x/(1000g))/(\y/m)^2</expression>
       <argument type="free" index="1">
         <_title>Weight</_title>

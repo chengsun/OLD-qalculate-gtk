@@ -124,6 +124,7 @@ void create_main_window (void);
 GtkWidget* get_functions_dialog (void);
 GtkWidget* get_variables_dialog (void);
 GtkWidget* get_units_dialog (void);
+GtkWidget* get_datasets_dialog (void);
 GtkWidget* get_preferences_dialog (void);
 GtkWidget* get_unit_edit_dialog (void);
 GtkWidget* get_function_edit_dialog (void);

@@ -1,3 +1,8 @@
+2004-08-25 Niklas Knutsson  <nq@altern.org>
+
+	* data collection -> data set
+	* Complete data set GUI
+
 2004-08-24 Niklas Knutsson  <nq@altern.org>
 
 	* Complete most of the data collection stuff

@@ -5,6 +5,7 @@ data/about.glade
 data/argumentrules.glade
 data/csvexport.glade
 data/csvimport.glade
+data/datasets.glade
 data/decimals.glade
 data/functionedit.glade
 data/functions.glade
@@ -28,7 +29,7 @@ src/callbacks.cc
 src/support.c
 src/calclib/BuiltinFunctions.cc
 src/calclib/Calculator.cc
-src/calclib/DataCollection.cc
+src/calclib/DataSet.cc
 src/calclib/ExpressionItem.cc
 src/calclib/MathStructure.cc
 src/calclib/Function.cc
@@ -37,7 +38,7 @@ src/calclib/Prefix.cc
 src/calclib/Unit.cc
 src/calclib/Variable.cc
 src/calclib/util.cc
-src/calclib/data/datacollections.xml.in
+src/calclib/data/datasets.xml.in
 src/calclib/data/elements.xml.in
 src/calclib/data/functions.xml.in
 src/calclib/data/prefixes.xml.in

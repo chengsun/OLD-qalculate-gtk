@@ -84,7 +84,7 @@ class EqItem;
 class EqNumber;
 class EqContainer;
 class Argument;
-class DataCollection;
+class DataSet;
 class DataProperty;
 class DataObject;
 

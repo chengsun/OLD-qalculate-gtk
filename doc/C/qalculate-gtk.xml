@@ -208,6 +208,10 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Shows a periodic table, with property values which can be inserted in the expression, in a new window.</para></entry>
 			</row>
 			<row valign="top">
+				<entry><para>Data Sets</para></entry>
+				<entry><para>Opens a window that lists available data sets and objects with property values.</para></entry>
+			</row>
+			<row valign="top">
 				<entry><para>Quit (<keycombo><keycap>Ctrl</keycap><keycap>Q</keycap></keycombo>)</para></entry>
 				<entry><para>Exits Qalculate!</para></entry>
 			</row>

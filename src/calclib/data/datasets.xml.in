@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <QALCULATE version="0.6.4">
   <category>
-    <_title>Data Collections</_title>
-    <data_collection>
+    <_title>Data Sets</_title>
+    <dataset>
       <_title>Elements</_title>
       <datafile>elements.xml</datafile>
       <name index="1">
@@ -38,7 +38,8 @@
       </property>
       <property>
         <_title>Classification</_title>
-	<type>text</type>
+	<_description>A number representing an element group:&#10;1 Alkali Metal&#10;2 Alkaline-Earth Metal&#10;3 Lanthanide&#10;4 Actinide&#10;5 Transition Metal&#10;6 Metal&#10;7 Metalloid&#10;8 Non-Metal&#10;9 Halogen&#10;10 Noble Gas&#10;11 Transactinide</_description>
+	<type>number</type>
 	<name index="1">
           <_name>class</_name>
         </name>
@@ -72,7 +73,7 @@
           <_name>y_pos</_name>
         </name>
       </property>
-    </data_collection>
+    </dataset>
   </category>
 </QALCULATE>
 

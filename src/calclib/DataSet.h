@@ -9,8 +9,8 @@
     (at your option) any later version.
 */
 
-#ifndef DATA_COLLECTION_H
-#define DATA_COLELCTION_H
+#ifndef DATA_SET_H
+#define DATA_SET_H
 
 #include "includes.h"
 #include "Function.h"
@@ -26,11 +26,11 @@ class DataObject {
 	vector<string> s_nonlocalized_properties;
 	vector<MathStructure*> m_properties;
 	vector<int> a_properties;
-	DataCollection *parent;
+	DataSet *parent;
 	
   public:
   
-	DataObject(DataCollection *parent_collection);
+	DataObject(DataSet *parent_set);
 
 	void setProperty(DataProperty *property, string s_value, int is_approximate = -1);
 	void setNonlocalizedKeyProperty(DataProperty *property, string s_value);
@@ -41,7 +41,7 @@ class DataObject {
 	string getPropertyInputString(DataProperty *property);
 	string getPropertyDisplayString(DataProperty *property);
 	
-	DataCollection *parentCollection() const;
+	DataSet *parentSet() const;
 
 };
 
@@ -59,12 +59,12 @@ class DataProperty {
 	string sdescr, stitle, sunit;
 	MathStructure *m_unit;
 	bool b_approximate, b_brackets, b_key, b_case, b_hide;
-	DataCollection *parent;
+	DataSet *parent;
 	PropertyType ptype;
 	
   public:
   
-	DataProperty(DataCollection *parent_collection, string s_name = "", string s_title = "", string s_description = "");
+	DataProperty(DataSet *parent_set, string s_name = "", string s_title = "", string s_description = "");
 	
 	void setName(string s_name);
 	void clearNames();
@@ -94,14 +94,14 @@ class DataProperty {
 	bool isApproximate() const;
 	void setPropertyType(PropertyType property_type);
 	PropertyType propertyType() const;
-	DataCollection *parentCollection() const;
+	DataSet *parentSet() const;
 	
 };
 
 typedef vector<DataProperty*>::iterator DataPropertyIter;
 typedef vector<DataObject*>::iterator DataObjectIter;
 
-class DataCollection : public Function {
+class DataSet : public Function {
 
   protected:
   
@@ -112,8 +112,8 @@ class DataCollection : public Function {
 	
   public:
   
-  	DataCollection(string s_category = "", string s_name = "", string s_default_file = "", string s_title = "", string s_description = "");
-	DataCollection(const DataCollection *o);
+  	DataSet(string s_category = "", string s_name = "", string s_default_file = "", string s_title = "", string s_description = "");
+	DataSet(const DataSet *o);
 	
 	ExpressionItem *copy() const;
 	void set(const ExpressionItem *item);
@@ -160,21 +160,21 @@ class DataPropertyArgument : public Argument {
 
   protected:
   
-  	DataCollection *o_data;
+  	DataSet *o_data;
   
 	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
 	virtual string subprintlong() const;
 
   public:
   
-  	DataPropertyArgument(DataCollection *data_collection, string name_ = "", bool does_test = true, bool does_error = true);
+  	DataPropertyArgument(DataSet *data_set, string name_ = "", bool does_test = true, bool does_error = true);
 	DataPropertyArgument(const DataPropertyArgument *arg);
 	~DataPropertyArgument();
 	int type() const;
 	Argument *copy() const;
 	string print() const;
-	DataCollection *dataCollection() const;
-	void setDataCollection(DataCollection *data_collection);
+	DataSet *dataSet() const;
+	void setDataSet(DataSet *data_set);
 	
 };
 
@@ -182,21 +182,21 @@ class DataObjectArgument : public Argument {
 
   protected:
   
-  	DataCollection *o_data;
+  	DataSet *o_data;
   
 	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
 	virtual string subprintlong() const;
 
   public:
   
-  	DataObjectArgument(DataCollection *data_collection, string name_ = "", bool does_test = true, bool does_error = true);
+  	DataObjectArgument(DataSet *data_set, string name_ = "", bool does_test = true, bool does_error = true);
 	DataObjectArgument(const DataObjectArgument *arg);
 	~DataObjectArgument();
 	int type() const;
 	Argument *copy() const;
 	string print() const;
-	DataCollection *dataCollection() const;
-	void setDataCollection(DataCollection *data_collection);
+	DataSet *dataSet() const;
+	void setDataSet(DataSet *data_set);
 	
 };
 

@@ -100,7 +100,7 @@ class Calculator {
 	vector<char> ufv_t;
 	vector<unsigned int> ufv_i;
 	
-	vector<DataCollection*> data_collections;
+	vector<DataSet*> data_sets;
 	
 	Sgi::hash_map<unsigned int, MathStructure> id_structs;
 	Sgi::hash_map<unsigned int, bool> ids_p;
@@ -293,9 +293,9 @@ class Calculator {
 	Variable* getActiveVariable(string name_);
 	ExpressionItem *addExpressionItem(ExpressionItem *item, bool force = true);
 	Function* addFunction(Function *f, bool force = true);
-	DataCollection* addDataCollection(DataCollection *dc, bool force = true);
-	DataCollection* getDataCollection(unsigned int index);
-	DataCollection* getDataCollection(string name);
+	DataSet* addDataSet(DataSet *dc, bool force = true);
+	DataSet* getDataSet(unsigned int index);
+	DataSet* getDataSet(string name);
 	Function* getFunction(string name_);	
 	Function* getActiveFunction(string name_);	
 	void error(bool critical, const char *TEMPLATE,...);

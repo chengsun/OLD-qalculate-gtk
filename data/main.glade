@@ -280,6 +280,15 @@
 		      <signal name="activate" handler="on_menu_item_periodic_table_activate" last_modification_time="Wed, 11 Aug 2004 15:11:19 GMT"/>
 		    </widget>
 		  </child>
+		  
+		  <child>
+		    <widget class="GtkMenuItem" id="menu_item_datasets">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Data Sets</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_menu_item_datasets_activate" last_modification_time="Wed, 25 Aug 2004 15:11:19 GMT"/>
+		    </widget>
+		  </child>
 
 		  <child>
 		    <widget class="GtkMenuItem" id="separator22">

@@ -9,7 +9,7 @@
     (at your option) any later version.
 */
 
-#include "DataCollection.h"
+#include "DataSet.h"
 
 #include "util.h"
 #include "Calculator.h"
@@ -21,8 +21,8 @@
 #define XML_GET_STRING_FROM_PROP(node, name, str)	value = xmlGetProp(node, (xmlChar*) name); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = ""; 
 #define XML_GET_STRING_FROM_TEXT(node, str)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = "";
 
-DataObject::DataObject(DataCollection *parent_collection) {
-	parent = parent_collection;
+DataObject::DataObject(DataSet *parent_set) {
+	parent = parent_set;
 }
 
 void DataObject::setProperty(DataProperty *property, string s_value, int is_approximate) {
@@ -107,15 +107,15 @@ const MathStructure *DataObject::getPropertyStruct(DataProperty *property) {
 	return NULL;
 }
 	
-DataCollection *DataObject::parentCollection() const {
+DataSet *DataObject::parentSet() const {
 	return parent;
 }
 
-DataProperty::DataProperty(DataCollection *parent_collection, string s_name, string s_title, string s_description) {
+DataProperty::DataProperty(DataSet *parent_set, string s_name, string s_title, string s_description) {
 	if(!s_name.empty()) names.push_back(s_name);
 	stitle = s_title;
 	sdescr = s_description;
-	parent = parent_collection;
+	parent = parent_set;
 	m_unit = NULL;
 	ptype = PROPERTY_EXPRESSION;
 	b_key = false; b_case = false; b_hide = false; b_brackets = false; b_approximate = false;
@@ -246,39 +246,39 @@ bool DataProperty::isApproximate() const {return b_approximate;}
 void DataProperty::setPropertyType(PropertyType property_type) {ptype = property_type;}
 PropertyType DataProperty::propertyType() const {return ptype;}
 
-DataCollection *DataProperty::parentCollection() const {
+DataSet *DataProperty::parentSet() const {
 	return parent;
 }
 
-DataCollection::DataCollection(string s_category, string s_name, string s_default_file, string s_title, string s_description) : Function(s_name, 1, 2, s_category, s_title, s_description) {
+DataSet::DataSet(string s_category, string s_name, string s_default_file, string s_title, string s_description) : Function(s_name, 1, 2, s_category, s_title, s_description) {
 	sfile = s_default_file;
 	b_loaded = false;
 	setArgumentDefinition(1, new DataObjectArgument(this, _("Object")));
 	setArgumentDefinition(2, new DataPropertyArgument(this, _("Property")));
 	setDefaultValue(2, _("info"));
 }
-DataCollection::DataCollection(const DataCollection *o) {
+DataSet::DataSet(const DataSet *o) {
 	b_loaded = false;
 	set(o);
 }
 	
-ExpressionItem *DataCollection::copy() const {return new DataCollection(this);}
-void DataCollection::set(const ExpressionItem *item) {
-	if(item->type() == TYPE_FUNCTION && item->subtype() == SUBTYPE_DATA_COLLECTION) {
-		DataCollection *dc = (DataCollection*) item;
+ExpressionItem *DataSet::copy() const {return new DataSet(this);}
+void DataSet::set(const ExpressionItem *item) {
+	if(item->type() == TYPE_FUNCTION && item->subtype() == SUBTYPE_DATA_SET) {
+		DataSet *dc = (DataSet*) item;
 		sfile = dc->defaultDataFile();
 		scopyright = dc->copyright();
 	}
 	Function::set(item);
 }
-int DataCollection::subtype() const {
-	return SUBTYPE_DATA_COLLECTION;
+int DataSet::subtype() const {
+	return SUBTYPE_DATA_SET;
 }
 	
-int DataCollection::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int DataSet::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	DataObject *o = getObject(vargs[0]);
 	if(!o) {
-		CALCULATOR->error(true, _("Object %s not available in data collection."), vargs[0].symbol().c_str(), NULL);
+		CALCULATOR->error(true, _("Object %s not available in data set."), vargs[0].symbol().c_str(), NULL);
 		return 0;
 	}
 	if(equalsIgnoreCase(vargs[1].symbol(), string("info")) || equalsIgnoreCase(vargs[1].symbol(), string(_("info")))) {
@@ -288,7 +288,7 @@ int DataCollection::calculate(MathStructure &mstruct, const MathStructure &vargs
 	}
 	DataProperty *dp = getProperty(vargs[1].symbol());
 	if(!dp) {
-		CALCULATOR->error(true, _("Property %s not available in data collection."), vargs[1].symbol().c_str(), NULL);
+		CALCULATOR->error(true, _("Property %s not available in data set."), vargs[1].symbol().c_str(), NULL);
 		return 0;
 	}
 	const MathStructure *pmstruct = o->getPropertyStruct(dp);
@@ -300,27 +300,27 @@ int DataCollection::calculate(MathStructure &mstruct, const MathStructure &vargs
 	return 1;
 }
 
-void DataCollection::setDefaultProperty(string property) {
+void DataSet::setDefaultProperty(string property) {
 	setDefaultValue(2, property);
 }
-const string &DataCollection::defaultProperty() const {
+const string &DataSet::defaultProperty() const {
 	return getDefaultValue(2);
 }
 
-void DataCollection::setCopyright(string s_copyright) {
+void DataSet::setCopyright(string s_copyright) {
 	scopyright = s_copyright;
 }
-const string &DataCollection::copyright() const {
+const string &DataSet::copyright() const {
 	return scopyright;
 }
-void DataCollection::setDefaultDataFile(string s_file) {
+void DataSet::setDefaultDataFile(string s_file) {
 	sfile = s_file;
 }
-const string &DataCollection::defaultDataFile() const {
+const string &DataSet::defaultDataFile() const {
 	return sfile;
 }
 	
-bool DataCollection::loadObjects(const char *file_name) {
+bool DataSet::loadObjects(const char *file_name) {
 	string filename;
 	if(file_name) {
 		filename = file_name;
@@ -518,51 +518,51 @@ bool DataCollection::loadObjects(const char *file_name) {
 	}
 	return true;
 }
-bool DataCollection::objectsLoaded() const {
+bool DataSet::objectsLoaded() const {
 	return b_loaded || sfile.empty();
 }
 	
-void DataCollection::addProperty(DataProperty *dp) {
+void DataSet::addProperty(DataProperty *dp) {
 	properties.push_back(dp);
 }
-DataProperty *DataCollection::getPrimaryKeyProperty() {
+DataProperty *DataSet::getPrimaryKeyProperty() {
 	for(unsigned int i = 0; i < properties.size(); i++) {
 		if(properties[i]->isKey()) return properties[i];
 	}
 	return NULL;
 }
-DataProperty *DataCollection::getProperty(string property) {
+DataProperty *DataSet::getProperty(string property) {
 	if(property.empty()) return NULL;
 	for(unsigned int i = 0; i < properties.size(); i++) {
 		if(properties[i]->hasName(property)) return properties[i];
 	}
 	return NULL;
 }
-DataProperty *DataCollection::getFirstProperty(DataPropertyIter *it) {
+DataProperty *DataSet::getFirstProperty(DataPropertyIter *it) {
 	*it = properties.begin();
 	if(*it != properties.end()) return **it;
 	return NULL;
 }
-DataProperty *DataCollection::getNextProperty(DataPropertyIter *it) {
+DataProperty *DataSet::getNextProperty(DataPropertyIter *it) {
 	++(*it);
 	if(*it != properties.end()) return **it;
 	return NULL;
 }
-const string &DataCollection::getFirstPropertyName(DataPropertyIter *it) {
+const string &DataSet::getFirstPropertyName(DataPropertyIter *it) {
 	*it = properties.begin();
 	if(*it != properties.end()) return (**it)->getName();
 	return empty_string;
 }
-const string &DataCollection::getNextPropertyName(DataPropertyIter *it) {
+const string &DataSet::getNextPropertyName(DataPropertyIter *it) {
 	++(*it);
 	if(*it != properties.end()) return (**it)->getName();
 	return empty_string;
 }
 
-void DataCollection::addObject(DataObject *o) {
+void DataSet::addObject(DataObject *o) {
 	objects.push_back(o);
 }	
-DataObject *DataCollection::getObject(string object) {
+DataObject *DataSet::getObject(string object) {
 	if(!objectsLoaded()) loadObjects();
 	if(object.empty()) return NULL;
 	DataProperty *dp;
@@ -586,7 +586,7 @@ DataObject *DataCollection::getObject(string object) {
 	}
 	return NULL;
 }
-DataObject *DataCollection::getObject(const MathStructure &object) {
+DataObject *DataSet::getObject(const MathStructure &object) {
 	if(object.isSymbolic()) return getObject(object.symbol());
 	if(!objectsLoaded()) loadObjects();
 	DataProperty *dp;
@@ -606,18 +606,19 @@ DataObject *DataCollection::getObject(const MathStructure &object) {
 	}
 	return NULL;
 }
-DataObject *DataCollection::getFirstObject(DataObjectIter *it) {
+DataObject *DataSet::getFirstObject(DataObjectIter *it) {
+	if(!objectsLoaded()) loadObjects();
 	*it = objects.begin();
 	if(*it != objects.end()) return **it;
 	return NULL;
 }
-DataObject *DataCollection::getNextObject(DataObjectIter *it) {
+DataObject *DataSet::getNextObject(DataObjectIter *it) {
 	++(*it);
 	if(*it != objects.end()) return **it;
 	return NULL;
 }
 	
-const MathStructure *DataCollection::getObjectProperyStruct(string property, string object) {
+const MathStructure *DataSet::getObjectProperyStruct(string property, string object) {
 	DataObject *o = getObject(object);
 	DataProperty *dp = getProperty(property);
 	if(o && dp) {
@@ -625,7 +626,7 @@ const MathStructure *DataCollection::getObjectProperyStruct(string property, str
 	}
 	return NULL;
 }
-const string &DataCollection::getObjectProperty(string property, string object) {
+const string &DataSet::getObjectProperty(string property, string object) {
 	DataObject *o = getObject(object);
 	DataProperty *dp = getProperty(property);
 	if(o && dp) {
@@ -633,7 +634,7 @@ const string &DataCollection::getObjectProperty(string property, string object) 
 	}
 	return empty_string;
 }
-string DataCollection::getObjectPropertyInputString(string property, string object) {
+string DataSet::getObjectPropertyInputString(string property, string object) {
 	DataObject *o = getObject(object);
 	DataProperty *dp = getProperty(property);
 	if(o && dp) {
@@ -641,7 +642,7 @@ string DataCollection::getObjectPropertyInputString(string property, string obje
 	}
 	return empty_string;
 }
-string DataCollection::getObjectPropertyDisplayString(string property, string object) {
+string DataSet::getObjectPropertyDisplayString(string property, string object) {
 	DataObject *o = getObject(object);
 	DataProperty *dp = getProperty(property);
 	if(o && dp) {
@@ -650,10 +651,10 @@ string DataCollection::getObjectPropertyDisplayString(string property, string ob
 	return empty_string;
 }
 	
-string DataCollection::printProperties(string object) {
+string DataSet::printProperties(string object) {
 	return printProperties(getObject(object));
 }
-string DataCollection::printProperties(DataObject *o) {
+string DataSet::printProperties(DataObject *o) {
 	if(o) {
 		string str, stmp;
 		unsigned int l, lmax = 0;
@@ -695,11 +696,11 @@ string DataCollection::printProperties(DataObject *o) {
 	return empty_string;
 }
 
-DataPropertyArgument::DataPropertyArgument(DataCollection *data_collection, string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
+DataPropertyArgument::DataPropertyArgument(DataSet *data_set, string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
 	b_text = true;
-	o_data = data_collection;
+	o_data = data_set;
 }
-DataPropertyArgument::DataPropertyArgument(const DataPropertyArgument *arg) {set(arg); b_text = true; o_data = arg->dataCollection();}
+DataPropertyArgument::DataPropertyArgument(const DataPropertyArgument *arg) {set(arg); b_text = true; o_data = arg->dataSet();}
 DataPropertyArgument::~DataPropertyArgument() {}
 bool DataPropertyArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
 	if(!value.isSymbolic()) {
@@ -721,31 +722,40 @@ string DataPropertyArgument::subprintlong() const {
 	if(!o) {
 		str += _("no properties available");
 	} else {
-		bool had_nonhidden = false;
+		string stmp;
+		unsigned int l_last = 0;
 		while(true) {
-			if(had_nonhidden && !o->isHidden()) str += ", ";
 			if(!o->isHidden()) {
-				str += o->getName();
-				had_nonhidden = true;
+				if(!stmp.empty()) {
+					stmp += ", ";
+					l_last = stmp.length();
+				}
+				stmp += o->getName();
 			}
 			o = o_data->getNextProperty(&it);
 			if(!o) break;
 		}
-		if(!had_nonhidden) {
+		if(stmp.empty()) {
 			str += _("no properties available");
+		} else {
+			if(l_last > 0) {
+				stmp.insert(l_last, " ");
+				stmp.insert(l_last, _("or"));
+			}
+			str += stmp;
 		}
 	}
 	str += ")";
 	return str;
 }
-DataCollection *DataPropertyArgument::dataCollection() const {return o_data;}
-void DataPropertyArgument::setDataCollection(DataCollection *data_collection) {o_data = data_collection;}
+DataSet *DataPropertyArgument::dataSet() const {return o_data;}
+void DataPropertyArgument::setDataSet(DataSet *data_set) {o_data = data_set;}
 
-DataObjectArgument::DataObjectArgument(DataCollection *data_collection, string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
+DataObjectArgument::DataObjectArgument(DataSet *data_set, string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
 	b_text = true;
-	o_data = data_collection;
+	o_data = data_set;
 }
-DataObjectArgument::DataObjectArgument(const DataObjectArgument *arg) {set(arg); b_text = true; o_data = arg->dataCollection();}
+DataObjectArgument::DataObjectArgument(const DataObjectArgument *arg) {set(arg); b_text = true; o_data = arg->dataSet();}
 DataObjectArgument::~DataObjectArgument() {}
 bool DataObjectArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
 	if(value.isSymbolic()) return true;
@@ -760,7 +770,7 @@ bool DataObjectArgument::subtest(MathStructure &value, const EvaluationOptions &
 		}
 		dp = o_data->getNextProperty(&it);
 	}
-	CALCULATOR->error(true, _("Data collection \"%s\" has no object key that supports the provided argument type."), o_data->title().c_str(), NULL);
+	CALCULATOR->error(true, _("Data set \"%s\" has no object key that supports the provided argument type."), o_data->title().c_str(), NULL);
 	return false;
 }
 int DataObjectArgument::type() const {return ARGUMENT_TYPE_DATA_OBJECT;}
@@ -771,8 +781,39 @@ string DataObjectArgument::subprintlong() const {
 	str += "\"";
 	str += o_data->title();
 	str += "\"";
+	DataPropertyIter it;
+	DataProperty *o = NULL;
+	if(o_data) {
+		o = o_data->getFirstProperty(&it);
+	}
+	if(o) {
+		string stmp;
+		unsigned int l_last = 0;
+		while(true) {
+			if(o->isKey()) {
+				if(!stmp.empty()) {
+					stmp += ", ";
+					l_last = stmp.length();
+				}
+				stmp += o->getName();
+			}
+			o = o_data->getNextProperty(&it);
+			if(!o) break;
+		}
+		if(!stmp.empty()) {
+			if(l_last > 0) {
+				stmp.insert(l_last, " ");
+				stmp.insert(l_last, _("or"));
+			}
+			str += " (";
+			str += _("use");
+			str += " ";
+			str += stmp;
+			str += ")";
+		}
+	}
 	return str;
 }
-DataCollection *DataObjectArgument::dataCollection() const {return o_data;}
-void DataObjectArgument::setDataCollection(DataCollection *data_collection) {o_data = data_collection;}
+DataSet *DataObjectArgument::dataSet() const {return o_data;}
+void DataObjectArgument::setDataSet(DataSet *data_set) {o_data = data_set;}
 

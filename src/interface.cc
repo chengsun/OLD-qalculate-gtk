@@ -31,7 +31,7 @@
 #include "qalculate.h"
 #include "data/icon.xpm"
 
-extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *nbexpression_glade, *decimals_glade;
+extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *datasets_glade, *nbexpression_glade, *decimals_glade;
 extern GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *namesedit_glade, *nbases_glade, *plot_glade, *precision_glade;
 extern GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
 extern GladeXML *periodictable_glade;
@@ -50,6 +50,11 @@ GtkWidget *tUnitCategories;
 GtkWidget *tUnits;
 GtkListStore *tUnits_store;
 GtkTreeStore *tUnitCategories_store;
+
+GtkWidget *tDatasets;
+GtkWidget *tDataObjects;
+GtkListStore *tDatasets_store;
+GtkListStore *tDataObjects_store;
 
 GtkWidget *tNames;
 GtkListStore *tNames_store;
@@ -595,6 +600,67 @@ get_units_dialog (void)
 	
 	return glade_xml_get_widget (units_glade, "units_dialog");
 }
+
+GtkWidget*
+get_datasets_dialog (void)
+{
+
+	if(!datasets_glade) {
+	
+		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "datasets.glade", NULL);
+		datasets_glade = glade_xml_new(gstr, NULL, NULL);
+		g_assert(datasets_glade != NULL);
+		g_free(gstr);
+	
+		g_assert (glade_xml_get_widget (datasets_glade, "datasets_dialog") != NULL);
+	
+		tDatasets = glade_xml_get_widget (datasets_glade, "datasets_treeview_datasets");
+		tDataObjects = glade_xml_get_widget (datasets_glade, "datasets_treeview_objects");
+
+		tDataObjects_store = gtk_list_store_new(4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+		gtk_tree_view_set_model(GTK_TREE_VIEW(tDataObjects), GTK_TREE_MODEL(tDataObjects_store));
+		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tDataObjects));
+		gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes("Key 1", renderer, "text", 0, NULL);
+		gtk_tree_view_column_set_sort_column_id(column, 0);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(tDataObjects), column);
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes("Key 2", renderer, "text", 1, NULL);
+		gtk_tree_view_column_set_sort_column_id(column, 1);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(tDataObjects), column);
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes("Key 3", renderer, "text", 2, NULL);
+		gtk_tree_view_column_set_sort_column_id(column, 2);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(tDataObjects), column);
+		g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tDataObjects_selection_changed), NULL);
+		gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(tDataObjects_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
+		gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(tDataObjects_store), 0, GTK_SORT_ASCENDING);
+
+		tDatasets_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
+		gtk_tree_view_set_model(GTK_TREE_VIEW(tDatasets), GTK_TREE_MODEL(tDatasets_store));
+		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tDatasets));
+		gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes(_("Data Set"), renderer, "text", 0, NULL);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(tDatasets), column);
+		g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tDatasets_selection_changed), NULL);
+		gtk_tree_view_column_set_sort_column_id(column, 0);
+		gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(tDatasets_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
+		gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(tDatasets_store), 0, GTK_SORT_ASCENDING);
+
+		GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (datasets_glade, "datasets_textview_description")));
+		gtk_text_buffer_create_tag(buffer, "bold", "weight", PANGO_WEIGHT_BOLD, NULL);
+		gtk_text_buffer_create_tag(buffer, "italic", "style", PANGO_STYLE_ITALIC, NULL);
+
+		glade_xml_signal_autoconnect(datasets_glade);
+
+		update_datasets_tree();
+	}
+
+	return glade_xml_get_widget (datasets_glade, "datasets_dialog");
+}
+
 
 GtkWidget*
 get_preferences_dialog (void)
@@ -1177,7 +1243,7 @@ GtkWidget* get_periodic_dialog (void) {
 		
 		glade_xml_signal_autoconnect(periodictable_glade);
 		
-		DataCollection *dc = CALCULATOR->getDataCollection("atom");
+		DataSet *dc = CALCULATOR->getDataSet("atom");
 		if(!dc) {
 			return glade_xml_get_widget (periodictable_glade, "periodic_dialog");
 		}

@@ -9,7 +9,7 @@ noinst_LTLIBRARIES = libcalculate.la
 libcalculate_la_SOURCES = \
 	Function.cc	Function.h \
 	Calculator.cc	Calculator.h \
-	DataCollection.cc	DataCollection.h \
+	DataSet.cc	DataSet.h \
 	Variable.cc	Variable.h \
 	ExpressionItem.cc	ExpressionItem.h \
 	Number.cc	Number.h \

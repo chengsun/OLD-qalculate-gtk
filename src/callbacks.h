@@ -47,14 +47,19 @@ gboolean on_display_errors_timeout(gpointer data);
 void update_functions_tree();
 void update_variables_tree();
 void update_units_tree();
+void update_datasets_tree();
 void on_tFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tFunctionCategories_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tVariables_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tVariableCategories_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
+void on_tDataObjects_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
+void on_tDatasets_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 
 void execute_expression(bool force = true);
+
+void insert_text(const gchar *name);
 
 void recreate_recent_functions();
 void recreate_recent_variables();
@@ -203,6 +208,7 @@ void on_button_ln_clicked(GtkButton *w, gpointer user_data);
 void on_menu_item_manage_variables_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_manage_functions_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_manage_units_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_datasets_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_import_csv_file_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_export_csv_file_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_convert_to_unit_expression_activate(GtkMenuItem *w, gpointer user_data);
@@ -328,6 +334,7 @@ void on_functions_button_edit_clicked(GtkButton *button, gpointer user_data);
 void on_functions_button_insert_clicked(GtkButton *button, gpointer user_data);
 void on_functions_button_delete_clicked(GtkButton *button, gpointer user_data);
 void on_functions_button_close_clicked(GtkButton *button, gpointer user_data);
+void on_datasets_button_close_clicked(GtkButton *button, gpointer user_data);
 void on_function_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 void on_variable_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 void on_unknown_edit_checkbutton_custom_assumptions_toggled(GtkToggleButton *w, gpointer user_data);

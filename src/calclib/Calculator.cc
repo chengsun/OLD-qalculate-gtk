@@ -16,7 +16,7 @@
 #include "Unit.h"
 #include "Variable.h"
 #include "Function.h"
-#include "DataCollection.h"
+#include "DataSet.h"
 #include "ExpressionItem.h"
 #include "Prefix.h"
 #include "Number.h"
@@ -2021,22 +2021,22 @@ Function* Calculator::addFunction(Function *f, bool force) {
 	f->setChanged(false);
 	return f;
 }
-DataCollection* Calculator::addDataCollection(DataCollection *dc, bool force) {
+DataSet* Calculator::addDataSet(DataSet *dc, bool force) {
 	addFunction(dc, force);
-	data_collections.push_back(dc);
+	data_sets.push_back(dc);
 	return dc;
 }
-DataCollection* Calculator::getDataCollection(unsigned int index) {
-	if(index > 0 && index <= data_collections.size()) {
-		return data_collections[index - 1];
+DataSet* Calculator::getDataSet(unsigned int index) {
+	if(index > 0 && index <= data_sets.size()) {
+		return data_sets[index - 1];
 	}
 	return 0;
 }
-DataCollection* Calculator::getDataCollection(string name) {
+DataSet* Calculator::getDataSet(string name) {
 	if(name.empty()) return NULL;
-	for(unsigned int i = 0; i < data_collections.size(); i++) {
-		if(data_collections[i]->hasName(name)) {
-			return data_collections[i];
+	for(unsigned int i = 0; i < data_sets.size(); i++) {
+		if(data_sets[i]->hasName(name)) {
+			return data_sets[i];
 		}
 	}
 	return NULL;
@@ -3290,7 +3290,7 @@ bool Calculator::loadGlobalDefinitions() {
 		return false;
 	}
 	filename = dir;
-	filename += "datacollections.xml";	
+	filename += "datasets.xml";	
 	if(!loadDefinitions(filename.c_str(), false)) {
 		return false;
 	}
@@ -3627,7 +3627,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 	CompositeUnit *cu;
 	Prefix *p;
 	Argument *arg;
-	DataCollection *dc;
+	DataSet *dc;
 	DataProperty *dp;
 	int itmp;
 	string rad_str = "rad";
@@ -3845,9 +3845,9 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				ITEM_SET_DTH
 				f->setChanged(false);
 				addFunction(f);
-			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "data_collection")) {
+			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "dataset")) {
 				XML_GET_FALSE_FROM_PROP(cur, "active", active)
-				dc = new DataCollection(category, "", "", "", "");
+				dc = new DataSet(category, "", "", "", "");
 				item = dc;
 				done_something = true;
 				child = cur->xmlChildrenNode;
@@ -3975,8 +3975,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						}
 						itmp = 1;
 						XML_GET_INT_FROM_PROP(child, "index", itmp);
-						if(f->getArgumentDefinition(itmp)) {
-							f->getArgumentDefinition(itmp)->setName(argname);
+						if(dc->getArgumentDefinition(itmp)) {
+							dc->getArgumentDefinition(itmp)->setName(argname);
 						}
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "object_argument")) {
 						child2 = child->xmlChildrenNode;
@@ -3988,8 +3988,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							child2 = child2->next;
 						}
 						itmp = 1;
-						if(f->getArgumentDefinition(itmp)) {
-							f->getArgumentDefinition(itmp)->setName(argname);
+						if(dc->getArgumentDefinition(itmp)) {
+							dc->getArgumentDefinition(itmp)->setName(argname);
 						}
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "property_argument")) {
 						child2 = child->xmlChildrenNode;
@@ -4001,8 +4001,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							child2 = child2->next;
 						}
 						itmp = 2;
-						if(f->getArgumentDefinition(itmp)) {
-							f->getArgumentDefinition(itmp)->setName(argname);
+						if(dc->getArgumentDefinition(itmp)) {
+							dc->getArgumentDefinition(itmp)->setName(argname);
 						}
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "default_property")) {
 						XML_DO_FROM_TEXT(child, dc->setDefaultProperty)
@@ -4018,7 +4018,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				ITEM_SET_NAME_3
 				ITEM_SET_DTH
 				dc->setChanged(false);
-				addDataCollection(dc);
+				addDataSet(dc);
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "builtin_function")) {
 				XML_GET_STRING_FROM_PROP(cur, "name", name)
 				f = getFunction(name);
