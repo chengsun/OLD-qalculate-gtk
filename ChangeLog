@@ -1,5 +1,7 @@
 2003-08-10  Niklas Knutsson  <nq@altern.org>
 
+	* Only enable prefixes in front of units
+	* Fix disable/enable variables/functions/units/unknown
 	* Found true evil in Manager::sort(). This should solve many problems. :-)
 	* Enable binary output for larger numbers
 	* Fix nested functions

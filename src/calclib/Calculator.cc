@@ -905,8 +905,6 @@ bool Calculator::unitIsUsedByOtherUnits(Unit *u) {
 	return false;
 }
 void Calculator::setFunctionsAndVariables(string &str) {
-	if(!b_variables)
-		return;
 	int i = -1, i3 = 0, i4, i5, i6, i7, i8, i9;
 	bool b;
 	Variable *v;
@@ -1058,7 +1056,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 					break;
 				}
 			}
-		} else if(ufv_t[i2] == 'p' || ufv_t[i2] == 'P') {
+		} else if(b_units && (ufv_t[i2] == 'p' || ufv_t[i2] == 'P')) {
 			ch = (char*) ufv[i2];
 			while(1) {
 				if((i = str.find(ch, i3)) != (int) string::npos) {
@@ -1101,6 +1099,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 							}
 						}
 					}
+					if(!b)
 					if(ufv_t[i2] == 'p') {
 						if(!b || i == str.length() - 1 || is_not_in(*ch, BRACKETS_S, OPERATORS_S, NULL)) {
 							stmp = LEFT_BRACKET_STR;
@@ -1114,7 +1113,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 							if(!b) str.replace(i, 1 + i7, stmp);
 							else str.replace(i, 1, stmp);
 						} else {
-							stmp += ch;
+							//stmp += ch;
 							i3 = i + 1;
 						}
 					} else {
@@ -1129,6 +1128,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						if(!b) str.replace(i, strlen(ch) + i7, stmp);
 						else str.replace(i, strlen(ch), stmp);						
 					}
+					else i3 = i + 1;
 				} else {
 					break;
 				}
