@@ -2,6 +2,7 @@
 
 	* defs2doc program for generation of definition list in help
 	* Make help book and add appendix for lists of functions, variables and units
+	* Fix broken CVS
 
 2004-10-09 Niklas Knutsson  <nq@altern.org>
 
