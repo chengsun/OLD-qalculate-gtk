@@ -1629,7 +1629,7 @@ LoadFunction::LoadFunction() : Function("Utilities", "load", 1, "Load CSV file",
 #endif
 void LoadFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[2]->text() == "tab") {
-		vargs[2]->text() = "\t";
+		vargs[2]->set("\t");
 	}
 	Matrix *mtrx = CALCULATOR->importCSV(vargs[0]->text().c_str(), vargs[1]->fraction()->numerator()->getInt(), vargs[2]->text());
 	if(!mtrx) {

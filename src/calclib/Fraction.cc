@@ -919,7 +919,6 @@ bool Fraction::log(Fraction *fr, bool tryexact) {
 		return false;
 	}
 #ifdef HAVE_LIBCLN
-	cl_RA clfr = num.getCL_I() / den.getCL_I();
 	cl_RA clbase = fr->numerator()->getCL_I() / fr->denominator()->getCL_I();	
 	if(tryexact) {		
 		if(!isComplex() && !fr->isComplex()) {
@@ -931,6 +930,7 @@ bool Fraction::log(Fraction *fr, bool tryexact) {
 				den.set(&num);
 				num.set(&den_save);
 			}
+			cl_RA clfr = num.getCL_I() / den.getCL_I();
 			cl_RA clns;
 			if(logp(clfr, clbase, &clns)) {
 				num.set(cln::numerator(clns));
@@ -947,8 +947,26 @@ bool Fraction::log(Fraction *fr, bool tryexact) {
 			}
 		}
 		if(CALCULATOR->alwaysExact()) return false;
-		b_exact = false;
+	} else {
+		bool b_minus = false;
+		if(den.isGreaterThan(&num)) {
+			b_minus = true;
+			Integer den_save(&den);
+			den.set(&num);
+			num.set(&den_save);
+		}
+		cl_RA clfr = num.getCL_I() / den.getCL_I();
+		cl_R clns = cln::log(clfr, clbase);
+		clfr = cln::rational(clns);
+		num.set(cln::numerator(clfr));
+		den.set(cln::denominator(clfr));	
+		if(b_minus) {
+			num.setNegative(true);
+		}
+		return true;
 	}
+	b_exact = false;		
+	cl_RA clfr = num.getCL_I() / den.getCL_I();
 	cl_RA clfr_i = complex_num.getCL_I() / complex_den.getCL_I();
 	cl_N clc1 = cln::complex(clfr, clfr_i);	
 	clfr = fr->numerator()->getCL_I() / fr->denominator()->getCL_I();
@@ -1657,23 +1675,25 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 	Integer exp;
 	if(nrformat != NUMBER_FORMAT_DECIMALS && !isZero()) {
 		if((!(displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY))) {
-			Fraction exp_pre(this);
-			exp_pre.setNegative(false);
-			bool b_always_exact = CALCULATOR->alwaysExact();
-			CALCULATOR->setAlwaysExact(false);	
-/*			exp_pre.floor();
-			Integer expdiv(exp_pre.numerator());
-			expdiv.div10();
-			while(!expdiv.isZero()) {
-				exp.add(1);
+			if(!isZero()) {
+				Fraction exp_pre(this);
+				exp_pre.setNegative(false);
+				bool b_always_exact = CALCULATOR->alwaysExact();
+				CALCULATOR->setAlwaysExact(false);	
+/*				exp_pre.floor();
+				Integer expdiv(exp_pre.numerator());
 				expdiv.div10();
-			}*/
-			Fraction fr10(10);
-			if(exp_pre.log(&fr10, false)) {
-				exp_pre.floor();
-				exp.set(exp_pre.numerator());
+				while(!expdiv.isZero()) {
+					exp.add(1);
+					expdiv.div10();
+				}*/
+				Fraction fr10(10);
+				if(exp_pre.log(&fr10, false)) {
+					exp_pre.floor();
+					exp.set(exp_pre.numerator());
+				}
+				CALCULATOR->setAlwaysExact(b_always_exact);
 			}
-			CALCULATOR->setAlwaysExact(b_always_exact);	
 		} else {
 			if(num.mod10()) {
 				Integer num_test(&num);				

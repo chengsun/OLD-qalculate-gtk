@@ -8,7 +8,6 @@
 * Fix dates
 * Check if unit is used on delete
 * Replace pointers to unit when unit type has changed (a different object must be created)
-* Direct reference to a CSV file (function)
 * Export to CSV file
 * Sort out percentile and provide alternative methods
 * Ask for exchange rate update on demand

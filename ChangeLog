@@ -1,3 +1,9 @@
+2004-03-03  Niklas Knutsson  <nq@altern.org>
+
+	* Fix exponential display in non-fractional mode with negative exponents
+	* Fix big mistake in log (if negative exact result, returned zero)
+	* Use "tab" for tab ("\t") a separator in load
+
 2004-03-01  Niklas Knutsson  <nq@altern.org>
 
 	* Load CSV file as matrix function (load)
