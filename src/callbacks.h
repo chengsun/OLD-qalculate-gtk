@@ -111,6 +111,7 @@ void on_preferences_checkbutton_short_units_toggled(GtkToggleButton *w, gpointer
 void on_preferences_checkbutton_all_prefixes_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_multiple_roots_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpointer user_data);
+void on_preferences_checkbutton_fetch_exchange_rates_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_save_defs_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_save_mode_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_load_defs_toggled(GtkToggleButton *w, gpointer user_data);
@@ -169,6 +170,7 @@ void on_button_sqrt_clicked(GtkButton *w, gpointer user_data);
 void on_button_log_clicked(GtkButton *w, gpointer user_data);
 void on_button_ln_clicked(GtkButton *w, gpointer user_data);
 void on_menu_item_rpn_mode_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_fetch_exchange_rates_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_save_defs_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_save_mode_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_edit_prefs_activate(GtkMenuItem *w, gpointer user_data);

@@ -34,7 +34,7 @@ string result_text;
 GtkWidget *units_window;
 string selected_unit_category;
 Unit *selected_unit, *selected_to_unit;
-bool load_global_defs;
+bool load_global_defs, fetch_exchange_rates_at_startup, first_time;
 GtkWidget *omToUnit_menu;
 GladeXML *glade_xml;
 GdkPixmap *pixmap_result;
@@ -76,6 +76,11 @@ int main (int argc, char **argv) {
 
 	mngr = new Manager();
 
+	if(fetch_exchange_rates_at_startup) {
+		CALCULATOR->fetchExchangeRates();
+	}
+	CALCULATOR->loadExchangeRates();
+
 	//load global definitions
 	if(load_global_defs && !CALCULATOR->loadGlobalDefinitions()) {
 		g_print(_("Failed to load global definitions!\n"));
@@ -88,12 +93,12 @@ int main (int argc, char **argv) {
 	vans = CALCULATOR->getVariable(_("ans"));
 	vAns = CALCULATOR->getVariable(_("Ans"));
 	if(!vans) {
-		vans = CALCULATOR->addVariable(new Variable(_("Utility"), _("ans"), mngr, _("Answer"), false));
+		vans = CALCULATOR->addVariable(new Variable(_("Temporary"), _("ans"), mngr, _("Answer"), false));
 	} else {
 		vans->set(mngr);
 	}
 	if(!vAns) {
-		vAns = CALCULATOR->addVariable(new Variable(_("Utility"), _("Ans"), mngr, _("Answer"), false));
+		vAns = CALCULATOR->addVariable(new Variable(_("Temporary"), _("Ans"), mngr, _("Answer"), false));
 	} else {
 		vAns->set(mngr);
 	}	

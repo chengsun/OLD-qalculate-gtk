@@ -37,6 +37,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <wait.h>
 #include <queue>
 #include <stack>
 
@@ -453,7 +454,8 @@ void Calculator::prefixNameChanged(Prefix *p) {
 				ufv.push_back((void*) p);
 				ufv_t.push_back('P');
 				break;
-			} else if(l < p->longName(false).length() || (l == p->longName(false).length() && ufv_t[i] != 'u' && ufv_t[i] != 'U' && ufv_t[i] != 'Y')) {
+//			} else if(l < p->longName(false).length() || (l == p->longName(false).length() && ufv_t[i] != 'u' && ufv_t[i] != 'U' && ufv_t[i] != 'Y')) {
+			} else if(l <= p->longName(false).length()) {			
 				ufv.insert(it, (void*) p);
 				ufv_t.insert(ufv_t.begin() + i, 'P');
 				break;
@@ -485,7 +487,8 @@ void Calculator::prefixNameChanged(Prefix *p) {
 				ufv.push_back((void*) p);
 				ufv_t.push_back('p');
 				break;
-			} else if(l < p->shortName(false).length() || (l == p->shortName(false).length() && ufv_t[i] != 'u' && ufv_t[i] != 'U' && ufv_t[i] != 'Y')) {
+//			} else if(l < p->shortName(false).length() || (l == p->shortName(false).length() && ufv_t[i] != 'u' && ufv_t[i] != 'U' && ufv_t[i] != 'Y')) {
+			} else if(l <= p->shortName(false).length()) {
 				ufv.insert(it, (void*) p);
 				ufv_t.insert(ufv_t.begin() + i, 'p');
 				break;
@@ -714,6 +717,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new LengthFunction());
 }
 void Calculator::addBuiltinUnits() {
+	addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true));
 }
 void Calculator::error(bool critical, const char *TEMPLATE, ...) {
 	if(disable_errors_ref) return;
@@ -729,7 +733,9 @@ void Calculator::error(bool critical, const char *TEMPLATE, ...) {
 		error_str.replace(i, 2, str);
 	}
 	va_end(ap);
-	errors.push(new Error(error_str, critical));
+	if(errors.size() == 0 || error_str != errors.top()->message()) {
+		errors.push(new Error(error_str, critical));
+	}
 }
 Error* Calculator::error() {
 	if(!errors.empty()) {
@@ -1300,7 +1306,7 @@ void Calculator::unitNameChanged(Unit *u) {
 			ufv.push_back((void*) u);
 			ufv_t.push_back('U');
 			break;
-		} else if(l <= u->name().length()) {
+		} else if(l < u->name().length() || (l == u->name().length() && ufv_t[i] != 'p' && ufv_t[i] != 'P')) {
 			ufv.insert(it, (void*) u);
 			ufv_t.insert(ufv_t.begin() + i, 'U');
 			break;
@@ -1331,7 +1337,7 @@ void Calculator::unitNameChanged(Unit *u) {
 				ufv.push_back((void*) u);
 				ufv_t.push_back('Y');
 				break;
-			} else if(l <= u->plural(false).length()) {
+			} else if(l < u->plural(false).length() || (l == u->plural(false).length() && ufv_t[i] != 'p' && ufv_t[i] != 'P')) {
 				ufv.insert(it, (void*) u);
 				ufv_t.insert(ufv_t.begin() + i, 'Y');
 				break;
@@ -1363,7 +1369,7 @@ void Calculator::unitNameChanged(Unit *u) {
 				ufv.push_back((void*) u);
 				ufv_t.push_back('u');
 				break;
-			} else if(l <= u->singular(false).length()) {
+			} else if(l < u->singular(false).length() || (l == u->singular(false).length() && ufv_t[i] != 'p' && ufv_t[i] != 'P')) {
 				ufv.insert(it, (void*) u);
 				ufv_t.insert(ufv_t.begin() + i, 'u');
 				break;
@@ -2506,14 +2512,32 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					child = cur->xmlChildrenNode;
 					title = ""; best_title = false; next_best_title = false;
 					description = ""; best_description = false; next_best_description = false;
+					singular = ""; best_singular = false; next_best_singular = false;
+					plural = ""; best_plural = false; next_best_plural = false;
 					while(child != NULL) {
 						if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "singular")) {	
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular);
+							if(!unitNameIsValid(singular)) {
+								singular = "";
+							}
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "plural")) {	
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, plural, best_plural, next_best_plural);
+							if(!unitNameIsValid(plural)) {
+								plural = "";
+							}
 						}
 						child = child->next;
-					}		
+					}	
+					if(!singular.empty()) {
+						u->setSingular(singular);
+					}
+					if(!plural.empty()) {
+						u->setPlural(plural);
+					}	
 					u->setCategory(category);
 					u->setDescription(description);
 					u->setTitle(title);		
@@ -2813,57 +2837,78 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 					xmlNewTextChild(cur, NULL, (xmlChar*) "deactivate", (xmlChar*) units[i]->referenceName().c_str());
 				}
 			} else if(save_global || units[i]->isLocal()) {
-				newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "unit", NULL);
-				switch(units[i]->unitType()) {
-					case BASE_UNIT: {
-						xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "base");
-						break;
-					}
-					case ALIAS_UNIT: {
-						au = (AliasUnit*) units[i];
-						xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "alias");
-						break;
-					}
-					case COMPOSITE_UNIT: {
-						cu = (CompositeUnit*) units[i];
-						xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "composite");
-						break;
-					}
-				}		
-				if(units[i]->unitType() == COMPOSITE_UNIT) {
-					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) cu->referenceName().c_str());
-					for(int i2 = 0; i2 < cu->units.size(); i2++) {
-						newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "part", NULL);
-						xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) cu->units[i2]->firstBaseUnit()->referenceName().c_str());
-						xmlNewTextChild(newnode2, NULL, (xmlChar*) "prefix", (xmlChar*) li2s(cu->units[i2]->prefixExponent()).c_str());
-						xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) li2s(cu->units[i2]->firstBaseExp()).c_str());
+				if(units[i]->isBuiltin()) {
+					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "builtin_unit", NULL);
+					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) units[i]->referenceName().c_str());
+					if(units[i]->unitType() != COMPOSITE_UNIT) {
+						if(!units[i]->singular(false).empty()) {
+							if(save_global) {
+								xmlNewTextChild(newnode, NULL, (xmlChar*) "_singular", (xmlChar*) units[i]->singular(false).c_str());
+							} else {
+								xmlNewTextChild(newnode, NULL, (xmlChar*) "singular", (xmlChar*) units[i]->singular(false).c_str());
+							}
+						}
+						if(!units[i]->plural(false).empty()) {
+							if(save_global) {
+								xmlNewTextChild(newnode, NULL, (xmlChar*) "_plural", (xmlChar*) units[i]->plural(false).c_str());
+							} else {
+								xmlNewTextChild(newnode, NULL, (xmlChar*) "plural", (xmlChar*) units[i]->plural(false).c_str());
+							}
+						}
 					}
 				} else {
-					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) units[i]->referenceName().c_str());
-					if(!units[i]->singular(false).empty()) {
-						if(save_global) {
-							xmlNewTextChild(newnode, NULL, (xmlChar*) "_singular", (xmlChar*) units[i]->singular(false).c_str());
-						} else {
-							xmlNewTextChild(newnode, NULL, (xmlChar*) "singular", (xmlChar*) units[i]->singular(false).c_str());
+					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "unit", NULL);
+					switch(units[i]->unitType()) {
+						case BASE_UNIT: {
+							xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "base");
+							break;
+						}
+						case ALIAS_UNIT: {
+							au = (AliasUnit*) units[i];
+							xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "alias");
+							break;
+						}
+						case COMPOSITE_UNIT: {
+							cu = (CompositeUnit*) units[i];
+							xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "composite");
+							break;
+						}
+					}		
+					if(units[i]->unitType() == COMPOSITE_UNIT) {
+						xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) cu->referenceName().c_str());
+						for(int i2 = 0; i2 < cu->units.size(); i2++) {
+							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "part", NULL);
+							xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) cu->units[i2]->firstBaseUnit()->referenceName().c_str());
+							xmlNewTextChild(newnode2, NULL, (xmlChar*) "prefix", (xmlChar*) li2s(cu->units[i2]->prefixExponent()).c_str());
+							xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) li2s(cu->units[i2]->firstBaseExp()).c_str());
+						}
+					} else {
+						xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) units[i]->referenceName().c_str());
+						if(!units[i]->singular(false).empty()) {
+							if(save_global) {
+								xmlNewTextChild(newnode, NULL, (xmlChar*) "_singular", (xmlChar*) units[i]->singular(false).c_str());
+							} else {
+								xmlNewTextChild(newnode, NULL, (xmlChar*) "singular", (xmlChar*) units[i]->singular(false).c_str());
+							}
+						}
+						if(!units[i]->plural(false).empty()) {
+							if(save_global) {
+								xmlNewTextChild(newnode, NULL, (xmlChar*) "_plural", (xmlChar*) units[i]->plural(false).c_str());
+							} else {
+								xmlNewTextChild(newnode, NULL, (xmlChar*) "plural", (xmlChar*) units[i]->plural(false).c_str());
+							}
 						}
 					}
-					if(!units[i]->plural(false).empty()) {
-						if(save_global) {
-							xmlNewTextChild(newnode, NULL, (xmlChar*) "_plural", (xmlChar*) units[i]->plural(false).c_str());
-						} else {
-							xmlNewTextChild(newnode, NULL, (xmlChar*) "plural", (xmlChar*) units[i]->plural(false).c_str());
+					if(units[i]->unitType() == ALIAS_UNIT) {
+						newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "base", NULL);
+						xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) au->firstBaseUnit()->referenceName().c_str());								
+						newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "relation", (xmlChar*) au->expression().c_str());
+						if(!units[i]->isPrecise()) xmlNewProp(newnode3, (xmlChar*) "precise", (xmlChar*) "false");				
+						if(!au->reverseExpression().empty()) {
+							xmlNewTextChild(newnode2, NULL, (xmlChar*) "reverse_relation", (xmlChar*) au->reverseExpression().c_str());	
 						}
+						xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) li2s(au->firstBaseExp()).c_str());
 					}
-				}
-				if(units[i]->unitType() == ALIAS_UNIT) {
-					newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "base", NULL);
-					xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) au->firstBaseUnit()->referenceName().c_str());								
-					newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "relation", (xmlChar*) au->expression().c_str());
-					if(!units[i]->isPrecise()) xmlNewProp(newnode3, (xmlChar*) "precise", (xmlChar*) "false");				
-					if(!au->reverseExpression().empty()) {
-						xmlNewTextChild(newnode2, NULL, (xmlChar*) "reverse_relation", (xmlChar*) au->reverseExpression().c_str());	
-					}
-					xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) li2s(au->firstBaseExp()).c_str());
 				}
 				if(!units[i]->title(false).empty()) {
 					if(save_global) {
@@ -3292,5 +3337,85 @@ int Calculator::testCondition(string expression) {
 	mngr->unref();
 	return -1;
 }
-
+bool Calculator::loadExchangeRates() {
+	xmlDocPtr doc;
+	xmlNodePtr cur;
+	xmlChar *value;
+	string homedir = "", filename, currency, rate;
+	struct passwd *pw = getpwuid(getuid());
+	if(pw) {
+		homedir = pw->pw_dir;
+		homedir += "/";
+	}
+	homedir += ".qalculate/";
+	filename = homedir;
+	filename += "eurofxref-daily.xml";
+	doc = xmlParseFile(filename.c_str());
+	if(doc == NULL) {
+		fetchExchangeRates();
+		doc = xmlParseFile(filename.c_str());
+		if(doc == NULL) {
+			return false;
+		}
+	}
+	cur = xmlDocGetRootElement(doc);
+	if(cur == NULL) {
+		xmlFreeDoc(doc);
+		return false;
+	}
+	Unit *euro = getUnit("EUR");
+	if(!euro) {
+		return false;
+	}
+	while(cur) {
+		if(!xmlStrcmp(cur->name, (const xmlChar*) "Cube")) {
+			XML_GET_STRING_FROM_PROP(cur, "currency", currency);
+			if(!currency.empty()) {
+				XML_GET_STRING_FROM_PROP(cur, "rate", rate);
+				if(!rate.empty()) {
+					rate = "1/" + rate;
+					addUnit(new AliasUnit(_("Currency"), currency, "", "", "", euro, rate, 1, "", false, true));
+				}
+			}
+		}
+		if(cur->children) {
+			cur = cur->children;
+		} else if(cur->next) {
+			cur = cur->next;
+		} else {
+			cur = cur->parent;
+			if(cur) {
+				cur = cur->next;
+			}
+		}
+	}
+}
+bool Calculator::fetchExchangeRates() {
+	pid_t pid;
+	int status;
+	string homedir = "", filename_arg;
+	struct passwd *pw = getpwuid(getuid());
+	if(pw) {
+		homedir = pw->pw_dir;
+		homedir += "/";
+	}
+	homedir += ".qalculate/";
+	filename_arg =  "--output-document=";
+	filename_arg += homedir;
+	filename_arg += "eurofxref-daily.xml";	
+	
+	pid = fork();
+	if(pid == 0) {
+		execlp("wget", "--quiet", filename_arg.c_str(), "--tries=1", "http://www.ecb.int/stats/eurofxref/eurofxref-daily.xml", NULL);
+		_exit(EXIT_FAILURE);
+	} else if(pid < 0) {
+		//error
+		status = -1;
+	} else {
+		if(waitpid(pid, &status, 0) != pid) {
+			status = -1;
+		}
+	}
+	return status >= 0;
+}
 

@@ -33,6 +33,58 @@
 		<widget class="GtkMenu" id="menu_item_expression_menu">
 
 		  <child>
+		    <widget class="GtkMenuItem" id="menu_item_expression_recent">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Recently Used</property>
+		      <property name="use_underline">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="separator8">
+		      <property name="visible">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="menu_item_expression_functions">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Functions</property>
+		      <property name="use_underline">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="menu_item_expression_variables">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Variables</property>
+		      <property name="use_underline">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="menu_item_expression_units">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Units</property>
+		      <property name="use_underline">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="menu_item_expression_prefixes">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Prefixes</property>
+		      <property name="use_underline">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="separator7">
+		      <property name="visible">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
 		    <widget class="GtkMenuItem" id="menu_item_angle_unit">
 		      <property name="visible">True</property>
 		      <property name="tooltip" translatable="yes">change angle unit used in trigonometric functions</property>
@@ -79,12 +131,6 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator7">
-		      <property name="visible">True</property>
-		    </widget>
-		  </child>
-
-		  <child>
 		    <widget class="GtkCheckMenuItem" id="menu_item_rpn_mode">
 		      <property name="visible">True</property>
 		      <property name="tooltip" translatable="yes">(de)activate reverse polish notation</property>
@@ -110,7 +156,7 @@
 		      <signal name="activate" handler="on_menu_item_save_defs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image57">
+			<widget class="GtkImage" id="image107">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -131,9 +177,30 @@
 		      <signal name="activate" handler="on_menu_item_save_mode_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image58">
+			<widget class="GtkImage" id="image108">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkImageMenuItem" id="menu_item_fetch_exchange_rates">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Update exchange rates</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_menu_item_fetch_exchange_rates_activate" last_modification_time="Mon, 06 Oct 2003 21:06:00 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image109">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-refresh</property>
 			  <property name="icon_size">1</property>
 			  <property name="xalign">0.5</property>
 			  <property name="yalign">0.5</property>
@@ -152,7 +219,7 @@
 		      <signal name="activate" handler="on_menu_item_edit_prefs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image59">
+			<widget class="GtkImage" id="image110">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -179,7 +246,7 @@
 		      <signal name="activate" handler="on_menu_item_about_activate" last_modification_time="Thu, 14 Aug 2003 22:31:50 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image60">
+			<widget class="GtkImage" id="image111">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-dialog-info</property>
 			  <property name="icon_size">1</property>
@@ -200,7 +267,7 @@
 		      <signal name="activate" handler="on_menu_item_quit_activate" last_modification_time="Fri, 08 Aug 2003 10:07:30 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image61">
+			<widget class="GtkImage" id="image112">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -444,6 +511,28 @@
 		  </child>
 
 		  <child>
+		    <widget class="GtkMenuItem" id="menu_item_result_units">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Convert to unit</property>
+		      <property name="use_underline">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="menu_item_result_prefixes">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Set prefix</property>
+		      <property name="use_underline">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="separator9">
+		      <property name="visible">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
 		    <widget class="GtkImageMenuItem" id="menu_item_save">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">_Save Result</property>
@@ -451,7 +540,7 @@
 		      <signal name="activate" handler="on_menu_item_save_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image62">
+			<widget class="GtkImage" id="image113">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -485,27 +574,6 @@
 		      <property name="label" translatable="yes">_Decimals</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_decimals_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
-		    </widget>
-		  </child>
-		</widget>
-	      </child>
-	    </widget>
-	  </child>
-
-	  <child>
-	    <widget class="GtkMenuItem" id="item7">
-	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">item7</property>
-	      <property name="use_underline">True</property>
-
-	      <child>
-		<widget class="GtkMenu" id="item7_menu">
-
-		  <child>
-		    <widget class="GtkMenuItem" id="item6">
-		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">item6</property>
-		      <property name="use_underline">True</property>
 		    </widget>
 		  </child>
 		</widget>
@@ -3517,6 +3585,26 @@
 	  </child>
 
 	  <child>
+	    <widget class="GtkCheckButton" id="preferences_checkbutton_fetch_exchange_rates">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">If current exchange rates shall be downloaded from the internet at program start</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Update exchange rates on start</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_fetch_exchange_rates_toggled" last_modification_time="Mon, 06 Oct 2003 21:03:52 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
 	    <widget class="GtkCheckButton" id="preferences_checkbutton_save_mode">
 	      <property name="visible">True</property>
 	      <property name="tooltip" translatable="yes">If the mode of the calculator shall be restored</property>
@@ -3588,6 +3676,26 @@
 	      <property name="inconsistent">False</property>
 	      <property name="draw_indicator">True</property>
 	      <signal name="toggled" handler="on_preferences_checkbutton_all_prefixes_toggled" last_modification_time="Thu, 02 Oct 2003 10:43:35 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkCheckButton" id="preferences_checkbutton_multiple_roots">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Enables calculation of multiple results for even roots</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Calculate multiple roots</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">True</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_multiple_roots_toggled" last_modification_time="Mon, 06 Oct 2003 08:36:37 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
@@ -6416,9 +6524,9 @@ Copyright (c) 2003 Niklas Knutsson
 	      <property name="digits">0</property>
 	      <property name="numeric">True</property>
 	      <property name="update_policy">GTK_UPDATE_ALWAYS</property>
-	      <property name="snap_to_ticks">False</property>
+	      <property name="snap_to_ticks">True</property>
 	      <property name="wrap">False</property>
-	      <property name="adjustment">12 1 10000 1 10 10</property>
+	      <property name="adjustment">12 1 1e+06 1 10 10</property>
 	      <signal name="value_changed" handler="on_precision_dialog_spinbutton_precision_value_changed" last_modification_time="Fri, 15 Aug 2003 16:03:38 GMT"/>
 	    </widget>
 	    <packing>
@@ -6523,7 +6631,7 @@ Copyright (c) 2003 Niklas Knutsson
 		  <property name="digits">0</property>
 		  <property name="numeric">True</property>
 		  <property name="update_policy">GTK_UPDATE_ALWAYS</property>
-		  <property name="snap_to_ticks">False</property>
+		  <property name="snap_to_ticks">True</property>
 		  <property name="wrap">False</property>
 		  <property name="adjustment">0 0 100 1 10 10</property>
 		  <signal name="value_changed" handler="on_decimals_dialog_spinbutton_min_value_changed" last_modification_time="Wed, 10 Sep 2003 14:50:29 GMT"/>
@@ -6577,7 +6685,7 @@ Copyright (c) 2003 Niklas Knutsson
 		  <property name="digits">0</property>
 		  <property name="numeric">True</property>
 		  <property name="update_policy">GTK_UPDATE_ALWAYS</property>
-		  <property name="snap_to_ticks">False</property>
+		  <property name="snap_to_ticks">True</property>
 		  <property name="wrap">False</property>
 		  <property name="adjustment">2 0 100 1 10 10</property>
 		  <signal name="value_changed" handler="on_decimals_dialog_spinbutton_max_value_changed" last_modification_time="Wed, 10 Sep 2003 14:50:40 GMT"/>

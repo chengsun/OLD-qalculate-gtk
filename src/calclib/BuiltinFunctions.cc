@@ -1041,16 +1041,22 @@ SqrtFunction::SqrtFunction() : Function("Exponents and Logarithms", "sqrt", 1, "
 	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, false));
 }
 void SqrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	mngr->set(vargs[0]);
+	Manager *mngr2 = new Manager(1, 2);
+	mngr->add(mngr2, OPERATION_RAISE);	
+	mngr2->unref();
+}
+AbsSqrtFunction::AbsSqrtFunction() : Function("Exponents and Logarithms", "abssqrt", 1, "Square Root (abs)") {
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, false));
+}
+void AbsSqrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
 		if(!mngr->fraction()->sqrt()) {
 			mngr->set(this, vargs[0], NULL);
 		}
 	} else {
-		mngr->set(vargs[0]);
-		Manager *mngr2 = new Manager(1, 2);
-		mngr->add(mngr2, OPERATION_RAISE);
-		mngr2->unref();		
+		mngr->set(this, vargs[0], NULL);
 	}
 }
 CbrtFunction::CbrtFunction() : Function("Exponents and Logarithms", "cbrt", 1, "Cube Root") {
@@ -1071,6 +1077,14 @@ void CbrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 RootFunction::RootFunction() : Function("Exponents and Logarithms", "root", 2, "Nth Root") {}
 void RootFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	mngr->set(vargs[0]);
+	Manager *mngr2 = new Manager(1, 1);		
+	mngr2->add(vargs[1], OPERATION_DIVIDE);
+	mngr->add(mngr2, OPERATION_RAISE);
+	mngr2->unref();	
+}
+AbsRootFunction::AbsRootFunction() : Function("Exponents and Logarithms", "absroot", 2, "Nth Root (abs)") {}
+void AbsRootFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->isFraction() && vargs[1]->isFraction()) {
 		mngr->set(vargs[0]);
 		Fraction fr(1);
@@ -1079,20 +1093,16 @@ void RootFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 			return;
 		}		
 	} 
-	mngr->set(vargs[0]);
-	Manager *mngr2 = new Manager(1, 1);		
-	mngr2->add(vargs[1], OPERATION_DIVIDE);
-	mngr->add(mngr2, OPERATION_RAISE);
-	mngr2->unref();	
+	mngr->set(this, vargs[0], vargs[1], NULL);
 }
 PowFunction::PowFunction() : Function("Exponents and Logarithms", "pow", 2, "Power") {}
 void PowFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction() && vargs[1]->isFraction()) {
+/*	if(vargs[0]->isFraction() && vargs[1]->isFraction()) {
 		mngr->set(vargs[0]);
 		if(mngr->fraction()->pow(vargs[1]->fraction())) {
 			return;
 		}		
-	}
+	}*/
 	mngr->set(vargs[0]);
 	mngr->add(vargs[1], OPERATION_RAISE);
 }
@@ -1393,10 +1403,9 @@ SaveFunction::SaveFunction() : Function("Utilities", "save", 2, "Save as variabl
 void SaveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	CALCULATOR->addVariable(new Variable(vargs[2]->text(), vargs[1]->text(), vargs[0], vargs[3]->text()));
 }
-ConcatenateFunction::ConcatenateFunction() : Function("Utilities", "concatenate", 2, "Concatenate strings", "", -1) {
+ConcatenateFunction::ConcatenateFunction() : Function("Utilities", "concatenate", 1, "Concatenate strings", "", -1) {
 	setArgumentDefinition(1, new TextArgument());
 	setArgumentDefinition(2, new TextArgument());	
-	setArgumentDefinition(3, new TextArgument());		
 }
 void ConcatenateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	string str;

@@ -294,8 +294,8 @@ bool Function::testArguments(vector<Manager*> &vargs) {
 		}
 	}
 	if(max_argc < 0 && last > argc) {
-		for(int i = last + 1; last <= vargs.size(); i++) {
-			if(argdefs[last]->test(vargs[i - 1], i, this)) {
+		for(int i = last + 1; i <= vargs.size(); i++) {
+			if(!argdefs[last]->test(vargs[i - 1], i, this)) {
 				return false;
 			}
 		}
@@ -305,7 +305,7 @@ bool Function::testArguments(vector<Manager*> &vargs) {
 Manager *Function::calculate(vector<Manager*> &vargs, int itmp) {
 	Manager *mngr = NULL;
 	if(itmp < 0) itmp = vargs.size();
-	if(testArgumentCount(itmp) && testArguments(vargs)) {
+	if(testArgumentCount(itmp)) {
 		mngr = new Manager();
 		bool b = false;
 		for(int i = 0; i < vargs.size(); i++) {
@@ -340,8 +340,12 @@ Manager *Function::calculate(vector<Manager*> &vargs, int itmp) {
 				}
 				if(!b) break;
 				Manager *mngr2 = new Manager();
-				calculate(mngr2, vargs);
-				if(!isPrecise()) mngr2->setPrecise(false);
+				if(testArguments(vargs)) {
+					calculate(mngr2, vargs);
+					if(!isPrecise()) mngr2->setPrecise(false);
+				} else {
+					mngr2 = createFunctionManagerFromVArgs(vargs);
+				}
 				if(mngr->isNull()) {
 					mngr->moveto(mngr2);
 				} else {
@@ -351,7 +355,12 @@ Manager *Function::calculate(vector<Manager*> &vargs, int itmp) {
 			}
 			mngr->typeclean();
 		} else {
-			calculate(mngr, vargs);
+			if(testArguments(vargs)) {
+				calculate(mngr, vargs);
+			} else {
+				mngr = createFunctionManagerFromVArgs(vargs);
+				return mngr;
+			}
 		}
 		if(!isPrecise()) mngr->setPrecise(false);
 		CALCULATOR->checkFPExceptions(sname.c_str());	

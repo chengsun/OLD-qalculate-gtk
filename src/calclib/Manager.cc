@@ -1716,7 +1716,9 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 	} else if(c_type == ALTERNATIVE_MANAGER) {
 		for(int i = 0; i < mngrs.size(); i++) {
 			if(i > 0) {
-				str += "\nor ";		
+				str += " ";
+				str += _("or");		
+				str += " ";
 			}
 			str += mngrs[i]->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
 		}

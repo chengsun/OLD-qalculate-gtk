@@ -122,7 +122,7 @@
     </builtin_function>
     <function name="norm">
       <_title>Norm (length)</_title>
-      <expression>sqrt(\v*\v)</expression>
+      <expression>abs((\v*\v)^(1/2))</expression>
       <argument type="vector" index="1">
         <_title>Vector</_title>
         <test>false</test>
@@ -315,7 +315,7 @@
       </argument>
     </builtin_function>
     <builtin_function name="sqrt">
-      <_title>Square Root (abs)</_title>
+      <_title>Square Root</_title>
       <argument index="1">
         <_title>Non-negative number</_title>
       </argument>
@@ -324,7 +324,7 @@
       <_title>Cube Root</_title>
     </builtin_function>
     <builtin_function name="root">
-      <_title>Nth Root (abs)</_title>
+      <_title>Nth Root</_title>
       <argument index="1">
         <_title>Base</_title>
       </argument>
@@ -333,7 +333,7 @@
       </argument>
     </builtin_function>
     <builtin_function name="pow">
-      <_title>Power (abs)</_title>
+      <_title>Power</_title>
       <argument index="1">
         <_title>Base</_title>
       </argument>
@@ -344,7 +344,7 @@
     <function name="sqrtpi">
       <_title>Square Root (x * pi)</_title>
       <_description>Returns the non-negative square root of x * pi</_description>
-      <expression>sqrt(\x*pi)</expression>
+      <expression>abs((\x*pi)^(1/2))</expression>
       <argument type="number" index="1">
         <_title>Non-negative value</_title>
         <min include_equals="true">0</min>
@@ -441,7 +441,7 @@
       </function>
       <function name="cone_sa">
         <_title>Surface Area of Cone</_title>
-        <expression>\x^2*pi+pi*\x*sqrt(\y^2+\x^2)</expression>
+        <expression>\x^2*pi+pi*\x*abs((\y^2+\x^2)^(1/2))</expression>
         <argument type="free" index="1">
           <_title>Radius</_title>
         </argument>
@@ -653,7 +653,7 @@
     </function>
     <function name="geomean">
       <_title>Geometric Mean</_title>
-      <expression>root(csum(1,-1,1,&quot;\\y*\\x&quot;,\v), elements(\v))</expression>
+      <expression>abs(csum(1,-1,1,&quot;\\y*\\x&quot;,\v)^(1/elements(\v)))</expression>
       <argument type="vector" index="1">
         <_title>Data</_title>
         <test>false</test>
@@ -723,7 +723,7 @@
     </function>
     <function name="rms">
       <_title>Quadratic Mean (RMS)</_title>
-      <expression>sqrt(csum(1,-1,0,&quot;\\y+\\x^2&quot;,\v)/elements(\v))</expression>
+      <expression>abs(csum(1,-1,0,&quot;\\y+\\x^2&quot;,\v)/elements(\v)^(1/2))</expression>
       <argument type="vector" index="1">
         <_title>Data</_title>
         <test>false</test>
@@ -747,7 +747,7 @@
     </function>
     <function name="stdevp">
       <_title>Standard Deviation (entire population)</_title>
-      <expression>sqrt(csum(1,-1,0,&quot;\\y+(\\x-mean(\v))^2&quot;,\v)/elements(\v))</expression>
+      <expression>abs(csum(1,-1,0,&quot;\\y+(\\x-mean(\v))^2&quot;,\v)/elements(\v)^(1/2))</expression>
       <argument type="vector" index="1">
         <_title>Data</_title>
         <test>false</test>
@@ -755,7 +755,7 @@
     </function>
     <function name="stdev">
       <_title>Standard Deviation (random sampling)</_title>
-      <expression>sqrt(csum(1,-1,0,&quot;\\y+(\\x-mean(\v))^2&quot;,\v)/(elements(\v)-1))</expression>
+      <expression>abs(csum(1,-1,0,&quot;\\y+(\\x-mean(\v))^2&quot;,\v)/(elements(\v)-1)^(1/2))</expression>
       <argument type="vector" index="1">
         <_title>Data</_title>
         <test>false</test>
@@ -779,7 +779,7 @@
     </function>
     <function name="stderr">
       <_title>Standard Error</_title>
-      <expression>sqrt(var(\v)/elements(\v))</expression>
+      <expression>abs((var(\v)/elements(\v))^(1/2))</expression>
       <argument type="vector" index="1">
         <_title>Data</_title>
         <test>false</test>
@@ -803,7 +803,7 @@
     </function>
     <function name="pearson">
       <_title>Pearson Correlation</_title>
-      <expression>(\x*\v-sum(\x)*sum(\v)/elements(\x))/sqrt((\x*\x-(sum(\x)^2)/elements(\x))*(\v*\v-(sum(\v)^2)/elements(\v)))</expression>
+      <expression>(\x*\v-sum(\x)*sum(\v)/elements(\x))/abs(((\x*\x-(sum(\x)^2)/elements(\x))*(\v*\v-(sum(\v)^2)/elements(\v)))^(1/2))</expression>
       <argument type="vector" index="1">
         <_title>Data 1</_title>
         <test>false</test>
@@ -887,7 +887,7 @@
     </function>
     <function name="ttest">
       <_title>Unpaired T-Test</_title>
-      <expression>(mean(\x)-mean(\v))/sqrt((poolvar(\x,\v)^2)/elements(\x)+(poolvar(\x,\v)^2)/elements(\v))</expression>
+      <expression>(mean(\x)-mean(\v))/abs(((poolvar(\x,\v)^2)/elements(\x)+(poolvar(\x,\v)^2)/elements(\v))^(1/2))</expression>
       <argument type="vector" index="1">
         <_title>Data 1</_title>
         <test>false</test>

@@ -75,7 +75,7 @@ bool hyp_is_on, saved_hyp_is_on;
 bool use_min_deci, use_max_deci;
 int min_deci, max_deci, display_mode, number_base;
 bool show_more, show_buttons;
-extern bool load_global_defs;
+extern bool load_global_defs, fetch_exchange_rates_at_startup, first_time;
 extern GtkWidget *omToUnit_menu;
 bool block_unit_convert;
 extern Manager *mngr;
@@ -1863,7 +1863,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				}
 				if(!(displayflags & DISPLAY_FORMAT_LONG_UNITS)) {
 					if(displayflags & DISPLAY_FORMAT_NONASCII) {
-						if(m->unit()->name() == "euro") str += SIGN_EURO;
+						if(m->unit()->name() == "EUR") str += SIGN_EURO;
 						else if(m->unit()->name() == "oC") str += SIGN_POWER_0 "C";
 						else if(m->unit()->name() == "oF") str += SIGN_POWER_0 "F";
 						else if(m->unit()->name() == "oR") str += SIGN_POWER_0 "R";
@@ -2671,7 +2671,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					} else {
 						unit_count++;
 					}
-					if(i == 0) {
+					if(i == 0 && !in_composite) {
 						prepend_one = true;
 						w += one_w;
 						w2 += one_w;
@@ -2905,7 +2905,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							}
 							break;
 						}
-						if(last_num && num_fract_w == 0 && f_is_unit[index]) {
+						if(last_num && num_fract_w == 0 && f_is_unit[index] && !in_composite) {
 							prepend_one = true;						
 							num_w += one_w;
 							if(one_h / 2 + one_h % 2 > num_uh) {
@@ -3196,16 +3196,19 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			break;
 		}			
 		case ALTERNATIVE_MANAGER: {
+
 			vector<GdkPixmap*> pixmap_terms;
 			vector<gint> hpt;
 			vector<gint> cpt;			
 			vector<gint> hpth;			
 			vector<gint> wpt;
 			vector<bool> ie;
+
 			gint or_w, or_h, wtmp, htmp, w = 0, h = 0, ctmp = 0, wle, hle, wlae, hlae;
 			CALCULATE_SPACE_W
 			PangoLayout *layout_almost_equals = gtk_widget_create_pango_layout(resultview, NULL);
 			PangoLayout *layout_equals = gtk_widget_create_pango_layout(resultview, NULL);
+
 			if(displayflags & DISPLAY_FORMAT_NONASCII) {
 				pango_layout_set_markup(layout_almost_equals, TEXT_TAGS SIGN_ALMOST_EQUAL " " TEXT_TAGS_END, -1);
 			} else {
@@ -3214,19 +3217,25 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				str += " " TEXT_TAGS_END;
 				pango_layout_set_markup(layout_almost_equals, str.c_str(), -1);
 			}
+
 			pango_layout_set_markup(layout_equals, TEXT_TAGS "= " TEXT_TAGS_END, -1);
 			pango_layout_get_pixel_size(layout_almost_equals, &wlae, &hlae);			
 			pango_layout_get_pixel_size(layout_equals, &wle, &hle);			
 			PangoLayout *layout_or = gtk_widget_create_pango_layout(resultview, NULL);
-			pango_layout_set_markup(layout_or, _(TEXT_TAGS "or" TEXT_TAGS_END), -1);
+			string str = TEXT_TAGS;
+			str += _("or");
+			str += TEXT_TAGS_END;
+			pango_layout_set_markup(layout_or, str.c_str(), -1);
 			pango_layout_get_pixel_size(layout_or, &or_w, &or_h);
+
 			for(int i = 0; i < m->countChilds(); i++) {
+
 				bool bie = false;
 				ctmp = 0;
 				pixmap_terms.push_back(draw_manager(m->getChild(i), nrformat, displayflags, min_decimals, max_decimals, &bie, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &ctmp));
 				if(bie && in_exact) {
 					*in_exact = true;
-				}
+				}	
 				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_terms[i]), &wtmp, &htmp);
 				hpt.push_back(htmp);
 				cpt.push_back(ctmp);
@@ -3335,7 +3344,7 @@ void *view_proc(void *x) {
 	int min_decimals, max_decimals;
 	
 	getFormat(numberformat, displayflags, min_decimals, max_decimals, true, tmp_prefix);
-	
+
 	tmp_pixmap = draw_manager(mngr, numberformat, displayflags, min_decimals, max_decimals, &tmp_in_exact, NULL, tmp_prefix);
 	
 	getFormat(numberformat, displayflags, min_decimals, max_decimals, false, tmp_prefix);
@@ -3370,7 +3379,6 @@ void setResult(const gchar *expr, Prefix *prefix = NULL, bool update_history = t
 	pthread_attr_init(&view_thread_attr);
 	
 	b_busy = true;
-	
 	if(update_history) {
 		result_text = expr;
 		gtk_editable_select_region(GTK_EDITABLE(expression), 0, -1);
@@ -3396,11 +3404,8 @@ void setResult(const gchar *expr, Prefix *prefix = NULL, bool update_history = t
 	tmp_in_exact = false;
 	
 	CALCULATOR->saveState();
-	
-	while(gtk_events_pending()) gtk_main_iteration();
+
 	gulong handler_id = g_signal_connect(G_OBJECT(glade_xml_get_widget (glade_xml, "main_window")), "event", G_CALLBACK(on_event), NULL);
-//	g_object_freeze_notify(G_OBJECT(glade_xml_get_widget (glade_xml, "main_window")));
-	while(gtk_events_pending()) gtk_main_iteration();
 	while(!pthread_create(&view_thread, &view_thread_attr, view_proc, (void*) expr) == 0) {
 		usleep(100);
 	}	
@@ -3427,10 +3432,8 @@ void setResult(const gchar *expr, Prefix *prefix = NULL, bool update_history = t
 	if(dialog) {
 		gtk_widget_hide(dialog);
 	}
-//	g_object_thaw_notify(G_OBJECT(glade_xml_get_widget (glade_xml, "main_window")));
 	g_signal_handler_disconnect(G_OBJECT(glade_xml_get_widget (glade_xml, "main_window")), handler_id);
-	while(gtk_events_pending()) gtk_main_iteration();
-	
+
 	gint w = 0, wr = 0, h = 0, hr = 0, h_new, w_new;
 	if(!tmp_pixmap) {
 		PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
@@ -3473,6 +3476,7 @@ void setResult(const gchar *expr, Prefix *prefix = NULL, bool update_history = t
 		gtk_widget_set_size_request(resultview, w_new, h_new);
 		while(gtk_events_pending()) gtk_main_iteration();
 	}
+
 	if(resultview->allocation.width > w) {
 		gdk_draw_drawable(resultview->window, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(tmp_pixmap), 0, 0, resultview->allocation.width - w, (resultview->allocation.height - h) / 2, -1, -1);
 	} else {
@@ -3525,10 +3529,7 @@ void execute_expression() {
 	string str = gtk_entry_get_text(GTK_ENTRY(expression));
 	//unreference previous result (deletes the object if it is not used anywhere else
 	mngr->unref();
-	while(gtk_events_pending()) gtk_main_iteration();
 	gulong handler_id = g_signal_connect(G_OBJECT(glade_xml_get_widget (glade_xml, "main_window")), "event", G_CALLBACK(on_event), NULL);
-//	g_object_freeze_notify(G_OBJECT(glade_xml_get_widget (glade_xml, "main_window")));
-	while(gtk_events_pending()) gtk_main_iteration();
 	mngr = CALCULATOR->calculate(str, true);
 	int i = 0;
 	while(CALCULATOR->busy() && i < 50) {
@@ -3553,12 +3554,9 @@ void execute_expression() {
 	if(dialog) {
 		gtk_widget_hide(dialog);
 	}
-	while(gtk_events_pending()) gtk_main_iteration();
 	display_errors();
 	setResult(gtk_entry_get_text(GTK_ENTRY(expression)));
-//	g_object_thaw_notify(G_OBJECT(glade_xml_get_widget (glade_xml, "main_window")));
 	g_signal_handler_disconnect(G_OBJECT(glade_xml_get_widget (glade_xml, "main_window")), handler_id);
-	while(gtk_events_pending()) gtk_main_iteration();
 	gtk_widget_grab_focus(expression);
 	//gtk_editable_set_position(GTK_EDITABLE(expression), -1);
 }
@@ -3954,15 +3952,23 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 
 	if(u) {
 		//fill in original parameters
-		if(u->unitType() == BASE_UNIT)
+		if(u->unitType() == BASE_UNIT) {
 			gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "unit_edit_optionmenu_class")), UNIT_CLASS_BASE_UNIT);
-		else if(u->unitType() == ALIAS_UNIT)
+		} else if(u->unitType() == ALIAS_UNIT) {
 			gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "unit_edit_optionmenu_class")), UNIT_CLASS_ALIAS_UNIT);
-		else if(u->unitType() == COMPOSITE_UNIT)
+		} else if(u->unitType() == COMPOSITE_UNIT) {
 			gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "unit_edit_optionmenu_class")), UNIT_CLASS_COMPOSITE_UNIT);
+		}
+		on_unit_edit_optionmenu_class_changed(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "unit_edit_optionmenu_class")), NULL);	
+
+		//gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "unit_edit_optionmenu_class"), u->isLocal() && !u->isBuiltin());
 
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_name")), u->name().c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_internal")), u->name().c_str());		
+		
+		if(u->unitType() != COMPOSITE_UNIT) {
+			gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "unit_edit_entry_name"), !u->isBuiltin());
+		}
 
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural")), u->plural(false).c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular")), u->singular(false).c_str());
@@ -3985,6 +3991,11 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_relation")), au->expression().c_str());
 				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_reversed")), au->reverseExpression().c_str());
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_checkbutton_exact")), au->isPrecise());
+				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "unit_edit_entry_relation"), !u->isBuiltin());
+				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "unit_edit_entry_reversed"), !u->isBuiltin());
+				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "unit_edit_checkbutton_exact"), !u->isBuiltin());
+				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "unit_edit_spinbutton_exp"), !u->isBuiltin());
+				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"), !u->isBuiltin());
 				break;
 			}
 			case COMPOSITE_UNIT: {
@@ -3994,16 +4005,17 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 					gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base")), u->singular().c_str());
 				}
 				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_internal")), ((CompositeUnit*) u)->referenceName().c_str());			
+				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "unit_edit_entry_internal"), !u->isBuiltin());
+				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"), !u->isBuiltin());
 			}
 		}
-
 	} else {
 		//default values
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_checkbutton_exact")), TRUE);
 		gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "unit_edit_optionmenu_class")), UNIT_CLASS_ALIAS_UNIT);
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_relation")), "1");
+		on_unit_edit_optionmenu_class_changed(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "unit_edit_optionmenu_class")), NULL);
 	}
-	on_unit_edit_optionmenu_class_changed(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "unit_edit_optionmenu_class")), NULL);
 
 run_unit_edit_dialog:
 	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
@@ -4060,18 +4072,20 @@ run_unit_edit_dialog:
 						u = NULL;
 						break;
 					}
-					AliasUnit *au = (AliasUnit*) u;
-					Unit *bu = CALCULATOR->getUnit(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"))));
-					if(!bu) bu = CALCULATOR->getCompositeUnit(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"))));
-					if(!bu) {
-						show_message(_("Base unit does not exist."), dialog);
-						goto run_unit_edit_dialog;
+					if(!u->isBuiltin()) {
+						AliasUnit *au = (AliasUnit*) u;
+						Unit *bu = CALCULATOR->getUnit(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"))));
+						if(!bu) bu = CALCULATOR->getCompositeUnit(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"))));
+						if(!bu) {
+							show_message(_("Base unit does not exist."), dialog);
+							goto run_unit_edit_dialog;
+						}
+						au->setBaseUnit(bu);
+						au->setExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_relation"))));
+						au->setReverseExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_reversed"))));
+						au->setExponent(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_spinbutton_exp"))));
+						au->setPrecise(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_checkbutton_exact"))));
 					}
-					au->setBaseUnit(bu);
-					au->setExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_relation"))));
-					au->setReverseExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_reversed"))));
-					au->setExponent(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_spinbutton_exp"))));
-					au->setPrecise(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_checkbutton_exact"))));
 					break;
 				}
 				case COMPOSITE_UNIT: {
@@ -4080,8 +4094,10 @@ run_unit_edit_dialog:
 						u = NULL;
 						break;
 					}
-					u->setName(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_internal"))));
-					((CompositeUnit*) u)->setBaseExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"))));					
+					if(!u->isBuiltin()) {
+						u->setName(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_internal"))));
+						((CompositeUnit*) u)->setBaseExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"))));
+					}
 					break;
 				}
 				case BASE_UNIT: {
@@ -4094,7 +4110,9 @@ run_unit_edit_dialog:
 				}
 			}
 			if(u && u->unitType() != COMPOSITE_UNIT) {
-				u->setName(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_name"))));
+				if(!u->isBuiltin()) {
+					u->setName(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_name"))));
+				}
 				u->setPlural(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural"))));
 				u->setSingular(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular"))));
 			}
@@ -5195,13 +5213,21 @@ void convert_in_wUnits(int toFrom) {
 		const gchar *toValue = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "units_entry_to_val")));
 		//determine conversion direction
 		if(toFrom > 0) {
-			Manager *v_mngr = CALCULATOR->convert(toValue, uTo, uFrom);
-			gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "units_entry_from_val")), v_mngr->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DECIMAL_ONLY).c_str());
-			mngr->unref();
+			if(uFrom == uTo) {
+				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "units_entry_from_val")), toValue);
+			} else {
+				Manager *v_mngr = CALCULATOR->convert(toValue, uTo, uFrom);
+				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "units_entry_from_val")), v_mngr->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DECIMAL_ONLY).c_str());
+				v_mngr->unref();
+			}
 		} else {
-			Manager *v_mngr = CALCULATOR->convert(fromValue, uFrom, uTo);
-			gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "units_entry_to_val")), v_mngr->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DECIMAL_ONLY).c_str());
-			mngr->unref();
+			if(uFrom == uTo) {
+				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "units_entry_to_val")), fromValue);
+			} else {
+				Manager *v_mngr = CALCULATOR->convert(fromValue, uFrom, uTo);
+				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "units_entry_to_val")), v_mngr->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DECIMAL_ONLY).c_str());
+				v_mngr->unref();
+			}
 		}
 	}
 	CALCULATOR->setAlwaysExact(b_always_exact);
@@ -5282,6 +5308,8 @@ void load_preferences() {
 	use_unicode_signs = true;
 	use_prefixes = true;
 	load_global_defs = true;
+	fetch_exchange_rates_at_startup = false;
+	first_time = false;
 	FILE *file = NULL;
 	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate-gtk.cfg", NULL);
 	file = fopen(gstr2, "r");
@@ -5308,6 +5336,8 @@ void load_preferences() {
 					save_defs_on_exit = v;
 				else if(svar == "load_global_definitions")
 					load_global_defs = v;
+				else if(svar == "fetch_exchange_rates_at_startup")
+					fetch_exchange_rates_at_startup = v;
 				else if(svar == "show_more")
 					show_more = v;
 				else if(svar == "show_buttons")
@@ -5385,6 +5415,8 @@ void load_preferences() {
 				}
 			}
 		}
+	} else {
+		first_time = true;
 	}
 	//remember start mode for when we save preferences
 	set_saved_mode();
@@ -5423,6 +5455,7 @@ void save_preferences(bool mode)
 	fprintf(file, "save_mode_on_exit=%i\n", save_mode_on_exit);
 	fprintf(file, "save_definitions_on_exit=%i\n", save_defs_on_exit);
 	fprintf(file, "load_global_definitions=%i\n", load_global_defs);
+	fprintf(file, "fetch_exchange_rates_at_startup=%i\n", fetch_exchange_rates_at_startup);
 	fprintf(file, "show_more=%i\n", GTK_WIDGET_VISIBLE(glade_xml_get_widget (glade_xml, "notebook")));
 	fprintf(file, "show_buttons=%i\n", gtk_notebook_get_current_page(GTK_NOTEBOOK(glade_xml_get_widget (glade_xml, "notebook"))) == 1);
 	fprintf(file, "use_short_units=%i\n", use_short_units);
@@ -5563,6 +5596,9 @@ void on_preferences_checkbutton_save_mode_toggled(GtkToggleButton *w, gpointer u
 }
 void on_preferences_checkbutton_load_defs_toggled(GtkToggleButton *w, gpointer user_data) {
 	load_global_defs = gtk_toggle_button_get_active(w);
+}
+void on_preferences_checkbutton_fetch_exchange_rates_toggled(GtkToggleButton *w, gpointer user_data) {
+	fetch_exchange_rates_at_startup = gtk_toggle_button_get_active(w);
 }
 void on_preferences_checkbutton_custom_font_toggled(GtkToggleButton *w, gpointer user_data) {
 	use_custom_font = gtk_toggle_button_get_active(w);
@@ -5962,6 +5998,10 @@ void on_button_ln_clicked(GtkButton *w, gpointer user_data) {
 void on_menu_item_rpn_mode_activate(GtkMenuItem *w, gpointer user_data) {
 	CALCULATOR->setRPNMode(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
 	gtk_widget_grab_focus(expression);
+}
+void on_menu_item_fetch_exchange_rates_activate(GtkMenuItem *w, gpointer user_data) {
+	CALCULATOR->fetchExchangeRates();
+	CALCULATOR->loadExchangeRates();
 }
 void on_menu_item_save_defs_activate(GtkMenuItem *w, gpointer user_data) {
 	save_defs();

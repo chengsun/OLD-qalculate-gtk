@@ -1,3 +1,32 @@
+2003-10-07  Niklas Knutsson  <nq@altern.org>
+
+	* Fully enable builtin units
+	* Do not print the same error message more than once
+	* Fetch exchange rates from ECB
+	* Fix crash by removing new line for alternative manager and gettextize the "or" while we are at it
+	* Root functions non-abs
+	* Fix argument check on alternative manager
+	* Remove unnecessary gtk_main_iteration() as they create lots of problems
+	* Do not unref wrong Manager in conversion in units dialog
+	* Fix check of arguments in functions with unlimited number of arguments
+	* Remove (again) prepended "1" for composite units
+	* Fix prefixes
+
+2003-10-06  Niklas Knutsson  <nq@altern.org>
+
+	* Allow disabling of multiple roots
+	* "Recently Used"-menu
+	* Fix rounding of negative numbers
+	* Fix adding ALTERNATIVE_MANAGER to ALTERNATIVE_MANAGER
+	* Change GUI code to allow unrestrained category depth
+	* Load builtin unit definitions even if we have no such
+	* Do not write active and precise attributes when true
+	* Organize definitions files in a category tree structure
+	* Make execute button in insert function dialog non-stock
+	* Change button text to "Insert"
+	* Fix insert function with undefined arguments
+	* Use a frame for description in insert function dialog
+
 2003-10-02  Niklas Knutsson  <nq@altern.org>
 
 	* Use &amp; for &

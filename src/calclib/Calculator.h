@@ -186,6 +186,9 @@ class Calculator {
 	Manager *setAngleValue(Manager *mngr);	
 	bool importCSV(const char *file_name, int first_row = 1, bool headers = true, string delimiter = ",", bool to_matrix = false, string name = "", string title = "", string category = "");
 	int testCondition(string expression);
+	
+	bool loadExchangeRates();
+	bool fetchExchangeRates();
 		
 };
 
