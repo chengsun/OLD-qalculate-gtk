@@ -1401,13 +1401,12 @@ void SolveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		return;
 	}
 	giac::identificateur id(vargs[1]->text());
-	giac::vecteur v;
-	giac::solve(v1, id, &v);
+	giac::vecteur v = giac::solve(v1, id);
 	if(v.empty()) {
 		CALCULATOR->error(false, _("No solution could be found."), NULL);
 		mngr->set(this, vargs[0], vargs[1], NULL);
 	} else {
-		v[0] = simplify(v);
+		v[0] = simplify(v[0]);
 		mngr->set(v[0]);
 		for(unsigned int i = 1; i < v.size(); i++) {
 			v[1] = simplify(v[1]);
