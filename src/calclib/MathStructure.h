@@ -312,6 +312,7 @@ class MathStructure {
 		
 		bool contains(const MathStructure &mstruct) const;
 		bool containsType(int mtype) const;
+		bool containsAdditionPower() const;
 		bool replace(const MathStructure &mfrom, const MathStructure &mto);
 		
 		MathStructure generateVector(MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL, const EvaluationOptions &eo = default_evaluation_options);

@@ -5271,7 +5271,7 @@ void load_preferences() {
 					printops.min_exp = v;
 				else if(svar == "negative_exponentes")
 					printops.negative_exponents = v;
-				else if(svar == "negative_exponentes")
+				else if(svar == "sort_minus_last")
 					printops.sort_options.minus_last = v;		
 				else if(svar == "spacious")
 					printops.spacious = v;	
@@ -6229,10 +6229,10 @@ void on_button_hyp_toggled(GtkToggleButton *w, gpointer user_data) {
 void on_button_fraction_toggled(GtkToggleButton *w, gpointer user_data) {
 	if(gtk_toggle_button_get_active(w)) {
 		printops.number_fraction_format = FRACTION_FRACTIONAL;
-		GtkWidget *w_fraction = glade_xml_get_widget (main_glade, "menu_item_fraction_fractional");
-		g_signal_handlers_block_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_fraction_combined_activate, NULL);		
+		GtkWidget *w_fraction = glade_xml_get_widget (main_glade, "menu_item_fraction_fraction");
+		g_signal_handlers_block_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_fraction_fraction_activate, NULL);		
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w_fraction), TRUE);		
-		g_signal_handlers_unblock_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_fraction_combined_activate, NULL);		
+		g_signal_handlers_unblock_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_fraction_fraction_activate, NULL);		
 	} else {
 		printops.number_fraction_format = FRACTION_DECIMAL;
 		GtkWidget *w_fraction = glade_xml_get_widget (main_glade, "menu_item_fraction_decimal");

@@ -1817,12 +1817,28 @@ SolveFunction::SolveFunction() : Function("solve", 1, 2) {
 	setDefaultValue(2, "x");
 }
 int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+
 	mstruct = vargs[0];
-	mstruct.eval(eo);
+	EvaluationOptions eo2 = eo;
+	eo2.simplify_addition_powers = false;
+	mstruct.eval(eo2);
+
+	test_comparison:
 	if(mstruct.isComparison()) {
 		if(mstruct[0] != vargs[1]) {
+			if(eo.simplify_addition_powers && !eo2.simplify_addition_powers) {
+				eo2.simplify_addition_powers = true;
+				eo2.calculate_functions = false;
+				mstruct.eval(eo2);
+				goto test_comparison;
+			}
 			CALCULATOR->error(true, _("Unable to isolate %s."), vargs[1].print().c_str(), NULL);
 		} else {
+			if(eo.simplify_addition_powers && !eo2.simplify_addition_powers) {
+				eo2.simplify_addition_powers = true;
+				eo2.calculate_functions = false;
+				mstruct[1].eval(eo2);
+			}
 			if(mstruct.comparisonType() == COMPARISON_EQUALS) {
 				MathStructure msave(mstruct[1]);
 				mstruct = msave;	
@@ -1833,4 +1849,5 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		CALCULATOR->error(true, _("No comparison to solve."), NULL);
 	}
 	return -1;
+	
 }

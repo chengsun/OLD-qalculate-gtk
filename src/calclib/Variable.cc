@@ -26,6 +26,7 @@ bool Assumptions::isInteger() {return i_type >= ASSUMPTION_NUMBER_INTEGER;}
 bool Assumptions::isNumber() {return i_type >= ASSUMPTION_NUMBER_NUMBER || fmin || fmax || isPositive() || isNegative();}
 bool Assumptions::isRational() {return i_type >= ASSUMPTION_NUMBER_RATIONAL;}
 bool Assumptions::isReal() {return i_type >= ASSUMPTION_NUMBER_REAL || isPositive() || isNegative();}
+bool Assumptions::isComplex() {return i_type == ASSUMPTION_NUMBER_COMPLEX;}
 bool Assumptions::isNonZero() {return i_sign == ASSUMPTION_SIGN_NONZERO || isPositive() || isNegative();}
 
 AssumptionNumberType Assumptions::numberType() {return i_type;}
@@ -148,6 +149,10 @@ bool UnknownVariable::isReal() {
 	if(o_assumption) return o_assumption->isReal();
 	return CALCULATOR->defaultAssumptions()->isReal();
 }
+bool UnknownVariable::isComplex() { 
+	if(o_assumption) return o_assumption->isComplex();
+	return CALCULATOR->defaultAssumptions()->isComplex();
+}
 bool UnknownVariable::isNonZero() { 
 	if(o_assumption) return o_assumption->isNonZero();
 	return CALCULATOR->defaultAssumptions()->isNonZero();
@@ -227,6 +232,7 @@ bool KnownVariable::isInteger() {return get().representsInteger();}
 bool KnownVariable::isNumber() {return get().representsNumber();}
 bool KnownVariable::isRational() {return get().representsRational();}
 bool KnownVariable::isReal() {return get().representsReal();}
+bool KnownVariable::isComplex() {return get().representsComplex();}
 bool KnownVariable::isNonZero() {return get().representsNonZero();}
 
 DynamicVariable::DynamicVariable(string cat_, string name_, string title_, string unicode_name, bool is_local, bool is_builtin, bool is_active) : KnownVariable(cat_, name_, MathStructure(), title_, is_local, is_builtin, is_active, unicode_name) {

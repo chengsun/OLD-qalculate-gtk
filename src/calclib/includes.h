@@ -259,9 +259,10 @@ static const struct EvaluationOptions {
 	ApproximationMode approximation;
 	bool sync_units, sync_complex_unit_relations, keep_prefixes;
 	bool calculate_variables, calculate_functions, test_comparisons, isolate_x;
+	bool simplify_addition_powers;
 	StructuringMode structuring;
 	ParseOptions parse_options;
-	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), structuring(STRUCTURING_SIMPLIFY) {}
+	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), simplify_addition_powers(true), structuring(STRUCTURING_SIMPLIFY) {}
 } default_evaluation_options;
 
 #define DEFAULT_PRECISION	8

@@ -64,6 +64,7 @@ class Assumptions {
 	bool isNumber();
 	bool isRational();
 	bool isReal();
+	bool isComplex();
 	bool isNonZero();
 	
 	AssumptionNumberType numberType();
@@ -104,6 +105,7 @@ class Variable : public ExpressionItem {
 	virtual bool isNumber() {return false;}
 	virtual bool isRational() {return false;}
 	virtual bool isReal() {return false;}
+	virtual bool isComplex() {return false;}
 	virtual bool isNonZero() {return false;}
 	
 };
@@ -134,6 +136,7 @@ class UnknownVariable : public Variable {
 	virtual bool isNumber();
 	virtual bool isRational();
 	virtual bool isReal();
+	virtual bool isComplex();
 	virtual bool isNonZero();
 	
 };
@@ -174,6 +177,7 @@ class KnownVariable : public Variable {
 	virtual bool isNumber();
 	virtual bool isRational();
 	virtual bool isReal();
+	virtual bool isComplex();
 	virtual bool isNonZero();
 
 };
@@ -209,6 +213,7 @@ class DynamicVariable : public KnownVariable {
 	virtual bool isNumber() {return true;}
 	virtual bool isRational() {return false;}
 	virtual bool isReal() {return true;}
+	virtual bool isComplex() {return false;}
 	virtual bool isNonZero() {return true;}
 
 };

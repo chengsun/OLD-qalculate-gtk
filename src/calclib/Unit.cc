@@ -287,7 +287,7 @@ MathStructure &AliasUnit::convertToFirstBase(MathStructure &mvalue, MathStructur
 		} else {
 			MathStructure mstruct = CALCULATOR->parse(value);
 			if(!mexp.isOne()) mstruct ^= mexp;
-			mvalue /= mstruct;
+			mvalue.divide(mstruct, true);
 		}
 	} else {
 		if(rvalue.find("\\x") != string::npos) {
@@ -308,7 +308,7 @@ MathStructure &AliasUnit::convertToFirstBase(MathStructure &mvalue, MathStructur
 		} else {
 			MathStructure mstruct = CALCULATOR->parse(rvalue);
 			if(!mexp.isOne()) mstruct ^= mexp;
-			mvalue *= mstruct;
+			mvalue.multiply(mstruct, true);
 		}
 	}
 	if(isApproximate()) mvalue.setApproximate();
@@ -333,7 +333,7 @@ MathStructure &AliasUnit::firstBaseValue(MathStructure &mvalue, MathStructure &m
 	} else {
 		MathStructure mstruct = CALCULATOR->parse(value);
 		if(!mexp.isOne()) mstruct ^= mexp;
-		mstruct *= mvalue;
+		mstruct.multiply(mvalue, true);
 		mvalue = mstruct;
 	}
 	if(isApproximate()) mvalue.setApproximate();	
