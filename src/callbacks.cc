@@ -2497,6 +2497,15 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			break;
 		}	
 		case POWER_MANAGER: {
+			if(!(displayflags & DISPLAY_FORMAT_SCIENTIFIC) && m->exponent()->isFraction() && m->exponent()->fraction()->numerator()->equals(1) && m->exponent()->fraction()->denominator()->equals(2)) {
+				Function *sqrt = CALCULATOR->getFunction("sqrt");
+				if(sqrt) {
+					Manager *m2 = new Manager(sqrt, m->base(), NULL);
+					pixmap = draw_manager(m2, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, toplevel, plural, l_exp, in_composite, in_power, draw_minus, point_central);
+					m2->unref();
+					return pixmap;
+				}
+			}
 			gint power_w, power_h, base_w, base_h, exp_w, exp_h, one_w, one_h, w = 0, h = 0, ctmp = 0;
 			CALCULATE_SPACE_W
 			GdkPixmap *pixmap_one = NULL;
@@ -2984,7 +2993,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							}
 							break;
 						}
-						if(last_num && num_fract_w == 0 && f_is_unit[index] && !in_composite) {
+						if(!prepend_one && last_num && num_fract_w == 0 && f_is_unit[index] && !in_composite) {
 							prepend_one = true;						
 							num_w += one_w;
 							if(one_h / 2 + one_h % 2 > num_uh) {
@@ -3145,7 +3154,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						w = (wfr - num_w) / 2 + w_first_fract;
 					}
 					if(f_is_div[i]) {
-						if(i == 0 || (i == 1 && (num_fract_w == 0 || first_is_minus))) {
+						if(i == 0 || (!div_i && i == 1 && (num_fract_w == 0 || first_is_minus))) {
 							gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w, num_uh - one_h / 2 - one_h % 2, -1, -1);								
 							w += one_w;
 						}													
@@ -3448,6 +3457,8 @@ void setResult(const gchar *expr, Prefix *prefix = NULL, bool update_history = t
 		execute_expression();
 		if(!prefix) return;
 	}
+	
+	b_busy = true;	
 
 	GtkTextIter iter;
 	GtkTextBuffer *tb;
@@ -3459,7 +3470,6 @@ void setResult(const gchar *expr, Prefix *prefix = NULL, bool update_history = t
 	pthread_attr_t view_thread_attr;
 	pthread_attr_init(&view_thread_attr);
 	
-	b_busy = true;
 	if(update_history) {
 		result_text = expr;
 		gtk_editable_select_region(GTK_EDITABLE(expression), 0, -1);
@@ -3510,6 +3520,7 @@ void setResult(const gchar *expr, Prefix *prefix = NULL, bool update_history = t
 		usleep(100000);
 		gtk_progress_bar_pulse(GTK_PROGRESS_BAR(glade_xml_get_widget (glade_xml, "progress_progressbar")));
 	}
+	b_busy = true;
 	if(dialog) {
 		gtk_widget_hide(dialog);
 	}
@@ -3587,6 +3598,8 @@ void setResult(const gchar *expr, Prefix *prefix = NULL, bool update_history = t
 			CALCULATOR->nextError();
 		}
 	}
+	b_busy = false;
+	display_errors();
 }
 
 void viewresult(Prefix *prefix = NULL) {
@@ -3610,6 +3623,7 @@ void execute_expression() {
 	string str = gtk_entry_get_text(GTK_ENTRY(expression));
 	//unreference previous result (deletes the object if it is not used anywhere else
 	mngr->unref();
+	b_busy = true;
 	gulong handler_id = g_signal_connect(G_OBJECT(glade_xml_get_widget (glade_xml, "main_window")), "event", G_CALLBACK(on_event), NULL);
 	mngr = CALCULATOR->calculate(str, true);
 	int i = 0;
@@ -3635,6 +3649,7 @@ void execute_expression() {
 	if(dialog) {
 		gtk_widget_hide(dialog);
 	}
+	b_busy = false;
 	display_errors();
 	setResult(gtk_entry_get_text(GTK_ENTRY(expression)));
 	g_signal_handler_disconnect(G_OBJECT(glade_xml_get_widget (glade_xml, "main_window")), handler_id);

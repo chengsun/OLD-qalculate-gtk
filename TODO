@@ -1,6 +1,6 @@
 * Do not recalculate plot data when it has not changed
 * Instant apply for all parameters in plot
-* Plot functions
+* Plot-functions
 * Make it possible to have functions and units with the same name (use function if name followed by parenthesis)
 * Sexagesimal numbers
 * Permutations
@@ -15,6 +15,9 @@
 * Sort out percentile and provide alternative methods
 * Ask for exchange rate update on demand
 * Improve matrix editing
+* Sort out cases where we should not do anything because x is unknown, 
+  such as sqrt(-5x) which now returns sqrt(-5) * sqrt(x)
+* Get rid of wget dependency
 
 * More functions
 * More units

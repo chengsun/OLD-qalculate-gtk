@@ -1,3 +1,9 @@
+2003-10-19  Niklas Knutsson  <nq@altern.org>
+
+	* Display ^0.5 as square root
+	* Fix display of ugly -x^-0.5 (still ugly but no duplicate ones and spaces)
+	* Stop display errors a bit more...
+
 2003-10-18  Niklas Knutsson  <nq@altern.org>
 
 	* Do not delete selection on sqrt button clicked but act as with the other functions
