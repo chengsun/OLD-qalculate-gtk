@@ -49,10 +49,19 @@ AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
 
 dnl  --------------------------------
-dnl | check for GMP                  |-----------------------------------------
+dnl | check for GMP and CLN         |-----------------------------------------
 dnl  --------------------------------
 
-AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_ERROR([GNU MP not found, see http://swox.com/gmp])])
+dnl AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_ERROR([GNU MP not found, see http://swox.com/gmp])])
+
+AC_LANG([C++])
+
+
+AC_PATH_CLN(1.1.0, [
+ 	LIBS="$LIBS $CLN_LIBS"
+ 	CPPFLAGS="$CPPFLAGS $CLN_CPPFLAGS"
+	AC_DEFINE(HAVE_LIBCLN,1,[If CLN can be used])
+], AC_MSG_ERROR([No suitable installed version of CLN could be found.]))
 
 dnl  -------------------------------------
 dnl | internationalization (i18n) support |------------------------------------

@@ -14,67 +14,103 @@
 
 #include "Integer.h"
 #include <unistd.h>
+#include <sstream>
 
 Integer::Integer() {
+#ifdef HAVE_LIBCLN
+#else
 #ifdef HAVE_LIBGMP
 	mpz_init(integ);
+#endif
 #endif
 	clear();
 }
 Integer::Integer(long int value) {
+#ifdef HAVE_LIBCLN
+#else
 #ifdef HAVE_LIBGMP
 	mpz_init(integ);
+#endif
 #endif
 	set(value);
 }
 Integer::Integer(const Integer *integer) {
+#ifdef HAVE_LIBCLN
+#else
 #ifdef HAVE_LIBGMP
 	mpz_init(integ);
+#endif
 #endif
 	set(integer);
 }
 Integer::~Integer() {
+#ifdef HAVE_LIBCLN
+#else
 #ifdef HAVE_LIBGMP
 	mpz_clear(integ);
 #endif
+#endif
 }
 bool Integer::isEven() const {
+#ifdef HAVE_LIBCLN
+	return cln::evenp(integ);
+#else
 #ifdef HAVE_LIBGMP
 	return mpz_even_p(integ);
 #else
 	return isZero() || bits[0] % 2 == 0;
 #endif
+#endif
 }
 bool Integer::isNegative() const {
+#ifdef HAVE_LIBCLN
+	return minusp(integ);
+#else
 #ifdef HAVE_LIBGMP
 	return mpz_cmp_si(integ, 0) < 0;
 #else
 	return b_neg;
 #endif
+#endif
 }
 bool Integer::isPositive() const {
+#ifdef HAVE_LIBCLN
+	return plusp(integ);
+#else
 #ifdef HAVE_LIBGMP
 	return mpz_cmp_si(integ, 0) > 0;
 #else
 	return !isNegative() && !isZero();
 #endif
+#endif
 }
 void Integer::setNegative(bool negative) {
+#ifdef HAVE_LIBCLN
+	if(isNegative() != negative) integ = -integ;
+#else
 #ifdef HAVE_LIBGMP
 	if(isNegative() != negative) mpz_neg(integ, integ);
 #else
 	b_neg = negative;
 #endif
+#endif
 }
 void Integer::clear() {
+#ifdef HAVE_LIBCLN
+	integ = 0;
+#else
 #ifdef HAVE_LIBGMP
 	mpz_set_si(integ, 0);
 #else
 	b_neg = false;
 	bits.clear();
 #endif
+#endif
 }
 void Integer::set(long int value) {
+#ifdef HAVE_LIBCLN
+	integ = value;
+#else
 #ifdef HAVE_LIBGMP
 	mpz_set_si(integ, value);
 #else
@@ -101,8 +137,12 @@ void Integer::set(long int value) {
 		}
 	}
 #endif
+#endif
 }
 void Integer::set(const Integer *integer) {
+#ifdef HAVE_LIBCLN
+	integ = integer->integ;
+#else
 #ifdef HAVE_LIBGMP
 	mpz_set(integ, integer->integ);
 #else
@@ -115,8 +155,12 @@ void Integer::set(const Integer *integer) {
 		bits.push_back(integer->bits[index]);
 	}
 #endif
+#endif
 }
 int Integer::compare(const Integer *integer) const {
+#ifdef HAVE_LIBCLN
+	return cln::compare(integer->integ, integ);
+#else
 #ifdef HAVE_LIBGMP
 	int i = mpz_cmp(integ, integer->integ);
 	if(i > 0) return -1;
@@ -143,8 +187,12 @@ int Integer::compare(const Integer *integer) const {
 	}
 	return 0;
 #endif
+#endif
 }
 int Integer::compare(long int value) const {
+#ifdef HAVE_LIBCLN
+	return cln::compare(value, integ);
+#else
 #ifdef HAVE_LIBGMP
 	int i = mpz_cmp_si(integ, value);
 	if(i > 0) return -1;
@@ -185,6 +233,7 @@ int Integer::compare(long int value) const {
 	}
 	return -1;
 #endif
+#endif
 }
 bool Integer::isGreaterThan(const Integer *integer) const {
 	return compare(integer) == -1;
@@ -199,6 +248,9 @@ bool Integer::isLessThan(long int value) const {
 	return compare(value) == 1;
 }
 bool Integer::equals(const Integer *integer) const {
+#ifdef HAVE_LIBCLN
+	return integ == integer->integ;
+#else
 #ifdef HAVE_LIBGMP
 	return mpz_cmp(integ, integer->integ) == 0;
 #else
@@ -209,8 +261,12 @@ bool Integer::equals(const Integer *integer) const {
 	}
 	return true;
 #endif
+#endif
 }
 bool Integer::equals(long int value) const {
+#ifdef HAVE_LIBCLN
+	return integ == value;
+#else
 #ifdef HAVE_LIBGMP
 	return mpz_cmp_si(integ, value) == 0;
 #else
@@ -233,8 +289,12 @@ bool Integer::equals(long int value) const {
 	}
 	return false;
 #endif
+#endif
 }
 void Integer::add(long int value) {
+#ifdef HAVE_LIBCLN
+	integ += value;
+#else
 #ifdef HAVE_LIBGMP
 	if(value < 0) mpz_sub_ui(integ, integ, (unsigned long int) -value);
 	else mpz_add_ui(integ, integ, (unsigned long int) value);
@@ -309,8 +369,12 @@ void Integer::add(long int value) {
 	}
 	if(bits.empty()) b_neg = false;
 #endif
+#endif
 }
 void Integer::add(const Integer *integer) {
+#ifdef HAVE_LIBCLN
+	integ += integer->integ;
+#else
 #ifdef HAVE_LIBGMP
 	mpz_add(integ, integ, integer->integ);
 #else
@@ -419,8 +483,11 @@ void Integer::add(const Integer *integer) {
 	if(bits.empty()) b_neg = false;	
 	if(b_del) delete integer;
 #endif
+#endif
 }
 void Integer::negate() {
+#ifdef HAVE_LIBCLN
+#else
 #ifdef HAVE_LIBGMP
 #else
 	b_neg = !b_neg;
@@ -436,11 +503,19 @@ void Integer::negate() {
 		}
 	}
 #endif
+#endif
 }
 void Integer::subtract(long int value) {
+#ifdef HAVE_LIBCLN
+	integ -= value;
+#else
 	add(-value);
+#endif
 }
 void Integer::subtract(const Integer *integer) {
+#ifdef HAVE_LIBCLN
+	integ -= integer->integ;
+#else
 #ifdef HAVE_LIBGMP
 	mpz_sub(integ, integ, integer->integ);
 #else
@@ -448,8 +523,12 @@ void Integer::subtract(const Integer *integer) {
 	integer2.b_neg = !integer2.b_neg;
 	add(&integer2);
 #endif
+#endif
 }
 void Integer::multiply(long int value) {
+#ifdef HAVE_LIBCLN
+	integ *= value;
+#else
 #ifdef HAVE_LIBGMP
 	mpz_mul_si(integ, integ, value);
 #else
@@ -498,8 +577,12 @@ void Integer::multiply(long int value) {
 	}
 	if(bits.empty()) b_neg = false;		
 #endif
+#endif
 }
 void Integer::multiply(const Integer *integer) {
+#ifdef HAVE_LIBCLN
+	integ *= integer->integ;
+#else
 #ifdef HAVE_LIBGMP
 	mpz_mul(integ, integ, integer->integ);
 #else
@@ -555,15 +638,25 @@ void Integer::multiply(const Integer *integer) {
 	if(bits.empty()) b_neg = false;		
 	if(b_del) delete integer;
 #endif
+#endif
 }
-bool Integer::divide(long int value, Integer **reminder) {
+bool Integer::divide(long int value, Integer **remainder) {
+#ifdef HAVE_LIBCLN
+	cl_I_div_t div = truncate2(integ, value);
+	if(remainder) {
+		*remainder = new Integer();
+		(*remainder)->integ = div.remainder;
+	}
+	integ = div.quotient;
+	return div.remainder == 0;
+#else
 #ifdef HAVE_LIBGMP
 	mpz_t rem;
 	mpz_init(rem);
 	mpz_tdiv_qr_ui(integ, rem, integ, value);
-	if(reminder) *reminder = new Integer();
+	if(remainder) *remainder = new Integer();
 	if(mpz_cmp_si(rem, 0) != 0) {
-		if(reminder) mpz_set((*reminder)->integ, rem);
+		if(remainder) mpz_set((*remainder)->integ, rem);
 		mpz_clear(rem);	
 		return false;
 	}
@@ -571,17 +664,27 @@ bool Integer::divide(long int value, Integer **reminder) {
 	return true;
 #else
 	Integer integer(value);
-	return divide(&integer, reminder);
+	return divide(&integer, remainder);
+#endif
 #endif
 }
-bool Integer::divide(const Integer *integer, Integer **reminder) {
+bool Integer::divide(const Integer *integer, Integer **remainder) {
+#ifdef HAVE_LIBCLN
+	cl_I_div_t div = truncate2(integ, integer->integ);
+	if(remainder) {
+		*remainder = new Integer();
+		(*remainder)->integ = div.remainder;
+	}
+	integ = div.quotient;
+	return div.remainder == 0;
+#else
 #ifdef HAVE_LIBGMP
 	mpz_t rem;
 	mpz_init(rem);
 	mpz_tdiv_qr(integ, rem, integ, integer->integ);
-	if(reminder) *reminder = new Integer();
+	if(remainder) *remainder = new Integer();
 	if(mpz_cmp_si(rem, 0) != 0) {
-		if(reminder) mpz_set((*reminder)->integ, rem);
+		if(remainder) mpz_set((*remainder)->integ, rem);
 		mpz_clear(rem);	
 		return false;
 	}
@@ -591,38 +694,38 @@ bool Integer::divide(const Integer *integer, Integer **reminder) {
 //	printf("A %s : %s\n", print().c_str(), integer->print().c_str());
 	if(integer->isZero()) {
 		//division by zero error
-		if(reminder) *reminder = new Integer();
+		if(remainder) *remainder = new Integer();
 		return true;
 	}	
 	if(isZero()) {
-		if(reminder) *reminder = new Integer();
+		if(remainder) *remainder = new Integer();
 		return true;	
 	}
 	if(integer->isOne()) {
-		if(reminder) *reminder = new Integer();
+		if(remainder) *remainder = new Integer();
 		return true;	
 	}	
 	if(integer->isMinusOne()) {
-		if(reminder) *reminder = new Integer();
+		if(remainder) *remainder = new Integer();
 		setNegative(!isNegative());
 		return true;	
 	}	
 	bool neg = isNegative() != integer->isNegative();		
 	Integer *rem = new Integer(this);
 	rem->setNegative(false);
-	if(reminder) *reminder = rem;
+	if(remainder) *remainder = rem;
 	Integer integer_noneg(integer);
 	integer_noneg.setNegative(false);	
 	int i_com = rem->compare(&integer_noneg);
 	if(i_com == 0) {		
 		set(1);
 		setNegative(neg);
-		if(!reminder) delete rem;
+		if(!remainder) delete rem;
 		return true;
 	} else if(i_com == 1) {
 		rem->set(this);
 		clear();		
-		if(!reminder) delete rem;
+		if(!remainder) delete rem;
 		return false;
 	}
 	Integer divided, tmp, remdiv;
@@ -703,7 +806,7 @@ bool Integer::divide(const Integer *integer, Integer **reminder) {
 //		printf("D\n");
 	set(&divided);
 	bool return_value = rem->isZero();
-	if(!reminder) delete rem;
+	if(!remainder) delete rem;
 	for(int index = bits.size() - 1; index >= 0; index--) {
 		if(bits[index] == 0) {
 			bits.erase(bits.begin() + index);
@@ -714,19 +817,25 @@ bool Integer::divide(const Integer *integer, Integer **reminder) {
 	if(bits.empty()) b_neg = false;		
 	return return_value;
 #endif
+#endif
 }
-bool Integer::div10(Integer **reminder, long int exp) {
+bool Integer::div10(Integer **remainder, long int exp) {
+#ifdef HAVE_LIBCLN
+	Integer int10(10);	
+	int10.pow(exp);
+	return divide(&int10, remainder);
+#else
 #ifdef HAVE_LIBGMP
 	Integer int10(10);	
 	int10.pow(exp);
-	return divide(&int10, reminder);
+	return divide(&int10, remainder);
 #else
 	if(isZero() || exp == 0) {
-		if(reminder) *reminder = new Integer();
+		if(remainder) *remainder = new Integer();
 		return true;
 	}
 	if(exp < 0) {
-		if(reminder) *reminder = new Integer();
+		if(remainder) *remainder = new Integer();
 		Integer div(1);
 		for(int i = 0; i > exp; i--) {	
 			div.multiply(10);
@@ -743,19 +852,19 @@ bool Integer::div10(Integer **reminder, long int exp) {
 			bits[i] += q2 * (BIT_SIZE / 10);
 			q2 = q;
 		}	
-		if(reminder) *reminder = new Integer(q);
+		if(remainder) *remainder = new Integer(q);
 		return_value = q == 0;	
 	} else {
 		if(exp / BIT_EXP10 > bits.size()) {	
-			if(reminder) *reminder = new Integer(this);
+			if(remainder) *remainder = new Integer(this);
 			clear();
 			return false;
 		}	
 		Integer *rem = new Integer();
 		mod10(&rem, exp);
 		return_value = rem->isZero();
-		if(reminder) {
-			*reminder = rem;
+		if(remainder) {
+			*remainder = rem;
 		} else {
 			delete rem;
 		}	
@@ -784,17 +893,28 @@ bool Integer::div10(Integer **reminder, long int exp) {
 	if(bits.empty()) b_neg = false;		
 	return return_value;
 #endif
+#endif
 }
-bool Integer::mod10(Integer **reminder, long int exp) const {
+bool Integer::mod10(Integer **remainder, long int exp) const {
+#ifdef HAVE_LIBCLN
+	Integer int10(10);	
+	int10.pow(exp);
+	cl_I div = rem(integ, int10.integ);
+	if(remainder) {
+		*remainder = new Integer();
+		(*remainder)->integ = div;
+	}
+	return div == 0;	
+#else
 #ifdef HAVE_LIBGMP
 	Integer int10(10);	
 	int10.pow(exp);
 	mpz_t rem;
 	mpz_init(rem);
 	mpz_tdiv_r(rem, integ, int10.integ);
-	if(reminder) *reminder = new Integer();
+	if(remainder) *remainder = new Integer();
 	if(mpz_cmp_si(rem, 0) != 0) {
-		if(reminder) mpz_set((*reminder)->integ, rem);
+		if(remainder) mpz_set((*remainder)->integ, rem);
 		mpz_clear(rem);	
 		return false;
 	}
@@ -802,24 +922,24 @@ bool Integer::mod10(Integer **reminder, long int exp) const {
 	return true;	
 #else
 	if(isZero()) {
-		if(reminder) *reminder = new Integer();
+		if(remainder) *remainder = new Integer();
 		return true;	
 	}
 	if(exp == 1) {
 		if(bits[0] % 10 == 0) {
-			if(reminder) *reminder = new Integer();
+			if(remainder) *remainder = new Integer();
 			return true;
 		} else {
-			if(reminder) *reminder = new Integer(bits[0] % 10);
+			if(remainder) *remainder = new Integer(bits[0] % 10);
 			return false;
 		}
 	}
 	if(exp <= 0) {
-		if(reminder) *reminder = new Integer();
+		if(remainder) *remainder = new Integer();
 		return true;
 	}
 	if(exp / BIT_EXP10 > bits.size()) {
-		if(reminder) *reminder = new Integer(this);
+		if(remainder) *remainder = new Integer(this);
 		return false;
 	}
 	long int div = 1;
@@ -832,23 +952,24 @@ bool Integer::mod10(Integer **reminder, long int exp) const {
 			div *= 10;
 		}
 		if(bits[i2] % div != 0) {
-			if(reminder) {
-				*reminder = new Integer();
-				(*reminder)->b_neg = b_neg;
+			if(remainder) {
+				*remainder = new Integer();
+				(*remainder)->b_neg = b_neg;
 				for(int i3 = 0; i3 < exp / BIT_EXP10; i3++) {
-					(*reminder)->bits.push_back(bits[i3]);
+					(*remainder)->bits.push_back(bits[i3]);
 				}
 				div = 1;
 				for(int i = 0; i < exp % BIT_EXP10; i++) {
 					div *= 10;
 				}
-				(*reminder)->bits.push_back(bits[exp / BIT_EXP10] % div);
+				(*remainder)->bits.push_back(bits[exp / BIT_EXP10] % div);
 			}
 			return false;
 		}
 	}
-	if(reminder) *reminder = new Integer();
+	if(remainder) *remainder = new Integer();
 	return true;
+#endif
 #endif
 }
 void Integer::exp10(const Integer *integer) {
@@ -893,18 +1014,18 @@ void Integer::pow(long int exp) {
 		}
 	}
 }
-void Integer::ln() {
-	add(-1);
-	Integer tmp1(this), tmp2, tmp_this(this);
-	for(int i = 2; i < 5; i++) {
-		tmp1.multiply(&tmp_this);
-		tmp2.set(&tmp1);	
-		tmp2.divide(i);	
-		if(i % 2 == 0) tmp2.setNegative(!tmp2.isNegative());
-		add(&tmp2);
-	}
-}
 bool Integer::gcd(const Integer *integer, Integer **divisor) const {
+#ifdef HAVE_LIBCLN
+	cl_I div = cln::gcd(integ, integer->integ);
+	if(divisor) {
+		*divisor = new Integer();
+		(*divisor)->integ = div;
+	}
+	if(div <= 1) {
+		return false;
+	}
+	return true;
+#else
 #ifdef HAVE_LIBGMP
 	mpz_t div;
 	mpz_init(div);
@@ -941,29 +1062,45 @@ bool Integer::gcd(const Integer *integer, Integer **divisor) const {
 	if(divisor) *divisor = new Integer(&int2);
 	return !int2.isZero() && !int2.isOne() && !int2.isMinusOne();	
 #endif
+#endif
 }
 bool Integer::isZero() const {
+#ifdef HAVE_LIBCLN
+	return zerop(integ);
+#else
 #ifdef HAVE_LIBGMP
 	return mpz_cmp_si(integ, 0) == 0;
 #else
 	return bits.empty();
 #endif
+#endif
 }
 bool Integer::isOne() const {
+#ifdef HAVE_LIBCLN
+	return integ == 1;
+#else
 #ifdef HAVE_LIBGMP
 	return mpz_cmp_ui(integ, 1) == 0;
 #else
 	return !b_neg && bits.size() == 1 && bits[0] == 1;
 #endif
+#endif
 }
 bool Integer::isMinusOne() const {
+#ifdef HAVE_LIBCLN
+	return integ == -1;
+#else
 #ifdef HAVE_LIBGMP
 	return mpz_cmp_si(integ, -1) == 0;
 #else
 	return b_neg && bits.size() == 1 && bits[0] == 1;
 #endif
+#endif
 }
 long int Integer::getLongInt() const {
+#ifdef HAVE_LIBCLN
+	return cl_I_to_long(integ);
+#else
 #ifdef HAVE_LIBGMP
 	return mpz_get_si(integ);
 #else
@@ -984,18 +1121,57 @@ long int Integer::getLongInt() const {
 	}
 	return 0;
 #endif
+#endif
 }
 int Integer::getInt() const {
+#ifdef HAVE_LIBCLN
+	return cl_I_to_int(integ);
+#else
 	long int li = getLongInt();
 	if(li > INT_MAX) return INT_MAX;
 	if(li < INT_MIN) return INT_MIN;	
 	return (int) li;
+#endif
 }
 string Integer::print(int base, bool display_sign) const {
+#ifdef HAVE_LIBCLN
+	cl_print_flags flags;
+	flags.rational_base = (unsigned int) base;
+	ostringstream stream;
+	print_integer(stream, flags, integ);
+	string cl_str = stream.str();
+	if(isNegative()) {
+		cl_str.erase(0, 1);
+	}	
+	if(cl_str[cl_str.length() - 1] == '.') {
+		cl_str.erase(cl_str.length() - 1, 1);
+	}
+	string str = "";
+	if(base == 16) {
+		str += "0x";
+	} else if(base == 8) {
+		str += "0";
+	} 
+	str += cl_str;
+	if(base == 2) {
+		int i2 = str.length() % 4;
+		if(i2 != 0) i2 = 4 - i2;
+		for(int i = str.length() - 4; i > 0; i -= 4) {
+			str.insert(i, 1, ' ');
+		} 
+		for(; i2 > 0; i2--) {
+			str.insert(0, "0");
+		}
+	}
+	if(isNegative() && display_sign) {
+		str.insert(0, "-");
+	}		
+	return str;
+#else
 #ifdef HAVE_LIBGMP
 	char *c_str = mpz_get_str(NULL, base, integ);
 	string mpz_str = c_str;
-	if(!display_sign && isNegative()) {
+	if(isNegative()) {
 		mpz_str.erase(0, 1);
 	}
 	string str = "";
@@ -1006,9 +1182,17 @@ string Integer::print(int base, bool display_sign) const {
 	} 
 	str += mpz_str;
 	if(base == 2) {
-		for(int i = str.length() - 4; (isNegative() && i > 1) || (!isNegative() && i > 0); i -= 4) {
+		int i2 = str.length() % 4;
+		if(i2 != 0) i2 = 4 - i2;	
+		for(int i = str.length() - 4; i > 0; i -= 4) {
 			str.insert(i, 1, ' ');
-		} 
+		}
+		for(; i2 > 0; i2--) {
+			str.insert(0, "0");
+		}		 
+	}
+	if(isNegative() && display_sign) {
+		str.insert(0, "-");
 	}
 	free(c_str);
 	return str;
@@ -1016,7 +1200,6 @@ string Integer::print(int base, bool display_sign) const {
 	string str = "";
 	long int value;
 	char c;	
-	if(b_neg && display_sign) str = '-';
 	if(base == 10) {
 		if(isZero()) return "0";
 		bool keep_zeros = false;
@@ -1073,12 +1256,19 @@ string Integer::print(int base, bool display_sign) const {
 			if(copy.isZero()) break;
 		}
 		if(base == 2) {
-			for(int i = str.length() - 5; (isNegative() && i > 1) || (!isNegative() && i > 0); i -= 4) {
+			int i2 = str.length() % 4;
+			if(i2 != 0) i2 = 4 - i2;		
+			for(int i = str.length() - 4; i > 0; i -= 4) {
 				str.insert(i, 1, ' ');
 			} 
+			for(; i2 > 0; i2--) {
+				str.insert(0, "0");
+			}			
 		}		
 	}
+	if(b_neg && display_sign) str.insert(0, "-");	
 	return str;
+#endif
 #endif
 }
 

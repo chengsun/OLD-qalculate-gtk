@@ -221,9 +221,10 @@ void on_button_convert_clicked(GtkButton *button, gpointer user_data);
 void on_menu_item_about_activate(GtkMenuItem *w, gpointer user_data);
 
 void on_precision_dialog_spinbutton_precision_value_changed(GtkSpinButton *w, gpointer user_data);
-void on_decimals_dialog_spinbutton_decimals_value_changed(GtkSpinButton *w, gpointer user_data);
-void on_decimals_dialog_radiobutton_least_toggled(GtkToggleButton *w, gpointer user_data);
-void on_decimals_dialog_radiobutton_always_toggled(GtkToggleButton *w, gpointer user_data);
+void on_decimals_dialog_spinbutton_max_value_changed(GtkSpinButton *w, gpointer user_data);
+void on_decimals_dialog_spinbutton_min_value_changed(GtkSpinButton *w, gpointer user_data);
+void on_decimals_dialog_checkbutton_max_toggled(GtkToggleButton *w, gpointer user_data);
+void on_decimals_dialog_checkbutton_min_toggled(GtkToggleButton *w, gpointer user_data);
 
 gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointer user_data);
 

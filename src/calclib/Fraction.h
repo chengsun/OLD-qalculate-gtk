@@ -67,9 +67,10 @@ class Fraction {
 	bool atan();	
 	bool tanh();	
 	bool atanh();
-	bool sqrt();	
+	int sqrt(int solution = 1);	
 	bool cbrt();	
 	bool log();	
+	bool log(Fraction *fr);		
 	bool log2();	
 	bool log10();	
 	bool exp();
@@ -86,7 +87,7 @@ class Fraction {
 	int pow(const Fraction *fr, int solution = 1);
 	bool root(const Integer *nth);	
 	bool root(long int nth = 2);
-	bool floatify(int precision = DEFAULT_PRECISION, bool *infinite_series = NULL);
+	bool floatify(int precision = DEFAULT_PRECISION, int max_decimals = -1, bool *infinite_series = NULL);
 	bool isZero() const;
 	bool isOne() const;	
 	bool isMinusOne() const;	

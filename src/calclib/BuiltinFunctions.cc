@@ -11,6 +11,10 @@
 
 #include "BuiltinFunctions.h"
 
+#define TRIG_FUNCTION(FUNC)	if(vargs[0]->isFraction()) {mngr->set(vargs[0]); CALCULATOR->setAngleValue(mngr); if(!mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);} } else {mngr->set(this, vargs[0], NULL);}
+#define FR_FUNCTION(FUNC)	if(vargs[0]->isFraction()) {mngr->set(vargs[0]); if(!mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);} } else {mngr->set(this, vargs[0], NULL);}
+#define FR_FUNCTION_2(FUNC)	if(vargs[0]->isFraction() && vargs[1]->isFraction()) {mngr->set(vargs[0]); if(!mngr->fraction()->FUNC(vargs[1]->fraction())) {mngr->set(this, vargs[0], vargs[1], NULL);} } else {mngr->set(this, vargs[0], vargs[1], NULL);}
+
 ProcessFunction::ProcessFunction() : Function("Utilities", "process", 1, "Process components", "", false, -1) {
 }
 void ProcessFunction::calculate2(Manager *mngr) {
@@ -174,6 +178,46 @@ void RankFunction::calculate2(Manager *mngr) {
 		mngr->matrix()->rank();
 	} else {
 		mngr->set(1, 1);
+	}
+}
+MatrixToVectorFunction::MatrixToVectorFunction() : Function("Matrices", "matrixtovector", 1, "Convert Matrix to Vector") {}
+void MatrixToVectorFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isMatrix()) {
+		Vector *v = vargs[0]->matrix()->toVector();
+		mngr->set(v);
+		delete v;
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
+}
+RowFunction::RowFunction() : Function("Matrices", "row", 2, "Extract Row as Vector") {}
+void RowFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isFraction() && vargs[0]->fraction()->isPositive() && vargs[0]->fraction()->isInteger() && vargs[1]->isMatrix()) {
+		Vector *v = vargs[1]->matrix()->rowToVector(vargs[0]->fraction()->numerator()->getInt());
+		if(!v) {
+			CALCULATOR->error(true, "Row %s does not exist in matrix.", vargs[0]->print().c_str(), NULL);
+			mngr->set(this, vargs[0], vargs[1], NULL);
+		} else {
+			mngr->set(v);
+			delete v;
+		}
+	} else {
+		mngr->set(this, vargs[0], vargs[1], NULL);
+	}
+}
+ColumnFunction::ColumnFunction() : Function("Matrices", "column", 2, "Extract Column as Vector") {}
+void ColumnFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isFraction() && vargs[0]->fraction()->isPositive() && vargs[0]->fraction()->isInteger() && vargs[1]->isMatrix()) {
+		Vector *v = vargs[1]->matrix()->columnToVector(vargs[0]->fraction()->numerator()->getInt());
+		if(!v) {
+			CALCULATOR->error(true, "Column %s does not exist in matrix.", vargs[0]->print().c_str(), NULL);
+			mngr->set(this, vargs[0], vargs[1], NULL);
+		} else {
+			mngr->set(v);
+			delete v;
+		}
+	} else {
+		mngr->set(this, vargs[0], vargs[1], NULL);
 	}
 }
 RowsFunction::RowsFunction() : Function("Matrices", "rows", 1, "Rows") {}
@@ -424,7 +468,6 @@ Manager *DifferentiateFunction::calculate(const string &argv) {
 	return mngr;	
 }
 FactorialFunction::FactorialFunction() : Function("Arithmetics", "factorial", 1, "Factorial") {
-
 }
 void FactorialFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->isFraction() && !vargs[0]->fraction()->isNegative() && vargs[0]->fraction()->isInteger()) {
@@ -552,165 +595,71 @@ void ModFunction::calculate2(Manager *mngr) {
 
 SinFunction::SinFunction() : Function("Trigonometry", "sin", 1, "Sine") {}
 void SinFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		CALCULATOR->setAngleValue(mngr);
-		mngr->fraction()->sin();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	TRIG_FUNCTION(sin)
 }
 CosFunction::CosFunction() : Function("Trigonometry", "cos", 1, "Cosine") {}
 void CosFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		CALCULATOR->setAngleValue(mngr);
-		mngr->fraction()->cos();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	TRIG_FUNCTION(cos)
 }
 TanFunction::TanFunction() : Function("Trigonometry", "tan", 1, "Tangent") {}
 void TanFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		CALCULATOR->setAngleValue(mngr);
-		mngr->fraction()->tan();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	TRIG_FUNCTION(tan)
 }
 SinhFunction::SinhFunction() : Function("Trigonometry", "sinh", 1, "Hyperbolic sine") {}
 void SinhFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		CALCULATOR->setAngleValue(mngr);
-		mngr->fraction()->sinh();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	TRIG_FUNCTION(sinh)
 }
 CoshFunction::CoshFunction() : Function("Trigonometry", "cosh", 1, "Hyperbolic cosine") {}
 void CoshFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		CALCULATOR->setAngleValue(mngr);
-		mngr->fraction()->cosh();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	TRIG_FUNCTION(cosh)
 }
 TanhFunction::TanhFunction() : Function("Trigonometry", "tanh", 1, "Hyperbolic tangent") {}
 void TanhFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		CALCULATOR->setAngleValue(mngr);
-		mngr->fraction()->tanh();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	TRIG_FUNCTION(tanh)
 }
 AsinFunction::AsinFunction() : Function("Trigonometry", "asin", 1, "Arcsine") {}
 void AsinFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		CALCULATOR->setAngleValue(mngr);
-		mngr->fraction()->asin();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	TRIG_FUNCTION(asin)
 }
 AcosFunction::AcosFunction() : Function("Trigonometry", "acos", 1, "Arccosine") {}
 void AcosFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		CALCULATOR->setAngleValue(mngr);
-		mngr->fraction()->acos();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	TRIG_FUNCTION(acos)
 }
 AtanFunction::AtanFunction() : Function("Trigonometry", "atan", 1, "Arctangent") {}
 void AtanFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		CALCULATOR->setAngleValue(mngr);
-		mngr->fraction()->atan();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	TRIG_FUNCTION(atan)
 }
 AsinhFunction::AsinhFunction() : Function("Trigonometry", "asinh", 1, "Hyperbolic arcsine") {}
 void AsinhFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		CALCULATOR->setAngleValue(mngr);
-		mngr->fraction()->asinh();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	TRIG_FUNCTION(asinh)
 }
 AcoshFunction::AcoshFunction() : Function("Trigonometry", "acosh", 1, "Hyperbolic arccosine") {}
 void AcoshFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		CALCULATOR->setAngleValue(mngr);
-		mngr->fraction()->acosh();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	TRIG_FUNCTION(acosh)
 }
 AtanhFunction::AtanhFunction() : Function("Trigonometry", "atanh", 1, "Hyperbolic arctangent") {}
 void AtanhFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		CALCULATOR->setAngleValue(mngr);
-		mngr->fraction()->atanh();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	TRIG_FUNCTION(atanh)
 }
 LogFunction::LogFunction() : Function("Exponents and Logarithms", "ln", 1, "Natural Logarithm") {}
 void LogFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->isZero()) {
-		CALCULATOR->error(true, _("It is not possible to calculate the logarithm of zero."), NULL);
-		mngr->set(this, vargs[0], NULL);
-	} else if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		mngr->fraction()->log();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	FR_FUNCTION(log)
 }
 Log10Function::Log10Function() : Function("Exponents and Logarithms", "log", 1, "Base-10 Logarithm") {}
 void Log10Function::calculate2(Manager *mngr) {
-	if(vargs[0]->isZero()) {
-		CALCULATOR->error(true, _("It is not possible to calculate the logarithm of zero."), NULL);
-		mngr->set(this, vargs[0], NULL);
-	} else if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		mngr->fraction()->log10();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	FR_FUNCTION(log10)
 }
 Log2Function::Log2Function() : Function("Exponents and Logarithms", "log2", 1, "Base-2 Logarithm") {}
 void Log2Function::calculate2(Manager *mngr) {
-	if(vargs[0]->isZero()) {
-		CALCULATOR->error(true, _("It is not possible to calculate the logarithm of zero."), NULL);
-		mngr->set(this, vargs[0], NULL);
-	} else if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		mngr->fraction()->log2();		
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+	FR_FUNCTION(log2)
 }
 ExpFunction::ExpFunction() : Function("Exponents and Logarithms", "exp", 1, "e raised to the power X") {}
 void ExpFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-		mngr->fraction()->exp();		
+		if(!mngr->fraction()->exp()) {
+			mngr->set(this, vargs[0], NULL);
+		}		
 	} else {
 		mngr->set(E_VALUE);
 		mngr->add(vargs[0], RAISE);	
@@ -720,7 +669,9 @@ Exp10Function::Exp10Function() : Function("Exponents and Logarithms", "exp10", 1
 void Exp10Function::calculate2(Manager *mngr) {
 	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-		mngr->fraction()->exp10();		
+		if(!mngr->fraction()->exp10()) {
+			mngr->set(this, vargs[0], NULL);
+		}		
 	} else {
 		mngr->set(10);
 		mngr->add(vargs[0], RAISE);	
@@ -730,7 +681,9 @@ Exp2Function::Exp2Function() : Function("Exponents and Logarithms", "exp2", 1, "
 void Exp2Function::calculate2(Manager *mngr) {
 	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-		mngr->fraction()->exp2();		
+		if(!mngr->fraction()->exp2()) {
+			mngr->set(this, vargs[0], NULL);
+		}		
 	} else {
 		mngr->set(2);
 		mngr->add(vargs[0], RAISE);	
@@ -741,13 +694,10 @@ SqrtFunction::SqrtFunction() : Function("Exponents and Logarithms", "sqrt", 1, "
 }
 void SqrtFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->isFraction()) {
-		if(vargs[0]->fraction()->isNegative()) {
-			CALCULATOR->error(true, _("Trying to calculate the square root of a negative number (%s)."), d2s(vargs[0]->value()).c_str(), NULL);
-			mngr->set(this, vargs[0], NULL);
-			return;
-		}	
 		mngr->set(vargs[0]);
-		mngr->fraction()->sqrt();		
+		if(!mngr->fraction()->sqrt()) {
+			mngr->set(this, vargs[0], NULL);
+		}
 	} else {
 		mngr->set(vargs[0]);
 		Manager *mngr2 = new Manager(1, 2);
@@ -759,7 +709,9 @@ CbrtFunction::CbrtFunction() : Function("Exponents and Logarithms", "cbrt", 1, "
 void CbrtFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-		mngr->fraction()->cbrt();		
+		if(!mngr->fraction()->cbrt()) {
+			mngr->set(this, vargs[0], NULL);
+		}		
 	} else {
 		mngr->set(vargs[0]);
 		Manager *mngr2 = new Manager(1, 3);		

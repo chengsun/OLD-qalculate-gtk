@@ -274,7 +274,7 @@ create_main_window (void)
 		pango_font_description_free(font);
 	} else {
 		PangoFontDescription *font = pango_font_description_copy(resultview->style->font_desc);
-		pango_font_description_set_weight(font, PANGO_WEIGHT_BOLD);
+//		pango_font_description_set_weight(font, PANGO_WEIGHT_BOLD);
 		gtk_widget_modify_font(resultview, font);
 		pango_font_description_free(font);		
 		if(custom_font.empty()) {
@@ -299,6 +299,8 @@ create_main_window (void)
 	gtk_widget_grab_default(expression);
 
 	glade_xml_signal_autoconnect(glade_xml);
+	
+//	gtk_widget_modify_bg(resultview, GTK_STATE_NORMAL, &glade_xml_get_widget(glade_xml, "history")->style->base[GTK_WIDGET_STATE(glade_xml_get_widget(glade_xml, "history"))]);	
 
 	gtk_widget_show (glade_xml_get_widget (glade_xml, "main_window"));
 	

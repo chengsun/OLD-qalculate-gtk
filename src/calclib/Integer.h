@@ -21,21 +21,30 @@ class Integer;
 #include "includes.h"
 #include "config.h"
 
+#ifdef HAVE_LIBCLN
+#define WANT_OBFUSCATING_OPERATORS
+#include <cln/cln.h>
+using namespace cln;
+#else
 #ifdef HAVE_LIBGMP
 #include <gmp.h>
+#endif
 #endif
 
 class Integer {
 
   public:
 
+#ifdef HAVE_LIBCLN
+	cl_I integ;
+#else
 #ifdef HAVE_LIBGMP
 	mpz_t integ;	
 #else
   	bool b_neg;
 	vector<long int> bits;  
 #endif
-  
+#endif  
 	/**
 	* Constructs an integer and initializes it to zero.
 	*/
@@ -110,16 +119,15 @@ class Integer {
 	void negate();
 	void multiply(long int value);	
 	void multiply(const Integer *integer);		
-	bool divide(long int value, Integer **reminder = NULL);
-	bool divide(const Integer *integer, Integer **reminder = NULL);	
-	bool div10(Integer **reminder = NULL, long int exp = 1);
-	bool mod10(Integer **reminder = NULL, long int exp = 1) const;
+	bool divide(long int value, Integer **remainder = NULL);
+	bool divide(const Integer *integer, Integer **remainder = NULL);	
+	bool div10(Integer **remainder = NULL, long int exp = 1);
+	bool mod10(Integer **remainder = NULL, long int exp = 1) const;
 	void exp10(const Integer *integer = NULL);
 	void exp10(long int value);
 	void pow(const Integer *integer);
 	void pow(long int value);
 	bool gcd(const Integer *integer, Integer **divisor) const;
-	void ln();
 	bool isZero() const;
 	bool isOne() const;
 	bool isMinusOne() const;

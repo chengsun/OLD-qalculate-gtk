@@ -1,3 +1,9 @@
+2003-09-10  Niklas Knutsson  <nq@altern.org>
+
+	* Change behavior of decimals settings
+	* CLN support (requirement for now)
+	* Disable gnome support in glade file
+
 2003-09-09  Niklas Knutsson  <nq@altern.org>
 
 	* More accurate roots using Newton's Method with the libc function as initial value

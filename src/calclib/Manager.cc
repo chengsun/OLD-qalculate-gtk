@@ -1357,7 +1357,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 		str = "";
 	}
 	if(displayflags == DISPLAY_FORMAT_DEFAULT) {
-		displayflags = DISPLAY_FORMAT_FRACTIONAL_ONLY;
+		displayflags = DISPLAY_FORMAT_ALWAYS_DISPLAY_EXACT;
 	}
 /*	if(c_type == VALUE_MANAGER) {
 		long double new_value = d_value;

@@ -359,29 +359,21 @@ int Function::stringArgs(const string &str) {
 	if(!str.empty()) {
 		itmp = 1;
 		while(1) {
-				printf("H\n");
 			if((i = str.find(COMMA_CH, i)) != (int) string::npos) {
-								printf("I %s\n", str.c_str());
 				if((i3 = str.find(LEFT_BRACKET_CH, i4)) < i && i3 != string::npos) {
 					i4 = i3;
 					while(1) {
-					printf("A %s\n", str.substr(i3, i4 - i3).c_str());
 						i = str.find(RIGHT_BRACKET_CH, i4);
 						if(i == string::npos) {
-					printf("E\n");						
 							i4 = i;
 							break;	
 						}
-					printf("C %i %i %i\n", i, i3, i3 + 1);							
 						i3 = str.find(LEFT_BRACKET_CH, i3 + 1);
-					printf("C %i %i\n", i3, i3 + 1);																	
-						if(i3 == string::npos || i3 > i) {
-					printf("D\n");						
+						if(i3 == string::npos || i3 > i) {		
 							i4 = i;
 							break;
 						}
-						i4 = i + 1;
-					printf("B%i\n", i3);						
+						i4 = i + 1;			
 					}
 					if(i4 == string::npos)
 						break;
@@ -393,11 +385,8 @@ int Function::stringArgs(const string &str) {
 						stmp += RIGHT_BRACKET_STR;
 						svargs.push_back(stmp);*/
 						stmp = str.substr(i2, i - i2);
-					printf("3 %s\n", stmp.c_str());												
-						remove_blank_ends(stmp);						
-					printf("C\n");																	
+						remove_blank_ends(stmp);																				
 						remove_brackets(stmp);						
-					printf("4 %s\n", stmp.c_str());						
 						remove_blank_ends(stmp);
 						svargs.push_back(stmp);
 					}
@@ -408,25 +397,20 @@ int Function::stringArgs(const string &str) {
 				}
 			} else {
 				if(itmp <= args() || args() < 0) {
-									printf("F\n");
 /*					stmp = LEFT_BRACKET_STR;
 					stmp += str.substr(i2, str.length() - i2);
 					stmp += RIGHT_BRACKET_STR;
 					svargs.push_back(stmp);*/
 					stmp = str.substr(i2, str.length() - i2);
-					printf("1 %s\n", stmp.c_str());
 					remove_blank_ends(stmp);					
-					remove_brackets(stmp);	
-					printf("2 %s\n", stmp.c_str());										
+					remove_brackets(stmp);									
 					remove_blank_ends(stmp);
 					svargs.push_back(stmp);
-										printf("G\n");
 				}
 				break;
 			}
 		}
 	}
-						printf("J\n");
 	if(itmp < maxargs() && itmp >= minargs()) {
 		int itmp2 = itmp;
 		while(itmp2 < maxargs()) {
@@ -438,7 +422,6 @@ int Function::stringArgs(const string &str) {
 			itmp2++;
 		}
 	}	
-						printf("K\n");
 	return itmp;
 }
 Manager *UserFunction::calculate(const string &argv) {

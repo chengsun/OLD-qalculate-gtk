@@ -14,6 +14,12 @@
 #include <fenv.h>
 #include <locale.h>
 
+#ifdef HAVE_LIBCLN
+#define WANT_OBFUSCATING_OPERATORS
+#include <cln/cln.h>
+using namespace cln;
+#endif
+
 #define FIRST_READ_TAB_DELIMITED_SET_0(str)	if((i = stmp.find_first_not_of("\t\n", i)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) { \
 							str = stmp.substr(i, i2 - i); \
 							if(str == "0") { \
@@ -100,7 +106,7 @@ Calculator *calculator;
 
 Calculator::Calculator() {
 
-	i_precision = DEFAULT_PRECISION;
+	setPrecision(DEFAULT_PRECISION);
 
 	setLocale();
 	addStringAlternative(SIGN_POWER_0, "o");
@@ -376,6 +382,9 @@ void Calculator::prefixNameChanged(Prefix *p) {
 
 void Calculator::setPrecision(int precision) {
 	if(precision <= 0) precision = DEFAULT_PRECISION;
+#ifdef HAVE_LIBCLN
+	cln::default_float_format = float_format(precision + 5);	
+#endif
 	i_precision = precision;
 }
 int Calculator::getPrecision() const {
@@ -608,6 +617,9 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new VectorFunction());	
 	addFunction(new ComponentsFunction());	
 	addFunction(new RankFunction());
+	addFunction(new MatrixToVectorFunction());	
+	addFunction(new RowFunction());
+	addFunction(new ColumnFunction());	
 	addFunction(new RowsFunction());
 	addFunction(new ColumnsFunction());
 	addFunction(new ElementFunction());
@@ -1855,7 +1867,7 @@ bool Calculator::save(const char* file_name) {
 			else
 				fprintf(file, "%s\t", variables[i]->category().c_str());
 			if(!variables[i]->isBuiltinVariable())
-				fprintf(file, "%s\t%s\t", variables[i]->name().c_str(), variables[i]->get()->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DEFAULT, 100).c_str());
+				fprintf(file, "%s\t%s\t", variables[i]->name().c_str(), variables[i]->get()->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTIONAL_ONLY).c_str());
 			if(variables[i]->title(false).empty())
 				fprintf(file, "0\t");
 			else

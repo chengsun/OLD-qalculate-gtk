@@ -48,10 +48,8 @@ EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 	}	
 	if(str[0] == ID_WRAP_LEFT_CH && str[str.length() - 1] == ID_WRAP_RIGHT_CH) {
 		int id = s2i(str.substr(1, str.length() - 2));
-		printf("XXX4 %i\n", id);
 		mngr = CALCULATOR->getId(id);
 		if(mngr) {
-			printf("XXX5 %s\n", mngr->print().c_str());
 			if(s == MINUS_CH) mngr->addInteger(-1, MULTIPLY);
 			mngr->ref();
 			CALCULATOR->delId(id);

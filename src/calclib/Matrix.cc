@@ -520,6 +520,35 @@ bool Matrix::isPrecise() const {
 void Matrix::setPrecise(bool is_precise) {
 	b_exact = is_precise;
 }
+Vector *Matrix::toVector() {
+	Vector *vctr = new Vector(columns() * rows());
+	for(int index_r = 1; index_r <= rows(); index_r++) {
+		for(int index_c = 1; index_c <= columns(); index_c++) {
+			vctr->set(get(index_r, index_c), (index_r - 1) * columns() + index_c);
+		}			
+	}
+	return vctr;
+}
+Vector *Matrix::rowToVector(int row) {
+	if(row < 1 || row > rows()) {
+		return NULL;
+	}
+	Vector *vctr = new Vector(columns());
+	for(int index_c = 1; index_c <= columns(); index_c++) {
+		vctr->set(get(row, index_c), index_c);
+	}
+	return vctr;
+}
+Vector *Matrix::columnToVector(int column) {
+	if(column < 1 || column > columns()) {
+		return NULL;
+	}
+	Vector *vctr = new Vector(rows());
+	for(int index_r = 1; index_r <= rows(); index_r++) {
+		vctr->set(get(index_r, column), index_r);
+	}
+	return vctr;
+}
 bool Matrix::isVector() const {
 	return b_vector;
 }

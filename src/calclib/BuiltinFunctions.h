@@ -44,6 +44,12 @@ class VectorFunction : public Function {
   public:
 	VectorFunction();
 };
+class MatrixToVectorFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	MatrixToVectorFunction();
+};
 class RankFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
@@ -61,6 +67,18 @@ class ColumnsFunction : public Function {
 	void calculate2(Manager *mngr);  
   public:
 	ColumnsFunction();
+};
+class RowFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	RowFunction();
+};
+class ColumnFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	ColumnFunction();
 };
 class ComponentsFunction : public Function {
   protected:
