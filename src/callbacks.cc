@@ -140,8 +140,6 @@ bool default_plot_color = true;
 
 bool names_edited = false;
 
-string multi_sign;
-
 gint current_object_start = -1, current_object_end = -1;
 
 PrintOptions printops, saved_printops;
@@ -2649,24 +2647,20 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			PangoLayout *layout_mul = gtk_widget_create_pango_layout(resultview, NULL);
 			string str;
 			if(ips.power_depth > 0) {
-				if(multi_sign == SIGN_MULTIPLICATION) {
-					str = TEXT_TAGS_XSMALL;
-					str += multi_sign;
-					str += TEXT_TAGS_XSMALL_END;
+				if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT) {
+					str = TEXT_TAGS_SMALL SIGN_MULTIDOT TEXT_TAGS_SMALL_END;
+				} else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X) {
+					str = TEXT_TAGS_XSMALL SIGN_MULTIPLICATION TEXT_TAGS_XSMALL_END;
 				} else {
-					str = TEXT_TAGS_SMALL;
-					str += multi_sign;
-					str += TEXT_TAGS_SMALL_END;
+					str = TEXT_TAGS_SMALL "*" TEXT_TAGS_SMALL_END;
 				}
 			} else {
-				if(multi_sign == SIGN_MULTIPLICATION) {
-					str = TEXT_TAGS_SMALL;
-					str += multi_sign;
-					str += TEXT_TAGS_SMALL_END;
+				if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT) {
+					str = TEXT_TAGS SIGN_MULTIDOT TEXT_TAGS_END;
+				} else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X) {
+					str = TEXT_TAGS_SMALL SIGN_MULTIPLICATION TEXT_TAGS_SMALL_END;
 				} else {
-					str = TEXT_TAGS;
-					str += multi_sign;
-					str += TEXT_TAGS_END;
+					str = TEXT_TAGS "*" TEXT_TAGS_END;
 				}
 			}
 			pango_layout_set_markup(layout_mul, str.c_str(), -1);
@@ -2829,15 +2823,19 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 				gint div_w, div_h;
 				PangoLayout *layout_div = gtk_widget_create_pango_layout(resultview, NULL);
 				CALCULATE_SPACE_W
-				if(po.use_unicode_signs) {
-					if(ips.power_depth > 0) {
+				if(ips.power_depth > 0) {
+					if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION) {
 						pango_layout_set_markup(layout_div, TEXT_TAGS_SMALL SIGN_DIVISION TEXT_TAGS_SMALL_END, -1);
+					} else if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH) {
+						pango_layout_set_markup(layout_div, TEXT_TAGS_SMALL SIGN_DIVISION_SLASH TEXT_TAGS_SMALL_END, -1);
 					} else {
-						pango_layout_set_markup(layout_div, TEXT_TAGS SIGN_DIVISION TEXT_TAGS_END, -1);
+						pango_layout_set_markup(layout_div, TEXT_TAGS_SMALL "/" TEXT_TAGS_SMALL_END, -1);
 					}
 				} else {
-					if(ips.power_depth > 0) {
-						pango_layout_set_markup(layout_div, TEXT_TAGS_SMALL "/" TEXT_TAGS_SMALL_END, -1);
+					if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION) {
+						pango_layout_set_markup(layout_div, TEXT_TAGS SIGN_DIVISION TEXT_TAGS_END, -1);
+					} else if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH) {
+						pango_layout_set_markup(layout_div, TEXT_TAGS SIGN_DIVISION_SLASH TEXT_TAGS_END, -1);
 					} else {
 						pango_layout_set_markup(layout_div, TEXT_TAGS "/" TEXT_TAGS_END, -1);
 					}
@@ -6748,8 +6746,6 @@ void set_saved_mode() {
 */
 void load_preferences() {
 
-	multi_sign = SIGN_MULTIDOT;
-
 	default_plot_legend_placement = PLOT_LEGEND_TOP_RIGHT;
 	default_plot_display_grid = true;
 	default_plot_full_border = false;
@@ -6765,6 +6761,8 @@ void load_preferences() {
 	default_plot_color = true;
 	default_plot_use_sampling_rate = true;
 
+	printops.multiplication_sign = MULTIPLICATION_SIGN_DOT;
+	printops.division_sign = DIVISION_SIGN_DIVISION_SLASH;
 	printops.is_approximate = new bool(false);
 	printops.prefix = NULL;
 	printops.use_min_decimals = false;
@@ -6947,6 +6945,12 @@ void load_preferences() {
 					evalops.parse_options.variables_enabled = v;
 				else if(svar == "donot_calculate_variables")
 					evalops.calculate_variables = !v;
+				else if(svar == "calculate_variables")
+					evalops.calculate_variables = v;
+				else if(svar == "calculate_functions")
+					evalops.calculate_functions = v;
+				else if(svar == "sync_units")
+					evalops.sync_units = v;
 				else if(svar == "unknownvariables_enabled")
 					evalops.parse_options.unknowns_enabled = v;
 				else if(svar == "units_enabled")
@@ -6978,7 +6982,17 @@ void load_preferences() {
 				else if(svar == "custom_expression_font")
 					custom_expression_font = svalue;	
 				else if(svar == "multiplication_sign")
-					multi_sign = svalue;	
+					if(svalue == "*") {
+						printops.multiplication_sign = MULTIPLICATION_SIGN_ASTERISK;
+					} else if(svalue == SIGN_MULTIDOT) {
+						printops.multiplication_sign = MULTIPLICATION_SIGN_DOT;
+					} else if(svalue == SIGN_MULTIPLICATION) {
+						printops.multiplication_sign = MULTIPLICATION_SIGN_X;
+					} else {
+						printops.multiplication_sign = (MultiplicationSign) v;
+					}
+				else if(svar == "division_sign")
+					printops.division_sign = (DivisionSign) v;
 				else if(svar == "indicate_infinite_series")
 					printops.indicate_infinite_series = v;
 				else if(svar == "show_ending_zeroes")
@@ -7144,7 +7158,8 @@ void save_preferences(bool mode)
 	fprintf(file, "use_custom_expression_font=%i\n", use_custom_expression_font);	
 	fprintf(file, "custom_result_font=%s\n", custom_result_font.c_str());	
 	fprintf(file, "custom_expression_font=%s\n", custom_expression_font.c_str());
-	fprintf(file, "multiplication_sign=%s\n", multi_sign.c_str());
+	fprintf(file, "multiplication_sign=%i\n", printops.multiplication_sign);
+	fprintf(file, "division_sign=%i\n", printops.division_sign);
 	if(history_width != 325 || history_height != 250) {
 		fprintf(file, "history_width=%i\n", history_width);	
 		fprintf(file, "history_height=%i\n", history_height);	
@@ -7206,7 +7221,9 @@ void save_preferences(bool mode)
 	fprintf(file, "hyp_is_on=%i\n", saved_hyp_is_on);
 	fprintf(file, "functions_enabled=%i\n", saved_evalops.parse_options.functions_enabled);
 	fprintf(file, "variables_enabled=%i\n", saved_evalops.parse_options.variables_enabled);
-	fprintf(file, "donot_calculate_variables=%i\n", !saved_evalops.calculate_variables);	
+	fprintf(file, "calculate_functions=%i\n", saved_evalops.calculate_functions);	
+	fprintf(file, "calculate_variables=%i\n", saved_evalops.calculate_variables);	
+	fprintf(file, "sync_units=%i\n", saved_evalops.sync_units);	
 	fprintf(file, "unknownvariables_enabled=%i\n", saved_evalops.parse_options.unknowns_enabled);
 	fprintf(file, "units_enabled=%i\n", saved_evalops.parse_options.units_enabled);
 	fprintf(file, "allow_complex=%i\n", saved_evalops.allow_complex);
@@ -7412,9 +7429,9 @@ void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpoint
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_sub")), SIGN_MINUS);
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_add")), SIGN_PLUS);
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_times")), SIGN_MULTIPLICATION);	
-		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_divide")), SIGN_DIVISION);	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_divide")), SIGN_DIVISION_SLASH);	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_sqrt")), SIGN_SQRT);	
-		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_dot")), SIGN_MULTIDOT);	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_dot")), SIGN_MULTIDOT);
 	} else {
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_sub")), MINUS);
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_add")), PLUS);
@@ -7422,10 +7439,13 @@ void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpoint
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_divide")), DIVISION);	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_sqrt")), "SQRT");	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_dot")), CALCULATOR->getDecimalPoint().c_str());
-		if(multi_sign != "*") {
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_asterisk")), TRUE);
-		}
 	}
+	gtk_widget_set_sensitive(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_asterisk"), printops.use_unicode_signs);
+	gtk_widget_set_sensitive(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_ex"), printops.use_unicode_signs);
+	gtk_widget_set_sensitive(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_dot"), printops.use_unicode_signs);
+	gtk_widget_set_sensitive(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_slash"), printops.use_unicode_signs);
+	gtk_widget_set_sensitive(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_division_slash"), printops.use_unicode_signs);
+	gtk_widget_set_sensitive(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_division"), printops.use_unicode_signs);
 	result_display_updated();
 }
 
@@ -7475,19 +7495,37 @@ void on_preferences_checkbutton_custom_expression_font_toggled(GtkToggleButton *
 }
 void on_preferences_radiobutton_dot_toggled(GtkToggleButton *w, gpointer user_data) {
 	if(gtk_toggle_button_get_active(w)) {
-		multi_sign = SIGN_MULTIDOT;
+		printops.multiplication_sign = MULTIPLICATION_SIGN_DOT;
 		result_display_updated();
 	}
 }
 void on_preferences_radiobutton_ex_toggled(GtkToggleButton *w, gpointer user_data) {
 	if(gtk_toggle_button_get_active(w)) {
-		multi_sign = SIGN_MULTIPLICATION;
+		printops.multiplication_sign = MULTIPLICATION_SIGN_X;
 		result_display_updated();
 	}
 }
 void on_preferences_radiobutton_asterisk_toggled(GtkToggleButton *w, gpointer user_data) {
 	if(gtk_toggle_button_get_active(w)) {
-		multi_sign = "*";
+		printops.multiplication_sign = MULTIPLICATION_SIGN_ASTERISK;
+		result_display_updated();
+	}
+}
+void on_preferences_radiobutton_slash_toggled(GtkToggleButton *w, gpointer user_data) {
+	if(gtk_toggle_button_get_active(w)) {
+		printops.division_sign = DIVISION_SIGN_SLASH;
+		result_display_updated();
+	}
+}
+void on_preferences_radiobutton_division_slash_toggled(GtkToggleButton *w, gpointer user_data) {
+	if(gtk_toggle_button_get_active(w)) {
+		printops.division_sign = DIVISION_SIGN_DIVISION_SLASH;
+		result_display_updated();
+	}
+}
+void on_preferences_radiobutton_division_toggled(GtkToggleButton *w, gpointer user_data) {
+	if(gtk_toggle_button_get_active(w)) {
+		printops.division_sign = DIVISION_SIGN_DIVISION;
 		result_display_updated();
 	}
 }
@@ -8061,7 +8099,13 @@ void on_button_brace_close_clicked(GtkButton *w, gpointer user_data) {
 }
 void on_button_times_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
-	insert_text(multi_sign.c_str());
+	if(printops.use_unicode_signs && printops.multiplication_sign == MULTIPLICATION_SIGN_DOT) {
+		insert_text(SIGN_MULTIDOT);
+	} else if(printops.use_unicode_signs && printops.multiplication_sign == MULTIPLICATION_SIGN_X) {
+		insert_text(SIGN_MULTIPLICATION);
+	} else {
+		insert_text("*");
+	}
 }
 void on_button_add_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
@@ -8076,9 +8120,11 @@ void on_button_sub_clicked(GtkButton *w, gpointer user_data) {
 }
 void on_button_divide_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
-//	if(printops.use_unicode_signs) insert_text(SIGN_DIVISION);
-//	else 
-	insert_text("/");
+	if(printops.use_unicode_signs && printops.division_sign == DIVISION_SIGN_DIVISION) {
+		insert_text(SIGN_DIVISION);
+	} else {
+		insert_text("/");
+	}
 }
 void on_button_ans_clicked(GtkButton *w, gpointer user_data) {
 	insert_text("Ans");
@@ -9354,7 +9400,7 @@ void on_menu_item_help_activate(GtkMenuItem *w, gpointer user_data) {
 #ifdef HAVE_LIBGNOME
 	GError *error = NULL;
 	gnome_help_display_desktop(NULL, "qalculate", "qalculate", NULL, &error);
-	if (error) {
+	if(error) {
 		gchar *error_str = g_locale_to_utf8(error->message, -1, NULL, NULL, NULL);
 		GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help for Qalculate!.\n%s"), error_str);
 		g_signal_connect_swapped (dialog, "response", G_CALLBACK (gtk_widget_destroy), dialog);
@@ -9457,12 +9503,27 @@ gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointe
 	}
 	gint pos = gtk_editable_get_position(GTK_EDITABLE(expression));
 	switch(event->keyval) {
-		case GDK_KP_Multiply: {}			
+		case GDK_KP_Multiply: {}
 		case GDK_asterisk: {
-			gtk_editable_insert_text(GTK_EDITABLE(expression), multi_sign.c_str(), -1, &pos);
+			if(printops.use_unicode_signs && printops.multiplication_sign == MULTIPLICATION_SIGN_DOT) {
+				gtk_editable_insert_text(GTK_EDITABLE(expression), SIGN_MULTIDOT, -1, &pos);
+			} else if(printops.use_unicode_signs && printops.multiplication_sign == MULTIPLICATION_SIGN_X) {
+				gtk_editable_insert_text(GTK_EDITABLE(expression), SIGN_MULTIPLICATION, -1, &pos);
+			} else {
+				gtk_editable_insert_text(GTK_EDITABLE(expression), "*", -1, &pos);
+			}
 			gtk_editable_set_position(GTK_EDITABLE(expression), pos);
 			return TRUE;			
-		}								
+		}
+		case GDK_KP_Divide: {}
+		case GDK_slash: {
+			if(printops.use_unicode_signs && printops.division_sign == DIVISION_SIGN_DIVISION) {
+				gtk_editable_insert_text(GTK_EDITABLE(expression), SIGN_DIVISION, -1, &pos);
+				gtk_editable_set_position(GTK_EDITABLE(expression), pos);
+				return TRUE;			
+			}
+			break;
+		}
 		case GDK_KP_Subtract: {}								
 		case GDK_minus: {
 			if(printops.use_unicode_signs) {
@@ -9470,6 +9531,7 @@ gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointe
 				gtk_editable_set_position(GTK_EDITABLE(expression), pos);
 				return TRUE;
 			}
+			break;
 		}
 		case GDK_braceleft: {}
 		case GDK_braceright: {

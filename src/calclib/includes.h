@@ -255,6 +255,18 @@ static const struct SortOptions {
 	SortOptions() : prefix_currencies(true), minus_last(true) {}
 } default_sort_options;
 
+typedef enum {
+	MULTIPLICATION_SIGN_ASTERISK,
+	MULTIPLICATION_SIGN_DOT,
+	MULTIPLICATION_SIGN_X
+} MultiplicationSign;
+
+typedef enum {
+	DIVISION_SIGN_SLASH,
+	DIVISION_SIGN_DIVISION_SLASH,
+	DIVISION_SIGN_DIVISION
+} DivisionSign;
+
 static const struct PrintOptions {
 	int min_exp;
 	int base;
@@ -271,6 +283,8 @@ static const struct PrintOptions {
 	bool short_multiplication;
 	bool allow_non_usable;
 	bool use_unicode_signs;
+	MultiplicationSign multiplication_sign;
+	DivisionSign division_sign;
 	bool spacious;
 	bool excessive_parenthesis;
 	bool halfexp_to_sqrt;
@@ -284,7 +298,7 @@ static const struct PrintOptions {
 	bool *is_approximate;
 	SortOptions sort_options;
 	string comma_sign, decimalpoint_sign;
-	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), lower_case_numbers(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), show_ending_zeroes(false), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), allow_non_usable(false), use_unicode_signs(false), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), improve_division_multipliers(true), prefix(NULL), is_approximate(NULL) {}
+	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), lower_case_numbers(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), show_ending_zeroes(false), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), allow_non_usable(false), use_unicode_signs(false), multiplication_sign(MULTIPLICATION_SIGN_DOT), division_sign(DIVISION_SIGN_DIVISION_SLASH), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), improve_division_multipliers(true), prefix(NULL), is_approximate(NULL) {}
 	const string &comma() const;
 	const string &decimalpoint() const;
 } default_print_options;
@@ -376,7 +390,8 @@ extern Calculator *calculator;
 #define SIGN_PI				"π"
 #define SIGN_MULTIPLICATION		"×"
 #define SIGN_MULTIDOT			"⋅"
-#define SIGN_DIVISION			"∕"
+#define SIGN_DIVISION_SLASH		"∕"
+#define SIGN_DIVISION			"÷"
 #define SIGN_MINUS			"−"
 #define SIGN_PLUS			"＋"
 #define SIGN_SQRT			"√"

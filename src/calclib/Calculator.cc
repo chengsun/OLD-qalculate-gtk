@@ -174,6 +174,7 @@ Calculator::Calculator() {
 	addStringAlternative(SIGN_POWER_3, "^3");
 	addStringAlternative(SIGN_INFINITY, "infinity");
 	addStringAlternative(SIGN_DIVISION, DIVISION);	
+	addStringAlternative(SIGN_DIVISION_SLASH, DIVISION);	
 	addStringAlternative(SIGN_MULTIPLICATION, MULTIPLICATION);		
 	addStringAlternative(SIGN_MULTIDOT, MULTIPLICATION);			
 	addStringAlternative(SIGN_MINUS, MINUS);		
@@ -292,7 +293,7 @@ bool Calculator::utf8_pos_is_valid_in_name(char *pos) {
 			str += pos[1];
 			pos++;
 		}
-		return str != SIGN_DIVISION && str != SIGN_MULTIPLICATION && str != SIGN_MULTIDOT && str != SIGN_MINUS && str != SIGN_PLUS && str != SIGN_NOT_EQUAL && str != SIGN_GREATER_OR_EQUAL && str != SIGN_LESS_OR_EQUAL;
+		return str != SIGN_DIVISION && str != SIGN_DIVISION_SLASH && str != SIGN_MULTIPLICATION && str != SIGN_MULTIDOT && str != SIGN_MINUS && str != SIGN_PLUS && str != SIGN_NOT_EQUAL && str != SIGN_GREATER_OR_EQUAL && str != SIGN_LESS_OR_EQUAL;
 	}
 	return true;
 }

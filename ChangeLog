@@ -1,3 +1,12 @@
+2004-10-07 Niklas Knutsson  <nq@altern.org>
+
+	* Update exchange rates command in qalc
+	* Update Swedish translation
+	* Add last set options to qalc
+	* Allow user to type - when unicode signs is disabled
+	* Division sign selection
+	* Use selected multiplication and division sign in text printing
+
 2004-10-06 Niklas Knutsson  <nq@altern.org>
 
 	* Fix qalc Ctrl+D crash (exit when read line is NULL)

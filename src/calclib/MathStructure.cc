@@ -6209,7 +6209,8 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, true);
 				if(!po.short_multiplication && i > 0) {
 					if(po.spacious) print_str += " ";
-					if(po.use_unicode_signs) print_str += SIGN_MULTIDOT;
+					if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT) print_str += SIGN_MULTIDOT;
+					else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X) print_str += SIGN_MULTIPLICATION;
 					else print_str += "*";
 					if(po.spacious) print_str += " ";
 				} else if(i > 0) {
@@ -6217,14 +6218,16 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 						case MULTIPLICATION_SIGN_SPACE: {print_str += " "; break;}
 						case MULTIPLICATION_SIGN_OPERATOR: {
 							if(po.spacious) {
-								if(po.use_unicode_signs) print_str += " " SIGN_MULTIDOT " ";
-								else print_str += " * "; 
+								if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT) print_str += " " SIGN_MULTIDOT " ";
+								else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X) print_str += " " SIGN_MULTIPLICATION " ";
+								else print_str += " * ";
 								break;
 							}
 						}
 						case MULTIPLICATION_SIGN_OPERATOR_SHORT: {
-							if(po.use_unicode_signs) print_str += SIGN_MULTIDOT;
-							else print_str += "*"; 
+							if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT) print_str += SIGN_MULTIDOT;
+							else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X) print_str += SIGN_MULTIPLICATION;
+							else print_str += "*";
 							break;
 						}
 					}
@@ -6237,7 +6240,8 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 		case STRUCT_INVERSE: {
 			print_str = "1";
 			if(po.spacious) print_str += " ";
-			if(po.use_unicode_signs) print_str += SIGN_DIVISION;
+			if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION) print_str += SIGN_DIVISION;
+			else if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH) print_str += SIGN_DIVISION_SLASH;
 			else print_str += "/";
 			if(po.spacious) print_str += " ";
 			ips_n.depth++;
@@ -6252,7 +6256,8 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
 			print_str = CHILD(0).print(po, ips_n);
 			if(po.spacious) print_str += " ";
-			if(po.use_unicode_signs) print_str += SIGN_DIVISION;
+			if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION) print_str += SIGN_DIVISION;
+			else if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH) print_str += SIGN_DIVISION_SLASH;
 			else print_str += "/";
 			if(po.spacious) print_str += " ";
 			ips_n.wrap = CHILD(1).needsParenthesis(po, ips_n, *this, 2, true, true);

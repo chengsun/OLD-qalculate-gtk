@@ -86,7 +86,6 @@ extern bool show_buttons;
 extern bool save_mode_on_exit, save_defs_on_exit, load_global_defs, hyp_is_on, fetch_exchange_rates_at_startup;
 extern bool use_custom_result_font, use_custom_expression_font;
 extern string custom_result_font, custom_expression_font;
-extern string multi_sign;
 
 extern PrintOptions printops, saved_printops;
 extern EvaluationOptions evalops, saved_evalops;
@@ -313,7 +312,7 @@ create_main_window (void)
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_sub")), SIGN_MINUS);
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_add")), SIGN_PLUS);
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_times")), SIGN_MULTIPLICATION);	
-		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_divide")), SIGN_DIVISION);	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_divide")), SIGN_DIVISION_SLASH);	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_sqrt")), SIGN_SQRT);	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_dot")), SIGN_MULTIDOT);	
 //		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_inexact")), SIGN_APPROXIMATELY_EQUAL);			
@@ -666,14 +665,42 @@ get_preferences_dialog (void)
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_button_expression_font")), custom_expression_font.c_str());
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_dot")), SIGN_MULTIDOT);
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_ex")), SIGN_MULTIPLICATION);
-		if(multi_sign == SIGN_MULTIDOT) {
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_dot")), TRUE);
-		} else if(multi_sign == SIGN_MULTIPLICATION) {
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_ex")), TRUE);
-		} else if(multi_sign == "*") {
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_asterisk")), TRUE);
+		switch(printops.multiplication_sign) {
+			case MULTIPLICATION_SIGN_DOT: {
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_dot")), TRUE);
+				break;
+			}
+			case MULTIPLICATION_SIGN_X: {
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_ex")), TRUE);
+				break;
+			}
+			default: {
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_asterisk")), TRUE);
+				break;
+			}
 		}
-		
+		gtk_widget_set_sensitive(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_asterisk"), printops.use_unicode_signs);
+		gtk_widget_set_sensitive(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_ex"), printops.use_unicode_signs);
+		gtk_widget_set_sensitive(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_dot"), printops.use_unicode_signs);
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_division_slash")), " " SIGN_DIVISION_SLASH " ");
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_division")), SIGN_DIVISION);
+		switch(printops.division_sign) {
+			case DIVISION_SIGN_DIVISION_SLASH: {
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_division_slash")), TRUE);
+				break;
+			}
+			case DIVISION_SIGN_DIVISION: {
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_division")), TRUE);
+				break;
+			}
+			default: {
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_slash")), TRUE);
+				break;
+			}
+		}
+		gtk_widget_set_sensitive(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_slash"), printops.use_unicode_signs);
+		gtk_widget_set_sensitive(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_division_slash"), printops.use_unicode_signs);
+		gtk_widget_set_sensitive(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_division"), printops.use_unicode_signs);
 		glade_xml_signal_autoconnect(preferences_glade);
 		
 	}

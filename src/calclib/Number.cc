@@ -2481,7 +2481,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			str = num.print(po, ips);
 			if(ips.num) *ips.num = str;
-			str += " / ";
+			if(po.spacious) str += " ";
+			if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION) str += SIGN_DIVISION;
+			if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH) str += SIGN_DIVISION_SLASH;
+			else str += "/";
+			if(po.spacious) str += " ";
 			InternalPrintStruct ips_n = ips;
 			ips_n.minus = NULL;
 			string str2 = den.print(po, ips_n);
