@@ -75,6 +75,7 @@ class Calculator {
 	void delUnit(Unit *u);	
 	void delUFV(void *object);		
 	Unit* getUnit(string name_);
+	Unit* getCompositeUnit(string internal_name_);	
 	Variable* addVariable(Variable *v, bool force = true);
 	void variableNameChanged(Variable *v);
 	void functionNameChanged(Function *f, bool priviliged = false);	

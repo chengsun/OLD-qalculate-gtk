@@ -181,10 +181,17 @@ void Calculator::deleteName(string name_, void *object) {
 }
 void Calculator::deleteUnitName(string name_, Unit *object) {
 	Unit *u2 = getUnit(name_);
-	if(u2 == object)
+	if(u2) {
+		if(u2 != object) {
+			delUnit(u2);
+		}
 		return;
-	if(u2 != NULL) {
-		delUnit(u2);
+	} 
+	u2 = getCompositeUnit(name_);	
+	if(u2) {
+		if(u2 != object) {
+			delUnit(u2);
+		}
 	}
 }
 Manager *Calculator::calculate(string str) {
@@ -265,12 +272,16 @@ Manager *Calculator::convert(string str, Unit *from_unit, Unit *to_unit) {
 	return mngr;
 }
 Unit* Calculator::addUnit(Unit *u, bool force) {
-	u->name(getUnitName(u->name(), u, force));
-	if(u->hasPlural()) {
-		u->plural(getUnitName(u->plural(), u, force));
-	}
-	if(u->hasShortName()) {
-		u->shortName(getUnitName(u->shortName(), u, force));
+	if(u->type() == 'D') {
+		u->name(getUnitName(((CompositeUnit*) u)->internalName(), u, force));		
+	} else {
+		u->name(getUnitName(u->name(), u, force));
+		if(u->hasPlural()) {
+			u->plural(getUnitName(u->plural(), u, force));
+		}
+		if(u->hasShortName()) {
+			u->shortName(getUnitName(u->shortName(), u, force));
+		}
 	}
 	units.push_back(u);
 	return u;
@@ -315,7 +326,15 @@ void Calculator::delUFV(void *object) {
 }
 Unit* Calculator::getUnit(string name_) {
 	for(int i = 0; i < (int) units.size(); i++) {
-		if(units[i]->name() == name_ || units[i]->shortName() == name_ || units[i]->plural() == name_) {
+		if(units[i]->type() != 'D' && (units[i]->name() == name_ || units[i]->shortName() == name_ || units[i]->plural() == name_)) {
+			return units[i];
+		}
+	}
+	return NULL;
+}
+Unit* Calculator::getCompositeUnit(string internal_name_) {
+	for(int i = 0; i < (int) units.size(); i++) {
+		if(units[i]->type() == 'D' && ((CompositeUnit*) units[i])->internalName() == internal_name_) {
 			return units[i];
 		}
 	}
@@ -634,7 +653,9 @@ bool Calculator::nameTaken(string name_, void *object) {
 }
 bool Calculator::unitNameTaken(string name_, Unit *unit) {
 	Unit *u = getUnit(name_);
-	return u && u != unit;
+	if(u) return u != unit;
+	u = getCompositeUnit(name_);
+	return u && u != unit;	
 }
 bool Calculator::unitIsUsedByOtherUnits(Unit *u) {
 	Unit *u2;
@@ -998,7 +1019,7 @@ string Calculator::getUnitName(string name, Unit *object, bool force, bool alway
 	if(always_append)
 		stmp += NAME_NUMBER_PRE_STR "1";
 	for(int i = 0; i < (int) units.size(); i++) {
-		if(units[i] != object && (units[i]->name() == stmp || units[i]->shortName() == stmp || units[i]->plural() == stmp)) {
+		if(units[i] != object && ((units[i]->type() == 'D' && ((CompositeUnit*) units[i])->internalName() == stmp) || (units[i]->type() != 'D' && (units[i]->name() == stmp || units[i]->shortName() == stmp || units[i]->plural() == stmp)))) {
 			i2++;
 			sprintf(buffer, NAME_NUMBER_PRE_STR "%i", i2);
 			stmp = name + buffer;
@@ -1087,15 +1108,16 @@ bool Calculator::save(const char* file_name) {
 		else
 			fprintf(file, "%s\t", units[i]->category().c_str());
 		if(units[i]->type() == 'D') {
+			cu = (CompositeUnit*) units[i];			
+			fprintf(file, "%s\t", cu->internalName().c_str());
 			if(units[i]->title().empty())
 				fprintf(file, "0\t");
 			else
 				fprintf(file, "%s", units[i]->title().c_str());
-			cu = (CompositeUnit*) units[i];
 			cu->sort();
-			for(int i = 0; i < cu->sorted.size(); i++) {
-//				fprintf(file, "\t%s\t%s\t%LG", cu->units[cu->sorted[i]]->firstBaseUnit()->shortName().c_str(), cu->units[cu->sorted[i]]->firstBaseExp()->print().c_str(), cu->units[cu->sorted[i]]->prefixValue());
-				fprintf(file, "\t%s\t%s\t%LG", cu->units[cu->sorted[i]]->firstBaseUnit()->shortName().c_str(), d2s(cu->units[cu->sorted[i]]->firstBaseExp()).c_str(), cu->units[cu->sorted[i]]->prefixValue());
+			for(int i2 = 0; i2 < cu->sorted.size(); i2++) {
+//				fprintf(file, "\t%s\t%s\t%LG", cu->units[cu->sorted[i2]]->firstBaseUnit()->shortName().c_str(), cu->units[cu->sorted[i2]]->firstBaseExp()->print().c_str(), cu->units[cu->sorted[i2]]->prefixValue());
+				fprintf(file, "\t%s\t%s\t%LG", cu->units[cu->sorted[i2]]->firstBaseUnit()->shortName().c_str(), d2s(cu->units[cu->sorted[i2]]->firstBaseExp()).c_str(), cu->units[cu->sorted[i2]]->prefixValue());
 			}
 		} else {
 			fprintf(file, "%s\t", units[i]->name().c_str());
@@ -1133,7 +1155,7 @@ bool Calculator::load(const char* file_name) {
 	FILE *file = fopen(file_name, "r");
 	if(file == NULL)
 		return false;
-	string stmp, str, ntmp, vtmp, rtmp, etmp, shtmp, ctmp, ttmp;
+	string stmp, str, ntmp, vtmp, rtmp, etmp, shtmp, ctmp, ttmp, cutmp;
 	Unit *u;
 	AliasUnit *au;
 	Variable *v;
@@ -1299,39 +1321,46 @@ bool Calculator::load(const char* file_name) {
 					if((i = stmp.find_first_not_of("\t\n", i)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 						ctmp = stmp.substr(i, i2 - i);
 						if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-							ttmp = stmp.substr(i, i2 - i);
-							if(ttmp == "0")
-								ttmp = "";
-							CompositeUnit* cu = NULL;
-							i3 = 0;
-							while(1) {
-								if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-									vtmp = stmp.substr(i, i2 - i);
-									if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-										etmp = stmp.substr(i, i2 - i);
+							ntmp = stmp.substr(i, i2 - i);
+							ttmp = "";
+							if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
+								ttmp = stmp.substr(i, i2 - i);
+								if(ttmp == "0")
+									ttmp = "";
+								CompositeUnit* cu = NULL;
+								i3 = 0;
+								if(unitNameIsValid(ntmp)) {
+									while(1) {
 										if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-											rtmp = stmp.substr(i, i2 - i);
-											u = getUnit(vtmp);
-											if(u) {
-												if(i3 == 0)
-													cu = new CompositeUnit(this, ctmp, ttmp);
-												if(cu) {
-													mngr = calculate(etmp);
-													//cu->add(u, mngr, strtold(rtmp.c_str(), NULL));
-													cu->add(u, mngr->value(), strtold(rtmp.c_str(), NULL));
-													mngr->unref();
-												}
-											}
+											vtmp = stmp.substr(i, i2 - i);
+											if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
+												cutmp = stmp.substr(i, i2 - i);
+												if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
+													rtmp = stmp.substr(i, i2 - i);
+													u = getUnit(vtmp);
+													if(!u) u = getCompositeUnit(vtmp);
+													if(u) {
+														if(i3 == 0)
+															cu = new CompositeUnit(this, ctmp, ntmp, ttmp);
+														if(cu) {
+															mngr = calculate(cutmp);
+															//cu->add(u, mngr, strtold(rtmp.c_str(), NULL));
+															cu->add(u, mngr->value(), strtold(rtmp.c_str(), NULL));
+															mngr->unref();
+														}
+													}
+												} else
+													break;
+											} else
+												break;
 										} else
 											break;
-									} else
-										break;
-								} else
-									break;
-								i3++;
-							}
-							if(cu)
-								addUnit(cu);
+										i3++;
+									}
+									if(cu)
+										addUnit(cu);
+								}
+							}						
 						}
 					}
 				} else if(str == "*AliasUnit") {
@@ -1357,6 +1386,9 @@ bool Calculator::load(const char* file_name) {
 										if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 											vtmp = stmp.substr(i, i2 - i);
 											u = getUnit(vtmp);
+											if(!u) {
+												u = getCompositeUnit(vtmp);
+											}
 											if((unitNameIsValid(ntmp) && unitNameIsValid(etmp) && unitNameIsValid(shtmp)) && u) {
 												au = new AliasUnit(this, ctmp, ntmp, etmp, shtmp, ttmp, u);
 												if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
