@@ -1060,20 +1060,22 @@ void Calculator::setFunctionsAndVariables(string &str) {
 							i5--;
 						if(i5 != i) {
 							for(i6 = 0; i6 < (int) ufv.size(); i6++) {
-								if(ufv_t[i6] == 'u')
+								if(ufv_t[i6] == 'u') {
 									i7 = ((Unit*) ufv[i6])->shortName().length();
-								else if(ufv_t[i6] == 'U')
+								} else if(ufv_t[i6] == 'U') {
 									i7 = ((Unit*) ufv[i6])->name().length();
-								else if(ufv_t[i6] == 'Y')
+								} else if(ufv_t[i6] == 'Y') {
 									i7 = ((Unit*) ufv[i6])->plural().length();
-								else
+								} else {
 									i7 = -1;
+								}
 								if(i7 > 0 && i7 <= i5 - i4) {
-									b = false;
+									b = true;
 									for(i8 = 1; i8 <= i7; i8++) {
-										if((ufv_t[i6] == 'u' && str[i4 + i8] != ((Unit*) ufv[i6])->shortName()[i8 - 1]) || (ufv_t[i6] == 'U' && str[i4 + i8] != ((Unit*) ufv[i6])->name()[i8 - 1]) || (ufv_t[i6] == 'Y' && str[i4 + i8] != ((Unit*) ufv[i6])->plural()[i8 - 1])) {
+//										if((ufv_t[i6] == 'u' && str[i4 + i8] != ((Unit*) ufv[i6])->shortName()[i8 - 1]) || (ufv_t[i6] == 'U' && str[i4 + i8] != ((Unit*) ufv[i6])->name()[i8 - 1]) || (ufv_t[i6] == 'Y' && str[i4 + i8] != ((Unit*) ufv[i6])->plural()[i8 - 1])) {
+										if((ufv_t[i6] == 'u' && str[i4 + i8] == ((Unit*) ufv[i6])->shortName()[i8 - 1]) || (ufv_t[i6] == 'U' && str[i4 + i8] == ((Unit*) ufv[i6])->name()[i8 - 1]) || (ufv_t[i6] == 'Y' && str[i4 + i8] == ((Unit*) ufv[i6])->plural()[i8 - 1])) {										
 											u = (Unit*) ufv[i6];
-											b = true;
+											b = false;
 											if(str.length() > i4 + 1 && is_in(str[i4 + 1], NUMBERS_S, NULL)) {
 												str.insert(i4 + 1, POWER_STR);
 											}
@@ -1098,7 +1100,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 							mngr->unref();
 							stmp += ID_WRAP_RIGHT_STR;
 							stmp += RIGHT_BRACKET_STR;
-							str.replace(i, 1, stmp);
+							if(!b) str.replace(i, 1 + i7, stmp);
 						} else {
 							stmp += ch;
 							i3 = i + 1;
@@ -1112,7 +1114,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						mngr->unref();
 						stmp += ID_WRAP_RIGHT_STR;
 						stmp += RIGHT_BRACKET_STR;
-						str.replace(i, strlen(ch), stmp);
+						if(!b) str.replace(i, strlen(ch) + i7, stmp);
 					}
 				} else {
 					break;
@@ -1174,12 +1176,12 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						str.insert(i4 + 1, POWER_STR);
 					}
 					mngr = new Manager(this, u, value);
-					stmp = LEFT_BRACKET_STR;
+					stmp = LEFT_BRACKET_STR;					
 					stmp += ID_WRAP_LEFT_STR;
 					stmp += i2s(addId(mngr));
 					mngr->unref();
 					stmp += ID_WRAP_RIGHT_STR;
-					stmp += RIGHT_BRACKET_STR;
+					stmp += RIGHT_BRACKET_STR;				
 					str.replace(i, i4 - i + 1, stmp);
 				} else {
 					break;
@@ -1592,11 +1594,11 @@ bool Calculator::load(const char* file_name) {
 														if(cu) {
 															mngr = calculate(cutmp);
 															//cu->add(u, mngr, strtold(rtmp.c_str(), NULL));
-															Manager *mngr2 = calculate(rtmp);
-															//cu->add(u, mngr->value(), strtold(rtmp.c_str(), NULL));
-															cu->add(u, mngr->value(), mngr2->value());
+															//Manager *mngr2 = calculate(rtmp);
+															cu->add(u, mngr->value(), strtold(rtmp.c_str(), NULL));
+															//cu->add(u, mngr->value(), mngr2->value());
 															mngr->unref();
-															mngr2->unref();
+															//mngr2->unref();
 														}
 													}
 												} else
@@ -1644,10 +1646,11 @@ bool Calculator::load(const char* file_name) {
 												if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 													au->expression(stmp.substr(i, i2 - i));
 													if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-														mngr = calculate(stmp.substr(i, i2 - i));
+														//mngr = calculate(stmp.substr(i, i2 - i));
 														//au->exp(mngr);
-														au->exp(mngr->value());
-														mngr->unref();
+														//au->exp(mngr->value());
+														au->exp(strtold(stmp.substr(i, i2 - i).c_str(), NULL));
+														//mngr->unref();
 														if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 															au->reverseExpression(stmp.substr(i, i2 - i));
 														}
@@ -1666,10 +1669,10 @@ bool Calculator::load(const char* file_name) {
 						ntmp = stmp.substr(i, i2 - i);
 						if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 							vtmp = stmp.substr(i, i2 - i);
-							mngr = calculate(vtmp);
-							//addPrefix(ntmp, strtold(vtmp.c_str(), NULL));
-							addPrefix(ntmp, mngr->value());
-							mngr->unref();
+							//mngr = calculate(vtmp);
+							addPrefix(ntmp, strtold(vtmp.c_str(), NULL));
+							//addPrefix(ntmp, mngr->value());
+							//mngr->unref();
 						}
 					}
 				}

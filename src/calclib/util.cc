@@ -73,7 +73,8 @@ int find_last_not_of(const string &str, int pos, ...) {
 		if(strs[i] == NULL) break;
 	}
 	va_end(ap);	
-	for(int i = str.length() - 1; i >= pos; i--) {
+	if(pos < 0) pos = str.length() - 1;		
+	for(int i = pos; i >= 0; i--) {
 		bool b = true;
 		for(int i2 = 0; true; i2++) {
 			if(!strs[i2]) break;
@@ -95,8 +96,9 @@ int find_last_of(const string &str, int pos, ...) {
 		strs[i] = va_arg(ap, char*);
 		if(strs[i] == NULL) break;
 	}
-	va_end(ap);	
-	for(int i = str.length() - 1; i >= pos; i--) {
+	va_end(ap);
+	if(pos < 0) pos = str.length() - 1;	
+	for(int i = pos; i >= 0; i--) {
 		for(int i2 = 0; true; i2++) {
 			if(!strs[i2]) break;
 			for(int i3 = 0; i3 < strlen(strs[i2]); i3++) {
