@@ -52,6 +52,9 @@ GtkTreeStore *tUnitCategories_store;
 GtkWidget *tFunctionArguments;
 GtkListStore *tFunctionArguments_store;
 
+GtkWidget *tPlotFunctions;
+GtkListStore *tPlotFunctions_store;
+
 GtkCellRenderer *renderer;
 GtkTreeViewColumn *column;
 GtkTreeSelection *selection;
@@ -327,6 +330,19 @@ create_main_window (void)
 	column = gtk_tree_view_column_new_with_attributes(_("Type"), renderer, "text", 1, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tFunctionArguments), column);	
 	g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tFunctionArguments_selection_changed), NULL);
+
+	tPlotFunctions = glade_xml_get_widget (glade_xml, "plot_treeview_data");
+	tPlotFunctions_store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(tPlotFunctions), GTK_TREE_MODEL(tPlotFunctions_store));
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tPlotFunctions));
+	gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
+	renderer = gtk_cell_renderer_text_new();
+	column = gtk_tree_view_column_new_with_attributes(_("Title"), renderer, "text", 0, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tPlotFunctions), column);
+	renderer = gtk_cell_renderer_text_new();
+	column = gtk_tree_view_column_new_with_attributes(_("Expression"), renderer, "text", 1, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tPlotFunctions), column);	
+	g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tPlotFunctions_selection_changed), NULL);
 
 	GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (glade_xml, "functions_textview_description")));
 	gtk_text_buffer_create_tag(buffer, "bold", "weight", PANGO_WEIGHT_BOLD, NULL);

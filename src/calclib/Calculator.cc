@@ -657,6 +657,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new ElementFunction());
 	addFunction(new ComponentsFunction());	
 	addFunction(new ComponentFunction());	
+	addFunction(new RangeFunction());
 	addFunction(new LimitsFunction());	
 	addFunction(new TransposeFunction());
 	addFunction(new IdentityFunction());
@@ -1911,7 +1912,7 @@ string Calculator::getName(string name, ExpressionItem *object, bool force, bool
 	}
 	int i2 = 1;
 	if(name.empty()) {
-		name = "x";
+		name = "var";
 		always_append = true;
 	}
 	string stmp = name;
@@ -3364,6 +3365,7 @@ bool Calculator::loadExchangeRates() {
 		return false;
 	}
 	Unit *euro = getUnit("EUR");
+	Unit *u;
 	if(!euro) {
 		return false;
 	}
@@ -3374,7 +3376,12 @@ bool Calculator::loadExchangeRates() {
 				XML_GET_STRING_FROM_PROP(cur, "rate", rate);
 				if(!rate.empty()) {
 					rate = "1/" + rate;
-					addUnit(new AliasUnit(_("Currency"), currency, "", "", "", euro, rate, 1, "", false, true));
+					u = getUnit(currency);
+					if(!u) {
+						addUnit(new AliasUnit(_("Currency"), currency, "", "", "", euro, rate, 1, "", false, true));
+					} else if(u->unitType() == ALIAS_UNIT) {
+						((AliasUnit*) u)->setExpression(rate);
+					}
 				}
 			}
 		}
@@ -3417,5 +3424,143 @@ bool Calculator::fetchExchangeRates() {
 		}
 	}
 	return status >= 0;
+}
+Vector *Calculator::expressionToVector(string expression, const Manager *min, const Manager *max, const Manager *step, Vector **x_vector, string x_var) {
+
+	if(x_var[0] == '\\') {
+		string x_var_sub = "\"";
+		x_var_sub += x_var;
+		x_var_sub += "\"";
+		gsub(x_var, x_var_sub, expression);	
+	}
+	
+	CALCULATOR->beginTemporaryStopErrors();
+	Manager *mngr = calculate(expression);
+	CALCULATOR->endTemporaryStopErrors();
+	Vector *v = mngr->generateVector(x_var, min, max, step, x_vector);
+	mngr->unref();
+	return v;
+	
+}
+Vector *Calculator::expressionToVector(string expression, float min, float max, float step, Vector **x_vector, string x_var) {
+	Manager min_mngr(min), max_mngr(max), step_mngr(step);
+	return expressionToVector(expression, &min_mngr, &max_mngr, &step_mngr, x_vector, x_var);
+}
+Vector *Calculator::expressionToVector(string expression, Vector *x_vector, string x_var) {
+	
+	if(x_var[0] == '\\') {
+		string x_var_sub = "\"";
+		x_var_sub += x_var;
+		x_var_sub += "\"";
+		gsub(x_var, x_var_sub, expression);	
+	}
+	
+	CALCULATOR->beginTemporaryStopErrors();
+	Manager *mngr = calculate(expression);
+	CALCULATOR->endTemporaryStopErrors();	
+	Vector *v = mngr->generateVector(x_var, x_vector);
+	mngr->unref();
+	return v;
+	
+}
+bool Calculator::plotVectors(plot_parameters *param, Vector *y_vector, ...) {
+
+	Vector *v;
+	plot_data_parameters *pdp;
+	vector<Vector*> y_vectors;
+	vector<Vector*> x_vectors;
+	vector<plot_data_parameters*> pdps;
+	y_vectors.push_back(y_vector);
+	va_list ap;
+	va_start(ap, y_vector); 
+	while(true) {
+		v = va_arg(ap, Vector*);
+		if(v == NULL) break;
+		x_vectors.push_back(v);
+		pdp = va_arg(ap, plot_data_parameters*);
+		if(pdp == NULL) break;
+		pdps.push_back(pdp);
+		v = va_arg(ap, Vector*);
+		if(v == NULL) break;
+		y_vectors.push_back(v);
+	}
+	va_end(ap);	
+
+	return plotVectors(param, y_vectors, x_vectors, pdps);
+
+}
+bool Calculator::plotVectors(plot_parameters *param, vector<Vector*> &y_vectors, vector<Vector*> &x_vectors, vector<plot_data_parameters*> &pdps) {
+
+	if(!param) {
+		plot_parameters pp;
+		param = &pp;
+	}
+	
+	Vector *x_vector, *y_vector;
+
+	string plot;
+	if(!param->x_label.empty()) {
+		plot += "set xlabel \"";
+		plot += param->x_label;
+		plot += "\"\n";	
+	}
+	if(!param->y_label.empty()) {
+		plot += "set ylabel \"";
+		plot += param->y_label;
+		plot += "\"\n";	
+	}
+	plot += "plot ";
+	for(int i = 0; i < y_vectors.size(); i++) {
+		if(i != 0) {
+			plot += ",";
+		}
+		plot += "'-'";
+		if(i < pdps.size()) {
+			if(!pdps[i]->smoothing.empty() && pdps[i]->smoothing != "none") {
+				plot += " smooth ";
+				plot += pdps[i]->smoothing;
+			}
+			if(!pdps[i]->title.empty()) {
+				plot += " title \"";
+				plot += pdps[i]->title;
+				plot += "\"";
+			}
+		}
+	}
+	
+	bool b_always_exact = alwaysExact();
+	setAlwaysExact(false);	
+
+	for(int serie = 0; serie < y_vectors.size(); serie++) {
+		y_vector = y_vectors[serie];
+		if(serie < x_vectors.size()) {
+			x_vector = x_vectors[serie];
+		} else {
+			x_vector = NULL;
+		}
+		for(int i = 1; i <= y_vector->components(); i++) {
+			if(x_vector && x_vector->components() == y_vector->components()) {
+				plot += x_vector->get(i)->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DECIMAL_ONLY);
+				plot += " ";
+			}
+			plot += y_vector->get(i)->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DECIMAL_ONLY);
+			plot += "\n";	
+		}
+		plot += "e\n";
+	}
+	
+	setAlwaysExact(b_always_exact);	
+	
+	return invokeGnuplot(plot);
+}
+bool Calculator::invokeGnuplot(string commands) {
+	FILE *pipe = popen("gnuplot -persist -", "w");
+	if(!pipe) {
+		error(true, _("Failed to invoke gnuplot. Make that you have gnuplot installed in your path."), NULL);
+		return false;
+	}
+	fputs(commands.c_str(), pipe);
+	pclose(pipe);
+	return true;
 }
 

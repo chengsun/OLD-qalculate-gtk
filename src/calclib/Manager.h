@@ -84,7 +84,8 @@ class Manager {
 		void addFloat(long double value_, MathOperation op = OPERATION_MULTIPLY);			
 		void addInteger(long int value_, MathOperation op = OPERATION_MULTIPLY);					
 		void addAlternative(const Manager *mngr);
-		int compare(const Manager *mngr, int sortflags = SORT_SCIENTIFIC) const;
+		int compare(const Manager *mngr) const;
+		int sortCompare(const Manager *mngr, int sortflags = SORT_SCIENTIFIC) const;
 		void sort(int sortflags = SORT_SCIENTIFIC);					
 		void clear();
 		bool equals(const Manager *mngr) const;
@@ -100,6 +101,7 @@ class Manager {
 		Function *function() const;
 		void recalculateFunctions();
 		ComparisonType comparisonType() const;
+		bool isAlternatives() const;
 		bool isComparison() const;
 		bool isOR() const;
 		bool isAND() const;
@@ -142,6 +144,9 @@ class Manager {
 		void replace(Manager *replace_this, Manager *replace_with);
 		void replace_no_copy(Manager *replace_this, Manager *replace_with);
 		void differentiate(string x_var);
+		
+		Vector *generateVector(string x_var, const Manager *min, const Manager *max, const Manager *step, Vector **x_vector = NULL);
+		Vector *generateVector(string x_var, Vector *x_vector);
 
 };
 

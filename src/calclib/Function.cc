@@ -293,7 +293,7 @@ bool Function::testArguments(vector<Manager*> &vargs) {
 			return false;
 		}
 	}
-	if(max_argc < 0 && last > argc) {
+	if(max_argc < 0 && last > argc && argdefs.count(last)) {
 		for(int i = last + 1; i <= vargs.size(); i++) {
 			if(!argdefs[last]->test(vargs[i - 1], i, this)) {
 				return false;

@@ -695,6 +695,18 @@ void ComponentFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		mngr->set(vargs[1]);
 	}
 }
+RangeFunction::RangeFunction() : Function("Matrices", "range", 3, "Range") {}
+void RangeFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	Vector v;
+	Manager x_value(vargs[0]);
+	bool b;
+	while(x_value.compare(vargs[1]) <= 0) {
+		if(b) v.addComponent();
+		v.set(&x_value, v.components());
+		x_value.add(vargs[2], OPERATION_ADD);
+	}
+	mngr->set(&v);
+}
 LimitsFunction::LimitsFunction() : Function("Matrices", "limits", 2, "Limits", "", -1) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));	

@@ -33,6 +33,8 @@ extern GladeXML *glade_xml;
 extern GtkWidget *expression;
 extern GtkWidget *f_menu, *v_menu, *u_menu, *u_menu2, *recent_menu;
 extern Variable *vans, *vAns;
+extern GtkWidget *tPlotFunctions;
+extern GtkListStore *tPlotFunctions_store;
 extern GtkWidget *tFunctionArguments;
 extern GtkListStore *tFunctionArguments_store;
 extern GtkWidget *tFunctions, *tFunctionCategories;
@@ -1200,6 +1202,26 @@ void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer user_
 	if(!block_unit_convert) convert_in_wUnits();
 }
 
+void on_tPlotFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	selected_argument = NULL;
+	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
+		gchar *gstr1, *gstr2;
+		gtk_tree_model_get(model, &iter, 0, &gstr1, 1, &gstr2, -1);
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_expression")), gstr2);
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_title")), gstr1);
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "plot_button_remove"), TRUE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "plot_button_modify"), TRUE);		
+		g_free(gstr1);
+		g_free(gstr2);
+	} else {
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "plot_button_modify"), FALSE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "plot_button_remove"), FALSE);
+	}
+}
+
+
 void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
@@ -2329,6 +2351,13 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			vector<gint> wpt;
 			vector<gint> cpt;
 			gint plus_w, plus_h, minus_w, minus_h, wtmp, htmp, hetmp = 0, w = 0, h = 0, dh = 0, uh = 0;
+			
+			if(displayflags & DISPLAY_FORMAT_SCIENTIFIC) {
+				m->sort(SORT_SCIENTIFIC);
+			} else {
+				m->sort(SORT_DEFAULT);
+			}
+			
 			CALCULATE_SPACE_W
 			PangoLayout *layout_plus = gtk_widget_create_pango_layout(resultview, NULL);
 			if(in_power) {
@@ -2415,6 +2444,9 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			}
 			g_object_unref(layout_minus);
 			g_object_unref(layout_plus);
+			
+			m->sort();
+			
 			break;
 		}	
 		case POWER_MANAGER: {
@@ -2796,7 +2828,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					wpf_div.push_back(0);
 				}	
 				hetmp = 0;
-				pixmap_factors.push_back(draw_manager(m_i, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &hetmp));
+				pixmap_factors.push_back(draw_manager(m_i, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, draw_minus || toplevel || i, &hetmp));
 				f_has_prefix.push_back(prefix_ == 2 && l_exp && l_exp->isZero());
 				if(m_i->isText() && (m_i->text().length() == 1 || m_i->text() == "pi" || m_i->text() == "euler" || m_i->text() == "golden") || (m_i->isFraction() && !(i < m->countChilds() && m->getChild(i + 1)->isPower() && m->getChild(i + 1)->base()->isFraction())) || (m_i->isPower() && m_i->base()->isText())) {
 					f_needs_multi_space.push_back(false);
@@ -3192,6 +3224,8 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			if(layout_minus) g_object_unref(layout_minus);
 			if(layout_num) g_object_unref(layout_num);
 			if(layout_den) g_object_unref(layout_den);
+		
+			m->sort();
 		
 			break;
 		}			
@@ -4526,16 +4560,7 @@ void edit_variable(const char *category, Variable *v, Manager *mngr_, GtkWidget 
 		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variable_edit_checkbutton_exact"), TRUE);
 	
 		//fill in default values
-		string v_name = "x";
-		if(CALCULATOR->nameTaken("x")) {
-			if(!CALCULATOR->nameTaken("y")) {
-				v_name = "y";
-			} else if(!CALCULATOR->nameTaken("z")) {
-				v_name = "z";
-			} else {
-				v_name = CALCULATOR->getName();
-			}
-		}
+		string v_name = CALCULATOR->getName();
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_name")), v_name.c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_value")), get_value_string(mngr).c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_category")), category);
@@ -5683,18 +5708,6 @@ gboolean on_units_entry_to_val_focus_out_event(GtkEntry *entry, GdkEventFocus *e
 }
 
 /*
-	do not actually destroy the unit manager, only hide it so we need not recreate it later
-*/
-gboolean on_units_dialog_destroy_event(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
-	gtk_widget_hide(units_window);
-	return TRUE;
-}
-gboolean on_units_dialog_delete_event(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
-	gtk_widget_hide(units_window);
-	return TRUE;
-}
-
-/*
 	"Close" clicked -- quit
 */
 void on_button_close_clicked(GtkButton *w, gpointer user_data) {
@@ -6064,6 +6077,17 @@ void on_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer user_data) {
 void on_menu_item_convert_number_bases_activate(GtkMenuItem *w, gpointer user_data) {
 	changing_in_nbases_dialog = false;
 	create_nbases_dialog();
+}
+void on_menu_item_plot_functions_activate(GtkMenuItem *w, gpointer user_data) {
+	GtkWidget *dialog = glade_xml_get_widget(glade_xml, "plot_dialog");
+	//gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (glade_xml, "main_window")));
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_expression")), gtk_entry_get_text(GTK_ENTRY(expression)));
+	if(!GTK_WIDGET_VISIBLE(dialog)) {
+		gtk_list_store_clear(tPlotFunctions_store);
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "plot_button_modify"), FALSE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "plot_button_remove"), FALSE);	
+	}
+	gtk_widget_show(dialog);
 }
 void on_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
@@ -6436,19 +6460,6 @@ void on_variables_button_close_clicked(GtkButton *button, gpointer user_data) {
 }
 
 /*
-	do not actually destroy the variable manager, only hide it so we need not recreate it later
-*/
-gboolean on_variables_dialog_destroy_event(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
-	gtk_widget_hide(variables_window);
-	return TRUE;
-}
-gboolean on_variables_dialog_delete_event(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
-	gtk_widget_hide(variables_window);
-	return TRUE;
-}
-
-
-/*
 	"New" button clicked in function manager -- open new function dialog
 */
 void on_functions_button_new_clicked(GtkButton *button, gpointer user_data) {
@@ -6518,17 +6529,6 @@ void on_functions_button_close_clicked(GtkButton *button, gpointer user_data) {
 	gtk_widget_hide(functions_window);
 }
 
-/*
-	do not actually destroy the function manager, only hide it so we need not recreate it later
-*/
-gboolean on_functions_dialog_destroy_event(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
-	gtk_widget_hide(functions_window);
-	return TRUE;
-}
-gboolean on_functions_dialog_delete_event(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
-	gtk_widget_hide(functions_window);
-	return TRUE;
-}
 /*
 	check if entered function name is valid, if not modify
 */
@@ -6989,6 +6989,138 @@ void on_argument_rules_checkbutton_enable_max_toggled(GtkToggleButton *w, gpoint
 }
 void on_argument_rules_checkbutton_enable_condition_toggled(GtkToggleButton *w, gpointer user_data) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "argument_rules_entry_condition"), gtk_toggle_button_get_active(w));
+}
+
+void on_plot_button_apply_clicked(GtkButton *w, gpointer user_data) {
+	GtkTreeIter iter;
+	bool b = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tPlotFunctions_store), &iter);
+	if(!b) {
+		string expression = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_expression")));
+		if(!expression.empty()) {
+			on_plot_button_add_clicked(GTK_BUTTON(glade_xml_get_widget (glade_xml, "plot_button_add")), NULL);
+			b = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tPlotFunctions_store), &iter);
+		} else {
+			show_message(_("No functions defined."), glade_xml_get_widget(glade_xml, "plot_dialog"));
+			return;
+		}
+	}
+	vector<Vector*> y_vectors;
+	vector<Vector*> x_vectors;
+	vector<plot_data_parameters*> pdps;
+	Manager *min = CALCULATOR->calculate(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_spinbutton_min"))));
+	Manager *max = CALCULATOR->calculate(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_spinbutton_max"))));
+	Manager *step = CALCULATOR->calculate(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_spinbutton_step"))));
+	Vector *x_vector;
+	string smoothing;
+	switch(gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_smoothing")))) {
+		case SMOOTHING_MENU_UNIQUE: {smoothing = "unique"; break;}
+		case SMOOTHING_MENU_ACSPLINES: {smoothing = "acsplines"; break;}
+		case SMOOTHING_MENU_CSPLINES: {smoothing = "csplines"; break;}
+		case SMOOTHING_MENU_BEZIER: {smoothing = "bezier"; break;}
+		case SMOOTHING_MENU_SBEZIER: {smoothing = "sbezier"; break;}
+	}
+	while(b) {
+		gchar *gstr1, *gstr2;
+		gint type;
+		gtk_tree_model_get(GTK_TREE_MODEL(tPlotFunctions_store), &iter, 0, &gstr1, 1, &gstr2, 2, &type, -1);
+		if(type == 1) {
+			Manager *mngr = CALCULATOR->calculate(gstr2);
+			Vector *v = new Vector();
+			if(mngr->isMatrix() && mngr->matrix()->isVector()) {
+				v->set((Vector*) mngr->matrix());
+			} else {
+				v->set(mngr, 1);
+			}
+			mngr->unref();
+			y_vectors.push_back(v);
+			x_vectors.push_back(NULL);
+		} else {
+			y_vectors.push_back(CALCULATOR->expressionToVector(gstr2, min, max, step, &x_vector, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_variable")))));
+			x_vectors.push_back(x_vector);
+		}
+		plot_data_parameters *pdp = new plot_data_parameters();
+		pdp->title = gstr1;
+		remove_blank_ends(pdp->title);
+		if(pdp->title.empty()) {
+			pdp->title = gstr2;
+		}
+		pdp->smoothing = smoothing;
+		pdps.push_back(pdp);
+		g_free(gstr1);
+		g_free(gstr2);
+		b = gtk_tree_model_iter_next(GTK_TREE_MODEL(tPlotFunctions_store), &iter);
+	}
+	plot_parameters pp;
+	pp.x_label = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_xlabel")));
+	pp.y_label = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_ylabel")));
+	CALCULATOR->plotVectors(&pp, y_vectors, x_vectors, pdps);
+	min->unref(); max->unref(); step->unref();
+	for(int i = 0; i < y_vectors.size(); i++) {
+		delete y_vectors[i];
+		delete x_vectors[i];
+		delete pdps[i];
+	}
+}
+void on_plot_button_add_clicked(GtkButton *w, gpointer user_data) {
+	string expression = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_expression")));
+	if(expression.empty()) {
+		show_message(_("Empty expression."), glade_xml_get_widget(glade_xml, "plot_dialog"));
+		return;
+	}
+	GtkTreeIter iter;	
+	gtk_list_store_append(tPlotFunctions_store, &iter);
+	gint type = 0;
+	string title = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_title")));
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_radiobutton_vector")))) {
+		type = 1;
+		if(title.empty()) {
+			Variable *v = CALCULATOR->getVariable(expression);
+			if(v) {
+				title = v->title(false);
+			}
+		}
+	}
+	gtk_list_store_set(tPlotFunctions_store, &iter, 0, title.c_str(), 1, expression.c_str(), 2, type, -1);
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_expression")), "");
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_title")), "");
+}
+void on_plot_button_modify_clicked(GtkButton *w, gpointer user_data) {
+
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tPlotFunctions));
+	if(gtk_tree_selection_get_selected(select, &model, &iter)) {	
+		string expression = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_expression")));
+		if(expression.empty()) {
+			show_message(_("Empty expression."), glade_xml_get_widget(glade_xml, "plot_dialog"));
+			return;
+		}
+		gint type = 0;
+		string title = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_title")));
+		if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_radiobutton_vector")))) {
+			type = 1;
+			if(title.empty()) {
+				Variable *v = CALCULATOR->getVariable(expression);
+				if(v) {
+					title = v->title(false);
+				}
+			}
+		}
+		gtk_list_store_set(tPlotFunctions_store, &iter, 0, title.c_str(), 1, expression.c_str(), 2, type, -1);
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_expression")), "");
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_title")), "");
+	}
+	
+}
+void on_plot_button_remove_clicked(GtkButton *w, gpointer user_data) {
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tPlotFunctions));
+	if(gtk_tree_selection_get_selected(select, &model, &iter)) {
+		gtk_list_store_remove(tPlotFunctions_store, &iter);
+	}
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_expression")), "");
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_title")), "");	
 }
 
 }

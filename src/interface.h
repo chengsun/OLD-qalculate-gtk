@@ -68,6 +68,15 @@ enum {
 	MENU_ARGUMENT_TYPE_VARIABLE	
 };
 
+enum {
+	SMOOTHING_MENU_NONE,
+	SMOOTHING_MENU_UNIQUE,
+	SMOOTHING_MENU_CSPLINES,
+	SMOOTHING_MENU_ACSPLINES,
+	SMOOTHING_MENU_BEZIER,
+	SMOOTHING_MENU_SBEZIER
+};
+
 void create_main_window (void);
 GtkWidget* create_functions_dialog (void);
 GtkWidget* create_variables_dialog (void);

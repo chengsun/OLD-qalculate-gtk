@@ -1081,25 +1081,31 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 			}
 		}
 	} else if(op == OPERATION_EQUALS || op == OPERATION_LESS || op == OPERATION_GREATER || op == OPERATION_NOT_EQUALS || op == OPERATION_EQUALS_LESS || op == OPERATION_EQUALS_GREATER) {
-		Manager *mngr2 = new Manager(this);	
+/*		Manager *mngr2 = new Manager(this);	
 		mngr2->add(mngr, OPERATION_SUBTRACT);
 		mngr2->finalize();
-		int s = mngr2->signedness();
+		int s = mngr2->signedness();*/
+		int s = compare(mngr);
 		if(s > -2) {
 			clear();
 			switch(op) {
 				case OPERATION_EQUALS: {fr->setTrue(s == 0); break;}
-				case OPERATION_LESS: {fr->setTrue(s < 0); break;}
-				case OPERATION_GREATER: {fr->setTrue(s > 0); break;}
-				case OPERATION_EQUALS_LESS: {fr->setTrue(s <= 0); break;}
-				case OPERATION_EQUALS_GREATER: {fr->setTrue(s >= 0); break;}
+				case OPERATION_LESS: {fr->setTrue(s > 0); break;}
+				case OPERATION_GREATER: {fr->setTrue(s < 0); break;}
+				case OPERATION_EQUALS_LESS: {fr->setTrue(s >= 0); break;}
+				case OPERATION_EQUALS_GREATER: {fr->setTrue(s <= 0); break;}
 				case OPERATION_NOT_EQUALS: {fr->setTrue(s != 0); break;}
 			}
-			mngr2->unref();
+//			mngr2->unref();
 		} else {
+		
 			if(!translate_) {
 				return false;
 			}
+			
+			Manager *mngr2 = new Manager(this);	
+			mngr2->add(mngr, OPERATION_SUBTRACT);
+				
 			clear();
 			push_back(mngr2);
 			mngr2 = new Manager();
@@ -1218,11 +1224,36 @@ void Manager::addInteger(long int value_, MathOperation op) {
 	add(mngr, op);
 	mngr->unref();
 }
-int Manager::compare(const Manager *mngr, int sortflags) const {
+int Manager::compare(const Manager *mngr) const {
+	if(isFraction() && mngr->isFraction()) {
+		return fraction()->compare(mngr->fraction());
+	} else if(isFraction() != mngr->isFraction()) {
+		return -2;
+	} else if(isMultiplication() && mngrs.size() == 2 && mngr->isMultiplication() && mngr->countChilds() == 2 && mngrs[0]->isFraction() && mngr->getChild(0)->isFraction() && mngrs[1]->isUnit_exp() && mngr->getChild(1)->isUnit_exp() && mngrs[1]->equals(mngr->getChild(1))) {
+		return mngrs[0]->fraction()->compare(mngr->getChild(0)->fraction());
+	} else if(equals(mngr)) {
+		return 0;
+	} else {
+		Manager mngr2(this);
+		mngr2.add(mngr, OPERATION_SUBTRACT);
+		mngr2.finalize();
+		if(mngr2.isFraction()) {
+			Fraction fr;
+			return mngr2.fraction()->compare(&fr);
+		} else if(mngr2.isUnit()) {
+			return -1;
+		} else if(mngr2.isMultiplication() && mngr2.countChilds() == 2 && mngr2.getChild(0)->isFraction() && mngr2.getChild(1)->isUnit_exp()) {
+			Fraction fr;
+			return mngr2.getChild(0)->fraction()->compare(&fr);
+		}
+	}
+	return -2;
+}
+int Manager::sortCompare(const Manager *mngr, int sortflags) const {
 	if(c_type != mngr->type()) {
-		if(mngr->type() == ADDITION_MANAGER) return -mngr->compare(this, sortflags);	
-		if(mngr->type() == MULTIPLICATION_MANAGER && c_type != ADDITION_MANAGER) return -mngr->compare(this, sortflags);		
-		if(mngr->type() == POWER_MANAGER && c_type != ADDITION_MANAGER && c_type != MULTIPLICATION_MANAGER) return -mngr->compare(this, sortflags);		
+		if(mngr->type() == ADDITION_MANAGER) return -mngr->sortCompare(this, sortflags);	
+		if(mngr->type() == MULTIPLICATION_MANAGER && c_type != ADDITION_MANAGER) return -mngr->sortCompare(this, sortflags);		
+		if(mngr->type() == POWER_MANAGER && c_type != ADDITION_MANAGER && c_type != MULTIPLICATION_MANAGER) return -mngr->sortCompare(this, sortflags);		
 	}
 	switch(c_type) {
 		case FRACTION_MANAGER: {
@@ -1267,7 +1298,7 @@ int Manager::compare(const Manager *mngr, int sortflags) const {
 						if(i >= mngrs.size()) {
 							return -1;	
 						}
-						int i2 = mngr->mngrs[i]->compare(mngrs[i], sortflags);
+						int i2 = mngr->mngrs[i]->sortCompare(mngrs[i], sortflags);
 						if(i2 != 0) return i2;
 					}
 					return 0;
@@ -1279,14 +1310,14 @@ int Manager::compare(const Manager *mngr, int sortflags) const {
 			if(mngr->type() == POWER_MANAGER) {
 				if(mngrs[1]->negative() && !mngr->mngrs[1]->negative()) return 1;
 				if(!mngrs[1]->negative() && mngr->mngrs[1]->negative()) return -1;				
-				int i = mngrs[0]->compare(mngr->mngrs[0], sortflags);
+				int i = mngrs[0]->sortCompare(mngr->mngrs[0], sortflags);
 				if(i == 0) {
-					return mngrs[1]->compare(mngr->mngrs[1], sortflags);
+					return mngrs[1]->sortCompare(mngr->mngrs[1], sortflags);
 				} else {
 					return i;
 				}
 			} else if(mngr->type() != ADDITION_MANAGER) {
-				int i = mngrs[0]->compare(mngr, sortflags);
+				int i = mngrs[0]->sortCompare(mngr, sortflags);
 				if(sortflags & SORT_SCIENTIFIC) {
 					if(i == 0) {
 						if(mngrs[1]->negative()) return 1;
@@ -1304,7 +1335,7 @@ int Manager::compare(const Manager *mngr, int sortflags) const {
 			if(mngr->isNumber()) return -1;
 			int start = 0;
 			if(mngrs[0]->isNumber() && mngrs.size() > 1) start = 1;
-			if(mngr->mngrs.size() < 1 || mngr->type() == POWER_MANAGER) return mngrs[start]->compare(mngr, sortflags);
+			if(mngr->mngrs.size() < 1 || mngr->type() == POWER_MANAGER) return mngrs[start]->sortCompare(mngr, sortflags);
 			if(mngr->type() == MULTIPLICATION_MANAGER) {
 				if(mngr->mngrs.size() < 1) return -1;
 				int mngr_start = 0;
@@ -1313,7 +1344,7 @@ int Manager::compare(const Manager *mngr, int sortflags) const {
 					if(i >= mngr->mngrs.size() - mngr_start && i >= mngrs.size() - start) return 0;
 					if(i >= mngr->mngrs.size() - mngr_start) return 1;
 					if(i >= mngrs.size() - start) return -1;
-					int i2 = mngrs[i + start]->compare(mngr->mngrs[i + mngr_start], sortflags);
+					int i2 = mngrs[i + start]->sortCompare(mngr->mngrs[i + mngr_start], sortflags);
 					if(i2 != 0) return i2;
 				}
 			} 
@@ -1329,11 +1360,11 @@ int Manager::compare(const Manager *mngr, int sortflags) const {
 					if(i >= mngr->mngrs.size() && i >= mngrs.size()) return 0;
 					if(i >= mngr->mngrs.size()) return 1;
 					if(i >= mngrs.size()) return -1;
-					int i2 = mngrs[i]->compare(mngr->mngrs[i], sortflags);
+					int i2 = mngrs[i]->sortCompare(mngr->mngrs[i], sortflags);
 					if(i2 != 0) return i2;
 				}
 			} 
-			return mngrs[0]->compare(mngr, sortflags);
+			return mngrs[0]->sortCompare(mngr, sortflags);
 		}
 		default: {
 			return 1;
@@ -1352,7 +1383,13 @@ void Manager::sort(int sortflags) {
 			sorted.insert(sorted.begin(), mngrs[i]);	
 		} else {		
 			for(int i2 = 0; i2 < sorted.size(); i2++) {
-				if(!(c_type == MULTIPLICATION_MANAGER && sorted[i2]->isNumber()) && mngrs[i]->compare(sorted[i2], sortflags) < 0) {
+				if(c_type == ADDITION_MANAGER && !(sortflags & SORT_SCIENTIFIC) && mngrs[i]->hasNegativeSign() != sorted[i2]->hasNegativeSign()) {
+					if(sorted[i2]->hasNegativeSign()) {
+						sorted.insert(sorted.begin() + i2, mngrs[i]);
+						b = true;
+						break;
+					}
+				} else if(!(c_type == MULTIPLICATION_MANAGER && sorted[i2]->isNumber()) && mngrs[i]->sortCompare(sorted[i2], sortflags) < 0) {
 					sorted.insert(sorted.begin() + i2, mngrs[i]);
 					b = true;
 					break;
@@ -1532,6 +1569,7 @@ Manager *Manager::exponent() const {
 }
 ComparisonType Manager::comparisonType() const {return comparison_type;}
 Function *Manager::function() const {return o_function;}
+bool Manager::isAlternatives() const {return c_type == ALTERNATIVE_MANAGER;}
 bool Manager::isText() const {return c_type == STRING_MANAGER;}
 bool Manager::isUnit() const {return c_type == UNIT_MANAGER;}
 bool Manager::isUnit_exp() const {return c_type == UNIT_MANAGER || (c_type == POWER_MANAGER && mngrs[0]->type() == UNIT_MANAGER);}
@@ -1734,6 +1772,9 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 		}
 		str += ")";		
 	} else if(c_type == ADDITION_MANAGER) {
+		if(!(displayflags & DISPLAY_FORMAT_SCIENTIFIC)) {
+			((Manager*) this)->sort(SORT_DEFAULT);
+		}
 		for(int i = 0; i < mngrs.size(); i++) {
 			if(i > 0) {
 				str += " ";			
@@ -1766,11 +1807,17 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			}
 			str += str2;
 		}
+		if(!(displayflags & DISPLAY_FORMAT_SCIENTIFIC)) {
+			((Manager*) this)->sort();
+		}
 	} else if(c_type == MULTIPLICATION_MANAGER) {
 		bool b = false, c = false, d = false;
 		bool plural_ = true;
 		int prefix_ = 0;
 		bool had_unit = false, had_div_unit = false, is_unit = false;
+		if(!(displayflags & DISPLAY_FORMAT_SCIENTIFIC)) {
+			((Manager*) this)->sort(SORT_DEFAULT);
+		}
 		for(int i = 0; i < mngrs.size(); i++) {
 			is_unit = false;
 			if(mngrs[i]->type() == UNIT_MANAGER || (mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->type() == UNIT_MANAGER)) {
@@ -1941,6 +1988,9 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			}
 			if(l_exp) delete l_exp;
 			l_exp = NULL;
+		}
+		if(!(displayflags & DISPLAY_FORMAT_SCIENTIFIC)) {
+			((Manager*) this)->sort();
 		}
 	} else if(c_type == POWER_MANAGER) {
 		if(!in_composite && toplevel && mngrs[0]->type() == UNIT_MANAGER) {
@@ -2530,6 +2580,46 @@ void Manager::differentiate(string x_var) {
 			break;
 		}	
 	}
+}
+
+Vector *Manager::generateVector(string x_var, const Manager *min, const Manager *max, const Manager *step, Vector **x_vector) {
+	Manager x_value(min);
+	Manager x_mngr(x_var);
+	Manager y_value;
+	Vector *y_vector = new Vector();
+	if(x_vector) {
+		*x_vector = new Vector();
+	}
+	bool b = false;
+	while(x_value.compare(max) >= 0) {
+		if(x_vector) {
+			if(b) (*x_vector)->addComponent();
+			(*x_vector)->set(&x_value, (*x_vector)->components());
+		}
+		y_value.set(this);
+		y_value.replace(&x_mngr, &x_value);
+		y_value.recalculateFunctions();
+		y_value.finalize();
+		if(b) y_vector->addComponent();
+		y_vector->set(&y_value, y_vector->components());
+		x_value.add(step, OPERATION_ADD);
+		b = true;
+	}
+	return y_vector;
+}
+Vector *Manager::generateVector(string x_var, Vector *x_vector) {
+	Manager y_value;
+	Manager x_mngr(x_var);
+	Vector *y_vector = new Vector();
+	for(int i = 1; i <= x_vector->components(); i++) {
+		y_value.set(this);
+		y_value.replace(&x_mngr, x_vector->get(i));
+		y_value.recalculateFunctions();
+		y_value.finalize();
+		if(i > 1) y_vector->addComponent();
+		y_vector->set(&y_value, y_vector->components());
+	}
+	return y_vector;
 }
 
 void Manager::replace(Manager *replace_this, Manager *replace_with) {

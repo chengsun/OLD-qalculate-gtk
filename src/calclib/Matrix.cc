@@ -660,6 +660,9 @@ Vector::Vector(int components) : Matrix(1, components) {
 Vector::Vector(const Matrix *vector) : Matrix(vector) {
 	b_vector = true;
 }
+void Vector::set(const Vector *vector) {
+	Matrix::set(vector);
+}
 void Vector::set(const Manager *mngr, int component) {
 	Matrix::set(mngr, 1, component);
 }

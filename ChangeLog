@@ -1,3 +1,16 @@
+2003-10-08  Niklas Knutsson  <nq@altern.org>
+
+	* Plot dialog
+	* Lots of plotting stuff
+	* Hide on destroy and delete events for non-modal windows
+	* Place terms with negative sign in the back when not using scientific sorting
+	* Do not display more than one minus
+	* Change compare() in Manager to sortCompare() and add real compare() function
+	* Plot vector
+	* Plotting with gnuplot
+	* Fix crash with no argument definitions and variable number of arguments
+	* Do not recreate currencies, just change the relation
+
 2003-10-07  Niklas Knutsson  <nq@altern.org>
 
 	* Fully enable builtin units

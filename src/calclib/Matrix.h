@@ -256,6 +256,7 @@ class Vector : public Matrix {
 		Vector();
 		Vector(int components);	
 		Vector(const Matrix *vector);		
+		void set(const Vector *vector);
 		void set(const Manager *mngr, int component);
 		Manager *get(int component);	
 		const Manager *get(int component) const;		

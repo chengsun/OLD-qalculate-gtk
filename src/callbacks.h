@@ -50,6 +50,8 @@ void execute_expression();
 
 void object_inserted(ExpressionItem *object);
 
+void on_tPlotFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
+
 void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void update_function_arguments_list(Function *f);
 
@@ -125,8 +127,6 @@ void on_units_entry_to_val_activate(GtkEntry *entry, gpointer user_data);
 gboolean on_units_entry_from_val_focus_out_event(GtkEntry *entry, GdkEventFocus *event, gpointer user_data);
 gboolean on_units_entry_to_val_focus_out_event(GtkEntry *entry, GdkEventFocus *event, gpointer user_data);
 void on_units_button_close_clicked(GtkButton *button, gpointer user_data);
-gboolean on_units_dialog_destroy_event(GtkWidget *widget, GdkEvent *event, gpointer user_data);
-gboolean on_units_dialog_delete_event(GtkWidget *widget, GdkEvent *event, gpointer user_data);
 void on_radiobutton_radians_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 void on_radiobutton_degrees_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 void on_radiobutton_gradians_toggled(GtkToggleButton *togglebutton, gpointer user_data);
@@ -194,6 +194,7 @@ void on_menu_item_exact_mode_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_save_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_precision_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_decimals_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_plot_functions_activate(GtkMenuItem *w, gpointer user_data);
 void on_unit_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 void on_unit_edit_optionmenu_class_changed(GtkOptionMenu *om, gpointer user_data);
 void on_units_button_new_clicked(GtkButton *button, gpointer user_data);
@@ -206,15 +207,11 @@ void on_variables_button_edit_clicked(GtkButton *button, gpointer user_data);
 void on_variables_button_insert_clicked(GtkButton *button, gpointer user_data);
 void on_variables_button_delete_clicked(GtkButton *button, gpointer user_data);
 void on_variables_button_close_clicked(GtkButton *button, gpointer user_data);
-gboolean on_variables_dialog_destroy_event(GtkWidget *widget, GdkEvent *event, gpointer user_data);
-gboolean on_variables_dialog_delete_event(GtkWidget *widget, GdkEvent *event, gpointer user_data);
 void on_functions_button_new_clicked(GtkButton *button, gpointer user_data);
 void on_functions_button_edit_clicked(GtkButton *button, gpointer user_data);
 void on_functions_button_insert_clicked(GtkButton *button, gpointer user_data);
 void on_functions_button_delete_clicked(GtkButton *button, gpointer user_data);
 void on_functions_button_close_clicked(GtkButton *button, gpointer user_data);
-gboolean on_functions_dialog_destroy_event(GtkWidget *widget, GdkEvent *event, gpointer user_data);
-gboolean on_functions_dialog_delete_event(GtkWidget *widget, GdkEvent *event, gpointer user_data);
 void on_function_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 void on_variable_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 
@@ -266,6 +263,11 @@ void on_function_edit_button_rules_clicked(GtkButton *w, gpointer user_data);
 void on_argument_rules_checkbutton_enable_min_toggled(GtkToggleButton *w, gpointer user_data);
 void on_argument_rules_checkbutton_enable_max_toggled(GtkToggleButton *w, gpointer user_data);
 void on_argument_rules_checkbutton_enable_condition_toggled(GtkToggleButton *w, gpointer user_data);
+
+void on_plot_button_apply_clicked(GtkButton *w, gpointer user_data);
+void on_plot_button_add_clicked(GtkButton *w, gpointer user_data);
+void on_plot_button_modify_clicked(GtkButton *w, gpointer user_data);
+void on_plot_button_remove_clicked(GtkButton *w, gpointer user_data);
 
 }
 

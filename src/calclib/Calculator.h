@@ -22,6 +22,25 @@ extern Calculator *calculator;
 
 typedef vector<Prefix*> p_type;
 
+struct plot_parameters {
+	string y_label, x_label;
+	bool auto_y_min, auto_x_min;
+	bool auto_y_max, auto_x_max;
+	float y_min, x_min;
+	float y_max, x_max;
+	plot_parameters() {
+		auto_y_min = true;
+		auto_x_min = true;
+		auto_y_max = true;
+		auto_x_max = true;
+	}
+};
+
+struct plot_data_parameters {
+	string title;
+	string smoothing;
+};
+
 class Calculator {
   protected:
 	stack<Error*> errors;
@@ -189,6 +208,13 @@ class Calculator {
 	
 	bool loadExchangeRates();
 	bool fetchExchangeRates();
+	
+	Vector *expressionToVector(string expression, const Manager *min, const Manager *max, const Manager *step, Vector **x_vector = NULL, string x_var = "\\x");
+	Vector *expressionToVector(string expression, float min, float max, float step, Vector **x_vector = NULL, string x_var = "\\x");
+	Vector *expressionToVector(string expression, Vector *x_vector, string x_var = "\\x");
+	bool plotVectors(plot_parameters *param, Vector *y_vector, ...);
+	bool plotVectors(plot_parameters *param, vector<Vector*> &y_vectors, vector<Vector*> &x_vectors, vector<plot_data_parameters*> &pdps);
+	bool invokeGnuplot(string commands);
 		
 };
 
