@@ -21,7 +21,7 @@ class Manager;
 #define UNIT_MANAGER		'u'
 #define NULL_MANAGER		0
 #define STRING_MANAGER		's'
-#define UNSOLVEABLE_FUNCTION_MANAGER	'f'
+#define FUNCTION_MANAGER	'f'
 
 #include "Calculator.h"
 #include "Unit.h"
@@ -48,18 +48,20 @@ class Manager {
 		char c_type;
 		int refcount;
 		string s_var;
-		Function *function;
+		Function *o_function;
 		
 	
 		void moveto(Manager *mngr);			
 		
 		Manager(Calculator *calc_);
 		Manager(Calculator *calc_, long double value_);		
-		Manager(Calculator *calc_, string var_);				
+		Manager(Calculator *calc_, string var_);	
+		Manager(Calculator *calc_, Function *f, ...);							
 		Manager(Calculator *calc_, Unit *u, long double value_ = 1);				
 		Manager(const Manager *mngr);	
 		~Manager(void);
 		void set(const Manager *mngr);
+		void set(Function *f, ...);		
 		void set(long double value_);		
 		void set(string var_);				
 		void set(Unit *u, long double value_ = 1);				
@@ -83,7 +85,7 @@ class Manager {
 		bool convert(Unit*);
 		bool convert(string unit_str);		
 		bool convert(Manager *unit_mngr);				
-		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int unitflags = UNIT_FORMAT_DEFAULT, int precision = PRECISION, int decimals_to_keep = 0, bool decimals_expand = true, bool decimals_decrease = false, bool *usable = NULL, bool toplevel = true, bool *plural = NULL);
+		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int unitflags = UNIT_FORMAT_DEFAULT, int precision = PRECISION, int decimals_to_keep = 0, bool decimals_expand = true, bool decimals_decrease = false, bool *usable = NULL, bool toplevel = true, bool *plural = NULL, long double *d_exp = NULL);
 		void ref(void);
 		void unref(void);
 		char type(void) const;

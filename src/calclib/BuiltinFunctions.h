@@ -28,109 +28,109 @@ class AbsFunction : public Function {
 };
 class CeilFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	CeilFunction(Calculator *calc_);
 };
 class FloorFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	FloorFunction(Calculator *calc_);
 };
 class TruncFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	TruncFunction(Calculator *calc_);
 };
 class RoundFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	RoundFunction(Calculator *calc_);
 };
 class RemFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	RemFunction(Calculator *calc_);
 };
 class ModFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	ModFunction(Calculator *calc_);
 };
 class SinFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	SinFunction(Calculator *calc_);
 };
 class CosFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	CosFunction(Calculator *calc_);
 };
 class TanFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	TanFunction(Calculator *calc_);
 };
 class SinhFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	SinhFunction(Calculator *calc_);
 };
 class CoshFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	CoshFunction(Calculator *calc_);
 };
 class TanhFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	TanhFunction(Calculator *calc_);
 };
 class AsinFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	AsinFunction(Calculator *calc_);
 };
 class AcosFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	AcosFunction(Calculator *calc_);
 };
 class AtanFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	AtanFunction(Calculator *calc_);
 };
 class AsinhFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	AsinhFunction(Calculator *calc_);
 };
 class AcoshFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	AcoshFunction(Calculator *calc_);
 };
 class AtanhFunction : public Function {
   protected:
-	long double calculate3();  
+	void calculate2(Manager *mngr);  
   public:
 	AtanhFunction(Calculator *calc_);
 };

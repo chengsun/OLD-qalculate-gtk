@@ -1,3 +1,8 @@
+2003-08-09  Niklas Knutsson  <nq@altern.org>
+
+	* Support unsolved function -- now log(x) returns log(x) instead of the result of log(0)
+	* Fix prefix display mode (only use in front of units to avoid confusion and support exponents)
+
 2003-08-08  Niklas Knutsson  <nq@altern.org>
 
 	* Set LC_NUMERIC to "C" to make strold() happy
@@ -45,7 +50,7 @@
 2003-08-08  Niklas Knutsson  <nq@altern.org>
 
 	* Move generated menus one step up
-	* Add finalize() after conversion in callbacks.cc 
+	* Add finalize() after conversion in callbacks.cc
 
 2003-08-08  Niklas Knutsson  <nq@altern.org>
 
@@ -53,14 +58,14 @@
 	* Fix (x+y)^(6+n)
 	* Fix kWs = W^2 * s^2 in Calculator.cc
 	* Do not convert units during the whole calculation, do it in finalize() afterwards instead
-	* Make units work even better. 
+	* Make units work even better.
 	* Move OCT, HEX, BIN and BASE functions to category "Number Bases"
 
 2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
 
 	* configure.in: added -Wall stuff again (was just a typo)
 	* src/interface.cc: removed some unneccessary variables from
-	create_window 
+	create_window
 
 2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
 

@@ -1123,11 +1123,11 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						i4 = i + u->plural().length() - 1;
 					else
 						i4 = i + u->name().length() - 1;
-/*					if(i4 != str.length() - 1 && is_not_in(SPACE_S NUMBERS_S OPERATORS_S BRACKETS_S DOT_S, str[i4 + 1])) {
+					if(i4 != str.length() - 1 && is_not_in(str[i4 + 1], SPACE_S, NUMBERS_S, OPERATORS_S, BRACKETS_S, DOT_S, NULL)) {
 						i3 = i + 1;
 						if(i3 >= str.length()) break;
 						goto find_unit;
-					}*/
+					}
 					i5 = find_last_of(str, i, NUMBERS_S, OPERATORS_S, BRACKETS_S, SPACE_S, NULL);
 					if(i5 == string::npos)
 						i5 = 0;
@@ -1765,7 +1765,7 @@ string Calculator::value2str_hex(long double &value, int precision) {
 	string stmp = vbuffer;
 	return stmp;
 }
-string Calculator::value2str_prefix(long double &value, int precision, bool use_short_prefixes, long double *new_value) {
+/*string Calculator::value2str_prefix(long double &value, long double &exp, int precision, bool use_short_prefixes, long double *new_value) {
 	string str;
 	long int i1, i2, iv, iv2 = 0;
 	char state = 2;
@@ -1775,10 +1775,7 @@ string Calculator::value2str_prefix(long double &value, int precision, bool use_
 	if(i1 != 0) {
 		if(use_short_prefixes) {
 			for(it = s_prefix.begin(); it != s_prefix.end(); ++it) {
-//				if(u)
-//					iv = lroundl(log10l(u->prefixValue(it->second)));
-//				else
-					iv = lroundl(log10l(it->second));
+				iv = lroundl(powl(log10l(it->second), exp));
 				if(iv == i1) {
 					itt = it;
 					iv2 = iv;
@@ -1792,10 +1789,7 @@ string Calculator::value2str_prefix(long double &value, int precision, bool use_
 			}
 		}
 		for(it2 = l_prefix.begin(); it2 != l_prefix.end() && state > 1; it2++) {
-//			if(u)
-//				iv = lroundl(log10l(u->prefixValue(it2->second)));
-//			else
-				iv = lroundl(log10l(it2->second));
+			iv = lroundl(powl(log10l(it2->second), exp));
 			if(iv == i1) {
 				itt2 = it2;
 				iv2 = iv;
@@ -1809,10 +1803,7 @@ string Calculator::value2str_prefix(long double &value, int precision, bool use_
 		}
 		if(!use_short_prefixes && state != 3) {
 			for(it = s_prefix.begin(); it != s_prefix.end(); ++it) {
-//				if(u)
-//					iv = lroundl(log10l(u->prefixValue(it->second)));
-//				else
-					iv = lroundl(log10l(it->second));
+				iv = lroundl(powl(log10l(it->second), exp));
 				if(iv == i1) {
 					itt = it;
 					iv2 = iv;
@@ -1829,13 +1820,10 @@ string Calculator::value2str_prefix(long double &value, int precision, bool use_
 	if(iv2 != 0) {
 		long double vtmp;
 		if(state > 2)
-			vtmp = itt2->second;
+			vtmp = powl(itt2->second, exp);
 		else
-			vtmp = itt->second;
-//		if(u)
-//			vtmp = value / u->prefixValue(vtmp);
-//		else
-			vtmp = value / vtmp;
+			vtmp = powl(itt->second, exp);
+		vtmp = value / vtmp;
 		if(new_value)
 			*new_value = vtmp;
 		str = value2str(vtmp, precision);
@@ -1848,6 +1836,62 @@ string Calculator::value2str_prefix(long double &value, int precision, bool use_
 	}
 	if(new_value)
 		*new_value = value;
+	return value2str(value, precision);
+}*/
+string Calculator::value2str_prefix(long double &value, long double &exp, int precision, bool use_short_prefixes, long double *new_value) {
+	long double d1, d2, d3;
+	hash_map<char, long double>::iterator it, itt;
+	l_type::iterator it2, itt2;
+	if(value == 1.0L || value == 0.0L) {
+		if(new_value) 
+			*new_value = value;
+		return value2str(value, precision);
+	}
+	for(it = s_prefix.begin(); it != s_prefix.end(); ++it) {
+		d1 = log10l(value / powl(it->second, exp));
+		if(d1 < 0) {
+			d1 = -(d1 * 2) + 2;				
+		}
+		if(it == s_prefix.begin() || d1 < d2) {
+			itt = it;
+			d2 = d1;
+		}
+	}
+	for(it2 = l_prefix.begin(); it2 != l_prefix.end(); ++it2) {
+		d1 = log10l(value / powl(it2->second, exp));
+		if(d1 < 0) {
+			d1 = -(d1 * 2) + 2;				
+		}
+		if(it2 == l_prefix.begin() || d1 < d3) {
+			itt2 = it2;
+			d3 = d1;
+		}
+	}
+	if(itt2->second == itt->second) {
+	} else if(d3 < d2) {
+		use_short_prefixes = false;
+	} else {
+		use_short_prefixes = true;
+	}
+	string str;
+	if(use_short_prefixes) {
+		d1 = powl(itt->second, exp);
+		str = itt->first;
+	} else {
+		d1 = powl(itt2->second, exp);
+		str = itt2->first;
+	}
+	d1 = value / d1;
+	if((value > 1 && value > d1) || (value < 1 && value < d1)) {
+		string str2 = value2str(d1, precision);
+		str2 += ' ';
+		str2 += str;
+		if(new_value)
+			*new_value = d1;
+		return str2;
+	}
+	if(new_value)
+		*new_value = value;	
 	return value2str(value, precision);
 }
 
@@ -1892,4 +1936,18 @@ long double Calculator::getAngleValue(long double value) {
 	    case GRADIANS: {return gra2rad(value);}
 	}
 }
-
+Manager *Calculator::setAngleValue(Manager *mngr) {
+	switch(angleMode()) {
+		case DEGREES: {
+	    		mngr->add(PI_VALUE, MULTIPLICATION_CH);
+	    		mngr->add(180, DIVISION_CH);			
+			break;
+		}
+		case GRADIANS: {
+	    		mngr->add(PI_VALUE, MULTIPLICATION_CH);
+	    		mngr->add(200, DIVISION_CH);		
+			break;
+		}
+	}
+	return mngr;
+}

@@ -102,126 +102,143 @@ void AbsFunction::calculate2(Manager *mngr) {
 CeilFunction::CeilFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "ceil", 1, "Round upwards") {
 	addArgName("Number");
 }
-long double CeilFunction::calculate3() {
-	return ceill(vargs[0]->value());
+void CeilFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
+	else mngr->set(ceill(vargs[0]->value()));
 }
 FloorFunction::FloorFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "floor", 1, "Round downwards") {
 	addArgName("Number");
 }
-long double FloorFunction::calculate3() {
-	return floorl(vargs[0]->value());
+void FloorFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
+	else mngr->set(floorl(vargs[0]->value()));
 }
 TruncFunction::TruncFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "trunc", 1, "Round towards zero") {
 	addArgName("Number");
 }
-long double TruncFunction::calculate3() {
-	return truncl(vargs[0]->value());
+void TruncFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
+	else mngr->set(truncl(vargs[0]->value()));
 }
 RoundFunction::RoundFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "round", 1, "Round") {
 	addArgName("Number");
 }
-long double RoundFunction::calculate3() {
-	return roundl(vargs[0]->value());
+void RoundFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
+	else mngr->set(roundl(vargs[0]->value()));
 }
 RemFunction::RemFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "rem", 2, "Reminder (rem)") {
 	addArgName("Numerator");
 	addArgName("Denominator");
 }
-long double RemFunction::calculate3() {
-	if(vargs[1] == 0) {
-		calc->error(true, 1, "The denominator in rem function cannot be zero");
-		return 0;
+void RemFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], vargs[1], NULL);
+	else if(vargs[1]->type() != VALUE_MANAGER && vargs[1]->type() != NULL_MANAGER) mngr->set(this, vargs[0], vargs[1], NULL);	
+	else {
+		if(vargs[1] == 0) {
+			calc->error(true, 1, "The denominator in rem function cannot be zero");
+			mngr->set(this, vargs[0], vargs[1], NULL);
+		} else {
+			mngr->set(dreml(vargs[0]->value(), vargs[1]->value()));
+		}
 	}
-	return dreml(vargs[0]->value(), vargs[1]->value());
 }
 ModFunction::ModFunction(Calculator *calc_) : Function(calc_, "Arithmetics", "mod", 2, "Reminder (mod)") {
 	addArgName("Numerator");
 	addArgName("Denominator");
 }
-long double ModFunction::calculate3() {
-	if(vargs[1]->value() == 0) {
-		calc->error(true, 1, "The denominator in mod function cannot be zero");
-		return 0;
+void ModFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], vargs[1], NULL);
+	else if(vargs[1]->type() != VALUE_MANAGER && vargs[1]->type() != NULL_MANAGER) mngr->set(this, vargs[0], vargs[1], NULL);	
+	else {
+		if(vargs[1] == 0) {
+			calc->error(true, 1, "The denominator in mod function cannot be zero");
+			mngr->set(this, vargs[0], vargs[1], NULL);
+		} else {
+			mngr->set(fmodl(vargs[0]->value(), vargs[1]->value()));
+		}
 	}
-	return fmodl(vargs[0]->value(), vargs[1]->value());
 }
 
 SinFunction::SinFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "sin", 1, "Sine") {}
-long double SinFunction::calculate3() {
-	return sinl(calc->getAngleValue(vargs[0]->value()));
+void SinFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	else mngr->set(sinl(calc->getAngleValue(vargs[0]->value())));
 }
 CosFunction::CosFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "cos", 1, "Cosine") {}
-long double CosFunction::calculate3() {
-	return cosl(calc->getAngleValue(vargs[0]->value()));
+void CosFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	else mngr->set(cosl(calc->getAngleValue(vargs[0]->value())));
 }
 TanFunction::TanFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "tan", 1, "Tangent") {}
-long double TanFunction::calculate3() {
-	return tanl(calc->getAngleValue(vargs[0]->value()));
+void TanFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	else mngr->set(tanl(calc->getAngleValue(vargs[0]->value())));
 }
 SinhFunction::SinhFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "sinh", 1, "Hyperbolic sine") {}
-long double SinhFunction::calculate3() {
-	return sinhl(calc->getAngleValue(vargs[0]->value()));
+void SinhFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	else mngr->set(sinhl(calc->getAngleValue(vargs[0]->value())));
 }
 CoshFunction::CoshFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "cosh", 1, "Hyperbolic cosine") {}
-long double CoshFunction::calculate3() {
-	return coshl(calc->getAngleValue(vargs[0]->value()));
+void CoshFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	else mngr->set(coshl(calc->getAngleValue(vargs[0]->value())));
 }
 TanhFunction::TanhFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "tanh", 1, "Hyperbolic tangent") {}
-long double TanhFunction::calculate3() {
-	return tanhl(calc->getAngleValue(vargs[0]->value()));
+void TanhFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	else mngr->set(tanhl(calc->getAngleValue(vargs[0]->value())));
 }
 AsinFunction::AsinFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "asin", 1, "Arcsine") {}
-long double AsinFunction::calculate3() {
-	return asinl(calc->getAngleValue(vargs[0]->value()));
+void AsinFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	else mngr->set(asinl(calc->getAngleValue(vargs[0]->value())));
 }
 AcosFunction::AcosFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "acos", 1, "Arccosine") {}
-long double AcosFunction::calculate3() {
-	return acosl(calc->getAngleValue(vargs[0]->value()));
+void AcosFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	else mngr->set(acosl(calc->getAngleValue(vargs[0]->value())));
 }
 AtanFunction::AtanFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "atan", 1, "Arctangent") {}
-long double AtanFunction::calculate3() {
-	return atanl(calc->getAngleValue(vargs[0]->value()));
+void AtanFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	else mngr->set(atanl(calc->getAngleValue(vargs[0]->value())));
 }
 AsinhFunction::AsinhFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "asinh", 1, "Hyperbolic arcsine") {}
-long double AsinhFunction::calculate3() {
-	return asinhl(calc->getAngleValue(vargs[0]->value()));
+void AsinhFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	else mngr->set(asinhl(calc->getAngleValue(vargs[0]->value())));
 }
 AcoshFunction::AcoshFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "acosh", 1, "Hyperbolic arccosine") {}
-long double AcoshFunction::calculate3() {
-	return acoshl(calc->getAngleValue(vargs[0]->value()));
+void AcoshFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	else mngr->set(acoshl(calc->getAngleValue(vargs[0]->value())));
 }
 AtanhFunction::AtanhFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "atanh", 1, "Hyperbolic arctangent") {}
-long double AtanhFunction::calculate3() {
-	return atanhl(calc->getAngleValue(vargs[0]->value()));
+void AtanhFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	else mngr->set(atanhl(calc->getAngleValue(vargs[0]->value())));
 }
 LogFunction::LogFunction(Calculator *calc_) : Function(calc_, "Exponents and Logarithms", "ln", 1, "Natural Logarithm") {}
 void LogFunction::calculate2(Manager *mngr) {
-//	if(vargs[0]->type() == VALUE_MANAGER || vargs[0]->type() == NULL_MANAGER) {
-		mngr->value(logl(vargs[0]->value()));
-//	} else {
-		//unsolved function
-//	}
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
+	else mngr->set(logl(vargs[0]->value()));
 }
 Log10Function::Log10Function(Calculator *calc_) : Function(calc_, "Exponents and Logarithms", "log", 1, "Base-10 Logarithm") {}
 void Log10Function::calculate2(Manager *mngr) {
-//	if(vargs[0]->type() == VALUE_MANAGER || vargs[0]->type() == NULL_MANAGER) {
-		mngr->value(log10l(vargs[0]->value()));
-//	} else {
-		//unsolved function
-//	}		
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
+	else mngr->set(log10l(vargs[0]->value()));
 }
 Log2Function::Log2Function(Calculator *calc_) : Function(calc_, "Exponents and Logarithms", "log2", 1, "Base-2 Logarithm") {}
 void Log2Function::calculate2(Manager *mngr) {
-//	if(vargs[0]->type() == VALUE_MANAGER || vargs[0]->type() == NULL_MANAGER) {
-		mngr->value(log2l(vargs[0]->value()));
-//	} else {
-		//unsolved function
-//	}		
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
+	else mngr->set(log2l(vargs[0]->value()));
 }
 ExpFunction::ExpFunction(Calculator *calc_) : Function(calc_, "Exponents and Logarithms", "exp", 1, "e raised to the power X") {}
 void ExpFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->type() == VALUE_MANAGER) mngr->set(expl(vargs[0]->value()));
-	else if(vargs[0]->type() == NULL_MANAGER) mngr->set(1.0);
+	else if(vargs[0]->type() == NULL_MANAGER) mngr->set(1.0L);
 	else {
 		mngr->set(E_VALUE);
 		mngr->add(vargs[0], POWER_CH);
@@ -230,18 +247,18 @@ void ExpFunction::calculate2(Manager *mngr) {
 Exp10Function::Exp10Function(Calculator *calc_) : Function(calc_, "Exponents and Logarithms", "exp10", 1, "10 raised the to power X") {}
 void Exp10Function::calculate2(Manager *mngr) {
 	if(vargs[0]->type() == VALUE_MANAGER) mngr->set(exp10l(vargs[0]->value()));
-	else if(vargs[0]->type() == NULL_MANAGER) mngr->set(1.0);
+	else if(vargs[0]->type() == NULL_MANAGER) mngr->set(1.0L);
 	else {
-		mngr->set(10.0);
+		mngr->set(10.0L);
 		mngr->add(vargs[0], POWER_CH);
 	}	
 }
 Exp2Function::Exp2Function(Calculator *calc_) : Function(calc_, "Exponents and Logarithms", "exp2", 1, "2 raised the to power X") {}
 void Exp2Function::calculate2(Manager *mngr) {
 	if(vargs[0]->type() == VALUE_MANAGER) mngr->set(exp2l(vargs[0]->value()));
-	else if(vargs[0]->type() == NULL_MANAGER) mngr->set(1.0);
+	else if(vargs[0]->type() == NULL_MANAGER) mngr->set(1.0L);
 	else {
-		mngr->set(2.0);
+		mngr->set(2.0L);
 		mngr->add(vargs[0], POWER_CH);
 	}	
 }
@@ -251,12 +268,13 @@ SqrtFunction::SqrtFunction(Calculator *calc_) : Function(calc_, "Exponents and L
 void SqrtFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->negative()) {
 		calc->error(true, 1, "Trying to calculate the square root of a negative number");
+		mngr->set(this, vargs[0], NULL);
 		return;
 	}
 	if(vargs[0]->type() == VALUE_MANAGER) mngr->set(sqrtl(vargs[0]->value()));
 	else if(vargs[0]->type() != NULL_MANAGER) {
 		mngr->set(vargs[0]);
-		mngr->add(0.5, POWER_CH);
+		mngr->add(0.5L, POWER_CH);
 	}	
 }
 CbrtFunction::CbrtFunction(Calculator *calc_) : Function(calc_, "Exponents and Logarithms", "cbrt", 1, "Cube Root") {}
@@ -264,7 +282,7 @@ void CbrtFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->type() == VALUE_MANAGER) mngr->set(cbrtl(vargs[0]->value()));
 	else if(vargs[0]->type() != NULL_MANAGER) {
 		mngr->set(vargs[0]);
-		mngr->add(1.0 / 3.0, POWER_CH);
+		mngr->add(1.0L / 3.0L, POWER_CH);
 	}
 }
 HypotFunction::HypotFunction(Calculator *calc_) : Function(calc_, "Geometry", "hypot", 2, "Hypotenuse") {
@@ -456,7 +474,7 @@ Manager *BASEFunction::calculate(const string &eq) {
 			value = (long double) strtol(svargs[1].c_str(), NULL, base);
 		}
 		svargs.clear();
-		mngr->value(value);
+		mngr->set(value);
 		return mngr;
 	} else {
 		calc->error(true, 4, "You need ", i2s(minargs()).c_str(), " arguments in function ", name().c_str());
