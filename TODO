@@ -14,13 +14,11 @@
 * More functions
 * More units
 
-* Separate library
 * Increase support for non-glibc systems
 
 * API documentation
 
 * Better graphs/charts (do not use gnuplot)
 * Script/code plugins for advanced functions
-* Command line version
 * Gnome/KDE applets
 * QT version

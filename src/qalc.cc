@@ -594,10 +594,12 @@ int main (int argc, char *argv[]) {
 			PUTS_UNICODE(_("usage: qalc [options] [expression]"));
 			printf("\n");
 			PUTS_UNICODE(_("where options are:"));
-			fputs("\n-/+u8\n", stdout);
-			PUTS_UNICODE(_("turn on/off unicode support"));
-			fputs("\n-set", stdout); fputs(" \"", stdout); FPUTS_UNICODE(_("OPTION"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("VALUE"), stdout); fputs("\"\n", stdout);
-			PUTS_UNICODE(_("as set command in interactive program session (ex. -set \"base 16\")"));
+			fputs("\n\t-/+u8\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("turn on/off unicode support"));
+			fputs("\n\t-set", stdout); fputs(" \"", stdout); FPUTS_UNICODE(_("OPTION"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("VALUE"), stdout); fputs("\"\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("as set command in interactive program session (ex. -set \"base 16\")"));
+			puts("");
+			PUTS_UNICODE(_("The program will start in interactive mode if no expression is specified."));
 			puts("");
 			return 0;
 		} else if(!calc_arg_begun && strcmp(argv[i], "-u8") == 0) {
@@ -658,7 +660,7 @@ int main (int argc, char *argv[]) {
 #ifdef HAVE_LIBREADLINE	
 	static char* rlbuffer;
 #endif
-	
+
 	//exchange rates
 	if(first_qalculate_run && canfetch) {
 		if(ask_question(_("You need the download exchange rates to be able to convert between different currencies.\nYou can later get current exchange rates with the \"exchange rates\" command.\nDo you want to fetch exchange rates now from the Internet (default yes)?"))) {
@@ -683,7 +685,7 @@ int main (int argc, char *argv[]) {
 	if(load_global_defs && !CALCULATOR->loadGlobalDefinitions()) {
 		PUTS_UNICODE(_("Failed to load global definitions!"));
 	}
-	
+
 	//CALCULATOR->savePrefixes("prefixes.xml.new", true);
 	//CALCULATOR->saveUnits("units.xml.new", true);
 	//CALCULATOR->saveVariables("variables.xml.new", true);
@@ -718,7 +720,13 @@ int main (int argc, char *argv[]) {
 		} else {
 			expression_str = calc_arg;
 		}
-		execute_expression(false);
+		unsigned int index = expression_str.find_first_of(ID_WRAPS);
+		if(index != string::npos) {
+			printf(_("Illegal character, \'%c\', in expression."), expression_str[index]);
+			puts("");
+		} else {
+			execute_expression(false);
+		}
 		pthread_cancel(view_thread);
 		CALCULATOR->terminateThreads();
 		return 0;
@@ -1462,8 +1470,14 @@ int main (int argc, char *argv[]) {
 #endif			
 			break;
 		} else {
-			expression_str = str;
-			execute_expression();
+			unsigned int index = str.find_first_of(ID_WRAPS);
+			if(index != string::npos) {
+				printf(_("Illegal character, \'%c\', in expression."), str[index]);
+				puts("");
+			} else {
+				expression_str = str;
+				execute_expression();
+			}
 		}
 #ifdef HAVE_LIBREADLINE				
 		add_history(rlbuffer);		
@@ -1789,6 +1803,7 @@ void load_preferences() {
 		closedir(dir);
 	}
 #ifdef HAVE_LIBREADLINE		
+	stifle_history(100);
 	string historyfile = filename;
 	historyfile += "qalc.history";
 	read_history(historyfile.c_str());

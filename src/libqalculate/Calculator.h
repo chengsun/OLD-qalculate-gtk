@@ -106,7 +106,7 @@ class Calculator {
 	
 	vector<DataSet*> data_sets;
 	
-	Sgi::hash_map<unsigned int, MathStructure> id_structs;
+	Sgi::hash_map<unsigned int, MathStructure*> id_structs;
 	Sgi::hash_map<unsigned int, bool> ids_p;
 	vector<unsigned int> freed_ids;	
 	unsigned int ids_i;
@@ -200,11 +200,11 @@ class Calculator {
 	void beginTemporaryStopErrors();
 	void endTemporaryStopErrors();	
 	
-	unsigned int addId(const MathStructure &m_struct, bool persistent = false);
+	unsigned int addId(MathStructure *m_struct, bool persistent = false);
 	unsigned int parseAddId(MathFunction *f, const string &str, const ParseOptions &po, bool persistent = false);
 	unsigned int parseAddIdAppend(MathFunction *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent = false);
 	unsigned int parseAddVectorId(const string &str, const ParseOptions &po, bool persistent = false);
-	const MathStructure *getId(unsigned int id);	
+	MathStructure *getId(unsigned int id);	
 	void delId(unsigned int id, bool force = false);
 
 	Variable *getVariable(unsigned int index) const;
@@ -254,10 +254,11 @@ class Calculator {
 	string printMathStructureTimeOut(const MathStructure &mstruct, int usecs = 100000, const PrintOptions &op = default_print_options);
 	
 	MathStructure parse(string str, const ParseOptions &po = default_parse_options);
-	MathStructure parseNumber(string str, const ParseOptions &po = default_parse_options);
-	MathStructure parseOperators(string str, const ParseOptions &po = default_parse_options);
-	void parseAdd(string &str, MathStructure &mstruct, const ParseOptions &po, MathOperation s);
-	void parseAdd(string &str, MathStructure &mstruct, const ParseOptions &po);
+	void parse(MathStructure *mstruct, string str, const ParseOptions &po = default_parse_options);
+	void parseNumber(MathStructure *mstruct, string str, const ParseOptions &po = default_parse_options);
+	void parseOperators(MathStructure *mstruct, string str, const ParseOptions &po = default_parse_options);
+	void parseAdd(string &str, MathStructure *mstruct, const ParseOptions &po, MathOperation s);
+	void parseAdd(string &str, MathStructure *mstruct, const ParseOptions &po);
 	
 	MathStructure convert(double value, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_evaluation_options);
 	MathStructure convert(string str, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_evaluation_options);

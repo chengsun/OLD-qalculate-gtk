@@ -236,7 +236,8 @@ const MathStructure &KnownVariable::get() {
 		if(isApproximate() && precision() < 1) {
 			po.read_precision = READ_PRECISION_WHEN_DECIMALS;
 		}
-		mstruct = new MathStructure(CALCULATOR->parse(sexpression, po));
+		mstruct = new MathStructure();
+		CALCULATOR->parse(mstruct, sexpression, po);
 		if(precision() > 0 && (mstruct->precision() < 1 || precision() < mstruct->precision())) {
 			mstruct->setPrecision(precision());
 		}

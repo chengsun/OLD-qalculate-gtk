@@ -223,15 +223,23 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 						}
 						if(stmp.empty()) {
 							if(arg) {
-								vargs.addItem(arg->parse(getDefaultValue(itmp), po));
+								MathStructure *mstruct = new MathStructure();
+								arg->parse(mstruct, getDefaultValue(itmp), po);
+								vargs.addChild_nocopy(mstruct);
 							} else {
-								vargs.addItem(CALCULATOR->parse(getDefaultValue(itmp), po));
+								MathStructure *mstruct = new MathStructure();
+								CALCULATOR->parse(mstruct, getDefaultValue(itmp), po);
+								vargs.addChild_nocopy(mstruct);
 							}
 						} else {
 							if(arg) {
-								vargs.addItem(arg->parse(stmp, po));
+								MathStructure *mstruct = new MathStructure();
+								arg->parse(mstruct, stmp, po);
+								vargs.addChild_nocopy(mstruct);
 							} else {
-								vargs.addItem(CALCULATOR->parse(stmp, po));
+								MathStructure *mstruct = new MathStructure();
+								CALCULATOR->parse(mstruct, stmp, po);
+								vargs.addChild_nocopy(mstruct);
 							}
 						}
 					} else if(last_is_vctr) {
@@ -242,9 +250,13 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 						stmp = str.substr(start_pos, str_index - start_pos);
 						remove_blank_ends(stmp);
 						if(stmp.empty()) {
-							vargs[vargs.size() - 1].addItem(getArgumentDefinition(maxargs())->parse(getDefaultValue(itmp), po));
+							MathStructure *mstruct = new MathStructure();
+							getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp), po);
+							vargs[vargs.size() - 1].addChild_nocopy(mstruct);
 						} else {
-							vargs[vargs.size() - 1].addItem(getArgumentDefinition(maxargs())->parse(stmp, po));
+							MathStructure *mstruct = new MathStructure();
+							getArgumentDefinition(maxargs())->parse(mstruct, stmp, po);
+							vargs[vargs.size() - 1].addChild_nocopy(mstruct);
 						}
 						vargs.childUpdated(vargs.size());
 					} else {
@@ -267,15 +279,23 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			}
 			if(stmp.empty()) {
 				if(arg) {
-					vargs.addItem(arg->parse(getDefaultValue(itmp), po));
+					MathStructure *mstruct = new MathStructure();
+					arg->parse(mstruct, getDefaultValue(itmp), po);
+					vargs.addChild_nocopy(mstruct);
 				} else {
-					vargs.addItem(CALCULATOR->parse(getDefaultValue(itmp), po));
+					MathStructure *mstruct = new MathStructure();
+					CALCULATOR->parse(mstruct, getDefaultValue(itmp), po);
+					vargs.addChild_nocopy(mstruct);
 				}
-			} else {
+			} else {				
 				if(arg) {
-					vargs.addItem(arg->parse(stmp, po));
+					MathStructure *mstruct = new MathStructure();
+					arg->parse(mstruct, stmp, po);
+					vargs.addChild_nocopy(mstruct);
 				} else {
-					vargs.addItem(CALCULATOR->parse(stmp, po));
+					MathStructure *mstruct = new MathStructure();
+					CALCULATOR->parse(mstruct, stmp, po);
+					vargs.addChild_nocopy(mstruct);
 				}
 			}
 		} else if(last_is_vctr) {
@@ -286,9 +306,13 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			stmp = str.substr(start_pos, str.length() - start_pos);
 			remove_blank_ends(stmp);
 			if(stmp.empty()) {
-				vargs[vargs.size() - 1].addItem(getArgumentDefinition(maxargs())->parse(getDefaultValue(itmp), po));
+				MathStructure *mstruct = new MathStructure();
+				getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp), po);
+				vargs[vargs.size() - 1].addChild_nocopy(mstruct);
 			} else {
-				vargs[vargs.size() - 1].addItem(getArgumentDefinition(maxargs())->parse(stmp, po));
+				MathStructure *mstruct = new MathStructure();
+				getArgumentDefinition(maxargs())->parse(mstruct, stmp, po);
+				vargs[vargs.size() - 1].addChild_nocopy(mstruct);
 			}
 			vargs.childUpdated(vargs.size());
 		} else {
@@ -300,9 +324,13 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 		while(itmp2 < maxargs()) {
 			arg = getArgumentDefinition(itmp2 + 1);
 			if(arg) {
-				vargs.addItem(arg->parse(default_values[itmp2 - minargs()], po));
+				MathStructure *mstruct = new MathStructure();
+				arg->parse(mstruct, default_values[itmp2 - minargs()], po);
+				vargs.addChild_nocopy(mstruct);
 			} else {
-				vargs.addItem(CALCULATOR->parse(default_values[itmp2 - minargs()], po));
+				MathStructure *mstruct = new MathStructure();
+				CALCULATOR->parse(mstruct, default_values[itmp2 - minargs()], po);
+				vargs.addChild_nocopy(mstruct);
 			}
 			itmp2++;
 		}
@@ -647,12 +675,11 @@ void UserFunction::set(const ExpressionItem *item) {
 int UserFunction::subtype() const {
 	return SUBTYPE_USER_FUNCTION;
 }
+
 int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	ParseOptions po;
-
 	if(args() != 0) {
-		
 		string stmp = eq_calc;
 		string svar;
 		string v_str, w_str;
@@ -665,31 +692,32 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 		
 		for(int i = 0; i < i_args; i++) {
-			v_id.push_back(CALCULATOR->addId(vargs[i], true));
+			v_id.push_back(CALCULATOR->addId(new MathStructure(vargs[i]), true));
 			v_strs.push_back(LEFT_PARENTHESIS ID_WRAP_LEFT);
 			v_strs[i] += i2s(v_id[i]);
-			v_strs[i] += ID_WRAP_RIGHT RIGHT_PARENTHESIS;			
+			v_strs[i] += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 		}
 		if(maxargs() < 0) {
 			if(stmp.find("\\v") != string::npos) {
-				v_id.push_back(CALCULATOR->addId(produceVector(vargs), true));
+				v_id.push_back(CALCULATOR->addId(new MathStructure(produceVector(vargs)), true));
 				v_str = LEFT_PARENTHESIS ID_WRAP_LEFT;
 				v_str += i2s(v_id[v_id.size() - 1]);
-				v_str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;					
+				v_str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 			}
 			if(stmp.find("\\w") != string::npos) {
-				v_id.push_back(CALCULATOR->addId(produceArgumentsVector(vargs), true));
+				v_id.push_back(CALCULATOR->addId(new MathStructure(produceArgumentsVector(vargs)), true));
 				w_str = LEFT_PARENTHESIS ID_WRAP_LEFT;
 				w_str += i2s(v_id[v_id.size() - 1]);
-				w_str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;							
+				w_str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 			}
 		}
+
 		for(unsigned int i = 0; i < v_subs.size(); i++) {
 			if(subfunctionPrecalculated(i + 1)) {
 				string str = v_subs[i];
 				for(int i3 = 0; i3 < i_args; i3++) {
 					svar = '\\';
-					if('x' + i > 'z') {
+					if('x' + i3 > 'z') {
 						svar += (char) ('a' + i3 - 3);
 					} else {
 						svar += 'x' + i3;
@@ -733,8 +761,9 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						}
 					}			
 				}
-				MathStructure v_mstruct(CALCULATOR->parse(str, po));
-				v_mstruct.eval(eo);
+				MathStructure *v_mstruct = new MathStructure();
+				CALCULATOR->parse(v_mstruct, str, po);
+				v_mstruct->eval(eo);
 				v_id.push_back(CALCULATOR->addId(v_mstruct, true));
 				str = LEFT_PARENTHESIS ID_WRAP_LEFT;
 				str += i2s(v_id[v_id.size() - 1]);
@@ -823,14 +852,14 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				break;
 			}
 		}
-		mstruct = CALCULATOR->parse(stmp, po);
+		CALCULATOR->parse(&mstruct, stmp, po);
 		for(unsigned int i = 0; i < v_id.size(); i++) {
 			CALCULATOR->delId(v_id[i], true);
 		}
 		if(precision() > 0) mstruct.setPrecision(precision());
 		if(isApproximate()) mstruct.setApproximate();
 	} else {
-		mstruct = CALCULATOR->parse(eq_calc, po);
+		CALCULATOR->parse(&mstruct, eq_calc, po);
 		if(precision() > 0) mstruct.setPrecision(precision());
 		if(isApproximate()) mstruct.setApproximate();
 	}
@@ -1122,12 +1151,10 @@ bool Argument::test(MathStructure &value, int index, MathFunction *f, const Eval
 	}
 	if(b && !scondition.empty()) {
 		string expression = scondition;
-		int id = CALCULATOR->addId(value, true);
-		string ids = LEFT_PARENTHESIS;
-		ids += ID_WRAP_LEFT;
+		int id = CALCULATOR->addId(new MathStructure(value), true);
+		string ids = LEFT_PARENTHESIS ID_WRAP_LEFT;
 		ids += i2s(id);
-		ids += ID_WRAP_RIGHT;
-		ids += RIGHT_PARENTHESIS;
+		ids += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 		gsub("\\x", ids, expression);
 		b = CALCULATOR->testCondition(expression);
 		CALCULATOR->delId(id, true);
@@ -1205,6 +1232,11 @@ void Argument::evaluate(MathStructure &mstruct, const EvaluationOptions &eo) con
 	}
 }
 MathStructure Argument::parse(const string &str, const ParseOptions &po) const {
+	MathStructure mstruct;
+	parse(&mstruct, str, po);
+	return mstruct;
+}
+void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
 	if(b_text) {
 		int pars = 0;
 		while(true) {
@@ -1234,10 +1266,12 @@ MathStructure Argument::parse(const string &str, const ParseOptions &po) const {
 		}
 		if((int) str.length() >= 2 + pars * 2) {
 			if(str[pars] == ID_WRAP_LEFT_CH && str[str.length() - 1 - pars] == ID_WRAP_RIGHT_CH && str.find(ID_WRAP_RIGHT, pars + 1) == str.length() - 1 - pars) {
-				return CALCULATOR->parse(str.substr(pars, str.length() - pars * 2), po);
+				CALCULATOR->parse(mstruct, str.substr(pars, str.length() - pars * 2), po);
+				return;
 			}
 			if(str[pars] == '\\' && str[str.length() - 1 - pars] == '\\') {
-				return CALCULATOR->parse(str.substr(1 + pars, str.length() - 2 - pars * 2), po);
+				CALCULATOR->parse(mstruct, str.substr(1 + pars, str.length() - 2 - pars * 2), po);
+				return;
 			}	
 			if((str[pars] == '\"' && str[str.length() - 1 - pars] == '\"') || (str[pars] == '\'' && str[str.length() - 1 - pars] == '\'')) {
 				unsigned int i = pars + 1, cits = 0;
@@ -1252,7 +1286,8 @@ MathStructure Argument::parse(const string &str, const ParseOptions &po) const {
 				if((cits / 2) % 2 == 0) {
 					i = str.find(ID_WRAP_LEFT, 1 + pars);
 					if(i == string::npos || i >= str.length() - (1 + pars)) {
-						return str.substr(1 + pars, str.length() - 2 - pars * 2);
+						mstruct->set(str.substr(1 + pars, str.length() - 2 - pars * 2));
+						return;
 					}
 					string str2 = str.substr(1 + pars, str.length() - 2 - pars * 2);
 					string str3;
@@ -1262,25 +1297,28 @@ MathStructure Argument::parse(const string &str, const ParseOptions &po) const {
 						i2 = str2.find(ID_WRAP_RIGHT, i + 1);
 						if(i2 == string::npos) break;
 						id = s2i(str2.substr(i + 1, i2 - (i + 1)));
-						const MathStructure *m_temp = CALCULATOR->getId(id);
+						MathStructure *m_temp = CALCULATOR->getId(id);
 						str3 = "(";
 						if(!m_temp) {
 							CALCULATOR->error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
 							str3 += CALCULATOR->v_undef->preferredInputName(true, false, false, true).name;
 						} else {
 							str3 += m_temp->print(CALCULATOR->save_printoptions).c_str();
+							m_temp->unref();
 						}
 						str3 += ")";
 						str2.replace(i, i2 - i + 1, str3);
 						i += str3.length();
 					}
-					return str2;
+					mstruct->set(str2);
+					return;
 				}
 			}
 		}
 		unsigned int i = str.find(ID_WRAP_LEFT, pars);
 		if(i == string::npos || i >= str.length() - pars) {
-			return str.substr(pars, str.length() - pars * 2);
+			mstruct->set(str.substr(pars, str.length() - pars * 2));
+			return;
 		}
 		string str2 = str.substr(pars, str.length() - pars * 2);
 		string str3;
@@ -1290,21 +1328,23 @@ MathStructure Argument::parse(const string &str, const ParseOptions &po) const {
 			i2 = str2.find(ID_WRAP_RIGHT, i + 1);
 			if(i2 == string::npos) break;
 			id = s2i(str2.substr(i + 1, i2 - (i + 1)));
-			const MathStructure *m_temp = CALCULATOR->getId(id);
+			MathStructure *m_temp = CALCULATOR->getId(id);
 			str3 = "(";
 			if(!m_temp) {
 				CALCULATOR->error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
 				str3 += CALCULATOR->v_undef->preferredInputName(true, false, false, true).name;
 			} else {
 				str3 += m_temp->print(CALCULATOR->save_printoptions).c_str();
+				m_temp->unref();
 			}
 			str3 += ")";
 			str2.replace(i, i2 - i + 1, str3);
 			i += str3.length();
 		}
-		return str2;
+		mstruct->set(str2);
+		return;
 	} else {
-		return CALCULATOR->parse(str, po);
+		CALCULATOR->parse(mstruct, str, po);
 	}
 }
 
@@ -1679,8 +1719,8 @@ string GiacArgument::subprintlong() const {return _("a free value (giac adjusted
 	MathStructure mstruct = CALCULATOR->parse(str);
 	return mstruct;
 }*/
-MathStructure GiacArgument::parse(const string &str, const ParseOptions &po) const {
-	return CALCULATOR->parse(str, po);
+void GiacArgument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
+	CALCULATOR->parse(mstruct, str, po);
 }
 
 SymbolicArgument::SymbolicArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
@@ -1958,8 +1998,8 @@ string AngleArgument::subprintlong() const {return _("an angle or a number (usin
 	CALCULATOR->setDonotCalculateVariables(was_cv);
 	return mstruct;
 }*/
-MathStructure AngleArgument::parse(const string &str, const ParseOptions &po) const {
-	return CALCULATOR->parse(str, po);
+void AngleArgument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
+	CALCULATOR->parse(mstruct, str, po);
 }
 
 ArgumentSet::ArgumentSet(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {

@@ -173,6 +173,7 @@ class Argument {
 	//virtual MathStructure evaluate(const string &str, bool keep_exact = true) const;
 	virtual void evaluate(MathStructure &mstruct, const EvaluationOptions &eo) const;
 	virtual MathStructure parse(const string &str, const ParseOptions &po = default_parse_options) const;
+	virtual void parse(MathStructure *mstruct, const string &str, const ParseOptions &po = default_parse_options) const;
 	
 	string name() const;
 	void setName(string name_);
@@ -318,7 +319,7 @@ class GiacArgument : public Argument {
 	virtual int type() const;
 	virtual Argument *copy() const;
 	//virtual MathStructure evaluate(const string &str, bool keep_exact = true) const;
-	virtual MathStructure parse(const string &str, const ParseOptions &po = default_parse_options) const;
+	virtual void parse(MathStructure *mstruct, const string &str, const ParseOptions &po = default_parse_options) const;
 };
 
 class DateArgument : public Argument {
@@ -460,7 +461,7 @@ class AngleArgument : public Argument {
 	virtual Argument *copy() const;
 	virtual string print() const;
 	//virtual MathStructure evaluate(const string &str, bool keep_exact = true) const;
-	virtual MathStructure parse(const string &str, const ParseOptions &po = default_parse_options) const;
+	virtual void parse(MathStructure *mstruct, const string &str, const ParseOptions &po = default_parse_options) const;
 };
 class VariableArgument : public Argument {
 

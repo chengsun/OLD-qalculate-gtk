@@ -49,11 +49,13 @@ class MathStructure {
 
 	protected:
 	
+		unsigned int i_ref;
+	
 		int m_type;
 		bool b_approx;
 		int i_precision;
 	
-		vector<MathStructure> v_subs;
+		vector<MathStructure*> v_subs;
 		vector<unsigned int> v_order;
 		string s_sym;
 		Number o_number;
@@ -72,6 +74,9 @@ class MathStructure {
 	
 	public:
 
+		void ref();
+		void unref();
+		unsigned int refcount() const;
 		void init();
 		
 		MathStructure();
@@ -86,22 +91,29 @@ class MathStructure {
 		MathStructure(const Number &o);
 		~MathStructure();
 		
-		void set(const MathStructure &o);
-		void set(int num, int den = 1, int exp10 = 0);
-		void set(string sym);
-		void set(double float_value);
-		void set(const MathStructure *o, ...);
+		void set(const MathStructure &o, bool merge_precision = false);
+		void set_nocopy(MathStructure &o, bool merge_precision = false);
+		void setToChild(unsigned int index, bool merge_precision = false);
+		void set(int num, int den = 1, int exp10 = 0, bool preserve_precision = false);
+		void set(string sym, bool preserve_precision = false);
+		void set(double float_value, bool preserve_precision = false);
+		void setVector(const MathStructure *o, ...);
 		void set(MathFunction *o, ...);
-		void set(Unit *u, Prefix *p = NULL);
-		void set(Variable *o);
-		void set(const Number &o);
-		void setInfinity();
-		void setUndefined();
+		void set(Unit *u, Prefix *p = NULL, bool preserve_precision = false);
+		void set(Variable *o, bool preserve_precision = false);
+		void set(const Number &o, bool preserve_precision = false);
+		void setInfinity(bool preserve_precision = false);
+		void setUndefined(bool preserve_precision = false);
 		void clear(bool preserve_precision = false);
 		void clearVector(bool preserve_precision = false);
 		void clearMatrix(bool preserve_precision = false);
 		
 		void operator = (const MathStructure &o);
+		void operator = (const Number &o);
+		void operator = (int i);
+		void operator = (Unit *u);
+		void operator = (Variable *v);
+		void operator = (string sym);
 		MathStructure operator - () const;
 		MathStructure operator * (const MathStructure &o) const;
 		MathStructure operator / (const MathStructure &o) const;
@@ -118,7 +130,43 @@ class MathStructure {
 		void operator -= (const MathStructure &o);
 		void operator ^= (const MathStructure &o);
 		
+		void operator *= (const Number &o);
+		void operator /= (const Number &o);
+		void operator += (const Number &o);
+		void operator -= (const Number &o);
+		void operator ^= (const Number &o);
+		
+		void operator *= (int i);
+		void operator /= (int i);
+		void operator += (int i);
+		void operator -= (int i);
+		void operator ^= (int i);
+		
+		void operator *= (Unit *u);
+		void operator /= (Unit *u);
+		void operator += (Unit *u);
+		void operator -= (Unit *u);
+		void operator ^= (Unit *u);
+		
+		void operator *= (Variable *v);
+		void operator /= (Variable *v);
+		void operator += (Variable *v);
+		void operator -= (Variable *v);
+		void operator ^= (Variable *v);
+		
+		void operator *= (string sym);
+		void operator /= (string sym);
+		void operator += (string sym);
+		void operator -= (string sym);
+		void operator ^= (string sym);
+		
 		bool operator == (const MathStructure &o) const;
+		bool operator == (const Number &o) const;
+		bool operator == (int i) const;
+		bool operator == (Unit *u) const;
+		bool operator == (Variable *v) const;
+		bool operator == (string sym) const;
+		
 		bool operator != (const MathStructure &o) const;
 		
 		const MathStructure &operator [] (unsigned int index) const;
@@ -199,6 +247,12 @@ class MathStructure {
 		int precision() const;
 		
 		void transform(int mtype, const MathStructure &o);
+		void transform(int mtype, const Number &o);
+		void transform(int mtype, int i);
+		void transform(int mtype, Unit *u);
+		void transform(int mtype, Variable *v);
+		void transform(int mtype, string sym);
+		void transform_nocopy(int mtype, MathStructure *o);
 		void transform(int mtype);
 
 		void add(const MathStructure &o, MathOperation op, bool append = false);
@@ -207,16 +261,53 @@ class MathStructure {
 		void multiply(const MathStructure &o, bool append = false);
 		void divide(const MathStructure &o, bool append = false);
 		void raise(const MathStructure &o);
+		void add(const Number &o, bool append = false);
+		void subtract(const Number &o, bool append = false);
+		void multiply(const Number &o, bool append = false);
+		void divide(const Number &o, bool append = false);
+		void raise(const Number &o);
+		void add(int i, bool append = false);
+		void subtract(int i, bool append = false);
+		void multiply(int i, bool append = false);
+		void divide(int i, bool append = false);
+		void raise(int i);
+		void add(Variable *v, bool append = false);
+		void subtract(Variable *v, bool append = false);
+		void multiply(Variable *v, bool append = false);
+		void divide(Variable *v, bool append = false);
+		void raise(Variable *v);
+		void add(Unit *u, bool append = false);
+		void subtract(Unit *u, bool append = false);
+		void multiply(Unit *u, bool append = false);
+		void divide(Unit *u, bool append = false);
+		void raise(Unit *u);
+		void add(string sym, bool append = false);
+		void subtract(string sym, bool append = false);
+		void multiply(string sym, bool append = false);
+		void divide(string sym, bool append = false);
+		void raise(string sym);
+		void add_nocopy(MathStructure *o, MathOperation op, bool append = false);
+		void add_nocopy(MathStructure *o, bool append = false);
+		void subtract_nocopy(MathStructure *o, bool append = false);
+		void multiply_nocopy(MathStructure *o, bool append = false);
+		void divide_nocopy(MathStructure *o, bool append = false);
+		void raise_nocopy(MathStructure *o);
 		void inverse();
 		void negate();
 		void setNOT();
 		
 		bool equals(const MathStructure &o) const;
+		bool equals(const Number &o) const;
+		bool equals(int i) const;
+		bool equals(Unit *u) const;
+		bool equals(Variable *v) const;
+		bool equals(string sym) const;
+		
 		ComparisonResult compare(const MathStructure &o) const;
 		
-		int merge_addition(const MathStructure &mstruct, const EvaluationOptions &eo);
-		int merge_multiplication(const MathStructure &mstruct, const EvaluationOptions &eo, bool do_append = true);
-		int merge_power(const MathStructure &mstruct, const EvaluationOptions &eo);
+		int merge_addition(MathStructure &mstruct, const EvaluationOptions &eo);
+		int merge_multiplication(MathStructure &mstruct, const EvaluationOptions &eo, bool do_append = true);
+		int merge_power(MathStructure &mstruct, const EvaluationOptions &eo);
 		bool calculatesub(const EvaluationOptions &eo, const EvaluationOptions &feo);
 		bool calculateFunctions(const EvaluationOptions &eo);			
 		MathStructure &eval(const EvaluationOptions &eo = default_evaluation_options);
@@ -229,9 +320,12 @@ class MathStructure {
 #endif
 		
 		void addChild(const MathStructure &o);
+		void addChild_nocopy(MathStructure *o);
 		void delChild(unsigned int index);
 		void insertChild(const MathStructure &o, unsigned int index);
+		void insertChild_nocopy(MathStructure *o, unsigned int index);
 		void setChild(const MathStructure &o, unsigned int index = 1);
+		void setChild_nocopy(MathStructure *o, unsigned int index = 1);
 		const MathStructure *getChild(unsigned int index) const;
 		MathStructure *getChild(unsigned int index);
 		unsigned int countChilds() const;
@@ -338,6 +432,8 @@ class MathStructure {
 		
 		const MathStructure &find_x_var() const;
 		bool isolate_x(const EvaluationOptions &eo, const MathStructure &x_var = m_undefined);
+		
+		
 
 };
 

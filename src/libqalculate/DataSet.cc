@@ -37,7 +37,7 @@ void DataObject::eraseProperty(DataProperty *property) {
 			s_properties.erase(s_properties.begin() + i);
 			a_properties.erase(a_properties.begin() + i);
 			if(m_properties[i]) {
-				delete m_properties[i];
+				m_properties[i]->unref();
 			}
 			m_properties.erase(m_properties.begin() + i);
 			s_nonlocalized_properties.erase(s_nonlocalized_properties.begin() + i);
@@ -51,7 +51,7 @@ void DataObject::setProperty(DataProperty *property, string s_value, int is_appr
 			s_properties[i] = s_value;
 			a_properties[i] = is_approximate;
 			if(m_properties[i]) {
-				delete m_properties[i];
+				m_properties[i]->unref();
 				m_properties[i] = NULL;
 			}
 			return;
@@ -161,7 +161,7 @@ void DataProperty::set(const DataProperty &dp) {
 	sdescr = dp.description();
 	sunit = dp.getUnitString();
 	parent = dp.parentSet();
-	if(m_unit) delete m_unit;
+	if(m_unit) m_unit->unref();
 	m_unit = NULL;
 	ptype = dp.propertyType();
 	b_key = dp.isKey(); 
@@ -243,7 +243,7 @@ void DataProperty::setDescription(string s_description) {
 }
 void DataProperty::setUnit(string s_unit) {
 	sunit = s_unit;
-	if(m_unit) delete m_unit;
+	if(m_unit) m_unit->unref();
 	m_unit = NULL;
 }
 const string &DataProperty::getUnitString() const {
@@ -251,7 +251,8 @@ const string &DataProperty::getUnitString() const {
 }
 const MathStructure *DataProperty::getUnitStruct() {
 	if(!m_unit && !sunit.empty()) {
-		m_unit = new MathStructure(CALCULATOR->parse(sunit));
+		m_unit = new MathStructure();
+		CALCULATOR->parse(m_unit, sunit);
 	}
 	return m_unit;
 }
@@ -282,8 +283,13 @@ MathStructure *DataProperty::generateStruct(const string &valuestr, int is_appro
 		case PROPERTY_EXPRESSION: {
 			ParseOptions po;
 			if((b_approximate && is_approximate < 0) || is_approximate > 0) po.read_precision = ALWAYS_READ_PRECISION;
-			if(b_brackets && valuestr.length() > 1 && valuestr[0] == '[' && valuestr[valuestr.length() - 1] == ']') mstruct = new MathStructure(CALCULATOR->parse(valuestr.substr(1, valuestr.length() - 2), po));
-			else mstruct = new MathStructure(CALCULATOR->parse(valuestr, po));
+			if(b_brackets && valuestr.length() > 1 && valuestr[0] == '[' && valuestr[valuestr.length() - 1] == ']') {
+				mstruct = new MathStructure();
+				CALCULATOR->parse(mstruct, valuestr.substr(1, valuestr.length() - 2), po);
+			} else {
+				mstruct = new MathStructure();
+				CALCULATOR->parse(mstruct, valuestr, po);
+			}
 			break;
 		}
 		case PROPERTY_NUMBER: {

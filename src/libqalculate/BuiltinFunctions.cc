@@ -570,7 +570,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 	bool b = false;
 	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_e) {
-		mstruct.set(1, 1);
+		mstruct.set(m_one);
 		b = true;
 	} else if(mstruct.isPower()) {
 		if(mstruct[0].isVariable() && mstruct[0].variable() == CALCULATOR->v_e) {
@@ -652,7 +652,7 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 
 	if(vargs[1].isVariable() && vargs[1].variable() == CALCULATOR->v_e) {
 		mstruct.set(CALCULATOR->f_ln, &vargs[0], NULL);
-		return 1 ;
+		return 1;
 	}
 	mstruct = vargs[0];
 	mstruct.eval(eo);
@@ -691,26 +691,30 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	} 
 	mstruct.set(CALCULATOR->f_ln, &vargs[0], NULL);
-	mstruct /= MathStructure(CALCULATOR->f_ln, &vargs[1], NULL);
-	return 1 ;
+	mstruct.divide_nocopy(new MathStructure(CALCULATOR->f_ln, &vargs[1], NULL));
+	return 1;
 }
 
 SinFunction::SinFunction() : MathFunction("sin", 1) {
 	setArgumentDefinition(1, new AngleArgument());
 }
 int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-
+printf("1\n");
 	mstruct = vargs[0]; 
 	if(CALCULATOR->u_rad) mstruct /= CALCULATOR->u_rad;
+printf("1.5 %s\n", mstruct.print().c_str());	
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
 		CALCULATOR->beginTemporaryStopErrors();
+		printf("1.6\n");
 		mstruct.eval(eo2);
 		CALCULATOR->endTemporaryStopErrors();
 	} else {
+	printf("1.7\n");
 		mstruct.eval(eo);
 	}
+printf("2\n");	
 	bool b = false;
 	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_pi) {
 		mstruct.clear();
@@ -733,25 +737,25 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				mstruct = -1;
 				b = true;
 			} else if(mstruct[0].number().equals(Number(1, 4))) {
-				mstruct.set(2);
-				mstruct ^= MathStructure(1, 2);
-				mstruct /= 2;
+				mstruct.set(2, 1);
+				mstruct.raise_nocopy(new MathStructure(1, 2));
+				mstruct.divide_nocopy(new MathStructure(2, 1));
 				b = true;
 			} else if(mstruct[0].number().equals(Number(-1, 4))) {
-				mstruct.set(2);
-				mstruct ^= MathStructure(1, 2);
-				mstruct /= 2;
+				mstruct.set(2, 1);
+				mstruct.raise_nocopy(new MathStructure(1, 2));
+				mstruct.divide_nocopy(new MathStructure(2, 1));
 				mstruct.negate();
 				b = true;
 			} else if(mstruct[0].number().equals(Number(1, 3))) {
-				mstruct.set(3);
-				mstruct ^= MathStructure(1, 2);
-				mstruct /= 2;
+				mstruct.set(3, 1);
+				mstruct.raise_nocopy(new MathStructure(1, 2));
+				mstruct.divide_nocopy(new MathStructure(2, 1));
 				b = true;
 			} else if(mstruct[0].number().equals(Number(-1, 3))) {
-				mstruct.set(3);
-				mstruct ^= MathStructure(1, 2);
-				mstruct /= 2;
+				mstruct.set(3, 1);
+				mstruct.raise_nocopy(new MathStructure(1, 2));
+				mstruct.divide_nocopy(new MathStructure(2, 1));
 				mstruct.negate();
 				b = true;
 			} else if(mstruct[0].number().equals(Number(1, 6))) {
@@ -784,6 +788,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct.set(CALCULATOR->f_sin, &mstruct2, NULL);
 		}
 	}
+	printf("3\n");
 	if(b) {
 		if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 			EvaluationOptions eo2 = eo;
@@ -859,14 +864,14 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				mstruct.clear();
 				b = true;
 			} else if(mstruct[0].number().equals(Number(1, 4))) {
-				mstruct.set(2);
-				mstruct ^= MathStructure(1, 2);
-				mstruct /= 2;
+				mstruct.set(2, 1);
+				mstruct.raise_nocopy(new MathStructure(1, 2));
+				mstruct.divide_nocopy(new MathStructure(2, 1));
 				b = true;
 			} else if(mstruct[0].number().equals(Number(1, 6))) {
-				mstruct.set(3);
-				mstruct ^= MathStructure(1, 2);
-				mstruct /= 2;
+				mstruct.set(3, 1);
+				mstruct.raise_nocopy(new MathStructure(1, 2));
+				mstruct.divide_nocopy(new MathStructure(2, 1));
 				b = true;
 			} else if(mstruct[0].number().equals(Number(1, 3))) {
 				mstruct.set(1, 2);
@@ -928,7 +933,7 @@ TanFunction::TanFunction() : MathFunction("tan", 1) {
 }
 int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct.set(CALCULATOR->f_sin, &vargs[0], NULL);
-	mstruct /= MathStructure(CALCULATOR->f_cos, &vargs[0], NULL);
+	mstruct.divide_nocopy(new MathStructure(CALCULATOR->f_cos, &vargs[0], NULL));
 	return 1 ;
 }
 AsinFunction::AsinFunction() : MathFunction("asin", 1) {
@@ -950,7 +955,7 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			default: {
 				mstruct.set(1, 2);
-				mstruct *= CALCULATOR->v_pi;
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 			}
 		}
 	} else if(vargs[0].number().isMinusOne()) {
@@ -965,7 +970,7 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			default: {
 				mstruct.set(-1, 2);
-				mstruct *= CALCULATOR->v_pi;
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 			}
 		}
 	} else if(vargs[0].number().equals(Number(1, 2))) {
@@ -980,7 +985,7 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			default: {
 				mstruct.set(1, 6);
-				mstruct *= CALCULATOR->v_pi;
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 			}
 		}
 	} else {
@@ -989,13 +994,13 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mstruct = nr;
 		switch(eo.angle_unit) {
 			case DEGREES: {
-				mstruct *= 180;
-		    		mstruct /= CALCULATOR->v_pi;
+				mstruct.multiply_nocopy(new MathStructure(180, 1));
+				mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
 			case GRADIANS: {
-				mstruct *= 200;
-	    			mstruct /= CALCULATOR->v_pi;
+				mstruct.multiply_nocopy(new MathStructure(200, 1));
+				mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
 			default: {}
@@ -1021,7 +1026,7 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			default: {
 				mstruct.set(1, 2);
-				mstruct *= CALCULATOR->v_pi;
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 			}
 		}
 	} else if(vargs[0].number().isOne()) {
@@ -1037,7 +1042,7 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				break;
 			}
 			default: {
-				mstruct = CALCULATOR->v_pi;
+				mstruct.set(CALCULATOR->v_pi);
 			}
 		}
 	} else if(vargs[0].number().equals(Number(1, 2))) {
@@ -1052,7 +1057,7 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			default: {
 				mstruct.set(1, 3);
-				mstruct *= CALCULATOR->v_pi;
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 			}
 		}
 	} else {
@@ -1061,13 +1066,13 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mstruct = nr;
 		switch(eo.angle_unit) {
 			case DEGREES: {
-				mstruct *= 180;
-		    		mstruct /= CALCULATOR->v_pi;
+				mstruct.multiply_nocopy(new MathStructure(180, 1));
+				mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
 			case GRADIANS: {
-				mstruct *= 200;
-	    			mstruct /= CALCULATOR->v_pi;
+				mstruct.multiply_nocopy(new MathStructure(200, 1));
+				mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
 			default: {}
@@ -1103,7 +1108,7 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			default: {
 				mstruct.set(1, 2);
-				mstruct *= CALCULATOR->v_pi;
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 			}
 		}
 	} else if(vargs[0].number().isMinusInfinity()) {
@@ -1118,7 +1123,7 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			default: {
 				mstruct.set(-1, 2);
-				mstruct *= CALCULATOR->v_pi;
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 			}
 		}
 	} else if(vargs[0].number().isOne()) {
@@ -1133,7 +1138,7 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			default: {
 				mstruct.set(1, 4);
-				mstruct *= CALCULATOR->v_pi;
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 			}
 		}
 	} else if(vargs[0].number().isMinusOne()) {
@@ -1148,7 +1153,7 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			default: {
 				mstruct.set(-1, 4);
-				mstruct *= CALCULATOR->v_pi;
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 			}
 		}
 	} else {
@@ -1157,13 +1162,13 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mstruct = nr;
 		switch(eo.angle_unit) {
 			case DEGREES: {
-				mstruct *= 180;
-		    		mstruct /= CALCULATOR->v_pi;
+				mstruct.multiply_nocopy(new MathStructure(180, 1));
+				mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
 			case GRADIANS: {
-				mstruct *= 200;
-	    			mstruct /= CALCULATOR->v_pi;
+				mstruct.multiply_nocopy(new MathStructure(200, 1));
+				mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
 			default: {}
@@ -1187,7 +1192,7 @@ int CoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 TanhFunction::TanhFunction() : MathFunction("tanh", 1) {}
 int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct.set(CALCULATOR->f_sinh, &vargs[0], NULL);
-	mstruct /= MathStructure(CALCULATOR->f_cosh, &vargs[0], NULL);
+	mstruct.divide_nocopy(new MathStructure(CALCULATOR->f_cosh, &vargs[0], NULL));
 	return 1 ;
 }
 AsinhFunction::AsinhFunction() : MathFunction("asinh", 1) {
@@ -1200,7 +1205,7 @@ int AsinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	m_arg ^= Number(1, 2);
 	m_arg += vargs[0];
 	mstruct.set(CALCULATOR->f_ln, &m_arg, NULL);
-	return 1 ;
+	return 1;
 }
 AcoshFunction::AcoshFunction() : MathFunction("acosh", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
@@ -1247,7 +1252,7 @@ int RadiansToDefaultAngleUnitFunction::calculate(MathStructure &mstruct, const M
 		}
 		default: {}
 	}
-	return 1 ;
+	return 1;
 }
 
 TotalFunction::TotalFunction() : MathFunction("total", 1) {
@@ -1258,7 +1263,7 @@ int TotalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	for(unsigned int index = 0; index < vargs[0].size(); index++) {
 		mstruct.add(vargs[0][index], true);
 	}
-	return 1 ;
+	return 1;
 }
 PercentileFunction::PercentileFunction() : MathFunction("percentile", 2) {
 	NumberArgument *arg = new NumberArgument();
@@ -1345,10 +1350,10 @@ int MinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				margs.addItem(*unsolveds[i]);
 			}
 			mstruct.set(this, &margs, NULL);
-			return 1 ;
+			return 1;
 		} else {
 			mstruct = *min;
-			return 1 ;
+			return 1;
 		}
 	}
 	return 0;
@@ -1388,10 +1393,10 @@ int MaxFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				margs.addItem(*unsolveds[i]);
 			}
 			mstruct.set(this, &margs, NULL);
-			return 1 ;
+			return 1;
 		} else {
 			mstruct = *max;
-			return 1 ;
+			return 1;
 		}
 	}
 	return 0;
@@ -1469,7 +1474,7 @@ int DaysFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
 	}
-	mstruct.set(days, 1, 0);
+	mstruct.set(days, 1);
 	return 1 ;			
 }
 YearFracFunction::YearFracFunction() : MathFunction("yearfrac", 2, 4) {
@@ -1592,8 +1597,8 @@ int BinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	//mstruct = Number(vargs[0].symbol(), 2);
 	ParseOptions po = eo.parse_options;
 	po.base = BASE_BINARY;
-	mstruct = CALCULATOR->parse(vargs[0].symbol(), po);
-	return 1 ;
+	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
+	return 1;
 }
 OctFunction::OctFunction() : MathFunction("oct", 1) {
 	setArgumentDefinition(1, new TextArgument());
@@ -1602,8 +1607,8 @@ int OctFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	//mstruct = Number(vargs[0].symbol(), 8);
 	ParseOptions po = eo.parse_options;
 	po.base = BASE_OCTAL;
-	mstruct = CALCULATOR->parse(vargs[0].symbol(), po);
-	return 1 ;
+	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
+	return 1;
 }
 HexFunction::HexFunction() : MathFunction("hex", 1) {
 	setArgumentDefinition(1, new TextArgument());
@@ -1612,7 +1617,7 @@ int HexFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	//mstruct = Number(vargs[0].symbol(), 16);
 	ParseOptions po = eo.parse_options;
 	po.base = BASE_HEXADECIMAL;
-	mstruct = CALCULATOR->parse(vargs[0].symbol(), po);
+	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	return 1;
 }
 BaseFunction::BaseFunction() : MathFunction("base", 2) {
@@ -1628,7 +1633,7 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	//mstruct = Number(vargs[0].symbol(), vargs[1].number().intValue());
 	ParseOptions po = eo.parse_options;
 	po.base = vargs[1].number().intValue();
-	mstruct = CALCULATOR->parse(vargs[0].symbol(), po);
+	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	return 1 ;
 }
 RomanFunction::RomanFunction() : MathFunction("roman", 1) {
@@ -1638,7 +1643,7 @@ int RomanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	//mstruct = Number(vargs[0].symbol(), BASE_ROMAN_NUMERALS);
 	ParseOptions po = eo.parse_options;
 	po.base = BASE_ROMAN_NUMERALS;
-	mstruct = CALCULATOR->parse(vargs[0].symbol(), po);
+	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	return 1 ;
 }
 

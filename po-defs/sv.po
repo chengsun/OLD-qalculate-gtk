@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-10-08 12:20+0200\n"
+"POT-Creation-Date: 2004-10-11 23:11+0200\n"
 "PO-Revision-Date: 2003-10-27 12:29+0100\n"
 "Last-Translator: Niklas Knutsson <nq@altern.org>\n"
 "Language-Team: Swedish\n"
@@ -1125,20 +1125,20 @@ msgid ""
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:93
+#, fuzzy
 msgid ""
-"Corresponds to the product symbol. Multiplies factors for each i "
-"(represented by \\i in the expression) ranging from the lower to the upper "
-"limit. Use \\j for the second index in a nested product."
+"Corresponds to the product symbol. Multiplies factors for each x ranging "
+"from the lower to the upper limit."
 msgstr ""
 "Motsvarar produktsymbolen. Multiplicerar faktorer för varje i (representerad "
 "av \\ii uttrycket) från den undre till den övre gränsen. Använd \\j för det "
 "andra indexet i en nästad produkt."
 
 #: src/libqalculate/data/functions.xml.in.h:94
+#, fuzzy
 msgid ""
-"Corresponds to the sum symbol. Adds terms for each i (represented by \\i in "
-"the expression) ranging from the lower to the upper limit. Use \\j for the "
-"second index in a nested sum."
+"Corresponds to the sum symbol. Adds terms for each x ranging from the lower "
+"to the upper limit."
 msgstr ""
 "Motsvarar summasymbolen. Adderar termer för varje i (representerad av \\ii "
 "uttrycket) från den undre till den övre gränsen. Använd \\j för det andra "
@@ -2717,7 +2717,7 @@ msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:463
 msgid "Superfactorial"
-msgstr "Suprtfakultet"
+msgstr "Superfakultet"
 
 #: src/libqalculate/data/functions.xml.in.h:464
 msgid "Supply Function"
@@ -3045,7 +3045,7 @@ msgid "atanh"
 msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:548
-#: src/libqalculate/data/variables.xml.in.h:107
+#: src/libqalculate/data/variables.xml.in.h:110
 msgid "atomic_mass"
 msgstr "atommassa"
 
@@ -3810,7 +3810,7 @@ msgstr ""
 
 #: src/libqalculate/data/functions.xml.in.h:739
 msgid "superfactorial"
-msgstr "suprtfakultet"
+msgstr "superfakultet"
 
 #: src/libqalculate/data/functions.xml.in.h:740
 msgid "syd"
@@ -6902,793 +6902,801 @@ msgid "%"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:3
-msgid "&#x3A6;_0"
+msgid "&#x2030;"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:4
-msgid "&#x3B3;"
+msgid "&#x2031;"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:5
-msgid "&#x3B5;_0"
+msgid "&#x3A6;_0"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:6
-msgid "&#x3BB;_C"
+msgid "&#x3B3;"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:7
-msgid "&#x3BC;_0"
+msgid "&#x3B5;_0"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:8
-msgid "&#x3BC;_B"
+msgid "&#x3BB;_C"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:9
-msgid "&#x3BC;_N"
+msgid "&#x3BC;_0"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:10
-msgid "&#x3C0;"
+msgid "&#x3BC;_B"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:11
-msgid "&#x3C6;"
+msgid "&#x3BC;_N"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:12
-msgid "Alpha Particle Mass"
+msgid "&#x3C0;"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:13
+msgid "&#x3C6;"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:14
+msgid "Alpha Particle Mass"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:15
 msgid "Apery's Constant"
 msgstr "Aperys konstant"
 
-#: src/libqalculate/data/variables.xml.in.h:14
+#: src/libqalculate/data/variables.xml.in.h:16
 msgid "Archimede's Constant (pi)"
 msgstr "Archimedes konstant (pi)"
 
-#: src/libqalculate/data/variables.xml.in.h:15
+#: src/libqalculate/data/variables.xml.in.h:17
 msgid "Atomic Mass Constant"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:16
+#: src/libqalculate/data/variables.xml.in.h:18
 msgid "Atomic and Nuclear Constants"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:17
+#: src/libqalculate/data/variables.xml.in.h:19
 msgid "Avogadro Constant"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:18
+#: src/libqalculate/data/variables.xml.in.h:20
 msgid "Basic Constants"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:19
+#: src/libqalculate/data/variables.xml.in.h:21
 msgid "Billion"
 msgstr "Miljard"
 
-#: src/libqalculate/data/variables.xml.in.h:20
+#: src/libqalculate/data/variables.xml.in.h:22
 msgid "Bohr Radius"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:21
+#: src/libqalculate/data/variables.xml.in.h:23
 msgid "Boltzmann Constant"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:22
+#: src/libqalculate/data/variables.xml.in.h:24
 msgid "Borh Magneton"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:23
+#: src/libqalculate/data/variables.xml.in.h:25
 msgid "Catalan's Constant"
 msgstr "Catalans konstant"
 
-#: src/libqalculate/data/variables.xml.in.h:24
+#: src/libqalculate/data/variables.xml.in.h:26
 msgid "Centillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:25
+#: src/libqalculate/data/variables.xml.in.h:27
 msgid "Characteristic Impedance of Vacuum"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:26
+#: src/libqalculate/data/variables.xml.in.h:28
 msgid "Classical Electron Radius"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:27
+#: src/libqalculate/data/variables.xml.in.h:29
 msgid "Compton Wavelength"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:28
+#: src/libqalculate/data/variables.xml.in.h:30
 msgid "Conductance Quantum"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:29
+#: src/libqalculate/data/variables.xml.in.h:31
 msgid "Decillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:30
+#: src/libqalculate/data/variables.xml.in.h:32
 msgid "Duodecillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:31
+#: src/libqalculate/data/variables.xml.in.h:33
 msgid "Electric Constant (Permittivity of Free Space)"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:32
+#: src/libqalculate/data/variables.xml.in.h:34
 msgid "Electromagnetic Constants"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:33
+#: src/libqalculate/data/variables.xml.in.h:35
 msgid "Electron Mass"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:34
+#: src/libqalculate/data/variables.xml.in.h:36
 msgid "Elementary Charge"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:35
+#: src/libqalculate/data/variables.xml.in.h:37
 msgid "Euler's Constant"
 msgstr "Eulers konstant"
 
-#: src/libqalculate/data/variables.xml.in.h:36
+#: src/libqalculate/data/variables.xml.in.h:38
 msgid "False"
 msgstr "Falskt"
 
-#: src/libqalculate/data/variables.xml.in.h:37
+#: src/libqalculate/data/variables.xml.in.h:39
 msgid "Faraday Constant"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:38
+#: src/libqalculate/data/variables.xml.in.h:40
 msgid "First Radiation Constant"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:39
+#: src/libqalculate/data/variables.xml.in.h:41
 msgid "G"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:40
+#: src/libqalculate/data/variables.xml.in.h:42
 msgid "G_0"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:41
+#: src/libqalculate/data/variables.xml.in.h:43
 msgid "Googol"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:42
+#: src/libqalculate/data/variables.xml.in.h:44
 msgid "Googolplex"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:43
+#: src/libqalculate/data/variables.xml.in.h:45
 msgid "Helion Mass"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:44
+#: src/libqalculate/data/variables.xml.in.h:46
 msgid "Hundred"
 msgstr "Hundra"
 
-#: src/libqalculate/data/variables.xml.in.h:45
+#: src/libqalculate/data/variables.xml.in.h:47
 msgid "Imaginary i (sqrt -1)"
 msgstr "Imaginärt i (sqrt -1)"
 
-#: src/libqalculate/data/variables.xml.in.h:46
+#: src/libqalculate/data/variables.xml.in.h:48
 msgid "Infinity"
 msgstr "Oändlighet"
 
-#: src/libqalculate/data/variables.xml.in.h:47
+#: src/libqalculate/data/variables.xml.in.h:49
 msgid "Josephson Constant"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:48
+#: src/libqalculate/data/variables.xml.in.h:50
 msgid "K_J"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:49
+#: src/libqalculate/data/variables.xml.in.h:51
 msgid "Large Numbers"
 msgstr "Stora tal"
 
-#: src/libqalculate/data/variables.xml.in.h:50
+#: src/libqalculate/data/variables.xml.in.h:52
 msgid "Magnetic Constant (Permeability of Free Space)"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:51
+#: src/libqalculate/data/variables.xml.in.h:53
 msgid "Magnetic Flux Quantum"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:52
+#: src/libqalculate/data/variables.xml.in.h:54
 msgid "Million"
 msgstr "Miljon"
 
-#: src/libqalculate/data/variables.xml.in.h:53
+#: src/libqalculate/data/variables.xml.in.h:55
 msgid "N_A"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:54
+#: src/libqalculate/data/variables.xml.in.h:56
 msgid "Negative Infinity"
 msgstr "Negativ oändlighet"
 
-#: src/libqalculate/data/variables.xml.in.h:55
+#: src/libqalculate/data/variables.xml.in.h:57
 msgid "Neutron Mass"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:56
+#: src/libqalculate/data/variables.xml.in.h:58
 msgid "Newtonian Constant of Gravitation"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:57
+#: src/libqalculate/data/variables.xml.in.h:59
 msgid "Nonillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:58
+#: src/libqalculate/data/variables.xml.in.h:60
 msgid "Novemdecillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:59
+#: src/libqalculate/data/variables.xml.in.h:61
 msgid "Nuclear Magneton"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:60
+#: src/libqalculate/data/variables.xml.in.h:62
 msgid "Octillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:61
+#: src/libqalculate/data/variables.xml.in.h:63
 msgid "Octodecillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:62
+#: src/libqalculate/data/variables.xml.in.h:64
 msgid "Per Mille"
 msgstr "Promille"
 
-#: src/libqalculate/data/variables.xml.in.h:63
+#: src/libqalculate/data/variables.xml.in.h:65
 msgid "Per Myriad"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:64
+#: src/libqalculate/data/variables.xml.in.h:66
 msgid "Physical Constants"
 msgstr "Fysiska konstanter"
 
-#: src/libqalculate/data/variables.xml.in.h:65
+#: src/libqalculate/data/variables.xml.in.h:67
 msgid "Physico-Chemical Constants"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:66
+#: src/libqalculate/data/variables.xml.in.h:68
 msgid "Planck Constant"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:67
-msgid "Planck Length"
-msgstr ""
-
-#: src/libqalculate/data/variables.xml.in.h:68
-msgid "Planck Mass"
-msgstr ""
-
 #: src/libqalculate/data/variables.xml.in.h:69
-msgid "Planck Temperature"
+msgid "Planck Constant over 2 pi"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:70
-msgid "Planck Time"
+msgid "Planck Length"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:71
-msgid "Positive Infinity"
-msgstr "Positiv oändlighet"
+msgid "Planck Mass"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:72
-msgid "Procent"
+msgid "Planck Temperature"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:73
-msgid "Proton Mass"
+msgid "Planck Time"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:74
-msgid "Pythagora's Constant (sqrt 2)"
-msgstr "Pythagoras konstant (sqrt 2)"
+msgid "Positive Infinity"
+msgstr "Positiv oändlighet"
 
 #: src/libqalculate/data/variables.xml.in.h:75
-msgid "Quadrillion"
+msgid "Procent"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:76
-msgid "Quattuordecillion"
+msgid "Proton Mass"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:77
-msgid "Quindecillion"
-msgstr ""
+msgid "Pythagora's Constant (sqrt 2)"
+msgstr "Pythagoras konstant (sqrt 2)"
 
 #: src/libqalculate/data/variables.xml.in.h:78
-msgid "Quintillion"
+msgid "Quadrillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:79
-msgid "R_&#x221E;"
+msgid "Quattuordecillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:80
-msgid "R_K"
+msgid "Quindecillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:81
-msgid "Rydberg Constant"
+msgid "Quintillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:82
-msgid "Second Radiation Constant"
+msgid "R_&#x221E;"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:83
-msgid "Septendecillion"
+msgid "R_K"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:84
-msgid "Septillion"
+msgid "Rydberg Constant"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:85
-msgid "Sexdecillion"
+msgid "Second Radiation Constant"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:86
-msgid "Sextillion"
+msgid "Septendecillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:87
-msgid "Small Numbers"
-msgstr "Små tal"
+msgid "Septillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:88
-msgid "Special Numbers"
-msgstr "Speciella nummer"
+msgid "Sexdecillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:89
-msgid "Speed of Light in Vacuum"
+msgid "Sextillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:90
+msgid "Small Numbers"
+msgstr "Små tal"
+
+#: src/libqalculate/data/variables.xml.in.h:91
+msgid "Special Numbers"
+msgstr "Speciella nummer"
+
+#: src/libqalculate/data/variables.xml.in.h:92
+msgid "Speed of Light in Vacuum"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:93
 msgid "T_P"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:91
+#: src/libqalculate/data/variables.xml.in.h:94
 msgid "Tau Mass"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:92
+#: src/libqalculate/data/variables.xml.in.h:95
 msgid "The Base of Natural Logarithms (e)"
 msgstr "Basen för naturliga logaritmer (e)"
 
-#: src/libqalculate/data/variables.xml.in.h:93
+#: src/libqalculate/data/variables.xml.in.h:96
 msgid "The Golden Ratio"
 msgstr "Golden ratio"
 
-#: src/libqalculate/data/variables.xml.in.h:94
+#: src/libqalculate/data/variables.xml.in.h:97
 msgid "Thousand"
 msgstr "Tusen"
 
-#: src/libqalculate/data/variables.xml.in.h:95
+#: src/libqalculate/data/variables.xml.in.h:98
 msgid "Tredecillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:96
+#: src/libqalculate/data/variables.xml.in.h:99
 msgid "Trillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:97
+#: src/libqalculate/data/variables.xml.in.h:100
 msgid "True"
 msgstr "Sant"
 
-#: src/libqalculate/data/variables.xml.in.h:98
+#: src/libqalculate/data/variables.xml.in.h:101
 msgid "Undecillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:99
+#: src/libqalculate/data/variables.xml.in.h:102
 msgid "Undefined"
 msgstr "Odefinierad"
 
-#: src/libqalculate/data/variables.xml.in.h:100
+#: src/libqalculate/data/variables.xml.in.h:103
 msgid "Universal Constants"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:101
+#: src/libqalculate/data/variables.xml.in.h:104
 msgid "Unknowns"
 msgstr "Okända"
 
-#: src/libqalculate/data/variables.xml.in.h:102
+#: src/libqalculate/data/variables.xml.in.h:105
 msgid "Vigintillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:103
+#: src/libqalculate/data/variables.xml.in.h:106
 msgid "Z_0"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:104
+#: src/libqalculate/data/variables.xml.in.h:107
 msgid "a_o"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:105
+#: src/libqalculate/data/variables.xml.in.h:108
 msgid "alpha_particle_mass"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:106
+#: src/libqalculate/data/variables.xml.in.h:109
 msgid "apery"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:108
+#: src/libqalculate/data/variables.xml.in.h:111
 msgid "avogadro"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:109
+#: src/libqalculate/data/variables.xml.in.h:112
 msgid "billion"
 msgstr "miljard"
 
-#: src/libqalculate/data/variables.xml.in.h:110
+#: src/libqalculate/data/variables.xml.in.h:113
 msgid "bohr_magneton"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:111
+#: src/libqalculate/data/variables.xml.in.h:114
 msgid "bohr_radius"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:112
+#: src/libqalculate/data/variables.xml.in.h:115
 msgid "boltzmann"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:113
+#: src/libqalculate/data/variables.xml.in.h:116
 msgid "c"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:114
+#: src/libqalculate/data/variables.xml.in.h:117
 msgid "c_1"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:115
+#: src/libqalculate/data/variables.xml.in.h:118
 msgid "c_2"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:116
+#: src/libqalculate/data/variables.xml.in.h:119
 msgid "catalan"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:117
+#: src/libqalculate/data/variables.xml.in.h:120
 msgid "centillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:118
+#: src/libqalculate/data/variables.xml.in.h:121
 msgid "characteristic_impedance"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:119
+#: src/libqalculate/data/variables.xml.in.h:122
 msgid "classical_electron_radius"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:120
+#: src/libqalculate/data/variables.xml.in.h:123
 msgid "compton_wavelength"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:121
+#: src/libqalculate/data/variables.xml.in.h:124
 msgid "conductance_quantum"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:122
+#: src/libqalculate/data/variables.xml.in.h:125
 msgid "decillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:123
+#: src/libqalculate/data/variables.xml.in.h:126
 msgid "duodecillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:124
+#: src/libqalculate/data/variables.xml.in.h:127
 msgid "e"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:125
+#: src/libqalculate/data/variables.xml.in.h:128
 msgid "e_charge"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:126
+#: src/libqalculate/data/variables.xml.in.h:129
 msgid "electric_constant"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:127
+#: src/libqalculate/data/variables.xml.in.h:130
 msgid "electron_mass"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:128
+#: src/libqalculate/data/variables.xml.in.h:131
 msgid "elementary_charge"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:129
+#: src/libqalculate/data/variables.xml.in.h:132
 msgid "euler"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:130
+#: src/libqalculate/data/variables.xml.in.h:133
 msgid "false"
 msgstr "falskt"
 
-#: src/libqalculate/data/variables.xml.in.h:131
+#: src/libqalculate/data/variables.xml.in.h:134
 msgid "faraday"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:132
+#: src/libqalculate/data/variables.xml.in.h:135
 msgid "first_radiation"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:133
+#: src/libqalculate/data/variables.xml.in.h:136
 msgid "golden"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:134
+#: src/libqalculate/data/variables.xml.in.h:137
 msgid "googol"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:135
+#: src/libqalculate/data/variables.xml.in.h:138
 msgid "googolplex"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:136
+#: src/libqalculate/data/variables.xml.in.h:139
 msgid "helion_mass"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:137
+#: src/libqalculate/data/variables.xml.in.h:140
 msgid "i"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:138
+#: src/libqalculate/data/variables.xml.in.h:141
 msgid "infinity"
 msgstr "oändlighet"
 
-#: src/libqalculate/data/variables.xml.in.h:139
+#: src/libqalculate/data/variables.xml.in.h:142
 msgid "josephson"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:140
+#: src/libqalculate/data/variables.xml.in.h:143
 msgid "klitzing"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:141
+#: src/libqalculate/data/variables.xml.in.h:144
 msgid "l_P"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:142
+#: src/libqalculate/data/variables.xml.in.h:145
 msgid "m_&#x3B1;"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:143
+#: src/libqalculate/data/variables.xml.in.h:146
 msgid "m_&#x3C4;"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:144
+#: src/libqalculate/data/variables.xml.in.h:147
 msgid "m_P"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:145
+#: src/libqalculate/data/variables.xml.in.h:148
 msgid "m_e"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:146
+#: src/libqalculate/data/variables.xml.in.h:149
 msgid "m_h"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:147
+#: src/libqalculate/data/variables.xml.in.h:150
 msgid "m_n"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:148
+#: src/libqalculate/data/variables.xml.in.h:151
 msgid "m_p"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:149
+#: src/libqalculate/data/variables.xml.in.h:152
 msgid "m_u"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:150
+#: src/libqalculate/data/variables.xml.in.h:153
 msgid "magnetic_constant"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:151
+#: src/libqalculate/data/variables.xml.in.h:154
 msgid "magnetic_flux_quantum"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:152
+#: src/libqalculate/data/variables.xml.in.h:155
 msgid "million"
 msgstr "miljon"
 
-#: src/libqalculate/data/variables.xml.in.h:153
+#: src/libqalculate/data/variables.xml.in.h:156
 msgid "minus_infinity"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:154
+#: src/libqalculate/data/variables.xml.in.h:157
 msgid "neutron_mass"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:155
+#: src/libqalculate/data/variables.xml.in.h:158
 msgid "newtonian_constant"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:156
+#: src/libqalculate/data/variables.xml.in.h:159
 msgid "no"
 msgstr "nej"
 
-#: src/libqalculate/data/variables.xml.in.h:157
+#: src/libqalculate/data/variables.xml.in.h:160
 msgid "nonillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:158
+#: src/libqalculate/data/variables.xml.in.h:161
 msgid "novemdecillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:159
+#: src/libqalculate/data/variables.xml.in.h:162
 msgid "nuclear_magneton"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:160
+#: src/libqalculate/data/variables.xml.in.h:163
 msgid "octillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:161
+#: src/libqalculate/data/variables.xml.in.h:164
 msgid "octodecillion"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:162
+#: src/libqalculate/data/variables.xml.in.h:165
 msgid "permille"
 msgstr "promille"
 
-#: src/libqalculate/data/variables.xml.in.h:163
+#: src/libqalculate/data/variables.xml.in.h:166
 msgid "permyriad"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:164
+#: src/libqalculate/data/variables.xml.in.h:167
 msgid "pi"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:165
+#: src/libqalculate/data/variables.xml.in.h:168
 msgid "planck"
 msgstr ""
 
-#: src/libqalculate/data/variables.xml.in.h:166
-msgid "planck_length"
-msgstr ""
-
-#: src/libqalculate/data/variables.xml.in.h:167
-msgid "planck_mass"
-msgstr ""
-
-#: src/libqalculate/data/variables.xml.in.h:168
-msgid "planck_temperature"
-msgstr ""
-
 #: src/libqalculate/data/variables.xml.in.h:169
-msgid "planck_time"
+msgid "planck2pi"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:170
-msgid "plus_infinity"
+msgid "planck_length"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:171
-msgid "procent"
+msgid "planck_mass"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:172
-msgid "proton_mass"
+msgid "planck_temperature"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:173
-msgid "pythagoras"
+msgid "planck_time"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:174
-msgid "quadrillion"
+msgid "plus_infinity"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:175
-msgid "quattuordecillion"
+msgid "procent"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:176
-msgid "quindecillion"
+msgid "proton_mass"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:177
-msgid "quintillion"
+msgid "pythagoras"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:178
-msgid "r_e"
+msgid "quadrillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:179
-msgid "rydberg"
+msgid "quattuordecillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:180
-msgid "second_radiation"
+msgid "quindecillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:181
-msgid "septendecillion"
+msgid "quintillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:182
-msgid "septillion"
+msgid "r_e"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:183
-msgid "sexdecillion"
+msgid "rydberg"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:184
-msgid "sextillion"
+msgid "second_radiation"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:185
-msgid "speed_of_light"
-msgstr "ljusets_hastighet"
+msgid "septendecillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:186
-msgid "t_P"
+msgid "septillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:187
-msgid "tau_mass"
+msgid "sexdecillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:188
-msgid "thousand"
-msgstr "tusen"
-
-#: src/libqalculate/data/variables.xml.in.h:189
-msgid "tredecillion"
+msgid "sextillion"
 msgstr ""
 
+#: src/libqalculate/data/variables.xml.in.h:189
+msgid "speed_of_light"
+msgstr "ljusets_hastighet"
+
 #: src/libqalculate/data/variables.xml.in.h:190
-msgid "trillion"
+msgid "t_P"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:191
-msgid "true"
-msgstr "sant"
-
-#: src/libqalculate/data/variables.xml.in.h:192
-msgid "undecillion"
+msgid "tau_mass"
 msgstr ""
 
+#: src/libqalculate/data/variables.xml.in.h:192
+msgid "thousand"
+msgstr "tusen"
+
 #: src/libqalculate/data/variables.xml.in.h:193
-msgid "undefined"
-msgstr "odefinierad"
+msgid "tredecillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:194
-msgid "vigintillion"
+msgid "trillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:195
-msgid "von Klitzing Constant"
-msgstr ""
+msgid "true"
+msgstr "sant"
 
 #: src/libqalculate/data/variables.xml.in.h:196
-msgid "x"
+msgid "undecillion"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:197
-msgid "y"
-msgstr ""
+msgid "undefined"
+msgstr "odefinierad"
 
 #: src/libqalculate/data/variables.xml.in.h:198
-msgid "yes"
-msgstr "ja"
+msgid "vigintillion"
+msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:199
-msgid "z"
+msgid "von Klitzing Constant"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:200
-msgid "‰"
+msgid "x"
 msgstr ""
 
 #: src/libqalculate/data/variables.xml.in.h:201
-msgid "‱"
+msgid "y"
+msgstr ""
+
+#: src/libqalculate/data/variables.xml.in.h:202
+msgid "yes"
+msgstr "ja"
+
+#: src/libqalculate/data/variables.xml.in.h:203
+msgid "z"
 msgstr ""

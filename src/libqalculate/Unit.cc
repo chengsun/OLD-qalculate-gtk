@@ -314,43 +314,45 @@ MathStructure &AliasUnit::convertToFirstBase(MathStructure &mvalue, MathStructur
 		if(value.find("\\x") != string::npos) {
 			string stmp = value;
 			string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
-			int x_id = CALCULATOR->addId(mvalue, true);
+			int x_id = CALCULATOR->addId(new MathStructure(mvalue), true);
 			stmp2 += i2s(x_id);
 			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 			gsub("\\x", stmp2, stmp);
 			stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
-			int y_id = CALCULATOR->addId(mexp, true);
+			int y_id = CALCULATOR->addId(new MathStructure(mexp), true);
 			stmp2 += i2s(y_id);
 			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 			gsub("\\y", stmp2, stmp);
-			mvalue = CALCULATOR->parse(stmp, po);
+			CALCULATOR->parse(&mvalue, stmp, po);
 			CALCULATOR->delId(x_id, true);
 			CALCULATOR->delId(y_id, true);
 		} else {
-			MathStructure mstruct = CALCULATOR->parse(value, po);
-			if(!mexp.isOne()) mstruct ^= mexp;
-			mvalue.divide(mstruct, true);
+			MathStructure *mstruct = new MathStructure();
+			CALCULATOR->parse(mstruct, value, po);
+			if(!mexp.isOne()) mstruct->raise(mexp);
+			mvalue.divide_nocopy(mstruct, true);
 		}
 	} else {
 		if(rvalue.find("\\x") != string::npos) {
 			string stmp = rvalue;
 			string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
-			int x_id = CALCULATOR->addId(mvalue, true);
+			int x_id = CALCULATOR->addId(new MathStructure(mvalue), true);
 			stmp2 += i2s(x_id);
 			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 			gsub("\\x", stmp2, stmp);
 			stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
-			int y_id = CALCULATOR->addId(mexp, true);
+			int y_id = CALCULATOR->addId(new MathStructure(mexp), true);
 			stmp2 += i2s(y_id);
 			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 			gsub("\\y", stmp2, stmp);
-			mvalue = CALCULATOR->parse(stmp, po);
+			CALCULATOR->parse(&mvalue, stmp, po);
 			CALCULATOR->delId(x_id, true);
 			CALCULATOR->delId(y_id, true);			
 		} else {
-			MathStructure mstruct = CALCULATOR->parse(rvalue, po);
-			if(!mexp.isOne()) mstruct ^= mexp;
-			mvalue.multiply(mstruct, true);
+			MathStructure *mstruct = new MathStructure();
+			CALCULATOR->parse(mstruct, rvalue, po);
+			if(!mexp.isOne()) mstruct->raise(mexp);
+			mvalue.multiply_nocopy(mstruct, true);
 		}
 	}
 	if(precision() > 0 && (mvalue.precision() < 1 || precision() < mvalue.precision())) mvalue.setPrecision(precision());
@@ -365,23 +367,24 @@ MathStructure &AliasUnit::firstBaseValue(MathStructure &mvalue, MathStructure &m
 	if(value.find("\\x") != string::npos) {
 		string stmp = value;
 		string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
-		int x_id = CALCULATOR->addId(mvalue, true);
+		int x_id = CALCULATOR->addId(new MathStructure(mvalue), true);
 		stmp2 += i2s(x_id);
 		stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 		gsub("\\x", stmp2, stmp);
 		stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
-		int y_id = CALCULATOR->addId(mexp, true);
+		int y_id = CALCULATOR->addId(new MathStructure(mexp), true);
 		stmp2 += i2s(y_id);
 		stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 		gsub("\\y", stmp2, stmp);
-		mvalue = CALCULATOR->parse(stmp, po);
+		CALCULATOR->parse(&mvalue, stmp, po);
 		CALCULATOR->delId(x_id, true);
 		CALCULATOR->delId(y_id, true);
 	} else {
-		MathStructure mstruct = CALCULATOR->parse(value, po);
-		if(!mexp.isOne()) mstruct ^= mexp;
+		MathStructure mstruct;
+		CALCULATOR->parse(&mstruct, value, po);
+		if(!mexp.isOne()) mstruct.raise(mexp);
 		mstruct.multiply(mvalue, true);
-		mvalue = mstruct;
+		mvalue.set_nocopy(mstruct);
 	}
 	if(precision() > 0 && (mvalue.precision() < 1 || precision() < mvalue.precision())) mvalue.setPrecision(precision());
 	if(isApproximate()) mvalue.setApproximate();	
@@ -671,7 +674,8 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	po.variables_enabled = false;
 	po.functions_enabled = false;
 	po.unknowns_enabled = false;
-	MathStructure mstruct(CALCULATOR->parse(base_expression_, po));
+	MathStructure mstruct;
+	CALCULATOR->parse(&mstruct, base_expression_, po);
 	mstruct.eval(eo);
 	if(mstruct.isUnit()) {
 		add(mstruct.unit(), 1, mstruct.prefix());

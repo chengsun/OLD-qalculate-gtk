@@ -1,3 +1,13 @@
+2004-10-13 Niklas Knutsson  <nq@altern.org>
+
+	* More speed-ups
+
+2004-10-12 Niklas Knutsson  <nq@altern.org>
+
+	* Limit qalc history to 100 entries
+	* Increase qalculate-gtk history to 25 entries
+	* Store children i math structures as pointers to reduce copying of large vectors
+
 2004-10-11 Niklas Knutsson  <nq@altern.org>
 
 	* Help buttons in variable edit, unit edit, function edit and plot dialogs

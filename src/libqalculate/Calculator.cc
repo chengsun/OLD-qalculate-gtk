@@ -60,6 +60,18 @@ using namespace cln;
 const string &PrintOptions::comma() const {if(comma_sign.empty()) return CALCULATOR->getComma(); return comma_sign;}
 const string &PrintOptions::decimalpoint() const {if(decimalpoint_sign.empty()) return CALCULATOR->getDecimalPoint(); return decimalpoint_sign;}
 
+/*#include <time.h>
+#include <sys/time.h>
+
+struct timeval tvtime;
+long int usecs, secs, usecs2, usecs3;
+
+#define PRINT_TIME(x) gettimeofday(&tvtime, NULL); usecs2 = tvtime.tv_usec - usecs + (tvtime.tv_sec - secs) * 1000000; printf("%s %li\n", x, usecs2);
+#define PRINT_TIMEDIFF(x) gettimeofday(&tvtime, NULL); printf("%s %li\n", x, tvtime.tv_usec - usecs + (tvtime.tv_sec - secs) * 1000000 - usecs2); usecs2 = tvtime.tv_usec - usecs + (tvtime.tv_sec - secs) * 1000000; 
+#define ADD_TIME1 gettimeofday(&tvtime, NULL); usecs2 = tvtime.tv_usec - usecs + (tvtime.tv_sec - secs) * 1000000; 
+#define ADD_TIME2 gettimeofday(&tvtime, NULL); usecs3 += tvtime.tv_usec - usecs + (tvtime.tv_sec - secs) * 1000000 - usecs2; */
+
+
 plot_parameters::plot_parameters() {
 	auto_y_min = true;
 	auto_x_min = true;
@@ -219,7 +231,6 @@ Calculator::Calculator() {
 	local_to = (str != " to ");
 	
 	null_prefix = new Prefix(0, "", "");
-	
 	m_undefined.setUndefined();
 	m_empty_vector.clearVector();
 	m_empty_matrix.clearMatrix();
@@ -229,7 +240,7 @@ Calculator::Calculator() {
 	no_evaluation.approximation = APPROXIMATION_EXACT;
 	no_evaluation.structuring = STRUCTURING_NONE;
 	no_evaluation.sync_units = false;
-	
+
 	save_printoptions.decimalpoint_sign = ".";
 	save_printoptions.comma_sign = ",";
 	save_printoptions.use_reference_names = true;
@@ -775,7 +786,7 @@ void Calculator::unsetLocale() {
 	DOT_S = ".";
 }
 
-unsigned int Calculator::addId(const MathStructure &m_struct, bool persistent) {
+unsigned int Calculator::addId(MathStructure *m_struct, bool persistent) {
 	unsigned int id = 0;
 	if(freed_ids.size() > 0) {
 		id = freed_ids.back();
@@ -798,7 +809,8 @@ unsigned int Calculator::parseAddId(MathFunction *f, const string &str, const Pa
 		id = ids_i;
 	}
 	ids_p[id] = persistent;
-	f->parse(id_structs[id], str, po);
+	id_structs[id] = new MathStructure();
+	f->parse(*id_structs[id], str, po);
 	return id;
 }
 unsigned int Calculator::parseAddIdAppend(MathFunction *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent) {
@@ -811,8 +823,9 @@ unsigned int Calculator::parseAddIdAppend(MathFunction *f, const MathStructure &
 		id = ids_i;
 	}
 	ids_p[id] = persistent;
-	f->parse(id_structs[id], str, po);
-	id_structs[id].addChild(append_mstruct);
+	id_structs[id] = new MathStructure();
+	f->parse(*id_structs[id], str, po);
+	id_structs[id]->addChild(append_mstruct);
 	return id;
 }
 unsigned int Calculator::parseAddVectorId(const string &str, const ParseOptions &po, bool persistent) {
@@ -825,11 +838,22 @@ unsigned int Calculator::parseAddVectorId(const string &str, const ParseOptions 
 		id = ids_i;
 	}
 	ids_p[id] = persistent;
-	f_vector->args(str, id_structs[id], po);
+	id_structs[id] = new MathStructure();
+	f_vector->args(str, *id_structs[id], po);
 	return id;
 }
-const MathStructure *Calculator::getId(unsigned int id) {
-	if(id_structs.find(id) != id_structs.end()) return &id_structs[id];
+MathStructure *Calculator::getId(unsigned int id) {
+	if(id_structs.find(id) != id_structs.end()) {
+		if(ids_p[id]) {
+			return new MathStructure(*id_structs[id]);
+		} else {
+			MathStructure *mstruct = id_structs[id];
+			freed_ids.push_back(id);
+			id_structs.erase(id);
+			ids_p.erase(id);
+			return mstruct;
+		}
+	}
 	return NULL;
 }
 
@@ -837,6 +861,7 @@ void Calculator::delId(unsigned int id, bool force) {
 	if(ids_p.find(id) != ids_p.end()) {	
 		if(!ids_p[id] || force) {
 			freed_ids.push_back(id);
+			id_structs[id]->unref();
 			id_structs.erase(id);
 			ids_p.erase(id);
 		}
@@ -1318,7 +1343,8 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		}
 	}
 	if(to_str) *to_str = str2;
-	MathStructure mstruct(parse(str, eo.parse_options));
+	MathStructure mstruct;
+	parse(&mstruct, str, eo.parse_options);
 	if(parsed_struct) *parsed_struct = mstruct;
 	mstruct.eval(eo);
 	if(!str2.empty()) {
@@ -1370,7 +1396,8 @@ MathStructure Calculator::convert(double value, Unit *from_unit, Unit *to_unit, 
 	return convert(value, from_unit, to_unit, eo);
 }
 MathStructure Calculator::convert(string str, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo) {
-	MathStructure mstruct(parse(str, eo.parse_options));
+	MathStructure mstruct;
+	parse(&mstruct, str, eo.parse_options);
 	mstruct *= from_unit;
 	mstruct.eval(eo);
 	mstruct.convert(to_unit, true);
@@ -1441,7 +1468,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 			eo2.sync_units = true;
 			eo2.keep_prefixes = false;
 			mstruct_new.eval(eo2);
-			if(mstruct_new.isOne()) mstruct_new.set(to_unit);
+			if(mstruct_new.isOne()) mstruct_new.setUnit(to_unit);
 			else mstruct_new.multiply(to_unit, true);
 			eo2.sync_units = false;
 			eo2.keep_prefixes = true;
@@ -2407,6 +2434,16 @@ bool compare_name_no_case(const string &name, const string &str, const int &name
 }
 
 MathStructure Calculator::parse(string str, const ParseOptions &po) {
+	
+	MathStructure mstruct;
+	parse(&mstruct, str, po);	
+	return mstruct;
+	
+}
+
+void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &po) {
+
+	mstruct->clear();
 
 	const string *name = NULL;
 	string stmp, stmp2;
@@ -2439,7 +2476,6 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 		q_end.push_back(i3);
 		i3++;
 	}
-
 	for(unsigned int i = 0; i < signs.size(); i++) {
 		unsigned int ui = str.find(signs[i]);
 		while(ui != string::npos) {
@@ -2457,7 +2493,6 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 			}
 		}
 	}
-
 	for(int str_index = 0; str_index < (int) str.length(); str_index++) {
 		chars_left = str.length() - str_index;
 		moved_forward = false;
@@ -2484,11 +2519,9 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 				}
 				if(i4 == 0) {
 					stmp2 = str.substr(str_index + 1, i3 - str_index - 1);
-					stmp = LEFT_PARENTHESIS_CH;
-					stmp += ID_WRAP_LEFT_CH;
+					stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 					stmp += i2s(parseAddVectorId(stmp2, po));
-					stmp += ID_WRAP_RIGHT_CH;
-					stmp += RIGHT_PARENTHESIS_CH;
+					stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 					str.replace(str_index, i3 + 1 - str_index, stmp);
 					str_index += stmp.length() - 1;
 					break;
@@ -2505,12 +2538,10 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 				} else {
 					name_length = i - str_index + 1;
 				}
-				stmp = LEFT_PARENTHESIS_CH;
-				stmp += ID_WRAP_LEFT_CH;
-				MathStructure mstruct(str.substr(str_index + 1, i - str_index - 1));
+				stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+				MathStructure *mstruct = new MathStructure(str.substr(str_index + 1, i - str_index - 1));
 				stmp += i2s(addId(mstruct));
-				stmp += ID_WRAP_RIGHT_CH;
-				stmp += RIGHT_PARENTHESIS_CH;
+				stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 				str.replace(str_index, name_length, stmp);
 				str_index += stmp.length() - 1;
 			}
@@ -2518,14 +2549,8 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 			if(str_index > 0 && (chars_left == 1 || str[str_index + 1] != EQUALS_CH)) {
 				stmp = "";
 				i5 = str.find_last_not_of(SPACE, str_index - 1);
-				if(i5 != (int) string::npos && is_in(NUMBERS, str[i5])) {
-					i3 = str.find_last_not_of(NUMBERS, i5);
-					if(i3 == (int) string::npos) {
-						stmp2 = str.substr(0, i5 + 1);
-					} else {
-						stmp2 = str.substr(i3 + 1, i5 - i3);
-					}
-				} else if(i5 != (int) string::npos && str[i5] == RIGHT_PARENTHESIS_CH) {
+				if(i5 == (int) string::npos) {
+				} else if(str[i5] == RIGHT_PARENTHESIS_CH) {
 					i3 = i5 - 1;
 					i4 = 1;
 					while(true) {
@@ -2545,10 +2570,18 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 						}
 						i3--;
 					}
-				}		
+				} else if(str[i5] == ID_WRAP_RIGHT_CH && (i3 = str.find_last_of(ID_WRAP_LEFT, i5 - 1)) != (int) string::npos) {
+					stmp2 = str.substr(i3, i5 + 1 - i3);
+				} else if(is_not_in(NOT_IN_NAMES, str[i5])) {
+					i3 = str.find_last_of(NOT_IN_NAMES, i5);
+					if(i3 == (int) string::npos) {
+						stmp2 = str.substr(0, i5 + 1);
+					} else {
+						stmp2 = str.substr(i3 + 1, i5 - i3);
+					}
+				}
 				if(!stmp2.empty()) {
-					stmp = LEFT_PARENTHESIS_CH;
-					stmp += ID_WRAP_LEFT_CH;
+					stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 					int ifac = 1;
 					i3 = str_index + 1;
 					i4 = i3;
@@ -2560,8 +2593,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 					if(ifac == 2) stmp += i2s(parseAddId(f_factorial2, stmp2, po));
 					else if(ifac == 1) stmp += i2s(parseAddId(f_factorial, stmp2, po));
 					else stmp += i2s(parseAddIdAppend(f_multifactorial, MathStructure(ifac, 1), stmp2, po));
-					stmp += ID_WRAP_RIGHT_CH;
-					stmp += RIGHT_PARENTHESIS_CH;
+					stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 					str.replace(i5 - stmp2.length() + 1, stmp2.length() + i4 - i5 - 1, stmp);
 					str_index = i5 - stmp2.length();
 					str_index += stmp.length();
@@ -2743,11 +2775,9 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 					switch(ufvt) {
 						case 'v': {
 							v = (Variable*) object;
-							stmp = LEFT_PARENTHESIS_CH;
-							stmp += ID_WRAP_LEFT_CH;
-							stmp += i2s(addId(v));
-							stmp += ID_WRAP_RIGHT_CH;
-							stmp += RIGHT_PARENTHESIS_CH;
+							stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+							stmp += i2s(addId(new MathStructure(v)));
+							stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 							str.replace(str_index, name_length, stmp);
 							str_index += stmp.length();
 							moved_forward = true;
@@ -2773,11 +2803,9 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 										i4 = i5 - str_index + 1;
 									}
 								}
-								stmp = LEFT_PARENTHESIS_CH;
-								stmp += ID_WRAP_LEFT_CH;
+								stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 								stmp += i2s(parseAddId(f, empty_string, po));
-								stmp += ID_WRAP_RIGHT_CH;
-								stmp += RIGHT_PARENTHESIS_CH;
+								stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 								if(i4 < 0) i4 = name_length;
 							} else if(po.rpn && f->args() == 1 && str_index > 0 && str[str_index - 1] == SPACE_CH && (str_index + name_length >= (int) str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != (int) string::npos) {
 								i5 = str.rfind(SPACE, i6);	
@@ -2786,12 +2814,10 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 								} else {
 									stmp2 = str.substr(i5 + 1, i6 - i5);
 								}
-								stmp = LEFT_PARENTHESIS_CH;
-								stmp += ID_WRAP_LEFT_CH;
+								stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 								if(f == f_vector) stmp += i2s(parseAddVectorId(stmp2, po));
 								else stmp += i2s(parseAddId(f, stmp2, po));
-								stmp += ID_WRAP_RIGHT_CH;
-								stmp += RIGHT_PARENTHESIS_CH;
+								stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 								if(i5 == (int) string::npos) {
 									str.replace(0, str_index + name_length, stmp);
 								} else {
@@ -2831,12 +2857,10 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 								}
 								if(b && i5 == 2) {
 									stmp2 = str.substr(str_index + name_length, i6 - 1);
-									stmp = LEFT_PARENTHESIS_CH;
-									stmp += ID_WRAP_LEFT_CH;
+									stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 									if(f == f_vector) stmp += i2s(parseAddVectorId(stmp2, po));
 									else stmp += i2s(parseAddId(f, stmp2, po));
-									stmp += ID_WRAP_RIGHT_CH;
-									stmp += RIGHT_PARENTHESIS_CH;
+									stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 									i4 = i6 + 1 + name_length - 2;
 									b = false;
 								}
@@ -2863,12 +2887,10 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 								}
 								if(b) {
 									stmp2 = str.substr(str_index + name_length + i9, i6 - (str_index + name_length + i9));
-									stmp = LEFT_PARENTHESIS_CH;
-									stmp += ID_WRAP_LEFT_CH;
+									stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 									if(f == f_vector) stmp += i2s(parseAddVectorId(stmp2, po));
 									else stmp += i2s(parseAddId(f, stmp2, po));
-									stmp += ID_WRAP_RIGHT_CH;
-									stmp += RIGHT_PARENTHESIS_CH;
+									stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 									i4 = i6 + 1 - str_index;
 								}
 							}
@@ -2885,11 +2907,9 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 							if((int) str.length() > str_index + name_length && is_in(NUMBERS, str[str_index + name_length]) && !u->isCurrency()) {
 								str.insert(str_index + name_length, 1, POWER_CH);
 							}
-							stmp = LEFT_PARENTHESIS_CH;					
-							stmp += ID_WRAP_LEFT_CH;
-							stmp += i2s(addId(MathStructure(u, p)));
-							stmp += ID_WRAP_RIGHT_CH;
-							stmp += RIGHT_PARENTHESIS_CH;				
+							stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+							stmp += i2s(addId(new MathStructure(u, p)));
+							stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 							str.replace(str_index, name_length, stmp);
 							str_index += stmp.length();
 							moved_forward = true;
@@ -2957,11 +2977,9 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 					while(i <= chars_left && str[str_index + i] < 0) {
 						i++;
 					}
-					stmp = LEFT_PARENTHESIS_CH;
-					stmp += ID_WRAP_LEFT_CH;
-					stmp += i2s(addId(str.substr(str_index, i)));
-					stmp += ID_WRAP_RIGHT_CH;
-					stmp += RIGHT_PARENTHESIS_CH;
+					stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+					stmp += i2s(addId(new MathStructure(str.substr(str_index, i))));
+					stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 					str.replace(str_index, i, stmp);
 					str_index += stmp.length() - 1;	
 				}	
@@ -2982,12 +3000,12 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 		remove_blanks(str);
 	}
 
-	return parseOperators(str, po);
+	parseOperators(mstruct, str, po);
 
 }
 
-MathStructure Calculator::parseNumber(string str, const ParseOptions &po) {
-	MathStructure mstruct;
+void Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOptions &po) {
+	mstruct->clear();
 	string ssave = str;
 	char s = PLUS_CH;
 	bool has_sign = false;
@@ -3015,11 +3033,11 @@ MathStructure Calculator::parseNumber(string str, const ParseOptions &po) {
 	}
 	if(str.empty()) {
 		if(!has_sign) {
-			return mstruct;
+			return;
 		} else if(s == MINUS_CH) {
-			mstruct.set(-1, 1);
+			mstruct->set(-1, 1);
 		} else {
-			mstruct.set(1, 1);
+			mstruct->set(1, 1);
 		}
 	}
 	for(int i = str.length() - 1; i >= 0; i--) {	
@@ -3030,28 +3048,29 @@ MathStructure Calculator::parseNumber(string str, const ParseOptions &po) {
 	}
 	if(str[0] == ID_WRAP_LEFT_CH && str.length() > 2 && str[str.length() - 1] == ID_WRAP_RIGHT_CH) {
 		int id = s2i(str.substr(1, str.length() - 2));
-		const MathStructure *m_temp = getId(id);
+		MathStructure *m_temp = getId(id);
 		if(!m_temp) {
-			mstruct.setUndefined();
+			mstruct->setUndefined();
 			error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
-			return mstruct;
+			return;
 		}
-		mstruct.set(*m_temp);
-		if(s == MINUS_CH) mstruct.negate();
-		delId(id);
-		return mstruct;
+		mstruct->set_nocopy(*m_temp);
+		m_temp->unref();
+		if(s == MINUS_CH) mstruct->negate();
+		//delId(id);
+		return;
 	}
 	int itmp;
 	if(str.empty() || ((itmp = str.find_first_not_of(" ")) == (int) string::npos)) {
-		return mstruct;
+		return;
 	}
 	if(po.base >= 2 && po.base <= 10 && (itmp = str.find_first_not_of(NUMBER_ELEMENTS MINUS, 0)) != (int) string::npos) {
 		string stmp = str.substr(itmp, str.length() - itmp);
 		str.erase(itmp, str.length() - itmp);
 		if(itmp == 0) {
 			error(true, _("\"%s\" is not a valid variable/function/unit."), ssave.c_str(), NULL);
-			mstruct.set(1, 1);
-			return mstruct;
+			mstruct->set(1, 1);
+			return;
 		} else {
 			error(true, _("Trailing characters in expression \"%s\" was ignored."), ssave.c_str(), NULL);
 		}
@@ -3061,12 +3080,12 @@ MathStructure Calculator::parseNumber(string str, const ParseOptions &po) {
 	}
 	
 	Number nr(str, po.base, po.read_precision);
-	mstruct.set(nr);
-	return mstruct;
+	mstruct->set(nr);
+	return;
 	
 }
 
-void Calculator::parseAdd(string &str, MathStructure &mstruct, const ParseOptions &po) {
+void Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOptions &po) {
 	if(str.length() > 0) {
 		unsigned int i;
 		if(po.base >= 2 && po.base <= 10) {
@@ -3075,13 +3094,13 @@ void Calculator::parseAdd(string &str, MathStructure &mstruct, const ParseOption
 			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
 		}
 		if(i == string::npos && str[0] != NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1)) {
-			mstruct.set(parseNumber(str, po));
+			parseNumber(mstruct, str, po);
 		} else {
-			mstruct.set(parseOperators(str, po));
+			parseOperators(mstruct, str, po);
 		}
 	}	
 }
-void Calculator::parseAdd(string &str, MathStructure &mstruct, const ParseOptions &po, MathOperation s) {
+void Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOptions &po, MathOperation s) {
 	if(str.length() > 0) {
 		unsigned int i;
 		if(po.base >= 2 && po.base <= 10) {
@@ -3093,18 +3112,25 @@ void Calculator::parseAdd(string &str, MathStructure &mstruct, const ParseOption
 			if(s == OPERATION_EXP10 && po.read_precision == ALWAYS_READ_PRECISION) {
 				ParseOptions po2 = po;
 				po2.read_precision = READ_PRECISION_WHEN_DECIMALS;
-				mstruct.add(parseNumber(str, po2), s, true);
+				MathStructure *mstruct2 = new MathStructure();
+				parseNumber(mstruct2, str, po2);
+				mstruct->add_nocopy(mstruct2, s, true);
 			} else {
-				mstruct.add(parseNumber(str, po), s, true);
+				MathStructure *mstruct2 = new MathStructure();
+				parseNumber(mstruct2, str, po);
+				mstruct->add_nocopy(mstruct2, s, true);
 			}
 		} else {
-			mstruct.add(parseOperators(str, po), s, true);
+			MathStructure *mstruct2 = new MathStructure();
+			parseOperators(mstruct2, str, po);
+			mstruct->add_nocopy(mstruct2, s, true);
 		}
 	}
 }
 
-MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
-	MathStructure mstruct;
+void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseOptions &po) {
+	string save_str = str;
+	mstruct->clear();
 	int i = 0, i2 = 0, i3 = 0;
 	string str2, str3;
 	while(true) {
@@ -3172,12 +3198,13 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 			str += MULTIPLICATION_CH;	
 		}
 		str2 = str.substr(i + 1, i2 - (i + 1));
-		mstruct.set(parseOperators(str2, po));
-		str2 = ID_WRAP_LEFT_CH;
-		str2 += i2s(addId(mstruct));
-		str2 += ID_WRAP_RIGHT_CH;
+		MathStructure *mstruct2 = new MathStructure();
+		parseOperators(mstruct2, str2, po);
+		str2 = ID_WRAP_LEFT;
+		str2 += i2s(addId(mstruct2));
+		str2 += ID_WRAP_RIGHT;
 		str.replace(i, i2 - i + 1, str2);
-		mstruct.clear();
+		mstruct->clear();
 	}
 	if((i = str.find(AND, 1)) != (int) string::npos && i != (int) str.length() - 1) {
 		bool b = false;
@@ -3201,7 +3228,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 		} else {
 			parseAdd(str, mstruct, po);
 		}
-		return mstruct;
+		return;
 	}
 	if((i = str.find(OR, 1)) != (int) string::npos && i != (int) str.length() - 1) {
 		bool b = false;
@@ -3225,13 +3252,13 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 		} else {
 			parseAdd(str, mstruct, po);
 		}
-		return mstruct;
+		return;
 	}	
 	if(str[0] == NOT_CH) {
 		str.erase(str.begin());
 		parseAdd(str, mstruct, po);
-		mstruct.setNOT();
-		return mstruct;
+		mstruct->setNOT();
+		return;
 	}
 	if((i = str.find_first_of(LESS GREATER EQUALS NOT, 0)) != (int) string::npos) {
 		bool b = false;
@@ -3261,7 +3288,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 				parseAdd(str2, mstruct, po, s);
 			}
 			if(i == (int) string::npos) {
-				return mstruct;
+				return;
 			}
 			if(!b) {
 				parseAdd(str2, mstruct, po);
@@ -3306,7 +3333,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 			if(i == (int) string::npos) {
 				if(!b) {
 					parseAdd(str, mstruct, po2);
-					return mstruct;
+					return;
 				}
 				if(i3 != 0) {
 					str2 = str.substr(i3 + 1, str.length() - i3 - 1);
@@ -3319,7 +3346,8 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 				} else if(mstack.size() > 1) {
 					error(false, _("Unused stack values."), NULL);
 				}
-				return mstack.back();
+				mstruct->set(mstack.back());
+				return;
 			}
 			b = true;
 			if(i3 != 0) {
@@ -3330,7 +3358,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 			remove_blank_ends(str2);
 			if(!str2.empty()) {
 				mstack.push_back(m_zero);
-				parseAdd(str2, mstack.back(), po2);
+				parseAdd(str2, &mstack.back(), po2);
 			}
 			if(str[i] != SPACE_CH) {
 				if(mstack.size() < 1) {
@@ -3369,7 +3397,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 						c = true;
 					} else {
 						parseAdd(str2, mstruct, po);
-						if(c && min) mstruct.negate();
+						if(c && min) mstruct->negate();
 						c = false;
 					}
 					b = true;
@@ -3386,7 +3414,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 			if(c) {
 				parseAdd(str, mstruct, po);
 				if(min) {
-					mstruct.negate();
+					mstruct->negate();
 				}
 			} else {
 				if(min) {
@@ -3395,7 +3423,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 					parseAdd(str, mstruct, po, OPERATION_ADD);
 				}
 			}
-			return mstruct;
+			return;
 		}
 	}
 	if((i = str.find_first_of(MULTIPLICATION DIVISION, 1)) != (int) string::npos && i != (int) str.length() - 1) {
@@ -3465,9 +3493,10 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 		parseAdd(str2, mstruct, po);
 		parseAdd(str, mstruct, po, OPERATION_MULTIPLY);
 	} else {
-		return parseNumber(str, po);
+		parseNumber(mstruct, str, po);
+		return;
 	}
-	return mstruct;
+	return;
 }
 
 string Calculator::getName(string name, ExpressionItem *object, bool force, bool always_append) {
@@ -5746,7 +5775,7 @@ bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int fi
 						str1 = stmp.substr(is, is_n - is);
 						is = is_n + delimiter.length();
 					}
-					mstruct[rows - 1][column - 1] = CALCULATOR->parse(str1);
+					CALCULATOR->parse(&mstruct[rows - 1][column - 1], str1);
 					column++;
 					if(is_n == (int) string::npos) {
 						break;
@@ -5836,7 +5865,7 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 						is = is_n + delimiter.length();
 					}
 					if(to_matrix) {
-						mstruct[rows - 1][column - 1] = CALCULATOR->parse(str1);
+						CALCULATOR->parse(&mstruct[rows - 1][column - 1], str1);
 					} else {
 						vectors[column - 1].addItem(CALCULATOR->parse(str1));
 					}

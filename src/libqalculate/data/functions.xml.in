@@ -1593,7 +1593,11 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <_name>correl</_name>
         </name>
 	<condition>dimension(\x)=dimension(\y)</condition>
-        <expression>(\x*\y-total(\x)*total(\y)/dimension(\x))/abs(((\x*\x-(total(\x)^2)/dimension(\x))*(\y*\y-(total(\y)^2)/dimension(\y)))^(1/2))</expression>
+	<subfunction precalculate="true">total(\x)</subfunction>
+	<subfunction precalculate="true">total(\y)</subfunction>
+	<subfunction precalculate="true">dimension(\x)</subfunction>
+	<subfunction precalculate="true">dimension(\y)</subfunction>
+	<expression>(\x*\y-\1*\2/\3)/abs(((\x^2-(\1^2)/\3)*(\y^2-(\2^2)/\4))^(1/2))</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
         </argument>

@@ -4067,7 +4067,7 @@ void add_to_expression_history(string str) {
 			break;
 		}
 	}
-	if(expression_history.size() >= 15) {
+	if(expression_history.size() >= 25) {
 		expression_history.pop_back();
 	}
 	expression_history.insert(expression_history.begin(), str);
