@@ -1,3 +1,9 @@
+2004-11-21 Niklas Knutsson  <nq@altern.org>
+	
+	* Fix draw unit
+	* Add alternative multiplication dot signs
+	* Enhance preferences safety
+
 2004-11-16 Niklas Knutsson  <nq@altern.org>
 	
 	* Check if unicode characters can be displayed

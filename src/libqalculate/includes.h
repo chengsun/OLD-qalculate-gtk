@@ -381,6 +381,8 @@ extern Calculator *calculator;
 #define SIGN_PI				"π"
 #define SIGN_MULTIPLICATION		"×"
 #define SIGN_MULTIDOT			"⋅"
+#define SIGN_MULTIBULLET		"∙"
+#define SIGN_SMALLCIRCLE		"•"
 #define SIGN_DIVISION_SLASH		"∕"
 #define SIGN_DIVISION			"÷"
 #define SIGN_MINUS			"−"

@@ -201,7 +201,7 @@ void set_unicode_buttons() {
 		else gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_sub")), MINUS);
 		if(can_display_unicode_string_function(SIGN_PLUS, (void*) glade_xml_get_widget (main_glade, "button_add"))) gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_add")), SIGN_PLUS);
 		else gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_add")), PLUS);
-		if(can_display_unicode_string_function(SIGN_MULTIPLICATION, (void*) glade_xml_get_widget (main_glade, "button_times"))) gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_times")), SIGN_MULTIPLICATION);	
+		if(can_display_unicode_string_function(SIGN_MULTIPLICATION, (void*) glade_xml_get_widget (main_glade, "button_times"))) gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_times")), SIGN_MULTIPLICATION);
 		else gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_times")), MULTIPLICATION);	
 		if(can_display_unicode_string_function(SIGN_DIVISION_SLASH, (void*) glade_xml_get_widget (main_glade, "button_divide"))) gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_divide")), SIGN_DIVISION_SLASH);	
 		else if(can_display_unicode_string_function(SIGN_DIVISION, (void*) glade_xml_get_widget (main_glade, "button_divide"))) gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_divide")), SIGN_DIVISION);
@@ -2713,6 +2713,10 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			if(ips.power_depth > 0) {
 				if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) {
 					str = TEXT_TAGS_SMALL SIGN_MULTIDOT TEXT_TAGS_SMALL_END;
+				} else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIBULLET, po.can_display_unicode_string_arg))) {
+					str = TEXT_TAGS_SMALL SIGN_MULTIBULLET TEXT_TAGS_SMALL_END;
+				} else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_SMALLCIRCLE, po.can_display_unicode_string_arg))) {
+					str = TEXT_TAGS_SMALL SIGN_SMALLCIRCLE TEXT_TAGS_SMALL_END;
 				} else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) {
 					str = TEXT_TAGS_XSMALL SIGN_MULTIPLICATION TEXT_TAGS_XSMALL_END;
 				} else {
@@ -2721,6 +2725,10 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			} else {
 				if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) {
 					str = TEXT_TAGS SIGN_MULTIDOT TEXT_TAGS_END;
+				} else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIBULLET, po.can_display_unicode_string_arg))) {
+					str = TEXT_TAGS SIGN_MULTIBULLET TEXT_TAGS_END;
+				} else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_SMALLCIRCLE, po.can_display_unicode_string_arg))) {
+					str = TEXT_TAGS SIGN_SMALLCIRCLE TEXT_TAGS_END;
 				} else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) {
 					str = TEXT_TAGS_SMALL SIGN_MULTIPLICATION TEXT_TAGS_SMALL_END;
 				} else {
@@ -3388,7 +3396,9 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			}
 			
 			const ExpressionName *ename = &m.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, m.isPlural(), po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
-			str += m.prefix()->name(po.abbreviate_names && ename->abbreviation && (ename->suffix || ename->name.find("_") == string::npos), po.use_unicode_signs, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
+			if(m.prefix()) {
+				str += m.prefix()->name(po.abbreviate_names && ename->abbreviation && (ename->suffix || ename->name.find("_") == string::npos), po.use_unicode_signs, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
+			}
 			if(ename->suffix && ename->name.length() > 1) {
 				size_t i = ename->name.rfind('_');
 				bool b = i == string::npos || i == ename->name.length() - 1 || i == 0;
@@ -7011,41 +7021,39 @@ void load_preferences() {
 				v = s2i(svalue);
 				if(svar == "version") {
 					parse_qalculate_version(svalue, version_numbers);
-				} else if(svar == "save_mode_on_exit")
+				} else if(svar == "save_mode_on_exit") {
 					save_mode_on_exit = v;
-				else if(svar == "save_definitions_on_exit")
+				} else if(svar == "save_definitions_on_exit") {
 					save_defs_on_exit = v;
-				/*else if(svar == "load_global_definitions")
-					load_global_defs = v;*/
-				else if(svar == "fetch_exchange_rates_at_startup")
+				} else if(svar == "fetch_exchange_rates_at_startup") {
 					fetch_exchange_rates_at_startup = v;
-				else if(svar == "show_buttons")
+				} else if(svar == "show_buttons") {
 					show_buttons = v;
-				else if(svar == "min_deci")
+				} else if(svar == "min_deci") {
 					printops.min_decimals = v;
-				else if(svar == "use_min_deci")
+				} else if(svar == "use_min_deci") {
 					printops.use_min_decimals = v;
-				else if(svar == "max_deci")
+				} else if(svar == "max_deci") {
 					printops.max_decimals = v;
-				else if(svar == "use_max_deci")
+				} else if(svar == "use_max_deci") {
 					printops.use_max_decimals = v;					
-				else if(svar == "precision")
+				} else if(svar == "precision") {
 					CALCULATOR->setPrecision(v);
-				else if(svar == "min_exp")
+				} else if(svar == "min_exp") {
 					printops.min_exp = v;
-				else if(svar == "negative_exponents")
+				} else if(svar == "negative_exponents") {
 					printops.negative_exponents = v;
-				else if(svar == "sort_minus_last")
+				} else if(svar == "sort_minus_last") {
 					printops.sort_options.minus_last = v;
-				else if(svar == "spacious")
+				} else if(svar == "spacious") {
 					printops.spacious = v;	
-				else if(svar == "excessive_parenthesis")
+				} else if(svar == "excessive_parenthesis") {
 					printops.excessive_parenthesis = v;
-				else if(svar == "short_multiplication")
+				} else if(svar == "short_multiplication") {
 					printops.short_multiplication = v;
-				else if(svar == "place_units_separately")
+				} else if(svar == "place_units_separately") {
 					printops.place_units_separately = v;
-				else if(svar == "display_mode") {	//obsolete
+				} else if(svar == "display_mode") {	//obsolete
 					switch(v) {
 						case 1: {
 							printops.min_exp = EXP_PRECISION;
@@ -7072,9 +7080,9 @@ void load_preferences() {
 							break;
 						}
 					}
-				} else if(svar == "use_prefixes")
+				} else if(svar == "use_prefixes") {
 					printops.use_unit_prefixes = v;
-				else if(svar == "fractional_mode") {	//obsolete
+				} else if(svar == "fractional_mode") {	//obsolete
 					switch(v) {
 						case 1: {
 							printops.number_fraction_format = FRACTION_DECIMAL;
@@ -7089,97 +7097,97 @@ void load_preferences() {
 							break;
 						}
 					}
-				} else if(svar == "number_fraction_format")
-					printops.number_fraction_format = (NumberFractionFormat) v;					
-				else if(svar == "number_base")
+				} else if(svar == "number_fraction_format") {
+					if(v >= FRACTION_DECIMAL && v <= FRACTION_COMBINED) printops.number_fraction_format = (NumberFractionFormat) v;					
+				} else if(svar == "number_base") {
 					printops.base = v;
-				else if(svar == "number_base_expression")
+				} else if(svar == "number_base_expression") {
 					evalops.parse_options.base = v;	
-				else if(svar == "read_precision")
-					evalops.parse_options.read_precision = (ReadPrecisionMode) v;
-				else if(svar == "assume_denominators_nonzero")
+				} else if(svar == "read_precision") {
+					if(v >= DONT_READ_PRECISION && v <= READ_PRECISION_WHEN_DECIMALS) evalops.parse_options.read_precision = (ReadPrecisionMode) v;
+				} else if(svar == "assume_denominators_nonzero") {
 					evalops.assume_denominators_nonzero = v;	
-				else if(svar == "angle_unit") {
+				} else if(svar == "angle_unit") {
 					if(version_numbers[0] == 0 && (version_numbers[1] < 7 || (version_numbers[1] == 7 && version_numbers[2] == 0))) {
 						v++;
 					}
-					evalops.parse_options.angle_unit = (AngleUnit) v;
-				} else if(svar == "hyp_is_on")
+					if(v >= ANGLE_UNIT_NONE && v <= ANGLE_UNIT_GRADIANS) evalops.parse_options.angle_unit = (AngleUnit) v;
+				} else if(svar == "hyp_is_on") {
 					hyp_is_on = v;
-				else if(svar == "functions_enabled")
+				} else if(svar == "functions_enabled") {
 					evalops.parse_options.functions_enabled = v;
-				else if(svar == "variables_enabled")
+				} else if(svar == "variables_enabled") {
 					evalops.parse_options.variables_enabled = v;
-				else if(svar == "donot_calculate_variables")
+				} else if(svar == "donot_calculate_variables") {
 					evalops.calculate_variables = !v;
-				else if(svar == "calculate_variables")
+				} else if(svar == "calculate_variables") {
 					evalops.calculate_variables = v;
-				else if(svar == "calculate_functions")
+				} else if(svar == "calculate_functions") {
 					evalops.calculate_functions = v;
-				else if(svar == "sync_units")
+				} else if(svar == "sync_units") {
 					evalops.sync_units = v;
-				else if(svar == "unknownvariables_enabled")
+				} else if(svar == "unknownvariables_enabled") {
 					evalops.parse_options.unknowns_enabled = v;
-				else if(svar == "units_enabled")
+				} else if(svar == "units_enabled") {
 					evalops.parse_options.units_enabled = v;
-				else if(svar == "allow_complex")
+				} else if(svar == "allow_complex") {
 					evalops.allow_complex = v;
-				else if(svar == "allow_infinite")
+				} else if(svar == "allow_infinite") {
 					evalops.allow_infinite = v;
-				else if(svar == "use_short_units")
+				} else if(svar == "use_short_units") {
 					printops.abbreviate_names = v;
-				else if(svar == "abbreviate_names")
+				} else if(svar == "abbreviate_names") {
 					printops.abbreviate_names = v;	
-				else if(svar == "all_prefixes_enabled")
+				} else if(svar == "all_prefixes_enabled") {
 					printops.use_all_prefixes = v;
-				else if(svar == "denominator_prefix_enabled")
+				} else if(svar == "denominator_prefix_enabled") {
 					printops.use_denominator_prefix = v;
-				else if(svar == "auto_post_conversion")
-					evalops.auto_post_conversion = (AutoPostConversion) v;
-				else if(svar == "use_unicode_signs" && (version_numbers[0] > 0 || version_numbers[1] > 7 || (version_numbers[1] == 7 && version_numbers[2] > 0)))
+				} else if(svar == "auto_post_conversion") {
+					if(v >= POST_CONVERSION_NONE && v <= POST_CONVERSION_BASE) evalops.auto_post_conversion = (AutoPostConversion) v;
+				} else if(svar == "use_unicode_signs" && (version_numbers[0] > 0 || version_numbers[1] > 7 || (version_numbers[1] == 7 && version_numbers[2] > 0))) {
 					printops.use_unicode_signs = v;	
-				else if(svar == "lower_case_numbers")
+				} else if(svar == "lower_case_numbers") {
 					printops.lower_case_numbers = v;	
-				else if(svar == "use_custom_result_font")
+				} else if(svar == "use_custom_result_font") {
 					use_custom_result_font = v;
-				else if(svar == "use_custom_expression_font")
+				} else if(svar == "use_custom_expression_font") {
 					use_custom_expression_font = v;											
-				else if(svar == "custom_result_font")
+				} else if(svar == "custom_result_font") {
 					custom_result_font = svalue;
-				else if(svar == "custom_expression_font")
+				} else if(svar == "custom_expression_font") {
 					custom_expression_font = svalue;	
-				else if(svar == "multiplication_sign")
+				} else if(svar == "multiplication_sign") {
 					if(svalue == "*") {
 						printops.multiplication_sign = MULTIPLICATION_SIGN_ASTERISK;
 					} else if(svalue == SIGN_MULTIDOT) {
 						printops.multiplication_sign = MULTIPLICATION_SIGN_DOT;
 					} else if(svalue == SIGN_MULTIPLICATION) {
 						printops.multiplication_sign = MULTIPLICATION_SIGN_X;
-					} else {
+					} else if(v >= MULTIPLICATION_SIGN_ASTERISK && v <= MULTIPLICATION_SIGN_X) {
 						printops.multiplication_sign = (MultiplicationSign) v;
 					}
-				else if(svar == "division_sign")
-					printops.division_sign = (DivisionSign) v;
-				else if(svar == "indicate_infinite_series")
+				} else if(svar == "division_sign") {
+					if(v >= DIVISION_SIGN_SLASH && v <= DIVISION_SIGN_DIVISION) printops.division_sign = (DivisionSign) v;
+				} else if(svar == "indicate_infinite_series") {
 					printops.indicate_infinite_series = v;
-				else if(svar == "show_ending_zeroes")
+				} else if(svar == "show_ending_zeroes") {
 					printops.show_ending_zeroes = v;
-				else if(svar == "round_halfway_to_even")
+				} else if(svar == "round_halfway_to_even") {
 					printops.round_halfway_to_even = v;	
-				else if(svar == "always_exact")		//obsolete
+				} else if(svar == "always_exact") {		//obsolete
 					evalops.approximation = APPROXIMATION_EXACT;
-				else if(svar == "approximation")
-					evalops.approximation = (ApproximationMode) v;
-				else if(svar == "in_rpn_mode")
+				} else if(svar == "approximation") {
+					if(v >= APPROXIMATION_EXACT && v <= APPROXIMATION_APPROXIMATE) evalops.approximation = (ApproximationMode) v;
+				} else if(svar == "in_rpn_mode") {
 					evalops.parse_options.rpn = v;
-				else if(svar == "limit_implicit_multiplication") {
+				} else if(svar == "limit_implicit_multiplication") {
 					evalops.parse_options.limit_implicit_multiplication = v;
 					printops.limit_implicit_multiplication = v;
-				} else if(svar == "default_assumption_type")
-					CALCULATOR->defaultAssumptions()->setNumberType((AssumptionNumberType) v);
-				else if(svar == "default_assumption_sign")
-					CALCULATOR->defaultAssumptions()->setSign((AssumptionSign) v);
-				else if(svar == "recent_functions") {
+				} else if(svar == "default_assumption_type") {
+					if(v >= ASSUMPTION_NUMBER_NONE && v <= ASSUMPTION_NUMBER_INTEGER) CALCULATOR->defaultAssumptions()->setNumberType((AssumptionNumberType) v);
+				} else if(svar == "default_assumption_sign") {
+					if(v >= ASSUMPTION_SIGN_UNKNOWN && v <= ASSUMPTION_SIGN_NONZERO) CALCULATOR->defaultAssumptions()->setSign((AssumptionSign) v);
+				} else if(svar == "recent_functions") {
 					size_t v_i = 0;
 					while(true) {
 						v_i = svalue.find(',');
@@ -7239,42 +7247,43 @@ void load_preferences() {
 							}
 						}
 					}
-				} else if(svar == "plot_legend_placement")
-					default_plot_legend_placement = (PlotLegendPlacement) v;
-				else if(svar == "plot_style")
-					default_plot_style = (PlotStyle) v;
-				else if(svar == "plot_smoothing")
-					default_plot_smoothing = (PlotSmoothing) v;		
-				else if(svar == "plot_display_grid")
+				} else if(svar == "plot_legend_placement") {
+					if(v >= PLOT_LEGEND_NONE && v <= PLOT_LEGEND_OUTSIDE) default_plot_legend_placement = (PlotLegendPlacement) v;
+				} else if(svar == "plot_style") {
+					if(v >= PLOT_STYLE_LINES && v <= PLOT_STYLE_DOTS) default_plot_style = (PlotStyle) v;
+				} else if(svar == "plot_smoothing") {
+					if(v >= PLOT_SMOOTHING_NONE && v <= PLOT_SMOOTHING_SBEZIER) default_plot_smoothing = (PlotSmoothing) v;		
+				} else if(svar == "plot_display_grid") {
 					default_plot_display_grid = v;
-				else if(svar == "plot_full_border")
-					default_plot_full_border = (PlotSmoothing) v;
-				else if(svar == "plot_min")
+				} else if(svar == "plot_full_border") {
+					default_plot_full_border = v;
+				} else if(svar == "plot_min") {
 					default_plot_min = svalue;	
-				else if(svar == "plot_max")
+				} else if(svar == "plot_max") {
 					default_plot_max = svalue;
-				else if(svar == "plot_step")
+				} else if(svar == "plot_step") {
 					default_plot_step = svalue;
-				else if(svar == "plot_sampling_rate")
+				} else if(svar == "plot_sampling_rate") {
 					default_plot_sampling_rate = v;	
-				else if(svar == "plot_use_sampling_rate")
+				} else if(svar == "plot_use_sampling_rate") {
 					default_plot_use_sampling_rate = v;		
-				else if(svar == "plot_variable")
+				} else if(svar == "plot_variable") {
 					default_plot_variable = svalue;
-				else if(svar == "plot_rows")
+				} else if(svar == "plot_rows") {
 					default_plot_rows = v;	
-				else if(svar == "plot_type")
+				} else if(svar == "plot_type") {
 					default_plot_type = v;	
-				else if(svar == "plot_color")
+				} else if(svar == "plot_color") {
 					default_plot_color = v;
-				else if(svar == "expression_history")
+				} else if(svar == "expression_history") {
 					expression_history.push_back(svalue);		
-				else if(svar == "history") 
+				} else if(svar == "history") {
 					initial_history.push_back(svalue);
-				else if(svar == "history_width") 
+				} else if(svar == "history_width") {
 					history_width = v;
-				else if(svar == "history_height") 
-					history_height = v;	
+				} else if(svar == "history_height") {
+					history_height = v;
+				}
 			}
 		}
 	} else {
@@ -8267,6 +8276,8 @@ void on_button_times_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
 	if(printops.use_unicode_signs && printops.multiplication_sign == MULTIPLICATION_SIGN_DOT && can_display_unicode_string_function(SIGN_MULTIDOT, (void*) expression)) {
 		insert_text(SIGN_MULTIDOT);
+	} else if(printops.use_unicode_signs && printops.multiplication_sign == MULTIPLICATION_SIGN_DOT && can_display_unicode_string_function(SIGN_SMALLCIRCLE, (void*) expression)) {
+		insert_text(SIGN_SMALLCIRCLE);
 	} else if(printops.use_unicode_signs && printops.multiplication_sign == MULTIPLICATION_SIGN_X && can_display_unicode_string_function(SIGN_MULTIPLICATION, (void*) expression)) {
 		insert_text(SIGN_MULTIPLICATION);
 	} else {
@@ -9701,6 +9712,8 @@ gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointe
 		case GDK_asterisk: {
 			if(printops.use_unicode_signs && printops.multiplication_sign == MULTIPLICATION_SIGN_DOT && can_display_unicode_string_function(SIGN_MULTIDOT, (void*) expression)) {
 				gtk_editable_insert_text(GTK_EDITABLE(expression), SIGN_MULTIDOT, -1, &pos);
+			} else if(printops.use_unicode_signs && printops.multiplication_sign == MULTIPLICATION_SIGN_DOT && can_display_unicode_string_function(SIGN_SMALLCIRCLE, (void*) expression)) {
+				gtk_editable_insert_text(GTK_EDITABLE(expression), SIGN_SMALLCIRCLE, -1, &pos);
 			} else if(printops.use_unicode_signs && printops.multiplication_sign == MULTIPLICATION_SIGN_X && can_display_unicode_string_function(SIGN_MULTIPLICATION, (void*) expression)) {
 				gtk_editable_insert_text(GTK_EDITABLE(expression), SIGN_MULTIPLICATION, -1, &pos);
 			} else {

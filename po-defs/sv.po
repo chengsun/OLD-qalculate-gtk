@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-10-18 12:10+0200\n"
+"POT-Creation-Date: 2004-11-21 22:28+0100\n"
 "PO-Revision-Date: 2003-10-27 12:29+0100\n"
 "Last-Translator: Niklas Knutsson <nq@altern.org>\n"
 "Language-Team: Swedish\n"
@@ -52,12 +52,12 @@ msgid "Eccentricity"
 msgstr "Excentricitet"
 
 #: src/libqalculate/data/datasets.xml.in.h:6
-#: src/libqalculate/data/functions.xml.in.h:152
+#: src/libqalculate/data/functions.xml.in.h:153
 msgid "Element"
 msgstr "Element"
 
 #: src/libqalculate/data/datasets.xml.in.h:7
-#: src/libqalculate/data/functions.xml.in.h:156
+#: src/libqalculate/data/functions.xml.in.h:157
 msgid "Elements"
 msgstr "Element"
 
@@ -83,12 +83,12 @@ msgid "Mean Surface Temperature"
 msgstr "Genomsnittlig yttemperatur"
 
 #: src/libqalculate/data/datasets.xml.in.h:13
-#: src/libqalculate/data/functions.xml.in.h:275
+#: src/libqalculate/data/functions.xml.in.h:278
 msgid "Name"
 msgstr "Namn"
 
 #: src/libqalculate/data/datasets.xml.in.h:14
-#: src/libqalculate/data/functions.xml.in.h:284
+#: src/libqalculate/data/functions.xml.in.h:287
 msgid "Number"
 msgstr "Nummer"
 
@@ -117,7 +117,7 @@ msgid "Symbol"
 msgstr "Symbol"
 
 #: src/libqalculate/data/datasets.xml.in.h:21
-#: src/libqalculate/data/functions.xml.in.h:515
+#: src/libqalculate/data/functions.xml.in.h:520
 msgid "Weight"
 msgstr "Vikt"
 
@@ -130,12 +130,12 @@ msgid "Y Position"
 msgstr ""
 
 #: src/libqalculate/data/datasets.xml.in.h:24
-#: src/libqalculate/data/functions.xml.in.h:540
+#: src/libqalculate/data/functions.xml.in.h:545
 msgid "area"
 msgstr ""
 
 #: src/libqalculate/data/datasets.xml.in.h:25
-#: src/libqalculate/data/functions.xml.in.h:547
+#: src/libqalculate/data/functions.xml.in.h:552
 msgid "atom"
 msgstr ""
 
@@ -168,7 +168,7 @@ msgid "name"
 msgstr "namn"
 
 #: src/libqalculate/data/datasets.xml.in.h:33
-#: src/libqalculate/data/functions.xml.in.h:670
+#: src/libqalculate/data/functions.xml.in.h:676
 msgid "number"
 msgstr "nummer"
 
@@ -205,7 +205,7 @@ msgid "y_pos"
 msgstr ""
 
 #: src/libqalculate/data/datasets.xml.in.h:42
-#: src/libqalculate/data/functions.xml.in.h:769
+#: src/libqalculate/data/functions.xml.in.h:775
 #: src/libqalculate/data/units.xml.in.h:734
 msgid "year"
 msgstr "år"
@@ -1066,10 +1066,15 @@ msgid "Components"
 msgstr "Komponenter"
 
 #: src/libqalculate/data/functions.xml.in.h:81
+#, fuzzy
+msgid "Components / Step size"
+msgstr "Komponenter"
+
+#: src/libqalculate/data/functions.xml.in.h:82
 msgid "Compound"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:82
+#: src/libqalculate/data/functions.xml.in.h:83
 #, fuzzy
 msgid ""
 "Computes the future value of an investment. This is based on periodic, "
@@ -1082,214 +1087,214 @@ msgstr ""
 "betalning i början av perioden och 0 (förvald) för betalning i slutet av "
 "perioden."
 
-#: src/libqalculate/data/functions.xml.in.h:83
+#: src/libqalculate/data/functions.xml.in.h:84
 msgid "Concatenate Strings"
 msgstr "Sammanfoga textsträngar"
 
-#: src/libqalculate/data/functions.xml.in.h:84
+#: src/libqalculate/data/functions.xml.in.h:85
 msgid "Condition"
 msgstr "Förutsättning"
 
-#: src/libqalculate/data/functions.xml.in.h:85
+#: src/libqalculate/data/functions.xml.in.h:86
 msgid "Cone"
 msgstr "Kon"
 
-#: src/libqalculate/data/functions.xml.in.h:86
+#: src/libqalculate/data/functions.xml.in.h:87
 msgid "Cone Volume"
 msgstr "Konvolym"
 
-#: src/libqalculate/data/functions.xml.in.h:87
+#: src/libqalculate/data/functions.xml.in.h:88
 msgid "Construct Matrix"
 msgstr "Skapa matris"
 
-#: src/libqalculate/data/functions.xml.in.h:88
+#: src/libqalculate/data/functions.xml.in.h:89
 msgid "Construct Vector"
 msgstr "Skapa vektor"
 
-#: src/libqalculate/data/functions.xml.in.h:89
+#: src/libqalculate/data/functions.xml.in.h:90
 msgid "Consumer Surplus"
 msgstr "Konsumentöverskott"
 
-#: src/libqalculate/data/functions.xml.in.h:90
+#: src/libqalculate/data/functions.xml.in.h:91
 msgid "Convert Matrix to Vector"
 msgstr "Omvandla matris till vektor"
 
-#: src/libqalculate/data/functions.xml.in.h:91
+#: src/libqalculate/data/functions.xml.in.h:92
 msgid ""
 "Converts a decimal dollar price into a dollar price expressed as a fraction."
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:92
+#: src/libqalculate/data/functions.xml.in.h:93
 msgid ""
 "Converts a dollar price expressed as a fraction into a dollar price "
 "expressed as a decimal number."
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:93
+#: src/libqalculate/data/functions.xml.in.h:94
 msgid ""
 "Corresponds to the product symbol. Multiplies factors for each x ranging "
 "from the lower to the upper limit."
 msgstr ""
-"Motsvarar produktsymbolen. Multiplicerar faktorer för varje x "
-"från den undre till den övre gränsen."
+"Motsvarar produktsymbolen. Multiplicerar faktorer för varje x från den undre "
+"till den övre gränsen."
 
-#: src/libqalculate/data/functions.xml.in.h:94
+#: src/libqalculate/data/functions.xml.in.h:95
 msgid ""
 "Corresponds to the sum symbol. Adds terms for each x ranging from the lower "
 "to the upper limit."
 msgstr ""
-"Motsvarar summasymbolen. Adderar termer för varje x "
-"från den undre till den övre gränsen."
+"Motsvarar summasymbolen. Adderar termer för varje x från den undre till den "
+"övre gränsen."
 
-#: src/libqalculate/data/functions.xml.in.h:95
+#: src/libqalculate/data/functions.xml.in.h:96
 msgid "Cosecant"
 msgstr "Cosekant"
 
-#: src/libqalculate/data/functions.xml.in.h:96
+#: src/libqalculate/data/functions.xml.in.h:97
 msgid "Cosine"
 msgstr "Cosinus"
 
-#: src/libqalculate/data/functions.xml.in.h:97
+#: src/libqalculate/data/functions.xml.in.h:98
 msgid "Cost"
 msgstr "Kostnad"
 
-#: src/libqalculate/data/functions.xml.in.h:98
+#: src/libqalculate/data/functions.xml.in.h:99
 msgid "Cotangent"
 msgstr "Cotangens"
 
-#: src/libqalculate/data/functions.xml.in.h:99
+#: src/libqalculate/data/functions.xml.in.h:100
 msgid "Counter Update Function"
 msgstr "Funktion för uppdatering av röknare"
 
-#: src/libqalculate/data/functions.xml.in.h:100
+#: src/libqalculate/data/functions.xml.in.h:101
 msgid "Counter Variable"
 msgstr "Röknarvariabel"
 
-#: src/libqalculate/data/functions.xml.in.h:101
+#: src/libqalculate/data/functions.xml.in.h:102
 msgid "Coupon Rate"
 msgstr "Kupongränta"
 
-#: src/libqalculate/data/functions.xml.in.h:102
+#: src/libqalculate/data/functions.xml.in.h:103
 msgid "Coupons per Year"
 msgstr "Antal kuponger per år"
 
-#: src/libqalculate/data/functions.xml.in.h:103
+#: src/libqalculate/data/functions.xml.in.h:104
 msgid "Covariance"
 msgstr "Kovarians"
 
-#: src/libqalculate/data/functions.xml.in.h:104
+#: src/libqalculate/data/functions.xml.in.h:105
 msgid "Cube"
 msgstr "Kub"
 
-#: src/libqalculate/data/functions.xml.in.h:105
+#: src/libqalculate/data/functions.xml.in.h:106
 msgid "Cube Root"
 msgstr "Kubikrot"
 
-#: src/libqalculate/data/functions.xml.in.h:106
+#: src/libqalculate/data/functions.xml.in.h:107
 msgid "Cube Volume"
 msgstr "Kubvolym"
 
-#: src/libqalculate/data/functions.xml.in.h:107
+#: src/libqalculate/data/functions.xml.in.h:108
 msgid "Current Time"
 msgstr "Nuvarande tid"
 
-#: src/libqalculate/data/functions.xml.in.h:108
+#: src/libqalculate/data/functions.xml.in.h:109
 msgid "Custom Sum of Components"
 msgstr "Anpassad komponentsumma"
 
-#: src/libqalculate/data/functions.xml.in.h:109
+#: src/libqalculate/data/functions.xml.in.h:110
 msgid "Cylinder"
 msgstr "Cylinder"
 
-#: src/libqalculate/data/functions.xml.in.h:110
+#: src/libqalculate/data/functions.xml.in.h:111
 msgid "Cylinder Volume"
 msgstr "Cylindervolym"
 
-#: src/libqalculate/data/functions.xml.in.h:111
+#: src/libqalculate/data/functions.xml.in.h:112
 msgid "Data"
 msgstr "Data"
 
-#: src/libqalculate/data/functions.xml.in.h:112
+#: src/libqalculate/data/functions.xml.in.h:113
 msgid "Data 1"
 msgstr "Data 1"
 
-#: src/libqalculate/data/functions.xml.in.h:113
+#: src/libqalculate/data/functions.xml.in.h:114
 msgid "Data 2"
 msgstr "Data 2"
 
-#: src/libqalculate/data/functions.xml.in.h:114
+#: src/libqalculate/data/functions.xml.in.h:115
 msgid "Date"
 msgstr "Datum"
 
-#: src/libqalculate/data/functions.xml.in.h:115
+#: src/libqalculate/data/functions.xml.in.h:116
 msgid "Date &amp; Time"
 msgstr "Datum &amp; Tid"
 
-#: src/libqalculate/data/functions.xml.in.h:116
+#: src/libqalculate/data/functions.xml.in.h:117
 msgid "Day Counting Basis"
 msgstr "Dagsräkningssystem"
 
-#: src/libqalculate/data/functions.xml.in.h:117
+#: src/libqalculate/data/functions.xml.in.h:118
 msgid "Day of Month"
 msgstr "Månadsdag"
 
-#: src/libqalculate/data/functions.xml.in.h:118
+#: src/libqalculate/data/functions.xml.in.h:119
 msgid "Day of Week"
 msgstr "Veckodag"
 
-#: src/libqalculate/data/functions.xml.in.h:119
+#: src/libqalculate/data/functions.xml.in.h:120
 msgid "Day of Year"
 msgstr "Dag på året"
 
-#: src/libqalculate/data/functions.xml.in.h:120
+#: src/libqalculate/data/functions.xml.in.h:121
 msgid "Days between two dates"
 msgstr "Antal dagar mellan två datum"
 
-#: src/libqalculate/data/functions.xml.in.h:121
+#: src/libqalculate/data/functions.xml.in.h:122
 msgid "Decile"
 msgstr "Decil"
 
-#: src/libqalculate/data/functions.xml.in.h:122
+#: src/libqalculate/data/functions.xml.in.h:123
 msgid "Decimal Dollar"
 msgstr "Decimala dollar"
 
-#: src/libqalculate/data/functions.xml.in.h:123
+#: src/libqalculate/data/functions.xml.in.h:124
 msgid "Demand Function"
 msgstr "Efterfrågefunktion"
 
-#: src/libqalculate/data/functions.xml.in.h:124
+#: src/libqalculate/data/functions.xml.in.h:125
 msgid "Demand Function or Price"
 msgstr "Efterfrågefunktion eller pris"
 
-#: src/libqalculate/data/functions.xml.in.h:125
+#: src/libqalculate/data/functions.xml.in.h:126
 msgid "Denominator"
 msgstr "Nämnare"
 
-#: src/libqalculate/data/functions.xml.in.h:126
+#: src/libqalculate/data/functions.xml.in.h:127
 msgid "Denominator of Fraction"
 msgstr "Bråktalets nämnare "
 
-#: src/libqalculate/data/functions.xml.in.h:127
+#: src/libqalculate/data/functions.xml.in.h:128
 msgid "Derangements"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:128
+#: src/libqalculate/data/functions.xml.in.h:129
 msgid "Derive"
 msgstr "Derivera"
 
-#: src/libqalculate/data/functions.xml.in.h:129
+#: src/libqalculate/data/functions.xml.in.h:130
 msgid "Descriptive Statistics"
 msgstr "Beskrivande statistik"
 
-#: src/libqalculate/data/functions.xml.in.h:130
+#: src/libqalculate/data/functions.xml.in.h:131
 msgid "Desired Future Value"
 msgstr "Önskat framtida värde"
 
-#: src/libqalculate/data/functions.xml.in.h:131
+#: src/libqalculate/data/functions.xml.in.h:132
 msgid "Determinant"
 msgstr "Determinanten"
 
-#: src/libqalculate/data/functions.xml.in.h:132
+#: src/libqalculate/data/functions.xml.in.h:133
 msgid ""
 "Determines the straight line depreciation of an asset for a single period."
 "&#10;&#10;Cost is the amount you paid for the asset. Salvage is the value of "
@@ -1298,251 +1303,256 @@ msgid ""
 "asset."
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:133
+#: src/libqalculate/data/functions.xml.in.h:134
 msgid "Diameter"
 msgstr "Diameter"
 
-#: src/libqalculate/data/functions.xml.in.h:134
+#: src/libqalculate/data/functions.xml.in.h:135
 msgid "Dimension"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:135
+#: src/libqalculate/data/functions.xml.in.h:136
 msgid "Discount"
 msgstr "Diskonto"
 
-#: src/libqalculate/data/functions.xml.in.h:136
+#: src/libqalculate/data/functions.xml.in.h:137
 msgid "Discount Rate"
 msgstr "Diskonto"
 
-#: src/libqalculate/data/functions.xml.in.h:137
+#: src/libqalculate/data/functions.xml.in.h:138
 msgid "Discount rate for a security"
 msgstr "Reduceringshastighet för säkerhet"
 
-#: src/libqalculate/data/functions.xml.in.h:138
+#: src/libqalculate/data/functions.xml.in.h:139
 msgid "Display Error"
 msgstr "Visa felmeddelande"
 
-#: src/libqalculate/data/functions.xml.in.h:139
+#: src/libqalculate/data/functions.xml.in.h:140
 msgid "Display Message"
 msgstr "Visa meddelande"
 
-#: src/libqalculate/data/functions.xml.in.h:140
+#: src/libqalculate/data/functions.xml.in.h:141
 msgid "Display Warning"
 msgstr "Visa varning"
 
-#: src/libqalculate/data/functions.xml.in.h:141
+#: src/libqalculate/data/functions.xml.in.h:142
 msgid "Distribution"
 msgstr "Distribution"
 
-#: src/libqalculate/data/functions.xml.in.h:142
+#: src/libqalculate/data/functions.xml.in.h:143
 msgid "Divide"
 msgstr "Dela"
 
-#: src/libqalculate/data/functions.xml.in.h:143
+#: src/libqalculate/data/functions.xml.in.h:144
 msgid "Do Function"
 msgstr "Funktion"
 
-#: src/libqalculate/data/functions.xml.in.h:144
+#: src/libqalculate/data/functions.xml.in.h:145
 msgid "Dollar Decimal"
 msgstr "Dollar decimal"
 
-#: src/libqalculate/data/functions.xml.in.h:145
+#: src/libqalculate/data/functions.xml.in.h:146
 msgid "Dollar Fraction"
 msgstr "Dollar bråktal"
 
-#: src/libqalculate/data/functions.xml.in.h:146
+#: src/libqalculate/data/functions.xml.in.h:147
 msgid "Double Factorial"
 msgstr "Dubbelfakultet"
 
-#: src/libqalculate/data/functions.xml.in.h:147
+#: src/libqalculate/data/functions.xml.in.h:148
 msgid "Duration"
 msgstr "Duration"
 
-#: src/libqalculate/data/functions.xml.in.h:148
+#: src/libqalculate/data/functions.xml.in.h:149
 msgid "Durbin-Watson"
 msgstr "Durbin-Watson"
 
-#: src/libqalculate/data/functions.xml.in.h:149
+#: src/libqalculate/data/functions.xml.in.h:150
 msgid "Economics"
 msgstr "Ekonomi"
 
-#: src/libqalculate/data/functions.xml.in.h:150
+#: src/libqalculate/data/functions.xml.in.h:151
 msgid "Effective Interest Rate"
 msgstr "Effektiv räntesats"
 
-#: src/libqalculate/data/functions.xml.in.h:151
+#: src/libqalculate/data/functions.xml.in.h:152
 msgid "Elasticity"
 msgstr "Elasticitet"
 
-#: src/libqalculate/data/functions.xml.in.h:153
+#: src/libqalculate/data/functions.xml.in.h:154
 msgid "Element Info"
 msgstr "Grundämnesinfo"
 
-#: src/libqalculate/data/functions.xml.in.h:154
+#: src/libqalculate/data/functions.xml.in.h:155
 msgid "Element Number"
 msgstr "Grundämnesnumber"
 
-#: src/libqalculate/data/functions.xml.in.h:155
+#: src/libqalculate/data/functions.xml.in.h:156
 msgid "Element Variable"
 msgstr "Elementvariabel"
 
-#: src/libqalculate/data/functions.xml.in.h:157
+#: src/libqalculate/data/functions.xml.in.h:158
 msgid "End Column"
 msgstr "Slutkolumn"
 
-#: src/libqalculate/data/functions.xml.in.h:158
+#: src/libqalculate/data/functions.xml.in.h:159
 msgid "End Row"
 msgstr "Slutrad"
 
-#: src/libqalculate/data/functions.xml.in.h:159
+#: src/libqalculate/data/functions.xml.in.h:160
 msgid "Equation"
 msgstr "Ekvation"
 
-#: src/libqalculate/data/functions.xml.in.h:160
+#: src/libqalculate/data/functions.xml.in.h:161
 msgid "Equation 1"
 msgstr "Ekvation 1"
 
-#: src/libqalculate/data/functions.xml.in.h:161
+#: src/libqalculate/data/functions.xml.in.h:162
 msgid "Equation 2"
 msgstr "Ekvation 2"
 
-#: src/libqalculate/data/functions.xml.in.h:162
+#: src/libqalculate/data/functions.xml.in.h:163
 msgid "Equation Vector"
 msgstr "Ekvationsvektor"
 
-#: src/libqalculate/data/functions.xml.in.h:163
+#: src/libqalculate/data/functions.xml.in.h:164
 msgid "Exponent"
 msgstr "Exponent"
 
-#: src/libqalculate/data/functions.xml.in.h:164
+#: src/libqalculate/data/functions.xml.in.h:165
 msgid "Exponential (e^x)"
 msgstr "Exponentialfunktion (e^x)"
 
-#: src/libqalculate/data/functions.xml.in.h:165
+#: src/libqalculate/data/functions.xml.in.h:166
 msgid "Exponents &amp; Logarithms"
 msgstr "Exponenter &amp; Logaritmer"
 
-#: src/libqalculate/data/functions.xml.in.h:166
+#: src/libqalculate/data/functions.xml.in.h:167
 msgid "Export To CSV File"
 msgstr "Exportera till CSV-fil"
 
-#: src/libqalculate/data/functions.xml.in.h:167
+#: src/libqalculate/data/functions.xml.in.h:168
 msgid "Expression"
 msgstr "Uttryck"
 
-#: src/libqalculate/data/functions.xml.in.h:168
+#: src/libqalculate/data/functions.xml.in.h:169
 msgid "Expression if condition is NOT met"
 msgstr "Uttryck om villkoret INTE uppfylls"
 
-#: src/libqalculate/data/functions.xml.in.h:169
+#: src/libqalculate/data/functions.xml.in.h:170
 msgid "Expression if condition is met"
 msgstr "Uttryck om villkoret uppfylls"
 
-#: src/libqalculate/data/functions.xml.in.h:170
+#: src/libqalculate/data/functions.xml.in.h:171
 msgid "Extract Column as Vector"
 msgstr "Extrahera kolumn som vektor"
 
-#: src/libqalculate/data/functions.xml.in.h:171
+#: src/libqalculate/data/functions.xml.in.h:172
 msgid "Extract Fractional Part"
 msgstr "Extrahera bråkdel"
 
-#: src/libqalculate/data/functions.xml.in.h:172
+#: src/libqalculate/data/functions.xml.in.h:173
 msgid "Extract Integer Part"
 msgstr "Extrahera heltal"
 
-#: src/libqalculate/data/functions.xml.in.h:173
+#: src/libqalculate/data/functions.xml.in.h:174
 msgid "Extract row as vector"
 msgstr "Skapa vektor från rad"
 
-#: src/libqalculate/data/functions.xml.in.h:174
+#: src/libqalculate/data/functions.xml.in.h:175
 msgid "Extreme Values"
 msgstr "Extremvärden"
 
-#: src/libqalculate/data/functions.xml.in.h:175
+#: src/libqalculate/data/functions.xml.in.h:176
 msgid "Face Value"
 msgstr "Nominellt värde"
 
-#: src/libqalculate/data/functions.xml.in.h:176
+#: src/libqalculate/data/functions.xml.in.h:177
 msgid "Factor Expression"
 msgstr "Faktoruttryck"
 
-#: src/libqalculate/data/functions.xml.in.h:177
+#: src/libqalculate/data/functions.xml.in.h:178
 msgid "Factorial"
 msgstr "Fakultet"
 
-#: src/libqalculate/data/functions.xml.in.h:178
+#: src/libqalculate/data/functions.xml.in.h:179
 msgid "Factors"
 msgstr "Faktorer"
 
-#: src/libqalculate/data/functions.xml.in.h:179
+#: src/libqalculate/data/functions.xml.in.h:180
 msgid "File Name"
 msgstr "Filnamn"
 
-#: src/libqalculate/data/functions.xml.in.h:180
+#: src/libqalculate/data/functions.xml.in.h:181
 msgid "Finance"
 msgstr "Finans"
 
-#: src/libqalculate/data/functions.xml.in.h:181
+#: src/libqalculate/data/functions.xml.in.h:182
 msgid "Financial function mode"
 msgstr "Läge för financiella funktioner"
 
-#: src/libqalculate/data/functions.xml.in.h:182
+#: src/libqalculate/data/functions.xml.in.h:183
 msgid "Find Linear Function"
 msgstr "Finn linjär funktion"
 
-#: src/libqalculate/data/functions.xml.in.h:183
+#: src/libqalculate/data/functions.xml.in.h:184
 msgid ""
 "Finds the linear function for the straight line between two distinct points."
 msgstr ""
 "Finner den linjära funktionen för den räta linjen mellan två distinkta "
 "punkter."
 
-#: src/libqalculate/data/functions.xml.in.h:184
+#: src/libqalculate/data/functions.xml.in.h:185
 msgid "First Component"
 msgstr "Första komponenten"
 
-#: src/libqalculate/data/functions.xml.in.h:185
+#: src/libqalculate/data/functions.xml.in.h:186
 msgid "First Data Row"
 msgstr "Första raden med data"
 
-#: src/libqalculate/data/functions.xml.in.h:186
+#: src/libqalculate/data/functions.xml.in.h:187
 msgid "First Date"
 msgstr "Första datumet"
 
-#: src/libqalculate/data/functions.xml.in.h:187
+#: src/libqalculate/data/functions.xml.in.h:188
 msgid "First Interest"
 msgstr "Första ränteinbetalning"
 
-#: src/libqalculate/data/functions.xml.in.h:188
+#: src/libqalculate/data/functions.xml.in.h:189
 msgid "For Condition"
 msgstr "Medans-villkor"
 
-#: src/libqalculate/data/functions.xml.in.h:189
+#: src/libqalculate/data/functions.xml.in.h:190
 msgid "For...Do"
 msgstr "för...utför"
 
-#: src/libqalculate/data/functions.xml.in.h:190
+#: src/libqalculate/data/functions.xml.in.h:191
 msgid "Fractional Dollar"
 msgstr "Bråktalsdollar"
 
-#: src/libqalculate/data/functions.xml.in.h:191
+#: src/libqalculate/data/functions.xml.in.h:192
 #: src/libqalculate/data/units.xml.in.h:133
 msgid "Frequency"
 msgstr "Frekvens"
 
-#: src/libqalculate/data/functions.xml.in.h:192
+#: src/libqalculate/data/functions.xml.in.h:193
 msgid "Function"
 msgstr "Funktion"
 
-#: src/libqalculate/data/functions.xml.in.h:193
+#: src/libqalculate/data/functions.xml.in.h:194
 msgid "Future Value"
 msgstr "Framtida värde"
 
-#: src/libqalculate/data/functions.xml.in.h:194
+#: src/libqalculate/data/functions.xml.in.h:195
 msgid "Gamma Function"
 msgstr "Gammafunktion"
 
-#: src/libqalculate/data/functions.xml.in.h:195
+#: src/libqalculate/data/functions.xml.in.h:196
+#, fuzzy
+msgid "Generate Vector"
+msgstr "Sammanslå vektorer"
+
+#: src/libqalculate/data/functions.xml.in.h:197
 msgid ""
 "Generates a pseudo-random number. Returns a real number between 0 and 1, if "
 "ceil is zero (default), or an integer between 1 and (including) ceil."
@@ -1551,685 +1561,693 @@ msgstr ""
 "och 1, om taket är noll (förval), eller ett heltal mellan 1 och (inklusive) "
 "taket."
 
-#: src/libqalculate/data/functions.xml.in.h:196
+#: src/libqalculate/data/functions.xml.in.h:198
+msgid ""
+"Generates a vector from a function with a variable (default x) running from "
+"min to max. The fourth argument is either the requested number of components "
+"if the sixth argument is false (default) or the step between each value of "
+"the variable."
+msgstr ""
+
+#: src/libqalculate/data/functions.xml.in.h:199
 msgid "Geometric Mean"
 msgstr "Geometriskt medelvärde"
 
-#: src/libqalculate/data/functions.xml.in.h:197
+#: src/libqalculate/data/functions.xml.in.h:200
 msgid "Geometry"
 msgstr "Geometri"
 
-#: src/libqalculate/data/functions.xml.in.h:198
+#: src/libqalculate/data/functions.xml.in.h:201
 msgid "Greatest Common Divisor"
 msgstr "Största gemensamma divisor"
 
-#: src/libqalculate/data/functions.xml.in.h:199
+#: src/libqalculate/data/functions.xml.in.h:202
 msgid "Harmonic Mean"
 msgstr "Harmoniskt medelvärde"
 
-#: src/libqalculate/data/functions.xml.in.h:200
+#: src/libqalculate/data/functions.xml.in.h:203
 msgid "Height"
 msgstr "Höjd"
 
-#: src/libqalculate/data/functions.xml.in.h:201
+#: src/libqalculate/data/functions.xml.in.h:204
 msgid "Hexadecimal"
 msgstr "Hexadecimal"
 
-#: src/libqalculate/data/functions.xml.in.h:202
+#: src/libqalculate/data/functions.xml.in.h:205
 msgid "Hexadecimal Number"
 msgstr "Hexadecimalt nummer"
 
-#: src/libqalculate/data/functions.xml.in.h:203
+#: src/libqalculate/data/functions.xml.in.h:206
 msgid "Hyperbolic Cosecant"
 msgstr "Cosekant hyperbolicus"
 
-#: src/libqalculate/data/functions.xml.in.h:204
+#: src/libqalculate/data/functions.xml.in.h:207
 msgid "Hyperbolic Cosine"
 msgstr "Cosinus hyperbolicus"
 
-#: src/libqalculate/data/functions.xml.in.h:205
+#: src/libqalculate/data/functions.xml.in.h:208
 msgid "Hyperbolic Cotangent"
 msgstr "Cotangens hyperbolicus"
 
-#: src/libqalculate/data/functions.xml.in.h:206
+#: src/libqalculate/data/functions.xml.in.h:209
 msgid "Hyperbolic Secant"
 msgstr "Sekant hyperbolicus"
 
-#: src/libqalculate/data/functions.xml.in.h:207
+#: src/libqalculate/data/functions.xml.in.h:210
 msgid "Hyperbolic Sine"
 msgstr "Sinus hyperbolicus"
 
-#: src/libqalculate/data/functions.xml.in.h:208
+#: src/libqalculate/data/functions.xml.in.h:211
 msgid "Hyperbolic Tangent"
 msgstr "Tangens hyperbolicus"
 
-#: src/libqalculate/data/functions.xml.in.h:209
+#: src/libqalculate/data/functions.xml.in.h:212
 msgid "Hyperfactorial"
 msgstr "Hyperfakultet"
 
-#: src/libqalculate/data/functions.xml.in.h:210
+#: src/libqalculate/data/functions.xml.in.h:213
 msgid "Hypotenuse"
 msgstr "Hypotenusa"
 
-#: src/libqalculate/data/functions.xml.in.h:211
+#: src/libqalculate/data/functions.xml.in.h:214
 msgid "Identity"
 msgstr "Identitetsmatris"
 
-#: src/libqalculate/data/functions.xml.in.h:212
+#: src/libqalculate/data/functions.xml.in.h:215
 msgid "If...Then...Else"
 msgstr "Om...då...annars"
 
-#: src/libqalculate/data/functions.xml.in.h:213
+#: src/libqalculate/data/functions.xml.in.h:216
 msgid "Imaginary Part"
 msgstr "Imaginär del"
 
-#: src/libqalculate/data/functions.xml.in.h:214
+#: src/libqalculate/data/functions.xml.in.h:217
 msgid "Imports a CSV data file as a matrix."
 msgstr "Importerar en CSV data file till en matrix"
 
-#: src/libqalculate/data/functions.xml.in.h:215
+#: src/libqalculate/data/functions.xml.in.h:218
 msgid "Index"
 msgstr "Index"
 
-#: src/libqalculate/data/functions.xml.in.h:216
+#: src/libqalculate/data/functions.xml.in.h:219
 msgid "Index Variable"
 msgstr "Indexvariabel"
 
-#: src/libqalculate/data/functions.xml.in.h:217
+#: src/libqalculate/data/functions.xml.in.h:220
 msgid "Initial Value"
 msgstr "Initialt värde"
 
-#: src/libqalculate/data/functions.xml.in.h:218
+#: src/libqalculate/data/functions.xml.in.h:221
 msgid "Initial Value of Counter"
 msgstr "Initialt värde för räknare"
 
-#: src/libqalculate/data/functions.xml.in.h:219
+#: src/libqalculate/data/functions.xml.in.h:222
 msgid "Integral Point"
 msgstr "Integralpunkt"
 
-#: src/libqalculate/data/functions.xml.in.h:220
+#: src/libqalculate/data/functions.xml.in.h:223
 msgid "Integrate"
 msgstr "Integrera"
 
-#: src/libqalculate/data/functions.xml.in.h:221
+#: src/libqalculate/data/functions.xml.in.h:224
 msgid "Interest Rate"
 msgstr "Räntesats"
 
-#: src/libqalculate/data/functions.xml.in.h:222
+#: src/libqalculate/data/functions.xml.in.h:225
 msgid "Interest paid on a given period of an investment (ISPMT)"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:223
+#: src/libqalculate/data/functions.xml.in.h:226
 msgid "Interest rate for a fully invested security"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:224
+#: src/libqalculate/data/functions.xml.in.h:227
 msgid "Interquartile Range"
 msgstr "Kvartilavstånd"
 
-#: src/libqalculate/data/functions.xml.in.h:225
+#: src/libqalculate/data/functions.xml.in.h:228
 msgid "Inverse Cosecant"
 msgstr "Invers cosekant"
 
-#: src/libqalculate/data/functions.xml.in.h:226
+#: src/libqalculate/data/functions.xml.in.h:229
 msgid "Inverse Cosine"
 msgstr "Invers cosinus"
 
-#: src/libqalculate/data/functions.xml.in.h:227
+#: src/libqalculate/data/functions.xml.in.h:230
 msgid "Inverse Cotangent"
 msgstr "Invers cotangens"
 
-#: src/libqalculate/data/functions.xml.in.h:228
+#: src/libqalculate/data/functions.xml.in.h:231
 msgid "Inverse Hyperbolic Cosecant"
 msgstr "Invers cosekant hyperbolicus"
 
-#: src/libqalculate/data/functions.xml.in.h:229
+#: src/libqalculate/data/functions.xml.in.h:232
 msgid "Inverse Hyperbolic Cosine"
 msgstr "Invers cosinus hyperbolicus"
 
-#: src/libqalculate/data/functions.xml.in.h:230
+#: src/libqalculate/data/functions.xml.in.h:233
 msgid "Inverse Hyperbolic Cotangent"
 msgstr "Invers cotangens hyperbolicus"
 
-#: src/libqalculate/data/functions.xml.in.h:231
+#: src/libqalculate/data/functions.xml.in.h:234
 msgid "Inverse Hyperbolic Sine"
 msgstr "Invers sinus hyperbolicus"
 
-#: src/libqalculate/data/functions.xml.in.h:232
+#: src/libqalculate/data/functions.xml.in.h:235
 msgid "Inverse Hyperbolic Tangent"
 msgstr "Invers tangens hyperbolicus"
 
-#: src/libqalculate/data/functions.xml.in.h:233
+#: src/libqalculate/data/functions.xml.in.h:236
 msgid "Inverse Hyperbolic secant"
 msgstr "Invers sekant hyperbolicus"
 
-#: src/libqalculate/data/functions.xml.in.h:234
+#: src/libqalculate/data/functions.xml.in.h:237
 msgid "Inverse Secant"
 msgstr "Invers sekant"
 
-#: src/libqalculate/data/functions.xml.in.h:235
+#: src/libqalculate/data/functions.xml.in.h:238
 msgid "Inverse Sine"
 msgstr "Invers sinus"
 
-#: src/libqalculate/data/functions.xml.in.h:236
+#: src/libqalculate/data/functions.xml.in.h:239
 msgid "Inverse Tangent"
 msgstr "Inverse tangens"
 
-#: src/libqalculate/data/functions.xml.in.h:237
+#: src/libqalculate/data/functions.xml.in.h:240
 msgid "Investment"
 msgstr "Investering"
 
-#: src/libqalculate/data/functions.xml.in.h:238
+#: src/libqalculate/data/functions.xml.in.h:241
 msgid "Issue Date"
 msgstr "Startdatum"
 
-#: src/libqalculate/data/functions.xml.in.h:239
+#: src/libqalculate/data/functions.xml.in.h:242
 msgid "Last Component"
 msgstr "Sista komponenten"
 
-#: src/libqalculate/data/functions.xml.in.h:240
+#: src/libqalculate/data/functions.xml.in.h:243
 #: src/libqalculate/data/units.xml.in.h:207
 msgid "Length"
 msgstr "Längd"
 
-#: src/libqalculate/data/functions.xml.in.h:241
+#: src/libqalculate/data/functions.xml.in.h:244
 msgid "Length of Base"
 msgstr "Basens längd"
 
-#: src/libqalculate/data/functions.xml.in.h:242
+#: src/libqalculate/data/functions.xml.in.h:245
 msgid "Length of Side"
 msgstr "Sidans längd"
 
-#: src/libqalculate/data/functions.xml.in.h:243
+#: src/libqalculate/data/functions.xml.in.h:246
 msgid "Length of string"
 msgstr "Textsträngslängd"
 
-#: src/libqalculate/data/functions.xml.in.h:244
+#: src/libqalculate/data/functions.xml.in.h:247
 #, fuzzy
 msgid "Level-Coupon Bond"
 msgstr "Nollkupong"
 
-#: src/libqalculate/data/functions.xml.in.h:245
+#: src/libqalculate/data/functions.xml.in.h:248
 msgid "Life"
 msgstr "Livslängd"
 
-#: src/libqalculate/data/functions.xml.in.h:246
+#: src/libqalculate/data/functions.xml.in.h:249
 msgid "Load CSV File"
 msgstr "Ladda CSV-fil"
 
-#: src/libqalculate/data/functions.xml.in.h:247
+#: src/libqalculate/data/functions.xml.in.h:250
 msgid "Logical"
 msgstr "Logik"
 
-#: src/libqalculate/data/functions.xml.in.h:248
+#: src/libqalculate/data/functions.xml.in.h:251
 msgid "Logistic Distribution"
 msgstr "Logistisk distribution"
 
-#: src/libqalculate/data/functions.xml.in.h:249
+#: src/libqalculate/data/functions.xml.in.h:252
 msgid "Lower Limit"
 msgstr "Undre gräns"
 
-#: src/libqalculate/data/functions.xml.in.h:250
+#: src/libqalculate/data/functions.xml.in.h:253
 msgid "Lower Limit (i)"
 msgstr "Undre gräns (i)"
 
-#: src/libqalculate/data/functions.xml.in.h:251
+#: src/libqalculate/data/functions.xml.in.h:254
 msgid "Market Interest Rate"
 msgstr "Marknadsränta"
 
-#: src/libqalculate/data/functions.xml.in.h:252
+#: src/libqalculate/data/functions.xml.in.h:255
 msgid "Matrices &amp; Vectors"
 msgstr "Matriser &amp; Vektorer"
 
-#: src/libqalculate/data/functions.xml.in.h:253
+#: src/libqalculate/data/functions.xml.in.h:256
 msgid "Matrix"
 msgstr "Matris"
 
-#: src/libqalculate/data/functions.xml.in.h:254
+#: src/libqalculate/data/functions.xml.in.h:257
 msgid "Matrix Area"
 msgstr "Matrisarea"
 
-#: src/libqalculate/data/functions.xml.in.h:255
+#: src/libqalculate/data/functions.xml.in.h:258
 msgid "Matrix Inverse"
 msgstr "Matrisinvers"
 
-#: src/libqalculate/data/functions.xml.in.h:256
+#: src/libqalculate/data/functions.xml.in.h:259
 msgid "Matrix Variable"
 msgstr "Matrisvariabel"
 
-#: src/libqalculate/data/functions.xml.in.h:257
+#: src/libqalculate/data/functions.xml.in.h:260
 msgid "Matrix or Rows/Columns"
 msgstr "Matris eller Rader/Kolumner"
 
-#: src/libqalculate/data/functions.xml.in.h:258
+#: src/libqalculate/data/functions.xml.in.h:261
 msgid "Matrix/Vector"
 msgstr "Matriser/Vektor"
 
-#: src/libqalculate/data/functions.xml.in.h:259
+#: src/libqalculate/data/functions.xml.in.h:262
 msgid "Maturity Date"
 msgstr "Mognadsdatum"
 
-#: src/libqalculate/data/functions.xml.in.h:260
+#: src/libqalculate/data/functions.xml.in.h:263
 msgid "Max"
 msgstr "Max"
 
-#: src/libqalculate/data/functions.xml.in.h:261
+#: src/libqalculate/data/functions.xml.in.h:264
 msgid "Mean"
 msgstr "Medelvärde"
 
-#: src/libqalculate/data/functions.xml.in.h:262
+#: src/libqalculate/data/functions.xml.in.h:265
 msgid "Mean Deviation"
 msgstr "Medelavvikelse"
 
-#: src/libqalculate/data/functions.xml.in.h:263
+#: src/libqalculate/data/functions.xml.in.h:266
 msgid "Means"
 msgstr "Medelvärde"
 
-#: src/libqalculate/data/functions.xml.in.h:264
+#: src/libqalculate/data/functions.xml.in.h:267
 msgid "Median"
 msgstr "Median"
 
-#: src/libqalculate/data/functions.xml.in.h:265
+#: src/libqalculate/data/functions.xml.in.h:268
 msgid "Merge Vectors"
 msgstr "Sammanslå vektorer"
 
-#: src/libqalculate/data/functions.xml.in.h:266
+#: src/libqalculate/data/functions.xml.in.h:269
 msgid "Message"
 msgstr "Meddelande"
 
-#: src/libqalculate/data/functions.xml.in.h:267
+#: src/libqalculate/data/functions.xml.in.h:270
 msgid "Microeconomics"
 msgstr "Mikroekonomi"
 
-#: src/libqalculate/data/functions.xml.in.h:268
+#: src/libqalculate/data/functions.xml.in.h:271
 msgid "Min"
 msgstr "Min"
 
-#: src/libqalculate/data/functions.xml.in.h:269
+#: src/libqalculate/data/functions.xml.in.h:272
 msgid "Miscellaneous"
 msgstr "Diverse"
 
-#: src/libqalculate/data/functions.xml.in.h:270
+#: src/libqalculate/data/functions.xml.in.h:273
 msgid "Mode"
 msgstr "Typvärde"
 
-#: src/libqalculate/data/functions.xml.in.h:271
+#: src/libqalculate/data/functions.xml.in.h:274
 msgid "Moments"
 msgstr "Moment"
 
-#: src/libqalculate/data/functions.xml.in.h:272
+#: src/libqalculate/data/functions.xml.in.h:275
 msgid "Month"
 msgstr "Månad"
 
-#: src/libqalculate/data/functions.xml.in.h:273
+#: src/libqalculate/data/functions.xml.in.h:276
 msgid "Multifactorial"
 msgstr "Multifakultet"
 
-#: src/libqalculate/data/functions.xml.in.h:274
+#: src/libqalculate/data/functions.xml.in.h:277
 msgid "Multiply"
 msgstr "Multiplicera"
 
-#: src/libqalculate/data/functions.xml.in.h:276
+#: src/libqalculate/data/functions.xml.in.h:279
 msgid "Name of Element"
 msgstr "Grundämnets namn"
 
-#: src/libqalculate/data/functions.xml.in.h:277
+#: src/libqalculate/data/functions.xml.in.h:280
 msgid "Natural Logarithm"
 msgstr "Naturlig logaritm"
 
-#: src/libqalculate/data/functions.xml.in.h:278
+#: src/libqalculate/data/functions.xml.in.h:281
 msgid "Negate"
 msgstr "Negera"
 
-#: src/libqalculate/data/functions.xml.in.h:279
+#: src/libqalculate/data/functions.xml.in.h:282
 msgid "New Value"
 msgstr "Nytt värde"
 
-#: src/libqalculate/data/functions.xml.in.h:280
+#: src/libqalculate/data/functions.xml.in.h:283
 msgid "Nominal Interest Rate"
 msgstr "Nominell räntesats"
 
-#: src/libqalculate/data/functions.xml.in.h:281
+#: src/libqalculate/data/functions.xml.in.h:284
 msgid "Non-Negative Value"
 msgstr "Icke-negativt nummer"
 
-#: src/libqalculate/data/functions.xml.in.h:282
+#: src/libqalculate/data/functions.xml.in.h:285
 msgid "Norm (length)"
 msgstr "Normal"
 
-#: src/libqalculate/data/functions.xml.in.h:283
+#: src/libqalculate/data/functions.xml.in.h:286
 msgid "Nth root"
 msgstr "N:te roten"
 
-#: src/libqalculate/data/functions.xml.in.h:285
+#: src/libqalculate/data/functions.xml.in.h:288
 msgid "Number Base"
 msgstr "Nummerbas"
 
-#: src/libqalculate/data/functions.xml.in.h:286
+#: src/libqalculate/data/functions.xml.in.h:289
 msgid "Number Bases"
 msgstr "Nummerbaser"
 
-#: src/libqalculate/data/functions.xml.in.h:287
+#: src/libqalculate/data/functions.xml.in.h:290
 msgid "Number Theory"
 msgstr "Nummerteori"
 
-#: src/libqalculate/data/functions.xml.in.h:288
+#: src/libqalculate/data/functions.xml.in.h:291
 msgid "Number of Elements"
 msgstr "Antal element"
 
-#: src/libqalculate/data/functions.xml.in.h:289
+#: src/libqalculate/data/functions.xml.in.h:292
 msgid "Number of Periods"
 msgstr "Antal perioder"
 
-#: src/libqalculate/data/functions.xml.in.h:290
+#: src/libqalculate/data/functions.xml.in.h:293
 msgid "Number of coupons to be paid"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:291
+#: src/libqalculate/data/functions.xml.in.h:294
 msgid "Number of payments per year"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:292
+#: src/libqalculate/data/functions.xml.in.h:295
 msgid "Numerator"
 msgstr "Täljare"
 
-#: src/libqalculate/data/functions.xml.in.h:293
+#: src/libqalculate/data/functions.xml.in.h:296
 msgid "Objects"
 msgstr "Objekt"
 
-#: src/libqalculate/data/functions.xml.in.h:294
+#: src/libqalculate/data/functions.xml.in.h:297
 msgid "Octal"
 msgstr "Oktal"
 
-#: src/libqalculate/data/functions.xml.in.h:295
+#: src/libqalculate/data/functions.xml.in.h:298
 msgid "Octal Number"
 msgstr "Oktalt nummer"
 
-#: src/libqalculate/data/functions.xml.in.h:296
+#: src/libqalculate/data/functions.xml.in.h:299
 msgid "Order"
 msgstr "Ordning"
 
-#: src/libqalculate/data/functions.xml.in.h:297
+#: src/libqalculate/data/functions.xml.in.h:300
 msgid "Original Value"
 msgstr "Ursprungligt värde"
 
-#: src/libqalculate/data/functions.xml.in.h:298
+#: src/libqalculate/data/functions.xml.in.h:301
 msgid "Paired T-Test"
 msgstr "Parvist t-test"
 
-#: src/libqalculate/data/functions.xml.in.h:299
+#: src/libqalculate/data/functions.xml.in.h:302
 msgid "Par Value"
 msgstr "Nominellt värde"
 
-#: src/libqalculate/data/functions.xml.in.h:300
+#: src/libqalculate/data/functions.xml.in.h:303
 msgid "Parallelogram"
 msgstr "Parallelogram"
 
-#: src/libqalculate/data/functions.xml.in.h:301
+#: src/libqalculate/data/functions.xml.in.h:304
 msgid "Parallelogram Area"
 msgstr "Parallelogramarea"
 
-#: src/libqalculate/data/functions.xml.in.h:302
+#: src/libqalculate/data/functions.xml.in.h:305
 msgid "Parallelogram Perimeter"
 msgstr "Parallelogramomkrets"
 
-#: src/libqalculate/data/functions.xml.in.h:303
+#: src/libqalculate/data/functions.xml.in.h:306
 msgid "Pareto Distribution"
 msgstr "Paretofördelning"
 
-#: src/libqalculate/data/functions.xml.in.h:304
+#: src/libqalculate/data/functions.xml.in.h:307
 msgid "Payment for a loan"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:305
+#: src/libqalculate/data/functions.xml.in.h:308
 msgid "Payment made each period"
 msgstr "Periodisk avbetalning "
 
-#: src/libqalculate/data/functions.xml.in.h:306
+#: src/libqalculate/data/functions.xml.in.h:309
 msgid "Payment of an annuity going towards interest (IPMT)"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:307
+#: src/libqalculate/data/functions.xml.in.h:310
 msgid "Payment of an annuity going towards principal (PPMT)"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:308
+#: src/libqalculate/data/functions.xml.in.h:311
 msgid "Pearson's Correlation Coefficient"
 msgstr "Pearsons korrelationskoefficient"
 
-#: src/libqalculate/data/functions.xml.in.h:309
+#: src/libqalculate/data/functions.xml.in.h:312
 msgid "Percentile"
 msgstr "Percentil"
 
-#: src/libqalculate/data/functions.xml.in.h:311
+#: src/libqalculate/data/functions.xml.in.h:314
 #, no-c-format
 msgid "Percentile (%)"
 msgstr "Percentil (%)"
 
-#: src/libqalculate/data/functions.xml.in.h:312
+#: src/libqalculate/data/functions.xml.in.h:315
 msgid "Period"
 msgstr "Period"
 
-#: src/libqalculate/data/functions.xml.in.h:313
+#: src/libqalculate/data/functions.xml.in.h:316
 msgid "Periodic Interest Rate"
 msgstr "Periodisk räntesats"
 
-#: src/libqalculate/data/functions.xml.in.h:314
+#: src/libqalculate/data/functions.xml.in.h:317
 msgid "Periods"
 msgstr "Antal perioder"
 
-#: src/libqalculate/data/functions.xml.in.h:315
+#: src/libqalculate/data/functions.xml.in.h:318
 msgid "Periods for investment to attain desired value"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:316
+#: src/libqalculate/data/functions.xml.in.h:319
 msgid "Periods of an investment"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:317
+#: src/libqalculate/data/functions.xml.in.h:320
 msgid "Periods per year"
 msgstr "Perioder per år"
 
-#: src/libqalculate/data/functions.xml.in.h:318
+#: src/libqalculate/data/functions.xml.in.h:321
 msgid "Permanent"
 msgstr "Permanent"
 
-#: src/libqalculate/data/functions.xml.in.h:319
+#: src/libqalculate/data/functions.xml.in.h:322
 msgid "Permutations"
 msgstr "Permutationer"
 
-#: src/libqalculate/data/functions.xml.in.h:320
+#: src/libqalculate/data/functions.xml.in.h:323
 msgid "Pooled Variance"
 msgstr "Gemensam varians"
 
-#: src/libqalculate/data/functions.xml.in.h:321
+#: src/libqalculate/data/functions.xml.in.h:324
 msgid "Precalculate expression"
 msgstr "Beräkna uttrycket först"
 
-#: src/libqalculate/data/functions.xml.in.h:322
+#: src/libqalculate/data/functions.xml.in.h:325
 msgid "Present Value"
 msgstr "Nuvärde"
 
-#: src/libqalculate/data/functions.xml.in.h:323
+#: src/libqalculate/data/functions.xml.in.h:326
 msgid "Price"
 msgstr "Pris"
 
-#: src/libqalculate/data/functions.xml.in.h:324
+#: src/libqalculate/data/functions.xml.in.h:327
 msgid "Price Variable"
 msgstr "Prisvariabel"
 
-#: src/libqalculate/data/functions.xml.in.h:325
+#: src/libqalculate/data/functions.xml.in.h:328
 msgid "Price per $100 face value"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:326
+#: src/libqalculate/data/functions.xml.in.h:329
 msgid "Price per $100 face value of a security"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:327
+#: src/libqalculate/data/functions.xml.in.h:330
 msgid "Price per $100 face value of a security bond"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:328
+#: src/libqalculate/data/functions.xml.in.h:331
 msgid "Principal"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:329
+#: src/libqalculate/data/functions.xml.in.h:332
 msgid "Prism"
 msgstr "Prism"
 
-#: src/libqalculate/data/functions.xml.in.h:330
+#: src/libqalculate/data/functions.xml.in.h:333
 msgid "Process Matrix Elements"
 msgstr "Modifiera matriselement"
 
-#: src/libqalculate/data/functions.xml.in.h:331
+#: src/libqalculate/data/functions.xml.in.h:334
 msgid "Process Vector Components"
 msgstr "Modifiera vektorkomponenter"
 
-#: src/libqalculate/data/functions.xml.in.h:332
+#: src/libqalculate/data/functions.xml.in.h:335
 msgid "Producer Surplus"
 msgstr "Producentöverskott"
 
-#: src/libqalculate/data/functions.xml.in.h:333
+#: src/libqalculate/data/functions.xml.in.h:336
 msgid "Product"
 msgstr "Produkt"
 
-#: src/libqalculate/data/functions.xml.in.h:334
+#: src/libqalculate/data/functions.xml.in.h:337
 msgid "Puts each element of a matrix in vertical order in a vector."
 msgstr "Placerar varje element i en matris i vertikal ordning i en vektor."
 
-#: src/libqalculate/data/functions.xml.in.h:335
+#: src/libqalculate/data/functions.xml.in.h:338
 msgid "Pyramid"
 msgstr "Pyramid"
 
-#: src/libqalculate/data/functions.xml.in.h:336
+#: src/libqalculate/data/functions.xml.in.h:339
 msgid "Pyramid Volume"
 msgstr "Pyramidvolym"
 
-#: src/libqalculate/data/functions.xml.in.h:337
+#: src/libqalculate/data/functions.xml.in.h:340
 msgid "Quadratic Mean (RMS)"
 msgstr "Kvadratiskt medelvärde"
 
-#: src/libqalculate/data/functions.xml.in.h:338
+#: src/libqalculate/data/functions.xml.in.h:341
 msgid "Quantity Variabel"
 msgstr "Kvantitetsvariabel"
 
-#: src/libqalculate/data/functions.xml.in.h:339
+#: src/libqalculate/data/functions.xml.in.h:342
 msgid "Quartile"
 msgstr "Kvartil"
 
-#: src/libqalculate/data/functions.xml.in.h:340
+#: src/libqalculate/data/functions.xml.in.h:343
 msgid "Radians"
 msgstr "Radianer"
 
-#: src/libqalculate/data/functions.xml.in.h:341
+#: src/libqalculate/data/functions.xml.in.h:344
 msgid "Radians to Default Angle Unit"
 msgstr "Radians till färvald vinkelenhet"
 
-#: src/libqalculate/data/functions.xml.in.h:342
+#: src/libqalculate/data/functions.xml.in.h:345
 msgid "Radius"
 msgstr "Radie"
 
-#: src/libqalculate/data/functions.xml.in.h:343
+#: src/libqalculate/data/functions.xml.in.h:346
 msgid "Raise"
 msgstr "Upphöj"
 
-#: src/libqalculate/data/functions.xml.in.h:344
+#: src/libqalculate/data/functions.xml.in.h:347
 msgid "Random Number"
 msgstr "Slumptal"
 
-#: src/libqalculate/data/functions.xml.in.h:345
+#: src/libqalculate/data/functions.xml.in.h:348
 msgid "Random Number Between Limits"
 msgstr "Slumptal mellan gräser"
 
-#: src/libqalculate/data/functions.xml.in.h:346
+#: src/libqalculate/data/functions.xml.in.h:349
 msgid "Range"
 msgstr "Omfång"
 
-#: src/libqalculate/data/functions.xml.in.h:347
+#: src/libqalculate/data/functions.xml.in.h:350
 msgid "Rank"
 msgstr "Rangordna"
 
-#: src/libqalculate/data/functions.xml.in.h:348
+#: src/libqalculate/data/functions.xml.in.h:351
 msgid "Rate"
 msgstr "Räntesats"
 
-#: src/libqalculate/data/functions.xml.in.h:349
+#: src/libqalculate/data/functions.xml.in.h:352
 msgid "Rayleigh Distribution"
 msgstr "Rayleighfördelning"
 
-#: src/libqalculate/data/functions.xml.in.h:350
+#: src/libqalculate/data/functions.xml.in.h:353
 msgid "Rayleigh Tail Distribution"
 msgstr "Rayleighsvansfördelning"
 
-#: src/libqalculate/data/functions.xml.in.h:351
+#: src/libqalculate/data/functions.xml.in.h:354
 msgid "Real Part"
 msgstr "Reell del"
 
-#: src/libqalculate/data/functions.xml.in.h:352
+#: src/libqalculate/data/functions.xml.in.h:355
 msgid "Reciprocal"
 msgstr "Reciprok"
 
-#: src/libqalculate/data/functions.xml.in.h:353
+#: src/libqalculate/data/functions.xml.in.h:356
 msgid "Rectangle"
 msgstr "Rektangel"
 
-#: src/libqalculate/data/functions.xml.in.h:354
+#: src/libqalculate/data/functions.xml.in.h:357
 msgid "Rectangle Area"
 msgstr "Rektangelarea"
 
-#: src/libqalculate/data/functions.xml.in.h:355
+#: src/libqalculate/data/functions.xml.in.h:358
 msgid "Rectangle Perimeter"
 msgstr "Rektangelomkrets"
 
-#: src/libqalculate/data/functions.xml.in.h:356
+#: src/libqalculate/data/functions.xml.in.h:359
 msgid "Redemption"
 msgstr "Utlösande summa"
 
-#: src/libqalculate/data/functions.xml.in.h:357
+#: src/libqalculate/data/functions.xml.in.h:360
 msgid "Regression"
 msgstr "Regression"
 
-#: src/libqalculate/data/functions.xml.in.h:358
+#: src/libqalculate/data/functions.xml.in.h:361
 msgid "Reminder (mod)"
 msgstr "Rest (mod)"
 
-#: src/libqalculate/data/functions.xml.in.h:359
+#: src/libqalculate/data/functions.xml.in.h:362
 msgid "Reminder (rem)"
 msgstr "Rest (rem)"
 
-#: src/libqalculate/data/functions.xml.in.h:360
+#: src/libqalculate/data/functions.xml.in.h:363
 msgid "Replace"
 msgstr "Ersätt"
 
-#: src/libqalculate/data/functions.xml.in.h:361
+#: src/libqalculate/data/functions.xml.in.h:364
 msgid "Return on continuously compounded interest"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:362
+#: src/libqalculate/data/functions.xml.in.h:365
 msgid "Returns a column in a matrix as a vector."
 msgstr "Returnerar en kolumn i en matris som en vektor."
 
-#: src/libqalculate/data/functions.xml.in.h:363
+#: src/libqalculate/data/functions.xml.in.h:366
 msgid "Returns a decimal integer from a binary number"
 msgstr "Returnerar ett decimalt heltal från ett binärt tal"
 
-#: src/libqalculate/data/functions.xml.in.h:364
+#: src/libqalculate/data/functions.xml.in.h:367
 msgid ""
 "Returns a decimal integer from a number of specified base between 2 and 36"
 msgstr ""
 "Returnerar ett decimalt heltal från ett tal med en angiven bas mellan 2 och "
 "36."
 
-#: src/libqalculate/data/functions.xml.in.h:365
+#: src/libqalculate/data/functions.xml.in.h:368
 msgid "Returns a decimal integer from an octal number"
 msgstr "Returnerar ett decimalt heltal från ett oktalt tal"
 
-#: src/libqalculate/data/functions.xml.in.h:366
+#: src/libqalculate/data/functions.xml.in.h:369
 msgid "Returns a decimal value from a hexadecimal number"
 msgstr "Returnerar ett decimalt värde från ett hexadecimalt tal"
 
-#: src/libqalculate/data/functions.xml.in.h:367
+#: src/libqalculate/data/functions.xml.in.h:370
 msgid ""
 "Returns a matrix with specified order and listed elements. Omitted elements "
 "are set to zero."
@@ -2237,34 +2255,34 @@ msgstr ""
 "Returnerar en matris med specifierat antal rader och kolumner, och angivna "
 "element.Utelämnade element sätts till noll."
 
-#: src/libqalculate/data/functions.xml.in.h:368
+#: src/libqalculate/data/functions.xml.in.h:371
 msgid "Returns a part of a matrix."
 msgstr "Returnerar en del av en matris."
 
-#: src/libqalculate/data/functions.xml.in.h:369
+#: src/libqalculate/data/functions.xml.in.h:372
 msgid "Returns a part of a vector."
 msgstr "Returnerar en del av en vektor."
 
-#: src/libqalculate/data/functions.xml.in.h:370
+#: src/libqalculate/data/functions.xml.in.h:373
 msgid "Returns a row in a matrix as a vector."
 msgstr "Returnerar en rad i en matris som en vektor."
 
-#: src/libqalculate/data/functions.xml.in.h:371
+#: src/libqalculate/data/functions.xml.in.h:374
 msgid "Returns a sorted vector."
 msgstr "Returnerar en sorterad vektor."
 
-#: src/libqalculate/data/functions.xml.in.h:372
+#: src/libqalculate/data/functions.xml.in.h:375
 msgid "Returns a vector with listed components."
 msgstr "Returnerar en vektor med angivna komponenter."
 
-#: src/libqalculate/data/functions.xml.in.h:373
+#: src/libqalculate/data/functions.xml.in.h:376
 msgid ""
 "Returns a vector with values of components replaced with their mutual ranks."
 msgstr ""
 "Returnerar en vektor med komponenternas värden ersatta av deras inbördes "
 "rangordning."
 
-#: src/libqalculate/data/functions.xml.in.h:374
+#: src/libqalculate/data/functions.xml.in.h:377
 #, fuzzy
 msgid ""
 "Returns accrued interest for a security which pays periodic interest.&#10;"
@@ -2277,11 +2295,11 @@ msgstr ""
 "30/360 (förvald), 1: verkliga dagar, 2: verkliga dagar/360, 3: verkliga "
 "dagar/365, eller 4: Europeiskt 30/360"
 
-#: src/libqalculate/data/functions.xml.in.h:375
+#: src/libqalculate/data/functions.xml.in.h:378
 msgid "Returns an integer between (including) bottom and top."
 msgstr "Returnerar ett heltal mellan (inklusive) nedre och övre gräns"
 
-#: src/libqalculate/data/functions.xml.in.h:376
+#: src/libqalculate/data/functions.xml.in.h:379
 #, fuzzy
 msgid ""
 "Returns the accrued interest for a security which pays interest at maturity "
@@ -2294,11 +2312,11 @@ msgstr ""
 "30/360 (förvald), 1: verkliga dagar, 2: verkliga dagar/360, 3: verkliga "
 "dagar/365, eller 4: Europeiskt 30/360"
 
-#: src/libqalculate/data/functions.xml.in.h:377
+#: src/libqalculate/data/functions.xml.in.h:380
 msgid "Returns the adjoint of a matrix."
 msgstr "Returnerar adjoint för en matris."
 
-#: src/libqalculate/data/functions.xml.in.h:378
+#: src/libqalculate/data/functions.xml.in.h:381
 #, fuzzy
 msgid ""
 "Returns the amount of payment for a loan based on a constant interest rate "
@@ -2311,7 +2329,7 @@ msgstr ""
 "betalning i början av perioden och 0 (förvald) för betalning i slutet av "
 "perioden."
 
-#: src/libqalculate/data/functions.xml.in.h:379
+#: src/libqalculate/data/functions.xml.in.h:382
 #, fuzzy
 msgid ""
 "Returns the amount received at the maturity date for an invested security."
@@ -2324,23 +2342,23 @@ msgstr ""
 "30/360 (förvald), 1: verkliga dagar, 2: verkliga dagar/360, 3: verkliga "
 "dagar/365, eller 4: Europeiskt 30/360"
 
-#: src/libqalculate/data/functions.xml.in.h:380
+#: src/libqalculate/data/functions.xml.in.h:383
 msgid "Returns the base n logarithm."
 msgstr "Returnerar logaritmen för bas n."
 
-#: src/libqalculate/data/functions.xml.in.h:381
+#: src/libqalculate/data/functions.xml.in.h:384
 msgid "Returns the bond equivalent for a treasury bill."
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:382
+#: src/libqalculate/data/functions.xml.in.h:385
 msgid "Returns the cofactor of the element at specified position."
 msgstr "Returnerar kofaktorn för elementet på angiven position"
 
-#: src/libqalculate/data/functions.xml.in.h:383
+#: src/libqalculate/data/functions.xml.in.h:386
 msgid "Returns the component at specified position in a vector."
 msgstr "Returnerar komponenten på angiven position i en vektor."
 
-#: src/libqalculate/data/functions.xml.in.h:384
+#: src/libqalculate/data/functions.xml.in.h:387
 #, fuzzy
 msgid ""
 "Returns the discount rate for a security.&#10;&#10;Basis is the type of day "
@@ -2352,15 +2370,15 @@ msgstr ""
 "30/360 (förvald), 1: verkliga dagar, 2: verkliga dagar/360, 3: verkliga "
 "dagar/365, eller 4: Europeiskt 30/360"
 
-#: src/libqalculate/data/functions.xml.in.h:385
+#: src/libqalculate/data/functions.xml.in.h:388
 msgid "Returns the element at specified position in a matrix."
 msgstr "Returnerar elementet på angiven position i en matris."
 
-#: src/libqalculate/data/functions.xml.in.h:386
+#: src/libqalculate/data/functions.xml.in.h:389
 msgid "Returns the highest value."
 msgstr "Returnerar det högsta värdet."
 
-#: src/libqalculate/data/functions.xml.in.h:387
+#: src/libqalculate/data/functions.xml.in.h:390
 msgid ""
 "Returns the identity matrix of a matrix or with specified number of rows/"
 "columns."
@@ -2368,7 +2386,7 @@ msgstr ""
 "Returnerar identitetsmatrisen för en matris eller med angivet antal rader/"
 "kolumner."
 
-#: src/libqalculate/data/functions.xml.in.h:388
+#: src/libqalculate/data/functions.xml.in.h:391
 #, fuzzy
 msgid ""
 "Returns the interest rate for a fully invested security.&#10;&#10;Basis is "
@@ -2380,31 +2398,31 @@ msgstr ""
 "30/360 (förvald), 1: verkliga dagar, 2: verkliga dagar/360, 3: verkliga "
 "dagar/365, eller 4: Europeiskt 30/360"
 
-#: src/libqalculate/data/functions.xml.in.h:389
+#: src/libqalculate/data/functions.xml.in.h:392
 msgid "Returns the inverse of a matrix."
 msgstr "Returnerar inversen för en matris."
 
-#: src/libqalculate/data/functions.xml.in.h:390
+#: src/libqalculate/data/functions.xml.in.h:393
 msgid "Returns the lowest value."
 msgstr "Returnerar det lägsta värdet."
 
-#: src/libqalculate/data/functions.xml.in.h:391
+#: src/libqalculate/data/functions.xml.in.h:394
 msgid "Returns the most frequently occuring value."
 msgstr "Returnerar det mest förekommande värdet."
 
-#: src/libqalculate/data/functions.xml.in.h:392
+#: src/libqalculate/data/functions.xml.in.h:395
 msgid "Returns the non-negative square root of x * pi"
 msgstr "Returnerar icke-negativa kvadratroten av x * pi"
 
-#: src/libqalculate/data/functions.xml.in.h:393
+#: src/libqalculate/data/functions.xml.in.h:396
 msgid "Returns the number of columns in a matrix."
 msgstr "Returner antalet kolumner i en matris."
 
-#: src/libqalculate/data/functions.xml.in.h:394
+#: src/libqalculate/data/functions.xml.in.h:397
 msgid "Returns the number of components in a vector."
 msgstr "Returnerar antalet komponenter i en vektor."
 
-#: src/libqalculate/data/functions.xml.in.h:395
+#: src/libqalculate/data/functions.xml.in.h:398
 #, fuzzy
 msgid ""
 "Returns the number of coupons to be paid between the settlement and the "
@@ -2417,7 +2435,7 @@ msgstr ""
 "30/360 (förvald), 1: verkliga dagar, 2: verkliga dagar/360, 3: verkliga "
 "dagar/365, eller 4: Europeiskt 30/360"
 
-#: src/libqalculate/data/functions.xml.in.h:396
+#: src/libqalculate/data/functions.xml.in.h:399
 #, fuzzy
 msgid ""
 "Returns the number of days between two dates.&#10;&#10;Basis is the type of "
@@ -2428,25 +2446,25 @@ msgstr ""
 "Amerikanskt 30/360 (förvald), 1: verkliga dagar, 2: verkliga dagar/360, 3: "
 "verkliga dagar/365, eller 4: Europeiskt 30/360"
 
-#: src/libqalculate/data/functions.xml.in.h:397
+#: src/libqalculate/data/functions.xml.in.h:400
 msgid "Returns the number of elements in a matrix."
 msgstr "Returnerar antalet element i en matris."
 
-#: src/libqalculate/data/functions.xml.in.h:398
+#: src/libqalculate/data/functions.xml.in.h:401
 msgid ""
 "Returns the number of periods needed for an investment to attain a desired "
 "value."
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:399
+#: src/libqalculate/data/functions.xml.in.h:402
 msgid "Returns the number of rows in a matrix."
 msgstr "Returnerar antalet rader i en matris."
 
-#: src/libqalculate/data/functions.xml.in.h:400
+#: src/libqalculate/data/functions.xml.in.h:403
 msgid "Returns the number of samples."
 msgstr "Returnerar antalet prov."
 
-#: src/libqalculate/data/functions.xml.in.h:401
+#: src/libqalculate/data/functions.xml.in.h:404
 #, fuzzy
 msgid ""
 "Returns the number of years (fractional) between two dates.&#10;&#10;Basis "
@@ -2457,7 +2475,7 @@ msgstr ""
 "vara: 0: Amerikanskt 30/360, 1: verkliga dagar (förvald), 2: verkliga "
 "dagar/360, 3: verkliga dagar/365, eller 4: Europeiskt 30/360"
 
-#: src/libqalculate/data/functions.xml.in.h:402
+#: src/libqalculate/data/functions.xml.in.h:405
 #, fuzzy
 msgid ""
 "Returns the present value of an investment.&#10;&#10;If type = 1 then the "
@@ -2469,165 +2487,165 @@ msgstr ""
 "betalning i början av perioden och 0 (förvald) för betalning i slutet av "
 "perioden."
 
-#: src/libqalculate/data/functions.xml.in.h:403
+#: src/libqalculate/data/functions.xml.in.h:406
 msgid "Returns the price per $100 value for a treasury bill."
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:404
+#: src/libqalculate/data/functions.xml.in.h:407
 msgid ""
 "Returns the probability density p(x) at x for a Pareto distribution with "
 "exponent and scale. (from Gnumeric)"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:405
+#: src/libqalculate/data/functions.xml.in.h:408
 msgid ""
 "Returns the probability density p(x) at x for a Rayleigh distribution with "
 "scale parameter sigma. (from Gnumeric)"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:406
+#: src/libqalculate/data/functions.xml.in.h:409
 msgid ""
 "Returns the probability density p(x) at x for a Rayleigh tail distribution "
 "with scale parameter sigma and a lower limit. (from Gnumeric)"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:407
+#: src/libqalculate/data/functions.xml.in.h:410
 msgid ""
 "Returns the probability density p(x) at x for a logistic distribution with "
 "scale parameter. (from Gnumeric)"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:408
+#: src/libqalculate/data/functions.xml.in.h:411
 msgid "Returns the transpose of a matrix."
 msgstr "Returnerar transponeringen av en matris."
 
-#: src/libqalculate/data/functions.xml.in.h:409
+#: src/libqalculate/data/functions.xml.in.h:412
 msgid ""
 "Returns the value of an investment, given the principal, nominal interest "
 "rate, compounding frequency and time."
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:410
+#: src/libqalculate/data/functions.xml.in.h:413
 msgid "Returns the yield for a treasury bill."
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:411
+#: src/libqalculate/data/functions.xml.in.h:414
 msgid "Riemann Zeta"
 msgstr "Riemanns Zeta"
 
-#: src/libqalculate/data/functions.xml.in.h:412
+#: src/libqalculate/data/functions.xml.in.h:415
 msgid "Roman Number"
 msgstr "Romerskt tal"
 
-#: src/libqalculate/data/functions.xml.in.h:413
+#: src/libqalculate/data/functions.xml.in.h:416
 msgid "Round"
 msgstr "Avrunda"
 
-#: src/libqalculate/data/functions.xml.in.h:414
+#: src/libqalculate/data/functions.xml.in.h:417
 msgid "Round Downwards"
 msgstr "Avrunda neråt"
 
-#: src/libqalculate/data/functions.xml.in.h:415
+#: src/libqalculate/data/functions.xml.in.h:418
 msgid "Round Towards Zero"
 msgstr "Avrunda mot noll"
 
-#: src/libqalculate/data/functions.xml.in.h:416
+#: src/libqalculate/data/functions.xml.in.h:419
 msgid "Round Upwards"
 msgstr "Avrunda uppåt"
 
-#: src/libqalculate/data/functions.xml.in.h:417
+#: src/libqalculate/data/functions.xml.in.h:420
 msgid "Rounding"
 msgstr "Avrundning"
 
-#: src/libqalculate/data/functions.xml.in.h:418
+#: src/libqalculate/data/functions.xml.in.h:421
 msgid "Row"
 msgstr "Rad"
 
-#: src/libqalculate/data/functions.xml.in.h:419
+#: src/libqalculate/data/functions.xml.in.h:422
 msgid "Row Variable"
 msgstr "Radvariabel"
 
-#: src/libqalculate/data/functions.xml.in.h:420
+#: src/libqalculate/data/functions.xml.in.h:423
 msgid "Rows"
 msgstr "Rader"
 
-#: src/libqalculate/data/functions.xml.in.h:421
+#: src/libqalculate/data/functions.xml.in.h:424
 msgid "Salvage Value"
 msgstr "Slutvärde"
 
-#: src/libqalculate/data/functions.xml.in.h:422
+#: src/libqalculate/data/functions.xml.in.h:425
 msgid "Salvage value"
 msgstr "Slutvärde"
 
-#: src/libqalculate/data/functions.xml.in.h:423
+#: src/libqalculate/data/functions.xml.in.h:426
 msgid "Save as Variable"
 msgstr "Spara som variabel"
 
-#: src/libqalculate/data/functions.xml.in.h:424
+#: src/libqalculate/data/functions.xml.in.h:427
 msgid "Scale"
 msgstr "Skala"
 
-#: src/libqalculate/data/functions.xml.in.h:425
+#: src/libqalculate/data/functions.xml.in.h:428
 msgid "Secant"
 msgstr "Sekant"
 
-#: src/libqalculate/data/functions.xml.in.h:426
+#: src/libqalculate/data/functions.xml.in.h:429
 msgid "Second Date"
 msgstr "Andra datumet"
 
-#: src/libqalculate/data/functions.xml.in.h:427
+#: src/libqalculate/data/functions.xml.in.h:430
 msgid "Select Vector Components"
 msgstr "Utvälj vektorkomponenter"
 
-#: src/libqalculate/data/functions.xml.in.h:428
+#: src/libqalculate/data/functions.xml.in.h:431
 msgid "Select first match"
 msgstr "Välj första matchande komponent"
 
-#: src/libqalculate/data/functions.xml.in.h:429
+#: src/libqalculate/data/functions.xml.in.h:432
 msgid "Separator"
 msgstr "Avskiljare"
 
-#: src/libqalculate/data/functions.xml.in.h:430
+#: src/libqalculate/data/functions.xml.in.h:433
 msgid "Settlement Date"
 msgstr "Avräkningsdatum"
 
-#: src/libqalculate/data/functions.xml.in.h:431
+#: src/libqalculate/data/functions.xml.in.h:434
 msgid "Side A"
 msgstr "Sida A"
 
-#: src/libqalculate/data/functions.xml.in.h:432
+#: src/libqalculate/data/functions.xml.in.h:435
 msgid "Side B"
 msgstr "Sida B"
 
-#: src/libqalculate/data/functions.xml.in.h:433
+#: src/libqalculate/data/functions.xml.in.h:436
 msgid "Sigma"
 msgstr "Sigma"
 
-#: src/libqalculate/data/functions.xml.in.h:434
+#: src/libqalculate/data/functions.xml.in.h:437
 msgid "Signum"
 msgstr "Sigma"
 
-#: src/libqalculate/data/functions.xml.in.h:435
+#: src/libqalculate/data/functions.xml.in.h:438
 msgid "Sine"
 msgstr "Sinus"
 
-#: src/libqalculate/data/functions.xml.in.h:436
+#: src/libqalculate/data/functions.xml.in.h:439
 msgid "Size"
 msgstr "Storlek"
 
-#: src/libqalculate/data/functions.xml.in.h:437
+#: src/libqalculate/data/functions.xml.in.h:440
 msgid "Solve equation"
 msgstr "Lös ekvation"
 
-#: src/libqalculate/data/functions.xml.in.h:438
+#: src/libqalculate/data/functions.xml.in.h:441
 msgid "Solve for multiple variables"
 msgstr "Lös för flera variabler"
 
-#: src/libqalculate/data/functions.xml.in.h:439
+#: src/libqalculate/data/functions.xml.in.h:442
 msgid "Solve for two variables"
 msgstr "Lös för två variabler"
 
-#: src/libqalculate/data/functions.xml.in.h:440
+#: src/libqalculate/data/functions.xml.in.h:443
 msgid ""
 "Solves two equations with two unknown variables. Returns the value of the "
 "first variable."
@@ -2635,1320 +2653,1334 @@ msgstr ""
 "Lös två ekvationer med två okända variabler. Returnerar värdet på den första "
 "variabeln."
 
-#: src/libqalculate/data/functions.xml.in.h:441
+#: src/libqalculate/data/functions.xml.in.h:444
 msgid "Sort"
 msgstr "Sortera"
 
-#: src/libqalculate/data/functions.xml.in.h:442
+#: src/libqalculate/data/functions.xml.in.h:445
 msgid "Spearman's Rho"
 msgstr "Spearmans Rho"
 
-#: src/libqalculate/data/functions.xml.in.h:443
+#: src/libqalculate/data/functions.xml.in.h:446
 msgid "Sphere"
 msgstr "Sfär"
 
-#: src/libqalculate/data/functions.xml.in.h:444
+#: src/libqalculate/data/functions.xml.in.h:447
 msgid "Sphere Volume"
 msgstr "Sfärvolym"
 
-#: src/libqalculate/data/functions.xml.in.h:445
+#: src/libqalculate/data/functions.xml.in.h:448
 msgid "Square"
 msgstr "Kvadrat"
 
-#: src/libqalculate/data/functions.xml.in.h:446
+#: src/libqalculate/data/functions.xml.in.h:449
 msgid "Square Area"
 msgstr "Kvadratarea"
 
-#: src/libqalculate/data/functions.xml.in.h:447
+#: src/libqalculate/data/functions.xml.in.h:450
 msgid "Square Perimeter"
 msgstr "Kvadratomkrets"
 
-#: src/libqalculate/data/functions.xml.in.h:448
+#: src/libqalculate/data/functions.xml.in.h:451
 msgid "Square Root"
 msgstr "Kvadratrot"
 
-#: src/libqalculate/data/functions.xml.in.h:449
+#: src/libqalculate/data/functions.xml.in.h:452
 msgid "Square root (x * pi)"
 msgstr "Kvadratrot (x * pi)"
 
-#: src/libqalculate/data/functions.xml.in.h:450
+#: src/libqalculate/data/functions.xml.in.h:453
 msgid "Standard Deviation (entire population)"
 msgstr "Standardavvikelse (komplett population)"
 
-#: src/libqalculate/data/functions.xml.in.h:451
+#: src/libqalculate/data/functions.xml.in.h:454
 msgid "Standard Deviation (random sampling)"
 msgstr "Standardavvikelse (slumpmässigt urval)"
 
-#: src/libqalculate/data/functions.xml.in.h:452
+#: src/libqalculate/data/functions.xml.in.h:455
 msgid "Standard Error"
 msgstr "Standardfel"
 
-#: src/libqalculate/data/functions.xml.in.h:453
+#: src/libqalculate/data/functions.xml.in.h:456
 msgid "Start Column"
 msgstr "Startkolumn"
 
-#: src/libqalculate/data/functions.xml.in.h:454
+#: src/libqalculate/data/functions.xml.in.h:457
 msgid "Start Row"
 msgstr "Startrad"
 
-#: src/libqalculate/data/functions.xml.in.h:455
+#: src/libqalculate/data/functions.xml.in.h:458
 msgid "Statistical Correlation"
 msgstr "Statistisk korrelation"
 
-#: src/libqalculate/data/functions.xml.in.h:456
+#: src/libqalculate/data/functions.xml.in.h:459
 msgid "Statistical Tests"
 msgstr "Statistika tester"
 
-#: src/libqalculate/data/functions.xml.in.h:457
+#: src/libqalculate/data/functions.xml.in.h:460
 msgid "Statistics"
 msgstr "Statistik"
 
-#: src/libqalculate/data/functions.xml.in.h:458
+#: src/libqalculate/data/functions.xml.in.h:461
 msgid "Straight Line Depreciation"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:459
+#: src/libqalculate/data/functions.xml.in.h:462
 msgid "Subtract"
 msgstr "Subtrahera"
 
-#: src/libqalculate/data/functions.xml.in.h:460
+#: src/libqalculate/data/functions.xml.in.h:463
 msgid "Sum"
 msgstr "Summa"
 
-#: src/libqalculate/data/functions.xml.in.h:461
+#: src/libqalculate/data/functions.xml.in.h:464
 msgid "Sum (total)"
 msgstr "Summa (total)"
 
-#: src/libqalculate/data/functions.xml.in.h:462
+#: src/libqalculate/data/functions.xml.in.h:465
 msgid "Sum-of-Years Digits Depreciation"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:463
+#: src/libqalculate/data/functions.xml.in.h:466
 msgid "Superfactorial"
 msgstr "Superfakultet"
 
-#: src/libqalculate/data/functions.xml.in.h:464
+#: src/libqalculate/data/functions.xml.in.h:467
 msgid "Supply Function"
 msgstr "Tillgångsfunktion"
 
-#: src/libqalculate/data/functions.xml.in.h:465
+#: src/libqalculate/data/functions.xml.in.h:468
 msgid "Supply Function or Price"
 msgstr "Tillgångsfunktion eller pris"
 
-#: src/libqalculate/data/functions.xml.in.h:466
+#: src/libqalculate/data/functions.xml.in.h:469
 msgid "Surface Area of Cone"
 msgstr "Ytarea för en kon"
 
-#: src/libqalculate/data/functions.xml.in.h:467
+#: src/libqalculate/data/functions.xml.in.h:470
 msgid "Surface Area of Cube"
 msgstr "Ytarea för en kub"
 
-#: src/libqalculate/data/functions.xml.in.h:468
+#: src/libqalculate/data/functions.xml.in.h:471
 msgid "Surface Area of Cylinder"
 msgstr "Ytarea för en cylinder"
 
-#: src/libqalculate/data/functions.xml.in.h:469
+#: src/libqalculate/data/functions.xml.in.h:472
 msgid "Surface Area of Rectangular Prism"
 msgstr "Ytarea för en rektangulär prism"
 
-#: src/libqalculate/data/functions.xml.in.h:470
+#: src/libqalculate/data/functions.xml.in.h:473
 msgid "Surface Area of Sphere"
 msgstr "Ytarea för en sfär"
 
-#: src/libqalculate/data/functions.xml.in.h:471
+#: src/libqalculate/data/functions.xml.in.h:474
 msgid "Symbol of Element"
 msgstr "Grundämnessymbol"
 
-#: src/libqalculate/data/functions.xml.in.h:472
+#: src/libqalculate/data/functions.xml.in.h:475
 msgid "Tangent"
 msgstr "Tangens"
 
-#: src/libqalculate/data/functions.xml.in.h:473
+#: src/libqalculate/data/functions.xml.in.h:476
 msgid "Term Expression"
 msgstr "Termuttryct"
 
-#: src/libqalculate/data/functions.xml.in.h:474
+#: src/libqalculate/data/functions.xml.in.h:477
 msgid "Terms"
 msgstr "Termer"
 
-#: src/libqalculate/data/functions.xml.in.h:475
+#: src/libqalculate/data/functions.xml.in.h:478
 msgid "Tests a condition and returns a value depending on the result."
 msgstr "Testar ett villkor och returnerar ett värde beroende av result."
 
-#: src/libqalculate/data/functions.xml.in.h:476
+#: src/libqalculate/data/functions.xml.in.h:479
 msgid "Text"
 msgstr "Text"
 
-#: src/libqalculate/data/functions.xml.in.h:477
+#: src/libqalculate/data/functions.xml.in.h:480
 msgid "Text String 1"
 msgstr "Textsträng 1"
 
-#: src/libqalculate/data/functions.xml.in.h:478
+#: src/libqalculate/data/functions.xml.in.h:481
 msgid "Text String 2"
 msgstr "Textsträng 2"
 
-#: src/libqalculate/data/functions.xml.in.h:479
+#: src/libqalculate/data/functions.xml.in.h:482
 msgid "Title"
 msgstr "Titel"
 
-#: src/libqalculate/data/functions.xml.in.h:480
+#: src/libqalculate/data/functions.xml.in.h:483
 msgid "Top"
 msgstr "Övre gräns"
 
-#: src/libqalculate/data/functions.xml.in.h:481
+#: src/libqalculate/data/functions.xml.in.h:484
 msgid "Transpose"
 msgstr "Transponera"
 
-#: src/libqalculate/data/functions.xml.in.h:482
+#: src/libqalculate/data/functions.xml.in.h:485
 msgid "Trapezoid"
 msgstr "Trapetsoid"
 
-#: src/libqalculate/data/functions.xml.in.h:483
+#: src/libqalculate/data/functions.xml.in.h:486
 msgid "Trapezoid Area"
 msgstr "Trapetsoidarea"
 
-#: src/libqalculate/data/functions.xml.in.h:484
+#: src/libqalculate/data/functions.xml.in.h:487
 #, fuzzy
 msgid "Treasury Bill Equivalent"
 msgstr "Dosekvivalent"
 
-#: src/libqalculate/data/functions.xml.in.h:485
+#: src/libqalculate/data/functions.xml.in.h:488
 msgid "Treasury Bill Price"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:486
+#: src/libqalculate/data/functions.xml.in.h:489
 msgid "Treasury Bill Yield"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:487
+#: src/libqalculate/data/functions.xml.in.h:490
 msgid "Triangle"
 msgstr "Triangel"
 
-#: src/libqalculate/data/functions.xml.in.h:488
+#: src/libqalculate/data/functions.xml.in.h:491
 msgid "Triangle Area"
 msgstr "Triangelarea"
 
-#: src/libqalculate/data/functions.xml.in.h:489
+#: src/libqalculate/data/functions.xml.in.h:492
 msgid "Triangle Perimeter"
 msgstr "Triangelomkrets"
 
-#: src/libqalculate/data/functions.xml.in.h:490
+#: src/libqalculate/data/functions.xml.in.h:493
 msgid "Trigonometry"
 msgstr "Trigonometri"
 
-#: src/libqalculate/data/functions.xml.in.h:491
+#: src/libqalculate/data/functions.xml.in.h:494
 msgid "Trimmed Mean"
 msgstr "Trimmat medelvärde"
 
-#: src/libqalculate/data/functions.xml.in.h:492
+#: src/libqalculate/data/functions.xml.in.h:495
 msgid "Trimmed Percentage (at each end)"
 msgstr "Trimmad procent (i båda ändarna)"
 
-#: src/libqalculate/data/functions.xml.in.h:493
+#: src/libqalculate/data/functions.xml.in.h:496
 msgid "Type"
 msgstr "Typ"
 
-#: src/libqalculate/data/functions.xml.in.h:494
+#: src/libqalculate/data/functions.xml.in.h:497
 msgid "Unpaired T-Test"
 msgstr "T-test"
 
-#: src/libqalculate/data/functions.xml.in.h:495
+#: src/libqalculate/data/functions.xml.in.h:498
 msgid "Upper Limit"
 msgstr "Övre gräns"
 
-#: src/libqalculate/data/functions.xml.in.h:496
+#: src/libqalculate/data/functions.xml.in.h:499
 msgid "Upper Limit (n)"
 msgstr "Övre gräns (n)"
 
-#: src/libqalculate/data/functions.xml.in.h:497
+#: src/libqalculate/data/functions.xml.in.h:500
+msgid "Use step size"
+msgstr ""
+
+#: src/libqalculate/data/functions.xml.in.h:501
 msgid "Utilities"
 msgstr "Verktyg"
 
-#: src/libqalculate/data/functions.xml.in.h:498
+#: src/libqalculate/data/functions.xml.in.h:502
 msgid "Value"
 msgstr "Värde"
 
-#: src/libqalculate/data/functions.xml.in.h:499
+#: src/libqalculate/data/functions.xml.in.h:503
 msgid "Value Variable"
 msgstr "Värdevariabel"
 
-#: src/libqalculate/data/functions.xml.in.h:500
+#: src/libqalculate/data/functions.xml.in.h:504
+#, fuzzy
+msgid "Variable"
+msgstr "Variabel 2"
+
+#: src/libqalculate/data/functions.xml.in.h:505
 msgid "Variable 1"
 msgstr "Variabel 1"
 
-#: src/libqalculate/data/functions.xml.in.h:501
+#: src/libqalculate/data/functions.xml.in.h:506
 msgid "Variable 2"
 msgstr "Variabel 2"
 
-#: src/libqalculate/data/functions.xml.in.h:502
+#: src/libqalculate/data/functions.xml.in.h:507
 msgid "Variable Vector"
 msgstr "Variabelvektor"
 
-#: src/libqalculate/data/functions.xml.in.h:503
+#: src/libqalculate/data/functions.xml.in.h:508
 msgid "Variable of Integration"
 msgstr "Variabel för integration"
 
-#: src/libqalculate/data/functions.xml.in.h:504
+#: src/libqalculate/data/functions.xml.in.h:509
 msgid "Variance (entire population)"
 msgstr "Varians (komplett population)"
 
-#: src/libqalculate/data/functions.xml.in.h:505
+#: src/libqalculate/data/functions.xml.in.h:510
 msgid "Variance (random sampling)"
 msgstr "Varians (slumpmässigt urval)"
 
-#: src/libqalculate/data/functions.xml.in.h:506
+#: src/libqalculate/data/functions.xml.in.h:511
 msgid "Vector"
 msgstr "Vektor"
 
-#: src/libqalculate/data/functions.xml.in.h:507
+#: src/libqalculate/data/functions.xml.in.h:512
 msgid "Vector 1"
 msgstr "Vektor 1"
 
-#: src/libqalculate/data/functions.xml.in.h:508
+#: src/libqalculate/data/functions.xml.in.h:513
 msgid "Vector 2"
 msgstr "Vektor 2"
 
-#: src/libqalculate/data/functions.xml.in.h:509
+#: src/libqalculate/data/functions.xml.in.h:514
 msgid "Vector Limits"
 msgstr "Vektorgränser"
 
-#: src/libqalculate/data/functions.xml.in.h:510
+#: src/libqalculate/data/functions.xml.in.h:515
 msgid "Vector Variable"
 msgstr "Vektorvariabel"
 
-#: src/libqalculate/data/functions.xml.in.h:511
+#: src/libqalculate/data/functions.xml.in.h:516
 msgid "Volume of Rectangular Prism"
 msgstr "Volym för en rektangulär prism"
 
-#: src/libqalculate/data/functions.xml.in.h:512
+#: src/libqalculate/data/functions.xml.in.h:517
 msgid "Volume of Triangular Prism"
 msgstr "Volym för en triangulär prism"
 
-#: src/libqalculate/data/functions.xml.in.h:513
+#: src/libqalculate/data/functions.xml.in.h:518
 msgid "Week begins on Sunday"
 msgstr "Veckor börjar på söndag"
 
-#: src/libqalculate/data/functions.xml.in.h:514
+#: src/libqalculate/data/functions.xml.in.h:519
 msgid "Week of Year"
 msgstr "Vecka på året"
 
-#: src/libqalculate/data/functions.xml.in.h:516
+#: src/libqalculate/data/functions.xml.in.h:521
 msgid "Weighted Mean"
 msgstr "Viktat medelvärde"
 
-#: src/libqalculate/data/functions.xml.in.h:517
+#: src/libqalculate/data/functions.xml.in.h:522
 msgid "Weights"
 msgstr "Vikter"
 
-#: src/libqalculate/data/functions.xml.in.h:518
+#: src/libqalculate/data/functions.xml.in.h:523
 msgid "Width"
 msgstr "Bredd"
 
-#: src/libqalculate/data/functions.xml.in.h:519
+#: src/libqalculate/data/functions.xml.in.h:524
 msgid "Width of Base"
 msgstr "Basens bredd"
 
-#: src/libqalculate/data/functions.xml.in.h:520
+#: src/libqalculate/data/functions.xml.in.h:525
 msgid "Winsorized Mean"
 msgstr "Winsor-medelvärde"
 
-#: src/libqalculate/data/functions.xml.in.h:521
+#: src/libqalculate/data/functions.xml.in.h:526
 msgid "Winsorized Percentage (at each end)"
 msgstr "Winsorprocent (i båda ändarna)"
 
-#: src/libqalculate/data/functions.xml.in.h:522
+#: src/libqalculate/data/functions.xml.in.h:527
 msgid "With respect to"
 msgstr "Med avseende på"
 
-#: src/libqalculate/data/functions.xml.in.h:523
+#: src/libqalculate/data/functions.xml.in.h:528
 msgid "X"
 msgstr "X"
 
-#: src/libqalculate/data/functions.xml.in.h:524
+#: src/libqalculate/data/functions.xml.in.h:529
 msgid "X raised to the power Y"
 msgstr "X upphöjt med Y"
 
-#: src/libqalculate/data/functions.xml.in.h:525
+#: src/libqalculate/data/functions.xml.in.h:530
 msgid "Year"
 msgstr "År"
 
-#: src/libqalculate/data/functions.xml.in.h:526
+#: src/libqalculate/data/functions.xml.in.h:531
 msgid "Years"
 msgstr "Antal år"
 
-#: src/libqalculate/data/functions.xml.in.h:527
+#: src/libqalculate/data/functions.xml.in.h:532
 msgid "Years between two dates"
 msgstr "Antal är mellan två datum"
 
-#: src/libqalculate/data/functions.xml.in.h:528
+#: src/libqalculate/data/functions.xml.in.h:533
 msgid "Zero Coupon"
 msgstr "Nollkupong"
 
-#: src/libqalculate/data/functions.xml.in.h:529
+#: src/libqalculate/data/functions.xml.in.h:534
 msgid "abs"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:530
+#: src/libqalculate/data/functions.xml.in.h:535
 msgid "accrint"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:531
+#: src/libqalculate/data/functions.xml.in.h:536
 msgid "accrintm"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:532
+#: src/libqalculate/data/functions.xml.in.h:537
 msgid "acos"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:533
+#: src/libqalculate/data/functions.xml.in.h:538
 msgid "acosh"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:534
+#: src/libqalculate/data/functions.xml.in.h:539
 msgid "acot"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:535
+#: src/libqalculate/data/functions.xml.in.h:540
 msgid "acoth"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:536
+#: src/libqalculate/data/functions.xml.in.h:541
 msgid "acsc"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:537
+#: src/libqalculate/data/functions.xml.in.h:542
 msgid "acsch"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:538
+#: src/libqalculate/data/functions.xml.in.h:543
 msgid "add"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:539
+#: src/libqalculate/data/functions.xml.in.h:544
 msgid "adj"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:541
+#: src/libqalculate/data/functions.xml.in.h:546
 msgid "asec"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:542
+#: src/libqalculate/data/functions.xml.in.h:547
 msgid "asech"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:543
+#: src/libqalculate/data/functions.xml.in.h:548
 msgid "asin"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:544
+#: src/libqalculate/data/functions.xml.in.h:549
 msgid "asinh"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:545
+#: src/libqalculate/data/functions.xml.in.h:550
 msgid "atan"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:546
+#: src/libqalculate/data/functions.xml.in.h:551
 msgid "atanh"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:548
+#: src/libqalculate/data/functions.xml.in.h:553
 #: src/libqalculate/data/variables.xml.in.h:110
 msgid "atomic_mass"
 msgstr "atommassa"
 
-#: src/libqalculate/data/functions.xml.in.h:549
+#: src/libqalculate/data/functions.xml.in.h:554
 msgid "atomic_name"
 msgstr "atomnamn"
 
-#: src/libqalculate/data/functions.xml.in.h:550
+#: src/libqalculate/data/functions.xml.in.h:555
 msgid "atomic_number"
 msgstr "atomnummer"
 
-#: src/libqalculate/data/functions.xml.in.h:551
+#: src/libqalculate/data/functions.xml.in.h:556
 msgid "atomic_symbol"
 msgstr "atomsymbol"
 
-#: src/libqalculate/data/functions.xml.in.h:552
+#: src/libqalculate/data/functions.xml.in.h:557
 msgid "atomic_weight"
 msgstr "atomvikt"
 
-#: src/libqalculate/data/functions.xml.in.h:553
+#: src/libqalculate/data/functions.xml.in.h:558
 msgid "base"
 msgstr "bas"
 
-#: src/libqalculate/data/functions.xml.in.h:554
+#: src/libqalculate/data/functions.xml.in.h:559
 msgid "beta"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:555
+#: src/libqalculate/data/functions.xml.in.h:560
 msgid "bin"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:556
+#: src/libqalculate/data/functions.xml.in.h:561
 msgid "binomial"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:557
+#: src/libqalculate/data/functions.xml.in.h:562
 msgid "bmi"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:558
+#: src/libqalculate/data/functions.xml.in.h:563
 msgid "cbrt"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:559
+#: src/libqalculate/data/functions.xml.in.h:564
 msgid "ceil"
 msgstr "tak"
 
-#: src/libqalculate/data/functions.xml.in.h:560
+#: src/libqalculate/data/functions.xml.in.h:565
 msgid "char"
 msgstr "tecken"
 
-#: src/libqalculate/data/functions.xml.in.h:561
+#: src/libqalculate/data/functions.xml.in.h:566
 msgid "circle"
 msgstr "cirkel"
 
-#: src/libqalculate/data/functions.xml.in.h:562
+#: src/libqalculate/data/functions.xml.in.h:567
 msgid "circumference"
 msgstr "omkrets"
 
-#: src/libqalculate/data/functions.xml.in.h:563
+#: src/libqalculate/data/functions.xml.in.h:568
 msgid "cis"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:564
+#: src/libqalculate/data/functions.xml.in.h:569
 msgid "code"
 msgstr "kod"
 
-#: src/libqalculate/data/functions.xml.in.h:565
+#: src/libqalculate/data/functions.xml.in.h:570
 msgid "cofactor"
 msgstr "kofaktor"
 
-#: src/libqalculate/data/functions.xml.in.h:566
+#: src/libqalculate/data/functions.xml.in.h:571
 msgid "column"
 msgstr "kolumn"
 
-#: src/libqalculate/data/functions.xml.in.h:567
+#: src/libqalculate/data/functions.xml.in.h:572
 msgid "columns"
 msgstr "kolumner"
 
-#: src/libqalculate/data/functions.xml.in.h:568
+#: src/libqalculate/data/functions.xml.in.h:573
 msgid "comb"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:569
+#: src/libqalculate/data/functions.xml.in.h:574
 msgid "component"
 msgstr "komponent"
 
-#: src/libqalculate/data/functions.xml.in.h:570
+#: src/libqalculate/data/functions.xml.in.h:575
 msgid "components"
 msgstr "komponenter"
 
-#: src/libqalculate/data/functions.xml.in.h:571
+#: src/libqalculate/data/functions.xml.in.h:576
 msgid "compound"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:572
+#: src/libqalculate/data/functions.xml.in.h:577
 msgid "concatenate"
 msgstr "sammanfoga"
 
-#: src/libqalculate/data/functions.xml.in.h:573
+#: src/libqalculate/data/functions.xml.in.h:578
 msgid "cone"
 msgstr "kon"
 
-#: src/libqalculate/data/functions.xml.in.h:574
+#: src/libqalculate/data/functions.xml.in.h:579
 msgid "cone_sa"
 msgstr "konyta"
 
-#: src/libqalculate/data/functions.xml.in.h:575
+#: src/libqalculate/data/functions.xml.in.h:580
 msgid "cor"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:576
+#: src/libqalculate/data/functions.xml.in.h:581
 msgid "correl"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:577
+#: src/libqalculate/data/functions.xml.in.h:582
 msgid "cos"
 msgstr "cos"
 
-#: src/libqalculate/data/functions.xml.in.h:578
+#: src/libqalculate/data/functions.xml.in.h:583
 msgid "cosh"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:579
+#: src/libqalculate/data/functions.xml.in.h:584
 msgid "cot"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:580
+#: src/libqalculate/data/functions.xml.in.h:585
 msgid "coth"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:581
+#: src/libqalculate/data/functions.xml.in.h:586
 msgid "countinuous"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:582
+#: src/libqalculate/data/functions.xml.in.h:587
 msgid "coupnum"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:583
+#: src/libqalculate/data/functions.xml.in.h:588
 msgid "covar"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:584
+#: src/libqalculate/data/functions.xml.in.h:589
 msgid "csc"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:585
+#: src/libqalculate/data/functions.xml.in.h:590
 msgid "csch"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:586
+#: src/libqalculate/data/functions.xml.in.h:591
 msgid "csum"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:587
+#: src/libqalculate/data/functions.xml.in.h:592
 msgid "csurplus"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:588
+#: src/libqalculate/data/functions.xml.in.h:593
 msgid "cube"
 msgstr "kub"
 
-#: src/libqalculate/data/functions.xml.in.h:589
+#: src/libqalculate/data/functions.xml.in.h:594
 msgid "cube_sa"
 msgstr "kubyta"
 
-#: src/libqalculate/data/functions.xml.in.h:590
+#: src/libqalculate/data/functions.xml.in.h:595
 msgid "cylinder"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:591
+#: src/libqalculate/data/functions.xml.in.h:596
 msgid "cylinder_sa"
 msgstr "cylinderyta"
 
-#: src/libqalculate/data/functions.xml.in.h:592
+#: src/libqalculate/data/functions.xml.in.h:597
 #: src/libqalculate/data/units.xml.in.h:460
 msgid "day"
 msgstr "dag"
 
-#: src/libqalculate/data/functions.xml.in.h:593
+#: src/libqalculate/data/functions.xml.in.h:598
 #: src/libqalculate/data/units.xml.in.h:461
 msgid "days"
 msgstr "dagar"
 
-#: src/libqalculate/data/functions.xml.in.h:594
+#: src/libqalculate/data/functions.xml.in.h:599
 msgid "decile"
 msgstr "decil"
 
-#: src/libqalculate/data/functions.xml.in.h:595
+#: src/libqalculate/data/functions.xml.in.h:600
 msgid "derangements"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:596
+#: src/libqalculate/data/functions.xml.in.h:601
 msgid "det"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:597
+#: src/libqalculate/data/functions.xml.in.h:602
 msgid "diff"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:598
+#: src/libqalculate/data/functions.xml.in.h:603
 msgid "dimension"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:599
+#: src/libqalculate/data/functions.xml.in.h:604
 msgid "disc"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:600
+#: src/libqalculate/data/functions.xml.in.h:605
 msgid "divide"
 msgstr "dela"
 
-#: src/libqalculate/data/functions.xml.in.h:601
+#: src/libqalculate/data/functions.xml.in.h:606
 msgid "dollarde"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:602
+#: src/libqalculate/data/functions.xml.in.h:607
 msgid "dollarfr"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:603
+#: src/libqalculate/data/functions.xml.in.h:608
 msgid "duration"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:604
+#: src/libqalculate/data/functions.xml.in.h:609
 msgid "durbinwatson"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:605
+#: src/libqalculate/data/functions.xml.in.h:610
 msgid "effect"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:606
+#: src/libqalculate/data/functions.xml.in.h:611
 msgid "elasticity"
 msgstr "elasticitet"
 
-#: src/libqalculate/data/functions.xml.in.h:607
+#: src/libqalculate/data/functions.xml.in.h:612
 msgid "element"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:608
+#: src/libqalculate/data/functions.xml.in.h:613
 msgid "elements"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:609
+#: src/libqalculate/data/functions.xml.in.h:614
 msgid "error"
 msgstr "fel"
 
-#: src/libqalculate/data/functions.xml.in.h:610
+#: src/libqalculate/data/functions.xml.in.h:615
 msgid "exp"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:611
+#: src/libqalculate/data/functions.xml.in.h:616
 msgid "exp10"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:612
+#: src/libqalculate/data/functions.xml.in.h:617
 msgid "exp2"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:613
+#: src/libqalculate/data/functions.xml.in.h:618
 msgid "export"
 msgstr "exportera"
 
-#: src/libqalculate/data/functions.xml.in.h:614
+#: src/libqalculate/data/functions.xml.in.h:619
 msgid "extremum"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:615
+#: src/libqalculate/data/functions.xml.in.h:620
 msgid "factorial"
 msgstr "fakultet"
 
-#: src/libqalculate/data/functions.xml.in.h:616
+#: src/libqalculate/data/functions.xml.in.h:621
 msgid "factorial2"
 msgstr "fakultet2"
 
-#: src/libqalculate/data/functions.xml.in.h:617
+#: src/libqalculate/data/functions.xml.in.h:622
 msgid "floor"
 msgstr "golv"
 
-#: src/libqalculate/data/functions.xml.in.h:618
+#: src/libqalculate/data/functions.xml.in.h:623
 msgid "for"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:619
+#: src/libqalculate/data/functions.xml.in.h:624
 msgid "frac"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:620
+#: src/libqalculate/data/functions.xml.in.h:625
 msgid "function"
 msgstr "funktion"
 
-#: src/libqalculate/data/functions.xml.in.h:621
+#: src/libqalculate/data/functions.xml.in.h:626
 msgid "fv"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:622
+#: src/libqalculate/data/functions.xml.in.h:627
 msgid "g_duration"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:623
+#: src/libqalculate/data/functions.xml.in.h:628
 msgid "gamma"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:624
+#: src/libqalculate/data/functions.xml.in.h:629
 msgid "gcd"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:625
+#: src/libqalculate/data/functions.xml.in.h:630
+#, fuzzy
+msgid "genvector"
+msgstr "vektor"
+
+#: src/libqalculate/data/functions.xml.in.h:631
 msgid "geomean"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:626
+#: src/libqalculate/data/functions.xml.in.h:632
 msgid "harmmean"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:627
+#: src/libqalculate/data/functions.xml.in.h:633
 msgid "hex"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:628
+#: src/libqalculate/data/functions.xml.in.h:634
 msgid "hyperfactorial"
 msgstr "hyperfakultet"
 
-#: src/libqalculate/data/functions.xml.in.h:629
+#: src/libqalculate/data/functions.xml.in.h:635
 msgid "hypot"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:630
+#: src/libqalculate/data/functions.xml.in.h:636
 msgid "identity"
 msgstr "identitetsmatris"
 
-#: src/libqalculate/data/functions.xml.in.h:631
+#: src/libqalculate/data/functions.xml.in.h:637
 msgid "if"
 msgstr "om"
 
-#: src/libqalculate/data/functions.xml.in.h:632
+#: src/libqalculate/data/functions.xml.in.h:638
 msgid "im"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:633
+#: src/libqalculate/data/functions.xml.in.h:639
 msgid "int"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:634
+#: src/libqalculate/data/functions.xml.in.h:640
 msgid "integrate"
 msgstr "integrera"
 
-#: src/libqalculate/data/functions.xml.in.h:635
+#: src/libqalculate/data/functions.xml.in.h:641
 msgid "intrate"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:636
+#: src/libqalculate/data/functions.xml.in.h:642
 msgid "inv"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:637
+#: src/libqalculate/data/functions.xml.in.h:643
 msgid "inverse"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:638
+#: src/libqalculate/data/functions.xml.in.h:644
 msgid "ipmt"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:639
+#: src/libqalculate/data/functions.xml.in.h:645
 msgid "iqr"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:640
+#: src/libqalculate/data/functions.xml.in.h:646
 msgid "ispmt"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:641
+#: src/libqalculate/data/functions.xml.in.h:647
 msgid "len"
 msgstr "längd"
 
-#: src/libqalculate/data/functions.xml.in.h:642
+#: src/libqalculate/data/functions.xml.in.h:648
 msgid "level_coupon"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:643
+#: src/libqalculate/data/functions.xml.in.h:649
 msgid "limits"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:644
+#: src/libqalculate/data/functions.xml.in.h:650
 msgid "linearfunction"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:645
+#: src/libqalculate/data/functions.xml.in.h:651
 msgid "ln"
 msgstr "ln"
 
-#: src/libqalculate/data/functions.xml.in.h:646
+#: src/libqalculate/data/functions.xml.in.h:652
 msgid "load"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:647
+#: src/libqalculate/data/functions.xml.in.h:653
 msgid "log"
 msgstr "log"
 
-#: src/libqalculate/data/functions.xml.in.h:648
+#: src/libqalculate/data/functions.xml.in.h:654
 msgid "log10"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:649
+#: src/libqalculate/data/functions.xml.in.h:655
 msgid "log2"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:650
+#: src/libqalculate/data/functions.xml.in.h:656
 msgid "logistic"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:651
+#: src/libqalculate/data/functions.xml.in.h:657
 msgid "matrix"
 msgstr "matris"
 
-#: src/libqalculate/data/functions.xml.in.h:652
+#: src/libqalculate/data/functions.xml.in.h:658
 msgid "matrix2vector"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:653
+#: src/libqalculate/data/functions.xml.in.h:659
 msgid "max"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:654
+#: src/libqalculate/data/functions.xml.in.h:660
 msgid "mean"
 msgstr "medel"
 
-#: src/libqalculate/data/functions.xml.in.h:655
+#: src/libqalculate/data/functions.xml.in.h:661
 msgid "meandev"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:656
+#: src/libqalculate/data/functions.xml.in.h:662
 msgid "median"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:657
+#: src/libqalculate/data/functions.xml.in.h:663
 msgid "mergevectors"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:658
+#: src/libqalculate/data/functions.xml.in.h:664
 msgid "message"
 msgstr "meddelande"
 
-#: src/libqalculate/data/functions.xml.in.h:659
+#: src/libqalculate/data/functions.xml.in.h:665
 #: src/libqalculate/data/units.xml.in.h:623
 msgid "min"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:660
+#: src/libqalculate/data/functions.xml.in.h:666
 msgid "mod"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:661
+#: src/libqalculate/data/functions.xml.in.h:667
 msgid "mode"
 msgstr "typvärde"
 
-#: src/libqalculate/data/functions.xml.in.h:662
+#: src/libqalculate/data/functions.xml.in.h:668
 msgid "month"
 msgstr "månad"
 
-#: src/libqalculate/data/functions.xml.in.h:663
+#: src/libqalculate/data/functions.xml.in.h:669
 msgid "multifactorial"
 msgstr "multifakultet"
 
-#: src/libqalculate/data/functions.xml.in.h:664
+#: src/libqalculate/data/functions.xml.in.h:670
 msgid "multiply"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:665
+#: src/libqalculate/data/functions.xml.in.h:671
 msgid "multisolve"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:666
+#: src/libqalculate/data/functions.xml.in.h:672
 msgid "neg"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:667
+#: src/libqalculate/data/functions.xml.in.h:673
 msgid "nominal"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:668
+#: src/libqalculate/data/functions.xml.in.h:674
 msgid "norm"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:669
+#: src/libqalculate/data/functions.xml.in.h:675
 msgid "nper"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:671
+#: src/libqalculate/data/functions.xml.in.h:677
 msgid "oct"
 msgstr "okt"
 
-#: src/libqalculate/data/functions.xml.in.h:672
+#: src/libqalculate/data/functions.xml.in.h:678
 msgid "parallelogram"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:673
+#: src/libqalculate/data/functions.xml.in.h:679
 msgid "parallelogram_perimeter"
 msgstr "parallelogramomkrets"
 
-#: src/libqalculate/data/functions.xml.in.h:674
+#: src/libqalculate/data/functions.xml.in.h:680
 msgid "pareto"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:675
+#: src/libqalculate/data/functions.xml.in.h:681
 msgid "pearson"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:676
+#: src/libqalculate/data/functions.xml.in.h:682
 msgid "percentile"
 msgstr "percentil"
 
-#: src/libqalculate/data/functions.xml.in.h:677
+#: src/libqalculate/data/functions.xml.in.h:683
 msgid "perm"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:678
+#: src/libqalculate/data/functions.xml.in.h:684
 msgid "permanent"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:679
+#: src/libqalculate/data/functions.xml.in.h:685
 msgid "pmt"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:680
+#: src/libqalculate/data/functions.xml.in.h:686
 msgid "poolvar"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:681
+#: src/libqalculate/data/functions.xml.in.h:687
 msgid "pow"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:682
+#: src/libqalculate/data/functions.xml.in.h:688
 msgid "ppmt"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:683
+#: src/libqalculate/data/functions.xml.in.h:689
 msgid "pricedisc"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:684
+#: src/libqalculate/data/functions.xml.in.h:690
 msgid "pricemat"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:685
+#: src/libqalculate/data/functions.xml.in.h:691
 msgid "process"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:686
+#: src/libqalculate/data/functions.xml.in.h:692
 msgid "processm"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:687
+#: src/libqalculate/data/functions.xml.in.h:693
 msgid "product"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:688
+#: src/libqalculate/data/functions.xml.in.h:694
 msgid "psurplus"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:689
+#: src/libqalculate/data/functions.xml.in.h:695
 msgid "pttest"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:690
+#: src/libqalculate/data/functions.xml.in.h:696
 msgid "pv"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:691
+#: src/libqalculate/data/functions.xml.in.h:697
 msgid "pyramid"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:692
+#: src/libqalculate/data/functions.xml.in.h:698
 msgid "quartile"
 msgstr "kvartil"
 
-#: src/libqalculate/data/functions.xml.in.h:693
+#: src/libqalculate/data/functions.xml.in.h:699
 msgid "radtodef"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:694
+#: src/libqalculate/data/functions.xml.in.h:700
 msgid "raise"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:695
+#: src/libqalculate/data/functions.xml.in.h:701
 msgid "rand"
 msgstr "slumptal"
 
-#: src/libqalculate/data/functions.xml.in.h:696
+#: src/libqalculate/data/functions.xml.in.h:702
 msgid "randbetween"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:697
+#: src/libqalculate/data/functions.xml.in.h:703
 msgid "range"
 msgstr "omfång"
 
-#: src/libqalculate/data/functions.xml.in.h:698
+#: src/libqalculate/data/functions.xml.in.h:704
 msgid "rank"
 msgstr "rangordna"
 
-#: src/libqalculate/data/functions.xml.in.h:699
+#: src/libqalculate/data/functions.xml.in.h:705
 msgid "rayleigh"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:700
+#: src/libqalculate/data/functions.xml.in.h:706
 msgid "rayleightail"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:701
+#: src/libqalculate/data/functions.xml.in.h:707
 msgid "re"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:702
+#: src/libqalculate/data/functions.xml.in.h:708
 msgid "received"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:703
+#: src/libqalculate/data/functions.xml.in.h:709
 msgid "rect"
 msgstr "rektangel"
 
-#: src/libqalculate/data/functions.xml.in.h:704
+#: src/libqalculate/data/functions.xml.in.h:710
 msgid "rect_perimeter"
 msgstr "rektangelomkrets"
 
-#: src/libqalculate/data/functions.xml.in.h:705
+#: src/libqalculate/data/functions.xml.in.h:711
 msgid "rectprism"
 msgstr "rektangelprism"
 
-#: src/libqalculate/data/functions.xml.in.h:706
+#: src/libqalculate/data/functions.xml.in.h:712
 msgid "rectprism_sa"
 msgstr "rektangelprismyta"
 
-#: src/libqalculate/data/functions.xml.in.h:707
+#: src/libqalculate/data/functions.xml.in.h:713
 msgid "rem"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:708
+#: src/libqalculate/data/functions.xml.in.h:714
 msgid "replace"
 msgstr "ersätt"
 
-#: src/libqalculate/data/functions.xml.in.h:709
+#: src/libqalculate/data/functions.xml.in.h:715
 msgid "rms"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:710
+#: src/libqalculate/data/functions.xml.in.h:716
 msgid "roman"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:711
+#: src/libqalculate/data/functions.xml.in.h:717
 msgid "root"
 msgstr "rot"
 
-#: src/libqalculate/data/functions.xml.in.h:712
+#: src/libqalculate/data/functions.xml.in.h:718
 msgid "round"
 msgstr "avrunda"
 
-#: src/libqalculate/data/functions.xml.in.h:713
+#: src/libqalculate/data/functions.xml.in.h:719
 msgid "row"
 msgstr "rad"
 
-#: src/libqalculate/data/functions.xml.in.h:714
+#: src/libqalculate/data/functions.xml.in.h:720
 msgid "rows"
 msgstr "rader"
 
-#: src/libqalculate/data/functions.xml.in.h:715
+#: src/libqalculate/data/functions.xml.in.h:721
 msgid "save"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:716
+#: src/libqalculate/data/functions.xml.in.h:722
 msgid "sec"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:717
+#: src/libqalculate/data/functions.xml.in.h:723
 msgid "sech"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:718
+#: src/libqalculate/data/functions.xml.in.h:724
 msgid "select"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:719
+#: src/libqalculate/data/functions.xml.in.h:725
 msgid "sgn"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:720
+#: src/libqalculate/data/functions.xml.in.h:726
 msgid "sin"
 msgstr "sin"
 
-#: src/libqalculate/data/functions.xml.in.h:721
+#: src/libqalculate/data/functions.xml.in.h:727
 msgid "sinh"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:722
+#: src/libqalculate/data/functions.xml.in.h:728
 msgid "sln"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:723
+#: src/libqalculate/data/functions.xml.in.h:729
 msgid "solve"
 msgstr "lös"
 
-#: src/libqalculate/data/functions.xml.in.h:724
+#: src/libqalculate/data/functions.xml.in.h:730
 msgid "solve2"
 msgstr "lös2"
 
-#: src/libqalculate/data/functions.xml.in.h:725
+#: src/libqalculate/data/functions.xml.in.h:731
 msgid "sort"
 msgstr "sortera"
 
-#: src/libqalculate/data/functions.xml.in.h:726
+#: src/libqalculate/data/functions.xml.in.h:732
 msgid "spearman"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:727
+#: src/libqalculate/data/functions.xml.in.h:733
 msgid "sphere"
 msgstr "sfär"
 
-#: src/libqalculate/data/functions.xml.in.h:728
+#: src/libqalculate/data/functions.xml.in.h:734
 msgid "sphere_sa"
 msgstr "sfäryta"
 
-#: src/libqalculate/data/functions.xml.in.h:729
+#: src/libqalculate/data/functions.xml.in.h:735
 msgid "sq"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:730
+#: src/libqalculate/data/functions.xml.in.h:736
 msgid "sqrt"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:731
+#: src/libqalculate/data/functions.xml.in.h:737
 msgid "sqrtpi"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:732
+#: src/libqalculate/data/functions.xml.in.h:738
 msgid "square"
 msgstr "kvadrat"
 
-#: src/libqalculate/data/functions.xml.in.h:733
+#: src/libqalculate/data/functions.xml.in.h:739
 msgid "square_perimeter"
 msgstr "kvadratomkrets"
 
-#: src/libqalculate/data/functions.xml.in.h:734
+#: src/libqalculate/data/functions.xml.in.h:740
 msgid "stderr"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:735
+#: src/libqalculate/data/functions.xml.in.h:741
 msgid "stdev"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:736
+#: src/libqalculate/data/functions.xml.in.h:742
 msgid "stdevp"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:737
+#: src/libqalculate/data/functions.xml.in.h:743
 msgid "subtract"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:738
+#: src/libqalculate/data/functions.xml.in.h:744
 msgid "sum"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:739
+#: src/libqalculate/data/functions.xml.in.h:745
 msgid "superfactorial"
 msgstr "superfakultet"
 
-#: src/libqalculate/data/functions.xml.in.h:740
+#: src/libqalculate/data/functions.xml.in.h:746
 msgid "syd"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:741
+#: src/libqalculate/data/functions.xml.in.h:747
 msgid "tan"
 msgstr "tan"
 
-#: src/libqalculate/data/functions.xml.in.h:742
+#: src/libqalculate/data/functions.xml.in.h:748
 msgid "tanh"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:743
+#: src/libqalculate/data/functions.xml.in.h:749
 msgid "tbilleq"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:744
+#: src/libqalculate/data/functions.xml.in.h:750
 msgid "tbillprice"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:745
+#: src/libqalculate/data/functions.xml.in.h:751
 msgid "tbillyield"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:746
+#: src/libqalculate/data/functions.xml.in.h:752
 msgid "time"
 msgstr "tid"
 
-#: src/libqalculate/data/functions.xml.in.h:747
+#: src/libqalculate/data/functions.xml.in.h:753
 msgid "title"
 msgstr "titel"
 
-#: src/libqalculate/data/functions.xml.in.h:748
+#: src/libqalculate/data/functions.xml.in.h:754
 msgid "total"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:749
+#: src/libqalculate/data/functions.xml.in.h:755
 msgid "transpose"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:750
+#: src/libqalculate/data/functions.xml.in.h:756
 msgid "trapezoid"
 msgstr "trapetsoid"
 
-#: src/libqalculate/data/functions.xml.in.h:751
+#: src/libqalculate/data/functions.xml.in.h:757
 msgid "triangle"
 msgstr "triangel"
 
-#: src/libqalculate/data/functions.xml.in.h:752
+#: src/libqalculate/data/functions.xml.in.h:758
 msgid "triangle_perimeter"
 msgstr "triangelomkrets"
 
-#: src/libqalculate/data/functions.xml.in.h:753
+#: src/libqalculate/data/functions.xml.in.h:759
 msgid "triangleprism"
 msgstr "triangelprism"
 
-#: src/libqalculate/data/functions.xml.in.h:754
+#: src/libqalculate/data/functions.xml.in.h:760
 msgid "trimmean"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:755
+#: src/libqalculate/data/functions.xml.in.h:761
 msgid "trunc"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:756
+#: src/libqalculate/data/functions.xml.in.h:762
 msgid "ttest"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:757
+#: src/libqalculate/data/functions.xml.in.h:763
 msgid "var"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:758
+#: src/libqalculate/data/functions.xml.in.h:764
 msgid "varp"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:759
+#: src/libqalculate/data/functions.xml.in.h:765
 msgid "vector"
 msgstr "vektor"
 
-#: src/libqalculate/data/functions.xml.in.h:760
+#: src/libqalculate/data/functions.xml.in.h:766
 msgid "warning"
 msgstr "varning"
 
-#: src/libqalculate/data/functions.xml.in.h:761
+#: src/libqalculate/data/functions.xml.in.h:767
 msgid "week"
 msgstr "vecka"
 
-#: src/libqalculate/data/functions.xml.in.h:762
+#: src/libqalculate/data/functions.xml.in.h:768
 msgid "weekday"
 msgstr "veckodag"
 
-#: src/libqalculate/data/functions.xml.in.h:763
+#: src/libqalculate/data/functions.xml.in.h:769
 msgid "weighmean"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:764
+#: src/libqalculate/data/functions.xml.in.h:770
 msgid "winsormean"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:765
+#: src/libqalculate/data/functions.xml.in.h:771
 msgid "x1"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:766
+#: src/libqalculate/data/functions.xml.in.h:772
 msgid "x2"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:767
+#: src/libqalculate/data/functions.xml.in.h:773
 msgid "y1"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:768
+#: src/libqalculate/data/functions.xml.in.h:774
 msgid "y2"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:770
+#: src/libqalculate/data/functions.xml.in.h:776
 msgid "yearday"
 msgstr "årsdag"
 
-#: src/libqalculate/data/functions.xml.in.h:771
+#: src/libqalculate/data/functions.xml.in.h:777
 msgid "yearfrac"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:772
+#: src/libqalculate/data/functions.xml.in.h:778
 msgid "zero_coupon"
 msgstr ""
 
-#: src/libqalculate/data/functions.xml.in.h:773
+#: src/libqalculate/data/functions.xml.in.h:779
 msgid "zeta"
 msgstr ""
 

@@ -190,7 +190,9 @@ Calculator::Calculator() {
 	addStringAlternative(SIGN_DIVISION, DIVISION);	
 	addStringAlternative(SIGN_DIVISION_SLASH, DIVISION);	
 	addStringAlternative(SIGN_MULTIPLICATION, MULTIPLICATION);		
-	addStringAlternative(SIGN_MULTIDOT, MULTIPLICATION);			
+	addStringAlternative(SIGN_MULTIDOT, MULTIPLICATION);
+	addStringAlternative(SIGN_MULTIBULLET, MULTIPLICATION);
+	addStringAlternative(SIGN_SMALLCIRCLE, MULTIPLICATION);
 	addStringAlternative(SIGN_MINUS, MINUS);		
 	addStringAlternative(SIGN_PLUS, PLUS);
 	addStringAlternative(SIGN_NOT_EQUAL, " " NOT EQUALS);		

@@ -24,6 +24,7 @@
 #include "main.h"
 
 
+bool can_display_unicode_string_function(const char *str, void *w);
 void set_unicode_buttons();
 
 void update_status_text();
