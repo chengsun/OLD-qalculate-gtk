@@ -88,18 +88,9 @@ EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 		if(s == MINUS_CH) {
 			str.insert(0, 1, MINUS_CH);
 		}
-		Fraction *fr = new Fraction();
-		if(fr->set(str)) {
-			mngr->set(fr);
-			return;
-/*		if(str.find(DOT_CH) == string::npos) {
-			mngr->set(new Fraction(str));
-			return;
-		}*/
-		} else {
-			delete fr;
-			value = strtold(str.c_str(), NULL);
-		}
+		Fraction fr(str);
+		mngr->set(&fr);
+		return;
 	}
 	if((itmp = str.find_first_not_of(NUMBERS MINUS DOT, 0)) != (int) string::npos) {
 		string stmp = str.substr(itmp, str.length() - itmp);

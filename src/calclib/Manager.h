@@ -17,8 +17,7 @@ class Manager;
 #define MULTIPLICATION_MANAGER	MULTIPLICATION_CH
 #define ADDITION_MANAGER	PLUS_CH
 #define POWER_MANAGER		POWER_CH
-#define VALUE_MANAGER		'v'
-#define FRACTION_MANAGER	'V'
+#define FRACTION_MANAGER	'v'
 #define UNIT_MANAGER		'u'
 #define NULL_MANAGER		0
 #define STRING_MANAGER		's'
@@ -35,13 +34,13 @@ class Manager {
 	public:
 	
 		Unit* o_unit;
-		long double d_value;
 		vector<Manager*> mngrs;
 		char c_type;
 		int refcount;
 		string s_var;
 		Function *o_function;
 		Fraction *fr;
+		bool b_exact;
 		
 		void transform(Manager *mngr, char type_, MathOperation op, bool reverse_ = false);		
 		void plusclean();		
@@ -50,28 +49,31 @@ class Manager {
 		bool reverseadd(Manager *mngr, MathOperation op, bool translate_ = true);
 		bool compatible(Manager *mngr);
 		void moveto(Manager *mngr);			
+		void init();
+		void push_back(Manager *mngr);
 		
 		Manager(void);
 		Manager(long double value_);		
-		Manager(long long int numerator_, long long int denominator_, long long int fraction_exp_ = 0);		
+		Manager(long int numerator_, long int denominator_, long int fraction_exp_ = 0);		
 		Manager(string var_);	
 		Manager(Function *f, ...);							
-		Manager(Unit *u, long long int exp10 = 0);				
+		Manager(Unit *u, long int exp10 = 0);				
 		Manager(const Manager *mngr);	
-		Manager(Fraction *fraction_);			
+		Manager(const Fraction *fraction_);			
 		~Manager(void);
+		void setNull();
 		void set(const Manager *mngr);
 		void set(Function *f, ...);		
-		void set(Fraction *fraction_);				
+		void set(const Fraction *fraction_);				
 		void set(long double value_);		
-		void set(long long int numerator_, long long int denominator_, long long int fraction_exp_ = 0);		
+		void set(long int numerator_, long int denominator_, long int fraction_exp_ = 0);		
 		void set(string var_);				
-		void set(Unit *u, long long int exp10 = 0);				
+		void set(Unit *u, long int exp10 = 0);				
 		void addFunctionArg(Manager *mngr);
 		bool add(Manager *mngr, MathOperation op = MULTIPLY, bool translate_ = true);	
 		void addUnit(Unit *u, MathOperation op = MULTIPLY);		
 		void addFloat(long double value_, MathOperation op = MULTIPLY);			
-		void addInteger(long long int value_, MathOperation op = MULTIPLY);					
+		void addInteger(long int value_, MathOperation op = MULTIPLY);					
 		int compare(Manager *mngr);
 		void sort(void);					
 		void clear(void);
@@ -80,10 +82,14 @@ class Manager {
 		void value(long double value_);				
 		Fraction *fraction() const;
 		bool isNumber();
-		bool isNonNullNumber();
+		bool isFraction();		
+		bool isNull();		
+		bool isZero();				
 		bool isOne();
+		bool isPrecise() const;
+		void setPrecise(bool is_precise);
 		Unit *unit(void);
-		void unit(Unit *u, long long int value_ = 1);		
+		void unit(Unit *u, long int value_ = 1);		
 		bool negative();
 		void finalize();
 		void clean();

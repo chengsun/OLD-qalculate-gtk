@@ -87,14 +87,14 @@ int main (int argc, char **argv) {
 	vans = CALCULATOR->getVariable(_("ans"));
 	vAns = CALCULATOR->getVariable(_("Ans"));
 	if(!vans) {
-		vans = CALCULATOR->addVariable(new Variable(_("Utility"), _("ans"), 0.0, _("Answer"), false));
+		vans = CALCULATOR->addVariable(new Variable(_("Utility"), _("ans"), mngr, _("Answer"), false));
 	} else {
-		vans->setValue(0);
+		vans->set(mngr);
 	}
 	if(!vAns) {
-		vAns = CALCULATOR->addVariable(new Variable(_("Utility"), _("Ans"), 0.0, _("Answer"), false));
+		vAns = CALCULATOR->addVariable(new Variable(_("Utility"), _("Ans"), mngr, _("Answer"), false));
 	} else {
-		vAns->setValue(0);
+		vAns->set(mngr);
 	}	
 
 	//reset

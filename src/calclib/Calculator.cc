@@ -14,6 +14,34 @@
 #include <fenv.h>
 #include <locale.h>
 
+#define FIRST_READ_TAB_DELIMITED_SET_0(str)	if((i = stmp.find_first_not_of("\t\n", i)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) { \
+							str = stmp.substr(i, i2 - i); \
+							if(str == "0") { \
+								str = ""; \
+							}
+
+#define FIRST_READ_TAB_DELIMITED(str)			if((i = stmp.find_first_not_of("\t\n", i)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) { \
+							str = stmp.substr(i, i2 - i);
+
+#define READ_TAB_DELIMITED_SET_0(str)		if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) { \
+							str = stmp.substr(i, i2 - i); \
+							if(str == "0") { \
+								str = ""; \
+							}
+
+#define READ_TAB_DELIMITED(str)			if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) { \
+							str = stmp.substr(i, i2 - i);
+						
+#define READ_TAB_DELIMITED_SET_BOOL(b)		if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) { \
+							if(stmp.substr(i, i2 - i) == "1") { \
+								b = true; \
+							} else { \
+								b = false; \
+							}
+
+#define TEST_TAB_DELIMITED			if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
+
+
  char * ID_WRAP_LEFT_STR;
  char * ID_WRAP_RIGHT_STR;
  char * ID_WRAP_S;
@@ -145,7 +173,6 @@ Calculator::Calculator() {
 	sprintf(ILLEGAL_IN_UNITNAMES, "%s%s", ILLEGAL_IN_NAMES, NUMBERS_S);			
 
 	calculator = this;
-	
 	srand48(time(0));
 	angleMode(RADIANS);
 	addBuiltinVariables();
@@ -518,8 +545,12 @@ void Calculator::reset() {
 	resetUnits();
 }
 void Calculator::addBuiltinVariables() {
-	addVariable(new Variable("Constants", "pi", PI_VALUE, "Pi", false, true));
-	addVariable(new Variable("Constants", "e", E_VALUE, "Natural Logarithmic Base", false, true));
+	Variable *v = new Variable("Constants", "pi", PI_VALUE, "Pi", false, true);
+	v->get()->setPrecise(false);
+	addVariable(v);
+	v = new Variable("Constants", "e", E_VALUE, "Natural Logarithmic Base", false, true);
+	v->get()->setPrecise(false);
+	addVariable(v);
 }
 void Calculator::addBuiltinFunctions() {
 	addFunction(new IFFunction());
@@ -1845,22 +1876,17 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 			if((i = stmp.find_first_of("\t")) != string::npos) {
 				str = stmp.substr(0, i);
 				if(str == "*Variable") {
-					if((i = stmp.find_first_not_of("\t\n", i)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-						ctmp = stmp.substr(i, i2 - i);
-						if(ctmp == "0")
-							ctmp = "";
-						if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-							ntmp = stmp.substr(i, i2 - i);
-							if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-								vtmp = stmp.substr(i, i2 - i);
+					FIRST_READ_TAB_DELIMITED_SET_0(ctmp)
+						READ_TAB_DELIMITED(ntmp)
+							READ_TAB_DELIMITED(vtmp)
 								ttmp = "";
-								if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-									ttmp = stmp.substr(i, i2 - i);
-									if(ttmp == "0")
-										ttmp = "";
+								READ_TAB_DELIMITED_SET_0(ttmp)
 								}
 								if(variableNameIsValid(ntmp)) {
 									mngr = calculate(vtmp);
+									READ_TAB_DELIMITED_SET_BOOL(b)
+										mngr->setPrecise(b);	
+									}
 									addVariable(new Variable(ctmp, ntmp, mngr, ttmp, is_user_defs));
 									mngr->unref();
 								}
@@ -1868,22 +1894,17 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 						}
 					}
 				} else if(str == "*BuiltinVariable") {
-					if((i = stmp.find_first_not_of("\t\n", i)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-						ntmp = stmp.substr(i, i2 - i);
+					FIRST_READ_TAB_DELIMITED(ntmp)
 						v = getVariable(ntmp);
-						if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-							ctmp = stmp.substr(i, i2 - i);
-							if(ctmp == "0")
-								ctmp = "";
-							if(v)
+						READ_TAB_DELIMITED_SET_0(ctmp)
+							if(v) {
 								v->setCategory(ctmp);
+							}
 							ttmp = "";
-							if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-								ttmp = stmp.substr(i, i2 - i);
-								if(ttmp == "0")
-									ttmp = "";
-								if(v)
+							READ_TAB_DELIMITED_SET_0(ttmp)
+								if(v) {
 									v->setTitle(ttmp);
+								}
 							}
 						}
 						if(v) {
@@ -1892,73 +1913,59 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 						}
 					}
 				} else if(str == "*Function") {
-					if((i = stmp.find_first_not_of("\t\n", i)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-						ctmp = stmp.substr(i, i2 - i);
-						if(ctmp == "0")
-							ctmp = "";
-						if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-							ntmp = stmp.substr(i, i2 - i);
-							if(functionNameIsValid(ntmp) && ((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos)) {
-								vtmp = stmp.substr(i, i2 - i);
-								func = addFunction(new UserFunction(ctmp, ntmp, vtmp, is_user_defs));
-								if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-									shtmp = stmp.substr(i, i2 - i);
-									if(shtmp == "0")
-										shtmp = "";
-									func->setTitle(shtmp);
-									if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-										shtmp = stmp.substr(i, i2 - i);
-										gsub("\\", "\n", shtmp);
-										if(shtmp == "0")
-											shtmp = "";
-										func->setDescription(shtmp);
-										while(1) {
-											if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-												func->addArgName(stmp.substr(i, i2 - i));
-											} else {
-												break;
+					FIRST_READ_TAB_DELIMITED_SET_0(ctmp)
+						READ_TAB_DELIMITED(ntmp)
+							if(functionNameIsValid(ntmp)) {
+								TEST_TAB_DELIMITED
+									vtmp = stmp.substr(i, i2 - i);
+									func = addFunction(new UserFunction(ctmp, ntmp, vtmp, is_user_defs));
+									READ_TAB_DELIMITED_SET_0(shtmp)
+										func->setTitle(shtmp);
+										READ_TAB_DELIMITED_SET_0(shtmp)
+											gsub("\\", "\n", shtmp);
+											func->setDescription(shtmp);
+											while(1) {
+												TEST_TAB_DELIMITED
+													func->addArgName(stmp.substr(i, i2 - i));
+												} else {
+													break;
+												}
 											}
 										}
 									}
+									func->setChanged(false);
 								}
-								func->setChanged(false);
 							}
 						}
 					}
 				} else if(str == "*BuiltinFunction") {
-					if((i = stmp.find_first_not_of("\t\n", i)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-						ntmp = stmp.substr(i, i2 - i);
+					FIRST_READ_TAB_DELIMITED(ntmp)
 						func = getFunction(ntmp);
-						if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-							ctmp = stmp.substr(i, i2 - i);
-							if(ctmp == "0")
-								ctmp = "";
-							if(func)
+						READ_TAB_DELIMITED_SET_0(ctmp)
+							if(func) {
 								func->setCategory(ctmp);
-							if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-								shtmp = stmp.substr(i, i2 - i);
-								if(shtmp == "0")
-									shtmp = "";
-								if(func)
+							}
+							READ_TAB_DELIMITED_SET_0(shtmp)								
+								if(func) {
 									func->setTitle(shtmp);
-								if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-									shtmp = stmp.substr(i, i2 - i);
+								}
+								READ_TAB_DELIMITED_SET_0(shtmp)
 									gsub("\\", "\n", shtmp);
-									if(shtmp == "0")
-										shtmp = "";
-									if(func)
+									if(func) {
 										func->setDescription(shtmp);
+									}
 									b = true;										
-									while(1) {
-										if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
+									while(true) {
+										TEST_TAB_DELIMITED
 											if(func && b) {
 												func->clearArgNames();
 												b = false;
 											}
-											if(func)
+											if(func) {
 												func->addArgName(stmp.substr(i, i2 - i));
-											else
+											} else {
 												break;
+											}
 										} else {
 											break;
 										}
@@ -1972,25 +1979,14 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 						}
 					}
 				} else if(str == "*Unit") {
-					if((i = stmp.find_first_not_of("\t\n", i)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-						ctmp = stmp.substr(i, i2 - i);
-						if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-							ntmp = stmp.substr(i, i2 - i);
+					FIRST_READ_TAB_DELIMITED_SET_0(ctmp)
+						READ_TAB_DELIMITED(ntmp)
 							shtmp = "";
 							ttmp = "";
 							etmp = "";
-							if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-								etmp = stmp.substr(i, i2 - i);
-								if(etmp == "0")
-									etmp = "";
-								if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-									shtmp = stmp.substr(i, i2 - i);
-									if(shtmp == "0")
-										shtmp = "";
-									if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-										ttmp = stmp.substr(i, i2 - i);
-										if(ttmp == "0")
-											ttmp = "";
+							READ_TAB_DELIMITED_SET_0(etmp)
+								READ_TAB_DELIMITED_SET_0(shtmp)
+									READ_TAB_DELIMITED_SET_0(ttmp)
 									}
 								}
 							}
@@ -1999,25 +1995,17 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 						}
 					}
 				} else if(str == "*CompositeUnit") {
-					if((i = stmp.find_first_not_of("\t\n", i)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-						ctmp = stmp.substr(i, i2 - i);
-						if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-							ntmp = stmp.substr(i, i2 - i);
+					FIRST_READ_TAB_DELIMITED_SET_0(ctmp)
+						READ_TAB_DELIMITED(ntmp)
 							ttmp = "";
-							if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-								ttmp = stmp.substr(i, i2 - i);
-								if(ttmp == "0")
-									ttmp = "";
+							READ_TAB_DELIMITED_SET_0(ttmp)
 								CompositeUnit* cu = NULL;
 								i3 = 0;
 								if(unitNameIsValid(ntmp)) {
 									while(1) {
-										if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-											vtmp = stmp.substr(i, i2 - i);
-											if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-												cutmp = stmp.substr(i, i2 - i);
-												if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-													rtmp = stmp.substr(i, i2 - i);
+										READ_TAB_DELIMITED(vtmp)
+											READ_TAB_DELIMITED(cutmp)
+												READ_TAB_DELIMITED(rtmp)
 													long int li_prefix = s2li(rtmp);
 													if(li_prefix == 0) {
 														p = NULL;
@@ -2066,27 +2054,15 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 						}
 					}
 				} else if(str == "*AliasUnit") {
-					if((i = stmp.find_first_not_of("\t\n", i)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-						ctmp = stmp.substr(i, i2 - i);
-						if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-							ntmp = stmp.substr(i, i2 - i);
+					FIRST_READ_TAB_DELIMITED_SET_0(ctmp)
+						READ_TAB_DELIMITED(ntmp)
 							shtmp = "";
 							ttmp = "";
 							etmp = "";
-							if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-								etmp = stmp.substr(i, i2 - i);
-								if(etmp == "0")
-									etmp = "";
-								if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-									shtmp = stmp.substr(i, i2 - i);
-									if(shtmp == "0")
-										shtmp = "";
-									if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-										ttmp = stmp.substr(i, i2 - i);
-										if(ttmp == "0")
-											ttmp = "";
-										if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-											vtmp = stmp.substr(i, i2 - i);
+							READ_TAB_DELIMITED_SET_0(etmp)
+								READ_TAB_DELIMITED_SET_0(shtmp)
+									READ_TAB_DELIMITED_SET_0(ttmp)
+										READ_TAB_DELIMITED(vtmp)
 											u = getUnit(vtmp);
 											if(!u) {
 												u = getCompositeUnit(vtmp);
@@ -2096,11 +2072,11 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 											}
 											if(u && (unitNameIsValid(ntmp) && unitNameIsValid(etmp) && unitNameIsValid(shtmp))) {
 												au = new AliasUnit(ctmp, ntmp, etmp, shtmp, ttmp, u);
-												if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
+												TEST_TAB_DELIMITED
 													au->setExpression(stmp.substr(i, i2 - i));
-													if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
+													TEST_TAB_DELIMITED
 														au->setExponent(s2li(stmp.substr(i, i2 - i)));
-														if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
+														TEST_TAB_DELIMITED
 															au->setReverseExpression(stmp.substr(i, i2 - i));
 														}
 													}
@@ -2117,22 +2093,10 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 						}
 					}
 				} else if(str == "*Prefix") {
-					if((i = stmp.find_first_not_of("\t\n", i)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-						ntmp = stmp.substr(i, i2 - i);
-						if(ntmp == "0") {
-							ntmp = "";
-						}						
-						if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-							shtmp = stmp.substr(i, i2 - i);
-							if(shtmp == "0") {
-								shtmp = "";
-							}
-							if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
-								vtmp = stmp.substr(i, i2 - i);
-								//mngr = calculate(vtmp);
+					FIRST_READ_TAB_DELIMITED_SET_0(ntmp)
+						READ_TAB_DELIMITED_SET_0(shtmp)
+							READ_TAB_DELIMITED(vtmp)
 								addPrefix(new Prefix(s2li(vtmp.c_str()), ntmp, shtmp));						
-								//addPrefix(ntmp, mngr->value());
-								//mngr->unref();
 							}
 						}
 					}

@@ -53,19 +53,21 @@ typedef enum {
 #define DEGREES		2
 #define GRADIANS	3
 
-#define SIGN_POWER_0		"°"
-#define SIGN_POWER_1		"¹"
-#define SIGN_POWER_2		"²"
-#define SIGN_POWER_3		"³"
-#define SIGN_EURO		"€"
-#define SIGN_MICRO		"µ"
-#define SIGN_PI			"π"
-#define SIGN_MULTIPLICATION	"×"
-#define SIGN_MULTIDOT		"⋅"
-#define SIGN_DIVISION		"∕"
-#define SIGN_MINUS		"−"
-#define SIGN_PLUS		"＋"
-#define SIGN_SQRT		"√"
+#define SIGN_POWER_0			"°"
+#define SIGN_POWER_1			"¹"
+#define SIGN_POWER_2			"²"
+#define SIGN_POWER_3			"³"
+#define SIGN_EURO			"€"
+#define SIGN_MICRO			"µ"
+#define SIGN_PI				"π"
+#define SIGN_MULTIPLICATION		"×"
+#define SIGN_MULTIDOT			"⋅"
+#define SIGN_DIVISION			"∕"
+#define SIGN_MINUS			"−"
+#define SIGN_PLUS			"＋"
+#define SIGN_SQRT			"√"
+#define SIGN_ALMOST_EQUAL		"≈"
+#define SIGN_APPROXIMATELY_EQUAL	"≅"
 
 #define ID_WRAP_LEFT_CH		'{'
 #define ID_WRAP_RIGHT_CH	'}'

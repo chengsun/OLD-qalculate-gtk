@@ -54,6 +54,7 @@ GtkTreeSelection *selection;
 
 GtkWidget *expression;
 GtkWidget *result;
+GtkWidget *label_equals;
 GtkWidget *f_menu ,*v_menu, *u_menu, *u_menu2;
 GtkAccelGroup *accel_group;
 
@@ -70,6 +71,7 @@ create_main_window (void)
 
 	expression = glade_xml_get_widget (glade_xml, "expression");
 	result = glade_xml_get_widget (glade_xml, "result");
+	label_equals = glade_xml_get_widget (glade_xml, "label_equals");	
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (glade_xml, "history"))), "red_foreground", "foreground", "red", NULL);
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (glade_xml, "history"))), "blue_foreground", "foreground", "blue", NULL);
 

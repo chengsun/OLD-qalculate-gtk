@@ -11,6 +11,7 @@ libcalculate_la_SOURCES = \
 	EqItem.cc	EqItem.h \
 	Error.cc	Error.h \
 	Fraction.cc	Fraction.h \
+	Integer.cc	Integer.h \
 	Manager.cc	Manager.h \
 	Prefix.cc	Prefix.h \
 	util.cc		util.h \

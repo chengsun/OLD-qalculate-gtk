@@ -1,3 +1,9 @@
+2003-08-30  Niklas Knutsson  <nq@altern.org>
+
+	* Show if result is exact or not
+	* Arbitrary precision
+	* Move from long double to Fraction
+
 2003-08-24  Niklas Knutsson  <nq@altern.org>
 
 	* Decimal string to fraction

@@ -29,6 +29,7 @@ extern GladeXML *glade_xml;
 
 extern GtkWidget *expression;
 extern GtkWidget *result;
+extern GtkWidget *label_equals;
 extern GtkWidget *f_menu, *v_menu, *u_menu, *u_menu2;
 extern Variable *vans, *vAns;
 extern GtkWidget *tFunctions, *tFunctionCategories;
@@ -1389,11 +1390,26 @@ void setResult(const gchar *expr, Prefix *prefix = NULL) {
 	vAns->set(mngr);
 
 	str2 = get_value_string(mngr, true, prefix);
+	
 	bool useable = true;
 	gtk_label_set_selectable(GTK_LABEL(result), useable);
 	gtk_widget_set_size_request(result, -1, -1);	
+//	pango_parse_markup(str2.c_str(), -1, 0, NULL, NULL, NULL, NULL);
+	if(str2.length() > 150) {
+		show_message("The result is too large to resonably fit the window.", glade_xml_get_widget (glade_xml, "main_window"));
+		str2 = "does not fit window";
+	}
 	gtk_label_set_text(GTK_LABEL(result), str2.c_str());
 	gtk_label_set_use_markup(GTK_LABEL(result), TRUE);
+	str2 = "<big>";
+	if(mngr->isPrecise()) {
+		str2 += "=";
+	} else {
+		str2 += SIGN_ALMOST_EQUAL;	
+	}
+	str2 += "</big>";
+	gtk_label_set_text(GTK_LABEL(label_equals), str2.c_str());
+	gtk_label_set_use_markup(GTK_LABEL(label_equals), TRUE);
 
 	//mark the whole expression
 	gtk_editable_select_region(GTK_EDITABLE(expression), 0, -1);
@@ -1401,7 +1417,10 @@ void setResult(const gchar *expr, Prefix *prefix = NULL) {
 	tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (glade_xml, "history")));
 	gtk_text_buffer_get_start_iter(tb, &iter);
 	gtk_text_buffer_insert(tb, &iter, str.c_str(), -1);
-	gtk_text_buffer_insert(tb, &iter, " = ", -1);
+	gtk_text_buffer_insert(tb, &iter, " ", -1);
+	if(mngr->isPrecise()) gtk_text_buffer_insert(tb, &iter, "=", -1);	
+	else gtk_text_buffer_insert(tb, &iter, SIGN_ALMOST_EQUAL, -1);		
+	gtk_text_buffer_insert(tb, &iter, " ", -1);	
 	gtk_text_buffer_insert(tb, &iter, get_value_string(mngr, false, prefix).c_str(), -1);
 	gtk_text_buffer_insert(tb, &iter, "\n", -1);
 	gtk_text_buffer_place_cursor(tb, &iter);
@@ -3020,6 +3039,7 @@ void on_expression_changed(GtkEditable *w, gpointer user_data) {
 	if(strlen(gtk_label_get_label(GTK_LABEL(result))) < 1) return;
 	gtk_widget_set_size_request(result, -1, result->allocation.height);	
 	gtk_label_set_text(GTK_LABEL(result), "");
+	gtk_label_set_text(GTK_LABEL(label_equals), "");	
 }
 
 /*
