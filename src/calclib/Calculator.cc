@@ -76,8 +76,11 @@ Calculator::Calculator() {
 	addStringAlternative(SIGN_POWER_3, "^3");
 	addStringAlternative(SIGN_EURO, "euro");
 	addStringAlternative(SIGN_MICRO, "micro");
+	addStringAlternative(SIGN_PI, "pi");	
+	addStringAlternative(SIGN_SQRT, "sqrt ");	
 	addStringAlternative(SIGN_DIVISION, DIVISION);	
 	addStringAlternative(SIGN_MULTIPLICATION, MULTIPLICATION);		
+	addStringAlternative(SIGN_MULTIDOT, MULTIPLICATION);			
 	addStringAlternative(SIGN_MINUS, MINUS);		
 	addStringAlternative(SIGN_PLUS, PLUS);		
 	addStringAlternative("[", LEFT_BRACKET);	
@@ -147,6 +150,7 @@ Calculator::Calculator() {
 	b_variables = true;
 	b_units = true;
 	b_unknown = true;
+	b_calcvars = true;
 }
 Calculator::~Calculator(void) {}
 
@@ -315,6 +319,12 @@ bool Calculator::unknownVariablesEnabled(void) {
 }
 void Calculator::setUnknownVariablesEnabled(bool enable) {
 	b_unknown = enable;
+}
+bool Calculator::donotCalculateVariables(void) {
+	return !b_calcvars;
+}
+void Calculator::setDonotCalculateVariables(bool enable) {
+	b_calcvars = !enable;
 }
 bool Calculator::unitsEnabled(void) {
 	return b_units;
@@ -1134,7 +1144,13 @@ void Calculator::setFunctionsAndVariables(string &str) {
 				if((i = str.find(v->name(), i3)) != (int) string::npos) {
 					stmp = LEFT_BRACKET_CH;
 					stmp += ID_WRAP_LEFT_CH;
-					stmp += i2s(addId(v->get()));
+					if(b_calcvars) {
+						stmp += i2s(addId(v->get()));
+					} else {
+						mngr = new Manager(this, v->name());
+						stmp += i2s(addId(mngr));
+						mngr->unref();
+					}
 					stmp += ID_WRAP_RIGHT_CH;
 					stmp += RIGHT_BRACKET_CH;
 					str.replace(i, v->name().length(), stmp);

@@ -42,7 +42,7 @@ extern GtkWidget *tUnits, *tUnitCategories;
 extern GtkListStore *tUnits_store;
 extern GtkTreeStore *tUnitCategories_store;
 extern GtkAccelGroup *accel_group;
-GtkWidget *u_enable_item, *f_enable_item, *v_enable_item, *uv_enable_item;
+GtkWidget *u_enable_item, *f_enable_item, *v_enable_item, *uv_enable_item, *v_calcvar_item;
 extern GtkWidget *functions_window;
 extern string selected_function_category;
 extern string selected_function;
@@ -55,7 +55,7 @@ extern Unit *selected_unit;
 extern Unit *selected_to_unit;
 int saved_deci_mode, saved_decimals, saved_precision, saved_display_mode, saved_number_base, saved_angle_unit;
 bool use_short_units, use_unicode_signs;
-bool saved_functions_enabled, saved_variables_enabled, saved_unknownvariables_enabled, saved_units_enabled;
+bool saved_functions_enabled, saved_variables_enabled, saved_unknownvariables_enabled, saved_units_enabled, saved_donot_calcvars;
 bool save_mode_on_exit;
 bool save_defs_on_exit;
 bool hyp_is_on, saved_hyp_is_on;
@@ -1272,6 +1272,12 @@ void create_vmenu() {
 		MENU_ITEM(_("Enable variables"), set_variables_enabled)
 	}
 	v_enable_item = item;
+	if(calc->donotCalculateVariables()) {
+		MENU_ITEM(_("Calculate variables"), set_donot_calcvars)
+	} else {
+		MENU_ITEM(_("Do not calculate variables"), set_donot_calcvars)
+	}
+	v_calcvar_item = item;	
 	if(calc->unknownVariablesEnabled()) {
 		MENU_ITEM(_("Disable unknown variables"), set_unknownvariables_enabled)
 	} else {
@@ -1428,8 +1434,8 @@ string get_value_string(Manager *mngr_, bool rlabel = false, long double prefix_
 	unitflags = unitflags | UNIT_FORMAT_BEAUTIFY;
 	if(use_short_units) unitflags = unitflags | UNIT_FORMAT_SHORT;
 	else unitflags = unitflags | UNIT_FORMAT_LONG;
+	if(use_unicode_signs) unitflags = unitflags | UNIT_FORMAT_NONASCII;	
 	if(rlabel) {
-		if(use_unicode_signs) unitflags = unitflags | UNIT_FORMAT_NONASCII;
 		unitflags = unitflags | UNIT_FORMAT_TAGS;
 		unitflags = unitflags | UNIT_FORMAT_ALLOW_NOT_USABLE;
 	}
@@ -2417,6 +2423,17 @@ void set_variables_enabled(GtkMenuItem *w, gpointer user_data) {
 	}
 }
 
+void set_donot_calcvars(GtkMenuItem *w, gpointer user_data) {
+	if(calc->donotCalculateVariables()) {
+		gtk_label_set_text(GTK_LABEL(gtk_bin_get_child(GTK_BIN(v_calcvar_item))), _("Do not calculate variables"));
+		calc->setDonotCalculateVariables(false);
+	} else {
+		gtk_label_set_text(GTK_LABEL(gtk_bin_get_child(GTK_BIN(v_calcvar_item))), _("Calculate variables"));
+		calc->setDonotCalculateVariables(true);
+	}
+	execute_expression();
+}
+
 /*
 	unknown variables enabled/disabled from menu
 */
@@ -2578,6 +2595,7 @@ void set_saved_mode() {
 	saved_angle_unit = calc->angleMode();
 	saved_functions_enabled = calc->functionsEnabled();
 	saved_variables_enabled = calc->variablesEnabled();
+	saved_donot_calcvars = calc->donotCalculateVariables();
 	saved_unknownvariables_enabled = calc->unknownVariablesEnabled();
 	saved_units_enabled = calc->unitsEnabled();
 	saved_hyp_is_on = hyp_is_on;
@@ -2646,6 +2664,8 @@ void load_preferences() {
 					calc->setFunctionsEnabled(v);
 				else if(svar == "variables_enabled")
 					calc->setVariablesEnabled(v);
+				else if(svar == "donot_calculate_variables")
+					calc->setDonotCalculateVariables(v);					
 				else if(svar == "unknownvariables_enabled")
 					calc->setUnknownVariablesEnabled(v);
 				else if(svar == "units_enabled")
@@ -2710,6 +2730,7 @@ void save_preferences(bool mode)
 	fprintf(file, "hyp_is_on=%i\n", saved_hyp_is_on);
 	fprintf(file, "functions_enabled=%i\n", saved_functions_enabled);
 	fprintf(file, "variables_enabled=%i\n", saved_variables_enabled);
+	fprintf(file, "donot_calculate_variables=%i\n", saved_donot_calcvars);	
 	fprintf(file, "unknownvariables_enabled=%i\n", saved_unknownvariables_enabled);
 	fprintf(file, "units_enabled=%i\n", saved_units_enabled);
 	fclose(file);
@@ -2797,6 +2818,7 @@ void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpoint
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_sqrt")), "SQRT");	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_dot")), DOT_STR);	
 	}
+	setResult(gtk_label_get_text(GTK_LABEL(result)));
 }
 void on_preferences_checkbutton_save_defs_toggled(GtkToggleButton *w, gpointer user_data) {
 	save_defs_on_exit = gtk_toggle_button_get_active(w);
@@ -3101,18 +3123,23 @@ void on_button_brace_close_clicked(GtkButton *w, gpointer user_data) {
 }
 void on_button_times_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
-	insert_text(MULTIPLICATION_STR);
+	if(use_unicode_signs) insert_text(SIGN_MULTIDOT);
+	else insert_text(MULTIPLICATION_STR);
 }
 void on_button_add_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
-	insert_text(PLUS_STR);
+	if(use_unicode_signs) insert_text(SIGN_PLUS);
+	else insert_text(PLUS_STR);
 }
 void on_button_sub_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
-	insert_text(MINUS_STR);
+	if(use_unicode_signs) insert_text(SIGN_MINUS);
+	else insert_text(MINUS_STR);
 }
 void on_button_divide_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
+//	if(use_unicode_signs) insert_text(SIGN_DIVISION);
+//	else 
 	insert_text(DIVISION_STR);
 }
 void on_button_ans_clicked(GtkButton *w, gpointer user_data) {
@@ -3136,7 +3163,8 @@ void on_button_square_clicked(GtkButton *w, gpointer user_data) {
 	Button clicked -- insert corresponding function
 */
 void on_button_sqrt_clicked(GtkButton *w, gpointer user_data) {
-	insertButtonFunction("sqrt");
+	if(use_unicode_signs) insert_text(SIGN_SQRT);
+	else insertButtonFunction("sqrt");
 }
 void on_button_log_clicked(GtkButton *w, gpointer user_data) {
 	insertButtonFunction("log");
@@ -3782,6 +3810,36 @@ gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointe
 			wrap_expression_selection();
 			break;
 		}						
+	}
+	if(use_unicode_signs) {
+		gint pos = gtk_editable_get_position(GTK_EDITABLE(expression));
+		switch(event->keyval) {
+			case GDK_KP_Divide: {}		
+			case GDK_slash: {
+//				gtk_editable_insert_text(GTK_EDITABLE(expression), " " SIGN_DIVISION " ", strlen(SIGN_DIVISION) + 2, &pos);
+//				gtk_editable_set_position(GTK_EDITABLE(expression), pos);
+//				return TRUE;			
+				break;
+			}					
+			case GDK_KP_Multiply: {}			
+			case GDK_asterisk: {
+				gtk_editable_insert_text(GTK_EDITABLE(expression), SIGN_MULTIDOT, -1, &pos);
+				gtk_editable_set_position(GTK_EDITABLE(expression), pos);
+				return TRUE;			
+			}								
+			case GDK_KP_Add: {}				
+			case GDK_plus: {
+				gtk_editable_insert_text(GTK_EDITABLE(expression), SIGN_PLUS, -1, &pos);
+				gtk_editable_set_position(GTK_EDITABLE(expression), pos);
+				return TRUE;			
+			}			
+			case GDK_KP_Subtract: {}								
+			case GDK_minus: {
+				gtk_editable_insert_text(GTK_EDITABLE(expression), SIGN_MINUS, -1, &pos);
+				gtk_editable_set_position(GTK_EDITABLE(expression), pos);
+				return TRUE;
+			}						
+		}	
 	}
 	return FALSE;
 }

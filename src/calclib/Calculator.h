@@ -33,7 +33,7 @@ class Calculator {
 	int error_id;
 	int ianglemode;
 	char vbuffer[200];
-	bool b_functions, b_variables, b_units, b_unknown;
+	bool b_functions, b_variables, b_units, b_unknown, b_calcvars;
 	vector<void*> ufv;
 	vector<char> ufv_t;	
 	hash_map<int, Manager*> ids;
@@ -69,6 +69,8 @@ class Calculator {
 	void setVariablesEnabled(bool enable);	
 	bool unknownVariablesEnabled(void);
 	void setUnknownVariablesEnabled(bool enable);		
+	bool donotCalculateVariables(void);	
+	void setDonotCalculateVariables(bool enable);			
 	bool unitsEnabled(void);
 	void setUnitsEnabled(bool enable);	
 	int angleMode(void);

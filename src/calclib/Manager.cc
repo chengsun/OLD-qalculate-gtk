@@ -1207,7 +1207,12 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 			else str += o_unit->name();
 		}
 	} else if(c_type == 's') {
-		str += s_var;
+		if(unitflags & UNIT_FORMAT_NONASCII) {
+			if(s_var == "pi") str += SIGN_PI;
+			else str += s_var;
+		} else {
+			str += s_var;
+		}
 		if(plural) *plural = true;
 	} else if(c_type == FUNCTION_MANAGER) {
 		str += o_function->name();
