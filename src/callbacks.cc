@@ -47,7 +47,7 @@ extern GtkWidget *expression;
 extern GtkWidget *result;
 extern GtkWidget *bEXE, *bMenuE, *bMenuR;
 extern GtkWidget *bHistory;
-extern GtkWidget *sep, *f_menu, *v_menu, *u_menu, *u_menu2;
+extern GtkWidget *f_menu, *v_menu, *u_menu, *u_menu2;
 extern Calculator *calc;
 extern GtkWidget *bHyp;
 extern Variable *vans, *vAns;
@@ -1016,14 +1016,12 @@ on_bHistory_clicked                    (GtkButton       *button,
 	if(GTK_WIDGET_VISIBLE(tabs)) {
 		hh = tabs->allocation.height;
 		gtk_widget_hide(tabs);
-		gtk_widget_show(sep);
 		gtk_button_set_label(button, _("More >>"));
 		//the extra widgets increased the window height with 150 pixels, decrease again
 		gtk_window_get_size(GTK_WINDOW(window), &w, &h);
 		gtk_window_resize(GTK_WINDOW(window), w, h - hh);
 	} else {
 		gtk_widget_show(tabs);
-		gtk_widget_hide(sep);
 		gtk_button_set_label(button, _("<< Less"));
 	}
 	focus_keeping_selection();

@@ -158,7 +158,6 @@ GSList *dmode_group = NULL;
 GSList *bmode_group = NULL;
 GtkWidget *arrow1, *arrow2;
 GtkAccelGroup *accel_group;
-GtkWidget *sep;
 
 extern int display_mode, number_base;
 extern bool show_more, show_buttons;
@@ -277,8 +276,6 @@ create_window (void) {
 			GTK_SIGNAL_FUNC(edit_preferences),
 			NULL);
 
-	sub = glade_xml_get_widget (glade_xml, "menu_result");
-
 	gtk_radio_menu_item_set_group(
 			GTK_RADIO_MENU_ITEM(
 				glade_xml_get_widget (glade_xml, "menu_item_decimal")
@@ -327,394 +324,220 @@ create_window (void) {
 	RADIO_MENU_ITEM_WITH_INT_2(glade_xml_get_widget (glade_xml, "menu_item_decimal"), set_number_base, BASE_OCTAL);
 	RADIO_MENU_ITEM_WITH_INT_2(glade_xml_get_widget (glade_xml, "menu_item_hexadecimal"), set_number_base, BASE_DECI);
 
-#ifndef G_DISABLE_ASSERT
-        g_print ("create_window () - doing the ugly stuff\n");
-#endif
+	gtk_radio_menu_item_set_group (
+			GTK_RADIO_MENU_ITEM (
+				glade_xml_get_widget (glade_xml, "menu_item_display_scientific")
+				),
+			gtk_radio_menu_item_get_group (
+				GTK_RADIO_MENU_ITEM (
+					glade_xml_get_widget (glade_xml, "menu_item_display_normal")
+					)
+				)
+			);
+	gtk_radio_menu_item_set_group (
+			GTK_RADIO_MENU_ITEM (
+				glade_xml_get_widget (glade_xml, "menu_item_display_non_scientific")
+				),
+			gtk_radio_menu_item_get_group (
+				GTK_RADIO_MENU_ITEM (
+					glade_xml_get_widget (glade_xml, "menu_item_display_normal")
+					)
+				)
+			);
+	gtk_radio_menu_item_set_group (
+			GTK_RADIO_MENU_ITEM (
+				glade_xml_get_widget (glade_xml, "menu_item_display_prefixes")
+				),
+			gtk_radio_menu_item_get_group (
+				GTK_RADIO_MENU_ITEM (
+					glade_xml_get_widget (glade_xml, "menu_item_display_normal")
+					)
+				)
+			);
 
-	SUBMENU_ITEM("Display mode", glade_xml_get_widget (glade_xml, "menu_result"))
-	RADIO_MENU_ITEM_WITH_INT_1("Normal", dmode_group);
-	dmode_group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
-	if(display_mode == MODE_NORMAL)
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
-	item2 = item;
-	RADIO_MENU_ITEM_WITH_INT_1("Scientific", dmode_group);
-	dmode_group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
-	if(display_mode == MODE_SCIENTIFIC)
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
-	item3 = item;
-	RADIO_MENU_ITEM_WITH_INT_1("Non-scientific", dmode_group);
-	dmode_group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
-	if(display_mode == MODE_DECIMALS)
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
-	item4 = item;
-	RADIO_MENU_ITEM_WITH_INT_1("Use prefixes", dmode_group);
-	dmode_group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
-	if(display_mode == MODE_PREFIXES)
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
-	RADIO_MENU_ITEM_WITH_INT_2(item, set_display_mode, MODE_PREFIXES);
-	RADIO_MENU_ITEM_WITH_INT_2(item2, set_display_mode, MODE_NORMAL);
-	RADIO_MENU_ITEM_WITH_INT_2(item3, set_display_mode, MODE_SCIENTIFIC);
-	RADIO_MENU_ITEM_WITH_INT_2(item4, set_display_mode, MODE_DECIMALS);
+	switch (display_mode)
+	{
+	case MODE_NORMAL:
+		gtk_check_menu_item_set_active(
+				GTK_CHECK_MENU_ITEM(
+					glade_xml_get_widget (glade_xml, "menu_item_display_normal")
+					),
+				TRUE);
+		break;
+	case MODE_SCIENTIFIC:
+		gtk_check_menu_item_set_active(
+				GTK_CHECK_MENU_ITEM(
+					glade_xml_get_widget (glade_xml, "menu_item_display_scientific")
+					),
+				TRUE);
+		break;
+	case MODE_DECIMALS:
+		gtk_check_menu_item_set_active(
+				GTK_CHECK_MENU_ITEM(
+					glade_xml_get_widget (glade_xml, "menu_item_display_non_scientific")
+					),
+				TRUE);
+		break;
+	case MODE_PREFIXES:
+		gtk_check_menu_item_set_active(
+				GTK_CHECK_MENU_ITEM(
+					glade_xml_get_widget (glade_xml, "menu_item_display_prefixes")
+					),
+				TRUE);
+		break;
+	default:
+		g_assert_not_reached ();
+		break;
+	}
+	
+	/* FIXME remove these macros */
+	RADIO_MENU_ITEM_WITH_INT_2(glade_xml_get_widget (glade_xml, "menu_item_display_normal"), set_display_mode, MODE_NORMAL);
+	RADIO_MENU_ITEM_WITH_INT_2(glade_xml_get_widget (glade_xml, "menu_item_display_scientific"), set_display_mode, MODE_SCIENTIFIC);
+	RADIO_MENU_ITEM_WITH_INT_2(glade_xml_get_widget (glade_xml, "menu_item_display_non_scientific"), set_display_mode, MODE_DECIMALS);
+	RADIO_MENU_ITEM_WITH_INT_2(glade_xml_get_widget (glade_xml, "menu_item_display_prefixes"), set_display_mode, MODE_PREFIXES);
 
-	sub = glade_xml_get_widget (glade_xml, "menu_result");
-	MENU_ITEM("Store result...", add_as_variable);
-	MENU_ITEM_SET_ACCEL(GDK_s);
-	MENU_ITEM("Precision...", select_precision);
-	MENU_ITEM("Decimals...", select_decimals);
 
-	vbox1 = gtk_vbox_new (FALSE, 0);
-	gtk_widget_show (vbox1);
-	gtk_container_add (
-			GTK_CONTAINER (
-				glade_xml_get_widget (glade_xml, "main_window")
-			),
-			vbox1);
-	gtk_container_set_border_width (GTK_CONTAINER (vbox1), 5);
-	gtk_box_set_spacing (GTK_BOX (vbox1), 5);
+	g_signal_connect (
+			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_save")),
+			"activate",
+			G_CALLBACK(add_as_variable),
+			NULL);
+	g_signal_connect (
+			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_precision")),
+			"activate",
+			G_CALLBACK(select_precision),
+			NULL);
+	g_signal_connect (
+			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_decimals")),
+			"activate",
+			G_CALLBACK(select_decimals),
+			NULL);
 
-	tableT = gtk_table_new (2, 2, TRUE);
-	gtk_widget_show (tableT);
-	gtk_box_pack_start (GTK_BOX (vbox1), tableT, TRUE, TRUE, 0);
-	gtk_table_set_row_spacings (GTK_TABLE (tableT), 5);
-	gtk_table_set_col_spacings (GTK_TABLE (tableT), 5);
-	gtk_table_set_homogeneous(GTK_TABLE(tableT), FALSE);
+	vbox1 = glade_xml_get_widget (glade_xml, "main_vbox");
+	tableT = glade_xml_get_widget (glade_xml, "top_table");
+	bMenuE = glade_xml_get_widget (glade_xml, "togglebutton_expression");
+	arrow1 = glade_xml_get_widget (glade_xml, "togglebutton_expression_arrow");
+	bMenuR = glade_xml_get_widget (glade_xml, "togglebutton_result");
+	arrow2 = glade_xml_get_widget (glade_xml, "togglebutton_result_arrow");
+	expression = glade_xml_get_widget (glade_xml, "expression");
+	result = glade_xml_get_widget (glade_xml, "result");
 
-	bMenuE = gtk_toggle_button_new();
-	arrow1 = gtk_arrow_new(GTK_ARROW_RIGHT, GTK_SHADOW_IN);
-	gtk_widget_show(arrow1);
-	gtk_container_add(GTK_CONTAINER(bMenuE), arrow1);
-	gtk_widget_show (bMenuE);
-	gtk_table_attach (GTK_TABLE (tableT), bMenuE, 1, 2, 0, 1, GTK_SHRINK, GTK_FILL, 0, 0);
-	bMenuR = gtk_toggle_button_new();
-	arrow2 = gtk_arrow_new(GTK_ARROW_RIGHT, GTK_SHADOW_IN);
-	gtk_widget_show(arrow2);
-	gtk_container_add(GTK_CONTAINER(bMenuR), arrow2) ;
-	gtk_widget_show (bMenuR);
-	gtk_table_attach (GTK_TABLE (tableT), bMenuR, 1, 2, 1, 2, GTK_SHRINK, GTK_FILL, 0, 0);
-
-	expression = gtk_entry_new ();
-	gtk_widget_show (expression);
-	gtk_table_attach_defaults (GTK_TABLE (tableT), expression, 0, 1, 0, 1);
-
-	result = gtk_label_new("<b><big>0</big></b>");
-	gtk_widget_show (result);
-	gtk_table_attach_defaults (GTK_TABLE (tableT), result, 0, 1, 1, 2);
-	gtk_label_set_justify(GTK_LABEL(result), GTK_JUSTIFY_RIGHT);
-	gtk_label_set_selectable(GTK_LABEL(result), TRUE);
-	gtk_label_set_use_markup(GTK_LABEL(result), TRUE);
-	gtk_misc_set_alignment (GTK_MISC (result), 0.98, 0.5);
-
-	sep = gtk_hseparator_new();
-	gtk_widget_show (sep);
-	gtk_box_pack_start (GTK_BOX (vbox1), sep, FALSE, FALSE, 0);
-
-	tabs = gtk_notebook_new ();
+	tabs = glade_xml_get_widget (glade_xml, "notebook");
+	
 	if(show_more)
-		gtk_widget_show(tabs);
-	gtk_box_pack_start (GTK_BOX (vbox1), tabs, TRUE, TRUE, 0);
+	{
+		gtk_widget_show (tabs);
+	}
+	else
+	{
+		gtk_widget_hide (tabs);
+	}
+	
 
-	history_scrolled = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_show (history_scrolled);
-	gtk_container_add (GTK_CONTAINER (tabs), history_scrolled);
-	gtk_container_set_border_width (GTK_CONTAINER (history_scrolled), 5);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (history_scrolled), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (history_scrolled), GTK_SHADOW_IN);
-
-	history = gtk_text_view_new ();
-	gtk_widget_show (history);
-	gtk_container_add (GTK_CONTAINER (history_scrolled), history);
-	gtk_text_view_set_editable (GTK_TEXT_VIEW (history), FALSE);
-	gtk_text_view_set_left_margin (GTK_TEXT_VIEW (history), 5);
-	gtk_text_view_set_right_margin (GTK_TEXT_VIEW (history), 5);
+	history_scrolled = glade_xml_get_widget (glade_xml, "history_page");
+	history = glade_xml_get_widget (glade_xml, "history");
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(history)), "red_foreground", "foreground", "red", NULL);
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(history)), "blue_foreground", "foreground", "blue", NULL);
 
-	tab1label = gtk_label_new (_("History"));
-	gtk_widget_show (tab1label);
-	gtk_notebook_set_tab_label (GTK_NOTEBOOK (tabs), gtk_notebook_get_nth_page (GTK_NOTEBOOK (tabs), 0), tab1label);
-	gtk_label_set_justify (GTK_LABEL (tab1label), GTK_JUSTIFY_LEFT);
+	tab1label = glade_xml_get_widget (glade_xml, "history_label");
+	hbox2 = glade_xml_get_widget (glade_xml, "buttons_page");
+	vbox3 = glade_xml_get_widget (glade_xml, "vbox3");
 
-	hbox2 = gtk_hbox_new (FALSE, 0);
-	gtk_widget_show (hbox2);
-	gtk_container_add (GTK_CONTAINER (tabs), hbox2);
+	/* the function table */
+	table2 = glade_xml_get_widget (glade_xml, "table2");
+	bSQRT	= glade_xml_get_widget (glade_xml, "button_sqrt");
+	bXY	= glade_xml_get_widget (glade_xml, "button_xy");
+	gtk_label_set_use_markup (
+			GTK_LABEL (gtk_bin_get_child (GTK_BIN(bXY))),
+			TRUE);
+	bLog	= glade_xml_get_widget (glade_xml, "button_log");
+	bLn	= glade_xml_get_widget (glade_xml, "button_ln");
+	bSin	= glade_xml_get_widget (glade_xml, "button_sine");
+	bCos	= glade_xml_get_widget (glade_xml, "button_cosine");
+	bTan	= glade_xml_get_widget (glade_xml, "button_tan");
+	bSTO	= glade_xml_get_widget (glade_xml, "button_store");
+	bLeftP	= glade_xml_get_widget (glade_xml, "button_brace_open");
+	bRightP = glade_xml_get_widget (glade_xml, "button_brace_close");
+	bX2	= glade_xml_get_widget (glade_xml, "button_square");
+	gtk_label_set_use_markup (
+			GTK_LABEL (gtk_bin_get_child (GTK_BIN(bX2))),
+			TRUE);
+	bHyp	= glade_xml_get_widget (glade_xml, "button_hyp");
 
-	vbox3 = gtk_vbox_new (FALSE, 0);
-	gtk_widget_show (vbox3);
-	gtk_box_pack_start (GTK_BOX (hbox2), vbox3, TRUE, TRUE, 0);
+	/* the mode selection */
+	hbox3	= glade_xml_get_widget (glade_xml, "hbox3");
 
-	table2 = gtk_table_new (4, 3, TRUE);
-	gtk_widget_show (table2);
-	gtk_box_pack_start (GTK_BOX (vbox3), table2, TRUE, TRUE, 0);
-	gtk_container_set_border_width (GTK_CONTAINER (table2), 10);
+	rDeg	= glade_xml_get_widget (glade_xml, "radiobutton_degrees");
+	rRad	= glade_xml_get_widget (glade_xml, "radiobutton_radians");
+	rGra	= glade_xml_get_widget (glade_xml, "radiobutton_gradians");
 
-	bSQRT = gtk_button_new_with_mnemonic (_("SQRT"));
-	gtk_widget_show (bSQRT);
-	gtk_table_attach (GTK_TABLE (table2), bSQRT, 0, 1, 0, 1,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bXY = gtk_button_new_with_mnemonic (_("x<sup>y</sup>"));
-	gtk_widget_show (bXY);
-	gtk_label_set_use_markup(GTK_LABEL(gtk_bin_get_child(GTK_BIN(bXY))), TRUE);
-	gtk_table_attach (GTK_TABLE (table2), bXY, 1, 2, 0, 1,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bLog = gtk_button_new_with_mnemonic (_("log"));
-	gtk_widget_show (bLog);
-	gtk_table_attach (GTK_TABLE (table2), bLog, 0, 1, 1, 2,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bLn = gtk_button_new_with_mnemonic (_("ln"));
-	gtk_widget_show (bLn);
-	gtk_table_attach (GTK_TABLE (table2), bLn, 1, 2, 1, 2,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bSin = gtk_button_new_with_mnemonic (_("sin"));
-	gtk_widget_show (bSin);
-	gtk_table_attach (GTK_TABLE (table2), bSin, 0, 1, 2, 3,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bCos = gtk_button_new_with_mnemonic (_("cos"));
-	gtk_widget_show (bCos);
-	gtk_table_attach (GTK_TABLE (table2), bCos, 1, 2, 2, 3,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bTan = gtk_button_new_with_mnemonic (_("tan"));
-	gtk_widget_show (bTan);
-	gtk_table_attach (GTK_TABLE (table2), bTan, 2, 3, 2, 3,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bSTO = gtk_button_new_with_mnemonic (_("STO"));
-	gtk_widget_show (bSTO);
-	gtk_table_attach (GTK_TABLE (table2), bSTO, 0, 1, 3, 4,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bLeftP = gtk_button_new_with_mnemonic (_("("));
-	gtk_widget_show (bLeftP);
-	gtk_table_attach (GTK_TABLE (table2), bLeftP, 1, 2, 3, 4,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bRightP = gtk_button_new_with_mnemonic (_(")"));
-	gtk_widget_show (bRightP);
-	gtk_table_attach (GTK_TABLE (table2), bRightP, 2, 3, 3, 4,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bX2 = gtk_button_new_with_mnemonic (_("x<sup>2</sup>"));
-	gtk_widget_show (bX2);
-	gtk_label_set_use_markup(GTK_LABEL(gtk_bin_get_child(GTK_BIN(bX2))), TRUE);
-	gtk_table_attach (GTK_TABLE (table2), bX2, 2, 3, 0, 1,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bHyp = gtk_toggle_button_new_with_mnemonic (_("hyp"));
-	gtk_widget_show (bHyp);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(bHyp), FALSE);
-	gtk_table_attach (GTK_TABLE (table2), bHyp, 2, 3, 1, 2,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	hbox3 = gtk_hbox_new (TRUE, 0);
-	gtk_widget_show (hbox3);
-	gtk_box_pack_start (GTK_BOX (vbox3), hbox3, TRUE, TRUE, 0);
-	gtk_container_set_border_width (GTK_CONTAINER (hbox3), 6);
-
-	rDeg = gtk_radio_button_new_with_mnemonic (NULL, _("Deg"));
-	gtk_widget_show (rDeg);
-	gtk_box_pack_start (GTK_BOX (hbox3), rDeg, FALSE, FALSE, 0);
-
-	rRad = gtk_radio_button_new_with_mnemonic_from_widget (GTK_RADIO_BUTTON(rDeg), _("Rad"));
-	gtk_widget_show (rRad);
-	gtk_box_pack_start (GTK_BOX (hbox3), rRad, FALSE, FALSE, 0);
-
-	rGra = gtk_radio_button_new_with_mnemonic_from_widget (GTK_RADIO_BUTTON(rDeg), _("Gra"));
-	gtk_widget_show (rGra);
-	gtk_box_pack_start (GTK_BOX (hbox3), rGra, FALSE, FALSE, 0);
-
-	if(calc->angleMode() == RADIANS)
+	switch (calc->angleMode())
+	{
+	case RADIANS:
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (rRad), TRUE);
-	else if(calc->angleMode() == DEGREES)
+		break;
+	case DEGREES:
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (rDeg), TRUE);
-	else if(calc->angleMode() == GRADIANS)
+		break;
+	case GRADIANS:
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (rGra), TRUE);
+		break;
+	default:
+		g_assert_not_reached ();
+		break;
+	}
 
-	table1 = gtk_table_new (4, 5, TRUE);
-	gtk_widget_show (table1);
-	gtk_box_pack_start (GTK_BOX (hbox2), table1, TRUE, TRUE, 0);
-	gtk_container_set_border_width (GTK_CONTAINER (table1), 10);
-	gtk_table_set_row_spacings (GTK_TABLE (table1), 10);
-	gtk_table_set_col_spacings (GTK_TABLE (table1), 5);
+	/* the standard input table */
+	table1	= glade_xml_get_widget (glade_xml, "table3");
+	b0	= glade_xml_get_widget (glade_xml, "button_zero");
+	b1	= glade_xml_get_widget (glade_xml, "button_one");
+	b2      = glade_xml_get_widget (glade_xml, "button_two");
+	b3      = glade_xml_get_widget (glade_xml, "button_three");
+	b4	= glade_xml_get_widget (glade_xml, "button_four");
+	b5      = glade_xml_get_widget (glade_xml, "button_five");
+	b6      = glade_xml_get_widget (glade_xml, "button_six");
+	b7	= glade_xml_get_widget (glade_xml, "button_seven");
+	b8	= glade_xml_get_widget (glade_xml, "button_eight");
+	b9      = glade_xml_get_widget (glade_xml, "button_nine");
+	bDot	= glade_xml_get_widget (glade_xml, "button_dot");
+	bEXP	= glade_xml_get_widget (glade_xml, "button_exp");
+	bDEL	= glade_xml_get_widget (glade_xml, "button_del");
+	bAC	= glade_xml_get_widget (glade_xml, "button_ac");
+	bMulti	= glade_xml_get_widget (glade_xml, "button_times");
+	bDivi	= glade_xml_get_widget (glade_xml, "button_divide");
+	bPlus	= glade_xml_get_widget (glade_xml, "button_add");
+	bMinus	= glade_xml_get_widget (glade_xml, "button_sub");
+	bAns	= glade_xml_get_widget (glade_xml, "button_ans");
+	bEquals	= glade_xml_get_widget (glade_xml, "button_equals");
 
-	b7 = gtk_button_new_with_mnemonic (_("7"));
-	gtk_widget_show (b7);
-	gtk_table_attach (GTK_TABLE (table1), b7, 0, 1, 0, 1,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
+	tab2label = glade_xml_get_widget (glade_xml, "buttons_label");
 
-	b4 = gtk_button_new_with_mnemonic (_("4"));
-	gtk_widget_show (b4);
-	gtk_table_attach (GTK_TABLE (table1), b4, 0, 1, 1, 2,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	b1 = gtk_button_new_with_mnemonic (_("1"));
-	gtk_widget_show (b1);
-	gtk_table_attach (GTK_TABLE (table1), b1, 0, 1, 2, 3,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	b8 = gtk_button_new_with_mnemonic (_("8"));
-	gtk_widget_show (b8);
-	gtk_table_attach (GTK_TABLE (table1), b8, 1, 2, 0, 1,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	b2 = gtk_button_new_with_mnemonic (_("2"));
-	gtk_widget_show (b2);
-	gtk_table_attach (GTK_TABLE (table1), b2, 1, 2, 2, 3,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	b5 = gtk_button_new_with_mnemonic (_("5"));
-	gtk_widget_show (b5);
-	gtk_table_attach (GTK_TABLE (table1), b5, 1, 2, 1, 2,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	b9 = gtk_button_new_with_mnemonic (_("9"));
-	gtk_widget_show (b9);
-	gtk_table_attach (GTK_TABLE (table1), b9, 2, 3, 0, 1,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	b6 = gtk_button_new_with_mnemonic (_("6"));
-	gtk_widget_show (b6);
-	gtk_table_attach (GTK_TABLE (table1), b6, 2, 3, 1, 2,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	b3 = gtk_button_new_with_mnemonic (_("3"));
-	gtk_widget_show (b3);
-	gtk_table_attach (GTK_TABLE (table1), b3, 2, 3, 2, 3,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	b0 = gtk_button_new_with_mnemonic (_("0"));
-	gtk_widget_show (b0);
-	gtk_table_attach (GTK_TABLE (table1), b0, 0, 1, 3, 4,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bDot = gtk_button_new_with_mnemonic (_("."));
-	gtk_widget_show (bDot);
-	gtk_table_attach (GTK_TABLE (table1), bDot, 1, 2, 3, 4,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bEXP = gtk_button_new_with_mnemonic (_("EXP"));
-	gtk_widget_show (bEXP);
-	gtk_table_attach (GTK_TABLE (table1), bEXP, 2, 3, 3, 4,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bDEL = gtk_button_new_with_mnemonic (_("DEL"));
-	gtk_widget_show (bDEL);
-	gtk_table_attach (GTK_TABLE (table1), bDEL, 3, 4, 0, 1,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bAC = gtk_button_new_with_mnemonic (_("AC"));
-	gtk_widget_show (bAC);
-	gtk_table_attach (GTK_TABLE (table1), bAC, 4, 5, 0, 1,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bMulti = gtk_button_new_with_mnemonic (_("x"));
-	gtk_widget_show (bMulti);
-	gtk_table_attach (GTK_TABLE (table1), bMulti, 3, 4, 1, 2,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bDivi = gtk_button_new_with_mnemonic (_("/"));
-	gtk_widget_show (bDivi);
-	gtk_table_attach (GTK_TABLE (table1), bDivi, 4, 5, 1, 2,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bPlus = gtk_button_new_with_mnemonic (_("+"));
-	gtk_widget_show (bPlus);
-	gtk_table_attach (GTK_TABLE (table1), bPlus, 3, 4, 2, 3,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bMinus = gtk_button_new_with_mnemonic (_("-"));
-	gtk_widget_show (bMinus);
-	gtk_table_attach (GTK_TABLE (table1), bMinus, 4, 5, 2, 3,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bAns = gtk_button_new_with_mnemonic (_("Ans"));
-	gtk_widget_show (bAns);
-	gtk_table_attach (GTK_TABLE (table1), bAns, 3, 4, 3, 4,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	bEquals = gtk_button_new_with_mnemonic (_("="));
-	gtk_widget_show (bEquals);
-	gtk_table_attach (GTK_TABLE (table1), bEquals, 4, 5, 3, 4,
-	                  (GtkAttachOptions) (GTK_FILL),
-	                  (GtkAttachOptions) (0), 0, 0);
-
-	tab2label = gtk_label_new (_("Buttons"));
-	gtk_widget_show (tab2label);
-	gtk_notebook_set_tab_label (GTK_NOTEBOOK (tabs), gtk_notebook_get_nth_page (GTK_NOTEBOOK (tabs), 1), tab2label);
-	gtk_label_set_justify (GTK_LABEL (tab2label), GTK_JUSTIFY_LEFT);
-
-	hbox1 = gtk_hbox_new (FALSE, 0);
-	gtk_widget_show (hbox1);
-	gtk_box_pack_start (GTK_BOX (vbox1), hbox1, FALSE, TRUE, 0);
-	gtk_box_set_spacing (GTK_BOX (hbox1), 50);
-
-	hbuttonbox2 = gtk_hbutton_box_new ();
-	gtk_widget_show (hbuttonbox2);
-	gtk_box_pack_start (GTK_BOX (hbox1), hbuttonbox2, TRUE, TRUE, 0);
-	gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox2), GTK_BUTTONBOX_START);
-	gtk_button_box_set_spacing (GTK_BUTTON_BOX (hbuttonbox2), 10);
+	hbox1	= glade_xml_get_widget (glade_xml, "hbox3");
+	hbuttonbox2 = glade_xml_get_widget (glade_xml, "hbuttonbox2");
 
 	if(show_buttons)
+	{
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(tabs), 1);
+	}
 
+	bHistory = glade_xml_get_widget (glade_xml, "button_less_more");
 	if(show_more)
-		bHistory = gtk_button_new_with_mnemonic (_("<< Less"));
+	{
+		gtk_button_set_label (
+				GTK_BUTTON(bHistory),
+				_("<< Less"));
+	}
 	else
-		bHistory = gtk_button_new_with_mnemonic (_("More >>"));
-	gtk_widget_show (bHistory);
-	gtk_container_add (GTK_CONTAINER (hbuttonbox2), bHistory);
-	GTK_WIDGET_SET_FLAGS (bHistory, GTK_CAN_DEFAULT);
+	{		
+		gtk_button_set_label (
+				GTK_BUTTON(bHistory),
+				_("More >>"));
+	}
+	
+	hbuttonbox1 = glade_xml_get_widget (glade_xml, "hbuttonbox1");
 
-	hbuttonbox1 = gtk_hbutton_box_new ();
-	gtk_widget_show (hbuttonbox1);
-	gtk_box_pack_start (GTK_BOX (hbox1), hbuttonbox1, TRUE, TRUE, 0);
-	gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox1), GTK_BUTTONBOX_END);
-	gtk_button_box_set_spacing (GTK_BUTTON_BOX (hbuttonbox1), 10);
-
-	bClose = gtk_button_new_from_stock ("gtk-close");
-	gtk_widget_show (bClose);
-	gtk_container_add (GTK_CONTAINER (hbuttonbox1), bClose);
-	GTK_WIDGET_SET_FLAGS (bClose, GTK_CAN_DEFAULT);
-
-	bEXE = gtk_button_new_from_stock ("gtk-execute");
-	gtk_widget_show (bEXE);
-	gtk_container_add (GTK_CONTAINER (hbuttonbox1), bEXE);
-	GTK_WIDGET_SET_FLAGS (bEXE, GTK_CAN_DEFAULT);
+	bClose	= glade_xml_get_widget (glade_xml, "button_close");
+	bEXE	= glade_xml_get_widget (glade_xml, "button_execute");
 
 	g_signal_connect (G_OBJECT (b0), "clicked", G_CALLBACK (button_pressed), (gpointer) "0");
 	g_signal_connect (G_OBJECT (b1), "clicked", G_CALLBACK (button_pressed), (gpointer) "1");

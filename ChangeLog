@@ -1,3 +1,9 @@
+2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
+
+	* data/qalculate.glade: includes the complete main window now
+	* src/callbacks.cc: removed the GtkHSeparator (the're not used anymore)
+	* src/interface.cc: moved the whole main window to the glade file
+
 2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
 
 	* data/qalculate.glade: added the expression menu and the result menu
