@@ -17,7 +17,11 @@
 #endif
 
 #ifdef HAVE_GIAC
+#undef PACKAGE
+#undef VERSION
 #  include <giac/giac.h>
+#undef PACKAGE
+#undef VERSION
 #  ifdef HAVE_CONFIG_H
 #    include <config.h>
 #  endif

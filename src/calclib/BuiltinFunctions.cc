@@ -881,8 +881,9 @@ void FactorialFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(&integ);
 }
 BinomialFunction::BinomialFunction() : Function("Arithmetics", "binomial", 2, "Binomial") {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, false));
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, false));
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true));
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, true));
+	setCondition("\\x>=\\y");
 }
 void BinomialFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	Integer integ;

@@ -6,6 +6,26 @@
       <_title>Integral point</_title>
     </argument>
   </builtin_function>
+  <function name="perm">
+    <_title>Permutations</_title>
+    <expression>\x!/(\x-\y)!</expression>
+    <argument type="free" index="1">
+      <_title>Objects</_title>
+    </argument>
+    <argument type="free" index="2">
+      <_title>Size</_title>
+    </argument>
+  </function>
+  <function name="comb">
+    <_title>Combinations</_title>
+    <expression>\x!/(\y!*(\x-\y)!)</expression>
+    <argument type="free" index="1">
+      <_title>Objects</_title>
+    </argument>
+    <argument type="free" index="2">
+      <_title>Size</_title>
+    </argument>
+  </function>
   <category>
     <_title>Logical</_title>
     <builtin_function name="for">
@@ -363,6 +383,15 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <_title>2nd Number</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="binomial">
+      <_title>Binomial coefficient</_title>
+      <argument index="1">
+          <_title>Exponent</_title>
+      </argument>
+      <argument index="2">
+          <_title>Index</_title>
+      </argument>
+    </builtin_function>    
     <builtin_function name="factorial">
       <_title>Factorial</_title>
       <argument index="1">

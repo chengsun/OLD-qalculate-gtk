@@ -808,7 +808,7 @@ void Calculator::error(bool critical, const char *TEMPLATE, ...) {
 	}
 	va_end(ap);
 	bool dup_error = false;
-	for(int i = 0; i < errors.size(); i++) {
+	for(unsigned int i = 0; i < errors.size(); i++) {
 		if(error_str == errors[i]->message()) {
 			dup_error = true;
 			break;
@@ -3713,6 +3713,11 @@ bool Calculator::fetchExchangeRates() {
 
 bool Calculator::canPlot() {
 	FILE *pipe = popen("gnuplot -", "w");
+	if(!pipe) {
+		return false;
+	}
+	if(pclose(pipe) != 0) return false;
+	pipe = popen("gnuplot -", "w");
 	if(!pipe) {
 		return false;
 	}

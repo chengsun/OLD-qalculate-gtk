@@ -14,7 +14,13 @@
 
 #include "includes.h"
 
+#ifndef _XOPEN_SOURCE
+#define _XOPEN_SOURCE
 #include <time.h>
+#undef _XOPEN_SOURCE
+#else
+#include <time.h>
+#endif
 
 #ifndef HAVE_STRPTIME_PROTOTYPE
 extern char *strptime (__const char *__restrict __s,

@@ -1222,7 +1222,7 @@ GiacArgument::GiacArgument(const GiacArgument *arg) {set(arg);}
 GiacArgument::~GiacArgument() {}
 int GiacArgument::type() const {return ARGUMENT_TYPE_GIAC;}
 Argument *GiacArgument::copy() const {return new GiacArgument(this);}
-string GiacArgument::subprintlong() const {return _("a free value (giac adusted)");}
+string GiacArgument::subprintlong() const {return _("a free value (giac adjusted)");}
 Manager *GiacArgument::evaluate(const string &str) const {
 	bool was_exact = CALCULATOR->alwaysExact();
 	CALCULATOR->setAlwaysExact(true);

@@ -4,15 +4,12 @@
 * Instant apply for all parameters in plot
 * Plot-functions
 * Sexagesimal numbers
-* Permutations
 * Matrix area
-* Finish differentiation
 * Fix dates
 * Check if unit is used on delete
 * Replace pointers to unit when unit type has changed (a different object must be created)
 * Direct reference to a CSV file (function)
 * Export to CSV file
-* Complex numbers
 * Sort out percentile and provide alternative methods
 * Ask for exchange rate update on demand
 * Improve matrix editing

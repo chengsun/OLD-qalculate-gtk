@@ -1,3 +1,17 @@
+2004-02-11  Niklas Knutsson  <nq@altern.org>
+
+	* Fix binomial arguments
+	* Update Swedish translation
+
+2004-02-10  Niklas Knutsson  <nq@altern.org>
+
+	* Remove PACKAGE and VERSION warnings with giac
+	* Permutations and combinations
+
+2004-02-09  Niklas Knutsson  <nq@altern.org>
+
+	* Start even if gnuplot is not present
+
 2004-02-08  Niklas Knutsson  <nq@altern.org>
 
 	* Complex numbers: log, pow, root
