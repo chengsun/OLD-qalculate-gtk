@@ -1,5 +1,6 @@
 # List of source files containing translatable strings.
 data/qalculate.desktop.in
+data/qalculate.glade
 src/main.cc
 src/interface.cc
 src/callbacks.cc

@@ -72,7 +72,7 @@ int main (int argc, char **argv) {
 	//load global definitions
 	gstr = g_build_filename(PACKAGE_DATA_DIR, PACKAGE, "qalculate.cfg", NULL);
 	if(load_global_defs && !calc->load(gstr)) {
-		g_print("%s not found!\n", gstr);
+		g_print(_("%s not found!\n"), gstr);
 	}
 	g_free(gstr);
 
@@ -102,13 +102,13 @@ int main (int argc, char **argv) {
 
 	//reset
 	functions_window = NULL;
-	selected_function_category = "All";
+	selected_function_category = _("All");
 	selected_function = "";
 	variables_window = NULL;
-	selected_variable_category = "All";
+	selected_variable_category = _("All");
 	selected_variable = "";
 	units_window = NULL;
-	selected_unit_category = "All";
+	selected_unit_category = _("All");
 	selected_unit = "";
 	selected_to_unit = "";
 	omToUnit_menu = NULL;
