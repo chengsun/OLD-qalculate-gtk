@@ -333,6 +333,9 @@ create_main_window (void)
 	gtk_widget_destroy(glade_xml_get_widget(main_glade, "menu_item_factorize"));
 	gtk_widget_destroy(glade_xml_get_widget(main_glade, "separator_factorize"));
 #endif
+#ifndef HAVE_LIBGNOME
+	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_help"), FALSE);
+#endif
 	
 //	gtk_widget_modify_bg(resultview, GTK_STATE_NORMAL, &glade_xml_get_widget(main_glade, "history")->style->base[GTK_WIDGET_STATE(glade_xml_get_widget(main_glade, "history"))]);	
 

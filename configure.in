@@ -51,6 +51,24 @@ PKG_CHECK_MODULES(PACKAGE, [
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
 
+LIBGNOME_REQUIRED=2.0.0
+
+PKG_CHECK_MODULES(GNOME_UTILS, libgnome-2.0 >= $LIBGNOME_REQUIRED, [
+	AC_SUBST(GNOME_UTILS_CFLAGS)
+	AC_SUBST(GNOME_UTILS_LIBS)
+	AC_DEFINE(HAVE_LIBGNOME,1,[If libgnome is available])
+], AC_MSG_WARN([libgnome-2.0 was not found. The manual will not be accessible from within Qalculate!]))
+
+dnl ********************
+dnl scrollkeeper checks
+dnl ********************
+
+AC_PATH_PROG(SCROLLKEEPER_CONFIG, scrollkeeper-config,no)
+if test x$SCROLLKEEPER_CONFIG = xno; then
+  AC_MSG_ERROR(Couldn't find scrollkeeper-config. Please install the scrollkeeper package)
+fi
+
+
 dnl  --------------------------------
 dnl | check for GMP and CLN         |-----------------------------------------
 dnl  --------------------------------
@@ -102,6 +120,8 @@ dnl  --------
 AC_OUTPUT([
   Makefile
   data/Makefile
+  doc/Makefile  
+  doc/C/Makefile
   src/Makefile
   src/calclib/Makefile
   src/calclib/data/Makefile  

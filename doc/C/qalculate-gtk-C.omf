@@ -1,0 +1,27 @@
+<?xml version="1.0" standalone="no"?>
+<omf>
+  <resource>
+    <creator>
+	Niklas Knutsson
+    </creator>
+    <title>
+      Qalculate! Manual
+    </title>
+    <date>
+      2004-03-04
+   </date>
+    <version identifier="1.0" date="2004-03-04" description="First version"/>
+    <subject category="GNOME|Applications|Accessories"/>
+    <description>
+      This is the Qalculate! manual
+    </description>
+    <type>
+       user's guide
+    </type>
+    <format mime="text/xml" dtd="-//OASIS//DTD DocBook XML V4.1.2//EN"/>
+    <identifier url="qalculate-gtk.xml"/>
+    <language code="C"/>
+    <relation seriesid="0bc49692-6d74-11d8-81db-fbc13da540bf"/>
+    <rights type="GNU FDL" license.version="1.1" holder="Niklas Knutsson"/>
+  </resource>
+</omf>

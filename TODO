@@ -27,7 +27,6 @@
 * Increase support for non-glibc systems
 
 * API documentation
-* User documentation
 
 * Better graphs/charts (do not use gnuplot)
 * Script/code plugins for advanced functions

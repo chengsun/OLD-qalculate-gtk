@@ -16,6 +16,9 @@
 
 #include <gtk/gtk.h>
 #include <glade/glade.h>
+#ifdef HAVE_LIBGNOME
+#include <libgnome/libgnome.h>
+#endif
 
 #include "support.h"
 #include "interface.h"
@@ -52,8 +55,11 @@ int main (int argc, char **argv) {
 	textdomain (GETTEXT_PACKAGE);
 #endif
 
-	gtk_init (&argc, &argv);
-	glade_init ();
+#ifdef HAVE_LIBGNOME
+	GnomeProgram *app = gnome_program_init(PACKAGE, VERSION, LIBGNOME_MODULE, argc, argv, NULL, NULL, NULL);
+#endif
+	gtk_init(&argc, &argv);
+	glade_init();
 	
 	string calc_arg;
 	for(int i = 1; i < argc; i++) {

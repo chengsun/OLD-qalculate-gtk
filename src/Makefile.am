@@ -8,6 +8,7 @@ INCLUDES = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
 	-I./calclib \
+	@GNOME_UTILS_CFLAGS@ \
 	@PACKAGE_CFLAGS@
 
 bin_PROGRAMS = qalculate-gtk
@@ -19,5 +20,6 @@ qalculate_gtk_SOURCES = \
 	callbacks.cc	callbacks.h
 
 qalculate_gtk_LDADD = \
-	@PACKAGE_LIBS@		\
+	@PACKAGE_LIBS@ \
+	@GNOME_UTILS_LIBS@ \
 	calclib/libcalculate.la

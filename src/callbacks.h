@@ -232,6 +232,7 @@ void on_button_units_clicked(GtkButton *button, gpointer user_data);
 void on_button_convert_clicked(GtkButton *button, gpointer user_data);
 
 void on_menu_item_about_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_help_activate(GtkMenuItem *w, gpointer user_data);
 
 void on_precision_dialog_spinbutton_precision_value_changed(GtkSpinButton *w, gpointer user_data);
 void on_decimals_dialog_spinbutton_max_value_changed(GtkSpinButton *w, gpointer user_data);

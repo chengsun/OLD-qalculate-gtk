@@ -20,6 +20,9 @@
 #include <time.h>
 #include <pthread.h>
 #include <glade/glade.h>
+#ifdef HAVE_LIBGNOME
+#include <libgnome/libgnome.h>
+#endif
 
 #include "support.h"
 #include "callbacks.h"
@@ -7111,6 +7114,19 @@ void on_menu_item_about_activate(GtkMenuItem *w, gpointer user_data) {
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_hide(dialog);
+	gtk_widget_grab_focus(expression);
+}
+void on_menu_item_help_activate(GtkMenuItem *w, gpointer user_data) {
+#ifdef HAVE_LIBGNOME
+	GError *error = NULL;
+	gnome_help_display_desktop(NULL, "qalculate-gtk", "qalculate-gtk", NULL, &error);
+	if (error) {
+		GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help for Qalculate!.\n%s"), error->message);
+		g_signal_connect_swapped (dialog, "response", G_CALLBACK (gtk_widget_destroy), dialog);
+		gtk_widget_show (dialog);
+		g_error_free (error);
+	}
+#endif	
 	gtk_widget_grab_focus(expression);
 }
 
