@@ -380,11 +380,10 @@ MathStructure &AliasUnit::firstBaseValue(MathStructure &mvalue, MathStructure &m
 		CALCULATOR->delId(x_id, true);
 		CALCULATOR->delId(y_id, true);
 	} else {
-		MathStructure mstruct;
-		CALCULATOR->parse(&mstruct, value, po);
-		if(!mexp.isOne()) mstruct.raise(mexp);
-		mstruct.multiply(mvalue, true);
-		mvalue.set_nocopy(mstruct);
+		MathStructure *mstruct = new MathStructure();
+		CALCULATOR->parse(mstruct, value, po);
+		if(!mexp.isOne()) mstruct->raise(mexp);
+		mvalue.multiply_nocopy(mstruct, true);
 	}
 	if(precision() > 0 && (mvalue.precision() < 1 || precision() < mvalue.precision())) mvalue.setPrecision(precision());
 	if(isApproximate()) mvalue.setApproximate();	

@@ -422,6 +422,7 @@ class MathStructure {
 		bool containsDivision() const;
 		void findAllUnknowns(MathStructure &unknowns_vector);
 		bool replace(const MathStructure &mfrom, const MathStructure &mto);
+		bool replace(const MathStructure &mfrom1, const MathStructure &mto1, const MathStructure &mfrom2, const MathStructure &mto2);
 		
 		MathStructure generateVector(MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL, const EvaluationOptions &eo = default_evaluation_options);
 		MathStructure generateVector(MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector = NULL, const EvaluationOptions &eo = default_evaluation_options);

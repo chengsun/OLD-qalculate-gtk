@@ -89,10 +89,12 @@ struct Element {
 	int x_pos, y_pos;
 };
 
-#define UFV_LENGTHS	20
+#define UFV_LENGTHS	5
 
 class Calculator {
+
   protected:
+
 	vector<CalculatorMessage> messages;
 
 	int ianglemode;
@@ -142,7 +144,7 @@ class Calculator {
 	bool b_save_called;
 	
 	string per_str, times_str, plus_str, minus_str, and_str, AND_str, or_str, OR_str, XOR_str;
-	int per_str_len, times_str_len, plus_str_len, minus_str_len, and_str_len, AND_str_len, or_str_len, OR_str_len, XOR_str_len;
+	unsigned int per_str_len, times_str_len, plus_str_len, minus_str_len, and_str_len, AND_str_len, or_str_len, OR_str_len, XOR_str_len;
 	
   public:
 
@@ -249,7 +251,7 @@ class Calculator {
 	
 	string localizeExpression(string str) const;
 	string unlocalizeExpression(string str) const;
-	bool calculate(MathStructure &mstruct, string str, int usecs, const EvaluationOptions &eo = default_evaluation_options, MathStructure *parsed_struct = NULL, string *to_str = NULL);
+	bool calculate(MathStructure *mstruct, string str, int usecs, const EvaluationOptions &eo = default_evaluation_options, MathStructure *parsed_struct = NULL, string *to_str = NULL);
 	MathStructure calculate(string str, const EvaluationOptions &eo = default_evaluation_options, MathStructure *parsed_struct = NULL, string *to_str = NULL);
 	string printMathStructureTimeOut(const MathStructure &mstruct, int usecs = 100000, const PrintOptions &op = default_print_options);
 	

@@ -5880,7 +5880,8 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure *paren
 							break;
 						}
 						case STRUCT_MULTIPLICATION: {
-							CHILD(1)[CHILD(1).size() - 1].setPlural(do_plural);
+							if(po.limit_implicit_multiplication) CHILD(1)[0].setPlural(do_plural);
+							else CHILD(1)[CHILD(1).size() - 1].setPlural(do_plural);
 							break;
 						}
 						case STRUCT_DIVISION: {
@@ -5894,7 +5895,8 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure *paren
 									break;
 								}
 								case STRUCT_MULTIPLICATION: {
-									CHILD(1)[0][CHILD(1)[0].size() - 1].setPlural(do_plural);
+									if(po.limit_implicit_multiplication) CHILD(1)[0][0].setPlural(do_plural);
+									else CHILD(1)[0][CHILD(1)[0].size() - 1].setPlural(do_plural);
 									break;
 								}
 							}
@@ -5929,7 +5931,8 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure *paren
 					}
 				}
 				if(do_plural) {
-					i--;
+					if(po.limit_implicit_multiplication) i = 1;
+					else i--;
 					if(CHILD(i).isUnit()) {
 						CHILD(i).setPlural(true);
 					} else {
@@ -5941,10 +5944,14 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure *paren
 				for(unsigned int i = 0; i < SIZE; i++) {
 					if(CHILD(i).isUnit()) {
 						CHILD(i).setPlural(false);
-						last_unit = i;
+						if(!po.limit_implicit_multiplication || last_unit < 0) {
+							last_unit = i;
+						}
 					} else if(CHILD(i).isPower() && CHILD(i)[0].isUnit()) {
 						CHILD(i)[0].setPlural(false);
-						last_unit = i;
+						if(!po.limit_implicit_multiplication || last_unit < 0) {
+							last_unit = i;
+						}
 					} else if(last_unit >= 0) {
 						break;
 					}
@@ -6131,7 +6138,6 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, uns
 			if(CHILD(0).isOne()) {
 				index = 1;
 			}
-
 			switch(CHILD(index).type()) {
 				case STRUCT_POWER: {
 					if(!CHILD(index)[0].isUnit_exp()) {
@@ -6140,7 +6146,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, uns
 				}
 				case STRUCT_UNIT: {
 					if(index == 0) {
-						if(parent && (!parent->isDivision() || pindex != 2)) {
+						if(!parent || (!parent->isDivision() || pindex != 2)) {
 							PREPEND(m_one);
 						}
 					}
@@ -6521,8 +6527,8 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		}
 		case STRUCT_UNIT: {
 			if(m_type == STRUCT_UNIT) {
-				if(!abbr_prev && !abbr_this) {
-					return MULTIPLICATION_SIGN_NONE;
+				if(!po.limit_implicit_multiplication && !abbr_prev && !abbr_this) {
+					return MULTIPLICATION_SIGN_SPACE;
 				} 
 				if(po.place_units_separately) {
 					return MULTIPLICATION_SIGN_OPERATOR_SHORT;
@@ -6558,6 +6564,7 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		case STRUCT_NUMBER: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_VARIABLE: {}
 		case STRUCT_SYMBOLIC: {
+			if(po.limit_implicit_multiplication && t != STRUCT_NUMBER) return MULTIPLICATION_SIGN_OPERATOR;
 			if(t != STRUCT_NUMBER && ((namelen_prev > 1 || namelen_this > 1) || equals(parent[index - 2]))) return MULTIPLICATION_SIGN_OPERATOR;
 			if(namelen_this > 1 || (m_type == STRUCT_SYMBOLIC && !po.allow_non_usable)) return MULTIPLICATION_SIGN_SPACE;
 			return MULTIPLICATION_SIGN_NONE;
@@ -7528,17 +7535,24 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations) {
 			convert(u, convert_complex_relations);
 			return true;
 		}
-		MathStructure exp(1, 1);
-		MathStructure mstruct(1, 1);
-		u->convert(o_unit, mstruct, exp, &b);
+		MathStructure *exp = new MathStructure(1, 1);
+		MathStructure *mstruct = new MathStructure(1, 1);
+		u->convert(o_unit, *mstruct, *exp, &b);
 		if(b) {
 			o_unit = u;
-			if(!exp.isOne()) {
-				raise(exp);
+			if(!exp->isOne()) {
+				raise_nocopy(exp);
+			} else {
+				exp->unref();
 			}
-			if(!mstruct.isOne()) {
-				multiply(mstruct);
+			if(!mstruct->isOne()) {
+				multiply_nocopy(mstruct);
+			} else {
+				mstruct->unref();
 			}
+		} else {
+			exp->unref();
+			mstruct->unref();
 		}
 		return b;
 	} else {
@@ -7710,6 +7724,10 @@ void MathStructure::findAllUnknowns(MathStructure &unknowns_vector) {
 	}
 }
 bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto) {
+	if(equals(mfrom)) {
+		set(mto);
+		return true;
+	}
 	bool b = false;
 	for(unsigned int i = 0; i < SIZE; i++) {
 		if(CHILD(i).replace(mfrom, mto)) {
@@ -7717,9 +7735,23 @@ bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto
 			CHILD_UPDATED(i);
 		}
 	}
-	if(equals(mfrom)) {
-		set(mto);
-		b = true;
+	return b;
+}
+bool MathStructure::replace(const MathStructure &mfrom1, const MathStructure &mto1, const MathStructure &mfrom2, const MathStructure &mto2) {
+	if(equals(mfrom1)) {
+		set(mto1);
+		return true;
+	}
+	if(equals(mfrom2)) {
+		set(mto2);
+		return true;
+	}
+	bool b = false;
+	for(unsigned int i = 0; i < SIZE; i++) {
+		if(CHILD(i).replace(mfrom1, mto1, mfrom2, mto2)) {
+			b = true;
+			CHILD_UPDATED(i);
+		}
 	}
 	return b;
 }

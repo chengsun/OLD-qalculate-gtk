@@ -1309,6 +1309,17 @@
 		      <signal name="activate" handler="on_menu_item_read_precision_activate" last_modification_time="Sat, 20 Sep 2003 15:21:55 GMT"/>
 		    </widget>
 		  </child>
+		  
+		  <child>
+		    <widget class="GtkCheckMenuItem" id="menu_item_limit_implicit_multiplication">
+		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">(De)activate limits to implicit multiplication</property>
+		      <property name="label" translatable="yes">Limit Implicit Multiplication</property>
+		      <property name="use_underline">True</property>
+		      <property name="active">False</property>
+		      <signal name="activate" handler="on_menu_item_limit_implicit_multiplication_activate" last_modification_time="Thu, 14 Oct 2004 15:21:55 GMT"/>
+		    </widget>
+		  </child>
 
 		  <child>
 		    <widget class="GtkCheckMenuItem" id="menu_item_rpn_mode">

@@ -385,6 +385,10 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Enables/disables interpretation of input numbers with decimals as approximate with a precision equal to the number of digits (after preceding zeroes).</para></entry>
 			</row>
 			<row valign="top">
+				<entry><para>Limit Implicit Multiplication</para></entry>
+				<entry><para>Activates/deactivates limits to implicit multiplication when parsing and displaying expressions. For details see <xref linkend="qalculate-result"/></para></entry>
+			</row>
+			<row valign="top">
 				<entry><para>RPN Mode (<keycombo><keycap>Ctrl</keycap><keycap>R</keycap></keycombo>)</para></entry>
 				<entry><para>Toggles use of Reverse Polish Notation syntax in expressions on/off.</para></entry>
 			</row>
@@ -780,7 +784,7 @@ These operator names are localized, but <quote>AND</quote> and <quote>OR</quote>
 In addition to these operators there are a couple of shortcuts for certain functions, such as <quote>5!</quote> which equals <quote>factorial(5)</quote>. 
 </para>
 <para>
-The multiplication sign can generally be left out. This is not true for numbers (<quote>5(5) = 25</quote> but <quote>5  5 = 55</quote>). Expressions can also generally be written with or without spaces with the same result (<quote>2xsin(2)</quote> equals <quote>2 x sin(2)</quote> which equals <quote>2*x*sin(2)</quote>), but be careful. The vast number of functions and units means that without separating spaces, the result might not be obvious. Also note that unit prefixes must be put immediately before the unit, to be interpreted as prefixes (<quote>5 mm = 0.005 m</quote>, but <quote>5 m m = 5m^2</quote>).
+The multiplication sign can generally be left out. This is not true for numbers (<quote>5(5) = 25</quote> but <quote>5  5 = 55</quote>). Expressions can also generally be written with or without spaces with the same result (<quote>2xsin(2)</quote> equals <quote>2 x sin(2)</quote> which equals <quote>2*x*sin(2)</quote>), but be careful. The vast number of functions and units means that without separating spaces, the result might not be obvious. To avoid confusion Qalculate! can limit the use of implicit multiplication (<menuchoice><guimenu>Mode</guimenu><guimenuitem>Limit Implicit Multiplication</guimenuitem></menuchoice>), so that space, operator or parenthesis must be put between functions, units and variables (in this mode <quote>esqrt(5)</quote> does not equal <quote>e * sqrt(5)</quote>). Also note that unit prefixes must be put immediately before the unit, to be interpreted as prefixes (<quote>5 mm = 0.005 m</quote>, but <quote>5 m m = 5m^2</quote>). You can see how to expression was interpreted in the history window.
 </para>
 <para>
 Usually, mathematical expressions are written as normally expected. Standard operator precedence apply. Expressions are evaluated according to the following priorities:
@@ -805,7 +809,7 @@ Usually, mathematical expressions are written as normally expected. Standard ope
 <chapter id="qalculate-result">
 <title>Calculator Modes</title>
 <para>
-Qalculate! provides flexible calculation output and result display. There are several ways in which calculation output and display of results can be customized. These modes can generally be changed through the mode menu. Different modes are summarized below.
+Qalculate! provides flexible parsing, calculation output and result display. There are several ways in which parsing of expression and display of results can be customized. These modes can generally be changed through the mode menu. Different modes are summarized below.
 <variablelist>
 <varlistentry>
 <term>Number Bases</term>
@@ -878,6 +882,12 @@ Precision controls the precision in approximate numbers and the number of signif
 <term>Decimals</term>
 <listitem><para>
 In the decimals dialog, the number of decimals displayed can be controlled. This includes minimal (will fill out with zeros) and maximal number of decimals (will round numbers).
+</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Limit Implicit Multiplication</term>
+<listitem><para>
+If the limit implicit multiplication mode is activated, the use of implicite multiplication when parsing expressions and displaying results will be limited to avoid confusion. For example, if this mode is not activated and <quote>integrte(5x)</quote> is accidently typed instead of <quote>integrate(5x)</quote>, the expression is interpreted as <quote>int(e * e * (5 * x) * gr * t)</quote> (displayed in history window). The result will then without any error be <quote>int(2.3940139x * km^2)</quote> instead of <quote>2.5x^2</quote>. If limit implicit multiplication is turned on to mistyped expression would instead show an error telling that <quote>integrte</quote> is not a valid variable, function or unit (unless unknowns is not enabled in which case the result will be <quote>5 "integrte" * x</quote>). When implicit multiplication is limited variables, functions and units must be separated by a space, opertor or parenthesis (<quote>xy</quote> does not equal <quote>x * y</quote>).
 </para></listitem>
 </varlistentry>
 </variablelist>
@@ -1253,7 +1263,7 @@ To plot functions or data sets, select <menuchoice><guimenu>File</guimenu><guime
 	</screenshot>
 </figure>
 <para>
-Plot functions are normal expressions that represents f(x) in y=f(x) (ex. <quote>sin(x)</quote>). The x can be specified as a different text string in the variable entry below the function/data list. Note that the x in the expression is an unknown variable and follows associated rules, meaning that if x is replaced by a string with more than one letter it must be put in quotes in the expression. Also, the x must not clash with an existing variable, function or unit. To avoid these problems, use a backslash as the first character in the x string.
+Plot functions are normal expressions that represents f(x) in y=f(x) (ex. <quote>sin(x)</quote>). The x can be specified as a different unknown variable (x, y, z) or a quoted text string (actually any mathematical expression which will then be matched in the plot expression and replaced by the values on the x axis) in the variable entry below the function/data list.
 </para>
 <para>
 To plot a data set, enter an expression that results in a matrix or vector. Select <interface>Vector/Matrix</interface> below and vectors will appear as one series and matrices will appear with each column or row (if selected) as a series, If the paired matrix option instead is selected, the first column/row of the matrix will constitute the y-values and the second the x-values.

@@ -1443,7 +1443,9 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <reference>true</reference>
           <_name>weighmean</_name>
         </name>
-        <expression>csum(1,min(dimension(\x),dimension(\y)),0,"y"+"x"*component("i"+dimension(\x),"v"),"x","y",mergevectors(\x,\y),"i","v")/total(limits(1,min(dimension(\x),dimension(\y)),\y))</expression>
+	<subfunction precalculate="true">dimension(\x)</subfunction>
+	<subfunction precalculate="true">min(dimension(\x),dimension(\y))</subfunction>
+        <expression>csum(1,\2,0,"y"+"x"*component("i"+\1,"v"),"x","y",mergevectors(\x,\y),"i","v")/total(limits(1,\2,\y))</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
@@ -1541,7 +1543,10 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
           <_name>covar</_name>
         </name>
         <subfunction precalculate="true">mean(\x)</subfunction>
-        <expression>csum(1,min(dimension(\x),dimension(\y)),0,"y"+("x"-\1)*(component("i"+dimension(\x),"v")-mean(\y)),"x","y",mergevectors(\x,\y),"i","v")/min(dimension(\x),dimension(\y))</expression>
+	<subfunction precalculate="true">mean(\y)</subfunction>
+	<subfunction precalculate="true">dimension(\x)</subfunction>
+	<subfunction precalculate="true">min(dimension(\x),dimension(\y))</subfunction>
+        <expression>csum(1,\4,0,"y"+("x"-\1)*(component("i"+\3,"v")-\2),"x","y",mergevectors(\x,\y),"i","v")/\4)</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
         </argument>

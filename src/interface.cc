@@ -183,6 +183,7 @@ create_main_window (void)
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_read_precision")), evalops.parse_options.read_precision != DONT_READ_PRECISION);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_rpn_mode")), evalops.parse_options.rpn);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_limit_implicit_multiplication")), evalops.parse_options.limit_implicit_multiplication);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assume_nonzero_denominators")), evalops.assume_denominators_nonzero);
 
 	switch(printops.base) {

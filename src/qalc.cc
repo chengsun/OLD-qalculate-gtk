@@ -375,7 +375,9 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "round to even", _("round to even"))) SET_BOOL_D(printops.round_halfway_to_even)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn", _("rpn"))) SET_BOOL_E(evalops.parse_options.rpn)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "short multiplication", _("short multiplication"))) SET_BOOL_D(printops.short_multiplication)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "spacious", _("spacious"))) SET_BOOL_D(printops.spacious)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "limit implicit multiplication", _("limit implicit multiplication"))) {
+		int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {printops.limit_implicit_multiplication = v; evalops.parse_options.limit_implicit_multiplication = v; expression_format_updated();}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "spacious", _("spacious"))) SET_BOOL_D(printops.spacious)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unicode", _("unicode"))) {
 		int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {printops.use_unicode_signs = v; result_display_updated();}
 		enable_unicode = -1;
@@ -731,7 +733,7 @@ int main (int argc, char *argv[]) {
 		CALCULATOR->terminateThreads();
 		return 0;
 	}
-
+	
 #ifdef HAVE_LIBREADLINE
 	rl_catch_signals = 1;
 	rl_catch_sigwinch = rl_readline_version >= 0x0500;
@@ -999,7 +1001,8 @@ int main (int argc, char *argv[]) {
 			}
 			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("indicate infinite series")); PUTS_UNICODE(b2oo(printops.indicate_infinite_series, false)); CHECK_IF_SCREEN_FILLED
-			PRINT_AND_COLON_TABS(_("infinite numbers")); PUTS_UNICODE(b2oo(evalops.allow_infinite, false)); CHECK_IF_SCREEN_FILLED			
+			PRINT_AND_COLON_TABS(_("infinite numbers")); PUTS_UNICODE(b2oo(evalops.allow_infinite, false)); CHECK_IF_SCREEN_FILLED
+			PRINT_AND_COLON_TABS(_("limit implicit multiplication")); PUTS_UNICODE(b2oo(evalops.parse_options.limit_implicit_multiplication, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("max decimals"));
 			if(printops.use_max_decimals && printops.max_decimals >= 0) {
 				printf("%i\n", printops.max_decimals);
@@ -1400,6 +1403,7 @@ int main (int argc, char *argv[]) {
 				STR_AND_TABS(_("input base")); str += "(2 - 36"; str += ", "; str += _("bin"); str += ", "; str += _("oct"); str += ", "; str += _("dec"); str += ", "; str += _("hex"); str += ", "; str += _("roman"); str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS(_("infinite numbers")); str += "("; str += _("on"); str += ", "; str += _("off");  str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS(_("indicate infinite series")); str += "("; str += _("on"); str += ", "; str += _("off");  str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+				STR_AND_TABS(_("limit implicit multiplication")); str += "("; str += _("on"); str += ", "; str += _("off");  str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS(_("max decimals")); str += "("; str += _("off"); str += ", >= 0)"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS(_("min decimals")); str += "("; str += _("off"); str += ", >= 0)"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS(_("multiplication sign")); str += "(0 = *, 1 = " SIGN_MULTIDOT ", 2 = " SIGN_MULTIPLICATION ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
@@ -1491,10 +1495,12 @@ int main (int argc, char *argv[]) {
 	
 }
 
-bool display_errors() {
+bool display_errors(bool goto_input) {
 	if(!CALCULATOR->message()) return false;
+	bool b = false;
 	while(true) {
 		MessageType mtype = CALCULATOR->message()->type();
+		if(b && goto_input) fputs("  ", stdout);
 		if(mtype == MESSAGE_ERROR) {
 			FPUTS_UNICODE(_("error"), stdout); fputs(": ", stdout); PUTS_UNICODE(CALCULATOR->message()->message().c_str());
 		} else if(mtype == MESSAGE_WARNING) {
@@ -1503,6 +1509,7 @@ bool display_errors() {
 			PUTS_UNICODE(CALCULATOR->message()->message().c_str());
 		}
 		if(!CALCULATOR->nextMessage()) break;
+		b = true;
 	}
 	return true;
 }
@@ -1581,7 +1588,7 @@ void setResult(Prefix *prefix = NULL, bool update_parse = false, bool goto_input
 	rtime.tv_nsec = 10000000;
 	int i = 0;
 	bool has_printed = false;
-	while(b_busy && i < 50) {
+	while(b_busy && i < 75) {
 		nanosleep(&rtime, NULL);
 		i++;
 	}
@@ -1622,7 +1629,7 @@ void setResult(Prefix *prefix = NULL, bool update_parse = false, bool goto_input
 	if(has_printed) printf("\n");
 	if(goto_input) printf("\n  ");
 	
-	if(display_errors() && goto_input) printf("  ");
+	if(display_errors(goto_input) && goto_input) printf("  ");
 	
 	if(update_parse) {
 		FPUTS_UNICODE(parsed_text.c_str(), stdout);
@@ -1671,12 +1678,12 @@ void execute_expression(bool goto_input) {
 	expression_executed = true;
 
 	b_busy = true;
-	CALCULATOR->calculate(*mstruct, CALCULATOR->unlocalizeExpression(str), 0, evalops, parsed_mstruct, parsed_to_str);
+	CALCULATOR->calculate(mstruct, CALCULATOR->unlocalizeExpression(str), 0, evalops, parsed_mstruct, parsed_to_str);
 	struct timespec rtime;
 	rtime.tv_sec = 0;
 	rtime.tv_nsec = 10000000;
 	int i = 0;
-	while(CALCULATOR->busy() && i < 50) {
+	while(CALCULATOR->busy() && i < 75) {
 		nanosleep(&rtime, NULL);
 		i++;
 	}
@@ -1703,7 +1710,7 @@ void execute_expression(bool goto_input) {
 			read(STDIN_FILENO, &c, 1);
 #endif			
 			if(c == '\n') {
-				on_abort_display();
+				CALCULATOR->abort();
 			}
 		} else {
 			printf(".");
@@ -1767,6 +1774,7 @@ void load_preferences() {
 	printops.use_unit_prefixes = true;
 	printops.spacious = true;
 	printops.short_multiplication = true;
+	printops.limit_implicit_multiplication = false;
 	printops.place_units_separately = false;
 	printops.use_all_prefixes = false;
 	printops.excessive_parenthesis = false;
@@ -1775,6 +1783,7 @@ void load_preferences() {
 	printops.division_sign = DIVISION_SIGN_SLASH;
 	printops.multiplication_sign = MULTIPLICATION_SIGN_ASTERISK;
 	
+	evalops.parse_options.limit_implicit_multiplication = false;
 	evalops.approximation = APPROXIMATION_TRY_EXACT;
 	evalops.sync_units = true;
 	evalops.structuring = STRUCTURING_SIMPLIFY;
@@ -1857,7 +1866,10 @@ void load_preferences() {
 					printops.excessive_parenthesis = v;
 				else if(svar == "short_multiplication")
 					printops.short_multiplication = v;
-				else if(svar == "place_units_separately")
+				else if(svar == "limit_implicit_multiplication") {
+					evalops.parse_options.limit_implicit_multiplication = v;
+					printops.limit_implicit_multiplication = v;
+				} else if(svar == "place_units_separately")
 					printops.place_units_separately = v;
 				else if(svar == "use_prefixes")
 					printops.use_unit_prefixes = v;
@@ -2002,6 +2014,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "round_halfway_to_even=%i\n", saved_printops.round_halfway_to_even);
 	fprintf(file, "approximation=%i\n", saved_evalops.approximation);	
 	fprintf(file, "in_rpn_mode=%i\n", saved_evalops.parse_options.rpn);
+	fprintf(file, "limit_implicit_multiplication=%i\n", evalops.parse_options.limit_implicit_multiplication);
 	fprintf(file, "default_assumption_type=%i\n", CALCULATOR->defaultAssumptions()->numberType());
 	fprintf(file, "default_assumption_sign=%i\n", CALCULATOR->defaultAssumptions()->sign());
 	

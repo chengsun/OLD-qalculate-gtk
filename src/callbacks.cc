@@ -4088,7 +4088,7 @@ void execute_expression(bool force) {
 
 	b_busy = true;
 	gulong handler_id = g_signal_connect(G_OBJECT(glade_xml_get_widget (main_glade, "main_window")), "event", G_CALLBACK(on_event), NULL);
-	CALCULATOR->calculate(*mstruct, CALCULATOR->unlocalizeExpression(str), 0, evalops, parsed_mstruct, parsed_to_str);
+	CALCULATOR->calculate(mstruct, CALCULATOR->unlocalizeExpression(str), 0, evalops, parsed_mstruct, parsed_to_str);
 	struct timespec rtime;
 	rtime.tv_sec = 0;
 	rtime.tv_nsec = 10000000;
@@ -6914,6 +6914,7 @@ void load_preferences() {
 	printops.excessive_parenthesis = false;
 	printops.allow_non_usable = false;
 	printops.lower_case_numbers = false;
+	printops.limit_implicit_multiplication = false;
 	
 	evalops.approximation = APPROXIMATION_TRY_EXACT;
 	evalops.sync_units = true;
@@ -6925,6 +6926,7 @@ void load_preferences() {
 	evalops.allow_infinite = true;
 	evalops.auto_post_conversion = POST_CONVERSION_NONE;
 	evalops.assume_denominators_nonzero = false;
+	evalops.parse_options.limit_implicit_multiplication = false;
 	
 	save_mode_on_exit = true;
 	save_defs_on_exit = true;
@@ -7131,7 +7133,10 @@ void load_preferences() {
 					evalops.approximation = (ApproximationMode) v;
 				else if(svar == "in_rpn_mode")
 					evalops.parse_options.rpn = v;
-				else if(svar == "default_assumption_type")
+				else if(svar == "limit_implicit_multiplication") {
+					evalops.parse_options.limit_implicit_multiplication = v;
+					printops.limit_implicit_multiplication = v;
+				} else if(svar == "default_assumption_type")
 					CALCULATOR->defaultAssumptions()->setNumberType((AssumptionNumberType) v);
 				else if(svar == "default_assumption_sign")
 					CALCULATOR->defaultAssumptions()->setSign((AssumptionSign) v);
@@ -7359,6 +7364,7 @@ void save_preferences(bool mode)
 	fprintf(file, "round_halfway_to_even=%i\n", saved_printops.round_halfway_to_even);
 	fprintf(file, "approximation=%i\n", saved_evalops.approximation);	
 	fprintf(file, "in_rpn_mode=%i\n", saved_evalops.parse_options.rpn);
+	fprintf(file, "limit_implicit_multiplication=%i\n", saved_evalops.parse_options.limit_implicit_multiplication);
 	fprintf(file, "default_assumption_type=%i\n", CALCULATOR->defaultAssumptions()->numberType());
 	fprintf(file, "default_assumption_sign=%i\n", CALCULATOR->defaultAssumptions()->sign());
 	
@@ -8448,6 +8454,13 @@ void on_menu_item_new_unit_activate(GtkMenuItem *w, gpointer user_data) {
 void on_menu_item_rpn_mode_activate(GtkMenuItem *w, gpointer user_data) {
 	evalops.parse_options.rpn = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	update_status_text();
+}
+void on_menu_item_limit_implicit_multiplication_activate(GtkMenuItem *w, gpointer user_data) {
+	evalops.parse_options.limit_implicit_multiplication = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
+	printops.limit_implicit_multiplication = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
+	update_status_text();
+	expression_format_updated();
+	result_format_updated();
 }
 void fetch_exchange_rates(int timeout) {
 	GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO, GTK_BUTTONS_NONE, "Fetching exchange rates.");

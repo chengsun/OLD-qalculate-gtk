@@ -236,6 +236,7 @@ void on_menu_item_new_function_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_new_dataset_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_new_unit_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_rpn_mode_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_limit_implicit_multiplication_activate(GtkMenuItem *w, gpointer user_data);
 void fetch_exchange_rates(int timeout);
 void on_menu_item_fetch_exchange_rates_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_save_defs_activate(GtkMenuItem *w, gpointer user_data);

@@ -1,3 +1,13 @@
+2004-10-14 Niklas Knutsson  <nq@altern.org>
+
+	* Speed-up csum when component(i, "v") is used
+	* Give messages in the right order (reversed)
+	* Update obsolete plot documentation
+	* Clean up parsing
+	* Add limit implicit multiplication mode
+	* Fix unit conversion
+	* Fix m*s -> 1 m*s
+
 2004-10-13 Niklas Knutsson  <nq@altern.org>
 
 	* More speed-ups
