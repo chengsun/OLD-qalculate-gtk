@@ -200,6 +200,8 @@ class Number {
 		bool gcd(const Number &o);
 		
 		bool factorial();
+		bool multiFactorial(const Number &o);
+		bool doubleFactorial();
 		bool binomial(const Number &m, const Number &k);
 	
 		bool add(const Number &o, MathOperation op); 

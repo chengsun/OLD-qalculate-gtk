@@ -22,7 +22,7 @@
 using namespace cln;
 
 void cln::cl_abort() {
-	CALCULATOR->error(true, "CLN Error: see terminal output (probably too large number)", NULL);
+	CALCULATOR->error(true, "CLN Error: see terminal output (probably too large or small floating point number)", NULL);
 	if(CALCULATOR->busy()) {
 		CALCULATOR->abort_this();
 	} else {
@@ -388,12 +388,13 @@ void Number::set(string number, int base, ReadPrecisionMode read_precision) {
 			num = num * base;
 			if(number[index] != '0') {
 				num = num + number[index] - '0';
+				if(!had_nonzero) readprec = 0;
 				had_nonzero = true;
 			}
 			if(in_decimals) {
 				den = den * base;
 			}
-			if(had_nonzero) readprec++;
+			readprec++;
 			numbers_started = true;
 		} else if(base > 10 && number[index] >= 'a' && number[index] < 'a' + base - 10) {
 			num = num * base;
@@ -401,6 +402,7 @@ void Number::set(string number, int base, ReadPrecisionMode read_precision) {
 			if(in_decimals) {
 				den = den * base;
 			}
+			if(!had_nonzero) readprec = 0;
 			had_nonzero = true;
 			readprec++;
 			numbers_started = true;
@@ -410,6 +412,7 @@ void Number::set(string number, int base, ReadPrecisionMode read_precision) {
 			if(in_decimals) {
 				den = den * base;
 			}
+			if(!had_nonzero) readprec = 0;
 			had_nonzero = true;
 			readprec++;
 			numbers_started = true;
@@ -513,7 +516,7 @@ void Number::set(int numerator, int denominator, int exp_10) {
 void Number::setFloat(double d_value) {
 	b_inf = false; b_pinf = false; b_minf = false; b_approx = true;
 	value = d_value;
-	i_precision = -1;
+	i_precision = 8;
 }
 void Number::setInternal(const cl_N &cln_value) {
 	b_inf = false; b_pinf = false; b_minf = false; b_approx = false;
@@ -1663,10 +1666,52 @@ bool Number::factorial() {
 	} else if(isNegative()) {
 		return false;
 	}
-	Number i(*this);
-	i.add(-1);
-	for(; !i.isOne(); i.add(-1)) {
-		multiply(i);
+	cln::cl_I i = cln::numerator(cln::rational(cln::realpart(value)));
+	i--;
+	for(; !cln::zerop(i); i--) {
+		value *= i;
+	}
+	return true;
+}
+bool Number::multiFactorial(const Number &o) {
+	if(o.isOne()) return factorial();
+	if(o.isTwo()) return doubleFactorial();
+	if(!isInteger() || !o.isInteger() || !o.isPositive()) {
+		return false;
+	}
+	if(isZero()) {
+		set(1, 1);
+		return true;
+	} else if(isOne()) {
+		return true;
+	} else if(isNegative()) {
+		return false;
+	}
+	cln::cl_I i = cln::numerator(cln::rational(cln::realpart(value)));
+	cln::cl_I i_o = cln::numerator(cln::rational(cln::realpart(o.internalNumber())));
+	i -= i_o;
+	for(; cln::plusp(i); i -= i_o) {
+		value *= i;
+	}
+	return true;
+}
+bool Number::doubleFactorial() {
+	if(!isInteger()) {
+		return false;
+	}
+	if(isZero() || isMinusOne()) {
+		set(1, 1);
+		return true;
+	} else if(isOne()) {
+		return true;
+	} else if(isNegative()) {
+		return false;
+	}
+	cln::cl_I i = cln::numerator(cln::rational(cln::realpart(value)));
+	cln::cl_I i2 = 2;
+	i -= i2;
+	for(; cln::plusp(i); i -= i2) {
+		value *= i;
 	}
 	return true;
 }
@@ -2000,6 +2045,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		bool neg = cln::minusp(ivalue);
 		string mpz_str;
 		bool rerun = false;
+		bool exact = true;
 		
 		integer_rerun:
 		
@@ -2030,7 +2076,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		} else {
 			expo = 0;
 		}
-		bool exact = true, dp_added = false;
+		bool dp_added = false;
 		if(!rerun && !cln::zerop(ivalue)) {
 			int precision2 = precision;
 			if(base != 10) {

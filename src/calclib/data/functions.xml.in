@@ -372,6 +372,29 @@
         <_title>Value</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="factorial2">
+      <_title>Double Factorial</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>factorial2</_name>
+      </name>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="multifactorial">
+      <_title>Multifactorial</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>multifactorial</_name>
+      </name>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+      <argument index="2">
+        <_title>Factorial</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="binomial">
       <_title>Binomial Coefficient</_title>
       <name index="1">
@@ -385,6 +408,30 @@
         <_title>Index</_title>
       </argument>
     </builtin_function>
+    <function>
+      <_title>Hyperfactorial</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>hyperfactorial</_name>
+      </name>
+      <expression>product(x^x,1,\x,x)</expression>
+      <argument type="integer" index="1">
+        <_title>Value</_title>
+	<min>1</min>
+      </argument>
+    </function>
+    <function>
+      <_title>Superfactorial</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>superfactorial</_name>
+      </name>
+      <expression>product(factorial(x),0,\x,x)</expression>
+      <argument type="integer" index="1">
+        <_title>Value</_title>
+	<min>0</min>
+      </argument>
+    </function>
     <function>
       <_title>Permutations</_title>
       <name index="1">
@@ -1382,7 +1429,7 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_des
 	<subfunction precalculate="true">sort(\y)</subfunction>
 	<subfunction precalculate="true">dimension(\y)</subfunction>
 	<subfunction precalculate="true">round(dimension(\y)/100*\x)</subfunction>
-        <expression>(component(\2-\3,\1)*\3+component(\3+1,\1)*\3+total(limits(\3+1,\2-\3,\1)))/dimension(\y)+\x*0</expression>
+        <expression>(component(\2-\3,\1)*\3+component(\3+1,\1)*\3+total(limits(\3+1,\2-\3,\1)))/\2</expression>
         <argument type="free" index="1">
           <_title>Winsorized Percentage (at each end)</_title>
         </argument>

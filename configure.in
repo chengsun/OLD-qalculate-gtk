@@ -60,7 +60,7 @@ dnl  --------------------------------
 AC_CHECK_LIB(pthread, pthread_create, [LIBS="$LIBS -lpthread"])
 
 PKG_CHECK_MODULES(PACKAGE, [
-	gtk+-2.0
+	gtk+-2.0 >= 2.4
 	gdk-pixbuf-2.0
 	libglade-2.0
 	libxml-2.0

@@ -18,8 +18,8 @@
 
 #include <sstream>
 
-#define FR_FUNCTION(FUNC)	Number nr = vargs[0].number(); if(!nr.FUNC() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) {return 0;} else {mstruct = nr; return 1 ;}
-#define FR_FUNCTION_2(FUNC)	Number nr = vargs[0].number(); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite() && !vargs[1].number().isInfinite())) {return 0;} else {mstruct = nr; return 1 ;}
+#define FR_FUNCTION(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) {return 0;} else {mstruct = nr; return 1;}
+#define FR_FUNCTION_2(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite() && !vargs[1].number().isInfinite())) {return 0;} else {mstruct = nr; return 1;}
 
 #define NON_COMPLEX_NUMBER_ARGUMENT(i)				NumberArgument *arg_non_complex##i = new NumberArgument(); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
 #define NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(i)			NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
@@ -292,14 +292,53 @@ int ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	FR_FUNCTION(zeta)
 }
 GammaFunction::GammaFunction() : Function("gamma", 1, 1, SIGN_CAPITAL_GAMMA) {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 int GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct = vargs[0]; 
-	mstruct -= 1;
-	mstruct.set(CALCULATOR->f_factorial, &vargs[0], NULL);
-	mstruct[0] -= 1;
-	return 1 ;
+	if(vargs[0].number().isRational()) {
+		if(vargs[0].number().isInteger()) {
+			mstruct.set(CALCULATOR->f_factorial, &vargs[0], NULL);
+			mstruct[0] -= 1;
+			return 1;
+		} else if(vargs[0].number().denominatorIsTwo()) {
+			Number nr(vargs[0].number());
+			nr.floor();
+			if(nr.isZero()) {
+				MathStructure mtmp(CALCULATOR->v_pi);
+				mstruct.set(CALCULATOR->f_sqrt, &mtmp, NULL);
+				return 1;
+			} else if(nr.isPositive()) {
+				Number nr2(nr);
+				nr2 *= 2;
+				nr2 -= 1;
+				nr2.doubleFactorial();
+				Number nr3(2, 1);
+				nr3 ^= nr;
+				nr2 /= nr3;
+				mstruct = nr2;
+				MathStructure mtmp1(CALCULATOR->v_pi);
+				MathStructure mtmp2(CALCULATOR->f_sqrt, &mtmp1, NULL);
+				mstruct *= mtmp2;
+				return 1;
+			} else {
+				nr.negate();
+				Number nr2(nr);
+				nr2 *= 2;
+				nr2 -= 1;
+				nr2.doubleFactorial();
+				Number nr3(2, 1);
+				nr3 ^= nr;
+				if(nr.isOdd()) nr3.negate();
+				nr3 /= nr2;
+				mstruct = nr3;
+				MathStructure mtmp1(CALCULATOR->v_pi);
+				MathStructure mtmp2(CALCULATOR->f_sqrt, &mtmp1, NULL);
+				mstruct *= mtmp2;
+				return 1;
+			}
+		}
+	} 
+	return 0;
 }
 BetaFunction::BetaFunction() : Function("beta", 2, 2, SIGN_CAPITAL_BETA) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, false));
@@ -320,6 +359,22 @@ FactorialFunction::FactorialFunction() : Function("factorial", 1) {
 }
 int FactorialFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(factorial)
+}
+DoubleFactorialFunction::DoubleFactorialFunction() : Function("factorial2", 1) {
+	IntegerArgument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true);
+	Number nr(-1, 1);
+	arg->setMin(&nr);
+	setArgumentDefinition(1, arg);
+}
+int DoubleFactorialFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(doubleFactorial)
+}
+MultiFactorialFunction::MultiFactorialFunction() : Function("multifactorial", 2) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, true));
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true));
+}
+int MultiFactorialFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION_2(multiFactorial)
 }
 BinomialFunction::BinomialFunction() : Function("binomial", 2) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true));

@@ -61,11 +61,9 @@ GtkListStore *tDataProperties_store;
 GtkWidget *tNames;
 GtkListStore *tNames_store;
 
-#if GTK_MINOR_VERSION >= 3
 GtkWidget *expander;
 GtkEntryCompletion *completion;
 GtkListStore *completion_store;
-#endif
 
 GtkWidget *tFunctionArguments;
 GtkListStore *tFunctionArguments_store;
@@ -311,16 +309,6 @@ create_main_window (void)
 		default: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_none")), TRUE);}
 	}
 
-#if GTK_MINOR_VERSION < 3
-	if(show_buttons) {
-		gtk_widget_show (glade_xml_get_widget (main_glade, "buttons"));
-		gtk_button_set_label (GTK_BUTTON(glade_xml_get_widget (main_glade, "button_less_more")), _("Hide keypad"));
-	} else {
-		gtk_widget_hide (glade_xml_get_widget (main_glade, "buttons"));
-		gtk_button_set_label (GTK_BUTTON(glade_xml_get_widget (main_glade, "button_less_more")), _("Show keypad"));
-	}
-#endif
-
 	if(printops.use_unicode_signs) {
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_sub")), SIGN_MINUS);
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_add")), SIGN_PLUS);
@@ -382,18 +370,9 @@ create_main_window (void)
 	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_save_image"), FALSE);
 	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "popup_menu_item_save_image"), FALSE);
 
-#if GTK_MINOR_VERSION >= 3
-
 /*	Expander	*/
-	gtk_widget_hide(glade_xml_get_widget(main_glade, "buttonbox_bottom"));
-	expander = gtk_expander_new(_("Keypad"));
-	g_object_ref(glade_xml_get_widget(main_glade, "buttons"));
-	gtk_container_remove(GTK_CONTAINER(glade_xml_get_widget(main_glade, "main_vbox")), glade_xml_get_widget(main_glade, "buttons"));
-	gtk_box_pack_end(GTK_BOX(glade_xml_get_widget(main_glade, "main_vbox")), expander, TRUE, TRUE, 0);
-	gtk_container_add(GTK_CONTAINER(expander), glade_xml_get_widget(main_glade, "buttons"));
-	g_object_unref(glade_xml_get_widget(main_glade, "buttons"));
+	expander = glade_xml_get_widget(main_glade, "expander_keypad");
 	gtk_expander_set_expanded(GTK_EXPANDER(expander), show_buttons);
-	gtk_widget_show(expander);
 	
 /*	Completion	*/	
 	completion = gtk_entry_completion_new();
@@ -411,7 +390,7 @@ create_main_window (void)
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(completion), cell, "text", 1);
 	gtk_entry_completion_set_match_func(completion, &completion_match_func, NULL, NULL);
 	g_signal_connect((gpointer) completion, "match-selected", G_CALLBACK(on_completion_match_selected), NULL);
-#endif
+
 	//gtk_widget_hide(glade_xml_get_widget(main_glade, "menu_item_multiple_roots"));
 
 	gtk_widget_show (glade_xml_get_widget (main_glade, "main_window"));
@@ -1009,9 +988,7 @@ get_names_edit_dialog (void)
 		renderer = gtk_cell_renderer_text_new();
 		column = gtk_tree_view_column_new_with_attributes(_("Name"), renderer, "text", NAMES_NAME_COLUMN, NULL);
 		gtk_tree_view_column_set_sort_column_id(column, NAMES_NAME_COLUMN);
-#if GTK_MINOR_VERSION >= 4
 		gtk_tree_view_column_set_expand(column, TRUE);
-#endif
 		gtk_tree_view_append_column(GTK_TREE_VIEW(tNames), column);
 		renderer = gtk_cell_renderer_text_new();
 		column = gtk_tree_view_column_new_with_attributes(_("Abbreviation"), renderer, "text", NAMES_ABBREVIATION_STRING_COLUMN, NULL);

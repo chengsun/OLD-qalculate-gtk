@@ -71,7 +71,7 @@ int Function::subtype() const {
 	return SUBTYPE_FUNCTION;
 }
 
-int Function::countArgOccurence(unsigned int arg_) {
+/*int Function::countArgOccurence(unsigned int arg_) {
 	if((int) arg_ > argc && max_argc < 0) {
 		arg_ = argc + 1;
 	}
@@ -79,7 +79,7 @@ int Function::countArgOccurence(unsigned int arg_) {
 		return argoccs[arg_];
 	}
 	return 1;
-}
+}*/
 int Function::args() const {
 	return max_argc;
 }
@@ -244,6 +244,7 @@ int Function::args(const string &argstr, MathStructure &vargs, const ParseOption
 						} else {
 							vargs[vargs.size() - 1].addItem(getArgumentDefinition(maxargs())->parse(stmp, po));
 						}
+						vargs.childUpdated(vargs.size());
 					} else {
 						CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s argument(s)."), name().c_str(), i2s(maxargs()).c_str());
 					}
@@ -287,6 +288,7 @@ int Function::args(const string &argstr, MathStructure &vargs, const ParseOption
 			} else {
 				vargs[vargs.size() - 1].addItem(getArgumentDefinition(maxargs())->parse(stmp, po));
 			}
+			vargs.childUpdated(vargs.size());
 		} else {
 			CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s argument(s)."), name().c_str(), i2s(maxargs()).c_str());
 		}
@@ -393,7 +395,7 @@ MathStructure Function::parse(const string &argv, const ParseOptions &po) {
 	//return createFunctionMathStructureFromVArgs(vargs);
 }
 void Function::parse(MathStructure &mstruct, const string &argv, const ParseOptions &po) {
-	args(argv, mstruct, po);	
+	args(argv, mstruct, po);
 	mstruct.setType(STRUCT_FUNCTION);
 	mstruct.setFunction(this);
 }
@@ -839,7 +841,7 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 	if(argc_ < 0) {
 		argc_ = 0, max_argc_ = 0;
 		string svar, svar_o, svar_v;
-		bool optionals = false;
+		bool optionals = false, b;
 		int i3 = 0, i4 = 0, i5 = 0;
 		unsigned int i2 = 0;
 		for(int i = 0; i < 26; i++) {
@@ -856,7 +858,7 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 			else
 				svar_o += 'X' + i;
 				
-			before_find_in_set_equation:	
+			before_find_in_set_equation:
 			if(i < 24 && (i2 = new_eq.find(svar_o, i4)) != string::npos) {
 				if(i2 > 0 && new_eq[i2 - 1] == '\\') {
 					i4 = i2 + 2;
@@ -876,32 +878,98 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 				}
 				new_eq.replace(i2, 2 + i3, svar);
 				while((i2 = new_eq.find(svar_o, i2 + 1)) != string::npos) {
-					new_eq.replace(i2, 2, svar);
-				}				
+					if(i2 > 0 && new_eq[i2 - 1] == '\\') {
+						i2++;
+					} else {
+						new_eq.replace(i2, 2, svar);
+					}
+				}
+				for(unsigned int sub_i = 0; sub_i < v_subs.size(); sub_i++) {
+					i2 = 0;
+					while((i2 = v_subs[sub_i].find(svar_o, i2 + 1)) != string::npos) {
+						if(i2 > 0 && v_subs[sub_i][i2 - 1] == '\\') {
+							i2++;
+						} else {
+							v_subs[sub_i].replace(i2, 2, svar);
+						}
+					}
+				}
 				optionals = true;
-				argoccs[i + 1] = 1;
+				/*argoccs[i + 1] = 1;
 				while((i2 = new_eq.find(svar, i2 + 2)) != string::npos) {
 					if(new_eq[i2 - 1] != '\\') {
 						argoccs[i + 1]++;
 					}
-				}
+				}*/
 			} else if((i2 = new_eq.find(svar, i5)) != string::npos) {
 				if(i2 > 0 && new_eq[i2 - 1] == '\\') {
 					i5 = i2 + 2;
 					goto before_find_in_set_equation;
 				}
-				argoccs[i + 1] = 1;
+				/*argoccs[i + 1] = 1;
 				while((i2 = new_eq.find(svar, i2 + 2)) != string::npos) {
 					if(new_eq[i5 - 1] != '\\') {
 						argoccs[i + 1]++;
 					}
-				}
+				}*/
 			} else {
-				if(i < 24 && !optionals) {
-					i = 24;
-					goto begin_loop_in_set_equation;
+				b = false;
+				for(unsigned int sub_i = 0; sub_i < v_subs.size(); sub_i++) {
+					before_find_in_vsubs_set_equation:
+					if(i < 24 && (i2 = v_subs[sub_i].find(svar_o, i4)) != string::npos) {
+						if(i2 > 0 && v_subs[sub_i][i2 - 1] == '\\') {
+							i4 = i2 + 2;
+							goto before_find_in_vsubs_set_equation;
+						}				
+						i3 = 0;
+						if(v_subs[sub_i].length() > i2 + 2 && v_subs[sub_i][i2 + 2] == ID_WRAP_LEFT_CH) {
+							if((i3 = v_subs[sub_i].find(ID_WRAP_RIGHT_CH, i2 + 2)) != (int) string::npos) {
+								svar_v = v_subs[sub_i].substr(i2 + 3, i3 - (i2 + 3));	
+								i3 -= i2 + 1;
+							} else i3 = 0;
+						}
+						if(i3) {
+							default_values.push_back(svar_v);
+						} else {
+							default_values.push_back("0");
+						}
+						v_subs[sub_i].replace(i2, 2 + i3, svar);
+						while((i2 = v_subs[sub_i].find(svar_o, i2 + 1)) != string::npos) {
+							if(i2 > 0 && v_subs[sub_i][i2 - 1] == '\\') {
+								i2++;
+							} else {
+								v_subs[sub_i].replace(i2, 2, svar);
+							}
+						}
+						optionals = true;
+						/*argoccs[i + 1] = 1;
+						while((i2 = v_subs[sub_i].find(svar, i2 + 2)) != string::npos) {
+							if(v_subs[sub_i][i2 - 1] != '\\') {
+								argoccs[i + 1]++;
+							}
+						}*/
+						b = true;
+					} else if((i2 = v_subs[sub_i].find(svar, i5)) != string::npos) {
+						if(i2 > 0 && v_subs[sub_i][i2 - 1] == '\\') {
+							i5 = i2 + 2;
+							goto before_find_in_vsubs_set_equation;
+						}
+						/*argoccs[i + 1] = 1;
+						while((i2 = v_subs[sub_i].find(svar, i2 + 2)) != string::npos) {
+							if(v_subs[sub_i][i5 - 1] != '\\') {
+								argoccs[i + 1]++;
+							}
+						}*/
+						b = true;
+					}
 				}
-				break;
+				if(!b) {
+					if(i < 24 && !optionals) {
+						i = 24;
+						goto begin_loop_in_set_equation;
+					}
+					break;
+				}
 			}
 			if(i >= 24) {
 				max_argc_ = -1;

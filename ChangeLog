@@ -1,3 +1,25 @@
+2004-09-30 Niklas Knutsson  <nq@altern.org>
+
+	* Modify CLN error message
+	* hyperfactorial() and superfactorial()
+	* Make factorials more efficient by using CLN numbers directly
+
+2004-09-29 Niklas Knutsson  <nq@altern.org>
+
+	* Gamma for rational numbers with denominator 2
+	* Double and multi factorials
+	* Tweak parsing of !-factorials 
+
+2004-09-28 Niklas Knutsson  <nq@altern.org>
+
+	* Allow arguments to only be used in sub functions
+	* Remove countArgOccurence() as it is not needed any more
+	* Drop support for gtk+ < 2.4
+	* Fix large integers displayed inexact was reported as exact
+	* Stop gamma() if argument is not an integer
+	* Read precision from zero with decimals (0.000...)
+	* Set precision from function and its arguments after function calculation
+
 2004-09-27 Niklas Knutsson  <nq@altern.org>
 
 	* "Inverse" -> "Matrix Inverse"

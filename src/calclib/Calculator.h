@@ -146,7 +146,7 @@ class Calculator {
 	UnknownVariable *v_x, *v_y, *v_z;
 	Function *f_vector, *f_sort, *f_rank, *f_limits, *f_component, *f_components, *f_merge_vectors;
 	Function *f_matrix, *f_matrix_to_vector, *f_area, *f_rows, *f_columns, *f_row, *f_column, *f_elements, *f_element, *f_transpose, *f_identity, *f_determinant, *f_permanent, *f_adjoint, *f_cofactor, *f_inverse; 
-	Function *f_factorial, *f_binomial;
+	Function *f_factorial, *f_factorial2, *f_multifactorial, *f_binomial;
 	Function *f_abs, *f_gcd, *f_signum, *f_round, *f_floor, *f_ceil, *f_trunc, *f_int, *f_frac, *f_rem, *f_mod;
 	Function *f_re, *f_im, *f_arg;
   	Function *f_sqrt, *f_sq;
@@ -198,6 +198,7 @@ class Calculator {
 	
 	unsigned int addId(const MathStructure &m_struct, bool persistent = false);
 	unsigned int parseAddId(Function *f, const string &str, const ParseOptions &po, bool persistent = false);
+	unsigned int parseAddIdAppend(Function *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent = false);
 	unsigned int parseAddVectorId(const string &str, const ParseOptions &po, bool persistent = false);
 	const MathStructure *getId(unsigned int id);	
 	void delId(unsigned int id, bool force = false);

@@ -776,6 +776,20 @@ unsigned int Calculator::parseAddId(Function *f, const string &str, const ParseO
 	f->parse(id_structs[id], str, po);
 	return id;
 }
+unsigned int Calculator::parseAddIdAppend(Function *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent) {
+	unsigned int id = 0;
+	if(freed_ids.size() > 0) {
+		id = freed_ids.back();
+		freed_ids.pop_back();
+	} else {
+		ids_i++;
+		id = ids_i;
+	}
+	ids_p[id] = persistent;
+	f->parse(id_structs[id], str, po);
+	id_structs[id].addChild(append_mstruct);
+	return id;
+}
 unsigned int Calculator::parseAddVectorId(const string &str, const ParseOptions &po, bool persistent) {
 	unsigned int id = 0;
 	if(freed_ids.size() > 0) {
@@ -870,6 +884,8 @@ void Calculator::addBuiltinFunctions() {
 	f_inverse = addFunction(new InverseFunction());
 
 	f_factorial = addFunction(new FactorialFunction());
+	f_factorial2 = addFunction(new DoubleFactorialFunction());
+	f_multifactorial = addFunction(new MultiFactorialFunction());
 	f_binomial = addFunction(new BinomialFunction());
 
 	f_abs = addFunction(new AbsFunction());
@@ -2421,19 +2437,21 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 		} else if(po.base >= 2 && po.base <= 10 && str[str_index] == '!' && po.functions_enabled) {
 			if(str_index > 0 && (chars_left == 1 || str[str_index + 1] != EQUALS_CH)) {
 				stmp = "";
-				if(is_in(NUMBERS, str[str_index - 1])) {
-					i3 = str.find_last_not_of(NUMBERS, str_index - 1);
+				i5 = str.find_last_not_of(SPACE, str_index - 1);
+				if(i5 != (int) string::npos && is_in(NUMBERS, str[i5])) {
+					i3 = str.find_last_not_of(NUMBERS, i5);
 					if(i3 == (int) string::npos) {
-						stmp2 = str.substr(0, str_index);
+						stmp2 = str.substr(0, i5 + 1);
 					} else {
-						stmp2 = str.substr(i3 + 1, str_index - i3 - 1);
+						stmp2 = str.substr(i3 + 1, i5 - i3);
 					}
-				} else if(str[str_index - 1] == RIGHT_PARENTHESIS_CH) {
-					i3 = str_index - 2;
+				} else if(i5 != (int) string::npos && str[i5] == RIGHT_PARENTHESIS_CH) {
+					i3 = i5 - 1;
 					i4 = 1;
 					while(true) {
 						i3 = str.find_last_of(LEFT_PARENTHESIS RIGHT_PARENTHESIS, i3);
 						if(i3 == (int) string::npos) {
+							stmp2 = str.substr(0, i5 + 1);
 							break;
 						}
 						if(str[i3] == RIGHT_PARENTHESIS_CH) {
@@ -2441,7 +2459,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 						} else {
 							i4--;
 							if(i4 == 0) {
-								stmp2 = str.substr(i3, str_index - i3);
+								stmp2 = str.substr(i3, i5 + 1 - i3);
 								break;
 							}
 						}
@@ -2451,12 +2469,22 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 				if(!stmp2.empty()) {
 					stmp = LEFT_PARENTHESIS_CH;
 					stmp += ID_WRAP_LEFT_CH;
-					stmp += i2s(parseAddId(f_factorial, stmp2, po));
+					int ifac = 1;
+					i3 = str_index + 1;
+					i4 = i3;
+					while((i3 = str.find_first_not_of(SPACE, i3)) != (int) string::npos && str[i3] == '!') {
+						ifac++;
+						i3++;
+						i4 = i3;						
+					}
+					if(ifac == 2) stmp += i2s(parseAddId(f_factorial2, stmp2, po));
+					else if(ifac == 1) stmp += i2s(parseAddId(f_factorial, stmp2, po));
+					else stmp += i2s(parseAddIdAppend(f_multifactorial, MathStructure(ifac, 1), stmp2, po));
 					stmp += ID_WRAP_RIGHT_CH;
 					stmp += RIGHT_PARENTHESIS_CH;
-					str.replace(str_index - stmp2.length(), stmp2.length() + 1, stmp);
-					str_index -=  stmp2.length();
-					str_index += stmp.length() - 1;
+					str.replace(i5 - stmp2.length() + 1, stmp2.length() + i4 - i5 - 1, stmp);
+					str_index = i5 - stmp2.length();
+					str_index += stmp.length();
 				}
 			}
 		} else if(str[str_index] == SPACE_CH) {

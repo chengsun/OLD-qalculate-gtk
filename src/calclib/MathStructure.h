@@ -127,8 +127,8 @@ class MathStructure {
 		const Number &number() const;
 		Number &number();
 		void numberUpdated();
-		void childUpdated(unsigned int index);
-		void childrenUpdated();
+		void childUpdated(unsigned int index, bool recursive = false);
+		void childrenUpdated(bool recursive = false);
 		const string &symbol() const;
 #ifdef HAVE_GIAC
 		const giac::gen *unknown() const;
@@ -330,6 +330,7 @@ class MathStructure {
 		bool replace(const MathStructure &mfrom, const MathStructure &mto);
 		
 		MathStructure generateVector(MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL, const EvaluationOptions &eo = default_evaluation_options);
+		MathStructure generateVector(MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector = NULL, const EvaluationOptions &eo = default_evaluation_options);
 		MathStructure generateVector(MathStructure x_mstruct, const MathStructure &x_vector, const EvaluationOptions &eo = default_evaluation_options);
 		
 		bool differentiate(const MathStructure &x_var, const EvaluationOptions &eo);

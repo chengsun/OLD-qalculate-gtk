@@ -60,7 +60,7 @@ class Function : public ExpressionItem {
 	int max_argc;
 	vector<string> default_values;
 	Sgi::hash_map<unsigned int, Argument*> argdefs;
-	Sgi::hash_map<unsigned int, int> argoccs;
+	//Sgi::hash_map<unsigned int, int> argoccs;
 	unsigned int last_argdef_index;		
 	bool testArguments(MathStructure &vargs);
 	virtual MathStructure createFunctionMathStructureFromVArgs(const MathStructure &vargs);
@@ -89,7 +89,7 @@ class Function : public ExpressionItem {
 	string printCondition();
 	void setCondition(string expression);
 	bool testCondition(const MathStructure &vargs);
-	int countArgOccurence(unsigned int arg_);
+	//int countArgOccurence(unsigned int arg_);
 	int args() const;
 	int minargs() const;	
 	int maxargs() const;		

@@ -40,11 +40,9 @@ extern GladeXML *periodictable_glade;
 
 bool changing_in_nbases_dialog;
 
-#if GTK_MINOR_VERSION >= 3
 extern GtkWidget *expander;
 extern GtkEntryCompletion *completion;
 extern GtkListStore *completion_store;
-#endif
 
 extern GtkWidget *expression;
 extern GtkWidget *f_menu, *v_menu, *u_menu, *u_menu2, *recent_menu;
@@ -195,14 +193,10 @@ vector<Unit*> recent_units;
 bool completion_blocked = false;
 
 void block_completion() {
-#if GTK_MINOR_VERSION >= 3
 	gtk_entry_completion_set_minimum_key_length(completion, 1000);
 	completion_blocked = true;
-#endif
 }
 void unblock_completion() {
-#if GTK_MINOR_VERSION >= 3
-#endif
 }
 
 bool is_answer_variable(Variable *v) {
@@ -2302,7 +2296,6 @@ void create_fmenu() {
 }
 
 void update_completion() {
-#if GTK_MINOR_VERSION >= 3
 	GtkTreeIter iter;
 	
 	gtk_entry_set_completion(GTK_ENTRY(expression), NULL);
@@ -2344,7 +2337,6 @@ void update_completion() {
 	gtk_entry_completion_set_match_func(completion, &completion_match_func, NULL, NULL);
 	g_signal_connect((gpointer) completion, "match-selected", G_CALLBACK(on_completion_match_selected), NULL);
 	gtk_entry_set_completion(GTK_ENTRY(expression), completion);
-#endif
 }
 
 /*
@@ -4445,7 +4437,6 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(boolean_buttons[boolean_buttons.size() - 1]), TRUE);
 					break;
 				}
-#if GTK_MINOR_VERSION >= 3
 				case ARGUMENT_TYPE_DATA_PROPERTY: {
 					if(f->subtype() == SUBTYPE_DATA_SET) {
 						properties_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
@@ -4479,7 +4470,6 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 						break;
 					}
 				}
-#endif
 				default: {
 					if(i >= f->minargs() && !has_vector) {
 						typestr = "(";
@@ -4536,9 +4526,7 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 			if(defstr == "1") {
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(boolean_buttons[boolean_buttons.size() - 2]), TRUE);
 			}
-#if GTK_MINOR_VERSION >= 3			
 		} else if(properties_store && arg && arg->type() == ARGUMENT_TYPE_DATA_PROPERTY) {
-#endif
 		} else {
 			gtk_entry_set_text(GTK_ENTRY(entry[i]), defstr.c_str());
 			//insert selection in expression entry into the first argument entry
@@ -4575,7 +4563,6 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 				} else {
 					str2 = "0";
 				}
-#if GTK_MINOR_VERSION >= 3			
 			} else if(properties_store && f->getArgumentDefinition(i + 1) && f->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_DATA_PROPERTY) {
 				GtkTreeIter iter;
 				DataProperty *dp = NULL;
@@ -4587,7 +4574,6 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 				} else {
 					str2 = "info";
 				}
-#endif				
 			} else {
 				str2 = gtk_entry_get_text(GTK_ENTRY(entry[i]));
 			}
@@ -7128,11 +7114,7 @@ void save_preferences(bool mode)
 	fprintf(file, "save_definitions_on_exit=%i\n", save_defs_on_exit);
 	fprintf(file, "load_global_definitions=%i\n", load_global_defs);
 	fprintf(file, "fetch_exchange_rates_at_startup=%i\n", fetch_exchange_rates_at_startup);
-#if GTK_MINOR_VERSION >= 3	
 	fprintf(file, "show_buttons=%i\n", gtk_expander_get_expanded(GTK_EXPANDER(expander)));
-#else
-	fprintf(file, "show_buttons=%i\n", GTK_WIDGET_VISIBLE(glade_xml_get_widget (main_glade, "buttons")));
-#endif
 	fprintf(file, "spacious=%i\n", printops.spacious);
 	fprintf(file, "excessive_parenthesis=%i\n", printops.excessive_parenthesis);
 	fprintf(file, "short_multiplication=%i\n", printops.short_multiplication);
@@ -7298,7 +7280,6 @@ void on_history_dialog_destroy_event(GtkWidget *widget, gpointer user_data) {
 	gtk_widget_hide(glade_xml_get_widget(main_glade, "history_dialog"));
 }
 
-#if GTK_MINOR_VERSION >= 3
 void set_current_object() {
 	if(!current_object_has_changed) return;
 	while(gtk_events_pending()) gtk_main_iteration();
@@ -7390,7 +7371,6 @@ gboolean completion_match_func(GtkEntryCompletion *entrycompletion, const gchar 
 	g_free(gstr2);
 	return b_match;
 }
-#endif
 
 
 void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data) {
@@ -8003,13 +7983,11 @@ on_togglebutton_result_toggled                      (GtkToggleButton       *butt
 	clear the displayed result when expression changes
 */
 void on_expression_changed(GtkEditable *w, gpointer user_data) {
-#if GTK_MINOR_VERSION >= 3
 	if(completion_blocked) {
 		completion_blocked = false;
 	} else {
 		gtk_entry_completion_set_minimum_key_length(completion, 1);
 	}
-#endif
 	expression_has_changed = true;
 	current_object_has_changed = true;
 	if(result_text.empty()) return;
@@ -8814,22 +8792,12 @@ void on_menu_item_save_activate(GtkMenuItem *w, gpointer user_data) {
 }
 void on_menu_item_save_image_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!pixbuf_result) return;
-#if GTK_MINOR_VERSION >= 3
 	GtkWidget *d = gtk_file_chooser_dialog_new(_("Select file to save PNG image to"), GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
-#if GTK_MICRO_VERSION >= 6 || GTK_MINOR_VERSION >= 4
 	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(d), "qalculate.png");
-#endif	
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT) {
 		gdk_pixbuf_save(pixbuf_result, gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d)), "png", NULL, NULL);
 	}
 	gtk_widget_destroy(d);
-#else	
-	GtkWidget *d = gtk_file_selection_new(_("Select file to save PNG image to"));
-	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
-		gdk_pixbuf_save(pixbuf_result, gtk_file_selection_get_filename(GTK_FILE_SELECTION(d)), "png", NULL, NULL);
-	}
-	gtk_widget_destroy(d);
-#endif
 }
 void on_menu_item_copy_activate(GtkMenuItem *w, gpointer user_data) {
 	gtk_clipboard_set_text(gtk_clipboard_get(gdk_atom_intern("CLIPBOARD", FALSE)), result_text.c_str(), -1);
@@ -9514,44 +9482,24 @@ void on_csv_import_optionmenu_delimiter_changed(GtkOptionMenu *w, gpointer user_
 	gtk_widget_set_sensitive(glade_xml_get_widget (csvimport_glade, "csv_import_entry_delimiter_other"), gtk_option_menu_get_history(w) == DELIMITER_OTHER);
 }
 void on_csv_import_button_file_clicked(GtkButton *button, gpointer user_data) {
-#if GTK_MINOR_VERSION >= 3
 	GtkWidget *d = gtk_file_chooser_dialog_new(_("Select file to import"), GTK_WINDOW(glade_xml_get_widget(csvimport_glade, "csv_import_dialog")), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
-#if GTK_MICRO_VERSION >= 6 || GTK_MINOR_VERSION >= 4
 	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (csvimport_glade, "csv_import_entry_file"))));
-#endif	
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT) {
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (csvimport_glade, "csv_import_entry_file")), gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d)));
 	}
 	gtk_widget_destroy(d);
-#else	
-	GtkWidget *d = gtk_file_selection_new(_("Select file to import"));
-	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
-		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (csvimport_glade, "csv_import_entry_file")), gtk_file_selection_get_filename(GTK_FILE_SELECTION(d)));
-	}
-	gtk_widget_destroy(d);
-#endif
 }
 
 void on_csv_export_optionmenu_delimiter_changed(GtkOptionMenu *w, gpointer user_data) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (csvexport_glade, "csv_export_entry_delimiter_other"), gtk_option_menu_get_history(w) == DELIMITER_OTHER);
 }
 void on_csv_export_button_file_clicked(GtkButton *button, gpointer user_data) {
-#if GTK_MINOR_VERSION >= 3
 	GtkWidget *d = gtk_file_chooser_dialog_new(_("Select file to export to"), GTK_WINDOW(glade_xml_get_widget(csvimport_glade, "csv_import_dialog")), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
-#if GTK_MICRO_VERSION >= 6 || GTK_MINOR_VERSION >= 4
 	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (csvexport_glade, "csv_export_entry_file"))));
-#endif	
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT) {
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (csvexport_glade, "csv_export_entry_file")), gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d)));
 	}
 	gtk_widget_destroy(d);
-#else	
-	GtkWidget *d = gtk_file_selection_new(_("Select file to export to"));
-	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
-		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (csvexport_glade, "csv_export_entry_file")), gtk_file_selection_get_filename(GTK_FILE_SELECTION(d)));
-	}
-	gtk_widget_destroy(d);
-#endif
 }
 void on_csv_export_radiobutton_current_toggled(GtkToggleButton *w, gpointer user_data) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (csvexport_glade, "csv_export_entry_matrix"), !gtk_toggle_button_get_active(w));
@@ -9575,22 +9523,12 @@ void on_type_label_date_clicked(GtkButton *w, gpointer user_data) {
 	gtk_widget_destroy(d);
 }
 void on_type_label_file_clicked(GtkButton *w, gpointer user_data) {
-#if GTK_MINOR_VERSION >= 3
 	GtkWidget *d = gtk_file_chooser_dialog_new(_("Select file to import"), GTK_WINDOW(glade_xml_get_widget(csvimport_glade, "csv_import_dialog")), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
-#if GTK_MICRO_VERSION >= 6 || GTK_MINOR_VERSION >= 4
 	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d), gtk_entry_get_text(GTK_ENTRY(user_data)));
-#endif
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT) {
 		gtk_entry_set_text(GTK_ENTRY(user_data), gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d)));
 	}
 	gtk_widget_destroy(d);
-#else	
-	GtkWidget *d = gtk_file_selection_new(_("Select file to import"));
-	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
-		gtk_entry_set_text(GTK_ENTRY(user_data), gtk_file_selection_get_filename(GTK_FILE_SELECTION(d)));
-	}
-	gtk_widget_destroy(d);
-#endif
 }
 
 void on_functions_button_deactivate_clicked(GtkButton *w, gpointer user_data) {
@@ -10090,7 +10028,6 @@ bool generate_plot(plot_parameters &pp, vector<MathStructure> &y_vectors, vector
 }
 void on_plot_button_save_clicked(GtkButton *w, gpointer user_data) {
 	GtkWidget *d;
-#if GTK_MINOR_VERSION >= 3
 	d = gtk_file_chooser_dialog_new(_("Select file to export"), GTK_WINDOW(glade_xml_get_widget(plot_glade, "plot_dialog")), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
 	GtkFileFilter *filter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filter, _("Allowed File Types"));
@@ -10113,20 +10050,12 @@ void on_plot_button_save_clicked(GtkButton *w, gpointer user_data) {
 		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(d), title.c_str());
 	}
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT) {
-#else	
-	d = gtk_file_selection_new(_("Select file to export"));
-	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
-#endif	
 		vector<MathStructure> y_vectors;
 		vector<MathStructure> x_vectors;
 		vector<plot_data_parameters*> pdps;
 		plot_parameters pp;
 		if(generate_plot(pp, y_vectors, x_vectors, pdps)) {
-#if GTK_MINOR_VERSION >= 3			
 			pp.filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d));
-#else		
-			pp.filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(d));
-#endif			
 			pp.filetype = PLOT_FILETYPE_AUTO;
 			CALCULATOR->plotVectors(&pp, y_vectors, x_vectors, pdps);
 			for(unsigned int i = 0; i < pdps.size(); i++) {
