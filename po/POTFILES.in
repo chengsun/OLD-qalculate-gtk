@@ -1,6 +1,22 @@
 # List of source files containing translatable strings.
 data/qalculate.desktop.in
-data/qalculate.glade
+data/about.glade
+data/argumentrules.glade
+data/csvimport.glade
+data/decimals.glade
+data/functionedit.glade
+data/functions.glade
+data/main.glade
+data/matrixedit.glade
+data/nbases.glade
+data/plot.glade
+data/precision.glade
+data/preferences.glade
+data/unit.glade
+data/unitedit.glade
+data/units.glade
+data/variableedit.glade
+data/variables.glade
 src/main.cc
 src/interface.cc
 src/callbacks.cc

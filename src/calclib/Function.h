@@ -46,7 +46,7 @@ class Function : public ExpressionItem {
 	int argc;
 	int max_argc;
 	vector<string> default_values;
-	hash_map<int, Argument*> argdefs;
+	Sgi::hash_map<int, Argument*> argdefs;
 	int last_argdef_index;
 	virtual void calculate(Manager *mngr, vector<Manager*> &vargs);			
 	bool testArgumentCount(int itmp);

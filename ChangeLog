@@ -1,3 +1,10 @@
+2003-10-23  Niklas Knutsson  <nq@altern.org>
+
+	* Do not use scandir as Solaris does not support it
+	* Access hash_map header properly
+	* Update POTFILES.in for new glade files
+	* Remove #include <ext/hash_map> from Calculator.h
+
 2003-10-22  Niklas Knutsson  <nq@altern.org>
 
 	* Split up glade file

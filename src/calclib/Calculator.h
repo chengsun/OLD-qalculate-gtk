@@ -13,7 +13,6 @@
 #define CALCULATOR_H
 
 #include "includes.h"
-#include <ext/hash_map>
 #include <pthread.h>
 
 extern Calculator *calculator;
@@ -61,8 +60,8 @@ class Calculator {
 	bool b_functions, b_variables, b_units, b_unknown, b_calcvars, b_always_exact, b_rpn, b_use_all_prefixes, b_multiple_roots;
 	vector<void*> ufv;
 	vector<char> ufv_t;	
-	hash_map<int, Manager*> ids;
-	hash_map<int, bool> ids_p;	
+	Sgi::hash_map<int, Manager*> ids;
+	Sgi::hash_map<int, bool> ids_p;	
 	vector<string> signs;	
 	vector<string> real_signs;
 	vector<string> default_signs;	

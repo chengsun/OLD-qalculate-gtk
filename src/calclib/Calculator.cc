@@ -819,7 +819,7 @@ void Calculator::restoreState() {
 }
 void Calculator::clearBuffers() {
 	ids_p.clear();
-	for(hash_map<int, Manager*>::iterator it = ids.begin(); it != ids.end(); ++it) {
+	for(Sgi::hash_map<int, Manager*>::iterator it = ids.begin(); it != ids.end(); ++it) {
 		delete it->second;
 	}
 	ids.clear();
@@ -2123,11 +2123,28 @@ bool Calculator::loadLocalDefinitions() {
 	}
 	homedir += ".qalculate/";
 	homedir += "definitions/";	
-	struct dirent **eps;
-	int n = scandir(homedir.c_str(), &eps, file_selector_nodirs, alphasort);
-	for(int i = 0; i < n; i++) {
+	list<const char*> eps;
+	struct dirent *ep;
+	DIR *dp;
+	dp = opendir(homedir.c_str());
+	if(dp) {
+		while(ep = readdir(dp)) {
+#ifdef _DIRENT_HAVE_D_TYPE
+			if(ep->d_type != DT_DIR) {
+#endif
+				if(strcmp(ep->d_name, "..") != 0 && strcmp(ep->d_name, ".") != 0) {
+					eps.push_back(ep->d_name);
+				}
+#ifdef _DIRENT_HAVE_D_TYPE			
+			}
+#endif
+		}
+		closedir(dp);
+	}
+	eps.sort();
+	for(list<const char*>::iterator it = eps.begin(); it != eps.end(); ++it) {
 		filename = homedir;
-		filename += eps[i]->d_name;
+		filename += *it;
 		loadDefinitions(filename.c_str(), true);
 	}
 	return true;

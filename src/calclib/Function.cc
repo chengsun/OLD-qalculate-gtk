@@ -234,7 +234,7 @@ Argument *Function::getArgumentDefinition(int index) {
 	return NULL;
 }
 void Function::clearArgumentDefinitions() {
-	for(hash_map<int, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
+	for(Sgi::hash_map<int, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
 		delete it->second;
 	}
 	argdefs.clear();
@@ -287,7 +287,7 @@ Manager *Function::calculate(const string &argv) {
 }
 bool Function::testArguments(vector<Manager*> &vargs) {
 	int last = 0;
-	for(hash_map<int, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
+	for(Sgi::hash_map<int, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
 		if(it->first > last) {
 			last = it->first;
 		}

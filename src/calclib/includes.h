@@ -189,14 +189,31 @@ using namespace std;
 #include <string>
 #include <stack>
 #include <list>
-#include <ext/hash_map>
+#include <stddef.h>
 #include <math.h>
 #include <float.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
 
-using namespace __gnu_cxx;
+#ifdef __GNUC__
+#if __GNUC__ < 3
+#include <hash_map.h>
+namespace Sgi { using ::hash_map; }; // inherit globals
+#else
+#include <ext/hash_map>
+#if __GNUC_MINOR__ == 0
+namespace Sgi = std;               // GCC 3.0
+#else
+namespace Sgi = ::__gnu_cxx;       // GCC 3.1 and later
+#endif
+#endif
+#else      // ...  there are other compilers, right?
+namespace Sgi = std;
+#endif
+
+//using namespace Sgi;
+//using namespace __gnu_cxx;
 
 #define DOT_CH			'.'
 #define ZERO_CH			'0'

@@ -17,6 +17,7 @@
 * Improve matrix editing
 * Sort out cases where we should not do anything because x is unknown, 
   such as sqrt(-5x) which now returns sqrt(-5) * sqrt(x)
+* Conditional if (y / x) * x = y if x != 0
 * Get rid of wget dependency
 * Split up interface code
 * Move unknown over to the other side in unsolved comparison
@@ -26,7 +27,7 @@
 * More units
 
 * Separate library
-* Support non-glibc systems (Solaris)
+* Increase support for non-glibc systems
 
 * API documentation
 * User documentation
