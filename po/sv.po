@@ -584,7 +584,7 @@ msgid "Non-zero number"
 msgstr "Icke-noll nummer"
 
 #: data/functionedit.glade.h:42 src/callbacks.cc:6160
-#: src/calclib/Calculator.cc:5355 src/calclib/DataSet.cc:336
+#: src/libqalculate/Calculator.cc:5355 src/libqalculate/DataSet.cc:336
 msgid "Object"
 msgstr "Objekt"
 
@@ -2223,7 +2223,7 @@ msgstr ""
 #: src/main.cc:155 src/main.cc:158 src/main.cc:159 src/main.cc:160
 #: src/main.cc:161 src/callbacks.cc:6451 src/qalc.cc:394 src/qalc.cc:397
 #: src/qalc.cc:398 src/qalc.cc:399 src/qalc.cc:400 src/qalc.cc:795
-#: src/calclib/Calculator.cc:4708
+#: src/libqalculate/Calculator.cc:4708
 msgid "Temporary"
 msgstr "Temporära"
 
@@ -2340,7 +2340,7 @@ msgid "Inactive"
 msgstr "Inaktiva"
 
 #: src/callbacks.cc:878 src/callbacks.cc:1658 src/qalc.cc:1093
-#: src/calclib/Function.cc:147
+#: src/libqalculate/Function.cc:147
 msgid "argument"
 msgstr "parameter"
 
@@ -2385,11 +2385,11 @@ msgstr "Aktivera"
 msgid "a previous result"
 msgstr "ett föregående resultat"
 
-#: src/callbacks.cc:1118 src/qalc.cc:1292 src/calclib/Function.cc:1830
+#: src/callbacks.cc:1118 src/qalc.cc:1292 src/libqalculate/Function.cc:1830
 msgid "matrix"
 msgstr "matris"
 
-#: src/callbacks.cc:1120 src/qalc.cc:1294 src/calclib/Function.cc:1769
+#: src/callbacks.cc:1120 src/qalc.cc:1294 src/libqalculate/Function.cc:1769
 msgid "vector"
 msgstr "vektor"
 
@@ -2418,7 +2418,7 @@ msgid "non-zero"
 msgstr "ej noll"
 
 #: src/callbacks.cc:1137 src/qalc.cc:163 src/qalc.cc:919 src/qalc.cc:1311
-#: src/qalc.cc:1363 src/calclib/Function.cc:1647
+#: src/qalc.cc:1363 src/libqalculate/Function.cc:1647
 msgid "integer"
 msgstr "heltal"
 
@@ -2438,7 +2438,7 @@ msgid "complex"
 msgstr "komplex"
 
 #: src/callbacks.cc:1141 src/callbacks.cc:5910 src/qalc.cc:159 src/qalc.cc:923
-#: src/qalc.cc:1315 src/qalc.cc:1363 src/calclib/Function.cc:1494
+#: src/qalc.cc:1315 src/qalc.cc:1363 src/libqalculate/Function.cc:1494
 msgid "number"
 msgstr "nummer"
 
@@ -2468,7 +2468,7 @@ msgstr "Prefix"
 msgid "No Prefix"
 msgstr "Inget prefix"
 
-#: src/callbacks.cc:3602 src/calclib/MathStructure.cc:6395
+#: src/callbacks.cc:3602 src/libqalculate/MathStructure.cc:6395
 msgid "undefined"
 msgstr "odefinierad"
 
@@ -2485,8 +2485,8 @@ msgstr ""
 "resultet är för långt\n"
 "se historiken"
 
-#: src/callbacks.cc:3740 src/qalc.cc:1515 src/calclib/Calculator.cc:142
-#: src/calclib/Calculator.cc:143 src/calclib/Calculator.cc:1273
+#: src/callbacks.cc:3740 src/qalc.cc:1515 src/libqalculate/Calculator.cc:142
+#: src/libqalculate/Calculator.cc:143 src/libqalculate/Calculator.cc:1273
 msgid "aborted"
 msgstr "avbruten"
 
@@ -2514,11 +2514,11 @@ msgstr "Infoga"
 msgid "Argument"
 msgstr "Parameter"
 
-#: src/callbacks.cc:4434 src/calclib/util.cc:538
+#: src/callbacks.cc:4434 src/libqalculate/util.cc:538
 msgid "True"
 msgstr "Sant"
 
-#: src/callbacks.cc:4436 src/calclib/util.cc:539
+#: src/callbacks.cc:4436 src/libqalculate/util.cc:539
 msgid "False"
 msgstr "Falskt"
 
@@ -2563,12 +2563,12 @@ msgid "New Function"
 msgstr "Ny funktion"
 
 #: src/callbacks.cc:5124 src/callbacks.cc:9665 src/callbacks.cc:9676
-#: src/calclib/util.cc:530
+#: src/libqalculate/util.cc:530
 msgid "Yes"
 msgstr "Ja"
 
 #: src/callbacks.cc:5126 src/callbacks.cc:9667 src/callbacks.cc:9678
-#: src/calclib/util.cc:531
+#: src/libqalculate/util.cc:531
 msgid "No"
 msgstr "Nej"
 
@@ -2645,7 +2645,7 @@ msgstr "Ny matris"
 msgid "New Data Object"
 msgstr "Nytt dataobjekt"
 
-#: src/callbacks.cc:5902 src/calclib/Function.cc:1709
+#: src/callbacks.cc:5902 src/libqalculate/Function.cc:1709
 msgid "text"
 msgstr "text"
 
@@ -2668,13 +2668,13 @@ msgid "New Data Set"
 msgstr "Nytt dataset"
 
 #: src/callbacks.cc:6087 src/qalc.cc:1038 src/qalc.cc:1048 src/qalc.cc:1413
-#: src/calclib/Calculator.cc:5372 src/calclib/DataSet.cc:338
-#: src/calclib/DataSet.cc:365 src/calclib/DataSet.cc:966
+#: src/libqalculate/Calculator.cc:5372 src/libqalculate/DataSet.cc:338
+#: src/libqalculate/DataSet.cc:365 src/libqalculate/DataSet.cc:966
 msgid "info"
 msgstr ""
 
-#: src/callbacks.cc:6167 src/calclib/Calculator.cc:5364
-#: src/calclib/DataSet.cc:337
+#: src/callbacks.cc:6167 src/libqalculate/Calculator.cc:5364
+#: src/libqalculate/DataSet.cc:337
 msgid "Property"
 msgstr "Egenskap"
 
@@ -2879,20 +2879,20 @@ msgid "Couldn't find pixmap file: %s"
 msgstr "Kunde inte hitta hitta bildfilen \"%s\"."
 
 #: src/qalc.cc:85 src/qalc.cc:135 src/qalc.cc:1388 src/qalc.cc:1389
-#: src/calclib/util.cc:533
+#: src/libqalculate/util.cc:533
 msgid "yes"
 msgstr "ja"
 
 #: src/qalc.cc:86 src/qalc.cc:137 src/qalc.cc:1388 src/qalc.cc:1389
-#: src/calclib/util.cc:534
+#: src/libqalculate/util.cc:534
 msgid "no"
 msgstr "nej"
 
-#: src/qalc.cc:87 src/calclib/util.cc:541
+#: src/qalc.cc:87 src/libqalculate/util.cc:541
 msgid "true"
 msgstr "sant"
 
-#: src/qalc.cc:88 src/calclib/util.cc:542
+#: src/qalc.cc:88 src/libqalculate/util.cc:542
 msgid "false"
 msgstr "falskt"
 
@@ -2903,7 +2903,7 @@ msgstr "falskt"
 #: src/qalc.cc:1382 src/qalc.cc:1384 src/qalc.cc:1385 src/qalc.cc:1386
 #: src/qalc.cc:1387 src/qalc.cc:1390 src/qalc.cc:1391 src/qalc.cc:1392
 #: src/qalc.cc:1393 src/qalc.cc:1394 src/qalc.cc:1395 src/qalc.cc:1396
-#: src/qalc.cc:1397 src/qalc.cc:1398 src/calclib/util.cc:549
+#: src/qalc.cc:1397 src/qalc.cc:1398 src/libqalculate/util.cc:549
 msgid "on"
 msgstr "på"
 
@@ -2917,7 +2917,7 @@ msgstr "på"
 #: src/qalc.cc:1384 src/qalc.cc:1385 src/qalc.cc:1386 src/qalc.cc:1387
 #: src/qalc.cc:1390 src/qalc.cc:1391 src/qalc.cc:1392 src/qalc.cc:1393
 #: src/qalc.cc:1394 src/qalc.cc:1395 src/qalc.cc:1396 src/qalc.cc:1397
-#: src/qalc.cc:1398 src/calclib/util.cc:550
+#: src/qalc.cc:1398 src/libqalculate/util.cc:550
 msgid "off"
 msgstr "av"
 
@@ -3496,60 +3496,60 @@ msgstr "Behandlar (tryck Enter för att avbryta)"
 msgid "Calculating (press Enter to abort)"
 msgstr "Beräknar (tryck Enter för att avbryta)"
 
-#: src/calclib/BuiltinFunctions.cc:48
+#: src/libqalculate/BuiltinFunctions.cc:48
 #, c-format
 msgid "Too many elements (%s) for the order (%sx%s) of the matrix."
 msgstr "För många element (%s) för en %sx%s matris."
 
-#: src/calclib/BuiltinFunctions.cc:110 src/calclib/BuiltinFunctions.cc:164
+#: src/libqalculate/BuiltinFunctions.cc:110 src/libqalculate/BuiltinFunctions.cc:164
 #, c-format
 msgid "Row %s does not exist in matrix."
 msgstr "Rad %s finns inte i matrisen."
 
-#: src/calclib/BuiltinFunctions.cc:123 src/calclib/BuiltinFunctions.cc:160
+#: src/libqalculate/BuiltinFunctions.cc:123 src/libqalculate/BuiltinFunctions.cc:160
 #, c-format
 msgid "Column %s does not exist in matrix."
 msgstr "Kolumn %s finns inte i matrisen."
 
-#: src/calclib/BuiltinFunctions.cc:188
+#: src/libqalculate/BuiltinFunctions.cc:188
 #, c-format
 msgid "Component %s does not exist in vector."
 msgstr "Komponent %s finns inte i vektorn."
 
-#: src/calclib/BuiltinFunctions.cc:341
+#: src/libqalculate/BuiltinFunctions.cc:341
 #, c-format
 msgid "%s() does at the moment only support integers and fractions of two."
 msgstr "%s() har för närvarande enbart stöd för heltal och halvtal."
 
-#: src/calclib/BuiltinFunctions.cc:1262 src/calclib/BuiltinFunctions.cc:1305
+#: src/libqalculate/BuiltinFunctions.cc:1262 src/libqalculate/BuiltinFunctions.cc:1305
 #, c-format
 msgid "Unsolvable comparison in %s()."
 msgstr "Olöslig jämförelse i %s()."
 
-#: src/calclib/BuiltinFunctions.cc:1400 src/calclib/BuiltinFunctions.cc:1421
+#: src/libqalculate/BuiltinFunctions.cc:1400 src/libqalculate/BuiltinFunctions.cc:1421
 #, c-format
 msgid "Error in date format for function %s()."
 msgstr "Felaktigt datumformat för %s()."
 
-#: src/calclib/BuiltinFunctions.cc:1873 src/calclib/BuiltinFunctions.cc:1890
+#: src/libqalculate/BuiltinFunctions.cc:1873 src/libqalculate/BuiltinFunctions.cc:1890
 msgid "Comparison failed."
 msgstr "Jämförelse misslyckades."
 
-#: src/calclib/BuiltinFunctions.cc:1878 src/calclib/BuiltinFunctions.cc:1905
+#: src/libqalculate/BuiltinFunctions.cc:1878 src/libqalculate/BuiltinFunctions.cc:1905
 msgid "No matching item found."
 msgstr "Inga matchande poster funna."
 
-#: src/calclib/BuiltinFunctions.cc:1965
+#: src/libqalculate/BuiltinFunctions.cc:1965
 #, c-format
 msgid "Object %s does not exist."
 msgstr "Okjektet %s finns inte."
 
-#: src/calclib/BuiltinFunctions.cc:2038 src/calclib/BuiltinFunctions.cc:2104
+#: src/libqalculate/BuiltinFunctions.cc:2038 src/libqalculate/BuiltinFunctions.cc:2104
 #, c-format
 msgid "Unable to isolate %s."
 msgstr "Kan inte isolera %s."
 
-#: src/calclib/BuiltinFunctions.cc:2047 src/calclib/BuiltinFunctions.cc:2116
+#: src/libqalculate/BuiltinFunctions.cc:2047 src/libqalculate/BuiltinFunctions.cc:2116
 msgid ""
 "No comparison to solve. The reason might be:\n"
 "\n"
@@ -3570,7 +3570,7 @@ msgstr ""
 "\n"
 "3. Uttryckes evalueras som SANT (ex. \"2x = 2x\")"
 
-#: src/calclib/BuiltinFunctions.cc:2102
+#: src/libqalculate/BuiltinFunctions.cc:2102
 #, c-format
 msgid ""
 "Unable to isolate %s.\n"
@@ -3585,137 +3585,137 @@ msgstr ""
 "att varje ekvation åtminstone innehåller motsvarande variabel (om automatisk "
 "omsortering misslyckades)."
 
-#: src/calclib/BuiltinFunctions.cc:2111
+#: src/libqalculate/BuiltinFunctions.cc:2111
 #, c-format
 msgid "Only equals comparison is allowed in the equations in %s()."
 msgstr "Enbart lika-med-jäförelser är tillåtna i ekvationer i %s()."
 
-#: src/calclib/Calculator.cc:192
+#: src/libqalculate/Calculator.cc:192
 msgid "per"
 msgstr ""
 
-#: src/calclib/Calculator.cc:194
+#: src/libqalculate/Calculator.cc:194
 msgid "times"
 msgstr "gånger"
 
-#: src/calclib/Calculator.cc:196
+#: src/libqalculate/Calculator.cc:196
 msgid "plus"
 msgstr ""
 
-#: src/calclib/Calculator.cc:198
+#: src/libqalculate/Calculator.cc:198
 msgid "minus"
 msgstr ""
 
-#: src/calclib/Calculator.cc:200 src/calclib/Function.cc:1084
-#: src/calclib/Function.cc:1516 src/calclib/Function.cc:1660
+#: src/libqalculate/Calculator.cc:200 src/libqalculate/Function.cc:1084
+#: src/libqalculate/Function.cc:1516 src/libqalculate/Function.cc:1660
 msgid "and"
 msgstr "och"
 
-#: src/calclib/Calculator.cc:204 src/calclib/DataSet.cc:1000
-#: src/calclib/DataSet.cc:1063 src/calclib/Function.cc:1995
-#: src/calclib/Function.cc:2011
+#: src/libqalculate/Calculator.cc:204 src/libqalculate/DataSet.cc:1000
+#: src/libqalculate/DataSet.cc:1063 src/libqalculate/Function.cc:1995
+#: src/libqalculate/Function.cc:2011
 msgid "or"
 msgstr "eller"
 
-#: src/calclib/Calculator.cc:216 src/calclib/Calculator.cc:1281
-#: src/calclib/Calculator.cc:1282
+#: src/libqalculate/Calculator.cc:216 src/libqalculate/Calculator.cc:1281
+#: src/libqalculate/Calculator.cc:1282
 msgid " to "
 msgstr " till "
 
-#: src/calclib/Calculator.cc:990 src/calclib/Calculator.cc:5767
+#: src/libqalculate/Calculator.cc:990 src/libqalculate/Calculator.cc:5767
 msgid "Currency"
 msgstr "Valuta"
 
-#: src/calclib/Calculator.cc:1249
+#: src/libqalculate/Calculator.cc:1249
 msgid "calculating..."
 msgstr "beräknar..."
 
-#: src/calclib/Calculator.cc:1340
+#: src/libqalculate/Calculator.cc:1340
 msgid "timed out"
 msgstr "tiden rann ut för visning"
 
-#: src/calclib/Calculator.cc:2836 src/calclib/Calculator.cc:2852
+#: src/libqalculate/Calculator.cc:2836 src/libqalculate/Calculator.cc:2852
 #, c-format
 msgid "Misplaced '%s' ignored"
 msgstr "Malplacerat '%s' ignorerades"
 
-#: src/calclib/Calculator.cc:2861 src/calclib/Function.cc:1266
-#: src/calclib/Function.cc:1294
+#: src/libqalculate/Calculator.cc:2861 src/libqalculate/Function.cc:1266
+#: src/libqalculate/Function.cc:1294
 #, c-format
 msgid "Internal id %s does not exist."
 msgstr "Internt id %s finns inte."
 
-#: src/calclib/Calculator.cc:2877
+#: src/libqalculate/Calculator.cc:2877
 #, c-format
 msgid "\"%s\" is not a valid variable/function/unit."
 msgstr "\"%s\" motsvarar inte någon giltig variabel/funktion/enhet."
 
-#: src/calclib/Calculator.cc:2881
+#: src/libqalculate/Calculator.cc:2881
 #, c-format
 msgid "Trailing characters in expression \"%s\" was ignored."
 msgstr "Överblivna tecken i uttrycket \"%s\" ignorerades."
 
-#: src/calclib/Calculator.cc:3143
+#: src/libqalculate/Calculator.cc:3143
 msgid "RPN syntax error. Values left at the end of the RPN expression."
 msgstr "RPN syntaxfel. Värden kvar i slutet av RPN uttryck."
 
-#: src/calclib/Calculator.cc:3145
+#: src/libqalculate/Calculator.cc:3145
 msgid "Unused stack values."
 msgstr "Oanvända stackvärden."
 
-#: src/calclib/Calculator.cc:3162
+#: src/libqalculate/Calculator.cc:3162
 msgid "RPN syntax error. Stack is empty."
 msgstr "RPN syntaxfel. Stacken är tom."
 
-#: src/calclib/Calculator.cc:3382
+#: src/libqalculate/Calculator.cc:3382
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr "Namnet \"%s\" är upptaget. Ändrar till \"%s\"."
 
-#: src/calclib/Calculator.cc:3764 src/calclib/DataSet.cc:482
+#: src/libqalculate/Calculator.cc:3764 src/libqalculate/DataSet.cc:482
 #, c-format
 msgid "File not identified as Qalculate! definitions file: %s."
 msgstr "Filen identifierades inte som en Qalculate! definitionsfil: %s."
 
-#: src/calclib/Calculator.cc:5671
+#: src/libqalculate/Calculator.cc:5671
 msgid "column"
 msgstr "kolumn"
 
-#: src/calclib/Calculator.cc:5674
+#: src/libqalculate/Calculator.cc:5674
 msgid "Column "
 msgstr "Kolumn"
 
-#: src/calclib/Calculator.cc:5825
+#: src/libqalculate/Calculator.cc:5825
 msgid "Failed to download exchange rates from ECB."
 msgstr "Misslyckades med att ladda ner växelkurser från ECB."
 
-#: src/calclib/Calculator.cc:5840
+#: src/libqalculate/Calculator.cc:5840
 msgid ""
 "It has been more than one week since the exchange rates last were updated."
 msgstr "Det var mer än en vecka sedan växelkurserna senast updaterades."
 
-#: src/calclib/Calculator.cc:5874 src/calclib/Calculator.cc:5885
+#: src/libqalculate/Calculator.cc:5874 src/libqalculate/Calculator.cc:5885
 msgid "Unable to generate plot data with current min, max and sampling rate."
 msgstr "Kunde inte generera diagramdata med angivet min, max och frekvens."
 
-#: src/calclib/Calculator.cc:5898 src/calclib/Calculator.cc:5909
+#: src/libqalculate/Calculator.cc:5898 src/libqalculate/Calculator.cc:5909
 msgid "Unable to generate plot data with current min, max and step size."
 msgstr "Kunde inte generera diagramdata med angivet min, max och stegstorlek."
 
-#: src/calclib/Calculator.cc:5955
+#: src/libqalculate/Calculator.cc:5955
 msgid "No extension in file name. Saving as PNG image."
 msgstr "Inget tillägg i filnamnet. Sparar som PNG-bild."
 
-#: src/calclib/Calculator.cc:5972
+#: src/libqalculate/Calculator.cc:5972
 msgid "Unknown extension in file name. Saving as PNG image."
 msgstr "Okänt tillägg i filnamnet. Sparar som PNG-bild."
 
-#: src/calclib/Calculator.cc:6164
+#: src/libqalculate/Calculator.cc:6164
 #, c-format
 msgid "Could not create temporary file %s"
 msgstr "Kunde inte skapa temporär fil %s"
 
-#: src/calclib/Calculator.cc:6200
+#: src/libqalculate/Calculator.cc:6200
 #, c-format
 msgid ""
 "Series %s contains non-numerical data (\"%s\" first of %s) which can not be "
@@ -3724,7 +3724,7 @@ msgstr ""
 "Dataserie %s innehåller värden som inte är numeriska (\"%s\" först av %s) "
 "och inte kan visas korrekt."
 
-#: src/calclib/Calculator.cc:6202
+#: src/libqalculate/Calculator.cc:6202
 #, c-format
 msgid ""
 "Series %s contains non-real data (\"%s\" first of %s) which can not be "
@@ -3733,7 +3733,7 @@ msgstr ""
 "Dataserie %s innehåller värden som inte är reella (\"%s\" först av %s) och "
 "inte kan visas korrekt."
 
-#: src/calclib/Calculator.cc:6227
+#: src/libqalculate/Calculator.cc:6227
 msgid ""
 "Failed to invoke gnuplot. Make sure that you have gnuplot installed in your "
 "path."
@@ -3741,58 +3741,58 @@ msgstr ""
 "Misslyckades med att aktivera gnuplot. Se till att du har gnuplot "
 "installerat i sökvägen för program."
 
-#: src/calclib/DataSet.cc:362
+#: src/libqalculate/DataSet.cc:362
 #, c-format
 msgid "Object %s not available in data set."
 msgstr "Okjektet %s finns inte i dataset."
 
-#: src/calclib/DataSet.cc:372
+#: src/libqalculate/DataSet.cc:372
 #, c-format
 msgid "Property %s not available in data set."
 msgstr "Egenskap %s är inte tillgänglig i dataset."
 
-#: src/calclib/DataSet.cc:377
+#: src/libqalculate/DataSet.cc:377
 #, c-format
 msgid "Property %s not defined for object %s."
 msgstr "Egenskap %s inte definierad för objekt %s."
 
-#: src/calclib/DataSet.cc:460 src/calclib/DataSet.cc:468
+#: src/libqalculate/DataSet.cc:460 src/libqalculate/DataSet.cc:468
 #, c-format
 msgid "Unable to load data objects in %s."
 msgstr "Kunde inhämte dataobjekt i %s."
 
-#: src/calclib/DataSet.cc:970
+#: src/libqalculate/DataSet.cc:970
 msgid "data property"
 msgstr "dataegenskap"
 
-#: src/calclib/DataSet.cc:972
+#: src/libqalculate/DataSet.cc:972
 msgid "name of a data property"
 msgstr "namn på dataegenskap"
 
-#: src/calclib/DataSet.cc:980 src/calclib/DataSet.cc:996
+#: src/libqalculate/DataSet.cc:980 src/libqalculate/DataSet.cc:996
 msgid "no properties available"
 msgstr "inga egenskaper tillgängliga"
 
-#: src/calclib/DataSet.cc:1030
+#: src/libqalculate/DataSet.cc:1030
 #, c-format
 msgid ""
 "Data set \"%s\" has no object key that supports the provided argument type."
 msgstr ""
 "Dataset \"%s\" har ingen objektnyckel som stödjer tillhandahållen argumenttyp"
 
-#: src/calclib/DataSet.cc:1035
+#: src/libqalculate/DataSet.cc:1035
 msgid "data object"
 msgstr "dataobjekt"
 
-#: src/calclib/DataSet.cc:1037
+#: src/libqalculate/DataSet.cc:1037
 msgid "an object from"
 msgstr "ett objekt från"
 
-#: src/calclib/DataSet.cc:1066
+#: src/libqalculate/DataSet.cc:1066
 msgid "use"
 msgstr "använd"
 
-#: src/calclib/MathStructure.cc:1892
+#: src/libqalculate/MathStructure.cc:1892
 #, c-format
 msgid ""
 "The second matrix must have as many rows (was %s) as the first has columns "
@@ -3801,31 +3801,31 @@ msgstr ""
 "Den andra matrisen måste ha lika många rader (var %s) som den första har "
 "kolumner (var %s) för matrismultiplikation."
 
-#: src/calclib/MathStructure.cc:6434
+#: src/libqalculate/MathStructure.cc:6434
 #, c-format
 msgid "Unsolvable comparison at component %s when trying to rank vector."
 msgstr "Olöslig jämförelse vid komponent %s vid rangordning av vektor."
 
-#: src/calclib/MathStructure.cc:6482
+#: src/libqalculate/MathStructure.cc:6482
 #, c-format
 msgid "Unsolvable comparison at component %s when trying to sort vector."
 msgstr "Olöslig jämförelse vid komponent %s vid sortering av vektor."
 
-#: src/calclib/MathStructure.cc:6654
+#: src/libqalculate/MathStructure.cc:6654
 msgid "The determinant can only be calculated for symmetric matrices."
 msgstr "Determinanten kan enbart beräknas för symmetriska matriser."
 
-#: src/calclib/MathStructure.cc:6711
+#: src/libqalculate/MathStructure.cc:6711
 msgid "The permanent can only be calculated for symmetric matrices."
 msgstr "Permanenten kan enbart beräknas för symmetriska matriser."
 
-#: src/calclib/Function.cc:111
+#: src/libqalculate/Function.cc:111
 #, c-format
 msgid "%s() requires that %s"
 msgstr "%s() kräver att %s"
 
-#: src/calclib/Function.cc:249 src/calclib/Function.cc:293
-#: src/calclib/Function.cc:340
+#: src/libqalculate/Function.cc:249 src/libqalculate/Function.cc:293
+#: src/libqalculate/Function.cc:340
 #, c-format
 msgid ""
 "Additional arguments for function %s() was ignored. Function can only use %s "
@@ -3834,179 +3834,179 @@ msgstr ""
 "Övertaliga parametrar för funktionen %s() ignorerades. Funktionen kan inte "
 "använda fler än %s parametrar."
 
-#: src/calclib/Function.cc:361
+#: src/libqalculate/Function.cc:361
 #, c-format
 msgid "You need at least %s argument(s) (%s) in function %s()."
 msgstr "Det krävs minst %s parametrar (%s) i funktionen %s()."
 
-#: src/calclib/Function.cc:363
+#: src/libqalculate/Function.cc:363
 #, c-format
 msgid "You need at least %s argument(s) in function %s()."
 msgstr "Det krävs minst %s parametrar i funktionen %s()."
 
-#: src/calclib/Function.cc:1074
+#: src/libqalculate/Function.cc:1074
 msgid "a free value"
 msgstr "ett valfritt värde"
 
-#: src/calclib/Function.cc:1079
+#: src/libqalculate/Function.cc:1079
 msgid "that is nonzero"
 msgstr "som är icke-noll"
 
-#: src/calclib/Function.cc:1087
+#: src/libqalculate/Function.cc:1087
 msgid "that fulfills the condition:"
 msgstr "som uppfyller villkoret:"
 
-#: src/calclib/Function.cc:1136
+#: src/libqalculate/Function.cc:1136
 #, c-format
 msgid "Argument %s in %s() must be %s."
 msgstr "Parameter %s i %s() måste vara %s."
 
-#: src/calclib/Function.cc:1138
+#: src/libqalculate/Function.cc:1138
 #, c-format
 msgid "Argument %s, %s, in %s() must be %s."
 msgstr "Parameter %s, %s, i %s() måste vara %s."
 
-#: src/calclib/Function.cc:1499
+#: src/libqalculate/Function.cc:1499
 msgid "a number"
 msgstr "ett nummer"
 
-#: src/calclib/Function.cc:1501
+#: src/libqalculate/Function.cc:1501
 msgid "a real number"
 msgstr "ett reelt nummer"
 
-#: src/calclib/Function.cc:1506 src/calclib/Function.cc:1653
+#: src/libqalculate/Function.cc:1506 src/libqalculate/Function.cc:1653
 msgid ">="
 msgstr ">="
 
-#: src/calclib/Function.cc:1508
+#: src/libqalculate/Function.cc:1508
 msgid ">"
 msgstr ">"
 
-#: src/calclib/Function.cc:1520 src/calclib/Function.cc:1663
+#: src/libqalculate/Function.cc:1520 src/libqalculate/Function.cc:1663
 msgid "<="
 msgstr "<="
 
-#: src/calclib/Function.cc:1522
+#: src/libqalculate/Function.cc:1522
 msgid "<"
 msgstr "<"
 
-#: src/calclib/Function.cc:1650
+#: src/libqalculate/Function.cc:1650
 msgid "an integer"
 msgstr "ett heltal"
 
-#: src/calclib/Function.cc:1675
+#: src/libqalculate/Function.cc:1675
 msgid "a free value (giac adjusted)"
 msgstr "ett valfritt värde (giac justerat)"
 
-#: src/calclib/Function.cc:1695
+#: src/libqalculate/Function.cc:1695
 msgid "symbol"
 msgstr "symbol"
 
-#: src/calclib/Function.cc:1696
+#: src/libqalculate/Function.cc:1696
 msgid "an unknown variable/symbol"
 msgstr "en okänd variabel/symbol"
 
-#: src/calclib/Function.cc:1710
+#: src/libqalculate/Function.cc:1710
 msgid "a text string"
 msgstr "en textsträng"
 
-#: src/calclib/Function.cc:1725
+#: src/libqalculate/Function.cc:1725
 msgid "date"
 msgstr "datum"
 
-#: src/calclib/Function.cc:1726
+#: src/libqalculate/Function.cc:1726
 msgid "a date"
 msgstr "ett datum"
 
-#: src/calclib/Function.cc:1772
+#: src/libqalculate/Function.cc:1772
 msgid "a vector with "
 msgstr "en vektor med "
 
-#: src/calclib/Function.cc:1784
+#: src/libqalculate/Function.cc:1784
 msgid "a vector"
 msgstr "en vektor"
 
-#: src/calclib/Function.cc:1833
+#: src/libqalculate/Function.cc:1833
 msgid "a symmetric matrix"
 msgstr "en symmetrisk matris"
 
-#: src/calclib/Function.cc:1835
+#: src/libqalculate/Function.cc:1835
 msgid "a matrix"
 msgstr "en matris"
 
-#: src/calclib/Function.cc:1850
+#: src/libqalculate/Function.cc:1850
 msgid "object"
 msgstr "objekt"
 
-#: src/calclib/Function.cc:1851
+#: src/libqalculate/Function.cc:1851
 msgid "a valid function, unit or variable name"
 msgstr "ett giltigt funktions, enhets eller variabelnamn"
 
-#: src/calclib/Function.cc:1864
+#: src/libqalculate/Function.cc:1864
 msgid "function"
 msgstr "funktion"
 
-#: src/calclib/Function.cc:1865
+#: src/libqalculate/Function.cc:1865
 msgid "a valid function name"
 msgstr "ett giltigt funktionsnamn"
 
-#: src/calclib/Function.cc:1878
+#: src/libqalculate/Function.cc:1878
 msgid "unit"
 msgstr "enhet"
 
-#: src/calclib/Function.cc:1879
+#: src/libqalculate/Function.cc:1879
 msgid "a valid unit name"
 msgstr "ett giltigt enhetsnamn"
 
-#: src/calclib/Function.cc:1892
+#: src/libqalculate/Function.cc:1892
 msgid "variable"
 msgstr "variabel"
 
-#: src/calclib/Function.cc:1893
+#: src/libqalculate/Function.cc:1893
 msgid "a valid variable name"
 msgstr "ett giltigt variabelnamn"
 
-#: src/calclib/Function.cc:1906
+#: src/libqalculate/Function.cc:1906
 msgid "file"
 msgstr "fil"
 
-#: src/calclib/Function.cc:1907
+#: src/libqalculate/Function.cc:1907
 msgid "a valid file name"
 msgstr "ett giltigt filnamn"
 
-#: src/calclib/Function.cc:1920
+#: src/libqalculate/Function.cc:1920
 msgid "boolean"
 msgstr "boolskt värde"
 
-#: src/calclib/Function.cc:1921
+#: src/libqalculate/Function.cc:1921
 msgid "a boolean (0 or 1)"
 msgstr "ett boolskt värde (0 eller 1)"
 
-#: src/calclib/Function.cc:1949
+#: src/libqalculate/Function.cc:1949
 msgid "angle"
 msgstr "vinkel"
 
-#: src/calclib/Function.cc:1950
+#: src/libqalculate/Function.cc:1950
 msgid "an angle or a number (using the default angle unit)"
 msgstr "en vinkel eller ett tal (som använder inställd vinkelenhet)"
 
-#: src/calclib/Number.cc:196
+#: src/libqalculate/Number.cc:196
 msgid ""
 "Assuming the unusual practice of letting a last capital I mean 2 in a roman "
 "numeral."
 msgstr "Antar att ett sista stort I avses betyda 2."
 
-#: src/calclib/Number.cc:274
+#: src/libqalculate/Number.cc:274
 #, c-format
 msgid "Error in roman numerals: %s."
 msgstr "Fel i romerska siffor: \"%s\"."
 
-#: src/calclib/Number.cc:309
+#: src/libqalculate/Number.cc:309
 #, c-format
 msgid "Unknown roman numeral: %s."
 msgstr "Okänd romersk siffra: %s."
 
-#: src/calclib/Number.cc:367
+#: src/libqalculate/Number.cc:367
 #, c-format
 msgid ""
 "Errors in roman numerals: \"%s\". Interpreted as %s, which should be written "
@@ -4014,54 +4014,54 @@ msgid ""
 msgstr ""
 "Fel i romerska siffor: \"%s\". Tolkat som %s, vilket borde skrivits %s."
 
-#: src/calclib/Number.cc:447
+#: src/libqalculate/Number.cc:447
 msgid "':' in decimal number ignored (decimal point detected)."
 msgstr "':' i decimalt tal ignorerades (decimalkomma upptäckt)."
 
-#: src/calclib/Number.cc:463
+#: src/libqalculate/Number.cc:463
 msgid "Decimal point in sexagesimal number treated as ':'."
 msgstr "Decimalkomma i sexagesimala tal behandlas som ':'."
 
-#: src/calclib/Number.cc:481
+#: src/libqalculate/Number.cc:481
 #, c-format
 msgid "Character '%s' was ignored in the number \"%s\" with base %s."
 msgstr "Tecken '%s' ignorerades i numret \"%s\" med bas %s"
 
-#: src/calclib/Number.cc:1172
+#: src/libqalculate/Number.cc:1172
 msgid "Division by zero."
 msgstr "Division med noll."
 
 #. 0^0
-#: src/calclib/Number.cc:1178
+#: src/libqalculate/Number.cc:1178
 msgid "0^0 might be considered undefined"
 msgstr "0^0 kan anses vara odefinierat"
 
-#: src/calclib/Number.cc:1423
+#: src/libqalculate/Number.cc:1423
 msgid "Integral point for Riemann's zeta must be an integer > 1."
 msgstr "Integralpunkten för Riemanns zeta måste vara ett heltal > 1."
 
-#: src/calclib/Number.cc:1429
+#: src/libqalculate/Number.cc:1429
 msgid "Integral point for Riemann's zeta is too large."
 msgstr "Integralpunkten för Riemanns zeta är för stor."
 
-#: src/calclib/Number.cc:2213 src/calclib/Number.cc:2221
-#: src/calclib/Number.cc:2230
+#: src/libqalculate/Number.cc:2213 src/libqalculate/Number.cc:2221
+#: src/libqalculate/Number.cc:2230
 msgid "infinity"
 msgstr "oändlighet"
 
-#: src/calclib/Unit.cc:685 src/calclib/Unit.cc:689
+#: src/libqalculate/Unit.cc:685 src/libqalculate/Unit.cc:689
 msgid "Error in unitexpression."
 msgstr "Fel i enhetsuttryck."
 
-#: src/calclib/util.cc:72 src/calclib/util.cc:116 src/calclib/util.cc:133
-#: src/calclib/util.cc:150
+#: src/libqalculate/util.cc:72 src/libqalculate/util.cc:116 src/libqalculate/util.cc:133
+#: src/libqalculate/util.cc:150
 msgid "today"
 msgstr "idag"
 
-#: src/calclib/util.cc:546
+#: src/libqalculate/util.cc:546
 msgid "On"
 msgstr "På"
 
-#: src/calclib/util.cc:547
+#: src/libqalculate/util.cc:547
 msgid "Off"
 msgstr "Av"

@@ -9399,7 +9399,8 @@ void on_menu_item_about_activate(GtkMenuItem *w, gpointer user_data) {
 void on_menu_item_help_activate(GtkMenuItem *w, gpointer user_data) {
 #ifdef HAVE_LIBGNOME
 	GError *error = NULL;
-	gnome_help_display_desktop(NULL, "qalculate", "qalculate", NULL, &error);
+	//gnome_help_display_desktop(NULL, "qalculate", "qalculate", NULL, &error);
+	gnome_help_display("qalculate", NULL, &error);
 	if(error) {
 		gchar *error_str = g_locale_to_utf8(error->message, -1, NULL, NULL, NULL);
 		GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help for Qalculate!.\n%s"), error_str);

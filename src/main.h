@@ -30,6 +30,6 @@ enum {
 	FRACTIONAL_MODE_FRACTION = 3,	
 };
 
-#include "qalculate.h"
+#include <libqalculate/qalculate.h>
 
 #endif /* MAIN_H */

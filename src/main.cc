@@ -72,7 +72,9 @@ int main (int argc, char **argv) {
 #endif
 
 #ifdef HAVE_LIBGNOME
-	gnome_program_init("qalculate-gtk", VERSION, LIBGNOME_MODULE, argc, argv, NULL, NULL, NULL);
+	gnome_program_init("qalculate", VERSION, LIBGNOME_MODULE, argc, argv, 
+					GNOME_PARAM_APP_DATADIR, PACKAGE_DATA_DIR,
+					NULL);
 #endif
 
 	gtk_init(&argc, &argv);

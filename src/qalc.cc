@@ -9,11 +9,8 @@
     (at your option) any later version.
 */
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-#include "calclib/qalculate.h"
+#include "support.h"
+#include <libqalculate/qalculate.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <time.h>

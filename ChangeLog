@@ -1,3 +1,11 @@
+2004-10-08 Niklas Knutsson  <nq@altern.org>
+
+	* Install headers
+	* Added pkgconfig file libqalculate.pc
+	* Remove inclusion of config.h in installed headers
+	* Include library headers with <libqalculate/*.h>
+	* Rename src/calclib src/libqalculate
+
 2004-10-07 Niklas Knutsson  <nq@altern.org>
 
 	* Update exchange rates command in qalc

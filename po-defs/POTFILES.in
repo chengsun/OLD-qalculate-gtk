@@ -1,9 +1,9 @@
 # List of source files containing translatable strings.
 [encoding: UTF-8]
-src/calclib/data/datasets.xml.in
-src/calclib/data/elements.xml.in
-src/calclib/data/functions.xml.in
-src/calclib/data/planets.xml.in
-src/calclib/data/prefixes.xml.in
-src/calclib/data/units.xml.in
-src/calclib/data/variables.xml.in
+src/libqalculate/data/datasets.xml.in
+src/libqalculate/data/elements.xml.in
+src/libqalculate/data/functions.xml.in
+src/libqalculate/data/planets.xml.in
+src/libqalculate/data/prefixes.xml.in
+src/libqalculate/data/units.xml.in
+src/libqalculate/data/variables.xml.in
