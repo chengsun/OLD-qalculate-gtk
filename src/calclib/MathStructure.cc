@@ -3726,7 +3726,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 		case STRUCT_INVERSE: {}
 		case STRUCT_DIVISION: {
 			switch(m_type) {
-				case STRUCT_MULTIPLICATION: {return false;}
+				case STRUCT_MULTIPLICATION: {return flat_division || po.excessive_parenthesis;}
 				case STRUCT_DIVISION: {return flat_division || po.excessive_parenthesis;}
 				case STRUCT_INVERSE: {return flat_division || po.excessive_parenthesis;}
 				case STRUCT_ADDITION: {return flat_division || po.excessive_parenthesis;}

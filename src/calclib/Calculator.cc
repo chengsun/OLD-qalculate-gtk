@@ -3105,9 +3105,9 @@ void Calculator::parseAdd(string &str, MathStructure &mstruct, const ParseOption
 	if(str.length() > 0) {
 		unsigned int i;
 		if(po.base >= 2 && po.base <= 10) {
-			i = str.find_first_of(OPERATORS PARENTHESISS EXP ID_WRAP_LEFT, 1);
+			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS EXP ID_WRAP_LEFT, 1);
 		} else {
-			i = str.find_first_of(OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
+			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
 		}
 		if(i == string::npos && str[0] != NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1)) {
 			mstruct.set(parseNumber(str, po));
@@ -3120,9 +3120,9 @@ void Calculator::parseAdd(string &str, MathStructure &mstruct, const ParseOption
 	if(str.length() > 0) {
 		unsigned int i;
 		if(po.base >= 2 && po.base <= 10) {
-			i = str.find_first_of(OPERATORS PARENTHESISS EXP ID_WRAP_LEFT, 1);
+			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS EXP ID_WRAP_LEFT, 1);
 		} else {
-			i = str.find_first_of(OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
+			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
 		}
 		if(i == string::npos && str[0] != NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1)) {
 			mstruct.add(parseNumber(str, po), s, true);
@@ -3172,7 +3172,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 				break;
 			}
 		}
-		if(i > 0 && is_not_in(OPERATORS PARENTHESISS SPACE, str[i - 1]) && (po.base > 10 || po.base < 2 || str[i - 1] != EXP_CH)) {
+		if(i > 0 && is_not_in(MULTIPLICATION_2 OPERATORS PARENTHESISS SPACE, str[i - 1]) && (po.base > 10 || po.base < 2 || str[i - 1] != EXP_CH)) {
 			if(po.rpn) {
 				str.insert(i2 + 1, MULTIPLICATION);	
 				str.insert(i, SPACE);
@@ -3184,7 +3184,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 				i2++;
 			}
 		}
-		if(i2 < (int) str.length() - 1 && is_not_in(OPERATORS PARENTHESISS SPACE, str[i2 + 1]) && (po.base > 10 || po.base < 2 || str[i2 + 1] != EXP_CH)) {
+		if(i2 < (int) str.length() - 1 && is_not_in(MULTIPLICATION_2 OPERATORS PARENTHESISS SPACE, str[i2 + 1]) && (po.base > 10 || po.base < 2 || str[i2 + 1] != EXP_CH)) {
 			if(po.rpn) {
 				i3 = str.find(SPACE, i2 + 1);
 				if(i3 == (int) string::npos) {
@@ -3392,8 +3392,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 		bool b = false, c = false;
 		bool min = false;
 		while(i != (int) string::npos && i != (int) str.length() - 1) {
-//			if((i < 1 || is_not_in(OPERATORS EXP, str[i - 1])) && ((int) str.length() == i + 1 || is_not_in(PLUS MINUS, str[i + 1]))) {
-			if(i < 1 || is_not_in(OPERATORS EXP, str[i - 1])) {
+			if(i < 1 || is_not_in(MULTIPLICATION_2 OPERATORS EXP, str[i - 1])) {
 				str2 = str.substr(0, i);
 				if(!c && b) {
 					if(min) {

@@ -3081,6 +3081,7 @@ void *view_proc(void *pipe) {
 		if(x) {
 			PrintOptions po = printops;
 			po.short_multiplication = false;
+			po.excessive_parenthesis = true;
 			MathStructure mp(*((MathStructure*) x));
 			fread(&po.is_approximate, sizeof(bool*), 1, view_pipe);
 			mp.format(printops);
