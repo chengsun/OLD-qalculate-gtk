@@ -432,6 +432,12 @@ void on_unit_dialog_entry_unit_activate(GtkEntry *entry, gpointer user_data);
 
 void on_element_button_clicked(GtkButton *w, gpointer user_data);
 
+void save_accels();
+
+gboolean
+on_menu_key_press (GtkWidget	*widget,
+		    GdkEventKey *event);
+
 #ifdef __cplusplus
 }
 #endif

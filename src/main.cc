@@ -26,6 +26,7 @@
 #include "interface.h"
 #include "callbacks.h"
 #include "main.h"
+#include "data/icon.xpm"
 
 MathStructure *mstruct, *parsed_mstruct;
 string *parsed_to_str;
@@ -49,6 +50,7 @@ extern vector<string> recent_functions_pre;
 extern vector<string> recent_variables_pre;
 extern vector<string> recent_units_pre;
 extern GtkWidget *expression;
+GdkPixbuf *icon_pixbuf;
 
 GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *nbexpression_glade, *datasets_glade, *decimals_glade;
 GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *namesedit_glade, *nbases_glade, *plot_glade, *precision_glade;
@@ -118,6 +120,8 @@ int main (int argc, char **argv) {
 
 	bool canplot = CALCULATOR->canPlot();
 	bool canfetch = CALCULATOR->canFetch();
+	
+	icon_pixbuf = gdk_pixbuf_new_from_xpm_data((const char**) icon_xpm);
 
 	//create main window
 	create_main_window();
@@ -224,6 +228,10 @@ int main (int argc, char **argv) {
 	if(!calc_arg.empty()) {
 		execute_expression();
 	}
+	
+	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", "accelmap", NULL);
+	gtk_accel_map_load(gstr);
+	g_free(gstr);
 	
 	gtk_main();
 	return 0;

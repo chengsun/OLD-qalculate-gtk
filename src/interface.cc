@@ -29,7 +29,6 @@
 #include "interface.h"
 #include "main.h"
 #include "qalculate.h"
-#include "data/icon.xpm"
 
 extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *datasets_glade, *nbexpression_glade, *decimals_glade;
 extern GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *namesedit_glade, *nbases_glade, *plot_glade, *precision_glade;
@@ -96,6 +95,8 @@ extern vector<string> initial_history;
 
 GtkTooltips *periodic_tooltips;
 
+extern GdkPixbuf *icon_pixbuf;
+
 gint compare_categories(gconstpointer a, gconstpointer b) {
 	return strcasecmp((const char*) a, (const char*) b);
 }
@@ -111,6 +112,9 @@ create_main_window (void)
 	
 	/* make sure we get a valid main window */
 	g_assert (glade_xml_get_widget (main_glade, "main_window") != NULL);
+	
+	accel_group = gtk_accel_group_new();
+	gtk_window_add_accel_group (GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), accel_group);
 
 	expression = glade_xml_get_widget (main_glade, "expression");
 	resultview = glade_xml_get_widget (main_glade, "resultview");
@@ -159,7 +163,7 @@ create_main_window (void)
 		}
 	}
 
-	accel_group = gtk_accel_group_new();
+	
 
 
 	switch (evalops.angle_unit) {
@@ -345,16 +349,13 @@ create_main_window (void)
 			custom_expression_font = pango_font_description_to_string(expression->style->font_desc);
 		}		
 	}
-	
-	gtk_window_add_accel_group (GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), accel_group);
 
 	gtk_widget_grab_focus(expression);
 	GTK_WIDGET_SET_FLAGS(expression, GTK_CAN_DEFAULT);
 	gtk_widget_grab_default(expression);
 
 	glade_xml_signal_autoconnect(main_glade);
-
-//	gtk_widget_modify_bg(resultview, GTK_STATE_NORMAL, &glade_xml_get_widget(main_glade, "history")->style->base[GTK_WIDGET_STATE(glade_xml_get_widget(main_glade, "history"))]);	
+	g_signal_connect(accel_group, "accel_changed", G_CALLBACK(save_accels), NULL);
 
 	GtkTextIter iter;
 	GtkTextBuffer *tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history")));
@@ -411,20 +412,7 @@ create_main_window (void)
 
 	gtk_widget_show (glade_xml_get_widget (main_glade, "main_window"));
 
-	GtkStyle *style;
-	GdkBitmap *bitmap;
-	GdkPixmap *pixmap;
-	GdkColormap *colormap;
-	GdkColor wait_color={0,0,0,0};
-	GtkWidget *toplevel = glade_xml_get_widget (main_glade, "main_window");
-
-	style=gtk_widget_get_style(GTK_WIDGET(toplevel));
-	pixmap=gdk_pixmap_create_from_xpm_d(GTK_WIDGET(toplevel)->window,
-		&bitmap, &style->bg[GTK_STATE_NORMAL], icon_xpm);
-	colormap = gtk_widget_get_colormap(GTK_WIDGET(toplevel));
-	gdk_color_alloc (colormap, &wait_color);
-	
-	gdk_window_set_icon(GTK_WIDGET(toplevel)->window, (GdkWindow *)NULL,  pixmap, bitmap);			
+	gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), icon_pixbuf);
 
 	update_status_text();
 	
@@ -477,6 +465,8 @@ get_functions_dialog (void)
 		glade_xml_signal_autoconnect(functions_glade);
 
 		update_functions_tree();
+		
+		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (functions_glade, "functions_dialog")), icon_pixbuf);
 	}
 
 	return glade_xml_get_widget (functions_glade, "functions_dialog");
@@ -531,6 +521,8 @@ get_variables_dialog (void)
 		glade_xml_signal_autoconnect(variables_glade);
 
 		update_variables_tree();
+		
+		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (variables_glade, "variables_dialog")), icon_pixbuf);
 
 	}
 	
@@ -595,6 +587,8 @@ get_units_dialog (void)
 	
 		gtk_entry_set_text (GTK_ENTRY (glade_xml_get_widget (units_glade, "units_entry_from_val")), "1");	
 		gtk_entry_set_text (GTK_ENTRY (glade_xml_get_widget (units_glade, "units_entry_to_val")), "1");		
+		
+		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (units_glade, "units_dialog")), icon_pixbuf);
 	
 	}
 	
@@ -656,6 +650,9 @@ get_datasets_dialog (void)
 		glade_xml_signal_autoconnect(datasets_glade);
 
 		update_datasets_tree();
+		
+		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (datasets_glade, "datasets_dialog")), icon_pixbuf);
+		
 	}
 
 	return glade_xml_get_widget (datasets_glade, "datasets_dialog");
@@ -1090,6 +1087,8 @@ get_nbases_dialog (void)
 		g_assert (glade_xml_get_widget (nbases_glade, "nbases_dialog") != NULL);
 		
 		glade_xml_signal_autoconnect(nbases_glade);
+		
+		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (nbases_glade, "nbases_dialog")), icon_pixbuf);
 	
 	}
 
@@ -1131,6 +1130,8 @@ GtkWidget* get_about_dialog (void) {
 		g_assert (glade_xml_get_widget (about_glade, "about_dialog") != NULL);
 		
 		glade_xml_signal_autoconnect(about_glade);
+		
+		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (about_glade, "about_dialog")), icon_pixbuf);
 	
 	}
 
@@ -1192,8 +1193,9 @@ GtkWidget* get_plot_dialog (void) {
 		gtk_tree_view_append_column(GTK_TREE_VIEW(tPlotFunctions), column);	
 		g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tPlotFunctions_selection_changed), NULL);
 
-		
 		glade_xml_signal_autoconnect(plot_glade);
+		
+		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (plot_glade, "plot_dialog")), icon_pixbuf);
 	
 	}
 		
@@ -1381,6 +1383,8 @@ GtkWidget* get_periodic_dialog (void) {
 				g_signal_connect((gpointer) e_button, "clicked", G_CALLBACK(on_element_button_clicked), (gpointer) e);
 			}
 		}
+		
+		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (periodictable_glade, "periodic_dialog")), icon_pixbuf);
 	
 	}
 

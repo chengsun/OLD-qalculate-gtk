@@ -207,7 +207,7 @@
 		    <widget class="GtkImageMenuItem" id="menu_item_save_defs">
 		      <property name="visible">True</property>
 		      <property name="tooltip" translatable="yes">Save local functions, variables and units</property>
-		      <property name="label" translatable="yes">_Save Definitions</property>
+		      <property name="label" translatable="yes">Save Definitions</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_save_defs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 

@@ -334,7 +334,7 @@ void update_status_text() {
 /*
 	display errors generated under calculation
 */
-void display_errors(GtkTextIter *iter = NULL) {
+void display_errors(GtkTextIter *iter = NULL, GtkWidget *win = NULL) {
 	if(!CALCULATOR->message()) return;
 	bool b = false, critical = false;
 	MessageType mtype;
@@ -365,9 +365,7 @@ void display_errors(GtkTextIter *iter = NULL) {
 			gtk_text_buffer_place_cursor(tb, iter);
 		} else {
 			edialog = gtk_message_dialog_new(
-					GTK_WINDOW(
-						glade_xml_get_widget (main_glade, "main_window")
-					),
+					GTK_WINDOW(win),
 					GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_MESSAGE_INFO,
 					GTK_BUTTONS_CLOSE,
@@ -380,18 +378,14 @@ void display_errors(GtkTextIter *iter = NULL) {
 	if(!str.empty()) {
 		if(critical) {
 			edialog = gtk_message_dialog_new(
-					GTK_WINDOW(
-						glade_xml_get_widget (main_glade, "main_window")
-					),
+					GTK_WINDOW(win),
 					GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_MESSAGE_ERROR,
 					GTK_BUTTONS_CLOSE,
 					str.c_str());
 		} else {
 			edialog = gtk_message_dialog_new(
-					GTK_WINDOW(
-						glade_xml_get_widget (main_glade, "main_window")
-					),
+					GTK_WINDOW(win),
 					GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_MESSAGE_WARNING,
 					GTK_BUTTONS_CLOSE,
@@ -1574,33 +1568,23 @@ void on_tDatasets_selection_changed(GtkTreeSelection *treeselection, gpointer us
 		gtk_text_buffer_set_text(buffer, "", -1);
 		GtkTextIter iter;
 		string str, str2;
-		str = "";
-		b = false;
 		if(!ds->description().empty()) {
-			b = true;
-			str += ds->description();
+			str = ds->description();
 			str += "\n";
-		}
-		if(!ds->copyright().empty()) {
-			if(b) str += "\n";
-			str += ds->copyright();
 			str += "\n";
-			b = true;
-		}
-		if(!str.empty()) {
 			gtk_text_buffer_get_end_iter(buffer, &iter);
 			gtk_text_buffer_insert(buffer, &iter, str.c_str(), -1);
 		}	
-		if(b) str = "\n";
-		str += _("Properties");
+		str = _("Properties");
 		str += "\n";
 		gtk_text_buffer_get_end_iter(buffer, &iter);
 		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, str.c_str(), -1, "bold", NULL);
 		dp = ds->getFirstProperty(&pit);
 		while(dp) {	
 			if(!dp->isHidden()) {
+				str = "";
 				if(!dp->title(false).empty()) {
-					str = dp->title();	
+					str += dp->title();	
 					str += ": ";
 				}
 				for(unsigned int i = 1; i <= dp->countNames(); i++) {
@@ -1675,9 +1659,16 @@ void on_tDatasets_selection_changed(GtkTreeSelection *treeselection, gpointer us
 				str += ds->getName(i2).name;
 			}
 		}
-		str += "\n";
+		str += "\n\n";
 		gtk_text_buffer_get_end_iter(buffer, &iter);
 		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, str.c_str(), -1, "italic", NULL);
+		if(!ds->copyright().empty()) {
+			str = "\n";
+			str = ds->copyright();
+			str += "\n";
+			gtk_text_buffer_get_end_iter(buffer, &iter);
+			gtk_text_buffer_insert(buffer, &iter, str.c_str(), -1);
+		}
 	} else {
 		gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (datasets_glade, "datasets_textview_description"))), "", -1);
 		selected_dataset = NULL;
@@ -3902,7 +3893,7 @@ void setResult(Prefix *prefix = NULL, bool update_history = true, bool update_pa
 			gtk_text_buffer_insert_with_tags_by_name(tb, &iter, str.c_str(), -1, "gray_foreground", NULL);	
 			gtk_text_buffer_insert(tb, &iter, "\n", -1);
 		}
-		display_errors(&iter);
+		display_errors(&iter, glade_xml_get_widget (main_glade, "main_window"));
 		if(!(*printops.is_approximate) && !mstruct->isApproximate()) {
 			gtk_text_buffer_insert(tb, &iter, "=", -1);	
 		} else {
@@ -3926,7 +3917,7 @@ void setResult(Prefix *prefix = NULL, bool update_history = true, bool update_pa
 	}
 	printops.prefix = NULL;
 	b_busy = false;
-	display_errors();
+	display_errors(NULL, glade_xml_get_widget (main_glade, "main_window"));
 	do_timeout = true;
 }
 
@@ -4016,7 +4007,7 @@ void execute_expression(bool force) {
 		gtk_widget_grab_focus(expression);
 	}
 	b_busy = false;
-	//display_errors();
+	//display_errors(NULL, glade_xml_get_widget (main_glade, "main_window"));
 	
 	//update "ans" variables
 	vans[4]->set(vans[3]->get());
@@ -7340,6 +7331,12 @@ gboolean on_gcalc_exit(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
 	CALCULATOR->terminateThreads();
 	gtk_main_quit();
 	return FALSE;
+}
+
+void save_accels() {
+	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", "accelmap", NULL);
+	gtk_accel_map_save(gstr);
+	g_free(gstr);
 }
 
 

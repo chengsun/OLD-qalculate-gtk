@@ -207,17 +207,17 @@ MathStructure *DataProperty::generateStruct(const string &valuestr, int is_appro
 	switch(ptype) {
 		case PROPERTY_EXPRESSION: {
 			ParseOptions po;
-			if((b_approximate && is_approximate < 0) || is_approximate) po.read_precision = ALWAYS_READ_PRECISION;
+			if((b_approximate && is_approximate < 0) || is_approximate > 0) po.read_precision = ALWAYS_READ_PRECISION;
 			if(b_brackets && valuestr.length() > 1 && valuestr[0] == '[' && valuestr[valuestr.length() - 1] == ']') mstruct = new MathStructure(CALCULATOR->parse(valuestr.substr(1, valuestr.length() - 2), po));
 			else mstruct = new MathStructure(CALCULATOR->parse(valuestr, po));
 			break;
 		}
 		case PROPERTY_NUMBER: {
 			if(b_brackets && valuestr.length() > 1 && valuestr[0] == '[' && valuestr[valuestr.length() - 1] == ']') {
-				if((b_approximate && is_approximate < 0) || is_approximate) mstruct = new MathStructure(Number(valuestr.substr(1, valuestr.length() - 2), 10, ALWAYS_READ_PRECISION));
+				if((b_approximate && is_approximate < 0) || is_approximate > 0) mstruct = new MathStructure(Number(valuestr.substr(1, valuestr.length() - 2), 10, ALWAYS_READ_PRECISION));
 				else mstruct = new MathStructure(Number(valuestr.substr(1, valuestr.length() - 2)));
 			} else {
-				if((b_approximate && is_approximate < 0) || is_approximate) mstruct = new MathStructure(Number(valuestr, 10, ALWAYS_READ_PRECISION));
+				if((b_approximate && is_approximate < 0) || is_approximate > 0) mstruct = new MathStructure(Number(valuestr, 10, ALWAYS_READ_PRECISION));
 				else mstruct = new MathStructure(Number(valuestr));
 			}
 			break;
@@ -390,13 +390,15 @@ bool DataSet::loadObjects(const char *file_name) {
 	}
 	DataObject *o;
 	cur = cur->xmlChildrenNode;
-	string str;
+	string str, str2;
 	vector<DataProperty*> lang_status_p;
 	vector<int> lang_status;
 	int ils;
 	int i_approx;
+	bool cmp;
+	bool b;
 	while(cur) {
-		bool b = false;
+		b = false;
 		if(!xmlStrcmp(cur->name, (const xmlChar*) "object")) {
 			b = true;
 		} else if(xmlStrcmp(cur->name, (const xmlChar*) "text")) {
@@ -414,7 +416,13 @@ bool DataSet::loadObjects(const char *file_name) {
 			for(unsigned int i = 0; i < properties.size(); i++) {
 				if(properties[i]->isKey()) {
 					for(unsigned int i2 = 1; i2 <= properties[i]->countNames(); i2++) {
-						XML_GET_STRING_FROM_PROP(cur, properties[i]->getName(i2).c_str(), str)
+						if(properties[i]->getName(i2).find(' ') != string::npos) {
+							str2 = properties[i]->getName(i2);
+							gsub(" ", "_", str2);
+							XML_GET_STRING_FROM_PROP(cur, str2.c_str(), str)
+						} else {
+							XML_GET_STRING_FROM_PROP(cur, properties[i]->getName(i2).c_str(), str)
+						}
 						remove_blank_ends(str);
 						if(!str.empty()) {
 							o->setProperty(properties[i], str);
@@ -427,7 +435,14 @@ bool DataSet::loadObjects(const char *file_name) {
 				b = false;
 				for(unsigned int i = 0; i < properties.size(); i++) {
 					for(unsigned int i2 = 1; i2 <= properties[i]->countNames(); i2++) {
-						if(!xmlStrcmp(child->name, (const xmlChar*) properties[i]->getName(i2).c_str())) {
+						if(properties[i]->getName(i2).find(' ') != string::npos) {
+							str2 = properties[i]->getName(i2);
+							gsub(" ", "_", str2);
+							cmp = !xmlStrcmp(child->name, (const xmlChar*) str2.c_str());
+						} else {
+							cmp = !xmlStrcmp(child->name, (const xmlChar*) properties[i]->getName(i2).c_str());
+						}
+						if(cmp) {
 							value = xmlGetProp(child, (xmlChar*) "approximate"); 
 							if(value) {
 								if(!xmlStrcmp(value, (const xmlChar*) "false")) {

@@ -1410,6 +1410,39 @@
         <exponent>1</exponent>
       </base>
     </unit>
+    <unit type="alias">
+      <_title>Day</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>d</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>day</_name>
+      </name>
+      <plural index="3">
+        <_name>days</_name>
+      </plural>
+      <base>
+        <unit>h</unit>
+        <relation>24</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Julian Year</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>year</_name>
+      </name>
+      <plural index="2">
+        <_name>years</_name>
+      </plural>
+      <base>
+        <unit>d</unit>
+        <relation>365.25</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
     <category>
       <_title>Frequency</_title>
       <unit type="alias">

@@ -74,6 +74,122 @@
         </name>
       </property>
     </dataset>
+    <dataset>
+      <_title>Planets</_title>
+      <datafile>planets.xml</datafile>
+      <copyright>This data uses material from the Wikipedia articles
+"Earth" (http://www.wikipedia.org/wiki/Earth),
+"Jupiter (planet)" (http://www.wikipedia.org/wiki/Jupiter_(planet)),
+"Mars (planet)" (http://www.wikipedia.org/wiki/Mars_(planet)),
+"Mercury (planet)" (http://www.wikipedia.org/wiki/Mercury_(planet)),
+"Neptune (planet)" (http://www.wikipedia.org/wiki/Neptune_(planet)),
+"Pluto (planet)" (http://www.wikipedia.org/wiki/Pluto_(planet)),
+"Saturn (planet)" (http://www.wikipedia.org/wiki/Saturn_(planet)),
+"Uranus (planet)" (http://www.wikipedia.org/wiki/Uranus_(planet)), and
+"Venus (planet)" (http://en.wikipedia.org/wiki/Venus_(planet)),
+licensed under the GNU Free Documentation License (http://www.gnu.org/copyleft/fdl.html)</copyright>
+      <name index="1">
+        <reference>true</reference>
+        <_name>planet</_name>
+      </name>
+      <object_argument>
+        <_title>Planet</_title>
+      </object_argument>
+      <property>
+        <_title>Name</_title>
+	<type>text</type>
+	<key>true</key>
+	<name index="1">
+          <_name>name</_name>
+        </name>
+      </property>
+      <property>
+        <_title>Orbital Period (Year)</_title>
+	<type>number</type>
+	<unit>d</unit>
+	<approximate>true</approximate>
+	<name index="1">
+          <_name>year</_name>
+        </name>
+      </property>
+      <property>
+        <_title>Average Orbital Speed</_title>
+	<type>number</type>
+	<unit>km/s</unit>
+	<approximate>true</approximate>
+	<name index="1">
+          <_name>speed</_name>
+        </name>
+      </property>
+      <property>
+        <_title>Eccentricity</_title>
+	<type>number</type>
+	<approximate>true</approximate>
+	<name index="1">
+          <_name>eccentricity</_name>
+        </name>
+      </property>
+      <property>
+        <_title>Inclination</_title>
+	<type>number</type>
+	<approximate>true</approximate>
+	<name index="1">
+          <_name>inclination</_name>
+        </name>
+      </property>
+      <property>
+        <_title>Number of Satellites</_title>
+	<type>number</type>
+	<name index="1">
+          <_name>satellites</_name>
+        </name>
+      </property>
+      <property>
+        <_title>Mass</_title>
+	<type>number</type>
+	<unit>kg</unit>
+	<approximate>true</approximate>
+	<name index="1">
+          <_name>mass</_name>
+        </name>
+      </property>
+      <property>
+        <_title>Mean Density</_title>
+	<type>number</type>
+	<unit>g/cm^3</unit>
+	<approximate>true</approximate>
+	<name index="1">
+          <_name>density</_name>
+        </name>
+      </property>
+      <property>
+        <_title>Surface Area</_title>
+	<type>number</type>
+	<unit>km^2</unit>
+	<approximate>true</approximate>
+	<name index="1">
+          <_name>area</_name>
+        </name>
+      </property>
+      <property>
+        <_title>Equatorial Gravity</_title>
+	<type>number</type>
+	<unit>m/s^2</unit>
+	<approximate>true</approximate>
+	<name index="1">
+          <_name>gravity</_name>
+        </name>
+      </property>
+      <property>
+        <_title>Mean Surface Temperature</_title>
+	<type>number</type>
+	<unit>K</unit>
+	<approximate>true</approximate>
+	<name index="1">
+          <_name>temperature</_name>
+        </name>
+      </property>
+    </dataset>
   </category>
 </QALCULATE>
 
