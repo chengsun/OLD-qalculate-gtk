@@ -15,6 +15,7 @@ void create_umenu(void);
 void create_umenu2(void);
 void create_vmenu(void);
 void create_fmenu(void);
+void create_pmenu(void);
 
 gboolean on_display_errors_timeout(gpointer data);
 

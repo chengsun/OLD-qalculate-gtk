@@ -36,9 +36,8 @@ string selected_unit, selected_to_unit;
 bool load_global_defs;
 GtkWidget *omToUnit_menu;
 
-int
-main (int argc, char **argv)
-{
+int main (int argc, char **argv) {
+
 	GtkWidget *window;
 
 #ifdef ENABLE_NLS
@@ -48,26 +47,31 @@ main (int argc, char **argv)
 #endif
 
 	gtk_init (&argc, &argv);
+	
+	//create the almighty Calculator object
 	calc = new Calculator();
 
+	//load application specific preferences
 	load_preferences();
 
+	//load global definitions
 	gchar *gstr = g_build_filename(PACKAGE_DATA_DIR, PACKAGE, "qalculate.cfg", NULL);
-	if(load_global_defs && !calc->load(gstr))
-	{
+	if(load_global_defs && !calc->load(gstr)) {
 		g_print("%s not found!\n", gstr);
 	}
 	g_free(gstr);
 
+	//load local definitions
 	gstr = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate.cfg", NULL);
 	calc->load(gstr);
 	g_free(gstr);
 
 	mngr = new Manager(calc);
 
+
+	//get ans variable objects or create if they do not exist
 	vans = calc->getVariable("ans");
 	vAns = calc->getVariable("Ans");
-
 	if(!vans) {
 		vans = calc->addVariable(new Variable(calc, "Utility", "ans", 0.0, "Answer", false));
 		calc->addVariable(vans);		
@@ -81,6 +85,7 @@ main (int argc, char **argv)
 		vAns->value(0);
 	}	
 
+	//reset
 	functions_window = NULL;
 	selected_function_category = "All";
 	selected_function = "";
@@ -93,10 +98,20 @@ main (int argc, char **argv)
 	selected_to_unit = "";
 	omToUnit_menu = NULL;
 
+	//check for calculation errros regularly
 	g_timeout_add(100, on_display_errors_timeout, NULL);
 
-	window = create_window ();
-	gtk_widget_show (window);
+	//create main window
+	window = create_window();
+	
+	//create dynamic menus
+	create_fmenu();
+	create_vmenu();	
+	create_pmenu();	
+	create_umenu();
+	create_umenu2();
+	
+	gtk_widget_show(window);
 
 	gtk_main ();
 	return 0;

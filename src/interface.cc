@@ -224,33 +224,6 @@ create_window (void) {
 	MENU_ITEM_WITH_INT("^ (power)", insert_sign, '^')
 	MENU_ITEM_WITH_INT("E (exponent)", insert_sign, 'E')
 
-	create_fmenu();
-	create_vmenu();
-
-	SUBMENU_ITEM("Prefixes", menu_e)
-	MENU_TEAROFF
-	vector<l_type::iterator> its;
-	bool no_larger = false;
-	l_type::iterator it1;
-	for(it1 = calc->l_prefix.begin(); it1 != calc->l_prefix.end(); ++it1) {
-		no_larger = true;
-		for(vector<l_type::iterator>::iterator it2 = its.begin(); it2 != its.end(); ++it2) {
-			if(it1->second < (*it2)->second) {
-				its.insert(it2, it1);
-				no_larger = false;
-				break;
-			}
-		}
-		if(no_larger)
-			its.push_back(it1);
-	}
-	for(vector<l_type::iterator>::iterator it = its.begin(); it != its.end(); ++it) {
-		gchar *gstr = g_strdup_printf("%s (10<sup>%i</sup>)", (*it)->first, (int) log10((*it)->second));
-		MENU_ITEM_WITH_STRING(gstr, insert_prefix, (*it)->first)
-		gtk_label_set_use_markup(GTK_LABEL(gtk_bin_get_child(GTK_BIN(item))), TRUE);
-		g_free(gstr);
-	}
-	create_umenu();
 	sub = menu_e;
 
 	//  CHECK_MENU_ITEM("Clean mode", set_clean_mode);
@@ -309,8 +282,6 @@ create_window (void) {
 	RADIO_MENU_ITEM_WITH_INT_2(item2, set_display_mode, MODE_NORMAL);
 	RADIO_MENU_ITEM_WITH_INT_2(item3, set_display_mode, MODE_SCIENTIFIC);
 	RADIO_MENU_ITEM_WITH_INT_2(item4, set_display_mode, MODE_DECIMALS);
-
-	create_umenu2();
 
 	sub = menu_r;
 	MENU_ITEM("Store result...", add_as_variable);
