@@ -94,6 +94,13 @@ int main (int argc, char **argv) {
 
 	mngr = new Manager();
 
+	/*gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", "tmp", "messages", NULL);
+	freopen(gstr, "w+", stdout);
+	g_free(gstr);
+	gstr = g_build_filename(g_get_home_dir(), ".qalculate", "tmp", "errors", NULL);
+	freopen(gstr, "w+", stderr);
+	g_free(gstr);*/
+
 	bool canplot = CALCULATOR->canPlot();
 	bool canfetch = CALCULATOR->canFetch();
 

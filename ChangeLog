@@ -1,5 +1,16 @@
+2004-03-21 Niklas Knutsson  <nq@altern.org>
+
+	* Protect intValue and longIntValue against overflow
+	* Fix printing of exponent 1E...
+	* Convert to best unit (beginning)
+	* Convert to base units
+
 2004-03-20 Niklas Knutsson  <nq@altern.org>
 
+	* Define sin and cos as expressions
+	* e^(i*pi) = -1 ...
+	* ln -1 = i*pi, ln i = i*pi/2, ln -i = -i*pi/2
+	* permanent()
 	* Print short currency unit before value
 	* Factorize independent of giac
 	* Make my own derive function default

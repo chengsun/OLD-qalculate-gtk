@@ -1237,7 +1237,36 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 					}
 				}
 				break;
-			}						
+			}
+			case VARIABLE_MANAGER: {
+				if(o_variable == CALCULATOR->getE()) {
+					if(mngr->isMultiplication() && mngr->countChilds() == 2 && mngr->getChild(1)->isVariable() && mngr->getChild(1)->variable() == CALCULATOR->getPI()) {
+						if(mngr->getChild(0)->isNumber()) {
+							if(mngr->getChild(0)->number()->isI() || mngr->getChild(0)->number()->isMinusI()) {
+								set(-1, 1);
+								break;
+							} else if(mngr->getChild(0)->number()->isComplex() && !mngr->getChild(0)->number()->hasRealPart()) {
+								Number *img = mngr->getChild(0)->number()->imaginaryPart();
+								if(img->isInteger()) {
+									set(-1, 1);
+									if(img->isEven()) {
+										set(1, 1);
+									}
+									delete img;
+									break;
+								} else if(img->equals(1, 2)) {
+									clear();
+									img->set(1, 1);
+									o_number->setImaginaryPart(img);
+									delete img;
+									break;
+								}
+								delete img;
+							}
+						}
+					}
+				}
+			}	
 			default: {
 				if(!translate_) {
 					return false;
@@ -3071,7 +3100,6 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 				displayflags = displayflags | DISPLAY_FORMAT_FRACTIONAL_ONLY;
 			}			
 			str += exponent()->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, set_prefix, false, NULL, NULL, in_composite, true, true, print_equals, false, true, false, NULL, 0, true);
-
 			if(!in_power && displayflags & DISPLAY_FORMAT_TAGS) {
 				str += "</sup>";
 			}
@@ -4185,6 +4213,12 @@ void Manager::simplify() {
 #endif
 void Manager::factorize() {
 #ifdef HAVE_GIAC
+	if(type() == ALTERNATIVE_MANAGER) {
+		for(unsigned int i = 0; i < mngrs.size(); i++) {
+			mngrs[i]->factorize();
+		}
+		return;
+	}
 	try {
 		giac::gen giac_gen = toGiac();
 		giac_gen = giac::factor(giac_gen);		

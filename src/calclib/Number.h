@@ -49,8 +49,8 @@ class Number {
 		const cln::cl_N &clnNumber() const;
 		
 		double floatValue() const;
-		int intValue() const;
-		long int longIntValue() const;
+		int intValue(bool *overflow = NULL) const;
+		long int longIntValue(bool *overflow = NULL) const;
 		
 		bool isApproximate() const;
 		void setApproximate(bool is_approximate = true);
@@ -68,6 +68,8 @@ class Number {
 		bool isFraction() const;
 		bool isZero() const;
 		bool isOne() const;
+		bool isI() const;
+		bool isMinusI() const;
 		bool isMinusOne() const;
 		bool isNegative() const;
 		bool isPositive() const;
@@ -77,12 +79,12 @@ class Number {
 		bool isLessThan(const Number *o) const;
 		bool isGreaterThanOrEqualTo(const Number *o) const;
 		bool isLessThanOrEqualTo(const Number *o) const;
-		bool equals(long int i) const;
-		int compare(long int i) const;
-		bool isGreaterThan(long int i) const;
-		bool isLessThan(long int i) const;
-		bool isGreaterThanOrEqualTo(long int i) const;
-		bool isLessThanOrEqualTo(long int i) const;
+		bool equals(long int num, long int den = 1) const;
+		int compare(long int num, long int den = 1) const;
+		bool isGreaterThan(long int num, long int den = 1) const;
+		bool isLessThan(long int num, long int den = 1) const;
+		bool isGreaterThanOrEqualTo(long int num, long int den = 1) const;
+		bool isLessThanOrEqualTo(long int num, long int den = 1) const;
 		bool isEven() const;
 		bool isOdd() const;
 		

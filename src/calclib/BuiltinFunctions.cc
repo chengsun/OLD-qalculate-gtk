@@ -768,6 +768,18 @@ void DeterminantFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(det);
 	det->unref();	
 }
+PermanentFunction::PermanentFunction() : Function("Matrices", "permanent", 1, "Permanent") {
+	setArgumentDefinition(1, new MatrixArgument());
+}
+void PermanentFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	Manager *per = vargs[0]->matrix()->permanent();
+	if(!per) {
+		mngr->set(this, vargs[0], NULL);
+		return;
+	}
+	mngr->set(per);
+	per->unref();	
+}
 CofactorFunction::CofactorFunction() : Function("Matrices", "cofactor", 3, "Cofactor") {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));	
@@ -979,18 +991,20 @@ void SinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 			mngr->clear();
 			return;
 		} else if(!mngr->getChild(0)->number()->isComplex()) {
-			Number fr(mngr->getChild(0)->number());
-			fr.frac();
-			fr.setNegative(false);
-			Number half_nr(1, 2);
-			if(fr.equals(&half_nr)) {
-				fr.set(mngr->getChild(0)->number());
-				fr.floor();
-				if(fr.isEven()) {
-					mngr->set(1, 1);
-				} else {
-					mngr->set(-1, 1);
-				}
+			if(mngr->getChild(0)->number()->equals(1, 2)) {
+				mngr->set(1, 1);
+				return;
+			}
+			if(mngr->getChild(0)->number()->equals(-1, 2)) {
+				mngr->set(-1, 1);
+				return;
+			}
+			if(mngr->getChild(0)->number()->equals(1, 6)) {
+				mngr->set(1, 2);
+				return;
+			}
+			if(mngr->getChild(0)->number()->equals(-1, 6)) {
+				mngr->set(-1, 2);
 				return;
 			}
 		}
@@ -1007,7 +1021,7 @@ CosFunction::CosFunction() : Function("Trigonometry", "cos", 1, "Cosine") {setAr
 void CosFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]); 
 	if(mngr->isVariable() && mngr->variable() == CALCULATOR->getPI()) {
-		mngr->set(1, 1);
+		mngr->set(-1, 1);
 		return;
 	} else if(mngr->isMultiplication() && mngr->countChilds() == 2 && mngr->getChild(0)->isNumber() && mngr->getChild(1)->isVariable() && mngr->getChild(1)->variable() == CALCULATOR->getPI()) {
 		if(mngr->getChild(0)->number()->isInteger()) {
@@ -1018,11 +1032,11 @@ void CosFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 			}
 			return;
 		} else if(!mngr->getChild(0)->number()->isComplex()) {
-			Number fr(mngr->getChild(0)->number());
-			fr.frac();
-			fr.setNegative(false);
-			Number half_nr(1, 2);
-			if(fr.equals(&half_nr)) {
+			if(mngr->getChild(0)->number()->equals(1, 2)) {
+				mngr->clear();
+				return;
+			}
+			if(mngr->getChild(0)->number()->equals(-1, 2)) {
 				mngr->clear();
 				return;
 			}
@@ -1107,6 +1121,23 @@ LogFunction::LogFunction() : Function("Exponents and Logarithms", "ln", 1, "Natu
 }
 void LogFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->isNumber()) {
+		if(vargs[0]->number()->isMinusOne()) {
+			mngr->clear();
+			Number cmplx(1, 1);
+			mngr->number()->setImaginaryPart(&cmplx);
+			Manager mngr2(CALCULATOR->getPI());
+			mngr->add(&mngr2, OPERATION_MULTIPLY);
+			return;
+		}
+		if(vargs[0]->number()->isComplex() && !vargs[0]->number()->hasRealPart()) {
+			if(vargs[0]->number()->isI() || vargs[0]->number()->isMinusI()) {
+				mngr->set(vargs[0]);
+				mngr->addInteger(2, OPERATION_DIVIDE);
+				Manager mngr2(CALCULATOR->getPI());
+				mngr->add(&mngr2, OPERATION_MULTIPLY);
+				return;
+			}
+		}
 		mngr->set(vargs[0]);
 		if(mngr->number()->ln()) {
 			mngr->setPrecise(!mngr->number()->isApproximate());

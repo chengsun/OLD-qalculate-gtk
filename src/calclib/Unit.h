@@ -150,6 +150,7 @@ class CompositeUnit : public Unit {
 		virtual Manager *generateManager(bool cleaned = true) const;		
 		virtual void setBaseExpression(string base_expression_);		
 		virtual void updateNames();
+		virtual void clear();
 };
 
 #endif

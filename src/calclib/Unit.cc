@@ -472,9 +472,7 @@ CompositeUnit::CompositeUnit(const CompositeUnit *unit) {
 	set(unit);
 }
 CompositeUnit::~CompositeUnit() {
-	for(unsigned int i = 0; i < units.size(); i++) {
-		delete units[i];
-	}
+	clear();
 }
 ExpressionItem *CompositeUnit::copy() const {
 	return new CompositeUnit(this);
@@ -635,7 +633,7 @@ Manager *CompositeUnit::generateManager(bool cleaned) const {
 	}
 }
 void CompositeUnit::setBaseExpression(string base_expression_) {
-	units.clear();
+	clear();
 	if(base_expression_.empty()) {
 		setChanged(true);
 		updateNames();
@@ -721,4 +719,9 @@ void CompositeUnit::updateNames() {
 	splural = print(true, false);
 	ssingular = print(false, false);
 }
-
+void CompositeUnit::clear() {
+	for(unsigned int i = 0; i < units.size(); i++) {
+		delete units[i];
+	}
+	units.clear();
+}

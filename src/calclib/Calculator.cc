@@ -760,6 +760,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new TransposeFunction());
 	addFunction(new IdentityFunction());
 	addFunction(new DeterminantFunction());
+	addFunction(new PermanentFunction());
 	addFunction(new CofactorFunction());
 	addFunction(new AdjointFunction());
 	addFunction(new InverseFunction());
@@ -778,8 +779,8 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new IntFunction());	
 	addFunction(new ModFunction());
 	addFunction(new RemFunction());
-	sin_func = addFunction(new SinFunction());
-	cos_func = addFunction(new CosFunction());
+	//sin_func = addFunction(new SinFunction());
+	//cos_func = addFunction(new CosFunction());
 	ln_func = addFunction(new LogFunction());
 	addFunction(new LognFunction());
 	addFunction(new SqrtFunction());
@@ -811,7 +812,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new GiacDeriveFunction());
 #endif
 	diff_func = addFunction(new DeriveFunction());
-	addFunction(new IntegrateFunction());
+	//addFunction(new IntegrateFunction());
 	addFunction(new LoadFunction());
 }
 void Calculator::addBuiltinUnits() {
@@ -1226,6 +1227,222 @@ Manager *Calculator::convert(Manager *mngr, Unit *to_unit, bool always_convert) 
 	}
 	return mngr;
 }
+Manager *Calculator::convertToBaseUnits(Manager *mngr) {
+	for(unsigned int i = 0; i < units.size(); i++) {
+		if(units[i]->unitType() == BASE_UNIT) {
+			mngr->convert(units[i]);
+		}
+	}
+	return mngr;
+}
+Unit *Calculator::getBestUnit(Unit *u) {
+	switch(u->unitType()) {
+		case BASE_UNIT: {
+			return u;
+		}
+		case ALIAS_UNIT: {
+			AliasUnit *au = (AliasUnit*) u;
+			if(au->baseExp() == 1 && au->baseUnit()->unitType() == BASE_UNIT) {
+				return (Unit*) au->baseUnit();
+			} else if(au->firstBaseUnit()->unitType() == COMPOSITE_UNIT || au->firstBaseExp() != 1) {
+				return u;
+			} else {
+				return getBestUnit((Unit*) au->firstBaseUnit());
+			}
+		}
+		case COMPOSITE_UNIT: {
+			CompositeUnit *cu = (CompositeUnit*) u;
+			long int exp, b_exp;
+			long int points = 0;
+			bool minus = false;
+			long int new_points;
+			long int max_points = 0;
+			for(unsigned int i = 0; cu->get(i, &exp); i++) {
+				if(exp < 0) {
+					max_points -= exp;
+				} else {
+					max_points += exp;
+				}
+			}
+			Unit *best_u = NULL;
+			Unit *cu_unit, *bu;
+			AliasUnit *au;
+			for(unsigned int i = 0; i < units.size(); i++) {
+				if(units[i]->unitType() == BASE_UNIT && (points == 0 || (points == 1 && minus))) {
+					new_points = 0;
+					for(unsigned int i2 = 0; true; i2++) {
+						cu_unit = cu->get(i2);
+						if(!cu_unit) {
+							break;
+						} else if(cu_unit->baseUnit() == units[i]) {
+							points = 1;
+							best_u = units[i];
+							minus = false;
+							break;
+						}
+					}
+				} else if(units[i]->unitType() == ALIAS_UNIT) {
+					au = (AliasUnit*) units[i];
+					bu = (Unit*) au->baseUnit();
+					b_exp = au->baseExp();
+					new_points = 0;
+					if(b_exp != 1 || bu->unitType() == COMPOSITE_UNIT) {
+						if(bu->unitType() == BASE_UNIT) {
+							for(unsigned int i2 = 0; true; i2++) {
+								cu_unit = cu->get(i2, &exp);
+								if(!cu_unit) {
+									break;
+								} else if(cu_unit->baseUnit() == bu) {
+									if(b_exp < 0 && exp < 0) {
+										b_exp = -b_exp;
+										exp = -exp;
+									}
+									if(b_exp > 0 && exp > 0) {
+										new_points = exp - b_exp;
+										if(new_points < 0) {
+											new_points = -new_points;
+											new_points = exp - new_points;
+											if(new_points > points) {
+												points = new_points;
+												minus = true;
+												best_u = units[i];
+											}
+										} else {
+											new_points = exp - new_points;
+											if(new_points > points || (minus && new_points == points)) {
+												points = new_points;
+												minus = false;
+												best_u = units[i];
+											}
+										}
+									}
+									break;
+								}
+							}
+						} else if(au->firstBaseExp() != 1 || au->firstBaseUnit()->unitType() == COMPOSITE_UNIT) {
+							Manager *cu_mngr = ((CompositeUnit*) bu)->generateManager();
+							cu_mngr->addInteger(b_exp, OPERATION_RAISE);
+							convertToBaseUnits(cu_mngr);
+							new_points = 0;
+							if(cu_mngr->type() == MULTIPLICATION_MANAGER) {
+								for(unsigned int i2 = 0; i2 < cu_mngr->countChilds(); i2++) {
+									bu = NULL;
+									if(cu_mngr->getChild(i2)->isUnit()) {
+										bu = cu_mngr->getChild(i2)->unit();
+										b_exp = 1;
+									} else if(cu_mngr->getChild(i2)->isPower() && cu_mngr->getChild(i2)->base()->isUnit() && cu_mngr->getChild(i2)->exponent()->isNumber() && cu_mngr->getChild(i2)->exponent()->number()->isInteger()) {
+										bu = cu_mngr->getChild(i2)->base()->unit();
+										b_exp = cu_mngr->getChild(i2)->exponent()->number()->longIntValue();
+									}
+									if(bu) {
+										for(unsigned int i3 = 0; true; i3++) {
+											cu_unit = cu->get(i3, &exp);
+											if(!cu_unit) {
+												break;
+											} else if(cu_unit->baseUnit() == bu) {
+												if(exp < 0 && b_exp > 0) {
+													new_points -= b_exp;
+												} else if(exp > 0 && b_exp < 0) {
+													new_points += b_exp;
+												} else {
+													if(exp < 0) {
+														exp = -exp;
+														b_exp = -b_exp;
+													}
+													if(exp >= b_exp) {
+														new_points += exp - (exp - b_exp);
+													} else {
+														new_points += exp - (b_exp - exp);
+													}
+												}
+												break;
+											}
+										}
+										if(!cu_unit) {
+											if(b_exp < 0) b_exp = -b_exp;
+											new_points -= b_exp;	
+										}
+									}
+								}
+								if(new_points >= points) {
+									minus = false;
+									points = new_points;
+									best_u = au;
+								}
+							}
+							cu_mngr->unref();
+						}
+					}
+				}
+				if(points >= max_points) break;
+			}
+			return getBestUnit(best_u);
+		}
+	}
+	return u;	
+}
+Manager *Calculator::convertToBestUnit(Manager *mngr) {
+	switch(mngr->type()) {
+		case NOT_MANAGER: {}
+		case OR_MANAGER: {}
+		case AND_MANAGER: {}
+		case COMPARISON_MANAGER: {}
+		case ALTERNATIVE_MANAGER: {}
+		case FUNCTION_MANAGER: {}
+		case ADDITION_MANAGER: {
+			for(unsigned int i = 0; i < mngr->countChilds(); i++) {
+				convertToBestUnit(mngr->getChild(i));
+			}
+			mngr->clean();
+			return mngr;
+		}
+		case MATRIX_MANAGER: {
+			for(unsigned int i = 1; i <= mngr->matrix()->rows(); i++) {
+				for(unsigned int i2 = 1; i2 <= mngr->matrix()->columns(); i2++) {
+					convertToBestUnit(mngr->matrix()->get(i, i2));
+				}
+			}
+			return mngr;
+		}
+		case POWER_MANAGER: {
+			if(mngr->base()->isUnit() && mngr->exponent()->isNumber() && mngr->exponent()->number()->isInteger()) {
+				CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
+				cu->add(mngr->base()->unit(), mngr->exponent()->number()->longIntValue());
+				convert(mngr, getBestUnit(cu), true);
+				delete cu;
+			} else {
+				convertToBestUnit(mngr->base());
+				convertToBestUnit(mngr->exponent());
+				mngr->clean();
+			}
+			return mngr;
+		}
+		case UNIT_MANAGER: {
+			return convert(mngr, getBestUnit(mngr->unit()), true);
+		}
+		case MULTIPLICATION_MANAGER: {
+			convertToBaseUnits(mngr);
+			CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
+			bool b = false;
+			for(unsigned int i = 0; i < mngr->countChilds(); i++) {
+				if(mngr->getChild(i)->isUnit()) {
+					b = true;
+					cu->add(mngr->getChild(i)->unit());
+				} else if(mngr->getChild(i)->isPower() && mngr->getChild(i)->base()->isUnit() && mngr->getChild(i)->exponent()->isNumber() && mngr->getChild(i)->exponent()->number()->isInteger()) {
+					b = true;
+					cu->add(mngr->getChild(i)->base()->unit(), mngr->getChild(i)->exponent()->number()->longIntValue());
+				} else {
+					convertToBestUnit(mngr->getChild(i));
+				}
+			}
+			if(b) convert(mngr, getBestUnit(cu), true);
+			delete cu;
+			mngr->clean();
+			return mngr;
+		}
+	}
+	return mngr;
+}
 Manager *Calculator::convertToCompositeUnit(Manager *mngr, CompositeUnit *cu, bool always_convert) {
 	mngr->finalize();
 	Manager *mngr3 = cu->generateManager(true);
@@ -1245,7 +1462,6 @@ Manager *Calculator::convertToCompositeUnit(Manager *mngr, CompositeUnit *cu, bo
 					if(cu->containsRelativeTo(mngr->unit())) {
 						b = true;
 					}
-					printf("B: %s\n", mngr->print().c_str());
 					break;
 				} 
 				case MULTIPLICATION_MANAGER: {
@@ -1318,6 +1534,13 @@ Manager *Calculator::convert(Manager *mngr, string composite_) {
 	remove_blank_ends(composite_);
 	if(composite_.empty()) return mngr;
 	Unit *u = getUnit(composite_);
+	if(u) return convert(mngr, u);
+	for(unsigned int i = 0; i < signs.size(); i++) {
+		if(composite_ == signs[i]) {
+			u = getUnit(real_signs[i]);
+			break;
+		}
+	}
 	if(u) return convert(mngr, u);
 	CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert", "", composite_);
 	convertToCompositeUnit(mngr, cu);

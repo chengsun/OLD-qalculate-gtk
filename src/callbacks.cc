@@ -6831,6 +6831,16 @@ void on_menu_item_convert_to_unit_expression_activate(GtkMenuItem *w, gpointer u
 		gtk_widget_show(dialog);
 	}
 }
+void on_menu_item_convert_to_best_unit_activate(GtkMenuItem *w, gpointer user_data) {
+	CALCULATOR->convertToBestUnit(mngr);
+	setResult();
+	gtk_widget_grab_focus(expression);
+}
+void on_menu_item_convert_to_base_units_activate(GtkMenuItem *w, gpointer user_data) {
+	CALCULATOR->convertToBaseUnits(mngr);
+	setResult();
+	gtk_widget_grab_focus(expression);
+}
 
 void on_menu_item_enable_variables_activate(GtkMenuItem *w, gpointer user_data) {
 	CALCULATOR->setVariablesEnabled(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));

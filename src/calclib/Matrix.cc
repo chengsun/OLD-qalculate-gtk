@@ -302,6 +302,46 @@ Manager *Matrix::determinant(Manager *mngr) const {
 	}
 	return mngr;
 }
+Manager *Matrix::permanent(Manager *mngr) const {
+	if(columns() != rows()) {
+		CALCULATOR->error(true, _("The permanent can only be calculated for matrices with an equal number of rows and columns."), NULL);
+		return NULL;
+	}
+	if(!mngr) {
+		mngr = new Manager();
+	} else {
+		mngr->clear();
+	}
+	if(rows() == 1) {
+		mngr->set(get(1, 1));
+	} else if(rows() == 2) {
+		Manager tmp;
+		mngr->set(get(1, 1));
+		mngr->add(get(2, 2), OPERATION_MULTIPLY);
+		tmp.set(get(2, 1));
+		tmp.add(get(1, 2), OPERATION_MULTIPLY);
+		mngr->add(&tmp, OPERATION_ADD);
+	} else {
+		Manager tmp;
+		Matrix mtrx(elements.size() - 1, elements[0].size() - 1);
+		for(unsigned int index_c = 0; index_c < elements[0].size(); index_c++) {
+			for(unsigned int index_r2 = 1; index_r2 < elements.size(); index_r2++) {
+				for(unsigned int index_c2 = 0; index_c2 < elements[index_r2].size(); index_c2++) {
+					if(index_c2 > index_c) {
+						mtrx.set(elements[index_r2][index_c2], index_r2, index_c2);
+					} else if(index_c2 < index_c) {
+						mtrx.set(elements[index_r2][index_c2], index_r2, index_c2 + 1);
+					}
+				}
+			}
+			mtrx.permanent(&tmp);	
+			
+			tmp.add(elements[0][index_c], OPERATION_MULTIPLY);
+			mngr->add(&tmp, OPERATION_ADD);
+		}
+	}
+	return mngr;
+}
 unsigned int Matrix::rows() const {
 	return elements.size();
 }

@@ -186,6 +186,8 @@ void on_menu_item_manage_functions_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_manage_units_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_import_csv_file_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_convert_to_unit_expression_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_convert_to_base_units_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_convert_to_best_unit_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_enable_variables_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_enable_functions_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_enable_units_activate(GtkMenuItem *w, gpointer user_data);

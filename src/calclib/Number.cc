@@ -168,10 +168,24 @@ const cl_N &Number::clnNumber() const {
 double Number::floatValue() const {
 	return double_approx(cln::realpart(value));
 }
-int Number::intValue() const {
+int Number::intValue(bool *overflow) const {
+	if(isGreaterThan(INT_MAX)) {
+		if(overflow) *overflow = true;
+		return INT_MAX;
+	} else if(isLessThan(INT_MIN)) {
+		if(overflow) *overflow = true;
+		return INT_MIN;
+	}
 	return cl_I_to_int(cln::round1(cln::realpart(value)));
 }
-long int Number::longIntValue() const {
+long int Number::longIntValue(bool *overflow) const {
+	if(isGreaterThan(LONG_MAX)) {
+		if(overflow) *overflow = true;
+		return LONG_MAX;
+	} else if(isLessThan(LONG_MIN)) {
+		if(overflow) *overflow = true;
+		return LONG_MIN;
+	}
 	return cl_I_to_long(cln::round1(cln::realpart(value)));
 }
 
@@ -235,8 +249,14 @@ bool Number::isZero() const {
 bool Number::isOne() const {
 	return value == 1;
 }
+bool Number::isI() const {
+	return cln::zerop(realpart(value)) && imagpart(value) == 1;
+}
 bool Number::isMinusOne() const {
 	return value == -1;
+}
+bool Number::isMinusI() const {
+	return cln::zerop(realpart(value)) && imagpart(value) == -1;
 }
 bool Number::isNegative() const {
 	return !isComplex() && cln::minusp(realpart(value));
@@ -275,36 +295,54 @@ bool Number::isLessThanOrEqualTo(const Number *o) const {
 		return equals(o);
 	}
 }
-bool Number::equals(long int i) const {
-	return value == i;
+bool Number::equals(long int num, long int den) const {
+	if(den == 1) return value == num;
+	Number o(num, den);
+	return equals(&o);
 }
-int Number::compare(long int i) const {
-	if(!isComplex()) {
-		return cln::compare(i, realpart(value));
-	} else {
-		if(equals(i)) return 0;
-		return -2;
+int Number::compare(long int num, long int den) const {
+	if(den == 1) {
+		if(!isComplex()) {
+			return cln::compare(num, realpart(value));
+		} else {
+			if(equals(num)) return 0;
+			return -2;
+		}
 	}
+	Number o(num, den);
+	return compare(&o);
 }
-bool Number::isGreaterThan(long int i) const {
-	return !isComplex() && realpart(value) > i;
+bool Number::isGreaterThan(long int num, long int den) const {
+	if(den == 1) return !isComplex() && realpart(value) > num;
+	Number o(num, den);
+	return isGreaterThan(&o);
 }
-bool Number::isLessThan(long int i) const {
-	return !isComplex() && realpart(value) < i;
+bool Number::isLessThan(long int num, long int den) const {
+	if(den == 1) return !isComplex() && realpart(value) < num;
+	Number o(num, den);
+	return isLessThan(&o);
 }
-bool Number::isGreaterThanOrEqualTo(long int i) const {
-	if(!isComplex()) {
-		return realpart(value) >= i;
-	} else {
-		return equals(i);
+bool Number::isGreaterThanOrEqualTo(long int num, long int den) const {
+	if(den == 1) {
+		if(!isComplex()) {
+			return realpart(value) >= num;
+		} else {
+			return equals(num);
+		}
 	}
+	Number o(num, den);
+	return isGreaterThanOrEqualTo(&o);
 }
-bool Number::isLessThanOrEqualTo(long int i) const {
-	if(!isComplex()) {
-		return realpart(value) <= i;
-	} else {
-		return equals(i);
+bool Number::isLessThanOrEqualTo(long int num, long int den) const {
+	if(den == 1) {
+		if(!isComplex()) {
+			return realpart(value) <= num;
+		} else {
+			return equals(num);
+		}
 	}
+	Number o(num, den);
+	return isLessThanOrEqualTo(&o);
 }
 bool Number::isEven() const {
 	return isInteger() && evenp(cln::numerator(cln::rational(cln::realpart(value))));
@@ -1334,7 +1372,7 @@ void Number::getPrintObjects(bool &minus, string &whole_, string &numerator_, st
 	if(plural) {
 		*plural = whole > den_spec;
 	}
-	if(in_composite && whole == den_spec) {
+	if(in_composite && exponent_.empty() && whole == den_spec) {
 		return;
 	} else if(!force_rational && !(displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY)) {
 		Number nr;
@@ -1421,8 +1459,12 @@ void Number::getPrintObjects(bool &minus, string &whole_, string &numerator_, st
 			denominator_ = printCL_I(den_spec, base, false);
 		}	
 	}
-	if(whole_.empty() && numerator_.empty() && denominator_.empty() && exponent_.empty() && prefix_.empty()) {
-		whole_ = "0";
+	if(whole_.empty() && numerator_.empty() && denominator_.empty() && prefix_.empty()) {
+		if(exponent_.empty()) {
+			whole_ = "0";
+		} else {
+			whole_ = "1";
+		}
 	}
 }
 

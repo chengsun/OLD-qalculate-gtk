@@ -179,7 +179,10 @@ class Calculator {
 	Manager *convert(double value, Unit *from_unit, Unit *to_unit);
 	Manager *convert(string str, Unit *from_unit, Unit *to_unit);	
 	Manager *convert(Manager *mngr, Unit *to_unit, bool always_convert = true);		
-	Manager *convert(Manager *mngr, string composite_);	
+	Manager *convert(Manager *mngr, string composite_);
+	Manager *convertToBaseUnits(Manager *mngr);
+	Unit *getBestUnit(Unit *u);
+	Manager *convertToBestUnit(Manager *mngr);
 	Manager *convertToCompositeUnit(Manager *mngr, CompositeUnit *cu, bool always_convert = true);		
 	void expressionItemActivated(ExpressionItem *item);
 	void expressionItemDeactivated(ExpressionItem *item);

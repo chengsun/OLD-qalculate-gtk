@@ -352,6 +352,13 @@
       </argument>
       <_description>Calculates the determinant of a matrix.</_description>
     </builtin_function>
+    <builtin_function name="permanent">
+      <_title>Permanent</_title>
+      <argument index="1">
+        <_title>Matrix</_title>
+      </argument>
+      <_description>Calculates the permanent of a matrix.</_description>
+    </builtin_function>
     <builtin_function name="cofactor">
       <_title>Cofactor</_title>
       <argument index="1">
@@ -531,18 +538,22 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
   </category>
   <category>
     <_title>Trigonometry</_title>
-    <builtin_function name="sin">
+    <function name="sin">
       <_title>Sine</_title>
-      <argument index="1">
+      <expression>(e^(i*\x)-e^(-i*\x))/(2*i)</expression>
+      <argument index="1" type="angle">
         <_title>Angle</_title>
+	<test>false</test>
       </argument>
-    </builtin_function>
-    <builtin_function name="cos">
+    </function>
+    <function name="cos">
       <_title>Cosine</_title>
-      <argument index="1">
+      <expression>(e^(i*\x)+e^(-i*\x))/2</expression>
+      <argument index="1" type="angle">
         <_title>Angle</_title>
+	<test>false</test>
       </argument>
-    </builtin_function>
+    </function>
     <function name="tan">
       <_title>Tangent</_title>
       <expression>sin(\x)/cos(\x)</expression>
