@@ -2,8 +2,8 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
     "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
   <!ENTITY legal SYSTEM "legal.xml">
-  <!ENTITY appversion "0.5.1">
-  <!ENTITY manrevision "0.5.1">
+  <!ENTITY appversion "0.5.9">
+  <!ENTITY manrevision "0.5.9">
   <!ENTITY date "Mars 2004">
   <!ENTITY app "Qalculate!">    
 ]>
@@ -337,12 +337,12 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Toggles calculation of variables on/off. If calculation of variables is not on, all variables will be treated as unknown.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Exact Mode</para></entry>
-				<entry><para>Toggles exact mode on/off.</para></entry>
+				<entry><para>Approximation</para></entry>
+				<entry><para>Submenu which switches between different approximation modes.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Calculate Multiple Real Roots</para></entry>
-				<entry><para>Toggles calculation of multiple real results for even roots on/off.</para></entry>
+				<entry><para>Assumptions</para></entry>
+				<entry><para>Submenu which changes default assumptions for unknown variables.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>RPN Mode</para></entry>
@@ -796,15 +796,9 @@ The display of unit names can be controlled by selecting to display abbreviation
 </para></listitem>
 </varlistentry>
 <varlistentry>
-<term>Exact Mode</term>
+<term>Approximation</term>
 <listitem><para>
-This mode affects both the display and calculation. When exact mode is on, the calculation will not go further than what can be calculated exactly (ex. <quote>sqrt(2+3) = sqrt(5)</quote>).
-</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Calculate Multiple Real Roots</term>
-<listitem><para>
-If this alternative is selected, Qalculate! will return both the negative and positive results of an even root (ex. <quote>sqrt(9) = 3 or -3</quote>. This does not yet work with complex numbers.
+When always exact mode is on, the calculation will not go further than what can be calculated exactly (ex. <quote>sqrt(2+3) = sqrt(5)</quote>).
 </para></listitem>
 </varlistentry>
 <varlistentry>
@@ -1060,9 +1054,6 @@ The expression of a function is basically a normal expression with placeholders 
 </para>
 <para>
 Additionally, optional arguments can be put in the expression with upper-case (X, Y, Z, ...) instead of lower-case letters (x, y, z, ...). The default value can be put in brackets after the letter (ex. <quote>\X{2}</quote>). The default value may be omitted and is then zero. All additional arguments after an optional argument must also be optional. 
-</para>
-<para>
-There are two special arguments represented by <quote>\v</quote> and <quote>\w</quote>. These represents an arbitrary number of arguments at the end, which are put in a vector. The difference between those two, is that <quote>\w</quote> treats each argument as one vector component, while <quote>\v</quote> extracts all components from matrices or vectors.
 </para>
 <para>
 A condition that must be true (&gt;0) for the function to be calculated, can optionally be entered in the text field below the expression. This follows the same conventions as function expressions. For example if the second argument must be higher than the first, <quote>\y &gt; \x</quote> may be entered as condition.

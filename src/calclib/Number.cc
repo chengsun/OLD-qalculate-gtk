@@ -1762,19 +1762,19 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		int decimals = 0;
 		if(expo > 0) {
 			if(po.number_fraction_format == FRACTION_DECIMAL) {
-				mpz_str.insert(mpz_str.length() - expo, ".");
+				mpz_str.insert(mpz_str.length() - expo, po.decimalpoint());
 				decimals = expo;
 				if((int) mpz_str.length() > PRECISION + 1) {
 					decimals -= mpz_str.length() - PRECISION - 1;
 					if(mpz_str[PRECISION + 1] >= '5') {
 						int i = 0;
 						while(true) {
-							if(PRECISION - i >= 0 && mpz_str[PRECISION - i] == '.') {
+							if(PRECISION - i >= 0 && mpz_str[PRECISION - i] == po.decimalpoint()[0]) {
 								i++;
 							}
 							if(PRECISION - i < 0) {
 								mpz_str.insert(mpz_str.begin(), '1');
-								mpz_str[1] = '.';
+								mpz_str[1] = po.decimalpoint()[0];
 								mpz_str[2] = '0';
 								decimals++;
 								expo++;
@@ -1793,7 +1793,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					if(po.is_approximate) *po.is_approximate = true;
 				}
 			} else if(po.number_fraction_format == FRACTION_DECIMAL_EXACT) {
-				mpz_str.insert(mpz_str.length() - expo, ".");
+				mpz_str.insert(mpz_str.length() - expo, po.decimalpoint());
 				decimals = expo;
 			} else {
 				mpz_str = mpz_str.substr(0, mpz_str.length() - expo);
@@ -1819,13 +1819,13 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					int i = (str.length() - decimals) + po.max_decimals;
 					if(str[i] >= '5') {
 						while(true) {
-							if(i - 1 >= 0 && str[i - 1] == '.') {
+							if(i - 1 >= 0 && str[i - 1] == po.decimalpoint()[0]) {
 								decimals++;
 								i--;
 							}
 							if(i - 1 < 0) {
 								str.insert(str.begin(), '1');
-								str[1] = '.';
+								str[1] = po.decimalpoint()[0];
 								str[2] = '0';
 								decimals++;
 								i++;
@@ -1848,13 +1848,13 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			if(min_decimals > decimals) {
 				if(decimals <= 0) {
-					str += ".";
+					str += po.decimalpoint();
 				}
 				for(int i = min_decimals - decimals; i > 0; i--) {
 					str += "0";
 				}
 			}
-			if(str[str.length() - 1] == '.') str.erase(str.end() - 1);
+			if(str[str.length() - 1] == po.decimalpoint()[0]) str.erase(str.end() - 1);
 		}
 
 		if(expo != 0) { 
@@ -2003,7 +2003,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					str.insert(str.begin(), 1 - l10, '0');
 					l10 = 1;
 				}
-				str.insert(l10, ".");
+				str.insert(l10, po.decimalpoint());
 				int l2 = 0;
 				while(str[str.length() - 1 - l2] == '0') {
 					l2++;
@@ -2026,13 +2026,13 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					int i = (str.length() - decimals) + po.max_decimals;
 					if(str[i] >= '0' + (base / 2 + base % 2) - 1) {
 						while(true) {
-							if(i - 1 >= 0 && str[i - 1] == '.') {
+							if(i - 1 >= 0 && str[i - 1] == po.decimalpoint()[0]) {
 								decimals++;
 								i--;
 							}
 							if(i - 1 < 0) {
 								str.insert(str.begin(), '1');
-								str[1] = '.';
+								str[1] = po.decimalpoint()[0];
 								str[2] = '0';
 								decimals++;
 								i++;
@@ -2055,14 +2055,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			if(min_decimals > decimals) {
 				if(decimals <= 0) {
-					str += ".";
+					str += po.decimalpoint();
 					decimals = 0;
 				}
 				for(; decimals < min_decimals; decimals++) {
 					str += "0";
 				}
 			}
-			if(str[str.length() - 1] == '.') {
+			if(str[str.length() - 1] == po.decimalpoint()[0]) {
 				str.erase(str.end() - 1);
 			}
 			if(infinite_series) {

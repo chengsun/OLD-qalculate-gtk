@@ -58,21 +58,26 @@ int MatrixFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	}
 	return 1 ;
 }
-RankFunction::RankFunction() : Function("rank", 1) {
+RankFunction::RankFunction() : Function("rank", 1, 2) {
 	setArgumentDefinition(1, new VectorArgument(""));
+	setArgumentDefinition(2, new BooleanArgument(""));
+	setDefaultValue(2, "1");
 }
 int RankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	return mstruct.rankVector();
+	return mstruct.rankVector(vargs[1].number().getBoolean());
 }
-SortFunction::SortFunction() : Function("sort", 1) {
+SortFunction::SortFunction() : Function("sort", 1, 2) {
 	setArgumentDefinition(1, new VectorArgument(""));
+	setArgumentDefinition(2, new BooleanArgument(""));
+	setDefaultValue(2, "1");
 }
 int SortFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	return mstruct.sortVector();
+	return mstruct.sortVector(vargs[1].number().getBoolean());
 }
 MergeVectorsFunction::MergeVectorsFunction() : Function("mergevectors", -1) {
+	setArgumentDefinition(1, new VectorArgument(""));
 }
 int MergeVectorsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct.clearVector();
@@ -1274,13 +1279,13 @@ RandFunction::RandFunction() : Function("rand", 0, 1) {
 	setDefaultValue(1, "-1"); 
 }
 int RandFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].number().isNegative()) {
+	if(vargs[0].number().isZero() || vargs[0].number().isNegative()) {
 		Number nr;
 		nr.setInternal(cln::random_F(cln::cl_float(1)));
 		mstruct = nr;
 	} else {
 		Number nr;
-		nr.setInternal(cln::random_I(cln::numerator(cln::rational(cln::realpart(vargs[0].number().internalNumber())))));
+		nr.setInternal(cln::random_I(cln::numerator(cln::rational(cln::realpart(vargs[0].number().internalNumber())))) + 1);
 		mstruct = nr;
 	}
 	return 1 ;
@@ -1706,10 +1711,13 @@ int CustomSumFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	else if(end < start) end = start;	
 	
 	mstruct = vargs[2];
+	MathStructure mexpr(vargs[3]);
 	MathStructure mprocess;
-
+	EvaluationOptions eo2 = eo;
+	eo2.calculate_functions = false;
+	//mexpr.eval(eo2);
 	for(unsigned int index = start - 1; index < (unsigned int) end; index++) {	
-		mprocess = vargs[3];
+		mprocess = mexpr;
 		mprocess.replace(vargs[4], vargs[6][index]);
 		mprocess.replace(vargs[5], mstruct);
 		if(!vargs[7].isEmptySymbol()) {
@@ -1718,6 +1726,7 @@ int CustomSumFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		if(!vargs[8].isEmptySymbol()) {
 			mprocess.replace(vargs[8], vargs[6]);
 		}
+		mprocess.eval(eo2);
 		mstruct = mprocess;
 	}
 	return 1 ;
@@ -1804,7 +1813,7 @@ int DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	mstruct = vargs[0];
 	bool b = false;
 	while(i) {
-		if(!b && !mstruct.differentiate(vargs[1], eo)) {
+		if(!mstruct.differentiate(vargs[1], eo) && !b) {
 			return 0;
 		}
 		b = true;

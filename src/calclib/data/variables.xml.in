@@ -29,16 +29,7 @@
     </variable>
   </category>
   <category>
-    <_title>Numbers</_title>
-    <variable name="procent">
-      <unicode>%</unicode>
-      <_title>Procent</_title>
-      <value>1/100</value>
-    </variable>
-    <variable name="promille">
-      <_title>Promille</_title>
-      <value>1/1000</value>
-    </variable>
+    <_title>Large Numbers</_title>
     <variable name="million">
       <_title>Million</_title>
       <value>1E6</value>
@@ -131,5 +122,32 @@
       <_title>Googleplex</_title>
       <value>10^(10^100)</value>
     </variable>
+  </category>
+  <category>
+    <_title>Small Numbers</_title>
+    <variable name="procent">
+      <unicode>%</unicode>
+      <_title>Procent</_title>
+      <value>1/100</value>
+    </variable>
+    <variable name="promille">
+      <_title>Promille</_title>
+      <value>1/1000</value>
+    </variable>
+  </category>
+  <category>
+    <_title>Special Numbers</_title>
+    <builtin_variable name="i">
+      <_title>Imaginary i (sqrt -1)</_title>
+    </builtin_variable>
+    <builtin_variable name="infinity">
+      <_title>Infinity</_title>
+    </builtin_variable>
+    <builtin_variable name="minus_infinity">
+      <_title>Negative Infinity</_title>
+    </builtin_variable>
+    <builtin_variable name="plus_infinity">
+      <_title>Positive Infinity</_title>
+    </builtin_variable>
   </category>
 </QALCULATE>

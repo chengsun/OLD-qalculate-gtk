@@ -243,7 +243,7 @@
 		<widget class="GtkRadioButton" id="preferences_radiobutton_dot">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
-		  <property name="label" translatable="yes">⋅</property>
+		  <property name="label" translatable="yes">.</property>
 		  <property name="use_underline">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
 		  <property name="active">True</property>
@@ -262,7 +262,7 @@
 		<widget class="GtkRadioButton" id="preferences_radiobutton_ex">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
-		  <property name="label" translatable="yes">×</property>
+		  <property name="label" translatable="yes">x</property>
 		  <property name="use_underline">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
 		  <property name="active">False</property>

@@ -86,7 +86,6 @@ extern GdkPixmap *pixmap_result;
 extern GdkPixbuf *pixbuf_result;
 vector<vector<GtkWidget*> > element_entries;
 bool b_busy;
-pthread_t view_thread;
 GdkPixmap *tmp_pixmap;
 bool expression_has_changed, current_object_has_changed;
 int history_width, history_height;
@@ -117,6 +116,10 @@ gint current_object_start = -1, current_object_end = -1;
 
 PrintOptions printops, saved_printops;
 EvaluationOptions evalops, saved_evalops;
+
+extern FILE *view_pipe_r, *view_pipe_w;
+extern pthread_t view_thread;
+extern pthread_attr_t view_thread_attr;
 
 
 #define TEXT_TAGS			"<span size=\"xx-large\">"
@@ -2567,7 +2570,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 				PangoLayout *layout_comma = gtk_widget_create_pango_layout(resultview, NULL);
 				string str;
 				gint comma_w = 0, comma_h = 0;
-				MARKUP_STRING(str, CALCULATOR->getComma())
+				MARKUP_STRING(str, po.comma())
 				pango_layout_set_markup(layout_comma, str.c_str(), -1);		
 				pango_layout_get_pixel_size(layout_comma, &comma_w, &comma_h);
 				for(unsigned int index_r = 0; index_r < m.size(); index_r++) {
@@ -2816,7 +2819,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			CALCULATE_SPACE_W
 			PangoLayout *layout_comma = gtk_widget_create_pango_layout(resultview, NULL);
 			string str, func_str;
-			MARKUP_STRING(str, CALCULATOR->getComma())
+			MARKUP_STRING(str, po.comma())
 			pango_layout_set_markup(layout_comma, str.c_str(), -1);		
 			pango_layout_get_pixel_size(layout_comma, &comma_w, &comma_h);
 			PangoLayout *layout_function = gtk_widget_create_pango_layout(resultview, NULL);
@@ -2995,51 +2998,62 @@ void clearresult() {
 }
 
 void on_abort_display(GtkDialog *w, gint arg1, gpointer user_data) {
-	while(pthread_cancel(view_thread) == 0) {
+	int i;
+	while(true) {
+		i = pthread_cancel(view_thread);
+		if(i == 0 || i == ESRCH) break;
 		usleep(100);
 	}
 	CALCULATOR->restoreState();
 	CALCULATOR->clearBuffers();
 	b_busy = false;
+	while(!pthread_create(&view_thread, &view_thread_attr, view_proc, view_pipe_r) == 0) {
+		usleep(100);
+	}
 }
 
-void *view_proc(void *) {
+void *view_proc(void *pipe) {
 
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);	
-
-	MathStructure m(*mstruct);
-	printops.allow_non_usable = false;
-	m.format(printops);
-	result_text = m.print(printops);	
+	FILE *view_pipe = (FILE*) pipe;
 	
-	if(result_text.length() > 1500) {
-		PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
-		pango_layout_set_markup(layout, _("result is too long\nsee history"), -1);
-		gint w = 0, h = 0;
-		pango_layout_get_pixel_size(layout, &w, &h);
-		tmp_pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
-		gdk_draw_rectangle(tmp_pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
-		gdk_draw_layout(GDK_DRAWABLE(tmp_pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
-		g_object_unref(layout);
-		*printops.is_approximate = false;
-	} else if(result_text == _("aborted")) {
-		PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
-		pango_layout_set_markup(layout, _("calculation was aborted"), -1);
-		gint w = 0, h = 0;
-		pango_layout_get_pixel_size(layout, &w, &h);
-		tmp_pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
-		gdk_draw_rectangle(tmp_pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
-		gdk_draw_layout(GDK_DRAWABLE(tmp_pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
-		g_object_unref(layout);
-		*printops.is_approximate = false;
-	} else {
-		printops.allow_non_usable = true;
-		tmp_pixmap = draw_structure(m, printops);
+	while(true) {
+	
+		void *x = NULL;
+		fread(&x, sizeof(void*), 1, view_pipe);
+		MathStructure m(*((MathStructure*) x));
 		printops.allow_non_usable = false;
-	}
-	b_busy = false;
+		m.format(printops);
+		result_text = m.print(printops);	
 	
+		if(result_text.length() > 1500) {
+			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
+			pango_layout_set_markup(layout, _("result is too long\nsee history"), -1);
+			gint w = 0, h = 0;
+			pango_layout_get_pixel_size(layout, &w, &h);
+			tmp_pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
+			gdk_draw_rectangle(tmp_pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
+			gdk_draw_layout(GDK_DRAWABLE(tmp_pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
+			g_object_unref(layout);
+			*printops.is_approximate = false;
+		} else if(result_text == _("aborted")) {
+			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
+			pango_layout_set_markup(layout, _("calculation was aborted"), -1);
+			gint w = 0, h = 0;
+			pango_layout_get_pixel_size(layout, &w, &h);
+			tmp_pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
+			gdk_draw_rectangle(tmp_pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
+			gdk_draw_layout(GDK_DRAWABLE(tmp_pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
+			g_object_unref(layout);
+			*printops.is_approximate = false;
+		} else {
+			printops.allow_non_usable = true;
+			tmp_pixmap = draw_structure(m, printops);
+			printops.allow_non_usable = false;
+		}
+		b_busy = false;
+	}
 	return NULL;
 }
 gboolean on_event(GtkWidget *w, GdkEvent *e, gpointer user_data) {
@@ -3066,9 +3080,6 @@ void setResult(Prefix *prefix = NULL, bool update_history = true) {
 	//update "ans" variables
 	vans->set(*mstruct);
 	vAns->set(*mstruct);
-	
-	pthread_attr_t view_thread_attr;
-	pthread_attr_init(&view_thread_attr);
 
 	if(update_history) {
 		//result_text = expr;
@@ -3100,9 +3111,9 @@ void setResult(Prefix *prefix = NULL, bool update_history = true) {
 	CALCULATOR->saveState();
 
 	gulong handler_id = g_signal_connect(G_OBJECT(glade_xml_get_widget (main_glade, "main_window")), "event", G_CALLBACK(on_event), NULL);
-	while(!pthread_create(&view_thread, &view_thread_attr, view_proc, NULL) == 0) {
-		usleep(100);
-	}	
+
+	fwrite(&mstruct, sizeof(void*), 1, view_pipe_w);
+	fflush(view_pipe_w);
 
 	int i = 0;
 	while(b_busy && i < 50) {
@@ -3282,7 +3293,6 @@ void execute_expression() {
 		gtk_widget_hide(dialog);
 		gtk_widget_grab_focus(expression);
 	}
-
 	b_busy = false;
 	display_errors();
 	result_text = str;
@@ -3592,8 +3602,10 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 						max = iarg->max()->intValue();
 					}				
 					entry[i] = gtk_spin_button_new_with_range(min, max, 1);
-					gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(entry[i]), FALSE);
-					if(!arg->zeroForbidden() && min <= 0 && max >= 0) {
+					gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(entry[i]), TRUE);
+					if(!f->getDefaultValue(i + 1).empty()) {
+						gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), s2i(f->getDefaultValue(i + 1)));
+					} else if(!arg->zeroForbidden() && min <= 0 && max >= 0) {
 						gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 0);
 					} else {
 						if(max < 0) {
@@ -5295,7 +5307,7 @@ void load_preferences() {
 					CALCULATOR->setPrecision(v);
 				else if(svar == "min_exp")
 					printops.min_exp = v;
-				else if(svar == "negative_exponentes")
+				else if(svar == "negative_exponents")
 					printops.negative_exponents = v;
 				else if(svar == "sort_minus_last")
 					printops.sort_options.minus_last = v;		
@@ -5809,7 +5821,7 @@ void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpoint
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_times")), MULTIPLICATION);	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_divide")), DIVISION);	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_sqrt")), "SQRT");	
-		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_dot")), CALCULATOR->getDecimalPoint());
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_dot")), CALCULATOR->getDecimalPoint().c_str());
 		if(multi_sign != "*") {
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_asterisk")), TRUE);
 		}
@@ -6407,7 +6419,7 @@ void on_button_nine_clicked(GtkButton *w, gpointer user_data) {
 	insert_text("9");
 }
 void on_button_dot_clicked(GtkButton *w, gpointer user_data) {
-	insert_text(CALCULATOR->getDecimalPoint());
+	insert_text(CALCULATOR->getDecimalPoint().c_str());
 }
 void on_button_brace_open_clicked(GtkButton *w, gpointer user_data) {
 	insert_text("(");
@@ -6503,50 +6515,62 @@ void on_menu_item_convert_to_base_units_activate(GtkMenuItem *w, gpointer user_d
 }
 
 void on_menu_item_assumptions_integer_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_INTEGER);
 	execute_expression();
 }
 void on_menu_item_assumptions_rational_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_RATIONAL);
 	execute_expression();
 }
 void on_menu_item_assumptions_real_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_REAL);
 	execute_expression();
 }
 void on_menu_item_assumptions_complex_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_COMPLEX);
 	execute_expression();
 }
 void on_menu_item_assumptions_number_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_NUMBER);
 	execute_expression();
 }
 void on_menu_item_assumptions_none_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_NONE);
 	execute_expression();
 }
 void on_menu_item_assumptions_nonzero_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONZERO);
 	execute_expression();
 }
 void on_menu_item_assumptions_positive_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_POSITIVE);
 	execute_expression();
 }
 void on_menu_item_assumptions_nonnegative_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONNEGATIVE);
 	execute_expression();
 }
 void on_menu_item_assumptions_negative_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NEGATIVE);
 	execute_expression();
 }
 void on_menu_item_assumptions_nonpositive_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONPOSITIVE);
 	execute_expression();
 }
 void on_menu_item_assumptions_unknown_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_UNKNOWN);
 	execute_expression();
 }
@@ -6928,14 +6952,17 @@ void on_menu_item_indicate_infinite_series_activate(GtkMenuItem *w, gpointer use
 	gtk_widget_grab_focus(expression);
 }
 void on_menu_item_always_exact_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	evalops.approximation = APPROXIMATION_EXACT;
 	execute_expression();
 }
 void on_menu_item_try_exact_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	evalops.approximation = APPROXIMATION_TRY_EXACT;
 	execute_expression();
 }
 void on_menu_item_approximate_activate(GtkMenuItem *w, gpointer user_data) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	evalops.approximation = APPROXIMATION_APPROXIMATE;
 	execute_expression();
 }

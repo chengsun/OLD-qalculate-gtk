@@ -121,6 +121,7 @@ gboolean on_completion_match_selected(GtkEntryCompletion *entrycompletion, GtkTr
 gboolean completion_match_func(GtkEntryCompletion *entrycompletion, const gchar *key, GtkTreeIter *iter, gpointer user_data);
 #endif
 
+void *view_proc(void*);
 void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data);
 void on_button_close_clicked(GtkButton *w, gpointer user_data);
 void on_button_history_clicked(GtkToggleButton *w, gpointer user_data);

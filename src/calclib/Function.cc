@@ -603,44 +603,29 @@ void UserFunction::set(const ExpressionItem *item) {
 		ExpressionItem::set(item);
 	}
 }
-
 int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(args() != 0) {
 		string stmp = eq_calc;
 		string svar;
-		string v_str;
+		string v_str, w_str;
+		vector<string> v_strs;
 		vector<int> v_id;
 		unsigned int i2 = 0;
 		int i_args = maxargs();
 		if(i_args < 0) {
 			i_args = minargs();
 		}
+		
+		ParseOptions po = eo.parse_options;
+		po.rpn = false;
+		
 		for(int i = 0; i < i_args; i++) {
-			svar = '\\';
-			if('x' + i > 'z') {
-				svar += (char) ('a' + i - 3);
-			} else {
-				svar += 'x' + i;
-			}
-			i2 = 0;	
 			v_id.push_back(CALCULATOR->addId(vargs[i], true));
-			v_str = LEFT_PARENTHESIS ID_WRAP_LEFT;
-			v_str += i2s(v_id[v_id.size() - 1]);
-			v_str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;			
-			while(true) {
-				if((i2 = stmp.find(svar, i2)) != string::npos) {
-					if(i2 != 0 && stmp[i2 - 1] == '\\') {
-						i2 += 2;
-					} else {
-						stmp.replace(i2, 2, v_str);
-					}
-				} else {
-					break;
-				}
-			}
+			v_strs.push_back(LEFT_PARENTHESIS ID_WRAP_LEFT);
+			v_strs[i] += i2s(v_id[i]);
+			v_strs[i] += ID_WRAP_RIGHT RIGHT_PARENTHESIS;			
 		}
 		if(maxargs() < 0) {
-			string w_str;
 			if(stmp.find("\\v") != string::npos) {
 				v_id.push_back(CALCULATOR->addId(produceVector(vargs), true));
 				v_str = LEFT_PARENTHESIS ID_WRAP_LEFT;
@@ -652,7 +637,116 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				w_str = LEFT_PARENTHESIS ID_WRAP_LEFT;
 				w_str += i2s(v_id[v_id.size() - 1]);
 				w_str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;							
-			}			
+			}
+		}
+		for(unsigned int i = 0; i < v_definitions.size(); i++) {
+			if(definitionPrecalculated(i + 1)) {
+				string str = v_definitions[i];
+				for(int i3 = 0; i3 < i_args; i3++) {
+					svar = '\\';
+					if('x' + i > 'z') {
+						svar += (char) ('a' + i3 - 3);
+					} else {
+						svar += 'x' + i3;
+					}
+					i2 = 0;	
+					while(true) {
+						if((i2 = str.find(svar, i2)) != string::npos) {
+							if(i2 != 0 && str[i2 - 1] == '\\') {
+								i2 += 2;
+							} else {
+								str.replace(i2, 2, v_strs[i3]);
+							}
+						} else {
+							break;
+						}
+					}
+				}
+				if(maxargs() < 0) {
+					i2 = 0;
+					while(true) {
+						if((i2 = str.find("\\v")) != string::npos) {					
+							if(i2 != 0 && str[i2 - 1] == '\\') {
+								i2 += 2;
+							} else {
+								str.replace(i2, 2, v_str);
+							}
+						} else {
+							break;
+						}
+					}
+					i2 = 0;
+					while(true) {
+						if((i2 = str.find("\\w")) != string::npos) {					
+							if(i2 != 0 && str[i2 - 1] == '\\') {
+								i2 += 2;
+							} else {
+								str.replace(i2, 2, w_str);
+							}
+						} else {
+							break;
+						}
+					}			
+				}
+				MathStructure v_mstruct(CALCULATOR->parse(str, po));
+				v_mstruct.eval(eo);
+				v_id.push_back(CALCULATOR->addId(v_mstruct, true));
+				str = LEFT_PARENTHESIS ID_WRAP_LEFT;
+				str += i2s(v_id[v_id.size() - 1]);
+				str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+				i2 = 0;
+				svar = '\\';
+				svar += i2s(i + 1);
+				while(true) {
+					if((i2 = stmp.find(svar, i2)) != string::npos) {
+						if(i2 != 0 && stmp[i2 - 1] == '\\') {
+							i2 += 2;
+						} else {
+							stmp.replace(i2, 2, str);
+						}
+					} else {
+						break;
+					}
+				}
+			} else {
+				i2 = 0;
+				svar = '\\';
+				svar += i2s(i + 1);
+				while(true) {
+					if((i2 = stmp.find(svar, i2)) != string::npos) {
+						if(i2 != 0 && stmp[i2 - 1] == '\\') {
+							i2 += svar.size();
+						} else {
+							stmp.replace(i2, svar.size(), v_definitions[i]);
+						}
+					} else {
+						break;
+					}
+				}
+			}
+		}
+		for(int i = 0; i < i_args; i++) {
+			svar = '\\';
+			if('x' + i > 'z') {
+				svar += (char) ('a' + i - 3);
+			} else {
+				svar += 'x' + i;
+			}
+			i2 = 0;	
+			while(true) {
+				if((i2 = stmp.find(svar, i2)) != string::npos) {
+					if(i2 != 0 && stmp[i2 - 1] == '\\') {
+						i2 += 2;
+					} else {
+						stmp.replace(i2, 2, v_strs[i]);
+					}
+				} else {
+					break;
+				}
+			}
+		}
+		if(maxargs() < 0) {
+			i2 = 0;
 			while(true) {
 				if((i2 = stmp.find("\\v")) != string::npos) {					
 					if(i2 != 0 && stmp[i2 - 1] == '\\') {
@@ -664,6 +758,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					break;
 				}
 			}
+			i2 = 0;
 			while(true) {
 				if((i2 = stmp.find("\\w")) != string::npos) {					
 					if(i2 != 0 && stmp[i2 - 1] == '\\') {
@@ -675,8 +770,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					break;
 				}
 			}			
-		} 		
-
+		}
 		while(true) {
 			if((i2 = stmp.find("\\\\")) != string::npos) {
 				stmp.replace(i2, 2, "\\");
@@ -684,11 +778,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				break;
 			}
 		}
-
-		ParseOptions po = eo.parse_options;
-		po.rpn = false;
 		mstruct = CALCULATOR->parse(stmp, po);
-
 		for(unsigned int i = 0; i < v_id.size(); i++) {
 			CALCULATOR->delId(v_id[i], true);
 		}
@@ -804,6 +894,40 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 	eq_calc = new_eq;
 	argc = argc_;
 	max_argc = max_argc_;	
+}
+void UserFunction::addDefinition(string definition, bool precalculate) {
+	v_definitions.push_back(definition);
+	v_precalculate.push_back(precalculate);
+}
+void UserFunction::setDefinition(unsigned int index, string definition) {
+	if(index > 0 && index <= v_definitions.size()) {
+		v_definitions[index - 1] = definition;
+	}
+}
+void UserFunction::delDefinition(unsigned int index) {
+	if(index > 0 && index <= v_definitions.size()) {
+		v_definitions.erase(v_definitions.begin() + (index - 1));
+	}
+	if(index > 0 && index <= v_precalculate.size()) {
+		v_precalculate.erase(v_precalculate.begin() + (index - 1));
+	}
+}
+void UserFunction::setDefinitionPrecalculated(unsigned int index, bool precalculate) {
+	if(index > 0 && index <= v_precalculate.size()) {
+		v_precalculate[index - 1] = precalculate;
+	}
+}
+const string &UserFunction::getDefinition(unsigned int index) const {
+	if(index > 0 && index <= v_definitions.size()) {
+		return v_definitions[index - 1];
+	}
+	return empty_string;
+}
+bool UserFunction::definitionPrecalculated(unsigned int index) const {
+	if(index > 0 && index <= v_precalculate.size()) {
+		return v_precalculate[index - 1];
+	}
+	return false;
 }
 
 Argument::Argument(string name_, bool does_test, bool does_error) {
@@ -1451,9 +1575,9 @@ VectorArgument::~VectorArgument() {
 	}
 }
 bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	if(!value.isVector()) {
+	//if(!value.isVector()) {
 		value.eval(eo);
-	}
+	//}
 	if(!value.isVector()) return false;
 	if(b_argloop && subargs.size() > 0) {
 		for(unsigned int i = 0; i < value.components(); i++) {
@@ -1524,9 +1648,9 @@ MatrixArgument::MatrixArgument(const MatrixArgument *arg) {
 }
 MatrixArgument::~MatrixArgument() {}
 bool MatrixArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	if(!value.isMatrix()) {
+	//if(!value.isMatrix()) {
 		value.eval(eo);
-	}
+	//}
 	return value.isMatrix() && (!b_sym || value.matrixIsSymmetric());
 }
 bool MatrixArgument::symmetricDemanded() const {return b_sym;}

@@ -51,6 +51,10 @@ GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *dec
 GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *nbases_glade, *plot_glade, *precision_glade;
 GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
 
+FILE *view_pipe_r, *view_pipe_w;
+pthread_t view_thread;
+pthread_attr_t view_thread_attr;
+
 int main (int argc, char **argv) {
 
 #ifdef ENABLE_NLS
@@ -196,6 +200,15 @@ int main (int argc, char **argv) {
 	}
 	
 	update_completion();
+	
+	int pipe_wr[] = {0, 0};
+	pipe(pipe_wr);
+	view_pipe_r = fdopen(pipe_wr[0], "r");
+	view_pipe_w = fdopen(pipe_wr[1], "w");
+	pthread_attr_init(&view_thread_attr);
+	while(!pthread_create(&view_thread, &view_thread_attr, view_proc, view_pipe_r) == 0) {
+		usleep(100);
+	}
 	
 	if(!calc_arg.empty()) {
 		execute_expression();

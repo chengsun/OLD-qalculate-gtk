@@ -576,6 +576,8 @@ get_preferences_dialog (void)
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_button_result_font")), custom_result_font.c_str());
 		gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_expression_font"), use_custom_expression_font);	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_button_expression_font")), custom_expression_font.c_str());
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_dot")), SIGN_MULTIDOT);
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_ex")), SIGN_MULTIPLICATION);
 		if(multi_sign == SIGN_MULTIDOT) {
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_dot")), TRUE);
 		} else if(multi_sign == SIGN_MULTIPLICATION) {

@@ -1,3 +1,8 @@
+2004-06-23 Niklas Knutsson  <nq@altern.org>
+
+	* Release v. 0.6
+	* Do not create a new thread for every calculation and printing
+
 2004-06-21 Niklas Knutsson  <nq@altern.org>
 
 	* ...

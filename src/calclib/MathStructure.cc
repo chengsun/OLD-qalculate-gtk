@@ -1765,7 +1765,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo) {
 			}
 			default: {
 				for(unsigned int i = 0; i < SIZE; i++) {
-					CHILD(i).calculatesub(eo);
+					if(CHILD(i).calculatesub(eo)) c = true;
 				}
 				childrenUpdated();
 			}
@@ -1774,6 +1774,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo) {
 	}
 	return c;
 }
+
 bool MathStructure::calculateFunctions(const EvaluationOptions &eo) {
 	if(m_type == STRUCT_FUNCTION) {
 		if(!o_function->testArgumentCount(SIZE)) {
@@ -2191,9 +2192,11 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 	return 1;
 }
 
-void MathStructure::sort(const SortOptions &so) {
-	for(unsigned int i = 0; i < SIZE; i++) {
-		CHILD(i).sort(so);
+void MathStructure::sort(const SortOptions &so, bool recursive) {
+	if(recursive) {
+		for(unsigned int i = 0; i < SIZE; i++) {
+			CHILD(i).sort(so);
+		}
 	}
 	if(m_type != STRUCT_ADDITION && m_type != STRUCT_MULTIPLICATION) return;
 	vector<unsigned int> sorted;
@@ -2911,15 +2914,20 @@ void MathStructure::setPrefixes(const PrintOptions &po, const MathStructure *par
 	switch(m_type) {
 		case STRUCT_MULTIPLICATION: {
 			bool b = false;
-			unsigned int i = 0;
-			for(; i < SIZE; i++) {
-				if(CHILD(i).isUnit_exp()) {
-					if((CHILD(i).isUnit() && CHILD(i).prefix()) || (CHILD(i).isPower() && CHILD(i)[0].prefix())) {
+			unsigned int i = SIZE;
+			for(unsigned int i2 = 0; i2 < SIZE; i2++) {
+				if(CHILD(i2).isUnit_exp()) {
+					if((CHILD(i2).isUnit() && CHILD(i2).prefix()) || (CHILD(i2).isPower() && CHILD(i2)[0].prefix())) {
 						b = false;
 						return;
 					}
-					b = true;
-					break;
+					if(po.use_prefixes_for_currencies || (CHILD(i2).isPower() && CHILD(i2)[0].unit()->baseUnit() != CALCULATOR->u_euro) || (CHILD(i2).isUnit() && CHILD(i2).unit()->baseUnit() != CALCULATOR->u_euro)) {
+						b = true;
+						if(i > i2) i = i2;
+						break;
+					} else if(i < i2) {
+						i = i2;
+					}
 				}
 			}
 			if(b) {
@@ -3331,11 +3339,82 @@ void MathStructure::format(const PrintOptions &po) {
 	}
 }
 void MathStructure::formatsub(const PrintOptions &po, const MathStructure *parent, unsigned int pindex) {
+
 	for(unsigned int i = 0; i < SIZE; i++) {
 		CHILD(i).formatsub(po, this, i + 1);
 	}
 	switch(m_type) {
+		case STRUCT_ADDITION: {
+			MathStructure *mi, *mi2;
+			bool bm1, bm2;
+			bool b = false, c = false;
+			for(unsigned int i = 0; i < SIZE; i++) {
+				if(CHILD(i).isNegate()) {bm1 = true; mi = &CHILD(i)[0];}
+				else {bm1 = false; mi = &CHILD(i);}
+				b = false;
+				if(mi->isDivision()) {
+					for(unsigned int i2 = i + 1; i2 < SIZE; i2++) {
+						if(CHILD(i2).isNegate()) {bm2 = true; mi2 = &CHILD(i2)[0];}
+						else {bm2 = false; mi2 = &CHILD(i2);}
+						if(mi2->isDivision() && (*mi)[1] == (*mi2)[1]) {
+							(*mi)[0].add((*mi2)[0], true);
+							if(bm1 != bm2) {
+								(*mi)[0][(*mi)[0].size() - 1].transform(STRUCT_NEGATE);
+							}
+							ERASE(i2);
+							if(CHILD(i).isNegate()) {mi = &CHILD(i)[0];}
+							else {mi = &CHILD(i);}
+							b = true;
+							i2--;
+						} else if(mi2->isInverse() && (*mi)[1] == (*mi2)[0]) {
+							(*mi)[0].add(MathStructure(1, 1), true);
+							if(bm1 != bm2) {
+								(*mi)[0][(*mi)[0].size() - 1].transform(STRUCT_NEGATE);
+							}
+							ERASE(i2);
+							if(CHILD(i).isNegate()) {mi = &CHILD(i)[0];}
+							else {mi = &CHILD(i);}
+							b = true;
+							i2--;
+						}
+					}
+				} else if(mi->isInverse()) {
+					for(unsigned int i2 = i + 1; i2 < SIZE; i2++) {
+						if(CHILD(i2).isNegate()) {bm2 = true; mi2 = &CHILD(i2)[0];}
+						else {bm2 = false; mi2 = &CHILD(i2);}
+						if(mi2->isDivision() && (*mi)[0] == (*mi2)[1]) {
+							mi->set(1, 1);
+							mi->transform(STRUCT_DIVISION, (*mi2)[1]);
+							(*mi)[0].add((*mi2)[0], true);
+							if(bm1 != bm2) {
+								(*mi)[0][(*mi)[0].size() - 1].transform(STRUCT_NEGATE);
+							}
+							ERASE(i2);
+							if(CHILD(i).isNegate()) {mi = &CHILD(i)[0];}
+							else {mi = &CHILD(i);}
+							b = true;
+							i--;
+							break;
+						}
+					}
+				}
+				if(b) {
+					(*mi)[0].sort(po.sort_options, false);
+					c = true;
+				}
+			}
+			if(c) {
+				if(SIZE == 1) {
+					MathStructure msave(CHILD(0));
+					set(msave);
+				} else {
+					sort(po.sort_options, false);
+				}
+			}
+			break;
+		}
 		case STRUCT_MULTIPLICATION: {
+
 			if(CHILD(0).isNegate()) {
 				CHILD(0).number().negate();
 				if(CHILD(0)[0].isOne()) {
@@ -3359,6 +3438,7 @@ void MathStructure::formatsub(const PrintOptions &po, const MathStructure *paren
 					break;
 				}
 			}
+
 			if(b) {
 				MathStructure den;
 				MathStructure num = m_undefined;
@@ -3401,10 +3481,12 @@ void MathStructure::formatsub(const PrintOptions &po, const MathStructure *paren
 				formatsub(po, parent, pindex);
 				break;
 			}
+
 			unsigned int index = 0;
 			if(CHILD(0).isOne()) {
 				index = 1;
 			}
+
 			switch(CHILD(index).type()) {
 				case STRUCT_POWER: {
 					if(!CHILD(index)[0].isUnit_exp()) {
@@ -3429,17 +3511,11 @@ void MathStructure::formatsub(const PrintOptions &po, const MathStructure *paren
 					}
 				}
 			}
-			break;
-		}
-		case STRUCT_DIVISION: {
-/*			if(CHILD(0)[0].isUnit_exp()) {
-				CHILD(0).insertChild(MathStructure(1, 1), 1);
-			}*/
+
 			break;
 		}
 		case STRUCT_UNIT: {
-			if(!parent || (!parent->isPower() && !parent->isMultiplication() && !parent->isInverse() && !(parent->isDivision() && pindex == 2))) {
-				MathStructure msave(*this);
+			if(!parent || (!parent->isPower() && !parent->isMultiplication() && !parent->isInverse() && !(parent->isDivision() && pindex == 2))) {				MathStructure msave(*this);
 				clear();
 				APPEND(MathStructure(1));
 				APPEND(msave);
@@ -3448,7 +3524,7 @@ void MathStructure::formatsub(const PrintOptions &po, const MathStructure *paren
 			break;
 		}
 		case STRUCT_POWER: {
-			if(CHILD(1).isNegate()) {
+			if(!po.negative_exponents && CHILD(1).isNegate()) {
 				if(CHILD(1)[0].isOne()) {
 					m_type = STRUCT_INVERSE;
 					ERASE(1);
@@ -4003,7 +4079,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			print_str = "[";
 			for(unsigned int i = 0; i < SIZE; i++) {
 				if(i > 0) {
-					print_str += ",";
+					print_str += po.comma();
 					if(po.spacious) print_str += " ";
 				}
 				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, true);
@@ -4040,7 +4116,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			print_str += "(";
 			for(unsigned int i = 0; i < SIZE; i++) {
 				if(i > 0) {
-					print_str += ",";
+					print_str += po.comma();
 					if(po.spacious) print_str += " ";
 				}
 				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, true);

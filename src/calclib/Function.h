@@ -112,7 +112,10 @@ class Function : public ExpressionItem {
 class UserFunction : public Function {
   protected:
   
-	string eq, eq_calc;	
+	string eq, eq_calc;
+	vector<string> v_definitions;
+	vector<bool> v_precalculate;
+	unsigned int last_def_index;
 	
   public:
   
@@ -123,7 +126,14 @@ class UserFunction : public Function {
 	string equation() const;
 	string internalEquation() const;
 	int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);	
-	void setEquation(string new_eq, int argc_ = -1, int max_argc_ = 0);	
+	void setEquation(string new_eq, int argc_ = -1, int max_argc_ = 0);
+	void addDefinition(string definition, bool precalculate = true);
+	void setDefinition(unsigned int index, string definition);
+	void delDefinition(unsigned int index);
+	void setDefinitionPrecalculated(unsigned int index, bool precalculate);
+	const string &getDefinition(unsigned int index) const;
+	bool definitionPrecalculated(unsigned int index) const;
+	
 };
 
 class Argument {

@@ -251,7 +251,7 @@ class MathStructure {
 
 		int type() const;
 		
-		void sort(const SortOptions &so = default_sort_options);
+		void sort(const SortOptions &so = default_sort_options, bool recursive = true);
 		void evalSort();
 		void setPrefixes(const PrintOptions &po = default_print_options, const MathStructure *parent = NULL, unsigned int pindex = 0);
 		void prefixCurrencies();

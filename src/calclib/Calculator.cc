@@ -50,6 +50,9 @@ using namespace cln;
 #define XML_GET_INT_FROM_PROP(node, name, i)		value = xmlGetProp(child, (xmlChar*) "index"); if(value) i = s2i((char*) value); if(value) xmlFree(value);
 #define XML_GET_LOCALE_STRING_FROM_TEXT(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); if(!best) {if(!lang) {if(!next_best) {if(value) str = (char*) value; else str = ""; if(locale.empty()) {best = true;}}} else {lang_tmp = (char*) lang; if(lang_tmp == locale) {best = true; if(value) str = (char*) value; else str = "";} else if(!next_best && lang_tmp.length() >= 2 && lang_tmp.substr(0, 2) == localebase) {next_best = true; if(value) str = (char*) value; else str = "";} else if(!next_best && str.empty() && value) {str = (char*) value;}}} if(value) xmlFree(value); if(lang) xmlFree(lang) 
 
+const string &PrintOptions::comma() const {if(comma_sign.empty()) return CALCULATOR->getComma(); return comma_sign;}
+const string &PrintOptions::decimalpoint() const {if(decimalpoint_sign.empty()) return CALCULATOR->getDecimalPoint(); return decimalpoint_sign;}
+
 plot_parameters::plot_parameters() {
 	auto_y_min = true;
 	auto_x_min = true;
@@ -122,25 +125,33 @@ Calculator *calculator;
 MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one;
 EvaluationOptions no_evaluation;
 
-void *calculate_proc(void *x) {
-	CALCULATOR->b_busy = true;
+void *calculate_proc(void *pipe) {
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	MathStructure *mstruct = (MathStructure*) x;
-	mstruct->set(_("aborted"));
-	mstruct->set(CALCULATOR->calculate(CALCULATOR->expression_to_calculate, CALCULATOR->tmp_evaluationoptions));
-	CALCULATOR->b_busy = false;
+	FILE *calculate_pipe = (FILE*) pipe;
+	while(true) {
+		void *x = NULL;
+		fread(&x, sizeof(void*), 1, calculate_pipe);
+		MathStructure *mstruct = (MathStructure*) x;
+		mstruct->set(_("aborted"));
+		mstruct->set(CALCULATOR->calculate(CALCULATOR->expression_to_calculate, CALCULATOR->tmp_evaluationoptions));
+		CALCULATOR->b_busy = false;
+	}
 	return NULL;
 }
-void *print_proc(void *x) {
-	CALCULATOR->b_busy = true;
+void *print_proc(void *pipe) {
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	const MathStructure *mstruct = (const MathStructure*) x;
-	MathStructure mstruct2(*mstruct);
-	mstruct2.format();
-	CALCULATOR->tmp_print_result = mstruct2.print(CALCULATOR->tmp_printoptions);
-	CALCULATOR->b_busy = false;
+	FILE *print_pipe = (FILE*) pipe;
+	while(true) {
+		void *x = NULL;
+		fread(&x, sizeof(void*), 1, print_pipe);
+		const MathStructure *mstruct = (const MathStructure*) x;
+		MathStructure mstruct2(*mstruct);
+		mstruct2.format();
+		CALCULATOR->tmp_print_result = mstruct2.print(CALCULATOR->tmp_printoptions);
+		CALCULATOR->b_busy = false;
+	}
 	return NULL;
 }
 
@@ -191,6 +202,9 @@ Calculator::Calculator() {
 	no_evaluation.approximation = APPROXIMATION_EXACT;
 	no_evaluation.structuring = STRUCTURING_NONE;
 	no_evaluation.sync_units = false;
+	
+	save_printoptions.decimalpoint_sign = ".";
+	save_printoptions.comma_sign = ",";
 
 	default_assumptions = new Assumptions;
 	default_assumptions->setNumberType(ASSUMPTION_NUMBER_REAL);
@@ -214,7 +228,19 @@ Calculator::Calculator() {
 	b_busy = false;
 	b_gnuplot_open = false;
 	gnuplot_pipe = NULL;
+	
+	calculate_thread_stopped = true;
 	pthread_attr_init(&calculate_thread_attr);
+	int pipe_wr[] = {0, 0};
+	pipe(pipe_wr);
+	calculate_pipe_r = fdopen(pipe_wr[0], "r");
+	calculate_pipe_w = fdopen(pipe_wr[1], "w");
+
+	print_thread_stopped = true;
+	pthread_attr_init(&print_thread_attr);
+	pipe(pipe_wr);
+	print_pipe_r = fdopen(pipe_wr[0], "r");
+	print_pipe_w = fdopen(pipe_wr[1], "w");
 
 }
 Calculator::~Calculator() {
@@ -671,8 +697,8 @@ int Calculator::getPrecision() const {
 	return i_precision;
 }
 
-const char *Calculator::getDecimalPoint() const {return DOT_STR.c_str();}
-const char *Calculator::getComma() const {return COMMA_STR.c_str();}	
+const string &Calculator::getDecimalPoint() const {return DOT_STR;}
+const string &Calculator::getComma() const {return COMMA_STR;}
 void Calculator::setLocale() {
 	setlocale(LC_NUMERIC, saved_locale);
 	lconv *locale = localeconv();
@@ -982,17 +1008,24 @@ void Calculator::clearBuffers() {
 	}
 }
 void Calculator::abort() {
-	while(pthread_cancel(calculate_thread) == 0) {
+	int i;
+	while(true) {
+		i = pthread_cancel(calculate_thread);
+		if(i == 0 || i == ESRCH) break;
 		usleep(100);
 	}
 	restoreState();
 	clearBuffers();
 	b_busy = false;
+	while(!pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, calculate_pipe_r) == 0) {
+		usleep(100);
+	}
 }
 void Calculator::abort_this() {
 	restoreState();
 	clearBuffers();
 	b_busy = false;
+	calculate_thread_stopped = true;
 	pthread_exit(PTHREAD_CANCELED);
 }
 bool Calculator::busy() {
@@ -1112,12 +1145,18 @@ bool Calculator::calculate(MathStructure &mstruct, string str, int usecs, const 
 	mstruct = string(_("calculating..."));
 	saveState();
 	b_busy = true;
+	if(calculate_thread_stopped) {
+		while(!pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, calculate_pipe_r) == 0) {
+			usleep(100);
+		}
+		calculate_thread_stopped = false;
+	}
 	bool had_usecs = usecs > 0;
 	expression_to_calculate = str;
 	tmp_evaluationoptions = eo;
-	while(!pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, &mstruct) == 0) {
-		usleep(100);
-	}
+	void *x = (void*) &mstruct;
+	fwrite(&x, sizeof(void*), 1, calculate_pipe_w);
+	fflush(calculate_pipe_w);
 	while(usecs > 0 && b_busy) {
 		usleep(1000);
 		usecs -= 1000;
@@ -1158,17 +1197,34 @@ string Calculator::printMathStructureTimeOut(const MathStructure &mstruct, int u
 	tmp_printoptions = po;
 	saveState();
 	b_busy = true;
-	while(!pthread_create(&calculate_thread, &calculate_thread_attr, print_proc, (void*) &mstruct) == 0) {
-		usleep(100);
+	if(print_thread_stopped) {
+		while(!pthread_create(&print_thread, &print_thread_attr, print_proc, print_pipe_r) == 0) {
+			usleep(100);
+		}
+		print_thread_stopped = false;
 	}
+	void *x = (void*) &mstruct;
+	fwrite(&x, sizeof(void*), 1, print_pipe_w);
+	fflush(print_pipe_w);
 	while(usecs > 0 && b_busy) {
 		usleep(1000);
 		usecs -= 1000;
-	}	
+	}
 	if(b_busy) {
-		abort();
+		int i;
+		while(true) {
+			i = pthread_cancel(print_thread);
+			if(i == 0 || i == ESRCH) break;
+			usleep(100);
+		}
+		restoreState();
+		clearBuffers();
+		b_busy = false;
+		while(!pthread_create(&print_thread, &print_thread_attr, print_proc, print_pipe_r) == 0) {
+			usleep(100);
+		}
 		tmp_print_result = "timed out";
-	}		
+	}
 	return tmp_print_result;
 }
 
@@ -2596,8 +2652,9 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 											if(i5 == 2) {
 												b = true;
 											}
-										} else if(i5 == 2 && is_in(OPERATORS, str[str_index + name_length + i6])) {
+										} else if(is_in(OPERATORS, str[str_index + name_length + i6])) {
 											b = true;
+											i5 = 2;
 										} else {
 											//if(i6 > 0) {
 												i5 = 2;
@@ -3500,6 +3557,12 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "hidden")) {	
 							XML_GET_TRUE_FROM_TEXT(child, hidden);
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "definition")) {
+							XML_GET_FALSE_FROM_PROP(child, "precalculate", b);
+							value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1); 
+							if(value) ((UserFunction*) f)->addDefinition((char*) value, b); 
+							else ((UserFunction*) f)->addDefinition("", true); 
+							if(value) xmlFree(value);
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "argument")) {
 							farg = NULL; iarg = NULL;
 							XML_GET_STRING_FROM_PROP(child, "type", type);
@@ -4127,7 +4190,6 @@ int Calculator::savePrefixes(const char* file_name, bool save_global) {
 	if(!save_global) {
 		return true;
 	}
-	unsetLocale();	
 	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");	
 	xmlNodePtr cur, newnode;	
 	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);	
@@ -4142,12 +4204,10 @@ int Calculator::savePrefixes(const char* file_name, bool save_global) {
 	}	
 	int returnvalue = xmlSaveFormatFile(file_name, doc, 1);
 	xmlFreeDoc(doc);
-	setLocale();
 	return returnvalue;
 }
 
 int Calculator::saveVariables(const char* file_name, bool save_global) {
-	unsetLocale();	
 	string str;
 	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");	
 	xmlNodePtr cur, newnode, newnode2;	
@@ -4311,12 +4371,10 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 	}	
 	int returnvalue = xmlSaveFormatFile(file_name, doc, 1);
 	xmlFreeDoc(doc);
-	setLocale();
 	return returnvalue;
 }
 
 int Calculator::saveUnits(const char* file_name, bool save_global) {
-	unsetLocale();	
 	string str;
 	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");	
 	xmlNodePtr cur, newnode, newnode2, newnode3;	
@@ -4473,12 +4531,10 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 	}
 	int returnvalue = xmlSaveFormatFile(file_name, doc, 1);
 	xmlFreeDoc(doc);
-	setLocale();
 	return returnvalue;
 }
 
 int Calculator::saveFunctions(const char* file_name, bool save_global) {
-	unsetLocale();	
 	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");	
 	xmlNodePtr cur, newnode, newnode2;	
 	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);	
@@ -4686,7 +4742,6 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 	}
 	int returnvalue = xmlSaveFormatFile(file_name, doc, 1);
 	xmlFreeDoc(doc);
-	setLocale();
 	return returnvalue;
 }
 
@@ -5377,6 +5432,8 @@ bool Calculator::plotVectors(plot_parameters *param, const vector<MathStructure>
 	string plot_data;
 	PrintOptions po;
 	po.number_fraction_format = FRACTION_DECIMAL;
+	po.decimalpoint_sign = ".";
+	po.comma_sign = ",";
 	for(unsigned int serie = 0; serie < y_vectors.size(); serie++) {
 		if(!y_vectors[serie].isUndefined()) {
 			filename_data = homedir;
@@ -5395,9 +5452,6 @@ bool Calculator::plotVectors(plot_parameters *param, const vector<MathStructure>
 				}
 				plot_data += y_vectors[serie].getComponent(i)->print(po);
 				plot_data += "\n";	
-				if(getDecimalPoint() != ".") {
-					gsub(getDecimalPoint(), ".", plot_data);
-				}
 			}
 			fputs(plot_data.c_str(), fdata);
 			fflush(fdata);
