@@ -2597,7 +2597,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			}
 			pango_layout_get_pixel_size(layout_minus, &minus_w, &minus_h);
 
-			w = minus_w + 1;
+			w = minus_w + 2;
 			uh = minus_h / 2 + minus_h % 2;
 			dh = minus_h / 2;
 			
@@ -2623,7 +2623,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			
 			w = 0;
 			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - minus_h / 2 - minus_h % 2, layout_minus);	
-			w += minus_w + 1;
+			w += minus_w + 2;
 			gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_arg), 0, 0, w, uh - (hpa - cpa), -1, -1);
 			g_object_unref(pixmap_arg);
 			
@@ -2880,7 +2880,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 					gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w + (wfr - one_w) / 2, uh - 3 - one_h, -1, -1);
 				}
 				gdk_draw_line(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh, w + wfr, uh);
-				gdk_draw_line(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh + 1, w + wfr, uh + 1);
+				gdk_draw_line(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - 1, w + wfr, uh - 1);
 				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(den_pixmap), 0, 0, w + (wfr - den_w) / 2, uh + 3, -1, -1);
 			}
 			if(num_pixmap) g_object_unref(num_pixmap);
@@ -6832,7 +6832,7 @@ void load_preferences() {
 				else if(svar == "negative_exponents")
 					printops.negative_exponents = v;
 				else if(svar == "sort_minus_last")
-					printops.sort_options.minus_last = v;		
+					printops.sort_options.minus_last = v;
 				else if(svar == "spacious")
 					printops.spacious = v;	
 				else if(svar == "excessive_parenthesis")
@@ -10479,6 +10479,7 @@ void on_menu_item_set_unknowns_activate(GtkMenuItem *w, gpointer user_data) {
 				setResult(NULL, true, false, false);
 			}
 			if(response == GTK_RESPONSE_ACCEPT) break;
+			mstruct->set(msave);
 		} else {
 			if(b_changed) {
 				mstruct->set(msave);

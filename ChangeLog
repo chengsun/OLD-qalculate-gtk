@@ -1,3 +1,15 @@
+2004-09-19 Niklas Knutsson  <nq@altern.org>
+
+	* Full factorization of quadratic polynomials
+	* Transform sqrt(8) to 2*sqrt(2) (and similar) in exact mode
+	* Fix xy-xy=xy !!!
+	* Fix repeated apply in unknowns dialog
+
+2004-09-18 Niklas Knutsson  <nq@altern.org>
+
+	* Updated result sorting
+	* (-x-y)/z --> -(x+y)/z
+
 2004-09-17 Niklas Knutsson  <nq@altern.org>
 
 	* Set unknowns dialog

@@ -30,6 +30,11 @@
 #define ERASE(v_index)	v_subs.erase(v_subs.begin() + v_order[v_index]); for(unsigned int v_index2 = 0; v_index2 < v_order.size(); v_index2++) {if(v_order[v_index2] > v_order[v_index]) v_order[v_index2]--;} v_order.erase(v_order.begin() + v_index);
 
 
+void idm1(const MathStructure &mnum, bool &bfrac, bool &bint);
+void idm2(const MathStructure &mnum, bool &bfrac, bool &bint, Number &nr);
+void idm3(MathStructure &mnum, Number &nr);
+
+
 inline void MathStructure::init() {
 #ifdef HAVE_GIAC
 	giac_unknown = NULL;
@@ -1014,7 +1019,7 @@ int MathStructure::merge_addition(const MathStructure &mstruct, const Evaluation
 						}
 						if(b) {
 							if(i1 == 0) {
-								APPEND(MathStructure(1));
+								PREPEND(MathStructure(1));
 							}
 							if(i2 == 0) {
 								CHILD(0).number() += 1;
@@ -1344,109 +1349,120 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 			}
 		}
 	}
-	if(mnum && mden && eo.do_polynomial_division) {
-		if(mnum->isAddition() && mnum->size() > 1 && !(*mnum)[0].isNumber()) {
-			const MathStructure *xvar = NULL;
-			const Number *xexp = NULL;
-			if((*mnum)[0].isPower() && (*mnum)[0][0].size() == 0 && (*mnum)[0][1].isNumber() && (*mnum)[0][1].number().isInteger() && (*mnum)[0][1].number().isPositive()) {
-				xvar = &(*mnum)[0][0];
-				xexp = &(*mnum)[0][1].number();
-			} else if((*mnum)[0].isMultiplication() && (*mnum)[0].size() == 2 && (*mnum)[0][0].isNumber()) {
-				if((*mnum)[0][1].isPower()) {
-					if((*mnum)[0][1][0].size() == 0 && (*mnum)[0][1][1].isNumber() && (*mnum)[0][1][1].number().isInteger() && (*mnum)[0][1][1].number().isPositive()) {
-						xvar = &(*mnum)[0][1][0];
-						xexp = &(*mnum)[0][1][1].number();
-					}
-				} else if((*mnum)[0][1].size() == 0) {
-					xvar = &(*mnum)[0][1];
+	if(mnum && mden && eo.do_polynomial_division && ((mnum->isAddition() && mnum->size() > 1) || (mden->isAddition() && mden->size() > 1))) {
+		const MathStructure *xvar = NULL;
+		const Number *xexp = NULL;
+		const MathStructure *mnum_first;
+		if(mnum->isAddition() && mnum->size() > 1) {
+			mnum_first = &(*mnum)[0];
+		} else {
+			mnum_first = mnum;
+		}
+		if(mnum_first->isNumber()) {
+		} else if(mnum_first->isPower() && (*mnum_first)[0].size() == 0 && (*mnum_first)[1].isNumber() && (*mnum_first)[1].number().isInteger() && (*mnum_first)[1].number().isPositive()) {
+			xvar = &(*mnum_first)[0];
+			xexp = &(*mnum_first)[1].number();
+		} else if(mnum_first->isMultiplication() && mnum_first->size() == 2 && (*mnum_first)[0].isNumber()) {
+			if((*mnum_first)[1].isPower()) {
+				if((*mnum_first)[1][0].size() == 0 && (*mnum_first)[1][1].isNumber() && (*mnum_first)[1][1].number().isInteger() && (*mnum_first)[1][1].number().isPositive()) {
+					xvar = &(*mnum_first)[1][0];
+					xexp = &(*mnum_first)[1][1].number();
 				}
-			} else if((*mnum)[0].size() == 0) {
-					xvar = &(*mnum)[0];
+			} else if((*mnum_first)[1].size() == 0) {
+				xvar = &(*mnum_first)[1];
 			}
+		} else if(mnum_first->size() == 0) {
+			xvar = mnum_first;
+		}
+		if(xvar) {
 			bool b = false;
-			if(xvar) {	
-				if((*mden)[0].isPower() && xexp && (*mden)[0][0].size() == 0 && (*mden)[0][1].isNumber() && xvar->equals((*mden)[0][0]) && (*mden)[0][1].number().isInteger() && (*mden)[0][1].number().isPositive() && !xexp->isLessThan((*mden)[0][1].number())) {
-					b = true;
-				} else if((*mden)[0].isMultiplication() && (*mden)[0].size() == 2 && (*mden)[0][0].isNumber()) {
-					if((*mden)[0][1].isPower()) {
-						if(xexp && (*mden)[0][1][0].size() == 0 && (*mden)[0][1][1].isNumber() && xvar->equals((*mden)[0][1][0]) && (*mden)[0][1][1].number().isInteger() && (*mden)[0][1][1].number().isPositive() && !xexp->isLessThan((*mden)[0][1][1].number())) {
-							b = true;
-						}
-					} else if(xvar->equals((*mden)[0][1])) {
+			const MathStructure *mden_first;
+			if(mden->isAddition() && mden->size() > 1) {
+				mden_first = &(*mden)[0];
+			} else {
+				mden_first = mden;
+			}
+			if(mden_first->isPower() && xexp && (*mden_first)[0].size() == 0 && (*mden_first)[1].isNumber() && xvar->equals((*mden_first)[0]) && (*mden_first)[1].number().isInteger() && (*mden_first)[1].number().isPositive() && !xexp->isLessThan((*mden_first)[1].number())) {
+				b = true;
+			} else if(mden_first->isMultiplication() && mden_first->size() == 2 && (*mden_first)[0].isNumber()) {
+				if((*mden_first)[1].isPower()) {
+					if(xexp && (*mden_first)[1][0].size() == 0 && (*mden_first)[1][1].isNumber() && xvar->equals((*mden_first)[1][0]) && (*mden_first)[1][1].number().isInteger() && (*mden_first)[1][1].number().isPositive() && !xexp->isLessThan((*mden_first)[1][1].number())) {
 						b = true;
 					}
-				} else if((*mden)[0] == *xvar) {
+				} else if(xvar->equals((*mden_first)[1])) {
 					b = true;
 				}
-				bool had_num = false;
-				for(unsigned int i = 1; b && i < mnum->size(); i++) {
-					switch((*mnum)[i].type()) {
-						case STRUCT_NUMBER: {
-							if(had_num) {
-								b = false;
-							} else {
-								had_num = true;
-							}
-							break;
+			} else if(mden_first->equals(*xvar)) {
+				b = true;
+			}
+			bool had_num = false;
+			for(unsigned int i = 1; b && mnum->isAddition() && i < mnum->size(); i++) {
+				switch((*mnum)[i].type()) {
+					case STRUCT_NUMBER: {
+						if(had_num) {
+							b = false;
+						} else {
+							had_num = true;
 						}
-						case STRUCT_POWER: {
-							if(!(*mnum)[i][1].isNumber() || !xvar->equals((*mnum)[i][0]) || !(*mnum)[i][1].number().isInteger() || !(*mnum)[i][1].number().isPositive()) {
-								b = false;
-							}
-							break;
+						break;
+					}
+					case STRUCT_POWER: {
+						if(!(*mnum)[i][1].isNumber() || !xvar->equals((*mnum)[i][0]) || !(*mnum)[i][1].number().isInteger() || !(*mnum)[i][1].number().isPositive()) {
+							b = false;
 						}
-						case STRUCT_MULTIPLICATION: {
-							if(!(*mnum)[i].size() == 2 || !(*mnum)[i][0].isNumber()) {
-								b = false;
-							} else if((*mnum)[i][1].isPower()) {
-								if(!(*mnum)[i][1][1].isNumber() || !xvar->equals((*mnum)[i][1][0]) || !(*mnum)[i][1][1].number().isInteger() || !(*mnum)[i][1][1].number().isPositive()) {
-									b = false;
-								}
-							} else if(!xvar->equals((*mnum)[i][1])) {
+						break;
+					}
+					case STRUCT_MULTIPLICATION: {
+						if(!(*mnum)[i].size() == 2 || !(*mnum)[i][0].isNumber()) {
+							b = false;
+						} else if((*mnum)[i][1].isPower()) {
+							if(!(*mnum)[i][1][1].isNumber() || !xvar->equals((*mnum)[i][1][0]) || !(*mnum)[i][1][1].number().isInteger() || !(*mnum)[i][1][1].number().isPositive()) {
 								b = false;
 							}
-							break;
+						} else if(!xvar->equals((*mnum)[i][1])) {
+							b = false;
 						}
-						default: {
-							if(!xvar->equals((*mnum)[i])) {
-								b = false;
-							}
+						break;
+					}
+					default: {
+						if(!xvar->equals((*mnum)[i])) {
+							b = false;
 						}
 					}
 				}
-				had_num = false;
-				for(unsigned int i = 1; b && i < mden->size(); i++) {
-					switch((*mden)[i].type()) {
-						case STRUCT_NUMBER: {
-							if(had_num) {
-								b = false;
-							} else {
-								had_num = true;
-							}
-							break;
+			}
+			had_num = false;
+			for(unsigned int i = 1; b && mden->isAddition() && i < mden->size(); i++) {
+				switch((*mden)[i].type()) {
+					case STRUCT_NUMBER: {
+						if(had_num) {
+							b = false;
+						} else {
+							had_num = true;
 						}
-						case STRUCT_POWER: {
-							if(!(*mden)[i][1].isNumber() || !xvar->equals((*mden)[i][0]) || !(*mden)[i][1].number().isInteger() || !(*mden)[i][1].number().isPositive()) {
-								b = false;
-							}
-							break;
+						break;
+					}
+					case STRUCT_POWER: {
+						if(!(*mden)[i][1].isNumber() || !xvar->equals((*mden)[i][0]) || !(*mden)[i][1].number().isInteger() || !(*mden)[i][1].number().isPositive()) {
+							b = false;
 						}
-						case STRUCT_MULTIPLICATION: {
-							if(!(*mden)[i].size() == 2 || !(*mden)[i][0].isNumber()) {
-								b = false;
-							} else if((*mden)[i][1].isPower()) {
-								if(!(*mden)[i][1][1].isNumber() || !xvar->equals((*mden)[i][1][0]) || !(*mden)[i][1][1].number().isInteger() || !(*mden)[i][1][1].number().isPositive()) {
-									b = false;
-								}
-							} else if(!xvar->equals((*mden)[i][1])) {
+						break;
+					}
+					case STRUCT_MULTIPLICATION: {
+						if(!(*mden)[i].size() == 2 || !(*mden)[i][0].isNumber()) {
+							b = false;
+						} else if((*mden)[i][1].isPower()) {
+							if(!(*mden)[i][1][1].isNumber() || !xvar->equals((*mden)[i][1][0]) || !(*mden)[i][1][1].number().isInteger() || !(*mden)[i][1][1].number().isPositive()) {
 								b = false;
 							}
-							break;
+						} else if(!xvar->equals((*mden)[i][1])) {
+							b = false;
 						}
-						default: {
-							if(!xvar->equals((*mden)[i])) {
-								b = false;
-							}
+						break;
+					}
+					default: {
+						if(!xvar->equals((*mden)[i])) {
+							b = false;
 						}
 					}
 				}
@@ -1456,22 +1472,23 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 				vector<Number> nexps;
 				vector<Number> dfactors;
 				vector<Number> dexps;
-				for(unsigned int i = 0; b && i < mnum->size(); i++) {
-					switch((*mnum)[i].type()) {
+				for(unsigned int i = 0; b && i == 0 || (i < mnum->size()); i++) {
+					if(i > 0) mnum_first = &(*mnum)[i];
+					switch(mnum_first->type()) {
 						case STRUCT_NUMBER: {
-							nfactors.push_back((*mnum)[i].number());
+							nfactors.push_back(mnum_first->number());
 							nexps.push_back(Number());
 							break;
 						}
 						case STRUCT_POWER: {
 							nfactors.push_back(Number(1, 1));
-							nexps.push_back((*mnum)[i][1].number());
+							nexps.push_back((*mnum_first)[1].number());
 							break;
 						}
 						case STRUCT_MULTIPLICATION: {
-							nfactors.push_back((*mnum)[i][0].number());
-							if((*mnum)[i][1].isPower()) {
-								nexps.push_back((*mnum)[i][1][1].number());
+							nfactors.push_back((*mnum_first)[0].number());
+							if((*mnum_first)[1].isPower()) {
+								nexps.push_back((*mnum_first)[1][1].number());
 							} else {
 								nexps.push_back(Number(1, 1));
 							}
@@ -1482,23 +1499,25 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 							nexps.push_back(Number(1, 1));
 						}
 					}
+					if(!mnum->isAddition()) break;
 				}
-				for(unsigned int i = 0; b && i < mden->size(); i++) {
-					switch((*mden)[i].type()) {
+				for(unsigned int i = 0; b && i == 0 || (i < mden->size()); i++) {
+					if(i > 0) mden_first = &(*mden)[i];
+					switch(mden_first->type()) {
 						case STRUCT_NUMBER: {
-							dfactors.push_back((*mden)[i].number());
+							dfactors.push_back(mden_first->number());
 							dexps.push_back(Number());
 							break;
 						}
 						case STRUCT_POWER: {
 							dfactors.push_back(Number(1, 1));
-							dexps.push_back((*mden)[i][1].number());
+							dexps.push_back((*mden_first)[1].number());
 							break;
 						}
 						case STRUCT_MULTIPLICATION: {
-							dfactors.push_back((*mden)[i][0].number());
-							if((*mden)[i][1].isPower()) {
-								dexps.push_back((*mden)[i][1][1].number());
+							dfactors.push_back((*mden_first)[0].number());
+							if((*mden_first)[1].isPower()) {
+								dexps.push_back((*mden_first)[1][1].number());
 							} else {
 								dexps.push_back(Number(1, 1));
 							}
@@ -1509,6 +1528,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 							dexps.push_back(Number(1, 1));
 						}
 					}
+					if(!mden->isAddition()) break;
 				}
 				bool approx = b_approx || mstruct.isApproximate();
 				int prec = i_precision;
@@ -1550,20 +1570,26 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 						nftmp *= nfac;
 						netmp = dexps[i];
 						netmp += nexp;
-						for(unsigned int i = 0; i < nfactors.size(); i++) {
-							if(netmp == nexps[i]) {
-								if(nfactors[i] == nftmp) {
-									nfactors.erase(nfactors.begin() + i);
-									nexps.erase(nexps.begin() + i);
-								} else {
-									nfactors[i] -= nftmp;
+						if(nfactors.empty()) {
+							nftmp.negate();
+							nfactors.push_back(nftmp);
+							nexps.push_back(netmp);
+						} else {
+							for(unsigned int i = 0; i < nfactors.size(); i++) {
+								if(netmp == nexps[i]) {
+									if(nfactors[i] == nftmp) {
+										nfactors.erase(nfactors.begin() + i);
+										nexps.erase(nexps.begin() + i);
+									} else {
+										nfactors[i] -= nftmp;
+									}
+									break;
+								} else if(netmp.isGreaterThan(nexps[i])) {
+									nftmp.negate();
+									nfactors.insert(nfactors.begin() + i, nftmp);
+									nexps.insert(nexps.begin() + i, netmp);
+									break;
 								}
-								break;
-							} else if(netmp.isGreaterThan(nexps[i])) {
-								nftmp.negate();
-								nfactors.insert(nfactors.begin() + i, nftmp);
-								nexps.insert(nexps.begin() + i, netmp);
-								break;
 							}
 						}
 					}
@@ -1624,7 +1650,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 			}
 		}
 	}
-	if(mnum && mden && eo.reduce_divisions) {
+	if(mnum && mden && eo.reduce_divisions && mden->isAddition() && mden->size() > 1) {
 		switch(mnum->type()) {
 			case STRUCT_ADDITION: {
 				break;
@@ -1951,7 +1977,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 					break;
 				}
 				default: {
-					if(CHILD(1).isNumber() && CHILD(0) == mstruct) {
+					if(!mstruct.isNumber() && CHILD(1).isNumber() && CHILD(0) == mstruct) {
 						if(CHILD(0).representsNonZero() || (eo.assume_denominators_nonzero && !CHILD(1).isZero()) || CHILD(1).representsPositive()) {
 							CHILD(1) += m_one;
 							MERGE_APPROX_AND_PREC(mstruct)
@@ -2003,15 +2029,55 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 			o_number = nr;
 			numberUpdated();
 			return 1;
-		} else if(mstruct.number().isRational() && !mstruct.number().numerator().isOne()) {
-			nr = o_number;
-			if(nr.raise(mstruct.number().numerator()) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
-				o_number = nr;
-				numberUpdated();
-				nr.set(mstruct.number().denominator());
-				nr.recip();
-				raise(nr);
-				return 1;
+		}
+		if(mstruct.number().isRational()) {
+			if(!mstruct.number().numeratorIsOne()) {
+				nr = o_number;
+				if(nr.raise(mstruct.number().numerator()) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
+					o_number = nr;
+					numberUpdated();
+					nr.set(mstruct.number().denominator());
+					nr.recip();
+					raise(nr);
+					return 1;
+				}
+			} else if(eo.split_squares && o_number.isInteger() && mstruct.number().denominatorIsTwo()) {
+				nr.set(1, 1);
+				bool b = true, overflow;
+				int val;
+				while(b) {
+					b = false;
+					overflow = false;
+					val = o_number.intValue(&overflow);
+					if(overflow) {
+						cln::cl_I cval = cln::numerator(cln::rational(cln::realpart(o_number.internalNumber())));
+						for(unsigned int i = 0; i < NR_OF_PRIMES; i++) {
+							if(cln::zerop(cln::rem(cval, SQUARE_PRIMES[i]))) {
+								nr *= PRIMES[i];
+								o_number /= SQUARE_PRIMES[i];
+								b = true;
+								break;
+							}
+						}
+					} else {
+						for(unsigned int i = 0; i < NR_OF_PRIMES; i++) {
+							if(SQUARE_PRIMES[i] > val) {
+								break;
+							} else if(val % SQUARE_PRIMES[i] == 0) {
+								nr *= PRIMES[i];
+								o_number /= SQUARE_PRIMES[i];
+								b = true;
+								break;
+							}
+						}
+					}
+				}
+				if(!nr.isOne()) {
+					transform(STRUCT_MULTIPLICATION);
+					CHILD(0) ^= mstruct;
+					PREPEND(nr);
+					return 1;
+				}
 			}
 		}
 		return -1;
@@ -2800,14 +2866,14 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 			if(mstruct2.isPower()) {
 				int i = evalSortCompare(mstruct1, mstruct2[0], parent);
 				if(i == 0) {
-					return evalSortCompare(m_zero, mstruct2[1], parent);
+					return evalSortCompare(m_one, mstruct2[1], parent);
 				}
 				return i;
 			}
 			if(mstruct1.isPower()) {
 				int i = evalSortCompare(mstruct1[0], mstruct2, parent);
 				if(i == 0) {
-					return evalSortCompare(mstruct1[1], m_zero, parent);
+					return evalSortCompare(mstruct1[1], m_one, parent);
 				}
 				return i;
 			}
@@ -2959,6 +3025,246 @@ void MathStructure::evalSort() {
 int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, const MathStructure &parent, const PrintOptions &po);
 int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, const MathStructure &parent, const PrintOptions &po) {
 	if(parent.isMultiplication()) {
+		if(mstruct1.containsType(STRUCT_VECTOR) && mstruct2.containsType(STRUCT_VECTOR)) {
+			return 0;
+		}
+	}
+	if(parent.isAddition() && po.sort_options.minus_last) {
+		bool m1 = mstruct1.hasNegativeSign(), m2 = mstruct2.hasNegativeSign();
+		if(m1 && !m2) {
+			return 1;
+		} else if(m2 && !m1) {
+			return -1;
+		}
+	}
+	bool isdiv1 = false, isdiv2 = false;
+	if(!po.negative_exponents) {
+		if(mstruct1.isMultiplication()) {
+			for(unsigned int i = 0; i < mstruct1.size(); i++) {
+				if(mstruct1[i].isPower() && mstruct1[i][1].hasNegativeSign()) {
+					isdiv1 = true;
+					break;
+				}
+			}
+		} else if(mstruct1.isPower() && mstruct1[1].hasNegativeSign()) {
+			isdiv1 = true;
+		}
+		if(mstruct2.isMultiplication()) {
+			for(unsigned int i = 0; i < mstruct2.size(); i++) {
+				if(mstruct2[i].isPower() && mstruct2[i][1].hasNegativeSign()) {
+					isdiv2 = true;
+					break;
+				}
+			}
+		} else if(mstruct2.isPower() && mstruct2[1].hasNegativeSign()) {
+			isdiv2 = true;
+		}
+	}
+	if(parent.isAddition() && isdiv1 == isdiv2) {
+		if(mstruct1.isMultiplication() && mstruct1.size() > 0) {
+			unsigned int start = 0;
+			while(mstruct1[start].isNumber() && mstruct1.size() > start + 1) {
+				start++;
+			}
+			int i2;
+			if(mstruct2.isMultiplication()) {
+				if(mstruct2.size() < 1) return -1;
+				unsigned int start2 = 0;
+				while(mstruct2[start2].isNumber() && mstruct2.size() > start2 + 1) {
+					start2++;
+				}
+				for(unsigned int i = 0; i + start < mstruct1.size(); i++) {
+					if(i + start2 >= mstruct2.size()) return 1;
+					i2 = sortCompare(mstruct1[i + start], mstruct2[i + start2], parent, po);
+					if(i2 != 0) return i2;
+				}
+				if(mstruct1.size() - start == mstruct2.size() - start2) return 0;
+				return -1;
+			} else {
+				i2 = sortCompare(mstruct1[start], mstruct2, parent, po);
+				if(i2 != 0) return i2;
+			}
+		} else if(mstruct2.isMultiplication() && mstruct2.size() > 0) {
+			unsigned int start = 0;
+			while(mstruct2[start].isNumber() && mstruct2.size() > start + 1) {
+				start++;
+			}
+			int i2;
+			if(mstruct1.isMultiplication()) {
+				return 1;
+			} else {
+				i2 = sortCompare(mstruct1, mstruct2[start], parent, po);
+				if(i2 != 0) return i2;
+			}
+		} 
+	}
+	if(mstruct1.type() != mstruct2.type()) {
+		if(mstruct1.isVariable() && mstruct2.isSymbolic()) {
+			if(mstruct1.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name < mstruct2.symbol()) return -1;
+			else return 1;
+		}
+		if(mstruct2.isVariable() && mstruct1.isSymbolic()) {
+			if(mstruct1.symbol() < mstruct2.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name) return -1;
+			else return 1;
+		}
+		if(!parent.isMultiplication() || (!mstruct1.isNumber() && !mstruct2.isNumber())) {
+			if(mstruct2.isPower()) {
+				int i = sortCompare(mstruct1, mstruct2[0], parent, po);
+				if(i == 0) {
+					return sortCompare(m_one, mstruct2[1], parent, po);
+				}
+				return i;
+			}
+			if(mstruct1.isPower()) {
+				int i = sortCompare(mstruct1[0], mstruct2, parent, po);
+				if(i == 0) {
+					return sortCompare(mstruct1[1], m_one, parent, po);
+				}
+				return i;
+			}
+		}
+		if(parent.isMultiplication()) {
+			if(mstruct2.isUnit()) return -1;
+			if(mstruct1.isUnit()) return 1;
+		}
+		if(mstruct2.isInverse()) return -1;
+		if(mstruct2.isInverse()) return 1;
+		if(mstruct2.isDivision()) return -1;
+		if(mstruct2.isDivision()) return 1;
+		if(mstruct2.isNegate()) return -1;
+		if(mstruct2.isNegate()) return 1;
+		if(mstruct2.type() == STRUCT_ALTERNATIVES) return -1;
+		if(mstruct2.type() == STRUCT_ALTERNATIVES) return 1;
+		if(mstruct2.isAND()) return -1;
+		if(mstruct2.isAND()) return 1;
+		if(mstruct2.isOR()) return -1;
+		if(mstruct2.isOR()) return 1;
+		if(mstruct2.isXOR()) return -1;
+		if(mstruct2.isXOR()) return 1;
+		if(mstruct2.isNOT()) return -1;
+		if(mstruct2.isNOT()) return 1;
+		if(mstruct2.isComparison()) return -1;
+		if(mstruct2.isComparison()) return 1;
+		if(mstruct2.type() == STRUCT_UNKNOWN) return -1;
+		if(mstruct2.type() == STRUCT_UNKNOWN) return 1;
+		if(mstruct2.isUndefined()) return -1;
+		if(mstruct2.isUndefined()) return 1;
+		if(mstruct2.isFunction()) return -1;
+		if(mstruct1.isFunction()) return 1;
+		if(mstruct2.isAddition()) return -1;
+		if(mstruct1.isAddition()) return 1;
+		if(!parent.isMultiplication()) {
+			if(isdiv2 && mstruct2.isMultiplication()) return -1;
+			if(isdiv1 && mstruct1.isMultiplication()) return 1;
+			if(mstruct2.isNumber()) return -1;
+			if(mstruct1.isNumber()) return 1;
+		}
+		if(mstruct2.isMultiplication()) return -1;
+		if(mstruct1.isMultiplication()) return 1;
+		if(mstruct2.isPower()) return -1;
+		if(mstruct1.isPower()) return 1;
+		if(mstruct2.isUnit()) return -1;
+		if(mstruct1.isUnit()) return 1;
+		if(mstruct2.isSymbolic()) return -1;
+		if(mstruct1.isSymbolic()) return 1;
+		if(mstruct2.isVariable()) return -1;
+		if(mstruct1.isVariable()) return 1;
+		if(parent.isMultiplication()) {
+			if(mstruct2.isNumber()) return -1;
+			if(mstruct1.isNumber()) return 1;
+		}
+		return -1;
+	}
+	switch(mstruct1.type()) {
+		case STRUCT_NUMBER: {
+			if(!mstruct1.number().isComplex() && !mstruct2.number().isComplex()) {
+				ComparisonResult cmp;
+				if(parent.isMultiplication() && mstruct2.number().isNegative() != mstruct1.number().isNegative()) cmp = mstruct2.number().compare(mstruct1.number());
+				else cmp = mstruct1.number().compare(mstruct2.number());
+				if(cmp == COMPARISON_RESULT_LESS) return -1;
+				else if(cmp == COMPARISON_RESULT_GREATER) return 1;
+				return 0;
+			} else {
+				if(!mstruct1.number().hasRealPart()) {
+					if(mstruct2.number().hasRealPart()) {
+						return 1;
+					} else {
+						ComparisonResult cmp = mstruct1.number().compareImaginaryParts(mstruct2.number());
+						if(cmp == COMPARISON_RESULT_LESS) return -1;
+						else if(cmp == COMPARISON_RESULT_GREATER) return 1;
+						return 0;
+					}
+				} else if(mstruct2.number().hasRealPart()) {
+					ComparisonResult cmp = mstruct1.number().compareRealParts(mstruct2.number());
+					if(cmp == COMPARISON_RESULT_EQUAL) {
+						cmp = mstruct1.number().compareImaginaryParts(mstruct2.number());
+					} 
+					if(cmp == COMPARISON_RESULT_LESS) return -1;
+					else if(cmp == COMPARISON_RESULT_GREATER) return 1;
+					return 0;
+				} else {
+					return -1;
+				}
+			}
+			return -1;
+		} 
+		case STRUCT_UNIT: {
+			if(mstruct1.unit() == mstruct2.unit()) return 0;
+			if(mstruct1.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct1.isPlural(), po.use_reference_names).name < mstruct2.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct2.isPlural(), po.use_reference_names).name) return -1;
+			return 1;
+		}
+		case STRUCT_SYMBOLIC: {
+			if(mstruct1.symbol() < mstruct2.symbol()) return -1;
+			else if(mstruct1.symbol() == mstruct2.symbol()) return 0;
+			return 1;
+		}
+		case STRUCT_VARIABLE: {
+			if(mstruct1.variable() == mstruct2.variable()) return 0;
+			else if(mstruct1.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name < mstruct2.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name) return -1;
+			return 1;
+		}
+		case STRUCT_FUNCTION: {
+			if(mstruct1.function() == mstruct2.function()) {
+				for(unsigned int i = 0; i < mstruct2.size(); i++) {
+					if(i >= mstruct1.size()) {
+						return -1;	
+					}
+					int i2 = sortCompare(mstruct1[i], mstruct2[i], parent, po);
+					if(i2 != 0) return i2;
+				}
+				return 0;
+			}
+			if(mstruct1.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name < mstruct2.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name) return -1;
+			return 1;
+		}
+		case STRUCT_POWER: {
+			int i = sortCompare(mstruct1[0], mstruct2[0], parent, po);
+			if(i == 0) {
+				return sortCompare(mstruct1[1], mstruct2[1], parent, po);
+			}
+			return i;
+		}
+		case STRUCT_MULTIPLICATION: {
+			if(isdiv1 != isdiv2) {
+				if(isdiv1) return 1;
+				return -1;
+			}
+		}
+		default: {
+			int ie;
+			for(unsigned int i = 0; i < mstruct1.size(); i++) {
+				if(i >= mstruct2.size()) return 1;
+				ie = sortCompare(mstruct1[i], mstruct2[i], parent, po);
+				if(ie != 0) {
+					return ie;
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+/*	if(parent.isMultiplication()) {
 		if(mstruct1.containsType(STRUCT_VECTOR) && mstruct2.containsType(STRUCT_VECTOR)) {
 			return 0;
 		}
@@ -3130,7 +3436,7 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 		}
 	}
 	return 1;
-}
+}*/
 
 void MathStructure::sort(const PrintOptions &po, bool recursive) {
 	if(recursive) {
@@ -3138,13 +3444,15 @@ void MathStructure::sort(const PrintOptions &po, bool recursive) {
 			CHILD(i).sort(po);
 		}
 	}
-	if(m_type != STRUCT_ADDITION && m_type != STRUCT_MULTIPLICATION) return;
+	if(m_type != STRUCT_ADDITION && m_type != STRUCT_MULTIPLICATION && m_type != STRUCT_AND && m_type != STRUCT_OR && m_type != STRUCT_XOR) return;
 	vector<unsigned int> sorted;
 	bool b;
+	PrintOptions po2 = po;
+	po2.sort_options.minus_last = po.sort_options.minus_last && !containsUnknowns();
 	for(unsigned int i = 0; i < SIZE; i++) {
 		b = false;
 		for(unsigned int i2 = 0; i2 < sorted.size(); i2++) {
-			if(sortCompare(CHILD(i), v_subs[sorted[i2]], *this, po) < 0) {
+			if(sortCompare(CHILD(i), v_subs[sorted[i2]], *this, po2) < 0) {
 				sorted.insert(sorted.begin() + i2, v_order[i]);
 				b = true;
 				break;
@@ -3181,6 +3489,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	if(eo2.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo3 = eo2;
 		eo3.approximation = APPROXIMATION_EXACT;
+		eo3.split_squares = false;
 		calculatesub(eo3, eo);
 		eo3.approximation = APPROXIMATION_APPROXIMATE;
 		calculatesub(eo3, eo);
@@ -3213,6 +3522,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			if(eo2.approximation == APPROXIMATION_TRY_EXACT) {
 				EvaluationOptions eo3 = eo2;
 				eo3.approximation = APPROXIMATION_EXACT;
+				eo3.split_squares = false;
 				calculatesub(eo3, eo);
 				eo3.approximation = APPROXIMATION_APPROXIMATE;
 				calculatesub(eo3, eo);
@@ -3226,132 +3536,105 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	}
 	return *this;
 }
-bool MathStructure::factorize(const EvaluationOptions &eo, bool prioritize_power) {
-	switch(type()) {
+
+bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew, MathStructure &factor_mstruct) {
+	factor_mstruct.set(1, 1);
+	switch(mstruct.type()) {
 		case STRUCT_ADDITION: {
-			MathStructure factor_mstruct(1, 1);
-			if(!prioritize_power) {
-				Number gcd;
-				bool bminus = true;
-				for(unsigned int i = 0; i < SIZE; i++) {
-					if(CHILD(i).isNumber()) {
-						if(!CHILD(i).number().isNegative()) bminus = false;
-						if(gcd.isZero()) {
-							gcd = CHILD(i).number();
-						} else {
-							if(!gcd.gcd(CHILD(i).number())) {
-								gcd.clear();
-								break;
-							}
-						}	
-					} else if(CHILD(i).isMultiplication() && CHILD(i)[0].isNumber()) {	
-						if(!CHILD(i)[0].number().isNegative()) bminus = false;
-						if(gcd.isZero()) {
-							gcd.set(CHILD(i)[0].number());
-						} else {
-							if(!gcd.gcd(CHILD(i)[0].number())) {
-								gcd.clear();
-								break;
-							}
-						}
-					} else {
-						gcd.clear();
-						break;
-					}
-					if((gcd.isOne() && !bminus) || gcd.isZero()) {
-						gcd.clear();
-						break;
-					}
-				}
-				if(!gcd.isZero()) {
-					if(bminus) gcd.setNegative(true);
+			bool bfrac = false, bint = true;
+			idm1(mstruct, bfrac, bint);
+			if(bfrac || bint) {
+				Number gcd(1, 1);
+				idm2(mstruct, bfrac, bint, gcd);
+				if((bint || bfrac) && !gcd.isOne()) {		
+					if(bfrac) gcd.recip();
 					factor_mstruct.set(gcd);
 				}
-				if(SIZE > 0) {
-					unsigned int i = 0;
-					MathStructure *cur_mstruct;
-					while(true) {
-						if(CHILD(0).isMultiplication()) {
-							if(i >= CHILD(0).size()) {
-								break;
-							}
-							cur_mstruct = &CHILD(0)[i];
-						} else {
-							cur_mstruct = &CHILD(0);
-						}
-						if(!cur_mstruct->isNumber() && (!cur_mstruct->isPower() || cur_mstruct->exponent()->isNumber())) {
-							MathStructure *exp = NULL;
-							MathStructure *bas;
-							if(cur_mstruct->isPower()) {
-								exp = cur_mstruct->exponent();
-								bas = cur_mstruct->base();
-							} else {
-								bas = cur_mstruct;
-							}
-							bool b = true;
-							for(unsigned int i2 = 1; i2 < SIZE; i2++) {
-								b = false;
-								unsigned int i3 = 0;
-								MathStructure *cmp_mstruct;
-								while(true) {
-									if(CHILD(i2).isMultiplication()) {
-										if(i3 >= CHILD(i2).size()) {
-											break;
-										}
-										cmp_mstruct = &CHILD(i2)[i3];
-									} else {
-										cmp_mstruct = &CHILD(i2);
-									}
-									if(cmp_mstruct->equals(*bas)) {
-										if(exp) {
-											exp = NULL;
-										}
-										b = true;
-										break;
-									} else if(cmp_mstruct->isPower() && cmp_mstruct->base()->equals(*bas)) {
-										if(exp) {
-											if(cmp_mstruct->exponent()->isNumber()) {
-												if(cmp_mstruct->exponent()->number().isLessThan(exp->number())) {
-													exp = cmp_mstruct->exponent();
-												}
-												b = true;
-												break;
-											} else {
-												exp = NULL;
-											}
-										} else {
-											b = true;
-											break;
-										}
-									}
-									if(!CHILD(i2).isMultiplication()) {
-										break;
-									}
-									i3++;
-								}
-								if(!b) break;
-							}
-							if(b) {
-								if(exp) {
-									MathStructure mstruct(*bas);
-									mstruct ^= *exp;
-									if(factor_mstruct.isOne()) factor_mstruct.set(mstruct);
-									else factor_mstruct.multiply(mstruct, true);
-								} else {
-									if(factor_mstruct.isOne()) factor_mstruct.set(*bas);
-									else factor_mstruct.multiply(*bas, true);
-								}
-							}
-						}
-						if(!CHILD(0).isMultiplication()) {
+			}
+			if(mstruct.size() > 0) {
+				unsigned int i = 0;
+				const MathStructure *cur_mstruct;
+				while(true) {
+					if(mstruct[0].isMultiplication()) {
+						if(i >= mstruct[0].size()) {
 							break;
 						}
-						i++;
+						cur_mstruct = &mstruct[0][i];
+					} else {
+						cur_mstruct = &mstruct[0];
 					}
+					if(!cur_mstruct->isNumber() && (!cur_mstruct->isPower() || cur_mstruct->exponent()->isNumber())) {
+						const MathStructure *exp = NULL;
+						const MathStructure *bas;
+						if(cur_mstruct->isPower()) {
+							exp = cur_mstruct->exponent();
+							bas = cur_mstruct->base();
+						} else {
+							bas = cur_mstruct;
+						}
+						bool b = true;
+						for(unsigned int i2 = 1; i2 < mstruct.size(); i2++) {
+							b = false;
+							unsigned int i3 = 0;
+							const MathStructure *cmp_mstruct;
+							while(true) {
+								if(mstruct[i2].isMultiplication()) {
+									if(i3 >= mstruct[i2].size()) {
+										break;
+									}
+									cmp_mstruct = &mstruct[i2][i3];
+								} else {
+									cmp_mstruct = &mstruct[i2];
+								}
+								if(cmp_mstruct->equals(*bas)) {
+									if(exp) {
+										exp = NULL;
+									}
+									b = true;
+									break;
+								} else if(cmp_mstruct->isPower() && cmp_mstruct->base()->equals(*bas)) {
+									if(exp) {
+										if(cmp_mstruct->exponent()->isNumber()) {
+											if(cmp_mstruct->exponent()->number().isLessThan(exp->number())) {
+												exp = cmp_mstruct->exponent();
+											}
+											b = true;
+											break;
+										} else {
+											exp = NULL;
+										}
+									} else {
+										b = true;
+										break;
+									}
+								}
+								if(!mstruct[i2].isMultiplication()) {
+									break;
+								}
+								i3++;
+							}
+							if(!b) break;
+						}
+						if(b) {
+							if(exp) {
+								MathStructure mstruct(*bas);
+								mstruct ^= *exp;
+								if(factor_mstruct.isOne()) factor_mstruct.set(mstruct);
+								else factor_mstruct.multiply(mstruct, true);
+							} else {
+								if(factor_mstruct.isOne()) factor_mstruct.set(*bas);
+								else factor_mstruct.multiply(*bas, true);
+							}
+						}
+					}
+					if(!mstruct[0].isMultiplication()) {
+						break;
+					}
+					i++;
 				}
 			}
-			if(!factor_mstruct.isOne() && (eo.assume_denominators_nonzero || factor_mstruct.representsNonZero())) {
-				MathStructure msave(*this);
+			if(!factor_mstruct.isOne()) {
+				if(&mstruct != &mnew) mnew.set(mstruct);
 				MathStructure *mfactor;
 				unsigned int i = 0;
 				while(true) {
@@ -3361,94 +3644,107 @@ bool MathStructure::factorize(const EvaluationOptions &eo, bool prioritize_power
 					} else {
 						mfactor = &factor_mstruct;
 					}
-					for(unsigned int i2 = 0; i2 < msave.size(); i2++) {
-						switch(msave[i2].type()) {
+					for(unsigned int i2 = 0; i2 < mnew.size(); i2++) {
+						switch(mnew[i2].type()) {
 							case STRUCT_NUMBER: {
 								if(mfactor->isNumber()) {
-									msave[i2].number() /= mfactor->number();
+									mnew[i2].number() /= mfactor->number();
 								}
 								break;
 							}
 							case STRUCT_POWER: {
-								if(mfactor->isPower()) {
-									if(mfactor->equals(msave[i2])) {
-										msave[i2].set(1, 1);
+								if(mfactor->isNumber()) {
+									mnew[i2].transform(STRUCT_MULTIPLICATION);
+									mnew[i2].insertChild(MathStructure(1, 1), 0);
+									mnew[i2][0].number() /= mfactor->number();
+								} else if(mfactor->isPower()) {
+									if(mfactor->equals(mnew[i2])) {
+										mnew[i2].set(1, 1);
 									} else {
-										msave[i2][1].number() -= mfactor->exponent()->number();
-										if(msave[i2][1].number().isOne()) {
-											MathStructure msave2(msave[i2][0]);
-											msave[i2] = msave2;
+										mnew[i2][1].number() -= mfactor->exponent()->number();
+										if(mnew[i2][1].number().isOne()) {
+											MathStructure mstruct2(mnew[i2][0]);
+											mnew[i2] = mstruct2;
 										}
 									}
 								} else {
-									msave[i2][1].number() -= 1;
-									if(msave[i2][1].number().isOne()) {
-										MathStructure msave2(msave[i2][0]);
-										msave[i2] = msave2;
-									} else if(msave[i2][1].number().isZero()) {
-										msave[i2].set(1, 1);
+									mnew[i2][1].number() -= 1;
+									if(mnew[i2][1].number().isOne()) {
+										MathStructure mstruct2(mnew[i2][0]);
+										mnew[i2] = mstruct2;
+									} else if(mnew[i2][1].number().isZero()) {
+										mnew[i2].set(1, 1);
 									}
 								}
 								break;
 							}
 							case STRUCT_MULTIPLICATION: {
 								bool b = true;
-								for(unsigned int i3 = 0; i3 < msave[i2].size() && b; i3++) {
-									switch(msave[i2][i3].type()) {
+								if(mfactor->isNumber() && (mnew[i2].size() < 1 || !mnew[i2][0].isNumber())) {
+									mnew[i2].insertChild(MathStructure(1, 1), 0);
+								}
+								for(unsigned int i3 = 0; i3 < mnew[i2].size() && b; i3++) {
+									switch(mnew[i2][i3].type()) {
 										case STRUCT_NUMBER: {
 											if(mfactor->isNumber()) {
-												if(mfactor->equals(msave[i2][i3])) {
-													msave[i2].delChild(i3 + 1);
+												if(mfactor->equals(mnew[i2][i3])) {
+													mnew[i2].delChild(i3 + 1);
 												} else {
-													msave[i2][i3].number() /= mfactor->number();
+													mnew[i2][i3].number() /= mfactor->number();
 												}
 												b = false;
 											}
 											break;
 										}
 										case STRUCT_POWER: {
-											if(mfactor->isPower() && mfactor->base()->equals(msave[i2][i3][0])) {
-												if(mfactor->equals(msave[i2][i3])) {
-													msave[i2].delChild(i3 + 1);
+											if(mfactor->isPower() && mfactor->base()->equals(mnew[i2][i3][0])) {
+												if(mfactor->equals(mnew[i2][i3])) {
+													mnew[i2].delChild(i3 + 1);
 												} else {
-													msave[i2][i3][1].number() -= mfactor->exponent()->number();
-													if(msave[i2][i3][1].number().isOne()) {
-														MathStructure msave2(msave[i2][i3][0]);
-														msave[i2][i3] = msave2;
-													} else if(msave[i2][i3][1].number().isZero()) {
-														msave[i2].delChild(i3 + 1);
+													mnew[i2][i3][1].number() -= mfactor->exponent()->number();
+													if(mnew[i2][i3][1].number().isOne()) {
+														MathStructure mstruct2(mnew[i2][i3][0]);
+														mnew[i2][i3] = mstruct2;
+													} else if(mnew[i2][i3][1].number().isZero()) {
+														mnew[i2].delChild(i3 + 1);
 													}
 												}
 												b = false;
-											} else if(mfactor->equals(msave[i2][i3][0])) {
-												if(msave[i2][i3][1].number() == 2) {
-													MathStructure msave2(msave[i2][i3][0]);
-													msave[i2][i3] = msave2;
-												} else if(msave[i2][i3][1].number().isOne()) {
-													msave[i2].delChild(i3 + 1);
+											} else if(mfactor->equals(mnew[i2][i3][0])) {
+												if(mnew[i2][i3][1].number() == 2) {
+													MathStructure mstruct2(mnew[i2][i3][0]);
+													mnew[i2][i3] = mstruct2;
+												} else if(mnew[i2][i3][1].number().isOne()) {
+													mnew[i2].delChild(i3 + 1);
 												} else {
-													msave[i2][i3][1].number() -= 1;
+													mnew[i2][i3][1].number() -= 1;
 												}
 												b = false;
 											}
 											break;
 										}
 										default: {
-											if(mfactor->equals(msave[i2][i3])) {
-												msave[i2].delChild(i3 + 1);
+											if(mfactor->equals(mnew[i2][i3])) {
+												mnew[i2].delChild(i3 + 1);
 												b = false;
 											}
 										}
 									}
 								}
-								if(msave[i2].size() == 1) {
-									MathStructure msave2(msave[i2][0]);
-									msave[i2] = msave2;
+								if(mnew[i2].size() == 1) {
+									MathStructure mstruct2(mnew[i2][0]);
+									mnew[i2] = mstruct2;
 								}
 								break;
 							}
 							default: {
-								msave[i2].set(1, 1);
+								if(mfactor->isNumber()) {
+									mnew[i2].transform(STRUCT_MULTIPLICATION);
+									mnew[i2].insertChild(MathStructure(1, 1), 0);
+									mnew[i2][0].number() /= mfactor->number();
+								} else {
+									mnew[i2].set(1, 1);
+								}
 							}
 						}
 					}
@@ -3458,215 +3754,361 @@ bool MathStructure::factorize(const EvaluationOptions &eo, bool prioritize_power
 						break;
 					}
 				}
-				msave.factorize(eo);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool MathStructure::factorize(const EvaluationOptions &eo) {
+	switch(type()) {
+		case STRUCT_ADDITION: {
+			if(SIZE <= 3 && SIZE > 1) {
+				MathStructure *xvar = NULL;
+				Number nr2(1, 1);
+				if(CHILD(0).isPower() && CHILD(0)[0].size() == 0 && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isTwo()) {
+					xvar = &CHILD(0)[0];
+				} else if(CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0].isNumber()) {
+					if(CHILD(0)[1].isPower()) {
+						if(CHILD(0)[1][0].size() == 0 && CHILD(0)[1][1].isNumber() && CHILD(0)[1][1].number().isTwo()) {
+							xvar = &CHILD(0)[1][0];
+							nr2.set(CHILD(0)[0].number());
+						}
+					}
+				}
+				if(xvar) {
+					bool factorable = false;
+					Number nr1, nr0;
+					if(CHILD(1).isNumber()) {
+						if(SIZE == 2) {
+							factorable = true;
+							nr0 = CHILD(1).number();
+						}
+					} else if(SIZE == 2 || (SIZE == 3 && CHILD(2).isNumber())) {
+						if(SIZE == 3) nr0 = CHILD(2).number();
+						if(CHILD(1).isMultiplication()) {
+							if(CHILD(1).size() == 2 && CHILD(1)[0].isNumber() && xvar->equals(CHILD(1)[1])) {
+								nr1 = CHILD(1)[0].number();
+								factorable = true;
+							}
+						} else if(xvar->equals(CHILD(1))) {
+							nr1.set(1, 1);
+							factorable = true;
+						}
+					}
+					if(factorable) {
+						Number nr4ac(4, 1);
+						nr4ac *= nr2;
+						nr4ac *= nr0;
+						Number nrtwo(2, 1);
+						Number nr2a(2, 1);
+						nr2a *= nr2;
+						Number sqrtb24ac(nr1);
+						sqrtb24ac.raise(nrtwo);
+						sqrtb24ac -= nr4ac;
+						if(!sqrtb24ac.isNegative()) {
+							nrtwo.set(1, 2);
+							MathStructure mstructb24(sqrtb24ac);
+							if(eo.approximation == APPROXIMATION_EXACT && !sqrtb24ac.isApproximate()) {
+								sqrtb24ac.raise(nrtwo);
+								if(sqrtb24ac.isApproximate()) {
+									mstructb24.raise(nrtwo);
+								} else {
+									mstructb24.set(sqrtb24ac);
+								}
+							} else {
+								mstructb24.number().raise(nrtwo);
+							}
+							MathStructure m1(nr1), m2(nr1);
+							Number mul1(1, 1), mul2(1, 1);
+							if(mstructb24.isNumber()) {
+								m1.number() += mstructb24.number();
+								m1.number() /= nr2a;
+								if(m1.number().isRational() && !m1.number().isInteger()) {
+									mul1 = m1.number().denominator();
+									m1.number() *= mul1;
+								}
+								m2.number() -= mstructb24.number();
+								m2.number() /= nr2a;
+								if(m2.number().isRational() && !m2.number().isInteger()) {
+									mul2 = m2.number().denominator();
+									m2.number() *= mul2;
+								}
+							} else {
+								EvaluationOptions eo2 = eo;
+								eo2.calculate_functions = false;
+								eo2.sync_units = false;
+								m1 += mstructb24;
+								m1 /= nr2a;
+								m1.eval(eo2);
+								if(m1.isNumber()) {
+									if(m1.number().isRational() && !m1.number().isInteger()) {
+										mul1 = m1.number().denominator();
+										m1.number() *= mul1;
+									}
+								} else {
+									bool bint = false, bfrac = false;
+									idm1(m1, bfrac, bint);
+									if(bfrac) {
+										idm2(m1, bfrac, bint, mul1);
+										idm3(m1, mul1);
+									}
+								}
+								m2 -= mstructb24;
+								m2 /= nr2a;
+								m2.eval(eo2);
+								if(m2.isNumber()) {
+									if(m2.number().isRational() && !m2.number().isInteger()) {
+										mul2 = m2.number().denominator();
+										m2.number() *= mul2;
+									}
+								} else {
+									bool bint = false, bfrac = false;
+									idm1(m2, bfrac, bint);
+									if(bfrac) {
+										idm2(m2, bfrac, bint, mul2);
+										idm3(m2, mul2);
+									}
+								}
+							}
+							nr2 /= mul1;
+							nr2 /= mul2;
+							if(m1 == m2 && mul1 == mul2) {
+								MathStructure xvar2(*xvar);
+								if(!mul1.isOne()) xvar2 *= mul1;
+								set(m1);
+								add(xvar2, true);
+								raise(MathStructure(2, 1));
+								if(!nr2.isOne()) {
+									multiply(nr2);
+								}
+							} else {
+								m1.add(*xvar, true);
+								if(!mul1.isOne()) m1[m1.size() - 1] *= mul1;
+								m2.add(*xvar, true);
+								if(!mul2.isOne()) m2[m2.size() - 1] *= mul2;
+								clear();
+								m_type = STRUCT_MULTIPLICATION;
+								if(!nr2.isOne()) {
+									APPEND(nr2);
+								}
+								APPEND(m1);
+								APPEND(m2);
+							}
+							return true;
+						}
+					}
+				}
+			}
+			MathStructure factor_mstruct(1, 1);
+			MathStructure mnew;
+			if(factorize_find_multiplier(*this, mnew, factor_mstruct)) {
+				mnew.factorize(eo);
 				clear();
 				m_type = STRUCT_MULTIPLICATION;
 				APPEND(factor_mstruct);
-				APPEND(msave);
+				APPEND(mnew);
 				return true;
-			} else {
-				for(unsigned int i = 0; i < SIZE; i++) {
-					CHILD(i).factorize(eo);
-				}
-				Number nr;
-				Number exp(1, 1);
-				Number exp_low(1, 1);
-				vector<unsigned int> bases;
-				vector<bool> minusb;
-				bool factorable = true;
-				for(unsigned int i = 0; i < SIZE && factorable; i++) {
-					switch(CHILD(i).type()) {
-						case STRUCT_NUMBER: {
-							if(nr.isZero()) {
-								nr = CHILD(i).number();
-							} else {
-								factorable = false;
-							}
-							break;
+			}
+			Number nr;
+			Number exp(1, 1);
+			Number exp_low(1, 1);
+			vector<unsigned int> bases;
+			vector<bool> minusb;
+			bool factorable = true;
+			for(unsigned int i = 0; i < SIZE && factorable; i++) {
+				switch(CHILD(i).type()) {
+					case STRUCT_NUMBER: {
+						if(nr.isZero()) {
+							nr = CHILD(i).number();
+						} else {
+							factorable = false;
 						}
-						case STRUCT_POWER: {
-							if(CHILD(i)[1].isNumber() && CHILD(i)[1].number().isInteger() && !CHILD(i)[1].number().isOne()) {
+						break;
+					}
+					case STRUCT_POWER: {
+						if(CHILD(i)[1].isNumber() && CHILD(i)[1].number().isInteger() && !CHILD(i)[1].number().isOne()) {
+							if(exp.isOne()) {
+								exp = CHILD(i)[1].number();
+								exp_low = exp;
+							} else if(CHILD(i)[1].number() != exp) {
+								if(exp.isLessThan(exp_low)) exp_low = exp;
+								exp.gcd(CHILD(i)[1].number());
+								if(exp.isOne()) factorable = false;
+							}
+							bases.push_back(i);
+							minusb.push_back(false);
+						} else {
+							factorable = false;
+						}
+						break;
+					}
+					case STRUCT_MULTIPLICATION: {
+/*						if(CHILD(i).size() == 2 && CHILD(i)[0].isMinusOne() && CHILD(i)[1].isPower()) {
+							if(CHILD(i)[1][1].isNumber() && CHILD(i)[1][1].number().isInteger() && !CHILD(i)[1][1].number().isOne()) {
 								if(exp.isOne()) {
-									exp = CHILD(i)[1].number();
+									exp = CHILD(i)[1][1].number();
 									exp_low = exp;
-								} else if(CHILD(i)[1].number() != exp) {
+								} else if(CHILD(i)[1][1].number() != exp) {
 									if(exp.isLessThan(exp_low)) exp_low = exp;
-									exp.gcd(CHILD(i)[1].number());
-									if(exp.isOne()) factorable = false;
+									exp.gcd(CHILD(i)[1][1].number());
+									if(exp.isOne()) {
+										factorable = false;
+										break;
+									}
+								}
+								while(exp.isEven()) {
+									exp /= 2;
+									if(exp.isOne()) {
+										factorable = false;
+										break;
+									}
 								}
 								bases.push_back(i);
-								minusb.push_back(false);
+								minusb.push_back(true);
 							} else {
 								factorable = false;
 							}
-							break;
-						}
-						case STRUCT_MULTIPLICATION: {
-/*							if(CHILD(i).size() == 2 && CHILD(i)[0].isMinusOne() && CHILD(i)[1].isPower()) {
-								if(CHILD(i)[1][1].isNumber() && CHILD(i)[1][1].number().isInteger() && !CHILD(i)[1][1].number().isOne()) {
-									if(exp.isOne()) {
-										exp = CHILD(i)[1][1].number();
-										exp_low = exp;
-									} else if(CHILD(i)[1][1].number() != exp) {
-										if(exp.isLessThan(exp_low)) exp_low = exp;
-										exp.gcd(CHILD(i)[1][1].number());
-										if(exp.isOne()) {
-											factorable = false;
-											break;
-										}
-									}
-									while(exp.isEven()) {
-										exp /= 2;
-										if(exp.isOne()) {
-											factorable = false;
-											break;
-										}
-									}
-									bases.push_back(i);
-									minusb.push_back(true);
-								} else {
-									factorable = false;
+						}*/
+						break;
+					}
+					default: {
+						factorable = false;
+					}
+				}
+			}
+			if(factorable && !exp.isOne()) {
+				Number min_multi;
+				bool b1 = false; 
+				for(unsigned int i = 0; !b1 && i < SIZE; i++) {
+					if(CHILD(i).isMultiplication()) {
+						for(unsigned int i2 = 0; !b1 && i2 < CHILD(i).size(); i2++) {
+							switch(CHILD(i)[i2].type()) {
+								case STRUCT_NUMBER: {
+									break;
 								}
-							}*/
-							break;
-						}
-						default: {
-							factorable = false;
+								case STRUCT_POWER: {
+									for(unsigned int i3 = 0; i3 < bases.size(); i3++) {
+										if(CHILD(bases[i3]).isPower() && CHILD(i)[i2].equals(CHILD(bases[i3])[0])) {
+											b1 = true;
+											break;
+										}
+									}
+									if(!b1) {
+										if(!CHILD(i)[i2][1].isNumber()) {
+											factorable = false;
+											b1 = true;
+											break;
+										}
+										if(min_multi.isZero() || CHILD(i)[i2][1].number().isLessThan(min_multi)) {
+											min_multi = CHILD(i)[i2][1].number();
+										}
+									}
+									break;
+								}
+								default: {
+									b1 = true;
+								}
+							}
 						}
 					}
 				}
-				if(factorable && !exp.isOne()) {
-					Number min_multi;
-					bool b1 = false; 
-					for(unsigned int i = 0; !b1 && i < SIZE; i++) {
-						if(CHILD(i).isMultiplication()) {
-							for(unsigned int i2 = 0; !b1 && i2 < CHILD(i).size(); i2++) {
-								switch(CHILD(i)[i2].type()) {
-									case STRUCT_NUMBER: {
-										break;
-									}
-									case STRUCT_POWER: {
-										for(unsigned int i3 = 0; i3 < bases.size(); i3++) {
-											if(CHILD(bases[i3]).isPower() && CHILD(i)[i2].equals(CHILD(bases[i3])[0])) {
-												b1 = true;
-												break;
-											}
-										}
-										if(!b1) {
-											if(!CHILD(i)[i2][1].isNumber()) {
-												factorable = false;
-												b1 = true;
-												break;
-											}
-											if(min_multi.isZero() || CHILD(i)[i2][1].number().isLessThan(min_multi)) {
-												min_multi = CHILD(i)[i2][1].number();
-											}
-										}
-										break;
-									}
-									default: {
-										b1 = true;
-									}
-								}
-							}
-						}
-					}
-					if(!b1) {
-						if(min_multi.isZero()) {
-							factorable = false;
-						} else {
-							exp_low /= min_multi;
-							if(!exp_low.isInteger() || exp_low.isOne() || exp_low.isZero()) {
-								factorable = false;
-							}
-							if(exp_low.isLessThan(exp)) exp = exp_low;
-						}
-					}	
-					if(factorable && !nr.isOne() && !nr.isZero()) {
+				if(!b1) {
+					if(min_multi.isZero()) {
 						factorable = false;
-						Number pow(exp);
-						pow.recip();
-						Number nr_tmp(nr);
-						nr_tmp ^= pow;
-						if(nr_tmp.isInteger()) {
-							factorable = true;
+					} else {
+						exp_low /= min_multi;
+						if(!exp_low.isInteger() || exp_low.isOne() || exp_low.isZero()) {
+							factorable = false;
 						}
-						if(!factorable) {
-							Number exp_tmp;
-							bool b;
-							while(!factorable) {
-								b = false;
-								for(unsigned int i = 0; i < NR_OF_PRIMES; i++) {
-									exp_tmp = exp;
-									exp_tmp /= PRIMES[0];
-									if(exp_tmp.isInteger()) {
-										pow *= PRIMES[0];
-										exp /= PRIMES[0];
-										b = true;
-										break;
-									}
-								}
-								if(b && !exp.isOne()) {
-									nr_tmp = nr;
-									nr_tmp ^= pow;
-									if(nr_tmp.isInteger()) {
-										factorable = true;
-										break;
-									}
-								} else {
+						if(exp_low.isLessThan(exp)) exp = exp_low;
+					}
+				}	
+				if(factorable && !nr.isOne() && !nr.isZero()) {
+					factorable = false;
+					Number pow(exp);
+					pow.recip();
+					Number nr_tmp(nr);
+					nr_tmp ^= pow;
+					if(nr_tmp.isInteger()) {
+						factorable = true;
+					}
+					if(!factorable) {
+						Number exp_tmp;
+						bool b;
+						while(!factorable) {
+							b = false;
+							for(unsigned int i = 0; i < NR_OF_PRIMES; i++) {
+								exp_tmp = exp;
+								exp_tmp /= PRIMES[0];
+								if(exp_tmp.isInteger()) {
+									pow *= PRIMES[0];
+									exp /= PRIMES[0];
+									b = true;
 									break;
 								}
 							}
+							if(b && !exp.isOne()) {
+								nr_tmp = nr;
+								nr_tmp ^= pow;
+								if(nr_tmp.isInteger()) {
+									factorable = true;
+									break;
+								}
+							} else {
+								break;
+							}
 						}
-						if(factorable) nr = nr_tmp;
 					}
-					if(factorable) {
-						MathStructure test_base;
-						unsigned int i = 0;
-						if(!nr.isZero()) {
-							test_base.set(nr);
+					if(factorable) nr = nr_tmp;
+				}
+				if(factorable) {
+					MathStructure test_base;
+					unsigned int i = 0;
+					if(!nr.isZero()) {
+						test_base.set(nr);
+					} else {
+						if(CHILD(bases[0])[1].number() == exp) {
+							test_base.set(CHILD(bases[0])[0]);
 						} else {
-							if(CHILD(bases[0])[1].number() == exp) {
-								test_base.set(CHILD(bases[0])[0]);
-							} else {
-								test_base.set(CHILD(bases[0]));
-								test_base[1].number() /= exp;
-							}
-							i = 1;
+							test_base.set(CHILD(bases[0]));
+							test_base[1].number() /= exp;
 						}
-						for(; i < bases.size(); i++) {
-							if(CHILD(bases[i])[1].number() == exp) {
-								test_base.add(CHILD(bases[i])[0], true);
-							} else {
-								test_base.add(CHILD(bases[i]), true);
-								test_base[test_base.size() - 1][1].number() /= exp;
-							}
-						}
-						MathStructure mtest(test_base);
-						mtest.raise(exp);
-						EvaluationOptions eo2 = eo;
-						eo2.calculate_functions = false;
-						eo2.sync_units = false;
-						mtest.eval(eo2);
-						if(equals(mtest)) {
-							set(test_base);
-							raise(exp);
-							return true;
-						}
-						mtest.evalSort();
-						MathStructure mcopy(*this);
-						mcopy.eval(eo2);
-						mcopy.evalSort();
-						if(mcopy == mtest) {
-							set(test_base);
-							raise(exp);
-							return true;
+						i = 1;
+					}
+					for(; i < bases.size(); i++) {
+						if(CHILD(bases[i])[1].number() == exp) {
+							test_base.add(CHILD(bases[i])[0], true);
+						} else {
+							test_base.add(CHILD(bases[i]), true);
+							test_base[test_base.size() - 1][1].number() /= exp;
 						}
 					}
+					MathStructure mtest(test_base);
+					mtest.raise(exp);
+					EvaluationOptions eo2 = eo;
+					eo2.calculate_functions = false;
+					eo2.sync_units = false;
+					mtest.eval(eo2);
+					if(equals(mtest)) {
+						set(test_base);
+						raise(exp);
+						return true;
+					}
+					mtest.evalSort();
+					MathStructure mcopy(*this);
+					mcopy.eval(eo2);
+					mcopy.evalSort();
+					if(mcopy == mtest) {
+						set(test_base);
+						raise(exp);
+						return true;
+					}
 				}
-				if(prioritize_power) {
-					return factorize(eo);
-				}
+			}
+			for(unsigned int i = 0; i < SIZE; i++) {
+				CHILD(i).factorize(eo);
 			}
 			break;
 		} 
@@ -4300,8 +4742,7 @@ void MathStructure::unformat(const EvaluationOptions &eo) {
 	}
 }
 
-void idm1(MathStructure &mnum, bool &bfrac, bool &bint);
-void idm1(MathStructure &mnum, bool &bfrac, bool &bint) {
+void idm1(const MathStructure &mnum, bool &bfrac, bool &bint) {
 	switch(mnum.type()) {
 		case STRUCT_NUMBER: {
 			if((!bfrac || bint) && mnum.number().isRational()) {
@@ -4337,18 +4778,33 @@ void idm1(MathStructure &mnum, bool &bfrac, bool &bint) {
 		}
 	}
 }
-void idm2(MathStructure &mnum, bool &bfrac, bool &bint, Number &nr);
-void idm2(MathStructure &mnum, bool &bfrac, bool &bint, Number &nr) {
+void idm2(const MathStructure &mnum, bool &bfrac, bool &bint, Number &nr) {
 	switch(mnum.type()) {
 		case STRUCT_NUMBER: {
 			if(mnum.number().isRational()) {
 				if(mnum.number().isInteger()) {
 					if(bint) {
-						if(mnum.number().isOne()) bint = false;
-						else nr = mnum.number();
+						if(mnum.number().isOne()) {
+							bint = false;
+						} else if(nr.isOne()) {
+							nr = mnum.number();
+						} else if(nr != mnum.number()) {
+							nr.gcd(mnum.number());
+							if(nr.isOne()) bint = false;
+						}
 					}
 				} else {
-					nr = mnum.number().denominator();
+					if(nr.isOne()) {
+						nr = mnum.number().denominator();
+					} else {
+						Number nden(mnum.number().denominator());
+						if(nr != nden) {
+							Number ngcd(nden);
+							ngcd.gcd(nr);
+							nden /= ngcd;
+							nr *= nden;
+						}
+					}
 				}
 			}
 			break;
@@ -4357,24 +4813,39 @@ void idm2(MathStructure &mnum, bool &bfrac, bool &bint, Number &nr) {
 			if(mnum.size() > 0 && mnum[0].isNumber() && mnum[0].number().isRational()) {
 				if(mnum[0].number().isInteger()) {
 					if(bint) {
-						if(mnum[0].number().isOne()) bint = false;
-						else nr = mnum[0].number();
+						if(mnum[0].number().isOne()) {
+							bint = false;
+						} else if(nr.isOne()) {
+							nr = mnum[0].number();
+						} else if(nr != mnum[0].number()) {
+							nr.gcd(mnum[0].number());
+							if(nr.isOne()) bint = false;
+						}
 					}
 				} else {
-					nr = mnum[0].number().denominator();
+					if(nr.isOne()) {
+						nr = mnum[0].number().denominator();
+					} else {
+						Number nden(mnum[0].number().denominator());
+						if(nr != nden) {
+							Number ngcd(nden);
+							ngcd.gcd(nr);
+							nden /= ngcd;
+							nr *= nden;
+						}
+					}
 				}
 			}
 			break;
 		}
 		case STRUCT_ADDITION: {
-			for(unsigned int i = 0; i < mnum.size() && (!bfrac || bint); i++) {
+			for(unsigned int i = 0; i < mnum.size() && (bfrac || bint); i++) {
 				idm2(mnum[i], bfrac, bint, nr);
 			}
 			break;
 		}
 	}
 }
-void idm3(MathStructure &mnum, Number &nr);
 void idm3(MathStructure &mnum, Number &nr) {
 	switch(mnum.type()) {
 		case STRUCT_NUMBER: {
@@ -4408,11 +4879,15 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po) {
 			unsigned int inum = 0, iden = 0;
 			bool bfrac = false, bint = true, bdiv = false;
 			unsigned int index1, index2;
+			bool dofrac = !po.negative_exponents;
 			for(unsigned int i2 = 0; i2 < SIZE; i2++) {
 				if(CHILD(i2).isPower() && CHILD(i2)[1].isMinusOne()) {
 					if(iden == 0) index1 = i2;
 					iden++;
 					bdiv = true;
+					if(CHILD(i2)[0].contains(STRUCT_ADDITION)) {
+						dofrac = true;
+					}
 				} else if(!bdiv && !po.negative_exponents && CHILD(i2).isPower() && CHILD(i2)[1].hasNegativeSign()) {
 					if(!bdiv) index1 = i2;
 					bdiv = true;
@@ -4422,9 +4897,21 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po) {
 				}
 			}
 			if(!bdiv) break;
+			if(iden > 1 && !po.negative_exponents) {
+				for(int i2 = index1 + 1; i2 < (int) SIZE; i2++) {
+					if(CHILD(i2).isPower() && CHILD(i2)[1].isMinusOne()) {
+						CHILD(index1)[0].multiply(CHILD(i2)[0], true);
+						ERASE(i2);
+						i2--;
+					}
+				}
+				iden = 1;
+			}
 			if(bint) bint = inum > 0 && iden == 1;
 			if(inum > 0) idm1(CHILD(index2), bfrac, bint);
 			if(iden > 0) idm1(CHILD(index1)[0], bfrac, bint);
+			bool b = false;
+			if(!dofrac) bfrac = false;
 			if(bint || bfrac) {
 				Number nr(1, 1);
 				if(inum > 0) idm2(CHILD(index2), bfrac, bint, nr);
@@ -4447,9 +4934,17 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po) {
 						mstruct.raise(m_minus_one);
 						insertChild(mstruct, index1);
 					}
-					return true;
+					b = true;
 				}
 			}
+			/*if(!po.negative_exponents && SIZE == 2 && CHILD(1).isAddition()) {
+				MathStructure factor_mstruct(1, 1);
+				if(factorize_find_multiplier(CHILD(1), CHILD(1), factor_mstruct)) {
+					transform(STRUCT_MULTIPLICATION);
+					PREPEND(factor_mstruct);
+				}
+			}*/
+			return b;
 		}
 		case STRUCT_DIVISION: {
 			bool bint = true, bfrac = false;
@@ -4967,10 +5462,10 @@ void MathStructure::prefixCurrencies() {
 	}
 }
 void MathStructure::format(const PrintOptions &po) {
-	if(po.improve_division_multipliers) {
-		improve_division_multipliers();
-	}
 	sort(po);
+	if(po.improve_division_multipliers) {
+		if(improve_division_multipliers(po)) sort(po);
+	}
 	setPrefixes(po);
 	formatsub(po);
 	postFormatUnits(po);
@@ -5053,6 +5548,25 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, uns
 			}*/
 			break;
 		}
+		case STRUCT_DIVISION: {
+			if(CHILD(0).isAddition() && CHILD(0).size() > 0) {
+				bool b = true;
+				for(unsigned int i = 0; i < CHILD(0).size(); i++) {
+					if(!CHILD(0)[i].isNegate()) {
+						b = false;
+						break;
+					}
+				}
+				if(b) {
+					for(unsigned int i = 0; i < CHILD(0).size(); i++) {
+						MathStructure msave(CHILD(0)[i][0]);
+						CHILD(0)[i] = msave;
+					}
+					transform(STRUCT_NEGATE);
+				}
+			}
+			break;
+		}
 		case STRUCT_MULTIPLICATION: {
 
 			if(CHILD(0).isNegate()) {
@@ -5071,11 +5585,22 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, uns
 				formatsub(po, parent, pindex);
 				break;
 			}
+			
 			bool b = false;
 			for(unsigned int i = 0; i < SIZE; i++) {
 				if(CHILD(i).isInverse() || CHILD(i).isDivision()) {
-					b = true;
-					break;
+					if(po.negative_exponents) {
+						for(unsigned int i2 = 0; i2 < CHILD(i).size(); i2++) {
+							if(!CHILD(i)[i2].isNumber()) {
+								b = true;
+								break;
+							}
+						}
+						if(b) break;
+					} else {
+						b = true;
+						break;
+					}
 				}
 			}
 
@@ -5164,7 +5689,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, uns
 			break;
 		}
 		case STRUCT_POWER: {
-			if(!po.negative_exponents && CHILD(1).isNegate()) {
+			if((!po.negative_exponents || CHILD(0).isAddition()) && CHILD(1).isNegate() && (!CHILD(0).isVector() || !CHILD(1).isMinusOne())) {
 				if(CHILD(1)[0].isOne()) {
 					m_type = STRUCT_INVERSE;
 					ERASE(1);

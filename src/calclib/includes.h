@@ -122,6 +122,33 @@ static const int PRIMES[] = {
 941, 947, 953, 967, 971, 977, 983, 991, 997, 1009, 1013
 };
 
+#define SQP_LT_1000 11
+#define SQP_LT_2000 17
+#define SQP_LT_10000 28
+#define SQP_LT_25000 40
+#define SQP_LT_100000 68
+
+static const int SQUARE_PRIMES[] = {
+4, 9, 25, 49, 121, 169, 289, 361, 441, 529, 
+841, 961, 1369, 1681, 961, 1369, 1681, 1849, 2209, 2809, 
+3481, 3721, 4489, 5041, 5329, 6241, 6889, 7921, 9409, 10201, 
+10609, 11449, 11881, 12769, 16129, 17161, 18769, 19321, 22201, 22801, 
+24649, 26569, 27889, 29929, 32041, 32761, 36481, 37249, 38809, 39601, 
+44521, 49729, 51529, 52441, 54289, 57121, 58081, 63001, 66049, 69169, 
+72361, 73441, 76729, 78961, 80089, 85849, 94249, 96721, 97969, 100489, 
+109561, 113569, 120409, 121801, 124609, 128881, 134689, 139129, 143641, 146689, 
+151321, 157609, 160801, 167281, 175561, 177241, 185761, 187489, 192721, 196249, 
+201601, 208849, 212521, 214369, 218089, 229441, 237169, 241081, 249001, 253009, 
+259081, 271441, 273529, 292681, 299209, 310249, 316969, 323761, 326041, 332929, 
+344569, 351649, 358801, 361201, 368449, 375769, 380689, 383161, 398161, 410881, 
+413449, 418609, 426409, 434281, 436921, 452929, 458329, 466489, 477481, 491401, 
+502681, 516961, 528529, 537289, 546121, 552049, 564001, 573049, 579121, 591361, 
+597529, 619369, 635209, 654481, 657721, 674041, 677329, 683929, 687241, 703921, 
+727609, 734449, 737881, 744769, 769129, 776161, 779689, 786769, 822649, 829921, 
+844561, 863041, 877969, 885481, 896809, 908209, 935089, 942841, 954529, 966289, 
+982081, 994009, 1018081, 1026169
+};
+
 typedef enum {
 	COMPARISON_RESULT_EQUAL,
 	COMPARISON_RESULT_GREATER,
@@ -318,11 +345,12 @@ static const struct EvaluationOptions {
 	bool simplify_addition_powers, reduce_divisions, do_polynomial_division;
 	bool allow_complex, allow_infinite;
 	bool assume_denominators_nonzero;
+	bool split_squares;
 	AutoPostConversion auto_post_conversion;
 	StructuringMode structuring;
 	ParseOptions parse_options;
 	AngleUnit angle_unit;
-	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), simplify_addition_powers(true), reduce_divisions(true), do_polynomial_division(true), allow_complex(true), allow_infinite(true), assume_denominators_nonzero(false), auto_post_conversion(POST_CONVERSION_NONE), structuring(STRUCTURING_SIMPLIFY), angle_unit(RADIANS) {}
+	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), simplify_addition_powers(true), reduce_divisions(true), do_polynomial_division(true), allow_complex(true), allow_infinite(true), assume_denominators_nonzero(false), split_squares(true), auto_post_conversion(POST_CONVERSION_NONE), structuring(STRUCTURING_SIMPLIFY), angle_unit(RADIANS) {}
 } default_evaluation_options;
 
 extern MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minus_one;
