@@ -1,5 +1,12 @@
 2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
 
+	* data/qalculate.glade: added the expression menu and the result menu
+	* po/de.po: updated translation
+	* src/callbacks.cc: glade updates
+	* src/interface.cc: glade updates
+
+2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
+
 	* src/interface.cc,
 	* src/interface.h,
 	* src/main.cc: as the return value of create_window was only used to

@@ -5,7 +5,6 @@
 <requires lib="gnome"/>
 
 <widget class="GtkWindow" id="main_window">
-  <property name="visible">False</property>
   <property name="title" translatable="yes">Calculate!</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
@@ -15,6 +14,193 @@
 
   <child>
     <placeholder/>
+  </child>
+</widget>
+
+<widget class="GtkMenu" id="menu_expression">
+
+  <child>
+    <widget class="GtkMenuItem" id="menu_item_angle_unit">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Angle Unit</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_menu_item_angle_unit_activate" last_modification_time="Thu, 07 Aug 2003 16:29:35 GMT"/>
+
+      <child>
+	<widget class="GtkMenu" id="menu_item_angle_unit_menu">
+
+	  <child>
+	    <widget class="GtkRadioMenuItem" id="menu_item_degrees">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">Degrees</property>
+	      <property name="use_underline">True</property>
+	      <property name="active">False</property>
+	      <signal name="activate" handler="on_menu_item_degrees_activate" last_modification_time="Thu, 07 Aug 2003 16:29:35 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkRadioMenuItem" id="menu_item_radians">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">Radians</property>
+	      <property name="use_underline">True</property>
+	      <property name="active">False</property>
+	      <signal name="activate" handler="on_menu_item_radians_activate" last_modification_time="Thu, 07 Aug 2003 16:29:35 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkRadioMenuItem" id="menu_item_gradians">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">Gradians</property>
+	      <property name="use_underline">True</property>
+	      <property name="active">False</property>
+	      <signal name="activate" handler="on_menu_item_gradians_activate" last_modification_time="Thu, 07 Aug 2003 16:29:35 GMT"/>
+	    </widget>
+	  </child>
+	</widget>
+      </child>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkMenuItem" id="signs1">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Signs</property>
+      <property name="use_underline">True</property>
+
+      <child>
+	<widget class="GtkMenu" id="signs1_menu">
+
+	  <child>
+	    <widget class="GtkMenuItem" id="menu_item_addition">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">+ (addition)</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_menu_item_addition_activate" last_modification_time="Thu, 07 Aug 2003 16:36:12 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="menu_item_subtraction">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">- (subtraction)</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_menu_item_subtraction_activate" last_modification_time="Thu, 07 Aug 2003 16:36:12 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="menu_item_multiplication">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">* (multiplication)</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_menu_item_multiplication_activate" last_modification_time="Thu, 07 Aug 2003 16:36:12 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="menu_item_division">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">/ (division)</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_menu_item_division_activate" last_modification_time="Thu, 07 Aug 2003 16:36:12 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="menu_item_power">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">^ (power)</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_menu_item_power_activate" last_modification_time="Thu, 07 Aug 2003 16:36:12 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="menu_item_exponent">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">E (exponent)</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_menu_item_exponent_activate" last_modification_time="Thu, 07 Aug 2003 16:36:12 GMT"/>
+	    </widget>
+	  </child>
+	</widget>
+      </child>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkMenuItem" id="menu_item_save_defs">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Save definitions</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_menu_item_save_defs_activate" last_modification_time="Thu, 07 Aug 2003 16:45:21 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkMenuItem" id="menu_item_save_mode">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Save mode</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_menu_item_save_mode_activate" last_modification_time="Thu, 07 Aug 2003 16:45:21 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkMenuItem" id="menu_item_edit_prefs">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Preferences</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_menu_item_edit_prefs_activate" last_modification_time="Thu, 07 Aug 2003 16:45:21 GMT"/>
+    </widget>
+  </child>
+</widget>
+
+<widget class="GtkMenu" id="menu_result">
+
+  <child>
+    <widget class="GtkMenuItem" id="menu_item_number_base">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Number Base</property>
+      <property name="use_underline">True</property>
+
+      <child>
+	<widget class="GtkMenu" id="menu_item_number_base_menu">
+
+	  <child>
+	    <widget class="GtkRadioMenuItem" id="menu_item_octal">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">Octal</property>
+	      <property name="use_underline">True</property>
+	      <property name="active">False</property>
+	      <signal name="activate" handler="on_menu_item_octal_activate" last_modification_time="Thu, 07 Aug 2003 17:16:38 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkRadioMenuItem" id="menu_item_decimal">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">Decimal</property>
+	      <property name="use_underline">True</property>
+	      <property name="active">False</property>
+	      <signal name="activate" handler="on_menu_item_decimal_activate" last_modification_time="Thu, 07 Aug 2003 17:16:38 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkRadioMenuItem" id="menu_item_hexadecimal">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">Hexadecimal</property>
+	      <property name="use_underline">True</property>
+	      <property name="active">False</property>
+	      <signal name="activate" handler="on_menu_item_hexadecimal_activate" last_modification_time="Thu, 07 Aug 2003 17:16:38 GMT"/>
+	    </widget>
+	  </child>
+	</widget>
+      </child>
+    </widget>
   </child>
 </widget>
 

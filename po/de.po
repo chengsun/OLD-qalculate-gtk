@@ -30,7 +30,7 @@ msgstr "Chronik"
 
 #: src/interface.cc:373
 msgid "SQRT"
-msgstr "Wurzel"
+msgstr "√"
 
 #: src/interface.cc:379
 msgid "x<sup>y</sup>"

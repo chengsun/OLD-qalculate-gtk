@@ -112,7 +112,7 @@ GtkWidget *expression;
 GtkWidget *result;
 GtkWidget *bEXE;
 GtkWidget *bHistory;
-GtkWidget *menu_e, *menu_r, *f_menu ,*v_menu, *u_menu, *u_menu2;
+GtkWidget *f_menu ,*v_menu, *u_menu, *u_menu2;
 GtkWidget *bMenuE;
 GtkWidget *bMenuR;
 GtkWidget *tabs;
@@ -154,7 +154,6 @@ GtkWidget *rGra;
 GtkWidget *mRad;
 GtkWidget *mDeg;
 GtkWidget *mGra;
-GSList *amode_group = NULL;
 GSList *dmode_group = NULL;
 GSList *bmode_group = NULL;
 GtkWidget *arrow1, *arrow2;
@@ -191,77 +190,148 @@ create_window (void) {
 
 	accel_group = gtk_accel_group_new ();
 
-	menu_e = gtk_menu_new();
-	gtk_widget_show (menu_e);
-	sub = menu_e;
+	sub  = glade_xml_get_widget (glade_xml, "menu_expression");
+	/* FIXME remove these three globally */
+	mDeg = glade_xml_get_widget (glade_xml, "menu_item_degrees");
+	mRad = glade_xml_get_widget (glade_xml, "menu_item_radians");
+	gtk_radio_menu_item_set_group(
+			GTK_RADIO_MENU_ITEM(mRad),
+			gtk_radio_menu_item_get_group(
+				GTK_RADIO_MENU_ITEM(mDeg)
+			)
+		);
+	mGra = glade_xml_get_widget (glade_xml, "menu_item_gradians");
+	gtk_radio_menu_item_set_group(
+			GTK_RADIO_MENU_ITEM(mGra),
+			gtk_radio_menu_item_get_group(
+				GTK_RADIO_MENU_ITEM(mDeg)
+			)
+		);
 
-	MENU_TEAROFF
+	switch (calc->angleMode())
+	{
+	case DEGREES:
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mDeg), TRUE);
+		break;
+	case RADIANS:
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mRad), TRUE);
+		break;
+	case GRADIANS:
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mGra), TRUE);
+		break;
+	default:
+		g_assert_not_reached ();
+		break;
+	}
 
-	SUBMENU_ITEM("Angle unit", menu_e)
-	MENU_TEAROFF
-	RADIO_MENU_ITEM_WITH_INT_1("Degrees", amode_group)
-	amode_group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
-	if(calc->angleMode() == DEGREES)
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
-	mDeg = item;
-	RADIO_MENU_ITEM_WITH_INT_1("Radians", amode_group)
-	amode_group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
-	if(calc->angleMode() == RADIANS)
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
-	mRad = item;
-	RADIO_MENU_ITEM_WITH_INT_1("Gradians", amode_group)
-	amode_group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
-	if(calc->angleMode() == GRADIANS)
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
-	mGra = item;
+	/* FIXME - remove the macros here somewhen */
 	RADIO_MENU_ITEM_WITH_INT_2(mDeg, set_angle_mode, DEGREES)
 	RADIO_MENU_ITEM_WITH_INT_2(mRad, set_angle_mode, RADIANS)
 	RADIO_MENU_ITEM_WITH_INT_2(mGra, set_angle_mode, GRADIANS)
 
-	SUBMENU_ITEM("Signs", menu_e)
-	MENU_TEAROFF
-	MENU_ITEM_WITH_INT("+ (addition)", insert_sign, '+')
-	MENU_ITEM_WITH_INT("- (subtraction)", insert_sign, '-')
-	MENU_ITEM_WITH_INT("* (multiplication)", insert_sign, '*')
-	MENU_ITEM_WITH_INT("/ (division)", insert_sign, '/')
-	MENU_ITEM_WITH_INT("^ (power)", insert_sign, '^')
-	MENU_ITEM_WITH_INT("E (exponent)", insert_sign, 'E')
-
-	sub = menu_e;
-
+	g_signal_connect (
+			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_addition")),
+			"activate",
+			G_CALLBACK(insert_sign),
+			GINT_TO_POINTER ('+'));
+	g_signal_connect (
+			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_subtraction")),
+			"activate",
+			G_CALLBACK(insert_sign),
+			GINT_TO_POINTER ('-'));
+	g_signal_connect (
+			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_multiplication")),
+			"activate",
+			G_CALLBACK(insert_sign),
+			GINT_TO_POINTER ('*'));
+	g_signal_connect (
+			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_division")),
+			"activate",
+			G_CALLBACK(insert_sign),
+			GINT_TO_POINTER ('/'));
+	g_signal_connect (
+			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_power")),
+			"activate",
+			G_CALLBACK(insert_sign),
+			GINT_TO_POINTER ('^'));
+	g_signal_connect (
+			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_exponent")),
+			"activate",
+			G_CALLBACK(insert_sign),
+			GINT_TO_POINTER ('E'));
+	
 	//  CHECK_MENU_ITEM("Clean mode", set_clean_mode);
-	MENU_ITEM("Save definitions", save_defs);
-	MENU_ITEM("Save mode", save_mode);
-	MENU_ITEM("Preferences", edit_preferences);
+	g_signal_connect (
+			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_save_defs")),
+			"activate",
+			GTK_SIGNAL_FUNC(save_defs),
+			NULL);
+	g_signal_connect (
+			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_save_mode")),
+			"activate",
+			GTK_SIGNAL_FUNC(save_mode),
+			NULL);
+	g_signal_connect (
+			G_OBJECT (glade_xml_get_widget (glade_xml, "menu_item_edit_prefs")),
+			"activate",
+			GTK_SIGNAL_FUNC(edit_preferences),
+			NULL);
 
-	menu_r = gtk_menu_new();
-	gtk_widget_show (menu_r);
-	sub = menu_r;
+	sub = glade_xml_get_widget (glade_xml, "menu_result");
 
-	MENU_TEAROFF
+	gtk_radio_menu_item_set_group(
+			GTK_RADIO_MENU_ITEM(
+				glade_xml_get_widget (glade_xml, "menu_item_decimal")
+				),
+			gtk_radio_menu_item_get_group(
+				GTK_RADIO_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_octal"))
+				)
+			);
+	gtk_radio_menu_item_set_group(
+			GTK_RADIO_MENU_ITEM(
+				glade_xml_get_widget (glade_xml, "menu_item_hexadecimal")
+				),
+			gtk_radio_menu_item_get_group( GTK_RADIO_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_octal")) )
+			);
 
-	SUBMENU_ITEM("Number base", menu_r)
-	MENU_TEAROFF
-	RADIO_MENU_ITEM_WITH_INT_1("Octal", bmode_group);
-	bmode_group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
-	if(number_base == BASE_OCTAL)
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
-	item2 = item;
-	RADIO_MENU_ITEM_WITH_INT_1("Decimal", bmode_group);
-	bmode_group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
-	if(number_base == BASE_DECI)
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
-	item3 = item;
-	RADIO_MENU_ITEM_WITH_INT_1("Hexadecimal", bmode_group);
-	bmode_group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
-	if(number_base == BASE_HEX)
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
-	RADIO_MENU_ITEM_WITH_INT_2(item, set_number_base, BASE_HEX);
-	RADIO_MENU_ITEM_WITH_INT_2(item2, set_number_base, BASE_OCTAL);
-	RADIO_MENU_ITEM_WITH_INT_2(item3, set_number_base, BASE_DECI);
+	switch (number_base)
+	{
+	case BASE_OCTAL:
+		gtk_check_menu_item_set_active(
+				GTK_CHECK_MENU_ITEM(
+					glade_xml_get_widget (glade_xml, "menu_item_octal")
+				),
+				TRUE);
+		break;
+	case BASE_DECI:
+		gtk_check_menu_item_set_active(
+				GTK_CHECK_MENU_ITEM(
+					glade_xml_get_widget (glade_xml, "menu_item_decimal")
+				),
+				TRUE);
+		break;
+	case BASE_HEX:
+		gtk_check_menu_item_set_active(
+				GTK_CHECK_MENU_ITEM(
+					glade_xml_get_widget (glade_xml, "menu_item_hexadecimal")
+				),
+				TRUE);
+		break;
+	default:
+		g_assert_not_reached ();
+		break;
+	}
 
-	SUBMENU_ITEM("Display mode", menu_r)
-	MENU_TEAROFF
+	/* FIXME remove these macros */
+	RADIO_MENU_ITEM_WITH_INT_2(glade_xml_get_widget (glade_xml, "menu_item_octal"), set_number_base, BASE_HEX);
+	RADIO_MENU_ITEM_WITH_INT_2(glade_xml_get_widget (glade_xml, "menu_item_decimal"), set_number_base, BASE_OCTAL);
+	RADIO_MENU_ITEM_WITH_INT_2(glade_xml_get_widget (glade_xml, "menu_item_hexadecimal"), set_number_base, BASE_DECI);
+
+#ifndef G_DISABLE_ASSERT
+        g_print ("create_window () - doing the ugly stuff\n");
+#endif
+
+	SUBMENU_ITEM("Display mode", glade_xml_get_widget (glade_xml, "menu_result"))
 	RADIO_MENU_ITEM_WITH_INT_1("Normal", dmode_group);
 	dmode_group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
 	if(display_mode == MODE_NORMAL)
@@ -286,7 +356,7 @@ create_window (void) {
 	RADIO_MENU_ITEM_WITH_INT_2(item3, set_display_mode, MODE_SCIENTIFIC);
 	RADIO_MENU_ITEM_WITH_INT_2(item4, set_display_mode, MODE_DECIMALS);
 
-	sub = menu_r;
+	sub = glade_xml_get_widget (glade_xml, "menu_result");
 	MENU_ITEM("Store result...", add_as_variable);
 	MENU_ITEM_SET_ACCEL(GDK_s);
 	MENU_ITEM("Precision...", select_precision);
@@ -722,10 +792,10 @@ create_window (void) {
 	g_signal_connect (G_OBJECT (bMenuR), "toggled",
 	                  G_CALLBACK (on_bMenuR_toggled),
 	                  NULL);
-	g_signal_connect (G_OBJECT (menu_e), "deactivate",
+	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_expression")), "deactivate",
 	                  G_CALLBACK (on_menu_e_deactivate),
 	                  NULL);
-	g_signal_connect (G_OBJECT (menu_r), "deactivate",
+	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_result")), "deactivate",
 	                  G_CALLBACK (on_menu_r_deactivate),
 	                  NULL);
 	g_signal_connect (G_OBJECT (expression), "changed",

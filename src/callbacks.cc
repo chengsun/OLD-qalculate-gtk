@@ -47,7 +47,7 @@ extern GtkWidget *expression;
 extern GtkWidget *result;
 extern GtkWidget *bEXE, *bMenuE, *bMenuR;
 extern GtkWidget *bHistory;
-extern GtkWidget *sep, *menu_e, *menu_r, *f_menu, *v_menu, *u_menu, *u_menu2;
+extern GtkWidget *sep, *f_menu, *v_menu, *u_menu, *u_menu2;
 extern Calculator *calc;
 extern GtkWidget *bHyp;
 extern Variable *vans, *vAns;
@@ -776,7 +776,7 @@ void create_umenu() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT("Units", menu_e, 6)
+	SUBMENU_ITEM_INSERT("Units", glade_xml_get_widget (glade_xml, "menu_expression"), 6)
 	u_menu = item;
 	MENU_TEAROFF
 	sub2 = sub;
@@ -819,7 +819,7 @@ void create_umenu2() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT("Convert to unit", menu_r, 3)
+	SUBMENU_ITEM_INSERT("Convert to unit", glade_xml_get_widget (glade_xml, "menu_result"), 3)
 	u_menu2 = item;
 	MENU_TEAROFF
 	sub2 = sub;
@@ -867,7 +867,7 @@ void create_vmenu() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT("Variables", menu_e, 4)
+	SUBMENU_ITEM_INSERT("Variables", glade_xml_get_widget (glade_xml, "menu_expression"), 4)
 	v_menu = item;
 	MENU_TEAROFF
 	sub2 = sub;
@@ -906,7 +906,7 @@ void create_pmenu() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT("Prefixes", menu_e, 5)
+	SUBMENU_ITEM_INSERT("Prefixes", glade_xml_get_widget (glade_xml, "menu_expression"), 5)
 	MENU_TEAROFF
 	vector<l_type::iterator> its;
 	bool no_larger = false;
@@ -947,7 +947,7 @@ void create_fmenu() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT("Functions", menu_e, 3)
+	SUBMENU_ITEM_INSERT("Functions", glade_xml_get_widget (glade_xml, "menu_expression"), 3)
 	f_menu = item;
 	MENU_TEAROFF
 	sub2 = sub;
@@ -1148,9 +1148,9 @@ void
 on_bMenuE_toggled                      (GtkToggleButton       *button,
                                         gpointer         user_data) {
 	if(gtk_toggle_button_get_active(button)) {
-		gtk_menu_popup(GTK_MENU(menu_e), NULL, NULL, menu_e_posfunc, NULL, 0, 0);
+		gtk_menu_popup(GTK_MENU(glade_xml_get_widget (glade_xml, "menu_expression")), NULL, NULL, menu_e_posfunc, NULL, 0, 0);
 	} else {
-		gtk_menu_popdown(GTK_MENU(menu_e));
+		gtk_menu_popdown(GTK_MENU(glade_xml_get_widget (glade_xml, "menu_expression")));
 	}
 }
 
@@ -1161,9 +1161,9 @@ void
 on_bMenuR_toggled                      (GtkToggleButton       *button,
                                         gpointer         user_data) {
 	if(gtk_toggle_button_get_active(button)) {
-		gtk_menu_popup(GTK_MENU(menu_r), NULL, NULL, menu_r_posfunc, NULL, 0, 0);
+		gtk_menu_popup(GTK_MENU(glade_xml_get_widget(glade_xml, "menu_result")), NULL, NULL, menu_r_posfunc, NULL, 0, 0);
 	} else {
-		gtk_menu_popdown(GTK_MENU(menu_r));
+		gtk_menu_popdown(GTK_MENU(glade_xml_get_widget (glade_xml, "menu_result")));
 	}
 }
 
