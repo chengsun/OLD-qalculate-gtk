@@ -800,7 +800,8 @@ create_wUnits (void)
 }
 
 GtkWidget*
-create_wPreferences (void) {
+create_wPreferences (void)
+{
 	GtkWidget *wPreferences;
 	GtkWidget *dialog_vbox3;
 	GtkWidget *vbox2_pr;
@@ -812,50 +813,20 @@ create_wPreferences (void) {
 	GtkWidget *dialog_action_area3;
 	GtkWidget *bClose_pr;
 
-	wPreferences = gtk_dialog_new ();
-	gtk_window_set_title (GTK_WINDOW (wPreferences), _("Preferences"));
-	gtk_window_set_resizable (GTK_WINDOW (wPreferences), FALSE);
-
+	wPreferences	= glade_xml_get_widget (glade_xml, "preferences_dialog");
 	dialog_vbox3 = GTK_DIALOG (wPreferences)->vbox;
-	gtk_widget_show (dialog_vbox3);
-
-	vbox2_pr = gtk_vbox_new (FALSE, 5);
-	gtk_widget_show (vbox2_pr);
-	gtk_box_pack_start (GTK_BOX (dialog_vbox3), vbox2_pr, TRUE, TRUE, 0);
-	gtk_container_set_border_width (GTK_CONTAINER (vbox2_pr), 5);
-
-	cbLoadGlobalDefs = gtk_check_button_new_with_mnemonic (_("Load global definitions on start"));
+	vbox2_pr	= glade_xml_get_widget (glade_xml, "preferences_vbox2");
+	cbLoadGlobalDefs= glade_xml_get_widget (glade_xml, "preferences_checkbutton_load_defs");
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(cbLoadGlobalDefs), load_global_defs);
-	gtk_widget_show (cbLoadGlobalDefs);
-	gtk_box_pack_start (GTK_BOX (vbox2_pr), cbLoadGlobalDefs, FALSE, FALSE, 0);
-
-	cbSaveModeOnExit = gtk_check_button_new_with_mnemonic (_("Save mode on exit"));
+	cbSaveModeOnExit= glade_xml_get_widget (glade_xml, "preferences_checkbutton_save_mode");
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(cbSaveModeOnExit), save_mode_on_exit);
-	gtk_widget_show (cbSaveModeOnExit);
-	gtk_box_pack_start (GTK_BOX (vbox2_pr), cbSaveModeOnExit, FALSE, FALSE, 0);
-
-	cbSaveDefsOnExit = gtk_check_button_new_with_mnemonic (_("Save definitions on exit"));
+	cbSaveDefsOnExit= glade_xml_get_widget (glade_xml, "preferences_checkbutton_save_defs");
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(cbSaveDefsOnExit), save_defs_on_exit);
-	gtk_widget_show (cbSaveDefsOnExit);
-	gtk_box_pack_start (GTK_BOX (vbox2_pr), cbSaveDefsOnExit, FALSE, FALSE, 0);
 
-	hseparator1 = gtk_hseparator_new ();
-	gtk_widget_show (hseparator1);
-	gtk_box_pack_start (GTK_BOX (vbox2_pr), hseparator1, TRUE, TRUE, 0);
-
-	cbUseShortUnits = gtk_check_button_new_with_mnemonic (_("Short unit format"));
+	cbUseShortUnits	= glade_xml_get_widget (glade_xml, "preferences_checkbutton_short_units");
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(cbUseShortUnits), use_short_units);
-	gtk_widget_show (cbUseShortUnits);
-	gtk_box_pack_start (GTK_BOX (vbox2_pr), cbUseShortUnits, FALSE, FALSE, 0);
 
-	dialog_action_area3 = GTK_DIALOG (wPreferences)->action_area;
-	gtk_widget_show (dialog_action_area3);
-	gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area3), GTK_BUTTONBOX_END);
-
-	bClose_pr = gtk_button_new_from_stock ("gtk-close");
-	gtk_widget_show (bClose_pr);
-	gtk_dialog_add_action_widget (GTK_DIALOG (wPreferences), bClose_pr, GTK_RESPONSE_CLOSE);
-	GTK_WIDGET_SET_FLAGS (bClose_pr, GTK_CAN_DEFAULT);
+	bClose_pr	= glade_xml_get_widget (glade_xml, "preferences_button_close");
 
 	g_signal_connect ((gpointer) cbLoadGlobalDefs, "toggled", G_CALLBACK (on_cbLoadGlobalDefs_toggled), NULL);
 	g_signal_connect ((gpointer) cbSaveModeOnExit, "toggled", G_CALLBACK (on_cbSaveModeOnExit_toggled), NULL);
