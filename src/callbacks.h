@@ -67,6 +67,8 @@ void on_tSubfunctions_selection_changed(GtkTreeSelection *treeselection, gpointe
 void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void update_function_arguments_list(Function *f);
 
+void on_tNames_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
+
 void on_menu_e_deactivate(GtkMenuShell *menushell, gpointer user_data);
 void on_menu_r_deactivate(GtkMenuShell *menushell, gpointer user_data);
 
@@ -117,6 +119,8 @@ void edit_variable(const char *category = "", Variable *v = NULL, MathStructure 
 void edit_matrix(const char *category = "", Variable *v = NULL, MathStructure *mstruct_ = NULL, GtkWidget *win = NULL, gboolean create_vector = FALSE);
 void import_csv_file(GtkWidget *win = NULL);
 void export_csv_file(KnownVariable *v = NULL, GtkWidget *win = NULL);
+
+void edit_names(ExpressionItem *item = NULL, const gchar *namestr = NULL, GtkWidget *win = NULL);
 
 #ifdef __cplusplus
 extern "C" {
@@ -390,6 +394,19 @@ void on_function_edit_button_rules_clicked(GtkButton *w, gpointer user_data);
 void on_argument_rules_checkbutton_enable_min_toggled(GtkToggleButton *w, gpointer user_data);
 void on_argument_rules_checkbutton_enable_max_toggled(GtkToggleButton *w, gpointer user_data);
 void on_argument_rules_checkbutton_enable_condition_toggled(GtkToggleButton *w, gpointer user_data);
+
+void on_variable_edit_button_names_clicked(GtkButton *w, gpointer user_data);
+void on_unknown_edit_button_names_clicked(GtkButton *w, gpointer user_data);
+void on_matrix_edit_button_names_clicked(GtkButton *w, gpointer user_data);
+void on_function_edit_button_names_clicked(GtkButton *w, gpointer user_data);
+void on_unit_edit_button_names_clicked(GtkButton *w, gpointer user_data);
+
+void on_names_edit_checkbutton_abbreviation_toggled(GtkToggleButton *w, gpointer user_data);
+void on_names_edit_button_add_clicked(GtkButton *w, gpointer user_data);
+void on_names_edit_button_modify_clicked(GtkButton *w, gpointer user_data);
+void on_names_edit_button_remove_clicked(GtkButton *w, gpointer user_data);
+void on_names_edit_entry_name_activate(GtkEntry *w, gpointer user_data);
+void on_names_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 
 void on_plot_button_save_clicked(GtkButton *w, gpointer user_data);
 void on_plot_button_apply_clicked(GtkButton *w, gpointer user_data);

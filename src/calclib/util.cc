@@ -522,6 +522,14 @@ string i2s(int value) {
 	string stmp = buffer;
 	return stmp;
 }
+const char *b2yn(bool b) {
+	if(b) return _("Yes");
+	return _("No");
+}
+const char *b2tf(bool b) {
+	if(b) return _("True");
+	return _("False");
+}
 int s2i(const string& str) {
 	return strtol(str.c_str(), NULL, 10);
 }

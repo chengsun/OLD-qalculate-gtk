@@ -1882,7 +1882,7 @@ void Calculator::expressionItemDeleted(ExpressionItem *item) {
 	delUFV((void*) item);
 }
 void Calculator::nameChanged(ExpressionItem *item) {
-	if(!item->isActive()) return;
+	if(!item->isActive() || item->countNames() == 0) return;
 	if(item->type() == TYPE_UNIT && ((Unit*) item)->unitType() == COMPOSITE_UNIT) {
 		return;
 	}

@@ -777,6 +777,7 @@
       <_title>Base-2 Logrithm</_title>
       <name index="1">
         <reference>true</reference>
+	<suffix>true</suffix>
         <_name>log2</_name>
       </name>
       <_description>Returns the base n logarithm.</_description>
@@ -791,6 +792,7 @@
       <_title>Base-10 Logrithm</_title>
       <name index="1">
         <reference>true</reference>
+	<suffix>true</suffix>
         <_name>log10</_name>
       </name>
       <_description>Returns the base n logarithm.</_description>

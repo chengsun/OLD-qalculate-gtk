@@ -1,3 +1,8 @@
+2004-08-07 Niklas Knutsson  <nq@altern.org>
+
+	* Initial work on GUI for new name system
+	* Treat whole ending number as suffix (for log10)
+
 2004-08-06 Niklas Knutsson  <nq@altern.org>
 
 	* More work on name system

@@ -10,6 +10,7 @@ data/functionedit.glade
 data/functions.glade
 data/main.glade
 data/matrixedit.glade
+data/namesedit.glade
 data/nbases.glade
 data/nbexpression.glade
 data/plot.glade

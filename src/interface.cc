@@ -32,7 +32,7 @@
 #include "data/icon.xpm"
 
 extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *nbexpression_glade, *decimals_glade;
-extern GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *nbases_glade, *plot_glade, *precision_glade;
+extern GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *namesedit_glade, *nbases_glade, *plot_glade, *precision_glade;
 extern GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
 
 GtkWidget *tFunctionCategories;
@@ -49,6 +49,9 @@ GtkWidget *tUnitCategories;
 GtkWidget *tUnits;
 GtkListStore *tUnits_store;
 GtkTreeStore *tUnitCategories_store;
+
+GtkWidget *tNames;
+GtkListStore *tNames_store;
 
 #if GTK_MINOR_VERSION >= 3
 GtkWidget *expander;
@@ -844,6 +847,52 @@ get_matrix_edit_dialog (void)
 
 	return glade_xml_get_widget (matrixedit_glade, "matrix_edit_dialog");
 }
+GtkWidget* 
+get_names_edit_dialog (void)
+{
+	if(!namesedit_glade) {
+	
+		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "namesedit.glade", NULL);
+		namesedit_glade = glade_xml_new(gstr, NULL, NULL);
+		g_assert(namesedit_glade != NULL);
+		g_free(gstr);
+	
+		g_assert (glade_xml_get_widget (namesedit_glade, "names_edit_dialog") != NULL);
+		
+		tNames = glade_xml_get_widget (namesedit_glade, "names_edit_treeview");
+
+		tNames_store = gtk_list_store_new(NAMES_N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN);
+		gtk_tree_view_set_model(GTK_TREE_VIEW(tNames), GTK_TREE_MODEL(tNames_store));
+		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tNames));
+		gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes(_("Name"), renderer, "text", NAMES_NAME_COLUMN, NULL);
+		gtk_tree_view_column_set_sort_column_id(column, NAMES_NAME_COLUMN);
+#if GTK_MINOR_VERSION >= 4
+		gtk_tree_view_column_set_expand(column, TRUE);
+#endif
+		gtk_tree_view_append_column(GTK_TREE_VIEW(tNames), column);
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes(_("Abbreviation"), renderer, "text", NAMES_ABBREVIATION_STRING_COLUMN, NULL);
+		gtk_tree_view_column_set_sort_column_id(column, NAMES_ABBREVIATION_STRING_COLUMN);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(tNames), column);
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes(_("Plural"), renderer, "text", NAMES_PLURAL_STRING_COLUMN, NULL);
+		gtk_tree_view_column_set_sort_column_id(column, NAMES_PLURAL_STRING_COLUMN);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(tNames), column);
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes(_("Reference"), renderer, "text", NAMES_REFERENCE_STRING_COLUMN, NULL);
+		gtk_tree_view_column_set_sort_column_id(column, NAMES_REFERENCE_STRING_COLUMN);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(tNames), column);	
+		g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tNames_selection_changed), NULL);
+		
+		glade_xml_signal_autoconnect(namesedit_glade);
+
+	}
+
+	return glade_xml_get_widget (namesedit_glade, "names_edit_dialog");
+}
+
 GtkWidget*
 get_csv_import_dialog (void)
 {

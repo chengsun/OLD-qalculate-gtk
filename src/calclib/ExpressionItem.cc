@@ -14,6 +14,7 @@
 #include "util.h"
 
 ExpressionName::ExpressionName(string sname) : suffix(false), unicode(false), plural(false), reference(false), avoid_input(false) {
+	name = sname;
 	if(text_length_is_one(sname)) {
 		abbreviation = true;
 		case_sensitive = true;
@@ -21,6 +22,18 @@ ExpressionName::ExpressionName(string sname) : suffix(false), unicode(false), pl
 		abbreviation = false;
 		case_sensitive = false;
 	}
+}
+ExpressionName::ExpressionName() : abbreviation(false), suffix(false), unicode(false), plural(false), reference(false), avoid_input(false), case_sensitive(false) {
+}
+void ExpressionName::operator = (const ExpressionName &ename) {
+	name = ename.name;
+	abbreviation = ename.abbreviation;
+	case_sensitive = ename.case_sensitive;
+	suffix = ename.suffix;
+	unicode = ename.unicode; 
+	plural = ename.plural;
+	reference = ename.reference;
+	avoid_input = ename.avoid_input;
 }
 bool ExpressionName::operator == (const ExpressionName &ename) const {
 	return name == ename.name && abbreviation == ename.abbreviation && case_sensitive == ename.case_sensitive && suffix == ename.suffix && unicode == ename.unicode && plural == ename.plural && reference == ename.reference && avoid_input == ename.avoid_input;

@@ -19,14 +19,17 @@
 */
 
 struct ExpressionName {
-	bool abbreviation, suffix, unicode, plural, reference;
-	bool avoid_input;
-	bool case_sensitive;
+	
+	bool abbreviation, suffix, unicode, plural, reference, avoid_input, case_sensitive;
 	string name;
-	ExpressionName() : abbreviation(false), suffix(false), unicode(false), plural(false), reference(false), avoid_input(false), case_sensitive(false) {}
+	
+	ExpressionName();
 	ExpressionName(string sname);
+	
+	void operator = (const ExpressionName &ename);
 	bool operator == (const ExpressionName &ename) const;
 	bool operator != (const ExpressionName &ename) const;
+	
 };
 
 class ExpressionItem {

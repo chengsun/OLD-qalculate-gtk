@@ -45,6 +45,8 @@ string& gsub(const string &pattern, const string &sub, string &str);
 string& gsub(const char *pattern, const char *sub, string &str);
 string d2s(double value, int precision = 100);
 string i2s(int value);
+const char *b2yn(bool b);
+const char *b2tf(bool b);
 string p2s(void *o);
 int s2i(const string& str);
 int s2i(const char *str);

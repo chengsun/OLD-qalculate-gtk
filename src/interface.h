@@ -42,6 +42,21 @@ enum {
 };
 
 enum {
+	NAMES_NAME_COLUMN,
+	NAMES_ABBREVIATION_STRING_COLUMN,
+	NAMES_PLURAL_STRING_COLUMN,
+	NAMES_REFERENCE_STRING_COLUMN,
+	NAMES_ABBREVIATION_COLUMN,
+	NAMES_SUFFIX_COLUMN,
+	NAMES_UNICODE_COLUMN,
+	NAMES_PLURAL_COLUMN,
+	NAMES_REFERENCE_COLUMN,
+	NAMES_AVOID_INPUT_COLUMN,
+	NAMES_CASE_SENSITIVE_COLUMN,
+	NAMES_N_COLUMNS
+};
+
+enum {
 	DELIMITER_COMMA,
 	DELIMITER_TABULATOR,	
 	DELIMITER_SEMICOLON,
@@ -113,6 +128,7 @@ GtkWidget* get_function_edit_dialog (void);
 GtkWidget* get_variable_edit_dialog (void);
 GtkWidget* get_unknown_edit_dialog (void);
 GtkWidget* get_matrix_edit_dialog (void);
+GtkWidget* get_names_edit_dialog (void);
 GtkWidget* get_csv_import_dialog (void);
 GtkWidget* get_csv_export_dialog (void);
 GtkWidget* get_number_base_expression_dialog (void);
