@@ -798,86 +798,140 @@ void Manager::add(Unit *u, char sign) {
 	mngr->unref();
 }
 int Manager::compare(Manager *mngr) {
-	if(mngr->c_type == 0) {
-		if(c_type == 0) return 0;
-		else return -1;
-	} else if(mngr->c_type == 'v') {
-		if(c_type == 0) return 1;
-		else if(c_type == 'v') {
-				if(d_value == mngr->d_value) return 0;
-				else if(d_value > mngr->d_value) return -1;
-				else return 1;
-		} else return -1;
-	} else if(mngr->c_type == 'u') {
-		if(c_type == 'u') {
-			if(mngr->o_unit->shortName() < o_unit->shortName()) return -1;
-			else if(mngr->o_unit->shortName() == o_unit->shortName()) return 0;
-			else return 1;
-		} else if(c_type != 'v' && c_type != 0 && c_type != 's') return -1;
-	} else if(mngr->c_type == 's') {
-		if(c_type == 's') {
-			if(mngr->s_var > s_var) return -1;
-			else if(mngr->s_var == s_var) return 0;
-			else return 1;
-		} else if(c_type != 'v' && c_type != 0) return -1;
-	} else if(mngr->c_type == FUNCTION_MANAGER) {
-		if(c_type == FUNCTION_MANAGER) {
-			if(mngr->o_function->name() > o_function->name()) return -1;
-			else if(equal(mngr)) return 0;
-			else return 1;
+	if(c_type != mngr->type()) {
+		if(mngr->type() == ADDITION_MANAGER) return -mngr->compare(this);	
+		if(mngr->type() == MULTIPLICATION_MANAGER && c_type != ADDITION_MANAGER) return -mngr->compare(this);		
+		if(mngr->type() == POWER_MANAGER && c_type != ADDITION_MANAGER && c_type != MULTIPLICATION_MANAGER) return -mngr->compare(this);		
+	}
+	switch(c_type) {
+		case NULL_MANAGER: {
+			if(mngr->type() == NULL_MANAGER) return 0;
+			if(mngr->type() == FUNCTION_MANAGER) return -1;					
+			return 1;
+		} 
+		case VALUE_MANAGER: {
+			if(mngr->type() == NULL_MANAGER) return -1;
+			if(mngr->type() == VALUE_MANAGER) {
+				if(d_value == mngr->value()) return 0;
+				if(d_value < mngr->value()) return 1;
+				return -1;
+			}
+			if(mngr->type() == FUNCTION_MANAGER) return -1;
+			return 1;
+		} 
+		case UNIT_MANAGER: {
+			if(mngr->type() == UNIT_MANAGER) {
+				if(o_unit->shortName() < mngr->o_unit->shortName()) return -1;
+				if(o_unit->shortName() == mngr->o_unit->shortName()) return 0;
+				return 1;
+			}
+			if(mngr->type() == VALUE_MANAGER || mngr->type() == NULL_MANAGER || mngr->type() == FUNCTION_MANAGER) return -1;
+			return 1;
 		}
-	} else if(mngr->c_type == POWER_CH) {
-		if(c_type == POWER_CH) {
-			if(mngrs[1]->negative()) {
-				int i2 = mngrs[1]->compare(mngr->mngrs[1]);
-				if(i2) return -1;
-				if(i2 < 0) return 1;
-			} else {
-				int i2 = mngrs[1]->compare(mngr->mngrs[1]);
-				if(i2 != 0) return i2;
+		case STRING_MANAGER: {
+			if(mngr->type() == STRING_MANAGER) {
+				if(s_var < mngr->s_var) return -1;
+				else if(s_var == mngr->s_var) return 0;
+				else return 1;
 			}
-			return mngrs[0]->compare(mngr->mngrs[0]);
-		} else if(c_type != 'v' && c_type != 'u' && c_type != 0 && c_type != 's') return -1;
-	} else if(mngr->c_type == MULTIPLICATION_CH) {
-		if(c_type == MULTIPLICATION_CH) {
-			for(int i = 0; ; i++) {
-				if(i >= mngr->mngrs.size() && i >= mngrs.size()) return 0;
-				if(i >= mngr->mngrs.size()) return -1;
-				if(i >= mngrs.size()) return 1;
-				int i2 = mngrs[i]->compare(mngr->mngrs[i]);
-				if(i2 != 0) return i2;
+			if(mngr->type() == VALUE_MANAGER || mngr->type() == NULL_MANAGER || mngr->type() == UNIT_MANAGER || mngr->type() == FUNCTION_MANAGER) return -1;
+			return 1;
+		}
+		case FUNCTION_MANAGER: {
+			if(mngr->type() == FUNCTION_MANAGER) {
+				if(o_function->name() < mngr->o_function->name()) return -1;
+				if(o_function->name() == mngr->o_function->name()) {
+					for(int i = 0; i < mngr->mngrs.size(); i++) {
+						if(i >= mngrs.size()) {
+							return -1;	
+						}
+						int i2 = mngr->mngrs[i]->compare(mngrs[i]);
+						if(i2 != 0) return i2;
+					}
+					return 0;
+				} else return 1;
 			}
-		} else if(c_type == PLUS_CH) return -1;
-	} else if(mngr->c_type == PLUS_CH) {
-		if(c_type == PLUS_CH) {
-			int i1 = mngrs.size() - 1;
-			int i2 = mngr->mngrs.size() - 1;
-			while(1) {
-				if(i1 < 0 && i2 < 0) return 0;
-				if(i2 < 0) return -1;
-				if(i1 < 0) return 1;
-				int i3 = mngrs[i1]->compare(mngr->mngrs[i2]);
-				if(i3 != 0) return i3;
-				i1--; i2--;
+			return 1;
+		}
+		case POWER_MANAGER: {
+			if(mngr->type() == POWER_MANAGER) {
+				int i = mngrs[0]->compare(mngr->mngrs[0]);
+				if(i == 0) {
+					if(mngrs[1]->negative()) {
+						int i2 = mngrs[1]->compare(mngr->mngrs[1]);
+						return -i2;
+					} else {
+						int i2 = mngrs[1]->compare(mngr->mngrs[1]);
+						return i2;
+					}
+				} else {
+					return i;
+				}
+			} else if(mngr->type() != ADDITION_MANAGER) {
+				int i = mngrs[0]->compare(mngr);
+				if(i == 0) return -1;
+				return i;
 			}
+			return 1;
+		}
+		case MULTIPLICATION_MANAGER: {
+			if(mngrs.size() < 1) return 1;
+			if(mngr->type() == VALUE_MANAGER || mngr->type() == NULL_MANAGER) return -1;
+			int start = 0;
+			if(mngrs[0]->type() == VALUE_MANAGER && mngrs.size() > 1) start = 1;
+			if(mngr->mngrs.size() < 1 || mngr->type() == POWER_MANAGER) return mngrs[start]->compare(mngr);
+			if(mngr->type() == MULTIPLICATION_MANAGER) {
+				if(mngr->mngrs.size() < 1) return -1;
+				int mngr_start = 0;
+				if(mngr->mngrs[0]->type() == VALUE_MANAGER && mngr->mngrs.size() > 1) mngr_start = 1;			
+				for(int i = 0; ; i++) {
+					if(i >= mngr->mngrs.size() - mngr_start && i >= mngrs.size() - start) return 0;
+					if(i >= mngr->mngrs.size() - mngr_start) return 1;
+					if(i >= mngrs.size() - start) return -1;
+					int i2 = mngrs[i + start]->compare(mngr->mngrs[i + mngr_start]);
+					if(i2 != 0) return i2;
+				}
+			} 
+			if(mngr->type() == ADDITION_MANAGER) return 1;
+			return -1;
+		} 
+		case ADDITION_MANAGER: {		
+			if(mngrs.size() < 1) return 1;
+			if(mngr->type() == VALUE_MANAGER || mngr->type() == NULL_MANAGER) return -1;
+			if(mngr->type() == ADDITION_MANAGER) {
+				if(mngr->mngrs.size() < 1) return -1;
+				for(int i = 0; ; i++) {
+					if(i >= mngr->mngrs.size() && i >= mngrs.size()) return 0;
+					if(i >= mngr->mngrs.size()) return 1;
+					if(i >= mngrs.size()) return -1;
+					int i2 = mngrs[i]->compare(mngr->mngrs[i]);
+					if(i2 != 0) return i2;
+				}
+			} 
+			return mngrs[0]->compare(mngr);
 		}
 	}
 	return 1;
 }
+
 void Manager::sort() {
-	if(c_type == POWER_CH || mngrs.size() < 2) return;
+	if(c_type == POWER_MANAGER || mngrs.size() < 2) return;
 	vector<Manager*> sorted;
 	bool b;
 	for(int i = 0; i < mngrs.size(); i++) {
 		b = false;
-		for(int i2 = 0; i2 < sorted.size(); i2++) {
-			if((c_type == PLUS_CH && mngrs[i]->compare(sorted[i2]) < 0) || (c_type == MULTIPLICATION_CH && mngrs[i]->compare(sorted[i2]) > 0)) {
-				sorted.insert(sorted.begin() + i2, mngrs[i]);
-				b = true;
-				break;
+		if(c_type == MULTIPLICATION_MANAGER && (mngrs[i]->type() == VALUE_MANAGER || mngrs[i]->type() == NULL_MANAGER)) {
+			sorted.insert(sorted.begin(), mngrs[i]);	
+		} else {		
+			for(int i2 = 0; i2 < sorted.size(); i2++) {
+				if(!(c_type == MULTIPLICATION_MANAGER && sorted[i2]->type() == VALUE_MANAGER) && mngrs[i]->compare(sorted[i2]) < 0) {
+					sorted.insert(sorted.begin() + i2, mngrs[i]);
+					b = true;
+					break;
+				}
 			}
+			if(!b) sorted.push_back(mngrs[i]);
 		}
-		if(!b) sorted.push_back(mngrs[i]);
 	}
 	for(int i2 = 0; i2 < sorted.size(); i2++) {
 		mngrs[i2] = sorted[i2];
@@ -1201,7 +1255,8 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 				str += mngr->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, false, &plural_, d_exp);
 				if(b && i == mngrs.size() - 1) str += RIGHT_BRACKET_STR;
 				b = true;
-			} else if(mngrs[i]->c_type == PLUS_CH || ((mngrs[i]->c_type == POWER_CH && i == 0) || (i > 0 && mngrs[i - 1]->c_type == POWER_CH))) {
+//			} else if(mngrs[i]->c_type == PLUS_CH || ((mngrs[i]->c_type == POWER_CH && i == 0) || (i > 0 && mngrs[i - 1]->c_type == POWER_CH))) {
+			} else if(mngrs[i]->c_type == PLUS_CH) {
 				str += LEFT_BRACKET_STR;
 				str += mngrs[i]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, false, &plural_, d_exp);
 				str += RIGHT_BRACKET_STR;
@@ -1234,12 +1289,12 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 		} else {
 			str += mngrs[0]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, false);
 		}
-		if(unitflags & UNIT_FORMAT_NONASCII && mngrs[1]->c_type == 'v' && mngrs[1]->d_value == 2) {
-			str += SIGN_POWER_2;
-		} else if(unitflags & UNIT_FORMAT_NONASCII && mngrs[1]->c_type == 'v' && mngrs[1]->d_value == 3) {
-			str += SIGN_POWER_3;
-		} else {
-			if(unitflags & UNIT_FORMAT_TAGS) str += "<sup>";
+//		if(unitflags & UNIT_FORMAT_NONASCII && mngrs[1]->c_type == 'v' && mngrs[1]->d_value == 2) {
+//			str += SIGN_POWER_2;
+//		} else if(unitflags & UNIT_FORMAT_NONASCII && mngrs[1]->c_type == 'v' && mngrs[1]->d_value == 3) {
+//			str += SIGN_POWER_3;
+//		} else {
+			if(unitflags & UNIT_FORMAT_TAGS) str += "</big><sup>";
 			else str += POWER_STR;
 			if(mngrs[1]->mngrs.size() > 0) {
 				str += LEFT_BRACKET_STR;
@@ -1248,8 +1303,8 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 			} else {
 				str += mngrs[1]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, false);
 			}
-			if(unitflags & UNIT_FORMAT_TAGS) str += "</sup>";
-		}
+			if(unitflags & UNIT_FORMAT_TAGS) str += "</sup><big>";
+//		}
 	} else {
 		str2 = "0";
 		calc->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);

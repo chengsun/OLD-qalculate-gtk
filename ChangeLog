@@ -7,6 +7,8 @@
 
 2003-08-10  Niklas Knutsson  <nq@altern.org>
 
+	* Use <sup></sup> for all exponents for consistency
+	* New elegant and intelligent sorting, not only for internal purposes
 	* Updated swedish translation.
 	* Gettextized error messages.
 	* Updaterad Calculator::error().
