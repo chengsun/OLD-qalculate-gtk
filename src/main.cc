@@ -41,7 +41,7 @@ string result_text, parsed_text;
 GtkWidget *units_window;
 string selected_unit_category;
 Unit *selected_unit, *selected_to_unit;
-bool load_global_defs, fetch_exchange_rates_at_startup, first_time;
+bool load_global_defs, fetch_exchange_rates_at_startup, first_time, first_qalculate_run;
 GtkWidget *omToUnit_menu;
 GdkPixmap *pixmap_result;
 GdkPixbuf *pixbuf_result;
@@ -111,13 +111,6 @@ int main (int argc, char **argv) {
 	parsed_mstruct = new MathStructure();
 	parsed_to_str = new string;
 
-	/*gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", "tmp", "messages", NULL);
-	freopen(gstr, "w+", stdout);
-	g_free(gstr);
-	gstr = g_build_filename(g_get_home_dir(), ".qalculate", "tmp", "errors", NULL);
-	freopen(gstr, "w+", stderr);
-	g_free(gstr);*/
-
 	bool canplot = CALCULATOR->canPlot();
 	bool canfetch = CALCULATOR->canFetch();
 	
@@ -142,7 +135,16 @@ int main (int argc, char **argv) {
 	while(gtk_events_pending()) gtk_main_iteration();
 
 	//exchange rates
-	if((fetch_exchange_rates_at_startup || first_time) && canfetch) {
+	if(first_qalculate_run && canfetch) {
+		GtkWidget *edialog = gtk_message_dialog_new(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("You need the download exchange rates to be able to convert between different currencies. You can later get current exchange rates by selecting \"Update Exchange Rates\" under the File menu.\n\nDo you want to fetch exchange rates now from the Internet."));
+		int question_answer = gtk_dialog_run(GTK_DIALOG(edialog));
+		gtk_widget_destroy(edialog);
+		while(gtk_events_pending()) gtk_main_iteration();
+		if(question_answer == GTK_RESPONSE_YES) {
+			fetch_exchange_rates(5);
+			while(gtk_events_pending()) gtk_main_iteration();
+		}
+	} else if(fetch_exchange_rates_at_startup && canfetch) {
 		fetch_exchange_rates(5);
 		while(gtk_events_pending()) gtk_main_iteration();
 	}

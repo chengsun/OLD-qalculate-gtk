@@ -34,7 +34,7 @@
     <speed>47.8725</speed>
     <eccentricity>0.20563069</eccentricity>
     <inclination>7.00487</inclination>
-    <satellites />
+    <satellites>0</satellites>
     <mass>3.302E23</mass>
     <density>5.43</density>
     <area>7.5E7</area>
@@ -47,7 +47,7 @@
     <speed>35.0214</speed>
     <eccentricity>0.00677323</eccentricity>
     <inclination>3.39471</inclination>
-    <satellites />
+    <satellites>0</satellites>
     <mass>4.869E24</mass>
     <density>5.24</density>
     <area>4.60E8</area>

@@ -1549,7 +1549,7 @@ int HexFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 BaseFunction::BaseFunction() : Function("base", 2) {
 	setArgumentDefinition(1, new TextArgument());
 	IntegerArgument *arg = new IntegerArgument();
-	Number integ(1, 1);
+	Number integ(2, 1);
 	arg->setMin(&integ);
 	integ.set(36, 1);
 	arg->setMax(&integ);

@@ -1,3 +1,20 @@
+2004-10-03 Niklas Knutsson  <nq@altern.org>
+
+	* Ask if exchange rates shall be downloaded the first qalculate run
+	* Number base 1 makes no sense
+	* More work on qalc
+
+2004-10-02 Niklas Knutsson  <nq@altern.org>
+
+	* Change n for micro to u
+	* Command line program "qalc"
+	* Get rid of traces of separate angle unit variable
+
+2004-10-01 Niklas Knutsson  <nq@altern.org>
+
+	* Add filter to save result to image file dialog
+	* Install libqalculate as a shared library
+
 2004-09-30 Niklas Knutsson  <nq@altern.org>
 
 	* Alternative to use step size instead of sampling rate for generation of plot data

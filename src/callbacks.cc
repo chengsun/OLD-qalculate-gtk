@@ -19,6 +19,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <time.h>
+#include <dirent.h>
 #include <pthread.h>
 #include <glade/glade.h>
 #ifdef HAVE_LIBGNOME
@@ -91,14 +92,14 @@ extern Variable *selected_variable;
 extern string selected_unit_category;
 extern Unit *selected_unit;
 extern Unit *selected_to_unit;
-int saved_precision, saved_angle_unit;
+int saved_precision;
 bool save_mode_on_exit;
 bool save_defs_on_exit;
 bool use_custom_result_font, use_custom_expression_font;
 string custom_result_font, custom_expression_font;
 bool hyp_is_on, saved_hyp_is_on;
 bool show_buttons;
-extern bool load_global_defs, fetch_exchange_rates_at_startup, first_time;
+extern bool load_global_defs, fetch_exchange_rates_at_startup, first_time, first_qalculate_run;
 extern GtkWidget *omToUnit_menu;
 bool block_unit_convert;
 extern MathStructure *mstruct, *parsed_mstruct;
@@ -3840,8 +3841,8 @@ void setResult(Prefix *prefix = NULL, bool update_history = true, bool update_pa
 
 	if(b_busy) {
 		dialog = glade_xml_get_widget (main_glade, "progress_dialog");
-		gtk_window_set_title(GTK_WINDOW(dialog), "Processing...");
-		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (main_glade, "progress_label_message")), "Processing...");
+		gtk_window_set_title(GTK_WINDOW(dialog), _("Processing..."));
+		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (main_glade, "progress_label_message")), _("Processing..."));
 		gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
 		g_signal_connect(GTK_OBJECT(dialog), "response", G_CALLBACK(on_abort_display), NULL);
 		gtk_widget_show(dialog);
@@ -4051,8 +4052,8 @@ void execute_expression(bool force) {
 	GtkWidget *dialog = NULL;	
 	if(CALCULATOR->busy()) {
 		dialog = glade_xml_get_widget (main_glade, "progress_dialog");
-		gtk_window_set_title(GTK_WINDOW(dialog), "Calculating...");
-		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (main_glade, "progress_label_message")), "Calculating...");
+		gtk_window_set_title(GTK_WINDOW(dialog), _("Calculating..."));
+		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (main_glade, "progress_label_message")), _("Calculating..."));
 		gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
 		g_signal_connect(GTK_OBJECT(dialog), "response", G_CALLBACK(on_abort_calculation), NULL);
 		gtk_widget_show(dialog);
@@ -5273,7 +5274,7 @@ void convert_to_unit(GtkMenuItem *w, gpointer user_data)
 		gtk_widget_destroy(edialog);
 	}
 	//result is stored in MathStructure *mstruct
-	*mstruct = CALCULATOR->convert(*mstruct, u, evalops);
+	mstruct->set(CALCULATOR->convert(*mstruct, u, evalops));
 	result_action_executed();
 	focus_keeping_selection();
 }
@@ -6735,7 +6736,6 @@ void save_mode() {
 */
 void set_saved_mode() {
 	saved_precision = CALCULATOR->getPrecision();
-	saved_angle_unit = evalops.angle_unit;
 	saved_hyp_is_on = hyp_is_on;
 	saved_printops = printops;
 	saved_evalops = evalops;
@@ -6813,13 +6813,25 @@ void load_preferences() {
 	load_global_defs = true;
 	fetch_exchange_rates_at_startup = false;
 	first_time = false;
-	FILE *file = NULL;
-	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate-gtk.cfg", NULL);
-	file = fopen(gstr2, "r");
 	expression_history.clear();
 	expression_history_index = -1;
 	history_width = 325;
 	history_height = 350;
+	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", NULL);
+	DIR *dir = opendir(gstr);
+	g_free(gstr);
+	if(!dir) {
+		first_qalculate_run = true;
+		first_time = true;
+		set_saved_mode();
+		return;
+	} else {
+		first_qalculate_run = false;
+		closedir(dir);
+	}
+	FILE *file = NULL;
+	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate-gtk.cfg", NULL);
+	file = fopen(gstr2, "r");
 	g_free(gstr2);
 	if(file) {
 		char line[10000];
@@ -7190,7 +7202,7 @@ void save_preferences(bool mode)
 	fprintf(file, "number_base_expression=%i\n", saved_evalops.parse_options.base);
 	fprintf(file, "read_precision=%i\n", saved_evalops.parse_options.read_precision);
 	fprintf(file, "assume_denominators_nonzero=%i\n", saved_evalops.assume_denominators_nonzero);
-	fprintf(file, "angle_unit=%i\n", saved_angle_unit);
+	fprintf(file, "angle_unit=%i\n", saved_evalops.angle_unit);
 	fprintf(file, "hyp_is_on=%i\n", saved_hyp_is_on);
 	fprintf(file, "functions_enabled=%i\n", saved_evalops.parse_options.functions_enabled);
 	fprintf(file, "variables_enabled=%i\n", saved_evalops.parse_options.variables_enabled);
@@ -8808,6 +8820,14 @@ void on_menu_item_save_activate(GtkMenuItem *w, gpointer user_data) {
 void on_menu_item_save_image_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!pixbuf_result) return;
 	GtkWidget *d = gtk_file_chooser_dialog_new(_("Select file to save PNG image to"), GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
+	GtkFileFilter *filter = gtk_file_filter_new();
+	gtk_file_filter_set_name(filter, _("Allowed File Types"));
+	gtk_file_filter_add_mime_type(filter, "image/png");
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(d), filter);
+	GtkFileFilter *filter_all = gtk_file_filter_new();
+	gtk_file_filter_add_pattern(filter_all, "*");
+	gtk_file_filter_set_name(filter_all, _("All Files"));
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(d), filter_all);
 	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(d), "qalculate.png");
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT) {
 		gdk_pixbuf_save(pixbuf_result, gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d)), "png", NULL, NULL);
@@ -10198,12 +10218,12 @@ void on_plot_entry_expression_activate(GtkEntry *entry, gpointer user_data) {
 }
 
 void on_unit_dialog_button_ok_clicked(GtkButton *w, gpointer user_data) {
-	*mstruct = CALCULATOR->convert(*mstruct, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unit_glade, "unit_dialog_entry_unit"))), evalops);
+	mstruct->set(CALCULATOR->convert(*mstruct, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unit_glade, "unit_dialog_entry_unit"))), evalops));
 	result_action_executed();
 	gtk_widget_hide(glade_xml_get_widget (unit_glade, "unit_dialog"));
 }
 void on_unit_dialog_button_apply_clicked(GtkButton *w, gpointer user_data) {
-	*mstruct = CALCULATOR->convert(*mstruct, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unit_glade, "unit_dialog_entry_unit"))), evalops);
+	mstruct->set(CALCULATOR->convert(*mstruct, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unit_glade, "unit_dialog_entry_unit"))), evalops));
 	result_action_executed();
 }
 void on_unit_dialog_entry_unit_activate(GtkEntry *entry, gpointer user_data) {

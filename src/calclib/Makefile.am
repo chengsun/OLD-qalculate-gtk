@@ -4,9 +4,9 @@
 
 SUBDIRS = data
 
-noinst_LTLIBRARIES = libcalculate.la
+lib_LTLIBRARIES = libqalculate.la
 
-libcalculate_la_SOURCES = \
+libqalculate_la_SOURCES = \
 	Function.cc	Function.h \
 	Calculator.cc	Calculator.h \
 	DataSet.cc	DataSet.h \
@@ -20,6 +20,10 @@ libcalculate_la_SOURCES = \
 	Unit.cc		Unit.h \
 	BuiltinFunctions.cc BuiltinFunctions.h \
 	qalculate.h
+
+libqalculate_la_LDFLAGS = -version-info $(QALCULATE_CURRENT):$(QALCULATE_REVISION):$(QALCULATE_AGE) -no-undefined
+
+libqalculate_la_LIBADD = $(INTLLIBS) $(DEPENDENT_LIBS)
 
 INCLUDES = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
