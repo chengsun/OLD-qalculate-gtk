@@ -100,7 +100,18 @@ int main (int argc, char **argv) {
 	//create main window
 	create_main_window();
 
-	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(main_glade, "expression")), calc_arg.c_str());
+	while(gtk_events_pending()) gtk_main_iteration();
+
+	if(!calc_arg.empty()) {
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(main_glade, "expression")), calc_arg.c_str());
+	} else if(first_time) {
+		PangoLayout *layout = gtk_widget_create_pango_layout(glade_xml_get_widget(main_glade, "resultview"), NULL);
+		gint w = 0, h = 0;
+		pango_layout_set_markup(layout, _("Enter a mathematical expression above.\nEx. 5 + 2 / 3"), -1);
+		pango_layout_get_pixel_size(layout, &w, &h);
+		gdk_draw_layout(GDK_DRAWABLE(glade_xml_get_widget(main_glade, "resultview")->window), glade_xml_get_widget(main_glade, "resultview")->style->fg_gc[GTK_WIDGET_STATE(glade_xml_get_widget(main_glade, "expression"))], 0, 0, layout);	
+		g_object_unref(layout);
+	}
 
 	while(gtk_events_pending()) gtk_main_iteration();
 

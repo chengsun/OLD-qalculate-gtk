@@ -1,5 +1,12 @@
 2004-03-17 Niklas Knutsson  <nq@altern.org>
 
+	* Save size of history dialog
+	* Show a nice little help message the first time Qalculate! is started
+	* Update Swedish translation
+	* "quaert" -> "quart"
+	* Do not insert parenthesis when completing if they already are there
+	* New error message when matrix has no inverse
+	* Make abort messages localized and nicer
 	* Limit width of result display text
 	* Use transparent pixbuf for result to not look ugly with pixmap themes
 	* Support newer Giac versions

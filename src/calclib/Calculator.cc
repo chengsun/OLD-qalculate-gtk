@@ -113,7 +113,7 @@ void *calculate_proc(void *x) {
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 	Manager *mngr = (Manager*) x;
-	mngr->set("aborted");
+	mngr->set(_("aborted"));
 	Manager *mngr2 = CALCULATOR->calculate(CALCULATOR->expression_to_calculate, false);
 	mngr->set(mngr2);
 	mngr2->unref();

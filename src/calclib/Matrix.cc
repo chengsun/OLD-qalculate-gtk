@@ -98,6 +98,7 @@ bool Matrix::inverse() {
 	}
 	if(mngr->isNull()) {
 		delete mngr;
+		CALCULATOR->error(true, _("The matrix has no inverse."), NULL);
 		return false;
 	}
 	b_vector = false;

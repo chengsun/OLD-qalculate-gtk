@@ -100,6 +100,7 @@ Prefix *tmp_prefix;
 bool tmp_in_exact;
 GdkPixmap *tmp_pixmap;
 bool expression_has_changed, current_object_has_changed;
+int history_width, history_height;
 
 vector<string> initial_history;
 vector<string> expression_history;
@@ -3617,7 +3618,17 @@ void *view_proc(void *x) {
 	
 	if(result_text.length() > 1500) {
 		PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
-		pango_layout_set_markup(layout, TEXT_TAGS "(to long, see history)" TEXT_TAGS_END, -1);
+		pango_layout_set_markup(layout, _("result is too long\nsee history"), -1);
+		gint w = 0, h = 0;
+		pango_layout_get_pixel_size(layout, &w, &h);
+		tmp_pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
+		gdk_draw_rectangle(tmp_pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
+		gdk_draw_layout(GDK_DRAWABLE(tmp_pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
+		g_object_unref(layout);
+		tmp_in_exact = false;
+	} else if(result_text == _("aborted")) {
+		PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
+		pango_layout_set_markup(layout, _("calculation was aborted"), -1);
 		gint w = 0, h = 0;
 		pango_layout_get_pixel_size(layout, &w, &h);
 		tmp_pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
@@ -3726,7 +3737,7 @@ void setResult(const gchar *expr, Prefix *prefix = NULL, bool update_history = t
 	gint w = 0, wr = 0, h = 0, hr = 0, h_new, w_new;
 	if(!tmp_pixmap) {
 		PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
-		pango_layout_set_markup(layout, TEXT_TAGS "?" TEXT_TAGS_END, -1);
+		pango_layout_set_markup(layout, _("result processing was aborted"), -1);
 		pango_layout_get_pixel_size(layout, &w, &h);
 		tmp_pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
 		gdk_draw_rectangle(tmp_pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
@@ -5679,6 +5690,8 @@ void load_preferences() {
 	file = fopen(gstr2, "r");
 	expression_history.clear();
 	expression_history_index = -1;
+	history_width = 325;
+	history_height = 250;
 	g_free(gstr2);
 	if(file) {
 		char line[10000];
@@ -5848,9 +5861,12 @@ void load_preferences() {
 					default_plot_color = v;
 				else if(svar == "expression_history")
 					expression_history.push_back(svalue);		
-				else if(svar == "history") {
+				else if(svar == "history") 
 					initial_history.push_back(svalue);
-				}
+				else if(svar == "history_width") 
+					history_width = v;
+				else if(svar == "history_height") 
+					history_height = v;	
 			}
 		}
 	} else {
@@ -5908,6 +5924,10 @@ void save_preferences(bool mode)
 	fprintf(file, "use_custom_expression_font=%i\n", use_custom_expression_font);	
 	fprintf(file, "custom_result_font=%s\n", custom_result_font.c_str());	
 	fprintf(file, "custom_expression_font=%s\n", custom_expression_font.c_str());		
+	if(history_width != 325 || history_height != 250) {
+		fprintf(file, "history_width=%i\n", history_width);	
+		fprintf(file, "history_height=%i\n", history_height);	
+	}
 	for(unsigned int i = 0; i < expression_history.size(); i++) {
 		fprintf(file, "expression_history=%s\n", expression_history[i].c_str()); 
 	}	
@@ -6036,6 +6056,14 @@ void edit_preferences() {
 extern "C" {
 #endif
 
+void on_history_dialog_destroy_event(GtkWidget *widget, gpointer user_data) {
+	gint w = 0, h = 0;
+	gtk_window_get_size(GTK_WINDOW(glade_xml_get_widget(main_glade, "history_dialog")), &w, &h);
+	history_width = w;
+	history_height = h;
+	gtk_widget_hide(glade_xml_get_widget(main_glade, "history_dialog"));
+}
+
 #if GTK_MINOR_VERSION >= 3
 void set_current_object() {
 	if(!current_object_has_changed) return;
@@ -6084,10 +6112,18 @@ gboolean on_completion_match_selected(GtkEntryCompletion *entrycompletion, GtkTr
 	gtk_editable_delete_text(GTK_EDITABLE(expression), current_object_start, current_object_end);
 	gint pos = current_object_start;
 	block_completion();
-	gtk_editable_insert_text(GTK_EDITABLE(expression), gstr, -1, &pos);
 	if(gstr[strlen(gstr) - 1] == ')') {
-		gtk_editable_set_position(GTK_EDITABLE(expression), pos -1);
+		gchar *gstr2 = gtk_editable_get_chars(GTK_EDITABLE(expression), pos, pos + 1);
+		if(strlen(gstr2) > 0 && gstr2[0] == '(') {
+			gtk_editable_insert_text(GTK_EDITABLE(expression), gstr, strlen(gstr) - 2, &pos);
+			gtk_editable_set_position(GTK_EDITABLE(expression), pos);
+		} else {
+			gtk_editable_insert_text(GTK_EDITABLE(expression), gstr, -1, &pos);
+			gtk_editable_set_position(GTK_EDITABLE(expression), pos -1);
+		}
+		g_free(gstr2);
 	} else {
+		gtk_editable_insert_text(GTK_EDITABLE(expression), gstr, -1, &pos);
 		gtk_editable_set_position(GTK_EDITABLE(expression), pos);
 	}
 	g_free(gstr);
@@ -6095,7 +6131,6 @@ gboolean on_completion_match_selected(GtkEntryCompletion *entrycompletion, GtkTr
 	return TRUE;
 }
 gboolean completion_match_func(GtkEntryCompletion *entrycompletion, const gchar *key, GtkTreeIter *iter, gpointer user_data) {
-
 	set_current_object();
 	if(current_object_start < 0) return FALSE;
 	gchar *gstr1, *gstr2;
@@ -6372,6 +6407,9 @@ void on_button_close_clicked(GtkButton *w, gpointer user_data) {
 }
 
 void on_button_history_clicked(GtkToggleButton *togglebutton, gpointer user_data) {
+	if(!GTK_WIDGET_VISIBLE(glade_xml_get_widget(main_glade, "history_dialog"))) {
+		gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "history_dialog")), history_width, history_height);
+	}
 	gtk_widget_show(glade_xml_get_widget(main_glade, "history_dialog"));
 	gtk_window_present(GTK_WINDOW(glade_xml_get_widget(main_glade, "history_dialog")));
 }
@@ -6444,6 +6482,9 @@ on_button_execute_clicked                        (GtkButton       *button,
 gboolean on_gcalc_exit(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
 	if(plot_glade && GTK_WIDGET_VISIBLE(glade_xml_get_widget (plot_glade, "plot_dialog"))) {
 		gtk_widget_hide(glade_xml_get_widget (plot_glade, "plot_dialog"));
+	}
+	if(GTK_WIDGET_VISIBLE(glade_xml_get_widget (main_glade, "history_dialog"))) {
+		on_history_dialog_destroy_event(glade_xml_get_widget(main_glade, "history_dialog"), NULL);
 	}
 	if(save_mode_on_exit) {
 		save_mode();

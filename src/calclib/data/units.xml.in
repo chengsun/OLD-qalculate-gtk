@@ -642,8 +642,8 @@
       </base>
       <_title>Stone</_title>
     </unit>
-    <unit type="alias" name="quaert">
-      <_singular>quaert</_singular>
+    <unit type="alias" name="quart">
+      <_singular>quart</_singular>
       <_plural>quarters</_plural>
       <base>
         <unit>lb</unit>
