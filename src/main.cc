@@ -62,7 +62,7 @@ int main (int argc, char **argv) {
 			NULL);
 	g_assert (glade_xml != NULL);
 	g_free (gstr);
-	
+
 	//create the almighty Calculator object
 	calc = new Calculator();
 

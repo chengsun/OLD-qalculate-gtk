@@ -76,6 +76,10 @@ Calculator::Calculator() {
 	addStringAlternative(SIGN_POWER_3, "^3");
 	addStringAlternative(SIGN_EURO, "euro");
 	addStringAlternative(SIGN_MICRO, "micro");
+	addStringAlternative(SIGN_DIVISION, DIVISION);	
+	addStringAlternative(SIGN_MULTIPLICATION, MULTIPLICATION);		
+	addStringAlternative(SIGN_MINUS, MINUS);		
+	addStringAlternative(SIGN_PLUS, PLUS);		
 	addStringAlternative("[", LEFT_BRACKET);	
 	addStringAlternative("]", RIGHT_BRACKET);	
 	addStringAlternative(";", COMMA);	
@@ -2104,7 +2108,7 @@ string Calculator::value2str_hex(long double &value, int precision) {
 	return stmp;
 }
 
-string Calculator::value2str_prefix(long double &value, long double &exp, int precision, bool use_short_prefixes, long double *new_value, long double prefix_) {
+string Calculator::value2str_prefix(long double &value, long double &exp, int precision, bool use_short_prefixes, long double *new_value, long double prefix_, bool print_one) {
 	long double d1;
 	if(prefix_ >= 0.0L) {
 		string str = "";
@@ -2129,8 +2133,11 @@ string Calculator::value2str_prefix(long double &value, long double &exp, int pr
 		if(!str.empty()) {
 			d1 = powl(prefix_, exp);
 			d1 = value / d1;
-			string str2 = value2str(d1, precision);
-			str2 += ' ';
+			string str2;
+			if(print_one || d1 != 1.0L) {
+				str2 = value2str(d1, precision);
+				str2 += ' ';
+			}
 			str2 += str;
 			if(new_value)
 				*new_value = d1;
@@ -2138,6 +2145,7 @@ string Calculator::value2str_prefix(long double &value, long double &exp, int pr
 		}
 		if(new_value)
 			*new_value = value;	
+		if(!print_one && value == 1.0L) return "";	
 		return value2str(value, precision);		
 	}
 	long double d2, d3;
@@ -2146,6 +2154,7 @@ string Calculator::value2str_prefix(long double &value, long double &exp, int pr
 	if(value == 1.0L || value == 0.0L) {
 		if(new_value) 
 			*new_value = value;
+		if(value == 1.0L && !print_one) return "";
 		return value2str(value, precision);
 	}
 	for(it = s_prefix.begin(); it != s_prefix.end(); ++it) {
@@ -2184,8 +2193,11 @@ string Calculator::value2str_prefix(long double &value, long double &exp, int pr
 	}
 	d1 = value / d1;
 	if((value > 1 && value > d1) || (value < 1 && value < d1)) {
-		string str2 = value2str(d1, precision);
-		str2 += ' ';
+		string str2;
+		if(print_one || d1 != 1.0L) {
+			str2 = value2str(d1, precision);
+			str2 += ' ';
+		}
 		str2 += str;
 		if(new_value)
 			*new_value = d1;
@@ -2193,6 +2205,7 @@ string Calculator::value2str_prefix(long double &value, long double &exp, int pr
 	}
 	if(new_value)
 		*new_value = value;	
+	if(!print_one && value == 1.0L) return "";	
 	return value2str(value, precision);
 }
 

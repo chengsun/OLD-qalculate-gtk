@@ -1,3 +1,12 @@
+2003-08-18  Niklas Knutsson  <nq@altern.org>
+
+	* Last minute fixes
+	* Fix display of exponent of exponent
+	* Put unicode chars on buttons in code and add option to disable unicode signs
+	* Unicode math operators
+	* Save version info to configuration file
+	* Update version number
+
 2003-08-17  Niklas Knutsson  <nq@altern.org>
 
 	* Only put "1 " in front of unit in toplevel
@@ -25,7 +34,7 @@
 	* Change Function::name(string), Unit::title(string), etc. to setTitle(), setName()
 
 2003-08-16  Niklas Knutsson  <nq@altern.org>
-	
+
 	* Google style in expression conversion (ex. 5 m to ft = 16.4 ft)
 	* Small unit conversion fix (1 km/1 kg => 1 km/kg).
 	* More units.

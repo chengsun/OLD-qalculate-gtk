@@ -166,62 +166,74 @@ void ModFunction::calculate2(Manager *mngr) {
 
 SinFunction::SinFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "sin", 1, "Sine") {}
 void SinFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+//	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
 	else mngr->set(sinl(calc->getAngleValue(vargs[0]->value())));
 }
 CosFunction::CosFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "cos", 1, "Cosine") {}
 void CosFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+//	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);	
 	else mngr->set(cosl(calc->getAngleValue(vargs[0]->value())));
 }
 TanFunction::TanFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "tan", 1, "Tangent") {}
 void TanFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+//	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
 	else mngr->set(tanl(calc->getAngleValue(vargs[0]->value())));
 }
 SinhFunction::SinhFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "sinh", 1, "Hyperbolic sine") {}
 void SinhFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+//	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
 	else mngr->set(sinhl(calc->getAngleValue(vargs[0]->value())));
 }
 CoshFunction::CoshFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "cosh", 1, "Hyperbolic cosine") {}
 void CoshFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+//	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
 	else mngr->set(coshl(calc->getAngleValue(vargs[0]->value())));
 }
 TanhFunction::TanhFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "tanh", 1, "Hyperbolic tangent") {}
 void TanhFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+//	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
 	else mngr->set(tanhl(calc->getAngleValue(vargs[0]->value())));
 }
 AsinFunction::AsinFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "asin", 1, "Arcsine") {}
 void AsinFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+//	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
 	else mngr->set(asinl(calc->getAngleValue(vargs[0]->value())));
 }
 AcosFunction::AcosFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "acos", 1, "Arccosine") {}
 void AcosFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+//	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
 	else mngr->set(acosl(calc->getAngleValue(vargs[0]->value())));
 }
 AtanFunction::AtanFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "atan", 1, "Arctangent") {}
 void AtanFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+//	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
 	else mngr->set(atanl(calc->getAngleValue(vargs[0]->value())));
 }
 AsinhFunction::AsinhFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "asinh", 1, "Hyperbolic arcsine") {}
 void AsinhFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+//	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
 	else mngr->set(asinhl(calc->getAngleValue(vargs[0]->value())));
 }
 AcoshFunction::AcoshFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "acosh", 1, "Hyperbolic arccosine") {}
 void AcoshFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+//	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
 	else mngr->set(acoshl(calc->getAngleValue(vargs[0]->value())));
 }
 AtanhFunction::AtanhFunction(Calculator *calc_) : Function(calc_, "Trigonometry", "atanh", 1, "Hyperbolic arctangent") {}
 void AtanhFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+//	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, calc->setAngleValue(vargs[0]), NULL);
+	if(vargs[0]->type() != VALUE_MANAGER && vargs[0]->type() != NULL_MANAGER) mngr->set(this, vargs[0], NULL);
 	else mngr->set(atanhl(calc->getAngleValue(vargs[0]->value())));
 }
 LogFunction::LogFunction(Calculator *calc_) : Function(calc_, "Exponents and Logarithms", "ln", 1, "Natural Logarithm") {}

@@ -86,6 +86,7 @@ extern "C" {
 void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data);
 void on_button_close_clicked(GtkButton *w, gpointer user_data);
 void on_preferences_checkbutton_short_units_toggled(GtkToggleButton *w, gpointer user_data);
+void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_save_defs_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_save_mode_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_load_defs_toggled(GtkToggleButton *w, gpointer user_data);

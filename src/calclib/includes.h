@@ -48,6 +48,12 @@ typedef enum {
 #define SIGN_POWER_3		"³"
 #define SIGN_EURO		"€"
 #define SIGN_MICRO		"µ"
+#define SIGN_MULTIPLICATION	"×"
+#define SIGN_MULTIDOT		"⋅"
+#define SIGN_DIVISION		"∕"
+#define SIGN_MINUS		"−"
+#define SIGN_PLUS		"＋"
+#define SIGN_SQRT		"√"
 
 #define ID_WRAP_LEFT_CH		'{'
 #define ID_WRAP_RIGHT_CH	'}'

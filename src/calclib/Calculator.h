@@ -136,7 +136,7 @@ class Calculator {
 	string value2str_bin(long double &value, int precision = PRECISION);				
 	string value2str_octal(long double &value, int precision = PRECISION);		
 	string value2str_hex(long double &value, int precision = PRECISION);			
-	string value2str_prefix(long double &value, long double &exp, int precision = PRECISION, bool use_short_prefixes = true, long double *new_value = NULL, long double prefix_ = -1.0L);
+	string value2str_prefix(long double &value, long double &exp, int precision = PRECISION, bool use_short_prefixes = true, long double *new_value = NULL, long double prefix_ = -1.0L, bool print_one = true);
 	string value2str_exp(long double &value, int precision = PRECISION);
 	string value2str_exp_pure(long double &value, int precision = PRECISION);	
 	long double getAngleValue(long double value);

@@ -54,7 +54,7 @@ extern string selected_unit_category;
 extern Unit *selected_unit;
 extern Unit *selected_to_unit;
 int saved_deci_mode, saved_decimals, saved_precision, saved_display_mode, saved_number_base, saved_angle_unit;
-bool use_short_units;
+bool use_short_units, use_unicode_signs;
 bool saved_functions_enabled, saved_variables_enabled, saved_unknownvariables_enabled, saved_units_enabled;
 bool save_mode_on_exit;
 bool save_defs_on_exit;
@@ -1063,7 +1063,7 @@ void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpoin
 		}
 		gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "units_optionmenu_to_unit")), h);
 	}
-	block_unit_convert = false;
+	block_unit_convert = false;		
 	//update conversion display
 	convert_in_wUnits();
 }
@@ -1426,10 +1426,10 @@ void update_fmenu() {
 string get_value_string(Manager *mngr_, bool rlabel = false, long double prefix_ = -1.0L) {
 	int unitflags = 0;
 	unitflags = unitflags | UNIT_FORMAT_BEAUTIFY;
-	unitflags = unitflags | UNIT_FORMAT_NONASCII;
 	if(use_short_units) unitflags = unitflags | UNIT_FORMAT_SHORT;
 	else unitflags = unitflags | UNIT_FORMAT_LONG;
 	if(rlabel) {
+		if(use_unicode_signs) unitflags = unitflags | UNIT_FORMAT_NONASCII;
 		unitflags = unitflags | UNIT_FORMAT_TAGS;
 		unitflags = unitflags | UNIT_FORMAT_ALLOW_NOT_USABLE;
 	}
@@ -1465,7 +1465,7 @@ void setResult(const gchar *expr, long double prefix_ = -1.0L) {
 	vAns->set(mngr);
 
 	str2 = get_value_string(mngr, true, prefix_);
-	bool useable = false;
+	bool useable = true;
 	gtk_label_set_selectable(GTK_LABEL(result), useable);
 	gtk_widget_set_size_request(result, -1, -1);	
 	gtk_label_set_text(GTK_LABEL(result), str2.c_str());
@@ -2332,11 +2332,11 @@ void set_angle_item() {
 	GtkWidget *mi = NULL;
 	switch(calc->angleMode()) {
 	case RADIANS: {
-			mi = glade_xml_get_widget (glade_xml, "menu_item_gradians");
+			mi = glade_xml_get_widget (glade_xml, "menu_item_radians");
 			break;
 		}
 	case GRADIANS: {
-			mi = glade_xml_get_widget (glade_xml, "menu_item_radians");
+			mi = glade_xml_get_widget (glade_xml, "menu_item_gradians");
 			break;
 		}
 	case DEGREES: {
@@ -2598,6 +2598,7 @@ void load_preferences() {
 	show_more = false;
 	show_buttons = false;
 	use_short_units = true;
+	use_unicode_signs = true;
 	load_global_defs = true;
 	FILE *file = NULL;
 	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate-gtk.cfg", NULL);
@@ -2651,6 +2652,8 @@ void load_preferences() {
 					calc->setUnitsEnabled(v);
 				else if(svar == "use_short_units")
 					use_short_units = v;
+				else if(svar == "use_unicode_signs")
+					use_unicode_signs = v;					
 			}
 		}
 	}
@@ -2687,12 +2690,14 @@ void save_preferences(bool mode)
 	}
 	g_free(gstr2);
 	fprintf(file, "\n[General]\n");
+	fprintf(file, "version=%s\n", VERSION);	
 	fprintf(file, "save_mode_on_exit=%i\n", save_mode_on_exit);
 	fprintf(file, "save_definitions_on_exit=%i\n", save_defs_on_exit);
 	fprintf(file, "load_global_definitions=%i\n", load_global_defs);
 	fprintf(file, "show_more=%i\n", GTK_WIDGET_VISIBLE(glade_xml_get_widget (glade_xml, "notebook")));
 	fprintf(file, "show_buttons=%i\n", gtk_notebook_get_current_page(GTK_NOTEBOOK(glade_xml_get_widget (glade_xml, "notebook"))) == 1);
 	fprintf(file, "use_short_units=%i\n", use_short_units);
+	fprintf(file, "use_unicode_signs=%i\n", use_unicode_signs);	
 	if(mode)
 		set_saved_mode();
 	fprintf(file, "\n[Mode]\n");
@@ -2774,6 +2779,24 @@ void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data) {
 */
 void on_preferences_checkbutton_short_units_toggled(GtkToggleButton *w, gpointer user_data) {
 	use_short_units = gtk_toggle_button_get_active(w);
+}
+void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpointer user_data) {
+	use_unicode_signs = gtk_toggle_button_get_active(w);
+	if(use_unicode_signs) {
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_sub")), SIGN_MINUS);
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_add")), SIGN_PLUS);
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_times")), SIGN_MULTIPLICATION);	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_divide")), SIGN_DIVISION);	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_sqrt")), SIGN_SQRT);	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_dot")), SIGN_MULTIDOT);	
+	} else {
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_sub")), MINUS_STR);
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_add")), PLUS_STR);
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_times")), MULTIPLICATION_STR);	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_divide")), DIVISION_STR);	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_sqrt")), "SQRT");	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_dot")), DOT_STR);	
+	}
 }
 void on_preferences_checkbutton_save_defs_toggled(GtkToggleButton *w, gpointer user_data) {
 	save_defs_on_exit = gtk_toggle_button_get_active(w);
@@ -3029,7 +3052,7 @@ on_togglebutton_result_toggled                      (GtkToggleButton       *butt
 	clear the displayed result when expression changes
 */
 void on_expression_changed(GtkEditable *w, gpointer user_data) {
-	gtk_label_set_text(GTK_LABEL(result), "<big><b>0</b></big>");
+	if(strlen(gtk_label_get_label(GTK_LABEL(result))) < 1) return;
 	gtk_widget_set_size_request(result, -1, result->allocation.height);	
 	gtk_label_set_text(GTK_LABEL(result), "");
 }

@@ -1132,7 +1132,7 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 //				if(toplevel || d_exp) {
 				if(d_exp) {
 //					if(d_exp) {
-					str2 = calc->value2str_prefix(d_value, *d_exp, precision, unitflags & UNIT_FORMAT_SHORT, &new_value, prefix_);
+					str2 = calc->value2str_prefix(d_value, *d_exp, precision, unitflags & UNIT_FORMAT_SHORT, &new_value, prefix_, !in_composite);
 //					} else {
 //						long double exp_value = 1.0L;
 //						str2 = calc->value2str_prefix(d_value, exp_value, precision, unitflags & UNIT_FORMAT_SHORT, &new_value);
@@ -1158,7 +1158,19 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 				break;
 			}			
 		}	
-		calc->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
+		bool minus = false;
+		if(str2.substr(0, strlen(MINUS_STR)) == MINUS_STR) {
+			str2 = str2.substr(strlen(MINUS_STR), str2.length() - strlen(MINUS_STR));
+			minus = true;
+		}
+		if(!in_composite) calc->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
+		if(minus) {
+			if(unitflags & UNIT_FORMAT_NONASCII) {
+				str2.insert(0, SIGN_MINUS);
+			} else {
+				str2.insert(0, MINUS_STR);
+			}
+		}
 		str += str2;
 		if(unitflags & UNIT_FORMAT_TAGS) {
 			int i = str.find("E");
@@ -1176,7 +1188,7 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 		if(o_unit->type() == 'D') {
 			Manager *mngr = ((CompositeUnit*) o_unit)->generateManager(false);
 			str2 = mngr->print(NUMBER_FORMAT_PREFIX, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, NULL, true);		
-			gsub("1 ", "", str2);
+//			gsub("1 ", "", str2);
 //			if(str2.substr(0, 2) == "1 ") str2 = str2.substr(2, str2.length() - 2);
 			str += str2;
 			mngr->unref();
@@ -1211,10 +1223,15 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 	} else if(c_type == PLUS_CH) {
 		for(int i = 0; i < mngrs.size(); i++) {
 			if(i > 0) {
-				str += " ";
-				if(mngrs[i]->negative()) str += MINUS_STR;
-				else str += PLUS_STR;
-				str += " ";
+				str += " ";			
+				if(unitflags & UNIT_FORMAT_NONASCII) {
+					if(mngrs[i]->negative()) str += SIGN_MINUS;
+					else str += SIGN_PLUS;
+				} else {
+					if(mngrs[i]->negative()) str += MINUS_STR;
+					else str += PLUS_STR;
+				}
+				str += " ";				
 			}
 			d_exp = NULL;
 /*			if(mngrs[i]->type() == VALUE_MANAGER) {
@@ -1226,10 +1243,13 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 				calc->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
 				str += str2; str += " ";
 			}
-			if(mngrs[i]->negative() && i > 0) {
-				str2 = mngrs[i]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, d_exp, in_composite);
-				str += str2.substr(1, str2.length() - 1);
-			} else str += mngrs[i]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, d_exp, in_composite);
+			str2 = mngrs[i]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, d_exp, in_composite);
+			if(i > 0 && unitflags & UNIT_FORMAT_NONASCII && str2.substr(0, strlen(SIGN_MINUS)) == SIGN_MINUS) {
+				str2 = str2.substr(strlen(SIGN_MINUS), str2.length() - strlen(SIGN_MINUS));
+			} else if(i > 0 && str2.substr(0, strlen(MINUS_STR)) == MINUS_STR) {
+				str2 = str2.substr(strlen(MINUS_STR), str2.length() - strlen(MINUS_STR));
+			}
+			str += str2;
 		}
 	} else if(c_type == MULTIPLICATION_CH) {
 		bool b = false, c = false;
@@ -1238,6 +1258,14 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 		for(int i = 0; i < mngrs.size(); i++) {
 			d_exp = NULL;
 			if(prefix) prefix--;
+			if(i == 0 && mngrs[i]->type() == VALUE_MANAGER && mngrs[i]->value() == -1.0L && mngrs.size() > 1 && mngrs[1]->type() != 'u' && (mngrs[1]->type() != UNIT_MANAGER || mngrs[1]->mngrs[0]->type() != UNIT_MANAGER)) {
+				if(unitflags & UNIT_FORMAT_NONASCII) {
+					str += SIGN_MINUS;
+				} else {
+					str += MINUS_STR;
+				}
+				i++;
+			}
 			if(mngrs[i]->type() == VALUE_MANAGER && mngrs.size() >= i + 2) {
 				if(mngrs[i + 1]->type() == POWER_MANAGER) {
 					if(mngrs[i + 1]->mngrs[1]->type() == VALUE_MANAGER && mngrs[i + 1]->mngrs[0]->type() == UNIT_MANAGER) {
@@ -1251,7 +1279,8 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 					prefix = 2;						
 				}
 			}
-			if(!in_composite && i == 0 && (mngrs[i]->c_type == 'u' || (mngrs[i]->c_type == 's' && mngrs[i]->s_var.length() > 1) || (mngrs[i]->c_type == POWER_CH && (mngrs[i]->mngrs[0]->c_type == 'u' || (mngrs[i]->mngrs[0]->c_type == 's' && mngrs[i]->mngrs[0]->s_var.length() > 1))))) {
+//			if(!in_composite && i == 0 && (mngrs[i]->c_type == 'u' || (mngrs[i]->c_type == 's' && mngrs[i]->s_var.length() > 1) || (mngrs[i]->c_type == POWER_CH && (mngrs[i]->mngrs[0]->c_type == 'u' || (mngrs[i]->mngrs[0]->c_type == 's' && mngrs[i]->mngrs[0]->s_var.length() > 1))))) {
+			if(!in_composite && i == 0 && (mngrs[i]->c_type == 'u' || (mngrs[i]->c_type == POWER_CH && mngrs[i]->mngrs[0]->c_type == 'u'))) {
 				str2 = "1";
 				calc->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
 				str += str2; str += " ";
@@ -1259,13 +1288,21 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 			if(!(unitflags & UNIT_FORMAT_SCIENTIFIC) && i > 0 && mngrs[i]->c_type == POWER_CH && mngrs[i]->mngrs[1]->negative()) {
 				Manager *mngr = new Manager(mngrs[i]);
 				mngr->add(-1, POWER_CH);
-				if(!b) str += DIVISION_STR;
+				if(!b) {
+					if(unitflags & UNIT_FORMAT_NONASCII) {
+						str += " ";
+						str += SIGN_DIVISION;
+						str += " ";
+					} else {
+						str += DIVISION_STR;
+					}
+				}
 				if(!b && (i < mngrs.size() - 1 || mngr->type() == ADDITION_MANAGER) && (i + 1 != mngrs.size() - 1 || mngr->type() != VALUE_MANAGER || mngr->type() == ADDITION_MANAGER)) {
 					c = true;
 					str += LEFT_BRACKET_STR;
 				}
 				if(b && mngrs[i]->mngrs[0]->c_type == 'u')  {
-					if(!prefix || is_in(str[str.length() - 1], NUMBERS_S, NULL)) {
+					if(!prefix || is_in(str[str.length() - 1], NUMBERS_S, MINUS_S, NULL)) {
 						str += " ";
 					}
 				}				
@@ -1282,8 +1319,12 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 			} else {
 				if(i > 0 && (mngrs[i]->type() == FUNCTION_MANAGER || mngrs[i - 1]->type() == FUNCTION_MANAGER)) {
 					str += " ";
-					str += MULTIPLICATION_STR;
-					str += " ";			
+					if(unitflags & UNIT_FORMAT_NONASCII) {
+						str += SIGN_MULTIDOT;
+					} else {
+						str += MULTIPLICATION_STR;
+					}
+					str += " ";								
 				} else if(i > 0 && (mngrs[i]->c_type == 'u' || (mngrs[i]->c_type == POWER_CH && mngrs[i]->mngrs[0]->c_type == 'u')))  {
 					if(!prefix || is_in(str[str.length() - 1], NUMBERS_S, NULL)) {
 						str += " ";
@@ -1315,7 +1356,26 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 //		} else if(unitflags & UNIT_FORMAT_NONASCII && mngrs[1]->c_type == 'v' && mngrs[1]->d_value == 3) {
 //			str += SIGN_POWER_3;
 //		} else {
-			if(unitflags & UNIT_FORMAT_TAGS) str += "</big><sup>";
+			int i2 = 0;
+			if(unitflags & UNIT_FORMAT_TAGS) {
+				int i = 0;
+				while((i = str.find("<big>", i)) != string::npos) {
+					i2++;
+					i += 5;
+					i = str.find("</big>", i);	
+					if(i == string::npos) break;
+					i2--;
+					i += 6;
+				}
+			}
+			if(unitflags & UNIT_FORMAT_TAGS) {
+				if(i2) {
+					str += "</big>";
+					str += "<sup>";
+				} else {
+					str += POWER_STR;
+				}
+			}
 			else str += POWER_STR;
 			if(mngrs[1]->mngrs.size() > 0) {
 				str += LEFT_BRACKET_STR;
@@ -1324,7 +1384,12 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 			} else {
 				str += mngrs[1]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, NULL, in_composite);
 			}
-			if(unitflags & UNIT_FORMAT_TAGS) str += "</sup><big>";
+			if(unitflags & UNIT_FORMAT_TAGS) {
+				if(i2) {
+					str += "</sup>";
+					str += "<big>";
+				}
+			}
 //		}
 	} else {
 		str2 = "0";

@@ -60,7 +60,7 @@ GtkAccelGroup *accel_group;
 extern int display_mode, number_base;
 extern bool show_more, show_buttons;
 extern Calculator *calc;
-extern bool use_short_units, save_mode_on_exit, save_defs_on_exit, load_global_defs;
+extern bool use_short_units, save_mode_on_exit, save_defs_on_exit, load_global_defs, use_unicode_signs;
 
 
 void
@@ -213,6 +213,15 @@ create_main_window (void)
 		gtk_button_set_label (
 				GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_less_more")),
 				_("More >>"));
+	}
+
+	if(use_unicode_signs) {
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_sub")), SIGN_MINUS);
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_add")), SIGN_PLUS);
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_times")), SIGN_MULTIPLICATION);	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_divide")), SIGN_DIVISION);	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_sqrt")), SIGN_SQRT);	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_dot")), SIGN_MULTIDOT);	
 	}
 
 	g_signal_connect (G_OBJECT (gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression")))), "deactivate",
@@ -371,7 +380,8 @@ create_units_dialog (void)
 	update_units_tree(glade_xml_get_widget (glade_xml, "units_dialog"));
 	
 	gtk_entry_set_text (GTK_ENTRY (glade_xml_get_widget (glade_xml, "units_entry_from_val")), "1");	
-
+	gtk_entry_set_text (GTK_ENTRY (glade_xml_get_widget (glade_xml, "units_entry_to_val")), "1");		
+	
 	return glade_xml_get_widget (glade_xml, "units_dialog");
 }
 
@@ -383,6 +393,7 @@ create_preferences_dialog (void)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "preferences_checkbutton_save_mode")), save_mode_on_exit);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "preferences_checkbutton_save_defs")), save_defs_on_exit);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "preferences_checkbutton_short_units")), use_short_units);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "preferences_checkbutton_unicode_signs")), use_unicode_signs);	
 
 	return glade_xml_get_widget (glade_xml, "preferences_dialog");;
 }
