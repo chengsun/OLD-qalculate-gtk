@@ -695,7 +695,7 @@ bool Number::hasImaginaryPart() const {
 	return !isInfinite() && !cln::zerop(cln::imagpart(value));
 }
 void Number::removeFloatZeroPart() {
-	if(!isInfinite() && isApproximate() && !cln::zerop(cln::imagpart(value))) {
+	if(!isInfinite() && isApproximateType() && !cln::zerop(cln::imagpart(value))) {
 		cl_F f_value = REAL_PRECISION_FLOAT_RE(value) + REAL_PRECISION_FLOAT_IM(value);
 		if(REAL_PRECISION_FLOAT(f_value) == REAL_PRECISION_FLOAT_RE(value)) {
 			value = cln::realpart(value);
@@ -735,7 +735,7 @@ bool Number::isInteger() const {
 	return cln::denominator(cln::rational(cln::realpart(value))) == 1;
 }
 bool Number::isRational() const {
-	return !isInfinite() && !isComplex() && !isApproximate();
+	return !isInfinite() && !isComplex() && !isApproximateType();
 }
 bool Number::isReal() const {
 	return !isInfinite() && !isComplex();
@@ -755,6 +755,10 @@ bool Number::isZero() const {
 bool Number::isOne() const {
 	if(isInfinite()) return false;
 	return value == 1;
+}
+bool Number::isTwo() const {
+	if(isInfinite()) return false;
+	return value == 2;
 }
 bool Number::isI() const {
 	if(isInfinite()) return false;
@@ -805,7 +809,7 @@ bool Number::equals(const Number &o) const {
 	if(b_pinf) return o.isPlusInfinity();
 	if(b_minf) return o.isMinusInfinity();
 	if(o.isInfinite()) return false;
-	if(isApproximate() || o.isApproximate()) {
+	if(isApproximateType() || o.isApproximateType()) {
 		if(!isComplex() && !o.isComplex()) {
 			return REAL_PRECISION_FLOAT_RE(value) == REAL_PRECISION_FLOAT_RE(o.internalNumber());
 		} else if(isComplex() && o.isComplex()) {
@@ -865,7 +869,7 @@ bool Number::isGreaterThan(const Number &o) const {
 	if(o.isMinusInfinity()) return true;
 	if(b_pinf) return true;
 	if(isComplex() || o.isComplex()) return false;
-	if(isApproximate() || o.isApproximate()) {
+	if(isApproximateType() || o.isApproximateType()) {
 		return REAL_PRECISION_FLOAT_RE(value) > REAL_PRECISION_FLOAT_RE(o.internalNumber());
 	}
 	return cln::realpart(value) > cln::realpart(o.internalNumber());
@@ -874,7 +878,7 @@ bool Number::isLessThan(const Number &o) const {
 	if(o.isMinusInfinity() || o.isInfinity() || b_inf || b_pinf) return false;
 	if(b_minf || o.isPlusInfinity()) return true;
 	if(isComplex() || o.isComplex()) return false;
-	if(isApproximate() || o.isApproximate()) {
+	if(isApproximateType() || o.isApproximateType()) {
 		return REAL_PRECISION_FLOAT_RE(value) < REAL_PRECISION_FLOAT_RE(o.internalNumber());
 	}
 	return cln::realpart(value) < cln::realpart(o.internalNumber());
@@ -884,7 +888,7 @@ bool Number::isGreaterThanOrEqualTo(const Number &o) const {
 	if(b_minf) return o.isMinusInfinity();
 	if(b_pinf) return true;
 	if(!isComplex() && !o.isComplex()) {
-		if(isApproximate() || o.isApproximate()) {
+		if(isApproximateType() || o.isApproximateType()) {
 			return REAL_PRECISION_FLOAT_RE(value) >= REAL_PRECISION_FLOAT_RE(o.internalNumber());
 		}
 		return cln::realpart(value) >= cln::realpart(o.internalNumber());
@@ -897,7 +901,7 @@ bool Number::isLessThanOrEqualTo(const Number &o) const {
 	if(b_pinf) return o.isPlusInfinity();
 	if(b_minf) return true;
 	if(!isComplex() && !o.isComplex()) {
-		if(isApproximate() || o.isApproximate()) {
+		if(isApproximateType() || o.isApproximateType()) {
 			return REAL_PRECISION_FLOAT_RE(value) <= REAL_PRECISION_FLOAT_RE(o.internalNumber());
 		}
 		return cln::realpart(value) <= cln::realpart(o.internalNumber());
@@ -906,13 +910,19 @@ bool Number::isLessThanOrEqualTo(const Number &o) const {
 	}
 }
 bool Number::isEven() const {
-	return isInteger() && evenp(cln::numerator(cln::rational(cln::realpart(value))));
+	return isInteger() && cln::evenp(cln::numerator(cln::rational(cln::realpart(value))));
 }
 bool Number::denominatorIsEven() const {
-	return !isInfinite() && !isComplex() && evenp(cln::denominator(cln::rational(cln::realpart(value))));
+	return !isInfinite() && !isComplex() && !isApproximateType() && cln::evenp(cln::denominator(cln::rational(cln::realpart(value))));
+}
+bool Number::denominatorIsTwo() const {
+	return !isInfinite() && !isComplex() && !isApproximateType() && cln::denominator(cln::rational(cln::realpart(value))) == 2;
 }
 bool Number::numeratorIsEven() const {
-	return !isInfinite() && !isComplex() && evenp(cln::numerator(cln::rational(cln::realpart(value))));
+	return !isInfinite() && !isComplex() && !isApproximateType() && cln::evenp(cln::numerator(cln::rational(cln::realpart(value))));
+}
+bool Number::numeratorIsOne() const {
+	return !isInfinite() && !isComplex() && !isApproximateType() && cln::numerator(cln::rational(cln::realpart(value))) == 1;
 }
 bool Number::isOdd() const {
 	return isInteger() && oddp(cln::numerator(cln::rational(cln::realpart(value))));
@@ -1332,9 +1342,10 @@ bool Number::rem(const Number &o) {
 int Number::getBoolean() const {
 	if(isPositive()) {
 		return 1;
-	} else {
+	} else if(isNonPositive()) {
 		return 0;
 	}
+	return -1;
 }
 void Number::toBoolean() {
 	setTrue(isPositive());

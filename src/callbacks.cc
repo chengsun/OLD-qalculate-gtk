@@ -3709,9 +3709,10 @@ void *view_proc(void *pipe) {
 			PrintOptions po = printops;
 			po.short_multiplication = false;
 			po.excessive_parenthesis = true;
+			po.improve_division_multipliers = false;
 			MathStructure mp(*((MathStructure*) x));
 			fread(&po.is_approximate, sizeof(bool*), 1, view_pipe);
-			mp.format(printops);
+			mp.format(po);
 			parsed_text = mp.print(po);
 		}
 		printops.allow_non_usable = false;
@@ -4674,7 +4675,14 @@ void set_edited_names(ExpressionItem *item, string str) {
 			item->addName(str);
 		}
 	} else {
-		item->setName(str, 1);
+		if(item->countNames() == 0) {
+			ExpressionName ename(str);
+			ename.reference = true;
+			item->setName(ename, 1);
+		} else {
+			item->setName(str, 1);
+		}
+		
 	}
 }
 
@@ -6762,6 +6770,7 @@ void load_preferences() {
 	evalops.allow_complex = true;
 	evalops.allow_infinite = true;
 	evalops.auto_post_conversion = POST_CONVERSION_NONE;
+	evalops.assume_denominators_nonzero = false;
 	
 	save_mode_on_exit = true;
 	save_defs_on_exit = true;
@@ -6884,6 +6893,8 @@ void load_preferences() {
 					evalops.parse_options.base = v;	
 				else if(svar == "read_precision")
 					evalops.parse_options.read_precision = (ReadPrecisionMode) v;
+				else if(svar == "assume_denominators_nonzero")
+					evalops.assume_denominators_nonzero = v;	
 				else if(svar == "angle_unit")
 					evalops.angle_unit = (AngleUnit) v;
 				else if(svar == "hyp_is_on")
@@ -7148,6 +7159,7 @@ void save_preferences(bool mode)
 	fprintf(file, "number_base=%i\n", saved_printops.base);
 	fprintf(file, "number_base_expression=%i\n", saved_evalops.parse_options.base);
 	fprintf(file, "read_precision=%i\n", saved_evalops.parse_options.read_precision);
+	fprintf(file, "assume_denominators_nonzero=%i\n", saved_evalops.assume_denominators_nonzero);
 	fprintf(file, "angle_unit=%i\n", saved_angle_unit);
 	fprintf(file, "hyp_is_on=%i\n", saved_hyp_is_on);
 	fprintf(file, "functions_enabled=%i\n", saved_evalops.parse_options.functions_enabled);
@@ -7528,6 +7540,7 @@ void update_resultview_popup() {
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_fraction_decimal_exact"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_fraction_decimal_exact_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_fraction_combined"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_fraction_combined_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_fraction_fraction"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_fraction_fraction_activate, NULL);
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_assume_nonzero_denominators"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_assume_nonzero_denominators_activate, NULL);
 	if(mstruct && mstruct->containsType(STRUCT_UNIT)) {
 		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_abbreviate_names"));
 		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_display_prefixes"));
@@ -7553,6 +7566,7 @@ void update_resultview_popup() {
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_non_scientific"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_display"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_factorize"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_assume_nonzero_denominators"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_factorize"));
 	} else {
 		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_abbreviate_names"));
@@ -7580,8 +7594,10 @@ void update_resultview_popup() {
 		gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_display"));
 		if(mstruct && mstruct->countChilds() > 0) {
 			gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_factorize"));
+			gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_assume_nonzero_denominators"));
 			gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_factorize"));
 		} else {
+			gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_assume_nonzero_denominators"));
 			gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_factorize"));
 			gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_factorize"));
 		}
@@ -7642,6 +7658,7 @@ void update_resultview_popup() {
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_abbreviate_names")), printops.abbreviate_names);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_all_prefixes")), printops.use_all_prefixes);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_denominator_prefixes")), printops.use_denominator_prefix);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_assume_nonzero_denominators")), evalops.assume_denominators_nonzero);
 	switch(printops.number_fraction_format) {
 		case FRACTION_DECIMAL: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_fraction_decimal")), TRUE);
@@ -7680,6 +7697,7 @@ void update_resultview_popup() {
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_fraction_decimal_exact"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_fraction_decimal_exact_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_fraction_combined"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_fraction_combined_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_fraction_fraction"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_fraction_fraction_activate, NULL);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_assume_nonzero_denominators"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_assume_nonzero_denominators_activate, NULL);
 }
 gboolean on_resultview_button_press_event(GtkWidget *w, GdkEventButton *event, gpointer user_data) {
 	if(event->button == 3) {
@@ -8176,6 +8194,10 @@ void on_menu_item_allow_infinite_activate(GtkMenuItem *w, gpointer user_data) {
 	evalops.allow_infinite = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	expression_format_updated();
 }
+void on_menu_item_assume_nonzero_denominators_activate(GtkMenuItem *w, gpointer user_data) {
+	evalops.assume_denominators_nonzero = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
+	expression_format_updated();
+}
 void on_menu_item_read_precision_activate(GtkMenuItem *w, gpointer user_data) {
 	 if(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) evalops.parse_options.read_precision = READ_PRECISION_WHEN_DECIMALS;
 	 else evalops.parse_options.read_precision = DONT_READ_PRECISION;
@@ -8550,6 +8572,9 @@ void on_plot_dialog_hide(GtkWidget *w, gpointer user_data) {
 void on_popup_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_normal")), TRUE);
+}
+void on_popup_menu_item_assume_nonzero_denominators_activate(GtkMenuItem *w, gpointer user_data) {
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_assume_nonzero_denominators")), gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
 }
 void on_popup_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;

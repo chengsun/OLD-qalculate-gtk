@@ -272,6 +272,7 @@ void on_menu_item_assumptions_nonnegative_activate(GtkMenuItem *w, gpointer user
 void on_menu_item_assumptions_negative_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_assumptions_nonpositive_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_assumptions_unknown_activate(GtkMenuItem *w, gpointer user_data);
+void on_popup_menu_item_assume_nonzero_denominators_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer user_data);
@@ -319,6 +320,7 @@ void on_menu_item_precision_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_decimals_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_plot_functions_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_factorize_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_assume_nonzero_denominators_activate(GtkMenuItem *w, gpointer user_data);
 gboolean on_main_window_focus_in_event(GtkWidget *w, GdkEventFocus *e, gpointer user_data);
 
 void on_unit_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);

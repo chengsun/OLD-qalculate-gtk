@@ -127,7 +127,7 @@ bool Calculator::delDefaultStringAlternative(string replacement, string standard
 
 Calculator *calculator;
 
-MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one;
+MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minus_one;
 EvaluationOptions no_evaluation;
 ExpressionName empty_expression_name;
 
@@ -222,6 +222,7 @@ Calculator::Calculator() {
 	m_empty_matrix.clearMatrix();
 	m_zero.clear();
 	m_one.set(1, 1);
+	m_minus_one.set(-1, 1);
 	no_evaluation.approximation = APPROXIMATION_EXACT;
 	no_evaluation.structuring = STRUCTURING_NONE;
 	no_evaluation.sync_units = false;
@@ -919,6 +920,7 @@ void Calculator::addBuiltinFunctions() {
 	f_process_matrix = addFunction(new ProcessMatrixFunction());
 	f_csum = addFunction(new CustomSumFunction());
 	f_function = addFunction(new FunctionFunction());
+	f_select = addFunction(new SelectFunction());
 	f_title = addFunction(new TitleFunction());
 	f_if = addFunction(new IFFunction());	
 	f_error = addFunction(new ErrorFunction());
@@ -1677,7 +1679,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 					b = true;
 					cu->add(mstruct_new.getChild(i)->base()->unit(), mstruct_new.getChild(i)->exponent()->number().intValue());
 				} else {
-					mstruct_new[i - 1] = convertToBestUnit(mstruct_new[i - 1]);
+					mstruct_new[i - 1] = convertToBestUnit(mstruct_new[i - 1], eo);
 					mstruct_new.childUpdated(i);
 				}
 			}

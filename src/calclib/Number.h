@@ -112,6 +112,7 @@ class Number {
 		bool isFraction() const;
 		bool isZero() const;
 		bool isOne() const;
+		bool isTwo() const;
 		bool isI() const;
 		bool isMinusI() const;
 		bool isMinusOne() const;
@@ -135,7 +136,9 @@ class Number {
 		bool isLessThanOrEqualTo(const Number &o) const;
 		bool isEven() const;
 		bool denominatorIsEven() const;
+		bool denominatorIsTwo() const;
 		bool numeratorIsEven() const;
+		bool numeratorIsOne() const;
 		bool isOdd() const;
 		
 		bool add(const Number &o);

@@ -253,11 +253,12 @@ static const struct PrintOptions {
 	bool use_min_decimals;
 	bool use_max_decimals;
 	bool round_halfway_to_even;
+	bool improve_division_multipliers;
 	Prefix *prefix;
 	bool *is_approximate;
 	SortOptions sort_options;
 	string comma_sign, decimalpoint_sign;
-	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), lower_case_numbers(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), show_ending_zeroes(false), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), allow_non_usable(false), use_unicode_signs(false), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), prefix(NULL), is_approximate(NULL) {}
+	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), lower_case_numbers(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), show_ending_zeroes(false), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), allow_non_usable(false), use_unicode_signs(false), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), improve_division_multipliers(true), prefix(NULL), is_approximate(NULL) {}
 	const string &comma() const;
 	const string &decimalpoint() const;
 } default_print_options;
@@ -316,14 +317,15 @@ static const struct EvaluationOptions {
 	bool calculate_variables, calculate_functions, test_comparisons, isolate_x;
 	bool simplify_addition_powers;
 	bool allow_complex, allow_infinite;
+	bool assume_denominators_nonzero;
 	AutoPostConversion auto_post_conversion;
 	StructuringMode structuring;
 	ParseOptions parse_options;
 	AngleUnit angle_unit;
-	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), simplify_addition_powers(true), allow_complex(true), allow_infinite(true), auto_post_conversion(POST_CONVERSION_NONE), structuring(STRUCTURING_SIMPLIFY), angle_unit(RADIANS) {}
+	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), simplify_addition_powers(true), allow_complex(true), allow_infinite(true), assume_denominators_nonzero(false), auto_post_conversion(POST_CONVERSION_NONE), structuring(STRUCTURING_SIMPLIFY), angle_unit(RADIANS) {}
 } default_evaluation_options;
 
-extern MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one;
+extern MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minus_one;
 extern EvaluationOptions no_evaluation;
 extern ExpressionName empty_expression_name;
 

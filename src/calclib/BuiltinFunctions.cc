@@ -1799,6 +1799,39 @@ int FunctionFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	mstruct = f.Function::calculate(args, eo);	
 	return 1 ;
 }
+SelectFunction::SelectFunction() : Function("select", 2, 3) {
+	setArgumentDefinition(3, new SymbolicArgument());
+	setDefaultValue(3, "x");
+}
+int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	MathStructure mtest;
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	if(!mstruct.isVector()) {
+		mtest = vargs[1];
+		mtest.replace(vargs[2], mstruct);
+		if(!mtest.isNumber() || mtest.number().getBoolean() < 0) return 0;
+		if(mtest.number().getBoolean() == 0) {
+			mstruct.clearVector();
+		}
+		return 1;
+	}
+	for(int i = 0; i < (int) mstruct.size(); i++) {
+		mtest = vargs[1];
+		mtest.replace(vargs[2], mstruct[i]);
+		mtest.eval(eo);
+		if(!mtest.isNumber() || mtest.number().getBoolean() < 0) return 0;
+		if(mtest.number().getBoolean() == 0) {
+			mstruct.delChild(i + 1);
+			i--;
+		}
+	}
+	if(mstruct.size() == 1) {
+		MathStructure msave(mstruct[0]);
+		mstruct = msave;
+	}
+	return 1;
+}
 IFFunction::IFFunction() : Function("if", 3) {
 	NON_COMPLEX_NUMBER_ARGUMENT(1)
 	setArgumentDefinition(2, new TextArgument());
@@ -1813,7 +1846,7 @@ int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	} else {
 		return 0;
 	}	
-	return 1 ;
+	return 1;
 }
 LoadFunction::LoadFunction() : Function("load", 1, 3) {
 	setArgumentDefinition(1, new FileArgument());

@@ -384,7 +384,7 @@
 		      <signal name="activate" handler="on_menu_item_factorize_activate" last_modification_time="Wed, 29 Oct 2003 09:14:28 GMT"/>
 		    </widget>
 		  </child>
-
+		  
 		  <child>
 		    <widget class="GtkImageMenuItem" id="menu_item_result_units">
 		      <property name="visible">True</property>
@@ -1265,6 +1265,17 @@
 			  </child>
 			</widget>
 		      </child>
+		    </widget>
+		  </child>
+		  
+		  <child>
+		    <widget class="GtkCheckMenuItem" id="menu_item_assume_nonzero_denominators">
+		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Assume that unknown denominators are non-zero</property>
+		      <property name="label" translatable="yes">Non-Zero Denominators</property>
+		      <property name="use_underline">True</property>
+		      <property name="active">False</property>
+		      <signal name="activate" handler="on_menu_item_assume_nonzero_denominators_activate" last_modification_time="Wed, 16 Nov 2004 09:14:28 GMT"/>
 		    </widget>
 		  </child>
 
@@ -2757,6 +2768,17 @@
       <property name="label" translatable="yes">_Factorize</property>
       <property name="use_underline">True</property>
       <signal name="activate" handler="on_menu_item_factorize_activate" last_modification_time="Sat, 20 Mar 2004 09:40:15 GMT"/>
+    </widget>
+  </child>
+  
+  <child>
+    <widget class="GtkCheckMenuItem" id="popup_menu_item_assume_nonzero_denominators">
+      <property name="visible">True</property>
+      <property name="tooltip" translatable="yes">Assume that unknown denominators are non-zero</property>
+      <property name="label" translatable="yes">Non-Zero Denominators</property>
+      <property name="use_underline">True</property>
+      <property name="active">False</property>
+      <signal name="activate" handler="on_popup_menu_item_assume_nonzero_denominators_activate" last_modification_time="Wed, 16 Nov 2004 09:14:28 GMT"/>
     </widget>
   </child>
 

@@ -260,11 +260,12 @@ class MathStructure {
 		
 		void sort(const PrintOptions &po = default_print_options, bool recursive = true);
 		void evalSort();
-		void setPrefixes(const PrintOptions &po = default_print_options, const MathStructure *parent = NULL, unsigned int pindex = 0);
+		bool improve_division_multipliers(const PrintOptions &po = default_print_options);
+		void setPrefixes(const PrintOptions &po = default_print_options, MathStructure *parent = NULL, unsigned int pindex = 0);
 		void prefixCurrencies();
 		void format(const PrintOptions &po = default_print_options);
-		void formatsub(const PrintOptions &po = default_print_options, const MathStructure *parent = NULL, unsigned int pindex = 0);
-		void postFormatUnits(const PrintOptions &po = default_print_options, const MathStructure *parent = NULL, unsigned int pindex = 0);
+		void formatsub(const PrintOptions &po = default_print_options, MathStructure *parent = NULL, unsigned int pindex = 0);
+		void postFormatUnits(const PrintOptions &po = default_print_options, MathStructure *parent = NULL, unsigned int pindex = 0);
 		void unformat(const EvaluationOptions &eo = default_evaluation_options);
 		bool needsParenthesis(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, unsigned int index, bool flat_division = true, bool flat_power = true) const;
 

@@ -2595,6 +2595,42 @@ Ex. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 
           <_title>Price Variable</_title>
         </argument>
       </function>
+      <function>
+        <_title>Consumer Surplus</_title>
+        <name index="1">
+	  <reference>true</reference>
+          <_name>csurplus</_name>
+        </name>
+        <subfunction precalculate="true">select(solve(\x=\y,\z),x>=0,x)</subfunction>
+        <expression>replace(integrate(\x-replace(\y,\Z{x},\1),\Z),\Z,\1,1)</expression>
+        <argument type="free" index="1">
+          <_title>Demand Function</_title>
+        </argument>
+        <argument type="free" index="2">
+          <_title>Supply Function or Price</_title>
+        </argument>
+        <argument type="symbol" index="3">
+          <_title>Quantity Variabel</_title>
+        </argument>
+      </function>
+      <function>
+        <_title>Producer Surplus</_title>
+        <name index="1">
+	  <reference>true</reference>
+          <_name>psurplus</_name>
+        </name>
+        <subfunction precalculate="true">select(solve(\x=\y,\z),x>=0,x)</subfunction>
+        <expression>replace(integrate(replace(\y,\Z{x},\1)-\x,\Z),\Z,\1,1)</expression>
+	<argument type="free" index="1">
+          <_title>Supply Function</_title>
+        </argument>
+        <argument type="free" index="2">
+          <_title>Demand Function or Price</_title>
+        </argument>
+        <argument type="symbol" index="3">
+          <_title>Quantity Variabel</_title>
+        </argument>
+      </function>
     </category>
     <category>
       <_title>Finance</_title>

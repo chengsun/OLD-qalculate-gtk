@@ -1,3 +1,17 @@
+2004-09-16 Niklas Knutsson  <nq@altern.org>
+
+	* Extensive enhancements of symbolic division
+	* Alternative to assume that unknown denominators are non-zero
+
+2004-09-12 Niklas Knutsson  <nq@altern.org>
+
+	* Ex. 1/(x+10)=5, test if x+10 is zero after solve
+
+2004-09-11 Niklas Knutsson  <nq@altern.org>
+
+	* Evaluation options was not always preserved when converting to best units
+	* Display x^(5/2) as x^2*sqrt(x)
+
 2004-09-10 Niklas Knutsson  <nq@altern.org>
 
 	* Internal sorting fixes
