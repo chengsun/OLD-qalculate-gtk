@@ -139,6 +139,7 @@ goto_place1:
 			i2 = str.length() - 1;
 		}
 		while(1) {
+			bool b = false;
 			if(i == string::npos || i > i2) break;
 			i3 = str.find(LEFT_BRACKET_CH, i + 1);
 			while(i3 < i2 && i3 > -1) {
@@ -146,6 +147,7 @@ goto_place1:
 				if(i2 == string::npos) {
 					str.append(1, RIGHT_BRACKET_CH);				
 					i2 = str.length() - 1;				
+					b = true;
 				}
 				i3 = str.find(LEFT_BRACKET_CH, i3 + 1);
 			}
@@ -167,6 +169,10 @@ goto_place1:
 			str.replace(i, i2 - i + 1, str2);
 			i = str.find(LEFT_BRACKET_CH);
 			i2 = str.find(RIGHT_BRACKET_CH);
+			if(!b && i2 == string::npos) {
+				str.append(1, RIGHT_BRACKET_CH);
+				i2 = str.length() - 1;
+			}			
 		}
 	}
 	i = 0;

@@ -2047,7 +2047,8 @@ string Calculator::value2str(long double &value, int precision) {
 	return stmp;
 }
 string Calculator::value2str_decimals(long double &value, int precision) {
-	sprintf(vbuffer, "%.*Lf", precision, value);
+//	sprintf(vbuffer, "%.*Lf", precision, value);
+	sprintf(vbuffer, "%.*LG", precision, value);
 	string stmp = vbuffer;
 	return stmp;
 }

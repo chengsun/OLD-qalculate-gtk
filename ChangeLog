@@ -1,5 +1,13 @@
 2003-08-17  Niklas Knutsson  <nq@altern.org>
 
+	* Only put "1 " in front of unit in toplevel
+	* Fix 5*5^m (endless loop in Manager::convert)
+	* Unscientific mode gives inexact result display -- disable for now
+	* Disable installation of old German translation (will enable again after v0.2)
+	* Create en_GB and en_US locales to get that nice square root sign
+	* Do not shrink result label on clear
+	* Do not expand menu buttons
+	* Make functions dialog a bit nicer
 	* Make units dialog a bit nicer
 	* More energy and pressure units
 	* Some constants

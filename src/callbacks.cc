@@ -1467,6 +1467,7 @@ void setResult(const gchar *expr, long double prefix_ = -1.0L) {
 	str2 = get_value_string(mngr, true, prefix_);
 	bool useable = false;
 	gtk_label_set_selectable(GTK_LABEL(result), useable);
+	gtk_widget_set_size_request(result, -1, -1);	
 	gtk_label_set_text(GTK_LABEL(result), str2.c_str());
 	gtk_label_set_use_markup(GTK_LABEL(result), TRUE);
 
@@ -2521,7 +2522,7 @@ void convert_in_wUnits(int toFrom) {
 		const gchar *fromValue = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "units_entry_from_val")));
 		const gchar *toValue = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "units_entry_to_val")));
 		//determine conversion direction
-		if(toFrom > 0 || (toFrom < 0 && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "units_toggle_button_from"))))) {
+		if(toFrom > 0) {
 			Manager *mngr = calc->convert(toValue, uTo, uFrom);
 			gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "units_entry_from_val")), mngr->print().c_str());
 			mngr->unref();
@@ -3028,6 +3029,8 @@ on_togglebutton_result_toggled                      (GtkToggleButton       *butt
 	clear the displayed result when expression changes
 */
 void on_expression_changed(GtkEditable *w, gpointer user_data) {
+	gtk_label_set_text(GTK_LABEL(result), "<big><b>0</b></big>");
+	gtk_widget_set_size_request(result, -1, result->allocation.height);	
 	gtk_label_set_text(GTK_LABEL(result), "");
 }
 
