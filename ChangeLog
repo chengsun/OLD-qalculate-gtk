@@ -1,3 +1,17 @@
+2003-08-08  Niklas Knutsson  <nq@altern.org>
+
+	* Move generated menus one step up
+	* Add finalize() after conversion in callbacks.cc 
+
+2003-08-08  Niklas Knutsson  <nq@altern.org>
+
+	* Some more fixes that I do not remember
+	* Fix (x+y)^(6+n)
+	* Fix kWs = W^2 * s^2 in Calculator.cc
+	* Do not convert units during the whole calculation, do it in finalize() afterwards instead
+	* Make units work even better. 
+	* Move OCT, HEX, BIN and BASE functions to category "Number Bases"
+
 2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
 
 	* configure.in: added -Wall stuff again (was just a typo)
