@@ -1313,7 +1313,7 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	gtk_widget_show_all(dialog);
 	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
 	if(response == GTK_RESPONSE_ACCEPT || response == GTK_RESPONSE_APPLY) {
-		string str = f->name() + "(", str2;
+		string str = f->name() + LEFT_BRACKET_STR, str2;
 		for(int i = 0; i < args; i++) {
 			str2 = gtk_entry_get_text(GTK_ENTRY(entry[i]));
 			
@@ -1324,12 +1324,12 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 			}
 			
 			if(i > 0)
-				str += ",";			
+				str += calc->getComma();			
 			str += str2;			
 		}
 		if(args < 0)
 			str += gtk_entry_get_text(GTK_ENTRY(entry1));
-		str += ")";
+		str += RIGHT_BRACKET_STR;
 		//redo selection if "OK" was clicked, clear expression entry "Execute"
 		if(response == GTK_RESPONSE_ACCEPT)
 			gtk_editable_select_region(GTK_EDITABLE(expression), start, end);
@@ -1614,7 +1614,8 @@ void edit_function(const char *category = "", Function *f = NULL, GtkWidget *win
 			if(i == 1)
 				str = f->argName(i);
 			else {
-				str += ", ";
+				str += calc->getComma();
+				str += " ";
 				str += f->argName(i);
 			}
 		}
@@ -1675,7 +1676,7 @@ run_function_edit_dialog:
 			unsigned int i = 0, i2 = 0;
 			f->clearArgNames();
 			while(true) {
-				i = str.find(",", i2);
+				i = str.find_first_of(COMMA_S, i2);
 				if(i != string::npos) {
 					str2 = str.substr(i2, i - i2);
 					i2 = i + 1;
@@ -1697,7 +1698,7 @@ run_function_edit_dialog:
 			string str2;
 			unsigned int i = 0, i2 = 0;
 			while(true) {
-				i = str.find(",", i2);
+				i = str.find_first_of(COMMA_S, i2);
 				if(i != string::npos) {
 					str2 = str.substr(i2, i - i2);
 					i2 = i + 1;

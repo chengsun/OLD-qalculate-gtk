@@ -10,12 +10,104 @@
 */
 
 #include "util.h"
+#include <stdarg.h>
 
 bool eqstr::operator()(const char *s1, const char *s2) const {
 	return strcmp(s1, s2) == 0;
 }
 
 char buffer[20000];
+
+int find_first_not_of(const string &str, int pos, ...) {
+	char *strs[10];
+	va_list ap;
+	va_start(ap, pos); 
+	for(int i = 0; true; i++) {
+		strs[i] = va_arg(ap, char*);
+		if(strs[i] == NULL) break;
+	}
+	va_end(ap);	
+	for(int i = pos; i < str.length(); i++) {
+		bool b = true;
+		for(int i2 = 0; true; i2++) {
+			if(!strs[i2]) break;
+			for(int i3 = 0; i3 < strlen(strs[i2]); i3++) {
+				if(str[i] == strs[i2][i3]) {
+					b = false;
+				}
+			}
+		}	
+		if(b) {
+			return i;		
+		}
+	}
+	return string::npos;
+}
+int find_first_of(const string &str, int pos, ...) {
+	char *strs[10];
+	va_list ap;
+	va_start(ap, pos); 
+	for(int i = 0; true; i++) {
+		strs[i] = va_arg(ap, char*);
+		if(strs[i] == NULL) break;
+	}
+	va_end(ap);	
+	for(int i = pos; i < str.length(); i++) {
+		for(int i2 = 0; true; i2++) {
+			if(!strs[i2]) break;
+			for(int i3 = 0; i3 < strlen(strs[i2]); i3++) {
+				if(str[i] == strs[i2][i3]) {
+					return i;
+				}
+			}
+		}		
+	}
+	return string::npos;
+}
+int find_last_not_of(const string &str, int pos, ...) {
+	char *strs[10];
+	va_list ap;
+	va_start(ap, pos); 
+	for(int i = 0; true; i++) {
+		strs[i] = va_arg(ap, char*);
+		if(strs[i] == NULL) break;
+	}
+	va_end(ap);	
+	for(int i = str.length() - 1; i >= pos; i--) {
+		bool b = true;
+		for(int i2 = 0; true; i2++) {
+			if(!strs[i2]) break;
+			for(int i3 = 0; i3 < strlen(strs[i2]); i3++) {
+				if(str[i] == strs[i2][i3]) {
+					b = false;
+				}
+			}
+			if(b) return i;
+		}	
+	}
+	return string::npos;
+}
+int find_last_of(const string &str, int pos, ...) {
+	char *strs[10];
+	va_list ap;
+	va_start(ap, pos); 
+	for(int i = 0; true; i++) {
+		strs[i] = va_arg(ap, char*);
+		if(strs[i] == NULL) break;
+	}
+	va_end(ap);	
+	for(int i = str.length() - 1; i >= pos; i--) {
+		for(int i2 = 0; true; i2++) {
+			if(!strs[i2]) break;
+			for(int i3 = 0; i3 < strlen(strs[i2]); i3++) {
+				if(str[i] == strs[i2][i3]) {
+					return i;
+				}
+			}
+		}		
+	}
+	return string::npos;
+}
 
 string& gsub(const string &pattern, const string &sub, string &str) {
 	unsigned int i = str.find(pattern);
@@ -42,6 +134,7 @@ string& remove_blanks(string &str) {
 	}
 	return str;
 }
+
 string& remove_blank_ends(string &str) {
 	unsigned int i = str.find_first_not_of(SPACE_S);
 	unsigned int i2 = str.find_last_not_of(SPACE_S);
@@ -97,19 +190,41 @@ string& wrap_p(string &str) {
 	str.append(RIGHT_BRACKET_STR);
 	return str;
 }
-bool is_in(const char *str, char c) {
-	for(int i = 0; i < strlen(str); i++) {
-		if(str[i] == c)
-			return true;
+bool is_in(char c, ...) {
+	char *strs[10];
+	va_list ap;
+	va_start(ap, c); 
+	for(int i = 0; true; i++) {
+		strs[i] = va_arg(ap, char*);
+		if(strs[i] == NULL) break;
+	}
+	va_end(ap);	
+	for(int i = 0; true; i++) {
+		if(!strs[i]) break;
+		for(int i2 = 0; i2 < strlen(strs[i]); i2++) { 
+			if(strs[i][i2] == c)
+				return true;
+		}
 	}
 	return false;
 }
-bool is_not_in(const char *str, char c) {
-	for(int i = 0; i < strlen(str); i++) {
-		if(str[i] == c)
-			return false;
+bool is_not_in(char c, ...) {
+	char *strs[10];
+	va_list ap;
+	va_start(ap, c); 
+	for(int i = 0; true; i++) {
+		strs[i] = va_arg(ap, char*);
+		if(strs[i] == NULL) break;
 	}
-	return true;
+	va_end(ap);	
+	for(int i = 0; true; i++) {
+		if(!strs[i]) break;
+		for(int i2 = 0; i2 < strlen(strs[i]); i2++) { 
+			if(strs[i][i2] == c)
+				return false;
+		}
+	}
+	return true;	
 }
 
 int sign_place(string *str, unsigned int start) {
@@ -119,7 +234,7 @@ int sign_place(string *str, unsigned int start) {
 	else
 		return -1;
 }
-string &remove_trailing_zeros(string &str, int decimals_to_keep, bool expand, bool decrease) {
+/*string &remove_trailing_zeros(string &str, int decimals_to_keep, bool expand, bool decrease) {
 	int i2 = str.find_first_of(DOT_S);
 	if(i2 != string::npos) {
 		string str2 = "";
@@ -215,7 +330,7 @@ string &remove_trailing_zeros(string &str, int decimals_to_keep, bool expand, bo
 			str = str.substr(0, i4);
 		}
 		if(decimals_to_keep > 0)
-			str += DOT_CH;
+			str += DOT_STR;
 		while(decimals_to_keep > 0) {
 			str += ZERO_CH;
 			decimals_to_keep--;
@@ -223,4 +338,4 @@ string &remove_trailing_zeros(string &str, int decimals_to_keep, bool expand, bo
 		str += str2;
 	}
 	return str;
-}
+}*/

@@ -158,7 +158,7 @@ void Manager::transform(Manager *mngr, char type_, char sign, bool reverse_) {
 
 
 bool Manager::add(Manager *mngr, char sign, bool translate_) {
-	printf("[%s] %c [%s] (%i)\n", print().c_str(), sign, mngr->print().c_str(), translate_);
+//	printf("[%s] %c [%s] (%i)\n", print().c_str(), sign, mngr->print().c_str(), translate_);
 	if(mngr->type() == VALUE_MANAGER && (c_type == NULL_MANAGER || c_type == VALUE_MANAGER)) {
 		add(mngr->d_value, sign);
 		return true;
@@ -1060,11 +1060,11 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 				break;
 			}
 		}	
-		remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
+		calc->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
 		str += str2;
 		if(unitflags & UNIT_FORMAT_TAGS) {
 			int i = str.find("E");
-			if(i != string::npos && i != str.length() - 1 && (is_in(PLUS_S MINUS_S NUMBERS_S, str[i + 1]))) {
+			if(i != string::npos && i != str.length() - 1 && (is_in(str[i + 1], PLUS_S, MINUS_S, NUMBERS_S, NULL))) {
 				str.replace(i, 1, "<small>E</small>");
 			}
 		}
@@ -1072,7 +1072,7 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 	} else if(c_type == 'u') {
 		if(toplevel) {
 			str2 = "1";
-			remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
+			calc->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
 			str += str2; str += " ";
 		}
 		if(unitflags & UNIT_FORMAT_SHORT) {
@@ -1100,7 +1100,7 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 			}
 			if(mngrs[i]->c_type == 'u' || (mngrs[i]->c_type == POWER_CH && mngrs[i]->mngrs[0]->c_type == 'u')) {
 				str2 = "1";
-				remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
+				calc->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
 				str += str2; str += " ";
 			}
 			if(mngrs[i]->negative() && i > 0) {
@@ -1114,7 +1114,7 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 		for(int i = 0; i < mngrs.size(); i++) {
 			if(i == 0 && (mngrs[i]->c_type == 'u' || (mngrs[i]->c_type == POWER_CH && mngrs[i]->mngrs[0]->c_type == 'u'))) {
 				str2 = "1";
-				remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
+				calc->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
 				str += str2; str += " ";
 			}
 			if(!(unitflags & UNIT_FORMAT_SCIENTIFIC) && i > 0 && mngrs[i]->c_type == POWER_CH && mngrs[i]->mngrs[1]->negative()) {
@@ -1140,7 +1140,7 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 	} else if(c_type == POWER_CH) {
 		if(toplevel && mngrs[0]->c_type == 'u') {
 			str2 = "1";
-			remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
+			calc->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
 			str += str2; str += " ";
 		}
 		if(mngrs[0]->mngrs.size() > 0) {
@@ -1168,7 +1168,7 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 		}
 	} else {
 		str2 = "0";
-		remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
+		calc->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
 		str += str2;
 	}
 	if(toplevel && (unitflags & UNIT_FORMAT_TAGS)) str += "</big></b>";

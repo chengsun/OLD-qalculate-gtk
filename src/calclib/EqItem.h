@@ -46,7 +46,7 @@ class EqContainer : public EqItem {
 	EqContainer(char operation_ = PLUS_CH, Calculator *parent = NULL);
 	~EqContainer(void);
 	EqContainer(string str, Calculator *parent, char operation_ = PLUS_CH);
-	void add(string *str, char s = PLUS_CH);
+	void add(string &str, char s = PLUS_CH);
 	void add(EqItem *e);
 	Manager *calculate(void);
 };

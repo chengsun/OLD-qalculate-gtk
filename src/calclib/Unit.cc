@@ -268,16 +268,16 @@ Manager *AliasUnit::convertToFirstBase(Manager *value_, Manager *exp_) {
 	if(!exp_) exp_ = new Manager(calc, 1.0L);		
 	else exp_->ref();
 	if(rvalue.empty()) {
-		if(value.find(FUNCTION_VAR_PRE_STR "x") != string::npos) {
+		if(value.find(FUNCTION_VAR_X) != string::npos) {
 			string stmp = value;
 			string stmp2 = LEFT_BRACKET_STR;
 			stmp2 += value_->print();
-			stmp2 += RIGHT_BRACKET_CH;
-			gsub(FUNCTION_VAR_PRE_STR "x", stmp2, stmp);
-			stmp2 = LEFT_BRACKET_CH;
+			stmp2 += RIGHT_BRACKET_STR;
+			gsub(FUNCTION_VAR_X, stmp2, stmp);
+			stmp2 = LEFT_BRACKET_STR;
 			stmp2 += exp_->print();
-			stmp2 += RIGHT_BRACKET_CH;
-			gsub(FUNCTION_VAR_PRE_STR "y", stmp2, stmp);
+			stmp2 += RIGHT_BRACKET_STR;
+			gsub(FUNCTION_VAR_Y, stmp2, stmp);
 			Manager *mngr = calc->calculate(stmp);
 //			value_->add(mngr, DIVISION_CH);
 			value_->moveto(mngr);
@@ -290,16 +290,16 @@ Manager *AliasUnit::convertToFirstBase(Manager *value_, Manager *exp_) {
 			mngr->unref();
 		}
 	} else {
-		if(rvalue.find(FUNCTION_VAR_PRE_STR "x") != string::npos) {
+		if(rvalue.find(FUNCTION_VAR_X) != string::npos) {
 			string stmp = rvalue;
 			string stmp2 = LEFT_BRACKET_STR;
 			stmp2 += value_->print();
-			stmp2 += RIGHT_BRACKET_CH;
-			gsub(FUNCTION_VAR_PRE_STR "x", stmp2, stmp);
-			stmp2 = LEFT_BRACKET_CH;
+			stmp2 += RIGHT_BRACKET_STR;
+			gsub(FUNCTION_VAR_X, stmp2, stmp);
+			stmp2 = LEFT_BRACKET_STR;
 			stmp2 += exp_->print();
-			stmp2 += RIGHT_BRACKET_CH;
-			gsub(FUNCTION_VAR_PRE_STR "y", stmp2, stmp);
+			stmp2 += RIGHT_BRACKET_STR;
+			gsub(FUNCTION_VAR_Y, stmp2, stmp);
 			Manager *mngr = calc->calculate(stmp);
 //			value_->add(mngr, MULTIPLICATION_CH);
 			value_->moveto(mngr);
@@ -320,16 +320,16 @@ Manager *AliasUnit::firstBaseValue(Manager *value_, Manager *exp_) {
 	if(!value_) value_ = new Manager(calc, 1.0L);
 	if(!exp_) exp_ = new Manager(calc, 1.0L);		
 	else exp_->ref();
-	if(value.find(FUNCTION_VAR_PRE_STR "x") != string::npos) {
+	if(value.find(FUNCTION_VAR_X) != string::npos) {
 		string stmp = value;
 		string stmp2 = LEFT_BRACKET_STR;
 		stmp2 += value_->print();
-		stmp2 += RIGHT_BRACKET_CH;
-		gsub(FUNCTION_VAR_PRE_STR "x", stmp2, stmp);
-		stmp2 = LEFT_BRACKET_CH;
+		stmp2 += RIGHT_BRACKET_STR;
+		gsub(FUNCTION_VAR_X, stmp2, stmp);
+		stmp2 = LEFT_BRACKET_STR;
 		stmp2 += exp_->print();
-		stmp2 += RIGHT_BRACKET_CH;
-		gsub(FUNCTION_VAR_PRE_STR "y", stmp2, stmp);
+		stmp2 += RIGHT_BRACKET_STR;
+		gsub(FUNCTION_VAR_Y, stmp2, stmp);
 		Manager *mngr = calc->calculate(stmp);
 		value_->moveto(mngr);
 		mngr->unref();
@@ -375,7 +375,7 @@ bool AliasUnit::isParentOf(Unit *u) {
 	return false;
 }
 bool AliasUnit::hasComplexExpression() {
-	return value.find(FUNCTION_VAR_PRE_STR "x") != string::npos;
+	return value.find(FUNCTION_VAR_X) != string::npos;
 }
 bool AliasUnit::hasComplexRelationTo(Unit *u) {
 	if(u == this || u->baseUnit() != baseUnit()) return false;

@@ -232,9 +232,9 @@ int Function::stringArgs(const string &str) {
 						break;
 				} else {
 					if(itmp <= args() || args() < 0) {
-						stmp = LEFT_BRACKET_CH;
+						stmp = LEFT_BRACKET_STR;
 						stmp += str.substr(i2, i - i2);
-						stmp += RIGHT_BRACKET_CH;
+						stmp += RIGHT_BRACKET_STR;
 						svargs.push_back(stmp);
 //						svargs.push_back(str.substr(i2, i - i2));
 					}
@@ -245,9 +245,9 @@ int Function::stringArgs(const string &str) {
 				}
 			} else {
 				if(itmp <= args() || args() < 0) {
-					stmp = LEFT_BRACKET_CH;
+					stmp = LEFT_BRACKET_STR;
 					stmp += str.substr(i2, str.length() - i2);
-					stmp += RIGHT_BRACKET_CH;
+					stmp += RIGHT_BRACKET_STR;
 					svargs.push_back(stmp);
 //					svargs.push_back(str.substr(i2, str.length() - i2));					
 				}
@@ -257,9 +257,9 @@ int Function::stringArgs(const string &str) {
 	}
 	if(itmp < maxargs() && itmp >= minargs()) {
 		while(itmp < maxargs()) {
-			stmp = LEFT_BRACKET_CH;
+			stmp = LEFT_BRACKET_STR;
 			stmp += default_values[itmp - minargs()];
-			stmp += RIGHT_BRACKET_CH;
+			stmp += RIGHT_BRACKET_STR;
 			svargs.push_back(stmp);
 //			svargs.push_back(default_values[itmp - minargs()]);			
 			itmp++;
@@ -326,8 +326,8 @@ void UserFunction::equation(string new_eq, int argc_, int max_argc_) {
 				
 			if((i2 = new_eq.find(svar_o)) != (int) string::npos) {				
 				i3 = 0;
-				if(new_eq.length() > i2 + 2 && new_eq[i2 + 2] == ID_WRAP_LEFT_CH) {
-					if((i3 = new_eq.find(ID_WRAP_RIGHT_CH, i2 + 2)) != string::npos) {
+				if(new_eq.length() > i2 + 2 && new_eq.substr(i2 + 2, strlen(ID_WRAP_LEFT_STR)) == ID_WRAP_LEFT_STR) {
+					if((i3 = new_eq.find(ID_WRAP_RIGHT_STR, i2 + 2)) != string::npos) {
 						svar_v = new_eq.substr(i2 + 3, i3 - (i2 + 3));	
 						i3 -= i2 + 1;
 					} else i3 = 0;

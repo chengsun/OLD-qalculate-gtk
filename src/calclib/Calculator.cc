@@ -12,8 +12,105 @@
 #include "Calculator.h"
 #include "BuiltinFunctions.h"
 #include <fenv.h>
+#include <locale.h>
+
+ char * ID_WRAP_LEFT_STR;
+ char * ID_WRAP_RIGHT_STR;
+ char * ID_WRAP_S;
+ char * NUMBERS_S;
+ char * SIGNS_S;
+ char * OPERATORS_S;
+ char * BRACKETS_S;
+ char * LEFT_BRACKET_S;
+ char * LEFT_BRACKET_STR;
+ char * RIGHT_BRACKET_S;
+ char * RIGHT_BRACKET_STR;
+ char * DOT_STR;
+ char * DOT_S;
+ char * SPACE_S;
+ char * SPACE_STR;
+ char * RESERVED_S;
+ char * PLUS_S;
+ char * PLUS_STR;
+ char * MINUS_S;
+ char * MINUS_STR;
+ char * MULTIPLICATION_S;
+ char * MULTIPLICATION_STR;
+ char * DIVISION_S;
+ char * DIVISION_STR;
+ char * EXP_S;
+ char * EXP_STR;
+ char * POWER_STR;
+ char * POWER_S;
+ char * INF_STR;
+ char * NAN_STR;
+ char * COMMA_S;
+ char * COMMA_STR;
+ char * UNDERSCORE_STR;
+ char * UNDERSCORE_S;
+ char * NAME_NUMBER_PRE_S;
+ char * NAME_NUMBER_PRE_STR;
+ char * FUNCTION_VAR_PRE_STR;
+ char * FUNCTION_VAR_X;
+ char * FUNCTION_VAR_Y;
+ char * ZERO_STR;
+ char * ONE_STR;
+ char * ILLEGAL_IN_NAMES;
+ char * ILLEGAL_IN_UNITNAMES;
+ char * ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
 
 Calculator::Calculator() {
+	ID_WRAP_LEFT_STR = "{";
+	ID_WRAP_RIGHT_STR = "}";	
+	ID_WRAP_S = "{}";	
+	DOT_STR = ".";
+	COMMA_STR = ",";
+	DOT_S = ".";
+	COMMA_S = ",;";
+	NUMBERS_S = "0123456789";
+	SIGNS_S = "+-*/^E";
+	OPERATORS_S = "+-*/^E";
+	BRACKETS_S = "()[]";
+	LEFT_BRACKET_S = "([";
+	LEFT_BRACKET_STR = "(";
+	RIGHT_BRACKET_S = ")]";
+	RIGHT_BRACKET_STR = ")";
+	SPACE_S = " \t\n";
+	SPACE_STR = " ";
+	RESERVED_S = "?!\\{}&':<>|";
+	PLUS_S = "+";
+	PLUS_STR = "+";
+	MINUS_S = "-";
+	MINUS_STR = "-";
+	MULTIPLICATION_S = "*";
+	MULTIPLICATION_STR = "*";
+	DIVISION_S = "/";
+	DIVISION_STR = "/";
+	EXP_S = "E";
+	EXP_STR = "E";
+	POWER_S = "^";
+	POWER_STR = "^";
+	INF_STR = "INF";
+	NAN_STR = "NAN";
+	UNDERSCORE_STR = "_";
+	UNDERSCORE_S = "_";
+	NAME_NUMBER_PRE_S = "_~#";
+	NAME_NUMBER_PRE_STR = "_";
+	FUNCTION_VAR_PRE_STR = "\\";
+	FUNCTION_VAR_X = "\\x";	
+	FUNCTION_VAR_Y = "\\y";		
+	ZERO_STR = "0";
+	ONE_STR = "1";  
+	setlocale(LC_NUMERIC, "C");
+	setLocale();
+	
+	ILLEGAL_IN_NAMES = (char*) malloc(sizeof(char) * (strlen(RESERVED_S) + strlen(OPERATORS_S) + strlen(SPACE_S) + strlen(DOT_S) + strlen(BRACKETS_S) + 1));
+	sprintf(ILLEGAL_IN_NAMES, "%s%s%s%s%s", RESERVED_S, OPERATORS_S, SPACE_S, DOT_S, BRACKETS_S);
+	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = (char*) malloc(sizeof(char) * (strlen(RESERVED_S) + strlen(OPERATORS_S) + strlen(DOT_S) + strlen(BRACKETS_S) + 1));
+	sprintf(ILLEGAL_IN_NAMES_MINUS_SPACE_STR, "%s%s%s%s\t\n", RESERVED_S, OPERATORS_S, DOT_S, BRACKETS_S);	
+	ILLEGAL_IN_UNITNAMES = (char*) malloc(sizeof(char) * (strlen(ILLEGAL_IN_NAMES) + strlen(NAME_NUMBER_PRE_S) + strlen(NUMBERS_S) + 1));
+	sprintf(ILLEGAL_IN_UNITNAMES, "%s%s%s", ILLEGAL_IN_NAMES, NAME_NUMBER_PRE_S, NUMBERS_S);			
+	
 	srand48(time(0));
 	angleMode(RADIANS);
 	addBuiltinVariables();
@@ -24,6 +121,133 @@ Calculator::Calculator() {
 	b_units = true;
 }
 Calculator::~Calculator(void) {}
+
+const char *Calculator::getDecimalPoint() const {return DOT_STR;}
+const char *Calculator::getComma() const {return COMMA_STR;}	
+void Calculator::setLocale() {
+/*	lconv *locale = localeconv();
+	DOT_STR = locale->decimal_point;
+	COMMA_STR = ",";
+	DOT_S = DOT_STR;	
+	if(strcmp(DOT_STR, COMMA_STR) == 0) {
+		COMMA_STR = ";";
+		COMMA_S = ";";
+	} else {
+		COMMA_S = ",;";	
+	}*/
+}
+void Calculator::unsetLocale() {
+/*	COMMA_STR = ",";
+	COMMA_S = ",;";	
+	DOT_STR = ".";
+	DOT_S = DOT_STR;*/
+}
+string &Calculator::remove_trailing_zeros(string &str, int decimals_to_keep, bool expand, bool decrease) {
+	int i2 = str.find_first_of(DOT_S);
+	if(i2 != string::npos) {
+		string str2 = "";
+		int i4 = str.find_first_not_of(NUMBERS_S, i2 + 1);
+		if(i4 != string::npos) {
+			str2 = str.substr(i4, str.length() - i4);
+			str = str.substr(0, i4);
+		}
+		int expands = 0;
+		int decimals = str.length() - i2 - 1;
+		int i3 = 1;
+		while(str[str.length() - i3] == ZERO_CH) {
+			i3++;
+		}
+		i3--;
+		int dtk = decimals_to_keep;
+		if(decimals_to_keep) {
+			decimals_to_keep = decimals_to_keep - (decimals - i3);
+			if(decimals_to_keep > 0) {
+				expands = decimals_to_keep - i3;
+				if(expands < 0)
+					expands = 0;
+				i3 -= decimals_to_keep;
+				if(i3 < 0)
+					i3 = 0;
+			}
+		}
+		if(expand && expands) {
+			while(expands > 0) {
+				str += ZERO_STR;
+				expands--;
+			}
+		} else {
+			if(is_in(str[str.length() - i3], DOT_S, NULL))
+				i3++;
+			if(i3) {
+				str = str.substr(0, str.length() - i3);
+			}
+		}
+		if(decrease) {
+			if(dtk > 0) {
+				if(i2 + dtk + 1 < str.length()) {
+					if(str.length() > i2 + dtk + 1 && str[i2 + dtk + 1] >= FIVE_CH) {
+						i3 = dtk;
+						while(i3 + i2 >= 0) {
+							if(str[i2 + i3] == NINE_CH)  {
+								str[i2 + i3] = ZERO_CH;
+								if(i3 + i2 == 0) {
+									str.insert(0, 1, ONE_CH);
+									i2++;
+									break;
+								}
+							} else {
+								str[i2 + i3] = str[i2 + i3] + 1;
+								break;
+							}
+							i3--;
+							if(i3 == 0)
+								i3--;
+						}
+					}
+					str = str.substr(0, i2 + dtk + 1);
+				}
+			} else {
+				if(str.length() > i2 + 1 && str[i2 + 1] >= FIVE_CH) {
+					i3 = i2 - 1;
+					while(i3 >= 0) {
+						if(str[i3] == NINE_CH)  {
+							str[i3] = ZERO_CH;
+							if(i3 == 0) {
+								str.insert(0, 1, ONE_CH);
+								i2++;
+								break;
+							}
+						} else {
+							str[i3] = str[i3] + 1;
+							break;
+						}
+						i3--;
+					}
+				}
+				str = str.substr(0, i2);
+			}
+		}
+		if(is_in(str[str.length() - 1], DOT_S, NULL))
+			str = str.substr(0, str.length() - 1);
+		str += str2;
+	} else if(expand) {
+		string str2 = "";
+		int i4 = str.find_first_not_of(NUMBERS_S, 0);
+		if(i4 != string::npos) {
+			str2 = str.substr(i4, str.length() - i4);
+			str = str.substr(0, i4);
+		}
+		if(decimals_to_keep > 0)
+			str += DOT_STR;
+		while(decimals_to_keep > 0) {
+			str += ZERO_STR;
+			decimals_to_keep--;
+		}
+		str += str2;
+	}
+	return str;
+}
+
 int Calculator::addId(Manager *mngr) {
 	for(int i = 0; ; i++) {
 		if(!ids.count(i)) {
@@ -576,7 +800,7 @@ bool Calculator::variableNameIsValid(string name_) {
 		return true;
 	if(i == 0)
 		return false;
-	while(is_in(NAME_NUMBER_PRE_S, name_[i - 1])) {
+	while(is_in(name_[i - 1], NAME_NUMBER_PRE_S, NULL)) {
 		i = name_.find_first_of(NUMBERS_S, i + 1);
 		if(i == string::npos)
 			return true;
@@ -594,7 +818,7 @@ bool Calculator::functionNameIsValid(string name_) {
 	return variableNameIsValid(name_);
 }
 bool Calculator::unitNameIsValid(string name_) {
-	if(name_.find_first_of(ILLEGAL_IN_NAMES NAME_NUMBER_PRE_S NUMBERS_S) != string::npos)
+	if(name_.find_first_of(ILLEGAL_IN_UNITNAMES) != string::npos)
 		return false;
 	return true;
 }
@@ -614,8 +838,8 @@ string Calculator::convertToValidVariableName(string name_) {
 			name_.erase(name_.begin());
 			i--;
 			i2 = -2;
-		} else if(is_not_in(NAME_NUMBER_PRE_S, name_[i - 1])) {
-			name_.insert(i, 1, NAME_NUMBER_PRE_CH);
+		} else if(is_not_in(name_[i - 1], NAME_NUMBER_PRE_S, NULL)) {
+			name_.insert(i, NAME_NUMBER_PRE_STR);
 			i++;
 			i2++;
 		}
@@ -638,7 +862,7 @@ string Calculator::convertToValidFunctionName(string name_) {
 string Calculator::convertToValidUnitName(string name_) {
 	int i = 0;
 	while(1) {
-		i = name_.find_first_of(ILLEGAL_IN_NAMES_MINUS_SPACE_STR NUMBERS_S, i);
+		i = find_first_of(name_, i, ILLEGAL_IN_NAMES_MINUS_SPACE_STR, NUMBERS_S, NULL);
 		if(i == string::npos)
 			break;
 		name_.erase(name_.begin() + i);
@@ -703,11 +927,11 @@ void Calculator::setFunctionsAndVariables(string &str) {
 			v = (Variable*) ufv[i2];
 			while(1) {
 				if((i = str.find(v->name(), i3)) != (int) string::npos) {
-					stmp = LEFT_BRACKET_CH;
-					stmp += ID_WRAP_LEFT_CH;
+					stmp = LEFT_BRACKET_STR;
+					stmp += ID_WRAP_LEFT_STR;
 					stmp += i2s(addId(v->get()));
-					stmp += ID_WRAP_RIGHT_CH;
-					stmp += RIGHT_BRACKET_CH;
+					stmp += ID_WRAP_RIGHT_STR;
+					stmp += RIGHT_BRACKET_STR;
 					str.replace(i, v->name().length(), stmp);
 				} else {
 					break;
@@ -720,13 +944,13 @@ void Calculator::setFunctionsAndVariables(string &str) {
 				if((i = str.find(f->name(), i3)) != (int) string::npos) {
 					i4 = -1;
 					if(f->args() == 0) {
-						stmp = LEFT_BRACKET_CH;
-						stmp += ID_WRAP_LEFT_CH;
+						stmp = LEFT_BRACKET_STR;
+						stmp += ID_WRAP_LEFT_STR;
 						mngr =  f->calculate("");
 						stmp += i2s(addId(mngr));
 						mngr->unref();
-						stmp += ID_WRAP_RIGHT_CH;
-						stmp += RIGHT_BRACKET_CH;
+						stmp += ID_WRAP_RIGHT_STR;
+						stmp += RIGHT_BRACKET_STR;
 						i4 = f->name().length();
 					} else {
 						b = false;
@@ -741,17 +965,17 @@ void Calculator::setFunctionsAndVariables(string &str) {
 								break;
 							} else {
 								char c = str[i + (int) f->name().length() + i6];
-								if(is_in(LEFT_BRACKET_S, c)) {
+								if(is_in(c, LEFT_BRACKET_S, NULL)) {
 									b = true;
-								} else if(is_in(NUMBERS_S DOT_S, c)) {
+								} else if(is_in(c, NUMBERS_S, DOT_S, NULL)) {
 									if(f->args() == 1 && i6 > 0)
 										i5 = 2;
 									else
 										i5 = -1;
-								} else if(is_in(SPACE_S, c))
+								} else if(is_in(c, SPACE_S, NULL))
 									if(i5 == 2) {
 										b = true;
-									} else if(i5 == 2 && is_in(BRACKETS_S OPERATORS_S, str[i + (int) f->name().length() + i6]))
+									} else if(i5 == 2 && is_in(str[i + (int) f->name().length() + i6], BRACKETS_S, OPERATORS_S, NULL))
 										b = true;
 									else
 										i5 = -1;
@@ -762,13 +986,13 @@ void Calculator::setFunctionsAndVariables(string &str) {
 
 							stmp2 = str.substr(i + f->name().length(), i6 - 1);
 
-							stmp = LEFT_BRACKET_CH;
-							stmp += ID_WRAP_LEFT_CH;
+							stmp = LEFT_BRACKET_STR;
+							stmp += ID_WRAP_LEFT_STR;
 							mngr =  f->calculate(stmp2);
 							stmp += i2s(addId(mngr));
 							mngr->unref();
-							stmp += ID_WRAP_RIGHT_CH;
-							stmp += RIGHT_BRACKET_CH;
+							stmp += ID_WRAP_RIGHT_STR;
+							stmp += RIGHT_BRACKET_STR;
 
 							i4 = i6 + 1 + f->name().length() - 2;
 							b = false;
@@ -795,13 +1019,13 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						}
 						if(b) {
 							stmp2 = str.substr(i + f->name().length() + i9, i6 - (i + f->name().length() + i9));
-							stmp = LEFT_BRACKET_CH;
-							stmp += ID_WRAP_LEFT_CH;
+							stmp = LEFT_BRACKET_STR;
+							stmp += ID_WRAP_LEFT_STR;
 							mngr =  f->calculate(stmp2);
 							stmp += i2s(addId(mngr));
 							mngr->unref();
-							stmp += ID_WRAP_RIGHT_CH;
-							stmp += RIGHT_BRACKET_CH;
+							stmp += ID_WRAP_RIGHT_STR;
+							stmp += RIGHT_BRACKET_STR;
 
 							i4 = i6 + 1 - i;
 						}
@@ -822,7 +1046,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 					i4 = i + strlen(ch) - 1;
 					b = true;
 					if(b_units) {
-						i5 = str.find_first_of(NUMBERS_S OPERATORS_S BRACKETS_S SPACE_S, i4);
+						i5 = find_first_of(str, i4, NUMBERS_S, OPERATORS_S, BRACKETS_S, SPACE_S, NULL);
 						if(i5 == string::npos)
 							i5 = str.length() - 1;
 						else
@@ -843,7 +1067,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 										if((ufv_t[i6] == 'u' && str[i4 + i8] != ((Unit*) ufv[i6])->shortName()[i8 - 1]) || (ufv_t[i6] == 'U' && str[i4 + i8] != ((Unit*) ufv[i6])->name()[i8 - 1]) || (ufv_t[i6] == 'Y' && str[i4 + i8] != ((Unit*) ufv[i6])->plural()[i8 - 1])) {
 											u = (Unit*) ufv[i6];
 											b = true;
-											if(str.length() > i4 + 1 && is_in(NUMBERS_S, str[i4 + 1])) {
+											if(str.length() > i4 + 1 && is_in(str[i4 + 1], NUMBERS_S, NULL)) {
 												str.insert(i4 + 1, POWER_STR);
 											}
 											break;
@@ -858,29 +1082,29 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						}
 					}
 					if(ufv_t[i2] == 'p') {
-						if(!b || i == str.length() - 1 || is_not_in(BRACKETS_S OPERATORS_S, *ch)) {
-							stmp = LEFT_BRACKET_CH;
-							stmp += ID_WRAP_LEFT_CH;
+						if(!b || i == str.length() - 1 || is_not_in(*ch, BRACKETS_S, OPERATORS_S, NULL)) {
+							stmp = LEFT_BRACKET_STR;
+							stmp += ID_WRAP_LEFT_STR;
 							if(b) mngr = new Manager(this, s_prefix[*ch]);
 							else mngr = new Manager(this, u, s_prefix[*ch]);
 							stmp += i2s(addId(mngr));
 							mngr->unref();
-							stmp += ID_WRAP_RIGHT_CH;
-							stmp += RIGHT_BRACKET_CH;
+							stmp += ID_WRAP_RIGHT_STR;
+							stmp += RIGHT_BRACKET_STR;
 							str.replace(i, 1, stmp);
 						} else {
 							stmp += ch;
 							i3 = i + 1;
 						}
 					} else {
-						stmp = LEFT_BRACKET_CH;
-						stmp += ID_WRAP_LEFT_CH;
+						stmp = LEFT_BRACKET_STR;
+						stmp += ID_WRAP_LEFT_STR;
 						if(b) mngr = new Manager(this, l_prefix[ch]);
 						else mngr = new Manager(this, u, l_prefix[ch]);
 						stmp += i2s(addId(mngr));
 						mngr->unref();
-						stmp += ID_WRAP_RIGHT_CH;
-						stmp += RIGHT_BRACKET_CH;
+						stmp += ID_WRAP_RIGHT_STR;
+						stmp += RIGHT_BRACKET_STR;
 						str.replace(i, strlen(ch), stmp);
 					}
 				} else {
@@ -904,7 +1128,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						if(i3 >= str.length()) break;
 						goto find_unit;
 					}*/
-					i5 = str.find_last_of(NUMBERS_S OPERATORS_S BRACKETS_S SPACE_S, i);
+					i5 = find_last_of(str, i, NUMBERS_S, OPERATORS_S, BRACKETS_S, SPACE_S, NULL);
 					if(i5 == string::npos)
 						i5 = 0;
 					else
@@ -939,16 +1163,16 @@ void Calculator::setFunctionsAndVariables(string &str) {
 							}
 						}
 					}
-					if(str.length() > i4 + 1 && is_in(NUMBERS_S, str[i4 + 1])) {
+					if(str.length() > i4 + 1 && is_in(str[i4 + 1], NUMBERS_S, NULL)) {
 						str.insert(i4 + 1, POWER_STR);
 					}
 					mngr = new Manager(this, u, value);
-					stmp = LEFT_BRACKET_CH;
-					stmp += ID_WRAP_LEFT_CH;
+					stmp = LEFT_BRACKET_STR;
+					stmp += ID_WRAP_LEFT_STR;
 					stmp += i2s(addId(mngr));
 					mngr->unref();
-					stmp += ID_WRAP_RIGHT_CH;
-					stmp += RIGHT_BRACKET_CH;
+					stmp += ID_WRAP_RIGHT_STR;
+					stmp += RIGHT_BRACKET_STR;
 					str.replace(i, i4 - i + 1, stmp);
 				} else {
 					break;
@@ -959,18 +1183,18 @@ void Calculator::setFunctionsAndVariables(string &str) {
 	remove_blanks(str);
 	i = 0;
 	while(1) {
-		i = str.find_first_not_of(NUMBERS_S DOT_S ILLEGAL_IN_NAMES, i);
+		i = find_first_not_of(str, i, NUMBERS_S, ILLEGAL_IN_NAMES, DOT_S, NULL);
 		if(i == string::npos) break;
 		stmp = str[i];
 		u = getUnit(stmp);
 		if(u) mngr = new Manager(this, u);
 		else mngr = new Manager(this, stmp);
-		stmp = LEFT_BRACKET_CH;
-		stmp += ID_WRAP_LEFT_CH;
+		stmp = LEFT_BRACKET_STR;
+		stmp += ID_WRAP_LEFT_STR;
 		stmp += i2s(addId(mngr));
 		mngr->unref();
-		stmp += ID_WRAP_RIGHT_CH;
-		stmp += RIGHT_BRACKET_CH;
+		stmp += ID_WRAP_RIGHT_STR;
+		stmp += RIGHT_BRACKET_STR;
 		str.replace(i, 1, stmp);
 	}
 }
@@ -980,26 +1204,28 @@ string Calculator::getName(string name, void *object, bool force, bool always_ap
 		return name;
 	}
 	int i2 = 1;
-	char buffer[10];
 	if(name.empty()) {
 		name = "x";
 		always_append = true;
 	}
 	string stmp = name;
 	if(always_append)
-		stmp += NAME_NUMBER_PRE_STR "1";
+		stmp += NAME_NUMBER_PRE_STR;
+		stmp += "1";
 	for(int i = 0; i < (int) variables.size(); i++) {
 		if(variables[i] != object && variables[i]->name() == stmp) {
 			i2++;
-			sprintf(buffer, NAME_NUMBER_PRE_STR "%i", i2);
-			stmp = name + buffer;
+			stmp = name;
+			stmp += NAME_NUMBER_PRE_STR;
+			stmp += i2s(i2);
 		}
 	}
 	for(int i = 0; i < (int) functions.size(); i++) {
 		if(functions[i] != object && functions[i]->name() == stmp) {
 			i2++;
-			sprintf(buffer, NAME_NUMBER_PRE_STR "%i", i2);
-			stmp = name + buffer;
+			stmp = name;
+			stmp += NAME_NUMBER_PRE_STR;
+			stmp += i2s(i2);
 		}
 	}
 	if(i2 > 1 && !always_append)
@@ -1012,19 +1238,20 @@ string Calculator::getUnitName(string name, Unit *object, bool force, bool alway
 		return name;
 	}
 	int i2 = 1;
-	char buffer[10];
 	if(name.empty()) {
 		name = "x";
 		always_append = true;
 	}
 	string stmp = name;
 	if(always_append)
-		stmp += NAME_NUMBER_PRE_STR "1";
+		stmp += NAME_NUMBER_PRE_STR;
+		stmp += "1";
 	for(int i = 0; i < (int) units.size(); i++) {
 		if(units[i] != object && ((units[i]->type() == 'D' && ((CompositeUnit*) units[i])->internalName() == stmp) || (units[i]->type() != 'D' && (units[i]->name() == stmp || units[i]->shortName() == stmp || units[i]->plural() == stmp)))) {
 			i2++;
-			sprintf(buffer, NAME_NUMBER_PRE_STR "%i", i2);
-			stmp = name + buffer;
+			stmp = name;
+			stmp += NAME_NUMBER_PRE_STR;
+			stmp += i2s(i2);
 		}
 	}
 	if(i2 > 1 && !always_append)
@@ -1036,6 +1263,7 @@ bool Calculator::save(const char* file_name) {
 	if(file == NULL)
 		return false;
 	string str;
+	unsetLocale();
 	for(int i = 0; i < variables.size(); i++) {
 		if(variables[i]->isUserVariable())
 			fprintf(file, "*Variable\t");
@@ -1152,11 +1380,13 @@ bool Calculator::save(const char* file_name) {
 		fprintf(file, "*Prefix\t%c\t%LG\n", it->first, it->second);
 	}
 	fclose(file);
+	setLocale();
 }
 bool Calculator::load(const char* file_name) {
 	FILE *file = fopen(file_name, "r");
 	if(file == NULL)
 		return false;
+	unsetLocale();
 	string stmp, str, ntmp, vtmp, rtmp, etmp, shtmp, ctmp, ttmp, cutmp;
 	Unit *u;
 	AliasUnit *au;
@@ -1169,7 +1399,7 @@ bool Calculator::load(const char* file_name) {
 	char line[10000];
 	while(1) {
 		if(fgets(line, 10000, file) == NULL)
-			return true;
+			break;
 		if(line[0] == '*') {
 			stmp = line;
 			if((i = stmp.find_first_of("\t")) != string::npos) {
@@ -1347,8 +1577,11 @@ bool Calculator::load(const char* file_name) {
 														if(cu) {
 															mngr = calculate(cutmp);
 															//cu->add(u, mngr, strtold(rtmp.c_str(), NULL));
-															cu->add(u, mngr->value(), strtold(rtmp.c_str(), NULL));
+															Manager *mngr2 = calculate(rtmp);
+															//cu->add(u, mngr->value(), strtold(rtmp.c_str(), NULL));
+															cu->add(u, mngr->value(), mngr2->value());
 															mngr->unref();
+															mngr2->unref();
 														}
 													}
 												} else
@@ -1418,7 +1651,10 @@ bool Calculator::load(const char* file_name) {
 						ntmp = stmp.substr(i, i2 - i);
 						if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 							vtmp = stmp.substr(i, i2 - i);
-							addPrefix(ntmp, strtold(vtmp.c_str(), NULL));
+							mngr = calculate(vtmp);
+							//addPrefix(ntmp, strtold(vtmp.c_str(), NULL));
+							addPrefix(ntmp, mngr->value());
+							mngr->unref();
 						}
 					}
 				}
@@ -1426,6 +1662,8 @@ bool Calculator::load(const char* file_name) {
 		}
 	}
 	fclose(file);
+	setLocale();
+	return true;
 }
 bool Calculator::getPrefix(const char *str, long double *value) {
 	if(strlen(str) == 1)
@@ -1630,13 +1868,13 @@ string Calculator::value2str_exp(long double &value, int precision) {
 		i1 -= 3;
 	}
 	if(i2 + 2 < str.length())
-		str.insert(i2 + 1, 1, DOT_CH);
+		str.insert(i2 + 1, DOT_STR);
 	if(neg != 0)
-		str.insert(0, 1, MINUS_CH);
+		str.insert(0, MINUS_STR);
 	if(i1 != 0) {
-		str += EXP_CH;
+		str += EXP_STR;
 		if(i1 > 0)
-			str += PLUS_CH;
+			str += PLUS_STR;
 		str += i2s(i1);
 	}
 	return str;

@@ -38,6 +38,9 @@ class Calculator {
 	vector<char> ufv_t;	
 	hash_map<int, Manager*> ids;
   public:
+  
+	char *dot_str, *comma_str, *dot_s, *comma_s, *numbers_s, *signs_s, *operators_s, *brackets_s, *left_bracket_s, *left_bracket_str, *right_bracket_s, *right_bracket_str, *space_s, *space_str, *reserved_s, *plus_s, *plus_str, *minus_s, *minus_str, *multiplication_s, *multiplication_str, *division_s, *division_str, *exp_s, *exp_str, *power_s, *power_str, *inf_str, *nan_str, *illegal_in_names, *illegal_in_names_minus_space_str, *underscore_str, *underscore_s, *name_number_pre_s, *name_number_pre_str, *function_var_pre_str, *zero_str, *one_str;  
+  
 	vector<Variable*> variables;
 	vector<Function*> functions;	
 	vector<Unit*> units;	
@@ -46,6 +49,11 @@ class Calculator {
   
 	Calculator(void);
 	~Calculator(void);
+	const char *getDecimalPoint() const;
+	const char *getComma() const;	
+	void setLocale();
+	void unsetLocale();
+	string &remove_trailing_zeros(string &str, int decimals_to_keep = 0, bool expand = false, bool decrease = false);	
 	int addId(Manager *mngr);
 	Manager *getId(int id);	
 	void delId(int id);

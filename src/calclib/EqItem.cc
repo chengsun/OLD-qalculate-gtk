@@ -32,10 +32,10 @@ EqNumber::EqNumber(string str, Calculator *parent, char operation_) : EqItem(ope
 	string ssave = str;
 	char s = PLUS_CH;
 	for(int i = 0; i < (int) str.length() - 1; i++) {
-		if(is_in(PLUS_S SPACE_S, str[i])) {
+		if(is_in(str[i], PLUS_S, SPACE_S, NULL)) {
 			str.erase(i, 1);
 			i--;
-		} else if(is_in(MINUS_S, str[i])) {
+		} else if(is_in(str[i], MINUS_S, NULL)) {
 			if(s == MINUS_CH)
 				s = PLUS_CH;
 			else
@@ -89,7 +89,7 @@ EqNumber::EqNumber(string str, Calculator *parent, char operation_) : EqItem(ope
 			str.insert(0, 1, MINUS_CH);
 		value = strtold(str.c_str(), NULL);
 	}
-	if((itmp = str.find_first_not_of(NUMBERS_S MINUS_S DOT_S)) != (int) string::npos) {
+	if((itmp = find_first_not_of(str, 0, NUMBERS_S, MINUS_S, DOT_S, NULL)) != (int) string::npos) {
 		string stmp = str.substr(itmp, str.length() - itmp);
 		str.erase(itmp, str.length() - itmp);
 
@@ -142,13 +142,13 @@ goto_place1:
 				}
 				i3 = str.find_first_of(LEFT_BRACKET_S, i3 + 1);
 			}
-			if(i > 0 && is_in(NUMBERS_S DOT_S ID_WRAP_S, str[i - 1])) {
-				str.insert(i, 1, MULTIPLICATION_CH);
+			if(i > 0 && is_in(str[i - 1], NUMBERS_S, DOT_S, ID_WRAP_S, NULL)) {
+				str.insert(i, MULTIPLICATION_STR);
 				i++;
 				i2++;
 			}
-			if(i2 < (int) str.length() - 1 && is_in(NUMBERS_S DOT_S ID_WRAP_S, str[i2 + 1])) {
-				str.insert(i2 + 1, 1, MULTIPLICATION_CH);
+			if(i2 < (int) str.length() - 1 && is_in(str[i2 + 1], NUMBERS_S, DOT_S, ID_WRAP_S, NULL)) {
+				str.insert(i2 + 1, MULTIPLICATION_STR);
 			}
 			str2 = str.substr(i + 1, i2 - (i + 1));
 			eq_c = new EqContainer(str2, calc, PLUS_CH);
@@ -168,68 +168,67 @@ goto_place1:
 	i5 = 0;
 	if(i4 > 0) {
 		if(!str.empty())
-			add(&str);
+			add(str);
 		return;
-	} else if((i = str.find_first_of(PLUS_S MINUS_S, 1)) > 0 && i != (int) string::npos) {
+	} else if((i = find_first_of(str, 1, PLUS_S, MINUS_S, NULL)) > 0 && i != (int) string::npos) {
 		bool b = false;
 		while(i > -1) {
-			if(is_not_in(OPERATORS_S, str[i - 1])) {
+			if(is_not_in(str[i - 1], OPERATORS_S, NULL)) {
 				s = str[i];
 				str2 = str.substr(0, i);
 				str = str.substr(i + 1, str.length() - (i + 1));
-				add(&str2, s);
-				i = str.find_first_of(PLUS_S MINUS_S, 1);
+				add(str2, s);
+				i = find_first_of(str, 1, PLUS_S, MINUS_S, NULL);
 				b = true;
 			} else {
-				i = str.find_first_of(PLUS_S MINUS_S, i + 1);
+				i = find_first_of(str, i + 1, PLUS_S, MINUS_S, NULL);
 			}
 			
 		}
 		if(b) {
-			add(&str);
+			add(str);
 			return;
 		}
 	}
-	if((i = str.find_first_of(MULTIPLICATION_S DIVISION_S, 1)) > 0 && i != (int) string::npos) {
+	if((i = find_first_of(str, 1, MULTIPLICATION_S, DIVISION_S, NULL)) > 0 && i != (int) string::npos) {
 		while(i > -1) {
 			s = str[i];
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
-			add(&str2, s);
-			i = str.find_first_of(MULTIPLICATION_S DIVISION_S, 1);
+			add(str2, s);
+			i = find_first_of(str, 1, MULTIPLICATION_S, DIVISION_S, NULL);
 		}
-		add(&str);
+		add(str);
 	} else if((i = str.find_first_of(POWER_S, 1)) > 0 && i != (int) string::npos) {
 		while(i > -1) {
 			s = str[i];
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
-			add(&str2, s);
+			add(str2, s);
 			i = str.find_first_of(POWER_S, 1);
 		}
-		add(&str);
+		add(str);
 	} else if((i = str.find_first_of(EXP_S, 1)) > 0 && i != (int) string::npos) {
 		while(i > -1) {
 			s = str[i];
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
-			add
-				(&str2, s);
+			add(str2, s);
 			i = str.find_first_of(EXP_S, 1);
 		}
-		add(&str);
+		add(str);
 	} else {
 		add(new EqNumber(str, calc));
 	}
 }
-void EqContainer::add(string *str, char s) {
-	if(str->length() > 0) {
-		string stmp = str[0];
-		if(str->find_first_not_of(OPERATORS_S) != string::npos) {
-			if(str->find_first_not_of(NUMBERS_S DOT_S ID_WRAP_S, 1) != string::npos && str->find_first_not_of(NUMBERS_S DOT_S ID_WRAP_S PLUS_S MINUS_S) != 0) {
-				add(new EqContainer(*str, calc, s));
+void EqContainer::add(string &str, char s) {
+	if(str.length() > 0) {
+		string stmp = str;
+		if(str.find_first_not_of(OPERATORS_S) != string::npos) {
+			if(find_first_not_of(str, 1, NUMBERS_S, DOT_S, ID_WRAP_S, NULL) != string::npos && find_first_not_of(str, 0, NUMBERS_S, DOT_S, ID_WRAP_S, PLUS_S, MINUS_S, NULL) != 0) {
+				add(new EqContainer(str, calc, s));
 			} else {
-				add(new EqNumber(*str, calc, s));
+				add(new EqNumber(str, calc, s));
 			}
 		}
 	}

@@ -50,50 +50,57 @@ typedef enum {
 #define ID_WRAP_LEFT_CH		'{'
 #define ID_WRAP_RIGHT_CH	'}'
 
-#define ID_WRAP_LEFT_STR	"{"
-#define ID_WRAP_RIGHT_STR	"}"
-#define ID_WRAP_S		"{}"
+extern char *ID_WRAP_LEFT_STR;
+extern char *ID_WRAP_RIGHT_STR;
+extern char *ID_WRAP_S;
+extern char *NUMBERS_S;
+extern char *SIGNS_S;
+extern char *OPERATORS_S;
+extern char *BRACKETS_S;
+extern char *LEFT_BRACKET_S;
+extern char *LEFT_BRACKET_STR;
+extern char *RIGHT_BRACKET_S;
+extern char *RIGHT_BRACKET_STR;
+extern char *DOT_STR;
+extern char *DOT_S;
+extern char *SPACE_S;
+extern char *SPACE_STR;
+extern char *RESERVED_S;
+extern char *PLUS_S;
+extern char *PLUS_STR;
+extern char *MINUS_S;
+extern char *MINUS_STR;
+extern char *MULTIPLICATION_S;
+extern char *MULTIPLICATION_STR;
+extern char *DIVISION_S;
+extern char *DIVISION_STR;
+extern char *EXP_S;
+extern char *EXP_STR;
+extern char *POWER_STR;
+extern char *POWER_S;
+extern char *INF_STR;
+extern char *NAN_STR;
+extern char *COMMA_S;
+extern char *COMMA_STR;
+extern char *UNDERSCORE_STR;
+extern char *UNDERSCORE_S;
+extern char *NAME_NUMBER_PRE_S;
+extern char *NAME_NUMBER_PRE_STR;
+extern char *FUNCTION_VAR_PRE_STR;
+extern char *FUNCTION_VAR_X;
+extern char *FUNCTION_VAR_Y;
+extern char *ZERO_STR;
+extern char *ONE_STR;
+extern char *ILLEGAL_IN_NAMES;
+extern char *ILLEGAL_IN_UNITNAMES;
+extern char *ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
+/*extern char *ILLEGAL_IN_NAMES_MINUS_SPACE_STR_PLUS_NUMBERS_S;
+extern char *BRACKETS_S_AND_OPERATORS_S;
+extern char *NUMBERS_S_AND_OPERATORS_S_AND_BRACKETS_S_AND_SPACE_S;
+extern char *PLUS_S_AND_SPACE_S;
+extern char *NUMBERS_S_AND_MINUS_S_AND_DOT_S;*/
 
-#define NUMBERS_S		"0123456789"
-#define SIGNS_S			"+-*/^E"
-#define OPERATORS_S		"+-*/^E"
-#define BRACKETS_S		"()[]"
-#define LEFT_BRACKET_S		"(["
-#define LEFT_BRACKET_STR	"("
-#define RIGHT_BRACKET_S		"])"
-#define RIGHT_BRACKET_STR	")"
-#define DOT_STR			"."
-#define DOT_S			"."
-#define SPACE_S			" \t\n"
-#define SPACE_STR		" "
-#define RESERVED_S		"?!\\{}&':<>|"
-#define PLUS_S			"+"
-#define PLUS_STR		"+"
-#define MINUS_S			"-"
-#define MINUS_STR		"-"
-#define MULTIPLICATION_S	"*"
-#define MULTIPLICATION_STR	"*"
-#define DIVISION_S		"/"
-#define DIVISION_STR		"/"
-#define EXP_S			"E"
-#define EXP_STR			"E"
-#define POWER_STR		"^"
-#define POWER_S			"^"
-#define INF_STR			"INF"
-#define NAN_STR			"NAN"
-#define COMMA_S			",;"
-#define COMMA_STR		","
-#define ILLEGAL_IN_NAMES			"?!\\{}&':<>|+-*/^E()[] \t."
-#define ILLEGAL_IN_NAMES_MINUS_SPACE_STR	"?!\\{}&':<>|+-*/^E()[]\t."
-#define UNDERSCORE_STR		"_"
-#define UNDERSCORE_S		"_"
-#define NAME_NUMBER_PRE_S	"_~#"
-#define NAME_NUMBER_PRE_STR	"_"
-#define FUNCTION_VAR_PRE_STR	"\\"
-#define ZERO_STR		"0"
-#define ONE_STR			"1"
-
-#define DOT_CH			'.'
+//#define DOT_CH			'.'
 #define ZERO_CH			'0'
 #define ONE_CH			'1'
 #define TWO_CH			'2'
@@ -110,13 +117,13 @@ typedef enum {
 #define DIVISION_CH		'/'
 #define EXP_CH			'E'
 #define POWER_CH		'^'
-#define SPACE_CH		' '
-#define LEFT_BRACKET_CH		'('
-#define RIGHT_BRACKET_CH	')'
-#define FUNCTION_VAR_PRE_CH	'\\'
-#define COMMA_CH		','
-#define NAME_NUMBER_PRE_CH	'_'
-#define UNIT_DIVISION_CH	'/'
+//#define SPACE_CH		' '
+//#define LEFT_BRACKET_CH		'('
+//#define RIGHT_BRACKET_CH	')'
+//#define FUNCTION_VAR_PRE_CH	'\\'
+//#define COMMA_CH		','
+//#define NAME_NUMBER_PRE_CH	'_'
+//#define UNIT_DIVISION_CH	'/'
 
 
 using namespace std;
