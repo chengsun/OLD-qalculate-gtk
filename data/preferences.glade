@@ -1,0 +1,263 @@
+<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
+<!DOCTYPE glade-interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
+
+<glade-interface>
+
+<widget class="GtkDialog" id="preferences_dialog">
+  <property name="border_width">5</property>
+  <property name="title" translatable="yes">Preferences</property>
+  <property name="type">GTK_WINDOW_TOPLEVEL</property>
+  <property name="window_position">GTK_WIN_POS_NONE</property>
+  <property name="modal">True</property>
+  <property name="resizable">False</property>
+  <property name="destroy_with_parent">False</property>
+  <property name="has_separator">False</property>
+
+  <child internal-child="vbox">
+    <widget class="GtkVBox" id="dialog-vbox4">
+      <property name="visible">True</property>
+      <property name="homogeneous">False</property>
+      <property name="spacing">0</property>
+
+      <child internal-child="action_area">
+	<widget class="GtkHButtonBox" id="dialog-action_area4">
+	  <property name="visible">True</property>
+	  <property name="layout_style">GTK_BUTTONBOX_END</property>
+
+	  <child>
+	    <widget class="GtkButton" id="preferences_button_close">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Close this window</property>
+	      <property name="can_default">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label">gtk-close</property>
+	      <property name="use_stock">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="response_id">-7</property>
+	    </widget>
+	  </child>
+	</widget>
+	<packing>
+	  <property name="padding">0</property>
+	  <property name="expand">False</property>
+	  <property name="fill">True</property>
+	  <property name="pack_type">GTK_PACK_END</property>
+	</packing>
+      </child>
+
+      <child>
+	<widget class="GtkVBox" id="vbox44">
+	  <property name="border_width">6</property>
+	  <property name="visible">True</property>
+	  <property name="homogeneous">False</property>
+	  <property name="spacing">6</property>
+
+	  <child>
+	    <widget class="GtkCheckButton" id="preferences_checkbutton_load_defs">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">If global definitions shall be loaded (you probably want this)</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Load global definitions on start</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_load_defs_toggled" last_modification_time="Sun, 10 Aug 2003 21:18:48 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkCheckButton" id="preferences_checkbutton_fetch_exchange_rates">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">If current exchange rates shall be downloaded from the internet at program start</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Update exchange rates on start</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_fetch_exchange_rates_toggled" last_modification_time="Mon, 06 Oct 2003 21:03:52 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkCheckButton" id="preferences_checkbutton_save_mode">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">If the mode of the calculator shall be restored</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Save mode on exit</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_save_mode_toggled" last_modification_time="Sun, 10 Aug 2003 21:19:02 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkCheckButton" id="preferences_checkbutton_save_defs">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">If changes to functions, units and variables shall be saved automatically</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Save definitions on exit</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_save_defs_toggled" last_modification_time="Sun, 10 Aug 2003 21:19:15 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkCheckButton" id="preferences_checkbutton_short_units">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">If you want the abbreviation of unit names to be displayed in the result</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Short unit format</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_short_units_toggled" last_modification_time="Sun, 10 Aug 2003 21:19:23 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkCheckButton" id="preferences_checkbutton_all_prefixes">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">enables automatic use of hekto, deka, deci and centi when prefixes is enabled</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Enable automatic use of all prefixes</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_all_prefixes_toggled" last_modification_time="Thu, 02 Oct 2003 10:43:35 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkCheckButton" id="preferences_checkbutton_multiple_roots">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Enables calculation of multiple results for even roots</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Calculate multiple roots</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">True</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_multiple_roots_toggled" last_modification_time="Mon, 06 Oct 2003 08:36:37 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkCheckButton" id="preferences_checkbutton_unicode_signs">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Disable this if you have problems with some fancy characters</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Enable unicode signs</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_unicode_signs_toggled" last_modification_time="Mon, 18 Aug 2003 06:14:15 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkCheckButton" id="preferences_checkbutton_custom_font">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">If you want to use a font other than the default in the result display</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Custom result font</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_custom_font_toggled" last_modification_time="Sun, 07 Sep 2003 19:57:10 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkButton" id="preferences_button_font">
+	      <property name="visible">True</property>
+	      <property name="sensitive">False</property>
+	      <property name="tooltip" translatable="yes">Select custom font</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Font</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <signal name="clicked" handler="on_preferences_button_font_clicked" last_modification_time="Sun, 07 Sep 2003 19:59:08 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+	</widget>
+	<packing>
+	  <property name="padding">0</property>
+	  <property name="expand">True</property>
+	  <property name="fill">True</property>
+	</packing>
+      </child>
+    </widget>
+  </child>
+</widget>
+
+</glade-interface>

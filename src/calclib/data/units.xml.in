@@ -714,7 +714,7 @@
       <_plural>seconds</_plural>
       <_title>Second</_title>
     </unit>
-    <unit type="alias" name="minute">
+    <unit type="alias" name="min">
       <_singular>minute</_singular>
       <_plural>minutes</_plural>
       <base>

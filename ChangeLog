@@ -1,3 +1,9 @@
+2003-10-22  Niklas Knutsson  <nq@altern.org>
+
+	* Split up glade file
+	* minute -> min
+	* Now function can have the same name as a unit or variable, but units and variables cannot have the same name
+
 2003-10-21  Niklas Knutsson  <nq@altern.org>
 
 	* Release Qalculate-GTK version 0.3

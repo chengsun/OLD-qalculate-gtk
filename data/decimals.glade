@@ -1,0 +1,176 @@
+<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
+<!DOCTYPE glade-interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
+
+<glade-interface>
+
+<widget class="GtkDialog" id="decimals_dialog">
+  <property name="border_width">5</property>
+  <property name="title" translatable="yes">Decimals</property>
+  <property name="type">GTK_WINDOW_TOPLEVEL</property>
+  <property name="window_position">GTK_WIN_POS_NONE</property>
+  <property name="modal">False</property>
+  <property name="resizable">False</property>
+  <property name="destroy_with_parent">False</property>
+  <property name="has_separator">False</property>
+  <signal name="delete_event" handler="gtk_widget_hide" object="decimals_dialog" last_modification_time="Wed, 08 Oct 2003 10:38:43 GMT"/>
+  <signal name="destroy_event" handler="gtk_widget_hide" object="decimals_dialog" last_modification_time="Wed, 08 Oct 2003 10:38:51 GMT"/>
+
+  <child internal-child="vbox">
+    <widget class="GtkVBox" id="vbox46">
+      <property name="visible">True</property>
+      <property name="homogeneous">False</property>
+      <property name="spacing">0</property>
+
+      <child internal-child="action_area">
+	<widget class="GtkHButtonBox" id="hbuttonbox7">
+	  <property name="visible">True</property>
+	  <property name="layout_style">GTK_BUTTONBOX_END</property>
+
+	  <child>
+	    <widget class="GtkButton" id="decimals_dialog_button_close">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Close this window</property>
+	      <property name="can_default">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label">gtk-close</property>
+	      <property name="use_stock">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="response_id">-7</property>
+	      <signal name="clicked" handler="gtk_widget_hide" object="decimals_dialog" last_modification_time="Wed, 01 Oct 2003 09:05:15 GMT"/>
+	    </widget>
+	  </child>
+	</widget>
+	<packing>
+	  <property name="padding">0</property>
+	  <property name="expand">False</property>
+	  <property name="fill">True</property>
+	  <property name="pack_type">GTK_PACK_END</property>
+	</packing>
+      </child>
+
+      <child>
+	<widget class="GtkVBox" id="vbox47">
+	  <property name="border_width">6</property>
+	  <property name="visible">True</property>
+	  <property name="homogeneous">False</property>
+	  <property name="spacing">6</property>
+
+	  <child>
+	    <widget class="GtkHBox" id="hbox61">
+	      <property name="visible">True</property>
+	      <property name="homogeneous">True</property>
+	      <property name="spacing">6</property>
+
+	      <child>
+		<widget class="GtkCheckButton" id="decimals_dialog_checkbutton_min">
+		  <property name="visible">True</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Min Decimals</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_decimals_dialog_checkbutton_min_toggled" last_modification_time="Wed, 10 Sep 2003 14:49:23 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">True</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkSpinButton" id="decimals_dialog_spinbutton_min">
+		  <property name="visible">True</property>
+		  <property name="sensitive">False</property>
+		  <property name="tooltip" translatable="yes">Minimal number of displayed decimals</property>
+		  <property name="can_focus">True</property>
+		  <property name="climb_rate">1</property>
+		  <property name="digits">0</property>
+		  <property name="numeric">True</property>
+		  <property name="update_policy">GTK_UPDATE_ALWAYS</property>
+		  <property name="snap_to_ticks">True</property>
+		  <property name="wrap">False</property>
+		  <property name="adjustment">0 0 100 1 10 10</property>
+		  <signal name="value_changed" handler="on_decimals_dialog_spinbutton_min_value_changed" last_modification_time="Wed, 10 Sep 2003 14:50:29 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">True</property>
+		  <property name="fill">True</property>
+		</packing>
+	      </child>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">True</property>
+	      <property name="fill">True</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkHBox" id="hbox62">
+	      <property name="visible">True</property>
+	      <property name="homogeneous">True</property>
+	      <property name="spacing">6</property>
+
+	      <child>
+		<widget class="GtkCheckButton" id="decimals_dialog_checkbutton_max">
+		  <property name="visible">True</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Max Decimals</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_decimals_dialog_checkbutton_max_toggled" last_modification_time="Wed, 10 Sep 2003 14:49:30 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">True</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkSpinButton" id="decimals_dialog_spinbutton_max">
+		  <property name="visible">True</property>
+		  <property name="sensitive">False</property>
+		  <property name="tooltip" translatable="yes">Maximal number of decimals to display (and round to)</property>
+		  <property name="can_focus">True</property>
+		  <property name="climb_rate">1</property>
+		  <property name="digits">0</property>
+		  <property name="numeric">True</property>
+		  <property name="update_policy">GTK_UPDATE_ALWAYS</property>
+		  <property name="snap_to_ticks">True</property>
+		  <property name="wrap">False</property>
+		  <property name="adjustment">2 0 100 1 10 10</property>
+		  <signal name="value_changed" handler="on_decimals_dialog_spinbutton_max_value_changed" last_modification_time="Wed, 10 Sep 2003 14:50:40 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">True</property>
+		</packing>
+	      </child>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">True</property>
+	      <property name="fill">True</property>
+	    </packing>
+	  </child>
+	</widget>
+	<packing>
+	  <property name="padding">0</property>
+	  <property name="expand">True</property>
+	  <property name="fill">True</property>
+	</packing>
+      </child>
+    </widget>
+  </child>
+</widget>
+
+</glade-interface>

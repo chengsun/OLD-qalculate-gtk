@@ -36,10 +36,13 @@ string selected_unit_category;
 Unit *selected_unit, *selected_to_unit;
 bool load_global_defs, fetch_exchange_rates_at_startup, first_time;
 GtkWidget *omToUnit_menu;
-GladeXML *glade_xml;
 GdkPixmap *pixmap_result;
 extern bool b_busy;
 extern vector<string> recent_objects_pre;
+
+GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *decimals_glade;
+GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *nbases_glade, *plot_glade, *precision_glade;
+GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *variableedit_glade, *variables_glade;
 
 int main (int argc, char **argv) {
 
@@ -53,20 +56,12 @@ int main (int argc, char **argv) {
 	glade_init ();
 
 	b_busy = false;
-
-	/* load the glade file into the object and die if that doesn't work */
-	gchar *gstr = g_build_filename (
-			PACKAGE_DATA_DIR,
-			PACKAGE,
-			"glade",
-			"qalculate.glade",
-			NULL);
-	glade_xml = glade_xml_new (
-			gstr,
-			NULL,
-			NULL);
-	g_assert (glade_xml != NULL);
-	g_free (gstr);
+	
+	main_glade = NULL; about_glade = NULL; argumentrules_glade = NULL; 
+	csvimport_glade = NULL; decimals_glade = NULL; functionedit_glade = NULL; 
+	functions_glade = NULL; matrixedit_glade = NULL; nbases_glade = NULL; plot_glade = NULL; 
+	precision_glade = NULL; preferences_glade = NULL; unit_glade = NULL; 
+	unitedit_glade = NULL; units_glade = NULL; variableedit_glade = NULL; variables_glade = NULL;	
 
 	//create the almighty Calculator object
 	new Calculator();
@@ -127,8 +122,8 @@ int main (int argc, char **argv) {
 	//create main window
 	create_main_window();
 	
-	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "menu_item_plot_functions"), canplot);
-	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "menu_item_fetch_exchange_rates"), canfetch);
+	gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "menu_item_plot_functions"), canplot);
+	gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "menu_item_fetch_exchange_rates"), canfetch);
 	
 	for(int i = recent_objects_pre.size() - 1; i >= 0; i--) {
 		object_inserted(CALCULATOR->getExpressionItem(recent_objects_pre[i]));
@@ -145,7 +140,7 @@ int main (int argc, char **argv) {
 	create_umenu2();
 	create_pmenu2();			
 	
-	gtk_main ();
+	gtk_main();
 	return 0;
 }
 

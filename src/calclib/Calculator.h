@@ -181,6 +181,7 @@ class Calculator {
 	ExpressionItem *getActiveExpressionItem(ExpressionItem *item);
 	ExpressionItem *getExpressionItem(string name, ExpressionItem *item = NULL);
 	Unit* getUnit(string name_);
+	Unit* getActiveUnit(string name_);
 	Unit* getCompositeUnit(string internal_name_);	
 	Variable* addVariable(Variable *v, bool force = true);
 	void variableNameChanged(Variable *v);
@@ -190,9 +191,11 @@ class Calculator {
 	void unitPluralChanged(Unit *u);		
 	void setFunctionsAndVariables(string &str);
 	Variable* getVariable(string name_);
+	Variable* getActiveVariable(string name_);
 	ExpressionItem *addExpressionItem(ExpressionItem *item, bool force = true);
 	Function* addFunction(Function *f, bool force = true);
 	Function* getFunction(string name_);	
+	Function* getActiveFunction(string name_);	
 	void error(bool critical, const char *TEMPLATE,...);
 	Error* error();
 	Error* nextError();
@@ -202,10 +205,9 @@ class Calculator {
 	string convertToValidFunctionName(string name_);		
 	bool unitNameIsValid(string name_);
 	string convertToValidUnitName(string name_);		
-	bool nameTaken(string name_, ExpressionItem *object = NULL);
+	bool nameTaken(string name, ExpressionItem *object = NULL);
 	bool unitIsUsedByOtherUnits(const Unit *u) const;	
 	string getName(string name = "", ExpressionItem *object = NULL, bool force = false, bool always_append = false);
-	string getUnitName(string name = "", Unit *object = NULL, bool force = false, bool always_append = false);	
 	//bool load(const char* file_name, bool is_user_defs = true);
 	bool loadGlobalDefinitions();
 	bool loadLocalDefinitions();

@@ -100,16 +100,22 @@ enum {
 };
 
 void create_main_window (void);
-GtkWidget* create_functions_dialog (void);
-GtkWidget* create_variables_dialog (void);
-GtkWidget* create_units_dialog (void);
-GtkWidget* create_preferences_dialog (void);
-GtkWidget* create_unit_edit_dialog (void);
-GtkWidget* create_function_edit_dialog (void);
-GtkWidget* create_variable_edit_dialog (void);
-GtkWidget* create_matrix_edit_dialog (void);
-GtkWidget* create_csv_import_dialog (void);
-GtkWidget* create_nbases_dialog (void);
-GtkWidget *create_InfoWidget(const gchar *text);
+GtkWidget* get_functions_dialog (void);
+GtkWidget* get_variables_dialog (void);
+GtkWidget* get_units_dialog (void);
+GtkWidget* get_preferences_dialog (void);
+GtkWidget* get_unit_edit_dialog (void);
+GtkWidget* get_function_edit_dialog (void);
+GtkWidget* get_variable_edit_dialog (void);
+GtkWidget* get_matrix_edit_dialog (void);
+GtkWidget* get_csv_import_dialog (void);
+GtkWidget* get_nbases_dialog (void);
+GtkWidget* get_about_dialog (void);
+GtkWidget* get_argument_rules_dialog (void);
+GtkWidget* get_decimals_dialog (void);
+GtkWidget* get_plot_dialog (void);
+GtkWidget* get_precision_dialog (void);
+GtkWidget* get_unit_dialog (void);
+GtkWidget* create_InfoWidget(const gchar *text);
 
 #endif /* INTERFACE_H */

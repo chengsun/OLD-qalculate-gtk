@@ -45,7 +45,7 @@ bool Unit::isUsedByOtherUnits() const {
 void Unit::setPlural(string name_, bool force) {
 	remove_blank_ends(name_);
 	if(name_ != splural) {
-		splural = CALCULATOR->getUnitName(name_, this, force);
+		splural = CALCULATOR->getName(name_, this, force);
 		setChanged(true);
 	}
 	CALCULATOR->unitPluralChanged(this);
@@ -55,7 +55,7 @@ void Unit::setSingular(string name_, bool force) {
 	if(name_.empty()) {
 		ssingular = name_;
 	} else if(name_ != ssingular) {
-		ssingular = CALCULATOR->getUnitName(name_, this, force);
+		ssingular = CALCULATOR->getName(name_, this, force);
 	}
 	setChanged(true);
 	CALCULATOR->unitSingularChanged(this);

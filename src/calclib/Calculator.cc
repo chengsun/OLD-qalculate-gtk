@@ -1097,14 +1097,14 @@ Manager *Calculator::convert(Manager *mngr, string composite_) {
 }
 Unit* Calculator::addUnit(Unit *u, bool force) {
 	if(u->unitType() == COMPOSITE_UNIT) {
-		u->setName(getUnitName(u->referenceName(), u, force));		
+		u->setName(getName(u->referenceName(), u, force));		
 	} else {
-		u->setName(getUnitName(u->name(), u, force));
+		u->setName(getName(u->name(), u, force));
 		if(!u->plural(false).empty()) {
-			u->setPlural(getUnitName(u->plural(false), u, force));
+			u->setPlural(getName(u->plural(false), u, force));
 		}
 		if(!u->singular(false).empty()) {
-			u->setSingular(getUnitName(u->singular(false), u, force));
+			u->setSingular(getName(u->singular(false), u, force));
 		}
 	}
 	if(!u->isLocal() && units.size() > 0 && units[units.size() - 1]->isLocal()) {
@@ -1150,6 +1150,15 @@ Unit* Calculator::getUnit(string name_) {
 	if(name_.empty()) return NULL;
 	for(int i = 0; i < (int) units.size(); i++) {
 		if(units[i]->unitType() != COMPOSITE_UNIT && (units[i]->name() == name_ || units[i]->singular(false) == name_ || units[i]->plural(false) == name_)) {
+			return units[i];
+		}
+	}
+	return NULL;
+}
+Unit* Calculator::getActiveUnit(string name_) {
+	if(name_.empty()) return NULL;
+	for(int i = 0; i < units.size(); i++) {
+		if(units[i]->isActive() && units[i]->unitType() != COMPOSITE_UNIT && (units[i]->name() == name_ || units[i]->singular(false) == name_ || units[i]->plural(false) == name_)) {
 			return units[i];
 		}
 	}
@@ -1299,7 +1308,7 @@ void Calculator::functionNameChanged(Function *f, bool priviliged) {
 			ufv.push_back((void*) f);
 			ufv_t.push_back('f');
 			break;
-		} else if(l < f->name().length() || (l == f->name().length() && (ufv_t[i] == 'v' || ufv_t[i] == 'f'))) {
+		} else if(l < f->name().length() || (l == f->name().length() && (ufv_t[i] != 'p' && ufv_t[i] != 'P'))) {
 			ufv.insert(it, (void*) f);
 			ufv_t.insert(ufv_t.begin() + i, 'f');
 			break;
@@ -1336,7 +1345,7 @@ void Calculator::unitNameChanged(Unit *u) {
 			ufv.push_back((void*) u);
 			ufv_t.push_back('U');
 			break;
-		} else if(l < u->name().length() || (l == u->name().length() && ufv_t[i] != 'p' && ufv_t[i] != 'P')) {
+		} else if(l < u->name().length() || (l == u->name().length() && (ufv_t[i] != 'p' && ufv_t[i] != 'P' && ufv_t[i] != 'f'))) {
 			ufv.insert(it, (void*) u);
 			ufv_t.insert(ufv_t.begin() + i, 'U');
 			break;
@@ -1367,7 +1376,7 @@ void Calculator::unitNameChanged(Unit *u) {
 				ufv.push_back((void*) u);
 				ufv_t.push_back('Y');
 				break;
-			} else if(l < u->plural(false).length() || (l == u->plural(false).length() && ufv_t[i] != 'p' && ufv_t[i] != 'P')) {
+			} else if(l < u->plural(false).length() || (l == u->plural(false).length() && (ufv_t[i] != 'p' && ufv_t[i] != 'P' && ufv_t[i] != 'f'))) {
 				ufv.insert(it, (void*) u);
 				ufv_t.insert(ufv_t.begin() + i, 'Y');
 				break;
@@ -1399,7 +1408,7 @@ void Calculator::unitNameChanged(Unit *u) {
 				ufv.push_back((void*) u);
 				ufv_t.push_back('u');
 				break;
-			} else if(l < u->singular(false).length() || (l == u->singular(false).length() && ufv_t[i] != 'p' && ufv_t[i] != 'P')) {
+			} else if(l < u->singular(false).length() || (l == u->singular(false).length() && (ufv_t[i] != 'p' && ufv_t[i] != 'P' && ufv_t[i] != 'f'))) {
 				ufv.insert(it, (void*) u);
 				ufv_t.insert(ufv_t.begin() + i, 'u');
 				break;
@@ -1418,8 +1427,17 @@ void Calculator::unitPluralChanged(Unit *u) {
 
 Variable* Calculator::getVariable(string name_) {
 	if(name_.empty()) return NULL;
-	for(int i = 0; i < (int) variables.size(); i++) {
+	for(int i = 0; i < variables.size(); i++) {
 		if(variables[i]->name() == name_) {
+			return variables[i];
+		}
+	}
+	return NULL;
+}
+Variable* Calculator::getActiveVariable(string name_) {
+	if(name_.empty()) return NULL;
+	for(int i = 0; i < variables.size(); i++) {
+		if(variables[i]->isActive() && variables[i]->name() == name_) {
 			return variables[i];
 		}
 	}
@@ -1452,8 +1470,17 @@ Function* Calculator::addFunction(Function *f, bool force) {
 }
 Function* Calculator::getFunction(string name_) {
 	if(name_.empty()) return NULL;
-	for(int i = 0; i < (int) functions.size(); i++) {
+	for(int i = 0; i < functions.size(); i++) {
 		if(functions[i]->name() == name_) {
+			return functions[i];
+		}
+	}
+	return NULL;
+}
+Function* Calculator::getActiveFunction(string name_) {
+	if(name_.empty()) return NULL;
+	for(int i = 0; i < functions.size(); i++) {
+		if(functions[i]->isActive() && functions[i]->name() == name_) {
 			return functions[i];
 		}
 	}
@@ -1497,10 +1524,41 @@ string Calculator::convertToValidUnitName(string name_) {
 	gsub(SPACE, UNDERSCORE, name_);
 	return name_;
 }
-bool Calculator::nameTaken(string name_, ExpressionItem *object) {
-	ExpressionItem *item = getExpressionItem(name_, object);
-	if(item) {
-		return true;
+bool Calculator::nameTaken(string name, ExpressionItem *object) {
+	if(name.empty()) return false;
+	if(object) {
+		switch(object->type()) {
+			case TYPE_VARIABLE: {}
+			case TYPE_UNIT: {
+				for(int index = 0; index < variables.size(); index++) {
+					if(variables[index]->isActive() && variables[index]->referenceName() == name) {
+						return variables[index] != object;
+					}
+				}
+				for(int i = 0; i < units.size(); i++) {
+					if(units[i]->isActive()) {
+						if(units[i]->unitType() == COMPOSITE_UNIT) {
+							if(name == units[i]->referenceName()) {
+								return units[i] != object;
+							}
+						} else {
+							if(units[i]->name() == name || units[i]->singular(false) == name || units[i]->plural(false) == name) {
+								return units[i] != object;
+							}
+						}
+					}
+				}
+				break;
+			}
+			case TYPE_FUNCTION: {
+				for(int index = 0; index < functions.size(); index++) {
+					if(functions[index]->isActive() && functions[index]->referenceName() == name) {
+						return functions[index] != object;
+					}
+				}
+				break;
+			}
+		}
 	}
 	return false;
 }
@@ -1527,6 +1585,8 @@ void Calculator::setFunctionsAndVariables(string &str) {
 	int i, i2, i3, i4, i5, i6, i7, i8, i9;
 	int chars_left;
 	int name_length, name_length_old;
+	int found_function_index, found_function_name_length;
+	int ufv_index;
 	Function *f;
 	Variable *v;
 	Unit *u;
@@ -1607,7 +1667,9 @@ void Calculator::setFunctionsAndVariables(string &str) {
 				}
 			}
 		} else if(is_not_in(NUMBERS NOT_IN_NAMES, str[str_index])) {
-			for(int ufv_index = 0; ufv_index < ufv.size(); ufv_index++) {
+			found_function_index = -1;
+			found_function_name_length = -1;
+			for(ufv_index = 0; ufv_index < ufv.size(); ufv_index++) {
 				name = NULL;
 				prefix_exp = 0;
 				switch(ufv_t[ufv_index]) {
@@ -1618,7 +1680,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						break;
 					}
 					case 'f': {
-						if(b_functions) {
+						if(b_functions && found_function_index < 0) {
 							name = &((ExpressionItem*) ufv[ufv_index])->name();
 						}
 						break;
@@ -1655,7 +1717,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 					}
 				}
 				if(name) name_length = name->length();
-				if(name && (*name)[0] == str[str_index] && (name_length == 1 || (name_length <= chars_left && (*name)[1] == str[str_index + 1] && *name == str.substr(str_index, name_length)))) {
+				if(name && name_length >= found_function_name_length && (*name)[0] == str[str_index] && (name_length == 1 || (name_length <= chars_left && (*name)[1] == str[str_index + 1] && *name == str.substr(str_index, name_length)))) {
 					moved_forward = false;
 					switch(ufv_t[ufv_index]) {
 						case 'v': {
@@ -1683,6 +1745,13 @@ void Calculator::setFunctionsAndVariables(string &str) {
 							break;
 						}
 						case 'f': {
+							i5 = str.find_first_not_of(SPACES, str_index + name_length);
+							if(i5 == string::npos || str[i5] != LEFT_PARENTHESIS_CH) {
+								found_function_index = ufv_index;
+								found_function_name_length = name_length;
+								break;
+							}
+							set_function:
 							f = (Function*) ufv[ufv_index];
 							b = false;
 							i4 = -1;
@@ -1886,6 +1955,12 @@ void Calculator::setFunctionsAndVariables(string &str) {
 					}
 				}
 			}
+			if(!moved_forward && found_function_index >= 0) {
+				ufv_index = found_function_index;
+				name = &((ExpressionItem*) ufv[ufv_index])->name();
+				name_length = found_function_name_length;
+				goto set_function;
+			}
 			if(!moved_forward) {
 				if(b_unknown && str[str_index] != EXP_CH) {
 					int i = 1;
@@ -1920,103 +1995,94 @@ void Calculator::setFunctionsAndVariables(string &str) {
 	}
 }
 string Calculator::getName(string name, ExpressionItem *object, bool force, bool always_append) {
-	if(object) {
-		switch(object->type()) {
-			case TYPE_UNIT: {
-				return getUnitName(name, (Unit*) object, force, always_append);
-			}
+	ExpressionItem *item = NULL;
+	if(!object) {
+	} else if(object->type() == TYPE_FUNCTION) {
+		item = getActiveFunction(name);
+	} else {
+		item = getActiveVariable(name);
+		if(!item) {
+			item = getActiveUnit(name);
+		}
+		if(!item) {
+			item = getCompositeUnit(name);
 		}
 	}
-	if(force) {
-		ExpressionItem *item = getActiveExpressionItem(name, object);
-		if(item) {
-			if(!item->isLocal()) {
-				bool b = item->hasChanged();
-				if(object->isActive()) {
-					item->setActive(false);
-				}
-				if(!object->isLocal()) {
-					item->setChanged(b);
-				}
-			} else {
-				if(object->isActive()) {
-					item->destroy();
-				}
+	if(item && force && !name.empty() && item != object && object) {
+		if(!item->isLocal()) {
+			bool b = item->hasChanged();
+			if(object->isActive()) {
+				item->setActive(false);
+			}
+			if(!object->isLocal()) {
+				item->setChanged(b);
+			}
+		} else {
+			if(object->isActive()) {
+				item->destroy();
 			}
 		}
 		return name;
 	}
 	int i2 = 1;
+	bool changed = false;
 	if(name.empty()) {
 		name = "var";
 		always_append = true;
+		item = NULL;
+		changed = true;
 	}
 	string stmp = name;
 	if(always_append) {
 		stmp += NAME_NUMBER_PRE_STR;
 		stmp += "1";
 	}
-	for(int i = 0; i < (int) variables.size(); i++) {
-		if(variables[i] != object && variables[i]->name() == stmp) {
-			i2++;
-			stmp = name;
-			stmp += NAME_NUMBER_PRE_STR;
-			stmp += i2s(i2);
-		}
-	}
-	for(int i = 0; i < (int) functions.size(); i++) {
-		if(functions[i] != object && functions[i]->name() == stmp) {
-			i2++;
-			stmp = name;
-			stmp += NAME_NUMBER_PRE_STR;
-			stmp += i2s(i2);
-		}
-	}
-	if(i2 > 1 && !always_append)
-		error(false, _("Name \"%s\" is in use. Replacing with \"%s\"."), name.c_str(), stmp.c_str(), NULL);
-	return stmp;
-}
-string Calculator::getUnitName(string name, Unit *object, bool force, bool always_append) {
-	if(force) {
-		ExpressionItem *item = getActiveExpressionItem(name, object);
+	if(changed || (item && item != object)) {
 		if(item) {
-			if(!item->isLocal()) {
-				bool b = item->hasChanged();
-				if(object->isActive()) {
-					item->setActive(false);
+			i2++;
+			stmp = name;
+			stmp += NAME_NUMBER_PRE_STR;
+			stmp += i2s(i2);
+		}
+		while(true) {
+			if(!object) {
+				item = getActiveFunction(stmp);
+				if(!item) {
+					item = getActiveVariable(stmp);
 				}
-				if(!object->isLocal()) {
-					item->setChanged(b);
-				}			
+				if(!item) {
+					item = getActiveUnit(stmp);
+				}
+				if(!item) {
+					item = getCompositeUnit(stmp);
+				}
+			} else if(object->type() == TYPE_FUNCTION) {
+				item = getActiveFunction(stmp);
 			} else {
-				if(object->isActive()) {
-					item->destroy();
-				}			
+				item = getActiveVariable(stmp);
+				if(!item) {
+					item = getActiveUnit(stmp);
+				}
+				if(!item) {
+					item = getCompositeUnit(stmp);
+				}
+			}
+			if(item && item != object) {
+				i2++;
+				stmp = name;
+				stmp += NAME_NUMBER_PRE_STR;
+				stmp += i2s(i2);
+			} else {
+				break;
 			}
 		}
-		return name;	
 	}
-	int i2 = 1;
-	if(name.empty()) {
-		name = "x";
-		always_append = true;
-	}
-	string stmp = name;
-	if(always_append)
-		stmp += NAME_NUMBER_PRE_STR;
-		stmp += "1";
-	for(int i = 0; i < (int) units.size(); i++) {
-		if(units[i] != object && ((units[i]->unitType() == COMPOSITE_UNIT && units[i]->referenceName() == stmp) || (units[i]->unitType() != COMPOSITE_UNIT && (units[i]->name() == stmp || units[i]->singular(false) == stmp || units[i]->plural(false) == stmp)))) {
-			i2++;
-			stmp = name;
-			stmp += NAME_NUMBER_PRE_STR;
-			stmp += i2s(i2);
-		}
-	}
-	if(i2 > 1 && !always_append)
+	if(i2 > 1 && !always_append) {
 		error(false, _("Name \"%s\" is in use. Replacing with \"%s\"."), name.c_str(), stmp.c_str(), NULL);
+	}
 	return stmp;
 }
+
 bool Calculator::loadGlobalDefinitions() {
 
 	string dir = PACKAGE_DATA_DIR;
