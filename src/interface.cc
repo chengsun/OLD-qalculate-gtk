@@ -218,10 +218,10 @@ create_main_window (void)
 #if GTK_MINOR_VERSION < 3
 	if(show_buttons) {
 		gtk_widget_show (glade_xml_get_widget (main_glade, "buttons"));
-		gtk_button_set_label (GTK_BUTTON(glade_xml_get_widget (main_glade, "button_less_more")), _("Hide buttons"));
+		gtk_button_set_label (GTK_BUTTON(glade_xml_get_widget (main_glade, "button_less_more")), _("Hide keypad"));
 	} else {
 		gtk_widget_hide (glade_xml_get_widget (main_glade, "buttons"));
-		gtk_button_set_label (GTK_BUTTON(glade_xml_get_widget (main_glade, "button_less_more")), _("Show buttons"));
+		gtk_button_set_label (GTK_BUTTON(glade_xml_get_widget (main_glade, "button_less_more")), _("Show keypad"));
 	}
 #endif
 
@@ -259,8 +259,6 @@ create_main_window (void)
 
 //	gtk_widget_modify_bg(resultview, GTK_STATE_NORMAL, &glade_xml_get_widget(main_glade, "history")->style->base[GTK_WIDGET_STATE(glade_xml_get_widget(main_glade, "history"))]);	
 
-	recent_menu = gtk_menu_new(); gtk_menu_item_set_submenu(GTK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_expression_recent")), recent_menu);
-
 	GtkTextIter iter;
 	GtkTextBuffer *tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history")));
 	for(unsigned int i = 0; i < initial_history.size(); i++) {
@@ -287,7 +285,7 @@ create_main_window (void)
 
 /*	Expander	*/
 	gtk_widget_hide(glade_xml_get_widget(main_glade, "buttonbox_bottom"));
-	expander = gtk_expander_new(_("Show buttons"));
+	expander = gtk_expander_new(_("Keypad"));
 	g_object_ref(glade_xml_get_widget(main_glade, "buttons"));
 	gtk_container_remove(GTK_CONTAINER(glade_xml_get_widget(main_glade, "main_vbox")), glade_xml_get_widget(main_glade, "buttons"));
 	gtk_box_pack_end(GTK_BOX(glade_xml_get_widget(main_glade, "main_vbox")), expander, TRUE, TRUE, 0);
@@ -306,7 +304,7 @@ create_main_window (void)
 	g_object_unref(completion_store);
 	//gtk_entry_completion_set_text_column(completion, 0);
 	GtkCellRenderer *cell = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(completion), cell, FALSE);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(completion), cell, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(completion), cell, "text", 0);	
 	cell = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_end(GTK_CELL_LAYOUT(completion), cell, FALSE);

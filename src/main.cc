@@ -41,7 +41,9 @@ bool load_global_defs, fetch_exchange_rates_at_startup, first_time;
 GtkWidget *omToUnit_menu;
 GdkPixmap *pixmap_result;
 extern bool b_busy;
-extern vector<string> recent_objects_pre;
+extern vector<string> recent_functions_pre;
+extern vector<string> recent_variables_pre;
+extern vector<string> recent_units_pre;
 
 GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *decimals_glade;
 GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *nbases_glade, *plot_glade, *precision_glade;
@@ -93,6 +95,14 @@ int main (int argc, char **argv) {
 	bool canplot = CALCULATOR->canPlot();
 	bool canfetch = CALCULATOR->canFetch();
 
+	//create main window
+	create_main_window();
+
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(main_glade, "expression")), calc_arg.c_str());
+
+	while(gtk_events_pending()) gtk_main_iteration();
+
+	//exchange rates
 	if(fetch_exchange_rates_at_startup && canfetch) {
 		CALCULATOR->fetchExchangeRates();
 	}
@@ -134,21 +144,11 @@ int main (int argc, char **argv) {
 	result_text = "0";
 	pixmap_result = NULL;
 
-
-	//create main window
-	create_main_window();
-
-	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(main_glade, "expression")), calc_arg.c_str());
-
 	//check for calculation errros regularly
 	g_timeout_add(100, on_display_errors_timeout, NULL);
 	
 	gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "menu_item_plot_functions"), canplot);
 	gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "menu_item_fetch_exchange_rates"), canfetch);
-	
-	for(int i = recent_objects_pre.size() - 1; i >= 0; i--) {
-		object_inserted(CALCULATOR->getExpressionItem(recent_objects_pre[i]));
-	}
 		
 	//create dynamic menus
 	generate_units_tree_struct();
@@ -160,6 +160,17 @@ int main (int argc, char **argv) {
 	//create_pmenu();	
 	create_umenu2();
 	create_pmenu2();			
+	
+	for(int i = recent_functions_pre.size() - 1; i >= 0; i--) {
+		function_inserted(CALCULATOR->getFunction(recent_functions_pre[i]));
+	}
+	for(int i = recent_variables_pre.size() - 1; i >= 0; i--) {
+		variable_inserted(CALCULATOR->getVariable(recent_variables_pre[i]));
+	}
+	for(int i = recent_units_pre.size() - 1; i >= 0; i--) {
+		unit_inserted(CALCULATOR->getUnit(recent_units_pre[i]));
+	}
+	
 	update_completion();
 	
 	if(!calc_arg.empty()) {

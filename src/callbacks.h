@@ -50,7 +50,12 @@ void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpoin
 
 void execute_expression();
 
-void object_inserted(ExpressionItem *object);
+void recreate_recent_functions();
+void recreate_recent_variables();
+void recreate_recent_units();
+void function_inserted(Function *object);
+void variable_inserted(Variable *object);
+void unit_inserted(Unit *object);
 
 void on_tPlotFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 

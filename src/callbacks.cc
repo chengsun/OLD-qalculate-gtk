@@ -150,9 +150,28 @@ struct tree_struct {
 
 tree_struct function_cats, unit_cats, variable_cats;
 vector<void*> ia_units, ia_variables, ia_functions;	
-vector<string> recent_objects_pre;
-vector<GtkWidget*> recent_items;
-vector<ExpressionItem*> recent_objects;
+vector<string> recent_functions_pre;
+vector<string> recent_variables_pre;
+vector<string> recent_units_pre;
+vector<GtkWidget*> recent_function_items;
+vector<GtkWidget*> recent_variable_items;
+vector<GtkWidget*> recent_unit_items;
+vector<Function*> recent_functions;
+vector<Variable*> recent_variables;
+vector<Unit*> recent_units;
+
+bool completion_blocked = false;
+
+void block_completion() {
+#if GTK_MINOR_VERSION >= 3
+	gtk_entry_completion_set_minimum_key_length(completion, 1000);
+	completion_blocked = true;
+#endif
+}
+void unblock_completion() {
+#if GTK_MINOR_VERSION >= 3
+#endif
+}
 
 void wrap_expression_selection() {
 	gint start = 0, end = 0;
@@ -1509,6 +1528,7 @@ void update_umenus() {
 	gtk_widget_destroy(u_menu2);
 	generate_units_tree_struct();
 	create_umenu();
+	recreate_recent_units();
 	create_umenu2();
 	update_units_tree();
 }
@@ -1620,6 +1640,7 @@ void update_vmenu() {
 	gtk_widget_destroy(v_menu);
 	generate_variables_tree_struct();
 	create_vmenu();
+	recreate_recent_variables();
 	update_variables_tree();
 	update_completion();
 }
@@ -1681,13 +1702,18 @@ void create_fmenu() {
 void update_completion() {
 #if GTK_MINOR_VERSION >= 3
 	GtkTreeIter iter;
-	gtk_list_store_clear(completion_store);	
+	
+	gtk_entry_set_completion(GTK_ENTRY(expression), NULL);
+	
+	completion = gtk_entry_completion_new();
+	completion_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	//gtk_list_store_clear(completion_store);	
 	string str;
 	for(unsigned int i = 0; i < CALCULATOR->functions.size(); i++) {
 		if(CALCULATOR->functions[i]->isActive()) {
-			gtk_list_store_append(completion_store, &iter);
 			str = CALCULATOR->functions[i]->name();
 			str += "()";
+			gtk_list_store_append(completion_store, &iter);
 			gtk_list_store_set(completion_store, &iter, 0, str.c_str(), 1, CALCULATOR->functions[i]->title().c_str(), -1);
 		}
 	}
@@ -1703,6 +1729,19 @@ void update_completion() {
 			gtk_list_store_set(completion_store, &iter, 0, CALCULATOR->units[i]->name().c_str(), 1, CALCULATOR->units[i]->title().c_str(), -1);
 		}
 	}
+	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(completion_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(completion_store), 0, GTK_SORT_ASCENDING);
+	gtk_entry_completion_set_model(completion, GTK_TREE_MODEL(completion_store));
+	g_object_unref(completion_store);
+	GtkCellRenderer *cell = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(completion), cell, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(completion), cell, "text", 0);	
+	cell = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_end(GTK_CELL_LAYOUT(completion), cell, FALSE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(completion), cell, "text", 1);
+	gtk_entry_completion_set_match_func(completion, &completion_match_func, NULL, NULL);
+	g_signal_connect((gpointer) completion, "match-selected", G_CALLBACK(on_completion_match_selected), NULL);
+	gtk_entry_set_completion(GTK_ENTRY(expression), completion);
 #endif
 }
 
@@ -1713,6 +1752,7 @@ void update_fmenu() {
 	gtk_widget_destroy(f_menu);
 	generate_functions_tree_struct();
 	create_fmenu();
+	recreate_recent_functions();
 	update_completion();
 	update_functions_tree();
 }
@@ -3844,50 +3884,147 @@ void insert_text(const gchar *name) {
 	}
 	//insert the text at current position
 	position = gtk_editable_get_position(GTK_EDITABLE(expression));
+	block_completion();
 	gtk_editable_insert_text(GTK_EDITABLE(expression), name, strlen(name), &position);
+	unblock_completion();
 	gtk_editable_set_position(GTK_EDITABLE(expression), position);
 	gtk_widget_grab_focus(expression);
 	//unselect
 	gtk_editable_select_region(GTK_EDITABLE(expression), position, position);
 }
 
-void object_inserted(ExpressionItem *object) {
+void recreate_recent_functions() {
+	GtkWidget *item, *sub;
+	sub = f_menu;
+	if(recent_functions.size() > 0) {
+		MENU_SEPARATOR_PREPEND
+	}
+	recent_function_items.clear();
+	for(unsigned int i = 0; i < recent_functions.size(); i++) {
+		item = gtk_menu_item_new_with_label(recent_functions[i]->title(true).c_str()); 
+		recent_function_items.push_back(item);
+		gtk_widget_show(item); 
+		gtk_menu_shell_prepend(GTK_MENU_SHELL(sub), item);
+		gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(insert_function), (gpointer) recent_functions[i]);
+	}
+}
+void recreate_recent_variables() {
+	GtkWidget *item, *sub;
+	sub = v_menu;
+	if(recent_variables.size() > 0) {
+		MENU_SEPARATOR_PREPEND
+	}
+	recent_variable_items.clear();
+	for(unsigned int i = 0; i < recent_variables.size(); i++) {
+		item = gtk_menu_item_new_with_label(recent_variables[i]->title(true).c_str()); 
+		recent_variable_items.push_back(item);
+		gtk_widget_show(item); 
+		gtk_menu_shell_prepend(GTK_MENU_SHELL(sub), item);
+		gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(insert_variable), (gpointer) recent_variables[i]);
+	}
+}
+void recreate_recent_units() {
+	GtkWidget *item, *sub;
+	sub = u_menu;
+	if(recent_units.size() > 0) {
+		MENU_SEPARATOR_PREPEND
+	}
+	recent_unit_items.clear();
+	for(unsigned int i = 0; i < recent_units.size(); i++) {
+		item = gtk_menu_item_new_with_label(recent_units[i]->title(true).c_str()); 
+		recent_unit_items.push_back(item);
+		gtk_widget_show(item); 
+		gtk_menu_shell_prepend(GTK_MENU_SHELL(sub), item);
+		gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(insert_unit), (gpointer) recent_units[i]);
+	}
+}
+
+void function_inserted(Function *object) {
 	if(!object) {
 		return;
 	}
-	for(unsigned int i = 0; i < recent_objects.size(); i++) {
-		if(recent_objects[i] == object) {
-			recent_objects.erase(recent_objects.begin() + i);
-			gtk_widget_destroy(recent_items[i]);
-			recent_items.erase(recent_items.begin() + i);
+	GtkWidget *item, *sub;
+	sub = f_menu;
+	if(recent_function_items.size() <= 0) {
+		MENU_SEPARATOR_PREPEND
+	}
+	for(unsigned int i = 0; i < recent_functions.size(); i++) {
+		if(recent_functions[i] == object) {
+			recent_functions.erase(recent_functions.begin() + i);
+			gtk_widget_destroy(recent_function_items[i]);
+			recent_function_items.erase(recent_function_items.begin() + i);
 			break;
 		}
 	}
-	GtkWidget *item, *sub = recent_menu;
+	if(recent_function_items.size() >= 5) {
+		recent_functions.erase(recent_functions.begin());
+		gtk_widget_destroy(recent_function_items[0]);
+		recent_function_items.erase(recent_function_items.begin());
+	}
 	item = gtk_menu_item_new_with_label(object->title(true).c_str()); 
+	recent_function_items.push_back(item);
+	recent_functions.push_back(object);
 	gtk_widget_show(item); 
 	gtk_menu_shell_prepend(GTK_MENU_SHELL(sub), item);
-	switch(object->type()) {
-		case TYPE_FUNCTION: {
-			gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(insert_function), (gpointer) object);
-			break;
-		}
-		case TYPE_VARIABLE: {
-			gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(insert_variable), (gpointer) object);
-			break;
-		}
-		case TYPE_UNIT: {
-			gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(insert_unit), (gpointer) object);
+	gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(insert_function), (gpointer) object);
+}
+void variable_inserted(Variable *object) {
+	if(!object) {
+		return;
+	}
+	GtkWidget *item, *sub;
+	sub = v_menu;
+	if(recent_variable_items.size() <= 0) {
+		MENU_SEPARATOR_PREPEND
+	}
+	for(unsigned int i = 0; i < recent_variables.size(); i++) {
+		if(recent_variables[i] == object) {
+			recent_variables.erase(recent_variables.begin() + i);
+			gtk_widget_destroy(recent_variable_items[i]);
+			recent_variable_items.erase(recent_variable_items.begin() + i);
 			break;
 		}
 	}
-	recent_items.push_back(item);
-	recent_objects.push_back(object);
-	if(recent_items.size() > 15) {
-		recent_objects.erase(recent_objects.begin());
-		gtk_widget_destroy(recent_items[0]);
-		recent_items.erase(recent_items.begin());
+	if(recent_variable_items.size() >= 5) {
+		recent_variables.erase(recent_variables.begin());
+		gtk_widget_destroy(recent_variable_items[0]);
+		recent_variable_items.erase(recent_variable_items.begin());
 	}
+	item = gtk_menu_item_new_with_label(object->title(true).c_str()); 
+	recent_variable_items.push_back(item);
+	recent_variables.push_back(object);
+	gtk_widget_show(item); 
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(sub), item);
+	gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(insert_variable), (gpointer) object);
+}
+void unit_inserted(Unit *object) {
+	if(!object) {
+		return;
+	}
+	GtkWidget *item, *sub;
+	sub = u_menu;
+	if(recent_unit_items.size() <= 0) {
+		MENU_SEPARATOR_PREPEND
+	}
+	for(unsigned int i = 0; i < recent_units.size(); i++) {
+		if(recent_units[i] == object) {
+			recent_units.erase(recent_units.begin() + i);
+			gtk_widget_destroy(recent_unit_items[i]);
+			recent_unit_items.erase(recent_unit_items.begin() + i);
+			break;
+		}
+	}
+	if(recent_unit_items.size() >= 5) {
+		recent_units.erase(recent_units.begin());
+		gtk_widget_destroy(recent_unit_items[0]);
+		recent_unit_items.erase(recent_unit_items.begin());
+	}
+	item = gtk_menu_item_new_with_label(object->title(true).c_str()); 
+	recent_unit_items.push_back(item);
+	recent_units.push_back(object);
+	gtk_widget_show(item); 
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(sub), item);
+	gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(insert_unit), (gpointer) object);
 }
 
 /*
@@ -3906,7 +4043,7 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	if(f->args() == 0) {
 		string str = f->name() + "()";
 		gchar *gstr = g_strdup(str.c_str());
-		object_inserted(f);
+		function_inserted(f);
 		insert_text(gstr);
 		g_free(gstr);
 		return;
@@ -4128,7 +4265,7 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 		if(response == GTK_RESPONSE_APPLY) {
 			execute_expression();
 		}
-		object_inserted(f);
+		function_inserted(f);
 	}
 	gtk_widget_destroy(dialog);
 }
@@ -4146,7 +4283,7 @@ void insert_function(GtkMenuItem *w, gpointer user_data) {
 */
 void insert_variable(GtkMenuItem *w, gpointer user_data) {
 	insert_text(((Variable*) user_data)->name().c_str());
-	object_inserted((Variable*) user_data);
+	variable_inserted((Variable*) user_data);
 }
 //from prefix menu
 void insert_prefix(GtkMenuItem *w, gpointer user_data) {
@@ -4159,7 +4296,7 @@ void insert_unit(GtkMenuItem *w, gpointer user_data) {
 	} else {
 		insert_text(((Unit*) user_data)->plural().c_str());
 	}
-	object_inserted((Unit*) user_data);
+	unit_inserted((Unit*) user_data);
 }
 
 /*
@@ -4410,6 +4547,7 @@ run_unit_edit_dialog:
 			}
 		}
 		update_umenus();
+		unit_inserted(u);
 	}
 	gtk_widget_hide(dialog);
 	gtk_widget_grab_focus(expression);
@@ -4677,8 +4815,8 @@ run_function_edit_dialog:
 			//select the new function
 			selected_function = f;
 		}
-		
 		update_fmenu();	
+		function_inserted(f);
 	}
 	edited_function = NULL;
 	gtk_widget_hide(dialog);
@@ -4852,6 +4990,7 @@ run_variable_edit_dialog:
 			}
 		}
 		update_vmenu();
+		variable_inserted(v);
 	}
 	gtk_widget_hide(dialog);
 	gtk_widget_grab_focus(expression);
@@ -5076,6 +5215,7 @@ run_matrix_edit_dialog:
 			}
 		}
 		update_vmenu();
+		variable_inserted(v);
 	}
 	gtk_widget_hide(dialog);
 	gtk_widget_grab_focus(expression);
@@ -5153,11 +5293,13 @@ run_csv_import_dialog:
 */
 void add_as_variable()
 {
+	Manager *mngr_ = new Manager(mngr);
 	edit_variable(
 			_("Temporary"),
 			NULL,
-			mngr,
+			mngr_,
 			glade_xml_get_widget (main_glade, "main_window"));
+	mngr_->unref();
 }
 
 /*
@@ -5573,7 +5715,7 @@ void load_preferences() {
 					CALCULATOR->setAlwaysExact(v);					
 				else if(svar == "in_rpn_mode")
 					CALCULATOR->setRPNMode(v);
-				else if(svar == "recent") {
+				else if(svar == "recent_functions") {
 					unsigned int v_i = 0;
 					while(true) {
 						v_i = svalue.find(',');
@@ -5581,7 +5723,7 @@ void load_preferences() {
 							svar = svalue.substr(0, svalue.length());
 							remove_blank_ends(svar);
 							if(!svar.empty()) {
-								recent_objects_pre.push_back(svar);	
+								recent_functions_pre.push_back(svar);	
 							}
 							break;
 						} else {
@@ -5589,7 +5731,47 @@ void load_preferences() {
 							svalue = svalue.substr(v_i + 1, svalue.length() - (v_i + 1));
 							remove_blank_ends(svar);
 							if(!svar.empty()) {
-								recent_objects_pre.push_back(svar);	
+								recent_functions_pre.push_back(svar);	
+							}
+						}
+					}
+				} else if(svar == "recent_variables") {
+					unsigned int v_i = 0;
+					while(true) {
+						v_i = svalue.find(',');
+						if(v_i == string::npos) {
+							svar = svalue.substr(0, svalue.length());
+							remove_blank_ends(svar);
+							if(!svar.empty()) {
+								recent_variables_pre.push_back(svar);	
+							}
+							break;
+						} else {
+							svar = svalue.substr(0, v_i);
+							svalue = svalue.substr(v_i + 1, svalue.length() - (v_i + 1));
+							remove_blank_ends(svar);
+							if(!svar.empty()) {
+								recent_variables_pre.push_back(svar);	
+							}
+						}
+					}
+				} else if(svar == "recent_units") {
+					unsigned int v_i = 0;
+					while(true) {
+						v_i = svalue.find(',');
+						if(v_i == string::npos) {
+							svar = svalue.substr(0, svalue.length());
+							remove_blank_ends(svar);
+							if(!svar.empty()) {
+								recent_units_pre.push_back(svar);	
+							}
+							break;
+						} else {
+							svar = svalue.substr(0, v_i);
+							svalue = svalue.substr(v_i + 1, svalue.length() - (v_i + 1));
+							remove_blank_ends(svar);
+							if(!svar.empty()) {
+								recent_units_pre.push_back(svar);	
 							}
 						}
 					}
@@ -5690,12 +5872,24 @@ void save_preferences(bool mode)
 		gtk_text_buffer_get_iter_at_line(tb, &iter2, i + 1);
 		fprintf(file, "history=%s", gtk_text_buffer_get_text(tb, &iter1, &iter2, TRUE)); 
 	}
-	fprintf(file, "recent="); 
-	for(int i = (int) (recent_objects.size()) - 1; i >= 0; i--) {
-		fprintf(file, "%s", recent_objects[i]->referenceName().c_str()); 
+	fprintf(file, "recent_functions="); 
+	for(int i = (int) (recent_functions.size()) - 1; i >= 0; i--) {
+		fprintf(file, "%s", recent_functions[i]->referenceName().c_str()); 
 		if(i != 0) fprintf(file, ","); 
 	}
 	fprintf(file, "\n"); 
+	fprintf(file, "recent_variables="); 
+	for(int i = (int) (recent_variables.size()) - 1; i >= 0; i--) {
+		fprintf(file, "%s", recent_variables[i]->referenceName().c_str()); 
+		if(i != 0) fprintf(file, ","); 
+	}
+	fprintf(file, "\n"); 	
+	fprintf(file, "recent_units="); 
+	for(int i = (int) (recent_units.size()) - 1; i >= 0; i--) {
+		fprintf(file, "%s", recent_units[i]->referenceName().c_str()); 
+		if(i != 0) fprintf(file, ","); 
+	}
+	fprintf(file, "\n"); 	
 	if(mode)
 		set_saved_mode();
 	fprintf(file, "\n[Mode]\n");
@@ -5837,8 +6031,10 @@ gboolean on_completion_match_selected(GtkEntryCompletion *entrycompletion, GtkTr
 	set_current_object();
 	gchar *gstr;
 	gtk_tree_model_get(model, iter, 0, &gstr, -1);
+	if(!gstr) return TRUE;
 	gtk_editable_delete_text(GTK_EDITABLE(expression), current_object_start, current_object_end);
 	gint pos = current_object_start;
+	block_completion();
 	gtk_editable_insert_text(GTK_EDITABLE(expression), gstr, -1, &pos);
 	if(gstr[strlen(gstr) - 1] == ')') {
 		gtk_editable_set_position(GTK_EDITABLE(expression), pos -1);
@@ -5846,19 +6042,17 @@ gboolean on_completion_match_selected(GtkEntryCompletion *entrycompletion, GtkTr
 		gtk_editable_set_position(GTK_EDITABLE(expression), pos);
 	}
 	g_free(gstr);
-	gint keylength = gtk_entry_completion_get_minimum_key_length(completion);
-	gtk_entry_completion_set_minimum_key_length(completion, 1000);
-	gtk_entry_completion_complete(completion);
-	while(gtk_events_pending()) gtk_main_iteration();
-	gtk_entry_completion_set_minimum_key_length(completion, keylength);
+	unblock_completion();
 	return TRUE;
 }
 gboolean completion_match_func(GtkEntryCompletion *entrycompletion, const gchar *key, GtkTreeIter *iter, gpointer user_data) {
+
 	set_current_object();
 	if(current_object_start < 0) return FALSE;
 	gchar *gstr1, *gstr2;
 	gboolean b_match = false;
 	gtk_tree_model_get(GTK_TREE_MODEL(completion_store), iter, 0, &gstr1, -1);
+	if(!gstr1) return FALSE;	
 	gstr2 = gtk_editable_get_chars(GTK_EDITABLE(expression), current_object_start, current_object_end);
 	if(strlen(gstr2) <= strlen(gstr1)) {
 		b_match = TRUE;
@@ -5932,6 +6126,7 @@ void on_preferences_checkbutton_custom_font_toggled(GtkToggleButton *w, gpointer
 }
 void on_preferences_button_font_clicked(GtkButton *w, gpointer user_data) {
 	GtkWidget *d = gtk_font_selection_dialog_new(_("Select result font"));
+	gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(d), custom_font.c_str());
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
 		custom_font = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(d));
 		gtk_button_set_label(w, custom_font.c_str());
@@ -6147,13 +6342,13 @@ on_button_less_more_clicked                    (GtkButton       *button,
 	if(GTK_WIDGET_VISIBLE(glade_xml_get_widget (main_glade, "buttons"))) {
 		hh = glade_xml_get_widget (main_glade, "buttons")->allocation.height;
 		gtk_widget_hide(glade_xml_get_widget (main_glade, "buttons"));
-		gtk_button_set_label(button, _("Show buttons"));
+		gtk_button_set_label(button, _("Show keypad"));
 		//the extra widgets increased the window height with 150 pixels, decrease again
 		gtk_window_get_size(GTK_WINDOW(window), &w, &h);
 		gtk_window_resize(GTK_WINDOW(window), w, h - hh);
 	} else {
 		gtk_widget_show(glade_xml_get_widget (main_glade, "buttons"));
-		gtk_button_set_label(button, _("Hide buttons"));
+		gtk_button_set_label(button, _("Hide keypad"));
 	}
 	focus_keeping_selection();
 }
@@ -6301,11 +6496,18 @@ on_togglebutton_result_toggled                      (GtkToggleButton       *butt
 	clear the displayed result when expression changes
 */
 void on_expression_changed(GtkEditable *w, gpointer user_data) {
+	if(completion_blocked) {
+		completion_blocked = false;
+	} else {
+#if GTK_MINOR_VERSION >= 3
+		gtk_entry_completion_set_minimum_key_length(completion, 1);
+	}
+#endif
 	expression_has_changed = true;
 	current_object_has_changed = true;
 	if(result_text.empty()) return;
 	if(!dont_change_index) expression_history_index = -1;
-	clearresult();
+	clearresult();	
 }
 
 /*
@@ -6977,11 +7179,11 @@ void on_units_button_delete_clicked(GtkButton *button, gpointer user_data) {
 			show_message(_("Cannot delete unit as it is needed by other units."), glade_xml_get_widget (units_glade, "units_dialog"));
 			return;
 		}
-		for(unsigned int i = 0; i < recent_objects.size(); i++) {
-			if(recent_objects[i] == u) {
-				recent_objects.erase(recent_objects.begin() + i);
-				gtk_widget_destroy(recent_items[i]);
-				recent_items.erase(recent_items.begin() + i);
+		for(unsigned int i = 0; i < recent_units.size(); i++) {
+			if(recent_units[i] == u) {
+				recent_units.erase(recent_units.begin() + i);
+				gtk_widget_destroy(recent_unit_items[i]);
+				recent_unit_items.erase(recent_unit_items.begin() + i);
 				break;
 			}
 		}
@@ -7043,11 +7245,11 @@ void on_variables_button_delete_clicked(GtkButton *button, gpointer user_data) {
 	GtkTreeIter iter;
 	Variable *v = get_selected_variable();
 	if(v && v->isLocal()) {
-		for(unsigned int i = 0; i < recent_objects.size(); i++) {
-			if(recent_objects[i] == v) {
-				recent_objects.erase(recent_objects.begin() + i);
-				gtk_widget_destroy(recent_items[i]);
-				recent_items.erase(recent_items.begin() + i);
+		for(unsigned int i = 0; i < recent_variables.size(); i++) {
+			if(recent_variables[i] == v) {
+				recent_variables.erase(recent_variables.begin() + i);
+				gtk_widget_destroy(recent_variable_items[i]);
+				recent_variable_items.erase(recent_variable_items.begin() + i);
 				break;
 			}
 		}
@@ -7112,11 +7314,11 @@ void on_functions_button_delete_clicked(GtkButton *button, gpointer user_data) {
 	GtkTreeIter iter;
 	Function *f = get_selected_function();
 	if(f && f->isLocal()) {
-		for(unsigned int i = 0; i < recent_objects.size(); i++) {
-			if(recent_objects[i] == f) {
-				recent_objects.erase(recent_objects.begin() + i);
-				gtk_widget_destroy(recent_items[i]);
-				recent_items.erase(recent_items.begin() + i);
+		for(unsigned int i = 0; i < recent_functions.size(); i++) {
+			if(recent_functions[i] == f) {
+				recent_functions.erase(recent_functions.begin() + i);
+				gtk_widget_destroy(recent_function_items[i]);
+				recent_function_items.erase(recent_function_items.begin() + i);
 				break;
 			}
 		}

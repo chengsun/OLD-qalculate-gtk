@@ -1,5 +1,12 @@
 2004-03-12 Niklas Knutsson  <nq@altern.org>
 	
+	* Set selected font in custom font dialog
+	* Save time by first destroying completion then updating list then creating new completion on update
+	* Do not crash when updating completion after new variable
+	* Bring up user interface as soon as possible
+	* Make completion block work
+	* Move recent objects to to the top of object menus
+	* "buttons" -> "keypad"
 	* Completion finished
 	* Ugly fix to not complete on completed
 	* Add units to completion if not composite
