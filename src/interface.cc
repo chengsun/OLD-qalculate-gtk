@@ -369,6 +369,8 @@ create_units_dialog (void)
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(tUnitCategories_store), 0, GTK_SORT_ASCENDING);
 
 	update_units_tree(glade_xml_get_widget (glade_xml, "units_dialog"));
+	
+	gtk_entry_set_text (GTK_ENTRY (glade_xml_get_widget (glade_xml, "units_entry_from_val")), "1");	
 
 	return glade_xml_get_widget (glade_xml, "units_dialog");
 }
