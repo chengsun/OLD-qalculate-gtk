@@ -28,6 +28,7 @@ src/main.cc
 src/interface.cc
 src/callbacks.cc
 src/support.c
+src/qalc.cc
 src/calclib/BuiltinFunctions.cc
 src/calclib/Calculator.cc
 src/calclib/DataSet.cc
@@ -39,10 +40,3 @@ src/calclib/Prefix.cc
 src/calclib/Unit.cc
 src/calclib/Variable.cc
 src/calclib/util.cc
-src/calclib/data/datasets.xml.in
-src/calclib/data/elements.xml.in
-src/calclib/data/functions.xml.in
-src/calclib/data/planets.xml.in
-src/calclib/data/prefixes.xml.in
-src/calclib/data/units.xml.in
-src/calclib/data/variables.xml.in

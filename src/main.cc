@@ -72,7 +72,7 @@ int main (int argc, char **argv) {
 #endif
 
 #ifdef HAVE_LIBGNOME
-	gnome_program_init(PACKAGE, VERSION, LIBGNOME_MODULE, argc, argv, NULL, NULL, NULL);
+	gnome_program_init("qalculate-gtk", VERSION, LIBGNOME_MODULE, argc, argv, NULL, NULL, NULL);
 #endif
 
 	gtk_init(&argc, &argv);
@@ -136,7 +136,7 @@ int main (int argc, char **argv) {
 
 	//exchange rates
 	if(first_qalculate_run && canfetch) {
-		GtkWidget *edialog = gtk_message_dialog_new(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("You need the download exchange rates to be able to convert between different currencies. You can later get current exchange rates by selecting \"Update Exchange Rates\" under the File menu.\n\nDo you want to fetch exchange rates now from the Internet."));
+		GtkWidget *edialog = gtk_message_dialog_new(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("You need the download exchange rates to be able to convert between different currencies. You can later get current exchange rates by selecting \"Update Exchange Rates\" under the File menu.\n\nDo you want to fetch exchange rates now from the Internet?"));
 		int question_answer = gtk_dialog_run(GTK_DIALOG(edialog));
 		gtk_widget_destroy(edialog);
 		while(gtk_events_pending()) gtk_main_iteration();

@@ -1,7 +1,7 @@
 figdir = figures
-docname = qalculate-gtk
+docname = qalculate
 lang = C
-omffile = qalculate-gtk-C.omf
+omffile = qalculate-C.omf
 entities = legal.xml
 include $(top_srcdir)/xmldocs.make
 dist-hook: app-dist-hook

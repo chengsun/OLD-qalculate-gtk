@@ -694,6 +694,25 @@ int gcd(int i1, int i2) {
 	return i2;
 }
 
+unsigned int unicode_length(const string &str) {
+	unsigned int l = str.length(), l2 = 0;
+	for(unsigned int i = 0; i < l; i++) {
+		if(str[i] > 0 || i == 0 || str[i - 1] > 0) {
+			l2++;
+		}
+	}
+	return l2;
+}
+unsigned int unicode_length(const char *str) {
+	unsigned int l = strlen(str), l2 = 0;
+	for(unsigned int i = 0; i < l; i++) {
+		if(str[i] > 0 || i == 0 || str[i - 1] > 0) {
+			l2++;
+		}
+	}
+	return l2;
+}
+
 bool text_length_is_one(const string &str) {
 	if(str.empty()) return false;
 	if(str.length() == 1) return true;

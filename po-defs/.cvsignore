@@ -1,0 +1,8 @@
+Makefile
+Makefile.in
+Makefile.in.in
+POTFILES
+qalculate-gtk.pot
+.intltool-merge-cache
+messages.mo
+*.gmo

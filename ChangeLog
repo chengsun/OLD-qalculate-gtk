@@ -1,7 +1,17 @@
+2004-10-06 Niklas Knutsson  <nq@altern.org>
+
+	* Fix qalc Ctrl+D crash (exit when read line is NULL)
+	* Do not require two tabs to show completion list
+	* Do not show all output directly if terminal is too small
+	* Split out localization of definitions into po-defs
+	* Add full support for non-utf8 local characters in qalc
+	* Various qalc tweaks
+
 2004-10-05 Niklas Knutsson  <nq@altern.org>
 
 	* Fix equalsIgnoreCase() for unicode chars and make more efficient
 	* Make qalc case insensitive and add extend localization
+	* Change package name to qalculate
 
 2004-10-04 Niklas Knutsson  <nq@altern.org>
 

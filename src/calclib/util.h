@@ -92,6 +92,8 @@ bool is_not_in(const string &str, char c);
 int sign_place(string *str, unsigned int start = 0);
 int gcd(int i1, int i2);
 
+unsigned int unicode_length(const string &str);
+unsigned int unicode_length(const char *str);
 bool text_length_is_one(const string &str);
 bool equalsIgnoreCase(const string &str1, const string &str2);
 bool equalsIgnoreCase(const string &str1, const char *str2);
