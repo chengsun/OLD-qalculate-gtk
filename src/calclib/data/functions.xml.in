@@ -1927,10 +1927,10 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <_name>csum</_name>
       </name>
       <argument index="1">
-        <_title>First component</_title>
+        <_title>First Component</_title>
       </argument>
       <argument index="2">
-        <_title>Last component</_title>
+        <_title>Last Component</_title>
       </argument>
       <argument index="3">
         <_title>Initial value</_title>
@@ -1949,6 +1949,25 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
       <argument index="9">
         <_title>Vector Variable</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="select">
+      <_title>Select Vector Components</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>select</_name>
+      </name>
+      <argument index="1">
+        <_title>Vector</_title>
+      </argument>
+      <argument index="2">
+        <_title>Expression</_title>
+      </argument>
+      <argument index="3">
+        <_title>Component Variable</_title>
+      </argument>
+      <argument index="4">
+        <_title>Select first match</_title>
       </argument>
     </builtin_function>
     <builtin_function name="function">
@@ -2595,13 +2614,13 @@ Ex. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 
           <_title>Price Variable</_title>
         </argument>
       </function>
-      <function>
+      <function active="false">
         <_title>Consumer Surplus</_title>
         <name index="1">
 	  <reference>true</reference>
           <_name>csurplus</_name>
         </name>
-        <subfunction precalculate="true">select(solve(\x=\y,\z),x>=0,x)</subfunction>
+        <subfunction precalculate="true">select(solve(\x=\y,\z),x&gt;=0,x,1)</subfunction>
         <expression>replace(integrate(\x-replace(\y,\Z{x},\1),\Z),\Z,\1,1)</expression>
         <argument type="free" index="1">
           <_title>Demand Function</_title>
@@ -2613,13 +2632,13 @@ Ex. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 
           <_title>Quantity Variabel</_title>
         </argument>
       </function>
-      <function>
+      <function active="false">
         <_title>Producer Surplus</_title>
         <name index="1">
 	  <reference>true</reference>
           <_name>psurplus</_name>
         </name>
-        <subfunction precalculate="true">select(solve(\x=\y,\z),x>=0,x)</subfunction>
+        <subfunction precalculate="true">select(solve(\x=\y,\z),x&gt;=0,x,1)</subfunction>
         <expression>replace(integrate(replace(\y,\Z{x},\1)-\x,\Z),\Z,\1,1)</expression>
 	<argument type="free" index="1">
           <_title>Supply Function</_title>

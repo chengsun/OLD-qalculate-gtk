@@ -1799,9 +1799,11 @@ int FunctionFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	mstruct = f.Function::calculate(args, eo);	
 	return 1 ;
 }
-SelectFunction::SelectFunction() : Function("select", 2, 3) {
+SelectFunction::SelectFunction() : Function("select", 2, 4) {
 	setArgumentDefinition(3, new SymbolicArgument());
 	setDefaultValue(3, "x");
+	setArgumentDefinition(4, new BooleanArgument());
+	setDefaultValue(4, "0");
 }
 int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	MathStructure mtest;
@@ -1810,8 +1812,16 @@ int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	if(!mstruct.isVector()) {
 		mtest = vargs[1];
 		mtest.replace(vargs[2], mstruct);
-		if(!mtest.isNumber() || mtest.number().getBoolean() < 0) return 0;
+		mtest.eval(eo);
+		if(!mtest.isNumber() || mtest.number().getBoolean() < 0) {
+			CALCULATOR->error(true, _("Comparison failed."), NULL);
+			return -1;
+		}
 		if(mtest.number().getBoolean() == 0) {
+			if(vargs[3].number().getBoolean() > 0) {
+				CALCULATOR->error(true, _("No matching item found."), NULL);
+				return -1;
+			}
 			mstruct.clearVector();
 		}
 		return 1;
@@ -1820,15 +1830,24 @@ int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		mtest = vargs[1];
 		mtest.replace(vargs[2], mstruct[i]);
 		mtest.eval(eo);
-		if(!mtest.isNumber() || mtest.number().getBoolean() < 0) return 0;
+		if(!mtest.isNumber() || mtest.number().getBoolean() < 0) {
+			CALCULATOR->error(true, _("Comparison failed."), NULL);
+			return -1;
+		}
 		if(mtest.number().getBoolean() == 0) {
-			mstruct.delChild(i + 1);
-			i--;
+			if(vargs[3].number().getBoolean() == 0) {
+				mstruct.delChild(i + 1);
+				i--;
+			}
+		} else if(vargs[3].number().getBoolean() > 0) {
+			MathStructure msave(mstruct[i]);
+			mstruct = msave;
+			return 1;
 		}
 	}
-	if(mstruct.size() == 1) {
-		MathStructure msave(mstruct[0]);
-		mstruct = msave;
+	if(vargs[3].number().getBoolean() > 0) {
+		CALCULATOR->error(true, _("No matching item found."), NULL);
+		return -1;
 	}
 	return 1;
 }

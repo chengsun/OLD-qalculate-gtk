@@ -1,3 +1,10 @@
+2004-09-17 Niklas Knutsson  <nq@altern.org>
+
+	* Set unknowns dialog
+	* More refined selection of popup menu items to show
+	* Polynomial division
+	* More reliable internal sorting
+
 2004-09-16 Niklas Knutsson  <nq@altern.org>
 
 	* Extensive enhancements of symbolic division

@@ -215,7 +215,7 @@ class MathStructure {
 		ComparisonResult compare(const MathStructure &o) const;
 		
 		int merge_addition(const MathStructure &mstruct, const EvaluationOptions &eo);
-		int merge_multiplication(const MathStructure &mstruct, const EvaluationOptions &eo);
+		int merge_multiplication(const MathStructure &mstruct, const EvaluationOptions &eo, bool do_append = true);
 		int merge_power(const MathStructure &mstruct, const EvaluationOptions &eo);
 		bool calculatesub(const EvaluationOptions &eo, const EvaluationOptions &feo);
 		bool calculateFunctions(const EvaluationOptions &eo);			
@@ -323,6 +323,9 @@ class MathStructure {
 		bool contains(const MathStructure &mstruct, bool check_variables = false, bool check_functions = false) const;
 		bool containsType(int mtype) const;
 		bool containsAdditionPower() const;
+		bool containsUnknowns() const;
+		bool containsDivision() const;
+		void findAllUnknowns(MathStructure &unknowns_vector);
 		bool replace(const MathStructure &mfrom, const MathStructure &mto);
 		
 		MathStructure generateVector(MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL, const EvaluationOptions &eo = default_evaluation_options);

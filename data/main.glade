@@ -386,6 +386,15 @@
 		  </child>
 		  
 		  <child>
+		    <widget class="GtkMenuItem" id="menu_item_set_unknowns">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Set Unknowns...</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_menu_item_set_unknowns_activate" last_modification_time="Fri, 17 Nov 2004 09:14:28 GMT"/>
+		    </widget>
+		  </child>
+		  
+		  <child>
 		    <widget class="GtkImageMenuItem" id="menu_item_result_units">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Convert To Unit</property>
@@ -1275,7 +1284,7 @@
 		      <property name="label" translatable="yes">Non-Zero Denominators</property>
 		      <property name="use_underline">True</property>
 		      <property name="active">False</property>
-		      <signal name="activate" handler="on_menu_item_assume_nonzero_denominators_activate" last_modification_time="Wed, 16 Nov 2004 09:14:28 GMT"/>
+		      <signal name="activate" handler="on_menu_item_assume_nonzero_denominators_activate" last_modification_time="Thu, 16 Nov 2004 09:14:28 GMT"/>
 		    </widget>
 		  </child>
 
@@ -2772,13 +2781,28 @@
   </child>
   
   <child>
+    <widget class="GtkMenuItem" id="popup_menu_item_set_unknowns">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Set Unknowns...</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_menu_item_set_unknowns_activate" last_modification_time="Fri, 17 Nov 2004 09:14:28 GMT"/>
+    </widget>
+  </child>
+  
+  <child>
+    <widget class="GtkMenuItem" id="separator_popup_nonzero">
+      <property name="visible">True</property>
+    </widget>
+  </child>
+  
+  <child>
     <widget class="GtkCheckMenuItem" id="popup_menu_item_assume_nonzero_denominators">
       <property name="visible">True</property>
       <property name="tooltip" translatable="yes">Assume that unknown denominators are non-zero</property>
       <property name="label" translatable="yes">Non-Zero Denominators</property>
       <property name="use_underline">True</property>
       <property name="active">False</property>
-      <signal name="activate" handler="on_popup_menu_item_assume_nonzero_denominators_activate" last_modification_time="Wed, 16 Nov 2004 09:14:28 GMT"/>
+      <signal name="activate" handler="on_popup_menu_item_assume_nonzero_denominators_activate" last_modification_time="Thu, 16 Nov 2004 09:14:28 GMT"/>
     </widget>
   </child>
 

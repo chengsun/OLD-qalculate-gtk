@@ -7565,9 +7565,6 @@ void update_resultview_popup() {
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_purely_scientific"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_non_scientific"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_display"));
-		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_factorize"));
-		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_assume_nonzero_denominators"));
-		gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_factorize"));
 	} else {
 		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_abbreviate_names"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_prefixes"));
@@ -7592,15 +7589,26 @@ void update_resultview_popup() {
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_purely_scientific"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_non_scientific"));
 		gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_display"));
-		if(mstruct && mstruct->countChilds() > 0) {
-			gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_factorize"));
-			gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_assume_nonzero_denominators"));
-			gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_factorize"));
-		} else {
-			gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_assume_nonzero_denominators"));
-			gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_factorize"));
-			gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_factorize"));
-		}
+	}
+	gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_factorize"));
+	if(mstruct && mstruct->containsUnknowns()) {
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_set_unknowns"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_factorize"));
+	} else {
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_set_unknowns"));
+	}
+	if(mstruct && mstruct->containsType(STRUCT_ADDITION)) {
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_factorize"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_factorize"));
+	} else {
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_factorize"));
+	}
+	if(mstruct && mstruct->containsDivision()) {
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_assume_nonzero_denominators"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_nonzero"));
+	} else {
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_assume_nonzero_denominators"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_nonzero"));
 	}
 	switch (printops.base) {
 		case BASE_OCTAL: {
@@ -10360,11 +10368,8 @@ void on_dataset_edit_button_new_property_clicked(GtkButton *button, gpointer use
 	DataProperty *dp = new DataProperty(edited_dataset);
 	dp->setUserModified(true);
 	if(edit_dataproperty(dp)) {
-		printf("A\n");
 		tmp_props.push_back(dp);
-		printf("B\n");
 		update_dataset_property_list(edited_dataset);
-		printf("C\n");
 	} else {
 		delete dp;
 	}
@@ -10396,6 +10401,96 @@ void on_dataproperty_edit_button_names_clicked(GtkButton *button, gpointer user_
 	edit_names(NULL, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_entry_name"))), glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_dialog"), TRUE, get_edited_dataproperty());
 	SET_NAMES_LE(datasetedit_glade, "dataproperty_edit_entry_name", "dataproperty_edit_label_names")
 }
+
+void on_menu_item_set_unknowns_activate(GtkMenuItem *w, gpointer user_data) {
+	if(expression_has_changed) execute_expression(true);
+	MathStructure unknowns;
+	mstruct->findAllUnknowns(unknowns);
+	if(unknowns.size() == 0) {
+		show_message(_("No unknowns in result."), glade_xml_get_widget (main_glade, "main_window"));
+		return;
+	}
+	GtkWidget *dialog = gtk_dialog_new_with_buttons(_("Set Unknowns"), GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), (GtkDialogFlags) (GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT), GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, GTK_STOCK_APPLY, GTK_RESPONSE_APPLY, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, NULL);
+	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
+	GtkWidget *vbox = gtk_vbox_new(FALSE, 15);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 12);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), vbox);
+	GtkWidget *label, *entry[unknowns.size()];
+	GtkWidget *ptable = gtk_table_new(0, 2, FALSE);
+	gtk_table_set_col_spacings(GTK_TABLE(ptable), 6);
+	gtk_table_set_row_spacings(GTK_TABLE(ptable), 6);
+	gtk_box_pack_start(GTK_BOX(vbox), ptable, FALSE, TRUE, 0);
+	int rows = 0;
+	for(unsigned int i = 0; i < unknowns.size(); i++) {
+		rows++;
+		gtk_table_resize(GTK_TABLE(ptable), rows, 2);
+		if(unknowns[i].isSymbolic()) {
+			string str = "\"";
+			str += unknowns[i].print().c_str();
+			str += "\"";
+			label = gtk_label_new(str.c_str());
+		} else {
+			label = gtk_label_new(unknowns[i].print().c_str());
+		}
+		gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+		gtk_table_attach(GTK_TABLE(ptable), label, 0, 1, rows - 1, rows, GTK_FILL, GTK_FILL, 0, 0);
+		entry[i] = gtk_entry_new();
+		gtk_table_attach(GTK_TABLE(ptable), entry[i], 1, 2, rows - 1, rows, (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), GTK_FILL, 0, 0);
+	}
+	MathStructure msave(*mstruct);
+	string result_save = result_text;
+	gtk_widget_show_all(dialog);
+	bool b_changed = false;
+	while(true) {
+		gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+		if(response == GTK_RESPONSE_ACCEPT || response == GTK_RESPONSE_APPLY) {
+			string str, result_mod = "";
+			for(unsigned int i = 0; i < unknowns.size(); i++) {
+				str = gtk_entry_get_text(GTK_ENTRY(entry[i]));
+				remove_blank_ends(str);
+				if(!str.empty()) {
+					if(!result_mod.empty()) result_mod += CALCULATOR->getComma();
+					if(unknowns[i].isSymbolic()) result_mod += "\"";
+					result_mod += unknowns[i].print().c_str();
+					if(unknowns[i].isSymbolic()) result_mod += "\"";
+					result_mod += "=";
+					result_mod += str;
+					mstruct->replace(unknowns[i], CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(str), evalops));
+					b_changed = true;
+				}
+			}
+			if(!result_mod.empty()) {
+				if(response == GTK_RESPONSE_ACCEPT) {
+					MathStructure mp(*mstruct);
+					mp.format(printops);
+					g_signal_handlers_block_matched((gpointer) expression, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_expression_changed, NULL);
+					gtk_entry_set_text(GTK_ENTRY(expression), mp.print(printops).c_str());
+					g_signal_handlers_unblock_matched((gpointer) expression, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_expression_changed, NULL);
+					gtk_widget_grab_focus(expression);
+					gtk_editable_select_region(GTK_EDITABLE(expression), 0, -1);
+				}
+				mstruct->eval(evalops);
+				result_text += " (";
+				result_text += _("with");
+				result_text += " ";
+				result_text += result_mod;
+				result_text += ")";
+				setResult(NULL, true, false, false);
+			}
+			if(response == GTK_RESPONSE_ACCEPT) break;
+		} else {
+			if(b_changed) {
+				mstruct->set(msave);
+				result_text = result_save;
+				setResult(NULL, false, false, false);
+			}
+			break;
+		}
+	}
+	gtk_widget_destroy(dialog);
+}
+
 
 
 #ifdef __cplusplus
