@@ -115,7 +115,7 @@ string& gsub(const string &pattern, const string &sub, string &str) {
 	unsigned int i = str.find(pattern);
 	while(i != string::npos) {
 		str.replace(i, pattern.length(), sub);
-		i = str.find(sub, i + sub.length());
+		i = str.find(pattern, i + sub.length());
 	}
 	return str;
 }

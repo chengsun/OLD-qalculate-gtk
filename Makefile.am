@@ -2,5 +2,8 @@
 
 SUBDIRS = data src po
 
-EXTRA_DIST =
+EXTRA_DIST = \
+	intltool-extract.in \
+	intltool-merge.in \
+	intltool-update.in
 
