@@ -1888,14 +1888,18 @@ void Calculator::setFunctionsAndVariables(string &str) {
 			}
 			if(!moved_forward) {
 				if(b_unknown && str[str_index] != EXP_CH) {
-					mngr = new Manager(str.substr(str_index, 1));
+					int i = 1;
+					while(i <= chars_left && str[str_index + i] < 0) {
+						i++;
+					}
+					mngr = new Manager(str.substr(str_index, i));
 					stmp = LEFT_PARENTHESIS_CH;
 					stmp += ID_WRAP_LEFT_CH;
 					stmp += i2s(addId(mngr));
 					mngr->unref();
 					stmp += ID_WRAP_RIGHT_CH;
 					stmp += RIGHT_PARENTHESIS_CH;
-					str.replace(str_index, 1, stmp);
+					str.replace(str_index, i, stmp);
 					str_index += stmp.length() - 1;
 				}	
 			}

@@ -18,5 +18,6 @@ applnkdir = $(datadir)/applnk/Utilities
 
 EXTRA_DIST = \
 	$(desktop_IN_FILES)	\
-	$(glade_DATA)
+	$(glade_DATA)	\
+	icon.xpm
 

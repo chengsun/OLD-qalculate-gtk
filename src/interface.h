@@ -23,6 +23,7 @@
 #define RADIO_MENU_ITEM_WITH_INT_1(x,w)	item = gtk_radio_menu_item_new_with_label(w, x); gtk_widget_show (item); gtk_menu_shell_append(GTK_MENU_SHELL(sub), item); 
 #define RADIO_MENU_ITEM_WITH_INT_2(x,y,z)	gtk_signal_connect (GTK_OBJECT (x), "activate", GTK_SIGNAL_FUNC(y), GINT_TO_POINTER (z));
 #define SUBMENU_ITEM(x,y)		item = gtk_menu_item_new_with_label(x); gtk_widget_show (item); gtk_menu_shell_append(GTK_MENU_SHELL(y), item); sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);   
+#define SUBMENU_ITEM_PREPEND(x,y)		item = gtk_menu_item_new_with_label(x); gtk_widget_show (item); gtk_menu_shell_prepend(GTK_MENU_SHELL(y), item); sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);   
 #define SUBMENU_ITEM_INSERT(x,y,i)		item = gtk_menu_item_new_with_label(x); gtk_widget_show (item); gtk_menu_shell_insert(GTK_MENU_SHELL(y), item, i); sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);   
 
 enum {

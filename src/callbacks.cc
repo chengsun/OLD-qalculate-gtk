@@ -118,6 +118,7 @@ struct tree_struct {
 	string item;
 	list<tree_struct> items;
 	list<tree_struct>::iterator it;
+	list<tree_struct>::reverse_iterator rit;
 	vector<void*> objects;	
 	tree_struct *parent;
 	void sort() {
@@ -1369,13 +1370,12 @@ void create_umenu() {
 	u_menu = sub;
 	sub2 = sub;
 	Unit *u;
-	list<tree_struct>::iterator it, it2;
 	tree_struct *titem, *titem2;
-	unit_cats.it = unit_cats.items.begin();
-	if(unit_cats.it != unit_cats.items.end()) {
-		titem = &*unit_cats.it;
-		++unit_cats.it;
-		titem->it = titem->items.begin();
+	unit_cats.rit = unit_cats.items.rbegin();
+	if(unit_cats.rit != unit_cats.items.rend()) {
+		titem = &*unit_cats.rit;
+		++unit_cats.rit;
+		titem->rit = titem->items.rbegin();
 	} else {
 		titem = NULL;
 	}
@@ -1383,7 +1383,7 @@ void create_umenu() {
 	menus.push(sub);
 	sub3 = sub;
 	while(titem) {
-		SUBMENU_ITEM(titem->item.c_str(), sub3)
+		SUBMENU_ITEM_PREPEND(titem->item.c_str(), sub3)
 		menus.push(sub);
 		sub3 = sub;
 		for(int i = 0; i < titem->objects.size(); i++) {
@@ -1392,16 +1392,16 @@ void create_umenu() {
 				MENU_ITEM_WITH_POINTER(u->title(true).c_str(), insert_unit, u)
 			}
 		}
-		while(titem && titem->it == titem->items.end()) {
+		while(titem && titem->rit == titem->items.rend()) {
 			titem = titem->parent;
 			menus.pop();
 			if(menus.size() > 0) sub3 = menus.top();
 		}	
 		if(titem) {
-			titem2 = &*titem->it;
-			++titem->it;
+			titem2 = &*titem->rit;
+			++titem->rit;
 			titem = titem2;
-			titem->it = titem->items.begin();	
+			titem->rit = titem->items.rbegin();	
 		}
 	}
 	sub = sub2;
@@ -1435,13 +1435,12 @@ void create_umenu2() {
 	u_menu2 = sub;
 	sub2 = sub;
 	Unit *u;
-	list<tree_struct>::iterator it, it2;
 	tree_struct *titem, *titem2;
-	unit_cats.it = unit_cats.items.begin();
-	if(unit_cats.it != unit_cats.items.end()) {
-		titem = &*unit_cats.it;
-		++unit_cats.it;
-		titem->it = titem->items.begin();
+	unit_cats.rit = unit_cats.items.rbegin();
+	if(unit_cats.rit != unit_cats.items.rend()) {
+		titem = &*unit_cats.rit;
+		++unit_cats.rit;
+		titem->rit = titem->items.rbegin();
 	} else {
 		titem = NULL;
 	}
@@ -1449,7 +1448,7 @@ void create_umenu2() {
 	menus.push(sub);
 	sub3 = sub;
 	while(titem) {
-		SUBMENU_ITEM(titem->item.c_str(), sub3)
+		SUBMENU_ITEM_PREPEND(titem->item.c_str(), sub3)
 		menus.push(sub);
 		sub3 = sub;
 		for(int i = 0; i < titem->objects.size(); i++) {
@@ -1458,16 +1457,16 @@ void create_umenu2() {
 				MENU_ITEM_WITH_POINTER(u->title(true).c_str(), convert_to_unit, u)
 			}
 		}
-		while(titem && titem->it == titem->items.end()) {
+		while(titem && titem->rit == titem->items.rend()) {
 			titem = titem->parent;
 			menus.pop();
 			if(menus.size() > 0) sub3 = menus.top();
 		}	
 		if(titem) {
-			titem2 = &*titem->it;
-			++titem->it;
+			titem2 = &*titem->rit;
+			++titem->rit;
 			titem = titem2;
-			titem->it = titem->items.begin();	
+			titem->rit = titem->items.rbegin();	
 		}
 	}
 	sub = sub2;
@@ -1479,6 +1478,7 @@ void create_umenu2() {
 	}		
 	MENU_SEPARATOR	
 	MENU_ITEM(_("Enter custom unit"), convert_to_custom_unit);
+	MENU_ITEM_SET_ACCEL(GDK_t);
 	MENU_ITEM(_("Create new unit"), new_unit);
 	MENU_ITEM(_("Manage units"), manage_units);
 }
@@ -1510,13 +1510,12 @@ void create_vmenu() {
 	v_menu = sub;
 	sub2 = sub;
 	Variable *v;
-	list<tree_struct>::iterator it;
 	tree_struct *titem, *titem2;
-	variable_cats.it = variable_cats.items.begin();
-	if(variable_cats.it != variable_cats.items.end()) {
-		titem = &*variable_cats.it;
-		++variable_cats.it;
-		titem->it = titem->items.begin();
+	variable_cats.rit = variable_cats.items.rbegin();
+	if(variable_cats.rit != variable_cats.items.rend()) {
+		titem = &*variable_cats.rit;
+		++variable_cats.rit;
+		titem->rit = titem->items.rbegin();
 	} else {
 		titem = NULL;
 	}
@@ -1525,8 +1524,7 @@ void create_vmenu() {
 	menus.push(sub);
 	sub3 = sub;
 	while(titem) {
-
-		SUBMENU_ITEM(titem->item.c_str(), sub3)
+		SUBMENU_ITEM_PREPEND(titem->item.c_str(), sub3)
 		menus.push(sub);
 		sub3 = sub;
 		for(int i = 0; i < titem->objects.size(); i++) {
@@ -1535,16 +1533,16 @@ void create_vmenu() {
 				MENU_ITEM_WITH_POINTER(v->title(true).c_str(), insert_variable, v);
 			}
 		}
-		while(titem && titem->it == titem->items.end()) {
+		while(titem && titem->rit == titem->items.rend()) {
 			titem = titem->parent;
 			menus.pop();
 			if(menus.size() > 0) sub3 = menus.top();
 		}	
 		if(titem) {
-			titem2 = &*titem->it;
-			++titem->it;
+			titem2 = &*titem->rit;
+			++titem->rit;
 			titem = titem2;
-			titem->it = titem->items.begin();	
+			titem->rit = titem->items.rbegin();	
 		}
 
 	}
@@ -1564,8 +1562,8 @@ void create_vmenu() {
 	MENU_ITEM(_("Import CSV file"), on_import_csv_file_activated);	
 	MENU_SEPARATOR		
 	MENU_ITEM(_("Manage variables"), manage_variables);
+	MENU_ITEM_SET_ACCEL(GDK_m);	
 	MENU_SEPARATOR
-	MENU_ITEM_SET_ACCEL(GDK_m);
 	if(CALCULATOR->variablesEnabled()) {
 		MENU_ITEM(_("Disable variables"), set_variables_enabled)
 	} else {
@@ -1653,13 +1651,12 @@ void create_fmenu() {
 	f_menu = sub;
 	sub2 = sub;
 	Function *f;
-	list<tree_struct>::iterator it;
 	tree_struct *titem, *titem2;
-	function_cats.it = function_cats.items.begin();
-	if(function_cats.it != function_cats.items.end()) {
-		titem = &*function_cats.it;
-		++function_cats.it;
-		titem->it = titem->items.begin();
+	function_cats.rit = function_cats.items.rbegin();
+	if(function_cats.rit != function_cats.items.rend()) {
+		titem = &*function_cats.rit;
+		++function_cats.rit;
+		titem->rit = titem->items.rbegin();
 	} else {
 		titem = NULL;
 	}
@@ -1667,25 +1664,25 @@ void create_fmenu() {
 	menus.push(sub);
 	sub3 = sub;
 	while(titem) {
-		SUBMENU_ITEM(titem->item.c_str(), sub3)
-		menus.push(sub);
-		sub3 = sub;
+		SUBMENU_ITEM_PREPEND(titem->item.c_str(), sub3)
 		for(int i = 0; i < titem->objects.size(); i++) {
 			f = (Function*) titem->objects[i];
 			if(f->isActive() && !f->isHidden()) {
 				MENU_ITEM_WITH_POINTER(f->title(true).c_str(), insert_function, f)
 			}
 		}
-		while(titem && titem->it == titem->items.end()) {
+		menus.push(sub);
+		sub3 = sub;
+		while(titem && titem->rit == titem->items.rend()) {
 			titem = titem->parent;
 			menus.pop();
 			if(menus.size() > 0) sub3 = menus.top();
 		}	
 		if(titem) {
-			titem2 = &*titem->it;
-			++titem->it;
+			titem2 = &*titem->rit;
+			++titem->rit;
 			titem = titem2;
-			titem->it = titem->items.begin();	
+			titem->rit = titem->items.rbegin();	
 		}
 	}
 	sub = sub2;
@@ -1770,7 +1767,7 @@ string get_value_string(Manager *mngr_, bool rlabel = false, Prefix *prefix = NU
 //	return mngr_->print(numberformat, displayflags, min_decimals, max_decimals, in_exact, NULL, prefix);
 }
 
-GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *prefix = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false, bool draw_minus = false, gint *point_central = NULL) {
+GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *prefix = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false, bool draw_minus = false, gint *point_central = NULL, bool in_multiplication = false) {
 
 	GdkPixmap *pixmap = NULL;
 	gint w, h;
@@ -2497,10 +2494,20 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			break;
 		}	
 		case POWER_MANAGER: {
-			if(!(displayflags & DISPLAY_FORMAT_SCIENTIFIC) && m->exponent()->isFraction() && m->exponent()->fraction()->numerator()->equals(1) && m->exponent()->fraction()->denominator()->equals(2)) {
-				Function *sqrt = CALCULATOR->getFunction("sqrt");
-				if(sqrt) {
-					Manager *m2 = new Manager(sqrt, m->base(), NULL);
+			if(!(displayflags & DISPLAY_FORMAT_SCIENTIFIC)) {
+				if(m->exponent()->isFraction() && m->exponent()->fraction()->numerator()->equals(1) && m->exponent()->fraction()->denominator()->equals(2)) {
+					Function *sqrt = CALCULATOR->getFunction("sqrt");
+					if(sqrt) {
+						Manager *m2 = new Manager(sqrt, m->base(), NULL);
+						pixmap = draw_manager(m2, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, toplevel, plural, l_exp, in_composite, in_power, draw_minus, point_central);
+						m2->unref();
+						return pixmap;
+					}
+				} else if(!in_multiplication && m->exponent()->hasNegativeSign()) {
+					Manager *m2 = new Manager();
+					m2->setType(MULTIPLICATION_MANAGER);
+					m->ref();
+					m2->push_back(m);
 					pixmap = draw_manager(m2, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, toplevel, plural, l_exp, in_composite, in_power, draw_minus, point_central);
 					m2->unref();
 					return pixmap;
@@ -2672,7 +2679,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			Manager one_mngr(1, 1);
 			GdkPixmap *pixmap_one = draw_manager(&one_mngr, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, NULL, false, in_power, true);	
 			gdk_drawable_get_size(GDK_DRAWABLE(pixmap_one), &one_w, &one_h);
-						
+			
 			Manager *m_i;
 
 			bool b = false, c = false, d = false;
@@ -2735,18 +2742,6 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					wpf_div.push_back(0);						
 					cpf_div.push_back(0);
 					cpf.push_back(dh);
-/*					string str;
-					layout_num = gtk_widget_create_pango_layout(resultview, NULL);
-					MARKUP_STRING(str, TEXT_TAGS "1" TEXT_TAGS_END)
-					pango_layout_set_markup(layout_num, str.c_str(), -1);
-					pango_layout_get_pixel_size(layout_num, &num_fract_w, &num_fract_h);
-					w2 += num_fract_w;
-					if(num_fract_h / 2 > dh2) {
-						dh2 = num_fract_h / 2;
-					}
-					if(num_fract_h / 2 + num_fract_h % 2 > uh2) {
-						uh2 = num_fract_h / 2 + num_fract_h % 2;
-					}*/													
 					f_has_prefix.push_back(false);
 					i++;
 					m_i = m->getChild(i);
@@ -2788,7 +2783,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				if(m_i->isPower() && m_i->exponent()->hasNegativeSign()) {
 					Manager mngr_i(m_i);
 					mngr_i.addInteger(-1, OPERATION_RAISE);
-					pixmap_factors_div.push_back(draw_manager(&mngr_i, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &hetmp));
+					pixmap_factors_div.push_back(draw_manager(&mngr_i, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, true, &hetmp, true));
 					gdk_drawable_get_size(GDK_DRAWABLE(pixmap_factors_div[i]), &wtmp, &htmp);
 					w2 += wtmp;
 					if(htmp - hetmp > uh2) {
@@ -2851,7 +2846,6 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							numerator_ = whole_;
 						}
 						if(numerator_ == "1") numerator_ = "";
-						layout_num = gtk_widget_create_pango_layout(resultview, NULL);
 						if(!exp_minus && !exponent_.empty()) {
 							if(numerator_.empty()) numerator_ = "1";
 							exponent_.insert(0, TEXT_TAGS_END TEXT_TAGS_SMALL "E" TEXT_TAGS_SMALL_END TEXT_TAGS);
@@ -2863,18 +2857,21 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 							if(!numerator_.empty()) numerator_ += " ";
 							numerator_ += prefix_;
 						}
-						MARKUP_STRING(str, numerator_)
-						pango_layout_set_markup(layout_num, str.c_str(), -1);
-						pango_layout_get_pixel_size(layout_num, &num_fract_w, &num_fract_h);
-						if(minus) {
-							w2 += minus_w;
-						}							
-						w2 += num_fract_w;
-						if(num_fract_h / 2 > dh2) {
-							dh2 = num_fract_h / 2;
-						}
-						if(num_fract_h / 2 + num_fract_h % 2 > uh2) {
-							uh2 = num_fract_h / 2 + num_fract_h % 2;
+						if(!numerator_.empty()) {
+							layout_num = gtk_widget_create_pango_layout(resultview, NULL);
+							MARKUP_STRING(str, numerator_)
+							pango_layout_set_markup(layout_num, str.c_str(), -1);
+							pango_layout_get_pixel_size(layout_num, &num_fract_w, &num_fract_h);
+							if(minus) {
+								w2 += minus_w;
+							}							
+							w2 += num_fract_w;
+							if(num_fract_h / 2 > dh2) {
+								dh2 = num_fract_h / 2;
+							}
+							if(num_fract_h / 2 + num_fract_h % 2 > uh2) {
+								uh2 = num_fract_h / 2 + num_fract_h % 2;
+							}
 						}											
 					}
 					pixmap_factors_div.push_back(NULL);
@@ -2884,9 +2881,9 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 					wpf_div.push_back(0);
 				}	
 				hetmp = 0;
-				pixmap_factors.push_back(draw_manager(m_i, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, draw_minus || toplevel || i, &hetmp));
+				pixmap_factors.push_back(draw_manager(m_i, nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power, draw_minus || toplevel || i, &hetmp, true));
 				f_has_prefix.push_back(prefix_ == 2 && l_exp && l_exp->isZero());
-				if(m_i->isText() && (m_i->text().length() == 1 || m_i->text() == "pi" || m_i->text() == "euler" || m_i->text() == "golden") || (m_i->isFraction() && !(i < m->countChilds() && m->getChild(i + 1)->isPower() && m->getChild(i + 1)->base()->isFraction())) || (m_i->isPower() && m_i->base()->isText())) {
+				if(m_i->isText() && (text_length_is_one(m_i->text()) || m_i->text() == "pi" || m_i->text() == "euler" || m_i->text() == "golden") || (m_i->isFraction() && !(i < m->countChilds() && m->getChild(i + 1)->isPower() && m->getChild(i + 1)->base()->isFraction())) || (m_i->isPower() && m_i->base()->isText())) {
 					f_needs_multi_space.push_back(false);
 				} else {
 					f_needs_multi_space.push_back(true);
@@ -2920,7 +2917,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 				cpf.push_back(hetmp);								
 				wpf.push_back(wtmp);
 				w += wtmp;
-				if(!f_is_div[i] && !(layout_num && i == 0)) {
+				if(!f_is_div[i] && !(m_i->isFraction() && (layout_num || layout_den)) && !(layout_num && i == 0)) {
 					w2 += wtmp;
 					if(htmp - hetmp > uh2) {
 						uh2 = htmp - hetmp;
@@ -2968,6 +2965,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						num_w = num_fract_w;
 						index += 1;
 						last_num = true;
+						prepend_one = false;
 					}	
 
 					if(layout_den) {
@@ -2986,8 +2984,11 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						}						
 					}
 					for(; index < m->countChilds(); index++) {
+						if(!f_is_div[index] && m->getChild(index)->isFraction() && (layout_num || layout_den)) {
+							index++; if(index >= m->countChilds()) break;
+						}
 						if(f_is_div[index]) {
-							if(index == 0 || (index == 1 && (num_fract_w == 0 || first_is_minus))) {
+							if(index == 0 || (index == 1 && first_is_minus)) {
 								num_w = 0;
 								prepend_one = false;
 							}
@@ -3003,14 +3004,14 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 								num_dh = one_h / 2;
 							}							
 						}
-						num_w += wpf[index];
+						num_w += wpf[index];					
 						if(hpf[index] - cpf[index] > num_uh) {
 							num_uh = hpf[index] - cpf[index];
 						}
 						if(cpf[index] > num_dh) {
 							num_dh = cpf[index];
 						}						
-						if(f_needs_multi_space[index] && index > 0 && !f_needs_multi_space[index - 1] && (index != 1 || !first_is_minus)) {
+						if(f_needs_multi_space[index] && (index > 0 || prepend_one) && !f_needs_multi_space[index - 1] && (index != 1 || !first_is_minus)) {
 							num_w += space_w;
 						}
 						if(f_needs_multi_space[index] && ((index + 1 < m->countChilds() && !f_is_div[index + 1]) || (last_num && index > 0 && f_needs_multi_space[index - 1]))) {
@@ -3030,6 +3031,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						num_w = one_w;
 						num_dh = one_h / 2;
 						num_uh = one_h / 2 + one_h % 2;
+						prepend_one = true;
 					}
 					for(; index < m->countChilds(); index++) {
 						if(last_den && m->getChild(index)->isPower() && m->getChild(index)->base()->isFraction()) {
@@ -3144,7 +3146,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						w_first_fract = w;
 					}	
 				} else if(do_div) {
-					if(i == 0) {
+					if(i == 0 || (i == 1 && first_is_minus)) {
 						if(minus && (toplevel || draw_minus)) {
 							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - minus_h / 2 - minus_h % 2, layout_minus);	
 							w += minus_w;
@@ -3154,10 +3156,11 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						w = (wfr - num_w) / 2 + w_first_fract;
 					}
 					if(f_is_div[i]) {
-						if(i == 0 || (!div_i && i == 1 && (num_fract_w == 0 || first_is_minus))) {
-							gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w, num_uh - one_h / 2 - one_h % 2, -1, -1);								
+						if(prepend_one) {
+							gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w, num_uh - one_h / 2 - one_h % 2, -1, -1);
 							w += one_w;
-						}													
+							prepend_one = false;
+						}
 						if(!in_den) {
 							in_den = true;
 							in_num = false;
@@ -3189,13 +3192,14 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						}								
 						div_i++;
 					} else if(in_num) {
-						if(i == 0 && prepend_one) {
+						if(prepend_one) {
 							gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w, num_uh - one_h / 2 - one_h % 2, -1, -1);								
 							w += one_w;
 						}					
-						if(i > 0 && f_needs_multi_space[i] && !f_has_prefix[i - 1] && !f_needs_multi_space[i - 1] && !(i == 1 && (first_is_minus || prefix_fract))) {
+						if((i > 0 || prepend_one) && f_needs_multi_space[i] && !f_has_prefix[i - 1] && !f_needs_multi_space[i - 1] && !(i == 1 && (first_is_minus || prefix_fract))) {
 							w += space_w;
 						}
+						prepend_one = false;
 						if(i == 0 && layout_num) {						
 							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, num_uh - num_fract_h / 2 - num_fract_h % 2, layout_num);	
 							w += num_fract_w;						
@@ -3205,7 +3209,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 								w += multi_w;
 								w += space_w;
 							}							
-						} else {						
+						} else if(!layout_den || !m->getChild(i)->isFraction()) {						
 							gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_factors[i]), 0, 0, w, num_uh - (hpf[i] - cpf[i]), -1, -1);
 							w += wpf[i];
 							if(f_needs_multi_space[i] && i + 1 < m->countChilds() && !f_is_div[i + 1]) {
@@ -3214,7 +3218,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 								w += multi_w;
 								w += space_w;
 							}							
-						}	
+						}
 					} else {
 						i--;
 						div_i = 1;
@@ -3227,10 +3231,11 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 						w += space_w;						
 					}
 				} else {
-					if(i == 0 && prepend_one) {
+					if(prepend_one) {
 						gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_one), 0, 0, w, uh - one_h / 2 - one_h % 2, -1, -1);								
 						w += one_w;
 						w += space_w;
+						prepend_one = false;
 					}		
 					if(div_i != 1 && div_i != 2 && i > 0 && f_needs_multi_space[i] && !f_has_prefix[i - 1] && !f_needs_multi_space[i - 1] && !(i == 1 && first_is_minus)) {
 						w += space_w;
@@ -3523,6 +3528,7 @@ void setResult(const gchar *expr, Prefix *prefix = NULL, bool update_history = t
 	b_busy = true;
 	if(dialog) {
 		gtk_widget_hide(dialog);
+		gtk_widget_grab_focus(expression);
 	}
 	g_signal_handler_disconnect(G_OBJECT(glade_xml_get_widget (glade_xml, "main_window")), handler_id);
 
@@ -3648,6 +3654,7 @@ void execute_expression() {
 	}
 	if(dialog) {
 		gtk_widget_hide(dialog);
+		gtk_widget_grab_focus(expression);
 	}
 	b_busy = false;
 	display_errors();
@@ -4266,6 +4273,7 @@ run_unit_edit_dialog:
 		update_umenus();
 	}
 	gtk_widget_hide(dialog);
+	gtk_widget_grab_focus(expression);
 }
 
 void edit_argument(Argument *arg) {
@@ -4400,6 +4408,7 @@ void edit_argument(Argument *arg) {
 	}
 	edited_argument = NULL;
 	gtk_widget_hide(dialog);
+	gtk_widget_grab_focus(expression);
 }
 
 /*
@@ -4534,6 +4543,7 @@ run_function_edit_dialog:
 	}
 	edited_function = NULL;
 	gtk_widget_hide(dialog);
+	gtk_widget_grab_focus(expression);
 }
 
 /*
@@ -4586,14 +4596,11 @@ void convert_to_custom_unit(GtkMenuItem *w, gpointer user_data)
 {
 	GtkWidget *dialog = glade_xml_get_widget (glade_xml, "unit_dialog");
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (glade_xml, "main_window")));
-	int i;
-	while((i = gtk_dialog_run(GTK_DIALOG(dialog))) == GTK_RESPONSE_OK || i == GTK_RESPONSE_APPLY) {
-		CALCULATOR->convert(mngr, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_dialog_entry_unit"))));
-		setResult(result_text.c_str());
-		if(i == GTK_RESPONSE_OK) break;
+	if(GTK_WIDGET_VISIBLE(dialog)) {
+		gtk_window_present(GTK_WINDOW(dialog));
+	} else {
+		gtk_widget_show(dialog);
 	}
-	gtk_widget_hide(dialog);
-	gtk_widget_grab_focus(expression);
 }
 
 /*
@@ -5800,6 +5807,7 @@ void on_preferences_button_font_clicked(GtkButton *w, gpointer user_data) {
 */
 void on_units_button_close_clicked(GtkButton *button, gpointer user_data) {
 	gtk_widget_hide(units_window);
+	gtk_widget_grab_focus(expression);
 }
 
 /*
@@ -6226,7 +6234,6 @@ void on_menu_item_convert_number_bases_activate(GtkMenuItem *w, gpointer user_da
 }
 void on_menu_item_plot_functions_activate(GtkMenuItem *w, gpointer user_data) {
 	GtkWidget *dialog = glade_xml_get_widget(glade_xml, "plot_dialog");
-	//gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (glade_xml, "main_window")));
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_expression")), gtk_entry_get_text(GTK_ENTRY(expression)));
 	if(!GTK_WIDGET_VISIBLE(dialog)) {
 		gtk_list_store_clear(tPlotFunctions_store);
@@ -6688,6 +6695,7 @@ void on_variables_button_delete_clicked(GtkButton *button, gpointer user_data) {
 */
 void on_variables_button_close_clicked(GtkButton *button, gpointer user_data) {
 	gtk_widget_hide(variables_window);
+	gtk_widget_grab_focus(expression);
 }
 
 /*
@@ -6758,6 +6766,7 @@ void on_functions_button_delete_clicked(GtkButton *button, gpointer user_data) {
 */
 void on_functions_button_close_clicked(GtkButton *button, gpointer user_data) {
 	gtk_widget_hide(functions_window);
+	gtk_widget_grab_focus(expression);
 }
 
 /*
@@ -6856,6 +6865,7 @@ void update_nbases_entries(Manager *value, NumberFormat nrformat) {
 }
 void on_nbases_button_close_clicked(GtkButton *button, gpointer user_data) {
 	gtk_widget_hide(glade_xml_get_widget (glade_xml, "nbases_dialog"));
+	gtk_widget_grab_focus(expression);
 }
 void on_nbases_entry_decimal_changed(GtkEditable *editable, gpointer user_data) {	
 	if(changing_in_nbases_dialog) return;
@@ -7488,6 +7498,20 @@ void on_plot_checkbutton_ylog_toggled(GtkToggleButton *w, gpointer user_data) {
 }
 void on_plot_entry_expression_activate(GtkEntry *entry, gpointer user_data) {
 	on_plot_button_add_clicked(GTK_BUTTON(glade_xml_get_widget (glade_xml, "plot_button_add")), NULL);
+}
+
+void on_unit_dialog_button_ok_clicked(GtkButton *w, gpointer user_data) {
+	CALCULATOR->convert(mngr, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_dialog_entry_unit"))));
+	setResult(result_text.c_str());
+	gtk_widget_hide(glade_xml_get_widget (glade_xml, "unit_dialog"));
+	gtk_widget_grab_focus(expression);
+}
+void on_unit_dialog_button_apply_clicked(GtkButton *w, gpointer user_data) {
+	CALCULATOR->convert(mngr, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_dialog_entry_unit"))));
+	setResult(result_text.c_str());
+}
+void on_unit_dialog_entry_unit_activate(GtkEntry *entry, gpointer user_data) {
+	on_unit_dialog_button_ok_clicked(GTK_BUTTON(glade_xml_get_widget (glade_xml, "unit_dialog_button_ok")), NULL);
 }
 
 }

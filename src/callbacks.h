@@ -273,6 +273,10 @@ void on_plot_checkbutton_xlog_toggled(GtkToggleButton *w, gpointer user_data);
 void on_plot_checkbutton_ylog_toggled(GtkToggleButton *w, gpointer user_data);
 void on_plot_entry_expression_activate(GtkEntry *entry, gpointer user_data);
 
+void on_unit_dialog_button_apply_clicked(GtkButton *w, gpointer user_data);
+void on_unit_dialog_button_ok_clicked(GtkButton *w, gpointer user_data);
+void on_unit_dialog_entry_unit_activate(GtkEntry *entry, gpointer user_data);
+
 }
 
 #endif

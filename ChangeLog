@@ -1,3 +1,22 @@
+2003-10-21  Niklas Knutsson  <nq@altern.org>
+
+	* Release Qalculate-GTK version 0.3
+
+2003-10-20  Niklas Knutsson  <nq@altern.org>
+
+	* Include all bytes in unicode char for unknown variables in setFunctionsAndVariables()
+	* Fix Manager->print(), and as below
+	* Display x^-y as 1/x^y in non-scientific mode
+	* Draw multiplication manager fixes
+	* Put menus before items
+	* More TODO
+	* Also add icon.xpm
+	* Add qalculate.h to Makefile.am to get it included in dist
+	* Accel fixes and additions
+	* Move "convert number basis" to the other menu
+	* Reorder some buttons to follow HIG
+	* Make convert unit dialog non-modal
+
 2003-10-19  Niklas Knutsson  <nq@altern.org>
 
 	* Display ^0.5 as square root

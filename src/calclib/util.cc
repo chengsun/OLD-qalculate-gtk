@@ -712,3 +712,11 @@ long double gcd_d(long double i1, long double i2) {
 	return i2;
 }
 
+bool text_length_is_one(const string &str) {
+	for(int i = 0; i < str.length() - 1; i++) {
+		if(str[i] > 0) {
+			return false;
+		}
+	}
+	return true;
+}

@@ -157,6 +157,17 @@
 		  </child>
 
 		  <child>
+		    <widget class="GtkMenuItem" id="menu_item_convert_number_bases">
+		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">open a window for quick base conversion</property>
+		      <property name="label" translatable="yes">Convert number bases</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_menu_item_convert_number_bases_activate" last_modification_time="Sun, 19 Oct 2003 15:11:19 GMT"/>
+		      <accelerator key="B" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+		    </widget>
+		  </child>
+
+		  <child>
 		    <widget class="GtkMenuItem" id="separator10">
 		      <property name="visible">True</property>
 		    </widget>
@@ -171,7 +182,7 @@
 		      <signal name="activate" handler="on_menu_item_save_defs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image142">
+			<widget class="GtkImage" id="image178">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -192,7 +203,7 @@
 		      <signal name="activate" handler="on_menu_item_save_mode_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image143">
+			<widget class="GtkImage" id="image179">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -213,7 +224,7 @@
 		      <signal name="activate" handler="on_menu_item_fetch_exchange_rates_activate" last_modification_time="Mon, 06 Oct 2003 21:06:00 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image144">
+			<widget class="GtkImage" id="image180">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-refresh</property>
 			  <property name="icon_size">1</property>
@@ -234,7 +245,7 @@
 		      <signal name="activate" handler="on_menu_item_edit_prefs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image145">
+			<widget class="GtkImage" id="image181">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -261,7 +272,7 @@
 		      <signal name="activate" handler="on_menu_item_about_activate" last_modification_time="Thu, 14 Aug 2003 22:31:50 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image146">
+			<widget class="GtkImage" id="image182">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-dialog-info</property>
 			  <property name="icon_size">1</property>
@@ -280,9 +291,10 @@
 		      <property name="label" translatable="yes">_Quit</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_quit_activate" last_modification_time="Fri, 08 Aug 2003 10:07:30 GMT"/>
+		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image147">
+			<widget class="GtkImage" id="image183">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -357,23 +369,6 @@
 			      <property name="active">False</property>
 			      <property name="group">menu_item_binary</property>
 			      <signal name="activate" handler="on_menu_item_hexadecimal_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
-			    </widget>
-			  </child>
-
-			  <child>
-			    <widget class="GtkMenuItem" id="separator4">
-			      <property name="visible">True</property>
-			    </widget>
-			  </child>
-
-			  <child>
-			    <widget class="GtkMenuItem" id="menu_item_convert_number_bases">
-			      <property name="visible">True</property>
-			      <property name="tooltip" translatable="yes">open a window for quick base conversion</property>
-			      <property name="label" translatable="yes">Convert number bases</property>
-			      <property name="use_underline">True</property>
-			      <signal name="activate" handler="on_menu_item_convert_number_bases_activate" last_modification_time="Tue, 12 Aug 2003 10:32:32 GMT"/>
-			      <accelerator key="B" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 			    </widget>
 			  </child>
 			</widget>
@@ -555,7 +550,7 @@
 		      <signal name="activate" handler="on_menu_item_save_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image148">
+			<widget class="GtkImage" id="image184">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -1105,6 +1100,7 @@
 				  <property name="active">False</property>
 				  <property name="inconsistent">False</property>
 				  <signal name="toggled" handler="on_button_fraction_toggled" last_modification_time="Tue, 19 Aug 2003 13:12:14 GMT"/>
+				  <accelerator key="R" modifiers="GDK_CONTROL_MASK" signal="clicked"/>
 				</widget>
 				<packing>
 				  <property name="left_attach">2</property>
@@ -4194,7 +4190,7 @@
 			  <child>
 			    <widget class="GtkCheckButton" id="unit_edit_checkbutton_hidden">
 			      <property name="visible">True</property>
-			      <property name="tooltip" translatable="yes">If this unit shall be hidden from menus</property>
+			      <property name="tooltip" translatable="yes">If this unit shall be hidden in menus</property>
 			      <property name="can_focus">True</property>
 			      <property name="label" translatable="yes">hide unit</property>
 			      <property name="use_underline">True</property>
@@ -4203,7 +4199,7 @@
 			      <property name="inconsistent">False</property>
 			      <property name="draw_indicator">True</property>
 			      <accessibility>
-				<atkproperty name="AtkObject::accessible_description" translatable="yes">If this unit shall be hidden from menus</atkproperty>
+				<atkproperty name="AtkObject::accessible_description" translatable="yes">If this unit shall be hidden in menus</atkproperty>
 			      </accessibility>
 			    </widget>
 			  </child>
@@ -5083,7 +5079,7 @@
 	      <child>
 		<widget class="GtkCheckButton" id="function_edit_checkbutton_hidden">
 		  <property name="visible">True</property>
-		  <property name="tooltip" translatable="yes">If this function shall be hidden from menus</property>
+		  <property name="tooltip" translatable="yes">If this function shall be hidden in menus</property>
 		  <property name="can_focus">True</property>
 		  <property name="label" translatable="yes">hide function</property>
 		  <property name="use_underline">True</property>
@@ -5092,7 +5088,7 @@
 		  <property name="inconsistent">False</property>
 		  <property name="draw_indicator">True</property>
 		  <accessibility>
-		    <atkproperty name="AtkObject::accessible_description" translatable="yes">If this function shall be hidden from menus</atkproperty>
+		    <atkproperty name="AtkObject::accessible_description" translatable="yes">If this function shall be hidden in menus</atkproperty>
 		  </accessibility>
 		</widget>
 	      </child>
@@ -6415,10 +6411,12 @@ Copyright (c) 2003 Niklas Knutsson
   <property name="title" translatable="yes">Convert to unit</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
-  <property name="modal">True</property>
+  <property name="modal">False</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
   <property name="has_separator">False</property>
+  <signal name="delete_event" handler="gtk_widget_hide" object="unit_dialog" last_modification_time="Sun, 19 Oct 2003 14:20:14 GMT"/>
+  <signal name="destroy_event" handler="gtk_widget_hide" object="unit_dialog" last_modification_time="Sun, 19 Oct 2003 14:20:30 GMT"/>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="dialog-vbox7">
@@ -6432,20 +6430,7 @@ Copyright (c) 2003 Niklas Knutsson
 	  <property name="layout_style">GTK_BUTTONBOX_END</property>
 
 	  <child>
-	    <widget class="GtkButton" id="unit_dialog_cancel">
-	      <property name="visible">True</property>
-	      <property name="tooltip" translatable="yes">Close this window</property>
-	      <property name="can_default">True</property>
-	      <property name="can_focus">True</property>
-	      <property name="label">gtk-cancel</property>
-	      <property name="use_stock">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="response_id">-6</property>
-	    </widget>
-	  </child>
-
-	  <child>
-	    <widget class="GtkButton" id="unit_dialog_apply">
+	    <widget class="GtkButton" id="unit_dialog_button_apply">
 	      <property name="visible">True</property>
 	      <property name="tooltip" translatable="yes">Convert result to entered unit expression</property>
 	      <property name="can_default">True</property>
@@ -6454,19 +6439,36 @@ Copyright (c) 2003 Niklas Knutsson
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="response_id">-10</property>
+	      <signal name="clicked" handler="on_unit_dialog_button_apply_clicked" last_modification_time="Sun, 19 Oct 2003 14:25:11 GMT"/>
 	    </widget>
 	  </child>
 
 	  <child>
-	    <widget class="GtkButton" id="unit_dialog_ok">
+	    <widget class="GtkButton" id="unit_dialog_button_cancel">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Close this window</property>
+	      <property name="can_default">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label">gtk-cancel</property>
+	      <property name="use_stock">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="response_id">-6</property>
+	      <signal name="clicked" handler="gtk_widget_hide" object="unit_dialog" last_modification_time="Sun, 19 Oct 2003 14:21:26 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkButton" id="unit_dialog_button_ok">
 	      <property name="visible">True</property>
 	      <property name="tooltip" translatable="yes">Do the conversion and close this window</property>
 	      <property name="can_default">True</property>
+	      <property name="has_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-ok</property>
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="response_id">-5</property>
+	      <signal name="clicked" handler="on_unit_dialog_button_ok_clicked" last_modification_time="Sun, 19 Oct 2003 14:25:44 GMT"/>
 	    </widget>
 	  </child>
 	</widget>
@@ -6519,6 +6521,7 @@ Copyright (c) 2003 Niklas Knutsson
 	      <property name="has_frame">True</property>
 	      <property name="invisible_char" translatable="yes">*</property>
 	      <property name="activates_default">False</property>
+	      <signal name="activate" handler="on_unit_dialog_entry_unit_activate" last_modification_time="Sun, 19 Oct 2003 14:41:59 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
@@ -8510,20 +8513,6 @@ Copyright (c) 2003 Niklas Knutsson
 	  <property name="layout_style">GTK_BUTTONBOX_END</property>
 
 	  <child>
-	    <widget class="GtkButton" id="plot_button_close">
-	      <property name="visible">True</property>
-	      <property name="tooltip" translatable="yes">Close this window</property>
-	      <property name="can_default">True</property>
-	      <property name="can_focus">True</property>
-	      <property name="label">gtk-close</property>
-	      <property name="use_stock">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="response_id">-7</property>
-	      <signal name="clicked" handler="gtk_widget_hide" object="plot_dialog" last_modification_time="Wed, 08 Oct 2003 10:41:52 GMT"/>
-	    </widget>
-	  </child>
-
-	  <child>
 	    <widget class="GtkButton" id="plot_button_save">
 	      <property name="visible">True</property>
 	      <property name="tooltip" translatable="yes">Save as png, svg, postscript, eps, latex or fig</property>
@@ -8541,12 +8530,27 @@ Copyright (c) 2003 Niklas Knutsson
 	    <widget class="GtkButton" id="plot_button_apply">
 	      <property name="visible">True</property>
 	      <property name="can_default">True</property>
+	      <property name="has_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-apply</property>
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="response_id">-10</property>
 	      <signal name="clicked" handler="on_plot_button_apply_clicked" last_modification_time="Wed, 08 Oct 2003 10:10:18 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkButton" id="plot_button_close">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Close this window</property>
+	      <property name="can_default">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label">gtk-close</property>
+	      <property name="use_stock">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="response_id">-7</property>
+	      <signal name="clicked" handler="gtk_widget_hide" object="plot_dialog" last_modification_time="Wed, 08 Oct 2003 10:41:52 GMT"/>
 	    </widget>
 	  </child>
 	</widget>

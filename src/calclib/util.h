@@ -100,4 +100,6 @@ int sign_place(string *str, unsigned int start = 0);
 long long int gcd(long long int i1, long long int i2);
 long double gcd_d(long double i1, long double i2);
 
+bool text_length_is_one(const string &str);
+
 #endif

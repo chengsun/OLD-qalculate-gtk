@@ -9,7 +9,7 @@
   <category>
     <_title>Logical</_title>
     <builtin_function name="for">
-      <_title>for...do</_title>
+      <_title>For...Do</_title>
       <argument index="1">
         <_title>Initial value of counter</_title>
       </argument>
@@ -131,7 +131,7 @@
   <category>
     <_title>Matrices &amp; Vectors</_title>
     <builtin_function name="matrix">
-      <_title>Construct Matrix</_title>
+      <_title>Construct matrix</_title>
       <argument index="1">
         <_title>Rows</_title>
       </argument>
@@ -144,7 +144,7 @@
       <_description>Returns a matrix with specified order and listed elements. Omitted elements are set to zero.</_description>
     </builtin_function>
     <builtin_function name="vector">
-      <_title>Construct Vector</_title>
+      <_title>Construct vector</_title>
       <argument index="1">
         <_title>Components</_title>
       </argument>
@@ -172,14 +172,14 @@
       <_description>Returns a vector with values of components replaced with their mutual ranks.</_description>
     </builtin_function>
     <builtin_function name="matrix2vector">
-      <_title>Convert Matrix to Vector</_title>
+      <_title>Convert matrix to vector</_title>
       <argument index="1">
         <_title>Matrix</_title>
       </argument>
       <_description>Puts each element of a matrix in vertical order in a vector.</_description>
     </builtin_function>
     <builtin_function name="row">
-      <_title>Extract Row as Vector</_title>
+      <_title>Extract row as vector</_title>
       <argument index="1">
         <_title>Row</_title>
       </argument>
@@ -189,7 +189,7 @@
       <_description>Returns a row in a matrix as a vector.</_description>
     </builtin_function>
     <builtin_function name="column">
-      <_title>Extract Column as Vector</_title>
+      <_title>Extract column as vector</_title>
       <argument index="1">
         <_title>Column</_title>
       </argument>
@@ -367,7 +367,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
   <category>
     <_title>Arithmetics</_title>
     <builtin_function name="gcd">
-      <_title>Greatest Common Divisor</_title>
+      <_title>Greatest common divisor</_title>
       <argument index="1">
         <_title>1st Number</_title>
       </argument>
@@ -382,7 +382,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </builtin_function>
     <builtin_function name="abs">
-      <_title>Absolute Value</_title>
+      <_title>Absolute value</_title>
       <argument index="1">
           <_title>Value</_title>
       </argument>
@@ -520,19 +520,19 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
   <category>
     <_title>Exponents &amp; Logarithms</_title>
     <builtin_function name="ln">
-      <_title>Natural Logarithm</_title>
+      <_title>Natural logarithm</_title>
       <argument index="1">
         <_title>Value</_title>
       </argument>
     </builtin_function>
     <builtin_function name="log2">
-      <_title>Base-2 Logarithm</_title>
+      <_title>Base-2 logarithm</_title>
       <argument index="1">
         <_title>Value</_title>
       </argument>
     </builtin_function>
     <builtin_function name="log10">
-      <_title>Base-10 Logarithm</_title>
+      <_title>Base-10 logarithm</_title>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -556,19 +556,19 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </builtin_function>
     <builtin_function name="sqrt">
-      <_title>Square Root</_title>
+      <_title>Square root</_title>
       <argument index="1">
         <_title>Value</_title>
       </argument>
     </builtin_function>
     <builtin_function name="cbrt">
-      <_title>Cube Root</_title>
+      <_title>Cube root</_title>
       <argument index="1">
         <_title>Value</_title>
       </argument>
     </builtin_function>
     <builtin_function name="root">
-      <_title>Nth Root</_title>
+      <_title>Nth root</_title>
       <argument index="1">
         <_title>Base</_title>
       </argument>
@@ -586,7 +586,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </builtin_function>
     <function name="sqrtpi">
-      <_title>Square Root (x * pi)</_title>
+      <_title>Square root (x * pi)</_title>
       <_description>Returns the non-negative square root of x * pi</_description>
       <expression>abs((\x*pi)^(1/2))</expression>
       <argument type="number" index="1">
@@ -595,7 +595,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </function>
     <function name="log">
-      <_title>Base N Logrithm</_title>
+      <_title>Base-N logrithm</_title>
       <_description>Returns the base n logarithm.</_description>
       <expression>ln(\x)/ln(\y)</expression>
       <argument type="free" index="1">
@@ -621,7 +621,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         </argument>
       </builtin_function>
       <function name="triangle">
-        <_title>Triangle Area</_title>
+        <_title>Triangle area</_title>
         <expression>(\x*\y)/2</expression>
         <argument type="free" index="1">
           <_title>Base</_title>
@@ -631,7 +631,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         </argument>
       </function>
       <function name="triangle_perimeter">
-        <_title>Triangle Perimeter</_title>
+        <_title>Triangle perimeter</_title>
         <expression>\x+\y+hypot(\x,\y)</expression>
         <argument type="free" index="1">
           <_title>Side A</_title>
@@ -644,7 +644,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     <category>
       <_title>Circle</_title>
       <function name="circle">
-        <_title>Circle Area</_title>
+        <_title>Circle area</_title>
         <_description>Calculates the area of a circle using the radius</_description>
         <expression>\x^2*pi</expression>
         <argument type="free" index="1">
@@ -652,7 +652,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         </argument>
       </function>
       <function name="circumference">
-        <_title>Circle Circumference</_title>
+        <_title>Circle circumference</_title>
         <_description>Calculates the area of a circle using the diameter</_description>
         <expression>\x*pi</expression>
         <argument type="free" index="1">
@@ -663,7 +663,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     <category>
       <_title>Cylinder</_title>
       <function name="cylinder">
-        <_title>Cylinder Volume</_title>
+        <_title>Cylinder volume</_title>
         <expression>\x^2*pi*\y</expression>
 	<argument type="free" index="1">
           <_title>Radius</_title>
@@ -673,7 +673,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         </argument>
       </function>
       <function name="cylinder_sa">
-        <_title>Surface Area of Cylinder</_title>
+        <_title>Surface area of cylinder</_title>
         <expression>2*(\x^2*pi)+2*pi*\x*\y</expression>
         <argument type="free" index="1">
           <_title>Radius</_title>
@@ -686,7 +686,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     <category>
       <_title>Cone</_title>
       <function name="cone">
-        <_title>Cone Volume</_title>
+        <_title>Cone volume</_title>
         <expression>\x^2*pi*\y/3</expression>
 	<argument type="free" index="1">
           <_title>Radius</_title>
@@ -696,7 +696,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         </argument>
       </function>
       <function name="cone_sa">
-        <_title>Surface Area of Cone</_title>
+        <_title>Surface area of cone</_title>
         <expression>\x^2*pi+pi*\x*abs((\y^2+\x^2)^(1/2))</expression>
         <argument type="free" index="1">
           <_title>Radius</_title>
@@ -709,14 +709,14 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     <category>
       <_title>Sphere</_title>
       <function name="sphere">
-        <_title>Sphere Volume</_title>
+        <_title>Sphere volume</_title>
         <expression>\x^3*pi*4/3</expression>
 	<argument type="free" index="1">
           <_title>Radius</_title>
         </argument>
       </function>
       <function name="sphere_sa">
-        <_title>Surface Area of Sphere</_title>
+        <_title>Surface area of sphere</_title>
         <expression>\x^2*pi*4</expression>
         <argument type="free" index="1">
           <_title>Radius</_title>
@@ -726,14 +726,14 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     <category>
       <_title>Square</_title>
       <function name="square">
-        <_title>Square Area</_title>
+        <_title>Square area</_title>
         <expression>\x^2</expression>
 	<argument type="free" index="1">
           <_title>Length of side</_title>
         </argument>
       </function>
       <function name="square_perimeter">
-        <_title>Square Perimeter</_title>
+        <_title>Square perimeter</_title>
         <expression>\x*4</expression>
         <argument type="free" index="1">
           <_title>Length of side</_title>
@@ -743,14 +743,14 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     <category>
       <_title>Cube</_title>
       <function name="cube">
-        <_title>Cube Volume</_title>
+        <_title>Cube volume</_title>
         <expression>\x^3</expression>
 	<argument type="free" index="1">
           <_title>Length of side</_title>
         </argument>
       </function>
       <function name="cube_sa">
-        <_title>Surface Area of Cube</_title>
+        <_title>Surface area of cube</_title>
         <expression>(\x^2)*6</expression>
         <argument type="free" index="1">
           <_title>Length of side</_title>
@@ -760,7 +760,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     <category>
       <_title>Rectangle</_title>
       <function name="rect">
-        <_title>Rectangle Area</_title>
+        <_title>Rectangle area</_title>
         <expression>\x*\y</expression>
         <argument type="free" index="1">
           <_title>Length</_title>
@@ -770,7 +770,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         </argument>
       </function>
       <function name="rect_perimeter">
-        <_title>Rectangle Perimeter</_title>
+        <_title>Rectangle perimeter</_title>
         <expression>(\x+\y)*2</expression>
         <argument type="free" index="1">
           <_title>Length</_title>
@@ -783,7 +783,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     <category>
       <_title>Prism</_title>
       <function name="rectprism">
-        <_title>Volume of Rectangular Prism</_title>
+        <_title>Volume of rectangular prism</_title>
         <expression>\x*\y*\z</expression>
         <argument type="free" index="1">
           <_title>Length</_title>
@@ -796,7 +796,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         </argument>
       </function>
       <function name="rectprism_sa">
-        <_title>Surface Are of Rectangular Prism</_title>
+        <_title>Surface area of rectangular prism</_title>
         <expression>(\x*\y)*2+(\x*\z)*2+(\y*\z)*2</expression>
         <argument type="free" index="1">
           <_title>Length</_title>
@@ -809,7 +809,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         </argument>
       </function>
       <function name="triangleprism">
-        <_title>Volume of Triangular Prism</_title>
+        <_title>Volume of triangular prism</_title>
         <expression>\x*\y*\z/2</expression>
         <argument type="free" index="1">
           <_title>Length</_title>
@@ -825,7 +825,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     <category>
       <_title>Pyramid</_title>
       <function name="pyramid">
-        <_title>Pyramid Volume</_title>
+        <_title>Pyramid volume</_title>
         <expression>\x*\y*\z/3</expression>
         <argument type="free" index="1">
           <_title>Length of base</_title>
@@ -841,7 +841,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     <category>
       <_title>Parallelogram</_title>
       <function name="parallelogram">
-        <_title>Parallelogram Area</_title>
+        <_title>Parallelogram area</_title>
         <expression>\x*\y</expression>
         <argument type="free" index="1">
           <_title>Base</_title>
@@ -851,7 +851,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         </argument>
       </function>
       <function name="parallelogram_perimeter">
-        <_title>Parallelogram Perimeter</_title>
+        <_title>Parallelogram perimeter</_title>
         <expression>(\x+\y)*2</expression>
         <argument type="free" index="1">
           <_title>Side A</_title>
@@ -864,7 +864,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     <category>
       <_title>Trapezoid</_title>
       <function name="trapezoid">
-        <_title>Trapezoid Area</_title>
+        <_title>Trapezoid area</_title>
         <expression>(\x+\y)/2*\z</expression>
         <argument type="free" index="1">
           <_title>Side A</_title>
@@ -880,6 +880,64 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
   </category>
   <category>
     <_title>Statistics</_title>
+    <function name="mean">
+      <_title>Mean</_title>
+      <expression>sum(\v)/elements(\v)</expression>
+      <argument type="vector" index="1">
+        <_title>Data</_title>
+        <test>false</test>
+      </argument>
+    </function>
+    <function name="harmmean">
+      <_title>Harmonic mean</_title>
+      <expression>elements(\v)/csum(1,-1,0,&quot;\\y+1/\\x&quot;,\v)</expression>
+      <argument type="vector" index="1">
+        <_title>Data</_title>
+        <test>false</test>
+      </argument>
+    </function>
+    <function name="geomean">
+      <_title>Geometric mean</_title>
+      <expression>abs(csum(1,-1,1,&quot;\\y*\\x&quot;,\v)^(1/elements(\v)))</expression>
+      <argument type="vector" index="1">
+        <_title>Data</_title>
+        <test>false</test>
+      </argument>
+    </function>
+    <function name="trimmean">
+      <_title>Trimmed mean</_title>
+      <expression>mean(limits(round(elements(\v)/100*\x),round(elements(\v)/100*(100-\x)),sort(\v)))</expression>
+      <argument type="free" index="1">
+        <_title>Trimmed percentage</_title>
+      </argument>
+      <argument type="vector" index="2">
+        <_title>Data</_title>
+        <test>false</test>
+      </argument>
+    </function>
+    <function name="winsormean">
+      <_title>Winsorized mean</_title>
+      <expression>mean(limits(1,round(elements(\v)/100*\x),sort(\v)),limits(round(elements(\v)/100*\x),round(elements(\v)/100*(100-\x)),sort(\v)),limits(round(elements(\v)/100*(100-\x)),-1,sort(\v)))</expression>
+      <argument type="free" index="1">
+        <_title>Trimmed percentage</_title>
+      </argument>
+      <argument type="vector" index="2">
+        <_title>Data</_title>
+        <test>false</test>
+      </argument>
+    </function>  
+    <function name="weighmean">
+      <_title>Weighted mean</_title>
+      <expression>csum(1,min(elements(\x),elements(\v)),0,&quot;\\y+\\x*\\x_(\\i+elements(\x))&quot;,\x,\v)/sum(limits(1,min(elements(\x),elements(\v)),\v))</expression>
+      <argument type="vector" index="1">
+        <_title>Data</_title>
+        <test>false</test>
+      </argument>
+      <argument type="vector" index="2">
+        <_title>Weights</_title>
+        <test>false</test>
+      </argument>
+    </function>  
     <builtin_function name="sum">
       <_title>Sum</_title>
       <argument index="1">
@@ -925,52 +983,6 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <test>false</test>
       </argument>
     </function>
-    <function name="mean">
-      <_title>Mean</_title>
-      <expression>sum(\v)/elements(\v)</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="harmmean">
-      <_title>Harmonic Mean</_title>
-      <expression>elements(\v)/csum(1,-1,0,&quot;\\y+1/\\x&quot;,\v)</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="geomean">
-      <_title>Geometric Mean</_title>
-      <expression>abs(csum(1,-1,1,&quot;\\y*\\x&quot;,\v)^(1/elements(\v)))</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="trimmean">
-      <_title>Trimmed Mean</_title>
-      <expression>mean(limits(round(elements(\v)/100*\x),round(elements(\v)/100*(100-\x)),sort(\v)))</expression>
-      <argument type="free" index="1">
-        <_title>Trimmed percentage</_title>
-      </argument>
-      <argument type="vector" index="2">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function name="winsormean">
-      <_title>Winsorized Mean</_title>
-      <expression>mean(limits(1,round(elements(\v)/100*\x),sort(\v)),limits(round(elements(\v)/100*\x),round(elements(\v)/100*(100-\x)),sort(\v)),limits(round(elements(\v)/100*(100-\x)),-1,sort(\v)))</expression>
-      <argument type="free" index="1">
-        <_title>Trimmed percentage</_title>
-      </argument>
-      <argument type="vector" index="2">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-    </function>
     <function name="median">
       <_title>Median</_title>
       <expression>percentile(50,\v)</expression>
@@ -1004,7 +1016,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </function>
     <function name="iqr">
-      <_title>Interquartile Range</_title>
+      <_title>Interquartile range</_title>
       <_description>Calculates the difference between the first and third quartile.</_description>
       <expression>quartile(3,\v)-quartile(1,\v)</expression>
       <argument type="vector" index="1">
@@ -1013,7 +1025,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </function>
     <function name="rms">
-      <_title>Quadratic Mean (RMS)</_title>
+      <_title>Quadratic mean (RMS)</_title>
       <expression>abs((csum(1,-1,0,&quot;\\y+\\x^2&quot;,\v)/elements(\v))^(1/2))</expression>
       <argument type="vector" index="1">
         <_title>Data</_title>
@@ -1030,7 +1042,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </function>
     <function name="stdevp">
-      <_title>Standard Deviation (entire population)</_title>
+      <_title>Standard deviation (entire population)</_title>
       <expression>abs(varp(\v)^(1/2))</expression>
       <argument type="vector" index="1">
         <_title>Data</_title>
@@ -1038,7 +1050,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </function>
     <function name="stdev">
-      <_title>Standard Deviation (random sampling)</_title>
+      <_title>Standard deviation (random sampling)</_title>
       <expression>abs(var(\v)^(1/2))</expression>
       <argument type="vector" index="1">
         <_title>Data</_title>
@@ -1062,7 +1074,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </function>
     <function name="stderr">
-      <_title>Standard Error</_title>
+      <_title>Standard error</_title>
       <expression>abs((var(\v)/elements(\v))^(1/2))</expression>
       <argument type="vector" index="1">
         <_title>Data</_title>
@@ -1070,7 +1082,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </function>
     <function name="meandev">
-      <_title>Mean Deviation</_title>
+      <_title>Mean deviation</_title>
       <expression>csum(1,-1,0,&quot;\\y+abs(\\x-mean(\v))&quot;,\v)/elements(\v)</expression>
       <argument type="vector" index="1">
         <_title>Data</_title>
@@ -1086,7 +1098,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </function>
     <function name="pearson">
-      <_title>Pearson Correlation</_title>
+      <_title>Pearson correlation</_title>
       <expression>(\x*\v-sum(\x)*sum(\v)/elements(\x))/abs(((\x*\x-(sum(\x)^2)/elements(\x))*(\v*\v-(sum(\v)^2)/elements(\v)))^(1/2))</expression>
       <argument type="vector" index="1">
         <_title>Data 1</_title>
@@ -1122,7 +1134,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </function>
     <function name="cor">
-      <_title>Statistical Correlation</_title>
+      <_title>Statistical correlation</_title>
       <expression>covar(\x,\v)/(stdev(\x)*stdev(\v))</expression>
       <argument type="vector" index="1">
         <_title>Data 1</_title>
@@ -1134,7 +1146,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </function>
     <function name="correl">
-      <_title>Correlation Coefficient</_title>
+      <_title>Correlation coefficient</_title>
       <expression>pearson(\x,\v)</expression>
       <argument type="vector" index="1">
         <_title>Data 1</_title>
@@ -1146,7 +1158,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </function>
     <function name="poolvar">
-      <_title>Pooled Variance</_title>
+      <_title>Pooled variance</_title>
       <expression>(csum(1,-1,0,&quot;\\y+(\\x-mean(\x))^2&quot;,\x)+csum(1,-1,0,&quot;\\y+(\\x-mean(\v))^2&quot;,\v))/(elements(\x)+elements(\v)-2)</expression>
       <argument type="vector" index="1">
         <_title>Data 1</_title>
@@ -1157,20 +1169,8 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <test>false</test>
       </argument>
     </function>
-    <function name="weighmean">
-      <_title>Weighted Mean</_title>
-      <expression>csum(1,min(elements(\x),elements(\v)),0,&quot;\\y+\\x*\\x_(\\i+elements(\x))&quot;,\x,\v)/sum(limits(1,min(elements(\x),elements(\v)),\v))</expression>
-      <argument type="vector" index="1">
-        <_title>Data</_title>
-        <test>false</test>
-      </argument>
-      <argument type="vector" index="2">
-        <_title>Weights</_title>
-        <test>false</test>
-      </argument>
-    </function>
     <function name="ttest">
-      <_title>Unpaired T-Test</_title>
+      <_title>Unpaired t-test</_title>
       <expression>(mean(\x)-mean(\v))/abs(((poolvar(\x,\v)^2)/elements(\x)+(poolvar(\x,\v)^2)/elements(\v))^(1/2))</expression>
       <argument type="vector" index="1">
         <_title>Data 1</_title>
@@ -1182,7 +1182,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </function>
     <function name="pttest">
-      <_title>Paired T-Test</_title>
+      <_title>Paired t-test</_title>
       <expression>mean(\x-\v)/stderr(\x-\v)</expression>
       <argument type="vector" index="1">
         <_title>Data 1</_title>
@@ -1252,14 +1252,14 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
   <category>
     <_title>General</_title>
     <builtin_function name="rand">
-      <_title>Random Number</_title>
+      <_title>Random number</_title>
       <_description>Generates a pseudo-random number between 0 and 1</_description>
     </builtin_function>
   </category>
   <category>
     <_title>Number Bases</_title>
     <builtin_function name="BASE">
-      <_title>Number Base</_title>
+      <_title>Number base</_title>
       <_description>Returns a decimal integer from a number of specified base between 2 and 36</_description>
       <argument index="1">
         <_title>Number</_title>
@@ -1600,7 +1600,7 @@ If type = 1 then the payment is made at the beginning of the period, If type = 0
         <_title>Nominal interest rate</_title>
       </argument>
       <argument type="free" index="3">
-        <_title>Periods per Year</_title>
+        <_title>Periods per year</_title>
       </argument>
       <argument type="free" index="4">
         <_title>Years</_title>

@@ -1,3 +1,4 @@
+* Limit fraction precision
 * Do not recalculate plot data when it has not changed
 * Instant apply for all parameters in plot
 * Plot-functions
@@ -18,6 +19,8 @@
 * Sort out cases where we should not do anything because x is unknown, 
   such as sqrt(-5x) which now returns sqrt(-5) * sqrt(x)
 * Get rid of wget dependency
+* Split up Glade file
+* Split up interface code
 
 * More functions
 * More units

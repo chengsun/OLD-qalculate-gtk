@@ -21,7 +21,8 @@ libcalculate_la_SOURCES = \
 	util.cc		util.h \
 	includes.h \
 	Unit.cc		Unit.h \
-	BuiltinFunctions.cc BuiltinFunctions.h
+	BuiltinFunctions.cc BuiltinFunctions.h \
+	qalculate.h
 
 INCLUDES = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
