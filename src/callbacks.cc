@@ -5882,22 +5882,6 @@ void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data) {
 /*
 	change preferences
 */
-void on_preferences_checkbutton_short_units_toggled(GtkToggleButton *w, gpointer user_data) {
-	use_short_units = gtk_toggle_button_get_active(w);
-	setResult(result_text.c_str());
-}
-void on_preferences_checkbutton_all_prefixes_toggled(GtkToggleButton *w, gpointer user_data) {
-	CALCULATOR->setAllPrefixesEnabled(gtk_toggle_button_get_active(w));
-	setResult(result_text.c_str());
-}
-void on_preferences_checkbutton_denominator_prefix_toggled(GtkToggleButton *w, gpointer user_data) {
-	CALCULATOR->setDenominatorPrefixEnabled(gtk_toggle_button_get_active(w));
-	setResult(result_text.c_str());
-}
-void on_preferences_checkbutton_multiple_roots_toggled(GtkToggleButton *w, gpointer user_data) {
-	CALCULATOR->setMultipleRootsEnabled(gtk_toggle_button_get_active(w));
-	execute_expression();
-}
 void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpointer user_data) {
 	use_unicode_signs = gtk_toggle_button_get_active(w);
 	if(use_unicode_signs) {
@@ -6384,6 +6368,22 @@ void on_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer user_data) {
 	number_base = BASE_HEX;
 	setResult(result_text.c_str());
 	gtk_widget_grab_focus(expression);
+}
+void on_menu_item_short_units_activate(GtkMenuItem *w, gpointer user_data) {
+	use_short_units = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
+	setResult(result_text.c_str());
+}
+void on_menu_item_all_prefixes_activate(GtkMenuItem *w, gpointer user_data) {
+	CALCULATOR->setAllPrefixesEnabled(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+	setResult(result_text.c_str());
+}
+void on_menu_item_denominator_prefixes_activate(GtkMenuItem *w, gpointer user_data) {
+	CALCULATOR->setDenominatorPrefixEnabled(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+	setResult(result_text.c_str());
+}
+void on_menu_item_multiple_roots_activate(GtkMenuItem *w, gpointer user_data) {
+	CALCULATOR->setMultipleRootsEnabled(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+	execute_expression();
 }
 void on_menu_item_factorize_activate(GtkMenuItem *w, gpointer user_data) {
 #ifdef HAVE_GIAC

@@ -100,7 +100,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Degrees</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">True</property>
+			      <property name="active">False</property>
 			      <signal name="activate" handler="on_menu_item_degrees_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 			    </widget>
 			  </child>
@@ -110,7 +110,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Radians</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
+			      <property name="active">True</property>
 			      <property name="group">menu_item_degrees</property>
 			      <signal name="activate" handler="on_menu_item_radians_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 			    </widget>
@@ -183,7 +183,7 @@
 		      <signal name="activate" handler="on_menu_item_save_defs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image220">
+			<widget class="GtkImage" id="image268">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -204,7 +204,7 @@
 		      <signal name="activate" handler="on_menu_item_save_mode_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image221">
+			<widget class="GtkImage" id="image269">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -225,7 +225,7 @@
 		      <signal name="activate" handler="on_menu_item_fetch_exchange_rates_activate" last_modification_time="Mon, 06 Oct 2003 21:06:00 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image222">
+			<widget class="GtkImage" id="image270">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-refresh</property>
 			  <property name="icon_size">1</property>
@@ -246,7 +246,7 @@
 		      <signal name="activate" handler="on_menu_item_edit_prefs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image223">
+			<widget class="GtkImage" id="image271">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -273,7 +273,7 @@
 		      <signal name="activate" handler="on_menu_item_about_activate" last_modification_time="Thu, 14 Aug 2003 22:31:50 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image224">
+			<widget class="GtkImage" id="image272">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-dialog-info</property>
 			  <property name="icon_size">1</property>
@@ -295,7 +295,7 @@
 		      <accelerator key="F1" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image225">
+			<widget class="GtkImage" id="image273">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
@@ -317,7 +317,7 @@
 		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image226">
+			<widget class="GtkImage" id="image274">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -459,16 +459,6 @@
 			  </child>
 
 			  <child>
-			    <widget class="GtkCheckMenuItem" id="menu_item_display_prefixes">
-			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Use prefixes</property>
-			      <property name="use_underline">True</property>
-			      <property name="active">True</property>
-			      <signal name="activate" handler="on_menu_item_display_prefixes_activate" last_modification_time="Fri, 08 Aug 2003 11:41:06 GMT"/>
-			    </widget>
-			  </child>
-
-			  <child>
 			    <widget class="GtkCheckMenuItem" id="menu_item_indicate_infinite_series">
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Indicate infinite series</property>
@@ -507,8 +497,7 @@
 			      <property name="label" translatable="yes">Combined</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">False</property>
-			      <property name="group">menu_item_fraction_decimal</property>
-			      <signal name="activate" handler="on_menu_item_fraction_combined_activate" last_modification_time="Mon, 01 Sep 2003 10:55:17 GMT"/>
+			      <signal name="activate" handler="on_menu_item_fraction_combined_activate" last_modification_time="Thu, 04 Mar 2004 16:38:33 GMT"/>
 			    </widget>
 			  </child>
 
@@ -518,8 +507,70 @@
 			      <property name="label" translatable="yes">Fraction</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">False</property>
-			      <property name="group">menu_item_fraction_decimal</property>
-			      <signal name="activate" handler="on_menu_item_fraction_fraction_activate" last_modification_time="Mon, 01 Sep 2003 10:55:17 GMT"/>
+			      <signal name="activate" handler="on_menu_item_fraction_fraction_activate" last_modification_time="Thu, 04 Mar 2004 16:38:33 GMT"/>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="menu_item_fraction_combined">
+			      <property name="visible">True</property>
+			      <signal name="activate" handler="on_menu_item_fraction_combined_activate" last_modification_time="Mon, 01 Sep 2003 10:55:17 GMT"/>
+			    </widget>
+			  </child>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="item13">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Unit Display</property>
+		      <property name="use_underline">True</property>
+
+		      <child>
+			<widget class="GtkMenu" id="item13_menu">
+
+			  <child>
+			    <widget class="GtkCheckMenuItem" id="menu_item_short_units">
+			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">If you want the abbreviation of unit names to be displayed in the result</property>
+			      <property name="label" translatable="yes">Use abbrevations</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">True</property>
+			      <signal name="activate" handler="on_menu_item_short_units_activate" last_modification_time="Thu, 04 Mar 2004 14:31:32 GMT"/>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkCheckMenuItem" id="menu_item_display_prefixes">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Enable prefixes</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">True</property>
+			      <signal name="activate" handler="on_menu_item_display_prefixes_activate" last_modification_time="Fri, 08 Aug 2003 11:41:06 GMT"/>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkCheckMenuItem" id="menu_item_all_prefixes">
+			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">enables automatic use of hekto, deka, deci and centi when prefixes is enabled</property>
+			      <property name="label" translatable="yes">Enable use of all prefixes</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <signal name="activate" handler="on_menu_item_all_prefixes_activate" last_modification_time="Thu, 04 Mar 2004 14:36:19 GMT"/>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkCheckMenuItem" id="menu_item_denominator_prefixes">
+			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">enables automatic setting of prefix for denominator in addition to the numerator</property>
+			      <property name="label" translatable="yes">Enable denominator prefixes</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <signal name="activate" handler="on_menu_item_denominator_prefixes_activate" last_modification_time="Thu, 04 Mar 2004 14:36:19 GMT"/>
 			    </widget>
 			  </child>
 			</widget>
@@ -534,6 +585,17 @@
 		      <property name="use_underline">True</property>
 		      <property name="active">False</property>
 		      <signal name="activate" handler="on_menu_item_exact_mode_activate" last_modification_time="Thu, 11 Sep 2003 12:26:38 GMT"/>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkCheckMenuItem" id="menu_item_multiple_roots">
+		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Enables calculation of multiple results for even roots</property>
+		      <property name="label" translatable="yes">Calculate multiple roots</property>
+		      <property name="use_underline">True</property>
+		      <property name="active">False</property>
+		      <signal name="activate" handler="on_menu_item_multiple_roots_activate" last_modification_time="Thu, 04 Mar 2004 16:38:33 GMT"/>
 		    </widget>
 		  </child>
 
@@ -588,7 +650,7 @@
 		      <signal name="activate" handler="on_menu_item_save_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image227">
+			<widget class="GtkImage" id="image275">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -610,7 +672,7 @@
 		      <accelerator key="C" modifiers="GDK_CONTROL_MASK | GDK_MOD1_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image228">
+			<widget class="GtkImage" id="image276">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-copy</property>
 			  <property name="icon_size">1</property>

@@ -1,5 +1,8 @@
 2004-03-04  Niklas Knutsson  <nq@altern.org>
 
+	* More user documentation
+	* Move calculate multiple roots option to result menu
+	* Move unit display options to a unit display submenu
 	* Begin writing the manual
 	* Add help menu item if libgnome is available	
 	* Add build structure for gnome style user documentation

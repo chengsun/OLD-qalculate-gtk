@@ -1748,7 +1748,7 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
     </function>
     <function name="received">
       <_title>Amount received at maturity for a security bond</_title>
-      <_description>Returns the amount received at the maturity date for a invested security. 
+      <_description>Returns the amount received at the maturity date for an invested security. 
 
 Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365. The settlement date must be before maturity date.</_description>
       <expression>\z/(1-\a*yearfrac(\x,\y,\B{0},1))</expression>
@@ -1794,7 +1794,7 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
     </function>
     <function name="accrintm">
       <_title>Accrued interest of security paying at maturity</_title>
-      <_description>Returns accrued interest for a security which pays interests at maturity date.
+      <_description>Returns the accrued interest for a security which pays interest at maturity date.
     
 Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
       <expression>\A{1000}*\z*yearfrac(\x,\y,\B{0},1)</expression>

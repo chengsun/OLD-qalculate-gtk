@@ -202,15 +202,39 @@ create_main_window (void)
 
 	gtk_check_menu_item_set_active(
 			GTK_CHECK_MENU_ITEM(
+				glade_xml_get_widget (main_glade, "menu_item_indicate_infinite_series")
+				),
+			indicate_infinite_series);
+
+	gtk_check_menu_item_set_active(
+			GTK_CHECK_MENU_ITEM(
 				glade_xml_get_widget (main_glade, "menu_item_display_prefixes")
 				),
 			use_prefixes);
 
 	gtk_check_menu_item_set_active(
 			GTK_CHECK_MENU_ITEM(
-				glade_xml_get_widget (main_glade, "menu_item_indicate_infinite_series")
+				glade_xml_get_widget (main_glade, "menu_item_all_prefixes")
 				),
-			indicate_infinite_series);
+			CALCULATOR->allPrefixesEnabled());
+
+	gtk_check_menu_item_set_active(
+			GTK_CHECK_MENU_ITEM(
+				glade_xml_get_widget (main_glade, "menu_item_denominator_prefixes")
+				),
+			CALCULATOR->denominatorPrefixEnabled());
+
+	gtk_check_menu_item_set_active(
+			GTK_CHECK_MENU_ITEM(
+				glade_xml_get_widget (main_glade, "menu_item_short_units")
+				),
+			use_short_units);
+
+	gtk_check_menu_item_set_active(
+			GTK_CHECK_MENU_ITEM(
+				glade_xml_get_widget (main_glade, "menu_item_multiple_roots")
+				),
+			CALCULATOR->multipleRootsEnabled());
 
 	switch (fractional_mode)
 	{
@@ -558,13 +582,9 @@ get_preferences_dialog (void)
 		g_assert (glade_xml_get_widget (preferences_glade, "preferences_dialog") != NULL);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_load_defs")), load_global_defs);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_save_mode")), save_mode_on_exit);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_save_defs")), save_defs_on_exit);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_short_units")), use_short_units);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_unicode_signs")), use_unicode_signs);	
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_save_defs")), save_defs_on_exit);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_custom_font")), use_custom_font);		
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_all_prefixes")), CALCULATOR->allPrefixesEnabled());
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_denominator_prefix")), CALCULATOR->denominatorPrefixEnabled());
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_multiple_roots")), CALCULATOR->multipleRootsEnabled());
 		gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_font"), use_custom_font);	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_button_font")), custom_font.c_str());
 		

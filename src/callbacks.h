@@ -111,10 +111,6 @@ extern "C" {
 
 void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data);
 void on_button_close_clicked(GtkButton *w, gpointer user_data);
-void on_preferences_checkbutton_short_units_toggled(GtkToggleButton *w, gpointer user_data);
-void on_preferences_checkbutton_all_prefixes_toggled(GtkToggleButton *w, gpointer user_data);
-void on_preferences_checkbutton_denominator_prefixe_toggled(GtkToggleButton *w, gpointer user_data);
-void on_preferences_checkbutton_multiple_roots_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_fetch_exchange_rates_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_save_defs_toggled(GtkToggleButton *w, gpointer user_data);
@@ -193,6 +189,10 @@ void on_menu_item_display_prefixes_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_fraction_decimal_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_fraction_fraction_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_all_prefixes_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_denominator_prefixes_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_multiple_roots_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_short_units_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_exact_mode_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_save_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_copy_activate(GtkMenuItem *w, gpointer user_data);
