@@ -736,7 +736,7 @@ int MathStructure::precision() const {
 }
 void MathStructure::setPrecision(int prec) {
 	i_precision = prec;
-	if(i_precision < 0) b_approx = true;
+	if(i_precision > 0) b_approx = true;
 }
 
 void MathStructure::transform(int mtype, const MathStructure &o) {
@@ -1509,7 +1509,10 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				if(eo.calculate_variables && o_variable->isKnown()) {
 					if(eo.approximation == APPROXIMATION_APPROXIMATE || !o_variable->isApproximate()) {
 						set(((KnownVariable*) o_variable)->get());
-						if(eo.calculate_functions) calculateFunctions(feo);
+						if(eo.calculate_functions) {
+							calculateFunctions(feo);
+							unformat(feo);
+						}
 						b = true;
 					}
 				}
@@ -1819,6 +1822,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			case STRUCT_FUNCTION: {
 				if(o_function == CALCULATOR->f_abs) {
 					calculateFunctions(eo);
+					unformat(eo);
 					b = m_type != STRUCT_FUNCTION;
 					break;
 				}
@@ -2298,6 +2302,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	}
 	if(eo.calculate_functions) {
 		calculateFunctions(eo);
+		unformat(eo);
 	}
 	EvaluationOptions eo2 = eo;
 	eo2.simplify_addition_powers = false;
@@ -3686,26 +3691,33 @@ void MathStructure::formatsub(const PrintOptions &po, const MathStructure *paren
 	}
 }
 
-int namelen(const MathStructure &mstruct, const PrintOptions &po, const InternalPrintStruct &ips) {
+int namelen(const MathStructure &mstruct, const PrintOptions &po, const InternalPrintStruct &ips, bool *abbreviated = NULL) {
 	const string *str;
 	switch(mstruct.type()) {
 		case STRUCT_FUNCTION: {
-			str = &mstruct.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name;
+			const ExpressionName *ename = &mstruct.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names);
+			str = &ename->name;
+			if(abbreviated) *abbreviated = ename->abbreviation;
 			break;
 		}
 		case STRUCT_VARIABLE:  {
-			str = &mstruct.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name;
+			const ExpressionName *ename = &mstruct.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names);
+			str = &ename->name;
+			if(abbreviated) *abbreviated = ename->abbreviation;
 			break;
 		}
 		case STRUCT_SYMBOLIC:  {
 			str = &mstruct.symbol();
+			if(abbreviated) *abbreviated = false;
 			break;
 		}
 		case STRUCT_UNIT:  {
-			str = &mstruct.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct.isPlural(), po.use_reference_names).name;
+			const ExpressionName *ename = &mstruct.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct.isPlural(), po.use_reference_names);
+			str = &ename->name;
+			if(abbreviated) *abbreviated = ename->abbreviation;
 			break;
 		}
-		default: {return 0;}
+		default: {if(abbreviated) *abbreviated = false; return 0;}
 	}
 	if(text_length_is_one(*str)) return 1;
 	return str->length();
@@ -3897,8 +3909,9 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 	if(par_prev) return MULTIPLICATION_SIGN_OPERATOR;
 	if(par) return MULTIPLICATION_SIGN_NONE;
 	int t = parent[index - 2].type();
-	int namelen_prev = namelen(parent[index - 2], po, ips);
-	int namelen_this = namelen(*this, po, ips);
+	bool abbr_prev = false, abbr_this = false;
+	int namelen_prev = namelen(parent[index - 2], po, ips, &abbr_prev);
+	int namelen_this = namelen(*this, po, ips, &abbr_this);	
 	switch(t) {
 		case STRUCT_MULTIPLICATION: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_INVERSE: {}
@@ -3920,9 +3933,9 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		}
 		case STRUCT_UNIT: {
 			if(m_type == STRUCT_UNIT) {
-				if(namelen_prev > 1 || namelen_this > 1) {
+				if(!abbr_prev && !abbr_this) {
 					return MULTIPLICATION_SIGN_NONE;
-				}
+				} 
 				if(po.place_units_separately) {
 					return MULTIPLICATION_SIGN_OPERATOR_SHORT;
 				} else {

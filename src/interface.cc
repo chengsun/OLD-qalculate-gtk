@@ -1278,7 +1278,7 @@ GtkWidget* get_periodic_dialog (void) {
 				else gtk_widget_set_style(e_button, e_style[11]);
 				gtk_widget_set_style(gtk_bin_get_child(GTK_BIN(e_button)), l_style);
 				if(e->x_pos > 2) gtk_table_attach_defaults(e_table, e_button, e->x_pos + 1, e->x_pos + 2, e->y_pos, e->y_pos + 1);
-				else  gtk_table_attach_defaults(e_table, e_button, e->x_pos, e->x_pos + 1, e->y_pos, e->y_pos + 1);
+				else gtk_table_attach_defaults(e_table, e_button, e->x_pos, e->x_pos + 1, e->y_pos, e->y_pos + 1);
 				tip = i2s(e->number);
 				tip += " ";
 				tip += e->name;
@@ -1288,12 +1288,8 @@ GtkWidget* get_periodic_dialog (void) {
 					tip += " u";
 				}
 				gtk_tooltips_set_tip(periodic_tooltips, e_button, tip.c_str(), "");
-				/*int style_nr = e->color_type;
-				if(style_nr < 1 || style_nr > 8) style_nr = 1;
-				style_nr--;
-				if(!e_style[style_nr*/
 				gtk_widget_show(e_button);
-				g_signal_connect((gpointer) e_button, "clicked", G_CALLBACK(on_element_button_clicked), (gpointer) i);
+				g_signal_connect((gpointer) e_button, "clicked", G_CALLBACK(on_element_button_clicked), (gpointer) e);
 			}
 		}
 	

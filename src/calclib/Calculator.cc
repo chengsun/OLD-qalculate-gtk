@@ -704,14 +704,9 @@ unsigned int Calculator::addId(const MathStructure &m_struct, bool persistent) {
 	}
 	ids_p[id] = persistent;
 	id_structs[id] = m_struct;
-/*	ids.push_back(id);
-	id_structs.push_back(new MathStructure(m_struct));
-	ids_p.push_back(persistent);*/
 	return id;
 }
 unsigned int Calculator::parseAddId(Function *f, const string &str, const ParseOptions &po, bool persistent) {
-	//MathStructure *mstruct = new MathStructure();
-	//f->parse(*mstruct, str, po);
 	unsigned int id = 0;
 	if(freed_ids.size() > 0) {
 		id = freed_ids.back();
@@ -722,14 +717,9 @@ unsigned int Calculator::parseAddId(Function *f, const string &str, const ParseO
 	}
 	ids_p[id] = persistent;
 	f->parse(id_structs[id], str, po);
-	/*	ids.push_back(id);
-	id_structs.push_back(mstruct);
-	ids_p.push_back(persistent);*/
 	return id;
 }
 unsigned int Calculator::parseAddVectorId(const string &str, const ParseOptions &po, bool persistent) {
-	//MathStructure *mstruct = new MathStructure();
-	//f->parse(*mstruct, str, po);
 	unsigned int id = 0;
 	if(freed_ids.size() > 0) {
 		id = freed_ids.back();
@@ -740,18 +730,10 @@ unsigned int Calculator::parseAddVectorId(const string &str, const ParseOptions 
 	}
 	ids_p[id] = persistent;
 	f_vector->args(str, id_structs[id], po);
-	/*	ids.push_back(id);
-	id_structs.push_back(mstruct);
-	ids_p.push_back(persistent);*/
 	return id;
 }
 const MathStructure *Calculator::getId(unsigned int id) {
 	if(id_structs.find(id) != id_structs.end()) return &id_structs[id];
-	/*for(unsigned int i = 0; i < ids.size(); i++) {
-		if(ids[i] == id) {
-			return id_structs[i];
-		}
-	} */
 	return NULL;
 }
 
@@ -763,18 +745,6 @@ void Calculator::delId(unsigned int id, bool force) {
 			ids_p.erase(id);
 		}
 	}
-/*	for(unsigned int i = 0; i < ids.size(); i++) {
-		if(ids[i] == id) {
-			if(!ids_p[i] || force) {
-				freed_ids.push_back(ids[i]);
-				ids.erase(ids.begin() + i);
-				delete id_structs[i];
-				id_structs.erase(id_structs.begin() + i);
-				ids_p.erase(ids_p.begin() + i);	
-			}
-			break;
-		}
-	}*/
 }
 
 int Calculator::angleMode() const {
@@ -2359,7 +2329,6 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 					stmp2 = str.substr(str_index + 1, i3 - str_index - 1);
 					stmp = LEFT_PARENTHESIS_CH;
 					stmp += ID_WRAP_LEFT_CH;
-					//stmp += i2s(addId(f_vector->parse(stmp2, po)));
 					stmp += i2s(parseAddVectorId(stmp2, po));
 					stmp += ID_WRAP_RIGHT_CH;
 					str.replace(str_index, i3 + 1 - str_index, stmp);
@@ -2420,7 +2389,6 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 				if(!stmp2.empty()) {
 					stmp = LEFT_PARENTHESIS_CH;
 					stmp += ID_WRAP_LEFT_CH;
-					//stmp += i2s(addId(f_factorial->parse(stmp2, po)));
 					stmp += i2s(parseAddId(f_factorial, stmp2, po));
 					stmp += ID_WRAP_RIGHT_CH;
 					stmp += RIGHT_PARENTHESIS_CH;
@@ -2518,7 +2486,6 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 								}
 								stmp = LEFT_PARENTHESIS_CH;
 								stmp += ID_WRAP_LEFT_CH;
-								//stmp += i2s(addId(f->parse("", po)));
 								stmp += i2s(parseAddId(f, empty_string, po));
 								stmp += ID_WRAP_RIGHT_CH;
 								stmp += RIGHT_PARENTHESIS_CH;
@@ -2532,7 +2499,6 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 								}
 								stmp = LEFT_PARENTHESIS_CH;
 								stmp += ID_WRAP_LEFT_CH;
-								//stmp += i2s(addId(f->parse(stmp2, po)));
 								if(f == f_vector) stmp += i2s(parseAddVectorId(stmp2, po));
 								else stmp += i2s(parseAddId(f, stmp2, po));
 								stmp += ID_WRAP_RIGHT_CH;
@@ -2578,7 +2544,6 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 									stmp2 = str.substr(str_index + name_length, i6 - 1);
 									stmp = LEFT_PARENTHESIS_CH;
 									stmp += ID_WRAP_LEFT_CH;
-									//stmp += i2s(addId(f->parse(stmp2, po)));
 									if(f == f_vector) stmp += i2s(parseAddVectorId(stmp2, po));
 									else stmp += i2s(parseAddId(f, stmp2, po));
 									stmp += ID_WRAP_RIGHT_CH;
@@ -2611,7 +2576,6 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 									stmp2 = str.substr(str_index + name_length + i9, i6 - (str_index + name_length + i9));
 									stmp = LEFT_PARENTHESIS_CH;
 									stmp += ID_WRAP_LEFT_CH;
-									//stmp += i2s(addId(f->parse(stmp2, po)));
 									if(f == f_vector) stmp += i2s(parseAddVectorId(stmp2, po));
 									else stmp += i2s(parseAddId(f, stmp2, po));
 									stmp += ID_WRAP_RIGHT_CH;

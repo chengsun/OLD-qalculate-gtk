@@ -2,9 +2,9 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
     "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
   <!ENTITY legal SYSTEM "legal.xml">
-  <!ENTITY appversion "0.6.2">
-  <!ENTITY manrevision "0.6.2">
-  <!ENTITY date "July 2004">
+  <!ENTITY appversion "0.6.3">
+  <!ENTITY manrevision "0.6.3">
+  <!ENTITY date "August 2004">
   <!ENTITY app "Qalculate!">    
 ]>
 <article>
@@ -204,6 +204,10 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Opens the number bases converter. See <xref linkend="qalculate-convert-number-bases-dialog"/></para></entry>
 			</row>
 			<row valign="top">
+				<entry><para>Periodic Table</para></entry>
+				<entry><para>Shows a periodic table, with property values which can be inserted in the expression, in a new window.</para></entry>
+			</row>
+			<row valign="top">
 				<entry><para>Quit (<keycombo><keycap>Ctrl</keycap><keycap>Q</keycap></keycombo>)</para></entry>
 				<entry><para>Exits Qalculate!</para></entry>
 			</row>
@@ -322,7 +326,7 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
                 <tbody>
 			<row valign="top">
 				<entry><para>Number Base</para></entry>
-				<entry><para>Submenu which switches between binary, octal, decimal, hexadecimal, sexagesimal (normal or time format), and other bases, and roman numerals in result.</para></entry>
+				<entry><para>Submenu which switches between binary, octal, decimal, hexadecimal, sexagesimal (normal or time format), and other bases, and roman numerals in result and expression.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Numerical Display</para></entry>
@@ -337,8 +341,16 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Submenu which controls the display of units and prefixes. See <xref linkend="qalculate-result"/>.</para></entry>
 			</row>
 			<row valign="top">
+				<entry><para>Angle Unit</para></entry>
+				<entry><para>Submenu which sets the default angle unit for trigonometric functions.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Abbreviate Names</para></entry>
+				<entry><para>Toggles on/off use of abbreviation for unit, prefix, variable and function names in result display.</para></entry>
+			</row>
+			<row valign="top">
 				<entry><para>Enabled Objects</para></entry>
-				<entry><para>Submenu which enables/disables variables, functions, units and unknowns (will not affect defined unknown variables and quoted unknowns), and calculation of variables (If calculation of variables is not on, all variables will be treated as unknown).</para></entry>
+				<entry><para>Submenu which enables/disables variables, functions, units and unknowns (will not affect defined unknown variables and quoted unknowns), and calculation of variables (If calculation of variables is not on, all variables will be treated as unknown). Here you can also disable complex and infinite results.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Approximation</para></entry>
@@ -347,6 +359,10 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 			<row valign="top">
 				<entry><para>Assumptions</para></entry>
 				<entry><para>Submenu which changes default assumptions for unknown variables.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Read Precision</para></entry>
+				<entry><para>Enables/disables interpretion of input numbers with decimals as approximate with a precision equal to the number of digits (after preceeding zeroes).</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>RPN Mode</para></entry>
@@ -794,6 +810,12 @@ With this option, halfway numbers will be rounded to even instead of upwards (ex
 </para></listitem>
 </varlistentry>
 <varlistentry>
+<term>Show Ending Zeroes</term>
+<listitem><para>
+if this option is on, approximate numbers in the result will be appended with zeroes, so that the number of digits (after preceeding zeroes) will equal the precision.
+</para></listitem>
+</varlistentry>
+<varlistentry>
 <term>Fractional Display</term>
 <listitem><para>
 This controls if numbers are displayed in fractional or decimal mode. Decimal mode displays numbers as usually expected (<quote>6/4 = 1.5</quote>), combined displays a whole number and a fraction (<quote>6/4 = 1 1/2</quote>) and fractional only displays as fraction (<quote>6/4 = 3/2</quote>).
@@ -802,7 +824,13 @@ This controls if numbers are displayed in fractional or decimal mode. Decimal mo
 <varlistentry>
 <term>Unit Display</term>
 <listitem><para>
-The display of unit names can be controlled by selecting to display abbreviations or full length names (ex. <quote>5 cm</quote> or <quote>5 centimeters</quote>). This also affects prefixes. Both abbreviations and long names can however always be entered in expressions. The use of prefixes for units can be toggled on and off. By default prefixes representing a power of ten not dividable by three (centi, deci, deca and hekto) are not used and need to be enabled. If denominator prefixes are not explicitly enabled, prefixes will only be set for the numerator in a fractional unit expression (ex. <quote>1 Mg/m</quote> or <quote>1 kg/mm</quote>). The place units separately alternative controls the display of unit expressions in result. If it is enabled (default) units will be displayed separate from other parts of the expression at the end (compare <quote>(5x*m)/(y*s)</quote> and <quote>5x/y m/s</quote>).
+The use of prefixes for units can be toggled on and off. By default prefixes representing a power of ten not dividable by three (centi, deci, deca and hekto) are not used and need to be enabled. If denominator prefixes are not explicitly enabled, prefixes will only be set for the numerator in a fractional unit expression (ex. <quote>1 Mg/m</quote> or <quote>1 kg/mm</quote>). The place units separately alternative controls the display of unit expressions in result. If it is enabled (default) units will be displayed separate from other parts of the expression at the end (compare <quote>(5x*m)/(y*s)</quote> and <quote>5x/y m/s</quote>).
+</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Abbreviate Names</term>
+<listitem><para>
+The display of unit, prefix, variable and function names can be controlled by selecting to display abbreviations or full length names (ex. <quote>5 cm</quote> or <quote>5 centimeters</quote>). Both abbreviations and long names can however always be entered in expressions.
 </para></listitem>
 </varlistentry>
 <varlistentry>
@@ -820,7 +848,7 @@ This controls the default assumptions for unknown variables without explicitly d
 <varlistentry>
 <term>Precision</term>
 <listitem><para>
-Precision controls the precision in approximate numbers and the number of significant digits.
+Precision controls the precision in approximate numbers and the number of significant digits. If the read precision options is turned on, input numbers with decimals will be interpreted as approximate with a precision equal to the number of digits (ex. <quote>0.250 + 3.4567 = 5.96</quote>).
 </para></listitem>
 </varlistentry>
 <varlistentry>
@@ -1001,9 +1029,15 @@ Standard logarithmic and exponential functions. <command>ln()</command> calculat
 </para></listitem>
 </varlistentry>
 <varlistentry>
-<term>Finance</term>
+<term>Economics</term>
 <listitem><para>
 This essentially includes most of the financial functions that are usually found in spreadsheet applications.
+</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Elements</term>
+<listitem><para>
+This category includes functions to retrieve data sush atomic weight. The <command>atom()</command> function opens a window with available data of an element. These functions accept the number, symbol or name of the element as argument. The data are loaded on demand.
 </para></listitem>
 </varlistentry>
 <varlistentry>

@@ -811,11 +811,11 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		for(unsigned int i = 0; i < v_id.size(); i++) {
 			CALCULATOR->delId(v_id[i], true);
 		}
-		if(precision() < 0) mstruct.setPrecision(precision());
+		if(precision() > 0) mstruct.setPrecision(precision());
 		if(isApproximate()) mstruct.setApproximate();
 	} else {
 		mstruct = CALCULATOR->parse(eq_calc, po);
-		if(precision() < 0) mstruct.setPrecision(precision());
+		if(precision() > 0) mstruct.setPrecision(precision());
 		if(isApproximate()) mstruct.setApproximate();
 	}
 	return 1;

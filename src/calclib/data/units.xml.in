@@ -2367,10 +2367,13 @@
         <reference>true</reference>
         <_name>L</_name>
       </abbreviation>
-      <name index="2">
+      <abbreviation index="2">
+        <_name>l</_name>
+      </abbreviation>
+      <name index="3">
         <_name>liter</_name>
       </name>
-      <plural index="3">
+      <plural index="4">
         <_name>liters</_name>
       </plural>
       <base>

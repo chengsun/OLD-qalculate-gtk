@@ -386,7 +386,7 @@ int ExpressionItem::precision() const {
 void ExpressionItem::setPrecision(int prec) {
 	if(i_precision != prec) {
 		i_precision = prec;
-		if(i_precision < 0) b_approx = true;
+		if(i_precision > 0) b_approx = true;
 		b_changed = true;	
 	}
 }

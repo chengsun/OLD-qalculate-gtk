@@ -1,3 +1,20 @@
+2004-08-11 Niklas Knutsson  <nq@altern.org>
+
+	* Remove double decimal points
+	* Nicer unit printing
+	* Warn in name edit dialog if name is used
+	* Update documentation
+	* Use gtk-paste instead of gtk-go-forward icon for insert
+	* Properties dialog for atoms in periodic table
+	* Respect max decimals with show ending zeroes
+	* Fix precision typos which made objects with undefined precision approximate
+	* Make element properties selectable
+	* Paste function instead of value of element property
+	* Display classification in element dialog
+	* Unformat parsed function expression
+	* Make sure that no unwanted prefixes are left when function expression has been parsed
+	* BMI (Body Mass index) function added (just to prove that Qalculate! is more than a scientific calculator)
+
 2004-08-10 Niklas Knutsson  <nq@altern.org>
 
 	* Reduce number of element properties for now and verify

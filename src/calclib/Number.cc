@@ -614,6 +614,7 @@ int Number::precision() const {
 }
 void Number::setPrecision(int prec) {
 	i_precision = prec;
+	if(i_precision > 0) b_approx = true;
 }
 
 bool Number::isUndefined() const {
@@ -2064,7 +2065,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					str += po.decimalpoint();
 					dp_added = true;
 				}
-				for(int i = min_decimals - decimals; i > 0; i--) {
+				while(min_decimals > decimals) {
+					decimals++;
 					str += "0";
 				}
 			}
@@ -2074,7 +2076,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 		}
 		if(!exact && po.is_approximate) *po.is_approximate = true;
-		if(po.show_ending_zeroes && (isApproximate() || !exact || ips.parent_approximate)) {
+		if(po.show_ending_zeroes && (isApproximate() || !exact || ips.parent_approximate) && (!po.use_max_decimals || po.max_decimals > decimals)) {
 			if(base != 10) {
 				Number precmax(10);
 				precmax.raise(precision);
@@ -2089,7 +2091,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			} else if(precision > 0) {
 				str += po.decimalpoint();
 			}
-			for(; precision > 0; precision--) {
+			for(; precision > 0 && (!po.use_max_decimals || po.max_decimals > decimals); precision--) {
+				decimals++;
 				str += "0";
 			}
 		}
@@ -2329,21 +2332,22 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					str += "0";
 				}
 			}
-			if(po.show_ending_zeroes && !infinite_series && (isApproximate() || !exact || ips.parent_approximate)) {
+			if(str[str.length() - 1] == po.decimalpoint()[0]) {
+				str.erase(str.end() - 1);
+			}
+			if(po.show_ending_zeroes && !infinite_series && (isApproximate() || !exact || ips.parent_approximate) && (!po.use_max_decimals || po.max_decimals > decimals)) {
 				precision -= str.length();
 				if(decimals > 0) {
 					precision += 1;
 				} else if(precision > 0) {
 					str += po.decimalpoint();
 				}
-				for(; precision > 0; precision--) {
+				for(; precision > 0 && (!po.use_max_decimals || po.max_decimals > decimals); precision--) {
+					decimals++;
 					str += "0";
 				}
 			}
 			
-			if(str[str.length() - 1] == po.decimalpoint()[0]) {
-				str.erase(str.end() - 1);
-			}
 			if(infinite_series) {
 				str += "...";
 			}

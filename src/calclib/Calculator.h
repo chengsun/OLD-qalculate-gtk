@@ -68,6 +68,7 @@ class CalculatorMessage {
 #include <MathStructure.h>
 
 enum {
+	ELEMENT_CLASS_NOT_DEFINED,
 	ALKALI_METALS,
 	ALKALI_EARTH_METALS,
 	LANTHANIDES,

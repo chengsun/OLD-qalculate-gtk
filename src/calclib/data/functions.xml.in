@@ -818,6 +818,7 @@
       <_title>2 raised the to power X</_title>
       <name index="1">
         <reference>true</reference>
+	<suffix>true</suffix>
         <_name>exp2</_name>
       </name>
       <expression>2^\x</expression>
@@ -829,6 +830,7 @@
       <_title>10 raised the to power X</_title>
       <name index="1">
         <reference>true</reference>
+	<suffix>true</suffix>
         <_name>exp10</_name>
       </name>
       <expression>10^\x</expression>
@@ -1105,6 +1107,27 @@
   </category>
   <category>
     <_title>Miscellaneous</_title>
+    <function>
+      <_title>Body Mass Index (BMI)</_title>
+      <name index="1">
+        <_name>bmi</_name>
+      </name>
+      <description>Calculates the Body Mass Index. The resulting BMI-value is interpreted as follows:
+
+Underweight		&lt; 18.5
+Normal weight		18.5-25
+Overweight		25-30
+Obesity			&gt; 30
+
+Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</description>
+      <expression>(\x/(1000g))/(\y/m)^2</expression>
+      <argument type="free" index="1">
+        <_title>Weight</_title>
+      </argument>
+      <argument type="free" index="2">
+        <_title>Length</_title>
+      </argument>
+    </function>
     <builtin_function name="zeta">
       <_title>Riemann Zeta</_title>
       <name index="1">

@@ -2,7 +2,7 @@
 <QALCULATE version="0.6.3">
   <element symbol="H" number="8">
     <_name>Hydrogen</_name>
-    <class>1</class>
+    <class>8</class>
     <weight>1.00794</weight>
     <x_pos>1</x_pos>
     <y_pos>1</y_pos>
