@@ -751,7 +751,7 @@ void create_vmenu() {
 	sub = sub2;
 	MENU_ITEM("New variable...", new_variable);
 	MENU_ITEM("Manage variables...", manage_variables);
-	MENU_ITEM_SET_ACCEL(GDK_v);
+	MENU_ITEM_SET_ACCEL(GDK_m);
 	if(calc->variablesEnabled()) {
 		MENU_ITEM("Disable variables", set_variables_enabled)
 	} else {
