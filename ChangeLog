@@ -1,5 +1,7 @@
 2003-08-09  Niklas Knutsson  <nq@altern.org>
 
+	* Fix prefixes in expression
+	* Added ability to disable unknown variables
 	* Support unsolved function -- now log(x) returns log(x) instead of the result of log(0)
 	* Fix prefix display mode (only use in front of units to avoid confusion and support exponents)
 
