@@ -18,10 +18,16 @@ Prefix::Prefix(long int exp10, string long_name, string short_name) {
 }
 Prefix::~Prefix() {
 }
-const string &Prefix::shortName() const {
+const string &Prefix::shortName(bool return_long_if_no_short) const {
+	if(return_long_if_no_short && s_name.empty()) {
+		return l_name;
+	}
 	return s_name;
 }
-const string &Prefix::longName() const {
+const string &Prefix::longName(bool return_short_if_no_long) const {
+	if(return_short_if_no_long && l_name.empty()) {
+		return s_name;
+	}
 	return l_name;
 }
 void Prefix::setShortName(string short_name) {

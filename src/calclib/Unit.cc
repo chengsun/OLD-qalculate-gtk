@@ -34,7 +34,10 @@ void Unit::setTitle(string title_) {
 	stitle = title_;
 	b_changed = true;
 }
-string Unit::title(void) {
+string Unit::title(bool return_name_if_no_title) {
+	if(return_name_if_no_title && stitle.empty()) {
+		return name();
+	}
 	return stitle;
 }
 void Unit::setCategory(string cat_) {
@@ -75,17 +78,11 @@ string Unit::category() {
 string Unit::name() {
 	return sname;
 }
-string Unit::plural() {
-	if(hasPlural())
-		return splural;
-	else
-		return sname;
-}
-bool Unit::hasPlural() {
-	return !splural.empty();
-}
-bool Unit::hasShortName() {
-	return !sshortname.empty();
+string Unit::plural(bool return_name_if_no_plural) {
+	if(return_name_if_no_plural && splural.empty()) {
+		return name();
+	}
+	return splural;
 }
 string Unit::baseName() {
 	return name();
@@ -93,13 +90,14 @@ string Unit::baseName() {
 string Unit::baseExpName() {
 	return name();
 }
-string Unit::shortName(bool plural_) {
-	if(hasShortName())
-		return sshortname;
-	if(plural_ && hasPlural())
-		return splural;
-	else
-		return sname;
+string Unit::shortName(bool return_name_if_no_short, bool plural_) {
+	if(return_name_if_no_short && sshortname.empty()) {
+		if(plural_) {
+			return plural(true);
+		}
+		return name();
+	}
+	return sshortname;
 }
 string Unit::shortBaseName() {
 	return shortName();
@@ -222,16 +220,16 @@ string AliasUnit::firstBaseExpName() {
 		return unit->name();
 }
 string AliasUnit::firstShortBaseName() {
-	return unit->shortName();
+	return unit->shortName(true);
 }
 string AliasUnit::firstShortBaseExpName() {
 	if(exp != 1) {
-		string str = unit->shortName();
+		string str = unit->shortName(true);
 		str += POWER_STR;
 		str += li2s(exp);
 		return str;
 	} else
-		return unit->shortName();
+		return unit->shortName(true);
 }
 Unit* AliasUnit::firstBaseUnit() {
 	return unit;
@@ -420,18 +418,18 @@ bool AliasUnit::hasComplexRelationTo(Unit *u) {
 	}
 }
 
-AliasUnit_Composite::AliasUnit_Composite(Unit *alias, long int exp_, Prefix *prefix_) : AliasUnit("", alias->name(), alias->plural(), alias->shortName(), "", alias, "", exp_, "") {
+AliasUnit_Composite::AliasUnit_Composite(Unit *alias, long int exp_, Prefix *prefix_) : AliasUnit("", alias->name(), alias->plural(false), alias->shortName(false), "", alias, "", exp_, "") {
 	prefixv = prefix_;
 }
 AliasUnit_Composite::~AliasUnit_Composite(void) {}
 string AliasUnit_Composite::printShort(bool plural_) {
-	if(!firstBaseUnit()->hasShortName())
+	if(firstBaseUnit()->shortName(false).empty())
 		return print(plural_);
 	string str = "";
 	if(prefixv) {
 		str += prefixv->name(true);
 	}
-	str += firstBaseUnit()->shortName();
+	str += firstBaseUnit()->shortName(true, plural_);
 	return str;
 }
 string AliasUnit_Composite::print(bool plural_) {
@@ -567,17 +565,11 @@ string CompositeUnit::print(bool plural_, bool short_) {
 string CompositeUnit::name(void) {
 	return print(false, false);
 }
-string CompositeUnit::plural(void) {
+string CompositeUnit::plural(bool return_name_if_no_plural) {
 	return print(true, false);
 }
-string CompositeUnit::shortName(bool plural_) {
+string CompositeUnit::shortName(bool return_name_if_no_short, bool plural_) {
 	return print(plural_, true);
-}
-bool CompositeUnit::hasShortName(void) {
-	return true;
-}
-bool CompositeUnit::hasPlural(void) {
-	return true;
 }
 char CompositeUnit::type() const {
 	return 'D';

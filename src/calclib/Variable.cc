@@ -36,7 +36,10 @@ Variable::Variable(string cat_, string name_, long double value_, string title_,
 Variable::~Variable(void) {
 	if(mngr) mngr->unref();
 }
-string Variable::title(void) {
+string Variable::title(bool return_name_if_no_title) {
+	if(return_name_if_no_title && stitle.empty()) {
+		return name();
+	}
 	return stitle;
 }
 void Variable::setTitle(string title_) {

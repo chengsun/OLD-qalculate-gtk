@@ -72,11 +72,19 @@ void Fraction::set(string str) {
 		}
 	}
 	if(minus) num = -num;
+	while(num % 10 == 0) {
+		num /= 10;
+		exp++;
+	}
+	while(den % 10 == 0) {
+		den /= 10;
+		exp--;
+	}	
 }
 
 bool Fraction::equals(Fraction *fr) {
 	if(!fr) return false;
-	return num = fr->numerator() && den == fr->denominator() && exp == fr->exponent();
+	return num == fr->numerator() && den == fr->denominator() && exp == fr->exponent();
 }
 long long int Fraction::numerator() const {
 	return num;
@@ -129,83 +137,117 @@ long double Fraction::getFractionPart() const {
 }
 bool Fraction::add(MathOperation op, Fraction *fr) {
 	if(!fr) return false;
+	printf("FRPRE [%s] %c [%s]\n", internalPrint(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), op2ch(op), fr->internalPrint(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str());		
 	switch(op) {
+		case SUBTRACT: {}
 		case ADD: {
+			long long int num2 = fr->numerator(), den2 = fr->denominator();
+			long double d_test;
+			if(op == SUBTRACT) {
+				num2 = -num2;
+			}							
 			if(exp != fr->exponent()) {
-				long long int exp1, exp2, num2 = fr->numerator(), den2 = fr->denominator();
-				if(exp < 0) exp1 = -exp;
-				else exp1 = exp;
-				if(fr->exponent() < 0) exp2 = -fr->exponent();
-				else exp2 = fr->exponent();
-				if((exp1 > exp2 && exp1 - exp2 > exp2) || (exp2 > exp1 && exp2 - exp1 < exp1)) {
-					exp1 -= exp2;
+				long long int exp1;
+				bool b = false;
+				if((fr->exponent() >= 0) || (exp >= 0)) {
+					exp1 = fr->exponent();
 					if(exp1 > 0) {
-						for(long long int i = 0; i < exp1; i++) {
-							num *= 10;
+						d_test = num2 * exp10(exp1);
+						if(d_test <= LONG_LONG_MAX && d_test >= LONG_LONG_MIN)  {
+							for(long long int i = 0; i < exp1; i++) {
+								num2 *= 10;
+							}
+							b = true;
 						}
 					} else {
-						for(long long int i = 0; i < -exp1; i++) {
-							den *= 10;
+						d_test = den2 * exp10(-exp1);
+						if(d_test <= LONG_LONG_MAX && d_test >= LONG_LONG_MIN)  {
+							for(long long int i = 0; i < -exp1; i++) {
+								den2 *= 10;
+							}
+							b = true;
 						}					
-					}
-				} else {
-					exp1 = exp2 - exp1;
+					}	
+					if(b) {
+						b = false;
+						exp1 = exp;
+						if(exp1 > 0) {
+							d_test = num * exp10(exp1);
+							if(d_test <= LONG_LONG_MAX && d_test >= LONG_LONG_MIN)  {
+								for(long long int i = 0; i < exp1; i++) {
+									num *= 10;
+								}
+								exp -= exp1;
+								b = true;
+							}
+						} else {
+							d_test = den * exp10(-exp1);
+							if(d_test <= LONG_LONG_MAX && d_test >= LONG_LONG_MIN)  {
+								for(long long int i = 0; i < -exp1; i++) {
+									den *= 10;
+								}
+								exp -= exp1;							
+								b = true;
+							}					
+						}						
+					}				
+				}
+				if(!b) {
+					exp1 = fr->exponent() - exp;
 					if(exp1 > 0) {
-						for(long long int i = 0; i < exp1; i++) {
-							num2 *= 10;
+						d_test = num2 * exp10(exp1);
+						if(d_test <= LONG_LONG_MAX && d_test >= LONG_LONG_MIN)  {
+							for(long long int i = 0; i < exp1; i++) {
+								num2 *= 10;
+							}
+							b = true;
 						}
 					} else {
-						for(long long int i = 0; i < -exp1; i++) {
-							den2 *= 10;
+						d_test = den2 * exp10(-exp1);
+						if(d_test <= LONG_LONG_MAX && d_test >= LONG_LONG_MIN)  {
+							for(long long int i = 0; i < -exp1; i++) {
+								den2 *= 10;
+							}
+							b = true;
 						}					
 					}					
 				}
-				num = num * den2 + num2 * den;
-				den *= den2;								
-			} else {	
-				num = num * fr->denominator() + fr->numerator() * den;
-				den *= fr->denominator();				
+				if(!b) {
+					exp1 = exp - fr->exponent();
+					if(exp1 > 0) {
+						d_test = num * exp10(exp1);
+						if(d_test <= LONG_LONG_MAX && d_test >= LONG_LONG_MIN)  {
+							for(long long int i = 0; i < exp1; i++) {
+								num *= 10;
+							}
+							exp -= exp1;
+							b = true;
+						}
+					} else {
+						d_test = den * exp10(-exp1);
+						if(d_test <= LONG_LONG_MAX && d_test >= LONG_LONG_MIN)  {
+							for(long long int i = 0; i < -exp1; i++) {
+								den *= 10;
+							}
+							exp -= exp1;							
+							b = true;
+						}					
+					}					
+				}												
+				if(!b) return false;
 			}
+			d_test = (long double) num * (long double) den2 + (long double) num2 * (long double) den;
+			if(d_test > LONG_LONG_MAX || d_test < LONG_LONG_MIN)  {
+				return false;
+			}
+			num = num * den2 + num2 * den;
+			d_test = (long double) den * (long double) den2;
+			if(d_test > LONG_LONG_MAX || d_test < LONG_LONG_MIN)  {
+				return false;
+			}				
+			den *= den2;			
 			break;
 		} 
-		case SUBTRACT: {
-			if(exp != fr->exponent()) {
-				long long int exp1, exp2, num2 = fr->numerator(), den2 = fr->denominator();
-				if(exp < 0) exp1 = -exp;
-				else exp1 = exp;
-				if(fr->exponent() < 0) exp2 = -fr->exponent();
-				else exp2 = fr->exponent();
-				if((exp1 > exp2 && exp1 - exp2 > exp2) || (exp2 > exp1 && exp2 - exp1 < exp1)) {
-					exp1 -= exp2;
-					if(exp1 > 0) {
-						for(long long int i = 0; i < exp1; i++) {
-							num *= 10;
-						}
-					} else {
-						for(long long int i = 0; i < -exp1; i++) {
-							den *= 10;
-						}					
-					}
-				} else {
-					exp1 = exp2 - exp1;
-					if(exp1 > 0) {
-						for(long long int i = 0; i < exp1; i++) {
-							num2 *= 10;
-						}
-					} else {
-						for(long long int i = 0; i < -exp1; i++) {
-							den2 *= 10;
-						}					
-					}					
-				}
-				num = num * den2 - num2 * den;
-				den *= den2;								
-			} else {	
-				num = num * fr->denominator() - fr->numerator() * den;
-				den *= fr->denominator();				
-			}
-			break;
-		}
 		case MULTIPLY: {
 			den *= fr->denominator();
 			num *= fr->numerator();
@@ -300,7 +342,8 @@ bool Fraction::add(MathOperation op, Fraction *fr) {
 	while(den % 10 == 0) {
 		den /= 10;
 		exp--;
-	}	
+	}
+	printf("FRPOST [%s] %c [%s]\n", internalPrint(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str(), op2ch(op), fr->internalPrint(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTION).c_str());	
 	return true;	
 }
 
@@ -391,8 +434,7 @@ string Fraction::internalPrint(NumberFormat nrformat, int displayflags, int prec
 			whole = -whole;
 		}
 		string str_whole = lli2s(whole);
-//		remove_trailing_zeros(str_whole, min_decimals, max_decimals);
-		remove_trailing_zeros(str_whole);
+//		remove_trailing_zeros(str_whole);
 		str_base += str_whole;
 	}
 	if(part != 0) {
@@ -435,7 +477,7 @@ string Fraction::internalPrint(NumberFormat nrformat, int displayflags, int prec
 	}
 	return str_base + str_spec;	
 }
-string Fraction::print(NumberFormat nrformat, int displayflags, int precision, int min_decimals, int max_decimals, Prefix *prefix, bool *usable) {
-	internalPrint(nrformat, displayflags, precision, min_decimals, max_decimals, prefix, usable);
+string Fraction::print(NumberFormat nrformat, int displayflags, int precision, Prefix *prefix, bool *usable) {
+	internalPrint(nrformat, displayflags, precision, -1, -1, prefix, usable, true);
 }
 

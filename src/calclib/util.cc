@@ -11,12 +11,30 @@
 
 #include "util.h"
 #include <stdarg.h>
+#include <time.h>
 
 bool eqstr::operator()(const char *s1, const char *s2) const {
 	return strcmp(s1, s2) == 0;
 }
 
 char buffer[20000];
+
+bool s2date(string str, int &year, int &month, int &day) {
+	struct tm time;
+	if(strptime(str.c_str(), "%x", &time) || strptime(str.c_str(), "%Ex", &time) || strptime(str.c_str(), "%Y-%m-%d", &time) || strptime(str.c_str(), "%m/%d/%y", &time)) {
+		year = time.tm_year + 1900;
+		month = time.tm_mon + 1;
+		day = time.tm_mday;	
+		return true;
+	}
+	return false;
+}
+bool s2date(string str, struct tm *time) {
+	if(strptime(str.c_str(), "%x", time) || strptime(str.c_str(), "%Ex", time) || strptime(str.c_str(), "%Y-%m-%d", time) || strptime(str.c_str(), "%m/%d/%y", time)) {
+		return true;
+	}
+	return false;
+}
 
 int find_first_not_of(const string &str, int pos, ...) {
 	char *strs[10];
@@ -289,6 +307,35 @@ string &lli2s(long long int &value, string &str)  {
 	if(minus) str.insert(pos, 1, '-');
 	return str;
 }
+
+string ld2s(long double value) {
+	if(value == 0) return "0";
+	long double dtmp = 0;
+	int itmp;
+	string str = "";
+	bool minus = value < 0;
+	if(minus) value =- value;
+	value = modfl(value, &dtmp);
+	while(true) {
+		itmp = (int) fmodl(dtmp, 10);		
+		str.insert(0, 1, '0' + itmp);
+		dtmp -= itmp;		
+		if(dtmp <= 0) break;		
+		dtmp /= 10;						
+	}
+	if(minus) str.insert(0, 1, '-');
+	if(value != 0) {
+		str += ".";
+		while(true) {
+			value *= 10;
+			str += '0' + (int) value;
+			value -= (int) value;			
+			if(value <= 0) break;
+		}
+	}
+	return str;
+}
+
 long long int llpow(long long int base, long long int exp, bool &overflow) {
 	if(exp < 0) {
 		overflow = true;

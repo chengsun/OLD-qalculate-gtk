@@ -51,7 +51,7 @@ class Variable {
 	/**
 	* Returns the title/descriptive name of the variable.
 	*/		
-	string title(void);
+	string title(bool return_name_if_no_title = true);
 	/**
 	* Sets the title/descriptive name of the variable.
 	*/			

@@ -82,10 +82,10 @@ void GCDFunction::calculate2(Manager *mngr) {
 	if(!vargs[1]->isNumber()) mngr->set(this, vargs[0], vargs[1], NULL);	
 	else mngr->set(gcd_d(vargs[0]->value(), vargs[1]->value()));
 }
-DifferentiateFunction::DifferentiateFunction() : Function("Experimental", "differentiate", 2, "Differentiate") {
+DifferentiateFunction::DifferentiateFunction() : Function("Experimental", "diff", 2, "Differentiate") {
 }
 Manager *DifferentiateFunction::calculate(const string &argv) {
-	CALCULATOR->error(true, _("%s() is an experimental unfinished function!"), name().c_str(), NULL);
+//	CALCULATOR->error(true, _("%s() is an experimental unfinished function!"), name().c_str(), NULL);
 	Manager *mngr = NULL;
 	int itmp = stringArgs(argv);
 	if(testArgCount(itmp)) {

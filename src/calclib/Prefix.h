@@ -24,8 +24,8 @@ class Prefix {
   public:
   	Prefix(long int exp10, string long_name, string short_name = "");
 	~Prefix();
-	const string &shortName() const;
-	const string &longName() const;
+	const string &shortName(bool return_long_if_no_short = true) const;
+	const string &longName(bool return_short_if_no_long = true) const;
 	void setShortName(string short_name);
 	void setLongName(string long_name);
 	const string &name(bool short_default = true) const;

@@ -72,6 +72,7 @@ Calculator *calculator;
 
 Calculator::Calculator() {
 
+	setLocale();
 	addStringAlternative(SIGN_POWER_0, "o");
 	addStringAlternative(SIGN_POWER_1, "^1");
 	addStringAlternative(SIGN_POWER_2, "^2");
@@ -95,10 +96,10 @@ Calculator::Calculator() {
 	ID_WRAP_LEFT_STR = "{";
 	ID_WRAP_RIGHT_STR = "}";	
 	ID_WRAP_S = "{}";	
-	DOT_STR = ".";
-	COMMA_STR = ",";
-	DOT_S = ".";
-	COMMA_S = ",;";
+//	DOT_STR = ".";
+//	COMMA_STR = ",";
+//	DOT_S = ".";
+//	COMMA_S = ",;";
 	NUMBERS_S = "0123456789";
 	SIGNS_S = "+-*/^E";
 	OPERATORS_S = "+-*/^E";
@@ -133,8 +134,8 @@ Calculator::Calculator() {
 	FUNCTION_VAR_Y = "\\y";		
 	ZERO_STR = "0";
 	ONE_STR = "1";  
+	saved_locale = strdup(setlocale(LC_NUMERIC, NULL));
 	setlocale(LC_NUMERIC, "C");
-	setLocale();
 	
 	ILLEGAL_IN_NAMES = (char*) malloc(sizeof(char) * (strlen(RESERVED_S) + strlen(OPERATORS_S) + strlen(SPACE_S) + strlen(DOT_S) + strlen(BRACKETS_S) + 1));
 	sprintf(ILLEGAL_IN_NAMES, "%s%s%s%s%s", RESERVED_S, OPERATORS_S, SPACE_S, DOT_S, BRACKETS_S);
@@ -185,7 +186,7 @@ Prefix *Calculator::getPrefix(int index) const {
 }
 Prefix *Calculator::getPrefix(string name_) const {
 	for(int i = 0; i < prefixes.size(); i++) {
-		if(prefixes[i]->shortName() == name_ || prefixes[i]->longName() == name_) {
+		if(prefixes[i]->shortName(false) == name_ || prefixes[i]->longName(false) == name_) {
 			return prefixes[i];
 		}
 	}
@@ -243,7 +244,7 @@ Prefix *Calculator::addPrefix(Prefix *p) {
 void Calculator::prefixNameChanged(Prefix *p) {
 	int l, i = 0;
 	delUFV((void*) p);
-	if(!p->longName().empty()) {
+	if(!p->longName(false).empty()) {
 		for(vector<void*>::iterator it = ufv.begin(); ; ++it) {
 			l = 0;
 			if(it != ufv.end()) {
@@ -254,19 +255,19 @@ void Calculator::prefixNameChanged(Prefix *p) {
 				else if(ufv_t[i] == 'U')
 					l = ((Unit*) (*it))->name().length();
 				else if(ufv_t[i] == 'Y')
-					l = ((Unit*) (*it))->plural().length();
+					l = ((Unit*) (*it))->plural(false).length();
 				else if(ufv_t[i] == 'u')
-					l = ((Unit*) (*it))->shortName().length();
+					l = ((Unit*) (*it))->shortName(false).length();
 				else if(ufv_t[i] == 'p')
-					l = ((Prefix*) (*it))->shortName().length();
+					l = ((Prefix*) (*it))->shortName(false).length();
 				else if(ufv_t[i] == 'P')
-					l = ((Prefix*) (*it))->longName().length();
+					l = ((Prefix*) (*it))->longName(false).length();
 			}
 			if(it == ufv.end()) {
 				ufv.push_back((void*) p);
 				ufv_t.push_back('P');
 				break;
-			} else if(l < p->longName().length() || (l == p->longName().length() && ufv_t[i] != 'u' && ufv_t[i] != 'U' && ufv_t[i] != 'Y')) {
+			} else if(l < p->longName(false).length() || (l == p->longName(false).length() && ufv_t[i] != 'u' && ufv_t[i] != 'U' && ufv_t[i] != 'Y')) {
 				ufv.insert(it, (void*) p);
 				ufv_t.insert(ufv_t.begin() + i, 'P');
 				break;
@@ -275,7 +276,7 @@ void Calculator::prefixNameChanged(Prefix *p) {
 		}
 	}
 	i = 0;
-	if(!p->shortName().empty()) {
+	if(!p->shortName(false).empty()) {
 		for(vector<void*>::iterator it = ufv.begin(); ; ++it) {
 			l = 0;
 			if(it != ufv.end()) {
@@ -286,19 +287,19 @@ void Calculator::prefixNameChanged(Prefix *p) {
 				else if(ufv_t[i] == 'U')
 					l = ((Unit*) (*it))->name().length();
 				else if(ufv_t[i] == 'Y')
-					l = ((Unit*) (*it))->plural().length();
+					l = ((Unit*) (*it))->plural(false).length();
 				else if(ufv_t[i] == 'u')
-					l = ((Unit*) (*it))->shortName().length();
+					l = ((Unit*) (*it))->shortName(false).length();
 				else if(ufv_t[i] == 'p')
-					l = ((Prefix*) (*it))->shortName().length();
+					l = ((Prefix*) (*it))->shortName(false).length();
 				else if(ufv_t[i] == 'P')
-					l = ((Prefix*) (*it))->longName().length();
+					l = ((Prefix*) (*it))->longName(false).length();
 			}
 			if(it == ufv.end()) {
 				ufv.push_back((void*) p);
 				ufv_t.push_back('p');
 				break;
-			} else if(l < p->shortName().length() || (l == p->shortName().length() && ufv_t[i] != 'u' && ufv_t[i] != 'U' && ufv_t[i] != 'Y')) {
+			} else if(l < p->shortName(false).length() || (l == p->shortName(false).length() && ufv_t[i] != 'u' && ufv_t[i] != 'U' && ufv_t[i] != 'Y')) {
 				ufv.insert(it, (void*) p);
 				ufv_t.insert(ufv_t.begin() + i, 'p');
 				break;
@@ -311,26 +312,32 @@ void Calculator::prefixNameChanged(Prefix *p) {
 const char *Calculator::getDecimalPoint() const {return DOT_STR;}
 const char *Calculator::getComma() const {return COMMA_STR;}	
 void Calculator::setLocale() {
-/*	lconv *locale = localeconv();
-	DOT_STR = locale->decimal_point;
-	COMMA_STR = ",";
-	DOT_S = DOT_STR;	
-	if(strcmp(DOT_STR, COMMA_STR) == 0) {
+	setlocale(LC_NUMERIC, saved_locale);
+	lconv *locale = localeconv();
+	if(strcmp(locale->decimal_point, ",") == 0) {
+		DOT_STR = ",";
+		DOT_S = ".,";	
 		COMMA_STR = ";";
-		COMMA_S = ";";
+		COMMA_S = ";";		
+		addStringAlternative(",", DOT);			
 	} else {
-		COMMA_S = ",;";	
-	}*/
+		DOT_STR = ".";	
+		DOT_S = ".";	
+		COMMA_STR = ",";
+		COMMA_S = ",;";			
+	}
+	setlocale(LC_NUMERIC, "C");
 }
 void Calculator::unsetLocale() {
-/*	COMMA_STR = ",";
+	COMMA_STR = ",";
 	COMMA_S = ",;";	
 	DOT_STR = ".";
-	DOT_S = DOT_STR;*/
+	DOT_S = ".";
 }
 string &Calculator::remove_trailing_zeros(string &str, int decimals_to_keep, bool expand, bool decrease) {
 	int i2 = str.find_first_of(DOT_S);
 	if(i2 != string::npos) {
+		str.replace(i2, 1, DOT_STR);
 		string str2 = "";
 		int i4 = str.find_first_not_of(NUMBERS_S, i2 + 1);
 		if(i4 != string::npos) {
@@ -850,11 +857,11 @@ Unit* Calculator::addUnit(Unit *u, bool force) {
 		u->setName(getUnitName(((CompositeUnit*) u)->internalName(), u, force));		
 	} else {
 		u->setName(getUnitName(u->name(), u, force));
-		if(u->hasPlural()) {
-			u->setPlural(getUnitName(u->plural(), u, force));
+		if(!u->plural(false).empty()) {
+			u->setPlural(getUnitName(u->plural(false), u, force));
 		}
-		if(u->hasShortName()) {
-			u->setShortName(getUnitName(u->shortName(), u, force));
+		if(!u->shortName(false).empty()) {
+			u->setShortName(getUnitName(u->shortName(false), u, force));
 		}
 	}
 	units.push_back(u);
@@ -901,7 +908,7 @@ void Calculator::delUFV(void *object) {
 }
 Unit* Calculator::getUnit(string name_) {
 	for(int i = 0; i < (int) units.size(); i++) {
-		if(units[i]->type() != 'D' && (units[i]->name() == name_ || units[i]->shortName() == name_ || units[i]->plural() == name_)) {
+		if(units[i]->type() != 'D' && (units[i]->name() == name_ || units[i]->shortName(false) == name_ || units[i]->plural(false) == name_)) {
 			return units[i];
 		}
 	}
@@ -935,13 +942,13 @@ void Calculator::variableNameChanged(Variable *v) {
 			else if(ufv_t[i] == 'U')
 				l = ((Unit*) (*it))->name().length();
 			else if(ufv_t[i] == 'Y')
-				l = ((Unit*) (*it))->plural().length();
+				l = ((Unit*) (*it))->plural(false).length();
 			else if(ufv_t[i] == 'u')
-				l = ((Unit*) (*it))->shortName().length();
+				l = ((Unit*) (*it))->shortName(false).length();
 			else if(ufv_t[i] == 'p')
-				l = 1;
+				l = ((Prefix*) (*it))->shortName(false).length();
 			else if(ufv_t[i] == 'P')
-				l = strlen((const char*) (*it));
+				l = ((Prefix*) (*it))->longName(false).length();				
 		}
 		if(it == ufv.end()) {
 			ufv.push_back((void*) v);
@@ -973,13 +980,13 @@ void Calculator::functionNameChanged(Function *f, bool priviliged) {
 			else if(ufv_t[i] == 'U')
 				l = ((Unit*) (*it))->name().length();
 			else if(ufv_t[i] == 'Y')
-				l = ((Unit*) (*it))->plural().length();
+				l = ((Unit*) (*it))->plural(false).length();
 			else if(ufv_t[i] == 'u')
-				l = ((Unit*) (*it))->shortName().length();
+				l = ((Unit*) (*it))->shortName(false).length();
 			else if(ufv_t[i] == 'p')
-				l = 1;
+				l = ((Prefix*) (*it))->shortName(false).length();
 			else if(ufv_t[i] == 'P')
-				l = strlen((const char*) (*it));
+				l = ((Prefix*) (*it))->longName(false).length();				
 		}
 		if(it == ufv.end()) {
 			ufv.push_back((void*) f);
@@ -1008,13 +1015,13 @@ void Calculator::unitNameChanged(Unit *u) {
 			else if(ufv_t[i] == 'U')
 				l = ((Unit*) (*it))->name().length();
 			else if(ufv_t[i] == 'Y')
-				l = ((Unit*) (*it))->plural().length();
+				l = ((Unit*) (*it))->plural(false).length();
 			else if(ufv_t[i] == 'u')
-				l = ((Unit*) (*it))->shortName().length();
+				l = ((Unit*) (*it))->shortName(false).length();
 			else if(ufv_t[i] == 'p')
-				l = 1;
+				l = ((Prefix*) (*it))->shortName(false).length();
 			else if(ufv_t[i] == 'P')
-				l = strlen((const char*) (*it));
+				l = ((Prefix*) (*it))->longName(false).length();
 		}
 		if(it == ufv.end()) {
 			ufv.push_back((void*) u);
@@ -1027,7 +1034,7 @@ void Calculator::unitNameChanged(Unit *u) {
 		}
 		i++;
 	}
-	if(u->hasPlural()) {
+	if(!u->plural(false).empty()) {
 		i = 0;
 		for(vector<void*>::iterator it = ufv.begin(); ; ++it) {
 			l = 0;
@@ -1039,19 +1046,19 @@ void Calculator::unitNameChanged(Unit *u) {
 				else if(ufv_t[i] == 'U')
 					l = ((Unit*) (*it))->name().length();
 				else if(ufv_t[i] == 'Y')
-					l = ((Unit*) (*it))->plural().length();
+					l = ((Unit*) (*it))->plural(false).length();
 				else if(ufv_t[i] == 'u')
-					l = ((Unit*) (*it))->shortName().length();
+					l = ((Unit*) (*it))->shortName(false).length();
 				else if(ufv_t[i] == 'p')
-					l = 1;
+					l = ((Prefix*) (*it))->shortName(false).length();
 				else if(ufv_t[i] == 'P')
-					l = strlen((const char*) (*it));
+					l = ((Prefix*) (*it))->longName(false).length();
 			}
 			if(it == ufv.end()) {
 				ufv.push_back((void*) u);
 				ufv_t.push_back('Y');
 				break;
-			} else if(l <= u->plural().length()) {
+			} else if(l <= u->plural(false).length()) {
 				ufv.insert(it, (void*) u);
 				ufv_t.insert(ufv_t.begin() + i, 'Y');
 				break;
@@ -1059,7 +1066,7 @@ void Calculator::unitNameChanged(Unit *u) {
 			i++;
 		}
 	}
-	if(u->hasShortName()) {
+	if(!u->shortName(false).empty()) {
 		i = 0;
 		for(vector<void*>::iterator it = ufv.begin(); ; ++it) {
 			l = 0;
@@ -1071,19 +1078,19 @@ void Calculator::unitNameChanged(Unit *u) {
 				else if(ufv_t[i] == 'U')
 					l = ((Unit*) (*it))->name().length();
 				else if(ufv_t[i] == 'Y')
-					l = ((Unit*) (*it))->plural().length();
+					l = ((Unit*) (*it))->plural(false).length();
 				else if(ufv_t[i] == 'u')
-					l = ((Unit*) (*it))->shortName().length();
+					l = ((Unit*) (*it))->shortName(false).length();
 				else if(ufv_t[i] == 'p')
-					l = 1;
+					l = ((Prefix*) (*it))->shortName(false).length();
 				else if(ufv_t[i] == 'P')
-					l = strlen((const char*) (*it));
+					l = ((Prefix*) (*it))->longName(false).length();
 			}
 			if(it == ufv.end()) {
 				ufv.push_back((void*) u);
 				ufv_t.push_back('u');
 				break;
-			} else if(l <= u->shortName().length()) {
+			} else if(l <= u->shortName(false).length()) {
 				ufv.insert(it, (void*) u);
 				ufv_t.insert(ufv_t.begin() + i, 'u');
 				break;
@@ -1455,18 +1462,18 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						if(i5 != i) {
 							for(i6 = 0; i6 < (int) ufv.size(); i6++) {
 								if(ufv_t[i6] == 'u') {
-									i7 = ((Unit*) ufv[i6])->shortName().length();
+									i7 = ((Unit*) ufv[i6])->shortName(false).length();
 								} else if(ufv_t[i6] == 'U') {
 									i7 = ((Unit*) ufv[i6])->name().length();
 								} else if(ufv_t[i6] == 'Y') {
-									i7 = ((Unit*) ufv[i6])->plural().length();
+									i7 = ((Unit*) ufv[i6])->plural(false).length();
 								} else {
 									i7 = -1;
 								}
 								if(i7 > 0 && i7 <= i5 - i4) {
 									b = false;
 									for(i8 = 1; i8 <= i7; i8++) {
-										if((ufv_t[i6] == 'u' && str[i4 + i8] != ((Unit*) ufv[i6])->shortName()[i8 - 1]) || (ufv_t[i6] == 'U' && str[i4 + i8] != ((Unit*) ufv[i6])->name()[i8 - 1]) || (ufv_t[i6] == 'Y' && str[i4 + i8] != ((Unit*) ufv[i6])->plural()[i8 - 1])) {
+										if((ufv_t[i6] == 'u' && str[i4 + i8] != ((Unit*) ufv[i6])->shortName(false)[i8 - 1]) || (ufv_t[i6] == 'U' && str[i4 + i8] != ((Unit*) ufv[i6])->name()[i8 - 1]) || (ufv_t[i6] == 'Y' && str[i4 + i8] != ((Unit*) ufv[i6])->plural(false)[i8 - 1])) {
 											b = true;
 											break;
 										}
@@ -1526,11 +1533,11 @@ void Calculator::setFunctionsAndVariables(string &str) {
 					if(i5 != i) {
 						stmp = str.substr(i5, i - i5);
 						for(int index = 0; index < prefixes.size(); index++) {
-							i7 = prefixes[index]->shortName().length();
+							i7 = prefixes[index]->shortName(false).length();
 							if(i7 > 0 && i7 <= i - i5) {
 								b = true;
 								for(i6 = 1; i6 <= i7; i6++) {
-									if(str[i - i6] != prefixes[index]->shortName()[i7 - i6]) {
+									if(str[i - i6] != prefixes[index]->shortName(false)[i7 - i6]) {
 										b = false;
 										break;
 									}
@@ -1541,11 +1548,11 @@ void Calculator::setFunctionsAndVariables(string &str) {
 									break;
 								}
 							}
-							i7 = prefixes[index]->longName().length();
+							i7 = prefixes[index]->longName(false).length();
 							if(i7 > 0 && i7 <= i - i5) {
 								b = true;
 								for(i6 = 1; i6 <= i7; i6++) {
-									if(str[i - i6] != prefixes[index]->longName()[i7 - i6]) {
+									if(str[i - i6] != prefixes[index]->longName(false)[i7 - i6]) {
 										b = false;
 										break;
 									}
@@ -1652,7 +1659,7 @@ string Calculator::getUnitName(string name, Unit *object, bool force, bool alway
 		stmp += NAME_NUMBER_PRE_STR;
 		stmp += "1";
 	for(int i = 0; i < (int) units.size(); i++) {
-		if(units[i] != object && ((units[i]->type() == 'D' && ((CompositeUnit*) units[i])->internalName() == stmp) || (units[i]->type() != 'D' && (units[i]->name() == stmp || units[i]->shortName() == stmp || units[i]->plural() == stmp)))) {
+		if(units[i] != object && ((units[i]->type() == 'D' && ((CompositeUnit*) units[i])->internalName() == stmp) || (units[i]->type() != 'D' && (units[i]->name() == stmp || units[i]->shortName(false) == stmp || units[i]->plural(false) == stmp)))) {
 			i2++;
 			stmp = name;
 			stmp += NAME_NUMBER_PRE_STR;
@@ -1683,10 +1690,10 @@ bool Calculator::save(const char* file_name) {
 				fprintf(file, "%s\t", variables[i]->category().c_str());
 			if(!variables[i]->isBuiltinVariable())
 				fprintf(file, "%s\t%s\t", variables[i]->name().c_str(), variables[i]->get()->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DEFAULT, 100).c_str());
-			if(variables[i]->title().empty())
+			if(variables[i]->title(false).empty())
 				fprintf(file, "0\t");
 			else
-				fprintf(file, "%s\t", variables[i]->title().c_str());
+				fprintf(file, "%s\t", variables[i]->title(false).c_str());
 			fprintf(file, "\n");
 		}
 	}
@@ -1705,10 +1712,10 @@ bool Calculator::save(const char* file_name) {
 				fprintf(file, "%s\t", functions[i]->category().c_str());
 			if(!functions[i]->isBuiltinFunction())
 				fprintf(file, "%s\t%s\t", functions[i]->name().c_str(), ((UserFunction*) functions[i])->equation().c_str());
-			if(functions[i]->title().empty())
+			if(functions[i]->title(false).empty())
 				fprintf(file, "0\t");
 			else
-				fprintf(file, "%s\t", functions[i]->title().c_str());
+				fprintf(file, "%s\t", functions[i]->title(false).c_str());
 			str = functions[i]->description();
 			gsub("\n", "\\", str);
 			if(str.empty())
@@ -1750,30 +1757,29 @@ bool Calculator::save(const char* file_name) {
 			if(units[i]->type() == 'D') {
 				cu = (CompositeUnit*) units[i];			
 				fprintf(file, "%s\t", cu->internalName().c_str());
-				if(units[i]->title().empty())
+				if(units[i]->title(false).empty())
 					fprintf(file, "0\t");
 				else
-					fprintf(file, "%s", units[i]->title().c_str());
+					fprintf(file, "%s", units[i]->title(false).c_str());
 				for(int i2 = 0; i2 < cu->units.size(); i2++) {
-					fprintf(file, "\t%s\t%s\t%s", cu->units[i2]->firstBaseUnit()->shortName().c_str(), li2s(cu->units[i2]->firstBaseExp()).c_str(), li2s(cu->units[i2]->prefixExponent()).c_str());
+					fprintf(file, "\t%s\t%s\t%s", cu->units[i2]->firstBaseUnit()->shortName(true).c_str(), li2s(cu->units[i2]->firstBaseExp()).c_str(), li2s(cu->units[i2]->prefixExponent()).c_str());
 				}
 			} else {
 				fprintf(file, "%s\t", units[i]->name().c_str());
-				if(!units[i]->hasPlural())
+				if(units[i]->plural(false).empty())
 					fprintf(file, "0\t");
 				else
-					fprintf(file, "%s\t", units[i]->plural().c_str());
-				if(!units[i]->hasShortName())
+					fprintf(file, "%s\t", units[i]->plural(false).c_str());
+				if(units[i]->shortName(false).empty())
 					fprintf(file, "0\t");
 				else
-					fprintf(file, "%s\t", units[i]->shortName().c_str());
-				if(units[i]->title().empty())
+					fprintf(file, "%s\t", units[i]->shortName(false).c_str());
+				if(units[i]->title(false).empty())
 					fprintf(file, "0\t");
 				else
-					fprintf(file, "%s", units[i]->title().c_str());
+					fprintf(file, "%s", units[i]->title(false).c_str());
 			}
 			if(units[i]->type() == 'A') {
-//				fprintf(file, "\t%s\t%s\t%s", au->firstShortBaseName().c_str(), au->expression().c_str(), au->firstBaseExp()->print().c_str());
 				if(au->firstBaseUnit()->type() == 'D') {
 					fprintf(file, "\t%s\t%s\t%s", ((CompositeUnit*) (au->firstBaseUnit()))->internalName().c_str(), au->expression().c_str(), li2s(au->firstBaseExp()).c_str());
 				} else {
@@ -1785,13 +1791,6 @@ bool Calculator::save(const char* file_name) {
 			fprintf(file, "\n");
 		}
 	}
-/*	fprintf(file, "\n");
-	for(l_type::iterator it = l_prefix.begin(); it != l_prefix.end(); ++it) {
-		fprintf(file, "*Prefix\t%s\t%LLi\n", it->first, it->second);
-	}
-	for(hash_map<char, long long int>::iterator it = s_prefix.begin(); it != s_prefix.end(); ++it) {
-		fprintf(file, "*Prefix\t%c\t%LLi\n", it->first, it->second);
-	}*/
 	fclose(file);
 	setLocale();
 }
@@ -1799,7 +1798,6 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 	FILE *file = fopen(file_name, "r");
 	if(file == NULL)
 		return false;
-	unsetLocale();
 	string stmp, str, ntmp, vtmp, rtmp, etmp, shtmp, ctmp, ttmp, cutmp;
 	Unit *u;
 	AliasUnit *au;
@@ -2140,7 +2138,6 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 		}
 	}
 	fclose(file);
-	setLocale();
 	return true;
 }
 

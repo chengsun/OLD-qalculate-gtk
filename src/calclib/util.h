@@ -13,6 +13,7 @@
 #define UTIL_H
 
 #include "includes.h"
+#include <time.h>
 
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
@@ -58,6 +59,10 @@ long long int s2lli(const char *str);
 string lli2s(long long int value);
 string li2s(long int value);
 string &lli2s(long long int &value, string &str);
+string ld2s(long double value);
+
+bool s2date(string str, int &year, int &month, int &day);
+bool s2date(string str, struct tm *time);
 
 char op2ch(MathOperation op);
 

@@ -43,7 +43,7 @@ class Fraction {
 	long double getFractionPart() const;
 	bool add(MathOperation op, Fraction *fr); 
 	string internalPrint(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int precision = PRECISION, int min_decimals = 0, int max_decimals = -1, Prefix *prefix = NULL, bool *usable = NULL, bool toplevel = true, bool *plural = NULL, long int *l_exp = NULL, bool in_composite = false, bool in_power = false);
-	string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int precision = PRECISION, int min_decimals = 0, int max_decimals = -1, Prefix *prefix = NULL, bool *usable = NULL);	
+	string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int precision = PRECISION, Prefix *prefix = NULL, bool *usable = NULL);	
 };
 
 #endif

@@ -150,7 +150,10 @@ void Function::setDescription(string descr_) {
 	sdescr = descr_;
 	b_changed = true;
 }
-string Function::title(void) {
+string Function::title(bool return_name_if_no_title) {
+	if(return_name_if_no_title && stitle.empty()) {
+		return name();
+	}
 	return stitle;
 }
 void Function::setTitle(string title_) {
@@ -289,7 +292,9 @@ int Function::stringArgs(const string &str) {
 						stmp += str.substr(i2, i - i2);
 						stmp += RIGHT_BRACKET_STR;
 						svargs.push_back(stmp);*/
-						svargs.push_back(str.substr(i2, i - i2));
+						stmp = str.substr(i2, i - i2);
+						remove_blank_ends(stmp);
+						svargs.push_back(stmp);
 					}
 					i++;
 					i2 = i;
@@ -302,7 +307,9 @@ int Function::stringArgs(const string &str) {
 					stmp += str.substr(i2, str.length() - i2);
 					stmp += RIGHT_BRACKET_STR;
 					svargs.push_back(stmp);*/
-					svargs.push_back(str.substr(i2, str.length() - i2));					
+					stmp = str.substr(i2, str.length() - i2);
+					remove_blank_ends(stmp);
+					svargs.push_back(stmp);
 				}
 				break;
 			}

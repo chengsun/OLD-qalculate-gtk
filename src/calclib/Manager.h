@@ -81,6 +81,7 @@ class Manager {
 		Fraction *fraction() const;
 		bool isNumber();
 		bool isNonNullNumber();
+		bool isOne();
 		Unit *unit(void);
 		void unit(Unit *u, long long int value_ = 1);		
 		bool negative();
@@ -98,6 +99,7 @@ class Manager {
 		void unref(void);
 		char type(void) const;
 		
+		void replace(Manager *replace_this, Manager *replace_with);
 		void differentiate(string x_var);
 
 };

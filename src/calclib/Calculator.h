@@ -45,6 +45,7 @@ class Calculator {
 	vector<string> real_signs;
 	vector<string> default_signs;	
 	vector<string> default_real_signs;	
+	char *saved_locale;
   public:
   
 	vector<Variable*> variables;

@@ -51,7 +51,7 @@ class Function {
 	void setCategory(string cat_);	
 	string description(void);
 	void setDescription(string descr_);
-	string title(void);
+	string title(bool return_name_if_no_title = true);
 	void setTitle(string title_);	
 	string argName(int index);
 	void clearArgNames(void);
