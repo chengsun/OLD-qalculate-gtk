@@ -3899,337 +3899,354 @@ bool MathStructure::factorize(const EvaluationOptions &eo) {
 			MathStructure mnew;
 			if(factorize_find_multiplier(*this, mnew, factor_mstruct)) {
 				mnew.factorize(eo);
-				clear();
-				m_type = STRUCT_MULTIPLICATION;
-				APPEND(factor_mstruct);
-				APPEND(mnew);
+				if(mnew.isMultiplication()) {
+					set(mnew);
+					bool b = false;
+					for(unsigned int i = 0; i < SIZE; i++) {
+						if(!CHILD(i).isAddition()) {
+							int ret = CHILD(i).merge_multiplication(factor_mstruct, eo);
+							if(ret == 0) {
+								ret = factor_mstruct.merge_multiplication(CHILD(i), eo);
+								if(ret > 0) {
+									CHILD(i) = factor_mstruct;
+								}
+							}
+							if(ret > 0) b = true;
+							break;
+						}
+					}
+					if(!b) {
+						PREPEND(factor_mstruct);
+					}
+				} else {
+					clear();
+					m_type = STRUCT_MULTIPLICATION;
+					APPEND(factor_mstruct);
+					APPEND(mnew);
+				}
 				return true;
 			}
-			Number nr;
-			Number exp(1, 1);
-			Number exp_low(1, 1);
-			vector<unsigned int> bases;
-			vector<bool> minusb;
-			bool factorable = true;
-			for(unsigned int i = 0; i < SIZE && factorable; i++) {
-				switch(CHILD(i).type()) {
-					case STRUCT_NUMBER: {
-						if(nr.isZero()) {
-							nr = CHILD(i).number();
-						} else {
-							factorable = false;
-						}
-						break;
-					}
-					case STRUCT_POWER: {
-						if(CHILD(i)[1].isNumber() && CHILD(i)[1].number().isInteger() && !CHILD(i)[1].number().isOne()) {
-							if(exp.isOne()) {
-								exp = CHILD(i)[1].number();
-								exp_low = exp;
-							} else if(CHILD(i)[1].number() != exp) {
-								if(exp.isLessThan(exp_low)) exp_low = exp;
-								exp.gcd(CHILD(i)[1].number());
-								if(exp.isOne()) factorable = false;
+			if(SIZE > 1 && CHILD(SIZE - 1).isNumber() && CHILD(SIZE - 1).number().isInteger()) {
+				MathStructure *xvar = NULL;
+				Number qnr(1, 1);
+				int degree = 1;
+				bool overflow = false;
+				int qcof = 1;
+				if(CHILD(0).isPower() && CHILD(0)[0].size() == 0 && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isInteger() && CHILD(0)[1].number().isPositive()) {
+					xvar = &CHILD(0)[0];
+					degree = CHILD(0)[1].number().intValue(&overflow);
+				} else if(CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0].isNumber() && CHILD(0)[0].number().isInteger()) {
+					if(CHILD(0)[1].isPower()) {
+						if(CHILD(0)[1][0].size() == 0 && CHILD(0)[1][1].isNumber() && CHILD(0)[1][1].number().isInteger() && CHILD(0)[1][1].number().isPositive()) {
+							xvar = &CHILD(0)[1][0];
+							qcof = CHILD(0)[0].number().intValue(&overflow);
+							if(!overflow) {
+								if(qcof < 0) qcof = -qcof;
+								degree = CHILD(0)[1][1].number().intValue(&overflow);
 							}
-							bases.push_back(i);
-							minusb.push_back(false);
-						} else {
-							factorable = false;
 						}
-						break;
-					}
-					case STRUCT_MULTIPLICATION: {
-/*						if(CHILD(i).size() == 2 && CHILD(i)[0].isMinusOne() && CHILD(i)[1].isPower()) {
-							if(CHILD(i)[1][1].isNumber() && CHILD(i)[1][1].number().isInteger() && !CHILD(i)[1][1].number().isOne()) {
-								if(exp.isOne()) {
-									exp = CHILD(i)[1][1].number();
-									exp_low = exp;
-								} else if(CHILD(i)[1][1].number() != exp) {
-									if(exp.isLessThan(exp_low)) exp_low = exp;
-									exp.gcd(CHILD(i)[1][1].number());
-									if(exp.isOne()) {
-										factorable = false;
-										break;
-									}
-								}
-								while(exp.isEven()) {
-									exp /= 2;
-									if(exp.isOne()) {
-										factorable = false;
-										break;
-									}
-								}
-								bases.push_back(i);
-								minusb.push_back(true);
-							} else {
-								factorable = false;
-							}
-						}*/
-						break;
-					}
-					default: {
-						factorable = false;
 					}
 				}
-			}
-			if(factorable && !exp.isOne()) {
-				Number min_multi;
-				bool b1 = false; 
-				for(unsigned int i = 0; !b1 && i < SIZE; i++) {
-					if(CHILD(i).isMultiplication()) {
-						for(unsigned int i2 = 0; !b1 && i2 < CHILD(i).size(); i2++) {
-							switch(CHILD(i)[i2].type()) {
-								case STRUCT_NUMBER: {
+				int pcof = 1;
+				if(!overflow) {
+					pcof = CHILD(SIZE - 1).number().intValue(&overflow);
+					if(pcof < 0) pcof = -pcof;
+				}
+				if(xvar && !overflow && degree <= 1000 && degree > 2) {
+					bool b = true;
+					for(unsigned int i = 1; b && i < SIZE - 1; i++) {
+						switch(CHILD(i).type()) {
+							case STRUCT_NUMBER: {
+								b = false;
+								break;
+							}
+							case STRUCT_POWER: {
+								if(!CHILD(i)[1].isNumber() || !xvar->equals(CHILD(i)[0]) || !CHILD(i)[1].number().isInteger() || !CHILD(i)[1].number().isPositive()) {
+									b = false;
+								}
+								break;
+							}
+							case STRUCT_MULTIPLICATION: {
+								if(!CHILD(i).size() == 2 || !CHILD(i)[0].isNumber()) {
+									b = false;
+								} else if(CHILD(i)[1].isPower()) {
+									if(!CHILD(i)[1][1].isNumber() || !xvar->equals(CHILD(i)[1][0]) || !CHILD(i)[1][1].number().isInteger() || !CHILD(i)[1][1].number().isPositive()) {
+										b = false;
+									}
+								} else if(!xvar->equals(CHILD(i)[1])) {
+									b = false;
+								}
+								break;
+							}
+							default: {
+								if(!xvar->equals(CHILD(i))) {
+									b = false;
+								}
+							}
+						}
+					}
+					if(b) {
+						Number factors[degree + 1];
+						factors[0] = CHILD(SIZE - 1).number();
+						vector<int> ps;
+						vector<int> qs;
+						vector<Number> zeroes;
+						int curdeg = 1, prevdeg = 0;
+						for(unsigned int i = 0; b && i < SIZE - 1; i++) {
+							switch(CHILD(i).type()) {
+								case STRUCT_POWER: {
+									curdeg = CHILD(i)[1].number().intValue(&overflow);
+									if(curdeg == prevdeg || curdeg > degree || prevdeg > 0 && curdeg > prevdeg || overflow) {
+										b = false;
+									} else {
+										factors[curdeg].set(1, 1);
+									}
 									break;
 								}
-								case STRUCT_POWER: {
-									for(unsigned int i3 = 0; i3 < bases.size(); i3++) {
-										if(CHILD(bases[i3]).isPower() && CHILD(i)[i2].equals(CHILD(bases[i3])[0])) {
-											b1 = true;
-											break;
-										}
+								case STRUCT_MULTIPLICATION: {
+									if(CHILD(i)[1].isPower()) {
+										curdeg = CHILD(i)[1][1].number().intValue(&overflow);
+									} else {
+										curdeg = 1;
 									}
-									if(!b1) {
-										if(!CHILD(i)[i2][1].isNumber()) {
-											factorable = false;
-											b1 = true;
-											break;
-										}
-										if(min_multi.isZero() || CHILD(i)[i2][1].number().isLessThan(min_multi)) {
-											min_multi = CHILD(i)[i2][1].number();
-										}
+									if(curdeg == prevdeg || curdeg > degree || prevdeg > 0 && curdeg > prevdeg || overflow) {
+										b = false;
+									} else {
+										factors[curdeg] = CHILD(i)[0].number();
 									}
 									break;
 								}
 								default: {
-									b1 = true;
+									curdeg = 1;
+									factors[curdeg].set(1, 1);
 								}
 							}
+							prevdeg = curdeg;
 						}
-					}
-				}
-				if(!b1) {
-					if(min_multi.isZero()) {
-						factorable = false;
-					} else {
-						exp_low /= min_multi;
-						if(!exp_low.isInteger() || exp_low.isOne() || exp_low.isZero()) {
-							factorable = false;
-						}
-						if(exp_low.isLessThan(exp)) exp = exp_low;
-					}
-				}	
-				if(factorable && !nr.isOne() && !nr.isZero()) {
-					factorable = false;
-					Number pow(exp);
-					pow.recip();
-					Number nr_tmp(nr);
-					nr_tmp ^= pow;
-					if(nr_tmp.isInteger()) {
-						factorable = true;
-					}
-					if(!factorable) {
-						Number exp_tmp;
-						bool b;
-						while(!factorable) {
-							b = false;
-							for(unsigned int i = 0; i < NR_OF_PRIMES; i++) {
-								exp_tmp = exp;
-								exp_tmp /= PRIMES[0];
-								if(exp_tmp.isInteger()) {
-									pow *= PRIMES[0];
-									exp /= PRIMES[0];
-									b = true;
+						while(b && degree > 2) {
+							for(int i = 1; i <= 1000; i++) {
+								if(i > pcof) break;
+								if(pcof % i == 0) ps.push_back(i);
+							}
+							for(int i = 1; i <= 1000; i++) {
+								if(i > qcof) break;
+								if(qcof % i == 0) qs.push_back(i);
+							}
+							Number itest;
+							int i2;
+							unsigned int pi = 0, qi = 0;
+							Number nrtest(ps[0], qs[0]);
+							while(true) {
+								itest.clear(); i2 = degree;
+								while(true) {
+									itest += factors[i2];
+									if(i2 == 0) break;
+									itest *= nrtest;
+									i2--;
+								}
+								if(itest.isZero()) {
 									break;
 								}
+								if(nrtest.isPositive()) {
+									nrtest.negate();
+								} else {
+									qi++;
+									if(qi == qs.size()) {
+										qi = 0;
+										pi++;
+										if(pi == ps.size()) {
+											break;
+										}
+									}
+									nrtest.set(ps[pi], qs[qi]);
+								}
 							}
-							if(b && !exp.isOne()) {
-								nr_tmp = nr;
-								nr_tmp ^= pow;
-								if(nr_tmp.isInteger()) {
-									factorable = true;
+							if(itest.isZero()) {
+								itest.clear(); i2 = degree;
+								Number ntmp(factors[i2]);
+								for(; i2 > 0; i2--) {
+									itest += ntmp;
+									ntmp = factors[i2 - 1];
+									factors[i2 - 1] = itest;
+									itest *= nrtest;
+								}
+								degree--;
+								nrtest.negate();
+								zeroes.push_back(nrtest);
+								if(degree == 2) {
+									break;
+								}
+								qcof = factors[degree].intValue(&overflow);
+								if(!overflow) {
+									if(qcof < 0) qcof = -qcof;
+									pcof = factors[0].intValue(&overflow);
+									if(!overflow) {
+										if(pcof < 0) pcof = -pcof;
+									}
+								}
+								if(overflow) {
 									break;
 								}
 							} else {
 								break;
 							}
+							ps.clear();
+							qs.clear();
 						}
-					}
-					if(factorable) nr = nr_tmp;
-				}
-				if(factorable) {
-					MathStructure test_base;
-					unsigned int i = 0;
-					if(!nr.isZero()) {
-						test_base.set(nr);
-					} else {
-						if(CHILD(bases[0])[1].number() == exp) {
-							test_base.set(CHILD(bases[0])[0]);
-						} else {
-							test_base.set(CHILD(bases[0]));
-							test_base[1].number() /= exp;
-						}
-						i = 1;
-					}
-					for(; i < bases.size(); i++) {
-						if(CHILD(bases[i])[1].number() == exp) {
-							test_base.add(CHILD(bases[i])[0], true);
-						} else {
-							test_base.add(CHILD(bases[i]), true);
-							test_base[test_base.size() - 1][1].number() /= exp;
-						}
-					}
-					MathStructure mtest(test_base);
-					mtest.raise(exp);
-					EvaluationOptions eo2 = eo;
-					eo2.calculate_functions = false;
-					eo2.sync_units = false;
-					mtest.eval(eo2);
-					if(equals(mtest)) {
-						set(test_base);
-						raise(exp);
-						return true;
-					}
-					mtest.evalSort();
-					MathStructure mcopy(*this);
-					mcopy.eval(eo2);
-					mcopy.evalSort();
-					if(mcopy == mtest) {
-						set(test_base);
-						raise(exp);
-						return true;
-					}
-				}
-			}
-			for(unsigned int i = 0; i < SIZE; i++) {
-				CHILD(i).factorize(eo);
-			}
-			break;
-		} 
-		case STRUCT_MULTIPLICATION: {
-			Number nr(1, 1);
-			Number exp(1, 1);
-			bool factorable = true;
-			for(unsigned int i = 0; i < SIZE && factorable; i++) {
-				switch(CHILD(i).type()) {
-					case STRUCT_NUMBER: {
-						if(nr.isOne()) {
-							nr = CHILD(i).number();
-						} else {
-							factorable = false;
-						}
-						break;
-					}
-					case STRUCT_POWER: {
-						if(CHILD(i)[1].isNumber() && CHILD(i)[1].number().isInteger() && !CHILD(i)[1].number().isOne()) {
-							if(exp.isOne()) {
-								exp = CHILD(i)[1].number();
-							} else if(CHILD(i)[1].number() != exp) {
-								exp.gcd(CHILD(i)[1].number());
-								if(exp.isOne()) factorable = false;
-							}
-						} else {
-							factorable = false;
-						}
-						break;
-					}
-					default: {
-						factorable = false;
-					}
-				}
-			}
-			if(factorable && !exp.isOne()) {
-				bool bminus = false;
-				if(nr.isMinusOne()) {
-					if(SIZE > 2) {
-						bminus = true;
-						nr.set(1, 1);
-					} else {
-						factorable = false;
-					}
-				} else if(nr.isNegative()) {
-					nr.setNegative(false);
-					bminus = true;
-				}
-				if(!nr.isOne()) {
-					factorable = false;
-					Number pow(exp);
-					pow.recip();
-					Number nr_tmp(nr);
-					nr_tmp ^= pow;
-					if(nr_tmp.isInteger()) {
-						factorable = true;
-					}
-					if(!factorable) {
-						Number exp_tmp;
-						bool b;
-						while(!factorable) {
-							b = false;
-							for(unsigned int i = 0; i < NR_OF_PRIMES; i++) {
-								exp_tmp = exp;
-								exp_tmp /= PRIMES[0];
-								if(exp_tmp.isInteger()) {
-									pow *= PRIMES[0];
-									exp /= PRIMES[0];
-									b = true;
-									break;
+						if(zeroes.size() > 0) {
+							MathStructure mleft;
+							MathStructure mtmp;
+							MathStructure *mcur;
+							for(int i = degree; i >= 0; i--) {
+								if(!factors[i].isZero()) {
+									if(mleft.isZero()) {
+										mcur = &mleft;
+									} else {
+										mleft.add(m_zero, true);
+										mcur = &mleft[mleft.size() - 1];
+									}
+									if(i > 1) {
+										if(!factors[i].isOne()) {
+											mcur->multiply(*xvar);
+											(*mcur)[0].set(factors[i]);
+											mcur = &(*mcur)[1];
+										} else {
+											mcur->set(*xvar);
+										}
+										mtmp.set(i, 1);
+										mcur->raise(mtmp);
+									} else if(i == 1) {
+										if(!factors[i].isOne()) {
+											mcur->multiply(*xvar);
+											(*mcur)[0].set(factors[i]);
+										} else {
+											mcur->set(*xvar);
+										}
+									} else {
+										mcur->set(factors[i]);
+									}
 								}
 							}
-							if(b && !exp.isOne()) {
-								nr_tmp = nr;
-								nr_tmp ^= pow;
-								if(nr_tmp.isInteger()) {
-									factorable = true;
-									break;
+							mleft.factorize();
+							vector<int> powers;
+							vector<unsigned int> powers_i;
+							int dupsfound = 0;
+							for(unsigned int i = 0; i < zeroes.size() - 1; i++) {
+								while(i + 1 < zeroes.size() && zeroes[i] == zeroes[i + 1]) {
+									dupsfound++;
+									zeroes.erase(zeroes.begin() + (i + 1));
+								}
+								if(dupsfound > 0) {
+									powers_i.push_back(i);
+									powers.push_back(dupsfound + 1);
+									dupsfound = 0;
+								}
+							}
+							MathStructure xvar2(*xvar);
+							Number *nrmul;
+							if(mleft.isMultiplication()) {
+								set(mleft);
+								evalSort();
+								if(CHILD(0).isNumber()) {
+									nrmul = &CHILD(0).number();
+								} else if(CHILD(0).isMultiplication() && CHILD(0).size() > 0 && CHILD(0)[0].isNumber()) {
+									nrmul = &CHILD(0)[0].number();
+								} else {
+									PREPEND(m_one);
+									nrmul = &CHILD(0).number();
 								}
 							} else {
-								break;
+								clear();
+								m_type = STRUCT_MULTIPLICATION;
+								APPEND(m_one);
+								APPEND(mleft);
+								nrmul = &CHILD(0).number();
 							}
-						}
-					}
-					if(factorable) nr = nr_tmp;
-				}
-				if(factorable) {
-					for(int i = 0; i < (int) SIZE && factorable; i++) {
-						switch(CHILD(i).type()) {
-							case STRUCT_NUMBER: {
-								if(nr.isOne()) {
-									ERASE(i);
-									i--;
+							unsigned int pi = 0;
+							for(unsigned int i = 0; i < zeroes.size(); i++) {
+								if(zeroes[i].isInteger()) {
+									APPEND(xvar2);
 								} else {
-									CHILD(i).set(nr);
+									APPEND(m_zero);
 								}
-								break;
-							}
-							case STRUCT_POWER: {
-								if(CHILD(i)[1].number() == exp) {
-									MathStructure msave(CHILD(i)[0]);
-									CHILD(i) = msave;
+								mcur = &CHILD(SIZE - 1);
+								if(pi < powers_i.size() && powers_i[pi] == i) {
+									mcur->raise(MathStructure(powers[pi], 1));
+									mcur = &(*mcur)[0];
+									pi++;
+								}
+								if(zeroes[i].isInteger()) {
+									mcur->add(zeroes[i]);
 								} else {
-									CHILD(i)[1].number() /= exp;
+									nrmul->divide(zeroes[i].denominator());
+									mcur->add(zeroes[i].numerator());
+									(*mcur)[0] *= xvar2;
+									(*mcur)[0][0].number() = zeroes[i].denominator();
 								}
-								break;
 							}
+							if(CHILD(0).isNumber() && CHILD(0).number().isOne()) {
+								ERASE(0);
+							} else if(CHILD(0).isMultiplication() && CHILD(0).size() > 0 && CHILD(0)[0].isNumber() && CHILD(0)[0].number().isOne()) {
+								if(CHILD(0).size() == 1) {
+									ERASE(0);
+								} else if(CHILD(0).size() == 2) {
+									MathStructure msave(CHILD(0)[1]);
+									CHILD(0) = msave;
+								} else {
+									CHILD(0).delChild(1);
+								}
+							}
+							for(unsigned int i = 0; i < SIZE; i++) {
+								if(CHILD(i).isPower()) {
+									CHILD(i)[0].evalSort();
+								} else {
+									CHILD(i).evalSort();
+								}
+							}
+							evalSort();
+							Number dupspow;
+							for(unsigned int i = 0; i < SIZE - 1; i++) {
+								mcur = NULL;
+								if(CHILD(i).isPower()) {
+									if(CHILD(i)[0].isAddition() && CHILD(i)[1].isNumber()) {
+										mcur = &CHILD(i)[0];
+									}
+								} else if(CHILD(i).isAddition()) {
+									mcur = &CHILD(i);
+								}
+								while(mcur && i + 1 < SIZE) {
+									if(CHILD(i + 1).isPower()) {
+										if(CHILD(i + 1)[0].isAddition() && CHILD(i + 1)[1].isNumber() && mcur->equals(CHILD(i + 1)[0])) {
+											dupspow += CHILD(i + 1)[1].number();
+										} else {
+											mcur = NULL;
+										}
+									} else if(CHILD(i + 1).isAddition() && mcur->equals(CHILD(i + 1))) {
+										dupspow++;
+									} else {
+										mcur = NULL;
+									}
+									if(mcur) {
+										ERASE(i + 1);
+									}
+								}
+								if(!dupspow.isZero()) {
+									if(CHILD(i).isPower()) {
+										CHILD(i)[1].number() += dupspow;
+									} else {
+										dupspow++;
+										CHILD(i) ^= dupspow;
+									}
+									dupspow.clear();
+								}
+							}
+							if(SIZE == 1) {
+								MathStructure msave(CHILD(0));
+								set(msave);
+							}
+							return true;
 						}
 					}
-					if(bminus) {
-						MathStructure msave;
-						if(SIZE == 1) {
-							msave = CHILD(0);
-						} else {
-							msave = *this;
-						}
-						set(-1, 1);
-						msave.raise(exp);
-						multiply(msave);
-					} else {
-						if(SIZE == 1) {
-							MathStructure msave(CHILD(0));
-							set(msave);
-						}
-						raise(exp);
-					}
-					return true;
 				}
 			}
 		}

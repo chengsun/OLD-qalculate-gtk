@@ -291,7 +291,7 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 			</row>
 			<row valign="top">
 				<entry><para>Factorize</para></entry>
-				<entry><para>Factorizes the current result. Functionality is limited for polynomials with a degree higher than two.</para></entry>
+				<entry><para>Factorizes the current result. Only rational roots of univariate polynomials can be found.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Set Unknowns...</para></entry>
