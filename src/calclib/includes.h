@@ -27,15 +27,49 @@
 #  endif
 #endif
 
+using namespace std;
+
+#include <vector>
+#include <string>
+#include <stack>
+#include <list>
+#include <stddef.h>
+#include <math.h>
+#include <float.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+
+#ifdef __GNUC__
+#   if __GNUC__ < 3
+#      include <hash_map.h>
+       namespace Sgi { using ::hash_map; }; // inherit globals
+#   else
+#      include <ext/hash_map>
+#      if __GNUC_MINOR__ == 0
+          namespace Sgi = std;               // GCC 3.0
+#      else
+          namespace Sgi = ::__gnu_cxx;       // GCC 3.1 and later
+#      endif
+#   endif
+#else      // ...  there are other compilers, right?
+    namespace Sgi = std;
+#endif
+
+
 class Calculator;
+class MathStructure;
 class Manager;
 class Unit;
 class Variable;
+class KnownVariable;
+class UnknownVariable;
+class Assumptions;
 class DynamicVariable;
 class ExpressionItem;
 class Number;
 class Prefix;
-class Error;
 class CompositeUnit;
 class AliasUnit;
 class AliasUnit_Composite;
@@ -53,9 +87,6 @@ enum {
 	TYPE_FUNCTION,
 	TYPE_UNIT
 };
-
-#define BASE_ROMAN_NUMERALS	-1
-#define BASE_TIME
 
 typedef enum {
 	PLOT_LEGEND_NONE,
@@ -87,19 +118,6 @@ typedef enum {
 } PlotSmoothing;
 
 typedef enum {
-	NUMBER_FORMAT_NORMAL,
-	NUMBER_FORMAT_DECIMALS,
-	NUMBER_FORMAT_EXP,
-	NUMBER_FORMAT_EXP_PURE,
-	NUMBER_FORMAT_HEX,
-	NUMBER_FORMAT_OCTAL,
-	NUMBER_FORMAT_BIN,
-	NUMBER_FORMAT_ROMAN,
-	NUMBER_FORMAT_SEXAGESIMAL,
-	NUMBER_FORMAT_TIME
-} NumberFormat;
-
-typedef enum {
 	PLOT_FILETYPE_AUTO,
 	PLOT_FILETYPE_PNG,
 	PLOT_FILETYPE_PS,
@@ -118,6 +136,7 @@ typedef enum {
 	OPERATION_EXP10,
 	OPERATION_AND,
 	OPERATION_OR,
+	OPERATION_XOR,
 	OPERATION_LESS,
 	OPERATION_GREATER,
 	OPERATION_EQUALS_LESS,
@@ -136,28 +155,75 @@ typedef enum {
 } ComparisonType;
 
 typedef enum {
-	DISPLAY_FORMAT_DEFAULT			= 1 << 0,
-	DISPLAY_FORMAT_SCIENTIFIC		= 1 << 1,
-	DISPLAY_FORMAT_FRACTION			= 1 << 2,
-	DISPLAY_FORMAT_FRACTIONAL_ONLY		= 1 << 3,	
-	DISPLAY_FORMAT_DECIMAL_ONLY		= 1 << 4,	
-	DISPLAY_FORMAT_BEAUTIFY			= 1 << 5,
-	DISPLAY_FORMAT_DEFINITE			= 1 << 6,
-	DISPLAY_FORMAT_NONASCII			= 1 << 7,
-	DISPLAY_FORMAT_TAGS			= 1 << 8,
-	DISPLAY_FORMAT_ALLOW_NOT_USABLE		= 1 << 9,
-	DISPLAY_FORMAT_USE_PREFIXES		= 1 << 10,
-	DISPLAY_FORMAT_SHORT_UNITS		= 1 << 11,
-	DISPLAY_FORMAT_LONG_UNITS		= 1 << 12,	
-	DISPLAY_FORMAT_HIDE_UNITS		= 1 << 13,
-	DISPLAY_FORMAT_INDICATE_INFINITE_SERIES	= 1 << 14,
-	DISPLAY_FORMAT_ALWAYS_DISPLAY_EXACT	= 1 << 15	
-} DisplayFormatFlags;
-
-typedef enum {
 	SORT_DEFAULT				= 1 << 0,
 	SORT_SCIENTIFIC				= 1 << 1
 } SortFlags;
+
+#define BASE_ROMAN_NUMERALS	-1
+#define BASE_TIME		-2
+#define BASE_BINARY		2
+#define BASE_OCTAL		8
+#define BASE_DECIMAL		10
+#define BASE_HEXADECIMAL	16
+#define BASE_SEXAGECIMAL	60
+
+#define EXP_PRECISION		-1
+#define EXP_NONE		0
+#define EXP_PURE		1
+#define EXP_SCIENTIFIC		3
+
+typedef enum {
+	FRACTION_DECIMAL,
+	FRACTION_DECIMAL_EXACT,
+	FRACTION_FRACTIONAL,
+	FRACTION_COMBINED
+} NumberFractionFormat;
+
+static const struct PrintOptions {
+	int min_exp;
+	int base;
+	NumberFractionFormat number_fraction_format;
+	bool indicate_infinite_series;
+	bool abbreviate_units;
+	bool use_unit_prefixes;
+	bool negative_exponents;
+	bool short_multiplication;
+	bool allow_non_usable;
+	bool use_unicode_signs;
+	bool spacious;
+	int min_decimals;
+	int max_decimals;
+	Prefix *prefix;
+	bool *is_approximate;
+	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), abbreviate_units(true), use_unit_prefixes(true), negative_exponents(false), short_multiplication(true), allow_non_usable(false), use_unicode_signs(false), spacious(true), min_decimals(0), max_decimals(-1), prefix(NULL), is_approximate(NULL) {}
+} default_print_options;
+
+static const struct InternalPrintStruct {
+	int depth;
+	bool wrap;
+	string *num, *den, *re, *im;
+	bool *minus;
+	InternalPrintStruct() : depth(0), wrap(false), num(NULL), den(NULL), re(NULL), im(NULL), minus(NULL) {}
+} top_ips;
+
+typedef enum {
+	APPROXIMATION_EXACT,
+	APPROXIMATION_TRY_EXACT,
+	APPROXIMATION_APPROXIMATE
+} ApproximationMode;
+
+typedef enum {
+	STRUCTURING_NONE,
+	STRUCTURING_SIMPLIFY,
+	STRUCTURING_FACTORIZE
+} StructuringMode;
+
+static const struct EvaluationOptions {
+	ApproximationMode approximation;
+	bool sync_units;
+	StructuringMode structuring;
+	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), structuring(STRUCTURING_SIMPLIFY) {}
+} default_evaluation_options;
 
 #define DEFAULT_PRECISION	8
 #define PRECISION		CALCULATOR->getPrecision()
@@ -193,39 +259,10 @@ typedef enum {
 #define SIGN_CAPITAL_SIGMA		"Σ"
 #define SIGN_CAPITAL_PI			"Π"
 #define SIGN_CAPITAL_OMEGA		"Ω"
+#define SIGN_INFINITY			"∞"
 
 #define ID_WRAP_LEFT_CH		'{'
 #define ID_WRAP_RIGHT_CH	'}'
-
-using namespace std;
-
-#include <vector>
-#include <string>
-#include <stack>
-#include <list>
-#include <stddef.h>
-#include <math.h>
-#include <float.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-
-
-#ifdef __GNUC__
-#   if __GNUC__ < 3
-#      include <hash_map.h>
-       namespace Sgi { using ::hash_map; }; // inherit globals
-#   else
-#      include <ext/hash_map>
-#      if __GNUC_MINOR__ == 0
-          namespace Sgi = std;               // GCC 3.0
-#      else
-          namespace Sgi = ::__gnu_cxx;       // GCC 3.1 and later
-#      endif
-#   endif
-#else      // ...  there are other compilers, right?
-    namespace Sgi = std;
-#endif
 
 #define DOT_CH			'.'
 #define ZERO_CH			'0'

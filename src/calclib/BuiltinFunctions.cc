@@ -11,17 +11,16 @@
 
 #include "BuiltinFunctions.h"
 #include "util.h"
-#include "Matrix.h"
-#include "Manager.h"
+#include "MathStructure.h"
 #include "Number.h"
 #include "Calculator.h"
 #include "Variable.h"
 
 #include <sstream>
 
-#define TRIG_FUNCTION(FUNC)	mngr->set(vargs[0]); mngr->recalculateVariables(); if(!mngr->isNumber() || !mngr->number()->FUNC()) {mngr->set(this, vargs[0], NULL);} else {mngr->setPrecise(!mngr->number()->isApproximate());}
-#define FR_FUNCTION(FUNC)	mngr->set(vargs[0]); if(!mngr->number()->FUNC()) {mngr->set(this, vargs[0], NULL);} else {mngr->setPrecise(!mngr->number()->isApproximate());}
-#define FR_FUNCTION_2(FUNC)	mngr->set(vargs[0]); if(!mngr->number()->FUNC(vargs[1]->number())) {mngr->set(this, vargs[0], vargs[1], NULL);} else {mngr->setPrecise(!mngr->number()->isApproximate());}
+#define TRIG_FUNCTION(FUNC)	mstruct = vargs[0]; mstruct.recalculateVariables(); if(!mstruct.isNumber() || !mstruct.number().FUNC()) {mstruct.set(this, &vargs[0], NULL);} else {mstruct.setApproximate(mstruct.number().isApproximate());}
+#define FR_FUNCTION(FUNC)	Number nr = vargs[0].number(); if(!nr.FUNC()) {return false;} else {mstruct = nr; return true;}
+#define FR_FUNCTION_2(FUNC)	Number nr = vargs[0].number(); if(!nr.FUNC(vargs[1].number())) {return false;} else {mstruct = nr; return true;}
 
 #define NON_COMPLEX_NUMBER_ARGUMENT(i)				NumberArgument *arg_non_complex##i = new NumberArgument(); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
 #define NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(i)			NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
@@ -29,668 +28,19 @@
 
 
 
-#ifdef HAVE_LIBCLN
-ZetaFunction::ZetaFunction() : Function("", "zeta", 1, "Riemann Zeta") {
+VectorFunction::VectorFunction() : Function("vector", 0, 1) {
+	setArgumentDefinition(1, new VectorArgument());
+}
+bool VectorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	return true;
+}
+MatrixFunction::MatrixFunction() : Function("matrix", 2, -1) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 }
-void ZetaFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	FR_FUNCTION(zeta)
-}
-#endif
-
-ErrorFunction::ErrorFunction() : Function("Utilities", "error", 1, "Display error") {
-	setArgumentDefinition(1, new TextArgument());
-}
-void ErrorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	CALCULATOR->error(true, vargs[0]->text().c_str(), NULL);
-}
-WarningFunction::WarningFunction() : Function("Utilities", "warning", 1, "Display warning") {
-	setArgumentDefinition(1, new TextArgument());
-}
-void WarningFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	CALCULATOR->error(false, vargs[0]->text().c_str(), NULL);
-}
-
-ForFunction::ForFunction() : Function("Logical", "for", 5, "for...do") {
-	argoccs[1] = -1;
-	setArgumentDefinition(2, new TextArgument());
-	setArgumentDefinition(3, new TextArgument());	
-	argoccs[4] = -1;
-	setArgumentDefinition(5, new TextArgument());
-}
-void ForFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-
-	string condition = vargs[1]->text();
-	string counter = vargs[2]->text();
-	string action = vargs[4]->text();
-
-	gsub("\\x", "\"\\x\"", action);	
-	gsub("\\y", "\"\\y\"", action);		
-	gsub("\\i", "\"\\i\"", action);		
-	Manager mngr_x("\\x");
-	Manager mngr_y("\\y");
-	Manager mngr_i("\\i");
-	
-	CALCULATOR->beginTemporaryStopErrors();
-	Manager *action_mngr_pre = CALCULATOR->calculate_sub(action, false);
-	CALCULATOR->endTemporaryStopErrors();	
-
-	Manager x_mngr(vargs[0]);
-	Manager y_mngr(vargs[3]);
-	Manager i_mngr(1, 1);
-
-	x_mngr.protect();
-	y_mngr.protect();
-	i_mngr.protect();
-	int x_id = CALCULATOR->addId(&x_mngr, true);
-	string str = LEFT_PARENTHESIS;
-	str += ID_WRAP_LEFT;
-	str += i2s(x_id);
-	str += ID_WRAP_RIGHT;
-	str += RIGHT_PARENTHESIS;
-	gsub("\\x", str, condition);
-	gsub("\\x", str, counter);
-	int y_id = CALCULATOR->addId(&y_mngr, true);
-	str = LEFT_PARENTHESIS;
-	str += ID_WRAP_LEFT;
-	str += i2s(y_id);
-	str += ID_WRAP_RIGHT;
-	str += RIGHT_PARENTHESIS;
-	gsub("\\y", str, condition);	
-	gsub("\\y", str, counter);
-	int i_id = CALCULATOR->addId(&i_mngr, true);
-	str = LEFT_PARENTHESIS;
-	str += ID_WRAP_LEFT;
-	str += i2s(i_id);
-	str += ID_WRAP_RIGHT;
-	str += RIGHT_PARENTHESIS;
-	gsub("\\i", str, condition);	
-	gsub("\\i", str, counter);	
-	
-	mngr->clear();
-
-	Manager *action_mngr;
-	Manager *cur_mngr = mngr;
-	unsigned int count = 1;
-	if(action_mngr_pre->isAlternatives()) {
-		count = action_mngr_pre->countChilds();
-	}
-	for(unsigned int i2 = 0; i2 < count; i2++) {
-		if(action_mngr_pre->isAlternatives()) {
-			if(i2 > 0) {
-				Manager mngr2;
-				mngr->addAlternative(&mngr2);
-				cur_mngr = mngr->getChild(i2);
-				i_mngr.set(1, 1);
-				x_mngr.set(vargs[0]);
-				y_mngr.set(vargs[3]);
-			}
-			action_mngr = action_mngr_pre->getChild(i2);
-		} else {
-			action_mngr = action_mngr_pre;
-		}
-
-		
-		Manager mngr_calc;
-	
-		Manager *calced = NULL;
-		int i = 1;
-		while(CALCULATOR->testCondition(condition)) {	
-			mngr_calc.set(action_mngr);
-			mngr_calc.replace(&mngr_x, &x_mngr);
-			mngr_calc.replace(&mngr_y, &y_mngr);		
-			mngr_calc.replace(&mngr_i, &i_mngr);
-			mngr_calc.recalculateFunctions();
-			mngr_calc.clean();
-			y_mngr.set(&mngr_calc);		
-			calced = CALCULATOR->calculate_sub(counter, false);
-			x_mngr.set(calced);
-			calced->unref();
-			i++;
-			i_mngr.set(i, 1);
-		}
-		cur_mngr->set(&y_mngr);
-		
-	}
-	action_mngr_pre->unref();
-	CALCULATOR->delId(x_id, true);
-	CALCULATOR->delId(y_id, true);
-	CALCULATOR->delId(i_id, true);
-
-}
-SumFunction::SumFunction() : Function("Algebra", "sum", 3, "Sum") {
-	setArgumentDefinition(1, new IntegerArgument());
-	setArgumentDefinition(2, new IntegerArgument());	
-	setArgumentDefinition(3, new TextArgument());
-	setCondition("\\y >= \\x");
-}
-void SumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-
-	string action = vargs[2]->text();
-
-	Manager mngr_i("\\i");
-	Manager mngr_j("\\j");
-	Manager mngr_k("\\k");
-
-	int i_id = CALCULATOR->addId(&mngr_i, true);
-	string str = LEFT_PARENTHESIS;
-	str += ID_WRAP_LEFT;
-	str += i2s(i_id);
-	str += ID_WRAP_RIGHT;
-	str += RIGHT_PARENTHESIS;
-	gsub("\\i", str, action);		
-	int j_id = CALCULATOR->addId(&mngr_j, true);
-	str = LEFT_PARENTHESIS;
-	str += ID_WRAP_LEFT;
-	str += i2s(j_id);
-	str += ID_WRAP_RIGHT;
-	str += RIGHT_PARENTHESIS;
-	gsub("\\j", str, action);
-	int k_id = CALCULATOR->addId(&mngr_k, true);
-	str = LEFT_PARENTHESIS;
-	str += ID_WRAP_LEFT;
-	str += i2s(k_id);
-	str += ID_WRAP_RIGHT;
-	str += RIGHT_PARENTHESIS;
-	gsub("\\k", str, action);
-	
-	
-	CALCULATOR->beginTemporaryStopErrors();
-	Manager *action_mngr_pre = CALCULATOR->calculate_sub(action, false);
-	CALCULATOR->endTemporaryStopErrors();	
-
-	mngr->clear();
-
-	Manager *action_mngr;
-	Manager *cur_mngr = mngr;
-	unsigned int count = 1;
-	if(action_mngr_pre->isAlternatives()) {
-		count = action_mngr_pre->countChilds();
-	}
-	for(unsigned int i = 0; i < count; i++) {
-		if(action_mngr_pre->isAlternatives()) {
-			if(i > 0) {
-				Manager mngr2;
-				mngr->addAlternative(&mngr2);
-				cur_mngr = mngr->getChild(i);
-			}
-			action_mngr = action_mngr_pre->getChild(i);
-		} else {
-			action_mngr = action_mngr_pre;
-		}
-
-		Manager i_mngr(vargs[0]->number());
-		Manager mngr_calc;
-	
-		while(i_mngr.number()->isLessThanOrEqualTo(vargs[1]->number())) {	
-			mngr_calc.set(action_mngr);
-			mngr_calc.replace(&mngr_i, &i_mngr);
-			mngr_calc.replace(&mngr_j, &mngr_i);
-			mngr_calc.replace(&mngr_k, &mngr_j);
-			mngr_calc.recalculateFunctions();
-			mngr_calc.clean();
-			cur_mngr->add(&mngr_calc, OPERATION_ADD);		
-			i_mngr.number()->add(1, 1);
-		}
-	}
-	action_mngr_pre->unref();
-	CALCULATOR->delId(i_id, true);
-	CALCULATOR->delId(j_id, true);
-	CALCULATOR->delId(k_id, true);
-}
-ProductFunction::ProductFunction() : Function("Algebra", "product", 3, "Product") {
-	setArgumentDefinition(1, new IntegerArgument());
-	setArgumentDefinition(2, new IntegerArgument());	
-	setArgumentDefinition(3, new TextArgument());
-	setCondition("\\y >= \\x");
-}
-void ProductFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-
-	string action = vargs[2]->text();
-
-	Manager mngr_i("\\i");
-	Manager mngr_j("\\j");
-	Manager mngr_k("\\k");
-
-	int i_id = CALCULATOR->addId(&mngr_i, true);
-	string str = LEFT_PARENTHESIS;
-	str += ID_WRAP_LEFT;
-	str += i2s(i_id);
-	str += ID_WRAP_RIGHT;
-	str += RIGHT_PARENTHESIS;
-	gsub("\\i", str, action);		
-	int j_id = CALCULATOR->addId(&mngr_j, true);
-	str = LEFT_PARENTHESIS;
-	str += ID_WRAP_LEFT;
-	str += i2s(j_id);
-	str += ID_WRAP_RIGHT;
-	str += RIGHT_PARENTHESIS;
-	gsub("\\j", str, action);
-	int k_id = CALCULATOR->addId(&mngr_k, true);
-	str = LEFT_PARENTHESIS;
-	str += ID_WRAP_LEFT;
-	str += i2s(k_id);
-	str += ID_WRAP_RIGHT;
-	str += RIGHT_PARENTHESIS;
-	gsub("\\k", str, action);
-	
-	
-	CALCULATOR->beginTemporaryStopErrors();
-	Manager *action_mngr_pre = CALCULATOR->calculate_sub(action, false);
-	CALCULATOR->endTemporaryStopErrors();	
-
-	mngr->clear();
-
-	Manager *action_mngr;
-	Manager *cur_mngr = mngr;
-	unsigned int count = 1;
-	if(action_mngr_pre->isAlternatives()) {
-		count = action_mngr_pre->countChilds();
-	}
-	for(unsigned int i = 0; i < count; i++) {
-		if(action_mngr_pre->isAlternatives()) {
-			if(i > 0) {
-				Manager mngr2;
-				mngr->addAlternative(&mngr2);
-				cur_mngr = mngr->getChild(i);
-			}
-			action_mngr = action_mngr_pre->getChild(i);
-		} else {
-			action_mngr = action_mngr_pre;
-		}
-		Manager i_mngr(vargs[0]->number());
-		Manager mngr_calc;
-		bool started = false;
-		while(i_mngr.number()->isLessThanOrEqualTo(vargs[1]->number())) {	
-			mngr_calc.set(action_mngr);
-			mngr_calc.replace(&mngr_i, &i_mngr);
-			mngr_calc.replace(&mngr_j, &mngr_i);
-			mngr_calc.replace(&mngr_k, &mngr_j);
-			mngr_calc.recalculateFunctions();
-			mngr_calc.clean();
-			if(started) {
-				cur_mngr->add(&mngr_calc, OPERATION_MULTIPLY);
-			} else {
-				cur_mngr->add(&mngr_calc, OPERATION_ADD);
-				started = true;
-			}
-			i_mngr.number()->add(1, 1);
-		}
-	}
-	action_mngr_pre->unref();
-	CALCULATOR->delId(i_id, true);
-	CALCULATOR->delId(j_id, true);
-	CALCULATOR->delId(k_id, true);
-	
-}
-
-ProcessFunction::ProcessFunction() : Function("Utilities", "process", 1, "Process components", "", -1) {
-	setArgumentDefinition(1, new TextArgument("", false));
-	setArgumentDefinition(2, new MatrixArgument("", false));
-	argoccs[2] = -1;
-}
-void ProcessFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-
-	string sarg = vargs[0]->text();
-	int i = sarg.find("\\x");
-	int i_length;
-	while(i != (int) string::npos) {
-		if(i + 2 < (int) sarg.length() && sarg[i + 2] == '_' && i + 3 < (int) sarg.length()) {
-			string index_str = "component(";
-			if(sarg[i + 3] == LEFT_PARENTHESIS_CH) {
-				int missing = 0;
-				int i2 = find_ending_bracket(sarg, i + 4, &missing);
-				if(i2 == (int) string::npos) {
-					for(int i3 = 1; i3 < missing; i3++) {
-						sarg += RIGHT_PARENTHESIS;
-					}
-					index_str += sarg.substr(i + 4, sarg.length() - (i + 4));
-					i_length += sarg.length() - i;
-				} else {
-					index_str += sarg.substr(i + 4, i2 - (i + 4));
-					i_length = i2 + 1 - i;					
-				}
-			} else {
-				int i2 = sarg.find_first_of(OPERATORS, i + 3);
-				if(i2 == (int) string::npos) {
-					index_str += sarg.substr(i + 3, sarg.length() - (i + 3));
-					i_length = sarg.length() - i;
-				} else {
-					index_str += sarg.substr(i + 3, i2 - (i + 3));
-					i_length += i2 - i;
-				}
-			}
-			index_str += ",\\x)";
-			sarg.replace(i, i_length, index_str);
-			i += index_str.length();
-		} else {
-			sarg.replace(i, 2, "\\z");
-			i += 2;
-		}
-		i = sarg.find("\\x", i);
-	}	
-
-	gsub("\\x", "\"\\x\"", sarg);	
-	gsub("\\z", "\"\\z\"", sarg);		
-	gsub("\\i", "\"\\i\"", sarg);
-	gsub("\\c", "\"\\c\"", sarg);		
-	gsub("\\r", "\"\\r\"", sarg);		
-	gsub("\\n", "\"\\n\"", sarg);	
-	Manager mngr_x("\\x");
-	Manager mngr_z("\\z");		
-	Manager mngr_i("\\i");
-	Manager mngr_n("\\n");
-	Manager mngr_c("\\c");
-	Manager mngr_r("\\r");			
-	
-	CALCULATOR->beginTemporaryStopErrors();
-	Manager *sarg_mngr_pre = CALCULATOR->calculate_sub(sarg, false);
-	CALCULATOR->endTemporaryStopErrors();	
-
-	Manager *sarg_mngr;
-	Manager *cur_mngr = mngr;
-	unsigned int count = 1;
-	if(sarg_mngr_pre->isAlternatives()) {
-		count = sarg_mngr_pre->countChilds();
-	}
-	for(unsigned int i2 = 0; i2 < count; i2++) {
-		if(sarg_mngr_pre->isAlternatives()) {
-			if(i2 > 0) {
-				Manager mngr2;
-				mngr->addAlternative(&mngr2);
-				cur_mngr = mngr->getChild(i2);
-			}
-			sarg_mngr = sarg_mngr_pre->getChild(i2);
-		} else {
-			sarg_mngr = sarg_mngr_pre;
-		}
-
-	
-		if(vargs.size() == 1) {
-			break;
-		} else if(vargs.size() > 2 || (vargs[1]->isMatrix() && vargs[1]->matrix()->isVector())) {
-
-			Vector *v = produceVector(vargs);
-	
-			Manager x_mngr(v);
-			Manager i_mngr;
-			Manager z_mngr;		
-			Manager n_mngr(v->components(), 1);
-			Manager r_mngr(1, 1);
-			Manager mngr_calc;
-			x_mngr.protect();
-			sarg_mngr->replace(&mngr_n, &n_mngr);
-			sarg_mngr->replace(&mngr_r, &r_mngr);
-			for(unsigned int index = 1; index <= v->components(); index++) {
-				i_mngr.set(index, 1);
-				z_mngr.set(v->get(index));
-				mngr_calc.set(sarg_mngr);
-				mngr_calc.replace_no_copy(&mngr_x, &x_mngr);
-				mngr_calc.replace(&mngr_z, &z_mngr);
-				mngr_calc.replace(&mngr_i, &i_mngr);
-				mngr_calc.replace(&mngr_c, &i_mngr);
-				mngr_calc.recalculateFunctions();
-				mngr_calc.finalize();
-				v->set(&mngr_calc, index);		
-			}		
-			cur_mngr->set(v);
-			delete v;		
-		} else if(vargs[1]->isMatrix()) {
-
-			Matrix *mtrx = new Matrix(vargs[1]->matrix());	
-		
-			Manager x_mngr(mtrx);
-			Manager z_mngr;
-			Manager i_mngr;
-			Manager r_mngr;
-			Manager c_mngr;
-			Manager n_mngr(mtrx->rows() * mtrx->columns(), 1);
-			x_mngr.protect();
-			sarg_mngr->replace(&mngr_n, &n_mngr);
-			Manager mngr_calc;
-			for(unsigned int index_r = 1; index_r <= mtrx->rows(); index_r++) {
-				r_mngr.set(index_r, 1);						
-				for(unsigned int index_c = 1; index_c <= mtrx->columns(); index_c++) {		
-					z_mngr.set(mtrx->get(index_r, index_c));
-					i_mngr.set((index_r - 1) * mtrx->columns() + index_c, 1);
-					c_mngr.set(index_c, 1);				
-					mngr_calc.set(sarg_mngr);
-					mngr_calc.replace_no_copy(&mngr_x, &x_mngr);
-					mngr_calc.replace(&mngr_z, &z_mngr);
-					mngr_calc.replace(&mngr_i, &i_mngr);
-					mngr_calc.replace(&mngr_c, &c_mngr);
-					mngr_calc.replace(&mngr_r, &r_mngr);					
-					mngr_calc.recalculateFunctions();
-					mngr_calc.finalize();
-					mtrx->set(&mngr_calc, index_r, index_c);					
-				}
-			}	
-			cur_mngr->set(mtrx);
-			delete mtrx;			
-		} else {
-			Manager x_mngr(vargs[1]);
-			Manager i_mngr(1, 1);
-			Manager mngr_calc;
-			sarg_mngr->replace(&mngr_n, &i_mngr);
-			sarg_mngr->replace(&mngr_r, &i_mngr);
-			sarg_mngr->replace(&mngr_c, &i_mngr);
-			sarg_mngr->replace(&mngr_i, &i_mngr);		
-			sarg_mngr->replace(&mngr_x, &x_mngr);
-			sarg_mngr->replace(&mngr_z, &x_mngr);
-			sarg_mngr->recalculateFunctions();
-			sarg_mngr->finalize();
-			cur_mngr->set(sarg_mngr);				
-		}
-	}
-	sarg_mngr_pre->unref();
-}
-
-CustomSumFunction::CustomSumFunction() : Function("Utilities", "csum", 4, "Custom sum of components", "", -1) {
-	setArgumentDefinition(1, new IntegerArgument());
-	setArgumentDefinition(2, new IntegerArgument());
-	setArgumentDefinition(4, new TextArgument());
-	setArgumentDefinition(5, new VectorArgument("", false));
-	argoccs[3] = -1;
-	argoccs[5] = -1;
-}
-void CustomSumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-
-	int start = 1;
-	int end = -1;
-	start = vargs[0]->number()->intValue();
-	if(start < 1) start = 1;
-	end = vargs[1]->number()->intValue();
-
-	string sarg = vargs[3]->text();
-	int i = sarg.find("\\x");
-	int i_length;
-	while(i != (int) string::npos) {
-		if(i + 2 < (int) sarg.length() && sarg[i + 2] == '_' && i + 3 < (int) sarg.length()) {
-			string index_str = "component(";
-			if(sarg[i + 3] == LEFT_PARENTHESIS_CH) {
-				int missing = 0;
-				int i2 = find_ending_bracket(sarg, i + 4, &missing);
-				if(i2 == (int) string::npos) {
-					for(int i3 = 1; i3 < missing; i3++) {
-						sarg += RIGHT_PARENTHESIS;
-					}
-					index_str += sarg.substr(i + 4, sarg.length() - (i + 4));
-					i_length += sarg.length() - i;
-				} else {
-					index_str += sarg.substr(i + 4, i2 - (i + 4));
-					i_length = i2 + 1 - i;					
-				}
-			} else {
-				int i2 = sarg.find_first_of(OPERATORS, i + 3);
-				if(i2 == (int) string::npos) {
-					index_str += sarg.substr(i + 3, sarg.length() - (i + 3));
-					i_length = sarg.length() - i;
-				} else {
-					index_str += sarg.substr(i + 3, i2 - (i + 3));
-					i_length += i2 - i;
-				}
-			}
-			index_str += ",\\x)";
-			sarg.replace(i, i_length, index_str);
-			i += index_str.length();
-		} else {
-			sarg.replace(i, 2, "\\z");
-			i += 2;
-		}
-		i = sarg.find("\\x", i);
-	}	
-	gsub("\\x", "\"\\x\"", sarg);	
-	gsub("\\y", "\"\\y\"", sarg);	
-	gsub("\\z", "\"\\z\"", sarg);		
-	gsub("\\i", "\"\\i\"", sarg);
-	gsub("\\c", "\"\\c\"", sarg);		
-	gsub("\\r", "\"\\r\"", sarg);		
-	gsub("\\n", "\"\\n\"", sarg);	
-	Manager mngr_x("\\x");
-	Manager mngr_y("\\y");
-	Manager mngr_z("\\z");		
-	Manager mngr_i("\\i");
-	Manager mngr_n("\\n");
-	Manager mngr_c("\\c");
-	Manager mngr_r("\\r");			
-	
-	CALCULATOR->beginTemporaryStopErrors();
-	Manager *sarg_mngr_pre = CALCULATOR->calculate_sub(sarg, false);
-	CALCULATOR->endTemporaryStopErrors();	
-
-	Manager *sarg_mngr;
-	Manager *cur_mngr = mngr;
-	unsigned int count = 1;
-	if(sarg_mngr_pre->isAlternatives()) {
-		count = sarg_mngr_pre->countChilds();
-	}
-	for(unsigned int i2 = 0; i2 < count; i2++) {
-		if(sarg_mngr_pre->isAlternatives()) {
-			if(i2 > 0) {
-				Manager mngr2;
-				mngr->addAlternative(&mngr2);
-				cur_mngr = mngr->getChild(i2);
-			}
-			sarg_mngr = sarg_mngr_pre->getChild(i2);
-		} else {
-			sarg_mngr = sarg_mngr_pre;
-		}
-
-
-		Manager *y_mngr = new Manager(vargs[2]);
-		if(vargs.size() == 4) {
-		} else if(vargs.size() > 5 || (vargs[4]->isMatrix() && vargs[4]->matrix()->isVector())) {
-
-			Vector *v = produceVector(vargs);
-
-			int n = v->components();
-			if(start > n) start = n;
-			if(end < 1 || end > n) end = n;
-			else if(end < start) end = start;	
-
-			Manager x_mngr(v);
-			Manager i_mngr;
-			Manager z_mngr;		
-			Manager n_mngr(v->components(), 1);
-			Manager r_mngr(1, 1);
-			Manager mngr_calc;
-			x_mngr.protect();
-			sarg_mngr->replace(&mngr_n, &n_mngr);
-			sarg_mngr->replace(&mngr_r, &r_mngr);
-			for(int index = start; index <= end; index++) {	
-				i_mngr.set(index, 1);
-				z_mngr.set(v->get(index));
-				mngr_calc.set(sarg_mngr);
-				mngr_calc.replace_no_copy(&mngr_x, &x_mngr);
-				mngr_calc.replace(&mngr_y, y_mngr);
-				mngr_calc.replace(&mngr_z, &z_mngr);
-				mngr_calc.replace(&mngr_i, &i_mngr);
-				mngr_calc.replace(&mngr_c, &i_mngr);
-				mngr_calc.recalculateFunctions();
-				mngr_calc.clean();
-				y_mngr->set(&mngr_calc);
-			}		
-			delete v;		
-		} else if(vargs[4]->isMatrix()) {
-			Matrix *mtrx = new Matrix(vargs[4]->matrix());	
-		
-			int n = mtrx->columns() * mtrx->rows();
-			if(start > n) start = n;
-			if(end < 1) end = n;
-			else if(end > n) end = n;
-			else if(end < start) end = start;		
-		
-			Manager x_mngr(mtrx);
-			Manager z_mngr;
-			Manager i_mngr;
-			Manager r_mngr;
-			Manager c_mngr;
-			Manager n_mngr(mtrx->rows() * mtrx->columns(), 1);
-			x_mngr.protect();
-			sarg_mngr->replace(&mngr_n, &n_mngr);
-			Manager mngr_calc;
-			int i;
-			for(unsigned int index_r = 1; index_r <= mtrx->rows(); index_r++) {
-				r_mngr.set(index_r, 1);						
-				for(unsigned int index_c = 1; index_c <= mtrx->columns(); index_c++) {		
-					i = (index_r - 1) * mtrx->columns() + index_c;
-					if(i >= start && i <= end) {
-						z_mngr.set(mtrx->get(index_r, index_c));
-						i_mngr.set(i, 1);
-						c_mngr.set(index_c, 1);				
-						mngr_calc.set(sarg_mngr);
-						mngr_calc.replace_no_copy(&mngr_x, &x_mngr);
-						mngr_calc.replace(&mngr_y, y_mngr);
-						mngr_calc.replace(&mngr_z, &z_mngr);
-						mngr_calc.replace(&mngr_i, &i_mngr);
-						mngr_calc.replace(&mngr_c, &c_mngr);
-						mngr_calc.replace(&mngr_r, &r_mngr);					
-						mngr_calc.recalculateFunctions();
-						mngr_calc.clean();
-						y_mngr->set(&mngr_calc);					
-					}
-				}
-			}	
-			delete mtrx;			
-		} else {
-			Manager x_mngr(vargs[4]);
-			Manager i_mngr(1, 1);
-			Manager mngr_calc;
-			sarg_mngr->replace(&mngr_n, &i_mngr);
-			sarg_mngr->replace(&mngr_r, &i_mngr);
-			sarg_mngr->replace(&mngr_c, &i_mngr);
-			sarg_mngr->replace(&mngr_i, &i_mngr);		
-			sarg_mngr->replace(&mngr_y, y_mngr);
-			sarg_mngr->replace(&mngr_x, &x_mngr);
-			sarg_mngr->replace(&mngr_z, &x_mngr);
-			sarg_mngr->recalculateFunctions();
-			sarg_mngr->clean();
-			y_mngr->set(sarg_mngr);				
-		}
-		cur_mngr->set(y_mngr);
-		y_mngr->unref();	
-	}
-	sarg_mngr_pre->unref();
-}
-
-FunctionFunction::FunctionFunction() : Function("Utilities", "function", 1, "Function", "", -1) {
-	setArgumentDefinition(1, new TextArgument());
-	argoccs[2] = -1;
-}
-void FunctionFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	UserFunction f("", "Generated Function", vargs[0]->text());
-	vector<Manager*> vargs2(vargs);
-	vargs2.erase(vargs2.begin());
-	Manager *mngr2 = f.calculate(vargs2);	
-	mngr->set(mngr2);
-	mngr2->unref();
-}
-MatrixFunction::MatrixFunction() : Function("Matrices", "matrix", 2, "Construct Matrix", "", -1) {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));	
-}
-void MatrixFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Matrix mtrx(vargs[0]->number()->intValue(), vargs[1]->number()->intValue());
+bool MatrixFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	/*Matrix mtrx(vargs[0].number().intValue(), vargs[1].number().intValue());
 	unsigned int r = 1, c = 1;
 	for(unsigned int i = 2; i < vargs.size(); i++) {
 		if(r > mtrx.rows()) {
@@ -705,322 +55,1213 @@ void MatrixFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 			c++;
 		}
 	}
-	mngr->set(&mtrx);
+	mstruct.set(&mtrx);*/
+	return false;
 }
-VectorFunction::VectorFunction() : Function("Matrices", "vector", -1, "Construct Vector") {}
-void VectorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Vector vctr(vargs.size());
-	for(unsigned int i = 0; i < vargs.size(); i++) {
-		vctr.set(vargs[i], i + 1);	
-	}
-	mngr->set(&vctr);
+RankFunction::RankFunction() : Function("rank", 1) {
+	setArgumentDefinition(1, new VectorArgument(""));
 }
-RankFunction::RankFunction() : Function("Matrices", "rank", -1, "Rank") {
-	setArgumentDefinition(1, new VectorArgument("", false));
-	argoccs[1] = -1;
+bool RankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs;
+	return mstruct.rank();
 }
-void RankFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs.size() > 1) {
-		Vector *v = produceVector(vargs);
-		if(v->rank()) {
-			mngr->set(v);
-		} else {
-			Manager *mngr2 = createFunctionManagerFromVArgs(vargs);
-			mngr->set(mngr2);
-			mngr2->unref();
-		}
-		delete v;
-	} else if(vargs.size() == 1) {
-		if(vargs[0]->isMatrix()) {
-			mngr->set(vargs[0]);
-			if(!mngr->matrix()->rank()) {
-				mngr->set(this, vargs[0], NULL);
-			}
-		} else {
-			mngr->set(1, 1);
-		}
-	}
+SortFunction::SortFunction() : Function("sort", 1) {
+	setArgumentDefinition(1, new VectorArgument(""));
 }
-SortFunction::SortFunction() : Function("Matrices", "sort", -1, "Sort") {
-	setArgumentDefinition(1, new VectorArgument("", false));
-	argoccs[1] = -1;
+bool SortFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs;
+	return mstruct.sort();
 }
-void SortFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs.size() > 1) {
-		Vector *v = produceVector(vargs);
-		if(v->sort()) {
-			mngr->set(v);
-		} else {
-			Manager *mngr2 = createFunctionManagerFromVArgs(vargs);
-			mngr->set(mngr2);
-			mngr2->unref();
-		}
-		delete v;
-	} else if(vargs.size() == 1) {
-		if(vargs[0]->isMatrix()) {
-			mngr->set(vargs[0]);
-			if(!mngr->matrix()->sort()) {
-				mngr->set(this, vargs[0], NULL);
-			}
-		} else {
-			mngr->set(vargs[0]);
-		}
-	}
+MatrixToVectorFunction::MatrixToVectorFunction() : Function("matrix2vector", 1) {
+	setArgumentDefinition(1, new MatrixArgument());
 }
-MatrixToVectorFunction::MatrixToVectorFunction() : Function("Matrices", "matrix2vector", 1, "Convert Matrix to Vector") {
-	setArgumentDefinition(1, new MatrixArgument("", false));
+bool MatrixToVectorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+//	mstruct = vargs[0].matrixToVector();
+//	return true;
+	return false;
 }
-void MatrixToVectorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isMatrix()) {
-		Vector *v = vargs[0]->matrix()->toVector();
-		mngr->set(v);
-		delete v;
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
-}
-RowFunction::RowFunction() : Function("Matrices", "row", 2, "Extract Row as Vector") {
+RowFunction::RowFunction() : Function("row", 2) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 	setArgumentDefinition(2, new MatrixArgument());	
 }
-void RowFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Vector *v = vargs[1]->matrix()->rowToVector(vargs[0]->number()->intValue());
-	if(!v) {
-		CALCULATOR->error(true, _("Row %s does not exist in matrix."), vargs[0]->print().c_str(), NULL);
-		mngr->set(this, vargs[0], vargs[1], NULL);
-	} else {
-		mngr->set(v);
-		delete v;
+bool RowFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	int row = vargs[0].number().intValue();
+	if(row > (int) vargs[1].rows()) {
+		CALCULATOR->error(true, _("Row %s does not exist in matrix."), vargs[0].print().c_str(), NULL);
+		return false;
 	}
+//	mstruct = vargs[1].rowToVector();
+//	return true;
+	return false;
 }
-ColumnFunction::ColumnFunction() : Function("Matrices", "column", 2, "Extract Column as Vector") {
+ColumnFunction::ColumnFunction() : Function("column", 2) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 	setArgumentDefinition(2, new MatrixArgument());	
 }
-void ColumnFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Vector *v = vargs[1]->matrix()->columnToVector(vargs[0]->number()->intValue());
-	if(!v) {
-		CALCULATOR->error(true, _("Column %s does not exist in matrix."), vargs[0]->print().c_str(), NULL);
-		mngr->set(this, vargs[0], vargs[1], NULL);
-	} else {
-		mngr->set(v);
-		delete v;
+bool ColumnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	int col = vargs[0].number().intValue();
+	if(col > (int) vargs[1].columns()) {
+		CALCULATOR->error(true, _("Column %s does not exist in matrix."), vargs[0].print().c_str(), NULL);
+		return false;
 	}
+//	mstruct = vargs[1].columnToVector();
+//	return true;
+	return false;
 }
-RowsFunction::RowsFunction() : Function("Matrices", "rows", 1, "Rows") {
-	setArgumentDefinition(1, new MatrixArgument("", false));
+RowsFunction::RowsFunction() : Function("rows", 1) {
+	setArgumentDefinition(1, new MatrixArgument(""));
 }
-void RowsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isMatrix()) {
-		mngr->set(vargs[0]->matrix()->rows(), 1);
-	} else {
-		mngr->set(1, 1);
-	}
+bool RowsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = (int) vargs[0].rows();
+	return true;
 }
-ColumnsFunction::ColumnsFunction() : Function("Matrices", "columns", 1, "Columns") {
-	setArgumentDefinition(1, new MatrixArgument("", false));
+ColumnsFunction::ColumnsFunction() : Function("columns", 1) {
+	setArgumentDefinition(1, new MatrixArgument(""));
 }
-void ColumnsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isMatrix()) {
-		mngr->set(vargs[0]->matrix()->columns(), 1);
-	} else {
-		mngr->set(1, 1);
-	}
+bool ColumnsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = (int) vargs[0].columns();
+	return true;
 }
-ElementsFunction::ElementsFunction() : Function("Matrices", "elements", 1, "Elements") {
-	setArgumentDefinition(1, new MatrixArgument("", false));
+ElementsFunction::ElementsFunction() : Function("elements", 1) {
+	setArgumentDefinition(1, new MatrixArgument(""));
 }
-void ElementsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isMatrix()) {
-		mngr->set(vargs[0]->matrix()->columns() * vargs[0]->matrix()->rows(), 1);
-	} else {
-		mngr->set(1, 1);
-	}
+bool ElementsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = (int) (vargs[0].rows() * vargs[0].columns());
+	return true;
 }
-ElementFunction::ElementFunction() : Function("Matrices", "element", 3, "Element") {
+ElementFunction::ElementFunction() : Function("element", 3) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
-	setArgumentDefinition(3, new MatrixArgument("", false));
+	setArgumentDefinition(3, new MatrixArgument(""));
 }
-void ElementFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[2]->isMatrix()) {
-		mngr->set(vargs[2]->matrix()->get(vargs[0]->number()->intValue(), vargs[1]->number()->intValue()));
-	} else if(vargs[0]->number()->isOne() && vargs[1]->number()->isOne()) {
-		mngr->set(vargs[2]);
+bool ElementFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	int row = vargs[0].number().intValue();
+	int col = vargs[1].number().intValue();
+	bool b = true;
+	if(col > (int) vargs[0].columns()) {
+		CALCULATOR->error(true, _("Column %s does not exist in matrix."), vargs[1].print().c_str(), NULL);
+		b = false;
 	}
-}
-ComponentsFunction::ComponentsFunction() : Function("Matrices", "components", 1, "Components") {
-	setArgumentDefinition(1, new VectorArgument("", false));
-}
-void ComponentsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isMatrix()) {
-		mngr->set(vargs[0]->matrix()->columns() * vargs[0]->matrix()->rows(), 1);
-	} else {
-		mngr->set(1, 1);
+	if(row > (int) vargs[0].rows()) {
+		CALCULATOR->error(true, _("Row %s does not exist in matrix."), vargs[0].print().c_str(), NULL);
+		b = false;
 	}
+	if(b) {
+		const MathStructure *em = vargs[0].getElement(row, col);
+		if(em) mstruct = *em;
+		else b = false;
+	}
+	return b;
 }
-ComponentFunction::ComponentFunction() : Function("Matrices", "component", 2, "Component") {
+ComponentsFunction::ComponentsFunction() : Function("components", 1) {
+	setArgumentDefinition(1, new VectorArgument(""));
+}
+bool ComponentsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = (int) vargs[0].components();
+	return true;
+}
+ComponentFunction::ComponentFunction() : Function("component", 2) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
-	setArgumentDefinition(2, new VectorArgument("", false));
+	setArgumentDefinition(2, new VectorArgument(""));
 }
-void ComponentFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[1]->isMatrix()) {
-		mngr->set(vargs[1]->matrix()->get((vargs[0]->number()->intValue() - 1) / vargs[1]->matrix()->columns() + 1, (vargs[0]->number()->intValue() - 1) % vargs[1]->matrix()->columns() + 1));
-	} else if(vargs[0]->number()->isOne()) {
-		mngr->set(vargs[1]);
+bool ComponentFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	int i = vargs[0].number().intValue();
+	if(i > (int) vargs[0].components()) {
+		CALCULATOR->error(true, _("Component %s does not exist in matrix."), vargs[0].print().c_str(), NULL);
+		return false;
 	}
+	mstruct = *vargs[0].getComponent(i);
+	return true;
 }
-RangeFunction::RangeFunction() : Function("Matrices", "range", 3, "Range") {
-	argoccs[1] = -1;
-	argoccs[2] = -1;
-	argoccs[3] = -1;
-}
-void RangeFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Vector v;
-	Manager x_value(vargs[0]);
-	bool b;
-	while(x_value.compare(vargs[1]) <= 0) {
-		if(b) v.addComponent();
-		v.set(&x_value, v.components());
-		x_value.add(vargs[2], OPERATION_ADD);
-	}
-	mngr->set(&v);
-}
-LimitsFunction::LimitsFunction() : Function("Matrices", "limits", 2, "Limits", "", -1) {
+LimitsFunction::LimitsFunction() : Function("limits", 3) {
 	setArgumentDefinition(1, new IntegerArgument(""));
 	setArgumentDefinition(2, new IntegerArgument(""));	
-	setArgumentDefinition(3, new VectorArgument("", false));	
+	setArgumentDefinition(3, new VectorArgument(""));	
 }
-void LimitsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	int i = vargs[0]->number()->intValue(), n = vargs[1]->number()->intValue();	
-	Vector *v = produceVector(vargs);
-	Vector *vctr = v->getRange(i, n);
-	mngr->set(vctr);
-	delete vctr;
-	delete v;
+bool LimitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	//int i = vargs[0].number().intValue(), n = vargs[1].number().intValue();	
+	//mstruct = vargs[2].getRange(i, n);
+	//return true;
+	return false;
 }
-AreaFunction::AreaFunction() : Function("Matrices", "area", 5, "Area") {
+AreaFunction::AreaFunction() : Function("area", 5) {
 	setArgumentDefinition(1, new IntegerArgument(""));
 	setArgumentDefinition(2, new IntegerArgument(""));	
 	setArgumentDefinition(3, new IntegerArgument(""));
 	setArgumentDefinition(4, new IntegerArgument(""));	
 	setArgumentDefinition(5, new MatrixArgument(""));	
 }
-void AreaFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Matrix *mtrx = vargs[4]->matrix()->getArea(vargs[0]->number()->intValue(), vargs[1]->number()->intValue(), vargs[2]->number()->intValue(), vargs[3]->number()->intValue());
-	mngr->set(mtrx);
-	delete mtrx;
+bool AreaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	//mstruct = vargs[4].getArea(vargs[0].number().intValue(), vargs[1].number().intValue(), vargs[2].number().intValue(), vargs[3].number().intValue());
+	//return true;
+	return false;
 }
-TransposeFunction::TransposeFunction() : Function("Matrices", "transpose", 1, "Transpose") {
+TransposeFunction::TransposeFunction() : Function("transpose", 1) {
 	setArgumentDefinition(1, new MatrixArgument());
 }
-void TransposeFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	mngr->matrix()->transpose();
+bool TransposeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	//return mstruct.transpose();
+	return false;
 }
-IdentityFunction::IdentityFunction() : Function("Matrices", "identity", 1, "Identity") {}
-void IdentityFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isMatrix()) {
-		Matrix *mtrx = vargs[0]->matrix()->getIdentityMatrix();
-		mngr->set(mtrx);
-		delete mtrx;
-	} else if(vargs[0]->isNumber() && vargs[0]->number()->isInteger() && vargs[0]->number()->isPositive()) {
-		Matrix mtrx;
-		mtrx.setToIdentityMatrix(vargs[0]->number()->intValue());
-		mngr->set(&mtrx);
-	} else {
-		mngr->set(this, vargs[0], NULL);
-	}
+IdentityFunction::IdentityFunction() : Function("identity", 1) {
+	ArgumentSet *arg = new ArgumentSet();
+	arg->addArgument(new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	MatrixArgument *marg = new MatrixArgument();
+	marg->setSymmetricDemanded(true);
+	arg->addArgument(marg);
+	setArgumentDefinition(1, arg);
 }
-DeterminantFunction::DeterminantFunction() : Function("Matrices", "det", 1, "Determinant") {
-	setArgumentDefinition(1, new MatrixArgument());
-	argoccs[1] = -1;
+bool IdentityFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	//if(arg->isMatrix()) {
+	//	if(vargs[0].rows() != vargs[0].columns()) {
+	//		return false;
+	//	}
+	//	mstruct = vargs[0].getIdentityMatrix();
+	//} else {
+		mstruct.setToIdentityMatrix((unsigned int) vargs[0].number().intValue());
+	//}
+	return true;
 }
-void DeterminantFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Manager *det = vargs[0]->matrix()->determinant();
-	if(!det) {
-		mngr->set(this, vargs[0], NULL);
-		return;
-	}
-	mngr->set(det);
-	det->unref();	
+DeterminantFunction::DeterminantFunction() : Function("det", 1) {
+	MatrixArgument *marg = new MatrixArgument();
+	marg->setSymmetricDemanded(true);
+	setArgumentDefinition(1, marg);
 }
-PermanentFunction::PermanentFunction() : Function("Matrices", "permanent", 1, "Permanent") {
-	setArgumentDefinition(1, new MatrixArgument());
-	argoccs[1] = -1;
+bool DeterminantFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0].determinant();
+	return !mstruct.isUndefined();
 }
-void PermanentFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Manager *per = vargs[0]->matrix()->permanent();
-	if(!per) {
-		mngr->set(this, vargs[0], NULL);
-		return;
-	}
-	mngr->set(per);
-	per->unref();	
+PermanentFunction::PermanentFunction() : Function("permanent", 1) {
+	MatrixArgument *marg = new MatrixArgument();
+	marg->setSymmetricDemanded(true);
+	setArgumentDefinition(1, marg);
 }
-CofactorFunction::CofactorFunction() : Function("Matrices", "cofactor", 3, "Cofactor") {
+bool PermanentFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	bool b = false;
+//	mstruct = vargs[0].parmanent(&b);
+	return b;
+}
+CofactorFunction::CofactorFunction() : Function("cofactor", 3) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));	
 	setArgumentDefinition(3, new MatrixArgument());
 }
-void CofactorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Manager *mngr2 = vargs[2]->matrix()->cofactor(vargs[0]->number()->intValue(), vargs[1]->number()->intValue());
-	if(!mngr2) {
-		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
-		return;
+bool CofactorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	bool b = false;
+	//mstruct = vargs[2].cofactor(vargs[0].number().intValue(), vargs[1].number().intValue(), &b);
+	return b;
+}
+AdjointFunction::AdjointFunction() : Function("adj", 1) {
+	MatrixArgument *marg = new MatrixArgument();
+	marg->setSymmetricDemanded(true);
+	setArgumentDefinition(1, marg);
+}
+bool AdjointFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	bool b = false;
+	//mstruct = vargs[2].adjoint(&b);
+	return b;
+}
+InverseFunction::InverseFunction() : Function("inverse", 1) {
+	MatrixArgument *marg = new MatrixArgument();
+	marg->setSymmetricDemanded(true);
+	setArgumentDefinition(1, marg);
+}
+bool InverseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	bool b = false;
+	//mstruct = vargs[2].inverse(&b);
+	return b;
+}
+
+ZetaFunction::ZetaFunction() : Function("zeta", 1) {
+	setArgumentDefinition(1, new IntegerArgument());
+}
+bool ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(zeta)
+}
+GammaFunction::GammaFunction() : Function("gamma", 1) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, false));
+}
+bool GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0]; 
+	mstruct -= 1;
+	mstruct.set(CALCULATOR->f_factorial, &vargs[0], NULL);
+	mstruct[0] -= 1;
+	return true;
+}
+BetaFunction::BetaFunction() : Function("beta", 2) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, false));
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, false));
+}
+bool BetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0]; 
+	mstruct.set(CALCULATOR->f_gamma, &vargs[0], NULL);
+	MathStructure mstruct2(CALCULATOR->f_gamma, &vargs[1], NULL);
+	mstruct *= mstruct2;
+	mstruct2[0] += vargs[0];
+	mstruct /= mstruct2;
+	return true;
+}
+
+FactorialFunction::FactorialFunction() : Function("factorial", 1) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+}
+bool FactorialFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(factorial)
+}
+BinomialFunction::BinomialFunction() : Function("binomial", 2) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true));
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, true));
+	setCondition("\\x>=\\y");
+}
+bool BinomialFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	Number nr;
+	if(!nr.binomial(vargs[0].number(), vargs[1].number())) return false;
+	mstruct = nr;
+	return true;
+}
+
+AbsFunction::AbsFunction() : Function("abs", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+}
+bool AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isNumber()) {
+		FR_FUNCTION(abs)
+	} else if(vargs[0].representsNegative()) {
+		mstruct = vargs[0];
+		mstruct.negate();
+		return true;
+	} else if(vargs[0].representsNonNegative()) {
+		mstruct = vargs[0];
+		return true;
 	}
-	mngr->set(mngr2);
-	mngr2->unref();	
+	return false;
 }
-AdjointFunction::AdjointFunction() : Function("Matrices", "adj", 1, "Adjoint") {
-	setArgumentDefinition(1, new MatrixArgument());
-	argoccs[1] = -1;
-}
-void AdjointFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	if(!mngr->matrix()->adjoint()) {
-		mngr->set(this, vargs[0], NULL);
-	}
-}
-InverseFunction::InverseFunction() : Function("Matrices", "inverse", 1, "Inverse") {
-	setArgumentDefinition(1, new MatrixArgument());
-	argoccs[1] = -1;
-}
-void InverseFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	if(!mngr->matrix()->inverse()) {
-		mngr->set(this, vargs[0], NULL);
-	}
-}
-IFFunction::IFFunction() : Function("Logical", "if", 3, "If...Then...Else") {
-	NON_COMPLEX_NUMBER_ARGUMENT(1)
-	setArgumentDefinition(2, new TextArgument());
-	setArgumentDefinition(3, new TextArgument());
-}
-void IFFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	int result = vargs[0]->number()->getBoolean();
-	if(result) {			
-		Manager *mngr2 = CALCULATOR->calculate_sub(vargs[1]->text());
-		mngr->set(mngr2);
-		mngr2->unref();		
-	} else if(result == 0) {			
-		Manager *mngr2 = CALCULATOR->calculate_sub(vargs[2]->text());		
-		mngr->set(mngr2);
-		mngr2->unref();		
-	} else {
-		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
-	}	
-}
-GCDFunction::GCDFunction() : Function("Arithmetics", "gcd", 2, "Greatest Common Divisor") {
+GcdFunction::GcdFunction() : Function("gcd", 2) {
 	setArgumentDefinition(1, new IntegerArgument());
 	setArgumentDefinition(2, new IntegerArgument());
 }
-void GCDFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	mngr->number()->gcd(vargs[1]->number());
-	mngr->setPrecise(!mngr->number()->isApproximate());
+bool GcdFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION_2(gcd)
 }
-DaysFunction::DaysFunction() : Function("Date & Time", "days", 2, "Days between two dates", "", 4) {
+SignumFunction::SignumFunction() : Function("sgn", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+}
+bool SignumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(signum)
+}
+CeilFunction::CeilFunction() : Function("ceil", 1) {
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
+}
+bool CeilFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(ceil)
+}
+FloorFunction::FloorFunction() : Function("floor", 1) {
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
+}
+bool FloorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(floor)
+}
+TruncFunction::TruncFunction() : Function("trunc", 1) {
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
+}
+bool TruncFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(trunc)
+}
+RoundFunction::RoundFunction() : Function("round", 1) {
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
+}
+bool RoundFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(round)
+}
+FracFunction::FracFunction() : Function("frac", 1) {
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
+}
+bool FracFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(frac)
+}
+IntFunction::IntFunction() : Function("int", 1) {
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
+}
+bool IntFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(trunc)
+}
+RemFunction::RemFunction() : Function("rem", 2) {
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(2)
+}
+bool RemFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION_2(rem)
+}
+ModFunction::ModFunction() : Function("mod", 2) {
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(2)
+}
+bool ModFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION_2(mod)
+}
+
+ImFunction::ImFunction() : Function("im", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+}
+bool ImFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0].number().imaginaryPart();
+	return true;
+}
+ReFunction::ReFunction() : Function("re", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+}
+bool ReFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0].number().realPart();
+	return true;
+}
+ArgFunction::ArgFunction() : Function("arg", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+}
+bool ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	MathStructure m_re(CALCULATOR->f_re, &vargs[0], NULL);
+	MathStructure m_im(CALCULATOR->f_re, &vargs[0], NULL);
+	mstruct.set(CALCULATOR->f_atan, &m_im, &m_re, NULL);
+	return true;
+}
+
+SqrtFunction::SqrtFunction() : Function("sqrt", 1) {
+}
+bool SqrtFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	mstruct ^= MathStructure(1, 2);
+	return true;
+}
+SquareFunction::SquareFunction() : Function("sq", 1) {
+}
+bool SquareFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	mstruct ^= 2;
+	return true;
+}
+
+ExpFunction::ExpFunction() : Function("exp", 1) {
+}
+bool ExpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = CALCULATOR->v_e;
+	mstruct ^= vargs[0];
+	return true;
+}
+
+LogFunction::LogFunction() : Function("ln", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false));
+}
+bool LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+
+	mstruct = vargs[0]; 
+	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_EXACT;
+		CALCULATOR->beginTemporaryStopErrors();
+		mstruct.eval(eo2);
+		CALCULATOR->endTemporaryStopErrors();
+	} else {
+		mstruct.eval(eo);
+	}
+	bool b = false;
+	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_e) {
+		mstruct = 1;
+		b = true;
+	} else if(mstruct.isPower() && mstruct.base()->isVariable() && mstruct.base()->variable() == CALCULATOR->v_e && mstruct.exponent()->isNumber()) {
+		if(!mstruct.exponent()->number().isComplex() && !mstruct.exponent()->number().isInfinite()) {
+			mstruct = *mstruct.exponent();
+			b = true;
+		} else if(!mstruct.exponent()->number().isInfinite()) {
+			Number pi_nr(CALCULATOR->v_pi->get().number());
+			Number img_part(mstruct.exponent()->number().imaginaryPart());
+			if(img_part.isLessThanOrEqualTo(pi_nr)) {
+				pi_nr.negate();
+				if(img_part.isGreaterThan(pi_nr)) {
+					mstruct = *mstruct.exponent();
+					b = true;
+				}
+			}
+		}
+	}
+	if(b) {
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_EXACT;
+			MathStructure mstruct2 = vargs[0];
+			mstruct2.eval(eo2);
+		}
+		return true;
+	}
+	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_APPROXIMATE;
+		mstruct = vargs[0];
+		mstruct.eval(eo2);
+	}
+	if(mstruct.isNumber()) {
+		if(mstruct.number().isMinusOne()) {
+			mstruct = CALCULATOR->v_i->get();
+			mstruct *= CALCULATOR->v_pi;
+			return true;
+		} else if(mstruct.number().isI() || mstruct.number().isMinusI()) {
+			mstruct = Number(1, 2);
+			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->v_i->get();
+			return true;
+		} else if(mstruct.number().isMinusInfinity()) {
+			mstruct = CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->v_i->get();
+			Number nr; nr.setPlusInfinity();
+			mstruct += nr;
+			return true;
+		}
+		Number nr(mstruct.number());
+		if(nr.ln()) {
+			mstruct = nr;
+			return true;
+		}
+	}
+	return false;
+	
+}
+LognFunction::LognFunction() : Function("log", 1, 2) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false));
+	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false));
+	setDefaultValue(2, "e");
+}
+bool LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+
+	if(vargs[1].isVariable() && vargs[1].variable() == CALCULATOR->v_e) {
+		mstruct = vargs[0]; 
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_EXACT;
+			CALCULATOR->beginTemporaryStopErrors();
+			mstruct.eval(eo2);
+			CALCULATOR->endTemporaryStopErrors();
+		} else {
+			mstruct.eval(eo);
+		}
+		bool b = false;
+		if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_e) {
+			mstruct = 1;
+			b = true;
+		} else if(mstruct.isPower() && mstruct.base()->isVariable() && mstruct.base()->variable() == CALCULATOR->v_e && mstruct.exponent()->isNumber()) {
+			if(!mstruct.exponent()->number().isComplex() && !mstruct.exponent()->number().isInfinite()) {
+				mstruct = *mstruct.exponent();
+				b= true;
+			} else if(!mstruct.exponent()->number().isInfinite()) {
+				Number pi_nr(CALCULATOR->v_pi->get().number());
+				Number img_part(mstruct.exponent()->number().imaginaryPart());
+				if(img_part.isLessThanOrEqualTo(pi_nr)) {
+					pi_nr.negate();
+					if(img_part.isGreaterThan(pi_nr)) {
+						mstruct = *mstruct.exponent();
+						b = true;
+					}
+				}
+			}
+		}
+		if(b) {
+			if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+				EvaluationOptions eo2 = eo;
+				eo2.approximation = APPROXIMATION_EXACT;
+				MathStructure mstruct2 = vargs[0];
+				mstruct2.eval(eo2);
+			}
+			return true;
+		}
+		if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_APPROXIMATE;
+			mstruct = vargs[0];
+			mstruct.eval(eo2);
+		}
+		if(mstruct.isNumber()) {
+			if(mstruct.number().isMinusOne()) {
+				mstruct = CALCULATOR->v_i->get();
+				mstruct *= CALCULATOR->v_pi;
+				return true;
+			} else if(mstruct.number().isI() || mstruct.number().isMinusI()) {
+				mstruct = Number(1, 2);
+				mstruct *= CALCULATOR->v_pi;
+				mstruct *= CALCULATOR->v_i->get();
+				return true;
+			} else if(mstruct.number().isMinusInfinity()) {
+				mstruct = CALCULATOR->v_pi;
+				mstruct *= CALCULATOR->v_i->get();
+				Number nr; nr.setPlusInfinity();
+				mstruct += nr;
+				return true;
+			}
+			Number nr(mstruct.number());
+			if(nr.ln()) {
+				mstruct = nr;
+				return true;
+			}
+		}	
+		return false;
+	}
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	if(vargs[0].isNumber() && vargs[1].isNumber()) {
+		Number nr(mstruct.number());
+		if(nr.log(vargs[1].number())) {
+			mstruct = nr;
+			return true;
+		}
+	} 
+	mstruct.set(CALCULATOR->f_ln, &vargs[0], NULL);
+	mstruct /= MathStructure(CALCULATOR->f_ln, &vargs[1], NULL);
+	return true;
+}
+
+SinFunction::SinFunction() : Function("sin", 1) {
+	setArgumentDefinition(1, new AngleArgument());
+}
+bool SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+
+	mstruct = vargs[0]; 
+	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_EXACT;
+		CALCULATOR->beginTemporaryStopErrors();
+		mstruct.eval(eo2);
+		CALCULATOR->endTemporaryStopErrors();
+	} else {
+		mstruct.eval(eo);
+	}
+	bool b = false;
+	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_pi) {
+		mstruct.clear();
+		b = true;
+	} else if(mstruct.isFunction() && mstruct.size() == 1) {
+		if(mstruct.function() == CALCULATOR->f_asin) {
+			MathStructure mstruct_new(mstruct[0]);
+			mstruct = mstruct_new;
+			b = true;
+		}
+	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi) {
+		if(mstruct[0].number().isInteger()) {
+			mstruct.clear();
+			b = true;
+		} else if(!mstruct[0].number().isComplex() && !mstruct[0].number().isInfinite()) {
+			if(mstruct[0].number().equals(Number(1, 2))) {
+				mstruct = 1;
+				b = true;
+			} else if(mstruct[0].number().equals(Number(-1, 2))) {
+				mstruct = -1;
+				b = true;
+			} else if(mstruct[0].number().equals(Number(1, 4))) {
+				mstruct.set(2);
+				mstruct ^= MathStructure(1, 2);
+				mstruct /= 2;
+				b = true;
+			} else if(mstruct[0].number().equals(Number(-1, 4))) {
+				mstruct.set(2);
+				mstruct ^= MathStructure(1, 2);
+				mstruct /= 2;
+				mstruct.negate();
+				b = true;
+			} else if(mstruct[0].number().equals(Number(1, 3))) {
+				mstruct.set(3);
+				mstruct ^= MathStructure(1, 2);
+				mstruct /= 2;
+				b = true;
+			} else if(mstruct[0].number().equals(Number(-1, 3))) {
+				mstruct.set(3);
+				mstruct ^= MathStructure(1, 2);
+				mstruct /= 2;
+				mstruct.negate();
+				b = true;
+			} else if(mstruct[0].number().equals(Number(1, 6))) {
+				mstruct.set(1, 2);
+				b = true;
+			} else if(mstruct[0].number().equals(Number(-1, 6))) {
+				mstruct.set(-1, 2);
+				b = true;
+			}
+		}
+	} else if(mstruct.isAddition()) {
+		unsigned int i = 0;
+		for(; i < mstruct.size(); i++) {
+			if(mstruct[i] == CALCULATOR->v_pi || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1] == CALCULATOR->v_pi && mstruct[i][0].isNumber() && mstruct[i][0].number().isInteger())) {
+				b = true;
+				break;
+			}
+		}
+		if(b) {
+			MathStructure mstruct2;
+			for(unsigned int i2 = 0; i2 < mstruct.size(); i2++) {
+				if(i2 != i) {
+					if(mstruct2.isZero()) {
+						mstruct2 = mstruct[i2];
+					} else {
+						mstruct2.add(mstruct[i2], true);
+					}
+				}
+			}
+			mstruct.set(CALCULATOR->f_sin, &mstruct2, NULL);
+		}
+	}
+	if(b) {
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_EXACT;
+			MathStructure mstruct2 = vargs[0];
+			mstruct2.eval(eo2);
+		}
+		return true;
+	}
+	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_APPROXIMATE;
+		mstruct = vargs[0];
+		mstruct.eval(eo2);
+	}
+	if(mstruct.isNumber()) {
+		Number nr(mstruct.number());
+		if(nr.sin()) {
+			mstruct = nr;
+			return true;
+		}
+	}
+	if(mstruct.isNegate()) {
+		MathStructure mstruct2(CALCULATOR->f_sin, &mstruct[0], NULL);
+		mstruct = mstruct2;
+		mstruct.negate();
+		return true;
+	}
+	return false;
+}
+CosFunction::CosFunction() : Function("cos", 1) {
+	setArgumentDefinition(1, new AngleArgument());
+}
+bool CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+
+	mstruct = vargs[0]; 
+	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_EXACT;
+		CALCULATOR->beginTemporaryStopErrors();
+		mstruct.eval(eo2);
+		CALCULATOR->endTemporaryStopErrors();
+	} else {
+		mstruct.eval(eo);
+	}
+	bool b = false;
+	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_pi) {
+		mstruct = -1;
+		b = true;
+	} else if(mstruct.isFunction() && mstruct.size() == 1) {
+		if(mstruct.function() == CALCULATOR->f_acos) {
+			MathStructure mstruct_new(mstruct[0]);
+			mstruct = mstruct_new;
+			b = true;
+		}
+	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi) {
+		if(mstruct[0].number().isInteger()) {
+			if(mstruct[0].number().numeratorIsEven()) {
+				mstruct = -1;
+			} else {
+				mstruct = 1;
+			}
+			b = true;
+		} else if(!mstruct[0].number().isComplex() && !mstruct[0].number().isInfinite()) {
+			Number nr(mstruct[0].number());
+			nr.setNegative(false);
+			if(mstruct[0].number().equals(Number(1, 2))) {
+				mstruct.clear();
+				b = true;
+			} else if(mstruct[0].number().equals(Number(1, 4))) {
+				mstruct.set(2);
+				mstruct ^= MathStructure(1, 2);
+				mstruct /= 2;
+				b = true;
+			} else if(mstruct[0].number().equals(Number(1, 6))) {
+				mstruct.set(3);
+				mstruct ^= MathStructure(1, 2);
+				mstruct /= 2;
+				b = true;
+			} else if(mstruct[0].number().equals(Number(1, 3))) {
+				mstruct.set(1, 2);
+				b = true;
+			}
+		}
+	} else if(mstruct.isAddition()) {
+		unsigned int i = 0;
+		for(; i < mstruct.size(); i++) {
+			if(mstruct[i] == CALCULATOR->v_pi || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1] == CALCULATOR->v_pi && mstruct[i][0].isNumber() && mstruct[i][0].number().isInteger())) {
+				b = true;
+				break;
+			}
+		}
+		if(b) {
+			MathStructure mstruct2;
+			for(unsigned int i2 = 0; i2 < mstruct.size(); i2++) {
+				if(i2 != i) {
+					if(mstruct2.isZero()) {
+						mstruct2 = mstruct[i2];
+					} else {
+						mstruct2.add(mstruct[i2], true);
+					}
+				}
+			}
+			mstruct.set(CALCULATOR->f_cos, &mstruct2, NULL);
+			mstruct.negate();
+		}
+	}
+	if(b) {
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_EXACT;
+			MathStructure mstruct2 = vargs[0];
+			mstruct2.eval(eo2);
+		}
+		return true;
+	}
+	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_APPROXIMATE;
+		mstruct = vargs[0];
+		mstruct.eval(eo2);
+	}
+	if(mstruct.isNumber()) {
+		Number nr(mstruct.number());
+		if(nr.cos()) {
+			mstruct = nr;
+			return true;
+		}
+	}
+	return false;
+}
+TanFunction::TanFunction() : Function("tan", 1) {
+	setArgumentDefinition(1, new AngleArgument());
+}
+bool TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct.set(CALCULATOR->f_sin, &vargs[0], NULL);
+	mstruct /= MathStructure(CALCULATOR->f_cos, &vargs[0], NULL);
+	return true;
+}
+AsinFunction::AsinFunction() : Function("asin", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+}
+bool AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	
+	if(vargs[0].number().isZero()) {
+		mstruct.clear();
+	} else if(vargs[0].number().isOne()) {
+		switch(CALCULATOR->angleMode()) {
+			case DEGREES: {
+				mstruct.set(90, 1);
+				break;
+			}
+			case GRADIANS: {
+				mstruct.set(100, 1);
+				break;
+			}
+			default: {
+				mstruct.set(1, 2);
+				mstruct *= CALCULATOR->v_pi;
+			}
+		}
+	} else if(vargs[0].number().isMinusOne()) {
+		switch(CALCULATOR->angleMode()) {
+			case DEGREES: {
+				mstruct.set(-90, 1);
+				break;
+			}
+			case GRADIANS: {
+				mstruct.set(-100, 1);
+				break;
+			}
+			default: {
+				mstruct.set(-1, 2);
+				mstruct *= CALCULATOR->v_pi;
+			}
+		}
+	} else if(vargs[0].number().equals(Number(1, 2))) {
+		switch(CALCULATOR->angleMode()) {
+			case DEGREES: {
+				mstruct.set(30, 1);
+				break;
+			}
+			case GRADIANS: {
+				mstruct.set(100, 3);
+				break;
+			}
+			default: {
+				mstruct.set(1, 6);
+				mstruct *= CALCULATOR->v_pi;
+			}
+		}
+	} else {
+		Number nr = vargs[0].number();
+		if(!nr.asin()) return false;
+		mstruct = nr;
+		switch(CALCULATOR->angleMode()) {
+			case DEGREES: {
+				mstruct *= 180;
+		    		mstruct /= CALCULATOR->v_pi;
+				break;
+			}
+			case GRADIANS: {
+				mstruct *= 200;
+	    			mstruct /= CALCULATOR->v_pi;
+				break;
+			}
+		}
+	}
+	return true;
+	
+}
+AcosFunction::AcosFunction() : Function("acos", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+}
+bool AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	
+	if(vargs[0].number().isZero()) {
+		switch(CALCULATOR->angleMode()) {
+			case DEGREES: {
+				mstruct.set(90, 1);
+				break;
+			}
+			case GRADIANS: {
+				mstruct.set(100, 1);
+				break;
+			}
+			default: {
+				mstruct.set(1, 2);
+				mstruct *= CALCULATOR->v_pi;
+			}
+		}
+	} else if(vargs[0].number().isOne()) {
+		mstruct.clear();
+	} else if(vargs[0].number().isMinusOne()) {
+		switch(CALCULATOR->angleMode()) {
+			case DEGREES: {
+				mstruct.set(180, 1);
+				break;
+			}
+			case GRADIANS: {
+				mstruct.set(200, 1);
+				break;
+			}
+			default: {
+				mstruct = CALCULATOR->v_pi;
+			}
+		}
+	} else if(vargs[0].number().equals(Number(1, 2))) {
+		switch(CALCULATOR->angleMode()) {
+			case DEGREES: {
+				mstruct.set(60, 1);
+				break;
+			}
+			case GRADIANS: {
+				mstruct.set(200, 3);
+				break;
+			}
+			default: {
+				mstruct.set(1, 3);
+				mstruct *= CALCULATOR->v_pi;
+			}
+		}
+	} else {
+		Number nr = vargs[0].number();
+		if(!nr.acos()) return false;
+		mstruct = nr;
+		switch(CALCULATOR->angleMode()) {
+			case DEGREES: {
+				mstruct *= 180;
+		    		mstruct /= CALCULATOR->v_pi;
+				break;
+			}
+			case GRADIANS: {
+				mstruct *= 200;
+	    			mstruct /= CALCULATOR->v_pi;
+				break;
+			}
+		}
+	}
+	return true;
+	
+}
+AtanFunction::AtanFunction() : Function("atan", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+}
+bool AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	
+	if(vargs[0].number().isZero()) {
+		mstruct.clear();
+	} else if(vargs[0].number().isI()) {
+		mstruct = vargs[0];
+		Number nr; nr.setInfinity();
+		mstruct *= nr;
+	} else if(vargs[0].number().isMinusI()) {
+		mstruct = vargs[0];
+		Number nr; nr.setInfinity();
+		mstruct *= nr;
+	} else if(vargs[0].number().isPlusInfinity()) {
+		mstruct.set(1, 2);
+		mstruct *= CALCULATOR->v_pi;
+	} else if(vargs[0].number().isMinusInfinity()) {
+		mstruct.set(-1, 2);
+		mstruct *= CALCULATOR->v_pi;
+	} else {
+		Number nr = vargs[0].number();
+		if(!nr.atan()) return false;
+		mstruct = nr;
+	}
+	return true;
+	
+}
+SinhFunction::SinhFunction() : Function("sinh", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+}
+bool SinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(sinh)
+}
+CoshFunction::CoshFunction() : Function("cosh", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));	
+}
+bool CoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(cosh)
+}
+TanhFunction::TanhFunction() : Function("tanh", 1) {}
+bool TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct.set(CALCULATOR->f_sinh, &vargs[0], NULL);
+	mstruct /= MathStructure(CALCULATOR->f_cosh, &vargs[0], NULL);
+	return true;
+}
+AsinhFunction::AsinhFunction() : Function("asinh", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+}
+bool AsinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	MathStructure m_arg(vargs[0]);
+	m_arg ^= 2;
+	m_arg += 1;
+	m_arg ^= Number(1, 2);
+	m_arg += vargs[0];
+	mstruct.set(CALCULATOR->f_ln, &m_arg, NULL);
+	return true;
+}
+AcoshFunction::AcoshFunction() : Function("acosh", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+}
+bool AcoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	MathStructure m_arg(vargs[0]);
+	m_arg ^= 2;
+	m_arg -= 1;
+	m_arg ^= Number(1, 2);
+	m_arg += vargs[0];
+	mstruct.set(CALCULATOR->f_ln, &m_arg, NULL);
+	return true;
+}
+AtanhFunction::AtanhFunction() : Function("atanh", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+}
+bool AtanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	
+	MathStructure m_arg = 1;
+	m_arg += vargs[0];
+	MathStructure m_den = 1;
+	m_den -= vargs[0];
+	m_arg /= m_den;
+	mstruct.set(CALCULATOR->f_ln, &m_arg, NULL);
+	mstruct *= Number(1, 2);
+	return true;
+	
+}
+
+RadiansToDefaultAngleUnitFunction::RadiansToDefaultAngleUnitFunction() : Function("radtodef", 1) {
+}
+bool RadiansToDefaultAngleUnitFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	switch(CALCULATOR->angleMode()) {
+		case DEGREES: {
+			mstruct *= 180;
+	    		mstruct /= CALCULATOR->v_pi;
+			break;
+		}
+		case GRADIANS: {
+			mstruct *= 200;
+	    		mstruct /= CALCULATOR->v_pi;
+			break;
+		}
+	}
+	return true;
+}
+
+TotalFunction::TotalFunction() : Function("total", 1) {
+	setArgumentDefinition(1, new VectorArgument(""));
+}
+bool TotalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct.clear();
+	for(unsigned int index = 0; index < vargs[0].size(); index++) {
+		mstruct.add(vargs[0][index], true);
+	}
+	return true;
+}
+PercentileFunction::PercentileFunction() : Function("percentile", 2) {
+	NumberArgument *arg = new NumberArgument();
+	Number fr;
+	arg->setMin(&fr);
+	fr.set(99, 1);
+	arg->setMax(&fr);
+	arg->setIncludeEqualsMin(false);
+	arg->setIncludeEqualsMax(false);
+	setArgumentDefinition(1, arg);
+	setArgumentDefinition(2, new VectorArgument(""));
+}
+bool PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	MathStructure v(vargs[1]);
+	MathStructure *mp;
+	Number fr100(100);
+	if(!v.sort()) {
+		return false;
+	} else {
+		Number pfr(vargs[0].number());		
+		pfr /= 100;
+		pfr *= v.components() + 1;
+/*		Number cfr(v->components());		
+		if(pfr.isZero() || pfr.numerator()->isLessThan(pfr.denominator()) || pfr.isGreaterThan(&cfr)) {
+			CALCULATOR->error(true, _("Not enough samples."), NULL);
+		}*/
+		if(pfr.isInteger()) {
+			mp = v.getComponent(pfr.intValue());
+			if(!mp) return false;
+			mstruct = *mp;
+		} else {
+			Number ufr(pfr);
+			ufr.ceil();
+			Number lfr(pfr);
+			lfr.floor();
+			pfr -= lfr;
+			mp = v.getComponent(ufr.intValue());
+			if(!mp) return false;
+			MathStructure gap(*mp);
+			mp = v.getComponent(lfr.intValue());
+			if(!mp) return false;
+			gap -= *mp;
+			gap *= pfr;
+			mp = v.getComponent(lfr.intValue());
+			if(!mp) return false;
+			mstruct = *mp;
+			mstruct += gap;
+		}
+	}
+	return true;
+}
+MinFunction::MinFunction() : Function("min", 1) {
+	setArgumentDefinition(1, new VectorArgument(""));
+}
+bool MinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	int cmp;
+	const MathStructure *min = NULL;
+	for(unsigned int index = 0; index < vargs[0].size(); index++) {
+		if(min == NULL) {
+			min = &vargs[0][index];
+		} else {
+			cmp = min->compare(vargs[0][index]);
+			if(cmp == -1) {
+				min = &vargs[0][index];
+			} else if(cmp < -1) {
+				if(CALCULATOR->showArgumentErrors()) {
+					CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
+				}
+				return false;
+			}
+		}
+	}
+	if(min) {
+		mstruct = *min;
+		return true;
+	}
+	return false;
+}
+MaxFunction::MaxFunction() : Function("max", 1) {
+	setArgumentDefinition(1, new VectorArgument(""));
+}
+bool MaxFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	int cmp;
+	const MathStructure *max = NULL;
+	for(unsigned int index = 0; index < vargs[0].size(); index++) {
+		if(max == NULL) {
+			max = &vargs[0][index];
+		} else {
+			cmp = max->compare(vargs[0][index]);
+			if(cmp == 1) {
+				max = &vargs[0][index];
+			} else if(cmp < -1) {
+				if(CALCULATOR->showArgumentErrors()) {
+					CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
+				}
+				return false;
+			}
+		}
+	}
+	if(max) {
+		mstruct = *max;
+		return true;
+	}
+	return false;
+}
+ModeFunction::ModeFunction() : Function("mode", 1) {
+	setArgumentDefinition(1, new VectorArgument(""));
+}
+bool ModeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].size() <= 0) {
+		return false;
+	}
+	int n = 0;
+	bool b;
+	vector<const MathStructure*> vargs_nodup;
+	vector<int> is;
+	const MathStructure *value = NULL;
+	for(unsigned int index_c = 0; index_c < vargs[0].size(); index_c++) {
+		b = true;
+		for(unsigned int index = 0; index < vargs_nodup.size(); index++) {
+			if(vargs_nodup[index]->equals(vargs[0][index_c])) {
+				is[index]++;
+				b = false;
+				break;
+			}
+		}
+		if(b) {
+			vargs_nodup.push_back(&vargs[0][index_c]);
+			is.push_back(1);
+		}
+	}
+	for(unsigned int index = 0; index < is.size(); index++) {
+		if(is[index] > n) {
+			n = is[index];
+			value = vargs_nodup[index];
+		}
+	}
+	if(value) {
+		mstruct = *value;
+		return true;
+	}
+	return false;
+}
+RandFunction::RandFunction() : Function("rand", 0, 1) {
+	setArgumentDefinition(1, new IntegerArgument());
+	setDefaultValue(1, "-1"); 
+}
+bool RandFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].number().isNegative()) {
+		Number nr;
+		nr.setInternal(cln::random_F(cln::cl_float(1)));
+		mstruct = nr;
+	} else {
+		Number nr;
+		nr.setInternal(cln::random_I(cln::numerator(cln::rational(cln::realpart(vargs[0].number().internalNumber())))));
+		mstruct = nr;
+	}
+	return true;
+}
+
+DaysFunction::DaysFunction() : Function("days", 2, 4) {
 	setArgumentDefinition(1, new DateArgument());
 	setArgumentDefinition(2, new DateArgument());	
 	IntegerArgument *arg = new IntegerArgument();
@@ -1032,16 +1273,16 @@ DaysFunction::DaysFunction() : Function("Date & Time", "days", 2, "Days between 
 	setArgumentDefinition(4, new BooleanArgument());				
 	setDefaultValue(3, "1"); 
 }
-void DaysFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	int days = daysBetweenDates(vargs[0]->text(), vargs[1]->text(), vargs[2]->number()->intValue(), vargs[3]->number()->isZero());
+bool DaysFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	int days = daysBetweenDates(vargs[0].symbol(), vargs[1].symbol(), vargs[2].number().intValue(), vargs[3].number().isZero());
 	if(days < 0) {
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
-		mngr->set(this, vargs[0], vargs[1], vargs[2], vargs[3], NULL);			
-	} else {
-		mngr->set(days, 1, 0);
-	}			
+		return false;
+	}
+	mstruct.set(days, 1, 0);
+	return true;			
 }
-YearFracFunction::YearFracFunction() : Function("Date & Time", "yearfrac", 2, "Years between two dates", "", 4) {
+YearFracFunction::YearFracFunction() : Function("yearfrac", 2, 4) {
 	setArgumentDefinition(1, new DateArgument());
 	setArgumentDefinition(2, new DateArgument());	
 	IntegerArgument *arg = new IntegerArgument();
@@ -1053,831 +1294,160 @@ YearFracFunction::YearFracFunction() : Function("Date & Time", "yearfrac", 2, "Y
 	setArgumentDefinition(4, new BooleanArgument());		
 	setDefaultValue(3, "1");
 }
-void YearFracFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Number *fr = yearsBetweenDates(vargs[0]->text(), vargs[1]->text(), vargs[2]->number()->intValue(), vargs[3]->number()->isZero());
-	if(!fr) {
+bool YearFracFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	Number yfr = yearsBetweenDates(vargs[0].symbol(), vargs[1].symbol(), vargs[2].number().intValue(), vargs[3].number().isZero());
+	if(yfr.isMinusOne()) {
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
-		mngr->set(this, vargs[0], vargs[1], vargs[2], vargs[3], NULL);			
-	} else {
-		mngr->set(fr);
+		return false;
 	}
-	delete fr;
+	mstruct.set(yfr);
+	return true;
 }
-WeekFunction::WeekFunction() : Function("Date & Time", "week", 0, "Week of Year", "", 2) {
+WeekFunction::WeekFunction() : Function("week", 0, 2) {
 	setArgumentDefinition(1, new DateArgument());
 	setArgumentDefinition(2, new BooleanArgument());	
 	setDefaultValue(1, "\"today\"");
 }
-void WeekFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	int w = week(vargs[0]->text(), vargs[1]->number()->getBoolean());
+bool WeekFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	int w = week(vargs[0].symbol(), vargs[1].number().getBoolean());
 	if(w < 0) {
-		mngr->set(this, vargs[0], vargs[1], NULL);
-	} else {
-		mngr->set(w, 1);
+		return false;
 	}
+	mstruct.set(w, 1);
+	return true;
 }
-WeekdayFunction::WeekdayFunction() : Function("Date & Time", "weekday", 0, "Day of Week", "", 2) {
+WeekdayFunction::WeekdayFunction() : Function("weekday", 0, 2) {
 	setArgumentDefinition(1, new DateArgument());
 	setArgumentDefinition(2, new BooleanArgument());
 	setDefaultValue(1, "\"today\"");
 }
-void WeekdayFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	int w = weekday(vargs[0]->text());
+bool WeekdayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	int w = weekday(vargs[0].symbol());
 	if(w < 0) {
-		mngr->set(this, vargs[0], vargs[1], NULL);
-	} else {
-		if(vargs[1]->number()->getBoolean()) {
-			if(w == 7) w = 1;
-			else w++;
-		}
-		mngr->set(w, 1);
+		return false;
 	}
+	if(vargs[1].number().getBoolean()) {
+		if(w == 7) w = 1;
+		else w++;
+	}
+	mstruct.set(w, 1);
+	return true;
 }
-YeardayFunction::YeardayFunction() : Function("Date & Time", "yearday", 0, "Day of Year", "", 1) {
+YeardayFunction::YeardayFunction() : Function("yearday", 0, 1) {
 	setArgumentDefinition(1, new DateArgument());
 	setDefaultValue(1, "\"today\"");
 }
-void YeardayFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	int d = yearday(vargs[0]->text());
+bool YeardayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	int d = yearday(vargs[0].symbol());
 	if(d < 0) {
-		mngr->set(this, vargs[0], NULL);
-	} else {
-		mngr->set(d, 1);
+		return false;
 	}
+	mstruct.set(d, 1);
+	return true;
 }
-MonthFunction::MonthFunction() : Function("Date & Time", "month", 0, "Month", "", 1) {
+MonthFunction::MonthFunction() : Function("month", 0, 1) {
 	setArgumentDefinition(1, new DateArgument());
 	setDefaultValue(1, "\"today\"");
 }
-void MonthFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+bool MonthFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int year, month, day;
-	bool b = s2date(vargs[0]->text(), year, month, day);
-	if(!b) {
-		mngr->set(this, vargs[0], NULL);
-	} else {
-		mngr->set(month, 1);
+	if(!s2date(vargs[0].symbol(), year, month, day)) {
+		return false;
 	}
+	mstruct.set(month, 1);
+	return true;
 }
-DayFunction::DayFunction() : Function("Date & Time", "day", 0, "Day of Month", "", 1) {
+DayFunction::DayFunction() : Function("day", 0, 1) {
 	setArgumentDefinition(1, new DateArgument());
 	setDefaultValue(1, "\"today\"");
 }
-void DayFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+bool DayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int year, month, day;
-	bool b = s2date(vargs[0]->text(), year, month, day);
-	if(!b) {
-		mngr->set(this, vargs[0], NULL);
-	} else {
-		mngr->set(day, 1);
+	if(!s2date(vargs[0].symbol(), year, month, day)) {
+		return false;
 	}
+	mstruct.set(day, 1);
+	return true;
 }
-YearFunction::YearFunction() : Function("Date & Time", "year", 0, "Year", "", 1) {
+YearFunction::YearFunction() : Function("year", 0, 1) {
 	setArgumentDefinition(1, new DateArgument());
 	setDefaultValue(1, "\"today\"");
 }
-void YearFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+bool YearFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int year, month, day;
-	bool b = s2date(vargs[0]->text(), year, month, day);
-	if(!b) {
-		mngr->set(this, vargs[0], NULL);
-	} else {
-		mngr->set(year, 1);
+	if(!s2date(vargs[0].symbol(), year, month, day)) {
+		return false;
 	}
+	mstruct.set(year, 1);
+	return true;
 }
-TimeFunction::TimeFunction() : Function("Date & Time", "time", 0, "Current Time", "") {
+TimeFunction::TimeFunction() : Function("time", 0) {
 }
-void TimeFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+bool TimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int hour, min, sec;
 	now(hour, min, sec);
-	mngr->set(sec, 1);
-	mngr->number()->divide(60);
-	mngr->number()->add(min);
-	mngr->number()->divide(60);
-	mngr->number()->add(hour);
-}
-FactorialFunction::FactorialFunction() : Function("Arithmetics", "factorial", 1, "Factorial") {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, false));
-}
-void FactorialFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	if(!mngr->number()->factorial()) {
-		mngr->set(this, vargs[0], NULL);
-	}
-}
-BinomialFunction::BinomialFunction() : Function("Arithmetics", "binomial", 2, "Binomial") {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true));
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, true));
-	setCondition("\\x>=\\y");
-}
-void BinomialFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->clear();
-	if(!mngr->number()->binomial(vargs[0]->number(), vargs[1]->number())) {
-		mngr->set(this, vargs[0], vargs[1], NULL);
-	}
-}
-AbsFunction::AbsFunction() : Function("Arithmetics", "abs", 1, "Absolute Value") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
-}
-void AbsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	if(!mngr->number()->abs()) {
-		mngr->set(this, vargs[0], NULL);	
-	}
-	mngr->setPrecise(!mngr->number()->isApproximate());
-}
-SignumFunction::SignumFunction() : Function("Arithmetics", "sgn", 1, "Signum") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
-}
-void SignumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	if(!mngr->number()->signum()) {
-		mngr->set(this, vargs[0], NULL);	
-	}
-	mngr->setPrecise(!mngr->number()->isApproximate());
-}
-CeilFunction::CeilFunction() : Function("Arithmetics", "ceil", 1, "Round upwards") {
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
-}
-void CeilFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	mngr->number()->ceil();
-	mngr->setPrecise(!mngr->number()->isApproximate());
-}
-FloorFunction::FloorFunction() : Function("Arithmetics", "floor", 1, "Round downwards") {
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
-}
-void FloorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	mngr->number()->floor();
-	mngr->setPrecise(!mngr->number()->isApproximate());
-}
-TruncFunction::TruncFunction() : Function("Arithmetics", "trunc", 1, "Round towards zero") {
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
-}
-void TruncFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	mngr->number()->trunc();
-	mngr->setPrecise(!mngr->number()->isApproximate());
-}
-RoundFunction::RoundFunction() : Function("Arithmetics", "round", 1, "Round") {
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
-}
-void RoundFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	mngr->number()->round();
-	mngr->setPrecise(!mngr->number()->isApproximate());
-}
-FracFunction::FracFunction() : Function("Arithmetics", "frac", 1, "Extract numberal part") {
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
-}
-void FracFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	mngr->number()->frac();
-	mngr->setPrecise(!mngr->number()->isApproximate());
-}
-ImaginaryPartFunction::ImaginaryPartFunction() : Function("Analysis", "im", 1, "Imaginary Part") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
-}
-void ImaginaryPartFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Number *imag = vargs[0]->number()->imaginaryPart();
-	mngr->set(imag);
-	delete imag;
-	mngr->setPrecise(!mngr->number()->isApproximate());
-}
-RealPartFunction::RealPartFunction() : Function("Analysis", "re", 1, "Real Part") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
-}
-void RealPartFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Number *real = vargs[0]->number()->realPart();
-	mngr->set(real);
-	delete real;
-	mngr->setPrecise(!mngr->number()->isApproximate());
-}
-IntFunction::IntFunction() : Function("Arithmetics", "int", 1, "Extract integer part") {
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
-}
-void IntFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	mngr->number()->trunc();
-	mngr->setPrecise(!mngr->number()->isApproximate());
-}
-RemFunction::RemFunction() : Function("Arithmetics", "rem", 2, "Reminder (rem)") {
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(2)
-}
-void RemFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);	
-	mngr->number()->rem(vargs[1]->number());
-	mngr->setPrecise(!mngr->number()->isApproximate());
-}
-ModFunction::ModFunction() : Function("Arithmetics", "mod", 2, "Reminder (mod)") {
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(2)
-}
-void ModFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);	
-	mngr->number()->mod(vargs[1]->number());
-	mngr->setPrecise(!mngr->number()->isApproximate());
+	Number tnr(sec, 1);
+	tnr /= 60;
+	tnr += min;
+	tnr /= 60;
+	tnr += hour;
+	mstruct = tnr;
+	return true;
 }
 
-/*void SinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]); 
-	if(mngr->isVariable() && mngr->variable() == CALCULATOR->getPI()) {
-		mngr->clear();
-		return;
-	} else if(mngr->isMultiplication() && mngr->countChilds() == 2 && mngr->getChild(0)->isNumber() && mngr->getChild(1)->isVariable() && mngr->getChild(1)->variable() == CALCULATOR->getPI()) {
-		if(mngr->getChild(0)->number()->isInteger()) {
-			mngr->clear();
-			return;
-		} else if(!mngr->getChild(0)->number()->isComplex()) {
-			if(mngr->getChild(0)->number()->equals(1, 2)) {
-				mngr->set(1, 1);
-				return;
-			}
-			if(mngr->getChild(0)->number()->equals(-1, 2)) {
-				mngr->set(-1, 1);
-				return;
-			}
-			if(mngr->getChild(0)->number()->equals(1, 6)) {
-				mngr->set(1, 2);
-				return;
-			}
-			if(mngr->getChild(0)->number()->equals(-1, 6)) {
-				mngr->set(-1, 2);
-				return;
-			}
-		}
-	}
-	mngr->recalculateVariables();
-	if(!mngr->isNumber() || !mngr->number()->sin()) {
-		vargs[0]->recalculateVariables();
-		mngr->set(this, vargs[0], NULL);
-	} else {
-		mngr->setPrecise(!mngr->number()->isApproximate());
-	}
-}*/
-LogFunction::LogFunction() : Function("Exponents and Logarithms", "ln", 1, "Natural Logarithm") {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
+BinFunction::BinFunction() : Function("bin", 1) {
+	setArgumentDefinition(1, new TextArgument());
 }
-void LogFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isNumber()) {
-		if(vargs[0]->number()->isMinusOne()) {
-			mngr->clear();
-			Number cmplx(1, 1);
-			mngr->number()->setImaginaryPart(&cmplx);
-			Manager mngr2(CALCULATOR->getPI());
-			mngr->add(&mngr2, OPERATION_MULTIPLY);
-			return;
-		}
-		if(vargs[0]->number()->isComplex() && !vargs[0]->number()->hasRealPart()) {
-			if(vargs[0]->number()->isI() || vargs[0]->number()->isMinusI()) {
-				mngr->set(vargs[0]);
-				mngr->addInteger(2, OPERATION_DIVIDE);
-				Manager mngr2(CALCULATOR->getPI());
-				mngr->add(&mngr2, OPERATION_MULTIPLY);
-				return;
-			}
-		}
-		mngr->set(vargs[0]);
-		if(mngr->number()->ln()) {
-			mngr->setPrecise(!mngr->number()->isApproximate());
-			return;
-		}
-	}
-	if(vargs[0]->isVariable() && vargs[0]->variable() == CALCULATOR->getE()) {
-		mngr->set(1, 1);
-		return;
-	} else if(vargs[0]->isPower() && vargs[0]->base()->isVariable() && vargs[0]->base()->variable() == CALCULATOR->getE() && vargs[0]->exponent()->isNumber()) {
-		if(!vargs[0]->exponent()->number()->isComplex()) {
-			mngr->set(vargs[0]->exponent());
-			return;
-		} else {
-			Number pi_nr(CALCULATOR->getPI()->get()->number());
-			Number *img_part = vargs[0]->exponent()->number()->imaginaryPart();
-			if(img_part->isLessThanOrEqualTo(&pi_nr)) {
-				pi_nr.negate();
-				if(img_part->isGreaterThan(&pi_nr)) {
-					mngr->set(vargs[0]->exponent());
-					delete img_part;
-					return;
-				}
-			}
-			delete img_part;
-		}
-	}
-	mngr->set(this, vargs[0], NULL);			
+bool BinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = Number(vargs[0].symbol(), 2);
+	return true;
 }
-LognFunction::LognFunction() : Function("Exponents and Logarithms", "log", 1, "Base-N Logarithm", "", 2) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
-	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
-	setDefaultValue(2, "e");
+OctFunction::OctFunction() : Function("oct", 1) {
+	setArgumentDefinition(1, new TextArgument());
 }
-void LognFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isNumber() && vargs[1]->isNumber()) {
-		mngr->set(vargs[0]);
-		if(mngr->number()->log(vargs[1]->number())) {
-			mngr->setPrecise(!mngr->number()->isApproximate());
-			return;
-		}
-	} else if(vargs[1]->isVariable() && vargs[1]->variable() == CALCULATOR->getE()) {
-		if(vargs[0]->isNumber()) {
-			if(vargs[0]->number()->isMinusOne()) {
-				mngr->clear();
-				Number cmplx(1, 1);
-				mngr->number()->setImaginaryPart(&cmplx);
-				Manager mngr2(CALCULATOR->getPI());
-				mngr->add(&mngr2, OPERATION_MULTIPLY);
-				return;
-			}
-			if(vargs[0]->number()->isComplex() && !vargs[0]->number()->hasRealPart()) {
-				if(vargs[0]->number()->isI() || vargs[0]->number()->isMinusI()) {
-					mngr->set(vargs[0]);
-					mngr->addInteger(2, OPERATION_DIVIDE);
-					Manager mngr2(CALCULATOR->getPI());
-					mngr->add(&mngr2, OPERATION_MULTIPLY);
-					return;
-				}
-			}
-			mngr->set(vargs[0]);
-			if(mngr->number()->ln()) {
-				mngr->setPrecise(!mngr->number()->isApproximate());
-				return;
-			}
-		}
-		if(vargs[0]->isVariable() && vargs[0]->variable() == CALCULATOR->getE()) {
-			mngr->set(1, 1);
-			return;
-		} else if(vargs[0]->isPower() && vargs[0]->base()->isVariable() && vargs[0]->base()->variable() == CALCULATOR->getE() && vargs[0]->exponent()->isNumber()) {
-			if(!vargs[0]->exponent()->number()->isComplex()) {
-				mngr->set(vargs[0]->exponent());
-				return;
-			} else {
-				Number pi_nr(CALCULATOR->getPI()->get()->number());
-				Number *img_part = vargs[0]->exponent()->number()->imaginaryPart();
-				if(img_part->isLessThanOrEqualTo(&pi_nr)) {
-					pi_nr.negate();
-					if(img_part->isGreaterThan(&pi_nr)) {
-						mngr->set(vargs[0]->exponent());
-						delete img_part;
-						return;
-					}
-				}
-				delete img_part;
-			}
-		}
-		mngr->set(CALCULATOR->getLnFunction(), vargs[0], NULL);
-	}
-	mngr->set(CALCULATOR->getLnFunction(), vargs[0], NULL);
-	Manager mngr2(CALCULATOR->getLnFunction(), vargs[1], NULL);
-	mngr->add(&mngr2, OPERATION_DIVIDE);		
+bool OctFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = Number(vargs[0].symbol(), 8);
+	return true;
 }
-TotalFunction::TotalFunction() : Function("Statistics", "total", -1, "Sum (total)") {
-	setArgumentDefinition(1, new VectorArgument("", false));
+HexFunction::HexFunction() : Function("hex", 1) {
+	setArgumentDefinition(1, new TextArgument());
 }
-void TotalFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs.size() <= 0)
-		return;
-	Vector *v = produceVector(vargs);
-	for(unsigned int index = 1; index <= v->components(); index++) {
-		mngr->add(v->get(index), OPERATION_ADD);
-	}
+bool HexFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = Number(vargs[0].symbol(), 16);
+	return true;
 }
-PercentileFunction::PercentileFunction() : Function("Statistics", "percentile", 1, "Percentile", "", -1) {
-	NumberArgument *arg = new NumberArgument();
-	Number fr;
-	arg->setMin(&fr);
-	fr.set(99, 1);
-	arg->setMax(&fr);
-	arg->setIncludeEqualsMin(false);
-	arg->setIncludeEqualsMax(false);
-	setArgumentDefinition(1, arg);
-	setArgumentDefinition(2, new VectorArgument("", false));
-	argoccs[1] = -1;
-	argoccs[2] = -1;
-}
-void PercentileFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs.size() < 1) {
-		return;
-	}
-	Number fr100(100);
-	Vector *v = produceVector(vargs);	
-	if(!v->sort()) {
-		Manager *mngr2 = createFunctionManagerFromVArgs(vargs);
-		mngr->set(mngr2);
-		mngr2->unref();	
-	} else {
-		Number nfr(v->components() + 1);		
-		Number pfr(vargs[0]->number());		
-		pfr.divide(&fr100);
-		pfr.multiply(&nfr);
-/*		Number cfr(v->components());		
-		if(pfr.isZero() || pfr.numerator()->isLessThan(pfr.denominator()) || pfr.isGreaterThan(&cfr)) {
-			CALCULATOR->error(true, _("Not enough samples."), NULL);
-		}*/
-		if(pfr.isInteger()) {
-			mngr->set(v->get(pfr.intValue()));
-		} else {
-			Number ufr(&pfr);
-			ufr.ceil();
-			Number lfr(&pfr);
-			lfr.floor();
-			pfr.subtract(&lfr);
-			Manager gap(v->get(ufr.intValue()));
-			gap.add(v->get(lfr.intValue()), OPERATION_SUBTRACT);
-			Manager pfr_mngr(&pfr);
-			gap.add(&pfr_mngr, OPERATION_MULTIPLY);
-			mngr->set(v->get(lfr.intValue()));
-			mngr->add(&gap, OPERATION_ADD);
-		}
-	}
-	delete v;
-}
-MinFunction::MinFunction() : Function("Statistics", "min", -1, "Min") {
-	setArgumentDefinition(1, new VectorArgument("", false));
-}
-void MinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs.size() <= 0)
-		return;
-	Vector *v = produceVector(vargs);		
-	int cmp;
-	Manager *min = NULL;
-	for(unsigned int index = 1; index <= v->components(); index++) {
-		if(min == NULL) {
-			min = v->get(index);
-		} else {
-			cmp = min->compare(v->get(index));
-			if(cmp == -1) {
-				min = v->get(index);
-			} else if(cmp < -1) {
-				if(CALCULATOR->showArgumentErrors()) {
-					CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
-				}
-				Manager mngr_v(v);
-				mngr->set(this, &mngr_v, NULL);
-				delete v;
-				return;
-			}
-		}
-	}
-	mngr->set(min);
-	delete v;
-}
-MaxFunction::MaxFunction() : Function("Statistics", "max", -1, "Max") {
-	setArgumentDefinition(1, new VectorArgument("", false));
-}
-void MaxFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs.size() <= 0)
-		return;
-	Vector *v = produceVector(vargs);		
-	int cmp;
-	Manager *max = NULL;
-	for(unsigned int index = 1; index <= v->components(); index++) {
-		if(max == NULL) {
-			max = v->get(index);
-		} else {
-			cmp = max->compare(v->get(index));
-			if(cmp == 1) {
-				max = v->get(index);
-			} else if(cmp < -1) {
-				if(CALCULATOR->showArgumentErrors()) {
-					CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
-				}
-				Manager mngr_v(v);
-				mngr->set(this, &mngr_v, NULL);
-				delete v;
-				return;
-			}
-		}
-	}
-	mngr->set(max);
-	delete v;
-}
-ModeFunction::ModeFunction() : Function("Statistics", "mode", -1, "Mode") {
-	setArgumentDefinition(1, new VectorArgument("", false));
-}
-void ModeFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs.size() <= 0) {
-		return;
-	}
-	Vector *v = produceVector(vargs);
-	int n = 0;
-	bool b;
-	vector<Manager*> vargs_nodup;
-	vector<int> is;
-	Manager *value = NULL;
-	for(unsigned int index_c = 1; index_c <= v->components(); index_c++) {
-		b = true;
-		for(unsigned int index = 0; index < vargs_nodup.size(); index++) {
-			if(vargs_nodup[index]->equals(v->get(index_c))) {
-				is[index]++;
-				b = false;
-				break;
-			}
-		}
-		if(b) {
-			vargs_nodup.push_back(v->get(index_c));
-			is.push_back(1);
-		}
-	}
-	for(unsigned int index = 0; index < is.size(); index++) {
-		if(is[index] > n) {
-			n = is[index];
-			value = vargs_nodup[index];
-		}
-	}
-	mngr->set(value);
-	delete v;
-}
-RandomFunction::RandomFunction() : Function("General", "rand", 0, "Random Number") {}
-void RandomFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(drand48());
-}
-
-BASEFunction::BASEFunction() : Function("General", "base", 2, "Number Base") {
+BaseFunction::BaseFunction() : Function("base", 2) {
 	setArgumentDefinition(1, new TextArgument());
 	IntegerArgument *arg = new IntegerArgument();
-	Number integ(2, 1);
+	Number integ(1, 1);
 	arg->setMin(&integ);
 	integ.set(36, 1);
 	arg->setMax(&integ);
 	setArgumentDefinition(2, arg);
 }
-void BASEFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	string str = vargs[0]->text();
-	remove_blanks(str);
-	mngr->set(strtol(str.c_str(), NULL, vargs[1]->number()->intValue()), 1);
+bool BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = Number(vargs[0].symbol(), vargs[1].number().intValue());
+	return true;
 }
-BINFunction::BINFunction() : Function("General", "bin", 1, "Binary") {
+RomanFunction::RomanFunction() : Function("roman", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
-void BINFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	string str = vargs[0]->text();
-	remove_blanks(str);
-	mngr->set(strtol(str.c_str(), NULL, 2), 1);
-}
-OCTFunction::OCTFunction() : Function("General", "oct", 1, "Octal") {
-	setArgumentDefinition(1, new TextArgument());
-}
-void OCTFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	string str = vargs[0]->text();
-	remove_blanks(str);
-	mngr->set(strtol(str.c_str(), NULL, 8), 1);
-}
-HEXFunction::HEXFunction() : Function("General", "hex", 1, "Hexadecimal") {
-	setArgumentDefinition(1, new TextArgument());
-}
-void HEXFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-/*	string expr = vargs[0]->text();
-	remove_blanks(expr);
-	if(!(expr.length() >= 2 && expr[0] == '0' && (expr[1] == 'x' || expr[1] == 'X'))) {
-		expr.insert(0, "0x");
-	}
-	mngr->set(strtold(expr.c_str(), NULL));*/
-	string str = vargs[0]->text();
-	remove_blanks(str);
-	mngr->set(strtol(str.c_str(), NULL, 16), 1);
-}
-RomanFunction::RomanFunction() : Function("General", "roman", 1, "Roman Number") {
-	setArgumentDefinition(1, new TextArgument());
-}
-void RomanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	string str = vargs[0]->text();
-	remove_blanks(str);
-	Number nr;
-	Number cur;
-	bool large = false;
-	vector<Number> numbers;
-	bool capital = false;
-	for(unsigned int i = 0; i < str.length(); i++) {
-		switch(str[i]) {
-			case 'I': {
-				if(!capital && i == str.length() - 1) {
-					cur.set(2);
-					CALCULATOR->error(false, _("Assuming the unusual practice of letting a last capital I mean 2 in a roman numeral."), NULL);
-					break;
-				}
-			}
-			case 'J': {capital = true;}
-			case 'i': {}
-			case 'j': {
-				cur.set(1);
-				break;
-			}
-			case 'V': {capital = true;}
-			case 'v': {
-				cur.set(5);
-				break;
-			}
-			case 'X': {capital = true;}
-			case 'x': {
-				cur.set(10);
-				break;
-			}
-			case 'L': {capital = true;}
-			case 'l': {
-				cur.set(50);
-				break;
-			}
-			case 'C': {capital = true;}
-			case 'c': {
-				cur.set(100);
-				break;
-			}
-			case 'D': {capital = true;}
-			case 'd': {
-				cur.set(500);
-				break;
-			}
-			case 'M': {capital = true;}
-			case 'm': {
-				cur.set(1000);
-				break;
-			}
-			case '(': {
-				int multi = 1, multi2;
-				bool turn = false;
-				bool error = false;
-				i++;
-				for(; i < str.length(); i++) {
-					if(str[i] == '|') {
-						if(!turn) {
-							turn = true;
-							multi2 = multi;
-						} else {
-							error = true;
-							break;
-						}
-					} else if(str[i] == ')') {
-						if(turn) {
-							multi2--;
-							if(multi2 < 1) {
-								break;
-							}	
-						} else {
-							error = true;
-							break;
-						}
-					} else if(str[i] == '(') {
-						if(!turn) {
-							multi++;	
-						} else {
-							error = true;
-							break;
-						}
-					} else {
-						error = true;
-						i--;
-						break;
-					}
-				}
-				if(error | !turn) {
-					CALCULATOR->error(true, _("Error in roman numerals: %s."), str.c_str(), NULL);
-				} else {
-					cur.set(10);
-					cur.raise(multi);
-					cur.multiply(100);
-				}
-				break;
-			}
-			case '|': {
-				if(large) {
-					cur.clear();
-					large = false;
-					break;
-				} else if(str.length() > i + 1 && str[i + 2] == ')') {
-					i++;
-					int multi = 1;
-					for(; i < str.length(); i++) {
-						if(str[i] != ')') {
-							i--;
-							break;
-						}
-						multi++;
-					}
-					cur.set(10);
-					cur.raise(multi);
-					cur.multiply(50);
-					break;
-				} else if(str.length() > i + 2 && str[i + 2] == '|') {
-					cur.clear();
-					large = true;
-					break;
-				}
-			}
-			default: {
-				cur.clear();
-				CALCULATOR->error(true, _("Unknown roman numeral: %s."), str.substr(i, 1).c_str(), NULL);
-			}
-		}
-		if(!cur.isZero()) {
-			if(large) {
-				cur.multiply(100000);
-			}
-			numbers.resize(numbers.size() + 1);
-			numbers[numbers.size() - 1].set(&cur);
-		}
-	}
-	vector<Number> values;
-	values.resize(numbers.size());
-	bool error = false;
-	int rep = 1;
-	for(unsigned int i = 0; i < numbers.size(); i++) {
-		if(i == 0 || numbers[i].isLessThanOrEqualTo(&numbers[i - 1])) {
-			nr.add(&numbers[i]);
-			if(i > 0 && numbers[i].equals(&numbers[i - 1])) {
-				rep++;
-				if(rep > 3 && numbers[i].isLessThan(1000)) {
-					error = true;
-				} else if(rep > 1 && (numbers[i].equals(5) || numbers[i].equals(50) || numbers[i].equals(500))) {
-					error = true;
-				}
-			} else {
-				rep = 1;
-			}
-		} else {
-			numbers[i - 1].multiply(10);
-			if(numbers[i - 1].isLessThan(&numbers[i])) {
-				error = true;
-			}
-			numbers[i - 1].divide(10);
-			for(int i2 = i - 2; ; i2--) {
-				if(i2 < 0) {
-					nr.negate();
-					nr.add(&numbers[i]);
-					break;
-				} else if(numbers[i2].isGreaterThan(&numbers[i2 + 1])) {
-					Number nr2(&nr);
-					nr2.subtract(&values[i2]);
-					nr.subtract(&nr2);
-					nr.subtract(&nr2);
-					nr.add(&numbers[i]);
-					if(numbers[i2].isLessThan(&numbers[i])) {
-						error = true;
-					}
-					break;
-				}
-				error = true;
-			}
-		}
-		values[i].set(&nr);
-	}
-	if(error) {
-		CALCULATOR->error(false, _("Errors in roman numerals: \"%s\". Interpreted as %s, which should be written as %s."), str.c_str(), nr.print().c_str(), nr.print(NUMBER_FORMAT_ROMAN).c_str(), NULL);
-	}
-	values.clear();
-	numbers.clear();
-	mngr->set(&nr);
+bool RomanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = Number(vargs[0].symbol(), BASE_ROMAN_NUMERALS);
+	return true;
 }
 
-TitleFunction::TitleFunction() : Function("Utilities", "title", 1, "Object title") {
-	setArgumentDefinition(1, new ExpressionItemArgument());
-}
-void TitleFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	ExpressionItem *item = CALCULATOR->getExpressionItem(vargs[0]->text());
-	if(!item) {
-		CALCULATOR->error(true, _("Object %s does not exist."), vargs[0]->text().c_str(), NULL);
-		mngr->set(this, vargs[0], NULL);
-	} else {
-		mngr->set(item->title());
-	}
-}
-SaveFunction::SaveFunction() : Function("Utilities", "save", 2, "Save as variable", "", 4) {
-	setArgumentDefinition(2, new TextArgument());
-	setArgumentDefinition(3, new TextArgument());	
-	setArgumentDefinition(4, new TextArgument());		
-	setDefaultValue(3, "\"Temporary\"");
-	setDefaultValue(4, "\"\"");	
-}
-void SaveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	CALCULATOR->addVariable(new Variable(vargs[2]->text(), vargs[1]->text(), vargs[0], vargs[3]->text()));
-}
-ConcatenateFunction::ConcatenateFunction() : Function("Utilities", "concatenate", 1, "Concatenate strings", "", -1) {
-	setArgumentDefinition(1, new TextArgument());
-	setArgumentDefinition(2, new TextArgument());	
-}
-void ConcatenateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	string str;
-	for(unsigned int i = 0; i < vargs.size(); i++) {
-		str += vargs[i]->text();
-	}
-	mngr->set(str);
-}
-LengthFunction::LengthFunction() : Function("Utilities", "len", 1, "Length of string") {
-	setArgumentDefinition(1, new TextArgument());
-}
-void LengthFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]->text().length());
-}
-AsciiFunction::AsciiFunction() : Function("Utilities", "code", 1, "ASCII Value") {
+AsciiFunction::AsciiFunction() : Function("code", 1) {
 	TextArgument *arg = new TextArgument();
 	arg->setCustomCondition("len(\\x) = 1");
 	setArgumentDefinition(1, arg);
 }
-void AsciiFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	unsigned char c = (unsigned char) vargs[0]->text()[0];
-	mngr->set(c, 1);
+bool AsciiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	unsigned char c = (unsigned char) vargs[0].symbol()[0];
+	mstruct.set(c, 1);
+	return true;
 }
-CharFunction::CharFunction() : Function("Utilities", "char", 1, "ASCII Char") {
+CharFunction::CharFunction() : Function("char", 1) {
 	IntegerArgument *arg = new IntegerArgument();
 	Number fr(32, 0);
 	arg->setMin(&fr);
@@ -1885,218 +1455,330 @@ CharFunction::CharFunction() : Function("Utilities", "char", 1, "ASCII Char") {
 	arg->setMax(&fr);
 	setArgumentDefinition(1, arg);
 }
-void CharFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+bool CharFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	string str;
-	str += vargs[0]->number()->intValue();
-	mngr->set(str);
-}
-ReplaceFunction::ReplaceFunction() : Function("Utilities", "replace", 3, "Replace") {
-}
-void ReplaceFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	mngr->replace(vargs[1], vargs[2]);
+	str += vargs[0].number().intValue();
+	mstruct = str;
+	return true;
 }
 
-RadiansToDefaultAngleUnitFunction::RadiansToDefaultAngleUnitFunction() : Function("Trigonometry", "radtodef", 1, "Radians To Default Angle Unit") {
+ConcatenateFunction::ConcatenateFunction() : Function("concatenate", 1) {
+	VectorArgument *arg = new VectorArgument();
+	arg->addArgument(new TextArgument());
+	setArgumentDefinition(1, arg);	
 }
-void RadiansToDefaultAngleUnitFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	switch(CALCULATOR->angleMode()) {
-		case DEGREES: {
-			Manager mngr_pi;
-			if(CALCULATOR->alwaysExact()) {
-				mngr_pi.set(CALCULATOR->getPI());
-			} else {
-				mngr_pi.set(CALCULATOR->getPI()->get());
-			}
-			mngr->addInteger(180, OPERATION_MULTIPLY);
-	    		mngr->add(&mngr_pi, OPERATION_DIVIDE);
-			break;
-		}
-		case GRADIANS: {
-			Manager mngr_pi;
-			if(CALCULATOR->alwaysExact()) {
-				mngr_pi.set(CALCULATOR->getPI());
-			} else {
-				mngr_pi.set(CALCULATOR->getPI()->get());
-			}
-			mngr->addInteger(200, OPERATION_MULTIPLY);
-	    		mngr->add(&mngr_pi, OPERATION_DIVIDE);
-			break;
-		}
+bool ConcatenateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	string str;
+	for(unsigned int i = 0; i < vargs.size(); i++) {
+		str += vargs[i].symbol();
 	}
+	mstruct = str;
+	return true;
 }
-
-#ifdef HAVE_GIAC
-GiacFunction::GiacFunction() : Function("Calculus", "giac", 1, "Giac expression") {
+LengthFunction::LengthFunction() : Function("len", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
-void GiacFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	try {
-		giac::gen v1(vargs[0]->text());
-		mngr->set(simplify(v1));
-		mngr->clean();
-	} catch(std::runtime_error & err){
-		CALCULATOR->error(true, _("Giac error: %s."), err.what(), NULL);
-		mngr->set(this, vargs[0], NULL);
-		return;
-	}
-}
-GiacDeriveFunction::GiacDeriveFunction() : Function("Calculus", "giac_diff", 1, "Derive (giac)", "", 3) {
-	setArgumentDefinition(1, new GiacArgument());
-	setArgumentDefinition(2, new TextArgument());
-	setDefaultValue(2, "\"x\"");
-	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
-	setDefaultValue(3, "1");		
-}
-void GiacDeriveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	bool failed = false;
-	giac::gen v1 = vargs[0]->toGiac(&failed);
-	if(failed) {
-		CALCULATOR->error(true, _("Conversion to Giac failed."), NULL);
-		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
-		return;
-	}
-	giac::identificateur id(vargs[1]->text());
-	giac::gen vars = id;
-	giac::gen nderiv = vargs[2]->toGiac();
-	try {
-		giac::gen ans = giac::derive(v1, vars, nderiv);
-		ans = simplify(ans);
-		mngr->set(ans);
-		mngr->clean();
-	} catch(std::runtime_error & err){
-		CALCULATOR->error(true, _("Giac error: %s."), err.what(), NULL);
-		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
-		return;
-	}
-}
-GiacSolveFunction::GiacSolveFunction() : Function("Calculus", "giac_solve", 1, "Solve equation (giac)", "", 2) {
-	setArgumentDefinition(1, new GiacArgument());
-	setArgumentDefinition(2, new TextArgument());
-	setDefaultValue(2, "\"x\"");		
-}
-void GiacSolveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	bool failed = false;
-	giac::gen v1 = vargs[0]->toGiac(&failed);
-	if(failed) {
-		CALCULATOR->error(true, _("Conversion to Giac failed."), NULL);
-		mngr->set(this, vargs[0], vargs[1], NULL);
-		return;
-	}
-	giac::identificateur id(vargs[1]->text());
-	try {
-		giac::vecteur v = giac::solve(v1, id);
-		if(v.size() < 1) {
-			CALCULATOR->error(false, _("No solution could be found."), NULL);
-			mngr->set(this, vargs[0], vargs[1], NULL);
-		} else {
-			v[0] = simplify(v[0]);
-			mngr->set(v[0]);
-			for(unsigned int i = 1; i < v.size(); i++) {
-				v[1] = simplify(v[1]);
-				Manager alt_mngr(v[1]);
-				mngr->addAlternative(&alt_mngr);
-			}
-		}
-		mngr->clean();
-	} catch(std::runtime_error & err){
-		CALCULATOR->error(true, _("Giac error: %s."), err.what(), NULL);
-		mngr->set(this, vargs[0], vargs[1], NULL);
-		return;
-	}
-}
-GiacIntegrateFunction::GiacIntegrateFunction() : Function("Calculus", "integrate", 1, "Integrate", "", 2) {
-	setArgumentDefinition(1, new GiacArgument());
-	setArgumentDefinition(2, new TextArgument());
-	setDefaultValue(2, "\"x\"");
-}
-void GiacIntegrateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	bool failed = false;
-	giac::gen v1 = vargs[0]->toGiac(&failed);
-	if(failed) {
-		CALCULATOR->error(true, _("Conversion to Giac failed."), NULL);
-		mngr->set(this, vargs[0], vargs[1], NULL);
-		return;
-	}
-	giac::identificateur id(vargs[1]->text());
-	try {
-#ifdef OLD_GIAC_API
-    		giac::gen ans = giac::integrate(v1, id);
-#else
-		giac::gen ans = giac::integrate(v1, id, NULL);
-#endif
-		ans = simplify(ans);
-		mngr->set(ans);
-		mngr->clean();
-	} catch(std::runtime_error & err){
-		CALCULATOR->error(true, _("Giac error: %s."), err.what(), NULL);
-		mngr->set(this, vargs[0], vargs[1], NULL);
-		return;
-	}
-}
-#endif
-DeriveFunction::DeriveFunction() : Function("Calculus", "diff", 1, "Derive", "", 3) {
-	setArgumentDefinition(2, new TextArgument());
-	setDefaultValue(2, "\"x\"");
-	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
-	setDefaultValue(3, "1");		
-}
-void DeriveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	int i = vargs[2]->number()->intValue();
-	mngr->set(vargs[0]);
-	while(i) {
-		mngr->differentiate(vargs[1]->text());
-		i--;
-	}
-}
-IntegrateFunction::IntegrateFunction() : Function("Calculus", "integrate", 1, "Integrate", "", 2) {
-	setArgumentDefinition(2, new TextArgument());
-	setDefaultValue(2, "\"x\"");
-}
-void IntegrateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	mngr->set(vargs[0]);
-	mngr->integrate(vargs[1]->text());
-}
-SolveFunction::SolveFunction() : Function("Calculus", "solve", 1, "Solve equation", "", 2) {
-	setArgumentDefinition(2, new TextArgument());
-	setDefaultValue(2, "\"x\"");		
-}
-void SolveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Manager mngr_solve(vargs[0]);
-	mngr_solve.solve(vargs[1]->text());
-	if(vargs[0]->isComparison()) {
-		if(vargs[0]->comparisonType() == COMPARISON_EQUALS) {
-			if(mngr_solve.getChild(0)->equals(vargs[1])) {
-				mngr->set(mngr_solve.getChild(1));
-				return;
-			} else if(mngr_solve.getChild(1)->equals(vargs[1])) {
-				mngr->set(mngr_solve.getChild(0));
-				return;
-			}
-		} else {
-			mngr->set(&mngr_solve);
-			return;
-		}
-	}
-	CALCULATOR->error(false, _("No solution was found."), NULL);
-	mngr->set(this, &mngr_solve, vargs[1], NULL);
+bool LengthFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = (int) vargs[0].symbol().length();
+	return true;
 }
 
-LoadFunction::LoadFunction() : Function("Utilities", "load", 1, "Load CSV file", "", 3) {
+ReplaceFunction::ReplaceFunction() : Function("replace", 3) {
+}
+bool ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	mstruct.replace(vargs[1], vargs[2]);
+	return true;
+}
+
+ErrorFunction::ErrorFunction() : Function("error", 1) {
+	setArgumentDefinition(1, new TextArgument());
+}
+bool ErrorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	CALCULATOR->error(true, vargs[0].symbol().c_str(), NULL);
+	return true;
+}
+WarningFunction::WarningFunction() : Function("warning", 1) {
+	setArgumentDefinition(1, new TextArgument());
+}
+bool WarningFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	CALCULATOR->error(false, vargs[0].symbol().c_str(), NULL);
+	return true;
+}
+
+ForFunction::ForFunction() : Function("for", 7) {
+	setArgumentDefinition(2, new SymbolicArgument());	
+	setArgumentDefinition(7, new SymbolicArgument());
+}
+bool ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+
+	mstruct = vargs[6];
+	MathStructure mcounter = vargs[0];
+	MathStructure mtest;
+	MathStructure mcount;
+	MathStructure mupdate;
+	while(true) {
+		mtest = vargs[3];
+		mtest.replace(vargs[1], mcounter);
+		mtest.eval(eo);
+		if(!mtest.isNumber()) return false;
+		if(!mtest.number().getBoolean()) {
+			break;
+		}
+		
+		mupdate = vargs[4];
+		mupdate.replace(vargs[1], mcounter);
+		mupdate.replace(vargs[5], mstruct);
+		mstruct = mupdate;
+		
+		mcount = vargs[2];
+		mcount.replace(vargs[1], mcounter);
+		mcounter = mcount;
+	}
+	return true;
+
+}
+SumFunction::SumFunction() : Function("sum", 4) {
+	setArgumentDefinition(2, new SymbolicArgument());
+	setArgumentDefinition(3, new IntegerArgument());
+	setArgumentDefinition(4, new IntegerArgument());	
+	//setCondition("\\a >= \\z");
+}
+bool SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+
+	mstruct.clear();
+	Number i_nr(vargs[2].number());
+	MathStructure mstruct_calc;
+	bool started = false, s2 = false;
+	while(i_nr.isLessThanOrEqualTo(vargs[3].number())) {	
+		mstruct_calc.set(vargs[0]);
+		mstruct_calc.replace(vargs[1], i_nr);
+		if(started) {
+			mstruct.add(mstruct_calc, s2);
+			s2 = true;
+		} else {
+			mstruct = mstruct_calc;
+			started = true;
+		}
+		i_nr += 1;
+	}
+	return true;
+	
+}
+ProductFunction::ProductFunction() : Function("product", 4) {
+	setArgumentDefinition(2, new SymbolicArgument());
+	setArgumentDefinition(3, new IntegerArgument());
+	setArgumentDefinition(4, new IntegerArgument());	
+	//setCondition("\\a >= \\z");
+}
+bool ProductFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+
+	mstruct.clear();
+	Number i_nr(vargs[2].number());
+	MathStructure mstruct_calc;
+	bool started = false, s2 = false;
+	while(i_nr.isLessThanOrEqualTo(vargs[3].number())) {	
+		mstruct_calc.set(vargs[0]);
+		mstruct_calc.replace(vargs[1], i_nr);
+		if(started) {
+			mstruct.multiply(mstruct_calc, s2);
+			s2 = true;
+		} else {
+			mstruct = mstruct_calc;
+			started = true;
+		}
+		i_nr += 1;
+	}
+	return true;
+	
+}
+
+ProcessFunction::ProcessFunction() : Function("process", 3, 5) {
+	setArgumentDefinition(2, new SymbolicArgument());
+	setArgumentDefinition(3, new VectorArgument());
+	setArgumentDefinition(4, new SymbolicArgument());
+	setDefaultValue(4, "\"\"");
+	setArgumentDefinition(5, new SymbolicArgument());
+	setDefaultValue(5, "\"\"");
+}
+bool ProcessFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+
+	mstruct = vargs[2];
+	MathStructure mprocess;
+	for(unsigned int index = 0; index < mstruct.size(); index++) {
+		mprocess = vargs[0];
+		mprocess.replace(vargs[1], mstruct[index]);
+		if(!vargs[3].isEmptySymbol()) {
+			mprocess.replace(vargs[3], (int) index);
+		}
+		if(!vargs[4].isEmptySymbol()) {
+			mprocess.replace(vargs[4], vargs[2]);
+		}
+		mstruct[index] = mprocess;
+	}
+	return true;
+	
+}
+ProcessMatrixFunction::ProcessMatrixFunction() : Function("processm", 3, 6) {
+	setArgumentDefinition(2, new SymbolicArgument());
+	setArgumentDefinition(3, new MatrixArgument());
+	setArgumentDefinition(4, new SymbolicArgument());
+	setDefaultValue(4, "\"\"");
+	setArgumentDefinition(5, new SymbolicArgument());
+	setDefaultValue(5, "\"\"");
+	setArgumentDefinition(6, new SymbolicArgument());
+	setDefaultValue(6, "\"\"");
+}
+bool ProcessMatrixFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+
+	mstruct = vargs[2];
+	MathStructure mprocess;
+	for(unsigned int rindex = 0; rindex < mstruct.size(); rindex++) {
+		for(unsigned int cindex = 0; cindex < mstruct[rindex].size(); cindex++) {
+			mprocess = vargs[0];
+			mprocess.replace(vargs[1], mstruct[rindex][cindex]);
+			if(!vargs[3].isEmptySymbol()) {
+				mprocess.replace(vargs[3], (int) rindex);
+			}
+			if(!vargs[4].isEmptySymbol()) {
+				mprocess.replace(vargs[4], (int) cindex);
+			}
+			if(!vargs[5].isEmptySymbol()) {
+				mprocess.replace(vargs[5], vargs[2]);
+			}
+			mstruct[rindex][cindex] = mprocess;
+		}
+	}
+	return true;
+	
+}
+CustomSumFunction::CustomSumFunction() : Function("csum", 7, 9) {
+	setArgumentDefinition(1, new IntegerArgument()); //begin
+	setArgumentDefinition(2, new IntegerArgument()); //end
+	//3. initial
+	//4. function
+	setArgumentDefinition(5, new SymbolicArgument()); //x var
+	setArgumentDefinition(6, new SymbolicArgument()); //y var
+	setArgumentDefinition(7, new VectorArgument());
+	setArgumentDefinition(8, new SymbolicArgument()); //i var
+	setDefaultValue(8, "\"\"");
+	setArgumentDefinition(9, new SymbolicArgument()); //v var
+	setDefaultValue(9, "\"\"");
+}
+bool CustomSumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+
+	int start = vargs[0].number().intValue();
+	if(start < 1) start = 1;
+	int end = vargs[1].number().intValue();
+	int n = vargs[6].components();
+	if(start > n) start = n;
+	if(end < 1 || end > n) end = n;
+	else if(end < start) end = start;	
+	
+	mstruct = vargs[2];
+	MathStructure mprocess;
+
+	for(unsigned int index = start - 1; index < (unsigned int) end; index++) {	
+		mprocess = vargs[3];
+		mprocess.replace(vargs[4], vargs[6][index]);
+		mprocess.replace(vargs[5], mstruct);
+		if(!vargs[7].isEmptySymbol()) {
+			mprocess.replace(vargs[7], (int) index);
+		}
+		if(!vargs[8].isEmptySymbol()) {
+			mprocess.replace(vargs[8], vargs[6]);
+		}
+		mstruct = mprocess;
+	}
+	return true;
+
+}
+
+FunctionFunction::FunctionFunction() : Function("function", 2) {
+	setArgumentDefinition(1, new TextArgument());
+	setArgumentDefinition(2, new VectorArgument());
+}
+bool FunctionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	UserFunction f("", "Generated Function", vargs[0].symbol());
+	MathStructure args = vargs[1];
+	mstruct = f.Function::calculate(args, eo);	
+	return true;
+}
+IFFunction::IFFunction() : Function("if", 3) {
+	NON_COMPLEX_NUMBER_ARGUMENT(1)
+	setArgumentDefinition(2, new TextArgument());
+	setArgumentDefinition(3, new TextArgument());
+}
+bool IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	int result = vargs[0].number().getBoolean();
+	if(result) {			
+		mstruct = CALCULATOR->parse(vargs[1].symbol());
+	} else if(result == 0) {			
+		mstruct = CALCULATOR->parse(vargs[2].symbol());		
+	} else {
+		return false;
+	}	
+	return true;
+}
+LoadFunction::LoadFunction() : Function("load", 1, 3) {
 	setArgumentDefinition(1, new FileArgument());
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 	setDefaultValue(2, "1");
 	setArgumentDefinition(3, new TextArgument());
 	setDefaultValue(3, ",");	
 }
-void LoadFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[2]->text() == "tab") {
-		vargs[2]->set("\t");
+bool LoadFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	string delim = vargs[2].symbol();
+	if(delim == "tab") {
+		delim = "\t";
 	}
-	Matrix *mtrx = CALCULATOR->importCSV(vargs[0]->text().c_str(), vargs[1]->number()->intValue(), vargs[2]->text());
-	if(!mtrx) {
-		CALCULATOR->error(true, "Failed to load %s.", vargs[0]->text().c_str(), NULL);
+	if(!CALCULATOR->importCSV(mstruct, vargs[0].symbol().c_str(), vargs[1].number().intValue(), delim)) {
+		CALCULATOR->error(true, "Failed to load %s.", vargs[0].symbol().c_str(), NULL);
+		return false;
 	}
-	mngr->set(mtrx);
+	return true;
+}
+TitleFunction::TitleFunction() : Function("title", 1) {
+	setArgumentDefinition(1, new ExpressionItemArgument());
+}
+bool TitleFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	ExpressionItem *item = CALCULATOR->getExpressionItem(vargs[0].symbol());
+	if(!item) {
+		CALCULATOR->error(true, _("Object %s does not exist."), vargs[0].symbol().c_str(), NULL);
+		return false;
+	} else {
+		mstruct = item->title();
+	}
+	return true;
+}
+SaveFunction::SaveFunction() : Function("save", 2, 4) {
+	setArgumentDefinition(2, new TextArgument());
+	setArgumentDefinition(3, new TextArgument());	
+	setArgumentDefinition(4, new TextArgument());		
+	setDefaultValue(3, "\"Temporary\"");
+	setDefaultValue(4, "\"\"");	
+}
+bool SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	CALCULATOR->addVariable(new KnownVariable(vargs[2].symbol(), vargs[1].symbol(), vargs[0], vargs[3].symbol()));
+	return true;
+}
+
+DeriveFunction::DeriveFunction() : Function("diff", 1, 3) {
+	setArgumentDefinition(2, new SymbolicArgument());
+	setDefaultValue(2, "x");
+	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setDefaultValue(3, "1");		
+}
+bool DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	int i = vargs[2].number().intValue();
+	mstruct = vargs[0];
+	bool b = false;
+	while(i) {
+		if(!b && !mstruct.differentiate(vargs[1])) {
+			return false;
+		}
+		b = true;
+		i--;
+	}
+	return true;
 }

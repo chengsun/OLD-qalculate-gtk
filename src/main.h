@@ -30,16 +30,6 @@ enum {
 	FRACTIONAL_MODE_FRACTION = 3,	
 };
 
-enum {
-	BASE_DECI = 1,
-	BASE_BIN = 2,		
-	BASE_OCTAL = 3,
-	BASE_HEX = 4,
-	BASE_SEXA = 5,
-	BASE_TIMEF = 6,
-	BASE_ROMAN = 7
-};
-
 #include "qalculate.h"
 
 #endif /* MAIN_H */

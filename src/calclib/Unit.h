@@ -43,16 +43,22 @@ class Unit : public ExpressionItem {
 	virtual const string &singular(bool return_short_if_no_singular = true) const;
 	virtual const string &shortName() const;
 	virtual bool isUsedByOtherUnits() const;
-	virtual const Unit* baseUnit() const;
-	virtual Manager *baseValue(Manager *value_ = NULL, Manager *exp_ = NULL) const;
-	virtual Manager *convertToBase(Manager *value_ = NULL, Manager *exp_ = NULL) const;
-	virtual long int baseExp(long int exp_ = 1) const;
+	virtual Unit* baseUnit() const;
+	virtual MathStructure &baseValue(MathStructure &mvalue, MathStructure &mexp) const;
+	virtual MathStructure &convertToBase(MathStructure &mvalue, MathStructure &mexp) const;
+	virtual MathStructure &baseValue(MathStructure &mvalue) const;
+	virtual MathStructure &convertToBase(MathStructure &mvalue) const;
+	virtual MathStructure baseValue() const;
+	virtual MathStructure convertToBase() const;
+	virtual int baseExp(int exp_ = 1) const;
 	virtual int type() const;
 	virtual int unitType() const;
-	virtual bool isChildOf(const Unit *u) const;
-	virtual bool isParentOf(const Unit *u) const;
-	virtual bool hasComplexRelationTo(const Unit *u) const;	
-	Manager *convert(const Unit *u, Manager *value_ = NULL, Manager *exp_ = NULL, bool *converted = NULL) const;
+	virtual bool isChildOf(Unit *u) const;
+	virtual bool isParentOf(Unit *u) const;
+	virtual bool hasComplexRelationTo(Unit *u) const;	
+	MathStructure &convert(Unit *u, MathStructure &mvalue, MathStructure &exp, bool *converted = NULL) const;
+	MathStructure &convert(Unit *u, MathStructure &mvalue, bool *converted = NULL) const;
+	MathStructure convert(Unit *u, bool *converted = NULL) const;
 
 };
 
@@ -61,13 +67,12 @@ class AliasUnit : public Unit {
   protected:
 
 	string value, rvalue;
-	long int exp;
-	Manager *exp_mngr;
+	int exp;
 	Unit *unit;
 
   public:
 
-	AliasUnit(string cat_, string name_, string plural_, string singular_, string title_, const Unit *alias, string relation = "1", long int exp_ = 1, string reverse = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	AliasUnit(string cat_, string name_, string plural_, string singular_, string title_, Unit *alias, string relation = "1", int exp_ = 1, string reverse = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
 	AliasUnit(const AliasUnit *unit);		
 	AliasUnit();			
 	virtual ~AliasUnit();
@@ -75,25 +80,29 @@ class AliasUnit : public Unit {
 	virtual ExpressionItem *copy() const;
 	virtual void set(const ExpressionItem *item);
 	
-	virtual const Unit* baseUnit() const;
-	virtual const Unit* firstBaseUnit() const;
-	virtual void setBaseUnit(const Unit *alias);
+	virtual Unit* baseUnit() const;
+	virtual Unit* firstBaseUnit() const;
+	virtual void setBaseUnit(Unit *alias);
 	virtual string expression() const;
 	virtual string reverseExpression() const;
 	virtual void setExpression(string relation);
 	virtual void setReverseExpression(string reverse);
-	virtual Manager *baseValue(Manager *value_ = NULL, Manager *exp_ = NULL) const;
-	virtual Manager *convertToBase(Manager *value_ = NULL, Manager *exp_ = NULL) const;
-	virtual Manager *firstBaseValue(Manager *value_ = NULL, Manager *exp_ = NULL) const;
-	virtual Manager *convertToFirstBase(Manager *value_ = NULL, Manager *exp_ = NULL) const;
-	virtual long int baseExp(long int exp_ = 1) const;
-	virtual void setExponent(long int exp_);
-	virtual long int firstBaseExp() const;
+	virtual MathStructure &firstBaseValue(MathStructure &mvalue, MathStructure &mexp) const;
+	virtual MathStructure &convertToFirstBase(MathStructure &mvalue, MathStructure &mexp) const;
+	virtual MathStructure &baseValue(MathStructure &mvalue, MathStructure &mexp) const;
+	virtual MathStructure &convertToBase(MathStructure &mvalue, MathStructure &mexp) const;
+	virtual MathStructure &baseValue(MathStructure &mvalue) const;
+	virtual MathStructure &convertToBase(MathStructure &mvalue) const;
+	virtual MathStructure baseValue() const;
+	virtual MathStructure convertToBase() const;
+	virtual int baseExp(int exp_ = 1) const;
+	virtual void setExponent(int exp_);
+	virtual int firstBaseExp() const;
 	virtual int unitType() const;
-	virtual bool isChildOf(const Unit *u) const;
-	virtual bool isParentOf(const Unit *u) const;
+	virtual bool isChildOf(Unit *u) const;
+	virtual bool isParentOf(Unit *u) const;
 	virtual bool hasComplexExpression() const;
-	virtual bool hasComplexRelationTo(const Unit *u) const;
+	virtual bool hasComplexRelationTo(Unit *u) const;
 
 };
 
@@ -104,7 +113,7 @@ class AliasUnit_Composite : public AliasUnit {
 	Prefix *prefixv;
 
   public:
-	AliasUnit_Composite(const Unit *alias, long int exp_ = 1, const Prefix *prefix_ = NULL);
+	AliasUnit_Composite(Unit *alias, int exp_ = 1, const Prefix *prefix_ = NULL);
 	AliasUnit_Composite(const AliasUnit_Composite *unit);			
 	virtual ~AliasUnit_Composite();
 
@@ -114,10 +123,10 @@ class AliasUnit_Composite : public AliasUnit {
 	virtual string print(bool plural_) const;
 	virtual string printShort(bool plural_) const;
 	virtual const Prefix *prefix() const;
-	virtual long int prefixExponent() const;	
-	virtual void set(const Unit *u, long int exp_ = 1, const Prefix *prefix_ = NULL);
-	virtual Manager *firstBaseValue(Manager *value_ = NULL, Manager *exp_ = NULL) const;
-	virtual Manager *convertToFirstBase(Manager *value_ = NULL, Manager *exp_ = NULL) const;
+	virtual int prefixExponent() const;	
+	virtual void set(Unit *u, int exp_ = 1, const Prefix *prefix_ = NULL);
+	virtual MathStructure &firstBaseValue(MathStructure &mvalue, MathStructure &mexp) const;
+	virtual MathStructure &convertToFirstBase(MathStructure &mvalue, MathStructure &mexp) const;
 
 };
 
@@ -137,9 +146,9 @@ class CompositeUnit : public Unit {
 		virtual ~CompositeUnit();
 		virtual ExpressionItem *copy() const;
 		virtual void set(const ExpressionItem *item);		
-		virtual void add(const Unit *u, long int exp_ = 1, const Prefix *prefix = NULL);
-		virtual Unit *get(unsigned int index, long int *exp_ = NULL, Prefix **prefix = NULL) const;
-		virtual void setExponent(unsigned int index, long int exp_);
+		virtual void add(Unit *u, int exp_ = 1, const Prefix *prefix = NULL);
+		virtual Unit *get(unsigned int index, int *exp_ = NULL, Prefix **prefix = NULL) const;
+		virtual void setExponent(unsigned int index, int exp_);
 		virtual void setPrefix(unsigned int index, const Prefix *prefix);
 		virtual unsigned int countUnits() const;
 		virtual void del(Unit *u);
@@ -148,8 +157,8 @@ class CompositeUnit : public Unit {
 		virtual const string &singular(bool return_short_if_no_singular = true) const;
 		virtual const string &shortName() const;
 		virtual int unitType() const;
-		virtual bool containsRelativeTo(const Unit *u) const;
-		virtual Manager *generateManager(bool cleaned = true) const;		
+		virtual bool containsRelativeTo(Unit *u) const;
+		virtual MathStructure generateMathStructure(bool cleaned = true) const;		
 		virtual void setBaseExpression(string base_expression_);		
 		virtual void updateNames();
 		virtual void clear();

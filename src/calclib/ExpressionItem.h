@@ -23,7 +23,9 @@ class ExpressionItem {
   protected:
 
 	string sname, scat, stitle, sdescr;
-	bool b_local, b_changed, b_builtin, b_exact, b_active, b_registered, b_hidden;
+	bool b_local, b_changed, b_builtin, b_approx, b_active, b_registered, b_hidden, b_destroyed;
+	int i_ref;
+	vector<ExpressionItem*> v_refs;
 
   public:
 
@@ -39,59 +41,46 @@ class ExpressionItem {
 	bool isRegistered() const;
 	void setRegistered(bool is_registered);
 
-	/**
-	* Sets the name of the ExpressionItem.
-	*/	
 	virtual void setName(string name_, bool force = true);
 	
-	/**
-	* Returns the name of the ExpressionItem.
-	*/		
 	virtual const string &name() const;
 	virtual const string &referenceName() const;
 	
-	/**
-	* Returns the title/descriptive name of the ExpressionItem.
-	*/		
 	virtual const string &title(bool return_name_if_no_title = true) const;
 	
-	/**
-	* Sets the title/descriptive name of the ExpressionItem.
-	*/			
 	virtual void setTitle(string title_);		
 	
 	virtual const string &description() const;
 	virtual void setDescription(string descr_);
 
-	/**
-	* Returns the category of the ExpressionItem.
-	*/			
 	virtual const string &category() const;
 	
-	/**
-	* Sets the category of the ExpressionItem.
-	*/			
 	virtual void setCategory(string cat_);		
 
 	virtual bool hasChanged() const;
 	virtual void setChanged(bool has_changed);
 	
-	/**
-	* Tells if the ExpressionItem is edited/created bt the end user.
-	*/				
 	virtual bool isLocal() const;
 	virtual bool setLocal(bool is_local = true, int will_be_active = -1);
 	
 	virtual bool isBuiltin() const;
 	
-	virtual bool isPrecise() const;
-	virtual void setPrecise(bool is_precise);
+	virtual bool isApproximate() const;
+	virtual void setApproximate(bool is_approx = true);
 	
 	virtual bool isActive() const;
 	virtual void setActive(bool is_active);
 	
 	virtual bool isHidden() const;
 	virtual void setHidden(bool is_hidden);
+	
+	virtual int refcount() const;
+	virtual void ref();
+	virtual void unref();
+	virtual void ref(ExpressionItem *o);
+	virtual void unref(ExpressionItem *o);
+	virtual ExpressionItem *getReferencer(unsigned int index = 1) const;
+	virtual bool changeReference(ExpressionItem *o_from, ExpressionItem *o_to);
 	
 	virtual int type() const = 0;
 };

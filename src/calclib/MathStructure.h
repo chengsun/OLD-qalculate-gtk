@@ -1,0 +1,277 @@
+/*
+    Qalculate    
+
+    Copyright (C) 2004  Niklas Knutsson (nq@altern.org)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+*/
+
+#ifndef MATH_STRUCTURE_H
+#define MATH_STRUCTURE_H
+
+#include "includes.h"
+#include "Number.h"
+
+enum {
+	STRUCT_MULTIPLICATION,
+	STRUCT_INVERSE,
+	STRUCT_DIVISION,
+	STRUCT_ADDITION,
+	STRUCT_NEGATE,
+	STRUCT_POWER,
+	STRUCT_NUMBER,
+	STRUCT_UNIT,
+	STRUCT_SYMBOLIC,
+	STRUCT_FUNCTION,
+	STRUCT_VARIABLE,
+	STRUCT_VECTOR,
+	STRUCT_ALTERNATIVES,
+	STRUCT_AND,
+	STRUCT_OR,
+	STRUCT_XOR,
+	STRUCT_NOT,
+	STRUCT_COMPARISON,
+	STRUCT_UNKNOWN,
+	STRUCT_UNDEFINED
+};
+
+class MathStructure {
+
+	protected:
+	
+		int m_type;
+		bool b_approx;
+	
+		vector<MathStructure> v_subs;
+		string s_sym;
+		Number o_number;
+		Variable *o_variable;
+		Unit *o_unit;
+		Function *o_function;
+#ifdef HAVE_GIAC		
+		giac::gen *giac_unknown;
+#endif
+		ComparisonType ct_comp;
+	
+	public:
+
+		void init();
+		
+		MathStructure();
+		MathStructure(const MathStructure &o);
+		MathStructure(int num, int den = 1, int exp10 = 0);
+		MathStructure(string sym);
+		MathStructure(double float_value);
+		MathStructure(const MathStructure *o, ...);
+		MathStructure(Function *o, ...);
+		MathStructure(Unit *u, Prefix *p = NULL);
+		MathStructure(Variable *o);
+		MathStructure(const Number &o);
+		~MathStructure();
+		
+		void set(const MathStructure &o);
+		void set(int num, int den = 1, int exp10 = 0);
+		void set(string sym);
+		void set(double float_value);
+		void set(const MathStructure *o, ...);
+		void set(Function *o, ...);
+		void set(Unit *u, Prefix *p = NULL);
+		void set(Variable *o);
+		void set(const Number &o);
+		void setInfinity();
+		void setUndefined();
+		void clear();
+		void clearVector();
+		void clearMatrix();
+		
+		void operator = (const MathStructure &o);
+		MathStructure operator - () const;
+		MathStructure operator * (const MathStructure &o) const;
+		MathStructure operator / (const MathStructure &o) const;
+		MathStructure operator + (const MathStructure &o) const;
+		MathStructure operator - (const MathStructure &o) const;
+		MathStructure operator ^ (const MathStructure &o) const;
+		MathStructure operator && (const MathStructure &o) const;
+		MathStructure operator || (const MathStructure &o) const;
+		MathStructure operator ! () const;
+		
+		void operator *= (const MathStructure &o);
+		void operator /= (const MathStructure &o);
+		void operator += (const MathStructure &o);
+		void operator -= (const MathStructure &o);
+		void operator ^= (const MathStructure &o);
+		
+		bool operator == (const MathStructure &o) const;
+		bool operator != (const MathStructure &o) const;
+		
+		const MathStructure &operator [] (unsigned int index) const;
+		MathStructure &operator [] (unsigned int index);
+		
+		const Number &number() const;
+		Number &number();
+		const string &symbol() const;
+#ifdef HAVE_GIAC
+		const giac::gen *unknown() const;
+#endif
+		ComparisonType comparisonType() const;
+		Unit *unit() const;
+		Function *function() const;
+		Variable *variable() const;
+		
+		bool isAddition() const;
+		bool isMultiplication() const;
+		bool isPower() const;
+		bool isSymbolic() const;
+		bool isEmptySymbol() const;
+		bool isVector() const;
+		bool isMatrix() const;
+		bool isFunction() const;
+		bool isUnit() const;
+		bool isUnit_exp() const;
+		bool isVariable() const;
+		bool isComparison() const;
+		bool isAND() const;
+		bool isOR() const;
+		bool isXOR() const;
+		bool isNOT() const;
+		bool isInverse() const;
+		bool isNegate() const;
+		bool isInfinity() const;
+		bool isUndefined() const;
+		bool isInteger() const;
+		bool isNumber() const;
+		bool isZero() const;
+		bool isOne() const;
+		
+		bool representsPositive() const;
+		bool representsNegative() const;
+		bool representsNonNegative() const;
+		bool representsInteger() const;
+		bool representsNumber() const;
+		bool representsRational() const;
+		bool representsReal() const;
+		bool representsNonZero() const;
+	
+		void setApproximate(bool is_approx = true);	
+		bool isApproximate() const;
+		
+		void transform(int mtype, const MathStructure &o);
+		void transform(int mtype);
+
+		void add(const MathStructure &o, MathOperation op, bool append = false);
+		void add(const MathStructure &o, bool append = false);
+		void subtract(const MathStructure &o, bool append = false);
+		void multiply(const MathStructure &o, bool append = false);
+		void divide(const MathStructure &o, bool append = false);
+		void raise(const MathStructure &o);
+		void inverse();
+		void negate();
+		void setNOT();
+		
+		bool equals(const MathStructure &o) const;
+		int compare(const MathStructure &o) const;
+		
+		int merge_addition(const MathStructure &mstruct);
+		int merge_multiplication(const MathStructure &mstruct);
+		int merge_power(const MathStructure &mstruct);
+		void calculate();
+		void calculatesub(int level);
+		void calculateFunctions(const EvaluationOptions &eo);
+		
+		void evalQalculateFunctions(const EvaluationOptions &eo);
+		void evalf();
+		MathStructure &eval(const EvaluationOptions &eo = default_evaluation_options);
+
+#ifdef HAVE_GIAC		
+		giac::gen toGiac() const;
+		void set(const giac::gen &giac_gen, bool in_retry = false);
+		MathStructure(const giac::gen &giac_gen);
+#endif
+		
+		void addChild(const MathStructure &o);
+		void insertChild(const MathStructure &o, unsigned int index);
+		void setChild(const MathStructure &o, unsigned int index = 1);
+		const MathStructure *getChild(unsigned int index) const;
+		MathStructure *getChild(unsigned int index);
+		unsigned int countChilds() const;
+		unsigned int size() const;
+		
+#define		addItem(o)		addChild(o)
+#define		insertItem(o, i)	insertChild(o, i)
+#define		setItem(o, i)		setChild(o, i)
+#define		items()			countChilds()
+#define		getItem(i)		getChild(i)
+
+#define		addComponent(o)		addChild(o)
+#define		insertComponent(o, i)	insertChild(o, i)
+#define		setComponent(o, i)	setChild(o, i)
+#define		components()		countChilds()
+#define		getComponent(i)		getChild(i)
+
+		const MathStructure *base() const;
+		const MathStructure *exponent() const;
+		MathStructure *base();
+		MathStructure *exponent();
+		
+		void addAlternative(const MathStructure &o);		
+
+		int type() const;
+		
+		void format();
+		
+		string print(const PrintOptions &po = default_print_options, const InternalPrintStruct &ips = top_ips) const;
+		
+		
+//vector
+	
+		MathStructure range(int start, int end = -1) const;
+		MathStructure flattenVector() const;
+		
+		bool rank(bool ascending = true);
+		bool sort(bool ascending = true);
+		
+		void resizeVector(unsigned int i, const MathStructure &mfill);
+		
+//matrix
+
+		unsigned int rows() const;
+		unsigned int columns() const;
+		const MathStructure *getElement(unsigned int row, unsigned int column) const;
+		void setElement(const MathStructure &mstruct, unsigned int row, unsigned int column);
+		void addRows(unsigned int r, const MathStructure &mfill);
+		void addColumns(unsigned int c, const MathStructure &mfill);
+		void addRow(const MathStructure &mfill);
+		void addColumn(const MathStructure &mfill);
+		void resizeMatrix(unsigned int r, unsigned int c, const MathStructure &mfill);
+		bool matrixIsSymmetric() const;
+		MathStructure determinant() const;
+		void setToIdentityMatrix(unsigned int n);
+		
+//units
+
+		void syncUnits();		
+		bool testDissolveCompositeUnit(Unit *u);
+		bool testCompositeUnit(Unit *u);	
+		bool dissolveAllCompositeUnits();			
+		bool convert(Unit *u);
+		bool convert(string unit_str);		
+		bool convert(const MathStructure unit_mstruct);	
+		
+		
+		bool contains(const MathStructure &mstruct) const;
+		bool containsType(int mtype) const;
+		bool replace(const MathStructure &mfrom, const MathStructure &mto);
+		
+		MathStructure generateVector(string x_var, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL);
+		MathStructure generateVector(string x_var, const MathStructure &x_vector);
+		
+		bool differentiate(const MathStructure &x_var);
+
+};
+
+static MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one;
+
+#endif

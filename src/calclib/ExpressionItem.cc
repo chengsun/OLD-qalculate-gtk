@@ -24,25 +24,29 @@ ExpressionItem::ExpressionItem(string cat_, string name_, string title_, string 
 	scat = cat_;
 	sdescr = descr_;
 	b_changed = false;
-	b_exact = true;
+	b_approx = false;
 	b_active = is_active;
 	b_registered = false;
 	b_hidden = false;
+	b_destroyed = false;
+	i_ref = 0;
 }
 ExpressionItem::ExpressionItem() {
 	b_changed = false;
-	b_exact = true;
+	b_approx = false;
 	b_active = true;
 	b_local = true;
 	b_builtin = false;
 	b_registered = false;	
 	b_hidden = false;
+	b_destroyed = false;
+	i_ref = 0;
 }
 ExpressionItem::~ExpressionItem() {
 }
 void ExpressionItem::set(const ExpressionItem *item) {
 	b_changed = item->hasChanged();
-	b_exact = item->isPrecise();
+	b_approx = item->isApproximate();
 	b_active = item->isActive();
 	sname = item->name();
 	stitle = item->title();
@@ -54,7 +58,13 @@ void ExpressionItem::set(const ExpressionItem *item) {
 }
 bool ExpressionItem::destroy() {
 	CALCULATOR->expressionItemDeleted(this);
-	delete this;
+	if(v_refs.size() > 0) {
+		return false;
+	} else if(i_ref > 0) {
+		b_destroyed = true;
+	} else {
+		delete this;
+	}
 	return true;
 }
 bool ExpressionItem::isRegistered() const {
@@ -149,12 +159,12 @@ bool ExpressionItem::hasChanged() const {
 void ExpressionItem::setChanged(bool has_changed) {
 	b_changed = has_changed;
 }
-bool ExpressionItem::isPrecise() const {
-	return b_exact;
+bool ExpressionItem::isApproximate() const {
+	return b_approx;
 }
-void ExpressionItem::setPrecise(bool is_precise) {
-	if(is_precise != b_exact) {
-		b_exact = is_precise;
+void ExpressionItem::setApproximate(bool is_approx) {
+	if(is_approx != b_approx) {
+		b_approx = is_approx;
 		b_changed = true;	
 	}
 }
@@ -184,3 +194,37 @@ void ExpressionItem::setHidden(bool is_hidden) {
 	}
 }
 
+int ExpressionItem::refcount() const {
+	return i_ref;
+}
+void ExpressionItem::ref() {
+	i_ref++;
+}
+void ExpressionItem::unref() {
+	i_ref--;
+	if(b_destroyed && i_ref <= 0) {
+		delete this;
+	}
+}
+void ExpressionItem::ref(ExpressionItem *o) {
+	i_ref++;
+	v_refs.push_back(o);
+}
+void ExpressionItem::unref(ExpressionItem *o) {
+	for(unsigned int i = 0; i < v_refs.size(); i++) {
+		if(v_refs[i] == o) {
+			i_ref--;
+			v_refs.erase(v_refs.begin() + i);
+			break;
+		}
+	}
+}
+ExpressionItem *ExpressionItem::getReferencer(unsigned int index) const {
+	if(index > 0 && index <= v_refs.size()) {
+		return v_refs[index - 1];
+	}
+	return NULL;
+}
+bool ExpressionItem::changeReference(ExpressionItem *o_from, ExpressionItem *o_to) {
+	return false;
+}

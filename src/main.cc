@@ -26,7 +26,7 @@
 #include "callbacks.h"
 #include "main.h"
 
-Manager *mngr;
+MathStructure *mstruct;
 Variable *vans, *vAns;
 GtkWidget *functions_window;
 string selected_function_category;
@@ -94,7 +94,7 @@ int main (int argc, char **argv) {
 	//load application specific preferences
 	load_preferences();
 
-	mngr = new Manager();
+	mstruct = new MathStructure();
 
 	/*gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", "tmp", "messages", NULL);
 	freopen(gstr, "w+", stdout);
@@ -142,14 +142,14 @@ int main (int argc, char **argv) {
 	vans = CALCULATOR->getVariable(_("ans"));
 	vAns = CALCULATOR->getVariable(_("Ans"));
 	if(!vans) {
-		vans = CALCULATOR->addVariable(new Variable(_("Temporary"), _("ans"), mngr, _("Answer"), false));
+		vans = CALCULATOR->addVariable(new Variable(_("Temporary"), _("ans"), *mstruct, _("Answer"), false));
 	} else {
-		vans->set(mngr);
+		vans->set(*mstruct);
 	}
 	if(!vAns) {
-		vAns = CALCULATOR->addVariable(new Variable(_("Temporary"), _("Ans"), mngr, _("Answer"), false));
+		vAns = CALCULATOR->addVariable(new Variable(_("Temporary"), _("Ans"), *mstruct, _("Answer"), false));
 	} else {
-		vAns->set(mngr);
+		vAns->set(*mstruct);
 	}	
 	//reset
 	functions_window = NULL;

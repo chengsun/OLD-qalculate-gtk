@@ -140,27 +140,27 @@ create_main_window (void)
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_octal")), TRUE);
 			break;
 		}
-		case BASE_DECI: {
+		case BASE_DECIMAL: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_decimal")), TRUE);
 			break;
 		}
-		case BASE_HEX: {
+		case BASE_HEXADECIMAL: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_hexadecimal")), TRUE);
 			break;
 		}
-		case BASE_BIN: {
+		case BASE_BINARY: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_binary")), TRUE);
 			break;
 		}
-		case BASE_ROMAN: {
+		case BASE_ROMAN_NUMERALS: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_roman")), TRUE);
 			break;
 		}
-		case BASE_SEXA: {
+		case BASE_SEXAGECIMAL: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_sexagesimal")), TRUE);
 			break;
 		}
-		case BASE_TIMEF: {
+		case BASE_TIME: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_time_format")), TRUE);
 			break;
 		}

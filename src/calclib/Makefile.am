@@ -10,12 +10,9 @@ libcalculate_la_SOURCES = \
 	Function.cc	Function.h \
 	Calculator.cc	Calculator.h \
 	Variable.cc	Variable.h \
-	EqItem.cc	EqItem.h \
-	Error.cc	Error.h \
 	ExpressionItem.cc	ExpressionItem.h \
 	Number.cc	Number.h \
-	Manager.cc	Manager.h \
-	Matrix.cc	Matrix.h \
+	MathStructure.cc	MathStructure.h \
 	Prefix.cc	Prefix.h \
 	util.cc		util.h \
 	includes.h \

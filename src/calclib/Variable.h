@@ -24,55 +24,137 @@
 						ExpressionItem *copy() const {return new x(this);} \
 					};
 
+typedef enum {
+	ASSUMPTION_NUMBER_INTEGER = 0,
+	ASSUMPTION_NUMBER_RATIONAL = 1,
+	ASSUMPTION_NUMBER_REAL = 2,
+	ASSUMPTION_NUMBER_COMPLEX = 3,
+	ASSUMPTION_NUMBER_NUMBER = 4,
+	ASSUMPTION_NUMBER_NONE = 5
+} AssumptionNumberType;
 
-/**
-* Contains a known variable.
-*/
+typedef enum {
+	ASSUMPTION_SIGN_UNKNOWN,
+	ASSUMPTION_SIGN_POSITIVE,
+	ASSUMPTION_SIGN_NONNEGATIVE,
+	ASSUMPTION_SIGN_NEGATIVE,
+	ASSUMPTION_SIGN_NONZERO
+} AssumptionSign;
+
+class Assumptions {
+
+  public:
+
+	AssumptionNumberType number_type;
+	AssumptionSign sign;
+
+	Assumptions();
+	virtual ~Assumptions();
+
+	virtual bool isPositive();
+	virtual bool isNegative();
+	virtual bool isNonNegative();
+	virtual bool isInteger();
+	virtual bool isNumber();
+	virtual bool isRational();
+	virtual bool isReal();
+	virtual bool isNonZero();
+};
+
 
 class Variable : public ExpressionItem {
 
+  public:
+
+	Variable(string cat_, string name_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	Variable();
+	Variable(const Variable *variable);
+	virtual ~Variable();
+	virtual ExpressionItem *copy() const = 0;
+	virtual void set(const ExpressionItem *item);
+	virtual int type() const {return TYPE_VARIABLE;}
+	virtual bool isKnown() const = 0;
+
+	virtual bool isPositive() {return false;}
+	virtual bool isNegative() {return false;}
+	virtual bool isNonNegative() {return false;}
+	virtual bool isInteger() {return false;}
+	virtual bool isNumber() {return false;}
+	virtual bool isRational() {return false;}
+	virtual bool isReal() {return false;}
+	virtual bool isNonZero() {return false;}
+	
+};
+
+class UnknownVariable : public Variable {
+
+  protected:
+  
+  	Assumptions *o_assumption;
+  
+  public:
+
+	UnknownVariable(string cat_, string name_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	UnknownVariable();
+	UnknownVariable(const UnknownVariable *variable);
+	virtual ~UnknownVariable();
+	virtual ExpressionItem *copy() const;
+	virtual void set(const ExpressionItem *item);
+	bool isKnown() const {return false;}
+	void setAssumptions(Assumptions *ass);
+	Assumptions *assumptions();
+
+	virtual bool isPositive();
+	virtual bool isNegative();
+	virtual bool isNonNegative();
+	virtual bool isInteger();
+	virtual bool isNumber();
+	virtual bool isRational();
+	virtual bool isReal();
+	virtual bool isNonZero();
+	
+};
+
+class KnownVariable : public Variable {
+
   protected:
 
-	Manager *mngr;
+	MathStructure *mstruct;
 	bool b_expression;
  	int calculated_precision;
 	string sexpression;
 
   public:
   
-	Variable(string cat_, string name_, Manager *mngr_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
-	Variable(string cat_, string name_, string expression_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);	
-	Variable();
-	Variable(const Variable *variable);
-	~Variable();
+	KnownVariable(string cat_, string name_, const MathStructure &o, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	KnownVariable(string cat_, string name_, string expression_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);	
+	KnownVariable();
+	KnownVariable(const KnownVariable *variable);
+	virtual ~KnownVariable();
 
 	virtual ExpressionItem *copy() const;
 	virtual void set(const ExpressionItem *item);
-	virtual int type() const;
+	bool isKnown() const {return true;}
 	virtual bool isExpression() const;
 	virtual string expression() const;
 
-	/**
-	* Sets the value of the variable.
-	*
-	* @see #value
-	*/
-	virtual void set(Manager *mngr_);
+	virtual void set(const MathStructure &o);
 	virtual void set(string expression_);	
 
-	/**
-	* Returns the value of the variable.
-	*/	
-	virtual Manager *get();
-
-	/**
-	* Returns the value of the variable.
-	*/	
-	virtual Manager *copyManager() const;	
+	virtual const MathStructure &get();
+	
+	virtual bool isPositive();
+	virtual bool isNegative();
+	virtual bool isNonNegative();
+	virtual bool isInteger();
+	virtual bool isNumber();
+	virtual bool isRational();
+	virtual bool isReal();
+	virtual bool isNonZero();
 
 };
 
-class DynamicVariable : public Variable {
+class DynamicVariable : public KnownVariable {
 
   protected:
   
@@ -88,17 +170,21 @@ class DynamicVariable : public Variable {
 	ExpressionItem *copy() const = 0;
 	void set(const ExpressionItem *item);
 
-	/**
-	* Returns the value of the variable.
-	*/	
-	virtual Manager *get();
+	const MathStructure &get();
 	
-	virtual Manager *copyManager() const;		
-
-	void set(Manager *mngr_);
-	void set(string expression_);	
+	void set(const MathStructure &o);
+	void set(string expression);	
 	
 	int calculatedPrecision() const;
+	
+	virtual bool isPositive() {return true;}
+	virtual bool isNegative() {return false;}
+	virtual bool isNonNegative() {return true;}
+	virtual bool isInteger() {return false;}
+	virtual bool isNumber() {return true;}
+	virtual bool isRational() {return false;}
+	virtual bool isReal() {return true;}
+	virtual bool isNonZero() {return true;}
 
 };
 
@@ -106,8 +192,5 @@ DECLARE_BUILTIN_VARIABLE(PiVariable);
 DECLARE_BUILTIN_VARIABLE(EVariable);
 DECLARE_BUILTIN_VARIABLE(EulerVariable);
 DECLARE_BUILTIN_VARIABLE(CatalanVariable);
-DECLARE_BUILTIN_VARIABLE(AperyVariable);
-DECLARE_BUILTIN_VARIABLE(PythagorasVariable);
-DECLARE_BUILTIN_VARIABLE(GoldenVariable);
 
 #endif

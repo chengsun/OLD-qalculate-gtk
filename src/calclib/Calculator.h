@@ -13,6 +13,7 @@
 #define CALCULATOR_H
 
 #include "includes.h"
+#include "util.h"
 #include <pthread.h>
 
 extern Calculator *calculator;
@@ -50,9 +51,21 @@ struct plot_data_parameters {
 	plot_data_parameters();
 };
 
+class CalculatorError {
+  protected:
+	string smessage;
+	bool bcritical;
+  public:
+	CalculatorError(string message_, bool critical_);
+	CalculatorError(const CalculatorError &e);
+	string message(void) const;
+	const char* c_message(void) const;	
+	bool critical(void) const;
+};
+
 class Calculator {
   protected:
-	vector<Error*> errors;
+	vector<CalculatorError> errors;
 	int error_id;
 	int ianglemode;
 	int i_precision;
@@ -60,8 +73,13 @@ class Calculator {
 	bool b_functions, b_variables, b_units, b_unknown, b_calcvars, b_always_exact, b_rpn, b_use_all_prefixes, b_multiple_roots, b_den_prefix;
 	vector<void*> ufv;
 	vector<char> ufv_t;	
-	Sgi::hash_map<unsigned int, Manager*> ids;
-	Sgi::hash_map<unsigned int, bool> ids_p;	
+	
+	vector<MathStructure> id_structs;
+	vector<unsigned int> ids;
+	vector<bool> ids_p;
+	vector<unsigned int> freed_ids;	
+	unsigned int ids_i;
+	
 	vector<string> signs;	
 	vector<string> real_signs;
 	vector<string> default_signs;	
@@ -74,7 +92,6 @@ class Calculator {
 	string NAME_NUMBER_PRE_S, NAME_NUMBER_PRE_STR, DOT_STR, DOT_S, COMMA_S, COMMA_STR, ILLEGAL_IN_NAMES, ILLEGAL_IN_UNITNAMES, ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
 
 	bool b_argument_errors, b_temp_exact;
-	bool toplevel_calc;
 
 	bool b_gnuplot_open;
 	string gnuplot_cmdline;
@@ -82,18 +99,36 @@ class Calculator {
 	
 	bool local_to;
 	
-	Variable *pi_var, *e_var;
-	Function *ln_func, *log_func, *vector_func, *matrix_func, *abs_func, *sgn_func, *diff_func, *bin_func, *oct_func, *hex_func, *base_func, *integrate_func;
-	
-	Sgi::hash_map<unsigned int, vector<Manager*> > alternative_syncs;
-	Sgi::hash_map<unsigned int, int> alternative_locks;
-
   public:
+
+	KnownVariable *v_pi, *v_e, *v_i, *v_inf, *v_pinf, *v_minf;
+	UnknownVariable *v_x, *v_y, *v_z;
+	Function *f_vector, *f_sort, *f_rank, *f_limits, *f_component, *f_components;
+	Function *f_matrix, *f_matrix_to_vector, *f_area, *f_rows, *f_columns, *f_row, *f_column, *f_elements, *f_element, *f_transpose, *f_identity, *f_determinant, *f_permanent, *f_adjoint, *f_cofactor, *f_inverse; 
+	Function *f_factorial, *f_binomial;
+	Function *f_abs, *f_gcd, *f_signum, *f_round, *f_floor, *f_ceil, *f_trunc, *f_int, *f_frac, *f_rem, *f_mod;
+	Function *f_re, *f_im, *f_arg;
+  	Function *f_sqrt, *f_sq;
+	Function *f_exp;
+	Function *f_ln, *f_logn;
+	Function *f_sin, *f_cos, *f_tan, *f_asin, *f_acos, *f_atan, *f_sinh, *f_cosh, *f_tanh, *f_asinh, *f_acosh, *f_atanh, *f_radians_to_default_angle_unit;
+	Function *f_zeta, *f_gamma, *f_beta;
+	Function *f_total, *f_percentile, *f_min, *f_max, *f_mode, *f_rand;
+	Function *f_days, *f_yearfrac, *f_week, *f_weekday, *f_month, *f_day, *f_year, *f_yearday, *f_time;
+	Function *f_bin, *f_oct, *f_hex, *f_base, *f_roman;
+	Function *f_ascii, *f_char;
+	Function *f_length, *f_concatenate;
+	Function *f_replace;
+	Function *f_for, *f_sum, *f_product, *f_process, *f_process_matrix, *f_csum;
+	Function *f_diff;
+	Unit *u_rad, *u_euro;
   
   	bool b_busy;
 	string expression_to_calculate, tmp_print_result;
-	NumberFormat tmp_nrformat; int tmp_displayflags; int tmp_min_decimals; 
-	int tmp_max_decimals; bool *tmp_in_exact; bool *tmp_usable; Prefix *tmp_prefix;	
+	PrintOptions tmp_printoptions;
+	EvaluationOptions tmp_evaluationoptions;
+	
+	PrintOptions save_printoptions;	
   
 	vector<Variable*> variables;
 	vector<Function*> functions;	
@@ -122,39 +157,21 @@ class Calculator {
 	void beginTemporaryStopErrors();
 	void endTemporaryStopErrors();	
 	
-	int addId(Manager *mngr, bool persistent = false);
-	Manager *getId(unsigned int id);	
+	unsigned int addId(const MathStructure &m_struct, bool persistent = false);
+	const MathStructure *getId(unsigned int id);	
 	void delId(unsigned int id, bool force = false);
-	
-	unsigned int addAlternativeSyncId();
-	void addAlternativeSync(unsigned int sync_id, Manager *mngr);
-	void delAlternativeSync(unsigned int sync_id, Manager *mngr);
-	void lockAlternative(unsigned int sync_id, int alternative);
-	int getAlternativeLock(unsigned int sync_id);
 
-	Variable *getPI() const;
-	Variable *getE() const;
-	Function *getLnFunction() const;
-	Function *getLogFunction() const;
-	Function *getOctalFunction() const;
-	Function *getHexadecimalFunction() const;
-	Function *getBinaryFunction() const;
-	Function *getBaseFunction() const;
-	Function *getSignumFunction() const;
-	Function *getAbsFunction() const;
-	Function *getDiffFunction() const;
-	Function *getIntegrateFunction() const;
 	Variable *getVariable(unsigned int index) const;
 	Unit *getUnit(unsigned int index) const;	
 	Function *getFunction(unsigned int index) const;	
 
 	Prefix *getPrefix(unsigned int index) const;	
 	Prefix *getPrefix(string name_) const;		
-	Prefix *getExactPrefix(long int exp10, long int exp = 1) const;			
-	Prefix *getExactPrefix(const Number *fr, long int exp = 1) const;				
-	Prefix *getNearestPrefix(long int exp10, long int exp = 1) const;		
-	Prefix *getBestPrefix(long int exp10, long int exp = 1) const;		
-	Prefix *getBestPrefix(const Number *exp10, const Number *exp) const;				
+	Prefix *getExactPrefix(int exp10, int exp = 1) const;			
+	Prefix *getExactPrefix(const Number &o, int exp = 1) const;				
+	Prefix *getNearestPrefix(int exp10, int exp = 1) const;		
+	Prefix *getBestPrefix(int exp10, int exp = 1) const;		
+	Prefix *getBestPrefix(const Number &exp10, const Number &exp) const;
 	Prefix *addPrefix(Prefix *p);
 	void prefixNameChanged(Prefix *p);	
 
@@ -197,25 +214,32 @@ class Calculator {
 	void abort();
 	void abort_this();
 	bool busy();
+	
 	string localizeExpression(string str) const;
 	string unlocalizeExpression(string str) const;
-	Manager *calculate(string str, bool enable_abort = false, int usecs = -1);
-	Manager *calculate_sub(const string &str, bool hold_exact = true);
-	string printManagerTimeOut(Manager *mngr, int usecs = 100000, NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *prefix = NULL);
-	Manager *convert(double value, Unit *from_unit, Unit *to_unit);
-	Manager *convert(string str, Unit *from_unit, Unit *to_unit);	
-	Manager *convert(Manager *mngr, Unit *to_unit, bool always_convert = true);		
-	Manager *convert(Manager *mngr, string composite_);
-	Manager *convertToBaseUnits(Manager *mngr);
+	bool calculate(MathStructure &mstruct, string str, int usecs, const EvaluationOptions &eo = default_evaluation_options);
+	MathStructure calculate(string str, const EvaluationOptions &eo = default_evaluation_options);
+	string printMathStructureTimeOut(const MathStructure &mstruct, int usecs = 100000, const PrintOptions &op = default_print_options);
+	
+	MathStructure parse(string str);
+	MathStructure parseNumber(string str);
+	MathStructure parseOperators(string str);
+	void parseAdd(string &str, MathStructure &mstruct, MathOperation s);
+	void parseAdd(string &str, MathStructure &mstruct);
+	
+	MathStructure convert(double value, Unit *from_unit, Unit *to_unit);
+	MathStructure convert(string str, Unit *from_unit, Unit *to_unit);	
+	MathStructure convert(const MathStructure &mstruct, Unit *to_unit, bool always_convert = true);		
+	MathStructure convert(const MathStructure &mstruct, string composite_);
+	MathStructure convertToBaseUnits(const MathStructure &mstruct);
 	Unit *getBestUnit(Unit *u, bool allow_only_div = false);
-	Manager *convertToBestUnit(Manager *mngr);
-	Manager *convertToCompositeUnit(Manager *mngr, CompositeUnit *cu, bool always_convert = true);		
+	MathStructure convertToBestUnit(const MathStructure &mstruct);
+	MathStructure convertToCompositeUnit(const MathStructure &mstruct, CompositeUnit *cu, bool always_convert = true);		
+	
 	void expressionItemActivated(ExpressionItem *item);
 	void expressionItemDeactivated(ExpressionItem *item);
 	void expressionItemDeleted(ExpressionItem *item);
 	void nameChanged(ExpressionItem *item);
-	void checkFPExceptions();
-	void checkFPExceptions(const char *str);	
 	void deleteName(string name_, ExpressionItem *object = NULL);
 	void deleteUnitName(string name_, Unit *object = NULL);	
 	Unit* addUnit(Unit *u, bool force = true);
@@ -232,8 +256,7 @@ class Calculator {
 	void functionNameChanged(Function *f, bool priviliged = false);	
 	void unitNameChanged(Unit *u);	
 	void unitSingularChanged(Unit *u);	
-	void unitPluralChanged(Unit *u);		
-	void setFunctionsAndVariables(string &str);
+	void unitPluralChanged(Unit *u);	
 	Variable* getVariable(string name_);
 	Variable* getActiveVariable(string name_);
 	ExpressionItem *addExpressionItem(ExpressionItem *item, bool force = true);
@@ -241,8 +264,8 @@ class Calculator {
 	Function* getFunction(string name_);	
 	Function* getActiveFunction(string name_);	
 	void error(bool critical, const char *TEMPLATE,...);
-	Error* error();
-	Error* nextError();
+	CalculatorError *error();
+	CalculatorError *nextError();
 	bool variableNameIsValid(string name_);
 	string convertToValidVariableName(string name_);	
 	bool functionNameIsValid(string name_);
@@ -260,8 +283,8 @@ class Calculator {
 	int saveVariables(const char* file_name, bool save_global = false);	
 	int saveUnits(const char* file_name, bool save_global = false);	
 	int saveFunctions(const char* file_name, bool save_global = false);	
-	Manager *setAngleValue(Manager *mngr);	
-	Matrix *importCSV(const char *file_name, int first_row = 1, string delimiter = ",", vector<string> *headers = NULL);
+	MathStructure setAngleValue(const MathStructure &mstruct);	
+	bool importCSV(MathStructure &mstruct, const char *file_name, int first_row = 1, string delimiter = ",", vector<string> *headers = NULL);
 	bool importCSV(const char *file_name, int first_row = 1, bool headers = true, string delimiter = ",", bool to_matrix = false, string name = "", string title = "", string category = "");
 	int testCondition(string expression);
 	
@@ -270,11 +293,11 @@ class Calculator {
 	bool fetchExchangeRates();
 	
 	bool canPlot();
-	Vector *expressionToVector(string expression, const Manager *min, const Manager *max, int steps, Vector **x_vector = NULL, string x_var = "\\x");
-	Vector *expressionToVector(string expression, float min, float max, int steps, Vector **x_vector = NULL, string x_var = "\\x");
-	Vector *expressionToVector(string expression, Vector *x_vector, string x_var = "\\x");
-	bool plotVectors(plot_parameters *param, Vector *y_vector, ...);
-	bool plotVectors(plot_parameters *param, vector<Vector*> &y_vectors, vector<Vector*> &x_vectors, vector<plot_data_parameters*> &pdps, bool persistent = false);
+	MathStructure expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL, string x_var = "\\x");
+	MathStructure expressionToPlotVector(string expression, float min, float max, int steps, MathStructure *x_vector = NULL, string x_var = "\\x");
+	MathStructure expressionToPlotVector(string expression, const MathStructure &x_vector, string x_var = "\\x");
+	bool plotVectors(plot_parameters *param, const MathStructure *y_vector, ...);
+	bool plotVectors(plot_parameters *param, const vector<const MathStructure*> &y_vectors, const vector<const MathStructure*> &x_vectors, vector<plot_data_parameters*> &pdps, bool persistent = false);
 	bool invokeGnuplot(string commands, string commandline_extra = "", bool persistent = false);
 	bool closeGnuplot();
 	bool gnuplotOpen();

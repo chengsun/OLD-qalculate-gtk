@@ -12,126 +12,176 @@
 #include "Variable.h"
 #include "util.h"
 #include "Calculator.h"
-#include "Manager.h"
+#include "MathStructure.h"
 #include "Number.h"
 
-Variable::Variable(string cat_, string name_, Manager *mngr_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active) {
-	mngr = mngr_;
-	if(mngr) mngr->ref();
+Assumptions::Assumptions() : number_type(ASSUMPTION_NUMBER_NONE), sign(ASSUMPTION_SIGN_UNKNOWN) {}
+Assumptions::~Assumptions() {}
+
+bool Assumptions::isPositive() {return sign == ASSUMPTION_SIGN_POSITIVE;}
+bool Assumptions::isNegative() {return sign == ASSUMPTION_SIGN_NEGATIVE;}
+bool Assumptions::isNonNegative() {return sign == ASSUMPTION_SIGN_NONNEGATIVE || sign == ASSUMPTION_SIGN_POSITIVE;}
+bool Assumptions::isInteger() {return number_type <= ASSUMPTION_NUMBER_INTEGER;}
+bool Assumptions::isNumber() {return number_type <= ASSUMPTION_NUMBER_NUMBER;}
+bool Assumptions::isRational() {return number_type <= ASSUMPTION_NUMBER_RATIONAL;}
+bool Assumptions::isReal() {return number_type <= ASSUMPTION_NUMBER_REAL;}
+bool Assumptions::isNonZero() {return sign == ASSUMPTION_SIGN_NONZERO || sign == ASSUMPTION_SIGN_POSITIVE || sign == ASSUMPTION_SIGN_NEGATIVE;}
+
+
+Variable::Variable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active) {
+	setChanged(false);
+}
+Variable::Variable() : ExpressionItem() {}
+Variable::Variable(const Variable *variable) {set(variable);}
+Variable::~Variable() {}
+void Variable::set(const ExpressionItem *item) {
+	ExpressionItem::set(item);
+}
+
+
+UnknownVariable::UnknownVariable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
+	setChanged(false);
+}
+UnknownVariable::UnknownVariable() : Variable() {
+}
+UnknownVariable::UnknownVariable(const UnknownVariable *variable) {
+	set(variable);
+}
+UnknownVariable::~UnknownVariable() {
+	if(o_assumption) delete o_assumption;
+}
+ExpressionItem *UnknownVariable::copy() const {
+	return new UnknownVariable(this);
+}
+void UnknownVariable::set(const ExpressionItem *item) {
+	if(item->type() == TYPE_VARIABLE && !((Variable*) item)->isKnown()) {
+	}
+	ExpressionItem::set(item);
+}
+void UnknownVariable::setAssumptions(Assumptions *ass) {
+	if(o_assumption) delete o_assumption;
+	o_assumption = ass;
+}
+Assumptions *UnknownVariable::assumptions() {
+	return o_assumption;
+}
+bool UnknownVariable::isPositive() {return o_assumption && o_assumption->isPositive();}
+bool UnknownVariable::isNegative() {return o_assumption && o_assumption->isNegative();}
+bool UnknownVariable::isNonNegative() {return o_assumption && o_assumption->isNonNegative();}
+bool UnknownVariable::isInteger() {return o_assumption && o_assumption->isInteger();}
+bool UnknownVariable::isNumber() {return o_assumption && o_assumption->isNumber();}
+bool UnknownVariable::isRational() {return o_assumption && o_assumption->isRational();}
+bool UnknownVariable::isReal() {return o_assumption && o_assumption->isReal();}
+bool UnknownVariable::isNonZero() {return o_assumption && o_assumption->isNonZero();}
+
+KnownVariable::KnownVariable(string cat_, string name_, const MathStructure &o, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
+	mstruct = new MathStructure(o);
 	b_expression = false;
 	sexpression = "";
 	calculated_precision = 0;
 	setChanged(false);
 }
-Variable::Variable(string cat_, string name_, string expression_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active) {
-	mngr = NULL;
+KnownVariable::KnownVariable(string cat_, string name_, string expression_, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
+	mstruct = NULL;
 	calculated_precision = 0;
 	set(expression_);
 	setChanged(false);
 }
-Variable::Variable() : ExpressionItem() {
-	mngr = NULL;
+KnownVariable::KnownVariable() : Variable() {
+	mstruct = NULL;
 }
-Variable::Variable(const Variable *variable) {
-	mngr = NULL;
+KnownVariable::KnownVariable(const KnownVariable *variable) {
+	mstruct = NULL;
 	set(variable);
 }
-Variable::~Variable() {
-	if(mngr) mngr->unref();
+KnownVariable::~KnownVariable() {
+	if(mstruct) delete mstruct;
 }
-ExpressionItem *Variable::copy() const {
-	return new Variable(this);
+ExpressionItem *KnownVariable::copy() const {
+	return new KnownVariable(this);
 }
-bool Variable::isExpression() const {
+bool KnownVariable::isExpression() const {
 	return b_expression;
 }
-string Variable::expression() const {
+string KnownVariable::expression() const {
 	return sexpression;
 }
-void Variable::set(const ExpressionItem *item) {
-	if(item->type() == TYPE_VARIABLE) {
+void KnownVariable::set(const ExpressionItem *item) {
+	if(item->type() == TYPE_VARIABLE && ((Variable*) item)->isKnown()) {
 		calculated_precision = 0;
-		sexpression = ((Variable*) item)->expression();
-		b_expression = ((Variable*) item)->isExpression();
+		sexpression = ((KnownVariable*) item)->expression();
+		b_expression = ((KnownVariable*) item)->isExpression();
 		if(!b_expression) {
-			set(((Variable*) item)->copyManager());
+			set(((KnownVariable*) item)->get());
 		}
 	}
 	ExpressionItem::set(item);
 }
-int Variable::type() const {
-	return TYPE_VARIABLE;
-}
-void Variable::set(Manager *mngr_) {
-	if(mngr) mngr->unref();
-	mngr = mngr_;
-	mngr->ref();
+void KnownVariable::set(const MathStructure &o) {
+	if(!mstruct) mstruct = new MathStructure(o);
+	else mstruct->set(o);
 	calculated_precision = 0;
 	b_expression = false;
 	sexpression = "";
 	setChanged(true);
 }
-void Variable::set(string expression_) {
+void KnownVariable::set(string expression_) {
+	if(mstruct) delete mstruct;
+	mstruct = NULL;
 	b_expression = true;
 	sexpression = expression_;
 	remove_blank_ends(sexpression);
 	calculated_precision = 0;
-/*	if(mngr) mngr->unref();
-	bool b_always_exact = CALCULATOR->alwaysExact();
-	CALCULATOR->setAlwaysExact(true);
-	mngr = CALCULATOR->calculate(expression_);
-	CALCULATOR->setAlwaysExact(b_always_exact);*/
 	setChanged(true);
 }
-Manager *Variable::get() {
-	if(b_expression && (calculated_precision != CALCULATOR->getPrecision() || !mngr)) {
-		calculated_precision = CALCULATOR->getPrecision();
-		if(mngr) {
-			mngr->unref();
-		}
-		mngr = CALCULATOR->calculate_sub(sexpression);
+const MathStructure &KnownVariable::get() {
+	if(b_expression && !mstruct) {
+		mstruct = new MathStructure(CALCULATOR->parse(sexpression));
 	}
-	return mngr;
+	return *mstruct;
 }
-Manager *Variable::copyManager() const {
-	return new Manager(mngr);
-}
+bool KnownVariable::isPositive() {return get().representsPositive();}
+bool KnownVariable::isNegative() {return get().representsNegative();}
+bool KnownVariable::isNonNegative() {return get().representsNonNegative();}
+bool KnownVariable::isInteger() {return get().representsInteger();}
+bool KnownVariable::isNumber() {return get().representsNumber();}
+bool KnownVariable::isRational() {return get().representsRational();}
+bool KnownVariable::isReal() {return get().representsReal();}
+bool KnownVariable::isNonZero() {return get().representsNonZero();}
 
-DynamicVariable::DynamicVariable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, new Manager(), title_, is_local, is_builtin, is_active) {
+DynamicVariable::DynamicVariable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : KnownVariable(cat_, name_, MathStructure(), title_, is_local, is_builtin, is_active) {
+	mstruct = NULL;
 	calculated_precision = 0;
-	setPrecise(false);
+	setApproximate();
 	setChanged(false);
 }
 DynamicVariable::DynamicVariable(const DynamicVariable *variable) {
+	mstruct = NULL;
 	set(variable);
-	setPrecise(false);	
+	setApproximate();	
 	setChanged(false);
 }
-DynamicVariable::DynamicVariable() : Variable() {
-	mngr = new Manager();
+DynamicVariable::DynamicVariable() : KnownVariable() {
+	mstruct = NULL;
 	calculated_precision = 0;
-	setPrecise(false);	
+	setApproximate();	
 	setChanged(false);
 }
-DynamicVariable::~DynamicVariable() {}
+DynamicVariable::~DynamicVariable() {
+	if(mstruct) delete mstruct;
+}
 void DynamicVariable::set(const ExpressionItem *item) {
-//	calculated_precision = 0;
 	ExpressionItem::set(item);
 }
-void DynamicVariable::set(Manager *mngr_) {}
+void DynamicVariable::set(const MathStructure &o) {}
 void DynamicVariable::set(string expression_) {}
-Manager *DynamicVariable::get() {
-	if(calculated_precision != CALCULATOR->getPrecision()) {
+const MathStructure &DynamicVariable::get() {
+	if(calculated_precision != CALCULATOR->getPrecision() || !mstruct) {
+		mstruct = new MathStructure();
 		calculated_precision = CALCULATOR->getPrecision();
 		calculate();
 	}
-	return mngr;
-}
-Manager *DynamicVariable::copyManager() const {
-	if(calculated_precision != CALCULATOR->getPrecision()) {
-		calculate();
-	}
-	return new Manager(mngr);
+	return *mstruct;
 }
 int DynamicVariable::calculatedPrecision() const {
 	return calculated_precision;
@@ -140,30 +190,18 @@ int DynamicVariable::calculatedPrecision() const {
 
 PiVariable::PiVariable() : DynamicVariable("Constants", "pi", "Archimede's Constant (pi)") {}
 void PiVariable::calculate() const {
-	Number nr; nr.pi(); mngr->set(&nr);
+	Number nr; nr.pi(); mstruct->set(nr);
 }
 EVariable::EVariable() : DynamicVariable("Constants", "e", "The Base of Natural Logarithms (e)") {}
 void EVariable::calculate() const {
-	Number nr; nr.e(); mngr->set(&nr);
-}
-PythagorasVariable::PythagorasVariable() : DynamicVariable("Constants", "pythagoras", "Pythagora's Constant (sqrt 2)") {}
-void PythagorasVariable::calculate() const {
-	Number nr; nr.pythagoras(); mngr->set(&nr);
+	Number nr; nr.e(); mstruct->set(nr);
 }
 EulerVariable::EulerVariable() : DynamicVariable("Constants", "euler", "Euler's Constant") {}
 void EulerVariable::calculate() const {
-	Number nr; nr.euler(); mngr->set(&nr);
-}
-GoldenVariable::GoldenVariable() : DynamicVariable("Constants", "golden", "The Golden Ratio") {}
-void GoldenVariable::calculate() const {
-	Number nr; nr.golden(); mngr->set(&nr);
-}
-AperyVariable::AperyVariable() : DynamicVariable("Constants", "apery", "Apery's Constant") {}
-void AperyVariable::calculate() const {
-	Number nr; nr.apery(); mngr->set(&nr);
+	Number nr; nr.euler(); mstruct->set(nr);
 }
 CatalanVariable::CatalanVariable() : DynamicVariable("Constants", "catalan", "Catalan's Constant") {}
 void CatalanVariable::calculate() const {
-	Number nr; nr.catalan(); mngr->set(&nr);
+	Number nr; nr.catalan(); mstruct->set(nr);
 }
 

@@ -12,12 +12,47 @@
 #include "Function.h"
 #include "util.h"
 #include "Calculator.h"
-#include "Matrix.h"
-#include "Manager.h"
+#include "MathStructure.h"
+#include "Variable.h"
 #include "Number.h"
 #include "Unit.h"
 
-Function::Function(string cat_, string name_, int argc_, string title_, string descr_, int max_argc_, bool is_active) : ExpressionItem(cat_, name_, title_, descr_, false, true, is_active) {
+#ifdef HAVE_GIAC
+#ifndef NO_NAMESPACE_GIAC
+namespace giac {
+#endif // ndef NO_NAMESPACE_GIAC
+
+/*	gen qalculate_function(const gen &a, const gen &b){
+		if(is_integer(a) && is_integer(b)) return (a + b) / (a * b);
+		return symbolic(at_qalculate_function, makevecteur(a, b));
+	}*/
+
+	gen _qalculate_function(const gen &args){
+		return symbolic(at_qalculate_function, args);
+		/*if((args.type != _VECT) || (args._VECTptr->size() < 1)) setsizeerr();
+		vecteur &v = *args._VECTptr;
+		if(v[0].type != _POINTER_) {
+			return symbolic(at_qalculate_function, v);
+		}
+		Function *f = (Function*) v[0]._POINTER_val;
+		MathStructure vargs;
+		vargs.clearVector();
+		for(unsigned int i = 1; i < v.size(); i++) {
+			vargs.addComponent(v[i]);
+		}
+		MathStructure mstruct = f->calculate(vargs);
+		return mstruct.toGiac();*/
+	}
+	const string _qalculate_function_s("qalculate_function");
+	unary_function_unary __qalculate_function(&_qalculate_function, _qalculate_function_s);
+	unary_function_ptr at_qalculate_function (&__qalculate_function, 0, true);
+     
+#ifndef NO_NAMESPACE_GIAC
+}
+#endif // ndef NO_NAMESPACE_GIAC
+#endif
+
+Function::Function(string name_, int argc_, int max_argc_, string cat_, string title_, string descr_, bool is_active) : ExpressionItem(cat_, name_, title_, descr_, false, true, is_active) {
 	argc = argc_;
 	if(max_argc_ < 0 || argc < 0) {
 		if(argc < 0) argc = 0;
@@ -69,6 +104,25 @@ int Function::type() const {
 	return TYPE_FUNCTION;
 }
 
+#ifdef HAVE_GIAC
+giac::gen Function::toGiac(const MathStructure &vargs) const {
+	giac::vecteur v;
+	v.push_back(giac::identificateur(p2s((void*) this)));
+	for(unsigned int i = 0; i < vargs.size(); i++) {
+		v.push_back(vargs[i].toGiac());
+	}
+	return giac::symbolic(giac::at_qalculate_function, v);
+}
+giac::gen Function::argsToGiac(const MathStructure &vargs) const {
+	giac::vecteur v;
+	for(unsigned int i = 0; i < vargs.size(); i++) {
+		v.push_back(vargs[i].toGiac());
+	}
+	return v;
+}
+bool Function::isGiacFunction() const {return false;}
+#endif
+
 int Function::countArgOccurence(unsigned int arg_) {
 	if((int) arg_ > argc && max_argc < 0) {
 		arg_ = argc + 1;
@@ -94,13 +148,17 @@ void Function::setCondition(string expression) {
 	scondition = expression;
 	remove_blank_ends(scondition);
 }
-bool Function::testCondition(vector<Manager*> &vargs) {
+bool Function::testCondition(const MathStructure &vargs) {
 	if(scondition.empty()) {
 		return true;
 	}
 	UserFunction test_function("", "CONDITION_TEST_FUNCTION", scondition, false, argc, "", "", max_argc);
-	Manager *mngr = test_function.calculate(vargs);
-	if(!mngr->isNumber() || !mngr->number()->isPositive()) {
+	MathStructure vargs2(vargs);
+	MathStructure mstruct(test_function.Function::calculate(vargs2));
+	EvaluationOptions eo;
+	eo.approximation = APPROXIMATION_APPROXIMATE;
+	mstruct.eval(eo);
+	if(!mstruct.isNumber() || !mstruct.number().isPositive()) {
 		string str = scondition;
 		string svar, argstr;
 		Argument *arg;
@@ -153,9 +211,8 @@ bool Function::testCondition(vector<Manager*> &vargs) {
 	}
 	return true;
 }
-int Function::args(const string &argstr, vector<Manager*> &vargs) {
-	vargs.clear();
-	Manager *mngr;
+int Function::args(const string &argstr, MathStructure &vargs) {
+	vargs.clearVector();
 	int start_pos = 0;
 	bool in_cit1 = false, in_cit2 = false;
 	int pars = 0;
@@ -163,6 +220,11 @@ int Function::args(const string &argstr, vector<Manager*> &vargs) {
 	string str = argstr, stmp;
 	remove_blank_ends(str);
 	Argument *arg;
+	bool last_is_vctr = false, vctr_started = false;
+	if(maxargs() > 0) {
+		arg = getArgumentDefinition(maxargs());
+		last_is_vctr = arg && arg->type() == ARGUMENT_TYPE_VECTOR;
+	}
 	for(unsigned int str_index = 0; str_index < str.length(); str_index++) {
 		switch(str[str_index]) {
 			case LEFT_VECTOR_WRAP_CH: {}
@@ -204,18 +266,29 @@ int Function::args(const string &argstr, vector<Manager*> &vargs) {
 						arg = getArgumentDefinition(itmp);
 						if(stmp.empty()) {
 							if(arg) {
-								mngr = arg->evaluate(getDefaultValue(itmp), countArgOccurence(itmp) == 1);
+								vargs.addItem(arg->parse(getDefaultValue(itmp)));
 							} else {
-								mngr = CALCULATOR->calculate_sub(getDefaultValue(itmp), countArgOccurence(itmp) == 1);
+								vargs.addItem(CALCULATOR->parse(getDefaultValue(itmp)));
 							}
 						} else {
 							if(arg) {
-								mngr = arg->evaluate(stmp, countArgOccurence(itmp) == 1);
+								vargs.addItem(arg->parse(stmp));
 							} else {
-								mngr = CALCULATOR->calculate_sub(stmp, countArgOccurence(itmp) == 1);
+								vargs.addItem(CALCULATOR->parse(stmp));
 							}
 						}
-						vargs.push_back(mngr);
+					} else if(last_is_vctr) {
+						if(!vctr_started) {
+							vargs[vargs.size() - 1].transform(STRUCT_VECTOR);
+							vctr_started = true;
+						}
+						stmp = str.substr(start_pos, str_index - start_pos);
+						remove_blank_ends(stmp);
+						if(stmp.empty()) {
+							vargs[vargs.size() - 1].addItem(getArgumentDefinition(maxargs())->parse(getDefaultValue(itmp)));
+						} else {
+							vargs[vargs.size() - 1].addItem(getArgumentDefinition(maxargs())->parse(stmp));
+						}
 					}
 					start_pos = str_index + 1;
 				}
@@ -231,25 +304,35 @@ int Function::args(const string &argstr, vector<Manager*> &vargs) {
 			arg = getArgumentDefinition(itmp);
 			if(stmp.empty()) {
 				if(arg) {
-					mngr = arg->evaluate(getDefaultValue(itmp), countArgOccurence(itmp) == 1);
+					vargs.addItem(arg->parse(getDefaultValue(itmp)));
 				} else {
-					mngr = CALCULATOR->calculate_sub(getDefaultValue(itmp), countArgOccurence(itmp) == 1);
+					vargs.addItem(CALCULATOR->parse(getDefaultValue(itmp)));
 				}
 			} else {
 				if(arg) {
-					mngr = arg->evaluate(stmp, countArgOccurence(itmp) == 1);
+					vargs.addItem(arg->parse(stmp));
 				} else {
-					mngr = CALCULATOR->calculate_sub(stmp, countArgOccurence(itmp) == 1);
+					vargs.addItem(CALCULATOR->parse(stmp));
 				}
 			}
-			vargs.push_back(mngr);
+		} else if(last_is_vctr) {
+			if(!vctr_started) {
+				vargs[vargs.size() - 1].transform(STRUCT_VECTOR);
+				vctr_started = true;
+			}
+			stmp = str.substr(start_pos, str.length() - start_pos);
+			remove_blank_ends(stmp);
+			if(stmp.empty()) {
+				vargs[vargs.size() - 1].addItem(getArgumentDefinition(maxargs())->parse(getDefaultValue(itmp)));
+			} else {
+				vargs[vargs.size() - 1].addItem(getArgumentDefinition(maxargs())->parse(stmp));
+			}
 		}	
 	}
 	if(itmp < maxargs() && itmp >= minargs()) {
 		int itmp2 = itmp;
 		while(itmp2 < maxargs()) {
-			mngr = CALCULATOR->calculate_sub(default_values[itmp2 - minargs()], countArgOccurence(itmp) == 1);
-			vargs.push_back(mngr);
+			vargs.addItem(CALCULATOR->parse(default_values[itmp2 - minargs()]));
 			itmp2++;
 		}
 	}
@@ -306,39 +389,37 @@ bool Function::testArgumentCount(int itmp) {
 		}
 	}
 	if(b) {
-		CALCULATOR->error(true, _("You need at least %s arguments (%s) in function %s()."), i2s(minargs()).c_str(), str.c_str(), name().c_str());
+		CALCULATOR->error(true, _("You need at least %s argument(s) (%s) in function %s()."), i2s(minargs()).c_str(), str.c_str(), name().c_str());
 	} else {
-		CALCULATOR->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str());
+		CALCULATOR->error(true, _("You need at least %s argument(s) in function %s()."), i2s(minargs()).c_str(), name().c_str());
 	}
 	return false;
 }
-Manager *Function::createFunctionManagerFromVArgs(vector<Manager*> &vargs) {
-	Manager *mngr = new Manager(this, NULL);
+MathStructure Function::createFunctionMathStructureFromVArgs(const MathStructure &vargs) {
+	MathStructure mstruct(this, NULL);
 	for(unsigned int i = 0; i < vargs.size(); i++) {
-		mngr->addFunctionArg(vargs[i]);
+		mstruct.addChild(vargs[i]);
 	}
-	return mngr;
+	return mstruct;
 }
-Manager *Function::createFunctionManagerFromSVArgs(vector<string> &svargs) {
-	Manager *mngr = new Manager(this, NULL); 
+MathStructure Function::createFunctionMathStructureFromSVArgs(vector<string> &svargs) {
+	MathStructure mstruct(this, NULL); 
 	for(unsigned int i = 0; i < svargs.size(); i++) {
-		Manager *mngr2 = new Manager(svargs[i]);
-		mngr->addFunctionArg(mngr2);
-		mngr2->unref();
+		mstruct.addChild(svargs[i]);
 	}
-	return mngr;
+	return mstruct;
 }
-Manager *Function::calculate(const string &argv) {
-	vector<Manager*> vargs;
+MathStructure Function::calculate(const string &argv, const EvaluationOptions &eo) {
+	MathStructure vargs;
 	args(argv, vargs);	
-	int itmp = args(argv, vargs);	
-	Manager *mngr = calculate(vargs, itmp);
-	for(unsigned int i = 0; i < vargs.size(); i++) {
-		vargs[i]->unref();
-	}	
-	return mngr;
+	return calculate(vargs, eo);
 }
-bool Function::testArguments(vector<Manager*> &vargs) {
+MathStructure Function::parse(const string &argv) {
+	MathStructure vargs;
+	args(argv, vargs);	
+	return createFunctionMathStructureFromVArgs(vargs);
+}
+bool Function::testArguments(MathStructure &vargs) {
 	unsigned int last = 0;
 	for(Sgi::hash_map<unsigned int, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
 		if(it->first > last) {
@@ -357,81 +438,70 @@ bool Function::testArguments(vector<Manager*> &vargs) {
 	}
 	return testCondition(vargs);
 }
-Manager *Function::calculate(vector<Manager*> &vargs, int itmp) {
-	Manager *mngr = NULL;
-	if(itmp < 0) itmp = vargs.size();
+MathStructure Function::calculate(MathStructure &vargs, const EvaluationOptions &eo) {
+	int itmp = vargs.size();
 	if(testArgumentCount(itmp)) {
-		itmp = vargs.size();
 		while(itmp < maxargs()) {
-			mngr = CALCULATOR->calculate_sub(default_values[itmp - minargs()], countArgOccurence(itmp + 1) == 1);
-			vargs.push_back(mngr);
+			vargs.addItem(CALCULATOR->parse(default_values[itmp - minargs()]));
 			itmp++;
 		}
-		mngr = new Manager();
+		MathStructure mstruct;
 		bool b = false;
 		for(unsigned int i = 0; i < vargs.size(); i++) {
-			if(vargs[i]->type() == ALTERNATIVE_MANAGER) {
+			if(vargs[i].type() == STRUCT_ALTERNATIVES) {
 				b = true;
 				break;
 			}
 		} 
 		if(b) {
-			vector<Manager*> vargs_copy(vargs);
-			vector<int> solutions;
+			vector<unsigned int> solutions;
 			solutions.reserve(vargs.size());
 			for(unsigned int i = 0; i < vargs.size(); i++) {
 				solutions.push_back(0);
 			}
 			b = true;
 			while(true) {
-				for(unsigned int i = 0; i < vargs.size(); i++) {
-					vargs[i] = vargs_copy[i];
-				}
-				for(unsigned int i = 0; i < vargs.size(); i++) {
-					if(vargs[i]->type() == ALTERNATIVE_MANAGER) {
-						if(!b && solutions[i] < (int) vargs[i]->countChilds()) {
-							vargs[i] = vargs[i]->getChild(solutions[i]);
+				MathStructure vargs_copy(vargs);
+				for(unsigned int i = 0; i < vargs_copy.size(); i++) {
+					if(vargs_copy[i].type() == STRUCT_ALTERNATIVES) {
+						if(!b && solutions[i] < vargs_copy[i].countChilds()) {
+							vargs_copy[i] = vargs_copy[i].getChild(solutions[i] + 1);
 							solutions[i]++;
 							b = true;
 						} else {
 							solutions[i] = 0;
-							vargs[i] = vargs[i]->getChild(solutions[i]);
+							vargs_copy[i] = vargs_copy[i].getChild(solutions[i] + 1);
 						}
 					}
 				}
 				if(!b) break;
-				Manager *mngr2 = new Manager();
-				if(testArguments(vargs)) {
-					calculate(mngr2, vargs);
-					if(!isPrecise()) mngr2->setPrecise(false);
+				MathStructure mstruct2;
+				if(!testArguments(vargs_copy) || !calculate(mstruct2, vargs_copy, eo)) {
+					mstruct2 = createFunctionMathStructureFromVArgs(vargs_copy);
 				} else {
-					mngr2 = createFunctionManagerFromVArgs(vargs);
+					if(isApproximate()) mstruct2.setApproximate();
 				}
-				if(mngr->isNull()) {
-					mngr->moveto(mngr2);
+				if(mstruct.isZero()) {
+					mstruct = mstruct2;
 				} else {
-					mngr->addAlternative(mngr2);
-					mngr2->unref();
+					mstruct.addAlternative(mstruct2);
 				}
 				b = false;	 			
 			}
-			mngr->typeclean();
 		} else {
-			if(testArguments(vargs)) {
-				calculate(mngr, vargs);
-			} else {
-				mngr = createFunctionManagerFromVArgs(vargs);
-				return mngr;
+			if(!testArguments(vargs) || !calculate(mstruct, vargs, eo)) {
+				return createFunctionMathStructureFromVArgs(vargs);
 			}
 		}
-		if(!isPrecise()) mngr->setPrecise(false);
-		CALCULATOR->checkFPExceptions(sname.c_str());	
+		if(isApproximate()) mstruct.setApproximate();
+		return mstruct;
 	} else {
-		mngr = createFunctionManagerFromVArgs(vargs);
-	}	
-	return mngr;
+		return createFunctionMathStructureFromVArgs(vargs);
+	}
 }
-void Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
+bool Function::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	//mstruct = createFunctionMathStructureFromVArgs(vargs);
+	return false;
 }
 void Function::setDefaultValue(unsigned int arg_, string value_) {
 	if((int) arg_ > argc && (int) arg_ <= max_argc && (int) default_values.size() >= (int) arg_ - argc) {
@@ -524,47 +594,38 @@ int Function::stringArgs(const string &argstr, vector<string> &svargs) {
 	return itmp;
 }
 
-Vector *Function::produceVector(vector<Manager*> &vargs, int begin, int end) {	
-	if(begin < 0) {
-		begin = minargs();
-		if(begin < 0) begin = 0;
+MathStructure Function::produceVector(const MathStructure &vargs, int begin, int end) {	
+	if(begin < 1) {
+		begin = minargs() + 1;
+		if(begin < 1) begin = 1;
 	}
-	if(end < 0 || end >= (int) vargs.size()) {
-		end = vargs.size() - 1;
+	if(end < 1 || end >= (int) vargs.size()) {
+		end = vargs.size();
 	}
-	Vector *v = new Vector();
-	for(int index = begin; index <= end; index++) {
-		if(vargs[index]->isMatrix()) {
-			for(unsigned int index_r = 1; index_r <= vargs[index]->matrix()->rows(); index_r++) {
-				for(unsigned int index_c = 1; index_c <= vargs[index]->matrix()->columns(); index_c++) {
-					if(!(index == begin && index_r == 1 && index_c == 1)) v->addComponent();
-					v->set(vargs[index]->matrix()->get(index_r, index_c), v->components());
-				}			
-			}
+	if(begin == 1 && vargs.size() == 1) {
+		if(vargs.getComponent(1)->isVector()) {
+			return *vargs.getComponent(1);
 		} else {
-			if(index != begin) v->addComponent();
-			v->set(vargs[index], v->components());
-		}	
+			return vargs;
+		}
 	}
-	return v;
+	return vargs.range(begin, end).flattenVector();
 }
-Vector *Function::produceArgumentsVector(vector<Manager*> &vargs, int begin, int end) {	
-	if(begin < 0) {
-		begin = minargs();
-		if(begin < 0) begin = 0;
+MathStructure Function::produceArgumentsVector(const MathStructure &vargs, int begin, int end) {	
+	if(begin < 1) {
+		begin = minargs() + 1;
+		if(begin < 1) begin = 1;
 	}
-	if(end < 0 || end >= (int) vargs.size()) {
-		end = vargs.size() - 1;
+	if(end < 1 || end >= (int) vargs.size()) {
+		end = vargs.size();
 	}
-	Vector *v = new Vector();
-	for(int index = begin; index <= end; index++) {
-		if(index != begin) v->addComponent();
-		v->set(vargs[index], v->components());
+	if(begin == 1 && vargs.size() == 1) {
+		return vargs;
 	}
-	return v;
+	return vargs.range(begin, end);
 }
 
-UserFunction::UserFunction(string cat_, string name_, string eq_, bool is_local, int argc_, string title_, string descr_, int max_argc_, bool is_active) : Function(cat_, name_, argc_, title_, descr_, max_argc_, is_active) {
+UserFunction::UserFunction(string cat_, string name_, string eq_, bool is_local, int argc_, string title_, string descr_, int max_argc_, bool is_active) : Function(name_, argc_, max_argc_, cat_, title_, descr_, is_active) {
 	b_local = is_local;
 	b_builtin = false;
 	setEquation(eq_, argc_, max_argc_);
@@ -594,14 +655,7 @@ void UserFunction::set(const ExpressionItem *item) {
 	}
 }
 
-Manager *UserFunction::calculate(vector<Manager*> &vargs) {
-	return Function::calculate(vargs);
-}
-Manager *UserFunction::calculate(const string &eq) {
-	return Function::calculate(eq);
-}
-void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-
+bool UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(args() != 0) {
 		string stmp = eq_calc;
 		string svar;
@@ -612,7 +666,6 @@ void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		if(i_args < 0) {
 			i_args = minargs();
 		}
-		vector<Manager*> mngr_v;										
 		for(int i = 0; i < i_args; i++) {
 			svar = '\\';
 			if('x' + i > 'z') {
@@ -621,8 +674,7 @@ void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 				svar += 'x' + i;
 			}
 			i2 = 0;	
-			mngr_v.push_back(new Manager(vargs[i]));
-			v_id.push_back(CALCULATOR->addId(mngr_v[i], true));
+			v_id.push_back(CALCULATOR->addId(vargs[i], true));
 			v_str = LEFT_PARENTHESIS ID_WRAP_LEFT;
 			v_str += i2s(v_id[v_id.size() - 1]);
 			v_str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;			
@@ -640,20 +692,15 @@ void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		}
 
 		if(maxargs() < 0) {
-			Vector *v = NULL, *w = NULL;
 			string w_str;
 			if(stmp.find("\\v") != string::npos) {
-				v = produceVector(vargs);			
-				mngr_v.push_back(new Manager(v));	
-				v_id.push_back(CALCULATOR->addId(mngr_v[mngr_v.size() - 1], true));
+				v_id.push_back(CALCULATOR->addId(produceVector(vargs), true));
 				v_str = LEFT_PARENTHESIS ID_WRAP_LEFT;
 				v_str += i2s(v_id[v_id.size() - 1]);
 				v_str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;					
 			}
 			if(stmp.find("\\w") != string::npos) {
-				w = produceArgumentsVector(vargs);	
-				mngr_v.push_back(new Manager(w));	
-				v_id.push_back(CALCULATOR->addId(mngr_v[mngr_v.size() - 1], true));
+				v_id.push_back(CALCULATOR->addId(produceArgumentsVector(vargs), true));
 				w_str = LEFT_PARENTHESIS ID_WRAP_LEFT;
 				w_str += i2s(v_id[v_id.size() - 1]);
 				w_str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;							
@@ -680,8 +727,6 @@ void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 					break;
 				}
 			}			
-			if(v) delete v;
-			if(w) delete w;
 		} 		
 
 		while(true) {
@@ -691,26 +736,24 @@ void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 				break;
 			}
 		}
+
 		bool was_rpn = CALCULATOR->inRPNMode();
 		CALCULATOR->setRPNMode(false);
-		Manager *mngr2 = CALCULATOR->calculate_sub(stmp);
+		mstruct = CALCULATOR->parse(stmp);
 		CALCULATOR->setRPNMode(was_rpn);
-		mngr->set(mngr2);
-		mngr2->unref();
+
 		for(unsigned int i = 0; i < v_id.size(); i++) {
 			CALCULATOR->delId(v_id[i], true);
-			mngr_v[i]->unref();
 		}
-		if(!isPrecise()) mngr->setPrecise(false);
+		if(isApproximate()) mstruct.setApproximate();
 	} else {
 		bool was_rpn = CALCULATOR->inRPNMode();
 		CALCULATOR->setRPNMode(false);
-		Manager *mngr2 = CALCULATOR->calculate_sub(eq_calc);
+		mstruct = CALCULATOR->parse(eq_calc);
 		CALCULATOR->setRPNMode(was_rpn);
-		mngr->set(mngr2);
-		mngr2->unref();
-		if(!isPrecise()) mngr->setPrecise(false);
+		if(isApproximate()) mstruct.setApproximate();
 	}
+	return true;
 }
 void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 	setChanged(true);
@@ -863,58 +906,51 @@ void Argument::set(const Argument *arg) {
 	b_test = arg->tests();
 	b_matrix = arg->matrixAllowed();
 }
-bool Argument::test(const Manager *value, int index, Function *f) const {
+bool Argument::test(MathStructure &value, int index, Function *f, const EvaluationOptions &eo) const {
 	if(!b_test) {
 		return true;
 	}
-	if(!b_zero && value->isZero()) {
-		if(b_error && CALCULATOR->showArgumentErrors()) {
-			if(sname.empty()) {
-				CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
-			} else {
-				CALCULATOR->error(true, _("Argument %s, %s, in %s() must be %s."), i2s(index).c_str(), sname.c_str(), f->name().c_str(), printlong().c_str(), NULL);
-			}
+	bool evaled = false;
+	bool b = subtest(value, eo);
+	if(b && !b_zero) {
+		if(!value.isNumber()) {
+			value.eval(eo);	
+			evaled = true;
 		}
-		return false;
+		b = !value.isZero();
 	}
-	if(!(b_matrix && value->isMatrix()) && !subtest(value)) {
-		if(b_error && CALCULATOR->showArgumentErrors()) {
-			if(sname.empty()) {
-				CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
-			} else {
-				CALCULATOR->error(true, _("Argument %s, %s, in %s() must be %s."), i2s(index).c_str(), sname.c_str(), f->name().c_str(), printlong().c_str(), NULL);
-			}
+	if(!b && b_matrix) {
+		if(!evaled && !value.isMatrix()) {
+			value.eval(eo);
+			evaled = true;
 		}
-		return false;
+		b = value.isMatrix();
 	}
-	if(!scondition.empty()) {
+	if(b && !scondition.empty()) {
 		string expression = scondition;
-		Manager *mngr = (Manager*) value;
-		mngr->protect(true);
-		int id = CALCULATOR->addId(mngr, true);
+		int id = CALCULATOR->addId(value, true);
 		string ids = LEFT_PARENTHESIS;
 		ids += ID_WRAP_LEFT;
 		ids += i2s(id);
 		ids += ID_WRAP_RIGHT;
 		ids += RIGHT_PARENTHESIS;
 		gsub("\\x", ids, expression);
-		bool result = CALCULATOR->testCondition(expression);
+		b = CALCULATOR->testCondition(expression);
 		CALCULATOR->delId(id, true);
-		mngr->protect(false);
-		if(!result) {
-			if(b_error && CALCULATOR->showArgumentErrors()) {
-				if(sname.empty()) {
-					CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
-				} else {
-					CALCULATOR->error(true, _("Argument %s, %s, in %s() must be %s."), i2s(index).c_str(), sname.c_str(), f->name().c_str(), printlong().c_str(), NULL);
-				}
+	}
+	if(!b) {
+		if(b_error) {
+			if(sname.empty()) {
+				CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
+			} else {
+				CALCULATOR->error(true, _("Argument %s, %s, in %s() must be %s."), i2s(index).c_str(), sname.c_str(), f->name().c_str(), printlong().c_str(), NULL);
 			}
-			return false;
 		}
+		return false;
 	}
 	return true;
 }
-Manager *Argument::evaluate(const string &str, bool keep_exact) const {
+MathStructure Argument::evaluate(const string &str, bool keep_exact) const {
 	if(b_text) {
 		int pars = 0;
 		while(true) {
@@ -944,10 +980,10 @@ Manager *Argument::evaluate(const string &str, bool keep_exact) const {
 		}
 		if((int) str.length() >= 2 + pars * 2) {
 			if(str[pars] == ID_WRAP_LEFT_CH && str[str.length() - 1 - pars] == ID_WRAP_RIGHT_CH && str.find(ID_WRAP_RIGHT, pars + 1) == str.length() - 1 - pars) {
-				return CALCULATOR->calculate_sub(str.substr(pars, str.length() - pars * 2), keep_exact);
+				return CALCULATOR->parse(str.substr(pars, str.length() - pars * 2));
 			}
 			if(str[pars] == '\\' && str[str.length() - 1 - pars] == '\\') {
-				return CALCULATOR->calculate_sub(str.substr(1 + pars, str.length() - 2 - pars * 2), keep_exact);
+				return CALCULATOR->parse(str.substr(1 + pars, str.length() - 2 - pars * 2));
 			}	
 			if((str[pars] == '\"' && str[str.length() - 1 - pars] == '\"') || (str[pars] == '\'' && str[str.length() - 1 - pars] == '\'')) {
 				unsigned int i = pars + 1, cits = 0;
@@ -960,16 +996,77 @@ Manager *Argument::evaluate(const string &str, bool keep_exact) const {
 					i++;
 				}
 				if((cits / 2) % 2 == 0) {
-					return new Manager(str.substr(1 + pars, str.length() - 2 - pars * 2));
+					return str.substr(1 + pars, str.length() - 2 - pars * 2);
 				}
 			}
 		}
-		return new Manager(str.substr(pars, str.length() - pars * 2));
+		return str.substr(pars, str.length() - pars * 2);
 	} else {
-		return CALCULATOR->calculate_sub(str, keep_exact);
+		return CALCULATOR->parse(str);
 	}
 }
-bool Argument::subtest(const Manager *value) const {
+void Argument::evaluate(MathStructure &mstruct, const EvaluationOptions &eo) const {
+	if(type() != ARGUMENT_TYPE_FREE) {
+		mstruct.eval(eo);
+	}
+}
+MathStructure Argument::parse(const string &str) const {
+	if(b_text) {
+		int pars = 0;
+		while(true) {
+			int pars2 = 1;
+			unsigned int i = pars;
+			if((int) str.length() >= 2 + pars * 2 && str[pars] == LEFT_PARENTHESIS_CH && str[str.length() - 1 - pars] == RIGHT_PARENTHESIS_CH) {
+				while(true) {
+					i = str.find_first_of(LEFT_PARENTHESIS RIGHT_PARENTHESIS, i + 1);
+					if(i >= str.length() - 1 - pars) {
+						break;
+					} else if(str[i] == LEFT_PARENTHESIS_CH) {
+						pars2++;
+					} else if(str[i] == RIGHT_PARENTHESIS_CH) {
+						pars2--;
+						if(pars2 == 0) {
+							break;
+						}
+					}
+				}
+				if(pars2 > 0) {
+					pars++;
+				}
+			} else {
+				break;
+			}
+			if(pars2 == 0) break;
+		}
+		if((int) str.length() >= 2 + pars * 2) {
+			if(str[pars] == ID_WRAP_LEFT_CH && str[str.length() - 1 - pars] == ID_WRAP_RIGHT_CH && str.find(ID_WRAP_RIGHT, pars + 1) == str.length() - 1 - pars) {
+				return CALCULATOR->parse(str.substr(pars, str.length() - pars * 2));
+			}
+			if(str[pars] == '\\' && str[str.length() - 1 - pars] == '\\') {
+				return CALCULATOR->parse(str.substr(1 + pars, str.length() - 2 - pars * 2));
+			}	
+			if((str[pars] == '\"' && str[str.length() - 1 - pars] == '\"') || (str[pars] == '\'' && str[str.length() - 1 - pars] == '\'')) {
+				unsigned int i = pars + 1, cits = 0;
+				while(i < str.length() - 1 - pars) {
+					i = str.find(str[pars], i);
+					if(i >= str.length() - 1 - pars) {
+						break;
+					}
+					cits++;
+					i++;
+				}
+				if((cits / 2) % 2 == 0) {
+					return str.substr(1 + pars, str.length() - 2 - pars * 2);
+				}
+			}
+		}
+		return str.substr(pars, str.length() - pars * 2);
+	} else {
+		return CALCULATOR->parse(str);
+	}
+}
+
+bool Argument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
 	return true;
 }
 string Argument::name() const {
@@ -1053,17 +1150,17 @@ NumberArgument::~NumberArgument() {
 	}
 }
 	
-void NumberArgument::setMin(const Number *min_) {
-	if(!min_) {
+void NumberArgument::setMin(const Number *nmin) {
+	if(!nmin) {
 		if(fmin) {
 			delete fmin;
 		}
 		return;
 	}
 	if(!fmin) {
-		fmin = new Number(min_);
+		fmin = new Number(*nmin);
 	} else {
-		fmin->set(min_);
+		fmin->set(*nmin);
 	}
 }
 void NumberArgument::setIncludeEqualsMin(bool include_equals) {
@@ -1075,17 +1172,17 @@ bool NumberArgument::includeEqualsMin() const {
 const Number *NumberArgument::min() const {
 	return fmin;
 }
-void NumberArgument::setMax(const Number *max_) {
-	if(!max_) {
+void NumberArgument::setMax(const Number *nmax) {
+	if(!nmax) {
 		if(fmax) {
 			delete fmax;
 		}
 		return;
 	}
 	if(!fmax) {
-		fmax = new Number(max_);
+		fmax = new Number(*nmax);
 	} else {
-		fmax->set(max_);
+		fmax->set(*nmax);
 	}
 }
 void NumberArgument::setIncludeEqualsMax(bool include_equals) {
@@ -1103,18 +1200,21 @@ bool NumberArgument::complexAllowed() const {
 void NumberArgument::setComplexAllowed(bool allow_complex) {
 	b_complex = allow_complex;
 }
-bool NumberArgument::subtest(const Manager *value) const {
-	if(!value->isNumber() || (!b_complex && value->number()->isComplex())) {
+bool NumberArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
+	if(!value.isNumber()) {
+		value.eval(eo);
+	}
+	if(!value.isNumber() || (!b_complex && value.number().isComplex())) {
 		return false;
 	}
 	if(fmin) {
-		int cmpr = value->number()->compare(fmin);
+		int cmpr = value.number().compare(*fmin);
 		if(cmpr <= -2 || (b_incl_min && cmpr > 0) || (!b_incl_min && cmpr >= 0)) {
 			return false;
 		}
 	}
 	if(fmax) {
-		int cmpr = value->number()->compare(fmax);
+		int cmpr = value.number().compare(*fmax);
 		if(cmpr <= -2 || (b_incl_max && cmpr < 0) || (!b_incl_max && cmpr <= 0)) {
 			return false;
 		}
@@ -1142,10 +1242,10 @@ void NumberArgument::set(const Argument *arg) {
 			fmax = NULL;
 		}
 		if(farg->min()) {
-			fmin = new Number(farg->min());
+			fmin = new Number(*farg->min());
 		}
 		if(farg->max()) {
-			fmax = new Number(farg->max());
+			fmax = new Number(*farg->max());
 		}		
 	}
 	Argument::set(arg);
@@ -1224,46 +1324,49 @@ IntegerArgument::~IntegerArgument() {
 	}
 }
 	
-void IntegerArgument::setMin(const Number *min_) {
-	if(!min_) {
+void IntegerArgument::setMin(const Number *nmin) {
+	if(!nmin) {
 		if(imin) {
 			delete imin;
 		}
 		return;
 	}
 	if(!imin) {
-		imin = new Number(min_);
+		imin = new Number(*nmin);
 	} else {
-		imin->set(min_);
+		imin->set(*nmin);
 	}
 }
 const Number *IntegerArgument::min() const {
 	return imin;
 }
-void IntegerArgument::setMax(const Number *max_) {
-	if(!max_) {
+void IntegerArgument::setMax(const Number *nmax) {
+	if(!nmax) {
 		if(imax) {
 			delete imax;
 		}
 		return;
 	}
 	if(!imax) {
-		imax = new Number(max_);
+		imax = new Number(*nmax);
 	} else {
-		imax->set(max_);
+		imax->set(*nmax);
 	}
 }
 const Number *IntegerArgument::max() const {
 	return imax;
 }
-bool IntegerArgument::subtest(const Manager *value) const {
-	if(!value->isNumber() || !value->number()->isInteger()) {
+bool IntegerArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
+	if(!value.isNumber()) {
+		value.eval(eo);
+	}
+	if(!value.isNumber() || !value.number().isInteger()) {
 		return false;
 	}
-	if(imin && value->number()->compare(imin) > 0) {
+	if(imin && value.number().compare(*imin) > 0) {
 		return false;
 	}
-	if(imax && value->number()->compare(imax) < 0) {
+	if(imax && value.number().compare(*imax) < 0) {
 		return false;
 	}	
 	return true;
@@ -1286,10 +1389,10 @@ void IntegerArgument::set(const Argument *arg) {
 			imax = NULL;
 		}
 		if(iarg->min()) {
-			imin = new Number(iarg->min());
+			imin = new Number(*iarg->min());
 		}
 		if(iarg->max()) {
-			imax = new Number(iarg->max());
+			imax = new Number(*iarg->max());
 		}		
 	}
 	Argument::set(arg);
@@ -1324,15 +1427,37 @@ GiacArgument::~GiacArgument() {}
 int GiacArgument::type() const {return ARGUMENT_TYPE_GIAC;}
 Argument *GiacArgument::copy() const {return new GiacArgument(this);}
 string GiacArgument::subprintlong() const {return _("a free value (giac adjusted)");}
-Manager *GiacArgument::evaluate(const string &str, bool keep_exact) const {
-	Manager *mngr = CALCULATOR->calculate_sub(str, keep_exact);
-	return mngr;
+MathStructure GiacArgument::evaluate(const string &str, bool keep_exact) const {
+	MathStructure mstruct = CALCULATOR->parse(str);
+	return mstruct;
 }
+MathStructure GiacArgument::parse(const string &str) const {
+	return CALCULATOR->parse(str);
+}
+
+SymbolicArgument::SymbolicArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
+SymbolicArgument::SymbolicArgument(const SymbolicArgument *arg) {set(arg);}
+SymbolicArgument::~SymbolicArgument() {}
+bool SymbolicArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
+	if(!value.isSymbolic() && (!value.isVariable() || value.variable()->isKnown())) {
+		value.eval(eo);
+	}
+	return value.isSymbolic() || value.isVariable();
+}
+int SymbolicArgument::type() const {return ARGUMENT_TYPE_SYMBOLIC;}
+Argument *SymbolicArgument::copy() const {return new SymbolicArgument(this);}
+string SymbolicArgument::print() const {return _("symbol");}
+string SymbolicArgument::subprintlong() const {return _("an unknown variable/symbol");}
 
 TextArgument::TextArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 TextArgument::TextArgument(const TextArgument *arg) {set(arg); b_text = true;}
 TextArgument::~TextArgument() {}
-bool TextArgument::subtest(const Manager *value) const {return value->isText();}
+bool TextArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
+	if(!value.isSymbolic()) {
+		value.eval(eo);
+	}
+	return value.isSymbolic();
+}
 int TextArgument::type() const {return ARGUMENT_TYPE_TEXT;}
 Argument *TextArgument::copy() const {return new TextArgument(this);}
 string TextArgument::print() const {return _("text");}
@@ -1342,9 +1467,12 @@ bool TextArgument::suggestsQuotes() const {return false;}
 DateArgument::DateArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) { b_text = true;}
 DateArgument::DateArgument(const DateArgument *arg) {set(arg); b_text = true;}
 DateArgument::~DateArgument() {}
-bool DateArgument::subtest(const Manager *value) const {
+bool DateArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
+	if(!value.isSymbolic()) {
+		value.eval(eo);
+	}
 	int day = 0, year = 0, month = 0;
-	return value->isText() && s2date(value->text(), day, year, month);
+	return value.isSymbolic() && s2date(value.symbol(), day, year, month);
 }
 int DateArgument::type() const {return ARGUMENT_TYPE_DATE;}
 Argument *DateArgument::copy() const {return new DateArgument(this);}
@@ -1353,28 +1481,124 @@ string DateArgument::subprintlong() const {return _("a date");}
 
 VectorArgument::VectorArgument(string name_, bool does_test, bool allow_matrix, bool does_error) : Argument(name_, does_test, does_error) {
 	setMatrixAllowed(allow_matrix);
+	b_argloop = true;
 }
-VectorArgument::VectorArgument(const VectorArgument *arg) {set(arg);}
-VectorArgument::~VectorArgument() {}
-bool VectorArgument::subtest(const Manager *value) const {return value->isMatrix() && value->matrix()->isVector();}
+VectorArgument::VectorArgument(const VectorArgument *arg) {
+	set(arg);
+	b_argloop = arg->reoccuringArguments();
+	unsigned int i = 1; 
+	while(true) {
+		if(!arg->getArgument(i)) break;
+		subargs.push_back(arg->getArgument(i)->copy());
+		i++;
+	}	
+}
+VectorArgument::~VectorArgument() {
+	for(unsigned int i = 0; i < subargs.size(); i++) {
+		delete subargs[i];
+	}
+}
+bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
+	if(!value.isVector()) {
+		value.eval(eo);
+	}
+	if(!value.isVector()) return false;
+	if(b_argloop && subargs.size() > 0) {
+		for(unsigned int i = 0; i < value.components(); i++) {
+			if(!subargs[i % subargs.size()]->test(value[i], 1, NULL, eo)) {
+				return false;
+			}
+		}
+	} else {
+		for(unsigned int i = 0; i < subargs.size() && i < value.components(); i++) {
+			if(!subargs[i]->test(value[i], 1, NULL, eo)) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
 int VectorArgument::type() const {return ARGUMENT_TYPE_VECTOR;}
 Argument *VectorArgument::copy() const {return new VectorArgument(this);}
 string VectorArgument::print() const {return _("vector");}
-string VectorArgument::subprintlong() const {return _("a vector");}
+string VectorArgument::subprintlong() const {
+	if(subargs.size() > 0) {
+		string str = _("a vector with");
+		for(unsigned int i = 0; i < subargs.size(); i++) {
+			if(i > 0) {
+				str += ", ";
+			}
+			str += subargs[i]->printlong();
+		}
+		if(b_argloop) {
+			str += ", ...";
+		}
+		return str;
+	} else {
+		return _("a vector");
+	}
+}
+bool VectorArgument::reoccuringArguments() const {
+	return b_argloop;
+}
+void VectorArgument::setReoccuringArguments(bool reocc) {
+	b_argloop = reocc;
+}
+void VectorArgument::addArgument(Argument *arg) {
+	arg->setAlerts(false);
+	subargs.push_back(arg);
+}
+void VectorArgument::delArgument(unsigned int index) {
+	if(index > 0 && index <= subargs.size()) {
+		subargs.erase(subargs.begin() + (index - 1));
+	}
+}
+unsigned int VectorArgument::countArguments() const {
+	return subargs.size();
+}
+Argument *VectorArgument::getArgument(unsigned int index) const {
+	if(index > 0 && index <= subargs.size()) {
+		return subargs[index - 1];
+	}
+	return NULL;
+}
 
-MatrixArgument::MatrixArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
-MatrixArgument::MatrixArgument(const MatrixArgument *arg) {set(arg);}
+MatrixArgument::MatrixArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
+	b_sym = false;
+}
+MatrixArgument::MatrixArgument(const MatrixArgument *arg) {
+	set(arg);
+	b_sym = arg->symmetricDemanded();
+}
 MatrixArgument::~MatrixArgument() {}
-bool MatrixArgument::subtest(const Manager *value) const {return value->isMatrix();}
+bool MatrixArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
+	if(!value.isMatrix()) {
+		value.eval(eo);
+	}
+	return value.isMatrix() && (!b_sym || value.matrixIsSymmetric());
+}
+bool MatrixArgument::symmetricDemanded() const {return b_sym;}
+void MatrixArgument::setSymmetricDemanded(bool sym) {b_sym = sym;}
 int MatrixArgument::type() const {return ARGUMENT_TYPE_MATRIX;}
 Argument *MatrixArgument::copy() const {return new MatrixArgument(this);}
 string MatrixArgument::print() const {return _("matrix");}
-string MatrixArgument::subprintlong() const {return _("a matrix");}
+string MatrixArgument::subprintlong() const {
+	if(b_sym) {
+		return _("a symmetric matrix");
+	} else {
+		return _("a matrix");
+	}
+}
 
 ExpressionItemArgument::ExpressionItemArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 ExpressionItemArgument::ExpressionItemArgument(const ExpressionItemArgument *arg) {set(arg); b_text = true;}
 ExpressionItemArgument::~ExpressionItemArgument() {}
-bool ExpressionItemArgument::subtest(const Manager *value) const {return value->isText() && CALCULATOR->getExpressionItem(value->text());}
+bool ExpressionItemArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
+	if(!value.isSymbolic()) {
+		value.eval(eo);
+	}
+	return value.isSymbolic() && CALCULATOR->getExpressionItem(value.symbol());
+}
 int ExpressionItemArgument::type() const {return ARGUMENT_TYPE_EXPRESSION_ITEM;}
 Argument *ExpressionItemArgument::copy() const {return new ExpressionItemArgument(this);}
 string ExpressionItemArgument::print() const {return _("object");}
@@ -1383,7 +1607,12 @@ string ExpressionItemArgument::subprintlong() const {return _("a valid function,
 FunctionArgument::FunctionArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 FunctionArgument::FunctionArgument(const FunctionArgument *arg) {set(arg); b_text = true;}
 FunctionArgument::~FunctionArgument() {}
-bool FunctionArgument::subtest(const Manager *value) const {return value->isText() && CALCULATOR->getFunction(value->text());}
+bool FunctionArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
+	if(!value.isSymbolic()) {
+		value.eval(eo);
+	}
+	return value.isSymbolic() && CALCULATOR->getFunction(value.symbol());
+}
 int FunctionArgument::type() const {return ARGUMENT_TYPE_FUNCTION;}
 Argument *FunctionArgument::copy() const {return new FunctionArgument(this);}
 string FunctionArgument::print() const {return _("function");}
@@ -1392,7 +1621,12 @@ string FunctionArgument::subprintlong() const {return _("a valid function name")
 UnitArgument::UnitArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 UnitArgument::UnitArgument(const UnitArgument *arg) {set(arg); b_text = true;}
 UnitArgument::~UnitArgument() {}
-bool UnitArgument::subtest(const Manager *value) const {return value->isText() && CALCULATOR->getUnit(value->text());}
+bool UnitArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
+	if(!value.isSymbolic()) {
+		value.eval(eo);
+	}
+	return value.isSymbolic() && CALCULATOR->getUnit(value.symbol());
+}
 int UnitArgument::type() const {return ARGUMENT_TYPE_UNIT;}
 Argument *UnitArgument::copy() const {return new UnitArgument(this);}
 string UnitArgument::print() const {return _("unit");}
@@ -1401,7 +1635,12 @@ string UnitArgument::subprintlong() const {return _("a valid unit name");}
 VariableArgument::VariableArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 VariableArgument::VariableArgument(const VariableArgument *arg) {set(arg); b_text = true;}
 VariableArgument::~VariableArgument() {}
-bool VariableArgument::subtest(const Manager *value) const {return value->isText() && CALCULATOR->getVariable(value->text());}
+bool VariableArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
+	if(!value.isSymbolic()) {
+		value.eval(eo);
+	}
+	return value.isSymbolic() && CALCULATOR->getVariable(value.symbol());
+}
 int VariableArgument::type() const {return ARGUMENT_TYPE_VARIABLE;}
 Argument *VariableArgument::copy() const {return new VariableArgument(this);}
 string VariableArgument::print() const {return _("variable");}
@@ -1410,7 +1649,12 @@ string VariableArgument::subprintlong() const {return _("a valid variable name")
 FileArgument::FileArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 FileArgument::FileArgument(const FileArgument *arg) {set(arg); b_text = true;}
 FileArgument::~FileArgument() {}
-bool FileArgument::subtest(const Manager *value) const {return value->isText();}
+bool FileArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
+	if(!value.isSymbolic()) {
+		value.eval(eo);
+	}
+	return value.isSymbolic();
+}
 int FileArgument::type() const {return ARGUMENT_TYPE_FILE;}
 Argument *FileArgument::copy() const {return new FileArgument(this);}
 string FileArgument::print() const {return _("file");}
@@ -1419,7 +1663,12 @@ string FileArgument::subprintlong() const {return _("a valid file name");}
 BooleanArgument::BooleanArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
 BooleanArgument::BooleanArgument(const BooleanArgument *arg) {set(arg);}
 BooleanArgument::~BooleanArgument() {}
-bool BooleanArgument::subtest(const Manager *value) const {return value->isZero() || value->isOne();}
+bool BooleanArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
+	if(!value.isNumber()) {
+		value.eval(eo);
+	}
+	return value.isZero() || value.isOne();
+}
 int BooleanArgument::type() const {return ARGUMENT_TYPE_BOOLEAN;}
 Argument *BooleanArgument::copy() const {return new BooleanArgument(this);}
 string BooleanArgument::print() const {return _("boolean");}
@@ -1428,36 +1677,114 @@ string BooleanArgument::subprintlong() const {return _("a boolean (0 or 1)");}
 AngleArgument::AngleArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
 AngleArgument::AngleArgument(const AngleArgument *arg) {set(arg);}
 AngleArgument::~AngleArgument() {}
-bool AngleArgument::subtest(const Manager *value) const {
-	if(value->isNumber()) {
-		return true;
-	} else if(value->isUnit()) {
-		Unit *rad = CALCULATOR->getUnit("rad");
-		return value->unit() == rad || value->unit()->isChildOf(rad);
-	} else if(value->isMultiplication() && value->countChilds() == 2 && value->getChild(0)->isNumber() && value->getChild(1)->isUnit()) {
-		Unit *rad = CALCULATOR->getUnit("rad");
-		return value->getChild(1)->unit() == rad || value->getChild(1)->unit()->isChildOf(rad);
+bool AngleArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
+	if(CALCULATOR->u_rad && value.convert(CALCULATOR->u_rad) && value.contains(CALCULATOR->u_rad)) {
+		value /= CALCULATOR->u_rad;
 	} else {
-		Unit *rad = CALCULATOR->getUnit("rad");
-		if(!rad) {
-			return false;
+		switch(CALCULATOR->angleMode()) {
+			case DEGREES: {
+		    		value *= (Variable*) CALCULATOR->v_pi;
+	    			value /= 180;
+				break;
+			}
+			case GRADIANS: {
+				value *= (Variable*) CALCULATOR->v_pi;
+	    			value /= 200;
+				break;
+			}
 		}
-		Manager mngr(value);
-		mngr.addUnit(rad, OPERATION_DIVIDE);
-		mngr.finalize();
-		return mngr.isNumber();
 	}
+	return true;
 }
 int AngleArgument::type() const {return ARGUMENT_TYPE_ANGLE;}
 Argument *AngleArgument::copy() const {return new AngleArgument(this);}
 string AngleArgument::print() const {return _("angle");}
 string AngleArgument::subprintlong() const {return _("an angle or a number (using the default angle unit)");}
-Manager *AngleArgument::evaluate(const string &str, bool keep_exact) const {
+MathStructure AngleArgument::evaluate(const string &str, bool keep_exact) const {
 	bool was_cv = CALCULATOR->donotCalculateVariables();
 	CALCULATOR->setDonotCalculateVariables(true);
-	Manager *mngr = CALCULATOR->calculate_sub(str, keep_exact);
-	CALCULATOR->setAngleValue(mngr);
+	MathStructure mstruct = CALCULATOR->parse(str);
+	CALCULATOR->setAngleValue(mstruct);
 	CALCULATOR->setDonotCalculateVariables(was_cv);
-	return mngr;
+	return mstruct;
+}
+MathStructure AngleArgument::parse(const string &str) const {
+	return CALCULATOR->parse(str);
 }
 
+ArgumentSet::ArgumentSet(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
+}
+ArgumentSet::ArgumentSet(const ArgumentSet *arg) {
+	set(arg); 
+	unsigned int i = 1;
+	while(true) {
+		if(!arg->getArgument(i)) break;
+		subargs.push_back(arg->getArgument(i)->copy());
+		i++;
+	}
+}
+ArgumentSet::~ArgumentSet() {
+	for(unsigned int i = 0; i < subargs.size(); i++) {
+		delete subargs[i];
+	}
+}
+bool ArgumentSet::subtest(MathStructure &value, const EvaluationOptions &eo) const {
+	for(unsigned int i = 0; i < subargs.size(); i++) {
+		if(subargs[i]->test(value, 1, NULL, eo)) {
+			return true;
+		}
+	}
+	return false;
+}
+int ArgumentSet::type() const {return ARGUMENT_TYPE_SET;}
+Argument *ArgumentSet::copy() const {return new ArgumentSet(this);}
+string ArgumentSet::print() const {
+	string str = "";
+	for(unsigned int i = 0; i < subargs.size(); i++) {
+		if(i > 0) {
+			if(i == subargs.size() - 1) {
+				str += " ";
+				str += _("or");
+				str += " ";
+			} else {
+				str += ", ";
+			}
+		}
+		str += subargs[i]->print();
+	}
+	return str;
+}
+string ArgumentSet::subprintlong() const {
+	string str = "";
+	for(unsigned int i = 0; i < subargs.size(); i++) {
+		if(i > 0) {
+			if(i == subargs.size() - 1) {
+				str += " ";
+				str += _("or");
+				str += " ";
+			} else {
+				str += ", ";
+			}
+		}
+		str += subargs[i]->printlong();
+	}
+	return str;
+}
+void ArgumentSet::addArgument(Argument *arg) {
+	arg->setAlerts(false);
+	subargs.push_back(arg);
+}
+void ArgumentSet::delArgument(unsigned int index) {
+	if(index > 0 && index <= subargs.size()) {
+		subargs.erase(subargs.begin() + (index - 1));
+	}
+}
+unsigned int ArgumentSet::countArguments() const {
+	return subargs.size();
+}
+Argument *ArgumentSet::getArgument(unsigned int index) const {
+	if(index > 0 && index <= subargs.size()) {
+		return subargs[index - 1];
+	}
+	return NULL;
+}

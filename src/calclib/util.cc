@@ -183,15 +183,15 @@ int daysPerMonth(int month, int year) {
 	}
 }	
 
-Number *yearsBetweenDates(string date1, string date2, int basis, bool date_func) {
-	if(basis < 0 || basis > 4) return NULL;
+Number yearsBetweenDates(string date1, string date2, int basis, bool date_func) {
+	if(basis < 0 || basis > 4) return -1;
 	if(basis == 1) {
 		int day1, day2, month1, month2, year1, year2;
 		if(!s2date(date1, year1, month1, day1)) {
-  			return NULL;
+  			return -1;
 		}
 		if(!s2date(date2, year2, month2, day2)) {
-  			return NULL;
+  			return -1;
 		}		
 		if(year1 > year2 || (year1 == year2 && month1 > month2) || (year1 == year2 && month1 == month2 && day1 > day2)) {
 			int year3 = year1, month3 = month1, day3 = day1;
@@ -201,8 +201,8 @@ Number *yearsBetweenDates(string date1, string date2, int basis, bool date_func)
 		int days = 0;
 		if(year1 == year2) {
 			days = daysBetweenDates(year1, month1, day1, year2, month2, day2, basis, date_func);
-			if(days < 0) return NULL;
-			return new Number(days, daysPerYear(year1, basis));
+			if(days < 0) return -1;
+			return Number(days, daysPerYear(year1, basis));
 		}
 		for(int month = 12; month > month1; month--) {
 			days += daysPerMonth(month, year1);
@@ -231,16 +231,15 @@ Number *yearsBetweenDates(string date1, string date2, int basis, bool date_func)
 			Number nr2(days, daysPerYear(year2, basis));
 			nr->add(&nr2);
 		}*/
-		Number *nr = new Number(days);
-		nr->divide(&year_frac);
+		Number nr(days);
+		nr /= year_frac;
 		return nr;
 	} else {
 		int days = daysBetweenDates(date1, date2, basis, date_func);
-		if(days < 0) return NULL;
-		Number *nr = new Number(days, daysPerYear(0, basis));	
-		return nr;
+		if(days < 0) return -1;
+		return Number(days, daysPerYear(0, basis));	
 	}
-	return NULL;
+	return -1;
 }
 int daysBetweenDates(string date1, string date2, int basis, bool date_func) {
 	int day1, day2, month1, month2, year1, year2;
@@ -489,41 +488,16 @@ string d2s(double value, int precision) {
 	return stmp;
 }
 
+string p2s(void *o) {
+	sprintf(buffer, "%p", o);
+	string stmp = buffer;
+	return stmp;
+}
 string i2s(int value) {
 	//	  char buffer[10];
 	sprintf(buffer, "%i", value);
 	string stmp = buffer;
 	return stmp;
-}
-long int s2li(const string& str) {
-	long int li = 0;
-	bool numbers_started = false, minus = false;		
-	for(unsigned int index = 0; index < str.size(); index++) {
-		if(str[index] >= '0' && str[index] <= '9') {
-			li *= 10;
-			li += str[index] - '0';
-			numbers_started = true;
-		} else if(!numbers_started && str[index] == '-') {
-			minus = !minus;
-		}
-	}
-	if(minus) li = -li;		
-	return li;
-}
-long int s2li(const char *str) {
-	long int li = 0;
-	bool numbers_started = false, minus = false;	
-	for(unsigned int index = 0; str[index] != '\0'; index++) {
-		if(str[index] >= '0' && str[index] <= '9') {
-			li *= 10;
-			li += str[index] - '0';
-			numbers_started = true;
-		} else if(!numbers_started && str[index] == '-') {
-			minus = !minus;
-		}
-	}
-	if(minus) li = -li;	
-	return li;
 }
 int s2i(const string& str) {
 	return strtol(str.c_str(), NULL, 10);
@@ -531,35 +505,15 @@ int s2i(const string& str) {
 int s2i(const char *str) {
 	return strtol(str, NULL, 10);
 }
-
-string li2s(long int value) {
-	if(value == 0) return "0";
-	string str = "";
-	bool minus = value < 0;
-	if(minus) value =- value;
-	while(true) {
-		str.insert(str.begin(), 1, '0' + value % 10);
-		value /= 10;						
-		if(value == 0) break;
-	}
-	if(minus) str.insert(str.begin(), 1, '-');
-	return str;
+void *s2p(const string& str) {
+	void *p;
+	sscanf(str.c_str(), "%p", &p);
+	return p;
 }
-string &lli2s(long int &value, string &str)  {
-	if(value == 0) {
-		str = "0";
-		return str;
-	}
-	int pos = str.length();
-	bool minus = value < 0;
-	if(minus) value =- value;
-	while(true) {
-		str.insert(str.begin() + pos, 1, '0' + value % 10);
-		value /= 10;						
-		if(value == 0) break;
-	}
-	if(minus) str.insert(str.begin() + pos, 1, '-');
-	return str;
+void *s2p(const char *str) {
+	void *p;
+	sscanf(str, "%p", &p);
+	return p;
 }
 
 int find_ending_bracket(const string &str, int start, int *missing) {
@@ -673,11 +627,11 @@ int sign_place(string *str, unsigned int start) {
 		return -1;
 }
 
-long int gcd(long int i1, long int i2) {
+int gcd(int i1, int i2) {
 	if(i1 < 0) i1 = -i1;
 	if(i2 < 0) i2 = -i2;
 	if(i1 == i2) return i2;
-	long int i3;
+	int i3;
 	if(i2 > i1) {
 		i3 = i2;
 		i2 = i1;

@@ -12,14 +12,11 @@
 #ifndef NUMBER_H
 #define NUMBER_H
 
-class Number;
-
 #include "includes.h"
 #include "Calculator.h"
 
 #define WANT_OBFUSCATING_OPERATORS
 #include <cln/cln.h>
-
 
 class Number {
 	
@@ -28,45 +25,79 @@ class Number {
 	protected:
 	
 		void removeFloatZeroPart();
-	
+
 		cln::cl_N value;
-		bool b_approx;
+		bool b_inf, b_pinf, b_minf;
 
 	public:
 	
 		Number();
-		Number(string number);
-		Number(long int numerator, long int denominator = 1, long int exp_10 = 0);
-		Number(const Number *o);
+		Number(string number, int base = 10);
+		Number(int numerator, int denominator = 1, int exp_10 = 0);
+		Number(const Number &o);
 		virtual ~Number();
 		
-		void set(string number);
-		void set(long int numerator, long int denominator = 1, long int exp_10 = 0);
+		void set(string number, int base = 10);
+		void set(int numerator, int denominator = 1, int exp_10 = 0);
+		void setInfinity();
+		void setPlusInfinity();
+		void setMinusInfinity();
 		void setFloat(double d_value);
-		void setCln(cln::cl_N cln_value);
-		void setImaginaryPart(const Number *o);
-		void set(const Number *o);
+
+		void setInternal(const cln::cl_N &cln_value);
+
+		void setImaginaryPart(const Number &o);
+		void setImaginaryPart(int numerator, int denominator = 1, int exp_10 = 0);
+		void set(const Number &o);
 		void clear();
-		
-		const cln::cl_N &clnNumber() const;
+
+		const cln::cl_N &internalNumber() const;
 		
 		double floatValue() const;
 		int intValue(bool *overflow = NULL) const;
-		long int longIntValue(bool *overflow = NULL) const;
 		
 		bool isApproximate() const;
 		void setApproximate(bool is_approximate = true);
 		
-		Number *realPart() const;
-		Number *imaginaryPart() const;
-		Number *numerator() const;
-		Number *denominator() const;
-		Number *complexNumerator() const;
-		Number *complexDenominator() const;
+		bool isUndefined() const;
+		bool isInfinite() const;
+		bool isInfinity() const;
+		bool isPlusInfinity() const;
+		bool isMinusInfinity() const;
+		
+		Number realPart() const;
+		Number imaginaryPart() const;
+		Number numerator() const;
+		Number denominator() const;
+		Number complexNumerator() const;
+		Number complexDenominator() const;
+
+		void operator = (const Number &o);
+		Number operator - () const;
+		Number operator * (const Number &o) const;
+		Number operator / (const Number &o) const;
+		Number operator + (const Number &o) const;
+		Number operator - (const Number &o) const;
+		Number operator ^ (const Number &o) const;
+		Number operator && (const Number &o) const;
+		Number operator || (const Number &o) const;
+		Number operator ! () const;
+		
+		void operator *= (const Number &o);
+		void operator /= (const Number &o);
+		void operator += (const Number &o);
+		void operator -= (const Number &o);
+		void operator ^= (const Number &o);
+		
+		bool operator == (const Number &o) const;
+		bool operator != (const Number &o) const;
 		
 		bool hasRealPart() const;
+		bool hasImaginaryPart() const;
 		bool isComplex() const;
 		bool isInteger() const;
+		bool isRational() const;
+		bool isReal() const;
 		bool isFraction() const;
 		bool isZero() const;
 		bool isOne() const;
@@ -74,6 +105,7 @@ class Number {
 		bool isMinusI() const;
 		bool isMinusOne() const;
 		bool isNegative() const;
+		bool isNonNegative() const;
 		bool isPositive() const;
 		bool realPartIsNegative() const;
 		bool realPartIsPositive() const;
@@ -81,55 +113,48 @@ class Number {
 		bool imaginaryPartIsPositive() const;
 		bool hasNegativeSign() const;
 		bool hasPositiveSign() const;
-		bool equals(const Number *o) const;
-		int compare(const Number *o) const;
-		int compareImaginaryParts(const Number *o) const;
-		int compareRealParts(const Number *o) const;
-		bool isGreaterThan(const Number *o) const;
-		bool isLessThan(const Number *o) const;
-		bool isGreaterThanOrEqualTo(const Number *o) const;
-		bool isLessThanOrEqualTo(const Number *o) const;
-		bool equals(long int num, long int den = 1) const;
-		int compare(long int num, long int den = 1) const;
-		bool isGreaterThan(long int num, long int den = 1) const;
-		bool isLessThan(long int num, long int den = 1) const;
-		bool isGreaterThanOrEqualTo(long int num, long int den = 1) const;
-		bool isLessThanOrEqualTo(long int num, long int den = 1) const;
+		bool equals(const Number &o) const;
+		int compare(const Number &o) const;
+		int compareImaginaryParts(const Number &o) const;
+		int compareRealParts(const Number &o) const;
+		bool isGreaterThan(const Number &o) const;
+		bool isLessThan(const Number &o) const;
+		bool isGreaterThanOrEqualTo(const Number &o) const;
+		bool isLessThanOrEqualTo(const Number &o) const;
 		bool isEven() const;
 		bool denominatorIsEven() const;
+		bool numeratorIsEven() const;
 		bool isOdd() const;
 		
-		bool add(const Number *o);
-		bool subtract(const Number *o);
-		bool multiply(const Number *o);
-		bool divide(const Number *o);
+		bool add(const Number &o);
+		bool subtract(const Number &o);
+		bool multiply(const Number &o);
+		bool divide(const Number &o);
 		bool recip();
-		int raise(const Number *o, int solution = 1);
-		bool exp10(const Number *o = NULL);
-		bool exp2(const Number *o = NULL);
+		bool raise(const Number &o, int solution = 1);
+		bool exp10(const Number &o);
+		bool exp2(const Number &o);
+		bool exp10();
+		bool exp2();
 		bool square();
-		
-		bool add(long int num, long int den = 1);
-		bool subtract(long int num, long int den = 1);
-		bool multiply(long int num, long int den = 1);
-		bool divide(long int num, long int den = 1);
-		int raise(long int num, long int den = 1, int solution = 1);
-		bool exp10(long int num, long int den = 1);
-		bool exp2(long int num, long int den = 1);
 		
 		bool negate();
 		void setNegative(bool is_negative);
 		bool abs();
 		bool signum();
-		bool round(const Number *o = NULL);
-		bool floor(const Number *o = NULL);
-		bool ceil(const Number *o = NULL);
-		bool trunc(const Number *o = NULL);
-		bool mod(const Number *o);	
+		bool round(const Number &o);
+		bool floor(const Number &o);
+		bool ceil(const Number &o);
+		bool trunc(const Number &o);
+		bool mod(const Number &o);
+		bool round();
+		bool floor();
+		bool ceil();
+		bool trunc();	
 		bool frac();		
-		bool rem(const Number *o);
+		bool rem(const Number &o);
 
-		int getBoolean();
+		int getBoolean() const;
 		void toBoolean();
 		void setTrue(bool is_true);
 		void setFalse();
@@ -138,10 +163,7 @@ class Number {
 		void e();
 		void pi();
 		void catalan();
-		void pythagoras();
 		void euler();	
-		void apery();
-		void golden();
 		bool zeta();			
 		
 		bool sin();
@@ -157,24 +179,21 @@ class Number {
 		bool tanh();
 		bool atanh();
 		bool ln();	
-		bool log(const Number *o);
-		bool log(long int num, long int den = 1);
+		bool log(const Number &o);
 		bool exp();
-		bool gcd(const Number *o);
+		bool gcd(const Number &o);
 		
 		bool factorial();
-		bool binomial(const Number *m, const Number *k);
+		bool binomial(const Number &m, const Number &k);
 	
-		int add(MathOperation op, const Number *o, int solution = 1); 
-		
-		bool floatify(cln::cl_I *num, cln::cl_I *den, int precision = DEFAULT_PRECISION, int max_decimals = -1, bool *infinite_series = NULL);
-		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, Prefix *prefix = NULL, bool *in_exact = NULL, bool *usable = NULL, bool toplevel = true, bool *plural = NULL, Number *l_exp = NULL, bool in_composite = false, bool in_power = false) const;
-		void getPrintObjects(bool &minus, string &whole_, string &numerator_, string &denominator_, bool &exp_minus, string &exponent_, string &prefix_, NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, Prefix *prefix = NULL, bool *in_exact = NULL, bool *usable = NULL, bool toplevel = true, bool *plural = NULL, Number *l_exp = NULL, bool in_composite = false, bool in_power = false, Number *l_exp2 = NULL, Prefix **prefix1 = NULL, Prefix **prefix2 = NULL) const;
-		
+		bool add(const Number &o, MathOperation op); 
+
 		string printNumerator(int base = 10, bool display_sign = true) const;
 		string printDenominator(int base = 10, bool display_sign = true) const;
 		string printImaginaryNumerator(int base = 10, bool display_sign = true) const;
 		string printImaginaryDenominator(int base = 10, bool display_sign = true) const;
+
+		string print(const PrintOptions &po = default_print_options, const InternalPrintStruct &ips = top_ips) const;
 	
 };
 

@@ -16,16 +16,13 @@
 #include "includes.h"
 #include "util.h"
 #include "Calculator.h"
-#include "Manager.h"
+#include "MathStructure.h"
 #include "Number.h"
-#include "Matrix.h"
 #include "Prefix.h"
-#include "EqItem.h"
 #include "ExpressionItem.h"
 #include "Variable.h"
 #include "Function.h"
 #include "Unit.h"
 #include "BuiltinFunctions.h"
-#include "Error.h"
 
 #endif

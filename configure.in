@@ -71,13 +71,10 @@ fi
 
 
 dnl  --------------------------------
-dnl | check for GMP and CLN         |-----------------------------------------
+dnl | check for GMP and GIAC        |-----------------------------------------
 dnl  --------------------------------
 
 dnl AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_ERROR([GNU MP not found, see http://swox.com/gmp])])
-
-AC_LANG([C++])
-
 
 AC_PATH_CLN(1.1.0, [
      	LIBS="$LIBS $CLN_LIBS"
@@ -85,19 +82,12 @@ AC_PATH_CLN(1.1.0, [
   	AC_DEFINE(HAVE_LIBCLN,1,[If CLN can be used])
 ], AC_MSG_ERROR([No suitable installed version of CLN could be found.]))
 
-AC_CHECK_LIB(giac, main, [
-	LIBS="$LIBS -lgiac"
-	AC_DEFINE(HAVE_GIAC,1,[If giac can be used])
-], AC_MSG_WARN([No suitable installed version of giac could be found.]))
+AC_LANG([C++])
 
-AC_MSG_CHECKING([if old Giac api])
-AC_TRY_COMPILE([#include <giac/giac.h>],[
-	giac::at_inf_ou_egal;],
-old_giac_api=yes, old_giac_api=no)
-AC_MSG_RESULT([$old_giac_api])
-if test $old_giac_api = yes; then
-	AC_DEFINE(OLD_GIAC_API,1,[If old giac version])
-fi
+dnl AC_CHECK_LIB(giac, main, [
+dnl	LIBS="$LIBS -lgiac"
+dnl	AC_DEFINE(HAVE_GIAC,1,[If giac can be used])
+dnl], AC_MSG_ERROR([No suitable installed version of giac could be found.]))
 
 
 dnl  -------------------------------------

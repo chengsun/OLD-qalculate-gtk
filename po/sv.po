@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-04-04 17:45+0200\n"
+"POT-Creation-Date: 2004-04-06 09:51+0200\n"
 "PO-Revision-Date: 2003-10-27 12:29+0100\n"
 "Last-Translator: Niklas Knutsson <nq@altern.org>\n"
 "Language-Team: Swedish\n"
@@ -94,12 +94,12 @@ msgid "Forbid zero"
 msgstr "Förbjud noll"
 
 #: data/argumentrules.glade.h:10 data/plot.glade.h:29
-#: src/calclib/data/functions.xml.in.h:230
+#: src/calclib/data/functions.xml.in.h:233
 msgid "Max"
 msgstr "Max"
 
 #: data/argumentrules.glade.h:11 data/plot.glade.h:30
-#: src/calclib/data/functions.xml.in.h:237
+#: src/calclib/data/functions.xml.in.h:240
 msgid "Min"
 msgstr "Min"
 
@@ -182,19 +182,19 @@ msgstr "Importera filen"
 msgid "Includes headings"
 msgstr "Inkludera kolumner"
 
-#: data/csvimport.glade.h:19 data/matrixedit.glade.h:13 src/callbacks.cc:5526
-#: src/callbacks.cc:7018
+#: data/csvimport.glade.h:19 data/matrixedit.glade.h:13 src/callbacks.cc:5530
+#: src/callbacks.cc:7022
 msgid "Matrices"
 msgstr "Matriser"
 
 #: data/csvimport.glade.h:20 data/functionedit.glade.h:27 data/main.glade.h:84
-#: data/matrixedit.glade.h:14 src/calclib/data/functions.xml.in.h:226
+#: data/matrixedit.glade.h:14 src/calclib/data/functions.xml.in.h:229
 msgid "Matrix"
 msgstr "Matris"
 
 #: data/csvimport.glade.h:21 data/functionedit.glade.h:29
 #: data/matrixedit.glade.h:15 data/variableedit.glade.h:8 src/interface.cc:480
-#: src/interface.cc:608 src/calclib/data/functions.xml.in.h:243
+#: src/interface.cc:608 src/calclib/data/functions.xml.in.h:246
 msgid "Name"
 msgstr "Namn"
 
@@ -237,7 +237,7 @@ msgstr "Första raden som innehåller data att importera"
 msgid "Title displayed in menus and in variable manager"
 msgstr "Rubrik som skall visas i menyer och variabelhanteraren"
 
-#: data/csvimport.glade.h:31 src/callbacks.cc:5537 src/callbacks.cc:7021
+#: data/csvimport.glade.h:31 src/callbacks.cc:5541 src/callbacks.cc:7025
 msgid "Vectors"
 msgstr "Vektorer"
 
@@ -328,7 +328,7 @@ msgstr "Beskrivning av funktionen"
 msgid "Do not create/modify this function"
 msgstr "Avbryt skapande/modifiering av funktionen"
 
-#: data/functionedit.glade.h:18 src/callbacks.cc:4906
+#: data/functionedit.glade.h:18 src/callbacks.cc:4910
 msgid "Edit Function"
 msgstr "Redigera funktion"
 
@@ -347,7 +347,7 @@ msgstr "Valfri"
 
 #: data/functionedit.glade.h:23 data/functions.glade.h:10 data/main.glade.h:71
 #: data/plot.glade.h:22 src/interface.cc:373
-#: src/calclib/data/functions.xml.in.h:166
+#: src/calclib/data/functions.xml.in.h:169
 msgid "Function"
 msgstr "Funktion"
 
@@ -387,7 +387,7 @@ msgstr "Icke-noll heltal"
 msgid "Non-zero number"
 msgstr "Icke-noll nummer"
 
-#: data/functionedit.glade.h:35 src/calclib/data/functions.xml.in.h:251
+#: data/functionedit.glade.h:35 src/calclib/data/functions.xml.in.h:254
 msgid "Number"
 msgstr "Nummer"
 
@@ -411,7 +411,7 @@ msgstr "Ta bort vald parameter"
 msgid "Rules"
 msgstr "Villkor"
 
-#: data/functionedit.glade.h:41 src/calclib/data/functions.xml.in.h:427
+#: data/functionedit.glade.h:41 src/calclib/data/functions.xml.in.h:430
 msgid "Text"
 msgstr "Text"
 
@@ -434,7 +434,7 @@ msgid "Variable"
 msgstr "Variabel"
 
 #: data/functionedit.glade.h:46 data/main.glade.h:136
-#: data/matrixedit.glade.h:21 src/calclib/data/functions.xml.in.h:451
+#: data/matrixedit.glade.h:21 src/calclib/data/functions.xml.in.h:454
 msgid "Vector"
 msgstr "Vektor"
 
@@ -602,8 +602,8 @@ msgid "C_onvert..."
 msgstr "_Omvandla"
 
 #: data/main.glade.h:29
-msgid "Calculate Multiple Roots"
-msgstr "Beräkna flera rötter"
+msgid "Calculate Multiple Real Roots"
+msgstr "Beräkna flera reella rötter"
 
 #: data/main.glade.h:30
 msgid "Calculate Variables"
@@ -732,14 +732,14 @@ msgstr ""
 "aktiverade"
 
 #: data/main.glade.h:60
-msgid "Enables calculation of multiple results for even roots"
-msgstr "Aktiverar beräkning av flera svar för jämna rötter"
+msgid "Enables calculation of multiple real results for even roots"
+msgstr "Aktiverar beräkning av flera reella svar för jämna rötter"
 
 #: data/main.glade.h:61
 msgid "Enter expression here"
 msgstr "Skriv in uttryck här"
 
-#: data/main.glade.h:62 src/callbacks.cc:4255
+#: data/main.glade.h:62 src/callbacks.cc:4259
 msgid "Execute"
 msgstr "Exekvera"
 
@@ -784,7 +784,7 @@ msgid "Gradians"
 msgstr "Gradienter"
 
 #: data/main.glade.h:75 data/nbases.glade.h:7
-#: src/calclib/data/functions.xml.in.h:175
+#: src/calclib/data/functions.xml.in.h:178
 msgid "Hexadecimal"
 msgstr "Hexadecimal"
 
@@ -820,11 +820,11 @@ msgstr "Hantera enheter"
 msgid "Manage Variables"
 msgstr "Hantera variabler"
 
-#: data/main.glade.h:85 src/calclib/data/functions.xml.in.h:242
+#: data/main.glade.h:85 src/calclib/data/functions.xml.in.h:245
 msgid "Multiply"
 msgstr "Multiplicera"
 
-#: data/main.glade.h:86 src/calclib/data/functions.xml.in.h:244
+#: data/main.glade.h:86 src/calclib/data/functions.xml.in.h:247
 msgid "Natural logarithm"
 msgstr "Naturlig logaritm"
 
@@ -841,7 +841,7 @@ msgid "Numerical Display"
 msgstr "Numerisk visning"
 
 #: data/main.glade.h:90 data/nbases.glade.h:10
-#: src/calclib/data/functions.xml.in.h:261
+#: src/calclib/data/functions.xml.in.h:264
 msgid "Octal"
 msgstr "Oktal"
 
@@ -889,7 +889,7 @@ msgstr "Rad"
 msgid "Radians"
 msgstr "Radianer"
 
-#: data/main.glade.h:103 src/calclib/data/functions.xml.in.h:304
+#: data/main.glade.h:103 src/calclib/data/functions.xml.in.h:307
 msgid "Raise"
 msgstr "Upphöj"
 
@@ -941,7 +941,7 @@ msgstr "Sätt prefix"
 msgid "Sexagesimal"
 msgstr "Sexagesimal"
 
-#: data/main.glade.h:116 src/interface.cc:236 src/callbacks.cc:6696
+#: data/main.glade.h:116 src/interface.cc:236 src/callbacks.cc:6700
 msgid "Show keypad"
 msgstr "Visa knappsats"
 
@@ -953,11 +953,11 @@ msgstr "Enke_lt"
 msgid "Simple"
 msgstr "Enkelt"
 
-#: data/main.glade.h:119 src/calclib/data/functions.xml.in.h:392
+#: data/main.glade.h:119 src/calclib/data/functions.xml.in.h:395
 msgid "Sine"
 msgstr "Sinus"
 
-#: data/main.glade.h:120 src/calclib/data/functions.xml.in.h:403
+#: data/main.glade.h:120 src/calclib/data/functions.xml.in.h:406
 msgid "Square root"
 msgstr "Kvadratrot"
 
@@ -965,11 +965,11 @@ msgstr "Kvadratrot"
 msgid "Store result"
 msgstr "Spara resultatet"
 
-#: data/main.glade.h:122 src/calclib/data/functions.xml.in.h:414
+#: data/main.glade.h:122 src/calclib/data/functions.xml.in.h:417
 msgid "Subtract"
 msgstr "Subtrahera"
 
-#: data/main.glade.h:123 src/calclib/data/functions.xml.in.h:423
+#: data/main.glade.h:123 src/calclib/data/functions.xml.in.h:426
 msgid "Tangent"
 msgstr "Tangens"
 
@@ -1165,11 +1165,11 @@ msgstr "Skapa/modifiera matrisen/vektorn"
 msgid "Do not create/modify this matrix/vector"
 msgstr "Avbryt skapande/modifiering av matrisen/vektorn"
 
-#: data/matrixedit.glade.h:10 src/callbacks.cc:5234
+#: data/matrixedit.glade.h:10 src/callbacks.cc:5238
 msgid "Edit Matrix"
 msgstr "Redigera matris"
 
-#: data/matrixedit.glade.h:11 src/callbacks.cc:8074 src/callbacks.cc:8081
+#: data/matrixedit.glade.h:11 src/callbacks.cc:8082 src/callbacks.cc:8089
 #: src/calclib/data/functions.xml.in.h:137
 msgid "Elements"
 msgstr "Element"
@@ -1191,7 +1191,7 @@ msgid "Number of rows in this matrix (rows displayed for vectors)"
 msgstr "Antal rader i matrisen (visade rader för vektorer)"
 
 #: data/matrixedit.glade.h:19 data/plot.glade.h:40
-#: src/calclib/data/functions.xml.in.h:380
+#: src/calclib/data/functions.xml.in.h:383
 msgid "Rows"
 msgstr "Rader"
 
@@ -1207,7 +1207,7 @@ msgstr "Decimalt värde"
 msgid "Hexadecimal value"
 msgstr "Hexadecimalt värde"
 
-#: data/nbases.glade.h:9 src/calclib/data/functions.xml.in.h:252
+#: data/nbases.glade.h:9 src/calclib/data/functions.xml.in.h:255
 msgid "Number Bases"
 msgstr "Nummerbaser"
 
@@ -1376,7 +1376,7 @@ msgid "The variable name used in expression"
 msgstr "Variabel namn använt i uttryck"
 
 #: data/plot.glade.h:49 src/interface.cc:864
-#: src/calclib/data/functions.xml.in.h:430
+#: src/calclib/data/functions.xml.in.h:433
 msgid "Title"
 msgstr "Titel"
 
@@ -1417,6 +1417,14 @@ msgid "Precision"
 msgstr "Precision"
 
 #: data/precision.glade.h:3
+msgid "Recalculate"
+msgstr "Omräkna"
+
+#: data/precision.glade.h:4
+msgid "Recalculate expression"
+msgstr "Räkna om uttrycket"
+
+#: data/precision.glade.h:5
 msgid ""
 "The number of significant digits to display/calculate (simple arithmetics "
 "are always calculated exact)"
@@ -1555,7 +1563,7 @@ msgstr "Sammansatt enhet"
 msgid "Do not create/modify this unit"
 msgstr "Avbryt skapande/modifiering av enheten"
 
-#: data/unitedit.glade.h:15 src/callbacks.cc:4516
+#: data/unitedit.glade.h:15 src/callbacks.cc:4520
 msgid "Edit Unit"
 msgstr "Redigera enhet"
 
@@ -1709,7 +1717,7 @@ msgstr "Godkänn skapande/modifiering av variabeln"
 msgid "Do not create/modify this variable"
 msgstr "Avbryt skapande/modifiering av variabeln"
 
-#: data/variableedit.glade.h:6 src/callbacks.cc:5090
+#: data/variableedit.glade.h:6 src/callbacks.cc:5094
 msgid "Edit Variable"
 msgstr "Redigera variabel"
 
@@ -1721,8 +1729,8 @@ msgstr "Huruvida värdet är exakt"
 msgid "The category this variable belongs to"
 msgstr "Kategorin som variabeln tillhör"
 
-#: data/variableedit.glade.h:12 src/interface.cc:428 src/callbacks.cc:4309
-#: src/calclib/data/functions.xml.in.h:448
+#: data/variableedit.glade.h:12 src/interface.cc:428 src/callbacks.cc:4313
+#: src/calclib/data/functions.xml.in.h:451
 msgid "Value"
 msgstr "Värde"
 
@@ -1771,8 +1779,8 @@ msgstr "Fel vid inhämtande av systemvida definitioner!\n"
 msgid "ans"
 msgstr ""
 
-#: src/main.cc:145 src/main.cc:150 src/callbacks.cc:5501
-#: src/calclib/Calculator.cc:3613
+#: src/main.cc:145 src/main.cc:150 src/callbacks.cc:5505
+#: src/calclib/Calculator.cc:3614
 msgid "Temporary"
 msgstr "Temporära"
 
@@ -1788,7 +1796,7 @@ msgstr "Svar"
 msgid "All"
 msgstr "Alla"
 
-#: src/interface.cc:233 src/callbacks.cc:6702
+#: src/interface.cc:233 src/callbacks.cc:6706
 msgid "Hide keypad"
 msgstr "Göm knappsatsen"
 
@@ -1796,27 +1804,27 @@ msgstr "Göm knappsatsen"
 msgid "Keypad"
 msgstr "Knappsats"
 
-#: src/interface.cc:611 src/calclib/data/functions.xml.in.h:443
+#: src/interface.cc:611 src/calclib/data/functions.xml.in.h:446
 msgid "Type"
 msgstr "Typ"
 
 #: src/callbacks.cc:589 src/callbacks.cc:590 src/callbacks.cc:641
 #: src/callbacks.cc:850 src/callbacks.cc:851 src/callbacks.cc:924
 #: src/callbacks.cc:1046 src/callbacks.cc:1047 src/callbacks.cc:1145
-#: src/callbacks.cc:4745 src/callbacks.cc:5012 src/callbacks.cc:5189
-#: src/callbacks.cc:5414
+#: src/callbacks.cc:4749 src/callbacks.cc:5016 src/callbacks.cc:5193
+#: src/callbacks.cc:5418
 msgid "Uncategorized"
 msgstr "Okategoriserad"
 
 #: src/callbacks.cc:598 src/callbacks.cc:599 src/callbacks.cc:643
 #: src/callbacks.cc:859 src/callbacks.cc:860 src/callbacks.cc:926
 #: src/callbacks.cc:1054 src/callbacks.cc:1055 src/callbacks.cc:1147
-#: src/callbacks.cc:4743 src/callbacks.cc:5010 src/callbacks.cc:5187
-#: src/callbacks.cc:5412
+#: src/callbacks.cc:4747 src/callbacks.cc:5014 src/callbacks.cc:5191
+#: src/callbacks.cc:5416
 msgid "Inactive"
 msgstr "Inaktiva"
 
-#: src/callbacks.cc:712 src/calclib/Function.cc:123
+#: src/callbacks.cc:712 src/calclib/Function.cc:132
 msgid "argument"
 msgstr "parameter"
 
@@ -1824,7 +1832,7 @@ msgstr "parameter"
 msgid "Arguments"
 msgstr "Parametrar"
 
-#: src/callbacks.cc:759 src/callbacks.cc:4357 src/callbacks.cc:4380
+#: src/callbacks.cc:759 src/callbacks.cc:4361 src/callbacks.cc:4384
 msgid "optional"
 msgstr "frivillig"
 
@@ -1841,22 +1849,22 @@ msgid "Prefixes"
 msgstr "Prefix"
 
 #: src/callbacks.cc:2049 src/callbacks.cc:2846 src/calclib/Calculator.cc:890
-#: src/calclib/Calculator.cc:2656 src/calclib/Calculator.cc:4408
-#: src/calclib/Manager.cc:2840 src/calclib/Manager.cc:3158
+#: src/calclib/Calculator.cc:2657 src/calclib/Calculator.cc:4409
+#: src/calclib/Manager.cc:3036 src/calclib/Manager.cc:3354
 #: src/calclib/data/units.xml.in.h:57
 msgid "Currency"
 msgstr "Valuta"
 
-#: src/callbacks.cc:3588 src/callbacks.cc:3707 src/callbacks.cc:3951
-#: src/calclib/Manager.cc:3567 src/calclib/Manager.cc:3595
+#: src/callbacks.cc:3588 src/callbacks.cc:3707 src/callbacks.cc:3955
+#: src/calclib/Manager.cc:3763 src/calclib/Manager.cc:3791
 msgid "approx."
 msgstr "ca"
 
-#: src/callbacks.cc:3598 src/calclib/Manager.cc:3555
+#: src/callbacks.cc:3598 src/calclib/Manager.cc:3751
 msgid "or"
 msgstr "eller"
 
-#: src/callbacks.cc:3759
+#: src/callbacks.cc:3763
 msgid ""
 "result is too long\n"
 "see history"
@@ -1864,45 +1872,45 @@ msgstr ""
 "resultet är för långt\n"
 "se historiken"
 
-#: src/callbacks.cc:3767 src/calclib/Calculator.cc:116
+#: src/callbacks.cc:3771 src/calclib/Calculator.cc:116
 msgid "aborted"
 msgstr "avbruten"
 
-#: src/callbacks.cc:3769
+#: src/callbacks.cc:3773
 msgid "calculation was aborted"
 msgstr "beräkningarna avbröts"
 
-#: src/callbacks.cc:3882
+#: src/callbacks.cc:3886
 msgid "result processing was aborted"
 msgstr "resultatbehandlingen avbröts"
 
-#: src/callbacks.cc:4264
+#: src/callbacks.cc:4268
 msgid "Insert"
 msgstr "Infoga"
 
-#: src/callbacks.cc:4311
+#: src/callbacks.cc:4315
 msgid "Argument"
 msgstr "Parameter"
 
-#: src/callbacks.cc:4518
+#: src/callbacks.cc:4522
 msgid "Edit Unit (global)"
 msgstr "Redigera enhet (systemvid)"
 
-#: src/callbacks.cc:4520
+#: src/callbacks.cc:4524
 msgid "New Unit"
 msgstr "Ny enhet"
 
-#: src/callbacks.cc:4619
+#: src/callbacks.cc:4623
 msgid "Empty internal name field."
 msgstr "Tomt fält för internt namn."
 
 #. no singular unit name either -- open dialog again
-#: src/callbacks.cc:4626 src/callbacks.cc:4952 src/callbacks.cc:5142
-#: src/callbacks.cc:5338
+#: src/callbacks.cc:4630 src/callbacks.cc:4956 src/callbacks.cc:5146
+#: src/callbacks.cc:5342
 msgid "Empty name field."
 msgstr "Tomt namnfält"
 
-#: src/callbacks.cc:4638
+#: src/callbacks.cc:4642
 msgid ""
 "A variable or unit with the same internal name already exists.\n"
 "Do you want to overwrite it?"
@@ -1910,7 +1918,7 @@ msgstr ""
 "En variabel eller enhet med samma interna namn finns redan.\n"
 "Vill du ersätta den?"
 
-#: src/callbacks.cc:4642
+#: src/callbacks.cc:4646
 msgid ""
 "A variable or unit with the same name already exists.\n"
 "Do you want to overwrite it?"
@@ -1918,7 +1926,7 @@ msgstr ""
 "En variabel eller enhet med samma namn finns redan.\n"
 "Vill du ersätta den?"
 
-#: src/callbacks.cc:4645
+#: src/callbacks.cc:4649
 msgid ""
 "A variable or unit with the same plural name already exists.\n"
 "Do you want to overwrite it?"
@@ -1926,7 +1934,7 @@ msgstr ""
 "En variabel eller enhet med samma pluralform finns redan.\n"
 "Vill du ersätta den?"
 
-#: src/callbacks.cc:4648
+#: src/callbacks.cc:4652
 msgid ""
 "A variable or unit with the same singular name already exists.\n"
 "Do you want to overwrite it?"
@@ -1934,25 +1942,25 @@ msgstr ""
 "En variabel eller enhet med samma singularis finns redan.\n"
 "Vill du ersätta den?"
 
-#: src/callbacks.cc:4668 src/callbacks.cc:4717
+#: src/callbacks.cc:4672 src/callbacks.cc:4721
 msgid "Base unit does not exist."
 msgstr "Angiven grundenhet finns inte."
 
-#: src/callbacks.cc:4908
+#: src/callbacks.cc:4912
 msgid "Edit Function (global)"
 msgstr "Redigera funktion (systemvid)"
 
-#: src/callbacks.cc:4910
+#: src/callbacks.cc:4914
 msgid "New Function"
 msgstr "Ny funktion"
 
 #. no expression/relation -- open dialog again
-#: src/callbacks.cc:4963
+#: src/callbacks.cc:4967
 msgid "Empty expression field."
 msgstr "Tom uttrycksfält."
 
 #. function with the same name exists -- overwrite or open the dialog again
-#: src/callbacks.cc:4970
+#: src/callbacks.cc:4974
 msgid ""
 "A function with the same name already exists.\n"
 "Do you want to overwrite the function?"
@@ -1960,25 +1968,25 @@ msgstr ""
 "En funktion med samma namn finns redan.\n"
 "Vill du ersätta den?"
 
-#: src/callbacks.cc:5064
+#: src/callbacks.cc:5068
 msgid "Unit does not exist"
 msgstr "Enheten finns inte"
 
-#: src/callbacks.cc:5092
+#: src/callbacks.cc:5096
 msgid "Edit Variable (global)"
 msgstr "Redigera variabel (systemvid)"
 
-#: src/callbacks.cc:5094
+#: src/callbacks.cc:5098
 msgid "New Variable"
 msgstr "Ny variabel"
 
 #. no value -- open dialog again
-#: src/callbacks.cc:5147
+#: src/callbacks.cc:5151
 msgid "Empty value field."
 msgstr "Tomt värdefält."
 
 #. variable with the same name exists -- overwrite or open dialog again
-#: src/callbacks.cc:5152 src/callbacks.cc:5343
+#: src/callbacks.cc:5156 src/callbacks.cc:5347
 msgid ""
 "An unit or variable with the same name already exists.\n"
 "Do you want to overwrite it?"
@@ -1986,37 +1994,37 @@ msgstr ""
 "En enhet eller variabel med samma namn finns redan.\n"
 "Vill du ersätta den?"
 
-#: src/callbacks.cc:5225
+#: src/callbacks.cc:5229
 msgid "Edit Vector"
 msgstr "Redigera vektor"
 
-#: src/callbacks.cc:5227
+#: src/callbacks.cc:5231
 msgid "Edit Vector (global)"
 msgstr "Redigera vektor (systemvid)"
 
-#: src/callbacks.cc:5229
+#: src/callbacks.cc:5233
 msgid "New Vector"
 msgstr "Ny vektor"
 
-#: src/callbacks.cc:5236
+#: src/callbacks.cc:5240
 msgid "Edit Matrix (global)"
 msgstr "Redigera matris (systemvid)"
 
-#: src/callbacks.cc:5238
+#: src/callbacks.cc:5242
 msgid "New Matrix"
 msgstr "Ny matris"
 
 #. no filename -- open dialog again
-#: src/callbacks.cc:5443
+#: src/callbacks.cc:5447
 msgid "No file name entered."
 msgstr "Filnamn måste anges"
 
 #. no filename -- open dialog again
-#: src/callbacks.cc:5471
+#: src/callbacks.cc:5475
 msgid "No delimiter selected."
 msgstr "En avgränsare måste anges"
 
-#: src/callbacks.cc:5482
+#: src/callbacks.cc:5486
 #, c-format
 msgid ""
 "Could not import from file \n"
@@ -2025,15 +2033,15 @@ msgstr ""
 "Kunde inte importera fil: \n"
 "%s"
 
-#: src/callbacks.cc:5514 src/callbacks.cc:7015
+#: src/callbacks.cc:5518 src/callbacks.cc:7019
 msgid "My Variables"
 msgstr "Mina variabler"
 
-#: src/callbacks.cc:5761
+#: src/callbacks.cc:5765
 msgid "Couldn't write definitions"
 msgstr "Kunde inte spara definitioner"
 
-#: src/callbacks.cc:6050
+#: src/callbacks.cc:6054
 #, c-format
 msgid ""
 "Couldn't write preferences to\n"
@@ -2042,20 +2050,20 @@ msgstr ""
 "Kunde inte spara inställningar till\n"
 "%s"
 
-#: src/callbacks.cc:6380
+#: src/callbacks.cc:6384
 msgid "Select result font"
 msgstr "Välj teckensnitt"
 
-#: src/callbacks.cc:6393
+#: src/callbacks.cc:6397
 msgid "Select expression font"
 msgstr "Välj teckensnitt"
 
 #. do not delete units that are used by other units
-#: src/callbacks.cc:7584
+#: src/callbacks.cc:7588
 msgid "Cannot delete unit as it is needed by other units."
 msgstr "Kan inte ta bort enheten eftersom den används av andra enheter."
 
-#: src/callbacks.cc:7940
+#: src/callbacks.cc:7944
 #, c-format
 msgid ""
 "Could not display help for Qalculate!.\n"
@@ -2064,36 +2072,36 @@ msgstr ""
 "Kunde inte visa hjälp för Qalculate!.\n"
 "%s"
 
-#: src/callbacks.cc:8076 src/callbacks.cc:8083
+#: src/callbacks.cc:8084 src/callbacks.cc:8091
 msgid "Components (in horizontal order)"
 msgstr "Komponenter (från vänster till höger)"
 
-#: src/callbacks.cc:8095 src/callbacks.cc:8104 src/callbacks.cc:8128
-#: src/callbacks.cc:8137
+#: src/callbacks.cc:8103 src/callbacks.cc:8112 src/callbacks.cc:8136
+#: src/callbacks.cc:8145
 msgid "Select file to import"
 msgstr "Välj fil att importera"
 
-#: src/callbacks.cc:8113
+#: src/callbacks.cc:8121
 msgid "Select date"
 msgstr "Välj datum"
 
-#: src/callbacks.cc:8314
+#: src/callbacks.cc:8322
 msgid "No functions defined."
 msgstr "Inga funktioner är definierade."
 
-#: src/callbacks.cc:8449 src/callbacks.cc:8472
+#: src/callbacks.cc:8457 src/callbacks.cc:8480
 msgid "Select file to export"
 msgstr "Välj fil att exporta till"
 
-#: src/callbacks.cc:8451
+#: src/callbacks.cc:8459
 msgid "Allowed File Types"
 msgstr "Tillåtna filtyper"
 
-#: src/callbacks.cc:8461
+#: src/callbacks.cc:8469
 msgid "All Files"
 msgstr "All filer"
 
-#: src/callbacks.cc:8517 src/callbacks.cc:8550
+#: src/callbacks.cc:8525 src/callbacks.cc:8558
 msgid "Empty expression."
 msgstr "Tomt uttryck."
 
@@ -2102,47 +2110,48 @@ msgstr "Tomt uttryck."
 msgid "Couldn't find pixmap file: %s"
 msgstr "Kunde inte hitta hitta bildfilen \"%s\"."
 
-#: src/calclib/BuiltinFunctions.cc:582
+#: src/calclib/BuiltinFunctions.cc:697
 #, c-format
 msgid "Too many elements (%s) for the order (%sx%s) of the matrix."
 msgstr "För många element (%s) för en %sx%s matris."
 
-#: src/calclib/BuiltinFunctions.cc:672
+#: src/calclib/BuiltinFunctions.cc:789
 #, c-format
 msgid "Row %s does not exist in matrix."
 msgstr "Rad %s finns inte i matrisen."
 
-#: src/calclib/BuiltinFunctions.cc:686
+#: src/calclib/BuiltinFunctions.cc:803
 #, c-format
 msgid "Column %s does not exist in matrix."
 msgstr "Kolumn %s finns inte i matrisen."
 
-#: src/calclib/BuiltinFunctions.cc:913 src/calclib/BuiltinFunctions.cc:934
+#: src/calclib/BuiltinFunctions.cc:1038 src/calclib/BuiltinFunctions.cc:1059
 #, c-format
 msgid "Error in date format for function %s()."
 msgstr "Felaktigt datumformat för %s()."
 
-#: src/calclib/BuiltinFunctions.cc:1386 src/calclib/BuiltinFunctions.cc:1416
+#: src/calclib/BuiltinFunctions.cc:1513 src/calclib/BuiltinFunctions.cc:1543
+#, c-format
 msgid "Unsolvable comparison in %s()."
 msgstr "Olöslig jämförelse i %s()."
 
-#: src/calclib/BuiltinFunctions.cc:1529
+#: src/calclib/BuiltinFunctions.cc:1656
 msgid ""
 "Assuming the unusual practice of letting a last capital I mean 2 in a roman "
 "numeral."
 msgstr "Antar att ett sista stort I avses betyda 2."
 
-#: src/calclib/BuiltinFunctions.cc:1607
+#: src/calclib/BuiltinFunctions.cc:1734
 #, c-format
 msgid "Error in roman numerals: %s."
 msgstr "Fel i romerska siffor: \"%s\"."
 
-#: src/calclib/BuiltinFunctions.cc:1642
+#: src/calclib/BuiltinFunctions.cc:1769
 #, c-format
 msgid "Unknown roman numeral: %s."
 msgstr "Okänd romersk siffra: %s."
 
-#: src/calclib/BuiltinFunctions.cc:1698
+#: src/calclib/BuiltinFunctions.cc:1825
 #, c-format
 msgid ""
 "Errors in roman numerals: \"%s\". Interpreted as %s, which should be written "
@@ -2150,27 +2159,27 @@ msgid ""
 msgstr ""
 "Fel i romerska siffor: \"%s\". Tolkat som %s, vilket borde skrivits %s."
 
-#: src/calclib/BuiltinFunctions.cc:1711
+#: src/calclib/BuiltinFunctions.cc:1838
 #, c-format
 msgid "Object %s does not exist."
 msgstr "Okjektet %s finns inte."
 
-#: src/calclib/BuiltinFunctions.cc:1813 src/calclib/BuiltinFunctions.cc:1842
-#: src/calclib/BuiltinFunctions.cc:1877 src/calclib/BuiltinFunctions.cc:1906
+#: src/calclib/BuiltinFunctions.cc:1940 src/calclib/BuiltinFunctions.cc:1969
+#: src/calclib/BuiltinFunctions.cc:2004 src/calclib/BuiltinFunctions.cc:2033
 #, c-format
 msgid "Giac error: %s."
 msgstr "Giac fel: %s."
 
-#: src/calclib/BuiltinFunctions.cc:1829 src/calclib/BuiltinFunctions.cc:1856
-#: src/calclib/BuiltinFunctions.cc:1891
+#: src/calclib/BuiltinFunctions.cc:1956 src/calclib/BuiltinFunctions.cc:1983
+#: src/calclib/BuiltinFunctions.cc:2018
 msgid "Conversion to Giac failed."
 msgstr "Giac omvandling misslyckades."
 
-#: src/calclib/BuiltinFunctions.cc:1864
+#: src/calclib/BuiltinFunctions.cc:1991
 msgid "No solution could be found."
 msgstr "Inga lösningar funna."
 
-#: src/calclib/BuiltinFunctions.cc:1955
+#: src/calclib/BuiltinFunctions.cc:2082
 msgid "No solution was found."
 msgstr "Ingen lösning funnen."
 
@@ -2179,62 +2188,62 @@ msgstr "Ingen lösning funnen."
 msgid " to "
 msgstr " till "
 
-#: src/calclib/Calculator.cc:1213
+#: src/calclib/Calculator.cc:1214
 msgid "Floating point error: division by zero."
 msgstr "Flyttalsfel: division med noll."
 
-#: src/calclib/Calculator.cc:1224
+#: src/calclib/Calculator.cc:1225
 msgid "Floating point error: invalid operation."
 msgstr "Flyttalsfel: ogiltig operation."
 
-#: src/calclib/Calculator.cc:1238
+#: src/calclib/Calculator.cc:1239
 #, c-format
 msgid "Floating point error: division by zero in \"%s\"."
 msgstr "Flyttalsfel: division med noll i \"%s\"."
 
-#: src/calclib/Calculator.cc:1249
+#: src/calclib/Calculator.cc:1250
 #, c-format
 msgid ""
 "Floating point error: invalid operation in \"%s\n"
 "."
 msgstr "Flyttalsfel: ogiltig operation i \"%s\"."
 
-#: src/calclib/Calculator.cc:2839
+#: src/calclib/Calculator.cc:2840
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr "Namnet \"%s\" är upptaget. Ändrar till \"%s\"."
 
-#: src/calclib/Calculator.cc:2963
+#: src/calclib/Calculator.cc:2964
 #, c-format
 msgid "File not identified as Qalculate! definitions file: %s."
 msgstr "Filen identifierades inte som en Qalculate! definitionsfil: %s."
 
-#: src/calclib/Calculator.cc:4332
+#: src/calclib/Calculator.cc:4333
 msgid "column"
 msgstr "kolumn"
 
-#: src/calclib/Calculator.cc:4335
+#: src/calclib/Calculator.cc:4336
 msgid "Column "
 msgstr "Kolumn"
 
-#: src/calclib/Calculator.cc:4461
+#: src/calclib/Calculator.cc:4462
 msgid "Failed to download exchange rates from ECB."
 msgstr "Misslyckades med att ladda ner växelkurser från ECB."
 
-#: src/calclib/Calculator.cc:4582
+#: src/calclib/Calculator.cc:4583
 msgid "No extension in file name. Saving as PNG image."
 msgstr "Inget tillägg i filnamnet. Sparar som PNG-bild."
 
-#: src/calclib/Calculator.cc:4599
+#: src/calclib/Calculator.cc:4600
 msgid "Unknown extension in file name. Saving as PNG image."
 msgstr "Okänt tillägg i filnamnet. Sparar som PNG-bild."
 
-#: src/calclib/Calculator.cc:4796
+#: src/calclib/Calculator.cc:4797
 #, c-format
 msgid "Could not create temporary file %s"
 msgstr "Kunde inte skapa temporär fil %s"
 
-#: src/calclib/Calculator.cc:4835
+#: src/calclib/Calculator.cc:4836
 msgid ""
 "Failed to invoke gnuplot. Make sure that you have gnuplot installed in your "
 "path."
@@ -2261,59 +2270,59 @@ msgstr "Överblivna tecken i uttrycket \"%s\" ignorerades."
 msgid "RPN syntax error."
 msgstr "RPN syntaxfel."
 
-#: src/calclib/Manager.cc:1056 src/calclib/Fraction.cc:1348
+#: src/calclib/Manager.cc:1237 src/calclib/Fraction.cc:1348
 msgid "Division by zero."
 msgstr "Division med noll."
 
 #. 			printf("_POLY: %s\n", giac_gen.print().c_str());
-#: src/calclib/Manager.cc:3921
+#: src/calclib/Manager.cc:4117
 #, c-format
 msgid "Cannot yet handle polynomes: %s."
 msgstr ""
 
-#: src/calclib/Manager.cc:4157
+#: src/calclib/Manager.cc:4353
 #, c-format
 msgid "Unhandled giac symbolic: %s."
 msgstr ""
 
 #. 			printf("_SPOL1: %s\n", giac_gen.print().c_str());
-#: src/calclib/Manager.cc:4203
+#: src/calclib/Manager.cc:4399
 #, c-format
 msgid "Cannot yet handle sparse polynomes: %s."
 msgstr ""
 
 #. 			printf("_EXT: %s\n", giac_gen.print().c_str());
-#: src/calclib/Manager.cc:4217
+#: src/calclib/Manager.cc:4413
 #, c-format
 msgid "Cannot yet handle giac alg. extensions: %s."
 msgstr ""
 
 #. 			printf("_FUNC: %s\n", giac_gen.print().c_str());
-#: src/calclib/Manager.cc:4229
+#: src/calclib/Manager.cc:4425
 #, c-format
 msgid "Cannot yet handle giac functions: %s."
 msgstr ""
 
 #. 			printf("_ROOT: %s\n", giac_gen.print().c_str());
-#: src/calclib/Manager.cc:4236
+#: src/calclib/Manager.cc:4432
 #, c-format
 msgid "Cannot yet handle real complex root of: %s."
 msgstr ""
 
 #. 			printf("_MOD: %s\n", giac_gen.print().c_str());
-#: src/calclib/Manager.cc:4243
+#: src/calclib/Manager.cc:4439
 #, c-format
 msgid "Cannot yet handle giac mod: %s."
 msgstr ""
 
 #. 			printf("_USER: %s\n", giac_gen.print().c_str());
-#: src/calclib/Manager.cc:4250
+#: src/calclib/Manager.cc:4446
 #, c-format
 msgid "Cannot handle giac user objects: %s."
 msgstr ""
 
 #. 			printf("unknown: %s\n", giac_gen.print().c_str());
-#: src/calclib/Manager.cc:4257
+#: src/calclib/Manager.cc:4453
 #, c-format
 msgid "Unknown giac object: %s."
 msgstr ""
@@ -2351,12 +2360,12 @@ msgstr "Logaritmer är odefinierade för negativa tal och oändliga för noll."
 msgid "0^0 might be considered undefined"
 msgstr "0^0 kan anses vara odefinierat"
 
-#: src/calclib/Function.cc:141
+#: src/calclib/Function.cc:150
 #, c-format
 msgid "%s() requires that %s"
 msgstr "%s() kräver att %s"
 
-#: src/calclib/Function.cc:279
+#: src/calclib/Function.cc:288
 #, c-format
 msgid ""
 "Additional arguments for function %s() was ignored. Function can only use %s "
@@ -2365,170 +2374,170 @@ msgstr ""
 "Övertaliga parametrar för funktionen %s() ignorerades. Funktionen kan inte "
 "använda fler än %s parametrar."
 
-#: src/calclib/Function.cc:300
+#: src/calclib/Function.cc:309
 #, c-format
 msgid "You need at least %s arguments (%s) in function %s()."
 msgstr "Det krävs minst %s parametrar (%s) i funktionen %s()."
 
-#: src/calclib/Function.cc:302
+#: src/calclib/Function.cc:311
 #, c-format
 msgid "You need at least %s arguments in function %s()."
 msgstr "Det krävs minst %s parametrar i funktionen %s()."
 
-#: src/calclib/Function.cc:817
+#: src/calclib/Function.cc:839
 msgid "a free value"
 msgstr "ett valfritt värde"
 
-#: src/calclib/Function.cc:822
+#: src/calclib/Function.cc:844
 msgid "that is nonzero"
 msgstr "som är icke-noll"
 
-#: src/calclib/Function.cc:827 src/calclib/Function.cc:1154
-#: src/calclib/Function.cc:1289
+#: src/calclib/Function.cc:849 src/calclib/Function.cc:1176
+#: src/calclib/Function.cc:1311
 msgid "and"
 msgstr "och"
 
-#: src/calclib/Function.cc:830
+#: src/calclib/Function.cc:852
 msgid "that fulfills the condition:"
 msgstr "som uppfyller villkoret:"
 
-#: src/calclib/Function.cc:851 src/calclib/Function.cc:861
-#: src/calclib/Function.cc:885
+#: src/calclib/Function.cc:873 src/calclib/Function.cc:883
+#: src/calclib/Function.cc:907
 #, c-format
 msgid "Argument %s in %s() must be %s."
 msgstr "Parameter %s i %s() måste vara %s."
 
-#: src/calclib/Function.cc:853 src/calclib/Function.cc:863
-#: src/calclib/Function.cc:887
+#: src/calclib/Function.cc:875 src/calclib/Function.cc:885
+#: src/calclib/Function.cc:909
 #, c-format
 msgid "Argument %s, %s, in %s() must be %s."
 msgstr "Parameter %s, %s, i %s() måste vara %s."
 
-#: src/calclib/Function.cc:1132
+#: src/calclib/Function.cc:1154
 msgid "number"
 msgstr "nummer"
 
-#: src/calclib/Function.cc:1137
+#: src/calclib/Function.cc:1159
 msgid "a number"
 msgstr "ett nummer"
 
-#: src/calclib/Function.cc:1139
+#: src/calclib/Function.cc:1161
 msgid "a real number"
 msgstr "ett reelt nummer"
 
-#: src/calclib/Function.cc:1144 src/calclib/Function.cc:1282
+#: src/calclib/Function.cc:1166 src/calclib/Function.cc:1304
 msgid ">="
 msgstr ">="
 
-#: src/calclib/Function.cc:1146
+#: src/calclib/Function.cc:1168
 msgid ">"
 msgstr ">"
 
-#: src/calclib/Function.cc:1158 src/calclib/Function.cc:1292
+#: src/calclib/Function.cc:1180 src/calclib/Function.cc:1314
 msgid "<="
 msgstr "<="
 
-#: src/calclib/Function.cc:1160
+#: src/calclib/Function.cc:1182
 msgid "<"
 msgstr "<"
 
-#: src/calclib/Function.cc:1276
+#: src/calclib/Function.cc:1298
 msgid "integer"
 msgstr "heltal"
 
-#: src/calclib/Function.cc:1279
+#: src/calclib/Function.cc:1301
 msgid "an integer"
 msgstr "ett heltal"
 
-#: src/calclib/Function.cc:1304
+#: src/calclib/Function.cc:1326
 msgid "a free value (giac adjusted)"
 msgstr "ett valfritt värde (giac justerat)"
 
-#: src/calclib/Function.cc:1316
+#: src/calclib/Function.cc:1338
 msgid "text"
 msgstr "text"
 
-#: src/calclib/Function.cc:1317
+#: src/calclib/Function.cc:1339
 msgid "a text string"
 msgstr "en textsträng"
 
-#: src/calclib/Function.cc:1329
+#: src/calclib/Function.cc:1351
 msgid "date"
 msgstr "datum"
 
-#: src/calclib/Function.cc:1330
+#: src/calclib/Function.cc:1352
 msgid "a date"
 msgstr "ett datum"
 
-#: src/calclib/Function.cc:1340
+#: src/calclib/Function.cc:1362
 msgid "vector"
 msgstr "vektor"
 
-#: src/calclib/Function.cc:1341
+#: src/calclib/Function.cc:1363
 msgid "a vector"
 msgstr "en vektor"
 
-#: src/calclib/Function.cc:1349
+#: src/calclib/Function.cc:1371
 msgid "matrix"
 msgstr "matris"
 
-#: src/calclib/Function.cc:1350
+#: src/calclib/Function.cc:1372
 msgid "a matrix"
 msgstr "en matris"
 
-#: src/calclib/Function.cc:1358
+#: src/calclib/Function.cc:1380
 msgid "object"
 msgstr "objekt"
 
-#: src/calclib/Function.cc:1359
+#: src/calclib/Function.cc:1381
 msgid "a valid function, unit or variable name"
 msgstr "ett giltigt funktions, enhets eller variabelnamn"
 
-#: src/calclib/Function.cc:1367
+#: src/calclib/Function.cc:1389
 msgid "function"
 msgstr "funktion"
 
-#: src/calclib/Function.cc:1368
+#: src/calclib/Function.cc:1390
 msgid "a valid function name"
 msgstr "ett giltigt funktionsnamn"
 
-#: src/calclib/Function.cc:1376
+#: src/calclib/Function.cc:1398
 msgid "unit"
 msgstr "enhet"
 
-#: src/calclib/Function.cc:1377
+#: src/calclib/Function.cc:1399
 msgid "a valid unit name"
 msgstr "ett giltigt enhetsnamn"
 
-#: src/calclib/Function.cc:1385
+#: src/calclib/Function.cc:1407
 msgid "variable"
 msgstr "variabel"
 
-#: src/calclib/Function.cc:1386
+#: src/calclib/Function.cc:1408
 msgid "a valid variable name"
 msgstr "ett giltigt variabelnamn"
 
-#: src/calclib/Function.cc:1394
+#: src/calclib/Function.cc:1416
 msgid "file"
 msgstr "fil"
 
-#: src/calclib/Function.cc:1395
+#: src/calclib/Function.cc:1417
 msgid "a valid file name"
 msgstr "ett giltigt filnamn"
 
-#: src/calclib/Function.cc:1403
+#: src/calclib/Function.cc:1425
 msgid "boolean"
 msgstr "boolskt värde"
 
-#: src/calclib/Function.cc:1404
+#: src/calclib/Function.cc:1426
 msgid "a boolean (0 or 1)"
 msgstr "ett boolskt värde (0 eller 1)"
 
-#: src/calclib/Function.cc:1431
+#: src/calclib/Function.cc:1453
 msgid "angle"
 msgstr "vinkel"
 
-#: src/calclib/Function.cc:1432
+#: src/calclib/Function.cc:1454
 msgid "an angle or a number (using the default angle unit)"
 msgstr "en vinkel eller ett tal (som använder inställd vinkelenhet)"
 
@@ -3220,631 +3229,646 @@ msgid "Extract row as vector"
 msgstr "Skapa vektor från rad"
 
 #: src/calclib/data/functions.xml.in.h:151
+msgid "Extreme Values"
+msgstr "Extremvärden"
+
+#: src/calclib/data/functions.xml.in.h:152
 msgid "Face value"
 msgstr "Nominellt värde"
 
-#: src/calclib/data/functions.xml.in.h:152
+#: src/calclib/data/functions.xml.in.h:153
 msgid "Factor expression"
 msgstr "Faktoruttryck"
 
-#: src/calclib/data/functions.xml.in.h:153
+#: src/calclib/data/functions.xml.in.h:154
 msgid "Factorial"
 msgstr "Fakultet"
 
-#: src/calclib/data/functions.xml.in.h:154
+#: src/calclib/data/functions.xml.in.h:155
 msgid "Factors"
 msgstr "Faktorer"
 
-#: src/calclib/data/functions.xml.in.h:155
+#: src/calclib/data/functions.xml.in.h:156
 msgid "File name"
 msgstr "Filnamn"
 
-#: src/calclib/data/functions.xml.in.h:156
+#: src/calclib/data/functions.xml.in.h:157
 msgid "Finance"
 msgstr "Finans"
 
-#: src/calclib/data/functions.xml.in.h:157
+#: src/calclib/data/functions.xml.in.h:158
 msgid "Financial function mode"
 msgstr "Läge för financiella funktioner"
 
-#: src/calclib/data/functions.xml.in.h:158
+#: src/calclib/data/functions.xml.in.h:159
+msgid "Find Linear Function"
+msgstr "Finn linjär funktion"
+
+#: src/calclib/data/functions.xml.in.h:160
+msgid ""
+"Finds the linear function for the straight line between two distinct points."
+msgstr ""
+"Finner den linjära funktionen för den räta linjen mellan två distinkta "
+"punkter."
+
+#: src/calclib/data/functions.xml.in.h:161
 msgid "First component"
 msgstr "Första komponenter"
 
-#: src/calclib/data/functions.xml.in.h:159
+#: src/calclib/data/functions.xml.in.h:162
 msgid "First data row"
 msgstr "Första raden med data"
 
-#: src/calclib/data/functions.xml.in.h:160
+#: src/calclib/data/functions.xml.in.h:163
 msgid "First date"
 msgstr "Första datumet"
 
-#: src/calclib/data/functions.xml.in.h:161
+#: src/calclib/data/functions.xml.in.h:164
 msgid "First interest"
 msgstr "Första ränteinbetalning"
 
-#: src/calclib/data/functions.xml.in.h:162
+#: src/calclib/data/functions.xml.in.h:165
 msgid "For condition"
 msgstr "Medans-villkor"
 
-#: src/calclib/data/functions.xml.in.h:163
+#: src/calclib/data/functions.xml.in.h:166
 msgid "For...Do"
 msgstr "för...utför"
 
-#: src/calclib/data/functions.xml.in.h:164
+#: src/calclib/data/functions.xml.in.h:167
 msgid "Fractional dollar"
 msgstr "Bråktalsdollar"
 
-#: src/calclib/data/functions.xml.in.h:165 src/calclib/data/units.xml.in.h:98
+#: src/calclib/data/functions.xml.in.h:168 src/calclib/data/units.xml.in.h:98
 msgid "Frequency"
 msgstr "Frekvens"
 
-#: src/calclib/data/functions.xml.in.h:167
+#: src/calclib/data/functions.xml.in.h:170
 msgid "Future value"
 msgstr "Framtida värde"
 
-#: src/calclib/data/functions.xml.in.h:168
+#: src/calclib/data/functions.xml.in.h:171
 msgid "Generates a pseudo-random number between 0 and 1"
 msgstr "Genererar ett pseudo-slumpmässigt tal mellan 0 och 1"
 
-#: src/calclib/data/functions.xml.in.h:169
+#: src/calclib/data/functions.xml.in.h:172
 msgid "Geometric mean"
 msgstr "Geometriskt medelvärde"
 
-#: src/calclib/data/functions.xml.in.h:170
+#: src/calclib/data/functions.xml.in.h:173
 msgid "Geometry"
 msgstr "Geometri"
 
-#: src/calclib/data/functions.xml.in.h:171
+#: src/calclib/data/functions.xml.in.h:174
 msgid "Giac expression"
 msgstr "Giac-uttryck"
 
-#: src/calclib/data/functions.xml.in.h:172
+#: src/calclib/data/functions.xml.in.h:175
 msgid "Greatest common divisor"
 msgstr "Största gemensamma divisor"
 
-#: src/calclib/data/functions.xml.in.h:173
+#: src/calclib/data/functions.xml.in.h:176
 msgid "Harmonic mean"
 msgstr "Harmoniskt medelvärde"
 
-#: src/calclib/data/functions.xml.in.h:174
+#: src/calclib/data/functions.xml.in.h:177
 msgid "Height"
 msgstr "Höjd"
 
-#: src/calclib/data/functions.xml.in.h:176
+#: src/calclib/data/functions.xml.in.h:179
 msgid "Hexadecimal number"
 msgstr "Hexadecimalt nummer"
 
-#: src/calclib/data/functions.xml.in.h:177
+#: src/calclib/data/functions.xml.in.h:180
 msgid "Hyperbolic cosecant"
 msgstr "Cosekant hyperbolicus"
 
-#: src/calclib/data/functions.xml.in.h:178
+#: src/calclib/data/functions.xml.in.h:181
 msgid "Hyperbolic cosine"
 msgstr "Cosinus hyperbolicus"
 
-#: src/calclib/data/functions.xml.in.h:179
+#: src/calclib/data/functions.xml.in.h:182
 msgid "Hyperbolic cotangent"
 msgstr "Cotangens hyperbolicus"
 
-#: src/calclib/data/functions.xml.in.h:180
+#: src/calclib/data/functions.xml.in.h:183
 msgid "Hyperbolic secant"
 msgstr "Sekant hyperbolicus"
 
-#: src/calclib/data/functions.xml.in.h:181
+#: src/calclib/data/functions.xml.in.h:184
 msgid "Hyperbolic sine"
 msgstr "Sinus hyperbolicus"
 
-#: src/calclib/data/functions.xml.in.h:182
+#: src/calclib/data/functions.xml.in.h:185
 msgid "Hyperbolic tangent"
 msgstr "Tangens hyperbolicus"
 
-#: src/calclib/data/functions.xml.in.h:183
+#: src/calclib/data/functions.xml.in.h:186
 msgid "Hypotenuse"
 msgstr "Hypotenusa"
 
-#: src/calclib/data/functions.xml.in.h:184
+#: src/calclib/data/functions.xml.in.h:187
 msgid "Identity"
 msgstr "Identitetsmatris"
 
-#: src/calclib/data/functions.xml.in.h:185
+#: src/calclib/data/functions.xml.in.h:188
 msgid "If...Then...Else"
 msgstr "Om...då...annars"
 
-#: src/calclib/data/functions.xml.in.h:186
+#: src/calclib/data/functions.xml.in.h:189
 msgid "Imaginary Part"
 msgstr "Imaginär del"
 
-#: src/calclib/data/functions.xml.in.h:187
+#: src/calclib/data/functions.xml.in.h:190
 msgid "Imports a CSV data file as a matrix."
 msgstr "Importerar en CSV data file till en matrix"
 
-#: src/calclib/data/functions.xml.in.h:188
+#: src/calclib/data/functions.xml.in.h:191
 msgid "Index"
 msgstr "Index"
 
-#: src/calclib/data/functions.xml.in.h:189
+#: src/calclib/data/functions.xml.in.h:192
 msgid "Initial value"
 msgstr "Initialt värde"
 
-#: src/calclib/data/functions.xml.in.h:190
+#: src/calclib/data/functions.xml.in.h:193
 msgid "Initial value of counter"
 msgstr "Initialt värde för räknare"
 
-#: src/calclib/data/functions.xml.in.h:191
+#: src/calclib/data/functions.xml.in.h:194
 msgid "Integral point"
 msgstr "Integralpunkt"
 
-#: src/calclib/data/functions.xml.in.h:192
+#: src/calclib/data/functions.xml.in.h:195
 msgid "Integrate"
 msgstr "Integrera"
 
-#: src/calclib/data/functions.xml.in.h:193
+#: src/calclib/data/functions.xml.in.h:196
 msgid "Interest paid on a given period of an investment (ISPMT)"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:194
+#: src/calclib/data/functions.xml.in.h:197
 msgid "Interest rate"
 msgstr "Räntesats"
 
-#: src/calclib/data/functions.xml.in.h:195
+#: src/calclib/data/functions.xml.in.h:198
 msgid "Interest rate for a fully invested security"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:196
+#: src/calclib/data/functions.xml.in.h:199
 msgid "Interquartile range"
 msgstr "Kvartilavstånd"
 
-#: src/calclib/data/functions.xml.in.h:197
+#: src/calclib/data/functions.xml.in.h:200
 msgid "Inverse"
 msgstr "Inversen"
 
-#: src/calclib/data/functions.xml.in.h:198
+#: src/calclib/data/functions.xml.in.h:201
 msgid "Inverse cosecant"
 msgstr "Invers cosekant"
 
-#: src/calclib/data/functions.xml.in.h:199
+#: src/calclib/data/functions.xml.in.h:202
 msgid "Inverse cosine"
 msgstr "Invers cosinus"
 
-#: src/calclib/data/functions.xml.in.h:200
+#: src/calclib/data/functions.xml.in.h:203
 msgid "Inverse cotangent"
 msgstr "Invers cotangens"
 
-#: src/calclib/data/functions.xml.in.h:201
+#: src/calclib/data/functions.xml.in.h:204
 msgid "Inverse hyperbolic cosecant"
 msgstr "Invers cosekant hyperbolicus"
 
-#: src/calclib/data/functions.xml.in.h:202
+#: src/calclib/data/functions.xml.in.h:205
 msgid "Inverse hyperbolic cosine"
 msgstr "Invers cosinus hyperbolicus"
 
-#: src/calclib/data/functions.xml.in.h:203
+#: src/calclib/data/functions.xml.in.h:206
 msgid "Inverse hyperbolic cotangent"
 msgstr "Invers cotangens hyperbolicus"
 
-#: src/calclib/data/functions.xml.in.h:204
+#: src/calclib/data/functions.xml.in.h:207
 msgid "Inverse hyperbolic secant"
 msgstr "Invers sekant hyperbolicus"
 
-#: src/calclib/data/functions.xml.in.h:205
+#: src/calclib/data/functions.xml.in.h:208
 msgid "Inverse hyperbolic sine"
 msgstr "Invers sinus hyperbolicus"
 
-#: src/calclib/data/functions.xml.in.h:206
+#: src/calclib/data/functions.xml.in.h:209
 msgid "Inverse hyperbolic tangent"
 msgstr "Invers tangens hyperbolicus"
 
-#: src/calclib/data/functions.xml.in.h:207
+#: src/calclib/data/functions.xml.in.h:210
 msgid "Inverse secant"
 msgstr "Invers sekant"
 
-#: src/calclib/data/functions.xml.in.h:208
+#: src/calclib/data/functions.xml.in.h:211
 msgid "Inverse sine"
 msgstr "Invers sinus"
 
-#: src/calclib/data/functions.xml.in.h:209
+#: src/calclib/data/functions.xml.in.h:212
 msgid "Inverse tangent"
 msgstr "Inverse tangens"
 
-#: src/calclib/data/functions.xml.in.h:210
+#: src/calclib/data/functions.xml.in.h:213
 msgid "Investment"
 msgstr "Investering"
 
-#: src/calclib/data/functions.xml.in.h:211
+#: src/calclib/data/functions.xml.in.h:214
 msgid "Issue date"
 msgstr "Avräkningsdatum"
 
-#: src/calclib/data/functions.xml.in.h:212
+#: src/calclib/data/functions.xml.in.h:215
 msgid "Last component"
 msgstr "Sista komponenten"
 
-#: src/calclib/data/functions.xml.in.h:213 src/calclib/data/units.xml.in.h:151
+#: src/calclib/data/functions.xml.in.h:216 src/calclib/data/units.xml.in.h:151
 msgid "Length"
 msgstr "Längd"
 
-#: src/calclib/data/functions.xml.in.h:214
+#: src/calclib/data/functions.xml.in.h:217
 msgid "Length of base"
 msgstr "Basens längd"
 
-#: src/calclib/data/functions.xml.in.h:215
+#: src/calclib/data/functions.xml.in.h:218
 msgid "Length of side"
 msgstr "Sidans längd"
 
-#: src/calclib/data/functions.xml.in.h:216
+#: src/calclib/data/functions.xml.in.h:219
 msgid "Length of string"
 msgstr "Textsträngslängd"
 
-#: src/calclib/data/functions.xml.in.h:217
+#: src/calclib/data/functions.xml.in.h:220
 msgid "Level-coupon bond"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:218
+#: src/calclib/data/functions.xml.in.h:221
 msgid "Life"
 msgstr "Livslängd"
 
-#: src/calclib/data/functions.xml.in.h:219
+#: src/calclib/data/functions.xml.in.h:222
 msgid "Load CSV file"
 msgstr "Ladda CSV-fil"
 
-#: src/calclib/data/functions.xml.in.h:220
+#: src/calclib/data/functions.xml.in.h:223
 msgid "Logical"
 msgstr "Logik"
 
-#: src/calclib/data/functions.xml.in.h:221
+#: src/calclib/data/functions.xml.in.h:224
 msgid "Logistic distribution"
 msgstr "Logistisk distribution"
 
-#: src/calclib/data/functions.xml.in.h:222
+#: src/calclib/data/functions.xml.in.h:225
 msgid "Lower limit"
 msgstr "Undre gräns"
 
-#: src/calclib/data/functions.xml.in.h:223
+#: src/calclib/data/functions.xml.in.h:226
 msgid "Lower limit (i)"
 msgstr "Undre gräns (i)"
 
-#: src/calclib/data/functions.xml.in.h:224
+#: src/calclib/data/functions.xml.in.h:227
 msgid "Market interest rate"
 msgstr "Marknadsränta"
 
-#: src/calclib/data/functions.xml.in.h:225
+#: src/calclib/data/functions.xml.in.h:228
 msgid "Matrices & Vectors"
 msgstr "Matriser & Vektorer"
 
-#: src/calclib/data/functions.xml.in.h:227
+#: src/calclib/data/functions.xml.in.h:230
 msgid "Matrix Area"
 msgstr "Matrisarea"
 
-#: src/calclib/data/functions.xml.in.h:228
+#: src/calclib/data/functions.xml.in.h:231
 msgid "Matrix or Rows/Columns"
 msgstr "Matris eller Rader/Kolumner"
 
-#: src/calclib/data/functions.xml.in.h:229
+#: src/calclib/data/functions.xml.in.h:232
 msgid "Maturity date"
 msgstr "Mognadsdatum"
 
-#: src/calclib/data/functions.xml.in.h:231
+#: src/calclib/data/functions.xml.in.h:234
 msgid "Mean"
 msgstr "Medelvärde"
 
-#: src/calclib/data/functions.xml.in.h:232
+#: src/calclib/data/functions.xml.in.h:235
 msgid "Mean deviation"
 msgstr "Medelavvikelse"
 
-#: src/calclib/data/functions.xml.in.h:233
+#: src/calclib/data/functions.xml.in.h:236
 msgid "Means"
 msgstr "Medelvärde"
 
-#: src/calclib/data/functions.xml.in.h:234
+#: src/calclib/data/functions.xml.in.h:237
 msgid "Median"
 msgstr "Median"
 
-#: src/calclib/data/functions.xml.in.h:235
+#: src/calclib/data/functions.xml.in.h:238
 msgid "Message"
 msgstr "Meddelande"
 
-#: src/calclib/data/functions.xml.in.h:236
+#: src/calclib/data/functions.xml.in.h:239
 msgid "Microeconomics"
 msgstr "Mikroekonomi"
 
-#: src/calclib/data/functions.xml.in.h:238
+#: src/calclib/data/functions.xml.in.h:241
 msgid "Miscellaneous"
 msgstr "Diverse"
 
-#: src/calclib/data/functions.xml.in.h:239
+#: src/calclib/data/functions.xml.in.h:242
 msgid "Mode"
 msgstr "Typvärde"
 
-#: src/calclib/data/functions.xml.in.h:240
+#: src/calclib/data/functions.xml.in.h:243
 msgid "Moments"
 msgstr "Moment"
 
-#: src/calclib/data/functions.xml.in.h:241
+#: src/calclib/data/functions.xml.in.h:244
 msgid "Month"
 msgstr "Månad"
 
-#: src/calclib/data/functions.xml.in.h:245
+#: src/calclib/data/functions.xml.in.h:248
 msgid "Negate"
 msgstr "Negera"
 
-#: src/calclib/data/functions.xml.in.h:246
+#: src/calclib/data/functions.xml.in.h:249
 msgid "New value"
 msgstr "Nytt värde"
 
-#: src/calclib/data/functions.xml.in.h:247
+#: src/calclib/data/functions.xml.in.h:250
 msgid "Nominal interest rate"
 msgstr "Nominell räntesats"
 
-#: src/calclib/data/functions.xml.in.h:248
+#: src/calclib/data/functions.xml.in.h:251
 msgid "Non-negative value"
 msgstr "Icke-negativt nummer"
 
-#: src/calclib/data/functions.xml.in.h:249
+#: src/calclib/data/functions.xml.in.h:252
 msgid "Norm (length)"
 msgstr "Normal"
 
-#: src/calclib/data/functions.xml.in.h:250
+#: src/calclib/data/functions.xml.in.h:253
 msgid "Nth root"
 msgstr "N:te roten"
 
-#: src/calclib/data/functions.xml.in.h:253
+#: src/calclib/data/functions.xml.in.h:256
 msgid "Number Theory"
 msgstr "Nummerteori"
 
-#: src/calclib/data/functions.xml.in.h:254
+#: src/calclib/data/functions.xml.in.h:257
 msgid "Number base"
 msgstr "Nummerbas"
 
-#: src/calclib/data/functions.xml.in.h:255
+#: src/calclib/data/functions.xml.in.h:258
 msgid "Number of coupons to be paid"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:256
+#: src/calclib/data/functions.xml.in.h:259
 msgid "Number of elements"
 msgstr "Antal element"
 
-#: src/calclib/data/functions.xml.in.h:257
+#: src/calclib/data/functions.xml.in.h:260
 msgid "Number of payments per year"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:258
+#: src/calclib/data/functions.xml.in.h:261
 msgid "Number of periods"
 msgstr "Antal perioder"
 
-#: src/calclib/data/functions.xml.in.h:259
+#: src/calclib/data/functions.xml.in.h:262
 msgid "Numerator"
 msgstr "Täljare"
 
-#: src/calclib/data/functions.xml.in.h:260
+#: src/calclib/data/functions.xml.in.h:263
 msgid "Objects"
 msgstr "Objekt"
 
-#: src/calclib/data/functions.xml.in.h:262
+#: src/calclib/data/functions.xml.in.h:265
 msgid "Octal number"
 msgstr "Oktalt nummer"
 
-#: src/calclib/data/functions.xml.in.h:263
+#: src/calclib/data/functions.xml.in.h:266
 msgid "Order"
 msgstr "Ordning"
 
-#: src/calclib/data/functions.xml.in.h:264
+#: src/calclib/data/functions.xml.in.h:267
 msgid "Original value"
 msgstr "Initialt värde"
 
-#: src/calclib/data/functions.xml.in.h:265
+#: src/calclib/data/functions.xml.in.h:268
 msgid "Paired t-test"
 msgstr "Parvist t-test"
 
-#: src/calclib/data/functions.xml.in.h:266
+#: src/calclib/data/functions.xml.in.h:269
 msgid "Par value"
 msgstr "Parvärde"
 
-#: src/calclib/data/functions.xml.in.h:267
+#: src/calclib/data/functions.xml.in.h:270
 msgid "Parallelogram"
 msgstr "Parallelogram"
 
-#: src/calclib/data/functions.xml.in.h:268
+#: src/calclib/data/functions.xml.in.h:271
 msgid "Parallelogram area"
 msgstr "Parallelogramarea"
 
-#: src/calclib/data/functions.xml.in.h:269
+#: src/calclib/data/functions.xml.in.h:272
 msgid "Parallelogram perimeter"
 msgstr "Parallelogramomkrets"
 
-#: src/calclib/data/functions.xml.in.h:270
+#: src/calclib/data/functions.xml.in.h:273
 msgid "Pareto distribution"
 msgstr "Paretofördelning"
 
-#: src/calclib/data/functions.xml.in.h:271
+#: src/calclib/data/functions.xml.in.h:274
 msgid "Payment for a loan"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:272
+#: src/calclib/data/functions.xml.in.h:275
 msgid "Payment made each period"
 msgstr "Periodisk avbetalning "
 
-#: src/calclib/data/functions.xml.in.h:273
+#: src/calclib/data/functions.xml.in.h:276
 msgid "Payment of an annuity going towards interest (IPMT)"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:274
+#: src/calclib/data/functions.xml.in.h:277
 msgid "Payment of an annuity going towards principal (PPMT)"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:275
+#: src/calclib/data/functions.xml.in.h:278
 msgid "Pearson correlation"
 msgstr "Pearsons korrelationskoefficient"
 
-#: src/calclib/data/functions.xml.in.h:276
+#: src/calclib/data/functions.xml.in.h:279
 msgid "Percentile"
 msgstr "Percentil"
 
-#: src/calclib/data/functions.xml.in.h:278
+#: src/calclib/data/functions.xml.in.h:281
 #, no-c-format
 msgid "Percentile (%)"
 msgstr "Percentil (%)"
 
-#: src/calclib/data/functions.xml.in.h:279
+#: src/calclib/data/functions.xml.in.h:282
 msgid "Period"
 msgstr "Period"
 
-#: src/calclib/data/functions.xml.in.h:280
+#: src/calclib/data/functions.xml.in.h:283
 msgid "Periodic interest rate"
 msgstr "Periodisk räntesats"
 
-#: src/calclib/data/functions.xml.in.h:281
+#: src/calclib/data/functions.xml.in.h:284
 msgid "Periods"
 msgstr "Antal perioder"
 
-#: src/calclib/data/functions.xml.in.h:282
+#: src/calclib/data/functions.xml.in.h:285
 msgid "Periods for investment to attain desired value"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:283
+#: src/calclib/data/functions.xml.in.h:286
 msgid "Periods of an investment"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:284
+#: src/calclib/data/functions.xml.in.h:287
 msgid "Periods per year"
 msgstr "Perioder per år"
 
-#: src/calclib/data/functions.xml.in.h:285
+#: src/calclib/data/functions.xml.in.h:288
 msgid "Permanent"
 msgstr "Permanent"
 
-#: src/calclib/data/functions.xml.in.h:286
+#: src/calclib/data/functions.xml.in.h:289
 msgid "Permutations"
 msgstr "Permutationer"
 
-#: src/calclib/data/functions.xml.in.h:287
+#: src/calclib/data/functions.xml.in.h:290
 msgid "Pooled variance"
 msgstr "Gemensam varians"
 
-#: src/calclib/data/functions.xml.in.h:288
+#: src/calclib/data/functions.xml.in.h:291
 msgid "Present value"
 msgstr "Nuvärde"
 
-#: src/calclib/data/functions.xml.in.h:289
+#: src/calclib/data/functions.xml.in.h:292
 msgid "Price"
 msgstr "Pris"
 
-#: src/calclib/data/functions.xml.in.h:290
+#: src/calclib/data/functions.xml.in.h:293
 msgid "Price Variable"
 msgstr "Prisvariabel"
 
-#: src/calclib/data/functions.xml.in.h:291
+#: src/calclib/data/functions.xml.in.h:294
 msgid "Price per $100 face value"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:292
+#: src/calclib/data/functions.xml.in.h:295
 msgid "Price per $100 face value of a security"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:293
+#: src/calclib/data/functions.xml.in.h:296
 msgid "Price per $100 face value of a security bond"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:294
+#: src/calclib/data/functions.xml.in.h:297
 msgid "Principal"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:295
+#: src/calclib/data/functions.xml.in.h:298
 msgid "Prism"
 msgstr "Prism"
 
-#: src/calclib/data/functions.xml.in.h:296
+#: src/calclib/data/functions.xml.in.h:299
 msgid "Process components"
 msgstr "Modifiera komponenter"
 
-#: src/calclib/data/functions.xml.in.h:297
+#: src/calclib/data/functions.xml.in.h:300
 msgid "Product"
 msgstr "Produkt"
 
-#: src/calclib/data/functions.xml.in.h:298
+#: src/calclib/data/functions.xml.in.h:301
 msgid "Puts each element of a matrix in vertical order in a vector."
 msgstr "Placerar varje element i en matris i vertikal ordning i en vektor."
 
-#: src/calclib/data/functions.xml.in.h:299
+#: src/calclib/data/functions.xml.in.h:302
 msgid "Pyramid"
 msgstr "Pyramid"
 
-#: src/calclib/data/functions.xml.in.h:300
+#: src/calclib/data/functions.xml.in.h:303
 msgid "Pyramid volume"
 msgstr "Pyramidvolym"
 
-#: src/calclib/data/functions.xml.in.h:301
+#: src/calclib/data/functions.xml.in.h:304
 msgid "Quadratic mean (RMS)"
 msgstr "Kvadratiskt medelvärde"
 
-#: src/calclib/data/functions.xml.in.h:302
+#: src/calclib/data/functions.xml.in.h:305
 msgid "Quartile"
 msgstr "Kvartil"
 
-#: src/calclib/data/functions.xml.in.h:303
+#: src/calclib/data/functions.xml.in.h:306
 msgid "Radius"
 msgstr "Radie"
 
-#: src/calclib/data/functions.xml.in.h:305
+#: src/calclib/data/functions.xml.in.h:308
 msgid "Random number"
 msgstr "Slumptal"
 
-#: src/calclib/data/functions.xml.in.h:306
+#: src/calclib/data/functions.xml.in.h:309
 msgid "Range"
 msgstr "Omfång"
 
-#: src/calclib/data/functions.xml.in.h:307
+#: src/calclib/data/functions.xml.in.h:310
 msgid "Rank"
 msgstr "Rangordna"
 
-#: src/calclib/data/functions.xml.in.h:308
+#: src/calclib/data/functions.xml.in.h:311
 msgid "Rate"
 msgstr "Räntesats"
 
-#: src/calclib/data/functions.xml.in.h:309
+#: src/calclib/data/functions.xml.in.h:312
 msgid "Rayleigh distribution"
 msgstr "Rayleighfördelning"
 
-#: src/calclib/data/functions.xml.in.h:310
+#: src/calclib/data/functions.xml.in.h:313
 msgid "Rayleigh tail distribution"
 msgstr "Rayleighsvansfördelning"
 
-#: src/calclib/data/functions.xml.in.h:311
+#: src/calclib/data/functions.xml.in.h:314
 msgid "Real Part"
 msgstr "Reell del"
 
-#: src/calclib/data/functions.xml.in.h:312
+#: src/calclib/data/functions.xml.in.h:315
 msgid "Reciprocal"
 msgstr "Reciprok"
 
-#: src/calclib/data/functions.xml.in.h:313
+#: src/calclib/data/functions.xml.in.h:316
 msgid "Rectangle"
 msgstr "Rektangel"
 
-#: src/calclib/data/functions.xml.in.h:314
+#: src/calclib/data/functions.xml.in.h:317
 msgid "Rectangle area"
 msgstr "Rektangelarea"
 
-#: src/calclib/data/functions.xml.in.h:315
+#: src/calclib/data/functions.xml.in.h:318
 msgid "Rectangle perimeter"
 msgstr "Rektangelomkrets"
 
-#: src/calclib/data/functions.xml.in.h:316
+#: src/calclib/data/functions.xml.in.h:319
 msgid "Redemption"
 msgstr "Utlösande summa"
 
-#: src/calclib/data/functions.xml.in.h:317
+#: src/calclib/data/functions.xml.in.h:320
 msgid "Regression"
 msgstr "Regression"
 
-#: src/calclib/data/functions.xml.in.h:318
+#: src/calclib/data/functions.xml.in.h:321
 msgid "Reminder (mod)"
 msgstr "Rest (mod)"
 
-#: src/calclib/data/functions.xml.in.h:319
+#: src/calclib/data/functions.xml.in.h:322
 msgid "Reminder (rem)"
 msgstr "Rest (rem)"
 
-#: src/calclib/data/functions.xml.in.h:320
+#: src/calclib/data/functions.xml.in.h:323
 msgid ""
 "Repeats an expression updating '\\y' while a condition for '\\x' is "
 "fulfilled."
@@ -3852,38 +3876,38 @@ msgstr ""
 "Upprepar ett uttryck som uppdaterar '\\y' medans ett villkor för '\\x' "
 "uppfylls."
 
-#: src/calclib/data/functions.xml.in.h:321
+#: src/calclib/data/functions.xml.in.h:324
 msgid "Replace"
 msgstr "Ersätt"
 
-#: src/calclib/data/functions.xml.in.h:322
+#: src/calclib/data/functions.xml.in.h:325
 msgid "Return on continuously compounded interest"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:323
+#: src/calclib/data/functions.xml.in.h:326
 msgid "Returns a column in a matrix as a vector."
 msgstr "Returnerar en kolumn i en matris som en vektor."
 
-#: src/calclib/data/functions.xml.in.h:324
+#: src/calclib/data/functions.xml.in.h:327
 msgid "Returns a decimal integer from a binary number"
 msgstr "Returnerar ett decimalt heltal från ett binärt tal"
 
-#: src/calclib/data/functions.xml.in.h:325
+#: src/calclib/data/functions.xml.in.h:328
 msgid ""
 "Returns a decimal integer from a number of specified base between 2 and 36"
 msgstr ""
 "Returnerar ett decimalt heltal från ett tal med en angiven bas mellan 2 och "
 "36."
 
-#: src/calclib/data/functions.xml.in.h:326
+#: src/calclib/data/functions.xml.in.h:329
 msgid "Returns a decimal integer from an octal number"
 msgstr "Returnerar ett decimalt heltal från ett oktalt tal"
 
-#: src/calclib/data/functions.xml.in.h:327
+#: src/calclib/data/functions.xml.in.h:330
 msgid "Returns a decimal value from a hexadecimal number"
 msgstr "Returnerar ett decimalt värde från ett hexadecimalt tal"
 
-#: src/calclib/data/functions.xml.in.h:328
+#: src/calclib/data/functions.xml.in.h:331
 msgid ""
 "Returns a matrix with specified order and listed elements. Omitted elements "
 "are set to zero."
@@ -3891,34 +3915,34 @@ msgstr ""
 "Returnerar en matris med specifierat antal rader och kolumner, och angivna "
 "element.Utelämnade element sätts till noll."
 
-#: src/calclib/data/functions.xml.in.h:329
+#: src/calclib/data/functions.xml.in.h:332
 msgid "Returns a part of a matrix."
 msgstr "Returnerar en del av en matris."
 
-#: src/calclib/data/functions.xml.in.h:330
+#: src/calclib/data/functions.xml.in.h:333
 msgid "Returns a part of a vector."
 msgstr "Returnerar en del av en vektor."
 
-#: src/calclib/data/functions.xml.in.h:331
+#: src/calclib/data/functions.xml.in.h:334
 msgid "Returns a row in a matrix as a vector."
 msgstr "Returnerar en rad i en matris som en vektor."
 
-#: src/calclib/data/functions.xml.in.h:332
+#: src/calclib/data/functions.xml.in.h:335
 msgid "Returns a sorted vector."
 msgstr "Returnerar en sorterad vektor."
 
-#: src/calclib/data/functions.xml.in.h:333
+#: src/calclib/data/functions.xml.in.h:336
 msgid "Returns a vector with listed components."
 msgstr "Returnerar en vektor med angivna komponenter."
 
-#: src/calclib/data/functions.xml.in.h:334
+#: src/calclib/data/functions.xml.in.h:337
 msgid ""
 "Returns a vector with values of components replaced with their mutual ranks."
 msgstr ""
 "Returnerar en vektor med komponenternas värden ersatta av deras inbördes "
 "rangordning."
 
-#: src/calclib/data/functions.xml.in.h:335
+#: src/calclib/data/functions.xml.in.h:338
 #, fuzzy
 msgid ""
 "Returns accrued interest for a security which pays periodic interest. "
@@ -3931,7 +3955,7 @@ msgstr ""
 "30/360 (förvald), 1: verkliga dagar, 2: verkliga dagar/360, 3: verkliga "
 "dagar/365, eller 4: Europeiskt 30/360"
 
-#: src/calclib/data/functions.xml.in.h:336
+#: src/calclib/data/functions.xml.in.h:339
 #, fuzzy
 msgid ""
 "Returns the accrued interest for a security which pays interest at maturity "
@@ -3944,11 +3968,11 @@ msgstr ""
 "30/360 (förvald), 1: verkliga dagar, 2: verkliga dagar/360, 3: verkliga "
 "dagar/365, eller 4: Europeiskt 30/360"
 
-#: src/calclib/data/functions.xml.in.h:337
+#: src/calclib/data/functions.xml.in.h:340
 msgid "Returns the adjoint of a matrix."
 msgstr "Returnerar adjoint för en matris."
 
-#: src/calclib/data/functions.xml.in.h:338
+#: src/calclib/data/functions.xml.in.h:341
 msgid ""
 "Returns the amount of payment for a loan based on a constant interest rate "
 "and constant payments (each payment is equal amount). If type = 1 then the "
@@ -3956,7 +3980,7 @@ msgid ""
 "is made at the end of each period."
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:339
+#: src/calclib/data/functions.xml.in.h:342
 #, fuzzy
 msgid ""
 "Returns the amount received at the maturity date for an invested security. "
@@ -3969,23 +3993,23 @@ msgstr ""
 "30/360 (förvald), 1: verkliga dagar, 2: verkliga dagar/360, 3: verkliga "
 "dagar/365, eller 4: Europeiskt 30/360"
 
-#: src/calclib/data/functions.xml.in.h:340
+#: src/calclib/data/functions.xml.in.h:343
 msgid "Returns the base n logarithm."
 msgstr "Returnerar logaritmen för bas n."
 
-#: src/calclib/data/functions.xml.in.h:341
+#: src/calclib/data/functions.xml.in.h:344
 msgid "Returns the bond equivalent for a treasury bill."
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:342
+#: src/calclib/data/functions.xml.in.h:345
 msgid "Returns the cofactor of the element at specified position."
 msgstr "Returnerar kofaktorn för elementet på angiven position"
 
-#: src/calclib/data/functions.xml.in.h:343
+#: src/calclib/data/functions.xml.in.h:346
 msgid "Returns the component at specified position in a vector."
 msgstr "Returnerar komponenten på angiven position i en vektor."
 
-#: src/calclib/data/functions.xml.in.h:344
+#: src/calclib/data/functions.xml.in.h:347
 #, fuzzy
 msgid ""
 "Returns the discount rate for a security. Basis is the type of day counting "
@@ -3997,15 +4021,15 @@ msgstr ""
 "30/360 (förvald), 1: verkliga dagar, 2: verkliga dagar/360, 3: verkliga "
 "dagar/365, eller 4: Europeiskt 30/360"
 
-#: src/calclib/data/functions.xml.in.h:345
+#: src/calclib/data/functions.xml.in.h:348
 msgid "Returns the element at specified position in a matrix."
 msgstr "Returnerar elementet på angiven position i en matris."
 
-#: src/calclib/data/functions.xml.in.h:346
+#: src/calclib/data/functions.xml.in.h:349
 msgid "Returns the highest value."
 msgstr "Returnerar det högsta värdet."
 
-#: src/calclib/data/functions.xml.in.h:347
+#: src/calclib/data/functions.xml.in.h:350
 msgid ""
 "Returns the identity matrix of a matrix or with specified number of rows/"
 "columns."
@@ -4013,7 +4037,7 @@ msgstr ""
 "Returnerar identitetsmatrisen för en matris eller med angivet antal rader/"
 "kolumner."
 
-#: src/calclib/data/functions.xml.in.h:348
+#: src/calclib/data/functions.xml.in.h:351
 #, fuzzy
 msgid ""
 "Returns the interest rate for a fully invested security. Basis is the type "
@@ -4025,31 +4049,31 @@ msgstr ""
 "30/360 (förvald), 1: verkliga dagar, 2: verkliga dagar/360, 3: verkliga "
 "dagar/365, eller 4: Europeiskt 30/360"
 
-#: src/calclib/data/functions.xml.in.h:349
+#: src/calclib/data/functions.xml.in.h:352
 msgid "Returns the inverse of a matrix."
 msgstr "Returnerar inversen för en matris."
 
-#: src/calclib/data/functions.xml.in.h:350
+#: src/calclib/data/functions.xml.in.h:353
 msgid "Returns the lowest value."
 msgstr "Returnerar det lägsta värdet."
 
-#: src/calclib/data/functions.xml.in.h:351
+#: src/calclib/data/functions.xml.in.h:354
 msgid "Returns the most frequently occuring value."
 msgstr "Returnerar det mest förekommande värdet."
 
-#: src/calclib/data/functions.xml.in.h:352
+#: src/calclib/data/functions.xml.in.h:355
 msgid "Returns the non-negative square root of x * pi"
 msgstr "Returnerar icke-negativa kvadratroten av x * pi"
 
-#: src/calclib/data/functions.xml.in.h:353
+#: src/calclib/data/functions.xml.in.h:356
 msgid "Returns the number of columns in a matrix."
 msgstr "Returner antalet kolumner i en matris."
 
-#: src/calclib/data/functions.xml.in.h:354
+#: src/calclib/data/functions.xml.in.h:357
 msgid "Returns the number of components in a vector."
 msgstr "Returnerar antalet komponenter i en vektor."
 
-#: src/calclib/data/functions.xml.in.h:355
+#: src/calclib/data/functions.xml.in.h:358
 #, fuzzy
 msgid ""
 "Returns the number of coupons to be paid between the settlement and the "
@@ -4062,7 +4086,7 @@ msgstr ""
 "30/360 (förvald), 1: verkliga dagar, 2: verkliga dagar/360, 3: verkliga "
 "dagar/365, eller 4: Europeiskt 30/360"
 
-#: src/calclib/data/functions.xml.in.h:356
+#: src/calclib/data/functions.xml.in.h:359
 #, fuzzy
 msgid ""
 "Returns the number of days between two dates. Basis is the type of day "
@@ -4073,25 +4097,25 @@ msgstr ""
 "Amerikanskt 30/360 (förvald), 1: verkliga dagar, 2: verkliga dagar/360, 3: "
 "verkliga dagar/365, eller 4: Europeiskt 30/360"
 
-#: src/calclib/data/functions.xml.in.h:357
+#: src/calclib/data/functions.xml.in.h:360
 msgid "Returns the number of elements in a matrix."
 msgstr "Returnerar antalet element i en matris."
 
-#: src/calclib/data/functions.xml.in.h:358
+#: src/calclib/data/functions.xml.in.h:361
 msgid ""
 "Returns the number of periods needed for an investment to attain a desired "
 "value."
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:359
+#: src/calclib/data/functions.xml.in.h:362
 msgid "Returns the number of rows in a matrix."
 msgstr "Returnerar antalet rader i en matris."
 
-#: src/calclib/data/functions.xml.in.h:360
+#: src/calclib/data/functions.xml.in.h:363
 msgid "Returns the number of samples."
 msgstr "Returnerar antalet prov."
 
-#: src/calclib/data/functions.xml.in.h:361
+#: src/calclib/data/functions.xml.in.h:364
 #, fuzzy
 msgid ""
 "Returns the number of years (fractional) between two dates. Basis is the "
@@ -4102,407 +4126,427 @@ msgstr ""
 "vara: 0: Amerikanskt 30/360, 1: verkliga dagar (förvald), 2: verkliga "
 "dagar/360, 3: verkliga dagar/365, eller 4: Europeiskt 30/360"
 
-#: src/calclib/data/functions.xml.in.h:362
+#: src/calclib/data/functions.xml.in.h:365
 msgid ""
 "Returns the present value of an investment. If type = 1 then the payment is "
 "made at the beginning of the period, If type = 0 (or omitted) it is made at "
 "the end of each period."
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:363
+#: src/calclib/data/functions.xml.in.h:366
 msgid "Returns the price per $100 value for a treasury bill."
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:364
+#: src/calclib/data/functions.xml.in.h:367
 msgid ""
 "Returns the probability density p(x) at x for a Pareto distribution with "
 "exponent and scale. (from Gnumeric)"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:365
+#: src/calclib/data/functions.xml.in.h:368
 msgid ""
 "Returns the probability density p(x) at x for a Rayleigh distribution with "
 "scale parameter sigma. (from Gnumeric)"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:366
+#: src/calclib/data/functions.xml.in.h:369
 msgid ""
 "Returns the probability density p(x) at x for a Rayleigh tail distribution "
 "with scale parameter sigma and a lower limit. (from Gnumeric)"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:367
+#: src/calclib/data/functions.xml.in.h:370
 msgid ""
 "Returns the probability density p(x) at x for a logistic distribution with "
 "scale parameter. (from Gnumeric)"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:368
+#: src/calclib/data/functions.xml.in.h:371
 msgid "Returns the transpose of a matrix."
 msgstr "Returnerar transponeringen av en matris."
 
-#: src/calclib/data/functions.xml.in.h:369
+#: src/calclib/data/functions.xml.in.h:372
 msgid ""
 "Returns the value of an investment, given the principal, nominal interest "
 "rate, compounding frequency and time."
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:370
+#: src/calclib/data/functions.xml.in.h:373
 msgid "Returns the yield for a treasury bill."
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:371
+#: src/calclib/data/functions.xml.in.h:374
 msgid "Riemann Zeta"
 msgstr "Riemanns Zeta"
 
-#: src/calclib/data/functions.xml.in.h:372
+#: src/calclib/data/functions.xml.in.h:375
 msgid "Roman Number"
 msgstr "Romerskt tal"
 
-#: src/calclib/data/functions.xml.in.h:373
+#: src/calclib/data/functions.xml.in.h:376
 msgid "Roman number"
 msgstr "Romerskt tal"
 
-#: src/calclib/data/functions.xml.in.h:374
+#: src/calclib/data/functions.xml.in.h:377
 msgid "Round"
 msgstr "Avrunda"
 
-#: src/calclib/data/functions.xml.in.h:375
+#: src/calclib/data/functions.xml.in.h:378
 msgid "Round downwards"
 msgstr "Avrunda neråt"
 
-#: src/calclib/data/functions.xml.in.h:376
+#: src/calclib/data/functions.xml.in.h:379
 msgid "Round towards zero"
 msgstr "Avrunda mot noll"
 
-#: src/calclib/data/functions.xml.in.h:377
+#: src/calclib/data/functions.xml.in.h:380
 msgid "Round upwards"
 msgstr "Avrunda uppåt"
 
-#: src/calclib/data/functions.xml.in.h:378
+#: src/calclib/data/functions.xml.in.h:381
 msgid "Rounding"
 msgstr "Avrundning"
 
-#: src/calclib/data/functions.xml.in.h:379
+#: src/calclib/data/functions.xml.in.h:382
 msgid "Row"
 msgstr "Rad"
 
-#: src/calclib/data/functions.xml.in.h:381
+#: src/calclib/data/functions.xml.in.h:384
 msgid "Salvage value"
 msgstr "Slutvärde"
 
-#: src/calclib/data/functions.xml.in.h:382
+#: src/calclib/data/functions.xml.in.h:385
 msgid "Save as variable"
 msgstr "Spara som variabel"
 
-#: src/calclib/data/functions.xml.in.h:383
+#: src/calclib/data/functions.xml.in.h:386
 msgid "Scale"
 msgstr "Skala"
 
-#: src/calclib/data/functions.xml.in.h:384
+#: src/calclib/data/functions.xml.in.h:387
 msgid "Secant"
 msgstr "Sekant"
 
-#: src/calclib/data/functions.xml.in.h:385
+#: src/calclib/data/functions.xml.in.h:388
 msgid "Second date"
 msgstr "Andra datumet"
 
-#: src/calclib/data/functions.xml.in.h:386
+#: src/calclib/data/functions.xml.in.h:389
 msgid "Separator"
 msgstr "Avskiljare"
 
-#: src/calclib/data/functions.xml.in.h:387
+#: src/calclib/data/functions.xml.in.h:390
 msgid "Settlement date"
 msgstr "Avräkningsdatum"
 
-#: src/calclib/data/functions.xml.in.h:388
+#: src/calclib/data/functions.xml.in.h:391
 msgid "Side A"
 msgstr "Sida A"
 
-#: src/calclib/data/functions.xml.in.h:389
+#: src/calclib/data/functions.xml.in.h:392
 msgid "Side B"
 msgstr "Sida B"
 
-#: src/calclib/data/functions.xml.in.h:390
+#: src/calclib/data/functions.xml.in.h:393
 msgid "Sigma"
 msgstr "Sigma"
 
-#: src/calclib/data/functions.xml.in.h:391
+#: src/calclib/data/functions.xml.in.h:394
 #, fuzzy
 msgid "Signum"
 msgstr "Sigma"
 
-#: src/calclib/data/functions.xml.in.h:393
+#: src/calclib/data/functions.xml.in.h:396
 msgid "Size"
 msgstr "Storlek"
 
-#: src/calclib/data/functions.xml.in.h:394
+#: src/calclib/data/functions.xml.in.h:397
 msgid "Solve equation"
 msgstr "Lös ekvation"
 
-#: src/calclib/data/functions.xml.in.h:395
+#: src/calclib/data/functions.xml.in.h:398
 msgid "Solve equation (giac)"
 msgstr "Lös ekvation (giac)"
 
-#: src/calclib/data/functions.xml.in.h:396
+#: src/calclib/data/functions.xml.in.h:399
 msgid "Sort"
 msgstr "Sortera"
 
-#: src/calclib/data/functions.xml.in.h:397
+#: src/calclib/data/functions.xml.in.h:400
 msgid "Spearman's Rho"
 msgstr "Spearmans Rho"
 
-#: src/calclib/data/functions.xml.in.h:398
+#: src/calclib/data/functions.xml.in.h:401
 msgid "Sphere"
 msgstr "Sfär"
 
-#: src/calclib/data/functions.xml.in.h:399
+#: src/calclib/data/functions.xml.in.h:402
 msgid "Sphere volume"
 msgstr "Sfärvolym"
 
-#: src/calclib/data/functions.xml.in.h:400
+#: src/calclib/data/functions.xml.in.h:403
 msgid "Square"
 msgstr "Kvadrat"
 
-#: src/calclib/data/functions.xml.in.h:401
+#: src/calclib/data/functions.xml.in.h:404
 msgid "Square area"
 msgstr "Kvadratarea"
 
-#: src/calclib/data/functions.xml.in.h:402
+#: src/calclib/data/functions.xml.in.h:405
 msgid "Square perimeter"
 msgstr "Kvadratomkrets"
 
-#: src/calclib/data/functions.xml.in.h:404
+#: src/calclib/data/functions.xml.in.h:407
 msgid "Square root (x * pi)"
 msgstr "Kvadratrot (x * pi)"
 
-#: src/calclib/data/functions.xml.in.h:405
+#: src/calclib/data/functions.xml.in.h:408
 msgid "Standard deviation (entire population)"
 msgstr "Standardavvikelse (komplett population)"
 
-#: src/calclib/data/functions.xml.in.h:406
+#: src/calclib/data/functions.xml.in.h:409
 msgid "Standard deviation (random sampling)"
 msgstr "Standardavvikelse (slumpmässigt urval)"
 
-#: src/calclib/data/functions.xml.in.h:407
+#: src/calclib/data/functions.xml.in.h:410
 msgid "Standard error"
 msgstr "Standardfel"
 
-#: src/calclib/data/functions.xml.in.h:408
+#: src/calclib/data/functions.xml.in.h:411
 msgid "Start column"
 msgstr "Startkolumn"
 
-#: src/calclib/data/functions.xml.in.h:409
+#: src/calclib/data/functions.xml.in.h:412
 msgid "Start row"
 msgstr "Startrad"
 
-#: src/calclib/data/functions.xml.in.h:410
+#: src/calclib/data/functions.xml.in.h:413
 msgid "Statistical Tests"
 msgstr "Statistika tester"
 
-#: src/calclib/data/functions.xml.in.h:411
+#: src/calclib/data/functions.xml.in.h:414
 msgid "Statistical correlation"
 msgstr "Statistisk korrelation"
 
-#: src/calclib/data/functions.xml.in.h:412
+#: src/calclib/data/functions.xml.in.h:415
 msgid "Statistics"
 msgstr "Statistik"
 
-#: src/calclib/data/functions.xml.in.h:413
+#: src/calclib/data/functions.xml.in.h:416
 msgid "Straight line depreciation"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:415
+#: src/calclib/data/functions.xml.in.h:418
 msgid "Sum"
 msgstr "Summa"
 
-#: src/calclib/data/functions.xml.in.h:416
+#: src/calclib/data/functions.xml.in.h:419
 msgid "Sum (total)"
 msgstr "Summa (total)"
 
-#: src/calclib/data/functions.xml.in.h:417
+#: src/calclib/data/functions.xml.in.h:420
 msgid "Sum-of-years digits depreciation"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:418
+#: src/calclib/data/functions.xml.in.h:421
 msgid "Surface area of cone"
 msgstr "Ytarea för en kon"
 
-#: src/calclib/data/functions.xml.in.h:419
+#: src/calclib/data/functions.xml.in.h:422
 msgid "Surface area of cube"
 msgstr "Ytarea för en kuba"
 
-#: src/calclib/data/functions.xml.in.h:420
+#: src/calclib/data/functions.xml.in.h:423
 msgid "Surface area of cylinder"
 msgstr "Ytarea för en cylinder"
 
-#: src/calclib/data/functions.xml.in.h:421
+#: src/calclib/data/functions.xml.in.h:424
 msgid "Surface area of rectangular prism"
 msgstr "Ytarea för en rektangulär prism"
 
-#: src/calclib/data/functions.xml.in.h:422
+#: src/calclib/data/functions.xml.in.h:425
 msgid "Surface area of sphere"
 msgstr "Ytarea för en sfär"
 
-#: src/calclib/data/functions.xml.in.h:424
+#: src/calclib/data/functions.xml.in.h:427
 msgid "Term expression"
 msgstr "Termuttryct"
 
-#: src/calclib/data/functions.xml.in.h:425
+#: src/calclib/data/functions.xml.in.h:428
 msgid "Terms"
 msgstr "Termer"
 
-#: src/calclib/data/functions.xml.in.h:426
+#: src/calclib/data/functions.xml.in.h:429
 msgid "Tests a condition and returns a value depending on the result."
 msgstr "Testar ett villkor och returnerar ett värde beroende av result."
 
-#: src/calclib/data/functions.xml.in.h:428
+#: src/calclib/data/functions.xml.in.h:431
 msgid "Text 1"
 msgstr "Text 1"
 
-#: src/calclib/data/functions.xml.in.h:429
+#: src/calclib/data/functions.xml.in.h:432
 msgid "Text 2"
 msgstr "Text 2"
 
-#: src/calclib/data/functions.xml.in.h:431
+#: src/calclib/data/functions.xml.in.h:434
 msgid "Transpose"
 msgstr "Transponera"
 
-#: src/calclib/data/functions.xml.in.h:432
+#: src/calclib/data/functions.xml.in.h:435
 msgid "Trapezoid"
 msgstr "Trapetsoid"
 
-#: src/calclib/data/functions.xml.in.h:433
+#: src/calclib/data/functions.xml.in.h:436
 msgid "Trapezoid area"
 msgstr "Trapetsoidarea"
 
-#: src/calclib/data/functions.xml.in.h:434
+#: src/calclib/data/functions.xml.in.h:437
 msgid "Treasury bill equivalent"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:435
+#: src/calclib/data/functions.xml.in.h:438
 msgid "Treasury bill price"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:436
+#: src/calclib/data/functions.xml.in.h:439
 msgid "Treasury bill yield"
 msgstr ""
 
-#: src/calclib/data/functions.xml.in.h:437
+#: src/calclib/data/functions.xml.in.h:440
 msgid "Triangle"
 msgstr "Triangel"
 
-#: src/calclib/data/functions.xml.in.h:438
+#: src/calclib/data/functions.xml.in.h:441
 msgid "Triangle area"
 msgstr "Triangelarea"
 
-#: src/calclib/data/functions.xml.in.h:439
+#: src/calclib/data/functions.xml.in.h:442
 msgid "Triangle perimeter"
 msgstr "Triangelomkrets"
 
-#: src/calclib/data/functions.xml.in.h:440
+#: src/calclib/data/functions.xml.in.h:443
 msgid "Trigonometry"
 msgstr "Trigonometri"
 
-#: src/calclib/data/functions.xml.in.h:441
+#: src/calclib/data/functions.xml.in.h:444
 msgid "Trimmed mean"
 msgstr "Trimmat medelvärde"
 
-#: src/calclib/data/functions.xml.in.h:442
+#: src/calclib/data/functions.xml.in.h:445
 msgid "Trimmed percentage"
 msgstr "Trimmad procent"
 
-#: src/calclib/data/functions.xml.in.h:444
+#: src/calclib/data/functions.xml.in.h:447
 msgid "Unpaired t-test"
 msgstr "T-test"
 
-#: src/calclib/data/functions.xml.in.h:445
+#: src/calclib/data/functions.xml.in.h:448
 msgid "Upper limit"
 msgstr "Övre gräns"
 
-#: src/calclib/data/functions.xml.in.h:446
+#: src/calclib/data/functions.xml.in.h:449
 msgid "Upper limit (n)"
 msgstr "Övre gräns (n)"
 
-#: src/calclib/data/functions.xml.in.h:447
+#: src/calclib/data/functions.xml.in.h:450
 msgid "Utilities"
 msgstr "Verktyg"
 
-#: src/calclib/data/functions.xml.in.h:449
+#: src/calclib/data/functions.xml.in.h:452
 msgid "Variance (entire population)"
 msgstr "Varians (komplett population)"
 
-#: src/calclib/data/functions.xml.in.h:450
+#: src/calclib/data/functions.xml.in.h:453
 msgid "Variance (random sampling)"
 msgstr "Varians (slumpmässigt urval)"
 
-#: src/calclib/data/functions.xml.in.h:452
+#: src/calclib/data/functions.xml.in.h:455
 msgid "Vector Limits"
 msgstr "Vektorgränser"
 
-#: src/calclib/data/functions.xml.in.h:453
+#: src/calclib/data/functions.xml.in.h:456
 msgid "Volume of rectangular prism"
 msgstr "Volym för en rektangulär prism"
 
-#: src/calclib/data/functions.xml.in.h:454
+#: src/calclib/data/functions.xml.in.h:457
 msgid "Volume of triangular prism"
 msgstr "Volym för en triangulär prism"
 
-#: src/calclib/data/functions.xml.in.h:455
+#: src/calclib/data/functions.xml.in.h:458
 msgid "Week begins on Sunday"
 msgstr "Veckor börjar på söndag"
 
-#: src/calclib/data/functions.xml.in.h:456
+#: src/calclib/data/functions.xml.in.h:459
 msgid "Week of Year"
 msgstr "Vecka på året"
 
-#: src/calclib/data/functions.xml.in.h:457
+#: src/calclib/data/functions.xml.in.h:460
 msgid "Weighted mean"
 msgstr "Viktat medelvärde"
 
-#: src/calclib/data/functions.xml.in.h:458
+#: src/calclib/data/functions.xml.in.h:461
 msgid "Weights"
 msgstr "Vikter"
 
-#: src/calclib/data/functions.xml.in.h:459
+#: src/calclib/data/functions.xml.in.h:462
 msgid "Width"
 msgstr "Bredd"
 
-#: src/calclib/data/functions.xml.in.h:460
+#: src/calclib/data/functions.xml.in.h:463
 msgid "Width of base"
 msgstr "Basens bredd"
 
-#: src/calclib/data/functions.xml.in.h:461
+#: src/calclib/data/functions.xml.in.h:464
 msgid "Winsorized mean"
 msgstr "Winsor-medelvärde"
 
-#: src/calclib/data/functions.xml.in.h:462
+#: src/calclib/data/functions.xml.in.h:465
 msgid "With respect to"
 msgstr "Med avseende på"
 
-#: src/calclib/data/functions.xml.in.h:463
+#: src/calclib/data/functions.xml.in.h:466
 msgid "X"
 msgstr "X"
 
-#: src/calclib/data/functions.xml.in.h:464
+#: src/calclib/data/functions.xml.in.h:467
 msgid "X raised to the power Y"
 msgstr "X upphöjt med Y"
 
-#: src/calclib/data/functions.xml.in.h:465 src/calclib/data/units.xml.in.h:298
+#: src/calclib/data/functions.xml.in.h:468 src/calclib/data/units.xml.in.h:298
 msgid "Year"
 msgstr "År"
 
-#: src/calclib/data/functions.xml.in.h:466
+#: src/calclib/data/functions.xml.in.h:469
 msgid "Years"
 msgstr "Antal år"
 
-#: src/calclib/data/functions.xml.in.h:467
+#: src/calclib/data/functions.xml.in.h:470
 msgid "Years between two dates"
 msgstr "Antal är mellan två datum"
 
-#: src/calclib/data/functions.xml.in.h:468
+#: src/calclib/data/functions.xml.in.h:471
 msgid "Zero coupon"
 msgstr "Nollkupong"
+
+#: src/calclib/data/functions.xml.in.h:472
+#, fuzzy
+msgid "x1"
+msgstr "1"
+
+#: src/calclib/data/functions.xml.in.h:473
+#, fuzzy
+msgid "x2"
+msgstr "2"
+
+#: src/calclib/data/functions.xml.in.h:474
+#, fuzzy
+msgid "y1"
+msgstr "1"
+
+#: src/calclib/data/functions.xml.in.h:475
+#, fuzzy
+msgid "y2"
+msgstr "2"
 
 #: src/calclib/data/units.xml.in.h:1
 msgid "&#xC5;ngstr&#xF6;m"

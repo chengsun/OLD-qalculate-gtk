@@ -45,12 +45,11 @@ string& gsub(const string &pattern, const string &sub, string &str);
 string& gsub(const char *pattern, const char *sub, string &str);
 string d2s(double value, int precision = 100);
 string i2s(int value);
+string p2s(void *o);
 int s2i(const string& str);
 int s2i(const char *str);
-long int s2li(const string& str);
-long int s2li(const char *str);
-string li2s(long int value);
-string &li2s(long int &value, string &str);
+void *s2p(const string& str);
+void *s2p(const char *str);
 
 string date2s(int year, int month, int day);
 int week(string str, bool start_sunday = false);
@@ -62,7 +61,7 @@ bool s2date(string str, int &year, int &month, int &day);
 bool isLeapYear(int year);
 int daysPerYear(int year, int basis = 0);
 int daysPerMonth(int month, int year);
-Number *yearsBetweenDates(string date1, string date2, int basis, bool date_func = true);
+Number yearsBetweenDates(string date1, string date2, int basis, bool date_func = true);
 int daysBetweenDates(string date1, string date2, int basis, bool date_func = true);
 int daysBetweenDates(int year1, int month1, int day1, int year2, int month2, int day2, int basis, bool date_func = true);
 
@@ -88,7 +87,7 @@ bool is_not_in(const char *str, char c);
 bool is_in(const string &str, char c);
 bool is_not_in(const string &str, char c);
 int sign_place(string *str, unsigned int start = 0);
-long int gcd(long int i1, long int i2);
+int gcd(int i1, int i2);
 
 bool text_length_is_one(const string &str);
 

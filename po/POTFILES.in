@@ -23,14 +23,10 @@ src/callbacks.cc
 src/support.c
 src/calclib/BuiltinFunctions.cc
 src/calclib/Calculator.cc
-src/calclib/EqItem.cc
-src/calclib/Error.cc
 src/calclib/ExpressionItem.cc
-src/calclib/Manager.cc
-src/calclib/Fraction.cc
+src/calclib/MathStructure.cc
 src/calclib/Function.cc
-src/calclib/Integer.cc
-src/calclib/Matrix.cc
+src/calclib/Number.cc
 src/calclib/Prefix.cc
 src/calclib/Unit.cc
 src/calclib/Variable.cc

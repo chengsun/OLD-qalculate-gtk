@@ -17,6 +17,7 @@
 
 enum {
 	ARGUMENT_TYPE_FREE,
+	ARGUMENT_TYPE_SYMBOLIC,
 	ARGUMENT_TYPE_TEXT,
 	ARGUMENT_TYPE_DATE,
 	ARGUMENT_TYPE_FILE,
@@ -30,7 +31,8 @@ enum {
 	ARGUMENT_TYPE_BOOLEAN,
 	ARGUMENT_TYPE_VARIABLE,
 	ARGUMENT_TYPE_ANGLE,
-	ARGUMENT_TYPE_GIAC
+	ARGUMENT_TYPE_GIAC,
+	ARGUMENT_TYPE_SET
 };
 
 typedef enum {
@@ -40,6 +42,20 @@ typedef enum {
 	ARGUMENT_MIN_MAX_NONNEGATIVE,
 	ARGUMENT_MIN_MAX_NEGATIVE	
 } ArgumentMinMaxPreDefinition;
+
+#ifdef HAVE_GIAC
+#ifndef NO_NAMESPACE_GIAC
+namespace giac {
+#endif
+     
+	//gen qalculate_function(const gen &a, const gen &b);
+	gen _qalculate_function(const gen &args);
+	extern unary_function_ptr at_qalculate_function;
+     
+#ifndef NO_NAMESPACE_GIAC
+}
+#endif
+#endif
 
 class Function : public ExpressionItem {
 
@@ -51,34 +67,41 @@ class Function : public ExpressionItem {
 	Sgi::hash_map<unsigned int, Argument*> argdefs;
 	Sgi::hash_map<unsigned int, int> argoccs;
 	unsigned int last_argdef_index;		
-	bool testArgumentCount(int itmp);
-	bool testArguments(vector<Manager*> &vargs);
-	virtual void calculate(Manager *mngr, vector<Manager*> &vargs);	
-	virtual Manager *createFunctionManagerFromVArgs(vector<Manager*> &vargs);
-	virtual Manager *createFunctionManagerFromSVArgs(vector<string> &svargs);	
+	bool testArguments(MathStructure &vargs);
+	virtual MathStructure createFunctionMathStructureFromVArgs(const MathStructure &vargs);
+	virtual MathStructure createFunctionMathStructureFromSVArgs(vector<string> &svargs);	
 	string scondition;
 	
   public:
   
-	Function(string cat_, string name_, int argc_, string title_ = "", string descr_ = "", int max_argc_ = 0, bool is_active = true);
+	Function(string name_, int argc_, int max_argc_ = 0, string cat_ = "", string title_ = "", string descr_ = "", bool is_active = true);
 	Function(const Function *function);
 	Function();
 	virtual ~Function();	
 
 	virtual ExpressionItem *copy() const = 0;
 	virtual void set(const ExpressionItem *item);
-	virtual int type() const;	
+	virtual int type() const;
+
+#ifdef HAVE_GIAC	
+	virtual giac::gen toGiac(const MathStructure &vargs) const;
+	virtual giac::gen argsToGiac(const MathStructure &vargs) const;
+	virtual bool isGiacFunction() const;
+#endif
 	
-	virtual Manager *calculate(const string &eq);
-	virtual Manager *calculate(vector<Manager*> &vargs, int counted_args = -1);	
+	bool testArgumentCount(int itmp);
+	virtual MathStructure calculate(const string &eq, const EvaluationOptions &eo = default_evaluation_options);
+	virtual MathStructure parse(const string &eq);
+	virtual MathStructure calculate(MathStructure &vargs, const EvaluationOptions &eo = default_evaluation_options);	
+	virtual bool calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);	
 	string condition() const;
 	void setCondition(string expression);
-	bool testCondition(vector<Manager*> &vargs);
+	bool testCondition(const MathStructure &vargs);
 	int countArgOccurence(unsigned int arg_);
 	int args() const;
 	int minargs() const;	
 	int maxargs() const;		
-	int args(const string &str, vector<Manager*> &vargs);
+	int args(const string &str, MathStructure &vargs);
 	unsigned int lastArgumentDefinitionIndex() const;
 	Argument *getArgumentDefinition(unsigned int index);
 	void clearArgumentDefinitions();
@@ -86,8 +109,8 @@ class Function : public ExpressionItem {
 	int stringArgs(const string &str, vector<string> &svargs);		
 	void setDefaultValue(unsigned int arg_, string value_);
 	string getDefaultValue(unsigned int arg_) const;	
-	Vector *produceVector(vector<Manager*> &vargs, int begin = -1, int end = -1);
-	Vector *produceArgumentsVector(vector<Manager*> &vargs, int begin = -1, int end = -1);
+	MathStructure produceVector(const MathStructure &vargs, int begin = -1, int end = -1);
+	MathStructure produceArgumentsVector(const MathStructure &vargs, int begin = -1, int end = -1);
 };
 
 class UserFunction : public Function {
@@ -103,9 +126,7 @@ class UserFunction : public Function {
 	ExpressionItem *copy() const;
 	string equation() const;
 	string internalEquation() const;
-	void calculate(Manager *mngr, vector<Manager*> &vargs);	
-	Manager *calculate(vector<Manager*> &vargs);	
-	Manager *calculate(const string &eq);	
+	bool calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);	
 	void setEquation(string new_eq, int argc_ = -1, int max_argc_ = 0);	
 };
 
@@ -115,7 +136,7 @@ class Argument {
   
   	string sname, scondition;
 	bool b_zero, b_test, b_matrix, b_text, b_error;
-	virtual bool subtest(const Manager *value) const;
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;
 	virtual string subprintlong() const;
 	
   public:
@@ -130,8 +151,10 @@ class Argument {
 	virtual string print() const;
 	string printlong() const;
 	
-	bool test(const Manager *value, int index, Function *f) const;
-	virtual Manager *evaluate(const string &str, bool keep_exact = true) const;
+	bool test(MathStructure &value, int index, Function *f, const EvaluationOptions &eo = default_evaluation_options) const;
+	virtual MathStructure evaluate(const string &str, bool keep_exact = true) const;
+	virtual void evaluate(MathStructure &mstruct, const EvaluationOptions &eo) const;
+	virtual MathStructure parse(const string &str) const;
 	
 	string name() const;
 	void setName(string name_);
@@ -167,7 +190,7 @@ class NumberArgument : public Argument {
 
   protected:
   
-	virtual bool subtest(const Manager *value) const;  
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
 	virtual string subprintlong() const;
 
   public:
@@ -181,11 +204,11 @@ class NumberArgument : public Argument {
 
 	virtual string print() const;	
 	
-	void setMin(const Number *min_);	
+	void setMin(const Number *nmin);	
 	void setIncludeEqualsMin(bool include_equals);
 	bool includeEqualsMin() const;	
 	const Number *min() const;
-	void setMax(const Number *max_);	
+	void setMax(const Number *nmax);	
 	void setIncludeEqualsMax(bool include_equals);
 	bool includeEqualsMax() const;	
 	const Number *max() const;	
@@ -205,7 +228,7 @@ class IntegerArgument : public Argument {
 
   protected:
   
-	virtual bool subtest(const Manager *value) const;  
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
 	virtual string subprintlong() const;
 
   public:
@@ -219,20 +242,37 @@ class IntegerArgument : public Argument {
 
 	virtual string print() const;	
 
-	void setMin(const Number *min_);	
+	void setMin(const Number *nmin);	
 	const Number *min() const;
-	void setMax(const Number *max_);	
+	void setMax(const Number *nmax);	
 	const Number *max() const;
 	
 	virtual int type() const;
 
 };
 
+class SymbolicArgument : public Argument {
+
+  protected:
+  
+  	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
+	virtual string subprintlong() const;
+
+  public:
+  
+  	SymbolicArgument(string name_ = "", bool does_test = true, bool does_error = true);
+	SymbolicArgument(const SymbolicArgument *arg);
+	virtual ~SymbolicArgument();
+	virtual int type() const;
+	virtual Argument *copy() const;
+	virtual string print() const;
+};
+
 class TextArgument : public Argument {
 
   protected:
   
-	virtual bool subtest(const Manager *value) const;  
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
 	virtual string subprintlong() const;
 
   public:
@@ -259,13 +299,15 @@ class GiacArgument : public Argument {
 	virtual ~GiacArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
-	virtual Manager *evaluate(const string &str, bool keep_exact = true) const;
+	virtual MathStructure evaluate(const string &str, bool keep_exact = true) const;
+	virtual MathStructure parse(const string &str) const;
 };
+
 class DateArgument : public Argument {
 
   protected:
   
-	virtual bool subtest(const Manager *value) const;  
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
 	virtual string subprintlong() const;
 
   public:
@@ -281,8 +323,10 @@ class VectorArgument : public Argument {
 
   protected:
   
-	virtual bool subtest(const Manager *value) const;  
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
 	virtual string subprintlong() const;
+	vector<Argument*> subargs;
+	bool b_argloop;
 
   public:
   
@@ -292,18 +336,27 @@ class VectorArgument : public Argument {
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
+	bool reoccuringArguments() const;
+	void setReoccuringArguments(bool reocc);
+	void addArgument(Argument *arg);
+	void delArgument(unsigned int index);
+	unsigned int countArguments() const;
+	Argument *getArgument(unsigned int index) const;
 };
 class MatrixArgument : public Argument {
 
   protected:
   
-	virtual bool subtest(const Manager *value) const;  
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
 	virtual string subprintlong() const;
+	bool b_sym;
 
   public:
   
   	MatrixArgument(string name_ = "", bool does_test = true, bool does_error = true);
 	MatrixArgument(const MatrixArgument *arg);
+	virtual bool symmetricDemanded() const;
+	virtual void setSymmetricDemanded(bool sym);
 	virtual ~MatrixArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
@@ -313,7 +366,7 @@ class ExpressionItemArgument : public Argument {
 
   protected:
   
-	virtual bool subtest(const Manager *value) const;  
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
 	virtual string subprintlong() const;
 
   public:
@@ -329,7 +382,7 @@ class FunctionArgument : public Argument {
 
   protected:
   
-	virtual bool subtest(const Manager *value) const;  
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
 	virtual string subprintlong() const;
 
   public:
@@ -345,7 +398,7 @@ class BooleanArgument : public Argument {
 
   protected:
   
-	virtual bool subtest(const Manager *value) const;  
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
 	virtual string subprintlong() const;
 
   public:
@@ -361,7 +414,7 @@ class UnitArgument : public Argument {
 
   protected:
   
-	virtual bool subtest(const Manager *value) const;  
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
 	virtual string subprintlong() const;
 
   public:
@@ -377,7 +430,7 @@ class AngleArgument : public Argument {
 
   protected:
   
-	virtual bool subtest(const Manager *value) const;  
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
 	virtual string subprintlong() const;
 
   public:
@@ -388,13 +441,14 @@ class AngleArgument : public Argument {
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
-	virtual Manager *evaluate(const string &str, bool keep_exact = true) const;
+	virtual MathStructure evaluate(const string &str, bool keep_exact = true) const;
+	virtual MathStructure parse(const string &str) const;
 };
 class VariableArgument : public Argument {
 
   protected:
   
-	virtual bool subtest(const Manager *value) const;  
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
 	virtual string subprintlong() const;
 
   public:
@@ -410,7 +464,7 @@ class FileArgument : public Argument {
 
   protected:
   
-	virtual bool subtest(const Manager *value) const;  
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
 	virtual string subprintlong() const;
 
   public:
@@ -421,6 +475,29 @@ class FileArgument : public Argument {
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
+};
+
+class ArgumentSet : public Argument {
+
+  protected:
+  
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
+	virtual string subprintlong() const;
+	vector<Argument*> subargs;
+
+  public:
+  
+  	ArgumentSet(string name_ = "", bool does_test = true, bool does_error = true);
+	ArgumentSet(const ArgumentSet *arg);
+	virtual ~ArgumentSet();
+	virtual int type() const;
+	virtual Argument *copy() const;
+	virtual string print() const;
+	void addArgument(Argument *arg);
+	void delArgument(unsigned int index);
+	unsigned int countArguments() const;
+	Argument *getArgument(unsigned int index) const;
+	
 };
 
 #endif

@@ -17,20 +17,20 @@
 class Prefix {
   protected:
 	string l_name, s_name;
-	long int exp;
+	int exp;
   public:
-  	Prefix(long int exp10, string long_name, string short_name = "");
+  	Prefix(int exp10, string long_name, string short_name = "");
 	~Prefix();
 	const string &shortName(bool return_long_if_no_short = true) const;
 	const string &longName(bool return_short_if_no_long = true) const;
 	void setShortName(string short_name);
 	void setLongName(string long_name);
 	const string &name(bool short_default = true) const;
-	long int exponent(long int exp_ = 1) const;
-	Number *exponent(const Number *exp_, Number *buffer = NULL) const;	
-	void setExponent(long int exp_);	
-	Number *value(const Number *exp_, Number *buffer = NULL) const;
-	Number *value(long int exp_ = 1, Number *buffer = NULL) const;
+	int exponent(int iexp = 1) const;
+	Number exponent(const Number &nexp) const;	
+	void setExponent(int iexp);	
+	Number value(const Number &nexp) const;
+	Number value(int iexp = 1) const;
 	
 };
 

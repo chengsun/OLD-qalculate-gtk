@@ -106,8 +106,8 @@ void add_as_variable();
 
 void edit_argument(Argument *arg = NULL);
 
-void edit_variable(const char *category = "", Variable *v = NULL, Manager *mngr_ = NULL, GtkWidget *win = NULL);
-void edit_matrix(const char *category = "", Variable *v = NULL, Manager *mngr_ = NULL, GtkWidget *win = NULL, gboolean create_vector = FALSE);
+void edit_variable(const char *category = "", Variable *v = NULL, MathStructure *mstruct_ = NULL, GtkWidget *win = NULL);
+void edit_matrix(const char *category = "", Variable *v = NULL, MathStructure *mstruct_ = NULL, GtkWidget *win = NULL, gboolean create_vector = FALSE);
 void import_csv_file(GtkWidget *win = NULL);
 
 #ifdef __cplusplus
