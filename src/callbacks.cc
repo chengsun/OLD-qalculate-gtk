@@ -819,7 +819,7 @@ void create_umenu2() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT("Convert to unit", glade_xml_get_widget (glade_xml, "menu_result"), 2)
+	SUBMENU_ITEM_INSERT("Convert to unit", gtk_menu_item_get_submenu(GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_result"))), 2)
 	u_menu2 = item;
 	MENU_TEAROFF
 	sub2 = sub;
@@ -1159,9 +1159,9 @@ void
 on_bMenuR_toggled                      (GtkToggleButton       *button,
                                         gpointer         user_data) {
 	if(gtk_toggle_button_get_active(button)) {
-		gtk_menu_popup(GTK_MENU(glade_xml_get_widget(glade_xml, "menu_result")), NULL, NULL, menu_r_posfunc, NULL, 0, 0);
+		gtk_menu_popup(GTK_MENU(gtk_menu_item_get_submenu(GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_result")))), NULL, NULL, menu_r_posfunc, NULL, 0, 0);
 	} else {
-		gtk_menu_popdown(GTK_MENU(glade_xml_get_widget (glade_xml, "menu_result")));
+		gtk_menu_popdown(GTK_MENU(gtk_menu_item_get_submenu(GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_result")))));
 	}
 }
 
