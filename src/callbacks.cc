@@ -1185,7 +1185,7 @@ void create_umenu2() {
 		}			
 	}	
 	MENU_SEPARATOR	
-	MENU_ITEM(_("Enter composite unit"), convert_to_custom_unit);
+	MENU_ITEM(_("Enter custom unit"), convert_to_custom_unit);
 	MENU_ITEM(_("Create new unit"), new_unit);
 	MENU_ITEM(_("Manage units"), manage_units);
 }
@@ -1678,7 +1678,8 @@ void
 edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 {
 	GtkWidget *dialog = create_unit_edit_dialog();
-
+	if(win) gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(win));
+	
 	if(u) {
 		if(u->isUserUnit())
 			gtk_window_set_title(GTK_WINDOW(dialog), _("Edit Unit"));
@@ -1896,6 +1897,8 @@ run_unit_edit_dialog:
 void edit_function(const char *category = "", Function *f = NULL, GtkWidget *win = NULL) {
 
 	GtkWidget *dialog = create_function_edit_dialog();	
+	if(win) gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(win));
+	
 	if(f) {
 		if(f->isUserFunction() && !f->isBuiltinFunction())
 			gtk_window_set_title(GTK_WINDOW(dialog), _("Edit Function"));
@@ -2080,7 +2083,7 @@ void convert_to_unit(GtkMenuItem *w, gpointer user_data)
 
 void convert_to_custom_unit(GtkMenuItem *w, gpointer user_data)
 {
-	GtkWidget *dialog = gtk_dialog_new_with_buttons(
+/*	GtkWidget *dialog = gtk_dialog_new_with_buttons(
 			_("Convert to custom unit"),
 			GTK_WINDOW(
 				glade_xml_get_widget (glade_xml, "main_window")
@@ -2095,19 +2098,23 @@ void convert_to_custom_unit(GtkMenuItem *w, gpointer user_data)
 	GtkWidget *vbox = gtk_vbox_new(false, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), vbox);
-	GtkWidget *label1 = gtk_label_new(_("Units"));
+	GtkWidget *label1 = gtk_label_new(_("Unit expression:"));
 	GtkWidget *entry1 = gtk_entry_new();
 	gtk_misc_set_alignment(GTK_MISC(label1), 0, 0.5);
 	gtk_container_add(GTK_CONTAINER(vbox), label1);
 	gtk_container_add(GTK_CONTAINER(vbox), entry1);
-	gtk_widget_show_all(dialog);
-	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+	gtk_widget_show_all(dialog);*/
+	GtkWidget *dialog = glade_xml_get_widget (glade_xml, "unit_dialog");
+	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (glade_xml, "main_window")));
+	int i;
+	while((i = gtk_dialog_run(GTK_DIALOG(dialog))) == GTK_RESPONSE_OK || i == GTK_RESPONSE_APPLY) {
 //		mngr->convert(gtk_entry_get_text(GTK_ENTRY(entry1)));
 //		mngr->finalize();
-		calc->convert(mngr, gtk_entry_get_text(GTK_ENTRY(entry1)));
+		calc->convert(mngr, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_dialog_entry_unit"))));
 		setResult(gtk_label_get_text(GTK_LABEL(result)));
+		if(i == GTK_RESPONSE_OK) break;
 	}
-	gtk_widget_destroy(dialog);
+	gtk_widget_hide(dialog);
 	gtk_widget_grab_focus(expression);
 }
 
@@ -2118,6 +2125,7 @@ void convert_to_custom_unit(GtkMenuItem *w, gpointer user_data)
 void edit_variable(const char *category = "", Variable *v = NULL, Manager *mngr_ = NULL, GtkWidget *win = NULL) {
 
 	GtkWidget *dialog = create_variable_edit_dialog();
+	if(win) gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(win));
 
 	if(v) {
 		if(v->isUserVariable() && !v->isBuiltinVariable())
@@ -2250,35 +2258,6 @@ void new_variable(GtkMenuItem *w, gpointer user_data)
 			NULL,
 			glade_xml_get_widget (glade_xml, "main_window"));
 }
-
-/*
-	precision has changed in precision dialog
-*/
-void set_precision(GtkSpinButton *w, gpointer user_data) {
-	precision = gtk_spin_button_get_value_as_int(w);
-	setResult(gtk_label_get_text(GTK_LABEL(result)));
-}
-
-/*
-	decimals or decimal mode has changed in decimals dialog
-*/
-void set_decimals(GtkSpinButton *w, gpointer user_data) {
-	decimals = gtk_spin_button_get_value_as_int(w);
-	setResult(gtk_label_get_text(GTK_LABEL(result)));
-}
-void on_deci_least_toggled(GtkToggleButton *w, gpointer user_data) {
-	if(gtk_toggle_button_get_active(w)) {
-		deci_mode = DECI_LEAST;
-		setResult(gtk_label_get_text(GTK_LABEL(result)));
-	}
-}
-void on_deci_fixed_toggled(GtkToggleButton *w, gpointer user_data) {
-	if(gtk_toggle_button_get_active(w)) {
-		deci_mode = DECI_FIXED;
-		setResult(gtk_label_get_text(GTK_LABEL(result)));
-	}
-}
-
 
 /*
 	insert one-argument function when button clicked
@@ -2748,6 +2727,7 @@ gint int_string_sort_func(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, g
 */
 void edit_preferences() {
 	GtkWidget *dialog = create_preferences_dialog();
+	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (glade_xml, "main_window")));
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_hide(dialog);
 	save_preferences();
@@ -3206,75 +3186,26 @@ void on_menu_item_save_activate(GtkMenuItem *w, gpointer user_data) {
 	add_as_variable();
 }
 void on_menu_item_precision_activate(GtkMenuItem *w, gpointer user_data) {
-	GtkWidget *dialog = gtk_dialog_new_with_buttons(
-			_("Precision"),
-			GTK_WINDOW(
-				glade_xml_get_widget (glade_xml, "main_window")
-			),
-			GTK_DIALOG_DESTROY_WITH_PARENT,
-			GTK_STOCK_CLOSE,
-			GTK_RESPONSE_ACCEPT,
-			NULL);
-	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-	GtkWidget *label1 = gtk_label_new(_("Precision"));
-	GtkWidget *spin1 = gtk_spin_button_new_with_range(1, 25, 1);
-	GtkWidget *vbox = gtk_vbox_new(false, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), vbox);
-	gtk_misc_set_alignment(GTK_MISC(label1), 0, 0.5);
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin1), precision);
-	gtk_container_add(GTK_CONTAINER(vbox), label1);
-	gtk_container_add(GTK_CONTAINER(vbox), spin1);
-	//update result when precision has changed
-	g_signal_connect(G_OBJECT(spin1), "value-changed", G_CALLBACK(set_precision), NULL);
-
-	gtk_widget_show_all(dialog);
+	GtkWidget *dialog = glade_xml_get_widget (glade_xml, "precision_dialog");
+	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (glade_xml, "main_window")));
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "precision_dialog_spinbutton_precision")), precision);	
 	gtk_dialog_run(GTK_DIALOG(dialog));
-	gtk_widget_destroy(dialog);
+	gtk_widget_hide(dialog);
 	gtk_widget_grab_focus(expression);
 }
 void on_menu_item_decimals_activate(GtkMenuItem *w, gpointer user_data) {
-	GtkWidget *dialog = gtk_dialog_new_with_buttons(
-			_("Decimals"),
-			GTK_WINDOW(
-				glade_xml_get_widget (glade_xml, "main_window")
-			),
-			GTK_DIALOG_DESTROY_WITH_PARENT,
-			GTK_STOCK_CLOSE,
-			GTK_RESPONSE_ACCEPT,
-			NULL);
-	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-	GtkWidget *label1 = gtk_label_new(_("Decimals"));
-	GtkWidget *spin1 = gtk_spin_button_new_with_range(0, 25, 1);
-	GtkWidget *radio1, *radio2;
-	GtkWidget *hbox1 = gtk_hbox_new(FALSE, 5);
-	GtkWidget *vbox = gtk_vbox_new(false, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), vbox);
-	gtk_misc_set_alignment(GTK_MISC(label1), 0, 0.5);
-	radio1 = gtk_radio_button_new_with_mnemonic (NULL, _("Least"));
-	gtk_box_pack_start (GTK_BOX (hbox1), radio1, FALSE, FALSE, 0);
-	radio2 = gtk_radio_button_new_with_mnemonic_from_widget (GTK_RADIO_BUTTON(radio1), _("Always"));
-	gtk_box_pack_start (GTK_BOX (hbox1), radio2, FALSE, FALSE, 0);
+	GtkWidget *dialog = glade_xml_get_widget (glade_xml, "decimals_dialog");
+	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (glade_xml, "main_window")));
 	if(deci_mode == DECI_LEAST)
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (radio1), TRUE);
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (glade_xml, "decimals_dialog_radiobutton_least")), TRUE);
 	else if(deci_mode == DECI_FIXED)
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (radio2), TRUE);
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin1), decimals);
-	gtk_container_add(GTK_CONTAINER(vbox), label1);
-	gtk_container_add(GTK_CONTAINER(vbox), hbox1);
-	gtk_container_add(GTK_CONTAINER(vbox), spin1);
-	//update result when decimal mode has changed
-	g_signal_connect(G_OBJECT(spin1), "value-changed", G_CALLBACK(set_decimals), NULL);
-	g_signal_connect(G_OBJECT(radio1), "toggled", G_CALLBACK(on_deci_least_toggled), NULL);
-	g_signal_connect(G_OBJECT(radio2), "toggled", G_CALLBACK(on_deci_fixed_toggled), NULL);
-
-	gtk_widget_show_all(dialog);
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (glade_xml, "decimals_dialog_radiobutton_always")), TRUE);
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "decimals_dialog_spinbutton_decimals")), decimals);
 	gtk_dialog_run(GTK_DIALOG(dialog));
-	gtk_widget_destroy(dialog);
+	gtk_widget_hide(dialog);
 	gtk_widget_grab_focus(expression);
-
 }
+
 /*
 	check if entered unit name is valid, if not modify
 */
@@ -3707,13 +3638,44 @@ void on_button_variables_clicked(GtkButton *button, gpointer user_data) {
 void on_button_units_clicked(GtkButton *button, gpointer user_data) {
 	manage_units(NULL, user_data);
 }
+void on_button_convert_clicked(GtkButton *button, gpointer user_data) {
+	convert_to_custom_unit(NULL, user_data);
+}
 
 void on_menu_item_about_activate(GtkMenuItem *w, gpointer user_data) {
 	GtkWidget *dialog = glade_xml_get_widget (glade_xml, "about_dialog");
+	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (glade_xml, "main_window")));
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_hide(dialog);
 	gtk_widget_grab_focus(expression);
 }
 
+/*
+	precision has changed in precision dialog
+*/
+void on_precision_dialog_spinbutton_precision_value_changed(GtkSpinButton *w, gpointer user_data) {
+	precision = gtk_spin_button_get_value_as_int(w);
+	setResult(gtk_label_get_text(GTK_LABEL(result)));
+}
+
+/*
+	decimals or decimal mode has changed in decimals dialog
+*/
+void on_decimals_dialog_spinbutton_decimals_value_changed(GtkSpinButton *w, gpointer user_data) {
+	decimals = gtk_spin_button_get_value_as_int(w);
+	setResult(gtk_label_get_text(GTK_LABEL(result)));
+}
+void on_decimals_dialog_radiobutton_least_toggled(GtkToggleButton *w, gpointer user_data) {
+	if(gtk_toggle_button_get_active(w)) {
+		deci_mode = DECI_LEAST;
+		setResult(gtk_label_get_text(GTK_LABEL(result)));
+	}
+}
+void on_decimals_dialog_radiobutton_always_toggled(GtkToggleButton *w, gpointer user_data) {
+	if(gtk_toggle_button_get_active(w)) {
+		deci_mode = DECI_FIXED;
+		setResult(gtk_label_get_text(GTK_LABEL(result)));
+	}
+}
 
 }

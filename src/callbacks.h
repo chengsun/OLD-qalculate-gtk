@@ -62,9 +62,6 @@ gint int_string_sort_func(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, g
 
 void set_prefix(GtkMenuItem *w, gpointer user_data);
 
-void set_precision(GtkSpinButton *w, gpointer user_data);
-void set_decimals(GtkSpinButton *w, gpointer user_data);
-
 void manage_variables(GtkMenuItem *w, gpointer user_data);
 void manage_functions(GtkMenuItem *w, gpointer user_data);
 void manage_units(GtkMenuItem *w, gpointer user_data);
@@ -83,9 +80,6 @@ void new_function(GtkMenuItem *w, gpointer user_data);
 void new_variable(GtkMenuItem *w, gpointer user_data);
 void new_unit(GtkMenuItem *w, gpointer user_data);
 void add_as_variable();
-void on_deci_least_toggled(GtkToggleButton *w, gpointer user_data);
-void on_deci_fixed_toggled(GtkToggleButton *w, gpointer user_data);
-
 
 extern "C" {
 
@@ -201,9 +195,14 @@ void on_nbases_entry_hexadecimal_changed(GtkEditable *editable, gpointer user_da
 void on_button_functions_clicked(GtkButton *button, gpointer user_data);
 void on_button_variables_clicked(GtkButton *button, gpointer user_data);
 void on_button_units_clicked(GtkButton *button, gpointer user_data);
+void on_button_convert_clicked(GtkButton *button, gpointer user_data);
 
 void on_menu_item_about_activate(GtkMenuItem *w, gpointer user_data);
 
-}
+void on_precision_dialog_spinbutton_precision_value_changed(GtkSpinButton *w, gpointer user_data);
+void on_decimals_dialog_spinbutton_decimals_value_changed(GtkSpinButton *w, gpointer user_data);
+void on_decimals_dialog_radiobutton_least_toggled(GtkToggleButton *w, gpointer user_data);
+void on_decimals_dialog_radiobutton_always_toggled(GtkToggleButton *w, gpointer user_data);
 
+}
 
