@@ -1,3 +1,13 @@
+2003-10-11  Niklas Knutsson  <nq@altern.org>
+
+	* Update plot on add/modify/remove
+	* Use only one gnuplot process/window and close it on exit
+	* Fix crach on create new variable dialog
+	* Delete the submenus, not the menu item, when updating
+	* Do not update treeviews if not created
+	* Save plot settings
+	* Switch to enums for style and smoothing
+
 2003-10-10  Niklas Knutsson  <nq@altern.org>
 
 	* More plot stuff

@@ -92,6 +92,19 @@ bool tmp_in_exact;
 GdkPixmap *tmp_pixmap;
 bool expression_has_changed;
 
+PlotLegendPlacement default_plot_legend_placement = PLOT_LEGEND_TOP_RIGHT;
+bool default_plot_display_grid = true;
+bool default_plot_full_border = false;
+string default_plot_min = "0";
+string default_plot_max = "10";
+int default_plot_sampling_rate = 100;
+bool default_plot_rows = false;
+int default_plot_type = 0;
+PlotStyle default_plot_style = PLOT_STYLE_LINES;
+PlotSmoothing default_plot_smoothing = PLOT_SMOOTHING_NONE;
+string default_plot_variable = "x";
+bool default_plot_color = true;
+
 #define TEXT_TAGS			"<span size=\"xx-large\">"
 #define TEXT_TAGS_END			"</span>"
 #define TEXT_TAGS_SMALL			"<span size=\"large\">"
@@ -255,7 +268,7 @@ void generate_units_tree_struct() {
 	int i2, cat_i, cat_i_prev; 
 	bool b, no_cat = false;	
 	string str, cat, cat_sub;
-	Unit *u;
+	Unit *u = NULL;
 	unit_cats.items.clear();
 	unit_cats.objects.clear();
 	unit_cats.parent = NULL;	
@@ -326,11 +339,12 @@ void generate_units_tree_struct() {
 
 }
 void generate_variables_tree_struct() {
+
 	tree_struct *p_cat;
 	int i2, cat_i, cat_i_prev; 
 	bool b, no_cat = false;	
 	string str, cat, cat_sub;
-	Variable *v;
+	Variable *v = NULL;
 	variable_cats.items.clear();
 	variable_cats.objects.clear();
 	variable_cats.parent = NULL;
@@ -406,7 +420,7 @@ void generate_functions_tree_struct() {
 	int i2, cat_i, cat_i_prev; 
 	bool b, no_cat = false;	
 	string str, cat, cat_sub;
-	Function *f;
+	Function *f = NULL;
 	function_cats.items.clear();
 	function_cats.objects.clear();
 	function_cats.parent = NULL;
@@ -771,7 +785,9 @@ void update_variables_tree() {
 			EXPAND_TO_ITER(model, tVariableCategories, iter)
 			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tVariableCategories)), &iter);
 		}
+
 		while(item && item->it == item->items.end()) {
+
 			int str_i = str.rfind("/");
 			if(str_i == string::npos) {
 				str = "";
@@ -790,6 +806,7 @@ void update_variables_tree() {
 			item->it = item->items.begin();	
 		}
 	}
+
 	if(!variable_cats.objects.empty()) {	
 		//add "Uncategorized" category if there are variables without category
 		gtk_tree_store_append(tVariableCategories_store, &iter, &iter3);
@@ -893,6 +910,7 @@ void on_tVariableCategories_selection_changed(GtkTreeSelection *treeselection, g
 	} else {
 		selected_variable_category = "";
 	}
+
 }
 
 /*
@@ -929,6 +947,7 @@ void on_tVariables_selection_changed(GtkTreeSelection *treeselection, gpointer u
 		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variables_button_deactivate"), FALSE);
 		selected_variable = NULL;
 	}
+
 }
 
 
@@ -1139,6 +1158,7 @@ void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpoin
 		i++;
 		g_free(gstr);
 	}
+
 	//if no items were added to the menu, reset selected unit
 	if(i == 0)
 		selected_to_unit = NULL;
@@ -1154,6 +1174,7 @@ void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpoin
 		}
 		gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "units_optionmenu_to_unit")), h);
 	}
+
 	block_unit_convert = false;		
 	//update conversion display
 	convert_in_wUnits();
@@ -1205,8 +1226,8 @@ void on_tPlotFunctions_selection_changed(GtkTreeSelection *treeselection, gpoint
 	selected_argument = NULL;
 	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
 		gchar *gstr1, *gstr2;
-		gint type, smoothing, style, axis;
-		gtk_tree_model_get(model, &iter, 0, &gstr1, 1, &gstr2, 2, &style, 3, &smoothing, 4, &type, 5, &axis, -1);
+		gint type, smoothing, style, axis, rows;
+		gtk_tree_model_get(model, &iter, 0, &gstr1, 1, &gstr2, 2, &style, 3, &smoothing, 4, &type, 5, &axis, 6, &rows, -1);
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_expression")), gstr2);
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_title")), gstr1);
 		gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_style")), style);
@@ -1215,6 +1236,7 @@ void on_tPlotFunctions_selection_changed(GtkTreeSelection *treeselection, gpoint
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_radiobutton_paired")), type == 2);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_radiobutton_yaxis1")), axis != 2);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_radiobutton_yaxis2")), axis == 2);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_checkbutton_rows")), rows);
 		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "plot_button_remove"), TRUE);
 		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "plot_button_modify"), TRUE);		
 		g_free(gstr1);
@@ -1336,7 +1358,7 @@ void create_umenu() {
 	GHashTable *hash;
 	item = glade_xml_get_widget (glade_xml, "menu_item_expression_units");
 	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);	
-	u_menu = item;
+	u_menu = sub;
 	sub2 = sub;
 	Unit *u;
 	list<tree_struct>::iterator it, it2;
@@ -1402,7 +1424,7 @@ void create_umenu2() {
 	GHashTable *hash;
 	item = glade_xml_get_widget (glade_xml, "menu_item_result_units");
 	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);	
-	u_menu2 = item;
+	u_menu2 = sub;
 	sub2 = sub;
 	Unit *u;
 	list<tree_struct>::iterator it, it2;
@@ -1462,19 +1484,22 @@ void update_umenus() {
 	generate_units_tree_struct();
 	create_umenu();
 	create_umenu2();
-	update_units_tree();
+	if(units_window) {
+		update_units_tree();
+	}
 }
 
 /*
 	generate variables submenu in expression menu
 */
 void create_vmenu() {
+
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2, *sub3;
 	GHashTable *hash;
 	item = glade_xml_get_widget (glade_xml, "menu_item_expression_variables");
 	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);
-	v_menu = item;
+	v_menu = sub;
 	sub2 = sub;
 	Variable *v;
 	list<tree_struct>::iterator it;
@@ -1487,10 +1512,12 @@ void create_vmenu() {
 	} else {
 		titem = NULL;
 	}
+
 	stack<GtkWidget*> menus;
 	menus.push(sub);
 	sub3 = sub;
 	while(titem) {
+
 		SUBMENU_ITEM(titem->item.c_str(), sub3)
 		menus.push(sub);
 		sub3 = sub;
@@ -1511,8 +1538,10 @@ void create_vmenu() {
 			titem = titem2;
 			titem->it = titem->items.begin();	
 		}
+
 	}
 	sub = sub2;
+
 	for(int i = 0; i < variable_cats.objects.size(); i++) {
 		v = (Variable*) variable_cats.objects[i];
 		if(v->isActive()) {
@@ -1547,6 +1576,7 @@ void create_vmenu() {
 		MENU_ITEM(_("Enable unknown variables"), set_unknownvariables_enabled)
 	}
 	uv_enable_item = item;
+
 }
 
 /*
@@ -1598,7 +1628,9 @@ void update_vmenu() {
 	gtk_widget_destroy(v_menu);
 	generate_variables_tree_struct();
 	create_vmenu();
-	update_variables_tree();
+	if(variables_window) {
+		update_variables_tree();
+	}
 }
 
 /*
@@ -1610,7 +1642,7 @@ void create_fmenu() {
 	GHashTable *hash;
 	item = glade_xml_get_widget (glade_xml, "menu_item_expression_functions");
 	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);
-	f_menu = item;
+	f_menu = sub;
 	sub2 = sub;
 	Function *f;
 	list<tree_struct>::iterator it;
@@ -1674,7 +1706,9 @@ void update_fmenu() {
 	gtk_widget_destroy(f_menu);
 	generate_functions_tree_struct();
 	create_fmenu();
-	update_functions_tree();
+	if(functions_window) {
+		update_functions_tree();
+	}
 }
 
 
@@ -4544,7 +4578,7 @@ void edit_variable(const char *category, Variable *v, Manager *mngr_, GtkWidget 
 	} else {
 		gtk_window_set_title(GTK_WINDOW(dialog), _("New Variable"));
 	}
-		
+
 	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variable_edit_button_ok"), TRUE);		
 
 	if(v) {
@@ -4562,7 +4596,7 @@ void edit_variable(const char *category, Variable *v, Manager *mngr_, GtkWidget 
 		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variable_edit_entry_name"), TRUE);
 		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variable_edit_entry_value"), TRUE);
 		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "variable_edit_checkbutton_exact"), TRUE);
-	
+
 		//fill in default values
 		string v_name = CALCULATOR->getName();
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_name")), v_name.c_str());
@@ -4570,6 +4604,7 @@ void edit_variable(const char *category, Variable *v, Manager *mngr_, GtkWidget 
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_category")), category);
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "variable_edit_entry_desc")), "");		
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "variable_edit_checkbutton_exact")), TRUE);				
+
 	}
 	if(mngr_) {
 		//forced value
@@ -5318,6 +5353,19 @@ void set_saved_mode() {
 */
 void load_preferences() {
 
+	default_plot_legend_placement = PLOT_LEGEND_TOP_RIGHT;
+	default_plot_display_grid = true;
+	default_plot_full_border = false;
+	default_plot_min = "0";
+	default_plot_max = "10";
+	default_plot_sampling_rate = 100;
+	default_plot_rows = false;
+	default_plot_type = 0;
+	default_plot_style = PLOT_STYLE_LINES;
+	default_plot_smoothing = PLOT_SMOOTHING_NONE;
+	default_plot_variable = "x";
+	default_plot_color = true;
+
 	use_min_deci = false;
 	min_deci = 0;
 	use_max_deci = false;
@@ -5441,7 +5489,30 @@ void load_preferences() {
 							}
 						}
 					}
-				}
+				} else if(svar == "plot_legend_placement")
+					default_plot_legend_placement = (PlotLegendPlacement) v;
+				else if(svar == "plot_style")
+					default_plot_style = (PlotStyle) v;
+				else if(svar == "plot_smoothing")
+					default_plot_smoothing = (PlotSmoothing) v;		
+				else if(svar == "plot_display_grid")
+					default_plot_display_grid = v;
+				else if(svar == "plot_full_border")
+					default_plot_full_border = (PlotSmoothing) v;
+				else if(svar == "plot_min")
+					default_plot_min = svalue;	
+				else if(svar == "plot_max")
+					default_plot_max = svalue;		
+				else if(svar == "plot_sampling_rate")
+					default_plot_sampling_rate = v;	
+				else if(svar == "plot_variable")
+					default_plot_variable = svalue;
+				else if(svar == "plot_rows")
+					default_plot_rows = v;	
+				else if(svar == "plot_type")
+					default_plot_type = v;	
+				else if(svar == "plot_color")
+					default_plot_color = v;		
 			}
 		}
 	} else {
@@ -5521,6 +5592,21 @@ void save_preferences(bool mode)
 	fprintf(file, "indicate_infinite_series=%i\n", saved_indicate_infinite_series);	
 	fprintf(file, "always_exact=%i\n", saved_always_exact);	
 	fprintf(file, "in_rpn_mode=%i\n", saved_in_rpn_mode);		
+	
+	fprintf(file, "\n[Plotting]\n");
+	fprintf(file, "plot_legend_placement=%i\n", default_plot_legend_placement);
+	fprintf(file, "plot_style=%i\n", default_plot_style);
+	fprintf(file, "plot_smoothing=%i\n", default_plot_smoothing);
+	fprintf(file, "plot_display_grid=%i\n", default_plot_display_grid);
+	fprintf(file, "plot_full_border=%i\n", default_plot_full_border);
+	fprintf(file, "plot_min=%s\n", default_plot_min.c_str());
+	fprintf(file, "plot_max=%s\n", default_plot_max.c_str());
+	fprintf(file, "plot_sampling_rate=%i\n", default_plot_sampling_rate);
+	fprintf(file, "plot_variable=%s\n", default_plot_variable.c_str());
+	fprintf(file, "plot_rows=%i\n", default_plot_rows);
+	fprintf(file, "plot_type=%i\n", default_plot_type);
+	fprintf(file, "plot_color=%i\n", default_plot_color);
+
 	fclose(file);
 }
 
@@ -5580,7 +5666,7 @@ void edit_preferences() {
 extern "C" {
 
 void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data) {
-	gtk_main_quit();
+	on_gcalc_exit(NULL, NULL, user_data);
 }
 
 /*
@@ -5785,12 +5871,17 @@ on_button_execute_clicked                        (GtkButton       *button,
 	save preferences, mode and definitions and then quit
 */
 gboolean on_gcalc_exit(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
-	if(save_mode_on_exit)
+	if(GTK_WIDGET_VISIBLE(glade_xml_get_widget (glade_xml, "plot_dialog"))) {
+		gtk_widget_hide(glade_xml_get_widget (glade_xml, "plot_dialog"));
+	}
+	if(save_mode_on_exit) {
 		save_mode();
-	else
+	} else {
 		save_preferences();
-	if(save_defs_on_exit)
+	}
+	if(save_defs_on_exit) {
 		save_defs();
+	}
 	gtk_main_quit();
 	return FALSE;
 }
@@ -6090,12 +6181,98 @@ void on_menu_item_plot_functions_activate(GtkMenuItem *w, gpointer user_data) {
 		gtk_list_store_clear(tPlotFunctions_store);
 		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "plot_button_modify"), FALSE);
 		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "plot_button_remove"), FALSE);	
+
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_checkbutton_grid")), default_plot_display_grid);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_checkbutton_full_border")), default_plot_full_border);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_checkbutton_rows")), default_plot_rows);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_radiobutton_color")), default_plot_color);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_radiobutton_mono")), !default_plot_color);
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_min")), default_plot_min.c_str());
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_max")), default_plot_max.c_str());
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_variable")), default_plot_variable.c_str());
+		switch(default_plot_type) {
+			case 1: {gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_radiobutton_vector")), TRUE); break;}
+			case 2: {gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_radiobutton_paired")), TRUE); break;}
+			default: {gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_radiobutton_function")), TRUE); break;}
+		}
+		switch(default_plot_legend_placement) {
+			case PLOT_LEGEND_NONE: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_legend_place")), PLOTLEGEND_MENU_NONE); break;}
+			case PLOT_LEGEND_TOP_LEFT: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_legend_place")), PLOTLEGEND_MENU_TOP_LEFT); break;}
+			case PLOT_LEGEND_TOP_RIGHT: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_legend_place")), PLOTLEGEND_MENU_TOP_RIGHT); break;}
+			case PLOT_LEGEND_BOTTOM_LEFT: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_legend_place")), PLOTLEGEND_MENU_BOTTOM_LEFT); break;}
+			case PLOT_LEGEND_BOTTOM_RIGHT: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_legend_place")), PLOTLEGEND_MENU_BOTTOM_RIGHT); break;}
+			case PLOT_LEGEND_BELOW: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_legend_place")), PLOTLEGEND_MENU_BELOW); break;}
+			case PLOT_LEGEND_OUTSIDE: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_legend_place")), PLOTLEGEND_MENU_OUTSIDE); break;}
+		}
+		switch(default_plot_smoothing) {
+			case PLOT_SMOOTHING_NONE: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_smoothing")), SMOOTHING_MENU_NONE); break;}
+			case PLOT_SMOOTHING_UNIQUE: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_smoothing")), SMOOTHING_MENU_UNIQUE); break;}
+			case PLOT_SMOOTHING_CSPLINES: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_smoothing")), SMOOTHING_MENU_CSPLINES); break;}
+			case PLOT_SMOOTHING_BEZIER: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_smoothing")), SMOOTHING_MENU_BEZIER); break;}
+			case PLOT_SMOOTHING_SBEZIER: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_smoothing")), SMOOTHING_MENU_SBEZIER); break;}
+		}
+		switch(default_plot_style) {
+			case PLOT_STYLE_LINES: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_style")), PLOTSTYLE_MENU_LINES); break;}
+			case PLOT_STYLE_POINTS: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_style")), PLOTSTYLE_MENU_LINES); break;}
+			case PLOT_STYLE_POINTS_LINES: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_style")), PLOTSTYLE_MENU_LINESPOINTS); break;}
+			case PLOT_STYLE_BOXES: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_style")), PLOTSTYLE_MENU_BOXES); break;}
+			case PLOT_STYLE_HISTOGRAM: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_style")), PLOTSTYLE_MENU_HISTEPS); break;}
+			case PLOT_STYLE_STEPS: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_style")), PLOTSTYLE_MENU_STEPS); break;}
+			case PLOT_STYLE_CANDLESTICKS: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_style")), PLOTSTYLE_MENU_CANDLESTICKS); break;}
+			case PLOT_STYLE_DOTS: {gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_style")), PLOTSTYLE_MENU_DOTS); break;}
+		}
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "plot_spinbutton_steps")), default_plot_sampling_rate);
+		
 		gtk_widget_show(dialog);
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(glade_xml_get_widget (glade_xml, "plot_notebook")), 1);
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(glade_xml_get_widget (glade_xml, "plot_notebook")), 0);
 	} else {
-		gtk_widget_show(dialog);
+		gtk_window_present(GTK_WINDOW(dialog));
 	}
+}
+void on_plot_dialog_hide(GtkWidget *w, gpointer user_data) {
+	default_plot_display_grid = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_checkbutton_grid")));
+	default_plot_full_border = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_checkbutton_full_border")));
+	default_plot_rows = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_checkbutton_rows")));
+	default_plot_color = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_radiobutton_color")));
+	default_plot_min = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_min")));
+	default_plot_max = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_max")));
+	default_plot_variable = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_variable")));
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_radiobutton_vector")))) {
+		default_plot_type = 1;
+	} else if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_radiobutton_paired")))) {
+		default_plot_type = 2;
+	} else {
+		default_plot_type = 0;
+	}
+	switch(gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_legend_place")))) {
+		case PLOTLEGEND_MENU_NONE: {default_plot_legend_placement = PLOT_LEGEND_NONE; break;}
+		case PLOTLEGEND_MENU_TOP_LEFT: {default_plot_legend_placement = PLOT_LEGEND_TOP_LEFT; break;}
+		case PLOTLEGEND_MENU_TOP_RIGHT: {default_plot_legend_placement = PLOT_LEGEND_TOP_RIGHT; break;}
+		case PLOTLEGEND_MENU_BOTTOM_LEFT: {default_plot_legend_placement = PLOT_LEGEND_BOTTOM_LEFT; break;}
+		case PLOTLEGEND_MENU_BOTTOM_RIGHT: {default_plot_legend_placement = PLOT_LEGEND_BOTTOM_RIGHT; break;}
+		case PLOTLEGEND_MENU_BELOW: {default_plot_legend_placement = PLOT_LEGEND_BELOW; break;}
+		case PLOTLEGEND_MENU_OUTSIDE: {default_plot_legend_placement = PLOT_LEGEND_OUTSIDE; break;}
+	}
+	switch(gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_smoothing")))) {
+		case SMOOTHING_MENU_NONE: {default_plot_smoothing = PLOT_SMOOTHING_NONE; break;}
+		case SMOOTHING_MENU_UNIQUE: {default_plot_smoothing = PLOT_SMOOTHING_UNIQUE; break;}
+		case SMOOTHING_MENU_CSPLINES: {default_plot_smoothing = PLOT_SMOOTHING_CSPLINES; break;}
+		case SMOOTHING_MENU_BEZIER: {default_plot_smoothing = PLOT_SMOOTHING_BEZIER; break;}
+		case SMOOTHING_MENU_SBEZIER: {default_plot_smoothing = PLOT_SMOOTHING_SBEZIER; break;}
+	}
+	switch(gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_style")))) {
+		case PLOTSTYLE_MENU_LINES: {default_plot_style = PLOT_STYLE_LINES; break;}
+		case PLOTSTYLE_MENU_POINTS: {default_plot_style = PLOT_STYLE_POINTS; break;}
+		case PLOTSTYLE_MENU_LINESPOINTS: {default_plot_style = PLOT_STYLE_POINTS_LINES; break;}
+		case PLOTSTYLE_MENU_BOXES: {default_plot_style = PLOT_STYLE_BOXES; break;}
+		case PLOTSTYLE_MENU_HISTEPS: {default_plot_style = PLOT_STYLE_HISTOGRAM; break;}
+		case PLOTSTYLE_MENU_STEPS: {default_plot_style = PLOT_STYLE_STEPS; break;}
+		case PLOTSTYLE_MENU_CANDLESTICKS: {default_plot_style = PLOT_STYLE_CANDLESTICKS; break;}
+		case PLOTSTYLE_MENU_DOTS: {default_plot_style = PLOT_STYLE_DOTS; break;}
+	}
+	default_plot_sampling_rate = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "plot_spinbutton_steps")));
+	CALCULATOR->closeGnuplot();
 }
 void on_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
@@ -7015,13 +7192,12 @@ bool generate_plot(plot_parameters &pp, vector<Vector*> &y_vectors, vector<Vecto
 	Manager *min = CALCULATOR->calculate(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_min"))));
 	Manager *max = CALCULATOR->calculate(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_max"))));
 	int steps = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "plot_spinbutton_steps")));
-	bool rows = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_checkbutton_rows")));
 	Vector *x_vector;
 	while(b) {
 		int count = 1;
 		gchar *gstr1, *gstr2;
-		gint type = 0, style = 0, smoothing = 0, axis = 1;
-		gtk_tree_model_get(GTK_TREE_MODEL(tPlotFunctions_store), &iter, 0, &gstr1, 1, &gstr2, 2, &style, 3, &smoothing, 4, &type, 5, &axis, -1);
+		gint type = 0, style = 0, smoothing = 0, axis = 1, rows = 0;
+		gtk_tree_model_get(GTK_TREE_MODEL(tPlotFunctions_store), &iter, 0, &gstr1, 1, &gstr2, 2, &style, 3, &smoothing, 4, &type, 5, &axis, 6, &rows, -1);
 		if(type == 1) {
 			Manager *mngr = CALCULATOR->calculate(gstr2);
 			if(mngr->isMatrix() && mngr->matrix()->isVector()) {
@@ -7096,21 +7272,21 @@ bool generate_plot(plot_parameters &pp, vector<Vector*> &y_vectors, vector<Vecto
 				pdp->title = gstr2;
 			}
 			switch(smoothing) {
-				case SMOOTHING_MENU_UNIQUE: {pdp->smoothing = "unique"; break;}
-				case SMOOTHING_MENU_ACSPLINES: {pdp->smoothing = "acsplines"; break;}
-				case SMOOTHING_MENU_CSPLINES: {pdp->smoothing = "csplines"; break;}
-				case SMOOTHING_MENU_BEZIER: {pdp->smoothing = "bezier"; break;}
-				case SMOOTHING_MENU_SBEZIER: {pdp->smoothing = "sbezier"; break;}
+				case SMOOTHING_MENU_NONE: {pdp->smoothing = PLOT_SMOOTHING_NONE; break;}
+				case SMOOTHING_MENU_UNIQUE: {pdp->smoothing = PLOT_SMOOTHING_UNIQUE; break;}
+				case SMOOTHING_MENU_CSPLINES: {pdp->smoothing = PLOT_SMOOTHING_CSPLINES; break;}
+				case SMOOTHING_MENU_BEZIER: {pdp->smoothing = PLOT_SMOOTHING_BEZIER; break;}
+				case SMOOTHING_MENU_SBEZIER: {pdp->smoothing = PLOT_SMOOTHING_SBEZIER; break;}
 			}
 			switch(style) {
-				case PLOTSTYLE_MENU_LINES: {pdp->style = "lines"; break;}
-				case PLOTSTYLE_MENU_POINTS: {pdp->style = "points"; break;}
-				case PLOTSTYLE_MENU_LINESPOINTS: {pdp->style = "linespoints"; break;}
-				case PLOTSTYLE_MENU_DOTS: {pdp->style = "dots"; break;}
-				case PLOTSTYLE_MENU_BOXES: {pdp->style = "boxes"; break;}
-				case PLOTSTYLE_MENU_HISTEPS: {pdp->style = "histeps"; break;}
-				case PLOTSTYLE_MENU_STEPS: {pdp->style = "steps"; break;}
-				case PLOTSTYLE_MENU_CANDLESTICKS: {pdp->style = "candlesticks"; break;}
+				case PLOTSTYLE_MENU_LINES: {pdp->style = PLOT_STYLE_LINES; break;}
+				case PLOTSTYLE_MENU_POINTS: {pdp->style = PLOT_STYLE_POINTS; break;}
+				case PLOTSTYLE_MENU_LINESPOINTS: {pdp->style = PLOT_STYLE_POINTS_LINES; break;}
+				case PLOTSTYLE_MENU_DOTS: {pdp->style = PLOT_STYLE_DOTS; break;}
+				case PLOTSTYLE_MENU_BOXES: {pdp->style = PLOT_STYLE_BOXES; break;}
+				case PLOTSTYLE_MENU_HISTEPS: {pdp->style = PLOT_STYLE_HISTOGRAM; break;}
+				case PLOTSTYLE_MENU_STEPS: {pdp->style = PLOT_STYLE_STEPS; break;}
+				case PLOTSTYLE_MENU_CANDLESTICKS: {pdp->style = PLOT_STYLE_CANDLESTICKS; break;}
 			}
 			pdp->yaxis2 = (axis == 2);
 			pdps.push_back(pdp);
@@ -7161,7 +7337,7 @@ void on_plot_button_save_clicked(GtkButton *w, gpointer user_data) {
 	}
 	gtk_widget_destroy(d);
 }
-void on_plot_button_apply_clicked(GtkButton *w, gpointer user_data) {
+void update_plot() {
 	vector<Vector*> y_vectors;
 	vector<Vector*> x_vectors;
 	vector<plot_data_parameters*> pdps;
@@ -7176,6 +7352,9 @@ void on_plot_button_apply_clicked(GtkButton *w, gpointer user_data) {
 		if(pdps[i]) delete pdps[i];
 	}
 }
+void on_plot_button_apply_clicked(GtkButton *w, gpointer user_data) {
+	update_plot();
+}
 void on_plot_button_add_clicked(GtkButton *w, gpointer user_data) {
 	string expression = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_expression")));
 	if(expression.empty()) {
@@ -7184,7 +7363,7 @@ void on_plot_button_add_clicked(GtkButton *w, gpointer user_data) {
 	}
 	GtkTreeIter iter;	
 	gtk_list_store_append(tPlotFunctions_store, &iter);
-	gint type = 0, axis = 1;
+	gint type = 0, axis = 1, rows = 0;
 	string title = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_title")));
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_radiobutton_vector")))) {
 		type = 1;
@@ -7200,9 +7379,9 @@ void on_plot_button_add_clicked(GtkButton *w, gpointer user_data) {
 			title = v->title(false);
 		}
 	}
-	gtk_list_store_set(tPlotFunctions_store, &iter, 0, title.c_str(), 1, expression.c_str(), 2, gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_style"))), 3, gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_smoothing"))), 4, type, 5, axis, -1);	
-//	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_expression")), "");
-//	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_title")), "");
+	rows = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_checkbutton_rows")));
+	gtk_list_store_set(tPlotFunctions_store, &iter, 0, title.c_str(), 1, expression.c_str(), 2, gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_style"))), 3, gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_smoothing"))), 4, type, 5, axis, 6, rows, -1);
+	update_plot();
 }
 void on_plot_button_modify_clicked(GtkButton *w, gpointer user_data) {
 
@@ -7215,7 +7394,7 @@ void on_plot_button_modify_clicked(GtkButton *w, gpointer user_data) {
 			show_message(_("Empty expression."), glade_xml_get_widget(glade_xml, "plot_dialog"));
 			return;
 		}
-		gint type = 0, axis = 1;
+		gint type = 0, axis = 1, rows = 0;
 		string title = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_title")));
 		if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_radiobutton_vector")))) {
 			type = 1;
@@ -7231,11 +7410,10 @@ void on_plot_button_modify_clicked(GtkButton *w, gpointer user_data) {
 				title = v->title(false);
 			}
 		}
-		gtk_list_store_set(tPlotFunctions_store, &iter, 0, title.c_str(), 1, expression.c_str(), 2, gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_style"))), 3, gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_smoothing"))), 4, type, 5, axis, -1);
-//		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_expression")), "");
-//		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_title")), "");
+		rows = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "plot_checkbutton_rows")));
+		gtk_list_store_set(tPlotFunctions_store, &iter, 0, title.c_str(), 1, expression.c_str(), 2, gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_style"))), 3, gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "plot_optionmenu_smoothing"))), 4, type, 5, axis, 6, rows, -1);
 	}
-	
+	update_plot();
 }
 void on_plot_button_remove_clicked(GtkButton *w, gpointer user_data) {
 	GtkTreeModel *model;
@@ -7246,6 +7424,7 @@ void on_plot_button_remove_clicked(GtkButton *w, gpointer user_data) {
 	}
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_expression")), "");
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "plot_entry_title")), "");	
+	update_plot();
 }
 
 void on_plot_checkbutton_xlog_toggled(GtkToggleButton *w, gpointer user_data) {

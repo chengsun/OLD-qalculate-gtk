@@ -44,8 +44,8 @@ struct plot_parameters {
 
 struct plot_data_parameters {
 	string title;
-	string smoothing;
-	string style;
+	PlotSmoothing smoothing;
+	PlotStyle style;
 	bool yaxis2;
 	bool xaxis2;
 	plot_data_parameters();
@@ -73,6 +73,10 @@ class Calculator {
 	pthread_attr_t calculate_thread_attr;
 	bool b_functions_was, b_variables_was, b_units_was, b_unknown_was, b_calcvars_was, b_always_exact_was, b_rpn_was;
 	string NAME_NUMBER_PRE_S, NAME_NUMBER_PRE_STR, DOT_STR, DOT_S, COMMA_S, COMMA_STR, ILLEGAL_IN_NAMES, ILLEGAL_IN_UNITNAMES, ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
+
+	bool b_gnuplot_open;
+	string gnuplot_cmdline;
+	FILE *gnuplot_pipe;
 
   public:
   
@@ -225,8 +229,10 @@ class Calculator {
 	Vector *expressionToVector(string expression, float min, float max, int steps, Vector **x_vector = NULL, string x_var = "\\x");
 	Vector *expressionToVector(string expression, Vector *x_vector, string x_var = "\\x");
 	bool plotVectors(plot_parameters *param, Vector *y_vector, ...);
-	bool plotVectors(plot_parameters *param, vector<Vector*> &y_vectors, vector<Vector*> &x_vectors, vector<plot_data_parameters*> &pdps);
-	bool invokeGnuplot(string commands, string commandline_extra = "");
+	bool plotVectors(plot_parameters *param, vector<Vector*> &y_vectors, vector<Vector*> &x_vectors, vector<plot_data_parameters*> &pdps, bool persistent = false);
+	bool invokeGnuplot(string commands, string commandline_extra = "", bool persistent = false);
+	bool closeGnuplot();
+	bool gnuplotOpen();
 		
 };
 

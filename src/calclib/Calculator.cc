@@ -184,9 +184,13 @@ Calculator::Calculator() {
 	b_multiple_roots = true;
 	disable_errors_ref = 0;
 	b_busy = false;
+	b_gnuplot_open = false;
+	gnuplot_pipe = NULL;
 	pthread_attr_init(&calculate_thread_attr);	    	
 }
-Calculator::~Calculator() {}
+Calculator::~Calculator() {
+	closeGnuplot();
+}
 
 void Calculator::setRPNMode(bool enable) {
 	b_rpn = enable;
@@ -1905,9 +1909,11 @@ void Calculator::setFunctionsAndVariables(string &str) {
 	}
 }
 string Calculator::getName(string name, ExpressionItem *object, bool force, bool always_append) {
-	switch(object->type()) {
-		case TYPE_UNIT: {
-			return getUnitName(name, (Unit*) object, force, always_append);
+	if(object) {
+		switch(object->type()) {
+			case TYPE_UNIT: {
+				return getUnitName(name, (Unit*) object, force, always_append);
+			}
 		}
 	}
 	if(force) {
@@ -3432,6 +3438,7 @@ bool Calculator::fetchExchangeRates() {
 		homedir += "/";
 	}
 	homedir += ".qalculate/";
+	mkdir(homedir.c_str(), S_IRWXU);	
 	filename_arg =  "--output-document=";
 	filename_arg += homedir;
 	filename_arg += "eurofxref-daily.xml";	
@@ -3524,7 +3531,20 @@ bool Calculator::plotVectors(plot_parameters *param, Vector *y_vector, ...) {
 	return plotVectors(param, y_vectors, x_vectors, pdps);
 
 }
-bool Calculator::plotVectors(plot_parameters *param, vector<Vector*> &y_vectors, vector<Vector*> &x_vectors, vector<plot_data_parameters*> &pdps) {
+
+bool Calculator::plotVectors(plot_parameters *param, vector<Vector*> &y_vectors, vector<Vector*> &x_vectors, vector<plot_data_parameters*> &pdps, bool persistent) {
+
+	string homedir = "";
+	string filename;
+	struct passwd *pw = getpwuid(getuid());
+	if(pw) {
+		homedir = pw->pw_dir;
+		homedir += "/";
+	}
+	homedir += ".qalculate/";
+	mkdir(homedir.c_str(), S_IRWXU);	
+	homedir += "tmp/";	
+	mkdir(homedir.c_str(), S_IRWXU);
 
 	string commandline_extra;
 
@@ -3543,7 +3563,9 @@ bool Calculator::plotVectors(plot_parameters *param, vector<Vector*> &y_vectors,
 		if(param->font.empty()) {
 			commandline_extra += " -font \"-*-helvetica-bold-r-*-*-14-*-*-*-*-*-*-*\"";
 		}
+		plot += "set terminal x11\n";
 	} else {
+		persistent = true;
 		if(param->filetype == PLOT_FILETYPE_AUTO) {
 			int i = param->filename.find(".");
 			if(i == string::npos) {
@@ -3689,7 +3711,11 @@ bool Calculator::plotVectors(plot_parameters *param, vector<Vector*> &y_vectors,
 			if(i != 0) {
 				plot += ",";
 			}
-			plot += "'-'";
+			plot += "\"";
+			plot += homedir;
+			plot += "gnuplot_data";
+			plot += i2s(i + 1);
+			plot += "\"";
 			if(i < pdps.size()) {
 				if(pdps[i]->xaxis2 && pdps[i]->yaxis2) {
 					plot += " axis x2y2";
@@ -3698,18 +3724,26 @@ bool Calculator::plotVectors(plot_parameters *param, vector<Vector*> &y_vectors,
 				} else if(pdps[i]->yaxis2) {
 					plot += " axis x1y2";
 				}
-				if(!pdps[i]->smoothing.empty() && pdps[i]->smoothing != "none") {
-					plot += " smooth ";
-					plot += pdps[i]->smoothing;
+				switch(pdps[i]->smoothing) {
+					case PLOT_SMOOTHING_UNIQUE: {plot += " smooth unique"; break;}
+					case PLOT_SMOOTHING_CSPLINES: {plot += " smooth csplines"; break;}
+					case PLOT_SMOOTHING_BEZIER: {plot += " smooth bezier"; break;}
+					case PLOT_SMOOTHING_SBEZIER: {plot += " smooth sbezier"; break;}
 				}
 				if(!pdps[i]->title.empty()) {
 					plot += " title \"";
 					plot += pdps[i]->title;
 					plot += "\"";
 				}
-				if(!pdps[i]->style.empty()) {
-					plot += " with ";
-					plot += pdps[i]->style;
+				switch(pdps[i]->style) {
+					case PLOT_STYLE_LINES: {plot += " with lines"; break;}
+					case PLOT_STYLE_POINTS: {plot += " with points"; break;}
+					case PLOT_STYLE_POINTS_LINES: {plot += " with linespoints"; break;}
+					case PLOT_STYLE_BOXES: {plot += " with boxes"; break;}
+					case PLOT_STYLE_HISTOGRAM: {plot += " with histeps"; break;}
+					case PLOT_STYLE_STEPS: {plot += " with steps"; break;}
+					case PLOT_STYLE_CANDLESTICKS: {plot += " with candlesticks"; break;}
+					case PLOT_STYLE_DOTS: {plot += " with dots"; break;}
 				}
 				if(param->linewidth < 1) {
 					plot += " lw 2";
@@ -3721,9 +3755,12 @@ bool Calculator::plotVectors(plot_parameters *param, vector<Vector*> &y_vectors,
 		}
 	}
 	plot += "\n";
+	
 	bool b_always_exact = alwaysExact();
 	setAlwaysExact(false);	
 
+	string filename_data;
+	string plot_data;
 	for(int serie = 0; serie < y_vectors.size(); serie++) {
 		y_vector = y_vectors[serie];
 		if(serie < x_vectors.size()) {
@@ -3732,32 +3769,84 @@ bool Calculator::plotVectors(plot_parameters *param, vector<Vector*> &y_vectors,
 			x_vector = NULL;
 		}
 		if(y_vector) {
+			filename_data = homedir;
+			filename_data += "gnuplot_data";
+			filename_data += i2s(serie + 1);
+			FILE *fdata = fopen(filename_data.c_str(), "w+");
+			if(!fdata) {
+				error(true, _("Could not create temporary file %s"), filename_data.c_str(), NULL);
+				return false;
+			}
+			plot_data = "";
 			for(int i = 1; i <= y_vector->components(); i++) {
 				if(x_vector && x_vector->components() == y_vector->components()) {
-					plot += x_vector->get(i)->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DECIMAL_ONLY);
-					plot += " ";
+					plot_data += x_vector->get(i)->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DECIMAL_ONLY);
+					plot_data += " ";
 				}
-				plot += y_vector->get(i)->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DECIMAL_ONLY);
-				plot += "\n";	
+				plot_data += y_vector->get(i)->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_DECIMAL_ONLY);
+				plot_data += "\n";	
 			}
-			plot += "e\n";
+			fputs(plot_data.c_str(), fdata);
+			fflush(fdata);
+			fclose(fdata);
 		}
 	}
 	
 	setAlwaysExact(b_always_exact);	
 	
-	return invokeGnuplot(plot, commandline_extra);
+	return invokeGnuplot(plot, commandline_extra, persistent);
 }
-bool Calculator::invokeGnuplot(string commands, string commandline_extra) {
-	string commandline = "gnuplot -persist";
-	commandline += commandline_extra;
-	commandline += " -";
-	FILE *pipe = popen(commandline.c_str(), "w");
+bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool persistent) {
+	FILE *pipe = NULL;
+	if(!b_gnuplot_open || !gnuplot_pipe || persistent || commandline_extra != gnuplot_cmdline) {
+		if(!persistent) {
+			closeGnuplot();
+		}
+		string commandline = "gnuplot";
+		if(persistent) {
+			commandline += " -persist";
+		}
+		commandline += commandline_extra;
+		commandline += " -";
+		pipe = popen(commandline.c_str(), "w");
+		if(!pipe) {
+			error(true, _("Failed to invoke gnuplot. Make that you have gnuplot installed in your path."), NULL);
+			return false;
+		}
+		if(!persistent && pipe) {
+			gnuplot_pipe = pipe;
+			b_gnuplot_open = true;
+			gnuplot_cmdline = commandline_extra;
+		}
+	} else {
+		pipe = gnuplot_pipe;
+	}
 	if(!pipe) {
-		error(true, _("Failed to invoke gnuplot. Make that you have gnuplot installed in your path."), NULL);
 		return false;
 	}
+	if(!persistent) {
+		fputs("clear\n", pipe);
+		fputs("reset\n", pipe);
+	}
 	fputs(commands.c_str(), pipe);
-	return pclose(pipe) == 0;
+	fflush(pipe);
+	if(persistent) {
+		return pclose(pipe) == 0;
+	}
+	return true;
+}
+bool Calculator::closeGnuplot() {
+	if(gnuplot_pipe) {
+		int rv = pclose(gnuplot_pipe);
+		gnuplot_pipe = NULL;
+		b_gnuplot_open = false;
+		return rv == 0;
+	}
+	gnuplot_pipe = NULL;
+	b_gnuplot_open = false;
+	return true;
+}
+bool Calculator::gnuplotOpen() {
+	return b_gnuplot_open && gnuplot_pipe;
 }
 

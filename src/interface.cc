@@ -332,7 +332,7 @@ create_main_window (void)
 	g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tFunctionArguments_selection_changed), NULL);
 
 	tPlotFunctions = glade_xml_get_widget (glade_xml, "plot_treeview_data");
-	tPlotFunctions_store = gtk_list_store_new(6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
+	tPlotFunctions_store = gtk_list_store_new(7, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tPlotFunctions), GTK_TREE_MODEL(tPlotFunctions_store));
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tPlotFunctions));
 	gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
@@ -373,8 +373,8 @@ GtkWidget*
 create_functions_dialog (void)
 {
 
-	tFunctionCategories = glade_xml_get_widget (glade_xml, "tFunctionCategories");
-	tFunctions	= glade_xml_get_widget (glade_xml, "tFunctions");
+	tFunctionCategories = glade_xml_get_widget (glade_xml, "functions_treeview_category");
+	tFunctions	= glade_xml_get_widget (glade_xml, "functions_treeview_function");
 
 
 
@@ -414,8 +414,8 @@ GtkWidget*
 create_variables_dialog (void)
 {
 
-	tVariableCategories = glade_xml_get_widget (glade_xml, "variables_tree_view1");
-	tVariables = glade_xml_get_widget (glade_xml, "variables_tree_view2");
+	tVariableCategories = glade_xml_get_widget (glade_xml, "variables_treeview_category");
+	tVariables = glade_xml_get_widget (glade_xml, "variables_treeview_variable");
 
 	tVariables_store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tVariables), GTK_TREE_MODEL(tVariables_store));
@@ -457,8 +457,8 @@ GtkWidget*
 create_units_dialog (void)
 {
 
-	tUnitCategories = glade_xml_get_widget (glade_xml, "units_tree_view1");
-	tUnits		= glade_xml_get_widget (glade_xml, "units_tree_view2");
+	tUnitCategories = glade_xml_get_widget (glade_xml, "units_treeview_category");
+	tUnits		= glade_xml_get_widget (glade_xml, "units_treeview_unit");
 
 	tUnits_store = gtk_list_store_new(UNITS_N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tUnits), GTK_TREE_MODEL(tUnits_store));
@@ -519,7 +519,7 @@ create_preferences_dialog (void)
 	gtk_widget_set_sensitive(glade_xml_get_widget(glade_xml, "preferences_button_font"), use_custom_font);	
 	gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "preferences_button_font")), custom_font.c_str());			
 
-	return glade_xml_get_widget (glade_xml, "preferences_dialog");;
+	return glade_xml_get_widget (glade_xml, "preferences_dialog");
 }
 
 GtkWidget*
