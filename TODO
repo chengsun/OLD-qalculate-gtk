@@ -1,0 +1,22 @@
+* Finish unit conversion
+* Finish (x + y)^5 etc.
+* Support unsolved functions
+* More functions
+* More Units
+* Complete number bases
+* Approximate variables and exact result (ex. circumference(2) = 2 PI)
+* Vector support
+* Matrix support
+* Fractions
+* Derivative, x^2 + y^2 + xy => (x + y)^2, etc.
+
+* Internationalisation
+* Clean up build system
+* Separate library
+* Support non-glibc systems (Solaris)
+
+* API documentation
+* User documentation
+
+* Command line version
+* QT version
