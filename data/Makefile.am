@@ -5,10 +5,18 @@
 config_DATA = qalculate.cfg
 configdir = $(datadir)/$(PACKAGE)
 
+# this is for gnome and kde 3.2+
+
 desktop_IN_FILES = qalculate.desktop.in
 desktop_DATA = $(desktop_IN_FILES:.desktop.in=.desktop)
 desktopdir = $(datadir)/applications
 @INTLTOOL_DESKTOP_RULE@
 
-EXTRA_DIST = qalculate.cfg
+# this is for older kde-versions
+applnk_DATA = $(desktop_DATA)
+applnkdir = $(datadir)/applnk/Utilities
+
+EXTRA_DIST = \
+	$(config_DATA)	\
+	$(desktop_IN_FILES)
 
