@@ -776,7 +776,7 @@ void create_umenu() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT("Units", glade_xml_get_widget (glade_xml, "menu_expression"), 5)
+	SUBMENU_ITEM_INSERT("Units", gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression"))), 5)
 	u_menu = item;
 	MENU_TEAROFF
 	sub2 = sub;
@@ -867,7 +867,7 @@ void create_vmenu() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT("Variables", glade_xml_get_widget (glade_xml, "menu_expression"), 3)
+	SUBMENU_ITEM_INSERT("Variables", gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression"))), 3)
 	v_menu = item;
 	MENU_TEAROFF
 	sub2 = sub;
@@ -906,7 +906,7 @@ void create_pmenu() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT("Prefixes", glade_xml_get_widget (glade_xml, "menu_expression"), 4)
+	SUBMENU_ITEM_INSERT("Prefixes", gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression"))), 4)
 	MENU_TEAROFF
 	vector<l_type::iterator> its;
 	bool no_larger = false;
@@ -947,7 +947,7 @@ void create_fmenu() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT("Functions", glade_xml_get_widget (glade_xml, "menu_expression"), 2)
+	SUBMENU_ITEM_INSERT("Functions", gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression"))), 2)
 	f_menu = item;
 	MENU_TEAROFF
 	sub2 = sub;
@@ -1146,9 +1146,9 @@ void
 on_bMenuE_toggled                      (GtkToggleButton       *button,
                                         gpointer         user_data) {
 	if(gtk_toggle_button_get_active(button)) {
-		gtk_menu_popup(GTK_MENU(glade_xml_get_widget (glade_xml, "menu_expression")), NULL, NULL, menu_e_posfunc, NULL, 0, 0);
+		gtk_menu_popup(GTK_MENU(gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression")))), NULL, NULL, menu_e_posfunc, NULL, 0, 0);
 	} else {
-		gtk_menu_popdown(GTK_MENU(glade_xml_get_widget (glade_xml, "menu_expression")));
+		gtk_menu_popdown(GTK_MENU(gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression")))));
 	}
 }
 
@@ -2341,16 +2341,16 @@ void manage_variables(GtkMenuItem *w, gpointer user_data) {
 /*
 	Open function manager
 */
-void manage_functions(GtkMenuItem *w, gpointer user_data) {
+void
+manage_functions(GtkMenuItem *w, gpointer user_data)
+{
 	if(!functions_window) {
 		//if not previously created, do so now
 		functions_window = create_wFunctions();
-		gtk_window_resize(GTK_WINDOW(functions_window), 500, 400);
-		gtk_widget_show(functions_window);
 	} else {
-		gtk_widget_show(functions_window);
 		gtk_window_present(GTK_WINDOW(functions_window));
 	}
+	gtk_widget_show(functions_window);
 }
 
 /*

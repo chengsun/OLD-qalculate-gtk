@@ -577,7 +577,7 @@ create_window (void)
 	g_signal_connect (G_OBJECT (bMenuR), "toggled",
 	                  G_CALLBACK (on_bMenuR_toggled),
 	                  NULL);
-	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_expression")), "deactivate",
+	g_signal_connect (G_OBJECT (gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression")))), "deactivate",
 	                  G_CALLBACK (on_menu_e_deactivate),
 	                  NULL);
 	g_signal_connect (G_OBJECT (glade_xml_get_widget (glade_xml, "menu_result")), "deactivate",
@@ -620,42 +620,18 @@ create_wFunctions (void) {
 	GtkWidget *label2_f;
 	GtkWidget *dialog_vbox1_f;
 
-	wFunctions = gtk_dialog_new ();
-	gtk_window_set_title (GTK_WINDOW (wFunctions), _("Functions"));
 
-	dialog_vbox1_f = GTK_DIALOG (wFunctions)->vbox;
-	gtk_widget_show (dialog_vbox1_f);
 
-	vbox1_f = gtk_vbox_new (FALSE, 5);
-	gtk_widget_show (vbox1_f);
-	gtk_box_pack_start (GTK_BOX (dialog_vbox1_f), vbox1_f, TRUE, TRUE, 0);
-	gtk_container_set_border_width (GTK_CONTAINER (vbox1_f), 5);
+	wFunctions	= glade_xml_get_widget (glade_xml, "wFunctions");
+	dialog_vbox1_f	= glade_xml_get_widget (glade_xml, "dialog-vbox1");
+	hbox1_f		= glade_xml_get_widget (glade_xml, "hbox1");
+	scrolledwindow1_f = glade_xml_get_widget (glade_xml, "scrolledwindow1");
+	tFunctionCategories = glade_xml_get_widget (glade_xml, "tFunctionCategories");
+	scrolledwindow2_f = glade_xml_get_widget (glade_xml, "scrolledwindow1");
+	tFunctions	= glade_xml_get_widget (glade_xml, "tFunctions");
 
-	hbox1_f = gtk_hbox_new (FALSE, 5);
-	gtk_widget_show (hbox1_f);
-	gtk_box_pack_start (GTK_BOX (vbox1_f), hbox1_f, TRUE, TRUE, 0);
 
-	scrolledwindow1_f = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_set_size_request (scrolledwindow1_f, 160, 1);
-	gtk_widget_show (scrolledwindow1_f);
-	gtk_box_pack_start (GTK_BOX (hbox1_f), scrolledwindow1_f, FALSE, TRUE, 0);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow1_f), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow1_f), GTK_SHADOW_IN);
-
-	tFunctionCategories = gtk_tree_view_new ();
-	gtk_widget_show (tFunctionCategories);
-	gtk_container_add (GTK_CONTAINER (scrolledwindow1_f), tFunctionCategories);
-
-	scrolledwindow2_f = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_show (scrolledwindow2_f);
-	gtk_box_pack_start (GTK_BOX (hbox1_f), scrolledwindow2_f, TRUE, TRUE, 0);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow2_f), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow2_f), GTK_SHADOW_IN);
-
-	tFunctions = gtk_tree_view_new ();
-	gtk_widget_show (tFunctions);
-	gtk_container_add (GTK_CONTAINER (scrolledwindow2_f), tFunctions);
-
+	
 	tFunctions_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tFunctions), GTK_TREE_MODEL(tFunctions_store));
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctions));
@@ -668,7 +644,7 @@ create_wFunctions (void) {
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(tFunctions_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(tFunctions_store), 0, GTK_SORT_ASCENDING);
 
-	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(tFunctions), TRUE);
+
 
 	tFunctionCategories_store = gtk_list_store_new(1, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tFunctionCategories), GTK_TREE_MODEL(tFunctionCategories_store));
@@ -682,92 +658,28 @@ create_wFunctions (void) {
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(tFunctionCategories_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(tFunctionCategories_store), 0, GTK_SORT_ASCENDING);
 
-	vbuttonbox1_f = gtk_vbutton_box_new ();
-	gtk_widget_show (vbuttonbox1_f);
-	gtk_box_pack_start (GTK_BOX (hbox1_f), vbuttonbox1_f, FALSE, TRUE, 0);
-	gtk_button_box_set_layout (GTK_BUTTON_BOX (vbuttonbox1_f), GTK_BUTTONBOX_START);
-	gtk_box_set_spacing (GTK_BOX (vbuttonbox1_f), 5);
 
-	bNewFunction = gtk_button_new_from_stock ("gtk-new");
-	gtk_widget_show (bNewFunction);
-	gtk_container_add (GTK_CONTAINER (vbuttonbox1_f), bNewFunction);
-	GTK_WIDGET_SET_FLAGS (bNewFunction, GTK_CAN_DEFAULT);
 
-	bEditFunction = gtk_button_new ();
-	gtk_widget_show (bEditFunction);
-	gtk_container_add (GTK_CONTAINER (vbuttonbox1_f), bEditFunction);
-	GTK_WIDGET_SET_FLAGS (bEditFunction, GTK_CAN_DEFAULT);
-
-	alignment2_f = gtk_alignment_new (0.5, 0.5, 0, 0);
-	gtk_widget_show (alignment2_f);
-	gtk_container_add (GTK_CONTAINER (bEditFunction), alignment2_f);
-
-	hbox3_f = gtk_hbox_new (FALSE, 2);
-	gtk_widget_show (hbox3_f);
-	gtk_container_add (GTK_CONTAINER (alignment2_f), hbox3_f);
-
-	image2_f = gtk_image_new_from_stock ("gtk-preferences", GTK_ICON_SIZE_BUTTON);
-	gtk_widget_show (image2_f);
-	gtk_box_pack_start (GTK_BOX (hbox3_f), image2_f, FALSE, FALSE, 0);
-
-	label3_f = gtk_label_new_with_mnemonic (_("_Edit"));
-	gtk_widget_show (label3_f);
-	gtk_box_pack_start (GTK_BOX (hbox3_f), label3_f, FALSE, FALSE, 0);
-	gtk_label_set_justify (GTK_LABEL (label3_f), GTK_JUSTIFY_LEFT);
-
-	bInsertFunction = gtk_button_new ();
-	gtk_widget_show (bInsertFunction);
-	gtk_container_add (GTK_CONTAINER (vbuttonbox1_f), bInsertFunction);
-	GTK_WIDGET_SET_FLAGS (bInsertFunction, GTK_CAN_DEFAULT);
-
-	alignment1_f = gtk_alignment_new (0.5, 0.5, 0, 0);
-	gtk_widget_show (alignment1_f);
-	gtk_container_add (GTK_CONTAINER (bInsertFunction), alignment1_f);
-
-	hbox2_f = gtk_hbox_new (FALSE, 2);
-	gtk_widget_show (hbox2_f);
-	gtk_container_add (GTK_CONTAINER (alignment1_f), hbox2_f);
-
-	image1_f = gtk_image_new_from_stock ("gtk-go-forward", GTK_ICON_SIZE_BUTTON);
-	gtk_widget_show (image1_f);
-	gtk_box_pack_start (GTK_BOX (hbox2_f), image1_f, FALSE, FALSE, 0);
-
-	label2_f = gtk_label_new_with_mnemonic (_("_Insert"));
-	gtk_widget_show (label2_f);
-	gtk_box_pack_start (GTK_BOX (hbox2_f), label2_f, FALSE, FALSE, 0);
-	gtk_label_set_justify (GTK_LABEL (label2_f), GTK_JUSTIFY_LEFT);
-
-	bDeleteFunction = gtk_button_new_from_stock ("gtk-delete");
-	gtk_widget_show (bDeleteFunction);
-	gtk_container_add (GTK_CONTAINER (vbuttonbox1_f), bDeleteFunction);
-	GTK_WIDGET_SET_FLAGS (bDeleteFunction, GTK_CAN_DEFAULT);
-
-	frame1_f = gtk_frame_new (NULL);
-	gtk_widget_show (frame1_f);
-	gtk_box_pack_start (GTK_BOX (vbox1_f), frame1_f, FALSE, TRUE, 0);
-	gtk_widget_set_size_request (frame1_f, 10, 150);
-
-	lFunctionDescription = gtk_label_new (_("no description"));
-	gtk_widget_show (lFunctionDescription);
-	gtk_container_add (GTK_CONTAINER (frame1_f), lFunctionDescription);
-	gtk_label_set_justify (GTK_LABEL (lFunctionDescription), GTK_JUSTIFY_LEFT);
-	gtk_label_set_line_wrap (GTK_LABEL (lFunctionDescription), TRUE);
-	gtk_misc_set_alignment (GTK_MISC (lFunctionDescription), 0, 0);
-	gtk_misc_set_padding (GTK_MISC (lFunctionDescription), 5, 5);
-
-	label1_f = gtk_label_new (_("Description"));
-	gtk_widget_show (label1_f);
-	gtk_frame_set_label_widget (GTK_FRAME (frame1_f), label1_f);
-	gtk_label_set_justify (GTK_LABEL (label1_f), GTK_JUSTIFY_LEFT);
-
+	vbuttonbox1_f	= glade_xml_get_widget (glade_xml, "vbuttonbox1");
+	bNewFunction	= glade_xml_get_widget (glade_xml, "bNewFunction");
+	bEditFunction	= glade_xml_get_widget (glade_xml, "bEditFunction");
+	alignment2_f	= glade_xml_get_widget (glade_xml, "alignment2");
+	hbox3_f		= glade_xml_get_widget (glade_xml, "hbox3");
+	image2_f	= glade_xml_get_widget (glade_xml, "image2");
+	label3_f	= glade_xml_get_widget (glade_xml, "label3");
+	bInsertFunction	= glade_xml_get_widget (glade_xml, "bInsertFunction");
+	alignment1_f	= glade_xml_get_widget (glade_xml, "alignment1");
+	hbox2_f		= glade_xml_get_widget (glade_xml, "hbox2");
+	image1_f	= glade_xml_get_widget (glade_xml, "image1");
+	label2_f	= glade_xml_get_widget (glade_xml, "label2");
+	bDeleteFunction	= glade_xml_get_widget (glade_xml, "bDeleteFunction");
+	frame1_f	= glade_xml_get_widget (glade_xml, "frame1");
+	lFunctionDescription = glade_xml_get_widget (glade_xml, "lFunctionDescription");
+	label1_f	= glade_xml_get_widget (glade_xml, "label1");
 	dialog_action_area1_f = GTK_DIALOG (wFunctions)->action_area;
-	gtk_widget_show (dialog_action_area1_f);
-	gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area1_f), GTK_BUTTONBOX_END);
+	bCloseFunctions	= glade_xml_get_widget (glade_xml, "bCloseFunctions");
 
-	bCloseFunctions = gtk_button_new_from_stock ("gtk-close");
-	gtk_widget_show (bCloseFunctions);
-	gtk_dialog_add_action_widget (GTK_DIALOG (wFunctions), bCloseFunctions, GTK_RESPONSE_CLOSE);
-	GTK_WIDGET_SET_FLAGS (bCloseFunctions, GTK_CAN_DEFAULT);
+
 
 	g_signal_connect ((gpointer) wFunctions, "delete_event",
 	                  G_CALLBACK (on_wFunctions_delete_event),
@@ -791,7 +703,11 @@ create_wFunctions (void) {
 	                  G_CALLBACK (on_bCloseFunctions_clicked),
 	                  NULL);
 
+
+
 	update_functions_tree(wFunctions);
+
+
 
 	return wFunctions;
 }

@@ -1,3 +1,10 @@
+2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
+
+	* data/qalculate.glade,
+	* src/callbacks.cc,
+	* src/interface.cc: moving the menus to a (hidden) menubar to
+	solve a warning regarding an accelerator group
+
 2003-08-08  Niklas Knutsson  <nq@altern.org>
 
 	* Move generated menus one step up
