@@ -1,3 +1,8 @@
+2004-11-26 Niklas Knutsson  <nq@altern.org>
+
+	* Fix "Convert result" button
+	* Use singular instead of abbreviated name for completion
+
 2004-11-21 Niklas Knutsson  <nq@altern.org>
 	
 	* Fix draw unit

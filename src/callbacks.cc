@@ -2371,7 +2371,7 @@ void update_completion() {
 	string str;
 	for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
 		if(CALCULATOR->functions[i]->isActive()) {
-			str = CALCULATOR->functions[i]->preferredInputName(true, false, false, false, &can_display_unicode_string_function, (void*) expression).name;
+			str = CALCULATOR->functions[i]->preferredInputName(false, false, false, false, &can_display_unicode_string_function, (void*) expression).name;
 			str += "()";
 			gtk_list_store_append(completion_store, &iter);
 			gtk_list_store_set(completion_store, &iter, 0, str.c_str(), 1, CALCULATOR->functions[i]->title().c_str(), -1);
@@ -2380,13 +2380,13 @@ void update_completion() {
 	for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
 		if(CALCULATOR->variables[i]->isActive()) {
 			gtk_list_store_append(completion_store, &iter);
-			gtk_list_store_set(completion_store, &iter, 0, CALCULATOR->variables[i]->preferredInputName(true, false, false, false, &can_display_unicode_string_function, (void*) expression).name.c_str(), 1, CALCULATOR->variables[i]->title().c_str(), -1);
+			gtk_list_store_set(completion_store, &iter, 0, CALCULATOR->variables[i]->preferredInputName(false, false, false, false, &can_display_unicode_string_function, (void*) expression).name.c_str(), 1, CALCULATOR->variables[i]->title().c_str(), -1);
 		}
 	}
 	for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
 		if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT) {
 			gtk_list_store_append(completion_store, &iter);
-			gtk_list_store_set(completion_store, &iter, 0, CALCULATOR->units[i]->preferredInputName(true, false, false, false, &can_display_unicode_string_function, (void*) expression).name.c_str(), 1, CALCULATOR->units[i]->title().c_str(), -1);
+			gtk_list_store_set(completion_store, &iter, 0, CALCULATOR->units[i]->preferredInputName(false, false, false, false, &can_display_unicode_string_function, (void*) expression).name.c_str(), 1, CALCULATOR->units[i]->title().c_str(), -1);
 		}
 	}
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(completion_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
@@ -9190,7 +9190,7 @@ void on_units_button_insert_clicked(GtkButton *button, gpointer user_data) {
 void on_units_button_convert_to_clicked(GtkButton *button, gpointer user_data) {
 	Unit *u = get_selected_unit();
 	if(u) {
-		CALCULATOR->convert(*mstruct, u, evalops);
+		mstruct->set(CALCULATOR->convert(*mstruct, u, evalops));
 		result_action_executed();
 		focus_keeping_selection();
 	}
