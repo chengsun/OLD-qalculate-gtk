@@ -764,7 +764,7 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 	max_argc = max_argc_;	
 }
 
-Argument::Argument(string name_, bool does_test) {
+Argument::Argument(string name_, bool does_test, bool does_error) {
 	sname = name_;
 	remove_blank_ends(sname);
 	scondition = "";
@@ -772,6 +772,7 @@ Argument::Argument(string name_, bool does_test) {
 	b_test = does_test;
 	b_matrix = false;
 	b_text = false;
+	b_error = does_error;
 }
 Argument::Argument(const Argument *arg) {set(arg);}
 Argument::~Argument() {}
@@ -811,18 +812,22 @@ bool Argument::test(const Manager *value, int index, Function *f) const {
 		return true;
 	}
 	if(!b_zero && value->isZero()) {
-		if(sname.empty()) {
-			CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
-		} else {
-			CALCULATOR->error(true, _("Argument %s, %s, in %s() must be %s."), i2s(index).c_str(), sname.c_str(), f->name().c_str(), printlong().c_str(), NULL);
+		if(b_error) {
+			if(sname.empty()) {
+				CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
+			} else {
+				CALCULATOR->error(true, _("Argument %s, %s, in %s() must be %s."), i2s(index).c_str(), sname.c_str(), f->name().c_str(), printlong().c_str(), NULL);
+			}
 		}
 		return false;
 	}
 	if(!(b_matrix && value->isMatrix()) && !subtest(value)) {
-		if(sname.empty()) {
-			CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
-		} else {
-			CALCULATOR->error(true, _("Argument %s, %s, in %s() must be %s."), i2s(index).c_str(), sname.c_str(), f->name().c_str(), printlong().c_str(), NULL);
+		if(b_error) {
+			if(sname.empty()) {
+				CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
+			} else {
+				CALCULATOR->error(true, _("Argument %s, %s, in %s() must be %s."), i2s(index).c_str(), sname.c_str(), f->name().c_str(), printlong().c_str(), NULL);
+			}
 		}
 		return false;
 	}
@@ -891,6 +896,12 @@ bool Argument::tests() const {
 void Argument::setTests(bool does_test) {
 	b_test = does_test;
 }
+bool Argument::alerts() const {
+	return b_error;
+}
+void Argument::setAlerts(bool does_error) {
+	b_error = does_error;
+}
 bool Argument::suggestsQuotes() const {return false;}
 int Argument::type() const {
 	return ARGUMENT_TYPE_FREE;
@@ -898,7 +909,7 @@ int Argument::type() const {
 bool Argument::matrixAllowed() const {return b_matrix;}
 void Argument::setMatrixAllowed(bool allow_matrix) {b_matrix = allow_matrix;}
 
-FractionArgument::FractionArgument(string name_, ArgumentMinMaxPreDefinition minmax, bool does_test) : Argument(name_, does_test) {
+FractionArgument::FractionArgument(string name_, ArgumentMinMaxPreDefinition minmax, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
 	fmin = NULL;
 	fmax = NULL;
 	b_incl_min = true;
@@ -1055,7 +1066,7 @@ string FractionArgument::subprintlong() const {
 	return str;
 }
 
-IntegerArgument::IntegerArgument(string name_, ArgumentMinMaxPreDefinition minmax, bool does_test) : Argument(name_, does_test) {
+IntegerArgument::IntegerArgument(string name_, ArgumentMinMaxPreDefinition minmax, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
 	imin = NULL;
 	imax = NULL;
 	switch(minmax) {
@@ -1186,7 +1197,7 @@ string IntegerArgument::subprintlong() const {
 	return str;
 }
 
-GiacArgument::GiacArgument(string name_, bool does_test) : Argument(name_, does_test) {}
+GiacArgument::GiacArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
 GiacArgument::GiacArgument(const GiacArgument *arg) {set(arg);}
 GiacArgument::~GiacArgument() {}
 int GiacArgument::type() const {return ARGUMENT_TYPE_GIAC;}
@@ -1200,7 +1211,7 @@ Manager *GiacArgument::evaluate(const string &str) const {
 	return mngr;
 }
 
-TextArgument::TextArgument(string name_, bool does_test) : Argument(name_, does_test) {b_text = true;}
+TextArgument::TextArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 TextArgument::TextArgument(const TextArgument *arg) {set(arg); b_text = true;}
 TextArgument::~TextArgument() {}
 bool TextArgument::subtest(const Manager *value) const {return value->isText();}
@@ -1210,7 +1221,7 @@ string TextArgument::print() const {return _("text");}
 string TextArgument::subprintlong() const {return _("a text string");}
 bool TextArgument::suggestsQuotes() const {return false;}
 
-DateArgument::DateArgument(string name_, bool does_test) : Argument(name_, does_test) { b_text = true;}
+DateArgument::DateArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) { b_text = true;}
 DateArgument::DateArgument(const DateArgument *arg) {set(arg); b_text = true;}
 DateArgument::~DateArgument() {}
 bool DateArgument::subtest(const Manager *value) const {
@@ -1222,7 +1233,7 @@ Argument *DateArgument::copy() const {return new DateArgument(this);}
 string DateArgument::print() const {return _("date");}
 string DateArgument::subprintlong() const {return _("a date");}
 
-VectorArgument::VectorArgument(string name_, bool does_test, bool allow_matrix) : Argument(name_, does_test) {
+VectorArgument::VectorArgument(string name_, bool does_test, bool allow_matrix, bool does_error) : Argument(name_, does_test, does_error) {
 	setMatrixAllowed(allow_matrix);
 }
 VectorArgument::VectorArgument(const VectorArgument *arg) {set(arg);}
@@ -1233,7 +1244,7 @@ Argument *VectorArgument::copy() const {return new VectorArgument(this);}
 string VectorArgument::print() const {return _("vector");}
 string VectorArgument::subprintlong() const {return _("a vector");}
 
-MatrixArgument::MatrixArgument(string name_, bool does_test) : Argument(name_, does_test) {}
+MatrixArgument::MatrixArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
 MatrixArgument::MatrixArgument(const MatrixArgument *arg) {set(arg);}
 MatrixArgument::~MatrixArgument() {}
 bool MatrixArgument::subtest(const Manager *value) const {return value->isMatrix();}
@@ -1242,7 +1253,7 @@ Argument *MatrixArgument::copy() const {return new MatrixArgument(this);}
 string MatrixArgument::print() const {return _("matrix");}
 string MatrixArgument::subprintlong() const {return _("a matrix");}
 
-ExpressionItemArgument::ExpressionItemArgument(string name_, bool does_test) : Argument(name_, does_test) {b_text = true;}
+ExpressionItemArgument::ExpressionItemArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 ExpressionItemArgument::ExpressionItemArgument(const ExpressionItemArgument *arg) {set(arg); b_text = true;}
 ExpressionItemArgument::~ExpressionItemArgument() {}
 bool ExpressionItemArgument::subtest(const Manager *value) const {return value->isText() && CALCULATOR->getExpressionItem(value->text());}
@@ -1251,7 +1262,7 @@ Argument *ExpressionItemArgument::copy() const {return new ExpressionItemArgumen
 string ExpressionItemArgument::print() const {return _("object");}
 string ExpressionItemArgument::subprintlong() const {return _("a valid function, unit or variable name");}
 
-FunctionArgument::FunctionArgument(string name_, bool does_test) : Argument(name_, does_test) {b_text = true;}
+FunctionArgument::FunctionArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 FunctionArgument::FunctionArgument(const FunctionArgument *arg) {set(arg); b_text = true;}
 FunctionArgument::~FunctionArgument() {}
 bool FunctionArgument::subtest(const Manager *value) const {return value->isText() && CALCULATOR->getFunction(value->text());}
@@ -1260,7 +1271,7 @@ Argument *FunctionArgument::copy() const {return new FunctionArgument(this);}
 string FunctionArgument::print() const {return _("function");}
 string FunctionArgument::subprintlong() const {return _("a valid function name");}
 
-UnitArgument::UnitArgument(string name_, bool does_test) : Argument(name_, does_test) {b_text = true;}
+UnitArgument::UnitArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 UnitArgument::UnitArgument(const UnitArgument *arg) {set(arg); b_text = true;}
 UnitArgument::~UnitArgument() {}
 bool UnitArgument::subtest(const Manager *value) const {return value->isText() && CALCULATOR->getUnit(value->text());}
@@ -1269,7 +1280,7 @@ Argument *UnitArgument::copy() const {return new UnitArgument(this);}
 string UnitArgument::print() const {return _("unit");}
 string UnitArgument::subprintlong() const {return _("a valid unit name");}
 
-VariableArgument::VariableArgument(string name_, bool does_test) : Argument(name_, does_test) {b_text = true;}
+VariableArgument::VariableArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 VariableArgument::VariableArgument(const VariableArgument *arg) {set(arg); b_text = true;}
 VariableArgument::~VariableArgument() {}
 bool VariableArgument::subtest(const Manager *value) const {return value->isText() && CALCULATOR->getVariable(value->text());}
@@ -1278,7 +1289,7 @@ Argument *VariableArgument::copy() const {return new VariableArgument(this);}
 string VariableArgument::print() const {return _("variable");}
 string VariableArgument::subprintlong() const {return _("a valid variable name");}
 
-BooleanArgument::BooleanArgument(string name_, bool does_test) : Argument(name_, does_test) {}
+BooleanArgument::BooleanArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
 BooleanArgument::BooleanArgument(const BooleanArgument *arg) {set(arg);}
 BooleanArgument::~BooleanArgument() {}
 bool BooleanArgument::subtest(const Manager *value) const {return value->isZero() || value->isOne();}
@@ -1287,7 +1298,7 @@ Argument *BooleanArgument::copy() const {return new BooleanArgument(this);}
 string BooleanArgument::print() const {return _("boolean");}
 string BooleanArgument::subprintlong() const {return _("a boolean (0 or 1)");}
 
-AngleArgument::AngleArgument(string name_, bool does_test) : Argument(name_, does_test) {}
+AngleArgument::AngleArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
 AngleArgument::AngleArgument(const AngleArgument *arg) {set(arg);}
 AngleArgument::~AngleArgument() {}
 bool AngleArgument::subtest(const Manager *value) const {

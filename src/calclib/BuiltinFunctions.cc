@@ -871,7 +871,7 @@ void DifferentiateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->differentiate(vargs[1]->text());
 }
 FactorialFunction::FactorialFunction() : Function("Arithmetics", "factorial", 1, "Factorial") {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, false));
 }
 void FactorialFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->fraction()->isZero()) mngr->set(1, 1);
@@ -882,7 +882,7 @@ void FactorialFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 AbsFunction::AbsFunction() : Function("Arithmetics", "abs", 1, "Absolute Value") {
-	setArgumentDefinition(1, new FractionArgument());
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 void AbsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -890,7 +890,7 @@ void AbsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(mngr->fraction()->isPrecise());
 }
 CeilFunction::CeilFunction() : Function("Arithmetics", "ceil", 1, "Round upwards") {
-	setArgumentDefinition(1, new FractionArgument());
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 void CeilFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -898,7 +898,7 @@ void CeilFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(mngr->fraction()->isPrecise());
 }
 FloorFunction::FloorFunction() : Function("Arithmetics", "floor", 1, "Round downwards") {
-	setArgumentDefinition(1, new FractionArgument());
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 void FloorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -906,7 +906,7 @@ void FloorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(mngr->fraction()->isPrecise());
 }
 TruncFunction::TruncFunction() : Function("Arithmetics", "trunc", 1, "Round towards zero") {
-	setArgumentDefinition(1, new FractionArgument());
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 void TruncFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -914,7 +914,7 @@ void TruncFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(mngr->fraction()->isPrecise());
 }
 RoundFunction::RoundFunction() : Function("Arithmetics", "round", 1, "Round") {
-	setArgumentDefinition(1, new FractionArgument());
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 void RoundFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -922,7 +922,7 @@ void RoundFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(mngr->fraction()->isPrecise());
 }
 FracFunction::FracFunction() : Function("Arithmetics", "frac", 1, "Extract fractional part") {
-	setArgumentDefinition(1, new FractionArgument());
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 void FracFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -930,7 +930,7 @@ void FracFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(mngr->fraction()->isPrecise());
 }
 IntFunction::IntFunction() : Function("Arithmetics", "int", 1, "Extract integer part") {
-	setArgumentDefinition(1, new FractionArgument());
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 void IntFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -938,8 +938,8 @@ void IntFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(mngr->fraction()->isPrecise());
 }
 RemFunction::RemFunction() : Function("Arithmetics", "rem", 2, "Reminder (rem)") {
-	setArgumentDefinition(1, new FractionArgument());
-	setArgumentDefinition(2, new FractionArgument("", ARGUMENT_MIN_MAX_NONZERO));
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	setArgumentDefinition(2, new FractionArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false));
 }
 void RemFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);	
@@ -948,8 +948,8 @@ void RemFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->setPrecise(mngr->fraction()->isPrecise());
 }
 ModFunction::ModFunction() : Function("Arithmetics", "mod", 2, "Reminder (mod)") {
-	setArgumentDefinition(1, new FractionArgument());
-	setArgumentDefinition(2, new FractionArgument("", ARGUMENT_MIN_MAX_NONZERO));
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	setArgumentDefinition(2, new FractionArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false));
 }
 void ModFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);	
@@ -1061,49 +1061,37 @@ void AtanhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(atanh)
 }
 LogFunction::LogFunction() : Function("Exponents and Logarithms", "ln", 1, "Natural Logarithm") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, false));
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, false));
 }
 void LogFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		if(!mngr->fraction()->log()) {
-			mngr->set(this, vargs[0], NULL);
-		} else {
-			mngr->setPrecise(mngr->fraction()->isPrecise());
-		}		
-	} else {
+	mngr->set(vargs[0]);
+	if(!mngr->fraction()->log()) {
 		mngr->set(this, vargs[0], NULL);
-	}
+	} else {
+		mngr->setPrecise(mngr->fraction()->isPrecise());
+	}		
 }
 Log10Function::Log10Function() : Function("Exponents and Logarithms", "log10", 1, "Base-10 Logarithm") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, false));
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, false));
 }
 void Log10Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		if(!mngr->fraction()->log10()) {
-			mngr->set(this, vargs[0], NULL);
-		} else {
-			mngr->setPrecise(mngr->fraction()->isPrecise());
-		}		
-	} else {
+	mngr->set(vargs[0]);
+	if(!mngr->fraction()->log10()) {
 		mngr->set(this, vargs[0], NULL);
-	}
+	} else {
+		mngr->setPrecise(mngr->fraction()->isPrecise());
+	}		
 }
 Log2Function::Log2Function() : Function("Exponents and Logarithms", "log2", 1, "Base-2 Logarithm") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, false));
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, false));
 }
 void Log2Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	if(vargs[0]->isFraction()) {
-		mngr->set(vargs[0]);
-		if(!mngr->fraction()->log2()) {
-			mngr->set(this, vargs[0], NULL);
-		} else {
-			mngr->setPrecise(mngr->fraction()->isPrecise());
-		}		
-	} else {
+	mngr->set(vargs[0]);
+	if(!mngr->fraction()->log2()) {
 		mngr->set(this, vargs[0], NULL);
-	}
+	} else {
+		mngr->setPrecise(mngr->fraction()->isPrecise());
+	}		
 }
 ExpFunction::ExpFunction() : Function("Exponents and Logarithms", "exp", 1, "e raised to the power X") {}
 void ExpFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
@@ -1473,9 +1461,15 @@ GiacFunction::GiacFunction() : Function("CAS", "giac", 1, "Giac expression") {
 	setArgumentDefinition(1, new TextArgument());
 }
 void GiacFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	giac::gen v1(vargs[0]->text());
-	mngr->set(simplify(v1));
-	mngr->clean();
+	try {
+		giac::gen v1(vargs[0]->text());
+		mngr->set(simplify(v1));
+		mngr->clean();
+	} catch(std::runtime_error & err){
+		CALCULATOR->error(true, "Giac error: %s.", err.what(), NULL);
+		mngr->set(this, vargs[0], NULL);
+		return;
+	}
 }
 SolveFunction::SolveFunction() : Function("CAS", "solve", 1, "Solve equation", "", 2) {
 	setArgumentDefinition(1, new GiacArgument());
@@ -1491,20 +1485,26 @@ void SolveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		return;
 	}
 	giac::identificateur id(vargs[1]->text());
-	giac::vecteur v = giac::solve(v1, id);
-	if(v.size() < 1) {
-		CALCULATOR->error(false, _("No solution could be found."), NULL);
-		mngr->set(this, vargs[0], vargs[1], NULL);
-	} else {
-		v[0] = simplify(v[0]);
-		mngr->set(v[0]);
-		for(unsigned int i = 1; i < v.size(); i++) {
-			v[1] = simplify(v[1]);
-			Manager alt_mngr(v[1]);
-			mngr->addAlternative(&alt_mngr);
+	try {
+		giac::vecteur v = giac::solve(v1, id);
+		if(v.size() < 1) {
+			CALCULATOR->error(false, _("No solution could be found."), NULL);
+			mngr->set(this, vargs[0], vargs[1], NULL);
+		} else {
+			v[0] = simplify(v[0]);
+			mngr->set(v[0]);
+			for(unsigned int i = 1; i < v.size(); i++) {
+				v[1] = simplify(v[1]);
+				Manager alt_mngr(v[1]);
+				mngr->addAlternative(&alt_mngr);
+			}
 		}
+		mngr->clean();
+	} catch(std::runtime_error & err){
+		CALCULATOR->error(true, "Giac error: %s.", err.what(), NULL);
+		mngr->set(this, vargs[0], vargs[1], NULL);
+		return;
 	}
-	mngr->clean();
 }
 DeriveFunction::DeriveFunction() : Function("CAS", "diff", 1, "Derive", "", 3) {
 	setArgumentDefinition(1, new GiacArgument());
@@ -1518,16 +1518,22 @@ void DeriveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	giac::gen v1 = vargs[0]->toGiac(&failed);
 	if(failed) {
 		CALCULATOR->error(true, _("Conversion to Giac failed."), NULL);
-		mngr->set(this, vargs[0], vargs[1], NULL);
+		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
 		return;
 	}
 	giac::identificateur id(vargs[1]->text());
 	giac::gen vars = id;
 	giac::gen nderiv = vargs[2]->toGiac();
-	giac::gen ans = giac::derive(v1, vars, nderiv);
-	ans = simplify(ans);
-	mngr->set(ans);
-	mngr->clean();
+	try {
+		giac::gen ans = giac::derive(v1, vars, nderiv);
+		ans = simplify(ans);
+		mngr->set(ans);
+		mngr->clean();
+	} catch(std::runtime_error & err){
+		CALCULATOR->error(true, "Giac error: %s.", err.what(), NULL);
+		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
+		return;
+	}
 }
 IntegrateFunction::IntegrateFunction() : Function("CAS", "integrate", 1, "Integrate", "", 2) {
 	setArgumentDefinition(1, new GiacArgument());
@@ -1543,9 +1549,15 @@ void IntegrateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		return;
 	}
 	giac::identificateur id(vargs[1]->text());
-	giac::gen ans = giac::integrate(v1, id);
-	ans = simplify(ans);
-	mngr->set(ans);
-	mngr->clean();
+	try {
+    		giac::gen ans = giac::integrate(v1, id);
+		ans = simplify(ans);
+		mngr->set(ans);
+		mngr->clean();
+	} catch(std::runtime_error & err){
+		CALCULATOR->error(true, "Giac error: %s.", err.what(), NULL);
+		mngr->set(this, vargs[0], vargs[1], NULL);
+		return;
+	}
 }
 #endif

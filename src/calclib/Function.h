@@ -110,13 +110,13 @@ class Argument {
   protected:
   
   	string sname, scondition;
-	bool b_zero, b_test, b_matrix, b_text;
+	bool b_zero, b_test, b_matrix, b_text, b_error;
 	virtual bool subtest(const Manager *value) const;
 	virtual string subprintlong() const;
 	
   public:
   
-	Argument(string name_ = "", bool does_test = true);	
+	Argument(string name_ = "", bool does_test = true, bool does_error = true);	
 	Argument(const Argument *arg);
 	virtual ~Argument();
 
@@ -136,7 +136,10 @@ class Argument {
 	string getCustomCondition() const;
 	
 	bool tests() const;
-	void setTests(bool does_test);
+	void setTests(bool does_error);
+	
+	bool alerts() const;
+	void setAlerts(bool does_error);
 
 	bool zeroForbidden() const;
 	void setZeroForbidden(bool forbid_zero);
@@ -164,7 +167,7 @@ class FractionArgument : public Argument {
 
   public:
   
-  	FractionArgument(string name_ = "", ArgumentMinMaxPreDefinition minmax = ARGUMENT_MIN_MAX_NONE, bool does_test = true);
+  	FractionArgument(string name_ = "", ArgumentMinMaxPreDefinition minmax = ARGUMENT_MIN_MAX_NONE, bool does_test = true, bool does_error = true);
 	FractionArgument(const FractionArgument *arg);
 	virtual ~FractionArgument();
 	
@@ -199,7 +202,7 @@ class IntegerArgument : public Argument {
 
   public:
   
-  	IntegerArgument(string name_ = "", ArgumentMinMaxPreDefinition minmax = ARGUMENT_MIN_MAX_NONE, bool does_test = true);
+  	IntegerArgument(string name_ = "", ArgumentMinMaxPreDefinition minmax = ARGUMENT_MIN_MAX_NONE, bool does_test = true, bool does_error = true);
 	IntegerArgument(const IntegerArgument *arg);
 	virtual ~IntegerArgument();
 
@@ -226,7 +229,7 @@ class TextArgument : public Argument {
 
   public:
   
-  	TextArgument(string name_ = "", bool does_test = true);
+  	TextArgument(string name_ = "", bool does_test = true, bool does_error = true);
 	TextArgument(const TextArgument *arg);
 	virtual ~TextArgument();
 	virtual int type() const;
@@ -242,7 +245,7 @@ class GiacArgument : public Argument {
 
   public:
   
-  	GiacArgument(string name_ = "", bool does_test = true);
+  	GiacArgument(string name_ = "", bool does_test = true, bool does_error = true);
 	GiacArgument(const GiacArgument *arg);
 	virtual ~GiacArgument();
 	virtual int type() const;
@@ -258,7 +261,7 @@ class DateArgument : public Argument {
 
   public:
   
-  	DateArgument(string name_ = "", bool does_test = true);
+  	DateArgument(string name_ = "", bool does_test = true, bool does_error = true);
 	DateArgument(const DateArgument *arg);
 	virtual ~DateArgument();
 	virtual int type() const;
@@ -274,7 +277,7 @@ class VectorArgument : public Argument {
 
   public:
   
-  	VectorArgument(string name_ = "", bool does_test = true, bool allow_matrix = false);
+  	VectorArgument(string name_ = "", bool does_test = true, bool allow_matrix = false, bool does_error = true);
 	VectorArgument(const VectorArgument *arg);
 	virtual ~VectorArgument();
 	virtual int type() const;
@@ -290,7 +293,7 @@ class MatrixArgument : public Argument {
 
   public:
   
-  	MatrixArgument(string name_ = "", bool does_test = true);
+  	MatrixArgument(string name_ = "", bool does_test = true, bool does_error = true);
 	MatrixArgument(const MatrixArgument *arg);
 	virtual ~MatrixArgument();
 	virtual int type() const;
@@ -306,7 +309,7 @@ class ExpressionItemArgument : public Argument {
 
   public:
   
-  	ExpressionItemArgument(string name_ = "", bool does_test = true);
+  	ExpressionItemArgument(string name_ = "", bool does_test = true, bool does_error = true);
 	ExpressionItemArgument(const ExpressionItemArgument *arg);
 	virtual ~ExpressionItemArgument();
 	virtual int type() const;
@@ -322,7 +325,7 @@ class FunctionArgument : public Argument {
 
   public:
   
-  	FunctionArgument(string name_ = "", bool does_test = true);
+  	FunctionArgument(string name_ = "", bool does_test = true, bool does_error = true);
 	FunctionArgument(const FunctionArgument *arg);
 	virtual ~FunctionArgument();
 	virtual int type() const;
@@ -338,7 +341,7 @@ class BooleanArgument : public Argument {
 
   public:
   
-  	BooleanArgument(string name_ = "", bool does_test = true);
+  	BooleanArgument(string name_ = "", bool does_test = true, bool does_error = true);
 	BooleanArgument(const BooleanArgument *arg);
 	virtual ~BooleanArgument();
 	virtual int type() const;
@@ -354,7 +357,7 @@ class UnitArgument : public Argument {
 
   public:
   
-  	UnitArgument(string name_ = "", bool does_test = true);
+  	UnitArgument(string name_ = "", bool does_test = true, bool does_error = true);
 	UnitArgument(const UnitArgument *arg);
 	virtual ~UnitArgument();
 	virtual int type() const;
@@ -370,7 +373,7 @@ class AngleArgument : public Argument {
 
   public:
   
-  	AngleArgument(string name_ = "", bool does_test = true);
+  	AngleArgument(string name_ = "", bool does_test = true, bool does_error = true);
 	AngleArgument(const AngleArgument *arg);
 	virtual ~AngleArgument();
 	virtual int type() const;
@@ -387,7 +390,7 @@ class VariableArgument : public Argument {
 
   public:
   
-  	VariableArgument(string name_ = "", bool does_test = true);
+  	VariableArgument(string name_ = "", bool does_test = true, bool does_error = true);
 	VariableArgument(const VariableArgument *arg);
 	virtual ~VariableArgument();
 	virtual int type() const;

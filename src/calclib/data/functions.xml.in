@@ -429,6 +429,20 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <_title>Denominator</_title>
       </argument>
     </builtin_function>
+    <function name="neg">
+      <_title>Negate</_title>
+      <expression>-\x</expression>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+    </function>
+    <function name="inv">
+      <_title>Inverse</_title>
+      <expression>\x^-1</expression>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+    </function>    
   </category>
   <category>
     <_title>Trigonometry</_title>

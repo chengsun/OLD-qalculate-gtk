@@ -1,5 +1,7 @@
 2003-10-30  Niklas Knutsson  <nq@altern.org>
 
+	* Giac might actually return -1*1 (we prefer -1)
+	* Catch giac errors
 	* Define tan, asinh, acosh, atanh as sin(x)/cos(x), log(x+sqrt(x^2+1)), ...
 	* Handle pi correctly in trigonometric functions
 	* Delay calculation of inexact values

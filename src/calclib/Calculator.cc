@@ -695,7 +695,6 @@ void Calculator::addBuiltinVariables() {
 	addVariable(new EulerVariable());
 	addVariable(new AperyVariable());	
 	addVariable(new CatalanVariable());
-	addVariable(new PythagorasVariable());
 	addVariable(new GoldenVariable());
 }
 void Calculator::addBuiltinFunctions() {
@@ -2414,6 +2413,9 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "test")) {
 									XML_GET_FALSE_FROM_TEXT(child2, b);
 									arg->setTests(b);
+								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "alert")) {
+									XML_GET_FALSE_FROM_TEXT(child2, b);
+									arg->setAlerts(b);
 								}
 								child2 = child2->next;
 							}	
@@ -3312,6 +3314,9 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 							xmlNewProp(newnode, (xmlChar*) "index", (xmlChar*) i2s(i2).c_str());
 							if(!arg->tests()) {
 								xmlNewTextChild(newnode, NULL, (xmlChar*) "test", (xmlChar*) "false");
+							}
+							if(!arg->alerts()) {
+								xmlNewTextChild(newnode, NULL, (xmlChar*) "alert", (xmlChar*) "false");
 							}
 							if(arg->zeroForbidden()) {
 								xmlNewTextChild(newnode, NULL, (xmlChar*) "zero_forbidden", (xmlChar*) "true");

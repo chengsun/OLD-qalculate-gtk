@@ -3198,6 +3198,8 @@ giac::gen Manager::toGiac(bool *failed) const {
 			else if(function()->name() == "ceil") ufp = &giac::at_ceil;
 			else if(function()->name() == "round") ufp = &giac::at_round;
 			else if(function()->name() == "gcd") ufp = &giac::at_gcd;
+			else if(function()->name() == "inv") ufp = &giac::at_inv;
+			else if(function()->name() == "neg") ufp = &giac::at_neg;
 			else if(function()->name() == "min") ufp = &giac::at_min;
 			else if(function()->name() == "max") ufp = &giac::at_max;
 			else if(function()->name() == "sin") ufp = &giac::at_sin;
@@ -3464,9 +3466,14 @@ void Manager::set(const giac::gen &giac_gen, bool in_retry) {
 				if(giac_gen._SYMBptr->feuille.type == giac::_VECT && !ckmatrix(giac_gen._SYMBptr->feuille)) {
 					f = CALCULATOR->getFunction("neg");
 				} else {
-					c_type = MULTIPLICATION_MANAGER;
-					push_back(new Manager(-1, 1));
-					push_back(new Manager(giac_gen._SYMBptr->feuille));
+					if(giac::is_one(giac_gen._SYMBptr->feuille)) {
+						set(-1, 1);
+					} else {
+						c_type = MULTIPLICATION_MANAGER;
+						push_back(new Manager(-1, 1));
+						push_back(new Manager(giac_gen._SYMBptr->feuille));
+						sort();
+					}
 				}
 			} else if(giac_gen._SYMBptr->sommet == giac::at_inv) {
 				if(giac_gen._SYMBptr->feuille.type == giac::_VECT && !ckmatrix(giac_gen._SYMBptr->feuille)) {
@@ -3674,7 +3681,13 @@ void Manager::simplify() {
 	set(giac::simplify(toGiac()));
 }
 void Manager::factor() {
-	set(giac::factor(toGiac()));
+	try {
+		giac::gen giac_gen = toGiac();
+		giac_gen = giac::factor(giac_gen);		
+		set(giac_gen);
+	} catch(std::runtime_error & err){
+		CALCULATOR->error(true, "Giac error: %s.", err.what(), NULL);
+	}
 }
 #endif
 
