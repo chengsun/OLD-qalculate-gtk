@@ -3452,6 +3452,7 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		po2.rpn = false;
 		vector<MathStructure*> mstack;
 		bool b = false;
+		char last_operator = 0;
 		while(true) {
 			i = str.find_first_of(OPERATORS SPACE, i3 + 1);
 			if(i == string::npos) {
@@ -3468,7 +3469,19 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				if(!str2.empty()) {
 					error(true, _("RPN syntax error. Values left at the end of the RPN expression."), NULL);
 				} else if(mstack.size() > 1) {
-					error(false, _("Unused stack values."), NULL);
+					if(last_operator = 0) {
+						error(false, _("Unused stack values."), NULL);
+					} else {
+						while(mstack.size() > 1) {
+							switch(last_operator) {
+								case PLUS_CH: {mstack[mstack.size() - 2]->add_nocopy(mstack.back()); mstack.pop_back(); break;}
+								case MINUS_CH: {mstack[mstack.size() - 2]->subtract_nocopy(mstack.back()); mstack.pop_back(); break;}
+								case MULTIPLICATION_CH: {mstack[mstack.size() - 2]->multiply_nocopy(mstack.back()); mstack.pop_back(); break;}
+								case DIVISION_CH: {mstack[mstack.size() - 2]->divide_nocopy(mstack.back()); mstack.pop_back(); break;}
+								case POWER_CH: {mstack[mstack.size() - 2]->raise_nocopy(mstack.back()); mstack.pop_back(); break;}
+							}
+						}
+					}
 				}
 				mstruct->set_nocopy(*mstack.back());
 				while(!mstack.empty()) {
@@ -3502,6 +3515,7 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						case DIVISION_CH: {mstack[mstack.size() - 2]->divide_nocopy(mstack.back()); mstack.pop_back(); break;}
 						case POWER_CH: {mstack[mstack.size() - 2]->raise_nocopy(mstack.back()); mstack.pop_back(); break;}
 					}
+					last_operator = str[i];
 				}
 			}
 			i3 = i;

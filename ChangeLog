@@ -1,3 +1,7 @@
+2005-01-24 Niklas Knutsson  <nq@altern.org>
+
+	* Use the last operator for leftover stack values
+
 2004-11-30 Niklas Knutsson  <nq@altern.org>
 
 	* Show base (if not decimal, hexadecimal or non-standard) as subscript
