@@ -160,6 +160,7 @@ int main (int argc, char **argv) {
 	//create_pmenu();	
 	create_umenu2();
 	create_pmenu2();			
+	update_completion();
 	
 	if(!calc_arg.empty()) {
 		execute_expression();

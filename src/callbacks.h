@@ -30,6 +30,8 @@ void create_fmenu(void);
 void create_pmenu(GtkWidget *item);
 void create_pmenu2(void);
 
+void update_completion();
+
 void generate_functions_tree_struct();
 void generate_variables_tree_struct();
 void generate_units_tree_struct();
@@ -107,9 +109,14 @@ void import_csv_file(GtkWidget *win = NULL);
 extern "C" {
 #endif
 
+#if GTK_MINOR_VERSION >= 3
+gboolean on_completion_match_selected(GtkEntryCompletion *entrycompletion, GtkTreeModel *model, GtkTreeIter *iter, gpointer user_data);
+gboolean completion_match_func(GtkEntryCompletion *entrycompletion, const gchar *key, GtkTreeIter *iter, gpointer user_data);
+#endif
+
 void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data);
 void on_button_close_clicked(GtkButton *w, gpointer user_data);
-void on_button_history_toggled(GtkToggleButton *w, gpointer user_data);
+void on_button_history_clicked(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_fetch_exchange_rates_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_save_defs_toggled(GtkToggleButton *w, gpointer user_data);
@@ -253,6 +260,9 @@ void on_decimals_dialog_spinbutton_max_value_changed(GtkSpinButton *w, gpointer 
 void on_decimals_dialog_spinbutton_min_value_changed(GtkSpinButton *w, gpointer user_data);
 void on_decimals_dialog_checkbutton_max_toggled(GtkToggleButton *w, gpointer user_data);
 void on_decimals_dialog_checkbutton_min_toggled(GtkToggleButton *w, gpointer user_data);
+
+gboolean on_resultview_button_press_event(GtkWidget *w, GdkEventButton *event, gpointer user_data);
+gboolean on_resultview_popup_menu(GtkWidget *w, gpointer user_data);
 
 gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointer user_data);
 

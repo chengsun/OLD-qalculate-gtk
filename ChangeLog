@@ -1,5 +1,12 @@
+2004-03-11 Niklas Knutsson  <nq@altern.org>
+
+	* Advanced completion in expression
+	* Popup menu for resultview
+
 2004-03-10 Niklas Knutsson  <nq@altern.org>
 	
+	* Lower default precision
+	* Make history button a regular button
 	* Reworked GUI -- menubar, expander, history window...
 	* Release 0.4.2a
 	* Set correct name on separator again

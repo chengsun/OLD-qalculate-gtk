@@ -52,6 +52,8 @@ GtkTreeStore *tUnitCategories_store;
 
 #if GTK_MINOR_VERSION >= 3
 GtkWidget *expander;
+GtkEntryCompletion *completion;
+GtkListStore *completion_store;
 #endif
 
 GtkWidget *tFunctionArguments;
@@ -359,6 +361,8 @@ create_main_window (void)
 #endif
 
 #if GTK_MINOR_VERSION >= 3
+
+/*	Expander	*/
 	gtk_widget_hide(glade_xml_get_widget(main_glade, "buttonbox_bottom"));
 	expander = gtk_expander_new(_("Show buttons"));
 	g_object_ref(glade_xml_get_widget(main_glade, "buttons"));
@@ -368,6 +372,24 @@ create_main_window (void)
 	g_object_unref(glade_xml_get_widget(main_glade, "buttons"));
 	gtk_expander_set_expanded(GTK_EXPANDER(expander), show_buttons);
 	gtk_widget_show(expander);
+	
+/*	Completion	*/	
+	completion = gtk_entry_completion_new();
+	gtk_entry_set_completion(GTK_ENTRY(expression), completion);
+	completion_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(completion_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(completion_store), 0, GTK_SORT_ASCENDING);
+	gtk_entry_completion_set_model(completion, GTK_TREE_MODEL(completion_store));
+	g_object_unref(completion_store);
+	//gtk_entry_completion_set_text_column(completion, 0);
+	GtkCellRenderer *cell = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(completion), cell, FALSE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(completion), cell, "text", 0);	
+	cell = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_end(GTK_CELL_LAYOUT(completion), cell, FALSE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(completion), cell, "text", 1);
+	gtk_entry_completion_set_match_func(completion, &completion_match_func, NULL, NULL);
+	g_signal_connect((gpointer) completion, "match-selected", G_CALLBACK(on_completion_match_selected), NULL);
 #endif
 
 	gtk_widget_show (glade_xml_get_widget (main_glade, "main_window"));
