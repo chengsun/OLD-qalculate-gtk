@@ -581,6 +581,8 @@ Number Number::complexDenominator() const {
 }
 
 void Number::operator = (const Number &o) {set(o);}
+void Number::operator -- (int) {value--;}
+void Number::operator ++ (int) {value++;}
 Number Number::operator - () const {Number o(*this); o.negate(); return o;}
 Number Number::operator * (const Number &o) const {Number o2(*this); o2.multiply(o); return o2;}
 Number Number::operator / (const Number &o) const {Number o2(*this); o2.divide(o); return o2;}
@@ -670,6 +672,9 @@ bool Number::isNonNegative() const {
 bool Number::isPositive() const {
 	return b_pinf || (!isInfinite() && !isComplex() && cln::plusp(cln::realpart(value)));
 }
+bool Number::isNonPositive() const {
+	return b_minf || (!isInfinite() && !isComplex() && !cln::plusp(cln::realpart(value)));
+}
 bool Number::realPartIsNegative() const {
 	return b_minf || (!isInfinite() && cln::minusp(cln::realpart(value)));
 }
@@ -707,33 +712,48 @@ bool Number::equals(const Number &o) const {
 	}
 	return value == o.internalNumber();
 }
-int Number::compare(const Number &o) const {
-	if(b_inf || o.isInfinity()) return -2;
+ComparisonResult Number::compare(const Number &o) const {
+	if(b_inf || o.isInfinity()) return COMPARISON_RESULT_UNKNOWN;
 	if(b_pinf) {
-		if(o.isPlusInfinity()) return 0;
-		else return -1;
+		if(o.isPlusInfinity()) return COMPARISON_RESULT_EQUAL;
+		else return COMPARISON_RESULT_LESS;
 	}
 	if(b_minf) {
-		if(o.isMinusInfinity()) return 0;
-		else return 1;
+		if(o.isMinusInfinity()) return COMPARISON_RESULT_EQUAL;
+		else return COMPARISON_RESULT_GREATER;
 	}
-	if(o.isPlusInfinity()) return 1;
-	if(o.isMinusInfinity()) return -1;
+	if(o.isPlusInfinity()) return COMPARISON_RESULT_GREATER;
+	if(o.isMinusInfinity()) return COMPARISON_RESULT_LESS;
 	if(!isComplex() && !o.isComplex()) {
+		int i;
 		if(isApproximate() || o.isApproximate()) {
-			return cln::compare(REAL_PRECISION_FLOAT_RE(o.internalNumber()), REAL_PRECISION_FLOAT_RE(value));
+			i = cln::compare(REAL_PRECISION_FLOAT_RE(o.internalNumber()), REAL_PRECISION_FLOAT_RE(value));
+			
+		} else {
+			i = cln::compare(cln::realpart(o.internalNumber()), cln::realpart(value));
 		}
-		return cln::compare(cln::realpart(o.internalNumber()), cln::realpart(value));
+		if(i == 0) return COMPARISON_RESULT_EQUAL;
+		else if(i == -1) return COMPARISON_RESULT_LESS;
+		else if(i == 1) return COMPARISON_RESULT_GREATER;
+		return COMPARISON_RESULT_UNKNOWN;
 	} else {
-		if(equals(o)) return 0;
-		return -2;
+		if(equals(o)) return COMPARISON_RESULT_EQUAL;
+		return COMPARISON_RESULT_NOT_EQUAL;
 	}
 }
-int Number::compareImaginaryParts(const Number &o) const {
-	return cln::compare(cln::imagpart(o.internalNumber()), cln::imagpart(value));
+ComparisonResult Number::compareImaginaryParts(const Number &o) const {
+	int i = cln::compare(cln::imagpart(o.internalNumber()), cln::imagpart(value));
+	if(i == 0) return COMPARISON_RESULT_EQUAL;
+	else if(i == -1) return COMPARISON_RESULT_LESS;
+	else if(i == 1) return COMPARISON_RESULT_GREATER;
+	return COMPARISON_RESULT_UNKNOWN;
 }
-int Number::compareRealParts(const Number &o) const {
-	return cln::compare(cln::realpart(o.internalNumber()), cln::realpart(value));
+ComparisonResult Number::compareRealParts(const Number &o) const {
+	int i = cln::compare(cln::realpart(o.internalNumber()), cln::realpart(value));
+	if(i == 0) return COMPARISON_RESULT_EQUAL;
+	else if(i == -1) return COMPARISON_RESULT_LESS;
+	else if(i == 1) return COMPARISON_RESULT_GREATER;
+	return COMPARISON_RESULT_UNKNOWN;
 }
 bool Number::isGreaterThan(const Number &o) const {
 	if(b_minf || b_inf || o.isInfinity() || o.isPlusInfinity()) return false;
@@ -841,13 +861,15 @@ bool Number::multiply(const Number &o) {
 	if(o.isInfinite() && isZero()) return false;
 	if(isInfinite() && o.isZero()) return false;
 	if((isInfinite() && o.isComplex()) || (o.isInfinite() && isComplex())) {
-		setInfinity();
-		return true;
+		//setInfinity();
+		//return true;
+		return false;
 	}
 	if(isInfinity()) return true;
 	if(o.isInfinity()) {
-		setInfinity();
-		return true;
+		//setInfinity();
+		//return true;
+		return false;
 	}
 	if(b_pinf || b_minf) {
 		if(o.isNegative()) {
@@ -878,8 +900,9 @@ bool Number::multiply(const Number &o) {
 bool Number::divide(const Number &o) {
 	if(isInfinite() && o.isInfinite()) return false;
 	if(isInfinite() && o.isZero()) {
-		setInfinity();
-		return true;
+		//setInfinity();
+		//return true;
+		return false;
 	}
 	if(o.isInfinite()) {
 		clear();
@@ -887,7 +910,8 @@ bool Number::divide(const Number &o) {
 	}
 	if(isInfinite()) {
 		if(o.isComplex()) {
-			setInfinity();
+			//setInfinity();
+			return false;
 		} else if(o.isNegative()) {
 			b_pinf = !b_pinf;
 			b_minf = !b_minf;
@@ -897,8 +921,9 @@ bool Number::divide(const Number &o) {
 	if(o.isZero()) {
 		if(isZero()) return false;
 		//division by zero!!!
-		setInfinity();
-		return true;
+		//setInfinity();
+		//return true;
+		return false;
 	}
 	if(isZero()) {
 		return true;
@@ -910,7 +935,8 @@ bool Number::divide(const Number &o) {
 bool Number::recip() {
 	if(isZero()) {
 		//division by zero!!!
-		setInfinity();
+		//setInfinity();
+		//return true;
 		return false;
 	}
 	if(isInfinite()) {
@@ -935,14 +961,16 @@ bool Number::raise(const Number &o, int solution) {
 			if(o.isEven()) {
 				setPlusInfinity();
 			} else if(!o.isInteger()) {
-				setInfinity();
+				//setInfinity();
+				return false;
 			}
 		}
 		return true;
 	}
 	if(o.isMinusInfinity()) {
 		if(isZero()) {
-			setInfinity();
+			//setInfinity();
+			return false;
 		} else if(isComplex()) {
 			return false;
 		} else {
@@ -1242,8 +1270,9 @@ bool Number::acos() {
 }
 bool Number::cosh() {
 	if(isInfinite()) {
-		setInfinity();
-		return true;
+		//setInfinity();
+		//return true;
+		return false;
 	}
 	if(isZero() && !isApproximate()) {
 		set(1);
@@ -1335,8 +1364,9 @@ bool Number::log(const Number &o) {
 		return true;
 	}
 	if(o.isOne()) {
-		setInfinity();
-		return true;
+		//setInfinity();
+		//return true;
+		return false;
 	}
 	value = cln::log(value, o.internalNumber());
 	removeFloatZeroPart();
@@ -1443,48 +1473,121 @@ bool Number::add(const Number &o, MathOperation op) {
 			return exp10(o);
 		}
 		case OPERATION_OR: {
-			setTrue(isPositive() || o.isPositive());
+			Number nr;
+			ComparisonResult i1 = compare(nr);
+			ComparisonResult i2 = o.compare(nr);
+			if(i1 == COMPARISON_RESULT_UNKNOWN || i1 == COMPARISON_RESULT_EQUAL_OR_LESS || i1 == COMPARISON_RESULT_NOT_EQUAL) i1 = COMPARISON_RESULT_UNKNOWN;
+			if(i2 == COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_EQUAL_OR_LESS || i2 == COMPARISON_RESULT_NOT_EQUAL) i2 = COMPARISON_RESULT_UNKNOWN;
+			if(i1 == COMPARISON_RESULT_UNKNOWN && (i2 == COMPARISON_RESULT_UNKNOWN || i2 != COMPARISON_RESULT_LESS)) return false;
+			if(i2 == COMPARISON_RESULT_UNKNOWN && (i1 != COMPARISON_RESULT_LESS)) return false;
+			setTrue(i1 == COMPARISON_RESULT_LESS || i2 == COMPARISON_RESULT_LESS);
 			return true;
 		}
 		case OPERATION_XOR: {
-			if(isPositive()) setTrue(!o.isPositive());
-			else setTrue(o.isPositive());
+			Number nr;
+			ComparisonResult i1 = compare(nr);
+			ComparisonResult i2 = o.compare(nr);
+			if(i1 == COMPARISON_RESULT_UNKNOWN || i1 == COMPARISON_RESULT_EQUAL_OR_LESS || i1 == COMPARISON_RESULT_NOT_EQUAL) return false;
+			if(i2 == COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_EQUAL_OR_LESS || i2 == COMPARISON_RESULT_NOT_EQUAL) return false;
+			if(i1 == COMPARISON_RESULT_LESS) setTrue(i2 != COMPARISON_RESULT_LESS);
+			else setTrue(i2 == COMPARISON_RESULT_LESS);
 			return true;
 		}
 		case OPERATION_AND: {
-			setTrue(isPositive() && o.isPositive());
+			Number nr;
+			ComparisonResult i1 = compare(nr);
+			ComparisonResult i2 = o.compare(nr);
+			if(i1 == COMPARISON_RESULT_UNKNOWN || i1 == COMPARISON_RESULT_EQUAL_OR_LESS || i1 == COMPARISON_RESULT_NOT_EQUAL) i1 = COMPARISON_RESULT_UNKNOWN;
+			if(i2 == COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_EQUAL_OR_LESS || i2 == COMPARISON_RESULT_NOT_EQUAL) i2 = COMPARISON_RESULT_UNKNOWN;
+			if(i1 == COMPARISON_RESULT_UNKNOWN && (i2 == COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_LESS)) return false;
+			if(i2 == COMPARISON_RESULT_UNKNOWN && (i1 == COMPARISON_RESULT_LESS)) return false;
+			setTrue(i1 == COMPARISON_RESULT_LESS && i2 == COMPARISON_RESULT_LESS);
 			return true;
 		}
 		case OPERATION_EQUALS: {
-			setTrue(equals(o));
+			ComparisonResult i = compare(o);
+			if(i == COMPARISON_RESULT_UNKNOWN || i == COMPARISON_RESULT_EQUAL_OR_GREATER || i == COMPARISON_RESULT_EQUAL_OR_LESS) return false;
+			setTrue(i == COMPARISON_RESULT_EQUAL);
 			return true;
 		}
 		case OPERATION_GREATER: {
-			int i = compare(o);
-			if(i != -2) setTrue(i == -1);
-			if(i != -2) return true;
-			return false;
+			ComparisonResult i = compare(o);
+			switch(i) {
+				case COMPARISON_RESULT_LESS: {
+					setTrue();
+					return true;
+				}
+				case COMPARISON_RESULT_GREATER: {}
+				case COMPARISON_RESULT_EQUAL_OR_GREATER: {}
+				case COMPARISON_RESULT_EQUAL: {
+					setFalse();
+					return true;
+				}
+				default: {
+					return false;
+				}
+			}
 		}
 		case OPERATION_LESS: {
-			int i = compare(o);
-			if(i != -2) setTrue(i == 1);
-			if(i != -2) return true;
-			return false;
+			ComparisonResult i = compare(o);
+			switch(i) {
+				case COMPARISON_RESULT_GREATER: {
+					setTrue();
+					return true;
+				}
+				case COMPARISON_RESULT_LESS: {}
+				case COMPARISON_RESULT_EQUAL_OR_LESS: {}
+				case COMPARISON_RESULT_EQUAL: {
+					setFalse();
+					return true;
+				}
+				default: {
+					return false;
+				}
+			}
 		}
 		case OPERATION_EQUALS_GREATER: {
-			int i = compare(o);
-			if(i != -2) setTrue(i == 0 || i == -1);
-			if(i != -2) return true;
+			ComparisonResult i = compare(o);
+			switch(i) {
+				case COMPARISON_RESULT_EQUAL_OR_LESS: {}
+				case COMPARISON_RESULT_EQUAL: {}
+				case COMPARISON_RESULT_LESS: {
+					setTrue();
+					return true;
+				}
+				case COMPARISON_RESULT_GREATER: {
+					setFalse();
+					return true;
+				}
+				default: {
+					return false;
+				}
+			}
 			return false;
 		}
 		case OPERATION_EQUALS_LESS: {
-			int i = compare(o);
-			if(i != -2) setTrue(i == 0 || i == 1);
-			if(i != -2) return true;
+			ComparisonResult i = compare(o);
+			switch(i) {
+				case COMPARISON_RESULT_EQUAL_OR_GREATER: {}
+				case COMPARISON_RESULT_EQUAL: {}
+				case COMPARISON_RESULT_GREATER: {
+					setTrue();
+					return true;
+				}
+				case COMPARISON_RESULT_LESS: {
+					setFalse();
+					return true;
+				}
+				default: {
+					return false;
+				}
+			}
 			return false;
 		}
 		case OPERATION_NOT_EQUALS: {
-			setTrue(!equals(o));
+			ComparisonResult i = compare(o);
+			if(i == COMPARISON_RESULT_UNKNOWN || i == COMPARISON_RESULT_EQUAL_OR_GREATER || i == COMPARISON_RESULT_EQUAL_OR_LESS) return false;
+			setTrue(i == COMPARISON_RESULT_NOT_EQUAL || i == COMPARISON_RESULT_GREATER || i == COMPARISON_RESULT_LESS);
 			return true;
 		}
 	}

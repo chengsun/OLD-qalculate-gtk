@@ -73,6 +73,8 @@ class Number {
 		Number complexDenominator() const;
 
 		void operator = (const Number &o);
+		void operator -- (int);
+		void operator ++ (int);
 		Number operator - () const;
 		Number operator * (const Number &o) const;
 		Number operator / (const Number &o) const;
@@ -107,6 +109,7 @@ class Number {
 		bool isNegative() const;
 		bool isNonNegative() const;
 		bool isPositive() const;
+		bool isNonPositive() const;
 		bool realPartIsNegative() const;
 		bool realPartIsPositive() const;
 		bool imaginaryPartIsNegative() const;
@@ -114,9 +117,9 @@ class Number {
 		bool hasNegativeSign() const;
 		bool hasPositiveSign() const;
 		bool equals(const Number &o) const;
-		int compare(const Number &o) const;
-		int compareImaginaryParts(const Number &o) const;
-		int compareRealParts(const Number &o) const;
+		ComparisonResult compare(const Number &o) const;
+		ComparisonResult compareImaginaryParts(const Number &o) const;
+		ComparisonResult compareRealParts(const Number &o) const;
 		bool isGreaterThan(const Number &o) const;
 		bool isLessThan(const Number &o) const;
 		bool isGreaterThanOrEqualTo(const Number &o) const;
@@ -156,7 +159,7 @@ class Number {
 
 		int getBoolean() const;
 		void toBoolean();
-		void setTrue(bool is_true);
+		void setTrue(bool is_true = true);
 		void setFalse();
 		void setNOT();
 		

@@ -99,6 +99,8 @@ class Calculator {
 	
 	bool local_to;
 	
+	Assumptions *default_assumptions;
+	
   public:
 
 	KnownVariable *v_pi, *v_e, *v_i, *v_inf, *v_pinf, *v_minf;
@@ -164,6 +166,9 @@ class Calculator {
 	Variable *getVariable(unsigned int index) const;
 	Unit *getUnit(unsigned int index) const;	
 	Function *getFunction(unsigned int index) const;	
+	
+	void setDefaultAssumptions(Assumptions *ass);
+	Assumptions *defaultAssumptions();
 
 	Prefix *getPrefix(unsigned int index) const;	
 	Prefix *getPrefix(string name_) const;		

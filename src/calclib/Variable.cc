@@ -15,17 +15,68 @@
 #include "MathStructure.h"
 #include "Number.h"
 
-Assumptions::Assumptions() : number_type(ASSUMPTION_NUMBER_NONE), sign(ASSUMPTION_SIGN_UNKNOWN) {}
+Assumptions::Assumptions() : i_type(ASSUMPTION_NUMBER_NONE), i_sign(ASSUMPTION_SIGN_UNKNOWN), fmin(NULL), fmax(NULL), b_incl_min(true), b_incl_max(true) {}
 Assumptions::~Assumptions() {}
 
-bool Assumptions::isPositive() {return sign == ASSUMPTION_SIGN_POSITIVE;}
-bool Assumptions::isNegative() {return sign == ASSUMPTION_SIGN_NEGATIVE;}
-bool Assumptions::isNonNegative() {return sign == ASSUMPTION_SIGN_NONNEGATIVE || sign == ASSUMPTION_SIGN_POSITIVE;}
-bool Assumptions::isInteger() {return number_type <= ASSUMPTION_NUMBER_INTEGER;}
-bool Assumptions::isNumber() {return number_type <= ASSUMPTION_NUMBER_NUMBER;}
-bool Assumptions::isRational() {return number_type <= ASSUMPTION_NUMBER_RATIONAL;}
-bool Assumptions::isReal() {return number_type <= ASSUMPTION_NUMBER_REAL;}
-bool Assumptions::isNonZero() {return sign == ASSUMPTION_SIGN_NONZERO || sign == ASSUMPTION_SIGN_POSITIVE || sign == ASSUMPTION_SIGN_NEGATIVE;}
+bool Assumptions::isPositive() {return i_sign == ASSUMPTION_SIGN_POSITIVE || (fmin && (fmin->isPositive() || (!b_incl_min && fmin->isNonNegative())));}
+bool Assumptions::isNegative() {return i_sign == ASSUMPTION_SIGN_NEGATIVE || (fmax && (fmax->isNegative() || (!b_incl_max && fmax->isNonPositive())));}
+bool Assumptions::isNonNegative() {return i_sign == ASSUMPTION_SIGN_NONNEGATIVE || i_sign == ASSUMPTION_SIGN_POSITIVE || (fmin && fmin->isNonNegative());}
+bool Assumptions::isNonPositive() {return i_sign == ASSUMPTION_SIGN_NONPOSITIVE || i_sign == ASSUMPTION_SIGN_NEGATIVE || (fmax && fmax->isNonPositive());}
+bool Assumptions::isInteger() {return i_type <= ASSUMPTION_NUMBER_INTEGER;}
+bool Assumptions::isNumber() {return i_type <= ASSUMPTION_NUMBER_NUMBER || fmin || fmax || isPositive() || isNegative();}
+bool Assumptions::isRational() {return i_type <= ASSUMPTION_NUMBER_RATIONAL;}
+bool Assumptions::isReal() {return i_type <= ASSUMPTION_NUMBER_REAL || isPositive() || isNegative();}
+bool Assumptions::isNonZero() {return i_sign == ASSUMPTION_SIGN_NONZERO || isPositive() || isNegative();}
+
+AssumptionNumberType Assumptions::numberType() {return i_type;}
+AssumptionSign Assumptions::sign() {return i_sign;}
+void Assumptions::setNumberType(AssumptionNumberType ant) {i_type = ant;}
+void Assumptions::setSign(AssumptionSign as) {i_sign = as;}
+	
+void Assumptions::setMin(const Number *nmin) {
+	if(!nmin) {
+		if(fmin) {
+			delete fmin;
+		}
+		return;
+	}
+	if(!fmin) {
+		fmin = new Number(*nmin);
+	} else {
+		fmin->set(*nmin);
+	}
+}
+void Assumptions::setIncludeEqualsMin(bool include_equals) {
+	b_incl_min = include_equals;
+}
+bool Assumptions::includeEqualsMin() const {
+	return b_incl_min;
+}
+const Number *Assumptions::min() const {
+	return fmin;
+}
+void Assumptions::setMax(const Number *nmax) {
+	if(!nmax) {
+		if(fmax) {
+			delete fmax;
+		}
+		return;
+	}
+	if(!fmax) {
+		fmax = new Number(*nmax);
+	} else {
+		fmax->set(*nmax);
+	}
+}
+void Assumptions::setIncludeEqualsMax(bool include_equals) {
+	b_incl_max = include_equals;
+}
+bool Assumptions::includeEqualsMax() const {
+	return b_incl_max;
+}
+const Number *Assumptions::max() const {
+	return fmax;
+}
 
 
 Variable::Variable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active) {
@@ -65,14 +116,42 @@ void UnknownVariable::setAssumptions(Assumptions *ass) {
 Assumptions *UnknownVariable::assumptions() {
 	return o_assumption;
 }
-bool UnknownVariable::isPositive() {return o_assumption && o_assumption->isPositive();}
-bool UnknownVariable::isNegative() {return o_assumption && o_assumption->isNegative();}
-bool UnknownVariable::isNonNegative() {return o_assumption && o_assumption->isNonNegative();}
-bool UnknownVariable::isInteger() {return o_assumption && o_assumption->isInteger();}
-bool UnknownVariable::isNumber() {return o_assumption && o_assumption->isNumber();}
-bool UnknownVariable::isRational() {return o_assumption && o_assumption->isRational();}
-bool UnknownVariable::isReal() {return o_assumption && o_assumption->isReal();}
-bool UnknownVariable::isNonZero() {return o_assumption && o_assumption->isNonZero();}
+bool UnknownVariable::isPositive() { 
+	if(o_assumption) return o_assumption->isPositive();
+	return CALCULATOR->defaultAssumptions()->isPositive();
+}
+bool UnknownVariable::isNegative() { 
+	if(o_assumption) return o_assumption->isNegative();
+	return CALCULATOR->defaultAssumptions()->isNegative();
+}
+bool UnknownVariable::isNonNegative() { 
+	if(o_assumption) return o_assumption->isNonNegative();
+	return CALCULATOR->defaultAssumptions()->isNonNegative();
+}
+bool UnknownVariable::isNonPositive() { 
+	if(o_assumption) return o_assumption->isNonPositive();
+	return CALCULATOR->defaultAssumptions()->isNonPositive();
+}
+bool UnknownVariable::isInteger() { 
+	if(o_assumption) return o_assumption->isInteger();
+	return CALCULATOR->defaultAssumptions()->isInteger();
+}
+bool UnknownVariable::isNumber() { 
+	if(o_assumption) return o_assumption->isNumber();
+	return CALCULATOR->defaultAssumptions()->isNumber();
+}
+bool UnknownVariable::isRational() { 
+	if(o_assumption) return o_assumption->isRational();
+	return CALCULATOR->defaultAssumptions()->isRational();
+}
+bool UnknownVariable::isReal() { 
+	if(o_assumption) return o_assumption->isReal();
+	return CALCULATOR->defaultAssumptions()->isReal();
+}
+bool UnknownVariable::isNonZero() { 
+	if(o_assumption) return o_assumption->isNonZero();
+	return CALCULATOR->defaultAssumptions()->isNonZero();
+}
 
 KnownVariable::KnownVariable(string cat_, string name_, const MathStructure &o, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
 	mstruct = new MathStructure(o);
@@ -143,6 +222,7 @@ const MathStructure &KnownVariable::get() {
 bool KnownVariable::isPositive() {return get().representsPositive();}
 bool KnownVariable::isNegative() {return get().representsNegative();}
 bool KnownVariable::isNonNegative() {return get().representsNonNegative();}
+bool KnownVariable::isNonPositive() {return get().representsNonPositive();}
 bool KnownVariable::isInteger() {return get().representsInteger();}
 bool KnownVariable::isNumber() {return get().representsNumber();}
 bool KnownVariable::isRational() {return get().representsRational();}

@@ -46,6 +46,7 @@ class MathStructure {
 		bool b_approx;
 	
 		vector<MathStructure> v_subs;
+		vector<unsigned int> v_order;
 		string s_sym;
 		Number o_number;
 		Variable *o_variable;
@@ -131,6 +132,7 @@ class MathStructure {
 		bool isFunction() const;
 		bool isUnit() const;
 		bool isUnit_exp() const;
+		bool isNumber_exp() const;
 		bool isVariable() const;
 		bool isComparison() const;
 		bool isAND() const;
@@ -138,6 +140,7 @@ class MathStructure {
 		bool isXOR() const;
 		bool isNOT() const;
 		bool isInverse() const;
+		bool isDivision() const;
 		bool isNegate() const;
 		bool isInfinity() const;
 		bool isUndefined() const;
@@ -146,14 +149,21 @@ class MathStructure {
 		bool isZero() const;
 		bool isOne() const;
 		
+		bool hasNegativeSign() const;
+		
 		bool representsPositive() const;
 		bool representsNegative() const;
 		bool representsNonNegative() const;
+		bool representsNonPositive() const;
 		bool representsInteger() const;
 		bool representsNumber() const;
 		bool representsRational() const;
 		bool representsReal() const;
+		bool representsComplex() const;
 		bool representsNonZero() const;
+		bool representsEven() const;
+		bool representsOdd() const;
+		bool representsUndefined() const;
 	
 		void setApproximate(bool is_approx = true);	
 		bool isApproximate() const;
@@ -172,14 +182,16 @@ class MathStructure {
 		void setNOT();
 		
 		bool equals(const MathStructure &o) const;
-		int compare(const MathStructure &o) const;
+		ComparisonResult compare(const MathStructure &o) const;
 		
-		int merge_addition(const MathStructure &mstruct);
-		int merge_multiplication(const MathStructure &mstruct);
-		int merge_power(const MathStructure &mstruct);
+		int merge_addition(const MathStructure &mstruct, const EvaluationOptions &eo);
+		int merge_multiplication(const MathStructure &mstruct, const EvaluationOptions &eo);
+		int merge_power(const MathStructure &mstruct, const EvaluationOptions &eo);
 		void calculate();
-		void calculatesub(int level);
+		bool calculatesub(const EvaluationOptions &eo);
 		void calculateFunctions(const EvaluationOptions &eo);
+		
+		void sort(int sortflags = SORT_SCIENTIFIC);
 		
 		void evalQalculateFunctions(const EvaluationOptions &eo);
 		void evalf();
@@ -192,6 +204,7 @@ class MathStructure {
 #endif
 		
 		void addChild(const MathStructure &o);
+		void delChild(unsigned int index);
 		void insertChild(const MathStructure &o, unsigned int index);
 		void setChild(const MathStructure &o, unsigned int index = 1);
 		const MathStructure *getChild(unsigned int index) const;
@@ -220,7 +233,9 @@ class MathStructure {
 
 		int type() const;
 		
-		void format();
+		void unformat();
+		
+		void format(const PrintOptions &po = default_print_options);
 		
 		string print(const PrintOptions &po = default_print_options, const InternalPrintStruct &ips = top_ips) const;
 		
@@ -230,8 +245,10 @@ class MathStructure {
 		MathStructure range(int start, int end = -1) const;
 		MathStructure flattenVector() const;
 		
-		bool rank(bool ascending = true);
-		bool sort(bool ascending = true);
+		bool rankVector(bool ascending = true);
+		bool sortVector(bool ascending = true);
+		
+		MathStructure getRange(unsigned int index1, unsigned int index2) const;
 		
 		void resizeVector(unsigned int i, const MathStructure &mfill);
 		
@@ -240,6 +257,10 @@ class MathStructure {
 		unsigned int rows() const;
 		unsigned int columns() const;
 		const MathStructure *getElement(unsigned int row, unsigned int column) const;
+		MathStructure getArea(unsigned int r1, unsigned int c1, unsigned int r2, unsigned int c2) const;
+		MathStructure rowToVector(unsigned int r) const;
+		MathStructure columnToVector(unsigned int c) const;
+		MathStructure matrixToVector() const;
 		void setElement(const MathStructure &mstruct, unsigned int row, unsigned int column);
 		void addRows(unsigned int r, const MathStructure &mfill);
 		void addColumns(unsigned int c, const MathStructure &mfill);
@@ -248,10 +269,17 @@ class MathStructure {
 		void resizeMatrix(unsigned int r, unsigned int c, const MathStructure &mfill);
 		bool matrixIsSymmetric() const;
 		MathStructure determinant() const;
+		MathStructure permanent() const;
 		void setToIdentityMatrix(unsigned int n);
+		MathStructure getIdentityMatrix() const;
+		bool invertMatrix();
+		bool adjointMatrix();
+		bool transposeMatrix();
+		MathStructure cofactor(unsigned int r, unsigned int c) const;
 		
 //units
 
+		bool isUnitCompatible(const MathStructure &mstruct);
 		void syncUnits();		
 		bool testDissolveCompositeUnit(Unit *u);
 		bool testCompositeUnit(Unit *u);	

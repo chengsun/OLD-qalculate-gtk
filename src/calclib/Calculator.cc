@@ -204,6 +204,8 @@ Calculator::Calculator() {
 	m_zero.clear();
 	m_one.set(1, 1);
 	
+	default_assumptions = new Assumptions;
+	
 	u_rad = NULL;
 
 	saved_locale = strdup(setlocale(LC_NUMERIC, NULL));
@@ -419,6 +421,15 @@ Function *Calculator::getFunction(unsigned int index) const {
 	}
 	return NULL;
 }
+
+void Calculator::setDefaultAssumptions(Assumptions *ass) {
+	if(default_assumptions) delete default_assumptions;
+	default_assumptions = ass;
+}
+Assumptions *Calculator::defaultAssumptions() {
+	return default_assumptions;
+}
+
 Prefix *Calculator::getPrefix(unsigned int index) const {
 	if(index >= 0 && index < prefixes.size()) {
 		return prefixes[index];
@@ -444,12 +455,12 @@ Prefix *Calculator::getExactPrefix(int exp10, int exp) const {
 	return NULL;
 }
 Prefix *Calculator::getExactPrefix(const Number &o, int exp) const {
-	int c = -2;
+	ComparisonResult c;
 	for(unsigned int i = 0; i < prefixes.size(); i++) {
 		c = o.compare(prefixes[i]->value(exp));
-		if(c == 0) {
+		if(c == COMPARISON_RESULT_EQUAL) {
 			return prefixes[i];
-		} else if(c == 1) {
+		} else if(c == COMPARISON_RESULT_GREATER) {
 			break;
 		}
 	}
@@ -515,16 +526,16 @@ Prefix *Calculator::getBestPrefix(const Number &exp10, const Number &exp) const 
 	if(prefixes.size() <= 0) return NULL;
 	int prev_i = 0;
 	int i = 0;
-	int c;
+	ComparisonResult c;
 	if(exp.isNegative()) {
 		i = prefixes.size() - 1;
 	}
 	while((exp.isNegative() && i >= 0) || (!exp.isNegative() && i < (int) prefixes.size())) {
 		if(b_use_all_prefixes || prefixes[i]->exponent() % 3 == 0) {
 			c = exp10.compare(prefixes[i]->exponent(exp));
-			if(c == 0) {
+			if(c == COMPARISON_RESULT_EQUAL) {
 				return prefixes[i];
-			} else if(c == 1) {
+			} else if(c == COMPARISON_RESULT_GREATER) {
 				if(i == 0) {
 					return prefixes[i];
 				}
@@ -803,10 +814,10 @@ void Calculator::addBuiltinVariables() {
 	v_y = (UnknownVariable*) addVariable(new UnknownVariable("", "y", "", false, true));
 	v_z = (UnknownVariable*) addVariable(new UnknownVariable("", "z", "", false, true));
 	v_x->setAssumptions(new Assumptions());
-	v_x->assumptions()->number_type = ASSUMPTION_NUMBER_REAL;
-	v_x->assumptions()->sign = ASSUMPTION_SIGN_POSITIVE;
+	v_x->assumptions()->setNumberType(ASSUMPTION_NUMBER_REAL);
+	v_x->assumptions()->setSign(ASSUMPTION_SIGN_POSITIVE);
 	v_y->setAssumptions(new Assumptions());
-	v_y->assumptions()->number_type = ASSUMPTION_NUMBER_REAL;
+	v_y->assumptions()->setNumberType(ASSUMPTION_NUMBER_REAL);
 }
 void Calculator::addBuiltinFunctions() {
 
@@ -1032,9 +1043,9 @@ void Calculator::error(bool critical, const char *TEMPLATE, ...) {
 			break;
 		}
 	}
-//	if(!dup_error) {
+	if(!dup_error) {
 		errors.push_back(CalculatorError(error_str, critical));
-//	}
+	}
 }
 CalculatorError* Calculator::error() {
 	if(!errors.empty()) {
@@ -2845,6 +2856,10 @@ MathStructure Calculator::parseOperators(string str) {
 		bool b = false;
 		while(i != (int) string::npos && i != (int) str.length() - 1) {
 			str2 = str.substr(0, i);
+			if(str[i + 1] == AND_CH) {
+				i++;
+				if(i == (int) str.length() - 1) break;
+			}
 			str = str.substr(i + 1, str.length() - (i + 1));
 			if(b) {
 				parseAdd(str2, mstruct, OPERATION_AND);
@@ -2865,6 +2880,10 @@ MathStructure Calculator::parseOperators(string str) {
 		bool b = false;
 		while(i != (int) string::npos && i != (int) str.length() - 1) {
 			str2 = str.substr(0, i);
+			if(str[i + 1] == OR_CH) {
+				i++;
+				if(i == (int) str.length() - 1) break;
+			}
 			str = str.substr(i + 1, str.length() - (i + 1));
 			if(b) {
 				parseAdd(str2, mstruct, OPERATION_OR);
@@ -2872,7 +2891,7 @@ MathStructure Calculator::parseOperators(string str) {
 				parseAdd(str2, mstruct);
 				b = true;
 			}
-			i = str.find(AND, 1);
+			i = str.find(OR, 1);
 		}
 		if(b) {
 			parseAdd(str, mstruct, OPERATION_OR);

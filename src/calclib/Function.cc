@@ -1208,14 +1208,14 @@ bool NumberArgument::subtest(MathStructure &value, const EvaluationOptions &eo) 
 		return false;
 	}
 	if(fmin) {
-		int cmpr = value.number().compare(*fmin);
-		if(cmpr <= -2 || (b_incl_min && cmpr > 0) || (!b_incl_min && cmpr >= 0)) {
+		ComparisonResult cmpr = fmin->compare(value.number());
+		if(!(cmpr == COMPARISON_RESULT_GREATER || (b_incl_min && COMPARISON_IS_EQUAL_OR_GREATER(cmpr)))) {
 			return false;
 		}
 	}
 	if(fmax) {
-		int cmpr = value.number().compare(*fmax);
-		if(cmpr <= -2 || (b_incl_max && cmpr < 0) || (!b_incl_max && cmpr <= 0)) {
+		ComparisonResult cmpr = fmax->compare(value.number());
+		if(!(cmpr == COMPARISON_RESULT_LESS || (b_incl_max && COMPARISON_IS_EQUAL_OR_LESS(cmpr)))) {
 			return false;
 		}
 	}	
@@ -1363,11 +1363,17 @@ bool IntegerArgument::subtest(MathStructure &value, const EvaluationOptions &eo)
 	if(!value.isNumber() || !value.number().isInteger()) {
 		return false;
 	}
-	if(imin && value.number().compare(*imin) > 0) {
-		return false;
+	if(imin) {
+		ComparisonResult cmpr = imin->compare(value.number());
+		if(!(COMPARISON_IS_EQUAL_OR_GREATER(cmpr))) {
+			return false;
+		}
 	}
-	if(imax && value.number().compare(*imax) < 0) {
-		return false;
+	if(imax) {
+		ComparisonResult cmpr = imax->compare(value.number());
+		if(!(COMPARISON_IS_EQUAL_OR_LESS(cmpr))) {
+			return false;
+		}
 	}	
 	return true;
 }

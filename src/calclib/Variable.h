@@ -38,27 +38,48 @@ typedef enum {
 	ASSUMPTION_SIGN_POSITIVE,
 	ASSUMPTION_SIGN_NONNEGATIVE,
 	ASSUMPTION_SIGN_NEGATIVE,
+	ASSUMPTION_SIGN_NONPOSITIVE,
 	ASSUMPTION_SIGN_NONZERO
 } AssumptionSign;
 
 class Assumptions {
 
+  protected:
+  
+	AssumptionNumberType i_type;
+	AssumptionSign i_sign;
+	Number *fmin, *fmax;
+	bool b_incl_min, b_incl_max;
+
   public:
 
-	AssumptionNumberType number_type;
-	AssumptionSign sign;
-
 	Assumptions();
-	virtual ~Assumptions();
+	~Assumptions();
 
-	virtual bool isPositive();
-	virtual bool isNegative();
-	virtual bool isNonNegative();
-	virtual bool isInteger();
-	virtual bool isNumber();
-	virtual bool isRational();
-	virtual bool isReal();
-	virtual bool isNonZero();
+	bool isPositive();
+	bool isNegative();
+	bool isNonNegative();
+	bool isNonPositive();
+	bool isInteger();
+	bool isNumber();
+	bool isRational();
+	bool isReal();
+	bool isNonZero();
+	
+	AssumptionNumberType numberType();
+	AssumptionSign sign();
+	void setNumberType(AssumptionNumberType ant);
+	void setSign(AssumptionSign as);
+	
+	void setMin(const Number *nmin);	
+	void setIncludeEqualsMin(bool include_equals);
+	bool includeEqualsMin() const;	
+	const Number *min() const;
+	void setMax(const Number *nmax);	
+	void setIncludeEqualsMax(bool include_equals);
+	bool includeEqualsMax() const;	
+	const Number *max() const;
+	
 };
 
 
@@ -78,6 +99,7 @@ class Variable : public ExpressionItem {
 	virtual bool isPositive() {return false;}
 	virtual bool isNegative() {return false;}
 	virtual bool isNonNegative() {return false;}
+	virtual bool isNonPositive() {return false;}
 	virtual bool isInteger() {return false;}
 	virtual bool isNumber() {return false;}
 	virtual bool isRational() {return false;}
@@ -107,6 +129,7 @@ class UnknownVariable : public Variable {
 	virtual bool isPositive();
 	virtual bool isNegative();
 	virtual bool isNonNegative();
+	virtual bool isNonPositive();
 	virtual bool isInteger();
 	virtual bool isNumber();
 	virtual bool isRational();
@@ -146,6 +169,7 @@ class KnownVariable : public Variable {
 	virtual bool isPositive();
 	virtual bool isNegative();
 	virtual bool isNonNegative();
+	virtual bool isNonPositive();
 	virtual bool isInteger();
 	virtual bool isNumber();
 	virtual bool isRational();
@@ -180,6 +204,7 @@ class DynamicVariable : public KnownVariable {
 	virtual bool isPositive() {return true;}
 	virtual bool isNegative() {return false;}
 	virtual bool isNonNegative() {return true;}
+	virtual bool isNonPositive() {return false;}
 	virtual bool isInteger() {return false;}
 	virtual bool isNumber() {return true;}
 	virtual bool isRational() {return false;}
