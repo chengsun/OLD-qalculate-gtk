@@ -327,7 +327,7 @@ create_units_dialog (void)
 	tUnitCategories = glade_xml_get_widget (glade_xml, "units_tree_view1");
 	tUnits		= glade_xml_get_widget (glade_xml, "units_tree_view2");
 
-	tUnits_store = gtk_list_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+	tUnits_store = gtk_list_store_new(UNITS_N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tUnits), GTK_TREE_MODEL(tUnits_store));
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnits));
 	gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);

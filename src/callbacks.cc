@@ -49,8 +49,8 @@ extern string selected_variable_category;
 extern string selected_variable;
 extern GtkWidget *units_window;
 extern string selected_unit_category;
-extern string selected_unit;
-extern string selected_to_unit;
+extern Unit *selected_unit;
+extern Unit *selected_to_unit;
 int saved_deci_mode, saved_decimals, saved_precision, saved_display_mode, saved_number_base, saved_angle_unit;
 bool use_short_units;
 bool saved_functions_enabled, saved_variables_enabled, saved_unknownvariables_enabled, saved_units_enabled;
@@ -198,24 +198,26 @@ Variable *get_selected_variable() {
 	return the Unit object that corresponds to the selected unit name (expression menu)
 */
 Unit *get_selected_unit() {
-	for(int i = 0; i < calc->units.size(); i++) {
+/*	for(int i = 0; i < calc->units.size(); i++) {
 		if(calc->units[i]->name() == selected_unit) {
 			return calc->units[i];
 		}
 	}
-	return NULL;
+	return NULL;*/
+	return selected_unit;
 }
 
 /*
 	return the Unit object that corresponds to the selected unit name (result menu)
 */
 Unit *get_selected_to_unit() {
-	for(int i = 0; i < calc->units.size(); i++) {
+/*	for(int i = 0; i < calc->units.size(); i++) {
 		if(calc->units[i]->name() == selected_to_unit) {
 			return calc->units[i];
 		}
 	}
-	return NULL;
+	return NULL;*/
+	return selected_to_unit;
 }
 
 /*
@@ -592,13 +594,13 @@ void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpoin
 					stitle = calc->units[i]->name();
 				else
 					stitle = calc->units[i]->title();
-				gtk_list_store_set(tUnits_store, &iter2, UNITS_TITLE_COLUMN, stitle.c_str(), UNITS_NAME_COLUMN, calc->units[i]->name().c_str(), UNITS_TYPE_COLUMN, stype.c_str(), UNITS_NAMES_COLUMN, snames.c_str(), UNITS_BASE_COLUMN, sbase.c_str(), -1);
-				if(calc->units[i]->name() == selected_unit) {
+				gtk_list_store_set(tUnits_store, &iter2, UNITS_TITLE_COLUMN, stitle.c_str(), UNITS_NAME_COLUMN, calc->units[i]->name().c_str(), UNITS_TYPE_COLUMN, stype.c_str(), UNITS_NAMES_COLUMN, snames.c_str(), UNITS_BASE_COLUMN, sbase.c_str(), UNITS_POINTER_COLUMN, (gpointer) calc->units[i], -1);
+				if(calc->units[i] == selected_unit) {
 					gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnits)), &iter2);
 				}
 			}
 		}
-		if(selected_unit.empty() || !gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnits)), &model2, &iter2)) {
+		if(!selected_unit || !gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnits)), &model2, &iter2)) {
 			gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tUnits_store), &iter2);
 			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnits)), &iter2);
 		}
@@ -619,34 +621,28 @@ void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpoin
 	bool b = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tUnits_store), &iter2);
 	Unit *u;
 	while(b) {
-		gchar *gstr2;
-		gtk_tree_model_get(GTK_TREE_MODEL(tUnits_store), &iter2, UNITS_NAME_COLUMN, &gstr2, -1);
-		if(selected_to_unit.empty())
-			selected_to_unit = gstr2;
-		u = calc->getUnit(gstr2);
-		if(!u) u = calc->getCompositeUnit(gstr2);
+		gtk_tree_model_get(GTK_TREE_MODEL(tUnits_store), &iter2, UNITS_POINTER_COLUMN, &u, -1);
+		if(!selected_to_unit)
+			selected_to_unit = u;
 		if(u) {
-			MENU_ITEM_WITH_STRING(u->plural().c_str(), on_omToUnit_menu_activate, u->name().c_str())
-			if(selected_to_unit == gstr2)
+			MENU_ITEM_WITH_POINTER(u->plural().c_str(), on_omToUnit_menu_activate, u)
+			if(selected_to_unit == u)
 				h = i;
 		}
-		g_free(gstr2);
 		b = gtk_tree_model_iter_next(GTK_TREE_MODEL(tUnits_store), &iter2);
 		i++;
 	}
 	//if no items were added to the menu, reset selected unit
 	if(i == 0)
-		selected_to_unit = "";
+		selected_to_unit = NULL;
 	else {
 		//if no menu item was selected, select the first
 		if(h < 0) {
 			h = 0;
 			b = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tUnits_store), &iter2);
 			if(b) {
-				gchar *gstr;
-				gtk_tree_model_get(GTK_TREE_MODEL(tUnits_store), &iter2, UNITS_NAME_COLUMN, &gstr, -1);
-				selected_to_unit = gstr;
-				g_free(gstr);
+				gtk_tree_model_get(GTK_TREE_MODEL(tUnits_store), &iter2, UNITS_POINTER_COLUMN, &u, -1);
+				selected_to_unit = u;
 			}
 		}
 		gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "units_optionmenu_to_unit")), h);
@@ -664,11 +660,11 @@ void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer user_
 	GtkTreeIter iter;
 	bool no_cat = false, b_all = false;
 	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
-		gchar *gstr;
-		gtk_tree_model_get(model, &iter, UNITS_NAME_COLUMN, &gstr, -1);
-		selected_unit = gstr;
+		Unit *u;
+		gtk_tree_model_get(model, &iter, UNITS_POINTER_COLUMN, &u, -1);
+		selected_unit = u;
 		for(int i = 0; i < calc->units.size(); i++) {
-			if(calc->units[i]->name() == selected_unit) {
+			if(calc->units[i] == selected_unit) {
 				if(use_short_units)
 					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (glade_xml, "units_label_from_unit")), calc->units[i]->shortName().c_str());
 				else
@@ -677,11 +673,10 @@ void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer user_
 				gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_edit"), TRUE);
 			}
 		}
-		g_free(gstr);
 	} else {
 		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_edit"), FALSE);
 		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "units_button_delete"), FALSE);
-		selected_unit = "";
+		selected_unit = NULL;
 	}
 	if(!block_unit_convert) convert_in_wUnits();
 }
@@ -1202,6 +1197,7 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular")), "");
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural")), "");
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short")), "");
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_internal")), "");	
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category")), "");
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc")), "");
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base")), "");
@@ -1219,6 +1215,7 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 			gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "unit_edit_optionmenu_class")), COMPOSITE_UNIT);
 
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular")), u->name().c_str());
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_internal")), u->name().c_str());		
 
 		if(u->hasPlural())
 			gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural")), u->plural().c_str());
@@ -1229,7 +1226,7 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc")), u->title().c_str());
 
 		switch(u->type()) {
-		case 'A': {
+			case 'A': {
 				AliasUnit *au = (AliasUnit*) u;
 				if(use_short_units)
 					gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base")), au->firstShortBaseName().c_str());
@@ -1239,6 +1236,13 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_relation")), au->expression().c_str());
 				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_reversed")), au->reverseExpression().c_str());
 				break;
+			}
+			case 'D': {
+				if(use_short_units)
+					gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base")), u->shortName().c_str());
+				else
+					gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base")), u->name().c_str());
+				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_internal")), ((CompositeUnit*) u)->internalName().c_str());			
 			}
 		}
 
@@ -1251,38 +1255,52 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 run_unit_edit_dialog:
 	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
 		//clicked "OK"
-		string str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular")));
+		int type = gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "unit_edit_optionmenu_class")));		
+		string str;
+		if(type == COMPOSITE_UNIT) str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_internal")));
+		else str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular")));
 		remove_blank_ends(str);
 		if(str.empty()) {
 			//no name given
-			str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short")));
-			remove_blank_ends(str);
-			if(str.empty()) {
-				//no short unit name either -- open dialog again
-				show_message(_("Empty name field."), dialog);
-				goto run_unit_edit_dialog;
+			if(type == COMPOSITE_UNIT) {
+				show_message(_("Empty internal name field."), dialog);
+				goto run_unit_edit_dialog;			
 			} else {
-				//switch short name and name
-				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular")), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short"))));
-				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short")), "");
+				str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short")));
+				remove_blank_ends(str);
+				if(str.empty()) {
+					//no short unit name either -- open dialog again
+					show_message(_("Empty name field."), dialog);
+					goto run_unit_edit_dialog;
+				} else {
+					//switch short name and name
+					gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular")), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short"))));
+					gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short")), "");
+				}
 			}
 		}
 
 		//unit with the same name exists -- overwrite or open the dialog again
-		if(calc->unitNameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular"))), u) && !ask_question(_("A unit with the same name already exists.\nOverwrite unit?"), dialog)) {
-			goto run_unit_edit_dialog;
-		}
-		if(calc->unitNameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural"))), u) && !ask_question(_("A unit with the same plural name already exists.\nOverwrite unit?"), dialog)) {
-			goto run_unit_edit_dialog;
-		}
-		if(calc->unitNameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short"))), u) && !ask_question(_("A unit with the same short format already exists.\nOverwrite unit?"), dialog)) {
-			goto run_unit_edit_dialog;
+		if(type == COMPOSITE_UNIT) {
+			if(calc->unitNameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_internal"))), u) && !ask_question(_("A unit with the same internal name already exists.\nOverwrite unit?"), dialog)) {
+				goto run_unit_edit_dialog;
+			}		
+		} else {
+			if(calc->unitNameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular"))), u) && !ask_question(_("A unit with the same name already exists.\nOverwrite unit?"), dialog)) {
+				goto run_unit_edit_dialog;
+			}
+			if(calc->unitNameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural"))), u) && !ask_question(_("A unit with the same plural name already exists.\nOverwrite unit?"), dialog)) {
+				goto run_unit_edit_dialog;
+			}
+			if(calc->unitNameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short"))), u) && !ask_question(_("A unit with the same short format already exists.\nOverwrite unit?"), dialog)) {
+				goto run_unit_edit_dialog;
+			}
 		}
 		if(u) {
 			//edited an existing unit -- update unit
 			gint i1 = gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "unit_edit_optionmenu_class")));
 			switch(u->type()) {
-			case 'A': {
+				case 'A': {
 					if(i1 != ALIAS_UNIT) {
 						calc->delUnit(u);
 						u = NULL;
@@ -1300,15 +1318,17 @@ run_unit_edit_dialog:
 					au->exp(gtk_spin_button_get_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_entry_spinbutton_exp"))));
 					break;
 				}
-			case 'D': {
+				case 'D': {
 					if(i1 != COMPOSITE_UNIT) {
 						calc->delUnit(u);
 						u = NULL;
 						break;
 					}
+					u->name(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_internal"))));
+					((CompositeUnit*) u)->baseExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"))));					
 					break;
 				}
-			case 'U': {
+				case 'U': {
 					if(i1 != BASE_UNIT) {
 						calc->delUnit(u);
 						u = NULL;
@@ -1317,7 +1337,7 @@ run_unit_edit_dialog:
 					break;
 				}
 			}
-			if(u) {
+			if(u && u->type() != COMPOSITE_UNIT) {
 				u->name(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular"))));
 				u->plural(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural"))));
 				u->shortName(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short"))));
@@ -1328,7 +1348,7 @@ run_unit_edit_dialog:
 		if(!u) {
 			//new unit
 			switch(gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (glade_xml, "unit_edit_optionmenu_class")))) {
-			case ALIAS_UNIT: {
+				case ALIAS_UNIT: {
 					Unit *bu = calc->getUnit(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"))));
 					if(!bu) {
 						show_message(_("Base unit does not exist."), dialog);
@@ -1337,12 +1357,12 @@ run_unit_edit_dialog:
 					u = new AliasUnit(calc, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc"))), bu, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_relation"))), gtk_spin_button_get_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "unit_edit_spinbutton_exp"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_reversed"))));
 					break;
 				}
-			case COMPOSITE_UNIT: {
-					CompositeUnit *cu = new CompositeUnit(calc, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc"))));
+				case COMPOSITE_UNIT: {
+					CompositeUnit *cu = new CompositeUnit(calc, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_internal"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_base"))));
 					u = cu;
 					break;
 				}
-			default: {
+				default: {
 					u = new Unit(calc, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_category"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_short"))), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "unit_edit_entry_desc"))));
 					break;
 				}
@@ -1351,7 +1371,7 @@ run_unit_edit_dialog:
 				calc->addUnit(u);
 		}
 		//select the new unit
-		selected_unit = u->name();
+		selected_unit = u;
 		selected_unit_category = u->category();
 		if(selected_unit_category.empty())
 			selected_unit_category = _("Uncategorized");
@@ -1934,8 +1954,7 @@ void manage_units(GtkMenuItem *w, gpointer user_data) {
 	selected item in unit conversion menu in unit manager has changed -- update conversion
 */
 void on_omToUnit_menu_activate(GtkMenuItem *item, gpointer user_data) {
-	gchar *name = (gchar*) user_data;
-	selected_to_unit = name;
+	selected_to_unit = (Unit*) user_data;
 	convert_in_wUnits();
 }
 /*
@@ -2742,9 +2761,6 @@ void on_unit_edit_entry_name_changed(GtkEditable *editable, gpointer user_data) 
 */
 void on_unit_edit_optionmenu_class_changed(GtkOptionMenu *om, gpointer user_data)
 {
-	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "unit_edit_entry_plural"), TRUE);
-	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "unit_edit_entry_short"), TRUE);
-	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "unit_edit_entry_singular"), TRUE);
 
 	gchar *composite[7] = {
 		"unit_edit_label_plural",
@@ -2756,10 +2772,13 @@ void on_unit_edit_optionmenu_class_changed(GtkOptionMenu *om, gpointer user_data
 		NULL
 	};
 
-	gchar *alias[12] = {
-		"unit_edit_label_relation_title",
-		"unit_edit_label_base",
-		"unit_edit_entry_base",
+	gchar *composite2[3] = {
+		"unit_edit_label_internal",
+		"unit_edit_entry_internal",
+		NULL
+	};
+
+	gchar *alias[9] = {
 		"unit_edit_label_exp",
 		"unit_edit_spinbutton_exp",
 		"unit_edit_label_relation",
@@ -2768,6 +2787,13 @@ void on_unit_edit_optionmenu_class_changed(GtkOptionMenu *om, gpointer user_data
 		"unit_edit_entry_reversed",
 		"unit_edit_label_info1",
 		"unit_edit_label_info2",
+		NULL
+	};
+
+	gchar *base[4] = {
+		"unit_edit_label_relation_title",
+		"unit_edit_label_base",
+		"unit_edit_entry_base",
 		NULL
 	};
 
@@ -2782,6 +2808,15 @@ void on_unit_edit_optionmenu_class_changed(GtkOptionMenu *om, gpointer user_data
 				);
 	}
 
+	/* making the composite widgets (un)sensitive */
+	for (pointer = composite2; *pointer != NULL; pointer++)
+	{
+		gtk_widget_set_sensitive (
+				glade_xml_get_widget (glade_xml, *pointer),
+				(gtk_option_menu_get_history(om) == COMPOSITE_UNIT) ? TRUE : FALSE
+				);
+	}
+
 	/* making the alias widgets (un)sensitive */
 	for (pointer = alias; *pointer != NULL; pointer++)
 	{
@@ -2790,6 +2825,18 @@ void on_unit_edit_optionmenu_class_changed(GtkOptionMenu *om, gpointer user_data
 				(gtk_option_menu_get_history(om) == ALIAS_UNIT) ? TRUE : FALSE
 				);
 	}
+
+	/* making the non-base widgets (un)sensitive */
+	for (pointer = base; *pointer != NULL; pointer++)
+	{
+		gtk_widget_set_sensitive (
+				glade_xml_get_widget (glade_xml, *pointer),
+				(gtk_option_menu_get_history(om) == BASE_UNIT) ? FALSE : TRUE
+				);
+	}
+
+	
+	
 }
 /*
 	"New" button clicked in unit manager -- open new unit dialog

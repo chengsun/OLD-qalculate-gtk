@@ -3232,6 +3232,60 @@
 			  <property name="fill">True</property>
 			</packing>
 		      </child>
+
+		      <child>
+			<widget class="GtkHBox" id="hbox55">
+			  <property name="visible">True</property>
+			  <property name="homogeneous">True</property>
+			  <property name="spacing">6</property>
+
+			  <child>
+			    <widget class="GtkLabel" id="unit_edit_label_internal">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Internal Name</property>
+			      <property name="use_underline">False</property>
+			      <property name="use_markup">False</property>
+			      <property name="justify">GTK_JUSTIFY_LEFT</property>
+			      <property name="wrap">False</property>
+			      <property name="selectable">False</property>
+			      <property name="xalign">0</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xpad">0</property>
+			      <property name="ypad">0</property>
+			    </widget>
+			    <packing>
+			      <property name="padding">0</property>
+			      <property name="expand">True</property>
+			      <property name="fill">True</property>
+			    </packing>
+			  </child>
+
+			  <child>
+			    <widget class="GtkEntry" id="unit_edit_entry_internal">
+			      <property name="visible">True</property>
+			      <property name="can_focus">True</property>
+			      <property name="editable">True</property>
+			      <property name="visibility">True</property>
+			      <property name="max_length">0</property>
+			      <property name="text" translatable="yes"></property>
+			      <property name="has_frame">True</property>
+			      <property name="invisible_char" translatable="yes">*</property>
+			      <property name="activates_default">False</property>
+			      <signal name="changed" handler="on_unit_edit_entry_name_changed" last_modification_time="Mon, 11 Aug 2003 21:04:54 GMT"/>
+			    </widget>
+			    <packing>
+			      <property name="padding">0</property>
+			      <property name="expand">True</property>
+			      <property name="fill">True</property>
+			    </packing>
+			  </child>
+			</widget>
+			<packing>
+			  <property name="padding">0</property>
+			  <property name="expand">True</property>
+			  <property name="fill">True</property>
+			</packing>
+		      </child>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
@@ -4087,7 +4141,7 @@
 			  <child>
 			    <widget class="GtkLabel" id="label46">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">&lt;span size='small' style='italic'&gt;insert '\x' in the place of the 1st argument, '\y' 2nd, '\z' 3rd, '\a' 4th, '\b'...&lt;/span&gt;</property>
+			      <property name="label" translatable="yes">&lt;span size='small' style='italic'&gt;insert '\x' in the place of the 1st argument, '\y' 2nd, '\z' 3rd, '\a' 4th, ...&lt;/span&gt;</property>
 			      <property name="use_underline">False</property>
 			      <property name="use_markup">True</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>

@@ -1,3 +1,11 @@
+2003-08-12  Niklas Knutsson  <nq@altern.org>
+
+	* Store pointer to unit in GUI to simplify the Unit/ComplexUnit mess
+	* Enable editing/creation of composite units
+	* New Greatest Common Divisor (gcd) function
+	* First try at differentiation
+	* Fix division
+
 2003-08-11  Niklas Knutsson  <nq@altern.org>
 
 	* Beautify insert function dialog

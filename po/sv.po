@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
-"POT-Creation-Date: 2003-08-11 13:36+0200\n"
-"PO-Revision-Date: 2003-08-11 13:36+0200\n"
+"POT-Creation-Date: 2003-08-12 10:26+0200\n"
+"PO-Revision-Date: 2003-08-12 10:27+0200\n"
 "Last-Translator: Niklas Knutsson <nq@altern.org>\n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 msgid "Powerful and easy to use calculator"
 msgstr "Kraftfull och användarvänlig miniräknare"
 
-#: data/qalculate.desktop.in.h:2 data/qalculate.glade.h:70
+#: data/qalculate.desktop.in.h:2 data/qalculate.glade.h:78
 msgid "Qalculate!"
 msgstr "Qalculate!"
 
@@ -131,331 +131,371 @@ msgstr ""
 "span>"
 
 #: data/qalculate.glade.h:26
+msgid "<span size='small' style='italic'>comma separated list</span>"
+msgstr "<span size='small' style='italic'>kommaseparated list</span>"
+
+#: data/qalculate.glade.h:27
+msgid ""
+"<span size='small' style='italic'>insert '\\x' in the place of the 1st "
+"argument, '\\y' 2nd, '\\z' 3rd, '' 4th, ...</span>"
+msgstr ""
+"<span size='small' style='italic'>sätt in '\\x' på platsen för första "
+"parametern, '\\y' för andra, '\\z' för tredje, '\\a' för fjärde, ... </span>"
+
+#: data/qalculate.glade.h:28
 msgid "<span weight='bold'>Name</span>"
 msgstr "<span weight='bold'>Namn</span>"
 
-#: data/qalculate.glade.h:27
+#: data/qalculate.glade.h:29
 msgid "<span weight='bold'>Relation</span>"
 msgstr "<span weight='bold'>Relation</span>"
 
-#: data/qalculate.glade.h:28
+#: data/qalculate.glade.h:30
 msgid "<span weight='bold'>Type</span>"
 msgstr "<span weight='bold'>Typ</span>"
 
-#: data/qalculate.glade.h:29
+#: data/qalculate.glade.h:31
 msgid "="
 msgstr "="
 
-#: data/qalculate.glade.h:30
+#: data/qalculate.glade.h:32
 msgid "AC"
 msgstr "AC"
 
-#: data/qalculate.glade.h:31
+#: data/qalculate.glade.h:33
 msgid "Alias"
 msgstr "Alias"
 
-#: data/qalculate.glade.h:32
+#: data/qalculate.glade.h:34
 msgid "Angle Unit"
 msgstr "Vinkelenhet"
 
-#: data/qalculate.glade.h:33
+#: data/qalculate.glade.h:35
 msgid "Ans"
 msgstr "Ans"
 
-#: data/qalculate.glade.h:34
+#: data/qalculate.glade.h:36
+msgid "Argument names"
+msgstr "Namn för parametrar"
+
+#: data/qalculate.glade.h:37
 msgid "Base Unit"
 msgstr "Grundenhet"
 
-#: data/qalculate.glade.h:35
+#: data/qalculate.glade.h:38
 msgid "Binary"
 msgstr "Binär"
 
-#: data/qalculate.glade.h:36
+#: data/qalculate.glade.h:39
 msgid "Buttons"
 msgstr "Knappsats"
 
-#: data/qalculate.glade.h:37
+#: data/qalculate.glade.h:40
 msgid "Categories:"
 msgstr "Kategorier:"
 
-#: data/qalculate.glade.h:38 src/interface.cc:267 src/interface.cc:311
-#: src/interface.cc:364 src/callbacks.cc:1391 src/callbacks.cc:1629
+#: data/qalculate.glade.h:41 src/interface.cc:267 src/interface.cc:311
+#: src/interface.cc:364
 msgid "Category"
 msgstr "Kategori"
 
-#: data/qalculate.glade.h:39
+#: data/qalculate.glade.h:42
 msgid "Class"
 msgstr "Klass"
 
-#: data/qalculate.glade.h:40
+#: data/qalculate.glade.h:43
 msgid "Composite Unit"
 msgstr "Sammansatt enhet"
 
-#: data/qalculate.glade.h:41
+#: data/qalculate.glade.h:44
 msgid "DEL"
 msgstr "DEL"
 
-#: data/qalculate.glade.h:42
+#: data/qalculate.glade.h:45
 msgid "Decimal"
 msgstr "Decimal"
 
-#: data/qalculate.glade.h:43 src/callbacks.cc:2744 src/callbacks.cc:2753
+#: data/qalculate.glade.h:46 src/callbacks.cc:2708 src/callbacks.cc:2717
 msgid "Decimals"
 msgstr "Decimaler"
 
-#: data/qalculate.glade.h:44
+#: data/qalculate.glade.h:47
 msgid "Deg"
 msgstr "Deg"
 
-#: data/qalculate.glade.h:45
+#: data/qalculate.glade.h:48
 msgid "Degrees"
 msgstr "Grader"
 
-#: data/qalculate.glade.h:46
+#: data/qalculate.glade.h:49
+msgid "Description"
+msgstr "Beskrivning"
+
+#: data/qalculate.glade.h:50
 msgid "Description:"
 msgstr "Beskrivning:"
 
-#: data/qalculate.glade.h:47
+#: data/qalculate.glade.h:51
 msgid "Descriptive Name"
 msgstr "Beskrivande namn"
 
-#: data/qalculate.glade.h:48
+#: data/qalculate.glade.h:52
 msgid "Display Mode"
 msgstr "Visningsläge"
 
-#: data/qalculate.glade.h:49
+#: data/qalculate.glade.h:53
 msgid "E (exponent)"
 msgstr "E (exponent)"
 
-#: data/qalculate.glade.h:50
+#: data/qalculate.glade.h:54
 msgid "EXP"
 msgstr "EXP"
 
-#: data/qalculate.glade.h:51
+#: data/qalculate.glade.h:55 src/callbacks.cc:1391
+msgid "Edit Function"
+msgstr "Redigera funktion"
+
+#: data/qalculate.glade.h:56 src/callbacks.cc:1190
 msgid "Edit Unit"
 msgstr "Redigera enheten"
 
-#: data/qalculate.glade.h:52
+#: data/qalculate.glade.h:57 src/callbacks.cc:1605
+msgid "Edit Variable"
+msgstr "Redigera variabel"
+
+#: data/qalculate.glade.h:58
 msgid "Execute"
 msgstr "Exekvera"
 
-#: data/qalculate.glade.h:53
+#: data/qalculate.glade.h:59
 msgid "Exponent"
 msgstr "Exponent"
 
-#: data/qalculate.glade.h:54
+#: data/qalculate.glade.h:60
 msgid "Expression"
 msgstr "Uttryck"
 
-#: data/qalculate.glade.h:55 src/callbacks.cc:896
+#: data/qalculate.glade.h:61 src/callbacks.cc:869
 msgid "Functions"
 msgstr "Funktioner"
 
-#: data/qalculate.glade.h:56
+#: data/qalculate.glade.h:62
 msgid "Functions:"
 msgstr "Funktioner:"
 
-#: data/qalculate.glade.h:57
+#: data/qalculate.glade.h:63
 msgid "Gra"
 msgstr "Gra"
 
-#: data/qalculate.glade.h:58
+#: data/qalculate.glade.h:64
 msgid "Gradians"
 msgstr "Gradienter"
 
-#: data/qalculate.glade.h:59
+#: data/qalculate.glade.h:65
 msgid "Hexadecimal"
 msgstr "Hexadecimal"
 
-#: data/qalculate.glade.h:60
+#: data/qalculate.glade.h:66
 msgid "History"
 msgstr "Historik"
 
-#: data/qalculate.glade.h:61
+#: data/qalculate.glade.h:67
+msgid "Internal Name"
+msgstr "Internt namn"
+
+#: data/qalculate.glade.h:68
 msgid "Load global definitions on start"
 msgstr "Inhämta systemvida definitioner vid programstart"
 
-#: data/qalculate.glade.h:62
+#: data/qalculate.glade.h:69 src/interface.cc:335
+msgid "Name"
+msgstr "Namn"
+
+#: data/qalculate.glade.h:70
 msgid "No description available."
 msgstr "Ingen beskrivning tillgänglig."
 
-#: data/qalculate.glade.h:63
+#: data/qalculate.glade.h:71
 msgid "Non-scientific"
 msgstr "Ovetenskaplig"
 
-#: data/qalculate.glade.h:64
+#: data/qalculate.glade.h:72
 msgid "Normal"
 msgstr "Normal"
 
-#: data/qalculate.glade.h:65
+#: data/qalculate.glade.h:73
 msgid "Number Base"
 msgstr "Nummerbas"
 
-#: data/qalculate.glade.h:66
+#: data/qalculate.glade.h:74
 msgid "Octal"
 msgstr "Oktal"
 
-#: data/qalculate.glade.h:67
+#: data/qalculate.glade.h:75
 msgid "Plural"
 msgstr "Pluralform"
 
-#: data/qalculate.glade.h:68 src/callbacks.cc:2716 src/callbacks.cc:2725
+#: data/qalculate.glade.h:76 src/callbacks.cc:2680 src/callbacks.cc:2689
 msgid "Precision"
 msgstr "Precision"
 
-#: data/qalculate.glade.h:69
+#: data/qalculate.glade.h:77
 msgid "Preferences"
 msgstr "Inställningar"
 
-#: data/qalculate.glade.h:71
+#: data/qalculate.glade.h:79
 msgid "Rad"
 msgstr "Rad"
 
-#: data/qalculate.glade.h:72
+#: data/qalculate.glade.h:80
 msgid "Radians"
 msgstr "Radianer"
 
-#: data/qalculate.glade.h:73
+#: data/qalculate.glade.h:81
 msgid "Relation"
 msgstr "Relation"
 
-#: data/qalculate.glade.h:74
+#: data/qalculate.glade.h:82
 msgid "Result"
 msgstr "Resultat"
 
-#: data/qalculate.glade.h:75
+#: data/qalculate.glade.h:83
 msgid "Reversed Relation"
 msgstr "Omvänd relation"
 
-#: data/qalculate.glade.h:76
+#: data/qalculate.glade.h:84
 msgid "SQRT"
 msgstr "√"
 
-#: data/qalculate.glade.h:77
+#: data/qalculate.glade.h:85
 msgid "STO"
 msgstr "STO"
 
-#: data/qalculate.glade.h:78
+#: data/qalculate.glade.h:86
 msgid "Save Result"
 msgstr "Spara resultatet"
 
-#: data/qalculate.glade.h:79
+#: data/qalculate.glade.h:87
 msgid "Save definitions"
 msgstr "Spara definitioner"
 
-#: data/qalculate.glade.h:80
+#: data/qalculate.glade.h:88
 msgid "Save definitions on exit"
 msgstr "Spara definitioner vid programavslut"
 
-#: data/qalculate.glade.h:81
+#: data/qalculate.glade.h:89
 msgid "Save mode"
 msgstr "Spara programläge"
 
-#: data/qalculate.glade.h:82
+#: data/qalculate.glade.h:90
 msgid "Save mode on exit"
 msgstr "Spara programläge vid avslut"
 
-#: data/qalculate.glade.h:83
+#: data/qalculate.glade.h:91
 msgid "Scientific"
 msgstr "Vetenskaplig"
 
-#: data/qalculate.glade.h:84
+#: data/qalculate.glade.h:92
 msgid "Short Format"
 msgstr "Kortform"
 
-#: data/qalculate.glade.h:85
+#: data/qalculate.glade.h:93
 msgid "Short unit format"
 msgstr "Kort enhetsformat"
 
-#: data/qalculate.glade.h:86
+#: data/qalculate.glade.h:94
 msgid "Signs"
 msgstr "Tecken"
 
-#: data/qalculate.glade.h:87
+#: data/qalculate.glade.h:95
 msgid "Singular"
 msgstr "Singularform"
 
-#: data/qalculate.glade.h:88 src/callbacks.cc:719 src/callbacks.cc:1595
+#: data/qalculate.glade.h:96 src/callbacks.cc:692 src/callbacks.cc:1581
 msgid "Units"
 msgstr "Enheter"
 
-#: data/qalculate.glade.h:89
+#: data/qalculate.glade.h:97
 msgid "Use prefixes"
 msgstr "Använd prefix"
 
-#: data/qalculate.glade.h:90
+#: data/qalculate.glade.h:98 src/interface.cc:296
+msgid "Value"
+msgstr "Värde"
+
+#: data/qalculate.glade.h:99
 msgid "Variable:"
 msgstr "Variabel:"
 
-#: data/qalculate.glade.h:91 src/callbacks.cc:810
+#: data/qalculate.glade.h:100 src/callbacks.cc:783
 msgid "Variables"
 msgstr "Variabler"
 
-#: data/qalculate.glade.h:92
+#: data/qalculate.glade.h:101
 msgid "^ (power)"
 msgstr "^(upphöjt med)"
 
-#: data/qalculate.glade.h:93
+#: data/qalculate.glade.h:102
 msgid "_Convert result"
 msgstr "_Omvandla resultat"
 
-#: data/qalculate.glade.h:94
+#: data/qalculate.glade.h:103
 msgid "_Edit"
 msgstr "_Redigera"
 
-#: data/qalculate.glade.h:95
+#: data/qalculate.glade.h:104
 msgid "_Insert"
 msgstr "_Infoga"
 
-#: data/qalculate.glade.h:96
+#: data/qalculate.glade.h:105
 msgid "_Quit"
 msgstr "_Avsluta"
 
-#: data/qalculate.glade.h:97
+#: data/qalculate.glade.h:106
 msgid "cos"
 msgstr "cos"
 
-#: data/qalculate.glade.h:98
+#: data/qalculate.glade.h:107
 msgid "hyp"
 msgstr "hyp"
 
-#: data/qalculate.glade.h:99
+#: data/qalculate.glade.h:108
 msgid "item6"
 msgstr ""
 
-#: data/qalculate.glade.h:100
+#: data/qalculate.glade.h:109
 msgid "item7"
 msgstr ""
 
-#: data/qalculate.glade.h:101
+#: data/qalculate.glade.h:110
 msgid "ln"
 msgstr "ln"
 
-#: data/qalculate.glade.h:102
+#: data/qalculate.glade.h:111
 msgid "log"
 msgstr "log"
 
-#: data/qalculate.glade.h:103
+#: data/qalculate.glade.h:112
 msgid "metres"
 msgstr ""
 
-#: data/qalculate.glade.h:104
+#: data/qalculate.glade.h:113
 msgid "more >>"
 msgstr "Mer >>"
 
-#: data/qalculate.glade.h:105
+#: data/qalculate.glade.h:114
 msgid "sin"
 msgstr "sin"
 
-#: data/qalculate.glade.h:106
+#: data/qalculate.glade.h:115
 msgid "tan"
 msgstr "tan"
 
-#: data/qalculate.glade.h:107
+#: data/qalculate.glade.h:116
 msgid "x<sup>2</sup>"
 msgstr "x<sup>2</sup>"
 
-#: data/qalculate.glade.h:108
+#: data/qalculate.glade.h:117
 msgid "x<sup>y</sup>"
 msgstr "x<sup>y</sup>"
 
@@ -465,19 +505,19 @@ msgid "%s not found!\n"
 msgstr "Kunde finna %s!\n"
 
 #. if no category has been selected (previously selected has been renamed/deleted), select "All"
-#: src/main.cc:105 src/main.cc:108 src/main.cc:111 src/callbacks.cc:260
-#: src/callbacks.cc:289 src/callbacks.cc:315 src/callbacks.cc:386
-#: src/callbacks.cc:415 src/callbacks.cc:441 src/callbacks.cc:512
-#: src/callbacks.cc:541 src/callbacks.cc:570 src/callbacks.cc:2853
-#: src/callbacks.cc:2934 src/callbacks.cc:3013
+#: src/main.cc:105 src/main.cc:108 src/main.cc:111 src/callbacks.cc:240
+#: src/callbacks.cc:269 src/callbacks.cc:295 src/callbacks.cc:366
+#: src/callbacks.cc:395 src/callbacks.cc:421 src/callbacks.cc:492
+#: src/callbacks.cc:521 src/callbacks.cc:550 src/callbacks.cc:2845
+#: src/callbacks.cc:2926 src/callbacks.cc:3005
 msgid "All"
 msgstr "Alla"
 
-#: src/interface.cc:209 src/callbacks.cc:2401
+#: src/interface.cc:209 src/callbacks.cc:2365
 msgid "<< Less"
 msgstr "<< Mindre"
 
-#: src/interface.cc:215 src/callbacks.cc:2395
+#: src/interface.cc:215 src/callbacks.cc:2359
 msgid "More >>"
 msgstr "Mer >>"
 
@@ -488,14 +528,6 @@ msgstr "Funktion"
 #: src/interface.cc:292
 msgid "Variable"
 msgstr "Variabel"
-
-#: src/interface.cc:296
-msgid "Value"
-msgstr "Värde"
-
-#: src/interface.cc:335
-msgid "Name"
-msgstr "Namn"
 
 #: src/interface.cc:339
 msgid "Unit"
@@ -509,118 +541,125 @@ msgstr "Grundenhet"
 msgid "Type"
 msgstr "Typ"
 
-#: src/callbacks.cc:282 src/callbacks.cc:283 src/callbacks.cc:317
-#: src/callbacks.cc:408 src/callbacks.cc:409 src/callbacks.cc:443
-#: src/callbacks.cc:534 src/callbacks.cc:535 src/callbacks.cc:572
-#: src/callbacks.cc:1363 src/callbacks.cc:1525 src/callbacks.cc:1731
-#: src/callbacks.cc:2853 src/callbacks.cc:2934 src/callbacks.cc:3013
+#: src/callbacks.cc:262 src/callbacks.cc:263 src/callbacks.cc:297
+#: src/callbacks.cc:388 src/callbacks.cc:389 src/callbacks.cc:423
+#: src/callbacks.cc:514 src/callbacks.cc:515 src/callbacks.cc:552
+#: src/callbacks.cc:1377 src/callbacks.cc:1511 src/callbacks.cc:1696
+#: src/callbacks.cc:2845 src/callbacks.cc:2926 src/callbacks.cc:3005
 msgid "Uncategorized"
 msgstr "Okategoriserad"
 
-#: src/callbacks.cc:591
+#: src/callbacks.cc:571
 msgid "COMPOSITE UNIT"
 msgstr "SAMMANSATT ENHET"
 
-#: src/callbacks.cc:597
+#: src/callbacks.cc:577
 msgid "ALIAS"
 msgstr "ALIAS"
 
-#: src/callbacks.cc:607
+#: src/callbacks.cc:587
 msgid "BASE UNIT"
 msgstr "GRUNDENHET"
 
-#: src/callbacks.cc:744 src/callbacks.cc:788
+#: src/callbacks.cc:717 src/callbacks.cc:761
 msgid "Create new unit"
 msgstr "Lägg till ny enhet"
 
-#: src/callbacks.cc:745 src/callbacks.cc:789
+#: src/callbacks.cc:718 src/callbacks.cc:762
 msgid "Manage units"
 msgstr "Hantera enheter"
 
-#: src/callbacks.cc:748 src/callbacks.cc:1941
+#: src/callbacks.cc:721 src/callbacks.cc:1906
 msgid "Disable units"
 msgstr "Inaktivera enheter"
 
-#: src/callbacks.cc:750 src/callbacks.cc:1938
+#: src/callbacks.cc:723 src/callbacks.cc:1903
 msgid "Enable units"
 msgstr "Aktivera enhet"
 
-#: src/callbacks.cc:762
+#: src/callbacks.cc:735
 msgid "Convert to unit"
 msgstr "Omvandla till enhet"
 
-#: src/callbacks.cc:787
+#: src/callbacks.cc:760
 msgid "Enter composite unit"
 msgstr "Skriv in sammansatt enhet"
 
-#: src/callbacks.cc:831
+#: src/callbacks.cc:804
 msgid "Create new variable"
 msgstr "Skapa en ny variabel"
 
-#: src/callbacks.cc:832
+#: src/callbacks.cc:805
 msgid "Manage variables"
 msgstr "Hantera variabler"
 
-#: src/callbacks.cc:835 src/callbacks.cc:1915
+#: src/callbacks.cc:808 src/callbacks.cc:1880
 msgid "Disable variables"
 msgstr "Inaktivera variabler"
 
-#: src/callbacks.cc:837 src/callbacks.cc:1912
+#: src/callbacks.cc:810 src/callbacks.cc:1877
 msgid "Enable variables"
 msgstr "Aktivera variabler"
 
-#: src/callbacks.cc:841 src/callbacks.cc:1928
+#: src/callbacks.cc:814 src/callbacks.cc:1893
 msgid "Disable unknown variables"
 msgstr "Inaktivera okända variabler"
 
-#: src/callbacks.cc:843 src/callbacks.cc:1925
+#: src/callbacks.cc:816 src/callbacks.cc:1890
 msgid "Enable unknown variables"
 msgstr "Aktivera okända variabler"
 
-#: src/callbacks.cc:855
+#: src/callbacks.cc:828
 msgid "Prefixes"
 msgstr "Prefix"
 
-#: src/callbacks.cc:921
+#: src/callbacks.cc:894
 msgid "Create new function"
 msgstr "Skapa en ny funktion"
 
-#: src/callbacks.cc:922
+#: src/callbacks.cc:895
 msgid "Manage functions"
 msgstr "Hantera funktioner"
 
-#: src/callbacks.cc:925 src/callbacks.cc:1902
+#: src/callbacks.cc:898 src/callbacks.cc:1867
 msgid "Disable functions"
 msgstr "Inaktivera funktioner"
 
-#: src/callbacks.cc:927 src/callbacks.cc:1899
+#: src/callbacks.cc:900 src/callbacks.cc:1864
 msgid "Enable functions"
 msgstr "Aktivera funktioner"
 
-#: src/callbacks.cc:1103
+#: src/callbacks.cc:1077
 #, c-format
 msgid "Argument %i"
 msgstr "Parameter %i"
 
-#: src/callbacks.cc:1121
+#: src/callbacks.cc:1097
 msgid "Vector (1,2,3,4...)"
 msgstr "Vektor (1,2,3,4,...)"
 
-#: src/callbacks.cc:1212
-msgid "Edit unit"
-msgstr "Redigera enheten"
-
-#: src/callbacks.cc:1214
-msgid "New unit"
+#: src/callbacks.cc:1192
+msgid "New Unit"
 msgstr "Ny enhet"
 
+#: src/callbacks.cc:1266
+msgid "Empty internal name field."
+msgstr "Tomt fält för internt namn."
+
 #. no short unit name either -- open dialog again
-#: src/callbacks.cc:1268 src/callbacks.cc:1451 src/callbacks.cc:1687
+#: src/callbacks.cc:1273 src/callbacks.cc:1437 src/callbacks.cc:1652
 msgid "Empty name field."
 msgstr "Tomt namnfält"
 
-#. unit with the same name exists -- overwrite or open the dialog again
-#: src/callbacks.cc:1278
+#: src/callbacks.cc:1285
+msgid ""
+"A unit with the same internal name already exists.\n"
+"Overwrite unit?"
+msgstr ""
+"En enhet med samma interna namn finns redan.\n"
+"Vill du ersätta den?"
+
+#: src/callbacks.cc:1289
 msgid ""
 "A unit with the same name already exists.\n"
 "Overwrite unit?"
@@ -628,7 +667,7 @@ msgstr ""
 "En enhet med samma namn finns redan.\n"
 "Vill du ersätta den?"
 
-#: src/callbacks.cc:1281
+#: src/callbacks.cc:1292
 msgid ""
 "A unit with the same plural name already exists.\n"
 "Overwrite unit?"
@@ -636,7 +675,7 @@ msgstr ""
 "En enhet med samma pluralform finns redan.\n"
 "Vill du ersätta den?"
 
-#: src/callbacks.cc:1284
+#: src/callbacks.cc:1295
 msgid ""
 "A unit with the same short format already exists.\n"
 "Overwrite unit?"
@@ -644,53 +683,21 @@ msgstr ""
 "En enhet med samma kortform finns redan.\n"
 "Vill du ersätta den?"
 
-#: src/callbacks.cc:1300 src/callbacks.cc:1340
+#: src/callbacks.cc:1312 src/callbacks.cc:1354
 msgid "Base unit does not exist."
 msgstr "Angiven grundenhet finns inte."
 
-#: src/callbacks.cc:1376
-msgid "Edit function"
-msgstr "Redigera funktionen"
-
-#: src/callbacks.cc:1378
-msgid "New function"
+#: src/callbacks.cc:1393
+msgid "New Function"
 msgstr "Ny funktion"
 
-#: src/callbacks.cc:1380 src/callbacks.cc:1621
-msgid "* Name"
-msgstr "* Namn"
-
-#: src/callbacks.cc:1386
-msgid "* Expression"
-msgstr "* Uttryck"
-
-#: src/callbacks.cc:1388
-msgid ""
-"insert '\\x' in the place of the 1st variable, '\\y' 2nd, '\\z' 3rd, '\\a' "
-"4th, '\\b'..."
-msgstr ""
-"skriv '\\x' där du vill sätta in första parametern, '\\y' för andra, '\\z' "
-"för tredje, '\\a' för fjärde, '\\b'..."
-
-#: src/callbacks.cc:1389
-msgid "Variables (comma separated list)"
-msgstr "Parametrar (kommaseparerad lista)"
-
-#: src/callbacks.cc:1394 src/callbacks.cc:1631
-msgid "Descriptive name"
-msgstr "Beskrivande namn"
-
-#: src/callbacks.cc:1396
-msgid "Description"
-msgstr "Beskrivning"
-
 #. no expression/relation -- open dialog again
-#: src/callbacks.cc:1458
+#: src/callbacks.cc:1444
 msgid "Empty expression field."
 msgstr "Tom uttrycksfält."
 
 #. function with the same name exists -- overwrite or open the dialog again
-#: src/callbacks.cc:1466 src/callbacks.cc:1697
+#: src/callbacks.cc:1452 src/callbacks.cc:1662
 msgid ""
 "A function or variable with the same name already exists.\n"
 "Overwrite function/variable?"
@@ -698,36 +705,28 @@ msgstr ""
 "En funktion eller variabel med samma namn finns redan.\n"
 "Vill du ersätta funktionen/variabeln?"
 
-#: src/callbacks.cc:1567
+#: src/callbacks.cc:1553
 msgid "Unit does not exist"
 msgstr "Enheten finns inte"
 
-#: src/callbacks.cc:1581
+#: src/callbacks.cc:1567
 msgid "Convert to custom unit"
 msgstr "Omvandla till anpassad enhet"
 
-#: src/callbacks.cc:1617
-msgid "Edit variable"
-msgstr "Redigera variabeln"
-
-#: src/callbacks.cc:1619
-msgid "New variable"
+#: src/callbacks.cc:1607
+msgid "New Variable"
 msgstr "Ny variabel"
 
-#: src/callbacks.cc:1627
-msgid "* Value"
-msgstr "* Värde"
-
 #. no value -- open dialog again
-#: src/callbacks.cc:1692
+#: src/callbacks.cc:1657
 msgid "Empty value field."
 msgstr "Tomt värdefält."
 
-#: src/callbacks.cc:1744 src/callbacks.cc:1756
+#: src/callbacks.cc:1709 src/callbacks.cc:1721
 msgid "Temporary"
 msgstr "Temporära"
 
-#: src/callbacks.cc:2055
+#: src/callbacks.cc:2019
 #, c-format
 msgid ""
 "Couldn't write definitions to\n"
@@ -736,7 +735,7 @@ msgstr ""
 "Kunde inte spara definitioner till\n"
 "%s"
 
-#: src/callbacks.cc:2182
+#: src/callbacks.cc:2146
 #, c-format
 msgid ""
 "Couldn't write preferences to\n"
@@ -745,16 +744,16 @@ msgstr ""
 "Kunde inte spara inställningar till\n"
 "%s"
 
-#: src/callbacks.cc:2761
+#: src/callbacks.cc:2725
 msgid "Least"
 msgstr "Minst"
 
-#: src/callbacks.cc:2763
+#: src/callbacks.cc:2727
 msgid "Always"
 msgstr "Alltid"
 
 #. do not delete units that are used by other units
-#: src/callbacks.cc:2910
+#: src/callbacks.cc:2902
 msgid "Cannot delete unit as it is needed by other units."
 msgstr "Kan inte ta bort enheten eftersom den används av andra enheter."
 
@@ -777,27 +776,27 @@ msgstr ""
 "Överblivna tecken i uttrycket \"%s\" ignorerades (okänd variabel/funktion/"
 "enhet)."
 
-#: src/calclib/Calculator.cc:456
+#: src/calclib/Calculator.cc:458
 msgid "Floating point error: division by zero."
 msgstr "Flyttalsfel: division med noll."
 
-#: src/calclib/Calculator.cc:467
+#: src/calclib/Calculator.cc:469
 msgid "Floating point error: invalid operation."
 msgstr "Flyttalsfel: ogiltig operation."
 
-#: src/calclib/Calculator.cc:480
+#: src/calclib/Calculator.cc:482
 #, c-format
 msgid "Floating point error: division by zero in \"%s\"."
 msgstr "Flyttalsfel: division med noll i \"%s\"."
 
-#: src/calclib/Calculator.cc:491
+#: src/calclib/Calculator.cc:493
 #, c-format
 msgid ""
 "Floating point error: invalid operation in \"%s\n"
 "."
 msgstr "Flyttalsfel: ogiltig operation i \"%s\"."
 
-#: src/calclib/Calculator.cc:1267 src/calclib/Calculator.cc:1293
+#: src/calclib/Calculator.cc:1269 src/calclib/Calculator.cc:1295
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr "Namnet \"%s\" är upptaget. Ändrar till \"%s\"."
@@ -811,8 +810,39 @@ msgstr "Försöker dividera \"%s\" med noll."
 msgid "0^0 is undefined"
 msgstr "0^0 är odefinierat."
 
-#: src/calclib/BuiltinFunctions.cc:28 src/calclib/BuiltinFunctions.cc:470
-#: src/calclib/Function.cc:179 src/calclib/Function.cc:282
+#: src/calclib/BuiltinFunctions.cc:27
+#, c-format
+msgid "Condition contains no comparison, interpreting as \"%s > 0\"."
+msgstr "Villkoret innehåller inte någon jämförelse, tolkar som \"%s > 0\"."
+
+#: src/calclib/BuiltinFunctions.cc:66
+msgid "Comparison is not solvable, treating as FALSE."
+msgstr "Jämförelsevillkoret går inte att lösa, tolkar som FALSKT."
+
+#: src/calclib/BuiltinFunctions.cc:95
+#, c-format
+msgid "%s() is an experimental unfinished function!"
+msgstr "%s() är en experimentell funktion under utveckling!"
+
+#: src/calclib/BuiltinFunctions.cc:155
+msgid "The denominator in rem function cannot be zero"
+msgstr "Nämnaren i rem funktionen kan inte vara noll."
+
+#: src/calclib/BuiltinFunctions.cc:171
+msgid "The denominator in mod function cannot be zero"
+msgstr "Nämnaren i mod funktionen kan inte vara noll."
+
+#: src/calclib/BuiltinFunctions.cc:287
+#, c-format
+msgid "Trying to calculate the square root of a negative number (%s)."
+msgstr "Försöker beräkna kvadratroten av ett negativt tal (%s)."
+
+#: src/calclib/BuiltinFunctions.cc:488
+#, c-format
+msgid "Base must be between 2 and 36 (was %s) for function %s()."
+msgstr "Basen måste vara mellan 2 och 36 (var %s) i funktionen %s()."
+
+#: src/calclib/Function.cc:177 src/calclib/Function.cc:307
 #, c-format
 msgid ""
 "Additional arguments for function %s() was ignored. Function can only use %s "
@@ -821,38 +851,8 @@ msgstr ""
 "Övertaliga parametrar för funktionen %s() ignorerades. Funktionen kan inte "
 "använda fler än %s parametrar."
 
-#: src/calclib/BuiltinFunctions.cc:33
-#, c-format
-msgid "Condition contains no comparison, interpreting as \"%s > 0\"."
-msgstr "Villkoret innehåller inte någon jämförelse, tolkar som \"%s > 0\"."
-
-#: src/calclib/BuiltinFunctions.cc:72
-msgid "Comparison is not solvable, treating as FALSE."
-msgstr "Jämförelsevillkoret går inte att lösa, tolkar som FALSKT."
-
-#: src/calclib/BuiltinFunctions.cc:84 src/calclib/BuiltinFunctions.cc:484
-#: src/calclib/Function.cc:184 src/calclib/Function.cc:304
+#: src/calclib/Function.cc:180 src/calclib/Function.cc:329
 #, c-format
 msgid "You need at least %s arguments in function %s()."
 msgstr "Det krävs minst %s parametrar i funktionen %s()."
 
-#: src/calclib/BuiltinFunctions.cc:140
-msgid "The denominator in rem function cannot be zero"
-msgstr "Nämnaren i rem funktionen kan inte vara noll."
-
-#: src/calclib/BuiltinFunctions.cc:156
-msgid "The denominator in mod function cannot be zero"
-msgstr "Nämnaren i mod funktionen kan inte vara noll."
-
-#: src/calclib/BuiltinFunctions.cc:272
-#, c-format
-msgid "Trying to calculate the square root of a negative number (%s)."
-msgstr "Försöker beräkna kvadratroten av ett negativt tal (%s)."
-
-#: src/calclib/BuiltinFunctions.cc:475
-#, c-format
-msgid "Base must be between 2 and 36 (was %s) for function %s()."
-msgstr "Basen måste vara mellan 2 och 36 (var %s) i funktionen %s()."
-
-#~ msgid "Category:"
-#~ msgstr "Kategorier:"

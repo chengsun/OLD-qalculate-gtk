@@ -33,7 +33,7 @@ string selected_variable_category;
 string selected_variable;
 GtkWidget *units_window;
 string selected_unit_category;
-string selected_unit, selected_to_unit;
+Unit *selected_unit, *selected_to_unit;
 bool load_global_defs;
 GtkWidget *omToUnit_menu;
 GladeXML * glade_xml;
@@ -109,8 +109,8 @@ int main (int argc, char **argv) {
 	selected_variable = "";
 	units_window = NULL;
 	selected_unit_category = _("All");
-	selected_unit = "";
-	selected_to_unit = "";
+	selected_unit = NULL;
+	selected_to_unit = NULL;
 	omToUnit_menu = NULL;
 
 	//check for calculation errros regularly
