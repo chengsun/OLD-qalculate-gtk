@@ -1279,7 +1279,6 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 			
 			Manager *mngr2 = new Manager(this);	
 			mngr2->add(mngr, OPERATION_SUBTRACT);
-				
 			clear();
 			push_back(mngr2);
 			mngr2 = new Manager();

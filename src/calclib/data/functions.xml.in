@@ -1923,4 +1923,43 @@ Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: re
       </argument>
     </function>
   </category>
+  <category>  
+    <_title>CAS</_title>
+    <builtin_function name="giac">
+      <_title>Giac expression</_title>
+      <argument index="1">
+        <_title>Expression</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="solve">
+      <_title>Solve equation</_title>
+      <argument index="1">
+        <_title>Equation</_title>
+      </argument>
+      <argument index="2">
+        <_title>With respect to</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="diff">
+      <_title>Derive</_title>
+      <argument index="1">
+        <_title>Expression</_title>
+      </argument>
+      <argument index="2">
+        <_title>With respect to</_title>
+      </argument>
+      <argument index="3">
+        <_title>Order</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="integrate">
+      <_title>Integrate</_title>
+      <argument index="1">
+        <_title>Expression</_title>
+      </argument>
+      <argument index="2">
+        <_title>With respect to</_title>
+      </argument>
+    </builtin_function>
+  </category>
 </QALCULATE>

@@ -977,7 +977,7 @@ void SinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		if(mngr->getChild(0)->fraction()->isInteger()) {
 			mngr->clear();
 			return;
-		} else {
+		} else if(!mngr->getChild(0)->fraction()->isComplex()) {
 			Fraction fr(mngr->getChild(0)->fraction());
 			fr.frac();
 			if((fr.numerator()->isOne() || fr.numerator()->isMinusOne()) && fr.denominator()->equals(2)) {
@@ -1014,7 +1014,7 @@ void CosFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 				mngr->set(1, 1);
 			}
 			return;
-		} else {
+		} else if(!mngr->getChild(0)->fraction()->isComplex()) {
 			Fraction fr(mngr->getChild(0)->fraction());
 			fr.frac();
 			if((fr.numerator()->isOne() || fr.numerator()->isMinusOne()) && fr.denominator()->equals(2)) {
@@ -1098,7 +1098,7 @@ void AtanhFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	TRIG_FUNCTION(atanh)
 }
 LogFunction::LogFunction() : Function("Exponents and Logarithms", "ln", 1, "Natural Logarithm") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, false));
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false));
 }
 void LogFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->isFraction()) {
@@ -1115,7 +1115,7 @@ void LogFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}		
 }
 LognFunction::LognFunction() : Function("Exponents and Logarithms", "log", 2, "Base-N Logarithm") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, false, false));
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
 	setArgumentDefinition(2, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, false, false));
 }
 void LognFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
@@ -1131,7 +1131,7 @@ void LognFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->add(&mngr2, OPERATION_DIVIDE);		
 }
 Log10Function::Log10Function() : Function("Exponents and Logarithms", "log10", 1, "Base-10 Logarithm") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, false));
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONZERO, false, false));
 }
 void Log10Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -1196,7 +1196,7 @@ void Exp2Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 SqrtFunction::SqrtFunction() : Function("Exponents and Logarithms", "sqrt", 1, "Square Root") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, false));
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, false));
 }
 void SqrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
@@ -1205,7 +1205,7 @@ void SqrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr2->unref();
 }
 AbsSqrtFunction::AbsSqrtFunction() : Function("Exponents and Logarithms", "abssqrt", 1, "Square Root (abs)") {
-	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, false));
+	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_NONE, false));
 }
 void AbsSqrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->isFraction()) {

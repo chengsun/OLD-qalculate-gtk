@@ -1,3 +1,12 @@
+2004-02-15  Niklas Knutsson  <nq@altern.org>
+
+	* Reenable checks for arguments that results in infinity
+	* Fix comparison with complex numbers (not solvable)
+
+2004-02-12  Niklas Knutsson  <nq@altern.org>
+
+	* Add giac functions in functions.xml
+
 2004-02-11  Niklas Knutsson  <nq@altern.org>
 
 	* Fix binomial arguments

@@ -299,11 +299,29 @@ bool Fraction::equals(const Fraction *fr) const {
 }
 int Fraction::compare(const Fraction *fr) const {
 	if(equals(fr)) return 0;
-	Integer num_this(&num);
-	Integer num_that(fr->numerator());
-	num_this.multiply(fr->denominator());
-	num_that.multiply(&den);
-	return num_this.compare(&num_that);
+	if(!isComplex()) {
+		if(!fr->isComplex()) {
+			Integer num_this(&num);
+			Integer num_that(fr->numerator());
+			num_this.multiply(fr->denominator());
+			num_that.multiply(&den);
+			return num_this.compare(&num_that);
+		}
+		return -2;
+	} else {
+		if(fr->isComplex()) {
+			if(fr->complexNumerator()->equals(&complex_num) && fr->complexDenominator()->equals(&complex_den)) {
+				Integer num_this(&num);
+				Integer num_that(fr->numerator());
+				num_this.multiply(fr->denominator());
+				num_that.multiply(&den);
+				return num_this.compare(&num_that);
+			}
+			return -2;
+		} else {
+			return -2;
+		}
+	}
 }
 bool Fraction::isGreaterThan(const Fraction *fr) const {
 	return compare(fr) == -1;
@@ -352,10 +370,10 @@ long double Fraction::value() const {
 #endif	
 }
 bool Fraction::isPositive() const {
-	return !isZero() && !isNegative();
+	return !isComplex() && num.isPositive();
 }
 bool Fraction::isNegative() const {
-	return num.isNegative();
+	return !isComplex() && num.isNegative();
 }
 void Fraction::setNegative(bool is_negative) {
 	num.setNegative(is_negative);
@@ -825,6 +843,10 @@ bool Fraction::atanh() {
 		CALCULATOR->error(true, _("The inverse hyperbolic tangent is undefined for x > 1 or x < -1 and infinite for 1 and -1."), NULL);
 		return false;
 	}*/
+	if(isOne() || isMinusOne()) {
+		CALCULATOR->error(true, _("The inverse hyperbolic tangent is infinite for 1 and -1."), NULL);
+		return false;
+	}
 	if(CALCULATOR->alwaysExact()) return false;
 #ifdef HAVE_LIBCLN
 	CLN_COMPLEX_FUNCTION(asin)
@@ -864,6 +886,10 @@ bool Fraction::log() {
 		CALCULATOR->error(true, _("The natural logarithm is undefined for negative numbers and infinite for zero."), NULL);
 		return false;
 	}*/
+	if(isZero()) {
+		CALCULATOR->error(true, _("The natural logarithm is infinite for zero."), NULL);
+		return false;
+	}
 	if(CALCULATOR->alwaysExact()) return false;
 #ifdef HAVE_LIBCLN
 //	CLN_NON_COMPLEX_FUNCTION(ln)
@@ -888,6 +914,10 @@ bool Fraction::log(Fraction *fr, bool tryexact) {
 		CALCULATOR->error(true, _("Logarithms with a negative or zero base is undefined."), NULL);
 		return false;	
 	}*/
+	if(isZero()) {
+		CALCULATOR->error(true, _("Logarithms is infinite for zero."), NULL);
+		return false;
+	}
 #ifdef HAVE_LIBCLN
 	cl_RA clfr = num.getCL_I() / den.getCL_I();
 	cl_RA clbase = fr->numerator()->getCL_I() / fr->denominator()->getCL_I();	
@@ -1080,20 +1110,24 @@ int Fraction::add(MathOperation op, const Fraction *fr, int solution) {
 			return true;
 		}
 		case OPERATION_GREATER: {
-			setTrue(compare(fr) < 0);
-			return true;
+			int i = compare(fr);
+			if(i != -2) setTrue(i == -1);
+			return i != -2;
 		}
 		case OPERATION_LESS: {
-			setTrue(compare(fr) > 0);
-			return true;
+			int i = compare(fr);
+			if(i != -2) setTrue(i == 1);
+			return i != -2;
 		}
 		case OPERATION_EQUALS_GREATER: {
-			setTrue(compare(fr) <= 0);
-			return true;
+			int i = compare(fr);
+			if(i != -2) setTrue(i == 0 || i == -1);
+			return i != -2;
 		}
 		case OPERATION_EQUALS_LESS: {
-			setTrue(compare(fr) >= 0);
-			return true;
+			int i = compare(fr);
+			if(i != -2) setTrue(i == 0 || i == 1);
+			return i != -2;
 		}
 		case OPERATION_NOT_EQUALS: {
 			setTrue(!equals(fr));
@@ -1347,8 +1381,12 @@ int Fraction::pow(const Fraction *fr, int solution) {
 	}
 	clean();
 	if(!isComplex() && fr->denominator()->isEven() && !fr->numerator()->isEven()) {
-		if(solution == 2) setNegative(true);
-		if(CALCULATOR->multipleRootsEnabled()) return 2;
+		if(solution == 2) {
+			setNegative(true);
+		}
+		if(CALCULATOR->multipleRootsEnabled()) {
+			return 2;
+		}
 	}
 	return 1;	
 }
