@@ -6146,62 +6146,67 @@ bool Calculator::canPlot() {
 	}
 	return false;
 }
-MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, string x_var) {
+MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, string x_var, const ParseOptions &po) {
 	Variable *v = getActiveVariable(x_var);
 	MathStructure x_mstruct;
 	if(v) x_mstruct = v;
 	else x_mstruct = x_var;
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
-	MathStructure y_vector(parse(expression).generateVector(x_mstruct, min, max, steps, x_vector, eo));
+	eo.parse_options = po;
+	MathStructure y_vector(parse(expression, po).generateVector(x_mstruct, min, max, steps, x_vector, eo));
 	if(y_vector.size() == 0) {
 		CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
 	}
 	return y_vector;
 }
-MathStructure Calculator::expressionToPlotVector(string expression, float min, float max, int steps, MathStructure *x_vector, string x_var) {
+MathStructure Calculator::expressionToPlotVector(string expression, float min, float max, int steps, MathStructure *x_vector, string x_var, const ParseOptions &po) {
 	MathStructure min_mstruct(min), max_mstruct(max);
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
-	MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, steps, x_vector, x_var));
+	eo.parse_options = po;
+	MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, steps, x_vector, x_var, po));
 	y_vector.eval(eo);
 	if(y_vector.size() == 0) {
 		CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
 	}
 	return y_vector;
 }
-MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector, string x_var) {
+MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector, string x_var, const ParseOptions &po) {
 	Variable *v = getActiveVariable(x_var);
 	MathStructure x_mstruct;
 	if(v) x_mstruct = v;
 	else x_mstruct = x_var;
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
-	MathStructure y_vector(parse(expression).generateVector(x_mstruct, min, max, step, x_vector, eo));
+	eo.parse_options = po;
+	MathStructure y_vector(parse(expression, po).generateVector(x_mstruct, min, max, step, x_vector, eo));
 	if(y_vector.size() == 0) {
 		CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
 	}
 	return y_vector;
 }
-MathStructure Calculator::expressionToPlotVector(string expression, float min, float max, float step, MathStructure *x_vector, string x_var) {
+MathStructure Calculator::expressionToPlotVector(string expression, float min, float max, float step, MathStructure *x_vector, string x_var, const ParseOptions &po) {
 	MathStructure min_mstruct(min), max_mstruct(max), step_mstruct(step);
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
-	MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, step_mstruct, x_vector, x_var));
+	eo.parse_options = po;
+	MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, step_mstruct, x_vector, x_var, po));
 	y_vector.eval(eo);
 	if(y_vector.size() == 0) {
 		CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
 	}
 	return y_vector;
 }
-MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &x_vector, string x_var) {
+MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &x_vector, string x_var, const ParseOptions &po) {
 	Variable *v = getActiveVariable(x_var);
 	MathStructure x_mstruct;
 	if(v) x_mstruct = v;
 	else x_mstruct = x_var;
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
-	return parse(expression).generateVector(x_mstruct, x_vector, eo).eval(eo);
+	eo.parse_options = po;
+	return parse(expression, po).generateVector(x_mstruct, x_vector, eo).eval(eo);
 }
 
 bool Calculator::plotVectors(plot_parameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<plot_data_parameters*> &pdps, bool persistent) {

@@ -1282,7 +1282,7 @@ GtkWidget* get_plot_dialog (void) {
 		g_assert (glade_xml_get_widget (plot_glade, "plot_dialog") != NULL);
 		
 		tPlotFunctions = glade_xml_get_widget (plot_glade, "plot_treeview_data");
-		tPlotFunctions_store = gtk_list_store_new(7, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
+		tPlotFunctions_store = gtk_list_store_new(10, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_STRING);
 		gtk_tree_view_set_model(GTK_TREE_VIEW(tPlotFunctions), GTK_TREE_MODEL(tPlotFunctions_store));
 		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tPlotFunctions));
 		gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);

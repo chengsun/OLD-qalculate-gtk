@@ -229,18 +229,18 @@ class MathStructure {
 		
 		bool hasNegativeSign() const;
 		
-		bool representsPositive() const;
-		bool representsNegative() const;
-		bool representsNonNegative() const;
-		bool representsNonPositive() const;
-		bool representsInteger() const;
-		bool representsNumber() const;
-		bool representsRational() const;
-		bool representsReal() const;
-		bool representsComplex() const;
-		bool representsNonZero() const;
-		bool representsEven() const;
-		bool representsOdd() const;
+		bool representsPositive(bool allow_units = false) const;
+		bool representsNegative(bool allow_units = false) const;
+		bool representsNonNegative(bool allow_units = false) const;
+		bool representsNonPositive(bool allow_units = false) const;
+		bool representsInteger(bool allow_units = false) const;
+		bool representsNumber(bool allow_units = false) const;
+		bool representsRational(bool allow_units = false) const;
+		bool representsReal(bool allow_units = false) const;
+		bool representsComplex(bool allow_units = false) const;
+		bool representsNonZero(bool allow_units = false) const;
+		bool representsEven(bool allow_units = false) const;
+		bool representsOdd(bool allow_units = false) const;
 		bool representsUndefined(bool include_childs = false, bool include_infinite = false) const;
 	
 		void setApproximate(bool is_approx = true);	

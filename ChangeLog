@@ -1,3 +1,9 @@
+2004-10-24 Niklas Knutsson  <nq@altern.org>
+
+	* Rearrange plot dialog
+	* Do not update plot data when not changed
+	* Make x variable separate for each plot function
+
 2004-10-22 Niklas Knutsson  <nq@altern.org>
 
 	* Fix angle arguments by adding option default angle unit none where angle units must be specified

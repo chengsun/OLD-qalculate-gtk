@@ -123,43 +123,43 @@ void UnknownVariable::setAssumptions(Assumptions *ass) {
 Assumptions *UnknownVariable::assumptions() {
 	return o_assumption;
 }
-bool UnknownVariable::isPositive() { 
+bool UnknownVariable::representsPositive(bool allow_units) { 
 	if(o_assumption) return o_assumption->isPositive();
 	return CALCULATOR->defaultAssumptions()->isPositive();
 }
-bool UnknownVariable::isNegative() { 
+bool UnknownVariable::representsNegative(bool allow_units) { 
 	if(o_assumption) return o_assumption->isNegative();
 	return CALCULATOR->defaultAssumptions()->isNegative();
 }
-bool UnknownVariable::isNonNegative() { 
+bool UnknownVariable::representsNonNegative(bool allow_units) { 
 	if(o_assumption) return o_assumption->isNonNegative();
 	return CALCULATOR->defaultAssumptions()->isNonNegative();
 }
-bool UnknownVariable::isNonPositive() { 
+bool UnknownVariable::representsNonPositive(bool allow_units) { 
 	if(o_assumption) return o_assumption->isNonPositive();
 	return CALCULATOR->defaultAssumptions()->isNonPositive();
 }
-bool UnknownVariable::isInteger() { 
+bool UnknownVariable::representsInteger(bool allow_units) { 
 	if(o_assumption) return o_assumption->isInteger();
 	return CALCULATOR->defaultAssumptions()->isInteger();
 }
-bool UnknownVariable::isNumber() { 
+bool UnknownVariable::representsNumber(bool allow_units) { 
 	if(o_assumption) return o_assumption->isNumber();
 	return CALCULATOR->defaultAssumptions()->isNumber();
 }
-bool UnknownVariable::isRational() { 
+bool UnknownVariable::representsRational(bool allow_units) { 
 	if(o_assumption) return o_assumption->isRational();
 	return CALCULATOR->defaultAssumptions()->isRational();
 }
-bool UnknownVariable::isReal() { 
+bool UnknownVariable::representsReal(bool allow_units) { 
 	if(o_assumption) return o_assumption->isReal();
 	return CALCULATOR->defaultAssumptions()->isReal();
 }
-bool UnknownVariable::isComplex() { 
+bool UnknownVariable::representsComplex(bool allow_units) { 
 	if(o_assumption) return o_assumption->isComplex();
 	return CALCULATOR->defaultAssumptions()->isComplex();
 }
-bool UnknownVariable::isNonZero() { 
+bool UnknownVariable::representsNonZero(bool allow_units) { 
 	if(o_assumption) return o_assumption->isNonZero();
 	return CALCULATOR->defaultAssumptions()->isNonZero();
 }
@@ -247,16 +247,19 @@ const MathStructure &KnownVariable::get() {
 	}
 	return *mstruct;
 }
-bool KnownVariable::isPositive() {return get().representsPositive();}
-bool KnownVariable::isNegative() {return get().representsNegative();}
-bool KnownVariable::isNonNegative() {return get().representsNonNegative();}
-bool KnownVariable::isNonPositive() {return get().representsNonPositive();}
-bool KnownVariable::isInteger() {return get().representsInteger();}
-bool KnownVariable::isNumber() {return get().representsNumber();}
-bool KnownVariable::isRational() {return get().representsRational();}
-bool KnownVariable::isReal() {return get().representsReal();}
-bool KnownVariable::isComplex() {return get().representsComplex();}
-bool KnownVariable::isNonZero() {return get().representsNonZero();}
+bool KnownVariable::representsPositive(bool allow_units) {return get().representsPositive(allow_units);}
+bool KnownVariable::representsNegative(bool allow_units) {return get().representsNegative(allow_units);}
+bool KnownVariable::representsNonNegative(bool allow_units) {return get().representsNonNegative(allow_units);}
+bool KnownVariable::representsNonPositive(bool allow_units) {return get().representsNonPositive(allow_units);}
+bool KnownVariable::representsInteger(bool allow_units) {return get().representsInteger(allow_units);}
+bool KnownVariable::representsNumber(bool allow_units) {return get().representsNumber(allow_units);}
+bool KnownVariable::representsRational(bool allow_units) {return get().representsRational(allow_units);}
+bool KnownVariable::representsReal(bool allow_units) {return get().representsReal(allow_units);}
+bool KnownVariable::representsComplex(bool allow_units) {return get().representsComplex(allow_units);}
+bool KnownVariable::representsNonZero(bool allow_units) {return get().representsNonZero(allow_units);}
+bool KnownVariable::representsEven(bool allow_units) {return get().representsEven(allow_units);}
+bool KnownVariable::representsOdd(bool allow_units) {return get().representsOdd(allow_units);}
+bool KnownVariable::representsUndefined(bool include_childs, bool include_infinite) {return get().representsUndefined(include_childs, include_infinite);}
 
 DynamicVariable::DynamicVariable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : KnownVariable(cat_, name_, MathStructure(), title_, is_local, is_builtin, is_active) {
 	mstruct = NULL;

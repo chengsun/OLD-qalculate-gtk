@@ -445,7 +445,6 @@ void on_names_edit_entry_name_activate(GtkEntry *w, gpointer user_data);
 void on_names_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 
 void on_plot_button_save_clicked(GtkButton *w, gpointer user_data);
-void on_plot_button_apply_clicked(GtkButton *w, gpointer user_data);
 void on_plot_button_add_clicked(GtkButton *w, gpointer user_data);
 void on_plot_button_modify_clicked(GtkButton *w, gpointer user_data);
 void on_plot_button_remove_clicked(GtkButton *w, gpointer user_data);

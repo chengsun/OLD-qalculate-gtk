@@ -104,16 +104,19 @@ class Variable : public ExpressionItem {
 	virtual int subtype() const {return SUBTYPE_VARIABLE;}
 	virtual bool isKnown() const = 0;
 
-	virtual bool isPositive() {return false;}
-	virtual bool isNegative() {return false;}
-	virtual bool isNonNegative() {return false;}
-	virtual bool isNonPositive() {return false;}
-	virtual bool isInteger() {return false;}
-	virtual bool isNumber() {return false;}
-	virtual bool isRational() {return false;}
-	virtual bool isReal() {return false;}
-	virtual bool isComplex() {return false;}
-	virtual bool isNonZero() {return false;}
+	virtual bool representsPositive(bool allow_units = false) {return false;}
+	virtual bool representsNegative(bool allow_units = false) {return false;}
+	virtual bool representsNonNegative(bool allow_units = false) {return false;}
+	virtual bool representsNonPositive(bool allow_units = false) {return false;}
+	virtual bool representsInteger(bool allow_units = false) {return false;}
+	virtual bool representsNumber(bool allow_units = false) {return false;}
+	virtual bool representsRational(bool allow_units = false) {return false;}
+	virtual bool representsReal(bool allow_units = false) {return false;}
+	virtual bool representsComplex(bool allow_units = false) {return false;}
+	virtual bool representsNonZero(bool allow_units = false) {return false;}
+	virtual bool representsEven(bool allow_units = false) {return false;}
+	virtual bool representsOdd(bool allow_units = false) {return false;}
+	virtual bool representsUndefined(bool include_childs = false, bool include_infinite = false) {return false;}
 	
 };
 
@@ -136,16 +139,16 @@ class UnknownVariable : public Variable {
 	Assumptions *assumptions();
 	int subtype() const {return SUBTYPE_UNKNOWN_VARIABLE;}
 
-	virtual bool isPositive();
-	virtual bool isNegative();
-	virtual bool isNonNegative();
-	virtual bool isNonPositive();
-	virtual bool isInteger();
-	virtual bool isNumber();
-	virtual bool isRational();
-	virtual bool isReal();
-	virtual bool isComplex();
-	virtual bool isNonZero();
+	virtual bool representsPositive(bool allow_units = false);
+	virtual bool representsNegative(bool allow_units = false);
+	virtual bool representsNonNegative(bool allow_units = false);
+	virtual bool representsNonPositive(bool allow_units = false);
+	virtual bool representsInteger(bool allow_units = false);
+	virtual bool representsNumber(bool allow_units = false);
+	virtual bool representsRational(bool allow_units = false);
+	virtual bool representsReal(bool allow_units = false);
+	virtual bool representsComplex(bool allow_units = false);
+	virtual bool representsNonZero(bool allow_units = false);
 	
 };
 
@@ -178,16 +181,19 @@ class KnownVariable : public Variable {
 
 	virtual const MathStructure &get();
 	
-	virtual bool isPositive();
-	virtual bool isNegative();
-	virtual bool isNonNegative();
-	virtual bool isNonPositive();
-	virtual bool isInteger();
-	virtual bool isNumber();
-	virtual bool isRational();
-	virtual bool isReal();
-	virtual bool isComplex();
-	virtual bool isNonZero();
+	virtual bool representsPositive(bool allow_units = false);
+	virtual bool representsNegative(bool allow_units = false);
+	virtual bool representsNonNegative(bool allow_units = false);
+	virtual bool representsNonPositive(bool allow_units = false);
+	virtual bool representsInteger(bool allow_units = false);
+	virtual bool representsNumber(bool allow_units = false);
+	virtual bool representsRational(bool allow_units = false);
+	virtual bool representsReal(bool allow_units = false);
+	virtual bool representsComplex(bool allow_units = false);
+	virtual bool representsNonZero(bool allow_units = false);
+	virtual bool representsEven(bool allow_units = false);
+	virtual bool representsOdd(bool allow_units = false);
+	virtual bool representsUndefined(bool include_childs = false, bool include_infinite = false);
 
 };
 
@@ -214,16 +220,19 @@ class DynamicVariable : public KnownVariable {
 	
 	int calculatedPrecision() const;
 	
-	virtual bool isPositive() {return true;}
-	virtual bool isNegative() {return false;}
-	virtual bool isNonNegative() {return true;}
-	virtual bool isNonPositive() {return false;}
-	virtual bool isInteger() {return false;}
-	virtual bool isNumber() {return true;}
-	virtual bool isRational() {return false;}
-	virtual bool isReal() {return true;}
-	virtual bool isComplex() {return false;}
-	virtual bool isNonZero() {return true;}
+	virtual bool representsPositive(bool allow_units = false) {return true;}
+	virtual bool representsNegative(bool allow_units = false) {return false;}
+	virtual bool representsNonNegative(bool allow_units = false) {return true;}
+	virtual bool representsNonPositive(bool allow_units = false) {return false;}
+	virtual bool representsInteger(bool allow_units = false) {return false;}
+	virtual bool representsNumber(bool allow_units = false) {return true;}
+	virtual bool representsRational(bool allow_units = false) {return false;}
+	virtual bool representsReal(bool allow_units = false) {return true;}
+	virtual bool representsComplex(bool allow_units = false) {return false;}
+	virtual bool representsNonZero(bool allow_units = false) {return true;}
+	virtual bool representsEven(bool allow_units = false) {return false;}
+	virtual bool representsOdd(bool allow_units = false) {return false;}
+	virtual bool representsUndefined(bool include_childs = false, bool include_infinite = false) {return false;}
 
 };
 

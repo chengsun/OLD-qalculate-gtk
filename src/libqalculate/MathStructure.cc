@@ -578,231 +578,231 @@ bool MathStructure::hasNegativeSign() const {
 	return (m_type == STRUCT_NUMBER && o_number.hasNegativeSign()) || m_type == STRUCT_NEGATE || (m_type == STRUCT_MULTIPLICATION && SIZE > 0 && CHILD(0).hasNegativeSign());
 }
 
-bool MathStructure::representsNumber() const {
+bool MathStructure::representsNumber(bool allow_units) const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return true;}
-		case STRUCT_VARIABLE: {return o_variable->isNumber();}
+		case STRUCT_VARIABLE: {return o_variable->representsNumber(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNumber();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsNumber()) || o_function->representsNumber(*this);}
-		case STRUCT_UNIT: {return true;}
+		case STRUCT_FUNCTION: {return (function_value && function_value->representsNumber(allow_units)) || o_function->representsNumber(*this, allow_units);}
+		case STRUCT_UNIT: {return allow_units;}
 		case STRUCT_ADDITION: {}
 		case STRUCT_POWER: {}
 		case STRUCT_MULTIPLICATION: {
 			for(size_t i = 0; i < SIZE; i++) {
-				if(!CHILD(i).representsNumber()) return false;
+				if(!CHILD(i).representsNumber(allow_units)) return false;
 			}
 			return true;
 		}
 		default: {return false;}
 	}
 }
-bool MathStructure::representsInteger() const {
+bool MathStructure::representsInteger(bool allow_units) const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return o_number.isInteger();}
-		case STRUCT_VARIABLE: {return o_variable->isInteger();}
+		case STRUCT_VARIABLE: {return o_variable->representsInteger(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isInteger();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsInteger()) || o_function->representsInteger(*this);}
-		case STRUCT_UNIT: {return true;}
+		case STRUCT_FUNCTION: {return (function_value && function_value->representsInteger(allow_units)) || o_function->representsInteger(*this, allow_units);}
+		case STRUCT_UNIT: {return false;}
 		case STRUCT_ADDITION: {}
 		case STRUCT_MULTIPLICATION: {
 			for(size_t i = 0; i < SIZE; i++) {
-				if(!CHILD(i).representsInteger()) return false;
+				if(!CHILD(i).representsInteger(allow_units)) return false;
 			}
 			return true;
 		}
 		case STRUCT_POWER: {
-			return CHILD(0).representsInteger() && CHILD(1).representsInteger() && CHILD(1).representsPositive();
+			return CHILD(0).representsInteger(allow_units) && CHILD(1).representsInteger(false) && CHILD(1).representsPositive(false);
 		}
 		default: {return false;}
 	}
 }
-bool MathStructure::representsPositive() const {
+bool MathStructure::representsPositive(bool allow_units) const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return o_number.isPositive();}
-		case STRUCT_VARIABLE: {return o_variable->isPositive();}
+		case STRUCT_VARIABLE: {return o_variable->representsPositive(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isPositive();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsPositive()) || o_function->representsPositive(*this);}
-		case STRUCT_UNIT: {return true;}
+		case STRUCT_FUNCTION: {return (function_value && function_value->representsPositive(allow_units)) || o_function->representsPositive(*this, allow_units);}
+		case STRUCT_UNIT: {return allow_units;}
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < SIZE; i++) {
-				if(!CHILD(i).representsPositive()) return false;
+				if(!CHILD(i).representsPositive(allow_units)) return false;
 			}
 			return true;
 		}
 		case STRUCT_MULTIPLICATION: {
 			bool b = true;
 			for(size_t i = 0; i < SIZE; i++) {
-				if(CHILD(i).representsNegative()) {
+				if(CHILD(i).representsNegative(allow_units)) {
 					b = !b;
-				} else if(!CHILD(i).representsPositive()) {
+				} else if(!CHILD(i).representsPositive(allow_units)) {
 					return false;
 				}
 			}
 			return b;
 		}
 		case STRUCT_POWER: {
-			return (CHILD(0).representsPositive() && CHILD(1).representsReal()) || (CHILD(0).representsNegative() && CHILD(1).representsEven() && CHILD(1).representsInteger() && CHILD(1).representsPositive());
+			return (CHILD(0).representsPositive(allow_units) && CHILD(1).representsReal(false)) || (CHILD(0).representsNegative(allow_units) && CHILD(1).representsEven(false) && CHILD(1).representsInteger(false) && CHILD(1).representsPositive(false));
 		}
 		default: {return false;}
 	}
 }
-bool MathStructure::representsNegative() const {
+bool MathStructure::representsNegative(bool allow_units) const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return o_number.isNegative();}
-		case STRUCT_VARIABLE: {return o_variable->isNegative();}
+		case STRUCT_VARIABLE: {return o_variable->representsNegative(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNegative();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsNegative()) || o_function->representsNegative(*this);}
+		case STRUCT_FUNCTION: {return (function_value && function_value->representsNegative(allow_units)) || o_function->representsNegative(*this, allow_units);}
 		case STRUCT_UNIT: {return false;}
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < SIZE; i++) {
-				if(!CHILD(i).representsNegative()) return false;
+				if(!CHILD(i).representsNegative(allow_units)) return false;
 			}
 			return true;
 		}
 		case STRUCT_MULTIPLICATION: {
 			bool b = false;
 			for(size_t i = 0; i < SIZE; i++) {
-				if(CHILD(i).representsNegative()) {
+				if(CHILD(i).representsNegative(allow_units)) {
 					b = !b;
-				} else if(!CHILD(i).representsPositive()) {
+				} else if(!CHILD(i).representsPositive(allow_units)) {
 					return false;
 				}
 			}
 			return b;
 		}
 		case STRUCT_POWER: {
-			return CHILD(1).representsInteger() && CHILD(1).representsPositive() && CHILD(1).representsOdd() && CHILD(0).representsNegative();
+			return CHILD(1).representsInteger(false) && CHILD(1).representsPositive(false) && CHILD(1).representsOdd(false) && CHILD(0).representsNegative(allow_units);
 		}
 		default: {return false;}
 	}
 }
-bool MathStructure::representsNonNegative() const {
+bool MathStructure::representsNonNegative(bool allow_units) const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return o_number.isNonNegative();}
-		case STRUCT_VARIABLE: {return o_variable->isNonNegative();}
+		case STRUCT_VARIABLE: {return o_variable->representsNonNegative(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonNegative();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsNonNegative()) || o_function->representsNonNegative(*this);}
-		case STRUCT_UNIT: {return true;}
+		case STRUCT_FUNCTION: {return (function_value && function_value->representsNonNegative(allow_units)) || o_function->representsNonNegative(*this, allow_units);}
+		case STRUCT_UNIT: {return allow_units;}
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < SIZE; i++) {
-				if(!CHILD(i).representsNonNegative()) return false;
+				if(!CHILD(i).representsNonNegative(allow_units)) return false;
 			}
 			return true;
 		}
 		case STRUCT_MULTIPLICATION: {
 			bool b = true;
 			for(size_t i = 0; i < SIZE; i++) {
-				if(CHILD(i).representsNegative()) {
+				if(CHILD(i).representsNegative(allow_units)) {
 					b = !b;
-				} else if(!CHILD(i).representsNonNegative()) {
+				} else if(!CHILD(i).representsNonNegative(allow_units)) {
 					return false;
 				}
 			}
 			return b;
 		}
 		case STRUCT_POWER: {
-			return (CHILD(0).isZero() && CHILD(1).representsNonNegative()) || representsPositive();
+			return (CHILD(0).isZero() && CHILD(1).representsNonNegative(false)) || representsPositive(allow_units);
 		}
 		default: {return false;}
 	}
 }
-bool MathStructure::representsNonPositive() const {
+bool MathStructure::representsNonPositive(bool allow_units) const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return o_number.isNonPositive();}
-		case STRUCT_VARIABLE: {return o_variable->isNonPositive();}
+		case STRUCT_VARIABLE: {return o_variable->representsNonPositive(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonPositive();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsNonPositive()) || o_function->representsNonPositive(*this);}
+		case STRUCT_FUNCTION: {return (function_value && function_value->representsNonPositive(allow_units)) || o_function->representsNonPositive(*this, allow_units);}
 		case STRUCT_UNIT: {return false;}
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < SIZE; i++) {
-				if(!CHILD(i).representsNonPositive()) return false;
+				if(!CHILD(i).representsNonPositive(allow_units)) return false;
 			}
 			return true;
 		}
 		case STRUCT_MULTIPLICATION: {
 			bool b = false;
 			for(size_t i = 0; i < SIZE; i++) {
-				if(CHILD(i).representsNegative()) {
+				if(CHILD(i).representsNegative(allow_units)) {
 					b = !b;
-				} else if(!CHILD(i).representsPositive()) {
+				} else if(!CHILD(i).representsPositive(allow_units)) {
 					return false;
 				}
 			}
 			return b;
 		}
 		case STRUCT_POWER: {
-			return (CHILD(0).isZero() && CHILD(1).representsPositive()) || representsNegative();
+			return (CHILD(0).isZero() && CHILD(1).representsPositive(false)) || representsNegative(allow_units);
 		}
 		default: {return false;}
 	}
 }
-bool MathStructure::representsRational() const {
+bool MathStructure::representsRational(bool allow_units) const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return o_number.isRational();}
-		case STRUCT_VARIABLE: {return o_variable->isRational();}
+		case STRUCT_VARIABLE: {return o_variable->representsRational(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isRational();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsRational()) || o_function->representsRational(*this);}
-		case STRUCT_UNIT: {return true;}
+		case STRUCT_FUNCTION: {return (function_value && function_value->representsRational(allow_units)) || o_function->representsRational(*this, allow_units);}
+		case STRUCT_UNIT: {return false;}
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < SIZE; i++) {
-				if(!CHILD(i).representsRational()) return false;
+				if(!CHILD(i).representsRational(allow_units)) return false;
 			}
 			return true;
 		}
 		case STRUCT_MULTIPLICATION: {
 			for(size_t i = 0; i < SIZE; i++) {
-				if(!CHILD(i).representsRational()) {
+				if(!CHILD(i).representsRational(allow_units)) {
 					return false;
 				}
 			}
 			return true;
 		}
 		case STRUCT_POWER: {
-			return CHILD(1).representsInteger() && CHILD(0).representsRational() && (CHILD(0).representsPositive() || (CHILD(0).representsNegative() && CHILD(1).representsEven() && CHILD(1).representsPositive()));
+			return CHILD(1).representsInteger(false) && CHILD(0).representsRational(allow_units) && (CHILD(0).representsPositive(allow_units) || (CHILD(0).representsNegative(allow_units) && CHILD(1).representsEven(false) && CHILD(1).representsPositive(false)));
 		}
 		default: {return false;}
 	}
 }
-bool MathStructure::representsReal() const {
+bool MathStructure::representsReal(bool allow_units) const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return o_number.isReal();}
-		case STRUCT_VARIABLE: {return o_variable->isReal();}
+		case STRUCT_VARIABLE: {return o_variable->representsReal(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isReal();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsReal()) || o_function->representsReal(*this);}
-		case STRUCT_UNIT: {return true;}
+		case STRUCT_FUNCTION: {return (function_value && function_value->representsReal(allow_units)) || o_function->representsReal(*this, allow_units);}
+		case STRUCT_UNIT: {return allow_units;}
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < SIZE; i++) {
-				if(!CHILD(i).representsReal()) return false;
+				if(!CHILD(i).representsReal(allow_units)) return false;
 			}
 			return true;
 		}
 		case STRUCT_MULTIPLICATION: {
 			for(size_t i = 0; i < SIZE; i++) {
-				if(!CHILD(i).representsReal()) {
+				if(!CHILD(i).representsReal(allow_units)) {
 					return false;
 				}
 			}
 			return true;
 		}
 		case STRUCT_POWER: {
-			return (CHILD(0).representsPositive() && CHILD(1).representsReal()) || (CHILD(0).representsReal() && CHILD(1).representsEven() && CHILD(1).representsInteger() && CHILD(1).representsPositive());
+			return (CHILD(0).representsPositive(allow_units) && CHILD(1).representsReal(false)) || (CHILD(0).representsReal(allow_units) && CHILD(1).representsEven(false) && CHILD(1).representsInteger(false) && CHILD(1).representsPositive(false));
 		}
 		default: {return false;}
 	}
 }
-bool MathStructure::representsComplex() const {
+bool MathStructure::representsComplex(bool allow_units) const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return o_number.isComplex();}
-		case STRUCT_VARIABLE: {return o_variable->isComplex();}
+		case STRUCT_VARIABLE: {return o_variable->representsComplex(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isComplex();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsComplex()) || o_function->representsComplex(*this);}
+		case STRUCT_FUNCTION: {return (function_value && function_value->representsComplex(allow_units)) || o_function->representsComplex(*this, allow_units);}
 		case STRUCT_ADDITION: {
 			bool c = false;
 			for(size_t i = 0; i < SIZE; i++) {
-				if(CHILD(i).representsComplex()) {
+				if(CHILD(i).representsComplex(allow_units)) {
 					if(c) return false;
 					c = true;
-				} else if(!CHILD(i).representsReal() || !CHILD(i).representsNonZero()) {
+				} else if(!CHILD(i).representsReal(allow_units) || !CHILD(i).representsNonZero(allow_units)) {
 					return false;
 				}
 			}
@@ -811,10 +811,10 @@ bool MathStructure::representsComplex() const {
 		case STRUCT_MULTIPLICATION: {
 			bool c = false;
 			for(size_t i = 0; i < SIZE; i++) {
-				if(CHILD(i).representsComplex()) {
+				if(CHILD(i).representsComplex(allow_units)) {
 					if(c) return false;
 					c = true;
-				} else if(!CHILD(i).representsReal()) {
+				} else if(!CHILD(i).representsReal(allow_units)) {
 					return false;
 				}
 			}
@@ -824,19 +824,19 @@ bool MathStructure::representsComplex() const {
 		default: {return false;}
 	}
 }
-bool MathStructure::representsNonZero() const {
+bool MathStructure::representsNonZero(bool allow_units) const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return !o_number.isZero();}
-		case STRUCT_VARIABLE: {return o_variable->isNonZero();}
+		case STRUCT_VARIABLE: {return o_variable->representsNonZero(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonZero();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsNonZero()) || o_function->representsNonZero(*this);}
-		case STRUCT_UNIT: {return true;}
+		case STRUCT_FUNCTION: {return (function_value && function_value->representsNonZero(allow_units)) || o_function->representsNonZero(*this, allow_units);}
+		case STRUCT_UNIT: {return allow_units;}
 		case STRUCT_ADDITION: {
 			bool neg = false, started = false;
 			for(size_t i = 0; i < SIZE; i++) {
-				if((!started || neg) && CHILD(i).representsNegative()) {
+				if((!started || neg) && CHILD(i).representsNegative(allow_units)) {
 					neg = true;
-				} else if(neg || !CHILD(i).representsPositive()) {
+				} else if(neg || !CHILD(i).representsPositive(allow_units)) {
 					return false;
 				}
 				started = true;
@@ -845,29 +845,31 @@ bool MathStructure::representsNonZero() const {
 		}
 		case STRUCT_MULTIPLICATION: {
 			for(size_t i = 0; i < SIZE; i++) {
-				if(!CHILD(i).representsNonZero()) {
+				if(!CHILD(i).representsNonZero(allow_units)) {
 					return false;
 				}
 			}
 			return true;
 		}
 		case STRUCT_POWER: {
-			return CHILD(0).representsNonZero();
+			return CHILD(0).representsNonZero(allow_units);
 		}
 		default: {return false;}
 	}
 }
-bool MathStructure::representsEven() const {
+bool MathStructure::representsEven(bool allow_units) const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return o_number.isEven();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsEven()) || o_function->representsEven(*this);}
+		case STRUCT_VARIABLE: {return o_variable->representsEven(allow_units);}
+		case STRUCT_FUNCTION: {return (function_value && function_value->representsEven(allow_units)) || o_function->representsEven(*this, allow_units);}
 		default: {return false;}
 	}
 }
-bool MathStructure::representsOdd() const {
+bool MathStructure::representsOdd(bool allow_units) const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return o_number.isOdd();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsOdd()) || o_function->representsOdd(*this);}
+		case STRUCT_VARIABLE: {return o_variable->representsOdd(allow_units);}
+		case STRUCT_FUNCTION: {return (function_value && function_value->representsOdd(allow_units)) || o_function->representsOdd(*this, allow_units);}
 		default: {return false;}
 	}
 }
@@ -880,7 +882,8 @@ bool MathStructure::representsUndefined(bool include_childs, bool include_infini
 			return false;
 		}
 		case STRUCT_UNDEFINED: {return true;}
-		case STRUCT_POWER: {return (CHILD(0).isZero() && CHILD(1).representsNegative()) || (CHILD(0).isInfinity() && CHILD(1).isZero());}
+		case STRUCT_VARIABLE: {return o_variable->representsUndefined(include_childs, include_infinite);}
+		case STRUCT_POWER: {return (CHILD(0).isZero() && CHILD(1).representsNegative(false)) || (CHILD(0).isInfinity() && CHILD(1).isZero());}
 		case STRUCT_FUNCTION: {return (function_value && function_value->representsUndefined()) || o_function->representsUndefined(*this);}
 		default: {
 			if(include_childs) {
@@ -1393,8 +1396,8 @@ ComparisonResult MathStructure::compare(const MathStructure &o) const {
 		return o_number.compare(o.number());
 	}
 	if(equals(o)) return COMPARISON_RESULT_EQUAL;
-	if(o.representsReal() && representsComplex()) return COMPARISON_RESULT_NOT_EQUAL;
-	if(representsReal() && o.representsComplex()) return COMPARISON_RESULT_NOT_EQUAL;
+	if(o.representsReal(true) && representsComplex(true)) return COMPARISON_RESULT_NOT_EQUAL;
+	if(representsReal(true) && o.representsComplex(true)) return COMPARISON_RESULT_NOT_EQUAL;
 	MathStructure mtest(*this);
 	mtest -= o;
 	EvaluationOptions eo = default_evaluation_options;
@@ -1410,11 +1413,11 @@ ComparisonResult MathStructure::compare(const MathStructure &o) const {
 		}
 	}
 	if(mtest.isZero()) return COMPARISON_RESULT_EQUAL;
-	else if(mtest.representsPositive()) {if(incomp) return COMPARISON_RESULT_NOT_EQUAL; return COMPARISON_RESULT_LESS;}
-	else if(mtest.representsNegative()) {if(incomp) return COMPARISON_RESULT_NOT_EQUAL; return COMPARISON_RESULT_GREATER;}
-	else if(mtest.representsNonZero()) return COMPARISON_RESULT_NOT_EQUAL;
-	else if(mtest.representsNonPositive()) {if(incomp) return COMPARISON_RESULT_NOT_EQUAL; return COMPARISON_RESULT_EQUAL_OR_LESS;}
-	else if(mtest.representsNonNegative()) {if(incomp) return COMPARISON_RESULT_NOT_EQUAL; return COMPARISON_RESULT_EQUAL_OR_GREATER;}
+	else if(mtest.representsPositive(true)) {if(incomp) return COMPARISON_RESULT_NOT_EQUAL; return COMPARISON_RESULT_LESS;}
+	else if(mtest.representsNegative(true)) {if(incomp) return COMPARISON_RESULT_NOT_EQUAL; return COMPARISON_RESULT_GREATER;}
+	else if(mtest.representsNonZero(true)) return COMPARISON_RESULT_NOT_EQUAL;
+	else if(mtest.representsNonPositive(true)) {if(incomp) return COMPARISON_RESULT_NOT_EQUAL; return COMPARISON_RESULT_EQUAL_OR_LESS;}
+	else if(mtest.representsNonNegative(true)) {if(incomp) return COMPARISON_RESULT_NOT_EQUAL; return COMPARISON_RESULT_EQUAL_OR_GREATER;}
 	return COMPARISON_RESULT_UNKNOWN;
 }
 
@@ -1437,12 +1440,12 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 		return 1;
 	}
 	if(m_type == STRUCT_NUMBER && o_number.isInfinite()) {
-		if(mstruct.representsNumber()) {
+		if(mstruct.representsNumber(false)) {
 			MERGE_APPROX_AND_PREC(mstruct)
 			return 1;
 		}
 	} else if(mstruct.isNumber() && mstruct.number().isInfinite()) {
-		if(representsNumber()) {
+		if(representsNumber(false)) {
 			clear(true);
 			o_number = mstruct.number();
 			MERGE_APPROX_AND_PREC(mstruct)
@@ -1692,7 +1695,7 @@ bool reducable(const MathStructure &mnum, const MathStructure &mden, Number &nr)
 			break;
 		}
 		default: {
-			if(mnum.representsNonZero()) {
+			if(mnum.representsNonZero(true)) {
 				bool reduce = true;
 				for(size_t i = 0; i < mden.size() && reduce; i++) {
 					switch(mden[i].type()) {
@@ -1819,56 +1822,56 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 	}
 	if(m_type == STRUCT_NUMBER && o_number.isInfinite()) {
 		if(o_number.isMinusInfinity()) {
-			if(mstruct.representsPositive()) {
+			if(mstruct.representsPositive(false)) {
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
-			} else if(mstruct.representsNegative()) {
+			} else if(mstruct.representsNegative(false)) {
 				o_number.setPlusInfinity();
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
 			}
 		} else if(o_number.isPlusInfinity()) {
-			if(mstruct.representsPositive()) {
+			if(mstruct.representsPositive(false)) {
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
-			} else if(mstruct.representsNegative()) {
+			} else if(mstruct.representsNegative(false)) {
 				o_number.setMinusInfinity();
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
 			}
 		}
-		if(mstruct.representsReal() && mstruct.representsNonZero()) {
+		if(mstruct.representsReal(false) && mstruct.representsNonZero(false)) {
 			o_number.setInfinity();
 			MERGE_APPROX_AND_PREC(mstruct)
 			return 1;
 		}
 	} else if(mstruct.isNumber() && mstruct.number().isInfinite()) {
 		if(mstruct.number().isMinusInfinity()) {
-			if(representsPositive()) {
+			if(representsPositive(false)) {
 				clear(true);
 				o_number.setMinusInfinity();
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
-			} else if(representsNegative()) {
+			} else if(representsNegative(false)) {
 				clear(true);
 				o_number.setPlusInfinity();
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
 			}
 		} else if(mstruct.number().isPlusInfinity()) {
-			if(representsPositive()) {
+			if(representsPositive(false)) {
 				clear(true);
 				o_number.setPlusInfinity();
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
-			} else if(representsNegative()) {
+			} else if(representsNegative(false)) {
 				clear(true);
 				o_number.setMinusInfinity();
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
 			}
 		}
-		if(representsReal() && representsNonZero()) {
+		if(representsReal(false) && representsNonZero(false)) {
 			clear(true);
 			o_number.setInfinity();
 			MERGE_APPROX_AND_PREC(mstruct)
@@ -2390,7 +2393,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				}
 				case STRUCT_POWER: {
 					if(mstruct[1].isNumber() && *this == mstruct[0]) {
-						if(representsNonNegative() || mstruct[1].representsPositive()) {
+						if(representsNonNegative(true) || mstruct[1].representsPositive(true)) {
 							set_nocopy(mstruct, true);
 							CHILD(1) += m_one;
 							return 1;
@@ -2474,7 +2477,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				}
 				case STRUCT_POWER: {
 					if(mstruct[1].isNumber() && *this == mstruct[0]) {
-						if(representsNonNegative() || mstruct[1].representsPositive()) {
+						if(representsNonNegative(true) || mstruct[1].representsPositive(true)) {
 							set_nocopy(mstruct, true);
 							CHILD(1) += m_one;
 							return 1;
@@ -2500,7 +2503,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				}
 				case STRUCT_POWER: {
 					if(mstruct[0] == CHILD(0)) {
-						if(CHILD(0).representsNonZero() || (eo.assume_denominators_nonzero && !CHILD(1).isZero()) || (CHILD(1).representsPositive() && mstruct[1].representsPositive())) {
+						if(CHILD(0).representsNonZero(true) || (eo.assume_denominators_nonzero && !CHILD(1).isZero()) || (CHILD(1).representsPositive(true) && mstruct[1].representsPositive(true))) {
 							MathStructure mstruct2(CHILD(1));
 							mstruct2 += mstruct[1];
 							if(mstruct2.calculatesub(eo, eo)) {
@@ -2521,7 +2524,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				}
 				default: {
 					if(!mstruct.isNumber() && CHILD(1).isNumber() && CHILD(0) == mstruct) {
-						if(CHILD(0).representsNonZero() || (eo.assume_denominators_nonzero && !CHILD(1).isZero()) || CHILD(1).representsPositive()) {
+						if(CHILD(0).representsNonZero(true) || (eo.assume_denominators_nonzero && !CHILD(1).isZero()) || CHILD(1).representsPositive(true)) {
 							CHILD(1) += m_one;
 							MERGE_APPROX_AND_PREC(mstruct)
 							return 1;
@@ -2630,20 +2633,20 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		return 1;
 	}
 	if(m_type == STRUCT_NUMBER && o_number.isInfinite()) {
-		if(mstruct.representsNegative()) {
+		if(mstruct.representsNegative(false)) {
 			o_number.clear();
 			MERGE_APPROX_AND_PREC(mstruct)
 			return 1;
-		} else if(mstruct.representsNonZero() && mstruct.representsNumber()) {
+		} else if(mstruct.representsNonZero(false) && mstruct.representsNumber(false)) {
 			if(o_number.isMinusInfinity()) {
-				if(mstruct.representsEven()) {
+				if(mstruct.representsEven(false)) {
 					o_number.setPlusInfinity();
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 1;
-				} else if(mstruct.representsOdd()) {
+				} else if(mstruct.representsOdd(false)) {
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 1;
-				} else if(mstruct.representsInteger()) {
+				} else if(mstruct.representsInteger(false)) {
 					o_number.setInfinity();
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 1;
@@ -2653,20 +2656,20 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 	} else if(mstruct.isNumber() && mstruct.number().isInfinite()) {
 		if(mstruct.number().isInfinity()) {
 		} else if(mstruct.number().isMinusInfinity()) {
-			if(representsReal() && representsNonZero()) {
+			if(representsReal(false) && representsNonZero(false)) {
 				clear(true);
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
 			}
 		} else if(mstruct.number().isPlusInfinity()) {
-			if(representsPositive()) {
+			if(representsPositive(false)) {
 				set_nocopy(mstruct, true);
 				return 1;
 			}
 		}
 	}
 	if(representsUndefined() || mstruct.representsUndefined()) return -1;
-	if(isZero() && mstruct.representsPositive()) {
+	if(isZero() && mstruct.representsPositive(true)) {
 		return 1;
 	}
 	if(mstruct.isZero() && !representsUndefined(true, true)) {
@@ -2870,7 +2873,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			goto default_power_merge;
 		}
 		case STRUCT_MULTIPLICATION: {
-			if(mstruct.representsInteger()) {
+			if(mstruct.representsInteger(false)) {
 				for(size_t i = 0; i < SIZE; i++) {
 					CHILD(i).raise(mstruct);	
 				}
@@ -2879,7 +2882,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			} else {
 				bool b = true;
 				for(size_t i = 0; i < SIZE; i++) {
-					if(!CHILD(i).representsNonNegative()) {
+					if(!CHILD(i).representsNonNegative(true)) {
 						b = false;
 					}
 				}
@@ -2894,9 +2897,9 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			goto default_power_merge;
 		}
 		case STRUCT_POWER: {
-			if(mstruct.representsInteger() || CHILD(0).representsReal()) {
+			if(mstruct.representsInteger(false) || CHILD(0).representsReal(true)) {
 				if(CHILD(1).isNumber() && CHILD(1).number().isRational()) {
-					if(CHILD(1).number().numeratorIsEven() && !mstruct.representsInteger()) {
+					if(CHILD(1).number().numeratorIsEven() && !mstruct.representsInteger(false)) {
 						MathStructure mstruct_base(CHILD(0));
 						CHILD(0).set(CALCULATOR->f_abs, &mstruct_base, NULL);
 					}
@@ -2940,7 +2943,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						}
 					}
 				} else if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_ln && mstruct.size() == 1) {
-					if(mstruct[0].representsPositive() || mstruct[0].representsComplex()) {
+					if(mstruct[0].representsPositive(false) || mstruct[0].representsComplex(false)) {
 						set(mstruct[0], true);
 						break;
 					}
@@ -3085,12 +3088,12 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				bool is_true = true;
 				size_t i = 0;
 				while(i < SIZE) {
-					if(CHILD(i).representsNonPositive()) {
+					if(CHILD(i).representsNonPositive(true)) {
 						clear(true);
 						b = true;
 						is_true = false;
 						break;
-					} else if(CHILD(i).representsPositive()) {
+					} else if(CHILD(i).representsPositive(true)) {
 						b = true;
 						ERASE(i);
 					} else {
@@ -3114,10 +3117,10 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				CHILDREN_UPDATED;
 				bool is_false = true;
 				for(size_t i = 0; i < SIZE;) {
-					if(CHILD(i).representsNonPositive()) {
+					if(CHILD(i).representsNonPositive(true)) {
 						b = true;
 						ERASE(i);
-					} else if(CHILD(i).representsPositive()) {
+					} else if(CHILD(i).representsPositive(true)) {
 						b = true;
 						set(m_one);
 						is_false = false;
@@ -3144,10 +3147,10 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				bool is_false = true;
 				bool had_true = false;
 				for(size_t i = 0; i < SIZE;) {
-					if(CHILD(i).representsNonPositive()) {
+					if(CHILD(i).representsNonPositive(true)) {
 						b = true;
 						ERASE(i);
-					} else if(CHILD(i).representsPositive()) {
+					} else if(CHILD(i).representsPositive(true)) {
 						if(had_true) {
 							clear(true);
 							b = true;
@@ -3189,10 +3192,10 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			case STRUCT_NOT: {
 				CHILD(0).calculatesub(eo, feo);
 				CHILDREN_UPDATED;
-				if(CHILD(0).representsPositive()) {
+				if(CHILD(0).representsPositive(true)) {
 					clear(true);
 					b = true;
-				} else if(CHILD(0).representsNonPositive()) {
+				} else if(CHILD(0).representsNonPositive(true)) {
 					set(m_one, true);
 					b = true;
 				}
@@ -3207,7 +3210,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					break;
 				}
 				if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) {
-					if((CHILD(0).representsReal() && CHILD(1).representsComplex()) || (CHILD(1).representsReal() && CHILD(0).representsComplex())) {
+					if((CHILD(0).representsReal(false) && CHILD(1).representsComplex(false)) || (CHILD(1).representsReal(false) && CHILD(0).representsComplex(false))) {
 						if(ct_comp == COMPARISON_EQUALS) {
 							clear(true);
 						} else {
@@ -3247,7 +3250,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 							clear(true);
 							o_number.set(1, 1);
 							b = true;	
-						} else if(CHILD(0).representsNonZero()) {
+						} else if(CHILD(0).representsNonZero(true)) {
 							clear(true);
 							b = true;
 						}
@@ -3258,7 +3261,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 							clear(true);
 							o_number.set(1, 1);
 							b = true;
-						} else if(CHILD(0).representsNonZero()) {
+						} else if(CHILD(0).representsNonZero(true)) {
 							clear(true);
 							o_number.set(1, 1);
 							b = true;	
@@ -3270,11 +3273,11 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					}
 					case COMPARISON_LESS:  {
 						if(incomp) {
-						} else if(CHILD(0).representsNegative()) {
+						} else if(CHILD(0).representsNegative(true)) {
 							clear(true);
 							o_number.set(1, 1);
 							b = true;	
-						} else if(CHILD(0).representsNonNegative()) {
+						} else if(CHILD(0).representsNonNegative(true)) {
 							clear(true);
 							b = true;
 						}
@@ -3282,11 +3285,11 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					}
 					case COMPARISON_GREATER:  {
 						if(incomp) {
-						} else if(CHILD(0).representsPositive()) {
+						} else if(CHILD(0).representsPositive(true)) {
 							clear(true);
 							o_number.set(1, 1);
 							b = true;	
-						} else if(CHILD(0).representsNonPositive()) {
+						} else if(CHILD(0).representsNonPositive(true)) {
 							clear(true);
 							b = true;
 						}
@@ -3294,11 +3297,11 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					}
 					case COMPARISON_EQUALS_LESS:  {
 						if(incomp) {
-						} else if(CHILD(0).representsNonPositive()) {
+						} else if(CHILD(0).representsNonPositive(true)) {
 							clear(true);
 							o_number.set(1, 1);
 							b = true;	
-						} else if(CHILD(0).representsPositive()) {
+						} else if(CHILD(0).representsPositive(true)) {
 							clear(true);
 							b = true;
 						}
@@ -3306,11 +3309,11 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					}
 					case COMPARISON_EQUALS_GREATER:  {
 						if(incomp) {
-						} else if(CHILD(0).representsNonNegative()) {
+						} else if(CHILD(0).representsNonNegative(true)) {
 							clear(true);
 							o_number.set(1, 1);
 							b = true;	
-						} else if(CHILD(0).representsNegative()) {
+						} else if(CHILD(0).representsNegative(true)) {
 							clear(true);
 							b = true;
 						}
@@ -7744,7 +7747,7 @@ int MathStructure::contains(const MathStructure &mstruct, bool structural_only, 
 			}
 		}
 		if((m_type == STRUCT_VARIABLE && o_variable->isKnown()) || m_type == STRUCT_FUNCTION) {
-			if(representsNumber()) {
+			if(representsNumber(false)) {
 				if(mstruct.isNumber()) return -1;
 				return 0;
 			} else {
@@ -7771,7 +7774,7 @@ int MathStructure::containsRepresentativeOf(const MathStructure &mstruct, bool c
 		}
 	}
 	if(m_type == STRUCT_SYMBOLIC || m_type == STRUCT_VARIABLE || m_type == STRUCT_FUNCTION) {
-		if(representsNumber()) {
+		if(representsNumber(false)) {
 			if(mstruct.isNumber()) return -1;
 			return 0;
 		} else {
@@ -7803,7 +7806,7 @@ int MathStructure::containsType(int mtype, bool structural_only, bool check_vari
 			}
 		}
 		if((m_type == STRUCT_VARIABLE && o_variable->isKnown()) || m_type == STRUCT_FUNCTION) {
-			if(representsNumber()) {
+			if(representsNumber(false)) {
 				return mtype == STRUCT_NUMBER;
 			} else {
 				return -1;
@@ -7828,7 +7831,7 @@ int MathStructure::containsRepresentativeOfType(int mtype, bool check_variables,
 		}
 	}
 	if(m_type == STRUCT_SYMBOLIC || m_type == STRUCT_VARIABLE || m_type == STRUCT_FUNCTION) {
-		if(representsNumber()) {
+		if(representsNumber(false)) {
 			return mtype == STRUCT_NUMBER;
 		} else {
 			return -1;
@@ -8138,7 +8141,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 					return false;
 				}
 			}
-			if(representsNumber()) {
+			if(representsNumber(true)) {
 				clear(true);
 				break;
 			}
@@ -8194,7 +8197,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 					MathStructure mstruct(CALCULATOR->f_abs, &x_var, NULL);
 					set(CALCULATOR->f_ln, &mstruct, NULL);
 					break;
-				} else if(CHILD(1).isNumber() || (CHILD(1).containsRepresentativeOf(x_var, true, true) == 0 && CHILD(1).representsNonNegative())) {
+				} else if(CHILD(1).isNumber() || (CHILD(1).containsRepresentativeOf(x_var, true, true) == 0 && CHILD(1).representsNonNegative(false))) {
 					CHILD(1) += m_one;
 					MathStructure mstruct(CHILD(1));
 					divide(mstruct);
@@ -8224,13 +8227,13 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 							mstruct = CHILD(1);
 							mstruct.delChild(i + 1);
 						}
-						if(mstruct.representsNonZero() && mstruct.containsRepresentativeOf(x_var, true, true) == 0) {
+						if(mstruct.representsNonZero(false) && mstruct.containsRepresentativeOf(x_var, true, true) == 0) {
 							divide(mstruct);
 							break;
 						}
 					}
 				}
-			} else if(CHILD(1).equals(x_var) && CHILD(0).containsRepresentativeOf(x_var, true, true) == 0 && CHILD(0).representsPositive()) {
+			} else if(CHILD(1).equals(x_var) && CHILD(0).containsRepresentativeOf(x_var, true, true) == 0 && CHILD(0).representsPositive(false)) {
 				MathStructure mstruct(CALCULATOR->f_ln, &CHILD(0), NULL);
 				CHILD(1) *= mstruct;
 				CHILD(0) = CALCULATOR->v_e;
@@ -8557,7 +8560,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 					int index = -1;
 					for(size_t i = 0; i < CHILD(0)[i2].size(); i++) {
 						if(CHILD(0)[i2][i].contains(x_var)) {
-  							if(CHILD(0)[i2][i].isPower() && CHILD(0)[i2][i][1].isNumber() && CHILD(0)[i2][i][1].number().isMinusOne() && (eo.assume_denominators_nonzero || CHILD(0)[i2][i][0].representsNonZero())) {
+  							if(CHILD(0)[i2][i].isPower() && CHILD(0)[i2][i][1].isNumber() && CHILD(0)[i2][i][1].number().isMinusOne() && (eo.assume_denominators_nonzero || CHILD(0)[i2][i][0].representsNonZero(true))) {
 								index = i;
 								break;
 							}
@@ -8604,10 +8607,10 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 			bool b = false;
 			for(size_t i = 0; i < CHILD(0).size(); i++) {
 				if(!CHILD(0)[i].contains(x_var)) {
-					if(eo.assume_denominators_nonzero || CHILD(0)[i].representsNonZero()) {
+					if(eo.assume_denominators_nonzero || CHILD(0)[i].representsNonZero(true)) {
 						bool b2 = false;
 						if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) {
-							if(CHILD(0)[i].representsNegative()) {
+							if(CHILD(0)[i].representsNegative(true)) {
 								switch(ct_comp) {
 									case COMPARISON_LESS: {ct_comp = COMPARISON_GREATER; break;}
 									case COMPARISON_GREATER: {ct_comp = COMPARISON_LESS; break;}
@@ -8616,7 +8619,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 									default: {}
 								}
 								b2 = true;
-							} else if(CHILD(0)[i].representsNonNegative()) {
+							} else if(CHILD(0)[i].representsNonNegative(true)) {
 								b2 = true;
 							}
 						} else {
@@ -8709,7 +8712,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 				if(!CHILD(0)[1].contains(x_var)) {
 					MathStructure mnonzero, mbefore;
 					bool test_nonzero = false;
-					if(!CHILD(0)[1].representsNonNegative() && !CHILD(0)[0].representsNonZero()) {
+					if(!CHILD(0)[1].representsNonNegative(true) && !CHILD(0)[0].representsNonZero(true)) {
 						if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) return false;
 						test_nonzero = true;
 						if(CHILD(0)[1].isNumber()) {
@@ -8724,7 +8727,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 							mnonzero[1].negate();
 						}
 					}
-					if(CHILD(0)[1].representsEven()) {
+					if(CHILD(0)[1].representsEven(true)) {
 
 						MathStructure exp(1, 1);
 						exp /= CHILD(0)[1];

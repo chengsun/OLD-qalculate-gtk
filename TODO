@@ -1,7 +1,6 @@
 * Implement signals for deleted variables etc.
 * Sort out when small floats really are zero due to limited precision
 * Quoted ")" in function
-* Do not recalculate plot data when it has not changed
 * Instant apply for all parameters in plot
 * Plot-functions
 * Replace pointers to unit when unit type has changed (a different object must be created)
@@ -15,6 +14,7 @@
 
 * Increase support for non-glibc systems
 
+* Sane and stable API
 * API documentation
 
 * Better graphs/charts (do not use gnuplot)

@@ -29,18 +29,18 @@
 						x(); \
 						x(const x *function) {set(function);} \
 						ExpressionItem *copy() const {return new x(this);} \
-						bool representsPositive(const MathStructure &vargs);\
-						bool representsNegative(const MathStructure &vargs);\
-						bool representsNonNegative(const MathStructure &vargs);\
-						bool representsNonPositive(const MathStructure &vargs);\
-						bool representsInteger(const MathStructure &vargs);\
-						bool representsNumber(const MathStructure &vargs);\
-						bool representsRational(const MathStructure &vargs);\
-						bool representsReal(const MathStructure &vargs);\
-						bool representsComplex(const MathStructure &vargs);\
-						bool representsNonZero(const MathStructure &vargs);\
-						bool representsEven(const MathStructure &vargs);\
-						bool representsOdd(const MathStructure &vargs);\
+						bool representsPositive(const MathStructure &vargs, bool allow_units = false);\
+						bool representsNegative(const MathStructure &vargs, bool allow_units = false);\
+						bool representsNonNegative(const MathStructure &vargs, bool allow_units = false);\
+						bool representsNonPositive(const MathStructure &vargs, bool allow_units = false);\
+						bool representsInteger(const MathStructure &vargs, bool allow_units = false);\
+						bool representsNumber(const MathStructure &vargs, bool allow_units = false);\
+						bool representsRational(const MathStructure &vargs, bool allow_units = false);\
+						bool representsReal(const MathStructure &vargs, bool allow_units = false);\
+						bool representsComplex(const MathStructure &vargs, bool allow_units = false);\
+						bool representsNonZero(const MathStructure &vargs, bool allow_units = false);\
+						bool representsEven(const MathStructure &vargs, bool allow_units = false);\
+						bool representsOdd(const MathStructure &vargs, bool allow_units = false);\
 						bool representsUndefined(const MathStructure &vargs);\
 					};
 					
@@ -50,8 +50,8 @@
 						x(); \
 						x(const x *function) {set(function);} \
 						ExpressionItem *copy() const {return new x(this);} \
-						bool representsNumber(const MathStructure &vargs);\
-						bool representsReal(const MathStructure &vargs);\
+						bool representsNumber(const MathStructure &vargs, bool allow_units = false);\
+						bool representsReal(const MathStructure &vargs, bool allow_units = false);\
 					};
 #define DECLARE_BUILTIN_FUNCTION_R1(x)	class x : public MathFunction { \
 					  public: \
@@ -59,7 +59,7 @@
 						x(); \
 						x(const x *function) {set(function);} \
 						ExpressionItem *copy() const {return new x(this);} \
-						bool representsNumber(const MathStructure &vargs);\
+						bool representsNumber(const MathStructure &vargs, bool allow_units = false);\
 					};															
 
 

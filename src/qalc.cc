@@ -1796,6 +1796,7 @@ void load_preferences() {
 	evalops.allow_infinite = true;
 	evalops.auto_post_conversion = POST_CONVERSION_NONE;
 	evalops.assume_denominators_nonzero = false;
+	evalops.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 	
 	save_mode_on_exit = true;
 	save_defs_on_exit = true;
