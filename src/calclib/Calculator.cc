@@ -1565,7 +1565,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 								if(!allow_only_div && new_points_m >= max_points) {
 									new_points_m = -1;
 								}
-								if(new_points >= points && new_points >= new_points_m) {
+								if(new_points > points && new_points >= new_points_m) {
 									minus = false;
 									points = new_points;
 									best_u = au;

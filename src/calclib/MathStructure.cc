@@ -716,12 +716,25 @@ bool MathStructure::representsOdd() const {
 		default: {return false;}
 	}
 }
-bool MathStructure::representsUndefined() const {
+bool MathStructure::representsUndefined(bool include_childs, bool include_infinite) const {
 	switch(m_type) {
+		case STRUCT_NUMBER: {
+			if(include_infinite) {
+				return o_number.isInfinite();
+			}
+			return false;
+		}
 		case STRUCT_UNDEFINED: {return true;}
 		case STRUCT_POWER: {return (CHILD(0).isZero() && CHILD(1).representsNegative()) || (CHILD(0).isInfinity() && CHILD(1).isZero());}
 		case STRUCT_FUNCTION: {return o_function->representsUndefined(*this);}
-		default: {return false;}
+		default: {
+			if(include_childs) {
+				for(unsigned int i = 0; i < SIZE; i++) {
+					if(CHILD(i).representsUndefined(include_childs, include_infinite)) return true;
+				}
+			}
+			return false;
+		}
 	}
 }
 
@@ -959,6 +972,19 @@ int MathStructure::merge_addition(const MathStructure &mstruct, const Evaluation
 	if(mstruct.isZero()) {
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 1;
+	}
+	if(m_type == STRUCT_NUMBER && o_number.isInfinite()) {
+		if(mstruct.representsNumber()) {
+			MERGE_APPROX_AND_PREC(mstruct)
+			return 1;
+		}
+	} else if(mstruct.isNumber() && mstruct.number().isInfinite()) {
+		if(representsNumber()) {
+			clear();
+			o_number = mstruct.number();
+			MERGE_APPROX_AND_PREC(mstruct)
+			return 1;
+		}
 	}
 	if(representsUndefined() || mstruct.representsUndefined()) return -1;
 	switch(m_type) {
@@ -1333,6 +1359,64 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 			set(mstruct);
 		}
 		return 1;
+	}
+	if(m_type == STRUCT_NUMBER && o_number.isInfinite()) {
+		if(o_number.isMinusInfinity()) {
+			if(mstruct.representsPositive()) {
+				MERGE_APPROX_AND_PREC(mstruct)
+				return 1;
+			} else if(mstruct.representsNegative()) {
+				o_number.setPlusInfinity();
+				MERGE_APPROX_AND_PREC(mstruct)
+				return 1;
+			}
+		} else if(o_number.isPlusInfinity()) {
+			if(mstruct.representsPositive()) {
+				MERGE_APPROX_AND_PREC(mstruct)
+				return 1;
+			} else if(mstruct.representsNegative()) {
+				o_number.setMinusInfinity();
+				MERGE_APPROX_AND_PREC(mstruct)
+				return 1;
+			}
+		}
+		if(mstruct.representsReal() && mstruct.representsNonZero()) {
+			o_number.setInfinity();
+			MERGE_APPROX_AND_PREC(mstruct)
+			return 1;
+		}
+	} else if(mstruct.isNumber() && mstruct.number().isInfinite()) {
+		if(mstruct.number().isMinusInfinity()) {
+			if(representsPositive()) {
+				clear();
+				o_number.setMinusInfinity();
+				MERGE_APPROX_AND_PREC(mstruct)
+				return 1;
+			} else if(representsNegative()) {
+				clear();
+				o_number.setPlusInfinity();
+				MERGE_APPROX_AND_PREC(mstruct)
+				return 1;
+			}
+		} else if(mstruct.number().isPlusInfinity()) {
+			if(representsPositive()) {
+				clear();
+				o_number.setPlusInfinity();
+				MERGE_APPROX_AND_PREC(mstruct)
+				return 1;
+			} else if(representsNegative()) {
+				clear();
+				o_number.setMinusInfinity();
+				MERGE_APPROX_AND_PREC(mstruct)
+				return 1;
+			}
+		}
+		if(representsReal() && representsNonZero()) {
+			clear();
+			o_number.setInfinity();
+			MERGE_APPROX_AND_PREC(mstruct)
+			return 1;
+		}
 	}
 	if(representsUndefined() || mstruct.representsUndefined()) return -1;
 	const MathStructure *mnum = NULL, *mden = NULL;
@@ -2012,7 +2096,7 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 					return 0;
 				}
 				default: {
-					if(mstruct.isZero() || isZero()) {
+					if((mstruct.isZero() && !representsUndefined(true, true)) || (isZero() && !mstruct.representsUndefined(true, true))) {
 						clear(); 
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
@@ -2095,11 +2179,51 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 1;
 	}
+	if(m_type == STRUCT_NUMBER && o_number.isInfinite()) {
+		if(mstruct.representsNegative()) {
+			o_number.clear();
+			MERGE_APPROX_AND_PREC(mstruct)
+			return 1;
+		} else if(mstruct.representsNonZero() && mstruct.representsNumber()) {
+			if(o_number.isMinusInfinity()) {
+				if(mstruct.representsEven()) {
+					o_number.setPlusInfinity();
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 1;
+				} else if(mstruct.representsOdd()) {
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 1;
+				} else if(mstruct.representsInteger()) {
+					o_number.setInfinity();
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 1;
+				}
+			}
+		}
+	} else if(mstruct.isNumber() && mstruct.number().isInfinite()) {
+		if(mstruct.number().isInfinity()) {
+		} else if(mstruct.number().isMinusInfinity()) {
+			if(representsReal() && representsNonZero()) {
+				clear();
+				MERGE_APPROX_AND_PREC(mstruct)
+				return 1;
+			}
+		} else if(mstruct.number().isPlusInfinity()) {
+			if(representsPositive()) {
+				int prev_prec = i_precision;
+				bool prev_approx = b_approx;
+				set(mstruct);
+				if(prev_approx) b_approx = true;
+				if(prev_prec > 0 && (i_precision < 1 || prev_prec < i_precision)) i_precision = prev_prec;
+				return 1;
+			}
+		}
+	}
 	if(representsUndefined() || mstruct.representsUndefined()) return -1;
 	if(isZero() && mstruct.representsPositive()) {
 		return 1;
 	}
-	if(mstruct.isZero()) {
+	if(mstruct.isZero() && !representsUndefined(true, true)) {
 		set(1, 1);
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 1;
@@ -2258,7 +2382,7 @@ int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOpt
 							return 1;
 						}
 					}
-				} else if(eo.simplify_addition_powers) {
+				} else if(eo.simplify_addition_powers && !mstruct.number().isZero()) {
 					bool neg = mstruct.number().isNegative();
 					MathStructure mstruct1(CHILD(0));
 					MathStructure mstruct2(CHILD(1));

@@ -999,9 +999,15 @@
         <_name>t</_name>
       </abbreviation>
       <name index="2">
-        <_name>ton</_name>
+        <_name>tonne</_name>
       </name>
       <plural index="3">
+        <_name>tonnes</_name>
+      </plural>
+      <name index="4">
+        <_name>ton</_name>
+      </name>
+      <plural index="5">
         <_name>tons</_name>
       </plural>
       <base>
@@ -1643,7 +1649,8 @@
         </part>
       </unit>
       <unit type="alias">
-        <_title>Farad</_title>
+        <system>SI</system>
+        <_title>Farad</_title>	
         <abbreviation index="1">
           <reference>true</reference>
           <_name>F</_name>
@@ -1682,7 +1689,8 @@
         </part>
       </unit>
       <unit type="alias">
-        <_title>Ohm</_title>
+        <system>SI</system>
+        <_title>Ohm</_title>	
         <abbreviation index="1">
           <unicode>true</unicode>
           <_name>&#x3A9;</_name>
@@ -2408,6 +2416,12 @@
       </name>
       <plural index="4">
         <_name>liters</_name>
+      </plural>
+      <name index="5">
+        <_name>litre</_name>
+      </name>
+      <plural index="6">
+        <_name>litres</_name>
       </plural>
       <base>
         <unit>m</unit>

@@ -190,7 +190,7 @@ class MathStructure {
 		bool representsNonZero() const;
 		bool representsEven() const;
 		bool representsOdd() const;
-		bool representsUndefined() const;
+		bool representsUndefined(bool include_childs = false, bool include_infinite = false) const;
 	
 		void setApproximate(bool is_approx = true);	
 		bool isApproximate() const;

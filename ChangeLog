@@ -1,3 +1,12 @@
+2004-09-24 Niklas Knutsson  <nq@altern.org>
+
+	* Include both "liter" and "litre" to avoid confusion
+	* Add "tonne" for metric ton
+	* Prefer keeping the original unit if equally good when converting to best unit
+	* Merge infinite numbers with somewhat known structures
+	* Be a bit more strict with undefined values
+	* Ohm and farad are SI units
+
 2004-09-23 Niklas Knutsson  <nq@altern.org>
 
 	* Increase space after imaginary i by 1
