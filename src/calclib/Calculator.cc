@@ -924,8 +924,8 @@ void Calculator::setFunctionsAndVariables(string &str) {
 	gsub(SIGN_POWER_3, "^3", str);
 	gsub(SIGN_EURO, "euro", str);
 	gsub(SIGN_MICRO, "micro", str);
-	gsub(ID_WRAP_LEFT_STR, "", str);
-	gsub(ID_WRAP_RIGHT_STR, "", str);
+//	gsub(ID_WRAP_LEFT_STR, "", str);
+//	gsub(ID_WRAP_RIGHT_STR, "", str);
 	Manager *mngr;
 	for(int i2 = 0; i2 < (int) ufv.size(); i2++) {
 		i = 0, i3 = 0;
@@ -969,27 +969,27 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						i6 = 0;
 						while(i5 > 0 && !b) {
 							if(i6 + i + (int) f->name().length() >= (int) str.length()) {
-								if(i5 == 2) {
-									b = true;
-									i6++;
-								}
+								b = true;
+								i5 = 2;
+								i6++;
 								break;
 							} else {
 								char c = str[i + (int) f->name().length() + i6];
 								if(is_in(c, LEFT_BRACKET_S, NULL)) {
 									b = true;
-								} else if(is_in(c, NUMBERS_S, DOT_S, NULL)) {
-									if(f->args() == 1 && i6 > 0)
-										i5 = 2;
-									else
-										i5 = -1;
-								} else if(is_in(c, SPACE_S, NULL))
+								} else if(is_in(c, SPACE_S, NULL)) {
 									if(i5 == 2) {
 										b = true;
-									} else if(i5 == 2 && is_in(str[i + (int) f->name().length() + i6], BRACKETS_S, OPERATORS_S, NULL))
-										b = true;
-									else
+									}
+								} else if(i5 == 2 && is_in(str[i + (int) f->name().length() + i6], BRACKETS_S, OPERATORS_S, NULL)) {
+									b = true;
+								} else {
+									if(i6 > 0) {
+										i5 = 2;
+									} else {
 										i5 = -1;
+									}		
+								}
 							}
 							i6++;
 						}
@@ -1034,7 +1034,6 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						}
 						if(b) {
 							stmp2 = str.substr(i + f->name().length() + i9, i6 - (i + f->name().length() + i9));
-							
 							mngr =  f->calculate(stmp2);
 							if(mngr) {
 								stmp = LEFT_BRACKET_STR;
@@ -1083,19 +1082,18 @@ void Calculator::setFunctionsAndVariables(string &str) {
 									i7 = -1;
 								}
 								if(i7 > 0 && i7 <= i5 - i4) {
-									b = true;
+									b = false;
 									for(i8 = 1; i8 <= i7; i8++) {
-//										if((ufv_t[i6] == 'u' && str[i4 + i8] != ((Unit*) ufv[i6])->shortName()[i8 - 1]) || (ufv_t[i6] == 'U' && str[i4 + i8] != ((Unit*) ufv[i6])->name()[i8 - 1]) || (ufv_t[i6] == 'Y' && str[i4 + i8] != ((Unit*) ufv[i6])->plural()[i8 - 1])) {
-										if((ufv_t[i6] == 'u' && str[i4 + i8] == ((Unit*) ufv[i6])->shortName()[i8 - 1]) || (ufv_t[i6] == 'U' && str[i4 + i8] == ((Unit*) ufv[i6])->name()[i8 - 1]) || (ufv_t[i6] == 'Y' && str[i4 + i8] == ((Unit*) ufv[i6])->plural()[i8 - 1])) {										
-											u = (Unit*) ufv[i6];
-											b = false;
-											if(str.length() > i4 + 1 && is_in(str[i4 + 1], NUMBERS_S, NULL)) {
-												str.insert(i4 + 1, POWER_STR);
-											}
+										if((ufv_t[i6] == 'u' && str[i4 + i8] != ((Unit*) ufv[i6])->shortName()[i8 - 1]) || (ufv_t[i6] == 'U' && str[i4 + i8] != ((Unit*) ufv[i6])->name()[i8 - 1]) || (ufv_t[i6] == 'Y' && str[i4 + i8] != ((Unit*) ufv[i6])->plural()[i8 - 1])) {
+											b = true;
 											break;
 										}
 									}
 									if(!b) {
+										u = (Unit*) ufv[i6];
+										if(str.length() > i4 + 1 && is_in(str[i4 + 1], NUMBERS_S, NULL)) {
+											str.insert(i4 + 1, POWER_STR);
+										}
 										i4 += i7;
 										break;
 									}
@@ -1789,11 +1787,17 @@ string Calculator::value2str_decimals(long double &value, int precision) {
 	return stmp;
 }
 string Calculator::value2str_bin(long double &value, int precision) {
-	if(value > 255) return value2str(value, precision);
+	if(value > 10000000) return value2str(value, precision);
 	string stmp;
 	long int val = lroundl(value);
-	int mask = 128;
+	long int mask = ((long int) pow(2, (((long int) log2(val)) / 8 + 1) * 8)) / 2;
+	int i = 0;
 	while(mask) {
+		if(i == 4) {
+			i = 0;
+			stmp += " ";
+		}
+		i++;
 		if(mask & val) stmp += "1";
 		else stmp += "0";
 		mask /= 2;
