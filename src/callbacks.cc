@@ -3708,5 +3708,12 @@ void on_button_units_clicked(GtkButton *button, gpointer user_data) {
 	manage_units(NULL, user_data);
 }
 
+void on_menu_item_about_activate(GtkMenuItem *w, gpointer user_data) {
+	GtkWidget *dialog = glade_xml_get_widget (glade_xml, "about_dialog");
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_hide(dialog);
+	gtk_widget_grab_focus(expression);
+}
+
 
 }

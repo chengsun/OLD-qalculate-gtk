@@ -185,6 +185,27 @@
 		  </child>
 
 		  <child>
+		    <widget class="GtkImageMenuItem" id="menu_item_about">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">_About</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_menu_item_about_activate" last_modification_time="Thu, 14 Aug 2003 22:31:50 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image13">
+			  <property name="visible">True</property>
+			  <property name="stock">gnome-stock-about</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
+
+		  <child>
 		    <widget class="GtkImageMenuItem" id="menu_item_quit">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">_Quit</property>
@@ -192,7 +213,7 @@
 		      <signal name="activate" handler="on_menu_item_quit_activate" last_modification_time="Fri, 08 Aug 2003 10:07:30 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image13">
+			<widget class="GtkImage" id="image14">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -253,7 +274,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Decimal</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">True</property>
+			      <property name="active">False</property>
 			      <property name="group">menu_item_binary</property>
 			      <signal name="activate" handler="on_menu_item_decimal_activate" last_modification_time="Fri, 08 Aug 2003 11:39:41 GMT"/>
 			    </widget>
@@ -264,7 +285,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Hexadecimal</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
+			      <property name="active">True</property>
 			      <property name="group">menu_item_binary</property>
 			      <signal name="activate" handler="on_menu_item_hexadecimal_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
 			    </widget>
@@ -304,7 +325,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Normal</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">True</property>
+			      <property name="active">False</property>
 			      <signal name="activate" handler="on_menu_item_display_normal_activate" last_modification_time="Fri, 08 Aug 2003 11:41:06 GMT"/>
 			    </widget>
 			  </child>
@@ -336,7 +357,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Use prefixes</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
+			      <property name="active">True</property>
 			      <property name="group">menu_item_display_normal</property>
 			      <signal name="activate" handler="on_menu_item_display_prefixes_activate" last_modification_time="Fri, 08 Aug 2003 11:41:06 GMT"/>
 			    </widget>
@@ -5202,6 +5223,94 @@
 	  <property name="padding">0</property>
 	  <property name="expand">True</property>
 	  <property name="fill">True</property>
+	</packing>
+      </child>
+    </widget>
+  </child>
+</widget>
+
+<widget class="GtkDialog" id="about_dialog">
+  <property name="border_width">5</property>
+  <property name="title" translatable="yes">About Qalculate!</property>
+  <property name="type">GTK_WINDOW_TOPLEVEL</property>
+  <property name="window_position">GTK_WIN_POS_NONE</property>
+  <property name="modal">False</property>
+  <property name="resizable">False</property>
+  <property name="destroy_with_parent">False</property>
+  <property name="has_separator">False</property>
+
+  <child internal-child="vbox">
+    <widget class="GtkVBox" id="dialog-vbox6">
+      <property name="visible">True</property>
+      <property name="homogeneous">False</property>
+      <property name="spacing">0</property>
+
+      <child internal-child="action_area">
+	<widget class="GtkHButtonBox" id="dialog-action_area6">
+	  <property name="visible">True</property>
+	  <property name="layout_style">GTK_BUTTONBOX_END</property>
+
+	  <child>
+	    <widget class="GtkButton" id="about_button_close">
+	      <property name="visible">True</property>
+	      <property name="can_default">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label">gtk-close</property>
+	      <property name="use_stock">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="response_id">-7</property>
+	    </widget>
+	  </child>
+	</widget>
+	<packing>
+	  <property name="padding">0</property>
+	  <property name="expand">False</property>
+	  <property name="fill">True</property>
+	  <property name="pack_type">GTK_PACK_END</property>
+	</packing>
+      </child>
+
+      <child>
+	<widget class="GtkVBox" id="vbox43">
+	  <property name="border_width">6</property>
+	  <property name="visible">True</property>
+	  <property name="homogeneous">False</property>
+	  <property name="spacing">6</property>
+
+	  <child>
+	    <widget class="GtkLabel" id="about_label_about">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">&lt;span weight=&quot;bold&quot; size=&quot;x-large&quot;&gt;&lt;span foreground=&quot;#cc4499&quot;&gt;Q&lt;/span&gt;alculate!&lt;/span&gt; (v. 0.2)
+&lt;span size=&quot;large&quot;&gt;- A modern desktop calculator&lt;/span&gt;
+
+&lt;i&gt;http://qalculate.sourceforge.net/&lt;/i&gt;
+
+&lt;i&gt;License:&lt;/i&gt; GNU General Public Licence
+&lt;i&gt;Authors:&lt;/i&gt; Niklas Knutsson, Sven Herzberg (gladeification etc.)
+
+Copyright (c) 2003 Niklas Knutsson
+</property>
+	      <property name="use_underline">False</property>
+	      <property name="use_markup">True</property>
+	      <property name="justify">GTK_JUSTIFY_LEFT</property>
+	      <property name="wrap">True</property>
+	      <property name="selectable">False</property>
+	      <property name="xalign">0.5</property>
+	      <property name="yalign">0.5</property>
+	      <property name="xpad">0</property>
+	      <property name="ypad">0</property>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+	</widget>
+	<packing>
+	  <property name="padding">0</property>
+	  <property name="expand">False</property>
+	  <property name="fill">False</property>
 	</packing>
       </child>
     </widget>

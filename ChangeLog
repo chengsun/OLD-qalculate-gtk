@@ -1,3 +1,7 @@
+2003-08-15  Niklas Knutsson  <nq@altern.org>
+
+	* About dialog
+
 2003-08-14  Niklas Knutsson  <nq@altern.org>
 
 	* Fix loading of argument names for builtin functions
