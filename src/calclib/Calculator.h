@@ -29,7 +29,7 @@ class Calculator {
 	int ianglemode;
 	int i_precision;
 	char vbuffer[200];
-	bool b_functions, b_variables, b_units, b_unknown, b_calcvars, b_always_exact, b_rpn, b_use_all_prefixes;
+	bool b_functions, b_variables, b_units, b_unknown, b_calcvars, b_always_exact, b_rpn, b_use_all_prefixes, b_multiple_roots;
 	vector<void*> ufv;
 	vector<char> ufv_t;	
 	hash_map<int, Manager*> ids;
@@ -67,6 +67,9 @@ class Calculator {
 
 	bool alwaysExact() const;
 	void setAlwaysExact(bool always_exact);
+	
+	bool multipleRootsEnabled() const;
+	void setMultipleRootsEnabled(bool enable_multiple_roots);
 
 	void beginTemporaryStopErrors();
 	void endTemporaryStopErrors();	

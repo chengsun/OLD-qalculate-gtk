@@ -871,12 +871,12 @@ void Fraction::clean() {
 }
 bool Fraction::round() {
 	Integer *remainder;
-	bool was_negative = num.isNegative();
 	if(!num.divide(&den, &remainder)) {
+		remainder->setNegative(false);
 		den.subtract(remainder);
 		int comp = den.compare(remainder);
 		if(comp >= 0) {
-			if(was_negative) num.add(-1);
+			if(num.isNegative()) num.add(-1);
 			else num.add(1);
 		}
 	}
@@ -998,7 +998,7 @@ int Fraction::pow(const Fraction *fr, int solution) {
 	clean();
 	if(fr->denominator()->isEven() && !fr->numerator()->isEven()) {
 		if(solution == 2) setNegative(true);
-		return 2;
+		if(CALCULATOR->multipleRootsEnabled()) return 2;
 	}
 	return 1;	
 }
@@ -1105,8 +1105,13 @@ bool Fraction::floatify(int precision, int max_decimals, bool *infinite_series) 
 			if(remainder) delete remainder;	
 			exact = num.divide(10, &remainder) && exact;
 			remainder->multiply(10);
+			remainder->setNegative(false);
 			if(remainder->compare(5) < 1) {
-				num.add(1);
+				if(num.isNegative()) {
+					num.add(-1);
+				} else {
+					num.add(1);
+				}
 			}		
 			exp.add(1);	
 			num.exp10(&exp);	
@@ -1148,6 +1153,7 @@ bool Fraction::floatify(int precision, int max_decimals, bool *infinite_series) 
 	if(!exact && !(infinite_series && *infinite_series)) {
 		remainder->multiply(10);
 		remainder->divide(&d, &remainder2);
+		remainder->setNegative(false);
 		int comp = remainder->compare(5);
 		if(comp <= 0) {
 			if(num.isNegative()) num.add(-1);

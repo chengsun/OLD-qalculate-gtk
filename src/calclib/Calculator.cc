@@ -37,6 +37,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <queue>
+#include <stack>
 
 #ifdef HAVE_LIBCLN
 #define WANT_OBFUSCATING_OPERATORS
@@ -159,6 +161,7 @@ Calculator::Calculator() {
 	b_calcvars = true;
 	b_always_exact = false;
 	b_use_all_prefixes = false;
+	b_multiple_roots = true;
 	disable_errors_ref = 0;
 	b_busy = false;
 	pthread_attr_init(&calculate_thread_attr);	    	
@@ -176,6 +179,12 @@ bool Calculator::alwaysExact() const {
 }
 void Calculator::setAlwaysExact(bool always_exact) {
 	b_always_exact = always_exact;
+}
+bool Calculator::multipleRootsEnabled() const {
+	return b_multiple_roots;
+}
+void Calculator::setMultipleRootsEnabled(bool enable_multiple_roots) {
+	b_multiple_roots = enable_multiple_roots;
 }
 void Calculator::beginTemporaryStopErrors() {
 	disable_errors_ref++;
@@ -1976,12 +1985,12 @@ bool Calculator::loadGlobalDefinitions() {
 		return false;
 	}	
 	filename = dir;
-	filename += "functions.xml";
+	filename += "units.xml";	
 	if(!loadDefinitions(filename.c_str(), false)) {
 		return false;
 	}
 	filename = dir;
-	filename += "units.xml";
+	filename += "functions.xml";	
 	if(!loadDefinitions(filename.c_str(), false)) {
 		return false;
 	}
@@ -2017,9 +2026,8 @@ bool Calculator::loadLocalDefinitions() {
 int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 	xmlDocPtr doc;
 	xmlNodePtr cur, child, child2, child3;
-	vector<xmlNodePtr> unfinished_nodes;
-	string version, stmp, lang_tmp, name, type, svalue, plural, singular, category, description, title, reverse, base, argname;
-	bool best_title, next_best_title, best_category, next_best_category, best_description, next_best_description;
+	string version, stmp, lang_tmp, name, type, svalue, plural, singular, category_title, category, description, title, reverse, base, argname;
+	bool best_title, next_best_title, best_category_title, next_best_category_title, best_description, next_best_description;
 	bool best_plural, next_best_plural, best_singular, next_best_singular, best_argname, next_best_argname;
 
 	string locale = setlocale(LC_ALL, "");
@@ -2068,248 +2076,322 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 	}
 	bool functions_was = b_functions, variables_was = b_variables, units_was = b_units, unknown_was = b_unknown, calcvars_was = b_calcvars, always_exact_was = b_always_exact, rpn_was = b_rpn;
 	b_functions = true; b_variables = true; b_units = true; b_unknown = true; b_calcvars = true; b_always_exact = true; b_rpn = false;
-	cur = cur->xmlChildrenNode;
-	while(cur != NULL) {
-		if(!xmlStrcmp(cur->name, (const xmlChar*) "activate")) {
-			XML_GET_STRING_FROM_TEXT(cur, name)
-			ExpressionItem *item = getInactiveExpressionItem(name);
-			if(item && !item->isLocal()) {
-				item->setActive(true);
-				done_something = true;
-			}
-		} else if(!xmlStrcmp(cur->name, (const xmlChar*) "deactivate")) {
-			XML_GET_STRING_FROM_TEXT(cur, name)
-			ExpressionItem *item = getActiveExpressionItem(name);
-			if(item && !item->isLocal()) {
-				item->setActive(false);
-				done_something = true;
-			}
-		} else if(!xmlStrcmp(cur->name, (const xmlChar*) "function")) {
-			XML_GET_STRING_FROM_PROP(cur, "name", name)
-			if(!name.empty() && functionNameIsValid(name)) {	
-				XML_GET_FALSE_FROM_PROP(cur, "active", active)
-				f = addFunction(new UserFunction("", name, "", is_user_defs, 0, "", "", 0, active));
-				done_something = true;
-				child = cur->xmlChildrenNode;
-				title = ""; best_title = false; next_best_title = false;
-				description = ""; best_description = false; next_best_description = false;
-				category = ""; best_category = false; next_best_category = false;
-				while(child != NULL) {
-					if(!xmlStrcmp(child->name, (const xmlChar*) "expression")) {
-						XML_DO_FROM_TEXT(child, ((UserFunction*) f)->setEquation);
-						XML_GET_FALSE_FROM_PROP(child, "precise", b)
-						f->setPrecise(b);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "category")) {	
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, category, best_category, next_best_category);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "condition")) {
-						XML_DO_FROM_TEXT(child, f->setCondition);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "argument")) {
-						farg = NULL; iarg = NULL;
-						XML_GET_STRING_FROM_PROP(child, "type", type);
-						if(type == "text") {
-							arg = new TextArgument();
-						} else if(type == "date") {
-							arg = new DateArgument();
-						} else if(type == "integer") {
-							iarg = new IntegerArgument();
-							arg = iarg;
-						} else if(type == "number") {
-							farg = new FractionArgument();
-							arg = farg;
-						} else if(type == "vector") {
-							arg = new VectorArgument();
-						} else if(type == "matrix") {
-							arg = new MatrixArgument();
-						} else if(type == "boolean") {
-							arg = new BooleanArgument();
-						} else if(type == "function") {
-							arg = new FunctionArgument();
-						} else if(type == "unit") {
-							arg = new UnitArgument();
-						} else if(type == "variable") {
-							arg = new VariableArgument();
-						} else if(type == "object") {
-							arg = new ExpressionItemArgument();
-						} else {
-							arg = new Argument();
-						}
-						child2 = child->xmlChildrenNode;
-						argname = ""; best_argname = false; next_best_argname = false;
-						while(child2 != NULL) {
-							if(!xmlStrcmp(child2->name, (const xmlChar*) "title")) {
-								XML_GET_LOCALE_STRING_FROM_TEXT(child2, argname, best_argname, next_best_argname);
-							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "min")) {
-								if(farg) {
-									XML_DO_FROM_TEXT(child2, fr.set);
-									farg->setMin(&fr);
-									XML_GET_FALSE_FROM_PROP(child, "include_equals", b)
-									farg->setIncludeEqualsMin(b);
-								} else if(iarg) {
-									XML_GET_STRING_FROM_TEXT(child2, stmp);
-									Integer integ(stmp);
-									iarg->setMin(&integ);
-								}
-							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "max")) {
-								if(farg) {
-									XML_DO_FROM_TEXT(child2, fr.set);
-									farg->setMax(&fr);
-									XML_GET_FALSE_FROM_PROP(child, "include_equals", b)
-									farg->setIncludeEqualsMax(b);
-								} else if(iarg) {
-									XML_GET_STRING_FROM_TEXT(child2, stmp);
-									Integer integ(stmp);
-									iarg->setMax(&integ);
-								}
-							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "condition")) {
-								XML_DO_FROM_TEXT(child2, arg->setCustomCondition);	
-							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "matrix_allowed")) {
-								XML_GET_TRUE_FROM_TEXT(child2, b);
-								arg->setMatrixAllowed(b);
-							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "zero_forbidden")) {
-								XML_GET_TRUE_FROM_TEXT(child2, b);
-								arg->setZeroForbidden(b);
-							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "test")) {
-								XML_GET_FALSE_FROM_TEXT(child2, b);
-								arg->setTests(b);
-							}
-							child2 = child2->next;
-						}	
-						arg->setName(argname);					
-						itmp = 1;
-						XML_GET_INT_FROM_PROP(child, "index", itmp);
-						f->setArgumentDefinition(itmp, arg); 
-					}
-					child = child->next;
+
+	vector<xmlNodePtr> unfinished_nodes;
+	vector<string> unfinished_cats;
+	queue<xmlNodePtr> sub_items;
+	vector<queue<xmlNodePtr> > nodes;
+
+	category = "";
+	nodes.resize(1);
+	
+	while(true) {
+		if(!in_unfinished) {
+			category_title = ""; best_category_title = false; next_best_category_title = false;	
+			child = cur->xmlChildrenNode;
+			while(child != NULL) {
+				if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {
+					XML_GET_LOCALE_STRING_FROM_TEXT(child, category_title, best_category_title, next_best_category_title);
+				} else if(!xmlStrcmp(child->name, (const xmlChar*) "category")) {
+					nodes.back().push(child);
+				} else {
+					sub_items.push(child);
 				}
-				f->setDescription(description);
-				f->setTitle(title);
-				f->setCategory(category);
-				f->setChanged(false);
+				child = child->next;
 			}
-		} else if(!xmlStrcmp(cur->name, (const xmlChar*) "builtin_function")) {
-			XML_GET_STRING_FROM_PROP(cur, "name", name)
-			f = getFunction(name);
-			if(f) {	
-				XML_GET_FALSE_FROM_PROP(cur, "active", active)
-				f->setLocal(is_user_defs, active);
-				child = cur->xmlChildrenNode;
-				title = ""; best_title = false; next_best_title = false;
-				description = ""; best_description = false; next_best_description = false;
-				category = ""; best_category = false; next_best_category = false;
-				while(child != NULL) {
-					if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "category")) {	
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, category, best_category, next_best_category);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "argument")) {
-						child2 = child->xmlChildrenNode;
-						argname = ""; best_argname = false; next_best_argname = false;
-						while(child2 != NULL) {
-							if(!xmlStrcmp(child2->name, (const xmlChar*) "title")) {
-								XML_GET_LOCALE_STRING_FROM_TEXT(child2, argname, best_argname, next_best_argname);
-							}
-							child2 = child2->next;
-						}
-						itmp = 1;
-						XML_GET_INT_FROM_PROP(child, "index", itmp);
-						if(f->getArgumentDefinition(itmp)) {
-							f->getArgumentDefinition(itmp)->setName(argname);
-						} else {
-							f->setArgumentDefinition(itmp, new Argument(argname, false));
-						}
-					}
-					child = child->next;
+			if(!category.empty()) {
+				category += "/";
+			}
+			category += category_title;
+		}
+		while(!sub_items.empty() || (in_unfinished && cur)) {
+			if(!in_unfinished) {
+				cur = sub_items.front();
+				sub_items.pop();
+			}
+			if(!xmlStrcmp(cur->name, (const xmlChar*) "activate")) {
+				XML_GET_STRING_FROM_TEXT(cur, name)
+				ExpressionItem *item = getInactiveExpressionItem(name);
+				if(item && !item->isLocal()) {
+					item->setActive(true);
+					done_something = true;
 				}
-				f->setDescription(description);
-				f->setTitle(title);
-				f->setCategory(category);
-				f->setChanged(false);
-				done_something = true;
-			}
-		} else if(!xmlStrcmp(cur->name, (const xmlChar*) "variable")) {
-			XML_GET_STRING_FROM_PROP(cur, "name", name)
-			if(!name.empty() && variableNameIsValid(name)) {	
-				XML_GET_FALSE_FROM_PROP(cur, "active", active)
-				svalue = "";
-				v = addVariable(new Variable("", name, "", "", is_user_defs, false, active));
-				done_something = true;
-				child = cur->xmlChildrenNode;
-				b = true;
-				title = ""; best_title = false; next_best_title = false;
-				description = ""; best_description = false; next_best_description = false;
-				category = ""; best_category = false; next_best_category = false;
-				while(child != NULL) {
-					if(!xmlStrcmp(child->name, (const xmlChar*) "value")) {
-						XML_DO_FROM_TEXT(child, v->set);
-						XML_GET_FALSE_FROM_PROP(child, "precise", b);
-						v->setPrecise(b);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
-						XML_DO_FROM_TEXT(child, v->setDescription);
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "category")) {	
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, category, best_category, next_best_category);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
-					}
-					child = child->next;
+			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "deactivate")) {
+				XML_GET_STRING_FROM_TEXT(cur, name)
+				ExpressionItem *item = getActiveExpressionItem(name);
+				if(item && !item->isLocal()) {
+					item->setActive(false);
+					done_something = true;
 				}
-				v->setCategory(category);
-				v->setDescription(description);
-				v->setTitle(title);
-				v->setChanged(false);
-			}
-		} else if(!xmlStrcmp(cur->name, (const xmlChar*) "builtin_variable")) {
-			XML_GET_STRING_FROM_PROP(cur, "name", name)
-			v = getVariable(name);
-			if(v) {	
-				XML_GET_FALSE_FROM_PROP(cur, "active", active)
-				v->setLocal(is_user_defs, active);
-				child = cur->xmlChildrenNode;
-				title = ""; best_title = false; next_best_title = false;
-				description = ""; best_description = false; next_best_description = false;
-				category = ""; best_category = false; next_best_category = false;
-				while(child != NULL) {
-					if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "category")) {	
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, category, best_category, next_best_category);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
-					}
-					child = child->next;
-				}		
-				v->setCategory(category);
-				v->setDescription(description);
-				v->setTitle(title);		
-				v->setChanged(false);
-				done_something = true;
-			}
-		} else if(!xmlStrcmp(cur->name, (const xmlChar*) "unit")) {
-			XML_GET_STRING_FROM_PROP(cur, "type", type)
-			if(type == "base") {	
+			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "function")) {
 				XML_GET_STRING_FROM_PROP(cur, "name", name)
-				XML_GET_FALSE_FROM_PROP(cur, "active", active)
-				if(unitNameIsValid(name)) {
+				if(!name.empty() && functionNameIsValid(name)) {	
+					XML_GET_FALSE_FROM_PROP(cur, "active", active)
+					f = addFunction(new UserFunction(category, name, "", is_user_defs, 0, "", "", 0, active));
+					done_something = true;
+					child = cur->xmlChildrenNode;
+					title = ""; best_title = false; next_best_title = false;
+					description = ""; best_description = false; next_best_description = false;
+					while(child != NULL) {
+						if(!xmlStrcmp(child->name, (const xmlChar*) "expression")) {
+							XML_DO_FROM_TEXT(child, ((UserFunction*) f)->setEquation);
+							XML_GET_FALSE_FROM_PROP(child, "precise", b)
+							f->setPrecise(b);
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "condition")) {
+							XML_DO_FROM_TEXT(child, f->setCondition);
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "argument")) {
+							farg = NULL; iarg = NULL;
+							XML_GET_STRING_FROM_PROP(child, "type", type);
+							if(type == "text") {
+								arg = new TextArgument();
+							} else if(type == "date") {
+								arg = new DateArgument();
+							} else if(type == "integer") {
+								iarg = new IntegerArgument();
+								arg = iarg;
+							} else if(type == "number") {
+								farg = new FractionArgument();
+								arg = farg;
+							} else if(type == "vector") {
+								arg = new VectorArgument();
+							} else if(type == "matrix") {
+								arg = new MatrixArgument();
+							} else if(type == "boolean") {
+								arg = new BooleanArgument();
+							} else if(type == "function") {
+								arg = new FunctionArgument();
+							} else if(type == "unit") {
+								arg = new UnitArgument();
+							} else if(type == "variable") {
+								arg = new VariableArgument();
+							} else if(type == "object") {
+								arg = new ExpressionItemArgument();
+							} else {
+								arg = new Argument();
+							}
+							child2 = child->xmlChildrenNode;
+							argname = ""; best_argname = false; next_best_argname = false;
+							while(child2 != NULL) {
+								if(!xmlStrcmp(child2->name, (const xmlChar*) "title")) {
+									XML_GET_LOCALE_STRING_FROM_TEXT(child2, argname, best_argname, next_best_argname);
+								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "min")) {
+									if(farg) {
+										XML_DO_FROM_TEXT(child2, fr.set);
+										farg->setMin(&fr);
+										XML_GET_FALSE_FROM_PROP(child, "include_equals", b)
+										farg->setIncludeEqualsMin(b);
+									} else if(iarg) {
+										XML_GET_STRING_FROM_TEXT(child2, stmp);
+										Integer integ(stmp);
+										iarg->setMin(&integ);
+									}
+								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "max")) {
+									if(farg) {
+										XML_DO_FROM_TEXT(child2, fr.set);
+										farg->setMax(&fr);
+										XML_GET_FALSE_FROM_PROP(child, "include_equals", b)
+										farg->setIncludeEqualsMax(b);
+									} else if(iarg) {
+										XML_GET_STRING_FROM_TEXT(child2, stmp);
+										Integer integ(stmp);
+										iarg->setMax(&integ);
+									}
+								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "condition")) {
+									XML_DO_FROM_TEXT(child2, arg->setCustomCondition);	
+								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "matrix_allowed")) {
+									XML_GET_TRUE_FROM_TEXT(child2, b);
+									arg->setMatrixAllowed(b);
+								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "zero_forbidden")) {
+									XML_GET_TRUE_FROM_TEXT(child2, b);
+									arg->setZeroForbidden(b);
+								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "test")) {
+									XML_GET_FALSE_FROM_TEXT(child2, b);
+									arg->setTests(b);
+								}
+								child2 = child2->next;
+							}	
+							arg->setName(argname);					
+							itmp = 1;
+							XML_GET_INT_FROM_PROP(child, "index", itmp);
+							f->setArgumentDefinition(itmp, arg); 
+						}
+						child = child->next;
+					}
+					f->setDescription(description);
+					f->setTitle(title);
+					f->setChanged(false);
+				}
+			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "builtin_function")) {
+				XML_GET_STRING_FROM_PROP(cur, "name", name)
+				f = getFunction(name);
+				if(f) {	
+					XML_GET_FALSE_FROM_PROP(cur, "active", active)
+					f->setLocal(is_user_defs, active);
+					child = cur->xmlChildrenNode;
+					title = ""; best_title = false; next_best_title = false;
+					description = ""; best_description = false; next_best_description = false;
+					while(child != NULL) {
+						if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "argument")) {
+							child2 = child->xmlChildrenNode;
+							argname = ""; best_argname = false; next_best_argname = false;
+							while(child2 != NULL) {
+								if(!xmlStrcmp(child2->name, (const xmlChar*) "title")) {
+									XML_GET_LOCALE_STRING_FROM_TEXT(child2, argname, best_argname, next_best_argname);
+								}
+								child2 = child2->next;
+							}
+							itmp = 1;
+							XML_GET_INT_FROM_PROP(child, "index", itmp);
+							if(f->getArgumentDefinition(itmp)) {
+								f->getArgumentDefinition(itmp)->setName(argname);
+							} else {
+								f->setArgumentDefinition(itmp, new Argument(argname, false));
+							}
+						}
+						child = child->next;
+					}
+					f->setDescription(description);
+					f->setTitle(title);
+					f->setCategory(category);
+					f->setChanged(false);
+					done_something = true;
+				}
+			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "variable")) {
+				XML_GET_STRING_FROM_PROP(cur, "name", name)
+				if(!name.empty() && variableNameIsValid(name)) {	
+					XML_GET_FALSE_FROM_PROP(cur, "active", active)
+					svalue = "";
+					v = addVariable(new Variable(category, name, "", "", is_user_defs, false, active));
+					done_something = true;
+					child = cur->xmlChildrenNode;
+					b = true;
+					title = ""; best_title = false; next_best_title = false;
+					description = ""; best_description = false; next_best_description = false;
+					while(child != NULL) {
+						if(!xmlStrcmp(child->name, (const xmlChar*) "value")) {
+							XML_DO_FROM_TEXT(child, v->set);
+							XML_GET_FALSE_FROM_PROP(child, "precise", b);
+							v->setPrecise(b);
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
+							XML_DO_FROM_TEXT(child, v->setDescription);
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
+						}
+						child = child->next;
+					}
+					v->setDescription(description);
+					v->setTitle(title);
+					v->setChanged(false);
+				}
+			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "builtin_variable")) {
+				XML_GET_STRING_FROM_PROP(cur, "name", name)
+				v = getVariable(name);
+				if(v) {	
+					XML_GET_FALSE_FROM_PROP(cur, "active", active)
+					v->setLocal(is_user_defs, active);
+					child = cur->xmlChildrenNode;
+					title = ""; best_title = false; next_best_title = false;
+					description = ""; best_description = false; next_best_description = false;
+					while(child != NULL) {
+						if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
+						}
+						child = child->next;
+					}		
+					v->setCategory(category);
+					v->setDescription(description);
+					v->setTitle(title);		
+					v->setChanged(false);
+					done_something = true;
+				}
+			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "unit")) {
+				XML_GET_STRING_FROM_PROP(cur, "type", type)
+				if(type == "base") {	
+					XML_GET_STRING_FROM_PROP(cur, "name", name)
+					XML_GET_FALSE_FROM_PROP(cur, "active", active)
+					if(unitNameIsValid(name)) {
+						child = cur->xmlChildrenNode;
+						singular = ""; best_singular = false; next_best_singular = false;
+						plural = ""; best_plural = false; next_best_plural = false;
+						title = ""; best_title = false; next_best_title = false;
+						description = ""; best_description = false; next_best_description = false;
+						while(child != NULL) {
+							if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
+								XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
+							} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
+								XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
+							} else if(!xmlStrcmp(child->name, (const xmlChar*) "singular")) {
+								XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular);
+								if(!unitNameIsValid(singular)) {
+									singular = "";
+								}
+							} else if(!xmlStrcmp(child->name, (const xmlChar*) "plural")) {	
+								XML_GET_LOCALE_STRING_FROM_TEXT(child, plural, best_plural, next_best_plural);
+								if(!unitNameIsValid(plural)) {
+									plural = "";
+								}
+							}
+							child = child->next;
+						}		
+						u = addUnit(new Unit(category, name, plural, singular, title, is_user_defs, false, active));		
+						u->setDescription(description);
+						u->setChanged(false);
+						done_something = true;
+					}
+				} else if(type == "alias") {	
+					XML_GET_STRING_FROM_PROP(cur, "name", name)
+					XML_GET_FALSE_FROM_PROP(cur, "active", active)
+					u = NULL;
 					child = cur->xmlChildrenNode;
 					singular = ""; best_singular = false; next_best_singular = false;
 					plural = ""; best_plural = false; next_best_plural = false;
 					title = ""; best_title = false; next_best_title = false;
 					description = ""; best_description = false; next_best_description = false;
-					category = ""; best_category = false; next_best_category = false;
 					while(child != NULL) {
-						if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
+						if(!xmlStrcmp(child->name, (const xmlChar*) "base")) {
+							child2 = child->xmlChildrenNode;
+							exponent = 1;
+							svalue = "";
+							reverse = "";
+							b = true;
+							while(child2 != NULL) {
+								if(!xmlStrcmp(child2->name, (const xmlChar*) "unit")) {
+									XML_GET_STRING_FROM_TEXT(child2, base);
+									u = getUnit(base);
+									if(!u) {
+										u = getCompositeUnit(base);
+									}
+								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "relation")) {
+									XML_GET_STRING_FROM_TEXT(child2, svalue);
+									XML_GET_FALSE_FROM_PROP(child2, "precise", b)
+								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "reverse_relation")) {
+									XML_GET_STRING_FROM_TEXT(child2, reverse);
+								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "exponent")) {
+									XML_GET_STRING_FROM_TEXT(child2, stmp);
+									if(stmp.empty()) {
+										exponent = 1;
+									} else {
+										exponent = s2li(stmp);
+									}
+								}
+								child2 = child2->next;
+							}
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
-						} else if(!xmlStrcmp(child->name, (const xmlChar*) "category")) {	
-							XML_GET_LOCALE_STRING_FROM_TEXT(child, category, best_category, next_best_category);
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
-						} else if(!xmlStrcmp(child->name, (const xmlChar*) "singular")) {
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "singular")) {	
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular);
 							if(!unitNameIsValid(singular)) {
 								singular = "";
@@ -2321,198 +2403,185 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							}
 						}
 						child = child->next;
-					}		
-					u = addUnit(new Unit(category, name, plural, singular, title, is_user_defs, false, active));		
-					u->setDescription(description);
-					u->setChanged(false);
-					done_something = true;
-				}
-			} else if(type == "alias") {	
-				XML_GET_STRING_FROM_PROP(cur, "name", name)
-				XML_GET_FALSE_FROM_PROP(cur, "active", active)
-				u = NULL;
-				child = cur->xmlChildrenNode;
-				singular = ""; best_singular = false; next_best_singular = false;
-				plural = ""; best_plural = false; next_best_plural = false;
-				title = ""; best_title = false; next_best_title = false;
-				description = ""; best_description = false; next_best_description = false;
-				category = ""; best_category = false; next_best_category = false;
-				while(child != NULL) {
-					if(!xmlStrcmp(child->name, (const xmlChar*) "base")) {
-						child2 = child->xmlChildrenNode;
-						exponent = 1;
-						svalue = "";
-						reverse = "";
-						b = true;
-						while(child2 != NULL) {
-							if(!xmlStrcmp(child2->name, (const xmlChar*) "unit")) {
-								XML_GET_STRING_FROM_TEXT(child2, base);
-								u = getUnit(base);
-								if(!u) {
-									u = getCompositeUnit(base);
-								}
-							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "relation")) {
-								XML_GET_STRING_FROM_TEXT(child2, svalue);
-								XML_GET_FALSE_FROM_PROP(child2, "precise", b)
-							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "reverse_relation")) {
-								XML_GET_STRING_FROM_TEXT(child2, reverse);
-							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "exponent")) {
-								XML_GET_STRING_FROM_TEXT(child2, stmp);
-								if(stmp.empty()) {
-									exponent = 1;
+					}
+					if(!u) {
+						if(!in_unfinished) {
+							unfinished_nodes.push_back(cur);
+							unfinished_cats.push_back(category);
+						}
+					} else if(unitNameIsValid(name)) {
+						au = new AliasUnit(category, name, plural, singular, title, u, svalue, exponent, reverse, is_user_defs, false, active);
+						au->setDescription(description);
+						au->setPrecise(b);
+						addUnit(au);
+						au->setChanged(false);
+						done_something = true;
+					}
+				} else if(type == "composite") {	
+					XML_GET_STRING_FROM_PROP(cur, "name", name)
+					if(unitNameIsValid(name)) {
+						XML_GET_FALSE_FROM_PROP(cur, "active", active)
+						child = cur->xmlChildrenNode;
+						cu = NULL;
+						title = ""; best_title = false; next_best_title = false;
+						description = ""; best_description = false; next_best_description = false;
+						while(child != NULL) {
+							u = NULL;
+							if(!xmlStrcmp(child->name, (const xmlChar*) "part")) {
+								child2 = child->xmlChildrenNode;
+								p = NULL;
+								exponent = 1;							
+								while(child2 != NULL) {
+									if(!xmlStrcmp(child2->name, (const xmlChar*) "unit")) {
+										XML_GET_STRING_FROM_TEXT(child2, base);
+										u = getUnit(base);
+										if(!u) {
+											u = getCompositeUnit(base);
+										}
+									} else if(!xmlStrcmp(child2->name, (const xmlChar*) "prefix")) {
+										XML_GET_STRING_FROM_TEXT(child2, svalue);
+										litmp = s2li(svalue);
+										if(litmp == 0) {
+											p = NULL;
+										} else {
+											p = getExactPrefix(litmp);
+											if(!p) {
+												if(cu) {
+													delete cu;
+												}
+												cu = NULL;
+												break;
+											}												
+										}
+									} else if(!xmlStrcmp(child2->name, (const xmlChar*) "exponent")) {
+										XML_GET_STRING_FROM_TEXT(child2, stmp);
+										if(stmp.empty()) {
+											exponent = 1;
+										} else {
+											exponent = s2li(stmp);
+										}
+									}
+									child2 = child2->next;
+								}		
+								if(u) {
+									if(!cu) {
+										cu = new CompositeUnit("", name, "", "", is_user_defs, false, active);
+									}
+									cu->add(u, exponent, p);
 								} else {
-									exponent = s2li(stmp);
+									if(cu) delete cu;
+									cu = NULL;
+									if(!in_unfinished) {
+										unfinished_nodes.push_back(cur);
+										unfinished_cats.push_back(category);
+									}
+									break;
 								}
+							} else if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
+								XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
+							} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
+								XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
 							}
-							child2 = child2->next;
+							child = child->next;
 						}
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "category")) {	
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, category, best_category, next_best_category);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "singular")) {	
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular);
-						if(!unitNameIsValid(singular)) {
-							singular = "";
-						}
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "plural")) {	
-						XML_GET_LOCALE_STRING_FROM_TEXT(child, plural, best_plural, next_best_plural);
-						if(!unitNameIsValid(plural)) {
-							plural = "";
+						if(cu) {
+							cu->setCategory(category);
+							cu->setTitle(title);
+							cu->setDescription(description);
+							addUnit(cu);
+							cu->setChanged(false);
+							done_something = true;
 						}
 					}
-					child = child->next;
 				}
-				if(!u) {
-					if(!in_unfinished) {
-						unfinished_nodes.push_back(cur);
-					}
-				} else if(unitNameIsValid(name)) {
-					au = new AliasUnit(category, name, plural, singular, title, u, svalue, exponent, reverse, is_user_defs, false, active);
-					au->setDescription(description);
-					au->setPrecise(b);
-					addUnit(au);
-					au->setChanged(false);
-					done_something = true;
-				}
-			} else if(type == "composite") {	
+			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "builtin_unit")) {
 				XML_GET_STRING_FROM_PROP(cur, "name", name)
-				if(unitNameIsValid(name)) {
+				u = getUnit(name);
+				if(!u) {
+					u = getCompositeUnit(name);
+				}
+				if(u) {	
 					XML_GET_FALSE_FROM_PROP(cur, "active", active)
+					u->setLocal(is_user_defs, active);
 					child = cur->xmlChildrenNode;
-					cu = NULL;
 					title = ""; best_title = false; next_best_title = false;
 					description = ""; best_description = false; next_best_description = false;
-					category = ""; best_category = false; next_best_category = false;
 					while(child != NULL) {
-						u = NULL;
-						if(!xmlStrcmp(child->name, (const xmlChar*) "part")) {
-							child2 = child->xmlChildrenNode;
-							p = NULL;
-							exponent = 1;							
-							while(child2 != NULL) {
-								if(!xmlStrcmp(child2->name, (const xmlChar*) "unit")) {
-									XML_GET_STRING_FROM_TEXT(child2, base);
-									u = getUnit(base);
-									if(!u) {
-										u = getCompositeUnit(base);
-									}
-								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "prefix")) {
-									XML_GET_STRING_FROM_TEXT(child2, svalue);
-									litmp = s2li(svalue);
-									if(litmp == 0) {
-										p = NULL;
-									} else {
-										p = getExactPrefix(litmp);
-										if(!p) {
-											if(cu) {
-												delete cu;
-											}
-											cu = NULL;
-											break;
-										}												
-									}
-								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "exponent")) {
-									XML_GET_STRING_FROM_TEXT(child2, stmp);
-									if(stmp.empty()) {
-										exponent = 1;
-									} else {
-										exponent = s2li(stmp);
-									}
-								}
-								child2 = child2->next;
-							}		
-							if(u) {
-								if(!cu) {
-									cu = new CompositeUnit("", name, "", "", is_user_defs, false, active);
-								}
-								cu->add(u, exponent, p);
-							} else {
-								if(cu) delete cu;
-								cu = NULL;
-								if(!in_unfinished) {
-									unfinished_nodes.push_back(cur);
-								}
-								break;
-							}
-						} else if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
+						if(!xmlStrcmp(child->name, (const xmlChar*) "description")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, description, best_description, next_best_description);
-						} else if(!xmlStrcmp(child->name, (const xmlChar*) "category")) {	
-							XML_GET_LOCALE_STRING_FROM_TEXT(child, category, best_category, next_best_category);
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {	
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, title, best_title, next_best_title);
 						}
 						child = child->next;
-					}
-					if(cu) {
-						cu->setCategory(category);
-						cu->setTitle(title);
-						cu->setDescription(description);
-						addUnit(cu);
-						cu->setChanged(false);
-						done_something = true;
-					}
+					}		
+					u->setCategory(category);
+					u->setDescription(description);
+					u->setTitle(title);		
+					u->setChanged(false);
+					done_something = true;
 				}
-			}
-		} else if(!xmlStrcmp(cur->name, (const xmlChar*) "prefix")) {
-			child = cur->xmlChildrenNode;
-			while(child != NULL) {
-				if(!xmlStrcmp(child->name, (const xmlChar*) "name")) {
-					XML_GET_STRING_FROM_TEXT(child, name);
-				} else if(!xmlStrcmp(child->name, (const xmlChar*) "abbreviation")) {	
-					XML_GET_STRING_FROM_TEXT(child, stmp);
-				} else if(!xmlStrcmp(child->name, (const xmlChar*) "exponent")) {	
-					XML_GET_STRING_FROM_TEXT(child, svalue);
+			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "prefix")) {
+				child = cur->xmlChildrenNode;
+				while(child != NULL) {
+					if(!xmlStrcmp(child->name, (const xmlChar*) "name")) {
+						XML_GET_STRING_FROM_TEXT(child, name);
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "abbreviation")) {	
+						XML_GET_STRING_FROM_TEXT(child, stmp);
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "exponent")) {	
+						XML_GET_STRING_FROM_TEXT(child, svalue);
+					}
+					child = child->next;
 				}
-				child = child->next;
+				addPrefix(new Prefix(s2li(svalue), name, stmp));
+				done_something = true;
 			}
-			addPrefix(new Prefix(s2li(svalue), name, stmp));
-			done_something = true;
-		}
-		if(in_unfinished) {
 			cur = NULL;
-			if(done_something) {
-				in_unfinished--;
-				unfinished_nodes.erase(unfinished_nodes.begin() + in_unfinished);
-			}
-			if(unfinished_nodes.size() > in_unfinished) {
-				cur = unfinished_nodes[in_unfinished];
-			} else if(done_something && unfinished_nodes.size() > 0) {
-				cur = unfinished_nodes[0];
-				in_unfinished = 0;
+			if(in_unfinished) {
+				if(done_something) {
+					in_unfinished--;
+					unfinished_nodes.erase(unfinished_nodes.begin() + in_unfinished);
+					unfinished_cats.erase(unfinished_cats.begin() + in_unfinished);
+				}
+				if(unfinished_nodes.size() > in_unfinished) {
+					cur = unfinished_nodes[in_unfinished];
+					category = unfinished_cats[in_unfinished];
+				} else if(done_something && unfinished_nodes.size() > 0) {
+					cur = unfinished_nodes[0];
+					category = unfinished_cats[0];
+					in_unfinished = 0;
+					done_something = false;
+				}
+				in_unfinished++;
 				done_something = false;
 			}
-			in_unfinished++;
+		}
+		if(in_unfinished) break;
+		while(!nodes.empty() && nodes.back().empty()) {
+			int cat_i = category.rfind("/");
+			if(cat_i == string::npos) {
+				category = "";
+			} else {
+				category = category.substr(0, cat_i);
+			}
+			nodes.pop_back();
+		}
+		if(!nodes.empty()) {
+			cur = nodes.back().front();
+			nodes.back().pop();
+			nodes.resize(nodes.size() + 1);
 		} else {
-			cur = cur->next;
-		}
-		if(cur == NULL && !in_unfinished && unfinished_nodes.size() > 0) {
-			cur = unfinished_nodes[0];
-			in_unfinished = 1;
-			done_something = false;
-		}
+			if(unfinished_nodes.size() > 0) {
+				cur = unfinished_nodes[0];
+				category = unfinished_cats[0];
+				in_unfinished = 1;
+				done_something = false;
+			} else {
+				cur = NULL;
+			}
+		} 
+		if(cur == NULL) {
+			break;
+		} 
 	}
 	b_functions = functions_was; b_variables = variables_was; b_units = units_was; b_unknown = unknown_was; b_calcvars = calcvars_was; b_always_exact = always_exact_was; b_rpn = rpn_was;
 	xmlFreeDoc(doc);
@@ -2548,6 +2617,12 @@ bool Calculator::saveDefinitions() {
 	return true;
 }
 
+struct node_tree_item {
+	xmlNodePtr node;;
+	string category;
+	vector<node_tree_item> items;
+};
+
 int Calculator::savePrefixes(const char* file_name, bool save_global) {
 	if(!save_global) {
 		return true;
@@ -2577,63 +2652,98 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 	xmlNodePtr cur, newnode, newnode2;	
 	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);	
 	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
-	cur = doc->children;
+	//cur = doc->children;
 	bool was_always_exact = alwaysExact();
 	setAlwaysExact(true);
-	if(!save_global) {		
-		for(int i = 0; i < variables.size(); i++) {
-			if(!variables[i]->isLocal() && variables[i]->hasChanged()) {
+	node_tree_item top;
+	top.category = "";
+	top.node = doc->children;
+	node_tree_item *item;
+	string cat, cat_sub;
+	for(int i = 0; i < variables.size(); i++) {
+		if((save_global || variables[i]->isLocal() || variables[i]->hasChanged()) && variables[i]->category() != _("Temporary")) {	
+			item = &top;
+			if(!variables[i]->category().empty()) {
+				cat = variables[i]->category();
+				int cat_i = cat.find("/"), cat_i_prev = -1;
+				bool b = false;
+				while(true) {
+					if(cat_i == string::npos) {
+						cat_sub = cat.substr(cat_i_prev + 1, cat.length() - 1 - cat_i_prev);
+					} else {
+						cat_sub = cat.substr(cat_i_prev + 1, cat_i - 1 - cat_i_prev);
+					}
+					b = false;
+					for(int i2 = 0; i2 < item->items.size(); i2++) {
+						if(cat_sub == item->items[i2].category) {
+							item = &item->items[i2];
+							b = true;
+							break;
+						}
+					}
+					if(!b) {
+						item->items.resize(item->items.size() + 1);
+						item->items[item->items.size() - 1].node = xmlNewTextChild(item->node, NULL, (xmlChar*) "category", NULL);
+						item = &item->items[item->items.size() - 1];
+						item->category = cat_sub;
+						if(save_global) {
+							xmlNewTextChild(item->node, NULL, (xmlChar*) "_title", (xmlChar*) item->category.c_str());
+						} else {
+							xmlNewTextChild(item->node, NULL, (xmlChar*) "title", (xmlChar*) item->category.c_str());
+						}
+					}
+					if(cat_i == string::npos) {
+						break;
+					}
+					cat_i_prev = cat_i;
+					cat_i = cat.find("/", cat_i_prev + 1);
+				}
+			}
+			cur = item->node;
+			if(!save_global && !variables[i]->isLocal() && variables[i]->hasChanged()) {
 				if(variables[i]->isActive()) {
 					xmlNewTextChild(cur, NULL, (xmlChar*) "activate", (xmlChar*) variables[i]->referenceName().c_str());
 				} else {
 					xmlNewTextChild(cur, NULL, (xmlChar*) "deactivate", (xmlChar*) variables[i]->referenceName().c_str());
 				}
+			} else if(save_global || variables[i]->isLocal()) {
+				if(variables[i]->isBuiltin()) {
+					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "builtin_variable", NULL);
+				} else {
+					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "variable", NULL);
+				}
+				if(variables[i]->isBuiltin()) {
+					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) variables[i]->referenceName().c_str());
+				} else {
+					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) variables[i]->name().c_str());
+				}
+				if(!variables[i]->title(false).empty()) {
+					if(save_global) {
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) variables[i]->title(false).c_str());
+					} else {
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) variables[i]->title(false).c_str());
+					}
+				}
+				if(!variables[i]->description().empty()) {
+					str = variables[i]->description();
+					if(save_global) {
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
+					} else {
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
+					}
+				}
+				if(!variables[i]->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");
+				if(!variables[i]->isBuiltin()) {
+					if(variables[i]->isExpression()) {
+						newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "value", (xmlChar*) variables[i]->expression().c_str());
+					} else {
+						newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "value", (xmlChar*) variables[i]->get()->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTIONAL_ONLY).c_str());
+					}
+					if(!variables[i]->isPrecise()) xmlNewProp(newnode2, (xmlChar*) "precise", (xmlChar*) "false");					
+				}
 			}
 		}
 	}	
-	for(int i = 0; i < variables.size(); i++) {
-		if((save_global || variables[i]->isLocal()) && variables[i]->category() != _("Temporary")) {
-			if(variables[i]->isBuiltin()) {
-				newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "builtin_variable", NULL);
-			} else {
-				newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "variable", NULL);
-			}
-			if(variables[i]->isBuiltin()) {
-				xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) variables[i]->referenceName().c_str());
-			} else {
-				xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) variables[i]->name().c_str());
-			}
-			if(!variables[i]->category().empty()) {
-				if(save_global) {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "_category", (xmlChar*) variables[i]->category().c_str());
-				} else {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "category", (xmlChar*) variables[i]->category().c_str());
-				}
-			}
-			if(!variables[i]->title(false).empty()) {
-				if(save_global) {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) variables[i]->title(false).c_str());
-				} else {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) variables[i]->title(false).c_str());
-				}
-			}
-			if(!variables[i]->description().empty()) {
-				str = variables[i]->description();
-				if(save_global) {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
-				} else {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
-				}
-			}
-			if(variables[i]->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "true");
-			else xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");
-			if(!variables[i]->isBuiltin()) {
-				newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "value", (xmlChar*) variables[i]->get()->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTIONAL_ONLY).c_str());
-				if(variables[i]->isPrecise()) xmlNewProp(newnode2, (xmlChar*) "precise", (xmlChar*) "true");
-				else xmlNewProp(newnode2, (xmlChar*) "precise", (xmlChar*) "false");					
-			}
-		}	
-	}
 	setAlwaysExact(was_always_exact);
 	int returnvalue = xmlSaveFormatFile(file_name, doc, 1);
 	xmlFreeDoc(doc);
@@ -2651,97 +2761,127 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 	CompositeUnit *cu;
 	AliasUnit *au;
 	Unit *u;
-	cur = doc->children;
-	if(!save_global) {
-		for(int i = 0; i < units.size(); i++) {
-			if(!units[i]->isLocal() && units[i]->hasChanged()) {
+	node_tree_item top;
+	top.category = "";
+	top.node = doc->children;
+	node_tree_item *item;
+	string cat, cat_sub;
+	for(int i = 0; i < units.size(); i++) {
+		if(save_global || units[i]->isLocal() || units[i]->hasChanged()) {	
+			item = &top;
+			if(!units[i]->category().empty()) {
+				cat = units[i]->category();
+				int cat_i = cat.find("/"), cat_i_prev = -1;
+				bool b = false;
+				while(true) {
+					if(cat_i == string::npos) {
+						cat_sub = cat.substr(cat_i_prev + 1, cat.length() - 1 - cat_i_prev);
+					} else {
+						cat_sub = cat.substr(cat_i_prev + 1, cat_i - 1 - cat_i_prev);
+					}
+					b = false;
+					for(int i2 = 0; i2 < item->items.size(); i2++) {
+						if(cat_sub == item->items[i2].category) {
+							item = &item->items[i2];
+							b = true;
+							break;
+						}
+					}
+					if(!b) {
+						item->items.resize(item->items.size() + 1);
+						item->items[item->items.size() - 1].node = xmlNewTextChild(item->node, NULL, (xmlChar*) "category", NULL);
+						item = &item->items[item->items.size() - 1];
+						item->category = cat_sub;
+						if(save_global) {
+							xmlNewTextChild(item->node, NULL, (xmlChar*) "_title", (xmlChar*) item->category.c_str());
+						} else {
+							xmlNewTextChild(item->node, NULL, (xmlChar*) "title", (xmlChar*) item->category.c_str());
+						}
+					}
+					if(cat_i == string::npos) {
+						break;
+					}
+					cat_i_prev = cat_i;
+					cat_i = cat.find("/", cat_i_prev + 1);
+				}
+			}
+			cur = item->node;	
+			if(!save_global && !units[i]->isLocal() && units[i]->hasChanged()) {
 				if(units[i]->isActive()) {
 					xmlNewTextChild(cur, NULL, (xmlChar*) "activate", (xmlChar*) units[i]->referenceName().c_str());
 				} else {
 					xmlNewTextChild(cur, NULL, (xmlChar*) "deactivate", (xmlChar*) units[i]->referenceName().c_str());
 				}
-			}
-		}
-	}
-	for(int i = 0; i < units.size(); i++) {
-		if(save_global || units[i]->isLocal()) {
-			newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "unit", NULL);
-			switch(units[i]->unitType()) {
-				case BASE_UNIT: {
-					xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "base");
-					break;
-				}
-				case ALIAS_UNIT: {
-					au = (AliasUnit*) units[i];
-					xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "alias");
-					break;
-				}
-				case COMPOSITE_UNIT: {
-					cu = (CompositeUnit*) units[i];
-					xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "composite");
-					break;
-				}
-			}		
-			if(units[i]->unitType() == COMPOSITE_UNIT) {
-				xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) cu->referenceName().c_str());
-				for(int i2 = 0; i2 < cu->units.size(); i2++) {
-					newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "part", NULL);
-					xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) cu->units[i2]->firstBaseUnit()->referenceName().c_str());
-					xmlNewTextChild(newnode2, NULL, (xmlChar*) "prefix", (xmlChar*) li2s(cu->units[i2]->prefixExponent()).c_str());
-					xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) li2s(cu->units[i2]->firstBaseExp()).c_str());
-				}
-			} else {
-				xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) units[i]->referenceName().c_str());
-				if(!units[i]->singular(false).empty()) {
-					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_singular", (xmlChar*) units[i]->singular(false).c_str());
-					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "singular", (xmlChar*) units[i]->singular(false).c_str());
+			} else if(save_global || units[i]->isLocal()) {
+				newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "unit", NULL);
+				switch(units[i]->unitType()) {
+					case BASE_UNIT: {
+						xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "base");
+						break;
+					}
+					case ALIAS_UNIT: {
+						au = (AliasUnit*) units[i];
+						xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "alias");
+						break;
+					}
+					case COMPOSITE_UNIT: {
+						cu = (CompositeUnit*) units[i];
+						xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "composite");
+						break;
+					}
+				}		
+				if(units[i]->unitType() == COMPOSITE_UNIT) {
+					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) cu->referenceName().c_str());
+					for(int i2 = 0; i2 < cu->units.size(); i2++) {
+						newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "part", NULL);
+						xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) cu->units[i2]->firstBaseUnit()->referenceName().c_str());
+						xmlNewTextChild(newnode2, NULL, (xmlChar*) "prefix", (xmlChar*) li2s(cu->units[i2]->prefixExponent()).c_str());
+						xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) li2s(cu->units[i2]->firstBaseExp()).c_str());
+					}
+				} else {
+					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) units[i]->referenceName().c_str());
+					if(!units[i]->singular(false).empty()) {
+						if(save_global) {
+							xmlNewTextChild(newnode, NULL, (xmlChar*) "_singular", (xmlChar*) units[i]->singular(false).c_str());
+						} else {
+							xmlNewTextChild(newnode, NULL, (xmlChar*) "singular", (xmlChar*) units[i]->singular(false).c_str());
+						}
+					}
+					if(!units[i]->plural(false).empty()) {
+						if(save_global) {
+							xmlNewTextChild(newnode, NULL, (xmlChar*) "_plural", (xmlChar*) units[i]->plural(false).c_str());
+						} else {
+							xmlNewTextChild(newnode, NULL, (xmlChar*) "plural", (xmlChar*) units[i]->plural(false).c_str());
+						}
 					}
 				}
-				if(!units[i]->plural(false).empty()) {
+				if(units[i]->unitType() == ALIAS_UNIT) {
+					newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "base", NULL);
+					xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) au->firstBaseUnit()->referenceName().c_str());								
+					newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "relation", (xmlChar*) au->expression().c_str());
+					if(!units[i]->isPrecise()) xmlNewProp(newnode3, (xmlChar*) "precise", (xmlChar*) "false");				
+					if(!au->reverseExpression().empty()) {
+						xmlNewTextChild(newnode2, NULL, (xmlChar*) "reverse_relation", (xmlChar*) au->reverseExpression().c_str());	
+					}
+					xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) li2s(au->firstBaseExp()).c_str());
+				}
+				if(!units[i]->title(false).empty()) {
 					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_plural", (xmlChar*) units[i]->plural(false).c_str());
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) units[i]->title(false).c_str());
 					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "plural", (xmlChar*) units[i]->plural(false).c_str());
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) units[i]->title(false).c_str());
 					}
 				}
-			}
-			if(units[i]->unitType() == ALIAS_UNIT) {
-				newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "base", NULL);
-				xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) au->firstBaseUnit()->referenceName().c_str());								
-				newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "relation", (xmlChar*) au->expression().c_str());
-				if(units[i]->isPrecise()) xmlNewProp(newnode3, (xmlChar*) "precise", (xmlChar*) "true");
-				else xmlNewProp(newnode3, (xmlChar*) "precise", (xmlChar*) "false");				
-				if(!au->reverseExpression().empty()) {
-					xmlNewTextChild(newnode2, NULL, (xmlChar*) "reverse_relation", (xmlChar*) au->reverseExpression().c_str());	
+				if(!units[i]->description().empty()) {
+					str = units[i]->description();
+					if(save_global) {
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
+					} else {
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
+					}
 				}
-				xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) li2s(au->firstBaseExp()).c_str());
+				if(!units[i]->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");
 			}
-			if(!units[i]->category().empty()) {
-				if(save_global) {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "_category", (xmlChar*) units[i]->category().c_str());
-				} else {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "category", (xmlChar*) units[i]->category().c_str());
-				}
-			}
-			if(!units[i]->title(false).empty()) {
-				if(save_global) {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) units[i]->title(false).c_str());
-				} else {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) units[i]->title(false).c_str());
-				}
-			}
-			if(!units[i]->description().empty()) {
-				str = units[i]->description();
-				if(save_global) {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
-				} else {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
-				}
-			}
-			if(units[i]->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "true");
-			else xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");
 		}
 	}
 	int returnvalue = xmlSaveFormatFile(file_name, doc, 1);
@@ -2756,168 +2896,189 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 	xmlNodePtr cur, newnode, newnode2;	
 	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);	
 	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
+	node_tree_item top;
+	top.category = "";
+	top.node = doc->children;
+	node_tree_item *item;
+	string cat, cat_sub;
 	Argument *arg;
 	IntegerArgument *iarg;
 	FractionArgument *farg;
 	string str;
-	cur = doc->children;
-	if(!save_global) {
-		for(int i = 0; i < functions.size(); i++) {
-			if(!functions[i]->isLocal() && functions[i]->hasChanged()) {
+	for(int i = 0; i < functions.size(); i++) {
+		if(save_global || functions[i]->isLocal() || functions[i]->hasChanged()) {	
+			item = &top;
+			if(!functions[i]->category().empty()) {
+				cat = functions[i]->category();
+				int cat_i = cat.find("/"), cat_i_prev = -1;
+				bool b = false;
+				while(true) {
+					if(cat_i == string::npos) {
+						cat_sub = cat.substr(cat_i_prev + 1, cat.length() - 1 - cat_i_prev);
+					} else {
+						cat_sub = cat.substr(cat_i_prev + 1, cat_i - 1 - cat_i_prev);
+					}
+					b = false;
+					for(int i2 = 0; i2 < item->items.size(); i2++) {
+						if(cat_sub == item->items[i2].category) {
+							item = &item->items[i2];
+							b = true;
+							break;
+						}
+					}
+					if(!b) {
+						item->items.resize(item->items.size() + 1);
+						item->items[item->items.size() - 1].node = xmlNewTextChild(item->node, NULL, (xmlChar*) "category", NULL);
+						item = &item->items[item->items.size() - 1];
+						item->category = cat_sub;
+						if(save_global) {
+							xmlNewTextChild(item->node, NULL, (xmlChar*) "_title", (xmlChar*) item->category.c_str());
+						} else {
+							xmlNewTextChild(item->node, NULL, (xmlChar*) "title", (xmlChar*) item->category.c_str());
+						}
+					}
+					if(cat_i == string::npos) {
+						break;
+					}
+					cat_i_prev = cat_i;
+					cat_i = cat.find("/", cat_i_prev + 1);
+				}
+			}
+			cur = item->node;
+			if(!save_global && !functions[i]->isLocal() && functions[i]->hasChanged()) {
 				if(functions[i]->isActive()) {
 					xmlNewTextChild(cur, NULL, (xmlChar*) "activate", (xmlChar*) functions[i]->referenceName().c_str());
 				} else {
 					xmlNewTextChild(cur, NULL, (xmlChar*) "deactivate", (xmlChar*) functions[i]->referenceName().c_str());
 				}
-			}
-		}
-	}
-	for(int i = 0; i < functions.size(); i++) {
-		cur = doc->children;
-		if(save_global || functions[i]->isLocal()) {	
-			if(functions[i]->isBuiltin()) {
-				newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "builtin_function", NULL);
-				xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) functions[i]->referenceName().c_str());
-				if(functions[i]->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "true");
-				else xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");			
-				if(!functions[i]->category().empty()) {
-					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_category", (xmlChar*) functions[i]->category().c_str());
-					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "category", (xmlChar*) functions[i]->category().c_str());
-					}
-				}
-				if(!functions[i]->title(false).empty()) {
-					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) functions[i]->title(false).c_str());
-					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) functions[i]->title(false).c_str());
-					}
-				}
-				if(!functions[i]->description().empty()) {
-					str = functions[i]->description();
-					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
-					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
-					}
-				}
-				cur = newnode;
-				for(int i2 = 1; i2 <= functions[i]->lastArgumentDefinitionIndex(); i2++) {
-					arg = functions[i]->getArgumentDefinition(i2);
-					if(arg && !arg->name().empty()) {
-						newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "argument", NULL);
+			} else if(save_global || functions[i]->isLocal()) {	
+				if(functions[i]->isBuiltin()) {
+					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "builtin_function", NULL);
+					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) functions[i]->referenceName().c_str());
+					if(!functions[i]->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");			
+					if(!functions[i]->title(false).empty()) {
 						if(save_global) {
-							xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) arg->name().c_str());
+							xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) functions[i]->title(false).c_str());
 						} else {
-							xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) arg->name().c_str());
+							xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) functions[i]->title(false).c_str());
 						}
-						xmlNewProp(newnode, (xmlChar*) "index", (xmlChar*) i2s(i2).c_str());
 					}
-				}
-			} else {
-				newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "function", NULL);
-				xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) functions[i]->name().c_str());
-				if(functions[i]->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "true");
-				else xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");
-				if(!functions[i]->category().empty()) {
-					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_category", (xmlChar*) functions[i]->category().c_str());
-					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "category", (xmlChar*) functions[i]->category().c_str());
+					if(!functions[i]->description().empty()) {
+						str = functions[i]->description();
+						if(save_global) {
+							xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
+						} else {
+							xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
+						}
 					}
-				}
-				if(!functions[i]->title(false).empty()) {
-					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) functions[i]->title(false).c_str());
-					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) functions[i]->title(false).c_str());
-					}
-				}
-				if(!functions[i]->description().empty()) {
-					str = functions[i]->description();
-					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
-					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
-					}
-				}
-				newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "expression", (xmlChar*) ((UserFunction*) functions[i])->equation().c_str());
-				if(functions[i]->isActive()) xmlNewProp(newnode2, (xmlChar*) "precise", (xmlChar*) "true");
-				else xmlNewProp(newnode2, (xmlChar*) "precise", (xmlChar*) "false");			
-				if(!functions[i]->condition().empty()) {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "condition", (xmlChar*) functions[i]->condition().c_str());
-				}
-				cur = newnode;
-				for(int i2 = 1; i2 <= functions[i]->lastArgumentDefinitionIndex(); i2++) {
-					arg = functions[i]->getArgumentDefinition(i2);
-					if(arg) {
-						newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "argument", NULL);
-						if(!arg->name().empty()) {
+					cur = newnode;
+					for(int i2 = 1; i2 <= functions[i]->lastArgumentDefinitionIndex(); i2++) {
+						arg = functions[i]->getArgumentDefinition(i2);
+						if(arg && !arg->name().empty()) {
+							newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "argument", NULL);
 							if(save_global) {
 								xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) arg->name().c_str());
 							} else {
 								xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) arg->name().c_str());
 							}
+							xmlNewProp(newnode, (xmlChar*) "index", (xmlChar*) i2s(i2).c_str());
 						}
-						switch(arg->type()) {
-							case ARGUMENT_TYPE_TEXT: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "text"); break;}
-							case ARGUMENT_TYPE_DATE: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "date"); break;}
-							case ARGUMENT_TYPE_INTEGER: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "integer"); break;}
-							case ARGUMENT_TYPE_FRACTION: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "number"); break;}
-							case ARGUMENT_TYPE_VECTOR: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "vector"); break;}
-							case ARGUMENT_TYPE_MATRIX: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "matrix"); break;}
-							case ARGUMENT_TYPE_BOOLEAN: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "boolean"); break;}
-							case ARGUMENT_TYPE_FUNCTION: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "function"); break;}
-							case ARGUMENT_TYPE_UNIT: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "unit"); break;}
-							case ARGUMENT_TYPE_VARIABLE: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "variable"); break;}
-							case ARGUMENT_TYPE_EXPRESSION_ITEM: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "object"); break;}
-							default: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "free");}
+					}
+				} else {
+					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "function", NULL);
+					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) functions[i]->name().c_str());
+					if(!functions[i]->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");
+					if(!functions[i]->title(false).empty()) {
+						if(save_global) {
+							xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) functions[i]->title(false).c_str());
+						} else {
+							xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) functions[i]->title(false).c_str());
 						}
-						xmlNewProp(newnode, (xmlChar*) "index", (xmlChar*) i2s(i2).c_str());
-						if(!arg->tests()) {
-							xmlNewTextChild(newnode, NULL, (xmlChar*) "test", (xmlChar*) "false");
+					}
+					if(!functions[i]->description().empty()) {
+						str = functions[i]->description();
+						if(save_global) {
+							xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
+						} else {
+							xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
 						}
-						if(arg->zeroForbidden()) {
-							xmlNewTextChild(newnode, NULL, (xmlChar*) "zero_forbidden", (xmlChar*) "true");
-						}
-						if(arg->matrixAllowed()) {
-							xmlNewTextChild(newnode, NULL, (xmlChar*) "matrix_allowed", (xmlChar*) "true");
-						}
-						switch(arg->type()) {
-							case ARGUMENT_TYPE_INTEGER: {
-								iarg = (IntegerArgument*) arg;
-								if(iarg->min()) {
-									xmlNewTextChild(newnode, NULL, (xmlChar*) "min", (xmlChar*) iarg->min()->print().c_str()); 
+					}
+					newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "expression", (xmlChar*) ((UserFunction*) functions[i])->equation().c_str());
+					if(!functions[i]->isPrecise()) xmlNewProp(newnode2, (xmlChar*) "precise", (xmlChar*) "false");			
+					if(!functions[i]->condition().empty()) {
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "condition", (xmlChar*) functions[i]->condition().c_str());
+					}
+					cur = newnode;
+					for(int i2 = 1; i2 <= functions[i]->lastArgumentDefinitionIndex(); i2++) {
+						arg = functions[i]->getArgumentDefinition(i2);
+						if(arg) {
+							newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "argument", NULL);
+							if(!arg->name().empty()) {
+								if(save_global) {
+									xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) arg->name().c_str());
+								} else {
+									xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) arg->name().c_str());
 								}
-								if(iarg->max()) {
-									xmlNewTextChild(newnode, NULL, (xmlChar*) "max", (xmlChar*) iarg->max()->print().c_str()); 
-								}
-								break;
 							}
-							case ARGUMENT_TYPE_FRACTION: {
-								farg = (FractionArgument*) arg;
-								if(farg->min()) {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "min", (xmlChar*) farg->min()->print().c_str()); 
-									if(farg->includeEqualsMin()) {
-										xmlNewProp(newnode2, (xmlChar*) "include_equals", (xmlChar*) "true");
-									} else {
-										xmlNewProp(newnode2, (xmlChar*) "include_equals", (xmlChar*) "false");
-									}
-								}
-								if(farg->max()) {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "max", (xmlChar*) farg->max()->print().c_str()); 
-									if(farg->includeEqualsMax()) {
-										xmlNewProp(newnode2, (xmlChar*) "include_equals", (xmlChar*) "true");
-									} else {
-										xmlNewProp(newnode2, (xmlChar*) "include_equals", (xmlChar*) "false");
-									}
-								}
-								break;						
+							switch(arg->type()) {
+								case ARGUMENT_TYPE_TEXT: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "text"); break;}
+								case ARGUMENT_TYPE_DATE: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "date"); break;}
+								case ARGUMENT_TYPE_INTEGER: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "integer"); break;}
+								case ARGUMENT_TYPE_FRACTION: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "number"); break;}
+								case ARGUMENT_TYPE_VECTOR: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "vector"); break;}
+								case ARGUMENT_TYPE_MATRIX: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "matrix"); break;}
+								case ARGUMENT_TYPE_BOOLEAN: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "boolean"); break;}
+								case ARGUMENT_TYPE_FUNCTION: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "function"); break;}
+								case ARGUMENT_TYPE_UNIT: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "unit"); break;}
+								case ARGUMENT_TYPE_VARIABLE: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "variable"); break;}
+								case ARGUMENT_TYPE_EXPRESSION_ITEM: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "object"); break;}
+								default: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "free");}
 							}
-						}					
-						if(!arg->getCustomCondition().empty()) {
-							xmlNewTextChild(newnode, NULL, (xmlChar*) "condition", (xmlChar*) arg->getCustomCondition().c_str());
+							xmlNewProp(newnode, (xmlChar*) "index", (xmlChar*) i2s(i2).c_str());
+							if(!arg->tests()) {
+								xmlNewTextChild(newnode, NULL, (xmlChar*) "test", (xmlChar*) "false");
+							}
+							if(arg->zeroForbidden()) {
+								xmlNewTextChild(newnode, NULL, (xmlChar*) "zero_forbidden", (xmlChar*) "true");
+							}
+							if(arg->matrixAllowed()) {
+								xmlNewTextChild(newnode, NULL, (xmlChar*) "matrix_allowed", (xmlChar*) "true");
+							}
+							switch(arg->type()) {
+								case ARGUMENT_TYPE_INTEGER: {
+									iarg = (IntegerArgument*) arg;
+									if(iarg->min()) {
+										xmlNewTextChild(newnode, NULL, (xmlChar*) "min", (xmlChar*) iarg->min()->print().c_str()); 
+									}
+									if(iarg->max()) {
+										xmlNewTextChild(newnode, NULL, (xmlChar*) "max", (xmlChar*) iarg->max()->print().c_str()); 
+									}
+									break;
+								}
+								case ARGUMENT_TYPE_FRACTION: {
+									farg = (FractionArgument*) arg;
+									if(farg->min()) {
+										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "min", (xmlChar*) farg->min()->print().c_str()); 
+										if(farg->includeEqualsMin()) {
+											xmlNewProp(newnode2, (xmlChar*) "include_equals", (xmlChar*) "true");
+										} else {
+											xmlNewProp(newnode2, (xmlChar*) "include_equals", (xmlChar*) "false");
+										}
+									}
+									if(farg->max()) {
+										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "max", (xmlChar*) farg->max()->print().c_str()); 
+										if(farg->includeEqualsMax()) {
+											xmlNewProp(newnode2, (xmlChar*) "include_equals", (xmlChar*) "true");
+										} else {
+											xmlNewProp(newnode2, (xmlChar*) "include_equals", (xmlChar*) "false");
+										}
+									}
+									break;						
+								}
+							}					
+							if(!arg->getCustomCondition().empty()) {
+								xmlNewTextChild(newnode, NULL, (xmlChar*) "condition", (xmlChar*) arg->getCustomCondition().c_str());
+							}
 						}
 					}
 				}

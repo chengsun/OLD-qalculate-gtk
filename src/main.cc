@@ -39,6 +39,7 @@ GtkWidget *omToUnit_menu;
 GladeXML *glade_xml;
 GdkPixmap *pixmap_result;
 extern bool b_busy;
+extern vector<string> recent_objects_pre;
 
 int main (int argc, char **argv) {
 
@@ -117,6 +118,10 @@ int main (int argc, char **argv) {
 
 	//create main window
 	create_main_window();
+	
+	for(int i = recent_objects_pre.size() - 1; i >= 0; i--) {
+		object_inserted(CALCULATOR->getExpressionItem(recent_objects_pre[i]));
+	}
 	
 	//create dynamic menus
 	generate_units_tree_struct();

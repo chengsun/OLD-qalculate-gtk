@@ -31,7 +31,7 @@ bool changing_in_nbases_dialog;
 extern GladeXML *glade_xml;
 
 extern GtkWidget *expression;
-extern GtkWidget *f_menu, *v_menu, *u_menu, *u_menu2;
+extern GtkWidget *f_menu, *v_menu, *u_menu, *u_menu2, *recent_menu;
 extern Variable *vans, *vAns;
 extern GtkWidget *tFunctionArguments;
 extern GtkListStore *tFunctionArguments_store;
@@ -102,14 +102,25 @@ bool expression_has_changed;
 struct tree_struct {
 	string item;
 	list<tree_struct> items;
+	list<tree_struct>::iterator it;
 	vector<void*> objects;	
+	tree_struct *parent;
+	void sort() {
+		items.sort();
+		for(list<tree_struct>::iterator it = items.begin(); it != items.end(); ++it) {
+			it->sort();
+		}
+	}
 	bool operator < (tree_struct &s1) const {
 		return item < s1.item;	
 	}	
 };
-list<tree_struct> unit_cats, variable_cats, function_cats;
-vector<void*> uc_units, uc_variables, uc_functions;	
+
+tree_struct function_cats, unit_cats, variable_cats;
 vector<void*> ia_units, ia_variables, ia_functions;	
+vector<string> recent_objects_pre;
+vector<GtkWidget*> recent_items;
+vector<ExpressionItem*> recent_objects;
 
 void wrap_expression_selection() {
 	gint start = 0, end = 0;
@@ -239,27 +250,17 @@ Unit *get_selected_to_unit() {
 
 void generate_units_tree_struct() {
 	tree_struct *p_cat;
-	int i2; bool b;
-	bool no_cat = false;	
-	string str;
-	unit_cats.clear();
-	uc_units.clear();
-	ia_units.clear();
+	int i2, cat_i, cat_i_prev; 
+	bool b, no_cat = false;	
+	string str, cat, cat_sub;
 	Unit *u;
+	unit_cats.items.clear();
+	unit_cats.objects.clear();
+	unit_cats.parent = NULL;	
+	ia_units.clear();
 	list<tree_struct>::iterator it;	
 	for(int i = 0; i < CALCULATOR->units.size(); i++) {
-		if(CALCULATOR->units[i]->category().empty()) {
-			b = false;
-			for(int i3 = 0; i3 < uc_units.size(); i3++) {
-				u = (Unit*) uc_units[i3];
-				if(CALCULATOR->units[i]->title() < u->title()) {
-					b = true;
-					uc_units.insert(uc_units.begin() + i3, (void*) CALCULATOR->units[i]);
-					break;
-				}
-			}
-			if(!b) uc_units.push_back((void*) CALCULATOR->units[i]);
-		} else if(!CALCULATOR->units[i]->isActive()) {
+		if(!CALCULATOR->units[i]->isActive()) {
 			b = false;
 			for(int i3 = 0; i3 < ia_units.size(); i3++) {
 				u = (Unit*) ia_units[i3];
@@ -271,100 +272,70 @@ void generate_units_tree_struct() {
 			}
 			if(!b) ia_units.push_back((void*) CALCULATOR->units[i]);						
 		} else {
-			b = false;
-			//add category if not present
-			if((i2 = CALCULATOR->units[i]->category().find("/")) == string::npos) { 	
-				for(it = unit_cats.begin(); it != unit_cats.end(); ++it) {
-					if(it->item == CALCULATOR->units[i]->category()) {
-						for(int i3 = 0; i3 < it->objects.size(); i3++) {
-							u = (Unit*) it->objects[i3];
-							if(CALCULATOR->units[i]->title() < u->title()) {
-								b = true;
-								it->objects.insert(it->objects.begin() + i3, (void*) CALCULATOR->units[i]);
-								break;
-							}
-						}
-						if(!b) it->objects.push_back((void*) CALCULATOR->units[i]);					
-						b = true;
-					}
-				}
-				if(!b) {
-					tree_struct cat;		
-					cat.item = CALCULATOR->units[i]->category();
-					cat.objects.push_back((void*) CALCULATOR->units[i]);
-					unit_cats.push_back(cat);
-				}
-			} else {
-				str = CALCULATOR->units[i]->category().substr(0, i2);
-				for(it = unit_cats.begin(); it != unit_cats.end(); ++it) {
-					if(it->item == str) {
-						p_cat = &(*it);
-						b = true;
-					}
-				}
-				if(!b) {
-					tree_struct cat;		
-					cat.item = str;
-					unit_cats.push_back(cat);				
-					it = unit_cats.end();
-					--it;
-					p_cat = &(*it);
-				}				
+			tree_struct *item = &unit_cats;
+			if(!CALCULATOR->units[i]->category().empty()) {
+				cat = CALCULATOR->units[i]->category();
+				cat_i = cat.find("/"); cat_i_prev = -1;
 				b = false;
-				str = CALCULATOR->units[i]->category().substr(i2 + 1, CALCULATOR->units[i]->category().length() - i2 - 1);
-				for(it = p_cat->items.begin(); it != p_cat->items.end(); ++it) {
-					if(it->item == str) {
-						for(int i3 = 0; i3 < it->objects.size(); i3++) {
-							u = (Unit*) it->objects[i3];
-							if(CALCULATOR->units[i]->title() < u->title()) {
-								b = true;
-								it->objects.insert(it->objects.begin() + i3, (void*) CALCULATOR->units[i]);
-								break;
-							}
-						}
-						if(!b) it->objects.push_back((void*) CALCULATOR->units[i]);
-						b = true;
+				while(true) {
+					if(cat_i == string::npos) {
+						cat_sub = cat.substr(cat_i_prev + 1, cat.length() - 1 - cat_i_prev);
+					} else {
+						cat_sub = cat.substr(cat_i_prev + 1, cat_i - 1 - cat_i_prev);
 					}
-				}	
-				if(!b) {
-					tree_struct cat;		
-					cat.item = str;
-					cat.objects.push_back((void*) CALCULATOR->units[i]);
-					p_cat->items.push_back(cat);				
-				}			
+					b = false;
+					for(it = item->items.begin(); it != item->items.end(); ++it) {
+						if(cat_sub == it->item) {
+							item = &*it;
+							b = true;
+							break;
+						}
+					}
+					if(!b) {
+						tree_struct cat;		
+						item->items.push_back(cat);
+						it = item->items.end();
+						--it;
+						it->parent = item;
+						item = &*it;
+						item->item = cat_sub;
+					}
+					if(cat_i == string::npos) {
+						break;
+					}
+					cat_i_prev = cat_i;
+					cat_i = cat.find("/", cat_i_prev + 1);
+				}
 			}
+			b = false;
+			for(int i3 = 0; i3 < item->objects.size(); i3++) {
+				u = (Unit*) item->objects[i3];
+				if(CALCULATOR->units[i]->title() < u->title()) {
+					b = true;
+					item->objects.insert(item->objects.begin() + i3, (void*) CALCULATOR->units[i]);
+					break;
+				}
+			}
+			if(!b) item->objects.push_back((void*) CALCULATOR->units[i]);		
 		}
 	}
 	
 	unit_cats.sort();
-	for(it = unit_cats.begin(); it != unit_cats.end(); ++it) {
-		it->items.sort();
-	}
+
 }
 void generate_variables_tree_struct() {
 	tree_struct *p_cat;
-	int i2; bool b;
-	bool no_cat = false;	
-	string str;
+	int i2, cat_i, cat_i_prev; 
+	bool b, no_cat = false;	
+	string str, cat, cat_sub;
 	Variable *v;
-	variable_cats.clear();
-	uc_variables.clear();
+	variable_cats.items.clear();
+	variable_cats.objects.clear();
+	variable_cats.parent = NULL;
 	ia_variables.clear();
 	list<tree_struct>::iterator it;	
 	for(int i = 0; i < CALCULATOR->variables.size(); i++) {
-		if(CALCULATOR->variables[i]->category().empty()) {
-			//uncategorized variable
-			b = false;
-			for(int i3 = 0; i3 < uc_variables.size(); i3++) {
-				v = (Variable*) uc_variables[i3];
-				if(CALCULATOR->variables[i]->title() < v->title()) {
-					b = true;
-					uc_variables.insert(uc_variables.begin() + i3, (void*) CALCULATOR->variables[i]);
-					break;
-				}
-			}
-			if(!b) uc_variables.push_back((void*) CALCULATOR->variables[i]);
-		} else if(!CALCULATOR->variables[i]->isActive()) {
+		if(!CALCULATOR->variables[i]->isActive()) {
 			//deactivated variable
 			b = false;
 			for(int i3 = 0; i3 < ia_variables.size(); i3++) {
@@ -377,100 +348,70 @@ void generate_variables_tree_struct() {
 			}
 			if(!b) ia_variables.push_back((void*) CALCULATOR->variables[i]);											
 		} else {
-			b = false;
-			//add category if not present
-			if((i2 = CALCULATOR->variables[i]->category().find("/")) == string::npos) { 	
-				for(it = variable_cats.begin(); it != variable_cats.end(); ++it) {
-					if(it->item == CALCULATOR->variables[i]->category()) {
-						for(int i3 = 0; i3 < it->objects.size(); i3++) {
-							v = (Variable*) it->objects[i3];
-							if(CALCULATOR->variables[i]->title() < v->title()) {
-								b = true;
-								it->objects.insert(it->objects.begin() + i3, (void*) CALCULATOR->variables[i]);
-								break;
-							}
-						}
-						if(!b) it->objects.push_back((void*) CALCULATOR->variables[i]);					
-						b = true;
-					}
-				}
-				if(!b) {
-					tree_struct cat;		
-					cat.item = CALCULATOR->variables[i]->category();
-					cat.objects.push_back((void*) CALCULATOR->variables[i]);
-					variable_cats.push_back(cat);
-				}
-			} else {
-				str = CALCULATOR->variables[i]->category().substr(0, i2);
-				for(it = variable_cats.begin(); it != variable_cats.end(); ++it) {
-					if(it->item == str) {
-						p_cat = &(*it);
-						b = true;
-					}
-				}
-				if(!b) {
-					tree_struct cat;		
-					cat.item = str;
-					variable_cats.push_back(cat);				
-					it = variable_cats.end();
-					--it;
-					p_cat = &(*it);
-				}				
+			tree_struct *item = &variable_cats;
+			if(!CALCULATOR->variables[i]->category().empty()) {
+				cat = CALCULATOR->variables[i]->category();
+				cat_i = cat.find("/"); cat_i_prev = -1;
 				b = false;
-				str = CALCULATOR->variables[i]->category().substr(i2 + 1, CALCULATOR->variables[i]->category().length() - i2 - 1);
-				for(it = p_cat->items.begin(); it != p_cat->items.end(); ++it) {
-					if(it->item == str) {
-						for(int i3 = 0; i3 < it->objects.size(); i3++) {
-							v = (Variable*) it->objects[i3];
-							if(CALCULATOR->variables[i]->title() < v->title()) {
-								b = true;
-								it->objects.insert(it->objects.begin() + i3, (void*) CALCULATOR->variables[i]);
-								break;
-							}
-						}
-						if(!b) it->objects.push_back((void*) CALCULATOR->variables[i]);
-						b = true;
+				while(true) {
+					if(cat_i == string::npos) {
+						cat_sub = cat.substr(cat_i_prev + 1, cat.length() - 1 - cat_i_prev);
+					} else {
+						cat_sub = cat.substr(cat_i_prev + 1, cat_i - 1 - cat_i_prev);
 					}
-				}	
-				if(!b) {
-					tree_struct cat;		
-					cat.item = str;
-					cat.objects.push_back((void*) CALCULATOR->variables[i]);
-					p_cat->items.push_back(cat);				
-				}			
+					b = false;
+					for(it = item->items.begin(); it != item->items.end(); ++it) {
+						if(cat_sub == it->item) {
+							item = &*it;
+							b = true;
+							break;
+						}
+					}
+					if(!b) {
+						tree_struct cat;		
+						item->items.push_back(cat);
+						it = item->items.end();
+						--it;
+						it->parent = item;
+						item = &*it;
+						item->item = cat_sub;
+					}
+					if(cat_i == string::npos) {
+						break;
+					}
+					cat_i_prev = cat_i;
+					cat_i = cat.find("/", cat_i_prev + 1);
+				}
 			}
+			b = false;
+			for(int i3 = 0; i3 < item->objects.size(); i3++) {
+				v = (Variable*) item->objects[i3];
+				if(CALCULATOR->variables[i]->title() < v->title()) {
+					b = true;
+					item->objects.insert(item->objects.begin() + i3, (void*) CALCULATOR->variables[i]);
+					break;
+				}
+			}
+			if(!b) item->objects.push_back((void*) CALCULATOR->variables[i]);		
 		}
 	}
 	
 	variable_cats.sort();
-	for(it = variable_cats.begin(); it != variable_cats.end(); ++it) {
-		it->items.sort();
-	}
+
 }
 void generate_functions_tree_struct() {
 	tree_struct *p_cat;
-	int i2; bool b;
-	bool no_cat = false;	
-	string str;
+	int i2, cat_i, cat_i_prev; 
+	bool b, no_cat = false;	
+	string str, cat, cat_sub;
 	Function *f;
-	function_cats.clear();
-	uc_functions.clear();
+	function_cats.items.clear();
+	function_cats.objects.clear();
+	function_cats.parent = NULL;
 	ia_functions.clear();
 	list<tree_struct>::iterator it;
 	for(int i = 0; i < CALCULATOR->functions.size(); i++) {
-		if(CALCULATOR->functions[i]->category().empty()) {
-			//uncategorized function
-			b = false;
-			for(int i3 = 0; i3 < uc_functions.size(); i3++) {
-				f = (Function*) uc_functions[i3];
-				if(CALCULATOR->functions[i]->title() < f->title()) {
-					b = true;
-					uc_functions.insert(uc_functions.begin() + i3, (void*) CALCULATOR->functions[i]);
-					break;
-				}
-			}
-			if(!b) uc_functions.push_back((void*) CALCULATOR->functions[i]);					
-		} else if(!CALCULATOR->functions[i]->isActive()) {
+		if(!CALCULATOR->functions[i]->isActive()) {
 			//deactivated function
 			b = false;
 			for(int i3 = 0; i3 < ia_functions.size(); i3++) {
@@ -483,67 +424,56 @@ void generate_functions_tree_struct() {
 			}
 			if(!b) ia_functions.push_back((void*) CALCULATOR->functions[i]);								
 		} else {
-			b = false;
-			//add category if not present
-			if((i2 = CALCULATOR->functions[i]->category().find("/")) == string::npos) { 	
-				for(it = function_cats.begin(); it != function_cats.end(); ++it) {
-					if(it->item == CALCULATOR->functions[i]->category()) {
-						for(int i3 = 0; i3 < it->objects.size(); i3++) {
-							f = (Function*) it->objects[i3];
-							if(CALCULATOR->functions[i]->title() < f->title()) {
-								b = true;
-								it->objects.insert(it->objects.begin() + i3, (void*) CALCULATOR->functions[i]);
-								break;
-							}
-						}
-						if(!b) it->objects.push_back((void*) CALCULATOR->functions[i]);					
-						b = true;
-					}
-				}
-				if(!b) {
-					tree_struct cat;		
-					cat.item = CALCULATOR->functions[i]->category();
-					cat.objects.push_back((void*) CALCULATOR->functions[i]);
-					function_cats.push_back(cat);
-				}
-			} else {
-				str = CALCULATOR->functions[i]->category().substr(0, i2);
-				for(it = function_cats.begin(); it != function_cats.end(); ++it) {
-					if(it->item == str) {
-						p_cat = &(*it);
-						b = true;
-					}
-				}
-				if(!b) {
-					tree_struct cat;		
-					cat.item = str;
-					function_cats.push_back(cat);				
-					it = function_cats.end();
-					--it;
-					p_cat = &(*it);
-				}				
+			tree_struct *item = &function_cats;
+			if(!CALCULATOR->functions[i]->category().empty()) {
+				cat = CALCULATOR->functions[i]->category();
+				cat_i = cat.find("/"); cat_i_prev = -1;
 				b = false;
-				str = CALCULATOR->functions[i]->category().substr(i2 + 1, CALCULATOR->functions[i]->category().length() - i2 - 1);
-				for(it = p_cat->items.begin(); it != p_cat->items.end(); ++it) {
-					if(it->item == str) {
-						it->objects.push_back((void*) CALCULATOR->functions[i]);
-						b = true;
+				while(true) {
+					if(cat_i == string::npos) {
+						cat_sub = cat.substr(cat_i_prev + 1, cat.length() - 1 - cat_i_prev);
+					} else {
+						cat_sub = cat.substr(cat_i_prev + 1, cat_i - 1 - cat_i_prev);
 					}
-				}	
-				if(!b) {
-					tree_struct cat;		
-					cat.item = str;
-					cat.objects.push_back((void*) CALCULATOR->functions[i]);
-					p_cat->items.push_back(cat);				
-				}			
+					b = false;
+					for(it = item->items.begin(); it != item->items.end(); ++it) {
+						if(cat_sub == it->item) {
+							item = &*it;
+							b = true;
+							break;
+						}
+					}
+					if(!b) {
+						tree_struct cat;		
+						item->items.push_back(cat);
+						it = item->items.end();
+						--it;
+						it->parent = item;
+						item = &*it;
+						item->item = cat_sub;
+					}
+					if(cat_i == string::npos) {
+						break;
+					}
+					cat_i_prev = cat_i;
+					cat_i = cat.find("/", cat_i_prev + 1);
+				}
 			}
+			b = false;
+			for(int i3 = 0; i3 < item->objects.size(); i3++) {
+				f = (Function*) item->objects[i3];
+				if(CALCULATOR->functions[i]->title() < f->title()) {
+					b = true;
+					item->objects.insert(item->objects.begin() + i3, (void*) CALCULATOR->functions[i]);
+					break;
+				}
+			}
+			if(!b) item->objects.push_back((void*) CALCULATOR->functions[i]);
 		}
 	}
 	
 	function_cats.sort();
-	for(it = function_cats.begin(); it != function_cats.end(); ++it) {
-		it->items.sort();
-	}
+	
 }
 
 /*
@@ -559,41 +489,47 @@ void update_functions_tree() {
 	gtk_tree_store_append(tFunctionCategories_store, &iter3, NULL);
 	gtk_tree_store_set(tFunctionCategories_store, &iter3, 0, _("All"), 1, _("All"), -1);
 	string str;
-	list<tree_struct>::iterator it, it2;
-	for(it = function_cats.begin(); it != function_cats.end(); ++it) {
-		gtk_tree_store_append(tFunctionCategories_store, &iter, &iter3);
-		if(!it->items.empty()) {
-			str = "/";
-			str += it->item;
-		} else {
-			str = it->item;
-		}
-		gtk_tree_store_set(tFunctionCategories_store, &iter, 0, it->item.c_str(), 1, str.c_str(), -1);
+	list<tree_struct>::iterator it;
+	tree_struct *item, *item2;
+	function_cats.it = function_cats.items.begin();
+	if(function_cats.it != function_cats.items.end()) {
+		item = &*function_cats.it;
+		++function_cats.it;
+		item->it = item->items.begin();
+	} else {
+		item = NULL;
+	}
+	str = "";
+	iter2 = iter3;
+	while(item) {
+		gtk_tree_store_append(tFunctionCategories_store, &iter, &iter2);
+		str += "/";
+		str += item->item;
+		gtk_tree_store_set(tFunctionCategories_store, &iter, 0, item->item.c_str(), 1, str.c_str(), -1);
 		if(str == selected_function_category) {
 			EXPAND_TO_ITER(model, tFunctionCategories, iter)
 			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctionCategories)), &iter);
 		}
-		if(!it->objects.empty() && !it->items.empty()) {
-			gtk_tree_store_append(tFunctionCategories_store, &iter2, &iter);
-			gtk_tree_store_set(tFunctionCategories_store, &iter2, 0, it->item.c_str(), 1, it->item.c_str(), -1);						
-			if(it->item == selected_function_category) {
-				EXPAND_TO_ITER(model, tFunctionCategories, iter2)
-				gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctionCategories)), &iter2);
-			}		
-		}
-		for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
-			str = it->item;
-			str += "/";
-			str += it2->item;
-			gtk_tree_store_append(tFunctionCategories_store, &iter2, &iter);
-			gtk_tree_store_set(tFunctionCategories_store, &iter2, 0, it2->item.c_str(), 1, str.c_str(), -1);		
-			if(str == selected_function_category) {
-				EXPAND_TO_ITER(model, tFunctionCategories, iter2)
-				gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctionCategories)), &iter2);
+		while(item && item->it == item->items.end()) {
+			int str_i = str.rfind("/");
+			if(str_i == string::npos) {
+				str = "";
+			} else {
+				str = str.substr(0, str_i);
 			}
+			item = item->parent;
+			gtk_tree_model_iter_parent(model, &iter2, &iter);
+			iter = iter2;
+		}
+		if(item) {
+			item2 = &*item->it;
+			if(item->it == item->items.begin()) iter2 = iter;
+			++item->it;
+			item = item2;
+			item->it = item->items.begin();	
 		}
 	}
-	if(!uc_functions.empty()) {
+	if(!function_cats.objects.empty()) {
 		//add "Uncategorized" category if there are functions without category
 		gtk_tree_store_append(tFunctionCategories_store, &iter, &iter3);
 		EXPAND_TO_ITER(model, tFunctionCategories, iter)
@@ -657,17 +593,9 @@ void on_tFunctionCategories_selection_changed(GtkTreeSelection *treeselection, g
 		if(!b_all && !no_cat && !b_inactive && selected_function_category[0] == '/') {
 			list<tree_struct>::iterator it, it2;
 			string str = selected_function_category.substr(1, selected_function_category.length() - 1);
-			for(it = function_cats.begin(); it != function_cats.end(); ++it) {
-				if(str == it->item) {
-					for(int i = 0; i < it->objects.size(); i++) {
-						setFunctionTreeItem(iter2, (Function*) it->objects[i]);		
-					}
-					for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
-						for(int i = 0; i < it2->objects.size(); i++) {
-							setFunctionTreeItem(iter2, (Function*) it2->objects[i]);		
-						}						
-					}
-					break;
+			for(int i = 0; i < CALCULATOR->functions.size(); i++) {
+				if(CALCULATOR->functions[i]->isActive() && CALCULATOR->functions[i]->category().substr(0, selected_function_category.length() - 1) == str) {
+					setFunctionTreeItem(iter2, CALCULATOR->functions[i]);
 				}
 			}
 		} else {			
@@ -821,43 +749,47 @@ void update_variables_tree() {
 	gtk_tree_store_append(tVariableCategories_store, &iter3, NULL);
 	gtk_tree_store_set(tVariableCategories_store, &iter3, 0, _("All"), 1, _("All"), -1);
 	string str;
-	list<tree_struct>::iterator it, it2;
-	for(it = variable_cats.begin(); it != variable_cats.end(); ++it) {
-		gtk_tree_store_append(tVariableCategories_store, &iter, &iter3);
-		if(!it->items.empty()) {
-			str = "/";
-			str += it->item;
-		} else {
-			str = it->item;
-		}		
-		gtk_tree_store_set(tVariableCategories_store, &iter, 0, it->item.c_str(), 1, str.c_str(), -1);
+	list<tree_struct>::iterator it;
+	tree_struct *item, *item2;
+	variable_cats.it = variable_cats.items.begin();
+	if(variable_cats.it != variable_cats.items.end()) {
+		item = &*variable_cats.it;
+		++variable_cats.it;
+		item->it = item->items.begin();
+	} else {
+		item = NULL;
+	}
+	str = "";
+	iter2 = iter3;
+	while(item) {
+		gtk_tree_store_append(tVariableCategories_store, &iter, &iter2);
+		str += "/";
+		str += item->item;
+		gtk_tree_store_set(tVariableCategories_store, &iter, 0, item->item.c_str(), 1, str.c_str(), -1);
 		if(str == selected_variable_category) {
 			EXPAND_TO_ITER(model, tVariableCategories, iter)
 			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tVariableCategories)), &iter);
 		}
-		if(!it->objects.empty() && !it->items.empty()) {
-			gtk_tree_store_append(tVariableCategories_store, &iter2, &iter);
-			gtk_tree_store_set(tVariableCategories_store, &iter2, 0, it->item.c_str(), 1, it->item.c_str(), -1);						
-			if(it->item == selected_variable_category) {
-				EXPAND_TO_ITER(model, tVariableCategories, iter2)
-				gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tVariableCategories)), &iter2);
-			}		
-		}
-		
-		for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
-			str = it->item;
-			str += "/";
-			str += it2->item;
-			gtk_tree_store_append(tVariableCategories_store, &iter2, &iter);
-			gtk_tree_store_set(tVariableCategories_store, &iter2, 0, it2->item.c_str(), 1, str.c_str(), -1);		
-			if(str == selected_variable_category) {
-				EXPAND_TO_ITER(model, tVariableCategories, iter2)
-				gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tVariableCategories)), &iter2);
+		while(item && item->it == item->items.end()) {
+			int str_i = str.rfind("/");
+			if(str_i == string::npos) {
+				str = "";
+			} else {
+				str = str.substr(0, str_i);
 			}
+			item = item->parent;
+			gtk_tree_model_iter_parent(model, &iter2, &iter);
+			iter = iter2;
 		}
-	}	
-	
-	if(!uc_variables.empty()) {
+		if(item) {
+			item2 = &*item->it;
+			if(item->it == item->items.begin()) iter2 = iter;
+			++item->it;
+			item = item2;
+			item->it = item->items.begin();	
+		}
+	}
+	if(!variable_cats.objects.empty()) {	
 		//add "Uncategorized" category if there are variables without category
 		gtk_tree_store_append(tVariableCategories_store, &iter, &iter3);
 		EXPAND_TO_ITER(model, tVariableCategories, iter)
@@ -941,19 +873,11 @@ void on_tVariableCategories_selection_changed(GtkTreeSelection *treeselection, g
 		if(!b_all && !no_cat && !b_inactive && selected_variable_category[0] == '/') {
 			list<tree_struct>::iterator it, it2;
 			string str = selected_variable_category.substr(1, selected_variable_category.length() - 1);
-			for(it = variable_cats.begin(); it != variable_cats.end(); ++it) {
-				if(str == it->item) {
-					for(int i = 0; i < it->objects.size(); i++) {
-						setVariableTreeItem(iter2, (Variable*) it->objects[i]);		
-					}
-					for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
-						for(int i = 0; i < it2->objects.size(); i++) {
-							setVariableTreeItem(iter2, (Variable*) it2->objects[i]);		
-						}						
-					}
-					break;
+			for(int i = 0; i < CALCULATOR->variables.size(); i++) {
+				if(CALCULATOR->variables[i]->isActive() && CALCULATOR->variables[i]->category().substr(0, selected_variable_category.length() - 1) == str) {
+					setVariableTreeItem(iter2, CALCULATOR->variables[i]);
 				}
-			}
+			}			
 		} else {			
 			for(int i = 0; i < CALCULATOR->variables.size(); i++) {
 				if((b_inactive && !CALCULATOR->variables[i]->isActive()) || (CALCULATOR->variables[i]->isActive() && (b_all || (no_cat && CALCULATOR->variables[i]->category().empty()) || (!b_inactive && CALCULATOR->variables[i]->category() == selected_variable_category)))) {
@@ -1021,41 +945,47 @@ void update_units_tree() {
 	gtk_tree_store_append(tUnitCategories_store, &iter3, NULL);
 	gtk_tree_store_set(tUnitCategories_store, &iter3, 0, _("All"), 1, _("All"), -1);
 	string str;
-	list<tree_struct>::iterator it, it2;
-	for(it = unit_cats.begin(); it != unit_cats.end(); ++it) {
-		gtk_tree_store_append(tUnitCategories_store, &iter, &iter3);
-		if(!it->items.empty()) {
-			str = "/";
-			str += it->item;
-		} else {
-			str = it->item;
-		}
-		gtk_tree_store_set(tUnitCategories_store, &iter, 0, it->item.c_str(), 1, str.c_str(), -1);		
+	list<tree_struct>::iterator it;
+	tree_struct *item, *item2;
+	unit_cats.it = unit_cats.items.begin();
+	if(unit_cats.it != unit_cats.items.end()) {
+		item = &*unit_cats.it;
+		++unit_cats.it;
+		item->it = item->items.begin();
+	} else {
+		item = NULL;
+	}
+	str = "";
+	iter2 = iter3;
+	while(item) {
+		gtk_tree_store_append(tUnitCategories_store, &iter, &iter2);
+		str += "/";
+		str += item->item;
+		gtk_tree_store_set(tUnitCategories_store, &iter, 0, item->item.c_str(), 1, str.c_str(), -1);
 		if(str == selected_unit_category) {
 			EXPAND_TO_ITER(model, tUnitCategories, iter)
 			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnitCategories)), &iter);
 		}
-		if(!it->objects.empty() && !it->items.empty()) {
-			gtk_tree_store_append(tUnitCategories_store, &iter2, &iter);
-			gtk_tree_store_set(tUnitCategories_store, &iter2, 0, it->item.c_str(), 1, it->item.c_str(), -1);						
-			if(it->item == selected_unit_category) {
-				EXPAND_TO_ITER(model, tUnitCategories, iter2)
-				gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnitCategories)), &iter2);
-			}		
-		}
-		for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
-			str = it->item;
-			str += "/";
-			str += it2->item;
-			gtk_tree_store_append(tUnitCategories_store, &iter2, &iter);
-			gtk_tree_store_set(tUnitCategories_store, &iter2, 0, it2->item.c_str(), 1, str.c_str(), -1);					
-			if(str == selected_unit_category) {
-				EXPAND_TO_ITER(model, tUnitCategories, iter2)
-				gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnitCategories)), &iter2);
+		while(item && item->it == item->items.end()) {
+			int str_i = str.rfind("/");
+			if(str_i == string::npos) {
+				str = "";
+			} else {
+				str = str.substr(0, str_i);
 			}
+			item = item->parent;
+			gtk_tree_model_iter_parent(model, &iter2, &iter);
+			iter = iter2;
+		}
+		if(item) {
+			item2 = &*item->it;
+			if(item->it == item->items.begin()) iter2 = iter;
+			++item->it;
+			item = item2;
+			item->it = item->items.begin();	
 		}
 	}
-	if(!uc_units.empty()) {
+	if(!unit_cats.objects.empty()) {	
 		//add "Uncategorized" category if there are units without category
 		gtk_tree_store_append(tUnitCategories_store, &iter, &iter3);
 		gtk_tree_store_set(tUnitCategories_store, &iter, 0, _("Uncategorized"), 1, _("Uncategorized"), -1);
@@ -1163,17 +1093,9 @@ void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpoin
 		if(!b_all && !no_cat && !b_inactive && selected_unit_category[0] == '/') {
 			list<tree_struct>::iterator it, it2;
 			string str = selected_unit_category.substr(1, selected_unit_category.length() - 1);
-			for(it = unit_cats.begin(); it != unit_cats.end(); ++it) {
-				if(str == it->item) {
-					for(int i = 0; i < it->objects.size(); i++) {
-						setUnitTreeItem(iter2, (Unit*) it->objects[i]);		
-					}
-					for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
-						for(int i = 0; i < it2->objects.size(); i++) {
-							setUnitTreeItem(iter2, (Unit*) it2->objects[i]);		
-						}						
-					}
-					break;
+			for(int i = 0; i < CALCULATOR->units.size(); i++) {	
+				if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->category().substr(0, selected_unit_category.length() - 1) == str) {
+					setUnitTreeItem(iter2, CALCULATOR->units[i]);
 				}
 			}
 		} else {
@@ -1384,39 +1306,55 @@ void update_function_arguments_list(Function *f) {
 */
 void create_umenu() {
 	GtkWidget *item, *item2, *item3, *item4;
-	GtkWidget *sub, *sub2;
+	GtkWidget *sub, *sub2, *sub3;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT(_("Units"), gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression"))), 3)
+	item = glade_xml_get_widget (glade_xml, "menu_item_expression_units");
+	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);	
 	u_menu = item;
 	sub2 = sub;
 	Unit *u;
 	list<tree_struct>::iterator it, it2;
-	for(it = unit_cats.begin(); it != unit_cats.end(); ++it) {
-		SUBMENU_ITEM(it->item.c_str(), sub2)
-		GtkWidget *sub3 = sub;
-		for(int i = 0; i < it->objects.size(); i++) {
-			u = (Unit*) it->objects[i];
+	tree_struct *titem, *titem2;
+	unit_cats.it = unit_cats.items.begin();
+	if(unit_cats.it != unit_cats.items.end()) {
+		titem = &*unit_cats.it;
+		++unit_cats.it;
+		titem->it = titem->items.begin();
+	} else {
+		titem = NULL;
+	}
+	stack<GtkWidget*> menus;
+	menus.push(sub);
+	sub3 = sub;
+	while(titem) {
+		SUBMENU_ITEM(titem->item.c_str(), sub3)
+		menus.push(sub);
+		sub3 = sub;
+		for(int i = 0; i < titem->objects.size(); i++) {
+			u = (Unit*) titem->objects[i];
 			if(u->isActive()) {
 				MENU_ITEM_WITH_POINTER(u->title(true).c_str(), insert_unit, u)
 			}
-		}				
-		for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
-			SUBMENU_ITEM(it2->item.c_str(), sub3)
-			for(int i = 0; i < it2->objects.size(); i++) {
-				u = (Unit*) it2->objects[i];
-				if(u->isActive()) {
-					MENU_ITEM_WITH_POINTER(u->title(true).c_str(), insert_unit, u)
-				}
-			}			
 		}
-	}		
+		while(titem && titem->it == titem->items.end()) {
+			titem = titem->parent;
+			menus.pop();
+			if(menus.size() > 0) sub3 = menus.top();
+		}	
+		if(titem) {
+			titem2 = &*titem->it;
+			++titem->it;
+			titem = titem2;
+			titem->it = titem->items.begin();	
+		}
+	}
 	sub = sub2;
-	for(int i = 0; i < uc_units.size(); i++) {
-		u = (Unit*) uc_units[i];
+	for(int i = 0; i < unit_cats.objects.size(); i++) {
+		u = (Unit*) unit_cats.objects[i];
 		if(u->isActive()) {
 			MENU_ITEM_WITH_POINTER(u->title(true).c_str(), insert_unit, u)
 		}
-	}	
+	}			
 	MENU_SEPARATOR	
 	MENU_ITEM(_("Create new unit"), new_unit);
 	MENU_ITEM(_("Manage units"), manage_units);
@@ -1434,39 +1372,55 @@ void create_umenu() {
 */
 void create_umenu2() {
 	GtkWidget *item, *item2, *item3, *item4;
-	GtkWidget *sub, *sub2;
+	GtkWidget *sub, *sub2, *sub3;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT(_("Convert to unit"), gtk_menu_item_get_submenu(GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_result"))), 3)
+	item = glade_xml_get_widget (glade_xml, "menu_item_result_units");
+	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);	
 	u_menu2 = item;
 	sub2 = sub;
 	Unit *u;
 	list<tree_struct>::iterator it, it2;
-	for(it = unit_cats.begin(); it != unit_cats.end(); ++it) {
-		SUBMENU_ITEM(it->item.c_str(), sub2)
-		GtkWidget *sub3 = sub;
-		for(int i = 0; i < it->objects.size(); i++) {
-			u = (Unit*) it->objects[i];
+	tree_struct *titem, *titem2;
+	unit_cats.it = unit_cats.items.begin();
+	if(unit_cats.it != unit_cats.items.end()) {
+		titem = &*unit_cats.it;
+		++unit_cats.it;
+		titem->it = titem->items.begin();
+	} else {
+		titem = NULL;
+	}
+	stack<GtkWidget*> menus;
+	menus.push(sub);
+	sub3 = sub;
+	while(titem) {
+		SUBMENU_ITEM(titem->item.c_str(), sub3)
+		menus.push(sub);
+		sub3 = sub;
+		for(int i = 0; i < titem->objects.size(); i++) {
+			u = (Unit*) titem->objects[i];
 			if(u->isActive()) {
 				MENU_ITEM_WITH_POINTER(u->title(true).c_str(), convert_to_unit, u)
 			}
-		}				
-		for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
-			SUBMENU_ITEM(it2->item.c_str(), sub3)
-			for(int i = 0; i < it2->objects.size(); i++) {
-				u = (Unit*) it2->objects[i];
-				if(u->isActive()) {
-					MENU_ITEM_WITH_POINTER(u->title(true).c_str(), convert_to_unit, u)
-				}
-			}			
 		}
-	}	
+		while(titem && titem->it == titem->items.end()) {
+			titem = titem->parent;
+			menus.pop();
+			if(menus.size() > 0) sub3 = menus.top();
+		}	
+		if(titem) {
+			titem2 = &*titem->it;
+			++titem->it;
+			titem = titem2;
+			titem->it = titem->items.begin();	
+		}
+	}
 	sub = sub2;
-	for(int i = 0; i < uc_units.size(); i++) {
-		u = (Unit*) uc_units[i];
+	for(int i = 0; i < unit_cats.objects.size(); i++) {
+		u = (Unit*) unit_cats.objects[i];
 		if(u->isActive()) {
 			MENU_ITEM_WITH_POINTER(u->title(true).c_str(), convert_to_unit, u)
 		}
-	}	
+	}		
 	MENU_SEPARATOR	
 	MENU_ITEM(_("Enter custom unit"), convert_to_custom_unit);
 	MENU_ITEM(_("Create new unit"), new_unit);
@@ -1490,39 +1444,56 @@ void update_umenus() {
 */
 void create_vmenu() {
 	GtkWidget *item, *item2, *item3, *item4;
-	GtkWidget *sub, *sub2;
+	GtkWidget *sub, *sub2, *sub3;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT(_("Variables"), gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression"))), 2)
+	item = glade_xml_get_widget (glade_xml, "menu_item_expression_variables");
+	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);
 	v_menu = item;
 	sub2 = sub;
 	Variable *v;
-	list<tree_struct>::iterator it, it2;
-	for(it = variable_cats.begin(); it != variable_cats.end(); ++it) {
-		SUBMENU_ITEM(it->item.c_str(), sub2)
-		GtkWidget *sub3 = sub;
-		for(int i = 0; i < it->objects.size(); i++) {
-			v = (Variable*) it->objects[i];
+	list<tree_struct>::iterator it;
+	tree_struct *titem, *titem2;
+	variable_cats.it = variable_cats.items.begin();
+	if(variable_cats.it != variable_cats.items.end()) {
+		titem = &*variable_cats.it;
+		++variable_cats.it;
+		titem->it = titem->items.begin();
+	} else {
+		titem = NULL;
+	}
+	stack<GtkWidget*> menus;
+	menus.push(sub);
+	sub3 = sub;
+	while(titem) {
+		SUBMENU_ITEM(titem->item.c_str(), sub3)
+		menus.push(sub);
+		sub3 = sub;
+		for(int i = 0; i < titem->objects.size(); i++) {
+			v = (Variable*) titem->objects[i];
 			if(v->isActive()) {
-				MENU_ITEM_WITH_STRING(v->title(true).c_str(), insert_variable, v->name().c_str());
+				MENU_ITEM_WITH_POINTER(v->title(true).c_str(), insert_variable, v);
 			}
-		}				
-		for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
-			SUBMENU_ITEM(it2->item.c_str(), sub3)
-			for(int i = 0; i < it2->objects.size(); i++) {
-				v = (Variable*) it2->objects[i];
-				if(v->isActive()) {
-					MENU_ITEM_WITH_STRING(v->title(true).c_str(), insert_variable, v->name().c_str());
-				}
-			}			
+		}
+		while(titem && titem->it == titem->items.end()) {
+			titem = titem->parent;
+			menus.pop();
+			if(menus.size() > 0) sub3 = menus.top();
+		}	
+		if(titem) {
+			titem2 = &*titem->it;
+			++titem->it;
+			titem = titem2;
+			titem->it = titem->items.begin();	
+		}
+	}
+	sub = sub2;
+	for(int i = 0; i < variable_cats.objects.size(); i++) {
+		v = (Variable*) variable_cats.objects[i];
+		if(v->isActive()) {
+			MENU_ITEM_WITH_POINTER(v->title(true).c_str(), insert_variable, v);
 		}
 	}		
-	sub = sub2;
-	for(int i = 0; i < uc_variables.size(); i++) {
-		v = (Variable*) uc_variables[i];
-		if(v->isActive()) {
-			MENU_ITEM_WITH_STRING(v->title(true).c_str(), insert_variable, v->name().c_str());
-		}
-	}	
+
 	MENU_SEPARATOR	
 	MENU_ITEM(_("Create new variable"), new_variable);
 	MENU_ITEM(_("Create new matrix"), new_matrix);	
@@ -1559,7 +1530,8 @@ void create_pmenu() {
 	GtkWidget *item, *item2;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT(_("Prefixes"), gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression"))), 4)
+	item = glade_xml_get_widget (glade_xml, "menu_item_expression_prefixes");
+	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);	
 	int index = 0;
 	Prefix *p = CALCULATOR->getPrefix(index);
 	while(p) {
@@ -1579,7 +1551,8 @@ void create_pmenu2() {
 	GtkWidget *item, *item2, *item3, *item4;
 	GtkWidget *sub, *sub2;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT(_("Set prefix"), gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_result"))), 4)
+	item = glade_xml_get_widget (glade_xml, "menu_item_result_prefixes");
+	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);	
 	int index = 0;
 	Prefix *p = CALCULATOR->getPrefix(index);
 	while(p) {
@@ -1607,37 +1580,53 @@ void update_vmenu() {
 */
 void create_fmenu() {
 	GtkWidget *item, *item2, *item3, *item4;
-	GtkWidget *sub, *sub2;
+	GtkWidget *sub, *sub2, *sub3;
 	GHashTable *hash;
-	SUBMENU_ITEM_INSERT(_("Functions"), gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression"))), 1)
+	item = glade_xml_get_widget (glade_xml, "menu_item_expression_functions");
+	sub = gtk_menu_new(); gtk_widget_show (sub); gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);
 	f_menu = item;
 	sub2 = sub;
 	Function *f;
-	list<tree_struct>::iterator it, it2;
-	for(it = function_cats.begin(); it != function_cats.end(); ++it) {
-		SUBMENU_ITEM(it->item.c_str(), sub2)
-		GtkWidget *sub3 = sub;
-		for(int i = 0; i < it->objects.size(); i++) {
-			f = (Function*) it->objects[i];
+	list<tree_struct>::iterator it;
+	tree_struct *titem, *titem2;
+	function_cats.it = function_cats.items.begin();
+	if(function_cats.it != function_cats.items.end()) {
+		titem = &*function_cats.it;
+		++function_cats.it;
+		titem->it = titem->items.begin();
+	} else {
+		titem = NULL;
+	}
+	stack<GtkWidget*> menus;
+	menus.push(sub);
+	sub3 = sub;
+	while(titem) {
+		SUBMENU_ITEM(titem->item.c_str(), sub3)
+		menus.push(sub);
+		sub3 = sub;
+		for(int i = 0; i < titem->objects.size(); i++) {
+			f = (Function*) titem->objects[i];
 			if(f->isActive()) {
-				MENU_ITEM_WITH_STRING(f->title(true).c_str(), insert_function, f->name().c_str())
+				MENU_ITEM_WITH_POINTER(f->title(true).c_str(), insert_function, f)
 			}
-		}				
-		for(it2 = it->items.begin(); it2 != it->items.end(); ++it2) {
-			SUBMENU_ITEM(it2->item.c_str(), sub3)
-			for(int i = 0; i < it2->objects.size(); i++) {
-				f = (Function*) it2->objects[i];
-				if(f->isActive()) {
-					MENU_ITEM_WITH_STRING(f->title(true).c_str(), insert_function, f->name().c_str())
-				}
-			}			
 		}
-	}		
+		while(titem && titem->it == titem->items.end()) {
+			titem = titem->parent;
+			menus.pop();
+			if(menus.size() > 0) sub3 = menus.top();
+		}	
+		if(titem) {
+			titem2 = &*titem->it;
+			++titem->it;
+			titem = titem2;
+			titem->it = titem->items.begin();	
+		}
+	}
 	sub = sub2;
-	for(int i = 0; i < uc_functions.size(); i++) {
-		f = (Function*) uc_functions[i];
+	for(int i = 0; i < function_cats.objects.size(); i++) {
+		f = (Function*) function_cats.objects[i];
 		if(f->isActive()) {
-			MENU_ITEM_WITH_STRING(f->title(true).c_str(), insert_function, f->name().c_str())
+			MENU_ITEM_WITH_POINTER(f->title(true).c_str(), insert_function, f)
 		}
 	}		
 	MENU_SEPARATOR
@@ -3629,6 +3618,44 @@ void insert_text(const gchar *name) {
 	gtk_editable_select_region(GTK_EDITABLE(expression), position, position);
 }
 
+void object_inserted(ExpressionItem *object) {
+	if(!object) {
+		return;
+	}
+	for(int i = 0; i < recent_objects.size(); i++) {
+		if(recent_objects[i] == object) {
+			recent_objects.erase(recent_objects.begin() + i);
+			gtk_widget_destroy(recent_items[i]);
+			recent_items.erase(recent_items.begin() + i);
+			break;
+		}
+	}
+	GtkWidget *item, *sub = recent_menu;
+	item = gtk_menu_item_new_with_label(object->title(true).c_str()); 
+	gtk_widget_show(item); 
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(sub), item);
+	switch(object->type()) {
+		case TYPE_FUNCTION: {
+			gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(insert_function), (gpointer) object);
+			break;
+		}
+		case TYPE_VARIABLE: {
+			gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(insert_variable), (gpointer) object);
+			break;
+		}
+		case TYPE_UNIT: {
+			gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(insert_unit), (gpointer) object);
+			break;
+		}
+	}
+	recent_items.push_back(item);
+	recent_objects.push_back(object);
+	if(recent_items.size() > 15) {
+		recent_objects.erase(recent_objects.begin());
+		gtk_widget_destroy(recent_items[0]);
+		recent_items.erase(recent_items.begin());
+	}
+}
 
 /*
 	insert function
@@ -3646,12 +3673,32 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	if(f->args() == 0) {
 		string str = f->name() + "()";
 		gchar *gstr = g_strdup(str.c_str());
+		object_inserted(f);
 		insert_text(gstr);
 		g_free(gstr);
 		return;
 	}
 	string f_title = f->title(true);
-	dialog = gtk_dialog_new_with_buttons(f_title.c_str(), GTK_WINDOW(parent), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, GTK_STOCK_EXECUTE, GTK_RESPONSE_APPLY, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL);
+	dialog = gtk_dialog_new_with_buttons(f_title.c_str(), GTK_WINDOW(parent), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, NULL);
+
+	GtkWidget *b_exec = gtk_button_new();
+	GtkWidget *b_hbox = gtk_hbox_new(FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(b_hbox), gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(b_hbox), gtk_label_new(_("Execute")), FALSE, FALSE, 0);
+	GtkWidget *b_align = gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
+	gtk_container_add(GTK_CONTAINER(b_align), b_hbox);
+	gtk_container_add(GTK_CONTAINER(b_exec), b_align);
+	gtk_dialog_add_action_widget(GTK_DIALOG(dialog), b_exec, GTK_RESPONSE_APPLY);
+	
+	GtkWidget *b_insert = gtk_button_new();
+	b_hbox = gtk_hbox_new(FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(b_hbox), gtk_image_new_from_stock(GTK_STOCK_OK, GTK_ICON_SIZE_BUTTON), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(b_hbox), gtk_label_new(_("Insert")), FALSE, FALSE, 0);
+	b_align = gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
+	gtk_container_add(GTK_CONTAINER(b_align), b_hbox);
+	gtk_container_add(GTK_CONTAINER(b_insert), b_align);
+	gtk_dialog_add_action_widget(GTK_DIALOG(dialog), b_insert, GTK_RESPONSE_ACCEPT);
+	
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);	
@@ -3664,7 +3711,7 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	gtk_label_set_use_markup(GTK_LABEL(title_label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(title_label), 0.0, 0.5);
 	gtk_container_add(GTK_CONTAINER(vbox_pre), title_label);	
-	int args;
+	int args = 0;
 	bool has_vector = false;
 	if(f->args() > 0) {
 		args = f->args();
@@ -3682,7 +3729,7 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	GtkWidget *label[args];
 	GtkWidget *entry[args];
 	GtkWidget *type_label[args];		
-	GtkWidget *descr;
+	GtkWidget *descr, *descr_box, *descr_frame;
 	string argstr, typestr; 
 	string argtype;
 	//create argument entries
@@ -3700,77 +3747,83 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 		argtype = "";
 		label[i] = gtk_label_new(argstr.c_str());
 		gtk_misc_set_alignment(GTK_MISC(label[i]), 0, 0.5);
-		if(arg)
-		switch(arg->type()) {
-			case ARGUMENT_TYPE_INTEGER: {
-				IntegerArgument *iarg = (IntegerArgument*) arg;
-				gdouble min = -1000000, max = 1000000;
-				if(iarg->min()) {
-					min = iarg->min()->getInt();
-				}
-				if(iarg->max()) {
-					max = iarg->max()->getInt();
-				}				
-				entry[i] = gtk_spin_button_new_with_range(min, max, 1);
-				gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(entry[i]), FALSE);
-				if(!arg->zeroForbidden() && min <= 0 && max >= 0) {
-					gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 0);
-				} else {
-					if(max < 0) {
-						gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), max);
-					} else if(min <= 1) {
-						gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 1);
-					} else {
-						gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), min);
+		if(arg) {
+			switch(arg->type()) {
+				case ARGUMENT_TYPE_INTEGER: {
+					IntegerArgument *iarg = (IntegerArgument*) arg;
+					gdouble min = -1000000, max = 1000000;
+					if(iarg->min()) {
+						min = iarg->min()->getInt();
 					}
+					if(iarg->max()) {
+						max = iarg->max()->getInt();
+					}				
+					entry[i] = gtk_spin_button_new_with_range(min, max, 1);
+					gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(entry[i]), FALSE);
+					if(!arg->zeroForbidden() && min <= 0 && max >= 0) {
+						gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 0);
+					} else {
+						if(max < 0) {
+							gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), max);
+						} else if(min <= 1) {
+							gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 1);
+						} else {
+							gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), min);
+						}
+					}
+					break;
 				}
-				break;
+				case ARGUMENT_TYPE_BOOLEAN: {
+					entry[i] = gtk_spin_button_new_with_range(0, 1, 1);
+					gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(entry[i]), FALSE);
+					gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 0);
+					break;
+				}									
+				default: {
+					if(i >= f->minargs() && !has_vector) {
+						typestr = "(";
+						typestr += _("optional");
+					}
+					argtype = arg->print();		
+					if(typestr.empty()) {
+						typestr = "(";
+					} else if(!argtype.empty()) {
+						typestr += " ";
+					}
+					if(!argtype.empty()) {
+						typestr += argtype;
+					}
+					typestr += ")";		
+					if(typestr.length() == 2) {
+						typestr = "";
+					}
+					entry[i] = gtk_entry_new();
+				}
 			}
-			case ARGUMENT_TYPE_BOOLEAN: {
-				entry[i] = gtk_spin_button_new_with_range(0, 1, 1);
-				gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(entry[i]), FALSE);
-				gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[i]), 0);
-				break;
-			}									
-			default: {
-				if(i >= f->minargs() && !has_vector) {
-					typestr = "(";
-					typestr += _("optional");
-				}
-				argtype = arg->print();		
-				if(typestr.empty()) {
-					typestr = "(";
-				} else if(!argtype.empty()) {
-					typestr += " ";
-				}
-				if(!argtype.empty()) {
-					typestr += argtype;
-				}
-				typestr += ")";		
-				if(typestr.length() == 2) {
-					typestr = "";
-				}
-			
-				entry[i] = gtk_entry_new();
-			}
+		} else {
+			entry[i] = gtk_entry_new();
 		}
 		if(typestr.empty() && i >= f->minargs() && !has_vector) {
 			typestr = "(";
 			typestr += _("optional");
 			typestr += ")";			
-		}		
-		if(arg)
-		switch(arg->type()) {		
-			case ARGUMENT_TYPE_DATE: {
-				typestr = typestr.substr(1, typestr.length() - 2);
-				type_label[i] = gtk_button_new_with_label(typestr.c_str());
-				g_signal_connect((gpointer) type_label[i], "clicked", G_CALLBACK(on_type_label_date_clicked), (gpointer) entry[i]);
-				break;
+		}
+		if(arg) {
+			switch(arg->type()) {		
+				case ARGUMENT_TYPE_DATE: {
+					typestr = typestr.substr(1, typestr.length() - 2);
+					type_label[i] = gtk_button_new_with_label(typestr.c_str());
+					g_signal_connect((gpointer) type_label[i], "clicked", G_CALLBACK(on_type_label_date_clicked), (gpointer) entry[i]);
+					break;
+				}
+				default: {
+					type_label[i] = gtk_label_new(typestr.c_str());		
+					gtk_misc_set_alignment(GTK_MISC(type_label[i]), 1, 0.5);
+				}
 			}
-			default: {
-				type_label[i] = gtk_label_new(typestr.c_str());		
-				gtk_misc_set_alignment(GTK_MISC(type_label[i]), 1, 0.5);
-			}
+		} else {
+			type_label[i] = gtk_label_new(typestr.c_str());		
+			gtk_misc_set_alignment(GTK_MISC(type_label[i]), 1, 0.5);
 		}
 		gtk_entry_set_text(GTK_ENTRY(entry[i]), f->getDefaultValue(i + 1).c_str());
 		//insert selection in expression entry into the first argument entry
@@ -3785,10 +3838,14 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	}
 	//display function description
 	if(!f->description().empty()) {
+		descr_frame = gtk_frame_new(NULL); 
+		gtk_container_add(GTK_CONTAINER(vbox_pre), descr_frame);
+		descr_box = gtk_vbox_new(FALSE, 0);
+		gtk_container_set_border_width(GTK_CONTAINER(descr_box), 6);
+		gtk_container_add(GTK_CONTAINER(descr_frame), descr_box);
 		descr = gtk_label_new(f->description().c_str());
 		gtk_label_set_line_wrap(GTK_LABEL(descr), TRUE);
-		gtk_container_add(GTK_CONTAINER(vbox_pre), descr);
-		gtk_misc_set_alignment(GTK_MISC(descr), 1, 0.5);
+		gtk_box_pack_start(GTK_BOX(descr_box), descr, TRUE, TRUE, 0);
 	}
 	gtk_widget_show_all(dialog);
 	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
@@ -3824,8 +3881,10 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 		
 		insert_text(str.c_str());
 		//Calculate directly when "Execute" was clicked
-		if(response == GTK_RESPONSE_APPLY)
+		if(response == GTK_RESPONSE_APPLY) {
 			execute_expression();
+		}
+		object_inserted(f);
 	}
 	gtk_widget_destroy(dialog);
 }
@@ -3834,10 +3893,7 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 	called from function menu
 */
 void insert_function(GtkMenuItem *w, gpointer user_data) {
-	gchar *name = (gchar*) user_data;
-	insert_function(
-			CALCULATOR->getFunction(name),
-			glade_xml_get_widget (glade_xml, "main_window"));
+	insert_function((Function*) user_data, glade_xml_get_widget (glade_xml, "main_window"));
 }
 
 /*
@@ -3845,7 +3901,8 @@ void insert_function(GtkMenuItem *w, gpointer user_data) {
 	just insert text data stored in menu item
 */
 void insert_variable(GtkMenuItem *w, gpointer user_data) {
-	insert_text((gchar*) user_data);
+	insert_text(((Variable*) user_data)->name().c_str());
+	object_inserted((Variable*) user_data);
 }
 //from prefix menu
 void insert_prefix(GtkMenuItem *w, gpointer user_data) {
@@ -3858,6 +3915,7 @@ void insert_unit(GtkMenuItem *w, gpointer user_data) {
 	} else {
 		insert_text(((Unit*) user_data)->plural().c_str());
 	}
+	object_inserted((Unit*) user_data);
 }
 
 /*
@@ -5276,6 +5334,8 @@ void load_preferences() {
 					CALCULATOR->angleMode(v);
 				else if(svar == "hyp_is_on")
 					hyp_is_on = v;
+				else if(svar == "multiple_roots_enabled")
+					CALCULATOR->setMultipleRootsEnabled(v);					
 				else if(svar == "functions_enabled")
 					CALCULATOR->setFunctionsEnabled(v);
 				else if(svar == "variables_enabled")
@@ -5301,7 +5361,28 @@ void load_preferences() {
 				else if(svar == "always_exact")
 					CALCULATOR->setAlwaysExact(v);					
 				else if(svar == "in_rpn_mode")
-					CALCULATOR->setRPNMode(v);										
+					CALCULATOR->setRPNMode(v);
+				else if(svar == "recent") {
+					int v_i = 0;
+					while(true) {
+						v_i = svalue.find(',');
+						if(v_i == string::npos) {
+							svar = svalue.substr(0, svalue.length());
+							remove_blank_ends(svar);
+							if(!svar.empty()) {
+								recent_objects_pre.push_back(svar);	
+							}
+							break;
+						} else {
+							svar = svalue.substr(0, v_i);
+							svalue = svalue.substr(v_i + 1, svalue.length() - (v_i + 1));
+							remove_blank_ends(svar);
+							if(!svar.empty()) {
+								recent_objects_pre.push_back(svar);	
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -5346,9 +5427,16 @@ void save_preferences(bool mode)
 	fprintf(file, "show_buttons=%i\n", gtk_notebook_get_current_page(GTK_NOTEBOOK(glade_xml_get_widget (glade_xml, "notebook"))) == 1);
 	fprintf(file, "use_short_units=%i\n", use_short_units);
 	fprintf(file, "all_prefixes_enabled=%i\n", CALCULATOR->allPrefixesEnabled());
+	fprintf(file, "multiple_roots_enabled=%i\n", CALCULATOR->multipleRootsEnabled());
 	fprintf(file, "use_unicode_signs=%i\n", use_unicode_signs);	
 	fprintf(file, "use_custom_font=%i\n", use_custom_font);	
 	fprintf(file, "custom_font=%s\n", custom_font.c_str());		
+	fprintf(file, "recent="); 
+	for(int i = recent_objects.size() - 1; i >= 0; i--) {
+		fprintf(file, "%s", recent_objects[i]->referenceName().c_str()); 
+		if(i != 0) fprintf(file, ","); 
+	}
+	fprintf(file, "\n"); 
 	if(mode)
 		set_saved_mode();
 	fprintf(file, "\n[Mode]\n");
@@ -5443,6 +5531,10 @@ void on_preferences_checkbutton_short_units_toggled(GtkToggleButton *w, gpointer
 void on_preferences_checkbutton_all_prefixes_toggled(GtkToggleButton *w, gpointer user_data) {
 	CALCULATOR->setAllPrefixesEnabled(gtk_toggle_button_get_active(w));
 	setResult(result_text.c_str());
+}
+void on_preferences_checkbutton_multiple_roots_toggled(GtkToggleButton *w, gpointer user_data) {
+	CALCULATOR->setMultipleRootsEnabled(gtk_toggle_button_get_active(w));
+	execute_expression();
 }
 void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpointer user_data) {
 	use_unicode_signs = gtk_toggle_button_get_active(w);
@@ -6206,6 +6298,14 @@ void on_units_button_delete_clicked(GtkButton *button, gpointer user_data) {
 			show_message(_("Cannot delete unit as it is needed by other units."), units_window);
 			return;
 		}
+		for(int i = 0; i < recent_objects.size(); i++) {
+			if(recent_objects[i] == u) {
+				recent_objects.erase(recent_objects.begin() + i);
+				gtk_widget_destroy(recent_items[i]);
+				recent_items.erase(recent_items.begin() + i);
+				break;
+			}
+		}
 		//ensure that all references to the unit is removed in Calculator
 		u->destroy();
 		//update menus and trees
@@ -6264,6 +6364,14 @@ void on_variables_button_delete_clicked(GtkButton *button, gpointer user_data) {
 	GtkTreeIter iter;
 	Variable *v = get_selected_variable();
 	if(v && v->isLocal()) {
+		for(int i = 0; i < recent_objects.size(); i++) {
+			if(recent_objects[i] == v) {
+				recent_objects.erase(recent_objects.begin() + i);
+				gtk_widget_destroy(recent_items[i]);
+				recent_items.erase(recent_items.begin() + i);
+				break;
+			}
+		}
 		//ensure that all references are removed in Calculator
 		v->destroy();
 		//update menus and trees
@@ -6337,6 +6445,14 @@ void on_functions_button_delete_clicked(GtkButton *button, gpointer user_data) {
 	GtkTreeIter iter;
 	Function *f = get_selected_function();
 	if(f && f->isLocal()) {
+		for(int i = 0; i < recent_objects.size(); i++) {
+			if(recent_objects[i] == f) {
+				recent_objects.erase(recent_objects.begin() + i);
+				gtk_widget_destroy(recent_items[i]);
+				recent_items.erase(recent_items.begin() + i);
+				break;
+			}
+		}
 		//ensure removal of all references in Calculator
 		f->destroy();
 		//update menus and trees

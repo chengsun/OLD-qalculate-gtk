@@ -53,20 +53,20 @@ class ExpressionItem {
 	/**
 	* Returns the title/descriptive name of the ExpressionItem.
 	*/		
-	virtual string title(bool return_name_if_no_title = true) const;
+	virtual const string &title(bool return_name_if_no_title = true) const;
 	
 	/**
 	* Sets the title/descriptive name of the ExpressionItem.
 	*/			
 	virtual void setTitle(string title_);		
 	
-	virtual string description() const;
+	virtual const string &description() const;
 	virtual void setDescription(string descr_);
 
 	/**
 	* Returns the category of the ExpressionItem.
 	*/			
-	virtual string category() const;
+	virtual const string &category() const;
 	
 	/**
 	* Sets the category of the ExpressionItem.

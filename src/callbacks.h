@@ -48,6 +48,8 @@ void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpoin
 
 void execute_expression();
 
+void object_inserted(ExpressionItem *object);
+
 void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void update_function_arguments_list(Function *f);
 
@@ -107,6 +109,7 @@ void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data);
 void on_button_close_clicked(GtkButton *w, gpointer user_data);
 void on_preferences_checkbutton_short_units_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_all_prefixes_toggled(GtkToggleButton *w, gpointer user_data);
+void on_preferences_checkbutton_multiple_roots_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_save_defs_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_save_mode_toggled(GtkToggleButton *w, gpointer user_data);

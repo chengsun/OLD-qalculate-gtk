@@ -60,7 +60,7 @@ bool ExpressionItem::isRegistered() const {
 void ExpressionItem::setRegistered(bool is_registered) {
 	b_registered = is_registered;
 }
-string ExpressionItem::title(bool return_name_if_no_title) const {
+const string &ExpressionItem::title(bool return_name_if_no_title) const {
 	if(return_name_if_no_title && stitle.empty()) {
 		return name();
 	}
@@ -73,7 +73,7 @@ void ExpressionItem::setTitle(string title_) {
 		b_changed = true;
 	}
 }
-string ExpressionItem::description() const {
+const string &ExpressionItem::description() const {
 	return sdescr;
 }
 void ExpressionItem::setDescription(string descr_) {
@@ -97,7 +97,7 @@ const string &ExpressionItem::name() const {
 const string &ExpressionItem::referenceName() const {
 	return name();
 }
-string ExpressionItem::category() const {
+const string &ExpressionItem::category() const {
 	return scat;
 }
 void ExpressionItem::setCategory(string cat_) {

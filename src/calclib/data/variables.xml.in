@@ -1,46 +1,42 @@
 <?xml version="1.0"?>
 <QALCULATE version="0.3">
-  <builtin_variable name="e" active="true">
-    <_category>Constants</_category>
-    <_title>The Base of Natural Logarithms (e)</_title>
-  </builtin_variable>
-  <builtin_variable name="pi" active="true">
-    <_category>Constants</_category>
-    <_title>Archimede's Constant (pi)</_title>
-  </builtin_variable>
-  <builtin_variable name="euler" active="true">
-    <_category>Constants</_category>
-    <_title>Euler's Constant</_title>
-  </builtin_variable>
-  <builtin_variable name="apery" active="true">
-    <_category>Constants</_category>
-    <_title>Apery's Constant</_title>
-  </builtin_variable>
-  <builtin_variable name="catalan" active="true">
-    <_category>Constants</_category>
-    <_title>Catalan's Constant</_title>
-  </builtin_variable>
-  <builtin_variable name="pythagoras" active="true">
-    <_category>Constants</_category>
-    <_title>Pythagora's Constant (sqrt 2)</_title>
-  </builtin_variable>
-  <builtin_variable name="golden" active="true">
-    <_category>Constants</_category>
-    <_title>The Golden Ratio</_title>
-  </builtin_variable>
-  <variable name="%" active="true">
-    <_category>General</_category>
-    <_title>Procent</_title>
-    <value precise="true">1/100</value>
-  </variable>
-  <variable name="procent" active="true">
-    <_category>General</_category>
-    <_title>Procent</_title>
-    <value precise="true">1/100</value>
-  </variable>
-  <variable name="promille" active="true">
-    <_category>General</_category>
-    <_title>Promille</_title>
-    <value precise="true">1/1000</value>
-  </variable>
+  <category>
+    <_title>Constants</_title>
+    <builtin_variable name="e">
+      <_title>The Base of Natural Logarithms (e)</_title>
+    </builtin_variable>
+    <builtin_variable name="pi">
+      <_title>Archimede's Constant (pi)</_title>
+    </builtin_variable>
+    <builtin_variable name="euler">
+      <_title>Euler's Constant</_title>
+    </builtin_variable>
+    <builtin_variable name="apery">
+      <_title>Apery's Constant</_title>
+    </builtin_variable>
+    <builtin_variable name="catalan">
+      <_title>Catalan's Constant</_title>
+    </builtin_variable>
+    <builtin_variable name="pythagoras">
+      <_title>Pythagora's Constant (sqrt 2)</_title>
+    </builtin_variable>
+    <builtin_variable name="golden">
+      <_title>The Golden Ratio</_title>
+    </builtin_variable>
+  </category>
+  <category>
+    <_title>General</_title>
+    <variable name="%">
+      <_title>Procent</_title>
+      <value>1/100</value>
+    </variable>
+    <variable name="procent">
+      <_title>Procent</_title>
+      <value>1/100</value>
+    </variable>
+    <variable name="promille">
+      <_title>Promille</_title>
+      <value>1/1000</value>
+    </variable>
+  </category>
 </QALCULATE>

@@ -404,9 +404,26 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 		return reverseadd(mngr, op, translate_);
 	}
 	if(c_type == ALTERNATIVE_MANAGER) {
-		for(int i = 0; i < mngrs.size(); i++) {
-			mngrs[i]->add(mngr, op);
-			if(!mngrs[i]->isPrecise()) setPrecise(false);
+		if(mngr->type() == ALTERNATIVE_MANAGER) {
+			for(int i = 0; i < mngr->countChilds(); i++) {
+				push_back(new Manager(mngr->getChild(i)));
+			}
+		} else {
+			int is = mngrs.size();
+			for(int i = 0; i < is; i++) {
+				mngrs[i]->add(mngr, op);
+				if(!mngrs[i]->isPrecise()) setPrecise(false);
+				if(mngrs[i]->type() == ALTERNATIVE_MANAGER) {
+					for(int i2 = 0; i2 < mngrs[i]->countChilds(); i2++) {
+						mngrs[i]->getChild(i2)->ref();
+						push_back(mngrs[i]->getChild(i2));
+					}
+					mngrs[i]->unref();
+					mngrs.erase(mngrs.begin() + i);
+					i--;
+					is--;
+				}
+			}
 		}
 		typeclean();
 		return true;
@@ -1384,13 +1401,13 @@ bool Manager::equals(const Manager *mngr) const {
 		} else if(c_type == STRING_MANAGER) {
 			return s_var == mngr->s_var;
 		} else if(c_type == FUNCTION_MANAGER) {
-			if(o_function != mngr->o_function) return false;
+			if(o_function != mngr->function()) return false;
 			if(mngrs.size() != mngr->mngrs.size()) return false;			
 			for(int i = 0; i < mngrs.size(); i++) {
 				if(!mngrs[i]->equals(mngr->mngrs[i])) return false;
 			}			
 			return true;
-		} else if(c_type == MULTIPLICATION_MANAGER || c_type == ADDITION_MANAGER || c_type == ALTERNATIVE_MANAGER) {
+		} else if(c_type == MULTIPLICATION_MANAGER || c_type == ADDITION_MANAGER || c_type == ALTERNATIVE_MANAGER || c_type == OR_MANAGER || c_type == AND_MANAGER) {
 			if(mngrs.size() != mngr->mngrs.size()) return false;
 			for(int i = 0; i < mngrs.size(); i++) {
 				if(!mngrs[i]->equals(mngr->mngrs[i])) return false;
@@ -1398,6 +1415,13 @@ bool Manager::equals(const Manager *mngr) const {
 			return true;
 		} else if(c_type == POWER_MANAGER) {
 			return mngrs[0]->equals(mngr->mngrs[0]) && mngrs[1]->equals(mngr->mngrs[1]);
+		} else if(c_type == COMPARISON_MANAGER) {
+			if(comparison_type != mngr->comparisonType()) return false;
+			if(mngrs.size() != mngr->mngrs.size()) return false;			
+			for(int i = 0; i < mngrs.size(); i++) {
+				if(!mngrs[i]->equals(mngr->mngrs[i])) return false;
+			}			
+			return true;
 		}
 	}
 	return false;

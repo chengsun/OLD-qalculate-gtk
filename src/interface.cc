@@ -58,7 +58,7 @@ GtkTreeSelection *selection;
 
 GtkWidget *expression;
 GtkWidget *resultview;
-GtkWidget *f_menu ,*v_menu, *u_menu, *u_menu2;
+GtkWidget *f_menu ,*v_menu, *u_menu, *u_menu2, *recent_menu;
 GtkAccelGroup *accel_group;
 
 extern int display_mode, number_base, fractional_mode;
@@ -332,6 +332,7 @@ create_main_window (void)
 	gtk_text_buffer_create_tag(buffer, "bold", "weight", PANGO_WEIGHT_BOLD, NULL);
 	gtk_text_buffer_create_tag(buffer, "italic", "style", PANGO_STYLE_ITALIC, NULL);
 
+	recent_menu = gtk_menu_new(); gtk_menu_item_set_submenu(GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_expression_recent")), recent_menu);
 
 	gtk_widget_show (glade_xml_get_widget (glade_xml, "main_window"));
 
@@ -497,6 +498,8 @@ create_preferences_dialog (void)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "preferences_checkbutton_short_units")), use_short_units);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "preferences_checkbutton_unicode_signs")), use_unicode_signs);	
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "preferences_checkbutton_custom_font")), use_custom_font);		
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "preferences_checkbutton_all_prefixes")), CALCULATOR->allPrefixesEnabled());
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "preferences_checkbutton_multiple_roots")), CALCULATOR->multipleRootsEnabled());
 	gtk_widget_set_sensitive(glade_xml_get_widget(glade_xml, "preferences_button_font"), use_custom_font);	
 	gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "preferences_button_font")), custom_font.c_str());			
 

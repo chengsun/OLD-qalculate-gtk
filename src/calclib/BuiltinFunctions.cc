@@ -100,19 +100,19 @@ void ZetaFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 #endif
 
-ErrorFunction::ErrorFunction() : Function("", "error", 1, "Display error") {
+ErrorFunction::ErrorFunction() : Function("Utilities", "error", 1, "Display error") {
 	setArgumentDefinition(1, new TextArgument());
 }
 void ErrorFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	CALCULATOR->error(true, vargs[0]->text().c_str(), NULL);
 }
-WarningFunction::WarningFunction() : Function("", "warning", 1, "Display warning") {
+WarningFunction::WarningFunction() : Function("Utilities", "warning", 1, "Display warning") {
 	setArgumentDefinition(1, new TextArgument());
 }
 void WarningFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	CALCULATOR->error(false, vargs[0]->text().c_str(), NULL);
 }
-MessageFunction::MessageFunction() : Function("", "message", 1, "Display a message", "", -1) {
+MessageFunction::MessageFunction() : Function("Utilities", "message", 1, "Display a message", "", -1) {
 	setArgumentDefinition(1, new TextArgument());
 }
 void MessageFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {

@@ -1,1868 +1,1879 @@
 <?xml version="1.0"?>
 <QALCULATE version="0.3">
-  <unit type="base" name="m" active="true">
-    <_singular>meter</_singular>
-    <_plural>meters</_plural>
-    <_category>Length</_category>
-    <_title>Meter</_title>
-  </unit>
-  <unit type="base" name="g" active="true">
-    <_singular>gram</_singular>
-    <_plural>grams</_plural>
-    <_category>Mass</_category>
-    <_title>Gram</_title>
-  </unit>
-  <unit type="base" name="s" active="true">
-    <_singular>second</_singular>
-    <_plural>seconds</_plural>
-    <_category>Time</_category>
-    <_title>Second</_title>
-  </unit>
-  <unit type="base" name="A" active="true">
-    <_singular>ampere</_singular>
-    <_plural>amperes</_plural>
-    <_category>Electricity/Electric Current</_category>
-    <_title>Ampere</_title>
-  </unit>
-  <unit type="base" name="K" active="true">
-    <_singular>kelvin</_singular>
-    <_plural>kelvins</_plural>
-    <_category>Temperature</_category>
-    <_title>Kelvin</_title>
-  </unit>
-  <unit type="base" name="mol" active="true">
-    <_singular>mole</_singular>
-    <_plural>moles</_plural>
-    <_category>Substance</_category>
-    <_title>Mole</_title>
-  </unit>
-  <unit type="base" name="cd" active="true">
-    <_singular>candela</_singular>
-    <_plural>candelas</_plural>
-    <_category>Light/Luminous Intensity</_category>
-    <_title>Candela</_title>
-  </unit>
-  <unit type="composite" name="sqm" active="true">
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>2</exponent>
-    </part>
-    <_category>Area</_category>
-    <_title>Square Meter</_title>
-  </unit>
-  <unit type="composite" name="cum" active="true">
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>3</exponent>
-    </part>
-    <_category>Volume</_category>
-    <_title>Cubic Meter</_title>
-  </unit>
-  <unit type="composite" name="m_p_s" active="true">
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>s</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Speed</_category>
-    <_title>Meter per Second</_title>
-  </unit>
-  <unit type="composite" name="m_p_sqs" active="true">
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>s</unit>
-      <prefix>0</prefix>
-      <exponent>-2</exponent>
-    </part>
-    <_category>Speed/Acceleration</_category>
-    <_title>Meter per Square Second</_title>
-  </unit>
-  <unit type="composite" name="recm" active="true">
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Magnetism/Wave Number</_category>
-    <_title>Reciprocal Meter</_title>
-  </unit>
-  <unit type="composite" name="kg_p_cum" active="true">
-    <part>
-      <unit>g</unit>
-      <prefix>3</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-3</exponent>
-    </part>
-    <_category>Mass/Density</_category>
-    <_title>Kilogram per Cubic Meter</_title>
-  </unit>
-  <unit type="composite" name="cum_p_kg" active="true">
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>3</exponent>
-    </part>
-    <part>
-      <unit>g</unit>
-      <prefix>3</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Volume/Specific Volume</_category>
-    <_title>Cubic Meter per Kilogram</_title>
-  </unit>
-  <unit type="composite" name="A_p_sqm" active="true">
-    <part>
-      <unit>A</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-2</exponent>
-    </part>
-    <_category>Electricity/Current Density</_category>
-    <_title>Ampere per Square Meter</_title>
-  </unit>
-  <unit type="composite" name="A_p_m" active="true">
-    <part>
-      <unit>A</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Magnetism/Magnetic Field Strength</_category>
-    <_title>Ampere per Meter</_title>
-  </unit>
-  <unit type="composite" name="mol_p_cum" active="true">
-    <part>
-      <unit>mol</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-3</exponent>
-    </part>
-    <_category>Substance/Substance Concentration</_category>
-    <_title>Mole per Cubic Meter</_title>
-  </unit>
-  <unit type="composite" name="cd_p_sqm" active="true">
-    <part>
-      <unit>cd</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-2</exponent>
-    </part>
-    <_category>Light/Luminance</_category>
-    <_title>Candela per Square Meter</_title>
-  </unit>
-  <unit type="alias" name="Hz" active="true">
-    <_singular>hertz</_singular>
-    <_plural>hertz</_plural>
-    <base>
-      <unit>s</unit>
-      <relation precise="true">1</relation>
-      <exponent>-1</exponent>
-    </base>
-    <_category>Time/Frequency</_category>
-    <_title>Hertz</_title>
-  </unit>
-  <unit type="composite" name="m_kg_p_sqs" active="true">
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>g</unit>
-      <prefix>3</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>s</unit>
-      <prefix>0</prefix>
-      <exponent>-2</exponent>
-    </part>
-    <_category>Force</_category>
-    <_title>Meter Kilogram per Square Second</_title>
-  </unit>
-  <unit type="alias" name="N" active="true">
-    <_singular>newton</_singular>
-    <_plural>newtons</_plural>
-    <base>
-      <unit>m_kg_p_sqs</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Force</_category>
-    <_title>Newton</_title>
-  </unit>
-  <unit type="composite" name="N_p_sqm" active="true">
-    <part>
-      <unit>N</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-2</exponent>
-    </part>
-    <_category>Force/Pressure</_category>
-    <_title>Newton per Square Meter</_title>
-  </unit>
-  <unit type="alias" name="Pa" active="true">
-    <_singular>pascal</_singular>
-    <_plural>pascals</_plural>
-    <base>
-      <unit>N_p_sqm</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Force/Pressure</_category>
-    <_title>Pascal</_title>
-  </unit>
-  <unit type="composite" name="N_m" active="true">
-    <part>
-      <unit>N</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <_category>Energy</_category>
-    <_title>Newton Meter</_title>
-  </unit>
-  <unit type="alias" name="J" active="true">
-    <_singular>joule</_singular>
-    <_plural>joules</_plural>
-    <base>
-      <unit>N_m</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Energy</_category>
-    <_title>Joule</_title>
-  </unit>
-  <unit type="alias" name="cal" active="true">
-    <_singular>calorie</_singular>
-    <_plural>calories</_plural>
-    <base>
-      <unit>J</unit>
-      <relation precise="true">4.1868</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Energy</_category>
-    <_title>Calorie (international table)</_title>
-  </unit>
-  <unit type="alias" name="Calorie" active="true">
-    <_singular>Calorie</_singular>
-    <_plural>Calories</_plural>
-    <base>
-      <unit>cal</unit>
-      <relation precise="true">1000</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Energy</_category>
-    <_title>Calorie (capital C)</_title>
-  </unit>
-  <unit type="alias" name="cal_th" active="true">
-    <_singular>thermo_calorie</_singular>
-    <_plural>thermo_calories</_plural>
-    <base>
-      <unit>J</unit>
-      <relation precise="true">4.184</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Energy</_category>
-    <_title>Calorie (thermochemical)</_title>
-  </unit>
-  <unit type="alias" name="calorie_fifteen" active="true">
-    <_singular>calorie_fifteen</_singular>
-    <_plural>calories_fifteen</_plural>
-    <base>
-      <unit>J</unit>
-      <relation precise="false">4.185880</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Energy</_category>
-    <_title>Calorie (15 degrees Celcius)</_title>
-  </unit>
-  <unit type="alias" name="cal_mean" active="true">
-    <_singular>mean_calorie</_singular>
-    <_plural>mean_calories</_plural>
-    <base>
-      <unit>J</unit>
-      <relation precise="false">4.19002</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Energy</_category>
-    <_title>Calorie (mean)</_title>
-  </unit>
-  <unit type="alias" name="Btu" active="true">
-    <_singular>Btu</_singular>
-    <base>
-      <unit>J</unit>
-      <relation precise="true">1055.056</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Energy</_category>
-    <_title>British Thermal Unit (IT)</_title>
-  </unit>
-  <unit type="alias" name="eV" active="true">
-    <_singular>electron_volt</_singular>
-    <_plural>electron_volts</_plural>
-    <base>
-      <unit>J</unit>
-      <relation precise="true">1.602177E-19</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Energy</_category>
-    <_title>Electron Volt</_title>
-  </unit>
-  <unit type="alias" name="erg" active="true">
-    <_singular>erg</_singular>
-    <_plural>ergs</_plural>
-    <base>
-      <unit>J</unit>
-      <relation precise="true">1E-7</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Energy</_category>
-    <_title>Erg</_title>
-  </unit>
-  <unit type="composite" name="J_p_s" active="true">
-    <part>
-      <unit>J</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>s</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Energy/Power</_category>
-    <_title>Joule per Second</_title>
-  </unit>
-  <unit type="alias" name="W" active="true">
-    <_singular>watt</_singular>
-    <_plural>watts</_plural>
-    <base>
-      <unit>J_p_s</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Energy/Power</_category>
-    <_title>Watt</_title>
-  </unit>
-  <unit type="composite" name="s_A" active="true">
-    <part>
-      <unit>s</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>A</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <_category>Electricity/Electric Charge</_category>
-    <_title>Second Ampere</_title>
-  </unit>
-  <unit type="alias" name="C" active="true">
-    <_singular>coulomb</_singular>
-    <_plural>coulombs</_plural>
-    <base>
-      <unit>s_A</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Electricity/Electric Charge</_category>
-    <_title>Coulomb</_title>
-  </unit>
-  <unit type="composite" name="W_p_A" active="true">
-    <part>
-      <unit>W</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>A</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Electricity/Electric Potential</_category>
-    <_title>Watt per Ampere</_title>
-  </unit>
-  <unit type="alias" name="V" active="true">
-    <_singular>volt</_singular>
-    <_plural>volts</_plural>
-    <base>
-      <unit>W_p_A</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Electricity/Electric Potential</_category>
-    <_title>Volt</_title>
-  </unit>
-  <unit type="composite" name="C_p_V" active="true">
-    <part>
-      <unit>C</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>V</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Electricity/Capacitance</_category>
-    <_title>Coulomb per Volt</_title>
-  </unit>
-  <unit type="alias" name="F" active="true">
-    <_singular>farad</_singular>
-    <_plural>farads</_plural>
-    <base>
-      <unit>C_p_V</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Electricity/Capacitance</_category>
-    <_title>Farad</_title>
-  </unit>
-  <unit type="composite" name="V_p_A" active="true">
-    <part>
-      <unit>V</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>A</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Electricity/Electric Resistance</_category>
-    <_title>Volt per Ampere</_title>
-  </unit>
-  <unit type="alias" name="ohm" active="true">
-    <_singular>ohm</_singular>
-    <_plural>ohms</_plural>
-    <base>
-      <unit>V_p_A</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Electricity/Electric Resistance</_category>
-    <_title>Ohm</_title>
-  </unit>
-  <unit type="composite" name="A_p_V" active="true">
-    <part>
-      <unit>A</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>V</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Electricity/Electric Conductance</_category>
-    <_title>Ampere per Volt</_title>
-  </unit>
-  <unit type="alias" name="S" active="true">
-    <_singular>siemens</_singular>
-    <_plural>siemens</_plural>
-    <base>
-      <unit>A_p_V</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Electricity/Electric Conductance</_category>
-    <_title>Siemens</_title>
-  </unit>
-  <unit type="composite" name="V_s" active="true">
-    <part>
-      <unit>V</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>s</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <_category>Magnetism/Magnetic Flux</_category>
-    <_title>Volt Seconds</_title>
-  </unit>
-  <unit type="alias" name="Wb" active="true">
-    <_singular>weber</_singular>
-    <_plural>webers</_plural>
-    <base>
-      <unit>V_s</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Magnetism/Magnetic Flux</_category>
-    <_title>Weber</_title>
-  </unit>
-  <unit type="composite" name="Wb_p_sqm" active="true">
-    <part>
-      <unit>Wb</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-2</exponent>
-    </part>
-    <_category>Magnetism/Magnetic Flux Density</_category>
-    <_title>Weber per Square Meter</_title>
-  </unit>
-  <unit type="alias" name="T" active="true">
-    <_singular>tesla</_singular>
-    <_plural>teslas</_plural>
-    <base>
-      <unit>Wb_p_sqm</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Magnetism/Magnetic Flux Density</_category>
-    <_title>Tesla</_title>
-  </unit>
-  <unit type="composite" name="Wb_p_A" active="true">
-    <part>
-      <unit>Wb</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>A</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Electricity/Inductance</_category>
-    <_title>Weber per Ampere</_title>
-  </unit>
-  <unit type="alias" name="H" active="true">
-    <_singular>henry</_singular>
-    <_plural>henrys</_plural>
-    <base>
-      <unit>Wb_p_A</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Electricity/Inductance</_category>
-    <_title>Henry</_title>
-  </unit>
-  <unit type="alias" name="lm" active="true">
-    <_singular>lumen</_singular>
-    <_plural>lumens</_plural>
-    <base>
-      <unit>cd</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Light/Luminous Flux</_category>
-    <_title>Lumen</_title>
-  </unit>
-  <unit type="composite" name="lm_p_sqm" active="true">
-    <part>
-      <unit>lm</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-2</exponent>
-    </part>
-    <_category>Light/Illuminance</_category>
-    <_title>Lumen per Square Meter</_title>
-  </unit>
-  <unit type="alias" name="lx" active="true">
-    <_singular>lux</_singular>
-    <base>
-      <unit>lm_p_sqm</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Light/Illuminance</_category>
-    <_title>Lux</_title>
-  </unit>
-  <unit type="alias" name="Bq" active="true">
-    <_singular>becquerel</_singular>
-    <_plural>becquerels</_plural>
-    <base>
-      <unit>s</unit>
-      <relation precise="true">1</relation>
-      <exponent>-1</exponent>
-    </base>
-    <_category>Radioactivity</_category>
-    <_title>Becquerel</_title>
-  </unit>
-  <unit type="composite" name="J_p_kg" active="true">
-    <part>
-      <unit>J</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>g</unit>
-      <prefix>3</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Radioactivity/Absorbed Dose</_category>
-    <_title>Joule per Kilogram</_title>
-  </unit>
-  <unit type="alias" name="Gy" active="true">
-    <_singular>gray</_singular>
-    <_plural>grays</_plural>
-    <base>
-      <unit>J_p_kg</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Radioactivity/Absorbed Dose</_category>
-    <_title>Gray</_title>
-  </unit>
-  <unit type="alias" name="Sv" active="true">
-    <_singular>sievert</_singular>
-    <_plural>sieverts</_plural>
-    <base>
-      <unit>J_p_kg</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Radioactivity/Dose Equivalent</_category>
-    <_title>Sievert</_title>
-  </unit>
-  <unit type="composite" name="recs_mol" active="true">
-    <part>
-      <unit>mol</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>s</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Substance/Catalytic Activity</_category>
-    <_title>Reciprocal Seconds Mole</_title>
-  </unit>
-  <unit type="alias" name="kat" active="true">
-    <_singular>katal</_singular>
-    <_plural>katals</_plural>
-    <base>
-      <unit>recs_mol</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Substance/Catalytic Activity</_category>
-    <_title>Katal</_title>
-  </unit>
-  <unit type="alias" name="oC" active="true">
-    <_singular>celcius</_singular>
-    <_plural>celcius</_plural>
-    <base>
-      <unit>K</unit>
-      <relation precise="true">\x + 273.15</relation>
-      <reverse_relation>\x - 273.15</reverse_relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Temperature</_category>
-    <_title>Degree Celcius</_title>
-  </unit>
-  <unit type="alias" name="minute" active="true">
-    <_singular>minute</_singular>
-    <_plural>minutes</_plural>
-    <base>
-      <unit>s</unit>
-      <relation precise="true">60</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Time</_category>
-    <_title>Minute</_title>
-  </unit>
-  <unit type="alias" name="h" active="true">
-    <_singular>hour</_singular>
-    <_plural>hours</_plural>
-    <base>
-      <unit>minute</unit>
-      <relation precise="true">60</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Time</_category>
-    <_title>Hour</_title>
-  </unit>
-  <unit type="alias" name="d" active="true">
-    <_singular>day</_singular>
-    <_plural>days</_plural>
-    <base>
-      <unit>h</unit>
-      <relation precise="true">24</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Time</_category>
-    <_title>Day</_title>
-  </unit>
-  <unit type="alias" name="L" active="true">
-    <_singular>liter</_singular>
-    <_plural>liters</_plural>
-    <base>
-      <unit>m</unit>
-      <relation precise="true">0.001</relation>
-      <exponent>3</exponent>
-    </base>
-    <_category>Volume</_category>
-    <_title>Liter</_title>
-  </unit>
-  <unit type="alias" name="l" active="true">
-    <_singular>litre</_singular>
-    <_plural>litres</_plural>
-    <base>
-      <unit>m</unit>
-      <relation precise="true">0.001</relation>
-      <exponent>3</exponent>
-    </base>
-    <_category>Volume</_category>
-    <_title>Litre</_title>
-  </unit>
-  <unit type="alias" name="fl_oz" active="false">
-    <_singular>fluid_ounce</_singular>
-    <_plural>fluid_ounces</_plural>
-    <base>
-      <unit>m</unit>
-      <relation precise="true">0.0000284130625</relation>
-      <exponent>3</exponent>
-    </base>
-    <_category>Volume</_category>
-    <_title>Fluid Ounce</_title>
-  </unit>
-  <unit type="alias" name="gill" active="false">
-    <_singular>gill</_singular>
-    <_plural>gills</_plural>
-    <base>
-      <unit>fl_oz</unit>
-      <relation precise="true">5</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Volume</_category>
-    <_title>Gill</_title>
-  </unit>
-  <unit type="alias" name="pt" active="false">
-    <_singular>pint</_singular>
-    <_plural>pints</_plural>
-    <base>
-      <unit>gill</unit>
-      <relation precise="true">4</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Volume</_category>
-    <_title>Pint</_title>
-  </unit>
-  <unit type="alias" name="qt" active="false">
-    <_singular>quart</_singular>
-    <_plural>quarts</_plural>
-    <base>
-      <unit>pt</unit>
-      <relation precise="true">2</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Volume</_category>
-    <_title>Quart</_title>
-  </unit>
-  <unit type="alias" name="gal" active="false">
-    <_singular>gallon</_singular>
-    <_plural>gallons</_plural>
-    <base>
-      <unit>qt</unit>
-      <relation precise="true">4</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Volume</_category>
-    <_title>Gallon</_title>
-  </unit>
-  <unit type="alias" name="pk" active="false">
-    <_singular>peck</_singular>
-    <_plural>pecks</_plural>
-    <base>
-      <unit>gal</unit>
-      <relation precise="true">2</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Volume</_category>
-    <_title>Peck</_title>
-  </unit>
-  <unit type="alias" name="bu" active="false">
-    <_singular>bushel</_singular>
-    <_plural>bushels</_plural>
-    <base>
-      <unit>gal</unit>
-      <relation precise="true">8</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Volume</_category>
-    <_title>Bushel</_title>
-  </unit>
-  <unit type="alias" name="t" active="true">
-    <_singular>ton</_singular>
-    <_plural>tons</_plural>
-    <base>
-      <unit>g</unit>
-      <relation precise="true">1000000</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Metric Ton</_title>
-  </unit>
-  <unit type="alias" name="nautical_mile" active="true">
-    <_singular>nautical_mile</_singular>
-    <_plural>nautical_miles</_plural>
-    <base>
-      <unit>m</unit>
-      <relation precise="true">1852</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>Nautical Mile</_title>
-  </unit>
-  <unit type="composite" name="nautical_mile_p_h" active="true">
-    <part>
-      <unit>nautical_mile</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>h</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Speed</_category>
-    <_title>Nautical Mile per Hour</_title>
-  </unit>
-  <unit type="alias" name="knot" active="true">
-    <_singular>knot</_singular>
-    <_plural>knots</_plural>
-    <base>
-      <unit>nautical_mile_p_h</unit>
-      <relation precise="true">1</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Speed</_category>
-    <_title>Knot</_title>
-  </unit>
-  <unit type="alias" name="a" active="true">
-    <_singular>are</_singular>
-    <_plural>ares</_plural>
-    <base>
-      <unit>m</unit>
-      <relation precise="true">100</relation>
-      <exponent>2</exponent>
-    </base>
-    <_category>Area</_category>
-    <_title>Are</_title>
-  </unit>
-  <unit type="composite" name="ha" active="true">
-    <part>
-      <unit>a</unit>
-      <prefix>2</prefix>
-      <exponent>1</exponent>
-    </part>
-    <_category>Area</_category>
-    <_title>Hectare</_title>
-  </unit>
-  <unit type="alias" name="bar" active="true">
-    <_singular>bar</_singular>
-    <_plural>bars</_plural>
-    <base>
-      <unit>Pa</unit>
-      <relation precise="true">100000</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Force/Pressure</_category>
-    <_title>Bar</_title>
-  </unit>
-  <unit type="alias" name="atm" active="true">
-    <_singular>atmosphere</_singular>
-    <_plural>atmospheres</_plural>
-    <base>
-      <unit>Pa</unit>
-      <relation precise="true">101325</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Force/Pressure</_category>
-    <_title>Atmosphere</_title>
-  </unit>
-  <unit type="alias" name="torr" active="true">
-    <_singular>torr</_singular>
-    <_plural>torrs</_plural>
-    <base>
-      <unit>Pa</unit>
-      <relation precise="true">1.333224</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Force/Pressure</_category>
-    <_title>Torr</_title>
-  </unit>
-  <unit type="alias" name="&#xC5;" active="true">
-    <_singular>&#xE5;ngstr&#xF6;m</_singular>
-    <base>
-      <unit>m</unit>
-      <relation precise="true">1E-10</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>&#xC5;ngstr&#xF6;m</_title>
-  </unit>
-  <unit type="alias" name="b" active="true">
-    <_singular>barn</_singular>
-    <_plural>barns</_plural>
-    <base>
-      <unit>m</unit>
-      <relation precise="true">1E-28</relation>
-      <exponent>2</exponent>
-    </base>
-    <_category>Area</_category>
-    <_title>Barn</_title>
-  </unit>
-  <unit type="alias" name="Ci" active="true">
-    <_singular>curie</_singular>
-    <_plural>curies</_plural>
-    <base>
-      <unit>Bq</unit>
-      <relation precise="true">3.7E10</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Radioactivity</_category>
-    <_title>Curie</_title>
-  </unit>
-  <unit type="composite" name="C_p_kg" active="true">
-    <part>
-      <unit>C</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>g</unit>
-      <prefix>3</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Radioactivity/Exposure</_category>
-    <_title>Coloumb per Kilogram</_title>
-  </unit>
-  <unit type="alias" name="R" active="true">
-    <_singular>roentgen</_singular>
-    <_plural>roentgens</_plural>
-    <base>
-      <unit>C_p_kg</unit>
-      <relation precise="true">0.000258</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Radioactivity/Exposure</_category>
-    <_title>Roentgen</_title>
-  </unit>
-  <unit type="alias" name="rad" active="true">
-    <_singular>rad</_singular>
-    <base>
-      <unit>Gy</unit>
-      <relation precise="true">1/100</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Radioactivity/Absorbed Dose</_category>
-    <_title>Rad</_title>
-  </unit>
-  <unit type="alias" name="rem_unit" active="true">
-    <_singular>rem_unit</_singular>
-    <base>
-      <unit>Sv</unit>
-      <relation precise="true">1/100</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Radioactivity/Dose Equivalent</_category>
-    <_title>Rem</_title>
-  </unit>
-  <unit type="composite" name="Pa_s" active="true">
-    <part>
-      <unit>Pa</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>s</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <_category>Force/Dynamic Viscosity</_category>
-    <_title>Pascal Second</_title>
-  </unit>
-  <unit type="composite" name="N_p_m" active="true">
-    <part>
-      <unit>N</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Force/Surface Tension</_category>
-    <_title>Newton per Meter</_title>
-  </unit>
-  <unit type="composite" name="W_p_sqm" active="true">
-    <part>
-      <unit>W</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-2</exponent>
-    </part>
-    <_category>Light/Irradiance</_category>
-    <_title>Watt per Square Meter</_title>
-  </unit>
-  <unit type="composite" name="J_p_K" active="true">
-    <part>
-      <unit>J</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>K</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Energy/Entropy</_category>
-    <_title>Joule per Kelvin</_title>
-  </unit>
-  <unit type="composite" name="J_p_kg_K" active="true">
-    <part>
-      <unit>J</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>g</unit>
-      <prefix>3</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <part>
-      <unit>K</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Energy/Specific Entropy</_category>
-    <_title>Joule per Kilogram Kelvin</_title>
-  </unit>
-  <unit type="composite" name="W_p_m_K" active="true">
-    <part>
-      <unit>W</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <part>
-      <unit>K</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Energy/Thermal Conductivity</_category>
-    <_title>Watt per Meter Kelvin</_title>
-  </unit>
-  <unit type="composite" name="J_p_cum" active="true">
-    <part>
-      <unit>J</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-3</exponent>
-    </part>
-    <_category>Energy/Energy Density</_category>
-    <_title>Joule per Cubic Meter</_title>
-  </unit>
-  <unit type="composite" name="V_p_m" active="true">
-    <part>
-      <unit>V</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Electricity/Electric Field Strength</_category>
-    <_title>Volt per Meter</_title>
-  </unit>
-  <unit type="composite" name="C_p_cum" active="true">
-    <part>
-      <unit>C</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-3</exponent>
-    </part>
-    <_category>Electricity/Electric Charge Density</_category>
-    <_title>Coulomb per Cubic Meter</_title>
-  </unit>
-  <unit type="composite" name="C_p_sqm" active="true">
-    <part>
-      <unit>C</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-2</exponent>
-    </part>
-    <_category>Electricity/Electric Flux Density</_category>
-    <_title>Coulomb per Square Meter</_title>
-  </unit>
-  <unit type="composite" name="F_p_m" active="true">
-    <part>
-      <unit>F</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Electricity/Permittivity</_category>
-    <_title>Farad per Meter</_title>
-  </unit>
-  <unit type="composite" name="H_p_m" active="true">
-    <part>
-      <unit>H</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Electricity/Permeability</_category>
-    <_title>Henry per Meter</_title>
-  </unit>
-  <unit type="composite" name="J_p_mol" active="true">
-    <part>
-      <unit>J</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>mol</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Energy/Molar Energy</_category>
-    <_title>Joule per Mole</_title>
-  </unit>
-  <unit type="composite" name="J_p_mol_K" active="true">
-    <part>
-      <unit>J</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>mol</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <part>
-      <unit>K</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Energy/Molar Entropy</_category>
-    <_title>Joule per Mole Kelvin</_title>
-  </unit>
-  <unit type="composite" name="Gy_p_s" active="true">
-    <part>
-      <unit>Gy</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>s</unit>
-      <prefix>0</prefix>
-      <exponent>-1</exponent>
-    </part>
-    <_category>Radioactivity/Absorbed Dose Rate</_category>
-    <_title>Gray per Second</_title>
-  </unit>
-  <unit type="composite" name="kat_p_cum" active="true">
-    <part>
-      <unit>kat</unit>
-      <prefix>0</prefix>
-      <exponent>1</exponent>
-    </part>
-    <part>
-      <unit>m</unit>
-      <prefix>0</prefix>
-      <exponent>-3</exponent>
-    </part>
-    <_category>Substance/Catalytic Concentration</_category>
-    <_title>Katal per Cubic Meter</_title>
-  </unit>
-  <unit type="alias" name="Gal" active="true">
-    <_singular>galileo</_singular>
-    <_plural>galileos</_plural>
-    <base>
-      <unit>m_p_sqs</unit>
-      <relation precise="true">1/100</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Speed/Acceleration</_category>
-    <_title>Galileo</_title>
-  </unit>
-  <unit type="alias" name="US_in" active="true">
-    <_singular>US_inch</_singular>
-    <_plural>US_inches</_plural>
-    <base>
-      <unit>m</unit>
-      <relation precise="true">100/3937</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>U.S. Survey Inch</_title>
-  </unit>
-  <unit type="alias" name="in" active="true">
-    <_singular>inch</_singular>
-    <_plural>inches</_plural>
-    <base>
-      <unit>m</unit>
-      <relation precise="true">0.0254</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>Inch</_title>
-  </unit>
-  <unit type="alias" name="hand" active="true">
-    <_singular>hand</_singular>
-    <_plural>hands</_plural>
-    <base>
-      <unit>in</unit>
-      <relation precise="true">4</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>Hand</_title>
-  </unit>
-  <unit type="alias" name="ft" active="true">
-    <_singular>foot</_singular>
-    <_plural>feet</_plural>
-    <base>
-      <unit>hand</unit>
-      <relation precise="true">3</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>Foot</_title>
-  </unit>
-  <unit type="alias" name="US_ft" active="true">
-    <_singular>US_foot</_singular>
-    <_plural>US_feet</_plural>
-    <base>
-      <unit>US_in</unit>
-      <relation precise="true">12</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>U.S. Survey Foot</_title>
-  </unit>
-  <unit type="alias" name="li" active="true">
-    <_singular>link</_singular>
-    <_plural>links</_plural>
-    <base>
-      <unit>ft</unit>
-      <relation precise="true">66/100</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>Link</_title>
-  </unit>
-  <unit type="alias" name="yd" active="true">
-    <_singular>yard</_singular>
-    <_plural>yards</_plural>
-    <base>
-      <unit>ft</unit>
-      <relation precise="true">3</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>Yard</_title>
-  </unit>
-  <unit type="alias" name="rd" active="true">
-    <_singular>rod</_singular>
-    <_plural>rods</_plural>
-    <base>
-      <unit>US_ft</unit>
-      <relation precise="true">16.5</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>Rod (pole/perch)</_title>
-  </unit>
-  <unit type="alias" name="fathom" active="true">
-    <_singular>fathom</_singular>
-    <_plural>fathoms</_plural>
-    <base>
-      <unit>yd</unit>
-      <relation precise="true">2</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>Fathom</_title>
-  </unit>
-  <unit type="alias" name="ch" active="true">
-    <_singular>chain</_singular>
-    <_plural>chains</_plural>
-    <base>
-      <unit>li</unit>
-      <relation precise="true">100</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>Chain</_title>
-  </unit>
-  <unit type="alias" name="fur" active="true">
-    <_singular>furlong</_singular>
-    <_plural>furlongs</_plural>
-    <base>
-      <unit>yd</unit>
-      <relation precise="true">220</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>Furlong</_title>
-  </unit>
-  <unit type="alias" name="mi" active="true">
-    <_singular>mile</_singular>
-    <_plural>miles</_plural>
-    <base>
-      <unit>ch</unit>
-      <relation precise="true">80</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>Mile</_title>
-  </unit>
-  <unit type="alias" name="US_mi" active="true">
-    <_singular>US_mile</_singular>
-    <_plural>US_miles</_plural>
-    <base>
-      <unit>US_ft</unit>
-      <relation precise="true">5280</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>U.S. Survey Mile</_title>
-  </unit>
-  <unit type="alias" name="mil" active="true">
-    <_singular>mil</_singular>
-    <_plural>mils</_plural>
-    <base>
-      <unit>in</unit>
-      <relation precise="true">0.001</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>Mils</_title>
-  </unit>
-  <unit type="alias" name="au" active="true">
-    <_singular>astronomical_unit</_singular>
-    <_plural>astronomical_units</_plural>
-    <base>
-      <unit>m</unit>
-      <relation precise="true">149578700000</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>Astronomical Unit</_title>
-  </unit>
-  <unit type="alias" name="ly" active="true">
-    <_singular>light_year</_singular>
-    <_plural>light_years</_plural>
-    <base>
-      <unit>m</unit>
-      <relation precise="true">9.46E15</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>Light Year</_title>
-  </unit>
-  <unit type="alias" name="par" active="true">
-    <_singular>parsec</_singular>
-    <_plural>parsecs</_plural>
-    <base>
-      <unit>m</unit>
-      <relation precise="true">30856770000000000</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Length</_category>
-    <_title>Parsec</_title>
-  </unit>
-  <unit type="alias" name="rood" active="true">
-    <_singular>rood</_singular>
-    <_plural>roods</_plural>
-    <base>
-      <unit>yd</unit>
-      <relation precise="true">1210</relation>
-      <exponent>2</exponent>
-    </base>
-    <_category>Area</_category>
-    <_title>Rood</_title>
-  </unit>
-  <unit type="alias" name="acre" active="true">
-    <_singular>acre</_singular>
-    <_plural>acres</_plural>
-    <base>
-      <unit>ch</unit>
-      <relation precise="true">10</relation>
-      <exponent>2</exponent>
-    </base>
-    <_category>Area</_category>
-    <_title>Acre</_title>
-  </unit>
-  <unit type="alias" name="section" active="true">
-    <_singular>section</_singular>
-    <_plural>sections</_plural>
-    <base>
-      <unit>mi</unit>
-      <relation precise="true">1</relation>
-      <exponent>2</exponent>
-    </base>
-    <_category>Area</_category>
-    <_title>Section</_title>
-  </unit>
-  <unit type="alias" name="township" active="true">
-    <_singular>township</_singular>
-    <_plural>townships</_plural>
-    <base>
-      <unit>section</unit>
-      <relation precise="true">36</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Area</_category>
-    <_title>Township</_title>
-  </unit>
-  <unit type="alias" name="gr" active="true">
-    <_singular>grain</_singular>
-    <_plural>grains</_plural>
-    <base>
-      <unit>g</unit>
-      <relation precise="true">0.06479891</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Grain</_title>
-  </unit>
-  <unit type="alias" name="pwt" active="true">
-    <_singular>pennyweight</_singular>
-    <_plural>pennyweights</_plural>
-    <base>
-      <unit>gr</unit>
-      <relation precise="true">24</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Pennyweight</_title>
-  </unit>
-  <unit type="alias" name="oz_t" active="true">
-    <_singular>troy_ounce</_singular>
-    <_plural>troy_ounces</_plural>
-    <base>
-      <unit>pwt</unit>
-      <relation precise="true">20</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Ounce (troy)</_title>
-  </unit>
-  <unit type="alias" name="lb_t" active="true">
-    <_singular>troy_pound</_singular>
-    <_plural>troy_pounds</_plural>
-    <base>
-      <unit>oz_t</unit>
-      <relation precise="true">12</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Pound (troy)</_title>
-  </unit>
-  <unit type="alias" name="dr" active="true">
-    <_singular>dram</_singular>
-    <_plural>drams</_plural>
-    <base>
-      <unit>g</unit>
-      <relation precise="true">1.7718451953125</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Dram</_title>
-  </unit>
-  <unit type="alias" name="oz" active="true">
-    <_singular>ounce</_singular>
-    <_plural>ounces</_plural>
-    <base>
-      <unit>dr</unit>
-      <relation precise="true">16</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Ounce</_title>
-  </unit>
-  <unit type="alias" name="lb" active="true">
-    <_singular>pound</_singular>
-    <_plural>pounds</_plural>
-    <base>
-      <unit>oz</unit>
-      <relation precise="true">16</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Pound</_title>
-  </unit>
-  <unit type="alias" name="cwt" active="true">
-    <_singular>hundredweight</_singular>
-    <_plural>hundredweights</_plural>
-    <base>
-      <unit>lb</unit>
-      <relation precise="true">100</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Short Hundredweight</_title>
-  </unit>
-  <unit type="alias" name="l_cwt" active="true">
-    <_singular>long_hundredweight</_singular>
-    <_plural>long_hundredweights</_plural>
-    <base>
-      <unit>lb</unit>
-      <relation precise="true">112</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Long Hundredweight</_title>
-  </unit>
-  <unit type="alias" name="s_ton" active="true">
-    <_singular>short_ton</_singular>
-    <_plural>short_tons</_plural>
-    <base>
-      <unit>lb</unit>
-      <relation precise="true">2000</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Short Ton</_title>
-  </unit>
-  <unit type="alias" name="l_ton" active="true">
-    <_singular>long_ton</_singular>
-    <_plural>long_tons</_plural>
-    <base>
-      <unit>lb</unit>
-      <relation precise="true">2240</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Long Ton</_title>
-  </unit>
-  <unit type="alias" name="stone" active="true">
-    <_singular>stone</_singular>
-    <_plural>stones</_plural>
-    <base>
-      <unit>lb</unit>
-      <relation precise="true">14</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Stone</_title>
-  </unit>
-  <unit type="alias" name="quaert" active="true">
-    <_singular>quaert</_singular>
-    <_plural>quarters</_plural>
-    <base>
-      <unit>lb</unit>
-      <relation precise="true">28</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Quarter</_title>
-  </unit>
-  <unit type="alias" name="cental" active="true">
-    <_singular>cental</_singular>
-    <_plural>centals</_plural>
-    <base>
-      <unit>lb</unit>
-      <relation precise="true">100</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Cental</_title>
-  </unit>
-  <unit type="alias" name="c" active="true">
-    <_singular>carat</_singular>
-    <_plural>carats</_plural>
-    <base>
-      <unit>g</unit>
-      <relation precise="true">0.2</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Carat</_title>
-  </unit>
-  <unit type="alias" name="pfund" active="true">
-    <_singular>pfund</_singular>
-    <base>
-      <unit>g</unit>
-      <relation precise="true">500</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Pfund</_title>
-  </unit>
-  <unit type="alias" name="zentner" active="true">
-    <_singular>zentner</_singular>
-    <base>
-      <unit>pfund</unit>
-      <relation precise="true">100</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Mass</_category>
-    <_title>Zentner</_title>
-  </unit>
-  <unit type="composite" name="cuin" active="true">
-    <part>
-      <unit>in</unit>
-      <prefix>0</prefix>
-      <exponent>3</exponent>
-    </part>
-    <_category>Volume</_category>
-    <_title>Cubic Inch</_title>
-  </unit>
-  <unit type="composite" name="sqft" active="true">
-    <part>
-      <unit>ft</unit>
-      <prefix>0</prefix>
-      <exponent>2</exponent>
-    </part>
-    <_category>Area</_category>
-    <_title>Square Foot</_title>
-  </unit>
-  <unit type="alias" name="hp" active="true">
-    <_singular>horsepower</_singular>
-    <_plural>horsepowers</_plural>
-    <base>
-      <unit>W</unit>
-      <relation precise="true">745.699987158227022</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Energy/Power</_category>
-    <_title>Horse Power</_title>
-  </unit>
-  <unit type="alias" name="PS" active="true">
-    <_singular>pferdest&#xE4;rke</_singular>
-    <base>
-      <unit>W</unit>
-      <relation precise="true">735.49875</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Energy/Power</_category>
-    <_title>Pferdest&#xE4;rke</_title>
-  </unit>
-  <unit type="alias" name="oR" active="true">
-    <_singular>rankine</_singular>
-    <base>
-      <unit>K</unit>
-      <relation precise="true">5\x/9</relation>
-      <reverse_relation>9\x/5</reverse_relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Temperature</_category>
-    <_title>Degrees Rankine</_title>
-  </unit>
-  <unit type="alias" name="oF" active="true">
-    <_singular>fahrenheit</_singular>
-    <base>
-      <unit>K</unit>
-      <relation precise="true">(2298.35+5\x)/9</relation>
-      <reverse_relation>(9\x-2298.35)/5</reverse_relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Temperature</_category>
-    <_title>Degrees Fahrenheit</_title>
-  </unit>
-  <unit type="base" name="euro" active="true">
-    <_singular>euro</_singular>
-    <_plural>euros</_plural>
-    <_category>Currency</_category>
-    <_title>Euro</_title>
-  </unit>
-  <unit type="alias" name="BEF" active="true">
-    <_singular>BEF</_singular>
-    <base>
-      <unit>euro</unit>
-      <relation precise="true">1/40.3399</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Currency</_category>
-    <_title>Belgian franc</_title>
-  </unit>
-  <unit type="alias" name="GRD" active="true">
-    <_singular>GRD</_singular>
-    <base>
-      <unit>euro</unit>
-      <relation precise="true">1/340.750</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Currency</_category>
-    <_title>Greek drachma</_title>
-  </unit>
-  <unit type="alias" name="FRF" active="true">
-    <_singular>FRF</_singular>
-    <base>
-      <unit>euro</unit>
-      <relation precise="true">1/6.55957</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Currency</_category>
-    <_title>French franc</_title>
-  </unit>
-  <unit type="alias" name="ITL" active="true">
-    <_singular>ITL</_singular>
-    <base>
-      <unit>euro</unit>
-      <relation precise="true">1/1936.27</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Currency</_category>
-    <_title>Italian lira</_title>
-  </unit>
-  <unit type="alias" name="NLG" active="true">
-    <_singular>NLG</_singular>
-    <base>
-      <unit>euro</unit>
-      <relation precise="true">1/2.20371</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Currency</_category>
-    <_title>Dutch guilder</_title>
-  </unit>
-  <unit type="alias" name="PTE" active="true">
-    <_singular>PTE</_singular>
-    <base>
-      <unit>euro</unit>
-      <relation precise="true">1/200.482</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Currency</_category>
-    <_title>Portuguese escudo</_title>
-  </unit>
-  <unit type="alias" name="DEM" active="true">
-    <_singular>DEM</_singular>
-    <base>
-      <unit>euro</unit>
-      <relation precise="true">1/1.95583</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Currency</_category>
-    <_title>Deutche Mark</_title>
-  </unit>
-  <unit type="alias" name="ESP" active="true">
-    <_singular>ESP</_singular>
-    <base>
-      <unit>euro</unit>
-      <relation precise="true">1/166.386</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Currency</_category>
-    <_title>Spanish peseta</_title>
-  </unit>
-  <unit type="alias" name="IEP" active="true">
-    <_singular>IEP</_singular>
-    <base>
-      <unit>euro</unit>
-      <relation precise="true">1/0.787564</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Currency</_category>
-    <_title>Irish pound</_title>
-  </unit>
-  <unit type="alias" name="LUF" active="true">
-    <_singular>LUF</_singular>
-    <base>
-      <unit>euro</unit>
-      <relation precise="true">1/40.3399</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Currency</_category>
-    <_title>Luxembourg franc</_title>
-  </unit>
-  <unit type="alias" name="ATS" active="true">
-    <_singular>ATS</_singular>
-    <base>
-      <unit>euro</unit>
-      <relation precise="true">1/13.7603</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Currency</_category>
-    <_title>Austrian shilling</_title>
-  </unit>
-  <unit type="alias" name="FIM" active="true">
-    <_singular>FIM</_singular>
-    <base>
-      <unit>euro</unit>
-      <relation precise="true">1/5.94573</relation>
-      <exponent>1</exponent>
-    </base>
-    <_category>Currency</_category>
-    <_title>Finnish markka</_title>
-  </unit>
+  <category>
+    <_title>Length</_title>
+    <unit type="base" name="m">
+      <_singular>meter</_singular>
+      <_plural>meters</_plural>
+      <_title>Meter</_title>
+    </unit>
+    <unit type="alias" name="nautical_mile">
+      <_singular>nautical_mile</_singular>
+      <_plural>nautical_miles</_plural>
+      <base>
+        <unit>m</unit>
+        <relation>1852</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Nautical Mile</_title>
+    </unit>
+    <unit type="alias" name="&#xC5;">
+      <_singular>&#xE5;ngstr&#xF6;m</_singular>
+      <base>
+        <unit>m</unit>
+        <relation>1E-10</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>&#xC5;ngstr&#xF6;m</_title>
+    </unit>
+    <unit type="alias" name="US_in">
+      <_singular>US_inch</_singular>
+      <_plural>US_inches</_plural>
+      <base>
+        <unit>m</unit>
+        <relation>100/3937</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>U.S. Survey Inch</_title>
+    </unit>
+    <unit type="alias" name="in">
+      <_singular>inch</_singular>
+      <_plural>inches</_plural>
+      <base>
+        <unit>m</unit>
+        <relation>0.0254</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Inch</_title>
+    </unit>
+    <unit type="alias" name="hand">
+      <_singular>hand</_singular>
+      <_plural>hands</_plural>
+      <base>
+        <unit>in</unit>
+        <relation>4</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Hand</_title>
+    </unit>
+    <unit type="alias" name="ft">
+      <_singular>foot</_singular>
+      <_plural>feet</_plural>
+      <base>
+        <unit>hand</unit>
+        <relation>3</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Foot</_title>
+    </unit>
+    <unit type="alias" name="US_ft">
+      <_singular>US_foot</_singular>
+      <_plural>US_feet</_plural>
+      <base>
+        <unit>US_in</unit>
+        <relation>12</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>U.S. Survey Foot</_title>
+    </unit>
+    <unit type="alias" name="li">
+      <_singular>link</_singular>
+      <_plural>links</_plural>
+      <base>
+        <unit>ft</unit>
+        <relation>66/100</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Link</_title>
+    </unit>
+    <unit type="alias" name="yd">
+      <_singular>yard</_singular>
+      <_plural>yards</_plural>
+      <base>
+        <unit>ft</unit>
+        <relation>3</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Yard</_title>
+    </unit>
+    <unit type="alias" name="rd">
+      <_singular>rod</_singular>
+      <_plural>rods</_plural>
+      <base>
+        <unit>US_ft</unit>
+        <relation>16.5</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Rod (pole/perch)</_title>
+    </unit>
+    <unit type="alias" name="fathom">
+      <_singular>fathom</_singular>
+      <_plural>fathoms</_plural>
+      <base>
+        <unit>yd</unit>
+        <relation>2</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Fathom</_title>
+    </unit>
+    <unit type="alias" name="ch">
+      <_singular>chain</_singular>
+      <_plural>chains</_plural>
+      <base>
+        <unit>li</unit>
+        <relation>100</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Chain</_title>
+    </unit>
+    <unit type="alias" name="fur">
+      <_singular>furlong</_singular>
+      <_plural>furlongs</_plural>
+      <base>
+        <unit>yd</unit>
+        <relation>220</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Furlong</_title>
+    </unit>
+    <unit type="alias" name="mi">
+      <_singular>mile</_singular>
+      <_plural>miles</_plural>
+      <base>
+        <unit>ch</unit>
+        <relation>80</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Mile</_title>
+    </unit>
+    <unit type="alias" name="US_mi">
+      <_singular>US_mile</_singular>
+      <_plural>US_miles</_plural>
+      <base>
+        <unit>US_ft</unit>
+        <relation>5280</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>U.S. Survey Mile</_title>
+    </unit>
+    <unit type="alias" name="mil">
+      <_singular>mil</_singular>
+      <_plural>mils</_plural>
+      <base>
+        <unit>in</unit>
+        <relation>0.001</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Mils</_title>
+    </unit>
+    <unit type="alias" name="au">
+      <_singular>astronomical_unit</_singular>
+      <_plural>astronomical_units</_plural>
+      <base>
+        <unit>m</unit>
+        <relation>149578700000</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Astronomical Unit</_title>
+    </unit>
+    <unit type="alias" name="ly">
+      <_singular>light_year</_singular>
+      <_plural>light_years</_plural>
+      <base>
+        <unit>m</unit>
+        <relation>9.46E15</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Light Year</_title>
+    </unit>
+    <unit type="alias" name="par">
+      <_singular>parsec</_singular>
+      <_plural>parsecs</_plural>
+      <base>
+        <unit>m</unit>
+        <relation>30856770000000000</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Parsec</_title>
+    </unit>
+  </category>
+  <category>
+    <_title>Mass</_title>
+    <unit type="base" name="g">
+      <_singular>gram</_singular>
+      <_plural>grams</_plural>
+      <_title>Gram</_title>
+    </unit>
+    <unit type="alias" name="t">
+      <_singular>ton</_singular>
+      <_plural>tons</_plural>
+      <base>
+        <unit>g</unit>
+        <relation>1000000</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Metric Ton</_title>
+    </unit>
+    <unit type="alias" name="gr">
+      <_singular>grain</_singular>
+      <_plural>grains</_plural>
+      <base>
+        <unit>g</unit>
+        <relation>0.06479891</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Grain</_title>
+    </unit>
+    <unit type="alias" name="pwt">
+      <_singular>pennyweight</_singular>
+      <_plural>pennyweights</_plural>
+      <base>
+        <unit>gr</unit>
+        <relation>24</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Pennyweight</_title>
+    </unit>
+    <unit type="alias" name="oz_t">
+      <_singular>troy_ounce</_singular>
+      <_plural>troy_ounces</_plural>
+      <base>
+        <unit>pwt</unit>
+        <relation>20</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Ounce (troy)</_title>
+    </unit>
+    <unit type="alias" name="lb_t">
+      <_singular>troy_pound</_singular>
+      <_plural>troy_pounds</_plural>
+      <base>
+        <unit>oz_t</unit>
+        <relation>12</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Pound (troy)</_title>
+    </unit>
+    <unit type="alias" name="dr">
+      <_singular>dram</_singular>
+      <_plural>drams</_plural>
+      <base>
+        <unit>g</unit>
+        <relation>1.7718451953125</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Dram</_title>
+    </unit>
+    <unit type="alias" name="oz">
+      <_singular>ounce</_singular>
+      <_plural>ounces</_plural>
+      <base>
+        <unit>dr</unit>
+        <relation>16</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Ounce</_title>
+    </unit>
+    <unit type="alias" name="lb">
+      <_singular>pound</_singular>
+      <_plural>pounds</_plural>
+      <base>
+        <unit>oz</unit>
+        <relation>16</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Pound</_title>
+    </unit>
+    <unit type="alias" name="cwt">
+      <_singular>hundredweight</_singular>
+      <_plural>hundredweights</_plural>
+      <base>
+        <unit>lb</unit>
+        <relation>100</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Short Hundredweight</_title>
+    </unit>
+    <unit type="alias" name="l_cwt">
+      <_singular>long_hundredweight</_singular>
+      <_plural>long_hundredweights</_plural>
+      <base>
+        <unit>lb</unit>
+        <relation>112</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Long Hundredweight</_title>
+    </unit>
+    <unit type="alias" name="s_ton">
+      <_singular>short_ton</_singular>
+      <_plural>short_tons</_plural>
+      <base>
+        <unit>lb</unit>
+        <relation>2000</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Short Ton</_title>
+    </unit>
+    <unit type="alias" name="l_ton">
+      <_singular>long_ton</_singular>
+      <_plural>long_tons</_plural>
+      <base>
+        <unit>lb</unit>
+        <relation>2240</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Long Ton</_title>
+    </unit>
+    <unit type="alias" name="stone">
+      <_singular>stone</_singular>
+      <_plural>stones</_plural>
+      <base>
+        <unit>lb</unit>
+        <relation>14</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Stone</_title>
+    </unit>
+    <unit type="alias" name="quaert">
+      <_singular>quaert</_singular>
+      <_plural>quarters</_plural>
+      <base>
+        <unit>lb</unit>
+        <relation>28</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Quarter</_title>
+    </unit>
+    <unit type="alias" name="cental">
+      <_singular>cental</_singular>
+      <_plural>centals</_plural>
+      <base>
+        <unit>lb</unit>
+        <relation>100</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Cental</_title>
+    </unit>
+    <unit type="alias" name="c">
+      <_singular>carat</_singular>
+      <_plural>carats</_plural>
+      <base>
+        <unit>g</unit>
+        <relation>0.2</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Carat</_title>
+    </unit>
+    <unit type="alias" name="pfund">
+      <_singular>pfund</_singular>
+      <base>
+        <unit>g</unit>
+        <relation>500</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Pfund</_title>
+    </unit>
+    <unit type="alias" name="zentner">
+      <_singular>zentner</_singular>
+      <base>
+        <unit>pfund</unit>
+        <relation>100</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Zentner</_title>
+    </unit>
+    <category>
+      <_title>Density</_title>
+      <unit type="composite" name="kg_p_cum">
+        <part>
+          <unit>g</unit>
+          <prefix>3</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-3</exponent>
+        </part>
+        <_title>Kilogram per Cubic Meter</_title>
+      </unit>
+    </category>
+  </category>
+  <category>
+    <_title>Time</_title>
+    <unit type="base" name="s">
+      <_singular>second</_singular>
+      <_plural>seconds</_plural>
+      <_title>Second</_title>
+    </unit>
+    <unit type="alias" name="minute">
+      <_singular>minute</_singular>
+      <_plural>minutes</_plural>
+      <base>
+        <unit>s</unit>
+        <relation>60</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Minute</_title>
+    </unit>
+    <unit type="alias" name="h">
+      <_singular>hour</_singular>
+      <_plural>hours</_plural>
+      <base>
+        <unit>minute</unit>
+        <relation>60</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Hour</_title>
+    </unit>
+    <unit type="alias" name="d">
+      <_singular>day</_singular>
+      <_plural>days</_plural>
+      <base>
+        <unit>h</unit>
+        <relation>24</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Day</_title>
+    </unit>
+    <category>
+      <_title>Frequency</_title>
+      <unit type="alias" name="Hz">
+        <_singular>hertz</_singular>
+        <_plural>hertz</_plural>
+        <base>
+          <unit>s</unit>
+          <relation>1</relation>
+          <exponent>-1</exponent>
+        </base>
+        <_title>Hertz</_title>
+      </unit>
+    </category>
+  </category>
+  <category>
+    <_title>Electricity</_title>
+    <category>
+      <_title>Electric Current</_title>
+      <unit type="base" name="A">
+        <_singular>ampere</_singular>
+        <_plural>amperes</_plural>
+        <_title>Ampere</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Current Density</_title>
+      <unit type="composite" name="A_p_sqm">
+        <part>
+          <unit>A</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-2</exponent>
+        </part>
+        <_title>Ampere per Square Meter</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Electric Charge</_title>
+      <unit type="composite" name="s_A">
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>A</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <_title>Second Ampere</_title>
+      </unit>
+      <unit type="alias" name="C">
+        <_singular>coulomb</_singular>
+        <_plural>coulombs</_plural>
+        <base>
+          <unit>s_A</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Coulomb</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Electric Charge Density</_title>
+      <unit type="composite" name="C_p_cum">
+        <part>
+          <unit>C</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-3</exponent>
+        </part>
+        <_title>Coulomb per Cubic Meter</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Electric Flux Density</_title>
+      <unit type="composite" name="C_p_sqm">
+        <part>
+          <unit>C</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-2</exponent>
+        </part>
+        <_title>Coulomb per Square Meter</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Electric Potential</_title>
+      <unit type="composite" name="W_p_A">
+        <part>
+          <unit>W</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>A</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Watt per Ampere</_title>
+      </unit>
+      <unit type="alias" name="V">
+        <_singular>volt</_singular>
+        <_plural>volts</_plural>
+        <base>
+          <unit>W_p_A</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Volt</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Capacitance</_title>
+      <unit type="composite" name="C_p_V">
+        <part>
+          <unit>C</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>V</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Coulomb per Volt</_title>
+      </unit>
+      <unit type="alias" name="F">
+        <_singular>farad</_singular>
+        <_plural>farads</_plural>
+        <base>
+          <unit>C_p_V</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Farad</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Electric Resistance</_title>
+      <unit type="composite" name="V_p_A">
+        <part>
+          <unit>V</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>A</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Volt per Ampere</_title>
+      </unit>
+      <unit type="alias" name="ohm">
+        <_singular>ohm</_singular>
+        <_plural>ohms</_plural>
+        <base>
+          <unit>V_p_A</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Ohm</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Electric Conductance</_title>
+      <unit type="composite" name="A_p_V">
+        <part>
+          <unit>A</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>V</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Ampere per Volt</_title>
+      </unit>
+      <unit type="alias" name="S">
+        <_singular>siemens</_singular>
+        <_plural>siemens</_plural>
+        <base>
+          <unit>A_p_V</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Siemens</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Electric Field Strength</_title>
+      <unit type="composite" name="V_p_m">
+        <part>
+          <unit>V</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Volt per Meter</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Permittivity</_title>
+      <unit type="composite" name="F_p_m">
+        <part>
+          <unit>F</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Farad per Meter</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Inductance</_title>
+      <unit type="composite" name="Wb_p_A">
+        <part>
+          <unit>Wb</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>A</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Weber per Ampere</_title>
+      </unit>
+      <unit type="alias" name="H">
+        <_singular>henry</_singular>
+        <_plural>henrys</_plural>
+        <base>
+          <unit>Wb_p_A</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Henry</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Permeability</_title>
+      <unit type="composite" name="H_p_m">
+        <part>
+          <unit>H</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Henry per Meter</_title>
+      </unit>
+    </category>
+  </category>
+  <category>
+    <_title>Temperature</_title>
+    <unit type="base" name="K">
+      <_singular>kelvin</_singular>
+      <_plural>kelvins</_plural>
+      <_title>Kelvin</_title>
+    </unit>
+    <unit type="alias" name="oC">
+      <_singular>celcius</_singular>
+      <_plural>celcius</_plural>
+      <base>
+        <unit>K</unit>
+        <relation>\x + 273.15</relation>
+        <reverse_relation>\x - 273.15</reverse_relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Degree Celcius</_title>
+    </unit>
+    <unit type="alias" name="oR">
+      <_singular>rankine</_singular>
+      <base>
+        <unit>K</unit>
+        <relation>5\x/9</relation>
+        <reverse_relation>9\x/5</reverse_relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Degrees Rankine</_title>
+    </unit>
+    <unit type="alias" name="oF">
+      <_singular>fahrenheit</_singular>
+      <base>
+        <unit>K</unit>
+        <relation>(2298.35+5\x)/9</relation>
+        <reverse_relation>(9\x-2298.35)/5</reverse_relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Degrees Fahrenheit</_title>
+    </unit>
+  </category>
+  <category>
+    <_title>Substance</_title>
+    <unit type="base" name="mol">
+      <_singular>mole</_singular>
+      <_plural>moles</_plural>
+      <_title>Mole</_title>
+    </unit>
+    <category>
+      <_title>Substance Concentration</_title>
+      <unit type="composite" name="mol_p_cum">
+        <part>
+          <unit>mol</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-3</exponent>
+        </part>
+        <_title>Mole per Cubic Meter</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Catalytic Activity</_title>
+      <unit type="composite" name="recs_mol">
+        <part>
+          <unit>mol</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Reciprocal Seconds Mole</_title>
+      </unit>
+      <unit type="alias" name="kat">
+        <_singular>katal</_singular>
+        <_plural>katals</_plural>
+        <base>
+          <unit>recs_mol</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Katal</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Catalytic Concentration</_title>
+      <unit type="composite" name="kat_p_cum">
+        <part>
+          <unit>kat</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-3</exponent>
+        </part>
+        <_title>Katal per Cubic Meter</_title>
+      </unit>
+    </category>
+  </category>
+  <category>
+    <_title>Light</_title>
+    <category>
+      <_title>Luminous Intensity</_title>
+      <unit type="base" name="cd">
+        <_singular>candela</_singular>
+        <_plural>candelas</_plural>
+        <_title>Candela</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Luminance</_title>
+      <unit type="composite" name="cd_p_sqm">
+        <part>
+          <unit>cd</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-2</exponent>
+        </part>
+        <_title>Candela per Square Meter</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Luminous Flux</_title>
+      <unit type="alias" name="lm">
+        <_singular>lumen</_singular>
+        <_plural>lumens</_plural>
+        <base>
+          <unit>cd</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Lumen</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Illuminance</_title>
+      <unit type="composite" name="lm_p_sqm">
+        <part>
+          <unit>lm</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-2</exponent>
+        </part>
+        <_title>Lumen per Square Meter</_title>
+      </unit>
+      <unit type="alias" name="lx">
+        <_singular>lux</_singular>
+        <base>
+          <unit>lm_p_sqm</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Lux</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Irradiance</_title>
+      <unit type="composite" name="W_p_sqm">
+        <part>
+          <unit>W</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-2</exponent>
+        </part>
+        <_title>Watt per Square Meter</_title>
+      </unit>
+    </category>
+  </category>
+  <category>
+    <_title>Area</_title>
+    <unit type="composite" name="sqm">
+      <part>
+        <unit>m</unit>
+        <prefix>0</prefix>
+        <exponent>2</exponent>
+      </part>
+      <_title>Square Meter</_title>
+    </unit>
+    <unit type="alias" name="a">
+      <_singular>are</_singular>
+      <_plural>ares</_plural>
+      <base>
+        <unit>m</unit>
+        <relation>100</relation>
+        <exponent>2</exponent>
+      </base>
+      <_title>Are</_title>
+    </unit>
+    <unit type="composite" name="ha">
+      <part>
+        <unit>a</unit>
+        <prefix>2</prefix>
+        <exponent>1</exponent>
+      </part>
+      <_title>Hectare</_title>
+    </unit>
+    <unit type="alias" name="b">
+      <_singular>barn</_singular>
+      <_plural>barns</_plural>
+      <base>
+        <unit>m</unit>
+        <relation>1E-28</relation>
+        <exponent>2</exponent>
+      </base>
+      <_title>Barn</_title>
+    </unit>
+    <unit type="alias" name="rood">
+      <_singular>rood</_singular>
+      <_plural>roods</_plural>
+      <base>
+        <unit>yd</unit>
+        <relation>1210</relation>
+        <exponent>2</exponent>
+      </base>
+      <_title>Rood</_title>
+    </unit>
+    <unit type="alias" name="acre">
+      <_singular>acre</_singular>
+      <_plural>acres</_plural>
+      <base>
+        <unit>ch</unit>
+        <relation>10</relation>
+        <exponent>2</exponent>
+      </base>
+      <_title>Acre</_title>
+    </unit>
+    <unit type="alias" name="section">
+      <_singular>section</_singular>
+      <_plural>sections</_plural>
+      <base>
+        <unit>mi</unit>
+        <relation>1</relation>
+        <exponent>2</exponent>
+      </base>
+      <_title>Section</_title>
+    </unit>
+    <unit type="alias" name="township">
+      <_singular>township</_singular>
+      <_plural>townships</_plural>
+      <base>
+        <unit>section</unit>
+        <relation>36</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Township</_title>
+    </unit>
+    <unit type="composite" name="sqft">
+      <part>
+        <unit>ft</unit>
+        <prefix>0</prefix>
+        <exponent>2</exponent>
+      </part>
+      <_title>Square Foot</_title>
+    </unit>
+  </category>
+  <category>
+    <_title>Volume</_title>
+    <unit type="composite" name="cum">
+      <part>
+        <unit>m</unit>
+        <prefix>0</prefix>
+        <exponent>3</exponent>
+      </part>
+      <_title>Cubic Meter</_title>
+    </unit>
+    <unit type="alias" name="L">
+      <_singular>liter</_singular>
+      <_plural>liters</_plural>
+      <base>
+        <unit>m</unit>
+        <relation>0.001</relation>
+        <exponent>3</exponent>
+      </base>
+      <_title>Liter</_title>
+    </unit>
+    <unit type="alias" name="l">
+      <_singular>litre</_singular>
+      <_plural>litres</_plural>
+      <base>
+        <unit>m</unit>
+        <relation>0.001</relation>
+        <exponent>3</exponent>
+      </base>
+      <_title>Litre</_title>
+    </unit>
+    <unit type="alias" name="fl_oz" active="false">
+      <_singular>fluid_ounce</_singular>
+      <_plural>fluid_ounces</_plural>
+      <base>
+        <unit>m</unit>
+        <relation>0.0000284130625</relation>
+        <exponent>3</exponent>
+      </base>
+      <_title>Fluid Ounce</_title>
+    </unit>
+    <unit type="alias" name="gill" active="false">
+      <_singular>gill</_singular>
+      <_plural>gills</_plural>
+      <base>
+        <unit>fl_oz</unit>
+        <relation>5</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Gill</_title>
+    </unit>
+    <unit type="alias" name="pt" active="false">
+      <_singular>pint</_singular>
+      <_plural>pints</_plural>
+      <base>
+        <unit>gill</unit>
+        <relation>4</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Pint</_title>
+    </unit>
+    <unit type="alias" name="qt" active="false">
+      <_singular>quart</_singular>
+      <_plural>quarts</_plural>
+      <base>
+        <unit>pt</unit>
+        <relation>2</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Quart</_title>
+    </unit>
+    <unit type="alias" name="gal" active="false">
+      <_singular>gallon</_singular>
+      <_plural>gallons</_plural>
+      <base>
+        <unit>qt</unit>
+        <relation>4</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Gallon</_title>
+    </unit>
+    <unit type="alias" name="pk" active="false">
+      <_singular>peck</_singular>
+      <_plural>pecks</_plural>
+      <base>
+        <unit>gal</unit>
+        <relation>2</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Peck</_title>
+    </unit>
+    <unit type="alias" name="bu" active="false">
+      <_singular>bushel</_singular>
+      <_plural>bushels</_plural>
+      <base>
+        <unit>gal</unit>
+        <relation>8</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Bushel</_title>
+    </unit>
+    <unit type="composite" name="cuin">
+      <part>
+        <unit>in</unit>
+        <prefix>0</prefix>
+        <exponent>3</exponent>
+      </part>
+      <_title>Cubic Inch</_title>
+    </unit>
+    <category>
+      <_title>Specific Volume</_title>
+      <unit type="composite" name="cum_p_kg">
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>3</exponent>
+        </part>
+        <part>
+          <unit>g</unit>
+          <prefix>3</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Cubic Meter per Kilogram</_title>
+      </unit>
+    </category>
+  </category>
+  <category>
+    <_title>Speed</_title>
+    <unit type="composite" name="m_p_s">
+      <part>
+        <unit>m</unit>
+        <prefix>0</prefix>
+        <exponent>1</exponent>
+      </part>
+      <part>
+        <unit>s</unit>
+        <prefix>0</prefix>
+        <exponent>-1</exponent>
+      </part>
+      <_title>Meter per Second</_title>
+    </unit>
+    <unit type="composite" name="nautical_mile_p_h">
+      <part>
+        <unit>nautical_mile</unit>
+        <prefix>0</prefix>
+        <exponent>1</exponent>
+      </part>
+      <part>
+        <unit>h</unit>
+        <prefix>0</prefix>
+        <exponent>-1</exponent>
+      </part>
+      <_title>Nautical Mile per Hour</_title>
+    </unit>
+    <unit type="alias" name="knot">
+      <_singular>knot</_singular>
+      <_plural>knots</_plural>
+      <base>
+        <unit>nautical_mile_p_h</unit>
+        <relation>1</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Knot</_title>
+    </unit>
+    <category>
+      <_title>Acceleration</_title>
+      <unit type="composite" name="m_p_sqs">
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-2</exponent>
+        </part>
+        <_title>Meter per Square Second</_title>
+      </unit>
+      <unit type="alias" name="Gal">
+        <_singular>galileo</_singular>
+        <_plural>galileos</_plural>
+        <base>
+          <unit>m_p_sqs</unit>
+          <relation>1/100</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Galileo</_title>
+      </unit>
+    </category>
+  </category>
+  <category>
+    <_title>Magnetism</_title>
+    <category>
+      <_title>Wave Number</_title>
+      <unit type="composite" name="recm">
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Reciprocal Meter</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Magnetic Field Strength</_title>
+      <unit type="composite" name="A_p_m">
+        <part>
+          <unit>A</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Ampere per Meter</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Magnetic Flux</_title>
+      <unit type="composite" name="V_s">
+        <part>
+          <unit>V</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <_title>Volt Seconds</_title>
+      </unit>
+      <unit type="alias" name="Wb">
+        <_singular>weber</_singular>
+        <_plural>webers</_plural>
+        <base>
+          <unit>V_s</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Weber</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Magnetic Flux Density</_title>
+      <unit type="composite" name="Wb_p_sqm">
+        <part>
+          <unit>Wb</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-2</exponent>
+        </part>
+        <_title>Weber per Square Meter</_title>
+      </unit>
+      <unit type="alias" name="T">
+        <_singular>tesla</_singular>
+        <_plural>teslas</_plural>
+        <base>
+          <unit>Wb_p_sqm</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Tesla</_title>
+      </unit>
+    </category>
+  </category>
+  <category>
+    <_title>Force</_title>
+    <unit type="composite" name="m_kg_p_sqs">
+      <part>
+        <unit>m</unit>
+        <prefix>0</prefix>
+        <exponent>1</exponent>
+      </part>
+      <part>
+        <unit>g</unit>
+        <prefix>3</prefix>
+        <exponent>1</exponent>
+      </part>
+      <part>
+        <unit>s</unit>
+        <prefix>0</prefix>
+        <exponent>-2</exponent>
+      </part>
+      <_title>Meter Kilogram per Square Second</_title>
+    </unit>
+    <unit type="alias" name="N">
+      <_singular>newton</_singular>
+      <_plural>newtons</_plural>
+      <base>
+        <unit>m_kg_p_sqs</unit>
+        <relation>1</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Newton</_title>
+    </unit>
+    <category>
+      <_title>Pressure</_title>
+      <unit type="composite" name="N_p_sqm">
+        <part>
+          <unit>N</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-2</exponent>
+        </part>
+        <_title>Newton per Square Meter</_title>
+      </unit>
+      <unit type="alias" name="Pa">
+        <_singular>pascal</_singular>
+        <_plural>pascals</_plural>
+        <base>
+          <unit>N_p_sqm</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Pascal</_title>
+      </unit>
+      <unit type="alias" name="bar">
+        <_singular>bar</_singular>
+        <_plural>bars</_plural>
+        <base>
+          <unit>Pa</unit>
+          <relation>100000</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Bar</_title>
+      </unit>
+      <unit type="alias" name="atm">
+        <_singular>atmosphere</_singular>
+        <_plural>atmospheres</_plural>
+        <base>
+          <unit>Pa</unit>
+          <relation>101325</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Atmosphere</_title>
+      </unit>
+      <unit type="alias" name="torr">
+        <_singular>torr</_singular>
+        <_plural>torrs</_plural>
+        <base>
+          <unit>Pa</unit>
+          <relation>1.333224</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Torr</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Dynamic Viscosity</_title>
+      <unit type="composite" name="Pa_s">
+        <part>
+          <unit>Pa</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <_title>Pascal Second</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Surface Tension</_title>
+      <unit type="composite" name="N_p_m">
+        <part>
+          <unit>N</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Newton per Meter</_title>
+      </unit>
+    </category>
+  </category>
+  <category>
+    <_title>Energy</_title>
+    <unit type="composite" name="N_m">
+      <part>
+        <unit>N</unit>
+        <prefix>0</prefix>
+        <exponent>1</exponent>
+      </part>
+      <part>
+        <unit>m</unit>
+        <prefix>0</prefix>
+        <exponent>1</exponent>
+      </part>
+      <_title>Newton Meter</_title>
+    </unit>
+    <unit type="alias" name="J">
+      <_singular>joule</_singular>
+      <_plural>joules</_plural>
+      <base>
+        <unit>N_m</unit>
+        <relation>1</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Joule</_title>
+    </unit>
+    <unit type="alias" name="cal">
+      <_singular>calorie</_singular>
+      <_plural>calories</_plural>
+      <base>
+        <unit>J</unit>
+        <relation>4.1868</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Calorie (international table)</_title>
+    </unit>
+    <unit type="alias" name="Calorie">
+      <_singular>Calorie</_singular>
+      <_plural>Calories</_plural>
+      <base>
+        <unit>cal</unit>
+        <relation>1000</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Calorie (capital C)</_title>
+    </unit>
+    <unit type="alias" name="cal_th">
+      <_singular>thermo_calorie</_singular>
+      <_plural>thermo_calories</_plural>
+      <base>
+        <unit>J</unit>
+        <relation>4.184</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Calorie (thermochemical)</_title>
+    </unit>
+    <unit type="alias" name="calorie_fifteen">
+      <_singular>calorie_fifteen</_singular>
+      <_plural>calories_fifteen</_plural>
+      <base>
+        <unit>J</unit>
+        <relation precise="false">4.185880</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Calorie (15 degrees Celcius)</_title>
+    </unit>
+    <unit type="alias" name="cal_mean">
+      <_singular>mean_calorie</_singular>
+      <_plural>mean_calories</_plural>
+      <base>
+        <unit>J</unit>
+        <relation precise="false">4.19002</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Calorie (mean)</_title>
+    </unit>
+    <unit type="alias" name="Btu">
+      <_singular>Btu</_singular>
+      <base>
+        <unit>J</unit>
+        <relation>1055.056</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>British Thermal Unit (IT)</_title>
+    </unit>
+    <unit type="alias" name="eV">
+      <_singular>electron_volt</_singular>
+      <_plural>electron_volts</_plural>
+      <base>
+        <unit>J</unit>
+        <relation>1.602177E-19</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Electron Volt</_title>
+    </unit>
+    <unit type="alias" name="erg">
+      <_singular>erg</_singular>
+      <_plural>ergs</_plural>
+      <base>
+        <unit>J</unit>
+        <relation>1E-7</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Erg</_title>
+    </unit>
+    <category>
+      <_title>Power</_title>
+      <unit type="composite" name="J_p_s">
+        <part>
+          <unit>J</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Joule per Second</_title>
+      </unit>
+      <unit type="alias" name="W">
+        <_singular>watt</_singular>
+        <_plural>watts</_plural>
+        <base>
+          <unit>J_p_s</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Watt</_title>
+      </unit>
+      <unit type="alias" name="hp">
+        <_singular>horsepower</_singular>
+        <_plural>horsepowers</_plural>
+        <base>
+          <unit>W</unit>
+          <relation>745.699987158227022</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Horse Power</_title>
+      </unit>
+      <unit type="alias" name="PS">
+        <_singular>pferdest&#xE4;rke</_singular>
+        <base>
+          <unit>W</unit>
+          <relation>735.49875</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Pferdest&#xE4;rke</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Entropy</_title>
+      <unit type="composite" name="J_p_K">
+        <part>
+          <unit>J</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>K</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Joule per Kelvin</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Specific Entropy</_title>
+      <unit type="composite" name="J_p_kg_K">
+        <part>
+          <unit>J</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>g</unit>
+          <prefix>3</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <part>
+          <unit>K</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Joule per Kilogram Kelvin</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Thermal Conductivity</_title>
+      <unit type="composite" name="W_p_m_K">
+        <part>
+          <unit>W</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <part>
+          <unit>K</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Watt per Meter Kelvin</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Energy Density</_title>
+      <unit type="composite" name="J_p_cum">
+        <part>
+          <unit>J</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-3</exponent>
+        </part>
+        <_title>Joule per Cubic Meter</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Molar Energy</_title>
+      <unit type="composite" name="J_p_mol">
+        <part>
+          <unit>J</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>mol</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Joule per Mole</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Molar Entropy</_title>
+      <unit type="composite" name="J_p_mol_K">
+        <part>
+          <unit>J</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>mol</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <part>
+          <unit>K</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Joule per Mole Kelvin</_title>
+      </unit>
+    </category>
+  </category>
+  <category>
+    <_title>Radioactivity</_title>
+    <unit type="alias" name="Bq">
+      <_singular>becquerel</_singular>
+      <_plural>becquerels</_plural>
+      <base>
+        <unit>s</unit>
+        <relation>1</relation>
+        <exponent>-1</exponent>
+      </base>
+      <_title>Becquerel</_title>
+    </unit>
+    <unit type="alias" name="Ci">
+      <_singular>curie</_singular>
+      <_plural>curies</_plural>
+      <base>
+        <unit>Bq</unit>
+        <relation>3.7E10</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Curie</_title>
+    </unit>
+    <category>
+      <_title>Absorbed Dose</_title>
+      <unit type="composite" name="J_p_kg">
+        <part>
+          <unit>J</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>g</unit>
+          <prefix>3</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Joule per Kilogram</_title>
+      </unit>
+      <unit type="alias" name="Gy">
+        <_singular>gray</_singular>
+        <_plural>grays</_plural>
+        <base>
+          <unit>J_p_kg</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Gray</_title>
+      </unit>
+      <unit type="alias" name="rad">
+        <_singular>rad</_singular>
+        <base>
+          <unit>Gy</unit>
+          <relation>1/100</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Rad</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Dose Equivalent</_title>
+      <unit type="alias" name="Sv">
+        <_singular>sievert</_singular>
+        <_plural>sieverts</_plural>
+        <base>
+          <unit>J_p_kg</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Sievert</_title>
+      </unit>
+      <unit type="alias" name="rem_unit">
+        <_singular>rem_unit</_singular>
+        <base>
+          <unit>Sv</unit>
+          <relation>1/100</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Rem</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Exposure</_title>
+      <unit type="composite" name="C_p_kg">
+        <part>
+          <unit>C</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>g</unit>
+          <prefix>3</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Coloumb per Kilogram</_title>
+      </unit>
+      <unit type="alias" name="R">
+        <_singular>roentgen</_singular>
+        <_plural>roentgens</_plural>
+        <base>
+          <unit>C_p_kg</unit>
+          <relation>0.000258</relation>
+          <exponent>1</exponent>
+        </base>
+        <_title>Roentgen</_title>
+      </unit>
+    </category>
+    <category>
+      <_title>Absorbed Dose Rate</_title>
+      <unit type="composite" name="Gy_p_s">
+        <part>
+          <unit>Gy</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <_title>Gray per Second</_title>
+      </unit>
+    </category>
+  </category>
+  <category>
+    <_title>Currency</_title>
+    <unit type="base" name="euro">
+      <_singular>euro</_singular>
+      <_plural>euros</_plural>
+      <_title>Euro</_title>
+    </unit>
+    <unit type="alias" name="BEF">
+      <_singular>BEF</_singular>
+      <base>
+        <unit>euro</unit>
+        <relation>1/40.3399</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Belgian franc</_title>
+    </unit>
+    <unit type="alias" name="GRD">
+      <_singular>GRD</_singular>
+      <base>
+        <unit>euro</unit>
+        <relation>1/340.750</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Greek drachma</_title>
+    </unit>
+    <unit type="alias" name="FRF">
+      <_singular>FRF</_singular>
+      <base>
+        <unit>euro</unit>
+        <relation>1/6.55957</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>French franc</_title>
+    </unit>
+    <unit type="alias" name="ITL">
+      <_singular>ITL</_singular>
+      <base>
+        <unit>euro</unit>
+        <relation>1/1936.27</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Italian lira</_title>
+    </unit>
+    <unit type="alias" name="NLG">
+      <_singular>NLG</_singular>
+      <base>
+        <unit>euro</unit>
+        <relation>1/2.20371</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Dutch guilder</_title>
+    </unit>
+    <unit type="alias" name="PTE">
+      <_singular>PTE</_singular>
+      <base>
+        <unit>euro</unit>
+        <relation>1/200.482</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Portuguese escudo</_title>
+    </unit>
+    <unit type="alias" name="DEM">
+      <_singular>DEM</_singular>
+      <base>
+        <unit>euro</unit>
+        <relation>1/1.95583</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Deutche Mark</_title>
+    </unit>
+    <unit type="alias" name="ESP">
+      <_singular>ESP</_singular>
+      <base>
+        <unit>euro</unit>
+        <relation>1/166.386</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Spanish peseta</_title>
+    </unit>
+    <unit type="alias" name="IEP">
+      <_singular>IEP</_singular>
+      <base>
+        <unit>euro</unit>
+        <relation>1/0.787564</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Irish pound</_title>
+    </unit>
+    <unit type="alias" name="LUF">
+      <_singular>LUF</_singular>
+      <base>
+        <unit>euro</unit>
+        <relation>1/40.3399</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Luxembourg franc</_title>
+    </unit>
+    <unit type="alias" name="ATS">
+      <_singular>ATS</_singular>
+      <base>
+        <unit>euro</unit>
+        <relation>1/13.7603</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Austrian shilling</_title>
+    </unit>
+    <unit type="alias" name="FIM">
+      <_singular>FIM</_singular>
+      <base>
+        <unit>euro</unit>
+        <relation>1/5.94573</relation>
+        <exponent>1</exponent>
+      </base>
+      <_title>Finnish markka</_title>
+    </unit>
+  </category>
 </QALCULATE>
