@@ -1,4 +1,4 @@
-* Sort out approximate integers
+* Sort out when small floats really are zero
 * Sort out x^-y -- (1/3)/(x+y)=1/3(x+y) but 1/3(x+y)=1/(3x+3y)
 * Quoted ")" in function
 * Limit fraction precision

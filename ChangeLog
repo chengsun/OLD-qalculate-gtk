@@ -1,3 +1,8 @@
+2004-07-05 Niklas Knutsson  <nq@altern.org>
+
+	* Follow ISO 8601 standard for week numbers (glib doesn't)
+	* Sort out approximation with rounding
+
 2004-07-03 Niklas Knutsson  <nq@altern.org>
 
 	* Fix input of numbers in bases > 10

@@ -1155,21 +1155,33 @@ bool Number::signum() {
 }
 bool Number::round() {
 	if(isInfinite() || isComplex()) return false;
+	if(b_approx) {
+		if(isInteger()) {
+			if(!cln::zerop(cln::rem(cln::realpart(value), 10))) {
+				b_approx = false;
+			}
+		} else {
+			b_approx = false;
+		}
+	}
 	value = cln::round1(cln::realpart(value));
 	return true;
 }
 bool Number::floor() {
 	if(isInfinite() || isComplex()) return false;
+	//if(b_approx && !isInteger()) b_approx = false;
 	value = cln::floor1(cln::realpart(value));
 	return true;
 }
 bool Number::ceil() {
 	if(isInfinite() || isComplex()) return false;
+	//if(b_approx && !isInteger()) b_approx = false;
 	value = cln::ceiling1(cln::realpart(value));
 	return true;
 }
 bool Number::trunc() {
 	if(isInfinite() || isComplex()) return false;
+	//if(b_approx && !isInteger()) b_approx = false;
 	value = cln::truncate1(cln::realpart(value));
 	return true;
 }

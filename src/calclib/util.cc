@@ -77,7 +77,30 @@ int week(string str, bool start_sunday) {
 		if(start_sunday) {
 			week = g_date_get_sunday_week_of_year(gtime);
 		} else {
-			week = g_date_get_monday_week_of_year(gtime);
+			if(g_date_get_month(gtime) == G_DATE_DECEMBER && g_date_get_day(gtime) >= 29 && g_date_get_weekday(gtime) <= g_date_get_day(gtime) - 28) {
+				week = 1;
+			} else {
+				calc_week_1:
+				int day = g_date_get_day_of_year(gtime);
+				g_date_set_day(gtime, 1);
+				g_date_set_month(gtime, G_DATE_JANUARY);
+				int wday = g_date_get_weekday(gtime);
+				day -= (8 - wday);
+				if(wday <= 4) {
+					week = 1;
+				} else {
+					week = 0;
+				}
+				if(day > 0) {
+					day--;
+					week += day / 7 + 1;
+				}
+				if(week == 0) {
+					int year = g_date_get_year(gtime);
+					g_date_set_dmy(gtime, 31, G_DATE_DECEMBER, year - 1);
+					goto calc_week_1;
+				}
+			}
 		}
 	}
 	g_date_free(gtime);
