@@ -142,18 +142,15 @@ Manager *Unit::convert(Unit *u, Manager *value_, Manager *exp_, bool *converted)
 	if(!exp_) exp_ = new Manager(calc, 1.0L);
 	else exp_->ref();
 	bool b = false;
-	if(u->type() == 'D') {
+	if(u->baseUnit() == baseUnit()) {
+		u->baseValue(value_, exp_);		
+		convertToBase(value_, exp_);
+		b = true;
+	} else if(u->type() == 'D') {
 		CompositeUnit *cu = (CompositeUnit*) u;
 		for(int i = 0; i < cu->units.size(); i++) {
 			if(convert(cu->units[i], value_, exp_)) b = true;
 		}
-	} else if(u->baseUnit() == baseUnit()) {
-		printf("EXP 0: %s\n", exp_->print().c_str());	
-		u->baseValue(value_, exp_);		
-		printf("EXP 1: %s\n", exp_->print().c_str());
-		convertToBase(value_, exp_);
-		printf("EXP 2: %s\n", exp_->print().c_str());		
-		b = true;
 	}
 	exp_->unref();
 	if(converted) *converted = b;

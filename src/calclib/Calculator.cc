@@ -198,6 +198,7 @@ Manager *Calculator::calculate(string str) {
 	setFunctionsAndVariables(str);
 	EqContainer *e = new EqContainer(str, this, PLUS_CH);
 	Manager *mngr = e->calculate();
+	mngr->finalize();
 	mngr->ref();
 /*	int vtype = fpclassify(value);
 	if(vtype == FP_NAN)
@@ -269,6 +270,7 @@ Manager *Calculator::convert(string str, Unit *from_unit, Unit *to_unit) {
 	} else {
 		mngr->add(from_unit, DIVISION_CH);
 	}
+	mngr->finalize();
 	return mngr;
 }
 Unit* Calculator::addUnit(Unit *u, bool force) {
@@ -897,11 +899,11 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						i4 = i + u->plural().length() - 1;
 					else
 						i4 = i + u->name().length() - 1;
-					if(i4 != str.length() - 1 && is_not_in(SPACE_S NUMBERS_S OPERATORS_S BRACKETS_S DOT_S, str[i4 + 1])) {
+/*					if(i4 != str.length() - 1 && is_not_in(SPACE_S NUMBERS_S OPERATORS_S BRACKETS_S DOT_S, str[i4 + 1])) {
 						i3 = i + 1;
 						if(i3 >= str.length()) break;
 						goto find_unit;
-					}
+					}*/
 					i5 = str.find_last_of(NUMBERS_S OPERATORS_S BRACKETS_S SPACE_S, i);
 					if(i5 == string::npos)
 						i5 = 0;

@@ -76,14 +76,17 @@ class Manager {
 		void unit(Unit *u, long double value_ = 1);		
 		bool negative();
 		void finalize();
+		void syncUnits();		
 		bool testDissolveCompositeUnit(Unit *u);
+		bool testCompositeUnit(Unit *u);	
+		bool dissolveAllCompositeUnits();			
 		bool convert(Unit*);
 		bool convert(string unit_str);		
 		bool convert(Manager *unit_mngr);				
 		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int unitflags = UNIT_FORMAT_DEFAULT, int precision = PRECISION, int decimals_to_keep = 0, bool decimals_expand = true, bool decimals_decrease = false, bool *usable = NULL, bool toplevel = true, bool *plural = NULL);
 		void ref(void);
 		void unref(void);
-		char type(void);
+		char type(void) const;
 
 };
 
