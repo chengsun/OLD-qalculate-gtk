@@ -1307,6 +1307,10 @@ void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gp
 				case ARGUMENT_TYPE_VARIABLE: {
 					menu_index = MENU_ARGUMENT_TYPE_VARIABLE;
 					break;
+				}
+				case ARGUMENT_TYPE_FILE: {
+					menu_index = MENU_ARGUMENT_TYPE_FILE;
+					break;
 				}					
 				case ARGUMENT_TYPE_BOOLEAN: {
 					menu_index = MENU_ARGUMENT_TYPE_BOOLEAN;
@@ -4044,6 +4048,12 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 					g_signal_connect((gpointer) type_label[i], "clicked", G_CALLBACK(on_type_label_date_clicked), (gpointer) entry[i]);
 					break;
 				}
+				case ARGUMENT_TYPE_FILE: {
+					typestr = typestr.substr(1, typestr.length() - 2);
+					type_label[i] = gtk_button_new_with_label(typestr.c_str());
+					g_signal_connect((gpointer) type_label[i], "clicked", G_CALLBACK(on_type_label_file_clicked), (gpointer) entry[i]);
+					break;
+				}
 				default: {
 					type_label[i] = gtk_label_new(typestr.c_str());		
 					gtk_misc_set_alignment(GTK_MISC(type_label[i]), 1, 0.5);
@@ -4091,7 +4101,7 @@ void insert_function(Function *f, GtkWidget *parent = NULL) {
 			if(i >= f->minargs()) {
 				remove_blank_ends(str2);
 			}
-			if(!(i >= f->minargs() && str2.empty()) && f->getArgumentDefinition(i + 1) && f->getArgumentDefinition(i + 1)->suggestsQuotes()) {
+			if(!(i >= f->minargs() && str2.empty()) && f->getArgumentDefinition(i + 1) && (f->getArgumentDefinition(i + 1)->suggestsQuotes() || (f->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_TEXT && str2.find(CALCULATOR->getComma()) != string::npos))) {
 				if(str2.length() < 1 || (str2[0] != '\"' && str[0] != '\'')) { 
 					str2.insert(0, "\"");
 					str2 += "\"";
@@ -7277,6 +7287,23 @@ void on_type_label_date_clicked(GtkButton *w, gpointer user_data) {
 	}
 	gtk_widget_destroy(d);
 }
+void on_type_label_file_clicked(GtkButton *w, gpointer user_data) {
+#if GTK_MINOR_VERSION >= 3
+	GtkWidget *d = gtk_file_chooser_dialog_new(_("Select file to import"), GTK_WINDOW(glade_xml_get_widget(csvimport_glade, "csv_import_dialog")), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+//disable until segmantation fault fixed	
+//	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d), gtk_entry_get_text(GTK_ENTRY(user_data)));
+	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT) {
+		gtk_entry_set_text(GTK_ENTRY(user_data), gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d)));
+	}
+	gtk_widget_destroy(d);
+#else	
+	GtkWidget *d = gtk_file_selection_new(_("Select file to import"));
+	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
+		gtk_entry_set_text(GTK_ENTRY(user_data), gtk_file_selection_get_filename(GTK_FILE_SELECTION(d)));
+	}
+	gtk_widget_destroy(d);
+#endif
+}
 
 void on_functions_button_deactivate_clicked(GtkButton *w, gpointer user_data) {
 	Function *f = get_selected_function();
@@ -7325,6 +7352,7 @@ void on_function_edit_button_add_argument_clicked(GtkButton *w, gpointer user_da
 			case MENU_ARGUMENT_TYPE_FUNCTION: {arg = new FunctionArgument(); break;}
 			case MENU_ARGUMENT_TYPE_UNIT: {arg = new UnitArgument(); break;}
 			case MENU_ARGUMENT_TYPE_VARIABLE: {arg = new VariableArgument(); break;}
+			case MENU_ARGUMENT_TYPE_FILE: {arg = new FileArgument(); break;}
 			case MENU_ARGUMENT_TYPE_BOOLEAN: {arg = new BooleanArgument(); break;}	
 			case MENU_ARGUMENT_TYPE_ANGLE: {arg = new AngleArgument(); break;}	
 			case MENU_ARGUMENT_TYPE_GIAC: {arg = new GiacArgument(); break;}	
@@ -7377,6 +7405,7 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 				case MENU_ARGUMENT_TYPE_FUNCTION: {argtype = ARGUMENT_TYPE_FUNCTION; break;}
 				case MENU_ARGUMENT_TYPE_UNIT: {argtype = ARGUMENT_TYPE_UNIT; break;}
 				case MENU_ARGUMENT_TYPE_VARIABLE: {argtype = ARGUMENT_TYPE_VARIABLE; break;}
+				case MENU_ARGUMENT_TYPE_FILE: {argtype = ARGUMENT_TYPE_FILE; break;}
 				case MENU_ARGUMENT_TYPE_BOOLEAN: {argtype = ARGUMENT_TYPE_BOOLEAN; break;}	
 				case MENU_ARGUMENT_TYPE_ANGLE: {argtype = ARGUMENT_TYPE_ANGLE; break;}	
 				case MENU_ARGUMENT_TYPE_GIAC: {argtype = ARGUMENT_TYPE_GIAC; break;}	
@@ -7403,6 +7432,7 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 					case MENU_ARGUMENT_TYPE_FUNCTION: {selected_argument = new FunctionArgument(); break;}
 					case MENU_ARGUMENT_TYPE_UNIT: {selected_argument = new UnitArgument(); break;}
 					case MENU_ARGUMENT_TYPE_VARIABLE: {selected_argument = new VariableArgument(); break;}
+					case MENU_ARGUMENT_TYPE_FILE: {selected_argument = new FileArgument(); break;}
 					case MENU_ARGUMENT_TYPE_BOOLEAN: {selected_argument = new BooleanArgument(); break;}	
 					case MENU_ARGUMENT_TYPE_ANGLE: {selected_argument = new AngleArgument(); break;}
 					case MENU_ARGUMENT_TYPE_GIAC: {selected_argument = new GiacArgument(); break;}	

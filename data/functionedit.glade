@@ -711,6 +711,14 @@
 			  </child>
 
 			  <child>
+			    <widget class="GtkMenuItem" id="item30">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">File</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
 			    <widget class="GtkMenuItem" id="item59">
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Angle</property>

@@ -150,6 +150,19 @@
   </category>
   <category>
     <_title>Matrices &amp; Vectors</_title>
+    <builtin_function name="load">
+      <_title>Load CSV file</_title>
+      <argument index="1">
+        <_title>File name</_title>
+      </argument>
+      <argument index="2">
+        <_title>First data row</_title>
+      </argument>
+      <argument index="3">
+        <_title>Separator</_title>
+      </argument>
+      <_description>Imports a CSV data file as a matrix.</_description>
+    </builtin_function>    
     <builtin_function name="matrix">
       <_title>Construct matrix</_title>
       <argument index="1">

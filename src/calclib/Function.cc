@@ -1313,6 +1313,15 @@ Argument *VariableArgument::copy() const {return new VariableArgument(this);}
 string VariableArgument::print() const {return _("variable");}
 string VariableArgument::subprintlong() const {return _("a valid variable name");}
 
+FileArgument::FileArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
+FileArgument::FileArgument(const FileArgument *arg) {set(arg); b_text = true;}
+FileArgument::~FileArgument() {}
+bool FileArgument::subtest(const Manager *value) const {return value->isText();}
+int FileArgument::type() const {return ARGUMENT_TYPE_FILE;}
+Argument *FileArgument::copy() const {return new FileArgument(this);}
+string FileArgument::print() const {return _("file");}
+string FileArgument::subprintlong() const {return _("a valid file name");}
+
 BooleanArgument::BooleanArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
 BooleanArgument::BooleanArgument(const BooleanArgument *arg) {set(arg);}
 BooleanArgument::~BooleanArgument() {}

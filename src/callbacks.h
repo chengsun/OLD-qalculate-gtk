@@ -255,6 +255,7 @@ void on_csv_import_optionmenu_delimiter_changed(GtkOptionMenu *w, gpointer user_
 void on_csv_import_button_file_clicked(GtkButton *button, gpointer user_data);
 
 void on_type_label_date_clicked(GtkButton *w, gpointer user_data);
+void on_type_label_file_clicked(GtkButton *w, gpointer user_data);
 
 void on_functions_button_deactivate_clicked(GtkButton *w, gpointer user_data);
 void on_variables_button_deactivate_clicked(GtkButton *w, gpointer user_data);

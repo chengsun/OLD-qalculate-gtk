@@ -19,6 +19,7 @@ enum {
 	ARGUMENT_TYPE_FREE,
 	ARGUMENT_TYPE_TEXT,
 	ARGUMENT_TYPE_DATE,
+	ARGUMENT_TYPE_FILE,
 	ARGUMENT_TYPE_INTEGER,	
 	ARGUMENT_TYPE_FRACTION,
 	ARGUMENT_TYPE_VECTOR,	
@@ -237,6 +238,7 @@ class TextArgument : public Argument {
 	virtual string print() const;
 	virtual bool suggestsQuotes() const;
 };
+
 class GiacArgument : public Argument {
 
   protected:
@@ -393,6 +395,22 @@ class VariableArgument : public Argument {
   	VariableArgument(string name_ = "", bool does_test = true, bool does_error = true);
 	VariableArgument(const VariableArgument *arg);
 	virtual ~VariableArgument();
+	virtual int type() const;
+	virtual Argument *copy() const;
+	virtual string print() const;
+};
+class FileArgument : public Argument {
+
+  protected:
+  
+	virtual bool subtest(const Manager *value) const;  
+	virtual string subprintlong() const;
+
+  public:
+  
+  	FileArgument(string name_ = "", bool does_test = true, bool does_error = true);
+	FileArgument(const FileArgument *arg);
+	virtual ~FileArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;

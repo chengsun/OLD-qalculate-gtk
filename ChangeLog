@@ -1,5 +1,7 @@
 2004-03-01  Niklas Knutsson  <nq@altern.org>
 
+	* Load CSV file as matrix function (load)
+	* File argument
 	* Replace localized decimal point with dot in plot data
 	* Save history (20 rows)
 	* Expression entry history

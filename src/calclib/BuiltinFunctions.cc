@@ -1619,4 +1619,21 @@ void IntegrateFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		return;
 	}
 }
+LoadFunction::LoadFunction() : Function("Utilities", "load", 1, "Load CSV file", "", 3) {
+	setArgumentDefinition(1, new FileArgument());
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setDefaultValue(2, "1");
+	setArgumentDefinition(3, new TextArgument());
+	setDefaultValue(3, ",");	
+}
 #endif
+void LoadFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	if(vargs[2]->text() == "tab") {
+		vargs[2]->text() = "\t";
+	}
+	Matrix *mtrx = CALCULATOR->importCSV(vargs[0]->text().c_str(), vargs[1]->fraction()->numerator()->getInt(), vargs[2]->text());
+	if(!mtrx) {
+		CALCULATOR->error(true, "Failed to load %s.", vargs[0]->text().c_str(), NULL);
+	}
+	mngr->set(mtrx);
+}

@@ -789,6 +789,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new DeriveFunction());
 	addFunction(new IntegrateFunction());
 #endif
+	addFunction(new LoadFunction());
 }
 void Calculator::addBuiltinUnits() {
 	addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true));
@@ -3440,6 +3441,82 @@ Manager *Calculator::setAngleValue(Manager *mngr) {
 		mngr->finalize();
 	}
 	return mngr;
+}
+
+Matrix *Calculator::importCSV(const char *file_name, int first_row, string delimiter, vector<string> *headers) {
+	FILE *file = fopen(file_name, "r");
+	if(file == NULL) {
+		return NULL;
+	}
+	if(first_row < 1) {
+		first_row = 1;
+	}
+	char line[10000];
+	string stmp, str1, str2;
+	int row = 0;
+	int columns = 1;
+	int column;
+	Manager *mngr;
+	Matrix *mtrx = NULL;
+	int is, is_n;
+	bool v_added = false;
+	while(fgets(line, 10000, file)) {
+		row++;
+		if(row >= first_row) {	
+			stmp = line;
+			remove_blank_ends(stmp);
+			if(row == first_row) {
+				if(stmp.empty()) {
+					row--;
+				} else {
+					is = 0;
+					while((is_n = stmp.find(delimiter, is)) != (int) string::npos) {		
+						columns++;
+						if(headers) {
+							str1 = stmp.substr(is, is_n - is);
+							remove_blank_ends(str1);
+							headers->push_back(str1);
+						}
+						is = is_n + delimiter.length();
+					}
+					if(headers) {
+						str1 = stmp.substr(is, stmp.length() - is);
+						remove_blank_ends(str1);
+						headers->push_back(str1);
+					}
+					mtrx = new Matrix(1, columns);
+				}
+			}
+			if((!headers || row > first_row) && !stmp.empty()) {
+				if(v_added) {
+					mtrx->addRow();
+				}
+				is = 0;
+				column = 1;
+				while(column <= columns) {
+					is_n = stmp.find(delimiter, is);
+					if(is_n == (int) string::npos) {
+						str1 = stmp.substr(is, stmp.length() - is);
+					} else {
+						str1 = stmp.substr(is, is_n - is);
+						is = is_n + delimiter.length();
+					}
+					mngr = CALCULATOR->calculate(str1);
+					mtrx->set(mngr, mtrx->rows(), column);
+					mngr->unref();
+					column++;
+					if(is_n == (int) string::npos) {
+						break;
+					}
+				}
+				for(; column <= columns; column++) {
+					mtrx->set(NULL, mtrx->rows(), column);
+				}
+				v_added = true;
+			}
+		}
+	}
+	return mtrx;
 }
 
 bool Calculator::importCSV(const char *file_name, int first_row, bool headers, string delimiter, bool to_matrix, string name, string title, string category) {
