@@ -503,13 +503,74 @@ Manager *Calculator::convert(long double value, Unit *from_unit, Unit *to_unit) 
 Manager *Calculator::convert(string str, Unit *from_unit, Unit *to_unit) {
 	Manager *mngr = calculate(str);
 	mngr->add(from_unit, MULTIPLICATION_CH);
-	if(mngr->convert(to_unit)) {
-		mngr->add(to_unit, DIVISION_CH);
-	} else {
-		mngr->add(from_unit, DIVISION_CH);
+	mngr->finalize();	
+//	mngr->convert(to_unit);
+	mngr->add(to_unit, DIVISION_CH);
+	mngr->finalize();	
+	return mngr;
+}
+Manager *Calculator::convert(Manager *mngr, Unit *to_unit, bool always_convert) {
+	if(to_unit->type() == 'D') return convertToCompositeUnit(mngr, (CompositeUnit*) to_unit, always_convert);
+	if(to_unit->type() != 'A' || ((AliasUnit*) to_unit)->baseUnit()->type() != 'D') {
+		Manager *mngr_old = new Manager(mngr);
+		mngr->finalize();
+		if(!mngr->convert(to_unit)) {
+			mngr->moveto(mngr_old);
+		}
+		mngr_old->unref();
+		return mngr;
 	}
 	mngr->finalize();
+	if(mngr->type() == ADDITION_MANAGER) {
+		for(int i = 0; i < mngr->mngrs.size(); i++) {
+			convert(mngr->mngrs[i], to_unit, false);
+		}
+		mngr->sort();
+	} else {
+		if(mngr->convert(to_unit) || always_convert) {
+			mngr->add(to_unit, DIVISION_CH);
+			mngr->finalize();			
+			Manager *mngr2 = new Manager(this, to_unit);
+			if(mngr->type() == MULTIPLICATION_MANAGER) {
+				mngr->mngrs.push_back(mngr2);
+			} else {
+				mngr->transform(mngr2, MULTIPLICATION_MANAGER, MULTIPLICATION_CH);
+				mngr2->unref();
+			}
+			mngr->sort();
+		}
+	}
 	return mngr;
+}
+Manager *Calculator::convertToCompositeUnit(Manager *mngr, CompositeUnit *cu, bool always_convert) {
+	mngr->finalize();
+	Manager *mngr3 = cu->generateManager(true);
+	if(mngr->type() == ADDITION_MANAGER) {
+		for(int i = 0; i < mngr->mngrs.size(); i++) {
+			convertToCompositeUnit(mngr->mngrs[i], cu, false);
+		}
+		mngr->sort();
+	} else {
+		if(mngr->convert(cu) || always_convert) {	
+			mngr->add(mngr3, DIVISION_CH);
+			mngr->finalize();			
+			Manager *mngr2 = new Manager(this, cu);
+			if(mngr->type() == MULTIPLICATION_MANAGER) {
+				mngr->mngrs.push_back(mngr2);
+			} else {
+				mngr->transform(mngr2, MULTIPLICATION_MANAGER, MULTIPLICATION_CH);
+				mngr2->unref();		
+			}
+			mngr->sort();
+		}
+	}
+	mngr3->unref();
+	return mngr;
+}
+Manager *Calculator::convert(Manager *mngr, string composite_) {
+	CompositeUnit *cu = new CompositeUnit(this, "", "temporary_composite_convert", "", composite_);
+	convertToCompositeUnit(mngr, cu);
+	return mngr;			
 }
 Unit* Calculator::addUnit(Unit *u, bool force) {
 	if(u->type() == 'D') {
@@ -941,7 +1002,6 @@ void Calculator::setFunctionsAndVariables(string &str) {
 			i3 = str.length();
 			b = true;
 		}
-		printf("%i : %i\n", i, i3);		
 		stmp = str.substr(i + 1, i3 - i - 1);
 		remove_blank_ends(stmp);
 		if(stmp.empty()) {
@@ -955,7 +1015,6 @@ void Calculator::setFunctionsAndVariables(string &str) {
 			stmp += RIGHT_BRACKET_STR;
 			if(b) str.replace(i, str.length() - i, stmp);
 			else str.replace(i, i3 + 1 - i, stmp);
-			printf("%s : %s\n", stmp.c_str(), str.c_str());
 			mngr->unref();		
 		}
 	}	
@@ -1873,81 +1932,44 @@ string Calculator::value2str_hex(long double &value, int precision) {
 	string stmp = vbuffer;
 	return stmp;
 }
-/*string Calculator::value2str_prefix(long double &value, long double &exp, int precision, bool use_short_prefixes, long double *new_value) {
-	string str;
-	long int i1, i2, iv, iv2 = 0;
-	char state = 2;
-	hash_map<char, long double>::iterator it, itt;
-	l_type::iterator it2, itt2;
-	i1 = (long int) floorl(log10l(value));
-	if(i1 != 0) {
+
+string Calculator::value2str_prefix(long double &value, long double &exp, int precision, bool use_short_prefixes, long double *new_value, long double prefix_) {
+	long double d1;
+	if(prefix_ >= 0.0L) {
+		string str = "";
 		if(use_short_prefixes) {
-			for(it = s_prefix.begin(); it != s_prefix.end(); ++it) {
-				iv = lroundl(powl(log10l(it->second), exp));
-				if(iv == i1) {
-					itt = it;
-					iv2 = iv;
-					state = 1;
-					break;
-				} else if((i1 > 0 && ((iv < i1 && iv > i1 - 10 && iv > iv2) || (iv2 > i1 && iv > i1 - 10 && (iv < iv2 || iv2 == 0)))) || (i1 < 0 && ((iv < i1 && iv > iv2) || (iv2 > i1 && iv < i1 + 4 && (iv < iv2 || iv2 == 0))))) {
-					iv2 = iv;
-					itt = it;
-					state = 2;
+			char c = getSPrefix(prefix_);
+			if(!c) {
+				str = getLPrefix(prefix_);
+			} else {
+				str = c;
+			}
+		} else {
+			str = getLPrefix(prefix_);
+			if(str.empty()) {
+				char c = getSPrefix(prefix_);
+				if(!c) {
+					str = "";
+				} else {
+					str = c;
 				}
-			}
+			}		
+		}		
+		if(!str.empty()) {
+			d1 = powl(prefix_, exp);
+			d1 = value / d1;
+			string str2 = value2str(d1, precision);
+			str2 += ' ';
+			str2 += str;
+			if(new_value)
+				*new_value = d1;
+			return str2;
 		}
-		for(it2 = l_prefix.begin(); it2 != l_prefix.end() && state > 1; it2++) {
-			iv = lroundl(powl(log10l(it2->second), exp));
-			if(iv == i1) {
-				itt2 = it2;
-				iv2 = iv;
-				state = 3;
-				break;
-			} else if((i1 > 0 && ((iv < i1 && iv > i1 - 10 && iv > iv2) || (iv2 > i1 && iv > i1 - 10 && (iv < iv2 || iv2 == 0)))) || (i1 < 0 && ((iv < i1 && iv > iv2) || (iv2 > i1 && iv < i1 + 4 && (iv < iv2 || iv2 == 0))))) {
-				iv2 = iv;
-				itt2 = it2;
-				state = 4;
-			}
-		}
-		if(!use_short_prefixes && state != 3) {
-			for(it = s_prefix.begin(); it != s_prefix.end(); ++it) {
-				iv = lroundl(powl(log10l(it->second), exp));
-				if(iv == i1) {
-					itt = it;
-					iv2 = iv;
-					state = 1;
-					break;
-				} else if((i1 > 0 && ((iv < i1 && iv > i1 - 10 && iv > iv2) || (iv2 > i1 && iv > i1 - 10 && (iv < iv2 || iv2 == 0)))) || (i1 < 0 && ((iv < i1 && iv > iv2) || (iv2 > i1 && iv < i1 + 4 && (iv < iv2 || iv2 == 0))))) {
-					iv2 = iv;
-					itt = it;
-					state = 2;
-				}
-			}
-		}
-	}
-	if(iv2 != 0) {
-		long double vtmp;
-		if(state > 2)
-			vtmp = powl(itt2->second, exp);
-		else
-			vtmp = powl(itt->second, exp);
-		vtmp = value / vtmp;
 		if(new_value)
-			*new_value = vtmp;
-		str = value2str(vtmp, precision);
-		str += ' ';
-		if(state > 2)
-			str += itt2->first;
-		else
-			str += itt->first;
-		return str;
+			*new_value = value;	
+		return value2str(value, precision);		
 	}
-	if(new_value)
-		*new_value = value;
-	return value2str(value, precision);
-}*/
-string Calculator::value2str_prefix(long double &value, long double &exp, int precision, bool use_short_prefixes, long double *new_value) {
-	long double d1, d2, d3;
+	long double d2, d3;
 	hash_map<char, long double>::iterator it, itt;
 	l_type::iterator it2, itt2;
 	if(value == 1.0L || value == 0.0L) {

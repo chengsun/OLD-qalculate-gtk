@@ -123,6 +123,7 @@ int main (int argc, char **argv) {
 	create_fmenu();
 	create_vmenu();	
 	create_pmenu();	
+	create_pmenu2();		
 	create_umenu();
 	create_umenu2();
 	

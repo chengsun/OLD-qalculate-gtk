@@ -75,6 +75,9 @@ class Calculator {
 	Manager *calculate(string str);
 	Manager *convert(long double value, Unit *from_unit, Unit *to_unit);
 	Manager *convert(string str, Unit *from_unit, Unit *to_unit);	
+	Manager *convert(Manager *mngr, Unit *to_unit, bool always_convert = true);		
+	Manager *convert(Manager *mngr, string composite_);	
+	Manager *convertToCompositeUnit(Manager *mngr, CompositeUnit *cu, bool always_convert = true);		
 	void checkFPExceptions(void);
 	void checkFPExceptions(const char *str);	
 	void deleteName(string name_, void *object = NULL);
@@ -125,7 +128,7 @@ class Calculator {
 	string value2str_bin(long double &value, int precision = PRECISION);				
 	string value2str_octal(long double &value, int precision = PRECISION);		
 	string value2str_hex(long double &value, int precision = PRECISION);			
-	string value2str_prefix(long double &value, long double &exp, int precision = PRECISION, bool use_short_prefixes = true, long double *new_value = NULL);
+	string value2str_prefix(long double &value, long double &exp, int precision = PRECISION, bool use_short_prefixes = true, long double *new_value = NULL, long double prefix_ = -1.0L);
 	string value2str_exp(long double &value, int precision = PRECISION);
 	string value2str_exp_pure(long double &value, int precision = PRECISION);	
 	long double getAngleValue(long double value);

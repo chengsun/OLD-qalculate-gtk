@@ -35,7 +35,6 @@ class Manager {
 		void multiclean();		
 		void powerclean();				
 		bool reverseadd(Manager *mngr, char sign, bool translate_ = true);
-		void transform(Manager *mngr, char type_, char sign, bool reverse_ = false);
 		bool mergable(Manager *mngr, char type_);
 		bool compatible(Manager *mngr);
 	
@@ -50,6 +49,7 @@ class Manager {
 		string s_var;
 		Function *o_function;
 		
+		void transform(Manager *mngr, char type_, char sign, bool reverse_ = false);		
 	
 		void moveto(Manager *mngr);			
 		
@@ -86,7 +86,7 @@ class Manager {
 		bool convert(Unit*);
 		bool convert(string unit_str);		
 		bool convert(Manager *unit_mngr);				
-		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int unitflags = UNIT_FORMAT_DEFAULT, int precision = PRECISION, int decimals_to_keep = 0, bool decimals_expand = true, bool decimals_decrease = false, bool *usable = NULL, bool toplevel = true, bool *plural = NULL, long double *d_exp = NULL);
+		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int unitflags = UNIT_FORMAT_DEFAULT, int precision = PRECISION, int decimals_to_keep = 0, bool decimals_expand = true, bool decimals_decrease = false, bool *usable = NULL, long double prefix_ = -1.0L, bool toplevel = true, bool *plural = NULL, long double *d_exp = NULL, bool in_composite = false);
 		void ref(void);
 		void unref(void);
 		char type(void) const;

@@ -130,7 +130,7 @@ class CompositeUnit : public Unit {
 		virtual bool hasPlural(void);
 		virtual char type() const;
 		virtual bool containsRelativeTo(Unit *u);
-		virtual Manager *generateManager();		
+		virtual Manager *generateManager(bool cleaned = true);		
 		virtual string internalName();
 		virtual void baseExpression(string base_expression_);		
 };

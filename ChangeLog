@@ -1,3 +1,8 @@
+2003-08-13  Niklas Knutsson  <nq@altern.org>
+
+	* Selectable prefix in result
+	* Fully functional unit conversion!
+
 2003-08-12  Niklas Knutsson  <nq@altern.org>
 
 	* Interpret "apple" as an unknown variable named apple

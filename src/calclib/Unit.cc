@@ -537,10 +537,11 @@ string CompositeUnit::print(bool plural_, bool short_) {
 				b = true;
 			}*/
 			if(units[sorted[i]]->firstBaseExp() < 0) {
-				str += DIVISION_CH;
+				str += DIVISION_STR;
 				b = true;
 			} else {
-				if(i > 0) str += MULTIPLICATION_CH;
+//				if(i > 0) str += MULTIPLICATION_STR;
+				if(i > 0) str += " ";
 				b = false;
 			}
 			if(short_) {
@@ -588,13 +589,54 @@ char CompositeUnit::type() const {
 	return 'D';
 }
 bool CompositeUnit::containsRelativeTo(Unit *u) {
+	if(u == this) return false;
+	CompositeUnit *cu;
 	for(int i = 0; i < units.size(); i++) {
 		if(u == units[i] || u->baseUnit() == units[i]->baseUnit()) return true;
+		if(units[i]->baseUnit()->type() == 'D') {
+			cu = (CompositeUnit*) units[i]->baseUnit();
+			if(cu->containsRelativeTo(u)) return true;
+		}
 	}
+	if(u->type() == 'D') {
+		cu = (CompositeUnit*) u;
+		for(int i = 0; i < cu->units.size(); i++) {	
+			if(containsRelativeTo(cu->units[i]->baseUnit())) return true;
+		}
+		return false;
+	}	
 	return false;
 }
-Manager *CompositeUnit::generateManager() {
-	return calc->calculate(print(false, true));
+Manager *CompositeUnit::generateManager(bool cleaned) {
+	if(cleaned) {
+		return calc->calculate(print(false, true));
+	} else {
+		Manager *mngr = new Manager(calc);
+		if(units.size() > 0) mngr->c_type = MULTIPLICATION_MANAGER;
+		for(int i = 0; i < units.size(); i++) {
+			if(units[i]->firstBaseExp() != 1.0L) {
+				Manager *mngr2 = new Manager(calc);
+				mngr2->c_type = POWER_MANAGER;
+				if(units[i]->prefixValue() != 1.0L) {
+					Manager *mngr3 = new Manager(calc);
+					mngr3->c_type = MULTIPLICATION_MANAGER;
+					mngr3->mngrs.push_back(new Manager(calc, units[i]->prefixValue()));
+					mngr3->mngrs.push_back(new Manager(calc, units[i]->firstBaseUnit()));
+					mngr2->mngrs.push_back(mngr3);
+				} else {				
+					mngr2->mngrs.push_back(new Manager(calc, units[i]->firstBaseUnit()));
+				}
+				mngr2->mngrs.push_back(new Manager(calc, units[i]->firstBaseExp()));
+				mngr->mngrs.push_back(mngr2);				
+			} else {
+				if(units[i]->prefixValue() != 1.0L) {
+					mngr->mngrs.push_back(new Manager(calc, units[i]->prefixValue()));
+				}
+				mngr->mngrs.push_back(new Manager(calc, units[i]->firstBaseUnit()));
+			}
+		}
+		return mngr;
+	}
 }
 string CompositeUnit::internalName() {
 	return sname;

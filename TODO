@@ -1,15 +1,13 @@
-* Unit conversion to an AliasUnit based on CompositeUnit
-* Selectable prefix in result
+* XML definitions file, restructure
 * More functions
 * More Units
-* Complete number bases
 * Approximate variables and exact result (ex. circumference(2) = 2 PI)
 * Vector support
 * Matrix support
 * Fractions
 * Derivative, x^2 + y^2 + xy => (x + y)^2, etc.
 
-* Internationalisation
+* Complete internationalisation
 * Separate library
 * Support non-glibc systems (Solaris)
 

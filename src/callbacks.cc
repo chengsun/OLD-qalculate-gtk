@@ -851,6 +851,38 @@ void create_pmenu() {
 }
 
 /*
+	generate prefixes submenu in result menu
+*/
+void create_pmenu2() {
+	GtkWidget *item, *item2, *item3, *item4;
+	GtkWidget *sub, *sub2;
+	GHashTable *hash;
+	SUBMENU_ITEM_INSERT(_("Set prefix"), gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_result"))), 2)
+//	MENU_TEAROFF
+	vector<l_type::iterator> its;
+	bool no_larger = false;
+	l_type::iterator it1;
+	for(it1 = calc->l_prefix.begin(); it1 != calc->l_prefix.end(); ++it1) {
+		no_larger = true;
+		for(vector<l_type::iterator>::iterator it2 = its.begin(); it2 != its.end(); ++it2) {
+			if(it1->second < (*it2)->second) {
+				its.insert(it2, it1);
+				no_larger = false;
+				break;
+			}
+		}
+		if(no_larger)
+			its.push_back(it1);
+	}
+	for(vector<l_type::iterator>::iterator it = its.begin(); it != its.end(); ++it) {
+		gchar *gstr = g_strdup_printf("%s (10<sup>%i</sup>)", (*it)->first, (int) log10((*it)->second));
+		MENU_ITEM_WITH_POINTER(gstr, set_prefix, &(*it)->second)
+		gtk_label_set_use_markup(GTK_LABEL(gtk_bin_get_child(GTK_BIN(item))), TRUE);
+		g_free(gstr);
+	}
+}
+
+/*
 	recreate variables menu and update variable manager (when variables have changed)
 */
 void update_vmenu() {
@@ -916,7 +948,7 @@ void update_fmenu() {
 	return a customized result string
 	set rlabel to true for result label (nicer look)
 */
-string get_value_string(Manager *mngr_, bool rlabel = false) {
+string get_value_string(Manager *mngr_, bool rlabel = false, long double prefix_ = -1.0L) {
 	int unitflags = 0;
 	unitflags = unitflags | UNIT_FORMAT_BEAUTIFY;
 	unitflags = unitflags | UNIT_FORMAT_NONASCII;
@@ -930,20 +962,24 @@ string get_value_string(Manager *mngr_, bool rlabel = false) {
 	else if(number_base == BASE_HEX) numberformat = NUMBER_FORMAT_HEX;
 	else if(number_base == BASE_BIN) numberformat = NUMBER_FORMAT_BIN;
 	else {
-		switch(display_mode) {
-			case MODE_SCIENTIFIC: {numberformat = NUMBER_FORMAT_EXP_PURE; unitflags = unitflags | UNIT_FORMAT_SCIENTIFIC; break;}
-			case MODE_PREFIXES: {numberformat = NUMBER_FORMAT_PREFIX; break;}
-			case MODE_DECIMALS: {numberformat = NUMBER_FORMAT_DECIMALS; break;}
-			default: {numberformat = NUMBER_FORMAT_NORMAL;}
+		if(prefix_ >= 0) {
+			numberformat = NUMBER_FORMAT_PREFIX;
+		} else {
+			switch(display_mode) {
+				case MODE_SCIENTIFIC: {numberformat = NUMBER_FORMAT_EXP_PURE; unitflags = unitflags | UNIT_FORMAT_SCIENTIFIC; break;}
+				case MODE_PREFIXES: {numberformat = NUMBER_FORMAT_PREFIX; break;}
+				case MODE_DECIMALS: {numberformat = NUMBER_FORMAT_DECIMALS; break;}
+				default: {numberformat = NUMBER_FORMAT_NORMAL;}
+			}
 		}
 	}
-	return mngr_->print(numberformat, unitflags, precision, decimals, true, deci_mode == DECI_FIXED);
+	return mngr_->print(numberformat, unitflags, precision, decimals, true, deci_mode == DECI_FIXED, NULL, prefix_);
 }
 
 /*
 	set result in result widget and add to history widget
 */
-void setResult(const gchar *expr) {
+void setResult(const gchar *expr, long double prefix_ = -1.0L) {
 	GtkTextIter iter;
 	GtkTextBuffer *tb;
 	string str = expr, str2;
@@ -952,7 +988,7 @@ void setResult(const gchar *expr) {
 	vans->set(mngr);
 	vAns->set(mngr);
 
-	str2 = get_value_string(mngr, true);
+	str2 = get_value_string(mngr, true, prefix_);
 	bool useable = false;
 	gtk_label_set_selectable(GTK_LABEL(result), useable);
 	gtk_label_set_text(GTK_LABEL(result), str2.c_str());
@@ -965,12 +1001,18 @@ void setResult(const gchar *expr) {
 	gtk_text_buffer_get_start_iter(tb, &iter);
 	gtk_text_buffer_insert(tb, &iter, str.c_str(), -1);
 	gtk_text_buffer_insert(tb, &iter, " = ", -1);
-	gtk_text_buffer_insert(tb, &iter, get_value_string(mngr).c_str(), -1);
+	gtk_text_buffer_insert(tb, &iter, get_value_string(mngr, false, prefix_).c_str(), -1);
 	gtk_text_buffer_insert(tb, &iter, "\n", -1);
 	gtk_text_buffer_place_cursor(tb, &iter);
 	while(calc->error()) {
 		calc->nextError();
 	}
+}
+
+void set_prefix(GtkMenuItem *w, gpointer user_data) {
+	long double *prefix = (long double*) user_data;
+	setResult(gtk_label_get_text(GTK_LABEL(result)), *prefix);
+	gtk_widget_grab_focus(expression);	
 }
 
 /*
@@ -1558,8 +1600,9 @@ void convert_to_unit(GtkMenuItem *w, gpointer user_data)
 		gtk_widget_destroy(edialog);
 	}
 	//result is stored in Manager *mngr
-	mngr->convert(u);
-	mngr->finalize();
+//	mngr->convert(u);
+//	mngr->finalize();
+	calc->convert(mngr, u);
 	setResult(gtk_label_get_text(GTK_LABEL(result)));
 	gtk_widget_grab_focus(expression);
 }
@@ -1588,8 +1631,9 @@ void convert_to_custom_unit(GtkMenuItem *w, gpointer user_data)
 	gtk_container_add(GTK_CONTAINER(vbox), entry1);
 	gtk_widget_show_all(dialog);
 	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
-		mngr->convert(gtk_entry_get_text(GTK_ENTRY(entry1)));
-		mngr->finalize();
+//		mngr->convert(gtk_entry_get_text(GTK_ENTRY(entry1)));
+//		mngr->finalize();
+		calc->convert(mngr, gtk_entry_get_text(GTK_ENTRY(entry1)));
 		setResult(gtk_label_get_text(GTK_LABEL(result)));
 	}
 	gtk_widget_destroy(dialog);
