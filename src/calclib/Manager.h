@@ -84,7 +84,7 @@ class Manager {
 		bool convert(Unit*);
 		bool convert(string unit_str);		
 		bool convert(Manager *unit_mngr);				
-		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int unitflags = UNIT_FORMAT_DEFAULT, int precision = PRECISION, int decimals_to_keep = 0, bool decimals_expand = true, bool decimals_decrease = false, bool *usable = NULL, long double prefix_ = -1.0L, bool toplevel = true, bool *plural = NULL, long double *d_exp = NULL, bool in_composite = false);
+		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int unitflags = UNIT_FORMAT_DEFAULT, int precision = PRECISION, int decimals_to_keep = 0, bool decimals_expand = true, bool decimals_decrease = false, bool *usable = NULL, long double prefix_ = -1.0L, bool toplevel = true, bool *plural = NULL, long double *d_exp = NULL, bool in_composite = false, bool in_power = false);
 		void ref(void);
 		void unref(void);
 		char type(void) const;

@@ -134,6 +134,8 @@ extern char *NUMBERS_S_AND_MINUS_S_AND_DOT_S;*/
 #define NAME_NUMBER_PRE_CH	'_'
 #define UNIT_DIVISION_CH	'/'
 
+#define ID_WRAP_LEFT	"{"	
+#define ID_WRAP_RIGHT	"}"	
 #define ID_WRAPS	"{}"	
 #define DOT		"."
 #define COMMA		","

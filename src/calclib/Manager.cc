@@ -1107,7 +1107,7 @@ bool Manager::negative() {
 	else if(c_type == MULTIPLICATION_CH || c_type == POWER_CH) return mngrs[0]->negative();
 	return false;
 }
-string Manager::print(NumberFormat nrformat, int unitflags, int precision, int decimals_to_keep, bool decimals_expand, bool decimals_decrease, bool *usable, long double prefix_, bool toplevel, bool *plural, long double *d_exp, bool in_composite) {
+string Manager::print(NumberFormat nrformat, int unitflags, int precision, int decimals_to_keep, bool decimals_expand, bool decimals_decrease, bool *usable, long double prefix_, bool toplevel, bool *plural, long double *d_exp, bool in_composite, bool in_power) {
 	string str, str2;
 	if(toplevel && (unitflags & UNIT_FORMAT_TAGS)) {
 	    str = "<b><big>";
@@ -1187,7 +1187,7 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 		}
 		if(o_unit->type() == 'D') {
 			Manager *mngr = ((CompositeUnit*) o_unit)->generateManager(false);
-			str2 = mngr->print(NUMBER_FORMAT_PREFIX, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, NULL, true);		
+			str2 = mngr->print(NUMBER_FORMAT_PREFIX, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, NULL, true, in_power);		
 //			gsub("1 ", "", str2);
 //			if(str2.substr(0, 2) == "1 ") str2 = str2.substr(2, str2.length() - 2);
 			str += str2;
@@ -1217,7 +1217,7 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 				str += COMMA_STR;
 				str += SPACE_STR;
 			}
-			str += mngrs[i]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, d_exp, in_composite);
+			str += mngrs[i]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, d_exp, in_composite, in_power);
 		}
 		str += RIGHT_BRACKET_STR;		
 	} else if(c_type == PLUS_CH) {
@@ -1243,7 +1243,7 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 				calc->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
 				str += str2; str += " ";
 			}
-			str2 = mngrs[i]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, d_exp, in_composite);
+			str2 = mngrs[i]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, d_exp, in_composite, in_power);
 			if(i > 0 && unitflags & UNIT_FORMAT_NONASCII && str2.substr(0, strlen(SIGN_MINUS)) == SIGN_MINUS) {
 				str2 = str2.substr(strlen(SIGN_MINUS), str2.length() - strlen(SIGN_MINUS));
 			} else if(i > 0 && str2.substr(0, strlen(MINUS_STR)) == MINUS_STR) {
@@ -1255,7 +1255,19 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 		bool b = false, c = false;
 		bool plural_ = true;
 		int prefix = 0;
+		bool had_unit = false, had_div_unit = false, is_unit = false;
 		for(int i = 0; i < mngrs.size(); i++) {
+			is_unit = false;
+			if(mngrs[i]->c_type == 'u' || (mngrs[i]->c_type == POWER_CH && mngrs[i]->mngrs[0]->c_type == 'u')) {
+				is_unit = true;
+			} else if(mngrs[i]->c_type == POWER_CH) {
+				for(int i2 = 0; i2 < mngrs[i]->mngrs[0]->mngrs.size(); i2++) {
+					if(mngrs[i]->mngrs[0]->mngrs[i2]->c_type == 'u') {
+						is_unit = true;
+						break;
+					}
+				}
+			}		
 			d_exp = NULL;
 			if(prefix) prefix--;
 			if(i == 0 && mngrs[i]->type() == VALUE_MANAGER && mngrs[i]->value() == -1.0L && mngrs.size() > 1 && mngrs[1]->type() != 'u' && (mngrs[1]->type() != UNIT_MANAGER || mngrs[1]->mngrs[0]->type() != UNIT_MANAGER)) {
@@ -1301,23 +1313,56 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 					c = true;
 					str += LEFT_BRACKET_STR;
 				}
-				if(b && mngrs[i]->mngrs[0]->c_type == 'u')  {
+				if(b && is_unit)  {
 					if(!prefix || is_in(str[str.length() - 1], NUMBERS_S, MINUS_S, NULL)) {
 						str += " ";
+						if(had_div_unit) {
+							if(unitflags & UNIT_FORMAT_NONASCII) {
+								str += SIGN_MULTIDOT;
+							} else {
+								str += MULTIPLICATION_STR;
+							}
+							str += " ";					
+						}						
 					}
-				}				
-				str += mngr->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, &plural_, d_exp, in_composite);
+				} else 	if(had_div_unit) {
+					if(unitflags & UNIT_FORMAT_NONASCII) {
+						str += SIGN_MULTIDOT;
+					} else {
+						str += MULTIPLICATION_STR;
+					}
+					str += " ";					
+				}						
+				if(is_unit) {
+					had_div_unit = true;
+				}								
+				str += mngr->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, &plural_, d_exp, in_composite, in_power);
 				if(c && i == mngrs.size() - 1) {
 					str += RIGHT_BRACKET_STR;
 				}
 				b = true;
 //			} else if(mngrs[i]->c_type == PLUS_CH || ((mngrs[i]->c_type == POWER_CH && i == 0) || (i > 0 && mngrs[i - 1]->c_type == POWER_CH))) {
-			} else if(mngrs[i]->type() == ADDITION_MANAGER || (mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->type() == VALUE_MANAGER)) {
+			} else if(mngrs[i]->type() == ADDITION_MANAGER) {
+				str += " ";
+				if(unitflags & UNIT_FORMAT_NONASCII) {
+					str += SIGN_MULTIDOT;
+				} else {
+					str += MULTIPLICATION_STR;
+				}
+				str += " ";								
 				str += LEFT_BRACKET_STR;
-				str += mngrs[i]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, &plural_, d_exp, in_composite);
+				str += mngrs[i]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, &plural_, d_exp, in_composite, in_power);
 				str += RIGHT_BRACKET_STR;
 			} else {
-				if(i > 0 && (mngrs[i]->type() == FUNCTION_MANAGER || mngrs[i - 1]->type() == FUNCTION_MANAGER)) {
+				if(mngrs[i]->type() == POWER_MANAGER && (mngrs[i]->mngrs[0]->type() == VALUE_MANAGER || had_unit)) {
+					str += " ";
+					if(unitflags & UNIT_FORMAT_NONASCII) {
+						str += SIGN_MULTIDOT;
+					} else {
+						str += MULTIPLICATION_STR;
+					}
+					str += " ";												
+				} else if(i > 0 && (mngrs[i]->type() == FUNCTION_MANAGER || mngrs[i - 1]->type() == FUNCTION_MANAGER)) {
 					str += " ";
 					if(unitflags & UNIT_FORMAT_NONASCII) {
 						str += SIGN_MULTIDOT;
@@ -1325,17 +1370,44 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 						str += MULTIPLICATION_STR;
 					}
 					str += " ";								
-				} else if(i > 0 && (mngrs[i]->c_type == 'u' || (mngrs[i]->c_type == POWER_CH && mngrs[i]->mngrs[0]->c_type == 'u')))  {
+				} else if(i > 0 && is_unit)  {
 					if(!prefix || is_in(str[str.length() - 1], NUMBERS_S, NULL)) {
 						str += " ";
+						if(had_unit) {
+							if(unitflags & UNIT_FORMAT_NONASCII) {
+								str += SIGN_MULTIDOT;
+							} else {
+								str += MULTIPLICATION_STR;
+							}
+							str += " ";					
+						}
 					}
 				} else if(i > 0 && mngrs[i]->c_type == 's' && mngrs[i]->s_var.length() > 1 || (mngrs[i]->c_type == POWER_CH && mngrs[i]->mngrs[0]->c_type == 's' && mngrs[i]->mngrs[0]->s_var.length() > 1)) {
 					str += " ";
+					if(i > 1) {
+						if(unitflags & UNIT_FORMAT_NONASCII) {
+							str += SIGN_MULTIDOT;
+						} else {
+							str += MULTIPLICATION_STR;
+						}
+						str += " ";					
+					}
+				} else if(had_unit && mngrs[i]->c_type == 'v') {
+					str += " ";
+					if(unitflags & UNIT_FORMAT_NONASCII) {
+						str += SIGN_MULTIDOT;
+					} else {
+						str += MULTIPLICATION_STR;
+					}
+					str += " ";					
 				}					
-				str += mngrs[i]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, &plural_, d_exp, in_composite);
+				str += mngrs[i]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, &plural_, d_exp, in_composite, in_power);
 			}
 			if(plural_ && (mngrs[i]->c_type == 'u' || (mngrs[i]->c_type == POWER_CH && mngrs[i]->mngrs[0]->c_type == 'u'))) {
 				plural_ = false;
+			}
+			if(is_unit) {
+				had_unit = true;
 			}
 		}
 	} else if(c_type == POWER_CH) {
@@ -1344,19 +1416,19 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 			calc->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
 			str += str2; str += " ";
 		}
-		if(mngrs[0]->mngrs.size() > 0) {
+		if(mngrs[0]->mngrs.size() > 0 && !in_composite) {
 			str += LEFT_BRACKET_STR;
-			str += mngrs[0]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, NULL, in_composite);
+			str += mngrs[0]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, NULL, in_composite, true);
 			str += RIGHT_BRACKET_STR;
 		} else {
-			str += mngrs[0]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, NULL, in_composite);
+			str += mngrs[0]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, NULL, in_composite, true);
 		}
 //		if(unitflags & UNIT_FORMAT_NONASCII && mngrs[1]->c_type == 'v' && mngrs[1]->d_value == 2) {
 //			str += SIGN_POWER_2;
 //		} else if(unitflags & UNIT_FORMAT_NONASCII && mngrs[1]->c_type == 'v' && mngrs[1]->d_value == 3) {
 //			str += SIGN_POWER_3;
 //		} else {
-			int i2 = 0;
+/*			int i2 = 0;
 			if(unitflags & UNIT_FORMAT_TAGS) {
 				int i = 0;
 				while((i = str.find("<big>", i)) != string::npos) {
@@ -1367,9 +1439,9 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 					i2--;
 					i += 6;
 				}
-			}
+			}*/
 			if(unitflags & UNIT_FORMAT_TAGS) {
-				if(i2) {
+				if(!in_power) {
 					str += "</big>";
 					str += "<sup>";
 				} else {
@@ -1379,13 +1451,13 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 			else str += POWER_STR;
 			if(mngrs[1]->mngrs.size() > 0) {
 				str += LEFT_BRACKET_STR;
-				str += mngrs[1]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, NULL, in_composite);
+				str += mngrs[1]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, NULL, in_composite, true);
 				str += RIGHT_BRACKET_STR;
 			} else {
-				str += mngrs[1]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, NULL, in_composite);
+				str += mngrs[1]->print(nrformat, unitflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix_, false, NULL, NULL, in_composite, true);
 			}
 			if(unitflags & UNIT_FORMAT_TAGS) {
-				if(i2) {
+				if(!in_power) {
 					str += "</sup>";
 					str += "<big>";
 				}
@@ -1584,7 +1656,7 @@ void Manager::syncUnits() {
 				if(!alias_units[i]->isParentOf(alias_units[i2])) {
 					b = false;
 					for(int i3 = 0; i < base_units.size(); i3++) {
-						if(base_units[i3] == cu->units[i2]->firstBaseUnit()) {
+						if(base_units[i3] == alias_units[i2]->firstBaseUnit()) {
 							b = true;
 							break;
 						}
@@ -1600,7 +1672,7 @@ void Manager::syncUnits() {
 		i--;
 		dont_erase_alias_unit_2:
 		true;
-	}		
+	}	
 	for(int i = 0; i < alias_units.size(); i++) {
 		if(alias_units[i]->baseUnit()->type() == 'U') {
 			for(int i2 = 0; i2 < base_units.size(); i2++) {

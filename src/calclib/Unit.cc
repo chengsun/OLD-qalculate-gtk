@@ -663,10 +663,20 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	long double exp = 1.0L;
 	int i = 0, i2 = 0, id;
 	Manager *mngr;
-	while(1) {
+	while(true) {
 		i = base_expression_.find(ID_WRAP_LEFT_CH, i2);
 		if(i == string::npos) {
+			if(base_expression_.length() > i2 + 2) {
+				calc->error(false, "Error in unitexpression: \"%s\".", base_expression_.substr(i2 + 2, base_expression_.length() - i2 - 2).c_str(), NULL);
+			}
 			break;
+		}
+		if(i > i2 + 3) {
+			if(!(i - i2 - 3 == 1 && is_in(OPERATORS, base_expression_[i2 + 2])))
+				calc->error(false, "Error in unitexpression: \"%s\".", base_expression_.substr(i2 + 2, i - i2 - 3).c_str(), NULL);
+		} else if(i2 == 0 && i > 1) {
+			if(!(i == 2 && is_in(OPERATORS, base_expression_[0])))
+				calc->error(false, "Error in unitexpression: \"%s\".", base_expression_.substr(0, i - 1).c_str(), NULL);
 		}
 		i2 = base_expression_.find(ID_WRAP_RIGHT_CH, i);		
 		if(i2 == string::npos) {
@@ -688,14 +698,18 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 				if(base_expression_.length() > i2 + 3 && base_expression_[i2 + 2] == POWER_CH) {
 					if(is_in(NUMBERS, base_expression_[i2 + 3])) {
 						exp = (long double) s2i(base_expression_.substr(i2 + 3, 1));
+						i2 += 2;
 					} else if(base_expression_.length() > i2 + 4 && is_in(MINUS PLUS, base_expression_[i2 + 3]) && is_in(NUMBERS, base_expression_[i2 + 4])) {
 						exp = (long double) s2i(base_expression_.substr(i2 + 3, 2));
+						i2 += 3;
 					}
 				}
 				if(div) {
 					exp = -exp;
 				}
 				add(mngr->o_unit, exp, prefix);
+			} else {
+				calc->error(false, "Error in unitexpression: \"%s\".", mngr->print().c_str(), NULL);
 			}
 			calc->delId(id);
 		}
