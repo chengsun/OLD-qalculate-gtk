@@ -1,3 +1,9 @@
+2003-08-31  Niklas Knutsson  <nq@altern.org>
+
+	* Move builtin functions to fraction system
+	* Reactivate display modes, decimals and precision
+	* Use GMP if available in Integer class (much faster)
+
 2003-08-30  Niklas Knutsson  <nq@altern.org>
 
 	* Show if result is exact or not
@@ -26,7 +32,7 @@
 
 2003-08-20  Niklas Knutsson  <nq@altern.org>
 
-	* Fraction button 
+	* Fraction button
 	* Fraction Manager
 	* New Fraction class
 

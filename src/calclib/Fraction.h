@@ -42,6 +42,7 @@ class Fraction {
 	const Integer *denominator() const;
 	long double value() const;
 	bool isNegative() const;
+	void setNegative(bool is_negative);	
 	bool isInteger() const;
 	bool isPrecise() const;
 	void setPrecise(bool is_precise);
@@ -50,6 +51,7 @@ class Fraction {
 	void subtract(const Fraction *fr);			
 	void multiply(const Fraction *fr);			
 	void divide(const Fraction *fr);
+	void gcd(const Fraction *fr);
 	void sin();	
 	void asin();	
 	void sinh();	
@@ -81,12 +83,12 @@ class Fraction {
 	void pow(const Fraction *fr);
 	void root(const Integer *nth);	
 	void root(long int nth = 2);
-	bool floatify(int precision = PRECISION);
+	bool floatify(int precision = DEFAULT_PRECISION);
 	bool isZero() const;
 	bool isOne() const;	
 	bool isMinusOne() const;	
 	bool add(MathOperation op, const Fraction *fr); 
-	string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int precision = PRECISION, int min_decimals = 0, int max_decimals = -1, Prefix *prefix = NULL, bool *usable = NULL, bool toplevel = true, bool *plural = NULL, long int *l_exp = NULL, bool in_composite = false, bool in_power = false) const;
+	string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, Prefix *prefix = NULL, bool *in_exact = NULL, bool *usable = NULL, bool toplevel = true, bool *plural = NULL, long int *l_exp = NULL, bool in_composite = false, bool in_power = false) const;
 };
 
 #endif

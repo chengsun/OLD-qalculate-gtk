@@ -78,9 +78,10 @@ Manager *IFFunction::calculate(const string &argv) {
 GCDFunction::GCDFunction() : Function("Arithmetics", "gcd", 2, "Greatest Common Divisor") {
 }
 void GCDFunction::calculate2(Manager *mngr) {
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], vargs[1], NULL);
-	if(!vargs[1]->isNumber()) mngr->set(this, vargs[0], vargs[1], NULL);	
-	else mngr->set(gcd_d(vargs[0]->value(), vargs[1]->value()));
+	if(!vargs[0]->isFraction()) mngr->set(this, vargs[0], vargs[1], NULL);
+	if(!vargs[1]->isFraction()) mngr->set(this, vargs[0], vargs[1], NULL);	
+	mngr->set(vargs[0]);
+	mngr->fraction()->gcd(vargs[1]->fraction());
 }
 DaysFunction::DaysFunction() : Function("Date & Time", "daysto", 2, "Days to date") {
 }
@@ -155,300 +156,313 @@ AbsFunction::AbsFunction() : Function("Arithmetics", "abs", 1, "Absolute Value")
 
 }
 void AbsFunction::calculate2(Manager *mngr) {
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);	
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-//		if(vargs[0]->fraction()->isNegative()) mngr->set(-vargs[0]->fraction()->numerator(), vargs[0]->fraction()->denominator(), vargs[0]->fraction()->exponent());
-//		else mngr->set(vargs[0]);
-	} else mngr->set(fabsl(vargs[0]->value()));
+	if(vargs[0]->isFraction()) {
+		mngr->set(vargs[0]);
+		mngr->fraction()->setNegative(false);		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 CeilFunction::CeilFunction() : Function("Arithmetics", "ceil", 1, "Round upwards") {
 
 }
 void CeilFunction::calculate2(Manager *mngr) {
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->ceil();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(vargs[0]);
+		mngr->fraction()->ceil();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 FloorFunction::FloorFunction() : Function("Arithmetics", "floor", 1, "Round downwards") {
 
 }
 void FloorFunction::calculate2(Manager *mngr) {
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
- 	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->floor();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(vargs[0]);	
+		mngr->fraction()->floor();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 TruncFunction::TruncFunction() : Function("Arithmetics", "trunc", 1, "Round towards zero") {
 
 }
 void TruncFunction::calculate2(Manager *mngr) {
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() ==  FRACTION_MANAGER) {
-		vargs[0]->fraction()->trunc();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(vargs[0]);
+		mngr->fraction()->trunc();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 RoundFunction::RoundFunction() : Function("Arithmetics", "round", 1, "Round") {
 
 }
 void RoundFunction::calculate2(Manager *mngr) {
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->round();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(vargs[0]);
+		mngr->fraction()->round();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 RemFunction::RemFunction() : Function("Arithmetics", "rem", 2, "Reminder (rem)") {
 
 }
 void RemFunction::calculate2(Manager *mngr) {
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], vargs[1], NULL);
-	else if(!vargs[1]->isNumber()) mngr->set(this, vargs[0], vargs[1], NULL);	
-	else {
-		if(vargs[1]->type() == NULL_MANAGER) {
+	if(vargs[0]->isFraction()) {
+		if(vargs[1]->isZero()) {
 			CALCULATOR->error(true, _("The denominator in rem function cannot be zero"), NULL);
-			mngr->set(this, vargs[0], vargs[1], NULL);
+			mngr->set(this, vargs[0], vargs[1], NULL);		
 		} else {
-			vargs[0]->fraction()->divide(vargs[1]->fraction());
-			vargs[0]->fraction()->rem();
-			mngr->set(vargs[0]);
+			mngr->set(vargs[0]);	
+			mngr->fraction()->divide(vargs[1]->fraction());
+			mngr->fraction()->rem();		
 		}
+	} else {
+		mngr->set(this, vargs[0], vargs[1], NULL);
 	}
 }
 ModFunction::ModFunction() : Function("Arithmetics", "mod", 2, "Reminder (mod)") {
 
 }
 void ModFunction::calculate2(Manager *mngr) {
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], vargs[1], NULL);
-	else if(!vargs[1]->isNumber()) mngr->set(this, vargs[0], vargs[1], NULL);	
-	else {
-		if(vargs[1] == 0) {
-			CALCULATOR->error(true, _("The denominator in mod function cannot be zero"), NULL);
-			mngr->set(this, vargs[0], vargs[1], NULL);
+	if(vargs[0]->isFraction()) {
+		if(vargs[1]->isZero()) {
+			CALCULATOR->error(true, _("The denominator in rem function cannot be zero"), NULL);
+			mngr->set(this, vargs[0], vargs[1], NULL);		
 		} else {
-			vargs[0]->fraction()->divide(vargs[1]->fraction());
-			vargs[0]->fraction()->mod();
-			mngr->set(vargs[0]);		
+			mngr->set(vargs[0]);	
+			mngr->fraction()->divide(vargs[1]->fraction());
+			mngr->fraction()->mod();		
 		}
+	} else {
+		mngr->set(this, vargs[0], vargs[1], NULL);
 	}
 }
 
 SinFunction::SinFunction() : Function("Trigonometry", "sin", 1, "Sine") {}
 void SinFunction::calculate2(Manager *mngr) {
-//	if(!vargs[0]->isNumber()) mngr->set(this, CALCULATOR->setAngleValue(vargs[0]), NULL);
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->sin();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(0, 1, 0);
+		CALCULATOR->setAngleValue(mngr);
+		mngr->fraction()->sin();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 CosFunction::CosFunction() : Function("Trigonometry", "cos", 1, "Cosine") {}
 void CosFunction::calculate2(Manager *mngr) {
-//	if(!vargs[0]->isNumber()) mngr->set(this, CALCULATOR->setAngleValue(vargs[0]), NULL);
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);	
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->cos();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(1);
+		CALCULATOR->setAngleValue(mngr);
+		mngr->fraction()->cos();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 TanFunction::TanFunction() : Function("Trigonometry", "tan", 1, "Tangent") {}
 void TanFunction::calculate2(Manager *mngr) {
-//	if(!vargs[0]->isNumber()) mngr->set(this, CALCULATOR->setAngleValue(vargs[0]), NULL);
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->tan();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(0, 1, 0);
+		CALCULATOR->setAngleValue(mngr);
+		mngr->fraction()->tan();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 SinhFunction::SinhFunction() : Function("Trigonometry", "sinh", 1, "Hyperbolic sine") {}
 void SinhFunction::calculate2(Manager *mngr) {
-//	if(!vargs[0]->isNumber()) mngr->set(this, CALCULATOR->setAngleValue(vargs[0]), NULL);
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->sinh();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(0, 1, 0);
+		CALCULATOR->setAngleValue(mngr);
+		mngr->fraction()->sinh();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 CoshFunction::CoshFunction() : Function("Trigonometry", "cosh", 1, "Hyperbolic cosine") {}
 void CoshFunction::calculate2(Manager *mngr) {
-//	if(!vargs[0]->isNumber()) mngr->set(this, CALCULATOR->setAngleValue(vargs[0]), NULL);
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->cosh();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(1);
+		CALCULATOR->setAngleValue(mngr);
+		mngr->fraction()->cosh();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 TanhFunction::TanhFunction() : Function("Trigonometry", "tanh", 1, "Hyperbolic tangent") {}
 void TanhFunction::calculate2(Manager *mngr) {
-//	if(!vargs[0]->isNumber()) mngr->set(this, CALCULATOR->setAngleValue(vargs[0]), NULL);
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->tanh();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(0, 1, 0);
+		CALCULATOR->setAngleValue(mngr);
+		mngr->fraction()->tanh();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 AsinFunction::AsinFunction() : Function("Trigonometry", "asin", 1, "Arcsine") {}
 void AsinFunction::calculate2(Manager *mngr) {
-//	if(!vargs[0]->isNumber()) mngr->set(this, CALCULATOR->setAngleValue(vargs[0]), NULL);
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->asin();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(0, 1, 0);
+		CALCULATOR->setAngleValue(mngr);
+		mngr->fraction()->asin();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 AcosFunction::AcosFunction() : Function("Trigonometry", "acos", 1, "Arccosine") {}
 void AcosFunction::calculate2(Manager *mngr) {
-//	if(!vargs[0]->isNumber()) mngr->set(this, CALCULATOR->setAngleValue(vargs[0]), NULL);
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->acos();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(1);
+		CALCULATOR->setAngleValue(mngr);
+		mngr->fraction()->acos();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 AtanFunction::AtanFunction() : Function("Trigonometry", "atan", 1, "Arctangent") {}
 void AtanFunction::calculate2(Manager *mngr) {
-//	if(!vargs[0]->isNumber()) mngr->set(this, CALCULATOR->setAngleValue(vargs[0]), NULL);
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->atan();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(0, 1, 0);
+		CALCULATOR->setAngleValue(mngr);
+		mngr->fraction()->atan();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 AsinhFunction::AsinhFunction() : Function("Trigonometry", "asinh", 1, "Hyperbolic arcsine") {}
 void AsinhFunction::calculate2(Manager *mngr) {
-//	if(!vargs[0]->isNumber()) mngr->set(this, CALCULATOR->setAngleValue(vargs[0]), NULL);
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->asinh();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(0, 1, 0);
+		CALCULATOR->setAngleValue(mngr);
+		mngr->fraction()->asinh();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 AcoshFunction::AcoshFunction() : Function("Trigonometry", "acosh", 1, "Hyperbolic arccosine") {}
 void AcoshFunction::calculate2(Manager *mngr) {
-//	if(!vargs[0]->isNumber()) mngr->set(this, CALCULATOR->setAngleValue(vargs[0]), NULL);
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->acosh();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(1);
+		CALCULATOR->setAngleValue(mngr);
+		mngr->fraction()->acosh();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 AtanhFunction::AtanhFunction() : Function("Trigonometry", "atanh", 1, "Hyperbolic arctangent") {}
 void AtanhFunction::calculate2(Manager *mngr) {
-//	if(!vargs[0]->isNumber()) mngr->set(this, CALCULATOR->setAngleValue(vargs[0]), NULL);
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->atanh();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(0, 1, 0);
+		CALCULATOR->setAngleValue(mngr);
+		mngr->fraction()->atanh();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 LogFunction::LogFunction() : Function("Exponents and Logarithms", "ln", 1, "Natural Logarithm") {}
 void LogFunction::calculate2(Manager *mngr) {
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->log();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(0, 1, 0);
+		mngr->fraction()->log();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 Log10Function::Log10Function() : Function("Exponents and Logarithms", "log", 1, "Base-10 Logarithm") {}
 void Log10Function::calculate2(Manager *mngr) {
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->log10();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(0, 1, 0);
+		mngr->fraction()->log10();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 Log2Function::Log2Function() : Function("Exponents and Logarithms", "log2", 1, "Base-2 Logarithm") {}
 void Log2Function::calculate2(Manager *mngr) {
-	if(!vargs[0]->isNumber()) mngr->set(this, vargs[0], NULL);
-	else if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->log2();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else mngr->set(0, 1, 0);
+		mngr->fraction()->log2();		
+	} else {
+		mngr->set(this, vargs[0], NULL);
+	}
 }
 ExpFunction::ExpFunction() : Function("Exponents and Logarithms", "exp", 1, "e raised to the power X") {}
 void ExpFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->exp();
-		mngr->set(vargs[0]);	
-	} else if(vargs[0]->type() == NULL_MANAGER) mngr->set(1, 1);
-	else {
+	if(vargs[0]->isFraction()) {
+		mngr->set(vargs[0]);
+		mngr->fraction()->exp();		
+	} else {
 		mngr->set(E_VALUE);
-		mngr->add(vargs[0], RAISE);
-	}	
+		mngr->add(vargs[0], RAISE);	
+	}
 }
 Exp10Function::Exp10Function() : Function("Exponents and Logarithms", "exp10", 1, "10 raised the to power X") {}
 void Exp10Function::calculate2(Manager *mngr) {
-	if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->exp10();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else if(vargs[0]->type() == NULL_MANAGER) mngr->set(1, 1);
-	else {
-		mngr->set(10.0L);
-		mngr->add(vargs[0], RAISE);
-	}	
+		mngr->fraction()->exp10();		
+	} else {
+		mngr->set(10);
+		mngr->add(vargs[0], RAISE);	
+	}
 }
 Exp2Function::Exp2Function() : Function("Exponents and Logarithms", "exp2", 1, "2 raised the to power X") {}
 void Exp2Function::calculate2(Manager *mngr) {
 	if(vargs[0]->isFraction()) {
-		vargs[0]->fraction()->exp2();
 		mngr->set(vargs[0]);
-	} else if(vargs[0]->type() == NULL_MANAGER) mngr->set(1, 1);
-	else {
-		mngr->set(2.0L);
-		mngr->add(vargs[0], RAISE);
-	}	
+		mngr->fraction()->exp2();		
+	} else {
+		mngr->set(2);
+		mngr->add(vargs[0], RAISE);	
+	}
 }
 SqrtFunction::SqrtFunction() : Function("Exponents and Logarithms", "sqrt", 1, "Square Root") {
 
 }
 void SqrtFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->type() == FRACTION_MANAGER) {
-		if(vargs[0]->value() < 0) {
+	if(vargs[0]->isFraction()) {
+		if(vargs[0]->fraction()->isNegative()) {
 			CALCULATOR->error(true, _("Trying to calculate the square root of a negative number (%s)."), d2s(vargs[0]->value()).c_str(), NULL);
 			mngr->set(this, vargs[0], NULL);
 			return;
-		}
-		vargs[0]->fraction()->sqrt();
-		mngr->set(vargs[0]);		
-	} else if(vargs[0]->type() != NULL_MANAGER) {
+		}	
+		mngr->set(vargs[0]);
+		mngr->fraction()->sqrt();		
+	} else {
 		mngr->set(vargs[0]);
 		Manager *mngr2 = new Manager(1, 2);
 		mngr->add(mngr2, RAISE);
-		mngr2->unref();
-	} else {
-		mngr->set(0.0L);
-	}	
+		mngr2->unref();		
+	}
 }
 CbrtFunction::CbrtFunction() : Function("Exponents and Logarithms", "cbrt", 1, "Cube Root") {}
 void CbrtFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->type() == FRACTION_MANAGER) {
-		vargs[0]->fraction()->cbrt();
+	if(vargs[0]->isFraction()) {
 		mngr->set(vargs[0]);
-	} else if(vargs[0]->type() != NULL_MANAGER) {
+		mngr->fraction()->cbrt();		
+	} else {
 		mngr->set(vargs[0]);
 		Manager *mngr2 = new Manager(1, 3);		
 		mngr->add(mngr2, RAISE);
-		mngr2->unref();
+		mngr2->unref();	
 	}
 }
 HypotFunction::HypotFunction() : Function("Geometry", "hypot", 2, "Hypotenuse") {
 
 }
 void HypotFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->type() != NULL_MANAGER) {
-		mngr->set(vargs[0]);
-		mngr->addInteger(2, RAISE);
-		Manager *mngr2 = new Manager(vargs[1]);
-		mngr2->addInteger(2, RAISE);		
-		mngr->add(mngr2, RAISE);
-		mngr2->unref();
-		mngr2 = new Manager(1, 2);
-		mngr->add(mngr2, RAISE);
-		mngr2->unref();
-	}	
+	mngr->set(vargs[0]);
+	mngr->addInteger(2, RAISE);
+	Manager *mngr2 = new Manager(vargs[1]);
+	mngr2->addInteger(2, RAISE);		
+	mngr->add(mngr2, RAISE);
+	mngr2->unref();
+	mngr2 = new Manager(1, 2);
+	mngr->add(mngr2, RAISE);
+	mngr2->unref();
 }
 SumFunction::SumFunction() : Function("Statistics", "sum", -1, "Sum") {}
 void SumFunction::calculate2(Manager *mngr) {
@@ -518,83 +532,79 @@ void MaxFunction::calculate2(Manager *mngr) {
 }
 ModeFunction::ModeFunction() : Function("Statistics", "mode", -1, "Mode") {}
 void ModeFunction::calculate2(Manager *mngr) {
-	if(vargs.size() <= 0)
+	if(vargs.size() <= 0) {
 		return;
-	long double value;
-	unsigned int ui = 0;
+	}
 	int n = 0;
 	bool b;
-	vector<long double> ds;
+	vector<Manager*> vargs_nodup;
 	vector<int> is;
-	hash_map<long double, int> tmpmap;
+	Manager *value;
 	for(unsigned int i = 0; i < vargs.size(); i++) {
 		b = true;
-		for(unsigned int i2 = 0; i2 < ds.size(); i2++) {
-			if(ds[i2] == vargs[i]->value()) {
+		for(unsigned int i2 = 0; i2 < vargs_nodup.size(); i2++) {
+			if(vargs_nodup[i2]->equals(vargs[i])) {
 				is[i2]++;
 				b = false;
 				break;
 			}
 		}
 		if(b) {
-			ds.push_back(vargs[i]->value());
+			vargs_nodup.push_back(vargs[i]);
 			is.push_back(1);
 		}
 	}
 	for(unsigned int i = 0; i < is.size(); i++) {
 		if(is[i] > n) {
 			n = is[i];
-			value = ds[i];
+			value = vargs_nodup[i];
 		}
 	}
-	for(unsigned int i = 0; i < vargs.size(); i++) {
-		if(vargs[i]->value() == value) {
-			ui = i;
-			break;
-		}
-	}
-/*	if(u)
-		u->add
-		(uargs[ui]);*/
-	mngr->value(value);
+	mngr->set(value);
 }
 NumberFunction::NumberFunction() : Function("Statistics", "number", -1, "Number") {}
 void NumberFunction::calculate2(Manager *mngr) {
-	mngr->value(vargs.size());
+	mngr->set(vargs.size(), 1);
 }
 StdDevFunction::StdDevFunction() : Function("Statistics", "stddev", -1, "Standard Deviation") {}
 void StdDevFunction::calculate2(Manager *mngr) {
-	if(vargs.size() <= 0)
+	if(vargs.size() <= 0) {
 		return;
-	long double mean = 0, value = 0;
-	for(unsigned int i = 0; i < vargs.size(); i++) {
-		mean += vargs[i]->value();
 	}
-	mean = mean / vargs.size();
+	Manager mean, value;
 	for(unsigned int i = 0; i < vargs.size(); i++) {
-		value += powl(vargs[i]->value() - mean, 2);
+		mean.add(vargs[i], ADD);
 	}
-/*	if(u)
-		u->add
-		(uargs[0]);*/
-	mngr->value(sqrtl(value / vargs.size()));
+	mean.addInteger(vargs.size(), DIVIDE);
+	for(unsigned int i = 0; i < vargs.size(); i++) {
+		vargs[i]->add(&mean, SUBTRACT);
+		vargs[i]->addInteger(2, RAISE);
+		value.add(vargs[i], ADD);
+	}
+	value.addInteger(vargs.size(), DIVIDE);
+	Manager mngr2(1, 2);
+	value.add(&mngr2, RAISE);
+	mngr->set(&value);
 }
 StdDevSFunction::StdDevSFunction() : Function("Statistics", "stddevs", -1, "Standard Deviation (random sampling)") {}
 void StdDevSFunction::calculate2(Manager *mngr) {
-	if(vargs.size() <= 0)
+	if(vargs.size() <= 0) {
 		return;
-	long double mean = 0, value = 0;
-	for(unsigned int i = 0; i < vargs.size(); i++) {
-		mean += vargs[i]->value();
 	}
-	mean = mean / vargs.size();
+	Manager mean, value;
 	for(unsigned int i = 0; i < vargs.size(); i++) {
-		value += powl(vargs[i]->value() - mean, 2);
+		mean.add(vargs[i], ADD);
 	}
-/*	if(u)
-		u->add
-		(uargs[0]);*/
-	mngr->value(sqrtl(value / (vargs.size() - 1)));
+	mean.addInteger(vargs.size(), DIVIDE);
+	for(unsigned int i = 0; i < vargs.size(); i++) {
+		vargs[i]->add(&mean, SUBTRACT);
+		vargs[i]->addInteger(2, RAISE);
+		value.add(vargs[i], ADD);
+	}
+	value.addInteger(vargs.size() - 1, DIVIDE);
+	Manager mngr2(1, 2);
+	value.add(&mngr2, RAISE);
+	mngr->set(&value);
 }
 RandomFunction::RandomFunction() : Function("General", "rand", 0, "Random Number") {}
 Manager *RandomFunction::calculate(const string &eq) {

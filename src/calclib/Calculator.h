@@ -23,6 +23,7 @@ class Calculator;
 #include "Function.h"
 #include "Error.h"
 #include "Prefix.h"
+#include "Integer.h"
 #include <ext/hash_map>
 
 extern Calculator *calculator;
@@ -36,6 +37,7 @@ class Calculator {
 	stack<Error*> errors;
 	int error_id;
 	int ianglemode;
+	int i_precision;
 	char vbuffer[200];
 	bool b_functions, b_variables, b_units, b_unknown, b_calcvars;
 	vector<void*> ufv;
@@ -68,8 +70,12 @@ class Calculator {
 	Prefix *getExactPrefix(long int exp10, long int exp = 1) const;			
 	Prefix *getNearestPrefix(long int exp10, long int exp = 1) const;		
 	Prefix *getBestPrefix(long int exp10, long int exp = 1) const;		
+	Prefix *getBestPrefix(const Integer *exp10, long int exp = 1) const;				
 	Prefix *addPrefix(Prefix *p);
 	void prefixNameChanged(Prefix *p);	
+
+	void setPrecision(int precision = DEFAULT_PRECISION);
+	int getPrecision() const;
 
 	const char *getDecimalPoint() const;
 	const char *getComma() const;	
@@ -143,14 +149,14 @@ class Calculator {
 	string getUnitName(string name = "", Unit *object = NULL, bool force = false, bool always_append = false);	
 	bool load(const char* file_name, bool is_user_defs = true);
 	bool save(const char* file_name);	
-	string value2str(long double &value, int precision = PRECISION);	
+/*	string value2str(long double &value, int precision = PRECISION);	
 	string value2str_decimals(long double &value, int precision = PRECISION);	
 	string value2str_bin(long double &value, int precision = PRECISION);				
 	string value2str_octal(long double &value, int precision = PRECISION);		
 	string value2str_hex(long double &value, int precision = PRECISION);			
 	string value2str_prefix(long double &value, long int &exp, int precision = PRECISION, bool use_short_prefixes = true, long double *new_value = NULL, Prefix *prefix = NULL, bool print_one = true);
 	string value2str_exp(long double &value, int precision = PRECISION);
-	string value2str_exp_pure(long double &value, int precision = PRECISION);	
+	string value2str_exp_pure(long double &value, int precision = PRECISION);	*/
 	long double getAngleValue(long double value);
 	Manager *setAngleValue(Manager *mngr);	
 	

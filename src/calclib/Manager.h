@@ -77,7 +77,7 @@ class Manager {
 		int compare(Manager *mngr);
 		void sort(void);					
 		void clear(void);
-		bool equal(Manager *mngr);
+		bool equals(Manager *mngr);
 		long double value(void);
 		void value(long double value_);				
 		Fraction *fraction() const;
@@ -100,7 +100,7 @@ class Manager {
 		bool convert(Unit*);
 		bool convert(string unit_str);		
 		bool convert(Manager *unit_mngr);				
-		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int precision = PRECISION, int decimals_to_keep = 0, bool decimals_expand = true, bool decimals_decrease = false, bool *usable = NULL, Prefix *prefix = NULL, bool toplevel = true, bool *plural = NULL, long int *l_exp = NULL, bool in_composite = false, bool in_power = false);
+		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int decimals_to_keep = 0, bool decimals_expand = true, bool decimals_decrease = false, bool *in_exact = NULL, bool *usable = NULL, Prefix *prefix = NULL, bool toplevel = true, bool *plural = NULL, long int *l_exp = NULL, bool in_composite = false, bool in_power = false);
 		void ref(void);
 		void unref(void);
 		char type(void) const;

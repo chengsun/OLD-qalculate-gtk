@@ -425,7 +425,7 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 						break;
 					}
 					case POWER_MANAGER: {
-						if(equal(mngr)) {
+						if(equals(mngr)) {
 							Manager *mngr2 = new Manager(this);
 							clear();
 							push_back(new Manager(2, 1));
@@ -476,7 +476,7 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 						break;
 					}
 					case UNIT_MANAGER: {
-						if(equal(mngr)) {
+						if(equals(mngr)) {
 							Manager *mngr2 = new Manager(this);
 							clear();
 							push_back(new Manager(2, 1));
@@ -538,7 +538,7 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 						break;
 					}
 					case FUNCTION_MANAGER: {
-						if(equal(mngr)) {
+						if(equals(mngr)) {
 							Manager *mngr2 = new Manager(this);
 							clear();
 							push_back(new Manager(2, 1));
@@ -633,7 +633,7 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 						break;
 					}
 					case POWER_MANAGER: {
-						if(mngr->mngrs[0]->equal(mngrs[0])) {
+						if(mngr->mngrs[0]->equals(mngrs[0])) {
 							mngrs[1]->add(mngr->mngrs[1], ADD);
 							if(mngrs[1]->isNull()) {
 								set(1, 1);
@@ -650,7 +650,7 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 						break;
 					}
 					default: {
-						if(mngr->equal(mngrs[0])) {
+						if(mngr->equals(mngrs[0])) {
 							mngrs[1]->addInteger(1, ADD);
 							if(mngrs[1]->isNull()) {
 								set(1, 1);
@@ -768,7 +768,7 @@ bool Manager::add(Manager *mngr, MathOperation op, bool translate_) {
 						break;
 					}
 					case FUNCTION_MANAGER: {
-						if(equal(mngr)) {
+						if(equals(mngr)) {
 							Manager *mngr2 = new Manager(this);
 							clear();
 							push_back(mngr2);
@@ -1081,7 +1081,7 @@ void Manager::moveto(Manager *term) {
 	c_type = term->type();
 	term->unref();
 }
-bool Manager::equal(Manager *mngr) {
+bool Manager::equals(Manager *mngr) {
 	if(c_type == mngr->type()) {
 		if(isNull()) {
 			return true;
@@ -1095,23 +1095,23 @@ bool Manager::equal(Manager *mngr) {
 			if(o_function != mngr->o_function) return false;
 			if(mngrs.size() != mngr->mngrs.size()) return false;			
 			for(int i = 0; i < mngrs.size(); i++) {
-				if(!mngrs[i]->equal(mngr->mngrs[i])) return false;
+				if(!mngrs[i]->equals(mngr->mngrs[i])) return false;
 			}			
 			return true;
 		} else if(c_type == MULTIPLICATION_MANAGER) {
 			if(mngrs.size() != mngr->mngrs.size()) return false;
 			for(int i = 0; i < mngrs.size(); i++) {
-				if(!mngrs[i]->equal(mngr->mngrs[i])) return false;
+				if(!mngrs[i]->equals(mngr->mngrs[i])) return false;
 			}
 			return true;
 		} else if(c_type == ADDITION_MANAGER) {
 			if(mngrs.size() != mngr->mngrs.size()) return false;
 			for(int i = 0; i < mngrs.size(); i++) {
-				if(!mngrs[i]->equal(mngr->mngrs[i])) return false;
+				if(!mngrs[i]->equals(mngr->mngrs[i])) return false;
 			}
 			return true;
 		} else if(c_type == POWER_MANAGER) {
-			return mngrs[0]->equal(mngr->mngrs[0]) && mngrs[1]->equal(mngr->mngrs[1]);
+			return mngrs[0]->equals(mngr->mngrs[0]) && mngrs[1]->equals(mngr->mngrs[1]);
 		}
 	}
 	return false;
@@ -1124,7 +1124,7 @@ bool Manager::compatible(Manager *mngr) {
 		} else if(c_type == STRING_MANAGER) {
 			if(s_var == mngr->s_var) return true;
 		} else if(c_type == FUNCTION_MANAGER) {
-			return equal(mngr);
+			return equals(mngr);
 		} else if(c_type == MULTIPLICATION_MANAGER) {
 			if(mngrs[0]->isNumber() && !mngr->mngrs[0]->isNumber()) {
 				if(mngrs.size() != mngr->mngrs.size() + 1) return false;
@@ -1146,11 +1146,11 @@ bool Manager::compatible(Manager *mngr) {
 		} else if(c_type == ADDITION_MANAGER) {
 			if(mngrs.size() != mngr->mngrs.size()) return false;
 			for(int i = 0; i < mngrs.size(); i++) {
-				if(!mngrs[i]->equal(mngr->mngrs[i])) return false;
+				if(!mngrs[i]->equals(mngr->mngrs[i])) return false;
 			}
 			return true;
 		} else if(c_type == POWER_MANAGER) {
-			return mngrs[0]->equal(mngr->mngrs[0]) && mngrs[1]->equal(mngr->mngrs[1]);
+			return mngrs[0]->equals(mngr->mngrs[0]) && mngrs[1]->equals(mngr->mngrs[1]);
 		}
 	} else if(c_type == MULTIPLICATION_MANAGER) {
 		if(!mngr->isNumber()) {
@@ -1243,7 +1243,8 @@ bool Manager::negative() {
 	else if(c_type == MULTIPLICATION_MANAGER || c_type == POWER_MANAGER) return mngrs[0]->negative();
 	return false;
 }
-string Manager::print(NumberFormat nrformat, int displayflags, int precision, int decimals_to_keep, bool decimals_expand, bool decimals_decrease, bool *usable, Prefix *prefix, bool toplevel, bool *plural, long int *l_exp, bool in_composite, bool in_power) {
+string Manager::print(NumberFormat nrformat, int displayflags, int decimals_to_keep, bool decimals_expand, bool decimals_decrease, bool *in_exact, bool *usable, Prefix *prefix, bool toplevel, bool *plural, long int *l_exp, bool in_composite, bool in_power) {
+	if(in_exact && !isPrecise()) *in_exact = true;
 	string str, str2;
 	if(toplevel && (displayflags & DISPLAY_FORMAT_TAGS)) {
 	    str = "<b><big>";
@@ -1315,7 +1316,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int precision, in
 		int max_decimals = -1;			
 		if(decimals_decrease) max_decimals = decimals_to_keep;
 		if(decimals_expand) min_decimals = decimals_to_keep;			
-		str += fr->print(nrformat, displayflags, precision, min_decimals, max_decimals, prefix, usable, false, NULL, l_exp, in_composite, in_power);
+		str += fr->print(nrformat, displayflags, min_decimals, max_decimals, prefix, in_exact, usable, false, NULL, l_exp, in_composite, in_power);
 	} else if(c_type == UNIT_MANAGER) {
 		if(!in_composite && toplevel) {
 			str2 = "1";
@@ -1324,7 +1325,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int precision, in
 		}
 		if(o_unit->type() == 'D') {
 			Manager *mngr = ((CompositeUnit*) o_unit)->generateManager(false);
-			str2 = mngr->print(NUMBER_FORMAT_PREFIX, displayflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix, false, NULL, NULL, true, in_power);		
+			str2 = mngr->print(NUMBER_FORMAT_PREFIX, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, NULL, NULL, true, in_power);		
 			str += str2;
 			mngr->unref();
 		} else {
@@ -1357,7 +1358,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int precision, in
 				str += COMMA_STR;
 				str += SPACE_STR;
 			}
-			str += mngrs[i]->print(nrformat, displayflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix, false, NULL, l_exp, in_composite, in_power);
+			str += mngrs[i]->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
 		}
 		str += RIGHT_BRACKET_STR;		
 	} else if(c_type == ADDITION_MANAGER) {
@@ -1379,7 +1380,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int precision, in
 				CALCULATOR->remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
 				str += str2; str += " ";
 			}
-			str2 = mngrs[i]->print(nrformat, displayflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix, false, NULL, l_exp, in_composite, in_power);
+			str2 = mngrs[i]->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, NULL, l_exp, in_composite, in_power);
 			if(i > 0 && displayflags & DISPLAY_FORMAT_NONASCII && str2.substr(0, strlen(SIGN_MINUS)) == SIGN_MINUS) {
 				str2 = str2.substr(strlen(SIGN_MINUS), str2.length() - strlen(SIGN_MINUS));
 			} else if(i > 0 && str2.substr(0, strlen(MINUS_STR)) == MINUS_STR) {
@@ -1481,7 +1482,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int precision, in
 				if(is_unit) {
 					had_div_unit = true;
 				}								
-				str += mngr->print(nrformat, displayflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix, false, &plural_, l_exp, in_composite, in_power);
+				str += mngr->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, &plural_, l_exp, in_composite, in_power);
 				if(c && i == mngrs.size() - 1) {
 					str += RIGHT_BRACKET_STR;
 				}
@@ -1495,7 +1496,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int precision, in
 				}
 				str += " ";								
 				str += LEFT_BRACKET_STR;
-				str += mngrs[i]->print(nrformat, displayflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix, false, &plural_, l_exp, in_composite, in_power);
+				str += mngrs[i]->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, &plural_, l_exp, in_composite, in_power);
 				str += RIGHT_BRACKET_STR;
 			} else {
 				if(mngrs[i]->type() == POWER_MANAGER && (mngrs[i]->mngrs[0]->isNumber() || had_unit)) {
@@ -1545,7 +1546,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int precision, in
 					}
 					str += " ";					
 				}					
-				str += mngrs[i]->print(nrformat, displayflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix, false, &plural_, l_exp, in_composite, in_power);
+				str += mngrs[i]->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, &plural_, l_exp, in_composite, in_power);
 			}
 			if(plural_ && (mngrs[i]->type() == UNIT_MANAGER || (mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->type() == UNIT_MANAGER))) {
 				plural_ = false;
@@ -1562,10 +1563,10 @@ string Manager::print(NumberFormat nrformat, int displayflags, int precision, in
 		}
 		if(mngrs[0]->mngrs.size() > 0 && !in_composite) {
 			str += LEFT_BRACKET_STR;
-			str += mngrs[0]->print(nrformat, displayflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix, false, NULL, NULL, in_composite, in_power);
+			str += mngrs[0]->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, NULL, NULL, in_composite, in_power);
 			str += RIGHT_BRACKET_STR;
 		} else {
-			str += mngrs[0]->print(nrformat, displayflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix, false, NULL, NULL, in_composite, in_power);
+			str += mngrs[0]->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, NULL, NULL, in_composite, in_power);
 		}
 		if(displayflags & DISPLAY_FORMAT_TAGS) {
 			if(!in_power) {
@@ -1578,10 +1579,10 @@ string Manager::print(NumberFormat nrformat, int displayflags, int precision, in
 		else str += POWER_STR;
 		if(mngrs[1]->mngrs.size() > 0) {
 			str += LEFT_BRACKET_STR;
-			str += mngrs[1]->print(nrformat, displayflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix, false, NULL, NULL, in_composite, true);
+			str += mngrs[1]->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, NULL, NULL, in_composite, true);
 			str += RIGHT_BRACKET_STR;
 		} else {
-			str += mngrs[1]->print(nrformat, displayflags, precision, decimals_to_keep, decimals_expand, decimals_decrease, usable, prefix, false, NULL, NULL, in_composite, true);
+			str += mngrs[1]->print(nrformat, displayflags, decimals_to_keep, decimals_expand, decimals_decrease, in_exact, usable, prefix, false, NULL, NULL, in_composite, true);
 		}
 		if(displayflags & DISPLAY_FORMAT_TAGS) {
 			if(!in_power) {
@@ -2119,7 +2120,7 @@ void Manager::differentiate(string x_var) {
 }
 
 void Manager::replace(Manager *replace_this, Manager *replace_with) {
-	if(this->equal(replace_this)) {
+	if(this->equals(replace_this)) {
 		set(replace_with);
 		return;
 	}

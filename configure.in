@@ -48,6 +48,12 @@ PKG_CHECK_MODULES(PACKAGE, [
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
 
+dnl  --------------------------------
+dnl | check for GMP                  |-----------------------------------------
+dnl  --------------------------------
+
+AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_WARN([GNU MP not found. Qalculate! does not require GMP but is slower without it.])])
+
 dnl  -------------------------------------
 dnl | internationalization (i18n) support |------------------------------------
 dnl  -------------------------------------

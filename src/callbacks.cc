@@ -60,7 +60,7 @@ bool save_mode_on_exit;
 bool save_defs_on_exit;
 bool fraction_is_on, saved_fraction_is_on;
 bool hyp_is_on, saved_hyp_is_on;
-int deci_mode, decimals, precision, display_mode, number_base;
+int deci_mode, decimals, display_mode, number_base;
 bool show_more, show_buttons;
 extern bool load_global_defs;
 extern GtkWidget *omToUnit_menu;
@@ -1346,7 +1346,7 @@ void update_fmenu() {
 	return a customized result string
 	set rlabel to true for result label (nicer look)
 */
-string get_value_string(Manager *mngr_, bool rlabel = false, Prefix *prefix = NULL) {
+string get_value_string(Manager *mngr_, bool rlabel = false, Prefix *prefix = NULL, bool *in_exact = NULL) {
 	int displayflags = 0;
 	displayflags = displayflags | DISPLAY_FORMAT_BEAUTIFY;
 	if(fraction_is_on) displayflags = displayflags | DISPLAY_FORMAT_FRACTION;	
@@ -1374,7 +1374,7 @@ string get_value_string(Manager *mngr_, bool rlabel = false, Prefix *prefix = NU
 			}
 		}
 	}
-	return mngr_->print(numberformat, displayflags, precision, decimals, true, deci_mode == DECI_FIXED, NULL, prefix);
+	return mngr_->print(numberformat, displayflags, decimals, true, deci_mode == DECI_FIXED, in_exact, NULL, prefix);
 }
 
 /*
@@ -1389,10 +1389,11 @@ void setResult(const gchar *expr, Prefix *prefix = NULL) {
 	vans->set(mngr);
 	vAns->set(mngr);
 
-	str2 = get_value_string(mngr, true, prefix);
+	bool in_exact = false;
+
+	str2 = get_value_string(mngr, true, prefix, &in_exact);
 	
-	bool useable = true;
-	gtk_label_set_selectable(GTK_LABEL(result), useable);
+	gtk_label_set_selectable(GTK_LABEL(result), true);
 	gtk_widget_set_size_request(result, -1, -1);	
 //	pango_parse_markup(str2.c_str(), -1, 0, NULL, NULL, NULL, NULL);
 	if(str2.length() > 150) {
@@ -1402,10 +1403,10 @@ void setResult(const gchar *expr, Prefix *prefix = NULL) {
 	gtk_label_set_text(GTK_LABEL(result), str2.c_str());
 	gtk_label_set_use_markup(GTK_LABEL(result), TRUE);
 	str2 = "<big>";
-	if(mngr->isPrecise()) {
-		str2 += "=";
-	} else {
+	if(in_exact) {
 		str2 += SIGN_ALMOST_EQUAL;	
+	} else {
+		str2 += "=";
 	}
 	str2 += "</big>";
 	gtk_label_set_text(GTK_LABEL(label_equals), str2.c_str());
@@ -2533,7 +2534,7 @@ void save_mode() {
 void set_saved_mode() {
 	saved_deci_mode = deci_mode;
 	saved_decimals = decimals;
-	saved_precision = precision;
+	saved_precision = CALCULATOR->getPrecision();
 	saved_display_mode = display_mode;
 	saved_number_base = number_base;
 	saved_angle_unit = CALCULATOR->angleMode();
@@ -2550,13 +2551,9 @@ void set_saved_mode() {
 	load preferences from ~/.qalculate/qalculate-gtk.cfg
 */
 void load_preferences() {
-								printf("1\n");
-								printf("3 %p\n", CALCULATOR);								
-								printf("2 %i\n", CALCULATOR->functionsEnabled());
 
 	deci_mode = DECI_LEAST;
 	decimals = 0;
-	precision = PRECISION;
 	display_mode = MODE_NORMAL;
 	number_base = BASE_DECI;
 	save_mode_on_exit = true;
@@ -2601,7 +2598,7 @@ void load_preferences() {
 				else if(svar == "decimals")
 					decimals = v;
 				else if(svar == "precision")
-					precision = v;
+					CALCULATOR->setPrecision(v);
 				else if(svar == "display_mode")
 					display_mode = v;
 				else if(svar == "number_base")
@@ -3250,7 +3247,7 @@ void on_menu_item_save_activate(GtkMenuItem *w, gpointer user_data) {
 void on_menu_item_precision_activate(GtkMenuItem *w, gpointer user_data) {
 	GtkWidget *dialog = glade_xml_get_widget (glade_xml, "precision_dialog");
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (glade_xml, "main_window")));
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "precision_dialog_spinbutton_precision")), precision);	
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "precision_dialog_spinbutton_precision")), PRECISION);	
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_hide(dialog);
 	gtk_widget_grab_focus(expression);
@@ -3728,7 +3725,7 @@ void on_menu_item_about_activate(GtkMenuItem *w, gpointer user_data) {
 	precision has changed in precision dialog
 */
 void on_precision_dialog_spinbutton_precision_value_changed(GtkSpinButton *w, gpointer user_data) {
-	precision = gtk_spin_button_get_value_as_int(w);
+	CALCULATOR->setPrecision(gtk_spin_button_get_value_as_int(w));
 	setResult(gtk_label_get_text(GTK_LABEL(result)));
 }
 

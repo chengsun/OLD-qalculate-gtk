@@ -100,6 +100,8 @@ Calculator *calculator;
 
 Calculator::Calculator() {
 
+	i_precision = DEFAULT_PRECISION;
+
 	setLocale();
 	addStringAlternative(SIGN_POWER_0, "o");
 	addStringAlternative(SIGN_POWER_1, "^1");
@@ -263,6 +265,30 @@ Prefix *Calculator::getBestPrefix(long int exp10, long int exp) const {
 	}
 	return prefixes[prefixes.size() - 1];	
 }
+Prefix *Calculator::getBestPrefix(const Integer *exp10, long int exp) const {
+	if(prefixes.size() <= 0) return NULL;
+	for(int i = 0; i < prefixes.size(); i++) {
+		if(exp10->equals(prefixes[i]->exponent(exp))) {
+			return prefixes[i];
+		} else if(exp10->compare(prefixes[i]->exponent(exp)) == 1) {
+			if(i == 0) {
+				return prefixes[i];
+			}
+			Integer exp10_1(exp10);
+			exp10_1.subtract(prefixes[i - 1]->exponent(exp));
+			Integer exp10_2(prefixes[i]->exponent(exp));
+			exp10_2.subtract(exp10);
+			exp10_2.multiply(2);
+			exp10_2.add(2);
+			if(exp10_1.isLessThan(&exp10_2)) {
+				return prefixes[i - 1];
+			} else {
+				return prefixes[i];
+			}
+		}
+	}
+	return prefixes[prefixes.size() - 1];	
+}
 Prefix *Calculator::addPrefix(Prefix *p) {
 	prefixes.push_back(p);
 	prefixNameChanged(p);
@@ -334,6 +360,14 @@ void Calculator::prefixNameChanged(Prefix *p) {
 			i++;
 		}
 	}
+}
+
+void Calculator::setPrecision(int precision) {
+	if(precision <= 0) precision = DEFAULT_PRECISION;
+	i_precision = precision;
+}
+int Calculator::getPrecision() const {
+	return i_precision;
 }
 
 const char *Calculator::getDecimalPoint() const {return DOT_STR;}
@@ -2108,13 +2142,12 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 	return true;
 }
 
-string Calculator::value2str(long double &value, int precision) {
+/*string Calculator::value2str(long double &value, int precision) {
 	sprintf(vbuffer, "%.*LG", precision, value);
 	string stmp = vbuffer;
 	return stmp;
 }
 string Calculator::value2str_decimals(long double &value, int precision) {
-//	sprintf(vbuffer, "%.*Lf", precision, value);
 	sprintf(vbuffer, "%.*LG", precision, value);
 	string stmp = vbuffer;
 	return stmp;
@@ -2245,7 +2278,7 @@ string Calculator::value2str_exp_pure(long double &value, int precision) {
 	sprintf(vbuffer, "%.*LE", precision, value);
 	string stmp = vbuffer;
 	return stmp;
-}
+}*/
 long double Calculator::getAngleValue(long double value) {
 	switch(angleMode()) {
 	    case RADIANS: {return value;}
