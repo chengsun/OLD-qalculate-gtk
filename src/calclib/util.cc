@@ -99,7 +99,7 @@ Fraction *yearsBetweenDates(string date1, string date2, int basis, bool date_fun
 		days_of_years += daysPerYear(year2, basis);
 		Fraction *fr = new Fraction(days, days_of_years);		
 		Fraction *fr2 = new Fraction(years);
-		fr->add(MULTIPLY, fr2);
+		fr->add(OPERATION_MULTIPLY, fr2);
 		delete fr2;
 		return fr;
 	} else {
@@ -571,13 +571,14 @@ int find_ending_bracket(const string &str, int start, int *missing) {
 
 char op2ch(MathOperation op) {
 	switch(op) {
-		case ADD: return PLUS_CH;
-		case SUBTRACT: return MINUS_CH;		
-		case MULTIPLY: return MULTIPLICATION_CH;		
-		case DIVIDE: return DIVISION_CH;		
-		case RAISE: return POWER_CH;		
-		case EXP10: return EXP_CH;		
+		case OPERATION_ADD: return PLUS_CH;
+		case OPERATION_SUBTRACT: return MINUS_CH;		
+		case OPERATION_MULTIPLY: return MULTIPLICATION_CH;		
+		case OPERATION_DIVIDE: return DIVISION_CH;		
+		case OPERATION_RAISE: return POWER_CH;		
+		case OPERATION_EXP10: return EXP_CH;		
 	}
+	return ' ';
 }
 
 string& wrap_p(string &str) {

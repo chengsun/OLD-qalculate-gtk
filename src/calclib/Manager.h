@@ -12,16 +12,22 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#define MULTIPLICATION_MANAGER	MULTIPLICATION_CH
-#define ADDITION_MANAGER	PLUS_CH
-#define POWER_MANAGER		POWER_CH
-#define FRACTION_MANAGER	'v'
-#define UNIT_MANAGER		'u'
-#define NULL_MANAGER		0
-#define STRING_MANAGER		's'
-#define FUNCTION_MANAGER	'f'
-#define MATRIX_MANAGER		'm'
-#define ALTERNATIVE_MANAGER	'a'
+enum {
+	MULTIPLICATION_MANAGER,
+	ADDITION_MANAGER,
+	POWER_MANAGER,
+	FRACTION_MANAGER,
+	UNIT_MANAGER,
+	NULL_MANAGER,
+	STRING_MANAGER,
+	FUNCTION_MANAGER,
+	MATRIX_MANAGER,
+	ALTERNATIVE_MANAGER,
+	AND_MANAGER,
+	OR_MANAGER,
+	NOT_MANAGER,
+	COMPARISON_MANAGER
+};
 
 #include "includes.h"
 
@@ -32,7 +38,7 @@ class Manager {
 	
 		Unit* o_unit;
 		vector<Manager*> mngrs;
-		char c_type;
+		int c_type;
 		int refcount;
 		string s_var;
 		Function *o_function;
@@ -40,12 +46,10 @@ class Manager {
 		Matrix *mtrx;
 		bool b_exact;
 		bool b_protect;
+		ComparisonType comparison_type;
 		
 		void transform(const Manager *mngr, char type_, MathOperation op, bool reverse_ = false);		
-		void altclean();
-		void plusclean();		
-		void multiclean();		
-		void powerclean();				
+		bool typeclean();
 		bool reverseadd(const Manager *mngr, MathOperation op, bool translate_ = true);
 		bool compatible(const Manager *mngr);
 		void moveto(Manager *mngr);			
@@ -74,10 +78,11 @@ class Manager {
 		void set(string var_);				
 		void set(const Unit *u, long int exp10 = 0);				
 		void addFunctionArg(const Manager *mngr);
-		bool add(const Manager *mngr, MathOperation op = MULTIPLY, bool translate_ = true);	
-		void addUnit(const Unit *u, MathOperation op = MULTIPLY);		
-		void addFloat(long double value_, MathOperation op = MULTIPLY);			
-		void addInteger(long int value_, MathOperation op = MULTIPLY);					
+		bool add(const Manager *mngr, MathOperation op = OPERATION_MULTIPLY, bool translate_ = true);	
+		bool setNOT(bool translate_ = true);
+		void addUnit(const Unit *u, MathOperation op = OPERATION_MULTIPLY);		
+		void addFloat(long double value_, MathOperation op = OPERATION_MULTIPLY);			
+		void addInteger(long int value_, MathOperation op = OPERATION_MULTIPLY);					
 		void addAlternative(const Manager *mngr);
 		int compare(const Manager *mngr, int sortflags = SORT_SCIENTIFIC) const;
 		void sort(int sortflags = SORT_SCIENTIFIC);					
@@ -94,6 +99,11 @@ class Manager {
 		Manager *exponent() const;
 		Function *function() const;
 		void recalculateFunctions();
+		ComparisonType comparisonType() const;
+		bool isComparison() const;
+		bool isOR() const;
+		bool isAND() const;
+		bool isNOT() const;
 		bool isText() const;
 		bool isUnit() const;
 		bool isUnit_exp() const;
@@ -110,6 +120,8 @@ class Manager {
 		bool isPrecise() const;
 		void setPrecise(bool is_precise);
 		bool hasNegativeSign() const;
+		int signedness() const;
+		int isPositive() const;
 		bool negative() const;
 		void finalize();
 		void clean();
@@ -125,7 +137,7 @@ class Manager {
 		void unref();
 		void protect(bool do_protect = true);
 		bool isProtected() const;
-		char type() const;
+		int type() const;
 		
 		void replace(Manager *replace_this, Manager *replace_with);
 		void replace_no_copy(Manager *replace_this, Manager *replace_with);

@@ -179,6 +179,9 @@ Calculator::Calculator() {
 	addStringAlternative(SIGN_MULTIDOT, MULTIPLICATION);			
 	addStringAlternative(SIGN_MINUS, MINUS);		
 	addStringAlternative(SIGN_PLUS, PLUS);		
+	addStringAlternative(SIGN_NOT_EQUAL, " " NOT EQUALS);		
+	addStringAlternative(SIGN_GREATER_OR_EQUAL, GREATER EQUALS);	
+	addStringAlternative(SIGN_LESS_OR_EQUAL, LESS EQUALS);		
 	addStringAlternative("[", LEFT_BRACKET);	
 	addStringAlternative("]", RIGHT_BRACKET);	
 	addStringAlternative(";", COMMA);	
@@ -203,7 +206,7 @@ Calculator::Calculator() {
 	RIGHT_BRACKET_STR = ")";
 	SPACE_S = " \t\n";
 	SPACE_STR = " ";
-	RESERVED_S = "@?\\{}:\",;";
+	RESERVED_S = "@?\\{}:\"\',;";
 	PLUS_S = "+";
 	PLUS_STR = "+";
 	MINUS_S = "-";
@@ -851,7 +854,9 @@ void Calculator::clearBuffers() {
 	ids.clear();
 }
 void Calculator::abort() {
-	pthread_cancel(calculate_thread);
+	while(pthread_cancel(calculate_thread) == 0) {
+		usleep(100);
+	}
 	restoreState();
 	clearBuffers();
 	b_busy = false;
@@ -866,7 +871,9 @@ Manager *Calculator::calculate(string str, bool enable_abort) {
 		b_busy = true;
 		mngr = new Manager();
 		expression_to_calculate = str;
-		pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, mngr);	
+		while(!pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, mngr) == 0) {
+			usleep(100);
+		}	
 	} else {
 		int i = 0; 
 		string str2 = "";
@@ -879,7 +886,7 @@ Manager *Calculator::calculate(string str, bool enable_abort) {
 			}
 		}
 		setFunctionsAndVariables(str);
-		EqContainer *e = new EqContainer(str, ADD);
+		EqContainer *e = new EqContainer(str, OPERATION_ADD);
 		mngr = e->calculate();
 		mngr->finalize();
 		if(!str2.empty()) {
@@ -951,12 +958,12 @@ Manager *Calculator::convert(long double value, Unit *from_unit, Unit *to_unit) 
 }
 Manager *Calculator::convert(string str, Unit *from_unit, Unit *to_unit) {
 	Manager *mngr = calculate(str);
-	mngr->addUnit(from_unit, MULTIPLY);
+	mngr->addUnit(from_unit, OPERATION_MULTIPLY);
 	from_unit->hasComplexRelationTo(to_unit);
 	mngr->convert(to_unit);
 	mngr->finalize();	
 //	mngr->convert(to_unit);
-	mngr->addUnit(to_unit, DIVIDE);
+	mngr->addUnit(to_unit, OPERATION_DIVIDE);
 	mngr->finalize();	
 	return mngr;
 }
@@ -1012,13 +1019,13 @@ Manager *Calculator::convert(Manager *mngr, Unit *to_unit, bool always_convert) 
 			}
 		}
 		if(b) {			
-			mngr->addUnit(to_unit, DIVIDE);
+			mngr->addUnit(to_unit, OPERATION_DIVIDE);
 			mngr->finalize();			
 			Manager *mngr2 = new Manager(to_unit);
 			if(mngr->type() == MULTIPLICATION_MANAGER) {
 				mngr->mngrs.push_back(mngr2);
 			} else {
-				mngr->transform(mngr2, MULTIPLICATION_MANAGER, MULTIPLY);
+				mngr->transform(mngr2, MULTIPLICATION_MANAGER, OPERATION_MULTIPLY);
 				mngr2->unref();
 			}
 			mngr->sort();
@@ -1066,13 +1073,13 @@ Manager *Calculator::convertToCompositeUnit(Manager *mngr, CompositeUnit *cu, bo
 			}
 		}
 		if(b) {	
-			mngr->add(mngr3, DIVIDE);
+			mngr->add(mngr3, OPERATION_DIVIDE);
 			mngr->finalize();			
 			Manager *mngr2 = new Manager(cu);
 			if(mngr->type() == MULTIPLICATION_MANAGER) {
 				mngr->mngrs.push_back(mngr2);
 			} else {
-				mngr->transform(mngr2, MULTIPLICATION_MANAGER, MULTIPLY);
+				mngr->transform(mngr2, MULTIPLICATION_MANAGER, OPERATION_MULTIPLY);
 				mngr2->unref();		
 			}
 			mngr->sort();
@@ -1514,6 +1521,401 @@ bool Calculator::unitIsUsedByOtherUnits(const Unit *u) const {
 	return false;
 }
 void Calculator::setFunctionsAndVariables(string &str) {
+	const string *name;
+	string stmp, stmp2;
+	long int prefix_exp;
+	bool b, moved_forward;
+	int i, i2, i3, i4, i5, i6, i7, i8, i9;
+	int chars_left;
+	int name_length, name_length_old;
+	Function *f;
+	Variable *v;
+	Unit *u;
+	Prefix *p;
+	Manager *mngr;
+	for(int i = 0; i < signs.size(); i++) {
+		gsub(signs[i], real_signs[i], str);
+	}
+	for(int str_index = 0; str_index < str.length(); str_index++) {
+		chars_left = str.length() - str_index;
+		if(str[str_index] == '\"' || str[str_index] == '\'') {
+			if(str_index == str.length() - 1) {
+				str.erase(str_index, 1);
+			} else {
+				i = str.find(str[str_index], str_index + 1);
+				if(i == string::npos) {
+					i = str.length();
+					name_length = i - str_index;
+				} else {
+					name_length = i - str_index + 1;
+				}
+				stmp = LEFT_BRACKET_CH;
+				stmp += ID_WRAP_LEFT_CH;
+				mngr = new Manager(str.substr(str_index + 1, i - str_index - 1));
+				stmp += i2s(addId(mngr));
+				mngr->unref();
+				stmp += ID_WRAP_RIGHT_CH;
+				stmp += RIGHT_BRACKET_CH;
+				str.replace(str_index, name_length, stmp);
+				str_index += stmp.length() - 1;
+			}
+		} else if(str[str_index] == '!') {
+			if(str_index != 0 && (chars_left == 1 || str[str_index + 1] != EQUALS_CH) && (f = getFunction("factorial"))) {
+				stmp = "";
+				if(is_in(NUMBERS, str[str_index - 1])) {
+					i3 = str.find_last_not_of(NUMBERS, str_index - 1);
+					if(i3 == string::npos) {
+						stmp2 = str.substr(0, str_index);
+					} else {
+						stmp2 = str.substr(i3 + 1, str_index - i3 - 1);
+					}
+				} else if(str[str_index - 1] == RIGHT_BRACKET_CH) {
+					i3 = str_index - 2;
+					i4 = 1;
+					while(true) {
+						i3 = str.find_last_of(BRACKETS, i3);
+						if(i3 == string::npos) {
+							break;
+						}
+						if(str[i3] == RIGHT_BRACKET_CH) {
+							i4++;
+						} else {
+							i4--;
+							if(i4 == 0) {
+								stmp2 = str.substr(i3, str_index - i3);
+								break;
+							}
+						}
+						i3--;
+					}
+				}		
+				if(!stmp2.empty()) {
+					mngr =  f->calculate(stmp2);
+					if(mngr) {
+						stmp = LEFT_BRACKET_CH;
+						stmp += ID_WRAP_LEFT_CH;
+						stmp += i2s(addId(mngr));
+						mngr->unref();
+						stmp += ID_WRAP_RIGHT_CH;
+						stmp += RIGHT_BRACKET_CH;
+					} else {
+						stmp = "";
+					}
+					str.replace(str_index - stmp2.length(), stmp2.length() + 1, stmp);
+					str_index -=  stmp2.length();
+					str_index += stmp.length() - 1;
+				}
+			}
+		} else if(is_not_in(NUMBERS NOT_IN_NAMES, str[str_index])) {
+			for(int ufv_index = 0; ufv_index < ufv.size(); ufv_index++) {
+				name = NULL;
+				prefix_exp = 0;
+				switch(ufv_t[ufv_index]) {
+					case 'v': {
+						if(b_variables) {
+							name = &((ExpressionItem*) ufv[ufv_index])->name();
+						}
+						break;
+					}
+					case 'f': {
+						if(b_functions) {
+							name = &((ExpressionItem*) ufv[ufv_index])->name();
+						}
+						break;
+					}
+					case 'U': {
+						if(b_units) {
+							name = &((ExpressionItem*) ufv[ufv_index])->name();
+						}
+						break;
+					}
+					case 'u': {
+						if(b_units) {
+							name = &((Unit*) ufv[ufv_index])->singular();
+						}
+						break;
+					}
+					case 'Y': {
+						if(b_units) {
+							name = &((Unit*) ufv[ufv_index])->plural();
+						}
+						break;
+					}
+					case 'p': {
+						if(b_units) {
+							name = &((Prefix*) ufv[ufv_index])->shortName();
+						}
+						break;
+					}
+					case 'P': {
+						if(b_units) {
+							name = &((Prefix*) ufv[ufv_index])->longName();
+						}
+						break;
+					}
+				}
+				if(name) name_length = name->length();
+				if(name && (*name)[0] == str[str_index] && (name_length == 1 || (name_length <= chars_left && (*name)[1] == str[str_index + 1] && *name == str.substr(str_index, name_length)))) {
+					moved_forward = false;
+					switch(ufv_t[ufv_index]) {
+						case 'v': {
+							v = (Variable*) ufv[ufv_index];
+							stmp = LEFT_BRACKET_CH;
+							stmp += ID_WRAP_LEFT_CH;
+							if(b_calcvars && (!b_always_exact || v->isPrecise())) {
+								mngr = new Manager(v->get());
+								mngr->recalculateFunctions();
+								if(!v->isPrecise()) {
+									mngr->setPrecise(false);
+								}
+								stmp += i2s(addId(mngr));
+								mngr->unref();
+							} else {
+								mngr = new Manager(v->name());
+								stmp += i2s(addId(mngr));
+								mngr->unref();
+							}
+							stmp += ID_WRAP_RIGHT_CH;
+							stmp += RIGHT_BRACKET_CH;
+							str.replace(str_index, name_length, stmp);
+							str_index += stmp.length();
+							moved_forward = true;
+							break;
+						}
+						case 'f': {
+							f = (Function*) ufv[ufv_index];
+							b = false;
+							i4 = -1;
+							if(f->args() == 0) {
+								i5 = str.find_first_not_of(SPACES, str_index + name_length);
+								if(i5 != string::npos && str[i5] == LEFT_BRACKET_CH) {
+									i5 = str.find_first_not_of(SPACES, i5 + 1);							
+									if(i5 != string::npos && str[i5] == RIGHT_BRACKET_CH) {
+										i4 = i5 - str_index + 1;
+									}
+								}
+								mngr = f->calculate("");
+								if(mngr) {
+									stmp = LEFT_BRACKET_CH;
+									stmp += ID_WRAP_LEFT_CH;
+									stmp += i2s(addId(mngr));
+									mngr->unref();
+									stmp += ID_WRAP_RIGHT_CH;
+									stmp += RIGHT_BRACKET_CH;
+								} else {
+									stmp = "";
+								}
+								if(i4 < 0) i4 = name_length;
+							} else if(b_rpn && f->args() == 1 && str_index > 0 && str[str_index - 1] == SPACE_CH && (str_index + name_length >= str.length() || str[str_index + name_length] != LEFT_BRACKET_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos) {
+								i5 = str.rfind(SPACE, i6);	
+								if(i5 == string::npos) {
+									stmp = str.substr(0, i6 + 1);	
+								} else {
+									stmp = str.substr(i5 + 1, i6 - i5);
+								}
+								mngr =  f->calculate(stmp);
+								if(mngr) {
+									stmp = LEFT_BRACKET_CH;
+									stmp += ID_WRAP_LEFT_CH;
+									stmp += i2s(addId(mngr));
+									mngr->unref();
+									stmp += ID_WRAP_RIGHT_CH;
+									stmp += RIGHT_BRACKET_CH;
+								} else {
+									stmp = "";
+								}
+								if(i5 == string::npos) {
+									str.replace(0, str_index + name_length, stmp);
+								} else {
+									str.replace(i5 + 1, str_index + name_length - i5 - 1, stmp);
+								}
+								str_index += name_length;
+								moved_forward = true;
+							} else {
+								b = false;
+								i5 = 1;
+								i6 = 0;
+								while(i5 > 0 && !b) {
+									if(i6 + str_index + name_length >= str.length()) {
+										b = true;
+										i5 = 2;
+										i6++;
+										break;
+									} else {
+										char c = str[str_index + name_length + i6];
+										if(c == LEFT_BRACKET_CH && i5 != 2) {
+											b = true;
+										} else if(c == ' ') {
+											if(i5 == 2) {
+												b = true;
+											}
+										} else if(i5 == 2 && is_in(OPERATORS, str[str_index + name_length + i6])) {
+											b = true;
+										} else {
+											//if(i6 > 0) {
+												i5 = 2;
+											//} else {
+											//	i5 = -1;
+											//}		
+										}
+									}
+									i6++;
+								}
+								if(b && i5 == 2) {
+									stmp2 = str.substr(str_index + name_length, i6 - 1);
+									mngr =  f->calculate(stmp2);
+									if(mngr) {
+										stmp = LEFT_BRACKET_CH;
+										stmp += ID_WRAP_LEFT_CH;
+										stmp += i2s(addId(mngr));
+										mngr->unref();
+										stmp += ID_WRAP_RIGHT_CH;
+										stmp += RIGHT_BRACKET_CH;
+									} else {
+										stmp = "";
+									}				
+									i4 = i6 + 1 + name_length - 2;
+									b = false;
+								}
+								i9 = i6;
+								if(b) {
+									b = false;
+									i6 = i6 + 1 + str_index + name_length;
+									i7 = i6 - 1;
+									i8 = i7;
+									while(true) {
+										i5 = str.find(RIGHT_BRACKET_CH, i7);
+										if(i5 == string::npos) {
+											str.append(1, RIGHT_BRACKET_CH);
+											i5 = str.length() - 1;
+										}
+										if(i5 < (i6 = str.find(LEFT_BRACKET_CH, i8)) || i6 == string::npos) {
+											i6 = i5;
+											b = true;
+											break;
+										}
+										i7 = i5 + 1;
+										i8 = i6 + 1;
+									}
+								}
+								if(b) {
+									stmp2 = str.substr(str_index + name_length + i9, i6 - (str_index + name_length + i9));
+									mngr =  f->calculate(stmp2);
+									if(mngr) {
+										stmp = LEFT_BRACKET_CH;
+										stmp += ID_WRAP_LEFT_CH;
+										stmp += i2s(addId(mngr));
+										mngr->unref();
+										stmp += ID_WRAP_RIGHT_CH;
+										stmp += RIGHT_BRACKET_CH;
+									} else {
+										stmp = "";
+									}							
+									i4 = i6 + 1 - str_index;
+								}
+							}
+							if(i4 > 0) {
+								str.replace(str_index, i4, stmp);
+								str_index += stmp.length();
+								moved_forward = true;
+							}
+							break;
+						}
+						case 'U': {}
+						case 'u': {}
+						case 'Y': {
+							replace_text_by_unit_place:
+							u = (Unit*) ufv[ufv_index];
+							if(str.length() > str_index + name_length && is_in(NUMBERS, str[str_index + name_length])) {
+								str.insert(str_index + name_length, 1, POWER_CH);
+							}
+							mngr = new Manager(u, prefix_exp);
+							stmp = LEFT_BRACKET_CH;					
+							stmp += ID_WRAP_LEFT_CH;
+							stmp += i2s(addId(mngr));
+							mngr->unref();
+							stmp += ID_WRAP_RIGHT_CH;
+							stmp += RIGHT_BRACKET_CH;				
+							str.replace(str_index, name_length, stmp);
+							str_index += stmp.length();
+							moved_forward = true;
+							break;
+						}
+						case 'p': {}
+						case 'P': {
+							if(str_index + name_length == str.length() || is_in(NOT_IN_NAMES, str[str_index + name_length])) {
+								break;
+							}
+							p = (Prefix*) ufv[ufv_index];
+							str_index += name_length;
+							chars_left = str.length() - str_index;
+							name_length_old = name_length;
+							for(int ufv_index2 = 0; ufv_index2 < ufv.size(); ufv_index2++) {
+								name = NULL;
+								switch(ufv_t[ufv_index2]) {
+									case 'U': {
+										name = &((ExpressionItem*) ufv[ufv_index2])->name();
+										break;
+									}
+									case 'u': {
+										name = &((Unit*) ufv[ufv_index2])->singular();
+										break;
+									}
+									case 'Y': {
+										name = &((Unit*) ufv[ufv_index2])->plural();
+										break;
+									}
+								}
+								if(name) name_length = name->length();
+								if(name && (*name)[0] == str[str_index] && (name_length == 1 || (name_length <= chars_left && (*name)[1] == str[str_index + 1] && *name == str.substr(str_index, name_length)))) {
+									prefix_exp = p->exponent();
+									str.erase(str_index - name_length_old, name_length_old);
+									str_index -= name_length_old;
+									ufv_index = ufv_index2;
+									goto replace_text_by_unit_place;
+								}
+							}
+							str_index -= name_length_old;
+							chars_left = str.length() - str_index;
+							break;
+						}
+					}
+					if(moved_forward) {
+						str_index--;
+						break;
+					}
+				}
+			}
+			if(!moved_forward) {
+				if(b_unknown && str[str_index] != EXP_CH) {
+					mngr = new Manager(str.substr(str_index, 1));
+					stmp = LEFT_BRACKET_CH;
+					stmp += ID_WRAP_LEFT_CH;
+					stmp += i2s(addId(mngr));
+					mngr->unref();
+					stmp += ID_WRAP_RIGHT_CH;
+					stmp += RIGHT_BRACKET_CH;
+					str.replace(str_index, 1, stmp);
+					str_index += stmp.length() - 1;
+				}	
+			}
+		}
+	}
+	if(b_rpn) {
+		int rpn_i = str.find(SPACE, 0);
+		while(rpn_i != string::npos) {
+			if(rpn_i == 0 || is_in(OPERATORS, str[rpn_i - 1]) || rpn_i + 1 == str.length() || is_in(SPACE OPERATORS, str[rpn_i + 1])) {
+				str.erase(rpn_i, 1);
+			} else {
+				rpn_i++;
+			}
+			rpn_i = str.find(SPACE, rpn_i);
+		}
+	} else {
+		remove_blanks(str);
+	}
+}
+/*void Calculator::setFunctionsAndVariables(string &str) {
 	int i = 0, i3 = 0, i4, i5, i6, i7, i8, i9;
 	bool b;
 	Variable *v;
@@ -1554,6 +1956,31 @@ void Calculator::setFunctionsAndVariables(string &str) {
 		}
 	}	
 	gsub("\"", "", str);	
+	while(!b) {
+		i = str.find("\'", i);
+		if(i == string::npos) break;
+		i3 = str.find("\'", i + 1);
+		if(i3 == string::npos) {
+			i3 = str.length();
+			b = true;
+		}
+		stmp = str.substr(i + 1, i3 - i - 1);
+		remove_blank_ends(stmp);
+		if(stmp.empty()) {
+			i = i3;
+		} else {
+			mngr = new Manager(stmp);
+			stmp = LEFT_BRACKET_CH;
+			stmp += ID_WRAP_LEFT_CH;
+			stmp += i2s(addId(mngr));
+			stmp += ID_WRAP_RIGHT_CH;
+			stmp += RIGHT_BRACKET_CH;
+			if(b) str.replace(i, str.length() - i, stmp);
+			else str.replace(i, i3 + 1 - i, stmp);
+			mngr->unref();		
+		}
+	}	
+	gsub("\'", "", str);		
 	i = -1; i3 = 0; b = false;
 	for(int i2 = 0; i2 < ufv.size(); i2++) {
 		i = 0, i3 = 0;
@@ -1687,7 +2114,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 							b = false;
 							i6 = i6 + 1 + i + (int) f->name().length();
 							i7 = i6 - 1;
-							i8 = i7;
+							i8 = i7;*/
 /*							i8 = 0;
 							while(1) {
 								i5 = str.find_first_of(RIGHT_BRACKET LEFT_BRACKET, i7);
@@ -1697,7 +2124,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 									}
 								}
 							}*/
-							while(1) {
+/*							while(1) {
 								i5 = str.find(RIGHT_BRACKET_CH, i7);
 								if(i5 == string::npos) {
 									str.append(1, RIGHT_BRACKET_CH);
@@ -1977,7 +2404,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 			i++;
 		}
 	}
-}
+}*/
 string Calculator::getName(string name, ExpressionItem *object, bool force, bool always_append) {
 	switch(object->type()) {
 		case TYPE_UNIT: {
@@ -2228,6 +2655,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							arg = new UnitArgument();
 						} else if(type == "variable") {
 							arg = new VariableArgument();
+						} else if(type == "object") {
+							arg = new ExpressionItemArgument();
 						} else {
 							arg = new Argument();
 						}
@@ -2266,7 +2695,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 								XML_GET_TRUE_FROM_TEXT(child2, b);
 								arg->setZeroForbidden(b);
 							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "test")) {
-								XML_GET_TRUE_FROM_TEXT(child2, b);
+								XML_GET_FALSE_FROM_TEXT(child2, b);
 								arg->setTests(b);
 							}
 							child2 = child2->next;
@@ -2673,7 +3102,6 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 			}
 			if(!variables[i]->description().empty()) {
 				str = variables[i]->description();
-				gsub("\n", "\\", str);
 				if(save_global) {
 					xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
 				} else {
@@ -2789,7 +3217,6 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 			}
 			if(!units[i]->description().empty()) {
 				str = units[i]->description();
-				gsub("\n", "\\", str);
 				if(save_global) {
 					xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
 				} else {
@@ -2852,7 +3279,6 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 				}
 				if(!functions[i]->description().empty()) {
 					str = functions[i]->description();
-					gsub("\n", "\\", str);
 					if(save_global) {
 						xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
 					} else {
@@ -2893,7 +3319,6 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 				}
 				if(!functions[i]->description().empty()) {
 					str = functions[i]->description();
-					gsub("\n", "\\", str);
 					if(save_global) {
 						xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
 					} else {
@@ -2929,6 +3354,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 							case ARGUMENT_TYPE_FUNCTION: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "function"); break;}
 							case ARGUMENT_TYPE_UNIT: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "unit"); break;}
 							case ARGUMENT_TYPE_VARIABLE: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "variable"); break;}
+							case ARGUMENT_TYPE_EXPRESSION_ITEM: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "object"); break;}
 							default: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "free");}
 						}
 						xmlNewProp(newnode, (xmlChar*) "index", (xmlChar*) i2s(i2).c_str());
@@ -3551,16 +3977,16 @@ Manager *Calculator::setAngleValue(Manager *mngr) {
 			Fraction fr;
 			fr.pi();
 			Manager mngr_pi(&fr);
-	    		mngr->add(&mngr_pi, MULTIPLY);
-	    		mngr->addFloat(180, DIVIDE);			
+	    		mngr->add(&mngr_pi, OPERATION_MULTIPLY);
+	    		mngr->addFloat(180, OPERATION_DIVIDE);			
 			break;
 		}
 		case GRADIANS: {
 			Fraction fr;
 			fr.pi();
 			Manager mngr_pi(&fr);
-	    		mngr->add(&mngr_pi, MULTIPLY);			
-	    		mngr->addFloat(200, DIVIDE);		
+	    		mngr->add(&mngr_pi, OPERATION_MULTIPLY);			
+	    		mngr->addFloat(200, OPERATION_DIVIDE);		
 			break;
 		}
 	}
@@ -3725,14 +4151,19 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 	}
 	return true;
 }
-bool Calculator::testCondition(string expression) {
+int Calculator::testCondition(string expression) {
 	Manager *mngr = calculate(expression);
-	if(mngr->isFraction() && mngr->fraction()->isPositive()) {
-		mngr->unref();
-		return true;
+	if(mngr->isFraction()) {
+		if(mngr->fraction()->isPositive()) {
+			mngr->unref();
+			return 1;
+		} else {
+			mngr->unref();
+			return 0;
+		}
 	}
 	mngr->unref();
-	return false;
+	return -1;
 }
 
 

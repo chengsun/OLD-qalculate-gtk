@@ -27,8 +27,8 @@ class EqItem {
 
 class EqNumber : public EqItem {
   public:  
-	EqNumber(Manager *value_, MathOperation operation_ = ADD);
-	EqNumber(string str, MathOperation operation_ = ADD);
+	EqNumber(Manager *value_, MathOperation operation_ = OPERATION_ADD);
+	EqNumber(string str, MathOperation operation_ = OPERATION_ADD);
 	Manager *calculate(void);
 };
 
@@ -37,10 +37,10 @@ class EqContainer : public EqItem {
 	vector<EqItem*> items;
 	MathOperation rpn_operation;
   public:
-	EqContainer(MathOperation operation_ = ADD);
+	EqContainer(MathOperation operation_ = OPERATION_ADD);
 	~EqContainer(void);
-	EqContainer(string str, MathOperation operation_ = ADD);
-	void add(string &str, MathOperation s = ADD);
+	EqContainer(string str, MathOperation operation_ = OPERATION_ADD);
+	void add(string &str, MathOperation s = OPERATION_ADD);
 	void add(EqItem *e);
 	Manager *calculate(void);
 };

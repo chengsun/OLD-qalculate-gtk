@@ -39,9 +39,9 @@ class Unit : public ExpressionItem {
 	
 	void setPlural(string name_, bool force = true);
 	void setSingular(string name_, bool force = true);
-	virtual string plural(bool return_singular_if_no_plural = true) const;
-	virtual string singular(bool return_short_if_no_singular = true) const;
-	virtual string shortName() const;
+	virtual const string &plural(bool return_singular_if_no_plural = true) const;
+	virtual const string &singular(bool return_short_if_no_singular = true) const;
+	virtual const string &shortName() const;
 	virtual bool isUsedByOtherUnits() const;
 	virtual const Unit* baseUnit() const;
 	virtual Manager *baseValue(Manager *value_ = NULL, Manager *exp_ = NULL) const;
@@ -122,6 +122,10 @@ class AliasUnit_Composite : public AliasUnit {
 };
 
 class CompositeUnit : public Unit {
+	
+	protected:
+	
+		string sshort;
 
 	public:
 		//--------internal-------------//
@@ -138,13 +142,14 @@ class CompositeUnit : public Unit {
 		virtual int countUnits() const;
 		virtual void del(Unit *u);
 		virtual string print(bool plural_, bool short_) const;
-		virtual string plural(bool return_singular_if_no_plural = true) const;
-		virtual string singular(bool return_short_if_no_singular = true) const;
-		virtual string shortName() const;
+		virtual const string &plural(bool return_singular_if_no_plural = true) const;
+		virtual const string &singular(bool return_short_if_no_singular = true) const;
+		virtual const string &shortName() const;
 		virtual int unitType() const;
 		virtual bool containsRelativeTo(const Unit *u) const;
 		virtual Manager *generateManager(bool cleaned = true) const;		
 		virtual void setBaseExpression(string base_expression_);		
+		virtual void updateNames();
 };
 
 #endif

@@ -91,10 +91,10 @@ void ExpressionItem::setName(string name_, bool force) {
 	}
 	CALCULATOR->nameChanged(this);
 }
-string ExpressionItem::name() const {
+const string &ExpressionItem::name() const {
 	return sname;
 }
-string ExpressionItem::referenceName() const {
+const string &ExpressionItem::referenceName() const {
 	return name();
 }
 string ExpressionItem::category() const {

@@ -113,7 +113,7 @@
     <_title>If...Then...Else</_title>
     <_description>Tests a condition and returns a value depending on the result.</_description>
     <argument index="1">
-      <_title>Condition (use &lt;, &lt;=, =, &lt;&gt;, =&gt; or &gt;)</_title>
+      <_title>Condition</_title>
     </argument>
     <argument index="2">
       <_title>Expression if condition met</_title>
@@ -678,7 +678,9 @@
   <function name="sln" active="true">
     <_category>Financial</_category>
     <_title>Straight line depreciation</_title>
-    <_description>Determines the straight line depreciation of an asset for a single period. \\Cost is the amount you paid for the asset. Salvage is the value of the asset at the end of the period. Life is the number of periods over which the asset is depreciated. SLN divides the cost evenly over the life of an asset.</_description>
+    <_description>Determines the straight line depreciation of an asset for a single period.
+    
+Cost is the amount you paid for the asset. Salvage is the value of the asset at the end of the period. Life is the number of periods over which the asset is depreciated. SLN divides the cost evenly over the life of an asset.</_description>
     <expression precise="true">(\x-\y)/\z</expression>
     <argument type="free" index="1">
       <_title>Cost</_title>
@@ -693,7 +695,9 @@
   <function name="pv" active="true">
     <_category>Financial</_category>
     <_title>Present value</_title>
-    <_description>Returns the present value of an investment.\\If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</_description>
+    <_description>Returns the present value of an investment.
+    
+If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</_description>
     <expression precise="true">(-\A{0}-\z*(1+\x*\B{0})*(((1+\x)^\y-1)/\x))/((1+\x)^\y)</expression>
     <argument type="free" index="1">
       <_title>Interest rate</_title>
@@ -806,7 +810,9 @@
   <function name="pmt" active="true">
     <_category>Financial</_category>
     <_title>Payment for a loan</_title>
-    <_description>Returns the amount of payment for a loan based on a constant interest rate and constant payments (each payment is equal amount).\\If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</_description>
+    <_description>Returns the amount of payment for a loan based on a constant interest rate and constant payments (each payment is equal amount).
+    
+If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</_description>
     <expression precise="true">(-\z*((1+\x)^\y)-\A{0})/((1+\x*\B{0})*(((1+\x)^\y-1)/\x))</expression>
     <argument type="free" index="1">
       <_title>Rate</_title>
@@ -827,7 +833,9 @@
   <function name="nper" active="true">
     <_category>Financial</_category>
     <_title>Periods of an investment</_title>
-    <_description>Calculates number of periods of an investment based on periodic constant payments and a constant interest rate.\\Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</_description>
+    <_description>Calculates number of periods of an investment based on periodic constant payments and a constant interest rate.
+    
+Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</_description>
     <expression precise="true">ln((\y*(1+\x*\B{0})-\A{0}*\x)/(\z*\x+\y*(1+\x*\B)))/ln(1+\x)</expression>
     <argument type="free" index="1">
       <_title>Interest rate</_title>
@@ -888,7 +896,9 @@
   <function name="ppmt" active="true">
     <_category>Financial</_category>
     <_title>Payment of an annuity going towards principal (PPMT)</_title>
-    <_description>Calculates the amount of a payment of an annuity going towards principal.\\Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</_description>
+    <_description>Calculates the amount of a payment of an annuity going towards principal.
+    
+Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</_description>
     <expression precise="true">((-\a*(pow(1+\x,\z))-\B{0})/((1+\x*\C{0})*((pow(1+\x,\z)-1)/\x)))+(\a*pow(1+\x,(\y-1))+((-\a*(pow(1+\x,\z))-\B)/((1+\x*\C)*((pow(1+\x,\z)-1)/\x)))*((pow(1+\x,(\y-1))-1)/\x))*\x</expression>
     <argument type="free" index="1">
       <_title>Periodic interest rate</_title>
@@ -926,7 +936,9 @@
   <function name="fv" active="true">
     <_category>Financial</_category>
     <_title>Future value</_title>
-    <_description>Computes the future value of an investment. This is based on periodic, constant payments and a constant interest rate.\\If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</_description>
+    <_description>Computes the future value of an investment. This is based on periodic, constant payments and a constant interest rate.
+    
+If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</_description>
     <expression precise="true">-(\A{0}*((1+\x)^\y)+\z*(1+\x*\B{0})*(((1+\x)^\y-1)/\x))</expression>
     <argument type="free" index="1">
       <_title>Interest rate</_title>
@@ -980,7 +992,9 @@
   <function name="ipmt" active="true">
     <_category>Financial</_category>
     <_title>Payment of an annuity going towards interest (IPMT)</_title>
-    <_description>Calculates the amount of a payment of an annuity going towards interest.\\Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</_description>
+    <_description>Calculates the amount of a payment of an annuity going towards interest.
+    
+Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</_description>
     <expression precise="true">-(\a*pow(1+\x,(\y-1))+((-\a*(pow(1+\x,\z))-\B)/((1+\x*\C)*((pow(1+\x,\z)-1)/\x)))*((pow(1+\x,(\y-1))-1)/\x))*\x</expression>
     <argument type="free" index="1">
       <_title>Periodic interest rate</_title>
@@ -1006,7 +1020,9 @@
   <function name="intrate" active="true">
     <_category>Financial</_category>
     <_title>Interest rate for a fully invested security</_title>
-    <_description>Returns the interest rate for a fully invested security. \\Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
+    <_description>Returns the interest rate for a fully invested security. 
+    
+Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
     <expression precise="true">(\a-\z)/\z/yearfrac(\x,\y,\B{0},1)</expression>
     <argument type="date" index="1">
       <_title>Settlement date</_title>
@@ -1054,7 +1070,9 @@
   <function name="received" active="true">
     <_category>Financial</_category>
     <_title>Amount received at maturity for a security bond</_title>
-    <_description>Returns the amount received at the maturity date for a invested security. \\Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365. The settlement date must be before maturity date.</_description>
+    <_description>Returns the amount received at the maturity date for a invested security. 
+
+Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365. The settlement date must be before maturity date.</_description>
     <expression precise="true">\z/(1-\a*yearfrac(\x,\y,\B{0},1))</expression>
     <argument type="date" index="1">
       <_title>Settlement date</_title>
@@ -1076,7 +1094,9 @@
   <function name="disc" active="true">
     <_category>Financial</_category>
     <_title>Discount rate for a security</_title>
-    <_description>Returns the discount rate for a security. \\Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
+    <_description>Returns the discount rate for a security.
+    
+Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
     <expression precise="true">(\a-\z)/\a/yearfrac(\x,\y,\B{0},1))</expression>
     <argument type="date" index="1">
       <_title>Settlement date</_title>
@@ -1098,7 +1118,9 @@
   <function name="accrintm" active="true">
     <_category>Financial</_category>
     <_title>Accrued interest of security paying at maturity</_title>
-    <_description>Returns accrued interest for a security which pays interests at maturity date. \\Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
+    <_description>Returns accrued interest for a security which pays interests at maturity date.
+    
+Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
     <expression precise="true">\A{1000}*\z*yearfrac(\x,\y,\B{0},1)</expression>
     <argument type="date" index="1">
       <_title>Issue Date</_title>
@@ -1120,7 +1142,9 @@
   <function name="accrint" active="true">
     <_category>Financial</_category>
     <_title>Accrued interest of security with periodic interest payments</_title>
-    <_description>Returns accrued interest for a security which pays periodic interest. \\Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
+    <_description>Returns accrued interest for a security which pays periodic interest.
+    
+Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
     <expression precise="true">\b*\a/\c*\c*yearfrac(\x,\z,\D{0},1)+\y*0</expression>
     <argument type="date" index="1">
       <_title>Issue date</_title>
@@ -1149,7 +1173,9 @@
   <function name="coupnum" active="true">
     <_category>Financial</_category>
     <_title>Number of coupons to be paid</_title>
-    <_description>Returns the number of coupons to be paid between the settlement and the maturity. \\Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
+    <_description>Returns the number of coupons to be paid between the settlement and the maturity.
+    
+Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
     <expression precise="true">trunc(yearfrac(\x,\y,\A{0},1)*\z)</expression>
     <argument type="date" index="1">
       <_title>Settlement date</_title>
@@ -1169,7 +1195,9 @@
   <function name="pricedisc" active="true">
     <_category>Financial</_category>
     <_title>Price per $100 face value of a security bond</_title>
-    <_description>Calculates and returns the price per $100 face value of a security bond. The security does not pay interest at maturity. \\Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
+    <_description>Calculates and returns the price per $100 face value of a security bond. The security does not pay interest at maturity.
+    
+Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
     <expression precise="true">\a-\z*\a*yearfrac(\x,\y,\B{0},1)</expression>
     <argument type="date" index="1">
       <_title>Settlement date</_title>
@@ -1191,7 +1219,9 @@
   <function name="pricemat" active="true">
     <_category>Financial</_category>
     <_title>Price per $100 face value of a security</_title>
-    <_description>Calculates and returns the price per $100 face value of a security. The security pays interest at maturity.\\Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
+    <_description>Calculates and returns the price per $100 face value of a security. The security pays interest at maturity.
+    
+Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/365.</_description>
     <expression precise="true">(100+yearfrac(\z,\y,\C{0},1)*\a*100)/(1+yearfrac(\x,\y,\C,1)*\b)-yearfrac(\z,\x,\C,1)*\a*100</expression>
     <argument type="date" index="1">
       <_title>Settlement date</_title>
@@ -1244,7 +1274,7 @@
       <min include_equals="true">0</min>
     </argument>
   </function>
-  <function name="logn" active="true">
+  <function name="log" active="true">
     <_category>Exponents and Logarithms</_category>
     <_title>Base N Logrithm</_title>
     <_description>Returns the base n logarithm.</_description>
@@ -1581,7 +1611,7 @@
     <_category>Statistics</_category>
     <_title>Rayleigh distribution</_title>
     <_description>Returns the probability density p(x) at x for a Rayleigh distribution with scale parameter sigma. (from Gnumeric)</_description>
-    <expression precise="true">if(&quot;\x &lt; 0&quot;,&quot;0&quot;,&quot;(\x/\y)/\y*exp(-(\x/\y)*(\x/\y)/2)&quot;)</expression>
+    <expression precise="true">if(\x &lt; 0,&quot;0&quot;,&quot;(\x/\y)/\y*exp(-(\x/\y)*(\x/\y)/2)&quot;)</expression>
     <argument type="free" index="1">
       <_title>X</_title>
     </argument>
@@ -1594,7 +1624,7 @@
     <_category>Statistics</_category>
     <_title>Rayleigh tail distribution</_title>
     <_description>Returns the probability density p(x) at x for a Rayleigh tail distribution with scale parameter sigma and a lower limit. (from Gnumeric)</_description>
-    <expression precise="true">if(&quot;\x &lt; \y&quot;,&quot;0&quot;,&quot;(\x/\z)/\z*exp(((\y/\z)+(\x/\z))*((\y/\z)-(\x/\z))/2)&quot;)</expression>
+    <expression precise="true">if(\x &lt; \y,&quot;0&quot;,&quot;(\x/\z)/\z*exp(((\y/\z)+(\x/\z))*((\y/\z)-(\x/\z))/2)&quot;)</expression>
     <argument type="free" index="1">
       <_title>X</_title>
     </argument>
@@ -1610,7 +1640,7 @@
     <_category>Statistics</_category>
     <_title>Pareto distribution</_title>
     <_description>Returns the probability density p(x) at x for a Pareto distribution with exponent and scale. (from Gnumeric)</_description>
-    <expression precise="true">if(&quot;\x &lt; \z&quot;,&quot;0&quot;,&quot;(\y/\z)/(\x/\z)^(\y+1)&quot;)</expression>
+    <expression precise="true">if(\x &lt; \z,&quot;0&quot;,&quot;(\y/\z)/(\x/\z)^(\y+1)&quot;)</expression>
     <argument type="free" index="1">
       <_title>X</_title>
     </argument>

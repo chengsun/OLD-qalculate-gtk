@@ -174,7 +174,7 @@ class Calculator {
 	long double getAngleValue(long double value);
 	Manager *setAngleValue(Manager *mngr);	
 	bool importCSV(const char *file_name, int first_row = 1, bool headers = true, string delimiter = ",", bool to_matrix = false, string name = "", string title = "", string category = "");
-	bool testCondition(string expression);
+	int testCondition(string expression);
 		
 };
 

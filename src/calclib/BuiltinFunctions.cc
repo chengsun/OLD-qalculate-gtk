@@ -770,25 +770,23 @@ void InverseFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 }
 IFFunction::IFFunction() : Function("Logical", "if", 3, "If...Then...Else") {
-	setArgumentDefinition(1, new TextArgument());
+	setArgumentDefinition(1, new FractionArgument());
 	setArgumentDefinition(2, new TextArgument());
 	setArgumentDefinition(3, new TextArgument());
 }
 void IFFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	bool result;
-	if(vargs[0]->isText()) {
-		result = CALCULATOR->testCondition(vargs[0]->text());
-	} else {
-		result = vargs[0]->isFraction() && vargs[0]->fraction()->isPositive();
-	}
-	Manager *mngr2;
+	int result = vargs[0]->fraction()->getBoolean();
 	if(result) {			
-		mngr2 = CALCULATOR->calculate(vargs[1]->text());
-	} else {			
-		mngr2 = CALCULATOR->calculate(vargs[2]->text());		
+		Manager *mngr2 = CALCULATOR->calculate(vargs[1]->text());
+		mngr->set(mngr2);
+		mngr2->unref();		
+	} else if(result == 0) {			
+		Manager *mngr2 = CALCULATOR->calculate(vargs[2]->text());		
+		mngr->set(mngr2);
+		mngr2->unref();		
+	} else {
+		mngr->set(this, vargs[0], vargs[1], vargs[2], NULL);
 	}	
-	mngr->set(mngr2);
-	mngr2->unref();		
 }
 GCDFunction::GCDFunction() : Function("Arithmetics", "gcd", 2, "Greatest Common Divisor") {
 	setArgumentDefinition(1, new FractionArgument());
@@ -861,8 +859,8 @@ void FactorialFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs[0]->fraction()->isZero()) mngr->set(1, 1);
 	mngr->set(vargs[0]);
 	while(!vargs[0]->fraction()->isOne()) {
-		vargs[0]->addInteger(-1, ADD);
-		mngr->add(vargs[0], MULTIPLY);
+		vargs[0]->addInteger(-1, OPERATION_ADD);
+		mngr->add(vargs[0], OPERATION_MULTIPLY);
 	}
 }
 AbsFunction::AbsFunction() : Function("Arithmetics", "abs", 1, "Absolute Value") {
@@ -987,7 +985,7 @@ LogFunction::LogFunction() : Function("Exponents and Logarithms", "ln", 1, "Natu
 void LogFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	FR_FUNCTION(log)
 }
-Log10Function::Log10Function() : Function("Exponents and Logarithms", "log", 1, "Base-10 Logarithm") {
+Log10Function::Log10Function() : Function("Exponents and Logarithms", "log10", 1, "Base-10 Logarithm") {
 	setArgumentDefinition(1, new FractionArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 }
 void Log10Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
@@ -1008,7 +1006,7 @@ void ExpFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		}		
 	} else {
 		mngr->set(E_VALUE);
-		mngr->add(vargs[0], RAISE);	
+		mngr->add(vargs[0], OPERATION_RAISE);	
 	}
 }
 Exp10Function::Exp10Function() : Function("Exponents and Logarithms", "exp10", 1, "10 raised the to power X") {}
@@ -1020,7 +1018,7 @@ void Exp10Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		}		
 	} else {
 		mngr->set(10);
-		mngr->add(vargs[0], RAISE);	
+		mngr->add(vargs[0], OPERATION_RAISE);	
 	}
 }
 Exp2Function::Exp2Function() : Function("Exponents and Logarithms", "exp2", 1, "2 raised the to power X") {}
@@ -1032,7 +1030,7 @@ void Exp2Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		}		
 	} else {
 		mngr->set(2);
-		mngr->add(vargs[0], RAISE);	
+		mngr->add(vargs[0], OPERATION_RAISE);	
 	}
 }
 SqrtFunction::SqrtFunction() : Function("Exponents and Logarithms", "sqrt", 1, "Square Root") {
@@ -1047,7 +1045,7 @@ void SqrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	} else {
 		mngr->set(vargs[0]);
 		Manager *mngr2 = new Manager(1, 2);
-		mngr->add(mngr2, RAISE);
+		mngr->add(mngr2, OPERATION_RAISE);
 		mngr2->unref();		
 	}
 }
@@ -1063,7 +1061,7 @@ void CbrtFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	} else {
 		mngr->set(vargs[0]);
 		Manager *mngr2 = new Manager(1, 3);		
-		mngr->add(mngr2, RAISE);
+		mngr->add(mngr2, OPERATION_RAISE);
 		mngr2->unref();	
 	}
 }
@@ -1079,8 +1077,8 @@ void RootFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	} 
 	mngr->set(vargs[0]);
 	Manager *mngr2 = new Manager(1, 1);		
-	mngr2->add(vargs[1], DIVIDE);
-	mngr->add(mngr2, RAISE);
+	mngr2->add(vargs[1], OPERATION_DIVIDE);
+	mngr->add(mngr2, OPERATION_RAISE);
 	mngr2->unref();	
 }
 PowFunction::PowFunction() : Function("Exponents and Logarithms", "pow", 2, "Power") {}
@@ -1092,19 +1090,19 @@ void PowFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		}		
 	}
 	mngr->set(vargs[0]);
-	mngr->add(vargs[1], RAISE);
+	mngr->add(vargs[1], OPERATION_RAISE);
 }
 HypotFunction::HypotFunction() : Function("Geometry", "hypot", 2, "Hypotenuse") {
 }
 void HypotFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	mngr->set(vargs[0]);
-	mngr->addInteger(2, RAISE);
+	mngr->addInteger(2, OPERATION_RAISE);
 	Manager *mngr2 = new Manager(vargs[1]);
-	mngr2->addInteger(2, RAISE);		
-	mngr->add(mngr2, RAISE);
+	mngr2->addInteger(2, OPERATION_RAISE);		
+	mngr->add(mngr2, OPERATION_RAISE);
 	mngr2->unref();
 	mngr2 = new Manager(1, 2);
-	mngr->add(mngr2, RAISE);
+	mngr->add(mngr2, OPERATION_RAISE);
 	mngr2->unref();
 }
 SumFunction::SumFunction() : Function("Statistics", "sum", -1, "Sum") {
@@ -1112,7 +1110,7 @@ SumFunction::SumFunction() : Function("Statistics", "sum", -1, "Sum") {
 }
 void SumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	for(unsigned int i = 0; i < vargs.size(); i++) {
-		mngr->add(vargs[i], ADD);
+		mngr->add(vargs[i], OPERATION_ADD);
 	}
 }
 MeanFunction::MeanFunction() : Function("Statistics", "mean", -1, "Mean") {
@@ -1122,9 +1120,9 @@ void MeanFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	if(vargs.size() <= 0)
 		return;
 	for(unsigned int i = 0; i < vargs.size(); i++) {
-		mngr->add(vargs[i], ADD);
+		mngr->add(vargs[i], OPERATION_ADD);
 	}
-	mngr->addInteger(vargs.size(), DIVIDE);	
+	mngr->addInteger(vargs.size(), OPERATION_DIVIDE);	
 }
 MedianFunction::MedianFunction() : Function("Statistics", "median", -1, "Median") {
 	setArgumentDefinition(1, new VectorArgument("", false));
@@ -1139,8 +1137,8 @@ void MedianFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 		mngr2->unref();	
 	} else if(v->components() % 2 == 0) {
 		mngr->set(v->get(v->components() / 2));
-		mngr->add(v->get(v->components() / 2 + 1), ADD);		
-		mngr->addInteger(2, DIVIDE);
+		mngr->add(v->get(v->components() / 2 + 1), OPERATION_ADD);		
+		mngr->addInteger(2, OPERATION_DIVIDE);
 	} else {
 		mngr->set(v->get(v->components() / 2 + 1));
 	}
@@ -1185,11 +1183,11 @@ void PercentileFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 			lfr.floor();
 			pfr.subtract(&lfr);
 			Manager gap(v->get(ufr.numerator()->getInt()));
-			gap.add(v->get(lfr.numerator()->getInt()), SUBTRACT);
+			gap.add(v->get(lfr.numerator()->getInt()), OPERATION_SUBTRACT);
 			Manager pfr_mngr(&pfr);
-			gap.add(&pfr_mngr, MULTIPLY);
+			gap.add(&pfr_mngr, OPERATION_MULTIPLY);
 			mngr->set(v->get(lfr.numerator()->getInt()));
-			mngr->add(&gap, ADD);
+			mngr->add(&gap, OPERATION_ADD);
 		}
 	}
 	delete v;
@@ -1295,17 +1293,17 @@ void StdDevFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 	Manager mean, value;
 	for(unsigned int i = 0; i < vargs.size(); i++) {
-		mean.add(vargs[i], ADD);
+		mean.add(vargs[i], OPERATION_ADD);
 	}
-	mean.addInteger(vargs.size(), DIVIDE);
+	mean.addInteger(vargs.size(), OPERATION_DIVIDE);
 	for(unsigned int i = 0; i < vargs.size(); i++) {
-		vargs[i]->add(&mean, SUBTRACT);
-		vargs[i]->addInteger(2, RAISE);
-		value.add(vargs[i], ADD);
+		vargs[i]->add(&mean, OPERATION_SUBTRACT);
+		vargs[i]->addInteger(2, OPERATION_RAISE);
+		value.add(vargs[i], OPERATION_ADD);
 	}
-	value.addInteger(vargs.size(), DIVIDE);
+	value.addInteger(vargs.size(), OPERATION_DIVIDE);
 	Manager mngr2(1, 2);
-	value.add(&mngr2, RAISE);
+	value.add(&mngr2, OPERATION_RAISE);
 	mngr->set(&value);
 }
 StdDevSFunction::StdDevSFunction() : Function("Statistics", "stddevs", -1, "Standard Deviation (random sampling)") {
@@ -1317,17 +1315,17 @@ void StdDevSFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 	Manager mean, value;
 	for(unsigned int i = 0; i < vargs.size(); i++) {
-		mean.add(vargs[i], ADD);
+		mean.add(vargs[i], OPERATION_ADD);
 	}
-	mean.addInteger(vargs.size(), DIVIDE);
+	mean.addInteger(vargs.size(), OPERATION_DIVIDE);
 	for(unsigned int i = 0; i < vargs.size(); i++) {
-		vargs[i]->add(&mean, SUBTRACT);
-		vargs[i]->addInteger(2, RAISE);
-		value.add(vargs[i], ADD);
+		vargs[i]->add(&mean, OPERATION_SUBTRACT);
+		vargs[i]->addInteger(2, OPERATION_RAISE);
+		value.add(vargs[i], OPERATION_ADD);
 	}
-	value.addInteger(vargs.size() - 1, DIVIDE);
+	value.addInteger(vargs.size() - 1, OPERATION_DIVIDE);
 	Manager mngr2(1, 2);
-	value.add(&mngr2, RAISE);
+	value.add(&mngr2, OPERATION_RAISE);
 	mngr->set(&value);
 }
 RandomFunction::RandomFunction() : Function("General", "rand", 0, "Random Number") {}
@@ -1369,15 +1367,15 @@ void HEXFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 	mngr->set(strtold(expr.c_str(), NULL));
 }
-TitleFunction::TitleFunction() : Function("Utilities", "title", 1, "Function Title") {
-	setArgumentDefinition(1, new FunctionArgument());
+TitleFunction::TitleFunction() : Function("Utilities", "title", 1, "Object Title") {
+	setArgumentDefinition(1, new ExpressionItemArgument());
 }
 void TitleFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	Function *f = CALCULATOR->getFunction(vargs[0]->text());
-	if(!f) {
-		CALCULATOR->error(true, _("Function %s() does not exist."), vargs[0]->text().c_str(), NULL);
+	ExpressionItem *item = CALCULATOR->getExpressionItem(vargs[0]->text());
+	if(!item) {
+		CALCULATOR->error(true, _("Object %s does not exist."), vargs[0]->text().c_str(), NULL);
 		mngr->set(this, vargs[0], NULL);
 	} else {
-		mngr->set(f->title());
+		mngr->set(item->title());
 	}
 }

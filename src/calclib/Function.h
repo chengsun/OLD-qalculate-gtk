@@ -23,6 +23,7 @@ enum {
 	ARGUMENT_TYPE_FRACTION,
 	ARGUMENT_TYPE_VECTOR,	
 	ARGUMENT_TYPE_MATRIX,
+	ARGUMENT_TYPE_EXPRESSION_ITEM,
 	ARGUMENT_TYPE_FUNCTION,	
 	ARGUMENT_TYPE_UNIT,
 	ARGUMENT_TYPE_BOOLEAN,
@@ -274,6 +275,22 @@ class MatrixArgument : public Argument {
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
+};
+class ExpressionItemArgument : public Argument {
+
+  protected:
+  
+	virtual bool subtest(const Manager *value) const;  
+	virtual string subprintlong() const;
+
+  public:
+  
+  	ExpressionItemArgument(string name_ = "", bool does_test = true);
+	ExpressionItemArgument(const ExpressionItemArgument *arg);
+	virtual int type() const;
+	virtual Argument *copy() const;
+	virtual string print() const;
+	virtual bool needQuotes() const;
 };
 class FunctionArgument : public Argument {
 

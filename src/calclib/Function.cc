@@ -329,7 +329,7 @@ Manager *Function::calculate(vector<Manager*> &vargs, int itmp) {
 				}
 				b = false;	 			
 			}
-			mngr->altclean();
+			mngr->typeclean();
 		} else {
 			calculate(mngr, vargs);
 		}
@@ -1150,6 +1150,15 @@ int MatrixArgument::type() const {return ARGUMENT_TYPE_TEXT;}
 Argument *MatrixArgument::copy() const {return new MatrixArgument(this);}
 string MatrixArgument::print() const {return _("matrix");}
 string MatrixArgument::subprintlong() const {return _("a matrix");}
+
+ExpressionItemArgument::ExpressionItemArgument(string name_, bool does_test) : Argument(name_, does_test) {}
+ExpressionItemArgument::ExpressionItemArgument(const ExpressionItemArgument *arg) {set(arg);}
+bool ExpressionItemArgument::subtest(const Manager *value) const {return value->isText() && CALCULATOR->getExpressionItem(value->text());}
+int ExpressionItemArgument::type() const {return ARGUMENT_TYPE_EXPRESSION_ITEM;}
+Argument *ExpressionItemArgument::copy() const {return new ExpressionItemArgument(this);}
+string ExpressionItemArgument::print() const {return _("object");}
+string ExpressionItemArgument::subprintlong() const {return _("a quoted valid function, unit or variable");}
+bool ExpressionItemArgument::needQuotes() const {return true;}
 
 FunctionArgument::FunctionArgument(string name_, bool does_test) : Argument(name_, does_test) {}
 FunctionArgument::FunctionArgument(const FunctionArgument *arg) {set(arg);}

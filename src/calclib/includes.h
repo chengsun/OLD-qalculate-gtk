@@ -55,13 +55,30 @@ typedef enum {
 } NumberFormat;
 
 typedef enum {
-	MULTIPLY,
-	DIVIDE,
-	ADD,
-	SUBTRACT,
-	RAISE,
-	EXP10
+	OPERATION_MULTIPLY,
+	OPERATION_DIVIDE,
+	OPERATION_ADD,
+	OPERATION_SUBTRACT,
+	OPERATION_RAISE,
+	OPERATION_EXP10,
+	OPERATION_AND,
+	OPERATION_OR,
+	OPERATION_LESS,
+	OPERATION_GREATER,
+	OPERATION_EQUALS_LESS,
+	OPERATION_EQUALS_GREATER,
+	OPERATION_EQUALS,
+	OPERATION_NOT_EQUALS
 } MathOperation;
+
+typedef enum {
+	COMPARISON_LESS,
+	COMPARISON_GREATER,
+	COMPARISON_EQUALS_LESS,
+	COMPARISON_EQUALS_GREATER,
+	COMPARISON_EQUALS,
+	COMPARISON_NOT_EQUALS
+} ComparisonType;
 
 typedef enum {
 	DISPLAY_FORMAT_DEFAULT			= 1 << 0,
@@ -120,6 +137,9 @@ typedef enum {
 #define	SIGN_ZETA			"ζ"
 #define SIGN_GAMMA			"γ"
 #define SIGN_PHI			"φ"
+#define	SIGN_LESS_OR_EQUAL		"≤"
+#define	SIGN_GREATER_OR_EQUAL		"≥"
+#define	SIGN_NOT_EQUAL			"≠"
 
 #define ID_WRAP_LEFT_CH		'{'
 #define ID_WRAP_RIGHT_CH	'}'
@@ -220,7 +240,7 @@ extern char *NUMBERS_S_AND_MINUS_S_AND_DOT_S;*/
 #define	RIGHT_BRACKET	")"
 #define	SPACES		" \t\n"
 #define SPACE		" "
-#define RESERVED	"@?\\{}:\""
+#define RESERVED	"\'@?\\{}:\""
 #define PLUS		"+"
 #define MINUS		"-"
 #define MULTIPLICATION	"*"

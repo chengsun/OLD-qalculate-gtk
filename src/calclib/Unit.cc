@@ -61,19 +61,19 @@ void Unit::setSingular(string name_, bool force) {
 	CALCULATOR->unitSingularChanged(this);
 
 }
-string Unit::singular(bool return_short_if_no_singular) const {
+const string &Unit::singular(bool return_short_if_no_singular) const {
 	if(return_short_if_no_singular && ssingular.empty()) {
 		return shortName();
 	}
 	return ssingular;
 }
-string Unit::plural(bool return_singular_if_no_plural) const {
+const string &Unit::plural(bool return_singular_if_no_plural) const {
 	if(return_singular_if_no_plural && splural.empty()) {
 		return singular();
 	}
 	return splural;
 }
-string Unit::shortName() const {
+const string &Unit::shortName() const {
 	return name();
 }
 const Unit* Unit::baseUnit() const {
@@ -81,12 +81,12 @@ const Unit* Unit::baseUnit() const {
 }
 Manager *Unit::baseValue(Manager *value_, Manager *exp_) const {
 	if(!value_) value_ = new Manager(1, 1);	
-//	value_->add(1, RAISE);
+//	value_->add(1, OPERATION_RAISE);
 	return value_;
 }
 Manager *Unit::convertToBase(Manager *value_, Manager *exp_) const {
 	if(!value_) value_ = new Manager(1, 1);
-//	value_->add(-1, RAISE);
+//	value_->add(-1, OPERATION_RAISE);
 	return value_;
 }
 long int Unit::baseExp(long int exp_) const {
@@ -211,7 +211,7 @@ Manager *AliasUnit::baseValue(Manager *value_, Manager *exp_) const {
 	if(!exp_) exp_ = new Manager(1, 1);		
 	else exp_->ref();
 	firstBaseValue(value_, exp_);
-	exp_->add(exp_mngr, MULTIPLY);	
+	exp_->add(exp_mngr, OPERATION_MULTIPLY);	
 	unit->baseValue(value_, exp_);
 	exp_->unref();
 	return value_;
@@ -219,7 +219,7 @@ Manager *AliasUnit::baseValue(Manager *value_, Manager *exp_) const {
 Manager *AliasUnit::convertToBase(Manager *value_, Manager *exp_) const {
 	if(!exp_) exp_ = new Manager(1, 1);		
 	else exp_->ref();
-	exp_->add(exp_mngr, DIVIDE);	
+	exp_->add(exp_mngr, OPERATION_DIVIDE);	
 	convertToFirstBase(value_, exp_);	
 	unit->convertToBase(value_, exp_);
 	exp_->unref();	
@@ -246,13 +246,13 @@ Manager *AliasUnit::convertToFirstBase(Manager *value_, Manager *exp_) const {
 			stmp2 += RIGHT_BRACKET_CH;
 			gsub(FUNCTION_VAR_Y, stmp2, stmp);
 			Manager *mngr = CALCULATOR->calculate(stmp);
-//			value_->add(mngr, DIVIDE);
+//			value_->add(mngr, OPERATION_DIVIDE);
 			value_->moveto(mngr);
 			mngr->unref();
 		} else {
 			Manager *mngr = CALCULATOR->calculate(value);
-			mngr->add(exp_, RAISE);
-			value_->add(mngr, DIVIDE);
+			mngr->add(exp_, OPERATION_RAISE);
+			value_->add(mngr, OPERATION_DIVIDE);
 //			value_->moveto(mngr);
 			mngr->unref();
 		}
@@ -268,14 +268,14 @@ Manager *AliasUnit::convertToFirstBase(Manager *value_, Manager *exp_) const {
 			stmp2 += RIGHT_BRACKET_CH;
 			gsub(FUNCTION_VAR_Y, stmp2, stmp);
 			Manager *mngr = CALCULATOR->calculate(stmp);
-//			value_->add(mngr, MULTIPLY);
+//			value_->add(mngr, OPERATION_MULTIPLY);
 			value_->moveto(mngr);
 			mngr->unref();
 		} else {
 			Manager *mngr = CALCULATOR->calculate(rvalue);
-			mngr->add(exp_, RAISE);
-			value_->add(mngr, MULTIPLY);
-//			mngr->add(value_, MULTIPLY);
+			mngr->add(exp_, OPERATION_RAISE);
+			value_->add(mngr, OPERATION_MULTIPLY);
+//			mngr->add(value_, OPERATION_MULTIPLY);
 //			value_->moveto(mngr);
 			mngr->unref();
 		}
@@ -306,8 +306,8 @@ Manager *AliasUnit::firstBaseValue(Manager *value_, Manager *exp_) const {
 		mngr->unref();
 	} else {
 		Manager *mngr = CALCULATOR->calculate(value);
-		mngr->add(exp_, RAISE);
-		mngr->add(value_, MULTIPLY);
+		mngr->add(exp_, OPERATION_RAISE);
+		mngr->add(value_, OPERATION_MULTIPLY);
 		value_->moveto(mngr);
 		mngr->unref();
 	}
@@ -434,10 +434,10 @@ Manager *AliasUnit_Composite::firstBaseValue(Manager *value_, Manager *exp_) con
 	if(!value_) value_ = new Manager(1, 1);
 	if(!exp_) exp_ = new Manager(1, 1);		
 	else exp_->ref();	
-	exp_->add(exp_mngr, DIVIDE);		
+	exp_->add(exp_mngr, OPERATION_DIVIDE);		
 	Manager *mngr = new Manager(1, 1);
 //	mngr->add(exp_, RAISE);
-	value_->add(mngr, MULTIPLY);
+	value_->add(mngr, OPERATION_MULTIPLY);
 	mngr->unref();
 	exp_->unref();
 	return value_;
@@ -446,10 +446,10 @@ Manager *AliasUnit_Composite::convertToFirstBase(Manager *value_, Manager *exp_)
 	if(!value_) value_ = new Manager(1, 1);
 	if(!exp_) exp_ = new Manager(1, 1);		
 	else exp_->ref();
-	exp_->add(exp_mngr, MULTIPLY);
+	exp_->add(exp_mngr, OPERATION_MULTIPLY);
 	Manager *mngr = new Manager(1, 1);
 //	mngr->add(exp_, RAISE);
-	value_->add(mngr, DIVIDE);
+	value_->add(mngr, OPERATION_DIVIDE);
 	mngr->unref();
 	exp_->unref();
 	return value_;
@@ -463,8 +463,9 @@ CompositeUnit::CompositeUnit(const CompositeUnit *unit) {
 	set(unit);
 }
 CompositeUnit::~CompositeUnit() {
-	for(int i = 0; i < units.size(); i++)
+	for(int i = 0; i < units.size(); i++) {
 		delete units[i];
+	}
 }
 ExpressionItem *CompositeUnit::copy() const {
 	return new CompositeUnit(this);
@@ -478,6 +479,7 @@ void CompositeUnit::set(const ExpressionItem *item) {
 				units.push_back(new AliasUnit_Composite(u->units[i]));
 			}
 		}
+		updateNames();
 	} else {
 		ExpressionItem::set(item);
 	}
@@ -494,6 +496,7 @@ void CompositeUnit::add(const Unit *u, long int exp_, const Prefix *prefix) {
 	if(!b) {
 		units.push_back(new AliasUnit_Composite(u, exp_, prefix));
 	}
+	updateNames();
 }
 Unit *CompositeUnit::get(int index, long int *exp_, Prefix **prefix) const {
 	if(index >= 0 && index < units.size()) {
@@ -513,6 +516,7 @@ void CompositeUnit::del(Unit *u) {
 			units.erase(units.begin() + i);
 		}
 	}
+	updateNames();
 }
 string CompositeUnit::print(bool plural_, bool short_) const {
 	string str = "";
@@ -559,14 +563,14 @@ string CompositeUnit::print(bool plural_, bool short_) const {
 	if(b2) str += RIGHT_BRACKET_STR;
 	return str;
 }
-string CompositeUnit::plural(bool return_name_if_no_plural) const {
-	return print(true, false);
+const string &CompositeUnit::plural(bool return_name_if_no_plural) const {
+	return splural;
 }
-string CompositeUnit::singular(bool return_short_if_no_singular) const {
-	return print(true, false);
+const string &CompositeUnit::singular(bool return_short_if_no_singular) const {
+	return ssingular;
 }
-string CompositeUnit::shortName() const {
-	return print(false, true);
+const string &CompositeUnit::shortName() const {
+	return sshort;
 }
 int CompositeUnit::unitType() const {
 	return COMPOSITE_UNIT;
@@ -625,6 +629,7 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	units.clear();
 	if(base_expression_.empty()) {
 		setChanged(true);
+		updateNames();
 		return;
 	}
 	bool b_var = CALCULATOR->variablesEnabled();
@@ -700,5 +705,11 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	CALCULATOR->setFunctionsEnabled(b_func);	
 	CALCULATOR->setUnitsEnabled(b_unit);			
 	setChanged(true);
+	updateNames();
+}
+void CompositeUnit::updateNames() {
+	sshort = print(false, true);
+	splural = print(true, false);
+	ssingular = print(false, false);
 }
 

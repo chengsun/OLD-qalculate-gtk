@@ -102,7 +102,7 @@ bool Matrix::inverse() {
 		return false;
 	}
 	b_vector = false;
-	mngr->addInteger(-1, RAISE);
+	mngr->addInteger(-1, OPERATION_RAISE);
 	adjoint();
 	multiply(mngr);
 	delete mngr;	
@@ -173,8 +173,8 @@ bool Matrix::rank(bool ascending) {
 		} else {
 			if(n_rep) {
 				Manager v(i + 1 + n_rep, 1);
-				v.addInteger(i + 1, ADD);
-				v.addInteger(2, DIVIDE);
+				v.addInteger(i + 1, OPERATION_ADD);
+				v.addInteger(2, OPERATION_DIVIDE);
 				for(; n_rep >= 0; n_rep--) {
 					get(ranked_r[i + n_rep], ranked_c[i + n_rep])->set(&v);
 				}
@@ -241,7 +241,7 @@ Manager *Matrix::cofactor(int row, int column) const {
 	}	
 	Manager *mngr = mtrx.determinant();	
 	if((row + column) % 2 == 1) {
-		mngr->addInteger(-1, MULTIPLY);
+		mngr->addInteger(-1, OPERATION_MULTIPLY);
 	}
 	return mngr;
 }
@@ -270,15 +270,15 @@ Manager *Matrix::determinant() const {
 	} else if(rows() == 2) {
 		Manager tmp;
 		mngr->set(get(1, 1));
-		mngr->add(get(2, 2), MULTIPLY);
+		mngr->add(get(2, 2), OPERATION_MULTIPLY);
 		tmp.set(get(2, 1));
-		tmp.add(get(1, 2), MULTIPLY);
-		mngr->add(&tmp, SUBTRACT);
+		tmp.add(get(1, 2), OPERATION_MULTIPLY);
+		mngr->add(&tmp, OPERATION_SUBTRACT);
 	} else {
 		for(int index_c = 1; index_c <= columns(); index_c++) {
 			Manager *tmp = cofactor(1, index_c);
-			tmp->add(get(1, index_c), MULTIPLY);
-			mngr->add(tmp, ADD);
+			tmp->add(get(1, index_c), OPERATION_MULTIPLY);
+			mngr->add(tmp, OPERATION_ADD);
 			delete tmp;
 		}
 	}
@@ -348,26 +348,26 @@ const Manager *Matrix::get(int row, int column) const {
 bool Matrix::add(MathOperation op, const Matrix *matrix) {
 	if(!matrix) return false;
 	switch(op) {
-		case SUBTRACT: {
+		case OPERATION_SUBTRACT: {
 			return subtract(matrix);
 		}
-		case ADD: {
+		case OPERATION_ADD: {
 			return add(matrix);
 		} 
-		case MULTIPLY: {
+		case OPERATION_MULTIPLY: {
 			return multiply(matrix);
 		}
-		case DIVIDE: {
+		case OPERATION_DIVIDE: {
 			return divide(matrix);
 		}		
-		case RAISE: {
+		case OPERATION_RAISE: {
 			return raise(matrix);
 		}
-		case EXP10: {
+		case OPERATION_EXP10: {
 			return exp10(matrix);
 		}
 	}
-	return true;	
+	return false;	
 }
 bool Matrix::add(const Matrix *matrix) {
 	if(columns() != matrix->columns() || rows() != matrix->rows()) {
@@ -375,7 +375,7 @@ bool Matrix::add(const Matrix *matrix) {
 	}
 	for(int index_r = 0; index_r < elements.size(); index_r++) {
 		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
-			elements[index_r][index_c]->add(matrix->get(index_r + 1, index_c + 1), ADD);
+			elements[index_r][index_c]->add(matrix->get(index_r + 1, index_c + 1), OPERATION_ADD);
 			if(!elements[index_r][index_c]->isPrecise()) b_exact = false;
 		}
 	}
@@ -387,7 +387,7 @@ bool Matrix::subtract(const Matrix *matrix) {
 	}
 	for(int index_r = 0; index_r < elements.size(); index_r++) {
 		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
-			elements[index_r][index_c]->add(matrix->get(index_r + 1, index_c + 1), SUBTRACT);
+			elements[index_r][index_c]->add(matrix->get(index_r + 1, index_c + 1), OPERATION_SUBTRACT);
 			if(!elements[index_r][index_c]->isPrecise()) b_exact = false;
 		}
 	}
@@ -398,8 +398,8 @@ bool Matrix::multiply(const Matrix *matrix) {
 		Manager mngr;
 		for(int index_r = 1; index_r <= rows(); index_r++) {
 			Manager mngr2(get(index_r, 1));
-			mngr2.add(matrix->get(index_r, 1), MULTIPLY);
-			mngr.add(&mngr2, ADD);
+			mngr2.add(matrix->get(index_r, 1), OPERATION_MULTIPLY);
+			mngr.add(&mngr2, OPERATION_ADD);
 		}
 		setRows(1);
 		setColumns(1);
@@ -409,8 +409,8 @@ bool Matrix::multiply(const Matrix *matrix) {
 		Manager mngr;
 		for(int index_c = 1; index_c <= columns(); index_c++) {
 			Manager mngr2(get(1, index_c));	
-			mngr2.add(matrix->get(1, index_c), MULTIPLY);
-			mngr.add(&mngr2, ADD);
+			mngr2.add(matrix->get(1, index_c), OPERATION_MULTIPLY);
+			mngr.add(&mngr2, OPERATION_ADD);
 		}
 		setRows(1);		
 		setColumns(1);
@@ -426,8 +426,8 @@ bool Matrix::multiply(const Matrix *matrix) {
 			for(int index_c = 1; index_c <= product.columns(); index_c++) {
 				for(int index = 1; index <= columns(); index++) {
 					mngr.set(get(index_r, index));
-					mngr.add(matrix->get(index, index_c), MULTIPLY);
-					product.get(index_r, index_c)->add(&mngr, ADD);
+					mngr.add(matrix->get(index, index_c), OPERATION_MULTIPLY);
+					product.get(index_r, index_c)->add(&mngr, OPERATION_ADD);
 					if(!product.get(index_r, index_c)->isPrecise()) {
 						product.setPrecise(false);
 					}	
@@ -451,26 +451,26 @@ bool Matrix::exp10(const Matrix *matrix) {
 bool Matrix::add(MathOperation op, const Manager *mngr) {
 	if(!mngr) return false;
 	switch(op) {
-		case SUBTRACT: {
+		case OPERATION_SUBTRACT: {
 			return subtract(mngr);
 		}
-		case ADD: {
+		case OPERATION_ADD: {
 			return add(mngr);
 		} 
-		case MULTIPLY: {
+		case OPERATION_MULTIPLY: {
 			return multiply(mngr);
 		}
-		case DIVIDE: {
+		case OPERATION_DIVIDE: {
 			return divide(mngr);
 		}		
-		case RAISE: {
+		case OPERATION_RAISE: {
 			return raise(mngr);
 		}
-		case EXP10: {
+		case OPERATION_EXP10: {
 			return exp10(mngr);
 		}
 	}
-	return true;	
+	return false;	
 }
 bool Matrix::add(const Manager *mngr) {
 	if(mngr->isMatrix()) {
@@ -490,7 +490,7 @@ bool Matrix::multiply(const Manager *mngr) {
 	}
 	for(int index_r = 0; index_r < elements.size(); index_r++) {
 		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
-			elements[index_r][index_c]->add(mngr, MULTIPLY);
+			elements[index_r][index_c]->add(mngr, OPERATION_MULTIPLY);
 			if(!elements[index_r][index_c]->isPrecise()) b_exact = false;
 		}
 	}
@@ -502,7 +502,7 @@ bool Matrix::divide(const Manager *mngr) {
 	}
 	for(int index_r = 0; index_r < elements.size(); index_r++) {
 		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
-			elements[index_r][index_c]->add(mngr, DIVIDE);
+			elements[index_r][index_c]->add(mngr, OPERATION_DIVIDE);
 			if(!elements[index_r][index_c]->isPrecise()) b_exact = false;
 		}
 	}
@@ -537,7 +537,7 @@ bool Matrix::exp10(const Manager *mngr) {
 	}
 	for(int index_r = 0; index_r < elements.size(); index_r++) {
 		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
-			elements[index_r][index_c]->add(mngr, EXP10);
+			elements[index_r][index_c]->add(mngr, OPERATION_EXP10);
 			if(!elements[index_r][index_c]->isPrecise()) b_exact = false;
 		}
 	}	

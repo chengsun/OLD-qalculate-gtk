@@ -54,7 +54,7 @@ EqNumber::EqNumber(string str, MathOperation operation_) : EqItem(operation_) {
 		int id = s2i(str.substr(1, str.length() - 2));
 		mngr = CALCULATOR->getId(id);
 		if(mngr) {	
-			if(s == MINUS_CH) mngr->addInteger(-1, MULTIPLY);
+			if(s == MINUS_CH) mngr->addInteger(-1, OPERATION_MULTIPLY);
 			mngr->ref();
 			CALCULATOR->delId(id);
 			return;
@@ -105,7 +105,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 	long double dtmp;
 	int i = 0, i2 = 0, i3 = 0;
 	string str2, str3;
-	MathOperation s = ADD;
+	MathOperation s = OPERATION_ADD;
 	while(true) {
 		//find first right parenthesis and then the last left parenthesis before
 		i2 = str.find(RIGHT_BRACKET_CH);
@@ -171,19 +171,148 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 			str += MULTIPLICATION_CH;	
 		}
 		str2 = str.substr(i + 1, i2 - (i + 1));
-		EqContainer eq_c(str2, ADD);
+		EqContainer eq_c(str2, OPERATION_ADD);
 		Manager *mngr2 = eq_c.calculate();
 		str2 = ID_WRAP_LEFT_CH;
 		str2 += i2s(CALCULATOR->addId(mngr2));
 		str2 += ID_WRAP_RIGHT_CH;
 		str.replace(i, i2 - i + 1, str2);
 	}
-	if((i = str.find(AND)) != string::npos) {
+	if((i = str.find(AND, 1)) != string::npos) {
+		while(i != string::npos) {
+			s = OPERATION_AND;
+			str2 = str.substr(0, i);
+			EqContainer eq_c(str2, OPERATION_ADD);
+			Manager *mngr2 = eq_c.calculate();
+			if(mngr2->isFraction() && !mngr2->fraction()->getBoolean()) {
+				mngr->clear();
+				for(int i = 0; i < items.size(); i++) {
+					delete items[i];
+				}
+				items.clear();
+				return;
+			}
+			while(str.length() > i + 1 && str[i + 1] == AND_CH) {
+				i++;
+			}
+			str = str.substr(i + 1, str.length() - (i + 1));
+			add(new EqNumber(mngr2, s));
+			i = str.find(AND, 1);
+		}
+		add(str);
+		return;
+	}
+	if((i = str.find(OR, 1)) != string::npos) {
+		while(i != string::npos) {
+			s = OPERATION_OR;
+			str2 = str.substr(0, i);
+			EqContainer eq_c(str2, OPERATION_ADD);
+			Manager *mngr2 = eq_c.calculate();
+			if(mngr2->isFraction() && mngr2->fraction()->getBoolean()) {
+				mngr->set(1, 1);
+				for(int i = 0; i < items.size(); i++) {
+					delete items[i];
+				}
+				items.clear();
+				return;
+			}
+			while(str.length() > i + 1 && str[i + 1] == OR_CH) {
+				i++;
+			}
+			str = str.substr(i + 1, str.length() - (i + 1));
+			add(new EqNumber(mngr2, s));
+			i = str.find(OR, 1);
+		}
+		add(str);
+		return;
+	}	
+	if(str[0] == NOT_CH) {
+		str.erase(str.begin());
+		EqContainer eq_c(str, OPERATION_ADD);
+		Manager *mngr2 = eq_c.calculate();
+		mngr->set(mngr2);
+		mngr->setNOT();
+		return;
+	}
+	if((i = str.find_first_of(LESS GREATER EQUALS NOT, 0)) != string::npos) {
+		bool c = false;
+		while(i != string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {
+			i++;
+			if(i + 1 == str.length()) {
+				c == true;
+			}
+		}
+		Manager *mngr1 = NULL;
+		while(!c) {
+			if(i == string::npos) {
+				str2 = str.substr(0, str.length());
+			} else {
+				str2 = str.substr(0, i);
+			}
+			EqContainer eq_c(str2, OPERATION_ADD);
+			Manager *mngr2 = eq_c.calculate();			
+			if(mngr1) {
+				switch(i3) {
+					case EQUALS_CH: {s = OPERATION_EQUALS; break;}
+					case GREATER_CH: {s = OPERATION_GREATER; break;}
+					case LESS_CH: {s = OPERATION_LESS; break;}
+					case GREATER_CH * EQUALS_CH: {s = OPERATION_EQUALS_GREATER; break;}
+					case LESS_CH * EQUALS_CH: {s = OPERATION_EQUALS_LESS; break;}
+					case GREATER_CH * LESS_CH: {s = OPERATION_NOT_EQUALS; break;}
+				}
+				mngr1->add(mngr2, s);
+				bool b = false;
+				if(mngr1->isZero()) {
+					mngr->clear();
+					mngr1->unref();
+					for(int i = 0; i < items.size(); i++) {
+						delete items[i];
+					}
+					items.clear();
+					return;
+				}
+				add(new EqNumber(mngr1, OPERATION_AND));
+				mngr1->unref();
+			}
+			if(i == string::npos) {
+				return;
+			}
+			mngr1 = mngr2;
+			mngr1->ref();
+			if(str.length() > i + 1 && is_in(LESS GREATER NOT EQUALS, str[i + 1])) {
+				if(str[i] == str[i + 1]) {
+					i3 = str[i];
+				} else {
+					i3 = str[i] * str[i + 1];
+					if(i3 == NOT_CH * EQUALS_CH) {
+						i3 = GREATER_CH * LESS_CH;
+					} else if(i3 == NOT_CH * LESS_CH) {
+						i3 = GREATER_CH;
+					} else if(i3 == NOT_CH * GREATER_CH) {
+						i3 = LESS_CH;
+					}
+				}
+				i++;
+			} else {
+				i3 = str[i];
+			}
+			str = str.substr(i + 1, str.length() - (i + 1));
+			i = str.find_first_of(LESS GREATER NOT EQUALS, 0);
+			while(i != string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {
+				i++;
+				if(i + 1 == str.length()) {
+					i = string::npos;
+				}
+			}
+		}
+	}		
+	
+/*	if((i = str.find(AND)) != string::npos) {
 		bool b = false;
 		while(i != string::npos) {
 			if(i > 0) {
 				str2 = str.substr(0, i);
-				EqContainer eq_c(str2, ADD);
+				EqContainer eq_c(str2, OPERATION_ADD);
 				Manager *mngr2 = eq_c.calculate();
 				if(mngr2->isFraction() && mngr2->fraction()->isPositive()) {
 					str = str.substr(i + 1, str.length() - (i + 1));	
@@ -201,7 +330,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 			b = true;
 		}
 		if(b) {
-			EqContainer eq_c(str, ADD);
+			EqContainer eq_c(str, OPERATION_ADD);
 			Manager *mngr2 = eq_c.calculate();
 			if(mngr2->isFraction() && mngr2->fraction()->isPositive()) {
 				mngr->set(1, 1);
@@ -219,7 +348,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 		while(i != string::npos) {
 			if(i > 0) {
 				str2 = str.substr(0, i);
-				EqContainer eq_c(str2, ADD);
+				EqContainer eq_c(str2, OPERATION_ADD);
 				Manager *mngr2 = eq_c.calculate();
 				if(mngr2->isFraction() && mngr2->fraction()->isPositive()) {
 					mngr->set(1, 1);
@@ -237,7 +366,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 			b = true;
 		}
 		if(b) {
-			EqContainer eq_c(str, ADD);
+			EqContainer eq_c(str, OPERATION_ADD);
 			Manager *mngr2 = eq_c.calculate();
 			if(mngr2->isFraction() && mngr2->fraction()->isPositive()) {
 				mngr->set(1, 1);
@@ -252,7 +381,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 	}
 	if(str[0] == NOT_CH) {
 		str.erase(str.begin());
-		EqContainer eq_c(str, ADD);
+		EqContainer eq_c(str, OPERATION_ADD);
 		Manager *mngr2 = eq_c.calculate();
 		if(mngr2->isFraction() && mngr2->fraction()->isPositive()) {
 			mngr->clear();
@@ -263,8 +392,8 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 			mngr->set(1, 1);
 		}
 		return;
-	}	
-	if((i = str.find_first_of(LESS GREATER EQUALS NOT, 0)) != string::npos) {
+	}*/	
+/*	if((i = str.find_first_of(LESS GREATER EQUALS NOT, 0)) != string::npos) {
 		bool c = false;
 		while(i != string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {
 			i++;
@@ -279,10 +408,10 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 			} else {
 				str2 = str.substr(0, i);
 			}
-			EqContainer eq_c(str2, ADD);
+			EqContainer eq_c(str2, OPERATION_ADD);
 			Manager *mngr2 = eq_c.calculate();			
 			if(mngr1) {
-				mngr1->add(mngr2, SUBTRACT);
+				mngr1->add(mngr2, OPERATION_SUBTRACT);
 				mngr1->finalize();	
 				bool b = false;
 				if(!mngr1->isFraction()) {
@@ -354,7 +483,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 				}
 			}
 		}
-	}		
+	}		*/
 	i = 0;
 	i3 = 0;	
 	if(CALCULATOR->inRPNMode()) {
@@ -368,7 +497,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 				}			
 				if(str2.length() > 0) {
 					CALCULATOR->setRPNMode(false);				
-					add(str2, ADD);
+					add(str2, OPERATION_ADD);
 					CALCULATOR->setRPNMode(true);								
 				}
 				if(items.size() > 1) {
@@ -390,15 +519,15 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 			
 			}*/
 			CALCULATOR->setRPNMode(false);
-			add(str2, ADD);
+			add(str2, OPERATION_ADD);
 			CALCULATOR->setRPNMode(true);			
 			if(str[i] != SPACE_CH) {
 				switch(str[i]) {
-					case PLUS_CH: {s = ADD; break;}
-					case MINUS_CH: {s = SUBTRACT; break;}
-					case MULTIPLICATION_CH: {s = MULTIPLY; break;}
-					case DIVISION_CH: {s = DIVIDE; break;}
-					case POWER_CH: {s = RAISE; break;}
+					case PLUS_CH: {s = OPERATION_ADD; break;}
+					case MINUS_CH: {s = OPERATION_SUBTRACT; break;}
+					case MULTIPLICATION_CH: {s = OPERATION_MULTIPLY; break;}
+					case DIVISION_CH: {s = OPERATION_DIVIDE; break;}
+					case POWER_CH: {s = OPERATION_RAISE; break;}
 				}
 				if(items.size() < 2) {
 					CALCULATOR->error(true, _("RPN syntax error."), NULL);
@@ -420,8 +549,8 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 		bool b = false;
 		while(i != string::npos) {
 			if(is_not_in(OPERATORS EXP, str[i - 1])) {
-				if(str[i] == PLUS_CH) s = ADD;
-				else s = SUBTRACT;
+				if(str[i] == PLUS_CH) s = OPERATION_ADD;
+				else s = OPERATION_SUBTRACT;
 				str2 = str.substr(0, i);
 				str = str.substr(i + 1, str.length() - (i + 1));
 				add(str2, s);
@@ -439,8 +568,8 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 	}
 	if((i = str.find_first_of(MULTIPLICATION DIVISION, 1)) != string::npos) {
 		while(i != string::npos) {
-			if(str[i] == MULTIPLICATION_CH) s = MULTIPLY;
-			else s = DIVIDE;			
+			if(str[i] == MULTIPLICATION_CH) s = OPERATION_MULTIPLY;
+			else s = OPERATION_DIVIDE;			
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
 			add(str2, s);
@@ -449,7 +578,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 		add(str);
 	} else if((i = str.find(MULTIPLICATION_2_CH, 1)) != string::npos) {
 		while(i != string::npos) {
-			s = MULTIPLY;
+			s = OPERATION_MULTIPLY;
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
 			add(str2, s);
@@ -458,7 +587,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 		add(str);		
 	} else if((i = str.find(POWER_CH, 1)) != string::npos) {
 		while(i != string::npos) {
-			s = RAISE;
+			s = OPERATION_RAISE;
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
 			add(str2, s);
@@ -467,7 +596,7 @@ EqContainer::EqContainer(string str, MathOperation operation_) : EqItem(operatio
 		add(str);
 	} else if((i = str.find(EXP_CH, 1)) != string::npos) {
 		while(i != string::npos) {
-			s = EXP10;
+			s = OPERATION_EXP10;
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
 			add(str2, s);
@@ -494,7 +623,7 @@ void EqContainer::add(EqItem *e) {
 	items.push_back(e);
 }
 Manager *EqContainer::calculate() {
-	MathOperation s = ADD;
+	MathOperation s = OPERATION_ADD;
 	for(unsigned int i = 0; i < items.size(); i++) {
 		if(i == 0) {
 			mngr->set(items[i]->calculate());

@@ -29,6 +29,7 @@
 #include "interface.h"
 #include "main.h"
 #include "qalculate.h"
+#include "data/icon.xpm"
 
 /* from main.cc */
 extern GladeXML *glade_xml;
@@ -67,6 +68,10 @@ extern bool use_custom_font, indicate_infinite_series;
 extern string custom_font;
 
 extern vector<vector<GtkWidget*> > element_entries;
+
+gint compare_categories(gconstpointer a, gconstpointer b) {
+	return strcasecmp((const char*) a, (const char*) b);
+}
 
 void
 create_main_window (void)
@@ -323,8 +328,27 @@ create_main_window (void)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tFunctionArguments), column);	
 	g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tFunctionArguments_selection_changed), NULL);
 
+	GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (glade_xml, "functions_textview_description")));
+	gtk_text_buffer_create_tag(buffer, "bold", "weight", PANGO_WEIGHT_BOLD, NULL);
+	gtk_text_buffer_create_tag(buffer, "italic", "style", PANGO_STYLE_ITALIC, NULL);
+
 
 	gtk_widget_show (glade_xml_get_widget (glade_xml, "main_window"));
+
+	GtkStyle *style;
+	GdkBitmap *bitmap;
+	GdkPixmap *pixmap;
+	GdkColormap *colormap;
+	GdkColor wait_color={0,0,0,0};
+	GtkWidget *toplevel = glade_xml_get_widget (glade_xml, "main_window");
+
+	style=gtk_widget_get_style(GTK_WIDGET(toplevel));
+	pixmap=gdk_pixmap_create_from_xpm_d(GTK_WIDGET(toplevel)->window,
+		&bitmap, &style->bg[GTK_STATE_NORMAL], icon_xpm);
+	colormap = gtk_widget_get_colormap(GTK_WIDGET(toplevel));
+	gdk_color_alloc (colormap, &wait_color);
+	
+	gdk_window_set_icon(GTK_WIDGET(toplevel)->window, (GdkWindow *)NULL,  pixmap, bitmap);			
 	
 }
 
@@ -419,7 +443,7 @@ create_units_dialog (void)
 	tUnitCategories = glade_xml_get_widget (glade_xml, "units_tree_view1");
 	tUnits		= glade_xml_get_widget (glade_xml, "units_tree_view2");
 
-	tUnits_store = gtk_list_store_new(UNITS_N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+	tUnits_store = gtk_list_store_new(UNITS_N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tUnits), GTK_TREE_MODEL(tUnits_store));
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnits));
 	gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
@@ -432,18 +456,13 @@ create_units_dialog (void)
 	gtk_tree_view_column_set_sort_column_id(column, UNITS_NAMES_COLUMN);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tUnits), column);
 	renderer = gtk_cell_renderer_text_new();
-	column = gtk_tree_view_column_new_with_attributes(_("Base unit"), renderer, "text", UNITS_BASE_COLUMN, NULL);
+	column = gtk_tree_view_column_new_with_attributes(_("Unit"), renderer, "text", UNITS_BASE_COLUMN, NULL);
 	gtk_tree_view_column_set_sort_column_id(column, UNITS_BASE_COLUMN);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tUnits), column);
-	renderer = gtk_cell_renderer_text_new();
-	column = gtk_tree_view_column_new_with_attributes(_("Type"), renderer, "text", UNITS_TYPE_COLUMN, NULL);
-	gtk_tree_view_column_set_sort_column_id(column, UNITS_TYPE_COLUMN);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tUnits), column);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tUnits), column);	
 	g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tUnits_selection_changed), NULL);
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(tUnits_store), UNITS_TITLE_COLUMN, string_sort_func, GINT_TO_POINTER(UNITS_TITLE_COLUMN), NULL);
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(tUnits_store), UNITS_NAMES_COLUMN, string_sort_func, GINT_TO_POINTER(UNITS_NAMES_COLUMN), NULL);
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(tUnits_store), UNITS_BASE_COLUMN, string_sort_func, GINT_TO_POINTER(UNITS_BASE_COLUMN), NULL);
-	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(tUnits_store), UNITS_TYPE_COLUMN, string_sort_func, GINT_TO_POINTER(UNITS_TYPE_COLUMN), NULL);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(tUnits_store), UNITS_TITLE_COLUMN, GTK_SORT_ASCENDING);
 
 	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(tUnits), TRUE);
@@ -495,7 +514,7 @@ create_unit_edit_dialog (void)
 		if(!CALCULATOR->units[i]->category().empty()) {
 			//add category if not present
 			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->units[i]->category().c_str()) == NULL) {
-				items = g_list_append(items, (gpointer) CALCULATOR->units[i]->category().c_str());
+				items = g_list_insert_sorted(items, (gpointer) CALCULATOR->units[i]->category().c_str(), (GCompareFunc) compare_categories);
 				//remember added categories
 				g_hash_table_insert(hash, (gpointer) CALCULATOR->units[i]->category().c_str(), (gpointer) hash);
 			}
@@ -519,7 +538,7 @@ create_function_edit_dialog (void)
 		if(!CALCULATOR->functions[i]->category().empty()) {
 			//add category if not present
 			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->functions[i]->category().c_str()) == NULL) {
-				items = g_list_append(items, (gpointer) CALCULATOR->functions[i]->category().c_str());
+				items = g_list_insert_sorted(items, (gpointer) CALCULATOR->functions[i]->category().c_str(), (GCompareFunc) compare_categories);
 				//remember added categories
 				g_hash_table_insert(hash, (gpointer) CALCULATOR->functions[i]->category().c_str(), (gpointer) hash);
 			}
@@ -542,7 +561,7 @@ create_variable_edit_dialog (void)
 		if(!CALCULATOR->variables[i]->category().empty()) {
 			//add category if not present
 			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->variables[i]->category().c_str()) == NULL) {
-				items = g_list_append(items, (gpointer) CALCULATOR->variables[i]->category().c_str());
+				items = g_list_insert_sorted(items, (gpointer) CALCULATOR->variables[i]->category().c_str(), (GCompareFunc) compare_categories);
 				//remember added categories
 				g_hash_table_insert(hash, (gpointer) CALCULATOR->variables[i]->category().c_str(), (gpointer) hash);
 			}
@@ -554,6 +573,7 @@ create_variable_edit_dialog (void)
 
 	return glade_xml_get_widget (glade_xml, "variable_edit_dialog");
 }
+
 GtkWidget*
 create_matrix_edit_dialog (void)
 {
@@ -565,7 +585,7 @@ create_matrix_edit_dialog (void)
 		if(!CALCULATOR->variables[i]->category().empty()) {
 			//add category if not present
 			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->variables[i]->category().c_str()) == NULL) {
-				items = g_list_append(items, (gpointer) CALCULATOR->variables[i]->category().c_str());
+				items = g_list_insert_sorted(items, (gpointer) CALCULATOR->variables[i]->category().c_str(), (GCompareFunc) compare_categories);
 				//remember added categories
 				g_hash_table_insert(hash, (gpointer) CALCULATOR->variables[i]->category().c_str(), (gpointer) hash);
 			}

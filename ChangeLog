@@ -1,3 +1,18 @@
+2003-09-29  Niklas Knutsson  <nq@altern.org>
+
+	* A little icon for the window
+	* Update display outside of thread
+	* Do not reverse order when transforming managar
+	* Merge boolean operations into Manager class to enable unsolved operations
+	* Make sure that thread actually is canceled before resuming
+	* Change log to log10 and logn to log
+	* Ignore syntax error function without parentesis are space before argument
+	* New better algorithm for Calculator::setFunctionsAndVariables()
+	* Nicer functions, variables and units dialogs
+	* Show a nice progress dialog
+	* More information (syntax and arguments) in description in functions dialog
+	* Sort categories in edit dialogs
+
 2003-09-27  Niklas Knutsson  <nq@altern.org>
 
 	* Safer threads

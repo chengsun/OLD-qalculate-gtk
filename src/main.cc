@@ -38,6 +38,7 @@ bool load_global_defs;
 GtkWidget *omToUnit_menu;
 GladeXML *glade_xml;
 GdkPixmap *pixmap_result;
+extern bool b_busy;
 
 int main (int argc, char **argv) {
 
@@ -49,6 +50,8 @@ int main (int argc, char **argv) {
 
 	gtk_init (&argc, &argv);
 	glade_init ();
+
+	b_busy = false;
 
 	/* load the glade file into the object and die if that doesn't work */
 	gchar *gstr = g_build_filename (

@@ -47,8 +47,8 @@ class ExpressionItem {
 	/**
 	* Returns the name of the ExpressionItem.
 	*/		
-	virtual string name() const;
-	virtual string referenceName() const;
+	virtual const string &name() const;
+	virtual const string &referenceName() const;
 	
 	/**
 	* Returns the title/descriptive name of the ExpressionItem.

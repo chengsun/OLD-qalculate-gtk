@@ -768,26 +768,82 @@ bool Fraction::exp10(const Fraction *fr) {
 int Fraction::add(MathOperation op, const Fraction *fr, int solution) {
 	if(!fr) return false;
 	switch(op) {
-		case SUBTRACT: {
+		case OPERATION_SUBTRACT: {
 			return subtract(fr);
 		}
-		case ADD: {
+		case OPERATION_ADD: {
 			return add(fr);
 		} 
-		case MULTIPLY: {
+		case OPERATION_MULTIPLY: {
 			return multiply(fr);
 		}
-		case DIVIDE: {
+		case OPERATION_DIVIDE: {
 			return divide(fr);
 		}		
-		case RAISE: {
+		case OPERATION_RAISE: {
 			return pow(fr, solution);
 		}
-		case EXP10: {
+		case OPERATION_EXP10: {
 			return exp10(fr);
 		}
+		case OPERATION_OR: {
+			setTrue(isPositive() || fr->isPositive());
+			return true;
+		}
+		case OPERATION_AND: {
+			setTrue(isPositive() && fr->isPositive());
+			return true;
+		}
+		case OPERATION_EQUALS: {
+			setTrue(equals(fr));
+			return true;
+		}
+		case OPERATION_GREATER: {
+			setTrue(compare(fr) < 0);
+			return true;
+		}
+		case OPERATION_LESS: {
+			setTrue(compare(fr) > 0);
+			return true;
+		}
+		case OPERATION_EQUALS_GREATER: {
+			setTrue(compare(fr) <= 0);
+			return true;
+		}
+		case OPERATION_EQUALS_LESS: {
+			setTrue(compare(fr) >= 0);
+			return true;
+		}
+		case OPERATION_NOT_EQUALS: {
+			setTrue(!equals(fr));
+			return true;
+		}
 	}
-	return 1;	
+	return false;	
+}
+int Fraction::getBoolean() {
+	if(isPositive()) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+void Fraction::toBoolean() {
+	setTrue(isPositive());
+}
+void Fraction::setTrue(bool is_true) {
+	if(is_true) {
+		num.set(1);
+		den.set(1);
+	} else {
+		clear();
+	}
+}
+void Fraction::setFalse() {
+	clear();
+}
+void Fraction::setNOT() {
+	setTrue(!isPositive());
 }
 void Fraction::clean() {
 	if(den.isZero()) {
@@ -966,7 +1022,7 @@ bool Fraction::root(const Integer *nth) {
 	Fraction n(nth);
 	Fraction n_m1(&n);
 	Fraction one(1);
-	n_m1.add(SUBTRACT, &one);
+	n_m1.add(OPERATION_SUBTRACT, &one);
 	int iter = CALCULATOR->getPrecision();
 	if(iter > 100) iter = 10;	
 	else if(iter > 40) iter = 7;
@@ -975,13 +1031,13 @@ bool Fraction::root(const Integer *nth) {
 	else iter = 1;
 	for(int i = 0; i <= iter; i++) {
 		Fraction tmp(x);
-		tmp.add(RAISE, &n);
-		tmp.add(SUBTRACT, &a);		
+		tmp.add(OPERATION_RAISE, &n);
+		tmp.add(OPERATION_SUBTRACT, &a);		
 		Fraction tmp2(x);
-		tmp2.add(RAISE, &n_m1);
-		tmp2.add(MULTIPLY, &n);
-		tmp.add(DIVIDE, &tmp2);
-		x->add(SUBTRACT, &tmp);
+		tmp2.add(OPERATION_RAISE, &n_m1);
+		tmp2.add(OPERATION_MULTIPLY, &n);
+		tmp.add(OPERATION_DIVIDE, &tmp2);
+		x->add(OPERATION_SUBTRACT, &tmp);
 		floatify(CALCULATOR->getPrecision() + 5);
 		clean();		
 	}
@@ -1273,14 +1329,12 @@ void Fraction::getPrintObjects(bool &minus, string &whole_, string &numerator_, 
 	} else if(exp.isPositive()) {
 		den_spec.exp10(&exp);
 	}
-/*	Integer *divisor;
+	Integer *divisor;
 	if(whole.gcd(&den_spec, &divisor)) {
-	printf("12\n");
 		whole.divide(divisor);
-	printf("13\n");		
 		den_spec.divide(divisor);
 	}	
-	delete divisor;*/
+	delete divisor;
 	if(in_composite && whole.isOne() && den_spec.isOne()) {
 		return;
 	} else if(!force_fractional && !(displayflags & DISPLAY_FORMAT_FRACTION) && !(displayflags & DISPLAY_FORMAT_FRACTIONAL_ONLY)) {
