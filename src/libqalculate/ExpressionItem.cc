@@ -92,7 +92,7 @@ void ExpressionItem::set(const ExpressionItem *item) {
 	b_approx = item->isApproximate();
 	i_precision = item->precision();
 	b_active = item->isActive();
-	for(unsigned int i = 1; i <= item->countNames(); i++) {
+	for(size_t i = 1; i <= item->countNames(); i++) {
 		names.push_back(item->getName(1));
 	}
 	stitle = item->title(false);
@@ -143,7 +143,7 @@ void ExpressionItem::setDescription(string descr_) {
 	}
 }
 const string &ExpressionItem::name(bool use_unicode) const {
-	for(unsigned int i = 0; i < names.size(); i++) {
+	for(size_t i = 0; i < names.size(); i++) {
 		if(names[i].unicode == use_unicode) {
 			return names[i].name;
 		}
@@ -152,7 +152,7 @@ const string &ExpressionItem::name(bool use_unicode) const {
 	return empty_string;
 }
 const string &ExpressionItem::referenceName() const {
-	for(unsigned int i = 0; i < names.size(); i++) {
+	for(size_t i = 0; i < names.size(); i++) {
 		if(names[i].reference) {
 			return names[i].name;
 		}
@@ -164,7 +164,7 @@ const string &ExpressionItem::referenceName() const {
 const ExpressionName &ExpressionItem::preferredName(bool abbreviation, bool use_unicode, bool plural, bool reference) const {
 	if(names.size() == 1) return names[0];
 	int index = -1;
-	for(unsigned int i = 0; i < names.size(); i++) {
+	for(size_t i = 0; i < names.size(); i++) {
 		if((!reference || names[i].reference) && names[i].abbreviation == abbreviation && names[i].unicode == use_unicode && names[i].plural == plural) return names[i];
 		if(index < 0) {
 			index = i;
@@ -186,7 +186,7 @@ const ExpressionName &ExpressionItem::preferredName(bool abbreviation, bool use_
 const ExpressionName &ExpressionItem::preferredInputName(bool abbreviation, bool use_unicode, bool plural, bool reference) const {
 	if(names.size() == 1) return names[0];
 	int index = -1;
-	for(unsigned int i = 0; i < names.size(); i++) {
+	for(size_t i = 0; i < names.size(); i++) {
 		if((!reference || names[i].reference) && names[i].abbreviation == abbreviation && names[i].unicode == use_unicode && names[i].plural == plural && !names[i].avoid_input) return names[i];
 		if(index < 0) {
 			index = i;
@@ -212,11 +212,11 @@ const ExpressionName &ExpressionItem::preferredInputName(bool abbreviation, bool
 const ExpressionName &ExpressionItem::preferredDisplayName(bool abbreviation, bool use_unicode, bool plural, bool reference) const {
 	return preferredName(abbreviation, use_unicode, plural, reference);
 }
-const ExpressionName &ExpressionItem::getName(unsigned int index) const {
+const ExpressionName &ExpressionItem::getName(size_t index) const {
 	if(index > 0 && index <= names.size()) return names[index - 1];
 	return empty_expression_name;
 }
-void ExpressionItem::setName(const ExpressionName &ename, unsigned int index, bool force) {
+void ExpressionItem::setName(const ExpressionName &ename, size_t index, bool force) {
 	if(index < 1) addName(ename, 1);
 	if(index > names.size()) addName(ename);
 	if(b_registered && names[index - 1].name != ename.name) {
@@ -229,7 +229,7 @@ void ExpressionItem::setName(const ExpressionName &ename, unsigned int index, bo
 		b_changed = true;
 	}
 }
-void ExpressionItem::setName(string sname, unsigned int index, bool force) {
+void ExpressionItem::setName(string sname, size_t index, bool force) {
 	if(index < 1) addName(sname, 1);
 	if(index > names.size()) addName(sname);
 	if(b_registered && names[index - 1].name != sname) {
@@ -241,7 +241,7 @@ void ExpressionItem::setName(string sname, unsigned int index, bool force) {
 		b_changed = true;
 	}
 }
-void ExpressionItem::addName(const ExpressionName &ename, unsigned int index, bool force) {
+void ExpressionItem::addName(const ExpressionName &ename, size_t index, bool force) {
 	if(index < 1 || index > names.size()) {
 		names.push_back(ename);
 		index = names.size();
@@ -254,7 +254,7 @@ void ExpressionItem::addName(const ExpressionName &ename, unsigned int index, bo
 	}
 	b_changed = true;
 }
-void ExpressionItem::addName(string sname, unsigned int index, bool force) {
+void ExpressionItem::addName(string sname, size_t index, bool force) {
 	if(index < 1 || index > names.size()) {
 		names.push_back(ExpressionName(sname));
 		index = names.size();
@@ -267,7 +267,7 @@ void ExpressionItem::addName(string sname, unsigned int index, bool force) {
 	}
 	b_changed = true;
 }
-unsigned int ExpressionItem::countNames() const {
+size_t ExpressionItem::countNames() const {
 	return names.size();
 }
 void ExpressionItem::clearNames() {
@@ -295,7 +295,7 @@ void ExpressionItem::clearNonReferenceNames() {
 		b_changed = true;
 	}
 }
-void ExpressionItem::removeName(unsigned int index) {
+void ExpressionItem::removeName(size_t index) {
 	if(index > 0 && index <= names.size()) {
 		names.erase(names.begin() + (index - 1));
 		if(b_registered) {
@@ -305,20 +305,20 @@ void ExpressionItem::removeName(unsigned int index) {
 	}
 }
 bool ExpressionItem::hasName(const string &sname) const {
-	for(unsigned int i = 0; i < names.size(); i++) {
+	for(size_t i = 0; i < names.size(); i++) {
 		if(names[i].case_sensitive && sname == names[i].name) return true;
 		if(!names[i].case_sensitive && equalsIgnoreCase(names[i].name, sname)) return true;
 	}
 	return false;
 }
 bool ExpressionItem::hasNameCaseSensitive(const string &sname) const {
-	for(unsigned int i = 0; i < names.size(); i++) {
+	for(size_t i = 0; i < names.size(); i++) {
 		if(sname == names[i].name) return true;
 	}
 	return false;
 }
 const ExpressionName &ExpressionItem::findName(int abbreviation, int use_unicode, int plural) const {
-	for(unsigned int i = 0; i < names.size(); i++) {
+	for(size_t i = 0; i < names.size(); i++) {
 		if((abbreviation < 0 || names[i].abbreviation == abbreviation) && (use_unicode < 0 || names[i].unicode == use_unicode) && (plural < 0 || names[i].plural == plural)) return names[i];
 	}
 	return empty_expression_name;
@@ -435,7 +435,7 @@ void ExpressionItem::ref(ExpressionItem *o) {
 	v_refs.push_back(o);
 }
 void ExpressionItem::unref(ExpressionItem *o) {
-	for(unsigned int i = 0; i < v_refs.size(); i++) {
+	for(size_t i = 0; i < v_refs.size(); i++) {
 		if(v_refs[i] == o) {
 			i_ref--;
 			v_refs.erase(v_refs.begin() + i);
@@ -443,7 +443,7 @@ void ExpressionItem::unref(ExpressionItem *o) {
 		}
 	}
 }
-ExpressionItem *ExpressionItem::getReferencer(unsigned int index) const {
+ExpressionItem *ExpressionItem::getReferencer(size_t index) const {
 	if(index > 0 && index <= v_refs.size()) {
 		return v_refs[index - 1];
 	}

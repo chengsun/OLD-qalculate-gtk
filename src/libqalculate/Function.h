@@ -59,9 +59,9 @@ class MathFunction : public ExpressionItem {
 	int argc;
 	int max_argc;
 	vector<string> default_values;
-	Sgi::hash_map<unsigned int, Argument*> argdefs;
-	//Sgi::hash_map<unsigned int, int> argoccs;
-	unsigned int last_argdef_index;		
+	Sgi::hash_map<size_t, Argument*> argdefs;
+	//Sgi::hash_map<size_t, int> argoccs;
+	size_t last_argdef_index;		
 	bool testArguments(MathStructure &vargs);
 	virtual MathStructure createFunctionMathStructureFromVArgs(const MathStructure &vargs);
 	virtual MathStructure createFunctionMathStructureFromSVArgs(vector<string> &svargs);	
@@ -89,18 +89,18 @@ class MathFunction : public ExpressionItem {
 	string printCondition();
 	void setCondition(string expression);
 	bool testCondition(const MathStructure &vargs);
-	//int countArgOccurence(unsigned int arg_);
+	//int countArgOccurence(size_t arg_);
 	int args() const;
 	int minargs() const;	
 	int maxargs() const;		
 	int args(const string &str, MathStructure &vargs, const ParseOptions &po = default_parse_options);
-	unsigned int lastArgumentDefinitionIndex() const;
-	Argument *getArgumentDefinition(unsigned int index);
+	size_t lastArgumentDefinitionIndex() const;
+	Argument *getArgumentDefinition(size_t index);
 	void clearArgumentDefinitions();
-	void setArgumentDefinition(unsigned int index, Argument *argdef);
+	void setArgumentDefinition(size_t index, Argument *argdef);
 	int stringArgs(const string &str, vector<string> &svargs);		
-	void setDefaultValue(unsigned int arg_, string value_);
-	const string &getDefaultValue(unsigned int arg_) const;	
+	void setDefaultValue(size_t arg_, string value_);
+	const string &getDefaultValue(size_t arg_) const;	
 	MathStructure produceVector(const MathStructure &vargs, int begin = -1, int end = -1);
 	MathStructure produceArgumentsVector(const MathStructure &vargs, int begin = -1, int end = -1);
 	
@@ -138,13 +138,13 @@ class UserFunction : public MathFunction {
 	int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);	
 	void setEquation(string new_eq, int argc_ = -1, int max_argc_ = 0);
 	void addSubfunction(string subfunction, bool precalculate = true);
-	void setSubfunction(unsigned int index, string subfunction);
-	void delSubfunction(unsigned int index);
+	void setSubfunction(size_t index, string subfunction);
+	void delSubfunction(size_t index);
 	void clearSubfunctions();
-	unsigned int countSubfunctions() const;
-	void setSubfunctionPrecalculated(unsigned int index, bool precalculate);
-	const string &getSubfunction(unsigned int index) const;
-	bool subfunctionPrecalculated(unsigned int index) const;
+	size_t countSubfunctions() const;
+	void setSubfunctionPrecalculated(size_t index, bool precalculate);
+	const string &getSubfunction(size_t index) const;
+	bool subfunctionPrecalculated(size_t index) const;
 	int subtype() const;
 };
 
@@ -358,9 +358,9 @@ class VectorArgument : public Argument {
 	bool reoccuringArguments() const;
 	void setReoccuringArguments(bool reocc);
 	void addArgument(Argument *arg);
-	void delArgument(unsigned int index);
-	unsigned int countArguments() const;
-	Argument *getArgument(unsigned int index) const;
+	void delArgument(size_t index);
+	size_t countArguments() const;
+	Argument *getArgument(size_t index) const;
 };
 class MatrixArgument : public Argument {
 
@@ -513,9 +513,9 @@ class ArgumentSet : public Argument {
 	virtual Argument *copy() const;
 	virtual string print() const;
 	void addArgument(Argument *arg);
-	void delArgument(unsigned int index);
-	unsigned int countArguments() const;
-	Argument *getArgument(unsigned int index) const;
+	void delArgument(size_t index);
+	size_t countArguments() const;
+	Argument *getArgument(size_t index) const;
 	
 };
 

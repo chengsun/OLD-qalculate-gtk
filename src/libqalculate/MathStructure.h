@@ -49,14 +49,14 @@ class MathStructure {
 
 	protected:
 	
-		unsigned int i_ref;
+		size_t i_ref;
 	
 		int m_type;
 		bool b_approx;
 		int i_precision;
 	
 		vector<MathStructure*> v_subs;
-		vector<unsigned int> v_order;
+		vector<size_t> v_order;
 		string s_sym;
 		Number o_number;
 		Variable *o_variable;
@@ -66,6 +66,7 @@ class MathStructure {
 		bool b_plural;
 		
 		MathFunction *o_function;
+		MathStructure *function_value;
 		
 #ifdef HAVE_GIAC		
 		giac::gen *giac_unknown;
@@ -76,7 +77,7 @@ class MathStructure {
 
 		void ref();
 		void unref();
-		unsigned int refcount() const;
+		size_t refcount() const;
 		void init();
 		
 		MathStructure();
@@ -93,7 +94,7 @@ class MathStructure {
 		
 		void set(const MathStructure &o, bool merge_precision = false);
 		void set_nocopy(MathStructure &o, bool merge_precision = false);
-		void setToChild(unsigned int index, bool merge_precision = false);
+		void setToChild(size_t index, bool merge_precision = false);
 		void set(int num, int den = 1, int exp10 = 0, bool preserve_precision = false);
 		void set(string sym, bool preserve_precision = false);
 		void set(double float_value, bool preserve_precision = false);
@@ -169,13 +170,15 @@ class MathStructure {
 		
 		bool operator != (const MathStructure &o) const;
 		
-		const MathStructure &operator [] (unsigned int index) const;
-		MathStructure &operator [] (unsigned int index);
+		const MathStructure &operator [] (size_t index) const;
+		MathStructure &operator [] (size_t index);
+		
+		const MathStructure *functionValue() const;
 		
 		const Number &number() const;
 		Number &number();
 		void numberUpdated();
-		void childUpdated(unsigned int index, bool recursive = false);
+		void childUpdated(size_t index, bool recursive = false);
 		void childrenUpdated(bool recursive = false);
 		const string &symbol() const;
 #ifdef HAVE_GIAC
@@ -305,6 +308,8 @@ class MathStructure {
 		
 		ComparisonResult compare(const MathStructure &o) const;
 		
+		void mergePrecision(const MathStructure &o);
+		
 		int merge_addition(MathStructure &mstruct, const EvaluationOptions &eo);
 		int merge_multiplication(MathStructure &mstruct, const EvaluationOptions &eo, bool do_append = true);
 		int merge_power(MathStructure &mstruct, const EvaluationOptions &eo);
@@ -321,16 +326,16 @@ class MathStructure {
 		
 		void addChild(const MathStructure &o);
 		void addChild_nocopy(MathStructure *o);
-		void delChild(unsigned int index);
-		void insertChild(const MathStructure &o, unsigned int index);
-		void insertChild_nocopy(MathStructure *o, unsigned int index);
-		void setChild(const MathStructure &o, unsigned int index = 1);
-		void setChild_nocopy(MathStructure *o, unsigned int index = 1);
-		const MathStructure *getChild(unsigned int index) const;
-		MathStructure *getChild(unsigned int index);
-		unsigned int countChilds() const;
-		unsigned int countTotalChilds(bool count_function_as_one = true) const;
-		unsigned int size() const;
+		void delChild(size_t index);
+		void insertChild(const MathStructure &o, size_t index);
+		void insertChild_nocopy(MathStructure *o, size_t index);
+		void setChild(const MathStructure &o, size_t index = 1);
+		void setChild_nocopy(MathStructure *o, size_t index = 1);
+		const MathStructure *getChild(size_t index) const;
+		MathStructure *getChild(size_t index);
+		size_t countChilds() const;
+		size_t countTotalChilds(bool count_function_as_one = true) const;
+		size_t size() const;
 		
 #define		addItem(o)		addChild(o)
 #define		insertItem(o, i)	insertChild(o, i)
@@ -356,15 +361,15 @@ class MathStructure {
 		void sort(const PrintOptions &po = default_print_options, bool recursive = true);
 		void evalSort(bool recursive = false);
 		bool improve_division_multipliers(const PrintOptions &po = default_print_options);
-		void setPrefixes(const PrintOptions &po = default_print_options, MathStructure *parent = NULL, unsigned int pindex = 0);
+		void setPrefixes(const PrintOptions &po = default_print_options, MathStructure *parent = NULL, size_t pindex = 0);
 		void prefixCurrencies();
 		void format(const PrintOptions &po = default_print_options);
-		void formatsub(const PrintOptions &po = default_print_options, MathStructure *parent = NULL, unsigned int pindex = 0);
-		void postFormatUnits(const PrintOptions &po = default_print_options, MathStructure *parent = NULL, unsigned int pindex = 0);
+		void formatsub(const PrintOptions &po = default_print_options, MathStructure *parent = NULL, size_t pindex = 0);
+		void postFormatUnits(const PrintOptions &po = default_print_options, MathStructure *parent = NULL, size_t pindex = 0);
 		void unformat(const EvaluationOptions &eo = default_evaluation_options);
-		bool needsParenthesis(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, unsigned int index, bool flat_division = true, bool flat_power = true) const;
+		bool needsParenthesis(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, size_t index, bool flat_division = true, bool flat_power = true) const;
 
-		int neededMultiplicationSign(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, unsigned int index, bool par, bool par_prev, bool flat_division = true, bool flat_power = true) const;
+		int neededMultiplicationSign(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, size_t index, bool par, bool par_prev, bool flat_division = true, bool flat_power = true) const;
 		
 		string print(const PrintOptions &po = default_print_options, const InternalPrintStruct &ips = top_ips) const;
 		
@@ -377,36 +382,36 @@ class MathStructure {
 		
 		MathStructure &getRange(int start, int end, MathStructure &mstruct) const;
 		
-		void resizeVector(unsigned int i, const MathStructure &mfill);
+		void resizeVector(size_t i, const MathStructure &mfill);
 		
 //matrix
 
-		unsigned int rows() const;
-		unsigned int columns() const;
-		const MathStructure *getElement(unsigned int row, unsigned int column) const;
-		MathStructure &getArea(unsigned int r1, unsigned int c1, unsigned int r2, unsigned int c2, MathStructure &mstruct) const;
-		MathStructure &rowToVector(unsigned int r, MathStructure &mstruct) const;
-		MathStructure &columnToVector(unsigned int c, MathStructure &mstruct) const;
+		size_t rows() const;
+		size_t columns() const;
+		const MathStructure *getElement(size_t row, size_t column) const;
+		MathStructure &getArea(size_t r1, size_t c1, size_t r2, size_t c2, MathStructure &mstruct) const;
+		MathStructure &rowToVector(size_t r, MathStructure &mstruct) const;
+		MathStructure &columnToVector(size_t c, MathStructure &mstruct) const;
 		MathStructure &matrixToVector(MathStructure &mstruct) const;
-		void setElement(const MathStructure &mstruct, unsigned int row, unsigned int column);
-		void addRows(unsigned int r, const MathStructure &mfill);
-		void addColumns(unsigned int c, const MathStructure &mfill);
+		void setElement(const MathStructure &mstruct, size_t row, size_t column);
+		void addRows(size_t r, const MathStructure &mfill);
+		void addColumns(size_t c, const MathStructure &mfill);
 		void addRow(const MathStructure &mfill);
 		void addColumn(const MathStructure &mfill);
-		void resizeMatrix(unsigned int r, unsigned int c, const MathStructure &mfill);
+		void resizeMatrix(size_t r, size_t c, const MathStructure &mfill);
 		bool matrixIsSymmetric() const;
 		MathStructure &determinant(MathStructure &mstruct, const EvaluationOptions &eo) const;
 		MathStructure &permanent(MathStructure &mstruct, const EvaluationOptions &eo) const;
-		void setToIdentityMatrix(unsigned int n);
+		void setToIdentityMatrix(size_t n);
 		MathStructure &getIdentityMatrix(MathStructure &mstruct) const;
 		bool invertMatrix(const EvaluationOptions &eo);
 		bool adjointMatrix(const EvaluationOptions &eo);
 		bool transposeMatrix();
-		MathStructure &cofactor(unsigned int r, unsigned int c, MathStructure &mstruct, const EvaluationOptions &eo) const;
+		MathStructure &cofactor(size_t r, size_t c, MathStructure &mstruct, const EvaluationOptions &eo) const;
 		
 //units
 
-		bool isUnitCompatible(const MathStructure &mstruct);
+		int isUnitCompatible(const MathStructure &mstruct);
 		bool syncUnits(bool sync_complex_relations = false);
 		bool testDissolveCompositeUnit(Unit *u);
 		bool testCompositeUnit(Unit *u);	
@@ -415,8 +420,10 @@ class MathStructure {
 		bool convert(const MathStructure unit_mstruct, bool convert_complex_relations = false);	
 		
 		
-		bool contains(const MathStructure &mstruct, bool check_variables = false, bool check_functions = false) const;
-		bool containsType(int mtype) const;
+		int contains(const MathStructure &mstruct, bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
+		int containsRepresentativeOf(const MathStructure &mstruct, bool check_variables = false, bool check_functions = false) const;
+		int containsType(int mtype, bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
+		int containsRepresentativeOfType(int mtype, bool check_variables = false, bool check_functions = false) const;
 		bool containsAdditionPower() const;
 		bool containsUnknowns() const;
 		bool containsDivision() const;

@@ -72,7 +72,7 @@ bool contains_unicode_char(const char *str) {
 #define PUTS_UNICODE(x)				if(printops.use_unicode_signs || !contains_unicode_char(x)) {puts(x);} else {gchar *gstr = g_locale_from_utf8(x, -1, NULL, NULL, NULL); if(gstr) {puts(gstr); g_free(gstr);} else {puts(x);}}
 #define FPUTS_UNICODE(x, y)			if(printops.use_unicode_signs || !contains_unicode_char(x)) {fputs(x, y);} else {gchar *gstr = g_locale_from_utf8(x, -1, NULL, NULL, NULL); if(gstr) {fputs(gstr, y); g_free(gstr);} else {fputs(x, y);}}
 
-unsigned int unicode_length_check(const char *str) {
+size_t unicode_length_check(const char *str) {
 	if(printops.use_unicode_signs) return unicode_length(str);
 	return strlen(str);
 }
@@ -99,7 +99,7 @@ bool equalsIgnoreCaseFirst(const string &str1, const char *str2) {
 	if(str1.length() < 1 || strlen(str2) < 1) return false;
 	if(str1[0] < 0 && str1.length() > 1) {
 		if(str2[0] >= 0) return false;
-		unsigned int i2 = 1;
+		size_t i2 = 1;
 		while(i2 < str1.length() && str1[i2] < 0) {
 			if(i2 >= strlen(str2) || str2[i2] >= 0) return false;
 			i2++;
@@ -188,13 +188,13 @@ char *qalc_completion(const char *text, int index) {
 		matches.clear();
 		const string *str;
 		bool b_match;
-		unsigned int l = strlen(text);
-		for(unsigned int i = 0; i < CALCULATOR->functions.size(); i++) {
+		size_t l = strlen(text);
+		for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
 			if(CALCULATOR->functions[i]->isActive()) {
 				str = &CALCULATOR->functions[i]->preferredInputName(printops.abbreviate_names, printops.use_unicode_signs).name;
 				if(l <= str->length()) {
 					b_match = true;
-					for(unsigned int i2 = 0; i2 < l; i2++) {
+					for(size_t i2 = 0; i2 < l; i2++) {
 						if((*str)[i2] != text[i2]) {
 							b_match = false;
 							break;
@@ -206,12 +206,12 @@ char *qalc_completion(const char *text, int index) {
 				}
 			}
 		}
-		for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
+		for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
 			if(CALCULATOR->variables[i]->isActive()) {
 				str = &CALCULATOR->variables[i]->preferredInputName(printops.abbreviate_names, printops.use_unicode_signs).name;
 				if(l <= str->length()) {
 					b_match = true;
-					for(unsigned int i2 = 0; i2 < l; i2++) {
+					for(size_t i2 = 0; i2 < l; i2++) {
 						if((*str)[i2] != text[i2]) {
 							b_match = false;
 							break;
@@ -223,12 +223,12 @@ char *qalc_completion(const char *text, int index) {
 				}
 			}
 		}
-		for(unsigned int i = 0; i < CALCULATOR->units.size(); i++) {
+		for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
 			if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT) {
 				str = &CALCULATOR->units[i]->preferredInputName(printops.abbreviate_names, printops.use_unicode_signs).name;
 				if(l <= str->length()) {
 					b_match = true;
-					for(unsigned int i2 = 0; i2 < l; i2++) {
+					for(size_t i2 = 0; i2 < l; i2++) {
 						if((*str)[i2] != text[i2]) {
 							b_match = false;
 							break;
@@ -315,7 +315,7 @@ int countRows(const char *str, int cols) {
 void set_option(string str) {
 	remove_blank_ends(str);
 	string svalue, svar;
-	unsigned int index;
+	size_t index;
 	if((index = str.find_first_of(SPACES)) != string::npos) {
 		svalue = str.substr(index + 1, str.length() - (index + 1));
 		remove_blank_ends(svalue);
@@ -350,7 +350,7 @@ void set_option(string str) {
 			result_format_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "assumptions", _("assumptions"))) {
-		unsigned int i = svalue.find_first_of(SPACES);
+		size_t i = svalue.find_first_of(SPACES);
 		if(i != string::npos) {
 			set_assumption(svalue.substr(i + 1, svalue.length() - (i + 1)), true);
 			set_assumption(svalue.substr(0, i), false);
@@ -389,16 +389,17 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "indicate infinite series", _("indicate infinite series"))) SET_BOOL_D(printops.indicate_infinite_series)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "angle unit", _("angle unit"))) {
 		int v = -1;
-		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "rad", _("rad")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "radians", _("radians"))) v = RADIANS;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "deg", _("deg")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "degrees", _("degrees"))) v = DEGREES;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "gra", _("gra")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "gradians", _("gradians"))) v = GRADIANS;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "rad", _("rad")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "radians", _("radians"))) v = ANGLE_UNIT_RADIANS;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "deg", _("deg")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "degrees", _("degrees"))) v = ANGLE_UNIT_DEGREES;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "gra", _("gra")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "gradians", _("gradians"))) v = ANGLE_UNIT_GRADIANS;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = ANGLE_UNIT_NONE;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
 		if(v < 0 || v > 2) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
-			evalops.angle_unit = (AngleUnit) v;
+			evalops.parse_options.angle_unit = (AngleUnit) v;
 			expression_format_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "multiplication sign", _("multiplication sign"))) {
@@ -640,7 +641,7 @@ int main (int argc, char *argv[]) {
 	//load application specific preferences
 	load_preferences();
 
-	for(unsigned int i = 0; i < set_option_strings.size(); i++) {
+	for(size_t i = 0; i < set_option_strings.size(); i++) {
 		set_option(set_option_strings[i]);
 	}
 
@@ -722,7 +723,7 @@ int main (int argc, char *argv[]) {
 		} else {
 			expression_str = calc_arg;
 		}
-		unsigned int index = expression_str.find_first_of(ID_WRAPS);
+		size_t index = expression_str.find_first_of(ID_WRAPS);
 		if(index != string::npos) {
 			printf(_("Illegal character, \'%c\', in expression."), expression_str[index]);
 			puts("");
@@ -744,7 +745,7 @@ int main (int argc, char *argv[]) {
 #endif
 	
 	string scom;
-	unsigned int slen, ispace;
+	size_t slen, ispace;
 	
 	while(true) {
 #ifdef HAVE_LIBREADLINE
@@ -801,7 +802,7 @@ int main (int argc, char *argv[]) {
 			} else {
 				string name = str, cat, title;
 				if(str[0] == '\"') {
-					unsigned int i = str.find('\"', 1);
+					size_t i = str.find('\"', 1);
 					if(i != string::npos) {
 						name = str.substr(1, i - 1);
 						str = str.substr(i + 1, str.length() - (i + 1));
@@ -810,7 +811,7 @@ int main (int argc, char *argv[]) {
 						str = "";
 					}
 				} else {
-					unsigned int i = str.find_first_of(SPACES, 1);
+					size_t i = str.find_first_of(SPACES, 1);
 					if(i != string::npos) {
 						name = str.substr(0, i);
 						str = str.substr(i + 1, str.length() - (i + 1));
@@ -824,14 +825,14 @@ int main (int argc, char *argv[]) {
 					cat = _("Temporary");
 				} else {
 					if(str[0] == '\"') {
-						unsigned int i = str.find('\"', 1);
+						size_t i = str.find('\"', 1);
 						if(i != string::npos) {
 							cat = str.substr(1, i - 1);
 							title = str.substr(i + 1, str.length() - (i + 1));
 							remove_blank_ends(title);
 						}
 					} else {
-						unsigned int i = str.find_first_of(SPACES, 1);
+						size_t i = str.find_first_of(SPACES, 1);
 						if(i != string::npos) {
 							cat = str.substr(0, i);
 							title = str.substr(i + 1, str.length() - (i + 1));
@@ -843,7 +844,7 @@ int main (int argc, char *argv[]) {
 				bool b = true;
 				if(!CALCULATOR->variableNameIsValid(name)) {
 					name = CALCULATOR->convertToValidVariableName(name);
-					unsigned int l = name.length() + strlen(_("Illegal name. Save as %s instead?"));
+					size_t l = name.length() + strlen(_("Illegal name. Save as %s instead?"));
 					char cstr[l];
 					snprintf(cstr, l, _("Illegal name. Save as %s instead?"), name.c_str());
 					if(!ask_question(cstr)) {
@@ -915,10 +916,11 @@ int main (int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("abbreviations")); PUTS_UNICODE(b2oo(printops.abbreviate_names, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("all prefixes")); PUTS_UNICODE(b2oo(printops.use_all_prefixes, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("angle unit"));
-			switch(evalops.angle_unit) {
-				case RADIANS: {PUTS_UNICODE(_("rad")); break;}
-				case DEGREES: {PUTS_UNICODE(_("rad")); break;}
-				case GRADIANS: {PUTS_UNICODE(_("gra")); break;}
+			switch(evalops.parse_options.angle_unit) {
+				case ANGLE_UNIT_RADIANS: {PUTS_UNICODE(_("rad")); break;}
+				case ANGLE_UNIT_DEGREES: {PUTS_UNICODE(_("rad")); break;}
+				case ANGLE_UNIT_GRADIANS: {PUTS_UNICODE(_("gra")); break;}
+				default: {PUTS_UNICODE(_("none")); break;}
 			}
 			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("approximation")); 
@@ -1133,7 +1135,7 @@ int main (int argc, char *argv[]) {
 						}
 						str += ")";
 						CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-						for(unsigned int i2 = 1; i2 <= f->countNames(); i2++) {
+						for(size_t i2 = 1; i2 <= f->countNames(); i2++) {
 							if(&f->getName(i2) != ename) {
 								CHECK_IF_SCREEN_FILLED_PUTS(f->getName(i2).name.c_str());
 							}
@@ -1196,7 +1198,7 @@ int main (int argc, char *argv[]) {
 										str = dp->title();	
 										str += ": ";
 									}
-									for(unsigned int i = 1; i <= dp->countNames(); i++) {
+									for(size_t i = 1; i <= dp->countNames(); i++) {
 										if(i > 1) str += ", ";
 										str += dp->getName(i);
 									}
@@ -1230,7 +1232,7 @@ int main (int argc, char *argv[]) {
 						if(item->subtype() != SUBTYPE_COMPOSITE_UNIT) {
 							const ExpressionName *ename = &item->preferredName(true, printops.use_unicode_signs);
 							FPUTS_UNICODE(ename->name.c_str(), stdout);
-							for(unsigned int i2 = 1; i2 <= item->countNames(); i2++) {
+							for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
 								if(&item->getName(i2) != ename) {
 									fputs(" / ", stdout);
 									FPUTS_UNICODE(item->getName(i2).name.c_str(), stdout);
@@ -1297,7 +1299,7 @@ int main (int argc, char *argv[]) {
 						PRINT_AND_COLON_TABS_INFO(_("Names"));
 						const ExpressionName *ename = &item->preferredName(false, printops.use_unicode_signs);
 						FPUTS_UNICODE(ename->name.c_str(), stdout);
-						for(unsigned int i2 = 1; i2 <= item->countNames(); i2++) {
+						for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
 							if(&item->getName(i2) != ename) {
 								fputs(" / ", stdout);
 								FPUTS_UNICODE(item->getName(i2).name.c_str(), stdout);
@@ -1384,7 +1386,7 @@ int main (int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				STR_AND_TABS(_("abbreviations")); str += "("; str += _("on"); str += ", "; str += _("off");  str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS(_("all prefixes")); str += "("; str += _("on"); str += ", "; str += _("off");  str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-				STR_AND_TABS(_("angle unit")); str += "(0 = "; str += _("radians"); str += ", 1 = "; str += _("degrees"); str += ", 2 = "; str += _("gradians");  str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+				STR_AND_TABS(_("angle unit")); str += "(0 = "; str += _("none"); str += ", 1 = "; str += _("radians"); str += ", 2 = "; str += _("degrees"); str += ", 3 = "; str += _("gradians");  str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS(_("approximation")); str += "(0 = "; str += _("exact"); str += ", 1 = "; str += _("try exact"); str += ", 2 = "; str += _("approximate");  str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS(_("assume nonzero denominators")); str += "("; str += _("on"); str += ", "; str += _("off");  str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS(_("assumptions")); str += "("; str += _("unknown"); str += ", "; str += _("non-zero"); str += ", "; str += _("positive"); str += ", "; str += _("negative"); str += ", "; str += _("non-positive"); str += ", "; str += _("non-negative"); str += " / "; str += _("unknown"); str += ", "; str += _("number"); str += ", "; str += _("complex"); str += ", "; str += _("real"); str += ", "; str += _("rational"); str += ", "; str += _("integer"); str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
@@ -1474,7 +1476,7 @@ int main (int argc, char *argv[]) {
 #endif			
 			break;
 		} else {
-			unsigned int index = str.find_first_of(ID_WRAPS);
+			size_t index = str.find_first_of(ID_WRAPS);
 			if(index != string::npos) {
 				printf(_("Illegal character, \'%c\', in expression."), str[index]);
 				puts("");
@@ -1817,13 +1819,14 @@ void load_preferences() {
 	historyfile += "qalc.history";
 	read_history(historyfile.c_str());
 #endif	
+	int version_numbers[] = {0, 7, 1};
 	FILE *file = NULL;
 	filename += "qalc.cfg";
 	file = fopen(filename.c_str(), "r");
 	if(file) {
 		char line[10000];
 		string stmp, svalue, svar;
-		unsigned int i;
+		size_t i;
 		int v;
 		while(true) {
 			if(fgets(line, 10000, file) == NULL)
@@ -1836,7 +1839,9 @@ void load_preferences() {
 				svalue = stmp.substr(i + 1, stmp.length() - (i + 1));
 				remove_blank_ends(svalue);
 				v = s2i(svalue);
-				if(svar == "save_mode_on_exit")
+				if(svar == "version") {
+					parse_qalculate_version(svalue, version_numbers);
+				} else if(svar == "save_mode_on_exit")
 					save_mode_on_exit = v;
 				else if(svar == "save_definitions_on_exit")
 					save_defs_on_exit = v;
@@ -1883,9 +1888,12 @@ void load_preferences() {
 					evalops.parse_options.read_precision = (ReadPrecisionMode) v;
 				else if(svar == "assume_denominators_nonzero")
 					evalops.assume_denominators_nonzero = v;	
-				else if(svar == "angle_unit")
-					evalops.angle_unit = (AngleUnit) v;
-				else if(svar == "functions_enabled")
+				else if(svar == "angle_unit") {
+					if(version_numbers[0] == 0 && (version_numbers[1] < 7 || (version_numbers[1] == 7 && version_numbers[2] == 0))) {
+						v++;
+					}
+					evalops.parse_options.angle_unit = (AngleUnit) v;
+				} else if(svar == "functions_enabled")
 					evalops.parse_options.functions_enabled = v;
 				else if(svar == "variables_enabled")
 					evalops.parse_options.variables_enabled = v;
@@ -1999,7 +2007,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "number_base_expression=%i\n", saved_evalops.parse_options.base);
 	fprintf(file, "read_precision=%i\n", saved_evalops.parse_options.read_precision);
 	fprintf(file, "assume_denominators_nonzero=%i\n", saved_evalops.assume_denominators_nonzero);
-	fprintf(file, "angle_unit=%i\n", saved_evalops.angle_unit);
+	fprintf(file, "angle_unit=%i\n", saved_evalops.parse_options.angle_unit);
 	fprintf(file, "functions_enabled=%i\n", saved_evalops.parse_options.functions_enabled);
 	fprintf(file, "variables_enabled=%i\n", saved_evalops.parse_options.variables_enabled);
 	fprintf(file, "calculate_variables=%i\n", saved_evalops.calculate_variables);	

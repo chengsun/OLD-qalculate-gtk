@@ -23,6 +23,45 @@
 						ExpressionItem *copy() const {return new x(this);} \
 					};					
 
+#define DECLARE_BUILTIN_FUNCTION_R(x)	class x : public MathFunction { \
+					  public: \
+						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+						x(); \
+						x(const x *function) {set(function);} \
+						ExpressionItem *copy() const {return new x(this);} \
+						bool representsPositive(const MathStructure &vargs);\
+						bool representsNegative(const MathStructure &vargs);\
+						bool representsNonNegative(const MathStructure &vargs);\
+						bool representsNonPositive(const MathStructure &vargs);\
+						bool representsInteger(const MathStructure &vargs);\
+						bool representsNumber(const MathStructure &vargs);\
+						bool representsRational(const MathStructure &vargs);\
+						bool representsReal(const MathStructure &vargs);\
+						bool representsComplex(const MathStructure &vargs);\
+						bool representsNonZero(const MathStructure &vargs);\
+						bool representsEven(const MathStructure &vargs);\
+						bool representsOdd(const MathStructure &vargs);\
+						bool representsUndefined(const MathStructure &vargs);\
+					};
+					
+#define DECLARE_BUILTIN_FUNCTION_R2(x)	class x : public MathFunction { \
+					  public: \
+						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+						x(); \
+						x(const x *function) {set(function);} \
+						ExpressionItem *copy() const {return new x(this);} \
+						bool representsNumber(const MathStructure &vargs);\
+						bool representsReal(const MathStructure &vargs);\
+					};
+#define DECLARE_BUILTIN_FUNCTION_R1(x)	class x : public MathFunction { \
+					  public: \
+						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+						x(); \
+						x(const x *function) {set(function);} \
+						ExpressionItem *copy() const {return new x(this);} \
+						bool representsNumber(const MathStructure &vargs);\
+					};															
+
 
 DECLARE_BUILTIN_FUNCTION(VectorFunction);
 DECLARE_BUILTIN_FUNCTION(LimitsFunction);
@@ -49,25 +88,25 @@ DECLARE_BUILTIN_FUNCTION(AdjointFunction);
 DECLARE_BUILTIN_FUNCTION(CofactorFunction);
 DECLARE_BUILTIN_FUNCTION(InverseFunction);
 
-DECLARE_BUILTIN_FUNCTION(FactorialFunction);
-DECLARE_BUILTIN_FUNCTION(DoubleFactorialFunction);
-DECLARE_BUILTIN_FUNCTION(MultiFactorialFunction);
+DECLARE_BUILTIN_FUNCTION_R(FactorialFunction);
+DECLARE_BUILTIN_FUNCTION_R(DoubleFactorialFunction);
+DECLARE_BUILTIN_FUNCTION_R(MultiFactorialFunction);
 DECLARE_BUILTIN_FUNCTION(BinomialFunction);
 
-DECLARE_BUILTIN_FUNCTION(AbsFunction);
+DECLARE_BUILTIN_FUNCTION_R(AbsFunction);
 DECLARE_BUILTIN_FUNCTION(GcdFunction);
 DECLARE_BUILTIN_FUNCTION(SignumFunction);
-DECLARE_BUILTIN_FUNCTION(RoundFunction);
-DECLARE_BUILTIN_FUNCTION(FloorFunction);
-DECLARE_BUILTIN_FUNCTION(CeilFunction);
-DECLARE_BUILTIN_FUNCTION(TruncFunction);
+DECLARE_BUILTIN_FUNCTION_R(RoundFunction);
+DECLARE_BUILTIN_FUNCTION_R(FloorFunction);
+DECLARE_BUILTIN_FUNCTION_R(CeilFunction);
+DECLARE_BUILTIN_FUNCTION_R(TruncFunction);
 DECLARE_BUILTIN_FUNCTION(IntFunction);
 DECLARE_BUILTIN_FUNCTION(FracFunction);
 DECLARE_BUILTIN_FUNCTION(RemFunction);
 DECLARE_BUILTIN_FUNCTION(ModFunction);
 
-DECLARE_BUILTIN_FUNCTION(ReFunction);
-DECLARE_BUILTIN_FUNCTION(ImFunction);
+DECLARE_BUILTIN_FUNCTION_R(ReFunction);
+DECLARE_BUILTIN_FUNCTION_R(ImFunction);
 DECLARE_BUILTIN_FUNCTION(ArgFunction);
 
 DECLARE_BUILTIN_FUNCTION(SqrtFunction);
@@ -75,20 +114,20 @@ DECLARE_BUILTIN_FUNCTION(SquareFunction);
 
 DECLARE_BUILTIN_FUNCTION(ExpFunction);
 
-DECLARE_BUILTIN_FUNCTION(LogFunction);
+DECLARE_BUILTIN_FUNCTION_R(LogFunction);
 DECLARE_BUILTIN_FUNCTION(LognFunction);
 
-DECLARE_BUILTIN_FUNCTION(SinFunction);
-DECLARE_BUILTIN_FUNCTION(CosFunction);
+DECLARE_BUILTIN_FUNCTION_R2(SinFunction);
+DECLARE_BUILTIN_FUNCTION_R2(CosFunction);
 DECLARE_BUILTIN_FUNCTION(TanFunction);
-DECLARE_BUILTIN_FUNCTION(AsinFunction);
-DECLARE_BUILTIN_FUNCTION(AcosFunction);
-DECLARE_BUILTIN_FUNCTION(AtanFunction);
-DECLARE_BUILTIN_FUNCTION(SinhFunction);
-DECLARE_BUILTIN_FUNCTION(CoshFunction);
-DECLARE_BUILTIN_FUNCTION(TanhFunction);
-DECLARE_BUILTIN_FUNCTION(AsinhFunction);
-DECLARE_BUILTIN_FUNCTION(AcoshFunction);
+DECLARE_BUILTIN_FUNCTION_R1(AsinFunction);
+DECLARE_BUILTIN_FUNCTION_R1(AcosFunction);
+DECLARE_BUILTIN_FUNCTION_R2(AtanFunction);
+DECLARE_BUILTIN_FUNCTION_R2(SinhFunction);
+DECLARE_BUILTIN_FUNCTION_R2(CoshFunction);
+DECLARE_BUILTIN_FUNCTION_R2(TanhFunction);
+DECLARE_BUILTIN_FUNCTION_R2(AsinhFunction);
+DECLARE_BUILTIN_FUNCTION_R1(AcoshFunction);
 DECLARE_BUILTIN_FUNCTION(AtanhFunction);
 DECLARE_BUILTIN_FUNCTION(RadiansToDefaultAngleUnitFunction);
 

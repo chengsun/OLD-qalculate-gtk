@@ -32,7 +32,7 @@ DataObject::DataObject(DataSet *parent_set) {
 }
 
 void DataObject::eraseProperty(DataProperty *property) {
-	for(unsigned int i = 0; i < properties.size(); i++) {
+	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i] == property) {
 			s_properties.erase(s_properties.begin() + i);
 			a_properties.erase(a_properties.begin() + i);
@@ -46,7 +46,7 @@ void DataObject::eraseProperty(DataProperty *property) {
 }
 void DataObject::setProperty(DataProperty *property, string s_value, int is_approximate) {
 	if(s_value.empty()) eraseProperty(property);
-	for(unsigned int i = 0; i < properties.size(); i++) {
+	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i] == property) {
 			s_properties[i] = s_value;
 			a_properties[i] = is_approximate;
@@ -64,7 +64,7 @@ void DataObject::setProperty(DataProperty *property, string s_value, int is_appr
 	s_nonlocalized_properties.push_back("");
 }
 void DataObject::setNonlocalizedKeyProperty(DataProperty *property, string s_value) {
-	for(unsigned int i = 0; i < properties.size(); i++) {
+	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i] == property) {
 			s_nonlocalized_properties[i] = s_value;
 			return;
@@ -79,7 +79,7 @@ void DataObject::setNonlocalizedKeyProperty(DataProperty *property, string s_val
 	
 const string &DataObject::getProperty(DataProperty *property, int *is_approximate) {
 	if(!property) return empty_string;
-	for(unsigned int i = 0; i < properties.size(); i++) {
+	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i] == property) {
 			if(is_approximate) *is_approximate = a_properties[i];
 			return s_properties[i];
@@ -89,7 +89,7 @@ const string &DataObject::getProperty(DataProperty *property, int *is_approximat
 }
 const string &DataObject::getNonlocalizedKeyProperty(DataProperty *property) {
 	if(!property) return empty_string;
-	for(unsigned int i = 0; i < properties.size(); i++) {
+	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i] == property) {
 			return s_nonlocalized_properties[i];
 		}
@@ -98,7 +98,7 @@ const string &DataObject::getNonlocalizedKeyProperty(DataProperty *property) {
 }
 string DataObject::getPropertyInputString(DataProperty *property) {
 	if(!property) return empty_string;
-	for(unsigned int i = 0; i < properties.size(); i++) {
+	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i] == property) {
 			return property->getInputString(s_properties[i]);
 		}
@@ -107,7 +107,7 @@ string DataObject::getPropertyInputString(DataProperty *property) {
 }
 string DataObject::getPropertyDisplayString(DataProperty *property) {
 	if(!property) return empty_string;
-	for(unsigned int i = 0; i < properties.size(); i++) {
+	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i] == property) {
 			return property->getDisplayString(s_properties[i]);
 		}
@@ -116,7 +116,7 @@ string DataObject::getPropertyDisplayString(DataProperty *property) {
 }
 const MathStructure *DataObject::getPropertyStruct(DataProperty *property) {
 	if(!property) return NULL;
-	for(unsigned int i = 0; i < properties.size(); i++) {
+	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i] == property) {
 			if(!m_properties[i]) {
 				m_properties[i] = property->generateStruct(s_properties[i], a_properties[i]);
@@ -171,7 +171,7 @@ void DataProperty::set(const DataProperty &dp) {
 	b_approximate = dp.isApproximate();
 	b_uchanged = dp.isUserModified();
 	clearNames();
-	for(unsigned int i = 1; i <= dp.countNames(); i++) {
+	for(size_t i = 1; i <= dp.countNames(); i++) {
 		names.push_back(dp.getName(i));
 		name_is_ref.push_back(dp.nameIsReference(i));
 	}
@@ -184,10 +184,10 @@ void DataProperty::setName(string s_name, bool is_ref) {
 	names.push_back(s_name);
 	name_is_ref.push_back(is_ref);
 }
-void DataProperty::setNameIsReference(unsigned int index, bool is_ref) {
+void DataProperty::setNameIsReference(size_t index, bool is_ref) {
 	if(index > 0 && index <= name_is_ref.size()) name_is_ref[index - 1] = is_ref;
 }
-bool DataProperty::nameIsReference(unsigned int index) const {
+bool DataProperty::nameIsReference(size_t index) const {
 	if(index > 0 && index <= name_is_ref.size()) return name_is_ref[index - 1];
 	return false;
 }
@@ -195,7 +195,7 @@ void DataProperty::clearNames() {
 	names.clear();
 	name_is_ref.clear();
 }
-void DataProperty::addName(string s_name, bool is_ref, unsigned int index) {
+void DataProperty::addName(string s_name, bool is_ref, size_t index) {
 	if(s_name.empty()) return;
 	if(index < 1 || index > names.size()) {
 		names.push_back(s_name);
@@ -205,23 +205,23 @@ void DataProperty::addName(string s_name, bool is_ref, unsigned int index) {
 		name_is_ref.insert(name_is_ref.begin() + (index - 1), is_ref);
 	}
 }
-const string &DataProperty::getName(unsigned int index) const {
+const string &DataProperty::getName(size_t index) const {
 	if(index < 1 || index > names.size()) return empty_string;
 	return names[index - 1];
 }
 const string &DataProperty::getReferenceName() const {
-	for(unsigned int i = 0; i < name_is_ref.size(); i++) {
+	for(size_t i = 0; i < name_is_ref.size(); i++) {
 		if(name_is_ref[i]) return names[i];
 	}
 	return getName();
 }
 bool DataProperty::hasName(const string &s_name) {
-	for(unsigned int i = 0; i < names.size(); i++) {
+	for(size_t i = 0; i < names.size(); i++) {
 		if(equalsIgnoreCase(s_name, names[i])) return true;
 	}
 	return false;
 }
-unsigned int DataProperty::countNames() const {
+size_t DataProperty::countNames() const {
 	return names.size();
 }
 const string &DataProperty::title(bool return_name_if_no_title) const {
@@ -421,7 +421,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	} else if(sfile.find("/") != string::npos) {
 		filename = sfile;
 		bool b = loadObjects(filename.c_str(), false);
-		unsigned int i = sfile.find_last_of("/");
+		size_t i = sfile.find_last_of("/");
 		if(i != sfile.length() - 1) {
 			filename = getLocalDir();
 			filename += "definitions/";
@@ -492,8 +492,8 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 		return false;
 	}
 	int version_numbers[] = {0, 0, 0};
-	for(unsigned int i = 0; i < 3; i++) {
-		unsigned int dot_i = version.find(".");
+	for(size_t i = 0; i < 3; i++) {
+		size_t dot_i = version.find(".");
 		if(dot_i == string::npos) {
 			version_numbers[i] = s2i(version);
 			break;
@@ -510,7 +510,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	int i_approx;
 	bool cmp;
 	bool b, old_object;
-	unsigned int objects_before = objects.size();
+	size_t objects_before = objects.size();
 	vector<DataProperty*> p_refs;
 	vector<string> s_refs;
 	while(cur) {
@@ -518,7 +518,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 		if(!xmlStrcmp(cur->name, (const xmlChar*) "object")) {
 			b = true;
 		} else if(xmlStrcmp(cur->name, (const xmlChar*) "text")) {
-			for(unsigned int i = 1; i <= countNames(); i++) {
+			for(size_t i = 1; i <= countNames(); i++) {
 				if(!xmlStrcmp(cur->name, (const xmlChar*) properties[i]->getName(i).c_str())) {
 					b = true;
 					break;
@@ -534,9 +534,9 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 			} else {
 				o = new DataObject(this);
 			}
-			for(unsigned int i = 0; i < properties.size(); i++) {
+			for(size_t i = 0; i < properties.size(); i++) {
 				if(properties[i]->isKey()) {
-					for(unsigned int i2 = 1; i2 <= properties[i]->countNames(); i2++) {
+					for(size_t i2 = 1; i2 <= properties[i]->countNames(); i2++) {
 						if(properties[i]->getName(i2).find(' ') != string::npos) {
 							str2 = properties[i]->getName(i2);
 							gsub(" ", "_", str2);
@@ -558,8 +558,8 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 			}
 			old_object = false;
 			if(is_user_defs && objects_before > 0) {
-				for(unsigned int i = 0; i < p_refs.size(); i++) {
-					for(unsigned int i2 = 0; i2 < objects_before; i2++) {
+				for(size_t i = 0; i < p_refs.size(); i++) {
+					for(size_t i2 = 0; i2 < objects_before; i2++) {
 						if(s_refs[i] == objects[i2]->getProperty(p_refs[i]) || s_refs[i] == objects[i2]->getNonlocalizedKeyProperty(p_refs[i])) {
 							o = objects[i2];
 							old_object = true;
@@ -569,15 +569,15 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 					if(old_object) break;
 				}
 				if(!old_object) o = new DataObject(this);
-				for(unsigned int i = 0; i < p_refs.size(); i++) {
+				for(size_t i = 0; i < p_refs.size(); i++) {
 					o->setProperty(p_refs[i], s_refs[i]);
 				}	
 			}
 			child = cur->xmlChildrenNode;
 			while(child) {
 				b = false;
-				for(unsigned int i = 0; i < properties.size(); i++) {
-					for(unsigned int i2 = 1; i2 <= properties[i]->countNames(); i2++) {
+				for(size_t i = 0; i < properties.size(); i++) {
+					for(size_t i2 = 1; i2 <= properties[i]->countNames(); i2++) {
 						if(properties[i]->getName(i2).find(' ') != string::npos) {
 							str2 = properties[i]->getName(i2);
 							gsub(" ", "_", str2);
@@ -698,13 +698,13 @@ int DataSet::saveObjects(const char *file_name, bool save_global) {
 	DataObject *o;
 	int approx = false;
 	bool do_save = save_global;
-	for(unsigned int i = 0; i < objects.size(); i++) {
+	for(size_t i = 0; i < objects.size(); i++) {
 		if(save_global || objects[i]->isUserModified()) {
 			do_save = true;
 			o = objects[i];
 			newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "object", NULL);
 			if(!save_global) {
-				for(unsigned int i2 = 0; i2 < properties.size(); i2++) {
+				for(size_t i2 = 0; i2 < properties.size(); i2++) {
 					if(properties[i2]->isKey()) {
 						vstr = &o->getProperty(properties[i2], &approx);
 						if(approx < 0 && !vstr->empty()) {
@@ -713,7 +713,7 @@ int DataSet::saveObjects(const char *file_name, bool save_global) {
 					}
 				}
 			}
-			for(unsigned int i2 = 0; i2 < properties.size(); i2++) {
+			for(size_t i2 = 0; i2 < properties.size(); i2++) {
 				if(save_global && properties[i2]->isKey()) {
 					vstr = &o->getNonlocalizedKeyProperty(properties[i2]);
 					if(vstr->empty()) {
@@ -771,7 +771,7 @@ void DataSet::addProperty(DataProperty *dp) {
 	setChanged(true);
 }
 void DataSet::delProperty(DataProperty *dp) {
-	for(unsigned int i = 0; i < properties.size(); i++) {
+	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i] == dp) {
 			delete properties[i];
 			properties.erase(properties.begin() + i);
@@ -785,14 +785,14 @@ void DataSet::delProperty(DataPropertyIter *it) {
 	--(*it);
 }
 DataProperty *DataSet::getPrimaryKeyProperty() {
-	for(unsigned int i = 0; i < properties.size(); i++) {
+	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i]->isKey()) return properties[i];
 	}
 	return NULL;
 }
 DataProperty *DataSet::getProperty(string property) {
 	if(property.empty()) return NULL;
-	for(unsigned int i = 0; i < properties.size(); i++) {
+	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i]->hasName(property)) return properties[i];
 	}
 	return NULL;
@@ -822,7 +822,7 @@ void DataSet::addObject(DataObject *o) {
 	objects.push_back(o);
 }
 void DataSet::delObject(DataObject *o) {
-	for(unsigned int i = 0; i < objects.size(); i++) {
+	for(size_t i = 0; i < objects.size(); i++) {
 		if(objects[i] == o) {
 			delete objects[i];
 			objects.erase(objects.begin() + i);
@@ -838,17 +838,17 @@ DataObject *DataSet::getObject(string object) {
 	if(!objectsLoaded()) loadObjects();
 	if(object.empty()) return NULL;
 	DataProperty *dp;
-	for(unsigned int i = 0; i < properties.size(); i++) {
+	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i]->isKey()) {
 			dp = properties[i];
 			if(dp->isCaseSensitive()) {
-				for(unsigned int i2 = 0; i2 < objects.size(); i2++) {
+				for(size_t i2 = 0; i2 < objects.size(); i2++) {
 					if(object == objects[i2]->getProperty(dp) || object == objects[i2]->getNonlocalizedKeyProperty(dp)) {
 						return objects[i2];
 					}
 				}
 			} else {
-				for(unsigned int i2 = 0; i2 < objects.size(); i2++) {
+				for(size_t i2 = 0; i2 < objects.size(); i2++) {
 					if(equalsIgnoreCase(object, objects[i2]->getProperty(dp)) || equalsIgnoreCase(object, objects[i2]->getNonlocalizedKeyProperty(dp))) {
 						return objects[i2];
 					}
@@ -862,12 +862,12 @@ DataObject *DataSet::getObject(const MathStructure &object) {
 	if(object.isSymbolic()) return getObject(object.symbol());
 	if(!objectsLoaded()) loadObjects();
 	DataProperty *dp;
-	for(unsigned int i = 0; i < properties.size(); i++) {
+	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i]->isKey()) {
 			dp = properties[i];
 			if(dp->propertyType() != PROPERTY_STRING) {
 				const MathStructure *mstruct;
-				for(unsigned int i2 = 0; i2 < objects.size(); i2++) {
+				for(size_t i2 = 0; i2 < objects.size(); i2++) {
 					mstruct = objects[i2]->getPropertyStruct(dp);
 					if(mstruct && object.equals(*mstruct)) {
 						return objects[i2];
@@ -931,7 +931,7 @@ string DataSet::printProperties(DataObject *o) {
 		string str, stmp;
 		str = "-------------------------------------\n";
 		bool started = false;
-		for(unsigned int i = 0; i < properties.size(); i++) {
+		for(size_t i = 0; i < properties.size(); i++) {
 			if(!properties[i]->isHidden() && properties[i]->isKey()) {
 				stmp = o->getPropertyDisplayString(properties[i]);
 				if(!stmp.empty()) {
@@ -943,7 +943,7 @@ string DataSet::printProperties(DataObject *o) {
 				}
 			}
 		}
-		for(unsigned int i = 0; i < properties.size(); i++) {
+		for(size_t i = 0; i < properties.size(); i++) {
 			if(!properties[i]->isHidden() && !properties[i]->isKey()) {
 				stmp = o->getPropertyDisplayString(properties[i]);
 				if(!stmp.empty()) {
@@ -988,7 +988,7 @@ string DataPropertyArgument::subprintlong() const {
 		str += _("no properties available");
 	} else {
 		string stmp;
-		unsigned int l_last = 0;
+		size_t l_last = 0;
 		while(true) {
 			if(!o->isHidden()) {
 				if(!stmp.empty()) {
@@ -1053,7 +1053,7 @@ string DataObjectArgument::subprintlong() const {
 	}
 	if(o) {
 		string stmp;
-		unsigned int l_last = 0;
+		size_t l_last = 0;
 		while(true) {
 			if(o->isKey()) {
 				if(!stmp.empty()) {

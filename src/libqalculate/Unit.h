@@ -153,10 +153,10 @@ class CompositeUnit : public Unit {
 		virtual ExpressionItem *copy() const;
 		virtual void set(const ExpressionItem *item);		
 		virtual void add(Unit *u, int exp_ = 1, Prefix *prefix = NULL);
-		virtual Unit *get(unsigned int index, int *exp_ = NULL, Prefix **prefix = NULL) const;
-		virtual void setExponent(unsigned int index, int exp_);
-		virtual void setPrefix(unsigned int index, Prefix *prefix);
-		virtual unsigned int countUnits() const;
+		virtual Unit *get(size_t index, int *exp_ = NULL, Prefix **prefix = NULL) const;
+		virtual void setExponent(size_t index, int exp_);
+		virtual void setPrefix(size_t index, Prefix *prefix);
+		virtual size_t countUnits() const;
 		virtual void del(Unit *u);
 		virtual string print(bool plural_, bool short_, bool use_unicode = false) const;
 		virtual int subtype() const;

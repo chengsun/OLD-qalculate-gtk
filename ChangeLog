@@ -1,3 +1,22 @@
+2004-10-22 Niklas Knutsson  <nq@altern.org>
+
+	* Fix angle arguments by adding option default angle unit none where angle units must be specified
+	* Represents... for some functions
+	* Some tweaks
+
+2004-10-21 Niklas Knutsson  <nq@altern.org>
+
+	* Fix 0.5!
+
+2004-10-20 Niklas Knutsson  <nq@altern.org>
+
+	* Fix comparison of unit with unknown
+	* Try with assumptions set to unknown in solve function if not successful
+
+2004-10-19 Niklas Knutsson  <nq@altern.org>
+	
+	* Fix when size_t not is unsigned int
+
 2004-10-17 Niklas Knutsson  <nq@altern.org>
 
 	* Disable plural forms not at the end of text strings (metersqrt(5) = meter * sqrt(5) instead of meters * qrt(5))

@@ -76,13 +76,13 @@ class DataProperty {
 	
 	void set(const DataProperty &dp);
 	void setName(string s_name, bool is_ref = false);
-	void setNameIsReference(unsigned int index = 1, bool is_ref = true);
-	bool nameIsReference(unsigned int index = 1) const;
+	void setNameIsReference(size_t index = 1, bool is_ref = true);
+	bool nameIsReference(size_t index = 1) const;
 	void clearNames();
-	void addName(string s_name, bool is_ref = false, unsigned int index = 0);
+	void addName(string s_name, bool is_ref = false, size_t index = 0);
 	bool hasName(const string &s_name);
-	unsigned int countNames() const;
-	const string &getName(unsigned int index = 1) const;
+	size_t countNames() const;
+	const string &getName(size_t index = 1) const;
 	const string &getReferenceName() const;
 	void setTitle(string s_title);
 	const string &title(bool return_name_if_no_title = true) const;

@@ -358,101 +358,8 @@ int daysBetweenDates(int year1, int month1, int day1, int year2, int month2, int
 	
 }
 
-int find_first_not_of(const string &str, unsigned int pos, ...) {
-	char *strs[10];
-	va_list ap;
-	va_start(ap, pos); 
-	for(int i = 0; true; i++) {
-		strs[i] = va_arg(ap, char*);
-		if(strs[i] == NULL) break;
-	}
-	va_end(ap);	
-	for(unsigned int i = pos; i < str.length(); i++) {
-		bool b = true;
-		for(unsigned int i2 = 0; true; i2++) {
-			if(!strs[i2]) break;
-			for(unsigned int i3 = 0; i3 < strlen(strs[i2]); i3++) {
-				if(str[i] == strs[i2][i3]) {
-					b = false;
-				}
-			}
-		}	
-		if(b) {
-			return i;		
-		}
-	}
-	return string::npos;
-}
-int find_first_of(const string &str, unsigned int pos, ...) {
-	char *strs[10];
-	va_list ap;
-	va_start(ap, pos); 
-	for(unsigned int i = 0; true; i++) {
-		strs[i] = va_arg(ap, char*);
-		if(strs[i] == NULL) break;
-	}
-	va_end(ap);	
-	for(unsigned int i = pos; i < str.length(); i++) {
-		for(unsigned int i2 = 0; true; i2++) {
-			if(!strs[i2]) break;
-			for(unsigned int i3 = 0; i3 < strlen(strs[i2]); i3++) {
-				if(str[i] == strs[i2][i3]) {
-					return i;
-				}
-			}
-		}		
-	}
-	return string::npos;
-}
-int find_last_not_of(const string &str, unsigned int pos, ...) {
-	char *strs[10];
-	va_list ap;
-	va_start(ap, pos); 
-	for(int i = 0; true; i++) {
-		strs[i] = va_arg(ap, char*);
-		if(strs[i] == NULL) break;
-	}
-	va_end(ap);	
-	if(pos < 0) pos = str.length() - 1;		
-	for(int i = pos; i >= 0; i--) {
-		bool b = true;
-		for(unsigned int i2 = 0; true; i2++) {
-			if(!strs[i2]) break;
-			for(unsigned int i3 = 0; i3 < strlen(strs[i2]); i3++) {
-				if(str[i] == strs[i2][i3]) {
-					b = false;
-				}
-			}
-			if(b) return i;
-		}	
-	}
-	return string::npos;
-}
-int find_last_of(const string &str, unsigned int pos, ...) {
-	char *strs[10];
-	va_list ap;
-	va_start(ap, pos); 
-	for(int i = 0; true; i++) {
-		strs[i] = va_arg(ap, char*);
-		if(strs[i] == NULL) break;
-	}
-	va_end(ap);
-	if(pos < 0) pos = str.length() - 1;	
-	for(int i = pos; i >= 0; i--) {
-		for(unsigned int i2 = 0; true; i2++) {
-			if(!strs[i2]) break;
-			for(unsigned int i3 = 0; i3 < strlen(strs[i2]); i3++) {
-				if(str[i] == strs[i2][i3]) {
-					return i;
-				}
-			}
-		}		
-	}
-	return string::npos;
-}
-
 string& gsub(const string &pattern, const string &sub, string &str) {
-	unsigned int i = str.find(pattern);
+	size_t i = str.find(pattern);
 	while(i != string::npos) {
 		str.replace(i, pattern.length(), sub);
 		i = str.find(pattern, i + sub.length());
@@ -460,7 +367,7 @@ string& gsub(const string &pattern, const string &sub, string &str) {
 	return str;
 }
 string& gsub(const char *pattern, const char *sub, string &str) {
-	unsigned int i = str.find(pattern);
+	size_t i = str.find(pattern);
 	while(i != string::npos) {
 		str.replace(i, strlen(pattern), string(sub));
 		i = str.find(pattern, i + strlen(sub));
@@ -469,7 +376,7 @@ string& gsub(const char *pattern, const char *sub, string &str) {
 }
 
 string& remove_blanks(string &str) {
-	unsigned int i = str.find_first_of(SPACES, 0);
+	size_t i = str.find_first_of(SPACES, 0);
 	while(i != string::npos) {
 		str.erase(i, 1);
 		i = str.find_first_of(SPACES, i);
@@ -478,7 +385,7 @@ string& remove_blanks(string &str) {
 }
 
 string& remove_duplicate_blanks(string &str) {
-	unsigned int i = str.find_first_of(SPACES, 0);
+	size_t i = str.find_first_of(SPACES, 0);
 	while(i != string::npos) {
 		if(i == 0 || is_in(SPACES, str[i - 1])) {
 			str.erase(i, 1);
@@ -491,12 +398,15 @@ string& remove_duplicate_blanks(string &str) {
 }
 
 string& remove_blank_ends(string &str) {
-	unsigned int i = str.find_first_not_of(SPACES);
-	unsigned int i2 = str.find_last_not_of(SPACES);
-	if(i != string::npos && i2 != string::npos && (i > 0 || i2 < str.length() - 1))
-		str = str.substr(i, i2 - i + 1);
-	else
+	size_t i = str.find_first_not_of(SPACES);
+	size_t i2 = str.find_last_not_of(SPACES);
+	if(i != string::npos && i2 != string::npos) {
+		if(i > 0 || i2 < str.length() - 1) {
+			str = str.substr(i, i2 - i + 1);
+		}
+	} else {
 		str.resize(0);
+	}
 	return str;
 }
 string& remove_parenthesis(string &str) {
@@ -523,6 +433,26 @@ string p2s(void *o) {
 string i2s(int value) {
 	//	  char buffer[10];
 	sprintf(buffer, "%i", value);
+	string stmp = buffer;
+	return stmp;
+}
+string i2s(long int value) {
+	sprintf(buffer, "%li", value);
+	string stmp = buffer;
+	return stmp;
+}
+string i2s(unsigned int value) {
+	sprintf(buffer, "%u", value);
+	string stmp = buffer;
+	return stmp;
+}
+string i2s(unsigned long int value) {
+	sprintf(buffer, "%lu", value);
+	string stmp = buffer;
+	return stmp;
+}
+string i2s(unsigned long long int value) {
+	sprintf(buffer, "%llu", value);
 	string stmp = buffer;
 	return stmp;
 }
@@ -567,11 +497,11 @@ void *s2p(const char *str) {
 	return p;
 }
 
-int find_ending_bracket(const string &str, int start, int *missing) {
+size_t find_ending_bracket(const string &str, size_t start, int *missing) {
 	int i_l = 1;
 	while(true) {
 		start = str.find_first_of(LEFT_PARENTHESIS RIGHT_PARENTHESIS, start);
-		if(start == (int) string::npos) {
+		if(start == string::npos) {
 			if(missing) *missing = i_l;
 			return string::npos;
 		}
@@ -605,73 +535,38 @@ string& wrap_p(string &str) {
 	str += RIGHT_PARENTHESIS_CH;
 	return str;
 }
-bool is_in(char c, ...) {
-	char *strs[10];
-	va_list ap;
-	va_start(ap, c); 
-	for(int i = 0; true; i++) {
-		strs[i] = va_arg(ap, char*);
-		if(strs[i] == NULL) break;
-	}
-	va_end(ap);	
-	for(int i = 0; true; i++) {
-		if(!strs[i]) break;
-		for(unsigned int i2 = 0; i2 < strlen(strs[i]); i2++) { 
-			if(strs[i][i2] == c)
-				return true;
-		}
-	}
-	return false;
-}
-bool is_not_in(char c, ...) {
-	char *strs[10];
-	va_list ap;
-	va_start(ap, c); 
-	for(int i = 0; true; i++) {
-		strs[i] = va_arg(ap, char*);
-		if(strs[i] == NULL) break;
-	}
-	va_end(ap);	
-	for(int i = 0; true; i++) {
-		if(!strs[i]) break;
-		for(unsigned int i2 = 0; i2 < strlen(strs[i]); i2++) { 
-			if(strs[i][i2] == c)
-				return false;
-		}
-	}
-	return true;	
-}
+
 bool is_in(const char *str, char c) {
-	for(unsigned int i = 0; i < strlen(str); i++) {
+	for(size_t i = 0; i < strlen(str); i++) {
 		if(str[i] == c)
 			return true;
 	}
 	return false;
 }
 bool is_not_in(const char *str, char c) {
-	for(unsigned int i = 0; i < strlen(str); i++) {
+	for(size_t i = 0; i < strlen(str); i++) {
 		if(str[i] == c)
 			return false;
 	}
 	return true;
 }
 bool is_in(const string &str, char c) {
-	for(unsigned int i = 0; i < str.length(); i++) {
+	for(size_t i = 0; i < str.length(); i++) {
 		if(str[i] == c)
 			return true;
 	}
 	return false;
 }
 bool is_not_in(const string &str, char c) {
-	for(unsigned int i = 0; i < str.length(); i++) {
+	for(size_t i = 0; i < str.length(); i++) {
 		if(str[i] == c)
 			return false;
 	}
 	return true;
 }
 
-int sign_place(string *str, unsigned int start) {
-	unsigned int i = str->find_first_of(OPERATORS, start);
+int sign_place(string *str, size_t start) {
+	size_t i = str->find_first_of(OPERATORS, start);
 	if(i != string::npos)
 		return i;
 	else
@@ -695,18 +590,18 @@ int gcd(int i1, int i2) {
 	return i2;
 }
 
-unsigned int unicode_length(const string &str) {
-	unsigned int l = str.length(), l2 = 0;
-	for(unsigned int i = 0; i < l; i++) {
+size_t unicode_length(const string &str) {
+	size_t l = str.length(), l2 = 0;
+	for(size_t i = 0; i < l; i++) {
 		if(str[i] > 0 || i == 0 || str[i - 1] > 0) {
 			l2++;
 		}
 	}
 	return l2;
 }
-unsigned int unicode_length(const char *str) {
-	unsigned int l = strlen(str), l2 = 0;
-	for(unsigned int i = 0; i < l; i++) {
+size_t unicode_length(const char *str) {
+	size_t l = strlen(str), l2 = 0;
+	for(size_t i = 0; i < l; i++) {
 		if(str[i] > 0 || i == 0 || str[i - 1] > 0) {
 			l2++;
 		}
@@ -717,7 +612,7 @@ unsigned int unicode_length(const char *str) {
 bool text_length_is_one(const string &str) {
 	if(str.empty()) return false;
 	if(str.length() == 1) return true;
-	for(unsigned int i = 0; i < str.length(); i++) {
+	for(size_t i = 0; i < str.length(); i++) {
 		if(str[i] > 0) {
 			return false;
 		}
@@ -727,7 +622,7 @@ bool text_length_is_one(const string &str) {
 
 bool equalsIgnoreCase(const string &str1, const string &str2) {
 	if(str1.length() != str2.length()) return false;
-	for(unsigned int i = 0; i < str1.length(); i++) {
+	for(size_t i = 0; i < str1.length(); i++) {
 		if(str1[i] < 0 && i + 1 < str1.length()) {
 			if(str2[i] >= 0) return false;
 			int i2 = 1;
@@ -750,7 +645,7 @@ bool equalsIgnoreCase(const string &str1, const string &str2) {
 
 bool equalsIgnoreCase(const string &str1, const char *str2) {
 	if(str1.length() != strlen(str2)) return false;
-	for(unsigned int i = 0; i < str1.length(); i++) {
+	for(size_t i = 0; i < str1.length(); i++) {
 		if(str1[i] < 0 && i + 1 < str1.length()) {
 			if(str2[i] >= 0) return false;
 			int i2 = 1;
@@ -771,6 +666,18 @@ bool equalsIgnoreCase(const string &str1, const char *str2) {
 	return true;
 }
 
+void parse_qalculate_version(string qalculate_version, int *qalculate_version_numbers) {
+	for(size_t i = 0; i < 3; i++) {
+		size_t dot_i = qalculate_version.find(".");
+		if(dot_i == string::npos) {
+			qalculate_version_numbers[i] = s2i(qalculate_version);
+			break;
+		}
+		qalculate_version_numbers[i] = s2i(qalculate_version.substr(0, dot_i));
+		qalculate_version = qalculate_version.substr(dot_i + 1, qalculate_version.length() - (dot_i + 1));
+	}
+}
+
 string getLocalDir() {
 	string homedir = "";
 	struct passwd *pw = getpwuid(getuid());
@@ -781,3 +688,4 @@ string getLocalDir() {
 	homedir += ".qalculate/";
 	return homedir;
 }
+

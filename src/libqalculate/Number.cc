@@ -127,7 +127,7 @@ string printCL_I(cl_I integ, int base = 10, bool display_sign = true, bool displ
 	print_integer(stream, flags, integ);
 	string cl_str = stream.str();
 	if(lower_case) {
-		for(unsigned int i = 0; i < cl_str.length(); i++) {
+		for(size_t i = 0; i < cl_str.length(); i++) {
 			if(cl_str[i] >= 'A' && cl_str[i] <= 'Z') {
 				cl_str[i] += 32;
 			}
@@ -190,7 +190,7 @@ void Number::set(string number, int base, ReadPrecisionMode read_precision) {
 		bool large = false;
 		vector<Number> numbers;
 		bool capital = false;
-		for(unsigned int i = 0; i < number.length(); i++) {
+		for(size_t i = 0; i < number.length(); i++) {
 			switch(number[i]) {
 				case 'I': {
 					if(!capital && i == number.length() - 1) {
@@ -323,7 +323,7 @@ void Number::set(string number, int base, ReadPrecisionMode read_precision) {
 		values.resize(numbers.size());
 		bool error = false;
 		int rep = 1;
-		for(unsigned int i = 0; i < numbers.size(); i++) {
+		for(size_t i = 0; i < numbers.size(); i++) {
 			if(i == 0 || numbers[i].isLessThanOrEqualTo(numbers[i - 1])) {
 				nr.add(numbers[i]);
 				if(i > 0 && numbers[i].equals(numbers[i - 1])) {
@@ -385,7 +385,7 @@ void Number::set(string number, int base, ReadPrecisionMode read_precision) {
 	if(base < 0) base = 10;
 	int readprec = 0;
 	bool numbers_started = false, minus = false, in_decimals = false, b_cplx = false, had_nonzero = false;
-	for(unsigned int index = 0; index < number.size(); index++) {
+	for(size_t index = 0; index < number.size(); index++) {
 		if(number[index] >= '0' && ((base >= 10 && number[index] <= '9') || (base < 10 && number[index] < '0' + base))) {
 			num = num * base;
 			if(number[index] != '0') {
@@ -2342,7 +2342,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				l10++;
 				remainder = remainder2;
 				if(po.indicate_infinite_series && !exact && !infinite_series) {
-					for(unsigned int i = 0; i < remainders.size(); i++) {
+					for(size_t i = 0; i < remainders.size(); i++) {
 						if(remainders[i] == remainder) {
 							infinite_series = true;
 							break;

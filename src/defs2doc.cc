@@ -72,7 +72,7 @@ tree_struct function_cats, unit_cats, variable_cats;
 vector<void*> ia_units, ia_variables, ia_functions;
 
 void generate_units_tree_struct() {
-	int cat_i, cat_i_prev; 
+	size_t cat_i, cat_i_prev; 
 	bool b;	
 	string str, cat, cat_sub;
 	Unit *u = NULL;
@@ -81,10 +81,10 @@ void generate_units_tree_struct() {
 	unit_cats.parent = NULL;	
 	ia_units.clear();
 	list<tree_struct>::iterator it;	
-	for(unsigned int i = 0; i < CALCULATOR->units.size(); i++) {
+	for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
 		if(!CALCULATOR->units[i]->isActive()) {
 			b = false;
-			for(unsigned int i3 = 0; i3 < ia_units.size(); i3++) {
+			for(size_t i3 = 0; i3 < ia_units.size(); i3++) {
 				u = (Unit*) ia_units[i3];
 				if(CALCULATOR->units[i]->title() < u->title()) {
 					b = true;
@@ -97,13 +97,13 @@ void generate_units_tree_struct() {
 			tree_struct *item = &unit_cats;
 			if(!CALCULATOR->units[i]->category().empty()) {
 				cat = CALCULATOR->units[i]->category();
-				cat_i = cat.find("/"); cat_i_prev = -1;
+				cat_i = cat.find("/"); cat_i_prev = 0;
 				b = false;
 				while(true) {
-					if(cat_i == (int) string::npos) {
-						cat_sub = cat.substr(cat_i_prev + 1, cat.length() - 1 - cat_i_prev);
+					if(cat_i == string::npos) {
+						cat_sub = cat.substr(cat_i_prev, cat.length() - cat_i_prev);
 					} else {
-						cat_sub = cat.substr(cat_i_prev + 1, cat_i - 1 - cat_i_prev);
+						cat_sub = cat.substr(cat_i_prev, cat_i - cat_i_prev);
 					}
 					b = false;
 					for(it = item->items.begin(); it != item->items.end(); ++it) {
@@ -122,15 +122,15 @@ void generate_units_tree_struct() {
 						item = &*it;
 						item->item = cat_sub;
 					}
-					if(cat_i == (int) string::npos) {
+					if(cat_i == string::npos) {
 						break;
 					}
-					cat_i_prev = cat_i;
-					cat_i = cat.find("/", cat_i_prev + 1);
+					cat_i_prev = cat_i + 1;
+					cat_i = cat.find("/", cat_i_prev);
 				}
 			}
 			b = false;
-			for(unsigned int i3 = 0; i3 < item->objects.size(); i3++) {
+			for(size_t i3 = 0; i3 < item->objects.size(); i3++) {
 				u = (Unit*) item->objects[i3];
 				if(CALCULATOR->units[i]->title() < u->title()) {
 					b = true;
@@ -147,7 +147,7 @@ void generate_units_tree_struct() {
 }
 void generate_variables_tree_struct() {
 
-	int cat_i, cat_i_prev; 
+	size_t cat_i, cat_i_prev; 
 	bool b;	
 	string str, cat, cat_sub;
 	Variable *v = NULL;
@@ -156,11 +156,11 @@ void generate_variables_tree_struct() {
 	variable_cats.parent = NULL;
 	ia_variables.clear();
 	list<tree_struct>::iterator it;	
-	for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
+	for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
 		if(!CALCULATOR->variables[i]->isActive()) {
 			//deactivated variable
 			b = false;
-			for(unsigned int i3 = 0; i3 < ia_variables.size(); i3++) {
+			for(size_t i3 = 0; i3 < ia_variables.size(); i3++) {
 				v = (Variable*) ia_variables[i3];
 				if(CALCULATOR->variables[i]->title() < v->title()) {
 					b = true;
@@ -173,13 +173,13 @@ void generate_variables_tree_struct() {
 			tree_struct *item = &variable_cats;
 			if(!CALCULATOR->variables[i]->category().empty()) {
 				cat = CALCULATOR->variables[i]->category();
-				cat_i = cat.find("/"); cat_i_prev = -1;
+				cat_i = cat.find("/"); cat_i_prev = 0;
 				b = false;
 				while(true) {
-					if(cat_i == (int) string::npos) {
-						cat_sub = cat.substr(cat_i_prev + 1, cat.length() - 1 - cat_i_prev);
+					if(cat_i == string::npos) {
+						cat_sub = cat.substr(cat_i_prev, cat.length() - cat_i_prev);
 					} else {
-						cat_sub = cat.substr(cat_i_prev + 1, cat_i - 1 - cat_i_prev);
+						cat_sub = cat.substr(cat_i_prev, cat_i - cat_i_prev);
 					}
 					b = false;
 					for(it = item->items.begin(); it != item->items.end(); ++it) {
@@ -198,15 +198,15 @@ void generate_variables_tree_struct() {
 						item = &*it;
 						item->item = cat_sub;
 					}
-					if(cat_i == (int) string::npos) {
+					if(cat_i == string::npos) {
 						break;
 					}
-					cat_i_prev = cat_i;
-					cat_i = cat.find("/", cat_i_prev + 1);
+					cat_i_prev = cat_i + 1;
+					cat_i = cat.find("/", cat_i_prev);
 				}
 			}
 			b = false;
-			for(unsigned int i3 = 0; i3 < item->objects.size(); i3++) {
+			for(size_t i3 = 0; i3 < item->objects.size(); i3++) {
 				v = (Variable*) item->objects[i3];
 				if(CALCULATOR->variables[i]->title() < v->title()) {
 					b = true;
@@ -223,7 +223,7 @@ void generate_variables_tree_struct() {
 }
 void generate_functions_tree_struct() {
 
-	int cat_i, cat_i_prev; 
+	size_t cat_i, cat_i_prev; 
 	bool b;	
 	string str, cat, cat_sub;
 	MathFunction *f = NULL;
@@ -233,11 +233,11 @@ void generate_functions_tree_struct() {
 	ia_functions.clear();
 	list<tree_struct>::iterator it;
 
-	for(unsigned int i = 0; i < CALCULATOR->functions.size(); i++) {
+	for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
 		if(!CALCULATOR->functions[i]->isActive()) {
 			//deactivated function
 			b = false;
-			for(unsigned int i3 = 0; i3 < ia_functions.size(); i3++) {
+			for(size_t i3 = 0; i3 < ia_functions.size(); i3++) {
 				f = (MathFunction*) ia_functions[i3];
 				if(CALCULATOR->functions[i]->title() < f->title()) {
 					b = true;
@@ -250,13 +250,13 @@ void generate_functions_tree_struct() {
 			tree_struct *item = &function_cats;
 			if(!CALCULATOR->functions[i]->category().empty()) {
 				cat = CALCULATOR->functions[i]->category();
-				cat_i = cat.find("/"); cat_i_prev = -1;
+				cat_i = cat.find("/"); cat_i_prev = 0;
 				b = false;
 				while(true) {
-					if(cat_i == (int) string::npos) {
-						cat_sub = cat.substr(cat_i_prev + 1, cat.length() - 1 - cat_i_prev);
+					if(cat_i == string::npos) {
+						cat_sub = cat.substr(cat_i_prev, cat.length() - cat_i_prev);
 					} else {
-						cat_sub = cat.substr(cat_i_prev + 1, cat_i - 1 - cat_i_prev);
+						cat_sub = cat.substr(cat_i_prev, cat_i - cat_i_prev);
 					}
 					b = false;
 					for(it = item->items.begin(); it != item->items.end(); ++it) {
@@ -275,15 +275,15 @@ void generate_functions_tree_struct() {
 						item = &*it;
 						item->item = cat_sub;
 					}
-					if(cat_i == (int) string::npos) {
+					if(cat_i == string::npos) {
 						break;
 					}
-					cat_i_prev = cat_i;
-					cat_i = cat.find("/", cat_i_prev + 1);
+					cat_i_prev = cat_i + 1;
+					cat_i = cat.find("/", cat_i_prev);
 				}
 			}
 			b = false;
-			for(unsigned int i3 = 0; i3 < item->objects.size(); i3++) {
+			for(size_t i3 = 0; i3 < item->objects.size(); i3++) {
 				f = (MathFunction*) item->objects[i3];
 				if(CALCULATOR->functions[i]->title() < f->title()) {
 					b = true;
@@ -344,7 +344,7 @@ void print_function(MathFunction *f) {
 		}
 		str += ")";
 		fprintf(ffile, "<para><command>%s</command></para>\n", str.c_str());
-		for(unsigned int i2 = 1; i2 <= f->countNames(); i2++) {
+		for(size_t i2 = 1; i2 <= f->countNames(); i2++) {
 			if(&f->getName(i2) != ename) {
 				fprintf(ffile, "<para><command>%s</command></para>", f->getName(i2).name.c_str());
 			}
@@ -409,7 +409,7 @@ void print_function(MathFunction *f) {
 						str = dp->title();	
 						str += ": ";
 					}
-					for(unsigned int i = 1; i <= dp->countNames(); i++) {
+					for(size_t i = 1; i <= dp->countNames(); i++) {
 						if(i > 1) str += ", ";
 						str += dp->getName(i);
 					}
@@ -437,7 +437,7 @@ void print_variable(Variable *v) {
 		string value, str;
 		fputs("<row valign=\"top\">\n", vfile);
 		fprintf(vfile, "<entry><para>%s</para></entry>\n", v->title().c_str());
-		for(unsigned int i2 = 1; i2 <= v->countNames(); i2++) {
+		for(size_t i2 = 1; i2 <= v->countNames(); i2++) {
 			if(i2 > 1) str += " / ";
 			str += v->getName(i2).name;
 		}
@@ -498,7 +498,7 @@ void print_unit(Unit *u) {
 		string str, base_unit, relation;
 		fputs("<row valign=\"top\">\n", ufile);
 		fprintf(ufile, "<entry><para>%s</para></entry>\n", u->title().c_str());
-		for(unsigned int i2 = 1; i2 <= u->countNames(); i2++) {
+		for(size_t i2 = 1; i2 <= u->countNames(); i2++) {
 			if(i2 > 1) str += " / ";
 			str += u->getName(i2).name;
 		}
@@ -600,7 +600,7 @@ int main (int argc, char *argv[]) {
 		fprintf(ffile, "<title>%s</title>\n", fix(item->item).c_str());
 		if(item->objects.size() > 0) {
 			fputs("<variablelist>\n", ffile);
-			for(unsigned int i = 0; i < item->objects.size(); i++) {
+			for(size_t i = 0; i < item->objects.size(); i++) {
 				print_function((MathFunction*) item->objects[i]);
 			}
 			fputs("</variablelist>\n", ffile);
@@ -625,7 +625,7 @@ int main (int argc, char *argv[]) {
 		fputs("<sect1 id=\"qalculate-definitions-functions-1-uncategorized\">\n", ffile);
 		fprintf(ffile, "<title>%s</title>\n", _("Uncategorized"));
 		fputs("<variablelist>\n", ffile);
-		for(unsigned int i = 0; i < function_cats.objects.size(); i++) {
+		for(size_t i = 0; i < function_cats.objects.size(); i++) {
 			print_function((MathFunction*) function_cats.objects[i]);
 		}
 		fputs("</variablelist>\n", ffile);
@@ -665,7 +665,7 @@ int main (int argc, char *argv[]) {
 			fputs("</row>\n", vfile);
 			fputs("</thead>\n", vfile);
 			fputs("<tbody>\n", vfile);
-			for(unsigned int i = 0; i < item->objects.size(); i++) {
+			for(size_t i = 0; i < item->objects.size(); i++) {
 				print_variable((Variable*) item->objects[i]);
 			}
 			fputs("</tbody>\n", vfile);
@@ -705,7 +705,7 @@ int main (int argc, char *argv[]) {
 		fputs("</row>\n", vfile);
 		fputs("</thead>\n", vfile);
 		fputs("<tbody>\n", vfile);
-		for(unsigned int i = 0; i < variable_cats.objects.size(); i++) {
+		for(size_t i = 0; i < variable_cats.objects.size(); i++) {
 			print_variable((Variable*) function_cats.objects[i]);
 		}
 		fputs("</tbody>\n", vfile);
@@ -749,7 +749,7 @@ int main (int argc, char *argv[]) {
 			fputs("</row>\n", ufile);
 			fputs("</thead>\n", ufile);
 			fputs("<tbody>\n", ufile);
-			for(unsigned int i = 0; i < item->objects.size(); i++) {
+			for(size_t i = 0; i < item->objects.size(); i++) {
 				print_unit((Unit*) item->objects[i]);
 			}
 			fputs("</tbody>\n", ufile);
@@ -791,7 +791,7 @@ int main (int argc, char *argv[]) {
 		fputs("</row>\n", ufile);
 		fputs("</thead>\n", ufile);
 		fputs("<tbody>\n", ufile);
-		for(unsigned int i = 0; i < unit_cats.objects.size(); i++) {
+		for(size_t i = 0; i < unit_cats.objects.size(); i++) {
 			print_unit((Unit*) function_cats.objects[i]);
 		}
 		fputs("</tbody>\n", ufile);

@@ -58,7 +58,7 @@ void MathFunction::set(const ExpressionItem *item) {
 		last_argdef_index = f->lastArgumentDefinitionIndex();
 		scondition = f->condition();
 		clearArgumentDefinitions();
-		for(unsigned int i = 1; i <= f->lastArgumentDefinitionIndex(); i++) {
+		for(size_t i = 1; i <= f->lastArgumentDefinitionIndex(); i++) {
 			if(f->getArgumentDefinition(i)) {
 				setArgumentDefinition(i, f->getArgumentDefinition(i)->copy());
 			}
@@ -73,7 +73,7 @@ int MathFunction::subtype() const {
 	return SUBTYPE_FUNCTION;
 }
 
-/*int MathFunction::countArgOccurence(unsigned int arg_) {
+/*int MathFunction::countArgOccurence(size_t arg_) {
 	if((int) arg_ > argc && max_argc < 0) {
 		arg_ = argc + 1;
 	}
@@ -136,7 +136,7 @@ string MathFunction::printCondition() {
 				svar += 'x' + i;
 			}
 		}
-		unsigned int i2 = 0;
+		size_t i2 = 0;
 		while(true) {
 			if((i2 = str.find(svar, i2)) != string::npos) {
 				if(maxargs() < 0 && i > minargs()) {
@@ -179,7 +179,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 		arg = getArgumentDefinition(maxargs());
 		last_is_vctr = arg && arg->type() == ARGUMENT_TYPE_VECTOR;
 	}
-	for(unsigned int str_index = 0; str_index < str.length(); str_index++) {
+	for(size_t str_index = 0; str_index < str.length(); str_index++) {
 		switch(str[str_index]) {
 			case LEFT_VECTOR_WRAP_CH: {}
 			case LEFT_PARENTHESIS_CH: {
@@ -228,7 +228,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 								vargs.addChild_nocopy(mstruct);
 							} else {
 								MathStructure *mstruct = new MathStructure();
-								CALCULATOR->parse(mstruct, getDefaultValue(itmp), po);
+								CALCULATOR->parse(mstruct, getDefaultValue(itmp));
 								vargs.addChild_nocopy(mstruct);
 							}
 						} else {
@@ -251,7 +251,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 						remove_blank_ends(stmp);
 						if(stmp.empty()) {
 							MathStructure *mstruct = new MathStructure();
-							getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp), po);
+							getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp));
 							vargs[vargs.size() - 1].addChild_nocopy(mstruct);
 						} else {
 							MathStructure *mstruct = new MathStructure();
@@ -280,11 +280,11 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			if(stmp.empty()) {
 				if(arg) {
 					MathStructure *mstruct = new MathStructure();
-					arg->parse(mstruct, getDefaultValue(itmp), po);
+					arg->parse(mstruct, getDefaultValue(itmp));
 					vargs.addChild_nocopy(mstruct);
 				} else {
 					MathStructure *mstruct = new MathStructure();
-					CALCULATOR->parse(mstruct, getDefaultValue(itmp), po);
+					CALCULATOR->parse(mstruct, getDefaultValue(itmp));
 					vargs.addChild_nocopy(mstruct);
 				}
 			} else {				
@@ -307,7 +307,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			remove_blank_ends(stmp);
 			if(stmp.empty()) {
 				MathStructure *mstruct = new MathStructure();
-				getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp), po);
+				getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp));
 				vargs[vargs.size() - 1].addChild_nocopy(mstruct);
 			} else {
 				MathStructure *mstruct = new MathStructure();
@@ -325,11 +325,11 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			arg = getArgumentDefinition(itmp2 + 1);
 			if(arg) {
 				MathStructure *mstruct = new MathStructure();
-				arg->parse(mstruct, default_values[itmp2 - minargs()], po);
+				arg->parse(mstruct, default_values[itmp2 - minargs()]);
 				vargs.addChild_nocopy(mstruct);
 			} else {
 				MathStructure *mstruct = new MathStructure();
-				CALCULATOR->parse(mstruct, default_values[itmp2 - minargs()], po);
+				CALCULATOR->parse(mstruct, default_values[itmp2 - minargs()]);
 				vargs.addChild_nocopy(mstruct);
 			}
 			itmp2++;
@@ -337,24 +337,24 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 	}
 	return itmp;
 }
-unsigned int MathFunction::lastArgumentDefinitionIndex() const {
+size_t MathFunction::lastArgumentDefinitionIndex() const {
 	return last_argdef_index;
 }
-Argument *MathFunction::getArgumentDefinition(unsigned int index) {
+Argument *MathFunction::getArgumentDefinition(size_t index) {
 	if(argdefs.find(index) != argdefs.end()) {
 		return argdefs[index];
 	}
 	return NULL;
 }
 void MathFunction::clearArgumentDefinitions() {
-	for(Sgi::hash_map<unsigned int, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
+	for(Sgi::hash_map<size_t, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
 		delete it->second;
 	}
 	argdefs.clear();
 	last_argdef_index = 0;
 	setChanged(true);
 }
-void MathFunction::setArgumentDefinition(unsigned int index, Argument *argdef) {
+void MathFunction::setArgumentDefinition(size_t index, Argument *argdef) {
 	if(argdefs.find(index) != argdefs.end()) {
 		delete argdefs[index];
 	}
@@ -396,14 +396,14 @@ bool MathFunction::testArgumentCount(int itmp) {
 }
 MathStructure MathFunction::createFunctionMathStructureFromVArgs(const MathStructure &vargs) {
 	MathStructure mstruct(this, NULL);
-	for(unsigned int i = 0; i < vargs.size(); i++) {
+	for(size_t i = 0; i < vargs.size(); i++) {
 		mstruct.addChild(vargs[i]);
 	}
 	return mstruct;
 }
 MathStructure MathFunction::createFunctionMathStructureFromSVArgs(vector<string> &svargs) {
 	MathStructure mstruct(this, NULL); 
-	for(unsigned int i = 0; i < svargs.size(); i++) {
+	for(size_t i = 0; i < svargs.size(); i++) {
 		mstruct.addChild(svargs[i]);
 	}
 	return mstruct;
@@ -430,8 +430,8 @@ void MathFunction::parse(MathStructure &mstruct, const string &argv, const Parse
 	mstruct.setFunction(this);
 }
 bool MathFunction::testArguments(MathStructure &vargs) {
-	unsigned int last = 0;
-	for(Sgi::hash_map<unsigned int, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
+	size_t last = 0;
+	for(Sgi::hash_map<size_t, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
 		if(it->first > last) {
 			last = it->first;
 		}
@@ -440,7 +440,7 @@ bool MathFunction::testArguments(MathStructure &vargs) {
 		}
 	}
 	if(max_argc < 0 && (int) last > argc && argdefs.find(last) != argdefs.end()) {
-		for(unsigned int i = last + 1; i <= vargs.size(); i++) {
+		for(size_t i = last + 1; i <= vargs.size(); i++) {
 			if(!argdefs[last]->test(vargs[i - 1], i, this)) {
 				return false;
 			}
@@ -452,27 +452,27 @@ MathStructure MathFunction::calculate(MathStructure &vargs, const EvaluationOpti
 	int itmp = vargs.size();
 	if(testArgumentCount(itmp)) {
 		while(itmp < maxargs()) {
-			vargs.addItem(CALCULATOR->parse(default_values[itmp - minargs()], eo.parse_options));
+			vargs.addItem(CALCULATOR->parse(default_values[itmp - minargs()]));
 			itmp++;
 		}
 		MathStructure mstruct;
 		bool b = false;
-		for(unsigned int i = 0; i < vargs.size(); i++) {
+		for(size_t i = 0; i < vargs.size(); i++) {
 			if(vargs[i].type() == STRUCT_ALTERNATIVES) {
 				b = true;
 				break;
 			}
 		} 
 		if(b) {
-			vector<unsigned int> solutions;
+			vector<size_t> solutions;
 			solutions.reserve(vargs.size());
-			for(unsigned int i = 0; i < vargs.size(); i++) {
+			for(size_t i = 0; i < vargs.size(); i++) {
 				solutions.push_back(0);
 			}
 			b = true;
 			while(true) {
 				MathStructure vargs_copy(vargs);
-				for(unsigned int i = 0; i < vargs_copy.size(); i++) {
+				for(size_t i = 0; i < vargs_copy.size(); i++) {
 					if(vargs_copy[i].type() == STRUCT_ALTERNATIVES) {
 						if(!b && solutions[i] < vargs_copy[i].countChilds()) {
 							vargs_copy[i] = vargs_copy[i].getChild(solutions[i] + 1);
@@ -515,12 +515,12 @@ int MathFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	//mstruct = createFunctionMathStructureFromVArgs(vargs);
 	return 0;
 }
-void MathFunction::setDefaultValue(unsigned int arg_, string value_) {
+void MathFunction::setDefaultValue(size_t arg_, string value_) {
 	if((int) arg_ > argc && (int) arg_ <= max_argc && (int) default_values.size() >= (int) arg_ - argc) {
 		default_values[arg_ - argc - 1] = value_;
 	}
 }
-const string &MathFunction::getDefaultValue(unsigned int arg_) const {
+const string &MathFunction::getDefaultValue(size_t arg_) const {
 	if((int) arg_ > argc && (int) arg_ <= max_argc && (int) default_values.size() >= (int) arg_ - argc) {
 		return default_values[arg_ - argc - 1];
 	}
@@ -534,7 +534,7 @@ int MathFunction::stringArgs(const string &argstr, vector<string> &svargs) {
 	int itmp = 0;
 	string str = argstr, stmp;
 	remove_blank_ends(str);
-	for(unsigned int str_index = 0; str_index < str.length(); str_index++) {
+	for(size_t str_index = 0; str_index < str.length(); str_index++) {
 		switch(str[str_index]) {
 			case LEFT_PARENTHESIS_CH: {
 				if(!in_cit1 && !in_cit2) {
@@ -665,7 +665,7 @@ void UserFunction::set(const ExpressionItem *item) {
 		eq_calc = ((UserFunction*) item)->internalEquation();
 		v_subs.clear();
 		v_precalculate.clear();
-		for(unsigned int i = 1; i <= ((UserFunction*) item)->countSubfunctions(); i++) {
+		for(size_t i = 1; i <= ((UserFunction*) item)->countSubfunctions(); i++) {
 			v_subs.push_back(((UserFunction*) item)->getSubfunction(i));
 			v_precalculate.push_back(((UserFunction*) item)->subfunctionPrecalculated(i));
 		}
@@ -684,8 +684,8 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		string svar;
 		string v_str, w_str;
 		vector<string> v_strs;
-		vector<int> v_id;
-		unsigned int i2 = 0;
+		vector<size_t> v_id;
+		size_t i2 = 0;
 		int i_args = maxargs();
 		if(i_args < 0) {
 			i_args = minargs();
@@ -712,7 +712,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 		}
 
-		for(unsigned int i = 0; i < v_subs.size(); i++) {
+		for(size_t i = 0; i < v_subs.size(); i++) {
 			if(subfunctionPrecalculated(i + 1)) {
 				string str = v_subs[i];
 				for(int i3 = 0; i3 < i_args; i3++) {
@@ -853,7 +853,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 		}
 		CALCULATOR->parse(&mstruct, stmp, po);
-		for(unsigned int i = 0; i < v_id.size(); i++) {
+		for(size_t i = 0; i < v_id.size(); i++) {
 			CALCULATOR->delId(v_id[i]);
 		}
 		if(precision() > 0) mstruct.setPrecision(precision());
@@ -873,8 +873,8 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 		argc_ = 0, max_argc_ = 0;
 		string svar, svar_o, svar_v;
 		bool optionals = false, b;
-		int i3 = 0, i4 = 0, i5 = 0;
-		unsigned int i2 = 0;
+		size_t i3 = 0, i4 = 0, i5 = 0;
+		size_t i2 = 0;
 		for(int i = 0; i < 26; i++) {
 			begin_loop_in_set_equation:
 			i4 = 0; i5 = 0;
@@ -897,7 +897,7 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 				}				
 				i3 = 0;
 				if(new_eq.length() > i2 + 2 && new_eq[i2 + 2] == ID_WRAP_LEFT_CH) {
-					if((i3 = new_eq.find(ID_WRAP_RIGHT_CH, i2 + 2)) != (int) string::npos) {
+					if((i3 = new_eq.find(ID_WRAP_RIGHT_CH, i2 + 2)) != string::npos) {
 						svar_v = new_eq.substr(i2 + 3, i3 - (i2 + 3));	
 						i3 -= i2 + 1;
 					} else i3 = 0;
@@ -915,7 +915,7 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 						new_eq.replace(i2, 2, svar);
 					}
 				}
-				for(unsigned int sub_i = 0; sub_i < v_subs.size(); sub_i++) {
+				for(size_t sub_i = 0; sub_i < v_subs.size(); sub_i++) {
 					i2 = 0;
 					while((i2 = v_subs[sub_i].find(svar_o, i2 + 1)) != string::npos) {
 						if(i2 > 0 && v_subs[sub_i][i2 - 1] == '\\') {
@@ -926,26 +926,14 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 					}
 				}
 				optionals = true;
-				/*argoccs[i + 1] = 1;
-				while((i2 = new_eq.find(svar, i2 + 2)) != string::npos) {
-					if(new_eq[i2 - 1] != '\\') {
-						argoccs[i + 1]++;
-					}
-				}*/
 			} else if((i2 = new_eq.find(svar, i5)) != string::npos) {
 				if(i2 > 0 && new_eq[i2 - 1] == '\\') {
 					i5 = i2 + 2;
 					goto before_find_in_set_equation;
 				}
-				/*argoccs[i + 1] = 1;
-				while((i2 = new_eq.find(svar, i2 + 2)) != string::npos) {
-					if(new_eq[i5 - 1] != '\\') {
-						argoccs[i + 1]++;
-					}
-				}*/
 			} else {
 				b = false;
-				for(unsigned int sub_i = 0; sub_i < v_subs.size(); sub_i++) {
+				for(size_t sub_i = 0; sub_i < v_subs.size(); sub_i++) {
 					before_find_in_vsubs_set_equation:
 					if(i < 24 && (i2 = v_subs[sub_i].find(svar_o, i4)) != string::npos) {
 						if(i2 > 0 && v_subs[sub_i][i2 - 1] == '\\') {
@@ -954,7 +942,7 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 						}				
 						i3 = 0;
 						if(v_subs[sub_i].length() > i2 + 2 && v_subs[sub_i][i2 + 2] == ID_WRAP_LEFT_CH) {
-							if((i3 = v_subs[sub_i].find(ID_WRAP_RIGHT_CH, i2 + 2)) != (int) string::npos) {
+							if((i3 = v_subs[sub_i].find(ID_WRAP_RIGHT_CH, i2 + 2)) != string::npos) {
 								svar_v = v_subs[sub_i].substr(i2 + 3, i3 - (i2 + 3));	
 								i3 -= i2 + 1;
 							} else i3 = 0;
@@ -973,24 +961,12 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 							}
 						}
 						optionals = true;
-						/*argoccs[i + 1] = 1;
-						while((i2 = v_subs[sub_i].find(svar, i2 + 2)) != string::npos) {
-							if(v_subs[sub_i][i2 - 1] != '\\') {
-								argoccs[i + 1]++;
-							}
-						}*/
 						b = true;
 					} else if((i2 = v_subs[sub_i].find(svar, i5)) != string::npos) {
 						if(i2 > 0 && v_subs[sub_i][i2 - 1] == '\\') {
 							i5 = i2 + 2;
 							goto before_find_in_vsubs_set_equation;
 						}
-						/*argoccs[i + 1] = 1;
-						while((i2 = v_subs[sub_i].find(svar, i2 + 2)) != string::npos) {
-							if(v_subs[sub_i][i5 - 1] != '\\') {
-								argoccs[i + 1]++;
-							}
-						}*/
 						b = true;
 					}
 				}
@@ -1040,13 +1016,13 @@ void UserFunction::addSubfunction(string subfunction, bool precalculate) {
 	v_subs.push_back(subfunction);
 	v_precalculate.push_back(precalculate);
 }
-void UserFunction::setSubfunction(unsigned int index, string subfunction) {
+void UserFunction::setSubfunction(size_t index, string subfunction) {
 	if(index > 0 && index <= v_subs.size()) {
 		setChanged(true);
 		v_subs[index - 1] = subfunction;
 	}
 }
-void UserFunction::delSubfunction(unsigned int index) {
+void UserFunction::delSubfunction(size_t index) {
 	if(index > 0 && index <= v_subs.size()) {
 		setChanged(true);
 		v_subs.erase(v_subs.begin() + (index - 1));
@@ -1061,22 +1037,22 @@ void UserFunction::clearSubfunctions() {
 	v_subs.clear();
 	v_precalculate.clear();
 }
-void UserFunction::setSubfunctionPrecalculated(unsigned int index, bool precalculate) {
+void UserFunction::setSubfunctionPrecalculated(size_t index, bool precalculate) {
 	if(index > 0 && index <= v_precalculate.size()) {
 		setChanged(true);
 		v_precalculate[index - 1] = precalculate;
 	}
 }
-unsigned int UserFunction::countSubfunctions() const {
+size_t UserFunction::countSubfunctions() const {
 	return v_subs.size();
 }
-const string &UserFunction::getSubfunction(unsigned int index) const {
+const string &UserFunction::getSubfunction(size_t index) const {
 	if(index > 0 && index <= v_subs.size()) {
 		return v_subs[index - 1];
 	}
 	return empty_string;
 }
-bool UserFunction::subfunctionPrecalculated(unsigned int index) const {
+bool UserFunction::subfunctionPrecalculated(size_t index) const {
 	if(index > 0 && index <= v_precalculate.size()) {
 		return v_precalculate[index - 1];
 	}
@@ -1171,61 +1147,6 @@ bool Argument::test(MathStructure &value, int index, MathFunction *f, const Eval
 	}
 	return true;
 }
-/*MathStructure Argument::evaluate(const string &str, bool keep_exact) const {
-	if(b_text) {
-		int pars = 0;
-		while(true) {
-			int pars2 = 1;
-			unsigned int i = pars;
-			if((int) str.length() >= 2 + pars * 2 && str[pars] == LEFT_PARENTHESIS_CH && str[str.length() - 1 - pars] == RIGHT_PARENTHESIS_CH) {
-				while(true) {
-					i = str.find_first_of(LEFT_PARENTHESIS RIGHT_PARENTHESIS, i + 1);
-					if(i >= str.length() - 1 - pars) {
-						break;
-					} else if(str[i] == LEFT_PARENTHESIS_CH) {
-						pars2++;
-					} else if(str[i] == RIGHT_PARENTHESIS_CH) {
-						pars2--;
-						if(pars2 == 0) {
-							break;
-						}
-					}
-				}
-				if(pars2 > 0) {
-					pars++;
-				}
-			} else {
-				break;
-			}
-			if(pars2 == 0) break;
-		}
-		if((int) str.length() >= 2 + pars * 2) {
-			if(str[pars] == ID_WRAP_LEFT_CH && str[str.length() - 1 - pars] == ID_WRAP_RIGHT_CH && str.find(ID_WRAP_RIGHT, pars + 1) == str.length() - 1 - pars) {
-				return CALCULATOR->parse(str.substr(pars, str.length() - pars * 2));
-			}
-			if(str[pars] == '\\' && str[str.length() - 1 - pars] == '\\') {
-				return CALCULATOR->parse(str.substr(1 + pars, str.length() - 2 - pars * 2));
-			}	
-			if((str[pars] == '\"' && str[str.length() - 1 - pars] == '\"') || (str[pars] == '\'' && str[str.length() - 1 - pars] == '\'')) {
-				unsigned int i = pars + 1, cits = 0;
-				while(i < str.length() - 1 - pars) {
-					i = str.find(str[pars], i);
-					if(i >= str.length() - 1 - pars) {
-						break;
-					}
-					cits++;
-					i++;
-				}
-				if((cits / 2) % 2 == 0) {
-					return str.substr(1 + pars, str.length() - 2 - pars * 2);
-				}
-			}
-		}
-		return str.substr(pars, str.length() - pars * 2);
-	} else {
-		return CALCULATOR->parse(str);
-	}
-}*/
 void Argument::evaluate(MathStructure &mstruct, const EvaluationOptions &eo) const {
 	if(type() != ARGUMENT_TYPE_FREE) {
 		mstruct.eval(eo);
@@ -1238,14 +1159,14 @@ MathStructure Argument::parse(const string &str, const ParseOptions &po) const {
 }
 void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
 	if(b_text) {
-		int pars = 0;
+		size_t pars = 0;
 		while(true) {
-			int pars2 = 1;
-			unsigned int i = pars;
-			if((int) str.length() >= 2 + pars * 2 && str[pars] == LEFT_PARENTHESIS_CH && str[str.length() - 1 - pars] == RIGHT_PARENTHESIS_CH) {
+			size_t pars2 = 1;
+			size_t i = pars;
+			if(str.length() >= 2 + pars * 2 && str[pars] == LEFT_PARENTHESIS_CH && str[str.length() - 1 - pars] == RIGHT_PARENTHESIS_CH) {
 				while(true) {
 					i = str.find_first_of(LEFT_PARENTHESIS RIGHT_PARENTHESIS, i + 1);
-					if(i >= str.length() - 1 - pars) {
+					if(i == string::npos || i >= str.length() - 1 - pars) {
 						break;
 					} else if(str[i] == LEFT_PARENTHESIS_CH) {
 						pars2++;
@@ -1264,7 +1185,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 			}
 			if(pars2 == 0) break;
 		}
-		if((int) str.length() >= 2 + pars * 2) {
+		if(str.length() >= 2 + pars * 2) {
 			if(str[pars] == ID_WRAP_LEFT_CH && str[str.length() - 1 - pars] == ID_WRAP_RIGHT_CH && str.find(ID_WRAP_RIGHT, pars + 1) == str.length() - 1 - pars) {
 				CALCULATOR->parse(mstruct, str.substr(pars, str.length() - pars * 2), po);
 				return;
@@ -1274,7 +1195,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 				return;
 			}	
 			if((str[pars] == '\"' && str[str.length() - 1 - pars] == '\"') || (str[pars] == '\'' && str[str.length() - 1 - pars] == '\'')) {
-				unsigned int i = pars + 1, cits = 0;
+				size_t i = pars + 1, cits = 0;
 				while(i < str.length() - 1 - pars) {
 					i = str.find(str[pars], i);
 					if(i >= str.length() - 1 - pars) {
@@ -1292,12 +1213,12 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 					string str2 = str.substr(1 + pars, str.length() - 2 - pars * 2);
 					string str3;
 					i = 0;
-					unsigned int i2 = 0; int id = 0;
+					size_t i2 = 0; int id = 0;
 					while((i = str2.find(ID_WRAP_LEFT, i)) != string::npos) {
 						i2 = str2.find(ID_WRAP_RIGHT, i + 1);
 						if(i2 == string::npos) break;
 						id = s2i(str2.substr(i + 1, i2 - (i + 1)));
-						MathStructure *m_temp = CALCULATOR->getId(id);
+						MathStructure *m_temp = CALCULATOR->getId((size_t) id);
 						str3 = "(";
 						if(!m_temp) {
 							CALCULATOR->error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
@@ -1315,7 +1236,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 				}
 			}
 		}
-		unsigned int i = str.find(ID_WRAP_LEFT, pars);
+		size_t i = str.find(ID_WRAP_LEFT, pars);
 		if(i == string::npos || i >= str.length() - pars) {
 			mstruct->set(str.substr(pars, str.length() - pars * 2));
 			return;
@@ -1323,12 +1244,12 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 		string str2 = str.substr(pars, str.length() - pars * 2);
 		string str3;
 		i = 0;
-		unsigned int i2 = 0; int id = 0;
+		size_t i2 = 0; int id = 0;
 		while((i = str2.find(ID_WRAP_LEFT, i)) != string::npos) {
 			i2 = str2.find(ID_WRAP_RIGHT, i + 1);
 			if(i2 == string::npos) break;
 			id = s2i(str2.substr(i + 1, i2 - (i + 1)));
-			MathStructure *m_temp = CALCULATOR->getId(id);
+			MathStructure *m_temp = CALCULATOR->getId((size_t) id);
 			str3 = "(";
 			if(!m_temp) {
 				CALCULATOR->error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
@@ -1774,7 +1695,7 @@ VectorArgument::VectorArgument(string name_, bool does_test, bool allow_matrix, 
 VectorArgument::VectorArgument(const VectorArgument *arg) {
 	set(arg);
 	b_argloop = arg->reoccuringArguments();
-	unsigned int i = 1; 
+	size_t i = 1; 
 	while(true) {
 		if(!arg->getArgument(i)) break;
 		subargs.push_back(arg->getArgument(i)->copy());
@@ -1782,7 +1703,7 @@ VectorArgument::VectorArgument(const VectorArgument *arg) {
 	}	
 }
 VectorArgument::~VectorArgument() {
-	for(unsigned int i = 0; i < subargs.size(); i++) {
+	for(size_t i = 0; i < subargs.size(); i++) {
 		delete subargs[i];
 	}
 }
@@ -1792,13 +1713,13 @@ bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) 
 	//}
 	if(!value.isVector()) return false;
 	if(b_argloop && subargs.size() > 0) {
-		for(unsigned int i = 0; i < value.components(); i++) {
+		for(size_t i = 0; i < value.components(); i++) {
 			if(!subargs[i % subargs.size()]->test(value[i], 1, NULL, eo)) {
 				return false;
 			}
 		}
 	} else {
-		for(unsigned int i = 0; i < subargs.size() && i < value.components(); i++) {
+		for(size_t i = 0; i < subargs.size() && i < value.components(); i++) {
 			if(!subargs[i]->test(value[i], 1, NULL, eo)) {
 				return false;
 			}
@@ -1812,7 +1733,7 @@ string VectorArgument::print() const {return _("vector");}
 string VectorArgument::subprintlong() const {
 	if(subargs.size() > 0) {
 		string str = _("a vector with ");
-		for(unsigned int i = 0; i < subargs.size(); i++) {
+		for(size_t i = 0; i < subargs.size(); i++) {
 			if(i > 0) {
 				str += ", ";
 			}
@@ -1836,15 +1757,15 @@ void VectorArgument::addArgument(Argument *arg) {
 	arg->setAlerts(false);
 	subargs.push_back(arg);
 }
-void VectorArgument::delArgument(unsigned int index) {
+void VectorArgument::delArgument(size_t index) {
 	if(index > 0 && index <= subargs.size()) {
 		subargs.erase(subargs.begin() + (index - 1));
 	}
 }
-unsigned int VectorArgument::countArguments() const {
+size_t VectorArgument::countArguments() const {
 	return subargs.size();
 }
-Argument *VectorArgument::getArgument(unsigned int index) const {
+Argument *VectorArgument::getArgument(size_t index) const {
 	if(index > 0 && index <= subargs.size()) {
 		return subargs[index - 1];
 	}
@@ -1966,47 +1887,36 @@ AngleArgument::AngleArgument(string name_, bool does_test, bool does_error) : Ar
 AngleArgument::AngleArgument(const AngleArgument *arg) {set(arg);}
 AngleArgument::~AngleArgument() {}
 bool AngleArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	if(CALCULATOR->u_rad) value.convert(CALCULATOR->u_rad);
-	if(CALCULATOR->u_rad && value.contains(CALCULATOR->u_rad)) {
-	} else {
-		switch(eo.angle_unit) {
-			case DEGREES: {
-		  		value *= (Variable*) CALCULATOR->v_pi;
-	    			value /= 180;
-				break;
-			}
-			case GRADIANS: {
-				value *= (Variable*) CALCULATOR->v_pi;
-	    			value /= 200;
-				break;
-			}
-			default: {}
-		}
-		if(CALCULATOR->u_rad) value *= CALCULATOR->u_rad;
-	}
 	return true;
 }
 int AngleArgument::type() const {return ARGUMENT_TYPE_ANGLE;}
 Argument *AngleArgument::copy() const {return new AngleArgument(this);}
 string AngleArgument::print() const {return _("angle");}
 string AngleArgument::subprintlong() const {return _("an angle or a number (using the default angle unit)");}
-/*MathStructure AngleArgument::evaluate(const string &str, bool keep_exact) const {
-	bool was_cv = CALCULATOR->donotCalculateVariables();
-	CALCULATOR->setDonotCalculateVariables(true);
-	MathStructure mstruct = CALCULATOR->parse(str);
-	CALCULATOR->setAngleValue(mstruct);
-	CALCULATOR->setDonotCalculateVariables(was_cv);
-	return mstruct;
-}*/
 void AngleArgument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
 	CALCULATOR->parse(mstruct, str, po);
+	switch(po.angle_unit) {
+		case ANGLE_UNIT_DEGREES: {
+			mstruct->multiply(CALCULATOR->getDegUnit());
+			break;
+		}
+		case ANGLE_UNIT_GRADIANS: {
+			mstruct->multiply(CALCULATOR->getGraUnit());
+			break;
+		}
+		case ANGLE_UNIT_RADIANS: {
+			mstruct->multiply(CALCULATOR->getRadUnit());
+			break;
+		}
+		default: {}
+	}
 }
 
 ArgumentSet::ArgumentSet(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
 }
 ArgumentSet::ArgumentSet(const ArgumentSet *arg) {
 	set(arg); 
-	unsigned int i = 1;
+	size_t i = 1;
 	while(true) {
 		if(!arg->getArgument(i)) break;
 		subargs.push_back(arg->getArgument(i)->copy());
@@ -2014,12 +1924,12 @@ ArgumentSet::ArgumentSet(const ArgumentSet *arg) {
 	}
 }
 ArgumentSet::~ArgumentSet() {
-	for(unsigned int i = 0; i < subargs.size(); i++) {
+	for(size_t i = 0; i < subargs.size(); i++) {
 		delete subargs[i];
 	}
 }
 bool ArgumentSet::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	for(unsigned int i = 0; i < subargs.size(); i++) {
+	for(size_t i = 0; i < subargs.size(); i++) {
 		if(subargs[i]->test(value, 1, NULL, eo)) {
 			return true;
 		}
@@ -2030,7 +1940,7 @@ int ArgumentSet::type() const {return ARGUMENT_TYPE_SET;}
 Argument *ArgumentSet::copy() const {return new ArgumentSet(this);}
 string ArgumentSet::print() const {
 	string str = "";
-	for(unsigned int i = 0; i < subargs.size(); i++) {
+	for(size_t i = 0; i < subargs.size(); i++) {
 		if(i > 0) {
 			if(i == subargs.size() - 1) {
 				str += " ";
@@ -2046,7 +1956,7 @@ string ArgumentSet::print() const {
 }
 string ArgumentSet::subprintlong() const {
 	string str = "";
-	for(unsigned int i = 0; i < subargs.size(); i++) {
+	for(size_t i = 0; i < subargs.size(); i++) {
 		if(i > 0) {
 			if(i == subargs.size() - 1) {
 				str += " ";
@@ -2064,15 +1974,15 @@ void ArgumentSet::addArgument(Argument *arg) {
 	arg->setAlerts(false);
 	subargs.push_back(arg);
 }
-void ArgumentSet::delArgument(unsigned int index) {
+void ArgumentSet::delArgument(size_t index) {
 	if(index > 0 && index <= subargs.size()) {
 		subargs.erase(subargs.begin() + (index - 1));
 	}
 }
-unsigned int ArgumentSet::countArguments() const {
+size_t ArgumentSet::countArguments() const {
 	return subargs.size();
 }
-Argument *ArgumentSet::getArgument(unsigned int index) const {
+Argument *ArgumentSet::getArgument(size_t index) const {
 	if(index > 0 && index <= subargs.size()) {
 		return subargs[index - 1];
 	}

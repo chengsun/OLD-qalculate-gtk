@@ -20,8 +20,8 @@
 
 #include <sstream>
 
-#define FR_FUNCTION(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) {return 0;} else {mstruct = nr; return 1;}
-#define FR_FUNCTION_2(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite() && !vargs[1].number().isInfinite())) {return 0;} else {mstruct = nr; return 1;}
+#define FR_FUNCTION(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) {return 0;} else {mstruct.set(nr); return 1;}
+#define FR_FUNCTION_2(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite() && !vargs[1].number().isInfinite())) {return 0;} else {mstruct.set(nr); return 1;}
 
 #define NON_COMPLEX_NUMBER_ARGUMENT(i)				NumberArgument *arg_non_complex##i = new NumberArgument(); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
 #define NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(i)			NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
@@ -41,11 +41,11 @@ MatrixFunction::MatrixFunction() : MathFunction("matrix", 3) {
 	setArgumentDefinition(3, new VectorArgument());
 }
 int MatrixFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	unsigned int rows = vargs[0].number().intValue();
-	unsigned int columns = vargs[1].number().intValue();
+	size_t rows = (size_t) vargs[0].number().intValue();
+	size_t columns = (size_t) vargs[1].number().intValue();
 	mstruct.clearMatrix(); mstruct.resizeMatrix(rows, columns, m_zero);
-	unsigned int r = 1, c = 1;
-	for(unsigned int i = 0; i < vargs[2].size(); i++) {
+	size_t r = 1, c = 1;
+	for(size_t i = 0; i < vargs[2].size(); i++) {
 		if(r > rows || c > columns) {
 			CALCULATOR->error(false, _("Too many elements (%s) for the order (%sx%s) of the matrix."), i2s(vargs[2].size()).c_str(), i2s(rows).c_str(), i2s(columns).c_str(), NULL);
 			break;
@@ -84,9 +84,9 @@ MergeVectorsFunction::MergeVectorsFunction() : MathFunction("mergevectors", 1, -
 }
 int MergeVectorsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct.clearVector();
-	for(unsigned int i = 0; i < vargs.size(); i++) {
+	for(size_t i = 0; i < vargs.size(); i++) {
 		if(vargs[i].isVector()) {
-			for(unsigned int i2 = 0; i2 < vargs[i].size(); i2++) {
+			for(size_t i2 = 0; i2 < vargs[i].size(); i2++) {
 				mstruct.addItem(vargs[i][i2]);
 			}
 		} else {
@@ -107,8 +107,8 @@ RowFunction::RowFunction() : MathFunction("row", 2) {
 	setArgumentDefinition(2, new MatrixArgument());	
 }
 int RowFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	int row = vargs[0].number().intValue();
-	if(row > (int) vargs[1].rows()) {
+	size_t row = (size_t) vargs[0].number().intValue();
+	if(row > vargs[1].rows()) {
 		CALCULATOR->error(true, _("Row %s does not exist in matrix."), vargs[0].print().c_str(), NULL);
 		return 0;
 	}
@@ -120,8 +120,8 @@ ColumnFunction::ColumnFunction() : MathFunction("column", 2) {
 	setArgumentDefinition(2, new MatrixArgument());	
 }
 int ColumnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	int col = vargs[0].number().intValue();
-	if(col > (int) vargs[1].columns()) {
+	size_t col = (size_t) vargs[0].number().intValue();
+	if(col > vargs[1].columns()) {
 		CALCULATOR->error(true, _("Column %s does not exist in matrix."), vargs[0].print().c_str(), NULL);
 		return 0;
 	}
@@ -155,14 +155,14 @@ ElementFunction::ElementFunction() : MathFunction("element", 3) {
 	setArgumentDefinition(3, new MatrixArgument(""));
 }
 int ElementFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	int row = vargs[0].number().intValue();
-	int col = vargs[1].number().intValue();
+	size_t row = (size_t) vargs[0].number().intValue();
+	size_t col = (size_t) vargs[1].number().intValue();
 	bool b = true;
-	if(col > (int) vargs[2].columns()) {
+	if(col > vargs[2].columns()) {
 		CALCULATOR->error(true, _("Column %s does not exist in matrix."), vargs[1].print().c_str(), NULL);
 		b = false;
 	}
-	if(row > (int) vargs[2].rows()) {
+	if(row > vargs[2].rows()) {
 		CALCULATOR->error(true, _("Row %s does not exist in matrix."), vargs[0].print().c_str(), NULL);
 		b = false;
 	}
@@ -185,8 +185,8 @@ ComponentFunction::ComponentFunction() : MathFunction("component", 2) {
 	setArgumentDefinition(2, new VectorArgument(""));
 }
 int ComponentFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	int i = vargs[0].number().intValue();
-	if(i > (int) vargs[1].components()) {
+	size_t i = (size_t) vargs[0].number().intValue();
+	if(i > vargs[1].components()) {
 		CALCULATOR->error(true, _("Component %s does not exist in vector."), vargs[0].print().c_str(), NULL);
 		return 0;
 	}
@@ -235,7 +235,7 @@ int IdentityFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		}
 		mstruct.setToIdentityMatrix(vargs[0].size());
 	} else {
-		mstruct.setToIdentityMatrix((unsigned int) vargs[0].number().intValue());
+		mstruct.setToIdentityMatrix((size_t) vargs[0].number().intValue());
 	}
 	return 1;
 }
@@ -263,7 +263,7 @@ CofactorFunction::CofactorFunction() : MathFunction("cofactor", 3) {
 	setArgumentDefinition(3, new MatrixArgument());
 }
 int CofactorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	vargs[2].cofactor(vargs[0].number().intValue(), vargs[1].number().intValue(), mstruct, eo);
+	vargs[2].cofactor((size_t) vargs[0].number().intValue(), (size_t) vargs[1].number().intValue(), mstruct, eo);
 	return !mstruct.isUndefined();
 }
 AdjointFunction::AdjointFunction() : MathFunction("adj", 1) {
@@ -363,6 +363,20 @@ FactorialFunction::FactorialFunction() : MathFunction("factorial", 1) {
 int FactorialFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(factorial)
 }
+bool FactorialFunction::representsPositive(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool FactorialFunction::representsNegative(const MathStructure &vargs) {return false;}
+bool FactorialFunction::representsNonNegative(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool FactorialFunction::representsNonPositive(const MathStructure &vargs) {return false;}
+bool FactorialFunction::representsInteger(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool FactorialFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool FactorialFunction::representsRational(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool FactorialFunction::representsReal(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool FactorialFunction::representsComplex(const MathStructure &vargs) {return false;}
+bool FactorialFunction::representsNonZero(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool FactorialFunction::representsEven(const MathStructure &vargs) {return false;}
+bool FactorialFunction::representsOdd(const MathStructure &vargs) {return false;}
+bool FactorialFunction::representsUndefined(const MathStructure &vargs) {return false;}
+
 DoubleFactorialFunction::DoubleFactorialFunction() : MathFunction("factorial2", 1) {
 	IntegerArgument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true);
 	Number nr(-1, 1);
@@ -372,6 +386,20 @@ DoubleFactorialFunction::DoubleFactorialFunction() : MathFunction("factorial2", 
 int DoubleFactorialFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(doubleFactorial)
 }
+bool DoubleFactorialFunction::representsPositive(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool DoubleFactorialFunction::representsNegative(const MathStructure &vargs) {return false;}
+bool DoubleFactorialFunction::representsNonNegative(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool DoubleFactorialFunction::representsNonPositive(const MathStructure &vargs) {return false;}
+bool DoubleFactorialFunction::representsInteger(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool DoubleFactorialFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool DoubleFactorialFunction::representsRational(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool DoubleFactorialFunction::representsReal(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool DoubleFactorialFunction::representsComplex(const MathStructure &vargs) {return false;}
+bool DoubleFactorialFunction::representsNonZero(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool DoubleFactorialFunction::representsEven(const MathStructure &vargs) {return false;}
+bool DoubleFactorialFunction::representsOdd(const MathStructure &vargs) {return false;}
+bool DoubleFactorialFunction::representsUndefined(const MathStructure &vargs) {return false;}
+
 MultiFactorialFunction::MultiFactorialFunction() : MathFunction("multifactorial", 2) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, true));
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true));
@@ -379,6 +407,20 @@ MultiFactorialFunction::MultiFactorialFunction() : MathFunction("multifactorial"
 int MultiFactorialFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION_2(multiFactorial)
 }
+bool MultiFactorialFunction::representsPositive(const MathStructure &vargs) {return vargs.size() == 2 && vargs[1].representsInteger() && vargs[1].representsPositive() && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool MultiFactorialFunction::representsNegative(const MathStructure &vargs) {return false;}
+bool MultiFactorialFunction::representsNonNegative(const MathStructure &vargs) {return vargs.size() == 2 && vargs[1].representsInteger() && vargs[1].representsPositive() && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool MultiFactorialFunction::representsNonPositive(const MathStructure &vargs) {return false;}
+bool MultiFactorialFunction::representsInteger(const MathStructure &vargs) {return vargs.size() == 2 && vargs[1].representsInteger() && vargs[1].representsPositive() && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool MultiFactorialFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 2 && vargs[1].representsInteger() && vargs[1].representsPositive() && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool MultiFactorialFunction::representsRational(const MathStructure &vargs) {return vargs.size() == 2 && vargs[1].representsInteger() && vargs[1].representsPositive() && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool MultiFactorialFunction::representsReal(const MathStructure &vargs) {return vargs.size() == 2 && vargs[1].representsInteger() && vargs[1].representsPositive() && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool MultiFactorialFunction::representsComplex(const MathStructure &vargs) {return false;}
+bool MultiFactorialFunction::representsNonZero(const MathStructure &vargs) {return vargs.size() == 2 && vargs[1].representsInteger() && vargs[1].representsPositive() && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
+bool MultiFactorialFunction::representsEven(const MathStructure &vargs) {return false;}
+bool MultiFactorialFunction::representsOdd(const MathStructure &vargs) {return false;}
+bool MultiFactorialFunction::representsUndefined(const MathStructure &vargs) {return false;}
+
 BinomialFunction::BinomialFunction() : MathFunction("binomial", 2) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true));
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, true));
@@ -394,6 +436,19 @@ int BinomialFunction::calculate(MathStructure &mstruct, const MathStructure &var
 AbsFunction::AbsFunction() : MathFunction("abs", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
+bool AbsFunction::representsPositive(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsNumber() && vargs[0].representsNonZero();}
+bool AbsFunction::representsNegative(const MathStructure &vargs) {return false;}
+bool AbsFunction::representsNonNegative(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool AbsFunction::representsNonPositive(const MathStructure &vargs) {return false;}
+bool AbsFunction::representsInteger(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger();}
+bool AbsFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool AbsFunction::representsRational(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsRational();}
+bool AbsFunction::representsReal(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool AbsFunction::representsComplex(const MathStructure &vargs) {return false;}
+bool AbsFunction::representsNonZero(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsNumber() && vargs[0].representsNonZero();}
+bool AbsFunction::representsEven(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsEven();}
+bool AbsFunction::representsOdd(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsOdd();}
+bool AbsFunction::representsUndefined(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsUndefined();}
 int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0]; 
 	mstruct.eval(eo);
@@ -426,30 +481,87 @@ SignumFunction::SignumFunction() : MathFunction("sgn", 1) {
 int SignumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(signum)
 }
+
 CeilFunction::CeilFunction() : MathFunction("ceil", 1) {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
 int CeilFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(ceil)
 }
+bool CeilFunction::representsPositive(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsPositive();}
+bool CeilFunction::representsNegative(const MathStructure &vargs) {return false;}
+bool CeilFunction::representsNonNegative(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonNegative();}
+bool CeilFunction::representsNonPositive(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonPositive();}
+bool CeilFunction::representsInteger(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
+bool CeilFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
+bool CeilFunction::representsRational(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
+bool CeilFunction::representsReal(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
+bool CeilFunction::representsComplex(const MathStructure &vargs) {return false;}
+bool CeilFunction::representsNonZero(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsPositive();}
+bool CeilFunction::representsEven(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsEven();}
+bool CeilFunction::representsOdd(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsOdd();}
+bool CeilFunction::representsUndefined(const MathStructure &vargs) {return false;}
+
 FloorFunction::FloorFunction() : MathFunction("floor", 1) {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
 int FloorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(floor)
 }
+bool FloorFunction::representsPositive(const MathStructure &vargs) {return false;}
+bool FloorFunction::representsNegative(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNegative();}
+bool FloorFunction::representsNonNegative(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonNegative();}
+bool FloorFunction::representsNonPositive(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonPositive();}
+bool FloorFunction::representsInteger(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
+bool FloorFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
+bool FloorFunction::representsRational(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
+bool FloorFunction::representsReal(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
+bool FloorFunction::representsComplex(const MathStructure &vargs) {return false;}
+bool FloorFunction::representsNonZero(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNegative();}
+bool FloorFunction::representsEven(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsEven();}
+bool FloorFunction::representsOdd(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsOdd();}
+bool FloorFunction::representsUndefined(const MathStructure &vargs) {return false;}
+
 TruncFunction::TruncFunction() : MathFunction("trunc", 1) {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
 int TruncFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(trunc)
 }
+bool TruncFunction::representsPositive(const MathStructure &vargs) {return false;}
+bool TruncFunction::representsNegative(const MathStructure &vargs) {return false;}
+bool TruncFunction::representsNonNegative(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonNegative();}
+bool TruncFunction::representsNonPositive(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonPositive();}
+bool TruncFunction::representsInteger(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
+bool TruncFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
+bool TruncFunction::representsRational(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
+bool TruncFunction::representsReal(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
+bool TruncFunction::representsComplex(const MathStructure &vargs) {return false;}
+bool TruncFunction::representsNonZero(const MathStructure &vargs) {return false;}
+bool TruncFunction::representsEven(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsEven();}
+bool TruncFunction::representsOdd(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsOdd();}
+bool TruncFunction::representsUndefined(const MathStructure &vargs) {return false;}
+
 RoundFunction::RoundFunction() : MathFunction("round", 1) {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
 int RoundFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(round)
 }
+bool RoundFunction::representsPositive(const MathStructure &vargs) {return false;}
+bool RoundFunction::representsNegative(const MathStructure &vargs) {return false;}
+bool RoundFunction::representsNonNegative(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonNegative();}
+bool RoundFunction::representsNonPositive(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonPositive();}
+bool RoundFunction::representsInteger(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
+bool RoundFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
+bool RoundFunction::representsRational(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
+bool RoundFunction::representsReal(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
+bool RoundFunction::representsComplex(const MathStructure &vargs) {return false;}
+bool RoundFunction::representsNonZero(const MathStructure &vargs) {return false;}
+bool RoundFunction::representsEven(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsEven();}
+bool RoundFunction::representsOdd(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsOdd();}
+bool RoundFunction::representsUndefined(const MathStructure &vargs) {return false;}
+
 FracFunction::FracFunction() : MathFunction("frac", 1) {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
@@ -478,18 +590,33 @@ int ModFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 }
 
 ImFunction::ImFunction() : MathFunction("im", 1) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
 int ImFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct = vargs[0].number().imaginaryPart();
-	return 1;
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	if(mstruct.isNumber()) {
+		mstruct = mstruct.number().imaginaryPart();
+		return 1;
+	} else if(mstruct.representsReal()) {
+		mstruct.clear();
+		return 1;
+	}
+	return -1;
 }
 ReFunction::ReFunction() : MathFunction("re", 1) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
 int ReFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct = vargs[0].number().realPart();
-	return 1;
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	if(mstruct.isNumber()) {
+		mstruct = mstruct.number().realPart();
+		return 1;
+	} else if(mstruct.representsReal()) {
+		return 1;
+	}
+	return -1;
 }
 ArgFunction::ArgFunction() : MathFunction("arg", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
@@ -555,16 +682,30 @@ int ExpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 LogFunction::LogFunction() : MathFunction("ln", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false));
 }
+bool LogFunction::representsPositive(const MathStructure &vargs) {return false;}
+bool LogFunction::representsNegative(const MathStructure &vargs) {return false;}
+bool LogFunction::representsNonNegative(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsPositive();}
+bool LogFunction::representsNonPositive(const MathStructure &vargs) {return false;}
+bool LogFunction::representsInteger(const MathStructure &vargs) {return false;}
+bool LogFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsNumber() && vargs[0].representsNonZero();}
+bool LogFunction::representsRational(const MathStructure &vargs) {return false;}
+bool LogFunction::representsReal(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsPositive();}
+bool LogFunction::representsComplex(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNegative();}
+bool LogFunction::representsNonZero(const MathStructure &vargs) {return false;}
+bool LogFunction::representsEven(const MathStructure &vargs) {return false;}
+bool LogFunction::representsOdd(const MathStructure &vargs) {return false;}
+bool LogFunction::representsUndefined(const MathStructure &vargs) {return false;}
 int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	mstruct = vargs[0]; 
-	
+
+	int errors = 0;	
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
-		CALCULATOR->beginTemporaryStopErrors();
+		CALCULATOR->beginTemporaryStopMessages();
 		mstruct.eval(eo2);
-		CALCULATOR->endTemporaryStopErrors();
+		CALCULATOR->endTemporaryStopMessages(&errors);
 	} else {
 		mstruct.eval(eo);
 	}
@@ -587,7 +728,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 	} else if(mstruct.isMultiplication()) {
 		b = true;
-		for(unsigned int i = 0; i < mstruct.size(); i++) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
 			if(!mstruct[i].representsPositive()) {
 				b = false;
 				break;
@@ -596,14 +737,14 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		if(b) {
 			MathStructure mstruct2;
 			mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
-			for(unsigned int i = 1; i < mstruct.size(); i++) {
+			for(size_t i = 1; i < mstruct.size(); i++) {
 				mstruct2.add(MathStructure(CALCULATOR->f_ln, &mstruct[i], NULL), i > 1);
 			}
 			mstruct = mstruct2;
 		}
 	}
 	if(b) {
-		if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+		if(eo.approximation == APPROXIMATION_TRY_EXACT && errors > 0) {
 			EvaluationOptions eo2 = eo;
 			eo2.approximation = APPROXIMATION_EXACT;
 			MathStructure mstruct2 = vargs[0];
@@ -636,7 +777,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 		Number nr(mstruct.number());
 		if(nr.ln() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.isInfinite() && !mstruct.number().isInfinite())) {
-			mstruct = nr;
+			mstruct.set(nr, true);
 			return 1;
 		}
 	}
@@ -668,7 +809,7 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	} else if(mstruct.isMultiplication()) {
 		bool b = true;
-		for(unsigned int i = 0; i < mstruct.size(); i++) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
 			if(!mstruct[i].representsPositive()) {
 				b = false;
 				break;
@@ -677,7 +818,7 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(b) {
 			MathStructure mstruct2;
 			mstruct2.set(CALCULATOR->f_logn, &mstruct[0], &mstructv2, NULL);
-			for(unsigned int i = 1; i < mstruct.size(); i++) {
+			for(size_t i = 1; i < mstruct.size(); i++) {
 				mstruct2.add(MathStructure(CALCULATOR->f_logn, &mstruct[i], &mstructv2, NULL), i > 1);
 			}
 			mstruct = mstruct2;
@@ -686,7 +827,7 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	} else if(vargs[0].isNumber() && vargs[1].isNumber()) {
 		Number nr(mstruct.number());
 		if(nr.log(vargs[1].number()) && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.isInfinite() && !mstruct.number().isInfinite())) {
-			mstruct = nr;
+			mstruct.set(nr, true);
 			return 1;
 		}
 	} 
@@ -698,17 +839,23 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 SinFunction::SinFunction() : MathFunction("sin", 1) {
 	setArgumentDefinition(1, new AngleArgument());
 }
+bool SinFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool SinFunction::representsReal(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
 int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	mstruct = vargs[0]; 
-	if(CALCULATOR->u_rad) mstruct /= CALCULATOR->u_rad;
+	if(CALCULATOR->getRadUnit()) {
+		mstruct.convert(CALCULATOR->getRadUnit());
+		mstruct /= CALCULATOR->getRadUnit();
+	}
 
+	int errors = 0;
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
-		CALCULATOR->beginTemporaryStopErrors();
+		CALCULATOR->beginTemporaryStopMessages();
 		mstruct.eval(eo2);
-		CALCULATOR->endTemporaryStopErrors();
+		CALCULATOR->endTemporaryStopMessages(&errors);
 	} else {
 		mstruct.eval(eo);
 	}
@@ -765,7 +912,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			}
 		}
 	} else if(mstruct.isAddition()) {
-		unsigned int i = 0;
+		size_t i = 0;
 		for(; i < mstruct.size(); i++) {
 			if(mstruct[i] == CALCULATOR->v_pi || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1] == CALCULATOR->v_pi && mstruct[i][0].isNumber() && mstruct[i][0].number().isInteger())) {
 				b = true;
@@ -774,7 +921,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 		if(b) {
 			MathStructure mstruct2;
-			for(unsigned int i2 = 0; i2 < mstruct.size(); i2++) {
+			for(size_t i2 = 0; i2 < mstruct.size(); i2++) {
 				if(i2 != i) {
 					if(mstruct2.isZero()) {
 						mstruct2 = mstruct[i2];
@@ -788,11 +935,14 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 
 	if(b) {
-		if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+		if(eo.approximation == APPROXIMATION_TRY_EXACT && errors > 0) {
 			EvaluationOptions eo2 = eo;
 			eo2.approximation = APPROXIMATION_EXACT;
 			MathStructure mstruct2 = vargs[0];
-			if(CALCULATOR->u_rad) mstruct2 /= CALCULATOR->u_rad;
+			if(CALCULATOR->getRadUnit()) {
+				mstruct2.convert(CALCULATOR->getRadUnit());
+				mstruct2 /= CALCULATOR->getRadUnit();
+			}
 			mstruct2.eval(eo2);
 		}
 		return 1;
@@ -801,13 +951,17 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 		mstruct = vargs[0];
-		if(CALCULATOR->u_rad) mstruct /= CALCULATOR->u_rad;
+		if(CALCULATOR->getRadUnit()) {
+			mstruct.convert(CALCULATOR->getRadUnit());
+			mstruct /= CALCULATOR->getRadUnit();
+		}
 		mstruct.eval(eo2);
 	}
+
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
 		if(nr.sin() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.isInfinite() && !mstruct.number().isInfinite())) {
-			mstruct = nr;
+			mstruct.set(nr, true);
 			return 1;
 		}
 	}
@@ -815,25 +969,33 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		MathStructure mstruct2(CALCULATOR->f_sin, &mstruct[0], NULL);
 		mstruct = mstruct2;
 		mstruct.negate();
-		if(CALCULATOR->u_rad) mstruct[0] *= CALCULATOR->u_rad;
+		if(CALCULATOR->getRadUnit()) mstruct[0] *= CALCULATOR->getRadUnit();
 		return 1;
 	}
-	if(CALCULATOR->u_rad) mstruct *= CALCULATOR->u_rad;
+	if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
 	return -1;
 }
+
 CosFunction::CosFunction() : MathFunction("cos", 1) {
 	setArgumentDefinition(1, new AngleArgument());
 }
+bool CosFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool CosFunction::representsReal(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
 int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	mstruct = vargs[0]; 
-	if(CALCULATOR->u_rad) mstruct /= CALCULATOR->u_rad;
+	if(CALCULATOR->getRadUnit()) {
+		mstruct.convert(CALCULATOR->getRadUnit());
+		mstruct /= CALCULATOR->getRadUnit();
+	}
+	
+	int errors = 0;
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
-		CALCULATOR->beginTemporaryStopErrors();
+		CALCULATOR->beginTemporaryStopMessages();
 		mstruct.eval(eo2);
-		CALCULATOR->endTemporaryStopErrors();
+		CALCULATOR->endTemporaryStopMessages(&errors);
 	} else {
 		mstruct.eval(eo);
 	}
@@ -877,7 +1039,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			}
 		}
 	} else if(mstruct.isAddition()) {
-		unsigned int i = 0;
+		size_t i = 0;
 		for(; i < mstruct.size(); i++) {
 			if(mstruct[i] == CALCULATOR->v_pi || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1] == CALCULATOR->v_pi && mstruct[i][0].isNumber() && mstruct[i][0].number().isInteger())) {
 				b = true;
@@ -886,7 +1048,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 		if(b) {
 			MathStructure mstruct2;
-			for(unsigned int i2 = 0; i2 < mstruct.size(); i2++) {
+			for(size_t i2 = 0; i2 < mstruct.size(); i2++) {
 				if(i2 != i) {
 					if(mstruct2.isZero()) {
 						mstruct2 = mstruct[i2];
@@ -900,11 +1062,14 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 	}
 	if(b) {
-		if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+		if(eo.approximation == APPROXIMATION_TRY_EXACT && errors > 0) {
 			EvaluationOptions eo2 = eo;
 			eo2.approximation = APPROXIMATION_EXACT;
 			MathStructure mstruct2 = vargs[0];
-			if(CALCULATOR->u_rad) mstruct2 /= CALCULATOR->u_rad;
+			if(CALCULATOR->getRadUnit()) {
+				mstruct2.convert(CALCULATOR->getRadUnit());
+				mstruct2 /= CALCULATOR->getRadUnit();
+			}
 			mstruct2.eval(eo2);
 		}
 		return 1;
@@ -913,19 +1078,23 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 		mstruct = vargs[0];
-		if(CALCULATOR->u_rad) mstruct /= CALCULATOR->u_rad;
+		if(CALCULATOR->getRadUnit()) {
+			mstruct.convert(CALCULATOR->getRadUnit());
+			mstruct /= CALCULATOR->getRadUnit();
+		}
 		mstruct.eval(eo2);
 	}
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
 		if(nr.cos() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.isInfinite() && !mstruct.number().isInfinite())) {
-			mstruct = nr;
+			mstruct.set(nr, true);
 			return 1;
 		}
 	}
-	if(CALCULATOR->u_rad) mstruct *= CALCULATOR->u_rad;
+	if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
 	return -1;
 }
+
 TanFunction::TanFunction() : MathFunction("tan", 1) {
 	setArgumentDefinition(1, new AngleArgument());
 }
@@ -934,154 +1103,222 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	mstruct.divide_nocopy(new MathStructure(CALCULATOR->f_cos, &vargs[0], NULL));
 	return 1;
 }
+
 AsinFunction::AsinFunction() : MathFunction("asin", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
+bool AsinFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsNumber();}
 int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	
 	if(vargs[0].number().isZero()) {
 		mstruct.clear();
 	} else if(vargs[0].number().isOne()) {
-		switch(eo.angle_unit) {
-			case DEGREES: {
+		switch(eo.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {
 				mstruct.set(90, 1);
 				break;
 			}
-			case GRADIANS: {
+			case ANGLE_UNIT_GRADIANS: {
 				mstruct.set(100, 1);
+				break;
+			}
+			case ANGLE_UNIT_RADIANS: {
+				mstruct.set(1, 2);
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
 			default: {
 				mstruct.set(1, 2);
 				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				if(CALCULATOR->getRadUnit()) {
+					mstruct *= CALCULATOR->getRadUnit();
+				}
 			}
 		}
 	} else if(vargs[0].number().isMinusOne()) {
-		switch(eo.angle_unit) {
-			case DEGREES: {
+		switch(eo.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {
 				mstruct.set(-90, 1);
 				break;
 			}
-			case GRADIANS: {
+			case ANGLE_UNIT_GRADIANS: {
 				mstruct.set(-100, 1);
+				break;
+			}
+			case ANGLE_UNIT_RADIANS: {
+				mstruct.set(-1, 2);
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
 			default: {
 				mstruct.set(-1, 2);
 				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				if(CALCULATOR->getRadUnit()) {
+					mstruct *= CALCULATOR->getRadUnit();
+				}
 			}
 		}
 	} else if(vargs[0].number().equals(Number(1, 2))) {
-		switch(eo.angle_unit) {
-			case DEGREES: {
+		switch(eo.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {
 				mstruct.set(30, 1);
 				break;
 			}
-			case GRADIANS: {
+			case ANGLE_UNIT_GRADIANS: {
 				mstruct.set(100, 3);
+				break;
+			}
+			case ANGLE_UNIT_RADIANS: {
+				mstruct.set(1, 6);
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
 			default: {
 				mstruct.set(1, 6);
 				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				if(CALCULATOR->getRadUnit()) {
+					mstruct *= CALCULATOR->getRadUnit();
+				}
 			}
 		}
 	} else {
 		Number nr = vargs[0].number();
 		if(!nr.asin() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !mstruct.number().isInfinite())) return 0;
 		mstruct = nr;
-		switch(eo.angle_unit) {
-			case DEGREES: {
+		switch(eo.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {
 				mstruct.multiply_nocopy(new MathStructure(180, 1));
 				mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
-			case GRADIANS: {
+			case ANGLE_UNIT_GRADIANS: {
 				mstruct.multiply_nocopy(new MathStructure(200, 1));
 				mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
-			default: {}
+			case ANGLE_UNIT_RADIANS: {
+				break;
+			}
+			default: {
+				if(CALCULATOR->getRadUnit()) {
+					mstruct *= CALCULATOR->getRadUnit();
+				}
+			}
 		}
 	}
 	return 1;
 	
 }
+
 AcosFunction::AcosFunction() : MathFunction("acos", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
+bool AcosFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsNumber();}
 int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	
 	if(vargs[0].number().isZero()) {
-		switch(eo.angle_unit) {
-			case DEGREES: {
+		switch(eo.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {
 				mstruct.set(90, 1);
 				break;
 			}
-			case GRADIANS: {
+			case ANGLE_UNIT_GRADIANS: {
 				mstruct.set(100, 1);
+				break;
+			}
+			case ANGLE_UNIT_RADIANS: {
+				mstruct.set(1, 2);
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
 			default: {
 				mstruct.set(1, 2);
 				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				if(CALCULATOR->getRadUnit()) {
+					mstruct *= CALCULATOR->getRadUnit();
+				}
 			}
 		}
 	} else if(vargs[0].number().isOne()) {
 		mstruct.clear();
 	} else if(vargs[0].number().isMinusOne()) {
-		switch(eo.angle_unit) {
-			case DEGREES: {
+		switch(eo.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {
 				mstruct.set(180, 1);
 				break;
 			}
-			case GRADIANS: {
+			case ANGLE_UNIT_GRADIANS: {
 				mstruct.set(200, 1);
+				break;
+			}
+			case ANGLE_UNIT_RADIANS: {
+				mstruct.set(CALCULATOR->v_pi);
 				break;
 			}
 			default: {
 				mstruct.set(CALCULATOR->v_pi);
+				if(CALCULATOR->getRadUnit()) {
+					mstruct *= CALCULATOR->getRadUnit();
+				}
 			}
 		}
 	} else if(vargs[0].number().equals(Number(1, 2))) {
-		switch(eo.angle_unit) {
-			case DEGREES: {
+		switch(eo.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {
 				mstruct.set(60, 1);
 				break;
 			}
-			case GRADIANS: {
+			case ANGLE_UNIT_GRADIANS: {
 				mstruct.set(200, 3);
+				break;
+			}
+			case ANGLE_UNIT_RADIANS: {
+				mstruct.set(1, 3);
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
 			default: {
 				mstruct.set(1, 3);
 				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				if(CALCULATOR->getRadUnit()) {
+					mstruct *= CALCULATOR->getRadUnit();
+				}
 			}
 		}
 	} else {
 		Number nr = vargs[0].number();
 		if(!nr.acos() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) return 0;
 		mstruct = nr;
-		switch(eo.angle_unit) {
-			case DEGREES: {
+		switch(eo.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {
 				mstruct.multiply_nocopy(new MathStructure(180, 1));
 				mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
-			case GRADIANS: {
+			case ANGLE_UNIT_GRADIANS: {
 				mstruct.multiply_nocopy(new MathStructure(200, 1));
 				mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
-			default: {}
+			case ANGLE_UNIT_RADIANS: {
+				break;
+			}
+			default: {
+				if(CALCULATOR->getRadUnit()) {
+					mstruct *= CALCULATOR->getRadUnit();
+				}
+			}
 		}
 	}
 	return 1;
 	
 }
+
 AtanFunction::AtanFunction() : MathFunction("atan", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
+bool AtanFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool AtanFunction::representsReal(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
 int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	
 	if(vargs[0].number().isZero()) {
@@ -1095,99 +1332,145 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		Number nr; nr.setInfinity();
 		mstruct *= nr;
 	} else if(vargs[0].number().isPlusInfinity()) {
-		switch(eo.angle_unit) {
-			case DEGREES: {
+		switch(eo.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {
 				mstruct.set(90, 1);
 				break;
 			}
-			case GRADIANS: {
+			case ANGLE_UNIT_GRADIANS: {
 				mstruct.set(100, 1);
+				break;
+			}
+			case ANGLE_UNIT_RADIANS: {
+				mstruct.set(1, 2);
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
 			default: {
 				mstruct.set(1, 2);
 				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				if(CALCULATOR->getRadUnit()) {
+					mstruct *= CALCULATOR->getRadUnit();
+				}
 			}
 		}
 	} else if(vargs[0].number().isMinusInfinity()) {
-		switch(eo.angle_unit) {
-			case DEGREES: {
+		switch(eo.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {
 				mstruct.set(-90, 1);
 				break;
 			}
-			case GRADIANS: {
+			case ANGLE_UNIT_GRADIANS: {
 				mstruct.set(-100, 1);
+				break;
+			}
+			case ANGLE_UNIT_RADIANS: {
+				mstruct.set(-1, 2);
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
 			default: {
 				mstruct.set(-1, 2);
 				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				if(CALCULATOR->getRadUnit()) {
+					mstruct *= CALCULATOR->getRadUnit();
+				}
 			}
 		}
 	} else if(vargs[0].number().isOne()) {
-		switch(eo.angle_unit) {
-			case DEGREES: {
+		switch(eo.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {
 				mstruct.set(45, 1);
 				break;
 			}
-			case GRADIANS: {
+			case ANGLE_UNIT_GRADIANS: {
 				mstruct.set(50, 1);
+				break;
+			}
+			case ANGLE_UNIT_RADIANS: {
+				mstruct.set(1, 4);
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
 			default: {
 				mstruct.set(1, 4);
 				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				if(CALCULATOR->getRadUnit()) {
+					mstruct *= CALCULATOR->getRadUnit();
+				}
 			}
 		}
 	} else if(vargs[0].number().isMinusOne()) {
-		switch(eo.angle_unit) {
-			case DEGREES: {
+		switch(eo.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {
 				mstruct.set(-45, 1);
 				break;
 			}
-			case GRADIANS: {
+			case ANGLE_UNIT_GRADIANS: {
 				mstruct.set(-50, 1);
+				break;
+			}
+			case ANGLE_UNIT_RADIANS: {
+				mstruct.set(-1, 4);
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
 			default: {
 				mstruct.set(-1, 4);
 				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				if(CALCULATOR->getRadUnit()) {
+					mstruct *= CALCULATOR->getRadUnit();
+				}
 			}
 		}
 	} else {
 		Number nr = vargs[0].number();
 		if(!nr.atan() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) return 0;
 		mstruct = nr;
-		switch(eo.angle_unit) {
-			case DEGREES: {
+		switch(eo.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {
 				mstruct.multiply_nocopy(new MathStructure(180, 1));
 				mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
-			case GRADIANS: {
+			case ANGLE_UNIT_GRADIANS: {
 				mstruct.multiply_nocopy(new MathStructure(200, 1));
 				mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi));
 				break;
 			}
-			default: {}
+			case ANGLE_UNIT_RADIANS: {
+				break;
+			}
+			default: {
+				if(CALCULATOR->getRadUnit()) {
+					mstruct *= CALCULATOR->getRadUnit();
+				}
+			}
 		}
 	}
 	return 1;
 	
 }
+
 SinhFunction::SinhFunction() : MathFunction("sinh", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
+bool SinhFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool SinhFunction::representsReal(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
 int SinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(sinh)
 }
 CoshFunction::CoshFunction() : MathFunction("cosh", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));	
 }
+bool CoshFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool CoshFunction::representsReal(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
 int CoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(cosh)
 }
 TanhFunction::TanhFunction() : MathFunction("tanh", 1) {}
+bool TanhFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool TanhFunction::representsReal(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
 int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct.set(CALCULATOR->f_sinh, &vargs[0], NULL);
 	mstruct.divide_nocopy(new MathStructure(CALCULATOR->f_cosh, &vargs[0], NULL));
@@ -1196,6 +1479,8 @@ int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 AsinhFunction::AsinhFunction() : MathFunction("asinh", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
+bool AsinhFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool AsinhFunction::representsReal(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsReal();}
 int AsinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	MathStructure m_arg(vargs[0]);
 	m_arg ^= 2;
@@ -1208,6 +1493,7 @@ int AsinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 AcoshFunction::AcoshFunction() : MathFunction("acosh", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
+bool AcoshFunction::representsNumber(const MathStructure &vargs) {return vargs.size() == 1 && vargs[0].representsNumber();}
 int AcoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	MathStructure m_arg(vargs[0]);
 	m_arg ^= 2;
@@ -1237,18 +1523,25 @@ RadiansToDefaultAngleUnitFunction::RadiansToDefaultAngleUnitFunction() : MathFun
 }
 int RadiansToDefaultAngleUnitFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	switch(eo.angle_unit) {
-		case DEGREES: {
+	switch(eo.parse_options.angle_unit) {
+		case ANGLE_UNIT_DEGREES: {
 			mstruct *= 180;
 	    		mstruct /= CALCULATOR->v_pi;
 			break;
 		}
-		case GRADIANS: {
+		case ANGLE_UNIT_GRADIANS: {
 			mstruct *= 200;
 	    		mstruct /= CALCULATOR->v_pi;
 			break;
 		}
-		default: {}
+		case ANGLE_UNIT_RADIANS: {
+			break;
+		}
+		default: {
+			if(CALCULATOR->getRadUnit()) {
+				mstruct *= CALCULATOR->getRadUnit();
+			}
+		}
 	}
 	return 1;
 }
@@ -1258,7 +1551,7 @@ TotalFunction::TotalFunction() : MathFunction("total", 1) {
 }
 int TotalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct.clear();
-	for(unsigned int index = 0; index < vargs[0].size(); index++) {
+	for(size_t index = 0; index < vargs[0].size(); index++) {
 		mstruct.add(vargs[0][index], true);
 	}
 	return 1;
@@ -1283,13 +1576,13 @@ int PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &v
 	} else {
 		Number pfr(vargs[0].number());		
 		pfr /= 100;
-		pfr *= v.components() + 1;
+		pfr *= (int) v.components() + 1;
 /*		Number cfr(v->components());		
 		if(pfr.isZero() || pfr.numerator()->isLessThan(pfr.denominator()) || pfr.isGreaterThan(&cfr)) {
 			CALCULATOR->error(true, _("Not enough samples."), NULL);
 		}*/
 		if(pfr.isInteger()) {
-			mp = v.getComponent(pfr.intValue());
+			mp = v.getComponent((size_t) pfr.intValue());
 			if(!mp) return 0;
 			mstruct = *mp;
 		} else {
@@ -1298,14 +1591,14 @@ int PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &v
 			Number lfr(pfr);
 			lfr.floor();
 			pfr -= lfr;
-			mp = v.getComponent(ufr.intValue());
+			mp = v.getComponent((size_t) ufr.intValue());
 			if(!mp) return 0;
 			MathStructure gap(*mp);
-			mp = v.getComponent(lfr.intValue());
+			mp = v.getComponent((size_t) lfr.intValue());
 			if(!mp) return 0;
 			gap -= *mp;
 			gap *= pfr;
-			mp = v.getComponent(lfr.intValue());
+			mp = v.getComponent((size_t) lfr.intValue());
 			if(!mp) return 0;
 			mstruct = *mp;
 			mstruct += gap;
@@ -1321,7 +1614,7 @@ int MinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	const MathStructure *min = NULL;
 	vector<const MathStructure*> unsolveds;
 	bool b = false;
-	for(unsigned int index = 0; index < vargs[0].size(); index++) {
+	for(size_t index = 0; index < vargs[0].size(); index++) {
 		if(min == NULL) {
 			min = &vargs[0][index];
 		} else {
@@ -1344,7 +1637,7 @@ int MinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			if(!b) return 0;
 			MathStructure margs; margs.clearVector();
 			margs.addItem(*min);
-			for(unsigned int i = 0; i < unsolveds.size(); i++) {
+			for(size_t i = 0; i < unsolveds.size(); i++) {
 				margs.addItem(*unsolveds[i]);
 			}
 			mstruct.set(this, &margs, NULL);
@@ -1364,7 +1657,7 @@ int MaxFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	const MathStructure *max = NULL;
 	vector<const MathStructure*> unsolveds;
 	bool b = false;
-	for(unsigned int index = 0; index < vargs[0].size(); index++) {
+	for(size_t index = 0; index < vargs[0].size(); index++) {
 		if(max == NULL) {
 			max = &vargs[0][index];
 		} else {
@@ -1387,7 +1680,7 @@ int MaxFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			if(!b) return 0;
 			MathStructure margs; margs.clearVector();
 			margs.addItem(*max);
-			for(unsigned int i = 0; i < unsolveds.size(); i++) {
+			for(size_t i = 0; i < unsolveds.size(); i++) {
 				margs.addItem(*unsolveds[i]);
 			}
 			mstruct.set(this, &margs, NULL);
@@ -1406,14 +1699,14 @@ int ModeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	if(vargs[0].size() <= 0) {
 		return 0;
 	}
-	int n = 0;
+	size_t n = 0;
 	bool b;
 	vector<const MathStructure*> vargs_nodup;
-	vector<int> is;
+	vector<size_t> is;
 	const MathStructure *value = NULL;
-	for(unsigned int index_c = 0; index_c < vargs[0].size(); index_c++) {
+	for(size_t index_c = 0; index_c < vargs[0].size(); index_c++) {
 		b = true;
-		for(unsigned int index = 0; index < vargs_nodup.size(); index++) {
+		for(size_t index = 0; index < vargs_nodup.size(); index++) {
 			if(vargs_nodup[index]->equals(vargs[0][index_c])) {
 				is[index]++;
 				b = false;
@@ -1425,7 +1718,7 @@ int ModeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			is.push_back(1);
 		}
 	}
-	for(unsigned int index = 0; index < is.size(); index++) {
+	for(size_t index = 0; index < is.size(); index++) {
 		if(is[index] > n) {
 			n = is[index];
 			value = vargs_nodup[index];
@@ -1676,7 +1969,7 @@ ConcatenateFunction::ConcatenateFunction() : MathFunction("concatenate", 1, -1) 
 }
 int ConcatenateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	string str;
-	for(unsigned int i = 0; i < vargs.size(); i++) {
+	for(size_t i = 0; i < vargs.size(); i++) {
 		str += vargs[i].symbol();
 	}
 	mstruct = str;
@@ -1811,8 +2104,8 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	
 }
 
-bool process_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, unsigned int index);
-bool process_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, unsigned int index) {
+bool process_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, size_t index);
+bool process_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, size_t index) {
 	if(mprocess == vargs[1]) {
 		mprocess = mstruct[index];
 		return true;
@@ -1826,7 +2119,7 @@ bool process_replace(MathStructure &mprocess, const MathStructure &mstruct, cons
 		return true;
 	}
 	bool b = false;
-	for(unsigned int i = 0; i < mprocess.size(); i++) {
+	for(size_t i = 0; i < mprocess.size(); i++) {
 		if(process_replace(mprocess[i], mstruct, vargs, index)) {
 			mprocess.childUpdated(i + 1);
 			b = true;
@@ -1847,7 +2140,7 @@ int ProcessFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 
 	mstruct = vargs[2];
 	MathStructure mprocess;
-	for(unsigned int index = 0; index < mstruct.size(); index++) {
+	for(size_t index = 0; index < mstruct.size(); index++) {
 		mprocess = vargs[0];
 		process_replace(mprocess, mstruct, vargs, index);
 		mstruct[index] = mprocess;
@@ -1857,8 +2150,8 @@ int ProcessFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 }
 
 
-bool process_matrix_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, unsigned int rindex, unsigned int cindex);
-bool process_matrix_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, unsigned int rindex, unsigned int cindex) {
+bool process_matrix_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, size_t rindex, size_t cindex);
+bool process_matrix_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, size_t rindex, size_t cindex) {
 	if(mprocess == vargs[1]) {
 		mprocess = mstruct[rindex][cindex];
 		return true;
@@ -1876,7 +2169,7 @@ bool process_matrix_replace(MathStructure &mprocess, const MathStructure &mstruc
 		return true;
 	}
 	bool b = false;
-	for(unsigned int i = 0; i < mprocess.size(); i++) {
+	for(size_t i = 0; i < mprocess.size(); i++) {
 		if(process_matrix_replace(mprocess[i], mstruct, vargs, rindex, cindex)) {
 			mprocess.childUpdated(i + 1);
 			b = true;
@@ -1899,8 +2192,8 @@ int ProcessMatrixFunction::calculate(MathStructure &mstruct, const MathStructure
 
 	mstruct = vargs[2];
 	MathStructure mprocess;
-	for(unsigned int rindex = 0; rindex < mstruct.size(); rindex++) {
-		for(unsigned int cindex = 0; cindex < mstruct[rindex].size(); cindex++) {
+	for(size_t rindex = 0; rindex < mstruct.size(); rindex++) {
+		for(size_t cindex = 0; cindex < mstruct[rindex].size(); cindex++) {
 			mprocess = vargs[0];
 			process_matrix_replace(mprocess, mstruct, vargs, rindex, cindex);
 			mstruct[rindex][cindex] = mprocess;
@@ -1910,8 +2203,8 @@ int ProcessMatrixFunction::calculate(MathStructure &mstruct, const MathStructure
 	
 }
 
-bool csum_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, unsigned int index, const EvaluationOptions &eo2);
-bool csum_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, unsigned int index, const EvaluationOptions &eo2) {
+bool csum_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, size_t index, const EvaluationOptions &eo2);
+bool csum_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, size_t index, const EvaluationOptions &eo2) {
 	if(mprocess == vargs[4]) {
 		mprocess = vargs[6][index];
 		return true;
@@ -1939,7 +2232,7 @@ bool csum_replace(MathStructure &mprocess, const MathStructure &mstruct, const M
 		}
 	}
 	bool b = false;
-	for(unsigned int i = 0; i < mprocess.size(); i++) {
+	for(size_t i = 0; i < mprocess.size(); i++) {
 		if(csum_replace(mprocess[i], mstruct, vargs, index, eo2)) {
 			mprocess.childUpdated(i + 1);
 			b = true;
@@ -1975,7 +2268,7 @@ int CustomSumFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	MathStructure mprocess;
 	EvaluationOptions eo2 = eo;
 	eo2.calculate_functions = false;
-	for(unsigned int index = start - 1; index < (unsigned int) end; index++) {	
+	for(size_t index = (size_t) start - 1; index < (size_t) end; index++) {	
 		mprocess = mexpr;
 		csum_replace(mprocess, mstruct, vargs, index, eo2);
 		mprocess.eval(eo2);
@@ -2022,7 +2315,7 @@ int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		}
 		return 1;
 	}
-	for(int i = 0; i < (int) mstruct.size(); i++) {
+	for(size_t i = 0; i < mstruct.size();) {
 		mtest = vargs[1];
 		mtest.replace(vargs[2], mstruct[i]);
 		mtest.eval(eo);
@@ -2033,12 +2326,15 @@ int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		if(mtest.number().getBoolean() == 0) {
 			if(vargs[3].number().getBoolean() == 0) {
 				mstruct.delChild(i + 1);
-				i--;
+			} else {
+				i++;
 			}
 		} else if(vargs[3].number().getBoolean() > 0) {
 			MathStructure msave(mstruct[i]);
 			mstruct = msave;
 			return 1;
+		} else {
+			i++;
 		}
 	}
 	if(vargs[3].number().getBoolean() > 0) {
@@ -2173,18 +2469,85 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	eo2.isolate_var = &vargs[1];
 	mstruct.eval(eo2);
 
-	if(mstruct.isComparison()) {
-		if(mstruct[0] != vargs[1]) {
-			CALCULATOR->error(true, _("Unable to isolate %s."), vargs[1].print().c_str(), NULL);
-		} else {
+	bool is_comparison = mstruct.isComparison();
+	if(is_comparison) {
+		if(mstruct[0] == vargs[1]) {
 			if(mstruct.comparisonType() == COMPARISON_EQUALS) {
 				MathStructure msave(mstruct[1]);
 				mstruct = msave;	
 			}
 			return 1;
 		}
+	}
+	
+	Assumptions *assumptions = NULL;
+	bool assumptions_added = false;
+	if(vargs[1].isVariable() && vargs[1].variable()->subtype() == SUBTYPE_UNKNOWN_VARIABLE) {
+		assumptions = ((UnknownVariable*) vargs[1].variable())->assumptions();
+		if(!assumptions) {
+			assumptions = new Assumptions();
+			assumptions->setSign(CALCULATOR->defaultAssumptions()->sign());
+			assumptions->setNumberType(CALCULATOR->defaultAssumptions()->numberType());
+			((UnknownVariable*) vargs[1].variable())->setAssumptions(assumptions);
+			assumptions_added = true;
+		}
 	} else {
+		CALCULATOR->defaultAssumptions();
+	}
+	
+	if(assumptions->sign() != ASSUMPTION_SIGN_UNKNOWN) {
+		AssumptionSign as = assumptions->sign();
+		assumptions->setSign(ASSUMPTION_SIGN_UNKNOWN);
+		MathStructure mstruct2(vargs[0]);
+		mstruct2.eval(eo2);
+		if(mstruct2.isComparison()) {
+			if(mstruct2[0] == vargs[1]) {
+				if(mstruct2.comparisonType() == COMPARISON_EQUALS) {
+					MathStructure msave(mstruct2[1]);
+					mstruct = msave;	
+				} else {
+					mstruct = mstruct2;
+				}
+				CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefor temporarily set as unknown."), vargs[1].print().c_str(), NULL);
+				assumptions->setSign(as);
+				if(assumptions_added) ((UnknownVariable*) vargs[1].variable())->setAssumptions(NULL);
+				return 1;
+			}
+		}
+		assumptions->setSign(as);
+	}
+	if(assumptions->numberType() != ASSUMPTION_NUMBER_NONE) {
+		AssumptionNumberType ant = assumptions->numberType();
+		assumptions->setNumberType(ASSUMPTION_NUMBER_NONE);
+		AssumptionSign as = assumptions->sign();
+		assumptions->setSign(ASSUMPTION_SIGN_UNKNOWN);
+		MathStructure mstruct2(vargs[0]);
+		mstruct2.eval(eo2);
+		if(mstruct2.isComparison()) {
+			if(mstruct2[0] == vargs[1]) {
+				if(mstruct2.comparisonType() == COMPARISON_EQUALS) {
+					MathStructure msave(mstruct2[1]);
+					mstruct = msave;	
+				} else {
+					mstruct = mstruct2;
+				}
+				CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefor temporarily set as unknown."), vargs[1].print().c_str(), NULL);
+				assumptions->setNumberType(ant);
+				assumptions->setSign(as);
+				if(assumptions_added) ((UnknownVariable*) vargs[1].variable())->setAssumptions(NULL);
+				return 1;
+			}
+		}
+		assumptions->setNumberType(ant);
+		assumptions->setSign(as);
+	}
+	
+	if(assumptions_added) ((UnknownVariable*) vargs[1].variable())->setAssumptions(NULL);
+	
+	if(!is_comparison) {
 		CALCULATOR->error(true, _("No comparison to solve. The reason might be:\n\n1. The entered expression to solve is not correct (ex. \"x + 5 = 3\" is correct)\n\n2. The expression evaluates FALSE. There is no valid solution with the current assumptions (ex. \"x = -5\" with x assumed positive).\n\n3. The expression evaluates TRUE (ex. \"2x = 2x\")"), NULL);
+	} else {
+		CALCULATOR->error(true, _("Unable to isolate %s."), vargs[1].print().c_str(), NULL);
 	}
 	return -1;
 	
@@ -2204,12 +2567,12 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 	if(vargs[1].size() < 1) return 1;
 	
 	bool eleft[vargs[0].size()];
-	for(unsigned int i = 0; i < vargs[0].size(); i++) eleft[i] = true;
-	vector<unsigned int> eorder;
+	for(size_t i = 0; i < vargs[0].size(); i++) eleft[i] = true;
+	vector<size_t> eorder;
 	bool b = false;
-	for(unsigned int i = 0; i < vargs[1].size(); i++) {
+	for(size_t i = 0; i < vargs[1].size(); i++) {
 		b = false;
-		for(unsigned int i2 = 0; i2 < vargs[0].size(); i2++) {
+		for(size_t i2 = 0; i2 < vargs[0].size(); i2++) {
 			if(eleft[i2] && vargs[0][i2].contains(vargs[1][i], true)) {
 				eorder.push_back(i2);
 				eleft[i2] = false;
@@ -2219,19 +2582,19 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 		}
 		if(!b) {
 			eorder.clear();
-			for(unsigned int i2 = 0; i2 < vargs[0].size(); i2++) {
+			for(size_t i2 = 0; i2 < vargs[0].size(); i2++) {
 				eorder.push_back(i2);
 			}
 			break;
 		}
 	}
 	
-	for(unsigned int i = 0; i < eorder.size(); i++) {
+	for(size_t i = 0; i < eorder.size(); i++) {
 		MathStructure msolve(vargs[0][eorder[i]]);
 		EvaluationOptions eo2 = eo;
 		eo2.assume_denominators_nonzero = false;
 		eo2.isolate_var = &vargs[1][i];
-		for(unsigned int i2 = 0; i2 < i; i2++) {
+		for(size_t i2 = 0; i2 < i; i2++) {
 			msolve.replace(vargs[1][i2], mstruct[i2]);
 		}
 		msolve.eval(eo2);
@@ -2256,8 +2619,8 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 			CALCULATOR->error(true, _("No comparison to solve. The reason might be:\n\n1. The entered expression to solve is not correct (ex. \"x + 5 = 3\" is correct)\n\n2. The expression evaluates FALSE. There is no valid solution with the current assumptions (ex. \"x = -5\" with x assumed positive).\n\n3. The expression evaluates TRUE (ex. \"2x = 2x\")"), NULL);
 			return 0;
 		}
-		for(unsigned int i2 = 0; i2 < i; i2++) {
-			for(unsigned int i3 = 0; i3 <= i; i3++) {
+		for(size_t i2 = 0; i2 < i; i2++) {
+			for(size_t i3 = 0; i3 <= i; i3++) {
 				if(i2 != i3) {
 					mstruct[i2].replace(vargs[1][i3], mstruct[i3]);
 				}

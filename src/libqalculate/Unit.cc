@@ -182,7 +182,7 @@ MathStructure &Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp
 	} else if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 		bool b2 = false;
 		CompositeUnit *cu = (CompositeUnit*) u;
-		for(unsigned int i = 0; i < cu->units.size(); i++) {
+		for(size_t i = 0; i < cu->units.size(); i++) {
 			convert(cu->units[i], mvalue, mexp, &b2);
 			if(b2) b = true;
 		}
@@ -523,7 +523,7 @@ void CompositeUnit::set(const ExpressionItem *item) {
 		Unit::set(item);
 		if(((Unit*) item)->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			CompositeUnit *u = (CompositeUnit*) item;
-			for(unsigned int i = 0; i < u->units.size(); i++) {
+			for(size_t i = 0; i < u->units.size(); i++) {
 				units.push_back(new AliasUnit_Composite(u->units[i]));
 			}
 		}
@@ -534,7 +534,7 @@ void CompositeUnit::set(const ExpressionItem *item) {
 }
 void CompositeUnit::add(Unit *u, int exp_, Prefix *prefix) {
 	bool b = false;
-	for(unsigned int i = 0; i < units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		if(exp_ > units[i]->firstBaseExp()) {
 			units.insert(units.begin() + i, new AliasUnit_Composite(u, exp_, prefix));
 			b = true;
@@ -546,7 +546,7 @@ void CompositeUnit::add(Unit *u, int exp_, Prefix *prefix) {
 	}
 	updateNames();
 }
-Unit *CompositeUnit::get(unsigned int index, int *exp_, Prefix **prefix) const {
+Unit *CompositeUnit::get(size_t index, int *exp_, Prefix **prefix) const {
 	if(index >= 0 && index < units.size()) {
 		if(exp_) *exp_ = units[index]->firstBaseExp();
 		if(prefix) *prefix = (Prefix*) units[index]->prefix();
@@ -554,21 +554,21 @@ Unit *CompositeUnit::get(unsigned int index, int *exp_, Prefix **prefix) const {
 	}
 	return NULL;
 }
-void CompositeUnit::setExponent(unsigned int index, int exp_) {
+void CompositeUnit::setExponent(size_t index, int exp_) {
 	if(index >= 0 && index < units.size()) {
 		units[index]->setExponent(exp_);
 	}
 }
-void CompositeUnit::setPrefix(unsigned int index, Prefix *prefix) {
+void CompositeUnit::setPrefix(size_t index, Prefix *prefix) {
 	if(index >= 0 && index < units.size()) {
 		units[index]->set(units[index]->firstBaseUnit(), units[index]->firstBaseExp(), prefix);
 	}
 }
-unsigned int CompositeUnit::countUnits() const {
+size_t CompositeUnit::countUnits() const {
 	return units.size();
 }
 void CompositeUnit::del(Unit *u) {
-	for(unsigned int i = 0; i < units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		if(units[i]->firstBaseUnit() == u) {
 			delete units[i];
 			units.erase(units.begin() + i);
@@ -579,7 +579,7 @@ void CompositeUnit::del(Unit *u) {
 string CompositeUnit::print(bool plural_, bool short_, bool use_unicode) const {
 	string str = "";
 	bool b = false, b2 = false;
-	for(unsigned int i = 0; i < units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		if(units[i]->firstBaseExp() != 0) {
 			if(!b && units[i]->firstBaseExp() < 0 && i > 0) {
 				str += "/";
@@ -619,7 +619,7 @@ int CompositeUnit::subtype() const {
 bool CompositeUnit::containsRelativeTo(Unit *u) const {
 	if(u == this) return false;
 	CompositeUnit *cu;
-	for(unsigned int i = 0; i < units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		if(u == units[i] || u->baseUnit() == units[i]->baseUnit()) return true;
 		if(units[i]->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			cu = (CompositeUnit*) units[i]->baseUnit();
@@ -628,7 +628,7 @@ bool CompositeUnit::containsRelativeTo(Unit *u) const {
 	}
 	if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 		cu = (CompositeUnit*) u;
-		for(unsigned int i = 0; i < cu->units.size(); i++) {	
+		for(size_t i = 0; i < cu->units.size(); i++) {	
 			if(containsRelativeTo(cu->units[i]->baseUnit())) return true;
 		}
 		return false;
@@ -638,13 +638,13 @@ bool CompositeUnit::containsRelativeTo(Unit *u) const {
 MathStructure CompositeUnit::generateMathStructure() const {
 	MathStructure mstruct;
 	bool has_p = false;
-	for(unsigned int i = 0; i < units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		if(units[i]->prefix()) {
 			has_p = true;
 			break;
 		}
 	}
-	for(unsigned int i = 0; i < units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		MathStructure mstruct2;
 		if(!has_p || units[i]->prefix()) {
 			mstruct2.set(units[i]->firstBaseUnit(), units[i]->prefix());
@@ -681,7 +681,7 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	} else if(mstruct.isPower() && mstruct[0].isUnit() && mstruct[1].isInteger()) {
 		add(mstruct[0].unit(), mstruct[1].number().intValue(), mstruct[0].prefix());
 	} else if(mstruct.isMultiplication()) {
-		for(unsigned int i = 0; i < mstruct.size(); i++) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
 			if(mstruct[i].isUnit()) {
 				add(mstruct[i].unit(), 1, mstruct[i].prefix());
 			} else if(mstruct[i].isPower() && mstruct[i][0].isUnit() && mstruct[i][1].isInteger()) {
@@ -699,7 +699,7 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 void CompositeUnit::updateNames() {
 }
 void CompositeUnit::clear() {
-	for(unsigned int i = 0; i < units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		delete units[i];
 	}
 	units.clear();

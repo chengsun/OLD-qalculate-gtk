@@ -102,16 +102,16 @@ class Calculator {
 	char vbuffer[200];
 	vector<void*> ufvl;
 	vector<char> ufvl_t;
-	vector<unsigned int> ufvl_i;
+	vector<size_t> ufvl_i;
 	vector<void*> ufv[4][UFV_LENGTHS];
-	vector<unsigned int> ufv_i[4][UFV_LENGTHS];
+	vector<size_t> ufv_i[4][UFV_LENGTHS];
 	
 	vector<DataSet*> data_sets;
 	
-	Sgi::hash_map<unsigned int, MathStructure*> id_structs;
-	Sgi::hash_map<unsigned int, bool> ids_p;
-	vector<unsigned int> freed_ids;	
-	unsigned int ids_i;
+	Sgi::hash_map<size_t, MathStructure*> id_structs;
+	Sgi::hash_map<size_t, bool> ids_p;
+	vector<size_t> freed_ids;	
+	size_t ids_i;
 	
 	vector<string> signs;	
 	vector<string> real_signs;
@@ -119,6 +119,8 @@ class Calculator {
 	vector<string> default_real_signs;	
 	char *saved_locale;
 	int disable_errors_ref;
+	vector<int> stopped_errors_count;
+	vector<int> stopped_messages_count;
 	pthread_t calculate_thread;
 	pthread_attr_t calculate_thread_attr;
 	pthread_t print_thread;
@@ -144,7 +146,7 @@ class Calculator {
 	bool b_save_called;
 	
 	string per_str, times_str, plus_str, minus_str, and_str, AND_str, or_str, OR_str, XOR_str;
-	unsigned int per_str_len, times_str_len, plus_str_len, minus_str_len, and_str_len, AND_str_len, or_str_len, OR_str_len, XOR_str_len;
+	size_t per_str_len, times_str_len, plus_str_len, minus_str_len, and_str_len, AND_str_len, or_str_len, OR_str_len, XOR_str_len;
 	
   public:
 
@@ -169,7 +171,7 @@ class Calculator {
 	MathFunction *f_for, *f_sum, *f_product, *f_process, *f_process_matrix, *f_csum, *f_if, *f_function, *f_select;
 	MathFunction *f_diff, *f_integrate, *f_solve, *f_multisolve;
 	MathFunction *f_error, *f_warning, *f_message, *f_save, *f_load, *f_export, *f_title;
-	Unit *u_rad, *u_euro;
+	Unit *u_rad, *u_gra, *u_deg, *u_euro;
 	Prefix *null_prefix;
 
   	bool place_currency_code_before, place_currency_sign_before;
@@ -199,24 +201,28 @@ class Calculator {
 	bool delDefaultStringAlternative(string replacement, string standard);
 
 	bool showArgumentErrors() const;
-	void beginTemporaryStopErrors();
-	void endTemporaryStopErrors();	
+	void beginTemporaryStopMessages();
+	int endTemporaryStopMessages(int *message_count = NULL);	
 	
-	unsigned int addId(MathStructure *m_struct, bool persistent = false);
-	unsigned int parseAddId(MathFunction *f, const string &str, const ParseOptions &po, bool persistent = false);
-	unsigned int parseAddIdAppend(MathFunction *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent = false);
-	unsigned int parseAddVectorId(const string &str, const ParseOptions &po, bool persistent = false);
-	MathStructure *getId(unsigned int id);	
-	void delId(unsigned int id);
+	size_t addId(MathStructure *m_struct, bool persistent = false);
+	size_t parseAddId(MathFunction *f, const string &str, const ParseOptions &po, bool persistent = false);
+	size_t parseAddIdAppend(MathFunction *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent = false);
+	size_t parseAddVectorId(const string &str, const ParseOptions &po, bool persistent = false);
+	MathStructure *getId(size_t id);	
+	void delId(size_t id);
 
-	Variable *getVariable(unsigned int index) const;
-	Unit *getUnit(unsigned int index) const;	
-	MathFunction *getFunction(unsigned int index) const;	
+	Variable *getVariable(size_t index) const;
+	Unit *getUnit(size_t index) const;	
+	MathFunction *getFunction(size_t index) const;	
 	
 	void setDefaultAssumptions(Assumptions *ass);
 	Assumptions *defaultAssumptions();
+	
+	Unit *getGraUnit();
+	Unit *getRadUnit();
+	Unit *getDegUnit();
 
-	Prefix *getPrefix(unsigned int index) const;	
+	Prefix *getPrefix(size_t index) const;	
 	Prefix *getPrefix(string name_) const;		
 	Prefix *getExactPrefix(int exp10, int exp = 1) const;			
 	Prefix *getExactPrefix(const Number &o, int exp = 1) const;				
@@ -304,7 +310,7 @@ class Calculator {
 	ExpressionItem *addExpressionItem(ExpressionItem *item, bool force = true);
 	MathFunction* addFunction(MathFunction *f, bool force = true, bool check_names = true);
 	DataSet* addDataSet(DataSet *dc, bool force = true, bool check_names = true);
-	DataSet* getDataSet(unsigned int index);
+	DataSet* getDataSet(size_t index);
 	DataSet* getDataSet(string name);
 	MathFunction* getFunction(string name_);	
 	MathFunction* getActiveFunction(string name_);	
@@ -337,7 +343,6 @@ class Calculator {
 	int saveUnits(const char *file_name, bool save_global = false);	
 	int saveFunctions(const char *file_name, bool save_global = false);
 	int saveDataSets(const char *file_name, bool save_global = false);
-	MathStructure setAngleValue(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options);	
 	bool importCSV(MathStructure &mstruct, const char *file_name, int first_row = 1, string delimiter = ",", vector<string> *headers = NULL);
 	bool importCSV(const char *file_name, int first_row = 1, bool headers = true, string delimiter = ",", bool to_matrix = false, string name = "", string title = "", string category = "");
 	bool exportCSV(const MathStructure &mstruct, const char *file_name, string delimiter = ",");

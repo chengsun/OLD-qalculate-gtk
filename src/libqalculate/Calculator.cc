@@ -115,7 +115,7 @@ void Calculator::addStringAlternative(string replacement, string standard) {
 	real_signs.push_back(standard);
 }
 bool Calculator::delStringAlternative(string replacement, string standard) {
-	for(unsigned int i = 0; i < signs.size(); i++) {
+	for(size_t i = 0; i < signs.size(); i++) {
 		if(signs[i] == replacement && real_signs[i] == standard) {
 			signs.erase(signs.begin() + i);
 			real_signs.erase(real_signs.begin() + i);
@@ -129,7 +129,7 @@ void Calculator::addDefaultStringAlternative(string replacement, string standard
 	default_real_signs.push_back(standard);
 }
 bool Calculator::delDefaultStringAlternative(string replacement, string standard) {
-	for(unsigned int i = 0; i < default_signs.size(); i++) {
+	for(size_t i = 0; i < default_signs.size(); i++) {
 		if(default_signs[i] == replacement && default_real_signs[i] == standard) {
 			default_signs.erase(default_signs.begin() + i);
 			default_real_signs.erase(default_real_signs.begin() + i);
@@ -252,7 +252,7 @@ Calculator::Calculator() {
 	default_assumptions->setNumberType(ASSUMPTION_NUMBER_REAL);
 	default_assumptions->setSign(ASSUMPTION_SIGN_NONZERO);
 	
-	u_rad = NULL;
+	u_rad = NULL; u_gra = NULL; u_deg = NULL;
 	
 	b_save_called = false;
 
@@ -295,6 +295,22 @@ Calculator::~Calculator() {
 	closeGnuplot();
 }
 
+Unit *Calculator::getGraUnit() {
+	if(!u_gra) u_gra = getUnit("gra");
+	if(!u_gra) CALCULATOR->error(_("Gradians unit is missing."), NULL);
+	return u_gra;
+}
+Unit *Calculator::getRadUnit() {
+	if(!u_rad) u_rad = getUnit("rad");
+	if(!u_rad) CALCULATOR->error(_("Radians unit is missing."), NULL);
+	return u_rad;
+}
+Unit *Calculator::getDegUnit() {
+	if(!u_deg) u_deg = getUnit("deg");
+	if(!u_deg) CALCULATOR->error(_("Degrees unit is missing."), NULL);
+	return u_deg;
+}
+
 bool Calculator::utf8_pos_is_valid_in_name(char *pos) {
 	if(is_in(ILLEGAL_IN_NAMES, pos[0])) {
 		return false;
@@ -314,32 +330,40 @@ bool Calculator::utf8_pos_is_valid_in_name(char *pos) {
 bool Calculator::showArgumentErrors() const {
 	return b_argument_errors;
 }
-void Calculator::beginTemporaryStopErrors() {
+void Calculator::beginTemporaryStopMessages() {
 	disable_errors_ref++;
+	stopped_errors_count.push_back(0);
+	stopped_messages_count.push_back(0);
 }
-void Calculator::endTemporaryStopErrors() {
+int Calculator::endTemporaryStopMessages(int *message_count) {
+	if(disable_errors_ref <= 0) return -1;
 	disable_errors_ref--;
+	int ret = stopped_errors_count[disable_errors_ref];
+	if(message_count) *message_count = stopped_messages_count[disable_errors_ref];
+	stopped_errors_count.pop_back();
+	stopped_messages_count.pop_back();
+	return ret;
 }
-Variable *Calculator::getVariable(unsigned int index) const {
+Variable *Calculator::getVariable(size_t index) const {
 	if(index >= 0 && index < variables.size()) {
 		return variables[index];
 	}
 	return NULL;
 }
 bool Calculator::hasVariable(Variable *v) {
-	for(unsigned int i = 0; i < variables.size(); i++) {
+	for(size_t i = 0; i < variables.size(); i++) {
 		if(variables[i] == v) return true;
 	}
 	return false;
 }
 bool Calculator::hasUnit(Unit *u) {
-	for(unsigned int i = 0; i < units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		if(units[i] == u) return true;
 	}
 	return false;
 }
 bool Calculator::hasFunction(MathFunction *f) {
-	for(unsigned int i = 0; i < functions.size(); i++) {
+	for(size_t i = 0; i < functions.size(); i++) {
 		if(functions[i] == f) return true;
 	}
 	return false;
@@ -374,7 +398,7 @@ bool Calculator::checkSaveFunctionCalled() {
 };
 ExpressionItem *Calculator::getActiveExpressionItem(ExpressionItem *item) {
 	if(!item) return NULL;
-	for(unsigned int i = 1; i <= item->countNames(); i++) {
+	for(size_t i = 1; i <= item->countNames(); i++) {
 		ExpressionItem *item2 = getActiveExpressionItem(item->getName(i).name, item);
 		if(item2) {
 			return item2;
@@ -384,17 +408,17 @@ ExpressionItem *Calculator::getActiveExpressionItem(ExpressionItem *item) {
 }
 ExpressionItem *Calculator::getActiveExpressionItem(string name, ExpressionItem *item) {
 	if(name.empty()) return NULL;
-	for(unsigned int index = 0; index < variables.size(); index++) {
+	for(size_t index = 0; index < variables.size(); index++) {
 		if(variables[index] != item && variables[index]->isActive() && variables[index]->hasName(name)) {
 			return variables[index];
 		}
 	}
-	for(unsigned int index = 0; index < functions.size(); index++) {
+	for(size_t index = 0; index < functions.size(); index++) {
 		if(functions[index] != item && functions[index]->isActive() && functions[index]->hasName(name)) {
 			return functions[index];
 		}
 	}
-	for(unsigned int i = 0; i < units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		if(units[i] != item && units[i]->isActive() && units[i]->hasName(name)) {
 			return units[i];
 		}
@@ -403,17 +427,17 @@ ExpressionItem *Calculator::getActiveExpressionItem(string name, ExpressionItem 
 }
 ExpressionItem *Calculator::getInactiveExpressionItem(string name, ExpressionItem *item) {
 	if(name.empty()) return NULL;
-	for(unsigned int index = 0; index < variables.size(); index++) {
+	for(size_t index = 0; index < variables.size(); index++) {
 		if(variables[index] != item && !variables[index]->isActive() && variables[index]->hasName(name)) {
 			return variables[index];
 		}
 	}
-	for(unsigned int index = 0; index < functions.size(); index++) {
+	for(size_t index = 0; index < functions.size(); index++) {
 		if(functions[index] != item && !functions[index]->isActive() && functions[index]->hasName(name)) {
 			return functions[index];
 		}
 	}
-	for(unsigned int i = 0; i < units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		if(units[i] != item && !units[i]->isActive() && units[i]->hasName(name)) {
 			return units[i];
 		}
@@ -432,13 +456,13 @@ ExpressionItem *Calculator::getExpressionItem(string name, ExpressionItem *item)
 	if(u && u != item) return u;
 	return NULL;
 }
-Unit *Calculator::getUnit(unsigned int index) const {
+Unit *Calculator::getUnit(size_t index) const {
 	if(index >= 0 && index < units.size()) {
 		return units[index];
 	}
 	return NULL;
 }
-MathFunction *Calculator::getFunction(unsigned int index) const {
+MathFunction *Calculator::getFunction(size_t index) const {
 	if(index >= 0 && index < functions.size()) {
 		return functions[index];
 	}
@@ -453,14 +477,14 @@ Assumptions *Calculator::defaultAssumptions() {
 	return default_assumptions;
 }
 
-Prefix *Calculator::getPrefix(unsigned int index) const {
+Prefix *Calculator::getPrefix(size_t index) const {
 	if(index >= 0 && index < prefixes.size()) {
 		return prefixes[index];
 	}
 	return NULL;
 }
 Prefix *Calculator::getPrefix(string name_) const {
-	for(unsigned int i = 0; i < prefixes.size(); i++) {
+	for(size_t i = 0; i < prefixes.size(); i++) {
 		if(prefixes[i]->shortName(false) == name_ || prefixes[i]->longName(false) == name_ || prefixes[i]->unicodeName(false) == name_) {
 			return prefixes[i];
 		}
@@ -468,7 +492,7 @@ Prefix *Calculator::getPrefix(string name_) const {
 	return NULL;
 }
 Prefix *Calculator::getExactPrefix(int exp10, int exp) const {
-	for(unsigned int i = 0; i < prefixes.size(); i++) {
+	for(size_t i = 0; i < prefixes.size(); i++) {
 		if(prefixes[i]->exponent(exp) == exp10) {
 			return prefixes[i];
 		} else if(prefixes[i]->exponent(exp) > exp10) {
@@ -479,7 +503,7 @@ Prefix *Calculator::getExactPrefix(int exp10, int exp) const {
 }
 Prefix *Calculator::getExactPrefix(const Number &o, int exp) const {
 	ComparisonResult c;
-	for(unsigned int i = 0; i < prefixes.size(); i++) {
+	for(size_t i = 0; i < prefixes.size(); i++) {
 		c = o.compare(prefixes[i]->value(exp));
 		if(c == COMPARISON_RESULT_EQUAL) {
 			return prefixes[i];
@@ -627,12 +651,12 @@ Prefix *Calculator::addPrefix(Prefix *p) {
 	return p;	
 }
 void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
-	unsigned int l2;
+	size_t l2;
 	if(!new_item) delPrefixUFV(p);
 	if(!p->longName(false).empty()) {
 		l2 = p->longName(false).length();
 		if(l2 > UFV_LENGTHS) {
-			unsigned int i = 0, l;
+			size_t i = 0, l;
 			for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
 				l = 0;
 				if(it != ufvl.end()) {
@@ -671,7 +695,7 @@ void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
 	if(!p->shortName(false).empty()) {
 		l2 = p->shortName(false).length();
 		if(l2 > UFV_LENGTHS) {
-			unsigned int i = 0, l;
+			size_t i = 0, l;
 			for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
 				l = 0;
 				if(it != ufvl.end()) {
@@ -710,7 +734,7 @@ void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
 	if(!p->unicodeName(false).empty()) {
 		l2 = p->unicodeName(false).length();
 		if(l2 > UFV_LENGTHS) {
-			unsigned int i = 0, l;
+			size_t i = 0, l;
 			for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
 				l = 0;
 				if(it != ufvl.end()) {
@@ -786,8 +810,8 @@ void Calculator::unsetLocale() {
 	DOT_S = ".";
 }
 
-unsigned int Calculator::addId(MathStructure *m_struct, bool persistent) {
-	unsigned int id = 0;
+size_t Calculator::addId(MathStructure *m_struct, bool persistent) {
+	size_t id = 0;
 	if(freed_ids.size() > 0) {
 		id = freed_ids.back();
 		freed_ids.pop_back();
@@ -799,8 +823,8 @@ unsigned int Calculator::addId(MathStructure *m_struct, bool persistent) {
 	id_structs[id] = m_struct;
 	return id;
 }
-unsigned int Calculator::parseAddId(MathFunction *f, const string &str, const ParseOptions &po, bool persistent) {
-	unsigned int id = 0;
+size_t Calculator::parseAddId(MathFunction *f, const string &str, const ParseOptions &po, bool persistent) {
+	size_t id = 0;
 	if(freed_ids.size() > 0) {
 		id = freed_ids.back();
 		freed_ids.pop_back();
@@ -813,8 +837,8 @@ unsigned int Calculator::parseAddId(MathFunction *f, const string &str, const Pa
 	f->parse(*id_structs[id], str, po);
 	return id;
 }
-unsigned int Calculator::parseAddIdAppend(MathFunction *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent) {
-	unsigned int id = 0;
+size_t Calculator::parseAddIdAppend(MathFunction *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent) {
+	size_t id = 0;
 	if(freed_ids.size() > 0) {
 		id = freed_ids.back();
 		freed_ids.pop_back();
@@ -828,8 +852,8 @@ unsigned int Calculator::parseAddIdAppend(MathFunction *f, const MathStructure &
 	id_structs[id]->addChild(append_mstruct);
 	return id;
 }
-unsigned int Calculator::parseAddVectorId(const string &str, const ParseOptions &po, bool persistent) {
-	unsigned int id = 0;
+size_t Calculator::parseAddVectorId(const string &str, const ParseOptions &po, bool persistent) {
+	size_t id = 0;
 	if(freed_ids.size() > 0) {
 		id = freed_ids.back();
 		freed_ids.pop_back();
@@ -842,7 +866,7 @@ unsigned int Calculator::parseAddVectorId(const string &str, const ParseOptions 
 	f_vector->args(str, *id_structs[id], po);
 	return id;
 }
-MathStructure *Calculator::getId(unsigned int id) {
+MathStructure *Calculator::getId(size_t id) {
 	if(id_structs.find(id) != id_structs.end()) {
 		if(ids_p[id]) {
 			return new MathStructure(*id_structs[id]);
@@ -857,7 +881,7 @@ MathStructure *Calculator::getId(unsigned int id) {
 	return NULL;
 }
 
-void Calculator::delId(unsigned int id) {
+void Calculator::delId(size_t id) {
 	if(ids_p.find(id) != ids_p.end()) {	
 		freed_ids.push_back(id);
 		id_structs[id]->unref();
@@ -1037,13 +1061,23 @@ void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
 }
 void Calculator::error(bool critical, const char *TEMPLATE, ...) {
-	if(disable_errors_ref) return;
+	if(disable_errors_ref > 0) {
+		for(size_t i = 0; i < stopped_messages_count.size(); i++) {
+			stopped_messages_count[i]++;
+		}
+		if(critical) {
+			for(size_t i = 0; i < stopped_errors_count.size(); i++) {
+				stopped_errors_count[i]++;
+			}
+		}
+		return;
+	}
 	string error_str = TEMPLATE;
 	va_list ap;
 	va_start(ap, TEMPLATE);
 	const char *str;
 	while(true) {
-		unsigned int i = error_str.find("%s");
+		size_t i = error_str.find("%s");
 		if(i == string::npos) break;	
 		str = va_arg(ap, const char*);
 		if(!str) break;
@@ -1051,7 +1085,7 @@ void Calculator::error(bool critical, const char *TEMPLATE, ...) {
 	}
 	va_end(ap);
 	bool dup_error = false;
-	for(unsigned int i = 0; i < messages.size(); i++) {
+	for(size_t i = 0; i < messages.size(); i++) {
 		if(error_str == messages[i].message()) {
 			dup_error = true;
 			break;
@@ -1063,13 +1097,23 @@ void Calculator::error(bool critical, const char *TEMPLATE, ...) {
 	}
 }
 void Calculator::message(MessageType mtype, const char *TEMPLATE, ...) {
-	if(disable_errors_ref) return;
+	if(disable_errors_ref > 0) {
+		for(size_t i = 0; i < stopped_messages_count.size(); i++) {
+			stopped_messages_count[i]++;
+		}
+		if(mtype == MESSAGE_ERROR) {
+			for(size_t i = 0; i < stopped_errors_count.size(); i++) {
+				stopped_errors_count[i]++;
+			}
+		}
+		return;
+	}
 	string error_str = TEMPLATE;
 	va_list ap;
 	va_start(ap, TEMPLATE);
 	const char *str;
 	while(true) {
-		unsigned int i = error_str.find("%s");
+		size_t i = error_str.find("%s");
 		if(i == string::npos) break;	
 		str = va_arg(ap, const char*);
 		if(!str) break;
@@ -1077,7 +1121,7 @@ void Calculator::message(MessageType mtype, const char *TEMPLATE, ...) {
 	}
 	va_end(ap);
 	bool dup_error = false;
-	for(unsigned int i = 0; i < messages.size(); i++) {
+	for(size_t i = 0; i < messages.size(); i++) {
 		if(error_str == messages[i].message()) {
 			dup_error = true;
 			break;
@@ -1140,17 +1184,13 @@ void Calculator::saveState() {
 void Calculator::restoreState() {
 }
 void Calculator::clearBuffers() {
-	for(Sgi::hash_map<unsigned int, bool>::iterator it = ids_p.begin(); it != ids_p.end(); ++it) {
+	for(Sgi::hash_map<size_t, bool>::iterator it = ids_p.begin(); it != ids_p.end(); ++it) {
 		if(!it->second) {
 			freed_ids.push_back(it->first);
 			id_structs.erase(it->first);
 			ids_p.erase(it);
 		}
 	}
-	/*freed_ids.clear();
-	id_structs.clear();
-	ids_p.clear();
-	ids_i = 0;*/
 }
 void Calculator::abort() {
 	if(calculate_thread_stopped) {
@@ -1158,6 +1198,9 @@ void Calculator::abort() {
 	} else {
 		pthread_cancel(calculate_thread);
 		restoreState();
+		stopped_messages_count.clear();
+		stopped_errors_count.clear();
+		disable_errors_ref = 0;
 		clearBuffers();
 		b_busy = false;
 		pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, calculate_pipe_r);
@@ -1184,9 +1227,9 @@ void Calculator::terminateThreads() {
 
 string Calculator::localizeExpression(string str) const {
 	if(DOT_STR == DOT && COMMA_STR == COMMA) return str;
-	vector<unsigned int> q_begin;
-	vector<unsigned int> q_end;
-	unsigned int i3 = 0;
+	vector<size_t> q_begin;
+	vector<size_t> q_end;
+	size_t i3 = 0;
 	while(true) {
 		i3 = str.find_first_of("\"\'", i3);
 		if(i3 == string::npos) {
@@ -1202,10 +1245,10 @@ string Calculator::localizeExpression(string str) const {
 		i3++;
 	}
 	if(COMMA_STR != COMMA) {
-		unsigned int ui = str.find(COMMA);
+		size_t ui = str.find(COMMA);
 		while(ui != string::npos) {
 			bool b = false;
-			for(unsigned int ui2 = 0; ui2 < q_end.size(); ui2++) {
+			for(size_t ui2 = 0; ui2 < q_end.size(); ui2++) {
 				if(ui <= q_end[ui2] && ui >= q_begin[ui2]) {
 					ui = str.find(COMMA, q_end[ui2] + 1);
 					b = true;
@@ -1219,10 +1262,10 @@ string Calculator::localizeExpression(string str) const {
 		}
 	}
 	if(DOT_STR != DOT) {
-		unsigned int ui = str.find(DOT);
+		size_t ui = str.find(DOT);
 		while(ui != string::npos) {
 			bool b = false;
-			for(unsigned int ui2 = 0; ui2 < q_end.size(); ui2++) {
+			for(size_t ui2 = 0; ui2 < q_end.size(); ui2++) {
 				if(ui <= q_end[ui2] && ui >= q_begin[ui2]) {
 					ui = str.find(DOT, q_end[ui2] + 1);
 					b = true;
@@ -1239,9 +1282,9 @@ string Calculator::localizeExpression(string str) const {
 }
 string Calculator::unlocalizeExpression(string str) const {
 	if(DOT_STR == DOT && COMMA_STR == COMMA) return str;
-	vector<unsigned int> q_begin;
-	vector<unsigned int> q_end;
-	unsigned int i3 = 0;
+	vector<size_t> q_begin;
+	vector<size_t> q_end;
+	size_t i3 = 0;
 	while(true) {
 		i3 = str.find_first_of("\"\'", i3);
 		if(i3 == string::npos) {
@@ -1257,10 +1300,10 @@ string Calculator::unlocalizeExpression(string str) const {
 		i3++;
 	}
 	if(DOT_STR != DOT) {
-		unsigned int ui = str.find(DOT_STR);
+		size_t ui = str.find(DOT_STR);
 		while(ui != string::npos) {
 			bool b = false;
-			for(unsigned int ui2 = 0; ui2 < q_end.size(); ui2++) {
+			for(size_t ui2 = 0; ui2 < q_end.size(); ui2++) {
 				if(ui <= q_end[ui2] && ui >= q_begin[ui2]) {
 					ui = str.find(DOT_STR, q_end[ui2] + 1);
 					b = true;
@@ -1274,10 +1317,10 @@ string Calculator::unlocalizeExpression(string str) const {
 		}
 	}
 	if(COMMA_STR != COMMA) {
-		unsigned int ui = str.find(COMMA_STR);
+		size_t ui = str.find(COMMA_STR);
 		while(ui != string::npos) {
 			bool b = false;
-			for(unsigned int ui2 = 0; ui2 < q_end.size(); ui2++) {
+			for(size_t ui2 = 0; ui2 < q_end.size(); ui2++) {
 				if(ui <= q_end[ui2] && ui >= q_begin[ui2]) {
 					ui = str.find(COMMA_STR, q_end[ui2] + 1);
 					b = true;
@@ -1323,17 +1366,17 @@ bool Calculator::calculate(MathStructure *mstruct, string str, int usecs, const 
 	return true;
 }
 MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, MathStructure *parsed_struct, string *to_str) {
-	unsigned int i = 0; 
+	size_t i = 0; 
 	string str2 = "";
 	if(eo.parse_options.units_enabled && (i = str.find(_(" to "))) != string::npos) {
-		int l = strlen(_(" to "));
+		size_t l = strlen(_(" to "));
 		str2 = str.substr(i + l, str.length() - i - l);		
 		remove_blank_ends(str2);
 		if(!str2.empty()) {
 			str = str.substr(0, i);
 		}
 	} else if(local_to && eo.parse_options.units_enabled && (i = str.find(" to ")) != string::npos) {
-		int l = strlen(" to ");
+		size_t l = strlen(" to ");
 		str2 = str.substr(i + l, str.length() - i - l);		
 		remove_blank_ends(str2);
 		if(!str2.empty()) {
@@ -1416,7 +1459,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 	}
 	MathStructure mstruct_new(mstruct);
 	if(mstruct_new.isAddition()) {
-		for(unsigned int i = 0; i < mstruct_new.size(); i++) {
+		for(size_t i = 0; i < mstruct_new.size(); i++) {
 			mstruct_new[i] = convert(mstruct_new[i], to_unit, eo, false);
 		}
 		mstruct_new.childrenUpdated();
@@ -1439,7 +1482,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 					break;
 				} 
 				case STRUCT_MULTIPLICATION: {
-					for(unsigned int i = 1; i <= mstruct_new.countChilds(); i++) {
+					for(size_t i = 1; i <= mstruct_new.countChilds(); i++) {
 						if(mstruct_new.getChild(i)->isUnit() && cu->containsRelativeTo(mstruct_new.getChild(i)->unit())) {
 							b = true;
 							break;
@@ -1477,7 +1520,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 }
 MathStructure Calculator::convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	MathStructure mstruct_new(mstruct);
-	for(unsigned int i = 0; i < units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		if(units[i]->subtype() == SUBTYPE_BASE_UNIT) {
 			mstruct_new.convert(units[i], true);
 		}
@@ -1510,7 +1553,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 			int new_points;
 			int new_points_m;
 			int max_points = 0;
-			for(unsigned int i = 0; cu->get(i, &exp); i++) {
+			for(size_t i = 0; cu->get(i, &exp); i++) {
 				if(exp < 0) {
 					max_points -= exp;
 				} else {
@@ -1520,10 +1563,10 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 			Unit *best_u = NULL;
 			Unit *cu_unit, *bu;
 			AliasUnit *au;
-			for(unsigned int i = 0; i < units.size(); i++) {
+			for(size_t i = 0; i < units.size(); i++) {
 				if(units[i]->subtype() == SUBTYPE_BASE_UNIT && (points == 0 || (points == 1 && minus))) {
 					new_points = 0;
-					for(unsigned int i2 = 0; true; i2++) {
+					for(size_t i2 = 0; true; i2++) {
 						cu_unit = cu->get(i2);
 						if(!cu_unit) {
 							break;
@@ -1543,7 +1586,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 					new_points_m = 0;
 					if(b_exp != 1 || bu->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 						if(bu->subtype() == SUBTYPE_BASE_UNIT) {
-							for(unsigned int i2 = 0; true; i2++) {
+							for(size_t i2 = 0; true; i2++) {
 								cu_unit = cu->get(i2, &exp);
 								if(!cu_unit) {
 									break;
@@ -1580,7 +1623,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 							cu_mstruct.raise(b_exp);
 							cu_mstruct = convertToBaseUnits(cu_mstruct);
 							if(cu_mstruct.isMultiplication()) {
-								for(unsigned int i2 = 1; i2 <= cu_mstruct.countChilds(); i2++) {
+								for(size_t i2 = 1; i2 <= cu_mstruct.countChilds(); i2++) {
 									bu = NULL;
 									if(cu_mstruct.getChild(i2)->isUnit()) {
 										bu = cu_mstruct.getChild(i2)->unit();
@@ -1590,7 +1633,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 										b_exp = cu_mstruct.getChild(i2)->exponent()->number().intValue();
 									}
 									if(bu) {
-										for(unsigned int i3 = 0; true; i3++) {
+										for(size_t i3 = 0; true; i3++) {
 											cu_unit = cu->get(i3, &exp);
 											if(!cu_unit) {
 												break;
@@ -1662,7 +1705,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 				cu_mstruct = convertToBaseUnits(cu_mstruct);
 				CompositeUnit *cu2 = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
 				bool b = false;
-				for(unsigned int i = 1; i <= cu_mstruct.countChilds(); i++) {
+				for(size_t i = 1; i <= cu_mstruct.countChilds(); i++) {
 					if(cu_mstruct.getChild(i)->isUnit()) {
 						b = true;
 						cu2->add(cu_mstruct.getChild(i)->unit());
@@ -1675,12 +1718,12 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 					Unit *u2 = getBestUnit(cu2, true);
 					Unit *cu_unit2;
 					if(u2->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-						for(unsigned int i3 = 0; true; i3++) {
+						for(size_t i3 = 0; true; i3++) {
 							cu_unit = ((CompositeUnit*) u2)->get(i3, &exp);
 							if(!cu_unit) {
 								break;
 							} else {
-								for(unsigned int i4 = 0; true; i4++) {
+								for(size_t i4 = 0; true; i4++) {
 									cu_unit2 = cu_new->get(i4, &b_exp);
 									if(!cu_unit2) {
 										break;
@@ -1696,7 +1739,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 						delete u2;
 					} else if(u2->subtype() == SUBTYPE_ALIAS_UNIT) {
 						return_cu = true;
-						for(unsigned int i3 = 0; true; i3++) {
+						for(size_t i3 = 0; true; i3++) {
 							cu_unit = cu_new->get(i3, &exp);
 							if(!cu_unit) {
 								break;
@@ -1741,7 +1784,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 		case STRUCT_VECTOR: {}
 		case STRUCT_ADDITION: {
 			MathStructure mstruct_new(mstruct);
-			for(unsigned int i = 0; i < mstruct_new.size(); i++) {
+			for(size_t i = 0; i < mstruct_new.size(); i++) {
 				mstruct_new[i] = convertToBestUnit(mstruct_new[i], eo);
 			}
 			mstruct_new.childrenUpdated();
@@ -1770,7 +1813,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 			MathStructure mstruct_new(convertToBaseUnits(mstruct, eo));
 			CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
 			bool b = false;
-			for(unsigned int i = 1; i <= mstruct_new.countChilds(); i++) {
+			for(size_t i = 1; i <= mstruct_new.countChilds(); i++) {
 				if(mstruct_new.getChild(i)->isUnit()) {
 					b = true;
 					cu->add(mstruct_new.getChild(i)->unit());
@@ -1794,7 +1837,7 @@ MathStructure Calculator::convertToCompositeUnit(const MathStructure &mstruct, C
 	MathStructure mstruct_cu(cu->generateMathStructure());
 	MathStructure mstruct_new(mstruct);
 	if(mstruct_new.isAddition()) {
-		for(unsigned int i = 0; i < mstruct_new.size(); i++) {
+		for(size_t i = 0; i < mstruct_new.size(); i++) {
 			mstruct_new[i] = convertToCompositeUnit(mstruct_new[i], cu, eo, false);
 		}
 		mstruct_new.childrenUpdated();
@@ -1816,7 +1859,7 @@ MathStructure Calculator::convertToCompositeUnit(const MathStructure &mstruct, C
 					break;
 				} 
 				case STRUCT_MULTIPLICATION: {
-					for(unsigned int i = 1; i <= mstruct_new.countChilds(); i++) {
+					for(size_t i = 1; i <= mstruct_new.countChilds(); i++) {
 						if(mstruct_new.getChild(i)->isUnit() && cu->containsRelativeTo(mstruct_new.getChild(i)->unit())) {
 							b = true;
 						}
@@ -1855,7 +1898,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, string composite
 	if(composite_.empty()) return mstruct;
 	Unit *u = getUnit(composite_);
 	if(u) return convert(mstruct, u, eo);
-	for(unsigned int i = 0; i < signs.size(); i++) {
+	for(size_t i = 0; i < signs.size(); i++) {
 		if(composite_ == signs[i]) {
 			u = getUnit(real_signs[i]);
 			break;
@@ -1867,7 +1910,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, string composite
 }
 Unit* Calculator::addUnit(Unit *u, bool force, bool check_names) {
 	if(check_names) {
-		for(unsigned int i = 1; i <= u->countNames(); i++) {
+		for(size_t i = 1; i <= u->countNames(); i++) {
 			u->setName(getName(u->getName(i).name, u, force), i);
 		}
 	}
@@ -1903,7 +1946,7 @@ void Calculator::delPrefixUFV(Prefix *object) {
 		}
 		i++;
 	}
-	for(unsigned int i2 = 0; i2 < UFV_LENGTHS; i2++) {
+	for(size_t i2 = 0; i2 < UFV_LENGTHS; i2++) {
 		i = 0;
 		for(vector<void*>::iterator it = ufv[0][i2].begin(); ; ++it) {
 			del_ufv:
@@ -1942,7 +1985,7 @@ void Calculator::delUFV(ExpressionItem *object) {
 		case TYPE_UNIT: {i3 = 2; break;}
 		case TYPE_VARIABLE: {i3 = 3; break;}
 	}
-	for(unsigned int i2 = 0; i2 < UFV_LENGTHS; i2++) {
+	for(size_t i2 = 0; i2 < UFV_LENGTHS; i2++) {
 		i = 0;
 		for(vector<void*>::iterator it = ufv[i3][i2].begin(); ; ++it) {
 			del_ufv:
@@ -1961,7 +2004,7 @@ void Calculator::delUFV(ExpressionItem *object) {
 }
 Unit* Calculator::getUnit(string name_) {
 	if(name_.empty()) return NULL;
-	for(int i = 0; i < (int) units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		if(units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT && (units[i]->hasName(name_))) {
 			return units[i];
 		}
@@ -1970,7 +2013,7 @@ Unit* Calculator::getUnit(string name_) {
 }
 Unit* Calculator::getActiveUnit(string name_) {
 	if(name_.empty()) return NULL;
-	for(unsigned int i = 0; i < units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		if(units[i]->isActive() && units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT && units[i]->hasName(name_)) {
 			return units[i];
 		}
@@ -1979,7 +2022,7 @@ Unit* Calculator::getActiveUnit(string name_) {
 }
 Unit* Calculator::getCompositeUnit(string internal_name_) {
 	if(internal_name_.empty()) return NULL;
-	for(unsigned int i = 0; i < units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		if(units[i]->subtype() == SUBTYPE_COMPOSITE_UNIT && units[i]->hasName(internal_name_)) {
 			return units[i];
 		}
@@ -1989,7 +2032,7 @@ Unit* Calculator::getCompositeUnit(string internal_name_) {
 
 Variable* Calculator::addVariable(Variable *v, bool force, bool check_names) {
 	if(check_names) {
-		for(unsigned int i = 1; i <= v->countNames(); i++) {
+		for(size_t i = 1; i <= v->countNames(); i++) {
 			v->setName(getName(v->getName(i).name, v, force), i);
 		}
 	}
@@ -2059,12 +2102,12 @@ void Calculator::nameChanged(ExpressionItem *item, bool new_item) {
 	if(item->type() == TYPE_UNIT && ((Unit*) item)->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 		return;
 	}
-	unsigned int l2;
+	size_t l2;
 	if(!new_item) delUFV(item);
-	for(unsigned int i2 = 1; i2 <= item->countNames(); i2++) {
+	for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
 		l2 = item->getName(i2).name.length();
 		if(l2 > UFV_LENGTHS) {
-			unsigned int i = 0, l;
+			size_t i = 0, l;
 			for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
 				if(it != ufvl.end()) {
 					if(ufvl_t[i] == 'v')
@@ -2141,7 +2184,7 @@ void Calculator::unitNameChanged(Unit *u, bool new_item) {
 
 Variable* Calculator::getVariable(string name_) {
 	if(name_.empty()) return NULL;
-	for(unsigned int i = 0; i < variables.size(); i++) {
+	for(size_t i = 0; i < variables.size(); i++) {
 		if(variables[i]->hasName(name_)) {
 			return variables[i];
 		}
@@ -2150,7 +2193,7 @@ Variable* Calculator::getVariable(string name_) {
 }
 Variable* Calculator::getActiveVariable(string name_) {
 	if(name_.empty()) return NULL;
-	for(unsigned int i = 0; i < variables.size(); i++) {
+	for(size_t i = 0; i < variables.size(); i++) {
 		if(variables[i]->isActive() && variables[i]->hasName(name_)) {
 			return variables[i];
 		}
@@ -2173,7 +2216,7 @@ ExpressionItem* Calculator::addExpressionItem(ExpressionItem *item, bool force) 
 }
 MathFunction* Calculator::addFunction(MathFunction *f, bool force, bool check_names) {
 	if(check_names) {
-		for(unsigned int i = 1; i <= f->countNames(); i++) {
+		for(size_t i = 1; i <= f->countNames(); i++) {
 			f->setName(getName(f->getName(i).name, f, force), i);
 		}
 	}
@@ -2198,7 +2241,7 @@ DataSet* Calculator::addDataSet(DataSet *dc, bool force, bool check_names) {
 	data_sets.push_back(dc);
 	return dc;
 }
-DataSet* Calculator::getDataSet(unsigned int index) {
+DataSet* Calculator::getDataSet(size_t index) {
 	if(index > 0 && index <= data_sets.size()) {
 		return data_sets[index - 1];
 	}
@@ -2206,7 +2249,7 @@ DataSet* Calculator::getDataSet(unsigned int index) {
 }
 DataSet* Calculator::getDataSet(string name) {
 	if(name.empty()) return NULL;
-	for(unsigned int i = 0; i < data_sets.size(); i++) {
+	for(size_t i = 0; i < data_sets.size(); i++) {
 		if(data_sets[i]->hasName(name)) {
 			return data_sets[i];
 		}
@@ -2215,7 +2258,7 @@ DataSet* Calculator::getDataSet(string name) {
 }
 MathFunction* Calculator::getFunction(string name_) {
 	if(name_.empty()) return NULL;
-	for(unsigned int i = 0; i < functions.size(); i++) {
+	for(size_t i = 0; i < functions.size(); i++) {
 		if(functions[i]->hasName(name_)) {
 			return functions[i];
 		}
@@ -2224,7 +2267,7 @@ MathFunction* Calculator::getFunction(string name_) {
 }
 MathFunction* Calculator::getActiveFunction(string name_) {
 	if(name_.empty()) return NULL;
-	for(unsigned int i = 0; i < functions.size(); i++) {
+	for(size_t i = 0; i < functions.size(); i++) {
 		if(functions[i]->isActive() && functions[i]->hasName(name_)) {
 			return functions[i];
 		}
@@ -2242,26 +2285,26 @@ bool Calculator::unitNameIsValid(const string &name_) {
 }
 bool Calculator::variableNameIsValid(const char *name_) {
 	if(is_in(NUMBERS, name_[0])) return false;
-	for(unsigned int i = 0; name_[i] != '\0'; i++) {
+	for(size_t i = 0; name_[i] != '\0'; i++) {
 		if(is_in(ILLEGAL_IN_NAMES, name_[i])) return false;
 	}
 	return true;
 }
 bool Calculator::functionNameIsValid(const char *name_) {
 	if(is_in(NUMBERS, name_[0])) return false;
-	for(unsigned int i = 0; name_[i] != '\0'; i++) {
+	for(size_t i = 0; name_[i] != '\0'; i++) {
 		if(is_in(ILLEGAL_IN_NAMES, name_[i])) return false;
 	}
 	return true;
 }
 bool Calculator::unitNameIsValid(const char *name_) {
-	for(unsigned int i = 0; name_[i] != '\0'; i++) {
+	for(size_t i = 0; name_[i] != '\0'; i++) {
 		if(is_in(ILLEGAL_IN_UNITNAMES, name_[i])) return false;
 	}
 	return true;
 }
 string Calculator::convertToValidVariableName(string name_) {
-	unsigned int i = 0;
+	size_t i = 0;
 	while(true) {
 		i = name_.find_first_of(ILLEGAL_IN_NAMES_MINUS_SPACE_STR, i);
 		if(i == string::npos)
@@ -2278,7 +2321,7 @@ string Calculator::convertToValidFunctionName(string name_) {
 	return convertToValidVariableName(name_);
 }
 string Calculator::convertToValidUnitName(string name_) {
-	unsigned int i = 0;
+	size_t i = 0;
 	string stmp = ILLEGAL_IN_NAMES_MINUS_SPACE_STR + NUMBERS;
 	while(true) {
 		i = name_.find_first_of(stmp, i);
@@ -2295,12 +2338,12 @@ bool Calculator::nameTaken(string name, ExpressionItem *object) {
 		switch(object->type()) {
 			case TYPE_VARIABLE: {}
 			case TYPE_UNIT: {
-				for(unsigned int index = 0; index < variables.size(); index++) {
+				for(size_t index = 0; index < variables.size(); index++) {
 					if(variables[index]->isActive() && variables[index]->hasName(name)) {
 						return variables[index] != object;
 					}
 				}
-				for(unsigned int i = 0; i < units.size(); i++) {
+				for(size_t i = 0; i < units.size(); i++) {
 					if(units[i]->isActive() && units[i]->hasName(name)) {
 						return units[i] != object;
 					}
@@ -2308,7 +2351,7 @@ bool Calculator::nameTaken(string name, ExpressionItem *object) {
 				break;
 			}
 			case TYPE_FUNCTION: {
-				for(unsigned int index = 0; index < functions.size(); index++) {
+				for(size_t index = 0; index < functions.size(); index++) {
 					if(functions[index]->isActive() && functions[index]->hasName(name)) {
 						return functions[index] != object;
 					}
@@ -2323,13 +2366,13 @@ bool Calculator::nameTaken(string name, ExpressionItem *object) {
 }
 bool Calculator::variableNameTaken(string name, Variable *object) {
 	if(name.empty()) return false;
-	for(unsigned int index = 0; index < variables.size(); index++) {
+	for(size_t index = 0; index < variables.size(); index++) {
 		if(variables[index]->isActive() && variables[index]->hasName(name)) {
 			return variables[index] != object;
 		}
 	}
 	
-	for(unsigned int i = 0; i < units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		if(units[i]->isActive() && units[i]->hasName(name)) {
 			return true;
 		}
@@ -2338,13 +2381,13 @@ bool Calculator::variableNameTaken(string name, Variable *object) {
 }
 bool Calculator::unitNameTaken(string name, Unit *object) {
 	if(name.empty()) return false;
-	for(unsigned int index = 0; index < variables.size(); index++) {
+	for(size_t index = 0; index < variables.size(); index++) {
 		if(variables[index]->isActive() && variables[index]->hasName(name)) {
 			return true;
 		}
 	}
 	
-	for(unsigned int i = 0; i < units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		if(units[i]->isActive() && units[i]->hasName(name)) {
 			return units[i] == object;
 		}
@@ -2353,7 +2396,7 @@ bool Calculator::unitNameTaken(string name, Unit *object) {
 }
 bool Calculator::functionNameTaken(string name, MathFunction *object) {
 	if(name.empty()) return false;
-	for(unsigned int index = 0; index < functions.size(); index++) {
+	for(size_t index = 0; index < functions.size(); index++) {
 		if(functions[index]->isActive() && functions[index]->hasName(name)) {
 			return functions[index] != object;
 		}
@@ -2362,7 +2405,7 @@ bool Calculator::functionNameTaken(string name, MathFunction *object) {
 }
 bool Calculator::unitIsUsedByOtherUnits(const Unit *u) const {
 	const Unit *u2;
-	for(unsigned int i = 0; i < units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		if(units[i] != u) {
 			u2 = units[i];
 			while(u2->subtype() == SUBTYPE_ALIAS_UNIT) {
@@ -2376,20 +2419,20 @@ bool Calculator::unitIsUsedByOtherUnits(const Unit *u) const {
 	return false;
 }
 
-bool compare_name(const string &name, const string &str, const unsigned int &name_length, const unsigned int &str_index) {
+bool compare_name(const string &name, const string &str, const size_t &name_length, const size_t &str_index) {
 	if(name_length == 0) return false;
 	if(name[0] != str[str_index]) return false;
 	if(name_length == 1) return true;
-	for(unsigned int i = 1; i < name_length; i++) {
+	for(size_t i = 1; i < name_length; i++) {
 		if(name[i] != str[str_index + i]) return false;
 	}
 	return true;
 }
-bool compare_name_no_case(const string &name, const string &str, const unsigned int &name_length, const unsigned int &str_index) {
+bool compare_name_no_case(const string &name, const string &str, const size_t &name_length, const size_t &str_index) {
 	if(name_length == 0) return false;
 	if(name[0] < 0 && name_length > 1) {
 		if(str[str_index] >= 0) return false;
-		unsigned int i2 = 1;
+		size_t i2 = 1;
 		while(i2 < name_length && name[i2] < 0) {
 			if(str[str_index + i2] >= 0) return false;
 			i2++;
@@ -2403,14 +2446,14 @@ bool compare_name_no_case(const string &name, const string &str, const unsigned 
 		return false;
 	}
 	if(name_length == 1) return true;
-	unsigned int i = 1;
+	size_t i = 1;
 	while(name[i - 1] < 0 && i <= name_length) {
 		i++;
 	}
 	for(; i < name_length; i++) {
 		if(name[i] < 0 && i + 1 < name_length) {
 			if(str[str_index + i] >= 0) return false;
-			unsigned int i2 = 1;
+			size_t i2 = 1;
 			while(i2 + i < name_length && name[i2 + i] < 0) {
 				if(str[str_index + i2 + i] >= 0) return false;
 				i2++;
@@ -2442,9 +2485,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
 	const string *name = NULL;
 	string stmp, stmp2;
-	vector<unsigned int> q_begin;
-	vector<unsigned int> q_end;
-	unsigned int quote_index = 0;
+	vector<size_t> q_begin;
+	vector<size_t> q_end;
+	size_t quote_index = 0;
 	while(true) {
 		quote_index = str.find_first_of("\"\'", quote_index);
 		if(quote_index == string::npos) {
@@ -2459,11 +2502,11 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		q_end.push_back(quote_index);
 		quote_index++;
 	}
-	for(unsigned int i = 0; i < signs.size(); i++) {
-		unsigned int ui = str.find(signs[i]);
+	for(size_t i = 0; i < signs.size(); i++) {
+		size_t ui = str.find(signs[i]);
 		while(ui != string::npos) {
 			bool b = false;
-			for(unsigned int ui2 = 0; ui2 < q_end.size(); ui2++) {
+			for(size_t ui2 = 0; ui2 < q_end.size(); ui2++) {
 				if(ui <= q_end[ui2] && ui >= q_begin[ui2]) {
 					ui = str.find(signs[i], q_end[ui2] + 1);
 					b = true;
@@ -2476,10 +2519,10 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			}
 		}
 	}
-	for(unsigned int str_index = 0; str_index < str.length(); str_index++) {		
+	for(size_t str_index = 0; str_index < str.length(); str_index++) {		
 		if(str[str_index] == LEFT_VECTOR_WRAP_CH) {
 			int i4 = 1;
-			unsigned int i3 = str_index;
+			size_t i3 = str_index;
 			while(true) {
 				i3 = str.find_first_of(LEFT_VECTOR_WRAP RIGHT_VECTOR_WRAP, i3 + 1);
 				if(i3 == string::npos) {
@@ -2512,8 +2555,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			if(str_index == str.length() - 1) {
 				str.erase(str_index, 1);
 			} else {
-				unsigned int i = str.find(str[str_index], str_index + 1);
-				unsigned int name_length;
+				size_t i = str.find(str[str_index], str_index + 1);
+				size_t name_length;
 				if(i == string::npos) {
 					i = str.length();
 					name_length = i - str_index;
@@ -2530,15 +2573,15 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		} else if(po.base >= 2 && po.base <= 10 && str[str_index] == '!' && po.functions_enabled) {
 			if(str_index > 0 && (str.length() - str_index == 1 || str[str_index + 1] != EQUALS_CH)) {
 				stmp = "";
-				unsigned int i5 = str.find_last_not_of(SPACE, str_index - 1);
-				unsigned int i3;
+				size_t i5 = str.find_last_not_of(SPACE, str_index - 1);
+				size_t i3;
 				if(i5 == string::npos) {
 				} else if(str[i5] == RIGHT_PARENTHESIS_CH) {
 					if(i5 == 0) {
 						stmp2 = str.substr(0, i5 + 1);
 					} else {
 						i3 = i5 - 1;
-						unsigned int i4 = 1;
+						size_t i4 = 1;
 						while(true) {
 							i3 = str.find_last_of(LEFT_PARENTHESIS RIGHT_PARENTHESIS, i3);
 							if(i3 == string::npos) {
@@ -2559,8 +2602,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					}
 				} else if(str[i5] == ID_WRAP_RIGHT_CH && (i3 = str.find_last_of(ID_WRAP_LEFT, i5 - 1)) != string::npos) {
 					stmp2 = str.substr(i3, i5 + 1 - i3);
-				} else if(is_not_in(NOT_IN_NAMES, str[i5])) {
-					i3 = str.find_last_of(NOT_IN_NAMES, i5);
+				} else if(is_not_in(RESERVED OPERATORS SPACES VECTOR_WRAPS PARENTHESISS COMMAS, str[i5])) {
+					i3 = str.find_last_of(RESERVED OPERATORS SPACES VECTOR_WRAPS PARENTHESISS COMMAS, i5);
 					if(i3 == string::npos) {
 						stmp2 = str.substr(0, i5 + 1);
 					} else {
@@ -2571,7 +2614,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 					int ifac = 1;
 					i3 = str_index + 1;
-					unsigned int i4 = i3;
+					size_t i4 = i3;
 					while((i3 = str.find_first_not_of(SPACE, i3)) != string::npos && str[i3] == '!') {
 						ifac++;
 						i3++;
@@ -2586,7 +2629,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				}
 			}
 		} else if(str[str_index] == SPACE_CH) {
-			unsigned int i = str.find(SPACE, str_index + 1);
+			size_t i = str.find(SPACE, str_index + 1);
 			if(i != string::npos) {
 				i -= str_index + 1;
 				if(i == per_str_len && compare_name_no_case(per_str, str, per_str_len, str_index + 1)) {
@@ -2620,22 +2663,22 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			bool moved_forward = false;
 			const string *found_function_name = NULL;
 			bool case_sensitive;
-			unsigned int found_function_name_length = 0;
+			size_t found_function_name_length = 0;
 			void *found_function = NULL, *object = NULL;
 			int vt2 = -1;
-			unsigned int ufv_index;
-			unsigned int name_length;
-			unsigned int vt3 = 0;
+			size_t ufv_index;
+			size_t name_length;
+			size_t vt3 = 0;
 			char ufvt;
-			unsigned int last_name_char = str.find_first_of(NOT_IN_NAMES, str_index + 1);
+			size_t last_name_char = str.find_first_of(NOT_IN_NAMES, str_index + 1);
 			if(last_name_char == string::npos) {
 				last_name_char = str.length() - 1;
 			} else {
 				last_name_char--;
 			}
-			unsigned int last_unit_char = str.find_last_not_of(NUMBERS, last_name_char);
-			unsigned int name_chars_left = last_name_char - str_index + 1;
-			unsigned int unit_chars_left = last_unit_char - str_index + 1;
+			size_t last_unit_char = str.find_last_not_of(NUMBERS, last_name_char);
+			size_t name_chars_left = last_name_char - str_index + 1;
+			size_t unit_chars_left = last_unit_char - str_index + 1;
 			if(name_chars_left <= UFV_LENGTHS) {
 				ufv_index = name_chars_left - 1;
 				vt2 = 0;
@@ -2837,7 +2880,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							break;
 						}
 						case 'f': {
-							unsigned int not_space_index;
+							size_t not_space_index;
 							if((not_space_index = str.find_first_not_of(SPACES, str_index + name_length)) == string::npos || str[not_space_index] != LEFT_PARENTHESIS_CH) {
 								found_function = object;
 								found_function_name = name;
@@ -2847,9 +2890,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							set_function:
 							MathFunction *f = (MathFunction*) object;
 							int i4 = -1;
-							unsigned int i6;
+							size_t i6;
 							if(f->args() == 0) {
-								unsigned int i7 = str.find_first_not_of(SPACES, str_index + name_length);
+								size_t i7 = str.find_first_not_of(SPACES, str_index + name_length);
 								if(i7 != string::npos && str[i7] == LEFT_PARENTHESIS_CH) {
 									i7 = str.find_first_not_of(SPACES, i7 + 1);
 									if(i7 != string::npos && str[i7] == RIGHT_PARENTHESIS_CH) {
@@ -2861,7 +2904,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 								if(i4 < 0) i4 = name_length;
 							} else if(po.rpn && f->args() == 1 && str_index > 0 && str[str_index - 1] == SPACE_CH && (str_index + name_length >= str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos) {
-								unsigned int i7 = str.rfind(SPACE, i6);
+								size_t i7 = str.rfind(SPACE, i6);
 								if(i7 == string::npos) {
 									stmp2 = str.substr(0, i6 + 1);	
 								} else {
@@ -2880,7 +2923,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								moved_forward = true;
 							} else {
 								bool b = false;
-								unsigned int i5 = 1;
+								size_t i5 = 1;
 								i6 = 0;
 								while(!b) {
 									if(i6 + str_index + name_length >= str.length()) {
@@ -2913,12 +2956,12 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									i4 = i6 + 1 + name_length - 2;
 									b = false;
 								}
-								unsigned int i9 = i6;
+								size_t i9 = i6;
 								if(b) {
 									b = false;
 									i6 = i6 + 1 + str_index + name_length;
-									unsigned int i7 = i6 - 1;
-									unsigned int i8 = i7;
+									size_t i7 = i6 - 1;
+									size_t i8 = i7;
 									while(true) {
 										i5 = str.find(RIGHT_PARENTHESIS_CH, i7);
 										if(i5 == string::npos) {
@@ -2975,7 +3018,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							unit_chars_left = last_unit_char - str_index + 1;
 							int name_length_old = name_length;
 							if(unit_chars_left > UFV_LENGTHS) {
-								for(unsigned int ufv_index2 = 0; ufv_index2 < ufvl.size(); ufv_index2++) {
+								for(size_t ufv_index2 = 0; ufv_index2 < ufvl.size(); ufv_index2++) {
 									name = NULL;
 									switch(ufvl_t[ufv_index2]) {
 										case 'u': {
@@ -3007,7 +3050,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								index = UFV_LENGTHS - 1;
 							}
 							for(; index >= 0; index--) {
-								for(unsigned int ufv_index2 = 0; ufv_index2 < ufv[2][index].size(); ufv_index2++) {
+								for(size_t ufv_index2 = 0; ufv_index2 < ufv[2][index].size(); ufv_index2++) {
 									name = &((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).name;
 									case_sensitive = ((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).case_sensitive;
 									name_length = name->length();
@@ -3053,7 +3096,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						str_index += unit_chars_left - 1;
 					}
 				} else if(po.unknowns_enabled && str[str_index] != EXP_CH) {
-					unsigned int i = 1;
+					size_t i = 1;
 					while(i <= unit_chars_left && str[str_index + i] < 0) {
 						i++;
 					}
@@ -3067,7 +3110,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		}
 	}
 	if(po.rpn) {
-		unsigned int rpn_i = str.find(SPACE, 0);
+		size_t rpn_i = str.find(SPACE, 0);
 		while(rpn_i != string::npos) {
 			if(rpn_i == 0 || is_in(OPERATORS, str[rpn_i - 1]) || rpn_i + 1 == str.length() || is_in(SPACE OPERATORS, str[rpn_i + 1])) {
 				str.erase(rpn_i, 1);
@@ -3089,7 +3132,8 @@ void Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 	string ssave = str;
 	char s = PLUS_CH;
 	bool has_sign = false;
-	for(int i = 0; i < (int) str.length(); i++) {
+	size_t i = 0;
+	while(i < str.length()) {
 		if(str[i] == MINUS_CH) {
 			has_sign = true;
 			if(s == MINUS_CH)
@@ -3097,18 +3141,16 @@ void Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			else
 				s = MINUS_CH;
 			str.erase(i, 1);
-			i--;
 		} else if(str[i] == PLUS_CH) {
 			has_sign = true;
 			str.erase(i, 1);
-			i--;
 		} else if(str[i] == SPACE_CH) {
 			str.erase(i, 1);
-			i--;
 		} else if(is_in(OPERATORS, str[i])) {
 			error(false, _("Misplaced '%s' ignored"), str.substr(0, 1).c_str(), NULL);
 			str.erase(i, 1);
-			i--;
+		} else {
+			i++;
 		}
 	}
 	if(str.empty()) {
@@ -3120,15 +3162,15 @@ void Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			mstruct->set(1, 1);
 		}
 	}
-	for(int i = str.length() - 1; i >= 0; i--) {	
-		if(is_in(OPERATORS, str[i])) {
-			error(false, _("Misplaced '%s' ignored"), str.substr(i, 1).c_str(), NULL);
-			str.erase(i, 1);
+	for(int index = str.length() - 1; index >= 0; index--) {	
+		if(is_in(OPERATORS, str[index])) {
+			error(false, _("Misplaced '%s' ignored"), str.substr(index, 1).c_str(), NULL);
+			str.erase(index, 1);
 		}
 	}
 	if(str[0] == ID_WRAP_LEFT_CH && str.length() > 2 && str[str.length() - 1] == ID_WRAP_RIGHT_CH) {
 		int id = s2i(str.substr(1, str.length() - 2));
-		MathStructure *m_temp = getId(id);
+		MathStructure *m_temp = getId((size_t) id);
 		if(!m_temp) {
 			mstruct->setUndefined();
 			error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
@@ -3139,11 +3181,11 @@ void Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		if(s == MINUS_CH) mstruct->negate();
 		return;
 	}
-	int itmp;
-	if(str.empty() || ((itmp = str.find_first_not_of(" ")) == (int) string::npos)) {
+	size_t itmp;
+	if(str.empty() || ((itmp = str.find_first_not_of(" ")) == string::npos)) {
 		return;
 	}
-	if(po.base >= 2 && po.base <= 10 && (itmp = str.find_first_not_of(NUMBER_ELEMENTS MINUS, 0)) != (int) string::npos) {
+	if(po.base >= 2 && po.base <= 10 && (itmp = str.find_first_not_of(NUMBER_ELEMENTS MINUS, 0)) != string::npos) {
 		string stmp = str.substr(itmp, str.length() - itmp);
 		str.erase(itmp, str.length() - itmp);
 		if(itmp == 0) {
@@ -3166,7 +3208,7 @@ void Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 
 void Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOptions &po) {
 	if(str.length() > 0) {
-		unsigned int i;
+		size_t i;
 		if(po.base >= 2 && po.base <= 10) {
 			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS EXP ID_WRAP_LEFT, 1);
 		} else {
@@ -3181,7 +3223,7 @@ void Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 }
 void Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOptions &po, MathOperation s) {
 	if(str.length() > 0) {
-		unsigned int i;
+		size_t i;
 		if(po.base >= 2 && po.base <= 10) {
 			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS EXP ID_WRAP_LEFT, 1);
 		} else {
@@ -3210,28 +3252,28 @@ void Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseOptions &po) {
 	string save_str = str;
 	mstruct->clear();
-	int i = 0, i2 = 0, i3 = 0;
+	size_t i = 0, i2 = 0, i3 = 0;
 	string str2, str3;
 	while(true) {
 		//find first right parenthesis and then the last left parenthesis before
 		i2 = str.find(RIGHT_PARENTHESIS_CH);
-		if(i2 == (int) string::npos) {
+		if(i2 == string::npos) {
 			i = str.rfind(LEFT_PARENTHESIS_CH);	
-			if(i == (int) string::npos) {
+			if(i == string::npos) {
 				//if no parenthesis break
 				break;
 			} else {
 				//right parenthesis missing -- append
 				str += RIGHT_PARENTHESIS_CH;
-				i2 = (int) str.length() - 1;
+				i2 = str.length() - 1;
 			}
 		} else {
 			if(i2 > 0) {
 				i = str.rfind(LEFT_PARENTHESIS_CH, i2 - 1);
 			} else {
-				i = (int) string::npos;
+				i = string::npos;
 			}
-			if(i == (int) string::npos) {
+			if(i == string::npos) {
 				//left parenthesis missing -- prepend
 				str.insert(str.begin(), 1, LEFT_PARENTHESIS_CH);
 				i = 0;
@@ -3240,7 +3282,7 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 		while(true) {
 			//remove unnecessary double parenthesis and the found parenthesis
-			if(i > 0 && i2 < (int) str.length() - 1 && str[i - 1] == LEFT_PARENTHESIS_CH && str[i2 + 1] == RIGHT_PARENTHESIS_CH) {
+			if(i > 0 && i2 + 1 < str.length() && str[i - 1] == LEFT_PARENTHESIS_CH && str[i2 + 1] == RIGHT_PARENTHESIS_CH) {
 				str.erase(str.begin() + (i - 1));
 				i--; i2--;
 				str.erase(str.begin() + (i2 + 1));
@@ -3260,10 +3302,10 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				i2++;
 			}
 		}
-		if(i2 < (int) str.length() - 1 && is_not_in(MULTIPLICATION_2 OPERATORS PARENTHESISS SPACE, str[i2 + 1]) && (po.base > 10 || po.base < 2 || str[i2 + 1] != EXP_CH)) {
+		if(i2 + 1 < str.length() && is_not_in(MULTIPLICATION_2 OPERATORS PARENTHESISS SPACE, str[i2 + 1]) && (po.base > 10 || po.base < 2 || str[i2 + 1] != EXP_CH)) {
 			if(po.rpn) {
 				i3 = str.find(SPACE, i2 + 1);
-				if(i3 == (int) string::npos) {
+				if(i3 == string::npos) {
 					str += MULTIPLICATION;
 				} else {
 					str.replace(i3, 1, MULTIPLICATION);
@@ -3273,7 +3315,7 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				str.insert(i2 + 1, MULTIPLICATION_2);
 			}
 		}
-		if(po.rpn && i > 0 && i2 + 1 == (int) str.length() && is_not_in(PARENTHESISS SPACE, str[i - 1])) {
+		if(po.rpn && i > 0 && i2 + 1 == str.length() && is_not_in(PARENTHESISS SPACE, str[i - 1])) {
 			str += MULTIPLICATION_CH;	
 		}
 		str2 = str.substr(i + 1, i2 - (i + 1));
@@ -3285,13 +3327,13 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		str.replace(i, i2 - i + 1, str2);
 		mstruct->clear();
 	}
-	if((i = str.find(AND, 1)) != (int) string::npos && i != (int) str.length() - 1) {
+	if((i = str.find(AND, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false;
-		while(i != (int) string::npos && i != (int) str.length() - 1) {
+		while(i != string::npos && i + 1 != str.length()) {
 			str2 = str.substr(0, i);
 			if(str[i + 1] == AND_CH) {
 				i++;
-				if(i == (int) str.length() - 1) break;
+				if(i + 1 == str.length()) break;
 			}
 			str = str.substr(i + 1, str.length() - (i + 1));
 			if(b) {
@@ -3309,13 +3351,13 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 		return;
 	}
-	if((i = str.find(OR, 1)) != (int) string::npos && i != (int) str.length() - 1) {
+	if((i = str.find(OR, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false;
-		while(i != (int) string::npos && i != (int) str.length() - 1) {
+		while(i != string::npos && i + 1 != str.length()) {
 			str2 = str.substr(0, i);
 			if(str[i + 1] == OR_CH) {
 				i++;
-				if(i == (int) str.length() - 1) break;
+				if(i + 1 == str.length()) break;
 			}
 			str = str.substr(i + 1, str.length() - (i + 1));
 			if(b) {
@@ -3339,18 +3381,18 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		mstruct->setNOT();
 		return;
 	}
-	if((i = str.find_first_of(LESS GREATER EQUALS NOT, 0)) != (int) string::npos) {
+	if((i = str.find_first_of(LESS GREATER EQUALS NOT, 0)) != string::npos) {
 		bool b = false;
 		bool c = false;
-		while(i != (int) string::npos && str[i] == NOT_CH && (int) str.length() > i + 1 && str[i + 1] == NOT_CH) {
+		while(i != string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {
 			i++;
-			if(i + 1 == (int) str.length()) {
+			if(i + 1 == str.length()) {
 				c = true;
 			}
 		}
 		MathOperation s = OPERATION_ADD;
 		while(!c) {
-			if(i == (int) string::npos) {
+			if(i == string::npos) {
 				str2 = str.substr(0, str.length());
 			} else {
 				str2 = str.substr(0, i);
@@ -3366,14 +3408,14 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				}
 				parseAdd(str2, mstruct, po, s);
 			}
-			if(i == (int) string::npos) {
+			if(i == string::npos) {
 				return;
 			}
 			if(!b) {
 				parseAdd(str2, mstruct, po);
 				b = true;
 			}
-			if((int) str.length() > i + 1 && is_in(LESS GREATER NOT EQUALS, str[i + 1])) {
+			if(str.length() > i + 1 && is_in(LESS GREATER NOT EQUALS, str[i + 1])) {
 				if(str[i] == str[i + 1]) {
 					i3 = str[i];
 				} else {
@@ -3392,10 +3434,10 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			}
 			str = str.substr(i + 1, str.length() - (i + 1));
 			i = str.find_first_of(LESS GREATER NOT EQUALS, 0);
-			while(i != (int) string::npos && str[i] == NOT_CH && (int) str.length() > i + 1 && str[i + 1] == NOT_CH) {
+			while(i != string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {
 				i++;
-				if(i + 1 == (int) str.length()) {
-					i = (int) string::npos;
+				if(i + 1 == str.length()) {
+					i = string::npos;
 				}
 			}
 		}
@@ -3409,7 +3451,7 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		bool b = false;
 		while(true) {
 			i = str.find_first_of(OPERATORS SPACE, i3 + 1);
-			if(i == (int) string::npos) {
+			if(i == string::npos) {
 				if(!b) {
 					parseAdd(str, mstruct, po2);
 					return;
@@ -3463,10 +3505,10 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 	}
 
-	if((i = str.find_first_of(PLUS MINUS, 0)) != (int) string::npos && i != (int) str.length() - 1) {
+	if((i = str.find_first_of(PLUS MINUS, 0)) != string::npos && i + 1 != str.length()) {
 		bool b = false, c = false;
 		bool min = false;
-		while(i != (int) string::npos && i != (int) str.length() - 1) {
+		while(i != string::npos && i + 1 != str.length()) {
 			if(i < 1 || is_not_in(MULTIPLICATION_2 OPERATORS EXP, str[i - 1])) {
 				str2 = str.substr(0, i);
 				if(!c && b) {
@@ -3509,10 +3551,10 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			return;
 		}
 	}
-	if((i = str.find_first_of(MULTIPLICATION DIVISION, 1)) != (int) string::npos && i != (int) str.length() - 1) {
+	if((i = str.find_first_of(MULTIPLICATION DIVISION, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false;
 		bool div = false;
-		while(i != (int) string::npos && i != (int) str.length() - 1) {		
+		while(i != string::npos && i + 1 != str.length()) {
 			str2 = str.substr(0, i);
 			if(b) {
 				if(div) {
@@ -3537,9 +3579,9 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		} else {
 			parseAdd(str, mstruct, po);
 		}
-	} else if((i = str.find(MULTIPLICATION_2_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
+	} else if((i = str.find(MULTIPLICATION_2_CH, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false;
-		while(i != (int) string::npos && i != (int) str.length() - 1) {
+		while(i != string::npos && i + 1 != str.length()) {
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
 			if(b) {
@@ -3555,22 +3597,22 @@ void Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		} else {
 			parseAdd(str, mstruct, po);
 		}
-	} else if((i = str.find(POWER_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
+	} else if((i = str.find(POWER_CH, 1)) != string::npos && i + 1 != str.length()) {
 		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));		
 		parseAdd(str2, mstruct, po);
 		parseAdd(str, mstruct, po, OPERATION_RAISE);
-	} else if(po.base >= 2 && po.base <= 10 && (i = str.find(EXP_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
+	} else if(po.base >= 2 && po.base <= 10 && (i = str.find(EXP_CH, 1)) != string::npos && i + 1 != str.length()) {
 		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
 		parseAdd(str, mstruct, po, OPERATION_EXP10);
-	} else if((i = str.find(ID_WRAP_LEFT_CH, 1)) != (int) string::npos && i != (int) str.length() - 1 && str.find(ID_WRAP_RIGHT_CH, i + 1) && (int) str.find_first_not_of(PLUS MINUS, 0) != i) {
+	} else if((i = str.find(ID_WRAP_LEFT_CH, 1)) != string::npos && i + 1 != str.length() && str.find(ID_WRAP_RIGHT_CH, i + 1) && str.find_first_not_of(PLUS MINUS, 0) != i) {
 		str2 = str.substr(0, i);
 		str = str.substr(i, str.length() - i);
 		parseAdd(str2, mstruct, po);
 		parseAdd(str, mstruct, po, OPERATION_MULTIPLY);
-	} else if(str.length() > 0 && str[0] == ID_WRAP_LEFT_CH && (i = str.find(ID_WRAP_RIGHT_CH, 1)) != (int) string::npos && i != (int) str.length() - 1) {
+	} else if(str.length() > 0 && str[0] == ID_WRAP_LEFT_CH && (i = str.find(ID_WRAP_RIGHT_CH, 1)) != string::npos && i + 1 != str.length()) {
 		str2 = str.substr(0, i + 1);
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
@@ -3844,7 +3886,7 @@ bool Calculator::loadLocalDefinitions() {
 					title = ""; best_title = false; next_best_title = false;\
 					description = ""; best_description = false; next_best_description = false;
 
-#define ITEM_INIT_NAME			for(unsigned int i = 0; i < 10; i++) {\
+#define ITEM_INIT_NAME			for(size_t i = 0; i < 10; i++) {\
 						best_name[i] = false;\
 						nextbest_name[i] = false;\
 					}
@@ -3861,7 +3903,7 @@ bool Calculator::loadLocalDefinitions() {
 						item->addName(ename);\
 					}
 					
-#define ITEM_SET_NAME_2			for(unsigned int i = 0; i < 10; i++) {\
+#define ITEM_SET_NAME_2			for(size_t i = 0; i < 10; i++) {\
 						if(!names[i].name.empty()) {\
 							item->addName(names[i], i + 1);\
 							names[i].name = "";\
@@ -3871,7 +3913,7 @@ bool Calculator::loadLocalDefinitions() {
 						}\
 					}
 					
-#define ITEM_SET_NAME_3			for(unsigned int i = 0; i < 10; i++) {\
+#define ITEM_SET_NAME_3			for(size_t i = 0; i < 10; i++) {\
 						if(!ref_names[i].name.empty()) {\
 							item->addName(ref_names[i]);\
 							ref_names[i].name = "";\
@@ -3920,10 +3962,10 @@ bool Calculator::loadLocalDefinitions() {
 					
 #define BUILTIN_NAMES_1			if(!is_user_defs) item->setRegistered(false);\
 					bool has_ref_name;\
-					for(unsigned int i = 1; i <= item->countNames(); i++) {\
+					for(size_t i = 1; i <= item->countNames(); i++) {\
 						if(item->getName(i).reference) {\
 							has_ref_name = false;\
-							for(unsigned int i2 = 0; i2 < 10; i2++) {\
+							for(size_t i2 = 0; i2 < 10; i2++) {\
 								if(names[i2].name == item->getName(i).name || ref_names[i2].name == item->getName(i).name) {\
 									has_ref_name = true;\
 									break;\
@@ -3943,10 +3985,10 @@ bool Calculator::loadLocalDefinitions() {
 
 #define BUILTIN_UNIT_NAMES_1		if(!is_user_defs) item->setRegistered(false);\
 					bool has_ref_name;\
-					for(unsigned int i = 1; i <= item->countNames(); i++) {\
+					for(size_t i = 1; i <= item->countNames(); i++) {\
 						if(item->getName(i).reference) {\
 							has_ref_name = item->getName(i).name == singular || item->getName(i).name == plural;\
-							for(unsigned int i2 = 0; !has_ref_name && i2 < 10; i2++) {\
+							for(size_t i2 = 0; !has_ref_name && i2 < 10; i2++) {\
 								if(names[i2].name == item->getName(i).name || ref_names[i2].name == item->getName(i).name) {\
 									has_ref_name = true;\
 									break;\
@@ -3967,7 +4009,7 @@ bool Calculator::loadLocalDefinitions() {
 #define BUILTIN_NAMES_2			if(!is_user_defs) {item->setRegistered(true);\
 					nameChanged(item);}
 					
-#define ITEM_CLEAR_NAMES		for(unsigned int i = 0; i < 10; i++) {\
+#define ITEM_CLEAR_NAMES		for(size_t i = 0; i < 10; i++) {\
 						if(!names[i].name.empty()) {\
 							names[i].name = "";\
 						}\
@@ -4025,7 +4067,6 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 	DataSet *dc;
 	DataProperty *dp;
 	int itmp;
-	string rad_str = "rad";
 	IntegerArgument *iarg;
 	NumberArgument *farg;	
 	xmlChar *value, *lang, *value2;
@@ -4052,16 +4093,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {0, 0, 0};
-	for(unsigned int i = 0; i < 3; i++) {
-		unsigned int dot_i = version.find(".");
-		if(dot_i == string::npos) {
-			version_numbers[i] = s2i(version);
-			break;
-		}
-		version_numbers[i] = s2i(version.substr(0, dot_i));
-		version = version.substr(dot_i + 1, version.length() - (dot_i + 1));
-	}
+	int version_numbers[] = {0, 7, 1};
+	parse_qalculate_version(version, version_numbers);
 	
 	ParseOptions po;
 
@@ -4262,7 +4295,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					if(!xmlStrcmp(child->name, (const xmlChar*) "property")) {
 						dp = new DataProperty(dc);
 						child2 = child->xmlChildrenNode;
-						for(unsigned int i = 0; i < 10; i++) {
+						for(size_t i = 0; i < 10; i++) {
 							best_name[i] = false;
 							nextbest_name[i] = false;
 						}
@@ -4354,7 +4387,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						dp->setTitle(proptitle);
 						dp->setDescription(propdescr);
 						bool b = false;
-						for(unsigned int i = 0; i < 10; i++) {
+						for(size_t i = 0; i < 10; i++) {
 							if(!prop_names[i].empty()) {
 								if(!b && ref_prop_names[i].empty()) {
 									dp->addName(prop_names[i], true, i + 1);
@@ -4365,7 +4398,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 								prop_names[i] = "";
 							}
 						}
-						for(unsigned int i = 0; i < 10; i++) {
+						for(size_t i = 0; i < 10; i++) {
 							if(!ref_prop_names[i].empty()) {
 								if(!b) {
 									dp->addName(ref_prop_names[i], true);
@@ -4522,7 +4555,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				ITEM_SET_NAME_2
 				ITEM_SET_NAME_3
 				ITEM_SET_DTH
-				for(unsigned int i = 1; i <= v->countNames(); i++) {
+				for(size_t i = 1; i <= v->countNames(); i++) {
 					if(v->getName(i).name == "x") {v_x->destroy(); v_x = (UnknownVariable*) v; break;}
 					if(v->getName(i).name == "y") {v_y->destroy(); v_y = (UnknownVariable*) v; break;}
 					if(v->getName(i).name == "z") {v_z->destroy(); v_z = (UnknownVariable*) v; break;}
@@ -4701,18 +4734,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						au->setApproximate(b);
 						au->setHidden(hidden);
 						au->setSystem(usystem);
-						item = au;
-						if(!u_rad) {
-							if(version_numbers[1] < 6 || version_numbers[2] < 3 && name == rad_str) {
-								u_rad = au;
-							}
-							for(unsigned int i = 0; i < 10; i++) {
-								if(names[i].name == rad_str || ref_names[i].name == rad_str) {
-									u_rad = au;
-									break;
-								}
-							}
-						}
+						item = au;						
 						ITEM_SET_NAME_2
 						ITEM_SET_NAME_3
 						addUnit(au, true, is_user_defs);
@@ -4888,7 +4910,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 			break;
 		}
 		while(!nodes.empty() && nodes.back().empty()) {
-			unsigned int cat_i = category.rfind("/");
+			size_t cat_i = category.rfind("/");
 			if(cat_i == string::npos) {
 				category = "";
 			} else {
@@ -4957,7 +4979,7 @@ struct node_tree_item {
 
 int Calculator::saveDataObjects() {
 	int returnvalue = 1;
-	for(unsigned int i = 0; i < data_sets.size(); i++) {
+	for(size_t i = 0; i < data_sets.size(); i++) {
 		int rv = data_sets[i]->saveObjects(NULL, false);
 		if(rv <= 0) returnvalue = rv;
 	}
@@ -4973,7 +4995,7 @@ int Calculator::savePrefixes(const char* file_name, bool save_global) {
 	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);	
 	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
 	cur = doc->children;
-	for(unsigned int i = 0; i < prefixes.size(); i++) {
+	for(size_t i = 0; i < prefixes.size(); i++) {
 		newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "prefix", NULL);
 		if(!prefixes[i]->longName(false).empty()) xmlNewTextChild(newnode, NULL, (xmlChar*) "name", (xmlChar*) prefixes[i]->longName(false).c_str());
 		if(!prefixes[i]->shortName(false).empty()) xmlNewTextChild(newnode, NULL, (xmlChar*) "abbreviation", (xmlChar*) prefixes[i]->shortName(false).c_str());
@@ -4997,21 +5019,21 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 	top.node = doc->children;
 	node_tree_item *item;
 	string cat, cat_sub;
-	for(unsigned int i = 0; i < variables.size(); i++) {
+	for(size_t i = 0; i < variables.size(); i++) {
 		if((save_global || variables[i]->isLocal() || variables[i]->hasChanged()) && variables[i]->category() != _("Temporary")) {
 			item = &top;
 			if(!variables[i]->category().empty()) {
 				cat = variables[i]->category();
-				unsigned int cat_i = cat.find("/"); int cat_i_prev = -1;
+				size_t cat_i = cat.find("/"); size_t cat_i_prev = 0;
 				bool b = false;
 				while(true) {
 					if(cat_i == string::npos) {
-						cat_sub = cat.substr(cat_i_prev + 1, cat.length() - 1 - cat_i_prev);
+						cat_sub = cat.substr(cat_i_prev, cat.length() - cat_i_prev);
 					} else {
-						cat_sub = cat.substr(cat_i_prev + 1, cat_i - 1 - cat_i_prev);
+						cat_sub = cat.substr(cat_i_prev, cat_i - cat_i_prev);
 					}
 					b = false;
-					for(unsigned int i2 = 0; i2 < item->items.size(); i2++) {
+					for(size_t i2 = 0; i2 < item->items.size(); i2++) {
 						if(cat_sub == item->items[i2].category) {
 							item = &item->items[i2];
 							b = true;
@@ -5032,8 +5054,8 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 					if(cat_i == string::npos) {
 						break;
 					}
-					cat_i_prev = cat_i;
-					cat_i = cat.find("/", cat_i_prev + 1);
+					cat_i_prev = cat_i + 1;
+					cat_i = cat.find("/", cat_i_prev);
 				}
 			}
 			cur = item->node;
@@ -5067,7 +5089,7 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 						xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) variables[i]->title(false).c_str());
 					}
 				}
-				for(unsigned int i2 = 1; i2 <= variables[i]->countNames(); i2++)  {
+				for(size_t i2 = 1; i2 <= variables[i]->countNames(); i2++)  {
 					ename = &variables[i]->getName(i2);
 					if(ename->abbreviation) newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "abbreviation", NULL);
 					else if(ename->plural) newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "plural", NULL);
@@ -5181,21 +5203,21 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 	top.node = doc->children;
 	node_tree_item *item;
 	string cat, cat_sub;
-	for(unsigned int i = 0; i < units.size(); i++) {
+	for(size_t i = 0; i < units.size(); i++) {
 		if(save_global || units[i]->isLocal() || units[i]->hasChanged()) {	
 			item = &top;
 			if(!units[i]->category().empty()) {
 				cat = units[i]->category();
-				unsigned int cat_i = cat.find("/"); int cat_i_prev = -1;
+				size_t cat_i = cat.find("/"); size_t cat_i_prev = 0;
 				bool b = false;
 				while(true) {
 					if(cat_i == string::npos) {
-						cat_sub = cat.substr(cat_i_prev + 1, cat.length() - 1 - cat_i_prev);
+						cat_sub = cat.substr(cat_i_prev, cat.length() - cat_i_prev);
 					} else {
-						cat_sub = cat.substr(cat_i_prev + 1, cat_i - 1 - cat_i_prev);
+						cat_sub = cat.substr(cat_i_prev, cat_i - cat_i_prev);
 					}
 					b = false;
-					for(unsigned int i2 = 0; i2 < item->items.size(); i2++) {
+					for(size_t i2 = 0; i2 < item->items.size(); i2++) {
 						if(cat_sub == item->items[i2].category) {
 							item = &item->items[i2];
 							b = true;
@@ -5216,8 +5238,8 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 					if(cat_i == string::npos) {
 						break;
 					}
-					cat_i_prev = cat_i;
-					cat_i = cat.find("/", cat_i_prev + 1);
+					cat_i_prev = cat_i + 1;
+					cat_i = cat.find("/", cat_i_prev);
 				}
 			}
 			cur = item->node;	
@@ -5260,7 +5282,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 						xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) units[i]->title(false).c_str());
 					}
 				}
-				for(unsigned int i2 = 1; i2 <= units[i]->countNames(); i2++)  {
+				for(size_t i2 = 1; i2 <= units[i]->countNames(); i2++)  {
 					ename = &units[i]->getName(i2);
 					if(ename->abbreviation) newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "abbreviation", NULL);
 					else if(ename->plural) newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "plural", NULL);
@@ -5288,7 +5310,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 				}
 				if(!units[i]->isBuiltin()) {
 					if(units[i]->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-						for(unsigned int i2 = 0; i2 < cu->units.size(); i2++) {
+						for(size_t i2 = 0; i2 < cu->units.size(); i2++) {
 							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "part", NULL);
 							xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) cu->units[i2]->firstBaseUnit()->referenceName().c_str());
 							xmlNewTextChild(newnode2, NULL, (xmlChar*) "prefix", (xmlChar*) i2s(cu->units[i2]->prefixExponent()).c_str());
@@ -5330,21 +5352,21 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 	IntegerArgument *iarg;
 	NumberArgument *farg;
 	string str;
-	for(unsigned int i = 0; i < functions.size(); i++) {
+	for(size_t i = 0; i < functions.size(); i++) {
 		if(functions[i]->subtype() != SUBTYPE_DATA_SET && (save_global || functions[i]->isLocal() || functions[i]->hasChanged())) {
 			item = &top;
 			if(!functions[i]->category().empty()) {
 				cat = functions[i]->category();
-				unsigned int cat_i = cat.find("/"); int cat_i_prev = -1;
+				size_t cat_i = cat.find("/"); size_t cat_i_prev = 0;
 				bool b = false;
 				while(true) {
 					if(cat_i == string::npos) {
-						cat_sub = cat.substr(cat_i_prev + 1, cat.length() - 1 - cat_i_prev);
+						cat_sub = cat.substr(cat_i_prev, cat.length() - cat_i_prev);
 					} else {
-						cat_sub = cat.substr(cat_i_prev + 1, cat_i - 1 - cat_i_prev);
+						cat_sub = cat.substr(cat_i_prev, cat_i - cat_i_prev);
 					}
 					b = false;
-					for(unsigned int i2 = 0; i2 < item->items.size(); i2++) {
+					for(size_t i2 = 0; i2 < item->items.size(); i2++) {
 						if(cat_sub == item->items[i2].category) {
 							item = &item->items[i2];
 							b = true;
@@ -5365,8 +5387,8 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 					if(cat_i == string::npos) {
 						break;
 					}
-					cat_i_prev = cat_i;
-					cat_i = cat.find("/", cat_i_prev + 1);
+					cat_i_prev = cat_i + 1;
+					cat_i = cat.find("/", cat_i_prev);
 				}
 			}
 			cur = item->node;
@@ -5392,7 +5414,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 						xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) functions[i]->title(false).c_str());
 					}
 				}
-				for(unsigned int i2 = 1; i2 <= functions[i]->countNames(); i2++)  {
+				for(size_t i2 = 1; i2 <= functions[i]->countNames(); i2++)  {
 					ename = &functions[i]->getName(i2);
 					if(ename->abbreviation) newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "abbreviation", NULL);
 					else if(ename->plural) newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "plural", NULL);
@@ -5420,7 +5442,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 				}
 				if(functions[i]->isBuiltin()) {
 					cur = newnode;
-					for(unsigned int i2 = 1; i2 <= functions[i]->lastArgumentDefinitionIndex(); i2++) {
+					for(size_t i2 = 1; i2 <= functions[i]->lastArgumentDefinitionIndex(); i2++) {
 						arg = functions[i]->getArgumentDefinition(i2);
 						if(arg && !arg->name().empty()) {
 							newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "argument", NULL);
@@ -5433,7 +5455,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 						}
 					}
 				} else {
-					for(unsigned int i2 = 1; i2 <= ((UserFunction*) functions[i])->countSubfunctions(); i2++) {
+					for(size_t i2 = 1; i2 <= ((UserFunction*) functions[i])->countSubfunctions(); i2++) {
 						newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "subfunction", (xmlChar*) ((UserFunction*) functions[i])->getSubfunction(i2).c_str());
 						if(((UserFunction*) functions[i])->subfunctionPrecalculated(i2)) xmlNewProp(newnode2, (xmlChar*) "precalculate", (xmlChar*) "true");
 						else xmlNewProp(newnode2, (xmlChar*) "precalculate", (xmlChar*) "false");
@@ -5446,7 +5468,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 						xmlNewTextChild(newnode, NULL, (xmlChar*) "condition", (xmlChar*) functions[i]->condition().c_str());
 					}
 					cur = newnode;
-					for(unsigned int i2 = 1; i2 <= functions[i]->lastArgumentDefinitionIndex(); i2++) {
+					for(size_t i2 = 1; i2 <= functions[i]->lastArgumentDefinitionIndex(); i2++) {
 						arg = functions[i]->getArgumentDefinition(i2);
 						if(arg) {
 							newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "argument", NULL);
@@ -5552,22 +5574,22 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
 	DataSet *ds;
 	DataProperty *dp;
 	string str;
-	for(unsigned int i = 0; i < functions.size(); i++) {
+	for(size_t i = 0; i < functions.size(); i++) {
 		if(functions[i]->subtype() == SUBTYPE_DATA_SET && (save_global || functions[i]->isLocal() || functions[i]->hasChanged())) {
 			item = &top;
 			ds = (DataSet*) functions[i];
 			if(!ds->category().empty()) {
 				cat = ds->category();
-				unsigned int cat_i = cat.find("/"); int cat_i_prev = -1;
+				size_t cat_i = cat.find("/"); size_t cat_i_prev;
 				bool b = false;
 				while(true) {
 					if(cat_i == string::npos) {
-						cat_sub = cat.substr(cat_i_prev + 1, cat.length() - 1 - cat_i_prev);
+						cat_sub = cat.substr(cat_i_prev, cat.length() - cat_i_prev);
 					} else {
-						cat_sub = cat.substr(cat_i_prev + 1, cat_i - 1 - cat_i_prev);
+						cat_sub = cat.substr(cat_i_prev, cat_i - cat_i_prev);
 					}
 					b = false;
-					for(unsigned int i2 = 0; i2 < item->items.size(); i2++) {
+					for(size_t i2 = 0; i2 < item->items.size(); i2++) {
 						if(cat_sub == item->items[i2].category) {
 							item = &item->items[i2];
 							b = true;
@@ -5588,8 +5610,8 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
 					if(cat_i == string::npos) {
 						break;
 					}
-					cat_i_prev = cat_i;
-					cat_i = cat.find("/", cat_i_prev + 1);
+					cat_i_prev = cat_i + 1;
+					cat_i = cat.find("/", cat_i_prev);
 				}
 			}
 			cur = item->node;
@@ -5612,7 +5634,7 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
 				if((save_global || ds->isLocal()) && !ds->defaultDataFile().empty()) {
 					xmlNewTextChild(newnode, NULL, (xmlChar*) "datafile", (xmlChar*) ds->defaultDataFile().c_str());
 				}
-				for(unsigned int i2 = 1; i2 <= ds->countNames(); i2++)  {
+				for(size_t i2 = 1; i2 <= ds->countNames(); i2++)  {
 					ename = &ds->getName(i2);
 					if(ename->abbreviation) newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "abbreviation", NULL);
 					else if(ename->plural) newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "plural", NULL);
@@ -5710,7 +5732,7 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
 						if(!dp->getUnitString().empty()) {
 							xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) dp->getUnitString().c_str());
 						}
-						for(unsigned int i2 = 1; i2 <= dp->countNames(); i2++)  {
+						for(size_t i2 = 1; i2 <= dp->countNames(); i2++)  {
 							newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "name", NULL);
 							xmlNewProp(newnode2, (xmlChar*) "index", (xmlChar*) i2s(i2).c_str());
 							if(save_global) {
@@ -5738,39 +5760,6 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
 	return returnvalue;
 }
 
-MathStructure Calculator::setAngleValue(const MathStructure &mstruct, const EvaluationOptions &eo) {
-	bool b = false;
-	if(mstruct.isUnit_exp()) {
-		b = true;
-	} else if(mstruct.isMultiplication()) {
-		for(unsigned int i = 0; i < mstruct.countChilds(); i++) {
-			if(mstruct.getChild(i)->isUnit_exp()) {
-				b = true;
-				break;
-			}
-		}
-	}
-	MathStructure mstruct_new(mstruct);
-	if(!b) {
-		switch(eo.angle_unit) {
-			case DEGREES: {
-		    		mstruct_new *= v_pi;
-	    			mstruct_new /= 180;
-				break;
-			}
-			case GRADIANS: {
-				mstruct_new *= v_pi;
-	    			mstruct_new /= 200;
-				break;
-			}
-			default: {}
-		}
-	} else {
-		mstruct_new /= getUnit("rad");
-	}
-	return mstruct_new;
-}
-
 bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int first_row, string delimiter, vector<string> *headers) {
 	FILE *file = fopen(file_name, "r");
 	if(file == NULL) {
@@ -5785,7 +5774,7 @@ bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int fi
 	int columns = 1;
 	int column;
 	mstruct = m_empty_matrix;
-	int is, is_n;
+	size_t is, is_n;
 	bool v_added = false;
 	while(fgets(line, 10000, file)) {
 		row++;
@@ -5797,7 +5786,7 @@ bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int fi
 					row--;
 				} else {
 					is = 0;
-					while((is_n = stmp.find(delimiter, is)) != (int) string::npos) {		
+					while((is_n = stmp.find(delimiter, is)) != string::npos) {		
 						columns++;
 						if(headers) {
 							str1 = stmp.substr(is, is_n - is);
@@ -5823,7 +5812,7 @@ bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int fi
 				}
 				while(column <= columns) {
 					is_n = stmp.find(delimiter, is);
-					if(is_n == (int) string::npos) {
+					if(is_n == string::npos) {
 						str1 = stmp.substr(is, stmp.length() - is);
 					} else {
 						str1 = stmp.substr(is, is_n - is);
@@ -5831,7 +5820,7 @@ bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int fi
 					}
 					CALCULATOR->parse(&mstruct[rows - 1][column - 1], str1);
 					column++;
-					if(is_n == (int) string::npos) {
+					if(is_n == string::npos) {
 						break;
 					}
 				}
@@ -5851,7 +5840,7 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 		first_row = 1;
 	}
 	string filestr = file_name;
-	unsigned int i = filestr.find_last_of("/");
+	size_t i = filestr.find_last_of("/");
 	if(i != string::npos) {
 		filestr = filestr.substr(i + 1, filestr.length() - (i + 1));
 	}
@@ -5867,7 +5856,7 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 	vector<string> header;
 	vector<MathStructure> vectors;
 	MathStructure mstruct = m_empty_matrix;
-	int is, is_n;
+	size_t is, is_n;
 	bool v_added = false;
 	while(fgets(line, 10000, file)) {
 		row++;
@@ -5879,7 +5868,7 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 					row--;
 				} else {
 					is = 0;
-					while((is_n = stmp.find(delimiter, is)) != (int) string::npos) {		
+					while((is_n = stmp.find(delimiter, is)) != string::npos) {		
 						columns++;
 						if(headers) {
 							str1 = stmp.substr(is, is_n - is);
@@ -5912,7 +5901,7 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 				column = 1;
 				while(column <= columns) {
 					is_n = stmp.find(delimiter, is);
-					if(is_n == (int) string::npos) {
+					if(is_n == string::npos) {
 						str1 = stmp.substr(is, stmp.length() - is);
 					} else {
 						str1 = stmp.substr(is, is_n - is);
@@ -5924,7 +5913,7 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 						vectors[column - 1].addItem(CALCULATOR->parse(str1));
 					}
 					column++;
-					if(is_n == (int) string::npos) {
+					if(is_n == string::npos) {
 						break;
 					}
 				}
@@ -5946,7 +5935,7 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 			}
 			category += name;
 		}
-		for(unsigned int i = 0; i < vectors.size(); i++) {
+		for(size_t i = 0; i < vectors.size(); i++) {
 			str1 = "";
 			str2 = "";
 			if(vectors.size() > 1) {
@@ -5995,8 +5984,8 @@ bool Calculator::exportCSV(const MathStructure &mstruct, const char *file_name, 
 	po.decimalpoint_sign = ".";
 	po.comma_sign = ",";
 	if(mcsv.isMatrix()) {
-		for(unsigned int i = 0; i < mcsv.size(); i++) {
-			for(unsigned int i2 = 0; i2 < mcsv[i].size(); i2++) {
+		for(size_t i = 0; i < mcsv.size(); i++) {
+			for(size_t i2 = 0; i2 < mcsv[i].size(); i2++) {
 				if(i2 > 0) fputs(delimiter.c_str(), file);
 				mcsv[i][i2].format(po);
 				fputs(mcsv[i][i2].print(po).c_str(), file);
@@ -6004,7 +5993,7 @@ bool Calculator::exportCSV(const MathStructure &mstruct, const char *file_name, 
 			fputs("\n", file);
 		}
 	} else if(mcsv.isVector()) {
-		for(unsigned int i = 0; i < mcsv.size(); i++) {
+		for(size_t i = 0; i < mcsv.size(); i++) {
 			mcsv[i].format(po);
 			fputs(mcsv[i].print(po).c_str(), file);
 			fputs("\n", file);
@@ -6244,7 +6233,7 @@ bool Calculator::plotVectors(plot_parameters *param, const vector<MathStructure>
 	} else {
 		persistent = true;
 		if(param->filetype == PLOT_FILETYPE_AUTO) {
-			unsigned int i = param->filename.find(".");
+			size_t i = param->filename.find(".");
 			if(i == string::npos) {
 				param->filetype = PLOT_FILETYPE_PNG;
 				error(false, _("No extension in file name. Saving as PNG image."), NULL);
@@ -6370,7 +6359,7 @@ bool Calculator::plotVectors(plot_parameters *param, const vector<MathStructure>
 		plot += "set border 15\n";
 	} else {
 		bool xaxis2 = false, yaxis2 = false;
-		for(unsigned int i = 0; i < pdps.size(); i++) {
+		for(size_t i = 0; i < pdps.size(); i++) {
 			if(pdps[i] && pdps[i]->xaxis2) {
 				xaxis2 = true;
 			}
@@ -6390,7 +6379,7 @@ bool Calculator::plotVectors(plot_parameters *param, const vector<MathStructure>
 		plot += "set xtics nomirror\nset ytics nomirror\n";
 	}
 	plot += "plot ";
-	for(unsigned int i = 0; i < y_vectors.size(); i++) {
+	for(size_t i = 0; i < y_vectors.size(); i++) {
 		if(!y_vectors[i].isUndefined()) {
 			if(i != 0) {
 				plot += ",";
@@ -6449,7 +6438,7 @@ bool Calculator::plotVectors(plot_parameters *param, const vector<MathStructure>
 	po.number_fraction_format = FRACTION_DECIMAL;
 	po.decimalpoint_sign = ".";
 	po.comma_sign = ",";
-	for(unsigned int serie = 0; serie < y_vectors.size(); serie++) {
+	for(size_t serie = 0; serie < y_vectors.size(); serie++) {
 		if(!y_vectors[serie].isUndefined()) {
 			filename_data = homedir;
 			filename_data += "gnuplot_data";
@@ -6462,7 +6451,7 @@ bool Calculator::plotVectors(plot_parameters *param, const vector<MathStructure>
 			plot_data = "";
 			int non_numerical = 0, non_real = 0;
 			string str = "";
-			for(unsigned int i = 1; i <= y_vectors[serie].components(); i++) {
+			for(size_t i = 1; i <= y_vectors[serie].components(); i++) {
 				if(serie < x_vectors.size() && !x_vectors[serie].isUndefined() && x_vectors[serie].components() == y_vectors[serie].components()) {
 					if(!x_vectors[serie].getComponent(i)->isNumber()) {
 						non_numerical++;

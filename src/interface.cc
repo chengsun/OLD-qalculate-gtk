@@ -166,17 +166,21 @@ create_main_window (void)
 	
 
 
-	switch (evalops.angle_unit) {
-		case DEGREES: {
+	switch(evalops.parse_options.angle_unit) {
+		case ANGLE_UNIT_DEGREES: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_degrees")), TRUE);
 			break;
 		}
-		case RADIANS: {
+		case ANGLE_UNIT_RADIANS: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_radians")), TRUE);
 			break;
 		}
-		case GRADIANS: {
+		case ANGLE_UNIT_GRADIANS: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_gradians")), TRUE);
+			break;
+		}
+		default: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_no_default_angle_unit")), TRUE);
 			break;
 		}
 	}
@@ -278,17 +282,21 @@ create_main_window (void)
 		}
 	}
 
-	switch(evalops.angle_unit) {
-		case RADIANS: {
+	switch(evalops.parse_options.angle_unit) {
+		case ANGLE_UNIT_RADIANS: {
 			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_radians")), TRUE);
 			break;
 		}
-		case DEGREES: {
+		case ANGLE_UNIT_DEGREES: {
 			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_degrees")), TRUE);
 			break;
 		}
-		case GRADIANS: {
+		case ANGLE_UNIT_GRADIANS: {
 			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_gradians")), TRUE);
+			break;
+		}
+		default: {
+			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_no_default_angle_unit")), TRUE);
 			break;
 		}
 	}
@@ -351,7 +359,7 @@ create_main_window (void)
 
 	GtkTextIter iter;
 	GtkTextBuffer *tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history")));
-	for(unsigned int i = 0; i < initial_history.size(); i++) {
+	for(size_t i = 0; i < initial_history.size(); i++) {
 		gtk_text_buffer_get_end_iter(tb, &iter);
 		if(i == 0 && initial_history[i] != "-----------------------") {
 			gtk_text_buffer_insert(tb, &iter, "-----------------------\n", -1);
@@ -734,7 +742,7 @@ get_unit_edit_dialog (void)
 	
 	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
 	GList *items = NULL;
-	for(unsigned int i = 0; i < CALCULATOR->units.size(); i++) {
+	for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
 		if(!CALCULATOR->units[i]->category().empty()) {
 			//add category if not present
 			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->units[i]->category().c_str()) == NULL) {
@@ -805,7 +813,7 @@ get_function_edit_dialog (void)
 	
 	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
 	GList *items = NULL;
-	for(unsigned int i = 0; i < CALCULATOR->functions.size(); i++) {
+	for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
 		if(!CALCULATOR->functions[i]->category().empty()) {
 			//add category if not present
 			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->functions[i]->category().c_str()) == NULL) {
@@ -846,7 +854,7 @@ get_variable_edit_dialog (void)
 	
 	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
 	GList *items = NULL;
-	for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
+	for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
 		if(!CALCULATOR->variables[i]->category().empty()) {
 			//add category if not present
 			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->variables[i]->category().c_str()) == NULL) {
@@ -888,7 +896,7 @@ get_unknown_edit_dialog (void)
 	
 	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
 	GList *items = NULL;
-	for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
+	for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
 		if(!CALCULATOR->variables[i]->category().empty()) {
 			//add category if not present
 			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->variables[i]->category().c_str()) == NULL) {
@@ -934,7 +942,7 @@ get_matrix_edit_dialog (void)
 	
 	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
 	GList *items = NULL;
-	for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
+	for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
 		if(!CALCULATOR->variables[i]->category().empty()) {
 			//add category if not present
 			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->variables[i]->category().c_str()) == NULL) {
@@ -1079,7 +1087,7 @@ get_csv_import_dialog (void)
 	
 	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
 	GList *items = NULL;
-	for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
+	for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
 		if(!CALCULATOR->variables[i]->category().empty()) {
 			//add category if not present
 			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->variables[i]->category().c_str()) == NULL) {
@@ -1367,7 +1375,7 @@ GtkWidget* get_periodic_dialog (void) {
 		DataProperty *p_name = dc->getProperty("name");
 		int x_pos, y_pos, group;
 		string weight;
-		for(unsigned int i = 1; i < 120; i++) {
+		for(size_t i = 1; i < 120; i++) {
 			e = dc->getObject(i2s(i));
 			if(e) {
 				x_pos = s2i(e->getProperty(p_xpos));
@@ -1378,13 +1386,13 @@ GtkWidget* get_periodic_dialog (void) {
 				gtk_button_set_relief(GTK_BUTTON(e_button), GTK_RELIEF_HALF);
 				if(!e_style[0]) {
 					l_style = gtk_style_copy(gtk_widget_get_style(gtk_bin_get_child(GTK_BIN(e_button))));
-					for(unsigned int i2 = 0; i2 < 5; i2++) {
+					for(size_t i2 = 0; i2 < 5; i2++) {
 						l_style->text[i2] = c_black;
 						l_style->fg[i2] = c_black;
 					}
-					for(unsigned int i3 = 0; i3 < 12; i3++) {
+					for(size_t i3 = 0; i3 < 12; i3++) {
 						e_style[i3] = gtk_style_copy(gtk_widget_get_style(e_button));
-						for(unsigned int i2 = 0; i2 < 5; i2++) {
+						for(size_t i2 = 0; i2 < 5; i2++) {
 							e_style[i3]->bg_pixmap[i2] = NULL;
 							e_style[i3]->text[i2] = c_black;
 							switch(i3) {

@@ -62,15 +62,15 @@ class ExpressionItem {
 	virtual const ExpressionName &preferredName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false) const;
 	virtual const ExpressionName &preferredInputName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false) const;
 	virtual const ExpressionName &preferredDisplayName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false) const;
-	virtual const ExpressionName &getName(unsigned int index) const;
-	virtual void setName(const ExpressionName &ename, unsigned int index = 1, bool force = true);
-	virtual void setName(string sname, unsigned int index, bool force = true);
-	virtual void addName(const ExpressionName &ename, unsigned int index = 0, bool force = true);
-	virtual void addName(string sname, unsigned int index = 0, bool force = true);
-	virtual unsigned int countNames() const;
+	virtual const ExpressionName &getName(size_t index) const;
+	virtual void setName(const ExpressionName &ename, size_t index = 1, bool force = true);
+	virtual void setName(string sname, size_t index, bool force = true);
+	virtual void addName(const ExpressionName &ename, size_t index = 0, bool force = true);
+	virtual void addName(string sname, size_t index = 0, bool force = true);
+	virtual size_t countNames() const;
 	virtual void clearNames();
 	virtual void clearNonReferenceNames();
-	virtual void removeName(unsigned int index);
+	virtual void removeName(size_t index);
 	virtual bool hasName(const string &sname) const;
 	virtual bool hasNameCaseSensitive(const string &sname) const;
 	virtual const ExpressionName &findName(int abbreviation = -1, int use_unicode = -1, int plural = -1) const;
@@ -111,7 +111,7 @@ class ExpressionItem {
 	virtual void unref();
 	virtual void ref(ExpressionItem *o);
 	virtual void unref(ExpressionItem *o);
-	virtual ExpressionItem *getReferencer(unsigned int index = 1) const;
+	virtual ExpressionItem *getReferencer(size_t index = 1) const;
 	virtual bool changeReference(ExpressionItem *o_from, ExpressionItem *o_to);
 	
 	virtual int type() const = 0;
