@@ -223,6 +223,8 @@ create_main_window (void)
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_enable_units")), evalops.parse_options.units_enabled);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_enable_unknown_variables")), evalops.parse_options.unknowns_enabled);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_calculate_variables")), evalops.calculate_variables);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_allow_complex")), evalops.allow_complex);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_allow_infinite")), evalops.allow_infinite);
 
 	switch (printops.number_fraction_format) {
 		case FRACTION_DECIMAL: {

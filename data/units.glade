@@ -204,7 +204,7 @@
 		      <property name="column_spacing">6</property>
 
 		      <child>
-			<widget class="GtkLabel" id="label59">
+			<widget class="GtkLabel" id="units_label_equals">
 			  <property name="visible">True</property>
 			  <property name="label" translatable="yes">=</property>
 			  <property name="use_underline">False</property>

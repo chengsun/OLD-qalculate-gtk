@@ -3127,7 +3127,7 @@ void Calculator::parseAdd(string &str, MathStructure &mstruct, const ParseOption
 		if(i == string::npos && str[0] != NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1)) {
 			mstruct.add(parseNumber(str, po), s, true);
 		} else {
-			mstruct.add(parseOperators(str, po), s);
+			mstruct.add(parseOperators(str, po), s, true);
 		}
 	}
 }
@@ -3388,20 +3388,27 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 			i3 = i;
 		}
 	}
-	if((i = str.find_first_of(PLUS MINUS, 1)) != (int) string::npos && i != (int) str.length() - 1) {
-		bool b = false;
+	if((i = str.find_first_of(PLUS MINUS, 0)) != (int) string::npos && i != (int) str.length() - 1) {
+		bool b = false, c = false;
 		bool min = false;
 		while(i != (int) string::npos && i != (int) str.length() - 1) {
-			if(is_not_in(OPERATORS EXP, str[i - 1])) {
+//			if((i < 1 || is_not_in(OPERATORS EXP, str[i - 1])) && ((int) str.length() == i + 1 || is_not_in(PLUS MINUS, str[i + 1]))) {
+			if(i < 1 || is_not_in(OPERATORS EXP, str[i - 1])) {
 				str2 = str.substr(0, i);
-				if(b) {
+				if(!c && b) {
 					if(min) {
 						parseAdd(str2, mstruct, po, OPERATION_SUBTRACT);
 					} else {
 						parseAdd(str2, mstruct, po, OPERATION_ADD);
 					}
 				} else {
-					parseAdd(str2, mstruct, po);
+					if(!b && str2.empty()) {
+						c = true;
+					} else {
+						parseAdd(str2, mstruct, po);
+						if(c && min) mstruct.negate();
+						c = false;
+					}
 					b = true;
 				}
 				min = str[i] == MINUS_CH;
@@ -3413,10 +3420,17 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 			
 		}
 		if(b) {
-			if(min) {
-				parseAdd(str, mstruct, po, OPERATION_SUBTRACT);
+			if(c) {
+				parseAdd(str, mstruct, po);
+				if(min) {
+					mstruct.negate();
+				}
 			} else {
-				parseAdd(str, mstruct, po, OPERATION_ADD);
+				if(min) {
+					parseAdd(str, mstruct, po, OPERATION_SUBTRACT);
+				} else {
+					parseAdd(str, mstruct, po, OPERATION_ADD);
+				}
 			}
 			return mstruct;
 		}

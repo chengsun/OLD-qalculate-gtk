@@ -1044,7 +1044,7 @@ int MathStructure::merge_addition(const MathStructure &mstruct, const Evaluation
 int MathStructure::merge_multiplication(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	if(mstruct.type() == STRUCT_NUMBER && m_type == STRUCT_NUMBER) {
 		Number nr(o_number);
-		if(nr.multiply(mstruct.number()) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate())) {
+		if(nr.multiply(mstruct.number()) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
 			o_number = nr;
 			numberUpdated();
 			return 1;
@@ -1250,13 +1250,13 @@ int MathStructure::merge_multiplication(const MathStructure &mstruct, const Eval
 int MathStructure::merge_power(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	if(mstruct.type() == STRUCT_NUMBER && m_type == STRUCT_NUMBER) {
 		Number nr(o_number);
-		if(nr.raise(mstruct.number()) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate())) {
+		if(nr.raise(mstruct.number()) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
 			o_number = nr;
 			numberUpdated();
 			return 1;
 		} else if(mstruct.number().isRational() && !mstruct.number().numerator().isOne()) {
 			nr = o_number;
-			if(nr.raise(mstruct.number().numerator()) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate())) {
+			if(nr.raise(mstruct.number().numerator()) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
 				o_number = nr;
 				numberUpdated();
 				nr.set(mstruct.number().denominator());
@@ -1680,10 +1680,10 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			case STRUCT_NOT: {
 				CHILD(0).calculatesub(eo, feo);
 				childrenUpdated();
-				if(CHILD(0).representsNonPositive()) {
+				if(CHILD(0).representsPositive()) {
 					clear();
 					b = true;
-				} else if(CHILD(0).representsPositive()) {
+				} else if(CHILD(0).representsNonPositive()) {
 					set(1, 1);
 					b = true;
 				}
@@ -2101,7 +2101,9 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 		case STRUCT_NUMBER: {
 			if(mstruct2.isNumber()) {
 				if(!mstruct1.number().isComplex() && !mstruct2.number().isComplex()) {
-					ComparisonResult cmp = mstruct1.number().compare(mstruct2.number());
+					ComparisonResult cmp;
+					if(parent.isMultiplication() && mstruct2.number().isNegative() != mstruct1.number().isNegative()) cmp = mstruct2.number().compare(mstruct1.number());
+					else cmp = mstruct1.number().compare(mstruct2.number());
 					if(cmp == COMPARISON_RESULT_LESS) return -1;
 					else if(cmp == COMPARISON_RESULT_GREATER) return 1;
 					return 0;
@@ -3942,7 +3944,8 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		case STRUCT_NUMBER: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_VARIABLE: {}
 		case STRUCT_SYMBOLIC: {
-			if(namelen_prev > 1 || namelen_this > 1) return MULTIPLICATION_SIGN_OPERATOR;
+			if(t != STRUCT_NUMBER && (namelen_prev > 1 || namelen_this > 1)) return MULTIPLICATION_SIGN_OPERATOR;
+			if(namelen_this > 1) return MULTIPLICATION_SIGN_SPACE;
 			return MULTIPLICATION_SIGN_NONE;
 		}
 		case STRUCT_UNIT: {

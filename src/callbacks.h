@@ -52,7 +52,7 @@ void on_tVariableCategories_selection_changed(GtkTreeSelection *treeselection, g
 void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 
-void execute_expression();
+void execute_expression(bool force = true);
 
 void recreate_recent_functions();
 void recreate_recent_variables();
@@ -207,6 +207,8 @@ void on_menu_item_enable_functions_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_enable_units_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_enable_unknown_variables_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_calculate_variables_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_allow_complex_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_allow_infinite_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_new_unknown_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_new_variable_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_new_matrix_activate(GtkMenuItem *w, gpointer user_data);

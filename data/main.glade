@@ -951,6 +951,35 @@
 			      <signal name="activate" handler="on_menu_item_calculate_variables_activate" last_modification_time="Wed, 10 Mar 2004 15:32:15 GMT"/>
 			    </widget>
 			  </child>
+			  
+			  <child>
+			    <widget class="GtkMenuItem" id="separator29">
+			      <property name="visible">True</property>
+			    </widget>
+			  </child>
+			  
+			  <child>
+			    <widget class="GtkCheckMenuItem" id="menu_item_allow_complex">
+			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Disables/enables complex numbers in result</property>
+			      <property name="label" translatable="yes">Allow Complex Result</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">True</property>
+			      <signal name="activate" handler="on_menu_item_allow_complex_activate" last_modification_time="Wed, 18 Jul 2004 23:32:15 GMT"/>
+			    </widget>
+			  </child>
+			  
+			  <child>
+			    <widget class="GtkCheckMenuItem" id="menu_item_allow_infinite">
+			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Disables/enables infinite numbers in result</property>
+			      <property name="label" translatable="yes">Allow Infinite Result</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">True</property>
+			      <signal name="activate" handler="on_menu_item_allow_infinite_activate" last_modification_time="Wed, 18 Jul 2004 23:42:15 GMT"/>
+			    </widget>
+			  </child>
+			  
 			</widget>
 		      </child>
 		    </widget>

@@ -1,3 +1,19 @@
+2004-07-19 Niklas Knutsson  <nq@altern.org>
+
+	* -5^2 = (-5)^2 -> = -(5^2)
+	* Beautify 2 * -1
+	* Fix not
+
+2004-07-18 Niklas Knutsson  <nq@altern.org>
+
+	* Show if precalculation display is approximate
+	* Show if approximate conversion in units manager
+	* Enable unicode signs in from-unit label
+	* Deillion -> Decillion
+	* Refine when to update result and display of result
+	* Ability to disable complex results
+	* Ability to disable infinite results
+
 2004-07-17 Niklas Knutsson  <nq@altern.org>
 
 	* Update variable lists in GUI after save function has been called
