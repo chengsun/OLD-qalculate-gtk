@@ -1,5 +1,7 @@
 2003-08-09  Niklas Knutsson  <nq@altern.org>
 
+	* Swedish translation
+	* More strings to translate
 	* Binary output
 	* Fix BASE()
 	* Fix prefixes in expression
