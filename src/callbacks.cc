@@ -3068,7 +3068,7 @@ void setResult(Prefix *prefix = NULL, bool update_history = true) {
 	b_busy = true;	
 
 	GtkTextIter iter;
-	GtkTextBuffer *tb;
+	GtkTextBuffer *tb = NULL;
 
 	//update "ans" variables
 	vans->set(*mstruct);
@@ -6617,8 +6617,16 @@ void on_menu_item_rpn_mode_activate(GtkMenuItem *w, gpointer user_data) {
 	evalops.parse_options.rpn = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	gtk_widget_grab_focus(expression);
 }
+void fetch_exchange_rates(int timeout) {
+	GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO, GTK_BUTTONS_NONE, "Fetching exchange rates.");
+	gtk_widget_show_now(dialog);
+	while(gtk_events_pending()) gtk_main_iteration();
+	CALCULATOR->fetchExchangeRates(timeout);
+	gtk_widget_destroy(dialog);
+	gtk_widget_grab_focus(expression);
+}
 void on_menu_item_fetch_exchange_rates_activate(GtkMenuItem *w, gpointer user_data) {
-	CALCULATOR->fetchExchangeRates();
+	fetch_exchange_rates(15);
 	CALCULATOR->loadExchangeRates();
 }
 void on_menu_item_save_defs_activate(GtkMenuItem *w, gpointer user_data) {

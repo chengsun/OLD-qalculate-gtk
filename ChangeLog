@@ -1,3 +1,15 @@
+2004-07-11 Niklas Knutsson  <nq@altern.org>
+
+	* Do not segfault on exit
+	* Fix compilation warnings
+
+2004-07-10 Niklas Knutsson  <nq@altern.org>
+
+	* Do not try to fetch exchange rates everytime they are missing
+	* Set fetch timeout to 5 seconds on first run
+	* Inform user that we are trying to fetch exchange rates
+	* Update fetch exchange rates at startup in preferences dialog
+
 2004-07-05 Niklas Knutsson  <nq@altern.org>
 
 	* Follow ISO 8601 standard for week numbers (glib doesn't)

@@ -1009,11 +1009,15 @@ void Calculator::clearBuffers() {
 	}
 }
 void Calculator::abort() {
-	pthread_cancel(calculate_thread);
-	restoreState();
-	clearBuffers();
-	b_busy = false;
-	pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, calculate_pipe_r);
+	if(calculate_thread_stopped) {
+		b_busy = false;
+	} else {
+		pthread_cancel(calculate_thread);
+		restoreState();
+		clearBuffers();
+		b_busy = false;
+		pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, calculate_pipe_r);
+	}
 }
 void Calculator::abort_this() {
 	restoreState();
@@ -1026,8 +1030,12 @@ bool Calculator::busy() {
 	return b_busy;
 }
 void Calculator::terminateThreads() {
-	pthread_cancel(calculate_thread);
-	pthread_cancel(print_thread);
+	if(!calculate_thread_stopped) {
+		pthread_cancel(calculate_thread);
+	}
+	if(!print_thread_stopped) {
+		pthread_cancel(print_thread);
+	}
 }
 
 string Calculator::localizeExpression(string str) const {
@@ -3094,7 +3102,7 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 		po2.rpn = false;
 		vector<string> stack;
 		bool b = false;
-		MathOperation s;
+		MathOperation s = OPERATION_ADD;
 		while(true) {
 			i = str.find_first_of(OPERATORS EXP SPACE, i3 + 1);
 			if(i == (int) string::npos) {
@@ -3439,8 +3447,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 		localebase = locale;
 	}
 
-	int exponent, litmp;
-	bool active, hidden, b;
+	int exponent = 1, litmp = 0;
+	bool active = false, hidden = false, b = false;
 	Number nr;
 	Function *f;
 	Variable *v;
@@ -4373,8 +4381,8 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 	xmlNodePtr cur, newnode, newnode2, newnode3;	
 	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);	
 	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
-	CompositeUnit *cu;
-	AliasUnit *au;
+	CompositeUnit *cu = NULL;
+	AliasUnit *au = NULL;
 	node_tree_item top;
 	top.category = "";
 	top.node = doc->children;
@@ -5016,7 +5024,7 @@ bool Calculator::loadExchangeRates() {
 	filename += "eurofxref-daily.xml";
 	doc = xmlParseFile(filename.c_str());
 	if(doc == NULL) {
-		fetchExchangeRates();
+		//fetchExchangeRates();
 		doc = xmlParseFile(filename.c_str());
 		if(doc == NULL) {
 			return false;
@@ -5064,7 +5072,7 @@ bool Calculator::canFetch() {
 	}
 	return false;
 }
-bool Calculator::fetchExchangeRates() {
+bool Calculator::fetchExchangeRates(int timeout) {
 	pid_t pid;
 	int status;
 	string homedir = "", filename_arg;
@@ -5081,7 +5089,9 @@ bool Calculator::fetchExchangeRates() {
 	
 	pid = fork();
 	if(pid == 0) {
-		execlp("wget", "--quiet", filename_arg.c_str(), "--tries=1", "--timeout=15", "http://www.ecb.int/stats/eurofxref/eurofxref-daily.xml", NULL);
+		string timeout_s = "--timeout=";
+		timeout_s += i2s(timeout);
+		execlp("wget", "--quiet", filename_arg.c_str(), "--tries=1", timeout_s.c_str(), "http://www.ecb.int/stats/eurofxref/eurofxref-daily.xml", NULL);
 		_exit(EXIT_FAILURE);
 	} else if(pid < 0) {
 		//error

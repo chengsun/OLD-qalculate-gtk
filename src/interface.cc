@@ -72,7 +72,7 @@ GtkWidget *f_menu ,*v_menu, *u_menu, *u_menu2, *recent_menu;
 GtkAccelGroup *accel_group;
 
 extern bool show_buttons;
-extern bool save_mode_on_exit, save_defs_on_exit, load_global_defs, hyp_is_on;
+extern bool save_mode_on_exit, save_defs_on_exit, load_global_defs, hyp_is_on, fetch_exchange_rates_at_startup;
 extern bool use_custom_result_font, use_custom_expression_font;
 extern string custom_result_font, custom_expression_font;
 extern string multi_sign;
@@ -567,6 +567,7 @@ get_preferences_dialog (void)
 		g_free(gstr);
 	
 		g_assert (glade_xml_get_widget (preferences_glade, "preferences_dialog") != NULL);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_fetch_exchange_rates")), fetch_exchange_rates_at_startup);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_save_mode")), save_mode_on_exit);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_unicode_signs")), printops.use_unicode_signs);	
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_save_defs")), save_defs_on_exit);

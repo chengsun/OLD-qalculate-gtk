@@ -207,7 +207,7 @@ void Number::set(string number, int base) {
 					break;
 				}
 				case '(': {
-					int multi = 1, multi2;
+					int multi = 1, multi2 = 0;
 					bool turn = false;
 					bool error = false;
 					i++;

@@ -1,11 +1,9 @@
 * Sort out when small floats really are zero
 * Sort out x^-y -- (1/3)/(x+y)=1/3(x+y) but 1/3(x+y)=1/(3x+3y)
 * Quoted ")" in function
-* Limit fraction precision
 * Do not recalculate plot data when it has not changed
 * Instant apply for all parameters in plot
 * Plot-functions
-* Check if unit is used on delete
 * Replace pointers to unit when unit type has changed (a different object must be created)
 * Export to CSV file
 * Sort out percentile and provide alternative methods

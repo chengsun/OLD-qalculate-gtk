@@ -47,6 +47,7 @@ extern bool b_busy;
 extern vector<string> recent_functions_pre;
 extern vector<string> recent_variables_pre;
 extern vector<string> recent_units_pre;
+extern GtkWidget *expression;
 
 GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *decimals_glade;
 GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *nbases_glade, *plot_glade, *precision_glade;
@@ -131,8 +132,9 @@ int main (int argc, char **argv) {
 	while(gtk_events_pending()) gtk_main_iteration();
 
 	//exchange rates
-	if(fetch_exchange_rates_at_startup && canfetch) {
-		CALCULATOR->fetchExchangeRates();
+	if((fetch_exchange_rates_at_startup || first_time) && canfetch) {
+		fetch_exchange_rates(5);
+		while(gtk_events_pending()) gtk_main_iteration();
 	}
 	CALCULATOR->loadExchangeRates();
 

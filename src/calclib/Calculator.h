@@ -278,7 +278,7 @@ class Calculator {
 	
 	bool canFetch();
 	bool loadExchangeRates();
-	bool fetchExchangeRates();
+	bool fetchExchangeRates(int timeout = 15);
 	bool checkExchangeRatesDate();
 	
 	bool canPlot();
