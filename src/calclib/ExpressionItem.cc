@@ -167,13 +167,15 @@ const string &ExpressionItem::referenceName() const {
 	return empty_string;
 }
 
-const ExpressionName &ExpressionItem::preferredName(bool abbreviation, bool use_unicode, bool plural) const {
+const ExpressionName &ExpressionItem::preferredName(bool abbreviation, bool use_unicode, bool plural, bool reference) const {
 	if(names.size() == 1) return names[0];
 	int index = -1;
 	for(unsigned int i = 0; i < names.size(); i++) {
-		if(names[i].abbreviation == abbreviation && names[i].unicode == use_unicode && names[i].plural == plural) return names[i];
+		if((!reference || names[i].reference) && names[i].abbreviation == abbreviation && names[i].unicode == use_unicode && names[i].plural == plural) return names[i];
 		if(index < 0) {
 			index = i;
+		} else if(reference && names[i].reference != names[index].reference) {
+			if(names[i].reference) index = i;
 		} else if(!use_unicode && names[i].unicode != names[index].unicode) {
 			if(!names[i].unicode) index = i;
 		} else if(names[i].abbreviation != names[index].abbreviation) {
@@ -187,13 +189,15 @@ const ExpressionName &ExpressionItem::preferredName(bool abbreviation, bool use_
 	if(index >= 0) return names[index];
 	return empty_expression_name;
 }
-const ExpressionName &ExpressionItem::preferredInputName(bool abbreviation, bool use_unicode, bool plural) const {
+const ExpressionName &ExpressionItem::preferredInputName(bool abbreviation, bool use_unicode, bool plural, bool reference) const {
 	if(names.size() == 1) return names[0];
 	int index = -1;
 	for(unsigned int i = 0; i < names.size(); i++) {
-		if(names[i].abbreviation == abbreviation && names[i].unicode == use_unicode && names[i].plural == plural && !names[i].avoid_input) return names[i];
+		if((!reference || names[i].reference) && names[i].abbreviation == abbreviation && names[i].unicode == use_unicode && names[i].plural == plural && !names[i].avoid_input) return names[i];
 		if(index < 0) {
 			index = i;
+		} else if(reference && names[i].reference != names[index].reference) {
+			if(names[i].reference) index = i;
 		} else if(!use_unicode && names[i].unicode != names[index].unicode) {
 			if(!names[i].unicode) index = i;
 		} else if(names[i].avoid_input != names[index].avoid_input) {
@@ -211,8 +215,8 @@ const ExpressionName &ExpressionItem::preferredInputName(bool abbreviation, bool
 	if(index >= 0) return names[index];
 	return empty_expression_name;
 }
-const ExpressionName &ExpressionItem::preferredDisplayName(bool abbreviation, bool use_unicode, bool plural) const {
-	return preferredName(abbreviation, use_unicode, plural);
+const ExpressionName &ExpressionItem::preferredDisplayName(bool abbreviation, bool use_unicode, bool plural, bool reference) const {
+	return preferredName(abbreviation, use_unicode, plural, reference);
 }
 const ExpressionName &ExpressionItem::getName(unsigned int index) const {
 	if(index > 0 && index <= names.size()) return names[index - 1];

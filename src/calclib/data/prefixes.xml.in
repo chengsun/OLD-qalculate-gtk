@@ -32,7 +32,8 @@
   </prefix>
   <prefix>
     <name>micro</name>
-    <unicode>µ</unicode>
+    <abbreviation>n</abbreviation>
+    <unicode>&#xB5;</unicode>
     <exponent>-6</exponent>
   </prefix>
   <prefix>

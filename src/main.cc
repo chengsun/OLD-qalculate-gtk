@@ -29,7 +29,7 @@
 
 MathStructure *mstruct, *parsed_mstruct;
 string *parsed_to_str;
-KnownVariable *vans, *vAns;
+KnownVariable *vans;
 GtkWidget *functions_window;
 string selected_function_category;
 Function *selected_function;
@@ -148,23 +148,22 @@ int main (int argc, char **argv) {
 	if(load_global_defs && !CALCULATOR->loadGlobalDefinitions()) {
 		g_print(_("Failed to load global definitions!\n"));
 	}
+	
+	/*CALCULATOR->savePrefixes("prefixes.xml.new", true);
+	CALCULATOR->saveUnits("units.xml.new", true);
+	CALCULATOR->saveVariables("variables.xml.new", true);
+	CALCULATOR->saveFunctions("functions.xml.new", true);*/
 
 	//load local definitions
 	CALCULATOR->loadLocalDefinitions();
 
 	//get ans variable objects or create if they do not exist
 	vans = (KnownVariable*) CALCULATOR->getVariable(_("ans"));
-	vAns = (KnownVariable*) CALCULATOR->getVariable(_("Ans"));
 	if(!vans) {
 		vans = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), _("ans"), *mstruct, _("Answer"), false));
 	} else {
 		vans->set(*mstruct);
 	}
-	if(!vAns) {
-		vAns = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), _("Ans"), *mstruct, _("Answer"), false));
-	} else {
-		vAns->set(*mstruct);
-	}	
 	//reset
 	functions_window = NULL;
 	selected_function_category = _("All");

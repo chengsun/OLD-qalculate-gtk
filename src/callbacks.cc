@@ -46,7 +46,7 @@ extern GtkListStore *completion_store;
 
 extern GtkWidget *expression;
 extern GtkWidget *f_menu, *v_menu, *u_menu, *u_menu2, *recent_menu;
-extern KnownVariable *vans, *vAns;
+extern KnownVariable *vans;
 extern GtkWidget *tPlotFunctions;
 extern GtkListStore *tPlotFunctions_store;
 extern GtkWidget *tFunctionArguments;
@@ -895,7 +895,7 @@ void update_variables_tree() {
 void setVariableTreeItem(GtkTreeIter &iter2, Variable *v) {
 	gtk_list_store_append(tVariables_store, &iter2);
 	string value = "";
-	if(v == vans || v == vAns) {
+	if(v == vans) {
 		value = _("the previous result");
 	} else if(v->isKnown()) {
 		if(((KnownVariable*) v)->isExpression()) {
@@ -935,8 +935,7 @@ void setVariableTreeItem(GtkTreeIter &iter2, Variable *v) {
 			if(value.empty()) value = _("unknown");
 		} else {
 			value = _("default assumptions");
-		}
-		
+		}		
 	}
 	gtk_list_store_set(tVariables_store, &iter2, 0, v->title(true).c_str(), 1, value.c_str(), 2, (gpointer) v, -1);
 	if(v == selected_variable) {
@@ -960,6 +959,7 @@ void on_tVariableCategories_selection_changed(GtkTreeSelection *treeselection, g
 	gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_delete"), FALSE);
 	gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_deactivate"), FALSE);
 	gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_export"), FALSE);
+
 	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
 		gchar *gstr;
 		gtk_tree_model_get(model, &iter, 1, &gstr, -1);
@@ -971,6 +971,7 @@ void on_tVariableCategories_selection_changed(GtkTreeSelection *treeselection, g
 		} else if(selected_variable_category == _("Inactive")) {
 			b_inactive = true;
 		}
+
 		if(!b_all && !no_cat && !b_inactive && selected_variable_category[0] == '/') {
 			string str = selected_variable_category.substr(1, selected_variable_category.length() - 1);
 			for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
@@ -985,11 +986,13 @@ void on_tVariableCategories_selection_changed(GtkTreeSelection *treeselection, g
 				}
 			}
 		}
+
 		if(!selected_variable || !gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(tVariables)), &model2, &iter2)) {
 			gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tVariables_store), &iter2);
 			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tVariables)), &iter2);
 		}
 		g_free(gstr);
+
 	} else {
 		selected_variable_category = "";
 	}
@@ -1015,9 +1018,9 @@ void on_tVariables_selection_changed(GtkTreeSelection *treeselection, gpointer u
 		selected_variable = v;
 		for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
 			if(CALCULATOR->variables[i] == selected_variable) {
-				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_edit"), CALCULATOR->variables[i] != vans && CALCULATOR->variables[i] != vAns);
-				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_insert"), CALCULATOR->variables[i]->isActive() && CALCULATOR->variables[i] != vans && CALCULATOR->variables[i] != vAns);
-				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_deactivate"), CALCULATOR->variables[i] != vans && CALCULATOR->variables[i] != vAns);
+				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_edit"), CALCULATOR->variables[i] != vans);
+				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_insert"), CALCULATOR->variables[i]->isActive() && CALCULATOR->variables[i] != vans);
+				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_deactivate"), CALCULATOR->variables[i] != vans);
 				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_export"), CALCULATOR->variables[i]->isKnown());
 				if(CALCULATOR->variables[i]->isActive()) {
 					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (variables_glade, "variables_buttonlabel_deactivate")), _("Deactivate"));
@@ -1025,7 +1028,7 @@ void on_tVariables_selection_changed(GtkTreeSelection *treeselection, gpointer u
 					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (variables_glade, "variables_buttonlabel_deactivate")), _("Activate"));
 				}
 				//user cannot delete global definitions
-				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_delete"), CALCULATOR->variables[i]->isLocal() && CALCULATOR->variables[i] != vans && CALCULATOR->variables[i] != vAns && CALCULATOR->variables[i] != CALCULATOR->v_x && CALCULATOR->variables[i] != CALCULATOR->v_y && CALCULATOR->variables[i] != CALCULATOR->v_z);
+				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_delete"), CALCULATOR->variables[i]->isLocal() && CALCULATOR->variables[i] != vans && CALCULATOR->variables[i] != CALCULATOR->v_x && CALCULATOR->variables[i] != CALCULATOR->v_y && CALCULATOR->variables[i] != CALCULATOR->v_z);
 			}
 		}
 	} else {
@@ -1123,9 +1126,9 @@ void setUnitTreeItem(GtkTreeIter &iter2, Unit *u) {
 	string snames, sbase;
 	//display name, plural name and short name in the second column
 	AliasUnit *au;
-	for(unsigned int i = 1; i < u->countNames(); i++) {
+	for(unsigned int i = 1; i <= u->countNames(); i++) {
 		if(i > 1) snames += " / ";
-		snames = u->getName(i).name;
+		snames += u->getName(i).name;
 	}
 	//depending on unit type display relation to base unit(s)
 	switch(u->unitType()) {
@@ -2783,23 +2786,29 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			}
 			
 			const ExpressionName *ename = &m.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, m.isPlural());
-			if(m.prefix() && po.abbreviate_names && ename->abbreviation && (ename->suffix || !ename->name.find("_"))) {
+			if(m.prefix() && po.abbreviate_names && ename->abbreviation && (ename->suffix || ename->name.find("_") == string::npos)) {
 				str += m.prefix()->shortName(true, po.use_unicode_signs);
 			} else if(m.prefix()) {
 				str += m.prefix()->longName(true, po.use_unicode_signs);
 			}
 			if(ename->suffix) {
 				unsigned int i = ename->name.rfind('_');
-				if(i == string::npos && i != ename->name.length() - 1 && i != 0) {
-					str += ename->name.substr(0, ename->name.length() - 1);
-					str += "<sub>";
-					str += ename->name[ename->name.length() - 1];
-					str += "</sub>";
+				bool b = i == string::npos || i == ename->name.length() - 1 || i == 0;
+				if(b) str += ename->name.substr(0, ename->name.length() - 1);
+				else str += ename->name.substr(0, i);
+				if(ips.power_depth > 0) {
+					str += TEXT_TAGS_XSMALL;
 				} else {
-					str += ename->name.substr(0, i);
-					str += "<sub>";
-					str += ename->name.substr(i + 1, ename->name.length() - (i + 1));
-					str += "</sub>";
+					str += TEXT_TAGS_SMALL;
+				}
+				str += "<sub>";
+				if(b) str += ename->name[ename->name.length() - 1];
+				else str += ename->name.substr(i + 1, ename->name.length() - (i + 1));
+				str += "</sub>";
+				if(ips.power_depth > 0) {
+					str += TEXT_TAGS_XSMALL_END;
+				} else {
+					str += TEXT_TAGS_SMALL_END;
 				}
 			} else {
 				str += ename->name;
@@ -2810,7 +2819,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 				str += TEXT_TAGS_SMALL_END;
 			} else {
 				str += TEXT_TAGS_END;
-			}		
+			}
 			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
 			pango_layout_set_markup(layout, str.c_str(), -1);
 			pango_layout_get_pixel_size(layout, &w, &h);
@@ -2842,16 +2851,22 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			const ExpressionName *ename = &m.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs);
 			if(ename->suffix) {
 				unsigned int i = ename->name.rfind('_');
-				if(i == string::npos && i != ename->name.length() - 1 && i != 0) {
-					str += ename->name.substr(0, ename->name.length() - 1);
-					str += "<sub>";
-					str += ename->name[ename->name.length() - 1];
-					str += "</sub>";
+				bool b = i == string::npos || i == ename->name.length() - 1 || i == 0;
+				if(b) str += ename->name.substr(0, ename->name.length() - 1);
+				else str += ename->name.substr(0, i);
+				if(ips.power_depth > 0) {
+					str += TEXT_TAGS_XSMALL;
 				} else {
-					str += ename->name.substr(0, i);
-					str += "<sub>";
-					str += ename->name.substr(i + 1, ename->name.length() - (i + 1));
-					str += "</sub>";
+					str += TEXT_TAGS_SMALL;
+				}
+				str += "<sub>";
+				if(b) str += ename->name[ename->name.length() - 1];
+				else str += ename->name.substr(i + 1, ename->name.length() - (i + 1));
+				str += "</sub>";
+				if(ips.power_depth > 0) {
+					str += TEXT_TAGS_XSMALL_END;
+				} else {
+					str += TEXT_TAGS_SMALL_END;
 				}
 			} else {
 				str += ename->name;
@@ -2911,16 +2926,22 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			const ExpressionName *ename = &m.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs);
 			if(ename->suffix) {
 				unsigned int i = ename->name.rfind('_');
-				if(i == string::npos && i != ename->name.length() - 1 && i != 0) {
-					str += ename->name.substr(0, ename->name.length() - 1);
-					str += "<sub>";
-					str += ename->name[ename->name.length() - 1];
-					str += "</sub>";
+				bool b = i == string::npos || i == ename->name.length() - 1 || i == 0;
+				if(b) str += ename->name.substr(0, ename->name.length() - 1);
+				else str += ename->name.substr(0, i);
+				if(ips.power_depth > 0) {
+					str += TEXT_TAGS_XSMALL;
 				} else {
-					str += ename->name.substr(0, i);
-					str += "<sub>";
-					str += ename->name.substr(i + 1, ename->name.length() - (i + 1));
-					str += "</sub>";
+					str += TEXT_TAGS_SMALL;
+				}
+				str += "<sub>";
+				if(b) str += ename->name[ename->name.length() - 1];
+				else str += ename->name.substr(i + 1, ename->name.length() - (i + 1));
+				str += "</sub>";
+				if(ips.power_depth > 0) {
+					str += TEXT_TAGS_XSMALL_END;
+				} else {
+					str += TEXT_TAGS_SMALL_END;
 				}
 			} else {
 				str += ename->name;
@@ -3190,7 +3211,6 @@ void setResult(Prefix *prefix = NULL, bool update_history = true, bool update_pa
 
 	//update "ans" variables
 	vans->set(*mstruct);
-	vAns->set(*mstruct);
 
 	if(update_history) {
 		//result_text = expr;

@@ -1,3 +1,14 @@
+2004-08-06 Niklas Knutsson  <nq@altern.org>
+
+	* More work on name system
+	* Remove quarter unit
+	* Regenerate definition files
+	* Remove duplicate names
+
+2004-08-05 Niklas Knutsson  <nq@altern.org>
+
+	* Do not prefix currencies in all locales
+
 2004-08-04 Niklas Knutsson  <nq@altern.org>
 
 	* New system for variable, unit and function names

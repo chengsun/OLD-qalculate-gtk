@@ -133,6 +133,8 @@ class Calculator {
 	Unit *u_rad, *u_euro;
 	Prefix *null_prefix;
   
+  	bool place_currency_code_before, place_currency_sign_before;
+  
   	bool b_busy, calculate_thread_stopped, print_thread_stopped;
 	string expression_to_calculate, tmp_print_result;
 	PrintOptions tmp_printoptions;

@@ -31,7 +31,7 @@ Unit::Unit(string cat_, string name_, string plural_, string singular_, string t
 	}
 	if(!singular_.empty()) {
 		names.resize(names.size() + 1);
-		names[names.size() - 1].name = name_;
+		names[names.size() - 1].name = singular_;
 		names[names.size() - 1].unicode = false;
 		names[names.size() - 1].abbreviation = false;
 		names[names.size() - 1].case_sensitive = text_length_is_one(names[names.size() - 1].name);
@@ -42,7 +42,7 @@ Unit::Unit(string cat_, string name_, string plural_, string singular_, string t
 	}
 	if(!plural_.empty()) {
 		names.resize(names.size() + 1);
-		names[names.size() - 1].name = name_;
+		names[names.size() - 1].name = plural_;
 		names[names.size() - 1].unicode = false;
 		names[names.size() - 1].abbreviation = false;
 		names[names.size() - 1].case_sensitive = text_length_is_one(names[names.size() - 1].name);

@@ -3,8 +3,6 @@
   <category>
     <_title>Currency</_title>
     <builtin_unit name="EUR">
-      <_singular>euro</_singular>
-      <_plural>euros</_plural>
       <_title>European Euros</_title>
       <abbreviation index="1">
         <reference>true</reference>
@@ -12,8 +10,14 @@
       </abbreviation>
       <abbreviation index="2">
         <unicode>true</unicode>
-        <_name>€</_name>
+        <_name>&#x20AC;</_name>
       </abbreviation>
+      <name index="3">
+        <_name>euro</_name>
+      </name>
+      <plural index="4">
+        <_name>euros</_name>
+      </plural>
     </builtin_unit>
     <builtin_unit name="USD">
       <_title>U.S. Dollars</_title>
@@ -32,7 +36,6 @@
       </plural>
     </builtin_unit>
     <builtin_unit name="JPY">
-      <_singular>yen</_singular>
       <_title>Japanese Yen</_title>
       <abbreviation index="1">
         <reference>true</reference>
@@ -40,11 +43,18 @@
       </abbreviation>
       <abbreviation index="2">
         <unicode>true</unicode>
-        <_name>¥</_name>
+        <_name>&#xA5;</_name>
       </abbreviation>
+      <name index="3">
+        <_name>yen</_name>
+      </name>
     </builtin_unit>
     <builtin_unit name="DKK">
       <_title>Danish Kroner</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>DKK</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="GBP">
       <_title>British Pounds</_title>
@@ -54,431 +64,763 @@
       </abbreviation>
       <abbreviation index="2">
         <unicode>true</unicode>
-        <_name>£</_name>
+        <_name>&#xA3;</_name>
       </abbreviation>
     </builtin_unit>
     <builtin_unit name="SEK">
       <_title>Swedish Krona</_title>
       <abbreviation index="1">
-      	<reference>true</reference>
-      	<_name>SEK</_name>
+        <reference>true</reference>
+        <_name>SEK</_name>
       </abbreviation>
     </builtin_unit>
     <builtin_unit name="CHF">
       <_title>Swiss Francs</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>CHF</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="ISK">
       <_title>Icelandic Krona</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>ISK</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="NOK">
       <_title>Norwegian Kroner</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>NOK</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="BGN">
-      <_singular>lev</_singular>
       <_title>Bulgarian Lev</_title>
+      <name index="1">
+        <_name>lev</_name>
+      </name>
+      <abbreviation index="2">
+        <reference>true</reference>
+        <_name>BGN</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="CYP">
       <_title>Cypriot Pound</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>CYP</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="CZK">
       <_title>Czech Koruna</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>CZK</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="EEK">
       <_title>Estonian Kroon</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>EEK</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="HUF">
-      <_singular>forint</_singular>
       <_title>Hungarian Forint</_title>
+      <name index="1">
+        <_name>forint</_name>
+      </name>
+      <abbreviation index="2">
+        <reference>true</reference>
+        <_name>HUF</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="LTL">
-      <_singular>lit</_singular>
       <_title>Lithuanian Lit</_title>
+      <name index="1">
+        <_name>lit</_name>
+      </name>
+      <abbreviation index="2">
+        <reference>true</reference>
+        <_name>LTL</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="LVL">
-      <_singular>lat</_singular>
       <_title>Latvian Lat</_title>
+      <name index="1">
+        <_name>lat</_name>
+      </name>
+      <abbreviation index="2">
+        <reference>true</reference>
+        <_name>LVL</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="MTL">
       <_title>Maltese Lira</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>MTL</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="PLN">
-      <_singular>zloty</_singular>
       <_title>Polish Zloty</_title>
+      <name index="1">
+        <_name>zloty</_name>
+      </name>
+      <abbreviation index="2">
+        <reference>true</reference>
+        <_name>PLN</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="ROL">
-      <_singular>leu</_singular>
       <_title>Romanian Leu</_title>
+      <name index="1">
+        <_name>leu</_name>
+      </name>
+      <abbreviation index="2">
+        <reference>true</reference>
+        <_name>ROL</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="SIT">
-      <_singular>tolar</_singular>
       <_title>Slovenian Tolar</_title>
+      <name index="1">
+        <_name>tolar</_name>
+      </name>
+      <abbreviation index="2">
+        <reference>true</reference>
+        <_name>SIT</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="SKK">
       <_title>Slovakian Koruna</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>SKK</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="TRL">
       <_title>Turkish Lira</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>TRL</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="AUD">
       <_title>Australian Dollars</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>AUD</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="CAD">
       <_title>Canadian Dollars</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>CAD</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="HKD">
       <_title>Hong Kong Dollars</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>HKD</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="NZD">
       <_title>New Zealand Dollars</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>NZD</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="SGD">
       <_title>Singapore Dollars</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>SGD</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="KRW">
       <_title>South Korean Won</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>KRW</_name>
+      </abbreviation>
     </builtin_unit>
     <builtin_unit name="ZAR">
       <_title>South African Rand</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>ZAR</_name>
+      </abbreviation>
     </builtin_unit>
-    <unit type="alias" name="eurocent">
-      <_singular>eurocent</_singular>
-      <_plural>eurocents</_plural>
+    <unit type="alias">
+      <_title>Euro Cent</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>eurocent</_name>
+      </name>
+      <plural index="2">
+        <_name>eurocents</_name>
+      </plural>
       <base>
         <unit>EUR</unit>
         <relation>1/100</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Euro Cent</_title>
     </unit>
-    <unit type="alias" name="cent">
-      <_singular>cent</_singular>
-      <_plural>cents</_plural>
+    <unit type="alias">
+      <_title>Cent (USD)</_title>
+      <abbreviation index="1">
+        <unicode>true</unicode>
+        <_name>&#xA2;</_name>
+      </abbreviation>
+      <name index="2">
+        <reference>true</reference>
+        <_name>cent</_name>
+      </name>
+      <plural index="3">
+        <_name>cents</_name>
+      </plural>
       <base>
         <unit>USD</unit>
         <relation>1/100</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Cent (USD)</_title>
+    </unit>
+    <unit type="alias">
+      <_title>Belgian franc</_title>
       <abbreviation index="1">
         <reference>true</reference>
-        <_name>cent</_name>
+        <_name>BEF</_name>
       </abbreviation>
-      <abbreviation index="2">
-        <unicode>true</unicode>
-        <_name>¢</_name>
-      </abbreviation>
-    </unit>
-    <unit type="alias" name="BEF">
       <base>
         <unit>EUR</unit>
         <relation>1/40.3399</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Belgian franc</_title>
     </unit>
-    <unit type="alias" name="GRD">
+    <unit type="alias">
+      <_title>Greek drachma</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>GRD</_name>
+      </abbreviation>
       <base>
         <unit>EUR</unit>
         <relation>1/340.750</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Greek drachma</_title>
     </unit>
-    <unit type="alias" name="FRF">
-      <_singular>franc</_singular>
+    <unit type="alias">
+      <_title>French franc</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>FRF</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>franc</_name>
+      </name>
       <base>
         <unit>EUR</unit>
         <relation>1/6.55957</relation>
         <exponent>1</exponent>
       </base>
-      <_title>French franc</_title>
     </unit>
-    <unit type="alias" name="ITL">
-      <_singular>lira</_singular>
+    <unit type="alias">
+      <_title>Italian lira</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>ITL</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>lira</_name>
+      </name>
       <base>
         <unit>EUR</unit>
         <relation>1/1936.27</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Italian lira</_title>
     </unit>
-    <unit type="alias" name="NLG">
-      <_singular>guilder</_singular>
+    <unit type="alias">
+      <_title>Dutch guilder</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>NLG</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>guilder</_name>
+      </name>
       <base>
         <unit>EUR</unit>
         <relation>1/2.20371</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Dutch guilder</_title>
     </unit>
-    <unit type="alias" name="PTE">
-      <_singular>escudo</_singular>
+    <unit type="alias">
+      <_title>Portuguese escudo</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>PTE</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>escudo</_name>
+      </name>
       <base>
         <unit>EUR</unit>
         <relation>1/200.482</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Portuguese escudo</_title>
     </unit>
-    <unit type="alias" name="DEM">
-      <_singular>mark</_singular>
+    <unit type="alias">
+      <_title>Deutche Mark</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>DEM</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>mark</_name>
+      </name>
       <base>
         <unit>EUR</unit>
         <relation>1/1.95583</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Deutche Mark</_title>
     </unit>
-    <unit type="alias" name="ESP">
-      <_singular>peseta</_singular>
-      <_plural>pesetas</_plural>
+    <unit type="alias">
+      <_title>Spanish peseta</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>ESP</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>peseta</_name>
+      </name>
+      <plural index="3">
+        <_name>pesetas</_name>
+      </plural>
       <base>
         <unit>EUR</unit>
         <relation>1/166.386</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Spanish peseta</_title>
     </unit>
-    <unit type="alias" name="IEP">
-      <_singular>IEP</_singular>
+    <unit type="alias">
+      <_title>Irish pound</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>IEP</_name>
+      </abbreviation>
       <base>
         <unit>EUR</unit>
         <relation>1/0.787564</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Irish pound</_title>
     </unit>
-    <unit type="alias" name="LUF">
-      <_singular>LUF</_singular>
+    <unit type="alias">
+      <_title>Luxembourg franc</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>LUF</_name>
+      </abbreviation>
       <base>
         <unit>EUR</unit>
         <relation>1/40.3399</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Luxembourg franc</_title>
     </unit>
-    <unit type="alias" name="ATS">
-      <_singular>shilling</_singular>
+    <unit type="alias">
+      <_title>Austrian shilling</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>ATS</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>shilling</_name>
+      </name>
       <base>
         <unit>EUR</unit>
         <relation>1/13.7603</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Austrian shilling</_title>
     </unit>
-    <unit type="alias" name="FIM">
-      <_singular>markka</_singular>
+    <unit type="alias">
+      <_title>Finnish markka</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>FIM</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>markka</_name>
+      </name>
       <base>
         <unit>EUR</unit>
         <relation>1/5.94573</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Finnish markka</_title>
     </unit>
   </category>
   <category>
     <_title>Length</_title>
-    <unit type="base" name="m">
-      <system>si</system>
-      <_singular>meter</_singular>
-      <_plural>meters</_plural>
+    <unit type="base">
       <_title>Meter</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>m</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>meter</_name>
+      </name>
+      <plural index="3">
+        <_name>meters</_name>
+      </plural>
     </unit>
-    <unit type="alias" name="nautical_mile">
-      <_singular>nautical_mile</_singular>
-      <_plural>nautical_miles</_plural>
+    <unit type="alias">
+      <_title>Nautical Mile</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>nautical_mile</_name>
+      </name>
+      <plural index="2">
+        <_name>nautical_miles</_name>
+      </plural>
       <base>
         <unit>m</unit>
         <relation>1852</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Nautical Mile</_title>
     </unit>
-    <unit type="alias" name="&#xC5;">
-      <_singular>&#xE5;ngstr&#xF6;m</_singular>
+    <unit type="alias">
+      <_title>&#xC5;ngstr&#xF6;m</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <unicode>true</unicode>
+        <_name>&#xC5;</_name>
+      </abbreviation>
+      <name index="2">
+        <unicode>true</unicode>
+        <_name>&#xE5;ngstr&#xF6;m</_name>
+      </name>
+      <name index="3">
+        <_name>angstrom</_name>
+      </name>
       <base>
         <unit>m</unit>
         <relation>1E-10</relation>
         <exponent>1</exponent>
       </base>
-      <_title>&#xC5;ngstr&#xF6;m</_title>
     </unit>
-    <unit type="alias" name="US_in">
-      <_singular>US_inch</_singular>
-      <_plural>US_inches</_plural>
+    <unit type="alias">
+      <_title>U.S. Survey Inch</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>US_in</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>US_inch</_name>
+      </name>
+      <plural index="3">
+        <_name>US_inches</_name>
+      </plural>
       <base>
         <unit>m</unit>
         <relation>100/3937</relation>
         <exponent>1</exponent>
       </base>
-      <_title>U.S. Survey Inch</_title>
     </unit>
-    <unit type="alias" name="in">
-      <_singular>inch</_singular>
-      <_plural>inches</_plural>
+    <unit type="alias">
+      <_title>Inch</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>in</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>inch</_name>
+      </name>
+      <plural index="3">
+        <_name>inches</_name>
+      </plural>
       <base>
         <unit>m</unit>
         <relation>0.0254</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Inch</_title>
     </unit>
-    <unit type="alias" name="hand">
-      <_singular>hand</_singular>
-      <_plural>hands</_plural>
+    <unit type="alias">
+      <_title>Hand</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>hand</_name>
+      </name>
+      <plural index="2">
+        <_name>hands</_name>
+      </plural>
       <base>
         <unit>in</unit>
         <relation>4</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Hand</_title>
     </unit>
-    <unit type="alias" name="ft">
-      <_singular>foot</_singular>
-      <_plural>feet</_plural>
+    <unit type="alias">
+      <_title>Foot</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>ft</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>foot</_name>
+      </name>
+      <plural index="3">
+        <_name>feet</_name>
+      </plural>
       <base>
         <unit>hand</unit>
         <relation>3</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Foot</_title>
     </unit>
-    <unit type="alias" name="US_ft">
-      <_singular>US_foot</_singular>
-      <_plural>US_feet</_plural>
+    <unit type="alias">
+      <_title>U.S. Survey Foot</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>US_ft</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>US_foot</_name>
+      </name>
+      <plural index="3">
+        <_name>US_feet</_name>
+      </plural>
       <base>
         <unit>US_in</unit>
         <relation>12</relation>
         <exponent>1</exponent>
       </base>
-      <_title>U.S. Survey Foot</_title>
     </unit>
-    <unit type="alias" name="li">
-      <_singular>link</_singular>
-      <_plural>links</_plural>
+    <unit type="alias">
+      <_title>Link</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>li</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>link</_name>
+      </name>
+      <plural index="3">
+        <_name>links</_name>
+      </plural>
       <base>
         <unit>ft</unit>
         <relation>66/100</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Link</_title>
     </unit>
-    <unit type="alias" name="yd">
-      <_singular>yard</_singular>
-      <_plural>yards</_plural>
+    <unit type="alias">
+      <_title>Yard</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>yd</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>yard</_name>
+      </name>
+      <plural index="3">
+        <_name>yards</_name>
+      </plural>
       <base>
         <unit>ft</unit>
         <relation>3</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Yard</_title>
     </unit>
-    <unit type="alias" name="rd">
-      <_singular>rod</_singular>
-      <_plural>rods</_plural>
+    <unit type="alias">
+      <_title>Rod (pole/perch)</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>rd</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>rod</_name>
+      </name>
+      <plural index="3">
+        <_name>rods</_name>
+      </plural>
       <base>
         <unit>US_ft</unit>
         <relation>16.5</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Rod (pole/perch)</_title>
     </unit>
-    <unit type="alias" name="fathom">
-      <_singular>fathom</_singular>
-      <_plural>fathoms</_plural>
+    <unit type="alias">
+      <_title>Fathom</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>fathom</_name>
+      </name>
+      <plural index="2">
+        <_name>fathoms</_name>
+      </plural>
       <base>
         <unit>yd</unit>
         <relation>2</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Fathom</_title>
     </unit>
-    <unit type="alias" name="ch">
-      <_singular>chain</_singular>
-      <_plural>chains</_plural>
+    <unit type="alias">
+      <_title>Chain</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>ch</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>chain</_name>
+      </name>
+      <plural index="3">
+        <_name>chains</_name>
+      </plural>
       <base>
         <unit>li</unit>
         <relation>100</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Chain</_title>
     </unit>
-    <unit type="alias" name="fur">
-      <_singular>furlong</_singular>
-      <_plural>furlongs</_plural>
+    <unit type="alias">
+      <_title>Furlong</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>fur</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>furlong</_name>
+      </name>
+      <plural index="3">
+        <_name>furlongs</_name>
+      </plural>
       <base>
         <unit>yd</unit>
         <relation>220</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Furlong</_title>
     </unit>
-    <unit type="alias" name="mi">
-      <_singular>mile</_singular>
-      <_plural>miles</_plural>
+    <unit type="alias">
+      <_title>Mile</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>mi</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>mile</_name>
+      </name>
+      <plural index="3">
+        <_name>miles</_name>
+      </plural>
       <base>
         <unit>ch</unit>
         <relation>80</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Mile</_title>
     </unit>
-    <unit type="alias" name="US_mi">
-      <_singular>US_mile</_singular>
-      <_plural>US_miles</_plural>
+    <unit type="alias">
+      <_title>U.S. Survey Mile</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>US_mi</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>US_mile</_name>
+      </name>
+      <plural index="3">
+        <_name>US_miles</_name>
+      </plural>
       <base>
         <unit>US_ft</unit>
         <relation>5280</relation>
         <exponent>1</exponent>
       </base>
-      <_title>U.S. Survey Mile</_title>
     </unit>
-    <unit type="alias" name="mil">
-      <_singular>mil</_singular>
-      <_plural>mils</_plural>
+    <unit type="alias">
+      <_title>Mils</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>mil</_name>
+      </name>
+      <plural index="2">
+        <_name>mils</_name>
+      </plural>
       <base>
         <unit>in</unit>
         <relation>0.001</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Mils</_title>
     </unit>
-    <unit type="alias" name="AU">
-      <_singular>astronomical_unit</_singular>
-      <_plural>astronomical_units</_plural>
+    <unit type="alias">
+      <_title>Astronomical Unit</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>AU</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>astronomical_unit</_name>
+      </name>
+      <plural index="3">
+        <_name>astronomical_units</_name>
+      </plural>
       <base>
         <unit>m</unit>
         <relation>149578706600</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Astronomical Unit</_title>
     </unit>
-    <unit type="alias" name="ly">
-      <_singular>light_year</_singular>
-      <_plural>light_years</_plural>
+    <unit type="alias">
+      <_title>Light Year</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>ly</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>light_year</_name>
+      </name>
+      <plural index="3">
+        <_name>light_years</_name>
+      </plural>
       <base>
         <unit>m</unit>
         <relation>9460536207068016</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Light Year</_title>
     </unit>
-    <unit type="alias" name="pc">
-      <_singular>parsec</_singular>
-      <_plural>parsecs</_plural>
+    <unit type="alias">
+      <_title>Parsec</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>pc</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>parsec</_name>
+      </name>
+      <plural index="3">
+        <_name>parsecs</_name>
+      </plural>
       <base>
         <unit>AU</unit>
         <relation>648000/pi</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Parsec</_title>
     </unit>
   </category>
   <category>
-    <_title>Angle</_title>  
+    <_title>Angle</_title>
     <category>
       <_title>Plane Angle</_title>
-      <unit type="composite" name="m_p_m">
+      <unit type="composite">
+        <hidden>true</hidden>
+        <_title>Meter per Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>m_p_m</name>
+        </name>
         <part>
           <unit>m</unit>
           <prefix>0</prefix>
@@ -489,56 +831,75 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-	<hidden>true</hidden>
-        <_title>Meter per Meter</_title>
       </unit>
-      <unit type="alias" name="rad">
-        <system>si</system>
-        <_singular>radian</_singular>
-        <_plural>radians</_plural>
+      <unit type="alias">
+        <_title>Radian</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>rad</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>radian</_name>
+        </name>
+        <plural index="3">
+          <_name>radians</_name>
+        </plural>
         <base>
           <unit>m_p_m</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Radian</_title>
       </unit>
       <unit type="alias">
+        <_title>Degree</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>deg</_name>
+        </abbreviation>
+        <abbreviation index="2">
+          <unicode>true</unicode>
+          <_name>&#xB0;</_name>
+        </abbreviation>
+        <name index="3">
+          <_name>degree</_name>
+        </name>
+        <plural index="4">
+          <_name>degrees</_name>
+        </plural>
         <base>
           <unit>rad</unit>
           <relation>pi/180</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Degree</_title>
-	<abbreviation index="1">
-          <reference>true</reference>
-          <_name>deg</_name>
-        </abbreviation>
-        <abbreviation index="2">
-	  <unicode>true</unicode>
-          <_name>°</_name>
-        </abbreviation>
-	<name index="3">
-          <_name>degree</_name>
-        </name>
-	<plural index="4">
-          <_name>degrees</_name>
-        </plural>
       </unit>
-      <unit type="alias" name="gra">
-        <_singular>gradian</_singular>
-        <_plural>gradians</_plural>
+      <unit type="alias">
+        <_title>Gradian</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>gra</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>gradian</_name>
+        </name>
+        <plural index="3">
+          <_name>gradians</_name>
+        </plural>
         <base>
           <unit>rad</unit>
           <relation>pi/200</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Gradian</_title>
       </unit>
     </category>
     <category>
       <_title>Solid Angle</_title>
-      <unit type="composite" name="sqm_p_sqm">
+      <unit type="composite">
+        <hidden>true</hidden>
+        <_title>Square Meter per Square Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>sqm_p_sqm</name>
+        </name>
         <part>
           <unit>m</unit>
           <prefix>0</prefix>
@@ -549,25 +910,34 @@
           <prefix>0</prefix>
           <exponent>-2</exponent>
         </part>
-	<hidden>true</hidden>
-        <_title>Square Meter per Square Meter</_title>
       </unit>
-      <unit type="alias" name="sr">
-        <system>si</system>
-        <_singular>steradian</_singular>
-        <_plural>steradians</_plural>
+      <unit type="alias">
+        <_title>Steradian</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>sr</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>steradian</_name>
+        </name>
+        <plural index="3">
+          <_name>steradians</_name>
+        </plural>
         <base>
           <unit>m_p_m</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Steradian</_title>
       </unit>
     </category>
     <category>
       <_title>Angular Acceleration</_title>
-      <unit type="composite" name="rad_p_sqs">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Radians per Square Second</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>rad_p_sqs</name>
+        </name>
         <part>
           <unit>rad</unit>
           <prefix>0</prefix>
@@ -578,13 +948,16 @@
           <prefix>0</prefix>
           <exponent>-2</exponent>
         </part>
-        <_title>Radians per Square Second</_title>
       </unit>
     </category>
     <category>
       <_title>Angular Velocity</_title>
-      <unit type="composite" name="rad_p_s">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Radians per Second</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>rad_p_s</name>
+        </name>
         <part>
           <unit>rad</unit>
           <prefix>0</prefix>
@@ -595,200 +968,317 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Radians per Second</_title>
       </unit>
     </category>
   </category>
   <category>
     <_title>Mass</_title>
-    <unit type="base" name="g">
-      <system>si</system>
-      <_singular>gram</_singular>
-      <_plural>grams</_plural>
+    <unit type="base">
       <_title>Gram</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>g</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>gram</_name>
+      </name>
+      <plural index="3">
+        <_name>grams</_name>
+      </plural>
     </unit>
-    <unit type="alias" name="t">
-      <_singular>ton</_singular>
-      <_plural>tons</_plural>
+    <unit type="alias">
+      <_title>Metric Ton</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>t</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>ton</_name>
+      </name>
+      <plural index="3">
+        <_name>tons</_name>
+      </plural>
       <base>
         <unit>g</unit>
         <relation>1000000</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Metric Ton</_title>
     </unit>
-    <unit type="alias" name="gr">
-      <_singular>grain</_singular>
-      <_plural>grains</_plural>
+    <unit type="alias">
+      <_title>Grain</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>gr</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>grain</_name>
+      </name>
+      <plural index="3">
+        <_name>grains</_name>
+      </plural>
       <base>
         <unit>g</unit>
         <relation>0.06479891</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Grain</_title>
     </unit>
-    <unit type="alias" name="pwt">
-      <_singular>pennyweight</_singular>
-      <_plural>pennyweights</_plural>
+    <unit type="alias">
+      <_title>Pennyweight</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>pwt</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>pennyweight</_name>
+      </name>
+      <plural index="3">
+        <_name>pennyweights</_name>
+      </plural>
       <base>
         <unit>gr</unit>
         <relation>24</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Pennyweight</_title>
     </unit>
-    <unit type="alias" name="oz_t">
-      <_singular>troy_ounce</_singular>
-      <_plural>troy_ounces</_plural>
+    <unit type="alias">
+      <_title>Ounce (troy)</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>oz_t</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>troy_ounce</_name>
+      </name>
+      <plural index="3">
+        <_name>troy_ounces</_name>
+      </plural>
       <base>
         <unit>pwt</unit>
         <relation>20</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Ounce (troy)</_title>
     </unit>
-    <unit type="alias" name="lb_t">
-      <_singular>troy_pound</_singular>
-      <_plural>troy_pounds</_plural>
+    <unit type="alias">
+      <_title>Pound (troy)</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>lb_t</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>troy_pound</_name>
+      </name>
+      <plural index="3">
+        <_name>troy_pounds</_name>
+      </plural>
       <base>
         <unit>oz_t</unit>
         <relation>12</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Pound (troy)</_title>
     </unit>
-    <unit type="alias" name="dr">
-      <_singular>dram</_singular>
-      <_plural>drams</_plural>
+    <unit type="alias">
+      <_title>Dram</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>dr</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>dram</_name>
+      </name>
+      <plural index="3">
+        <_name>drams</_name>
+      </plural>
       <base>
         <unit>g</unit>
         <relation>1.7718451953125</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Dram</_title>
     </unit>
-    <unit type="alias" name="oz">
-      <_singular>ounce</_singular>
-      <_plural>ounces</_plural>
+    <unit type="alias">
+      <_title>Ounce</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>oz</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>ounce</_name>
+      </name>
+      <plural index="3">
+        <_name>ounces</_name>
+      </plural>
       <base>
         <unit>dr</unit>
         <relation>16</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Ounce</_title>
     </unit>
-    <unit type="alias" name="lb">
-      <_singular>pound</_singular>
-      <_plural>pounds</_plural>
+    <unit type="alias">
+      <_title>Pound</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>lb</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>pound</_name>
+      </name>
+      <plural index="3">
+        <_name>pounds</_name>
+      </plural>
       <base>
         <unit>oz</unit>
         <relation>16</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Pound</_title>
     </unit>
-    <unit type="alias" name="cwt">
-      <_singular>hundredweight</_singular>
-      <_plural>hundredweights</_plural>
+    <unit type="alias">
+      <_title>Short Hundredweight</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>cwt</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>hundredweight</_name>
+      </name>
+      <plural index="3">
+        <_name>hundredweights</_name>
+      </plural>
       <base>
         <unit>lb</unit>
         <relation>100</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Short Hundredweight</_title>
     </unit>
-    <unit type="alias" name="l_cwt">
-      <_singular>long_hundredweight</_singular>
-      <_plural>long_hundredweights</_plural>
+    <unit type="alias">
+      <_title>Long Hundredweight</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>l_cwt</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>long_hundredweight</_name>
+      </name>
+      <plural index="3">
+        <_name>long_hundredweights</_name>
+      </plural>
       <base>
         <unit>lb</unit>
         <relation>112</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Long Hundredweight</_title>
     </unit>
-    <unit type="alias" name="s_ton">
-      <_singular>short_ton</_singular>
-      <_plural>short_tons</_plural>
+    <unit type="alias">
+      <_title>Short Ton</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>s_ton</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>short_ton</_name>
+      </name>
+      <plural index="3">
+        <_name>short_tons</_name>
+      </plural>
       <base>
         <unit>lb</unit>
         <relation>2000</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Short Ton</_title>
     </unit>
-    <unit type="alias" name="l_ton">
-      <_singular>long_ton</_singular>
-      <_plural>long_tons</_plural>
+    <unit type="alias">
+      <_title>Long Ton</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>l_ton</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>long_ton</_name>
+      </name>
+      <plural index="3">
+        <_name>long_tons</_name>
+      </plural>
       <base>
         <unit>lb</unit>
         <relation>2240</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Long Ton</_title>
     </unit>
-    <unit type="alias" name="stone">
-      <_singular>stone</_singular>
-      <_plural>stones</_plural>
+    <unit type="alias">
+      <_title>Stone</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>stone</_name>
+      </name>
+      <plural index="2">
+        <_name>stones</_name>
+      </plural>
       <base>
         <unit>lb</unit>
         <relation>14</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Stone</_title>
     </unit>
-    <unit type="alias" name="quart">
-      <_singular>quart</_singular>
-      <_plural>quarters</_plural>
-      <base>
-        <unit>lb</unit>
-        <relation>28</relation>
-        <exponent>1</exponent>
-      </base>
-      <_title>Quarter</_title>
-    </unit>
-    <unit type="alias" name="cental">
-      <_singular>cental</_singular>
-      <_plural>centals</_plural>
+    <unit type="alias">
+      <_title>Cental</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>cental</_name>
+      </name>
+      <plural index="2">
+        <_name>centals</_name>
+      </plural>
       <base>
         <unit>lb</unit>
         <relation>100</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Cental</_title>
     </unit>
-    <unit type="alias" name="carat">
-      <_singular>carat</_singular>
-      <_plural>carats</_plural>
+    <unit type="alias">
+      <_title>Carat</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>carat</_name>
+      </name>
+      <plural index="2">
+        <_name>carats</_name>
+      </plural>
       <base>
         <unit>g</unit>
         <relation>0.2</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Carat</_title>
     </unit>
-    <unit type="alias" name="pfund">
-      <_singular>pfund</_singular>
+    <unit type="alias">
+      <_title>Pfund</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>pfund</_name>
+      </name>
       <base>
         <unit>g</unit>
         <relation>500</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Pfund</_title>
     </unit>
-    <unit type="alias" name="zentner">
-      <_singular>zentner</_singular>
+    <unit type="alias">
+      <_title>Zentner</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>zentner</_name>
+      </name>
       <base>
         <unit>pfund</unit>
         <relation>100</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Zentner</_title>
     </unit>
     <category>
       <_title>Density</_title>
-      <unit type="composite" name="kg_p_cum">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Kilogram per Cubic Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>kg_p_cum</name>
+        </name>
         <part>
           <unit>g</unit>
           <prefix>3</prefix>
@@ -799,13 +1289,16 @@
           <prefix>0</prefix>
           <exponent>-3</exponent>
         </part>
-        <_title>Kilogram per Cubic Meter</_title>
       </unit>
     </category>
     <category>
       <_title>Mass Fraction</_title>
-      <unit type="composite" name="kg_p_kg">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Kilogram per Kilogram</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>kg_p_kg</name>
+        </name>
         <part>
           <unit>g</unit>
           <prefix>3</prefix>
@@ -816,70 +1309,76 @@
           <prefix>3</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Kilogram per Kilogram</_title>
       </unit>
     </category>
   </category>
   <category>
     <_title>Time</_title>
-    <unit type="base" name="s">
-      <system>si</system>
-      <_singular>second</_singular>
-      <_plural>seconds</_plural>
+    <unit type="base">
       <_title>Second</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>s</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>second</_name>
+      </name>
+      <plural index="3">
+        <_name>seconds</_name>
+      </plural>
     </unit>
-    <unit type="alias" name="min">
-      <_singular>minute</_singular>
-      <_plural>minutes</_plural>
+    <unit type="alias">
+      <_title>Minute</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>min</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>minute</_name>
+      </name>
+      <plural index="3">
+        <_name>minutes</_name>
+      </plural>
       <base>
         <unit>s</unit>
         <relation>60</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Minute</_title>
     </unit>
-    <unit type="alias" name="h">
-      <_singular>hour</_singular>
-      <_plural>hours</_plural>
+    <unit type="alias">
+      <_title>Hour</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>h</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>hour</_name>
+      </name>
+      <plural index="3">
+        <_name>hours</_name>
+      </plural>
       <base>
-        <unit>minute</unit>
+        <unit>min</unit>
         <relation>60</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Hour</_title>
-    </unit>
-    <unit type="alias" name="year">
-      <_singular>year</_singular>
-      <_plural>years</_plural>
-      <base>
-        <unit>d</unit>
-        <relation>365.2425</relation>
-        <exponent>1</exponent>
-      </base>
-      <_title>Year</_title>
-    </unit>
-    <unit type="alias" name="century">
-      <_singular>century</_singular>
-      <_plural>centuries</_plural>
-      <base>
-        <unit>year</unit>
-        <relation>100</relation>
-        <exponent>1</exponent>
-      </base>
-      <_title>Century</_title>
     </unit>
     <category>
       <_title>Frequency</_title>
-      <unit type="alias" name="Hz">
-        <system>si</system>
-        <_singular>hertz</_singular>
-        <_plural>hertz</_plural>
+      <unit type="alias">
+        <_title>Hertz</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>Hz</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>hertz</_name>
+        </name>
         <base>
           <unit>s</unit>
           <relation>1</relation>
           <exponent>-1</exponent>
         </base>
-        <_title>Hertz</_title>
       </unit>
     </category>
   </category>
@@ -887,17 +1386,28 @@
     <_title>Electricity</_title>
     <category>
       <_title>Electric Current</_title>
-      <unit type="base" name="A">
-        <system>si</system>
-        <_singular>ampere</_singular>
-        <_plural>amperes</_plural>
+      <unit type="base">
         <_title>Ampere</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>A</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>ampere</_name>
+        </name>
+        <plural index="3">
+          <_name>amperes</_name>
+        </plural>
       </unit>
     </category>
     <category>
       <_title>Current Density</_title>
-      <unit type="composite" name="A_p_sqm">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Ampere per Square Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>A_p_sqm</name>
+        </name>
         <part>
           <unit>A</unit>
           <prefix>0</prefix>
@@ -908,12 +1418,16 @@
           <prefix>0</prefix>
           <exponent>-2</exponent>
         </part>
-        <_title>Ampere per Square Meter</_title>
       </unit>
     </category>
     <category>
       <_title>Electric Charge</_title>
-      <unit type="composite" name="s_A">
+      <unit type="composite">
+        <_title>Second Ampere</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>s_A</name>
+        </name>
         <part>
           <unit>s</unit>
           <prefix>0</prefix>
@@ -924,24 +1438,34 @@
           <prefix>0</prefix>
           <exponent>1</exponent>
         </part>
-        <_title>Second Ampere</_title>
       </unit>
-      <unit type="alias" name="C">
-        <system>si</system>
-        <_singular>coulomb</_singular>
-        <_plural>coulombs</_plural>
+      <unit type="alias">
+        <_title>Coulomb</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>C</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>coulomb</_name>
+        </name>
+        <plural index="3">
+          <_name>coulombs</_name>
+        </plural>
         <base>
           <unit>s_A</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Coulomb</_title>
       </unit>
     </category>
     <category>
       <_title>Electric Charge Density</_title>
-      <unit type="composite" name="C_p_cum">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Coulomb per Cubic Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>C_p_cum</name>
+        </name>
         <part>
           <unit>C</unit>
           <prefix>0</prefix>
@@ -952,13 +1476,16 @@
           <prefix>0</prefix>
           <exponent>-3</exponent>
         </part>
-        <_title>Coulomb per Cubic Meter</_title>
       </unit>
     </category>
     <category>
       <_title>Electric Flux Density</_title>
-      <unit type="composite" name="C_p_sqm">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Coulomb per Square Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>C_p_sqm</name>
+        </name>
         <part>
           <unit>C</unit>
           <prefix>0</prefix>
@@ -969,12 +1496,16 @@
           <prefix>0</prefix>
           <exponent>-2</exponent>
         </part>
-        <_title>Coulomb per Square Meter</_title>
       </unit>
     </category>
     <category>
       <_title>Electric Potential</_title>
-      <unit type="composite" name="W_p_A">
+      <unit type="composite">
+        <_title>Watt per Ampere</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>W_p_A</name>
+        </name>
         <part>
           <unit>W</unit>
           <prefix>0</prefix>
@@ -985,23 +1516,34 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Watt per Ampere</_title>
       </unit>
-      <unit type="alias" name="V">
-        <system>si</system>
-        <_singular>volt</_singular>
-        <_plural>volts</_plural>
+      <unit type="alias">
+        <_title>Volt</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>V</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>volt</_name>
+        </name>
+        <plural index="3">
+          <_name>volts</_name>
+        </plural>
         <base>
           <unit>W_p_A</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Volt</_title>
       </unit>
     </category>
     <category>
       <_title>Capacitance</_title>
-      <unit type="composite" name="C_p_V">
+      <unit type="composite">
+        <_title>Coulomb per Volt</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>C_p_V</name>
+        </name>
         <part>
           <unit>C</unit>
           <prefix>0</prefix>
@@ -1012,22 +1554,34 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Coulomb per Volt</_title>
       </unit>
-      <unit type="alias" name="F">
-        <_singular>farad</_singular>
-        <_plural>farads</_plural>
+      <unit type="alias">
+        <_title>Farad</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>F</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>farad</_name>
+        </name>
+        <plural index="3">
+          <_name>farads</_name>
+        </plural>
         <base>
           <unit>C_p_V</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Farad</_title>
       </unit>
     </category>
     <category>
       <_title>Electric Resistance</_title>
-      <unit type="composite" name="V_p_A">
+      <unit type="composite">
+        <_title>Volt per Ampere</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>V_p_A</name>
+        </name>
         <part>
           <unit>V</unit>
           <prefix>0</prefix>
@@ -1038,32 +1592,35 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Volt per Ampere</_title>
       </unit>
       <unit type="alias">
-        <system>si</system>
+        <_title>Ohm</_title>
+        <abbreviation index="1">
+          <unicode>true</unicode>
+          <_name>&#x3A9;</_name>
+        </abbreviation>
+        <name index="2">
+          <reference>true</reference>
+          <_name>ohm</_name>
+        </name>
+        <plural index="3">
+          <_name>ohms</_name>
+        </plural>
         <base>
           <unit>V_p_A</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Ohm</_title>
-	<abbreviation index="1">
-	  <unicode>true</unicode>
-          <_name>Ω</_name>
-        </abbreviation>
-	<name index="2">
-	  <reference>true</reference>
-          <_name>ohm</_name>
-        </name>
-	<plural index="3">
-          <_name>ohms</_name>
-        </plural>
       </unit>
     </category>
     <category>
       <_title>Electric Conductance</_title>
-      <unit type="composite" name="A_p_V">
+      <unit type="composite">
+        <_title>Ampere per Volt</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>A_p_V</name>
+        </name>
         <part>
           <unit>A</unit>
           <prefix>0</prefix>
@@ -1074,24 +1631,34 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Ampere per Volt</_title>
       </unit>
-      <unit type="alias" name="S">
-        <system>si</system>
-        <_singular>siemens</_singular>
-        <_plural>siemens</_plural>
+      <unit type="alias">
+        <_title>Siemens</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>S</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>siemens</_name>
+        </name>
+        <plural index="3">
+          <_name>siemens</_name>
+        </plural>
         <base>
           <unit>A_p_V</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Siemens</_title>
       </unit>
     </category>
     <category>
       <_title>Electric Field Strength</_title>
-      <unit type="composite" name="V_p_m">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Volt per Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>V_p_m</name>
+        </name>
         <part>
           <unit>V</unit>
           <prefix>0</prefix>
@@ -1102,13 +1669,16 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Volt per Meter</_title>
       </unit>
     </category>
     <category>
       <_title>Permittivity</_title>
-      <unit type="composite" name="F_p_m">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Farad per Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>F_p_m</name>
+        </name>
         <part>
           <unit>F</unit>
           <prefix>0</prefix>
@@ -1119,12 +1689,16 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Farad per Meter</_title>
       </unit>
     </category>
     <category>
       <_title>Inductance</_title>
-      <unit type="composite" name="Wb_p_A">
+      <unit type="composite">
+        <_title>Weber per Ampere</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>Wb_p_A</name>
+        </name>
         <part>
           <unit>Wb</unit>
           <prefix>0</prefix>
@@ -1135,24 +1709,34 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Weber per Ampere</_title>
       </unit>
-      <unit type="alias" name="H">
-        <system>si</system>
-        <_singular>henry</_singular>
-        <_plural>henrys</_plural>
+      <unit type="alias">
+        <_title>Henry</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>H</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>henry</_name>
+        </name>
+        <plural index="3">
+          <_name>henrys</_name>
+        </plural>
         <base>
           <unit>Wb_p_A</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Henry</_title>
       </unit>
     </category>
     <category>
       <_title>Permeability</_title>
-      <unit type="composite" name="H_p_m">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Henry per Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>H_p_m</name>
+        </name>
         <part>
           <unit>H</unit>
           <prefix>0</prefix>
@@ -1163,95 +1747,111 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Henry per Meter</_title>
       </unit>
     </category>
   </category>
   <category>
     <_title>Temperature</_title>
-    <unit type="base" name="K">
-      <system>si</system>
-      <_singular>kelvin</_singular>
-      <_plural>kelvins</_plural>
+    <unit type="base">
       <_title>Kelvin</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>K</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>kelvin</_name>
+      </name>
+      <plural index="3">
+        <_name>kelvins</_name>
+      </plural>
     </unit>
     <unit type="alias">
-      <system>si</system>
+      <_title>Degree Celcius</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>oC</_name>
+      </abbreviation>
+      <abbreviation index="2">
+        <unicode>true</unicode>
+        <_name>&#xB0;C</_name>
+      </abbreviation>
+      <name index="3">
+        <reference>true</reference>
+        <_name>celcius</_name>
+      </name>
       <base>
         <unit>K</unit>
         <relation>\x + 273.15</relation>
         <reverse_relation>\x - 273.15</reverse_relation>
         <exponent>1</exponent>
       </base>
-      <_title>Degree Celcius</_title>
+    </unit>
+    <unit type="alias">
+      <_title>Degrees Rankine</_title>
       <abbreviation index="1">
-      	<reference>true</reference>
-        <_name>oC</_name>
+        <reference>true</reference>
+        <_name>oR</_name>
       </abbreviation>
       <abbreviation index="2">
         <unicode>true</unicode>
-        <_name>°C</_name>
+        <_name>&#xB0;R</_name>
       </abbreviation>
       <name index="3">
         <reference>true</reference>
-        <_name>celcius</_name>
+        <_name>rankine</_name>
       </name>
-    </unit>
-    <unit type="alias">
       <base>
         <unit>K</unit>
         <relation>5\x/9</relation>
         <reverse_relation>9\x/5</reverse_relation>
         <exponent>1</exponent>
       </base>
-      <_title>Degrees Rankine</_title>
+    </unit>
+    <unit type="alias">
+      <_title>Degrees Fahrenheit</_title>
       <abbreviation index="1">
-      	<reference>true</reference>
-        <_name>oR</_name>
+        <reference>true</reference>
+        <_name>oF</_name>
       </abbreviation>
       <abbreviation index="2">
         <unicode>true</unicode>
-        <_name>°R</_name>
+        <_name>&#xB0;F</_name>
       </abbreviation>
       <name index="3">
         <reference>true</reference>
-        <_name>rankine</_name>
+        <_name>fahrenheit</_name>
       </name>
-    </unit>
-    <unit type="alias">
       <base>
         <unit>K</unit>
         <relation>(2298.35+5\x)/9</relation>
         <reverse_relation>(9\x-2298.35)/5</reverse_relation>
         <exponent>1</exponent>
       </base>
-      <_title>Degrees Fahrenheit</_title>
-      <abbreviation index="1">
-      	<reference>true</reference>
-        <_name>oF</_name>
-      </abbreviation>
-      <abbreviation index="2">
-        <unicode>true</unicode>
-        <_name>°F</_name>
-      </abbreviation>
-      <name index="3">
-        <reference>true</reference>
-        <_name>fahrenheit</_name>
-      </name>
     </unit>
   </category>
   <category>
     <_title>Substance</_title>
-    <unit type="base" name="mol">
-      <system>si</system>
-      <_singular>mole</_singular>
-      <_plural>moles</_plural>
+    <unit type="base">
       <_title>Mole</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>mol</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>mole</_name>
+      </name>
+      <plural index="3">
+        <_name>moles</_name>
+      </plural>
     </unit>
     <category>
       <_title>Substance Concentration</_title>
-      <unit type="composite" name="mol_p_cum">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Mole per Cubic Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>mol_p_cum</name>
+        </name>
         <part>
           <unit>mol</unit>
           <prefix>0</prefix>
@@ -1262,12 +1862,16 @@
           <prefix>0</prefix>
           <exponent>-3</exponent>
         </part>
-        <_title>Mole per Cubic Meter</_title>
       </unit>
     </category>
     <category>
       <_title>Catalytic Activity</_title>
-      <unit type="composite" name="recs_mol">
+      <unit type="composite">
+        <_title>Reciprocal Seconds Mole</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>recs_mol</name>
+        </name>
         <part>
           <unit>mol</unit>
           <prefix>0</prefix>
@@ -1278,24 +1882,34 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Reciprocal Seconds Mole</_title>
       </unit>
-      <unit type="alias" name="kat">
-        <system>si</system>
-        <_singular>katal</_singular>
-        <_plural>katals</_plural>
+      <unit type="alias">
+        <_title>Katal</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>kat</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>katal</_name>
+        </name>
+        <plural index="3">
+          <_name>katals</_name>
+        </plural>
         <base>
           <unit>recs_mol</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Katal</_title>
       </unit>
     </category>
     <category>
       <_title>Catalytic Concentration</_title>
-      <unit type="composite" name="kat_p_cum">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Katal per Cubic Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>kat_p_cum</name>
+        </name>
         <part>
           <unit>kat</unit>
           <prefix>0</prefix>
@@ -1306,7 +1920,6 @@
           <prefix>0</prefix>
           <exponent>-3</exponent>
         </part>
-        <_title>Katal per Cubic Meter</_title>
       </unit>
     </category>
   </category>
@@ -1314,17 +1927,28 @@
     <_title>Light</_title>
     <category>
       <_title>Luminous Intensity</_title>
-      <unit type="base" name="cd">
-        <system>si</system>
-        <_singular>candela</_singular>
-        <_plural>candelas</_plural>
+      <unit type="base">
         <_title>Candela</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>cd</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>candela</_name>
+        </name>
+        <plural index="3">
+          <_name>candelas</_name>
+        </plural>
       </unit>
     </category>
     <category>
       <_title>Luminance</_title>
-      <unit type="composite" name="cd_p_sqm">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Candela per Square Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>cd_p_sqm</name>
+        </name>
         <part>
           <unit>cd</unit>
           <prefix>0</prefix>
@@ -1335,23 +1959,34 @@
           <prefix>0</prefix>
           <exponent>-2</exponent>
         </part>
-        <_title>Candela per Square Meter</_title>
       </unit>
-      <unit type="alias" name="sb">
-        <system>cgs</system>
-        <_singular>stilb</_singular>
-        <_plural>stilbs</_plural>
+      <unit type="alias">
+        <_title>Stilb</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>sb</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>stilb</_name>
+        </name>
+        <plural index="3">
+          <_name>stilbs</_name>
+        </plural>
         <base>
           <unit>cd_p_sqm</unit>
           <relation>10000</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Stilb</_title>
       </unit>
     </category>
     <category>
       <_title>Luminous Flux</_title>
-      <unit type="composite" name="cd_sr">
+      <unit type="composite">
+        <_title>Candela Steradian</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>cd_sr</name>
+        </name>
         <part>
           <unit>cd</unit>
           <prefix>0</prefix>
@@ -1362,23 +1997,34 @@
           <prefix>0</prefix>
           <exponent>1</exponent>
         </part>
-        <_title>Candela Steradian</_title>
       </unit>
-      <unit type="alias" name="lm">
-        <system>si</system>
-        <_singular>lumen</_singular>
-        <_plural>lumens</_plural>
+      <unit type="alias">
+        <_title>Lumen</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>lm</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>lumen</_name>
+        </name>
+        <plural index="3">
+          <_name>lumens</_name>
+        </plural>
         <base>
           <unit>cd_sr</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Lumen</_title>
       </unit>
     </category>
     <category>
       <_title>Illuminance</_title>
-      <unit type="composite" name="lm_p_sqm">
+      <unit type="composite">
+        <_title>Lumen per Square Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>lm_p_sqm</name>
+        </name>
         <part>
           <unit>lm</unit>
           <prefix>0</prefix>
@@ -1389,50 +2035,69 @@
           <prefix>0</prefix>
           <exponent>-2</exponent>
         </part>
-        <_title>Lumen per Square Meter</_title>
       </unit>
-      <unit type="alias" name="lx">
-        <system>si</system>
-        <_singular>lux</_singular>
+      <unit type="alias">
+        <_title>Lux</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>lx</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>lux</_name>
+        </name>
         <base>
           <unit>lm_p_sqm</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Lux</_title>
       </unit>
-      <unit type="alias" name="ph">
-        <system>cgs</system>
-        <_singular>phot</_singular>
-        <_plural>phots</_plural>
+      <unit type="alias">
+        <_title>Phot</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>ph</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>phot</_name>
+        </name>
+        <plural index="3">
+          <_name>phots</_name>
+        </plural>
         <base>
           <unit>lx</unit>
           <relation>10000</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Phot</_title>
       </unit>
     </category>
     <category>
       <_title>Radiant Intensity</_title>
-      <unit type="composite" name="W_p_sr">
+      <unit type="composite">
+        <_title>Watt per Steradian</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>W_p_sr</name>
+        </name>
         <part>
           <unit>W</unit>
           <prefix>0</prefix>
           <exponent>1</exponent>
         </part>
-	<part>
+        <part>
           <unit>sr</unit>
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Watt per Steradian</_title>
       </unit>
-    </category>    
+    </category>
     <category>
       <_title>Irradiance</_title>
-      <unit type="composite" name="W_p_sqm">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Watt per Square Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>W_p_sqm</name>
+        </name>
         <part>
           <unit>W</unit>
           <prefix>0</prefix>
@@ -1443,412 +2108,656 @@
           <prefix>0</prefix>
           <exponent>-2</exponent>
         </part>
-        <_title>Watt per Square Meter</_title>
       </unit>
     </category>
     <category>
       <_title>Radiance</_title>
-      <unit type="composite" name="W_p_sqm_sr">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Watt per Square Meter Steradian</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>W_p_sqm_sr</name>
+        </name>
         <part>
           <unit>W</unit>
           <prefix>0</prefix>
           <exponent>1</exponent>
         </part>
         <part>
-          <unit>m</unit>
-          <prefix>0</prefix>
-          <exponent>-2</exponent>
-        </part>
-	<part>
           <unit>sr</unit>
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Watt per Square Meter Steradian</_title>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-2</exponent>
+        </part>
       </unit>
     </category>
   </category>
   <category>
     <_title>Area</_title>
-    <unit type="composite" name="sqm">
-      <system>si</system>
+    <unit type="composite">
+      <_title>Square Meter</_title>
+      <name index="1">
+        <reference>true</reference>
+        <name>sqm</name>
+      </name>
       <part>
         <unit>m</unit>
         <prefix>0</prefix>
         <exponent>2</exponent>
       </part>
-      <_title>Square Meter</_title>
     </unit>
-    <unit type="alias" name="a">
-      <_singular>are</_singular>
-      <_plural>ares</_plural>
+    <unit type="alias">
+      <_title>Are</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>a</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>are</_name>
+      </name>
+      <plural index="3">
+        <_name>ares</_name>
+      </plural>
       <base>
         <unit>m</unit>
         <relation>100</relation>
         <exponent>2</exponent>
       </base>
-      <_title>Are</_title>
     </unit>
-    <unit type="composite" name="ha">
+    <unit type="composite">
+      <_title>Hectare</_title>
+      <name index="1">
+        <reference>true</reference>
+        <name>ha</name>
+      </name>
       <part>
         <unit>a</unit>
         <prefix>2</prefix>
         <exponent>1</exponent>
       </part>
-      <_title>Hectare</_title>
     </unit>
-    <unit type="alias" name="b">
-      <_singular>barn</_singular>
-      <_plural>barns</_plural>
+    <unit type="alias">
+      <_title>Barn</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>b</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>barn</_name>
+      </name>
+      <plural index="3">
+        <_name>barns</_name>
+      </plural>
       <base>
         <unit>m</unit>
         <relation>1E-28</relation>
         <exponent>2</exponent>
       </base>
-      <_title>Barn</_title>
     </unit>
-    <unit type="alias" name="rood">
-      <_singular>rood</_singular>
-      <_plural>roods</_plural>
+    <unit type="alias">
+      <_title>Rood</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>rood</_name>
+      </name>
+      <plural index="2">
+        <_name>roods</_name>
+      </plural>
       <base>
         <unit>yd</unit>
         <relation>1210</relation>
         <exponent>2</exponent>
       </base>
-      <_title>Rood</_title>
     </unit>
-    <unit type="alias" name="acre">
-      <_singular>acre</_singular>
-      <_plural>acres</_plural>
+    <unit type="alias">
+      <_title>Acre</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>acre</_name>
+      </name>
+      <plural index="2">
+        <_name>acres</_name>
+      </plural>
       <base>
         <unit>ch</unit>
         <relation>10</relation>
         <exponent>2</exponent>
       </base>
-      <_title>Acre</_title>
     </unit>
-    <unit type="alias" name="section">
-      <_singular>section</_singular>
-      <_plural>sections</_plural>
+    <unit type="alias">
+      <_title>Section</_title>
+      <name index="2">
+        <reference>true</reference>
+        <_name>section</_name>
+      </name>
+      <plural index="3">
+        <_name>sections</_name>
+      </plural>
       <base>
         <unit>mi</unit>
         <relation>1</relation>
         <exponent>2</exponent>
       </base>
-      <_title>Section</_title>
     </unit>
-    <unit type="alias" name="township">
-      <_singular>township</_singular>
-      <_plural>townships</_plural>
+    <unit type="alias">
+      <_title>Township</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>township</_name>
+      </name>
+      <plural index="2">
+        <_name>townships</_name>
+      </plural>
       <base>
         <unit>section</unit>
         <relation>36</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Township</_title>
     </unit>
-    <unit type="composite" name="sqft">
+    <unit type="composite">
+      <_title>Square Foot</_title>
+      <name index="1">
+        <reference>true</reference>
+        <name>sqft</name>
+      </name>
       <part>
         <unit>ft</unit>
         <prefix>0</prefix>
         <exponent>2</exponent>
       </part>
-      <_title>Square Foot</_title>
     </unit>
   </category>
   <category>
     <_title>Volume</_title>
-    <category>
-      <_title>Cooking</_title>
-      <unit type="alias" name="teaspoon">
-        <_singular>teaspoon</_singular>
-        <_plural>teaspoons</_plural>
-        <base>
-          <unit>L</unit>
-          <relation>0.005</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>Teaspoon</_title>
-      </unit>
-      <unit type="alias" name="dessertspoon">
-        <_singular>dessertspoon</_singular>
-        <_plural>dessertspoons</_plural>
-        <base>
-          <unit>teaspoon</unit>
-          <relation>2</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>Dessertspoon</_title>
-      </unit>
-      <unit type="alias" name="tablespoon">
-        <_singular>tablespoon</_singular>
-        <_plural>tablespoons</_plural>
-        <base>
-          <unit>teaspoon</unit>
-          <relation>3</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>Tablespoon</_title>
-      </unit>
-      <unit type="alias" name="cup">
-        <_singular>cup</_singular>
-        <_plural>cups</_plural>
-        <base>
-          <unit>L</unit>
-          <relation>0.250</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>Cup</_title>
-      </unit>
-    </category>
-    <category>
-      <_title>Imperial Capacity</_title>
-      <unit type="alias" name="UK_bu">
-        <_singular>imperial_bushel</_singular>
-        <_plural>imperial_bushels</_plural>
-        <base>
-          <unit>UK_gal</unit>
-          <relation>8</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>Imperial Bushel</_title>
-      </unit>
-      <unit type="alias" name="UK_fl_oz">
-        <_singular>imperial_fluid_ounce</_singular>
-        <_plural>imperial_fluid_ounces</_plural>
-        <base>
-          <unit>L</unit>
-          <relation>0.0284130625</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>Imperial Fluid Ounce</_title>
-      </unit>
-      <unit type="alias" name="imperial_gill">
-        <_singular>imperial_gill</_singular>
-        <_plural>imperial_gills</_plural>
-        <base>
-          <unit>UK_fl_oz</unit>
-          <relation>5</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>Imperial Gill</_title>
-      </unit>
-      <unit type="alias" name="UK_pt">
-        <_singular>imperial_pint</_singular>
-        <_plural>imperial_pints</_plural>
-        <base>
-          <unit>imperial_gill</unit>
-          <relation>4</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>Imperial Pint</_title>
-      </unit>
-      <unit type="alias" name="UK_qt">
-        <_singular>imperial_quart</_singular>
-        <_plural>imperial_quarts</_plural>
-        <base>
-          <unit>UK_pt</unit>
-          <relation>2</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>Imperial Quart</_title>
-      </unit>
-      <unit type="alias" name="UK_gal">
-        <_singular>imperial_gallon</_singular>
-        <_plural>imperial_gallons</_plural>
-        <base>
-          <unit>UK_qt</unit>
-          <relation>4</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>Imperial Gallon</_title>
-      </unit>
-      <unit type="alias" name="imperial_minim">
-        <_singular>imperial_minim</_singular>
-        <_plural>imperial_minims</_plural>
-        <base>
-          <unit>UK_fl_oz</unit>
-          <relation>1/480</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>Imperial Minim</_title>
-      </unit>
-      <unit type="alias" name="imperial_fluid_scuple">
-        <_singular>imperial_fluid_scuple</_singular>
-        <_plural>imperial_fluid_scuples</_plural>
-        <base>
-          <unit>imperial_minim</unit>
-          <relation>20</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>Imperial Fluid Scuple</_title>
-      </unit>
-      <unit type="alias" name="UK_fl_dr">
-        <_singular>imperial_fluid_drachm</_singular>
-        <_plural>imperial_fluid_drachms</_plural>
-        <base>
-          <unit>imperial_fluid_scuple</unit>
-          <relation>3</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>Imperial Fluid Drachm</_title>
-      </unit>
-    </category>
-    <category>
-      <_title>U.S. Capacity</_title>
-      <unit type="alias" name="gal">
-        <_singular>gallon</_singular>
-        <_plural>gallons</_plural>
-        <base>
-          <unit>liq_qt</unit>
-          <relation>4</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>U.S. Gallon</_title>
-      </unit>
-      <unit type="alias" name="fl_oz">
-        <_singular>fluid_ounce</_singular>
-        <_plural>fluid_ounces</_plural>
-        <base>
-          <unit>in</unit>
-          <relation>231/128</relation>
-          <exponent>3</exponent>
-        </base>
-        <_title>U.S. Fluid Ounce</_title>
-      </unit>
-      <unit type="alias" name="gi">
-        <_singular>gill</_singular>
-        <_plural>gills</_plural>
-        <base>
-          <unit>fl_oz</unit>
-          <relation>4</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>U.S. Gill</_title>
-      </unit>
-      <unit type="alias" name="liq_pt">
-        <_singular>luquid_pint</_singular>
-        <_plural>liquid_pints</_plural>
-        <base>
-          <unit>gi</unit>
-          <relation>4</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>U.S. Liquid Pints</_title>
-      </unit>
-      <unit type="alias" name="liq_qt">
-        <_singular>liquid_quart</_singular>
-        <_plural>liquid_quarts</_plural>
-        <base>
-          <unit>liq_pt</unit>
-          <relation>2</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>U.S. Liquid Quarts</_title>
-      </unit>
-      <unit type="alias" name="minim">
-        <_singular>minim</_singular>
-        <_plural>minims</_plural>
-        <base>
-          <unit>fl_oz</unit>
-          <relation>1/480</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>U.S. Minim</_title>
-      </unit>
-      <unit type="alias" name="fl_dr">
-        <_singular>fluid_drachm</_singular>
-        <_plural>fluid_drachms</_plural>
-        <base>
-          <unit>minim</unit>
-          <relation>60</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>U.S. Fluid Drachm</_title>
-      </unit>
-      <unit type="alias" name="bbl">
-        <_singular>barrell</_singular>
-        <_plural>barrells</_plural>
-        <base>
-          <unit>gal</unit>
-          <relation>42</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>U.S. Barrell (oil)</_title>
-      </unit>
-      <unit type="alias" name="dry_pt">
-        <_singular>dry_pint</_singular>
-        <_plural>dry_pints</_plural>
-        <base>
-          <unit>in</unit>
-          <relation>33.6003125</relation>
-          <exponent>3</exponent>
-        </base>
-        <_title>U.S. Dry Pint</_title>
-      </unit>
-      <unit type="alias" name="dry_qt">
-        <_singular>dry_quart</_singular>
-        <_plural>dry_quarts</_plural>
-        <base>
-          <unit>dry_pt</unit>
-          <relation>2</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>U.S. Dry Quart</_title>
-      </unit>
-      <unit type="alias" name="pk">
-        <_singular>peck</_singular>
-        <_plural>pecks</_plural>
-        <base>
-          <unit>dry_qt</unit>
-          <relation>8</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>U.S. Peck</_title>
-      </unit>
-      <unit type="alias" name="bu">
-        <_singular>bushel</_singular>
-        <_plural>bushels</_plural>
-        <base>
-          <unit>pk</unit>
-          <relation>4</relation>
-          <exponent>1</exponent>
-        </base>
-        <_title>U.S. Bushel</_title>
-      </unit>
-    </category>
-    <unit type="composite" name="cum">
-      <system>si</system>
+    <unit type="composite">
+      <_title>Cubic Meter</_title>
+      <name index="1">
+        <reference>true</reference>
+        <name>cum</name>
+      </name>
       <part>
         <unit>m</unit>
         <prefix>0</prefix>
         <exponent>3</exponent>
       </part>
-      <_title>Cubic Meter</_title>
     </unit>
-    <unit type="alias" name="L">
-      <_singular>liter</_singular>
-      <_plural>liters</_plural>
+    <unit type="alias">
+      <_title>Liter</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>L</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>liter</_name>
+      </name>
+      <plural index="3">
+        <_name>liters</_name>
+      </plural>
       <base>
         <unit>m</unit>
         <relation>0.001</relation>
         <exponent>3</exponent>
       </base>
-      <_title>Liter</_title>
     </unit>
-    <unit type="composite" name="cuin">
+    <unit type="composite">
+      <_title>Cubic Inch</_title>
+      <name index="1">
+        <reference>true</reference>
+        <name>cuin</name>
+      </name>
       <part>
         <unit>in</unit>
         <prefix>0</prefix>
         <exponent>3</exponent>
       </part>
-      <_title>Cubic Inch</_title>
     </unit>
     <category>
+      <_title>Cooking</_title>
+      <unit type="alias">
+        <_title>Teaspoon</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>teaspoon</_name>
+        </name>
+        <plural index="2">
+          <_name>teaspoons</_name>
+        </plural>
+        <base>
+          <unit>L</unit>
+          <relation>0.005</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Dessertspoon</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>dessertspoon</_name>
+        </name>
+        <plural index="2">
+          <_name>dessertspoons</_name>
+        </plural>
+        <base>
+          <unit>teaspoon</unit>
+          <relation>2</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Tablespoon</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>tablespoon</_name>
+        </name>
+        <plural index="2">
+          <_name>tablespoons</_name>
+        </plural>
+        <base>
+          <unit>teaspoon</unit>
+          <relation>3</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Cup</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>cup</_name>
+        </name>
+        <plural index="2">
+          <_name>cups</_name>
+        </plural>
+        <base>
+          <unit>L</unit>
+          <relation>0.250</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+    </category>
+    <category>
+      <_title>Imperial Capacity</_title>
+      <unit type="alias">
+        <_title>Imperial Fluid Ounce</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>UK_fl_oz</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>imperial_fluid_ounce</_name>
+        </name>
+        <plural index="3">
+          <_name>imperial_fluid_ounces</_name>
+        </plural>
+        <base>
+          <unit>L</unit>
+          <relation>0.0284130625</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Imperial Gill</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>imperial_gill</_name>
+        </name>
+        <plural index="2">
+          <_name>imperial_gills</_name>
+        </plural>
+        <base>
+          <unit>UK_fl_oz</unit>
+          <relation>5</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Imperial Pint</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>UK_pt</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>imperial_pint</_name>
+        </name>
+        <plural index="3">
+          <_name>imperial_pints</_name>
+        </plural>
+        <base>
+          <unit>imperial_gill</unit>
+          <relation>4</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Imperial Quart</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>UK_qt</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>imperial_quart</_name>
+        </name>
+        <plural index="3">
+          <_name>imperial_quarts</_name>
+        </plural>
+        <base>
+          <unit>UK_pt</unit>
+          <relation>2</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Imperial Gallon</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>UK_gal</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>imperial_gallon</_name>
+        </name>
+        <plural index="3">
+          <_name>imperial_gallons</_name>
+        </plural>
+        <base>
+          <unit>UK_qt</unit>
+          <relation>4</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Imperial Minim</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>imperial_minim</_name>
+        </name>
+        <plural index="2">
+          <_name>imperial_minims</_name>
+        </plural>
+        <base>
+          <unit>UK_fl_oz</unit>
+          <relation>1/480</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Imperial Fluid Scuple</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>imperial_fluid_scuple</_name>
+        </name>
+        <plural index="2">
+          <_name>imperial_fluid_scuples</_name>
+        </plural>
+        <base>
+          <unit>imperial_minim</unit>
+          <relation>20</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Imperial Fluid Drachm</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>UK_fl_dr</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>imperial_fluid_drachm</_name>
+        </name>
+        <plural index="3">
+          <_name>imperial_fluid_drachms</_name>
+        </plural>
+        <base>
+          <unit>imperial_fluid_scuple</unit>
+          <relation>3</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Imperial Bushel</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>UK_bu</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>imperial_bushel</_name>
+        </name>
+        <plural index="3">
+          <_name>imperial_bushels</_name>
+        </plural>
+        <base>
+          <unit>UK_gal</unit>
+          <relation>8</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+    </category>
+    <category>
+      <_title>U.S. Capacity</_title>
+      <unit type="alias">
+        <_title>U.S. Fluid Ounce</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>fl_oz</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>fluid_ounce</_name>
+        </name>
+        <plural index="3">
+          <_name>fluid_ounces</_name>
+        </plural>
+        <base>
+          <unit>in</unit>
+          <relation>231/128</relation>
+          <exponent>3</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>U.S. Gill</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>gi</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>gill</_name>
+        </name>
+        <plural index="3">
+          <_name>gills</_name>
+        </plural>
+        <base>
+          <unit>fl_oz</unit>
+          <relation>4</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>U.S. Liquid Pints</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>liq_pt</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>luquid_pint</_name>
+        </name>
+        <plural index="3">
+          <_name>liquid_pints</_name>
+        </plural>
+        <base>
+          <unit>gi</unit>
+          <relation>4</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>U.S. Liquid Quarts</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>liq_qt</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>liquid_quart</_name>
+        </name>
+        <plural index="3">
+          <_name>liquid_quarts</_name>
+        </plural>
+        <base>
+          <unit>liq_pt</unit>
+          <relation>2</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>U.S. Minim</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>minim</_name>
+        </name>
+        <plural index="2">
+          <_name>minims</_name>
+        </plural>
+        <base>
+          <unit>fl_oz</unit>
+          <relation>1/480</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>U.S. Fluid Drachm</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>fl_dr</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>fluid_drachm</_name>
+        </name>
+        <plural index="3">
+          <_name>fluid_drachms</_name>
+        </plural>
+        <base>
+          <unit>minim</unit>
+          <relation>60</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>U.S. Dry Pint</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>dry_pt</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>dry_pint</_name>
+        </name>
+        <plural index="3">
+          <_name>dry_pints</_name>
+        </plural>
+        <base>
+          <unit>in</unit>
+          <relation>33.6003125</relation>
+          <exponent>3</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>U.S. Dry Quart</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>dry_qt</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>dry_quart</_name>
+        </name>
+        <plural index="3">
+          <_name>dry_quarts</_name>
+        </plural>
+        <base>
+          <unit>dry_pt</unit>
+          <relation>2</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>U.S. Peck</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>pk</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>peck</_name>
+        </name>
+        <plural index="3">
+          <_name>pecks</_name>
+        </plural>
+        <base>
+          <unit>dry_qt</unit>
+          <relation>8</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>U.S. Bushel</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>bu</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>bushel</_name>
+        </name>
+        <plural index="3">
+          <_name>bushels</_name>
+        </plural>
+        <base>
+          <unit>pk</unit>
+          <relation>4</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>U.S. Gallon</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>gal</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>gallon</_name>
+        </name>
+        <plural index="3">
+          <_name>gallons</_name>
+        </plural>
+        <base>
+          <unit>liq_qt</unit>
+          <relation>4</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>U.S. Barrell (oil)</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>bbl</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>barrell</_name>
+        </name>
+        <plural index="3">
+          <_name>barrells</_name>
+        </plural>
+        <base>
+          <unit>gal</unit>
+          <relation>42</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+    </category>
+    <category>
       <_title>Specific Volume</_title>
-      <unit type="composite" name="cum_p_kg">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Cubic Meter per Kilogram</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>cum_p_kg</name>
+        </name>
         <part>
           <unit>m</unit>
           <prefix>0</prefix>
@@ -1859,14 +2768,17 @@
           <prefix>3</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Cubic Meter per Kilogram</_title>
       </unit>
     </category>
   </category>
   <category>
     <_title>Speed</_title>
-    <unit type="composite" name="m_p_s">
-      <system>si</system>
+    <unit type="composite">
+      <_title>Meter per Second</_title>
+      <name index="1">
+        <reference>true</reference>
+        <name>m_p_s</name>
+      </name>
       <part>
         <unit>m</unit>
         <prefix>0</prefix>
@@ -1877,9 +2789,13 @@
         <prefix>0</prefix>
         <exponent>-1</exponent>
       </part>
-      <_title>Meter per Second</_title>
     </unit>
-    <unit type="composite" name="nautical_mile_p_h">
+    <unit type="composite">
+      <_title>Nautical Mile per Hour</_title>
+      <name index="1">
+        <reference>true</reference>
+        <name>nautical_mile_p_h</name>
+      </name>
       <part>
         <unit>nautical_mile</unit>
         <prefix>0</prefix>
@@ -1890,22 +2806,30 @@
         <prefix>0</prefix>
         <exponent>-1</exponent>
       </part>
-      <_title>Nautical Mile per Hour</_title>
     </unit>
-    <unit type="alias" name="knot">
-      <_singular>knot</_singular>
-      <_plural>knots</_plural>
+    <unit type="alias">
+      <_title>Knot</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>knot</_name>
+      </name>
+      <plural index="2">
+        <_name>knots</_name>
+      </plural>
       <base>
         <unit>nautical_mile_p_h</unit>
         <relation>1</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Knot</_title>
     </unit>
     <category>
       <_title>Acceleration</_title>
-      <unit type="composite" name="m_p_sqs">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Meter per Square Second</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>m_p_sqs</name>
+        </name>
         <part>
           <unit>m</unit>
           <prefix>0</prefix>
@@ -1916,17 +2840,24 @@
           <prefix>0</prefix>
           <exponent>-2</exponent>
         </part>
-        <_title>Meter per Square Second</_title>
       </unit>
-      <unit type="alias" name="Gal">
-        <_singular>galileo</_singular>
-        <_plural>galileos</_plural>
+      <unit type="alias">
+        <_title>Galileo</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>Gal</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>galileo</_name>
+        </name>
+        <plural index="3">
+          <_name>galileos</_name>
+        </plural>
         <base>
           <unit>m_p_sqs</unit>
           <relation>1/100</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Galileo</_title>
       </unit>
     </category>
   </category>
@@ -1934,20 +2865,27 @@
     <_title>Magnetism</_title>
     <category>
       <_title>Wave Number</_title>
-      <unit type="composite" name="recm">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Reciprocal Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>recm</name>
+        </name>
         <part>
           <unit>m</unit>
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Reciprocal Meter</_title>
       </unit>
     </category>
     <category>
       <_title>Magnetic Field Strength</_title>
-      <unit type="composite" name="A_p_m">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Ampere per Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>A_p_m</name>
+        </name>
         <part>
           <unit>A</unit>
           <prefix>0</prefix>
@@ -1958,23 +2896,34 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Ampere per Meter</_title>
       </unit>
-      <unit type="alias" name="Oe">
-        <system>cgs</system>
-        <_singular>oersted</_singular>
-        <_plural>oersteds</_plural>
+      <unit type="alias">
+        <_title>Oersted</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>Oe</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>oersted</_name>
+        </name>
+        <plural index="3">
+          <_name>oersteds</_name>
+        </plural>
         <base>
           <unit>A_p_m</unit>
           <relation>1000/(4*pi)</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Oersted</_title>
       </unit>
     </category>
     <category>
       <_title>Magnetic Flux</_title>
-      <unit type="composite" name="V_s">
+      <unit type="composite">
+        <_title>Volt Seconds</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>V_s</name>
+        </name>
         <part>
           <unit>V</unit>
           <prefix>0</prefix>
@@ -1985,34 +2934,52 @@
           <prefix>0</prefix>
           <exponent>1</exponent>
         </part>
-        <_title>Volt Seconds</_title>
       </unit>
-      <unit type="alias" name="Wb">
-        <system>si</system>
-        <_singular>weber</_singular>
-        <_plural>webers</_plural>
+      <unit type="alias">
+        <_title>Weber</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>Wb</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>weber</_name>
+        </name>
+        <plural index="3">
+          <_name>webers</_name>
+        </plural>
         <base>
           <unit>V_s</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Weber</_title>
       </unit>
-      <unit type="alias" name="Mx">
-        <system>cgs</system>
-        <_singular>maxwell</_singular>
-        <_plural>maxwells</_plural>
+      <unit type="alias">
+        <_title>Maxwell</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>Mx</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>maxwell</_name>
+        </name>
+        <plural index="3">
+          <_name>maxwells</_name>
+        </plural>
         <base>
           <unit>Wb</unit>
           <relation>1E-8</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Maxwell</_title>
       </unit>
     </category>
     <category>
       <_title>Magnetic Flux Density</_title>
-      <unit type="composite" name="Wb_p_sqm">
+      <unit type="composite">
+        <_title>Weber per Square Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>Wb_p_sqm</name>
+        </name>
         <part>
           <unit>Wb</unit>
           <prefix>0</prefix>
@@ -2023,35 +2990,47 @@
           <prefix>0</prefix>
           <exponent>-2</exponent>
         </part>
-        <_title>Weber per Square Meter</_title>
       </unit>
-      <unit type="alias" name="T">
-        <system>si</system>
-        <_singular>tesla</_singular>
-        <_plural>teslas</_plural>
+      <unit type="alias">
+        <_title>Tesla</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>T</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>tesla</_name>
+        </name>
+        <plural index="3">
+          <_name>teslas</_name>
+        </plural>
         <base>
           <unit>Wb_p_sqm</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Tesla</_title>
       </unit>
-      <unit type="alias" name="gauss">
-        <system>cgs</system>
-        <_singular>gauss</_singular>
-        <_plural>gauss</_plural>
+      <unit type="alias">
+        <_title>Gauss</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>gauss</_name>
+        </name>
         <base>
           <unit>T</unit>
           <relation>0.0001</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Gauss</_title>
       </unit>
     </category>
   </category>
   <category>
     <_title>Force</_title>
-    <unit type="composite" name="m_kg_p_sqs">
+    <unit type="composite">
+      <_title>Meter Kilogram per Square Second</_title>
+      <name index="1">
+        <reference>true</reference>
+        <name>m_kg_p_sqs</name>
+      </name>
       <part>
         <unit>m</unit>
         <prefix>0</prefix>
@@ -2067,34 +3046,51 @@
         <prefix>0</prefix>
         <exponent>-2</exponent>
       </part>
-      <_title>Meter Kilogram per Square Second</_title>
     </unit>
-    <unit type="alias" name="N">
-      <system>si</system>
-      <_singular>newton</_singular>
-      <_plural>newtons</_plural>
+    <unit type="alias">
+      <_title>Newton</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>N</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>newton</_name>
+      </name>
+      <plural index="3">
+        <_name>newtons</_name>
+      </plural>
       <base>
         <unit>m_kg_p_sqs</unit>
         <relation>1</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Newton</_title>
     </unit>
-    <unit type="alias" name="dyn">
-      <system>cgs</system>
-      <_singular>dyne</_singular>
-      <_plural>dynes</_plural>
+    <unit type="alias">
+      <_title>Dyne</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>dyn</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>dyne</_name>
+      </name>
+      <plural index="3">
+        <_name>dynes</_name>
+      </plural>
       <base>
         <unit>N</unit>
         <relation>1E-5</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Dyne</_title>
     </unit>
     <category>
       <_title>Moment of Force</_title>
-      <unit type="composite" name="N_m">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Newton Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>N_m</name>
+        </name>
         <part>
           <unit>N</unit>
           <prefix>0</prefix>
@@ -2105,12 +3101,16 @@
           <prefix>0</prefix>
           <exponent>1</exponent>
         </part>
-        <_title>Newton Meter</_title>
       </unit>
     </category>
     <category>
       <_title>Pressure</_title>
-      <unit type="composite" name="N_p_sqm">
+      <unit type="composite">
+        <_title>Newton per Square Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>N_p_sqm</name>
+        </name>
         <part>
           <unit>N</unit>
           <prefix>0</prefix>
@@ -2121,54 +3121,82 @@
           <prefix>0</prefix>
           <exponent>-2</exponent>
         </part>
-        <_title>Newton per Square Meter</_title>
       </unit>
-      <unit type="alias" name="Pa">
-        <system>si</system>
-        <_singular>pascal</_singular>
-        <_plural>pascals</_plural>
+      <unit type="alias">
+        <_title>Pascal</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>Pa</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>pascal</_name>
+        </name>
+        <plural index="3">
+          <_name>pascals</_name>
+        </plural>
         <base>
           <unit>N_p_sqm</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Pascal</_title>
       </unit>
-      <unit type="alias" name="bar">
-        <_singular>bar</_singular>
-        <_plural>bars</_plural>
+      <unit type="alias">
+        <_title>Bar</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>bar</_name>
+        </name>
+        <plural index="2">
+          <_name>bars</_name>
+        </plural>
         <base>
           <unit>Pa</unit>
           <relation>100000</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Bar</_title>
       </unit>
-      <unit type="alias" name="atm">
-        <_singular>atmosphere</_singular>
-        <_plural>atmospheres</_plural>
+      <unit type="alias">
+        <_title>Atmosphere</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>atm</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>atmosphere</_name>
+        </name>
+        <plural index="3">
+          <_name>atmospheres</_name>
+        </plural>
         <base>
           <unit>Pa</unit>
           <relation>101325</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Atmosphere</_title>
       </unit>
-      <unit type="alias" name="torr">
-        <_singular>torr</_singular>
-        <_plural>torrs</_plural>
+      <unit type="alias">
+        <_title>Torr</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>torr</_name>
+        </name>
+        <plural index="2">
+          <_name>torrs</_name>
+        </plural>
         <base>
           <unit>atm</unit>
           <relation>1/760</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Torr</_title>
       </unit>
     </category>
     <category>
       <_title>Dynamic Viscosity</_title>
-      <unit type="composite" name="Pa_s">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Pascal Second</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>Pa_s</name>
+        </name>
         <part>
           <unit>Pa</unit>
           <prefix>0</prefix>
@@ -2179,23 +3207,34 @@
           <prefix>0</prefix>
           <exponent>1</exponent>
         </part>
-        <_title>Pascal Second</_title>
       </unit>
-      <unit type="alias" name="P">
-        <system>cgs</system>
-        <_singular>poise</_singular>
-        <_plural>poises</_plural>
+      <unit type="alias">
+        <_title>Poise</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>P</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>poise</_name>
+        </name>
+        <plural index="3">
+          <_name>poises</_name>
+        </plural>
         <base>
           <unit>Pa_s</unit>
           <relation>0.1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Poise</_title>
       </unit>
     </category>
     <category>
-      <title>Kinematic Viscosity</title>
-      <unit type="composite" name="sqm_p_s">
+      <_title>Kinematic Viscosity</_title>
+      <unit type="composite">
+        <_title>Square Meter per Second</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>sqm_p_s</name>
+        </name>
         <part>
           <unit>m</unit>
           <prefix>0</prefix>
@@ -2206,24 +3245,34 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Square Meter per Second</_title>
       </unit>
-      <unit type="alias" name="St">
-        <system>cgs</system>
-        <_singular>stokes</_singular>
-        <_plural>stokes</_plural>
+      <unit type="alias">
+        <_title>Stokes</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>St</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>stokes</_name>
+        </name>
+        <plural index="3">
+          <_name>stokes</_name>
+        </plural>
         <base>
           <unit>sqm_p_s</unit>
           <relation>0.0001</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Stokes</_title>
       </unit>
     </category>
     <category>
       <_title>Surface Tension</_title>
-      <unit type="composite" name="N_p_m">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Newton per Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>N_p_m</name>
+        </name>
         <part>
           <unit>N</unit>
           <prefix>0</prefix>
@@ -2234,107 +3283,170 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Newton per Meter</_title>
       </unit>
     </category>
   </category>
   <category>
     <_title>Energy</_title>
-    <unit type="alias" name="J">
-      <system>si</system>
-      <_singular>joule</_singular>
-      <_plural>joules</_plural>
+    <unit type="alias">
+      <_title>Joule</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>J</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>joule</_name>
+      </name>
+      <plural index="3">
+        <_name>joules</_name>
+      </plural>
       <base>
         <unit>N_m</unit>
         <relation>1</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Joule</_title>
     </unit>
-    <unit type="alias" name="cal">
-      <_singular>calorie</_singular>
-      <_plural>calories</_plural>
+    <unit type="alias">
+      <_title>Calorie (international table)</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>cal</_name>
+      </abbreviation>
+      <name index="2">
+        <case_sensitive>true</case_sensitive>
+        <_name>calorie</_name>
+      </name>
+      <plural index="3">
+        <case_sensitive>true</case_sensitive>
+        <_name>calories</_name>
+      </plural>
       <base>
         <unit>J</unit>
         <relation>4.1868</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Calorie (international table)</_title>
     </unit>
-    <unit type="alias" name="Calorie">
-      <_singular>Calorie</_singular>
-      <_plural>Calories</_plural>
+    <unit type="alias">
+      <_title>Calorie (capital C)</_title>
+      <name index="2">
+        <reference>true</reference>
+        <case_sensitive>true</case_sensitive>
+        <_name>Calorie</_name>
+      </name>
+      <plural index="3">
+        <case_sensitive>true</case_sensitive>
+        <_name>Calories</_name>
+      </plural>
       <base>
         <unit>cal</unit>
         <relation>1000</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Calorie (capital C)</_title>
     </unit>
-    <unit type="alias" name="cal_th">
-      <_singular>thermo_calorie</_singular>
-      <_plural>thermo_calories</_plural>
+    <unit type="alias">
+      <_title>Calorie (thermochemical)</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>cal_th</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>thermo_calorie</_name>
+      </name>
+      <plural index="3">
+        <_name>thermo_calories</_name>
+      </plural>
       <base>
         <unit>J</unit>
         <relation>4.184</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Calorie (thermochemical)</_title>
     </unit>
-    <unit type="alias" name="calorie_fifteen">
-      <_singular>calorie_fifteen</_singular>
-      <_plural>calories_fifteen</_plural>
+    <unit type="alias">
+      <_title>Calorie (15 degrees Celcius)</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>calorie_fifteen</_name>
+      </name>
+      <plural index="2">
+        <_name>calories_fifteen</_name>
+      </plural>
       <base>
         <unit>J</unit>
         <relation approximate="true">4.185880</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Calorie (15 degrees Celcius)</_title>
     </unit>
-    <unit type="alias" name="cal_mean">
-      <_singular>mean_calorie</_singular>
-      <_plural>mean_calories</_plural>
+    <unit type="alias">
+      <_title>Calorie (mean)</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>cal_mean</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>mean_calorie</_name>
+      </name>
+      <plural index="3">
+        <_name>mean_calories</_name>
+      </plural>
       <base>
         <unit>J</unit>
         <relation approximate="true">4.19002</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Calorie (mean)</_title>
     </unit>
-    <unit type="alias" name="Btu">
-      <_singular>Btu</_singular>
+    <unit type="alias">
+      <_title>British Thermal Unit (IT)</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>Btu</_name>
+      </abbreviation>
       <base>
         <unit>J</unit>
         <relation>1055.056</relation>
         <exponent>1</exponent>
       </base>
-      <_title>British Thermal Unit (IT)</_title>
     </unit>
-    <unit type="alias" name="eV">
-      <_singular>electron_volt</_singular>
-      <_plural>electron_volts</_plural>
+    <unit type="alias">
+      <_title>Electron Volt</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>eV</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>electron_volt</_name>
+      </name>
+      <plural index="3">
+        <_name>electron_volts</_name>
+      </plural>
       <base>
         <unit>J</unit>
         <relation approximate="true">1.602177E-19</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Electron Volt</_title>
     </unit>
-    <unit type="alias" name="erg">
-      <system>cgs</system>
-      <_singular>erg</_singular>
-      <_plural>ergs</_plural>
+    <unit type="alias">
+      <_title>Erg</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>erg</_name>
+      </name>
+      <plural index="2">
+        <_name>ergs</_name>
+      </plural>
       <base>
         <unit>J</unit>
         <relation>1E-7</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Erg</_title>
     </unit>
     <category>
       <_title>Specific Energy</_title>
-      <unit type="composite" name="J_p_kg">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Joule per Kilogram</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>J_p_kg</name>
+        </name>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -2345,12 +3457,16 @@
           <prefix>3</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Joule per Kilogram</_title>
       </unit>
     </category>
     <category>
       <_title>Power</_title>
-      <unit type="composite" name="J_p_s">
+      <unit type="composite">
+        <_title>Joule per Second</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>J_p_s</name>
+        </name>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -2361,43 +3477,67 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Joule per Second</_title>
       </unit>
-      <unit type="alias" name="W">
-        <system>si</system>
-        <_singular>watt</_singular>
-        <_plural>watts</_plural>
+      <unit type="alias">
+        <_title>Watt</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>W</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>watt</_name>
+        </name>
+        <plural index="3">
+          <_name>watts</_name>
+        </plural>
         <base>
           <unit>J_p_s</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Watt</_title>
       </unit>
-      <unit type="alias" name="hp">
-        <_singular>horsepower</_singular>
-        <_plural>horsepowers</_plural>
+      <unit type="alias">
+        <_title>Horse Power</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>hp</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>horsepower</_name>
+        </name>
+        <plural index="3">
+          <_name>horsepowers</_name>
+        </plural>
         <base>
           <unit>W</unit>
           <relation>745.699987158227022</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Horse Power</_title>
       </unit>
-      <unit type="alias" name="PS">
-        <_singular>pferdest&#xE4;rke</_singular>
+      <unit type="alias">
+        <_title>Pferdest&#xE4;rke</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>PS</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>pferdest&#xE4;rke</_name>
+        </name>
         <base>
           <unit>W</unit>
           <relation>735.49875</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Pferdest&#xE4;rke</_title>
       </unit>
     </category>
     <category>
       <_title>Entropy</_title>
-      <unit type="composite" name="J_p_K">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Joule per Kelvin</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>J_p_K</name>
+        </name>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -2408,13 +3548,16 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Joule per Kelvin</_title>
       </unit>
     </category>
     <category>
       <_title>Specific Entropy</_title>
-      <unit type="composite" name="J_p_kg_K">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Joule per Kilogram Kelvin</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>J_p_kg_K</name>
+        </name>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -2430,13 +3573,16 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Joule per Kilogram Kelvin</_title>
       </unit>
     </category>
     <category>
       <_title>Thermal Conductivity</_title>
-      <unit type="composite" name="W_p_m_K">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Watt per Meter Kelvin</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>W_p_m_K</name>
+        </name>
         <part>
           <unit>W</unit>
           <prefix>0</prefix>
@@ -2452,13 +3598,16 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Watt per Meter Kelvin</_title>
       </unit>
     </category>
     <category>
       <_title>Energy Density</_title>
-      <unit type="composite" name="J_p_cum">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Joule per Cubic Meter</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>J_p_cum</name>
+        </name>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -2469,13 +3618,16 @@
           <prefix>0</prefix>
           <exponent>-3</exponent>
         </part>
-        <_title>Joule per Cubic Meter</_title>
       </unit>
     </category>
     <category>
       <_title>Molar Energy</_title>
-      <unit type="composite" name="J_p_mol">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Joule per Mole</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>J_p_mol</name>
+        </name>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -2486,13 +3638,16 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Joule per Mole</_title>
       </unit>
     </category>
     <category>
       <_title>Molar Entropy</_title>
-      <unit type="composite" name="J_p_mol_K">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Joule per Mole Kelvin</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>J_p_mol_K</name>
+        </name>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -2508,83 +3663,121 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Joule per Mole Kelvin</_title>
       </unit>
     </category>
   </category>
   <category>
     <_title>Radioactivity</_title>
-    <unit type="alias" name="Bq">
-      <system>si</system>
-      <_singular>becquerel</_singular>
-      <_plural>becquerels</_plural>
+    <unit type="alias">
+      <_title>Becquerel</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>Bq</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>becquerel</_name>
+      </name>
+      <plural index="3">
+        <_name>becquerels</_name>
+      </plural>
       <base>
         <unit>s</unit>
         <relation>1</relation>
         <exponent>-1</exponent>
       </base>
-      <_title>Becquerel</_title>
     </unit>
-    <unit type="alias" name="Ci">
-      <_singular>curie</_singular>
-      <_plural>curies</_plural>
+    <unit type="alias">
+      <_title>Curie</_title>
+      <abbreviation index="1">
+        <reference>true</reference>
+        <_name>Ci</_name>
+      </abbreviation>
+      <name index="2">
+        <_name>curie</_name>
+      </name>
+      <plural index="3">
+        <_name>curies</_name>
+      </plural>
       <base>
         <unit>Bq</unit>
         <relation>3.7E10</relation>
         <exponent>1</exponent>
       </base>
-      <_title>Curie</_title>
     </unit>
     <category>
       <_title>Absorbed Dose</_title>
-      <unit type="alias" name="Gy">
-        <system>si</system>
-        <_singular>gray</_singular>
-        <_plural>grays</_plural>
+      <unit type="alias">
+        <_title>Gray</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>Gy</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>gray</_name>
+        </name>
+        <plural index="3">
+          <_name>grays</_name>
+        </plural>
         <base>
           <unit>J_p_kg</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Gray</_title>
       </unit>
-      <unit type="alias" name="rad_radioactivity">
-        <_singular>rad_radioactivity</_singular>
+      <unit type="alias">
+        <_title>Rad</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>rad_radioactivity</_name>
+        </abbreviation>
         <base>
           <unit>Gy</unit>
           <relation>1/100</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Rad</_title>
       </unit>
     </category>
     <category>
       <_title>Dose Equivalent</_title>
-      <unit type="alias" name="Sv">
-        <system>si</system>
-        <_singular>sievert</_singular>
-        <_plural>sieverts</_plural>
+      <unit type="alias">
+        <_title>Sievert</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>Sv</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>sievert</_name>
+        </name>
+        <plural index="3">
+          <_name>sieverts</_name>
+        </plural>
         <base>
           <unit>J_p_kg</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Sievert</_title>
       </unit>
-      <unit type="alias" name="rem_radioactivity">
-        <_singular>rem_radioactivity</_singular>
+      <unit type="alias">
+        <_title>Rem</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>rem_radioactivity</_name>
+        </abbreviation>
         <base>
           <unit>Sv</unit>
           <relation>1/100</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Rem</_title>
       </unit>
     </category>
     <category>
       <_title>Exposure</_title>
-      <unit type="composite" name="C_p_kg">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Coulomb per Kilogram</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>C_p_kg</name>
+        </name>
         <part>
           <unit>C</unit>
           <prefix>0</prefix>
@@ -2595,23 +3788,34 @@
           <prefix>3</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Coulomb per Kilogram</_title>
       </unit>
-      <unit type="alias" name="R">
-        <_singular>roentgen</_singular>
-        <_plural>roentgens</_plural>
+      <unit type="alias">
+        <_title>Roentgen</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>R</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>roentgen</_name>
+        </name>
+        <plural index="3">
+          <_name>roentgens</_name>
+        </plural>
         <base>
           <unit>C_p_kg</unit>
           <relation>0.000258</relation>
           <exponent>1</exponent>
         </base>
-        <_title>Roentgen</_title>
       </unit>
     </category>
     <category>
       <_title>Absorbed Dose Rate</_title>
-      <unit type="composite" name="Gy_p_s">
-        <system>si</system>
+      <unit type="composite">
+        <_title>Gray per Second</_title>
+        <name index="1">
+          <reference>true</reference>
+          <name>Gy_p_s</name>
+        </name>
         <part>
           <unit>Gy</unit>
           <prefix>0</prefix>
@@ -2622,7 +3826,6 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
-        <_title>Gray per Second</_title>
       </unit>
     </category>
   </category>

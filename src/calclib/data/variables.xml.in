@@ -1,42 +1,212 @@
 <?xml version="1.0"?>
 <QALCULATE version="0.6.2">
   <category>
-    <_title>Basic Constants</_title>
-    <builtin_variable name="e">
-      <_title>The Base of Natural Logarithms (e)</_title>
-    </builtin_variable>
-    <builtin_variable name="pi">
-      <_title>Archimede's Constant (pi)</_title>
-      <abbreviation index="2">
-        <unicode>true</unicode>
-        <_name>π</_name>
-      </abbreviation>
-    </builtin_variable>
-    <builtin_variable name="euler">
-      <_title>Euler's Constant</_title>
-      <abbreviation index="2">
-        <unicode>true</unicode>
-        <_name>γ</_name>
-      </abbreviation>
-    </builtin_variable>
-    <variable name="apery">
-      <_title>Apery's Constant</_title>
-      <value>zeta(3)</value>
+    <_title>Small Numbers</_title>
+    <variable>
+      <_title>Promille</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>promille</_name>
+      </name>
+      <value>1/1000</value>
     </variable>
-    <builtin_variable name="catalan">
-      <_title>Catalan's Constant</_title>
-    </builtin_variable>
-    <variable name="pythagoras">
-      <_title>Pythagora's Constant (sqrt 2)</_title>
-      <value>sqrt(2)</value>
-    </variable>
-    <variable name="golden">
-      <_title>The Golden Ratio</_title>
-      <value>(1+sqrt(5))/2</value>
-      <abbreviation index="2">
-        <unicode>true</unicode>
-        <_name>φ</_name>
+    <variable>
+      <_title>Procent</_title>
+      <abbreviation index="1">
+        <_name>%</_name>
       </abbreviation>
+      <name index="2">
+        <reference>true</reference>
+        <_name>procent</_name>
+      </name>
+      <value>1/100</value>
+    </variable>
+  </category>
+  <category>
+    <_title>Large Numbers</_title>
+    <variable>
+      <_title>Googleplex</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>googleplex</_name>
+      </name>
+      <value>10^(10^100)</value>
+    </variable>
+    <variable>
+      <_title>Google</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>google</_name>
+      </name>
+      <value>10^100</value>
+    </variable>
+    <variable>
+      <_title>Centillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>centillion</_name>
+      </name>
+      <value>1E303</value>
+    </variable>
+    <variable>
+      <_title>Vigintillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>vigintillion</_name>
+      </name>
+      <value>1E63</value>
+    </variable>
+    <variable>
+      <_title>Novemdecillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>novemdecillion</_name>
+      </name>
+      <value>1E60</value>
+    </variable>
+    <variable>
+      <_title>Octodecillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>octodecillion</_name>
+      </name>
+      <value>1E57</value>
+    </variable>
+    <variable>
+      <_title>Septendecillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>septendecillion</_name>
+      </name>
+      <value>1E54</value>
+    </variable>
+    <variable>
+      <_title>Sexdecillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>sexdecillion</_name>
+      </name>
+      <value>1E51</value>
+    </variable>
+    <variable>
+      <_title>Quindecillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>quindecillion</_name>
+      </name>
+      <value>1E48</value>
+    </variable>
+    <variable>
+      <_title>Quattuordecillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>quattuordecillion</_name>
+      </name>
+      <value>1E45</value>
+    </variable>
+    <variable>
+      <_title>Tredecillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>tredecillion</_name>
+      </name>
+      <value>1E42</value>
+    </variable>
+    <variable>
+      <_title>Duodecillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>duodecillion</_name>
+      </name>
+      <value>1E39</value>
+    </variable>
+    <variable>
+      <_title>Undecillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>undecillion</_name>
+      </name>
+      <value>1E36</value>
+    </variable>
+    <variable>
+      <_title>Decillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>decillion</_name>
+      </name>
+      <value>1E33</value>
+    </variable>
+    <variable>
+      <_title>Nonillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>nonillion</_name>
+      </name>
+      <value>1E30</value>
+    </variable>
+    <variable>
+      <_title>Octillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>octillion</_name>
+      </name>
+      <value>1E27</value>
+    </variable>
+    <variable>
+      <_title>Septillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>septillion</_name>
+      </name>
+      <value>1E24</value>
+    </variable>
+    <variable>
+      <_title>Sextillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>sextillion</_name>
+      </name>
+      <value>1E21</value>
+    </variable>
+    <variable>
+      <_title>Quintillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>quintillion</_name>
+      </name>
+      <value>1E18</value>
+    </variable>
+    <variable>
+      <_title>Quadrillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>quadrillion</_name>
+      </name>
+      <value>1E15</value>
+    </variable>
+    <variable>
+      <_title>Trillion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>trillion</_name>
+      </name>
+      <value>1E12</value>
+    </variable>
+    <variable>
+      <_title>Billion</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>billion</_name>
+      </name>
+      <value>1E9</value>
+    </variable>
+    <variable>
+      <_title>Million</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>million</_name>
+      </name>
+      <value>1E6</value>
     </variable>
   </category>
   <category>
@@ -44,261 +214,255 @@
     <category>
       <_title>Universal Constants</_title>
       <variable>
+        <_title>Speed of Light in Vacuum</_title>
+        <abbreviation index="1">
+          <reference>true</reference>
+          <_name>c</_name>
+        </abbreviation>
+        <name index="2">
+          <_name>speed_of_light</_name>
+        </name>
+        <value>299792458*m*s^(-1)</value>
+      </variable>
+      <variable>
+        <_title>Planck Time</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>planck_time</_name>
+        </name>
+        <abbreviation index="2">
+          <avoid_input>true</avoid_input>
+          <suffix>true</suffix>
+          <_name>t_p</_name>
+        </abbreviation>
+        <value>planck_length/c</value>
+      </variable>
+      <variable>
+        <_title>Planck Temperature</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>planck_temperature</_name>
+        </name>
+        <abbreviation index="2">
+          <avoid_input>true</avoid_input>
+          <suffix>true</suffix>
+          <_name>T_p</_name>
+        </abbreviation>
+        <value>planck_mass*c^2/k</value>
+      </variable>
+      <variable>
+        <_title>Planck Mass</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>planck_mass</_name>
+        </name>
+        <abbreviation index="2">
+          <avoid_input>true</avoid_input>
+          <suffix>true</suffix>
+          <_name>m_p</_name>
+        </abbreviation>
+        <value>(planck+c/newtonian_constant)^(1/2)</value>
+      </variable>
+      <variable>
+        <_title>Planck Length</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>planck_length</_name>
+        </name>
+        <abbreviation index="2">
+          <avoid_input>true</avoid_input>
+          <suffix>true</suffix>
+          <_name>l_p</_name>
+        </abbreviation>
+        <value>planck2pi/(planck_mass*c)</value>
+      </variable>
+      <variable>
+        <_title>Planck Constant over 2 pi</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>planck2pi</_name>
+        </name>
+        <value>planck/(2*pi)</value>
+      </variable>
+      <variable>
+        <_title>Planck Constant</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>planck</_name>
+        </name>
+        <value approximate="true">6.626 0693E-34*J*s</value>
+      </variable>
+      <variable>
+        <_title>Newtonian Constant of Gravitation</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>newtonian_constant</_name>
+        </name>
+        <abbreviation index="2">
+          <_name>G</_name>
+        </abbreviation>
+        <value approximate="true">6.6742E-11*m^3*kg^(-1)*s^(-2)</value>
+      </variable>
+      <variable>
+        <_title>Electric Constant (Permittivity of Free Space)</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>electric_constant</_name>
+        </name>
+        <abbreviation index="2">
+          <unicode>true</unicode>
+          <avoid_input>true</avoid_input>
+          <suffix>true</suffix>
+          <_name>&#x3B5;_0</_name>
+        </abbreviation>
+        <value>1/(magnetic_constant*c^2)</value>
+      </variable>
+      <variable>
+        <_title>Magnetic Constant (Permeability of Free Space)</_title>
+        <name index="1">
+          <reference>true</reference>
+          <_name>magnetic_constant</_name>
+        </name>
+        <abbreviation index="2">
+          <unicode>true</unicode>
+          <avoid_input>true</avoid_input>
+          <suffix>true</suffix>
+          <_name>&#x3BC;_0</_name>
+        </abbreviation>
+        <value>4E-7*pi*N*A^(-2)</value>
+      </variable>
+      <variable>
         <_title>Characteristic Impedance of Vacuum</_title>
-        <value>magnetic_constant*c</value>
         <name index="1">
           <reference>true</reference>
           <_name>characteristic_impedance</_name>
         </name>
-	<abbreviation index="2">
-	  <suffix>true</suffix>
-	  <avoid_input>true</avoid_input>
+        <abbreviation index="2">
+          <avoid_input>true</avoid_input>
+          <suffix>true</suffix>
           <_name>Z_0</_name>
         </abbreviation>
-      </variable>
-      <variable>
-        <_title>Magnetic Constant (Permeability of Free Space)</_title>
-        <value>4E-7*pi*N*A^(-2)</value>
-	<name index="1">
-          <reference>true</reference>
-          <_name>magnetic_constant</_name>
-        </name>
-	<abbreviation index="2">
-          <unicode>true</unicode>
-	  <suffix>true</suffix>
-	  <avoid_input>true</avoid_input>
-          <_name>μ_0</_name>
-        </abbreviation>
-      </variable>
-      <variable>
-        <_title>Electric Constant (Permittivity of Free Space)</_title>
-        <value>1/(magnetic_constant*c^2)</value>
-	<name index="1">
-          <reference>true</reference>
-          <_name>electric_constant</_name>
-        </name>
-	<abbreviation index="2">
-          <unicode>true</unicode>
-	  <suffix>true</suffix>
-	  <avoid_input>true</avoid_input>
-          <_name>ε_0</_name>
-        </abbreviation>
-      </variable>
-      <variable>
-        <_title>Newtonian Constant of Gravitation</_title>
-        <value approximate="true">6.6742E-11*m^3*kg^(-1)*s^(-2)</value>
-	<name index="1">
-          <reference>true</reference>
-          <_name>newtonian_constant</_name>
-        </name>
-	<abbreviation index="2">
-          <_name>G</_name>
-        </abbreviation>
-      </variable>
-      <variable>
-        <_title>Planck Constant</_title>
-        <value approximate="true">6.626 0693E-34*J*s</value>
-	<name index="1">
-          <reference>true</reference>
-          <_name>planck</_name>
-        </name>
-      </variable>
-      <variable>
-        <_title>Planck Constant over 2 pi</_title>
-        <value>planck/(2*pi)</value>
-	<_name index="1" reference="true">planck2pi</_name>
-	<name index="1">
-          <reference>true</reference>
-          <_name>planck2pi</_name>
-        </name>
-      </variable>
-      <variable>
-        <_title>Planck Length</_title>
-        <value>planck2pi/(planck_mass*c)</value>
-	<name index="1">
-          <reference>true</reference>
-          <_name>planck_length</_name>
-        </name>
-	<abbreviation index="2">
-	  <suffix>true</suffix>
-	  <avoid_input>true</avoid_input>
-          <_name>l_p</_name>
-        </abbreviation>
-      </variable>
-      <variable>
-        <_title>Planck Mass</_title>
-        <value>(planck+c/newtonian_constant)^(1/2)</value>
-	<name index="1">
-          <reference>true</reference>
-          <_name>planck_mass</_name>
-        </name>
-	<abbreviation index="2">
-	  <suffix>true</suffix>
-	  <avoid_input>true</avoid_input>
-          <_name>m_p</_name>
-        </abbreviation>
-      </variable>
-      <variable>
-        <_title>Planck Temperature</_title>
-        <value>planck_mass*c^2/k</value>
-	<name index="1">
-          <reference>true</reference>
-          <_name>planck_temperature</_name>
-        </name>
-	<abbreviation index="2">
-	  <suffix>true</suffix>
-	  <avoid_input>true</avoid_input>
-          <_name>T_p</_name>
-        </abbreviation>
-      </variable>
-      <variable>
-        <_title>Planck Time</_title>
-        <value>planck_length/c</value>
-	<name index="1">
-          <reference>true</reference>
-          <_name>planck_time</_name>
-        </name>
-	<abbreviation index="2">
-	  <suffix>true</suffix>
-	  <avoid_input>true</avoid_input>
-          <_name>t_p</_name>
-        </abbreviation>
-      </variable>
-      <variable>
-        <_title>Speed of Light in Vacuum</_title>
-        <value>299792458*m*s^(-1)</value>
-	<abbreviation index="1">
-          <reference>true</reference>
-          <_name>c</_name>
-        </abbreviation>
-	<name index="2">
-          <_name>speed_of_light</_name>
-        </name>
+        <value>magnetic_constant*c</value>
       </variable>
     </category>
-  </category>  
-  <category>
-    <_title>Large Numbers</_title>
-    <variable name="million">
-      <_title>Million</_title>
-      <value>1E6</value>
-    </variable>
-    <variable name="billion">
-      <_title>Billion</_title>
-      <value>1E9</value>
-    </variable>
-    <variable name="trillion">
-      <_title>Trillion</_title>
-      <value>1E12</value>
-    </variable>
-    <variable name="quadrillion">
-      <_title>Quadrillion</_title>
-      <value>1E15</value>
-    </variable>
-    <variable name="quintillion">
-      <_title>Quintillion</_title>
-      <value>1E18</value>
-    </variable>
-    <variable name="sextillion">
-      <_title>Sextillion</_title>
-      <value>1E21</value>
-    </variable>
-    <variable name="septillion">
-      <_title>Septillion</_title>
-      <value>1E24</value>
-    </variable>
-    <variable name="octillion">
-      <_title>Octillion</_title>
-      <value>1E27</value>
-    </variable>
-    <variable name="nonillion">
-      <_title>Nonillion</_title>
-      <value>1E30</value>
-    </variable>
-    <variable name="decillion">
-      <_title>Decillion</_title>
-      <value>1E33</value>
-    </variable>
-    <variable name="undecillion">
-      <_title>Undecillion</_title>
-      <value>1E36</value>
-    </variable>
-    <variable name="duodecillion">
-      <_title>Duodecillion</_title>
-      <value>1E39</value>
-    </variable>
-    <variable name="tredecillion">
-      <_title>Tredecillion</_title>
-      <value>1E42</value>
-    </variable>
-    <variable name="quattuordecillion">
-      <_title>Quattuordecillion</_title>
-      <value>1E45</value>
-    </variable>
-    <variable name="quindecillion">
-      <_title>Quindecillion</_title>
-      <value>1E48</value>
-    </variable>
-    <variable name="sexdecillion">
-      <_title>Sexdecillion</_title>
-      <value>1E51</value>
-    </variable>
-    <variable name="septendecillion">
-      <_title>Septendecillion</_title>
-      <value>1E54</value>
-    </variable>
-    <variable name="octodecillion">
-      <_title>Octodecillion</_title>
-      <value>1E57</value>
-    </variable>
-    <variable name="novemdecillion">
-      <_title>Novemdecillion</_title>
-      <value>1E60</value>
-    </variable>
-    <variable name="vigintillion">
-      <_title>Vigintillion</_title>
-      <value>1E63</value>
-    </variable>
-    <variable name="centillion">
-      <_title>Centillion</_title>
-      <value>1E303</value>
-    </variable>
-    <variable name="google">
-      <_title>Google</_title>
-      <value>10^100</value>
-    </variable>
-    <variable name="googleplex">
-      <_title>Googleplex</_title>
-      <value>10^(10^100)</value>
-    </variable>
   </category>
   <category>
-    <_title>Small Numbers</_title>
-    <variable name="procent">
-      <_title>Procent</_title>
-      <value>1/100</value>
-      <abbreviation index="1">
-        <_name>%</_name>
+    <_title>Basic Constants</_title>
+    <variable>
+      <_title>The Golden Ratio</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>golden</_name>
+      </name>
+      <abbreviation index="2">
+        <unicode>true</unicode>
+        <_name>&#x3C6;</_name>
       </abbreviation>
+      <value>(1+sqrt(5))/2</value>
     </variable>
-    <variable name="promille">
-      <_title>Promille</_title>
-      <value>1/1000</value>
+    <variable>
+      <_title>Pythagora's Constant (sqrt 2)</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>pythagoras</_name>
+      </name>
+      <value>sqrt(2)</value>
     </variable>
+    <variable>
+      <_title>Apery's Constant</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>apery</_name>
+      </name>
+      <value>zeta(3)</value>
+    </variable>
+    <builtin_variable name="e">
+      <_title>The Base of Natural Logarithms (e)</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>e</_name>
+      </name>
+    </builtin_variable>
+    <builtin_variable name="pi">
+      <_title>Archimede's Constant (pi)</_title>
+      <abbreviation index="1">
+        <unicode>true</unicode>
+        <_name>&#x3C0;</_name>
+      </abbreviation>
+      <name index="2">
+        <reference>true</reference>
+        <_name>pi</_name>
+      </name>
+    </builtin_variable>
+    <builtin_variable name="euler">
+      <_title>Euler's Constant</_title>
+      <abbreviation index="1">
+        <unicode>true</unicode>
+        <_name>&#x3B3;</_name>
+      </abbreviation>
+      <name index="2">
+        <reference>true</reference>
+        <_name>euler</_name>
+      </name>
+    </builtin_variable>
+    <builtin_variable name="catalan">
+      <_title>Catalan's Constant</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>catalan</_name>
+      </name>
+    </builtin_variable>
   </category>
   <category>
     <_title>Special Numbers</_title>
     <builtin_variable name="i">
       <_title>Imaginary i (sqrt -1)</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>i</_name>
+      </name>
     </builtin_variable>
     <builtin_variable name="infinity">
       <_title>Infinity</_title>
-    </builtin_variable>
-    <builtin_variable name="minus_infinity">
-      <_title>Negative Infinity</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>infinity</_name>
+      </name>
     </builtin_variable>
     <builtin_variable name="plus_infinity">
       <_title>Positive Infinity</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>plus_infinity</_name>
+      </name>
     </builtin_variable>
+    <builtin_variable name="minus_infinity">
+      <_title>Negative Infinity</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>minus_infinity</_name>
+      </name>
+    </builtin_variable>
+  </category>
+  <category>
+    <_title>Unknowns</_title>
+    <unknown>
+      <name index="1">
+        <reference>true</reference>
+        <_name>x</_name>
+      </name>
+    </unknown>
+    <unknown>
+      <name index="1">
+        <reference>true</reference>
+        <_name>y</_name>
+      </name>
+    </unknown>
+    <unknown>
+      <name index="1">
+        <reference>true</reference>
+        <_name>z</_name>
+      </name>
+    </unknown>
   </category>
 </QALCULATE>

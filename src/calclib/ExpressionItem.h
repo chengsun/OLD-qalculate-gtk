@@ -58,9 +58,9 @@ class ExpressionItem {
 	virtual const string &name(bool use_unicode = false) const;
 	virtual const string &referenceName() const;
 	
-	virtual const ExpressionName &preferredName(bool abbreviation = false, bool use_unicode = false, bool plural = false) const;
-	virtual const ExpressionName &preferredInputName(bool abbreviation = false, bool use_unicode = false, bool plural = false) const;
-	virtual const ExpressionName &preferredDisplayName(bool abbreviation = false, bool use_unicode = false, bool plural = false) const;
+	virtual const ExpressionName &preferredName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false) const;
+	virtual const ExpressionName &preferredInputName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false) const;
+	virtual const ExpressionName &preferredDisplayName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false) const;
 	virtual const ExpressionName &getName(unsigned int index) const;
 	virtual void setName(const ExpressionName &ename, unsigned int index = 1, bool force = true);
 	virtual void setName(string sname, unsigned int index, bool force = true);

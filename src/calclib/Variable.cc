@@ -93,8 +93,10 @@ void Variable::set(const ExpressionItem *item) {
 
 UnknownVariable::UnknownVariable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
 	setChanged(false);
+	o_assumption = NULL;
 }
 UnknownVariable::UnknownVariable() : Variable() {
+	o_assumption = NULL;
 }
 UnknownVariable::UnknownVariable(const UnknownVariable *variable) {
 	set(variable);
@@ -107,6 +109,8 @@ ExpressionItem *UnknownVariable::copy() const {
 }
 void UnknownVariable::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_VARIABLE && !((Variable*) item)->isKnown()) {
+		if(o_assumption) delete o_assumption;
+		o_assumption = ((UnknownVariable*) item)->assumptions();
 	}
 	ExpressionItem::set(item);
 }

@@ -468,7 +468,7 @@ GtkWidget*
 get_variables_dialog (void)
 {
 	if(!variables_glade) {
-	
+
 		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "variables.glade", NULL);
 		variables_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(variables_glade != NULL);
