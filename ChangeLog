@@ -1,3 +1,10 @@
+2003-08-06  Niklas Knutsson  <nq@altern.org>
+
+	* Removed some debug output
+	* Fix (x+y)^5, but unfortunately not (x+y)^6...
+	* Even better unit conversion.
+	* Change Ctrl+V to Ctrl+M for manage variables
+
 2003-08-06  Sven Herzberg  <herzi@gnome-de.org>
 
 	* Makefile.am: make dist works now
@@ -19,6 +26,7 @@
 	* src/calclib/.cvsignore: cvs update has less warnings now
 	* src/calclib/Makefile.am: using libtool now
 
+2003-08-04  Niklas Knutsson  <nq@altern.org>
 
 	* Optional arguments for functions
 	* More functions...
@@ -26,5 +34,3 @@
 	* "config" -> "definition"
 	* Added Execute button to insert function dialog
 	* Added some financial functions
-v 0.1
-	* First public release
