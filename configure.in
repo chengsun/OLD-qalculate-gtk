@@ -1,9 +1,19 @@
-dnl Process this file with autoconf to produce a configure script.
+dnl
+dnl configure.in for qalculate
+dnl
+
+dnl  ----------------------
+dnl | initialize autotools |---------------------------------------------------
+dnl  ----------------------
 
 AC_INIT(configure.in)
 AM_INIT_AUTOMAKE(qalculate-gtk, 0.1a)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
+
+dnl  -------------------------------
+dnl | check for neccessary programs |------------------------------------------
+dnl  -------------------------------
 
 AC_ISC_POSIX
 AC_PROG_CC
@@ -11,29 +21,59 @@ AC_PROG_CXX
 AM_PROG_CC_STDC
 AC_HEADER_STDC
 AC_PROG_LIBTOOL
+AC_PROG_INTLTOOL
 
-pkg_modules="gtk+-2.0 >= 1.3.13"
-PKG_CHECK_MODULES(PACKAGE, [$pkg_modules])
+dnl  ------------------------------------
+dnl | check for compiler characteristics |-------------------------------------
+dnl  ------------------------------------
+
+dnl Use -Wall if we have gcc.
+dnl changequote(,)dnl
+dnl if test "x$GCC" = "xyes"; then
+dnl  case " $CFLAGS " in
+dnl  *[\ \ ]-Wall[\ \      ]*) ;;
+dnl  *) CFLAGS="$CFLAGS -Wall" ;;
+dnl  esac
+dnl fi
+dnl changequote(,)dnl
+
+dnl  --------------------------------
+dnl | check for neccessary libraries |-----------------------------------------
+dnl  --------------------------------
+
+PKG_CHECK_MODULES(PACKAGE, [
+	gtk+-2.0 >= 1.3.13
+	])
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
+
+dnl  -------------------------------------
+dnl | internationalization (i18n) support |------------------------------------
+dnl  -------------------------------------
 
 GETTEXT_PACKAGE=qalculate-gtk
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[The package name for gettext])
 
-dnl Add the languages which your application supports here.
+dnl Please keep this in alphabetical order
 ALL_LINGUAS=""
 AM_GLIB_GNU_GETTEXT
 
-dnl Use -Wall if we have gcc.
-changequote(,)dnl
-if test "x$GCC" = "xyes"; then
-  case " $CFLAGS " in
-  *[\ \	]-Wall[\ \	]*) ;;
-  *) CFLAGS="$CFLAGS -Wall" ;;
-  esac
+dnl AM_GLIB_GNU_GETTEXT sets $DATADIRNAME
+AC_MSG_CHECKING(locale directory)
+if test "x$prefix" = "xNONE"; then
+  PACKAGE_LOCALE_DIR=$ac_default_prefix/share/locale
+else
+  PACKAGE_LOCALE_DIR=$prefix/share/locale
 fi
-changequote([,])dnl
+
+AC_DEFINE_UNQUOTED(PACKAGE_LOCALE_DIR, "$PACKAGE_LOCALE_DIR",
+	[The directory in which qalculate's locale data will be stored])
+	 AC_MSG_RESULT("$PACKAGE_LOCALE_DIR")
+
+dnl  --------
+dnl | output |-----------------------------------------------------------------
+dnl  --------
 
 AC_OUTPUT([
   Makefile

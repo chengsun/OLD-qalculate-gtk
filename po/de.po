@@ -1,0 +1,310 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-08-07 15:15+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/qalculate.desktop.in.h:1
+msgid "Powerful and easy to use calculator"
+msgstr "Unfangreicher und einfacher Taschenrechner"
+
+#: data/qalculate.desktop.in.h:2 src/interface.cc:189
+msgid "Qalculate!"
+msgstr "Qalculate!"
+
+#: src/interface.cc:355
+msgid "History"
+msgstr ""
+
+#: src/interface.cc:373
+msgid "SQRT"
+msgstr ""
+
+#: src/interface.cc:379
+msgid "x<sup>y</sup>"
+msgstr ""
+
+#: src/interface.cc:386
+msgid "log"
+msgstr ""
+
+#: src/interface.cc:392
+msgid "ln"
+msgstr ""
+
+#: src/interface.cc:398
+msgid "sin"
+msgstr ""
+
+#: src/interface.cc:404
+msgid "cos"
+msgstr ""
+
+#: src/interface.cc:410
+msgid "tan"
+msgstr ""
+
+#: src/interface.cc:416
+msgid "STO"
+msgstr ""
+
+#: src/interface.cc:422
+msgid "("
+msgstr ""
+
+#: src/interface.cc:428
+msgid ")"
+msgstr ""
+
+#: src/interface.cc:434
+msgid "x<sup>2</sup>"
+msgstr ""
+
+#: src/interface.cc:441
+msgid "hyp"
+msgstr ""
+
+#: src/interface.cc:453
+msgid "Deg"
+msgstr ""
+
+#: src/interface.cc:457
+msgid "Rad"
+msgstr ""
+
+#: src/interface.cc:461
+msgid "Gra"
+msgstr ""
+
+#: src/interface.cc:479
+msgid "7"
+msgstr ""
+
+#: src/interface.cc:485
+msgid "4"
+msgstr ""
+
+#: src/interface.cc:491
+msgid "1"
+msgstr ""
+
+#: src/interface.cc:497
+msgid "8"
+msgstr ""
+
+#: src/interface.cc:503
+msgid "2"
+msgstr ""
+
+#: src/interface.cc:509
+msgid "5"
+msgstr ""
+
+#: src/interface.cc:515
+msgid "9"
+msgstr ""
+
+#: src/interface.cc:521
+msgid "6"
+msgstr ""
+
+#: src/interface.cc:527
+msgid "3"
+msgstr ""
+
+#: src/interface.cc:533
+msgid "0"
+msgstr ""
+
+#: src/interface.cc:539
+msgid "."
+msgstr ""
+
+#: src/interface.cc:545
+msgid "EXP"
+msgstr ""
+
+#: src/interface.cc:551
+msgid "DEL"
+msgstr ""
+
+#: src/interface.cc:557
+msgid "AC"
+msgstr ""
+
+#: src/interface.cc:563
+msgid "x"
+msgstr ""
+
+#: src/interface.cc:569
+msgid "/"
+msgstr ""
+
+#: src/interface.cc:575
+msgid "+"
+msgstr ""
+
+#: src/interface.cc:581
+msgid "-"
+msgstr ""
+
+#: src/interface.cc:587
+msgid "Ans"
+msgstr ""
+
+#: src/interface.cc:593
+msgid "="
+msgstr ""
+
+#: src/interface.cc:599
+msgid "Buttons"
+msgstr ""
+
+#: src/interface.cc:619 src/callbacks.cc:1002
+msgid "<< Less"
+msgstr ""
+
+#: src/interface.cc:621 src/callbacks.cc:995
+msgid "More >>"
+msgstr ""
+
+#: src/interface.cc:750
+msgid "Functions"
+msgstr ""
+
+#: src/interface.cc:839 src/interface.cc:1041 src/interface.cc:1322
+msgid "_Edit"
+msgstr ""
+
+#: src/interface.cc:861 src/interface.cc:1063 src/interface.cc:1344
+msgid "_Insert"
+msgstr ""
+
+#: src/interface.cc:876
+msgid "no description"
+msgstr ""
+
+#: src/interface.cc:884
+msgid "Description"
+msgstr ""
+
+#: src/interface.cc:947
+msgid "Variables"
+msgstr ""
+
+#: src/interface.cc:1145
+msgid "Units"
+msgstr ""
+
+#: src/interface.cc:1239
+msgid "metres"
+msgstr ""
+
+#: src/interface.cc:1366
+msgid "_Convert to"
+msgstr ""
+
+#: src/interface.cc:1447
+msgid "Preferences"
+msgstr ""
+
+#: src/interface.cc:1458
+msgid "Load global definitions on start"
+msgstr ""
+
+#: src/interface.cc:1463
+msgid "Save mode on exit"
+msgstr ""
+
+#: src/interface.cc:1468
+msgid "Save definitions on exit"
+msgstr ""
+
+#: src/interface.cc:1477
+msgid "Short unit format"
+msgstr ""
+
+#: src/interface.cc:1516
+msgid "New unit"
+msgstr ""
+
+#: src/interface.cc:1527
+msgid "Type"
+msgstr ""
+
+#: src/interface.cc:1539
+msgid "BASE UNIT"
+msgstr ""
+
+#: src/interface.cc:1543
+msgid "ALIAS"
+msgstr ""
+
+#: src/interface.cc:1547
+msgid "COMPOSITE UNIT"
+msgstr ""
+
+#: src/interface.cc:1553
+msgid "* Name"
+msgstr ""
+
+#: src/interface.cc:1563
+msgid "Plural form"
+msgstr ""
+
+#: src/interface.cc:1573
+msgid "Short format"
+msgstr ""
+
+#: src/interface.cc:1586
+msgid "* Base unit (unit/exponent)"
+msgstr ""
+
+#: src/interface.cc:1606
+msgid "Relation"
+msgstr ""
+
+#: src/interface.cc:1616
+msgid "If non-fixed relation, replace value with \\x and exponent with \\y"
+msgstr ""
+
+#: src/interface.cc:1619
+msgid "Reversed relation"
+msgstr ""
+
+#: src/interface.cc:1629
+msgid "Not needed for fixed relations."
+msgstr ""
+
+#: src/interface.cc:1632
+msgid "Category"
+msgstr ""
+
+#: src/interface.cc:1642
+msgid "Descriptive name"
+msgstr ""
+
+#: src/callbacks.cc:1955
+msgid "Least"
+msgstr ""
+
+#: src/callbacks.cc:1957
+msgid "Always"
+msgstr ""
+
+#: src/support.c:94 src/support.c:116
+#, c-format
+msgid "Couldn't find pixmap file: %s"
+msgstr ""

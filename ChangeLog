@@ -1,5 +1,16 @@
 2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
 
+	* .cvsignore: cvs update has less warnings now
+	* configure.in: some beautification (will fix -Wall later this day)
+	* data/.cvsignore: cvs update has less warnings now
+	* data/Makefile.am: added desktop file
+	* data/qalculate.desktop.in: desktop file template
+	* po/.cvsignore: cvs update has less warnings now
+	* po/POTFILES.in: added data/qalculate.desktop
+	* po/de.po: added german translation
+
+2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
+
 	* src/main.cc: some beautification
 	* src/main.h: made enums from #defines (are the values relevant?)
 

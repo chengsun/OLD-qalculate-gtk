@@ -7,7 +7,11 @@ config.h.in
 config.log
 config.status
 configure
-error
+intltool-extract
+intltool-extract.in
+intltool-merge
+intltool-merge.in
+intltool-update
+intltool-update.in
 libtool
-log
 stamp-h
