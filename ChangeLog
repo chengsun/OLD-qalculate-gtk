@@ -1,3 +1,13 @@
+2003-08-10  Niklas Knutsson  <nq@altern.org>
+
+	* Found true evil in Manager::sort(). This should solve many problems. :-)
+	* Enable binary output for larger numbers
+	* Fix nested functions
+	* Fix prefix followed be unit
+	* Fix functions without parenthesis
+	* correct widget name (units_option_menu_to_unit)
+	* handle long result by making the window not resizable and the result label wrap
+
 2003-08-09  Niklas Knutsson  <nq@altern.org>
 
 	* Swedish translation
