@@ -250,16 +250,19 @@ void Calculator::checkFPExceptions(const char *str) {
 	feclearexcept(FE_ALL_EXCEPT);
 }
 
-long double Calculator::convert(long double value, Unit *from_unit, Unit *to_unit) {
+Manager *Calculator::convert(long double value, Unit *from_unit, Unit *to_unit) {
 	string str = d2s(value);
 	return convert(str, from_unit, to_unit);
 }
-long double Calculator::convert(string str, Unit *from_unit, Unit *to_unit) {
-	str += from_unit->shortName();
-//	UnitManager um(this);
-//	long double value = calculate(str, &um);
-//	return um.convert(to_unit, value);
-	return 0;
+Manager *Calculator::convert(string str, Unit *from_unit, Unit *to_unit) {
+	Manager *mngr = calculate(str);
+	mngr->add(from_unit, MULTIPLICATION_CH);
+	if(mngr->convert(to_unit)) {
+		mngr->add(to_unit, DIVISION_CH);
+	} else {
+		mngr->add(from_unit, DIVISION_CH);
+	}
+	return mngr;
 }
 Unit* Calculator::addUnit(Unit *u, bool force) {
 	u->name(getUnitName(u->name(), u, force));

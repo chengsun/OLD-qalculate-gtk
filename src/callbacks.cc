@@ -2002,13 +2002,17 @@ void convert_in_wUnits(int toFrom) {
 	Unit *uFrom = get_selected_unit();
 	Unit *uTo = get_selected_to_unit();
 	if(uFrom && uTo) {
-/*		const gchar *fromValue = gtk_entry_get_text(GTK_ENTRY(eFromValue));
+		const gchar *fromValue = gtk_entry_get_text(GTK_ENTRY(eFromValue));
 		const gchar *toValue = gtk_entry_get_text(GTK_ENTRY(eToValue));
 		if(toFrom > 0 || (toFrom < 0 && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(tbToFrom)))) {
-			gtk_entry_set_text(GTK_ENTRY(eFromValue), d2s(calc->convert(toValue, uTo, uFrom), PRECISION).c_str());
+			Manager *mngr = calc->convert(toValue, uTo, uFrom);
+			gtk_entry_set_text(GTK_ENTRY(eFromValue), mngr->print().c_str());
+			mngr->unref();
 		} else {
-			gtk_entry_set_text(GTK_ENTRY(eToValue), d2s(calc->convert(fromValue, uFrom, uTo), PRECISION).c_str());
-		}*/
+			Manager *mngr = calc->convert(fromValue, uFrom, uTo);
+			gtk_entry_set_text(GTK_ENTRY(eToValue), mngr->print().c_str());
+			mngr->unref();
+		}
 	}
 }
 void on_bCloseUnits_clicked(GtkButton *button, gpointer user_data) {

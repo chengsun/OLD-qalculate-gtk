@@ -65,8 +65,8 @@ class Calculator {
 	void addBuiltinFunctions(void);
 	void addBuiltinUnits(void);	
 	Manager *calculate(string str);
-	long double convert(long double value, Unit *from_unit, Unit *to_unit);
-	long double convert(string str, Unit *from_unit, Unit *to_unit);	
+	Manager *convert(long double value, Unit *from_unit, Unit *to_unit);
+	Manager *convert(string str, Unit *from_unit, Unit *to_unit);	
 	void checkFPExceptions(void);
 	void checkFPExceptions(const char *str);	
 	void deleteName(string name_, void *object = NULL);
