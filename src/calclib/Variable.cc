@@ -22,6 +22,7 @@ Variable::Variable(string cat_, string name_, Manager *mngr_, string title_, boo
 	mngr = mngr_;
 	mngr->ref();
 	b_changed = false;
+	b_exact = true;
 }
 Variable::Variable(string cat_, string name_, long double value_, string title_, bool uservariable_, bool is_builtin) : b_user(uservariable_), b_builtin(is_builtin) {
 	remove_blank_ends(name_);
@@ -32,6 +33,7 @@ Variable::Variable(string cat_, string name_, long double value_, string title_,
 	scat = cat_;
 	mngr = new Manager(value_);
 	b_changed = false;
+	b_exact = true;
 }
 Variable::~Variable(void) {
 	if(mngr) mngr->unref();

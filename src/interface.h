@@ -49,6 +49,7 @@ GtkWidget* create_preferences_dialog (void);
 GtkWidget* create_unit_edit_dialog (void);
 GtkWidget* create_function_edit_dialog (void);
 GtkWidget* create_variable_edit_dialog (void);
+GtkWidget* create_matrix_edit_dialog (void);
 GtkWidget* create_nbases_dialog (void);
 GtkWidget *create_InfoWidget(const gchar *text);
 

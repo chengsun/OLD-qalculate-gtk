@@ -322,19 +322,67 @@ bool Fraction::atanh() {
 }
 bool Fraction::sqrt() {
 	if(isNegative()) return false;
-	setFloat(sqrtl(value()));
-	b_exact = false;
+/*	setFloat(sqrtl(value()));
+	b_exact = false;*/
+	root(2);
 	return true;
 }	
 bool Fraction::cbrt() {
-	setFloat(cbrtl(value()));
-	b_exact = false;
+/*	setFloat(cbrtl(value()));
+	b_exact = false;*/
+	root(3);
 	return true;
+}
+Fraction *log(Integer *y) {
+	if(y->isOne()) {
+		Fraction *x = new Fraction();
+		return x;
+	}
+	Fraction *x = new Fraction(y);
+	Fraction a(x);
+	Fraction n(y);
+	Fraction n_m1(&n);
+	Fraction one(1);
+	n_m1.add(SUBTRACT, &one);
+	a.subtract(&one);
+//	x->set(d2s(logl(a.value()), 8));		
+	x->subtract(&one);	
+	int iter = CALCULATOR->getPrecision();
+	if(iter > 100) iter = 10;	
+	else if(iter > 40) iter = 7;
+	else if(iter > 20) iter = 5;
+	else if(iter > 8) iter = 3;
+	else iter = 1;
+	iter = 100000;
+	for(int i = 0; i <= iter; i++) {
+		Fraction tmp(&a);
+		n.set(i + 2);
+		tmp.pow(&n);
+		tmp.divide(&n);		
+		if(i % 2 == 0) {
+			x->subtract(&tmp);
+		} else {
+			x->add(&tmp);
+		}
+		x->floatify(CALCULATOR->getPrecision() + 5);
+		x->clean();		
+	}
+	x->floatify(CALCULATOR->getPrecision() + 5);
+	x->clean();
+	x->setPrecise(false);	
+	return x;
+
 }
 bool Fraction::log() {
 	if(isZero()) return false;
 	setFloat(logl(value()));
 	b_exact = false;
+/*	Fraction *x = ::log(&num);
+	Fraction *y = ::log(&den);	
+	set(x);
+	subtract(y);
+	delete x;
+	delete y;*/
 	return true;
 }
 bool Fraction::log2() {
@@ -500,37 +548,45 @@ int Fraction::pow(const Fraction *fr, int solution) {
 	if(isNegative() && fr->denominator()->isEven()) {
 		return false;
 	}
-	if(fr->denominator()->isOne()) {
-//	root(fr->denominator());
-		Integer exp(fr->numerator());
-		if(exp.isNegative()) {
-			exp.setNegative(false);
-			Integer d(&den);
-			den.set(&num);
-			num.set(&d);
-		}
-		num.pow(&exp);
-		den.pow(&exp);
-		clean();
-	} else {
+//	if(fr->denominator()->isOne()) {
+	root(fr->denominator());
+	Integer exp(fr->numerator());
+	if(exp.isNegative()) {
+		exp.setNegative(false);
+		Integer d(&den);
+		den.set(&num);
+		num.set(&d);
+	}
+	num.pow(&exp);
+	den.pow(&exp);
+	clean();
+/*	} else {
 		setFloat(powl(value(), fr->value()));
-		b_exact = false;
+		b_exact = false;*/
 		if(fr->denominator()->isEven() && !fr->numerator()->isEven()) {
 			if(solution == 2) setNegative(true);
 			return 2;
 		}
-	}
+//	}
 	return 1;	
 }
 bool Fraction::root(const Integer *nth) {
 	if(nth->isOne()) return true;
+	Fraction nth_fr(NULL, nth);
 	Fraction *x = this;
 	Fraction a(this);
+	set(d2s(powl(value(), nth_fr.value()), 8));	
 	Fraction n(nth);
 	Fraction n_m1(&n);
 	Fraction one(1);
 	n_m1.add(SUBTRACT, &one);
-	for(int i = 0; i <= 10; i++) {
+	int iter = CALCULATOR->getPrecision();
+	if(iter > 100) iter = 10;	
+	else if(iter > 40) iter = 7;
+	else if(iter > 20) iter = 5;
+	else if(iter > 8) iter = 3;
+	else iter = 1;
+	for(int i = 0; i <= iter; i++) {
 		Fraction tmp(x);
 		tmp.add(RAISE, &n);
 		tmp.add(SUBTRACT, &a);		
@@ -539,10 +595,19 @@ bool Fraction::root(const Integer *nth) {
 		tmp2.add(MULTIPLY, &n);
 		tmp.add(DIVIDE, &tmp2);
 		x->add(SUBTRACT, &tmp);
+		floatify(CALCULATOR->getPrecision() + 5);
+		clean();		
 	}
+	floatify(CALCULATOR->getPrecision() + 5);
 	clean();
-	b_exact = false;
+	Fraction test(this);
+	Fraction nth_pow(nth);
+	test.pow(&nth_pow);
+	if(!test.equals(&a)) {
+		b_exact = false;	
+	}
 	return true;
+	
 }
 bool Fraction::root(long int nth) {
 	Integer n(nth);

@@ -52,7 +52,7 @@ dnl  --------------------------------
 dnl | check for GMP                  |-----------------------------------------
 dnl  --------------------------------
 
-AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_WARN([GNU MP not found. Qalculate! does not require GMP but is slower without it.])])
+AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_ERROR([GNU MP not found, see http://swox.com/gmp])])
 
 dnl  -------------------------------------
 dnl | internationalization (i18n) support |------------------------------------

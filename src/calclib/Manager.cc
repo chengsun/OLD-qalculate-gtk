@@ -82,7 +82,11 @@ void Manager::set(const Manager *mngr) {
 		s_var = mngr->text();	
 		o_function = mngr->function();
 		if(mngr->matrix()) {
-			mtrx = new Matrix(mngr->matrix());
+			if(mngr->matrix()->isVector()) {
+				mtrx = new Vector(mngr->matrix());
+			} else {
+				mtrx = new Matrix(mngr->matrix());
+			}
 		}
 		fr->set(mngr->fraction());
 		for(int i = 0; i < mngr->countChilds(); i++) {
@@ -1351,6 +1355,9 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 		str = "<b><big>";
 	} else {
 		str = "";
+	}
+	if(displayflags == DISPLAY_FORMAT_DEFAULT) {
+		displayflags = DISPLAY_FORMAT_FRACTIONAL_ONLY;
 	}
 /*	if(c_type == VALUE_MANAGER) {
 		long double new_value = d_value;

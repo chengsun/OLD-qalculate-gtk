@@ -1,3 +1,11 @@
+2003-09-09  Niklas Knutsson  <nq@altern.org>
+
+	* More accurate roots using Newton's Method with the libc function as initial value
+	* Require GMP (it is not a priority right now to fix my own integer implementation)
+	* GUI for edit/create matrix/vector
+	* Remove repaint artifacts
+	* Rank function
+
 2003-09-08  Niklas Knutsson  <nq@altern.org>
 
 	* Pearson Correlation and Spearman's rho (still needs rank function)
@@ -22,12 +30,12 @@
 	* More work on matrices
 
 2003-09-02  Niklas Knutsson  <nq@altern.org>
-	
+
 	* Beginning of matrix support
 	* Fix zero division
 
 2003-09-01  Niklas Knutsson  <nq@altern.org>
-	
+
 	* factorial function and !
 	* frac and int functions
 	* Menu items for fractional representation

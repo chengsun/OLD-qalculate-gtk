@@ -9,6 +9,9 @@
     (at your option) any later version.
 */
 
+#ifndef CALLBACKS_H
+#define CALLBACKS_H
+
 #include <gtk/gtk.h>
 
 #define EXPAND_TO_ITER(model, view, iter)		GtkTreePath *path = gtk_tree_model_get_path(model, &iter); \
@@ -17,6 +20,8 @@
 #define EXPAND_ITER(model, view, iter)			GtkTreePath *path = gtk_tree_model_get_path(model, &iter); \
 							gtk_tree_view_expand_row(GTK_TREE_VIEW(view), path, false); \
 							gtk_tree_path_free(path);							
+
+#include "main.h"
 
 void create_umenu(void);
 void create_umenu2(void);
@@ -79,8 +84,13 @@ void insert_unit(GtkMenuItem *w, gpointer user_data);
 
 void new_function(GtkMenuItem *w, gpointer user_data);
 void new_variable(GtkMenuItem *w, gpointer user_data);
+void new_matrix(GtkMenuItem *w, gpointer user_data);
+void new_vector(GtkMenuItem *w, gpointer user_data);
 void new_unit(GtkMenuItem *w, gpointer user_data);
 void add_as_variable();
+
+void edit_variable(const char *category = "", Variable *v = NULL, Manager *mngr_ = NULL, GtkWidget *win = NULL);
+void edit_matrix(const char *category = "", Variable *v = NULL, Manager *mngr_ = NULL, GtkWidget *win = NULL, gboolean create_vector = FALSE);
 
 extern "C" {
 
@@ -219,5 +229,13 @@ gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointe
 
 gboolean on_resultview_expose_event(GtkWidget *w, GdkEventExpose *event, gpointer user_data);
 
+void on_matrix_edit_spinbutton_columns_value_changed(GtkSpinButton *w, gpointer user_data);
+void on_matrix_edit_spinbutton_rows_value_changed(GtkSpinButton *w, gpointer user_data);
+
+void on_matrix_edit_radiobutton_matrix_toggled(GtkToggleButton *w, gpointer user_data);
+void on_matrix_edit_radiobutton_vector_toggled(GtkToggleButton *w, gpointer user_data);
+
 }
+
+#endif
 

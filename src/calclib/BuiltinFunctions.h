@@ -44,6 +44,12 @@ class VectorFunction : public Function {
   public:
 	VectorFunction();
 };
+class RankFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	RankFunction();
+};
 class RowsFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  

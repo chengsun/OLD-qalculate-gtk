@@ -17,6 +17,7 @@
 
 Matrix::Matrix() {
 	b_exact = true;
+	b_vector = false;
 	elements.resize(1);
 	elements[0].push_back(new Manager());
 }
@@ -42,6 +43,7 @@ Matrix::~Matrix() {
 	} 
 }
 void Matrix::set(const Matrix *matrix) {
+	if(!matrix->isVector()) b_vector = false;
 	b_exact = matrix->isPrecise();
 	setColumns(matrix->columns());
 	setRows(matrix->rows());	
@@ -52,6 +54,7 @@ void Matrix::set(const Matrix *matrix) {
 	} 
 }
 void Matrix::setToIdentityMatrix(int rows_columns) {
+	b_vector = false;
 	if(rows_columns < 1) rows_columns = 1;
 	setColumns(rows_columns);
 	setRows(rows_columns);	
@@ -114,6 +117,66 @@ bool Matrix::adjoint() {
 		}
 	}
 	transpose();
+	return true;
+}
+bool Matrix::rank() {
+	Manager *mngr;
+	vector<int> ranked_r;
+	vector<int> ranked_c;	
+	vector<Manager*> ranked_mngr;	
+	vector<bool> ranked_equals_prev;	
+	for(int index_r = 1; index_r <= rows(); index_r++) {
+		for(int index_c = 1; index_c <= columns(); index_c++) {
+			mngr = get(index_r, index_c);
+			if(!mngr->isFraction()) {
+				CALCULATOR->error(true, "Only numbers can be ranked -- halted on \"%s\".", mngr->print().c_str(), NULL);
+				return false;
+			}
+			bool b = false;
+			for(int i = 0; i < ranked_r.size(); i++) {
+				int cmp = mngr->fraction()->compare(ranked_mngr[i]->fraction());
+				if(cmp >= 0) {
+					if(cmp == 0) {
+						ranked_c.insert(ranked_c.begin() + i + 1, index_c);
+						ranked_r.insert(ranked_r.begin() + i + 1, index_r);						
+						ranked_mngr.insert(ranked_mngr.begin() + i + 1, mngr);
+						ranked_equals_prev.insert(ranked_equals_prev.begin() + i + 1, true);
+					} else {
+						ranked_c.insert(ranked_c.begin() + i, index_c);
+						ranked_r.insert(ranked_r.begin() + i, index_r);							
+						ranked_mngr.insert(ranked_mngr.begin() + i, mngr);
+						ranked_equals_prev.insert(ranked_equals_prev.begin() + i, false);
+					}
+					b = true;
+					break;
+				}
+			}
+			if(!b) {
+				ranked_r.push_back(index_r);
+				ranked_c.push_back(index_c);
+				ranked_mngr.push_back(mngr);
+				ranked_equals_prev.push_back(false);
+			}
+		}
+	}	
+	int n_rep = 0;
+	for(int i = ranked_r.size() - 1; i >= 0; i--) {
+		if(ranked_equals_prev[i]) {
+			n_rep++;
+		} else {
+			if(n_rep) {
+				Manager v(i + 1 + n_rep, 1);
+				v.addInteger(i + 1, ADD);
+				v.addInteger(2, DIVIDE);
+				for(; n_rep >= 0; n_rep--) {
+					get(ranked_r[i + n_rep], ranked_c[i + n_rep])->set(&v);
+				}
+			} else {
+				get(ranked_r[i], ranked_c[i])->set(i + 1, 1);
+			}
+			n_rep = 0;
+		}
+	}
 	return true;
 }
 Manager *Matrix::cofactor(int row, int column) const {
@@ -191,6 +254,7 @@ int Matrix::columns() const {
 }
 void Matrix::setRows(int nr_of_rows) {
 	if(nr_of_rows < 1) nr_of_rows = 1;	
+	if(nr_of_rows > 1) b_vector = false;
 	for(int index_r = nr_of_rows; index_r < elements.size(); index_r++) {
 		for(int index_c = 0; index_c < elements[index_r].size(); index_c++) {
 			delete elements[index_r][index_c];
@@ -407,6 +471,9 @@ bool Matrix::divide(const Manager *mngr) {
 	return true;
 }
 bool Matrix::raise(const Manager *mngr) {
+	if(mngr->isOne()) {
+		return true;
+	}
 	if(mngr->isMatrix()) {
 		return raise(mngr->matrix());
 	} else if(mngr->isFraction() && mngr->fraction()->isMinusOne()) {
@@ -417,6 +484,7 @@ bool Matrix::raise(const Manager *mngr) {
 		} else {
 			Integer integer(mngr->fraction()->numerator());
 			Matrix mtrx(this);
+			integer.add(-1);
 			for(; integer.isPositive(); integer.add(-1)) {
 				multiply(&mtrx);
 			}

@@ -607,6 +607,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new MatrixFunction());
 	addFunction(new VectorFunction());	
 	addFunction(new ComponentsFunction());	
+	addFunction(new RankFunction());
 	addFunction(new RowsFunction());
 	addFunction(new ColumnsFunction());
 	addFunction(new ElementFunction());

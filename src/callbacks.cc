@@ -70,6 +70,7 @@ extern Manager *mngr;
 extern string result_text;
 extern GtkWidget *resultview;
 extern GdkPixmap *pixmap_result;
+vector<vector<GtkWidget*> > element_entries;
 
 #define MARKUP_STRING(str, text)	if(in_power) {str = "<small>";} else {str = "<big>";} str += text; if(in_power) {str += "</small>";} else {str += "</big>";}			
 #define CALCULATE_SPACE_W		gint space_w, space_h; PangoLayout *layout_space = gtk_widget_create_pango_layout(resultview, NULL); if(in_power) {pango_layout_set_markup(layout_space, "<small> </small>", -1);} else {pango_layout_set_markup(layout_space, "<big> </big>", -1);} pango_layout_get_pixel_size(layout_space, &space_w, &space_h); g_object_unref(layout_space);
@@ -1199,6 +1200,8 @@ void create_vmenu() {
 	}	
 	MENU_SEPARATOR	
 	MENU_ITEM(_("Create new variable"), new_variable);
+	MENU_ITEM(_("Create new matrix"), new_matrix);	
+	MENU_ITEM(_("Create new vector"), new_vector);		
 	MENU_ITEM(_("Manage variables"), manage_variables);
 	MENU_ITEM_SET_ACCEL(GDK_m);
 	if(CALCULATOR->variablesEnabled()) {
@@ -2733,10 +2736,10 @@ void viewresult(Prefix *prefix = NULL) {
 		gtk_widget_set_size_request(resultview, w_new, h_new);
 		while(gtk_events_pending()) gtk_main_iteration();
 	}
-	if(w_new > w) {
-		gdk_draw_drawable(resultview->window, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap), 0, 0, w_new - w, (h_new - h) / 2, -1, -1);
+	if(resultview->allocation.width > w) {
+		gdk_draw_drawable(resultview->window, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap), 0, 0, resultview->allocation.width - w, (resultview->allocation.height - h) / 2, -1, -1);
 	} else {
-		gdk_draw_drawable(resultview->window, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap), 0, 0, 0, (h_new - h) / 2, -1, -1);
+		gdk_draw_drawable(resultview->window, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap), 0, 0, 0, (resultview->allocation.height - h) / 2, -1, -1);
 	}
 	pixmap_result = pixmap;	
 }
@@ -3468,7 +3471,12 @@ void convert_to_custom_unit(GtkMenuItem *w, gpointer user_data)
 	display edit/new variable dialog
 	creates new variable if v == NULL, mngr_ is forced value, win is parent window
 */
-void edit_variable(const char *category = "", Variable *v = NULL, Manager *mngr_ = NULL, GtkWidget *win = NULL) {
+void edit_variable(const char *category, Variable *v, Manager *mngr_, GtkWidget *win) {
+
+	if((v != NULL && v->get()->isMatrix() && (!mngr_ || mngr_->isMatrix())) || (mngr_ && !v && mngr_->isMatrix())) {
+		edit_matrix(category, v, mngr_, win);
+		return;
+	}
 
 	GtkWidget *dialog = create_variable_edit_dialog();
 	if(win) gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(win));
@@ -3582,6 +3590,224 @@ run_variable_edit_dialog:
 }
 
 /*
+	display edit/new matrix dialog
+	creates new matrix if v == NULL, mngr_ is forced value, win is parent window
+*/
+void edit_matrix(const char *category, Variable *v, Manager *mngr_, GtkWidget *win, gboolean create_vector) {
+
+	if((v && !v->get()->isMatrix()) || (mngr_ && !mngr_->isMatrix())) {
+		edit_variable(category, v, mngr_, win);
+		return;
+	}
+
+	GtkWidget *dialog = create_matrix_edit_dialog();
+	if(win) gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(win));
+	if(mngr_) {
+		create_vector = mngr_->matrix()->isVector();
+	} else if(v) {
+		create_vector = v->get()->matrix()->isVector();	
+	}
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "matrix_edit_radiobutton_vector")), create_vector);				
+
+	if(create_vector) {
+		if(v) {
+			if(v->isUserVariable() && !v->isBuiltinVariable())
+				gtk_window_set_title(GTK_WINDOW(dialog), _("Edit Vector"));
+			else
+				gtk_window_set_title(GTK_WINDOW(dialog), _("Edit Vector (read only)"));
+		} else {
+			gtk_window_set_title(GTK_WINDOW(dialog), _("New Vector"));
+		}
+	} else {
+		if(v) {
+			if(v->isUserVariable() && !v->isBuiltinVariable())
+				gtk_window_set_title(GTK_WINDOW(dialog), _("Edit Matrix"));
+			else
+				gtk_window_set_title(GTK_WINDOW(dialog), _("Edit Matrix (read only)"));
+		} else {
+			gtk_window_set_title(GTK_WINDOW(dialog), _("New Matrix"));
+		}	
+	}
+		
+	gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_button_ok"), !v || (!v->isBuiltinVariable() && v->isUserVariable()));		
+
+	int r = 4, c = 4;
+	Vector *old_vctr = NULL;
+	if(v) {
+		if(create_vector) {
+			old_vctr = (Vector*) v->get()->matrix();
+		}	
+		//fill in original parameters
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "matrix_edit_entry_name")), v->name().c_str());
+		//can only change name and value of user variable
+//		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_entry_name"), !v->isBuiltinVariable() && v->isUserVariable());
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_entry_name"), !v->isBuiltinVariable());
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_spinbutton_rows"), !v->isBuiltinVariable());		
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_spinbutton_columns"), !v->isBuiltinVariable());				
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_table_elements"), !v->isBuiltinVariable());
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_radiobutton_matrix"), !v->isBuiltinVariable());						
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_radiobutton_vector"), !v->isBuiltinVariable());								
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "matrix_edit_entry_category")), v->category().c_str());
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "matrix_edit_entry_desc")), v->title(false).c_str());
+		c = v->get()->matrix()->columns();
+		r = v->get()->matrix()->rows();
+	} else {
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_entry_name"), TRUE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_spinbutton_rows"), TRUE);		
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_spinbutton_columns"), TRUE);				
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_table_elements"), TRUE);
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_radiobutton_matrix"), TRUE);						
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_radiobutton_vector"), TRUE);								
+	
+		//fill in default values
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "matrix_edit_entry_name")), "");
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "matrix_edit_entry_category")), category);
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "matrix_edit_entry_desc")), "");		
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "matrix_edit_spinbutton_rows")), 3);		
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "matrix_edit_spinbutton_columns")), 3);						
+	}
+	if(mngr_) {
+		//forced value
+		if(create_vector) {
+			old_vctr = (Vector*) mngr_->matrix();
+		}
+		c = mngr_->matrix()->columns();
+		r = mngr_->matrix()->rows();				
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_spinbutton_rows"), FALSE);		
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_spinbutton_columns"), FALSE);				
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_table_elements"), FALSE);						
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_radiobutton_matrix"), FALSE);		
+		gtk_widget_set_sensitive(glade_xml_get_widget (glade_xml, "matrix_edit_radiobutton_vector"), FALSE);		
+	}
+	if(create_vector) {
+		if(old_vctr) {
+			r = old_vctr->components();
+			c = (int) sqrt(r) + 4;
+			if(r % c > 0) {
+				r = r / c + 1;
+			} else {
+				r = r / c;
+			}
+		} else {
+			c = 8;
+			r = 3;
+		}
+	}
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "matrix_edit_spinbutton_rows")), r);		
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "matrix_edit_spinbutton_columns")), c);					
+	on_matrix_edit_spinbutton_columns_value_changed(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "matrix_edit_spinbutton_columns")), NULL);
+	on_matrix_edit_spinbutton_rows_value_changed(GTK_SPIN_BUTTON(glade_xml_get_widget (glade_xml, "matrix_edit_spinbutton_rows")), NULL);		
+
+	while(gtk_events_pending()) gtk_main_iteration();
+	for(int index_r = 0; index_r < element_entries.size(); index_r++) {
+		for(int index_c = 0; index_c < element_entries[index_r].size(); index_c++) {
+			if(create_vector) {
+				if(old_vctr && index_r * element_entries[index_r].size() + index_c < old_vctr->components()) {
+					gtk_entry_set_text(GTK_ENTRY(element_entries[index_r][index_c]), old_vctr->get(index_r * element_entries[index_r].size() + index_c + 1)->print().c_str());
+				} else {
+					gtk_entry_set_text(GTK_ENTRY(element_entries[index_r][index_c]), "");
+				}
+			} else {
+				if(v) {
+					gtk_entry_set_text(GTK_ENTRY(element_entries[index_r][index_c]), v->get()->matrix()->get(index_r + 1, index_c + 1)->print().c_str());
+				} else if(mngr_) {
+					gtk_entry_set_text(GTK_ENTRY(element_entries[index_r][index_c]), mngr_->matrix()->get(index_r + 1, index_c + 1)->print().c_str());			
+				} else {
+					gtk_entry_set_text(GTK_ENTRY(element_entries[index_r][index_c]), "0");
+				}
+			}
+		}
+	}		
+
+run_matrix_edit_dialog:
+	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
+		//clicked "OK"
+		string str = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "matrix_edit_entry_name")));
+		remove_blank_ends(str);
+		if(str.empty()) {
+			//no name -- open dialog again
+			show_message(_("Empty name field."), dialog);
+			goto run_matrix_edit_dialog;
+		}
+
+		//variable with the same name exists -- overwrite or open dialog again
+		if(CALCULATOR->nameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "matrix_edit_entry_name"))), (void*) v) && !ask_question(_("A function or variable with the same name already exists.\nOverwrite function/variable?"), dialog)) {
+			goto run_matrix_edit_dialog;
+		}
+		if(!v) {
+			//no need to create a new variable when a variable with the same name exists
+			v = CALCULATOR->getVariable(str);
+		}
+		Matrix *mtrx;
+		if(!mngr_) {
+			Manager *mngr_v;
+			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "matrix_edit_radiobutton_vector")))) {
+				Vector *vctr = new Vector();
+				string str;
+				for(int index_r = 0; index_r < element_entries.size(); index_r++) {
+					for(int index_c = 0; index_c < element_entries[index_r].size(); index_c++) {
+						str = gtk_entry_get_text(GTK_ENTRY(element_entries[index_r][index_c]));
+						remove_blank_ends(str);
+						if(!str.empty()) {
+							mngr_v = CALCULATOR->calculate(str);
+							if(index_r || index_c) vctr->addComponent();
+							vctr->set(mngr_v, vctr->components());
+							mngr_v->unref();
+						}
+					}
+				}
+				mtrx = vctr;
+			} else {
+				mtrx = new Matrix(element_entries.size(), element_entries[0].size());
+				for(int index_r = 0; index_r < element_entries.size(); index_r++) {
+					for(int index_c = 0; index_c < element_entries[index_r].size(); index_c++) {
+						mngr_v = CALCULATOR->calculate(gtk_entry_get_text(GTK_ENTRY(element_entries[index_r][index_c])));
+						mtrx->set(mngr_v, index_r + 1, index_c + 1);
+						mngr_v->unref();
+					}
+				}
+			}					
+		}		
+		if(v) {
+			//update existing variable
+			if(!v->isBuiltinVariable()) {
+				if(mngr_) {
+					v->set(mngr_);
+				} else {
+					mngr_ = new Manager(mtrx);
+					v->set(mngr_);
+					mngr_->unref();
+					delete mtrx;
+				}
+				v->setName(str);
+			}
+			v->setCategory(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "matrix_edit_entry_category"))));
+			v->setTitle(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "matrix_edit_entry_desc"))));
+			v->setUserVariable(true);
+		} else {
+			//new variable
+			if(mngr_) {
+				//forced value
+				v = CALCULATOR->addVariable(new Variable(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "matrix_edit_entry_category"))), str, mngr_, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "matrix_edit_entry_desc"))), true));
+			} else {
+				mngr_ = new Manager(mtrx);
+				v = CALCULATOR->addVariable(new Variable(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "matrix_edit_entry_category"))), str, mngr_, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (glade_xml, "matrix_edit_entry_desc"))), true));
+				mngr_->unref();
+				delete mtrx;
+			}
+		}
+		//select the new variable
+		selected_variable = v->name();
+		selected_variable_category = v->category();
+		if(selected_variable_category.empty())
+			selected_variable_category = _("Uncategorized");
+		update_vmenu();
+	}
+	gtk_widget_hide(dialog);
+	gtk_widget_grab_focus(expression);
+}
+
+/*
 	add a new variable (from menu) with the value of result
 */
 void add_as_variable()
@@ -3603,6 +3829,29 @@ void new_variable(GtkMenuItem *w, gpointer user_data)
 			NULL,
 			NULL,
 			glade_xml_get_widget (glade_xml, "main_window"));
+}
+
+/*
+	add a new matrix (from menu)
+*/
+void new_matrix(GtkMenuItem *w, gpointer user_data)
+{
+	edit_matrix(
+			_("Matrices"),
+			NULL,
+			NULL,
+			glade_xml_get_widget (glade_xml, "main_window"), FALSE);
+}
+/*
+	add a new vector (from menu)
+*/
+void new_vector(GtkMenuItem *w, gpointer user_data)
+{
+	edit_matrix(
+			_("Vectors"),
+			NULL,
+			NULL,
+			glade_xml_get_widget (glade_xml, "main_window"), TRUE);
 }
 
 /*
@@ -4390,8 +4639,8 @@ void on_button_hyp_toggled(GtkToggleButton *w, gpointer user_data) {
 */
 void on_button_fraction_toggled(GtkToggleButton *w, gpointer user_data) {
 	if(gtk_toggle_button_get_active(w)) {
-		fractional_mode = FRACTIONAL_MODE_COMBINED;
-		GtkWidget *w_fraction = glade_xml_get_widget (glade_xml, "menu_item_fraction_combined");
+		fractional_mode = FRACTIONAL_MODE_FRACTION;
+		GtkWidget *w_fraction = glade_xml_get_widget (glade_xml, "menu_item_fraction_fraction");
 		g_signal_handlers_block_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_fraction_combined_activate, NULL);		
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w_fraction), TRUE);		
 		g_signal_handlers_unblock_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_fraction_combined_activate, NULL);		
@@ -4708,7 +4957,7 @@ void on_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer user_data)
 
 	GtkWidget *w_fraction = glade_xml_get_widget (glade_xml, "button_fraction");
 	g_signal_handlers_block_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_button_fraction_toggled, NULL);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w_fraction), TRUE);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w_fraction), FALSE);
 	g_signal_handlers_unblock_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_button_fraction_toggled, NULL);	
 	
 	setResult(result_text.c_str());
@@ -4721,7 +4970,7 @@ void on_menu_item_fraction_fraction_activate(GtkMenuItem *w, gpointer user_data)
 
 	GtkWidget *w_fraction = glade_xml_get_widget (glade_xml, "button_fraction");
 	g_signal_handlers_block_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_button_fraction_toggled, NULL);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w_fraction), FALSE);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w_fraction), TRUE);
 	g_signal_handlers_unblock_matched((gpointer) w_fraction, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_button_fraction_toggled, NULL);	
 	
 	setResult(result_text.c_str());
@@ -5101,6 +5350,60 @@ void on_variable_edit_entry_name_changed(GtkEditable *editable, gpointer user_da
 	}
 }
 
+void on_matrix_edit_spinbutton_columns_value_changed(GtkSpinButton *w, gpointer user_data) {
+	GtkTable *table = GTK_TABLE(glade_xml_get_widget(glade_xml, "matrix_edit_table_elements")); 
+	gint c = element_entries[0].size();
+	gint r = element_entries.size();
+	gint new_c = gtk_spin_button_get_value_as_int(w);	
+	gtk_table_resize(table, r, new_c);
+	if(new_c < c) {
+		for(gint index_r = 0; index_r < r; index_r++) {
+			for(gint index_c = new_c; index_c < c; index_c++) {
+				gtk_widget_destroy(element_entries[index_r][index_c]);
+			}
+			element_entries[index_r].resize(new_c);		
+		}	
+	} else {
+		for(gint index_c = c; index_c < new_c; index_c++) {
+			for(gint index_r = 0; index_r < r; index_r++) {
+				GtkWidget *entry = gtk_entry_new();
+				if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "matrix_edit_radiobutton_matrix")))) {
+					gtk_entry_set_text(GTK_ENTRY(entry), "0");
+				}
+				gtk_entry_set_width_chars(GTK_ENTRY(entry), 6);
+				gtk_table_attach(table, entry, index_c, index_c + 1, index_r, index_r + 1, (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), GTK_FILL, 0, 0);
+				gtk_widget_show(entry);			
+				element_entries[index_r].push_back(entry);
+			}
+		}
+	}
+}
+void on_matrix_edit_spinbutton_rows_value_changed(GtkSpinButton *w, gpointer user_data) {
+	GtkTable *table = GTK_TABLE(glade_xml_get_widget(glade_xml, "matrix_edit_table_elements")); 
+	gint c = element_entries[0].size();
+	gint r = element_entries.size();
+	gint new_r = gtk_spin_button_get_value_as_int(w);	
+	gtk_table_resize(table, new_r, c);
+	for(gint index_r = new_r; index_r < r; index_r++) {
+		for(gint index_c = 0; index_c < c; index_c++) {
+			gtk_widget_destroy(element_entries[index_r][index_c]);
+		}
+	}
+	element_entries.resize(new_r);		
+	for(gint index_r = r; index_r < new_r; index_r++) {
+		for(gint index_c = 0; index_c < c; index_c++) {
+			GtkWidget *entry = gtk_entry_new();
+			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (glade_xml, "matrix_edit_radiobutton_matrix")))) {
+				gtk_entry_set_text(GTK_ENTRY(entry), "0");
+			}		
+			gtk_entry_set_width_chars(GTK_ENTRY(entry), 6);
+			gtk_table_attach(table, entry, index_c, index_c + 1, index_r, index_r + 1, (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), GTK_FILL, 0, 0);
+			gtk_widget_show(entry);
+			element_entries[index_r].push_back(entry);
+		}
+	}
+}
+
 void update_nbases_entries(Manager *value, NumberFormat nrformat) {
 	GtkWidget *w_dec, *w_bin, *w_oct, *w_hex;
 	w_dec = glade_xml_get_widget (glade_xml, "nbases_entry_decimal");
@@ -5296,6 +5599,20 @@ gboolean on_resultview_expose_event(GtkWidget *w, GdkEventExpose *event, gpointe
 		}		
 	}	
 	return TRUE;
+}
+void on_matrix_edit_radiobutton_matrix_toggled(GtkToggleButton *w, gpointer user_data) {
+	if(gtk_toggle_button_get_active(w)) {
+		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (glade_xml, "matrix_edit_label_elements")), _("Elements"));
+	} else {
+		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (glade_xml, "matrix_edit_label_elements")), _("Components (in horizontal order)"));
+	}
+}
+void on_matrix_edit_radiobutton_vector_toggled(GtkToggleButton *w, gpointer user_data) {
+	if(!gtk_toggle_button_get_active(w)) {
+		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (glade_xml, "matrix_edit_label_elements")), _("Elements"));
+	} else {
+		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (glade_xml, "matrix_edit_label_elements")), _("Components (in horizontal order)"));
+	}
 }
 
 }

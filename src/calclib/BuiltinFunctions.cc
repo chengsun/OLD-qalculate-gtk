@@ -167,6 +167,15 @@ void VectorFunction::calculate2(Manager *mngr) {
 	}
 	mngr->set(&vctr);
 }
+RankFunction::RankFunction() : Function("Matrices", "rank", 1, "Rank") {}
+void RankFunction::calculate2(Manager *mngr) {
+	if(vargs[0]->isMatrix()) {
+		mngr->set(vargs[0]);
+		mngr->matrix()->rank();
+	} else {
+		mngr->set(1, 1);
+	}
+}
 RowsFunction::RowsFunction() : Function("Matrices", "rows", 1, "Rows") {}
 void RowsFunction::calculate2(Manager *mngr) {
 	if(vargs[0]->isMatrix()) {

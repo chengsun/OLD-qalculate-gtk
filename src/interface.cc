@@ -63,6 +63,7 @@ extern bool use_short_units, save_mode_on_exit, save_defs_on_exit, load_global_d
 extern bool use_custom_font, indicate_infinite_series;
 extern string custom_font;
 
+extern vector<vector<GtkWidget*> > element_entries;
 
 void
 create_main_window (void)
@@ -477,6 +478,8 @@ create_unit_edit_dialog (void)
 		}
 	}
 	gtk_combo_set_popdown_strings(GTK_COMBO(glade_xml_get_widget (glade_xml, "unit_edit_combo_category")), items);
+	g_hash_table_destroy(hash);	
+	g_list_free(items);
 
 	return glade_xml_get_widget (glade_xml, "unit_edit_dialog");
 }
@@ -499,6 +502,8 @@ create_function_edit_dialog (void)
 		}
 	}
 	gtk_combo_set_popdown_strings(GTK_COMBO(glade_xml_get_widget (glade_xml, "function_edit_combo_category")), items);
+	g_hash_table_destroy(hash);	
+	g_list_free(items);
 
 	return glade_xml_get_widget (glade_xml, "function_edit_dialog");
 }
@@ -520,8 +525,38 @@ create_variable_edit_dialog (void)
 		}
 	}
 	gtk_combo_set_popdown_strings(GTK_COMBO(glade_xml_get_widget (glade_xml, "variable_edit_combo_category")), items);
+	g_hash_table_destroy(hash);
+	g_list_free(items);
 
 	return glade_xml_get_widget (glade_xml, "variable_edit_dialog");
+}
+GtkWidget*
+create_matrix_edit_dialog (void)
+{
+	/* populate combo menu */
+	
+	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
+	GList *items = NULL;
+	for(int i = 0; i < CALCULATOR->variables.size(); i++) {
+		if(!CALCULATOR->variables[i]->category().empty()) {
+			//add category if not present
+			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->variables[i]->category().c_str()) == NULL) {
+				items = g_list_append(items, (gpointer) CALCULATOR->variables[i]->category().c_str());
+				//remember added categories
+				g_hash_table_insert(hash, (gpointer) CALCULATOR->variables[i]->category().c_str(), (gpointer) hash);
+			}
+		}
+	}
+	gtk_combo_set_popdown_strings(GTK_COMBO(glade_xml_get_widget (glade_xml, "matrix_edit_combo_category")), items);
+	g_hash_table_destroy(hash);	
+	g_list_free(items);
+
+	if(element_entries.size() == 0) {
+		element_entries.resize(1);
+		element_entries[0].push_back(glade_xml_get_widget (glade_xml, "matrix_edit_entry_1x1"));
+	}
+
+	return glade_xml_get_widget (glade_xml, "matrix_edit_dialog");
 }
 
 GtkWidget*

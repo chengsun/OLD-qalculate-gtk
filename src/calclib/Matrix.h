@@ -58,6 +58,7 @@ class Matrix {
 	void transpose();
 	bool inverse();
 	bool adjoint();
+	bool rank();
 	
 	bool isSymmetric() const;
 	bool isOrthogonal() const;
