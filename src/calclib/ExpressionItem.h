@@ -115,6 +115,7 @@ class ExpressionItem {
 	virtual bool changeReference(ExpressionItem *o_from, ExpressionItem *o_to);
 	
 	virtual int type() const = 0;
+	virtual int subtype() const = 0;
 };
 
 #endif

@@ -32,7 +32,8 @@ enum {
 	ARGUMENT_TYPE_VARIABLE,
 	ARGUMENT_TYPE_ANGLE,
 	ARGUMENT_TYPE_GIAC,
-	ARGUMENT_TYPE_SET
+	ARGUMENT_TYPE_SET,
+	ARGUMENT_TYPE_DATA_PROPERTY
 };
 
 typedef enum {
@@ -42,6 +43,12 @@ typedef enum {
 	ARGUMENT_MIN_MAX_NONNEGATIVE,
 	ARGUMENT_MIN_MAX_NEGATIVE	
 } ArgumentMinMaxPreDefinition;
+
+enum {
+	SUBTYPE_FUNCTION,
+	SUBTYPE_USER_FUNCTION,
+	SUBTYPE_DATA_COLLECTION
+};
 
 
 class Function : public ExpressionItem {
@@ -69,6 +76,7 @@ class Function : public ExpressionItem {
 	virtual ExpressionItem *copy() const = 0;
 	virtual void set(const ExpressionItem *item);
 	virtual int type() const;
+	virtual int subtype() const;
 
 	bool testArgumentCount(int itmp);
 	virtual MathStructure calculate(const string &eq, const EvaluationOptions &eo = default_evaluation_options);
@@ -135,7 +143,7 @@ class UserFunction : public Function {
 	void setSubfunctionPrecalculated(unsigned int index, bool precalculate);
 	const string &getSubfunction(unsigned int index) const;
 	bool subfunctionPrecalculated(unsigned int index) const;
-	
+	int subtype() const;
 };
 
 class Argument {

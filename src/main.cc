@@ -29,7 +29,7 @@
 
 MathStructure *mstruct, *parsed_mstruct;
 string *parsed_to_str;
-KnownVariable *vans;
+KnownVariable *vans[5];
 GtkWidget *functions_window;
 string selected_function_category;
 Function *selected_function;
@@ -145,6 +145,15 @@ int main (int argc, char **argv) {
 	
 	CALCULATOR->loadExchangeRates();
 
+	string ans_str = _("ans");
+	vans[0] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str, m_undefined, _("Last Answer"), false));
+	vans[0]->addName(_("answer"));
+	vans[0]->addName(ans_str + "1");
+	vans[1] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "2", m_undefined, _("Answer 2"), false));
+	vans[2] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "3", m_undefined, _("Answer 3"), false));
+	vans[3] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "4", m_undefined, _("Answer 4"), false));
+	vans[4] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "5", m_undefined, _("Answer 5"), false));
+
 	//load global definitions
 	if(load_global_defs && !CALCULATOR->loadGlobalDefinitions()) {
 		g_print(_("Failed to load global definitions!\n"));
@@ -158,14 +167,6 @@ int main (int argc, char **argv) {
 	//load local definitions
 	CALCULATOR->loadLocalDefinitions();
 
-	//get ans variable objects or create if they do not exist
-	vans = (KnownVariable*) CALCULATOR->getVariable(_("ans"));
-	if(!vans) {
-		vans = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), _("ans"), *mstruct, _("Answer"), false));
-		vans->addName(_("answer"));
-	} else {
-		vans->set(*mstruct);
-	}
 	//reset
 	functions_window = NULL;
 	selected_function_category = _("All");

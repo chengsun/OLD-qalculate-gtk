@@ -881,7 +881,7 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	if(vargs[0].number().isZero()) {
 		mstruct.clear();
 	} else if(vargs[0].number().isOne()) {
-		switch(CALCULATOR->angleMode()) {
+		switch(eo.angle_unit) {
 			case DEGREES: {
 				mstruct.set(90, 1);
 				break;
@@ -896,7 +896,7 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 		}
 	} else if(vargs[0].number().isMinusOne()) {
-		switch(CALCULATOR->angleMode()) {
+		switch(eo.angle_unit) {
 			case DEGREES: {
 				mstruct.set(-90, 1);
 				break;
@@ -911,7 +911,7 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 		}
 	} else if(vargs[0].number().equals(Number(1, 2))) {
-		switch(CALCULATOR->angleMode()) {
+		switch(eo.angle_unit) {
 			case DEGREES: {
 				mstruct.set(30, 1);
 				break;
@@ -929,7 +929,7 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		Number nr = vargs[0].number();
 		if(!nr.asin() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !mstruct.number().isInfinite())) return 0;
 		mstruct = nr;
-		switch(CALCULATOR->angleMode()) {
+		switch(eo.angle_unit) {
 			case DEGREES: {
 				mstruct *= 180;
 		    		mstruct /= CALCULATOR->v_pi;
@@ -940,6 +940,7 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	    			mstruct /= CALCULATOR->v_pi;
 				break;
 			}
+			default: {}
 		}
 	}
 	return 1 ;
@@ -951,7 +952,7 @@ AcosFunction::AcosFunction() : Function("acos", 1) {
 int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	
 	if(vargs[0].number().isZero()) {
-		switch(CALCULATOR->angleMode()) {
+		switch(eo.angle_unit) {
 			case DEGREES: {
 				mstruct.set(90, 1);
 				break;
@@ -968,7 +969,7 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	} else if(vargs[0].number().isOne()) {
 		mstruct.clear();
 	} else if(vargs[0].number().isMinusOne()) {
-		switch(CALCULATOR->angleMode()) {
+		switch(eo.angle_unit) {
 			case DEGREES: {
 				mstruct.set(180, 1);
 				break;
@@ -982,7 +983,7 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 		}
 	} else if(vargs[0].number().equals(Number(1, 2))) {
-		switch(CALCULATOR->angleMode()) {
+		switch(eo.angle_unit) {
 			case DEGREES: {
 				mstruct.set(60, 1);
 				break;
@@ -1000,7 +1001,7 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		Number nr = vargs[0].number();
 		if(!nr.acos() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) return 0;
 		mstruct = nr;
-		switch(CALCULATOR->angleMode()) {
+		switch(eo.angle_unit) {
 			case DEGREES: {
 				mstruct *= 180;
 		    		mstruct /= CALCULATOR->v_pi;
@@ -1011,6 +1012,7 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	    			mstruct /= CALCULATOR->v_pi;
 				break;
 			}
+			default: {}
 		}
 	}
 	return 1 ;
@@ -1107,7 +1109,7 @@ RadiansToDefaultAngleUnitFunction::RadiansToDefaultAngleUnitFunction() : Functio
 }
 int RadiansToDefaultAngleUnitFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	switch(CALCULATOR->angleMode()) {
+	switch(eo.angle_unit) {
 		case DEGREES: {
 			mstruct *= 180;
 	    		mstruct /= CALCULATOR->v_pi;
@@ -1118,6 +1120,7 @@ int RadiansToDefaultAngleUnitFunction::calculate(MathStructure &mstruct, const M
 	    		mstruct /= CALCULATOR->v_pi;
 			break;
 		}
+		default: {}
 	}
 	return 1 ;
 }

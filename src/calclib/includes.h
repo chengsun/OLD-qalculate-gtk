@@ -284,6 +284,12 @@ static const struct ParseOptions {
 	ParseOptions() : variables_enabled(true), functions_enabled(true), unknowns_enabled(true), units_enabled(true), rpn(false), base(BASE_DECIMAL), read_precision(DONT_READ_PRECISION) {}
 } default_parse_options;
 
+typedef enum {
+	RADIANS,
+	DEGREES,
+	GRADIANS
+} AngleUnit;
+
 static const struct EvaluationOptions {
 	ApproximationMode approximation;
 	bool sync_units, sync_complex_unit_relations, keep_prefixes;
@@ -293,7 +299,8 @@ static const struct EvaluationOptions {
 	AutoPostConversion auto_post_conversion;
 	StructuringMode structuring;
 	ParseOptions parse_options;
-	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), simplify_addition_powers(true), allow_complex(true), allow_infinite(true), auto_post_conversion(POST_CONVERSION_NONE), structuring(STRUCTURING_SIMPLIFY) {}
+	AngleUnit angle_unit;
+	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), simplify_addition_powers(true), allow_complex(true), allow_infinite(true), auto_post_conversion(POST_CONVERSION_NONE), structuring(STRUCTURING_SIMPLIFY), angle_unit(RADIANS) {}
 } default_evaluation_options;
 
 extern MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one;
@@ -307,10 +314,6 @@ extern Calculator *calculator;
 
 #define DEFAULT_PRECISION	8
 #define PRECISION		CALCULATOR->getPrecision()
-
-#define RADIANS		1
-#define DEGREES		2
-#define GRADIANS	3
 
 #define SIGN_POWER_0			"°"
 #define SIGN_POWER_1			"¹"

@@ -152,8 +152,8 @@ int Unit::baseExp(int exp_) const {
 int Unit::type() const {
 	return TYPE_UNIT;
 }
-int Unit::unitType() const {
-	return BASE_UNIT;
+int Unit::subtype() const {
+	return SUBTYPE_BASE_UNIT;
 }
 bool Unit::isChildOf(Unit *u) const {
 	return false;
@@ -164,11 +164,11 @@ bool Unit::isParentOf(Unit *u) const {
 bool Unit::hasComplexRelationTo(Unit *u) const {
 	if(u == this || u->baseUnit() != this) return false;
 	Unit *fbu = u;
-	if(fbu->unitType() != ALIAS_UNIT) return false;
+	if(fbu->subtype() != SUBTYPE_ALIAS_UNIT) return false;
 	while(1) {
 		if(fbu == this) return false;
 		if(((AliasUnit*) fbu)->hasComplexExpression()) return true;
-		if(fbu->unitType() != ALIAS_UNIT) return false;
+		if(fbu->subtype() != SUBTYPE_ALIAS_UNIT) return false;
 		fbu = (Unit*) ((AliasUnit*) fbu)->firstBaseUnit();
 	}
 }
@@ -190,7 +190,7 @@ MathStructure &Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp
 		if(isCurrency()) {
 			CALCULATOR->checkExchangeRatesDate();
 		}
-	} else if(u->unitType() == COMPOSITE_UNIT) {
+	} else if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 		bool b2 = false;
 		CompositeUnit *cu = (CompositeUnit*) u;
 		for(unsigned int i = 0; i < cu->units.size(); i++) {
@@ -227,7 +227,7 @@ ExpressionItem *AliasUnit::copy() const {
 void AliasUnit::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_UNIT) {
 		Unit::set(item);
-		if(((Unit*) item)->unitType() == ALIAS_UNIT) {
+		if(((Unit*) item)->subtype() == SUBTYPE_ALIAS_UNIT) {
 			AliasUnit *u = (AliasUnit*) item;
 			unit = (Unit*) u->firstBaseUnit();
 			exp = u->firstBaseExp();
@@ -405,8 +405,8 @@ void AliasUnit::setExponent(int exp_) {
 int AliasUnit::firstBaseExp() const {
 	return exp;
 }
-int AliasUnit::unitType() const {
-	return ALIAS_UNIT;
+int AliasUnit::subtype() const {
+	return SUBTYPE_ALIAS_UNIT;
 }
 bool AliasUnit::isChildOf(Unit *u) const {
 	if(u == this) return false;
@@ -416,7 +416,7 @@ bool AliasUnit::isChildOf(Unit *u) const {
 	while(1) {
 		u2 = (Unit*) ((AliasUnit*) u2)->firstBaseUnit();
 		if(u == u2) return true;
-		if(u2->unitType() != ALIAS_UNIT) return false;
+		if(u2->subtype() != SUBTYPE_ALIAS_UNIT) return false;
 	}
 	return false;
 }
@@ -424,7 +424,7 @@ bool AliasUnit::isParentOf(Unit *u) const {
 	if(u == this) return false;
 	if(u->baseUnit() != baseUnit()) return false;
 	while(1) {
-		if(u->unitType() != ALIAS_UNIT) return false;
+		if(u->subtype() != SUBTYPE_ALIAS_UNIT) return false;
 		u = ((AliasUnit*) u)->firstBaseUnit();
 		if(u == this) return true;
 	}
@@ -440,16 +440,16 @@ bool AliasUnit::hasComplexRelationTo(Unit *u) const {
 		while(true) {
 			if((const Unit*) fbu == this) return false;
 			if(((AliasUnit*) fbu)->hasComplexExpression()) return true;
-			if(fbu->unitType() != ALIAS_UNIT) return false;
+			if(fbu->subtype() != SUBTYPE_ALIAS_UNIT) return false;
 			fbu = (Unit*) ((AliasUnit*) fbu)->firstBaseUnit();			
 		}	
 	} else if(isChildOf(u)) {
 		Unit *fbu = (Unit*) this;
-		if(fbu->unitType() != ALIAS_UNIT) return false;
+		if(fbu->subtype() != SUBTYPE_ALIAS_UNIT) return false;
 		while(true) {
 			if((const Unit*) fbu == u) return false;
 			if(((AliasUnit*) fbu)->hasComplexExpression()) return true;
-			if(fbu->unitType() != ALIAS_UNIT) return false;
+			if(fbu->subtype() != SUBTYPE_ALIAS_UNIT) return false;
 			fbu = (Unit*) ((AliasUnit*) fbu)->firstBaseUnit();
 		}			
 	} else {
@@ -469,7 +469,7 @@ ExpressionItem *AliasUnit_Composite::copy() const {
 }
 void AliasUnit_Composite::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_UNIT) {
-		if(((Unit*) item)->unitType() == ALIAS_UNIT) {
+		if(((Unit*) item)->subtype() == SUBTYPE_ALIAS_UNIT) {
 			AliasUnit::set(item);
 			prefixv = (Prefix*) ((AliasUnit_Composite*) item)->prefix();
 		} else {
@@ -536,7 +536,7 @@ ExpressionItem *CompositeUnit::copy() const {
 void CompositeUnit::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_UNIT) {
 		Unit::set(item);
-		if(((Unit*) item)->unitType() == COMPOSITE_UNIT) {
+		if(((Unit*) item)->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			CompositeUnit *u = (CompositeUnit*) item;
 			for(unsigned int i = 0; i < u->units.size(); i++) {
 				units.push_back(new AliasUnit_Composite(u->units[i]));
@@ -637,20 +637,20 @@ const string &CompositeUnit::singular(bool return_short_if_no_singular, bool use
 const string &CompositeUnit::shortName(bool use_unicode) const {
 	return sshort;
 }
-int CompositeUnit::unitType() const {
-	return COMPOSITE_UNIT;
+int CompositeUnit::subtype() const {
+	return SUBTYPE_COMPOSITE_UNIT;
 }
 bool CompositeUnit::containsRelativeTo(Unit *u) const {
 	if(u == this) return false;
 	CompositeUnit *cu;
 	for(unsigned int i = 0; i < units.size(); i++) {
 		if(u == units[i] || u->baseUnit() == units[i]->baseUnit()) return true;
-		if(units[i]->baseUnit()->unitType() == COMPOSITE_UNIT) {
+		if(units[i]->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			cu = (CompositeUnit*) units[i]->baseUnit();
 			if(cu->containsRelativeTo(u)) return true;
 		}
 	}
-	if(u->unitType() == COMPOSITE_UNIT) {
+	if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 		cu = (CompositeUnit*) u;
 		for(unsigned int i = 0; i < cu->units.size(); i++) {	
 			if(containsRelativeTo(cu->units[i]->baseUnit())) return true;

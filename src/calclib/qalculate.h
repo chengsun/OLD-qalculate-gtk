@@ -22,6 +22,7 @@
 #include "ExpressionItem.h"
 #include "Variable.h"
 #include "Function.h"
+#include "DataCollection.h"
 #include "Unit.h"
 #include "BuiltinFunctions.h"
 

@@ -108,7 +108,7 @@ ExpressionItem *UnknownVariable::copy() const {
 	return new UnknownVariable(this);
 }
 void UnknownVariable::set(const ExpressionItem *item) {
-	if(item->type() == TYPE_VARIABLE && !((Variable*) item)->isKnown()) {
+	if(item->type() == TYPE_VARIABLE && item->subtype() == SUBTYPE_UNKNOWN_VARIABLE) {
 		if(o_assumption) delete o_assumption;
 		o_assumption = ((UnknownVariable*) item)->assumptions();
 	}
@@ -197,7 +197,7 @@ string KnownVariable::expression() const {
 	return sexpression;
 }
 void KnownVariable::set(const ExpressionItem *item) {
-	if(item->type() == TYPE_VARIABLE && ((Variable*) item)->isKnown()) {
+	if(item->type() == TYPE_VARIABLE && item->subtype() == SUBTYPE_KNOWN_VARIABLE) {
 		calculated_precision = 0;
 		sexpression = ((KnownVariable*) item)->expression();
 		b_expression = ((KnownVariable*) item)->isExpression();

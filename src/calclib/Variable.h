@@ -42,6 +42,12 @@ typedef enum {
 	ASSUMPTION_SIGN_NONZERO
 } AssumptionSign;
 
+enum {
+	SUBTYPE_VARIABLE,
+	SUBTYPE_UNKNOWN_VARIABLE,
+	SUBTYPE_KNOWN_VARIABLE
+};
+
 class Assumptions {
 
   protected:
@@ -95,6 +101,7 @@ class Variable : public ExpressionItem {
 	virtual ExpressionItem *copy() const = 0;
 	virtual void set(const ExpressionItem *item);
 	virtual int type() const {return TYPE_VARIABLE;}
+	virtual int subtype() const {return SUBTYPE_VARIABLE;}
 	virtual bool isKnown() const = 0;
 
 	virtual bool isPositive() {return false;}
@@ -127,6 +134,7 @@ class UnknownVariable : public Variable {
 	bool isKnown() const {return false;}
 	void setAssumptions(Assumptions *ass);
 	Assumptions *assumptions();
+	int subtype() const {return SUBTYPE_UNKNOWN_VARIABLE;}
 
 	virtual bool isPositive();
 	virtual bool isNegative();
@@ -163,6 +171,7 @@ class KnownVariable : public Variable {
 	bool isKnown() const {return true;}
 	virtual bool isExpression() const;
 	virtual string expression() const;
+	int subtype() const {return SUBTYPE_KNOWN_VARIABLE;}
 
 	virtual void set(const MathStructure &o);
 	virtual void set(string expression_);	

@@ -40,7 +40,7 @@
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1207">
+			<widget class="GtkImage" id="image1336">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-new</property>
 			  <property name="icon_size">1</property>
@@ -120,7 +120,7 @@
 		      <signal name="activate" handler="on_menu_item_import_csv_file_activate" last_modification_time="Wed, 10 Mar 2004 15:40:44 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1208">
+			<widget class="GtkImage" id="image1337">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -141,7 +141,7 @@
 		      <signal name="activate" handler="on_menu_item_export_csv_file_activate" last_modification_time="Wed, 14 Jul 2004 17:15:07 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1209">
+			<widget class="GtkImage" id="image1338">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -163,7 +163,28 @@
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1210">
+			<widget class="GtkImage" id="image1339">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-save-as</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkImageMenuItem" id="menu_item_save_image">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Save Result Image</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_menu_item_save_image_activate" last_modification_time="Sun, 22 Aug 2004 21:05:32 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image1340">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -191,7 +212,7 @@
 		      <signal name="activate" handler="on_menu_item_save_defs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1211">
+			<widget class="GtkImage" id="image1341">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -205,7 +226,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkImageMenuItem" id="menu_item_fetch_exchange_rates">
+		    <widget class="GtkMenuItem" id="menu_item_fetch_exchange_rates">
 		      <property name="visible">True</property>
 		      <property name="tooltip" translatable="yes">Fetch current exchange rates from the Internet</property>
 		      <property name="label" translatable="yes">Update Exchange Rates</property>
@@ -238,7 +259,7 @@
 		      <accelerator key="B" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1213">
+			<widget class="GtkImage" id="image1342">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -250,25 +271,13 @@
 		      </child>
 		    </widget>
 		  </child>
-		  
+
 		  <child>
-		    <widget class="GtkImageMenuItem" id="menu_item_periodic_table">
+		    <widget class="GtkMenuItem" id="menu_item_periodic_table">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Periodic Table</property>
 		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_menu_item_periodic_table_activate" last_modification_time="Mon, 11 Aug 2004 15:11:19 GMT"/>
-
-		      <child internal-child="image">
-			<widget class="GtkImage" id="image_periodic_table">
-			  <property name="visible">True</property>
-			  <property name="stock">gtk-table-borders</property>
-			  <property name="icon_size">1</property>
-			  <property name="xalign">0.5</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			</widget>
-		      </child>
+		      <signal name="activate" handler="on_menu_item_periodic_table_activate" last_modification_time="Wed, 11 Aug 2004 15:11:19 GMT"/>
 		    </widget>
 		  </child>
 
@@ -287,7 +296,7 @@
 		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1214">
+			<widget class="GtkImage" id="image1343">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -365,7 +374,7 @@
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1215">
+			<widget class="GtkImage" id="image1344">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -395,7 +404,7 @@
 		      <accelerator key="T" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1216">
+			<widget class="GtkImage" id="image1345">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -416,7 +425,7 @@
 		      <signal name="activate" handler="on_menu_item_convert_to_base_units_activate" last_modification_time="Sun, 21 Mar 2004 08:14:57 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1217">
+			<widget class="GtkImage" id="image1346">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -437,7 +446,7 @@
 		      <signal name="activate" handler="on_menu_item_convert_to_best_unit_activate" last_modification_time="Sun, 21 Mar 2004 08:14:57 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1218">
+			<widget class="GtkImage" id="image1347">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -465,7 +474,7 @@
 		      <accelerator key="C" modifiers="GDK_CONTROL_MASK | GDK_MOD1_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1219">
+			<widget class="GtkImage" id="image1348">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-copy</property>
 			  <property name="icon_size">1</property>
@@ -492,7 +501,7 @@
 		      <signal name="activate" handler="on_menu_item_edit_prefs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1220">
+			<widget class="GtkImage" id="image1349">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -706,7 +715,7 @@
 			      <signal name="activate" handler="on_menu_item_indicate_infinite_series_activate" last_modification_time="Sun, 07 Sep 2003 23:09:27 GMT"/>
 			    </widget>
 			  </child>
-			  
+
 			  <child>
 			    <widget class="GtkCheckMenuItem" id="menu_item_show_ending_zeroes">
 			      <property name="visible">True</property>
@@ -1266,6 +1275,7 @@
 		      <property name="use_underline">True</property>
 		      <property name="active">False</property>
 		      <signal name="activate" handler="on_menu_item_rpn_mode_activate" last_modification_time="Sat, 20 Sep 2003 15:21:55 GMT"/>
+		      <accelerator key="R" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 		    </widget>
 		  </child>
 
@@ -1307,7 +1317,7 @@
 		      <signal name="activate" handler="on_menu_item_save_mode_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1221">
+			<widget class="GtkImage" id="image1350">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -1366,7 +1376,7 @@
 		      <accelerator key="F1" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1222">
+			<widget class="GtkImage" id="image1351">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
@@ -1387,7 +1397,7 @@
 		      <signal name="activate" handler="on_menu_item_about_activate" last_modification_time="Thu, 14 Aug 2003 22:31:50 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1223">
+			<widget class="GtkImage" id="image1352">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-dialog-info</property>
 			  <property name="icon_size">1</property>
@@ -1422,11 +1432,41 @@
 	    <widget class="GtkTable" id="top_table">
 	      <property name="border_width">6</property>
 	      <property name="visible">True</property>
-	      <property name="n_rows">2</property>
+	      <property name="n_rows">3</property>
 	      <property name="n_columns">3</property>
 	      <property name="homogeneous">False</property>
-	      <property name="row_spacing">6</property>
+	      <property name="row_spacing">0</property>
 	      <property name="column_spacing">6</property>
+
+	      <child>
+		<widget class="GtkButton" id="button_execute">
+		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Execute</property>
+		  <property name="can_focus">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <signal name="clicked" handler="on_button_execute_clicked" last_modification_time="Sun, 10 Aug 2003 21:40:33 GMT"/>
+
+		  <child>
+		    <widget class="GtkImage" id="image309">
+		      <property name="visible">True</property>
+		      <property name="stock">gtk-execute</property>
+		      <property name="icon_size">4</property>
+		      <property name="xalign">0.5</property>
+		      <property name="yalign">0.5</property>
+		      <property name="xpad">0</property>
+		      <property name="ypad">0</property>
+		    </widget>
+		  </child>
+		</widget>
+		<packing>
+		  <property name="left_attach">2</property>
+		  <property name="right_attach">3</property>
+		  <property name="top_attach">0</property>
+		  <property name="bottom_attach">1</property>
+		  <property name="x_options">fill</property>
+		  <property name="y_options"></property>
+		</packing>
+	      </child>
 
 	      <child>
 		<widget class="GtkEntry" id="expression">
@@ -1488,37 +1528,32 @@
 		  <property name="left_attach">2</property>
 		  <property name="right_attach">3</property>
 		  <property name="top_attach">1</property>
-		  <property name="bottom_attach">2</property>
+		  <property name="bottom_attach">3</property>
+		  <property name="y_padding">6</property>
 		  <property name="x_options"></property>
 		  <property name="y_options">fill</property>
 		</packing>
 	      </child>
 
 	      <child>
-		<widget class="GtkButton" id="button_execute">
+		<widget class="GtkLabel" id="label_status">
 		  <property name="visible">True</property>
-		  <property name="tooltip" translatable="yes">Execute</property>
-		  <property name="can_focus">True</property>
-		  <property name="relief">GTK_RELIEF_NORMAL</property>
-		  <signal name="clicked" handler="on_button_execute_clicked" last_modification_time="Sun, 10 Aug 2003 21:40:33 GMT"/>
-
-		  <child>
-		    <widget class="GtkImage" id="image309">
-		      <property name="visible">True</property>
-		      <property name="stock">gtk-execute</property>
-		      <property name="icon_size">4</property>
-		      <property name="xalign">0.5</property>
-		      <property name="yalign">0.5</property>
-		      <property name="xpad">0</property>
-		      <property name="ypad">0</property>
-		    </widget>
-		  </child>
+		  <property name="label" translatable="yes">&lt;span size=&quot;x-small&quot;&gt;STATUS&lt;/span&gt;</property>
+		  <property name="use_underline">False</property>
+		  <property name="use_markup">True</property>
+		  <property name="justify">GTK_JUSTIFY_LEFT</property>
+		  <property name="wrap">False</property>
+		  <property name="selectable">False</property>
+		  <property name="xalign">1</property>
+		  <property name="yalign">1</property>
+		  <property name="xpad">6</property>
+		  <property name="ypad">0</property>
 		</widget>
 		<packing>
-		  <property name="left_attach">2</property>
-		  <property name="right_attach">3</property>
-		  <property name="top_attach">0</property>
-		  <property name="bottom_attach">1</property>
+		  <property name="left_attach">0</property>
+		  <property name="right_attach">2</property>
+		  <property name="top_attach">1</property>
+		  <property name="bottom_attach">2</property>
 		  <property name="x_options">fill</property>
 		  <property name="y_options"></property>
 		</packing>
@@ -1543,7 +1578,7 @@
 
 		      <child>
 			<widget class="GtkDrawingArea" id="resultview">
-			  <property name="height_request">50</property>
+			  <property name="height_request">34</property>
 			  <property name="visible">True</property>
 			  <property name="tooltip" translatable="yes">Result</property>
 			  <signal name="expose_event" handler="on_resultview_expose_event" last_modification_time="Thu, 04 Sep 2003 10:38:54 GMT"/>
@@ -1555,8 +1590,8 @@
 		<packing>
 		  <property name="left_attach">0</property>
 		  <property name="right_attach">2</property>
-		  <property name="top_attach">1</property>
-		  <property name="bottom_attach">2</property>
+		  <property name="top_attach">2</property>
+		  <property name="bottom_attach">3</property>
 		  <property name="x_options">fill</property>
 		  <property name="y_options">fill</property>
 		</packing>
@@ -1907,7 +1942,6 @@
 			      <property name="active">False</property>
 			      <property name="inconsistent">False</property>
 			      <signal name="toggled" handler="on_button_fraction_toggled" last_modification_time="Tue, 19 Aug 2003 13:12:14 GMT"/>
-			      <accelerator key="R" modifiers="GDK_CONTROL_MASK" signal="clicked"/>
 			    </widget>
 			    <packing>
 			      <property name="left_attach">2</property>
@@ -2638,7 +2672,7 @@
       <signal name="activate" handler="on_menu_item_copy_activate" last_modification_time="Sat, 20 Mar 2004 09:40:15 GMT"/>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image1236">
+	<widget class="GtkImage" id="image1368">
 	  <property name="visible">True</property>
 	  <property name="stock">gtk-copy</property>
 	  <property name="icon_size">1</property>
@@ -2659,9 +2693,30 @@
       <signal name="activate" handler="on_menu_item_save_activate" last_modification_time="Sun, 21 Mar 2004 20:46:44 GMT"/>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image1237">
+	<widget class="GtkImage" id="image1369">
 	  <property name="visible">True</property>
-	  <property name="stock">gtk-save</property>
+	  <property name="stock">gtk-save-as</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkImageMenuItem" id="popup_menu_item_save_image">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Save Image</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_menu_item_save_image_activate" last_modification_time="Sun, 22 Aug 2004 21:08:13 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image1370">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-save-as</property>
 	  <property name="icon_size">1</property>
 	  <property name="xalign">0.5</property>
 	  <property name="yalign">0.5</property>
@@ -2877,13 +2932,13 @@
       <signal name="activate" handler="on_popup_menu_item_fraction_fraction_activate" last_modification_time="Thu, 11 Mar 2004 08:34:34 GMT"/>
     </widget>
   </child>
-  
+
   <child>
     <widget class="GtkMenuItem" id="separator33">
       <property name="visible">True</property>
     </widget>
   </child>
-  
+
   <child>
     <widget class="GtkCheckMenuItem" id="popup_menu_item_abbreviate_names">
       <property name="visible">True</property>
@@ -2908,7 +2963,7 @@
       <signal name="activate" handler="on_menu_item_convert_to_unit_expression_activate" last_modification_time="Sat, 20 Mar 2004 09:40:15 GMT"/>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image1238">
+	<widget class="GtkImage" id="image1371">
 	  <property name="visible">True</property>
 	  <property name="stock">gtk-convert</property>
 	  <property name="icon_size">1</property>
@@ -2929,7 +2984,7 @@
       <signal name="activate" handler="on_menu_item_convert_to_base_units_activate" last_modification_time="Sun, 21 Mar 2004 20:29:28 GMT"/>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image1239">
+	<widget class="GtkImage" id="image1372">
 	  <property name="visible">True</property>
 	  <property name="stock">gtk-convert</property>
 	  <property name="icon_size">1</property>
@@ -2950,7 +3005,7 @@
       <signal name="activate" handler="on_menu_item_convert_to_best_unit_activate" last_modification_time="Sun, 21 Mar 2004 20:29:28 GMT"/>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image1240">
+	<widget class="GtkImage" id="image1373">
 	  <property name="visible">True</property>
 	  <property name="stock">gtk-convert</property>
 	  <property name="icon_size">1</property>

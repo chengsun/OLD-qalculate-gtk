@@ -1,3 +1,14 @@
+2004-08-22 Niklas Knutsson  <nq@altern.org>
+
+	* ans2, ans3, ans4 and ans5
+	* google/googleplex -> googol/googolplex
+	* thousand and hundred
+	* Reduce min result area height
+	* Put angle mode in evalution options
+	* Status text
+	* Save to image
+	* Initial work on data collection concept
+
 2004-08-20 Niklas Knutsson  <nq@altern.org>
 
 	* Fix RPN mode

@@ -157,7 +157,7 @@ create_main_window (void)
 	accel_group = gtk_accel_group_new();
 
 
-	switch (CALCULATOR->angleMode()) {
+	switch (evalops.angle_unit) {
 		case DEGREES: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_degrees")), TRUE);
 			break;
@@ -267,7 +267,7 @@ create_main_window (void)
 		}
 	}
 
-	switch(CALCULATOR->angleMode()) {
+	switch(evalops.angle_unit) {
 		case RADIANS: {
 			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_radians")), TRUE);
 			break;
@@ -369,6 +369,9 @@ create_main_window (void)
 	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_help"), FALSE);
 #endif
 
+	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_save_image"), FALSE);
+	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "popup_menu_item_save_image"), FALSE);
+
 #if GTK_MINOR_VERSION >= 3
 
 /*	Expander	*/
@@ -417,6 +420,8 @@ create_main_window (void)
 	gdk_color_alloc (colormap, &wait_color);
 	
 	gdk_window_set_icon(GTK_WIDGET(toplevel)->window, (GdkWindow *)NULL,  pixmap, bitmap);			
+
+	update_status_text();
 	
 }
 

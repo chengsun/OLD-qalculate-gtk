@@ -16,6 +16,7 @@
 #include "Unit.h"
 #include "Variable.h"
 #include "Function.h"
+#include "DataCollection.h"
 #include "ExpressionItem.h"
 #include "Prefix.h"
 #include "Number.h"
@@ -44,7 +45,7 @@ using namespace cln;
 #define XML_GET_TRUE_FROM_PROP(node, name, b)		value = xmlGetProp(node, (xmlChar*) name); if(value && !xmlStrcmp(value, (const xmlChar*) "true")) {b = true;} else {b = false;} if(value) xmlFree(value);
 #define XML_GET_BOOL_FROM_PROP(node, name, b)		value = xmlGetProp(node, (xmlChar*) name); if(value && !xmlStrcmp(value, (const xmlChar*) "false")) {b = false;} else if(value && !xmlStrcmp(value, (const xmlChar*) "true")) {b = true;} if(value) xmlFree(value);
 #define XML_GET_FALSE_FROM_TEXT(node, b)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value && !xmlStrcmp(value, (const xmlChar*) "false")) {b = false;} else {b = true;} if(value) xmlFree(value);
-#define XML_GET_TRUE_FROM_TEXT(node, b)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value && !xmlStrcmp(value, (const xmlChar*) "true")) {b = true;} else {b = true;} if(value) xmlFree(value);
+#define XML_GET_TRUE_FROM_TEXT(node, b)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value && !xmlStrcmp(value, (const xmlChar*) "true")) {b = true;} else {b = false;} if(value) xmlFree(value);
 #define XML_GET_BOOL_FROM_TEXT(node, b)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value && !xmlStrcmp(value, (const xmlChar*) "false")) {b = false;} else if(value && !xmlStrcmp(value, (const xmlChar*) "true")) {b = true;} if(value) xmlFree(value);
 #define XML_GET_STRING_FROM_PROP(node, name, str)	value = xmlGetProp(node, (xmlChar*) name); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = ""; 
 #define XML_GET_STRING_FROM_TEXT(node, str)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = "";
@@ -232,7 +233,6 @@ Calculator::Calculator() {
 	b_argument_errors = true;
 	calculator = this;
 	srand48(time(0));
-	angleMode(RADIANS);
 
 	addBuiltinVariables();
 	addBuiltinFunctions();
@@ -752,13 +752,6 @@ void Calculator::delId(unsigned int id, bool force) {
 	}
 }
 
-int Calculator::angleMode() const {
-	return ianglemode;
-}
-void Calculator::angleMode(int mode_) {
-	if(mode_ >= RADIANS && mode_ <= GRADIANS)
-		ianglemode = mode_;
-}
 void Calculator::resetVariables() {
 	variables.clear();
 	addBuiltinVariables();
@@ -1296,8 +1289,8 @@ MathStructure Calculator::convert(string str, Unit *from_unit, Unit *to_unit, co
 	return mstruct;
 }
 MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert) {
-	if(to_unit->unitType() == COMPOSITE_UNIT) return convertToCompositeUnit(mstruct, (CompositeUnit*) to_unit, eo, always_convert);
-	if(to_unit->unitType() != ALIAS_UNIT || (((AliasUnit*) to_unit)->baseUnit()->unitType() != COMPOSITE_UNIT && ((AliasUnit*) to_unit)->baseExp() == 1)) {
+	if(to_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) return convertToCompositeUnit(mstruct, (CompositeUnit*) to_unit, eo, always_convert);
+	if(to_unit->subtype() != SUBTYPE_ALIAS_UNIT || (((AliasUnit*) to_unit)->baseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT && ((AliasUnit*) to_unit)->baseExp() == 1)) {
 		MathStructure mstruct_new(mstruct);
 		if(!mstruct_new.convert(to_unit, true)) {
 			mstruct_new = mstruct;
@@ -1321,7 +1314,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 		bool b = false;
 		if(mstruct_new.convert(to_unit) || always_convert) {	
 			b = true;
-		} else if(to_unit->unitType() == ALIAS_UNIT && ((AliasUnit*) to_unit)->baseUnit()->unitType() == COMPOSITE_UNIT) {
+		} else if(to_unit->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) to_unit)->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			CompositeUnit *cu = (CompositeUnit*) ((AliasUnit*) to_unit)->baseUnit();
 			switch(mstruct.type()) {
 				case STRUCT_UNIT: {
@@ -1370,7 +1363,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 MathStructure Calculator::convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	MathStructure mstruct_new(mstruct);
 	for(unsigned int i = 0; i < units.size(); i++) {
-		if(units[i]->unitType() == BASE_UNIT) {
+		if(units[i]->subtype() == SUBTYPE_BASE_UNIT) {
 			mstruct_new.convert(units[i], true);
 		}
 	}
@@ -1380,21 +1373,21 @@ MathStructure Calculator::convertToBaseUnits(const MathStructure &mstruct, const
 	return mstruct_new;
 }
 Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
-	switch(u->unitType()) {
-		case BASE_UNIT: {
+	switch(u->subtype()) {
+		case SUBTYPE_BASE_UNIT: {
 			return u;
 		}
-		case ALIAS_UNIT: {
+		case SUBTYPE_ALIAS_UNIT: {
 			AliasUnit *au = (AliasUnit*) u;
-			if(au->baseExp() == 1 && au->baseUnit()->unitType() == BASE_UNIT) {
+			if(au->baseExp() == 1 && au->baseUnit()->subtype() == SUBTYPE_BASE_UNIT) {
 				return (Unit*) au->baseUnit();
-			} else if(au->firstBaseUnit()->unitType() == COMPOSITE_UNIT || au->firstBaseExp() != 1) {
+			} else if(au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT || au->firstBaseExp() != 1) {
 				return u;
 			} else {
 				return getBestUnit((Unit*) au->firstBaseUnit());
 			}
 		}
-		case COMPOSITE_UNIT: {
+		case SUBTYPE_COMPOSITE_UNIT: {
 			CompositeUnit *cu = (CompositeUnit*) u;
 			int exp, b_exp;
 			int points = 0;
@@ -1413,7 +1406,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 			Unit *cu_unit, *bu;
 			AliasUnit *au;
 			for(unsigned int i = 0; i < units.size(); i++) {
-				if(units[i]->unitType() == BASE_UNIT && (points == 0 || (points == 1 && minus))) {
+				if(units[i]->subtype() == SUBTYPE_BASE_UNIT && (points == 0 || (points == 1 && minus))) {
 					new_points = 0;
 					for(unsigned int i2 = 0; true; i2++) {
 						cu_unit = cu->get(i2);
@@ -1427,14 +1420,14 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 						}
 					}
 				} else if(!units[i]->isSIUnit()) {
-				} else if(units[i]->unitType() == ALIAS_UNIT) {
+				} else if(units[i]->subtype() == SUBTYPE_ALIAS_UNIT) {
 					au = (AliasUnit*) units[i];
 					bu = (Unit*) au->baseUnit();
 					b_exp = au->baseExp();
 					new_points = 0;
 					new_points_m = 0;
-					if(b_exp != 1 || bu->unitType() == COMPOSITE_UNIT) {
-						if(bu->unitType() == BASE_UNIT) {
+					if(b_exp != 1 || bu->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+						if(bu->subtype() == SUBTYPE_BASE_UNIT) {
 							for(unsigned int i2 = 0; true; i2++) {
 								cu_unit = cu->get(i2, &exp);
 								if(!cu_unit) {
@@ -1467,7 +1460,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 									break;
 								}
 							}
-						} else if(au->firstBaseExp() != 1 || au->firstBaseUnit()->unitType() == COMPOSITE_UNIT) {
+						} else if(au->firstBaseExp() != 1 || au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 							MathStructure cu_mstruct = ((CompositeUnit*) bu)->generateMathStructure();
 							cu_mstruct.raise(b_exp);
 							cu_mstruct = convertToBaseUnits(cu_mstruct);
@@ -1566,7 +1559,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 				if(b) {
 					Unit *u2 = getBestUnit(cu2, true);
 					Unit *cu_unit2;
-					if(u2->unitType() == COMPOSITE_UNIT) {
+					if(u2->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 						for(unsigned int i3 = 0; true; i3++) {
 							cu_unit = ((CompositeUnit*) u2)->get(i3, &exp);
 							if(!cu_unit) {
@@ -1586,7 +1579,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 						}
 						return_cu = true;
 						delete u2;
-					} else if(u2->unitType() == ALIAS_UNIT) {
+					} else if(u2->subtype() == SUBTYPE_ALIAS_UNIT) {
 						return_cu = true;
 						for(unsigned int i3 = 0; true; i3++) {
 							cu_unit = cu_new->get(i3, &exp);
@@ -1797,7 +1790,7 @@ void Calculator::delUFV(void *object) {
 Unit* Calculator::getUnit(string name_) {
 	if(name_.empty()) return NULL;
 	for(int i = 0; i < (int) units.size(); i++) {
-		if(units[i]->unitType() != COMPOSITE_UNIT && (units[i]->hasName(name_))) {
+		if(units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT && (units[i]->hasName(name_))) {
 			return units[i];
 		}
 	}
@@ -1806,7 +1799,7 @@ Unit* Calculator::getUnit(string name_) {
 Unit* Calculator::getActiveUnit(string name_) {
 	if(name_.empty()) return NULL;
 	for(unsigned int i = 0; i < units.size(); i++) {
-		if(units[i]->isActive() && units[i]->unitType() != COMPOSITE_UNIT && units[i]->hasName(name_)) {
+		if(units[i]->isActive() && units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT && units[i]->hasName(name_)) {
 			return units[i];
 		}
 	}
@@ -1815,7 +1808,7 @@ Unit* Calculator::getActiveUnit(string name_) {
 Unit* Calculator::getCompositeUnit(string internal_name_) {
 	if(internal_name_.empty()) return NULL;
 	for(unsigned int i = 0; i < units.size(); i++) {
-		if(units[i]->unitType() == COMPOSITE_UNIT && units[i]->hasName(internal_name_)) {
+		if(units[i]->subtype() == SUBTYPE_COMPOSITE_UNIT && units[i]->hasName(internal_name_)) {
 			return units[i];
 		}
 	}
@@ -1889,7 +1882,7 @@ void Calculator::expressionItemDeleted(ExpressionItem *item) {
 }
 void Calculator::nameChanged(ExpressionItem *item) {
 	if(!item->isActive() || item->countNames() == 0) return;
-	if(item->type() == TYPE_UNIT && ((Unit*) item)->unitType() == COMPOSITE_UNIT) {
+	if(item->type() == TYPE_UNIT && ((Unit*) item)->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 		return;
 	}
 	unsigned int l, i = 0;
@@ -2032,6 +2025,11 @@ Function* Calculator::addFunction(Function *f, bool force) {
 	f->setRegistered(true);
 	f->setChanged(false);
 	return f;
+}
+DataCollection* Calculator::addDataCollection(DataCollection *dc, bool force) {
+	addFunction(dc, force);
+	data_collections.push_back(dc);
+	return dc;
 }
 Function* Calculator::getFunction(string name_) {
 	if(name_.empty()) return NULL;
@@ -2185,7 +2183,7 @@ bool Calculator::unitIsUsedByOtherUnits(const Unit *u) const {
 	for(unsigned int i = 0; i < units.size(); i++) {
 		if(units[i] != u) {
 			u2 = units[i];
-			while(u2->unitType() == ALIAS_UNIT) {
+			while(u2->subtype() == SUBTYPE_ALIAS_UNIT) {
 				u2 = ((AliasUnit*) u2)->firstBaseUnit();
 				if(u2 == u) {
 					return true;
@@ -3017,8 +3015,10 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 					str2 = str.substr(i3, str.length() - i3);
 				}
 				remove_blank_ends(str2);
-				if(!str2.empty() || mstack.size() > 1) {
-					error(true, _("RPN syntax error. Stack values left."), NULL);
+				if(!str2.empty()) {
+					error(true, _("RPN syntax error. Values left at the end of the RPN expression."), NULL);
+				} else if(mstack.size() > 1) {
+					error(false, _("Unused stack values."), NULL);
 				}
 				return mstack.back();
 			}
@@ -3034,9 +3034,12 @@ MathStructure Calculator::parseOperators(string str, const ParseOptions &po) {
 				parseAdd(str2, mstack.back(), po2);
 			}
 			if(str[i] != SPACE_CH) {
-				if(mstack.size() < 2) {
-					error(true, _("RPN syntax error. Stack does not contain two values to apply the operation to."), NULL);
+				if(mstack.size() < 1) {
+					error(true, _("RPN syntax error. Stack is empty."), NULL);		
 				} else {
+					if(mstack.size() < 2) {
+						mstack.push_back(mstack[0]);
+					}
 					switch(str[i]) {
 						case PLUS_CH: {mstack[mstack.size() - 2] += mstack.back(); mstack.pop_back(); break;}
 						case MINUS_CH: {mstack[mstack.size() - 2] -= mstack.back(); mstack.pop_back(); break;}
@@ -3570,6 +3573,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 	string version, stmp, lang_tmp, name, uname, type, svalue, plural, singular, category_title, category, description, title, reverse, base, argname;
 	bool best_title, next_best_title, best_category_title, next_best_category_title, best_description, next_best_description;
 	bool best_plural, next_best_plural, best_singular, next_best_singular, best_argname, next_best_argname;
+	bool best_propname, next_best_propname, best_proptitle, next_best_proptitle, best_propdescr, next_best_propdescr;
+	string propname, proptitle, propdescr;
 	ExpressionName names[10];
 	ExpressionName ref_names[10];
 	bool best_name[10];
@@ -3604,6 +3609,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 	CompositeUnit *cu;
 	Prefix *p;
 	Argument *arg;
+	DataCollection *dc;
+	DataProperty *dp;
 	int itmp;
 	string rad_str = "rad";
 	IntegerArgument *iarg;
@@ -3750,6 +3757,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							arg = new ExpressionItemArgument();
 						} else if(type == "angle") {
 							arg = new AngleArgument();
+						} else if(type == "data-property") {
+							arg = new DataPropertyArgument(NULL, "");
 /*						} else if(type == "giac") {
 							arg = new GiacArgument();*/
 						} else {
@@ -3816,6 +3825,110 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				ITEM_SET_DTH
 				f->setChanged(false);
 				addFunction(f);
+			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "data_collection")) {
+				XML_GET_FALSE_FROM_PROP(cur, "active", active)
+				dc = new DataCollection(category, "", "", "", "");
+				item = dc;
+				done_something = true;
+				child = cur->xmlChildrenNode;
+				ITEM_INIT_DTH
+				ITEM_INIT_NAME
+				while(child != NULL) {
+					if(!xmlStrcmp(child->name, (const xmlChar*) "property")) {
+						dp = new DataProperty(dc);
+						child2 = child->xmlChildrenNode;
+						propname = ""; best_propname = false; next_best_propname = false;
+						proptitle = ""; best_proptitle = false; next_best_proptitle = false;
+						propdescr = ""; best_propdescr = false; next_best_propdescr = false;
+						while(child2 != NULL) {
+							if(!xmlStrcmp(child2->name, (const xmlChar*) "title")) {
+								XML_GET_LOCALE_STRING_FROM_TEXT(child2, proptitle, best_proptitle, next_best_proptitle)
+							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "name")) {
+								XML_GET_LOCALE_STRING_FROM_TEXT(child2, propname, best_propname, next_best_propname)
+							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "description")) {
+								XML_GET_LOCALE_STRING_FROM_TEXT(child2, propdescr, best_propdescr, next_best_propdescr)
+							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "unit")) {
+								XML_DO_FROM_TEXT(child2, dp->setUnit)
+							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "key")) {
+								XML_GET_TRUE_FROM_TEXT(child2, b)
+								dp->setKey(b);
+							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "hidden")) {
+								XML_GET_TRUE_FROM_TEXT(child2, b)
+								dp->setHidden(b);
+							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "brackets")) {
+								XML_GET_TRUE_FROM_TEXT(child2, b)
+								dp->setUsesBrackets(b);
+							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "approximate")) {
+								XML_GET_TRUE_FROM_TEXT(child2, b)
+								dp->setApproximate(b);
+							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "case_sensitive")) {
+								XML_GET_TRUE_FROM_TEXT(child2, b)
+								dp->setCaseSensitive(b);
+							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "type")) {
+								XML_GET_STRING_FROM_TEXT(child2, stmp)
+								if(stmp == "text") {
+									dp->setPropertyType(PROPERTY_STRING);
+								} else if(stmp == "number") {
+									dp->setPropertyType(PROPERTY_NUMBER);
+								} else if(stmp == "expression") {
+									dp->setPropertyType(PROPERTY_EXPRESSION);
+								}
+							}
+							child2 = child2->next;
+						}
+						dp->setTitle(proptitle);
+						dp->setDescription(propdescr);
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "argument")) {
+						child2 = child->xmlChildrenNode;
+						argname = ""; best_argname = false; next_best_argname = false;
+						while(child2 != NULL) {
+							if(!xmlStrcmp(child2->name, (const xmlChar*) "title")) {
+								XML_GET_LOCALE_STRING_FROM_TEXT(child2, argname, best_argname, next_best_argname)
+							}
+							child2 = child2->next;
+						}
+						itmp = 1;
+						XML_GET_INT_FROM_PROP(child, "index", itmp);
+						if(f->getArgumentDefinition(itmp)) {
+							f->getArgumentDefinition(itmp)->setName(argname);
+						}
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "object_argument")) {
+						child2 = child->xmlChildrenNode;
+						argname = ""; best_argname = false; next_best_argname = false;
+						while(child2 != NULL) {
+							if(!xmlStrcmp(child2->name, (const xmlChar*) "title")) {
+								XML_GET_LOCALE_STRING_FROM_TEXT(child2, argname, best_argname, next_best_argname)
+							}
+							child2 = child2->next;
+						}
+						itmp = 1;
+						if(f->getArgumentDefinition(itmp)) {
+							f->getArgumentDefinition(itmp)->setName(argname);
+						}
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "property_argument")) {
+						child2 = child->xmlChildrenNode;
+						argname = ""; best_argname = false; next_best_argname = false;
+						while(child2 != NULL) {
+							if(!xmlStrcmp(child2->name, (const xmlChar*) "title")) {
+								XML_GET_LOCALE_STRING_FROM_TEXT(child2, argname, best_argname, next_best_argname)
+							}
+							child2 = child2->next;
+						}
+						itmp = 2;
+						if(f->getArgumentDefinition(itmp)) {
+							f->getArgumentDefinition(itmp)->setName(argname);
+						}
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "copyright")) {
+						XML_DO_FROM_TEXT(child, dc->setCopyright)
+					} else ITEM_READ_NAME(functionNameIsValid)
+					 else ITEM_READ_DTH
+					child = child->next;
+				}
+				ITEM_SET_NAME_2
+				ITEM_SET_NAME_3
+				ITEM_SET_DTH
+				dc->setChanged(false);
+				addDataCollection(dc);
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "builtin_function")) {
 				XML_GET_STRING_FROM_PROP(cur, "name", name)
 				f = getFunction(name);
@@ -4619,17 +4732,17 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) units[i]->referenceName().c_str());
 				} else {
 					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "unit", NULL);
-					switch(units[i]->unitType()) {
-						case BASE_UNIT: {
+					switch(units[i]->subtype()) {
+						case SUBTYPE_BASE_UNIT: {
 							xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "base");
 							break;
 						}
-						case ALIAS_UNIT: {
+						case SUBTYPE_ALIAS_UNIT: {
 							au = (AliasUnit*) units[i];
 							xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "alias");
 							break;
 						}
-						case COMPOSITE_UNIT: {
+						case SUBTYPE_COMPOSITE_UNIT: {
 							cu = (CompositeUnit*) units[i];
 							xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "composite");
 							break;
@@ -4658,7 +4771,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 					if(ename->avoid_input) xmlNewTextChild(newnode2, NULL, (xmlChar*) "avoid_input", (xmlChar*) "true");
 					if(ename->suffix) xmlNewTextChild(newnode2, NULL , (xmlChar*) "suffix", (xmlChar*) "true");
 					if(ename->case_sensitive != (ename->abbreviation || text_length_is_one(ename->name))) xmlNewTextChild(newnode2, NULL, (xmlChar*) "case_sensitive", (xmlChar*) "true");
-					if(save_global && units[i]->unitType() != COMPOSITE_UNIT) {
+					if(save_global && units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT) {
 						xmlNewTextChild(newnode2, NULL, (xmlChar*) "_name", (xmlChar*) ename->name.c_str());
 					} else {
 						xmlNewTextChild(newnode2, NULL, (xmlChar*) "name", (xmlChar*) ename->name.c_str());
@@ -4673,7 +4786,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 					}
 				}
 				if(!units[i]->isBuiltin()) {
-					if(units[i]->unitType() == COMPOSITE_UNIT) {
+					if(units[i]->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 						for(unsigned int i2 = 0; i2 < cu->units.size(); i2++) {
 							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "part", NULL);
 							xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) cu->units[i2]->firstBaseUnit()->referenceName().c_str());
@@ -4681,7 +4794,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 							xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) i2s(cu->units[i2]->firstBaseExp()).c_str());
 						}
 					}
-					if(units[i]->unitType() == ALIAS_UNIT) {
+					if(units[i]->subtype() == SUBTYPE_ALIAS_UNIT) {
 						newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "base", NULL);
 						xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) au->firstBaseUnit()->referenceName().c_str());								
 						newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "relation", (xmlChar*) au->expression().c_str());
@@ -4857,6 +4970,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 								case ARGUMENT_TYPE_VARIABLE: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "variable"); break;}
 								case ARGUMENT_TYPE_EXPRESSION_ITEM: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "object"); break;}
 								case ARGUMENT_TYPE_ANGLE: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "angle"); break;}
+								case ARGUMENT_TYPE_DATA_PROPERTY: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "data-property"); break;}
 //								case ARGUMENT_TYPE_GIAC: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "giac"); break;}
 								default: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "free");}
 							}
@@ -4922,7 +5036,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 	return returnvalue;
 }
 
-MathStructure Calculator::setAngleValue(const MathStructure &mstruct) {
+MathStructure Calculator::setAngleValue(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	bool b = false;
 	if(mstruct.isUnit_exp()) {
 		b = true;
@@ -4936,7 +5050,7 @@ MathStructure Calculator::setAngleValue(const MathStructure &mstruct) {
 	}
 	MathStructure mstruct_new(mstruct);
 	if(!b) {
-		switch(angleMode()) {
+		switch(eo.angle_unit) {
 			case DEGREES: {
 		    		mstruct_new *= v_pi;
 	    			mstruct_new /= 180;
@@ -4947,10 +5061,10 @@ MathStructure Calculator::setAngleValue(const MathStructure &mstruct) {
 	    			mstruct_new /= 200;
 				break;
 			}
+			default: {}
 		}
 	} else {
 		mstruct_new /= getUnit("rad");
-		//mstruct_new.finalize();
 	}
 	return mstruct_new;
 }
@@ -5249,7 +5363,7 @@ bool Calculator::loadExchangeRates() {
 					u = getUnit(currency);
 					if(!u) {
 						addUnit(new AliasUnit(_("Currency"), currency, "", "", "", u_euro, rate, 1, "", false, true));
-					} else if(u->unitType() == ALIAS_UNIT) {
+					} else if(u->subtype() == SUBTYPE_ALIAS_UNIT) {
 						((AliasUnit*) u)->setExpression(rate);
 					}
 				}

@@ -28,6 +28,7 @@ src/callbacks.cc
 src/support.c
 src/calclib/BuiltinFunctions.cc
 src/calclib/Calculator.cc
+src/calclib/DataCollection.cc
 src/calclib/ExpressionItem.cc
 src/calclib/MathStructure.cc
 src/calclib/Function.cc

@@ -13,9 +13,9 @@
 #define UNIT_H
 
 enum {
-	BASE_UNIT,
-	ALIAS_UNIT,
-	COMPOSITE_UNIT
+	SUBTYPE_BASE_UNIT,
+	SUBTYPE_ALIAS_UNIT,
+	SUBTYPE_COMPOSITE_UNIT
 };	
 
 #include "ExpressionItem.h"
@@ -57,7 +57,7 @@ class Unit : public ExpressionItem {
 	virtual MathStructure convertToBase() const;
 	virtual int baseExp(int exp_ = 1) const;
 	virtual int type() const;
-	virtual int unitType() const;
+	virtual int subtype() const;
 	virtual bool isChildOf(Unit *u) const;
 	virtual bool isParentOf(Unit *u) const;
 	virtual bool hasComplexRelationTo(Unit *u) const;	
@@ -103,7 +103,7 @@ class AliasUnit : public Unit {
 	virtual int baseExp(int exp_ = 1) const;
 	virtual void setExponent(int exp_);
 	virtual int firstBaseExp() const;
-	virtual int unitType() const;
+	virtual int subtype() const;
 	virtual bool isChildOf(Unit *u) const;
 	virtual bool isParentOf(Unit *u) const;
 	virtual bool hasComplexExpression() const;
@@ -160,7 +160,7 @@ class CompositeUnit : public Unit {
 		virtual const string &plural(bool return_singular_if_no_plural = true, bool use_unicode = false) const;
 		virtual const string &singular(bool return_short_if_no_singular = true, bool use_unicode = false) const;
 		virtual const string &shortName(bool use_unicode = false) const;
-		virtual int unitType() const;
+		virtual int subtype() const;
 		virtual bool containsRelativeTo(Unit *u) const;
 		virtual MathStructure generateMathStructure() const;
 		virtual void setBaseExpression(string base_expression_);		

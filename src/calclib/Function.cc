@@ -67,6 +67,9 @@ void Function::set(const ExpressionItem *item) {
 int Function::type() const {
 	return TYPE_FUNCTION;
 }
+int Function::subtype() const {
+	return SUBTYPE_FUNCTION;
+}
 
 int Function::countArgOccurence(unsigned int arg_) {
 	if((int) arg_ > argc && max_argc < 0) {
@@ -621,21 +624,20 @@ ExpressionItem *UserFunction::copy() const {
 	return new UserFunction(this);
 }
 void UserFunction::set(const ExpressionItem *item) {
-	if(item->type() == TYPE_FUNCTION) {
-		if(!item->isBuiltin()) {
-			eq = ((UserFunction*) item)->equation();
-			eq_calc = ((UserFunction*) item)->internalEquation();
-			v_subs.clear();
-			v_precalculate.clear();
-			for(unsigned int i = 1; i <= ((UserFunction*) item)->countSubfunctions(); i++) {
-				v_subs.push_back(((UserFunction*) item)->getSubfunction(i));
-				v_precalculate.push_back(((UserFunction*) item)->subfunctionPrecalculated(i));
-			}
+	if(item->type() == TYPE_FUNCTION && item->subtype() == SUBTYPE_USER_FUNCTION) {
+		eq = ((UserFunction*) item)->equation();
+		eq_calc = ((UserFunction*) item)->internalEquation();
+		v_subs.clear();
+		v_precalculate.clear();
+		for(unsigned int i = 1; i <= ((UserFunction*) item)->countSubfunctions(); i++) {
+			v_subs.push_back(((UserFunction*) item)->getSubfunction(i));
+			v_precalculate.push_back(((UserFunction*) item)->subfunctionPrecalculated(i));
 		}
-		Function::set(item);
-	} else {
-		ExpressionItem::set(item);
 	}
+	Function::set(item);
+}
+int UserFunction::subtype() const {
+	return SUBTYPE_USER_FUNCTION;
 }
 int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
@@ -1853,7 +1855,7 @@ bool AngleArgument::subtest(MathStructure &value, const EvaluationOptions &eo) c
 	if(CALCULATOR->u_rad) value.convert(CALCULATOR->u_rad);
 	if(CALCULATOR->u_rad && value.contains(CALCULATOR->u_rad)) {
 	} else {
-		switch(CALCULATOR->angleMode()) {
+		switch(eo.angle_unit) {
 			case DEGREES: {
 		  		value *= (Variable*) CALCULATOR->v_pi;
 	    			value /= 180;
@@ -1864,6 +1866,7 @@ bool AngleArgument::subtest(MathStructure &value, const EvaluationOptions &eo) c
 	    			value /= 200;
 				break;
 			}
+			default: {}
 		}
 		if(CALCULATOR->u_rad) value *= CALCULATOR->u_rad;
 	}

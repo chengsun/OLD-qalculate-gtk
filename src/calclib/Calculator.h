@@ -101,6 +101,7 @@ class Calculator {
 	vector<unsigned int> ufv_i;
 	
 	vector<Element*> elements;
+	vector<DataCollection*> data_collections;
 	
 	Sgi::hash_map<unsigned int, MathStructure> id_structs;
 	Sgi::hash_map<unsigned int, bool> ids_p;
@@ -225,8 +226,6 @@ class Calculator {
 	void setLocale();
 	void unsetLocale();
 	
-	int angleMode() const;
-	void angleMode(int mode_);
 	void resetVariables();
 	void resetFunctions();	
 	void resetUnits();		
@@ -296,6 +295,7 @@ class Calculator {
 	Variable* getActiveVariable(string name_);
 	ExpressionItem *addExpressionItem(ExpressionItem *item, bool force = true);
 	Function* addFunction(Function *f, bool force = true);
+	DataCollection* addDataCollection(DataCollection *dc, bool force = true);
 	Function* getFunction(string name_);	
 	Function* getActiveFunction(string name_);	
 	void error(bool critical, const char *TEMPLATE,...);
@@ -325,7 +325,7 @@ class Calculator {
 	int saveVariables(const char *file_name, bool save_global = false);	
 	int saveUnits(const char *file_name, bool save_global = false);	
 	int saveFunctions(const char *file_name, bool save_global = false);	
-	MathStructure setAngleValue(const MathStructure &mstruct);	
+	MathStructure setAngleValue(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options);	
 	bool importCSV(MathStructure &mstruct, const char *file_name, int first_row = 1, string delimiter = ",", vector<string> *headers = NULL);
 	bool importCSV(const char *file_name, int first_row = 1, bool headers = true, string delimiter = ",", bool to_matrix = false, string name = "", string title = "", string category = "");
 	bool exportCSV(const MathStructure &mstruct, const char *file_name, string delimiter = ",");

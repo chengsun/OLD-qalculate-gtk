@@ -4689,8 +4689,8 @@ MathStructure &MathStructure::cofactor(unsigned int r, unsigned int c, MathStruc
 void gatherInformation(const MathStructure &mstruct, vector<Unit*> &base_units, vector<AliasUnit*> &alias_units) {
 	switch(mstruct.type()) {
 		case STRUCT_UNIT: {
-			switch(mstruct.unit()->unitType()) {
-				case BASE_UNIT: {
+			switch(mstruct.unit()->subtype()) {
+				case SUBTYPE_BASE_UNIT: {
 					for(unsigned int i = 0; i < base_units.size(); i++) {
 						if(base_units[i] == mstruct.unit()) {
 							return;
@@ -4699,7 +4699,7 @@ void gatherInformation(const MathStructure &mstruct, vector<Unit*> &base_units, 
 					base_units.push_back(mstruct.unit());
 					break;
 				}
-				case ALIAS_UNIT: {
+				case SUBTYPE_ALIAS_UNIT: {
 					for(unsigned int i = 0; i < alias_units.size(); i++) {
 						if(alias_units[i] == mstruct.unit()) {
 							return;
@@ -4708,7 +4708,7 @@ void gatherInformation(const MathStructure &mstruct, vector<Unit*> &base_units, 
 					alias_units.push_back((AliasUnit*) (mstruct.unit()));
 					break;
 				}
-				case COMPOSITE_UNIT: {
+				case SUBTYPE_COMPOSITE_UNIT: {
 					gatherInformation(((CompositeUnit*) (mstruct.unit()))->generateMathStructure(), base_units, alias_units);
 					break;
 				}				
@@ -4770,7 +4770,7 @@ bool MathStructure::syncUnits(bool sync_complex_relations) {
 	CompositeUnit *cu;
 	bool b = false;
 	for(int i = 0; i < (int) alias_units.size(); i++) {
-		if(alias_units[i]->baseUnit()->unitType() == COMPOSITE_UNIT) {
+		if(alias_units[i]->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			b = false;
 			cu = (CompositeUnit*) alias_units[i]->baseUnit();
 			for(unsigned int i2 = 0; i2 < base_units.size(); i2++) {
@@ -4803,8 +4803,8 @@ bool MathStructure::syncUnits(bool sync_complex_relations) {
 		alias_units.erase(alias_units.begin() + i);
 		for(int i2 = 0; i2 < (int) cu->units.size(); i2++) {
 			b = false;
-			switch(cu->units[i2]->firstBaseUnit()->unitType()) {
-				case BASE_UNIT: {
+			switch(cu->units[i2]->firstBaseUnit()->subtype()) {
+				case SUBTYPE_BASE_UNIT: {
 					for(unsigned int i = 0; i < base_units.size(); i++) {
 						if(base_units[i] == cu->units[i2]->firstBaseUnit()) {
 							b = true;
@@ -4814,7 +4814,7 @@ bool MathStructure::syncUnits(bool sync_complex_relations) {
 					if(!b) base_units.push_back((Unit*) cu->units[i2]->firstBaseUnit());
 					break;
 				}
-				case ALIAS_UNIT: {
+				case SUBTYPE_ALIAS_UNIT: {
 					for(unsigned int i = 0; i < alias_units.size(); i++) {
 						if(alias_units[i] == cu->units[i2]->firstBaseUnit()) {
 							b = true;
@@ -4824,7 +4824,7 @@ bool MathStructure::syncUnits(bool sync_complex_relations) {
 					if(!b) alias_units.push_back((AliasUnit*) cu->units[i2]->firstBaseUnit());				
 					break;
 				}
-				case COMPOSITE_UNIT: {
+				case SUBTYPE_COMPOSITE_UNIT: {
 					gatherInformation(((CompositeUnit*) cu->units[i2]->firstBaseUnit())->generateMathStructure(), base_units, alias_units);
 					break;
 				}
@@ -4861,7 +4861,7 @@ bool MathStructure::syncUnits(bool sync_complex_relations) {
 		;
 	}	
 	for(int i = 0; i < (int) alias_units.size(); i++) {
-		if(alias_units[i]->baseUnit()->unitType() == BASE_UNIT) {
+		if(alias_units[i]->baseUnit()->subtype() == SUBTYPE_BASE_UNIT) {
 			for(unsigned int i2 = 0; i2 < base_units.size(); i2++) {
 				if(alias_units[i]->baseUnit() == base_units[i2]) {
 					goto erase_alias_unit_3;
@@ -4890,12 +4890,12 @@ bool MathStructure::syncUnits(bool sync_complex_relations) {
 }
 bool MathStructure::testDissolveCompositeUnit(Unit *u) {
 	if(m_type == STRUCT_UNIT) {
-		if(o_unit->unitType() == COMPOSITE_UNIT) {
+		if(o_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			if(((CompositeUnit*) o_unit)->containsRelativeTo(u)) {
 				set(((CompositeUnit*) o_unit)->generateMathStructure());
 				return true;
 			}
-		} else if(o_unit->unitType() == ALIAS_UNIT && o_unit->baseUnit()->unitType() == COMPOSITE_UNIT) {
+		} else if(o_unit->subtype() == SUBTYPE_ALIAS_UNIT && o_unit->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			if(((CompositeUnit*) (o_unit->baseUnit()))->containsRelativeTo(u)) {
 				convert(o_unit->baseUnit());
 				convert(u);
@@ -4907,11 +4907,11 @@ bool MathStructure::testDissolveCompositeUnit(Unit *u) {
 }
 bool MathStructure::testCompositeUnit(Unit *u) {
 	if(m_type == STRUCT_UNIT) {
-		if(o_unit->unitType() == COMPOSITE_UNIT) {
+		if(o_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			if(((CompositeUnit*) o_unit)->containsRelativeTo(u)) {
 				return true;
 			}
-		} else if(o_unit->unitType() == ALIAS_UNIT && o_unit->baseUnit()->unitType() == COMPOSITE_UNIT) {
+		} else if(o_unit->subtype() == SUBTYPE_ALIAS_UNIT && o_unit->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			if(((CompositeUnit*) (o_unit->baseUnit()))->containsRelativeTo(u)) {
 				return true;
 			}		
@@ -4922,7 +4922,7 @@ bool MathStructure::testCompositeUnit(Unit *u) {
 bool MathStructure::dissolveAllCompositeUnits() {
 	switch(m_type) {
 		case STRUCT_UNIT: {
-			if(o_unit->unitType() == COMPOSITE_UNIT) {
+			if(o_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 				set(((CompositeUnit*) o_unit)->generateMathStructure());
 				return true;
 			}
@@ -4941,7 +4941,7 @@ bool MathStructure::dissolveAllCompositeUnits() {
 bool MathStructure::convert(Unit *u, bool convert_complex_relations) {
 	bool b = false;	
 	if(m_type == STRUCT_UNIT && o_unit == u) return false;
-	if(u->unitType() == COMPOSITE_UNIT && !(m_type == STRUCT_UNIT && o_unit->baseUnit() == u)) {
+	if(u->subtype() == SUBTYPE_COMPOSITE_UNIT && !(m_type == STRUCT_UNIT && o_unit->baseUnit() == u)) {
 		return convert(((CompositeUnit*) u)->generateMathStructure());
 	}
 	if(m_type == STRUCT_UNIT) {

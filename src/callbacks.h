@@ -23,6 +23,8 @@
 
 #include "main.h"
 
+void update_status_text();
+
 void create_umenu(void);
 void create_umenu2(void);
 void create_vmenu(void);
@@ -300,6 +302,7 @@ void on_menu_item_always_exact_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_try_exact_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_approximate_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_save_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_save_image_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_copy_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_precision_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_decimals_activate(GtkMenuItem *w, gpointer user_data);

@@ -25,18 +25,18 @@
   <category>
     <_title>Large Numbers</_title>
     <variable>
-      <_title>Googleplex</_title>
+      <_title>Googolplex</_title>
       <name index="1">
         <reference>true</reference>
-        <_name>googleplex</_name>
+        <_name>googolplex</_name>
       </name>
       <value>10^(10^100)</value>
     </variable>
     <variable>
-      <_title>Google</_title>
+      <_title>Googol</_title>
       <name index="1">
         <reference>true</reference>
-        <_name>google</_name>
+        <_name>googol</_name>
       </name>
       <value>10^100</value>
     </variable>
@@ -207,6 +207,22 @@
         <_name>million</_name>
       </name>
       <value>1E6</value>
+    </variable>
+    <variable>
+      <_title>Thousand</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>thousand</_name>
+      </name>
+      <value>1E3</value>
+    </variable>
+    <variable>
+      <_title>Hundred</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>Hundred</_name>
+      </name>
+      <value>1E2</value>
     </variable>
   </category>
   <category>
