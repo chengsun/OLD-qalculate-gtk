@@ -1963,7 +1963,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 
 		if(po.min_exp < 0) {
-			if(expo > -PRECISION && expo < PRECISION) { 
+			if(expo > -precision && expo < precision) { 
 				expo = 0;
 			}
 		} else if(po.min_exp != 0) {
@@ -2164,7 +2164,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				} else {
 					expo = str.length() - 1;
 					if(po.min_exp < 0) {
-						if(expo > -PRECISION && expo < PRECISION) { 
+						if(expo > -precision && expo < precision) { 
 							expo = 0;
 						}
 					} else if(po.min_exp != 0) {
@@ -2274,7 +2274,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(base == 10) {
 				expo = str.length() - l10 - 1;
 				if(po.min_exp < 0) {
-					if(expo > -PRECISION && expo < PRECISION) { 
+					if(expo > -precision && expo < precision) { 
 						expo = 0;
 					}
 				} else if(po.min_exp != 0) {
