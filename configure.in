@@ -10,6 +10,7 @@ AC_PROG_CC
 AC_PROG_CXX
 AM_PROG_CC_STDC
 AC_HEADER_STDC
+AC_PROG_LIBTOOL
 
 pkg_modules="gtk+-2.0 >= 1.3.13"
 PKG_CHECK_MODULES(PACKAGE, [$pkg_modules])
@@ -18,7 +19,7 @@ AC_SUBST(PACKAGE_LIBS)
 
 GETTEXT_PACKAGE=qalculate-gtk
 AC_SUBST(GETTEXT_PACKAGE)
-AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE")
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[The package name for gettext])
 
 dnl Add the languages which your application supports here.
 ALL_LINGUAS=""
@@ -35,8 +36,9 @@ fi
 changequote([,])dnl
 
 AC_OUTPUT([
-Makefile
-src/Makefile
-po/Makefile.in
+  Makefile
+  src/Makefile
+  src/calclib/Makefile
+  po/Makefile.in
 ])
 

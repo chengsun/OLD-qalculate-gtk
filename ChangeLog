@@ -1,3 +1,17 @@
+2003-08-06  Sven Herzberg  <herzi@gnome-de.org>
+
+	* .cvsignore: cvs update has less warnings now
+	* Makefile.am: added data as subdir
+	* acconfig.h: removed (templates are deprecated)
+	* configure.in: added libtool
+	* data/Makefile.am: added config file installation
+	* po/.cvsignore: cvs update has less warnings now
+	* src/.cvsignore: cvs update has less warnings now
+	* src/Makefile.am: switched to libtool now
+	* src/calclib/.cvsignore: cvs update has less warnings now
+	* src/calclib/Makefile.am: using libtool now
+
+
 	* Optional arguments for functions
 	* More functions...
 	* Implemented if...then...else function
