@@ -452,6 +452,12 @@ create_variable_edit_dialog (void)
 	return glade_xml_get_widget (glade_xml, "variable_edit_dialog");
 }
 
+GtkWidget*
+create_nbases_dialog (void)
+{
+	gtk_widget_show(glade_xml_get_widget (glade_xml, "nbases_dialog"));
+	return glade_xml_get_widget (glade_xml, "nbases_dialog");
+}
 
 GtkWidget *create_InfoWidget(const gchar *text) {
 

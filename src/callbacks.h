@@ -146,6 +146,7 @@ void on_menu_item_binary_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_octal_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_decimal_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_convert_number_bases_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer user_data);
@@ -176,6 +177,12 @@ gboolean on_functions_dialog_destroy_event(GtkWidget *widget, GdkEvent *event, g
 gboolean on_functions_dialog_delete_event(GtkWidget *widget, GdkEvent *event, gpointer user_data);
 void on_function_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 void on_variable_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
+
+void on_nbases_button_close_clicked(GtkButton *button, gpointer user_data);
+void on_nbases_entry_decimal_changed(GtkEditable *editable, gpointer user_data);
+void on_nbases_entry_binary_changed(GtkEditable *editable, gpointer user_data);
+void on_nbases_entry_octal_changed(GtkEditable *editable, gpointer user_data);
+void on_nbases_entry_hexadecimal_changed(GtkEditable *editable, gpointer user_data);
 
 }
 

@@ -960,7 +960,7 @@ void setResult(const gchar *expr) {
 
 	//mark the whole expression
 	gtk_editable_select_region(GTK_EDITABLE(expression), 0, -1);
-
+	display_errors();
 	tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (glade_xml, "history")));
 	gtk_text_buffer_get_start_iter(tb, &iter);
 	gtk_text_buffer_insert(tb, &iter, str.c_str(), -1);
@@ -968,6 +968,9 @@ void setResult(const gchar *expr) {
 	gtk_text_buffer_insert(tb, &iter, get_value_string(mngr).c_str(), -1);
 	gtk_text_buffer_insert(tb, &iter, "\n", -1);
 	gtk_text_buffer_place_cursor(tb, &iter);
+	while(calc->error()) {
+		calc->nextError();
+	}
 }
 
 /*
@@ -2644,6 +2647,9 @@ void on_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer user_data) {
 	setResult(gtk_label_get_text(GTK_LABEL(result)));
 	gtk_widget_grab_focus(expression);
 }
+void on_menu_item_convert_number_bases_activate(GtkMenuItem *w, gpointer user_data) {
+	create_nbases_dialog();
+}
 void on_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
@@ -3091,6 +3097,77 @@ void on_variable_edit_entry_name_changed(GtkEditable *editable, gpointer user_da
 		gtk_entry_set_text(GTK_ENTRY(editable), calc->convertToValidVariableName(gtk_entry_get_text(GTK_ENTRY(editable))).c_str());
 		unblock_signal(G_OBJECT(editable), sh);
 	}
+}
+
+void update_nbases_entries(Manager *value, NumberFormat nrformat) {
+	GtkWidget *w_dec, *w_bin, *w_oct, *w_hex;
+	w_dec = glade_xml_get_widget (glade_xml, "nbases_entry_decimal");
+	w_bin = glade_xml_get_widget (glade_xml, "nbases_entry_binary");	
+	w_oct = glade_xml_get_widget (glade_xml, "nbases_entry_octal");	
+	w_hex = glade_xml_get_widget (glade_xml, "nbases_entry_hexadecimal");	
+	gulong s_dec = get_signal_handler(w_dec);
+	gulong s_bin = get_signal_handler(w_bin);	
+	gulong s_oct = get_signal_handler(w_oct);	
+	gulong s_hex = get_signal_handler(w_hex);	
+	block_signal(w_dec, s_dec);
+	block_signal(w_bin, s_bin);	
+	block_signal(w_oct, s_oct);	
+	block_signal(w_hex, s_hex);	
+	if(nrformat != NUMBER_FORMAT_NORMAL) gtk_entry_set_text(GTK_ENTRY(w_dec), value->print().c_str());
+	if(nrformat != NUMBER_FORMAT_BIN) gtk_entry_set_text(GTK_ENTRY(w_bin), value->print(NUMBER_FORMAT_BIN).c_str());	
+	if(nrformat != NUMBER_FORMAT_OCTAL) gtk_entry_set_text(GTK_ENTRY(w_oct), value->print(NUMBER_FORMAT_OCTAL).c_str());	
+	if(nrformat != NUMBER_FORMAT_HEX) gtk_entry_set_text(GTK_ENTRY(w_hex), value->print(NUMBER_FORMAT_HEX).c_str());	
+	unblock_signal(w_dec, s_dec);
+	unblock_signal(w_bin, s_bin);	
+	unblock_signal(w_oct, s_oct);	
+	unblock_signal(w_hex, s_hex);		
+}
+void on_nbases_button_close_clicked(GtkButton *button, gpointer user_data) {
+	gtk_widget_hide(glade_xml_get_widget (glade_xml, "nbases_dialog"));
+}
+void on_nbases_entry_decimal_changed(GtkEditable *editable, gpointer user_data) {	
+	Manager *value;
+	Function *func = calc->getFunction("round");	
+	string str = gtk_entry_get_text(GTK_ENTRY(editable));
+	remove_blank_ends(str);
+	if(str.empty()) return;
+	if(func) value = func->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
+	else value = calc->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
+	update_nbases_entries(value, NUMBER_FORMAT_NORMAL);
+	value->unref();
+}
+void on_nbases_entry_binary_changed(GtkEditable *editable, gpointer user_data) {
+	Manager *value;
+	Function *func = calc->getFunction("BIN");	
+	string str = gtk_entry_get_text(GTK_ENTRY(editable));
+	remove_blank_ends(str);
+	if(str.empty()) return;
+	if(func) value = func->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
+	else value = calc->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
+	update_nbases_entries(value, NUMBER_FORMAT_BIN);
+	value->unref();
+}
+void on_nbases_entry_octal_changed(GtkEditable *editable, gpointer user_data) {
+	Manager *value;
+	Function *func = calc->getFunction("OCT");	
+	string str = gtk_entry_get_text(GTK_ENTRY(editable));
+	remove_blank_ends(str);
+	if(str.empty()) return;	
+	if(func) value = func->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
+	else value = calc->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
+	update_nbases_entries(value, NUMBER_FORMAT_OCTAL);
+	value->unref();
+}
+void on_nbases_entry_hexadecimal_changed(GtkEditable *editable, gpointer user_data) {
+	Manager *value;
+	Function *func = calc->getFunction("HEX");	
+	string str = gtk_entry_get_text(GTK_ENTRY(editable));
+	remove_blank_ends(str);
+	if(str.empty()) return;	
+	if(func) value = func->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
+	else value = calc->calculate(gtk_entry_get_text(GTK_ENTRY(editable)));
+	update_nbases_entries(value, NUMBER_FORMAT_HEX);
+	value->unref();
 }
 
 
