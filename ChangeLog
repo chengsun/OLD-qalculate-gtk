@@ -1,3 +1,11 @@
+2003-08-16  Niklas Knutsson  <nq@altern.org>
+
+	* Modify priotrity for calculations so that inexplicit multiplication is calculated before division (2/2(x) = 2/(2*x)) and functions (sin 2x(x) = sin (2x*x), but sin(2x)(x) is still sin(2x)*x)
+	* Some restructuring
+	* Unbreak brokeness from last fix
+	* Move three small dialogs to Glade
+	* Convert button
+
 2003-08-15  Niklas Knutsson  <nq@altern.org>
 
 	* Fix bracket madness breaking unbrackened division (!)

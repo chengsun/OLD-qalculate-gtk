@@ -32,10 +32,10 @@ EqNumber::EqNumber(string str, Calculator *parent, char operation_) : EqItem(ope
 	string ssave = str;
 	char s = PLUS_CH;
 	for(int i = 0; i < (int) str.length() - 1; i++) {
-		if(is_in(str[i], PLUS_S, SPACE_S, NULL)) {
+		if(str[i] == PLUS_CH || str[i] == SPACE_CH) {
 			str.erase(i, 1);
 			i--;
-		} else if(is_in(str[i], MINUS_S, NULL)) {
+		} else if(str[i] == MINUS_CH) {
 			if(s == MINUS_CH)
 				s = PLUS_CH;
 			else
@@ -71,14 +71,14 @@ EqNumber::EqNumber(string str, Calculator *parent, char operation_) : EqItem(ope
 		mngr->set(value);
 		return;
 	}
-	if(str.substr(0, 3) == NAN_STR) {
+	if(str.substr(0, 3) == SNAN) {
 		mngr->set(NAN);
 		//			calc->error(true, "Math error", NULL);
 		str[0] = ZERO_CH;
 		str[1] = ZERO_CH;
 		str[2] = ZERO_CH;
 		return;
-	} else if(str.substr(0, 3) == INF_STR) {
+	} else if(str.substr(0, 3) == SINF) {
 		if(s == MINUS_CH)
 			mngr->set(-INFINITY);
 		else
@@ -91,7 +91,7 @@ EqNumber::EqNumber(string str, Calculator *parent, char operation_) : EqItem(ope
 			str.insert(0, 1, MINUS_CH);
 		value = strtold(str.c_str(), NULL);
 	}
-	if((itmp = find_first_not_of(str, 0, NUMBERS_S, MINUS_S, DOT_S, NULL)) != (int) string::npos) {
+	if((itmp = str.find_first_not_of(NUMBERS MINUS DOT, 0)) != (int) string::npos) {
 		string stmp = str.substr(itmp, str.length() - itmp);
 		str.erase(itmp, str.length() - itmp);
 
@@ -131,26 +131,26 @@ EqContainer::EqContainer(string str, Calculator *parent, char operation_) : EqIt
 	string str2, str3;
 	char s = PLUS_CH;
 goto_place1:
-	if((i = str.find_first_of(LEFT_BRACKET_S)) != (int) string::npos && (i2 = str.find_first_of(RIGHT_BRACKET_S)) > 0 && i2 != (int) string::npos && i2 > i) {
+	if((i = str.find(LEFT_BRACKET_CH)) != (int) string::npos && (i2 = str.find(RIGHT_BRACKET_CH)) > 0 && i2 != (int) string::npos && i2 > i) {
 		while(1) {
 			if(i < 0 || i2 <= 0 || i2 < i)
 				break;
-			i3 = str.find_first_of(LEFT_BRACKET_S, i + 1);
+			i3 = str.find(LEFT_BRACKET_CH, i + 1);
 			while(i3 < i2 && i3 > -1) {
-				i2 = str.find_first_of(RIGHT_BRACKET_S, i2 + 1);
+				i2 = str.find(RIGHT_BRACKET_CH, i2 + 1);
 				if(i2 == (int) string::npos) {
 					str.erase(i, 1);
 					goto goto_place1;
 				}
-				i3 = str.find_first_of(LEFT_BRACKET_S, i3 + 1);
+				i3 = str.find(LEFT_BRACKET_CH, i3 + 1);
 			}
-			if(i > 0 && is_in(str[i - 1], NUMBERS_S, DOT_S, ID_WRAP_S, NULL)) {
-				str.insert(i, MULTIPLICATION_STR);
+			if(i > 0 && is_in(NUMBERS DOT ID_WRAPS, str[i - 1])) {
+				str.insert(i, 1, MULTIPLICATION_2_CH);
 				i++;
 				i2++;
 			}
-			if(i2 < (int) str.length() - 1 && is_in(str[i2 + 1], NUMBERS_S, DOT_S, ID_WRAP_S, NULL)) {
-				str.insert(i2 + 1, MULTIPLICATION_STR);
+			if(i2 < (int) str.length() - 1 && is_in(NUMBERS DOT ID_WRAPS, str[i2 + 1])) {
+				str.insert(i2 + 1, 1, MULTIPLICATION_2_CH);
 			}
 			str2 = str.substr(i + 1, i2 - (i + 1));
 			eq_c = new EqContainer(str2, calc, PLUS_CH);
@@ -160,8 +160,8 @@ goto_place1:
 			str2 += ID_WRAP_RIGHT_CH;
 			delete eq_c;
 			str.replace(i, i2 - i + 1, str2);
-			i = str.find_first_of(LEFT_BRACKET_S);
-			i2 = str.find_first_of(RIGHT_BRACKET_S);
+			i = str.find(LEFT_BRACKET_CH);
+			i2 = str.find(RIGHT_BRACKET_CH);
 		}
 	}
 	i = 0;
@@ -172,18 +172,18 @@ goto_place1:
 		if(!str.empty())
 			add(str);
 		return;
-	} else if((i = find_first_of(str, 1, PLUS_S, MINUS_S, NULL)) > 0 && i != (int) string::npos) {
+	} else if((i = str.find_first_of(PLUS MINUS, 1)) > 0 && i != (int) string::npos) {
 		bool b = false;
 		while(i > -1) {
-			if(is_not_in(str[i - 1], OPERATORS_S, NULL)) {
+			if(is_not_in(OPERATORS, str[i - 1])) {
 				s = str[i];
 				str2 = str.substr(0, i);
 				str = str.substr(i + 1, str.length() - (i + 1));
 				add(str2, s);
-				i = find_first_of(str, 1, PLUS_S, MINUS_S, NULL);
+				i = str.find_first_of(PLUS MINUS, 1);
 				b = true;
 			} else {
-				i = find_first_of(str, i + 1, PLUS_S, MINUS_S, NULL);
+				i = str.find_first_of(PLUS MINUS, i + 1);
 			}
 			
 		}
@@ -192,31 +192,40 @@ goto_place1:
 			return;
 		}
 	}
-	if((i = find_first_of(str, 1, MULTIPLICATION_S, DIVISION_S, NULL)) > 0 && i != (int) string::npos) {
+	if((i = str.find_first_of(MULTIPLICATION DIVISION, 1)) > 0 && i != (int) string::npos) {
 		while(i > -1) {
 			s = str[i];
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
 			add(str2, s);
-			i = find_first_of(str, 1, MULTIPLICATION_S, DIVISION_S, NULL);
+			i = str.find_first_of(MULTIPLICATION DIVISION, 1);
 		}
 		add(str);
-	} else if((i = str.find_first_of(POWER_S, 1)) > 0 && i != (int) string::npos) {
+	} else if((i = str.find(MULTIPLICATION_2_CH, 1)) > 0 && i != (int) string::npos) {
+		while(i > -1) {
+			s = MULTIPLICATION_CH;
+			str2 = str.substr(0, i);
+			str = str.substr(i + 1, str.length() - (i + 1));
+			add(str2, s);
+			i = str.find(MULTIPLICATION_2_CH, 1);
+		}
+		add(str);		
+	} else if((i = str.find(POWER_CH, 1)) > 0 && i != (int) string::npos) {
 		while(i > -1) {
 			s = str[i];
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
 			add(str2, s);
-			i = str.find_first_of(POWER_S, 1);
+			i = str.find(POWER_CH, 1);
 		}
 		add(str);
-	} else if((i = str.find_first_of(EXP_S, 1)) > 0 && i != (int) string::npos) {
+	} else if((i = str.find(EXP_CH, 1)) > 0 && i != (int) string::npos) {
 		while(i > -1) {
 			s = str[i];
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
 			add(str2, s);
-			i = str.find_first_of(EXP_S, 1);
+			i = str.find(EXP_CH, 1);
 		}
 		add(str);
 	} else {
@@ -226,8 +235,8 @@ goto_place1:
 void EqContainer::add(string &str, char s) {
 	if(str.length() > 0) {
 		string stmp = str;
-		if(str.find_first_not_of(OPERATORS_S) != string::npos) {
-			if(find_first_not_of(str, 1, NUMBERS_S, DOT_S, ID_WRAP_S, NULL) != string::npos && find_first_not_of(str, 0, NUMBERS_S, DOT_S, ID_WRAP_S, PLUS_S, MINUS_S, NULL) != 0) {
+		if(str.find_first_not_of(OPERATORS) != string::npos) {
+			if(str.find_first_not_of(NUMBERS DOT ID_WRAPS, 1) != string::npos && str.find_first_not_of(NUMBERS DOT ID_WRAPS PLUS MINUS, 0) != 0) {
 				add(new EqContainer(str, calc, s));
 			} else {
 				add(new EqNumber(str, calc, s));

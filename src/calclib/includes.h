@@ -102,7 +102,7 @@ extern char *NUMBERS_S_AND_OPERATORS_S_AND_BRACKETS_S_AND_SPACE_S;
 extern char *PLUS_S_AND_SPACE_S;
 extern char *NUMBERS_S_AND_MINUS_S_AND_DOT_S;*/
 
-//#define DOT_CH			'.'
+#define DOT_CH			'.'
 #define ZERO_CH			'0'
 #define ONE_CH			'1'
 #define TWO_CH			'2'
@@ -116,17 +116,41 @@ extern char *NUMBERS_S_AND_MINUS_S_AND_DOT_S;*/
 #define PLUS_CH			'+'
 #define MINUS_CH		'-'
 #define MULTIPLICATION_CH	'*'
+#define MULTIPLICATION_2_CH	' '
 #define DIVISION_CH		'/'
 #define EXP_CH			'E'
 #define POWER_CH		'^'
-//#define SPACE_CH		' '
-//#define LEFT_BRACKET_CH		'('
-//#define RIGHT_BRACKET_CH	')'
-//#define FUNCTION_VAR_PRE_CH	'\\'
-//#define COMMA_CH		','
-//#define NAME_NUMBER_PRE_CH	'_'
-//#define UNIT_DIVISION_CH	'/'
+#define SPACE_CH		' '
+#define LEFT_BRACKET_CH		'('
+#define RIGHT_BRACKET_CH	')'
+#define FUNCTION_VAR_PRE_CH	'\\'
+#define COMMA_CH		','
+#define NAME_NUMBER_PRE_CH	'_'
+#define UNIT_DIVISION_CH	'/'
 
+#define ID_WRAPS	"{}"	
+#define DOT		"."
+#define COMMA		","
+#define NUMBERS		"0123456789"
+#define SIGNS		"+-*/^E"
+#define OPERATORS	"+-*/^E"
+#define	BRACKETS	"()"
+#define LEFT_BRACKET	"("
+#define	RIGHT_BRACKET	")"
+#define	SPACES		" \t\n"
+#define SPACE		" "
+#define RESERVED	"@?!\\{}&':<>|\""
+#define PLUS		"+"
+#define MINUS		"-"
+#define MULTIPLICATION	"*"
+#define DIVISION	"/"
+#define EXP		"E"
+#define	POWER		"^"
+#define SINF		"INF"
+#define SNAN		"NAN"
+#define UNDERSCORE	"_"
+
+#define NOT_IN_NAMES 	RESERVED OPERATORS SPACES DOT BRACKETS
 
 using namespace std;
 

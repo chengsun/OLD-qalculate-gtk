@@ -37,6 +37,10 @@ class Calculator {
 	vector<void*> ufv;
 	vector<char> ufv_t;	
 	hash_map<int, Manager*> ids;
+	vector<string> signs;	
+	vector<string> real_signs;
+	vector<string> default_signs;	
+	vector<string> default_real_signs;	
   public:
   
 	vector<Variable*> variables;
@@ -47,6 +51,10 @@ class Calculator {
   
 	Calculator(void);
 	~Calculator(void);
+
+	void addStringAlternative(string replacement, string standard);
+	void addDefauktStringAlternative(string replacement, string standard);
+
 	const char *getDecimalPoint() const;
 	const char *getComma() const;	
 	void setLocale();

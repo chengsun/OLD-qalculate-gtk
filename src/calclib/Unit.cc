@@ -285,13 +285,13 @@ Manager *AliasUnit::convertToFirstBase(Manager *value_, Manager *exp_) {
 	if(rvalue.empty()) {
 		if(value.find(FUNCTION_VAR_X) != string::npos) {
 			string stmp = value;
-			string stmp2 = LEFT_BRACKET_STR;
+			string stmp2 = LEFT_BRACKET;
 			stmp2 += value_->print();
-			stmp2 += RIGHT_BRACKET_STR;
+			stmp2 += RIGHT_BRACKET_CH;
 			gsub(FUNCTION_VAR_X, stmp2, stmp);
-			stmp2 = LEFT_BRACKET_STR;
+			stmp2 = LEFT_BRACKET;
 			stmp2 += exp_->print();
-			stmp2 += RIGHT_BRACKET_STR;
+			stmp2 += RIGHT_BRACKET_CH;
 			gsub(FUNCTION_VAR_Y, stmp2, stmp);
 			Manager *mngr = calc->calculate(stmp);
 //			value_->add(mngr, DIVISION_CH);
@@ -307,13 +307,13 @@ Manager *AliasUnit::convertToFirstBase(Manager *value_, Manager *exp_) {
 	} else {
 		if(rvalue.find(FUNCTION_VAR_X) != string::npos) {
 			string stmp = rvalue;
-			string stmp2 = LEFT_BRACKET_STR;
+			string stmp2 = LEFT_BRACKET;
 			stmp2 += value_->print();
-			stmp2 += RIGHT_BRACKET_STR;
+			stmp2 += RIGHT_BRACKET_CH;
 			gsub(FUNCTION_VAR_X, stmp2, stmp);
-			stmp2 = LEFT_BRACKET_STR;
+			stmp2 = LEFT_BRACKET;
 			stmp2 += exp_->print();
-			stmp2 += RIGHT_BRACKET_STR;
+			stmp2 += RIGHT_BRACKET_CH;
 			gsub(FUNCTION_VAR_Y, stmp2, stmp);
 			Manager *mngr = calc->calculate(stmp);
 //			value_->add(mngr, MULTIPLICATION_CH);
@@ -337,13 +337,13 @@ Manager *AliasUnit::firstBaseValue(Manager *value_, Manager *exp_) {
 	else exp_->ref();
 	if(value.find(FUNCTION_VAR_X) != string::npos) {
 		string stmp = value;
-		string stmp2 = LEFT_BRACKET_STR;
+		string stmp2 = LEFT_BRACKET;
 		stmp2 += value_->print();
-		stmp2 += RIGHT_BRACKET_STR;
+		stmp2 += RIGHT_BRACKET_CH;
 		gsub(FUNCTION_VAR_X, stmp2, stmp);
-		stmp2 = LEFT_BRACKET_STR;
+		stmp2 = LEFT_BRACKET;
 		stmp2 += exp_->print();
-		stmp2 += RIGHT_BRACKET_STR;
+		stmp2 += RIGHT_BRACKET_CH;
 		gsub(FUNCTION_VAR_Y, stmp2, stmp);
 		Manager *mngr = calc->calculate(stmp);
 		value_->moveto(mngr);
@@ -657,18 +657,18 @@ void CompositeUnit::baseExpression(string base_expression_) {
 	bool b_unit = calc->unitsEnabled();
 	calc->setUnitsEnabled(true);		
 	calc->setFunctionsAndVariables(base_expression_);
-	int div_place = base_expression_.find_first_of(DIVISION_S);
+	int div_place = base_expression_.find(DIVISION_CH);
 	bool div = false;
 	long double prefix = 1.0L;
 	long double exp = 1.0L;
 	int i = 0, i2 = 0, id;
 	Manager *mngr;
 	while(1) {
-		i = base_expression_.find(ID_WRAP_LEFT_STR, i2);
+		i = base_expression_.find(ID_WRAP_LEFT_CH, i2);
 		if(i == string::npos) {
 			break;
 		}
-		i2 = base_expression_.find(ID_WRAP_RIGHT_STR, i);		
+		i2 = base_expression_.find(ID_WRAP_RIGHT_CH, i);		
 		if(i2 == string::npos) {
 			break;
 		}
@@ -685,10 +685,10 @@ void CompositeUnit::baseExpression(string base_expression_) {
 				mngr = mngr->mngrs[1];
 			} 
 			if(mngr->type() == UNIT_MANAGER) {
-				if(base_expression_.length() > i2 + 3 && is_in(base_expression_[i2 + 2], POWER_S, NULL)) {
-					if(is_in(base_expression_[i2 + 3], NUMBERS_S, NULL)) {
+				if(base_expression_.length() > i2 + 3 && base_expression_[i2 + 2] == POWER_CH) {
+					if(is_in(NUMBERS, base_expression_[i2 + 3])) {
 						exp = (long double) s2i(base_expression_.substr(i2 + 3, 1));
-					} else if(base_expression_.length() > i2 + 4 && is_in(base_expression_[i2 + 3], MINUS_S, PLUS_S, NULL) && is_in(base_expression_[i2 + 4], NUMBERS_S, NULL)) {
+					} else if(base_expression_.length() > i2 + 4 && is_in(MINUS PLUS, base_expression_[i2 + 3]) && is_in(NUMBERS, base_expression_[i2 + 4])) {
 						exp = (long double) s2i(base_expression_.substr(i2 + 3, 2));
 					}
 				}

@@ -228,6 +228,20 @@ bool is_not_in(char c, ...) {
 	}
 	return true;	
 }
+bool is_in(const char *str, char c) {
+	for(int i = 0; i < strlen(str); i++) {
+		if(str[i] == c)
+			return true;
+	}
+	return false;
+}
+bool is_not_in(const char *str, char c) {
+	for(int i = 0; i < strlen(str); i++) {
+		if(str[i] == c)
+			return false;
+	}
+	return true;
+}
 
 int sign_place(string *str, unsigned int start) {
 	int i = str->find_first_of(OPERATORS_S, start);

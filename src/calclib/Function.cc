@@ -65,9 +65,9 @@ int Function::args(const string &str) {
 	if(!str.empty()) {
 		itmp = 1;
 		while(1) {
-			if((i = str.find_first_of(COMMA_S, i)) != (int) string::npos) {
-				if((i3 = str.find_first_of(LEFT_BRACKET_S, i4)) < i && i3 >= 0) {
-					i = str.find_first_of(RIGHT_BRACKET_S, i3);
+			if((i = str.find(COMMA_CH, i)) != (int) string::npos) {
+				if((i3 = str.find(LEFT_BRACKET_CH, i4)) < i && i3 >= 0) {
+					i = str.find(RIGHT_BRACKET_CH, i3);
 					i4 = i;
 					if(i == (int) string::npos)
 						break;
@@ -105,9 +105,9 @@ int Function::args(const string &str, string *buffer) {
 	if(!str.empty()) {
 		itmp = 1;
 		while(1) {
-			if((i = str.find_first_of(COMMA_S, i)) != (int) string::npos) {
-				if((i3 = str.find_first_of(LEFT_BRACKET_S, i2)) < i && i3 >= 0) {
-					i = str.find_first_of(RIGHT_BRACKET_S, i3);
+			if((i = str.find(COMMA_CH, i)) != (int) string::npos) {
+				if((i3 = str.find(LEFT_BRACKET_CH, i2)) < i && i3 >= 0) {
+					i = str.find(RIGHT_BRACKET_CH, i3);
 					if(i == (int) string::npos)
 						break;
 				} else {
@@ -278,9 +278,9 @@ int Function::stringArgs(const string &str) {
 	if(!str.empty()) {
 		itmp = 1;
 		while(1) {
-			if((i = str.find_first_of(COMMA_S, i)) != (int) string::npos) {
-				if((i3 = str.find_first_of(LEFT_BRACKET_S, i4)) < i && i3 >= 0) {
-					i = str.find_first_of(RIGHT_BRACKET_S, i3);
+			if((i = str.find(COMMA_CH, i)) != (int) string::npos) {
+				if((i3 = str.find(LEFT_BRACKET_CH, i4)) < i && i3 >= 0) {
+					i = str.find(RIGHT_BRACKET_CH, i3);
 					i4 = i;
 					if(i == (int) string::npos)
 						break;
@@ -388,8 +388,8 @@ void UserFunction::equation(string new_eq, int argc_, int max_argc_) {
 				
 			if((i2 = new_eq.find(svar_o)) != (int) string::npos) {				
 				i3 = 0;
-				if(new_eq.length() > i2 + 2 && new_eq.substr(i2 + 2, strlen(ID_WRAP_LEFT_STR)) == ID_WRAP_LEFT_STR) {
-					if((i3 = new_eq.find(ID_WRAP_RIGHT_STR, i2 + 2)) != string::npos) {
+				if(new_eq.length() > i2 + 2 && new_eq[i2 + 2] == ID_WRAP_LEFT_CH) {
+					if((i3 = new_eq.find(ID_WRAP_RIGHT_CH, i2 + 2)) != string::npos) {
 						svar_v = new_eq.substr(i2 + 3, i3 - (i2 + 3));	
 						i3 -= i2 + 1;
 					} else i3 = 0;
