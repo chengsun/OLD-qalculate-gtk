@@ -92,6 +92,21 @@ class Function : public ExpressionItem {
 	string getDefaultValue(unsigned int arg_) const;	
 	MathStructure produceVector(const MathStructure &vargs, int begin = -1, int end = -1);
 	MathStructure produceArgumentsVector(const MathStructure &vargs, int begin = -1, int end = -1);
+	
+	virtual bool representsPositive(const MathStructure &vargs) const {return false;}
+	virtual bool representsNegative(const MathStructure &vargs) const {return false;}
+	virtual bool representsNonNegative(const MathStructure &vargs) const {return false;}
+	virtual bool representsNonPositive(const MathStructure &vargs) const {return false;}
+	virtual bool representsInteger(const MathStructure &vargs) const {return false;}
+	virtual bool representsNumber(const MathStructure &vargs) const {return false;}
+	virtual bool representsRational(const MathStructure &vargs) const {return false;}
+	virtual bool representsReal(const MathStructure &vargs) const {return false;}
+	virtual bool representsComplex(const MathStructure &vargs) const {return false;}
+	virtual bool representsNonZero(const MathStructure &vargs) const {return false;}
+	virtual bool representsEven(const MathStructure &vargs) const {return false;}
+	virtual bool representsOdd(const MathStructure &vargs) const {return false;}
+	virtual bool representsUndefined(const MathStructure &vargs) const {return false;}
+	
 };
 
 class UserFunction : public Function {

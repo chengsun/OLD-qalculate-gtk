@@ -123,5 +123,13 @@
       <_title>Centillion</_title>
       <value>1E303</value>
     </variable>
+    <variable name="google">
+      <_title>Google</_title>
+      <value>10^100</value>
+    </variable>
+    <variable name="googleplex">
+      <_title>Googleplex</_title>
+      <value>10^(10^100)</value>
+    </variable>
   </category>
 </QALCULATE>

@@ -69,7 +69,7 @@ const string &Unit::singular(bool return_short_if_no_singular, bool use_unicode)
 }
 const string &Unit::plural(bool return_singular_if_no_plural, bool use_unicode) const {
 	if(return_singular_if_no_plural && splural.empty()) {
-		return singular(use_unicode);
+		return singular(true, use_unicode);
 	}
 	return splural;
 }

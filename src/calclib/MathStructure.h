@@ -133,6 +133,9 @@ class MathStructure {
 		const giac::gen *unknown() const;
 #endif
 		ComparisonType comparisonType() const;
+		void setComparisonType(ComparisonType comparison_type);
+		//dangerous
+		void setType(int mtype);
 		Unit *unit() const;
 		Prefix *prefix() const;
 		void setPrefix(Prefix *p);

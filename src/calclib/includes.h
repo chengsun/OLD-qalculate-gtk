@@ -219,6 +219,7 @@ static const struct PrintOptions {
 	bool use_unicode_signs;
 	bool spacious;
 	bool excessive_parenthesis;
+	bool halfexp_to_sqrt;
 	int min_decimals;
 	int max_decimals;
 	bool use_min_decimals;
@@ -226,7 +227,7 @@ static const struct PrintOptions {
 	Prefix *prefix;
 	bool *is_approximate;
 	SortOptions sort_options;
-	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), abbreviate_units(true), place_units_separately(true), use_unit_prefixes(true), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), allow_non_usable(false), use_unicode_signs(false), spacious(true), excessive_parenthesis(false), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), prefix(NULL), is_approximate(NULL) {}
+	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), abbreviate_units(true), place_units_separately(true), use_unit_prefixes(true), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), allow_non_usable(false), use_unicode_signs(false), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), prefix(NULL), is_approximate(NULL) {}
 } default_print_options;
 
 static const struct InternalPrintStruct {

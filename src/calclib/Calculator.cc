@@ -892,7 +892,7 @@ void Calculator::addBuiltinFunctions() {
 
 }
 void Calculator::addBuiltinUnits() {
-	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, SIGN_EURO));
+	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true, SIGN_EURO));
 }
 void Calculator::error(bool critical, const char *TEMPLATE, ...) {
 	if(disable_errors_ref) return;
@@ -1656,6 +1656,9 @@ Unit* Calculator::addUnit(Unit *u, bool force) {
 		if(!u->singular(false).empty()) {
 			u->setSingular(getName(u->singular(false), u, force));
 		}
+		if(!u->unicodeName(false).empty()) {
+			u->setUnicodeName(getName(u->unicodeName(false), u, force));
+		}
 	}
 	if(!u->isLocal() && units.size() > 0 && units[units.size() - 1]->isLocal()) {
 		units.insert(units.begin(), u);
@@ -1726,6 +1729,9 @@ Unit* Calculator::getCompositeUnit(string internal_name_) {
 
 Variable* Calculator::addVariable(Variable *v, bool force) {
 	v->setName(getName(v->name(), v, force));
+	if(!v->unicodeName(false).empty()) {
+		v->setUnicodeName(getName(v->unicodeName(false), v, force));
+	}
 	if(!v->isLocal() && variables.size() > 0 && variables[variables.size() - 1]->isLocal()) {
 		variables.insert(variables.begin(), v);
 	} else {
@@ -2169,6 +2175,9 @@ ExpressionItem* Calculator::addExpressionItem(ExpressionItem *item, bool force) 
 }
 Function* Calculator::addFunction(Function *f, bool force) {
 	f->setName(getName(f->name(), f, force));
+	if(!f->unicodeName(false).empty()) {
+		f->setUnicodeName(getName(f->unicodeName(false), f, force));
+	}
 	if(!f->isLocal() && functions.size() > 0 && functions[functions.size() - 1]->isLocal()) {
 		functions.insert(functions.begin(), f);
 	} else {

@@ -131,6 +131,9 @@ void on_preferences_checkbutton_save_mode_toggled(GtkToggleButton *w, gpointer u
 void on_preferences_checkbutton_load_defs_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_custom_result_font_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_custom_expression_font_toggled(GtkToggleButton *w, gpointer user_data);
+void on_preferences_radiobutton_dot_toggled(GtkToggleButton *w, gpointer user_data);
+void on_preferences_radiobutton_ex_toggled(GtkToggleButton *w, gpointer user_data);
+void on_preferences_radiobutton_asterisk_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_button_result_font_toggled(GtkButton *w, gpointer user_data);
 void on_preferences_button_expression_font_toggled(GtkButton *w, gpointer user_data);
 void on_units_togglebutton_from_toggled(GtkToggleButton *togglebutton, gpointer user_data);

@@ -343,6 +343,12 @@ const string &MathStructure::symbol() const {
 ComparisonType MathStructure::comparisonType() const {
 	return ct_comp;
 }
+void MathStructure::setComparisonType(ComparisonType comparison_type) {
+	ct_comp = comparison_type;
+}
+void MathStructure::setType(int mtype) {
+	m_type = mtype;
+}
 Unit *MathStructure::unit() const {
 	return o_unit;
 }
@@ -407,6 +413,7 @@ bool MathStructure::representsNumber() const {
 		case STRUCT_NUMBER: {return true;}
 		case STRUCT_VARIABLE: {return o_variable->isNumber();}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNumber();}
+		case STRUCT_FUNCTION: {return o_function->representsNumber(*this);}
 		case STRUCT_UNIT: {return true;}
 		case STRUCT_ADDITION: {}
 		case STRUCT_MULTIPLICATION: {
@@ -423,6 +430,7 @@ bool MathStructure::representsInteger() const {
 		case STRUCT_NUMBER: {return o_number.isInteger();}
 		case STRUCT_VARIABLE: {return o_variable->isInteger();}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isInteger();}
+		case STRUCT_FUNCTION: {return o_function->representsInteger(*this);}
 		case STRUCT_UNIT: {return true;}
 		case STRUCT_ADDITION: {}
 		case STRUCT_MULTIPLICATION: {
@@ -442,6 +450,7 @@ bool MathStructure::representsPositive() const {
 		case STRUCT_NUMBER: {return o_number.isPositive();}
 		case STRUCT_VARIABLE: {return o_variable->isPositive();}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isPositive();}
+		case STRUCT_FUNCTION: {return o_function->representsPositive(*this);}
 		case STRUCT_UNIT: {return true;}
 		case STRUCT_ADDITION: {
 			for(unsigned int i = 0; i < SIZE; i++) {
@@ -471,6 +480,7 @@ bool MathStructure::representsNegative() const {
 		case STRUCT_NUMBER: {return o_number.isNegative();}
 		case STRUCT_VARIABLE: {return o_variable->isNegative();}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNegative();}
+		case STRUCT_FUNCTION: {return o_function->representsNegative(*this);}
 		case STRUCT_UNIT: {return false;}
 		case STRUCT_ADDITION: {
 			for(unsigned int i = 0; i < SIZE; i++) {
@@ -500,6 +510,7 @@ bool MathStructure::representsNonNegative() const {
 		case STRUCT_NUMBER: {return o_number.isNonNegative();}
 		case STRUCT_VARIABLE: {return o_variable->isNonNegative();}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonNegative();}
+		case STRUCT_FUNCTION: {return o_function->representsNonNegative(*this);}
 		case STRUCT_UNIT: {return true;}
 		case STRUCT_ADDITION: {
 			for(unsigned int i = 0; i < SIZE; i++) {
@@ -529,6 +540,7 @@ bool MathStructure::representsNonPositive() const {
 		case STRUCT_NUMBER: {return o_number.isNonPositive();}
 		case STRUCT_VARIABLE: {return o_variable->isNonPositive();}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonPositive();}
+		case STRUCT_FUNCTION: {return o_function->representsNonPositive(*this);}
 		case STRUCT_UNIT: {return false;}
 		case STRUCT_ADDITION: {
 			for(unsigned int i = 0; i < SIZE; i++) {
@@ -558,6 +570,7 @@ bool MathStructure::representsRational() const {
 		case STRUCT_NUMBER: {return o_number.isRational();}
 		case STRUCT_VARIABLE: {return o_variable->isRational();}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isRational();}
+		case STRUCT_FUNCTION: {return o_function->representsRational(*this);}
 		case STRUCT_UNIT: {return true;}
 		case STRUCT_ADDITION: {
 			for(unsigned int i = 0; i < SIZE; i++) {
@@ -584,6 +597,7 @@ bool MathStructure::representsReal() const {
 		case STRUCT_NUMBER: {return o_number.isReal();}
 		case STRUCT_VARIABLE: {return o_variable->isReal();}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isReal();}
+		case STRUCT_FUNCTION: {return o_function->representsReal(*this);}
 		case STRUCT_UNIT: {return true;}
 		case STRUCT_ADDITION: {
 			for(unsigned int i = 0; i < SIZE; i++) {
@@ -610,13 +624,14 @@ bool MathStructure::representsComplex() const {
 		case STRUCT_NUMBER: {return o_number.isComplex();}
 		case STRUCT_VARIABLE: {return o_variable->isComplex();}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isComplex();}
+		case STRUCT_FUNCTION: {return o_function->representsComplex(*this);}
 		case STRUCT_ADDITION: {
 			bool c = false;
 			for(unsigned int i = 0; i < SIZE; i++) {
 				if(CHILD(i).representsComplex()) {
 					if(c) return false;
 					c = true;
-				} else if(!CHILD(i).representsReal()) {
+				} else if(!CHILD(i).representsReal() || !CHILD(i).representsNonZero()) {
 					return false;
 				}
 			}
@@ -643,6 +658,7 @@ bool MathStructure::representsNonZero() const {
 		case STRUCT_NUMBER: {return !o_number.isZero();}
 		case STRUCT_VARIABLE: {return o_variable->isNonZero();}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonZero();}
+		case STRUCT_FUNCTION: {return o_function->representsNonZero(*this);}
 		case STRUCT_UNIT: {return true;}
 		case STRUCT_ADDITION: {
 			bool neg = false, started = false;
@@ -673,12 +689,14 @@ bool MathStructure::representsNonZero() const {
 bool MathStructure::representsEven() const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return o_number.isEven();}
+		case STRUCT_FUNCTION: {return o_function->representsEven(*this);}
 		default: {return false;}
 	}
 }
 bool MathStructure::representsOdd() const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return o_number.isOdd();}
+		case STRUCT_FUNCTION: {return o_function->representsOdd(*this);}
 		default: {return false;}
 	}
 }
@@ -686,6 +704,7 @@ bool MathStructure::representsUndefined() const {
 	switch(m_type) {
 		case STRUCT_UNDEFINED: {return true;}
 		case STRUCT_POWER: {return (CHILD(0).isZero() && CHILD(1).representsNegative()) || (CHILD(0).isInfinity() && CHILD(1).isZero());}
+		case STRUCT_FUNCTION: {return o_function->representsUndefined(*this);}
 		default: {return false;}
 	}
 }
@@ -879,11 +898,11 @@ ComparisonResult MathStructure::compare(const MathStructure &o) const {
 		}
 	}
 	if(mtest.isZero()) return COMPARISON_RESULT_EQUAL;
-	else if(mtest.representsPositive()) return COMPARISON_RESULT_LESS;
-	else if(mtest.representsNegative()) return COMPARISON_RESULT_GREATER;
+	else if(mtest.representsPositive()) {if(incomp) return COMPARISON_RESULT_NOT_EQUAL; return COMPARISON_RESULT_LESS;}
+	else if(mtest.representsNegative()) {if(incomp) return COMPARISON_RESULT_NOT_EQUAL; return COMPARISON_RESULT_GREATER;}
 	else if(mtest.representsNonZero()) return COMPARISON_RESULT_NOT_EQUAL;
-	else if(mtest.representsNonPositive()) return COMPARISON_RESULT_EQUAL_OR_LESS;
-	else if(mtest.representsNonNegative()) return COMPARISON_RESULT_EQUAL_OR_GREATER;
+	else if(mtest.representsNonPositive()) {if(incomp) return COMPARISON_RESULT_NOT_EQUAL; return COMPARISON_RESULT_EQUAL_OR_LESS;}
+	else if(mtest.representsNonNegative()) {if(incomp) return COMPARISON_RESULT_NOT_EQUAL; return COMPARISON_RESULT_EQUAL_OR_GREATER;}
 	return COMPARISON_RESULT_UNKNOWN;
 }		
 
@@ -3342,7 +3361,7 @@ void MathStructure::formatsub(const PrintOptions &po, const MathStructure *paren
 			}
 			if(b) {
 				MathStructure den;
-				MathStructure num;
+				MathStructure num = m_undefined;
 				short ds = 0, ns = 0;
 				for(unsigned int i = 0; i < SIZE; i++) {
 					if(CHILD(i).isInverse()) {
@@ -3376,6 +3395,7 @@ void MathStructure::formatsub(const PrintOptions &po, const MathStructure *paren
 				}
 				clear();
 				m_type = STRUCT_DIVISION;
+				if(num.isUndefined()) num.set(1, 1);
 				APPEND(MathStructure(num));
 				APPEND(MathStructure(den));
 				formatsub(po, parent, pindex);
@@ -3386,19 +3406,18 @@ void MathStructure::formatsub(const PrintOptions &po, const MathStructure *paren
 				index = 1;
 			}
 			switch(CHILD(index).type()) {
-				case STRUCT_UNIT: {
-					if(index == 0) {
-						PREPEND(MathStructure(1));
-					}
-					break;
-				}
 				case STRUCT_POWER: {
-					if(CHILD(index)[0].isUnit()) {
-						if(index == 0) {
-							PREPEND(MathStructure(1));
-						}
+					if(!CHILD(index)[0].isUnit_exp()) {
 						break;
 					}
+				}
+				case STRUCT_UNIT: {
+					if(index == 0) {
+						if(parent && (!parent->isDivision() || pindex != 2)) {
+							PREPEND(MathStructure(1));
+						}
+					}
+					break;
 				}
 				default: {
 					if(index == 1) {
@@ -3410,6 +3429,12 @@ void MathStructure::formatsub(const PrintOptions &po, const MathStructure *paren
 					}
 				}
 			}
+			break;
+		}
+		case STRUCT_DIVISION: {
+/*			if(CHILD(0)[0].isUnit_exp()) {
+				CHILD(0).insertChild(MathStructure(1, 1), 1);
+			}*/
 			break;
 		}
 		case STRUCT_UNIT: {
@@ -3433,10 +3458,17 @@ void MathStructure::formatsub(const PrintOptions &po, const MathStructure *paren
 					transform(STRUCT_INVERSE);
 				}
 				formatsub(po, parent, pindex);
-			} else if(CHILD(1).isNumber() && CHILD(1).number() == Number(1, 2)) {
+			} else if(po.halfexp_to_sqrt && ((CHILD(1).isNumber() && CHILD(1).number() == Number(1, 2)) || (CHILD(1).isInverse() && CHILD(1)[0].isNumber() && CHILD(1)[0].number() == 2))) {
 				m_type = STRUCT_FUNCTION;
 				ERASE(1)
 				o_function = CALCULATOR->f_sqrt;
+				formatsub(po, parent, pindex);
+			} else if(CHILD(0).isUnit_exp() && (!parent || (!parent->isPower() && !parent->isMultiplication() && !parent->isInverse() && !(parent->isDivision() && pindex == 2)))) {
+				MathStructure msave(*this);
+				clear();
+				APPEND(MathStructure(1));
+				APPEND(msave);
+				m_type = STRUCT_MULTIPLICATION;
 			}
 			break;
 		}
@@ -3450,8 +3482,12 @@ void MathStructure::formatsub(const PrintOptions &po, const MathStructure *paren
 					Number num(o_number.numerator());
 					Number den(o_number.denominator());
 					clear();
-					m_type = STRUCT_DIVISION;
-					APPEND(MathStructure(num));
+					if(num.isOne()) {
+						m_type = STRUCT_INVERSE;
+					} else {
+						m_type = STRUCT_DIVISION;
+						APPEND(MathStructure(num));
+					}
 					APPEND(MathStructure(den));
 				} else {
 					Number frac(o_number);
@@ -3465,8 +3501,12 @@ void MathStructure::formatsub(const PrintOptions &po, const MathStructure *paren
 				Number num(o_number.numerator());
 				Number den(o_number.denominator());
 				clear();
-				m_type = STRUCT_DIVISION;
-				APPEND(MathStructure(num));
+				if(num.isOne()) {
+					m_type = STRUCT_INVERSE;
+				} else {
+					m_type = STRUCT_DIVISION;
+					APPEND(MathStructure(num));
+				}
 				APPEND(MathStructure(den));
 			} else if(o_number.isComplex()) {
 				if(o_number.hasRealPart()) {
@@ -3499,6 +3539,38 @@ void MathStructure::formatsub(const PrintOptions &po, const MathStructure *paren
 		}
 	}
 }
+
+int namelen(const MathStructure &mstruct, const PrintOptions &po, const InternalPrintStruct &ips) {
+	const string *str;
+	switch(mstruct.type()) {
+		case STRUCT_FUNCTION: {
+			str = &mstruct.function()->name(po.use_unicode_signs);
+			break;
+		}
+		case STRUCT_VARIABLE:  {
+			str = &mstruct.variable()->name(po.use_unicode_signs);
+			break;
+		}
+		case STRUCT_SYMBOLIC:  {
+			str = &mstruct.symbol();
+			break;
+		}
+		case STRUCT_UNIT:  {
+			if(po.abbreviate_units) {
+				str = &mstruct.unit()->shortName(po.use_unicode_signs);
+			} else if(mstruct.isPlural()) {
+				str = &mstruct.unit()->plural(true, po.use_unicode_signs);
+			} else {
+				str = &mstruct.unit()->singular(true, po.use_unicode_signs);
+			}
+			break;
+		}
+		default: {return 0;}
+	}
+	if(text_length_is_one(*str)) return 1;
+	return str->length();
+}
+
 bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, unsigned int index, bool flat_division, bool flat_power) const {
 	switch(parent.type()) {
 		case STRUCT_MULTIPLICATION: {
@@ -3518,6 +3590,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return false;}
 				case STRUCT_VARIABLE: {return false;}
+				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return po.excessive_parenthesis;}
 				default: {return true;}
@@ -3541,6 +3614,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return false;}
 				case STRUCT_VARIABLE: {return false;}
+				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return false;}
 				default: {return true;}
@@ -3563,6 +3637,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return false;}
 				case STRUCT_VARIABLE: {return false;}
+				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return false;}
 				default: {return true;}
@@ -3585,6 +3660,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return false;}
 				case STRUCT_VARIABLE: {return false;}
+				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return false;}
 				default: {return true;}
@@ -3607,6 +3683,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return false;}
 				case STRUCT_VARIABLE: {return false;}
+				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return false;}
 				default: {return true;}
@@ -3632,6 +3709,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return false;}
 				case STRUCT_VARIABLE: {return false;}
+				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return false;}
 				default: {return true;}
@@ -3654,6 +3732,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_VECTOR: {return po.excessive_parenthesis;}
 				case STRUCT_NUMBER: {return po.excessive_parenthesis;}
 				case STRUCT_VARIABLE: {return po.excessive_parenthesis;}
+				case STRUCT_SYMBOLIC: {return po.excessive_parenthesis;}
 				case STRUCT_UNIT: {return po.excessive_parenthesis;}
 				case STRUCT_UNDEFINED: {return po.excessive_parenthesis;}
 				default: {return true;}
@@ -3678,7 +3757,8 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 	if(par_prev) return MULTIPLICATION_SIGN_OPERATOR;
 	if(par) return MULTIPLICATION_SIGN_NONE;
 	int t = parent[index - 2].type();
-	
+	int namelen_prev = namelen(parent[index - 2], po, ips);
+	int namelen_this = namelen(*this, po, ips);
 	switch(t) {
 		case STRUCT_MULTIPLICATION: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_INVERSE: {}
@@ -3694,17 +3774,28 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		case STRUCT_FUNCTION: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_VECTOR: {break;}
 		case STRUCT_NUMBER: {break;}
-		case STRUCT_VARIABLE: {break;}
+		case STRUCT_VARIABLE: {}
+		case STRUCT_SYMBOLIC: {
+			break;
+		}
 		case STRUCT_UNIT: {
 			if(m_type == STRUCT_UNIT) {
-				if(!po.abbreviate_units) {
+				if(namelen_prev > 1 || namelen_this > 1) {
 					return MULTIPLICATION_SIGN_NONE;
 				}
 				if(po.place_units_separately) {
 					return MULTIPLICATION_SIGN_OPERATOR_SHORT;
+				} else {
+					return MULTIPLICATION_SIGN_OPERATOR;
+				}
+			} else if(m_type == STRUCT_NUMBER) {
+				if(namelen_prev > 1) {
+					return MULTIPLICATION_SIGN_SPACE;
+				} else {
+					return MULTIPLICATION_SIGN_NONE;
 				}
 			}
-			return MULTIPLICATION_SIGN_SPACE;
+			//return MULTIPLICATION_SIGN_SPACE;
 		}
 		case STRUCT_UNDEFINED: {break;}
 		default: {return MULTIPLICATION_SIGN_OPERATOR;}
@@ -3724,7 +3815,11 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		case STRUCT_FUNCTION: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_VECTOR: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_NUMBER: {return MULTIPLICATION_SIGN_OPERATOR;}
-		case STRUCT_VARIABLE: {return MULTIPLICATION_SIGN_NONE;}
+		case STRUCT_VARIABLE: {}
+		case STRUCT_SYMBOLIC: {
+			if(namelen_prev > 1 || namelen_this > 1) return MULTIPLICATION_SIGN_OPERATOR;
+			return MULTIPLICATION_SIGN_NONE;
+		}
 		case STRUCT_UNIT: {
 			if(t == STRUCT_POWER && parent[index - 2][0].isUnit_exp()) {
 				return MULTIPLICATION_SIGN_NONE;
@@ -5136,13 +5231,26 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 						MathStructure mtest2(mstruct);
 						mtest2[1].negate();
 						mtest2[1].eval(eo2);
+						switch(ct_comp) {
+							case COMPARISON_LESS: {mtest2.setComparisonType(COMPARISON_GREATER); break;}
+							case COMPARISON_GREATER: {mtest2.setComparisonType(COMPARISON_LESS); break;}
+							case COMPARISON_EQUALS_LESS: {mtest2.setComparisonType(COMPARISON_EQUALS_GREATER); break;}
+							case COMPARISON_EQUALS_GREATER: {mtest2.setComparisonType(COMPARISON_EQUALS_LESS); break;}
+							default: {}
+						}
 						mtest2.isolate_x(eo, x_var);
 						mtest2.childrenUpdated();
 						MathStructure mtestC2(mtest2);
-						eo2.test_comparisons = true;
-						mtestC2.eval(eo2);
-						b2 = mtestC2.isComparison();
-						eo2.test_comparisons = false;
+						if(mtest2 == mtest1) {
+							b2 = false;
+							mtestC2 = mtestC1;	
+						}
+						if(b2) {
+							eo2.test_comparisons = true;
+							mtestC2.eval(eo2);
+							b2 = mtestC2.isComparison();
+							eo2.test_comparisons = false;
+						}
 					
 						if(b1 && !b2) {
 							set(mtest1);	
@@ -5156,7 +5264,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 								APPEND(mtestC1);
 								APPEND(mtestC2);
 							}
-						} else if(mtest1[0] == mtest2[0]) {
+						} else if(mtest1[0] == mtest2[0] && mtest1.comparisonType() == mtest2.comparisonType()) {
 							CHILD(0) = mtest1[0];
 							CHILD(1).clearVector();
 							CHILD(1).addItem(mtest1[1]);
@@ -5194,10 +5302,10 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 			break;
 		}
 		case STRUCT_FUNCTION: {
-			if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) {
-				break;
-			}
 			if(CHILD(0).function() == CALCULATOR->f_ln && CHILD(0).size() == 1) {
+				if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) {
+					break;
+				}
 				if(CHILD(0)[0].contains(x_var)) {
 					MathStructure msave(CHILD(1));
 					CHILD(1).set(CALCULATOR->v_e);
@@ -5210,6 +5318,9 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 					return true;
 				}
 			} else if(CHILD(0).function() == CALCULATOR->f_logn && CHILD(0).size() == 2) {
+				if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) {
+					break;
+				}
 				if(CHILD(0)[0].contains(x_var)) {
 					MathStructure msave(CHILD(1));
 					CHILD(1) = CHILD(0)[1];
@@ -5240,13 +5351,27 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 					mtest2[0] = CHILD(0)[0];
 					mtest2[1].negate();
 					mtest2[1].eval(eo2);
+					switch(ct_comp) {
+						case COMPARISON_LESS: {mtest2.setComparisonType(COMPARISON_GREATER); break;}
+						case COMPARISON_GREATER: {mtest2.setComparisonType(COMPARISON_LESS); break;}
+						case COMPARISON_EQUALS_LESS: {mtest2.setComparisonType(COMPARISON_EQUALS_GREATER); break;}
+						case COMPARISON_EQUALS_GREATER: {mtest2.setComparisonType(COMPARISON_EQUALS_LESS); break;}
+						default: {}
+					}
 					mtest2.isolate_x(eo, x_var);
 					mtest2.childrenUpdated();
 					MathStructure mtestC2(mtest2);
-					eo2.test_comparisons = true;
-					mtestC2.eval(eo2);
-					b2 = mtestC2.isComparison();
-					eo2.test_comparisons = false;
+					if(mtest2 == mtest1) {
+						b2 = false;
+						mtestC2 = mtestC1;	
+					}
+					if(b2) {
+						eo2.test_comparisons = true;
+						mtestC2.eval(eo2);
+						b2 = mtestC2.isComparison();
+						eo2.test_comparisons = false;
+					}
+					
 					
 					if(b1 && !b2) {
 						set(mtest1);	
@@ -5260,7 +5385,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 							APPEND(mtestC1);
 							APPEND(mtestC2);
 						}
-					} else if(mtest1[0] == mtest2[0]) {
+					} else if(mtest1[0] == mtest2[0] && mtest1.comparisonType() == mtest2.comparisonType()) {
 						CHILD(0) = mtest1[0];
 						CHILD(1).clearVector();
 						CHILD(1).addItem(mtest1[1]);
