@@ -79,6 +79,7 @@ GtkTreeSelection *selection;
 
 GtkWidget *expression;
 GtkWidget *resultview;
+GtkWidget *historyview;
 GtkWidget *f_menu ,*v_menu, *u_menu, *u_menu2, *recent_menu;
 GtkAccelGroup *accel_group;
 
@@ -118,6 +119,7 @@ create_main_window (void)
 
 	expression = glade_xml_get_widget (main_glade, "expression");
 	resultview = glade_xml_get_widget (main_glade, "resultview");
+	historyview = glade_xml_get_widget (main_glade, "history");
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "gray_foreground", "foreground", "gray40", NULL);
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "red_foreground", "foreground", "red", NULL);
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "blue_foreground", "foreground", "blue", NULL);
@@ -317,25 +319,13 @@ create_main_window (void)
 		default: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_none")), TRUE);}
 	}
 
-	if(printops.use_unicode_signs) {
-		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_sub")), SIGN_MINUS);
-		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_add")), SIGN_PLUS);
-		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_times")), SIGN_MULTIPLICATION);	
-		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_divide")), SIGN_DIVISION_SLASH);	
-		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_sqrt")), SIGN_SQRT);	
-		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_dot")), SIGN_MULTIDOT);	
-//		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_inexact")), SIGN_APPROXIMATELY_EQUAL);			
-	}
+	set_unicode_buttons();
 
 	if(use_custom_result_font) {
 		PangoFontDescription *font = pango_font_description_from_string(custom_result_font.c_str());
 		gtk_widget_modify_font(resultview, font);
 		pango_font_description_free(font);
 	} else {
-/*		PangoFontDescription *font = pango_font_description_copy(resultview->style->font_desc);
-//		pango_font_description_set_weight(font, PANGO_WEIGHT_BOLD);
-		gtk_widget_modify_font(resultview, font);
-		pango_font_description_free(font);	*/	
 		if(custom_result_font.empty()) {
 			custom_result_font = pango_font_description_to_string(resultview->style->font_desc);
 		}		
@@ -398,8 +388,6 @@ create_main_window (void)
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(completion), cell, "text", 1);
 	gtk_entry_completion_set_match_func(completion, &completion_match_func, NULL, NULL);
 	g_signal_connect((gpointer) completion, "match-selected", G_CALLBACK(on_completion_match_selected), NULL);
-
-	//gtk_widget_hide(glade_xml_get_widget(main_glade, "menu_item_multiple_roots"));
 
 	gtk_widget_show (glade_xml_get_widget (main_glade, "main_window"));
 

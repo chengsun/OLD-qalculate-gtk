@@ -2057,6 +2057,26 @@ int MessageFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	return 1;
 }
 
+GenerateVectorFunction::GenerateVectorFunction() : MathFunction("genvector", 4, 6) {
+	setArgumentDefinition(5, new SymbolicArgument());
+	setDefaultValue(5, "x");
+	setArgumentDefinition(6, new BooleanArgument());
+	setDefaultValue(6, "0");
+}
+int GenerateVectorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[5].number().getBoolean()) {
+		mstruct = vargs[0].generateVector(vargs[4], vargs[1], vargs[2], vargs[3], NULL, eo);
+	} else {
+		bool overflow = false;
+		int steps = vargs[3].number().intValue(&overflow);
+		if(!vargs[3].isNumber() || overflow || steps < 1) {
+			CALCULATOR->error(true, _("The number of requested components in generate vector function must be a positive integer."), NULL);
+			return 0;
+		}
+		mstruct = vargs[0].generateVector(vargs[4], vargs[1], vargs[2], steps, NULL, eo);
+	}
+	return 1;
+}
 ForFunction::ForFunction() : MathFunction("for", 7) {
 	setArgumentDefinition(2, new SymbolicArgument());	
 	setArgumentDefinition(7, new SymbolicArgument());

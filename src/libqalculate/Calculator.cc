@@ -1033,6 +1033,7 @@ void Calculator::addBuiltinFunctions() {
 		
 	f_replace = addFunction(new ReplaceFunction());
 
+	f_genvector = addFunction(new GenerateVectorFunction());
 	f_for = addFunction(new ForFunction());
 	f_sum = addFunction(new SumFunction());
 	f_product = addFunction(new ProductFunction());

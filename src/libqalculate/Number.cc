@@ -1930,7 +1930,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		nr.trunc();
 		string str = nr.printNumerator(10, false);
 		if(po.base == BASE_SEXAGESIMAL) {
-			if(po.use_unicode_signs) {
+			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_POWER_0, po.can_display_unicode_string_arg))) {
 				str += SIGN_POWER_0;
 			} else {
 				str += "o";
@@ -2108,7 +2108,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					rerun = true;
 					goto integer_rerun;
 				}
-			} else if(precision2 < 0) {
+			} else if(precision2 < 0 && (expo > 0 || isApproximate() || ips.parent_approximate)) {
 				cln::cl_RA_div_t div = cln::floor2(ivalue / cln::expt_pos(cln::cl_I(base), -precision2));
 				if(!cln::zerop(div.remainder)) {
 					ivalue = div.quotient;
@@ -2209,7 +2209,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(ips.num) *ips.num = str;
 
 	} else if(isInfinity()) {
-		if(po.use_unicode_signs) {
+		if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_INFINITY, po.can_display_unicode_string_arg))) {
 			str = SIGN_INFINITY;
 		} else {
 			str = _("infinity");
@@ -2217,7 +2217,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	} else if(isPlusInfinity()) {
 		str = "(";
 		str += "+";
-		if(po.use_unicode_signs) {
+		if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_INFINITY, po.can_display_unicode_string_arg))) {
 			str += SIGN_INFINITY;
 		} else {
 			str += _("infinity");
@@ -2226,7 +2226,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	} else if(isMinusInfinity()) {
 		str = "(";
 		str += "-";
-		if(po.use_unicode_signs) {
+		if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_INFINITY, po.can_display_unicode_string_arg))) {
 			str += SIGN_INFINITY;
 		} else {
 			str += _("infinity");
@@ -2484,8 +2484,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			str = num.print(po, ips);
 			if(ips.num) *ips.num = str;
 			if(po.spacious) str += " ";
-			if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION) str += SIGN_DIVISION;
-			if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH) str += SIGN_DIVISION_SLASH;
+			if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION, po.can_display_unicode_string_arg))) str += SIGN_DIVISION;
+			if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION_SLASH, po.can_display_unicode_string_arg))) str += SIGN_DIVISION_SLASH;
 			else str += "/";
 			if(po.spacious) str += " ";
 			InternalPrintStruct ips_n = ips;

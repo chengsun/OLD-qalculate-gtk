@@ -102,17 +102,17 @@ bool Unit::isCurrency() const {
 bool Unit::isUsedByOtherUnits() const {
 	return CALCULATOR->unitIsUsedByOtherUnits(this);
 }
-string Unit::print(bool plural_, bool short_, bool use_unicode) const {
-	return preferredName(short_, use_unicode, plural_).name;
+string Unit::print(bool plural_, bool short_, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
+	return preferredName(short_, use_unicode, plural_, false, can_display_unicode_string_function, can_display_unicode_string_arg).name;
 }
-const string &Unit::plural(bool return_singular_if_no_plural, bool use_unicode) const {
-	return preferredName(false, use_unicode, true).name;
+const string &Unit::plural(bool return_singular_if_no_plural, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
+	return preferredName(false, use_unicode, true, false, can_display_unicode_string_function, can_display_unicode_string_arg).name;
 }
-const string &Unit::singular(bool return_short_if_no_singular, bool use_unicode) const {
-	return preferredName(false, use_unicode, false).name;
+const string &Unit::singular(bool return_short_if_no_singular, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
+	return preferredName(false, use_unicode, false, false, can_display_unicode_string_function, can_display_unicode_string_arg).name;
 }
-const string &Unit::shortName(bool use_unicode) const {
-	return preferredName(true, use_unicode, false).name;
+const string &Unit::shortName(bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
+	return preferredName(true, use_unicode, false, false, can_display_unicode_string_function, can_display_unicode_string_arg).name;
 }
 Unit* Unit::baseUnit() const {
 	return (Unit*) this;
@@ -470,12 +470,12 @@ void AliasUnit_Composite::set(const ExpressionItem *item) {
 		ExpressionItem::set(item);
 	}
 }
-string AliasUnit_Composite::print(bool plural_, bool short_, bool use_unicode) const {
+string AliasUnit_Composite::print(bool plural_, bool short_, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
 	string str = "";
 	if(prefixv) {
-		str += prefixv->name(short_, use_unicode);
+		str += prefixv->name(short_, use_unicode, can_display_unicode_string_function, can_display_unicode_string_arg);
 	}
-	str += preferredName(short_, use_unicode, plural_).name;
+	str += preferredName(short_, use_unicode, plural_, false, can_display_unicode_string_function, can_display_unicode_string_arg).name;
 	return str;
 }
 Prefix *AliasUnit_Composite::prefix() const {
@@ -576,7 +576,7 @@ void CompositeUnit::del(Unit *u) {
 	}
 	updateNames();
 }
-string CompositeUnit::print(bool plural_, bool short_, bool use_unicode) const {
+string CompositeUnit::print(bool plural_, bool short_, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
 	string str = "";
 	bool b = false, b2 = false;
 	for(size_t i = 0; i < units.size(); i++) {
@@ -593,9 +593,9 @@ string CompositeUnit::print(bool plural_, bool short_, bool use_unicode) const {
 				if(i > 0) str += " ";
 			}
 			if(plural_ && i == 0 && units[i]->firstBaseExp() > 0) {
-				str += units[i]->print(true, short_, use_unicode);
+				str += units[i]->print(true, short_, use_unicode, can_display_unicode_string_function, can_display_unicode_string_arg);
 			} else {
-				str += units[i]->print(false, short_, use_unicode);
+				str += units[i]->print(false, short_, use_unicode, can_display_unicode_string_function, can_display_unicode_string_arg);
 			}
 			if(b) {
 				if(units[i]->firstBaseExp() != -1) {

@@ -27,7 +27,7 @@ class Prefix {
 	void setShortName(string short_name);
 	void setLongName(string long_name);
 	void setUnicodeName(string unicode_name);
-	const string &name(bool short_default = true, bool use_unicode = false) const;
+	const string &name(bool short_default = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
 	int exponent(int iexp = 1) const;
 	Number exponent(const Number &nexp) const;	
 	void setExponent(int iexp);	

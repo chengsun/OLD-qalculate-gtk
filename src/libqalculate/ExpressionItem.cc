@@ -119,9 +119,9 @@ bool ExpressionItem::isRegistered() const {
 void ExpressionItem::setRegistered(bool is_registered) {
 	b_registered = is_registered;
 }
-const string &ExpressionItem::title(bool return_name_if_no_title, bool use_unicode) const {
+const string &ExpressionItem::title(bool return_name_if_no_title, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
 	if(return_name_if_no_title && stitle.empty()) {
-		return preferredName(false, use_unicode).name;
+		return preferredName(false, use_unicode, false, false, can_display_unicode_string_function, can_display_unicode_string_arg).name;
 	}
 	return stitle;
 }
@@ -142,12 +142,18 @@ void ExpressionItem::setDescription(string descr_) {
 		b_changed = true;
 	}
 }
-const string &ExpressionItem::name(bool use_unicode) const {
+const string &ExpressionItem::name(bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
+	bool undisplayable_uni = false;
 	for(size_t i = 0; i < names.size(); i++) {
 		if(names[i].unicode == use_unicode) {
-			return names[i].name;
+			if(use_unicode && can_display_unicode_string_function && !((*can_display_unicode_string_function) (names[i].name.c_str(), can_display_unicode_string_arg))) {
+				undisplayable_uni = true;
+			} else {
+				return names[i].name;
+			}
 		}
 	}
+	if(undisplayable_uni) return name(false);
 	if(names.size() > 0) return names[0].name;
 	return empty_string;
 }
@@ -161,11 +167,11 @@ const string &ExpressionItem::referenceName() const {
 	return empty_string;
 }
 
-const ExpressionName &ExpressionItem::preferredName(bool abbreviation, bool use_unicode, bool plural, bool reference) const {
+const ExpressionName &ExpressionItem::preferredName(bool abbreviation, bool use_unicode, bool plural, bool reference, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
 	if(names.size() == 1) return names[0];
 	int index = -1;
 	for(size_t i = 0; i < names.size(); i++) {
-		if((!reference || names[i].reference) && names[i].abbreviation == abbreviation && names[i].unicode == use_unicode && names[i].plural == plural) return names[i];
+		if((!reference || names[i].reference) && names[i].abbreviation == abbreviation && names[i].unicode == use_unicode && names[i].plural == plural && (!use_unicode || !can_display_unicode_string_function || (*can_display_unicode_string_function) (names[i].name.c_str(), can_display_unicode_string_arg))) return names[i];
 		if(index < 0) {
 			index = i;
 		} else if(reference && names[i].reference != names[index].reference) {
@@ -180,10 +186,13 @@ const ExpressionName &ExpressionItem::preferredName(bool abbreviation, bool use_
 			if(names[i].unicode) index = i;
 		}
 	}
+	if(use_unicode && names[index].unicode && can_display_unicode_string_function && !((*can_display_unicode_string_function) (names[index].name.c_str(), can_display_unicode_string_arg))) {
+		return preferredName(abbreviation, false, plural, reference, can_display_unicode_string_function, can_display_unicode_string_arg);
+	}
 	if(index >= 0) return names[index];
 	return empty_expression_name;
 }
-const ExpressionName &ExpressionItem::preferredInputName(bool abbreviation, bool use_unicode, bool plural, bool reference) const {
+const ExpressionName &ExpressionItem::preferredInputName(bool abbreviation, bool use_unicode, bool plural, bool reference, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
 	if(names.size() == 1) return names[0];
 	int index = -1;
 	for(size_t i = 0; i < names.size(); i++) {
@@ -206,11 +215,14 @@ const ExpressionName &ExpressionItem::preferredInputName(bool abbreviation, bool
 			if(names[i].unicode) index = i;
 		}
 	}
+	if(use_unicode && names[index].unicode && can_display_unicode_string_function && !((*can_display_unicode_string_function) (names[index].name.c_str(), can_display_unicode_string_arg))) {
+		return preferredInputName(abbreviation, false, plural, reference, can_display_unicode_string_function, can_display_unicode_string_arg);
+	}
 	if(index >= 0) return names[index];
 	return empty_expression_name;
 }
-const ExpressionName &ExpressionItem::preferredDisplayName(bool abbreviation, bool use_unicode, bool plural, bool reference) const {
-	return preferredName(abbreviation, use_unicode, plural, reference);
+const ExpressionName &ExpressionItem::preferredDisplayName(bool abbreviation, bool use_unicode, bool plural, bool reference, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
+	return preferredName(abbreviation, use_unicode, plural, reference, can_display_unicode_string_function, can_display_unicode_string_arg);
 }
 const ExpressionName &ExpressionItem::getName(size_t index) const {
 	if(index > 0 && index <= names.size()) return names[index - 1];
@@ -317,9 +329,9 @@ bool ExpressionItem::hasNameCaseSensitive(const string &sname) const {
 	}
 	return false;
 }
-const ExpressionName &ExpressionItem::findName(int abbreviation, int use_unicode, int plural) const {
+const ExpressionName &ExpressionItem::findName(int abbreviation, int use_unicode, int plural, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
 	for(size_t i = 0; i < names.size(); i++) {
-		if((abbreviation < 0 || names[i].abbreviation == abbreviation) && (use_unicode < 0 || names[i].unicode == use_unicode) && (plural < 0 || names[i].plural == plural)) return names[i];
+		if((abbreviation < 0 || names[i].abbreviation == abbreviation) && (use_unicode < 0 || names[i].unicode == use_unicode) && (plural < 0 || names[i].plural == plural) && (!names[i].unicode || !can_display_unicode_string_function || ((*can_display_unicode_string_function) (names[i].name.c_str(), can_display_unicode_string_arg)))) return names[i];
 	}
 	return empty_expression_name;
 }

@@ -55,11 +55,18 @@ void Prefix::setUnicodeName(string unicode_name) {
 	u_name = unicode_name;
 	CALCULATOR->prefixNameChanged(this);
 }
-const string &Prefix::name(bool short_default, bool use_unicode) const {
+const string &Prefix::name(bool short_default, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
+	if(use_unicode && !u_name.empty() && (!can_display_unicode_string_function || (*can_display_unicode_string_function) (u_name.c_str(), can_display_unicode_string_arg))) return u_name;
 	if(short_default) {
-		return shortName(true, use_unicode);
+		if(s_name.empty()) {
+			return l_name;
+		}
+		return s_name;
 	}
-	return longName(true, use_unicode);
+	if(l_name.empty()) {
+		return s_name;
+	}
+	return l_name;
 }
 int Prefix::exponent(int iexp) const {
 	return exp * iexp;

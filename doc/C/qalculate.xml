@@ -1125,7 +1125,7 @@ Contains a lot of functions for descriptive statistics and some statistical test
 <varlistentry>
 <term>Trigonometry</term>
 <listitem><para>
-Trigonometric functions, including <command>sin()</command>, <command>cos()</command>, <command>tan()</command>, <command>sec()</command>, <command>csc()</command>, <command>cot()</command>, and hyperbolic and inverse versions of those. These functions take as argument an angle, with degrees, radians or gradians as unit. The default angle unit is used if the argument does not have a unit.
+Trigonometric functions, including <command>sin()</command>, <command>cos()</command>, <command>tan()</command>, <command>sec()</command>, <command>csc()</command>, <command>cot()</command>, and hyperbolic and inverse versions of those. These functions take as argument an angle. If the default angle unit (<menuchoice><guimenu>Mode</guimenu><guisubmenu>Angle Unit</guisubmenu></menuchoice>) is set to none, the argument must have an angle unit appended (degrees, radians or gradians), otherwise the default unit will be appended automatically (and removed from result of inverse functions).
 </para></listitem>
 </varlistentry>
 <varlistentry>

@@ -1,3 +1,15 @@
+2004-11-16 Niklas Knutsson  <nq@altern.org>
+	
+	* Check if unicode characters can be displayed
+
+2004-11-10 Niklas Knutsson  <nq@altern.org>
+
+	* Revert back somewhat to the old behaviour of not rounding exact numbers not in exponential format 
+
+2004-10-25 Niklas Knutsson  <nq@altern.org>
+
+	* Generate vector function
+
 2004-10-24 Niklas Knutsson  <nq@altern.org>
 
 	* Rearrange plot dialog

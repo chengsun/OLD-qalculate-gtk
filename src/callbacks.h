@@ -23,6 +23,9 @@
 
 #include "main.h"
 
+
+void set_unicode_buttons();
+
 void update_status_text();
 
 void create_umenu(void);

@@ -13,6 +13,32 @@
         <_title>Components</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="genvector">
+      <_title>Generate Vector</_title>
+      <name index="1">
+        <reference>true</reference>
+        <_name>genvector</_name>
+      </name>
+      <_description>Generates a vector from a function with a variable (default x) running from min to max. The fourth argument is either the requested number of components if the sixth argument is false (default) or the step between each value of the variable.</_description>
+      <argument index="1">
+        <_title>Function</_title>
+      </argument>
+      <argument index="2">
+        <_title>Min</_title>
+      </argument>
+      <argument index="3">
+        <_title>Max</_title>
+      </argument>
+      <argument index="4">
+        <_title>Components / Step size</_title>
+      </argument>
+      <argument index="5">
+        <_title>Variable</_title>
+      </argument>
+      <argument index="6">
+        <_title>Use step size</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="sort">
       <_title>Sort</_title>
       <name index="1">

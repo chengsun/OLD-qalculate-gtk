@@ -2900,8 +2900,12 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			if(mstruct.representsInteger(false) || CHILD(0).representsReal(true)) {
 				if(CHILD(1).isNumber() && CHILD(1).number().isRational()) {
 					if(CHILD(1).number().numeratorIsEven() && !mstruct.representsInteger(false)) {
-						MathStructure mstruct_base(CHILD(0));
-						CHILD(0).set(CALCULATOR->f_abs, &mstruct_base, NULL);
+						if(CHILD(0).representsNegative(true)) {
+							CHILD(0).negate();							
+						} else if(!CHILD(0).representsNonNegative(true)) {
+							MathStructure mstruct_base(CHILD(0));
+							CHILD(0).set(CALCULATOR->f_abs, &mstruct_base, NULL);
+						}
 					}
 					CHILD(1).multiply(mstruct);
 					MERGE_APPROX_AND_PREC(mstruct)
@@ -3324,9 +3328,8 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			}
 			case STRUCT_FUNCTION: {
 				if(o_function == CALCULATOR->f_abs) {
-					calculateFunctions(eo);
+					b = calculateFunctions(eo, false);
 					unformat(eo);
-					b = m_type != STRUCT_FUNCTION;
 					break;
 				}
 			}
@@ -3342,7 +3345,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 	return c;
 }
 
-bool MathStructure::calculateFunctions(const EvaluationOptions &eo) {
+bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursive) {
 	if(m_type == STRUCT_FUNCTION) {
 		if(function_value) {
 			function_value->unref();
@@ -3394,7 +3397,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo) {
 		int i = o_function->calculate(*mstruct, *this, eo);
 		if(i > 0) {
 			set_nocopy(*mstruct, true);
-			calculateFunctions(eo);
+			if(recursive) calculateFunctions(eo);
 			mstruct->unref();
 			return true;
 		} else {
@@ -3426,10 +3429,12 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo) {
 		}
 	}
 	bool b = false;
-	for(size_t i = 0; i < SIZE; i++) {
-		if(CHILD(i).calculateFunctions(eo)) {
-			CHILD_UPDATED(i);
-			b = true;
+	if(recursive) {
+		for(size_t i = 0; i < SIZE; i++) {
+			if(CHILD(i).calculateFunctions(eo)) {
+				CHILD_UPDATED(i);
+				b = true;
+			}
 		}
 	}
 	return b;
@@ -3731,14 +3736,14 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			if(parent.isMultiplication()) {
 				if(mstruct1.variable()->isKnown()) return -1;
 			}
-			if(mstruct1.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name < mstruct2.symbol()) return -1;
+			if(mstruct1.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name < mstruct2.symbol()) return -1;
 			else return 1;
 		}
 		if(mstruct2.isVariable() && mstruct1.isSymbolic()) {
 			if(parent.isMultiplication()) {
 				if(mstruct2.variable()->isKnown()) return 1;
 			}
-			if(mstruct1.symbol() < mstruct2.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name) return -1;
+			if(mstruct1.symbol() < mstruct2.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name) return -1;
 			else return 1;
 		}
 		if(!parent.isMultiplication() || (!mstruct1.isNumber() && !mstruct2.isNumber())) {
@@ -3844,7 +3849,7 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 		} 
 		case STRUCT_UNIT: {
 			if(mstruct1.unit() == mstruct2.unit()) return 0;
-			if(mstruct1.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct1.isPlural(), po.use_reference_names).name < mstruct2.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct2.isPlural(), po.use_reference_names).name) return -1;
+			if(mstruct1.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct1.isPlural(), po.use_reference_names).name < mstruct2.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct2.isPlural(), po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name) return -1;
 			return 1;
 		}
 		case STRUCT_SYMBOLIC: {
@@ -3858,7 +3863,7 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 				if(mstruct1.variable()->isKnown() && !mstruct2.variable()->isKnown()) return -1;
 				if(!mstruct1.variable()->isKnown() && mstruct2.variable()->isKnown()) return 1;
 			}
-			if(mstruct1.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name < mstruct2.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name) return -1;
+			if(mstruct1.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name < mstruct2.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name) return -1;
 			return 1;
 		}
 		case STRUCT_FUNCTION: {
@@ -3872,7 +3877,7 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 				}
 				return 0;
 			}
-			if(mstruct1.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name < mstruct2.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name) return -1;
+			if(mstruct1.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name < mstruct2.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name) return -1;
 			return 1;
 		}
 		case STRUCT_POWER: {
@@ -6347,13 +6352,13 @@ int namelen(const MathStructure &mstruct, const PrintOptions &po, const Internal
 	const string *str;
 	switch(mstruct.type()) {
 		case STRUCT_FUNCTION: {
-			const ExpressionName *ename = &mstruct.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names);
+			const ExpressionName *ename = &mstruct.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
 			str = &ename->name;
 			if(abbreviated) *abbreviated = ename->abbreviation;
 			break;
 		}
 		case STRUCT_VARIABLE:  {
-			const ExpressionName *ename = &mstruct.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names);
+			const ExpressionName *ename = &mstruct.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
 			str = &ename->name;
 			if(abbreviated) *abbreviated = ename->abbreviation;
 			break;
@@ -6364,7 +6369,7 @@ int namelen(const MathStructure &mstruct, const PrintOptions &po, const Internal
 			break;
 		}
 		case STRUCT_UNIT:  {
-			const ExpressionName *ename = &mstruct.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct.isPlural(), po.use_reference_names);
+			const ExpressionName *ename = &mstruct.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct.isPlural(), po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
 			str = &ename->name;
 			if(abbreviated) *abbreviated = ename->abbreviation;
 			break;
@@ -6671,7 +6676,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 				if(i > 0) {
 					if(CHILD(i).type() == STRUCT_NEGATE) {
 						if(po.spacious) print_str += " ";
-						if(po.use_unicode_signs) print_str += SIGN_MINUS;
+						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) print_str += SIGN_MINUS;
 						else print_str += "-";
 						if(po.spacious) print_str += " ";
 						ips_n.wrap = CHILD(i)[0].needsParenthesis(po, ips_n, *this, i + 1, true, true);
@@ -6691,7 +6696,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			break;
 		}
 		case STRUCT_NEGATE: {
-			if(po.use_unicode_signs) print_str += SIGN_MINUS;
+			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) print_str += SIGN_MINUS;
 			else print_str = "-";
 			ips_n.depth++;
 			ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
@@ -6705,8 +6710,8 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, true);
 				if(!po.short_multiplication && i > 0) {
 					if(po.spacious) print_str += " ";
-					if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT) print_str += SIGN_MULTIDOT;
-					else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X) print_str += SIGN_MULTIPLICATION;
+					if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) print_str += SIGN_MULTIDOT;
+					else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) print_str += SIGN_MULTIPLICATION;
 					else print_str += "*";
 					if(po.spacious) print_str += " ";
 				} else if(i > 0) {
@@ -6714,15 +6719,15 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 						case MULTIPLICATION_SIGN_SPACE: {print_str += " "; break;}
 						case MULTIPLICATION_SIGN_OPERATOR: {
 							if(po.spacious) {
-								if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT) print_str += " " SIGN_MULTIDOT " ";
-								else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X) print_str += " " SIGN_MULTIPLICATION " ";
+								if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) print_str += " " SIGN_MULTIDOT " ";
+								else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) print_str += " " SIGN_MULTIPLICATION " ";
 								else print_str += " * ";
 								break;
 							}
 						}
 						case MULTIPLICATION_SIGN_OPERATOR_SHORT: {
-							if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT) print_str += SIGN_MULTIDOT;
-							else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X) print_str += SIGN_MULTIPLICATION;
+							if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) print_str += SIGN_MULTIDOT;
+							else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) print_str += SIGN_MULTIPLICATION;
 							else print_str += "*";
 							break;
 						}
@@ -6736,8 +6741,8 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 		case STRUCT_INVERSE: {
 			print_str = "1";
 			if(po.spacious) print_str += " ";
-			if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION) print_str += SIGN_DIVISION;
-			else if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH) print_str += SIGN_DIVISION_SLASH;
+			if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION, po.can_display_unicode_string_arg))) print_str += SIGN_DIVISION;
+			else if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION_SLASH, po.can_display_unicode_string_arg))) print_str += SIGN_DIVISION_SLASH;
 			else print_str += "/";
 			if(po.spacious) print_str += " ";
 			ips_n.depth++;
@@ -6752,8 +6757,8 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
 			print_str = CHILD(0).print(po, ips_n);
 			if(po.spacious) print_str += " ";
-			if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION) print_str += SIGN_DIVISION;
-			else if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH) print_str += SIGN_DIVISION_SLASH;
+			if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION, po.can_display_unicode_string_arg))) print_str += SIGN_DIVISION;
+			else if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION_SLASH, po.can_display_unicode_string_arg))) print_str += SIGN_DIVISION_SLASH;
 			else print_str += "/";
 			if(po.spacious) print_str += " ";
 			ips_n.wrap = CHILD(1).needsParenthesis(po, ips_n, *this, 2, true, true);
@@ -6780,19 +6785,19 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			switch(ct_comp) {
 				case COMPARISON_EQUALS: {print_str += "="; break;}
 				case COMPARISON_NOT_EQUALS: {
-					if(po.use_unicode_signs) print_str += SIGN_NOT_EQUAL;
+					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_NOT_EQUAL, po.can_display_unicode_string_arg))) print_str += SIGN_NOT_EQUAL;
 					else print_str += "!="; 
 					break;
 				}
 				case COMPARISON_GREATER: {print_str += ">"; break;}
 				case COMPARISON_LESS: {print_str += "<"; break;}
 				case COMPARISON_EQUALS_GREATER: {
-					if(po.use_unicode_signs) print_str += SIGN_GREATER_OR_EQUAL;
+					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_GREATER_OR_EQUAL, po.can_display_unicode_string_arg))) print_str += SIGN_GREATER_OR_EQUAL;
 					else print_str += ">="; 
 					break;
 				}
 				case COMPARISON_EQUALS_LESS: {
-					if(po.use_unicode_signs) print_str += SIGN_LESS_OR_EQUAL;
+					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_LESS_OR_EQUAL, po.can_display_unicode_string_arg))) print_str += SIGN_LESS_OR_EQUAL;
 					else print_str += "<="; 
 					break;
 				}
@@ -6863,18 +6868,18 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			break;
 		}
 		case STRUCT_UNIT: {
-			const ExpressionName *ename = &o_unit->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, b_plural, po.use_reference_names);
-			if(o_prefix) print_str += o_prefix->name(po.abbreviate_names && ename->abbreviation, po.use_unicode_signs);
+			const ExpressionName *ename = &o_unit->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, b_plural, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
+			if(o_prefix) print_str += o_prefix->name(po.abbreviate_names && ename->abbreviation, po.use_unicode_signs, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
 			print_str += ename->name;
 			break;
 		}
 		case STRUCT_VARIABLE: {
-			print_str = o_variable->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name;
+			print_str = o_variable->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name;
 			break;
 		}
 		case STRUCT_FUNCTION: {
 			ips_n.depth++;
-			print_str += o_function->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name;
+			print_str += o_function->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name;
 			print_str += "(";
 			for(size_t i = 0; i < SIZE; i++) {
 				if(i > 0) {
@@ -7912,7 +7917,7 @@ bool MathStructure::replace(const MathStructure &mfrom1, const MathStructure &mt
 	return b;
 }
 
-MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, const EvaluationOptions &eo) {
+MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, const EvaluationOptions &eo) const {
 	if(steps < 1) {
 		steps = 1;
 	}
@@ -7940,7 +7945,7 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 	}
 	return y_vector;
 }
-MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector, const EvaluationOptions &eo) {
+MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector, const EvaluationOptions &eo) const {
 	MathStructure x_value(min);
 	MathStructure y_value;
 	MathStructure y_vector;
@@ -7970,7 +7975,7 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 	}
 	return y_vector;
 }
-MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathStructure &x_vector, const EvaluationOptions &eo) {
+MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathStructure &x_vector, const EvaluationOptions &eo) const {
 	MathStructure y_value;
 	MathStructure y_vector;
 	y_vector.clearVector();

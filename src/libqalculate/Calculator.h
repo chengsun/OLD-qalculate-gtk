@@ -168,7 +168,7 @@ class Calculator {
 	MathFunction *f_ascii, *f_char;
 	MathFunction *f_length, *f_concatenate;
 	MathFunction *f_replace;
-	MathFunction *f_for, *f_sum, *f_product, *f_process, *f_process_matrix, *f_csum, *f_if, *f_function, *f_select;
+	MathFunction *f_genvector, *f_for, *f_sum, *f_product, *f_process, *f_process_matrix, *f_csum, *f_if, *f_function, *f_select;
 	MathFunction *f_diff, *f_integrate, *f_solve, *f_multisolve;
 	MathFunction *f_error, *f_warning, *f_message, *f_save, *f_load, *f_export, *f_title;
 	Unit *u_rad, *u_gra, *u_deg, *u_euro;

@@ -56,12 +56,12 @@ class ExpressionItem {
 	bool isRegistered() const;
 	void setRegistered(bool is_registered);
 
-	virtual const string &name(bool use_unicode = false) const;
+	virtual const string &name(bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
 	virtual const string &referenceName() const;
 	
-	virtual const ExpressionName &preferredName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false) const;
-	virtual const ExpressionName &preferredInputName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false) const;
-	virtual const ExpressionName &preferredDisplayName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false) const;
+	virtual const ExpressionName &preferredName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	virtual const ExpressionName &preferredInputName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	virtual const ExpressionName &preferredDisplayName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
 	virtual const ExpressionName &getName(size_t index) const;
 	virtual void setName(const ExpressionName &ename, size_t index = 1, bool force = true);
 	virtual void setName(string sname, size_t index, bool force = true);
@@ -73,9 +73,9 @@ class ExpressionItem {
 	virtual void removeName(size_t index);
 	virtual bool hasName(const string &sname) const;
 	virtual bool hasNameCaseSensitive(const string &sname) const;
-	virtual const ExpressionName &findName(int abbreviation = -1, int use_unicode = -1, int plural = -1) const;
+	virtual const ExpressionName &findName(int abbreviation = -1, int use_unicode = -1, int plural = -1, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
 	
-	virtual const string &title(bool return_name_if_no_title = true, bool use_unicode = false) const;
+	virtual const string &title(bool return_name_if_no_title = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
 	
 	virtual void setTitle(string title_);		
 	

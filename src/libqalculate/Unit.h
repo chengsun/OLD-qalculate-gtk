@@ -45,10 +45,10 @@ class Unit : public ExpressionItem {
 	bool isCurrency() const;
 	void setPlural(string name_, bool force = true);
 	void setSingular(string name_, bool force = true);
-	virtual string print(bool plural_, bool short_, bool use_unicode = false) const;
-	virtual const string &plural(bool return_singular_if_no_plural = true, bool use_unicode = false) const;
-	virtual const string &singular(bool return_short_if_no_singular = true, bool use_unicode = false) const;
-	virtual const string &shortName(bool use_unicode = false) const;
+	virtual string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	virtual const string &plural(bool return_singular_if_no_plural = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	virtual const string &singular(bool return_short_if_no_singular = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	virtual const string &shortName(bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
 	virtual bool isUsedByOtherUnits() const;
 	virtual Unit* baseUnit() const;
 	virtual MathStructure &baseValue(MathStructure &mvalue, MathStructure &mexp) const;
@@ -127,7 +127,7 @@ class AliasUnit_Composite : public AliasUnit {
 	virtual ExpressionItem *copy() const;
 	virtual void set(const ExpressionItem *item);
 	
-	virtual string print(bool plural_, bool short_, bool use_unicode = false) const;
+	virtual string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
 	virtual Prefix *prefix() const;
 	virtual int prefixExponent() const;	
 	virtual void set(Unit *u, int exp_ = 1, Prefix *prefix_ = NULL);
@@ -158,7 +158,7 @@ class CompositeUnit : public Unit {
 		virtual void setPrefix(size_t index, Prefix *prefix);
 		virtual size_t countUnits() const;
 		virtual void del(Unit *u);
-		virtual string print(bool plural_, bool short_, bool use_unicode = false) const;
+		virtual string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
 		virtual int subtype() const;
 		virtual bool containsRelativeTo(Unit *u) const;
 		virtual MathStructure generateMathStructure() const;
