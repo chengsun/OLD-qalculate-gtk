@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
-"POT-Creation-Date: 2003-08-09 17:38+0200\n"
+"POT-Creation-Date: 2003-08-09 18:32+0200\n"
 "PO-Revision-Date: 2003-08-09 17:34+0200\n"
 "Last-Translator: Niklas Knutsson <nq@altern.org>\n"
 "Language-Team: Swedish\n"
@@ -20,7 +20,7 @@ msgstr ""
 msgid "Powerful and easy to use calculator"
 msgstr "Kraftfull och användarvänlig miniräknare"
 
-#: data/qalculate.desktop.in.h:2 data/qalculate.glade.h:51
+#: data/qalculate.desktop.in.h:2 data/qalculate.glade.h:52
 msgid "Qalculate!"
 msgstr "Qalculate!"
 
@@ -173,190 +173,194 @@ msgid "EXP"
 msgstr "EXP"
 
 #: data/qalculate.glade.h:38
+msgid "Execute"
+msgstr "Exekvera"
+
+#: data/qalculate.glade.h:39
 msgid "Expression"
 msgstr "Uttryck"
 
-#: data/qalculate.glade.h:39 src/callbacks.cc:956
+#: data/qalculate.glade.h:40 src/callbacks.cc:956
 msgid "Functions"
 msgstr "Funktioner"
 
-#: data/qalculate.glade.h:40
+#: data/qalculate.glade.h:41
 msgid "Gra"
 msgstr "Gra"
 
-#: data/qalculate.glade.h:41
+#: data/qalculate.glade.h:42
 msgid "Gradians"
 msgstr "Gradienter"
 
-#: data/qalculate.glade.h:42
+#: data/qalculate.glade.h:43
 msgid "Hexadecimal"
 msgstr "Hexadecimal"
 
-#: data/qalculate.glade.h:43
+#: data/qalculate.glade.h:44
 msgid "History"
 msgstr "Historik"
 
-#: data/qalculate.glade.h:44
+#: data/qalculate.glade.h:45
 msgid "Load global definitions on start"
 msgstr "Inhämta systemvida definitioner vid programstart"
 
-#: data/qalculate.glade.h:45
+#: data/qalculate.glade.h:46
 msgid "Non-scientific"
 msgstr "Ovetenskaplig"
 
-#: data/qalculate.glade.h:46
+#: data/qalculate.glade.h:47
 msgid "Normal"
 msgstr "Normal"
 
-#: data/qalculate.glade.h:47
+#: data/qalculate.glade.h:48
 msgid "Number Base"
 msgstr "Nummerbas"
 
-#: data/qalculate.glade.h:48
+#: data/qalculate.glade.h:49
 msgid "Octal"
 msgstr "Oktal"
 
-#: data/qalculate.glade.h:49 src/callbacks.cc:1999 src/callbacks.cc:2008
+#: data/qalculate.glade.h:50 src/callbacks.cc:1999 src/callbacks.cc:2008
 msgid "Precision"
 msgstr "Precision"
 
-#: data/qalculate.glade.h:50
+#: data/qalculate.glade.h:51
 msgid "Preferences"
 msgstr "Inställningar"
 
-#: data/qalculate.glade.h:52
+#: data/qalculate.glade.h:53
 msgid "Rad"
 msgstr "Rad"
 
-#: data/qalculate.glade.h:53
+#: data/qalculate.glade.h:54
 msgid "Radians"
 msgstr "Radianer"
 
-#: data/qalculate.glade.h:54
+#: data/qalculate.glade.h:55
 msgid "Result"
 msgstr "Resultat"
 
-#: data/qalculate.glade.h:55
+#: data/qalculate.glade.h:56
 msgid "SQRT"
 msgstr "√"
 
-#: data/qalculate.glade.h:56
+#: data/qalculate.glade.h:57
 msgid "STO"
 msgstr "STO"
 
-#: data/qalculate.glade.h:57
+#: data/qalculate.glade.h:58
 msgid "Save Result"
 msgstr "Spara resultatet"
 
-#: data/qalculate.glade.h:58
+#: data/qalculate.glade.h:59
 msgid "Save definitions"
 msgstr "Spara definitioner"
 
-#: data/qalculate.glade.h:59
+#: data/qalculate.glade.h:60
 msgid "Save definitions on exit"
 msgstr "Spara definitioner vid programavslut"
 
-#: data/qalculate.glade.h:60
+#: data/qalculate.glade.h:61
 msgid "Save mode"
 msgstr "Spara programläge"
 
-#: data/qalculate.glade.h:61
+#: data/qalculate.glade.h:62
 msgid "Save mode on exit"
 msgstr "Spara programläge vid avslut"
 
-#: data/qalculate.glade.h:62
+#: data/qalculate.glade.h:63
 msgid "Scientific"
 msgstr "Vetenskaplig"
 
-#: data/qalculate.glade.h:63
+#: data/qalculate.glade.h:64
 msgid "Short unit format"
 msgstr "Kort enhetsformat"
 
-#: data/qalculate.glade.h:64
+#: data/qalculate.glade.h:65
 msgid "Signs"
 msgstr "Tecken"
 
-#: data/qalculate.glade.h:65 src/callbacks.cc:779 src/callbacks.cc:1798
+#: data/qalculate.glade.h:66 src/callbacks.cc:779 src/callbacks.cc:1798
 msgid "Units"
 msgstr "Enheter"
 
-#: data/qalculate.glade.h:66
+#: data/qalculate.glade.h:67
 msgid "Use prefixes"
 msgstr "Använd prefix"
 
-#: data/qalculate.glade.h:67 src/callbacks.cc:870
+#: data/qalculate.glade.h:68 src/callbacks.cc:870
 msgid "Variables"
 msgstr "Variabler"
 
-#: data/qalculate.glade.h:68
+#: data/qalculate.glade.h:69
 msgid "^ (power)"
 msgstr "^(upphöjt med)"
 
-#: data/qalculate.glade.h:69
+#: data/qalculate.glade.h:70
 msgid "_Convert to"
 msgstr "_Omvandla till enhet"
 
-#: data/qalculate.glade.h:70
+#: data/qalculate.glade.h:71
 msgid "_Edit"
 msgstr "_Redigera"
 
-#: data/qalculate.glade.h:71
+#: data/qalculate.glade.h:72
 msgid "_Insert"
 msgstr "_Infoga"
 
-#: data/qalculate.glade.h:72
+#: data/qalculate.glade.h:73
 msgid "_Quit"
 msgstr "_Avsluta"
 
-#: data/qalculate.glade.h:73
+#: data/qalculate.glade.h:74
 msgid "cos"
 msgstr "cos"
 
-#: data/qalculate.glade.h:74
+#: data/qalculate.glade.h:75
 msgid "hyp"
 msgstr "hyp"
 
-#: data/qalculate.glade.h:75
+#: data/qalculate.glade.h:76
 msgid "item6"
 msgstr ""
 
-#: data/qalculate.glade.h:76
+#: data/qalculate.glade.h:77
 msgid "item7"
 msgstr ""
 
-#: data/qalculate.glade.h:77
+#: data/qalculate.glade.h:78
 msgid "ln"
 msgstr "ln"
 
-#: data/qalculate.glade.h:78
+#: data/qalculate.glade.h:79
 msgid "log"
 msgstr "log"
 
-#: data/qalculate.glade.h:79
+#: data/qalculate.glade.h:80
 msgid "metres"
 msgstr ""
 
-#: data/qalculate.glade.h:80
+#: data/qalculate.glade.h:81
 msgid "more >>"
 msgstr "Mer >>"
 
-#: data/qalculate.glade.h:81
+#: data/qalculate.glade.h:82
 msgid "no description"
 msgstr "Ingen beskrivning tillgänglig."
 
-#: data/qalculate.glade.h:82
+#: data/qalculate.glade.h:83
 msgid "sin"
 msgstr "sin"
 
-#: data/qalculate.glade.h:83
+#: data/qalculate.glade.h:84
 msgid "tan"
 msgstr "tan"
 
-#: data/qalculate.glade.h:84
+#: data/qalculate.glade.h:85
 msgid "x<sup>2</sup>"
 msgstr "x<sup>2</sup>"
 
-#: data/qalculate.glade.h:85
+#: data/qalculate.glade.h:86
 msgid "x<sup>y</sup>"
 msgstr "x<sup>y</sup>"
 
