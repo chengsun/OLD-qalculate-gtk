@@ -308,30 +308,17 @@ void MedianFunction::calculate2(Manager *mngr) {
 		largs.push_back(vargs[i]->value());
 	}
 	largs.sort();
-/*	unsigned int i = 0;
-	for(list<long double>::iterator it = largs.begin(); it != largs.end(); ++it) {
-		vargs[i] = *it;
-		i++;
-	}*/
-/*	if(u)
-		u->add
-		(uargs[0]);*/
 	list<long double>::iterator it = largs.begin();
 	for(unsigned int i = 0; i < largs.size() / 2 - 1; i++) {
-	    printf("%i %i %i %Lf\n", largs.size(), largs.size() / 2, i, *it);
 	    ++it;
-	}
-	printf("4 %Lf\n", *it);
+	}	
 	if(vargs.size() % 2 == 0) {
-		printf("1 %Lf\n", *it);
 		mngr->value(*it);
 		++it;
-		printf("2 %Lf\n", *it);		
 		mngr->add(*it, PLUS_CH);
 		mngr->add(2, DIVISION_CH);
 	} else {
 		++it;
-		printf("3 %Lf\n", *it);		
 		mngr->value(*it);
 	}
 }

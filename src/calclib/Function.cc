@@ -59,19 +59,16 @@ void Function::name(string new_name, bool force) {
 int Function::args(const string &str) {
 	int itmp = 0, i = 0, i2 = 0, i3 = 0, i4 = 0;
 	vargs.clear();
-	printf("ARGS1 %s\n", str.c_str());
 	if(!str.empty()) {
 		itmp = 1;
 		while(1) {
 			if((i = str.find_first_of(COMMA_S, i)) != (int) string::npos) {
 				if((i3 = str.find_first_of(LEFT_BRACKET_S, i4)) < i && i3 >= 0) {
-					printf("ARGS(\n");
 					i = str.find_first_of(RIGHT_BRACKET_S, i3);
 					i4 = i;
 					if(i == (int) string::npos)
 						break;
 				} else {
-					printf("ARGS2 %s\n", str.substr(i2, i - i2).c_str());
 					if(itmp <= args() || args() < 0) {
 						Manager *mngr = calc->calculate(str.substr(i2, i - i2));
 						vargs.push_back(mngr);
@@ -82,7 +79,6 @@ int Function::args(const string &str) {
 					itmp++;
 				}
 			} else {
-				printf("ARGS3 %s\n", str.substr(i2, str.length() - i2).c_str());
 				if(itmp <= args() || args() < 0) {
 					Manager *mngr = calc->calculate(str.substr(i2, str.length() - i2));
 					vargs.push_back(mngr);			
@@ -280,7 +276,6 @@ Manager *UserFunction::calculate(const string &argv) {
 			string stmp = eq_calc;
 			string svar;
 			int i2 = 0;
-			printf("UserFunction 1: %s\n", stmp.c_str());
 			for(int i = 0; i < args(); i++) {
 				svar = '\\';
 				if('x' + i > 'z')
@@ -289,16 +284,13 @@ Manager *UserFunction::calculate(const string &argv) {
 					svar += 'x' + i;
 				while(1) {
 					if((i2 = stmp.find(svar)) != (int) string::npos) {
-						printf("UserFunction 2: %s\n", svargs[i].c_str());
 						stmp.replace(i2, 2, svargs[i]);
-						printf("UserFunction 3: %s\n", stmp.c_str());
 					} else {
 						break;
 					}
 				}
 			}
 			svargs.clear();
-			printf("UserFunction 4: %s\n", stmp.c_str());
 			Manager *mngr = calc->calculate(stmp);
 			return mngr;
 		} else {

@@ -29,7 +29,6 @@ EqNumber::EqNumber(long double value_, Calculator *parent, char operation_) : Eq
 	mngr = new Manager(calc, value_);
 }
 EqNumber::EqNumber(string str, Calculator *parent, char operation_) : EqItem(operation_, parent) {
-//	printf("EqNr1: %s\n", str.c_str());
 	string ssave = str;
 	char s = PLUS_CH;
 	for(int i = 0; i < (int) str.length() - 1; i++) {
@@ -51,7 +50,6 @@ EqNumber::EqNumber(string str, Calculator *parent, char operation_) : EqItem(ope
 		int id = s2i(str.substr(1, str.length() - 2));
 		mngr = calc->getId(id);
 		if(s == MINUS_CH) mngr->add(-1, MULTIPLICATION_CH);
-//		printf("EqNr2: %s\n", mngr->print().c_str());		
 		mngr->ref();
 		calc->delId(id);
 		return;
@@ -124,7 +122,6 @@ EqContainer::~EqContainer() {
 }
 EqContainer::EqContainer(string str, Calculator *parent, char operation_) : EqItem(operation_, parent) {
 	mngr = new Manager(calc);
-//	printf("EqCon: %s\n", str.c_str());
 	char buffer[100];
 	EqContainer *eq_c;
 	long double dtmp;
@@ -226,7 +223,6 @@ goto_place1:
 	}
 }
 void EqContainer::add(string *str, char s) {
-//	printf("EqCon::Add: %s\n", str->c_str());
 	if(str->length() > 0) {
 		string stmp = str[0];
 		if(str->find_first_not_of(OPERATORS_S) != string::npos) {
