@@ -14,11 +14,6 @@
 
 #include "includes.h"
 #include <time.h>
-#include "Fraction.h"
-
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
 
 /*
  * Standard gettext macros.
@@ -100,6 +95,5 @@ bool is_not_in(const char *str, char c);
 int sign_place(string *str, unsigned int start = 0);
 long long int gcd(long long int i1, long long int i2);
 long double gcd_d(long double i1, long double i2);
-string &remove_trailing_zeros(string &str, int decimals_to_keep = 0, bool expand = false, bool decrease = false);
 
 #endif

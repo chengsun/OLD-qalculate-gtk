@@ -12,8 +12,6 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-class Manager;
-
 #define MULTIPLICATION_MANAGER	MULTIPLICATION_CH
 #define ADDITION_MANAGER	PLUS_CH
 #define POWER_MANAGER		POWER_CH
@@ -25,12 +23,7 @@ class Manager;
 #define MATRIX_MANAGER		'm'
 #define ALTERNATIVE_MANAGER	'a'
 
-#include "Calculator.h"
-#include "Unit.h"
-#include "Function.h"
-#include "Fraction.h"
-#include "Integer.h"
-#include "Matrix.h"
+#include "includes.h"
 
 class Manager {
 
@@ -46,6 +39,7 @@ class Manager {
 		Fraction *fr;
 		Matrix *mtrx;
 		bool b_exact;
+		bool b_protect;
 		
 		void transform(const Manager *mngr, char type_, MathOperation op, bool reverse_ = false);		
 		void altclean();
@@ -58,7 +52,7 @@ class Manager {
 		void init();
 		void push_back(Manager *mngr);
 		
-		Manager(void);
+		Manager();
 		Manager(long double value_);		
 		Manager(long int numerator_, long int denominator_, long int fraction_exp_ = 0);		
 		Manager(string var_);	
@@ -68,7 +62,7 @@ class Manager {
 		Manager(const Fraction *fraction_);
 		Manager(const Matrix *matrix_);					
 		Manager(const Vector *vector_);
-		~Manager(void);
+		~Manager();
 		void setNull();
 		void set(const Manager *mngr);
 		void set(const Function *f, ...);		
@@ -87,7 +81,7 @@ class Manager {
 		void addAlternative(const Manager *mngr);
 		int compare(const Manager *mngr, int sortflags = SORT_SCIENTIFIC) const;
 		void sort(int sortflags = SORT_SCIENTIFIC);					
-		void clear(void);
+		void clear();
 		bool equals(const Manager *mngr) const;
 		long double value() const;
 		Fraction *fraction() const;
@@ -99,6 +93,7 @@ class Manager {
 		Manager *base() const;
 		Manager *exponent() const;
 		Function *function() const;
+		void recalculateFunctions();
 		bool isText() const;
 		bool isUnit() const;
 		bool isUnit_exp() const;
@@ -126,11 +121,14 @@ class Manager {
 		bool convert(string unit_str);		
 		bool convert(const Manager *unit_mngr);				
 		string print(NumberFormat nrformat = NUMBER_FORMAT_NORMAL, int displayflags = DISPLAY_FORMAT_DEFAULT, int min_decimals = 0, int max_decimals = -1, bool *in_exact = NULL, bool *usable = NULL, Prefix *prefix = NULL, bool toplevel = true, bool *plural = NULL, Integer *l_exp = NULL, bool in_composite = false, bool in_power = false) const;
-		void ref(void);
-		void unref(void);
-		char type(void) const;
+		void ref();
+		void unref();
+		void protect(bool do_protect = true);
+		bool isProtected() const;
+		char type() const;
 		
 		void replace(Manager *replace_this, Manager *replace_with);
+		void replace_no_copy(Manager *replace_this, Manager *replace_with);
 		void differentiate(string x_var);
 
 };

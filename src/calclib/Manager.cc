@@ -11,14 +11,22 @@
 
 
 #include "Manager.h"
+#include "Calculator.h"
+#include "Unit.h"
+#include "Function.h"
+#include "Fraction.h"
+#include "Integer.h"
+#include "Matrix.h"
+#include "util.h"
 
 void Manager::init() {
 	refcount = 1;
 	b_exact = true;
+	b_protect = false;
 	fr = new Fraction();
 	mtrx = NULL;
 }
-Manager::Manager(void) {
+Manager::Manager() {
 	init();
 	clear();
 }
@@ -890,6 +898,7 @@ bool Manager::add(const Manager *mngr, MathOperation op, bool translate_) {
 							Integer *n = mngr->fraction()->getInteger();
 							n->setNegative(false);
 							Manager *mngr2 = new Manager(this);
+							n->add(-1);
 							for(; n->isPositive(); n->add(-1)) {
 								add(mngr2, MULTIPLY);
 							}
@@ -1365,67 +1374,6 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 	if(displayflags == DISPLAY_FORMAT_DEFAULT) {
 		displayflags = DISPLAY_FORMAT_ALWAYS_DISPLAY_EXACT;
 	}
-/*	if(c_type == VALUE_MANAGER) {
-		long double new_value = d_value;
-		switch(nrformat) {
-			case NUMBER_FORMAT_DECIMALS: {
-				str2 = CALCULATOR->value2str_decimals(d_value, precision);
-				break;
-			}
-			case NUMBER_FORMAT_EXP: {
-				str2 = CALCULATOR->value2str_exp(d_value, precision);
-				break;
-			}
-			case NUMBER_FORMAT_EXP_PURE: {
-				str2 = CALCULATOR->value2str_exp_pure(d_value, precision);
-				break;
-			}
-			case DISPLAY_FORMAT_USE_PREFIXES: {
-				if(l_exp) {
-					str2 = CALCULATOR->value2str_prefix(d_value, *l_exp, precision, displayflags & DISPLAY_FORMAT_SHORT_UNITS, &new_value, prefix, !in_composite);
-					if((displayflags & DISPLAY_FORMAT_SHORT_UNITS) && (displayflags & DISPLAY_FORMAT_NONASCII)) gsub("micro", SIGN_MICRO, str2);
-					break;
-				}
-			}
-			case NUMBER_FORMAT_NORMAL: {
-				str2 = CALCULATOR->value2str(d_value, precision);
-				break;
-			}			
-			case NUMBER_FORMAT_HEX: {
-				str2 = CALCULATOR->value2str_hex(d_value, precision);
-				break;
-			}
-			case NUMBER_FORMAT_OCTAL: {
-				str2 = CALCULATOR->value2str_octal(d_value, precision);
-				break;
-			}
-			case NUMBER_FORMAT_BIN: {
-				str2 = CALCULATOR->value2str_bin(d_value, precision);
-				break;
-			}			
-		}	
-		bool minus = false;
-		if(str2.substr(0, strlen(MINUS_STR)) == MINUS_STR) {
-			str2 = str2.substr(strlen(MINUS_STR), str2.length() - strlen(MINUS_STR));
-			minus = true;
-		}
-		if(!in_composite) CALCULATOR->remove_trailing_zeros(str2, decimals_to_keep, max_decimals);
-		if(minus) {
-			if(displayflags & DISPLAY_FORMAT_NONASCII) {
-				str2.insert(0, SIGN_MINUS);
-			} else {
-				str2.insert(0, MINUS_STR);
-			}
-		}
-		str += str2;
-		if(displayflags & DISPLAY_FORMAT_TAGS) {
-			int i = str.find("E");
-			if(i != string::npos && i != str.length() - 1 && (is_in(str[i + 1], PLUS_S, MINUS_S, NUMBERS_S, NULL))) {
-				str.replace(i, 1, "<small>E</small>");
-			}
-		}
-		if(plural) *plural = (new_value > 1 || new_value < -1);
-	} else */
 	if(c_type == FRACTION_MANAGER) {
 		str += fr->print(nrformat, displayflags, min_decimals, max_decimals, prefix, in_exact, usable, false, NULL, l_exp, in_composite, in_power);
 	} else if(c_type == MATRIX_MANAGER) {
@@ -1441,7 +1389,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 			}			
 			str += str2; str += " ";
 		}
-		if(o_unit->type() == 'D') {
+		if(o_unit->unitType() == COMPOSITE_UNIT) {
 			Manager *mngr = ((CompositeUnit*) o_unit)->generateManager(false);
 			int displayflags_d = displayflags;
 			if(!(displayflags_d & DISPLAY_FORMAT_USE_PREFIXES)) displayflags_d = displayflags_d | DISPLAY_FORMAT_USE_PREFIXES;
@@ -1573,7 +1521,7 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 							prefix_ = 2;
 						}
 					}*/				
-				} else if(mngrs[i + 1]->type() == UNIT_MANAGER && mngrs[i + 1]->o_unit->type() != 'D') {
+				} else if(mngrs[i + 1]->type() == UNIT_MANAGER && mngrs[i + 1]->o_unit->unitType() != COMPOSITE_UNIT) {
 					l_exp = new Integer(1);
 					prefix_ = 2;						
 				}
@@ -1754,14 +1702,14 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 }
 bool Manager::testDissolveCompositeUnit(const Unit *u) {
 	if(c_type == UNIT_MANAGER) {
-		if(o_unit->type() == 'D') {
+		if(o_unit->unitType() == COMPOSITE_UNIT) {
 			if(((CompositeUnit*) o_unit)->containsRelativeTo(u)) {
 				Manager *mngr = ((CompositeUnit*) o_unit)->generateManager();
 				moveto(mngr);
 				mngr->unref();
 				return true;
 			}
-		} else if(o_unit->type() == 'A' && o_unit->baseUnit()->type() == 'D') {
+		} else if(o_unit->unitType() == ALIAS_UNIT && o_unit->baseUnit()->unitType() == COMPOSITE_UNIT) {
 			if(((CompositeUnit*) (o_unit->baseUnit()))->containsRelativeTo(u)) {
 /*				Manager *mngr = o_unit->baseUnit()->convert(o_unit);
 				Manager *mngr2 = ((CompositeUnit*) o_unit->baseUnit())->generateManager();
@@ -1779,11 +1727,11 @@ bool Manager::testDissolveCompositeUnit(const Unit *u) {
 }
 bool Manager::testCompositeUnit(const Unit *u) {
 	if(c_type == UNIT_MANAGER) {
-		if(o_unit->type() == 'D') {
+		if(o_unit->unitType() == COMPOSITE_UNIT) {
 			if(((CompositeUnit*) o_unit)->containsRelativeTo(u)) {
 				return true;
 			}
-		} else if(o_unit->type() == 'A' && o_unit->baseUnit()->type() == 'D') {
+		} else if(o_unit->unitType() == ALIAS_UNIT && o_unit->baseUnit()->unitType() == COMPOSITE_UNIT) {
 			if(((CompositeUnit*) (o_unit->baseUnit()))->containsRelativeTo(u)) {
 				return true;
 			}		
@@ -1814,6 +1762,20 @@ void Manager::clean() {
 		}				
 	}
 }
+void Manager::recalculateFunctions() {
+	for(int i = 0; i < mngrs.size(); i++) {
+		mngrs[i]->recalculateFunctions();
+	}
+	switch(c_type) {
+		case FUNCTION_MANAGER: {
+			clean();
+			Manager *mngr_f = function()->calculate(mngrs);
+			moveto(mngr_f);
+			mngr_f->unref();
+			break;
+		}				
+	}
+}
 void Manager::finalize() {
 	dissolveAllCompositeUnits();		
 	syncUnits();
@@ -1822,8 +1784,8 @@ void Manager::finalize() {
 void gatherInformation(Manager *mngr, vector<Unit*> &base_units, vector<AliasUnit*> &alias_units) {
 	switch(mngr->type()) {
 		case UNIT_MANAGER: {
-			switch(mngr->o_unit->type()) {
-				case 'U': {
+			switch(mngr->o_unit->unitType()) {
+				case BASE_UNIT: {
 					for(int i = 0; i < base_units.size(); i++) {
 						if(base_units[i] == mngr->o_unit) {
 							return;
@@ -1832,7 +1794,7 @@ void gatherInformation(Manager *mngr, vector<Unit*> &base_units, vector<AliasUni
 					base_units.push_back(mngr->o_unit);
 					break;
 				}
-				case 'A': {
+				case ALIAS_UNIT: {
 					for(int i = 0; i < alias_units.size(); i++) {
 						if(alias_units[i] == mngr->o_unit) {
 							return;
@@ -1841,7 +1803,7 @@ void gatherInformation(Manager *mngr, vector<Unit*> &base_units, vector<AliasUni
 					alias_units.push_back((AliasUnit*) (mngr->o_unit));				
 					break;
 				}
-				case 'D': {
+				case COMPOSITE_UNIT: {
 					mngr = ((CompositeUnit*) (mngr->o_unit))->generateManager();
 					gatherInformation(mngr, base_units, alias_units);
 					break;
@@ -1878,7 +1840,7 @@ void Manager::syncUnits() {
 	CompositeUnit *cu;
 	bool b = false;
 	for(int i = 0; i < alias_units.size(); i++) {
-		if(alias_units[i]->baseUnit()->type() == 'D') {
+		if(alias_units[i]->baseUnit()->unitType() == COMPOSITE_UNIT) {
 			b = false;
 			cu = (CompositeUnit*) alias_units[i]->baseUnit();
 			for(int i2 = 0; i2 < base_units.size(); i2++) {
@@ -1909,8 +1871,8 @@ void Manager::syncUnits() {
 		alias_units.erase(alias_units.begin() + i);
 		for(int i2 = 0; i2 < cu->units.size(); i2++) {
 			b = false;
-			switch(cu->units[i2]->firstBaseUnit()->type()) {
-				case 'U': {
+			switch(cu->units[i2]->firstBaseUnit()->unitType()) {
+				case BASE_UNIT: {
 					for(int i = 0; i < base_units.size(); i++) {
 						if(base_units[i] == cu->units[i2]->firstBaseUnit()) {
 							b = true;
@@ -1920,7 +1882,7 @@ void Manager::syncUnits() {
 					if(!b) base_units.push_back((Unit*) cu->units[i2]->firstBaseUnit());
 					break;
 				}
-				case 'A': {
+				case ALIAS_UNIT: {
 					for(int i = 0; i < alias_units.size(); i++) {
 						if(alias_units[i] == cu->units[i2]->firstBaseUnit()) {
 							b = true;
@@ -1930,7 +1892,7 @@ void Manager::syncUnits() {
 					if(!b) alias_units.push_back((AliasUnit*) cu->units[i2]->firstBaseUnit());				
 					break;
 				}
-				case 'D': {
+				case COMPOSITE_UNIT: {
 					Manager *mngr = ((CompositeUnit*) cu->units[i2]->firstBaseUnit())->generateManager();
 					gatherInformation(mngr, base_units, alias_units);
 					break;
@@ -1968,7 +1930,7 @@ void Manager::syncUnits() {
 		true;
 	}	
 	for(int i = 0; i < alias_units.size(); i++) {
-		if(alias_units[i]->baseUnit()->type() == 'U') {
+		if(alias_units[i]->baseUnit()->unitType() == BASE_UNIT) {
 			for(int i2 = 0; i2 < base_units.size(); i2++) {
 				if(alias_units[i]->baseUnit() == base_units[i2]) {
 					goto erase_alias_unit_3;
@@ -1997,7 +1959,7 @@ void Manager::syncUnits() {
 bool Manager::dissolveAllCompositeUnits() {
 	switch(type()) {
 		case UNIT_MANAGER: {
-			if(o_unit->type() == 'D') {
+			if(o_unit->unitType() == COMPOSITE_UNIT) {
 				Manager *mngr = ((CompositeUnit*) o_unit)->generateManager();			
 				moveto(mngr);
 				mngr->unref();
@@ -2056,7 +2018,7 @@ bool Manager::convert(const Unit *u) {
 	if(isNumber() || c_type == STRING_MANAGER) return false;
 	bool b = false;	
 	if(c_type == UNIT_MANAGER && o_unit == u) return false;
-	if(u->type() == 'D' && !(c_type == UNIT_MANAGER && o_unit->baseUnit() == u)) {
+	if(u->unitType() == COMPOSITE_UNIT && !(c_type == UNIT_MANAGER && o_unit->baseUnit() == u)) {
 		Manager *mngr = ((CompositeUnit*) u)->generateManager();
 		b = convert(mngr);
 		mngr->unref();
@@ -2245,11 +2207,21 @@ bool Manager::convert(const Unit *u) {
 	}
 }
 void Manager::unref() {
-	refcount--;
-	if(refcount <= 0) delete this;
+	if(!b_protect) {
+		refcount--;
+		if(refcount <= 0) delete this;
+	}
 }
 void Manager::ref() {
-	refcount++;
+	if(!b_protect) {
+		refcount++;
+	}
+}
+void Manager::protect(bool do_protect) {
+	b_protect = do_protect;
+}
+bool Manager::isProtected() const {
+	return b_protect;
 }
 char Manager::type() const {
 	return c_type;
@@ -2314,6 +2286,16 @@ void Manager::replace(Manager *replace_this, Manager *replace_with) {
 	}
 	for(int i = 0; i < mngrs.size(); i++) {
 		mngrs[i]->replace(replace_this, replace_with);
+	}
+	clean();
+}
+void Manager::replace_no_copy(Manager *replace_this, Manager *replace_with) {
+	for(int i = 0; i < mngrs.size(); i++) {
+		if(mngrs[i]->equals(replace_this)) {
+			mngrs[i]->unref();
+			mngrs[i] = replace_with;
+		}
+		mngrs[i]->replace_no_copy(replace_this, replace_with);
 	}
 	clean();
 }

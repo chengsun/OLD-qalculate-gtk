@@ -12,8 +12,6 @@
 #ifndef ERROR_H
 #define ERROR_H
 
-class Error;
-
 #include "includes.h"
 
 class Error {

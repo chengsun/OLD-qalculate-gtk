@@ -10,6 +10,10 @@
 */
 
 #include "EqItem.h"
+#include "Calculator.h"
+#include "Manager.h"
+#include "util.h"
+#include "Fraction.h"
 
 EqItem::EqItem(MathOperation operation_) {
 	op = operation_;

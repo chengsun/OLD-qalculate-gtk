@@ -26,10 +26,10 @@ Manager *mngr;
 Variable *vans, *vAns;
 GtkWidget *functions_window;
 string selected_function_category;
-string selected_function;
+Function *selected_function;
 GtkWidget *variables_window;
 string selected_variable_category;
-string selected_variable;
+Variable *selected_variable;
 string result_text;
 GtkWidget *units_window;
 string selected_unit_category;
@@ -70,6 +70,8 @@ int main (int argc, char **argv) {
 	//load application specific preferences
 	load_preferences();
 
+	mngr = new Manager();
+
 	//load global definitions
 	gstr = g_build_filename(PACKAGE_DATA_DIR, PACKAGE, "qalculate.cfg", NULL);
 	if(load_global_defs && !CALCULATOR->load(gstr, false)) {
@@ -81,9 +83,6 @@ int main (int argc, char **argv) {
 	gstr = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate.cfg", NULL);
 	CALCULATOR->load(gstr, true);
 	g_free(gstr);
-
-	mngr = new Manager();
-
 
 	//get ans variable objects or create if they do not exist
 	vans = CALCULATOR->getVariable(_("ans"));
@@ -102,10 +101,10 @@ int main (int argc, char **argv) {
 	//reset
 	functions_window = NULL;
 	selected_function_category = _("All");
-	selected_function = "";
+	selected_function = NULL;
 	variables_window = NULL;
 	selected_variable_category = _("All");
-	selected_variable = "";
+	selected_variable = NULL;
 	units_window = NULL;
 	selected_unit_category = _("All");
 	selected_unit = NULL;

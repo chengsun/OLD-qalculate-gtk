@@ -12,14 +12,11 @@
 #ifndef INTEGER_H
 #define INTEGER_H
 
-class Integer;
-
 /**
 * An arbitrary precision integer.
 */
 
 #include "includes.h"
-#include "config.h"
 
 #ifdef HAVE_LIBCLN
 #define WANT_OBFUSCATING_OPERATORS

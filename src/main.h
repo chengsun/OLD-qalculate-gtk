@@ -37,6 +37,6 @@ enum {
 	BASE_HEX = 4
 };
 
-#include "Calculator.h"
+#include "qalculate.h"
 
 #endif /* MAIN_H */

@@ -12,23 +12,28 @@
 #ifndef VARIABLE_H
 #define VARIABLE_H
 
-class Variable;
-
-#include "Calculator.h"
+#include "ExpressionItem.h"
+#include "includes.h"
 
 /**
 * Contains a known variable.
 */
 
-class Variable {
+class Variable : public ExpressionItem {
+
   protected:
-	string sname, scat, stitle;
+
 	Manager *mngr;
-	bool b_user, b_changed, b_builtin, b_exact;
+
   public:
-	Variable(string cat_, string name_, Manager *mngr_, string title_ = "", bool uservariable_ = true, bool is_builtin = false);
-	Variable(string cat_, string name_, long double value_, string title_ = "", bool uservariable_ = true, bool is_builtin = false);	
-	~Variable(void);
+  
+	Variable(string cat_, string name_, Manager *mngr_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	Variable(const Variable *variable);
+	~Variable();
+
+	virtual ExpressionItem *copy() const;
+	virtual void set(const ExpressionItem *item);
+	virtual int type() const;
 
 	/**
 	* Sets the value of the variable.
@@ -36,51 +41,17 @@ class Variable {
 	* @see #value
 	*/
 	void set(Manager *mngr_);
+
 	/**
 	* Returns the value of the variable.
 	*/	
-	Manager *get(void);
-	const Manager *get(void) const;	
+	Manager *get();
+
 	/**
-	* Sets the name of the variable.
+	* Returns the value of the variable.
 	*/	
-	void setName(string name_, bool force = true);
-	/**
-	* Returns the name of the variable.
-	*/		
-	string name(void) const;
-	/**
-	* Returns the title/descriptive name of the variable.
-	*/		
-	string title(bool return_name_if_no_title = true) const;
-	/**
-	* Sets the title/descriptive name of the variable.
-	*/			
-	void setTitle(string title_);		
-	/**
-	* Sets the value of the variable.
-	*
-	* @see #set
-	*/			
-	void setValue(long double value_);
-	/**
-	* Returns the category of the variable.
-	*/			
-	string category(void) const;
-	/**
-	* Sets the category of the variable.
-	*/			
-	void setCategory(string cat_);		
-	/**
-	* Tells if the variable is editable for the end user.
-	*/			
-	bool isUserVariable(void) const;
-	bool hasChanged() const;
-	bool setUserVariable(bool is_user_var);
-	bool setChanged(bool has_changed);
-	bool isBuiltinVariable() const;
-	bool isPrecise() const;
-	void setPrecise(bool is_precise);
+	const Manager *get() const;	
+
 };
 
 #endif

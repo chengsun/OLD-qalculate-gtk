@@ -992,6 +992,13 @@ void Integer::exp10(long int value) {
 	multiply(&exp10);
 }
 void Integer::pow(const Integer *exp) {
+#ifdef HAVE_LIBCLN
+	if(exp->isZero()) {
+		set(1);
+	} else {
+		integ = expt_pos(integ, exp->getCL_I());
+	}
+#else
 	if(exp->isZero()) {
 		set(1);
 	} else if(!exp->isOne()) {
@@ -1004,8 +1011,16 @@ void Integer::pow(const Integer *exp) {
 			multiply(&this_saved);
 		}
 	}
+#endif
 }
 void Integer::pow(long int exp) {
+#ifdef HAVE_LIBCLN
+	if(exp == 0) {
+		set(1);
+	} else {
+		integ = expt_pos(integ, exp);
+	}
+#else
 	if(exp == 0) {
 		set(1);
 	} else if(exp != 1) {
@@ -1018,6 +1033,7 @@ void Integer::pow(long int exp) {
 			multiply(&this_saved);
 		}
 	}
+#endif
 }
 bool Integer::gcd(const Integer *integer, Integer **divisor) const {
 #ifdef HAVE_LIBCLN

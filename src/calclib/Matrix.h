@@ -12,12 +12,7 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-class Matrix;
-class Vector;
-
-#include "Calculator.h"
-#include "Manager.h"
-#include "Integer.h"
+#include "includes.h"
 
 /**
 * Contains a matrix.

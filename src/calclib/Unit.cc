@@ -11,53 +11,42 @@
 
 #include "Unit.h"
 #include "util.h"
+#include "Calculator.h"
+#include "Manager.h"
+#include "Prefix.h"
 
-Unit::Unit(string cat_, string name_, string plural_, string short_name_, string title_, bool is_user_unit) {
-	b_user = is_user_unit;
-	remove_blank_ends(name_);
+Unit::Unit(string cat_, string name_, string plural_, string short_name_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active) {
 	remove_blank_ends(plural_);
 	remove_blank_ends(short_name_);
-	remove_blank_ends(cat_);
-	setCategory(cat_);
-	sname = name_;
 	sshortname = short_name_;
-	stitle = title_;
 	splural = plural_;
-	b_changed = false;
+}
+Unit::Unit() {
+	sshortname = "";
+	splural = "";
+}
+Unit::Unit(const Unit *unit) {
+	set(unit);
 }
 Unit::~Unit() {}
+ExpressionItem *Unit::copy() const {
+	return new Unit(this);
+}
+void Unit::set(const ExpressionItem *item) {
+	if(item->type() == TYPE_UNIT) {
+		splural = ((Unit*) item)->plural(false);
+		sshortname = ((Unit*) item)->shortName(false);
+	}
+	ExpressionItem::set(item);
+}
 bool Unit::isUsedByOtherUnits() const {
 	return CALCULATOR->unitIsUsedByOtherUnits(this);
-}
-void Unit::setTitle(string title_) {
-	remove_blank_ends(title_);
-	stitle = title_;
-	b_changed = true;
-}
-string Unit::title(bool return_name_if_no_title) const {
-	if(return_name_if_no_title && stitle.empty()) {
-		return name();
-	}
-	return stitle;
-}
-void Unit::setCategory(string cat_) {
-	remove_blank_ends(cat_);
-	scategory = cat_;
-	b_changed = true;
-}
-void Unit::setName(string name_, bool force) {
-	remove_blank_ends(name_);
-	if(name_ != sname) {
-		sname = CALCULATOR->getUnitName(name_, this, force);
-		b_changed = true;
-	}
-	CALCULATOR->unitNameChanged(this);
 }
 void Unit::setPlural(string name_, bool force) {
 	remove_blank_ends(name_);
 	if(name_ != splural) {
 		splural = CALCULATOR->getUnitName(name_, this, force);
-		b_changed = true;
+		setChanged(true);
 	}
 	CALCULATOR->unitPluralChanged(this);
 }
@@ -68,15 +57,15 @@ void Unit::setShortName(string name_, bool force) {
 	} else if(name_ != sshortname) {
 		sshortname = CALCULATOR->getUnitName(name_, this, force);
 	}
-	b_changed = true;
+	setChanged(true);
 	CALCULATOR->unitShortNameChanged(this);
 
 }
-string Unit::category() const {
-	return scategory;
-}
 string Unit::name() const {
 	return sname;
+}
+string Unit::referenceName() const {
+	return name();
 }
 string Unit::plural(bool return_name_if_no_plural) const {
 	if(return_name_if_no_plural && splural.empty()) {
@@ -121,8 +110,11 @@ Manager *Unit::convertToBase(Manager *value_, Manager *exp_) const {
 long int Unit::baseExp(long int exp_) const {
 	return exp_;
 }
-char Unit::type() const {
-	return 'U';
+int Unit::type() const {
+	return TYPE_UNIT;
+}
+int Unit::unitType() const {
+	return BASE_UNIT;
 }
 bool Unit::isChildOf(const Unit *u) const {
 	return false;
@@ -133,11 +125,11 @@ bool Unit::isParentOf(const Unit *u) const {
 bool Unit::hasComplexRelationTo(const Unit *u) const {
 	if(u == this || u->baseUnit() != this) return false;
 	Unit *fbu = (Unit*) u;
-	if(fbu->type() != 'A') return false;
+	if(fbu->unitType() != ALIAS_UNIT) return false;
 	while(1) {
 		if(fbu == this) return false;
 		if(((AliasUnit*) fbu)->hasComplexExpression()) return true;
-		if(fbu->type() != 'A') return false;
+		if(fbu->unitType() != ALIAS_UNIT) return false;
 		fbu = (Unit*) ((AliasUnit*) fbu)->firstBaseUnit();
 	}
 }
@@ -150,7 +142,7 @@ Manager *Unit::convert(const Unit *u, Manager *value_, Manager *exp_, bool *conv
 		u->baseValue(value_, exp_);		
 		convertToBase(value_, exp_);
 		b = true;
-	} else if(u->type() == 'D') {
+	} else if(u->unitType() == COMPOSITE_UNIT) {
 		CompositeUnit *cu = (CompositeUnit*) u;
 		for(int i = 0; i < cu->units.size(); i++) {
 			if(convert(cu->units[i], value_, exp_)) b = true;
@@ -161,12 +153,8 @@ Manager *Unit::convert(const Unit *u, Manager *value_, Manager *exp_, bool *conv
 	if(converted) *converted = b;
 	return value_;
 }
-bool Unit::isUserUnit() const {return b_user;}
-bool Unit::hasChanged() const {return b_changed;}
-void Unit::setUserUnit(bool is_user_unit) {b_user = is_user_unit;}
-void Unit::setChanged(bool has_changed) {b_changed = has_changed;}
 
-AliasUnit::AliasUnit(string cat_, string name_, string plural_, string short_name_, string title_, const Unit *alias, string relation, long int exp_, string reverse, bool is_user_unit) : Unit(cat_, name_, plural_, short_name_, title_, is_user_unit) {
+AliasUnit::AliasUnit(string cat_, string name_, string plural_, string short_name_, string title_, const Unit *alias, string relation, long int exp_, string reverse, bool is_local, bool is_builtin, bool is_active) : Unit(cat_, name_, plural_, short_name_, title_, is_local, is_builtin, is_active) {
 	unit = (Unit*) alias;
 	remove_blank_ends(relation);
 	remove_blank_ends(reverse);
@@ -174,11 +162,37 @@ AliasUnit::AliasUnit(string cat_, string name_, string plural_, string short_nam
 	rvalue = reverse;
 	exp = exp_;
 	exp_mngr = new Manager(exp, 1);
-	b_changed = false;
-	b_exact = true;
+}
+AliasUnit::AliasUnit() {
+	unit = NULL;
+	value = "";
+	rvalue = "";
+	exp = 1;
+	exp_mngr = new Manager(exp, 1);	
+}
+AliasUnit::AliasUnit(const AliasUnit *unit) {
+	set(unit);
 }
 AliasUnit::~AliasUnit() {
 	exp_mngr->unref();
+}
+ExpressionItem *AliasUnit::copy() const {
+	return new AliasUnit(this);
+}
+void AliasUnit::set(const ExpressionItem *item) {
+	if(item->type() == TYPE_UNIT) {
+		Unit::set(item);
+		if(((Unit*) item)->unitType() == ALIAS_UNIT) {
+			AliasUnit *u = (AliasUnit*) item;
+			unit = (Unit*) u->firstBaseUnit();
+			exp = u->firstBaseExp();
+			value = u->expression();
+			rvalue = u->reverseExpression();
+			exp_mngr->set(exp, 1);
+		}
+	} else {
+		ExpressionItem::set(item);
+	}
 }
 string AliasUnit::baseName() const {
 	return unit->baseName();
@@ -238,7 +252,7 @@ const Unit* AliasUnit::firstBaseUnit() const {
 }
 void AliasUnit::setBaseUnit(const Unit *alias) {
 	unit = (Unit*) alias;
-	b_changed = true;
+	setChanged(true);
 }
 string AliasUnit::expression() const {
 	return value;
@@ -248,16 +262,17 @@ string AliasUnit::reverseExpression() const {
 }
 void AliasUnit::setExpression(string relation) {
 	remove_blank_ends(relation);
-	if(relation.empty())
+	if(relation.empty()) {
 		value = "1";
-	else
+	} else {
 		value = relation;
-	b_changed = true;		
+	}
+	setChanged(true);
 }
 void AliasUnit::setReverseExpression(string reverse) {
 	remove_blank_ends(reverse);
 	rvalue = reverse;
-	b_changed = true;
+	setChanged(true);
 }
 Manager *AliasUnit::baseValue(Manager *value_, Manager *exp_) const {
 	if(!exp_) exp_ = new Manager(1, 1);		
@@ -365,13 +380,13 @@ Manager *AliasUnit::firstBaseValue(Manager *value_, Manager *exp_) const {
 void AliasUnit::setExponent(long int exp_) {
 	exp = exp_;
 	exp_mngr->set(exp, 1);
-	b_changed = true;
+	setChanged(true);
 }
 long int AliasUnit::firstBaseExp() const {
 	return exp;
 }
-char AliasUnit::type() const {
-	return 'A';
+int AliasUnit::unitType() const {
+	return ALIAS_UNIT;
 }
 bool AliasUnit::isChildOf(const Unit *u) const {
 	if(u == this) return false;
@@ -381,7 +396,7 @@ bool AliasUnit::isChildOf(const Unit *u) const {
 	while(1) {
 		u2 = (Unit*) ((AliasUnit*) u2)->firstBaseUnit();
 		if(u == u2) return true;
-		if(u2->type() != 'A') return false;
+		if(u2->unitType() != ALIAS_UNIT) return false;
 	}
 	return false;
 }
@@ -389,7 +404,7 @@ bool AliasUnit::isParentOf(const Unit *u) const {
 	if(u == this) return false;
 	if(u->baseUnit() != baseUnit()) return false;
 	while(1) {
-		if(u->type() != 'A') return false;
+		if(u->unitType() != ALIAS_UNIT) return false;
 		u = ((AliasUnit*) u)->firstBaseUnit();
 		if(u == this) return true;
 	}
@@ -405,33 +420,45 @@ bool AliasUnit::hasComplexRelationTo(const Unit *u) const {
 		while(1) {
 			if(fbu == this) return false;
 			if(((AliasUnit*) fbu)->hasComplexExpression()) return true;
-			if(fbu->type() != 'A') return false;
+			if(fbu->unitType() != ALIAS_UNIT) return false;
 			fbu = (Unit*) ((AliasUnit*) fbu)->firstBaseUnit();			
 		}	
 	} else if(isChildOf(u)) {
 		Unit *fbu = (Unit*) this;
-		if(fbu->type() != 'A') return false;
+		if(fbu->unitType() != ALIAS_UNIT) return false;
 		while(1) {
 			if(fbu == u) return false;
 			if(((AliasUnit*) fbu)->hasComplexExpression()) return true;
-			if(fbu->type() != 'A') return false;
+			if(fbu->unitType() != ALIAS_UNIT) return false;
 			fbu = (Unit*) ((AliasUnit*) fbu)->firstBaseUnit();
 		}			
 	} else {
 		return hasComplexRelationTo(baseUnit()) || u->hasComplexRelationTo(u->baseUnit());
 	}
 }
-bool AliasUnit::isPrecise() const {
-	return b_exact;
-}
-void AliasUnit::setPrecise(bool is_precise) {
-	b_exact = is_precise;
-}
 
 AliasUnit_Composite::AliasUnit_Composite(const Unit *alias, long int exp_, const Prefix *prefix_) : AliasUnit("", alias->name(), alias->plural(false), alias->shortName(false), "", alias, "", exp_, "") {
 	prefixv = (Prefix*) prefix_;
 }
-AliasUnit_Composite::~AliasUnit_Composite(void) {}
+AliasUnit_Composite::AliasUnit_Composite(const AliasUnit_Composite *unit) {
+	set(unit);
+}
+AliasUnit_Composite::~AliasUnit_Composite() {}
+ExpressionItem *AliasUnit_Composite::copy() const {
+	return new AliasUnit_Composite(this);
+}
+void AliasUnit_Composite::set(const ExpressionItem *item) {
+	if(item->type() == TYPE_UNIT) {
+		if(((Unit*) item)->unitType() == ALIAS_UNIT) {
+			AliasUnit::set(item);
+			prefixv = (Prefix*) ((AliasUnit_Composite*) item)->prefix();
+		} else {
+			Unit::set(item);
+		}
+	} else {
+		ExpressionItem::set(item);
+	}
+}
 string AliasUnit_Composite::printShort(bool plural_) const {
 	if(firstBaseUnit()->shortName(false).empty())
 		return print(plural_);
@@ -490,13 +517,32 @@ Manager *AliasUnit_Composite::convertToFirstBase(Manager *value_, Manager *exp_)
 	return value_;
 }
 
-CompositeUnit::CompositeUnit(string cat_, string name_, string title_, string base_expression_, bool is_user_unit) : Unit(cat_, name_, "", "", title_, is_user_unit) {
+CompositeUnit::CompositeUnit(string cat_, string name_, string title_, string base_expression_, bool is_local, bool is_builtin, bool is_active) : Unit(cat_, name_, "", "", title_, is_local, is_builtin, is_active) {
 	setBaseExpression(base_expression_);
-	b_changed = false;
+	setChanged(false);
 }
-CompositeUnit::~CompositeUnit(void) {
+CompositeUnit::CompositeUnit(const CompositeUnit *unit) {
+	set(unit);
+}
+CompositeUnit::~CompositeUnit() {
 	for(int i = 0; i < units.size(); i++)
 		delete units[i];
+}
+ExpressionItem *CompositeUnit::copy() const {
+	return new CompositeUnit(this);
+}
+void CompositeUnit::set(const ExpressionItem *item) {
+	if(item->type() == TYPE_UNIT) {
+		Unit::set(item);
+		if(((Unit*) item)->unitType() == COMPOSITE_UNIT) {
+			CompositeUnit *u = (CompositeUnit*) item;
+			for(int i = 0; i < u->units.size(); i++) {
+				units.push_back(new AliasUnit_Composite(u->units[i]));
+			}
+		}
+	} else {
+		ExpressionItem::set(item);
+	}
 }
 void CompositeUnit::add(const Unit *u, long int exp_, const Prefix *prefix) {
 	bool b = false;
@@ -575,7 +621,7 @@ string CompositeUnit::print(bool plural_, bool short_) const {
 	if(b2) str += RIGHT_BRACKET_STR;
 	return str;
 }
-string CompositeUnit::name(void) const {
+string CompositeUnit::name() const {
 	return print(false, false);
 }
 string CompositeUnit::plural(bool return_name_if_no_plural) const {
@@ -584,20 +630,20 @@ string CompositeUnit::plural(bool return_name_if_no_plural) const {
 string CompositeUnit::shortName(bool return_name_if_no_short, bool plural_) const {
 	return print(plural_, true);
 }
-char CompositeUnit::type() const {
-	return 'D';
+int CompositeUnit::unitType() const {
+	return COMPOSITE_UNIT;
 }
 bool CompositeUnit::containsRelativeTo(const Unit *u) const {
 	if(u == this) return false;
 	CompositeUnit *cu;
 	for(int i = 0; i < units.size(); i++) {
 		if(u == units[i] || u->baseUnit() == units[i]->baseUnit()) return true;
-		if(units[i]->baseUnit()->type() == 'D') {
+		if(units[i]->baseUnit()->unitType() == COMPOSITE_UNIT) {
 			cu = (CompositeUnit*) units[i]->baseUnit();
 			if(cu->containsRelativeTo(u)) return true;
 		}
 	}
-	if(u->type() == 'D') {
+	if(u->unitType() == COMPOSITE_UNIT) {
 		cu = (CompositeUnit*) u;
 		for(int i = 0; i < cu->units.size(); i++) {	
 			if(containsRelativeTo(cu->units[i]->baseUnit())) return true;
@@ -637,13 +683,13 @@ Manager *CompositeUnit::generateManager(bool cleaned) const {
 		return mngr;
 	}
 }
-string CompositeUnit::internalName() const {
+string CompositeUnit::referenceName() const {
 	return sname;
 }
 void CompositeUnit::setBaseExpression(string base_expression_) {
 	units.clear();
 	if(base_expression_.empty()) {
-		b_changed = true;
+		setChanged(true);
 		return;
 	}
 	bool b_var = CALCULATOR->variablesEnabled();
@@ -718,6 +764,6 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	CALCULATOR->setUnknownVariablesEnabled(b_var_u);	
 	CALCULATOR->setFunctionsEnabled(b_func);	
 	CALCULATOR->setUnitsEnabled(b_unit);			
-	b_changed = true;
+	setChanged(true);
 }
 

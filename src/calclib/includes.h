@@ -12,6 +12,36 @@
 #ifndef INCLUDES_H
 #define INCLUDES_H
 
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
+
+class Calculator;
+class Manager;
+class Unit;
+class Variable;
+class ExpressionItem;
+class Function;
+class Prefix;
+class Integer;
+class Error;
+class CompositeUnit;
+class AliasUnit;
+class AliasUnit_Composite;
+class Fraction;
+class Matrix;
+class Vector;
+class UserFunction;
+class EqItem;
+class EqNumber;
+class EqContainer;
+
+enum {
+	TYPE_VARIABLE,
+	TYPE_FUNCTION,
+	TYPE_UNIT
+};
+
 typedef enum {
 	NUMBER_FORMAT_NORMAL,
 	NUMBER_FORMAT_DECIMALS,
@@ -174,8 +204,8 @@ extern char *NUMBERS_S_AND_MINUS_S_AND_DOT_S;*/
 #define DOT		"."
 #define COMMA		","
 #define NUMBERS		"0123456789"
-#define SIGNS		"+-*/^E"
-#define OPERATORS	"+-*/^E"
+#define SIGNS		"+-*/^"
+#define OPERATORS	"+-*/^"
 #define	BRACKETS	"()"
 #define LEFT_BRACKET	"("
 #define	RIGHT_BRACKET	")"

@@ -12,11 +12,7 @@
 #ifndef PREFIX_H
 #define PREFIX_H
 
-class Prefix;
-
 #include "includes.h"
-#include "Calculator.h"
-#include "Integer.h"
 
 class Prefix {
   protected:

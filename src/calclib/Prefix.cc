@@ -10,6 +10,9 @@
 */
 
 #include "Prefix.h"
+#include "Calculator.h"
+#include "Integer.h"
+#include "Fraction.h"
 
 Prefix::Prefix(long int exp10, string long_name, string short_name) {
 	exp = exp10;

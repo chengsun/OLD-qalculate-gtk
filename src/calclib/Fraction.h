@@ -12,16 +12,12 @@
 #ifndef FRACTION_H
 #define FRACTION_H
 
-class Fraction;
-
 #include "includes.h"
-#include "Prefix.h"
 #include "Integer.h"
 
 class Fraction {
   protected:
 	Integer num, den;
-	char vbuffer[1001];
 	bool b_exact;
   public:
   	Fraction();

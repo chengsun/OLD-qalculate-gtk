@@ -10,6 +10,11 @@
 */
 
 #include "Matrix.h"
+#include "Calculator.h"
+#include "Manager.h"
+#include "Integer.h"
+#include "Fraction.h"
+#include "util.h"
 
 /**
 * Contains a matrix.
@@ -89,6 +94,7 @@ void Matrix::transpose() {
 bool Matrix::inverse() {
 	Manager *mngr = determinant();
 	if(!mngr) {
+		CALCULATOR->error(true, _("Could not calculate determinant in inverse function."), NULL);
 		return false;
 	}
 	if(mngr->isNull()) {
@@ -104,6 +110,7 @@ bool Matrix::inverse() {
 }
 bool Matrix::adjoint() {
 	if(columns() != rows()) {
+		CALCULATOR->error(true, _("The adjoint can only be calculated for matrices with an equal number of rows and columns."), NULL);
 		return false;
 	}
 	b_vector = false;
@@ -129,7 +136,7 @@ bool Matrix::rank(bool ascending) {
 		for(int index_c = 1; index_c <= columns(); index_c++) {
 			mngr = get(index_r, index_c);
 			if(!mngr->isFraction()) {
-				CALCULATOR->error(true, "Only numbers can be ranked -- halted on \"%s\".", mngr->print().c_str(), NULL);
+				CALCULATOR->error(true, _("Only numbers can be ranked -- halted on \"%s\"."), mngr->print().c_str(), NULL);
 				return false;
 			}
 			bool b = false;
@@ -186,7 +193,7 @@ bool Matrix::sort(bool ascending) {
 		for(int index_c = 1; index_c <= columns(); index_c++) {
 			mngr = new Manager(get(index_r, index_c));
 			if(!mngr->isFraction()) {
-				CALCULATOR->error(true, "Only numbers can be sorted -- halted on \"%s\".", mngr->print().c_str(), NULL);
+				CALCULATOR->error(true, _("Only numbers can be sorted -- halted on \"%s\"."), mngr->print().c_str(), NULL);
 				return false;
 			}
 			bool b = false;
@@ -254,6 +261,7 @@ bool Matrix::isOrthogonal() const {
 }
 Manager *Matrix::determinant() const {
 	if(columns() != rows()) {
+		CALCULATOR->error(true, _("The determinant can only be calculated for matrices with an equal number of rows and columns."), NULL);
 		return NULL;
 	}
 	Manager *mngr = new Manager();
@@ -420,7 +428,7 @@ bool Matrix::multiply(const Matrix *matrix) {
 					mngr.set(get(index_r, index));
 					mngr.add(matrix->get(index, index_c), MULTIPLY);
 					product.get(index_r, index_c)->add(&mngr, ADD);
-					if(product.get(index_r, index_c)->isPrecise()) {
+					if(!product.get(index_r, index_c)->isPrecise()) {
 						product.setPrecise(false);
 					}	
 				}			

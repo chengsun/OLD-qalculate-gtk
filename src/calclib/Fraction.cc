@@ -12,7 +12,7 @@
 #include "Fraction.h"
 #include "util.h"
 #include "Calculator.h"
-#include <sstream>
+#include "Prefix.h"
 
 #ifdef HAVE_LIBCLN
 #define WANT_OBFUSCATING_OPERATORS
@@ -571,6 +571,7 @@ int Fraction::sqrt(int solution) {
 	b_exact = false;*/
 	if(isNegative()) {
 		CALCULATOR->error(true, "The square root is undefined for negative numbers.", NULL);	
+		return false;
 	}
 	if(!root(2)) {
 		return false;

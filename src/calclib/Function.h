@@ -12,74 +12,89 @@
 #ifndef FUNCTION_H
 #define FUNCTION_H
 
-class Function;
-class UserFunction;
+#include "ExpressionItem.h"
+#include "includes.h"
 
-#include "Calculator.h"
-#include "Matrix.h"
+typedef enum {
+	ARGUMENT_TYPE_FREE,
+	ARGUMENT_TYPE_TEXT,
+	ARGUMENT_TYPE_DATE,
+	ARGUMENT_TYPE_POSITIVE,
+	ARGUMENT_TYPE_NONNEGATIVE,
+	ARGUMENT_TYPE_NONZERO,	
+	ARGUMENT_TYPE_INTEGER,	
+	ARGUMENT_TYPE_POSITIVE_INTEGER,
+	ARGUMENT_TYPE_NONNEGATIVE_INTEGER,	
+	ARGUMENT_TYPE_NONZERO_INTEGER,		
+	ARGUMENT_TYPE_FRACTION,
+	ARGUMENT_TYPE_VECTOR,	
+	ARGUMENT_TYPE_MATRIX,
+	ARGUMENT_TYPE_FUNCTION,	
+	ARGUMENT_TYPE_UNIT,
+	ARGUMENT_TYPE_BOOLEAN
+} ArgumentType;
 
-class Function {
+
+class Function : public ExpressionItem {
+
   protected:
-  	bool b_exact;
+
 	int argc;
 	int max_argc;
 	vector<string> default_values;
-	string sname, stitle, sdescr, scat;
-	bool b_user, b_changed;
-	bool bpriv;
-	vector<string> sargs;
-	vector<Manager*> vargs;
-	vector<string> svargs;	
-	virtual void calculate2(Manager *mngr);	
-	virtual long double calculate3(void);		
-	bool testArgCount(int itmp);
-	virtual Manager *createFunctionManagerFromVArgs(int itmp);
-	virtual Manager *createFunctionManagerFromSVArgs(int itmp);	
-	virtual void clearVArgs();
-	virtual void clearSVArgs();	
+	hash_map<int, string> argnames;
+	hash_map<int, ArgumentType> argtypes;	
+	int last_arg_name_index, last_arg_type_index;
+	virtual void calculate(Manager *mngr, vector<Manager*> &vargs);			
+	bool testArgumentCount(int itmp);
+	virtual Manager *createFunctionManagerFromVArgs(vector<Manager*> &vargs);
+	virtual Manager *createFunctionManagerFromSVArgs(vector<string> &svargs);	
+	
   public:
-	Function(string cat_, string name_, int argc_, string title_ = "", string descr_ = "", bool priviliged_ = false, int max_argc_ = 0);
-	virtual ~Function(void);	
+	Function(string cat_, string name_, int argc_, string title_ = "", string descr_ = "", int max_argc_ = 0, bool is_active = true);
+	Function(const Function *function);
+	Function();
+	virtual ~Function();	
+
+	virtual ExpressionItem *copy() const;
+	virtual void set(const ExpressionItem *item);
+	virtual int type() const;	
+	
 	virtual Manager *calculate(const string &eq);
-	bool priviliged(void) const;
-	int args(void) const;
-	int minargs(void) const;	
-	int maxargs(void) const;		
-	string name(void) const;
-	void setName(string new_name, bool force = true);
-	int args(const string &str);
-	string category(void) const;
-	void setCategory(string cat_);	
-	string description(void) const;
-	void setDescription(string descr_);
-	string title(bool return_name_if_no_title = true) const;
-	void setTitle(string title_);	
-	string argName(int index) const;
-	void clearArgNames(void);
-	void addArgName(string name_);
-	bool setArgName(string name_, int index);
-	virtual bool isUserFunction(void) const;	
-	virtual bool isBuiltinFunction(void) const;		
-	virtual bool hasChanged(void) const;
-	virtual void setUserFunction(bool is_user_function);	
-	virtual void setChanged(bool has_changed);	
-	int stringArgs(const string &str);		
+	virtual Manager *calculate(vector<Manager*> &vargs);	
+	int args() const;
+	int minargs() const;	
+	int maxargs() const;		
+	int args(const string &str, vector<Manager*> &vargs);
+	int lastArgumentNameIndex() const;
+	int lastArgumentTypeIndex() const;	
+	string argumentName(int index);
+	ArgumentType argumentType(int index);	
+	const char *argumentTypeString(int index);		
+	void clearArgumentNames();
+	void clearArgumentTypes();	
+	void setArgumentName(string name_, int index);
+	void setArgumentType(ArgumentType type_, int index);	
+	int stringArgs(const string &str, vector<string> &svargs);		
 	void setDefaultValue(int arg_, string value_);
 	string getDefaultValue(int arg_) const;	
-	bool isPrecise() const;
-	void setPrecise(bool is_precise);	
-	Vector *produceVector(int begin = -1, int end = -1);
+	Vector *produceVector(vector<Manager*> &vargs, int begin = -1, int end = -1);
 };
 
 class UserFunction : public Function {
   protected:
 	string eq, eq_calc;	
   public:
-	UserFunction(string cat_, string name_, string eq_, bool is_user_function = true, int argc_ = -1, string title_ = "", string descr_ = "", int max_argc_ = 0);
-	string equation(void) const;
-	Manager *calculate(const string &argv);	
+	UserFunction(string cat_, string name_, string eq_, bool is_local = true, int argc_ = -1, string title_ = "", string descr_ = "", int max_argc_ = 0, bool is_active = true);
+	UserFunction(const UserFunction *function);
+	void set(const ExpressionItem *item);
+	ExpressionItem *copy() const;
+	string equation() const;
+	string internalEquation() const;
+	void calculate(Manager *mngr, vector<Manager*> &vargs);	
+	Manager *calculate(vector<Manager*> &vargs);	
+	Manager *calculate(const string &eq);	
 	void setEquation(string new_eq, int argc_ = -1, int max_argc_ = 0);	
-	bool isBuiltinFunction(void) const;
 };
 
 #endif

@@ -11,19 +11,11 @@
 
 #include "Function.h"
 #include "util.h"
+#include "Calculator.h"
+#include "Matrix.h"
+#include "Manager.h"
 
-Function::Function(string cat_, string name_, int argc_, string title_, string descr_, bool priviliged_, int max_argc_) {
-	b_user = false;
-	b_exact = true;
-	bpriv = priviliged_;
-	remove_blank_ends(cat_);
-	remove_blank_ends(title_);
-	remove_blank_ends(descr_);
-	remove_blank_ends(name_);
-	sname = name_;
-	stitle = title_;
-	setDescription(descr_);
-	setCategory(cat_);
+Function::Function(string cat_, string name_, int argc_, string title_, string descr_, int max_argc_, bool is_active) : ExpressionItem(cat_, name_, title_, descr_, false, true, is_active) {
 	argc = argc_;
 	if(max_argc_ < 0 || argc < 0) {
 		max_argc = -1;
@@ -35,34 +27,59 @@ Function::Function(string cat_, string name_, int argc_, string title_, string d
 			default_values.push_back("0");
 		}
 	}
-	sargs.clear();
-	b_changed = false;
+	last_arg_name_index = 0;
+	last_arg_type_index = 0;
 }
-Function::~Function(void) {}
-bool Function::priviliged(void) const {
-	return bpriv;
+Function::Function(const Function *function) {
+	set(function);
 }
-int Function::args(void) const {
+Function::Function() {
+	argc = 0;
+	max_argc = 0;
+	last_arg_name_index = 0;
+	last_arg_type_index = 0;
+}
+Function::~Function() {}
+
+ExpressionItem *Function::copy() const {
+	return new Function(this);
+}
+void Function::set(const ExpressionItem *item) {
+	if(item->type() == TYPE_FUNCTION) {
+		Function *f = (Function*) item;
+		argc = f->minargs();
+		max_argc = f->maxargs();
+		default_values.clear();
+		for(int i = argc + 1; i <= max_argc; i++) {
+			setDefaultValue(i, f->getDefaultValue(i));
+		}
+		last_arg_name_index = f->lastArgumentNameIndex();
+		last_arg_type_index = f->lastArgumentTypeIndex();
+		argnames.clear();
+		argtypes.clear();
+		for(int i = 1; i <= f->lastArgumentNameIndex(); i++) {
+			setArgumentName(f->argumentName(i), i);
+		}
+		for(int i = 1; i <= f->lastArgumentTypeIndex(); i++) {
+			setArgumentType(f->argumentType(i), i);
+		}		
+	}
+	ExpressionItem::set(item);
+}
+int Function::type() const {
+	return TYPE_FUNCTION;
+}
+
+int Function::args() const {
 	return max_argc;
 }
-int Function::minargs(void) const {
+int Function::minargs() const {
 	return argc;
 }
-int Function::maxargs(void) const {
+int Function::maxargs() const {
 	return max_argc;
 }
-string Function::name(void) const {
-	return sname;
-}
-void Function::setName(string new_name, bool force) {
-	remove_blank_ends(new_name);
-	if(new_name != sname) {
-		b_changed = true;
-		sname = CALCULATOR->getName(new_name, (void*) this, force);
-	}
-	CALCULATOR->functionNameChanged(this, bpriv);
-}
-int Function::args(const string &str) {
+int Function::args(const string &str, vector<Manager*> &vargs) {
 	int itmp = 0, i = 0, i2 = 0, i3 = 0, i4 = 0;
 	vargs.clear();
 	if(!str.empty()) {
@@ -120,55 +137,71 @@ int Function::args(const string &str) {
 	}
 	return itmp;
 }
-string Function::category(void) const {
-	return scat;
+int Function::lastArgumentNameIndex() const {
+	return last_arg_name_index;
 }
-void Function::setCategory(string cat_) {
-	remove_blank_ends(cat_);
-	scat = cat_;
-	b_changed = true;
+int Function::lastArgumentTypeIndex() const {	
+	return last_arg_type_index;
 }
-string Function::description(void) const {
-	return sdescr;
-}
-void Function::setDescription(string descr_) {
-	remove_blank_ends(descr_);
-	sdescr = descr_;
-	b_changed = true;
-}
-string Function::title(bool return_name_if_no_title) const {
-	if(return_name_if_no_title && stitle.empty()) {
-		return name();
+string Function::argumentName(int index) {
+	if(argnames.count(index)) {
+		return argnames[index];
 	}
-	return stitle;
-}
-void Function::setTitle(string title_) {
-	remove_blank_ends(title_);
-	stitle = title_;
-	b_changed = true;
-}
-string Function::argName(int index) const {
-	if(index > 0 && index <= sargs.size())
-		return sargs[index - 1];
 	return "";
 }
-void Function::clearArgNames(void) {
-	sargs.clear();
-	b_changed = true;
-}
-void Function::addArgName(string name_) {
-	sargs.push_back(name_);
-	b_changed = true;
-}
-bool Function::setArgName(string name_, int index) {
-	if(index > 0 && index <= sargs.size()) {
-		sargs[index - 1] = name_;
-		b_changed = true;
-		return true;
+ArgumentType Function::argumentType(int index) {
+	if(argtypes.count(index)) {
+		return argtypes[index];
 	}
-	return false;
+	return ARGUMENT_TYPE_FREE;
 }
-bool Function::testArgCount(int itmp) {
+const char *Function::argumentTypeString(int index) {
+	if(argtypes.count(index)) {
+		switch(argtypes[index]) {
+			case ARGUMENT_TYPE_TEXT: {return "text";}
+			case ARGUMENT_TYPE_DATE: {return "date";}
+			case ARGUMENT_TYPE_POSITIVE: {return "positive";}
+			case ARGUMENT_TYPE_NONNEGATIVE: {return "non-negative";}
+			case ARGUMENT_TYPE_NONZERO: {return "non-zero";}			
+			case ARGUMENT_TYPE_INTEGER: {return "integer";}
+			case ARGUMENT_TYPE_POSITIVE_INTEGER: {return "positive integer";}
+			case ARGUMENT_TYPE_NONNEGATIVE_INTEGER: {return "non-negative integer";}
+			case ARGUMENT_TYPE_NONZERO_INTEGER: {return "non-zero integer";}			
+			case ARGUMENT_TYPE_FRACTION: {return "number";}
+			case ARGUMENT_TYPE_VECTOR: {return "vector";}
+			case ARGUMENT_TYPE_MATRIX: {return "matrix";}
+			case ARGUMENT_TYPE_FUNCTION: {return "function";}
+			case ARGUMENT_TYPE_UNIT: {return "unit";}
+			case ARGUMENT_TYPE_BOOLEAN: {return "boolean";}
+		}
+	}
+	return NULL;
+}
+void Function::clearArgumentNames() {
+	argnames.clear();
+	last_arg_name_index = 0;
+	setChanged(true);
+}
+void Function::setArgumentName(string name_, int index) {
+	argnames[index] = name_;
+	if(index > last_arg_name_index) {
+		last_arg_name_index = index;
+	}
+	setChanged(true);
+}
+void Function::clearArgumentTypes() {
+	argtypes.clear();
+	last_arg_type_index = 0;
+	setChanged(true);
+}
+void Function::setArgumentType(ArgumentType type_, int index) {
+	argtypes[index] = type_;
+	if(index > last_arg_type_index) {
+		last_arg_type_index = index;
+	}		
+	setChanged(true);
+}
+bool Function::testArgumentCount(int itmp) {
 	if(itmp >= minargs()) {
 		if(itmp > maxargs() && maxargs() >= 0)
 			CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str());						
@@ -177,35 +210,34 @@ bool Function::testArgCount(int itmp) {
 	CALCULATOR->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str());
 	return false;
 }
-Manager *Function::createFunctionManagerFromVArgs(int itmp) {
+Manager *Function::createFunctionManagerFromVArgs(vector<Manager*> &vargs) {
 	Manager *mngr = new Manager(this, NULL);
-	for(int i = 0; i < itmp; i++) {
+	for(int i = 0; i < vargs.size(); i++) {
 		mngr->addFunctionArg(vargs[i]);
 	}
 	return mngr;
 }
-Manager *Function::createFunctionManagerFromSVArgs(int itmp) {
+Manager *Function::createFunctionManagerFromSVArgs(vector<string> &svargs) {
 	Manager *mngr = new Manager(this, NULL); 
-	for(int i = 0; i < itmp; i++) {
+	for(int i = 0; i < svargs.size(); i++) {
 		Manager *mngr2 = new Manager(svargs[i]);
 		mngr->addFunctionArg(mngr2);
 		mngr2->unref();
 	}
 	return mngr;
 }
-void Function::clearVArgs() {
-	for(unsigned int i = 0; i < vargs.size(); i++) {
-		vargs[i]->unref();
-	}
-	vargs.clear();
-}
-void Function::clearSVArgs() {
-	svargs.clear();
-}
 Manager *Function::calculate(const string &argv) {
+	vector<Manager*> vargs;
+	args(argv, vargs);	
+	Manager *mngr = calculate(vargs);
+	for(int i = 0; i < vargs.size(); i++) {
+		vargs[i]->unref();
+	}	
+	return mngr;
+}
+Manager *Function::calculate(vector<Manager*> &vargs) {
 	Manager *mngr = NULL;
-	int itmp = args(argv);
-	if(testArgCount(itmp)) {
+	if(testArgumentCount(vargs.size())) {
 		mngr = new Manager();
 		bool b = false;
 		for(int i = 0; i < vargs.size(); i++) {
@@ -240,7 +272,7 @@ Manager *Function::calculate(const string &argv) {
 				}
 				if(!b) break;
 				Manager *mngr2 = new Manager();
-				calculate2(mngr2);
+				calculate(mngr2, vargs);
 				if(!isPrecise()) mngr2->setPrecise(false);
 				if(mngr->isNull()) {
 					mngr->moveto(mngr2);
@@ -251,39 +283,16 @@ Manager *Function::calculate(const string &argv) {
 			}
 			mngr->altclean();
 		} else {
-			calculate2(mngr);
+			calculate(mngr, vargs);
 		}
 		if(!isPrecise()) mngr->setPrecise(false);
 		CALCULATOR->checkFPExceptions(sname.c_str());	
 	} else {
-		mngr = createFunctionManagerFromVArgs(itmp);
-	}
-	clearVArgs();
+		mngr = createFunctionManagerFromVArgs(vargs);
+	}	
 	return mngr;
 }
-void Function::calculate2(Manager *mngr) {
-/*	if(u)
-		u->add
-		(uargs[0]);*/
-	mngr->set(calculate3());	
-}
-long double Function::calculate3() {
-	return 0;
-}
-bool Function::isBuiltinFunction(void) const {
-	return true;
-}
-bool Function::isUserFunction(void) const {
-	return b_user;
-}
-bool Function::hasChanged(void) const {
-	return b_changed;
-}
-void Function::setUserFunction(bool is_user_function) {
-	b_user = is_user_function;
-}
-void Function::setChanged(bool has_changed) {
-	b_changed = has_changed;
+void Function::calculate(Manager *mngr, vector<Manager*> &vargs) {
 }
 void Function::setDefaultValue(int arg_, string value_) {
 	if(arg_ > argc && arg_ <= max_argc && default_values.size() >= arg_ - argc) {
@@ -296,46 +305,7 @@ string Function::getDefaultValue(int arg_) const {
 	}
 	return "";
 }
-bool Function::isPrecise() const {
-	return b_exact;
-}
-void Function::setPrecise(bool is_precise) {
-	b_exact = is_precise;
-}
-Vector *Function::produceVector(int begin, int end) {	
-	if(begin < 0) {
-		begin = minargs();
-		if(begin < 0) begin = 0;
-	}
-	if(end < 0 || end >= vargs.size()) {
-		end = vargs.size() - 1;
-	}
-	Vector *v = new Vector();
-	for(int index = begin; index <= end; index++) {
-		if(vargs[index]->isMatrix()) {
-			for(int index_r = 1; index_r <= vargs[index]->matrix()->rows(); index_r++) {
-				for(int index_c = 1; index_c <= vargs[index]->matrix()->columns(); index_c++) {
-					if(!(index == begin && index_r == 1 && index_c == 1)) v->addComponent();
-					v->set(vargs[index]->matrix()->get(index_r, index_c), v->components());
-				}			
-			}
-		} else {
-			if(index != begin) v->addComponent();
-			v->set(vargs[index], v->components());
-		}	
-	}
-	return v;
-}
-
-UserFunction::UserFunction(string cat_, string name_, string eq_, bool is_user_function, int argc_, string title_, string descr_, int max_argc_) : Function(cat_, name_, argc_, title_, descr_, false, max_argc_) {
-	b_user = is_user_function;
-	setEquation(eq_, argc_, max_argc_);
-	b_changed = false;	
-}
-string UserFunction::equation(void) const {
-	return eq;
-}
-int Function::stringArgs(const string &str) {
+int Function::stringArgs(const string &str, vector<string> &svargs) {
 	int itmp = 0, i = 0, i2 = 0, i3 = 0, i4 = 0;
 	string stmp;
 	svargs.clear();
@@ -407,115 +377,153 @@ int Function::stringArgs(const string &str) {
 	}	
 	return itmp;
 }
-Manager *UserFunction::calculate(const string &argv) {
+
+Vector *Function::produceVector(vector<Manager*> &vargs, int begin, int end) {	
+	if(begin < 0) {
+		begin = minargs();
+		if(begin < 0) begin = 0;
+	}
+	if(end < 0 || end >= vargs.size()) {
+		end = vargs.size() - 1;
+	}
+	Vector *v = new Vector();
+	for(int index = begin; index <= end; index++) {
+		if(vargs[index]->isMatrix()) {
+			for(int index_r = 1; index_r <= vargs[index]->matrix()->rows(); index_r++) {
+				for(int index_c = 1; index_c <= vargs[index]->matrix()->columns(); index_c++) {
+					if(!(index == begin && index_r == 1 && index_c == 1)) v->addComponent();
+					v->set(vargs[index]->matrix()->get(index_r, index_c), v->components());
+				}			
+			}
+		} else {
+			if(index != begin) v->addComponent();
+			v->set(vargs[index], v->components());
+		}	
+	}
+	return v;
+}
+
+UserFunction::UserFunction(string cat_, string name_, string eq_, bool is_local, int argc_, string title_, string descr_, int max_argc_, bool is_active) : Function(cat_, name_, argc_, title_, descr_, max_argc_, is_active) {
+	b_local = is_local;
+	b_builtin = false;
+	setEquation(eq_, argc_, max_argc_);
+	setChanged(false);	
+}
+UserFunction::UserFunction(const UserFunction *function) {
+	set(function);
+}
+string UserFunction::equation() const {
+	return eq;
+}
+string UserFunction::internalEquation() const {
+	return eq_calc;
+}
+ExpressionItem *UserFunction::copy() const {
+	return new UserFunction(this);
+}
+void UserFunction::set(const ExpressionItem *item) {
+	if(item->type() == TYPE_FUNCTION) {
+		if(!item->isBuiltin()) {
+			eq = ((UserFunction*) item)->equation();
+			eq_calc = ((UserFunction*) item)->internalEquation();			
+		}
+		Function::set(item);
+	} else {
+		ExpressionItem::set(item);
+	}
+}
+
+Manager *UserFunction::calculate(vector<Manager*> &vargs) {
+	Function::calculate(vargs);
+}
+Manager *UserFunction::calculate(const string &eq) {
+	Function::calculate(eq);
+}
+void UserFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 
 	if(args() != 0) {
-		int itmp;
-		if((itmp = args(argv)) >= minargs()) {
-
-			if(itmp > maxargs() && maxargs() >= 0)
-				CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s arguments."), name().c_str(), i2s(maxargs()).c_str());						
-			string stmp = eq_calc;
-			string svar;
-			string v_str;
-			vector<int> v_id;
-			int i2 = 0;
-			int i_args = maxargs();
-			if(i_args < 0) {
-				i_args = minargs();
+		string stmp = eq_calc;
+		string svar;
+		string v_str;
+		vector<int> v_id;
+		int i2 = 0;
+		int i_args = maxargs();
+		if(i_args < 0) {
+			i_args = minargs();
+		}
+		vector<Manager*> mngr_v;										
+		for(int i = 0; i < i_args; i++) {
+			svar = '\\';
+			if('x' + i > 'z') {
+				svar += (char) ('a' + i - 3);
+			} else {
+				svar += 'x' + i;
 			}
-
-			vector<Manager*> mngr_v;										
-			for(int i = 0; i < i_args; i++) {
-
-				svar = '\\';
-				if('x' + i > 'z') {
-					svar += (char) ('a' + i - 3);
-				} else {
-					svar += 'x' + i;
-				}
-				i2 = 0;	
-				mngr_v.push_back(new Manager(vargs[i]));
-				v_id.push_back(CALCULATOR->addId(mngr_v[i], true));
-				v_str = LEFT_BRACKET ID_WRAP_LEFT;
-				v_str += i2s(v_id[v_id.size() - 1]);
-				v_str += ID_WRAP_RIGHT RIGHT_BRACKET;			
-				while(1) {
-
-					if((i2 = stmp.find(svar, i2)) != (int) string::npos) {
-						if(i2 != 0 && stmp[i2 - 1] == '\\') {
-							i2 += 2;
-						} else {
-//							svargs[i].insert(0, LEFT_BRACKET_STR);
-//							svargs[i] += RIGHT_BRACKET_STR;						
-//							stmp.replace(i2, 2, svargs[i]);
-							stmp.replace(i2, 2, v_str);
-						}
-					} else {
-						break;
-					}
-				}
-
-			}
-
-			if(maxargs() < 0) {
-				Vector *v = produceVector();			
-				mngr_v.push_back(new Manager(v));	
-				v_id.push_back(CALCULATOR->addId(mngr_v[mngr_v.size() - 1], true));
-				v_str = LEFT_BRACKET ID_WRAP_LEFT;
-				v_str += i2s(v_id[v_id.size() - 1]);
-				v_str += ID_WRAP_RIGHT RIGHT_BRACKET;	
-
-				while(1) {
-					if((i2 = stmp.find("\\v")) != (int) string::npos) {					
-						if(i2 != 0 && stmp[i2 - 1] == '\\') {
-							i2 += 2;
-						} else {
-//							mngr_v.push_back(new Manager(v));	
-//							v_id.push_back(CALCULATOR->addId(mngr_v[mngr_v.size() - 1], true));
-							stmp.replace(i2, 2, v_str);
-						}
-					} else {
-						break;
-					}
-				}
-				delete v;
-			} 		
-
+			i2 = 0;	
+			mngr_v.push_back(new Manager(vargs[i]));
+			v_id.push_back(CALCULATOR->addId(mngr_v[i], true));
+			v_str = LEFT_BRACKET ID_WRAP_LEFT;
+			v_str += i2s(v_id[v_id.size() - 1]);
+			v_str += ID_WRAP_RIGHT RIGHT_BRACKET;			
 			while(1) {
-				if((i2 = stmp.find("\\\\")) != (int) string::npos) {
-					stmp.replace(i2, 2, "\\");
+				if((i2 = stmp.find(svar, i2)) != (int) string::npos) {
+					if(i2 != 0 && stmp[i2 - 1] == '\\') {
+						i2 += 2;
+					} else {
+						stmp.replace(i2, 2, v_str);
+					}
 				} else {
 					break;
 				}
 			}
-			clearVArgs();							
-			Manager *mngr = CALCULATOR->calculate(stmp);
-			for(int i = 0; i < v_id.size(); i++) {
-				CALCULATOR->delId(v_id[i], true);
-				mngr_v[i]->unref();
-			}
-			if(!isPrecise()) mngr->setPrecise(false);
-			return mngr;
-		} else {
-			CALCULATOR->error(true, _("You need at least %s arguments in function %s()."), i2s(minargs()).c_str(), name().c_str());		
-			Manager *mngr = new Manager(this, NULL);
-			for(int i = 0; i < itmp; i++) {
-				Manager *mngr2 = CALCULATOR->calculate(svargs[i]);
-				mngr->addFunctionArg(mngr2);
-				mngr2->unref();
-			}
-			clearSVArgs();
-			return mngr;
 		}
-	} else {
-		Manager *mngr = CALCULATOR->calculate(eq_calc);
+
+		if(maxargs() < 0) {
+		
+			Vector *v = produceVector(vargs);			
+			mngr_v.push_back(new Manager(v));	
+			v_id.push_back(CALCULATOR->addId(mngr_v[mngr_v.size() - 1], true));
+			v_str = LEFT_BRACKET ID_WRAP_LEFT;
+			v_str += i2s(v_id[v_id.size() - 1]);
+			v_str += ID_WRAP_RIGHT RIGHT_BRACKET;	
+			while(1) {
+				if((i2 = stmp.find("\\v")) != (int) string::npos) {					
+					if(i2 != 0 && stmp[i2 - 1] == '\\') {
+						i2 += 2;
+					} else {
+						stmp.replace(i2, 2, v_str);
+					}
+				} else {
+					break;
+				}
+			}
+			delete v;
+		} 		
+
+		while(1) {
+			if((i2 = stmp.find("\\\\")) != (int) string::npos) {
+				stmp.replace(i2, 2, "\\");
+			} else {
+				break;
+			}
+		}
+		Manager *mngr2 = CALCULATOR->calculate(stmp);
+		mngr->set(mngr2);
+		mngr2->unref();
+		for(int i = 0; i < v_id.size(); i++) {
+			CALCULATOR->delId(v_id[i], true);
+			mngr_v[i]->unref();
+		}
 		if(!isPrecise()) mngr->setPrecise(false);
-		return mngr;
+	} else {
+		Manager *mngr2 = CALCULATOR->calculate(eq_calc);
+		mngr->set(mngr2);
+		mngr2->unref();
+		if(!isPrecise()) mngr->setPrecise(false);
 	}
 }
 void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
-	b_changed = true;
+	setChanged(true);
 	eq = new_eq;
 	default_values.clear();
 	if(argc_ < 0) {
@@ -604,7 +612,4 @@ void UserFunction::setEquation(string new_eq, int argc_, int max_argc_) {
 	eq_calc = new_eq;
 	argc = argc_;
 	max_argc = max_argc_;	
-}
-bool UserFunction::isBuiltinFunction(void) const {
-	return false;
 }

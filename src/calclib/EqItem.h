@@ -12,11 +12,7 @@
 #ifndef EQITEM_H
 #define EQITEM_H
 
-class EqItem;
-class EqNumber;
-class EqContainer;
-
-#include "Calculator.h"
+#include "includes.h"
 
 class EqItem {
   protected:  

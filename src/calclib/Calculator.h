@@ -12,18 +12,7 @@
 #ifndef CALCULATOR_H
 #define CALCULATOR_H
 
-class Calculator;
-
 #include "includes.h"
-#include "util.h"
-#include "Manager.h"
-#include "Unit.h"
-#include "EqItem.h"
-#include "Variable.h"
-#include "Function.h"
-#include "Error.h"
-#include "Prefix.h"
-#include "Integer.h"
 #include <ext/hash_map>
 
 extern Calculator *calculator;
@@ -49,6 +38,7 @@ class Calculator {
 	vector<string> default_signs;	
 	vector<string> default_real_signs;	
 	char *saved_locale;
+	int disable_errors_ref;
   public:
   
 	vector<Variable*> variables;
@@ -56,8 +46,8 @@ class Calculator {
 	vector<Unit*> units;	
 	vector<Prefix*> prefixes;
   
-	Calculator(void);
-	~Calculator(void);
+	Calculator();
+	~Calculator();
 
 	void addStringAlternative(string replacement, string standard);
 	void addDefauktStringAlternative(string replacement, string standard);
@@ -66,6 +56,9 @@ class Calculator {
 	void setAlwaysExact(bool always_exact);
 	void beginTemporaryInexact();
 	void endTemporaryInexact();
+
+	void beginTemporaryStopErrors();
+	void endTemporaryStopErrors();	
 
 	Variable *getVariable(int index) const;
 	Unit *getUnit(int index) const;	
@@ -88,42 +81,47 @@ class Calculator {
 	const char *getComma() const;	
 	void setLocale();
 	void unsetLocale();
-	string &remove_trailing_zeros(string &str, int decimals_to_keep = 0, bool expand = false, bool decrease = false);	
 	int addId(Manager *mngr, bool persistent = false);
 	Manager *getId(int id);	
 	void delId(int id, bool force = false);
-	bool functionsEnabled(void);
+	bool functionsEnabled();
 	void setFunctionsEnabled(bool enable);
-	bool variablesEnabled(void);
+	bool variablesEnabled();
 	void setVariablesEnabled(bool enable);	
-	bool unknownVariablesEnabled(void);
+	bool unknownVariablesEnabled();
 	void setUnknownVariablesEnabled(bool enable);		
-	bool donotCalculateVariables(void);	
+	bool donotCalculateVariables();	
 	void setDonotCalculateVariables(bool enable);			
-	bool unitsEnabled(void);
+	bool unitsEnabled();
 	void setUnitsEnabled(bool enable);	
-	int angleMode(void);
+	int angleMode();
 	void angleMode(int mode_);
-	void resetVariables(void);
-	void resetFunctions(void);	
-	void resetUnits(void);		
-	void reset(void);		
-	void addBuiltinVariables(void);	
-	void addBuiltinFunctions(void);
-	void addBuiltinUnits(void);	
+	void resetVariables();
+	void resetFunctions();	
+	void resetUnits();		
+	void reset();		
+	void addBuiltinVariables();	
+	void addBuiltinFunctions();
+	void addBuiltinUnits();	
 	Manager *calculate(string str);
 	Manager *convert(long double value, Unit *from_unit, Unit *to_unit);
 	Manager *convert(string str, Unit *from_unit, Unit *to_unit);	
 	Manager *convert(Manager *mngr, Unit *to_unit, bool always_convert = true);		
 	Manager *convert(Manager *mngr, string composite_);	
 	Manager *convertToCompositeUnit(Manager *mngr, CompositeUnit *cu, bool always_convert = true);		
-	void checkFPExceptions(void);
+	void expressionItemActivated(ExpressionItem *item);
+	void expressionItemDeactivated(ExpressionItem *item);
+	void expressionItemDeleted(ExpressionItem *item);
+	void nameChanged(ExpressionItem *item);
+	void checkFPExceptions();
 	void checkFPExceptions(const char *str);	
-	void deleteName(string name_, void *object = NULL);
+	void deleteName(string name_, ExpressionItem *object = NULL);
 	void deleteUnitName(string name_, Unit *object = NULL);	
 	Unit* addUnit(Unit *u, bool force = true);
-	void delUnit(Unit *u);	
 	void delUFV(void *object);		
+	ExpressionItem *getActiveExpressionItem(string name, ExpressionItem *item = NULL);
+	ExpressionItem *getActiveExpressionItem(ExpressionItem *item);
+	ExpressionItem *getExpressionItem(string name, ExpressionItem *item = NULL);
 	Unit* getUnit(string name_);
 	Unit* getCompositeUnit(string internal_name_);	
 	Variable* addVariable(Variable *v, bool force = true);
@@ -133,37 +131,25 @@ class Calculator {
 	void unitShortNameChanged(Unit *u);	
 	void unitPluralChanged(Unit *u);		
 	void setFunctionsAndVariables(string &str);
-	void setVariables(string &str);
-	void delVariable(Variable *v);	
 	Variable* getVariable(string name_);
+	ExpressionItem *addExpressionItem(ExpressionItem *item, bool force = true);
 	Function* addFunction(Function *f, bool force = true);
-	void setFunctions(string &str);
-	void delFunction(Function *f);		
 	Function* getFunction(string name_);	
 	void error(bool critical, const char *TEMPLATE,...);
-	Error* error(void);
-	Error* nextError(void);
+	Error* error();
+	Error* nextError();
 	bool variableNameIsValid(string name_);
 	string convertToValidVariableName(string name_);	
 	bool functionNameIsValid(string name_);
 	string convertToValidFunctionName(string name_);		
 	bool unitNameIsValid(string name_);
 	string convertToValidUnitName(string name_);		
-	bool nameTaken(string name_, void *object = NULL);
-	bool unitNameTaken(string name_, Unit *u = NULL);
+	bool nameTaken(string name_, ExpressionItem *object = NULL);
 	bool unitIsUsedByOtherUnits(const Unit *u) const;	
-	string getName(string name = "", void *object = NULL, bool force = false, bool always_append = false);
+	string getName(string name = "", ExpressionItem *object = NULL, bool force = false, bool always_append = false);
 	string getUnitName(string name = "", Unit *object = NULL, bool force = false, bool always_append = false);	
 	bool load(const char* file_name, bool is_user_defs = true);
 	bool save(const char* file_name);	
-/*	string value2str(long double &value, int precision = PRECISION);	
-	string value2str_decimals(long double &value, int precision = PRECISION);	
-	string value2str_bin(long double &value, int precision = PRECISION);				
-	string value2str_octal(long double &value, int precision = PRECISION);		
-	string value2str_hex(long double &value, int precision = PRECISION);			
-	string value2str_prefix(long double &value, long int &exp, int precision = PRECISION, bool use_short_prefixes = true, long double *new_value = NULL, Prefix *prefix = NULL, bool print_one = true);
-	string value2str_exp(long double &value, int precision = PRECISION);
-	string value2str_exp_pure(long double &value, int precision = PRECISION);	*/
 	long double getAngleValue(long double value);
 	Manager *setAngleValue(Manager *mngr);	
 	bool importCSV(const char *file_name, int first_row = 1, bool headers = true, string delimiter = ",", bool to_matrix = false, string name = "", string title = "", string category = "");
