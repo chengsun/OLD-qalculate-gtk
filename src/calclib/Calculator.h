@@ -95,6 +95,8 @@ class Calculator {
 	Calculator();
 	virtual ~Calculator();
 
+	bool utf8_pos_is_valid_in_name(char *pos);
+
 	void addStringAlternative(string replacement, string standard);
 	bool delStringAlternative(string replacement, string standard);
 	void addDefaultStringAlternative(string replacement, string standard);

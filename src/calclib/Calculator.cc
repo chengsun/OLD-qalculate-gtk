@@ -208,6 +208,22 @@ Calculator::~Calculator() {
 	closeGnuplot();
 }
 
+bool Calculator::utf8_pos_is_valid_in_name(char *pos) {
+	if(is_in(ILLEGAL_IN_NAMES, pos[0])) {
+		return false;
+	}
+	if(pos[0] < 0) {
+		string str;
+		str += pos[0];
+		while(pos[1] < 0) {
+			str += pos[1];
+			pos++;
+		}
+		return str != SIGN_DIVISION && str != SIGN_MULTIPLICATION && str != SIGN_MULTIDOT && str != SIGN_MINUS && str != SIGN_PLUS && str != SIGN_NOT_EQUAL && str != SIGN_GREATER_OR_EQUAL && str != SIGN_LESS_OR_EQUAL;
+	}
+	return true;
+}
+
 Variable *Calculator::getPI() const {return pi_var;}
 Variable *Calculator::getE() const {return e_var;}
 Function *Calculator::getLnFunction() const {return ln_func;}

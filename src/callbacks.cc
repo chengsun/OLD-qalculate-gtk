@@ -1697,6 +1697,12 @@ void update_completion() {
 			gtk_list_store_set(completion_store, &iter, 0, CALCULATOR->variables[i]->name().c_str(), 1, CALCULATOR->variables[i]->title().c_str(), -1);
 		}
 	}
+	for(unsigned int i = 0; i < CALCULATOR->units.size(); i++) {
+		if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->unitType() != COMPOSITE_UNIT) {
+			gtk_list_store_append(completion_store, &iter);
+			gtk_list_store_set(completion_store, &iter, 0, CALCULATOR->units[i]->name().c_str(), 1, CALCULATOR->units[i]->title().c_str(), -1);
+		}
+	}
 #endif
 }
 
@@ -5792,10 +5798,17 @@ void set_current_object() {
 	if(!current_object_has_changed) return;
 	while(gtk_events_pending()) gtk_main_iteration();
 	int pos = gtk_editable_get_position(GTK_EDITABLE(expression));
+	if(pos == 0) {
+		current_object_start = -1;
+		current_object_end = -1;
+		return;
+	}
 	int start = pos - 1;
 	gchar *gstr = gtk_editable_get_chars(GTK_EDITABLE(expression), 0, pos);
+	gchar *p = gstr + strlen(gstr);
 	for(; start >= 0; start--) {
-		if(!(gstr[start] == '_' || gstr[start] == '~' || (gstr[start] >= 'a' && gstr[start] <= 'z') || (gstr[start] >= 'A' && gstr[start] <= 'Z'))) {
+		p = g_utf8_prev_char(p);
+		if(!CALCULATOR->utf8_pos_is_valid_in_name(p)) {
 			break;
 		}
 	}
@@ -5808,12 +5821,13 @@ void set_current_object() {
 		current_object_start = start;
 		current_object_end = pos;
 		gstr = gtk_editable_get_chars(GTK_EDITABLE(expression), pos, -1);
-		int start = strlen(gstr);
-		for(int i = 0; i < start; i++) {
-			if(!(gstr[i] == '_' || gstr[i] == '~' || (gstr[i] >= 'a' && gstr[i] <= 'z') || (gstr[i] >= 'A' && gstr[i] <= 'Z'))) {
+		p = gstr;
+		while(p[0] != '\0') {
+			if(!CALCULATOR->utf8_pos_is_valid_in_name(p)) {
 				break;
 			}
 			current_object_end++;
+			p = g_utf8_next_char(p);
 		}
 		g_free(gstr);
 	}
@@ -5832,6 +5846,11 @@ gboolean on_completion_match_selected(GtkEntryCompletion *entrycompletion, GtkTr
 		gtk_editable_set_position(GTK_EDITABLE(expression), pos);
 	}
 	g_free(gstr);
+	gint keylength = gtk_entry_completion_get_minimum_key_length(completion);
+	gtk_entry_completion_set_minimum_key_length(completion, 1000);
+	gtk_entry_completion_complete(completion);
+	while(gtk_events_pending()) gtk_main_iteration();
+	gtk_entry_completion_set_minimum_key_length(completion, keylength);
 	return TRUE;
 }
 gboolean completion_match_func(GtkEntryCompletion *entrycompletion, const gchar *key, GtkTreeIter *iter, gpointer user_data) {

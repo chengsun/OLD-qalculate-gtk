@@ -1,3 +1,10 @@
+2004-03-12 Niklas Knutsson  <nq@altern.org>
+	
+	* Completion finished
+	* Ugly fix to not complete on completed
+	* Add units to completion if not composite
+	* Use g_utf8_next_char and g_utf8_prev_char
+
 2004-03-11 Niklas Knutsson  <nq@altern.org>
 
 	* Advanced completion in expression
