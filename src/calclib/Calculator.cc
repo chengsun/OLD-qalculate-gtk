@@ -1555,14 +1555,39 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 	Function *func;
 	Manager *mngr;
 	bool b;
+	bool unit_added = false, units_added = false, rerun = false;
+	int rerun_i = 0;
+	vector<string> unfinished_units;
 	unsigned int i, i2, i3;
 	long double value;
 	char line[10000];
 	while(1) {
-		if(fgets(line, 10000, file) == NULL)
-			break;
-		if(line[0] == '*') {
-			stmp = line;
+		if(fgets(line, 10000, file) == NULL) {
+			rerun = true;
+			unit_added = false;
+		}
+		if(line[0] == '*' || rerun) {
+			if(rerun) {
+				if(unit_added) {
+					unfinished_units.erase(unfinished_units.begin());
+					rerun_i--;
+					unit_added = false;
+					units_added = true; 
+				}
+				if(rerun_i < unfinished_units.size()) {
+					stmp = unfinished_units[rerun_i];
+					rerun_i++;
+				} else if(units_added && unfinished_units.size() > 0) {
+					units_added = false;
+					rerun_i = 0;
+					stmp = unfinished_units[rerun_i];
+					rerun_i++;					
+				} else {
+					break;
+				}	
+			} else {
+				stmp = line;
+			}
 			if((i = stmp.find_first_of("\t")) != string::npos) {
 				str = stmp.substr(0, i);
 				if(str == "*Variable") {
@@ -1741,6 +1766,12 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 													rtmp = stmp.substr(i, i2 - i);
 													u = getUnit(vtmp);
 													if(!u) u = getCompositeUnit(vtmp);
+													if(!u) {
+														unfinished_units.push_back(stmp);
+														if(cu) delete cu;
+														cu = NULL;
+														break;
+													}
 													if(u) {
 														if(i3 == 0)
 															cu = new CompositeUnit(this, ctmp, ntmp, ttmp);
@@ -1766,6 +1797,7 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 										addUnit(cu);
 										cu->setUserUnit(is_user_defs);
 										cu->setChanged(false);
+										unit_added = true;
 									}
 								}
 							}						
@@ -1797,7 +1829,10 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 											if(!u) {
 												u = getCompositeUnit(vtmp);
 											}
-											if((unitNameIsValid(ntmp) && unitNameIsValid(etmp) && unitNameIsValid(shtmp)) && u) {
+											if(!u) {
+												unfinished_units.push_back(stmp);
+											}
+											if(u && (unitNameIsValid(ntmp) && unitNameIsValid(etmp) && unitNameIsValid(shtmp))) {
 												au = new AliasUnit(this, ctmp, ntmp, etmp, shtmp, ttmp, u);
 												if((i = stmp.find_first_not_of("\t\n", i2)) != string::npos && (i2 = stmp.find_first_of("\t\n", i)) != string::npos) {
 													au->expression(stmp.substr(i, i2 - i));
@@ -1815,6 +1850,7 @@ bool Calculator::load(const char* file_name, bool is_user_defs) {
 												addUnit(au);
 												au->setUserUnit(is_user_defs);
 												au->setChanged(false);
+												unit_added = true;
 											}
 										}
 									}
