@@ -21,9 +21,11 @@ class Manager;
 #define UNIT_MANAGER		'u'
 #define NULL_MANAGER		0
 #define STRING_MANAGER		's'
+#define UNSOLVEABLE_FUNCTION_MANAGER	'f'
 
 #include "Calculator.h"
 #include "Unit.h"
+#include "Function.h"
 
 class Manager {
 
@@ -46,6 +48,8 @@ class Manager {
 		char c_type;
 		int refcount;
 		string s_var;
+		Function *function;
+		
 	
 		void moveto(Manager *mngr);			
 		
@@ -53,9 +57,9 @@ class Manager {
 		Manager(Calculator *calc_, long double value_);		
 		Manager(Calculator *calc_, string var_);				
 		Manager(Calculator *calc_, Unit *u, long double value_ = 1);				
-		Manager(Manager *mngr);	
+		Manager(const Manager *mngr);	
 		~Manager(void);
-		void set(Manager *mngr);
+		void set(const Manager *mngr);
 		void set(long double value_);		
 		void set(string var_);				
 		void set(Unit *u, long double value_ = 1);				

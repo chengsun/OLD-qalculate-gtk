@@ -32,14 +32,14 @@ Manager::Manager(Calculator *calc_, Unit *u, long double value_) {
 	refcount = 1;
 	set(u, value_);
 }
-Manager::Manager(Manager *mngr) {
+Manager::Manager(const Manager *mngr) {
 	refcount = 1;
 	set(mngr);
 }
 Manager::~Manager() {
 	clear();
 }
-void Manager::set(Manager *mngr) {
+void Manager::set(const Manager *mngr) {
 	clear();
 	if(mngr != NULL) {
 		calc = mngr->calc;
@@ -78,12 +78,22 @@ void Manager::set(Unit *u, long double value_) {
 }
 void Manager::plusclean() {
 	for(int i = 0; i < mngrs.size() - 1; i++) {
-		for(int i2 = i + 1; i2 < mngrs.size(); i2++) {
-			if(mngrs[i]->add(mngrs[i2], PLUS_CH, false)) {
-				mngrs[i2]->unref();
-				mngrs.erase(mngrs.begin() + i2);
-				i = -1;
-				break;
+		if(mngrs[i]->c_type == NULL_MANAGER) {
+			mngrs[i]->unref();
+			mngrs.erase(mngrs.begin() + i);				
+			i--;
+		} else {
+			for(int i2 = i + 1; i2 < mngrs.size(); i2++) {
+				if(mngrs[i2]->c_type == NULL_MANAGER) {
+					mngrs[i2]->unref();
+					mngrs.erase(mngrs.begin() + i2);				
+					i2--;
+				} else if(mngrs[i]->add(mngrs[i2], PLUS_CH, false)) {
+					mngrs[i2]->unref();
+					mngrs.erase(mngrs.begin() + i2);
+					i = -1;
+					break;
+				}
 			}
 		}
 	}
@@ -110,17 +120,16 @@ void Manager::powerclean() {
 	if(mngrs[0]->add(mngrs[1], POWER_CH, false)) {
 		mngrs[1]->unref();
 		mngrs.erase(mngrs.begin() + 1);
-		//break;
 	}
 	if(mngrs.size() == 1) {
 		moveto(mngrs[0]);
 	}
 }
 bool Manager::reverseadd(Manager *mngr, char sign, bool translate_) {
-	mngr = new Manager(mngr);
-	if(!mngr->add(this, sign, translate_)) return false;
-	set(mngr);
-	mngr->unref();
+	Manager *mngr2 = new Manager(mngr);
+	if(!mngr2->add(this, sign, translate_)) return false;
+	set(mngr2);
+	mngr2->unref();
 	return true;
 }
 void Manager::transform(Manager *mngr, char type_, char sign, bool reverse_) {
@@ -173,6 +182,10 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 		if(mngr->c_type == 0) {
 			mngr->unref(); return true;
 		}
+		if(c_type == 0) {
+			moveto(mngr);
+			mngr->unref(); return true;
+		}		
 		switch(c_type) {
 			case PLUS_CH: {
 				switch(mngr->c_type) {
@@ -205,28 +218,84 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 						bool b = false;
 						if(compatible(mngr)) {
 							for(int i = 0; i < mngrs.size(); i++) {
-								if(mngrs[i]->c_type == 'v') {
+								if(mngrs[i]->c_type == 'u') {
 									for(int i2 = 0; i2 < mngr->mngrs.size(); i2++) {
-										if(mngr->mngrs[i2]->c_type == 'v') {
-											mngrs[i]->add(mngr->mngrs[i2], sign);
+										if(mngr->mngrs[i2]->c_type == 'u' && mngr->mngrs[i2]->o_unit->baseUnit() == mngrs[i]->o_unit->baseUnit()) {
+											if(mngr->mngrs[i2]->o_unit == mngrs[i]->o_unit) {
+												break;
+											}
+											if(mngrs[i]->o_unit->type() == 'U') {
+												Manager *mngr2 = new Manager(mngr);
+												mngr2->convert(mngrs[i]->o_unit);
+												add(mngr2, sign);
+												mngr2->unref();
+												b = true;
+											} else if(mngr->mngrs[i2]->o_unit->type() == 'U') {
+												convert(mngr->mngrs[i2]->o_unit);
+												add(mngr, sign);
+												b = true;
+											}
+											Unit *u = mngrs[i]->o_unit;
+											while(!b) {
+												u = ((AliasUnit*) u)->firstBaseUnit();
+												if(u == mngr->mngrs[i2]->o_unit) {
+													convert(mngr->mngrs[i2]->o_unit);
+													add(mngr, sign);
+													b = true;
+													break;
+												}
+												if(u->type() != 'A') {break;}
+											}
+											if(!b) {
+												u = mngr->mngrs[i2]->o_unit;
+												while(1) {
+													u = ((AliasUnit*) u)->firstBaseUnit();
+													if(u == mngrs[i]->o_unit) {
+														Manager *mngr2 = new Manager(mngr);
+														mngr2->convert(mngrs[i]->o_unit);
+														add(mngr2, sign);
+														mngr2->unref();													
+														b = true;
+														break;
+													}
+													if(u->type() != 'A') {break;}
+												}
+											}
+											if(!b) {
+												convert(mngrs[i]->o_unit->baseUnit());
+												add(mngr, sign);
+											}	
 											b = true;
 											break;
 										}
-									}
-									if(!b) {
-										mngrs[i]->add(1, sign);
-										b = true;
-									}
-									if(mngrs[i]->c_type == 0) {
-										clear();
-									} else if(mngrs[i]->d_value == 1) {
-										mngrs[i]->unref();
-										mngrs.erase(mngrs.begin());
-										if(mngrs.size() == 1) {
-											moveto(mngrs[0]);
+									}		
+								}
+							}
+							if(!b) {							
+								for(int i = 0; i < mngrs.size(); i++) {
+									if(mngrs[i]->c_type == 'v') {
+										for(int i2 = 0; i2 < mngr->mngrs.size(); i2++) {
+											if(mngr->mngrs[i2]->c_type == 'v') {
+												mngrs[i]->add(mngr->mngrs[i2], sign);
+												b = true;
+												break;
+											}
 										}
+										if(!b) {
+											mngrs[i]->add(1, sign);
+											b = true;
+										}
+										if(mngrs[i]->c_type == 0) {
+											clear();
+										} else if(mngrs[i]->d_value == 1) {
+											mngrs[i]->unref();
+											mngrs.erase(mngrs.begin() + i);
+											if(mngrs.size() == 1) {
+												moveto(mngrs[0]);
+											}
+										}
+										break;
 									}
-									break;
 								}
 							}
 							if(!b) {
@@ -252,9 +321,6 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 						transform(mngr, PLUS_CH, sign);
 						break;
 					}
-					case POWER_CH: {
-					}
-					case 's': {}
 					case 'u': {
 						bool b = false;
 						for(int i = 0; i < mngrs.size(); i++) {
@@ -264,7 +330,7 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 									mngr2 = new Manager(calc, 1.0L);
 								} else {
 									if(mngrs[i]->o_unit->type() == 'U') {
-										mngr2 = mngr->o_unit->baseValue();
+										mngr2 = mngrs[i]->o_unit->convert(mngr->o_unit);
 										b = true;
 									} else if(mngr->o_unit->type() == 'U') {
 										convert(mngr->o_unit);
@@ -302,10 +368,17 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 								if(mngr2) {
 									Manager *mngr3 = new Manager(mngrs[i]);
 									add(mngr3, DIVISION_CH);
-									add(mngr2, PLUS_CH);
-									mngr2->unref();
-									add(mngr3, MULTIPLICATION_CH);
-									mngr3->unref();
+									if(add(mngr2, PLUS_CH, false)) {
+										add(mngr3, MULTIPLICATION_CH);									
+										mngr2->unref();
+										mngr3->unref();
+									} else {
+										add(mngr3, MULTIPLICATION_CH);
+										mngr2->unref();
+										mngr3->unref();
+										if(!translate_) {mngr->unref(); return false;}
+										transform(mngr, PLUS_CH, sign);	
+									}
 								}
 								b = true;
 								break;
@@ -313,6 +386,33 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 						}
 						if(b) break;
 					}
+					case POWER_CH: {
+					}
+					case 's': {
+						if(compatible(mngr)) {
+							bool b = false;
+							for(int i = 0; i < mngrs.size(); i++) {
+								if(mngrs[i]->c_type == 'v') {
+									mngrs[i]->add(1, sign);
+									if(mngrs[i]->c_type == 0) {
+										clear();
+									} else if(mngrs[i]->d_value == 1) {
+										mngrs[i]->unref();
+										mngrs.erase(mngrs.begin());
+										if(mngrs.size() == 1) {
+											moveto(mngrs[0]);
+										}
+									}
+									b = true;
+									break;
+								}
+							}
+							if(!b) {
+								mngrs.push_back(new Manager(calc, 2));
+							}
+							break;
+						}					
+					}					
 					case 'v': {
 						if(!translate_) {mngr->unref(); return false;}
 						transform(mngr, PLUS_CH, sign);
@@ -381,7 +481,6 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 						break;
 					}
 					case 'u': {
-						//convert
 						if(o_unit == mngr->o_unit) {
 							Manager *mngr2 = new Manager(this);
 							clear();
@@ -390,29 +489,26 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 							c_type = MULTIPLICATION_CH;
 							break;
 						} else if(o_unit->baseUnit() == mngr->o_unit->baseUnit()) {
+							Manager *mngr2;
 							if(o_unit->type() == 'U') {
-								Manager *mngr2 = mngr->o_unit->baseValue();
-								mngr2->add(o_unit, MULTIPLICATION_CH);
+								mngr2 = new Manager(mngr);
+								mngr2->convert(o_unit);
 								add(mngr2, sign);
 								mngr2->unref();
 								break;
 							}
 							if(mngr->o_unit->type() == 'U') {
-								Manager *mngr2 = o_unit->baseValue();
-								mngr2->add(mngr->o_unit, MULTIPLICATION_CH);
-								mngr2->add(mngr->o_unit, sign);
-								moveto(mngr2);
-								mngr2->unref();
+								convert(mngr->o_unit);
+								add(mngr, sign);
 								break;
 							}
-							Manager *mngr2;
 							Unit *u = o_unit;
 							bool b = false;
 							while(1) {
 								u = ((AliasUnit*) u)->firstBaseUnit();
 								if(u == mngr->o_unit) {
 									if(convert(mngr->o_unit))
-										add(mngr, PLUS_CH);
+										add(mngr, sign);
 									b = true;
 									break;
 								}
@@ -423,9 +519,9 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 								while(1) {
 									u = ((AliasUnit*) u)->firstBaseUnit();
 									if(u == o_unit) {
-										mngr2 = o_unit->convert(mngr->o_unit);
-										mngr2->add(1, PLUS_CH);
-										add(mngr2, MULTIPLICATION_CH);
+										mngr2 = new Manager(mngr);
+										mngr2->convert(o_unit);
+										add(mngr2, sign);
 										mngr2->unref();
 										b = true;
 										break;
@@ -435,10 +531,7 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 							}
 							if(!b) {
 								convert(o_unit->baseUnit());
-								mngr2 = mngr->o_unit->convert(mngr->o_unit->baseUnit());
-								mngr2->add(mngr->o_unit->baseUnit(), MULTIPLICATION_CH);
-								add(mngr2, sign);
-								mngr2->unref();
+								add(mngr, sign);
 							}
 							break;
 						}
@@ -484,7 +577,7 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 	} else if(sign == MULTIPLICATION_CH) {
 		if(mngr->c_type == 0) {
 			clear(); mngr->unref(); return true;
-		} else if(mngr->c_type == 'v' && mngr->d_value == 1) {
+		} else if(mngr->c_type == 'v' && mngr->d_value == 1.0L) {
 			mngr->unref();
 			return true;
 		}
@@ -586,7 +679,7 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 				break;
 			}
 			case 'v': {
-				if(d_value == 1) {set(mngr); mngr->unref(); return true;}
+				if(d_value == 1.0L) {set(mngr); mngr->unref(); return true;}
 				switch(mngr->c_type) {
 					case PLUS_CH: {}
 					case MULTIPLICATION_CH: {}
@@ -616,7 +709,6 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 						break;
 					}
 					case 'u': {
-						//convert
 						if(o_unit == mngr->o_unit) {
 							Manager *mngr2 = new Manager(this);
 							clear();
@@ -625,7 +717,50 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 							c_type = POWER_CH;
 							break;
 						} else if(o_unit->baseUnit() == mngr->o_unit->baseUnit()) {
-							
+							if(o_unit->type() == 'U') {
+								Manager *mngr2 = new Manager(mngr);
+								mngr2->convert(o_unit);
+								add(mngr2, sign);
+								mngr2->unref();
+								break;
+							}
+							if(mngr->o_unit->type() == 'U') {
+								convert(mngr->o_unit);
+								add(mngr, sign);
+								break;
+							}
+							Manager *mngr2;
+							Unit *u = o_unit;
+							bool b = false;
+							while(1) {
+								u = ((AliasUnit*) u)->firstBaseUnit();
+								if(u == mngr->o_unit) {
+									if(convert(mngr->o_unit))
+										add(mngr, sign);
+									b = true;
+									break;
+								}
+								if(u->type() != 'A') {break;}
+							}
+							if(!b) {
+								u = mngr->o_unit;
+								while(1) {
+									u = ((AliasUnit*) u)->firstBaseUnit();
+									if(u == o_unit) {
+										Manager *mngr2 = new Manager(mngr);
+										mngr2->convert(o_unit);
+										add(mngr2, sign);
+										mngr2->unref();
+										b = true;
+										break;
+									}
+									if(u->type() != 'A') {break;}
+								}
+							}
+							if(!b) {
+								convert(o_unit->baseUnit());
+								add(mngr, sign);
+							}
 							break;
 						}
 					}
@@ -647,7 +782,6 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 						break;
 					}
 					case 's': {
-						//convert
 						if(s_var == mngr->s_var) {
 							Manager *mngr2 = new Manager(this);
 							clear();
@@ -705,6 +839,7 @@ bool Manager::add(Manager *mngr, char sign, bool translate_) {
 					case 's': {}
 					case 'u': {
 						if(!translate_) {mngr->unref(); return false;}
+						
 						transform(mngr, POWER_CH, sign);
 						break;
 					}
@@ -841,7 +976,7 @@ int Manager::compare(Manager *mngr) {
 		} else if(c_type != 'v' && c_type != 0 && c_type != 's') return -1;
 	} else if(mngr->c_type == 's') {
 		if(c_type == 's') {
-			if(mngr->s_var < s_var) return -1;
+			if(mngr->s_var > s_var) return -1;
 			else if(mngr->s_var == s_var) return 0;
 			else return 1;
 		} else if(c_type != 'v' && c_type != 0) return -1;
@@ -851,8 +986,11 @@ int Manager::compare(Manager *mngr) {
 				int i2 = mngrs[1]->compare(mngr->mngrs[1]);
 				if(i2) return -1;
 				if(i2 < 0) return 1;
-				return 0;
-			} else return mngrs[1]->compare(mngr->mngrs[1]);
+			} else {
+				int i2 = mngrs[1]->compare(mngr->mngrs[1]);
+				if(i2 != 0) return i2;
+			}
+			return mngrs[0]->compare(mngr->mngrs[0]);
 		} else if(c_type != 'v' && c_type != 'u' && c_type != 0 && c_type != 's') return -1;
 	} else if(mngr->c_type == MULTIPLICATION_CH) {
 		if(c_type == MULTIPLICATION_CH) {
@@ -1092,7 +1230,7 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 				str2 = calc->value2str_octal(d_value, precision);
 				break;
 			}
-		}
+		}	
 		remove_trailing_zeros(str2, decimals_to_keep, decimals_expand, decimals_decrease);
 		str += str2;
 		if(unitflags & UNIT_FORMAT_TAGS) {
@@ -1209,22 +1347,16 @@ string Manager::print(NumberFormat nrformat, int unitflags, int precision, int d
 }
 void Manager::finalize() {}
 bool Manager::convert(Unit *u) {
-	printf("CONVERT 1\n");
 	if(c_type == VALUE_MANAGER || c_type == STRING_MANAGER) return false;
-	printf("CONVERT 2\n");	
 	bool b = false;
 	if(c_type == ADDITION_MANAGER) {
-		printf("CONVERT PLUS 1\n");
 		for(int i = 0; i < mngrs.size(); i++) {
-			printf("CONVERT PLUS 2\n");
 			if(mngrs[i]->convert(u)) b = true;
 		}
 		if(b) plusclean();
 	} else if(c_type == UNIT_MANAGER) {
-		printf("CONVERT UNIT 1\n");
 		if(u == o_unit) return false;
-		printf("CONVERT UNIT 2\n");
-		Manager *mngr = u->convert(o_unit, NULL, 1, &b);
+		Manager *mngr = u->convert(o_unit, NULL, NULL, &b);
 		if(b) {
 			o_unit = u;
 			add(mngr, MULTIPLICATION_CH);
@@ -1232,37 +1364,30 @@ bool Manager::convert(Unit *u) {
 		mngr->unref();
 		return b;
 	} else if(c_type == POWER_MANAGER) {
-		printf("CONVERT POWER 1\n");
 		bool b = false;
 		b = mngrs[1]->convert(u);
 		if(b) {
-			printf("CONVERT POWER 2\n");
 			powerclean();
 			return convert(u);
 		}
 		if(mngrs[0]->c_type == UNIT_MANAGER) {
-			printf("CONVERT POWER 3\n");
 			if(u == o_unit) return false;
-			Manager *mngr = u->convert(mngrs[0]->o_unit, NULL, mngrs[1]->value(), &b);
+			Manager *mngr = u->convert(mngrs[0]->o_unit, NULL, mngrs[1], &b);
 			if(b) {
 				mngrs[0]->o_unit = u;
 				add(mngr, MULTIPLICATION_CH);
 			}			
 			mngr->unref();
 		} else {
-			printf("CONVERT POWER 4\n");
 			b = mngrs[0]->convert(u);
 		}
 		return b;
 	} else if(c_type == MULTIPLICATION_MANAGER) {
-		printf("CONVERT MULTIPLICATION 1\n");
 		for(int i = 0; i < mngrs.size(); i++) {
-			printf("CONVERT MULTIPLICATION 2\n");
 			if(mngrs[i]->type() == UNIT_MANAGER && mngrs[i]->o_unit != u) {
-				printf("CONVERT MULTIPLICATION 3\n");
 				Manager *mngr = new Manager(this);
 				mngr->add(mngrs[i], DIVISION_CH);
-				u->convert(mngrs[i]->o_unit, mngr, 1, &b);
+				u->convert(mngrs[i]->o_unit, mngr, NULL, &b);
 				if(b) {
 					set(u);
 					add(mngr, MULTIPLICATION_CH);
@@ -1271,23 +1396,16 @@ bool Manager::convert(Unit *u) {
 				}
 				mngr->unref();
 			} else if(mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->c_type == UNIT_MANAGER && mngrs[i]->mngrs[0]->o_unit != u) {
-				printf("CONVERT MULTIPLICATION 7\n");
 				Manager *mngr = new Manager(this);
 				mngr->add(mngrs[i], DIVISION_CH);
-				printf("CONVERT MULTIPLICATION 8\n");							
-				u->convert(mngrs[i]->mngrs[0]->o_unit, mngr, mngrs[i]->mngrs[1]->value(), &b);
-				printf("CONVERT MULTIPLICATION 9\n");				
+				u->convert(mngrs[i]->mngrs[0]->o_unit, mngr, mngrs[i]->mngrs[1], &b);
 				if(b) {
-				printf("CONVERT MULTIPLICATION 10\n");				
 					Manager *mngr2 = mngrs[i]->mngrs[1];
 					mngr2->ref();
 					set(u);
-					printf("CONVERT MULTIPLICATION 11\n");
 					add(mngr2, POWER_CH);
 					mngr2->unref();
-					printf("CONVERT MULTIPLICATION 12\n");
 					add(mngr, MULTIPLICATION_CH);
-					printf("CONVERT MULTIPLICATION 13\n");
 					mngr->unref();
 					return true;
 				}			
@@ -1295,17 +1413,14 @@ bool Manager::convert(Unit *u) {
 			}
 		}
 		for(int i = 0; i < mngrs.size(); i++) {
-			printf("CONVERT MULTIPLICATION 4\n");
 			if(mngrs[i]->convert(u)) b = true;
 		}
 		if(b) {
 			for(int i = 0; i < mngrs.size(); i++) {
-				printf("CONVERT MULTIPLICATION 5\n");
 				if(mngrs[i]->type() == UNIT_MANAGER) {
-					printf("CONVERT MULTIPLICATION 6\n");
 					Manager *mngr = new Manager(this);
 					mngr->add(mngrs[i], DIVISION_CH);
-					u->convert(mngrs[i]->o_unit, mngr, 1, &b);
+					u->convert(mngrs[i]->o_unit, mngr, NULL, &b);
 					if(b) {
 						set(u);
 						add(mngr, MULTIPLICATION_CH);
@@ -1314,23 +1429,16 @@ bool Manager::convert(Unit *u) {
 					}
 					mngr->unref();
 				} else if(mngrs[i]->type() == POWER_MANAGER && mngrs[i]->mngrs[0]->c_type == UNIT_MANAGER && mngrs[i]->mngrs[0]->o_unit != u) {
-					printf("CONVERT MULTIPLICATION 14\n");
 					Manager *mngr = new Manager(this);
 					mngr->add(mngrs[i], DIVISION_CH);
-					printf("CONVERT MULTIPLICATION 15\n");							
-					u->convert(mngrs[i]->mngrs[0]->o_unit, mngr, mngrs[i]->mngrs[1]->value(), &b);
-					printf("CONVERT MULTIPLICATION 16\n");				
-					if(b) {
-						printf("CONVERT MULTIPLICATION 17\n");				
+					u->convert(mngrs[i]->mngrs[0]->o_unit, mngr, mngrs[i]->mngrs[1], &b);
+					if(b) {	
 						Manager *mngr2 = mngrs[i]->mngrs[1];
 						mngr2->ref();
 						set(u);
-						printf("CONVERT MULTIPLICATION 18\n");
 						add(mngr2, POWER_CH);
 						mngr2->unref();
-						printf("CONVERT MULTIPLICATION 19\n");
 						add(mngr, MULTIPLICATION_CH);
-						printf("CONVERT MULTIPLICATION 20\n");
 						mngr->unref();
 						return true;
 					}			

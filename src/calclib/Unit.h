@@ -45,13 +45,13 @@ class Unit {
 	virtual string baseExpName(void);
 	virtual string shortBaseName(void);
 	virtual string shortBaseExpName(void);
-	virtual Manager *baseValue(Manager *value_ = NULL, long double exp_ = 1.0L);
-	virtual Manager *convertToBase(Manager *value_ = NULL, long double exp_ = 1.0L);
+	virtual Manager *baseValue(Manager *value_ = NULL, const Manager *exp_ = NULL);
+	virtual Manager *convertToBase(Manager *value_ = NULL, const Manager *exp_ = NULL);
 	virtual long double baseExp(long double exp_ = 1.0L);
 	virtual char type() const;
 	virtual bool isChildOf(Unit *u);
 	virtual bool isParentOf(Unit *u);
-	Manager *convert(Unit *u, Manager *value_ = NULL, long double exp_ = 1, bool *converted = NULL);
+	Manager *convert(Unit *u, Manager *value_ = NULL, const Manager *exp_ = NULL, bool *converted = NULL);
 };
 
 class AliasUnit : public Unit {
@@ -77,10 +77,10 @@ class AliasUnit : public Unit {
 	virtual string reverseExpression(void);
 	virtual void expression(string relation);
 	virtual void reverseExpression(string reverse);
-	virtual Manager *baseValue(Manager *value_ = NULL, long double exp_ = 1.0L);
-	virtual Manager *convertToBase(Manager *value_ = NULL, long double exp_ = 1.0L);
-	virtual Manager *firstBaseValue(Manager *value_ = NULL, long double exp_ = 1.0L);
-	virtual Manager *convertToFirstBase(Manager *value_ = NULL, long double exp_ = 1.0L);
+	virtual Manager *baseValue(Manager *value_ = NULL, const Manager *exp_ = NULL);
+	virtual Manager *convertToBase(Manager *value_ = NULL, const Manager *exp_ = NULL);
+	virtual Manager *firstBaseValue(Manager *value_ = NULL, const Manager *exp_ = NULL);
+	virtual Manager *convertToFirstBase(Manager *value_ = NULL, const Manager *exp_ = NULL);
 	virtual long double baseExp(long double exp_ = 1.0L);
 	virtual void exp(long double exp_);
 	virtual long double firstBaseExp(void);
@@ -100,8 +100,8 @@ class AliasUnit_Composite : public AliasUnit {
 	virtual string printShort(bool plural_);
 	virtual long double prefixValue(void);
 	virtual void set(Unit *u, long double exp_ = 1.0L, long double prefix = 1.0L);
-	virtual Manager *firstBaseValue(Manager *value_ = NULL, long double exp_ = 1.0L);
-	virtual Manager *convertToFirstBase(Manager *value_ = NULL, long double exp_ = 1.0L);
+	virtual Manager *firstBaseValue(Manager *value_ = NULL, const Manager *exp_ = NULL);
+	virtual Manager *convertToFirstBase(Manager *value_ = NULL, const Manager *exp_ = NULL);
 };
 
 class CompositeUnit : public Unit {
