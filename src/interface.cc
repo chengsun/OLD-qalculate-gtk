@@ -572,7 +572,7 @@ get_unit_edit_dialog (void)
 	
 	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
 	GList *items = NULL;
-	for(int i = 0; i < CALCULATOR->units.size(); i++) {
+	for(unsigned int i = 0; i < CALCULATOR->units.size(); i++) {
 		if(!CALCULATOR->units[i]->category().empty()) {
 			//add category if not present
 			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->units[i]->category().c_str()) == NULL) {
@@ -623,7 +623,7 @@ get_function_edit_dialog (void)
 	
 	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
 	GList *items = NULL;
-	for(int i = 0; i < CALCULATOR->functions.size(); i++) {
+	for(unsigned int i = 0; i < CALCULATOR->functions.size(); i++) {
 		if(!CALCULATOR->functions[i]->category().empty()) {
 			//add category if not present
 			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->functions[i]->category().c_str()) == NULL) {
@@ -660,7 +660,7 @@ get_variable_edit_dialog (void)
 	
 	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
 	GList *items = NULL;
-	for(int i = 0; i < CALCULATOR->variables.size(); i++) {
+	for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
 		if(!CALCULATOR->variables[i]->category().empty()) {
 			//add category if not present
 			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->variables[i]->category().c_str()) == NULL) {
@@ -702,7 +702,7 @@ get_matrix_edit_dialog (void)
 	
 	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
 	GList *items = NULL;
-	for(int i = 0; i < CALCULATOR->variables.size(); i++) {
+	for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
 		if(!CALCULATOR->variables[i]->category().empty()) {
 			//add category if not present
 			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->variables[i]->category().c_str()) == NULL) {
@@ -739,7 +739,7 @@ get_csv_import_dialog (void)
 	
 	GHashTable *hash = g_hash_table_new(g_str_hash, g_str_equal);
 	GList *items = NULL;
-	for(int i = 0; i < CALCULATOR->variables.size(); i++) {
+	for(unsigned int i = 0; i < CALCULATOR->variables.size(); i++) {
 		if(!CALCULATOR->variables[i]->category().empty()) {
 			//add category if not present
 			if(g_hash_table_lookup(hash, (gconstpointer) CALCULATOR->variables[i]->category().c_str()) == NULL) {

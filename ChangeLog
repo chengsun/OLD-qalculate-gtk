@@ -1,5 +1,10 @@
 2003-10-24  Niklas Knutsson  <nq@altern.org>
 
+	* Compability fixes for Unit.cc
+	* change strold to strol in HEX()
+	* remove ld2s()
+	* provide another workaround for strptime
+	* some warnings left
 	* remove llpow() as it only creates problems
 	* __USE_XOPEN for strptime
 	* Replace insert(0, 1, ...) with insert(begin(), 1, ...)

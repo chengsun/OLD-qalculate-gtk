@@ -197,19 +197,19 @@ using namespace std;
 #include <stdio.h>
 
 #ifdef __GNUC__
-#if __GNUC__ < 3
-#include <hash_map.h>
-namespace Sgi { using ::hash_map; }; // inherit globals
-#else
-#include <ext/hash_map>
-#if __GNUC_MINOR__ == 0
-namespace Sgi = std;               // GCC 3.0
-#else
-namespace Sgi = ::__gnu_cxx;       // GCC 3.1 and later
-#endif
-#endif
+#   if __GNUC__ < 3
+#      include <hash_map.h>
+       namespace Sgi { using ::hash_map; }; // inherit globals
+#   else
+#      include <ext/hash_map>
+#      if __GNUC_MINOR__ == 0
+          namespace Sgi = std;               // GCC 3.0
+#      else
+          namespace Sgi = ::__gnu_cxx;       // GCC 3.1 and later
+#      endif
+#   endif
 #else      // ...  there are other compilers, right?
-namespace Sgi = std;
+    namespace Sgi = std;
 #endif
 
 #define DOT_CH			'.'

@@ -14,12 +14,12 @@
 
 #include "includes.h"
 
-#ifndef __USE_XOPEN
-#  define __USE_XOPEN
-#  include <time.h>
-#  undef __USE_XOPEN
-#else
-#  include <time.h>
+#include <time.h>
+
+#ifndef HAVE_STRPTIME_PROTOTYPE
+extern char *strptime (__const char *__restrict __s,
+		       __const char *__restrict __fmt, struct tm *__tp)
+     __THROW;
 #endif
 
 /*
@@ -62,7 +62,6 @@ long long int s2lli(const char *str);
 string lli2s(long long int value);
 string li2s(long int value);
 string &lli2s(long long int &value, string &str);
-string ld2s(long double value);
 
 bool s2date(string str, int &year, int &month, int &day);
 bool s2date(string str, struct tm *time);

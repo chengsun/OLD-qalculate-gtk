@@ -11,6 +11,7 @@
 
 #include "util.h"
 #include <stdarg.h>
+//#include <langinfo.h>
 #include "Fraction.h"
 
 bool eqstr::operator()(const char *s1, const char *s2) const {
@@ -21,7 +22,8 @@ char buffer[20000];
 
 bool s2date(string str, int &year, int &month, int &day) {
 	struct tm time;
-	if(strptime(str.c_str(), "%x", &time) || strptime(str.c_str(), "%Ex", &time) || strptime(str.c_str(), "%Y-%m-%d", &time) || strptime(str.c_str(), "%m/%d/%Y", &time) || strptime(str.c_str(), "%m/%d/%y", &time)) {
+	bool b = s2date(str, &time);
+	if(b) {
 		year = time.tm_year + 1900;
 		month = time.tm_mon + 1;
 		day = time.tm_mday;	
@@ -33,6 +35,7 @@ bool s2date(string str, struct tm *time) {
 	if(strptime(str.c_str(), "%x", time) || strptime(str.c_str(), "%Ex", time) || strptime(str.c_str(), "%Y-%m-%d", time) || strptime(str.c_str(), "%m/%d/%Y", time) || strptime(str.c_str(), "%m/%d/%y", time)) {
 		return true;
 	}
+	//char *date_format = nl_langinfo(D_FMT);
 	return false;
 }
 bool isLeapYear(int year) {
@@ -331,7 +334,7 @@ string& gsub(const string &pattern, const string &sub, string &str) {
 string& gsub(const char *pattern, const char *sub, string &str) {
 	unsigned int i = str.find(pattern);
 	while(i != string::npos) {
-		str.replace(i, strlen(pattern), sub);
+		str.replace(i, strlen(pattern), string(sub));
 		i = str.find(pattern, i + strlen(sub));
 	}
 	return str;
@@ -516,35 +519,6 @@ string &lli2s(long long int &value, string &str)  {
 		if(value == 0) break;
 	}
 	if(minus) str.insert(str.begin() + pos, 1, '-');
-	return str;
-}
-
-string ld2s(long double value) {
-	if(value == 0) return "0";
-	long double dtmp = 0;
-	int itmp;
-	string str = "";
-	bool minus = value < 0;
-	if(minus) value =- value;
-	value = modfl(value, &dtmp);
-	while(true) {
-		itmp = (int) fmodl(dtmp, 10);		
-		char c = '0' + itmp;
-		str.insert(str.begin(), 1, c);
-		dtmp -= itmp;		
-		if(dtmp <= 0) break;		
-		dtmp /= 10;						
-	}
-	if(minus) str.insert(str.begin(), 1, '-');
-	if(value != 0) {
-		str += ".";
-		while(true) {
-			value *= 10;
-			str += '0' + (int) value;
-			value -= (int) value;			
-			if(value <= 0) break;
-		}
-	}
 	return str;
 }
 

@@ -505,7 +505,6 @@ void update_functions_tree() {
 	gtk_tree_store_append(tFunctionCategories_store, &iter3, NULL);
 	gtk_tree_store_set(tFunctionCategories_store, &iter3, 0, _("All"), 1, _("All"), -1);
 	string str;
-	list<tree_struct>::iterator it;
 	tree_struct *item, *item2;
 	function_cats.it = function_cats.items.begin();
 	if(function_cats.it != function_cats.items.end()) {
@@ -764,7 +763,6 @@ void update_variables_tree() {
 	gtk_tree_store_append(tVariableCategories_store, &iter3, NULL);
 	gtk_tree_store_set(tVariableCategories_store, &iter3, 0, _("All"), 1, _("All"), -1);
 	string str;
-	list<tree_struct>::iterator it;
 	tree_struct *item, *item2;
 	variable_cats.it = variable_cats.items.begin();
 	if(variable_cats.it != variable_cats.items.end()) {
@@ -965,7 +963,6 @@ void update_units_tree() {
 	gtk_tree_store_append(tUnitCategories_store, &iter3, NULL);
 	gtk_tree_store_set(tUnitCategories_store, &iter3, 0, _("All"), 1, _("All"), -1);
 	string str;
-	list<tree_struct>::iterator it;
 	tree_struct *item, *item2;
 	unit_cats.it = unit_cats.items.begin();
 	if(unit_cats.it != unit_cats.items.end()) {
@@ -5789,7 +5786,9 @@ void edit_preferences() {
 	gtk_widget_grab_focus(expression);
 }
 
+#ifdef __cplusplus
 extern "C" {
+#endif
 
 void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data) {
 	on_gcalc_exit(NULL, NULL, user_data);
@@ -7587,4 +7586,7 @@ void on_unit_dialog_entry_unit_activate(GtkEntry *entry, gpointer user_data) {
 	on_unit_dialog_button_ok_clicked(GTK_BUTTON(glade_xml_get_widget (unit_glade, "unit_dialog_button_ok")), NULL);
 }
 
+#ifdef __cplusplus
 }
+#endif
+

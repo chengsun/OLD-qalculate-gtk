@@ -105,7 +105,9 @@ void edit_variable(const char *category = "", Variable *v = NULL, Manager *mngr_
 void edit_matrix(const char *category = "", Variable *v = NULL, Manager *mngr_ = NULL, GtkWidget *win = NULL, gboolean create_vector = FALSE);
 void import_csv_file(GtkWidget *win = NULL);
 
+#ifdef __cplusplus
 extern "C" {
+#endif
 
 void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data);
 void on_button_close_clicked(GtkButton *w, gpointer user_data);
@@ -277,7 +279,9 @@ void on_unit_dialog_button_apply_clicked(GtkButton *w, gpointer user_data);
 void on_unit_dialog_button_ok_clicked(GtkButton *w, gpointer user_data);
 void on_unit_dialog_entry_unit_activate(GtkEntry *entry, gpointer user_data);
 
+#ifdef __cplusplus
 }
+#endif
 
 #endif
 

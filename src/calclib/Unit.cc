@@ -363,8 +363,8 @@ bool AliasUnit::hasComplexRelationTo(const Unit *u) const {
 	if(u == this || u->baseUnit() != baseUnit()) return false;
 	if(isParentOf(u)) {
 		Unit *fbu = (Unit*) u;
-		while(1) {
-			if(fbu == this) return false;
+		while(true) {
+			if((const Unit*) fbu == this) return false;
 			if(((AliasUnit*) fbu)->hasComplexExpression()) return true;
 			if(fbu->unitType() != ALIAS_UNIT) return false;
 			fbu = (Unit*) ((AliasUnit*) fbu)->firstBaseUnit();			
@@ -372,8 +372,8 @@ bool AliasUnit::hasComplexRelationTo(const Unit *u) const {
 	} else if(isChildOf(u)) {
 		Unit *fbu = (Unit*) this;
 		if(fbu->unitType() != ALIAS_UNIT) return false;
-		while(1) {
-			if(fbu == u) return false;
+		while(true) {
+			if((const Unit*) fbu == u) return false;
 			if(((AliasUnit*) fbu)->hasComplexExpression()) return true;
 			if(fbu->unitType() != ALIAS_UNIT) return false;
 			fbu = (Unit*) ((AliasUnit*) fbu)->firstBaseUnit();

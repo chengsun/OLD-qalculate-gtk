@@ -1337,12 +1337,15 @@ HEXFunction::HEXFunction() : Function("General", "HEX", 1, "Hexadecimal") {
 	setArgumentDefinition(1, new TextArgument());
 }
 void HEXFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
-	string expr = vargs[0]->text();
+/*	string expr = vargs[0]->text();
 	remove_blanks(expr);
 	if(!(expr.length() >= 2 && expr[0] == '0' && (expr[1] == 'x' || expr[1] == 'X'))) {
 		expr.insert(0, "0x");
 	}
-	mngr->set(strtold(expr.c_str(), NULL));
+	mngr->set(strtold(expr.c_str(), NULL));*/
+	string str = vargs[0]->text();
+	remove_blanks(str);
+	mngr->set(strtol(str.c_str(), NULL, 16), 1);
 }
 TitleFunction::TitleFunction() : Function("Utilities", "title", 1, "Object title") {
 	setArgumentDefinition(1, new ExpressionItemArgument());

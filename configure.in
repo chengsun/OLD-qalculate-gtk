@@ -41,6 +41,8 @@ dnl  --------------------------------
 dnl | check for neccessary libraries |-----------------------------------------
 dnl  --------------------------------
 
+AC_CHECK_LIB(pthread, pthread_create, [LIBS="$LIBS -lpthread"])
+
 PKG_CHECK_MODULES(PACKAGE, [
 	gtk+-2.0 >= 1.3.13
 	libglade-2.0
@@ -48,6 +50,19 @@ PKG_CHECK_MODULES(PACKAGE, [
 	])
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
+
+AC_LANG_SAVE
+AC_LANG_CPLUSPLUS
+AC_MSG_CHECKING([for strptime])
+AC_TRY_COMPILE([#include <time.h>],[
+   tm newTime;
+   strptime("12-04-2000", "%A %h %d %H:%M:%S %Y", &newTime);],
+have_strptime_prototype=yes, have_strptime_prototype=no)
+AC_MSG_RESULT([$have_strptime_prototype])
+if test $have_strptime_prototype = yes; then
+	AC_DEFINE(HAVE_STRPTIME_PROTOTYPE,1,[If strptime is directly available.])
+fi
+AC_LANG_RESTORE
 
 dnl  --------------------------------
 dnl | check for GMP and CLN         |-----------------------------------------
@@ -59,9 +74,9 @@ AC_LANG([C++])
 
 
 AC_PATH_CLN(1.1.0, [
- 	LIBS="$LIBS $CLN_LIBS"
- 	CPPFLAGS="$CPPFLAGS $CLN_CPPFLAGS"
-	AC_DEFINE(HAVE_LIBCLN,1,[If CLN can be used])
+     	LIBS="$LIBS $CLN_LIBS"
+     	CPPFLAGS="$CPPFLAGS $CLN_CPPFLAGS"
+  	AC_DEFINE(HAVE_LIBCLN,1,[If CLN can be used])
 ], AC_MSG_ERROR([No suitable installed version of CLN could be found.]))
 
 dnl  -------------------------------------
