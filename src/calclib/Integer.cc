@@ -51,6 +51,11 @@ Integer::~Integer() {
 #endif
 #endif
 }
+#ifdef HAVE_LIBCLN
+Integer::Integer(cl_I cln_integer) {integ = cln_integer;}
+const cl_I &Integer::getCL_I() const {return integ;}
+void Integer::set(cl_I cln_integer) {integ = cln_integer;}
+#endif
 bool Integer::isEven() const {
 #ifdef HAVE_LIBCLN
 	return cln::evenp(integ);
@@ -141,7 +146,7 @@ void Integer::set(long int value) {
 }
 void Integer::set(const Integer *integer) {
 #ifdef HAVE_LIBCLN
-	integ = integer->integ;
+	integ = integer->getCL_I();
 #else
 #ifdef HAVE_LIBGMP
 	mpz_set(integ, integer->integ);
@@ -159,7 +164,7 @@ void Integer::set(const Integer *integer) {
 }
 int Integer::compare(const Integer *integer) const {
 #ifdef HAVE_LIBCLN
-	return cln::compare(integer->integ, integ);
+	return cln::compare(integer->getCL_I(), integ);
 #else
 #ifdef HAVE_LIBGMP
 	int i = mpz_cmp(integ, integer->integ);
@@ -249,7 +254,7 @@ bool Integer::isLessThan(long int value) const {
 }
 bool Integer::equals(const Integer *integer) const {
 #ifdef HAVE_LIBCLN
-	return integ == integer->integ;
+	return integ == integer->getCL_I();
 #else
 #ifdef HAVE_LIBGMP
 	return mpz_cmp(integ, integer->integ) == 0;
@@ -373,7 +378,7 @@ void Integer::add(long int value) {
 }
 void Integer::add(const Integer *integer) {
 #ifdef HAVE_LIBCLN
-	integ += integer->integ;
+	integ += integer->getCL_I();
 #else
 #ifdef HAVE_LIBGMP
 	mpz_add(integ, integ, integer->integ);
@@ -514,7 +519,7 @@ void Integer::subtract(long int value) {
 }
 void Integer::subtract(const Integer *integer) {
 #ifdef HAVE_LIBCLN
-	integ -= integer->integ;
+	integ -= integer->getCL_I();
 #else
 #ifdef HAVE_LIBGMP
 	mpz_sub(integ, integ, integer->integ);
@@ -581,7 +586,7 @@ void Integer::multiply(long int value) {
 }
 void Integer::multiply(const Integer *integer) {
 #ifdef HAVE_LIBCLN
-	integ *= integer->integ;
+	integ *= integer->getCL_I();
 #else
 #ifdef HAVE_LIBGMP
 	mpz_mul(integ, integ, integer->integ);
@@ -645,7 +650,7 @@ bool Integer::divide(long int value, Integer **remainder) {
 	cl_I_div_t div = truncate2(integ, value);
 	if(remainder) {
 		*remainder = new Integer();
-		(*remainder)->integ = div.remainder;
+		(*remainder)->set(div.remainder);
 	}
 	integ = div.quotient;
 	return div.remainder == 0;
@@ -670,10 +675,10 @@ bool Integer::divide(long int value, Integer **remainder) {
 }
 bool Integer::divide(const Integer *integer, Integer **remainder) {
 #ifdef HAVE_LIBCLN
-	cl_I_div_t div = truncate2(integ, integer->integ);
+	cl_I_div_t div = truncate2(integ, integer->getCL_I());
 	if(remainder) {
 		*remainder = new Integer();
-		(*remainder)->integ = div.remainder;
+		(*remainder)->set(div.remainder);
 	}
 	integ = div.quotient;
 	return div.remainder == 0;
@@ -902,7 +907,7 @@ bool Integer::mod10(Integer **remainder, long int exp) const {
 	cl_I div = rem(integ, int10.integ);
 	if(remainder) {
 		*remainder = new Integer();
-		(*remainder)->integ = div;
+		(*remainder)->set(div);
 	}
 	return div == 0;	
 #else
@@ -1016,10 +1021,10 @@ void Integer::pow(long int exp) {
 }
 bool Integer::gcd(const Integer *integer, Integer **divisor) const {
 #ifdef HAVE_LIBCLN
-	cl_I div = cln::gcd(integ, integer->integ);
+	cl_I div = cln::gcd(integ, integer->getCL_I());
 	if(divisor) {
 		*divisor = new Integer();
-		(*divisor)->integ = div;
+		(*divisor)->set(div);
 	}
 	if(div <= 1) {
 		return false;

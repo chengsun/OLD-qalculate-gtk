@@ -117,6 +117,9 @@ Calculator::Calculator() {
 	addStringAlternative(SIGN_MICRO, "micro");
 	addStringAlternative(SIGN_PI, "pi");	
 	addStringAlternative(SIGN_SQRT, "sqrt ");	
+	addStringAlternative(SIGN_PHI, "golden");
+	addStringAlternative(SIGN_ZETA, "zeta ");		
+	addStringAlternative(SIGN_GAMMA, "euler");
 	addStringAlternative(SIGN_DIVISION, DIVISION);	
 	addStringAlternative(SIGN_MULTIPLICATION, MULTIPLICATION);		
 	addStringAlternative(SIGN_MULTIDOT, MULTIPLICATION);			
@@ -191,10 +194,25 @@ Calculator::Calculator() {
 	b_units = true;
 	b_unknown = true;
 	b_calcvars = true;
-
+	b_always_exact = false;
+	tmp_always_exact = b_always_exact;
+	
 }
 Calculator::~Calculator(void) {}
 
+bool Calculator::alwaysExact() const {
+	return b_always_exact;
+}
+void Calculator::setAlwaysExact(bool always_exact) {
+	b_always_exact = always_exact;
+	tmp_always_exact = b_always_exact;	
+}
+void Calculator::beginTemporaryInexact() {
+	b_always_exact = false;
+}
+void Calculator::endTemporaryInexact() {
+	b_always_exact = tmp_always_exact;
+}
 Variable *Calculator::getVariable(int index) const {
 	if(index >= 0 && index < variables.size()) {
 		return variables[index];
@@ -602,20 +620,31 @@ void Calculator::reset() {
 	resetUnits();
 }
 void Calculator::addBuiltinVariables() {
-	Variable *v = new Variable("Constants", "pi", PI_VALUE, "Pi", false, true);
+/*	Variable *v = new Variable("Constants", "pi", PI_VALUE, "Pi", false, true);
 	v->get()->setPrecise(false);
 	addVariable(v);
 	v = new Variable("Constants", "e", E_VALUE, "Natural Logarithmic Base", false, true);
 	v->get()->setPrecise(false);
-	addVariable(v);
+	addVariable(v);*/
 }
 void Calculator::addBuiltinFunctions() {
+	addFunction(new EFunction());
+	addFunction(new PiFunction());	
+	addFunction(new EulerFunction());
+	addFunction(new AperyFunction());	
+	addFunction(new CatalanFunction());
+	addFunction(new PythagorasFunction());
+	addFunction(new GoldenFunction());
+#ifdef HAVE_LIBCLN
+	addFunction(new ZetaFunction());
+#endif	
 	addFunction(new ProcessFunction());
 	addFunction(new CustomSumFunction());
 	addFunction(new FunctionFunction());
 	addFunction(new MatrixFunction());
 	addFunction(new VectorFunction());	
 	addFunction(new ComponentsFunction());	
+	addFunction(new SortFunction());	
 	addFunction(new RankFunction());
 	addFunction(new MatrixToVectorFunction());	
 	addFunction(new RowFunction());
@@ -1405,7 +1434,6 @@ void Calculator::setFunctionsAndVariables(string &str) {
 		}
 	}	
 	gsub("\"", "", str);	
-	printf("F1 %s\n", str.c_str());
 	i = -1; i3 = 0; b = false;
 	for(int i2 = 0; i2 < (int) ufv.size(); i2++) {
 		i = 0, i3 = 0;
@@ -1416,7 +1444,7 @@ void Calculator::setFunctionsAndVariables(string &str) {
 				if((i = str.find(v->name(), i3)) != (int) string::npos) {
 					stmp = LEFT_BRACKET_CH;
 					stmp += ID_WRAP_LEFT_CH;
-					if(b_calcvars) {
+					if(b_calcvars && (!b_always_exact || v->isPrecise())) {
 						mngr = new Manager(v->get());
 						if(!v->isPrecise()) {
 							mngr->setPrecise(false);
@@ -1542,7 +1570,6 @@ void Calculator::setFunctionsAndVariables(string &str) {
 						}
 						if(b) {
 							stmp2 = str.substr(i + f->name().length() + i9, i6 - (i + f->name().length() + i9));
-							printf("F2 %s\n", stmp2.c_str());
 							mngr =  f->calculate(stmp2);
 							if(mngr) {
 								stmp = LEFT_BRACKET_CH;
@@ -1854,30 +1881,6 @@ bool Calculator::save(const char* file_name) {
 		return false;
 	string str;
 	unsetLocale();
-	for(int i = 0; i < variables.size(); i++) {
-		if(variables[i]->isUserVariable() && variables[i]->category() != _("Temporary")) {
-			if(!variables[i]->isBuiltinVariable()) 
-				fprintf(file, "*Variable\t");
-			else
-				fprintf(file, "*BuiltinVariable\t");
-			if(variables[i]->isBuiltinVariable())
-				fprintf(file, "%s\t", variables[i]->name().c_str());
-			if(variables[i]->category().empty())
-				fprintf(file, "0\t");
-			else
-				fprintf(file, "%s\t", variables[i]->category().c_str());
-			if(!variables[i]->isBuiltinVariable())
-				fprintf(file, "%s\t%s\t", variables[i]->name().c_str(), variables[i]->get()->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTIONAL_ONLY).c_str());
-			if(variables[i]->title(false).empty())
-				fprintf(file, "0\t");
-			else
-				fprintf(file, "%s\t", variables[i]->title(false).c_str());
-			if(!variables[i]->isBuiltinVariable())	
-				fprintf(file, "%i", variables[i]->isPrecise());
-			fprintf(file, "\n");
-		}
-	}
-	fprintf(file, "\n");
 	for(int i = 0; i < functions.size(); i++) {
 		if(functions[i]->isUserFunction()) {	
 			if(!functions[i]->isBuiltinFunction())
@@ -1972,6 +1975,32 @@ bool Calculator::save(const char* file_name) {
 			fprintf(file, "\n");
 		}
 	}
+	fprintf(file, "\n");
+	
+	for(int i = 0; i < variables.size(); i++) {
+		if(variables[i]->isUserVariable() && variables[i]->category() != _("Temporary")) {
+			if(!variables[i]->isBuiltinVariable()) 
+				fprintf(file, "*Variable\t");
+			else
+				fprintf(file, "*BuiltinVariable\t");
+			if(variables[i]->isBuiltinVariable())
+				fprintf(file, "%s\t", variables[i]->name().c_str());
+			if(variables[i]->category().empty())
+				fprintf(file, "0\t");
+			else
+				fprintf(file, "%s\t", variables[i]->category().c_str());
+			if(!variables[i]->isBuiltinVariable())
+				fprintf(file, "%s\t%s\t", variables[i]->name().c_str(), variables[i]->get()->print(NUMBER_FORMAT_NORMAL, DISPLAY_FORMAT_FRACTIONAL_ONLY).c_str());
+			if(variables[i]->title(false).empty())
+				fprintf(file, "0\t");
+			else
+				fprintf(file, "%s\t", variables[i]->title(false).c_str());
+			if(!variables[i]->isBuiltinVariable())	
+				fprintf(file, "%i", variables[i]->isPrecise());
+			fprintf(file, "\n");
+		}
+	}
+	
 	fclose(file);
 	setLocale();
 }
@@ -2407,12 +2436,18 @@ long double Calculator::getAngleValue(long double value) {
 Manager *Calculator::setAngleValue(Manager *mngr) {
 	switch(angleMode()) {
 		case DEGREES: {
-	    		mngr->addFloat(PI_VALUE, MULTIPLY);
+			Fraction fr;
+			fr.pi();
+			Manager mngr_pi(&fr);
+	    		mngr->add(&mngr_pi, MULTIPLY);
 	    		mngr->addFloat(180, DIVIDE);			
 			break;
 		}
 		case GRADIANS: {
-	    		mngr->addFloat(PI_VALUE, MULTIPLY);
+			Fraction fr;
+			fr.pi();
+			Manager mngr_pi(&fr);
+	    		mngr->add(&mngr_pi, MULTIPLY);			
 	    		mngr->addFloat(200, DIVIDE);		
 			break;
 		}

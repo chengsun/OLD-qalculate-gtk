@@ -14,6 +14,58 @@
 
 #include "Function.h"
 
+//CONSTANTS
+class PiFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	PiFunction();
+};
+class EFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	EFunction();
+};
+class EulerFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	EulerFunction();
+};
+class CatalanFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	CatalanFunction();
+};
+class AperyFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	AperyFunction();
+};
+class PythagorasFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	PythagorasFunction();
+};
+class GoldenFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	GoldenFunction();
+};
+
+#ifdef HAVE_LIBCLN
+class ZetaFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	ZetaFunction();
+};
+#endif
 class ProcessFunction : public Function {
   protected:
 	void calculate2(Manager *mngr);  
@@ -55,6 +107,12 @@ class RankFunction : public Function {
 	void calculate2(Manager *mngr);  
   public:
 	RankFunction();
+};
+class SortFunction : public Function {
+  protected:
+	void calculate2(Manager *mngr);  
+  public:
+	SortFunction();
 };
 class RowsFunction : public Function {
   protected:

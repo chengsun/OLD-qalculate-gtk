@@ -15,99 +15,339 @@
 #define FR_FUNCTION(FUNC)	if(vargs[0]->isFraction()) {mngr->set(vargs[0]); if(!mngr->fraction()->FUNC()) {mngr->set(this, vargs[0], NULL);} } else {mngr->set(this, vargs[0], NULL);}
 #define FR_FUNCTION_2(FUNC)	if(vargs[0]->isFraction() && vargs[1]->isFraction()) {mngr->set(vargs[0]); if(!mngr->fraction()->FUNC(vargs[1]->fraction())) {mngr->set(this, vargs[0], vargs[1], NULL);} } else {mngr->set(this, vargs[0], vargs[1], NULL);}
 
+PiFunction::PiFunction() : Function("Constants", "pi", 0, "Archimede's Constant (pi)") {}
+void PiFunction::calculate2(Manager *mngr) {
+	if(CALCULATOR->alwaysExact()) {
+		mngr->set(name());
+	} else {
+		Fraction fr; fr.pi(); mngr->set(&fr);
+	}
+}
+EFunction::EFunction() : Function("Constants", "e", 0, "The Base of Natural Logarithms (e)") {}
+void EFunction::calculate2(Manager *mngr) {
+	if(CALCULATOR->alwaysExact()) {
+		mngr->set(name());
+	} else {
+		Fraction fr; fr.e(); mngr->set(&fr);
+	}
+}
+PythagorasFunction::PythagorasFunction() : Function("Constants", "pythagoras", 0, "Pythagora's Constant (sqrt 2)") {}
+void PythagorasFunction::calculate2(Manager *mngr) {
+	if(CALCULATOR->alwaysExact()) {
+		mngr->set(name());
+	} else {
+		Fraction fr; fr.pythagoras(); mngr->set(&fr);
+	}
+}
+EulerFunction::EulerFunction() : Function("Constants", "euler", 0, "Euler's Constant") {}
+void EulerFunction::calculate2(Manager *mngr) {
+	if(CALCULATOR->alwaysExact()) {
+		mngr->set(name());
+	} else {
+		Fraction fr; fr.euler(); mngr->set(&fr);
+	}
+}
+GoldenFunction::GoldenFunction() : Function("Constants", "golden", 0, "The Golden Ratio") {}
+void GoldenFunction::calculate2(Manager *mngr) {
+	if(CALCULATOR->alwaysExact()) {
+		mngr->set(name());
+	} else {
+		Fraction fr; fr.golden(); mngr->set(&fr);
+	}
+}
+AperyFunction::AperyFunction() : Function("Constants", "apery", 0, "Apery's Constant") {}
+void AperyFunction::calculate2(Manager *mngr) {
+	if(CALCULATOR->alwaysExact()) {
+		mngr->set(name());
+	} else {
+		Fraction fr; fr.apery(); mngr->set(&fr);
+	}
+}
+CatalanFunction::CatalanFunction() : Function("Constants", "catalan", 0, "Catalan's Constant") {}
+void CatalanFunction::calculate2(Manager *mngr) {
+	if(CALCULATOR->alwaysExact()) {
+		mngr->set(name());
+	} else {
+		Fraction fr; fr.catalan(); mngr->set(&fr);
+	}
+}
+
+
+#ifdef HAVE_LIBCLN
+ZetaFunction::ZetaFunction() : Function("", "zeta", 1, "Riemann Zeta") {}
+void ZetaFunction::calculate2(Manager *mngr) {
+	FR_FUNCTION(zeta)
+}
+#endif
 ProcessFunction::ProcessFunction() : Function("Utilities", "process", 1, "Process components", "", false, -1) {
 }
 void ProcessFunction::calculate2(Manager *mngr) {
 	string sarg = vargs[0]->text();
-	gsub("\\i", "\\y", sarg);
-	gsub("\\n", "\\z", sarg);				
-	UserFunction f("", "Processing Function", sarg, false, 3);
 	string argv = "";
-	Vector *v = produceVector();
-	clearVArgs();					
-	Manager *x_mngr = new Manager();
-	argv += LEFT_BRACKET ID_WRAP_LEFT;
-	int x_id = CALCULATOR->addId(x_mngr, true);
-	argv += i2s(x_id);
-	argv += ID_WRAP_RIGHT RIGHT_BRACKET;				
-	argv += COMMA;
-	Manager *i_mngr = new Manager();
-	argv += LEFT_BRACKET ID_WRAP_LEFT;
-	int i_id = CALCULATOR->addId(i_mngr, true);
-	argv += i2s(i_id);
-	argv += ID_WRAP_RIGHT RIGHT_BRACKET;
-	argv += COMMA;
-	Manager *n_mngr = new Manager(v->components(), 1);
-	argv += LEFT_BRACKET ID_WRAP_LEFT;
-	int n_id = CALCULATOR->addId(n_mngr, true);
-	argv += i2s(n_id);
-	argv += ID_WRAP_RIGHT RIGHT_BRACKET;	
-	Manager *mngr2;
-	for(int index = 1; index <= v->components(); index++) {
-		x_mngr->set(v->get(index));
-		i_mngr->set(index, 1);
+	Manager *mngr2;	
+	if(vargs.size() > 2 || (vargs[1]->isMatrix() && vargs[1]->matrix()->isVector())) {
+		Vector *v = produceVector();
+		clearVArgs();			
+		gsub("\\i", "\\y", sarg);
+		gsub("\\c", "\\y", sarg);		
+		gsub("\\r", LEFT_BRACKET "1" RIGHT_BRACKET, sarg);		
+		gsub("\\n", "\\z", sarg);				
+		UserFunction f("", "Processing Function", sarg, false, 3);
+		Manager *x_mngr = new Manager();
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int x_id = CALCULATOR->addId(x_mngr, true);
+		argv += i2s(x_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;				
+		argv += COMMA;
+		Manager *i_mngr = new Manager();
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int i_id = CALCULATOR->addId(i_mngr, true);
+		argv += i2s(i_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;
+		argv += COMMA;
+		Manager *n_mngr = new Manager(v->components(), 1);
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int n_id = CALCULATOR->addId(n_mngr, true);
+		argv += i2s(n_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;	
+		for(int index = 1; index <= v->components(); index++) {
+			x_mngr->set(v->get(index));
+			i_mngr->set(index, 1);
+			mngr2 = f.calculate(argv);
+			v->set(mngr2, index);		
+			mngr2->unref();
+		}
+		CALCULATOR->delId(x_id, true);
+		CALCULATOR->delId(i_id, true);
+		CALCULATOR->delId(n_id, true);
+		x_mngr->unref();
+		i_mngr->unref();
+		n_mngr->unref();
+		mngr->set(v);
+		delete v;		
+	} else if(vargs[1]->isMatrix()) {
+		Matrix *mtrx = new Matrix(vargs[1]->matrix());	
+		clearVArgs();			
+		gsub("\\i", "\\y", sarg);
+		gsub("\\r", "\\z", sarg);		
+		gsub("\\c", "\\a", sarg);		
+		gsub("\\n", "\\b", sarg);	
+		UserFunction f("", "Processing Function", sarg, false, 5);
+		Manager *x_mngr = new Manager();
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int x_id = CALCULATOR->addId(x_mngr, true);
+		argv += i2s(x_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;				
+		argv += COMMA;
+		Manager *i_mngr = new Manager();
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int i_id = CALCULATOR->addId(i_mngr, true);
+		argv += i2s(i_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;
+		argv += COMMA;
+		Manager *r_mngr = new Manager();
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int r_id = CALCULATOR->addId(r_mngr, true);
+		argv += i2s(r_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;		
+		argv += COMMA;
+		Manager *c_mngr = new Manager();
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int c_id = CALCULATOR->addId(c_mngr, true);
+		argv += i2s(c_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;		
+		argv += COMMA;		
+		Manager *n_mngr = new Manager(mtrx->rows() * mtrx->columns(), 1);
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int n_id = CALCULATOR->addId(n_mngr, true);
+		argv += i2s(n_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;			
+		for(int index_r = 1; index_r <= mtrx->rows(); index_r++) {
+			r_mngr->set(index_r, 1);						
+			for(int index_c = 1; index_c <= mtrx->columns(); index_c++) {		
+				x_mngr->set(mtrx->get(index_r, index_c));
+				i_mngr->set((index_r - 1) * mtrx->columns() + index_c, 1);
+				c_mngr->set(index_c, 1);				
+				mngr2 = f.calculate(argv);
+				mtrx->set(mngr2, index_r, index_c);		
+				mngr2->unref();
+			}
+		}	
+		CALCULATOR->delId(x_id, true);
+		CALCULATOR->delId(i_id, true);
+		CALCULATOR->delId(r_id, true);		
+		CALCULATOR->delId(c_id, true);	
+		CALCULATOR->delId(n_id, true);
+		x_mngr->unref();
+		i_mngr->unref();
+		r_mngr->unref();
+		c_mngr->unref();
+		n_mngr->unref();
+		mngr->set(mtrx);
+		delete mtrx;			
+	} else {
+		Manager *x_mngr = new Manager(vargs[1]);
+		clearVArgs();			
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int x_id = CALCULATOR->addId(x_mngr, true);
+		argv += i2s(x_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;		
+		gsub("\\i", LEFT_BRACKET "1" RIGHT_BRACKET, sarg);
+		gsub("\\c", LEFT_BRACKET "1" RIGHT_BRACKET, sarg);		
+		gsub("\\r", LEFT_BRACKET "1" RIGHT_BRACKET, sarg);		
+		gsub("\\n", LEFT_BRACKET "1" RIGHT_BRACKET, sarg);				
+		UserFunction f("", "Processing Function", sarg, false, 1);	
 		mngr2 = f.calculate(argv);
-		v->set(mngr2, index);		
-		mngr2->unref();
+		mngr->set(mngr2);		
+		mngr2->unref();		
+		CALCULATOR->delId(x_id, true);
+		x_mngr->unref();		
 	}
-	CALCULATOR->delId(x_id, true);
-	CALCULATOR->delId(i_id, true);
-	CALCULATOR->delId(n_id, true);
-	x_mngr->unref();
-	i_mngr->unref();
-	n_mngr->unref();
-	mngr->set(v);
 }
 CustomSumFunction::CustomSumFunction() : Function("Utilities", "csum", 2, "Custom sum of components", "", false, -1) {
 }
 void CustomSumFunction::calculate2(Manager *mngr) {
 	string sarg = vargs[0]->text();
-	gsub("\\i", "\\z", sarg);
-	gsub("\\n", "\\a", sarg);				
-	UserFunction f("", "Processing Function", sarg, false, 4);
 	string argv = "";
-	Vector *v = produceVector();
-	Manager *y_mngr = new Manager(vargs[1]);		
-	clearVArgs();					
-	Manager *x_mngr = new Manager();
-	argv += LEFT_BRACKET ID_WRAP_LEFT;
-	int x_id = CALCULATOR->addId(x_mngr, true);
-	argv += i2s(x_id);
-	argv += ID_WRAP_RIGHT RIGHT_BRACKET;				
-	argv += COMMA;
-	argv += LEFT_BRACKET ID_WRAP_LEFT;
-	int y_id = CALCULATOR->addId(y_mngr, true);
-	argv += i2s(y_id);
-	argv += ID_WRAP_RIGHT RIGHT_BRACKET;				
-	argv += COMMA;		
-	Manager *i_mngr = new Manager();
-	argv += LEFT_BRACKET ID_WRAP_LEFT;
-	int i_id = CALCULATOR->addId(i_mngr, true);
-	argv += i2s(i_id);
-	argv += ID_WRAP_RIGHT RIGHT_BRACKET;
-	argv += COMMA;
-	Manager *n_mngr = new Manager(v->components(), 1);
-	argv += LEFT_BRACKET ID_WRAP_LEFT;
-	int n_id = CALCULATOR->addId(n_mngr, true);
-	argv += i2s(n_id);
-	argv += ID_WRAP_RIGHT RIGHT_BRACKET;	
-	Manager *mngr2;
-	for(int index = 1; index <= v->components(); index++) {
-		x_mngr->set(v->get(index));
-		i_mngr->set(index, 1);
+	Manager *mngr2;	
+	Manager *y_mngr = new Manager(vargs[1]);
+	if(vargs.size() > 3 || (vargs[2]->isMatrix() && vargs[2]->matrix()->isVector())) {
+		Vector *v = produceVector();
+		clearVArgs();			
+		gsub("\\i", "\\z", sarg);
+		gsub("\\c", "\\z", sarg);		
+		gsub("\\r", LEFT_BRACKET "1" RIGHT_BRACKET, sarg);		
+		gsub("\\n", "\\a", sarg);				
+		UserFunction f("", "Processing Function", sarg, false, 4);
+		Manager *x_mngr = new Manager();
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int x_id = CALCULATOR->addId(x_mngr, true);
+		argv += i2s(x_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;				
+		argv += COMMA;
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int y_id = CALCULATOR->addId(y_mngr, true);
+		argv += i2s(y_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;		
+		argv += COMMA;		
+		Manager *i_mngr = new Manager();
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int i_id = CALCULATOR->addId(i_mngr, true);
+		argv += i2s(i_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;
+		argv += COMMA;
+		Manager *n_mngr = new Manager(v->components(), 1);
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int n_id = CALCULATOR->addId(n_mngr, true);
+		argv += i2s(n_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;	
+		for(int index = 1; index <= v->components(); index++) {
+			x_mngr->set(v->get(index));
+			i_mngr->set(index, 1);
+			mngr2 = f.calculate(argv);
+			y_mngr->set(mngr2);
+			mngr2->unref();
+		}
+		CALCULATOR->delId(x_id, true);
+		CALCULATOR->delId(y_id, true);		
+		CALCULATOR->delId(i_id, true);
+		CALCULATOR->delId(n_id, true);
+		x_mngr->unref();
+		i_mngr->unref();
+		n_mngr->unref();
+		delete v;		
+	} else if(vargs[2]->isMatrix()) {
+		Matrix *mtrx = new Matrix(vargs[2]->matrix());	
+		clearVArgs();			
+		gsub("\\i", "\\z", sarg);
+		gsub("\\r", "\\a", sarg);		
+		gsub("\\c", "\\b", sarg);		
+		gsub("\\n", "\\c", sarg);	
+		UserFunction f("", "Processing Function", sarg, false, 6);
+		Manager *x_mngr = new Manager();
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int x_id = CALCULATOR->addId(x_mngr, true);
+		argv += i2s(x_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;				
+		argv += COMMA;
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int y_id = CALCULATOR->addId(y_mngr, true);
+		argv += i2s(y_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;		
+		argv += COMMA;
+		Manager *i_mngr = new Manager();
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int i_id = CALCULATOR->addId(i_mngr, true);
+		argv += i2s(i_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;
+		argv += COMMA;
+		Manager *r_mngr = new Manager();
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int r_id = CALCULATOR->addId(r_mngr, true);
+		argv += i2s(r_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;		
+		argv += COMMA;
+		Manager *c_mngr = new Manager();
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int c_id = CALCULATOR->addId(c_mngr, true);
+		argv += i2s(c_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;		
+		argv += COMMA;		
+		Manager *n_mngr = new Manager(mtrx->rows() * mtrx->columns(), 1);
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int n_id = CALCULATOR->addId(n_mngr, true);
+		argv += i2s(n_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;			
+		for(int index_r = 1; index_r <= mtrx->rows(); index_r++) {
+			r_mngr->set(index_r, 1);						
+			for(int index_c = 1; index_c <= mtrx->columns(); index_c++) {		
+				x_mngr->set(mtrx->get(index_r, index_c));
+				i_mngr->set((index_r - 1) * mtrx->columns() + index_c, 1);
+				c_mngr->set(index_c, 1);				
+				mngr2 = f.calculate(argv);
+				y_mngr->set(mngr2);
+				mngr2->unref();
+			}
+		}	
+		CALCULATOR->delId(x_id, true);
+		CALCULATOR->delId(y_id, true);		
+		CALCULATOR->delId(i_id, true);
+		CALCULATOR->delId(r_id, true);		
+		CALCULATOR->delId(c_id, true);	
+		CALCULATOR->delId(n_id, true);
+		x_mngr->unref();
+		i_mngr->unref();
+		r_mngr->unref();
+		c_mngr->unref();
+		n_mngr->unref();
+		delete mtrx;			
+	} else {
+		Manager *x_mngr = new Manager(vargs[2]);
+		clearVArgs();			
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int x_id = CALCULATOR->addId(x_mngr, true);
+		argv += i2s(x_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;		
+		argv += COMMA;
+		argv += LEFT_BRACKET ID_WRAP_LEFT;
+		int y_id = CALCULATOR->addId(y_mngr, true);
+		argv += i2s(y_id);
+		argv += ID_WRAP_RIGHT RIGHT_BRACKET;		
+		gsub("\\i", LEFT_BRACKET "1" RIGHT_BRACKET, sarg);
+		gsub("\\c", LEFT_BRACKET "1" RIGHT_BRACKET, sarg);		
+		gsub("\\r", LEFT_BRACKET "1" RIGHT_BRACKET, sarg);		
+		gsub("\\n", LEFT_BRACKET "1" RIGHT_BRACKET, sarg);				
+		UserFunction f("", "Processing Function", sarg, false, 2);	
 		mngr2 = f.calculate(argv);
-		y_mngr->set(mngr2);	
-		mngr2->unref();
+		y_mngr->set(mngr2);		
+		mngr2->unref();		
+		CALCULATOR->delId(x_id, true);
+		CALCULATOR->delId(y_id, true);		
+		x_mngr->unref();	
+			
 	}
-	CALCULATOR->delId(x_id, true);
-	CALCULATOR->delId(y_id, true);
-	CALCULATOR->delId(i_id, true);		
-	CALCULATOR->delId(n_id, true);
-	x_mngr->unref();
-	i_mngr->unref();
-	n_mngr->unref();
 	mngr->set(y_mngr);
-	delete v;			
+	y_mngr->unref();	
 }
 
 FunctionFunction::FunctionFunction() : Function("Utilities", "function", 1, "Function", "", false, -1) {
@@ -171,13 +411,36 @@ void VectorFunction::calculate2(Manager *mngr) {
 	}
 	mngr->set(&vctr);
 }
-RankFunction::RankFunction() : Function("Matrices", "rank", 1, "Rank") {}
+RankFunction::RankFunction() : Function("Matrices", "rank", -1, "Rank") {}
 void RankFunction::calculate2(Manager *mngr) {
-	if(vargs[0]->isMatrix()) {
-		mngr->set(vargs[0]);
-		mngr->matrix()->rank();
-	} else {
-		mngr->set(1, 1);
+	if(vargs.size() > 1) {
+		Vector *v = produceVector();
+		v->rank();
+		mngr->set(v);
+		delete v;
+	} else if(vargs.size() == 1) {
+		if(vargs[0]->isMatrix()) {
+			mngr->set(vargs[0]);
+			mngr->matrix()->rank();
+		} else {
+			mngr->set(1, 1);
+		}
+	}
+}
+SortFunction::SortFunction() : Function("Matrices", "sort", -1, "Sort") {}
+void SortFunction::calculate2(Manager *mngr) {
+	if(vargs.size() > 1) {
+		Vector *v = produceVector();
+		v->sort();
+		mngr->set(v);
+		delete v;
+	} else if(vargs.size() == 1) {
+		if(vargs[0]->isMatrix()) {
+			mngr->set(vargs[0]);
+			mngr->matrix()->sort();
+		} else {
+			mngr->set(vargs[0]);
+		}
 	}
 }
 MatrixToVectorFunction::MatrixToVectorFunction() : Function("Matrices", "matrixtovector", 1, "Convert Matrix to Vector") {}
@@ -752,84 +1015,99 @@ MedianFunction::MedianFunction() : Function("Statistics", "median", -1, "Median"
 void MedianFunction::calculate2(Manager *mngr) {
 	if(vargs.size() <= 0)
 		return;
-	list<long double> largs;
-	for(unsigned int i = 0; i < vargs.size(); i++) {
-		largs.push_back(vargs[i]->value());
-	}
-	largs.sort();
-	list<long double>::iterator it = largs.begin();
-	for(unsigned int i = 0; i < largs.size() / 2 - 1; i++) {
-	    ++it;
-	}	
-	if(vargs.size() % 2 == 0) {
-		mngr->set(*it);
-		++it;
-		mngr->addFloat(*it, ADD);
-		mngr->addFloat(2, DIVIDE);
+	Vector *v = produceVector();	
+	if(!v->sort()) {
+		Manager *mngr2 = createFunctionManagerFromVArgs(vargs.size());
+		mngr->set(mngr2);
+		mngr2->unref();	
+	} else if(v->components() % 2 == 0) {
+		mngr->set(v->get(v->components() / 2));
+		mngr->add(v->get(v->components() / 2 + 1), ADD);		
+		mngr->addInteger(2, DIVIDE);
 	} else {
-		++it;
-		mngr->set(*it);
+		mngr->set(v->get(v->components() / 2 + 1));
 	}
+	delete v;
 }
 MinFunction::MinFunction() : Function("Statistics", "min", -1, "Min") {}
 void MinFunction::calculate2(Manager *mngr) {
 	if(vargs.size() <= 0)
 		return;
-	long double value = vargs[0]->value();
-	unsigned int ui = 0;
-	for(unsigned int i = 1; i < vargs.size(); i++) {
-		if(vargs[i]->value() < value) {
-			value = vargs[i]->value();
-			ui = i;
+	Vector *v = produceVector();		
+	Fraction *fr = NULL;
+	for(int index = 1; index < v->components(); index++) {
+		if(v->get(index)->isFraction()) {
+			if(!fr || v->get(index)->fraction()->isLessThan(fr)) {
+				fr = v->get(index)->fraction();
+			}
+		} else {
+			CALCULATOR->error(true, "%s() can only compare numbers.", name().c_str(), NULL);
+			Manager *mngr2 = createFunctionManagerFromVArgs(vargs.size());
+			mngr->set(mngr2);
+			mngr2->unref();
+			fr = NULL;
+			break;
 		}
 	}
-	mngr->set(vargs[ui]);
+	if(fr) mngr->set(fr);
+	delete v;
 }
 MaxFunction::MaxFunction() : Function("Statistics", "max", -1, "Max") {}
 void MaxFunction::calculate2(Manager *mngr) {
 	if(vargs.size() <= 0)
 		return;
-	long double value = vargs[0]->value();
-	unsigned int ui = 0;
-	for(unsigned int i = 1; i < vargs.size(); i++) {
-		if(vargs[i]->value() > value) {
-			value = vargs[i]->value();
-			ui = i;
+	Vector *v = produceVector();		
+	Fraction *fr = NULL;
+	for(int index = 1; index < v->components(); index++) {
+		if(v->get(index)->isFraction()) {
+			if(!fr || v->get(index)->fraction()->isGreaterThan(fr)) {
+				fr = v->get(index)->fraction();
+			}
+		} else {
+			CALCULATOR->error(true, "%s() function can only compare numbers.", name().c_str(), NULL);
+			Manager *mngr2 = createFunctionManagerFromVArgs(vargs.size());
+			mngr->set(mngr2);
+			mngr2->unref();
+			fr = NULL;
+			break;
 		}
 	}
-	mngr->set(vargs[ui]);
+	if(fr) mngr->set(fr);
+	delete v;
 }
 ModeFunction::ModeFunction() : Function("Statistics", "mode", -1, "Mode") {}
 void ModeFunction::calculate2(Manager *mngr) {
 	if(vargs.size() <= 0) {
 		return;
 	}
+	Vector *v = produceVector();
 	int n = 0;
 	bool b;
 	vector<Manager*> vargs_nodup;
 	vector<int> is;
-	Manager *value;
-	for(unsigned int i = 0; i < vargs.size(); i++) {
+	Manager *value = NULL;
+	for(int index_c = 1; index_c < v->components(); index_c++) {
 		b = true;
-		for(unsigned int i2 = 0; i2 < vargs_nodup.size(); i2++) {
-			if(vargs_nodup[i2]->equals(vargs[i])) {
-				is[i2]++;
+		for(int index = 0; index < vargs_nodup.size(); index++) {
+			if(vargs_nodup[index]->equals(v->get(index_c))) {
+				is[index]++;
 				b = false;
 				break;
 			}
 		}
 		if(b) {
-			vargs_nodup.push_back(vargs[i]);
+			vargs_nodup.push_back(v->get(index_c));
 			is.push_back(1);
 		}
 	}
-	for(unsigned int i = 0; i < is.size(); i++) {
-		if(is[i] > n) {
-			n = is[i];
-			value = vargs_nodup[i];
+	for(int index = 0; index < is.size(); index++) {
+		if(is[index] > n) {
+			n = is[index];
+			value = vargs_nodup[index];
 		}
 	}
 	mngr->set(value);
+	delete v;
 }
 NumberFunction::NumberFunction() : Function("Statistics", "number", -1, "Number") {}
 void NumberFunction::calculate2(Manager *mngr) {

@@ -1462,6 +1462,8 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 		}	
 		if(displayflags & DISPLAY_FORMAT_NONASCII) {
 			if(s_var == "pi") str += SIGN_PI;
+			else if(s_var == "euler") str += SIGN_GAMMA;
+			else if(s_var == "golden") str += SIGN_PHI;			
 			else str += s_var;
 		} else {
 			str += s_var;

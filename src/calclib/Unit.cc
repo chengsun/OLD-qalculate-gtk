@@ -156,6 +156,7 @@ Manager *Unit::convert(const Unit *u, Manager *value_, Manager *exp_, bool *conv
 			if(convert(cu->units[i], value_, exp_)) b = true;
 		}
 	}
+	if(CALCULATOR->alwaysExact() && !value_->isPrecise()) b = false;
 	exp_->unref();
 	if(converted) *converted = b;
 	return value_;

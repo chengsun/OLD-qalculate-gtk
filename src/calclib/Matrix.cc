@@ -119,7 +119,7 @@ bool Matrix::adjoint() {
 	transpose();
 	return true;
 }
-bool Matrix::rank() {
+bool Matrix::rank(bool ascending) {
 	Manager *mngr;
 	vector<int> ranked_r;
 	vector<int> ranked_c;	
@@ -135,7 +135,7 @@ bool Matrix::rank() {
 			bool b = false;
 			for(int i = 0; i < ranked_r.size(); i++) {
 				int cmp = mngr->fraction()->compare(ranked_mngr[i]->fraction());
-				if(cmp >= 0) {
+				if((cmp > 0 && ascending) || cmp == 0 || (cmp < 0 && !ascending)) {
 					if(cmp == 0) {
 						ranked_c.insert(ranked_c.begin() + i + 1, index_c);
 						ranked_r.insert(ranked_r.begin() + i + 1, index_r);						
@@ -176,6 +176,36 @@ bool Matrix::rank() {
 			}
 			n_rep = 0;
 		}
+	}
+	return true;
+}
+bool Matrix::sort(bool ascending) {
+	Manager *mngr;
+	vector<Manager*> ranked_mngr;	
+	for(int index_r = 1; index_r <= rows(); index_r++) {
+		for(int index_c = 1; index_c <= columns(); index_c++) {
+			mngr = new Manager(get(index_r, index_c));
+			if(!mngr->isFraction()) {
+				CALCULATOR->error(true, "Only numbers can be sorted -- halted on \"%s\".", mngr->print().c_str(), NULL);
+				return false;
+			}
+			bool b = false;
+			for(int i = 0; i < ranked_mngr.size(); i++) {
+				int cmp = mngr->fraction()->compare(ranked_mngr[i]->fraction());
+				if((cmp > 0 && ascending) || cmp == 0 || (cmp < 0 && !ascending)) {
+					ranked_mngr.insert(ranked_mngr.begin() + i, mngr);
+					b = true;
+					break;
+				}
+			}
+			if(!b) {
+				ranked_mngr.push_back(mngr);
+			}
+		}
+	}	
+	for(int i = ranked_mngr.size() - 1; i >= 0; i--) {
+		set(ranked_mngr[i], i / columns() + 1, i % columns() + 1);
+		delete ranked_mngr[i];
 	}
 	return true;
 }

@@ -35,6 +35,16 @@ class Fraction {
 	void set(const Integer *numerator_ = NULL, const Integer *denominator_ = NULL, const Integer *exp10_ = NULL);	
 	void set(const Fraction *fr);
 	bool set(string str);	
+	void e();
+	void pi();
+	void catalan();
+	void pythagoras();
+	void euler();	
+	void apery();
+	void golden();
+#ifdef HAVE_LIBCLN			
+	bool zeta();			
+#endif	
 	void clear();
 	bool equals(const Fraction *fr) const;
 	int compare(const Fraction *fr) const;

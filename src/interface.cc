@@ -85,7 +85,10 @@ create_main_window (void)
 			TRUE);
 			
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (glade_xml, "button_hyp")), hyp_is_on);			
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (glade_xml, "button_fraction")), fractional_mode == FRACTIONAL_MODE_COMBINED);				
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (glade_xml, "button_fraction")), fractional_mode == FRACTIONAL_MODE_FRACTION);
+//	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (glade_xml, "button_inexact")), !CALCULATOR->alwaysExact());					
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (glade_xml, "menu_item_exact_mode")), CALCULATOR->alwaysExact());
+
 
 	accel_group = gtk_accel_group_new ();
 
@@ -266,6 +269,7 @@ create_main_window (void)
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_divide")), SIGN_DIVISION);	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_sqrt")), SIGN_SQRT);	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_dot")), SIGN_MULTIDOT);	
+//		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (glade_xml, "button_inexact")), SIGN_APPROXIMATELY_EQUAL);			
 	}
 
 	if(use_custom_font) {

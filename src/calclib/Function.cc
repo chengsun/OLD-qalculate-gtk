@@ -323,6 +323,7 @@ void Function::setPrecise(bool is_precise) {
 Vector *Function::produceVector(int begin, int end) {	
 	if(begin < 0) {
 		begin = minargs();
+		if(begin < 0) begin = 0;
 	}
 	if(end < 0 || end >= vargs.size()) {
 		end = vargs.size() - 1;

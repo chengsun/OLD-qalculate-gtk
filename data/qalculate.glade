@@ -152,29 +152,65 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="menu_item_save_defs">
+		    <widget class="GtkImageMenuItem" id="menu_item_save_defs">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Save definitions</property>
+		      <property name="label" translatable="yes">_Save definitions</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_save_defs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image29">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-save</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
 		    </widget>
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="menu_item_save_mode">
+		    <widget class="GtkImageMenuItem" id="menu_item_save_mode">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Save mode</property>
+		      <property name="label" translatable="yes">Save _mode</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_save_mode_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image30">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-save</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
 		    </widget>
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="menu_item_edit_prefs">
+		    <widget class="GtkImageMenuItem" id="menu_item_edit_prefs">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Preferences</property>
+		      <property name="label" translatable="yes">_Preferences</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_edit_prefs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image31">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-preferences</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
 		    </widget>
 		  </child>
 
@@ -192,9 +228,9 @@
 		      <signal name="activate" handler="on_menu_item_about_activate" last_modification_time="Thu, 14 Aug 2003 22:31:50 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image23">
+			<widget class="GtkImage" id="image32">
 			  <property name="visible">True</property>
-			  <property name="stock">gnome-stock-about</property>
+			  <property name="stock">gtk-dialog-info</property>
 			  <property name="icon_size">1</property>
 			  <property name="xalign">0.5</property>
 			  <property name="yalign">0.5</property>
@@ -213,7 +249,7 @@
 		      <signal name="activate" handler="on_menu_item_quit_activate" last_modification_time="Fri, 08 Aug 2003 10:07:30 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image24">
+			<widget class="GtkImage" id="image33">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -439,17 +475,39 @@
 		  </child>
 
 		  <child>
+		    <widget class="GtkCheckMenuItem" id="menu_item_exact_mode">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">_Exact Mode</property>
+		      <property name="use_underline">True</property>
+		      <property name="active">False</property>
+		      <signal name="activate" handler="on_menu_item_exact_mode_activate" last_modification_time="Thu, 11 Sep 2003 12:26:38 GMT"/>
+		    </widget>
+		  </child>
+
+		  <child>
 		    <widget class="GtkMenuItem" id="separator2">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="menu_item_save">
+		    <widget class="GtkImageMenuItem" id="menu_item_save">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Save Result</property>
+		      <property name="label" translatable="yes">_Save Result</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_save_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image34">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-save-as</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
 		    </widget>
 		  </child>
 
@@ -462,7 +520,7 @@
 		  <child>
 		    <widget class="GtkMenuItem" id="menu_item_precision">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Precision</property>
+		      <property name="label" translatable="yes">_Precision</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_precision_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
 		    </widget>
@@ -471,7 +529,7 @@
 		  <child>
 		    <widget class="GtkMenuItem" id="menu_item_decimals">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Decimals</property>
+		      <property name="label" translatable="yes">_Decimals</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_decimals_activate" last_modification_time="Sun, 10 Aug 2003 22:20:27 GMT"/>
 		    </widget>
@@ -4126,18 +4184,25 @@
 			  </child>
 
 			  <child>
-			    <widget class="GtkLabel" id="unit_edit_label_info1">
+			    <widget class="GtkAlignment" id="alignment13">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">&lt;span size='small' style='italic'&gt;If non-fixed relation, replace value with \x and exponent with \y&lt;/span&gt;</property>
-			      <property name="use_underline">False</property>
-			      <property name="use_markup">True</property>
-			      <property name="justify">GTK_JUSTIFY_LEFT</property>
-			      <property name="wrap">True</property>
-			      <property name="selectable">False</property>
 			      <property name="xalign">1</property>
 			      <property name="yalign">0.5</property>
-			      <property name="xpad">12</property>
-			      <property name="ypad">0</property>
+			      <property name="xscale">0</property>
+			      <property name="yscale">1</property>
+
+			      <child>
+				<widget class="GtkCheckButton" id="unit_edit_checkbutton_exact">
+				  <property name="visible">True</property>
+				  <property name="can_focus">True</property>
+				  <property name="label" translatable="yes">relation is exact</property>
+				  <property name="use_underline">True</property>
+				  <property name="relief">GTK_RELIEF_NORMAL</property>
+				  <property name="active">True</property>
+				  <property name="inconsistent">False</property>
+				  <property name="draw_indicator">True</property>
+				</widget>
+			      </child>
 			    </widget>
 			    <packing>
 			      <property name="padding">0</property>
@@ -5041,6 +5106,34 @@
 	    <packing>
 	      <property name="padding">0</property>
 	      <property name="expand">True</property>
+	      <property name="fill">True</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkAlignment" id="alignment12">
+	      <property name="visible">True</property>
+	      <property name="xalign">1</property>
+	      <property name="yalign">0.5</property>
+	      <property name="xscale">0</property>
+	      <property name="yscale">1</property>
+
+	      <child>
+		<widget class="GtkCheckButton" id="variable_edit_checkbutton_exact">
+		  <property name="visible">True</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">value is exact</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="active">True</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		</widget>
+	      </child>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
 	      <property name="fill">True</property>
 	    </packing>
 	  </child>

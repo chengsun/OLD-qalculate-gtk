@@ -1,3 +1,11 @@
+2003-09-11  Niklas Knutsson  <nq@altern.org>
+
+	* Sort function
+	* Buttons to set if precise in variable and unit edit dialogs
+	* Exact mode
+	* Use vectors in max, min, mode and median
+	* Make constants functions for more flexible precision
+
 2003-09-10  Niklas Knutsson  <nq@altern.org>
 
 	* Change behavior of decimals settings

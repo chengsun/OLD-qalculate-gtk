@@ -33,10 +33,18 @@ using namespace cln;
 
 class Integer {
 
+  protected:
+  
+#ifdef HAVE_LIBCLN
+	cl_I integ;  	
+#endif	
+
   public:
 
 #ifdef HAVE_LIBCLN
-	cl_I integ;
+	Integer(cl_I cln_integer);
+	const cl_I &getCL_I() const;	
+	void set(cl_I cln_integer);		
 #else
 #ifdef HAVE_LIBGMP
 	mpz_t integ;	

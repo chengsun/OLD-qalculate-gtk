@@ -39,7 +39,7 @@ class Calculator {
 	int ianglemode;
 	int i_precision;
 	char vbuffer[200];
-	bool b_functions, b_variables, b_units, b_unknown, b_calcvars;
+	bool b_functions, b_variables, b_units, b_unknown, b_calcvars, b_always_exact, tmp_always_exact;
 	vector<void*> ufv;
 	vector<char> ufv_t;	
 	hash_map<int, Manager*> ids;
@@ -61,6 +61,11 @@ class Calculator {
 
 	void addStringAlternative(string replacement, string standard);
 	void addDefauktStringAlternative(string replacement, string standard);
+
+	bool alwaysExact() const;
+	void setAlwaysExact(bool always_exact);
+	void beginTemporaryInexact();
+	void endTemporaryInexact();
 
 	Variable *getVariable(int index) const;
 	Unit *getUnit(int index) const;	
