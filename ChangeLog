@@ -1,5 +1,13 @@
 2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
 
+	* .cvsignore: cvs update has less warnings now
+	* configure.in: added de to ALL_LINGUAS
+	* data/qalculate.desktop.in: fixed the starter
+	* po/.cvsignore: cvs update has less warnings now
+	* po/de.po: updated german translation
+
+2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
+
 	* data/Makefile.am: added fixes for kde pre-3.2 (aka stable)
 
 2003-08-07  Sven Herzberg  <herzi@gnome-de.org>

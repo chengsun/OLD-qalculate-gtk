@@ -5,3 +5,4 @@ POTFILES
 qalculate-gtk.pot
 .intltool-merge-cache
 messages.mo
+*.gmo

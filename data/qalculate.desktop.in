@@ -2,7 +2,7 @@
 Encoding=UTF-8
 _Name=Qalculate!
 _Comment=Powerful and easy to use calculator
-Exec=qalculate
+Exec=qalculate-gtk
 Icon=gnome-calc3.png
 Terminal=false
 Type=Application
