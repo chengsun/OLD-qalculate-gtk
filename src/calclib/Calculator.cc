@@ -182,13 +182,14 @@ Calculator::Calculator() {
 	ILLEGAL_IN_NAMES = DOT_S + RESERVED OPERATORS SPACES PARENTHESISS VECTOR_WRAPS;
 	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = DOT_S + RESERVED OPERATORS PARENTHESISS VECTOR_WRAPS;	
 	ILLEGAL_IN_UNITNAMES = ILLEGAL_IN_NAMES + NUMBERS;			
+	b_argument_errors = true;
 	b_rpn = false;
 	calculator = this;
 	srand48(time(0));
 	angleMode(RADIANS);
 	pi_var = NULL;
 	e_var = NULL;
-	ln_func = NULL, log_func = NULL, matrix_func = NULL, vector_func = NULL, abs_func = NULL, diff_func = NULL, base_func = NULL, bin_func = NULL, oct_func = NULL, hex_func = NULL, integrate_func = NULL;
+	ln_func = NULL, log_func = NULL, matrix_func = NULL, vector_func = NULL, abs_func = NULL, sgn_func = NULL, diff_func = NULL, base_func = NULL, bin_func = NULL, oct_func = NULL, hex_func = NULL, integrate_func = NULL;
 	addBuiltinVariables();
 	addBuiltinFunctions();
 	addBuiltinUnits();
@@ -199,7 +200,7 @@ Calculator::Calculator() {
 	b_calcvars = true;
 	b_always_exact = false;
 	b_use_all_prefixes = false;
-	b_multiple_roots = false;
+	b_multiple_roots = true;
 	disable_errors_ref = 0;
 	b_busy = false;
 	b_gnuplot_open = false;
@@ -236,6 +237,7 @@ Function *Calculator::getBaseFunction() const {return base_func;}
 Function *Calculator::getLnFunction() const {return ln_func;}
 Function *Calculator::getLogFunction() const {return log_func;}
 Function *Calculator::getAbsFunction() const {return abs_func;}
+Function *Calculator::getSignumFunction() const {return sgn_func;}
 Function *Calculator::getDiffFunction() const {return diff_func;}
 Function *Calculator::getIntegrateFunction() const {return integrate_func;}
 void Calculator::setRPNMode(bool enable) {
@@ -243,6 +245,9 @@ void Calculator::setRPNMode(bool enable) {
 }
 bool Calculator::inRPNMode() const {
 	return b_rpn;
+}
+bool Calculator::showArgumentErrors() const {
+	return b_argument_errors;
 }
 bool Calculator::alwaysExact() const {
 	return b_always_exact;
@@ -833,6 +838,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new GCDFunction());	
 	addFunction(new FactorialFunction());
 	abs_func = addFunction(new AbsFunction());
+	sgn_func = addFunction(new SignumFunction());
 	addFunction(new CeilFunction());
 	addFunction(new FloorFunction());
 	addFunction(new TruncFunction());
@@ -1133,9 +1139,12 @@ Manager *Calculator::calculate(string str, bool enable_abort, int usecs) {
 		}
 		bool was_exact = alwaysExact();
 		setAlwaysExact(true);
+		bool bae_was = b_argument_errors;
+		b_argument_errors = false;
 		setFunctionsAndVariables(str);
 		EqContainer *e = new EqContainer(str, OPERATION_ADD);
 		mngr = e->calculate();
+		b_argument_errors = bae_was;
 		setAlwaysExact(was_exact);
 		mngr->finalize();
 		if(!str2.empty()) {

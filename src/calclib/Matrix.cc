@@ -707,11 +707,6 @@ void Matrix::recalculateVariables() {
 	} 	
 }
 string Matrix::print(NumberFormat nrformat, int displayflags, int min_decimals, int max_decimals, Prefix *prefix, bool *in_exact, bool *usable, bool toplevel, bool *plural, Number *l_exp, bool in_composite, bool in_power) const {
-//	string str = "matrix(";
-//	str += i2s(rows());
-//	str += CALCULATOR->getComma();
-//	str += " ";
-//	str += i2s(columns());
 	string str = LEFT_VECTOR_WRAP;
 	for(unsigned int index_r = 0; index_r < elements.size(); index_r++) {
 		if(index_r > 0) {
@@ -764,7 +759,6 @@ string Vector::print(NumberFormat nrformat, int displayflags, int min_decimals, 
 	if(!isVector()) {
 		return Matrix::print(nrformat, displayflags, min_decimals, max_decimals, prefix, in_exact, usable, toplevel, plural, l_exp, in_composite, in_power);
 	}
-//	string str = "vector(";
 	string str = LEFT_VECTOR_WRAP;
 	for(unsigned int index = 1; index <= components(); index++) {
 		if(index != 1) {

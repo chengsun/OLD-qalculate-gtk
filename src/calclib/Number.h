@@ -27,6 +27,8 @@ class Number {
 
 	protected:
 	
+		void removeFloatZeroPart();
+	
 		cln::cl_N value;
 		bool b_approx;
 
@@ -117,6 +119,7 @@ class Number {
 		bool negate();
 		void setNegative(bool is_negative);
 		bool abs();
+		bool signum();
 		bool round(const Number *o = NULL);
 		bool floor(const Number *o = NULL);
 		bool ceil(const Number *o = NULL);

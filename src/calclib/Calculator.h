@@ -73,6 +73,8 @@ class Calculator {
 	bool b_functions_was, b_variables_was, b_units_was, b_unknown_was, b_calcvars_was, b_always_exact_was, b_rpn_was;
 	string NAME_NUMBER_PRE_S, NAME_NUMBER_PRE_STR, DOT_STR, DOT_S, COMMA_S, COMMA_STR, ILLEGAL_IN_NAMES, ILLEGAL_IN_UNITNAMES, ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
 
+	bool b_argument_errors;
+
 	bool b_gnuplot_open;
 	string gnuplot_cmdline;
 	FILE *gnuplot_pipe;
@@ -80,7 +82,7 @@ class Calculator {
 	bool local_to;
 	
 	Variable *pi_var, *e_var;
-	Function *ln_func, *log_func, *vector_func, *matrix_func, *abs_func, *diff_func, *bin_func, *oct_func, *hex_func, *base_func, *integrate_func;
+	Function *ln_func, *log_func, *vector_func, *matrix_func, *abs_func, *sgn_func, *diff_func, *bin_func, *oct_func, *hex_func, *base_func, *integrate_func;
 	
 	Sgi::hash_map<unsigned int, vector<Manager*> > alternative_syncs;
 	Sgi::hash_map<unsigned int, int> alternative_locks;
@@ -113,6 +115,8 @@ class Calculator {
 	bool multipleRootsEnabled() const;
 	void setMultipleRootsEnabled(bool enable_multiple_roots);
 
+	bool showArgumentErrors() const;
+	
 	void beginTemporaryStopErrors();
 	void endTemporaryStopErrors();	
 	
@@ -134,6 +138,7 @@ class Calculator {
 	Function *getHexadecimalFunction() const;
 	Function *getBinaryFunction() const;
 	Function *getBaseFunction() const;
+	Function *getSignumFunction() const;
 	Function *getAbsFunction() const;
 	Function *getDiffFunction() const;
 	Function *getIntegrateFunction() const;

@@ -1,5 +1,17 @@
+2004-04-03 Niklas Knutsson  <nq@altern.org>
+
+	* Enable multiple roots again
+	* Do not ignore unsolvable comparison
+	* Remove imaginary or real part present because of approximate floating point numbers
+	* Do not display errors for arguments in exact precalculation
+	* Do not display extra trailing zeros
+	* Make comparison between floats in lower precision (but not less than user defined precision)
+	* Fix printing of toplevel negative complex number
+	* Return -(x^(1/3)) for (-x)^(1/3)
+
 2004-04-02 Niklas Knutsson  <nq@altern.org>
 
+	* Remove integrate parts that does not work
 	* Do not crash on i^4
 	* Disable broken multiple roots
 

@@ -34,6 +34,13 @@ bool Manager::clearPrefixes() {
 	for(unsigned int i = 0; i < mngrs.size(); i++) {
 		if(mngrs[i]->clearPrefixes()) b = true;
 	}
+	if(c_type == MATRIX_MANAGER) {
+		for(unsigned int i = 1; i <= matrix()->rows(); i++) {
+			for(unsigned int i2 = 1; i2 <= matrix()->columns(); i2++) {
+				matrix()->get(i, i2)->clearPrefixes();
+			}	
+		}
+	}
 	if(b) {
 		clean();
 	}
@@ -397,7 +404,9 @@ bool Manager::typeclean() {
 				clear();
 				changed = true;
 			} else {
-				move_x_to_one_side();
+//				if(comparison_type == COMPARISON_EQUALS || comparison_type == COMPARISON_NOT_EQUALS) {
+					move_x_to_one_side();
+//				}
 			}
 			break;	
 		}
@@ -1908,6 +1917,13 @@ void Manager::clean() {
 		mngrs[i]->clean();
 		if(!mngrs[i]->isPrecise()) setPrecise(false);
 	}
+	if(c_type == MATRIX_MANAGER) {
+		for(unsigned int i = 1; i <= matrix()->rows(); i++) {
+			for(unsigned int i2 = 1; i2 <= matrix()->columns(); i2++) {
+				matrix()->get(i, i2)->clean();
+			}	
+		}
+	}
 	typeclean();
 }
 void Manager::recalculateFunctions() {
@@ -1923,8 +1939,13 @@ void Manager::recalculateFunctions() {
 			break;
 		}
 		case MATRIX_MANAGER: {
-			mtrx->recalculateFunctions();
-		}				
+			for(unsigned int i = 1; i <= matrix()->rows(); i++) {
+				for(unsigned int i2 = 1; i2 <= matrix()->columns(); i2++) {
+					matrix()->get(i, i2)->recalculateFunctions();
+				}	
+			}
+			break;
+		}
 	}
 }
 void Manager::recalculateVariables() {
@@ -1941,7 +1962,12 @@ void Manager::recalculateVariables() {
 			break;
 		}
 		case MATRIX_MANAGER: {
-			mtrx->recalculateVariables();
+			for(unsigned int i = 1; i <= matrix()->rows(); i++) {
+				for(unsigned int i2 = 1; i2 <= matrix()->columns(); i2++) {
+					matrix()->get(i, i2)->recalculateVariables();
+				}	
+			}
+			break;
 		}				
 	}
 }
@@ -2573,14 +2599,19 @@ void Manager::integrate(string x_var) {
 			break;
 		}
 		case POWER_MANAGER: {
-			Manager *x_mngr = new Manager(x_var);
-			bool x_in_base = base()->contains(x_mngr);
-			bool x_in_exp = exponent()->contains(x_mngr);
-			x_mngr->unref();
+			Manager x_mngr(x_var);
+			bool x_in_base = base()->contains(&x_mngr);
+			bool x_in_exp = exponent()->contains(&x_mngr);
 			if(x_in_base && !x_in_exp) {
-				if(exponent()->isNumber() && exponent()->number()->isMinusOne()) {
-					Manager mngr(CALCULATOR->getAbsFunction(), base(), NULL);
-					Manager mngr2(CALCULATOR->getLnFunction(), &mngr, NULL);
+				if(base()->equals(&x_mngr) && exponent()->isNumber()) {
+					if(exponent()->number()->isMinusOne()) {
+						Manager mngr(CALCULATOR->getAbsFunction(), base(), NULL);
+						Manager mngr2(CALCULATOR->getLnFunction(), &mngr, NULL);
+					} else {
+						exponent()->addInteger(1, OPERATION_ADD);
+						Manager mngr(exponent());
+						add(&mngr, OPERATION_DIVIDE);	
+					}
 				} else {
 					Manager mngr2(x_var);
 					Manager *mngr = new Manager(CALCULATOR->getIntegrateFunction(), this, &mngr2, NULL);
@@ -2601,14 +2632,7 @@ void Manager::integrate(string x_var) {
 			break;
 		}
 		case FUNCTION_MANAGER: {
-			if(function() == CALCULATOR->getLnFunction() && mngrs.size() == 1) {
-				Manager *mngr = new Manager(mngrs[0]);
-				set(mngr);
-				addInteger(-1, OPERATION_RAISE);
-				mngr->differentiate(x_var);
-				add(mngr, OPERATION_MULTIPLY);
-				mngr->unref();
-			} else if(function() == CALCULATOR->getDiffFunction() && mngrs.size() == 3 && mngrs[1]->text() == x_var) {
+			if(function() == CALCULATOR->getDiffFunction() && mngrs.size() == 3 && mngrs[1]->text() == x_var) {
 				mngrs[2]->addInteger(-1, OPERATION_ADD);
 				if(mngrs[2]->isZero()) {
 					moveto(mngrs[0]);	
@@ -2817,67 +2841,40 @@ string Manager::print(NumberFormat nrformat, int displayflags, int min_decimals,
 		}
 		case NUMBER_MANAGER: {
 
-			bool b_imag = true;
-			bool b_real = true;
-			if(number()->isApproximate() && number()->isComplex()) {
-				Number exp_prec(1, 1, CALCULATOR->getPrecision() + 2);
-				Number *nr_real = number()->realPart();
-				Number *nr_im = number()->imaginaryPart();
-				nr_real->setNegative(false);
-				nr_im->setNegative(false);
-				if(nr_real->isGreaterThan(nr_im)) {
-					nr_im->multiply(&exp_prec);
-					if(nr_real->isGreaterThan(nr_im)) {
-						b_imag = false;
-					}
-				} else {
-					nr_real->multiply(&exp_prec);
-					if(nr_im->isGreaterThan(nr_real)) {
-						b_real = false;
-					}
-				}
-				delete nr_real;
-				delete nr_im;
-			}
-
 			if(number()->isComplex()) {
 				Number *nr_im = number()->imaginaryPart();
-				if(b_real && number()->hasRealPart()) {
+				if(number()->hasRealPart()) {
 					Number *nr_real = number()->realPart();
 					Manager mngr(nr_real);
-					if(b_imag && !draw_minus && !toplevel && wrap) {
+					if(!draw_minus && !toplevel && wrap) {
 						nr_im->setNegative(!nr_im->isNegative());
 					}
 					delete nr_real;
-					str += mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, in_composite, in_power, draw_minus, print_equals, in_multiplication, false, false, NULL, in_div, false, NULL, prefix1, prefix2);	
-					if(b_imag) {
-						str += " ";
-						if(nr_im->isNegative()) {
-							if(displayflags & DISPLAY_FORMAT_NONASCII) {
-								str += SIGN_MINUS;				
-							} else {
-								str += MINUS;
-							}						
-						} else  {
-							if(displayflags & DISPLAY_FORMAT_NONASCII) {
-								str += SIGN_PLUS;
-							} else {
-								str += PLUS;
-							}
+					str += mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, in_composite, in_power, draw_minus || toplevel, print_equals, in_multiplication, false, false, NULL, in_div, false, NULL, prefix1, prefix2);	
+					str += " ";
+					if(nr_im->isNegative()) {
+						if(displayflags & DISPLAY_FORMAT_NONASCII) {
+							str += SIGN_MINUS;				
+						} else {
+							str += MINUS;
+						}						
+					} else  {
+						if(displayflags & DISPLAY_FORMAT_NONASCII) {
+							str += SIGN_PLUS;
+						} else {
+							str += PLUS;
 						}
-						str += " ";
 					}
-					if(!toplevel && wrap && b_imag) wrap_all = true;
+					str += " ";
+					if(!toplevel && wrap) wrap_all = true;
 				}
-				if(b_imag) {
-					Manager mngr(nr_im);
-					delete nr_im;
-					string str2 = mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, in_composite, in_power, !number()->hasRealPart() && draw_minus, print_equals, in_multiplication, false, false, NULL, in_div, true, NULL, prefix1, prefix2);
-					if(str2 == SIGN_MINUS "1") str += SIGN_MINUS;
-					else if(str2 == MINUS "1") str += MINUS;
-					else if(str2 != "1") str += str2;
-					str += "i";
-				}
+				Manager mngr(nr_im);
+				delete nr_im;
+				string str2 = mngr.print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, false, NULL, NULL, in_composite, in_power, !number()->hasRealPart() && (draw_minus || toplevel), print_equals, in_multiplication, false, false, NULL, in_div, true, NULL, prefix1, prefix2);
+				if(str2 == SIGN_MINUS "1") str += SIGN_MINUS;
+				else if(str2 == MINUS "1") str += MINUS;
+				else if(str2 != "1") str += str2;
+				str += "i";
 				break;
 			}
 
@@ -4407,7 +4404,10 @@ void Manager::move_x_to_one_side(string x_var) {
 			}
 		}
 		if(mngr_new.isAddition()) {
-
+			if(comparison_type != COMPARISON_EQUALS && comparison_type != COMPARISON_NOT_EQUALS) {
+				mngrs[0]->set(&mngr_new);
+				return;
+			}
 			Manager *base_x = NULL;
 			Number exp_num;
 			bool end = false;
@@ -4716,6 +4716,15 @@ void Manager::move_x_to_one_side(string x_var) {
 		for(unsigned int i = 0; i < mngrs[0]->countChilds(); i++) {
 			if(!mngrs[0]->getChild(i)->contains(&mngr_x)) {
 				mngrs[1]->add(mngrs[0]->getChild(i), OPERATION_DIVIDE);
+				if(mngrs[0]->getChild(i)->negative()) {
+					switch(comparison_type) {
+						case COMPARISON_LESS: {comparison_type = COMPARISON_GREATER; break;}
+						case COMPARISON_GREATER: {comparison_type = COMPARISON_LESS; break;}
+						case COMPARISON_EQUALS_LESS: {comparison_type = COMPARISON_EQUALS_GREATER; break;}
+						case COMPARISON_EQUALS_GREATER: {comparison_type = COMPARISON_EQUALS_LESS; break;}
+						default: {}
+					}
+				}
 				b = true;
 			} else {
 				mngr_new.add(mngrs[0]->getChild(i), OPERATION_MULTIPLY);
@@ -4748,6 +4757,9 @@ void Manager::move_x_to_one_side(string x_var) {
 			move_x_to_one_side(x_var);
 		}
 	} else if(mngrs[0]->isFunction()) {
+		if(comparison_type != COMPARISON_EQUALS && comparison_type != COMPARISON_NOT_EQUALS) {
+			return;
+		}
 		if(mngrs[0]->function() == CALCULATOR->getLnFunction() && mngrs[0]->countChilds() == 1) {
 			Manager mngr_x(x_var);
 			if(mngrs[0]->getChild(0)->contains(&mngr_x)) {
@@ -4756,7 +4768,6 @@ void Manager::move_x_to_one_side(string x_var) {
 				Manager mngr(CALCULATOR->getE());
 				mngr.add(mngrs[1], OPERATION_RAISE);
 				mngrs[1]->set(&mngr);
-				printf("%s\n", print().c_str());
 				move_x_to_one_side(x_var);
 			}
 		} else if(mngrs[0]->function() == CALCULATOR->getLogFunction() && mngrs[0]->countChilds() == 2) {

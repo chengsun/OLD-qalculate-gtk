@@ -2114,7 +2114,7 @@ GdkPixmap *draw_manager(Manager *m, NumberFormat nrformat = NUMBER_FORMAT_NORMAL
 			if(m->number()->isComplex()) {
 				string str;
 				PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
-				str = m->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, toplevel, NULL, NULL, in_composite, in_power, draw_minus, false, in_multiplication, wrap, false, NULL, in_div, false, NULL, prefix1, prefix2);
+				str = m->print(nrformat, displayflags, min_decimals, max_decimals, in_exact, usable, NULL, toplevel, NULL, NULL, in_composite, in_power, draw_minus || toplevel, false, in_multiplication, wrap, false, NULL, in_div, false, NULL, prefix1, prefix2);
 				gsub(SIGN_PLUS, "+", str);
 				if(str[0] == '(' && str[str.length() - 1] == ')') {
 					str = str.substr(1, str.length() - 2);
@@ -5892,8 +5892,8 @@ void load_preferences() {
 					CALCULATOR->angleMode(v);
 				else if(svar == "hyp_is_on")
 					hyp_is_on = v;
-//				else if(svar == "multiple_roots_enabled")
-//					CALCULATOR->setMultipleRootsEnabled(v);					
+				else if(svar == "multiple_roots_enabled")
+					CALCULATOR->setMultipleRootsEnabled(v);					
 				else if(svar == "functions_enabled")
 					CALCULATOR->setFunctionsEnabled(v);
 				else if(svar == "variables_enabled")
@@ -6069,7 +6069,7 @@ void save_preferences(bool mode)
 	fprintf(file, "use_short_units=%i\n", use_short_units);
 	fprintf(file, "all_prefixes_enabled=%i\n", CALCULATOR->allPrefixesEnabled());
 	fprintf(file, "denominator_prefix_enabled=%i\n", CALCULATOR->denominatorPrefixEnabled());
-//	fprintf(file, "multiple_roots_enabled=%i\n", CALCULATOR->multipleRootsEnabled());
+	fprintf(file, "multiple_roots_enabled=%i\n", CALCULATOR->multipleRootsEnabled());
 	fprintf(file, "use_unicode_signs=%i\n", use_unicode_signs);	
 	fprintf(file, "use_custom_result_font=%i\n", use_custom_result_font);	
 	fprintf(file, "use_custom_expression_font=%i\n", use_custom_expression_font);	

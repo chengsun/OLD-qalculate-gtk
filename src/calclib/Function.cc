@@ -137,7 +137,9 @@ bool Function::testCondition(vector<Manager*> &vargs) {
 				}
 			}
 		}
-		CALCULATOR->error(true, _("%s() requires that %s"), name().c_str(), str.c_str(), NULL);
+		if(CALCULATOR->showArgumentErrors()) {
+			CALCULATOR->error(true, _("%s() requires that %s"), name().c_str(), str.c_str(), NULL);
+		}
 		return false;
 	}
 	return true;
@@ -844,7 +846,7 @@ bool Argument::test(const Manager *value, int index, Function *f) const {
 		return true;
 	}
 	if(!b_zero && value->isZero()) {
-		if(b_error) {
+		if(b_error && CALCULATOR->showArgumentErrors()) {
 			if(sname.empty()) {
 				CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
 			} else {
@@ -854,7 +856,7 @@ bool Argument::test(const Manager *value, int index, Function *f) const {
 		return false;
 	}
 	if(!(b_matrix && value->isMatrix()) && !subtest(value)) {
-		if(b_error) {
+		if(b_error && CALCULATOR->showArgumentErrors()) {
 			if(sname.empty()) {
 				CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
 			} else {
@@ -878,7 +880,7 @@ bool Argument::test(const Manager *value, int index, Function *f) const {
 		CALCULATOR->delId(id, true);
 		mngr->protect(false);
 		if(!result) {
-			if(b_error) {
+			if(b_error && CALCULATOR->showArgumentErrors()) {
 				if(sname.empty()) {
 					CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
 				} else {

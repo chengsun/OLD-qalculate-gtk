@@ -82,6 +82,12 @@
           <_title>Denominator</_title>
         </argument>
       </builtin_function>
+      <builtin_function name="sgn">
+        <_title>Signum</_title>
+        <argument index="1">
+          <_title>Number</_title>
+        </argument>
+      </builtin_function>
       <function name="neg">
         <_title>Negate</_title>
           <expression>-\x</expression>

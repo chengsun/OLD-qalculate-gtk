@@ -1060,6 +1060,16 @@ void AbsFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	}
 	mngr->setPrecise(!mngr->number()->isApproximate());
 }
+SignumFunction::SignumFunction() : Function("Arithmetics", "sgn", 1, "Signum") {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+}
+void SignumFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
+	mngr->set(vargs[0]);
+	if(!mngr->number()->signum()) {
+		mngr->set(this, vargs[0], NULL);	
+	}
+	mngr->setPrecise(!mngr->number()->isApproximate());
+}
 CeilFunction::CeilFunction() : Function("Arithmetics", "ceil", 1, "Round upwards") {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
 }
@@ -1372,7 +1382,13 @@ void MinFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 			if(cmp == -1) {
 				min = v->get(index);
 			} else if(cmp < -1) {
-				CALCULATOR->error(true, _("Unsolvable comparison in %s() ignored."), name().c_str(), NULL);
+				if(CALCULATOR->showArgumentErrors()) {
+					CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
+				}
+				Manager mngr_v(v);
+				mngr->set(this, &mngr_v, NULL);
+				delete v;
+				return;
 			}
 		}
 	}
@@ -1396,7 +1412,13 @@ void MaxFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 			if(cmp == 1) {
 				max = v->get(index);
 			} else if(cmp < -1) {
-				CALCULATOR->error(true, _("Unsolvable comparison in %s() ignored."), name().c_str(), NULL);
+				if(CALCULATOR->showArgumentErrors()) {
+					CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
+				}
+				Manager mngr_v(v);
+				mngr->set(this, &mngr_v, NULL);
+				delete v;
+				return;
 			}
 		}
 	}
@@ -1916,12 +1938,17 @@ SolveFunction::SolveFunction() : Function("Calculus", "solve", 1, "Solve equatio
 void SolveFunction::calculate(Manager *mngr, vector<Manager*> &vargs) {
 	Manager mngr_solve(vargs[0]);
 	mngr_solve.solve(vargs[1]->text());
-	if(vargs[0]->isComparison() && vargs[0]->comparisonType() == COMPARISON_EQUALS) {
-		if(mngr_solve.getChild(0)->equals(vargs[1])) {
-			mngr->set(mngr_solve.getChild(1));
-			return;
-		} else if(mngr_solve.getChild(1)->equals(vargs[1])) {
-			mngr->set(mngr_solve.getChild(0));
+	if(vargs[0]->isComparison()) {
+		if(vargs[0]->comparisonType() == COMPARISON_EQUALS) {
+			if(mngr_solve.getChild(0)->equals(vargs[1])) {
+				mngr->set(mngr_solve.getChild(1));
+				return;
+			} else if(mngr_solve.getChild(1)->equals(vargs[1])) {
+				mngr->set(mngr_solve.getChild(0));
+				return;
+			}
+		} else {
+			mngr->set(&mngr_solve);
 			return;
 		}
 	}
