@@ -1371,7 +1371,7 @@ int YearFracFunction::calculate(MathStructure &mstruct, const MathStructure &var
 WeekFunction::WeekFunction() : Function("week", 0, 2) {
 	setArgumentDefinition(1, new DateArgument());
 	setArgumentDefinition(2, new BooleanArgument());	
-	setDefaultValue(1, "\"today\"");
+	setDefaultValue(1, "today");
 }
 int WeekFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int w = week(vargs[0].symbol(), vargs[1].number().getBoolean());
@@ -1384,7 +1384,7 @@ int WeekFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 WeekdayFunction::WeekdayFunction() : Function("weekday", 0, 2) {
 	setArgumentDefinition(1, new DateArgument());
 	setArgumentDefinition(2, new BooleanArgument());
-	setDefaultValue(1, "\"today\"");
+	setDefaultValue(1, "today");
 }
 int WeekdayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int w = weekday(vargs[0].symbol());
@@ -1400,7 +1400,7 @@ int WeekdayFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 }
 YeardayFunction::YeardayFunction() : Function("yearday", 0, 1) {
 	setArgumentDefinition(1, new DateArgument());
-	setDefaultValue(1, "\"today\"");
+	setDefaultValue(1, "today");
 }
 int YeardayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int d = yearday(vargs[0].symbol());
@@ -1412,7 +1412,7 @@ int YeardayFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 }
 MonthFunction::MonthFunction() : Function("month", 0, 1) {
 	setArgumentDefinition(1, new DateArgument());
-	setDefaultValue(1, "\"today\"");
+	setDefaultValue(1, "today");
 }
 int MonthFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int year, month, day;
@@ -1424,7 +1424,7 @@ int MonthFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 }
 DayFunction::DayFunction() : Function("day", 0, 1) {
 	setArgumentDefinition(1, new DateArgument());
-	setDefaultValue(1, "\"today\"");
+	setDefaultValue(1, "today");
 }
 int DayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int year, month, day;
@@ -1436,7 +1436,7 @@ int DayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 }
 YearFunction::YearFunction() : Function("year", 0, 1) {
 	setArgumentDefinition(1, new DateArgument());
-	setDefaultValue(1, "\"today\"");
+	setDefaultValue(1, "today");
 }
 int YearFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int year, month, day;
@@ -1919,8 +1919,8 @@ SaveFunction::SaveFunction() : Function("save", 2, 4) {
 	setArgumentDefinition(2, new TextArgument());
 	setArgumentDefinition(3, new TextArgument());	
 	setArgumentDefinition(4, new TextArgument());		
-	setDefaultValue(3, "\"Temporary\"");
-	setDefaultValue(4, "\"\"");	
+	setDefaultValue(3, "Temporary");
+	setDefaultValue(4, "");	
 }
 int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	CALCULATOR->addVariable(new KnownVariable(vargs[2].symbol(), vargs[1].symbol(), vargs[0], vargs[3].symbol()));

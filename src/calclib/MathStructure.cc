@@ -2786,11 +2786,9 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo) {
 
 		MathStructure mstruct;
 		int i = o_function->calculate(mstruct, *this, eo);
-		printf("G %s\n", print().c_str());
 		if(i > 0) {
 			set(mstruct);
 			calculateFunctions(eo);
-			printf("J %s\n", print().c_str());
 			return true;
 		} else {
 			if(i < 0) {
@@ -2798,10 +2796,8 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo) {
 				if(i <= (int) SIZE) CHILD(i - 1) = mstruct;
 			}
 			m_type = STRUCT_FUNCTION;
-			printf("I %s\n", print().c_str());
 			return false;
 		}
-		printf("H %s\n", print().c_str());
 		return false;
 	}
 	bool b = false;
@@ -3780,13 +3776,11 @@ bool MathStructure::factorize(const EvaluationOptions &eo) {
 				if(xvar) {
 					bool factorable = false;
 					Number nr1, nr0;
-					if(CHILD(1).isNumber()) {
-						if(SIZE == 2) {
-							factorable = true;
-							nr0 = CHILD(1).number();
-						}
-					} else if(SIZE == 2 || (SIZE == 3 && CHILD(2).isNumber())) {
-						if(SIZE == 3) nr0 = CHILD(2).number();
+					if(SIZE == 2 && CHILD(1).isNumber()) {
+						factorable = true;
+						nr0 = CHILD(1).number();
+					} else if(SIZE == 3 && CHILD(2).isNumber()) {
+						nr0 = CHILD(2).number();
 						if(CHILD(1).isMultiplication()) {
 							if(CHILD(1).size() == 2 && CHILD(1)[0].isNumber() && xvar->equals(CHILD(1)[1])) {
 								nr1 = CHILD(1)[0].number();
@@ -5309,6 +5303,23 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure *paren
 							MathStructure msave(CHILD(0)[0]);
 							CHILD(0) = msave;
 						}
+						if(CHILD(0).isDivision() && CHILD(0)[1].isNumber() && CHILD(0)[0].isMultiplication() && CHILD(0)[0].size() > 1 && CHILD(0)[0][0].isNumber()) {
+							MathStructure msave;
+							if(CHILD(0)[0].size() == 2) {
+								MathStructure msavenum(CHILD(0)[0][0]);
+								msave = CHILD(0)[0][1];
+								CHILD(0)[0] = msavenum;	
+							} else {
+								msave = CHILD(0)[0];
+								CHILD(0)[0] = msave[0];
+								msave.delChild(1);
+							}
+							if(isMultiplication()) {
+								insertChild(msave, 2);
+							} else {
+								CHILD(0) *= msave;
+							}
+						}
 					}
 					bool do_plural = true;
 					switch(CHILD(0).type()) {
@@ -5588,16 +5599,13 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, uns
 			
 			bool b = false;
 			for(unsigned int i = 0; i < SIZE; i++) {
-				if(CHILD(i).isInverse() || CHILD(i).isDivision()) {
-					if(po.negative_exponents) {
-						for(unsigned int i2 = 0; i2 < CHILD(i).size(); i2++) {
-							if(!CHILD(i)[i2].isNumber()) {
-								b = true;
-								break;
-							}
-						}
-						if(b) break;
-					} else {
+				if(CHILD(i).isInverse()) {
+					if(!po.negative_exponents || !CHILD(i)[0].isNumber()) {
+						b = true;
+						break;
+					}
+				} else if(CHILD(i).isDivision()) {
+					if(!CHILD(i)[0].isNumber() || !CHILD(i)[1].isNumber() || (!po.negative_exponents && CHILD(i)[0].number().isOne())) {
 						b = true;
 						break;
 					}
@@ -6044,7 +6052,7 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		case STRUCT_FUNCTION: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_VECTOR: {break;}
 		case STRUCT_NUMBER: {break;}
-		case STRUCT_VARIABLE: {}
+		case STRUCT_VARIABLE: {break;}
 		case STRUCT_SYMBOLIC: {
 			break;
 		}
@@ -6087,8 +6095,8 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		case STRUCT_NUMBER: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_VARIABLE: {}
 		case STRUCT_SYMBOLIC: {
-			if(t != STRUCT_NUMBER && (namelen_prev > 1 || namelen_this > 1)) return MULTIPLICATION_SIGN_OPERATOR;
-			if(namelen_this > 1) return MULTIPLICATION_SIGN_SPACE;
+			if(t != STRUCT_NUMBER && ((namelen_prev > 1 || namelen_this > 1) || equals(parent[index - 2]))) return MULTIPLICATION_SIGN_OPERATOR;
+			if(namelen_this > 1 || (m_type == STRUCT_SYMBOLIC && !po.allow_non_usable)) return MULTIPLICATION_SIGN_SPACE;
 			return MULTIPLICATION_SIGN_NONE;
 		}
 		case STRUCT_UNIT: {
@@ -6114,7 +6122,13 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			break;
 		}
 		case STRUCT_SYMBOLIC: {
-			print_str = s_sym;
+			if(po.allow_non_usable) {
+				print_str = s_sym;
+			} else {
+				print_str = "\"";
+				print_str += s_sym;
+				print_str += "\"";
+			}
 			break;
 		}
 #ifdef HAVE_GIAC		
@@ -7539,14 +7553,11 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 				MathStructure mstruct(CHILD(0));
 				set(mstruct);
 			} else {
-				printf("B %s | %s\n", x_var.print().c_str(), print().c_str());
 				if(!eo.calculate_functions || !calculateFunctions(eo)) {
 					MathStructure mstruct(CALCULATOR->f_integrate, this, &x_var, NULL);
 					set(mstruct);
-					printf("C %s | %s\n", x_var.print().c_str(), print().c_str());
 					return false;
 				} else {
-					printf("D %s | %s\n", x_var.print().c_str(), print().c_str());
 					EvaluationOptions eo2 = eo;
 					eo2.calculate_functions = false;
 					return integrate(x_var, eo2);
@@ -7613,10 +7624,8 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 			}
 		}		
 		default: {
-			printf("E %s | %s\n", x_var.print().c_str(), print().c_str());
 			MathStructure mstruct(CALCULATOR->f_integrate, this, &x_var, NULL);
 			set(mstruct);
-			printf("F %s | %s\n", x_var.print().c_str(), print().c_str());
 			return false;
 		}	
 	}

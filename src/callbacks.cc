@@ -2776,6 +2776,28 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			
 			gint den_uh, den_w, den_dh, num_w, num_dh, num_uh, dh = 0, uh = 0, w = 0, h = 0, one_w, one_h;
 			
+			bool flat = ips.division_depth > 0 || ips.power_depth > 0;
+			if(!flat && po.place_units_separately) {
+				flat = true;
+				unsigned int i = 0;
+				if(m.isDivision()) {
+					i = 1;
+				}
+				if(m[i].isMultiplication()) {
+					for(unsigned int i2 = 0; i2 < m[i].size(); i2++) {
+						if(!m[i][i2].isUnit_exp()) {
+							flat = false;
+							break;
+						}
+					}
+				} else if(!m[i].isUnit_exp()) {
+					flat = false;
+				}
+				if(flat) {
+					ips_n.division_depth--;
+				}
+			}
+			
 			GdkPixmap *num_pixmap = NULL, *den_pixmap = NULL, *pixmap_one = NULL;
 			if(m.type() == STRUCT_DIVISION) {
 				ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
@@ -2798,24 +2820,6 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			gdk_drawable_get_size(GDK_DRAWABLE(den_pixmap), &den_w, &h);
 			den_uh = h - den_dh;
 			h = 0;
-			bool flat = ips.division_depth > 0 || ips.power_depth > 0;
-			if(!flat && po.place_units_separately) {
-				flat = true;
-				for(unsigned int i = 0; i < m.size(); i++) {
-					if(m[i].isMultiplication()) {
-						for(unsigned int i2 = 0; i2 < m[i].size(); i2++) {
-							if(!m[i][i2].isUnit_exp()) {
-								flat = false;
-								break;
-							}
-						}
-						if(!flat) break;
-					} else if(!m[i].isUnit_exp()) {
-						flat = false;
-						break;
-					}
-				}
-			}
 			if(flat) {
 				gint div_w, div_h;
 				PangoLayout *layout_div = gtk_widget_create_pango_layout(resultview, NULL);

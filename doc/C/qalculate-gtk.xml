@@ -291,7 +291,11 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 			</row>
 			<row valign="top">
 				<entry><para>Factorize</para></entry>
-				<entry><para>Factorizes the current result.</para></entry>
+				<entry><para>Factorizes the current result. Functionality is limited for polynomials with a degree higher than two.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Set Unknowns...</para></entry>
+				<entry><para>Opens a dialog where the values of unknown variables in the result can be set and the result recalculated.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Convert To Unit</para></entry>
@@ -371,6 +375,10 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 			<row valign="top">
 				<entry><para>Assumptions</para></entry>
 				<entry><para>Submenu which changes default assumptions for unknown variables.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Non-Zero Denominators</para></entry>
+				<entry><para>Toggles on/off use of the assumption that unknown denominators not are zero. This alternative makes it possible to avoid the situation where expressions such as <quote>(x-1)/(x-1)</quote> can not be further simplified because the denominator might be zero (if x equals 1).</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Read Precision</para></entry>
@@ -857,6 +865,7 @@ When always exact mode is on, the calculation will not go further than what can 
 <term>Assumptions</term>
 <listitem><para>
 This controls the default assumptions for unknown variables without explicitly defined assumptions. See <xref linkend="qalculate-variables"/>.
+The assume denominators non-zero alternative makes it possible to avoid the situation where expressions such as <quote>(x-1)/(x-1)</quote> can not be further simplified because the denominator might be zero (if x equals 1). With this alternative activated the example can be reduced to 1.
 </para></listitem>
 </varlistentry>
 <varlistentry>

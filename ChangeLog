@@ -1,3 +1,12 @@
+2004-09-20 Niklas Knutsson  <nq@altern.org>
+
+	* Some result display tweaks
+	* Update function titles and argument names
+	* Update Swedish translation
+	* Update documentation
+	* Print quotation marks for symbolic structures when not allow unusable
+	* Display e*e^x with multiplication sign
+
 2004-09-19 Niklas Knutsson  <nq@altern.org>
 
 	* Full factorization of quadratic polynomials

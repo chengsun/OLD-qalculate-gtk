@@ -1,7 +1,6 @@
 * Implement signals for deleted variables etc.
 * Mode without implicit multiplication
 * Sort out when small floats really are zero
-* Sort out x^-y -- (1/3)/(x+y)=1/3(x+y) but 1/3(x+y)=1/(3x+3y)
 * Quoted ")" in function
 * Do not recalculate plot data when it has not changed
 * Instant apply for all parameters in plot
