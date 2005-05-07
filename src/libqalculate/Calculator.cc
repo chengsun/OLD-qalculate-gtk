@@ -232,6 +232,8 @@ Calculator::Calculator() {
 	string str = _(" to ");
 	local_to = (str != " to ");
 	
+	ids_i = 0;
+	
 	null_prefix = new Prefix(0, "", "");
 	m_undefined.setUndefined();
 	m_empty_vector.clearVector();

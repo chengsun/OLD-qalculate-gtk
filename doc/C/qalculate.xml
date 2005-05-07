@@ -585,7 +585,7 @@ In Qalculate! mathematical entities, such as numbers and variables, are referred
 	<varlistentry>
 		<term>Numbers</term>
 		<listitem><para>
-		These are the regular numbers composed by digits 0-9 and a decimal point — a dot, and a comma if it is the default decimal point in the locale/language used. Separators (ex. <quote>1,000.00</quote>), usually comma or dot whichever is not the decimal point, are not allowed. Numbers include integers, real numbers, and complex numbers. The imaginary part of complex numbers are written with as regular number followed by the special variable <quote>i</quote>, which represents the square root of -1 (ex. <quote>2 + 3i</quote>). Spaces between digits are ignored (<quote>5  5 = 55</quote>). <quote>E</quote> can be considered as a shortcut for writing many zeros and is equivalent to multiplication by 10 raised to the power of the right-hand value (ex. <quote>5E3 = 5000</quote>). Sexagesimal numbers (and time) can be entered directly using colons (ex. <quote>5:30 = 5.5</quote>). Numbers in other bases also be entered, either by using the <command>base()</command>, <command>bin()</command>, <command>oct()</command>, <command>hex()</command> and <command>roman()</command> functions, or by setting the base used for all numbers in the whole expression from <menuchoice><guimenu>Mode</guimenu><guisubmenu>Number Base</guisubmenu><guimenuitem>Set Base In Expression</guimenuitem></menuchoice>.
+		These are the regular numbers composed by digits 0-9 and a decimal point — a dot, and a comma if it is the default decimal point in the locale/language used. Separators (ex. <quote>1,000.00</quote>), usually comma or dot whichever is not the decimal point, are not allowed. Numbers include integers, real numbers, and complex numbers. The imaginary part of complex numbers are written with as regular number followed by the special variable <quote>i</quote>, which represents the square root of -1 (ex. <quote>2 + 3i</quote>). Spaces between digits are ignored (<quote>5  5 = 55</quote>). <quote>E</quote> can be considered as a shortcut for writing many zeroes and is equivalent to multiplication by 10 raised to the power of the right-hand value (ex. <quote>5E3 = 5000</quote>). Sexagesimal numbers (and time) can be entered directly using colons (ex. <quote>5:30 = 5.5</quote>). Numbers in other bases also be entered, either by using the <command>base()</command>, <command>bin()</command>, <command>oct()</command>, <command>hex()</command> and <command>roman()</command> functions, or by setting the base used for all numbers in the whole expression from <menuchoice><guimenu>Mode</guimenu><guisubmenu>Number Base</guisubmenu><guimenuitem>Set Base In Expression</guimenuitem></menuchoice>.
 		</para></listitem>
 	</varlistentry>
 	<varlistentry>
@@ -875,19 +875,19 @@ The assume denominators non-zero alternative makes it possible to avoid the situ
 <varlistentry>
 <term>Precision</term>
 <listitem><para>
-Precision controls the precision in approximate numbers and the number of significant digits. If the read precision options is turned on, input numbers with decimals will be interpreted as approximate with a precision equal to the number of digits (ex. <quote>0.250 + 3.4567 = 5.96</quote>).
+Precision controls the precision in approximate numbers and the number of significant digits. If the read precision option is turned on, input numbers with decimals will be interpreted as approximate with a precision equal to the number of digits (ex. <quote>2.50 + 3.4567 = 5.96</quote>).
 </para></listitem>
 </varlistentry>
 <varlistentry>
 <term>Decimals</term>
 <listitem><para>
-In the decimals dialog, the number of decimals displayed can be controlled. This includes minimal (will fill out with zeros) and maximal number of decimals (will round numbers).
+In the decimals dialog, the number of decimals displayed can be controlled. This includes minimal (will fill out with zeroes) and maximal number of decimals (will round numbers).
 </para></listitem>
 </varlistentry>
 <varlistentry>
 <term>Limit Implicit Multiplication</term>
 <listitem><para>
-If the limit implicit multiplication mode is activated, the use of implicite multiplication when parsing expressions and displaying results will be limited to avoid confusion. For example, if this mode is not activated and <quote>integrte(5x)</quote> is accidently typed instead of <quote>integrate(5x)</quote>, the expression is interpreted as <quote>int(e * e * (5 * x) * gr * t)</quote> (displayed in history window). The result will then without any error be <quote>int(2.3940139x * km^2)</quote> instead of <quote>2.5x^2</quote>. If limit implicit multiplication is turned on to mistyped expression would instead show an error telling that <quote>integrte</quote> is not a valid variable, function or unit (unless unknowns is not enabled in which case the result will be <quote>5 "integrte" * x</quote>). When implicit multiplication is limited variables, functions and units must be separated by a space, opertor or parenthesis (<quote>xy</quote> does not equal <quote>x * y</quote>).
+If the limit implicit multiplication mode is activated, the use of implicite multiplication when parsing expressions and displaying results will be limited to avoid confusion. For example, if this mode is not activated and <quote>integrate(5x)</quote> is accidently typed instead of <quote>integrate(5x)</quote>, the expression is interpreted as <quote>int(e * e * (5 * x) * gr * t)</quote> (displayed in history window). The result will then without any error be <quote>int(2.3940139x * km^2)</quote> instead of <quote>2.5x^2</quote>. If limit implicit multiplication is turned on to mistyped expression would instead show an error telling that <quote>integrate</quote> is not a valid variable, function or unit (unless unknowns is not enabled in which case the result will be <quote>5 "integrate" * x</quote>). When implicit multiplication is limited variables, functions and units must be separated by a space, opertor or parenthesis (<quote>xy</quote> does not equal <quote>x * y</quote>).
 </para></listitem>
 </varlistentry>
 </variablelist>

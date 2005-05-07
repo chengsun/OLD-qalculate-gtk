@@ -1,3 +1,9 @@
+2005-05-07 Niklas Knutsson  <nq@altern.org>
+
+	* Initialize ids_i
+	* Fix documentation typos
+	* Fix includes.h for gcc-4.0
+
 2005-03-06 Niklas Knutsson  <nq@altern.org>
 
 	* 5e2 = 5E2 = 500 and 5e = 5*e
