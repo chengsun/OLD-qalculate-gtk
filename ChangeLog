@@ -1,3 +1,7 @@
+2005-05-15 Niklas Knutsson  <nq@altern.org>
+
+	* Max values seem to have been lost a long time ago -- add them again
+
 2005-05-07 Niklas Knutsson  <nq@altern.org>
 
 	* Initialize ids_i

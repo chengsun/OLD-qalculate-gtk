@@ -86,7 +86,7 @@ int main (int argc, char **argv) {
 		if(i > 1) {
 			calc_arg += " ";
 		}
-		if(strlen(argv[i]) >= 2 && ((argv[i][0] == '\"' && argv[i][strlen(argv[i] - 1)] == '\"') || (argv[i][0] == '\'' && argv[i][strlen(argv[i] - 1)] == '\''))) {
+		if(strlen(argv[i]) >= 2 && ((argv[i][0] == '\"' && argv[i][strlen(argv[i]) - 1] == '\"') || (argv[i][0] == '\'' && argv[i][strlen(argv[i]) - 1] == '\''))) {
 			calc_arg += argv[i] + 1;
 			calc_arg.erase(calc_arg.length() - 1);
 		} else {

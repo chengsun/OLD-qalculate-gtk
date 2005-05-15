@@ -205,10 +205,12 @@ const ExpressionName &ExpressionItem::preferredInputName(bool abbreviation, bool
 			if(!names[i].unicode) index = i;
 		} else if(names[i].avoid_input != names[index].avoid_input) {
 			if(!names[i].avoid_input) index = i;
+		} else if(abbreviation && names[i].abbreviation != names[index].abbreviation) {
+			if(names[i].abbreviation) index = i;
 		} else if(plural && names[i].plural != names[index].plural) {
 			if(names[i].plural) index = i;
-		} else if(names[i].abbreviation != names[index].abbreviation) {
-			if(names[i].abbreviation == abbreviation) index = i;
+		} else if(!abbreviation && names[i].abbreviation != names[index].abbreviation) {
+			if(!names[i].abbreviation) index = i;
 		} else if(!plural && names[i].plural != names[index].plural) {
 			if(!names[i].plural) index = i;
 		} else if(use_unicode && names[i].unicode != names[index].unicode) {

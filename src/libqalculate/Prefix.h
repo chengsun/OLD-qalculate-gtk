@@ -12,6 +12,7 @@
 #ifndef PREFIX_H
 #define PREFIX_H
 
+
 #include <libqalculate/includes.h>
 
 class Prefix {
