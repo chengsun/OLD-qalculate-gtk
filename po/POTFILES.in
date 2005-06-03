@@ -1,6 +1,6 @@
 # List of source files containing translatable strings.
 [encoding: UTF-8]
-data/qalculate.desktop.in
+data/qalculate-gtk.desktop.in
 data/about.glade
 data/argumentrules.glade
 data/csvexport.glade
@@ -27,15 +27,3 @@ data/variables.glade
 src/main.cc
 src/interface.cc
 src/callbacks.cc
-src/qalc.cc
-src/libqalculate/BuiltinFunctions.cc
-src/libqalculate/Calculator.cc
-src/libqalculate/DataSet.cc
-src/libqalculate/ExpressionItem.cc
-src/libqalculate/MathStructure.cc
-src/libqalculate/Function.cc
-src/libqalculate/Number.cc
-src/libqalculate/Prefix.cc
-src/libqalculate/Unit.cc
-src/libqalculate/Variable.cc
-src/libqalculate/util.cc

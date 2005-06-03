@@ -8,16 +8,12 @@ glade_DATA = about.glade argumentrules.glade csvexport.glade csvimport.glade dat
 	units.glade unknownedit.glade variableedit.glade variables.glade
 gladedir = $(datadir)/$(PACKAGE)/glade
 
-# this is for gnome and kde 3.2+
+# this is for gnome
 
-desktop_IN_FILES = qalculate.desktop.in
+desktop_IN_FILES = qalculate-gtk.desktop.in
 desktop_DATA = $(desktop_IN_FILES:.desktop.in=.desktop)
 desktopdir = $(datadir)/applications
 @INTLTOOL_DESKTOP_RULE@
-
-# this is for older kde-versions
-applnk_DATA = $(desktop_DATA)
-applnkdir = $(datadir)/applnk/Utilities
 
 EXTRA_DIST = \
 	$(desktop_IN_FILES)	\

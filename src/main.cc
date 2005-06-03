@@ -72,7 +72,7 @@ int main (int argc, char **argv) {
 #endif
 
 #ifdef HAVE_LIBGNOME
-	gnome_program_init("qalculate", VERSION, LIBGNOME_MODULE, argc, argv, 
+	gnome_program_init("qalculate-gtk", VERSION, LIBGNOME_MODULE, argc, argv, 
 					GNOME_PARAM_APP_DATADIR, PACKAGE_DATA_DIR,
 					NULL);
 #endif
@@ -128,7 +128,7 @@ int main (int argc, char **argv) {
 	} else if(first_time) {
 		PangoLayout *layout = gtk_widget_create_pango_layout(glade_xml_get_widget(main_glade, "resultview"), NULL);
 		gint w = 0, h = 0;
-		pango_layout_set_markup(layout, _("Enter a mathematical expression above.\nEx. 5 + 2 / 3"), -1);
+		pango_layout_set_markup(layout, _("Enter a mathematical expression above. Ex. 5 + 2 / 3"), -1);
 		pango_layout_get_pixel_size(layout, &w, &h);
 		gdk_draw_layout(GDK_DRAWABLE(glade_xml_get_widget(main_glade, "resultview")->window), glade_xml_get_widget(main_glade, "resultview")->style->fg_gc[GTK_WIDGET_STATE(glade_xml_get_widget(main_glade, "expression"))], 0, 0, layout);	
 		g_object_unref(layout);
@@ -138,7 +138,7 @@ int main (int argc, char **argv) {
 
 	//exchange rates
 	if(first_qalculate_run && canfetch) {
-		GtkWidget *edialog = gtk_message_dialog_new(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("You need the download exchange rates to be able to convert between different currencies. You can later get current exchange rates by selecting \"Update Exchange Rates\" under the File menu.\n\nDo you want to fetch exchange rates now from the Internet?"));
+		GtkWidget *edialog = gtk_message_dialog_new(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("You need to download exchange rates to be able to convert between different currencies. You can later get current exchange rates by selecting \"Update Exchange Rates\" under the File menu.\n\nDo you want to fetch exchange rates now from the Internet?"));
 		int question_answer = gtk_dialog_run(GTK_DIALOG(edialog));
 		gtk_widget_destroy(edialog);
 		while(gtk_events_pending()) gtk_main_iteration();
@@ -205,13 +205,13 @@ int main (int argc, char **argv) {
 	create_umenu2();
 	create_pmenu2();			
 
-	for(int i = recent_functions_pre.size() - 1; i >= 0; i--) {
+	for(int i = ((int) recent_functions_pre.size()) - 1; i >= 0; i--) {
 		function_inserted(CALCULATOR->getFunction(recent_functions_pre[i]));
 	}
-	for(int i = recent_variables_pre.size() - 1; i >= 0; i--) {
+	for(int i = ((int) recent_variables_pre.size()) - 1; i >= 0; i--) {
 		variable_inserted(CALCULATOR->getVariable(recent_variables_pre[i]));
 	}
-	for(int i = recent_units_pre.size() - 1; i >= 0; i--) {
+	for(int i = ((int) recent_units_pre.size()) - 1; i >= 0; i--) {
 		unit_inserted(CALCULATOR->getUnit(recent_units_pre[i]));
 	}
 
