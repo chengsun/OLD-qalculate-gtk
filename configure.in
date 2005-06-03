@@ -61,6 +61,14 @@ dnl  --------------------------------
 
 AC_CHECK_LIB(pthread, pthread_create, [LIBS="$LIBS -lpthread"])
 
+AC_LANG([C++])
+
+AC_PATH_CLN(1.1.0, [
+     	LIBS="$LIBS $CLN_LIBS"
+     	CPPFLAGS="$CPPFLAGS $CLN_CPPFLAGS"
+  	AC_DEFINE(HAVE_LIBCLN,1,[If CLN can be used])
+], AC_MSG_ERROR([No suitable installed version of CLN could be found.]))
+
 PKG_CHECK_MODULES(GLIB, [
 	glib-2.0 >= 2.4
 	libxml-2.0
@@ -103,15 +111,6 @@ if test x$SCROLLKEEPER_CONFIG = xno; then
 fi
 
 AC_SUBST(QALCULATE_GTK)
-
-AC_LANG([C++])
-
-AC_PATH_CLN(1.1.0, [
-     	LIBS="$LIBS $CLN_LIBS"
-     	CPPFLAGS="$CPPFLAGS $CLN_CPPFLAGS"
-  	AC_DEFINE(HAVE_LIBCLN,1,[If CLN can be used])
-], AC_MSG_ERROR([No suitable installed version of CLN could be found.]))
-
 
 AC_SUBST(LN_QALCULATE)
 

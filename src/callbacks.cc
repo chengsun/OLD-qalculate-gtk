@@ -1984,10 +1984,6 @@ void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gp
 					menu_index = MENU_ARGUMENT_TYPE_DATA_PROPERTY;
 					break;
 				}
-/*				case ARGUMENT_TYPE_GIAC: {
-					menu_index = MENU_ARGUMENT_TYPE_GIAC;
-					break;
-				}	*/					
 			}			
 		} else {
 			gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_argument_name")), "");
@@ -2529,35 +2525,6 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			g_object_unref(layout);
 			break;
 		}
-#ifdef HAVE_GIAC		
-		case STRUCT_UNKNOWN: {
-			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
-			string str;
-			if(ips.power_depth > 0) {
-				str = TEXT_TAGS_SMALL;
-			} else {
-				str = TEXT_TAGS;
-			}
-			str += m.unknown()->print();
-			if(ips.power_depth > 0) {
-				str += TEXT_TAGS_SMALL_END;
-			} else {
-				str += TEXT_TAGS_END;
-			}
-			pango_layout_set_markup(layout, str.c_str(), -1);
-			PangoRectangle rect;
-			pango_layout_get_pixel_size(layout, &w, &h);
-			pango_layout_get_pixel_extents(layout, &rect, NULL);
-			w = rect.width;
-			w += 1;
-			central_point = h / 2;
-			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
-			draw_background(pixmap, w, h);
-			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
-			g_object_unref(layout);
-			break;
-		}
-#endif
 		case STRUCT_ADDITION: {
 
 			ips_n.depth++;
@@ -3039,9 +3006,12 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			break;
 		}
 		case STRUCT_COMPARISON: {}
-		case STRUCT_AND: {}
-		case STRUCT_XOR: {}
-		case STRUCT_OR: {
+		case STRUCT_LOGICAL_AND: {}
+		case STRUCT_LOGICAL_XOR: {}
+		case STRUCT_LOGICAL_OR: {}
+		case STRUCT_BITWISE_AND: {}
+		case STRUCT_BITWISE_XOR: {}
+		case STRUCT_BITWISE_OR: {
 			
 			ips_n.depth++;
 			
@@ -3119,11 +3089,17 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 						break;
 					}
 				}
-			} else if(m.type() == STRUCT_AND) {
+			} else if(m.type() == STRUCT_LOGICAL_AND) {
+				str += "AND";
+			} else if(m.type() == STRUCT_LOGICAL_OR) {
+				str += "OR";
+			} else if(m.type() == STRUCT_LOGICAL_XOR) {
+				str += "XOR";
+			} else if(m.type() == STRUCT_BITWISE_AND) {
 				str += "&amp;";
-			} else if(m.type() == STRUCT_OR) {
+			} else if(m.type() == STRUCT_BITWISE_OR) {
 				str += "|";
-			} else if(m.type() == STRUCT_XOR) {
+			} else if(m.type() == STRUCT_BITWISE_XOR) {
 				str += "XOR";
 			}
 			
@@ -9961,7 +9937,6 @@ void on_function_edit_button_add_argument_clicked(GtkButton *w, gpointer user_da
 			case MENU_ARGUMENT_TYPE_ANGLE: {arg = new AngleArgument(); break;}	
 			case MENU_ARGUMENT_TYPE_DATA_OBJECT: {arg = new DataObjectArgument(NULL, ""); break;}
 			case MENU_ARGUMENT_TYPE_DATA_PROPERTY: {arg = new DataPropertyArgument(NULL, ""); break;}
-//			case MENU_ARGUMENT_TYPE_GIAC: {arg = new GiacArgument(); break;}
 			default: {arg = new Argument();}
 		}
 	}
@@ -10017,7 +9992,6 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 				case MENU_ARGUMENT_TYPE_ANGLE: {argtype = ARGUMENT_TYPE_ANGLE; break;}	
 				case MENU_ARGUMENT_TYPE_DATA_OBJECT: {argtype = ARGUMENT_TYPE_DATA_OBJECT; break;}
 				case MENU_ARGUMENT_TYPE_DATA_PROPERTY: {argtype = ARGUMENT_TYPE_DATA_PROPERTY; break;}	
-//				case MENU_ARGUMENT_TYPE_GIAC: {argtype = ARGUMENT_TYPE_GIAC; break;}	
 			}			
 			
 			if(!selected_argument || argtype != selected_argument->type() || menu_index == MENU_ARGUMENT_TYPE_NONNEGATIVE_INTEGER || menu_index == MENU_ARGUMENT_TYPE_POSITIVE_INTEGER || menu_index == MENU_ARGUMENT_TYPE_NONZERO_INTEGER || menu_index == MENU_ARGUMENT_TYPE_NONZERO || menu_index == MENU_ARGUMENT_TYPE_POSITIVE || menu_index == MENU_ARGUMENT_TYPE_NONNEGATIVE) {
@@ -10047,7 +10021,6 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 					case MENU_ARGUMENT_TYPE_ANGLE: {selected_argument = new AngleArgument(); break;}
 					case MENU_ARGUMENT_TYPE_DATA_OBJECT: {selected_argument = new DataObjectArgument(NULL, ""); break;}
 					case MENU_ARGUMENT_TYPE_DATA_PROPERTY: {selected_argument = new DataPropertyArgument(NULL, ""); break;}
-//					case MENU_ARGUMENT_TYPE_GIAC: {selected_argument = new GiacArgument(); break;}	
 					default: {selected_argument = new Argument();}
 				}			
 			}
