@@ -264,6 +264,12 @@
 <entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
+<entry><para>CNY</para></entry>
+<entry><para>CNY</para></entry>
+<entry><para>€</para></entry>
+<entry><para>exchange rate</para></entry>
+</row>
+<row valign="top">
 <entry><para>Canadian Dollars</para></entry>
 <entry><para>CAD</para></entry>
 <entry><para>€</para></entry>
@@ -342,6 +348,12 @@
 <entry><para>1/340.750</para></entry>
 </row>
 <row valign="top">
+<entry><para>HRK</para></entry>
+<entry><para>HRK</para></entry>
+<entry><para>€</para></entry>
+<entry><para>exchange rate</para></entry>
+</row>
+<row valign="top">
 <entry><para>Hong Kong Dollars</para></entry>
 <entry><para>HKD</para></entry>
 <entry><para>€</para></entry>
@@ -350,6 +362,12 @@
 <row valign="top">
 <entry><para>Hungarian Forint</para></entry>
 <entry><para>forint / HUF</para></entry>
+<entry><para>€</para></entry>
+<entry><para>exchange rate</para></entry>
+</row>
+<row valign="top">
+<entry><para>IDR</para></entry>
+<entry><para>IDR</para></entry>
 <entry><para>€</para></entry>
 <entry><para>exchange rate</para></entry>
 </row>
@@ -396,6 +414,12 @@
 <entry><para>1/40.3399</para></entry>
 </row>
 <row valign="top">
+<entry><para>MYR</para></entry>
+<entry><para>MYR</para></entry>
+<entry><para>€</para></entry>
+<entry><para>exchange rate</para></entry>
+</row>
+<row valign="top">
 <entry><para>Maltese Lira</para></entry>
 <entry><para>MTL</para></entry>
 <entry><para>€</para></entry>
@@ -414,6 +438,12 @@
 <entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
+<entry><para>PHP</para></entry>
+<entry><para>PHP</para></entry>
+<entry><para>€</para></entry>
+<entry><para>exchange rate</para></entry>
+</row>
+<row valign="top">
 <entry><para>Polish Zloty</para></entry>
 <entry><para>zloty / PLN</para></entry>
 <entry><para>€</para></entry>
@@ -424,6 +454,12 @@
 <entry><para>PTE / escudo</para></entry>
 <entry><para>€</para></entry>
 <entry><para>1/200.482</para></entry>
+</row>
+<row valign="top">
+<entry><para>RUB</para></entry>
+<entry><para>RUB</para></entry>
+<entry><para>€</para></entry>
+<entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
 <entry><para>Romanian Leu</para></entry>
@@ -480,8 +516,14 @@
 <entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
-<entry><para>Turkish Lira</para></entry>
-<entry><para>TRL</para></entry>
+<entry><para>THB</para></entry>
+<entry><para>THB</para></entry>
+<entry><para>€</para></entry>
+<entry><para>exchange rate</para></entry>
+</row>
+<row valign="top">
+<entry><para>TRY</para></entry>
+<entry><para>TRY</para></entry>
 <entry><para>€</para></entry>
 <entry><para>exchange rate</para></entry>
 </row>

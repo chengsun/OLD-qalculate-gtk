@@ -1,3 +1,9 @@
+2005-06-05 Niklas Knutsson  <nq@altern.org>
+
+	* Reload also recent composite units and getActive...
+	* Bitwise NOT (~)
+	* xor() and bitXor()
+
 2005-06-03 Niklas Knutsson  <nq@altern.org>
 
 	* Bitwise AND (&), OR (|), XOR

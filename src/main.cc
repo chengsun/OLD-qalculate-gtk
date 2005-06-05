@@ -206,13 +206,15 @@ int main (int argc, char **argv) {
 	create_pmenu2();			
 
 	for(int i = ((int) recent_functions_pre.size()) - 1; i >= 0; i--) {
-		function_inserted(CALCULATOR->getFunction(recent_functions_pre[i]));
+		function_inserted(CALCULATOR->getActiveFunction(recent_functions_pre[i]));
 	}
 	for(int i = ((int) recent_variables_pre.size()) - 1; i >= 0; i--) {
-		variable_inserted(CALCULATOR->getVariable(recent_variables_pre[i]));
+		variable_inserted(CALCULATOR->getActiveVariable(recent_variables_pre[i]));
 	}
 	for(int i = ((int) recent_units_pre.size()) - 1; i >= 0; i--) {
-		unit_inserted(CALCULATOR->getUnit(recent_units_pre[i]));
+		Unit *u = CALCULATOR->getActiveUnit(recent_units_pre[i]);
+		if(!u) u = CALCULATOR->getCompositeUnit(recent_units_pre[i]);
+		unit_inserted(u);
 	}
 
 	update_completion();

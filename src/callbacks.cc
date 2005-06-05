@@ -3139,7 +3139,8 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			g_object_unref(layout_sign);
 			break;
 		}
-		case STRUCT_NOT: {
+		case STRUCT_LOGICAL_NOT: {}
+		case STRUCT_BITWISE_NOT: {
 
 			ips_n.depth++;
 
@@ -3147,10 +3148,18 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			
 			PangoLayout *layout_not = gtk_widget_create_pango_layout(resultview, NULL);
 			
-			if(ips.power_depth > 0) {
-				pango_layout_set_markup(layout_not, TEXT_TAGS_SMALL "!" TEXT_TAGS_SMALL_END, -1);
+			if(m.type() == STRUCT_LOGICAL_NOT) {
+				if(ips.power_depth > 0) {
+					pango_layout_set_markup(layout_not, TEXT_TAGS_SMALL "!" TEXT_TAGS_SMALL_END, -1);
+				} else {
+					pango_layout_set_markup(layout_not, TEXT_TAGS "!" TEXT_TAGS_END, -1);
+				}
 			} else {
-				pango_layout_set_markup(layout_not, TEXT_TAGS "!" TEXT_TAGS_END, -1);
+				if(ips.power_depth > 0) {
+					pango_layout_set_markup(layout_not, TEXT_TAGS_SMALL "~" TEXT_TAGS_SMALL_END, -1);
+				} else {
+					pango_layout_set_markup(layout_not, TEXT_TAGS "~" TEXT_TAGS_END, -1);
+				}
 			}
 			pango_layout_get_pixel_size(layout_not, &not_w, &not_h);
 
@@ -6990,7 +6999,7 @@ void load_preferences() {
 		first_qalculate_run = false;
 		closedir(dir);
 	}
-	int version_numbers[] = {0, 8, 0};
+	int version_numbers[] = {0, 8, 1};
 	FILE *file = NULL;
 	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate-gtk.cfg", NULL);
 	file = fopen(gstr2, "r");

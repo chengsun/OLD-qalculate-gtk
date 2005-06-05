@@ -4,6 +4,18 @@
 <title>Algebra</title>
 <variablelist>
 <varlistentry>
+<term><emphasis>Bitwise Exclusive OR</emphasis></term>
+<listitem>
+<para><command>bitxor(Value 1, Value 2)</command></para>
+<para><command>xor</command></para><formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value 1: a free value</para></listitem>
+<listitem><para>Value 2: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
 <term><emphasis>Find Linear Function</emphasis></term>
 <listitem>
 <para><command>linearfunction(x1, y1, x2, y2)</command></para>
@@ -488,7 +500,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <listitem><para>Settlement Date: a date</para></listitem>
 <listitem><para>Annual Rate of Security: a free value</para></listitem>
 <listitem><para>Par Value: a free value (optional)</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 (optional)</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -496,7 +508,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Accrued interest of security with periodic interest payments</emphasis></term>
 <listitem>
-<para><command>accrint(Issue Date, First Interest, Settlement Date, Annual Rate of Security, Par Value, Number of payments per year[, Day Counting Basis])</command></para>
+<para><command>accrint(Issue Date, First Interest, Settlement Date, Annual Rate of Security, Par Value, Frequency[, Day Counting Basis])</command></para>
 <para>Returns accrued interest for a security which pays periodic interest.</para><para></para><para>Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
@@ -505,8 +517,8 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <listitem><para>Settlement Date: a date</para></listitem>
 <listitem><para>Annual Rate of Security: a free value</para></listitem>
 <listitem><para>Par Value: a free value</para></listitem>
-<listitem><para>Number of payments per year: an integer &gt;= 1</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 (optional)</para></listitem>
+<listitem><para>Frequency: an integer &gt;= 1 and &lt;= 4</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -522,7 +534,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <listitem><para>Maturity Date: a date</para></listitem>
 <listitem><para>Investment: a free value</para></listitem>
 <listitem><para>Discount Rate: a free value</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 (optional)</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -553,7 +565,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <listitem><para>Maturity Date: a date</para></listitem>
 <listitem><para>Price per $100 face value: a free value</para></listitem>
 <listitem><para>Redemption: a free value</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 (optional)</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -639,7 +651,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <listitem><para>Maturity Date: a date</para></listitem>
 <listitem><para>Investment: a free value</para></listitem>
 <listitem><para>Redemption: a free value</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 (optional)</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -682,8 +694,8 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Settlement Date: a date</para></listitem>
 <listitem><para>Maturity Date: a date</para></listitem>
-<listitem><para>Frequency: an integer &gt;= 1</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 (optional)</para></listitem>
+<listitem><para>Frequency: an integer &gt;= 1 and &lt;= 12</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -796,7 +808,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <listitem><para>Issue Date: a date</para></listitem>
 <listitem><para>Discount Rate: a free value</para></listitem>
 <listitem><para>Annual Yield: a free value</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 (optional)</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -812,7 +824,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <listitem><para>Maturity Date: a date</para></listitem>
 <listitem><para>Discount: a free value</para></listitem>
 <listitem><para>Redemption: a free value</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 (optional)</para></listitem>
+<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1672,6 +1684,23 @@ dimension("Equation Vector")=dimension("Variable Vector")
 </listitem>
 </varlistentry>
 <varlistentry>
+<term><emphasis>Generate Vector</emphasis></term>
+<listitem>
+<para><command>genvector(Function, Min, Max, Components / Step size[, Variable][, Use step size])</command></para>
+<para>Generates a vector from a function with a variable (default x) running from min to max. The fourth argument is either the requested number of components if the sixth argument is false (default) or the step between each value of the variable.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Function: a free value</para></listitem>
+<listitem><para>Min: a free value</para></listitem>
+<listitem><para>Max: a free value</para></listitem>
+<listitem><para>Components / Step size: a free value</para></listitem>
+<listitem><para>Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Use step size: a boolean (0 or 1) (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
 <term><emphasis>Identity</emphasis></term>
 <listitem>
 <para><command>identity(Matrix or Rows/Columns)</command></para>
@@ -1921,6 +1950,18 @@ dimension("Equation Vector")=dimension("Variable Vector")
 </listitem>
 </varlistentry>
 <varlistentry>
+<term><emphasis>Modulus</emphasis></term>
+<listitem>
+<para><command>mod(Numerator, Denominator)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Numerator: a real number</para></listitem>
+<listitem><para>Denominator: a real number that is nonzero</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
 <term><emphasis>Multiply</emphasis></term>
 <listitem>
 <para><command>multiply(Factors)</command></para>
@@ -1966,19 +2007,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 </listitem>
 </varlistentry>
 <varlistentry>
-<term><emphasis>Reminder (mod)</emphasis></term>
-<listitem>
-<para><command>mod(Numerator, Denominator)</command></para>
-<formalpara>
-<title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Numerator: a real number</para></listitem>
-<listitem><para>Denominator: a real number that is nonzero</para></listitem>
-</itemizedlist></para>
-</formalpara>
-</listitem>
-</varlistentry>
-<varlistentry>
-<term><emphasis>Reminder (rem)</emphasis></term>
+<term><emphasis>Remainder</emphasis></term>
 <listitem>
 <para><command>rem(Numerator, Denominator)</command></para>
 <formalpara>
@@ -2182,7 +2211,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <para><command>decile(Decile, Data)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Decile: a number &gt;= 0</para></listitem>
+<listitem><para>Decile: a number &gt;= 0 and &lt;= 100</para></listitem>
 <listitem><para>Data: a vector</para></listitem>
 </itemizedlist></para>
 </formalpara>
@@ -2277,7 +2306,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <para><command>quartile(Quartile, Data)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Quartile: an integer &gt;= 1</para></listitem>
+<listitem><para>Quartile: an integer &gt;= 1 and &lt;= 3</para></listitem>
 <listitem><para>Data: a vector</para></listitem>
 </itemizedlist></para>
 </formalpara>
@@ -3100,6 +3129,23 @@ dimension("Data 1")=dimension("Data 2")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Name: a valid function, unit or variable name</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+<sect1 id="qalculate-definitions-functions-1-uncategorized">
+<title>Uncategorized</title>
+<variablelist>
+<varlistentry>
+<term><emphasis></emphasis></term>
+<listitem>
+<para><command>bitxor(argument 1, argument 2)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: an integer or a vector</para></listitem>
+<listitem><para>2: an integer or a vector</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
