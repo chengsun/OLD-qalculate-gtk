@@ -2,9 +2,9 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
     "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
   <!ENTITY legal SYSTEM "legal.xml">
-  <!ENTITY appversion "0.7.0">
-  <!ENTITY manrevision "0.7.0">
-  <!ENTITY date "October 2004">
+  <!ENTITY appversion "0.8.1">
+  <!ENTITY manrevision "0.8.1">
+  <!ENTITY date "June 2005">
   <!ENTITY app "Qalculate!">
   <!ENTITY appendixa SYSTEM "appendixa.xml">
   <!ENTITY appendixb SYSTEM "appendixb.xml">
@@ -14,7 +14,7 @@
 <title>&app; Manual v&manrevision;</title>
 <bookinfo>
 	<copyright>
-		<year>2004</year>
+		<year>2005</year>
 		<holder>Niklas Knutsson</holder>
 	</copyright>
 	<publisher> 
@@ -188,6 +188,10 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Stores the current result as a variable. See <xref linkend="qalculate-variable-creation"/>.</para></entry>
 			</row>
 			<row valign="top">
+				<entry><para>Save Result Image...</para></entry>
+				<entry><para>Saves the result display to a PNG image.</para></entry>
+			</row>
+			<row valign="top">
 				<entry><para>Save Definitions</para></entry>
 				<entry><para>Saves all user definitions (variables, functions and units).</para></entry>
 			</row>
@@ -206,10 +210,6 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 			<row valign="top">
 				<entry><para>Periodic Table</para></entry>
 				<entry><para>Shows a periodic table, with property values which can be inserted in the expression, in a new window.</para></entry>
-			</row>
-			<row valign="top">
-				<entry><para>Data Sets</para></entry>
-				<entry><para>Opens a window that lists available data sets and objects with property values.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Quit (<keycombo><keycap>Ctrl</keycap><keycap>Q</keycap></keycombo>)</para></entry>
@@ -762,18 +762,32 @@ The following operators are defined in Qalculate! and may be used in expressions
 				<entry align="right"><para>1</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>OR</para></entry>
-				<entry align="center"><para>|</para></entry>
+				<entry><para>Logical OR</para></entry>
+				<entry align="center"><para>|| or OR</para></entry>
 				<entry><para>Returns 1 for true, if the right or left value is true, and 0 for false.</para></entry>
-				<entry align="center"><para>1&gt;2 | 2&gt;1</para></entry>
+				<entry align="center"><para>1&gt;2 || 2&gt;1</para></entry>
 				<entry align="right"><para>1</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>AND</para></entry>
-				<entry align="center"><para>&amp;</para></entry>
+				<entry><para>Logical AND</para></entry>
+				<entry align="center"><para>&amp;&amp; or AND</para></entry>
 				<entry><para>Returns 1 for true, if the right and left value is true, and 0 for false.</para></entry>
-				<entry align="center"><para>1&gt;2 &amp; 2&gt;1</para></entry>
+				<entry align="center"><para>1&gt;2 &amp;&amp; 2&gt;1</para></entry>
 				<entry align="right"><para>0</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Bitwise OR</para></entry>
+				<entry align="center"><para>|</para></entry>
+				<entry><para>If a bit is 1 in one of the numbers set it to 1, otherwise 0. Also functions as elementwise logical operator on vectors.</para></entry>
+				<entry align="center"><para>0010 || 1100</para></entry>
+				<entry align="right"><para>1110</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Bitwise AND</para></entry>
+				<entry align="center"><para>&amp;</para></entry>
+				<entry><para>If a bit is 1 in both numbers set it to 1, otherwise 0. Also functions as elementwise logical operator on vectors.</para></entry>
+				<entry align="center"><para>1010 &amp; 0011</para></entry>
+				<entry align="right"><para>0010</para></entry>
 			</row>
 		</tbody>
 	</tgroup>
@@ -796,6 +810,8 @@ Usually, mathematical expressions are written as normally expected. Standard ope
 	<listitem><para>Exponents (x^y)</para></listitem>
 	<listitem><para>Multiplication and division (*, /)</para></listitem>
 	<listitem><para>Addition and subtraction (+, −)</para></listitem>
+	<listitem><para>Bitwise AND (&amp;)</para></listitem>
+	<listitem><para>Bitwise OR (|)</para></listitem>
 	<listitem><para>Comparison (&gt;, &lt;, =, &gt;=, &lt;=)</para></listitem>
 	<listitem><para>AND (&amp;)</para></listitem>
 	<listitem><para>OR (|)</para></listitem>

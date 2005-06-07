@@ -8,9 +8,9 @@
       Qalculate! Manual
     </title>
     <date>
-      2004-10-13
+      2005-06-07
    </date>
-    <version identifier="0.7.0" date="2004-10-13" description=""/>
+    <version identifier="0.8.1" date="2005-06-07" description=""/>
     <subject category="GNOME|Applications|Accessories"/>
     <description>
       This is the Qalculate! manual
@@ -19,7 +19,7 @@
        user's guide
     </type>
     <format mime="text/xml" dtd="-//OASIS//DTD DocBook XML V4.1.2//EN"/>
-    <identifier url="qalculate.xml"/>
+    <identifier url="qalculate-gtk.xml"/>
     <language code="C"/>
     <relation seriesid="0bc49692-6d74-11d8-81db-fbc13da540bf"/>
     <rights type="GNU FDL" license.version="1.1" holder="Niklas Knutsson"/>

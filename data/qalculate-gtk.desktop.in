@@ -8,5 +8,4 @@ Terminal=false
 Type=Application
 StartupNotify=true
 Categories=GNOME;Application;Utility;
-Categories=Qt;KDE;Utility
 
