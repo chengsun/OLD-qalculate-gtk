@@ -29,6 +29,7 @@
 #include "data/icon.xpm"
 
 MathStructure *mstruct, *parsed_mstruct;
+bool prev_result_approx;
 string *parsed_to_str;
 KnownVariable *vans[5];
 GtkWidget *functions_window;
@@ -111,6 +112,7 @@ int main (int argc, char **argv) {
 
 	mstruct = new MathStructure();
 	parsed_mstruct = new MathStructure();
+	prev_result_approx = false;
 	parsed_to_str = new string;
 
 	bool canplot = CALCULATOR->canPlot();

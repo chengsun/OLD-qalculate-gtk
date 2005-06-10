@@ -103,6 +103,7 @@ extern bool load_global_defs, fetch_exchange_rates_at_startup, first_time, first
 extern GtkWidget *omToUnit_menu;
 bool block_unit_convert;
 extern MathStructure *mstruct, *parsed_mstruct;
+extern bool prev_result_approx;
 extern string *parsed_to_str;
 extern string result_text, parsed_text;
 extern GtkWidget *resultview;
@@ -2456,9 +2457,11 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			str += m.number().print(po, ips_n);
 			if(!exp.empty()) {
 				if(ips.power_depth > 0) {
-					str += TEXT_TAGS_XSMALL "E" TEXT_TAGS_XSMALL_END;
+					if(po.lower_case_e) str += TEXT_TAGS_SMALL "e" TEXT_TAGS_SMALL_END;
+					else str += TEXT_TAGS_XSMALL "E" TEXT_TAGS_XSMALL_END;					
 				} else {
-					str += TEXT_TAGS_SMALL "E" TEXT_TAGS_SMALL_END;
+					if(po.lower_case_e) str += TEXT_TAGS "e" TEXT_TAGS_END;
+					else str += TEXT_TAGS_SMALL "E" TEXT_TAGS_SMALL_END;					
 				}
 				if(exp_minus) {
 					str += "-";
@@ -3789,6 +3792,7 @@ void *view_proc(void *pipe) {
 			po.short_multiplication = false;
 			po.excessive_parenthesis = true;
 			po.improve_division_multipliers = false;
+			po.base = evalops.parse_options.base;
 			MathStructure mp(*((MathStructure*) x));
 			fread(&po.is_approximate, sizeof(bool*), 1, view_pipe);
 			mp.format(po);
@@ -4021,7 +4025,7 @@ void setResult(Prefix *prefix = NULL, bool update_history = true, bool update_pa
 			gtk_text_buffer_insert(tb, &iter, "\n", -1);
 		}
 		display_errors(&iter, glade_xml_get_widget (main_glade, "main_window"));
-		if(!(*printops.is_approximate) && !mstruct->isApproximate()) {
+		if(!(*printops.is_approximate) && !mstruct->isApproximate() && (update_parse || !prev_result_approx)) {
 			gtk_text_buffer_insert(tb, &iter, "=", -1);	
 		} else {
 			if(printops.use_unicode_signs && can_display_unicode_string_function(SIGN_ALMOST_EQUAL, (void*) historyview)) {
@@ -4038,6 +4042,7 @@ void setResult(Prefix *prefix = NULL, bool update_history = true, bool update_pa
 			gtk_text_buffer_insert(tb, &iter, "\n", -1);
 		}
 		gtk_text_buffer_place_cursor(tb, &iter);
+		prev_result_approx = *printops.is_approximate;
 		/*while(CALCULATOR->error()) {
 			CALCULATOR->nextError();
 		}*/
@@ -6956,6 +6961,7 @@ void load_preferences() {
 	printops.excessive_parenthesis = false;
 	printops.allow_non_usable = false;
 	printops.lower_case_numbers = false;
+	printops.lower_case_e = false;
 	printops.limit_implicit_multiplication = false;
 	printops.can_display_unicode_string_function = &can_display_unicode_string_function;
 	
@@ -7149,6 +7155,8 @@ void load_preferences() {
 					printops.use_unicode_signs = v;	
 				} else if(svar == "lower_case_numbers") {
 					printops.lower_case_numbers = v;	
+				} else if(svar == "lower_case_e") {
+					printops.lower_case_e = v;	
 				} else if(svar == "use_custom_result_font") {
 					use_custom_result_font = v;
 				} else if(svar == "use_custom_expression_font") {
@@ -7334,6 +7342,7 @@ void save_preferences(bool mode)
 	fprintf(file, "short_multiplication=%i\n", printops.short_multiplication);
 	fprintf(file, "use_unicode_signs=%i\n", printops.use_unicode_signs);
 	fprintf(file, "lower_case_numbers=%i\n", printops.lower_case_numbers);
+	fprintf(file, "lower_case_e=%i\n", printops.lower_case_e);
 	fprintf(file, "use_custom_result_font=%i\n", use_custom_result_font);	
 	fprintf(file, "use_custom_expression_font=%i\n", use_custom_expression_font);	
 	fprintf(file, "custom_result_font=%s\n", custom_result_font.c_str());	
@@ -7602,6 +7611,10 @@ void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data) {
 */
 void on_preferences_checkbutton_lower_case_numbers_toggled(GtkToggleButton *w, gpointer user_data) {
 	printops.lower_case_numbers = gtk_toggle_button_get_active(w);
+	result_display_updated();
+}
+void on_preferences_checkbutton_lower_case_e_toggled(GtkToggleButton *w, gpointer user_data) {
+	printops.lower_case_e = gtk_toggle_button_get_active(w);
 	result_display_updated();
 }
 void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpointer user_data) {
@@ -8309,7 +8322,8 @@ void on_button_ans_clicked(GtkButton *w, gpointer user_data) {
 }
 void on_button_exp_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();
-	insert_text("E");
+	if(printops.lower_case_e) insert_text("e");
+	else insert_text("E");	
 }
 void on_button_xy_clicked(GtkButton *w, gpointer user_data) {
 	wrap_expression_selection();

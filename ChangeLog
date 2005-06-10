@@ -1,3 +1,12 @@
+2005-06-09 Niklas Knutsson  <nq@altern.org>
+
+	* Use number base for expression parsing when printing parsed expression
+	* Support for "e" instead of "E" in result
+
+2005-06-08 Niklas Knutsson  <nq@altern.org>
+
+	* Display correct equals in history on updated display format
+
 2005-06-05 Niklas Knutsson  <nq@altern.org>
 
 	* Reload also recent composite units and getActive...
