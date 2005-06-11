@@ -1,3 +1,8 @@
+2005-06-10 Niklas Knutsson  <nq@altern.org>
+
+	* Check that prefix name can be displayed
+	* Close gnuplot and disable save button when no series defined
+
 2005-06-09 Niklas Knutsson  <nq@altern.org>
 
 	* Use number base for expression parsing when printing parsed expression

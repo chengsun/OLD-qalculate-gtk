@@ -1287,6 +1287,8 @@ GtkWidget* get_plot_dialog (void) {
 		gtk_widget_hide(glade_xml_get_widget (plot_glade, "plot_button_help"));
 #endif		
 
+		gtk_widget_set_sensitive(glade_xml_get_widget(plot_glade, "plot_button_save"), false);
+
 		glade_xml_signal_autoconnect(plot_glade);
 		
 		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (plot_glade, "plot_dialog")), icon_pixbuf);

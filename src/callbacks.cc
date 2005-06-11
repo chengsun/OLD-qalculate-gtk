@@ -2261,7 +2261,7 @@ void create_pmenu(GtkWidget *item) {
 	int index = 0;
 	Prefix *p = CALCULATOR->getPrefix(index);
 	while(p) {
-		gchar *gstr = g_strdup_printf("%s (10<sup>%i</sup>)", p->name(false, true).c_str(), p->exponent());
+		gchar *gstr = g_strdup_printf("%s (10<sup>%i</sup>)", p->name(false, true, &can_display_unicode_string_function, (void*) item).c_str(), p->exponent());
 		MENU_ITEM_WITH_POINTER(gstr, insert_prefix, p)
 		gtk_label_set_use_markup(GTK_LABEL(gtk_bin_get_child(GTK_BIN(item))), TRUE);
 		g_free(gstr);			
@@ -2282,7 +2282,7 @@ void create_pmenu2() {
 	MENU_ITEM_WITH_POINTER(_("No Prefix"), set_prefix, CALCULATOR->null_prefix)
 	Prefix *p = CALCULATOR->getPrefix(index);
 	while(p) {
-		gchar *gstr = g_strdup_printf("%s (10<sup>%i</sup>)", p->name(false, true).c_str(), p->exponent());
+		gchar *gstr = g_strdup_printf("%s (10<sup>%i</sup>)", p->name(false, true, &can_display_unicode_string_function, (void*) item).c_str(), p->exponent());
 		MENU_ITEM_WITH_POINTER(gstr, set_prefix, p)
 		gtk_label_set_use_markup(GTK_LABEL(gtk_bin_get_child(GTK_BIN(item))), TRUE);
 		g_free(gstr);			
@@ -8889,6 +8889,7 @@ void on_plot_dialog_hide(GtkWidget *w, gpointer user_data) {
 		if(x_vector) delete x_vector;
 		b = gtk_tree_model_iter_next(GTK_TREE_MODEL(tPlotFunctions_store), &iter);
 	}
+	gtk_widget_set_sensitive(glade_xml_get_widget(plot_glade, "plot_button_save"), false);
 	CALCULATOR->closeGnuplot();
 }
 void on_popup_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data) {
@@ -10214,7 +10215,6 @@ bool generate_plot(plot_parameters &pp, vector<MathStructure> &y_vectors, vector
 			on_plot_button_add_clicked(GTK_BUTTON(glade_xml_get_widget (plot_glade, "plot_button_add")), NULL);
 			b = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tPlotFunctions_store), &iter);
 		} else {
-			show_message(_("No functions defined."), glade_xml_get_widget(plot_glade, "plot_dialog"));
 			return false;
 		}
 	}	
@@ -10397,9 +10397,12 @@ void update_plot() {
 	vector<plot_data_parameters*> pdps;
 	plot_parameters pp;
 	if(!generate_plot(pp, y_vectors, x_vectors, pdps)) {
+		CALCULATOR->closeGnuplot();
+		gtk_widget_set_sensitive(glade_xml_get_widget(plot_glade, "plot_button_save"), false);
 		return;
 	}
 	CALCULATOR->plotVectors(&pp, y_vectors, x_vectors, pdps);
+	gtk_widget_set_sensitive(glade_xml_get_widget(plot_glade, "plot_button_save"), true);
 	for(size_t i = 0; i < pdps.size(); i++) {
 		if(pdps[i]) delete pdps[i];
 	}

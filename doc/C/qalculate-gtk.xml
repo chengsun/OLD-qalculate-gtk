@@ -755,7 +755,7 @@ The following operators are defined in Qalculate! and may be used in expressions
 				<entry align="right"><para>1</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>NOT</para></entry>
+				<entry><para>Logical NOT</para></entry>
 				<entry align="center"><para>!</para></entry>
 				<entry><para>Returns 1 for true, if the value to the right is false, and 0 for false.</para></entry>
 				<entry align="center"><para>!(1&gt;2)</para></entry>
@@ -776,10 +776,17 @@ The following operators are defined in Qalculate! and may be used in expressions
 				<entry align="right"><para>0</para></entry>
 			</row>
 			<row valign="top">
+				<entry><para>Bitwise NOT</para></entry>
+				<entry align="center"><para>~</para></entry>
+				<entry><para>Equivalent to -1-x.</para></entry>
+				<entry align="center"><para>~(0010 | 1100)</para></entry>
+				<entry align="right"><para>-1111</para></entry>
+			</row>
+			<row valign="top">
 				<entry><para>Bitwise OR</para></entry>
 				<entry align="center"><para>|</para></entry>
 				<entry><para>If a bit is 1 in one of the numbers set it to 1, otherwise 0. Also functions as elementwise logical operator on vectors.</para></entry>
-				<entry align="center"><para>0010 || 1100</para></entry>
+				<entry align="center"><para>0010 | 1100</para></entry>
 				<entry align="right"><para>1110</para></entry>
 			</row>
 			<row valign="top">
