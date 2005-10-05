@@ -6,7 +6,6 @@
 * Replace pointers to unit when unit type has changed (a different object must be created)
 * Sort out percentile and provide alternative methods
 * Improve matrix editing
-* Get rid of wget dependency
 * Split up interface code
 
 * More functions

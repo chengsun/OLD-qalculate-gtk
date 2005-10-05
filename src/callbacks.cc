@@ -96,7 +96,7 @@ int saved_precision;
 bool save_mode_on_exit;
 bool save_defs_on_exit;
 bool use_custom_result_font, use_custom_expression_font;
-string custom_result_font, custom_expression_font;
+string custom_result_font, custom_expression_font, wget_args;
 bool hyp_is_on, saved_hyp_is_on;
 bool show_buttons;
 extern bool load_global_defs, fetch_exchange_rates_at_startup, first_time, first_qalculate_run;
@@ -6988,6 +6988,7 @@ void load_preferences() {
 	show_buttons = true;
 	load_global_defs = true;
 	fetch_exchange_rates_at_startup = false;
+	wget_args = "--quiet --tries=1";
 	first_time = false;
 	expression_history.clear();
 	expression_history_index = -1;
@@ -7034,6 +7035,8 @@ void load_preferences() {
 					save_defs_on_exit = v;
 				} else if(svar == "fetch_exchange_rates_at_startup") {
 					fetch_exchange_rates_at_startup = v;
+				} else if(svar == "wget_args") {
+					wget_args = svalue;
 				} else if(svar == "show_buttons") {
 					show_buttons = v;
 				} else if(svar == "min_deci") {
@@ -7336,6 +7339,7 @@ void save_preferences(bool mode)
 	fprintf(file, "save_definitions_on_exit=%i\n", save_defs_on_exit);
 	fprintf(file, "load_global_definitions=%i\n", load_global_defs);
 	fprintf(file, "fetch_exchange_rates_at_startup=%i\n", fetch_exchange_rates_at_startup);
+	fprintf(file, "wget_args=%s\n", wget_args.c_str());
 	fprintf(file, "show_buttons=%i\n", gtk_expander_get_expanded(GTK_EXPANDER(expander)));
 	fprintf(file, "spacious=%i\n", printops.spacious);
 	fprintf(file, "excessive_parenthesis=%i\n", printops.excessive_parenthesis);
@@ -7609,6 +7613,9 @@ void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data) {
 /*
 	change preferences
 */
+void on_preferences_entry_wget_args_changed(GtkEditable *editable, gpointer user_data) {
+	wget_args = gtk_entry_get_text(GTK_ENTRY(editable));
+}
 void on_preferences_checkbutton_lower_case_numbers_toggled(GtkToggleButton *w, gpointer user_data) {
 	printops.lower_case_numbers = gtk_toggle_button_get_active(w);
 	result_display_updated();
@@ -8530,7 +8537,7 @@ void fetch_exchange_rates(int timeout) {
 #endif	
 	gtk_widget_show_now(dialog);
 	while(gtk_events_pending()) gtk_main_iteration();
-	CALCULATOR->fetchExchangeRates(timeout);
+	CALCULATOR->fetchExchangeRates(timeout, wget_args);
 	gtk_widget_destroy(dialog);
 }
 void on_menu_item_fetch_exchange_rates_activate(GtkMenuItem *w, gpointer user_data) {

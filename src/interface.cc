@@ -85,7 +85,7 @@ GtkAccelGroup *accel_group;
 extern bool show_buttons;
 extern bool save_mode_on_exit, save_defs_on_exit, load_global_defs, hyp_is_on, fetch_exchange_rates_at_startup;
 extern bool use_custom_result_font, use_custom_expression_font;
-extern string custom_result_font, custom_expression_font;
+extern string custom_result_font, custom_expression_font, wget_args;
 
 extern PrintOptions printops, saved_printops;
 extern EvaluationOptions evalops, saved_evalops;
@@ -656,6 +656,10 @@ get_preferences_dialog (void)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_save_defs")), save_defs_on_exit);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_custom_result_font")), use_custom_result_font);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_custom_expression_font")), use_custom_expression_font);		
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(preferences_glade, "preferences_entry_wget_args")), wget_args.c_str());	
+		if(CALCULATOR->hasGnomeVFS()) {
+			gtk_widget_hide(glade_xml_get_widget (preferences_glade, "preferences_box_wget_args"));
+		}
 		gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_result_font"), use_custom_result_font);	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_button_result_font")), custom_result_font.c_str());
 		gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_expression_font"), use_custom_expression_font);	
