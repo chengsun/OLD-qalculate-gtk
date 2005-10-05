@@ -96,6 +96,7 @@ int main (int argc, char **argv) {
 	}
 
 	b_busy = false;
+
 	
 	main_glade = NULL; about_glade = NULL; argumentrules_glade = NULL; 
 	csvimport_glade = NULL; datasetedit_glade = NULL; datasets_glade = NULL; decimals_glade = NULL; functionedit_glade = NULL; 

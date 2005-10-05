@@ -783,6 +783,20 @@ The following operators are defined in Qalculate! and may be used in expressions
 				<entry align="right"><para>-1111</para></entry>
 			</row>
 			<row valign="top">
+				<entry><para>Bitwise Shift Left</para></entry>
+				<entry align="center"><para>&lt;&lt;</para></entry>
+				<entry><para>Shifts the bits of the left value x steps to the left, where x is the value on the right. Implemented as a shortcut for <command>shift()</command></para></entry>
+				<entry align="center"><para>0011 &lt;&lt; 1</para></entry>
+				<entry align="right"><para>0110</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Bitwise Shift Right</para></entry>
+				<entry align="center"><para>&gt;&gt;</para></entry>
+				<entry><para>Shifts the bits of the left value x steps to the right, where x is the value on the right. Implemented as a shortcut for <command>shift()</command></para></entry>
+				<entry align="center"><para>0011 &lt;&lt; 1</para></entry>
+				<entry align="right"><para>0001</para></entry>
+			</row>
+			<row valign="top">
 				<entry><para>Bitwise OR</para></entry>
 				<entry align="center"><para>|</para></entry>
 				<entry><para>If a bit is 1 in one of the numbers set it to 1, otherwise 0. Also functions as elementwise logical operator on vectors.</para></entry>
@@ -817,9 +831,12 @@ Usually, mathematical expressions are written as normally expected. Standard ope
 	<listitem><para>Exponents (x^y)</para></listitem>
 	<listitem><para>Multiplication and division (*, /)</para></listitem>
 	<listitem><para>Addition and subtraction (+, −)</para></listitem>
+	<listitem><para>Bitwise NOT (~)</para></listitem>
+	<listitem><para>&lt;&lt; and &gt;&gt;</para></listitem>
 	<listitem><para>Bitwise AND (&amp;)</para></listitem>
 	<listitem><para>Bitwise OR (|)</para></listitem>
 	<listitem><para>Comparison (&gt;, &lt;, =, &gt;=, &lt;=)</para></listitem>
+	<listitem><para>Logical NOT (!)</para></listitem>
 	<listitem><para>AND (&amp;)</para></listitem>
 	<listitem><para>OR (|)</para></listitem>
 </orderedlist>

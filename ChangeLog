@@ -1,3 +1,7 @@
+2005-10-05 Niklas Knutsson  <nq@altern.org>
+
+	* Add -export-dynamic to LDFLAGS to fix libglade without libgnome
+
 2005-06-10 Niklas Knutsson  <nq@altern.org>
 
 	* Check that prefix name can be displayed
