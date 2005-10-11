@@ -7,7 +7,7 @@ dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
 AC_INIT(configure.in)
-AM_INIT_AUTOMAKE(qalculate-gtk, 0.8.1)
+AM_INIT_AUTOMAKE(qalculate-gtk, 0.8.2)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
@@ -90,7 +90,7 @@ AC_SUBST(GTK_LIBS)
 GTK_LIBS="-export-dynamic $GTK_LIBS"
 
 PKG_CHECK_MODULES(QALCULATE, [
-	libqalculate >= 0.8.1
+	libqalculate >= 0.8.2
 	])
 AC_SUBST(QALCULATE_CFLAGS)
 AC_SUBST(QALCULATE_LIBS)

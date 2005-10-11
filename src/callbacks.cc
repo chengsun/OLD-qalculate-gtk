@@ -6846,7 +6846,7 @@ void convert_in_wUnits(int toFrom) {
 			} else {
 				EvaluationOptions eo;
 				eo.approximation = APPROXIMATION_APPROXIMATE;
-				
+				eo.parse_options.angle_unit = evalops.parse_options.angle_unit;
 				PrintOptions po;
 				po.is_approximate = &b;
 				po.number_fraction_format = FRACTION_DECIMAL;
@@ -6860,6 +6860,7 @@ void convert_in_wUnits(int toFrom) {
 			} else {
 				EvaluationOptions eo;
 				eo.approximation = APPROXIMATION_APPROXIMATE;
+				eo.parse_options.angle_unit = evalops.parse_options.angle_unit;
 				PrintOptions po;
 				po.is_approximate = &b;
 				po.number_fraction_format = FRACTION_DECIMAL;
@@ -7006,7 +7007,7 @@ void load_preferences() {
 		first_qalculate_run = false;
 		closedir(dir);
 	}
-	int version_numbers[] = {0, 8, 1};
+	int version_numbers[] = {0, 8, 2};
 	FILE *file = NULL;
 	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate-gtk.cfg", NULL);
 	file = fopen(gstr2, "r");
@@ -9567,8 +9568,9 @@ void on_nbases_entry_decimal_changed(GtkEditable *editable, gpointer user_data) 
 	if(str.empty()) return;
 	if(is_in(OPERATORS EXP, str[str.length() - 1])) return;
 	changing_in_nbases_dialog = true;	
-	MathStructure value = CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(editable))));
-	update_nbases_entries(value, 10);
+	EvaluationOptions eo;
+	eo.parse_options.angle_unit = evalops.parse_options.angle_unit;
+	update_nbases_entries(CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(editable))), eo), 10);
 	changing_in_nbases_dialog = false;	
 }
 void on_nbases_entry_binary_changed(GtkEditable *editable, gpointer user_data) {
@@ -9579,6 +9581,7 @@ void on_nbases_entry_binary_changed(GtkEditable *editable, gpointer user_data) {
 	if(is_in(OPERATORS, str[str.length() - 1])) return;
 	EvaluationOptions eo;
 	eo.parse_options.base = BASE_BINARY;
+	eo.parse_options.angle_unit = evalops.parse_options.angle_unit;
 	changing_in_nbases_dialog = true;	
 	update_nbases_entries(CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(str), eo), 2);
 	changing_in_nbases_dialog = false;	
@@ -9591,6 +9594,7 @@ void on_nbases_entry_octal_changed(GtkEditable *editable, gpointer user_data) {
 	if(is_in(OPERATORS, str[str.length() - 1])) return;
 	EvaluationOptions eo;
 	eo.parse_options.base = BASE_OCTAL;
+	eo.parse_options.angle_unit = evalops.parse_options.angle_unit;
 	changing_in_nbases_dialog = true;	
 	update_nbases_entries(CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(str), eo), 8);
 	changing_in_nbases_dialog = false;	
@@ -9603,6 +9607,7 @@ void on_nbases_entry_hexadecimal_changed(GtkEditable *editable, gpointer user_da
 	if(is_in(OPERATORS, str[str.length() - 1])) return;
 	EvaluationOptions eo;
 	eo.parse_options.base = BASE_HEXADECIMAL;
+	eo.parse_options.angle_unit = evalops.parse_options.angle_unit;
 	changing_in_nbases_dialog = true;	
 	update_nbases_entries(CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(str), eo), 16);
 	changing_in_nbases_dialog = false;	
