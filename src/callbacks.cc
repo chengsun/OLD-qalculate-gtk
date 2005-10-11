@@ -2424,11 +2424,7 @@ string get_value_string(const MathStructure &mstruct_, bool rlabel = false, Pref
 }
 
 void draw_background(GdkPixmap *pixmap, gint w, gint h) {
-//	if(resultview->style->bg_pixmap[GTK_WIDGET_STATE(resultview)]) {
-//		gdk_draw_drawable(pixmap, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], resultview->style->bg_pixmap[GTK_WIDGET_STATE(resultview)], 0, 0, w, h, -1, -1);
-//	} else {
-		gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);
-//	}
+	gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);
 }
 GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_options, InternalPrintStruct ips = top_ips, gint *point_central = NULL) {
 
@@ -2492,7 +2488,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			PangoRectangle rect;
 			pango_layout_get_pixel_size(layout, &w, &h);
 			pango_layout_get_pixel_extents(layout, &rect, NULL);
-			w = rect.width;
+			w = rect.width + rect.x;
 			w += 1;
 			central_point = h / 2;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);	
@@ -2519,7 +2515,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			PangoRectangle rect;
 			pango_layout_get_pixel_size(layout, &w, &h);
 			pango_layout_get_pixel_extents(layout, &rect, NULL);
-			w = rect.width;
+			w = rect.width + rect.x;
 			w += 1;
 			central_point = h / 2;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
@@ -3519,7 +3515,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			PangoRectangle rect;
 			pango_layout_get_pixel_size(layout, &w, &h);
 			pango_layout_get_pixel_extents(layout, &rect, NULL);
-			w = rect.width;
+			w = rect.width + rect.x;
 			w += 1;
 			if(m.variable() == CALCULATOR->v_i) w += 1;
 			central_point = h / 2;
@@ -3682,7 +3678,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			PangoRectangle rect;
 			pango_layout_get_pixel_size(layout, &w, &h);
 			pango_layout_get_pixel_extents(layout, &rect, NULL);
-			w = rect.width;
+			w = rect.width + rect.x;
 			w += 1;
 			central_point = h / 2;
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);	

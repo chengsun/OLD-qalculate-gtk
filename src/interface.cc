@@ -564,7 +564,9 @@ get_units_dialog (void)
 		update_units_tree();
 	
 		gtk_entry_set_text (GTK_ENTRY (glade_xml_get_widget (units_glade, "units_entry_from_val")), "1");	
-		gtk_entry_set_text (GTK_ENTRY (glade_xml_get_widget (units_glade, "units_entry_to_val")), "1");		
+		gtk_entry_set_text (GTK_ENTRY (glade_xml_get_widget (units_glade, "units_entry_to_val")), "1");	
+		gtk_entry_set_alignment(GTK_ENTRY(glade_xml_get_widget (units_glade, "units_entry_from_val")), 1.0);
+		gtk_entry_set_alignment(GTK_ENTRY(glade_xml_get_widget (units_glade, "units_entry_to_val")), 1.0);
 		
 		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (units_glade, "units_dialog")), icon_pixbuf);
 	
@@ -1179,6 +1181,11 @@ get_nbases_dialog (void)
 		g_free(gstr);
 	
 		g_assert (glade_xml_get_widget (nbases_glade, "nbases_dialog") != NULL);
+		
+		gtk_entry_set_alignment(GTK_ENTRY(glade_xml_get_widget (nbases_glade, "nbases_entry_binary")), 1.0);
+		gtk_entry_set_alignment(GTK_ENTRY(glade_xml_get_widget (nbases_glade, "nbases_entry_octal")), 1.0);
+		gtk_entry_set_alignment(GTK_ENTRY(glade_xml_get_widget (nbases_glade, "nbases_entry_decimal")), 1.0);
+		gtk_entry_set_alignment(GTK_ENTRY(glade_xml_get_widget (nbases_glade, "nbases_entry_hexadecimal")), 1.0);
 		
 		glade_xml_signal_autoconnect(nbases_glade);
 		

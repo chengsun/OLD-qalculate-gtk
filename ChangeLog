@@ -1,3 +1,8 @@
+2005-10-11 Niklas Knutsson  <nq@altern.org>
+
+	* Change alignment in entries in base and units dialogs
+	* Fix result text cropping in pango >= 1.10.0 (add inc_rect.x to inc_rect.width)
+
 2005-10-05 Niklas Knutsson  <nq@altern.org>
 
 	* Add -export-dynamic to LDFLAGS to fix libglade without libgnome
