@@ -10,7 +10,7 @@
   <!ENTITY appendixb SYSTEM "appendixb.xml">
   <!ENTITY appendixc SYSTEM "appendixc.xml">
 ]>
-<book>
+<book id="index" lang="en">
 <title>&app; Manual v&manrevision;</title>
 <bookinfo>
 	<copyright>
