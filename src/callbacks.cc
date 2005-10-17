@@ -680,6 +680,8 @@ void display_parse_status() {
 			had_errors = CALCULATOR->endTemporaryStopMessages() > 0;
 		}
 		PrintOptions po;
+		po.abbreviate_names = false;
+		po.hide_underscore_spaces = true;
 		po.use_unicode_signs = true;
 		po.multiplication_sign = printops.multiplication_sign;
 		po.division_sign = printops.division_sign;
