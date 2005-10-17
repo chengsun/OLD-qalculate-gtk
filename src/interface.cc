@@ -79,6 +79,7 @@ GtkTreeSelection *selection;
 GtkWidget *expression;
 GtkWidget *resultview;
 GtkWidget *historyview;
+GtkWidget *statuslabel_l, *statuslabel_r;
 GtkWidget *f_menu ,*v_menu, *u_menu, *u_menu2, *recent_menu;
 GtkAccelGroup *accel_group;
 
@@ -119,6 +120,8 @@ create_main_window (void)
 	expression = glade_xml_get_widget (main_glade, "expression");
 	resultview = glade_xml_get_widget (main_glade, "resultview");
 	historyview = glade_xml_get_widget (main_glade, "history");
+	statuslabel_l = glade_xml_get_widget (main_glade, "label_status_left");
+	statuslabel_r = glade_xml_get_widget (main_glade, "label_status_right");
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "gray_foreground", "foreground", "gray40", NULL);
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "red_foreground", "foreground", "red", NULL);
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "blue_foreground", "foreground", "blue", NULL);

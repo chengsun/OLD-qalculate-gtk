@@ -47,6 +47,7 @@ void generate_variables_tree_struct();
 void generate_units_tree_struct();
 
 gboolean on_display_errors_timeout(gpointer data);
+gboolean on_check_expression_position_timeout(gpointer data);
 
 void update_functions_tree();
 void update_variables_tree();
@@ -195,6 +196,7 @@ void on_button_store_clicked(GtkButton *w, gpointer user_data);
 void on_togglebutton_expression_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 void on_togglebutton_result_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 void on_expression_changed(GtkEditable *w, gpointer user_data);
+void on_expression_move_cursor(GtkEntry*, GtkMovementStep, gint, gboolean, gpointer);
 void on_button_zero_clicked(GtkButton *w, gpointer user_data);
 void on_button_one_clicked(GtkButton *w, gpointer user_data);
 void on_button_two_clicked(GtkButton *w, gpointer user_data);

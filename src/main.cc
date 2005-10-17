@@ -62,7 +62,8 @@ FILE *view_pipe_r, *view_pipe_w;
 pthread_t view_thread;
 pthread_attr_t view_thread_attr;
 
-bool do_timeout;
+bool do_timeout, check_expression_position;
+gint expression_position;
 
 int main (int argc, char **argv) {
 
@@ -193,6 +194,10 @@ int main (int argc, char **argv) {
 	//check for calculation errros regularly
 	do_timeout = true;
 	g_timeout_add(100, on_display_errors_timeout, NULL);
+	
+	check_expression_position = true;
+	expression_position = 1;
+	g_timeout_add(50, on_check_expression_position_timeout, NULL);
 	
 	gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "menu_item_plot_functions"), canplot);
 	gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "menu_item_fetch_exchange_rates"), canfetch);

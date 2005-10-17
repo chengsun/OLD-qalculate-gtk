@@ -1,4 +1,4 @@
-/*
+/*[4~
     Qalculate
 
     Copyright (C) 2003  Niklas Knutsson (nq@altern.org)
@@ -32,7 +32,8 @@
 #include "main.h"
 #include <stack>
 
-extern bool do_timeout;
+extern bool do_timeout, check_expression_position;
+extern gint expression_position;
 
 extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *nbexpression_glade, *datasetedit_glade, *datasets_glade, *decimals_glade;
 extern GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *namesedit_glade, *nbases_glade, *plot_glade, *precision_glade;
@@ -45,7 +46,7 @@ extern GtkWidget *expander;
 extern GtkEntryCompletion *completion;
 extern GtkListStore *completion_store;
 
-extern GtkWidget *expression;
+extern GtkWidget *expression, *statuslabel_l, *statuslabel_r;
 extern GtkWidget *f_menu, *v_menu, *u_menu, *u_menu2, *recent_menu;
 extern KnownVariable *vans[5];
 extern GtkWidget *tPlotFunctions;
@@ -113,7 +114,8 @@ extern GdkPixbuf *pixbuf_result;
 vector<vector<GtkWidget*> > element_entries;
 bool b_busy;
 GdkPixmap *tmp_pixmap;
-bool expression_has_changed, current_object_has_changed;
+bool expression_has_changed = false, current_object_has_changed = false, expression_has_changed2 = false;
+string parsed_expression;
 int history_width, history_height;
 AssumptionNumberType saved_assumption_type;
 AssumptionSign saved_assumption_sign;
@@ -143,6 +145,7 @@ bool default_plot_color = true;
 bool names_edited = false;
 
 gint current_object_start = -1, current_object_end = -1;
+bool stop_timeouts = false;
 
 PrintOptions printops, saved_printops;
 EvaluationOptions evalops, saved_evalops;
@@ -290,11 +293,81 @@ bool ask_question(const gchar *text, GtkWidget *win) {
 
 #define STATUS_SPACE	if(b) str += "  "; else b = true;
 
+void set_status_text(string text, bool break_begin = false, bool error_color = false) {
+
+	string str;
+	if(error_color) {
+		str = "<span size=\"small\" foreground=\"red\">";
+	} else {
+		str = "<span size=\"small\">";
+	}
+	if(text.empty()) str += " ";
+	else str += text;
+	str += "</span>";
+
+#if GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION < 6
+	gint w, h;
+	int l = 0;
+	while(true) {
+		PangoLayout *layout_test = gtk_widget_create_pango_layout(statuslabel_l, NULL);
+		pango_layout_set_markup(layout_test, str.c_str(), -1);
+		pango_layout_get_pixel_size(layout_test, &w, &h);
+		g_object_unref(layout_test);
+		if(w < statuslabel_l->allocation.width - 20) {
+			break;
+		}
+		if(l == 0) l = ((text.length() * statuslabel_l->allocation.width - 20) / w) - 3;
+		else l -= 5;
+		if(l <= 0) {
+			set_status_text("", break_begin, error_color);
+			return;
+		}
+		if(error_color) {
+			str = "<span size=\"small\" foreground=\"red\">";
+		} else {
+			str = "<span size=\"small\">";
+		}
+		if(break_begin) {
+			text = text.substr(text.length() - l, l);
+			str += "...";
+			str += text;
+		} else {
+			int b_begin, b_end;
+			bool add_bold_end = false;
+			b_begin = text.find("<b>");
+			if(b_begin != string::npos) {
+				b_end = text.find("</b>", b_begin);
+			}
+			if(b_begin != string::npos && l > b_begin && l < b_end + 4) {
+				if(l > b_end) l = b_end + 4;
+				else if(l < b_begin + 4) l = b_begin;
+				else add_bold_end = true;
+			}
+			if(l == 0) {
+				set_status_text("", break_begin, error_color);
+				return;
+			}
+			text = text.substr(0, l);
+			if(add_bold_end) text += "</b>";
+			str += text;
+			str += "...";
+		}
+		str += "</span>";
+	}
+#else
+	if(break_begin) gtk_label_set_ellipsize(GTK_LABEL(statuslabel_l), PANGO_ELLIPSIZE_START);
+	else gtk_label_set_ellipsize(GTK_LABEL(statuslabel_l), PANGO_ELLIPSIZE_END);
+#endif
+	
+	gtk_label_set_markup(GTK_LABEL(statuslabel_l), str.c_str());
+	
+}
+
 void update_status_text() {
 
 	string str = "<span size=\"x-small\">";
-	bool b = false;
 	
+	bool b = false;
 	if(evalops.approximation == APPROXIMATION_EXACT) {
 		STATUS_SPACE
 		str += _("EXACT");
@@ -388,11 +461,13 @@ void update_status_text() {
 		str += _("CPLX");
 		str += "</s>";
 	}
+
 	remove_blank_ends(str);
 	if(!b) str += " ";
+	
 	str += "</span>";
 	
-	gtk_label_set_markup(GTK_LABEL(glade_xml_get_widget (main_glade, "label_status")), str.c_str());
+	gtk_label_set_markup(GTK_LABEL(statuslabel_r), str.c_str());
 	
 }
 
@@ -464,11 +539,174 @@ void display_errors(GtkTextIter *iter = NULL, GtkWidget *win = NULL) {
 }
 
 gboolean on_display_errors_timeout(gpointer data) {
+	if(stop_timeouts) return false;
 	if(!do_timeout) return true;
 	if(CALCULATOR->checkSaveFunctionCalled()) {
 		update_vmenu();
 	}
 	display_errors();
+	return true;
+}
+
+void display_function_hint(MathFunction *f, int arg_index = 1) {
+	if(!f) return;
+	int iargs = f->maxargs();
+	Argument *arg;
+	Argument default_arg;
+	string str, str2;
+	const ExpressionName *ename = &f->preferredName(false, printops.use_unicode_signs, false, false, &can_display_unicode_string_function, (void*) statuslabel_l);
+	if(arg_index > iargs) {
+		gchar *gstr = g_strdup_printf(_("Too many arguments for %s()."), ename->name.c_str());
+		set_status_text(str);
+		g_free(gstr);
+		return;
+	}
+	str += ename->name;	
+	if(iargs < 0) {
+		iargs = f->minargs() + 1;
+	}
+	str += "(";
+	int i_reduced = 0;
+	if(iargs != 0) {
+		for(int i2 = 1; i2 <= iargs; i2++) {			
+			if(i2 > f->minargs() && arg_index < i2) {
+				str += "[";
+			}
+			if(i2 > 1) {
+				str += CALCULATOR->getComma();
+				str += " ";
+			}
+			if(i2 == arg_index) str += "<b>";
+			arg = f->getArgumentDefinition(i2);
+			if(arg && !arg->name().empty()) {
+				str2 = arg->name();
+			} else {
+				str2 = _("argument");
+				str2 += " ";
+				str2 += i2s(i2);
+			}
+			if(i2 == arg_index) {
+				str2 += ": ";
+				if(arg) {
+					if(i_reduced == 2) str2 += arg->print();
+					else str2 += arg->printlong();
+				} else {
+					Argument arg_default;
+					if(i_reduced == 2) str2 += arg_default.print();
+					else str2 += arg_default.printlong();
+				}
+				gsub("&", "&amp;", str2);
+				gsub(">", "&gt;", str2);
+				gsub("<", "&lt;", str2);
+				str += str2;					
+				str += "</b>";
+				if(i_reduced < 2) {
+					PangoLayout *layout_test = gtk_widget_create_pango_layout(statuslabel_l, NULL);
+					string str3 = "<span size=\"small\">";
+					str3 += str;
+					str3 += "</span>";
+					pango_layout_set_markup(layout_test, str3.c_str(), -1);
+					gint w, h;
+					pango_layout_get_pixel_size(layout_test, &w, &h);
+					if(w > statuslabel_l->allocation.width - 20) {
+						str = ename->name;	
+						str += "(";
+						if(i2 != 1) {
+							str += "...";
+							i_reduced++;
+						} else {
+							i_reduced = 2;
+						}
+						i2--;
+					}
+					g_object_unref(layout_test);	
+				} else {
+					i_reduced = 0;
+				}
+			} else {
+				gsub("&", "&amp;", str2);
+				gsub(">", "&gt;", str2);
+				gsub("<", "&lt;", str2);
+				str += str2;
+				if(i2 > f->minargs() && arg_index < i2) {
+					str += "]";
+				}
+			}
+		}
+		if(f->maxargs() < 0) {
+			str += CALCULATOR->getComma();
+			str += " ...";
+		}
+	}
+	str += ")";
+	set_status_text(str);
+}
+
+void display_parse_status() {
+	if(strlen(gtk_entry_get_text(GTK_ENTRY(expression))) == 0) {
+		set_status_text("", true, false);
+		parsed_expression = "";
+		expression_has_changed2 = false;
+		return;
+	}
+	MathStructure mparse, mfunc;
+	int pos = gtk_editable_get_position(GTK_EDITABLE(expression));
+	bool full_parsed = false;
+	bool had_errors = false;
+	if(pos > 0) {
+		evalops.parse_options.unended_function = &mfunc;
+		CALCULATOR->beginTemporaryStopMessages();
+		if(pos < g_utf8_strlen(gtk_entry_get_text(GTK_ENTRY(expression)), -1)) {
+			gchar *gstr = gtk_editable_get_chars(GTK_EDITABLE(expression), 0, pos);
+			CALCULATOR->parse(&mparse, CALCULATOR->unlocalizeExpression(gstr), evalops.parse_options);
+			g_free(gstr);
+		} else {
+			CALCULATOR->parse(&mparse, CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(expression))), evalops.parse_options);
+			full_parsed = true;
+		}
+		had_errors = CALCULATOR->endTemporaryStopMessages() > 0;
+		evalops.parse_options.unended_function = NULL;
+	}
+	if(mfunc.isFunction()) {
+		if(mfunc.countChilds() == 0) {
+			display_function_hint(mfunc.function(), 1);
+		} else {
+			display_function_hint(mfunc.function(), mfunc.countChilds());
+		}
+	} else if(expression_has_changed2) {
+		if(!full_parsed) {
+			CALCULATOR->beginTemporaryStopMessages();
+			CALCULATOR->parse(&mparse, CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(expression))), evalops.parse_options);
+			had_errors = CALCULATOR->endTemporaryStopMessages() > 0;
+		}
+		PrintOptions po;
+		po.use_unicode_signs = true;
+		po.multiplication_sign = printops.multiplication_sign;
+		po.division_sign = printops.division_sign;
+		po.short_multiplication = false;
+		po.excessive_parenthesis = true;
+		po.improve_division_multipliers = false;
+		po.can_display_unicode_string_function = &can_display_unicode_string_function;
+		po.can_display_unicode_string_arg = (void*) statuslabel_l;
+		mparse.formatsub(po);
+		parsed_expression = mparse.print(po);
+		set_status_text(parsed_expression.c_str(), true, had_errors);
+		expression_has_changed2 = false;
+	} else {
+		set_status_text(parsed_expression.c_str(), true, had_errors);
+	}
+}
+
+
+gboolean on_check_expression_position_timeout(gpointer data) {
+	if(stop_timeouts) return false;
+	if(!check_expression_position) return true;
+	check_expression_position = false;
+	if(gtk_editable_get_position(GTK_EDITABLE(expression)) != expression_position || expression_has_changed2) {
+		expression_position = gtk_editable_get_position(GTK_EDITABLE(expression));
+		display_parse_status();
+	}
+	check_expression_position = true;
 	return true;
 }
 
@@ -4047,6 +4285,7 @@ void setResult(Prefix *prefix = NULL, bool update_history = true, bool update_pa
 	b_busy = false;
 	display_errors(NULL, glade_xml_get_widget (main_glade, "main_window"));
 	do_timeout = true;
+
 }
 
 void viewresult(Prefix *prefix = NULL) {
@@ -4068,6 +4307,8 @@ void result_prefix_changed(Prefix *prefix = NULL) {
 	setResult(prefix, true, false, true);
 }
 void expression_format_updated() {
+	expression_has_changed2 = true;
+	display_parse_status();
 	execute_expression(false);
 	update_status_text();
 }
@@ -6768,7 +7009,7 @@ void set_clean_mode(GtkMenuItem *w, gpointer user_data) {
 	evalops.parse_options.functions_enabled = !b;
 	evalops.parse_options.variables_enabled = !b;
 	evalops.parse_options.units_enabled = !b;
-	update_status_text();
+	expression_format_updated();
 }
 
 /*
@@ -7003,7 +7244,7 @@ void load_preferences() {
 		first_qalculate_run = false;
 		closedir(dir);
 	}
-	int version_numbers[] = {0, 8, 2};
+	int version_numbers[] = {0, 8, 3};
 	FILE *file = NULL;
 	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate-gtk.cfg", NULL);
 	file = fopen(gstr2, "r");
@@ -7522,6 +7763,7 @@ void set_current_object() {
 	int start = pos - 1;
 	gchar *gstr = gtk_editable_get_chars(GTK_EDITABLE(expression), 0, pos);
 	gchar *p = gstr + strlen(gstr);
+	
 	bool non_number_before = false;
 	for(; start >= 0; start--) {
 		p = g_utf8_prev_char(p);
@@ -8090,6 +8332,7 @@ on_button_execute_clicked                        (GtkButton       *button,
 	save preferences, mode and definitions and then quit
 */
 gboolean on_gcalc_exit(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
+	stop_timeouts = true;
 	if(plot_glade && GTK_WIDGET_VISIBLE(glade_xml_get_widget (plot_glade, "plot_dialog"))) {
 		gtk_widget_hide(glade_xml_get_widget (plot_glade, "plot_dialog"));
 	}
@@ -8242,6 +8485,7 @@ void on_expression_changed(GtkEditable *w, gpointer user_data) {
 		gtk_entry_completion_set_minimum_key_length(completion, 1);
 	}
 	expression_has_changed = true;
+	expression_has_changed2 = true;
 	current_object_has_changed = true;
 	if(result_text.empty()) return;
 	if(!dont_change_index) expression_history_index = -1;
@@ -9688,7 +9932,7 @@ gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointe
 			wrap_expression_selection();
 			end = gtk_editable_get_position(GTK_EDITABLE(expression));
 			gtk_editable_insert_text(GTK_EDITABLE(expression), "^", -1, &end);				
-			gtk_editable_set_position(GTK_EDITABLE(expression), end);							
+			gtk_editable_set_position(GTK_EDITABLE(expression), end);
 			return TRUE;
 		}
 		case GDK_KP_Divide: {}		
