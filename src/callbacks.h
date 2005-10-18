@@ -23,6 +23,15 @@
 
 #include "main.h"
 
+struct mode_struct {
+	PrintOptions po;
+	EvaluationOptions eo;
+	AssumptionNumberType at;
+	AssumptionSign as;
+	int precision;
+	string name;
+};
+
 
 bool can_display_unicode_string_function(const char *str, void *w);
 void set_unicode_buttons();
@@ -148,6 +157,9 @@ gboolean completion_match_func(GtkEntryCompletion *entrycompletion, const gchar 
 #endif
 
 void *view_proc(void*);
+void on_menu_item_meta_mode_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_meta_mode_save_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_meta_mode_delete_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data);
 void on_button_close_clicked(GtkButton *w, gpointer user_data);
 void on_button_history_clicked(GtkToggleButton *w, gpointer user_data);

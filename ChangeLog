@@ -1,3 +1,9 @@
+2005-10-18 Niklas Knutsson  <nq@altern.org>
+
+	* Ability to save different modes
+	* Fix as-you-type parsing with " to " in expression
+	* Display as-you-type parsing with warnings in blue
+
 2005-10-17 Niklas Knutsson  <nq@altern.org>
 
 	* Display parsing and function hints under the expression entry to the left

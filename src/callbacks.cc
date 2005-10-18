@@ -93,12 +93,11 @@ extern Variable *selected_variable;
 extern string selected_unit_category;
 extern Unit *selected_unit;
 extern Unit *selected_to_unit;
-int saved_precision;
 bool save_mode_on_exit;
 bool save_defs_on_exit;
 bool use_custom_result_font, use_custom_expression_font;
 string custom_result_font, custom_expression_font, wget_args;
-bool hyp_is_on, saved_hyp_is_on;
+bool hyp_is_on;
 bool show_buttons;
 extern bool load_global_defs, fetch_exchange_rates_at_startup, first_time, first_qalculate_run;
 extern GtkWidget *omToUnit_menu;
@@ -115,10 +114,10 @@ vector<vector<GtkWidget*> > element_entries;
 bool b_busy;
 GdkPixmap *tmp_pixmap;
 bool expression_has_changed = false, current_object_has_changed = false, expression_has_changed2 = false;
+bool block_result_update = false, block_expression_execution = false, block_display_parse = false;
 string parsed_expression;
+bool parsed_had_errors = false, parsed_had_warnings = false;
 int history_width, history_height;
-AssumptionNumberType saved_assumption_type;
-AssumptionSign saved_assumption_sign;
 vector<DataProperty*> tmp_props;
 vector<DataProperty*> tmp_props_orig;
 
@@ -147,13 +146,15 @@ bool names_edited = false;
 gint current_object_start = -1, current_object_end = -1;
 bool stop_timeouts = false;
 
-PrintOptions printops, saved_printops;
-EvaluationOptions evalops, saved_evalops;
+PrintOptions printops;
+EvaluationOptions evalops;
 
 extern FILE *view_pipe_r, *view_pipe_w;
 extern pthread_t view_thread;
 extern pthread_attr_t view_thread_attr;
 
+vector<mode_struct> modes;
+vector<GtkWidget*> mode_items;
 
 #define TEXT_TAGS			"<span size=\"xx-large\">"
 #define TEXT_TAGS_END			"</span>"
@@ -293,11 +294,13 @@ bool ask_question(const gchar *text, GtkWidget *win) {
 
 #define STATUS_SPACE	if(b) str += "  "; else b = true;
 
-void set_status_text(string text, bool break_begin = false, bool error_color = false) {
+void set_status_text(string text, bool break_begin = false, bool had_errors = false, bool had_warnings = false) {
 
 	string str;
-	if(error_color) {
+	if(had_errors) {
 		str = "<span size=\"small\" foreground=\"red\">";
+	} else if(had_warnings) {
+		str = "<span size=\"small\" foreground=\"blue\">";
 	} else {
 		str = "<span size=\"small\">";
 	}
@@ -322,8 +325,10 @@ void set_status_text(string text, bool break_begin = false, bool error_color = f
 			set_status_text("", break_begin, error_color);
 			return;
 		}
-		if(error_color) {
+		if(had_errors) {
 			str = "<span size=\"small\" foreground=\"red\">";
+		} else if(had_warnings) {
+			str = "<span size=\"small\" foreground=\"blue\">";
 		} else {
 			str = "<span size=\"small\">";
 		}
@@ -344,7 +349,7 @@ void set_status_text(string text, bool break_begin = false, bool error_color = f
 				else add_bold_end = true;
 			}
 			if(l == 0) {
-				set_status_text("", break_begin, error_color);
+				set_status_text("", break_begin, had_errors, had_warnings);
 				return;
 			}
 			text = text.substr(0, l);
@@ -643,8 +648,9 @@ void display_function_hint(MathFunction *f, int arg_index = 1) {
 }
 
 void display_parse_status() {
+	if(block_display_parse) return;
 	if(strlen(gtk_entry_get_text(GTK_ENTRY(expression))) == 0) {
-		set_status_text("", true, false);
+		set_status_text("", true, false, false);
 		parsed_expression = "";
 		expression_has_changed2 = false;
 		return;
@@ -652,19 +658,27 @@ void display_parse_status() {
 	MathStructure mparse, mfunc;
 	int pos = gtk_editable_get_position(GTK_EDITABLE(expression));
 	bool full_parsed = false;
-	bool had_errors = false;
+	string str_e, str_u;
+	bool had_errors = false, had_warnings = false;
 	if(pos > 0) {
 		evalops.parse_options.unended_function = &mfunc;
 		CALCULATOR->beginTemporaryStopMessages();
 		if(pos < g_utf8_strlen(gtk_entry_get_text(GTK_ENTRY(expression)), -1)) {
 			gchar *gstr = gtk_editable_get_chars(GTK_EDITABLE(expression), 0, pos);
-			CALCULATOR->parse(&mparse, CALCULATOR->unlocalizeExpression(gstr), evalops.parse_options);
+			str_e = CALCULATOR->unlocalizeExpression(gstr);
+			if(!CALCULATOR->separateToExpression(str_e, str_u, evalops)) {
+				CALCULATOR->parse(&mparse, str_e, evalops.parse_options);
+			}
 			g_free(gstr);
 		} else {
-			CALCULATOR->parse(&mparse, CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(expression))), evalops.parse_options);
+			str_e = CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(expression)));
+			CALCULATOR->separateToExpression(str_e, str_u, evalops);
+			CALCULATOR->parse(&mparse, str_e, evalops.parse_options);
 			full_parsed = true;
 		}
-		had_errors = CALCULATOR->endTemporaryStopMessages() > 0;
+		int warnings_count;
+		had_errors = CALCULATOR->endTemporaryStopMessages(NULL, &warnings_count) > 0;
+		had_warnings = warnings_count > 0;
 		evalops.parse_options.unended_function = NULL;
 	}
 	if(mfunc.isFunction()) {
@@ -676,8 +690,12 @@ void display_parse_status() {
 	} else if(expression_has_changed2) {
 		if(!full_parsed) {
 			CALCULATOR->beginTemporaryStopMessages();
-			CALCULATOR->parse(&mparse, CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(expression))), evalops.parse_options);
-			had_errors = CALCULATOR->endTemporaryStopMessages() > 0;
+			str_e = CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(expression)));
+			CALCULATOR->separateToExpression(str_e, str_u, evalops);
+			CALCULATOR->parse(&mparse, str_e, evalops.parse_options);
+			int warnings_count;
+			had_errors = CALCULATOR->endTemporaryStopMessages(NULL, &warnings_count) > 0;
+			had_warnings = warnings_count > 0;
 		}
 		PrintOptions po;
 		po.abbreviate_names = false;
@@ -692,10 +710,20 @@ void display_parse_status() {
 		po.can_display_unicode_string_arg = (void*) statuslabel_l;
 		mparse.formatsub(po);
 		parsed_expression = mparse.print(po);
-		set_status_text(parsed_expression.c_str(), true, had_errors);
+		if(!str_u.empty()) {
+			parsed_expression += " to ";
+			CALCULATOR->beginTemporaryStopMessages();
+			CompositeUnit cu("", "temporary_composite_parse", "", str_u);
+			int warnings_count;
+			had_errors = CALCULATOR->endTemporaryStopMessages(NULL, &warnings_count) > 0 || had_errors;
+			had_warnings = had_warnings || warnings_count > 0;
+			parsed_expression += cu.print(false, false, true, &can_display_unicode_string_function, (void*) statuslabel_l);
+		}
+		parsed_had_errors = had_errors; parsed_had_warnings = had_warnings;
+		set_status_text(parsed_expression.c_str(), true, had_errors, had_warnings);
 		expression_has_changed2 = false;
 	} else {
-		set_status_text(parsed_expression.c_str(), true, had_errors);
+		set_status_text(parsed_expression.c_str(), true, parsed_had_errors, parsed_had_warnings);
 	}
 }
 
@@ -4081,6 +4109,8 @@ gboolean on_event(GtkWidget *w, GdkEvent *e, gpointer user_data) {
 */
 void setResult(Prefix *prefix = NULL, bool update_history = true, bool update_parse = false, bool force = false) {
 
+	if(block_result_update) return;
+
 	if(expression_has_changed) {
 		if(!force) return;
 		execute_expression();
@@ -4345,6 +4375,9 @@ void add_to_expression_history(string str) {
 	calculate entered expression and display result
 */
 void execute_expression(bool force) {
+
+	if(block_expression_execution) return;
+
 	string str = gtk_entry_get_text(GTK_ENTRY(expression));
 	if(!force && (expression_has_changed || str.find_first_not_of(SPACES) == string::npos)) return;
 	do_timeout = false;
@@ -7146,12 +7179,143 @@ void save_mode() {
 	remember current mode
 */
 void set_saved_mode() {
-	saved_precision = CALCULATOR->getPrecision();
-	saved_hyp_is_on = hyp_is_on;
-	saved_printops = printops;
-	saved_evalops = evalops;
-	saved_assumption_type = CALCULATOR->defaultAssumptions()->numberType();
-	saved_assumption_sign = CALCULATOR->defaultAssumptions()->sign();
+	modes[1].precision = CALCULATOR->getPrecision();
+	modes[1].po = printops;
+	modes[1].eo = evalops;
+	modes[1].at = CALCULATOR->defaultAssumptions()->numberType();
+	modes[1].as = CALCULATOR->defaultAssumptions()->sign();
+}
+
+size_t save_mode_as(string name, bool *new_mode = NULL) {
+	remove_blank_ends(name);
+	size_t index = 0;
+	for(; index < modes.size(); index++) {
+		if(equalsIgnoreCase(modes[index].name, name)) {
+			if(new_mode) *new_mode = false;
+			break;
+		}
+	}
+	if(index >= modes.size()) {
+		modes.resize(modes.size() + 1);
+		index = modes.size() - 1;
+		if(new_mode) *new_mode = true;
+	}
+	modes[index].po = printops;
+	modes[index].eo = evalops;
+	modes[index].precision = CALCULATOR->getPrecision();
+	modes[index].at = CALCULATOR->defaultAssumptions()->numberType();
+	modes[index].as = CALCULATOR->defaultAssumptions()->sign();
+	if(index == 1) modes[index].name = _("Default");
+	else modes[index].name = name;
+	return index;
+}
+
+void set_mode_items(const PrintOptions&, const EvaluationOptions&, AssumptionNumberType, AssumptionSign, int, bool);
+void load_mode(const mode_struct &mode) {
+	block_result_update = true;
+	block_expression_execution = true;
+	block_display_parse = true;
+	set_mode_items(mode.po, mode.eo, mode.at, mode.as, mode.precision, false);
+	block_result_update = false;
+	block_expression_execution = false;
+	block_display_parse = false;
+	setResult(NULL, true, false, false);
+	expression_has_changed2 = true;
+	display_parse_status();
+	execute_expression(false);
+}
+void load_mode(string name) {
+	for(size_t i = 0; i < modes.size(); i++) {
+		if(equalsIgnoreCase(modes[i].name, name)) {
+			load_mode(modes[i]);
+			return;
+		}
+	}
+}
+void load_mode(size_t index) {
+	if(index >= 0 && index < modes.size()) {
+		load_mode(modes[index]);
+	}
+}
+void on_menu_item_meta_mode_activate(GtkMenuItem *w, gpointer user_data) {
+	const char *name = (const char*) user_data;
+	load_mode(name);
+}
+void on_menu_item_meta_mode_save_activate(GtkMenuItem *w, gpointer user_data) {
+	GtkWidget *dialog = gtk_dialog_new_with_buttons(_("Save Mode"), GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), (GtkDialogFlags) (GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT), GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, NULL);
+	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
+	GtkWidget *hbox = gtk_hbox_new(TRUE, 6);
+	gtk_container_set_border_width(GTK_CONTAINER(hbox), 12);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
+	gtk_widget_show(hbox);
+	GtkWidget *label = gtk_label_new(_("Name"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
+	gtk_widget_show(label);
+	GtkWidget *entry = gtk_combo_box_entry_new_text();
+	for(size_t i = 2; i < modes.size(); i++) {
+		gtk_combo_box_append_text(GTK_COMBO_BOX(entry), modes[i].name.c_str());
+	}
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, TRUE, 0);
+	gtk_widget_show(entry);
+run_meta_mode_save_dialog:
+	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+	if(response == GTK_RESPONSE_ACCEPT) {
+		bool new_mode = true;
+		string name = gtk_combo_box_get_active_text(GTK_COMBO_BOX(entry));
+		remove_blank_ends(name);
+		if(name.empty()) {
+			show_message(_("Empty name field."), dialog);
+			goto run_meta_mode_save_dialog;
+		}
+		if(equalsIgnoreCase(name, modes[0].name)) {
+			gchar *gstr = g_strdup_printf(_("Preset mode cannot be overwritten."), modes[0].name.c_str());
+			show_message(gstr, dialog);
+			g_free(gstr);
+			goto run_meta_mode_save_dialog;
+		}
+		size_t index = save_mode_as(name, &new_mode);
+		if(new_mode) {
+			GtkWidget *item = gtk_menu_item_new_with_label(modes[index].name.c_str()); 
+			gtk_widget_show(item); 
+			gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(on_menu_item_meta_mode_activate), (gpointer) modes[index].name.c_str()); 
+			gtk_menu_shell_insert(GTK_MENU_SHELL(glade_xml_get_widget (main_glade, "menu_meta_modes")), item, (gint) index);
+			gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_meta_mode_delete"), TRUE);
+			mode_items.push_back(item);
+		} else {
+		
+		}
+	}
+	gtk_widget_destroy(dialog);
+}
+void on_menu_item_meta_mode_delete_activate(GtkMenuItem *w, gpointer user_data) {
+	GtkWidget *dialog = gtk_dialog_new_with_buttons(_("Delete Mode"), GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), (GtkDialogFlags) (GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT), GTK_STOCK_DELETE, GTK_RESPONSE_ACCEPT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, NULL);
+	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
+	GtkWidget *hbox = gtk_hbox_new(TRUE, 6);
+	gtk_container_set_border_width(GTK_CONTAINER(hbox), 12);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
+	gtk_widget_show(hbox);
+	GtkWidget *label = gtk_label_new(_("Mode"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
+	gtk_widget_show(label);
+	GtkWidget *menu = gtk_combo_box_new_text();
+	for(size_t i = 2; i < modes.size(); i++) {
+		gtk_combo_box_append_text(GTK_COMBO_BOX(menu), modes[i].name.c_str());
+	}
+	gtk_combo_box_set_active(GTK_COMBO_BOX(menu), 0);
+	gtk_box_pack_end(GTK_BOX(hbox), menu, FALSE, TRUE, 0);
+	gtk_widget_show(menu);
+	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+	if(response == GTK_RESPONSE_ACCEPT && gtk_combo_box_get_active(GTK_COMBO_BOX(menu)) >= 0) {
+		size_t index = gtk_combo_box_get_active(GTK_COMBO_BOX(menu)) + 2;
+		gtk_widget_destroy(mode_items[index]);
+		modes.erase(modes.begin() + index);
+		if(modes.size() < 3) gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_meta_mode_delete"), FALSE);
+	}
+	gtk_widget_destroy(dialog);
 }
 
 /*
@@ -7218,6 +7382,8 @@ void load_preferences() {
 	evalops.parse_options.limit_implicit_multiplication = false;
 	evalops.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 	
+	save_mode_as(_("Preset"));
+	
 	save_mode_on_exit = true;
 	save_defs_on_exit = true;
 	hyp_is_on = false;
@@ -7237,16 +7403,17 @@ void load_preferences() {
 	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", NULL);
 	DIR *dir = opendir(gstr);
 	g_free(gstr);
+	save_mode_as(_("Default"));
 	if(!dir) {
 		first_qalculate_run = true;
-		first_time = true;
-		set_saved_mode();
+		first_time = true;	
 		return;
 	} else {
 		first_qalculate_run = false;
 		closedir(dir);
 	}
 	int version_numbers[] = {0, 8, 3};
+	size_t mode_index = 1;
 	FILE *file = NULL;
 	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate-gtk.cfg", NULL);
 	file = fopen(gstr2, "r");
@@ -7280,120 +7447,224 @@ void load_preferences() {
 				} else if(svar == "show_buttons") {
 					show_buttons = v;
 				} else if(svar == "min_deci") {
-					printops.min_decimals = v;
+					if(mode_index == 1) printops.min_decimals = v;
+					else modes[mode_index].po.min_decimals = v;
 				} else if(svar == "use_min_deci") {
-					printops.use_min_decimals = v;
+					if(mode_index == 1) printops.use_min_decimals = v;
+					else modes[mode_index].po.use_min_decimals = v;
 				} else if(svar == "max_deci") {
-					printops.max_decimals = v;
+					if(mode_index == 1) printops.max_decimals = v;
+					else modes[mode_index].po.max_decimals = v;
 				} else if(svar == "use_max_deci") {
-					printops.use_max_decimals = v;					
+					if(mode_index == 1) printops.use_max_decimals = v;
+					else modes[mode_index].po.use_max_decimals = v;
 				} else if(svar == "precision") {
-					CALCULATOR->setPrecision(v);
+					if(mode_index == 1) CALCULATOR->setPrecision(v);
+					else modes[mode_index].precision = v;
 				} else if(svar == "min_exp") {
-					printops.min_exp = v;
+					if(mode_index == 1) printops.min_exp = v;
+					else modes[mode_index].po.min_exp = v;
 				} else if(svar == "negative_exponents") {
-					printops.negative_exponents = v;
+					if(mode_index == 1) printops.negative_exponents = v;
+					else modes[mode_index].po.negative_exponents = v;
 				} else if(svar == "sort_minus_last") {
-					printops.sort_options.minus_last = v;
+					if(mode_index == 1) printops.sort_options.minus_last = v;
+					else modes[mode_index].po.sort_options.minus_last = v;
+				} else if(svar == "place_units_separately") {
+					if(mode_index == 1) printops.place_units_separately = v;
+					else modes[mode_index].po.place_units_separately = v;
+				} else if(svar == "display_mode") {	//obsolete
+					switch(v) {
+						case 1: {
+							if(mode_index == 1) {
+								printops.min_exp = EXP_PRECISION;
+								printops.negative_exponents = false;
+								printops.sort_options.minus_last = true;
+							} else {
+								modes[mode_index].po.min_exp = EXP_PRECISION;
+								modes[mode_index].po.negative_exponents = false;
+								modes[mode_index].po.sort_options.minus_last = true;
+							}
+							break;
+						}
+						case 2: {
+							if(mode_index == 1) {
+								printops.min_exp = EXP_SCIENTIFIC;
+								printops.negative_exponents = true;
+								printops.sort_options.minus_last = false;
+							} else {
+								modes[mode_index].po.min_exp = EXP_SCIENTIFIC;
+								modes[mode_index].po.negative_exponents = true;
+								modes[mode_index].po.sort_options.minus_last = false;
+							}
+							break;
+						}
+						case 3: {
+							if(mode_index == 1) {
+								printops.min_exp = EXP_PURE;
+								printops.negative_exponents = true;
+								printops.sort_options.minus_last = false;
+							} else {
+								modes[mode_index].po.min_exp = EXP_PURE;
+								modes[mode_index].po.negative_exponents = true;
+								modes[mode_index].po.sort_options.minus_last = false;
+							}
+							break;
+						}
+						case 4: {
+							if(mode_index == 1) {
+								printops.min_exp = EXP_NONE;
+								printops.negative_exponents = false;
+								printops.sort_options.minus_last = true;
+							} else {
+								modes[mode_index].po.min_exp = EXP_NONE;
+								modes[mode_index].po.negative_exponents = false;
+								modes[mode_index].po.sort_options.minus_last = true;
+							}
+							break;
+						}
+					}
+				} else if(svar == "use_prefixes") {
+					if(mode_index == 1) printops.use_unit_prefixes = v;
+					else modes[mode_index].po.use_unit_prefixes = v;
+				} else if(svar == "fractional_mode") {	//obsolete
+					switch(v) {
+						case 1: {
+							if(mode_index == 1) printops.number_fraction_format = FRACTION_DECIMAL;
+							else modes[mode_index].po.number_fraction_format = FRACTION_DECIMAL;
+							break;
+						}
+						case 2: {
+							if(mode_index == 1) printops.number_fraction_format = FRACTION_COMBINED;
+							else modes[mode_index].po.number_fraction_format = FRACTION_COMBINED;
+							break;
+						}
+						case 3: {
+							if(mode_index == 1) printops.number_fraction_format = FRACTION_FRACTIONAL;
+							else modes[mode_index].po.number_fraction_format = FRACTION_FRACTIONAL;
+							break;
+						}
+					}
+				} else if(svar == "number_fraction_format") {
+					if(v >= FRACTION_DECIMAL && v <= FRACTION_COMBINED) {
+						if(mode_index == 1) printops.number_fraction_format = (NumberFractionFormat) v;
+						else modes[mode_index].po.number_fraction_format = (NumberFractionFormat) v;
+					}
+				} else if(svar == "number_base") {
+					if(mode_index == 1) printops.base = v;
+					else modes[mode_index].po.base = v;
+				} else if(svar == "number_base_expression") {
+					if(mode_index == 1) evalops.parse_options.base = v;	
+					else modes[mode_index].eo.parse_options.base = v;	
+				} else if(svar == "read_precision") {
+					if(v >= DONT_READ_PRECISION && v <= READ_PRECISION_WHEN_DECIMALS) {
+						if(mode_index == 1) evalops.parse_options.read_precision = (ReadPrecisionMode) v;
+						else modes[mode_index].eo.parse_options.read_precision = (ReadPrecisionMode) v;
+					}
+				} else if(svar == "assume_denominators_nonzero") {
+					if(mode_index == 1) evalops.assume_denominators_nonzero = v;	
+					else modes[mode_index].eo.assume_denominators_nonzero = v;	
+				} else if(svar == "angle_unit") {
+					if(version_numbers[0] == 0 && (version_numbers[1] < 7 || (version_numbers[1] == 7 && version_numbers[2] == 0))) {
+						v++;
+					}
+					if(v >= ANGLE_UNIT_NONE && v <= ANGLE_UNIT_GRADIANS) {
+						if(mode_index == 1) evalops.parse_options.angle_unit = (AngleUnit) v;
+						else modes[mode_index].eo.parse_options.angle_unit = (AngleUnit) v;
+					}
+				} else if(svar == "functions_enabled") {
+					if(mode_index == 1) evalops.parse_options.functions_enabled = v;
+					else modes[mode_index].eo.parse_options.functions_enabled = v;
+				} else if(svar == "variables_enabled") {
+					if(mode_index == 1) evalops.parse_options.variables_enabled = v;
+					else modes[mode_index].eo.parse_options.variables_enabled = v;
+				} else if(svar == "donot_calculate_variables") {
+					if(mode_index == 1) evalops.calculate_variables = !v;
+					else modes[mode_index].eo.calculate_variables = !v;
+				} else if(svar == "calculate_variables") {
+					if(mode_index == 1) evalops.calculate_variables = v;
+					else modes[mode_index].eo.calculate_variables = v;
+				} else if(svar == "calculate_functions") {
+					if(mode_index == 1) evalops.calculate_functions = v;
+					else modes[mode_index].eo.calculate_functions = v;
+				} else if(svar == "sync_units") {
+					if(mode_index == 1) evalops.sync_units = v;
+					else modes[mode_index].eo.sync_units = v;
+				} else if(svar == "unknownvariables_enabled") {
+					if(mode_index == 1) evalops.parse_options.unknowns_enabled = v;
+					else modes[mode_index].eo.parse_options.unknowns_enabled = v;
+				} else if(svar == "units_enabled") {
+					if(mode_index == 1) evalops.parse_options.units_enabled = v;
+					else modes[mode_index].eo.parse_options.units_enabled = v;
+				} else if(svar == "allow_complex") {
+					if(mode_index == 1) evalops.allow_complex = v;
+					else modes[mode_index].eo.allow_complex = v;
+				} else if(svar == "allow_infinite") {
+					if(mode_index == 1) evalops.allow_infinite = v;
+					else modes[mode_index].eo.allow_infinite = v;
+				} else if(svar == "use_short_units") {
+					if(mode_index == 1) printops.abbreviate_names = v;
+					else modes[mode_index].po.abbreviate_names = v;
+				} else if(svar == "abbreviate_names") {
+					if(mode_index == 1) printops.abbreviate_names = v;
+					else modes[mode_index].po.abbreviate_names = v;
+				} else if(svar == "all_prefixes_enabled") {
+					if(mode_index == 1) printops.use_all_prefixes = v;
+					else modes[mode_index].po.use_all_prefixes = v;
+				} else if(svar == "denominator_prefix_enabled") {
+					if(mode_index == 1) printops.use_denominator_prefix = v;
+					else modes[mode_index].po.use_denominator_prefix = v;
+				} else if(svar == "auto_post_conversion") {
+					if(v >= POST_CONVERSION_NONE && v <= POST_CONVERSION_BASE) {
+						if(mode_index == 1) evalops.auto_post_conversion = (AutoPostConversion) v;
+						else modes[mode_index].eo.auto_post_conversion = (AutoPostConversion) v;
+					}
+				} else if(svar == "indicate_infinite_series") {
+					if(mode_index == 1) printops.indicate_infinite_series = v;
+					else modes[mode_index].po.indicate_infinite_series = v;
+				} else if(svar == "show_ending_zeroes") {
+					if(mode_index == 1) printops.show_ending_zeroes = v;
+					else modes[mode_index].po.show_ending_zeroes = v;
+				} else if(svar == "round_halfway_to_even") {
+					if(mode_index == 1) printops.round_halfway_to_even = v;	
+					else modes[mode_index].po.round_halfway_to_even = v;	
+				} else if(svar == "always_exact") {		//obsolete
+					if(mode_index == 1) evalops.approximation = APPROXIMATION_EXACT;
+					else modes[mode_index].eo.approximation = APPROXIMATION_EXACT;
+				} else if(svar == "approximation") {
+					if(v >= APPROXIMATION_EXACT && v <= APPROXIMATION_APPROXIMATE) {
+						if(mode_index == 1) evalops.approximation = (ApproximationMode) v;
+						else modes[mode_index].eo.approximation = (ApproximationMode) v;
+					}
+				} else if(svar == "in_rpn_mode") {
+					if(mode_index == 1) evalops.parse_options.rpn = v;
+					else modes[mode_index].eo.parse_options.rpn = v;
+				} else if(svar == "limit_implicit_multiplication") {
+					if(mode_index == 1) {
+						evalops.parse_options.limit_implicit_multiplication = v;
+						printops.limit_implicit_multiplication = v;
+					} else {
+						modes[mode_index].eo.parse_options.limit_implicit_multiplication = v;
+						modes[mode_index].po.limit_implicit_multiplication = v;
+					}
+				} else if(svar == "default_assumption_type") {
+					if(v >= ASSUMPTION_NUMBER_NONE && v <= ASSUMPTION_NUMBER_INTEGER) {
+						if(mode_index == 1) CALCULATOR->defaultAssumptions()->setNumberType((AssumptionNumberType) v);
+						else modes[mode_index].at = (AssumptionNumberType) v;
+					}
+				} else if(svar == "default_assumption_sign") {
+					if(v >= ASSUMPTION_SIGN_UNKNOWN && v <= ASSUMPTION_SIGN_NONZERO) {
+						if(mode_index == 1) CALCULATOR->defaultAssumptions()->setSign((AssumptionSign) v);
+						else modes[mode_index].as = (AssumptionSign) v;
+					}
+				} else if(svar == "hyp_is_on") {
+					hyp_is_on = v;
 				} else if(svar == "spacious") {
 					printops.spacious = v;	
 				} else if(svar == "excessive_parenthesis") {
 					printops.excessive_parenthesis = v;
 				} else if(svar == "short_multiplication") {
 					printops.short_multiplication = v;
-				} else if(svar == "place_units_separately") {
-					printops.place_units_separately = v;
-				} else if(svar == "display_mode") {	//obsolete
-					switch(v) {
-						case 1: {
-							printops.min_exp = EXP_PRECISION;
-							printops.negative_exponents = false;
-							printops.sort_options.minus_last = true;
-							break;
-						}
-						case 2: {
-							printops.min_exp = EXP_SCIENTIFIC;
-							printops.negative_exponents = true;
-							printops.sort_options.minus_last = false;
-							break;
-						}
-						case 3: {
-							printops.min_exp = EXP_PURE;
-							printops.negative_exponents = true;
-							printops.sort_options.minus_last = false;
-							break;
-						}
-						case 4: {
-							printops.min_exp = EXP_NONE;
-							printops.negative_exponents = false;
-							printops.sort_options.minus_last = true;
-							break;
-						}
-					}
-				} else if(svar == "use_prefixes") {
-					printops.use_unit_prefixes = v;
-				} else if(svar == "fractional_mode") {	//obsolete
-					switch(v) {
-						case 1: {
-							printops.number_fraction_format = FRACTION_DECIMAL;
-							break;
-						}
-						case 2: {
-							printops.number_fraction_format = FRACTION_COMBINED;
-							break;
-						}
-						case 3: {
-							printops.number_fraction_format = FRACTION_FRACTIONAL;
-							break;
-						}
-					}
-				} else if(svar == "number_fraction_format") {
-					if(v >= FRACTION_DECIMAL && v <= FRACTION_COMBINED) printops.number_fraction_format = (NumberFractionFormat) v;					
-				} else if(svar == "number_base") {
-					printops.base = v;
-				} else if(svar == "number_base_expression") {
-					evalops.parse_options.base = v;	
-				} else if(svar == "read_precision") {
-					if(v >= DONT_READ_PRECISION && v <= READ_PRECISION_WHEN_DECIMALS) evalops.parse_options.read_precision = (ReadPrecisionMode) v;
-				} else if(svar == "assume_denominators_nonzero") {
-					evalops.assume_denominators_nonzero = v;	
-				} else if(svar == "angle_unit") {
-					if(version_numbers[0] == 0 && (version_numbers[1] < 7 || (version_numbers[1] == 7 && version_numbers[2] == 0))) {
-						v++;
-					}
-					if(v >= ANGLE_UNIT_NONE && v <= ANGLE_UNIT_GRADIANS) evalops.parse_options.angle_unit = (AngleUnit) v;
-				} else if(svar == "hyp_is_on") {
-					hyp_is_on = v;
-				} else if(svar == "functions_enabled") {
-					evalops.parse_options.functions_enabled = v;
-				} else if(svar == "variables_enabled") {
-					evalops.parse_options.variables_enabled = v;
-				} else if(svar == "donot_calculate_variables") {
-					evalops.calculate_variables = !v;
-				} else if(svar == "calculate_variables") {
-					evalops.calculate_variables = v;
-				} else if(svar == "calculate_functions") {
-					evalops.calculate_functions = v;
-				} else if(svar == "sync_units") {
-					evalops.sync_units = v;
-				} else if(svar == "unknownvariables_enabled") {
-					evalops.parse_options.unknowns_enabled = v;
-				} else if(svar == "units_enabled") {
-					evalops.parse_options.units_enabled = v;
-				} else if(svar == "allow_complex") {
-					evalops.allow_complex = v;
-				} else if(svar == "allow_infinite") {
-					evalops.allow_infinite = v;
-				} else if(svar == "use_short_units") {
-					printops.abbreviate_names = v;
-				} else if(svar == "abbreviate_names") {
-					printops.abbreviate_names = v;	
-				} else if(svar == "all_prefixes_enabled") {
-					printops.use_all_prefixes = v;
-				} else if(svar == "denominator_prefix_enabled") {
-					printops.use_denominator_prefix = v;
-				} else if(svar == "auto_post_conversion") {
-					if(v >= POST_CONVERSION_NONE && v <= POST_CONVERSION_BASE) evalops.auto_post_conversion = (AutoPostConversion) v;
 				} else if(svar == "use_unicode_signs" && (version_numbers[0] > 0 || version_numbers[1] > 7 || (version_numbers[1] == 7 && version_numbers[2] > 0))) {
 					printops.use_unicode_signs = v;	
 				} else if(svar == "lower_case_numbers") {
@@ -7420,25 +7691,6 @@ void load_preferences() {
 					}
 				} else if(svar == "division_sign") {
 					if(v >= DIVISION_SIGN_SLASH && v <= DIVISION_SIGN_DIVISION) printops.division_sign = (DivisionSign) v;
-				} else if(svar == "indicate_infinite_series") {
-					printops.indicate_infinite_series = v;
-				} else if(svar == "show_ending_zeroes") {
-					printops.show_ending_zeroes = v;
-				} else if(svar == "round_halfway_to_even") {
-					printops.round_halfway_to_even = v;	
-				} else if(svar == "always_exact") {		//obsolete
-					evalops.approximation = APPROXIMATION_EXACT;
-				} else if(svar == "approximation") {
-					if(v >= APPROXIMATION_EXACT && v <= APPROXIMATION_APPROXIMATE) evalops.approximation = (ApproximationMode) v;
-				} else if(svar == "in_rpn_mode") {
-					evalops.parse_options.rpn = v;
-				} else if(svar == "limit_implicit_multiplication") {
-					evalops.parse_options.limit_implicit_multiplication = v;
-					printops.limit_implicit_multiplication = v;
-				} else if(svar == "default_assumption_type") {
-					if(v >= ASSUMPTION_NUMBER_NONE && v <= ASSUMPTION_NUMBER_INTEGER) CALCULATOR->defaultAssumptions()->setNumberType((AssumptionNumberType) v);
-				} else if(svar == "default_assumption_sign") {
-					if(v >= ASSUMPTION_SIGN_UNKNOWN && v <= ASSUMPTION_SIGN_NONZERO) CALCULATOR->defaultAssumptions()->setSign((AssumptionSign) v);
 				} else if(svar == "recent_functions") {
 					size_t v_i = 0;
 					while(true) {
@@ -7536,21 +7788,30 @@ void load_preferences() {
 				} else if(svar == "history_height") {
 					history_height = v;
 				}
+			} else if(stmp.length() > 2 && stmp[0] == '[' && stmp[stmp.length() - 1] == ']') {
+				stmp = stmp.substr(1, stmp.length() - 2);
+				remove_blank_ends(stmp);
+				if(equalsIgnoreCase(stmp, "Mode")) {
+					mode_index = 1;
+				} else if(stmp.length() > 5 && equalsIgnoreCase(stmp.substr(0, 4), "Mode")) {
+					mode_index = save_mode_as(stmp.substr(5, stmp.length() - 5));
+				}
 			}
 		}
 	} else {
 		first_time = true;
 	}
-	//remember start mode for when we save preferences
 	set_saved_mode();
+
 }
 
 /*
 	save preferences to ~/.qalculate/qalculate-gtk.cfg
 	set mode to true to save current calculator mode
 */
-void save_preferences(bool mode)
-{
+
+void save_preferences(bool mode) {
+
 	FILE *file = NULL;
 	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", NULL);
 	mkdir(gstr, S_IRWXU);
@@ -7630,45 +7891,50 @@ void save_preferences(bool mode)
 	fprintf(file, "\n"); 	
 	if(mode)
 		set_saved_mode();
-	fprintf(file, "\n[Mode]\n");
-	fprintf(file, "min_deci=%i\n", saved_printops.min_decimals);
-	fprintf(file, "use_min_deci=%i\n", saved_printops.use_min_decimals);
-	fprintf(file, "max_deci=%i\n", saved_printops.max_decimals);
-	fprintf(file, "use_max_deci=%i\n", saved_printops.use_max_decimals);	
-	fprintf(file, "precision=%i\n", saved_precision);
-	fprintf(file, "min_exp=%i\n", saved_printops.min_exp);
-	fprintf(file, "negative_exponents=%i\n", saved_printops.negative_exponents);
-	fprintf(file, "sort_minus_last=%i\n", saved_printops.sort_options.minus_last);
-	fprintf(file, "number_fraction_format=%i\n", saved_printops.number_fraction_format);	
-	fprintf(file, "use_prefixes=%i\n", saved_printops.use_unit_prefixes);
-	fprintf(file, "abbreviate_names=%i\n", saved_printops.abbreviate_names);
-	fprintf(file, "all_prefixes_enabled=%i\n", saved_printops.use_all_prefixes);
-	fprintf(file, "denominator_prefix_enabled=%i\n", saved_printops.use_denominator_prefix);
-	fprintf(file, "place_units_separately=%i\n", saved_printops.place_units_separately);
-	fprintf(file, "auto_post_conversion=%i\n", saved_evalops.auto_post_conversion);	
-	fprintf(file, "number_base=%i\n", saved_printops.base);
-	fprintf(file, "number_base_expression=%i\n", saved_evalops.parse_options.base);
-	fprintf(file, "read_precision=%i\n", saved_evalops.parse_options.read_precision);
-	fprintf(file, "assume_denominators_nonzero=%i\n", saved_evalops.assume_denominators_nonzero);
-	fprintf(file, "angle_unit=%i\n", saved_evalops.parse_options.angle_unit);
-	fprintf(file, "hyp_is_on=%i\n", saved_hyp_is_on);
-	fprintf(file, "functions_enabled=%i\n", saved_evalops.parse_options.functions_enabled);
-	fprintf(file, "variables_enabled=%i\n", saved_evalops.parse_options.variables_enabled);
-	fprintf(file, "calculate_functions=%i\n", saved_evalops.calculate_functions);	
-	fprintf(file, "calculate_variables=%i\n", saved_evalops.calculate_variables);	
-	fprintf(file, "sync_units=%i\n", saved_evalops.sync_units);	
-	fprintf(file, "unknownvariables_enabled=%i\n", saved_evalops.parse_options.unknowns_enabled);
-	fprintf(file, "units_enabled=%i\n", saved_evalops.parse_options.units_enabled);
-	fprintf(file, "allow_complex=%i\n", saved_evalops.allow_complex);
-	fprintf(file, "allow_infinite=%i\n", saved_evalops.allow_infinite);
-	fprintf(file, "indicate_infinite_series=%i\n", saved_printops.indicate_infinite_series);
-	fprintf(file, "show_ending_zeroes=%i\n", saved_printops.show_ending_zeroes);
-	fprintf(file, "round_halfway_to_even=%i\n", saved_printops.round_halfway_to_even);
-	fprintf(file, "approximation=%i\n", saved_evalops.approximation);	
-	fprintf(file, "in_rpn_mode=%i\n", saved_evalops.parse_options.rpn);
-	fprintf(file, "limit_implicit_multiplication=%i\n", saved_evalops.parse_options.limit_implicit_multiplication);
-	fprintf(file, "default_assumption_type=%i\n", CALCULATOR->defaultAssumptions()->numberType());
-	fprintf(file, "default_assumption_sign=%i\n", CALCULATOR->defaultAssumptions()->sign());
+	for(size_t i = 1; i < modes.size(); i++) {
+		if(i == 1) {
+			fprintf(file, "\n[Mode]\n");
+		} else {
+			fprintf(file, "\n[Mode %s]\n", modes[i].name.c_str());
+		}
+		fprintf(file, "min_deci=%i\n", modes[i].po.min_decimals);
+		fprintf(file, "use_min_deci=%i\n", modes[i].po.use_min_decimals);
+		fprintf(file, "max_deci=%i\n", modes[i].po.max_decimals);
+		fprintf(file, "use_max_deci=%i\n", modes[i].po.use_max_decimals);	
+		fprintf(file, "precision=%i\n", modes[i].precision);
+		fprintf(file, "min_exp=%i\n", modes[i].po.min_exp);
+		fprintf(file, "negative_exponents=%i\n", modes[i].po.negative_exponents);
+		fprintf(file, "sort_minus_last=%i\n", modes[i].po.sort_options.minus_last);
+		fprintf(file, "number_fraction_format=%i\n", modes[i].po.number_fraction_format);	
+		fprintf(file, "use_prefixes=%i\n", modes[i].po.use_unit_prefixes);
+		fprintf(file, "abbreviate_names=%i\n", modes[i].po.abbreviate_names);
+		fprintf(file, "all_prefixes_enabled=%i\n", modes[i].po.use_all_prefixes);
+		fprintf(file, "denominator_prefix_enabled=%i\n", modes[i].po.use_denominator_prefix);
+		fprintf(file, "place_units_separately=%i\n", modes[i].po.place_units_separately);
+		fprintf(file, "auto_post_conversion=%i\n", modes[i].eo.auto_post_conversion);	
+		fprintf(file, "number_base=%i\n", modes[i].po.base);
+		fprintf(file, "number_base_expression=%i\n", modes[i].eo.parse_options.base);
+		fprintf(file, "read_precision=%i\n", modes[i].eo.parse_options.read_precision);
+		fprintf(file, "assume_denominators_nonzero=%i\n", modes[i].eo.assume_denominators_nonzero);
+		fprintf(file, "angle_unit=%i\n", modes[i].eo.parse_options.angle_unit);
+		fprintf(file, "functions_enabled=%i\n", modes[i].eo.parse_options.functions_enabled);
+		fprintf(file, "variables_enabled=%i\n", modes[i].eo.parse_options.variables_enabled);
+		fprintf(file, "calculate_functions=%i\n", modes[i].eo.calculate_functions);	
+		fprintf(file, "calculate_variables=%i\n", modes[i].eo.calculate_variables);	
+		fprintf(file, "sync_units=%i\n", modes[i].eo.sync_units);	
+		fprintf(file, "unknownvariables_enabled=%i\n", modes[i].eo.parse_options.unknowns_enabled);
+		fprintf(file, "units_enabled=%i\n", modes[i].eo.parse_options.units_enabled);
+		fprintf(file, "allow_complex=%i\n", modes[i].eo.allow_complex);
+		fprintf(file, "allow_infinite=%i\n", modes[i].eo.allow_infinite);
+		fprintf(file, "indicate_infinite_series=%i\n", modes[i].po.indicate_infinite_series);
+		fprintf(file, "show_ending_zeroes=%i\n", modes[i].po.show_ending_zeroes);
+		fprintf(file, "round_halfway_to_even=%i\n", modes[i].po.round_halfway_to_even);
+		fprintf(file, "approximation=%i\n", modes[i].eo.approximation);	
+		fprintf(file, "in_rpn_mode=%i\n", modes[i].eo.parse_options.rpn);
+		fprintf(file, "limit_implicit_multiplication=%i\n", modes[i].eo.parse_options.limit_implicit_multiplication);
+		fprintf(file, "default_assumption_type=%i\n", modes[i].at);
+		fprintf(file, "default_assumption_sign=%i\n", modes[i].as);
+	}
 	
 	fprintf(file, "\n[Plotting]\n");
 	fprintf(file, "plot_legend_placement=%i\n", default_plot_legend_placement);
