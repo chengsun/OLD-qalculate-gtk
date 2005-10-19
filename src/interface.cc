@@ -100,6 +100,7 @@ GtkTooltips *periodic_tooltips;
 extern GdkPixbuf *icon_pixbuf;
 
 extern vector<GtkWidget*> mode_items;
+extern vector<GtkWidget*> popup_result_mode_items;
 
 gint compare_categories(gconstpointer a, gconstpointer b) {
 	return strcasecmp((const char*) a, (const char*) b);
@@ -138,9 +139,6 @@ void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, Assumpt
 			break;
 		}
 	}
-
-	
-
 
 	switch(eo.parse_options.angle_unit) {
 		case ANGLE_UNIT_DEGREES: {
@@ -310,6 +308,40 @@ void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, Assumpt
 		} else {
 			CALCULATOR->setPrecision(precision);
 		}
+		printops.spacious = po.spacious;
+		printops.short_multiplication = po.short_multiplication;
+		printops.excessive_parenthesis = po.excessive_parenthesis;
+		evalops.calculate_functions = eo.calculate_functions;
+		if(nbexpression_glade) {
+			switch(eo.parse_options.base) {
+				case BASE_BINARY: {
+					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (nbexpression_glade, "number_base_expression_radiobutton_binary")), TRUE);
+					break;
+				}
+				case BASE_OCTAL: {
+					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (nbexpression_glade, "number_base_expression_radiobutton_octal")), TRUE);
+					break;
+				}
+				case BASE_DECIMAL: {
+					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (nbexpression_glade, "number_base_expression_radiobutton_decimal")), TRUE);
+					break;
+				}
+				case BASE_HEXADECIMAL: {
+					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (nbexpression_glade, "number_base_expression_radiobutton_hexadecimal")), TRUE);
+					break;
+				}
+				case BASE_ROMAN_NUMERALS: {
+					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (nbexpression_glade, "number_base_expression_radiobutton_roman")), TRUE);
+					break;
+				}
+				default: {
+					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (nbexpression_glade, "number_base_expression_radiobutton_custom_base")), TRUE);
+					gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base")), eo.parse_options.base);
+				}
+			}
+		} else {
+			evalops.parse_options.base = eo.parse_options.base;
+		}
 	}
 
 }
@@ -426,8 +458,14 @@ create_main_window (void)
 		gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(on_menu_item_meta_mode_activate), (gpointer) modes[i].name.c_str()); 
 		gtk_menu_shell_insert(GTK_MENU_SHELL(glade_xml_get_widget (main_glade, "menu_meta_modes")), item, (gint) i);
 		mode_items.push_back(item);
+		item = gtk_menu_item_new_with_label(modes[i].name.c_str()); 
+		gtk_widget_show(item); 
+		gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(on_menu_item_meta_mode_activate), (gpointer) modes[i].name.c_str()); 
+		gtk_menu_shell_insert(GTK_MENU_SHELL(glade_xml_get_widget (main_glade, "menu_result_popup_meta_modes")), item, (gint) i);
+		popup_result_mode_items.push_back(item);
 	}
 	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_meta_mode_delete"), modes.size() > 2);
+	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_result_popup_meta_mode_delete"), modes.size() > 2);
 
 	gtk_widget_show (glade_xml_get_widget (main_glade, "main_window"));
 

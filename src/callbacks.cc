@@ -155,6 +155,7 @@ extern pthread_attr_t view_thread_attr;
 
 vector<mode_struct> modes;
 vector<GtkWidget*> mode_items;
+vector<GtkWidget*> popup_result_mode_items;
 
 #define TEXT_TAGS			"<span size=\"xx-large\">"
 #define TEXT_TAGS_END			"</span>"
@@ -7190,7 +7191,7 @@ size_t save_mode_as(string name, bool *new_mode = NULL) {
 	remove_blank_ends(name);
 	size_t index = 0;
 	for(; index < modes.size(); index++) {
-		if(equalsIgnoreCase(modes[index].name, name)) {
+		if(modes[index].name == name)) {
 			if(new_mode) *new_mode = false;
 			break;
 		}
@@ -7205,8 +7206,7 @@ size_t save_mode_as(string name, bool *new_mode = NULL) {
 	modes[index].precision = CALCULATOR->getPrecision();
 	modes[index].at = CALCULATOR->defaultAssumptions()->numberType();
 	modes[index].as = CALCULATOR->defaultAssumptions()->sign();
-	if(index == 1) modes[index].name = _("Default");
-	else modes[index].name = name;
+	modes[index].name = name;
 	return index;
 }
 
@@ -7226,7 +7226,7 @@ void load_mode(const mode_struct &mode) {
 }
 void load_mode(string name) {
 	for(size_t i = 0; i < modes.size(); i++) {
-		if(equalsIgnoreCase(modes[i].name, name)) {
+		if(modes[i].name == name) {
 			load_mode(modes[i]);
 			return;
 		}
@@ -7269,10 +7269,8 @@ run_meta_mode_save_dialog:
 			show_message(_("Empty name field."), dialog);
 			goto run_meta_mode_save_dialog;
 		}
-		if(equalsIgnoreCase(name, modes[0].name)) {
-			gchar *gstr = g_strdup_printf(_("Preset mode cannot be overwritten."), modes[0].name.c_str());
-			show_message(gstr, dialog);
-			g_free(gstr);
+		if(name == modes[0].name) {
+			show_message(_("Preset mode cannot be overwritten."), dialog);
 			goto run_meta_mode_save_dialog;
 		}
 		size_t index = save_mode_as(name, &new_mode);
@@ -7283,8 +7281,12 @@ run_meta_mode_save_dialog:
 			gtk_menu_shell_insert(GTK_MENU_SHELL(glade_xml_get_widget (main_glade, "menu_meta_modes")), item, (gint) index);
 			gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_meta_mode_delete"), TRUE);
 			mode_items.push_back(item);
-		} else {
-		
+			item = gtk_menu_item_new_with_label(modes[index].name.c_str()); 
+			gtk_widget_show(item); 
+			gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(on_menu_item_meta_mode_activate), (gpointer) modes[index].name.c_str()); 
+			gtk_menu_shell_insert(GTK_MENU_SHELL(glade_xml_get_widget (main_glade, "menu_result_popup_meta_modes")), item, (gint) index);
+			gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_result_popup_meta_mode_delete"), TRUE);
+			popup_result_mode_items.push_back(item);
 		}
 	}
 	gtk_widget_destroy(dialog);
@@ -7312,8 +7314,14 @@ void on_menu_item_meta_mode_delete_activate(GtkMenuItem *w, gpointer user_data) 
 	if(response == GTK_RESPONSE_ACCEPT && gtk_combo_box_get_active(GTK_COMBO_BOX(menu)) >= 0) {
 		size_t index = gtk_combo_box_get_active(GTK_COMBO_BOX(menu)) + 2;
 		gtk_widget_destroy(mode_items[index]);
+		gtk_widget_destroy(popup_result_mode_items[index]);
 		modes.erase(modes.begin() + index);
-		if(modes.size() < 3) gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_meta_mode_delete"), FALSE);
+		mode_items.erase(mode_items.begin() + index);
+		popup_result_mode_items.erase(popup_result_mode_items.begin() + index);
+		if(modes.size() < 3) {
+			gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_meta_mode_delete"), FALSE);
+			gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_result_popup_meta_mode_delete"), FALSE);
+		}
 	}
 	gtk_widget_destroy(dialog);
 }
@@ -7383,6 +7391,8 @@ void load_preferences() {
 	evalops.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 	
 	save_mode_as(_("Preset"));
+	save_mode_as(_("Default"));
+	size_t mode_index = 1;
 	
 	save_mode_on_exit = true;
 	save_defs_on_exit = true;
@@ -7403,7 +7413,6 @@ void load_preferences() {
 	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", NULL);
 	DIR *dir = opendir(gstr);
 	g_free(gstr);
-	save_mode_as(_("Default"));
 	if(!dir) {
 		first_qalculate_run = true;
 		first_time = true;	
@@ -7413,7 +7422,7 @@ void load_preferences() {
 		closedir(dir);
 	}
 	int version_numbers[] = {0, 8, 3};
-	size_t mode_index = 1;
+
 	FILE *file = NULL;
 	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate-gtk.cfg", NULL);
 	file = fopen(gstr2, "r");
@@ -7657,14 +7666,17 @@ void load_preferences() {
 						if(mode_index == 1) CALCULATOR->defaultAssumptions()->setSign((AssumptionSign) v);
 						else modes[mode_index].as = (AssumptionSign) v;
 					}
+				} else if(svar == "spacious") {
+					if(mode_index == 1) printops.spacious = v;
+					else modes[mode_index].po.spacious = v;
+				} else if(svar == "excessive_parenthesis") {
+					if(mode_index == 1) printops.excessive_parenthesis = v;
+					else modes[mode_index].po.excessive_parenthesis = v;
+				} else if(svar == "short_multiplication") {
+					if(mode_index == 1) printops.short_multiplication = v;
+					else modes[mode_index].po.short_multiplication = v;
 				} else if(svar == "hyp_is_on") {
 					hyp_is_on = v;
-				} else if(svar == "spacious") {
-					printops.spacious = v;	
-				} else if(svar == "excessive_parenthesis") {
-					printops.excessive_parenthesis = v;
-				} else if(svar == "short_multiplication") {
-					printops.short_multiplication = v;
 				} else if(svar == "use_unicode_signs" && (version_numbers[0] > 0 || version_numbers[1] > 7 || (version_numbers[1] == 7 && version_numbers[2] > 0))) {
 					printops.use_unicode_signs = v;	
 				} else if(svar == "lower_case_numbers") {
@@ -7791,9 +7803,9 @@ void load_preferences() {
 			} else if(stmp.length() > 2 && stmp[0] == '[' && stmp[stmp.length() - 1] == ']') {
 				stmp = stmp.substr(1, stmp.length() - 2);
 				remove_blank_ends(stmp);
-				if(equalsIgnoreCase(stmp, "Mode")) {
+				if(stmp == "Mode") {
 					mode_index = 1;
-				} else if(stmp.length() > 5 && equalsIgnoreCase(stmp.substr(0, 4), "Mode")) {
+				} else if(stmp.length() > 5 && stmp.substr(0, 4) == "Mode") {
 					mode_index = save_mode_as(stmp.substr(5, stmp.length() - 5));
 				}
 			}
@@ -7842,9 +7854,6 @@ void save_preferences(bool mode) {
 	fprintf(file, "fetch_exchange_rates_at_startup=%i\n", fetch_exchange_rates_at_startup);
 	fprintf(file, "wget_args=%s\n", wget_args.c_str());
 	fprintf(file, "show_buttons=%i\n", gtk_expander_get_expanded(GTK_EXPANDER(expander)));
-	fprintf(file, "spacious=%i\n", printops.spacious);
-	fprintf(file, "excessive_parenthesis=%i\n", printops.excessive_parenthesis);
-	fprintf(file, "short_multiplication=%i\n", printops.short_multiplication);
 	fprintf(file, "use_unicode_signs=%i\n", printops.use_unicode_signs);
 	fprintf(file, "lower_case_numbers=%i\n", printops.lower_case_numbers);
 	fprintf(file, "lower_case_e=%i\n", printops.lower_case_e);
@@ -7932,6 +7941,9 @@ void save_preferences(bool mode) {
 		fprintf(file, "approximation=%i\n", modes[i].eo.approximation);	
 		fprintf(file, "in_rpn_mode=%i\n", modes[i].eo.parse_options.rpn);
 		fprintf(file, "limit_implicit_multiplication=%i\n", modes[i].eo.parse_options.limit_implicit_multiplication);
+		fprintf(file, "spacious=%i\n", modes[i].po.spacious);
+		fprintf(file, "excessive_parenthesis=%i\n", modes[i].po.excessive_parenthesis);
+		fprintf(file, "short_multiplication=%i\n", modes[i].po.short_multiplication);
 		fprintf(file, "default_assumption_type=%i\n", modes[i].at);
 		fprintf(file, "default_assumption_sign=%i\n", modes[i].as);
 	}
