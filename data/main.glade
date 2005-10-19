@@ -1377,7 +1377,7 @@
 		  <child>
 		    <widget class="GtkMenuItem" id="item18">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Modes</property>
+		      <property name="label" translatable="yes">Meta Modes</property>
 		      <property name="use_underline">True</property>
 
 		      <child>
@@ -3305,7 +3305,7 @@
   <child>
     <widget class="GtkMenuItem" id="result_popup_menu_item_meta_modes">
       <property name="visible">True</property>
-      <property name="label" translatable="yes">Modes</property>
+      <property name="label" translatable="yes">Meta Modes</property>
       <property name="use_underline">True</property>
 
       <child>

@@ -95,11 +95,12 @@ extern Unit *selected_unit;
 extern Unit *selected_to_unit;
 bool save_mode_on_exit;
 bool save_defs_on_exit;
-bool use_custom_result_font, use_custom_expression_font;
-string custom_result_font, custom_expression_font, wget_args;
+bool use_custom_result_font, use_custom_expression_font, use_custom_status_font;
+string custom_result_font, custom_expression_font, custom_status_font, wget_args;
 bool hyp_is_on;
 bool show_buttons;
 extern bool load_global_defs, fetch_exchange_rates_at_startup, first_time, first_qalculate_run;
+bool display_expression_status;
 extern GtkWidget *omToUnit_menu;
 bool block_unit_convert;
 extern MathStructure *mstruct, *parsed_mstruct;
@@ -561,16 +562,19 @@ void display_function_hint(MathFunction *f, int arg_index = 1) {
 	Argument default_arg;
 	string str, str2;
 	const ExpressionName *ename = &f->preferredName(false, printops.use_unicode_signs, false, false, &can_display_unicode_string_function, (void*) statuslabel_l);
-	if(arg_index > iargs) {
+	bool last_is_vctr = f->getArgumentDefinition(iargs) && f->getArgumentDefinition(iargs)->type() == ARGUMENT_TYPE_VECTOR;
+	if(arg_index > iargs && iargs >= 0 && !last_is_vctr) {
 		gchar *gstr = g_strdup_printf(_("Too many arguments for %s()."), ename->name.c_str());
-		set_status_text(str);
+		set_status_text(str, false, false, true);
 		g_free(gstr);
 		return;
 	}
-	str += ename->name;	
+	str += ename->name;		
 	if(iargs < 0) {
 		iargs = f->minargs() + 1;
+		if(arg_index > iargs) arg_index = iargs;
 	}
+	if(arg_index > iargs && last_is_vctr) arg_index = iargs;
 	str += "(";
 	int i_reduced = 0;
 	if(iargs != 0) {
@@ -649,6 +653,7 @@ void display_function_hint(MathFunction *f, int arg_index = 1) {
 }
 
 void display_parse_status() {
+	if(!display_expression_status) return;
 	if(block_display_parse) return;
 	if(strlen(gtk_entry_get_text(GTK_ENTRY(expression))) == 0) {
 		set_status_text("", true, false, false);
@@ -699,9 +704,12 @@ void display_parse_status() {
 			had_warnings = warnings_count > 0;
 		}
 		PrintOptions po;
+		po.show_ending_zeroes = true;
+		po.lower_case_e = printops.lower_case_e;
+		po.lower_case_numbers = printops.lower_case_numbers;
 		po.abbreviate_names = false;
 		po.hide_underscore_spaces = true;
-		po.use_unicode_signs = true;
+		po.use_unicode_signs = printops.use_unicode_signs;
 		po.multiplication_sign = printops.multiplication_sign;
 		po.division_sign = printops.division_sign;
 		po.short_multiplication = false;
@@ -1441,8 +1449,8 @@ void setVariableTreeItem(GtkTreeIter &iter2, Variable *v) {
 	} else if(v->isKnown()) {
 		if(((KnownVariable*) v)->isExpression()) {
 			value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression());
-			if(value.length() > 13) {
-				value = value.substr(0, 10);
+			if(value.length() > 20) {
+				value = value.substr(0, 17);
 				value += "...";
 			}
 		} else {
@@ -7191,7 +7199,7 @@ size_t save_mode_as(string name, bool *new_mode = NULL) {
 	remove_blank_ends(name);
 	size_t index = 0;
 	for(; index < modes.size(); index++) {
-		if(modes[index].name == name)) {
+		if(modes[index].name == name) {
 			if(new_mode) *new_mode = false;
 			break;
 		}
@@ -7399,11 +7407,14 @@ void load_preferences() {
 	hyp_is_on = false;
 	use_custom_result_font = false;
 	use_custom_expression_font = false;
+	use_custom_status_font = false;
 	custom_result_font = "";
 	custom_expression_font = "";
+	custom_status_font = "";
 	show_buttons = true;
 	load_global_defs = true;
 	fetch_exchange_rates_at_startup = false;
+	display_expression_status = true;
 	wget_args = "--quiet --tries=1";
 	first_time = false;
 	expression_history.clear();
@@ -7455,6 +7466,8 @@ void load_preferences() {
 					wget_args = svalue;
 				} else if(svar == "show_buttons") {
 					show_buttons = v;
+				} else if(svar == "display_expression_status") {
+					display_expression_status = v;
 				} else if(svar == "min_deci") {
 					if(mode_index == 1) printops.min_decimals = v;
 					else modes[mode_index].po.min_decimals = v;
@@ -7687,10 +7700,14 @@ void load_preferences() {
 					use_custom_result_font = v;
 				} else if(svar == "use_custom_expression_font") {
 					use_custom_expression_font = v;											
+				} else if(svar == "use_custom_status_font") {
+					use_custom_status_font = v;											
 				} else if(svar == "custom_result_font") {
 					custom_result_font = svalue;
 				} else if(svar == "custom_expression_font") {
 					custom_expression_font = svalue;	
+				} else if(svar == "custom_status_font") {
+					custom_status_font = svalue;	
 				} else if(svar == "multiplication_sign") {
 					if(svalue == "*") {
 						printops.multiplication_sign = MULTIPLICATION_SIGN_ASTERISK;
@@ -7854,13 +7871,16 @@ void save_preferences(bool mode) {
 	fprintf(file, "fetch_exchange_rates_at_startup=%i\n", fetch_exchange_rates_at_startup);
 	fprintf(file, "wget_args=%s\n", wget_args.c_str());
 	fprintf(file, "show_buttons=%i\n", gtk_expander_get_expanded(GTK_EXPANDER(expander)));
+	fprintf(file, "display_expression_status=%i\n", display_expression_status);
 	fprintf(file, "use_unicode_signs=%i\n", printops.use_unicode_signs);
 	fprintf(file, "lower_case_numbers=%i\n", printops.lower_case_numbers);
 	fprintf(file, "lower_case_e=%i\n", printops.lower_case_e);
 	fprintf(file, "use_custom_result_font=%i\n", use_custom_result_font);	
 	fprintf(file, "use_custom_expression_font=%i\n", use_custom_expression_font);	
+	fprintf(file, "use_custom_status_font=%i\n", use_custom_status_font);	
 	fprintf(file, "custom_result_font=%s\n", custom_result_font.c_str());	
 	fprintf(file, "custom_expression_font=%s\n", custom_expression_font.c_str());
+	fprintf(file, "custom_status_font=%s\n", custom_status_font.c_str());
 	fprintf(file, "multiplication_sign=%i\n", printops.multiplication_sign);
 	fprintf(file, "division_sign=%i\n", printops.division_sign);
 	if(history_width != 325 || history_height != 250) {
@@ -8167,6 +8187,15 @@ void on_preferences_checkbutton_load_defs_toggled(GtkToggleButton *w, gpointer u
 void on_preferences_checkbutton_fetch_exchange_rates_toggled(GtkToggleButton *w, gpointer user_data) {
 	fetch_exchange_rates_at_startup = gtk_toggle_button_get_active(w);
 }
+void on_preferences_checkbutton_display_expression_status_toggled(GtkToggleButton *w, gpointer user_data) {
+	if(gtk_toggle_button_get_active(w)) {
+		display_expression_status = true;
+		display_parse_status();
+	} else {
+		display_expression_status = false;
+		set_status_text("");
+	}
+}
 void on_preferences_checkbutton_custom_result_font_toggled(GtkToggleButton *w, gpointer user_data) {
 	use_custom_result_font = gtk_toggle_button_get_active(w);
 	gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_result_font"), use_custom_result_font);
@@ -8190,13 +8219,25 @@ void on_preferences_checkbutton_custom_expression_font_toggled(GtkToggleButton *
 		PangoFontDescription *font = pango_font_description_from_string(custom_expression_font.c_str());
 		gtk_widget_modify_font(expression, font);
 		pango_font_description_free(font);
-		result_display_updated();
 	} else {
-		PangoFontDescription *font = pango_font_description_from_string("");
-//		pango_font_description_set_weight(font, PANGO_WEIGHT_BOLD);		
+		PangoFontDescription *font = pango_font_description_from_string("");	
 		gtk_widget_modify_font(expression, font);
 		pango_font_description_free(font);
-		result_display_updated();
+	}
+}
+void on_preferences_checkbutton_custom_status_font_toggled(GtkToggleButton *w, gpointer user_data) {
+	use_custom_status_font = gtk_toggle_button_get_active(w);
+	gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_status_font"), use_custom_status_font);
+	if(use_custom_status_font) {
+		PangoFontDescription *font = pango_font_description_from_string(custom_status_font.c_str());
+		gtk_widget_modify_font(statuslabel_l, font);
+		gtk_widget_modify_font(statuslabel_r, font);
+		pango_font_description_free(font);
+	} else {
+		PangoFontDescription *font = pango_font_description_from_string("");
+		gtk_widget_modify_font(statuslabel_l, font);
+		gtk_widget_modify_font(statuslabel_r, font);
+		pango_font_description_free(font);
 	}
 }
 void on_preferences_radiobutton_dot_toggled(GtkToggleButton *w, gpointer user_data) {
@@ -8256,6 +8297,19 @@ void on_preferences_button_expression_font_clicked(GtkButton *w, gpointer user_d
 		gtk_button_set_label(w, custom_expression_font.c_str());
 		PangoFontDescription *font = pango_font_description_from_string(custom_expression_font.c_str());
 		gtk_widget_modify_font(expression, font);
+		pango_font_description_free(font);
+	}
+	gtk_widget_destroy(d);
+}
+void on_preferences_button_status_font_clicked(GtkButton *w, gpointer user_data) {
+	GtkWidget *d = gtk_font_selection_dialog_new(_("Select status font"));
+	gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(d), custom_status_font.c_str());
+	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
+		custom_status_font = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(d));
+		gtk_button_set_label(w, custom_status_font.c_str());
+		PangoFontDescription *font = pango_font_description_from_string(custom_status_font.c_str());
+		gtk_widget_modify_font(statuslabel_l, font);
+		gtk_widget_modify_font(statuslabel_r, font);
 		pango_font_description_free(font);
 	}
 	gtk_widget_destroy(d);

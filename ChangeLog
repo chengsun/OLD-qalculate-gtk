@@ -1,6 +1,12 @@
 2005-10-19 Niklas Knutsson  <nq@altern.org>
 
 	* Modes updates
+	* Update documentation
+	* Update Swedish translation
+	* Fix as-you-type function hints when unlimited number of arguments
+	* Increase max value length in variables dialog
+	* Font selection for status label
+	* Choice to disable as-you-type expression status
 
 2005-10-18 Niklas Knutsson  <nq@altern.org>
 

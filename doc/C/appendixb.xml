@@ -251,7 +251,7 @@
 <row valign="top">
 <entry><para>Neutron Mass</para></entry>
 <entry><para>neutron_mass / m_n</para></entry>
-<entry><para>1.67492728 (approximate)</para></entry>
+<entry><para>1.67492728E-24*g (approximate)</para></entry>
 </row>
 <row valign="top">
 <entry><para>Proton Mass</para></entry>
@@ -369,6 +369,11 @@
 <entry><para>3.74177138E-16*W*m^2 (approximate)</para></entry>
 </row>
 <row valign="top">
+<entry><para>Ideal Gas Constant</para></entry>
+<entry><para>ideal_gas</para></entry>
+<entry><para>8.314472*J*K^(-1)*mol^(-1) (approximate)</para></entry>
+</row>
+<row valign="top">
 <entry><para>Second Radiation Constant</para></entry>
 <entry><para>second_radiation / c_2</para></entry>
 <entry><para>1.4387752E-2*m*K (approximate)</para></entry>
@@ -416,7 +421,7 @@
 <row valign="top">
 <entry><para>Planck Constant</para></entry>
 <entry><para>planck</para></entry>
-<entry><para>6.626 0693E-34*J*s (approximate)</para></entry>
+<entry><para>6.6260693E-34*J*s (approximate)</para></entry>
 </row>
 <row valign="top">
 <entry><para>Planck Constant over 2 pi</para></entry>

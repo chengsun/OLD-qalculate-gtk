@@ -1,10 +1,4 @@
-* Implement signals for deleted variables etc.
-* Sort out when small floats really are zero due to limited precision
-* Quoted ")" in function
 * Instant apply for all parameters in plot
-* Plot-functions
-* Replace pointers to unit when unit type has changed (a different object must be created)
-* Sort out percentile and provide alternative methods
 * Improve matrix editing
 * Split up interface code
 
@@ -13,10 +7,4 @@
 
 * Increase support for non-glibc systems
 
-* Sane and stable API
-* API documentation
-
 * Better graphs/charts (do not use gnuplot)
-* Script/code plugins for advanced functions
-* Gnome/KDE applets
-* QT version

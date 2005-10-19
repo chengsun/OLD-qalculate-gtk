@@ -59,6 +59,27 @@
 	  <property name="spacing">6</property>
 
 	  <child>
+	    <widget class="GtkCheckButton" id="preferences_checkbutton_display_expression_status">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">If as-you-type expression status shall be displayed below the expression entry</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Display expression status</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="focus_on_click">True</property>
+	      <property name="active">True</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <signal name="toggled" handler="on_preferences_checkbutton_display_expression_status_toggled" last_modification_time="Wed, 19 Oct 2005 21:03:52 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
 	    <widget class="GtkCheckButton" id="preferences_checkbutton_fetch_exchange_rates">
 	      <property name="visible">True</property>
 	      <property name="tooltip" translatable="yes">If current exchange rates shall be downloaded from the internet at program start</property>
@@ -314,6 +335,49 @@
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
 	      <signal name="clicked" handler="on_preferences_button_expression_font_clicked" last_modification_time="Mon, 15 Mar 2004 21:03:30 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+	  
+	  <child>
+	    <widget class="GtkCheckButton" id="preferences_checkbutton_custom_status_font">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">If you want to use a font other than the default in the status display below the expression entry</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Custom status font</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="focus_on_click">True</property>
+	      <property name="active">False</property>
+	      <property name="inconsistent">False</property>
+	      <property name="draw_indicator">True</property>
+	      <accessibility>
+		<atkproperty name="AtkObject::accessible_description" translatable="yes">If you want to use a font other than the default in the status display below the expression entry</atkproperty>
+	      </accessibility>
+	      <signal name="toggled" handler="on_preferences_checkbutton_custom_status_font_toggled" last_modification_time="Wed, 19 Oct 2005 21:03:18 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkButton" id="preferences_button_status_font">
+	      <property name="visible">True</property>
+	      <property name="sensitive">False</property>
+	      <property name="tooltip" translatable="yes">Select custom font</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Font</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="focus_on_click">True</property>
+	      <signal name="clicked" handler="on_preferences_button_status_font_clicked" last_modification_time="Wed, 19 Oct 2005 21:03:30 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>

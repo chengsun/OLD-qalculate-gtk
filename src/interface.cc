@@ -86,8 +86,9 @@ GtkAccelGroup *accel_group;
 
 extern bool show_buttons;
 extern bool save_mode_on_exit, save_defs_on_exit, load_global_defs, hyp_is_on, fetch_exchange_rates_at_startup;
-extern bool use_custom_result_font, use_custom_expression_font;
-extern string custom_result_font, custom_expression_font, wget_args;
+extern bool display_expression_status;
+extern bool use_custom_result_font, use_custom_expression_font, use_custom_status_font;
+extern string custom_result_font, custom_expression_font, custom_status_font, wget_args;
 
 extern PrintOptions printops;
 extern EvaluationOptions evalops;
@@ -400,6 +401,16 @@ create_main_window (void)
 	} else {
 		if(custom_expression_font.empty()) {
 			custom_expression_font = pango_font_description_to_string(expression->style->font_desc);
+		}		
+	}
+	if(use_custom_status_font) {
+		PangoFontDescription *font = pango_font_description_from_string(custom_status_font.c_str());
+		gtk_widget_modify_font(statuslabel_l, font);
+		gtk_widget_modify_font(statuslabel_r, font);
+		pango_font_description_free(font);
+	} else {
+		if(custom_status_font.empty()) {
+			custom_status_font = pango_font_description_to_string(statuslabel_l->style->font_desc);
 		}		
 	}
 
@@ -729,6 +740,7 @@ get_preferences_dialog (void)
 		g_free(gstr);
 	
 		g_assert (glade_xml_get_widget (preferences_glade, "preferences_dialog") != NULL);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_display_expression_status")), display_expression_status);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_fetch_exchange_rates")), fetch_exchange_rates_at_startup);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_save_mode")), save_mode_on_exit);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_unicode_signs")), printops.use_unicode_signs);	
@@ -736,7 +748,8 @@ get_preferences_dialog (void)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_lower_case_e")), printops.lower_case_e);	
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_save_defs")), save_defs_on_exit);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_custom_result_font")), use_custom_result_font);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_custom_expression_font")), use_custom_expression_font);		
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_custom_expression_font")), use_custom_expression_font);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_custom_status_font")), use_custom_status_font);
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(preferences_glade, "preferences_entry_wget_args")), wget_args.c_str());	
 		if(CALCULATOR->hasGnomeVFS()) {
 			gtk_widget_hide(glade_xml_get_widget (preferences_glade, "preferences_box_wget_args"));
@@ -745,6 +758,8 @@ get_preferences_dialog (void)
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_button_result_font")), custom_result_font.c_str());
 		gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_expression_font"), use_custom_expression_font);	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_button_expression_font")), custom_expression_font.c_str());
+		gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_status_font"), use_custom_status_font);	
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_button_status_font")), custom_status_font.c_str());
 		if(can_display_unicode_string_function(SIGN_MULTIDOT, (void*) glade_xml_get_widget (preferences_glade, "preferences_radiobutton_dot"))) gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_dot")), SIGN_MULTIDOT);
 		else gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_dot")), SIGN_SMALLCIRCLE);
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_ex")), SIGN_MULTIPLICATION);

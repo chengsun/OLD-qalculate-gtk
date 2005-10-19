@@ -2,8 +2,8 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
     "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
   <!ENTITY legal SYSTEM "legal.xml">
-  <!ENTITY appversion "0.8.1">
-  <!ENTITY manrevision "0.8.1">
+  <!ENTITY appversion "0.8.3">
+  <!ENTITY manrevision "0.8.3">
   <!ENTITY date "June 2005">
   <!ENTITY app "Qalculate!">
   <!ENTITY appendixa SYSTEM "appendixa.xml">
@@ -95,6 +95,9 @@ The expression entry is the most important part of the Qalculate! user interface
 </figure>
 <para>
 Qalculate! helps out with the expression by giving a list of possible endings to words representing functions, variables and units. The list will narrow with each letter typed. Select an item in the list and the name will be completed. If a function was selected, parenthesis will be added and the position moved for immediate entry of arguments.
+</para>
+<para>
+As the expression is typed in, the area directly direclty below the expression entry, to the left, will show useful information. By default the calculator's interpretation of the expression is shown (ex. <quote>5 * meter</quote> for <quote>5m</quote>). The interpretation will be displayed in red if there are errors in the expression or in blue for lesser errors (for example too many arguments in a function). If the last typed in text represents a function and arguments are about to be entered, the functions name and its arguments will be displayed. The first argument in the information text is highlighted and includes information about its type and restrictions and when an argument has been entered, the next will be highlighted.
 </para>
 <para>
 After execution of an expression, the whole expression will be marked. This normally means that if something new is entered, the old expression will be overwritten. If, however, an operator (+, −, *, /, ^) is entered first, the old expression will instead be the target of action. The operator will then apply to the whole expression, which is put in parenthesis. This works on all marked ranges, meaning that this way an expression can conveniently be put in parenthesis. Functions set the selection as their first argument.
@@ -401,8 +404,12 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Opens a dialog to change displayed number of decimals.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Save Mode</para></entry>
-				<entry><para>Saves the current calculator mode.</para></entry>
+				<entry><para>Modes</para></entry>
+				<entry><para>Provides a list of available modes for loading and menu items to save and delete modes.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Save Default Mode</para></entry>
+				<entry><para>Saves the current calculator mode as the startup default.</para></entry>
 			</row>
 		</tbody>
 	</tgroup>
@@ -849,7 +856,7 @@ Usually, mathematical expressions are written as normally expected. Standard ope
 <chapter id="qalculate-result">
 <title>Calculator Modes</title>
 <para>
-Qalculate! provides flexible parsing, calculation output and result display. There are several ways in which parsing of expression and display of results can be customized. These modes can generally be changed through the mode menu. Different modes are summarized below.
+Qalculate! provides flexible parsing, calculation output and result display. There are several ways in which parsing of expression and display of results can be customized. These modes can generally be changed through the mode menu. The state of each mode can be saved under a name in <menuchoice><guimenu>Mode</guimenu><guisubmenu>Meta Modes</guisubmenu></menuchoice> for quick access. The Preset and Default meta modes are always available and represents the state when Qalculate! is load for the first time and the mode settings automatically loaded at each startup (and by default saved on exit), respectively. Different modes are summarized below.
 <variablelist>
 <varlistentry>
 <term>Number Bases</term>

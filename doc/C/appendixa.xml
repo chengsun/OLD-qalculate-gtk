@@ -4,18 +4,6 @@
 <title>Algebra</title>
 <variablelist>
 <varlistentry>
-<term><emphasis>Bitwise Exclusive OR</emphasis></term>
-<listitem>
-<para><command>bitxor(Value 1, Value 2)</command></para>
-<para><command>xor</command></para><formalpara>
-<title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Value 1: a free value</para></listitem>
-<listitem><para>Value 2: a free value</para></listitem>
-</itemizedlist></para>
-</formalpara>
-</listitem>
-</varlistentry>
-<varlistentry>
 <term><emphasis>Find Linear Function</emphasis></term>
 <listitem>
 <para><command>linearfunction(x1, y1, x2, y2)</command></para>
@@ -1469,6 +1457,30 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <title>Logical</title>
 <variablelist>
 <varlistentry>
+<term><emphasis>Bitwise Exclusive OR</emphasis></term>
+<listitem>
+<para><command>bitxor(Value 1, Value 2)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value 1: an integer or a vector</para></listitem>
+<listitem><para>Value 2: an integer or a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Bitwise Shift</emphasis></term>
+<listitem>
+<para><command>shift(Number, Bits)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Number: an integer</para></listitem>
+<listitem><para>Bits: an integer</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
 <term><emphasis>For...Do</emphasis></term>
 <listitem>
 <para><command>for(Initial Value of Counter, Counter Variable, For Condition, Counter Update Function, Initial Value, Do Function, Value Variable)</command></para>
@@ -1495,6 +1507,18 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <listitem><para>Condition: a real number</para></listitem>
 <listitem><para>Expression if condition is met: a free value</para></listitem>
 <listitem><para>Expression if condition is NOT met: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Logical Exclusive OR</emphasis></term>
+<listitem>
+<para><command>xor(Value 1, Value 2)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value 1: a free value</para></listitem>
+<listitem><para>Value 2: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2036,6 +2060,33 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Terms: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Integers">
+<title>Integers</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Even</emphasis></term>
+<listitem>
+<para><command>even(Number)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Number: an integer</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Odd</emphasis></term>
+<listitem>
+<para><command>odd(Number)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Number: an integer</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -3129,23 +3180,6 @@ dimension("Data 1")=dimension("Data 2")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Name: a valid function, unit or variable name</para></listitem>
-</itemizedlist></para>
-</formalpara>
-</listitem>
-</varlistentry>
-</variablelist>
-</sect1>
-<sect1 id="qalculate-definitions-functions-1-uncategorized">
-<title>Uncategorized</title>
-<variablelist>
-<varlistentry>
-<term><emphasis></emphasis></term>
-<listitem>
-<para><command>bitxor(argument 1, argument 2)</command></para>
-<formalpara>
-<title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>1: an integer or a vector</para></listitem>
-<listitem><para>2: an integer or a vector</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
