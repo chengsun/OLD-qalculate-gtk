@@ -1,3 +1,9 @@
+2005-10-20 Niklas Knutsson  <nq@altern.org>
+
+	* Fix display of too many arguments message
+	* Configuration of status warning and error colors
+	* Split preferences dialog in two tabs
+
 2005-10-19 Niklas Knutsson  <nq@altern.org>
 
 	* Modes updates

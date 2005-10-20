@@ -142,6 +142,8 @@ PlotSmoothing default_plot_smoothing = PLOT_SMOOTHING_NONE;
 string default_plot_variable = "x";
 bool default_plot_color = true;
 
+string status_error_color, status_warning_color;
+
 bool names_edited = false;
 
 gint current_object_start = -1, current_object_end = -1;
@@ -300,9 +302,13 @@ void set_status_text(string text, bool break_begin = false, bool had_errors = fa
 
 	string str;
 	if(had_errors) {
-		str = "<span size=\"small\" foreground=\"red\">";
+		str = "<span size=\"small\" foreground=\"";
+		str += status_error_color;
+		str += "\">";
 	} else if(had_warnings) {
-		str = "<span size=\"small\" foreground=\"blue\">";
+		str = "<span size=\"small\" foreground=\"";
+		str += status_warning_color;
+		str += "\">";
 	} else {
 		str = "<span size=\"small\">";
 	}
@@ -328,9 +334,13 @@ void set_status_text(string text, bool break_begin = false, bool had_errors = fa
 			return;
 		}
 		if(had_errors) {
-			str = "<span size=\"small\" foreground=\"red\">";
+			str = "<span size=\"small\" foreground=\"";
+			str += status_error_color;
+			str += "\">";
 		} else if(had_warnings) {
-			str = "<span size=\"small\" foreground=\"blue\">";
+			str = "<span size=\"small\" foreground=\"";
+			str += status_warning_color;
+			str += "\">";
 		} else {
 			str = "<span size=\"small\">";
 		}
@@ -565,7 +575,7 @@ void display_function_hint(MathFunction *f, int arg_index = 1) {
 	bool last_is_vctr = f->getArgumentDefinition(iargs) && f->getArgumentDefinition(iargs)->type() == ARGUMENT_TYPE_VECTOR;
 	if(arg_index > iargs && iargs >= 0 && !last_is_vctr) {
 		gchar *gstr = g_strdup_printf(_("Too many arguments for %s()."), ename->name.c_str());
-		set_status_text(str, false, false, true);
+		set_status_text(gstr, false, false, true);
 		g_free(gstr);
 		return;
 	}
@@ -7411,6 +7421,8 @@ void load_preferences() {
 	custom_result_font = "";
 	custom_expression_font = "";
 	custom_status_font = "";
+	status_error_color = "#FF0000";
+	status_warning_color = "#0000FF";
 	show_buttons = true;
 	load_global_defs = true;
 	fetch_exchange_rates_at_startup = false;
@@ -7708,6 +7720,10 @@ void load_preferences() {
 					custom_expression_font = svalue;	
 				} else if(svar == "custom_status_font") {
 					custom_status_font = svalue;	
+				} else if(svar == "status_error_color") {
+					status_error_color = svalue;	
+				} else if(svar == "status_warning_color") {
+					status_warning_color = svalue;	
 				} else if(svar == "multiplication_sign") {
 					if(svalue == "*") {
 						printops.multiplication_sign = MULTIPLICATION_SIGN_ASTERISK;
@@ -7881,6 +7897,8 @@ void save_preferences(bool mode) {
 	fprintf(file, "custom_result_font=%s\n", custom_result_font.c_str());	
 	fprintf(file, "custom_expression_font=%s\n", custom_expression_font.c_str());
 	fprintf(file, "custom_status_font=%s\n", custom_status_font.c_str());
+	if(status_error_color != "#FF0000") fprintf(file, "status_error_color=%s\n", status_error_color.c_str());
+	if(status_warning_color != "#0000FF") fprintf(file, "status_warning_color=%s\n", status_warning_color.c_str());
 	fprintf(file, "multiplication_sign=%i\n", printops.multiplication_sign);
 	fprintf(file, "division_sign=%i\n", printops.division_sign);
 	if(history_width != 325 || history_height != 250) {
@@ -8149,9 +8167,38 @@ void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data) {
 	on_gcalc_exit(NULL, NULL, user_data);
 }
 
+string i2hex(guint value) {
+	unsigned int v = (unsigned int) value / 0x101;
+	if(value % 0x101 > 128) {
+		v++;
+	}
+	char buffer[3];
+	snprintf(buffer, 3, "%.2X", v);
+	string stmp = buffer;
+	return stmp;
+}
 /*
 	change preferences
 */
+void on_colorbutton_status_error_color_color_set(GtkColorButton *w, gpointer user_data) {
+	GdkColor c;
+	gtk_color_button_get_color(w, &c);
+	status_error_color = "#";
+	status_error_color += i2hex(c.red);
+	status_error_color += i2hex(c.green);
+	status_error_color += i2hex(c.blue);
+	printf("%s\n", status_error_color.c_str());
+	display_parse_status();
+}
+void on_colorbutton_status_warning_color_color_set(GtkColorButton *w, gpointer user_data) {
+	GdkColor c;
+	gtk_color_button_get_color(w, &c);
+	status_warning_color = "#";
+	status_warning_color += i2hex(c.red);
+	status_warning_color += i2hex(c.green);
+	status_warning_color += i2hex(c.blue);
+	display_parse_status();
+}
 void on_preferences_entry_wget_args_changed(GtkEditable *editable, gpointer user_data) {
 	wget_args = gtk_entry_get_text(GTK_ENTRY(editable));
 }

@@ -89,6 +89,7 @@ extern bool save_mode_on_exit, save_defs_on_exit, load_global_defs, hyp_is_on, f
 extern bool display_expression_status;
 extern bool use_custom_result_font, use_custom_expression_font, use_custom_status_font;
 extern string custom_result_font, custom_expression_font, custom_status_font, wget_args;
+extern string status_error_color, status_warning_color;
 
 extern PrintOptions printops;
 extern EvaluationOptions evalops;
@@ -760,6 +761,11 @@ get_preferences_dialog (void)
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_button_expression_font")), custom_expression_font.c_str());
 		gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_status_font"), use_custom_status_font);	
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_button_status_font")), custom_status_font.c_str());
+		GdkColor c;
+		gdk_color_parse(status_error_color.c_str(), &c);
+		gtk_color_button_set_color(GTK_COLOR_BUTTON(glade_xml_get_widget (preferences_glade, "colorbutton_status_error_color")), &c);
+		gdk_color_parse(status_warning_color.c_str(), &c);
+		gtk_color_button_set_color(GTK_COLOR_BUTTON(glade_xml_get_widget (preferences_glade, "colorbutton_status_warning_color")), &c);
 		if(can_display_unicode_string_function(SIGN_MULTIDOT, (void*) glade_xml_get_widget (preferences_glade, "preferences_radiobutton_dot"))) gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_dot")), SIGN_MULTIDOT);
 		else gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_dot")), SIGN_SMALLCIRCLE);
 		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_ex")), SIGN_MULTIPLICATION);

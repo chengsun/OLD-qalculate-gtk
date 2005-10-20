@@ -16,6 +16,7 @@
   <property name="skip_pager_hint">False</property>
   <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
+  <property name="focus_on_map">True</property>
   <property name="has_separator">False</property>
 
   <child internal-child="vbox">
@@ -52,359 +53,274 @@
       </child>
 
       <child>
-	<widget class="GtkVBox" id="vbox44">
-	  <property name="border_width">6</property>
+	<widget class="GtkNotebook" id="preferences_tabs">
 	  <property name="visible">True</property>
-	  <property name="homogeneous">False</property>
-	  <property name="spacing">6</property>
+	  <property name="can_focus">True</property>
+	  <property name="show_tabs">True</property>
+	  <property name="show_border">True</property>
+	  <property name="tab_pos">GTK_POS_TOP</property>
+	  <property name="scrollable">False</property>
+	  <property name="enable_popup">False</property>
 
 	  <child>
-	    <widget class="GtkCheckButton" id="preferences_checkbutton_display_expression_status">
-	      <property name="visible">True</property>
-	      <property name="tooltip" translatable="yes">If as-you-type expression status shall be displayed below the expression entry</property>
-	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">Display expression status</property>
-	      <property name="use_underline">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="focus_on_click">True</property>
-	      <property name="active">True</property>
-	      <property name="inconsistent">False</property>
-	      <property name="draw_indicator">True</property>
-	      <signal name="toggled" handler="on_preferences_checkbutton_display_expression_status_toggled" last_modification_time="Wed, 19 Oct 2005 21:03:52 GMT"/>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">False</property>
-	      <property name="fill">False</property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkCheckButton" id="preferences_checkbutton_fetch_exchange_rates">
-	      <property name="visible">True</property>
-	      <property name="tooltip" translatable="yes">If current exchange rates shall be downloaded from the internet at program start</property>
-	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">Update exchange rates on start</property>
-	      <property name="use_underline">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="focus_on_click">True</property>
-	      <property name="active">False</property>
-	      <property name="inconsistent">False</property>
-	      <property name="draw_indicator">True</property>
-	      <signal name="toggled" handler="on_preferences_checkbutton_fetch_exchange_rates_toggled" last_modification_time="Mon, 06 Oct 2003 21:03:52 GMT"/>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">False</property>
-	      <property name="fill">False</property>
-	    </packing>
-	  </child>
-	  
-	  <child>
-	    <widget class="GtkHBox" id="preferences_box_wget_args">
+	    <widget class="GtkVBox" id="vbox44">
+	      <property name="border_width">6</property>
 	      <property name="visible">True</property>
 	      <property name="homogeneous">False</property>
 	      <property name="spacing">6</property>
-			  
-	      <child>
-	        <widget class="GtkLabel" id="preferences_label_wget_args">
-	          <property name="visible">True</property>
-	          <property name="label" translatable="yes">Wget arguments</property>
-	          <property name="use_underline">False</property>
-	          <property name="use_markup">False</property>
-	          <property name="justify">GTK_JUSTIFY_LEFT</property>
-	          <property name="wrap">False</property>
-	          <property name="selectable">False</property>
-	          <property name="xalign">0</property>
-	          <property name="yalign">0.5</property>
-	          <property name="xpad">0</property>
-	          <property name="ypad">0</property>
-	        </widget>
-	        <packing>
-	          <property name="padding">0</property>
-	          <property name="expand">True</property>
-	          <property name="fill">True</property>
-	        </packing>
-	      </child>
 
 	      <child>
-	        <widget class="GtkEntry" id="preferences_entry_wget_args">
-	          <property name="visible">True</property>
-	          <property name="tooltip" translatable="yes">Arguments (in addition to timeout and output file) passed to wget when fetching exchange rates.</property>
-	          <property name="can_focus">True</property>
-	          <property name="editable">True</property>
-	          <property name="visibility">True</property>
-	          <property name="max_length">0</property>
-	          <property name="text" translatable="yes"></property>
-	          <property name="has_frame">True</property>
-	          <property name="invisible_char" translatable="yes">*</property>
-	          <property name="activates_default">False</property>
-	          <signal name="changed" handler="on_preferences_entry_wget_args_changed" last_modification_time="Wed, 05 Oct 2004 12:32:14 GMT"/>
-	        </widget>
-	        <packing>
-	          <property name="padding">0</property>
-	          <property name="expand">True</property>
-	          <property name="fill">True</property>
-	        </packing>
-	      </child>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">True</property>
-	      <property name="fill">True</property>
-	    </packing>
-	  </child>
-	  
-	  <child>
-	    <widget class="GtkCheckButton" id="preferences_checkbutton_save_mode">
-	      <property name="visible">True</property>
-	      <property name="tooltip" translatable="yes">If the mode of the calculator shall be restored</property>
-	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">Save mode on exit</property>
-	      <property name="use_underline">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="focus_on_click">True</property>
-	      <property name="active">False</property>
-	      <property name="inconsistent">False</property>
-	      <property name="draw_indicator">True</property>
-	      <signal name="toggled" handler="on_preferences_checkbutton_save_mode_toggled" last_modification_time="Sun, 10 Aug 2003 21:19:02 GMT"/>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">False</property>
-	      <property name="fill">False</property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkCheckButton" id="preferences_checkbutton_save_defs">
-	      <property name="visible">True</property>
-	      <property name="tooltip" translatable="yes">If changes to functions, units and variables shall be saved automatically</property>
-	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">Save definitions on exit</property>
-	      <property name="use_underline">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="focus_on_click">True</property>
-	      <property name="active">False</property>
-	      <property name="inconsistent">False</property>
-	      <property name="draw_indicator">True</property>
-	      <signal name="toggled" handler="on_preferences_checkbutton_save_defs_toggled" last_modification_time="Sun, 10 Aug 2003 21:19:15 GMT"/>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">False</property>
-	      <property name="fill">False</property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkCheckButton" id="preferences_checkbutton_unicode_signs">
-	      <property name="visible">True</property>
-	      <property name="tooltip" translatable="yes">Disable this if you have problems with some fancy characters</property>
-	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">Enable unicode signs</property>
-	      <property name="use_underline">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="focus_on_click">True</property>
-	      <property name="active">False</property>
-	      <property name="inconsistent">False</property>
-	      <property name="draw_indicator">True</property>
-	      <signal name="toggled" handler="on_preferences_checkbutton_unicode_signs_toggled" last_modification_time="Mon, 18 Aug 2003 06:14:15 GMT"/>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">False</property>
-	      <property name="fill">False</property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkCheckButton" id="preferences_checkbutton_lower_case_numbers">
-	      <property name="visible">True</property>
-	      <property name="tooltip" translatable="yes">If lower case letters should be used in numbers with non-decimal base</property>
-	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">Use lower case in numbers</property>
-	      <property name="use_underline">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="focus_on_click">True</property>
-	      <property name="active">False</property>
-	      <property name="inconsistent">False</property>
-	      <property name="draw_indicator">True</property>
-	      <signal name="toggled" handler="on_preferences_checkbutton_lower_case_numbers_toggled" last_modification_time="Tue, 13 Jul 2004 05:06:29 GMT"/>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">False</property>
-	      <property name="fill">False</property>
-	    </packing>
-	  </child>
-	  
-	  <child>
-	    <widget class="GtkCheckButton" id="preferences_checkbutton_lower_case_e">
-	      <property name="visible">True</property>
-	      <property name="tooltip" translatable="yes">If "e" shall be used instead of "E" in numbers</property>
-	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">Use lower case "e"</property>
-	      <property name="use_underline">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="focus_on_click">True</property>
-	      <property name="active">False</property>
-	      <property name="inconsistent">False</property>
-	      <property name="draw_indicator">True</property>
-	      <signal name="toggled" handler="on_preferences_checkbutton_lower_case_e_toggled" last_modification_time="Tue, 09 Jun 2005 05:06:29 GMT"/>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">False</property>
-	      <property name="fill">False</property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkCheckButton" id="preferences_checkbutton_custom_result_font">
-	      <property name="visible">True</property>
-	      <property name="tooltip" translatable="yes">If you want to use a font other than the default in the result display</property>
-	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">Custom result font</property>
-	      <property name="use_underline">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="focus_on_click">True</property>
-	      <property name="active">False</property>
-	      <property name="inconsistent">False</property>
-	      <property name="draw_indicator">True</property>
-	      <signal name="toggled" handler="on_preferences_checkbutton_custom_result_font_toggled" last_modification_time="Mon, 15 Mar 2004 21:04:03 GMT"/>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">False</property>
-	      <property name="fill">False</property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkButton" id="preferences_button_result_font">
-	      <property name="visible">True</property>
-	      <property name="sensitive">False</property>
-	      <property name="tooltip" translatable="yes">Select custom font</property>
-	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">Font</property>
-	      <property name="use_underline">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="focus_on_click">True</property>
-	      <signal name="clicked" handler="on_preferences_button_result_font_clicked" last_modification_time="Mon, 15 Mar 2004 21:04:13 GMT"/>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">False</property>
-	      <property name="fill">False</property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkCheckButton" id="preferences_checkbutton_custom_expression_font">
-	      <property name="visible">True</property>
-	      <property name="tooltip" translatable="yes">If you want to use a font other than the default in the expression entry</property>
-	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">Custom expression font</property>
-	      <property name="use_underline">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="focus_on_click">True</property>
-	      <property name="active">False</property>
-	      <property name="inconsistent">False</property>
-	      <property name="draw_indicator">True</property>
-	      <accessibility>
-		<atkproperty name="AtkObject::accessible_description" translatable="yes">If you want to use a font other than the default in the expression entry</atkproperty>
-	      </accessibility>
-	      <signal name="toggled" handler="on_preferences_checkbutton_custom_expression_font_toggled" last_modification_time="Mon, 15 Mar 2004 21:03:18 GMT"/>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">False</property>
-	      <property name="fill">False</property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkButton" id="preferences_button_expression_font">
-	      <property name="visible">True</property>
-	      <property name="sensitive">False</property>
-	      <property name="tooltip" translatable="yes">Select custom font</property>
-	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">Font</property>
-	      <property name="use_underline">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="focus_on_click">True</property>
-	      <signal name="clicked" handler="on_preferences_button_expression_font_clicked" last_modification_time="Mon, 15 Mar 2004 21:03:30 GMT"/>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">False</property>
-	      <property name="fill">False</property>
-	    </packing>
-	  </child>
-	  
-	  <child>
-	    <widget class="GtkCheckButton" id="preferences_checkbutton_custom_status_font">
-	      <property name="visible">True</property>
-	      <property name="tooltip" translatable="yes">If you want to use a font other than the default in the status display below the expression entry</property>
-	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">Custom status font</property>
-	      <property name="use_underline">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="focus_on_click">True</property>
-	      <property name="active">False</property>
-	      <property name="inconsistent">False</property>
-	      <property name="draw_indicator">True</property>
-	      <accessibility>
-		<atkproperty name="AtkObject::accessible_description" translatable="yes">If you want to use a font other than the default in the status display below the expression entry</atkproperty>
-	      </accessibility>
-	      <signal name="toggled" handler="on_preferences_checkbutton_custom_status_font_toggled" last_modification_time="Wed, 19 Oct 2005 21:03:18 GMT"/>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">False</property>
-	      <property name="fill">False</property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkButton" id="preferences_button_status_font">
-	      <property name="visible">True</property>
-	      <property name="sensitive">False</property>
-	      <property name="tooltip" translatable="yes">Select custom font</property>
-	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">Font</property>
-	      <property name="use_underline">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="focus_on_click">True</property>
-	      <signal name="clicked" handler="on_preferences_button_status_font_clicked" last_modification_time="Wed, 19 Oct 2005 21:03:30 GMT"/>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">False</property>
-	      <property name="fill">False</property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkHBox" id="hbox4">
-	      <property name="visible">True</property>
-	      <property name="homogeneous">True</property>
-	      <property name="spacing">6</property>
-
-	      <child>
-		<widget class="GtkLabel" id="preferences_label_multi_sign">
+		<widget class="GtkCheckButton" id="preferences_checkbutton_display_expression_status">
 		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">Multiplication sign</property>
-		  <property name="use_underline">False</property>
-		  <property name="use_markup">False</property>
-		  <property name="justify">GTK_JUSTIFY_LEFT</property>
-		  <property name="wrap">False</property>
-		  <property name="selectable">False</property>
-		  <property name="xalign">0</property>
-		  <property name="yalign">0.5</property>
-		  <property name="xpad">0</property>
-		  <property name="ypad">0</property>
+		  <property name="tooltip" translatable="yes">If as-you-type expression status shall be displayed below the expression entry</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Display expression status</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">True</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_preferences_checkbutton_display_expression_status_toggled" last_modification_time="Wed, 19 Oct 2005 21:03:52 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkCheckButton" id="preferences_checkbutton_fetch_exchange_rates">
+		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">If current exchange rates shall be downloaded from the internet at program start</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Update exchange rates on start</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_preferences_checkbutton_fetch_exchange_rates_toggled" last_modification_time="Mon, 06 Oct 2003 21:03:52 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkCheckButton" id="preferences_checkbutton_save_mode">
+		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">If the mode of the calculator shall be restored</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Save mode on exit</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_preferences_checkbutton_save_mode_toggled" last_modification_time="Sun, 10 Aug 2003 21:19:02 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkCheckButton" id="preferences_checkbutton_save_defs">
+		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">If changes to functions, units and variables shall be saved automatically</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Save definitions on exit</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_preferences_checkbutton_save_defs_toggled" last_modification_time="Sun, 10 Aug 2003 21:19:15 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkCheckButton" id="preferences_checkbutton_unicode_signs">
+		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Disable this if you have problems with some fancy characters</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Enable unicode signs</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_preferences_checkbutton_unicode_signs_toggled" last_modification_time="Mon, 18 Aug 2003 06:14:15 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkCheckButton" id="preferences_checkbutton_lower_case_numbers">
+		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">If lower case letters should be used in numbers with non-decimal base</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Use lower case in numbers</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_preferences_checkbutton_lower_case_numbers_toggled" last_modification_time="Tue, 13 Jul 2004 05:06:29 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkCheckButton" id="preferences_checkbutton_lower_case_e">
+		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">If &quot;e&quot; shall be used instead of &quot;E&quot; in numbers</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Use lower case &quot;e&quot;</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_preferences_checkbutton_lower_case_e_toggled" last_modification_time="Thu, 09 Jun 2005 05:06:29 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkHBox" id="hbox4">
+		  <property name="visible">True</property>
+		  <property name="homogeneous">True</property>
+		  <property name="spacing">6</property>
+
+		  <child>
+		    <widget class="GtkLabel" id="preferences_label_multi_sign">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Multiplication sign</property>
+		      <property name="use_underline">False</property>
+		      <property name="use_markup">False</property>
+		      <property name="justify">GTK_JUSTIFY_LEFT</property>
+		      <property name="wrap">False</property>
+		      <property name="selectable">False</property>
+		      <property name="xalign">0</property>
+		      <property name="yalign">0.5</property>
+		      <property name="xpad">0</property>
+		      <property name="ypad">0</property>
+		      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+		      <property name="width_chars">-1</property>
+		      <property name="single_line_mode">False</property>
+		      <property name="angle">0</property>
+		    </widget>
+		    <packing>
+		      <property name="padding">0</property>
+		      <property name="expand">False</property>
+		      <property name="fill">True</property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkHBox" id="hbox1">
+		      <property name="visible">True</property>
+		      <property name="homogeneous">True</property>
+		      <property name="spacing">6</property>
+
+		      <child>
+			<widget class="GtkRadioButton" id="preferences_radiobutton_dot">
+			  <property name="visible">True</property>
+			  <property name="can_focus">True</property>
+			  <property name="label" translatable="yes">.</property>
+			  <property name="use_underline">True</property>
+			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <property name="focus_on_click">True</property>
+			  <property name="active">True</property>
+			  <property name="inconsistent">False</property>
+			  <property name="draw_indicator">True</property>
+			  <signal name="toggled" handler="on_preferences_radiobutton_dot_toggled" last_modification_time="Mon, 21 Jun 2004 08:22:12 GMT"/>
+			</widget>
+			<packing>
+			  <property name="padding">0</property>
+			  <property name="expand">False</property>
+			  <property name="fill">True</property>
+			</packing>
+		      </child>
+
+		      <child>
+			<widget class="GtkRadioButton" id="preferences_radiobutton_ex">
+			  <property name="visible">True</property>
+			  <property name="can_focus">True</property>
+			  <property name="label" translatable="yes">x</property>
+			  <property name="use_underline">True</property>
+			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <property name="focus_on_click">True</property>
+			  <property name="active">False</property>
+			  <property name="inconsistent">False</property>
+			  <property name="draw_indicator">True</property>
+			  <property name="group">preferences_radiobutton_dot</property>
+			  <signal name="toggled" handler="on_preferences_radiobutton_ex_toggled" last_modification_time="Mon, 21 Jun 2004 08:22:23 GMT"/>
+			</widget>
+			<packing>
+			  <property name="padding">0</property>
+			  <property name="expand">False</property>
+			  <property name="fill">True</property>
+			</packing>
+		      </child>
+
+		      <child>
+			<widget class="GtkRadioButton" id="preferences_radiobutton_asterisk">
+			  <property name="visible">True</property>
+			  <property name="can_focus">True</property>
+			  <property name="label" translatable="yes">*</property>
+			  <property name="use_underline">True</property>
+			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <property name="focus_on_click">True</property>
+			  <property name="active">False</property>
+			  <property name="inconsistent">False</property>
+			  <property name="draw_indicator">True</property>
+			  <property name="group">preferences_radiobutton_dot</property>
+			  <signal name="toggled" handler="on_preferences_radiobutton_asterisk_toggled" last_modification_time="Mon, 21 Jun 2004 08:23:18 GMT"/>
+			</widget>
+			<packing>
+			  <property name="padding">0</property>
+			  <property name="expand">False</property>
+			  <property name="fill">True</property>
+			</packing>
+		      </child>
+		    </widget>
+		    <packing>
+		      <property name="padding">0</property>
+		      <property name="expand">True</property>
+		      <property name="fill">True</property>
+		    </packing>
+		  </child>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>
@@ -414,23 +330,28 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkHBox" id="hbox1">
+		<widget class="GtkHBox" id="hbox3">
 		  <property name="visible">True</property>
 		  <property name="homogeneous">True</property>
 		  <property name="spacing">6</property>
 
 		  <child>
-		    <widget class="GtkRadioButton" id="preferences_radiobutton_dot">
+		    <widget class="GtkLabel" id="preferences_label_division_sign">
 		      <property name="visible">True</property>
-		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">.</property>
-		      <property name="use_underline">True</property>
-		      <property name="relief">GTK_RELIEF_NORMAL</property>
-		      <property name="focus_on_click">True</property>
-		      <property name="active">True</property>
-		      <property name="inconsistent">False</property>
-		      <property name="draw_indicator">True</property>
-		      <signal name="toggled" handler="on_preferences_radiobutton_dot_toggled" last_modification_time="Mon, 21 Jun 2004 08:22:12 GMT"/>
+		      <property name="label" translatable="yes">Division sign</property>
+		      <property name="use_underline">False</property>
+		      <property name="use_markup">False</property>
+		      <property name="justify">GTK_JUSTIFY_LEFT</property>
+		      <property name="wrap">False</property>
+		      <property name="selectable">False</property>
+		      <property name="xalign">0</property>
+		      <property name="yalign">0.5</property>
+		      <property name="xpad">0</property>
+		      <property name="ypad">0</property>
+		      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+		      <property name="width_chars">-1</property>
+		      <property name="single_line_mode">False</property>
+		      <property name="angle">0</property>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
@@ -440,80 +361,79 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkRadioButton" id="preferences_radiobutton_ex">
+		    <widget class="GtkHBox" id="hbox2">
 		      <property name="visible">True</property>
-		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">x</property>
-		      <property name="use_underline">True</property>
-		      <property name="relief">GTK_RELIEF_NORMAL</property>
-		      <property name="focus_on_click">True</property>
-		      <property name="active">False</property>
-		      <property name="inconsistent">False</property>
-		      <property name="draw_indicator">True</property>
-		      <property name="group">preferences_radiobutton_dot</property>
-		      <signal name="toggled" handler="on_preferences_radiobutton_ex_toggled" last_modification_time="Mon, 21 Jun 2004 08:22:23 GMT"/>
+		      <property name="homogeneous">True</property>
+		      <property name="spacing">6</property>
+
+		      <child>
+			<widget class="GtkRadioButton" id="preferences_radiobutton_division_slash">
+			  <property name="visible">True</property>
+			  <property name="can_focus">True</property>
+			  <property name="label" translatable="yes">/</property>
+			  <property name="use_underline">True</property>
+			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <property name="focus_on_click">True</property>
+			  <property name="active">True</property>
+			  <property name="inconsistent">False</property>
+			  <property name="draw_indicator">True</property>
+			  <signal name="toggled" handler="on_preferences_radiobutton_division_slash_toggled" last_modification_time="Mon, 21 Jun 2004 08:22:12 GMT"/>
+			</widget>
+			<packing>
+			  <property name="padding">0</property>
+			  <property name="expand">False</property>
+			  <property name="fill">True</property>
+			</packing>
+		      </child>
+
+		      <child>
+			<widget class="GtkRadioButton" id="preferences_radiobutton_division">
+			  <property name="visible">True</property>
+			  <property name="can_focus">True</property>
+			  <property name="label" translatable="yes">/</property>
+			  <property name="use_underline">True</property>
+			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <property name="focus_on_click">True</property>
+			  <property name="active">False</property>
+			  <property name="inconsistent">False</property>
+			  <property name="draw_indicator">True</property>
+			  <property name="group">preferences_radiobutton_division_slash</property>
+			  <signal name="toggled" handler="on_preferences_radiobutton_division_toggled" last_modification_time="Mon, 21 Jun 2004 08:22:23 GMT"/>
+			</widget>
+			<packing>
+			  <property name="padding">0</property>
+			  <property name="expand">False</property>
+			  <property name="fill">True</property>
+			</packing>
+		      </child>
+
+		      <child>
+			<widget class="GtkRadioButton" id="preferences_radiobutton_slash">
+			  <property name="visible">True</property>
+			  <property name="can_focus">True</property>
+			  <property name="label" translatable="yes">/</property>
+			  <property name="use_underline">True</property>
+			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <property name="focus_on_click">True</property>
+			  <property name="active">False</property>
+			  <property name="inconsistent">False</property>
+			  <property name="draw_indicator">True</property>
+			  <property name="group">preferences_radiobutton_division_slash</property>
+			  <signal name="toggled" handler="on_preferences_radiobutton_slash_toggled" last_modification_time="Mon, 21 Jun 2004 08:23:18 GMT"/>
+			</widget>
+			<packing>
+			  <property name="padding">0</property>
+			  <property name="expand">False</property>
+			  <property name="fill">True</property>
+			</packing>
+		      </child>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
-		      <property name="expand">False</property>
+		      <property name="expand">True</property>
 		      <property name="fill">True</property>
 		    </packing>
 		  </child>
-
-		  <child>
-		    <widget class="GtkRadioButton" id="preferences_radiobutton_asterisk">
-		      <property name="visible">True</property>
-		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">*</property>
-		      <property name="use_underline">True</property>
-		      <property name="relief">GTK_RELIEF_NORMAL</property>
-		      <property name="focus_on_click">True</property>
-		      <property name="active">False</property>
-		      <property name="inconsistent">False</property>
-		      <property name="draw_indicator">True</property>
-		      <property name="group">preferences_radiobutton_dot</property>
-		      <signal name="toggled" handler="on_preferences_radiobutton_asterisk_toggled" last_modification_time="Mon, 21 Jun 2004 08:23:18 GMT"/>
-		    </widget>
-		    <packing>
-		      <property name="padding">0</property>
-		      <property name="expand">False</property>
-		      <property name="fill">True</property>
-		    </packing>
-		  </child>
-		</widget>
-		<packing>
-		  <property name="padding">0</property>
-		  <property name="expand">True</property>
-		  <property name="fill">True</property>
-		</packing>
-	      </child>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">True</property>
-	      <property name="fill">True</property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkHBox" id="hbox3">
-	      <property name="visible">True</property>
-	      <property name="homogeneous">True</property>
-	      <property name="spacing">6</property>
-
-	      <child>
-		<widget class="GtkLabel" id="preferences_label_division_sign">
-		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">Division sign</property>
-		  <property name="use_underline">False</property>
-		  <property name="use_markup">False</property>
-		  <property name="justify">GTK_JUSTIFY_LEFT</property>
-		  <property name="wrap">False</property>
-		  <property name="selectable">False</property>
-		  <property name="xalign">0</property>
-		  <property name="yalign">0.5</property>
-		  <property name="xpad">0</property>
-		  <property name="ypad">0</property>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>
@@ -523,23 +443,243 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkHBox" id="hbox2">
+		<widget class="GtkHBox" id="preferences_box_wget_args">
 		  <property name="visible">True</property>
 		  <property name="homogeneous">True</property>
 		  <property name="spacing">6</property>
 
 		  <child>
-		    <widget class="GtkRadioButton" id="preferences_radiobutton_division_slash">
+		    <widget class="GtkLabel" id="preferences_label_wget_args">
 		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Wget arguments</property>
+		      <property name="use_underline">False</property>
+		      <property name="use_markup">False</property>
+		      <property name="justify">GTK_JUSTIFY_LEFT</property>
+		      <property name="wrap">False</property>
+		      <property name="selectable">False</property>
+		      <property name="xalign">0</property>
+		      <property name="yalign">0.5</property>
+		      <property name="xpad">0</property>
+		      <property name="ypad">0</property>
+		      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+		      <property name="width_chars">-1</property>
+		      <property name="single_line_mode">False</property>
+		      <property name="angle">0</property>
+		    </widget>
+		    <packing>
+		      <property name="padding">0</property>
+		      <property name="expand">True</property>
+		      <property name="fill">True</property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkEntry" id="preferences_entry_wget_args">
+		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Arguments (in addition to timeout and output file) passed to wget when fetching exchange rates.</property>
 		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">/</property>
-		      <property name="use_underline">True</property>
-		      <property name="relief">GTK_RELIEF_NORMAL</property>
-		      <property name="focus_on_click">True</property>
-		      <property name="active">True</property>
-		      <property name="inconsistent">False</property>
-		      <property name="draw_indicator">True</property>
-		      <signal name="toggled" handler="on_preferences_radiobutton_division_slash_toggled" last_modification_time="Mon, 21 Jun 2004 08:22:12 GMT"/>
+		      <property name="editable">True</property>
+		      <property name="visibility">True</property>
+		      <property name="max_length">0</property>
+		      <property name="text" translatable="yes"></property>
+		      <property name="has_frame">True</property>
+		      <property name="invisible_char">*</property>
+		      <property name="activates_default">False</property>
+		      <signal name="changed" handler="on_preferences_entry_wget_args_changed" last_modification_time="Tue, 05 Oct 2004 12:32:14 GMT"/>
+		    </widget>
+		    <packing>
+		      <property name="padding">0</property>
+		      <property name="expand">True</property>
+		      <property name="fill">True</property>
+		    </packing>
+		  </child>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">True</property>
+		</packing>
+	      </child>
+	    </widget>
+	    <packing>
+	      <property name="tab_expand">False</property>
+	      <property name="tab_fill">True</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkLabel" id="label3">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">General</property>
+	      <property name="use_underline">False</property>
+	      <property name="use_markup">False</property>
+	      <property name="justify">GTK_JUSTIFY_LEFT</property>
+	      <property name="wrap">False</property>
+	      <property name="selectable">False</property>
+	      <property name="xalign">0.5</property>
+	      <property name="yalign">0.5</property>
+	      <property name="xpad">0</property>
+	      <property name="ypad">0</property>
+	      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+	      <property name="width_chars">-1</property>
+	      <property name="single_line_mode">False</property>
+	      <property name="angle">0</property>
+	    </widget>
+	    <packing>
+	      <property name="type">tab</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkVBox" id="vbox45">
+	      <property name="border_width">6</property>
+	      <property name="visible">True</property>
+	      <property name="homogeneous">False</property>
+	      <property name="spacing">6</property>
+
+	      <child>
+		<widget class="GtkCheckButton" id="preferences_checkbutton_custom_result_font">
+		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">If you want to use a font other than the default in the result display</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Custom result font</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_preferences_checkbutton_custom_result_font_toggled" last_modification_time="Mon, 15 Mar 2004 21:04:03 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkButton" id="preferences_button_result_font">
+		  <property name="visible">True</property>
+		  <property name="sensitive">False</property>
+		  <property name="tooltip" translatable="yes">Select custom font</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Font</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <signal name="clicked" handler="on_preferences_button_result_font_clicked" last_modification_time="Mon, 15 Mar 2004 21:04:13 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkCheckButton" id="preferences_checkbutton_custom_expression_font">
+		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">If you want to use a font other than the default in the expression entry</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Custom expression font</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_preferences_checkbutton_custom_expression_font_toggled" last_modification_time="Mon, 15 Mar 2004 21:03:18 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkButton" id="preferences_button_expression_font">
+		  <property name="visible">True</property>
+		  <property name="sensitive">False</property>
+		  <property name="tooltip" translatable="yes">Select custom font</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Font</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <signal name="clicked" handler="on_preferences_button_expression_font_clicked" last_modification_time="Mon, 15 Mar 2004 21:03:30 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkCheckButton" id="preferences_checkbutton_custom_status_font">
+		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">If you want to use a font other than the default in the status display below the expression entry</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Custom status font</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_preferences_checkbutton_custom_status_font_toggled" last_modification_time="Wed, 19 Oct 2005 21:03:18 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkButton" id="preferences_button_status_font">
+		  <property name="visible">True</property>
+		  <property name="sensitive">False</property>
+		  <property name="tooltip" translatable="yes">Select custom font</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Font</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <signal name="clicked" handler="on_preferences_button_status_font_clicked" last_modification_time="Wed, 19 Oct 2005 21:03:30 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkHBox" id="hbox5">
+		  <property name="visible">True</property>
+		  <property name="homogeneous">True</property>
+		  <property name="spacing">6</property>
+
+		  <child>
+		    <widget class="GtkLabel" id="label1">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Status error color</property>
+		      <property name="use_underline">False</property>
+		      <property name="use_markup">False</property>
+		      <property name="justify">GTK_JUSTIFY_LEFT</property>
+		      <property name="wrap">False</property>
+		      <property name="selectable">False</property>
+		      <property name="xalign">0</property>
+		      <property name="yalign">0.5</property>
+		      <property name="xpad">0</property>
+		      <property name="ypad">0</property>
+		      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+		      <property name="width_chars">-1</property>
+		      <property name="single_line_mode">False</property>
+		      <property name="angle">0</property>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
@@ -549,39 +689,12 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkRadioButton" id="preferences_radiobutton_division">
+		    <widget class="GtkColorButton" id="colorbutton_status_error_color">
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">/</property>
-		      <property name="use_underline">True</property>
-		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <property name="use_alpha">False</property>
 		      <property name="focus_on_click">True</property>
-		      <property name="active">False</property>
-		      <property name="inconsistent">False</property>
-		      <property name="draw_indicator">True</property>
-		      <property name="group">preferences_radiobutton_division_slash</property>
-		      <signal name="toggled" handler="on_preferences_radiobutton_division_toggled" last_modification_time="Mon, 21 Jun 2004 08:22:23 GMT"/>
-		    </widget>
-		    <packing>
-		      <property name="padding">0</property>
-		      <property name="expand">False</property>
-		      <property name="fill">True</property>
-		    </packing>
-		  </child>
-
-		  <child>
-		    <widget class="GtkRadioButton" id="preferences_radiobutton_slash">
-		      <property name="visible">True</property>
-		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">/</property>
-		      <property name="use_underline">True</property>
-		      <property name="relief">GTK_RELIEF_NORMAL</property>
-		      <property name="focus_on_click">True</property>
-		      <property name="active">False</property>
-		      <property name="inconsistent">False</property>
-		      <property name="draw_indicator">True</property>
-		      <property name="group">preferences_radiobutton_division_slash</property>
-		      <signal name="toggled" handler="on_preferences_radiobutton_slash_toggled" last_modification_time="Mon, 21 Jun 2004 08:23:18 GMT"/>
+		      <signal name="color_set" handler="on_colorbutton_status_error_color_color_set" last_modification_time="Wed, 19 Oct 2005 22:48:42 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
@@ -592,15 +705,90 @@
 		</widget>
 		<packing>
 		  <property name="padding">0</property>
-		  <property name="expand">True</property>
+		  <property name="expand">False</property>
+		  <property name="fill">True</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkHBox" id="hbox7">
+		  <property name="visible">True</property>
+		  <property name="homogeneous">True</property>
+		  <property name="spacing">6</property>
+
+		  <child>
+		    <widget class="GtkLabel" id="label3">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Status warning color</property>
+		      <property name="use_underline">False</property>
+		      <property name="use_markup">False</property>
+		      <property name="justify">GTK_JUSTIFY_LEFT</property>
+		      <property name="wrap">False</property>
+		      <property name="selectable">False</property>
+		      <property name="xalign">0</property>
+		      <property name="yalign">0.5</property>
+		      <property name="xpad">0</property>
+		      <property name="ypad">0</property>
+		      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+		      <property name="width_chars">-1</property>
+		      <property name="single_line_mode">False</property>
+		      <property name="angle">0</property>
+		    </widget>
+		    <packing>
+		      <property name="padding">0</property>
+		      <property name="expand">False</property>
+		      <property name="fill">True</property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkColorButton" id="colorbutton_status_warning_color">
+		      <property name="visible">True</property>
+		      <property name="can_focus">True</property>
+		      <property name="use_alpha">False</property>
+		      <property name="focus_on_click">True</property>
+		      <signal name="color_set" handler="on_colorbutton_status_warning_color_color_set" last_modification_time="Wed, 19 Oct 2005 22:48:37 GMT"/>
+		    </widget>
+		    <packing>
+		      <property name="padding">0</property>
+		      <property name="expand">False</property>
+		      <property name="fill">True</property>
+		    </packing>
+		  </child>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
 		  <property name="fill">True</property>
 		</packing>
 	      </child>
 	    </widget>
 	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">True</property>
-	      <property name="fill">True</property>
+	      <property name="tab_expand">False</property>
+	      <property name="tab_fill">True</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkLabel" id="label4">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">Fonts</property>
+	      <property name="use_underline">False</property>
+	      <property name="use_markup">False</property>
+	      <property name="justify">GTK_JUSTIFY_LEFT</property>
+	      <property name="wrap">False</property>
+	      <property name="selectable">False</property>
+	      <property name="xalign">0.5</property>
+	      <property name="yalign">0.5</property>
+	      <property name="xpad">0</property>
+	      <property name="ypad">0</property>
+	      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+	      <property name="width_chars">-1</property>
+	      <property name="single_line_mode">False</property>
+	      <property name="angle">0</property>
+	    </widget>
+	    <packing>
+	      <property name="type">tab</property>
 	    </packing>
 	  </child>
 	</widget>
