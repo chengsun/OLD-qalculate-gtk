@@ -61,7 +61,7 @@ GtkListStore *tDataProperties_store;
 GtkWidget *tNames;
 GtkListStore *tNames_store;
 
-GtkWidget *expander;
+GtkWidget *tabs, *expander_keypad, *expander_history;
 GtkEntryCompletion *completion;
 GtkListStore *completion_store;
 
@@ -84,8 +84,8 @@ GtkWidget *statuslabel_l, *statuslabel_r;
 GtkWidget *f_menu ,*v_menu, *u_menu, *u_menu2, *recent_menu;
 GtkAccelGroup *accel_group;
 
-extern bool show_buttons;
-extern bool save_mode_on_exit, save_defs_on_exit, load_global_defs, hyp_is_on, fetch_exchange_rates_at_startup;
+extern bool show_buttons, show_history;
+extern bool save_mode_on_exit, save_defs_on_exit, load_global_defs, hyp_is_on, inv_is_on, fetch_exchange_rates_at_startup;
 extern bool display_expression_status;
 extern bool use_custom_result_font, use_custom_expression_font, use_custom_status_font;
 extern string custom_result_font, custom_expression_font, custom_status_font, wget_args;
@@ -104,13 +104,13 @@ extern GdkPixbuf *icon_pixbuf;
 extern vector<GtkWidget*> mode_items;
 extern vector<GtkWidget*> popup_result_mode_items;
 
+gint win_height, win_width;
+
 gint compare_categories(gconstpointer a, gconstpointer b) {
 	return strcasecmp((const char*) a, (const char*) b);
 }
 
-void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, AssumptionNumberType at, AssumptionSign as, int precision, bool initial_update) {
-
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "button_fraction")), po.number_fraction_format == FRACTION_FRACTIONAL);
+void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, AssumptionNumberType at, AssumptionSign as, int precision, bool initial_update) {	
 
 	switch(eo.approximation) {
 		case APPROXIMATION_EXACT: {
@@ -119,13 +119,16 @@ void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, Assumpt
 		}
 		case APPROXIMATION_TRY_EXACT: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_try_exact")), TRUE);
+			if(initial_update) gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (main_glade, "button_exact")), FALSE);
 			break;
 		}
 		case APPROXIMATION_APPROXIMATE: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_approximate")), TRUE);
+			if(initial_update) gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (main_glade, "button_exact")), FALSE);
 			break;
 		}
 	}
+	if(initial_update) gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (main_glade, "button_exact")), eo.approximation == APPROXIMATION_EXACT);
 	
 	switch(eo.auto_post_conversion) {
 		case POST_CONVERSION_BEST: {
@@ -145,18 +148,22 @@ void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, Assumpt
 	switch(eo.parse_options.angle_unit) {
 		case ANGLE_UNIT_DEGREES: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_degrees")), TRUE);
+			if(initial_update) gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_degrees")), TRUE);
 			break;
 		}
 		case ANGLE_UNIT_RADIANS: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_radians")), TRUE);
+			if(initial_update) gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_radians")), TRUE);
 			break;
 		}
 		case ANGLE_UNIT_GRADIANS: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_gradians")), TRUE);
+			if(initial_update) gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_gradians")), TRUE);
 			break;
 		}
 		default: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_no_default_angle_unit")), TRUE);
+			if(initial_update) gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_no_default_angle_unit")), TRUE);
 			break;
 		}
 	}
@@ -166,57 +173,70 @@ void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, Assumpt
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_limit_implicit_multiplication")), eo.parse_options.limit_implicit_multiplication);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assume_nonzero_denominators")), eo.assume_denominators_nonzero);
 
+	if(po.base >= 2 && po.base <= 36) {
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (main_glade, "number_base_spinbutton_base")), po.base);
+	}
 	switch(po.base) {
 		case BASE_BINARY: {
-			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_binary")), TRUE);
+			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 0);
+			if(initial_update) gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_binary")), TRUE);
 			break;
 		}
 		case BASE_OCTAL: {
-			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_octal")), TRUE);
+			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 1);
+			if(initial_update) gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_octal")), TRUE);
 			break;
 		}
 		case BASE_DECIMAL: {
-			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_decimal")), TRUE);
+			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 2);
+			if(initial_update) gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_decimal")), TRUE);
 			break;
 		}
 		case BASE_HEXADECIMAL: {
-			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_hexadecimal")), TRUE);
+			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 3);
+			if(initial_update) gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_hexadecimal")), TRUE);
 			break;
 		}
 		case BASE_ROMAN_NUMERALS: {
+			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 6);
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_roman")), TRUE);
 			break;
 		}
 		case BASE_SEXAGESIMAL: {
+			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 4);
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_sexagesimal")), TRUE);
 			break;
 		}
 		case BASE_TIME: {
+			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 5);
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_time_format")), TRUE);
 			break;
 		}
 		default: {
-			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_custom_base")), TRUE);
+			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 7);
+			if(initial_update) gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_custom_base")), TRUE);
+			
 		}
-	}
-	if(po.base >= 2 && po.base <= 36) {
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (main_glade, "number_base_spinbutton_base")), po.base);
 	}
 	
 	switch(po.min_exp) {
 		case EXP_PRECISION: {
+			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 0);
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_normal")), TRUE);
 			break;
 		}
 		case EXP_SCIENTIFIC: {
+			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 1);
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_scientific")), TRUE);
 			break;
 		}
 		case EXP_PURE: {
+			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 2);
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_purely_scientific")), TRUE);
 			break;
 		}
 		case EXP_NONE: {
+			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 3);
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_non_scientific")), TRUE);
 			break;
 		}
@@ -257,25 +277,8 @@ void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, Assumpt
 			break;		
 		}
 	}
+	if(initial_update) gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "button_fraction")), po.number_fraction_format == FRACTION_FRACTIONAL);
 
-	switch(eo.parse_options.angle_unit) {
-		case ANGLE_UNIT_RADIANS: {
-			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_radians")), TRUE);
-			break;
-		}
-		case ANGLE_UNIT_DEGREES: {
-			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_degrees")), TRUE);
-			break;
-		}
-		case ANGLE_UNIT_GRADIANS: {
-			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_gradians")), TRUE);
-			break;
-		}
-		default: {
-			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "radiobutton_no_default_angle_unit")), TRUE);
-			break;
-		}
-	}
 	switch(as) {
 		case ASSUMPTION_SIGN_POSITIVE: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_positive")), TRUE); break;}
 		case ASSUMPTION_SIGN_NONPOSITIVE: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_nonpositive")), TRUE); break;}
@@ -362,6 +365,8 @@ create_main_window (void)
 
 	accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group (GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), accel_group);
+	
+	gtk_window_set_default_size (GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), win_width, win_height);
 
 	expression = glade_xml_get_widget (main_glade, "expression");
 	resultview = glade_xml_get_widget (main_glade, "resultview");
@@ -372,15 +377,18 @@ create_main_window (void)
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "red_foreground", "foreground", "red", NULL);
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "blue_foreground", "foreground", "blue", NULL);
 
-	/* the function table */
 	gtk_label_set_use_markup (
 			GTK_LABEL (gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (main_glade, "button_xy")))),
 			TRUE);
 	gtk_label_set_use_markup (
 			GTK_LABEL (gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (main_glade, "button_fraction")))),
 			TRUE);
+	gtk_label_set_use_markup (
+			GTK_LABEL (gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (main_glade, "button_square")))),
+			TRUE);
 			
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "button_hyp")), hyp_is_on);			
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "button_hyp")), hyp_is_on);
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "button_inv")), inv_is_on);
 	
 	set_mode_items(printops, evalops, CALCULATOR->defaultAssumptions()->numberType(), CALCULATOR->defaultAssumptions()->sign(), CALCULATOR->getPrecision(), true);
 
@@ -419,6 +427,22 @@ create_main_window (void)
 	GTK_WIDGET_SET_FLAGS(expression, GTK_CAN_DEFAULT);
 	gtk_widget_grab_default(expression);
 
+	expander_keypad = glade_xml_get_widget(main_glade, "expander_keypad");
+	expander_history = glade_xml_get_widget(main_glade, "expander_history");
+	gtk_expander_set_expanded(GTK_EXPANDER(expander_keypad), show_buttons);
+	gtk_expander_set_expanded(GTK_EXPANDER(expander_history), show_history && !show_buttons);
+	tabs = glade_xml_get_widget(main_glade, "tabs");
+	if(show_history) {
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(tabs), 1);
+	} else {
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(tabs), 0);
+	}
+	if(show_history || show_buttons) {
+		gtk_widget_show(tabs);
+	} else {
+		gtk_widget_hide(tabs);
+	}
+
 	glade_xml_signal_autoconnect(main_glade);
 	g_signal_connect(accel_group, "accel_changed", G_CALLBACK(save_accels), NULL);
 
@@ -442,10 +466,6 @@ create_main_window (void)
 
 	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_save_image"), FALSE);
 	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "popup_menu_item_save_image"), FALSE);
-
-/*	Expander	*/
-	expander = glade_xml_get_widget(main_glade, "expander_keypad");
-	gtk_expander_set_expanded(GTK_EXPANDER(expander), show_buttons);
 
 /*	Completion	*/	
 	completion = gtk_entry_completion_new();

@@ -1,3 +1,7 @@
+2005-10-21 Niklas Knutsson  <nq@altern.org>
+
+	* GUI redesign along the lines of the KDE GUI
+
 2005-10-20 Niklas Knutsson  <nq@altern.org>
 
 	* Fix display of too many arguments message

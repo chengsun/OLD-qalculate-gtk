@@ -157,12 +157,14 @@ gboolean completion_match_func(GtkEntryCompletion *entrycompletion, const gchar 
 #endif
 
 void *view_proc(void*);
+void on_combobox_base_changed(GtkComboBox *w, gpointer user_data);
+void on_combobox_numerical_display_changed(GtkComboBox *w, gpointer user_data);
+void on_expander_keypad_expanded(GObject *o, GParamSpec *param_spec, gpointer user_data);
+void on_expander_history_expanded(GObject *o, GParamSpec *param_spec, gpointer user_data);
 void on_menu_item_meta_mode_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_meta_mode_save_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_meta_mode_delete_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data);
-void on_button_close_clicked(GtkButton *w, gpointer user_data);
-void on_button_history_clicked(GtkToggleButton *w, gpointer user_data);
 void on_colorbutton_status_error_color_color_set(GtkColorButton *w, gpointer user_data);
 void on_colorbutton_status_warning_color_color_set(GtkColorButton *w, gpointer user_data);
 void on_preferences_entry_wget_args_changed(GtkEditable *w, gpointer user_data);
@@ -200,16 +202,19 @@ void on_radiobutton_gradians_toggled(GtkToggleButton *togglebutton, gpointer use
 void on_radiobutton_no_default_angle_unit_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 gboolean on_gcalc_exit(GtkWidget *widget, GdkEvent *event, gpointer user_data);
 void on_expression_activate(GtkEntry *entry, gpointer user_data);
-void on_button_less_more_clicked(GtkButton *button, gpointer user_data);
 void on_button_execute_clicked(GtkButton *button, gpointer user_data);
 void on_button_del_clicked(GtkButton *w, gpointer user_data);
 void on_button_ac_clicked(GtkButton *w, gpointer user_data);
 void on_button_hyp_toggled(GtkToggleButton *w, gpointer user_data);
+void on_button_inv_toggled(GtkToggleButton *w, gpointer user_data);
 void on_button_fraction_toggled(GtkToggleButton *w, gpointer user_data);
+void on_button_exact_toggled(GtkToggleButton *w, gpointer user_data);
 void on_button_tan_clicked(GtkButton *w, gpointer user_data);
 void on_button_sine_clicked(GtkButton *w, gpointer user_data);
 void on_button_cosine_clicked(GtkButton *w, gpointer user_data);
 void on_button_store_clicked(GtkButton *w, gpointer user_data);
+void on_button_mod_clicked(GtkButton *w, gpointer user_data);
+void on_button_factorial_clicked(GtkButton *w, gpointer user_data);
 void on_togglebutton_expression_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 void on_togglebutton_result_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 void on_expression_changed(GtkEditable *w, gpointer user_data);

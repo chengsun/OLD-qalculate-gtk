@@ -240,9 +240,9 @@ int main (int argc, char **argv) {
 
 	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", "accelmap", NULL);
 	gtk_accel_map_load(gstr);
-
 	g_free(gstr);
-	
+
 	gtk_main();
+
 	return 0;
 }
