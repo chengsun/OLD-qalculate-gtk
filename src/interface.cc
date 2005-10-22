@@ -470,7 +470,7 @@ create_main_window (void)
 /*	Completion	*/	
 	completion = gtk_entry_completion_new();
 	gtk_entry_set_completion(GTK_ENTRY(expression), completion);
-	completion_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	completion_store = gtk_list_store_new(4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(completion_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(completion_store), 0, GTK_SORT_ASCENDING);
 	gtk_entry_completion_set_model(completion, GTK_TREE_MODEL(completion_store));

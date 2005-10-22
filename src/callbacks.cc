@@ -2646,33 +2646,121 @@ void create_fmenu() {
 	}		
 }
 
+string sub_suffix(const ExpressionName *ename) {
+	size_t i = ename->name.rfind('_');
+	bool b = i == string::npos || i == ename->name.length() - 1 || i == 0;
+	size_t i2 = 1;
+	string str;
+	if(b) {
+		if(is_in(NUMBERS, ename->name[ename->name.length() - 1])) {
+			while(ename->name.length() > i2 + 1 && is_in(NUMBERS, ename->name[ename->name.length() - 1 - i2])) {
+					i2++;
+			}
+		}
+		str += ename->name.substr(0, ename->name.length() - i2);
+	} else {
+		str += ename->name.substr(0, i);
+	}
+	str += "<sub>";
+	if(b) str += ename->name.substr(ename->name.length() - i2, i2);
+	else str += ename->name.substr(i + 1, ename->name.length() - (i + 1));
+	str += "</sub>";
+	return str;
+}
+
 void update_completion() {
 	GtkTreeIter iter;
 	
 	gtk_entry_set_completion(GTK_ENTRY(expression), NULL);
 	
 	completion = gtk_entry_completion_new();
-	completion_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	completion_store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 	//gtk_list_store_clear(completion_store);	
 	string str;
 	for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
 		if(CALCULATOR->functions[i]->isActive()) {
-			str = CALCULATOR->functions[i]->preferredInputName(false, false, false, false, &can_display_unicode_string_function, (void*) expression).name;
-			str += "()";
 			gtk_list_store_append(completion_store, &iter);
-			gtk_list_store_set(completion_store, &iter, 0, str.c_str(), 1, CALCULATOR->functions[i]->title().c_str(), -1);
+			const ExpressionName *ename, *ename_r;
+			ename_r = &CALCULATOR->functions[i]->preferredInputName(false, printops.use_unicode_signs, false, false, &can_display_unicode_string_function, (void*) expression);
+			if(ename_r->suffix && ename_r->name.length() > 1) {
+				str = sub_suffix(ename_r);
+			} else {
+				str = ename_r->name;
+			}
+			str += "()";
+			for(size_t name_i = 1; name_i <= CALCULATOR->functions[i]->countNames(); name_i++) {
+				ename = &CALCULATOR->functions[i]->getName(name_i);
+				if(ename && ename != ename_r && !ename->plural && can_display_unicode_string_function(ename->name.c_str(), (void*) expression)) {
+					str += " <i>";
+					if(ename->suffix && ename->name.length() > 1) {
+						str += sub_suffix(ename);
+					} else {
+						str += ename->name;
+					}
+					str += "()</i>";
+				}
+			}			
+			gtk_list_store_set(completion_store, &iter, 0, str.c_str(), 1, CALCULATOR->functions[i]->title().c_str(), 2, CALCULATOR->functions[i], -1);
 		}
 	}
 	for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
 		if(CALCULATOR->variables[i]->isActive()) {
 			gtk_list_store_append(completion_store, &iter);
-			gtk_list_store_set(completion_store, &iter, 0, CALCULATOR->variables[i]->preferredInputName(false, false, false, false, &can_display_unicode_string_function, (void*) expression).name.c_str(), 1, CALCULATOR->variables[i]->title().c_str(), -1);
+			const ExpressionName *ename, *ename_r;
+			bool b = false;
+			ename_r = &CALCULATOR->variables[i]->preferredInputName(false, printops.use_unicode_signs, false, false, &can_display_unicode_string_function, (void*) expression);
+			for(size_t name_i = 1; name_i <= CALCULATOR->variables[i]->countNames(); name_i++) {
+				ename = &CALCULATOR->variables[i]->getName(name_i);
+				if(ename && ename != ename_r && !ename->plural && can_display_unicode_string_function(ename->name.c_str(), (void*) expression)) {
+					if(!b) {
+						if(ename_r->suffix && ename_r->name.length() > 1) {
+							str = sub_suffix(ename_r);
+						} else {
+							str = ename_r->name;
+						}
+						b = true;
+					}
+					str += " <i>";
+					if(ename->suffix && ename->name.length() > 1) {
+						str += sub_suffix(ename);
+					} else {
+						str += ename->name;
+					}
+					str += "</i>";
+				}
+			}
+			if(b) gtk_list_store_set(completion_store, &iter, 0, str.c_str(), 1, CALCULATOR->variables[i]->title().c_str(), 2, CALCULATOR->variables[i], -1);
+			else gtk_list_store_set(completion_store, &iter, 0, ename_r->name.c_str(), 1, CALCULATOR->variables[i]->title().c_str(), 2, CALCULATOR->variables[i], -1);
 		}
 	}
 	for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
 		if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT) {
 			gtk_list_store_append(completion_store, &iter);
-			gtk_list_store_set(completion_store, &iter, 0, CALCULATOR->units[i]->preferredInputName(false, false, false, false, &can_display_unicode_string_function, (void*) expression).name.c_str(), 1, CALCULATOR->units[i]->title().c_str(), -1);
+			const ExpressionName *ename, *ename_r;
+			bool b = false;
+			ename_r = &CALCULATOR->units[i]->preferredInputName(false, printops.use_unicode_signs, false, false, &can_display_unicode_string_function, (void*) expression);
+			for(size_t name_i = 1; name_i <= CALCULATOR->units[i]->countNames(); name_i++) {
+				ename = &CALCULATOR->units[i]->getName(name_i);
+				if(ename && ename != ename_r && !ename->plural && can_display_unicode_string_function(ename->name.c_str(), (void*) expression)) {
+					if(!b) {
+						if(ename_r->suffix && ename_r->name.length() > 1) {
+							str = sub_suffix(ename_r);
+						} else {
+							str = ename_r->name;
+						}
+						b = true;
+					}
+					str += " <i>";
+					if(ename->suffix && ename->name.length() > 1) {
+						str += sub_suffix(ename);
+					} else {
+						str += ename->name;
+					}
+					str += "</i>";
+				}
+			}
+			if(b) gtk_list_store_set(completion_store, &iter, 0, str.c_str(), 1, CALCULATOR->units[i]->title().c_str(), 2, CALCULATOR->units[i], -1);
+			else gtk_list_store_set(completion_store, &iter, 0, ename_r->name.c_str(), 1, CALCULATOR->units[i]->title().c_str(), 2, CALCULATOR->units[i], -1);
 		}
 	}
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(completion_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
@@ -2681,9 +2769,10 @@ void update_completion() {
 	g_object_unref(completion_store);
 	GtkCellRenderer *cell = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(completion), cell, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(completion), cell, "text", 0);	
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(completion), cell, "markup", 0);	
 	cell = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_end(GTK_CELL_LAYOUT(completion), cell, FALSE);
+	g_object_set(G_OBJECT(cell), "style", PANGO_STYLE_ITALIC, NULL);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(completion), cell, "text", 1);
 	gtk_entry_completion_set_match_func(completion, &completion_match_func, NULL, NULL);
 	g_signal_connect((gpointer) completion, "match-selected", G_CALLBACK(on_completion_match_selected), NULL);
@@ -8177,27 +8266,66 @@ void set_current_object() {
 }
 gboolean on_completion_match_selected(GtkEntryCompletion *entrycompletion, GtkTreeModel *model, GtkTreeIter *iter, gpointer user_data) {
 	set_current_object();
-	gchar *gstr;
-	gtk_tree_model_get(model, iter, 0, &gstr, -1);
-	if(!gstr) return TRUE;
+	ExpressionItem *item = NULL;
+	const ExpressionName *ename = NULL, *ename_r = NULL;
+	gtk_tree_model_get(model, iter, 2, &item, -1);
+	if(!item) return TRUE;	
+	ename_r = &item->preferredInputName(false, printops.use_unicode_signs, false, false, &can_display_unicode_string_function, (void*) expression);	
+	gchar *gstr2 = gtk_editable_get_chars(GTK_EDITABLE(expression), current_object_start, current_object_end);
+	for(size_t name_i = 0; name_i <= item->countNames() && !ename; name_i++) {
+		if(name_i == 0) {
+			ename = ename_r;
+		} else {
+			ename = &item->getName(name_i);
+			if(!ename || ename == ename_r || ename->plural || !can_display_unicode_string_function(ename->name.c_str(), (void*) expression)) {
+				ename = NULL;
+			}
+		}
+		if(ename && strlen(gstr2) <= ename->name.length()) {
+			for(size_t i = 0; i < strlen(gstr2); i++) {
+				if(ename->name[i] != gstr2[i]) {
+					ename = NULL;
+					break;
+				}
+			}
+		}
+	}
+	for(size_t name_i = 1; name_i <= item->countNames() && !ename; name_i++) {
+		ename = &item->getName(name_i);
+		if(!ename || ename == ename_r || (!ename->plural && can_display_unicode_string_function(ename->name.c_str(), (void*) expression))) {
+			ename = NULL;
+		}
+		if(ename && strlen(gstr2) <= ename->name.length()) {
+			for(size_t i = 0; i < strlen(gstr2); i++) {
+				if(ename->name[i] != gstr2[i]) {
+					ename = NULL;
+					break;
+				}
+			}
+		}
+	}
+	if(!ename) ename = ename_r;
+	g_free(gstr2);
+	if(!ename) return TRUE;
 	gtk_editable_delete_text(GTK_EDITABLE(expression), current_object_start, current_object_end);
 	gint pos = current_object_start;
 	block_completion();
-	if(gstr[strlen(gstr) - 1] == ')') {
-		gchar *gstr2 = gtk_editable_get_chars(GTK_EDITABLE(expression), pos, pos + 1);
-		if(strlen(gstr2) > 0 && gstr2[0] == '(') {
-			gtk_editable_insert_text(GTK_EDITABLE(expression), gstr, strlen(gstr) - 2, &pos);
+	if(item->type() == TYPE_FUNCTION) {		
+		gchar *gstr = gtk_editable_get_chars(GTK_EDITABLE(expression), pos, pos + 1);
+		if(strlen(gstr) > 0 && gstr[0] == '(') {
+			gtk_editable_insert_text(GTK_EDITABLE(expression), ename->name.c_str(), -1, &pos);
 			gtk_editable_set_position(GTK_EDITABLE(expression), pos);
 		} else {
-			gtk_editable_insert_text(GTK_EDITABLE(expression), gstr, -1, &pos);
-			gtk_editable_set_position(GTK_EDITABLE(expression), pos -1);
+			string str = ename->name;
+			str += "()";
+			gtk_editable_insert_text(GTK_EDITABLE(expression), str.c_str(), -1, &pos);
+			gtk_editable_set_position(GTK_EDITABLE(expression), pos - 1);
 		}
-		g_free(gstr2);
+		g_free(gstr);
 	} else {
-		gtk_editable_insert_text(GTK_EDITABLE(expression), gstr, -1, &pos);
+		gtk_editable_insert_text(GTK_EDITABLE(expression), ename->name.c_str(), -1, &pos);
 		gtk_editable_set_position(GTK_EDITABLE(expression), pos);
 	}
-	g_free(gstr);
 	unblock_completion();
 	return TRUE;
 }
@@ -8206,19 +8334,23 @@ gboolean completion_match_func(GtkEntryCompletion *entrycompletion, const gchar 
 	if(current_object_start < 0) return FALSE;
 	gchar *gstr1, *gstr2;
 	gboolean b_match = false;
-	gtk_tree_model_get(GTK_TREE_MODEL(completion_store), iter, 0, &gstr1, -1);
-	if(!gstr1) return FALSE;	
+	ExpressionItem *item = NULL;
+	const ExpressionName *ename;
+	gtk_tree_model_get(GTK_TREE_MODEL(completion_store), iter, 2, &item, -1);
+	if(!item) return FALSE;	
 	gstr2 = gtk_editable_get_chars(GTK_EDITABLE(expression), current_object_start, current_object_end);
-	if(strlen(gstr2) <= strlen(gstr1)) {
-		b_match = TRUE;
-		for(size_t i = 0; i < strlen(gstr2); i++) {
-			if(gstr1[i] != gstr2[i]) {
-				b_match = FALSE;
-				break;
+	for(size_t name_i = 1; name_i <= item->countNames() && !b_match; name_i++) {
+		ename = &item->getName(name_i);
+		if(ename && strlen(gstr2) <= ename->name.length()) {
+			b_match = TRUE;
+			for(size_t i = 0; i < strlen(gstr2); i++) {
+				if(ename->name[i] != gstr2[i]) {
+					b_match = FALSE;
+					break;
+				}
 			}
 		}
 	}
-	g_free(gstr1);
 	g_free(gstr2);
 	return b_match;
 }

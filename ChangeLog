@@ -1,6 +1,9 @@
 2005-10-22 Niklas Knutsson  <nq@altern.org>
 
 	* GUI polishing
+	* Show alternative names in cursive style after default in completion list
+	* Show title in completion list in cursive style
+	* Completion for all names
 
 2005-10-21 Niklas Knutsson  <nq@altern.org>
 
