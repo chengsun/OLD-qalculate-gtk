@@ -1648,6 +1648,7 @@
 		  <child>
 		    <widget class="GtkScrolledWindow" id="scrolled_result">
 		      <property name="border_width">2</property>
+		      <property name="height_request">1</property>
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
@@ -1702,20 +1703,19 @@
 		    <widget class="GtkVBox" id="vbox63">
 		      <property name="visible">True</property>
 		      <property name="homogeneous">True</property>
-		      <property name="spacing">3</property>
+		      <property name="spacing">4</property>
 
 		      <child>
 			<widget class="GtkButton" id="button_execute">
 			  <property name="visible">True</property>
 			  <property name="tooltip" translatable="yes">Calculate expression</property>
-			  <property name="can_default">True</property>
 			  <property name="can_focus">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
-			  <signal name="clicked" handler="on_button_execute_clicked" last_modification_time="Fri, 21 Oct 2005 10:53:54 GMT"/>
+			  <signal name="clicked" handler="on_button_execute_clicked" last_modification_time="Sat, 22 Oct 2005 10:16:23 GMT"/>
 
 			  <child>
-			    <widget class="GtkImage" id="image1376">
+			    <widget class="GtkImage" id="image1377">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-execute</property>
 			      <property name="icon_size">4</property>
@@ -1729,7 +1729,7 @@
 			<packing>
 			  <property name="padding">0</property>
 			  <property name="expand">False</property>
-			  <property name="fill">True</property>
+			  <property name="fill">False</property>
 			</packing>
 		      </child>
 
@@ -1737,14 +1737,13 @@
 			<widget class="GtkButton" id="button_store">
 			  <property name="visible">True</property>
 			  <property name="tooltip" translatable="yes">Store result as a variable</property>
-			  <property name="can_default">True</property>
 			  <property name="can_focus">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
-			  <signal name="clicked" handler="on_button_store_clicked" last_modification_time="Fri, 21 Oct 2005 10:54:26 GMT"/>
+			  <signal name="clicked" handler="on_button_store_clicked" last_modification_time="Sat, 22 Oct 2005 10:18:04 GMT"/>
 
 			  <child>
-			    <widget class="GtkImage" id="image1375">
+			    <widget class="GtkImage" id="image1378">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-save-as</property>
 			      <property name="icon_size">4</property>
@@ -1758,7 +1757,7 @@
 			<packing>
 			  <property name="padding">0</property>
 			  <property name="expand">False</property>
-			  <property name="fill">True</property>
+			  <property name="fill">False</property>
 			</packing>
 		      </child>
 
@@ -1766,14 +1765,13 @@
 			<widget class="GtkButton" id="button_convert">
 			  <property name="visible">True</property>
 			  <property name="tooltip" translatable="yes">Convert units in result</property>
-			  <property name="can_default">True</property>
 			  <property name="can_focus">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
-			  <signal name="clicked" handler="on_button_convert_clicked" last_modification_time="Fri, 21 Oct 2005 10:54:41 GMT"/>
+			  <signal name="clicked" handler="on_button_convert_clicked" last_modification_time="Sat, 22 Oct 2005 10:18:20 GMT"/>
 
 			  <child>
-			    <widget class="GtkImage" id="image1374">
+			    <widget class="GtkImage" id="image1379">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-convert</property>
 			      <property name="icon_size">4</property>
@@ -1787,7 +1785,7 @@
 			<packing>
 			  <property name="padding">0</property>
 			  <property name="expand">False</property>
-			  <property name="fill">True</property>
+			  <property name="fill">False</property>
 			</packing>
 		      </child>
 		    </widget>
