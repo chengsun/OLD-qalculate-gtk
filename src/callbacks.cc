@@ -2715,7 +2715,7 @@ string get_value_string(const MathStructure &mstruct_, bool rlabel = false, Pref
 void draw_background(GdkPixmap *pixmap, gint w, gint h) {
 	gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);
 }
-GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_options, InternalPrintStruct ips = top_ips, gint *point_central = NULL) {
+GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct ips, gint *point_central) {
 
 	if(ips.depth == 0 && po.is_approximate) *po.is_approximate = false;
 
@@ -3337,7 +3337,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 			if(m.type() == STRUCT_COMPARISON) {
 				switch(m.comparisonType()) {
 					case COMPARISON_EQUALS: {
-						if(ips.depth == 0 && po.use_unicode_signs && (*po.is_approximate || m.isApproximate()) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_ALMOST_EQUAL, po.can_display_unicode_string_arg))) {
+						if(ips.depth == 0 && po.use_unicode_signs && ((po.is_approximate && *po.is_approximate) || m.isApproximate()) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_ALMOST_EQUAL, po.can_display_unicode_string_arg))) {
 							str += SIGN_ALMOST_EQUAL;
 						} else {
 							str += "=";
@@ -4005,12 +4005,12 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 		g_object_unref(pixmap_old);
 		gdk_gc_unref(line_gc);
 	}
-	if(ips.depth == 0 && !(m.isComparison() && (!(*po.is_approximate || m.isApproximate()) || (m.comparisonType() == COMPARISON_EQUALS && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_ALMOST_EQUAL, po.can_display_unicode_string_arg))))) && pixmap) {
+	if(ips.depth == 0 && !(m.isComparison() && (!((po.is_approximate && *po.is_approximate) || m.isApproximate()) || (m.comparisonType() == COMPARISON_EQUALS && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_ALMOST_EQUAL, po.can_display_unicode_string_arg))))) && pixmap) {
 		gint w, h, wle, hle, w_new, h_new;
 		gdk_drawable_get_size(GDK_DRAWABLE(pixmap), &w, &h);			
 		GdkPixmap *pixmap_old = pixmap;
 		PangoLayout *layout_equals = gtk_widget_create_pango_layout(resultview, NULL);
-		if(*po.is_approximate || m.isApproximate()) {
+		if((po.is_approximate && *po.is_approximate) || m.isApproximate()) {
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_ALMOST_EQUAL, po.can_display_unicode_string_arg))) {
 				pango_layout_set_markup(layout_equals, TEXT_TAGS SIGN_ALMOST_EQUAL " " TEXT_TAGS_END, -1);
 			} else {
@@ -4238,37 +4238,6 @@ void setResult(Prefix *prefix = NULL, bool update_history = true, bool update_pa
 	gdk_drawable_get_size(GDK_DRAWABLE(tmp_pixmap), &w, &h);
 	gtk_widget_set_size_request(resultview, w, h);
 	while(gtk_events_pending()) gtk_main_iteration();
-/*	gtk_widget_get_size_request(resultview, &wr, &hr);	
-	if(h < 34) {
-		h_new = 34;
-	} else {
-		h_new = h;
-	}
-	if(w < glade_xml_get_widget(main_glade, "scrolled_result")->allocation.width - 20) {
-		w_new = glade_xml_get_widget(main_glade, "scrolled_result")->allocation.width - 20;
-	} else {
-		w_new = w;
-	}	
-	
-	if(wr != w_new || hr != h_new) {
-		if(h_new > 200) {
-			if(w_new > glade_xml_get_widget(main_glade, "scrolled_result")->allocation.width - 20) {
-				gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(glade_xml_get_widget(main_glade, "scrolled_result")), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-			} else {
-				gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(glade_xml_get_widget(main_glade, "scrolled_result")), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-			}
-			gtk_widget_set_size_request(glade_xml_get_widget(main_glade, "scrolled_result"), -1, 200);						
-		} else {
-			if(w_new > glade_xml_get_widget(main_glade, "scrolled_result")->allocation.width - 20) {
-				gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(glade_xml_get_widget(main_glade, "scrolled_result")), GTK_POLICY_AUTOMATIC, GTK_POLICY_NEVER);		
-			} else {
-				gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(glade_xml_get_widget(main_glade, "scrolled_result")), GTK_POLICY_NEVER, GTK_POLICY_NEVER);
-			}	
-			gtk_widget_set_size_request(glade_xml_get_widget(main_glade, "scrolled_result"), -1, -1);					
-		}							
-		gtk_widget_set_size_request(resultview, w_new, h_new);
-		while(gtk_events_pending()) gtk_main_iteration();
-	}*/
 
 	GdkPixbuf *pixbuf_result_tmp = gdk_pixbuf_get_from_drawable(NULL, tmp_pixmap, NULL, 0, 0, 0, 0, -1, -1);
 	if(pixbuf_result_tmp) {
@@ -7307,6 +7276,13 @@ void show_tabs(bool do_show) {
 	if(do_show) {
 		h += tabs->allocation.height + 6;
 		gtk_widget_show(tabs);
+		gint w2, h2;
+		gtk_widget_get_size_request(glade_xml_get_widget(main_glade, "main_vbox"), &w2, &h2);
+		if(w2 > 0) {
+			h2 += tabs->allocation.height + 6;
+			w2 = tabs->allocation.width + 24;
+			gtk_widget_set_size_request(glade_xml_get_widget(main_glade, "main_vbox"), w2, h2);
+		}
 		gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), w, h);
 	} else {
 		h -= tabs->allocation.height + 6;

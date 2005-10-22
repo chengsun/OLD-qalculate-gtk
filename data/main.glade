@@ -1648,7 +1648,6 @@
 		  <child>
 		    <widget class="GtkScrolledWindow" id="scrolled_result">
 		      <property name="border_width">2</property>
-		      <property name="height_request">80</property>
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
@@ -1703,7 +1702,7 @@
 		    <widget class="GtkVBox" id="vbox63">
 		      <property name="visible">True</property>
 		      <property name="homogeneous">True</property>
-		      <property name="spacing">0</property>
+		      <property name="spacing">3</property>
 
 		      <child>
 			<widget class="GtkButton" id="button_execute">
@@ -1711,35 +1710,26 @@
 			  <property name="tooltip" translatable="yes">Calculate expression</property>
 			  <property name="can_default">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">=</property>
-			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
 			  <signal name="clicked" handler="on_button_execute_clicked" last_modification_time="Fri, 21 Oct 2005 10:53:54 GMT"/>
-			</widget>
-			<packing>
-			  <property name="padding">0</property>
-			  <property name="expand">False</property>
-			  <property name="fill">False</property>
-			</packing>
-		      </child>
 
-		      <child>
-			<widget class="GtkButton" id="button_functions">
-			  <property name="visible">True</property>
-			  <property name="tooltip" translatable="yes">Open function manager</property>
-			  <property name="can_default">True</property>
-			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">f(x)</property>
-			  <property name="use_underline">True</property>
-			  <property name="relief">GTK_RELIEF_NORMAL</property>
-			  <property name="focus_on_click">True</property>
-			  <signal name="clicked" handler="on_button_functions_clicked" last_modification_time="Fri, 21 Oct 2005 19:51:33 GMT"/>
+			  <child>
+			    <widget class="GtkImage" id="image1376">
+			      <property name="visible">True</property>
+			      <property name="stock">gtk-execute</property>
+			      <property name="icon_size">4</property>
+			      <property name="xalign">0.5</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xpad">0</property>
+			      <property name="ypad">0</property>
+			    </widget>
+			  </child>
 			</widget>
 			<packing>
 			  <property name="padding">0</property>
 			  <property name="expand">False</property>
-			  <property name="fill">False</property>
+			  <property name="fill">True</property>
 			</packing>
 		      </child>
 
@@ -1768,7 +1758,7 @@
 			<packing>
 			  <property name="padding">0</property>
 			  <property name="expand">False</property>
-			  <property name="fill">False</property>
+			  <property name="fill">True</property>
 			</packing>
 		      </child>
 
@@ -1797,7 +1787,7 @@
 			<packing>
 			  <property name="padding">0</property>
 			  <property name="expand">False</property>
-			  <property name="fill">False</property>
+			  <property name="fill">True</property>
 			</packing>
 		      </child>
 		    </widget>
