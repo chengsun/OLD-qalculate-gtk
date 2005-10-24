@@ -86,7 +86,7 @@ GtkAccelGroup *accel_group;
 
 extern bool show_buttons, show_history;
 extern bool save_mode_on_exit, save_defs_on_exit, load_global_defs, hyp_is_on, inv_is_on, fetch_exchange_rates_at_startup;
-extern bool display_expression_status;
+extern bool display_expression_status, enable_completion;
 extern bool use_custom_result_font, use_custom_expression_font, use_custom_status_font;
 extern string custom_result_font, custom_expression_font, custom_status_font, wget_args;
 extern string status_error_color, status_warning_color;
@@ -377,15 +377,10 @@ create_main_window (void)
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "red_foreground", "foreground", "red", NULL);
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "blue_foreground", "foreground", "blue", NULL);
 
-	gtk_label_set_use_markup (
-			GTK_LABEL (gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (main_glade, "button_xy")))),
-			TRUE);
-	gtk_label_set_use_markup (
-			GTK_LABEL (gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (main_glade, "button_fraction")))),
-			TRUE);
-	gtk_label_set_use_markup (
-			GTK_LABEL (gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (main_glade, "button_square")))),
-			TRUE);
+	gtk_label_set_use_markup(GTK_LABEL(gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (main_glade, "button_xy")))), TRUE);
+	//gtk_label_set_use_markup(GTK_LABEL(gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (main_glade, "button_fraction")))), TRUE);
+	gtk_label_set_use_markup(GTK_LABEL (gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (main_glade, "button_square")))), TRUE);
+	gtk_label_set_use_markup(GTK_LABEL(gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (main_glade, "button_functions")))), TRUE);
 			
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "button_hyp")), hyp_is_on);
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "button_inv")), inv_is_on);
@@ -778,6 +773,7 @@ get_preferences_dialog (void)
 	
 		g_assert (glade_xml_get_widget (preferences_glade, "preferences_dialog") != NULL);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_display_expression_status")), display_expression_status);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_enable_completion")), enable_completion);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_fetch_exchange_rates")), fetch_exchange_rates_at_startup);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_save_mode")), save_mode_on_exit);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_unicode_signs")), printops.use_unicode_signs);	

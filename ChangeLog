@@ -1,3 +1,15 @@
+2005-10-24 Niklas Knutsson  <nq@altern.org>
+
+	* Add accelerators Ctrl+K and Ctrl+H for keypad and history expanders respectively
+	* Replace mod button with f(x) button
+
+2005-10-23 Niklas Knutsson  <nq@altern.org>
+
+	* Completion fixes
+	* Option to disable completion
+	* Make suffixes in completion list smaller
+	* Disable completion for disabled object types (functions, variables and units)
+
 2005-10-22 Niklas Knutsson  <nq@altern.org>
 
 	* GUI polishing

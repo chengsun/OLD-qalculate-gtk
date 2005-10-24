@@ -1715,7 +1715,7 @@
 			  <signal name="clicked" handler="on_button_execute_clicked" last_modification_time="Sat, 22 Oct 2005 10:16:23 GMT"/>
 
 			  <child>
-			    <widget class="GtkImage" id="image1377">
+			    <widget class="GtkImage" id="image1381">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-execute</property>
 			      <property name="icon_size">4</property>
@@ -1743,7 +1743,7 @@
 			  <signal name="clicked" handler="on_button_store_clicked" last_modification_time="Sat, 22 Oct 2005 10:18:04 GMT"/>
 
 			  <child>
-			    <widget class="GtkImage" id="image1378">
+			    <widget class="GtkImage" id="image1379">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-save-as</property>
 			      <property name="icon_size">4</property>
@@ -1771,7 +1771,7 @@
 			  <signal name="clicked" handler="on_button_convert_clicked" last_modification_time="Sat, 22 Oct 2005 10:18:20 GMT"/>
 
 			  <child>
-			    <widget class="GtkImage" id="image1379">
+			    <widget class="GtkImage" id="image1380">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-convert</property>
 			      <property name="icon_size">4</property>
@@ -1836,6 +1836,7 @@
 			  <property name="expanded">False</property>
 			  <property name="spacing">0</property>
 			  <signal name="notify::expanded" handler="on_expander_keypad_expanded" last_modification_time="Fri, 21 Oct 2005 17:57:42 GMT"/>
+			  <accelerator key="K" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 			  <child>
 			    <placeholder/>
@@ -1874,6 +1875,7 @@
 			  <property name="expanded">False</property>
 			  <property name="spacing">0</property>
 			  <signal name="notify::expanded" handler="on_expander_history_expanded" last_modification_time="Fri, 21 Oct 2005 16:59:58 GMT"/>
+			  <accelerator key="H" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 			  <child>
 			    <placeholder/>
@@ -2056,63 +2058,6 @@ Other...</property>
 				  <property name="column_spacing">6</property>
 
 				  <child>
-				    <widget class="GtkButton" id="button_sqrt">
-				      <property name="visible">True</property>
-				      <property name="tooltip" translatable="yes">Square root</property>
-				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">sqrt</property>
-				      <property name="use_underline">True</property>
-				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="focus_on_click">True</property>
-				      <signal name="clicked" handler="on_button_sqrt_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:02 GMT"/>
-				    </widget>
-				    <packing>
-				      <property name="left_attach">0</property>
-				      <property name="right_attach">1</property>
-				      <property name="top_attach">0</property>
-				      <property name="bottom_attach">1</property>
-				    </packing>
-				  </child>
-
-				  <child>
-				    <widget class="GtkButton" id="button_log">
-				      <property name="visible">True</property>
-				      <property name="tooltip" translatable="yes">Base-10 logarithm</property>
-				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">log</property>
-				      <property name="use_underline">True</property>
-				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="focus_on_click">True</property>
-				      <signal name="clicked" handler="on_button_log_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:22 GMT"/>
-				    </widget>
-				    <packing>
-				      <property name="left_attach">0</property>
-				      <property name="right_attach">1</property>
-				      <property name="top_attach">1</property>
-				      <property name="bottom_attach">2</property>
-				    </packing>
-				  </child>
-
-				  <child>
-				    <widget class="GtkButton" id="button_ln">
-				      <property name="visible">True</property>
-				      <property name="tooltip" translatable="yes">Natural logarithm</property>
-				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">ln</property>
-				      <property name="use_underline">True</property>
-				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="focus_on_click">True</property>
-				      <signal name="clicked" handler="on_button_ln_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:29 GMT"/>
-				    </widget>
-				    <packing>
-				      <property name="left_attach">1</property>
-				      <property name="right_attach">2</property>
-				      <property name="top_attach">1</property>
-				      <property name="bottom_attach">2</property>
-				    </packing>
-				  </child>
-
-				  <child>
 				    <widget class="GtkButton" id="button_cosine">
 				      <property name="visible">True</property>
 				      <property name="tooltip" translatable="yes">Cosine</property>
@@ -2147,46 +2092,6 @@ Other...</property>
 				      <property name="right_attach">3</property>
 				      <property name="top_attach">2</property>
 				      <property name="bottom_attach">3</property>
-				    </packing>
-				  </child>
-
-				  <child>
-				    <widget class="GtkButton" id="button_xy">
-				      <property name="visible">True</property>
-				      <property name="tooltip" translatable="yes">Raise</property>
-				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">x&lt;sup&gt;y&lt;/sup&gt;</property>
-				      <property name="use_underline">True</property>
-				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="focus_on_click">True</property>
-				      <signal name="clicked" handler="on_button_xy_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:08 GMT"/>
-				    </widget>
-				    <packing>
-				      <property name="left_attach">1</property>
-				      <property name="right_attach">2</property>
-				      <property name="top_attach">0</property>
-				      <property name="bottom_attach">1</property>
-				    </packing>
-				  </child>
-
-				  <child>
-				    <widget class="GtkButton" id="button_mod">
-				      <property name="visible">True</property>
-				      <property name="tooltip" translatable="yes">Modulus</property>
-				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">mod</property>
-				      <property name="use_underline">True</property>
-				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="focus_on_click">True</property>
-				      <signal name="clicked" handler="on_button_mod_clicked" last_modification_time="Fri, 21 Oct 2005 09:35:21 GMT"/>
-				    </widget>
-				    <packing>
-				      <property name="left_attach">2</property>
-				      <property name="right_attach">3</property>
-				      <property name="top_attach">1</property>
-				      <property name="bottom_attach">2</property>
-				      <property name="x_options">fill</property>
-				      <property name="y_options"></property>
 				    </packing>
 				  </child>
 
@@ -2273,19 +2178,114 @@ Other...</property>
 				  <child>
 				    <widget class="GtkButton" id="button_square">
 				      <property name="visible">True</property>
-				      <property name="tooltip" translatable="yes">Square</property>
+				      <property name="tooltip" translatable="yes">Raise</property>
 				      <property name="can_focus">True</property>
 				      <property name="label" translatable="yes">x&lt;sup&gt;2&lt;/sup&gt;</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
 				      <property name="focus_on_click">True</property>
-				      <signal name="clicked" handler="on_button_square_clicked" last_modification_time="Fri, 21 Oct 2005 22:40:31 GMT"/>
+				      <signal name="clicked" handler="on_button_square_clicked" last_modification_time="Mon, 24 Oct 2005 11:15:22 GMT"/>
 				    </widget>
 				    <packing>
 				      <property name="left_attach">2</property>
 				      <property name="right_attach">3</property>
 				      <property name="top_attach">0</property>
 				      <property name="bottom_attach">1</property>
+				    </packing>
+				  </child>
+
+				  <child>
+				    <widget class="GtkButton" id="button_xy">
+				      <property name="visible">True</property>
+				      <property name="tooltip" translatable="yes">Raise</property>
+				      <property name="can_focus">True</property>
+				      <property name="label" translatable="yes">x&lt;sup&gt;y&lt;/sup&gt;</property>
+				      <property name="use_underline">True</property>
+				      <property name="relief">GTK_RELIEF_NORMAL</property>
+				      <property name="focus_on_click">True</property>
+				      <signal name="clicked" handler="on_button_xy_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:08 GMT"/>
+				    </widget>
+				    <packing>
+				      <property name="left_attach">1</property>
+				      <property name="right_attach">2</property>
+				      <property name="top_attach">0</property>
+				      <property name="bottom_attach">1</property>
+				    </packing>
+				  </child>
+
+				  <child>
+				    <widget class="GtkButton" id="button_functions">
+				      <property name="visible">True</property>
+				      <property name="tooltip" translatable="yes">Store result as a variable</property>
+				      <property name="can_focus">True</property>
+				      <property name="label" translatable="yes">&lt;i&gt;f(x)&lt;/i&gt;</property>
+				      <property name="use_underline">True</property>
+				      <property name="relief">GTK_RELIEF_NORMAL</property>
+				      <property name="focus_on_click">True</property>
+				      <signal name="clicked" handler="on_button_functions_clicked" last_modification_time="Mon, 24 Oct 2005 10:31:25 GMT"/>
+				    </widget>
+				    <packing>
+				      <property name="left_attach">0</property>
+				      <property name="right_attach">1</property>
+				      <property name="top_attach">0</property>
+				      <property name="bottom_attach">1</property>
+				    </packing>
+				  </child>
+
+				  <child>
+				    <widget class="GtkButton" id="button_ln">
+				      <property name="visible">True</property>
+				      <property name="tooltip" translatable="yes">Natural logarithm</property>
+				      <property name="can_focus">True</property>
+				      <property name="label" translatable="yes">ln</property>
+				      <property name="use_underline">True</property>
+				      <property name="relief">GTK_RELIEF_NORMAL</property>
+				      <property name="focus_on_click">True</property>
+				      <signal name="clicked" handler="on_button_ln_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:29 GMT"/>
+				    </widget>
+				    <packing>
+				      <property name="left_attach">2</property>
+				      <property name="right_attach">3</property>
+				      <property name="top_attach">1</property>
+				      <property name="bottom_attach">2</property>
+				    </packing>
+				  </child>
+
+				  <child>
+				    <widget class="GtkButton" id="button_log">
+				      <property name="visible">True</property>
+				      <property name="tooltip" translatable="yes">Base-10 logarithm</property>
+				      <property name="can_focus">True</property>
+				      <property name="label" translatable="yes">log</property>
+				      <property name="use_underline">True</property>
+				      <property name="relief">GTK_RELIEF_NORMAL</property>
+				      <property name="focus_on_click">True</property>
+				      <signal name="clicked" handler="on_button_log_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:22 GMT"/>
+				    </widget>
+				    <packing>
+				      <property name="left_attach">1</property>
+				      <property name="right_attach">2</property>
+				      <property name="top_attach">1</property>
+				      <property name="bottom_attach">2</property>
+				    </packing>
+				  </child>
+
+				  <child>
+				    <widget class="GtkButton" id="button_sqrt">
+				      <property name="visible">True</property>
+				      <property name="tooltip" translatable="yes">Square root</property>
+				      <property name="can_focus">True</property>
+				      <property name="label" translatable="yes">sqrt</property>
+				      <property name="use_underline">True</property>
+				      <property name="relief">GTK_RELIEF_NORMAL</property>
+				      <property name="focus_on_click">True</property>
+				      <signal name="clicked" handler="on_button_sqrt_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:02 GMT"/>
+				    </widget>
+				    <packing>
+				      <property name="left_attach">0</property>
+				      <property name="right_attach">1</property>
+				      <property name="top_attach">1</property>
+				      <property name="bottom_attach">2</property>
 				    </packing>
 				  </child>
 				</widget>

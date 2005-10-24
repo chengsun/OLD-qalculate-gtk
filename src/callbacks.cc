@@ -100,7 +100,7 @@ string custom_result_font, custom_expression_font, custom_status_font, wget_args
 bool hyp_is_on, inv_is_on;
 bool show_buttons, show_history;
 extern bool load_global_defs, fetch_exchange_rates_at_startup, first_time, first_qalculate_run;
-bool display_expression_status;
+bool display_expression_status, enable_completion;
 extern GtkWidget *omToUnit_menu;
 bool block_unit_convert;
 extern MathStructure *mstruct, *parsed_mstruct;
@@ -2661,17 +2661,20 @@ string sub_suffix(const ExpressionName *ename) {
 	} else {
 		str += ename->name.substr(0, i);
 	}
-	str += "<sub>";
+	str += "<span size=\"small\"><sub>";
 	if(b) str += ename->name.substr(ename->name.length() - i2, i2);
 	else str += ename->name.substr(i + 1, ename->name.length() - (i + 1));
-	str += "</sub>";
+	str += "</sub></span>";
 	return str;
 }
 
 void update_completion() {
+
 	GtkTreeIter iter;
 	
 	gtk_entry_set_completion(GTK_ENTRY(expression), NULL);
+	
+	if(!enable_completion) return;
 	
 	completion = gtk_entry_completion_new();
 	completion_store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
@@ -2762,7 +2765,8 @@ void update_completion() {
 			if(b) gtk_list_store_set(completion_store, &iter, 0, str.c_str(), 1, CALCULATOR->units[i]->title().c_str(), 2, CALCULATOR->units[i], -1);
 			else gtk_list_store_set(completion_store, &iter, 0, ename_r->name.c_str(), 1, CALCULATOR->units[i]->title().c_str(), 2, CALCULATOR->units[i], -1);
 		}
-	}
+	}	
+
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(completion_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(completion_store), 0, GTK_SORT_ASCENDING);
 	gtk_entry_completion_set_model(completion, GTK_TREE_MODEL(completion_store));
@@ -7376,7 +7380,7 @@ void show_tabs(bool do_show) {
 	} else {
 		h -= tabs->allocation.height + 6;
 		gtk_widget_hide(tabs);
-		gtk_widget_set_size_request(glade_xml_get_widget(main_glade, "main_vbox"), 0, glade_xml_get_widget(main_glade, "button_convert")->allocation.height * 4 + expander_keypad->allocation.height + 42);
+		gtk_widget_set_size_request(glade_xml_get_widget(main_glade, "main_vbox"), 0, glade_xml_get_widget(main_glade, "button_convert")->allocation.height * 3 + 8 + expander_keypad->allocation.height + 24);
 		gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), w, h);
 	}
 }
@@ -7582,6 +7586,7 @@ void load_preferences() {
 	load_global_defs = true;
 	fetch_exchange_rates_at_startup = false;
 	display_expression_status = true;
+	enable_completion = true;
 	wget_args = "--quiet --tries=1";
 	first_time = false;
 	expression_history.clear();
@@ -7639,6 +7644,8 @@ void load_preferences() {
 					show_history = v;
 				} else if(svar == "display_expression_status") {
 					display_expression_status = v;
+				} else if(svar == "enable_completion") {
+					enable_completion = v;
 				} else if(svar == "min_deci") {
 					if(mode_index == 1) printops.min_decimals = v;
 					else modes[mode_index].po.min_decimals = v;
@@ -8050,6 +8057,7 @@ void save_preferences(bool mode) {
 	fprintf(file, "show_buttons=%i\n", gtk_expander_get_expanded(GTK_EXPANDER(expander_keypad)));
 	fprintf(file, "show_history=%i\n", gtk_expander_get_expanded(GTK_EXPANDER(expander_history)));
 	fprintf(file, "display_expression_status=%i\n", display_expression_status);
+	fprintf(file, "enable_completion=%i\n", enable_completion);
 	fprintf(file, "use_unicode_signs=%i\n", printops.use_unicode_signs);
 	fprintf(file, "lower_case_numbers=%i\n", printops.lower_case_numbers);
 	fprintf(file, "lower_case_e=%i\n", printops.lower_case_e);
@@ -8269,7 +8277,7 @@ gboolean on_completion_match_selected(GtkEntryCompletion *entrycompletion, GtkTr
 	ExpressionItem *item = NULL;
 	const ExpressionName *ename = NULL, *ename_r = NULL;
 	gtk_tree_model_get(model, iter, 2, &item, -1);
-	if(!item) return TRUE;	
+	if(!item) return TRUE;		
 	ename_r = &item->preferredInputName(false, printops.use_unicode_signs, false, false, &can_display_unicode_string_function, (void*) expression);	
 	gchar *gstr2 = gtk_editable_get_chars(GTK_EDITABLE(expression), current_object_start, current_object_end);
 	for(size_t name_i = 0; name_i <= item->countNames() && !ename; name_i++) {
@@ -8277,7 +8285,7 @@ gboolean on_completion_match_selected(GtkEntryCompletion *entrycompletion, GtkTr
 			ename = ename_r;
 		} else {
 			ename = &item->getName(name_i);
-			if(!ename || ename == ename_r || ename->plural || !can_display_unicode_string_function(ename->name.c_str(), (void*) expression)) {
+			if(!ename || ename == ename_r || (ename->unicode && !printops.use_unicode_signs) || ename->plural || !can_display_unicode_string_function(ename->name.c_str(), (void*) expression)) {
 				ename = NULL;
 			}
 		}
@@ -8292,7 +8300,7 @@ gboolean on_completion_match_selected(GtkEntryCompletion *entrycompletion, GtkTr
 	}
 	for(size_t name_i = 1; name_i <= item->countNames() && !ename; name_i++) {
 		ename = &item->getName(name_i);
-		if(!ename || ename == ename_r || (!ename->plural && can_display_unicode_string_function(ename->name.c_str(), (void*) expression))) {
+		if(!ename || ename == ename_r || (!(ename->unicode && !printops.use_unicode_signs) && !ename->plural && can_display_unicode_string_function(ename->name.c_str(), (void*) expression))) {
 			ename = NULL;
 		}
 		if(ename && strlen(gstr2) <= ename->name.length()) {
@@ -8307,9 +8315,9 @@ gboolean on_completion_match_selected(GtkEntryCompletion *entrycompletion, GtkTr
 	if(!ename) ename = ename_r;
 	g_free(gstr2);
 	if(!ename) return TRUE;
-	gtk_editable_delete_text(GTK_EDITABLE(expression), current_object_start, current_object_end);
-	gint pos = current_object_start;
 	block_completion();
+	gtk_editable_delete_text(GTK_EDITABLE(expression), current_object_start, current_object_end);
+	gint pos = current_object_start;	
 	if(item->type() == TYPE_FUNCTION) {		
 		gchar *gstr = gtk_editable_get_chars(GTK_EDITABLE(expression), pos, pos + 1);
 		if(strlen(gstr) > 0 && gstr[0] == '(') {
@@ -8338,6 +8346,9 @@ gboolean completion_match_func(GtkEntryCompletion *entrycompletion, const gchar 
 	const ExpressionName *ename;
 	gtk_tree_model_get(GTK_TREE_MODEL(completion_store), iter, 2, &item, -1);
 	if(!item) return FALSE;	
+	if(!evalops.parse_options.functions_enabled && item->type() == TYPE_FUNCTION) return FALSE;
+	if(!evalops.parse_options.variables_enabled && item->type() == TYPE_VARIABLE) return FALSE;
+	if(!evalops.parse_options.units_enabled && item->type() == TYPE_UNIT) return FALSE;
 	gstr2 = gtk_editable_get_chars(GTK_EDITABLE(expression), current_object_start, current_object_end);
 	for(size_t name_i = 1; name_i <= item->countNames() && !b_match; name_i++) {
 		ename = &item->getName(name_i);
@@ -8347,7 +8358,7 @@ gboolean completion_match_func(GtkEntryCompletion *entrycompletion, const gchar 
 				if(ename->name[i] != gstr2[i]) {
 					b_match = FALSE;
 					break;
-				}
+				}				
 			}
 		}
 	}
@@ -8433,6 +8444,15 @@ void on_preferences_checkbutton_display_expression_status_toggled(GtkToggleButto
 	} else {
 		display_expression_status = false;
 		set_status_text("");
+	}
+}
+void on_preferences_checkbutton_enable_completion_toggled(GtkToggleButton *w, gpointer user_data) {
+	if(gtk_toggle_button_get_active(w)) {
+		enable_completion = true;
+		update_completion();
+	} else {
+		enable_completion = false;
+		update_completion();
 	}
 }
 void on_preferences_checkbutton_custom_result_font_toggled(GtkToggleButton *w, gpointer user_data) {
@@ -9052,32 +9072,6 @@ void on_button_factorial_clicked(GtkButton *w, gpointer user_data) {
 */
 void on_button_store_clicked(GtkButton *w, gpointer user_data) {
 	add_as_variable();
-}
-
-/*
-	expression menu button clicked -- popup or hide the menu
-*/
-void
-on_togglebutton_expression_toggled                      (GtkToggleButton       *button,
-                                        gpointer         user_data) {
-	if(gtk_toggle_button_get_active(button)) {
-		gtk_menu_popup(GTK_MENU(gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_expression")))), NULL, NULL, menu_e_posfunc, NULL, 0, 0);
-	} else {
-		gtk_menu_popdown(GTK_MENU(gtk_menu_item_get_submenu (GTK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_expression")))));
-	}
-}
-
-/*
-	result menu button clicked -- popup or hide the menu
-*/
-void
-on_togglebutton_result_toggled                      (GtkToggleButton       *button,
-                                        gpointer         user_data) {
-	if(gtk_toggle_button_get_active(button)) {
-		gtk_menu_popup(GTK_MENU(gtk_menu_item_get_submenu(GTK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_result")))), NULL, NULL, menu_r_posfunc, NULL, 0, 0);
-	} else {
-		gtk_menu_popdown(GTK_MENU(gtk_menu_item_get_submenu(GTK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_result")))));
-	}
 }
 
 /*
