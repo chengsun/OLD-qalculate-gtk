@@ -63,6 +63,7 @@ gboolean on_check_expression_position_timeout(gpointer data);
 void update_functions_tree();
 void update_variables_tree();
 void update_units_tree();
+void update_unit_selector_tree();
 void update_datasets_tree();
 void on_tFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tFunctionCategories_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
@@ -73,8 +74,11 @@ void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpoin
 void on_tDataObjects_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tDatasets_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 void on_tDataProperties_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
+void on_tUnitSelector_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
+void on_tUnitSelectorCategories_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 
 void execute_expression(bool force = true);
+void setResult(Prefix *prefix = NULL, bool update_history = true, bool update_parse = false, bool force = false);
 
 void insert_text(const gchar *name);
 

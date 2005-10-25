@@ -41,6 +41,7 @@ Variable *selected_variable;
 string result_text, parsed_text;
 GtkWidget *units_window;
 string selected_unit_category;
+string selected_unit_selector_category;
 Unit *selected_unit, *selected_to_unit;
 bool load_global_defs, fetch_exchange_rates_at_startup, first_time, first_qalculate_run;
 GtkWidget *omToUnit_menu;
@@ -236,6 +237,8 @@ int main (int argc, char **argv) {
 	
 	if(!calc_arg.empty()) {
 		execute_expression();
+	} else {
+		setResult(NULL, false, false, false);
 	}
 
 	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", "accelmap", NULL);

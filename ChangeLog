@@ -1,3 +1,12 @@
+2005-10-25 Niklas Knutsson  <nq@altern.org>
+
+	* Hide value entry, exact button and names details in variable edit dialog in store mode
+	* Focus name entry in variable edit dialog
+	* Add unit selector to convert to unit dialog
+	* Focus name entries
+	* Use variables edit dialog also for storing matrix/vector results
+	* Split edit data set and edit function dialogs in tabs
+
 2005-10-24 Niklas Knutsson  <nq@altern.org>
 
 	* Add accelerators Ctrl+K and Ctrl+H for keypad and history expanders respectively

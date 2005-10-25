@@ -50,6 +50,11 @@ GtkWidget *tUnits;
 GtkListStore *tUnits_store;
 GtkTreeStore *tUnitCategories_store;
 
+GtkWidget *tUnitSelectorCategories;
+GtkWidget *tUnitSelector;
+GtkListStore *tUnitSelector_store;
+GtkTreeStore *tUnitSelectorCategories_store;
+
 GtkWidget *tDatasets;
 GtkWidget *tDataObjects;
 GtkListStore *tDatasets_store;
@@ -1457,19 +1462,50 @@ GtkWidget* get_precision_dialog (void) {
 	return glade_xml_get_widget (precision_glade, "precision_dialog");
 }
 GtkWidget* get_unit_dialog (void) {
+
 	if(!unit_glade) {
 	
 		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "unit.glade", NULL);
 		unit_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(unit_glade != NULL);
 		g_free(gstr);
-	
+		
 		g_assert (glade_xml_get_widget (unit_glade, "unit_dialog") != NULL);
 		
+		tUnitSelectorCategories = glade_xml_get_widget (unit_glade, "unit_dialog_treeview_category");
+		tUnitSelector		= glade_xml_get_widget (unit_glade, "unit_dialog_treeview_unit");
+	
+		tUnitSelector_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
+		gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(tUnitSelector_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
+		gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(tUnitSelector_store), 0, GTK_SORT_ASCENDING);
+		gtk_tree_view_set_model(GTK_TREE_VIEW(tUnitSelector), GTK_TREE_MODEL(tUnitSelector_store));
+		GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnitSelector));
+		gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
+		GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
+		GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes(_("Name"), renderer, "text", 0, NULL);
+		gtk_tree_view_column_set_sort_column_id(column, 0);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(tUnitSelector), column);
+		g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tUnitSelector_selection_changed), NULL);
+		gtk_tree_view_set_enable_search(GTK_TREE_VIEW(tUnitSelector), TRUE);
+
+		tUnitSelectorCategories_store = gtk_tree_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+		gtk_tree_view_set_model(GTK_TREE_VIEW(tUnitSelectorCategories), GTK_TREE_MODEL(tUnitSelectorCategories_store));
+		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tUnitSelectorCategories));
+		gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes(_("Category"), renderer, "text", 0, NULL);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(tUnitSelectorCategories), column);
+		g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_tUnitSelectorCategories_selection_changed), NULL);
+		gtk_tree_view_column_set_sort_column_id(column, 0);
+		gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(tUnitSelectorCategories_store), 0, string_sort_func, GINT_TO_POINTER(0), NULL);
+		gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(tUnitSelectorCategories_store), 0, GTK_SORT_ASCENDING);
+		
 		glade_xml_signal_autoconnect(unit_glade);
+		
+		update_unit_selector_tree();
 	
 	}
-
+	gtk_widget_grab_focus(glade_xml_get_widget (unit_glade, "unit_dialog_entry_unit"));
 	return glade_xml_get_widget (unit_glade, "unit_dialog");
 }
 GtkWidget* get_periodic_dialog (void) {
