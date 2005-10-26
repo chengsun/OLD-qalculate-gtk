@@ -498,24 +498,16 @@ create_main_window (void)
 	}
 	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_meta_mode_delete"), modes.size() > 2);
 	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_result_popup_meta_mode_delete"), modes.size() > 2);
+	
+	if(show_history || show_buttons) gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), 1, win_height);
+	else gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), win_width, win_height);
 
 	gtk_widget_show (glade_xml_get_widget (main_glade, "main_window"));
 	
-	MathStructure mtest;
-	mtest.setType(STRUCT_DIVISION);
-	mtest.addChild(1);
-	mtest.addChild(1);
-	mtest.format();
-	PrintOptions po;
-	po.can_display_unicode_string_function = &can_display_unicode_string_function;
-	po.can_display_unicode_string_arg = (void*) glade_xml_get_widget (main_glade, "resultview");
-	GdkPixmap *tmp_pixmap = draw_structure(mtest, po);
-	gint w, h;
-	gdk_drawable_get_size(GDK_DRAWABLE(tmp_pixmap), &w, &h);
-	h += 4;
-	g_object_unref(tmp_pixmap);
-	gtk_widget_set_size_request(glade_xml_get_widget (main_glade, "scrolled_result"), -1, h);
-	gtk_window_resize (GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), win_width, win_height);
+	set_result_size_request();
+	
+	if(show_history || show_buttons) gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), 1, 1);
+	else gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), win_width, 1);
 
 	gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), icon_pixbuf);
 

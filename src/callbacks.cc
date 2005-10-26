@@ -211,6 +211,23 @@ bool can_display_unicode_string_function(const char *str, void *w) {
 	return get_least_coverage(str, (GtkWidget*) w) >= PANGO_COVERAGE_APPROXIMATE;
 }
 
+void set_result_size_request() {
+	MathStructure mtest;
+	mtest.setType(STRUCT_DIVISION);
+	mtest.addChild(1);
+	mtest.addChild(1);
+	mtest.format();
+	PrintOptions po;
+	po.can_display_unicode_string_function = &can_display_unicode_string_function;
+	po.can_display_unicode_string_arg = (void*) resultview;
+	GdkPixmap *tmp_pixmap = draw_structure(mtest, po);
+	gint w, h;
+	gdk_drawable_get_size(GDK_DRAWABLE(tmp_pixmap), &w, &h);
+	h += 4;
+	g_object_unref(tmp_pixmap);
+	gtk_widget_set_size_request(glade_xml_get_widget (main_glade, "scrolled_result"), -1, h);
+}
+
 void set_unicode_buttons() {
 	if(printops.use_unicode_signs) {
 		if(can_display_unicode_string_function(SIGN_MINUS, (void*) glade_xml_get_widget (main_glade, "button_sub"))) gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget (main_glade, "button_sub")), SIGN_MINUS);
@@ -1994,7 +2011,7 @@ void on_tUnitSelector_selection_changed(GtkTreeSelection *treeselection, gpointe
 		gtk_tree_model_get(model, &iter, 1, &u, -1);
 		for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
 			if(CALCULATOR->units[i] == u) {
-				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unit_glade, "unit_dialog_entry_unit")), u->print(true, true, true, &can_display_unicode_string_function, (void*) glade_xml_get_widget (unit_glade, "unit_dialog_entry_unit")).c_str());
+				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unit_glade, "unit_dialog_entry_unit")), u->print(false, printops.abbreviate_names, printops.use_unicode_signs, &can_display_unicode_string_function, (void*) glade_xml_get_widget (unit_glade, "unit_dialog_entry_unit")).c_str());
 				gtk_tree_selection_unselect_all(treeselection);
 				gtk_widget_grab_focus(glade_xml_get_widget (unit_glade, "unit_dialog_entry_unit"));
 				if(!block_unit_selector_convert) gtk_button_clicked(GTK_BUTTON(glade_xml_get_widget (unit_glade, "unit_dialog_button_apply")));
@@ -7532,20 +7549,13 @@ void show_tabs(bool do_show) {
 	gint w, h;
 	gtk_window_get_size(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), &w, &h);
 	if(do_show) {
-		h += tabs->allocation.height + 6;
 		gtk_widget_show(tabs);
-		gint w2, h2;
-		gtk_widget_get_size_request(glade_xml_get_widget(main_glade, "main_vbox"), &w2, &h2);
-		if(w2 > 0) {
-			h2 += tabs->allocation.height + 6;
-			w2 = tabs->allocation.width + 24;
-			gtk_widget_set_size_request(glade_xml_get_widget(main_glade, "main_vbox"), w2, h2);
-		}
+		h += tabs->allocation.height + 6;		
 		gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), w, h);
 	} else {
 		h -= tabs->allocation.height + 6;
 		gtk_widget_hide(tabs);
-		gtk_widget_set_size_request(glade_xml_get_widget(main_glade, "main_vbox"), 0, glade_xml_get_widget(main_glade, "button_convert")->allocation.height * 3 + 8 + expander_keypad->allocation.height + 24);
+		set_result_size_request();
 		gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), w, h);
 	}
 }
@@ -8627,12 +8637,11 @@ void on_preferences_checkbutton_custom_result_font_toggled(GtkToggleButton *w, g
 		PangoFontDescription *font = pango_font_description_from_string(custom_result_font.c_str());
 		gtk_widget_modify_font(resultview, font);
 		pango_font_description_free(font);
+		set_result_size_request();
 		result_display_updated();
 	} else {
-		PangoFontDescription *font = pango_font_description_from_string("");
-//		pango_font_description_set_weight(font, PANGO_WEIGHT_BOLD);		
-		gtk_widget_modify_font(resultview, font);
-		pango_font_description_free(font);
+		gtk_widget_modify_font(resultview, NULL);
+		set_result_size_request();
 		result_display_updated();
 	}
 }
@@ -8644,9 +8653,7 @@ void on_preferences_checkbutton_custom_expression_font_toggled(GtkToggleButton *
 		gtk_widget_modify_font(expression, font);
 		pango_font_description_free(font);
 	} else {
-		PangoFontDescription *font = pango_font_description_from_string("");	
-		gtk_widget_modify_font(expression, font);
-		pango_font_description_free(font);
+		gtk_widget_modify_font(expression, NULL);
 	}
 }
 void on_preferences_checkbutton_custom_status_font_toggled(GtkToggleButton *w, gpointer user_data) {
@@ -8658,10 +8665,8 @@ void on_preferences_checkbutton_custom_status_font_toggled(GtkToggleButton *w, g
 		gtk_widget_modify_font(statuslabel_r, font);
 		pango_font_description_free(font);
 	} else {
-		PangoFontDescription *font = pango_font_description_from_string("");
-		gtk_widget_modify_font(statuslabel_l, font);
-		gtk_widget_modify_font(statuslabel_r, font);
-		pango_font_description_free(font);
+		gtk_widget_modify_font(statuslabel_l, NULL);
+		gtk_widget_modify_font(statuslabel_r, NULL);
 	}
 }
 void on_preferences_radiobutton_dot_toggled(GtkToggleButton *w, gpointer user_data) {
@@ -8709,6 +8714,7 @@ void on_preferences_button_result_font_clicked(GtkButton *w, gpointer user_data)
 		PangoFontDescription *font = pango_font_description_from_string(custom_result_font.c_str());
 		gtk_widget_modify_font(resultview, font);
 		pango_font_description_free(font);
+		set_result_size_request();
 		result_display_updated();
 	}
 	gtk_widget_destroy(d);

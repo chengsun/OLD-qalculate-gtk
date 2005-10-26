@@ -1,3 +1,10 @@
+2005-10-26 Niklas Knutsson  <nq@altern.org>
+
+	* A better solution (set size request for result display again) for resizing window when
+	  keypad or history are shown/hidden.
+	* Update Swedish translation
+	* Reduce result display size on startup
+
 2005-10-25 Niklas Knutsson  <nq@altern.org>
 
 	* Hide value entry, exact button and names details in variable edit dialog in store mode

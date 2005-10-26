@@ -40,6 +40,8 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_opti
 
 void update_status_text();
 
+void set_result_size_request();
+
 void create_umenu(void);
 void create_umenu2(void);
 void create_vmenu(void);
