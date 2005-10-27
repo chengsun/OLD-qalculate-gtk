@@ -167,6 +167,9 @@ vector<mode_struct> modes;
 vector<GtkWidget*> mode_items;
 vector<GtkWidget*> popup_result_mode_items;
 
+Sgi::hash_map<int, GdkPixbuf*> left_par_pix;
+Sgi::hash_map<int, GdkPixbuf*> right_par_pix;
+
 #define TEXT_TAGS			"<span size=\"xx-large\">"
 #define TEXT_TAGS_END			"</span>"
 #define TEXT_TAGS_SMALL			"<span size=\"large\">"
@@ -174,8 +177,25 @@ vector<GtkWidget*> popup_result_mode_items;
 #define TEXT_TAGS_XSMALL		"<span size=\"medium\">"
 #define TEXT_TAGS_XSMALL_END		"</span>"
 
-#define MARKUP_STRING(str, text)	if(ips.power_depth > 0) {str = TEXT_TAGS_SMALL;} else {str = TEXT_TAGS;} str += text; if(ips.power_depth > 0) {str += TEXT_TAGS_SMALL_END;} else {str += TEXT_TAGS_END;}			
-#define CALCULATE_SPACE_W		gint space_w, space_h; PangoLayout *layout_space = gtk_widget_create_pango_layout(resultview, NULL); if(ips.power_depth > 0) {pango_layout_set_markup(layout_space, TEXT_TAGS_SMALL " " TEXT_TAGS_SMALL_END, -1);} else {pango_layout_set_markup(layout_space, TEXT_TAGS " " TEXT_TAGS_END, -1);} pango_layout_get_pixel_size(layout_space, &space_w, &space_h); g_object_unref(layout_space);
+#define TTB(str)			if(scaledown <= 0) {str += "<span size=\"xx-large\">";} else if(scaledown == 1) {str += "<span size=\"x-large\">";} else if(scaledown == 2) {str += "<span size=\"large\">";} else {str += "<span size=\"medium\">";}
+#define TTB_SMALL(str)			if(scaledown <= 0) {str += "<span size=\"large\">";} else if(scaledown == 1) {str += "<span size=\"medium\">";} else if(scaledown == 2) {str += "<span size=\"small\">";} else {str += "<span size=\"x-small\">";}
+#define TTB_XSMALL(str)			if(scaledown <= 0) {str += "<span size=\"medium\">";} else if(scaledown == 1) {str += "<span size=\"small\">";} else {str += "<span size=\"x-small\">";}
+#define TTBP(str)			if(ips.power_depth > 0) {TTB_SMALL(str);} else {TTB(str);}
+#define TTBP_SMALL(str)			if(ips.power_depth > 0) {TTB_XSMALL(str);} else {TTB_SMALL(str);}
+#define TTE(str)			str += "</span>";
+#define TT(str, x)			{if(scaledown <= 0) {str += "<span size=\"xx-large\">";} else if(scaledown == 1) {str += "<span size=\"x-large\">";} else if(scaledown == 2) {str += "<span size=\"large\">";} else {str += "<span size=\"medium\">";} str += x; str += "</span>";}
+#define TT_SMALL(str, x)		{if(scaledown <= 0) {str += "<span size=\"large\">";} else if(scaledown == 1) {str += "<span size=\"medium\">";} else if(scaledown == 2) {str += "<span size=\"small\">";} else {str += "<span size=\"x-small\">";} str += x; str += "</span>";}
+#define TT_XSMALL(str, x)		{if(scaledown <= 0) {str += "<span size=\"medium\">";} else if(scaledown == 1) {str += "<span size=\"small\">";} else {str += "<span size=\"x-small\">";} str += x; str += "</span>";}
+#define TTP(str, x)			if(ips.power_depth > 0) {TT_SMALL(str, x);} else {TT(str, x);}
+#define TTP_SMALL(str, x)		if(ips.power_depth > 0) {TT_XSMALL(str, x);} else {TT_SMALL(str, x);}
+
+#define PANGO_TT(layout, x)		if(scaledown <= 0) {pango_layout_set_markup(layout, "<span size=\"xx-large\">" x "</span>", -1);} else if(scaledown == 1) {pango_layout_set_markup(layout, "<span size=\"x-large\">" x "</span>", -1);} else if(scaledown == 2) {pango_layout_set_markup(layout, "<span size=\"large\">" x "</span>", -1);} else {pango_layout_set_markup(layout, "<span size=\"medium\">" x "</span>", -1);}
+#define PANGO_TT_SMALL(layout, x)	if(scaledown <= 0) {pango_layout_set_markup(layout, "<span size=\"large\">" x "</span>", -1);} else if(scaledown == 1) {pango_layout_set_markup(layout, "<span size=\"medium\">" x "</span>", -1);} else if(scaledown == 1) {pango_layout_set_markup(layout, "<span size=\"medium\">" x "</span>", -1);} else {pango_layout_set_markup(layout, "<span size=\"x-small\">" x "</span>", -1);}
+#define PANGO_TT_XSMALL(layout, x)	if(scaledown <= 0) {pango_layout_set_markup(layout, "<span size=\"medium\">" x "</span>", -1);} else if(scaledown == 1) {pango_layout_set_markup(layout, "<span size=\"small\">" x "</span>", -1);} else {pango_layout_set_markup(layout, "<span size=\"x-small\">" x "</span>", -1);}
+#define PANGO_TTP(layout, x)		if(ips.power_depth > 0) {PANGO_TT_SMALL(layout, x);} else {PANGO_TT(layout, x);}
+#define PANGO_TTP_SMALL(layout, x)	if(ips.power_depth > 0) {PANGO_TT_XSMALL(layout, x);} else {PANGO_TT_SMALL(layout, x);}
+
+#define CALCULATE_SPACE_W		gint space_w, space_h; PangoLayout *layout_space = gtk_widget_create_pango_layout(resultview, NULL); PANGO_TTP(layout_space, " "); pango_layout_get_pixel_size(layout_space, &space_w, &space_h); g_object_unref(layout_space);
 
 PangoCoverageLevel get_least_coverage(const gchar *gstr, PangoCoverage *coverage) {
 
@@ -212,10 +232,13 @@ bool can_display_unicode_string_function(const char *str, void *w) {
 }
 
 void set_result_size_request() {
-	MathStructure mtest;
+	MathStructure mtest, mtest2;
 	mtest.setType(STRUCT_DIVISION);
 	mtest.addChild(1);
-	mtest.addChild(1);
+	mtest2.setType(STRUCT_POWER);
+	mtest2.addChild(1);
+	mtest2.addChild(1);
+	mtest.addChild(mtest2);
 	mtest.format();
 	PrintOptions po;
 	po.can_display_unicode_string_function = &can_display_unicode_string_function;
@@ -223,7 +246,7 @@ void set_result_size_request() {
 	GdkPixmap *tmp_pixmap = draw_structure(mtest, po);
 	gint w, h;
 	gdk_drawable_get_size(GDK_DRAWABLE(tmp_pixmap), &w, &h);
-	h += 4;
+	h += 8;
 	g_object_unref(tmp_pixmap);
 	gtk_widget_set_size_request(glade_xml_get_widget (main_glade, "scrolled_result"), -1, h);
 }
@@ -763,6 +786,9 @@ void display_parse_status() {
 			parsed_expression += cu.print(false, false, true, &can_display_unicode_string_function, (void*) statuslabel_l);
 		}
 		parsed_had_errors = had_errors; parsed_had_warnings = had_warnings;
+		gsub("&", "&amp;", parsed_expression);
+		gsub(">", "&gt;", parsed_expression);
+		gsub("<", "&lt;", parsed_expression);
 		set_status_text(parsed_expression.c_str(), true, had_errors, had_warnings);
 		expression_has_changed2 = false;
 	} else {
@@ -2967,10 +2993,51 @@ string get_value_string(const MathStructure &mstruct_, bool rlabel = false, Pref
 	return str;
 }
 
+
 void draw_background(GdkPixmap *pixmap, gint w, gint h) {
 	gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);
 }
-GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct ips, gint *point_central) {
+
+GdkPixbuf *get_left_parenthesis(gint arc_w, gint arc_h, int scaledown) {
+	if(left_par_pix.count(arc_w * 1000 + arc_h) > 0) {
+		return left_par_pix[arc_w * 1000 + arc_h];
+	}
+	gint par_h = 0, par_w = 0;
+	PangoLayout *layout_parl = gtk_widget_create_pango_layout(resultview, NULL);
+	pango_layout_set_markup(layout_parl, "<span font_desc=\"100\">(</span>", -1);
+	pango_layout_get_pixel_size(layout_parl, &par_w, &par_h);
+	GdkPixmap *pixmap_tmp = gdk_pixmap_new(resultview->window, par_w, par_h, -1);
+	draw_background(pixmap_tmp, par_w, par_h);
+	gdk_draw_layout(GDK_DRAWABLE(pixmap_tmp), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 0, 0, layout_parl);	
+	GdkPixbuf *pixbuf_tmp = gdk_pixbuf_get_from_drawable(NULL, pixmap_tmp, NULL, 0, 0, 0, 0, -1, -1);
+	GdkPixbuf *pixbuf_parl = gdk_pixbuf_scale_simple(pixbuf_tmp, arc_w, arc_h, GDK_INTERP_HYPER);
+	gdk_pixmap_unref(pixmap_tmp);
+	gdk_pixbuf_unref(pixbuf_tmp);
+	g_object_unref(layout_parl);
+	left_par_pix[arc_w * 1000 + arc_h] = pixbuf_parl;
+	return pixbuf_parl;
+}
+GdkPixbuf *get_right_parenthesis(gint arc_w, gint arc_h, int scaledown) {
+	if(right_par_pix.count(arc_w * 1000 + arc_h) > 0) {
+		return right_par_pix[arc_w * 1000 + arc_h];
+	}
+	gint par_h = 0, par_w = 0;
+	PangoLayout *layout_parl = gtk_widget_create_pango_layout(resultview, NULL);
+	pango_layout_set_markup(layout_parl, "<span font_desc=\"100\">)</span>", -1);
+	pango_layout_get_pixel_size(layout_parl, &par_w, &par_h);
+	GdkPixmap *pixmap_tmp = gdk_pixmap_new(resultview->window, par_w, par_h, -1);
+	draw_background(pixmap_tmp, par_w, par_h);
+	gdk_draw_layout(GDK_DRAWABLE(pixmap_tmp), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 0, 0, layout_parl);	
+	GdkPixbuf *pixbuf_tmp = gdk_pixbuf_get_from_drawable(NULL, pixmap_tmp, NULL, 0, 0, 0, 0, -1, -1);
+	GdkPixbuf *pixbuf_parl = gdk_pixbuf_scale_simple(pixbuf_tmp, arc_w, arc_h, GDK_INTERP_HYPER);
+	gdk_pixmap_unref(pixmap_tmp);
+	gdk_pixbuf_unref(pixbuf_tmp);
+	g_object_unref(layout_parl);
+	right_par_pix[arc_w * 1000 + arc_h] = pixbuf_parl;
+	return pixbuf_parl;
+}
+
+GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct ips, gint *point_central, int scaledown) {
 
 	if(ips.depth == 0 && po.is_approximate) *po.is_approximate = false;
 
@@ -2989,45 +3056,24 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			bool exp_minus;
 			ips_n.exp = &exp;
 			ips_n.exp_minus = &exp_minus;
-			if(ips.power_depth > 0) {
-				str = TEXT_TAGS_SMALL;
-			} else {
-				str = TEXT_TAGS;
-			}
+			TTBP(str)
 			str += m.number().print(po, ips_n);
 			if(!exp.empty()) {
-				if(ips.power_depth > 0) {
-					if(po.lower_case_e) str += TEXT_TAGS_SMALL "e" TEXT_TAGS_SMALL_END;
-					else str += TEXT_TAGS_XSMALL "E" TEXT_TAGS_XSMALL_END;					
-				} else {
-					if(po.lower_case_e) str += TEXT_TAGS "e" TEXT_TAGS_END;
-					else str += TEXT_TAGS_SMALL "E" TEXT_TAGS_SMALL_END;					
-				}
+				if(po.lower_case_e) {TTP(str, "e");}
+				else {TTP_SMALL(str, "E");}
 				if(exp_minus) {
 					str += "-";
 				}
 				str += exp;
 			}
 			if(po.base != BASE_DECIMAL && po.base != BASE_HEXADECIMAL && po.base > 0 && po.base <= 36) {
-				if(ips.power_depth > 0) {
-					str += TEXT_TAGS_XSMALL;
-				} else {
-					str += TEXT_TAGS_SMALL;
-				}
+				TTBP_SMALL(str)
 				str += "<sub>";
 				str += i2s(po.base);
 				str += "</sub>";
-				if(ips.power_depth > 0) {
-					str += TEXT_TAGS_XSMALL_END;
-				} else {
-					str += TEXT_TAGS_SMALL_END;
-				}
+				TTE(str)
 			}
-			if(ips.power_depth > 0) {
-				str += TEXT_TAGS_SMALL_END;
-			} else {
-				str += TEXT_TAGS_END;
-			}
+			TTE(str)
 			pango_layout_set_markup(layout, str.c_str(), -1);
 			PangoRectangle rect;
 			pango_layout_get_pixel_size(layout, &w, &h);
@@ -3044,17 +3090,11 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 		case STRUCT_SYMBOLIC: {
 			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
 			string str;
-			if(ips.power_depth > 0) {
-				str = "<i>" TEXT_TAGS_SMALL;
-			} else {
-				str = "<i>" TEXT_TAGS;
-			}
+			str = "<i>";
+			TTBP(str)
 			str += m.symbol();
-			if(ips.power_depth > 0) {
-				str += TEXT_TAGS_SMALL_END "</i>";
-			} else {
-				str += TEXT_TAGS_END "</i>";
-			}
+			TTE(str)
+			str += "</i>";
 			pango_layout_set_markup(layout, str.c_str(), -1);
 			PangoRectangle rect;
 			pango_layout_get_pixel_size(layout, &w, &h);
@@ -3080,35 +3120,23 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			
 			CALCULATE_SPACE_W
 			PangoLayout *layout_plus = gtk_widget_create_pango_layout(resultview, NULL);
-			if(ips.power_depth > 0) {
-				pango_layout_set_markup(layout_plus, TEXT_TAGS_SMALL "+" TEXT_TAGS_SMALL_END, -1);
-			} else {
-				pango_layout_set_markup(layout_plus, TEXT_TAGS "+" TEXT_TAGS_END, -1);
-			}
+			PANGO_TTP(layout_plus, "+");
 			pango_layout_get_pixel_size(layout_plus, &plus_w, &plus_h);
 			PangoLayout *layout_minus = gtk_widget_create_pango_layout(resultview, NULL);
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
-				if(ips.power_depth > 0) {
-					pango_layout_set_markup(layout_minus, TEXT_TAGS_SMALL SIGN_MINUS TEXT_TAGS_SMALL_END, -1);
-				} else {
-					pango_layout_set_markup(layout_minus, TEXT_TAGS SIGN_MINUS TEXT_TAGS_END, -1);
-				}			
+				PANGO_TTP(layout_minus, SIGN_MINUS);
 			} else {
-				if(ips.power_depth > 0) {
-					pango_layout_set_markup(layout_minus, TEXT_TAGS_SMALL "-" TEXT_TAGS_SMALL_END, -1);
-				} else {
-					pango_layout_set_markup(layout_minus, TEXT_TAGS "-" TEXT_TAGS_END, -1);
-				}			
+				PANGO_TTP(layout_minus, "-");
 			}
 			pango_layout_get_pixel_size(layout_minus, &minus_w, &minus_h);
 			for(size_t i = 0; i < m.size(); i++) {
 				hetmp = 0;		
 				if(m[i].type() == STRUCT_NEGATE && i > 0) {
 					ips_n.wrap = m[i][0].needsParenthesis(po, ips_n, m, i + 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
-					pixmap_terms.push_back(draw_structure(m[i][0], po, ips_n, &hetmp));
+					pixmap_terms.push_back(draw_structure(m[i][0], po, ips_n, &hetmp, scaledown));
 				} else {
 					ips_n.wrap = m[i].needsParenthesis(po, ips_n, m, i + 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
-					pixmap_terms.push_back(draw_structure(m[i], po, ips_n, &hetmp));
+					pixmap_terms.push_back(draw_structure(m[i], po, ips_n, &hetmp, scaledown));
 				}
 				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_terms[i]), &wtmp, &htmp);
 				hpt.push_back(htmp);
@@ -3175,17 +3203,9 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			PangoLayout *layout_minus = gtk_widget_create_pango_layout(resultview, NULL);
 			
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
-				if(ips.power_depth > 0) {
-					pango_layout_set_markup(layout_minus, TEXT_TAGS_SMALL SIGN_MINUS TEXT_TAGS_SMALL_END, -1);
-				} else {
-					pango_layout_set_markup(layout_minus, TEXT_TAGS SIGN_MINUS TEXT_TAGS_END, -1);
-				}			
+				PANGO_TTP(layout_minus, SIGN_MINUS);
 			} else {
-				if(ips.power_depth > 0) {
-					pango_layout_set_markup(layout_minus, TEXT_TAGS_SMALL "-" TEXT_TAGS_SMALL_END, -1);
-				} else {
-					pango_layout_set_markup(layout_minus, TEXT_TAGS "-" TEXT_TAGS_END, -1);
-				}			
+				PANGO_TTP(layout_minus, "-");
 			}
 			pango_layout_get_pixel_size(layout_minus, &minus_w, &minus_h);
 
@@ -3194,7 +3214,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			dh = minus_h / 2;
 			
 			ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
-			GdkPixmap *pixmap_arg = draw_structure(m[0], po, ips_n, &ctmp);
+			GdkPixmap *pixmap_arg = draw_structure(m[0], po, ips_n, &ctmp, scaledown);
 			gdk_drawable_get_size(GDK_DRAWABLE(pixmap_arg), &wtmp, &htmp);
 			hpa = htmp;
 			cpa = ctmp;
@@ -3235,30 +3255,16 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			CALCULATE_SPACE_W
 			PangoLayout *layout_mul = gtk_widget_create_pango_layout(resultview, NULL);
 			string str;
-			if(ips.power_depth > 0) {
-				if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) {
-					str = TEXT_TAGS_SMALL SIGN_MULTIDOT TEXT_TAGS_SMALL_END;
-				} else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIBULLET, po.can_display_unicode_string_arg))) {
-					str = TEXT_TAGS_SMALL SIGN_MULTIBULLET TEXT_TAGS_SMALL_END;
-				} else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_SMALLCIRCLE, po.can_display_unicode_string_arg))) {
-					str = TEXT_TAGS_SMALL SIGN_SMALLCIRCLE TEXT_TAGS_SMALL_END;
-				} else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) {
-					str = TEXT_TAGS_XSMALL SIGN_MULTIPLICATION TEXT_TAGS_XSMALL_END;
-				} else {
-					str = TEXT_TAGS_SMALL "*" TEXT_TAGS_SMALL_END;
-				}
+			if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) {
+				TTP(str, SIGN_MULTIDOT);
+			} else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIBULLET, po.can_display_unicode_string_arg))) {
+				TTP(str, SIGN_MULTIBULLET);
+			} else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_SMALLCIRCLE, po.can_display_unicode_string_arg))) {
+				TTP(str, SIGN_SMALLCIRCLE);
+			} else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) {
+				TTP_SMALL(str, SIGN_MULTIPLICATION);
 			} else {
-				if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) {
-					str = TEXT_TAGS SIGN_MULTIDOT TEXT_TAGS_END;
-				} else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIBULLET, po.can_display_unicode_string_arg))) {
-					str = TEXT_TAGS SIGN_MULTIBULLET TEXT_TAGS_END;
-				} else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_SMALLCIRCLE, po.can_display_unicode_string_arg))) {
-					str = TEXT_TAGS SIGN_SMALLCIRCLE TEXT_TAGS_END;
-				} else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) {
-					str = TEXT_TAGS_SMALL SIGN_MULTIPLICATION TEXT_TAGS_SMALL_END;
-				} else {
-					str = TEXT_TAGS "*" TEXT_TAGS_END;
-				}
+				TTP(str, "*");
 			}
 			pango_layout_set_markup(layout_mul, str.c_str(), -1);
 			pango_layout_get_pixel_size(layout_mul, &mul_w, &mul_h);
@@ -3267,7 +3273,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			for(size_t i = 0; i < m.size(); i++) {
 				hetmp = 0;		
 				ips_n.wrap = m[i].needsParenthesis(po, ips_n, m, i + 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
-				pixmap_terms.push_back(draw_structure(m[i], po, ips_n, &hetmp));
+				pixmap_terms.push_back(draw_structure(m[i], po, ips_n, &hetmp, scaledown));
 				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_terms[i]), &wtmp, &htmp);
 				hpt.push_back(htmp);
 				cpt.push_back(hetmp);
@@ -3397,21 +3403,21 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			GdkPixmap *num_pixmap = NULL, *den_pixmap = NULL, *pixmap_one = NULL;
 			if(m.type() == STRUCT_DIVISION) {
 				ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
-				num_pixmap = draw_structure(m[0], po, ips_n, &num_dh);
+				num_pixmap = draw_structure(m[0], po, ips_n, &num_dh, scaledown);
 				gdk_drawable_get_size(GDK_DRAWABLE(num_pixmap), &num_w, &h);
 				num_uh = h - num_dh;
 			} else {
 				MathStructure onestruct(1, 1);
-				pixmap_one = draw_structure(onestruct, po, ips_n, NULL);	
+				pixmap_one = draw_structure(onestruct, po, ips_n, NULL, scaledown);	
 				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_one), &one_w, &one_h);
 				num_w = one_w; num_dh = one_h / 2; num_uh = one_h - num_dh;
 			}
 			if(m.type() == STRUCT_DIVISION) {
 				ips_n.wrap = m[1].needsParenthesis(po, ips_n, m, 2, ips.division_depth > 1 || ips.power_depth > 0, ips.power_depth > 0);
-				den_pixmap = draw_structure(m[1], po, ips_n, &den_dh);
+				den_pixmap = draw_structure(m[1], po, ips_n, &den_dh, scaledown);
 			} else {
 				ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 2, ips.division_depth > 1 || ips.power_depth > 0, ips.power_depth > 0);
-				den_pixmap = draw_structure(m[0], po, ips_n, &den_dh);
+				den_pixmap = draw_structure(m[0], po, ips_n, &den_dh, scaledown);
 			}
 			gdk_drawable_get_size(GDK_DRAWABLE(den_pixmap), &den_w, &h);
 			den_uh = h - den_dh;
@@ -3420,22 +3426,12 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 				gint div_w, div_h;
 				PangoLayout *layout_div = gtk_widget_create_pango_layout(resultview, NULL);
 				CALCULATE_SPACE_W
-				if(ips.power_depth > 0) {
-					if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION, po.can_display_unicode_string_arg))) {
-						pango_layout_set_markup(layout_div, TEXT_TAGS_SMALL SIGN_DIVISION TEXT_TAGS_SMALL_END, -1);
-					} else if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION_SLASH, po.can_display_unicode_string_arg))) {
-						pango_layout_set_markup(layout_div, TEXT_TAGS_SMALL SIGN_DIVISION_SLASH TEXT_TAGS_SMALL_END, -1);
-					} else {
-						pango_layout_set_markup(layout_div, TEXT_TAGS_SMALL "/" TEXT_TAGS_SMALL_END, -1);
-					}
+				if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION, po.can_display_unicode_string_arg))) {
+					PANGO_TTP(layout_div, SIGN_DIVISION);
+				} else if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION_SLASH, po.can_display_unicode_string_arg))) {
+					PANGO_TTP(layout_div, SIGN_DIVISION_SLASH);
 				} else {
-					if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION, po.can_display_unicode_string_arg))) {
-						pango_layout_set_markup(layout_div, TEXT_TAGS SIGN_DIVISION TEXT_TAGS_END, -1);
-					} else if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION_SLASH, po.can_display_unicode_string_arg))) {
-						pango_layout_set_markup(layout_div, TEXT_TAGS SIGN_DIVISION_SLASH TEXT_TAGS_END, -1);
-					} else {
-						pango_layout_set_markup(layout_div, TEXT_TAGS "/" TEXT_TAGS_END, -1);
-					}
+					PANGO_TTP(layout_div, "/");
 				}
 				pango_layout_get_pixel_size(layout_div, &div_w, &div_h);
 				w = num_w + den_w + space_w + space_w + div_w;
@@ -3499,20 +3495,20 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			gint base_w, base_h, exp_w, exp_h, w = 0, h = 0, ctmp = 0, power_w, power_h;
 			CALCULATE_SPACE_W
 			ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
-			GdkPixmap *pixmap_base = draw_structure(m[0], po, ips_n, &central_point);			
+			GdkPixmap *pixmap_base = draw_structure(m[0], po, ips_n, &central_point, scaledown);
 			gdk_drawable_get_size(GDK_DRAWABLE(pixmap_base), &base_w, &base_h);
 			
 			PangoLayout *layout_power = NULL;
 			if(ips.power_depth > 0) {
 				layout_power = gtk_widget_create_pango_layout(resultview, NULL);
-				pango_layout_set_markup(layout_power, TEXT_TAGS_SMALL "^" TEXT_TAGS_SMALL_END, -1);
+				PANGO_TT_SMALL(layout_power, "^");
 				pango_layout_get_pixel_size(layout_power, &power_w, &power_h);			
 			}
 			ips_n.power_depth++;
 			ips_n.wrap = m[1].needsParenthesis(po, ips_n, m, 2, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
 			PrintOptions po2 = po;
 			po2.show_ending_zeroes = false;
-			GdkPixmap *pixmap_exp = draw_structure(m[1], po2, ips_n, &ctmp);
+			GdkPixmap *pixmap_exp = draw_structure(m[1], po2, ips_n, &ctmp, scaledown);
 			gdk_drawable_get_size(GDK_DRAWABLE(pixmap_exp), &exp_w, &exp_h);
 			
 			h = base_h;
@@ -3524,7 +3520,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 				}
 			} else {
 				if(exp_h < h) {
-					h += exp_h / 2;
+					h += exp_h / 3;
 				} else {
 					h += exp_h - base_h / 2;
 				}
@@ -3540,6 +3536,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			if(layout_power) {
 				gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, 0, layout_power);
 				w += power_w;
+			} else {
 			}
 			gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_exp), 0, 0, w, 0, -1, -1);
 			
@@ -3568,7 +3565,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			for(size_t i = 0; i < m.size(); i++) {
 				hetmp = 0;		
 				ips_n.wrap = m[i].needsParenthesis(po, ips_n, m, i + 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
-				pixmap_terms.push_back(draw_structure(m[i], po, ips_n, &hetmp));
+				pixmap_terms.push_back(draw_structure(m[i], po, ips_n, &hetmp, scaledown));
 				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_terms[i]), &wtmp, &htmp);
 				hpt.push_back(htmp);
 				cpt.push_back(hetmp);
@@ -3584,11 +3581,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			
 			PangoLayout *layout_sign = gtk_widget_create_pango_layout(resultview, NULL);
 			string str;
-			if(ips.power_depth > 0) {
-				str = TEXT_TAGS_SMALL;
-			} else {
-				str = TEXT_TAGS;
-			}	
+			TTBP(str);
 			if(m.type() == STRUCT_COMPARISON) {
 				switch(m.comparisonType()) {
 					case COMPARISON_EQUALS: {
@@ -3646,11 +3639,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 				str += "XOR";
 			}
 			
-			if(ips.power_depth > 0) {
-				str += TEXT_TAGS_SMALL_END;
-			} else {
-				str += TEXT_TAGS_END;
-			}
+			TTE(str);
 			pango_layout_set_markup(layout_sign, str.c_str(), -1);
 			pango_layout_get_pixel_size(layout_sign, &sign_w, &sign_h);
 			if(sign_h / 2 > dh) {
@@ -3692,17 +3681,9 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			PangoLayout *layout_not = gtk_widget_create_pango_layout(resultview, NULL);
 			
 			if(m.type() == STRUCT_LOGICAL_NOT) {
-				if(ips.power_depth > 0) {
-					pango_layout_set_markup(layout_not, TEXT_TAGS_SMALL "!" TEXT_TAGS_SMALL_END, -1);
-				} else {
-					pango_layout_set_markup(layout_not, TEXT_TAGS "!" TEXT_TAGS_END, -1);
-				}
+				PANGO_TTP(layout_not, "!");
 			} else {
-				if(ips.power_depth > 0) {
-					pango_layout_set_markup(layout_not, TEXT_TAGS_SMALL "~" TEXT_TAGS_SMALL_END, -1);
-				} else {
-					pango_layout_set_markup(layout_not, TEXT_TAGS "~" TEXT_TAGS_END, -1);
-				}
+				PANGO_TTP(layout_not, "~");
 			}
 			pango_layout_get_pixel_size(layout_not, &not_w, &not_h);
 
@@ -3711,7 +3692,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			dh = not_h / 2;
 			
 			ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
-			GdkPixmap *pixmap_arg = draw_structure(m[0], po, ips_n, &ctmp);
+			GdkPixmap *pixmap_arg = draw_structure(m[0], po, ips_n, &ctmp, scaledown);
 			gdk_drawable_get_size(GDK_DRAWABLE(pixmap_arg), &wtmp, &htmp);
 			hpa = htmp;
 			cpa = ctmp;
@@ -3761,14 +3742,14 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 				PangoLayout *layout_comma = gtk_widget_create_pango_layout(resultview, NULL);
 				string str;
 				gint comma_w = 0, comma_h = 0;
-				MARKUP_STRING(str, po.comma())
+				TTP(str, po.comma())
 				pango_layout_set_markup(layout_comma, str.c_str(), -1);		
 				pango_layout_get_pixel_size(layout_comma, &comma_w, &comma_h);
 				for(size_t index_r = 0; index_r < m.size(); index_r++) {
 					for(size_t index_c = 0; index_c < m[index_r].size(); index_c++) {
 						ctmp = 0;
 						ips_n.wrap = m[index_r][index_c].needsParenthesis(po, ips_n, m, index_r + 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
-						pixmap_elements[index_r].push_back(draw_structure(m[index_r][index_c], po, ips_n, &ctmp));
+						pixmap_elements[index_r].push_back(draw_structure(m[index_r][index_c], po, ips_n, &ctmp, scaledown));
 						gdk_drawable_get_size(GDK_DRAWABLE(pixmap_elements[index_r][index_c]), &wtmp, &htmp);
 						element_w[index_r].push_back(wtmp);
 						element_h[index_r].push_back(htmp);
@@ -3836,7 +3817,6 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 				}
 				h -= 4;
 				h += 2;
-				//w += 1;
 				w += wll - 7;
 				gdk_draw_line(GDK_DRAWABLE(pixmap), line_gc, w + 7, 1, w + 7, h - 1);
 				gdk_draw_line(GDK_DRAWABLE(pixmap), line_gc, w, 1, w + 7, 1);
@@ -3855,13 +3835,13 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			CALCULATE_SPACE_W
 			PangoLayout *layout_comma = gtk_widget_create_pango_layout(resultview, NULL);
 			string str, func_str;
-			MARKUP_STRING(str, CALCULATOR->getComma())
+			TTP(str, CALCULATOR->getComma())
 			pango_layout_set_markup(layout_comma, str.c_str(), -1);		
 			pango_layout_get_pixel_size(layout_comma, &comma_w, &comma_h);
 
 			if(m.size() == 0) {
 				PangoLayout *layout_one = gtk_widget_create_pango_layout(resultview, NULL);
-				MARKUP_STRING(str, "1")
+				TTP(str, "1")
 				pango_layout_set_markup(layout_one, str.c_str(), -1);
 				pango_layout_get_pixel_size(layout_one, &w, &h);
 				uh = h / 2 + h % 2;
@@ -3871,7 +3851,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			}
 			for(size_t index = 0; index < m.size(); index++) {
 				ips_n.wrap = m[index].needsParenthesis(po, ips_n, m, index + 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
-				pixmap_args.push_back(draw_structure(m[index], po, ips_n, &ctmp));
+				pixmap_args.push_back(draw_structure(m[index], po, ips_n, &ctmp, scaledown));
 				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_args[index]), &wtmp, &htmp);
 				hpa.push_back(htmp);
 				cpa.push_back(ctmp);				
@@ -3889,28 +3869,20 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 				}				
 			}
 		
-			uh += 2;
-			dh += 2;
-			if(uh > dh) dh = uh;
-			else uh = dh;
+			if(dh > uh) uh = dh;
 			h = uh + dh;
 			central_point = dh;
 			arc_h = dh * 2;
-			arc_w = arc_h / 6;
-			w += arc_w * 2 + 2;
-			w += 2;
+			arc_w = (int) sqrt(arc_h * 3);
+			w += arc_w * 2;
+			w += 1;
+
 			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
 			draw_background(pixmap, w, h);
-			GdkGC *line_gc = gdk_gc_new(GDK_DRAWABLE(pixmap));
-			gdk_gc_copy(line_gc, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)]);
-			if(ips.power_depth > 0) {
-				gdk_gc_set_line_attributes(line_gc, 1, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
-			} else {
-				gdk_gc_set_line_attributes(line_gc, 2, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
-			}
+
 			w = 0;
-			gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w + 1, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);	
-			w += arc_w + 2;
+			gdk_draw_pixbuf(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], get_left_parenthesis(arc_w, arc_h, scaledown), 0, 0, w, uh - arc_h / 2 - arc_h % 2, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
+			w += arc_w;
 			if(m.size() == 0) w += 2;
 			for(size_t index = 0; index < m.size(); index++) {
 				if(index > 0) {
@@ -3921,22 +3893,16 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_args[index]), 0, 0, w, uh - (hpa[index] - cpa[index]), -1, -1);
 				w += wpa[index];
 				g_object_unref(pixmap_args[index]);
-			}	
-			gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w - arc_w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 270 * 64, 180 * 64);
-			w += arc_w;				
+			}
+			gdk_draw_pixbuf(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], get_right_parenthesis(arc_w, arc_h, scaledown), 0, 0, w, uh - arc_h / 2 - arc_h % 2, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 			
 			g_object_unref(layout_comma);
-			gdk_gc_unref(line_gc);
 
 			break;
 		}
 		case STRUCT_UNIT: {
 			string str, str2;
-			if(ips.power_depth > 0) {
-				str = TEXT_TAGS_SMALL;
-			} else {
-				str = TEXT_TAGS;
-			}
+			TTBP(str);
 			
 			const ExpressionName *ename = &m.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, m.isPlural(), po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
 			if(m.prefix()) {
@@ -3956,30 +3922,18 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 				} else {
 					str += ename->name.substr(0, i);
 				}
-				if(ips.power_depth > 0) {
-					str += TEXT_TAGS_XSMALL;
-				} else {
-					str += TEXT_TAGS_SMALL;
-				}
+				TTBP_SMALL(str);
 				str += "<sub>";
 				if(b) str += ename->name.substr(ename->name.length() - i2, i2);
 				else str += ename->name.substr(i + 1, ename->name.length() - (i + 1));
 				str += "</sub>";
-				if(ips.power_depth > 0) {
-					str += TEXT_TAGS_XSMALL_END;
-				} else {
-					str += TEXT_TAGS_SMALL_END;
-				}
+				TTE(str);
 			} else {
 				str += ename->name;
 			}
 			gsub("_", " ", str);
 
-			if(ips.power_depth > 0) {
-				str += TEXT_TAGS_SMALL_END;
-			} else {
-				str += TEXT_TAGS_END;
-			}
+			TTE(str);
 			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
 			pango_layout_set_markup(layout, str.c_str(), -1);
 			pango_layout_get_pixel_size(layout, &w, &h);
@@ -3994,19 +3948,10 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
 			string str;
 			
-			if(m.variable() == CALCULATOR->v_i) {
-				if(ips.power_depth > 0) {
-					str = TEXT_TAGS_SMALL;
-				} else {
-					str = TEXT_TAGS;
-				}
-			} else {
-				if(ips.power_depth > 0) {
-					str = "<i>" TEXT_TAGS_SMALL;
-				} else {
-					str = "<i>" TEXT_TAGS;
-				}
+			if(m.variable() != CALCULATOR->v_i) {
+				str = "<i>";
 			}
+			TTBP(str);
 			
 			const ExpressionName *ename = &m.variable()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
 			if(ename->suffix && ename->name.length() > 1) {
@@ -4023,37 +3968,20 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 				} else {
 					str += ename->name.substr(0, i);
 				}
-				if(ips.power_depth > 0) {
-					str += TEXT_TAGS_XSMALL;
-				} else {
-					str += TEXT_TAGS_SMALL;
-				}
+				TTBP_SMALL(str);
 				str += "<sub>";
 				if(b) str += ename->name.substr(ename->name.length() - i2, i2);
 				else str += ename->name.substr(i + 1, ename->name.length() - (i + 1));
 				str += "</sub>";
-				if(ips.power_depth > 0) {
-					str += TEXT_TAGS_XSMALL_END;
-				} else {
-					str += TEXT_TAGS_SMALL_END;
-				}
+				TTE(str);
 			} else {
 				str += ename->name;
 			}
 			gsub("_", " ", str);
 			
-			if(m.variable() == CALCULATOR->v_i) {
-				if(ips.power_depth > 0) {
-					str += TEXT_TAGS_SMALL_END;
-				} else {
-					str += TEXT_TAGS_END;
-				}
-			} else {
-				if(ips.power_depth > 0) {
-					str += TEXT_TAGS_SMALL_END "</i>";
-				} else {
-					str += TEXT_TAGS_END "</i>";
-				}
+			TTE(str);
+			if(m.variable() != CALCULATOR->v_i) {
+				str += "</i>";
 			} 
 			pango_layout_set_markup(layout, str.c_str(), -1);
 			PangoRectangle rect;
@@ -4082,16 +4010,13 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			CALCULATE_SPACE_W
 			PangoLayout *layout_comma = gtk_widget_create_pango_layout(resultview, NULL);
 			string str;
-			MARKUP_STRING(str, po.comma())
+			TTP(str, po.comma())
 			pango_layout_set_markup(layout_comma, str.c_str(), -1);		
 			pango_layout_get_pixel_size(layout_comma, &comma_w, &comma_h);
 			PangoLayout *layout_function = gtk_widget_create_pango_layout(resultview, NULL);
-			
-			if(ips.power_depth > 0) {
-				str = TEXT_TAGS_SMALL;
-			} else {
-				str = TEXT_TAGS;
-			}
+		
+			str = "";	
+			TTBP(str);
 			
 			const ExpressionName *ename = &m.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
 			if(ename->suffix && ename->name.length() > 1) {
@@ -4108,30 +4033,18 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 				} else {
 					str += ename->name.substr(0, i);
 				}
-				if(ips.power_depth > 0) {
-					str += TEXT_TAGS_XSMALL;
-				} else {
-					str += TEXT_TAGS_SMALL;
-				}
+				TTBP_SMALL(str);
 				str += "<sub>";
 				if(b) str += ename->name.substr(ename->name.length() - i2, i2);
 				else str += ename->name.substr(i + 1, ename->name.length() - (i + 1));
 				str += "</sub>";
-				if(ips.power_depth > 0) {
-					str += TEXT_TAGS_XSMALL_END;
-				} else {
-					str += TEXT_TAGS_SMALL_END;
-				}
+				TTE(str);
 			} else {
 				str += ename->name;
 			}
 			gsub("_", " ", str);
 			
-			if(ips.power_depth > 0) {
-				str += TEXT_TAGS_SMALL_END;
-			} else {
-				str += TEXT_TAGS_END;
-			}
+			TTE(str);
 			
 			pango_layout_set_markup(layout_function, str.c_str(), -1);			
 			pango_layout_get_pixel_size(layout_function, &function_w, &function_h);
@@ -4141,7 +4054,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 
 			for(size_t index = 0; index < m.size(); index++) {
 				ips_n.wrap = m[index].needsParenthesis(po, ips_n, m, index + 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
-				pixmap_args.push_back(draw_structure(m[index], po, ips_n, &ctmp));
+				pixmap_args.push_back(draw_structure(m[index], po, ips_n, &ctmp, scaledown));
 				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_args[index]), &wtmp, &htmp);
 				hpa.push_back(htmp);
 				cpa.push_back(ctmp);				
@@ -4159,32 +4072,22 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 				}				
 			}
 			
-			uh += 2;
-			dh += 2;
-			if(uh > dh) dh = uh;
-			else uh = dh;
+			if(dh > uh) uh = dh;
 			h = uh + dh;
 			central_point = dh;
 			arc_h = dh * 2;
-			arc_w = arc_h / 6;
-			w += arc_w * 2 + 2;
-			w += 2;
+			arc_w = (int) sqrt(arc_h * 3);
+			w += arc_w * 2;
+			w += 1;
 
-			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
+			pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
 			draw_background(pixmap, w, h);
 			
-			GdkGC *line_gc = gdk_gc_new(GDK_DRAWABLE(pixmap));
-			gdk_gc_copy(line_gc, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)]);
-			if(ips.power_depth > 0) {
-				gdk_gc_set_line_attributes(line_gc, 1, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
-			} else {
-				gdk_gc_set_line_attributes(line_gc, 2, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
-			}
 			w = 0;
 			gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - function_h / 2 - function_h % 2, layout_function);	
-			w += function_w + 1;
-			gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w + 1, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 90 * 64, 180 * 64);	
-			w += arc_w + 2;
+			w += function_w;
+			gdk_draw_pixbuf(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], get_left_parenthesis(arc_w, arc_h, scaledown), 0, 0, w, uh - arc_h / 2 - arc_h % 2, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
+			w += arc_w;
 			for(size_t index = 0; index < m.size(); index++) {
 				if(index > 0) {
 					gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - comma_h / 2 - comma_h % 2, layout_comma);	
@@ -4194,30 +4097,18 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 				gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_args[index]), 0, 0, w, uh - (hpa[index] - cpa[index]), -1, -1);
 				w += wpa[index];
 				g_object_unref(pixmap_args[index]);
-			}	
-			gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w - arc_w, uh - arc_h / 2 - arc_h % 2, arc_w * 2, arc_h, 270 * 64, 180 * 64);			
-			w += arc_w;				
-			
+			}
+			gdk_draw_pixbuf(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], get_right_parenthesis(arc_w, arc_h, scaledown), 0, 0, w, uh - arc_h / 2 - arc_h % 2, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
+						
 			g_object_unref(layout_comma);
 			g_object_unref(layout_function);
-			gdk_gc_unref(line_gc);
 
 			break;
 		}
 		case STRUCT_UNDEFINED: {
 			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
 			string str;
-			if(ips.power_depth > 0) {
-				str = TEXT_TAGS_SMALL;
-			} else {
-				str = TEXT_TAGS;
-			}
-			str += _("undefined");
-			if(ips.power_depth > 0) {
-				str += TEXT_TAGS_SMALL_END;
-			} else {
-				str += TEXT_TAGS_END;
-			}
+			TTP(str, _("undefined"));
 			pango_layout_set_markup(layout, str.c_str(), -1);
 			PangoRectangle rect;
 			pango_layout_get_pixel_size(layout, &w, &h);
@@ -4237,28 +4128,22 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 		gdk_drawable_get_size(GDK_DRAWABLE(pixmap), &base_w, &base_h);
 		h = base_h;
 		w = base_w;
-		gint arc_base_w = base_h / 6;
-		base_h += 4;
-		central_point += 2;
-		w += arc_base_w * 2 + 5;
+		gint arc_base_h = central_point * 2;
+		if(h < arc_base_h) h = arc_base_h;
+		gint arc_base_w = (int) sqrt(arc_base_h * 3);;
+		//base_h += 4;
+		//central_point += 2;
+		w += arc_base_w * 2;
 		GdkPixmap *pixmap_old = pixmap;
 		pixmap = gdk_pixmap_new(resultview->window, w, h, -1);	
 		draw_background(pixmap, w, h);
-		GdkGC *line_gc = gdk_gc_new(GDK_DRAWABLE(pixmap));
-		gdk_gc_copy(line_gc, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)]);
-		w = 1;
-		if(ips.power_depth > 0) {
-			gdk_gc_set_line_attributes(line_gc, 1, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
-		} else {
-			gdk_gc_set_line_attributes(line_gc, 2, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
-		}
-		gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w, 0, arc_base_w * 2, h, 90 * 64, 180 * 64);
-		w += arc_base_w + 1;
+		w = 0;
+		gdk_draw_pixbuf(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], get_left_parenthesis(arc_base_w, arc_base_h, scaledown), 0, 0, w, h - arc_base_h, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
+		w += arc_base_w;
 		gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_old), 0, 0, w, (h - base_h) / 2, -1, -1);
-		w += base_w + 1;
-		gdk_draw_arc(GDK_DRAWABLE(pixmap), line_gc, FALSE, w - arc_base_w, 0, arc_base_w * 2, h, 270 * 64, 180 * 64);			
+		w += base_w;
+		gdk_draw_pixbuf(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], get_right_parenthesis(arc_base_w, arc_base_h, scaledown), 0, 0, w, h - arc_base_h, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 		g_object_unref(pixmap_old);
-		gdk_gc_unref(line_gc);
 	}
 	if(ips.depth == 0 && !(m.isComparison() && (!((po.is_approximate && *po.is_approximate) || m.isApproximate()) || (m.comparisonType() == COMPARISON_EQUALS && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_ALMOST_EQUAL, po.can_display_unicode_string_arg))))) && pixmap) {
 		gint w, h, wle, hle, w_new, h_new;
@@ -4267,15 +4152,15 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 		PangoLayout *layout_equals = gtk_widget_create_pango_layout(resultview, NULL);
 		if((po.is_approximate && *po.is_approximate) || m.isApproximate()) {
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_ALMOST_EQUAL, po.can_display_unicode_string_arg))) {
-				pango_layout_set_markup(layout_equals, TEXT_TAGS SIGN_ALMOST_EQUAL " " TEXT_TAGS_END, -1);
+				PANGO_TT(layout_equals, SIGN_ALMOST_EQUAL " ");
 			} else {
-				string str = TEXT_TAGS;
-				str += _("approx.");
-				str += " " TEXT_TAGS_END;
+				
+				string str;
+				TT(str, _("approx."));
 				pango_layout_set_markup(layout_equals, str.c_str(), -1);
 			}
 		} else {
-			pango_layout_set_markup(layout_equals, TEXT_TAGS "= " TEXT_TAGS_END, -1);
+			PANGO_TT(layout_equals, "= ");
 		}
 		pango_layout_get_pixel_size(layout_equals, &wle, &hle);
 		w_new = w + wle;
@@ -4323,24 +4208,28 @@ void *view_proc(void *pipe) {
 	while(true) {
 	
 		void *x = NULL;
+		int scale_n = 0;
+		fread(&scale_n, sizeof(int), 1, view_pipe);
 		fread(&x, sizeof(void*), 1, view_pipe);
 		MathStructure m(*((MathStructure*) x));
-		fread(&x, sizeof(void*), 1, view_pipe);
-		printops.can_display_unicode_string_arg = (void*) historyview;
-		if(x) {
-			PrintOptions po = printops;
-			po.short_multiplication = false;
-			po.excessive_parenthesis = true;
-			po.improve_division_multipliers = false;
-			po.base = evalops.parse_options.base;
-			MathStructure mp(*((MathStructure*) x));
-			fread(&po.is_approximate, sizeof(bool*), 1, view_pipe);
-			mp.format(po);
-			parsed_text = mp.print(po);
+		if(scale_n == 0) {
+			fread(&x, sizeof(void*), 1, view_pipe);
+			printops.can_display_unicode_string_arg = (void*) historyview;
+			if(x) {
+				PrintOptions po = printops;
+				po.short_multiplication = false;
+				po.excessive_parenthesis = true;
+				po.improve_division_multipliers = false;
+				po.base = evalops.parse_options.base;
+				MathStructure mp(*((MathStructure*) x));
+				fread(&po.is_approximate, sizeof(bool*), 1, view_pipe);
+				mp.format(po);
+				parsed_text = mp.print(po);
+			}			
 		}
 		printops.allow_non_usable = false;
 		m.format(printops);
-		result_text = m.print(printops);
+		if(scale_n == 0) result_text = m.print(printops);
 		printops.can_display_unicode_string_arg = NULL;
 	
 		if(result_text.length() > 1500) {
@@ -4366,7 +4255,9 @@ void *view_proc(void *pipe) {
 		} else {
 			printops.allow_non_usable = true;
 			printops.can_display_unicode_string_arg = (void*) resultview;
-			tmp_pixmap = draw_structure(m, printops);
+			
+			tmp_pixmap = draw_structure(m, printops, top_ips, NULL, scale_n);
+			
 			printops.can_display_unicode_string_arg = NULL;
 			printops.allow_non_usable = false;
 		}
@@ -4416,83 +4307,107 @@ void setResult(Prefix *prefix, bool update_history, bool update_parse, bool forc
 
 	clearresult();
 
-	if(pixmap_result) {
-		g_object_unref(pixmap_result);
-	}
-	pixmap_result = NULL;
-	if(pixbuf_result) {
-		gdk_pixbuf_unref(pixbuf_result);
-	}
-	pixbuf_result = NULL;
-	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_save_image"), FALSE);
-	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "popup_menu_item_save_image"), FALSE);
-
-	printops.prefix = prefix;
-	tmp_pixmap = NULL;
-	
-	CALCULATOR->saveState();
-
-	gulong handler_id = g_signal_connect(G_OBJECT(glade_xml_get_widget (main_glade, "main_window")), "event", G_CALLBACK(on_event), NULL);
-
-	bool parsed_approx = false;
-	fwrite(&mstruct, sizeof(void*), 1, view_pipe_w);
-	if(update_parse) {
-		fwrite(&parsed_mstruct, sizeof(void*), 1, view_pipe_w);
-		bool *parsed_approx_p = &parsed_approx;
-		fwrite(&parsed_approx_p, sizeof(void*), 1, view_pipe_w);
-	} else {
-		void *x = NULL;
-		fwrite(&x, sizeof(void*), 1, view_pipe_w);
-	}
-	fflush(view_pipe_w);
-
-	struct timespec rtime;
-	rtime.tv_sec = 0;
-	rtime.tv_nsec = 10000000;
-	int i = 0;
-	while(b_busy && i < 50) {
-		nanosleep(&rtime, NULL);
-		i++;
-	}
-	i = 0;
+	int scale_n = 0;
 	GtkWidget *dialog = NULL;
+	CALCULATOR->saveState();
+	gint w = 0, wr = 0, h = 0, hr = 0, h_new, w_new;
+	bool parsed_approx = false;
 
-	if(b_busy) {
-		dialog = glade_xml_get_widget (main_glade, "progress_dialog");
-		gtk_window_set_title(GTK_WINDOW(dialog), _("Processing..."));
-		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (main_glade, "progress_label_message")), _("Processing..."));
-		gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
-		g_signal_connect(GTK_OBJECT(dialog), "response", G_CALLBACK(on_abort_display), NULL);
-		gtk_widget_show(dialog);
-	}
-	rtime.tv_nsec = 100000000;
-	while(b_busy) {
+	while(true) {
+
+		if(pixmap_result) {
+			g_object_unref(pixmap_result);
+		}
+		pixmap_result = NULL;
+		if(pixbuf_result) {
+			gdk_pixbuf_unref(pixbuf_result);
+		}
+		pixbuf_result = NULL;
+		gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_save_image"), FALSE);
+		gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "popup_menu_item_save_image"), FALSE);
+
+		printops.prefix = prefix;
+		tmp_pixmap = NULL;		
+
+		gulong handler_id = g_signal_connect(G_OBJECT(glade_xml_get_widget (main_glade, "main_window")), "event", G_CALLBACK(on_event), NULL);
+
+		fwrite(&scale_n, sizeof(int), 1, view_pipe_w);
+		fwrite(&mstruct, sizeof(void*), 1, view_pipe_w);
+		if(scale_n == 0) {
+			if(update_parse) {
+				fwrite(&parsed_mstruct, sizeof(void*), 1, view_pipe_w);
+				bool *parsed_approx_p = &parsed_approx;
+				fwrite(&parsed_approx_p, sizeof(void*), 1, view_pipe_w);
+			} else {
+				void *x = NULL;
+				fwrite(&x, sizeof(void*), 1, view_pipe_w);
+			}
+		}
+		fflush(view_pipe_w);
+
+		struct timespec rtime;
+		rtime.tv_sec = 0;
+		rtime.tv_nsec = 10000000;
+		int i = 0;
+		while(b_busy && i < 50) {
+			nanosleep(&rtime, NULL);
+			i++;
+		}
+		i = 0;
+
+		if(b_busy) {
+			if(!dialog) {
+				dialog = glade_xml_get_widget (main_glade, "progress_dialog");
+				gtk_window_set_title(GTK_WINDOW(dialog), _("Processing..."));
+				gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (main_glade, "progress_label_message")), _("Processing..."));
+				gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
+				g_signal_connect(GTK_OBJECT(dialog), "response", G_CALLBACK(on_abort_display), NULL);
+			}
+			gtk_widget_show(dialog);
+		}
+		rtime.tv_nsec = 100000000;
+		while(b_busy) {
+			while(gtk_events_pending()) gtk_main_iteration();
+			nanosleep(&rtime, NULL);
+			gtk_progress_bar_pulse(GTK_PROGRESS_BAR(glade_xml_get_widget (main_glade, "progress_progressbar")));
+		}
+
+		b_busy = true;
+
+		g_signal_handler_disconnect(G_OBJECT(glade_xml_get_widget (main_glade, "main_window")), handler_id);
+	
+		bool was_aborted = !tmp_pixmap;
+		if(was_aborted) {
+			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
+			pango_layout_set_markup(layout, _("result processing was aborted"), -1);
+			pango_layout_get_pixel_size(layout, &w, &h);
+			tmp_pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
+			gdk_draw_rectangle(tmp_pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
+			gdk_draw_layout(GDK_DRAWABLE(tmp_pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
+			g_object_unref(layout);
+			*printops.is_approximate = false;
+		}
+		gdk_drawable_get_size(GDK_DRAWABLE(tmp_pixmap), &w, &h);
+		gtk_widget_set_size_request(resultview, w, h);
 		while(gtk_events_pending()) gtk_main_iteration();
-		nanosleep(&rtime, NULL);
-		gtk_progress_bar_pulse(GTK_PROGRESS_BAR(glade_xml_get_widget (main_glade, "progress_progressbar")));
+		if(!was_aborted && scale_n < 3 && h > glade_xml_get_widget(main_glade, "resultport")->allocation.height) {
+			int scroll_diff = glade_xml_get_widget(main_glade, "scrolled_result")->allocation.height - glade_xml_get_widget(main_glade, "resultport")->allocation.height - 8;
+			double scale_div = (double) h / (glade_xml_get_widget(main_glade, "resultport")->allocation.height + scroll_diff);
+			if(scale_div > 1.44) {
+				scale_n = 3;
+			} else if(scale_n < 2 && scale_div > 1.2) {
+				scale_n = 2;
+			} else {
+				scale_n++;
+			}
+		} else {
+			break;
+		}
 	}
-
-	b_busy = true;
+	
 	if(dialog) {
 		gtk_widget_hide(dialog);
 	}
-
-	g_signal_handler_disconnect(G_OBJECT(glade_xml_get_widget (main_glade, "main_window")), handler_id);
-	
-	gint w = 0, wr = 0, h = 0, hr = 0, h_new, w_new;
-	if(!tmp_pixmap) {
-		PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
-		pango_layout_set_markup(layout, _("result processing was aborted"), -1);
-		pango_layout_get_pixel_size(layout, &w, &h);
-		tmp_pixmap = gdk_pixmap_new(resultview->window, w, h, -1);
-		gdk_draw_rectangle(tmp_pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);	
-		gdk_draw_layout(GDK_DRAWABLE(tmp_pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], 1, 0, layout);	
-		g_object_unref(layout);
-		*printops.is_approximate = false;
-	}
-	gdk_drawable_get_size(GDK_DRAWABLE(tmp_pixmap), &w, &h);
-	gtk_widget_set_size_request(resultview, w, h);
-	while(gtk_events_pending()) gtk_main_iteration();
 
 	GdkPixbuf *pixbuf_result_tmp = gdk_pixbuf_get_from_drawable(NULL, tmp_pixmap, NULL, 0, 0, 0, 0, -1, -1);
 	if(pixbuf_result_tmp) {
@@ -4500,11 +4415,9 @@ void setResult(Prefix *prefix, bool update_history, bool update_parse, bool forc
 		pixbuf_result = gdk_pixbuf_add_alpha(pixbuf_result_tmp, TRUE, pixels[0], pixels[1], pixels[2]);
 		gdk_pixbuf_unref(pixbuf_result_tmp);
 		if(pixbuf_result) {
-			if(resultview->allocation.width - 20 > w) {
-				//gdk_draw_drawable(resultview->window, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(tmp_pixmap), 0, 0, resultview->allocation.width - w, (resultview->allocation.height - h) / 2, -1, -1);
-				gdk_draw_pixbuf(resultview->window, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], pixbuf_result, 0, 0, resultview->allocation.width - w - 20, (resultview->allocation.height - h) / 2, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
+			if(resultview->allocation.width - 15 > w) {
+				gdk_draw_pixbuf(resultview->window, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], pixbuf_result, 0, 0, resultview->allocation.width - w - 15, (resultview->allocation.height - h) / 2, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 			} else {
-				//gdk_draw_drawable(resultview->window, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(tmp_pixmap), 0, 0, 0, (resultview->allocation.height - h) / 2, -1, -1);
 				gdk_draw_pixbuf(resultview->window, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], pixbuf_result, 0, 0, 0, (resultview->allocation.height - h) / 2, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 			}
 			gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_save_image"), TRUE);
@@ -7777,7 +7690,7 @@ void load_preferences() {
 		first_qalculate_run = false;
 		closedir(dir);
 	}
-	int version_numbers[] = {0, 8, 3};
+	int version_numbers[] = {0, 9, 0};
 
 	FILE *file = NULL;
 	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate-gtk.cfg", NULL);
@@ -10167,6 +10080,9 @@ void on_menu_item_save_activate(GtkMenuItem *w, gpointer user_data) {
 void on_menu_item_save_image_activate(GtkMenuItem *w, gpointer user_data) {
 	if(!pixbuf_result) return;
 	GtkWidget *d = gtk_file_chooser_dialog_new(_("Select file to save PNG image to"), GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
+#if GTK_MAJOR_VERSION > 2 || GTK_MINOR_VERSION >= 8	
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(d), TRUE);
+#endif
 	GtkFileFilter *filter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filter, _("Allowed File Types"));
 	gtk_file_filter_add_mime_type(filter, "image/png");
@@ -10177,7 +10093,12 @@ void on_menu_item_save_image_activate(GtkMenuItem *w, gpointer user_data) {
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(d), filter_all);
 	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(d), "qalculate.png");
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT) {
+/*		GdkPixbuf *pixbuf_result_tmp = gdk_pixbuf_get_from_drawable(NULL, pixmap_result, NULL, 0, 0, 0, 0, -1, -1);
+		guchar *pixels = gdk_pixbuf_get_pixels(pixbuf_result_tmp);
+		GdkPixbuf *pixbuf_save = gdk_pixbuf_add_alpha(pixbuf_result_tmp, TRUE, pixels[0], pixels[1], pixels[2]);
+		gdk_pixbuf_unref(pixbuf_result_tmp);*/
 		gdk_pixbuf_save(pixbuf_result, gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d)), "png", NULL, NULL);
+//		gdk_pixbuf_unref(pixbuf_save);
 	}
 	gtk_widget_destroy(d);
 }
@@ -10852,14 +10773,11 @@ gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointe
 gboolean on_resultview_expose_event(GtkWidget *w, GdkEventExpose *event, gpointer user_data) {
 	if(pixbuf_result) {
 		gint w = 0, h = 0;
-		//gdk_drawable_get_size(GDK_DRAWABLE(pixmap_result), &w, &h);	
 		w = gdk_pixbuf_get_width(pixbuf_result);
 		h = gdk_pixbuf_get_height(pixbuf_result);
 		if(resultview->allocation.width - 20 > w) {
-//			gdk_draw_drawable(resultview->window, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_result), 0, 0, resultview->allocation.width - w, (resultview->allocation.height - h) / 2, -1, -1);
 			gdk_draw_pixbuf(resultview->window, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], pixbuf_result, 0, 0, resultview->allocation.width - w - 20, (resultview->allocation.height - h) / 2, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 		} else {
-//			gdk_draw_drawable(resultview->window, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_result), 0, 0, 0, (resultview->allocation.height - h) / 2, -1, -1);
 			gdk_draw_pixbuf(resultview->window, resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], pixbuf_result, 0, 0, 0, (resultview->allocation.height - h) / 2, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 		}
 	}	
@@ -11436,6 +11354,9 @@ void on_plot_button_help_clicked(GtkButton *w, gpointer user_data) {
 void on_plot_button_save_clicked(GtkButton *w, gpointer user_data) {
 	GtkWidget *d;
 	d = gtk_file_chooser_dialog_new(_("Select file to export"), GTK_WINDOW(glade_xml_get_widget(plot_glade, "plot_dialog")), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
+#if GTK_MAJOR_VERSION > 2 || GTK_MINOR_VERSION >= 8	
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(d), TRUE);
+#endif	
 	GtkFileFilter *filter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filter, _("Allowed File Types"));
 	gtk_file_filter_add_mime_type(filter, "image/x-xfig");

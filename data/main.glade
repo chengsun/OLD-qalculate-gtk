@@ -1647,7 +1647,7 @@
 
 		  <child>
 		    <widget class="GtkScrolledWindow" id="scrolled_result">
-		      <property name="border_width">2</property>
+		      <property name="border_width">4</property>
 		      <property name="height_request">1</property>
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>

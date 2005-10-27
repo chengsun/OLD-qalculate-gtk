@@ -1,3 +1,10 @@
+2005-10-27 Niklas Knutsson  <nq@altern.org>
+
+	* Update documentation
+	* Scale result if it does not fit window height
+	* Save confirmation with gtk-2.8
+	* Improved parenthesis drawing
+
 2005-10-26 Niklas Knutsson  <nq@altern.org>
 
 	* A better solution (set size request for result display again) for resizing window when

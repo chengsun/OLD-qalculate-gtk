@@ -2,9 +2,9 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
     "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
   <!ENTITY legal SYSTEM "legal.xml">
-  <!ENTITY appversion "0.8.3">
-  <!ENTITY manrevision "0.8.3">
-  <!ENTITY date "June 2005">
+  <!ENTITY appversion "0.9.0">
+  <!ENTITY manrevision "0.9.0">
+  <!ENTITY date "October 2005">
   <!ENTITY app "Qalculate!">
   <!ENTITY appendixa SYSTEM "appendixa.xml">
   <!ENTITY appendixb SYSTEM "appendixb.xml">
@@ -143,7 +143,7 @@ The keypad provides access to a fairly small set of traditional calculator butto
 <sect1 id="qalculate-calculation-history">
 <title>Calculation History</title>
 <para>
-The history window, opened with the button next to the result display, provides access to previous calculation results (20 rows are reloaded on restart). Previous expressions and results, as well as errors and warnings, are displayed in plain text and can be marked and copied (from the right-button context menu or with <keycombo><keycap>Ctrl</keycap><keycap>C</keycap></keycombo>) to the expression entry or elsewhere.
+The history view provides access to previous calculation results (20 rows are reloaded on restart). Previous expressions and results, as well as errors and warnings, are displayed in plain text and can be marked and copied (from the right-button context menu or with <keycombo><keycap>Ctrl</keycap><keycap>C</keycap></keycombo>) to the expression entry or elsewhere.
 <figure id="qalculate-FIG-calculation-history">
 	<title>Calculation History</title>
 	<screenshot>
@@ -979,6 +979,16 @@ The easiest way to create a known variable is to store the current result. This 
 <para>
 Known variables can also be created from scratch by selecting <menuchoice><guimenu>File</guimenu><guisubmenu>New</guisubmenu><guimenuitem>Variable</guimenuitem></menuchoice>  or by clicking <guibutton>New</guibutton> in the variable manager. The value can then be filled in, in the text field below the name, and specified as exact or approximate. 
 </para>
+<figure id="qalculate-FIG-edit-variable">
+	<title>New Variable</title>
+	<screenshot>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="figures/edit-variable.png" format="PNG"/>
+			</imageobject>
+		</mediaobject>
+	</screenshot>
+</figure>
 <para>
 The dialog for creation of unknown variables are accessed by selecting <menuchoice><guimenu>File</guimenu><guisubmenu>New</guisubmenu><guimenuitem>Unknown Variable</guimenuitem></menuchoice>. Instead of a value, an assumed type and sign can then be entered.
 </para>
@@ -1319,10 +1329,14 @@ To plot a data set, enter an expression that results in a matrix or vector. Sele
 Type in an expression, press <keycap>Enter</keycap> and a new window will open with the plot. The title of the series, the diagram style and smoothing of the line can also be set. The series modified must be selected in the list and to apply changes click <guibutton>Apply</guibutton>. More series that will appear in the same plot window can be added. If the scale of the y values differ, series can be put on a secondary y-axis.
 </para>
 <caution>
-<para>
-Even though Qalculate! does all the calculations before handing over the data to <application>Gnuplot</application>, the resulting data must only consist of pure numbers, as <application>Gnuplot</application> knows nothing about the functions, variables, units, etc. of Qalculate!.
-</para>
+	<para>
+		Even though Qalculate! does all the calculations before handing over the data to <application>Gnuplot</application>, the resulting data must only consist of pure numbers, as <application>Gnuplot</application> knows nothing about the functions, variables, units, etc. of Qalculate!.
+	</para>
 </caution>
+<para>
+For functions, the function range — min and max x value, and the number of values or the size of the step between each y value calculated — can be specified
+in the function range tab.
+</para>
 <figure id="qalculate-FIG-plot-settings">
 	<title>Plot Settings</title>
 	<screenshot>
@@ -1333,9 +1347,6 @@ Even though Qalculate! does all the calculations before handing over the data to
 		</mediaobject>
 	</screenshot>
 </figure>
-<para>
-For functions, the function range — min and max x value, and the number of values or the size of the step between each y value calculated — can be specified.
-</para>
 <para>
 A title can be set to appear at the top of the plot, as well as labels for the x and y axis. The appearance can also be controlled by selecting or disabling legend placement, displaying/hiding the grid and borders on the top and the right side of the diagram and choosing color or monochrome graphics. The x and y scales can be made logarithmic by clicking the box on the right and filling in a desired logarithmic base.
 </para>

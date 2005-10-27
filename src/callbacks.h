@@ -36,7 +36,7 @@ struct mode_struct {
 bool can_display_unicode_string_function(const char *str, void *w);
 void set_unicode_buttons();
 
-GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_options, InternalPrintStruct ips = top_ips, gint *point_central = NULL);
+GdkPixmap *draw_structure(MathStructure &m, PrintOptions po = default_print_options, InternalPrintStruct ips = top_ips, gint *point_central = NULL, int scaledown = 0);
 
 void update_status_text();
 
