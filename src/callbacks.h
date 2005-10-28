@@ -82,6 +82,14 @@ void on_tUnitSelectorCategories_selection_changed(GtkTreeSelection *treeselectio
 void execute_expression(bool force = true);
 void setResult(Prefix *prefix = NULL, bool update_history = true, bool update_parse = false, bool force = false);
 
+void result_display_updated();
+void result_format_updated();
+void result_action_executed();
+void result_prefix_changed(Prefix *prefix = NULL);
+void expression_calculation_updated();
+void expression_format_updated(bool recalculate = false);
+
+
 void insert_text(const gchar *name);
 
 void recreate_recent_functions();

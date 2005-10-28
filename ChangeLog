@@ -1,3 +1,10 @@
+2005-10-28 Niklas Knutsson  <nq@altern.org>
+
+	* More result drawing enhancements
+	* Use option to reduce transformation when parsing and print formating for parse status
+	* Update recalculation behaviour on mode change
+	* Support for binary and other prefixes
+
 2005-10-27 Niklas Knutsson  <nq@altern.org>
 
 	* Update documentation

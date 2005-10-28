@@ -851,7 +851,7 @@
 			    <widget class="GtkCheckMenuItem" id="menu_item_all_prefixes">
 			      <property name="visible">True</property>
 			      <property name="tooltip" translatable="yes">Enables automatic use of hekto, deka, deci and centi when prefixes is enabled</property>
-			      <property name="label" translatable="yes">Enable Use Of All Prefixes</property>
+			      <property name="label" translatable="yes">Enable Use Of All SI Prefixes</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">False</property>
 			      <signal name="activate" handler="on_menu_item_all_prefixes_activate" last_modification_time="Thu, 04 Mar 2004 14:36:19 GMT"/>
