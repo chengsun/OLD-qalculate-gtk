@@ -3414,7 +3414,7 @@ Other...</property>
   <child>
     <widget class="GtkCheckMenuItem" id="popup_menu_item_all_prefixes">
       <property name="visible">True</property>
-      <property name="label" translatable="yes">Enable Use Of All Prefi_xes</property>
+      <property name="label" translatable="yes">Enable Use Of All SI Prefi_xes</property>
       <property name="use_underline">True</property>
       <property name="active">False</property>
       <signal name="activate" handler="on_popup_menu_item_all_prefixes_activate" last_modification_time="Sun, 21 Mar 2004 21:37:18 GMT"/>

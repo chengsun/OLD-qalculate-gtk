@@ -28,7 +28,7 @@
 #include "main.h"
 #include "data/icon.xpm"
 
-MathStructure *mstruct, *parsed_mstruct;
+MathStructure *mstruct, *parsed_mstruct, *parsed_tostruct;
 bool prev_result_approx;
 string *parsed_to_str;
 KnownVariable *vans[5];
@@ -115,6 +115,8 @@ int main (int argc, char **argv) {
 
 	mstruct = new MathStructure();
 	parsed_mstruct = new MathStructure();
+	parsed_tostruct = new MathStructure();
+	parsed_tostruct->setUndefined();
 	prev_result_approx = false;
 	parsed_to_str = new string;
 

@@ -21,7 +21,7 @@
 </thead>
 <tbody>
 <row valign="top">
-<entry><para>Radians per Square Second</para></entry>
+<entry><para>Radians per Second Squared</para></entry>
 <entry><para>(rad_p_sqs)</para></entry>
 <entry><para>rad/s^2</para></entry>
 <entry><para></para></entry>
@@ -77,14 +77,26 @@
 </thead>
 <tbody>
 <row valign="top">
+<entry><para>Arcminute</para></entry>
+<entry><para>arcminute / arcminutes</para></entry>
+<entry><para>°</para></entry>
+<entry><para>1/60</para></entry>
+</row>
+<row valign="top">
+<entry><para>Arcsecond</para></entry>
+<entry><para>arcsecond / arcseconds</para></entry>
+<entry><para>arcminute</para></entry>
+<entry><para>1/60</para></entry>
+</row>
+<row valign="top">
 <entry><para>Degree</para></entry>
 <entry><para>deg / ° / degree / degrees</para></entry>
 <entry><para>rad</para></entry>
 <entry><para>pi/180</para></entry>
 </row>
 <row valign="top">
-<entry><para>Gradian</para></entry>
-<entry><para>gra / gradian / gradians</para></entry>
+<entry><para>Gradian (Gon)</para></entry>
+<entry><para>gra / gradian / gradians / gon / gons</para></entry>
 <entry><para>rad</para></entry>
 <entry><para>pi/200</para></entry>
 </row>
@@ -99,6 +111,12 @@
 <entry><para>rad / radian / radians</para></entry>
 <entry><para>m_p_m</para></entry>
 <entry><para>1</para></entry>
+</row>
+<row valign="top">
+<entry><para>Turn</para></entry>
+<entry><para>turn / turns</para></entry>
+<entry><para>°</para></entry>
+<entry><para>360</para></entry>
 </row>
 </tbody>
 </tgroup>
@@ -610,7 +628,7 @@
 </thead>
 <tbody>
 <row valign="top">
-<entry><para>Ampere per Square Meter</para></entry>
+<entry><para>Ampere per Meter Squared</para></entry>
 <entry><para>(A_p_sqm)</para></entry>
 <entry><para>A/m^2</para></entry>
 <entry><para></para></entry>
@@ -638,6 +656,12 @@
 </thead>
 <tbody>
 <row valign="top">
+<entry><para>Abcoulomb</para></entry>
+<entry><para>abcoulomb / abcoulombs / abC / aC</para></entry>
+<entry><para>C</para></entry>
+<entry><para>10</para></entry>
+</row>
+<row valign="top">
 <entry><para>Coulomb</para></entry>
 <entry><para>C / coulomb / coulombs</para></entry>
 <entry><para>s_A</para></entry>
@@ -648,6 +672,12 @@
 <entry><para>(s_A)</para></entry>
 <entry><para>s A</para></entry>
 <entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Statcoloumb (Franklin)</para></entry>
+<entry><para>statcoulomb / statcoulombs / statC / franklin / Fr</para></entry>
+<entry><para>C</para></entry>
+<entry><para>3.3356410E-10 (approximate)</para></entry>
 </row>
 </tbody>
 </tgroup>
@@ -734,6 +764,12 @@
 </thead>
 <tbody>
 <row valign="top">
+<entry><para>Abampere</para></entry>
+<entry><para>abampere / abA / aA / abamperes</para></entry>
+<entry><para>A</para></entry>
+<entry><para>10</para></entry>
+</row>
+<row valign="top">
 <entry><para>Ampere</para></entry>
 <entry><para>A / ampere / amperes</para></entry>
 <entry><para></para></entry>
@@ -790,7 +826,7 @@
 </thead>
 <tbody>
 <row valign="top">
-<entry><para>Coulomb per Square Meter</para></entry>
+<entry><para>Coulomb per Meter Squared</para></entry>
 <entry><para>(C_p_sqm)</para></entry>
 <entry><para>C/m^2</para></entry>
 <entry><para></para></entry>
@@ -817,6 +853,18 @@
 </row>
 </thead>
 <tbody>
+<row valign="top">
+<entry><para>Abvolt</para></entry>
+<entry><para>abvolt / abvolts / abV</para></entry>
+<entry><para>V</para></entry>
+<entry><para>1E-8</para></entry>
+</row>
+<row valign="top">
+<entry><para>Statvolt</para></entry>
+<entry><para>statvolt / statvolts / statV</para></entry>
+<entry><para>V</para></entry>
+<entry><para>299.792458</para></entry>
+</row>
 <row valign="top">
 <entry><para>Volt</para></entry>
 <entry><para>V / volt / volts</para></entry>
@@ -852,10 +900,22 @@
 </thead>
 <tbody>
 <row valign="top">
+<entry><para>Abohm</para></entry>
+<entry><para>abohm / abohms / abΩ</para></entry>
+<entry><para>Ω</para></entry>
+<entry><para>1E-9</para></entry>
+</row>
+<row valign="top">
 <entry><para>Ohm</para></entry>
 <entry><para>Ω / ohm / ohms</para></entry>
 <entry><para>V_p_A</para></entry>
 <entry><para>1</para></entry>
+</row>
+<row valign="top">
+<entry><para>Statohm</para></entry>
+<entry><para>statohm / statohms / statΩ</para></entry>
+<entry><para>Ω</para></entry>
+<entry><para>8.9875517874E11 (approximate)</para></entry>
 </row>
 <row valign="top">
 <entry><para>Volt per Ampere</para></entry>
@@ -1023,6 +1083,18 @@
 <entry><para>erg / ergs</para></entry>
 <entry><para>J</para></entry>
 <entry><para>1E-7</para></entry>
+</row>
+<row valign="top">
+<entry><para>Foe</para></entry>
+<entry><para>foe / foes</para></entry>
+<entry><para>erg</para></entry>
+<entry><para>1E51</para></entry>
+</row>
+<row valign="top">
+<entry><para>Foot-Pound Force</para></entry>
+<entry><para>(ft_lbf)</para></entry>
+<entry><para>ft lbf</para></entry>
+<entry><para></para></entry>
 </row>
 <row valign="top">
 <entry><para>Joule</para></entry>
@@ -1313,7 +1385,13 @@
 <entry><para>1E-5</para></entry>
 </row>
 <row valign="top">
-<entry><para>Meter Kilogram per Square Second</para></entry>
+<entry><para>Kilopond (Kilogram-Force)</para></entry>
+<entry><para>(kpond_c)</para></entry>
+<entry><para>kpond</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Meter Kilogram per Second Squared</para></entry>
 <entry><para>(m_kg_p_sqs)</para></entry>
 <entry><para>m kg/s^2</para></entry>
 <entry><para></para></entry>
@@ -1322,6 +1400,30 @@
 <entry><para>Newton</para></entry>
 <entry><para>N / newton / newtons</para></entry>
 <entry><para>m_kg_p_sqs</para></entry>
+<entry><para>1</para></entry>
+</row>
+<row valign="top">
+<entry><para>Pond (Gram-Force)</para></entry>
+<entry><para>pond / ponds / gf</para></entry>
+<entry><para>N</para></entry>
+<entry><para>0.00980665</para></entry>
+</row>
+<row valign="top">
+<entry><para>Pound Foot per Second Squared</para></entry>
+<entry><para>(lb_ft_p_sqs)</para></entry>
+<entry><para>lb ft/s^2</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Pound-force</para></entry>
+<entry><para>lbf / pound_force</para></entry>
+<entry><para>N</para></entry>
+<entry><para>4.4482216152605</para></entry>
+</row>
+<row valign="top">
+<entry><para>Poundal</para></entry>
+<entry><para>poundal / poundals / pdl</para></entry>
+<entry><para>lb_ft_p_sqs</para></entry>
 <entry><para>1</para></entry>
 </row>
 </tbody>
@@ -1460,7 +1562,7 @@
 <entry><para>1/760</para></entry>
 </row>
 <row valign="top">
-<entry><para>Newton per Square Meter</para></entry>
+<entry><para>Newton per Meter Squared</para></entry>
 <entry><para>(N_p_sqm)</para></entry>
 <entry><para>N/m^2</para></entry>
 <entry><para></para></entry>
@@ -1509,6 +1611,142 @@
 </tgroup>
 </table>
 </sect2>
+</sect1>
+<sect1 id="qalculate-definitions-units-1-Information">
+<title>Information</title>
+<table id="qalculate-TBL-units-Information" frame="topbot" colsep="1">
+<title>Units: Information</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Bit</para></entry>
+<entry><para>bit / bits</para></entry>
+<entry><para></para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Byte (8-bit)</para></entry>
+<entry><para>byte / bytes / octet / octets</para></entry>
+<entry><para>bit</para></entry>
+<entry><para>8</para></entry>
+</row>
+<row valign="top">
+<entry><para>Gibibit</para></entry>
+<entry><para>(Gibit_c)</para></entry>
+<entry><para>Gibit</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Gibibyte</para></entry>
+<entry><para>(Gibyte_c)</para></entry>
+<entry><para>Gibyte</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Gigabit</para></entry>
+<entry><para>(Gbit_c)</para></entry>
+<entry><para>Gbit</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Gigabyte</para></entry>
+<entry><para>(Gbyte_c)</para></entry>
+<entry><para>Gbyte</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Kibibit</para></entry>
+<entry><para>(Kibit_c)</para></entry>
+<entry><para>Kibit</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Kibibyte</para></entry>
+<entry><para>(Kibyte_c)</para></entry>
+<entry><para>Kibyte</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Kilobit</para></entry>
+<entry><para>(kbit_c)</para></entry>
+<entry><para>kbit</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Kilobyte</para></entry>
+<entry><para>(kbyte_c)</para></entry>
+<entry><para>kbyte</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Mebibit</para></entry>
+<entry><para>(Mibit_c)</para></entry>
+<entry><para>Mibit</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Mebibyte</para></entry>
+<entry><para>(Mibyte_c)</para></entry>
+<entry><para>Mibyte</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Megabit</para></entry>
+<entry><para>(Mbit_c)</para></entry>
+<entry><para>Mbit</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Megabyte</para></entry>
+<entry><para>(Mbyte_c)</para></entry>
+<entry><para>Mbyte</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Nibble</para></entry>
+<entry><para>nibble / nibbles / nybble / nybbles / semioctet / semioctets</para></entry>
+<entry><para>bit</para></entry>
+<entry><para>4</para></entry>
+</row>
+<row valign="top">
+<entry><para>Terabit</para></entry>
+<entry><para>(Tbit_c)</para></entry>
+<entry><para>Tbit</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Terabyte</para></entry>
+<entry><para>(Tbyte_c)</para></entry>
+<entry><para>Tbyte</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Tribble</para></entry>
+<entry><para>tribble / tribbles</para></entry>
+<entry><para>nibble</para></entry>
+<entry><para>3</para></entry>
+</row>
+<row valign="top">
+<entry><para>Word (16-bit)</para></entry>
+<entry><para>word / words</para></entry>
+<entry><para>bit</para></entry>
+<entry><para>16</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
 </sect1>
 <sect1 id="qalculate-definitions-units-1-Length">
 <title>Length</title>
@@ -1590,7 +1828,7 @@
 </row>
 <row valign="top">
 <entry><para>Light Year</para></entry>
-<entry><para>ly / light_year / light_years</para></entry>
+<entry><para>ly / lightyear / lightyears</para></entry>
 <entry><para>m</para></entry>
 <entry><para>9460536207068016</para></entry>
 </row>
@@ -1602,7 +1840,7 @@
 </row>
 <row valign="top">
 <entry><para>Meter</para></entry>
-<entry><para>m / meter / meters</para></entry>
+<entry><para>m / meter / meters / metre / metres</para></entry>
 <entry><para></para></entry>
 <entry><para></para></entry>
 </row>
@@ -1703,13 +1941,13 @@
 <entry><para>1</para></entry>
 </row>
 <row valign="top">
-<entry><para>Lumen per Square Foot</para></entry>
+<entry><para>Lumen per Foot Squared</para></entry>
 <entry><para>(lm_p_sqft)</para></entry>
 <entry><para>lm/ft^2</para></entry>
 <entry><para></para></entry>
 </row>
 <row valign="top">
-<entry><para>Lumen per Square Meter</para></entry>
+<entry><para>Lumen per Meter Squared</para></entry>
 <entry><para>(lm_p_sqm)</para></entry>
 <entry><para>lm/m^2</para></entry>
 <entry><para></para></entry>
@@ -1749,19 +1987,19 @@
 </thead>
 <tbody>
 <row valign="top">
-<entry><para>Einstein per Square Meter per Second</para></entry>
+<entry><para>Einstein per Meter per Second</para></entry>
 <entry><para>(einstein_p_sqm_p_s)</para></entry>
 <entry><para>einstein/(s m^2)</para></entry>
 <entry><para></para></entry>
 </row>
 <row valign="top">
-<entry><para>Microeinstein per Square Meter per Second</para></entry>
+<entry><para>Microeinstein per Meter Squared per Second</para></entry>
 <entry><para>(microeinstein_p_sqm_p_s)</para></entry>
 <entry><para>µeinstein/(s m^2)</para></entry>
 <entry><para></para></entry>
 </row>
 <row valign="top">
-<entry><para>Watt per Square Meter</para></entry>
+<entry><para>Watt per Meter Squared</para></entry>
 <entry><para>(W_p_sqm)</para></entry>
 <entry><para>W/m^2</para></entry>
 <entry><para></para></entry>
@@ -1789,7 +2027,7 @@
 </thead>
 <tbody>
 <row valign="top">
-<entry><para>Candela per Square Meter</para></entry>
+<entry><para>Candela per Meter Squared</para></entry>
 <entry><para>(cd_p_sqm)</para></entry>
 <entry><para>cd/m^2</para></entry>
 <entry><para></para></entry>
@@ -2030,7 +2268,7 @@
 <entry><para>1</para></entry>
 </row>
 <row valign="top">
-<entry><para>Weber per Square Meter</para></entry>
+<entry><para>Weber per Meter Squared</para></entry>
 <entry><para>(Wb_p_sqm)</para></entry>
 <entry><para>Wb/m^2</para></entry>
 <entry><para></para></entry>
@@ -2141,7 +2379,7 @@
 <entry><para>2240</para></entry>
 </row>
 <row valign="top">
-<entry><para>Metric Ton</para></entry>
+<entry><para>Metric Ton (Tonne)</para></entry>
 <entry><para>t / tonne / tonnes / ton / tons</para></entry>
 <entry><para>g</para></entry>
 <entry><para>1000000</para></entry>
@@ -2454,6 +2692,46 @@
 </table>
 </sect2>
 </sect1>
+<sect1 id="qalculate-definitions-units-1-Ratio">
+<title>Ratio</title>
+<table id="qalculate-TBL-units-Ratio" frame="topbot" colsep="1">
+<title>Units: Ratio</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>Bel</para></entry>
+<entry><para>B</para></entry>
+<entry><para>Np</para></entry>
+<entry><para>0.5*ln(10)</para></entry>
+</row>
+<row valign="top">
+<entry><para>Decibel</para></entry>
+<entry><para>(dB_c)</para></entry>
+<entry><para>dB</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Neper</para></entry>
+<entry><para>Np / neper / nepers</para></entry>
+<entry><para></para></entry>
+<entry><para></para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</sect1>
 <sect1 id="qalculate-definitions-units-1-Speed">
 <title>Speed</title>
 <table id="qalculate-TBL-units-Speed" frame="topbot" colsep="1">
@@ -2542,7 +2820,7 @@
 <entry><para>9.80665</para></entry>
 </row>
 <row valign="top">
-<entry><para>Meter per Square Second</para></entry>
+<entry><para>Meter per Second Squared</para></entry>
 <entry><para>(m_p_sqs)</para></entry>
 <entry><para>m/s^2</para></entry>
 <entry><para></para></entry>

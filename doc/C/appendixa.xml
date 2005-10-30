@@ -3174,6 +3174,17 @@ dimension("Data 1")=dimension("Data 2")
 </listitem>
 </varlistentry>
 <varlistentry>
+<term><emphasis>Strip Units</emphasis></term>
+<listitem>
+<para><command>nounit(Expression)</command></para>
+<para><command>strip_units</command></para><formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Expression: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
 <term><emphasis>Title</emphasis></term>
 <listitem>
 <para><command>title(Name)</command></para>

@@ -75,7 +75,7 @@ Although use of Qalculate! for simple calculations should be natural and self-ex
 	</screenshot>
 </figure>
 <para>
-The main window provides a menu bar, the expression entry, the result display and a calculator keypad which can be shown/hidden by clicking on <guilabel>Keypad</guilabel>. There are two small buttons to right of the expression entry and the result display. The upper button performs calculation of the entered expression (same as <keycap>Enter</keycap>), while the one below opens a window showing previous calculations. When non-default options for the interpretion of expressions have been selected, the choice will be indicated in a small status area below the expression entry.
+	The main window provides a menu bar, the expression entry, the result display and a calculator keypad or history view which can be shown/hidden by clicking on <guilabel>Keypad</guilabel> and <guilabel>History</guilabel>, respectively. There are three buttons to the right of the expression entry and the result display. The upper button performs calculation of the entered expression (same as <keycap>Enter</keycap>), the one below saves the current result as a variable (see <xref linkend="qalculate-variable-creation"/>), while the last button opens a dialog for conversion of units in the result (see <xref linkend="qalculate-unit-conversion"/>). When non-default options for the interpretion of expressions have been selected, the choice will be indicated in a small status area below the expression entry, to the right.
 </para>
 </sect1>
 <sect1 id="qalculate-expression-entry">
@@ -97,7 +97,7 @@ The expression entry is the most important part of the Qalculate! user interface
 Qalculate! helps out with the expression by giving a list of possible endings to words representing functions, variables and units. The list will narrow with each letter typed. Select an item in the list and the name will be completed. If a function was selected, parenthesis will be added and the position moved for immediate entry of arguments.
 </para>
 <para>
-As the expression is typed in, the area directly direclty below the expression entry, to the left, will show useful information. By default the calculator's interpretation of the expression is shown (ex. <quote>5 * meter</quote> for <quote>5m</quote>). The interpretation will be displayed in red if there are errors in the expression or in blue for lesser errors (for example too many arguments in a function). If the last typed in text represents a function and arguments are about to be entered, the functions name and its arguments will be displayed. The first argument in the information text is highlighted and includes information about its type and restrictions and when an argument has been entered, the next will be highlighted.
+As the expression is typed in, the area directly direclty below the expression entry, to the left, will show useful information. By default the calculator's interpretation of the expression is shown (ex. <quote>5 * meter</quote> for <quote>5m</quote>). The interpretation will be displayed in red (configurable) if there are errors in the expression or in blue for lesser errors (for example too many arguments in a function). If the last typed in text represents a function and arguments are about to be entered, the functions name and its arguments will be displayed. The first argument in the information text is highlighted and includes information about its type and restrictions and when an argument has been entered, the next will be highlighted.
 </para>
 <para>
 After execution of an expression, the whole expression will be marked. This normally means that if something new is entered, the old expression will be overwritten. If, however, an operator (+, −, *, /, ^) is entered first, the old expression will instead be the target of action. The operator will then apply to the whole expression, which is put in parenthesis. This works on all marked ranges, meaning that this way an expression can conveniently be put in parenthesis. Functions set the selection as their first argument.
@@ -112,7 +112,7 @@ The font used for the expression entry can be selected in the preferences dialog
 <sect1 id="qalculate-result-display">
 <title>Result Display</title>
 <para>
-The result of calculations is displayed in the open area below the expression entry. The font used for the result display can be selected in the preferences dialog (<menuchoice><guimenu>Edit</guimenu><guimenuitem>Preferences</guimenuitem></menuchoice>). Use of Unicode signs can be turned off in the same dialog, in case of problems with missing characters. Otherwise Qalculate! will try to make the result as fancy as possible and print π for pi, √ for sqrt, € for euro, and so on. Information about customization of the mathematical result output is available in <xref linkend="qalculate-result"/>.
+The result of calculations is displayed in the open area below the expression entry. The font used for the result display can be selected in the preferences dialog (<menuchoice><guimenu>Edit</guimenu><guimenuitem>Preferences</guimenuitem></menuchoice>). Use of Unicode signs can be turned off in the same dialog. Otherwise Qalculate! will try to make the result as fancy as possible and print π for pi, √ for sqrt, € for euro, and so on. Information about customization of the mathematical result output is available in <xref linkend="qalculate-result"/>.
 </para>
 <para>
 In front of the result an equals or approximately equals sign is shown. This indicates whether Qalculate! was able to calculate/display the result exact or only approximate, in the current mode.
@@ -127,7 +127,7 @@ To copy the result, either select <menuchoice><guimenu>Edit</guimenu><guimenuite
 <sect1 id="qalculate-calculator-buttons">
 <title>Keypad</title>
 <para>
-The keypad provides access to a fairly small set of traditional calculator buttons, which work as expected. The <guibutton>Convert</guibutton> button in the top left corner opens the convert to unit dialog (see <xref linkend="qalculate-unit-conversion"/>), while the buttons to the right open the functions, variables and units managers (see <xref linkend="qalculate-managers"/>).
+The keypad provides access to a fairly small set of traditional calculator buttons, which work as expected. The top buttons (from left to right) toggles exact calculation, toggles fractional number display, selects display mode and selects number base in result (see <xref linkend="qalculate-result"/>).
 <figure id="qalculate-FIG-calculator-buttons">
 	<title>Keypad</title>
 	<screenshot>
@@ -143,7 +143,7 @@ The keypad provides access to a fairly small set of traditional calculator butto
 <sect1 id="qalculate-calculation-history">
 <title>Calculation History</title>
 <para>
-The history view provides access to previous calculation results (20 rows are reloaded on restart). Previous expressions and results, as well as errors and warnings, are displayed in plain text and can be marked and copied (from the right-button context menu or with <keycombo><keycap>Ctrl</keycap><keycap>C</keycap></keycombo>) to the expression entry or elsewhere.
+The history view provides access to previous calculation results (50 rows are reloaded on restart). Previous expressions and results, as well as errors and warnings, are displayed in plain text and can be marked and copied (from the right-button context menu or with <keycombo><keycap>Ctrl</keycap><keycap>C</keycap></keycombo>) to the expression entry or elsewhere.
 <figure id="qalculate-FIG-calculation-history">
 	<title>Calculation History</title>
 	<screenshot>
@@ -404,8 +404,8 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Opens a dialog to change displayed number of decimals.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Modes</para></entry>
-				<entry><para>Provides a list of available modes for loading and menu items to save and delete modes.</para></entry>
+				<entry><para>Meta Modes</para></entry>
+				<entry><para>Provides a list of available meta modes for loading and menu items to save and delete modes.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Save Default Mode</para></entry>
@@ -511,7 +511,7 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 <sect1 id="qalculate-managers">
 <title>Variable/Function/Unit Managers</title>
 <para>
-The manager windows provide a structural way of working with variables, functions and units (collectively referred to as objects). The managers for the three different objects are essentially similar. They can be opened from the edit menu and the keypad. <keycombo><keycap>Ctrl</keycap><keycap>M</keycap></keycombo>, <keycombo><keycap>Ctrl</keycap><keycap>F</keycap></keycombo> and <keycombo><keycap>Ctrl</keycap><keycap>U</keycap></keycombo> can also be used for variables, functions and units respectively.
+The manager windows provide a structural way of working with variables, functions and units (collectively referred to as objects). The managers for the three different objects are essentially similar. They can be opened from the edit menu and the keypad. <keycombo><keycap>Ctrl</keycap><keycap>M</keycap></keycombo>, <keycombo><keycap>Ctrl</keycap><keycap>F</keycap></keycombo> and <keycombo><keycap>Ctrl</keycap><keycap>U</keycap></keycombo> can also be used for variables, functions and units respectively. The function manager can also be opened with the <guibutton>f(x)</guibutton> button in the keypad.
 </para>
 <figure id="qalculate-FIG-variable-manager">
 	<title>Variable Manager</title>
@@ -1197,7 +1197,7 @@ Various utility functions. Most are only useful in definition of other functions
 <sect1 id="qalculate-function-creation">
 <title>Function creation/editing</title>
 <para>
-Functions are a bit more complex than variables, but can nevertheless be relatively easily created. <menuchoice><guimenu>File</guimenu><guisubmenu>New</guisubmenu><guimenuitem>Function</guimenuitem></menuchoice> or click <guibutton>New</guibutton> in the function manager and the function edit dialog pops up. First enter a name, used to reference the function in an expression. If an expression is entered a bit further down, then the function will already be fully working. A bit more does however need to be said about the function expression.
+Functions are a bit more complex than variables, but can nevertheless be relatively easily created. <menuchoice><guimenu>File</guimenu><guisubmenu>New</guisubmenu><guimenuitem>Function</guimenuitem></menuchoice> or click <guibutton>New</guibutton> in the function manager and the function edit dialog pops up. This dialog consists of two tabs/pages; the first with general descriptive information and the last for the function definition. First enter a name, used to reference the function in an expression. If an expression is entered a bit further down, then the function will already be fully working. A bit more does however need to be said about the function expression.
 </para>
 <para>
 The expression of a function is basically a normal expression with placeholders for arguments. These placeholders consists of a backslash and a letter — x, y, z for the 1st, 2nd and 3rd arguments and a to u for argument 4 to 24. These placeholders are replaced by entered arguments when a function is calculated. They naturally also decide the number of arguments that a function requires. For example the function for triangle area (<quote>base * height / 2</quote>) has the name triangle and the expression <quote>(\x*\y)/2</quote>, which gives that <quote>triangle(2, 3)</quote> equals <quote>(2*3) / 2</quote> and returns <quote>3</quote> as result. An argument can be used more than one time and must not necessarily be in order in the expression.
@@ -1248,10 +1248,10 @@ Among units, Qalculate! has support for currencies with up-to-date exchange rate
 <sect1 id="qalculate-unit-conversion">
 <title>Conversion</title>
 <para>
-Expression can be converted to a specific unit directly in the expression entry with the <quote>to</quote> operator, which converts the left-hand expression to a specified unit (ex. <quote>5 feet + 2 inches to cm</quote> converts the result of <quote>5 feet + 2 inches</quote> to centimeters and displays it). Unit expressions may only contain units, prefixes, exponents, multiplication and division. Other elements are ignored. 
+Expressions can be converted to a specific unit directly in the expression entry with the <quote>to</quote> operator, which converts the left-hand expression to a specified unit (ex. <quote>5 feet + 2 inches to cm</quote> converts the result of <quote>5 feet + 2 inches</quote> to centimeters and displays it). Unit expressions may only contain units, prefixes, exponents, multiplication and division. Other elements are ignored. 
 </para>
 <para>
-The unit conversion dialog, accessible from the <guibutton>Convert</guibutton> button, <menuchoice><guimenu>Edit</guimenu><guimenuitem>Convert To Unit Expression...</guimenuitem></menuchoice> or <keycombo><keycap>Ctrl</keycap><keycap>T</keycap></keycombo>, can also be used. Enter a unit in the dialog that pops up, click <guibutton>Apply</guibutton> or <guibutton>OK</guibutton> and the displayed result is then converted.
+The unit conversion dialog, accessible from the <guibutton>Convert</guibutton> button, <menuchoice><guimenu>Edit</guimenu><guimenuitem>Convert To Unit Expression...</guimenuitem></menuchoice> or <keycombo><keycap>Ctrl</keycap><keycap>T</keycap></keycombo>, can also be used. Enter a unit in the dialog that pops up, click <guibutton>Apply</guibutton> or <guibutton>OK</guibutton> and the displayed result is then converted. In this dialog, you can also select a unit from a list accessed by clicking <guibutton>Selector</guibutton>. When a unit is selected from the list the expression is updated and <guibutton>Apply</guibutton> automatically pressed.
 <figure id="qalculate-FIG-unit-conversion-dialog">
 	<title>Unit Conversion Dialog</title>
 	<screenshot>
@@ -1267,7 +1267,7 @@ The unit conversion dialog, accessible from the <guibutton>Convert</guibutton> b
 The final way to convert to another unit is to use the predefined units in the <menuchoice><guimenu>Edit</guimenu><guisubmenu>Convert To Unit</guisubmenu></menuchoice> menu or press <guibutton>Convert Result</guibutton> in the unit manager. <menuchoice><guimenu>Edit</guimenu><guisubmenu>Set Prefix</guisubmenu></menuchoice> can be used to select a prefix.
 </para>
 <para>
-It is also possible to let Qalculate! automatically convert the result to appropriate units with <menuchoice><guimenu>Edit</guimenu><guisubmenu>Convert To Base Units</guisubmenu></menuchoice> and <menuchoice><guimenu>Edit</guimenu><guisubmenu>Convert To Best Unit</guisubmenu></menuchoice>.
+It is also possible to let Qalculate! automagically convert the result to appropriate units with <menuchoice><guimenu>Edit</guimenu><guisubmenu>Convert To Best Unit</guisubmenu></menuchoice> or <menuchoice><guimenu>Edit</guimenu><guisubmenu>Convert To Base Units</guisubmenu></menuchoice>.  If instead the corresponding choice is selected from <menuchoice><guimenu>Mode</guimenu><guimenu>Unit Display</guimenu></menuchoice>, each result will automatically be converted until the choice is deactivated (<menuchoice><guimenu>Mode</guimenu><guimenu>Unit Display</guimenu><guisubmenu>No Automatic Conversion</guisubmenu></menuchoice>).
 </para>
 </sect1>
 <sect1 id="qalculate-unit-creation">
@@ -1307,7 +1307,7 @@ Composite units need a unit expression with multiple units as base, in the base 
 Plotting in Qalculate! is done through an external program, <application>Gnuplot</application>. Thus <application>Gnuplot</application> (&gt;= v. 3.7) need to be installed on the computer for plotting to work.
 </para>
 <para>
-To plot functions or data sets, select <menuchoice><guimenu>File</guimenu><guimenuitem>Plot Functions/Data</guimenuitem></menuchoice>, which brings up the plot dialog. The plot dialog consists of two tabs/pages — the first for the data and the other for control of function sampling and appearance. 
+To plot functions or data sets, select <menuchoice><guimenu>File</guimenu><guimenuitem>Plot Functions/Data</guimenuitem></menuchoice>, which brings up the plot dialog. The plot dialog consists of three tabs/pages — the first for the data, the second for the function range and sampling rate, and the last for control of function sampling and appearance.  
 </para>
 <figure id="qalculate-FIG-plot-data">
 	<title>Plot Data</title>
@@ -1330,12 +1330,11 @@ Type in an expression, press <keycap>Enter</keycap> and a new window will open w
 </para>
 <caution>
 	<para>
-		Even though Qalculate! does all the calculations before handing over the data to <application>Gnuplot</application>, the resulting data must only consist of pure numbers, as <application>Gnuplot</application> knows nothing about the functions, variables, units, etc. of Qalculate!.
+Even though Qalculate! does all the calculations before handing over the data to <application>Gnuplot</application>, the resulting data must only consist of pure numbers, as <application>Gnuplot</application> knows nothing about the functions, variables, units, etc. of Qalculate!.
 	</para>
 </caution>
 <para>
-For functions, the function range — min and max x value, and the number of values or the size of the step between each y value calculated — can be specified
-in the function range tab.
+For functions, the function range — min and max x value, and the number of values or the size of the step between each y value calculated — can be specified in the function range page.
 </para>
 <figure id="qalculate-FIG-plot-settings">
 	<title>Plot Settings</title>

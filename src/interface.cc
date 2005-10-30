@@ -29,6 +29,8 @@
 #include "interface.h"
 #include "main.h"
 
+#include <deque>
+
 extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *datasetedit_glade, *datasets_glade, *nbexpression_glade, *decimals_glade;
 extern GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *namesedit_glade, *nbases_glade, *plot_glade, *precision_glade;
 extern GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
@@ -100,7 +102,6 @@ extern PrintOptions printops;
 extern EvaluationOptions evalops;
 
 extern vector<vector<GtkWidget*> > element_entries;
-extern vector<string> initial_history;
 
 GtkTooltips *periodic_tooltips;
 
@@ -108,6 +109,9 @@ extern GdkPixbuf *icon_pixbuf;
 
 extern vector<GtkWidget*> mode_items;
 extern vector<GtkWidget*> popup_result_mode_items;
+
+extern deque<string> inhistory;
+extern deque<int> inhistory_type;
 
 gint win_height, win_width;
 
@@ -378,9 +382,12 @@ create_main_window (void)
 	historyview = glade_xml_get_widget (main_glade, "history");
 	statuslabel_l = glade_xml_get_widget (main_glade, "label_status_left");
 	statuslabel_r = glade_xml_get_widget (main_glade, "label_status_right");
-	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "gray_foreground", "foreground", "gray40", NULL);
-	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "red_foreground", "foreground", "red", NULL);
-	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "blue_foreground", "foreground", "blue", NULL);
+	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_parse", "foreground", "gray40", "style", PANGO_STYLE_ITALIC, NULL);
+	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_error", "foreground", "red", NULL);
+	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_warning", "foreground", "blue", NULL);
+	//gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_result", "underline", PANGO_UNDERLINE_SINGLE);
+	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_result", "weight", PANGO_WEIGHT_BOLD);
+	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_separate", "pixels-below-lines", 12, NULL);
 
 	gtk_label_set_use_markup(GTK_LABEL(gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (main_glade, "button_xy")))), TRUE);
 	//gtk_label_set_use_markup(GTK_LABEL(gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (main_glade, "button_fraction")))), TRUE);
@@ -448,17 +455,76 @@ create_main_window (void)
 
 	GtkTextIter iter;
 	GtkTextBuffer *tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history")));
-	for(size_t i = 0; i < initial_history.size(); i++) {
+	bool prev_parse = false;
+	for(size_t i = 0; i < inhistory.size(); i++) {
 		gtk_text_buffer_get_end_iter(tb, &iter);
-		if(i == 0 && initial_history[i] != "-----------------------") {
-			gtk_text_buffer_insert(tb, &iter, "-----------------------\n", -1);
+		switch(inhistory_type[i]) {
+			case QALCULATE_HISTORY_EXPRESSION: {
+				gtk_text_buffer_insert(tb, &iter, inhistory[i].c_str(), -1);
+				gtk_text_buffer_insert(tb, &iter, " ", -1);
+				prev_parse = false;
+				break;
+			}
+			case QALCULATE_HISTORY_RESULT: {
+				if(prev_parse) {
+					gtk_text_buffer_insert_with_tags_by_name(tb, &iter, "= ", -1, "history_separate", NULL);
+					gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_result", "history_separate", NULL);
+				} else {
+					gtk_text_buffer_insert(tb, &iter, "= ", -1);
+					gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_result", NULL);
+				}
+				gtk_text_buffer_insert(tb, &iter, "\n", -1);
+				prev_parse = false;
+				break;
+			}
+			case QALCULATE_HISTORY_RESULT_APPROXIMATE: {
+				string str;
+				if(printops.use_unicode_signs && can_display_unicode_string_function(SIGN_ALMOST_EQUAL, (void*) historyview)) {
+					str = SIGN_ALMOST_EQUAL " ";
+				} else {
+					str = "= ";
+					str += _("approx.");
+					str += " ";
+				}
+				if(prev_parse) {
+					gtk_text_buffer_insert_with_tags_by_name(tb, &iter, str.c_str(), -1, "history_separate", NULL);
+					gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_result", "history_separate", NULL);
+				} else {
+					gtk_text_buffer_insert(tb, &iter, str.c_str(), -1);
+					gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_result", NULL);
+				}
+				gtk_text_buffer_insert(tb, &iter, "\n", -1);
+				prev_parse = false;
+				break;
+			}
+			case QALCULATE_HISTORY_PARSE: {
+				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, " ", -1, "history_parse", NULL);
+				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_parse", NULL);
+				gtk_text_buffer_insert(tb, &iter, "\n", -1);
+				prev_parse = true;
+				break;
+			}
+			case QALCULATE_HISTORY_WARNING: {
+				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, "- ", -1, "history_warning", NULL);
+				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_warning", NULL);
+				gtk_text_buffer_insert(tb, &iter, "\n", -1);
+				break;
+			}
+			case QALCULATE_HISTORY_ERROR: {
+				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, "- ", -1, "history_error", NULL);
+				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_error", NULL);
+				gtk_text_buffer_insert(tb, &iter, "\n", -1);
+				break;
+			}
+			case QALCULATE_HISTORY_OLD: {
+				gtk_text_buffer_insert(tb, &iter, inhistory[i].c_str(), -1);
+				gtk_text_buffer_insert(tb, &iter, "\n", -1);
+				prev_parse = false;
+				break;
+			}
 		}
-		gtk_text_buffer_get_end_iter(tb, &iter);
-		gtk_text_buffer_insert(tb, &iter, initial_history[i].c_str(), -1);
-		gtk_text_buffer_get_end_iter(tb, &iter);
-		gtk_text_buffer_insert(tb, &iter, "\n", -1);
+		
 	}
-	initial_history.clear();
 
 #ifndef HAVE_LIBGNOME
 	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_help"), FALSE);

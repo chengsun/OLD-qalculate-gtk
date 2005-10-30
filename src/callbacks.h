@@ -32,6 +32,15 @@ struct mode_struct {
 	string name;
 };
 
+enum {
+	QALCULATE_HISTORY_EXPRESSION,
+	QALCULATE_HISTORY_RESULT,
+	QALCULATE_HISTORY_RESULT_APPROXIMATE,
+	QALCULATE_HISTORY_PARSE,
+	QALCULATE_HISTORY_WARNING,
+	QALCULATE_HISTORY_ERROR,
+	QALCULATE_HISTORY_OLD
+};
 
 bool can_display_unicode_string_function(const char *str, void *w);
 void set_unicode_buttons();

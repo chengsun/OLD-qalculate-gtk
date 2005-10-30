@@ -1,3 +1,13 @@
+2005-10-30 Niklas Knutsson  <nq@altern.org>
+
+	* Finish documentation updates
+	* Completion fixes
+
+2005-10-29 Niklas Knutsson  <nq@altern.org>
+
+	* Update parse status display of to unit expression and parse display in history
+	* Save history type information to restore formatting
+
 2005-10-28 Niklas Knutsson  <nq@altern.org>
 
 	* More result drawing enhancements
