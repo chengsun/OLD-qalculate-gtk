@@ -34,6 +34,7 @@ struct mode_struct {
 
 enum {
 	QALCULATE_HISTORY_EXPRESSION,
+	QALCULATE_HISTORY_TRANSFORMATION,
 	QALCULATE_HISTORY_RESULT,
 	QALCULATE_HISTORY_RESULT_APPROXIMATE,
 	QALCULATE_HISTORY_PARSE,
@@ -89,7 +90,7 @@ void on_tUnitSelector_selection_changed(GtkTreeSelection *treeselection, gpointe
 void on_tUnitSelectorCategories_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 
 void execute_expression(bool force = true);
-void setResult(Prefix *prefix = NULL, bool update_history = true, bool update_parse = false, bool force = false);
+void setResult(Prefix *prefix = NULL, bool update_history = true, bool update_parse = false, bool force = false, string transformation = "");
 
 void result_display_updated();
 void result_format_updated();

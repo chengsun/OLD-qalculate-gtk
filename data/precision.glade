@@ -108,7 +108,6 @@
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="response_id">-7</property>
 	      <signal name="clicked" handler="gtk_widget_hide" object="precision_dialog" last_modification_time="Wed, 01 Oct 2003 08:54:59 GMT"/>
-	      <signal name="clicked" handler="on_precision_dialog_button_recalculate_clicked" last_modification_time="Mon, 05 Apr 2004 21:38:23 GMT"/>
 	    </widget>
 	  </child>
 	</widget>

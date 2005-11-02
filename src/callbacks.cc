@@ -174,6 +174,9 @@ GdkPixbuf *pixbuf_right_par = NULL;
 deque<string> inhistory;
 deque<int> inhistory_type;
 
+GtkTextMark *initial_result_pos = NULL;
+int initial_result_index = 0;
+
 #define TEXT_TAGS			"<span size=\"xx-large\">"
 #define TEXT_TAGS_END			"</span>"
 #define TEXT_TAGS_SMALL			"<span size=\"large\">"
@@ -575,8 +578,6 @@ void display_errors(GtkTextIter *iter = NULL, GtkWidget *win = NULL, int *inhist
 	GtkWidget *edialog;
 	string str = "";
 	GtkTextBuffer *tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history")));
-	GtkTextIter tbiter;
-	int tbinhistory_index = 0;
 	while(true) {
 		mtype = CALCULATOR->message()->type();
 		if(mtype == MESSAGE_ERROR || mtype == MESSAGE_WARNING) {
@@ -586,28 +587,23 @@ void display_errors(GtkTextIter *iter = NULL, GtkWidget *win = NULL, int *inhist
 				b = true;
 			}
 			str += CALCULATOR->message()->message();
-			if(!iter) {
-				gtk_text_buffer_get_start_iter(tb, &tbiter);
-				iter = &tbiter;
+			if(iter && inhistory_index) {
+				if(mtype == MESSAGE_ERROR) {
+					critical = true;
+					inhistory.insert(inhistory.begin() + *inhistory_index, CALCULATOR->message()->message());
+					inhistory_type.insert(inhistory_type.begin() + *inhistory_index, QALCULATE_HISTORY_ERROR);
+					gtk_text_buffer_insert_with_tags_by_name(tb, iter, "- ", -1, "history_error", NULL);
+					gtk_text_buffer_insert_with_tags_by_name(tb, iter, CALCULATOR->message()->message().c_str(), -1, "history_error", NULL);
+				} else if(mtype == MESSAGE_WARNING) {
+					inhistory.insert(inhistory.begin() + *inhistory_index, CALCULATOR->message()->message());
+					inhistory_type.insert(inhistory_type.begin() + *inhistory_index, QALCULATE_HISTORY_WARNING);
+					gtk_text_buffer_insert_with_tags_by_name(tb, iter, "- ", -1, "history_warning", NULL);
+					gtk_text_buffer_insert_with_tags_by_name(tb, iter, CALCULATOR->message()->message().c_str(), -1, "history_warning", NULL);
+				}
+				*inhistory_index += 1;
+				gtk_text_buffer_insert(tb, iter, "\n", -1);
+				gtk_text_buffer_place_cursor(tb, iter);
 			}
-			if(!inhistory_index) {
-				inhistory_index = &tbinhistory_index;
-			}
-			if(mtype == MESSAGE_ERROR) {
-				critical = true;
-				inhistory.insert(inhistory.begin() + *inhistory_index, CALCULATOR->message()->message());
-				inhistory_type.insert(inhistory_type.begin() + *inhistory_index, QALCULATE_HISTORY_ERROR);
-				gtk_text_buffer_insert_with_tags_by_name(tb, iter, "- ", -1, "history_error", NULL);
-				gtk_text_buffer_insert_with_tags_by_name(tb, iter, CALCULATOR->message()->message().c_str(), -1, "history_error", NULL);
-			} else if(mtype == MESSAGE_WARNING) {
-				inhistory.insert(inhistory.begin() + *inhistory_index, CALCULATOR->message()->message());
-				inhistory_type.insert(inhistory_type.begin() + *inhistory_index, QALCULATE_HISTORY_WARNING);
-				gtk_text_buffer_insert_with_tags_by_name(tb, iter, "- ", -1, "history_warning", NULL);
-				gtk_text_buffer_insert_with_tags_by_name(tb, iter, CALCULATOR->message()->message().c_str(), -1, "history_warning", NULL);
-			}
-			*inhistory_index += 1;
-			gtk_text_buffer_insert(tb, iter, "\n", -1);
-			gtk_text_buffer_place_cursor(tb, iter);
 		} else {
 			edialog = gtk_message_dialog_new(
 					GTK_WINDOW(win),
@@ -4331,6 +4327,12 @@ void *view_proc(void *pipe) {
 	
 		if(result_text.length() > 1500) {
 			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
+			int index = 0;
+			while(result_text.length() - index > 3000) {
+				//GtkTextView can not display very very long lines
+				result_text.insert(3000 + index - index / 3000, "\n");
+				index += 3000;
+			}
 			pango_layout_set_markup(layout, _("result is too long\nsee history"), -1);
 			gint w = 0, h = 0;
 			pango_layout_get_pixel_size(layout, &w, &h);
@@ -4371,7 +4373,7 @@ gboolean on_event(GtkWidget *w, GdkEvent *e, gpointer user_data) {
 /*
 	set result in result widget and add to history widget
 */
-void setResult(Prefix *prefix, bool update_history, bool update_parse, bool force) {
+void setResult(Prefix *prefix, bool update_history, bool update_parse, bool force, string transformation) {
 
 	if(block_result_update) return;
 
@@ -4389,18 +4391,31 @@ void setResult(Prefix *prefix, bool update_history, bool update_parse, bool forc
 	int inhistory_index = 0;
 	
 	if(update_history) {
-		//result_text = expr;
-		//gtk_editable_select_region(GTK_EDITABLE(expression), 0, -1);
-		//display_errors();
 		tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history")));
-		gtk_text_buffer_get_start_iter(tb, &iter);
-		gtk_text_buffer_insert(tb, &iter, result_text.c_str(), -1);
-		inhistory.push_front(result_text);
-		inhistory_type.push_front(QALCULATE_HISTORY_EXPRESSION);
-		inhistory_index++;
-		gtk_text_buffer_insert(tb, &iter, " ", -1);
-		gtk_text_buffer_insert(tb, &iter, "\n", -1);
-		gtk_text_buffer_get_iter_at_line_index(tb, &iter, 0, result_text.length() + 1);
+		if(update_parse) {
+			gtk_text_buffer_get_start_iter(tb, &iter);
+			gtk_text_buffer_insert(tb, &iter, result_text.c_str(), -1);
+			inhistory.push_front(result_text);
+			inhistory_type.push_front(QALCULATE_HISTORY_EXPRESSION);
+			inhistory_index++;
+			gtk_text_buffer_insert(tb, &iter, " ", -1);
+			gtk_text_buffer_insert_with_tags_by_name(tb, &iter, "\n", -1, "history_separator", NULL);
+			gtk_text_buffer_get_iter_at_line_index(tb, &iter, 0, result_text.length() + 1);
+		} else if(initial_result_pos) {
+			gtk_text_buffer_get_iter_at_mark(tb, &iter, initial_result_pos);
+			inhistory_index = initial_result_index;
+			if(!transformation.empty()) {
+				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, transformation.c_str(), -1, "history_transformation", NULL);
+				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, ":  ", -1, "history_transformation", NULL);
+				inhistory.insert(inhistory.begin() + inhistory_index, transformation);
+				inhistory_type.insert(inhistory_type.begin() + inhistory_index, QALCULATE_HISTORY_TRANSFORMATION);
+				inhistory_index++;
+			}
+		} else {
+			b_busy = false;
+			do_timeout = true;
+			return;
+		}
 		result_text = "?";
 	}
 	if(update_parse) {
@@ -4570,11 +4585,15 @@ void setResult(Prefix *prefix, bool update_history, bool update_parse, bool forc
 		}
 		str += " ";
 		if(update_parse) {
-			gtk_text_buffer_insert_with_tags_by_name(tb, &iter, str.c_str(), -1, "history_separate", NULL);
-			gtk_text_buffer_insert_with_tags_by_name(tb, &iter, result_text.c_str(), -1, "history_result", "history_separate", NULL);
+			gtk_text_buffer_insert(tb, &iter, str.c_str(), -1);
+			gtk_text_buffer_insert_with_tags_by_name(tb, &iter, result_text.c_str(), -1, "history_result", NULL);
+			gtk_text_buffer_insert(tb, &iter, "\n", -1);
+			initial_result_pos = gtk_text_buffer_create_mark(tb, NULL, &iter, FALSE);
+			initial_result_index = inhistory_index + 1;
 		} else {
 			gtk_text_buffer_insert(tb, &iter, str.c_str(), -1);
 			gtk_text_buffer_insert_with_tags_by_name(tb, &iter, result_text.c_str(), -1, "history_result", NULL);
+			gtk_text_buffer_insert(tb, &iter, "\n", -1);
 		}
 		inhistory.insert(inhistory.begin() + inhistory_index, result_text);
 		if(b_approx) {
@@ -4605,17 +4624,11 @@ void result_format_updated() {
 	update_status_text();
 }
 void result_action_executed() {
-	display_errors(NULL, glade_xml_get_widget (main_glade, "main_window"));
+	//display_errors(NULL, glade_xml_get_widget (main_glade, "main_window"));
 	setResult(NULL, true, false, true);
 }
 void result_prefix_changed(Prefix *prefix) {
 	setResult(prefix, true, false, true);
-}
-void expression_format_updated() {
-	expression_has_changed2 = true;
-	display_parse_status();
-	execute_expression(false);
-	update_status_text();
 }
 void expression_calculation_updated() {
 	expression_has_changed2 = true;
@@ -4625,8 +4638,9 @@ void expression_calculation_updated() {
 }
 void expression_format_updated(bool recalculate) {
 	expression_has_changed2 = true;
-	if(expression_has_changed || recalculate) {	
-		display_parse_status();
+	display_parse_status();
+	if(!expression_has_changed && !recalculate) {	
+		clearresult();
 	}
 	if(recalculate) {
 		execute_expression(false);
@@ -4706,7 +4720,6 @@ void execute_expression(bool force) {
 		gtk_widget_grab_focus(expression);
 	}
 	b_busy = false;
-	//display_errors(NULL, glade_xml_get_widget (main_glade, "main_window"));
 	
 	//update "ans" variables
 	vans[4]->set(vans[3]->get());
@@ -5944,8 +5957,10 @@ void convert_to_unit(GtkMenuItem *w, gpointer user_data)
 		gtk_widget_destroy(edialog);
 	}
 	//result is stored in MathStructure *mstruct
+	do_timeout = false;
 	mstruct->set(CALCULATOR->convert(*mstruct, u, evalops));
 	result_action_executed();
+	do_timeout = true;
 	focus_keeping_selection();
 }
 
@@ -8219,6 +8234,9 @@ void load_preferences() {
 				} else if(svar == "history_expression") {
 					inhistory.push_back(svalue);
 					inhistory_type.push_back(QALCULATE_HISTORY_EXPRESSION);
+				} else if(svar == "history_transformation") {
+					inhistory.push_back(svalue);
+					inhistory_type.push_back(QALCULATE_HISTORY_TRANSFORMATION);
 				} else if(svar == "history_result") {
 					inhistory.push_back(svalue);
 					inhistory_type.push_back(QALCULATE_HISTORY_RESULT);
@@ -8234,6 +8252,11 @@ void load_preferences() {
 				} else if(svar == "history_error") {
 					inhistory.push_back(svalue);
 					inhistory_type.push_back(QALCULATE_HISTORY_ERROR);
+				} else if(svar == "history_continued") {
+					if(inhistory.size() > 0) {
+						inhistory[inhistory.size() - 1] += "\n";
+						inhistory[inhistory.size() - 1] += svalue;
+					}
 				}
 			} else if(stmp.length() > 2 && stmp[0] == '[' && stmp[stmp.length() - 1] == ']') {
 				stmp = stmp.substr(1, stmp.length() - 2);
@@ -8321,6 +8344,10 @@ void save_preferences(bool mode) {
 				fprintf(file, "history_expression=");				
 				break;
 			}
+			case QALCULATE_HISTORY_TRANSFORMATION: {
+				fprintf(file, "history_transformation=");
+				break;
+			}
 			case QALCULATE_HISTORY_RESULT: {
 				fprintf(file, "history_result=");
 				lines--;
@@ -8356,7 +8383,22 @@ void save_preferences(bool mode) {
 				break;
 			}
 		}
-		fprintf(file, "%s\n", inhistory[i].c_str());
+		size_t i3 = inhistory[i].find('\n');
+		if(i3 == string::npos) {
+			fprintf(file, "%s\n", inhistory[i].c_str());
+		} else {
+			fprintf(file, "%s\n", inhistory[i].substr(0, i3).c_str());
+			i3++;
+			size_t i2 = inhistory[i].find('\n', i3);
+			while(i2 != string::npos) {
+				fprintf(file, "history_continued=%s\n", inhistory[i].substr(i3, i2 - i3).c_str());
+				lines--;
+				i3 = i2 + 1;
+				i2 = inhistory[i].find('\n', i3);
+			}
+			fprintf(file, "history_continued=%s\n", inhistory[i].substr(i3, inhistory[i].length() - i3).c_str());
+			lines--;
+		}
 	}
 	fprintf(file, "recent_functions="); 
 	for(int i = (int) (recent_functions.size()) - 1; i >= 0; i--) {
@@ -9504,12 +9546,16 @@ void on_menu_item_convert_to_unit_expression_activate(GtkMenuItem *w, gpointer u
 	}
 }
 void on_menu_item_convert_to_best_unit_activate(GtkMenuItem *w, gpointer user_data) {
+	do_timeout = false;
 	mstruct->set(CALCULATOR->convertToBestUnit(*mstruct, evalops));
 	result_action_executed();
+	do_timeout = true;
 }
 void on_menu_item_convert_to_base_units_activate(GtkMenuItem *w, gpointer user_data) {
+	do_timeout = false;
 	mstruct->set(CALCULATOR->convertToBaseUnits(*mstruct, evalops));
 	result_action_executed();
+	do_timeout = true;
 }
 
 void on_menu_item_assumptions_integer_activate(GtkMenuItem *w, gpointer user_data) {
@@ -9920,8 +9966,10 @@ void on_menu_item_multiple_roots_activate(GtkMenuItem *w, gpointer user_data) {
 	expression_calculation_updated();
 }
 void on_menu_item_factorize_activate(GtkMenuItem *w, gpointer user_data) {
+	do_timeout = false;
 	mstruct->factorize(evalops);
 	result_action_executed();
+	do_timeout = true;
 }
 void on_menu_item_convert_number_bases_activate(GtkMenuItem *w, gpointer user_data) {
 	changing_in_nbases_dialog = false;
@@ -10397,9 +10445,11 @@ void on_units_button_insert_clicked(GtkButton *button, gpointer user_data) {
 void on_units_button_convert_to_clicked(GtkButton *button, gpointer user_data) {
 	Unit *u = get_selected_unit();
 	if(u) {
+		do_timeout = false;
 		mstruct->set(CALCULATOR->convert(*mstruct, u, evalops));
 		result_action_executed();
-		focus_keeping_selection();
+		do_timeout = true;
+		focus_keeping_selection();		
 	}
 }
 
@@ -11778,13 +11828,17 @@ void on_plot_button_appearance_apply_clicked(GtkButton *w, gpointer user_data) {
 }
 
 void on_unit_dialog_button_ok_clicked(GtkButton *w, gpointer user_data) {
+	do_timeout = false;
 	mstruct->set(CALCULATOR->convert(*mstruct, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unit_glade, "unit_dialog_entry_unit"))), evalops));
 	result_action_executed();
+	do_timeout = true;
 	gtk_widget_hide(glade_xml_get_widget (unit_glade, "unit_dialog"));
 }
 void on_unit_dialog_button_apply_clicked(GtkButton *w, gpointer user_data) {
+	do_timeout = false;
 	mstruct->set(CALCULATOR->convert(*mstruct, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unit_glade, "unit_dialog_entry_unit"))), evalops));
 	result_action_executed();
+	do_timeout = true;
 }
 void on_unit_dialog_entry_unit_activate(GtkEntry *entry, gpointer user_data) {
 	on_unit_dialog_button_ok_clicked(GTK_BUTTON(glade_xml_get_widget (unit_glade, "unit_dialog_button_ok")), NULL);
@@ -12024,25 +12078,37 @@ void on_menu_item_set_unknowns_activate(GtkMenuItem *w, gpointer user_data) {
 	string result_save = result_text;
 	gtk_widget_show_all(dialog);
 	bool b_changed = false;
+	vector<bool> unknown_changed;
+	unknown_changed.resize(unknowns.size(), false);
 	while(true) {
 		gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+		bool b = false;
 		if(response == GTK_RESPONSE_ACCEPT || response == GTK_RESPONSE_APPLY) {
 			string str, result_mod = "";
 			for(size_t i = 0; i < unknowns.size(); i++) {
 				str = gtk_entry_get_text(GTK_ENTRY(entry[i]));
 				remove_blank_ends(str);
-				if(!str.empty()) {
-					if(!result_mod.empty()) result_mod += CALCULATOR->getComma();
+				if(unknown_changed[i] || !str.empty()) {
+					if(!result_mod.empty()) {
+						result_mod += CALCULATOR->getComma();
+						result_mod += " ";
+					}
 					if(unknowns[i].isSymbolic()) result_mod += "\"";
 					result_mod += unknowns[i].print().c_str();
 					if(unknowns[i].isSymbolic()) result_mod += "\"";
 					result_mod += "=";
-					result_mod += str;
-					mstruct->replace(unknowns[i], CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(str), evalops));
-					b_changed = true;
+					if(str.empty()) {
+						result_mod += "?";
+					} else {
+						result_mod += str;
+						mstruct->replace(unknowns[i], CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(str), evalops));
+						b = true;
+						unknown_changed[i] = true;
+					}
 				}
 			}
-			if(!result_mod.empty()) {
+			if(b) {
+				b_changed = true;
 				if(response == GTK_RESPONSE_ACCEPT) {
 					MathStructure mp(*mstruct);
 					printops.can_display_unicode_string_arg = historyview;
@@ -12051,26 +12117,40 @@ void on_menu_item_set_unknowns_activate(GtkMenuItem *w, gpointer user_data) {
 					str = mp.print(printops);
 					printops.can_display_unicode_string_arg = NULL;
 					gtk_entry_set_text(GTK_ENTRY(expression), str.c_str());
-					add_to_expression_history(str);
+					//add_to_expression_history(str);
+					expression_history_index = -1;
 					g_signal_handlers_unblock_matched((gpointer) expression, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_expression_changed, NULL);
 					gtk_widget_grab_focus(expression);
 					gtk_editable_select_region(GTK_EDITABLE(expression), 0, -1);
+					expression_has_changed2 = true;
+					display_parse_status();
 				}
 				mstruct->eval(evalops);
-				result_text += " (";
-				result_text += _("with");
-				result_text += " ";
-				result_text += result_mod;
-				result_text += ")";
-				setResult(NULL, true, false, false);
 			}
-			if(response == GTK_RESPONSE_ACCEPT) break;
-			mstruct->set(msave);
+			if(b_changed) setResult(NULL, true, false, false, result_mod);
+			if(response == GTK_RESPONSE_ACCEPT) {
+				break;
+			}
+			if(b) mstruct->set(msave);
+			
 		} else {
 			if(b_changed) {
+				string result_mod = "";
 				mstruct->set(msave);
-				result_text = result_save;
-				setResult(NULL, false, false, false);
+				for(size_t i = 0; i < unknowns.size(); i++) {
+					if(unknown_changed[i]) {
+						if(!result_mod.empty()) {
+							result_mod += CALCULATOR->getComma();
+							result_mod += " ";
+						}
+						if(unknowns[i].isSymbolic()) result_mod += "\"";
+						result_mod += unknowns[i].print().c_str();
+						if(unknowns[i].isSymbolic()) result_mod += "\"";
+						result_mod += "=";
+						result_mod += "?";
+					}
+				}
+				setResult(NULL, true, false, false, result_mod);
 			}
 			break;
 		}

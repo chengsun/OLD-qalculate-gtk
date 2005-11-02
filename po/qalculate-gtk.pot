@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-30 18:32+0100\n"
+"POT-Creation-Date: 2005-10-30 20:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -946,19 +946,19 @@ msgid "EXP"
 msgstr ""
 
 #: data/main.glade.h:74
-msgid "Enable Denominator Prefixes"
+msgid "Enable All SI Prefi_xes"
 msgstr ""
 
 #: data/main.glade.h:75
-msgid "Enable Prefixes"
+msgid "Enable All SI Prefixes"
 msgstr ""
 
 #: data/main.glade.h:76
-msgid "Enable Use Of All SI Prefi_xes"
+msgid "Enable Denominator Prefixes"
 msgstr ""
 
 #: data/main.glade.h:77
-msgid "Enable Use Of All SI Prefixes"
+msgid "Enable Prefixes"
 msgstr ""
 
 #: data/main.glade.h:78

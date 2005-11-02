@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-30 18:32+0100\n"
+"POT-Creation-Date: 2005-10-30 20:53+0100\n"
 "PO-Revision-Date: 2003-10-27 12:29+0100\n"
 "Last-Translator: Niklas Knutsson <nq@altern.org>\n"
 "Language-Team: Swedish\n"
@@ -859,7 +859,7 @@ msgstr ""
 
 #: data/main.glade.h:46
 msgid "C_onvert..."
-msgstr "_Omvandla"
+msgstr "_Omvandla..."
 
 #: data/main.glade.h:47
 msgid "Calculate Variables"
@@ -891,7 +891,7 @@ msgstr "Omvandla till basenheter"
 
 #: data/main.glade.h:54
 msgid "Convert To Base _Units"
-msgstr "Omvandla till base _enheter"
+msgstr "Omvandla till bas_enheter"
 
 #: data/main.glade.h:55
 msgid "Convert To Best Unit"
@@ -966,20 +966,20 @@ msgid "EXP"
 msgstr "EXP"
 
 #: data/main.glade.h:74
+msgid "Enable All SI Prefi_xes"
+msgstr "Använd alla SI-prefi_x"
+
+#: data/main.glade.h:75
+msgid "Enable All SI Prefixes"
+msgstr "Använd alla SI-prefix"
+
+#: data/main.glade.h:76
 msgid "Enable Denominator Prefixes"
 msgstr "Aktivera prefix i nämnaren"
 
-#: data/main.glade.h:75
+#: data/main.glade.h:77
 msgid "Enable Prefixes"
 msgstr "Använd prefix"
-
-#: data/main.glade.h:76
-msgid "Enable Use Of All SI Prefi_xes"
-msgstr "Automatisk användning av alla SI-prefi_x"
-
-#: data/main.glade.h:77
-msgid "Enable Use Of All SI Prefixes"
-msgstr "Automatisk användning av alla SI-prefix"
 
 #: data/main.glade.h:78
 msgid "Enable _Prefixes"
@@ -1163,9 +1163,9 @@ msgid ""
 "Simple"
 msgstr ""
 "Normal\n"
-"Vetenskapligt\n"
+"Vetenskaplig\n"
 "Strikt\n"
-"Enkelt"
+"Enkel"
 
 #: data/main.glade.h:129
 msgid "Number Base"
@@ -1221,11 +1221,11 @@ msgstr "Framåtskridande..."
 
 #: data/main.glade.h:141
 msgid "Purel_y Scientific"
-msgstr "Fu_llt vetenskapligt"
+msgstr "Fu_llt vetenskaplig"
 
 #: data/main.glade.h:142
 msgid "Purely Scientific"
-msgstr "Fullt vetenskapligt"
+msgstr "Fullt vetenskaplig"
 
 #: data/main.glade.h:144
 msgid "RPN Mode"
@@ -1325,11 +1325,11 @@ msgstr "Visa avslutande nollor"
 
 #: data/main.glade.h:168
 msgid "Simp_le"
-msgstr "Enke_lt"
+msgstr "Enke_l"
 
 #: data/main.glade.h:169
 msgid "Simple"
-msgstr "Enkelt"
+msgstr "Enkel"
 
 #: data/main.glade.h:170
 msgid "Sine"
@@ -3005,6 +3005,9 @@ msgstr "Ange okända värden"
 #: src/callbacks.cc:12061
 msgid "with"
 msgstr "med"
+
+#~ msgid "Enable Use Of All SI Prefixes"
+#~ msgstr "Automatisk användning av alla SI-prefix"
 
 #~ msgid "Enable Use Of All Prefi_xes"
 #~ msgstr "Automatisk användning av alla prefi_x"

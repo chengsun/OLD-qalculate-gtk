@@ -383,11 +383,11 @@ create_main_window (void)
 	statuslabel_l = glade_xml_get_widget (main_glade, "label_status_left");
 	statuslabel_r = glade_xml_get_widget (main_glade, "label_status_right");
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_parse", "foreground", "gray40", "style", PANGO_STYLE_ITALIC, NULL);
+	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_transformation", "style", PANGO_STYLE_ITALIC, NULL);
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_error", "foreground", "red", NULL);
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_warning", "foreground", "blue", NULL);
-	//gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_result", "underline", PANGO_UNDERLINE_SINGLE);
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_result", "weight", PANGO_WEIGHT_BOLD);
-	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_separate", "pixels-below-lines", 12, NULL);
+	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_separator", "size-points", 6.0, NULL);
 
 	gtk_label_set_use_markup(GTK_LABEL(gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (main_glade, "button_xy")))), TRUE);
 	//gtk_label_set_use_markup(GTK_LABEL(gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (main_glade, "button_fraction")))), TRUE);
@@ -460,19 +460,22 @@ create_main_window (void)
 		gtk_text_buffer_get_end_iter(tb, &iter);
 		switch(inhistory_type[i]) {
 			case QALCULATE_HISTORY_EXPRESSION: {
+				if(i != 0) {
+					gtk_text_buffer_insert_with_tags_by_name(tb, &iter, "\n", -1, "history_separator", NULL);
+				}
 				gtk_text_buffer_insert(tb, &iter, inhistory[i].c_str(), -1);
 				gtk_text_buffer_insert(tb, &iter, " ", -1);
 				prev_parse = false;
 				break;
 			}
+			case QALCULATE_HISTORY_TRANSFORMATION: {
+				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_transformation", NULL);
+				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, ":  ", -1, "history_transformation", NULL);
+				break;
+			}
 			case QALCULATE_HISTORY_RESULT: {
-				if(prev_parse) {
-					gtk_text_buffer_insert_with_tags_by_name(tb, &iter, "= ", -1, "history_separate", NULL);
-					gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_result", "history_separate", NULL);
-				} else {
-					gtk_text_buffer_insert(tb, &iter, "= ", -1);
-					gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_result", NULL);
-				}
+				gtk_text_buffer_insert(tb, &iter, "= ", -1);
+				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_result", NULL);
 				gtk_text_buffer_insert(tb, &iter, "\n", -1);
 				prev_parse = false;
 				break;
@@ -486,13 +489,8 @@ create_main_window (void)
 					str += _("approx.");
 					str += " ";
 				}
-				if(prev_parse) {
-					gtk_text_buffer_insert_with_tags_by_name(tb, &iter, str.c_str(), -1, "history_separate", NULL);
-					gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_result", "history_separate", NULL);
-				} else {
-					gtk_text_buffer_insert(tb, &iter, str.c_str(), -1);
-					gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_result", NULL);
-				}
+				gtk_text_buffer_insert(tb, &iter, str.c_str(), -1);
+				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_result", NULL);
 				gtk_text_buffer_insert(tb, &iter, "\n", -1);
 				prev_parse = false;
 				break;
