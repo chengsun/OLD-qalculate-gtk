@@ -53,6 +53,7 @@ extern vector<string> recent_variables_pre;
 extern vector<string> recent_units_pre;
 extern GtkWidget *expression;
 GdkPixbuf *icon_pixbuf;
+extern PrintOptions printops;
 
 GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *nbexpression_glade, *datasetedit_glade, *datasets_glade, *decimals_glade;
 GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *namesedit_glade, *nbases_glade, *plot_glade, *precision_glade;
@@ -240,7 +241,10 @@ int main (int argc, char **argv) {
 	if(!calc_arg.empty()) {
 		execute_expression();
 	} else {
+		int base = printops.base;
+		printops.base = 10;
 		setResult(NULL, false, false, false);
+		printops.base = base;
 	}
 
 	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", "accelmap", NULL);

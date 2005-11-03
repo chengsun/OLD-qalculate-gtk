@@ -375,7 +375,7 @@ create_main_window (void)
 	accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group (GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), accel_group);
 	
-	gtk_window_set_default_size (GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), win_width, win_height);
+	if(win_width > 0) gtk_window_set_default_size (GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), win_width, win_height);
 
 	expression = glade_xml_get_widget (main_glade, "expression");
 	resultview = glade_xml_get_widget (main_glade, "resultview");
@@ -386,7 +386,7 @@ create_main_window (void)
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_transformation", "style", PANGO_STYLE_ITALIC, NULL);
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_error", "foreground", "red", NULL);
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_warning", "foreground", "blue", NULL);
-	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_result", "weight", PANGO_WEIGHT_BOLD);
+	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_result", "weight", PANGO_WEIGHT_BOLD, NULL);
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_separator", "size-points", 6.0, NULL);
 
 	gtk_label_set_use_markup(GTK_LABEL(gtk_bin_get_child (GTK_BIN(glade_xml_get_widget (main_glade, "button_xy")))), TRUE);
@@ -454,7 +454,7 @@ create_main_window (void)
 	g_signal_connect(accel_group, "accel_changed", G_CALLBACK(save_accels), NULL);
 
 	GtkTextIter iter;
-	GtkTextBuffer *tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history")));
+	GtkTextBuffer *tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(historyview));
 	bool prev_parse = false;
 	for(size_t i = 0; i < inhistory.size(); i++) {
 		gtk_text_buffer_get_end_iter(tb, &iter);
@@ -563,8 +563,10 @@ create_main_window (void)
 	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_meta_mode_delete"), modes.size() > 2);
 	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_result_popup_meta_mode_delete"), modes.size() > 2);
 	
-	if(show_history || show_buttons) gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), 1, win_height);
-	else gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), win_width, win_height);
+	if(win_width > 0) {
+		if(show_history || show_buttons) gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), 1, win_height);
+		else gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), win_width, win_height);
+	}
 
 	gtk_widget_show (glade_xml_get_widget (main_glade, "main_window"));
 	

@@ -3944,7 +3944,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			h = uh + dh;
 			central_point = dh;
 			arc_h = dh * 2;
-			arc_w = (int) sqrt(arc_h * 3);
+			arc_w = (int) ::sqrt((double) arc_h * 3);
 			w += arc_w * 2;
 			w += 1;
 
@@ -4147,7 +4147,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			h = uh + dh;
 			central_point = dh;
 			arc_h = dh * 2;
-			arc_w = (int) sqrt(arc_h * 3);
+			arc_w = (int) ::sqrt((double) arc_h * 3);
 			w += arc_w * 2;
 			w += 1;
 
@@ -4201,7 +4201,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 		w = base_w;
 		gint arc_base_h = central_point * 2;
 		if(h < arc_base_h) h = arc_base_h;
-		gint arc_base_w = (int) sqrt(arc_base_h * 3);
+		gint arc_base_w = (int) ::sqrt((double) arc_base_h * 3);
 		//base_h += 4;
 		//central_point += 2;
 		w += arc_base_w * 2;
@@ -6386,7 +6386,7 @@ void edit_matrix(const char *category, Variable *var, MathStructure *mstruct_, G
 	if(create_vector) {
 		if(old_vctr) {
 			r = old_vctr->components();
-			c = (int) ::sqrt(r) + 4;
+			c = (int) ::sqrt((double) r) + 4;
 			if(r % c > 0) {
 				r = r / c + 1;
 			} else {
