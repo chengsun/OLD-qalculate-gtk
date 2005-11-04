@@ -27,7 +27,7 @@ enum {
 enum {
 	FRACTIONAL_MODE_DECIMAL = 1,
 	FRACTIONAL_MODE_COMBINED = 2,	
-	FRACTIONAL_MODE_FRACTION = 3,	
+	FRACTIONAL_MODE_FRACTION = 3
 };
 
 #include <libqalculate/qalculate.h>

@@ -236,7 +236,7 @@ PangoCoverageLevel get_least_coverage(const gchar *gstr, PangoCoverage *coverage
 	while(gstr[0] != '\0') {
 		if(gstr[0] < 0) {
 			gunichar gu = g_utf8_get_char_validated(gstr, -1);
-			if(gu >= 0) {
+			if(gu != (gunichar) -1 && gu != (gunichar) -2) {
 				if(pango_coverage_get(coverage, (int) gu) < level) {
 					level = pango_coverage_get(coverage, gu);
 				}
@@ -638,7 +638,7 @@ void display_errors(GtkTextIter *iter = NULL, GtkWidget *win = NULL, int *inhist
 	}
 }
 
-gboolean on_display_errors_timeout(gpointer data) {
+gboolean on_display_errors_timeout(gpointer) {
 	if(stop_timeouts) return false;
 	if(!do_timeout) return true;
 	if(CALCULATOR->checkSaveFunctionCalled()) {
@@ -838,7 +838,7 @@ void display_parse_status() {
 }
 
 
-gboolean on_check_expression_position_timeout(gpointer data) {
+gboolean on_check_expression_position_timeout(gpointer) {
 	if(stop_timeouts) return false;
 	if(!check_expression_position) return true;
 	check_expression_position = false;
@@ -1227,7 +1227,7 @@ void setFunctionTreeItem(GtkTreeIter &iter2, MathFunction *f) {
 /*
 	generate the function tree in manage functions dialog when category selection has changed
 */
-void on_tFunctionCategories_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+void on_tFunctionCategories_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 	GtkTreeModel *model, *model2;
 	GtkTreeIter iter, iter2;
 	bool no_cat = false, b_all = false, b_inactive = false;
@@ -1277,7 +1277,7 @@ void on_tFunctionCategories_selection_changed(GtkTreeSelection *treeselection, g
 /*
 	function selection has changed
 */
-void on_tFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+void on_tFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
@@ -1596,7 +1596,7 @@ void setVariableTreeItem(GtkTreeIter &iter2, Variable *v) {
 /*
 	generate the variable tree in manage variables dialog when category selection has changed
 */
-void on_tVariableCategories_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+void on_tVariableCategories_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 	GtkTreeModel *model, *model2;
 	GtkTreeIter iter, iter2;
 	bool no_cat = false, b_all = false, b_inactive = false;
@@ -1652,7 +1652,7 @@ void on_tVariableCategories_selection_changed(GtkTreeSelection *treeselection, g
 /*
 	variable selection has changed
 */
-void on_tVariables_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+void on_tVariables_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
@@ -1811,7 +1811,7 @@ void setUnitTreeItem(GtkTreeIter &iter2, Unit *u) {
 /*
 	generate the unit tree and units conversion menu in manage units dialog when category selection has changed
 */
-void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 	GtkTreeModel *model, *model2;
 	GtkTreeIter iter, iter2;
 	//make sure that no unit conversion is done in the dialog until everthing is updated
@@ -1913,7 +1913,7 @@ void on_tUnitCategories_selection_changed(GtkTreeSelection *treeselection, gpoin
 /*
 	unit selection has changed
 */
-void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
@@ -2026,11 +2026,11 @@ void setUnitSelectorTreeItem(GtkTreeIter &iter2, Unit *u) {
 /*
 	generate the unit tree and units conversion menu in manage units dialog when category selection has changed
 */
-void on_tUnitSelectorCategories_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+void on_tUnitSelectorCategories_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 
 	block_unit_selector_convert = true;
 
-	GtkTreeModel *model, *model2;
+	GtkTreeModel *model;
 	GtkTreeIter iter, iter2;
 
 	bool no_cat = false, b_all = false;
@@ -2070,7 +2070,7 @@ void on_tUnitSelectorCategories_selection_changed(GtkTreeSelection *treeselectio
 	
 }
 
-void on_tUnitSelector_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+void on_tUnitSelector_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	if(gtk_tree_selection_get_selected(treeselection, &model, &iter)) {
@@ -2116,7 +2116,7 @@ void update_datasets_tree() {
 }
 
 
-void on_tDatasets_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+void on_tDatasets_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 	GtkTreeModel *model, *model2;
 	GtkTreeIter iter, iter2;
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tDataObjects));
@@ -2300,7 +2300,7 @@ void on_dataset_button_function_clicked(GtkButton *w, gpointer user_data) {
 		insert_text(str.c_str());
 	}
 }
-void on_tDataObjects_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+void on_tDataObjects_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	GtkWidget *ptable = glade_xml_get_widget(datasets_glade, "datasets_table_properties");
@@ -2359,7 +2359,7 @@ void on_tDataObjects_selection_changed(GtkTreeSelection *treeselection, gpointer
 	}
 }
 
-void on_tDataProperties_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+void on_tDataProperties_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	selected_dataproperty = NULL;
@@ -2376,7 +2376,7 @@ void on_tDataProperties_selection_changed(GtkTreeSelection *treeselection, gpoin
 }
 
 
-void on_tPlotFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+void on_tPlotFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	selected_argument = NULL;
@@ -2405,7 +2405,7 @@ void on_tPlotFunctions_selection_changed(GtkTreeSelection *treeselection, gpoint
 	}
 }
 
-void on_tSubfunctions_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+void on_tSubfunctions_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	selected_subfunction = 0;
@@ -2426,7 +2426,7 @@ void on_tSubfunctions_selection_changed(GtkTreeSelection *treeselection, gpointe
 	}
 }
 
-void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+void on_tFunctionArguments_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	selected_argument = NULL;
@@ -2550,7 +2550,7 @@ void update_function_arguments_list(MathFunction *f) {
 	}
 }
 
-void on_tNames_selection_changed(GtkTreeSelection *treeselection, gpointer user_data) {
+void on_tNames_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	selected_subfunction = 0;
@@ -3067,7 +3067,7 @@ void draw_background(GdkPixmap *pixmap, gint w, gint h) {
 	gdk_draw_rectangle(pixmap, resultview->style->bg_gc[GTK_WIDGET_STATE(resultview)], TRUE, 0, 0, w, h);
 }
 
-GdkPixbuf *get_left_parenthesis(gint arc_w, gint arc_h, int scaledown) {
+GdkPixbuf *get_left_parenthesis(gint arc_w, gint arc_h, int) {
 	if(left_par_pix.count(arc_w * 1000 + arc_h) > 0) {
 		return left_par_pix[arc_w * 1000 + arc_h];
 	}
@@ -3087,7 +3087,7 @@ GdkPixbuf *get_left_parenthesis(gint arc_w, gint arc_h, int scaledown) {
 	left_par_pix[arc_w * 1000 + arc_h] = pixbuf_parl;
 	return pixbuf_parl;
 }
-GdkPixbuf *get_right_parenthesis(gint arc_w, gint arc_h, int scaledown) {
+GdkPixbuf *get_right_parenthesis(gint arc_w, gint arc_h, int) {
 	if(right_par_pix.count(arc_w * 1000 + arc_h) > 0) {
 		return right_par_pix[arc_w * 1000 + arc_h];
 	}
@@ -4263,7 +4263,7 @@ void clearresult() {
 	}
 }
 
-void on_abort_display(GtkDialog *w, gint arg1, gpointer user_data) {
+void on_abort_display(GtkDialog*, gint, gpointer) {
 	pthread_cancel(view_thread);
 	CALCULATOR->restoreState();
 	CALCULATOR->clearBuffers();
@@ -4364,7 +4364,7 @@ void *view_proc(void *pipe) {
 	}
 	return NULL;
 }
-gboolean on_event(GtkWidget *w, GdkEvent *e, gpointer user_data) {
+gboolean on_event(GtkWidget*, GdkEvent *e, gpointer) {
 	if(e->type == GDK_EXPOSE || e->type == GDK_PROPERTY_NOTIFY || e->type == GDK_CONFIGURE || e->type == GDK_FOCUS_CHANGE || e->type == GDK_VISIBILITY_NOTIFY) {
 		return FALSE;
 	}
@@ -4427,7 +4427,7 @@ void setResult(Prefix *prefix, bool update_history, bool update_parse, bool forc
 	int scale_n = 0;
 	GtkWidget *dialog = NULL;
 	CALCULATOR->saveState();
-	gint w = 0, wr = 0, h = 0, hr = 0, h_new, w_new;
+	gint w = 0, h = 0;
 	bool parsed_approx = false;
 
 	while(true) {
@@ -4649,13 +4649,13 @@ void expression_format_updated(bool recalculate) {
 }
 
 
-void set_prefix(GtkMenuItem *w, gpointer user_data) {
+void set_prefix(GtkMenuItem*, gpointer user_data) {
 	//mstruct->clearPrefixes();
 	result_prefix_changed((Prefix*) user_data);
 	focus_keeping_selection();
 }
 
-void on_abort_calculation(GtkDialog *w, gint arg1, gpointer user_data) {
+void on_abort_calculation(GtkDialog*, gint, gpointer) {
 	CALCULATOR->abort();
 }
 
@@ -4736,41 +4736,6 @@ void execute_expression(bool force) {
 	do_timeout = true;
 	//gtk_editable_set_position(GTK_EDITABLE(expression), -1);
 }
-
-
-
-/*
-	calculate position of expression menu
-*/
-void menu_e_posfunc(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data)
-{
-	GtkWidget *window = glade_xml_get_widget (main_glade, "main_window");
-	gint root_x = 0, root_y = 0, size_x = 0, size_y = 0;
-	GdkRectangle rect;
-	gdk_window_get_frame_extents(window->window, &rect);
-	gtk_window_get_position(GTK_WINDOW(window), &root_x, &root_y);
-	gtk_window_get_size(GTK_WINDOW(window), &size_x, &size_y);
-	*x = root_x + (rect.width - size_x) / 2 + glade_xml_get_widget (main_glade, "togglebutton_expression")->allocation.x + glade_xml_get_widget (main_glade, "togglebutton_expression")->allocation.width;
-	*y = root_y + (rect.height - size_y) / 2 + glade_xml_get_widget (main_glade, "togglebutton_expression")->allocation.y;
-	*push_in = false;
-}
-
-/*
-	calculate position of result menu
-*/
-void menu_r_posfunc(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data)
-{
-	GtkWidget *window = glade_xml_get_widget (main_glade, "main_window");
-	gint root_x = 0, root_y = 0, size_x = 0, size_y = 0;
-	GdkRectangle rect;
-	gdk_window_get_frame_extents(window->window, &rect);
-	gtk_window_get_position(GTK_WINDOW(window), &root_x, &root_y);
-	gtk_window_get_size(GTK_WINDOW(window), &size_x, &size_y);
-	*x = root_x + (rect.width - size_x) / 2 + glade_xml_get_widget (main_glade, "togglebutton_result")->allocation.x + glade_xml_get_widget (main_glade, "togglebutton_result")->allocation.width;
-	*y = root_y + (rect.height - size_y) / 2 + glade_xml_get_widget (main_glade, "togglebutton_result")->allocation.y;
-	*push_in = false;
-}
-
 
 /*
 	general function used to insert text in expression entry
@@ -5017,12 +4982,16 @@ void insert_function(MathFunction *f, GtkWidget *parent = NULL) {
 	GtkWidget *table = gtk_table_new(3, args, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
-	gtk_container_add(GTK_CONTAINER(vbox_pre), table);	
-	GtkWidget *label[args];
-	GtkWidget *entry[args];
-	GtkWidget *type_label[args];
+	gtk_container_add(GTK_CONTAINER(vbox_pre), table);
+	vector<GtkWidget*> label;
+	vector<GtkWidget*> entry;
+	vector<GtkWidget*> type_label;
+	label.resize(args, NULL);
+	entry.resize(args, NULL);
+	type_label.resize(args, NULL);
 	vector<GtkWidget*> boolean_buttons;
-	int boolean_index[args];
+	vector<int> boolean_index;
+	boolean_index.resize(args, 0);
 	int bindex = 0;
 	GtkWidget *descr, *descr_box, *descr_frame;
 	string argstr, typestr, defstr; 
@@ -5269,7 +5238,7 @@ void insert_function(MathFunction *f, GtkWidget *parent = NULL) {
 /*
 	called from function menu
 */
-void insert_function(GtkMenuItem *w, gpointer user_data) {
+void insert_function(GtkMenuItem*, gpointer user_data) {
 	insert_function((MathFunction*) user_data, glade_xml_get_widget (main_glade, "main_window"));
 }
 
@@ -5277,7 +5246,7 @@ void insert_function(GtkMenuItem *w, gpointer user_data) {
 	called from variable menu
 	just insert text data stored in menu item
 */
-void insert_variable(GtkMenuItem *w, gpointer user_data) {
+void insert_variable(GtkMenuItem*, gpointer user_data) {
 	Variable *v = (Variable*) user_data;
 	if(!CALCULATOR->stillHasVariable(v)) {
 		show_message(_("Variable does not exist anymore."), glade_xml_get_widget (main_glade, "main_window"));
@@ -5288,11 +5257,11 @@ void insert_variable(GtkMenuItem *w, gpointer user_data) {
 	variable_inserted((Variable*) user_data);
 }
 //from prefix menu
-void insert_prefix(GtkMenuItem *w, gpointer user_data) {
+void insert_prefix(GtkMenuItem*, gpointer user_data) {
 	insert_text(((Prefix*) user_data)->name(printops.abbreviate_names, printops.use_unicode_signs, &can_display_unicode_string_function, (void*) expression).c_str());
 }
 //from unit menu
-void insert_unit(GtkMenuItem *w, gpointer user_data) {
+void insert_unit(GtkMenuItem*, gpointer user_data) {
 	if(((Unit*) user_data)->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 		insert_text(((CompositeUnit*) user_data)->print(true, printops.abbreviate_names, printops.use_unicode_signs, &can_display_unicode_string_function, (void*) expression).c_str());
 	} else {
@@ -5919,7 +5888,7 @@ run_function_edit_dialog:
 /*
 	"New function" menu item selected
 */
-void new_function(GtkMenuItem *w, gpointer user_data)
+void new_function(GtkMenuItem*, gpointer)
 {
 	edit_function(
 			"",
@@ -5929,7 +5898,7 @@ void new_function(GtkMenuItem *w, gpointer user_data)
 /*
 	"New unit" menu item selected
 */
-void new_unit(GtkMenuItem *w, gpointer user_data)
+void new_unit(GtkMenuItem*, gpointer)
 {
 	edit_unit(
 			"",
@@ -5940,7 +5909,7 @@ void new_unit(GtkMenuItem *w, gpointer user_data)
 /*
 	a unit selected in result menu, convert result
 */
-void convert_to_unit(GtkMenuItem *w, gpointer user_data)
+void convert_to_unit(GtkMenuItem*, gpointer user_data)
 {
 	GtkWidget *edialog;
 	Unit *u = (Unit*) user_data;
@@ -6626,7 +6595,7 @@ void edit_dataobject(DataSet *ds, DataObject *o, GtkWidget *win) {
 	gtk_widget_hide(dialog);
 }
 
-void update_dataset_property_list(DataSet *ds) {
+void update_dataset_property_list(DataSet*) {
 	if(!datasetedit_glade) return;
 	selected_dataproperty = NULL;
 	gtk_list_store_clear(tDataProperties_store);
@@ -7204,7 +7173,7 @@ void add_as_variable()
 	edit_variable(_("Temporary"), NULL, mstruct, glade_xml_get_widget (main_glade, "main_window"));
 }
 
-void new_unknown(GtkMenuItem *w, gpointer user_data)
+void new_unknown(GtkMenuItem*, gpointer)
 {
 	edit_unknown(_("My Variables"), NULL, glade_xml_get_widget (main_glade, "main_window"));
 }
@@ -7212,7 +7181,7 @@ void new_unknown(GtkMenuItem *w, gpointer user_data)
 /*
 	add a new variable (from menu)
 */
-void new_variable(GtkMenuItem *w, gpointer user_data)
+void new_variable(GtkMenuItem*, gpointer)
 {
 	edit_variable(_("My Variables"), NULL, NULL, glade_xml_get_widget (main_glade, "main_window"));
 }
@@ -7220,14 +7189,14 @@ void new_variable(GtkMenuItem *w, gpointer user_data)
 /*
 	add a new matrix (from menu)
 */
-void new_matrix(GtkMenuItem *w, gpointer user_data)
+void new_matrix(GtkMenuItem*, gpointer)
 {
 	edit_matrix(_("Matrices"), NULL, NULL, glade_xml_get_widget (main_glade, "main_window"), FALSE);
 }
 /*
 	add a new vector (from menu)
 */
-void new_vector(GtkMenuItem *w, gpointer user_data)
+void new_vector(GtkMenuItem*, gpointer)
 {
 	edit_matrix(_("Vectors"), NULL, NULL, glade_xml_get_widget (main_glade, "main_window"), TRUE);
 }
@@ -7266,14 +7235,14 @@ void insertButtonFunction(MathFunction *f) {
 /*
 	Button clicked -- insert text (1,2,3,... +,-,...)
 */
-void button_pressed(GtkButton *w, gpointer user_data) {
+void button_pressed(GtkButton*, gpointer user_data) {
 	insert_text((gchar*) user_data);
 }
 
 /*
 	Button clicked -- insert corresponding function
 */
-void button_function_pressed(GtkButton *w, gpointer user_data) {
+void button_function_pressed(GtkButton*, gpointer user_data) {
 	insertButtonFunction((gchar*) user_data);
 }
 
@@ -7362,7 +7331,7 @@ void set_angle_button() {
 /*
 	variables, functions and units enabled/disabled from menu
 */
-void set_clean_mode(GtkMenuItem *w, gpointer user_data) {
+void set_clean_mode(GtkMenuItem *w, gpointer) {
 	gboolean b = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	evalops.parse_options.functions_enabled = !b;
 	evalops.parse_options.variables_enabled = !b;
@@ -7399,7 +7368,7 @@ void manage_units() {
 /*
 	selected item in unit conversion menu in unit manager has changed -- update conversion
 */
-void on_omToUnit_menu_activate(GtkMenuItem *item, gpointer user_data) {
+void on_omToUnit_menu_activate(GtkMenuItem*, gpointer user_data) {
 	selected_to_unit = (Unit*) user_data;
 	convert_in_wUnits();
 }
@@ -7538,12 +7507,12 @@ void load_mode(string name) {
 	}
 }
 void load_mode(size_t index) {
-	if(index >= 0 && index < modes.size()) {
+	if(index < modes.size()) {
 		load_mode(modes[index]);
 	}
 }
 
-void on_combobox_base_changed(GtkComboBox *w, gpointer user_data) {
+void on_combobox_base_changed(GtkComboBox *w, gpointer) {
 	switch(gtk_combo_box_get_active(w)) {
 		case 0: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_binary")), TRUE);
@@ -7579,7 +7548,7 @@ void on_combobox_base_changed(GtkComboBox *w, gpointer user_data) {
 		}
 	}
 }
-void on_combobox_numerical_display_changed(GtkComboBox *w, gpointer user_data) {
+void on_combobox_numerical_display_changed(GtkComboBox *w, gpointer) {
 	switch(gtk_combo_box_get_active(w)) {
 		case 0: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_normal")), TRUE);
@@ -7616,7 +7585,7 @@ void show_tabs(bool do_show) {
 	}
 }
 
-void on_expander_keypad_expanded(GObject *o, GParamSpec *param_spec, gpointer user_data) {
+void on_expander_keypad_expanded(GObject *o, GParamSpec*, gpointer) {
 	if(gtk_expander_get_expanded(GTK_EXPANDER(o))) {
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(tabs), 0);
 		if(gtk_expander_get_expanded(GTK_EXPANDER(expander_history))) {
@@ -7628,7 +7597,7 @@ void on_expander_keypad_expanded(GObject *o, GParamSpec *param_spec, gpointer us
 		show_tabs(false);
 	}
 }
-void on_expander_history_expanded(GObject *o, GParamSpec *param_spec, gpointer user_data) {
+void on_expander_history_expanded(GObject *o, GParamSpec*, gpointer) {
 	if(gtk_expander_get_expanded(GTK_EXPANDER(o))) {
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(tabs), 1);
 		if(gtk_expander_get_expanded(GTK_EXPANDER(expander_keypad))) {
@@ -7641,11 +7610,11 @@ void on_expander_history_expanded(GObject *o, GParamSpec *param_spec, gpointer u
 	}
 }
 
-void on_menu_item_meta_mode_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_meta_mode_activate(GtkMenuItem*, gpointer user_data) {
 	const char *name = (const char*) user_data;
 	load_mode(name);
 }
-void on_menu_item_meta_mode_save_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_meta_mode_save_activate(GtkMenuItem*, gpointer) {
 	GtkWidget *dialog = gtk_dialog_new_with_buttons(_("Save Mode"), GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), (GtkDialogFlags) (GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT), GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, NULL);
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
@@ -7695,7 +7664,7 @@ run_meta_mode_save_dialog:
 	}
 	gtk_widget_destroy(dialog);
 }
-void on_menu_item_meta_mode_delete_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_meta_mode_delete_activate(GtkMenuItem*, gpointer) {
 	GtkWidget *dialog = gtk_dialog_new_with_buttons(_("Delete Mode"), GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), (GtkDialogFlags) (GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT), GTK_STOCK_DELETE, GTK_RESPONSE_ACCEPT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, NULL);
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
@@ -8588,7 +8557,7 @@ void set_current_object() {
 	}
 	current_object_has_changed = false;
 }
-gboolean on_completion_match_selected(GtkEntryCompletion *entrycompletion, GtkTreeModel *model, GtkTreeIter *iter, gpointer user_data) {
+gboolean on_completion_match_selected(GtkEntryCompletion*, GtkTreeModel *model, GtkTreeIter *iter, gpointer) {
 	set_current_object();
 	ExpressionItem *item = NULL;
 	const ExpressionName *ename = NULL, *ename_r = NULL;
@@ -8661,10 +8630,10 @@ gboolean on_completion_match_selected(GtkEntryCompletion *entrycompletion, GtkTr
 	unblock_completion();
 	return TRUE;
 }
-gboolean completion_match_func(GtkEntryCompletion *entrycompletion, const gchar *key, GtkTreeIter *iter, gpointer user_data) {
+gboolean completion_match_func(GtkEntryCompletion*, const gchar*, GtkTreeIter *iter, gpointer) {
 	set_current_object();
 	if(current_object_start < 0) return FALSE;
-	gchar *gstr1, *gstr2;
+	gchar *gstr2;
 	gboolean b_match = false;
 	ExpressionItem *item = NULL;
 	const ExpressionName *ename;
@@ -8691,7 +8660,7 @@ gboolean completion_match_func(GtkEntryCompletion *entrycompletion, const gchar 
 }
 
 
-void on_menu_item_quit_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_quit_activate(GtkMenuItem*, gpointer user_data) {
 	on_gcalc_exit(NULL, NULL, user_data);
 }
 
@@ -8708,7 +8677,7 @@ string i2hex(guint value) {
 /*
 	change preferences
 */
-void on_colorbutton_status_error_color_color_set(GtkColorButton *w, gpointer user_data) {
+void on_colorbutton_status_error_color_color_set(GtkColorButton *w, gpointer) {
 	GdkColor c;
 	gtk_color_button_get_color(w, &c);
 	status_error_color = "#";
@@ -8717,7 +8686,7 @@ void on_colorbutton_status_error_color_color_set(GtkColorButton *w, gpointer use
 	status_error_color += i2hex(c.blue);
 	display_parse_status();
 }
-void on_colorbutton_status_warning_color_color_set(GtkColorButton *w, gpointer user_data) {
+void on_colorbutton_status_warning_color_color_set(GtkColorButton *w, gpointer) {
 	GdkColor c;
 	gtk_color_button_get_color(w, &c);
 	status_warning_color = "#";
@@ -8726,18 +8695,18 @@ void on_colorbutton_status_warning_color_color_set(GtkColorButton *w, gpointer u
 	status_warning_color += i2hex(c.blue);
 	display_parse_status();
 }
-void on_preferences_entry_wget_args_changed(GtkEditable *editable, gpointer user_data) {
+void on_preferences_entry_wget_args_changed(GtkEditable *editable, gpointer) {
 	wget_args = gtk_entry_get_text(GTK_ENTRY(editable));
 }
-void on_preferences_checkbutton_lower_case_numbers_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_checkbutton_lower_case_numbers_toggled(GtkToggleButton *w, gpointer) {
 	printops.lower_case_numbers = gtk_toggle_button_get_active(w);
 	result_display_updated();
 }
-void on_preferences_checkbutton_lower_case_e_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_checkbutton_lower_case_e_toggled(GtkToggleButton *w, gpointer) {
 	printops.lower_case_e = gtk_toggle_button_get_active(w);
 	result_display_updated();
 }
-void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpointer) {
 	printops.use_unicode_signs = gtk_toggle_button_get_active(w);
 	set_unicode_buttons();
 	gtk_widget_set_sensitive(glade_xml_get_widget (preferences_glade, "preferences_radiobutton_asterisk"), printops.use_unicode_signs);
@@ -8749,19 +8718,19 @@ void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpoint
 	result_display_updated();
 }
 
-void on_preferences_checkbutton_save_defs_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_checkbutton_save_defs_toggled(GtkToggleButton *w, gpointer) {
 	save_defs_on_exit = gtk_toggle_button_get_active(w);
 }
-void on_preferences_checkbutton_save_mode_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_checkbutton_save_mode_toggled(GtkToggleButton *w, gpointer) {
 	save_mode_on_exit = gtk_toggle_button_get_active(w);
 }
-void on_preferences_checkbutton_load_defs_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_checkbutton_load_defs_toggled(GtkToggleButton *w, gpointer) {
 	load_global_defs = gtk_toggle_button_get_active(w);
 }
-void on_preferences_checkbutton_fetch_exchange_rates_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_checkbutton_fetch_exchange_rates_toggled(GtkToggleButton *w, gpointer) {
 	fetch_exchange_rates_at_startup = gtk_toggle_button_get_active(w);
 }
-void on_preferences_checkbutton_display_expression_status_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_checkbutton_display_expression_status_toggled(GtkToggleButton *w, gpointer) {
 	if(gtk_toggle_button_get_active(w)) {
 		display_expression_status = true;
 		display_parse_status();
@@ -8770,7 +8739,7 @@ void on_preferences_checkbutton_display_expression_status_toggled(GtkToggleButto
 		set_status_text("");
 	}
 }
-void on_preferences_checkbutton_enable_completion_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_checkbutton_enable_completion_toggled(GtkToggleButton *w, gpointer) {
 	if(gtk_toggle_button_get_active(w)) {
 		enable_completion = true;
 		update_completion();
@@ -8779,7 +8748,7 @@ void on_preferences_checkbutton_enable_completion_toggled(GtkToggleButton *w, gp
 		update_completion();
 	}
 }
-void on_preferences_checkbutton_custom_result_font_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_checkbutton_custom_result_font_toggled(GtkToggleButton *w, gpointer) {
 	use_custom_result_font = gtk_toggle_button_get_active(w);
 	gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_result_font"), use_custom_result_font);
 	if(use_custom_result_font) {
@@ -8792,7 +8761,7 @@ void on_preferences_checkbutton_custom_result_font_toggled(GtkToggleButton *w, g
 		result_font_modified();
 	}
 }
-void on_preferences_checkbutton_custom_expression_font_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_checkbutton_custom_expression_font_toggled(GtkToggleButton *w, gpointer) {
 	use_custom_expression_font = gtk_toggle_button_get_active(w);
 	gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_expression_font"), use_custom_expression_font);
 	if(use_custom_expression_font) {
@@ -8803,7 +8772,7 @@ void on_preferences_checkbutton_custom_expression_font_toggled(GtkToggleButton *
 		gtk_widget_modify_font(expression, NULL);
 	}
 }
-void on_preferences_checkbutton_custom_status_font_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_checkbutton_custom_status_font_toggled(GtkToggleButton *w, gpointer) {
 	use_custom_status_font = gtk_toggle_button_get_active(w);
 	gtk_widget_set_sensitive(glade_xml_get_widget(preferences_glade, "preferences_button_status_font"), use_custom_status_font);
 	if(use_custom_status_font) {
@@ -8816,43 +8785,43 @@ void on_preferences_checkbutton_custom_status_font_toggled(GtkToggleButton *w, g
 		gtk_widget_modify_font(statuslabel_r, NULL);
 	}
 }
-void on_preferences_radiobutton_dot_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_radiobutton_dot_toggled(GtkToggleButton *w, gpointer) {
 	if(gtk_toggle_button_get_active(w)) {
 		printops.multiplication_sign = MULTIPLICATION_SIGN_DOT;
 		result_display_updated();
 	}
 }
-void on_preferences_radiobutton_ex_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_radiobutton_ex_toggled(GtkToggleButton *w, gpointer) {
 	if(gtk_toggle_button_get_active(w)) {
 		printops.multiplication_sign = MULTIPLICATION_SIGN_X;
 		result_display_updated();
 	}
 }
-void on_preferences_radiobutton_asterisk_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_radiobutton_asterisk_toggled(GtkToggleButton *w, gpointer) {
 	if(gtk_toggle_button_get_active(w)) {
 		printops.multiplication_sign = MULTIPLICATION_SIGN_ASTERISK;
 		result_display_updated();
 	}
 }
-void on_preferences_radiobutton_slash_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_radiobutton_slash_toggled(GtkToggleButton *w, gpointer) {
 	if(gtk_toggle_button_get_active(w)) {
 		printops.division_sign = DIVISION_SIGN_SLASH;
 		result_display_updated();
 	}
 }
-void on_preferences_radiobutton_division_slash_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_radiobutton_division_slash_toggled(GtkToggleButton *w, gpointer) {
 	if(gtk_toggle_button_get_active(w)) {
 		printops.division_sign = DIVISION_SIGN_DIVISION_SLASH;
 		result_display_updated();
 	}
 }
-void on_preferences_radiobutton_division_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_preferences_radiobutton_division_toggled(GtkToggleButton *w, gpointer) {
 	if(gtk_toggle_button_get_active(w)) {
 		printops.division_sign = DIVISION_SIGN_DIVISION;
 		result_display_updated();
 	}
 }
-void on_preferences_button_result_font_clicked(GtkButton *w, gpointer user_data) {
+void on_preferences_button_result_font_clicked(GtkButton *w, gpointer) {
 	GtkWidget *d = gtk_font_selection_dialog_new(_("Select result font"));
 	gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(d), custom_result_font.c_str());
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
@@ -8865,7 +8834,7 @@ void on_preferences_button_result_font_clicked(GtkButton *w, gpointer user_data)
 	}
 	gtk_widget_destroy(d);
 }
-void on_preferences_button_expression_font_clicked(GtkButton *w, gpointer user_data) {
+void on_preferences_button_expression_font_clicked(GtkButton *w, gpointer) {
 	GtkWidget *d = gtk_font_selection_dialog_new(_("Select expression font"));
 	gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(d), custom_expression_font.c_str());
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
@@ -8877,7 +8846,7 @@ void on_preferences_button_expression_font_clicked(GtkButton *w, gpointer user_d
 	}
 	gtk_widget_destroy(d);
 }
-void on_preferences_button_status_font_clicked(GtkButton *w, gpointer user_data) {
+void on_preferences_button_status_font_clicked(GtkButton *w, gpointer) {
 	GtkWidget *d = gtk_font_selection_dialog_new(_("Select status font"));
 	gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(d), custom_status_font.c_str());
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_OK) {
@@ -8894,14 +8863,14 @@ void on_preferences_button_status_font_clicked(GtkButton *w, gpointer user_data)
 /*
 	hide unit manager when "Close" clicked
 */
-void on_units_button_close_clicked(GtkButton *button, gpointer user_data) {
+void on_units_button_close_clicked(GtkButton*, gpointer) {
 	gtk_widget_hide(glade_xml_get_widget (units_glade, "units_dialog"));
 }
 
 /*
 	change conversion direction in unit manager on user request
 */
-void on_units_toggle_button_from_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
+void on_units_toggle_button_from_toggled(GtkToggleButton *togglebutton, gpointer) {
 	if(gtk_toggle_button_get_active(togglebutton)) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (units_glade, "units_toggle_button_to")), FALSE);
 		convert_in_wUnits();
@@ -8911,14 +8880,14 @@ void on_units_toggle_button_from_toggled(GtkToggleButton *togglebutton, gpointer
 /*
 	convert button clicked
 */
-void on_units_button_convert_clicked(GtkButton *button, gpointer user_data) {
+void on_units_button_convert_clicked(GtkButton*, gpointer) {
 	convert_in_wUnits();
 }
 
 /*
 	change conversion direction in unit manager on user request
 */
-void on_units_toggle_button_to_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
+void on_units_toggle_button_to_toggled(GtkToggleButton *togglebutton, gpointer) {
 	if(gtk_toggle_button_get_active(togglebutton)) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (units_glade, "units_toggle_button_from")), FALSE);
 		convert_in_wUnits();
@@ -8928,10 +8897,10 @@ void on_units_toggle_button_to_toggled(GtkToggleButton *togglebutton, gpointer u
 /*
 	enter in conversion field
 */
-void on_units_entry_from_val_activate(GtkEntry *entry, gpointer user_data) {
+void on_units_entry_from_val_activate(GtkEntry*, gpointer) {
 	convert_in_wUnits(0);
 }
-void on_units_entry_to_val_activate(GtkEntry *entry, gpointer user_data) {
+void on_units_entry_to_val_activate(GtkEntry*, gpointer) {
 	convert_in_wUnits(1);
 }
 
@@ -9123,7 +9092,7 @@ void update_resultview_popup() {
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_fraction_fraction"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_fraction_fraction_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_assume_nonzero_denominators"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_assume_nonzero_denominators_activate, NULL);
 }
-gboolean on_resultview_button_press_event(GtkWidget *w, GdkEventButton *event, gpointer user_data) {
+gboolean on_resultview_button_press_event(GtkWidget*, GdkEventButton *event, gpointer) {
 	if(event->button == 3) {
 		update_resultview_popup();
 		gtk_menu_popup(GTK_MENU(glade_xml_get_widget (main_glade, "popup_menu_resultview")), NULL, NULL, NULL, NULL, event->button, event->time);
@@ -9131,17 +9100,17 @@ gboolean on_resultview_button_press_event(GtkWidget *w, GdkEventButton *event, g
 	}
 	return FALSE;
 }
-gboolean on_resultview_popup_menu(GtkWidget *w, gpointer user_data) {
+gboolean on_resultview_popup_menu(GtkWidget*, gpointer) {
 	update_resultview_popup();
 	gtk_menu_popup(GTK_MENU(glade_xml_get_widget (main_glade, "popup_menu_resultview")), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
 	return TRUE;
 }
 
-gboolean on_units_entry_from_val_focus_out_event(GtkEntry *entry, GdkEventFocus *event, gpointer user_data) {
+gboolean on_units_entry_from_val_focus_out_event(GtkEntry*, GdkEventFocus*, gpointer) {
 	convert_in_wUnits(0);
 	return FALSE;
 }
-gboolean on_units_entry_to_val_focus_out_event(GtkEntry *entry, GdkEventFocus *event, gpointer user_data) {
+gboolean on_units_entry_to_val_focus_out_event(GtkEntry*, GdkEventFocus*, gpointer) {
 	convert_in_wUnits(1);
 	return FALSE;
 }
@@ -9149,7 +9118,7 @@ gboolean on_units_entry_to_val_focus_out_event(GtkEntry *entry, GdkEventFocus *e
 /*
 	angle mode radio buttons toggled
 */
-void on_radiobutton_radians_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
+void on_radiobutton_radians_toggled(GtkToggleButton *togglebutton, gpointer) {
 	if(gtk_toggle_button_get_active(togglebutton)) {
 		evalops.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 		set_angle_item();
@@ -9157,7 +9126,7 @@ void on_radiobutton_radians_toggled(GtkToggleButton *togglebutton, gpointer user
 	}
 	focus_keeping_selection();
 }
-void on_radiobutton_degrees_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
+void on_radiobutton_degrees_toggled(GtkToggleButton *togglebutton, gpointer) {
 	if(gtk_toggle_button_get_active(togglebutton)) {
 		evalops.parse_options.angle_unit = ANGLE_UNIT_DEGREES;
 		set_angle_item();
@@ -9165,7 +9134,7 @@ void on_radiobutton_degrees_toggled(GtkToggleButton *togglebutton, gpointer user
 	}
 	focus_keeping_selection();
 }
-void on_radiobutton_gradians_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
+void on_radiobutton_gradians_toggled(GtkToggleButton *togglebutton, gpointer) {
 	if(gtk_toggle_button_get_active(togglebutton)) {
 		evalops.parse_options.angle_unit = ANGLE_UNIT_GRADIANS;
 		set_angle_item();
@@ -9173,7 +9142,7 @@ void on_radiobutton_gradians_toggled(GtkToggleButton *togglebutton, gpointer use
 	}
 	focus_keeping_selection();
 }
-void on_radiobutton_no_default_angle_unit_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
+void on_radiobutton_no_default_angle_unit_toggled(GtkToggleButton *togglebutton, gpointer) {
 	if(gtk_toggle_button_get_active(togglebutton)) {
 		evalops.parse_options.angle_unit = ANGLE_UNIT_NONE;
 		set_angle_item();
@@ -9185,9 +9154,7 @@ void on_radiobutton_no_default_angle_unit_toggled(GtkToggleButton *togglebutton,
 /*
 	enter in expression entry does the same as clicking "Execute" button
 */
-void
-on_expression_activate                 (GtkEntry        *entry,
-                                        gpointer         user_data) {
+void on_expression_activate(GtkEntry*, gpointer) {
 	execute_expression();
 }
 
@@ -9195,15 +9162,13 @@ on_expression_activate                 (GtkEntry        *entry,
 /*
 	"Execute" clicked
 */
-void
-on_button_execute_clicked                        (GtkButton       *button,
-                                        gpointer         user_data) {
+void on_button_execute_clicked(GtkButton*, gpointer) {
 	execute_expression();
 }
 /*
 	save preferences, mode and definitions and then quit
 */
-gboolean on_gcalc_exit(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
+gboolean on_gcalc_exit(GtkWidget*, GdkEvent*, gpointer) {
 	stop_timeouts = true;
 	exit_in_progress = true;
 	if(plot_glade && GTK_WIDGET_VISIBLE(glade_xml_get_widget (plot_glade, "plot_dialog"))) {
@@ -9236,7 +9201,7 @@ void save_accels() {
 /*
 	DEL button clicked -- delete in expression entry
 */
-void on_button_del_clicked(GtkButton *w, gpointer user_data) {
+void on_button_del_clicked(GtkButton*, gpointer) {
 	gint position = gtk_editable_get_position(GTK_EDITABLE(expression));
 	//delete selection or one character
 	if(g_utf8_strlen(gtk_entry_get_text(GTK_ENTRY(expression)), -1) == position)
@@ -9250,7 +9215,7 @@ void on_button_del_clicked(GtkButton *w, gpointer user_data) {
 /*
 	AC button clicked -- clear expression entry
 */
-void on_button_ac_clicked(GtkButton *w, gpointer user_data) {
+void on_button_ac_clicked(GtkButton*, gpointer) {
 	gtk_editable_delete_text(GTK_EDITABLE(expression), 0, -1);
 	gtk_widget_grab_focus(expression);
 }
@@ -9258,7 +9223,7 @@ void on_button_ac_clicked(GtkButton *w, gpointer user_data) {
 /*
 	HYP button toggled -- enable/disable hyperbolic functions
 */
-void on_button_hyp_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_button_hyp_toggled(GtkToggleButton *w, gpointer) {
 	hyp_is_on = gtk_toggle_button_get_active(w);
 	focus_keeping_selection();
 }
@@ -9267,7 +9232,7 @@ void on_button_hyp_toggled(GtkToggleButton *w, gpointer user_data) {
 	INV button toggled -- enable/disable inverse functions
 */
 
-void on_button_inv_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_button_inv_toggled(GtkToggleButton *w, gpointer) {
 	inv_is_on = gtk_toggle_button_get_active(w);
 	focus_keeping_selection();
 }
@@ -9275,7 +9240,7 @@ void on_button_inv_toggled(GtkToggleButton *w, gpointer user_data) {
 /*
 	fraction button toggled -- enable/disable fractional display
 */
-void on_button_fraction_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_button_fraction_toggled(GtkToggleButton *w, gpointer) {
 	if(gtk_toggle_button_get_active(w)) {
 		printops.number_fraction_format = FRACTION_FRACTIONAL;
 		GtkWidget *w_fraction = glade_xml_get_widget (main_glade, "menu_item_fraction_fraction");
@@ -9296,7 +9261,7 @@ void on_button_fraction_toggled(GtkToggleButton *w, gpointer user_data) {
 /*
 	exact button toggled
 */
-void on_button_exact_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_button_exact_toggled(GtkToggleButton *w, gpointer) {
 	if(gtk_toggle_button_get_active(w)) {
 		evalops.approximation = APPROXIMATION_EXACT;
 		GtkWidget *w_exact = glade_xml_get_widget (main_glade, "menu_item_always_exact");
@@ -9317,7 +9282,7 @@ void on_button_exact_toggled(GtkToggleButton *w, gpointer user_data) {
 /*
 	Tan/Sin/Cos button clicked -- insert corresponding function
 */
-void on_button_tan_clicked(GtkButton *w, gpointer user_data) {
+void on_button_tan_clicked(GtkButton*, gpointer) {
 	if(hyp_is_on) {
 		if(inv_is_on) {
 			insertButtonFunction(CALCULATOR->f_atanh);
@@ -9336,7 +9301,7 @@ void on_button_tan_clicked(GtkButton *w, gpointer user_data) {
 		insertButtonFunction(CALCULATOR->f_tan);
 	}
 }
-void on_button_sine_clicked(GtkButton *w, gpointer user_data) {
+void on_button_sine_clicked(GtkButton*, gpointer) {
 	if(hyp_is_on) {
 		if(inv_is_on) {
 			insertButtonFunction(CALCULATOR->f_asinh);
@@ -9355,7 +9320,7 @@ void on_button_sine_clicked(GtkButton *w, gpointer user_data) {
 		insertButtonFunction(CALCULATOR->f_sin);
 	}
 }
-void on_button_cosine_clicked(GtkButton *w, gpointer user_data) {
+void on_button_cosine_clicked(GtkButton*, gpointer) {
 	if(hyp_is_on) {
 		if(inv_is_on) {
 			insertButtonFunction(CALCULATOR->f_acosh);
@@ -9375,11 +9340,11 @@ void on_button_cosine_clicked(GtkButton *w, gpointer user_data) {
 	}
 }
 
-void on_button_mod_clicked(GtkButton *w, gpointer user_data) {
+void on_button_mod_clicked(GtkButton*, gpointer) {
 	insertButtonFunction(CALCULATOR->f_mod);
 }
 
-void on_button_factorial_clicked(GtkButton *w, gpointer user_data) {
+void on_button_factorial_clicked(GtkButton*, gpointer) {
 	wrap_expression_selection();
 	insert_text("!");
 }
@@ -9387,14 +9352,14 @@ void on_button_factorial_clicked(GtkButton *w, gpointer user_data) {
 /*
 	STO button clicked -- store result
 */
-void on_button_store_clicked(GtkButton *w, gpointer user_data) {
+void on_button_store_clicked(GtkButton*, gpointer) {
 	add_as_variable();
 }
 
 /*
 	clear the displayed result when expression changes
 */
-void on_expression_changed(GtkEditable *w, gpointer user_data) {
+void on_expression_changed(GtkEditable*, gpointer) {
 	if(completion_blocked) {
 		completion_blocked = false;
 	} else {
@@ -9411,46 +9376,46 @@ void on_expression_changed(GtkEditable *w, gpointer user_data) {
 /*
 	Button clicked -- insert text (1,2,3,... +,-,...)
 */
-void on_button_zero_clicked(GtkButton *w, gpointer user_data) {
+void on_button_zero_clicked(GtkButton*, gpointer) {
 	insert_text("0");
 }
-void on_button_one_clicked(GtkButton *w, gpointer user_data) {
+void on_button_one_clicked(GtkButton*, gpointer) {
 	insert_text("1");
 }
-void on_button_two_clicked(GtkButton *w, gpointer user_data) {
+void on_button_two_clicked(GtkButton*, gpointer) {
 	insert_text("2");
 }
-void on_button_three_clicked(GtkButton *w, gpointer user_data) {
+void on_button_three_clicked(GtkButton*, gpointer) {
 	insert_text("3");
 }
-void on_button_four_clicked(GtkButton *w, gpointer user_data) {
+void on_button_four_clicked(GtkButton*, gpointer) {
 	insert_text("4");
 }
-void on_button_five_clicked(GtkButton *w, gpointer user_data) {
+void on_button_five_clicked(GtkButton*, gpointer) {
 	insert_text("5");
 }
-void on_button_six_clicked(GtkButton *w, gpointer user_data) {
+void on_button_six_clicked(GtkButton*, gpointer) {
 	insert_text("6");
 }
-void on_button_seven_clicked(GtkButton *w, gpointer user_data) {
+void on_button_seven_clicked(GtkButton*, gpointer) {
 	insert_text("7");
 }
-void on_button_eight_clicked(GtkButton *w, gpointer user_data) {
+void on_button_eight_clicked(GtkButton*, gpointer) {
 	insert_text("8");
 }
-void on_button_nine_clicked(GtkButton *w, gpointer user_data) {
+void on_button_nine_clicked(GtkButton*, gpointer) {
 	insert_text("9");
 }
-void on_button_dot_clicked(GtkButton *w, gpointer user_data) {
+void on_button_dot_clicked(GtkButton*, gpointer) {
 	insert_text(CALCULATOR->getDecimalPoint().c_str());
 }
-void on_button_brace_open_clicked(GtkButton *w, gpointer user_data) {
+void on_button_brace_open_clicked(GtkButton*, gpointer) {
 	insert_text("(");
 }
-void on_button_brace_close_clicked(GtkButton *w, gpointer user_data) {
+void on_button_brace_close_clicked(GtkButton*, gpointer) {
 	insert_text(")");
 }
-void on_button_times_clicked(GtkButton *w, gpointer user_data) {
+void on_button_times_clicked(GtkButton*, gpointer) {
 	wrap_expression_selection();
 	if(printops.use_unicode_signs && printops.multiplication_sign == MULTIPLICATION_SIGN_DOT && can_display_unicode_string_function(SIGN_MULTIDOT, (void*) expression)) {
 		insert_text(SIGN_MULTIDOT);
@@ -9462,18 +9427,18 @@ void on_button_times_clicked(GtkButton *w, gpointer user_data) {
 		insert_text("*");
 	}
 }
-void on_button_add_clicked(GtkButton *w, gpointer user_data) {
+void on_button_add_clicked(GtkButton*, gpointer) {
 	wrap_expression_selection();
 //	if(printops.use_unicode_signs) insert_text(SIGN_PLUS);
 //	else 
 	insert_text("+");
 }
-void on_button_sub_clicked(GtkButton *w, gpointer user_data) {
+void on_button_sub_clicked(GtkButton*, gpointer) {
 	wrap_expression_selection();
 	if(printops.use_unicode_signs && can_display_unicode_string_function(SIGN_MINUS, (void*) expression)) insert_text(SIGN_MINUS);
 	else insert_text("-");
 }
-void on_button_divide_clicked(GtkButton *w, gpointer user_data) {
+void on_button_divide_clicked(GtkButton*, gpointer) {
 	wrap_expression_selection();
 	if(printops.use_unicode_signs && printops.division_sign == DIVISION_SIGN_DIVISION && can_display_unicode_string_function(SIGN_DIVISION, (void*) expression)) {
 		insert_text(SIGN_DIVISION);
@@ -9481,19 +9446,19 @@ void on_button_divide_clicked(GtkButton *w, gpointer user_data) {
 		insert_text("/");
 	}
 }
-void on_button_ans_clicked(GtkButton *w, gpointer user_data) {
+void on_button_ans_clicked(GtkButton*, gpointer) {
 	insert_text(vans[0]->preferredInputName(printops.abbreviate_names, printops.use_unicode_signs, false, false, &can_display_unicode_string_function, (void*) expression).name.c_str());
 }
-void on_button_exp_clicked(GtkButton *w, gpointer user_data) {
+void on_button_exp_clicked(GtkButton*, gpointer) {
 	wrap_expression_selection();
 	if(printops.lower_case_e) insert_text("e");
 	else insert_text("E");	
 }
-void on_button_xy_clicked(GtkButton *w, gpointer user_data) {
+void on_button_xy_clicked(GtkButton*, gpointer) {
 	wrap_expression_selection();
 	insert_text("^");
 }
-void on_button_square_clicked(GtkButton *w, gpointer user_data) {
+void on_button_square_clicked(GtkButton*, gpointer) {
 	wrap_expression_selection();
 	insert_text("^2");
 }
@@ -9501,42 +9466,42 @@ void on_button_square_clicked(GtkButton *w, gpointer user_data) {
 /*
 	Button clicked -- insert corresponding function
 */
-void on_button_sqrt_clicked(GtkButton *w, gpointer user_data) {
+void on_button_sqrt_clicked(GtkButton*, gpointer) {
 	insertButtonFunction(CALCULATOR->f_sqrt);
 }
-void on_button_log_clicked(GtkButton *w, gpointer user_data) {
+void on_button_log_clicked(GtkButton*, gpointer) {
 	insertButtonFunction("log10");
 }
-void on_button_ln_clicked(GtkButton *w, gpointer user_data) {
+void on_button_ln_clicked(GtkButton*, gpointer) {
 	insertButtonFunction(CALCULATOR->f_ln);
 }
 
-void on_menu_item_manage_variables_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_manage_variables_activate(GtkMenuItem*, gpointer) {
 	manage_variables();
 }
-void on_menu_item_manage_functions_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_manage_functions_activate(GtkMenuItem*, gpointer) {
 	manage_functions();
 }
-void on_menu_item_manage_units_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_manage_units_activate(GtkMenuItem*, gpointer) {
 	manage_units();
 }
 
-void on_menu_item_datasets_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_datasets_activate(GtkMenuItem*, gpointer) {
 	GtkWidget *dialog = get_datasets_dialog();
 	gtk_widget_show(dialog);
 	gtk_window_present(GTK_WINDOW(dialog));	
 }
 
-void on_menu_item_import_csv_file_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_import_csv_file_activate(GtkMenuItem*, gpointer) {
 	import_csv_file(glade_xml_get_widget (main_glade, "main_window"));
 }
 
-void on_menu_item_export_csv_file_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_export_csv_file_activate(GtkMenuItem*, gpointer) {
 	export_csv_file(NULL, glade_xml_get_widget (main_glade, "main_window"));
 }
 
 
-void on_menu_item_convert_to_unit_expression_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_convert_to_unit_expression_activate(GtkMenuItem*, gpointer) {
 	GtkWidget *dialog = get_unit_dialog();
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
 	if(GTK_WIDGET_VISIBLE(dialog)) {
@@ -9545,144 +9510,144 @@ void on_menu_item_convert_to_unit_expression_activate(GtkMenuItem *w, gpointer u
 		gtk_widget_show(dialog);
 	}
 }
-void on_menu_item_convert_to_best_unit_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_convert_to_best_unit_activate(GtkMenuItem*, gpointer) {
 	do_timeout = false;
 	mstruct->set(CALCULATOR->convertToBestUnit(*mstruct, evalops));
 	result_action_executed();
 	do_timeout = true;
 }
-void on_menu_item_convert_to_base_units_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_convert_to_base_units_activate(GtkMenuItem*, gpointer) {
 	do_timeout = false;
 	mstruct->set(CALCULATOR->convertToBaseUnits(*mstruct, evalops));
 	result_action_executed();
 	do_timeout = true;
 }
 
-void on_menu_item_assumptions_integer_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_assumptions_integer_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_INTEGER);
 	expression_calculation_updated();
 }
-void on_menu_item_assumptions_rational_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_assumptions_rational_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_RATIONAL);
 	expression_calculation_updated();
 }
-void on_menu_item_assumptions_real_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_assumptions_real_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_REAL);
 	expression_calculation_updated();
 }
-void on_menu_item_assumptions_complex_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_assumptions_complex_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_COMPLEX);
 	expression_calculation_updated();
 }
-void on_menu_item_assumptions_number_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_assumptions_number_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_NUMBER);
 	expression_calculation_updated();
 }
-void on_menu_item_assumptions_none_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_assumptions_none_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_NONE);
 	expression_calculation_updated();
 }
-void on_menu_item_assumptions_nonzero_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_assumptions_nonzero_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONZERO);
 	expression_calculation_updated();
 }
-void on_menu_item_assumptions_positive_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_assumptions_positive_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_POSITIVE);
 	expression_calculation_updated();
 }
-void on_menu_item_assumptions_nonnegative_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_assumptions_nonnegative_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONNEGATIVE);
 	expression_calculation_updated();
 }
-void on_menu_item_assumptions_negative_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_assumptions_negative_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NEGATIVE);
 	expression_calculation_updated();
 }
-void on_menu_item_assumptions_nonpositive_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_assumptions_nonpositive_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONPOSITIVE);
 	expression_calculation_updated();
 }
-void on_menu_item_assumptions_unknown_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_assumptions_unknown_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_UNKNOWN);
 	expression_calculation_updated();
 }
 
-void on_menu_item_enable_variables_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_enable_variables_activate(GtkMenuItem *w, gpointer) {
 	evalops.parse_options.variables_enabled = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	expression_format_updated(evalops.parse_options.variables_enabled);
 }
-void on_menu_item_enable_functions_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_enable_functions_activate(GtkMenuItem *w, gpointer) {
 	evalops.parse_options.functions_enabled = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	expression_format_updated(evalops.parse_options.functions_enabled);
 }
-void on_menu_item_enable_units_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_enable_units_activate(GtkMenuItem *w, gpointer) {
 	evalops.parse_options.units_enabled = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	expression_format_updated(evalops.parse_options.units_enabled);
 }
-void on_menu_item_enable_unknown_variables_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_enable_unknown_variables_activate(GtkMenuItem *w, gpointer) {
 	evalops.parse_options.unknowns_enabled = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	expression_format_updated(evalops.parse_options.unknowns_enabled);
 }
-void on_menu_item_calculate_variables_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_calculate_variables_activate(GtkMenuItem *w, gpointer) {
 	evalops.calculate_variables = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	expression_calculation_updated();
 }
-void on_menu_item_allow_complex_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_allow_complex_activate(GtkMenuItem *w, gpointer) {
 	evalops.allow_complex = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	expression_calculation_updated();
 }
-void on_menu_item_allow_infinite_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_allow_infinite_activate(GtkMenuItem *w, gpointer) {
 	evalops.allow_infinite = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	expression_calculation_updated();
 }
-void on_menu_item_assume_nonzero_denominators_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_assume_nonzero_denominators_activate(GtkMenuItem *w, gpointer) {
 	evalops.assume_denominators_nonzero = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	expression_calculation_updated();
 }
-void on_menu_item_read_precision_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_read_precision_activate(GtkMenuItem *w, gpointer) {
 	 if(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) evalops.parse_options.read_precision = READ_PRECISION_WHEN_DECIMALS;
 	 else evalops.parse_options.read_precision = DONT_READ_PRECISION;
 	 expression_format_updated(true);
 }
-void on_menu_item_new_unknown_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_new_unknown_activate(GtkMenuItem*, gpointer) {
 	edit_unknown(_("My Variables"), NULL, glade_xml_get_widget (main_glade, "main_window"));
 }
-void on_menu_item_new_variable_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_new_variable_activate(GtkMenuItem*, gpointer) {
 	edit_variable(_("My Variables"), NULL, NULL, glade_xml_get_widget (main_glade, "main_window"));
 }
-void on_menu_item_new_matrix_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_new_matrix_activate(GtkMenuItem*, gpointer) {
 	edit_matrix(_("Matrices"), NULL, NULL, glade_xml_get_widget (main_glade, "main_window"), FALSE);
 }
-void on_menu_item_new_vector_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_new_vector_activate(GtkMenuItem*, gpointer) {
 	edit_matrix(_("Vectors"), NULL, NULL, glade_xml_get_widget (main_glade, "main_window"), TRUE);
 }
-void on_menu_item_new_function_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_new_function_activate(GtkMenuItem*, gpointer) {
 	edit_function("", NULL, glade_xml_get_widget (main_glade, "main_window"));
 }
-void on_menu_item_new_dataset_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_new_dataset_activate(GtkMenuItem*, gpointer) {
 	edit_dataset(NULL, glade_xml_get_widget (main_glade, "main_window"));
 }
-void on_menu_item_new_unit_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_new_unit_activate(GtkMenuItem*, gpointer) {
 	edit_unit("", NULL, glade_xml_get_widget (main_glade, "main_window"));
 }
 
-void on_menu_item_rpn_mode_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_rpn_mode_activate(GtkMenuItem *w, gpointer) {
 	evalops.parse_options.rpn = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	expression_format_updated(false);
 }
-void on_menu_item_limit_implicit_multiplication_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_limit_implicit_multiplication_activate(GtkMenuItem *w, gpointer) {
 	evalops.parse_options.limit_implicit_multiplication = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	printops.limit_implicit_multiplication = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	expression_format_updated(true);
@@ -9699,42 +9664,42 @@ void fetch_exchange_rates(int timeout) {
 	CALCULATOR->fetchExchangeRates(timeout, wget_args);
 	gtk_widget_destroy(dialog);
 }
-void on_menu_item_fetch_exchange_rates_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_fetch_exchange_rates_activate(GtkMenuItem*, gpointer) {
 	fetch_exchange_rates(15);
 	CALCULATOR->loadExchangeRates();
 	expression_calculation_updated();
 }
-void on_menu_item_save_defs_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_save_defs_activate(GtkMenuItem*, gpointer) {
 	save_defs();
 }
-void on_menu_item_save_mode_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_save_mode_activate(GtkMenuItem*, gpointer) {
 	save_mode();
 }
-void on_menu_item_edit_prefs_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_edit_prefs_activate(GtkMenuItem*, gpointer) {
 	edit_preferences();
 }
-void on_menu_item_degrees_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_degrees_activate(GtkMenuItem *w, gpointer) {
 	if(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) {
 		evalops.parse_options.angle_unit = ANGLE_UNIT_DEGREES;
 		set_angle_button();
 		expression_format_updated(true);
 	}
 }
-void on_menu_item_radians_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_radians_activate(GtkMenuItem *w, gpointer) {
 	if(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) {
 		evalops.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 		set_angle_button();
 		expression_format_updated(true);
 	}
 }
-void on_menu_item_gradians_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_gradians_activate(GtkMenuItem *w, gpointer) {
 	if(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) {
 		evalops.parse_options.angle_unit = ANGLE_UNIT_GRADIANS;
 		set_angle_button();
 		expression_format_updated(true);
 	}
 }
-void on_menu_item_no_default_angle_unit_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_no_default_angle_unit_activate(GtkMenuItem *w, gpointer) {
 	if(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) {
 		evalops.parse_options.angle_unit = ANGLE_UNIT_NONE;
 		set_angle_button();
@@ -9742,7 +9707,7 @@ void on_menu_item_no_default_angle_unit_activate(GtkMenuItem *w, gpointer user_d
 	}
 }
 
-void on_menu_item_binary_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_binary_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.base = BASE_BINARY;
@@ -9754,7 +9719,7 @@ void on_menu_item_binary_activate(GtkMenuItem *w, gpointer user_data) {
 	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 0);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
 }
-void on_menu_item_octal_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_octal_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.base = BASE_OCTAL;
@@ -9766,7 +9731,7 @@ void on_menu_item_octal_activate(GtkMenuItem *w, gpointer user_data) {
 	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 1);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
 }
-void on_menu_item_decimal_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_decimal_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.base = BASE_DECIMAL;
@@ -9778,7 +9743,7 @@ void on_menu_item_decimal_activate(GtkMenuItem *w, gpointer user_data) {
 	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 2);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
 }
-void on_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.base = BASE_HEXADECIMAL;
@@ -9790,14 +9755,14 @@ void on_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer user_data) {
 	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 3);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
 }
-void on_menu_item_custom_base_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_custom_base_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	gtk_widget_show(glade_xml_get_widget (main_glade, "number_base_dialog"));
 	gtk_window_present(GTK_WINDOW(glade_xml_get_widget (main_glade, "number_base_dialog")));
 	on_number_base_spinbutton_base_value_changed(GTK_SPIN_BUTTON(glade_xml_get_widget (main_glade, "number_base_spinbutton_base")), NULL);
 }
-void on_number_base_spinbutton_base_value_changed(GtkSpinButton *w, gpointer user_data) {
+void on_number_base_spinbutton_base_value_changed(GtkSpinButton *w, gpointer) {
 	printops.base = gtk_spin_button_get_value_as_int(w);
 	switch(printops.base) {
 		case 2: {
@@ -9848,7 +9813,7 @@ void on_number_base_spinbutton_base_value_changed(GtkSpinButton *w, gpointer use
 	}
 	result_format_updated();
 }
-void on_menu_item_roman_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_roman_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.base = BASE_ROMAN_NUMERALS;
@@ -9857,7 +9822,7 @@ void on_menu_item_roman_activate(GtkMenuItem *w, gpointer user_data) {
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
 	result_format_updated();
 }
-void on_menu_item_sexagesimal_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_sexagesimal_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.base = BASE_SEXAGESIMAL;
@@ -9866,7 +9831,7 @@ void on_menu_item_sexagesimal_activate(GtkMenuItem *w, gpointer user_data) {
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
 	result_format_updated();
 }
-void on_menu_item_time_format_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_time_format_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.base = BASE_TIME;
@@ -9875,114 +9840,110 @@ void on_menu_item_time_format_activate(GtkMenuItem *w, gpointer user_data) {
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
 	result_format_updated();
 }
-void on_menu_item_expression_base_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_expression_base_activate(GtkMenuItem*, gpointer) {
 	GtkWidget *dialog = get_number_base_expression_dialog();
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
 	gtk_widget_show(dialog);
 	gtk_window_present(GTK_WINDOW(dialog));
 }
-void on_number_base_expression_radiobutton_binary_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_number_base_expression_radiobutton_binary_toggled(GtkToggleButton *w, gpointer) {
 	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 		return;
 	evalops.parse_options.base = BASE_BINARY;
 	expression_format_updated(true);
 	gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
 }
-void on_number_base_expression_radiobutton_octal_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_number_base_expression_radiobutton_octal_toggled(GtkToggleButton *w, gpointer) {
 	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 		return;
 	evalops.parse_options.base = BASE_OCTAL;
 	expression_format_updated(true);
 	gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
 }
-void on_number_base_expression_radiobutton_decimal_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_number_base_expression_radiobutton_decimal_toggled(GtkToggleButton *w, gpointer) {
 	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 		return;
 	evalops.parse_options.base = BASE_DECIMAL;
 	expression_format_updated(true);
 	gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
 }
-void on_number_base_expression_radiobutton_hexadecimal_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_number_base_expression_radiobutton_hexadecimal_toggled(GtkToggleButton *w, gpointer) {
 	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 		return;
 	evalops.parse_options.base = BASE_HEXADECIMAL;
 	expression_format_updated(true);
 	gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
 }
-void on_number_base_expression_radiobutton_custom_base_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_number_base_expression_radiobutton_custom_base_toggled(GtkToggleButton *w, gpointer) {
 	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 		return;
 	evalops.parse_options.base = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base")));
 	expression_format_updated(true);
 	gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), TRUE);
 }
-void on_number_base_expression_spinbutton_base_value_changed(GtkSpinButton *w, gpointer user_data) {
+void on_number_base_expression_spinbutton_base_value_changed(GtkSpinButton *w, gpointer) {
 	evalops.parse_options.base = gtk_spin_button_get_value_as_int(w);
 	expression_format_updated(true);
 }
-void on_number_base_expression_radiobutton_roman_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_number_base_expression_radiobutton_roman_toggled(GtkToggleButton *w, gpointer) {
 	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 		return;
 	evalops.parse_options.base = BASE_ROMAN_NUMERALS;
 	expression_format_updated(true);
 	gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
 }
-void on_menu_item_abbreviate_names_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_abbreviate_names_activate(GtkMenuItem *w, gpointer) {
 	printops.abbreviate_names = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	result_format_updated();
 }
-void on_menu_item_all_prefixes_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_all_prefixes_activate(GtkMenuItem *w, gpointer) {
 	printops.use_all_prefixes = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	result_format_updated();
 }
-void on_menu_item_denominator_prefixes_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_denominator_prefixes_activate(GtkMenuItem *w, gpointer) {
 	printops.use_denominator_prefix = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	result_format_updated();
 }
-void on_menu_item_place_units_separately_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_place_units_separately_activate(GtkMenuItem *w, gpointer) {
 	printops.place_units_separately = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	result_format_updated();
 }
-void on_menu_item_post_conversion_none_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_post_conversion_none_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	evalops.auto_post_conversion = POST_CONVERSION_NONE;
 	expression_calculation_updated();
 }
-void on_menu_item_post_conversion_base_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_post_conversion_base_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	evalops.auto_post_conversion = POST_CONVERSION_BASE;
 	expression_calculation_updated();
 }
-void on_menu_item_post_conversion_best_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_post_conversion_best_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	evalops.auto_post_conversion = POST_CONVERSION_BEST;
 	expression_calculation_updated();
 }
-void on_menu_item_multiple_roots_activate(GtkMenuItem *w, gpointer user_data) {
-	//CALCULATOR->setMultipleRootsEnabled(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
-	expression_calculation_updated();
-}
-void on_menu_item_factorize_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_factorize_activate(GtkMenuItem*, gpointer) {
 	do_timeout = false;
 	mstruct->factorize(evalops);
 	result_action_executed();
 	do_timeout = true;
 }
-void on_menu_item_convert_number_bases_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_convert_number_bases_activate(GtkMenuItem*, gpointer) {
 	changing_in_nbases_dialog = false;
 	GtkWidget *dialog = get_nbases_dialog();
 	gtk_widget_show(dialog);
 	gtk_window_present(GTK_WINDOW(dialog));
 }
-void on_menu_item_periodic_table_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_periodic_table_activate(GtkMenuItem*, gpointer) {
 	GtkWidget *dialog = get_periodic_dialog();
 	gtk_widget_show(dialog);
 	gtk_window_present(GTK_WINDOW(dialog));
 }
-void on_menu_item_plot_functions_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_plot_functions_activate(GtkMenuItem*, gpointer) {
 	GtkWidget *dialog = get_plot_dialog();
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_expression")), gtk_entry_get_text(GTK_ENTRY(expression)));
 	if(!GTK_WIDGET_VISIBLE(dialog)) {
@@ -10044,7 +10005,7 @@ void on_menu_item_plot_functions_activate(GtkMenuItem *w, gpointer user_data) {
 		gtk_window_present(GTK_WINDOW(dialog));
 	}
 }
-void on_plot_dialog_hide(GtkWidget *w, gpointer user_data) {
+void on_plot_dialog_hide(GtkWidget*, gpointer) {
 	default_plot_display_grid = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (plot_glade, "plot_checkbutton_grid")));
 	default_plot_full_border = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (plot_glade, "plot_checkbutton_full_border")));
 	default_plot_rows = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (plot_glade, "plot_checkbutton_rows")));
@@ -10100,87 +10061,87 @@ void on_plot_dialog_hide(GtkWidget *w, gpointer user_data) {
 	gtk_widget_set_sensitive(glade_xml_get_widget(plot_glade, "plot_button_save"), false);
 	CALCULATOR->closeGnuplot();
 }
-void on_popup_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_display_normal_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_normal")), TRUE);
 }
-void on_popup_menu_item_assume_nonzero_denominators_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_assume_nonzero_denominators_activate(GtkMenuItem *w, gpointer) {
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_assume_nonzero_denominators")), gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
 }
-void on_popup_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_scientific")), TRUE);
 }
-void on_popup_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_purely_scientific")), TRUE);
 }
-void on_popup_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_non_scientific")), TRUE);
 }
-void on_popup_menu_item_display_prefixes_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_display_prefixes_activate(GtkMenuItem *w, gpointer) {
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_prefixes")), gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
 }
-void on_popup_menu_item_fraction_decimal_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_fraction_decimal_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_fraction_decimal")), TRUE);
 }
-void on_popup_menu_item_fraction_decimal_exact_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_fraction_decimal_exact_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_fraction_decimal_exact")), TRUE);
 }
-void on_popup_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_fraction_combined")), TRUE);
 }
-void on_popup_menu_item_fraction_fraction_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_fraction_fraction_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_fraction_fraction")), TRUE);
 }
-void on_popup_menu_item_binary_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_binary_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_binary")), TRUE);
 }
-void on_popup_menu_item_roman_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_roman_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_roman")), TRUE);
 }
-void on_popup_menu_item_sexagesimal_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_sexagesimal_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_sexagesimal")), TRUE);
 }
-void on_popup_menu_item_time_format_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_time_format_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_time_format")), TRUE);
 }
-void on_popup_menu_item_octal_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_octal_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_octal")), TRUE);
 }
-void on_popup_menu_item_decimal_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_decimal_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_decimal")), TRUE);
 }
-void on_popup_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_hexadecimal")), TRUE);
 }
-void on_popup_menu_item_custom_base_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_custom_base_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_custom_base")), TRUE);
 }
-void on_popup_menu_item_abbreviate_names_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_abbreviate_names_activate(GtkMenuItem *w, gpointer) {
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_abbreviate_names")), gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
 }
-void on_popup_menu_item_all_prefixes_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_all_prefixes_activate(GtkMenuItem *w, gpointer) {
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_all_prefixes")), gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
 }
-void on_popup_menu_item_denominator_prefixes_activate(GtkMenuItem *w, gpointer user_data) {
+void on_popup_menu_item_denominator_prefixes_activate(GtkMenuItem *w, gpointer) {
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_denominator_prefixes")), gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
 }
 
-void on_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_display_normal_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.min_exp = EXP_PRECISION;
@@ -10191,7 +10152,7 @@ void on_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data) {
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
 	result_format_updated();
 }
-void on_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.min_exp = EXP_SCIENTIFIC;
@@ -10202,7 +10163,7 @@ void on_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer user_data
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
 	result_format_updated();
 }
-void on_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.min_exp = EXP_PURE;
@@ -10213,7 +10174,7 @@ void on_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer us
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
 	result_format_updated();
 }
-void on_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.min_exp = EXP_NONE;
@@ -10224,23 +10185,23 @@ void on_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer user_
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
 	result_format_updated();
 }
-void on_menu_item_display_prefixes_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_display_prefixes_activate(GtkMenuItem *w, gpointer) {
 	printops.use_unit_prefixes = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	result_format_updated();
 }
-void on_menu_item_indicate_infinite_series_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_indicate_infinite_series_activate(GtkMenuItem *w, gpointer) {
 	printops.indicate_infinite_series = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	result_format_updated();
 }
-void on_menu_item_show_ending_zeroes_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_show_ending_zeroes_activate(GtkMenuItem *w, gpointer) {
 	printops.show_ending_zeroes = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	result_format_updated();
 }
-void on_menu_item_round_halfway_to_even_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_round_halfway_to_even_activate(GtkMenuItem *w, gpointer) {
 	printops.round_halfway_to_even = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	result_format_updated();
 }
-void on_menu_item_always_exact_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_always_exact_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	evalops.approximation = APPROXIMATION_EXACT;
 	GtkWidget *w_exact = glade_xml_get_widget (main_glade, "button_exact");
@@ -10249,7 +10210,7 @@ void on_menu_item_always_exact_activate(GtkMenuItem *w, gpointer user_data) {
 	g_signal_handlers_unblock_matched((gpointer) w_exact, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_button_exact_toggled, NULL);	
 	expression_calculation_updated();
 }
-void on_menu_item_try_exact_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_try_exact_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	evalops.approximation = APPROXIMATION_TRY_EXACT;
 	GtkWidget *w_exact = glade_xml_get_widget (main_glade, "button_exact");
@@ -10258,7 +10219,7 @@ void on_menu_item_try_exact_activate(GtkMenuItem *w, gpointer user_data) {
 	g_signal_handlers_unblock_matched((gpointer) w_exact, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_button_exact_toggled, NULL);	
 	expression_calculation_updated();
 }
-void on_menu_item_approximate_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_approximate_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	evalops.approximation = APPROXIMATION_APPROXIMATE;
 	GtkWidget *w_exact = glade_xml_get_widget (main_glade, "button_exact");
@@ -10267,7 +10228,7 @@ void on_menu_item_approximate_activate(GtkMenuItem *w, gpointer user_data) {
 	g_signal_handlers_unblock_matched((gpointer) w_exact, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_button_exact_toggled, NULL);	
 	expression_calculation_updated();
 }
-void on_menu_item_fraction_decimal_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_fraction_decimal_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.number_fraction_format = FRACTION_DECIMAL;
@@ -10279,7 +10240,7 @@ void on_menu_item_fraction_decimal_activate(GtkMenuItem *w, gpointer user_data) 
 	
 	result_format_updated();
 }
-void on_menu_item_fraction_decimal_exact_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_fraction_decimal_exact_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.number_fraction_format = FRACTION_DECIMAL_EXACT;
@@ -10291,7 +10252,7 @@ void on_menu_item_fraction_decimal_exact_activate(GtkMenuItem *w, gpointer user_
 	
 	result_format_updated();
 }
-void on_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.number_fraction_format = FRACTION_COMBINED;
@@ -10303,7 +10264,7 @@ void on_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer user_data)
 	
 	result_format_updated();
 }
-void on_menu_item_fraction_fraction_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_fraction_fraction_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.number_fraction_format = FRACTION_FRACTIONAL;
@@ -10316,10 +10277,10 @@ void on_menu_item_fraction_fraction_activate(GtkMenuItem *w, gpointer user_data)
 	result_format_updated();
 }
 
-void on_menu_item_save_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_save_activate(GtkMenuItem*, gpointer) {
 	add_as_variable();
 }
-void on_menu_item_save_image_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_save_image_activate(GtkMenuItem*, gpointer) {
 	if(!pixbuf_result) return;
 	GtkWidget *d = gtk_file_chooser_dialog_new(_("Select file to save PNG image to"), GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
 #if GTK_MAJOR_VERSION > 2 || GTK_MINOR_VERSION >= 8	
@@ -10339,10 +10300,10 @@ void on_menu_item_save_image_activate(GtkMenuItem *w, gpointer user_data) {
 	}
 	gtk_widget_destroy(d);
 }
-void on_menu_item_copy_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_copy_activate(GtkMenuItem*, gpointer) {
 	gtk_clipboard_set_text(gtk_clipboard_get(gdk_atom_intern("CLIPBOARD", FALSE)), result_text.c_str(), -1);
 }
-void on_menu_item_precision_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_precision_activate(GtkMenuItem*, gpointer) {
 	GtkWidget *dialog = get_precision_dialog();
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget (precision_glade, "precision_dialog_spinbutton_precision"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_precision_dialog_spinbutton_precision_value_changed, NULL);
@@ -10350,7 +10311,7 @@ void on_menu_item_precision_activate(GtkMenuItem *w, gpointer user_data) {
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget (precision_glade, "precision_dialog_spinbutton_precision"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_precision_dialog_spinbutton_precision_value_changed, NULL);
 	gtk_widget_show(dialog);
 }
-void on_menu_item_decimals_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_decimals_activate(GtkMenuItem*, gpointer) {
 	GtkWidget *dialog = get_decimals_dialog();
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget (decimals_glade, "decimals_dialog_checkbutton_max"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_decimals_dialog_checkbutton_max_toggled, NULL);
@@ -10370,7 +10331,7 @@ void on_menu_item_decimals_activate(GtkMenuItem *w, gpointer user_data) {
 	gtk_widget_show(dialog);
 }
 
-gboolean on_main_window_focus_in_event(GtkWidget *w, GdkEventFocus *e, gpointer user_data) {
+gboolean on_main_window_focus_in_event(GtkWidget*, GdkEventFocus*, gpointer) {
 	focus_keeping_selection();
 	return FALSE;
 }
@@ -10378,7 +10339,7 @@ gboolean on_main_window_focus_in_event(GtkWidget *w, GdkEventFocus *e, gpointer 
 /*
 	check if entered unit name is valid, if not modify
 */
-void on_unit_edit_entry_name_changed(GtkEditable *editable, gpointer user_data) {
+void on_unit_edit_entry_name_changed(GtkEditable *editable, gpointer) {
 	if(!CALCULATOR->unitNameIsValid(gtk_entry_get_text(GTK_ENTRY(editable)))) {
 		g_signal_handlers_block_matched((gpointer) editable, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_unit_edit_entry_name_changed, NULL);		
 		gtk_entry_set_text(GTK_ENTRY(editable), CALCULATOR->convertToValidUnitName(gtk_entry_get_text(GTK_ENTRY(editable))).c_str());
@@ -10388,7 +10349,7 @@ void on_unit_edit_entry_name_changed(GtkEditable *editable, gpointer user_data) 
 /*
 	selected unit type in edit/new unit dialog has changed
 */
-void on_unit_edit_optionmenu_class_changed(GtkOptionMenu *om, gpointer user_data)
+void on_unit_edit_optionmenu_class_changed(GtkOptionMenu *om, gpointer)
 {
 
 	gtk_widget_set_sensitive(glade_xml_get_widget (unitedit_glade, "unit_edit_label_relation_title"), gtk_option_menu_get_history(om) != UNIT_CLASS_BASE_UNIT);
@@ -10407,7 +10368,7 @@ void on_unit_edit_optionmenu_class_changed(GtkOptionMenu *om, gpointer user_data
 /*
 	"New" button clicked in unit manager -- open new unit dialog
 */
-void on_units_button_new_clicked(GtkButton *button, gpointer user_data) {
+void on_units_button_new_clicked(GtkButton*, gpointer) {
 	if(selected_unit_category.empty() || selected_unit_category[0] != '/') {
 		edit_unit("", NULL, glade_xml_get_widget (units_glade, "units_dialog"));
 	} else {
@@ -10419,7 +10380,7 @@ void on_units_button_new_clicked(GtkButton *button, gpointer user_data) {
 /*
 	"Edit" button clicked in unit manager -- open edit unit dialog for selected unit
 */
-void on_units_button_edit_clicked(GtkButton *button, gpointer user_data) {
+void on_units_button_edit_clicked(GtkButton*, gpointer) {
 	Unit *u = get_selected_unit();
 	if(u) {
 		edit_unit("", u, glade_xml_get_widget (units_glade, "units_dialog"));
@@ -10429,7 +10390,7 @@ void on_units_button_edit_clicked(GtkButton *button, gpointer user_data) {
 /*
 	"Insert" button clicked in unit manager -- insert selected unit in expression entry
 */
-void on_units_button_insert_clicked(GtkButton *button, gpointer user_data) {
+void on_units_button_insert_clicked(GtkButton*, gpointer) {
 	Unit *u = get_selected_unit();
 	if(u) {
 		gchar *gstr;
@@ -10442,7 +10403,7 @@ void on_units_button_insert_clicked(GtkButton *button, gpointer user_data) {
 /*
 	"Convert" button clicked in unit manager -- convert result to selected unit
 */
-void on_units_button_convert_to_clicked(GtkButton *button, gpointer user_data) {
+void on_units_button_convert_to_clicked(GtkButton*, gpointer) {
 	Unit *u = get_selected_unit();
 	if(u) {
 		do_timeout = false;
@@ -10456,7 +10417,7 @@ void on_units_button_convert_to_clicked(GtkButton *button, gpointer user_data) {
 /*
 	deletion of unit requested
 */
-void on_units_button_delete_clicked(GtkButton *button, gpointer user_data) {
+void on_units_button_delete_clicked(GtkButton*, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	Unit *u = get_selected_unit();
@@ -10493,7 +10454,7 @@ void on_units_button_delete_clicked(GtkButton *button, gpointer user_data) {
 /*
 	"New" button clicked in variable manager -- open new variable dialog
 */
-void on_variables_button_new_clicked(GtkButton *button, gpointer user_data) {
+void on_variables_button_new_clicked(GtkButton*, gpointer) {
 	if(selected_variable_category.empty() || selected_variable_category[0] != '/') {
 		edit_variable("", NULL, NULL, glade_xml_get_widget (variables_glade, "variables_dialog"));
 	} else {
@@ -10505,7 +10466,7 @@ void on_variables_button_new_clicked(GtkButton *button, gpointer user_data) {
 /*
 	"Edit" button clicked in variable manager -- open edit dialog for selected variable
 */
-void on_variables_button_edit_clicked(GtkButton *button, gpointer user_data) {
+void on_variables_button_edit_clicked(GtkButton*, gpointer) {
 	Variable *v = get_selected_variable();
 	if(v) {
 		if(!CALCULATOR->stillHasVariable(v)) {
@@ -10520,7 +10481,7 @@ void on_variables_button_edit_clicked(GtkButton *button, gpointer user_data) {
 /*
 	"Insert" button clicked in variable manager -- insert variable name in expression entry
 */
-void on_variables_button_insert_clicked(GtkButton *button, gpointer user_data) {
+void on_variables_button_insert_clicked(GtkButton*, gpointer) {
 	Variable *v = get_selected_variable();
 	if(v) {
 		if(!CALCULATOR->stillHasVariable(v)) {
@@ -10537,7 +10498,7 @@ void on_variables_button_insert_clicked(GtkButton *button, gpointer user_data) {
 /*
 	"Delete" button clicked in variable manager -- deletion of selected variable requested
 */
-void on_variables_button_delete_clicked(GtkButton *button, gpointer user_data) {
+void on_variables_button_delete_clicked(GtkButton*, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	Variable *v = get_selected_variable();
@@ -10571,7 +10532,7 @@ void on_variables_button_delete_clicked(GtkButton *button, gpointer user_data) {
 	}
 }
 
-void on_variables_button_export_clicked(GtkButton *button, gpointer user_data) {
+void on_variables_button_export_clicked(GtkButton*, gpointer) {
 	Variable *v = get_selected_variable();
 	if(v && !CALCULATOR->stillHasVariable(v)) {
 		show_message(_("Variable does not exist anymore."), glade_xml_get_widget (variables_glade, "variables_dialog"));
@@ -10586,14 +10547,14 @@ void on_variables_button_export_clicked(GtkButton *button, gpointer user_data) {
 /*
 	"Close" button clicked in variable manager -- hide
 */
-void on_variables_button_close_clicked(GtkButton *button, gpointer user_data) {
+void on_variables_button_close_clicked(GtkButton*, gpointer) {
 	gtk_widget_hide(glade_xml_get_widget (variables_glade, "variables_dialog"));
 }
 
 /*
 	"New" button clicked in function manager -- open new function dialog
 */
-void on_functions_button_new_clicked(GtkButton *button, gpointer user_data) {
+void on_functions_button_new_clicked(GtkButton*, gpointer) {
 	if(selected_function_category.empty() || selected_function_category[0] != '/') {
 		edit_function("", NULL, glade_xml_get_widget (functions_glade, "functions_dialog"));
 	} else {
@@ -10605,7 +10566,7 @@ void on_functions_button_new_clicked(GtkButton *button, gpointer user_data) {
 /*
 	"Edit" button clicked in function manager -- open edit function dialog for selected function
 */
-void on_functions_button_edit_clicked(GtkButton *button, gpointer user_data) {
+void on_functions_button_edit_clicked(GtkButton*, gpointer) {
 	MathFunction *f = get_selected_function();
 	if(f) {
 		edit_function("", f, glade_xml_get_widget (functions_glade, "functions_dialog"));
@@ -10615,14 +10576,14 @@ void on_functions_button_edit_clicked(GtkButton *button, gpointer user_data) {
 /*
 	"Insert" button clicked in function manager -- open dialog for insertion of function in expression entry
 */
-void on_functions_button_insert_clicked(GtkButton *button, gpointer user_data) {
+void on_functions_button_insert_clicked(GtkButton*, gpointer) {
 	insert_function(get_selected_function(), glade_xml_get_widget (functions_glade, "functions_dialog"));
 }
 
 /*
 	"Delete" button clicked in function manager -- deletion of selected function requested
 */
-void on_functions_button_delete_clicked(GtkButton *button, gpointer user_data) {
+void on_functions_button_delete_clicked(GtkButton*, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	MathFunction *f = get_selected_function();
@@ -10656,37 +10617,37 @@ void on_functions_button_delete_clicked(GtkButton *button, gpointer user_data) {
 /*
 	"Close" button clicked in function manager -- hide
 */
-void on_functions_button_close_clicked(GtkButton *button, gpointer user_data) {
+void on_functions_button_close_clicked(GtkButton*, gpointer) {
 	gtk_widget_hide(glade_xml_get_widget (functions_glade, "functions_dialog"));
 }
 
-void on_datasets_button_newset_clicked(GtkButton *button, gpointer user_data) {	
+void on_datasets_button_newset_clicked(GtkButton*, gpointer) {	
 	edit_dataset(NULL, glade_xml_get_widget (datasets_glade, "datasets_dialog"));
 }
-void on_datasets_button_editset_clicked(GtkButton *button, gpointer user_data) {
+void on_datasets_button_editset_clicked(GtkButton*, gpointer) {
 	edit_dataset(selected_dataset, glade_xml_get_widget (datasets_glade, "datasets_dialog"));
 }
-void on_datasets_button_delset_clicked(GtkButton *button, gpointer user_data) {
+void on_datasets_button_delset_clicked(GtkButton*, gpointer) {
 	if(selected_dataset && selected_dataset->isLocal()) {
 		selected_dataset->destroy();
 		selected_dataobject = NULL;
 		update_datasets_tree();
 	}
 }
-void on_datasets_button_newobject_clicked(GtkButton *button, gpointer user_data) {
+void on_datasets_button_newobject_clicked(GtkButton*, gpointer) {
 	edit_dataobject(selected_dataset, NULL, glade_xml_get_widget (datasets_glade, "datasets_dialog"));
 }
-void on_datasets_button_editobject_clicked(GtkButton *button, gpointer user_data) {
+void on_datasets_button_editobject_clicked(GtkButton*, gpointer) {
 	edit_dataobject(selected_dataset, selected_dataobject, glade_xml_get_widget (datasets_glade, "datasets_dialog"));
 }
-void on_datasets_button_delobject_clicked(GtkButton *button, gpointer user_data) {
+void on_datasets_button_delobject_clicked(GtkButton*, gpointer) {
 	if(selected_dataset && selected_dataobject) {
 		selected_dataset->delObject(selected_dataobject);
 		selected_dataobject = NULL;
 		update_dataobjects();
 	}
 }
-void on_datasets_button_close_clicked(GtkButton *button, gpointer user_data) {
+void on_datasets_button_close_clicked(GtkButton*, gpointer) {
 	gtk_widget_hide(glade_xml_get_widget (datasets_glade, "datasets_dialog"));
 }
 
@@ -10694,7 +10655,7 @@ void on_datasets_button_close_clicked(GtkButton *button, gpointer user_data) {
 /*
 	check if entered function name is valid, if not modify
 */
-void on_function_edit_entry_name_changed(GtkEditable *editable, gpointer user_data) {
+void on_function_edit_entry_name_changed(GtkEditable *editable, gpointer) {
 	if(!CALCULATOR->functionNameIsValid(gtk_entry_get_text(GTK_ENTRY(editable)))) {
 		g_signal_handlers_block_matched((gpointer) editable, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_function_edit_entry_name_changed, NULL);		
 		gtk_entry_set_text(GTK_ENTRY(editable), CALCULATOR->convertToValidFunctionName(gtk_entry_get_text(GTK_ENTRY(editable))).c_str());
@@ -10704,7 +10665,7 @@ void on_function_edit_entry_name_changed(GtkEditable *editable, gpointer user_da
 /*
 	check if entered variable name is valid, if not modify
 */
-void on_variable_edit_entry_name_changed(GtkEditable *editable, gpointer user_data) {
+void on_variable_edit_entry_name_changed(GtkEditable *editable, gpointer) {
 	if(!CALCULATOR->variableNameIsValid(gtk_entry_get_text(GTK_ENTRY(editable)))) {
 		g_signal_handlers_block_matched((gpointer) editable, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_variable_edit_entry_name_changed, NULL);
 		gtk_entry_set_text(GTK_ENTRY(editable), CALCULATOR->convertToValidVariableName(gtk_entry_get_text(GTK_ENTRY(editable))).c_str());
@@ -10712,7 +10673,7 @@ void on_variable_edit_entry_name_changed(GtkEditable *editable, gpointer user_da
 	}
 }
 
-void on_matrix_edit_spinbutton_columns_value_changed(GtkSpinButton *w, gpointer user_data) {
+void on_matrix_edit_spinbutton_columns_value_changed(GtkSpinButton *w, gpointer) {
 	GtkTable *table = GTK_TABLE(glade_xml_get_widget(matrixedit_glade, "matrix_edit_table_elements")); 
 	gint c = element_entries[0].size();
 	gint r = element_entries.size();
@@ -10740,7 +10701,7 @@ void on_matrix_edit_spinbutton_columns_value_changed(GtkSpinButton *w, gpointer 
 		}
 	}
 }
-void on_matrix_edit_spinbutton_rows_value_changed(GtkSpinButton *w, gpointer user_data) {
+void on_matrix_edit_spinbutton_rows_value_changed(GtkSpinButton *w, gpointer) {
 	GtkTable *table = GTK_TABLE(glade_xml_get_widget(matrixedit_glade, "matrix_edit_table_elements")); 
 	gint c = element_entries[0].size();
 	gint r = element_entries.size();
@@ -10787,10 +10748,10 @@ void update_nbases_entries(const MathStructure &value, int base) {
 	g_signal_handlers_unblock_matched((gpointer) w_oct, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_nbases_entry_octal_changed, NULL);
 	g_signal_handlers_unblock_matched((gpointer) w_hex, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_nbases_entry_hexadecimal_changed, NULL);
 }
-void on_nbases_button_close_clicked(GtkButton *button, gpointer user_data) {
+void on_nbases_button_close_clicked(GtkButton*, gpointer) {
 	gtk_widget_hide(glade_xml_get_widget (nbases_glade, "nbases_dialog"));
 }
-void on_nbases_entry_decimal_changed(GtkEditable *editable, gpointer user_data) {	
+void on_nbases_entry_decimal_changed(GtkEditable *editable, gpointer) {	
 	if(changing_in_nbases_dialog) return;
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
@@ -10802,7 +10763,7 @@ void on_nbases_entry_decimal_changed(GtkEditable *editable, gpointer user_data) 
 	update_nbases_entries(CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(editable))), eo), 10);
 	changing_in_nbases_dialog = false;	
 }
-void on_nbases_entry_binary_changed(GtkEditable *editable, gpointer user_data) {
+void on_nbases_entry_binary_changed(GtkEditable *editable, gpointer) {
 	if(changing_in_nbases_dialog) return;
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
@@ -10815,7 +10776,7 @@ void on_nbases_entry_binary_changed(GtkEditable *editable, gpointer user_data) {
 	update_nbases_entries(CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(str), eo), 2);
 	changing_in_nbases_dialog = false;	
 }
-void on_nbases_entry_octal_changed(GtkEditable *editable, gpointer user_data) {
+void on_nbases_entry_octal_changed(GtkEditable *editable, gpointer) {
 	if(changing_in_nbases_dialog) return;
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
@@ -10828,7 +10789,7 @@ void on_nbases_entry_octal_changed(GtkEditable *editable, gpointer user_data) {
 	update_nbases_entries(CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(str), eo), 8);
 	changing_in_nbases_dialog = false;	
 }
-void on_nbases_entry_hexadecimal_changed(GtkEditable *editable, gpointer user_data) {
+void on_nbases_entry_hexadecimal_changed(GtkEditable *editable, gpointer) {
 	if(changing_in_nbases_dialog) return;
 	string str = gtk_entry_get_text(GTK_ENTRY(editable));
 	remove_blank_ends(str);
@@ -10842,26 +10803,26 @@ void on_nbases_entry_hexadecimal_changed(GtkEditable *editable, gpointer user_da
 	changing_in_nbases_dialog = false;	
 }
 
-void on_button_functions_clicked(GtkButton *button, gpointer user_data) {
+void on_button_functions_clicked(GtkButton*, gpointer) {
 	manage_functions();
 }
-void on_button_variables_clicked(GtkButton *button, gpointer user_data) {
+void on_button_variables_clicked(GtkButton*, gpointer) {
 	manage_variables();
 }
-void on_button_units_clicked(GtkButton *button, gpointer user_data) {
+void on_button_units_clicked(GtkButton*, gpointer) {
 	manage_units();
 }
-void on_button_convert_clicked(GtkButton *button, gpointer user_data) {
+void on_button_convert_clicked(GtkButton*, gpointer user_data) {
 	on_menu_item_convert_to_unit_expression_activate(NULL, user_data);
 }
 
-void on_menu_item_about_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_about_activate(GtkMenuItem*, gpointer) {
 	GtkWidget *dialog = get_about_dialog();
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_hide(dialog);
 }
-void on_menu_item_help_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_help_activate(GtkMenuItem*, gpointer) {
 #ifdef HAVE_LIBGNOME
 	GError *error = NULL;
 	//gnome_help_display_desktop(NULL, "qalculate-gtk", "qalculate-gtk", NULL, &error);
@@ -10880,41 +10841,41 @@ void on_menu_item_help_activate(GtkMenuItem *w, gpointer user_data) {
 /*
 	precision has changed in precision dialog
 */
-void on_precision_dialog_spinbutton_precision_value_changed(GtkSpinButton *w, gpointer user_data) {
+void on_precision_dialog_spinbutton_precision_value_changed(GtkSpinButton *w, gpointer) {
 	CALCULATOR->setPrecision(gtk_spin_button_get_value_as_int(w));
 //	execute_expression();
 }
-void on_precision_dialog_button_recalculate_clicked(GtkButton *w, gpointer user_data) {
+void on_precision_dialog_button_recalculate_clicked(GtkButton*, gpointer) {
 	CALCULATOR->setPrecision(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (precision_glade, "precision_dialog_spinbutton_precision"))));
 	execute_expression();
 }
 
 
-void on_decimals_dialog_spinbutton_max_value_changed(GtkSpinButton *w, gpointer user_data) {
+void on_decimals_dialog_spinbutton_max_value_changed(GtkSpinButton *w, gpointer) {
 	printops.max_decimals = gtk_spin_button_get_value_as_int(w);
 	result_format_updated();
 }
-void on_decimals_dialog_spinbutton_min_value_changed(GtkSpinButton *w, gpointer user_data) {
+void on_decimals_dialog_spinbutton_min_value_changed(GtkSpinButton *w, gpointer) {
 	printops.min_decimals = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
 	result_format_updated();
 }
-void on_decimals_dialog_checkbutton_max_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_decimals_dialog_checkbutton_max_toggled(GtkToggleButton *w, gpointer) {
 	printops.use_max_decimals = gtk_toggle_button_get_active(w);
 	gtk_widget_set_sensitive(glade_xml_get_widget (decimals_glade, "decimals_dialog_spinbutton_max"), printops.use_max_decimals);
 	result_format_updated();
 }
-void on_decimals_dialog_checkbutton_min_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_decimals_dialog_checkbutton_min_toggled(GtkToggleButton *w, gpointer) {
 	printops.use_min_decimals = gtk_toggle_button_get_active(w);
 	gtk_widget_set_sensitive(glade_xml_get_widget (decimals_glade, "decimals_dialog_spinbutton_min"), printops.use_min_decimals);
 	result_format_updated();
 }
 
-void on_unknown_edit_checkbutton_custom_assumptions_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_unknown_edit_checkbutton_custom_assumptions_toggled(GtkToggleButton *w, gpointer) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (unknownedit_glade, "unknown_edit_hbox_type"), gtk_toggle_button_get_active(w));
 	gtk_widget_set_sensitive(glade_xml_get_widget (unknownedit_glade, "unknown_edit_hbox_sign"), gtk_toggle_button_get_active(w));
 }
 
-gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointer user_data) {
+gboolean on_expression_key_press_event(GtkWidget*, GdkEventKey *event, gpointer) {
 	switch(event->keyval) {
 		case GDK_dead_circumflex: {
 			gint end = 0;
@@ -11009,7 +10970,7 @@ gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointe
 	return FALSE;
 }
 
-gboolean on_resultview_expose_event(GtkWidget *w, GdkEventExpose *event, gpointer user_data) {
+gboolean on_resultview_expose_event(GtkWidget*, GdkEventExpose*, gpointer) {
 	if(pixbuf_result) {
 		gint w = 0, h = 0;
 		w = gdk_pixbuf_get_width(pixbuf_result);
@@ -11022,28 +10983,28 @@ gboolean on_resultview_expose_event(GtkWidget *w, GdkEventExpose *event, gpointe
 	}	
 	return TRUE;
 }
-void on_matrix_edit_radiobutton_matrix_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_matrix_edit_radiobutton_matrix_toggled(GtkToggleButton *w, gpointer) {
 	if(gtk_toggle_button_get_active(w)) {
 		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (matrixedit_glade, "matrix_edit_label_elements")), _("Elements"));
 	} else {
 		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (matrixedit_glade, "matrix_edit_label_elements")), _("Components (in horizontal order)"));
 	}
 }
-void on_matrix_edit_radiobutton_vector_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_matrix_edit_radiobutton_vector_toggled(GtkToggleButton *w, gpointer) {
 	if(!gtk_toggle_button_get_active(w)) {
 		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (matrixedit_glade, "matrix_edit_label_elements")), _("Elements"));
 	} else {
 		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (matrixedit_glade, "matrix_edit_label_elements")), _("Components (in horizontal order)"));
 	}
 }
-void on_csv_import_radiobutton_matrix_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_csv_import_radiobutton_matrix_toggled(GtkToggleButton*, gpointer) {
 }
-void on_csv_import_radiobutton_vectors_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_csv_import_radiobutton_vectors_toggled(GtkToggleButton*, gpointer) {
 }
-void on_csv_import_optionmenu_delimiter_changed(GtkOptionMenu *w, gpointer user_data) {
+void on_csv_import_optionmenu_delimiter_changed(GtkOptionMenu *w, gpointer) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (csvimport_glade, "csv_import_entry_delimiter_other"), gtk_option_menu_get_history(w) == DELIMITER_OTHER);
 }
-void on_csv_import_button_file_clicked(GtkButton *button, gpointer user_data) {
+void on_csv_import_button_file_clicked(GtkButton*, gpointer) {
 	GtkWidget *d = gtk_file_chooser_dialog_new(_("Select file to import"), GTK_WINDOW(glade_xml_get_widget(csvimport_glade, "csv_import_dialog")), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (csvimport_glade, "csv_import_entry_file"))));
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT) {
@@ -11052,10 +11013,10 @@ void on_csv_import_button_file_clicked(GtkButton *button, gpointer user_data) {
 	gtk_widget_destroy(d);
 }
 
-void on_csv_export_optionmenu_delimiter_changed(GtkOptionMenu *w, gpointer user_data) {
+void on_csv_export_optionmenu_delimiter_changed(GtkOptionMenu *w, gpointer) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (csvexport_glade, "csv_export_entry_delimiter_other"), gtk_option_menu_get_history(w) == DELIMITER_OTHER);
 }
-void on_csv_export_button_file_clicked(GtkButton *button, gpointer user_data) {
+void on_csv_export_button_file_clicked(GtkButton*, gpointer) {
 	GtkWidget *d = gtk_file_chooser_dialog_new(_("Select file to export to"), GTK_WINDOW(glade_xml_get_widget(csvimport_glade, "csv_import_dialog")), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (csvexport_glade, "csv_export_entry_file"))));
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT) {
@@ -11063,10 +11024,10 @@ void on_csv_export_button_file_clicked(GtkButton *button, gpointer user_data) {
 	}
 	gtk_widget_destroy(d);
 }
-void on_csv_export_radiobutton_current_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_csv_export_radiobutton_current_toggled(GtkToggleButton *w, gpointer) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (csvexport_glade, "csv_export_entry_matrix"), !gtk_toggle_button_get_active(w));
 }
-void on_csv_export_radiobutton_matrix_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_csv_export_radiobutton_matrix_toggled(GtkToggleButton *w, gpointer) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (csvexport_glade, "csv_export_entry_matrix"), gtk_toggle_button_get_active(w));
 }
 
@@ -11084,7 +11045,7 @@ void on_type_label_date_clicked(GtkButton *w, gpointer user_data) {
 	}
 	gtk_widget_destroy(d);
 }
-void on_type_label_file_clicked(GtkButton *w, gpointer user_data) {
+void on_type_label_file_clicked(GtkButton*, gpointer user_data) {
 	GtkWidget *d = gtk_file_chooser_dialog_new(_("Select file to import"), GTK_WINDOW(glade_xml_get_widget(csvimport_glade, "csv_import_dialog")), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d), gtk_entry_get_text(GTK_ENTRY(user_data)));
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT) {
@@ -11093,21 +11054,21 @@ void on_type_label_file_clicked(GtkButton *w, gpointer user_data) {
 	gtk_widget_destroy(d);
 }
 
-void on_functions_button_deactivate_clicked(GtkButton *w, gpointer user_data) {
+void on_functions_button_deactivate_clicked(GtkButton*, gpointer) {
 	MathFunction *f = get_selected_function();
 	if(f) {
 		f->setActive(!f->isActive());
 		update_fmenu();
 	}
 }
-void on_variables_button_deactivate_clicked(GtkButton *w, gpointer user_data) {
+void on_variables_button_deactivate_clicked(GtkButton*, gpointer) {
 	Variable *v = get_selected_variable();
 	if(v) {
 		v->setActive(!v->isActive());
 		update_vmenu();
 	}
 }
-void on_units_button_deactivate_clicked(GtkButton *w, gpointer user_data) {
+void on_units_button_deactivate_clicked(GtkButton*, gpointer) {
 	Unit *u = get_selected_unit();
 	if(u) {
 		u->setActive(!u->isActive());
@@ -11115,12 +11076,12 @@ void on_units_button_deactivate_clicked(GtkButton *w, gpointer user_data) {
 	}
 }
 
-void on_function_edit_button_subfunctions_clicked(GtkButton *w, gpointer user_data) {
+void on_function_edit_button_subfunctions_clicked(GtkButton*, gpointer) {
 	gtk_window_set_transient_for(GTK_WINDOW(glade_xml_get_widget (functionedit_glade, "function_edit_dialog_subfunctions")), GTK_WINDOW(glade_xml_get_widget (functionedit_glade, "function_edit_dialog")));
 	gtk_dialog_run(GTK_DIALOG(glade_xml_get_widget (functionedit_glade, "function_edit_dialog_subfunctions")));
 	gtk_widget_hide(glade_xml_get_widget (functionedit_glade, "function_edit_dialog_subfunctions"));
 }
-void on_function_edit_button_add_subfunction_clicked(GtkButton *w, gpointer user_data) {
+void on_function_edit_button_add_subfunction_clicked(GtkButton*, gpointer) {
 	GtkTreeIter iter;	
 	gtk_list_store_append(tSubfunctions_store, &iter);
 	string str = "\\";
@@ -11133,7 +11094,7 @@ void on_function_edit_button_add_subfunction_clicked(GtkButton *w, gpointer user
 	}
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_subexpression")), "");
 }
-void on_function_edit_button_modify_subfunction_clicked(GtkButton *w, gpointer user_data) {
+void on_function_edit_button_modify_subfunction_clicked(GtkButton*, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	if(gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(tSubfunctions)), &model, &iter)) {
@@ -11144,7 +11105,7 @@ void on_function_edit_button_modify_subfunction_clicked(GtkButton *w, gpointer u
 		}
 	}
 }
-void on_function_edit_button_remove_subfunction_clicked(GtkButton *w, gpointer user_data) {
+void on_function_edit_button_remove_subfunction_clicked(GtkButton*, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	if(gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(tSubfunctions)), &model, &iter)) {
@@ -11161,14 +11122,14 @@ void on_function_edit_button_remove_subfunction_clicked(GtkButton *w, gpointer u
 		last_subfunction_index--;
 	}
 }
-void on_function_edit_entry_subexpression_activate(GtkEntry *entry, gpointer user_data) {
+void on_function_edit_entry_subexpression_activate(GtkEntry*, gpointer) {
 	if(GTK_WIDGET_SENSITIVE(glade_xml_get_widget (functionedit_glade, "function_edit_button_add_subfunction"))) {
 		on_function_edit_button_add_subfunction_clicked(GTK_BUTTON(glade_xml_get_widget (functionedit_glade, "function_edit_button_add_subfunction")), NULL);
 	} else if(GTK_WIDGET_SENSITIVE(glade_xml_get_widget (functionedit_glade, "function_edit_button_modify_subfunction"))) {
 		on_function_edit_button_modify_subfunction_clicked(GTK_BUTTON(glade_xml_get_widget (functionedit_glade, "function_edit_button_modify_subfunction")), NULL);
 	}
 }
-void on_function_edit_button_add_argument_clicked(GtkButton *w, gpointer user_data) {
+void on_function_edit_button_add_argument_clicked(GtkButton*, gpointer) {
 	GtkTreeIter iter;	
 	gtk_list_store_append(tFunctionArguments_store, &iter);
 	Argument *arg;
@@ -11206,7 +11167,7 @@ void on_function_edit_button_add_argument_clicked(GtkButton *w, gpointer user_da
 	gtk_list_store_set(tFunctionArguments_store, &iter, 0, arg->name().c_str(), 1, arg->printlong().c_str(), 2, arg, -1);
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_argument_name")), "");
 }
-void on_function_edit_button_remove_argument_clicked(GtkButton *w, gpointer user_data) {
+void on_function_edit_button_remove_argument_clicked(GtkButton*, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctionArguments));
@@ -11219,7 +11180,7 @@ void on_function_edit_button_remove_argument_clicked(GtkButton *w, gpointer user
 	}
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_argument_name")), "");
 }
-void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user_data) {
+void on_function_edit_button_modify_argument_clicked(GtkButton*, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tFunctionArguments));
@@ -11292,23 +11253,23 @@ void on_function_edit_button_modify_argument_clicked(GtkButton *w, gpointer user
 		gtk_list_store_set(tFunctionArguments_store, &iter, 0, selected_argument->name().c_str(), 1, selected_argument->printlong().c_str(), 2, (gpointer) selected_argument, -1);
 	}
 }
-void on_function_edit_entry_argument_name_activate(GtkEntry *entry, gpointer user_data) {
+void on_function_edit_entry_argument_name_activate(GtkEntry*, gpointer) {
 	if(GTK_WIDGET_SENSITIVE(glade_xml_get_widget (functionedit_glade, "function_edit_button_add_argument"))) {
 		on_function_edit_button_add_argument_clicked(GTK_BUTTON(glade_xml_get_widget (functionedit_glade, "function_edit_button_add_argument")), NULL);
 	} else if(GTK_WIDGET_SENSITIVE(glade_xml_get_widget (functionedit_glade, "function_edit_button_modify_argument"))) {
 		on_function_edit_button_modify_argument_clicked(GTK_BUTTON(glade_xml_get_widget (functionedit_glade, "function_edit_button_modify_argument")), NULL);
 	}
 }
-void on_function_edit_button_rules_clicked(GtkButton *w, gpointer user_data) {
+void on_function_edit_button_rules_clicked(GtkButton*, gpointer) {
 	edit_argument(get_selected_argument());
 }
-void on_argument_rules_checkbutton_enable_min_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_argument_rules_checkbutton_enable_min_toggled(GtkToggleButton *w, gpointer) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (argumentrules_glade, "argument_rules_spinbutton_min"), gtk_toggle_button_get_active(w));
 }
-void on_argument_rules_checkbutton_enable_max_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_argument_rules_checkbutton_enable_max_toggled(GtkToggleButton *w, gpointer) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (argumentrules_glade, "argument_rules_spinbutton_max"), gtk_toggle_button_get_active(w));
 }
-void on_argument_rules_checkbutton_enable_condition_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_argument_rules_checkbutton_enable_condition_toggled(GtkToggleButton *w, gpointer) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (argumentrules_glade, "argument_rules_entry_condition"), gtk_toggle_button_get_active(w));
 }
 #define SET_NAMES_LE(x,y,z)	GtkTreeIter iter;\
@@ -11333,31 +11294,31 @@ void on_argument_rules_checkbutton_enable_condition_toggled(GtkToggleButton *w, 
 				}\
 				gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (x, z)), str.c_str());
 				
-void on_variable_edit_button_names_clicked(GtkButton *w, gpointer user_data) {
+void on_variable_edit_button_names_clicked(GtkButton*, gpointer) {
 	edit_names(get_edited_variable(), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_name"))), glade_xml_get_widget (variableedit_glade, "variable_edit_dialog"));
 	SET_NAMES_LE(variableedit_glade, "variable_edit_entry_name", "variable_edit_label_names")
 }
-void on_unknown_edit_button_names_clicked(GtkButton *w, gpointer user_data) {
+void on_unknown_edit_button_names_clicked(GtkButton*, gpointer) {
 	edit_names(get_edited_unknown(), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_name"))), glade_xml_get_widget (unknownedit_glade, "unknown_edit_dialog"));
 	SET_NAMES_LE(unknownedit_glade, "unknown_edit_entry_name", "unknown_edit_label_names")
 }
-void on_matrix_edit_button_names_clicked(GtkButton *w, gpointer user_data) {
+void on_matrix_edit_button_names_clicked(GtkButton*, gpointer) {
 	edit_names(get_edited_matrix(), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_name"))), glade_xml_get_widget (matrixedit_glade, "matrix_edit_dialog"));
 	SET_NAMES_LE(matrixedit_glade, "matrix_edit_entry_name", "matrix_edit_label_names")
 }
-void on_function_edit_button_names_clicked(GtkButton *w, gpointer user_data) {
+void on_function_edit_button_names_clicked(GtkButton*, gpointer) {
 	edit_names(get_edited_function(), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_name"))), glade_xml_get_widget (functionedit_glade, "function_edit_dialog"));
 	SET_NAMES_LE(functionedit_glade, "function_edit_entry_name", "function_edit_label_names")
 }
-void on_unit_edit_button_names_clicked(GtkButton *w, gpointer user_data) {
+void on_unit_edit_button_names_clicked(GtkButton*, gpointer) {
 	edit_names(get_edited_unit(), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_name"))), glade_xml_get_widget (unitedit_glade, "unit_edit_dialog"));
 	SET_NAMES_LE(unitedit_glade, "unit_edit_entry_name", "unit_edit_label_names")
 }
 
-void on_names_edit_checkbutton_abbreviation_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_names_edit_checkbutton_abbreviation_toggled(GtkToggleButton *w, gpointer) {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_case_sensitive")), gtk_toggle_button_get_active(w));
 }
-void on_names_edit_button_add_clicked(GtkButton *w, gpointer user_data) {
+void on_names_edit_button_add_clicked(GtkButton*, gpointer) {
 	if(strlen(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name")))) == 0) {
 		show_message(_("Empty name field."), glade_xml_get_widget (namesedit_glade, "names_edit_dialog"));
 		return;
@@ -11378,7 +11339,7 @@ void on_names_edit_button_add_clicked(GtkButton *w, gpointer user_data) {
 	else gtk_list_store_set(tNames_store, &iter, NAMES_NAME_COLUMN, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), NAMES_ABBREVIATION_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_abbreviation")))), NAMES_PLURAL_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_plural")))), NAMES_REFERENCE_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_reference")))), NAMES_ABBREVIATION_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_abbreviation"))), NAMES_PLURAL_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_plural"))), NAMES_UNICODE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_unicode"))), NAMES_REFERENCE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_reference"))), NAMES_SUFFIX_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_suffix"))), NAMES_AVOID_INPUT_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_avoid_input"))), NAMES_CASE_SENSITIVE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_case_sensitive"))), -1);
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name")), "");
 }
-void on_names_edit_button_modify_clicked(GtkButton *w, gpointer user_data) {
+void on_names_edit_button_modify_clicked(GtkButton*, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tNames));
@@ -11405,7 +11366,7 @@ void on_names_edit_button_modify_clicked(GtkButton *w, gpointer user_data) {
 		else gtk_list_store_set(tNames_store, &iter, NAMES_NAME_COLUMN, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), NAMES_ABBREVIATION_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_abbreviation")))), NAMES_PLURAL_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_plural")))), NAMES_REFERENCE_STRING_COLUMN, b2yn(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_reference")))), NAMES_ABBREVIATION_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_abbreviation"))), NAMES_PLURAL_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_plural"))), NAMES_UNICODE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_unicode"))), NAMES_REFERENCE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_reference"))), NAMES_SUFFIX_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_suffix"))), NAMES_AVOID_INPUT_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_avoid_input"))), NAMES_CASE_SENSITIVE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_checkbutton_case_sensitive"))), -1);
 	}
 }
-void on_names_edit_button_remove_clicked(GtkButton *w, gpointer user_data) {
+void on_names_edit_button_remove_clicked(GtkButton*, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tNames));
@@ -11414,14 +11375,14 @@ void on_names_edit_button_remove_clicked(GtkButton *w, gpointer user_data) {
 	}
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name")), "");
 }
-void on_names_edit_entry_name_activate(GtkEntry *w, gpointer user_data) {
+void on_names_edit_entry_name_activate(GtkEntry*, gpointer) {
 	if(GTK_WIDGET_SENSITIVE(glade_xml_get_widget (namesedit_glade, "names_edit_button_add"))) {
 		on_names_edit_button_add_clicked(GTK_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_button_add")), NULL);
 	} else if(GTK_WIDGET_SENSITIVE(glade_xml_get_widget (namesedit_glade, "names_edit_button_modify"))) {
 		on_names_edit_button_modify_clicked(GTK_BUTTON(glade_xml_get_widget (namesedit_glade, "names_edit_button_modify")), NULL);
 	}
 }
-void on_names_edit_entry_name_changed(GtkEditable *editable, gpointer user_data) {
+void on_names_edit_entry_name_changed(GtkEditable *editable, gpointer) {
 	if(editing_unit) {
 		if(!CALCULATOR->unitNameIsValid(gtk_entry_get_text(GTK_ENTRY(editable)))) {
 			g_signal_handlers_block_matched((gpointer) editable, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_names_edit_entry_name_changed, NULL);
@@ -11576,7 +11537,7 @@ bool generate_plot(plot_parameters &pp, vector<MathStructure> &y_vectors, vector
 	pp.show_all_borders = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (plot_glade, "plot_checkbutton_full_border")));
 	return true;
 }
-void on_plot_button_help_clicked(GtkButton *w, gpointer user_data) {
+void on_plot_button_help_clicked(GtkButton, gpointer) {
 #ifdef HAVE_LIBGNOME
 	GError *error = NULL;
 	gnome_help_display("qalculate-gtk", "qalculate-plotting", &error);
@@ -11590,7 +11551,7 @@ void on_plot_button_help_clicked(GtkButton *w, gpointer user_data) {
 	}
 #endif	
 }
-void on_plot_button_save_clicked(GtkButton *w, gpointer user_data) {
+void on_plot_button_save_clicked(GtkButton*, gpointer) {
 	GtkWidget *d;
 	d = gtk_file_chooser_dialog_new(_("Select file to export"), GTK_WINDOW(glade_xml_get_widget(plot_glade, "plot_dialog")), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
 #if GTK_MAJOR_VERSION > 2 || GTK_MINOR_VERSION >= 8	
@@ -11668,7 +11629,7 @@ void generate_plot_series(MathStructure **x_vector, MathStructure **y_vector, in
 		}
 	}
 }
-void on_plot_button_add_clicked(GtkButton *w, gpointer user_data) {
+void on_plot_button_add_clicked(GtkButton*, gpointer) {
 	string expression = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_expression")));
 	if(expression.empty()) {
 		show_message(_("Empty expression."), glade_xml_get_widget(plot_glade, "plot_dialog"));
@@ -11705,7 +11666,7 @@ void on_plot_button_add_clicked(GtkButton *w, gpointer user_data) {
 	gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tPlotFunctions)), &iter);
 	update_plot();
 }
-void on_plot_button_modify_clicked(GtkButton *w, gpointer user_data) {
+void on_plot_button_modify_clicked(GtkButton*, gpointer) {
 
 	GtkTreeModel *model;
 	GtkTreeIter iter;
@@ -11750,7 +11711,7 @@ void on_plot_button_modify_clicked(GtkButton *w, gpointer user_data) {
 		update_plot();
 	}
 }
-void on_plot_button_remove_clicked(GtkButton *w, gpointer user_data) {
+void on_plot_button_remove_clicked(GtkButton*, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tPlotFunctions));
@@ -11766,21 +11727,21 @@ void on_plot_button_remove_clicked(GtkButton *w, gpointer user_data) {
 	}
 }
 
-void on_plot_checkbutton_xlog_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_plot_checkbutton_xlog_toggled(GtkToggleButton *w, gpointer) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (plot_glade, "plot_spinbutton_xlog_base"), gtk_toggle_button_get_active(w));
 }
-void on_plot_checkbutton_ylog_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_plot_checkbutton_ylog_toggled(GtkToggleButton *w, gpointer) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (plot_glade, "plot_spinbutton_ylog_base"), gtk_toggle_button_get_active(w));
 }
-void on_plot_radiobutton_step_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_plot_radiobutton_step_toggled(GtkToggleButton *w, gpointer) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (plot_glade, "plot_entry_step"), gtk_toggle_button_get_active(w));
 	gtk_widget_set_sensitive(glade_xml_get_widget (plot_glade, "plot_spinbutton_steps"), !gtk_toggle_button_get_active(w));
 }
-void on_plot_radiobutton_steps_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_plot_radiobutton_steps_toggled(GtkToggleButton *w, gpointer) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (plot_glade, "plot_entry_step"), !gtk_toggle_button_get_active(w));
 	gtk_widget_set_sensitive(glade_xml_get_widget (plot_glade, "plot_spinbutton_steps"), gtk_toggle_button_get_active(w));
 }
-void on_plot_entry_expression_activate(GtkEntry *entry, gpointer user_data) {
+void on_plot_entry_expression_activate(GtkEntry*, gpointer) {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tPlotFunctions));
@@ -11791,19 +11752,19 @@ void on_plot_entry_expression_activate(GtkEntry *entry, gpointer user_data) {
 	}
 }
 
-void on_plot_radiobutton_function_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_plot_radiobutton_function_toggled(GtkToggleButton *w, gpointer) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (plot_glade, "plot_box_variable"), gtk_toggle_button_get_active(w));
 	gtk_widget_set_sensitive(glade_xml_get_widget (plot_glade, "plot_checkbutton_rows"), !gtk_toggle_button_get_active(w));
 }
-void on_plot_radiobutton_vector_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_plot_radiobutton_vector_toggled(GtkToggleButton *w, gpointer) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (plot_glade, "plot_box_variable"), !gtk_toggle_button_get_active(w));
 	gtk_widget_set_sensitive(glade_xml_get_widget (plot_glade, "plot_checkbutton_rows"), gtk_toggle_button_get_active(w));
 }
-void on_plot_radiobutton_paired_toggled(GtkToggleButton *w, gpointer user_data) {
+void on_plot_radiobutton_paired_toggled(GtkToggleButton *w, gpointer) {
 	gtk_widget_set_sensitive(glade_xml_get_widget (plot_glade, "plot_box_variable"), !gtk_toggle_button_get_active(w));
 	gtk_widget_set_sensitive(glade_xml_get_widget (plot_glade, "plot_checkbutton_rows"), gtk_toggle_button_get_active(w));
 }
-void on_plot_button_range_apply_clicked(GtkButton *w, gpointer user_data) {
+void on_plot_button_range_apply_clicked(GtkButton*, gpointer) {
 	GtkTreeIter iter;
 	bool b = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tPlotFunctions_store), &iter);
 	while(b) {
@@ -11823,24 +11784,24 @@ void on_plot_button_range_apply_clicked(GtkButton *w, gpointer user_data) {
 	}
 	update_plot();
 }
-void on_plot_button_appearance_apply_clicked(GtkButton *w, gpointer user_data) {
+void on_plot_button_appearance_apply_clicked(GtkButton*, gpointer) {
 	update_plot();
 }
 
-void on_unit_dialog_button_ok_clicked(GtkButton *w, gpointer user_data) {
+void on_unit_dialog_button_ok_clicked(GtkButton*, gpointer) {
 	do_timeout = false;
 	mstruct->set(CALCULATOR->convert(*mstruct, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unit_glade, "unit_dialog_entry_unit"))), evalops));
 	result_action_executed();
 	do_timeout = true;
 	gtk_widget_hide(glade_xml_get_widget (unit_glade, "unit_dialog"));
 }
-void on_unit_dialog_button_apply_clicked(GtkButton *w, gpointer user_data) {
+void on_unit_dialog_button_apply_clicked(GtkButton*, gpointer) {
 	do_timeout = false;
 	mstruct->set(CALCULATOR->convert(*mstruct, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unit_glade, "unit_dialog_entry_unit"))), evalops));
 	result_action_executed();
 	do_timeout = true;
 }
-void on_unit_dialog_entry_unit_activate(GtkEntry *entry, gpointer user_data) {
+void on_unit_dialog_entry_unit_activate(GtkEntry*, gpointer) {
 	on_unit_dialog_button_ok_clicked(GTK_BUTTON(glade_xml_get_widget (unit_glade, "unit_dialog_button_ok")), NULL);
 }
 
@@ -11882,7 +11843,7 @@ void on_element_button_close_clicked(GtkButton *w, gpointer user_data) {
 	}
 	gtk_widget_destroy((GtkWidget*) user_data);
 }
-void on_element_button_clicked(GtkButton *w, gpointer user_data) {
+void on_element_button_clicked(GtkButton*, gpointer user_data) {
 	DataObject *e = (DataObject*) user_data;
 	if(e) {
 		DataSet *ds = e->parentSet();
@@ -11986,14 +11947,14 @@ void on_element_button_clicked(GtkButton *w, gpointer user_data) {
 	}
 }
 
-void on_dataset_edit_entry_name_changed(GtkEditable *editable, gpointer user_data) {
+void on_dataset_edit_entry_name_changed(GtkEditable *editable, gpointer) {
 	if(!CALCULATOR->functionNameIsValid(gtk_entry_get_text(GTK_ENTRY(editable)))) {
 		g_signal_handlers_block_matched((gpointer) editable, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_dataset_edit_entry_name_changed, NULL);
 		gtk_entry_set_text(GTK_ENTRY(editable), CALCULATOR->convertToValidFunctionName(gtk_entry_get_text(GTK_ENTRY(editable))).c_str());
 		g_signal_handlers_unblock_matched((gpointer) editable, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_dataset_edit_entry_name_changed, NULL);		
 	}
 }
-void on_dataset_edit_button_new_property_clicked(GtkButton *button, gpointer user_data) {
+void on_dataset_edit_button_new_property_clicked(GtkButton*, gpointer) {
 	DataProperty *dp = new DataProperty(edited_dataset);
 	dp->setUserModified(true);
 	if(edit_dataproperty(dp)) {
@@ -12004,14 +11965,14 @@ void on_dataset_edit_button_new_property_clicked(GtkButton *button, gpointer use
 		delete dp;
 	}
 }
-void on_dataset_edit_button_edit_property_clicked(GtkButton *button, gpointer user_data) {
+void on_dataset_edit_button_edit_property_clicked(GtkButton*, gpointer) {
 	if(selected_dataproperty) {
 		if(edit_dataproperty(selected_dataproperty)) {
 			update_dataset_property_list(edited_dataset);
 		}
 	}
 }
-void on_dataset_edit_button_del_property_clicked(GtkButton *button, gpointer user_data) {
+void on_dataset_edit_button_del_property_clicked(GtkButton*, gpointer) {
 	if(edited_dataset && selected_dataproperty && selected_dataproperty->isUserModified()) {
 		for(size_t i = 0; i < tmp_props.size(); i++) {
 			if(tmp_props[i] == selected_dataproperty) {
@@ -12027,17 +11988,17 @@ void on_dataset_edit_button_del_property_clicked(GtkButton *button, gpointer use
 		update_dataset_property_list(edited_dataset);
 	}
 }
-void on_dataset_edit_button_names_clicked(GtkButton *button, gpointer user_data) {
+void on_dataset_edit_button_names_clicked(GtkButton*, gpointer) {
 	edit_names(get_edited_dataset(), gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_name"))), glade_xml_get_widget (datasetedit_glade, "dataset_edit_dialog"));
 	SET_NAMES_LE(datasetedit_glade, "dataset_edit_entry_name", "dataset_edit_label_names")
 }
 
-void on_dataproperty_edit_button_names_clicked(GtkButton *button, gpointer user_data) {
+void on_dataproperty_edit_button_names_clicked(GtkButton*, gpointer) {
 	edit_names(NULL, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_entry_name"))), glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_dialog"), TRUE, get_edited_dataproperty());
 	SET_NAMES_LE(datasetedit_glade, "dataproperty_edit_entry_name", "dataproperty_edit_label_names")
 }
 
-void on_menu_item_set_unknowns_activate(GtkMenuItem *w, gpointer user_data) {
+void on_menu_item_set_unknowns_activate(GtkMenuItem*, gpointer) {
 	if(expression_has_changed) execute_expression(true);
 	MathStructure unknowns;
 	mstruct->findAllUnknowns(unknowns);
@@ -12052,7 +12013,9 @@ void on_menu_item_set_unknowns_activate(GtkMenuItem *w, gpointer user_data) {
 	GtkWidget *vbox = gtk_vbox_new(FALSE, 15);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 12);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), vbox);
-	GtkWidget *label, *entry[unknowns.size()];
+	GtkWidget *label;
+	vector<GtkWidget*> entry;
+	entry.resize(unknowns.size(), NULL);
 	GtkWidget *ptable = gtk_table_new(0, 2, FALSE);
 	gtk_table_set_col_spacings(GTK_TABLE(ptable), 6);
 	gtk_table_set_row_spacings(GTK_TABLE(ptable), 6);

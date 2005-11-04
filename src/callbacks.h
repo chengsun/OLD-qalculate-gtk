@@ -117,9 +117,6 @@ void update_function_arguments_list(MathFunction *f);
 
 void on_tNames_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 
-void on_menu_e_deactivate(GtkMenuShell *menushell, gpointer user_data);
-void on_menu_r_deactivate(GtkMenuShell *menushell, gpointer user_data);
-
 void convert_in_wUnits(int toFrom = -1);
 void on_omToUnit_menu_activate(GtkMenuItem *item, gpointer user_data);
 
@@ -371,7 +368,6 @@ void on_menu_item_place_units_separately_activate(GtkMenuItem *w, gpointer user_
 void on_menu_item_post_conversion_none_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_post_conversion_base_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_post_conversion_best_activate(GtkMenuItem *w, gpointer user_data);
-void on_menu_item_multiple_roots_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_abbreviate_names_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_always_exact_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_try_exact_activate(GtkMenuItem *w, gpointer user_data);
