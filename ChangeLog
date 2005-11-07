@@ -1,3 +1,11 @@
+2005-11-06 Niklas Knutsson  <nq@altern.org>
+
+	* Fixes for gtk+ version 2.4
+
+2005-11-05 Niklas Knutsson  <nq@altern.org>
+
+	* Fix parenthesis for division in division
+
 2005-11-04 Niklas Knutsson  <nq@altern.org>
 
 	* Compile without warnings with -pedantic and -Wextra

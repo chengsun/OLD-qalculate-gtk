@@ -395,7 +395,7 @@ void set_status_text(string text, bool break_begin = false, bool had_errors = fa
 	else str += text;
 	str += "</span>";
 
-#if GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION < 6
+#if GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION < 10
 	gint w, h;
 	int l = 0;
 	while(true) {
@@ -407,9 +407,9 @@ void set_status_text(string text, bool break_begin = false, bool had_errors = fa
 			break;
 		}
 		if(l == 0) l = ((text.length() * statuslabel_l->allocation.width - 20) / w) - 3;
-		else l -= 5;
+		else l -= 6;
 		if(l <= 0) {
-			set_status_text("", break_begin, error_color);
+			set_status_text("", break_begin, had_errors, had_warnings);
 			return;
 		}
 		if(had_errors) {
@@ -424,24 +424,34 @@ void set_status_text(string text, bool break_begin = false, bool had_errors = fa
 			str = "<span size=\"small\">";
 		}
 		if(break_begin) {
+			int i = 0;
+			while(i < 5 && text.length() - l > 0 && (unsigned char) text[text.length() - l] >= 0x80 && (unsigned char) text[text.length() - l] <= 0xBF) {
+				l++;
+				i++;
+			}
 			text = text.substr(text.length() - l, l);
 			str += "...";
 			str += text;
 		} else {
-			int b_begin, b_end;
+			size_t b_begin, b_end;
 			bool add_bold_end = false;
 			b_begin = text.find("<b>");
 			if(b_begin != string::npos) {
 				b_end = text.find("</b>", b_begin);
 			}
-			if(b_begin != string::npos && l > b_begin && l < b_end + 4) {
-				if(l > b_end) l = b_end + 4;
-				else if(l < b_begin + 4) l = b_begin;
+			if(b_begin != string::npos && l > (int) b_begin && l < (int) b_end + 4) {
+				if(l > (int) b_end) l = (int) b_end + 4;
+				else if(l < (int) b_begin + 4) l = (int) b_begin;
 				else add_bold_end = true;
 			}
 			if(l == 0) {
 				set_status_text("", break_begin, had_errors, had_warnings);
 				return;
+			}
+			int i = 0;
+			while(i < 5 && l + 1 < (int) text.length() && (unsigned char) text[l + 1] >= 0x80 && (unsigned char) text[l + 1] <= 0xBF) {
+				l++;
+				i++;
 			}
 			text = text.substr(0, l);
 			if(add_bold_end) text += "</b>";
@@ -3484,10 +3494,10 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 				num_w = one_w; num_dh = one_h / 2; num_uh = one_h - num_dh;
 			}
 			if(m.type() == STRUCT_DIVISION) {
-				ips_n.wrap = m[1].needsParenthesis(po, ips_n, m, 2, ips.division_depth > 1 || ips.power_depth > 0, ips.power_depth > 0);
+				ips_n.wrap = m[1].needsParenthesis(po, ips_n, m, 2, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
 				den_pixmap = draw_structure(m[1], po, ips_n, &den_dh, scaledown);
 			} else {
-				ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 2, ips.division_depth > 1 || ips.power_depth > 0, ips.power_depth > 0);
+				ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 2, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
 				den_pixmap = draw_structure(m[0], po, ips_n, &den_dh, scaledown);
 			}
 			gdk_drawable_get_size(GDK_DRAWABLE(den_pixmap), &den_w, &h);
@@ -7636,7 +7646,11 @@ run_meta_mode_save_dialog:
 	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
 	if(response == GTK_RESPONSE_ACCEPT) {
 		bool new_mode = true;
+#if GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION < 6
+		string name = gtk_entry_get_text(GTK_ENTRY(GTK_BIN(entry)->child));
+#else
 		string name = gtk_combo_box_get_active_text(GTK_COMBO_BOX(entry));
+#endif
 		remove_blank_ends(name);
 		if(name.empty()) {
 			show_message(_("Empty name field."), dialog);
