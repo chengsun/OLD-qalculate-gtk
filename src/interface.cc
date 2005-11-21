@@ -181,6 +181,21 @@ void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, Assumpt
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_rpn_mode")), eo.parse_options.rpn);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_limit_implicit_multiplication")), eo.parse_options.limit_implicit_multiplication);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assume_nonzero_denominators")), eo.assume_denominators_nonzero);
+	
+	switch(eo.structuring) {
+		case STRUCTURING_SIMPLIFY: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_algebraic_mode_simplify")), TRUE);
+			break;
+		}
+		case STRUCTURING_FACTORIZE: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_algebraic_mode_factorize")), TRUE);
+			break;
+		}
+		default: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_algebraic_mode_none")), TRUE);
+			break;
+		}
+	}
 
 	if(po.base >= 2 && po.base <= 36) {
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (main_glade, "number_base_spinbutton_base")), po.base);

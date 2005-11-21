@@ -1,3 +1,19 @@
+2005-11-19 Niklas Knutsson  <nq@altern.org>
+
+	* Do not display colon when argument description is empty
+
+2005-11-17 Niklas Knutsson  <nq@altern.org>
+
+	* Simplify menu item
+	* Algebraic mode -- simplify, factorize, or none
+
+2005-11-07 Niklas Knutsson  <nq@altern.org>
+
+	* Fix crash when newline character at end of expression (from pasted text)
+	* Do not add plot expression with only white space
+	* Do not automatically add plot expression when applying appearance or function range
+	* Replace new line characters in expression entry with space
+
 2005-11-06 Niklas Knutsson  <nq@altern.org>
 
 	* Fixes for gtk+ version 2.4

@@ -389,6 +389,15 @@
 		      <signal name="activate" handler="on_menu_item_factorize_activate" last_modification_time="Wed, 29 Oct 2003 09:14:28 GMT"/>
 		    </widget>
 		  </child>
+		  
+		  <child>
+		    <widget class="GtkMenuItem" id="menu_item_simplify">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Simplify</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_menu_item_simplify_activate" last_modification_time="Thu, 17 Nov 2005 20:44:49 GMT"/>
+		    </widget>
+		  </child>
 
 		  <child>
 		    <widget class="GtkMenuItem" id="menu_item_set_unknowns">
@@ -1277,7 +1286,7 @@
 			      <signal name="activate" handler="on_menu_item_assumptions_negative_activate" last_modification_time="Wed, 16 Jun 2004 10:14:23 GMT"/>
 			    </widget>
 			  </child>
-
+			  
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="menu_item_assumptions_nonpositive">
 			      <property name="visible">True</property>
@@ -1294,13 +1303,65 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkCheckMenuItem" id="menu_item_assume_nonzero_denominators">
+		    <widget class="GtkMenuItem" id="item_algebraic_mode">
 		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">Assume that unknown denominators are non-zero</property>
-		      <property name="label" translatable="yes">Non-Zero Denominators</property>
+		      <property name="label" translatable="yes">Algebraic Mode</property>
 		      <property name="use_underline">True</property>
-		      <property name="active">False</property>
-		      <signal name="activate" handler="on_menu_item_assume_nonzero_denominators_activate" last_modification_time="Tue, 16 Nov 2004 09:14:28 GMT"/>
+
+		      <child>
+			<widget class="GtkMenu" id="item_algebraic_mode_menu">
+
+			  <child>
+			    <widget class="GtkRadioMenuItem" id="menu_item_algebraic_mode_simplify">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Simplify</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">True</property>
+			      <signal name="activate" handler="on_menu_item_algebraic_mode_simplify_activate" last_modification_time="Thu, 17 Nov 2005 20:50:56 GMT"/>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkRadioMenuItem" id="menu_item_algebraic_mode_factorize">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Factorize</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <property name="group">menu_item_algebraic_mode_simplify</property>
+			      <signal name="activate" handler="on_menu_item_algebraic_mode_factorize_activate" last_modification_time="Thu, 17 Nov 2005 20:50:56 GMT"/>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkRadioMenuItem" id="menu_item_algebraic_mode_none">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">None</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <property name="group">menu_item_algebraic_mode_simplify</property>
+			      <signal name="activate" handler="on_menu_item_algebraic_mode_none_activate" last_modification_time="Thu, 17 Nov 2005 20:50:56 GMT"/>
+			    </widget>
+			  </child>
+			  
+			  <child>
+			    <widget class="GtkMenuItem" id="separator_algebraic_mode">
+			      <property name="visible">True</property>
+			    </widget>
+			  </child>
+			  
+			  <child>
+			    <widget class="GtkCheckMenuItem" id="menu_item_assume_nonzero_denominators">
+			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Assume that unknown denominators are non-zero</property>
+			      <property name="label" translatable="yes">Non-Zero Denominators</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <signal name="activate" handler="on_menu_item_assume_nonzero_denominators_activate" last_modification_time="Tue, 16 Nov 2004 09:14:28 GMT"/>
+			    </widget>
+			  </child>
+			  
+		  	</widget>
+		      </child>
 		    </widget>
 		  </child>
 
@@ -3090,6 +3151,15 @@ Other...</property>
       <property name="label" translatable="yes">_Factorize</property>
       <property name="use_underline">True</property>
       <signal name="activate" handler="on_menu_item_factorize_activate" last_modification_time="Sat, 20 Mar 2004 09:40:15 GMT"/>
+    </widget>
+  </child>
+  
+  <child>
+    <widget class="GtkMenuItem" id="popup_menu_item_simplify">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">_Simplify</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_menu_item_simplify_activate" last_modification_time="Thu, 17 Nov 2005 21:04:06 GMT"/>
     </widget>
   </child>
 

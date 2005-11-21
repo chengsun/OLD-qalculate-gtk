@@ -379,8 +379,12 @@ void on_menu_item_precision_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_decimals_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_plot_functions_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_factorize_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_simplify_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_set_unknowns_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_assume_nonzero_denominators_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_algebraic_mode_simplify_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_algebraic_mode_factorize_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_algebraic_mode_none_activate(GtkMenuItem *w, gpointer user_data);
 gboolean on_main_window_focus_in_event(GtkWidget *w, GdkEventFocus *e, gpointer user_data);
 
 void on_unit_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
