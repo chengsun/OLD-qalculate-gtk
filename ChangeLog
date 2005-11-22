@@ -1,3 +1,10 @@
+2005-11-22 Niklas Knutsson  <nq@altern.org>
+
+	* Factorize and simplify in a separate thread that can be stopped and show progress dialog
+	* Add "Enable/Disable Completion", "Read Precision", "Limit Implicit Multiplication", "RPN Mode", and "Meta Modes"
+	  to expression entry popup menu
+	* Add "Clear" to history popup menu
+
 2005-11-19 Niklas Knutsson  <nq@altern.org>
 
 	* Do not display colon when argument description is empty

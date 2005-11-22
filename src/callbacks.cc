@@ -126,6 +126,8 @@ bool parsed_had_errors = false, parsed_had_warnings = false;
 vector<DataProperty*> tmp_props;
 vector<DataProperty*> tmp_props_orig;
 
+extern GtkAccelGroup *accel_group;
+
 extern gint win_height, win_width;
 
 vector<string> expression_history;
@@ -157,10 +159,11 @@ bool stop_timeouts = false;
 PrintOptions printops, parse_printops;
 EvaluationOptions evalops;
 
-extern FILE *view_pipe_r, *view_pipe_w;
-extern pthread_t view_thread;
-extern pthread_attr_t view_thread_attr;
-bool exit_in_progress = false;
+extern FILE *view_pipe_r, *view_pipe_w, *command_pipe_r, *command_pipe_w;
+extern pthread_t view_thread, command_thread;
+extern pthread_attr_t view_thread_attr, command_thread_attr;
+bool exit_in_progress = false, command_aborted = false;
+extern bool command_thread_started;
 
 vector<mode_struct> modes;
 vector<GtkWidget*> mode_items;
@@ -203,6 +206,11 @@ int initial_result_index = 0;
 #define PANGO_TTP_SMALL(layout, x)	if(ips.power_depth > 0) {PANGO_TT_XSMALL(layout, x);} else {PANGO_TT_SMALL(layout, x);}
 
 #define CALCULATE_SPACE_W		gint space_w, space_h; PangoLayout *layout_space = gtk_widget_create_pango_layout(resultview, NULL); PANGO_TTP(layout_space, " "); pango_layout_get_pixel_size(layout_space, &space_w, &space_h); g_object_unref(layout_space);
+
+enum {
+	COMMAND_FACTORIZE,
+	COMMAND_SIMPLIFY
+};
 
 void clear_parenthesis_pix() {
 	if(pixbuf_left_par) {
@@ -4623,6 +4631,119 @@ void setResult(Prefix *prefix, bool update_history, bool update_parse, bool forc
 
 }
 
+void on_abort_command(GtkDialog*, gint, gpointer) {
+	pthread_cancel(command_thread);
+	CALCULATOR->restoreState();
+	CALCULATOR->clearBuffers();
+	b_busy = false;
+	command_aborted = true;
+	command_thread_started = false;
+}
+
+void *command_proc(void *pipe) {
+
+	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);	
+	FILE *command_pipe = (FILE*) pipe;
+	
+	while(true) {
+	
+		void *x = NULL;
+		int command_type;
+		fread(&command_type, sizeof(int), 1, command_pipe);
+		fread(&x, sizeof(void*), 1, command_pipe);
+		switch(command_type) {
+			case COMMAND_FACTORIZE: {
+				((MathStructure*) x)->factorize(evalops);
+				break;
+			}
+			case COMMAND_SIMPLIFY: {
+				((MathStructure*) x)->simplify(evalops);
+				break;
+			}
+		}
+		b_busy = false;
+		
+	}
+	return NULL;
+}
+
+void executeCommand(int command_type) {
+
+	do_timeout = false;
+	b_busy = true;	
+	command_aborted = false;
+	GtkWidget *dialog = NULL;
+	CALCULATOR->saveState();
+
+	if(!command_thread_started) {
+		pthread_create(&command_thread, &command_thread_attr, command_proc, command_pipe_r);
+	}
+
+	gulong handler_id = g_signal_connect(G_OBJECT(glade_xml_get_widget (main_glade, "main_window")), "event", G_CALLBACK(on_event), NULL);
+
+	fwrite(&command_type, sizeof(int), 1, command_pipe_w);
+	MathStructure *mfactor = new MathStructure(*mstruct);
+	fwrite(&mfactor, sizeof(void*), 1, command_pipe_w);
+	
+	fflush(command_pipe_w);
+
+	struct timespec rtime;
+	rtime.tv_sec = 0;
+	rtime.tv_nsec = 10000000;
+	int i = 0;
+	while(b_busy && i < 50) {
+		nanosleep(&rtime, NULL);
+		i++;
+	}
+	i = 0;
+	
+	if(b_busy) {
+		string progress_str;
+		switch(command_type) {
+			case COMMAND_FACTORIZE: {
+				progress_str = _("Factorizing...");
+				break;
+			}
+			case COMMAND_SIMPLIFY: {
+				progress_str = _("Simplifying...");
+				break;
+			}
+		}
+		dialog = glade_xml_get_widget (main_glade, "progress_dialog");
+		gtk_window_set_title(GTK_WINDOW(dialog), progress_str.c_str());
+		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (main_glade, "progress_label_message")), progress_str.c_str());
+		gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
+		g_signal_connect(GTK_OBJECT(dialog), "response", G_CALLBACK(on_abort_command), NULL);
+		gtk_widget_show(dialog);
+	}
+	rtime.tv_nsec = 100000000;
+	while(b_busy) {
+		while(gtk_events_pending()) gtk_main_iteration();
+		nanosleep(&rtime, NULL);
+		gtk_progress_bar_pulse(GTK_PROGRESS_BAR(glade_xml_get_widget (main_glade, "progress_progressbar")));
+	}
+
+	b_busy = true;
+
+	g_signal_handler_disconnect(G_OBJECT(glade_xml_get_widget (main_glade, "main_window")), handler_id);
+	
+	if(dialog) {
+		gtk_widget_hide(dialog);
+	}
+	b_busy = false;
+	
+	if(!command_aborted) {
+		mstruct->unref();
+		mstruct = mfactor;
+		setResult(NULL, true, false, true);
+	}
+		
+	do_timeout = true;
+
+}
+
+
 void viewresult(Prefix *prefix = NULL) {
 	setResult(prefix, false);
 }
@@ -7523,6 +7644,68 @@ void load_mode(size_t index) {
 	}
 }
 
+void on_popup_menu_item_clear_history_active(GtkMenuItem*, gpointer) {
+	GtkTextBuffer *tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history")));
+	inhistory.clear();
+	inhistory_type.clear();
+	initial_result_pos = NULL;
+	initial_result_index = 0;
+	gtk_text_buffer_set_text(tb, "", 0);
+}
+void on_history_populate_popup(GtkTextView*, GtkMenu *sub, gpointer) {
+	GtkWidget *item;
+	MENU_SEPARATOR
+	item = gtk_image_menu_item_new_from_stock(GTK_STOCK_CLEAR, accel_group);
+	gtk_widget_show(item);
+	gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(on_popup_menu_item_clear_history_active), NULL); 
+	gtk_menu_shell_append(GTK_MENU_SHELL(sub), item);
+	gtk_widget_set_sensitive(item, !inhistory.empty());
+}
+void on_popup_menu_item_disable_completion_activate(GtkMenuItem*, gpointer) {
+	enable_completion = false;
+	update_completion();
+}
+void on_popup_menu_item_enable_completion_activate(GtkMenuItem*, gpointer) {
+	enable_completion = true;
+	update_completion();
+}
+void on_popup_menu_item_read_precision_activate(GtkMenuItem *w, gpointer) {
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_read_precision")), gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+}
+void on_popup_menu_item_limit_implicit_multiplication_activate(GtkMenuItem *w, gpointer) {
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_limit_implicit_multiplication")), gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+}
+void on_popup_menu_item_rpn_mode_activate(GtkMenuItem *w, gpointer) {
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_rpn_mode")), gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+}
+void on_expression_populate_popup(GtkEntry*, GtkMenu *menu, gpointer) {
+	GtkWidget *item, *sub, *sub2;
+	sub = GTK_WIDGET(menu);
+	MENU_SEPARATOR
+	if(enable_completion) {
+		MENU_ITEM(_("Disable Completion"), on_popup_menu_item_disable_completion_activate)
+	} else {
+		MENU_ITEM(_("Enable Completion"), on_popup_menu_item_enable_completion_activate)
+	}
+	MENU_SEPARATOR
+	CHECK_MENU_ITEM(_("Read Precision"), on_popup_menu_item_read_precision_activate, evalops.parse_options.read_precision)
+	CHECK_MENU_ITEM(_("Limit Implicit Multiplication"), on_popup_menu_item_limit_implicit_multiplication_activate, evalops.parse_options.limit_implicit_multiplication)
+	CHECK_MENU_ITEM(_("RPN Mode"), on_popup_menu_item_rpn_mode_activate, evalops.parse_options.rpn)
+	sub2 = sub;
+	SUBMENU_ITEM(_("Meta Modes"), sub2)
+	for(size_t i = 0; i < modes.size(); i++) {
+		item = gtk_menu_item_new_with_label(modes[i].name.c_str()); 
+		gtk_widget_show(item); 
+		gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(on_menu_item_meta_mode_activate), (gpointer) modes[i].name.c_str()); 
+		gtk_menu_shell_insert(GTK_MENU_SHELL(sub), item, (gint) i);
+	}
+	MENU_SEPARATOR
+	MENU_ITEM(_("Save Mode..."), on_menu_item_meta_mode_save_activate)	
+	MENU_ITEM(_("Delete Mode..."), on_menu_item_meta_mode_delete_activate)
+	gtk_widget_set_sensitive(item, modes.size() > 2);
+	sub = sub2;
+}
+
 void on_combobox_base_changed(GtkComboBox *w, gpointer) {
 	switch(gtk_combo_box_get_active(w)) {
 		case 0: {
@@ -9982,16 +10165,10 @@ void on_menu_item_post_conversion_best_activate(GtkMenuItem *w, gpointer) {
 	expression_calculation_updated();
 }
 void on_menu_item_factorize_activate(GtkMenuItem*, gpointer) {
-	do_timeout = false;
-	mstruct->factorize(evalops);
-	result_action_executed();
-	do_timeout = true;
+	executeCommand(COMMAND_FACTORIZE);
 }
 void on_menu_item_simplify_activate(GtkMenuItem*, gpointer) {
-	do_timeout = false;
-	mstruct->simplify(evalops);
-	result_action_executed();
-	do_timeout = true;
+	executeCommand(COMMAND_SIMPLIFY);
 }
 void on_menu_item_convert_number_bases_activate(GtkMenuItem*, gpointer) {
 	changing_in_nbases_dialog = false;

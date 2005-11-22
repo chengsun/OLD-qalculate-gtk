@@ -16,7 +16,7 @@
 #define MENU_ITEM_WITH_STRING(x,y,z)	item = gtk_menu_item_new_with_label(x); gtk_widget_show (item); gtk_signal_connect (GTK_OBJECT (item), "activate", GTK_SIGNAL_FUNC(y), (gpointer) z); gtk_menu_shell_append(GTK_MENU_SHELL(sub), item);
 #define MENU_ITEM_WITH_POINTER(x,y,z)	item = gtk_menu_item_new_with_label(x); gtk_widget_show (item); gtk_signal_connect (GTK_OBJECT (item), "activate", GTK_SIGNAL_FUNC(y), (gpointer) z); gtk_menu_shell_append(GTK_MENU_SHELL(sub), item);
 #define MENU_ITEM(x,y)			item = gtk_menu_item_new_with_label(x); gtk_widget_show (item); gtk_signal_connect (GTK_OBJECT (item), "activate", GTK_SIGNAL_FUNC(y), NULL); gtk_menu_shell_append(GTK_MENU_SHELL(sub), item);
-#define CHECK_MENU_ITEM(x,y)		item = gtk_check_menu_item_new_with_label(x); gtk_widget_show (item); gtk_signal_connect (GTK_OBJECT (item), "activate", GTK_SIGNAL_FUNC(y), NULL); gtk_menu_shell_append(GTK_MENU_SHELL(sub), item);
+#define CHECK_MENU_ITEM(x,y,b)		item = gtk_check_menu_item_new_with_label(x); gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), b); gtk_widget_show (item); gtk_signal_connect (GTK_OBJECT (item), "activate", GTK_SIGNAL_FUNC(y), NULL); gtk_menu_shell_append(GTK_MENU_SHELL(sub), item);
 #define MENU_ITEM_SET_ACCEL(a)		gtk_widget_add_accelerator(item, "activate", accel_group, a, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 #define MENU_TEAROFF			item = gtk_tearoff_menu_item_new(); gtk_widget_show (item); gtk_menu_shell_append(GTK_MENU_SHELL(sub), item);
 #define MENU_SEPARATOR			item = gtk_separator_menu_item_new(); gtk_widget_show (item); gtk_menu_shell_append(GTK_MENU_SHELL(sub), item);

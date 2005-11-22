@@ -180,6 +180,9 @@ gboolean completion_match_func(GtkEntryCompletion *entrycompletion, const gchar 
 #endif
 
 void *view_proc(void*);
+void *command_proc(void*);
+void on_history_populate_popup(GtkTextView *w, GtkMenu *menu, gpointer user_data);
+void on_expression_populate_popup(GtkEntry *w, GtkMenu *menu, gpointer user_data);
 void on_combobox_base_changed(GtkComboBox *w, gpointer user_data);
 void on_combobox_numerical_display_changed(GtkComboBox *w, gpointer user_data);
 void on_expander_keypad_expanded(GObject *o, GParamSpec *param_spec, gpointer user_data);

@@ -851,7 +851,6 @@ get_preferences_dialog (void)
 	
 		g_assert (glade_xml_get_widget (preferences_glade, "preferences_dialog") != NULL);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_display_expression_status")), display_expression_status);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_enable_completion")), enable_completion);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_fetch_exchange_rates")), fetch_exchange_rates_at_startup);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_save_mode")), save_mode_on_exit);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_unicode_signs")), printops.use_unicode_signs);	

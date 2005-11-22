@@ -60,9 +60,10 @@ GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *namesedit_gl
 GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
 GladeXML *periodictable_glade;
 
-FILE *view_pipe_r, *view_pipe_w;
-pthread_t view_thread;
-pthread_attr_t view_thread_attr;
+FILE *view_pipe_r, *view_pipe_w, *command_pipe_r, *command_pipe_w;
+pthread_t view_thread, command_thread;
+pthread_attr_t view_thread_attr, command_thread_attr;
+bool command_thread_started;
 
 bool do_timeout, check_expression_position;
 gint expression_position;
@@ -237,6 +238,13 @@ int main (int argc, char **argv) {
 	view_pipe_w = fdopen(pipe_wr[1], "w");
 	pthread_attr_init(&view_thread_attr);
 	pthread_create(&view_thread, &view_thread_attr, view_proc, view_pipe_r);
+	
+	int pipe_wr2[] = {0, 0};
+	pipe(pipe_wr2);
+	command_pipe_r = fdopen(pipe_wr2[0], "r");
+	command_pipe_w = fdopen(pipe_wr2[1], "w");
+	pthread_attr_init(&command_thread_attr);
+	command_thread_started = false;
 	
 	if(!calc_arg.empty()) {
 		execute_expression();
