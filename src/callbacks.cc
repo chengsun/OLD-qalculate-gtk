@@ -4349,10 +4349,22 @@ void *view_proc(void *pipe) {
 		if(result_text.length() > 1500) {
 			PangoLayout *layout = gtk_widget_create_pango_layout(resultview, NULL);
 			int index = 0;
-			while(result_text.length() - index > 3000) {
-				//GtkTextView can not display very very long lines
-				result_text.insert(3000 + index - index / 3000, "\n");
-				index += 3000;
+			//GtkTextView can not display very very long lines
+			while(result_text.length() - index > 2500) {								
+				size_t index_utf8 = 2500 + index;
+				size_t space_index = 0;
+				while(space_index < 100 && result_text[index_utf8 - space_index] != ' ') {
+					space_index++;
+				}
+				if(space_index < 100) {
+					index_utf8 -= space_index;
+				} else {
+					while(result_text[index_utf8] < 0 && (unsigned char) result_text[index_utf8] < 0xC2) {
+						index_utf8--;
+					}
+				}
+				result_text.insert(index_utf8, "\n");
+				index = index_utf8;
 			}
 			pango_layout_set_markup(layout, _("result is too long\nsee history"), -1);
 			gint w = 0, h = 0;
@@ -4404,7 +4416,7 @@ void setResult(Prefix *prefix, bool update_history, bool update_parse, bool forc
 		if(!prefix) return;
 	}
 	do_timeout = false;
-	b_busy = true;	
+	b_busy = true;
 
 	GtkTextIter iter;
 	GtkTextBuffer *tb = NULL;
@@ -4736,16 +4748,21 @@ void executeCommand(int command_type) {
 	if(!command_aborted) {
 		mstruct->unref();
 		mstruct = mfactor;
+		switch(command_type) {
+			case COMMAND_FACTORIZE: {
+				printops.allow_factorization = true;
+				break;
+			}
+			case COMMAND_SIMPLIFY: {
+				printops.allow_factorization = false;
+				break;
+			}
+		}
 		setResult(NULL, true, false, true);
 	}
 		
 	do_timeout = true;
 
-}
-
-
-void viewresult(Prefix *prefix = NULL) {
-	setResult(prefix, false);
 }
 
 void result_display_updated() {
@@ -4758,6 +4775,7 @@ void result_format_updated() {
 }
 void result_action_executed() {
 	//display_errors(NULL, glade_xml_get_widget (main_glade, "main_window"));
+	printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
 	setResult(NULL, true, false, true);
 }
 void result_prefix_changed(Prefix *prefix) {
@@ -4862,6 +4880,7 @@ void execute_expression(bool force) {
 	vans[0]->set(*mstruct);
 	
 	result_text = str;
+	printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
 	setResult(NULL, true, true, true);
 	g_signal_handler_disconnect(G_OBJECT(glade_xml_get_widget (main_glade, "main_window")), handler_id);
 	gtk_widget_grab_focus(expression);
@@ -7588,6 +7607,7 @@ void save_mode() {
 void set_saved_mode() {
 	modes[1].precision = CALCULATOR->getPrecision();
 	modes[1].po = printops;
+	modes[1].po.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
 	modes[1].eo = evalops;
 	modes[1].at = CALCULATOR->defaultAssumptions()->numberType();
 	modes[1].as = CALCULATOR->defaultAssumptions()->sign();
@@ -7608,6 +7628,7 @@ size_t save_mode_as(string name, bool *new_mode = NULL) {
 		if(new_mode) *new_mode = true;
 	}
 	modes[index].po = printops;
+	modes[index].po.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
 	modes[index].eo = evalops;
 	modes[index].precision = CALCULATOR->getPrecision();
 	modes[index].at = CALCULATOR->defaultAssumptions()->numberType();
@@ -7625,6 +7646,7 @@ void load_mode(const mode_struct &mode) {
 	block_result_update = false;
 	block_expression_execution = false;
 	block_display_parse = false;
+	printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
 	setResult(NULL, true, false, false);
 	expression_has_changed2 = true;
 	display_parse_status();
@@ -7947,6 +7969,7 @@ void load_preferences() {
 	printops.lower_case_e = false;
 	printops.limit_implicit_multiplication = false;
 	printops.can_display_unicode_string_function = &can_display_unicode_string_function;
+	printops.allow_factorization = false;
 	
 	evalops.approximation = APPROXIMATION_TRY_EXACT;
 	evalops.sync_units = true;
@@ -8164,8 +8187,13 @@ void load_preferences() {
 					else modes[mode_index].eo.assume_denominators_nonzero = v;
 				} else if(svar == "structuring") {
 					if(v >= STRUCTURING_NONE && v <= STRUCTURING_FACTORIZE) {
-						if(mode_index == 1) evalops.structuring = (StructuringMode) v;
-						else modes[mode_index].eo.structuring = (StructuringMode) v;
+						if(mode_index == 1) {
+							evalops.structuring = (StructuringMode) v;
+							printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
+						} else {
+							modes[mode_index].eo.structuring = (StructuringMode) v;
+							modes[mode_index].po.allow_factorization = (modes[mode_index].eo.structuring == STRUCTURING_FACTORIZE);
+						}
 					}
 				} else if(svar == "angle_unit") {
 					if(version_numbers[0] == 0 && (version_numbers[1] < 7 || (version_numbers[1] == 7 && version_numbers[2] == 0))) {
@@ -9842,16 +9870,19 @@ void on_menu_item_assume_nonzero_denominators_activate(GtkMenuItem *w, gpointer)
 void on_menu_item_algebraic_mode_simplify_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	evalops.structuring = STRUCTURING_SIMPLIFY;
+	printops.allow_factorization = false;
 	expression_calculation_updated();
 }
 void on_menu_item_algebraic_mode_factorize_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	evalops.structuring = STRUCTURING_FACTORIZE;
+	printops.allow_factorization = true;
 	expression_calculation_updated();
 }
 void on_menu_item_algebraic_mode_none_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	evalops.structuring = STRUCTURING_NONE;
+	printops.allow_factorization = false;
 	expression_calculation_updated();
 }
 void on_menu_item_read_precision_activate(GtkMenuItem *w, gpointer) {
@@ -12322,7 +12353,10 @@ void on_menu_item_set_unknowns_activate(GtkMenuItem*, gpointer) {
 				}
 				mstruct->eval(evalops);
 			}
-			if(b_changed) setResult(NULL, true, false, false, result_mod);
+			if(b_changed) {
+				printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
+				setResult(NULL, true, false, false, result_mod);
+			}
 			if(response == GTK_RESPONSE_ACCEPT) {
 				break;
 			}
@@ -12345,6 +12379,7 @@ void on_menu_item_set_unknowns_activate(GtkMenuItem*, gpointer) {
 						result_mod += "?";
 					}
 				}
+				printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
 				setResult(NULL, true, false, false, result_mod);
 			}
 			break;
