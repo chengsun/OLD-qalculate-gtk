@@ -412,6 +412,8 @@ void on_datasets_button_close_clicked(GtkButton *button, gpointer user_data);
 void on_function_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 void on_variable_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 void on_unknown_edit_checkbutton_custom_assumptions_toggled(GtkToggleButton *w, gpointer user_data);
+void on_unknown_edit_optionmenu_type_changed(GtkOptionMenu *om, gpointer user_data);
+void on_unknown_edit_optionmenu_sign_changed(GtkOptionMenu *om, gpointer user_data);
 
 void on_dataset_edit_entry_name_changed(GtkEditable *editable, gpointer user_data);
 void on_dataset_edit_button_new_property_clicked(GtkButton *button, gpointer user_data);

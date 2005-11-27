@@ -1,3 +1,16 @@
+2005-11-27 Niklas Knutsson  <nq@altern.org>
+	
+	* Update assumption menu items and combo boxes (in edit unknown variable dialog) 
+	  after setting sign or type (ex. setting sign to positive makes type at least real)
+
+2005-11-26 Niklas Knutsson  <nq@altern.org>
+
+	* Do not start command thread more than once
+
+2005-11-24 Niklas Knutsson  <nq@altern.org>
+
+	* Never display 1/x as (1)/x no matter how deeply nested
+
 2005-11-23 Niklas Knutsson  <nq@altern.org>
 
 	* Do not split up utf8 characters and search for spaces when wrapping very long results

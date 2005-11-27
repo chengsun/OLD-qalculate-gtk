@@ -212,6 +212,9 @@ enum {
 	COMMAND_SIMPLIFY
 };
 
+void set_assumptions_items(AssumptionNumberType, AssumptionSign);
+void set_mode_items(const PrintOptions&, const EvaluationOptions&, AssumptionNumberType, AssumptionSign, int, bool);
+
 void clear_parenthesis_pix() {
 	if(pixbuf_left_par) {
 		gdk_pixbuf_unref(pixbuf_left_par);
@@ -3500,6 +3503,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 				num_uh = h - num_dh;
 			} else {
 				MathStructure onestruct(1, 1);
+				ips_n.wrap = false;
 				pixmap_one = draw_structure(onestruct, po, ips_n, NULL, scaledown);	
 				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_one), &one_w, &one_h);
 				num_w = one_w; num_dh = one_h / 2; num_uh = one_h - num_dh;
@@ -4690,6 +4694,7 @@ void executeCommand(int command_type) {
 
 	if(!command_thread_started) {
 		pthread_create(&command_thread, &command_thread_attr, command_proc, command_pipe_r);
+		command_thread_started = true;
 	}
 
 	gulong handler_id = g_signal_connect(G_OBJECT(glade_xml_get_widget (main_glade, "main_window")), "event", G_CALLBACK(on_event), NULL);
@@ -6109,6 +6114,8 @@ void edit_unknown(const char *category, Variable *var, GtkWidget *win) {
 		gtk_window_set_title(GTK_WINDOW(dialog), _("New Unknown Variable"));
 	}
 	
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_type"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_unknown_edit_optionmenu_type_changed, NULL);
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_sign"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_unknown_edit_optionmenu_sign_changed, NULL);
 	if(v) {
 		//fill in original parameters
 		set_name_label_and_entry(v, glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_name"), glade_xml_get_widget (unknownedit_glade, "unknown_edit_label_names"));
@@ -6149,6 +6156,9 @@ void edit_unknown(const char *category, Variable *var, GtkWidget *win) {
 		gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_sign")), CALCULATOR->defaultAssumptions()->sign());
 
 	}
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_type"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_unknown_edit_optionmenu_type_changed, NULL);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_sign"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_unknown_edit_optionmenu_sign_changed, NULL);
+	
 	gtk_widget_grab_focus(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_name"));
 
 run_unknown_edit_dialog:
@@ -7637,7 +7647,6 @@ size_t save_mode_as(string name, bool *new_mode = NULL) {
 	return index;
 }
 
-void set_mode_items(const PrintOptions&, const EvaluationOptions&, AssumptionNumberType, AssumptionSign, int, bool);
 void load_mode(const mode_struct &mode) {
 	block_result_update = true;
 	block_expression_execution = true;
@@ -9774,64 +9783,84 @@ void on_menu_item_convert_to_base_units_activate(GtkMenuItem*, gpointer) {
 	do_timeout = true;
 }
 
+void update_assumptions_items() {
+	if(!block_expression_execution) {
+		block_expression_execution = true;
+		set_assumptions_items(CALCULATOR->defaultAssumptions()->numberType(), CALCULATOR->defaultAssumptions()->sign());
+		block_expression_execution = false;
+	}
+}
+
 void on_menu_item_assumptions_integer_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_INTEGER);
+	update_assumptions_items();
 	expression_calculation_updated();
 }
 void on_menu_item_assumptions_rational_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_RATIONAL);
+	update_assumptions_items();
 	expression_calculation_updated();
 }
 void on_menu_item_assumptions_real_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_REAL);
+	update_assumptions_items();
 	expression_calculation_updated();
 }
 void on_menu_item_assumptions_complex_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_COMPLEX);
+	update_assumptions_items();
 	expression_calculation_updated();
 }
 void on_menu_item_assumptions_number_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_NUMBER);
+	update_assumptions_items();
 	expression_calculation_updated();
 }
 void on_menu_item_assumptions_none_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setNumberType(ASSUMPTION_NUMBER_NONE);
+	update_assumptions_items();
 	expression_calculation_updated();
 }
 void on_menu_item_assumptions_nonzero_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONZERO);
+	update_assumptions_items();
 	expression_calculation_updated();
 }
 void on_menu_item_assumptions_positive_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_POSITIVE);
+	update_assumptions_items();
 	expression_calculation_updated();
 }
 void on_menu_item_assumptions_nonnegative_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONNEGATIVE);
+	update_assumptions_items();
 	expression_calculation_updated();
 }
 void on_menu_item_assumptions_negative_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NEGATIVE);
+	update_assumptions_items();
 	expression_calculation_updated();
 }
 void on_menu_item_assumptions_nonpositive_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONPOSITIVE);
+	update_assumptions_items();
 	expression_calculation_updated();
 }
 void on_menu_item_assumptions_unknown_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_UNKNOWN);
+	update_assumptions_items();
 	expression_calculation_updated();
 }
 
@@ -11143,6 +11172,21 @@ void on_unknown_edit_checkbutton_custom_assumptions_toggled(GtkToggleButton *w, 
 	gtk_widget_set_sensitive(glade_xml_get_widget (unknownedit_glade, "unknown_edit_hbox_type"), gtk_toggle_button_get_active(w));
 	gtk_widget_set_sensitive(glade_xml_get_widget (unknownedit_glade, "unknown_edit_hbox_sign"), gtk_toggle_button_get_active(w));
 }
+void on_unknown_edit_optionmenu_type_changed(GtkOptionMenu *om, gpointer) {	
+	if((AssumptionNumberType) gtk_option_menu_get_history(om) <= ASSUMPTION_NUMBER_COMPLEX && (AssumptionSign) gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_sign"))) != ASSUMPTION_SIGN_NONZERO) {
+		g_signal_handlers_block_matched((gpointer) glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_sign"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_unknown_edit_optionmenu_sign_changed, NULL);
+		gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_sign")), ASSUMPTION_SIGN_UNKNOWN);	
+		g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_sign"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_unknown_edit_optionmenu_sign_changed, NULL);
+	}
+}
+void on_unknown_edit_optionmenu_sign_changed(GtkOptionMenu *om, gpointer) {	
+	if((AssumptionSign) gtk_option_menu_get_history(om) != ASSUMPTION_SIGN_NONZERO && (AssumptionSign) gtk_option_menu_get_history(om) != ASSUMPTION_SIGN_UNKNOWN && (AssumptionNumberType) gtk_option_menu_get_history(GTK_OPTION_MENU(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_type"))) <= ASSUMPTION_NUMBER_COMPLEX) {
+		g_signal_handlers_block_matched((gpointer) glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_type"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_unknown_edit_optionmenu_type_changed, NULL);
+		gtk_option_menu_set_history(GTK_OPTION_MENU(glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_type")), ASSUMPTION_NUMBER_REAL);	
+		g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget (unknownedit_glade, "unknown_edit_optionmenu_type"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_unknown_edit_optionmenu_type_changed, NULL);
+	}
+}
+
 
 gboolean on_expression_key_press_event(GtkWidget*, GdkEventKey *event, gpointer) {
 	switch(event->keyval) {

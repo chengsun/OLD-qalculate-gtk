@@ -283,6 +283,7 @@
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="history">0</property>
+		  <signal name="changed" handler="on_unknown_edit_optionmenu_type_changed" last_modification_time="Sun, 27 Nov 2003 12:18:09 GMT"/>
 
 		  <child>
 		    <widget class="GtkMenu" id="menu1">
@@ -383,6 +384,7 @@
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="history">0</property>
+		  <signal name="changed" handler="on_unknown_edit_optionmenu_sign_changed" last_modification_time="Sun, 27 Nov 2003 12:18:09 GMT"/>
 
 		  <child>
 		    <widget class="GtkMenu" id="menu2">
