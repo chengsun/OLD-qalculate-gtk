@@ -3384,7 +3384,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 					}
 					nm.push_back(-1);
 				} else if(i > 0) {
-					nm.push_back(m[i].neededMultiplicationSign(po, ips_n, m, i + 1, ips_n.wrap, par_prev, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0));
+					nm.push_back(m[i].neededMultiplicationSign(po, ips_n, m, i + 1, ips_n.wrap || (m[i].isPower() && m[i][0].needsParenthesis(po, ips_n, m[i], 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0)), par_prev, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0));
 					switch(nm[i]) {
 						case MULTIPLICATION_SIGN_SPACE: {
 							w += space_w;
@@ -3422,7 +3422,8 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 				}
 				if(hetmp > dh) {
 					dh = hetmp;
-				}				
+				}
+				par_prev = ips_n.wrap;		
 			}
 			central_point = dh;
 			h = dh + uh;
@@ -12331,14 +12332,7 @@ void on_menu_item_set_unknowns_activate(GtkMenuItem*, gpointer) {
 	for(size_t i = 0; i < unknowns.size(); i++) {
 		rows++;
 		gtk_table_resize(GTK_TABLE(ptable), rows, 2);
-		if(unknowns[i].isSymbolic()) {
-			string str = "\"";
-			str += unknowns[i].print().c_str();
-			str += "\"";
-			label = gtk_label_new(str.c_str());
-		} else {
-			label = gtk_label_new(unknowns[i].print().c_str());
-		}
+		label = gtk_label_new(unknowns[i].print().c_str());
 		gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 		gtk_table_attach(GTK_TABLE(ptable), label, 0, 1, rows - 1, rows, GTK_FILL, GTK_FILL, 0, 0);
 		entry[i] = gtk_entry_new();
