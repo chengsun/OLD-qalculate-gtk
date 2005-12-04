@@ -480,6 +480,8 @@ void set_status_text(string text, bool break_begin = false, bool had_errors = fa
 	
 }
 
+void display_parse_status();
+
 void update_status_text() {
 
 	string str = "<span size=\"x-small\">";
@@ -583,8 +585,12 @@ void update_status_text() {
 	if(!b) str += " ";
 	
 	str += "</span>";
-	
-	gtk_label_set_markup(GTK_LABEL(statuslabel_r), str.c_str());
+
+	if(str != gtk_label_get_label(GTK_LABEL(statuslabel_r))) {
+		gtk_label_set_text(GTK_LABEL(statuslabel_l), "");	
+		gtk_label_set_markup(GTK_LABEL(statuslabel_r), str.c_str());	
+		display_parse_status();
+	}
 	
 }
 
@@ -3642,8 +3648,172 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			if(layout_power) g_object_unref(layout_power);
 			break;
 		}
-		case STRUCT_COMPARISON: {}
-		case STRUCT_LOGICAL_AND: {}
+		case STRUCT_LOGICAL_AND: {
+			if(!po.preserve_format && m.size() == 2 && m[0].isComparison() && m[1].isComparison() && m[0].comparisonType() != COMPARISON_EQUALS && m[0].comparisonType() != COMPARISON_NOT_EQUALS && m[1].comparisonType() != COMPARISON_EQUALS && m[1].comparisonType() != COMPARISON_NOT_EQUALS && m[0][0] == m[1][0]) {
+				ips_n.depth++;
+			
+				vector<GdkPixmap*> pixmap_terms;
+				vector<gint> hpt;
+				vector<gint> wpt;
+				vector<gint> cpt;
+				gint sign_w, sign_h, sign2_w, sign2_h, wtmp, htmp, hetmp = 0, w = 0, h = 0, dh = 0, uh = 0;
+				CALCULATE_SPACE_W
+			
+				hetmp = 0;		
+				ips_n.wrap = m[0][1].needsParenthesis(po, ips_n, m[0], 2, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+				pixmap_terms.push_back(draw_structure(m[0][1], po, ips_n, &hetmp, scaledown));
+				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_terms[0]), &wtmp, &htmp);
+				hpt.push_back(htmp);
+				cpt.push_back(hetmp);
+				wpt.push_back(wtmp);
+				w += wtmp;
+				if(htmp - hetmp > uh) {
+					uh = htmp - hetmp;
+				}
+				if(hetmp > dh) {
+					dh = hetmp;
+				}
+				hetmp = 0;		
+				ips_n.wrap = m[0][0].needsParenthesis(po, ips_n, m[0], 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+				pixmap_terms.push_back(draw_structure(m[0][0], po, ips_n, &hetmp, scaledown));
+				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_terms[1]), &wtmp, &htmp);
+				hpt.push_back(htmp);
+				cpt.push_back(hetmp);
+				wpt.push_back(wtmp);
+				w += wtmp;
+				if(htmp - hetmp > uh) {
+					uh = htmp - hetmp;
+				}
+				if(hetmp > dh) {
+					dh = hetmp;
+				}
+				hetmp = 0;		
+				ips_n.wrap = m[1][1].needsParenthesis(po, ips_n, m[1], 2, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+				pixmap_terms.push_back(draw_structure(m[1][1], po, ips_n, &hetmp, scaledown));
+				gdk_drawable_get_size(GDK_DRAWABLE(pixmap_terms[2]), &wtmp, &htmp);
+				hpt.push_back(htmp);
+				cpt.push_back(hetmp);
+				wpt.push_back(wtmp);
+				w += wtmp;
+				if(htmp - hetmp > uh) {
+					uh = htmp - hetmp;
+				}
+				if(hetmp > dh) {
+					dh = hetmp;
+				}
+			
+				PangoLayout *layout_sign = gtk_widget_create_pango_layout(resultview, NULL);
+				string str;
+				TTBP(str);
+				switch(m[0].comparisonType()) {
+					case COMPARISON_LESS: {
+						str += "&gt;";
+						break;
+					}
+					case COMPARISON_GREATER: {
+						str += "&lt;";
+						break;
+					}
+					case COMPARISON_EQUALS_LESS: {
+						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_GREATER_OR_EQUAL, po.can_display_unicode_string_arg))) {
+							str += SIGN_GREATER_OR_EQUAL;
+						} else {
+							str += "&gt;=";
+						}
+						break;
+					}
+					case COMPARISON_EQUALS_GREATER: {
+						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_LESS_OR_EQUAL, po.can_display_unicode_string_arg))) {
+							str += SIGN_LESS_OR_EQUAL;
+						} else {
+							str += "&lt;=";
+						}
+						break;
+					}
+					default: {}
+				}
+				TTE(str);
+				pango_layout_set_markup(layout_sign, str.c_str(), -1);
+				pango_layout_get_pixel_size(layout_sign, &sign_w, &sign_h);
+				if(sign_h / 2 > dh) {
+					dh = sign_h / 2;
+				}
+				if(sign_h / 2 + sign_h % 2 > uh) {
+					uh = sign_h / 2 + sign_h % 2;
+				}
+				w += sign_w;
+				
+				PangoLayout *layout_sign2 = gtk_widget_create_pango_layout(resultview, NULL);
+				str = "";
+				TTBP(str);
+				switch(m[1].comparisonType()) {
+					case COMPARISON_GREATER: {
+						str += "&gt;";
+						break;
+					}
+					case COMPARISON_LESS: {
+						str += "&lt;";
+						break;
+					}
+					case COMPARISON_EQUALS_GREATER: {
+						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_GREATER_OR_EQUAL, po.can_display_unicode_string_arg))) {
+							str += SIGN_GREATER_OR_EQUAL;
+						} else {
+							str += "&gt;=";
+						}
+						break;
+					}
+					case COMPARISON_EQUALS_LESS: {
+						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_LESS_OR_EQUAL, po.can_display_unicode_string_arg))) {
+							str += SIGN_LESS_OR_EQUAL;
+						} else {
+							str += "&lt;=";
+						}
+						break;
+					}
+					default: {}
+				}
+				TTE(str);
+				pango_layout_set_markup(layout_sign2, str.c_str(), -1);
+				pango_layout_get_pixel_size(layout_sign2, &sign2_w, &sign2_h);
+				if(sign2_h / 2 > dh) {
+					dh = sign2_h / 2;
+				}
+				if(sign2_h / 2 + sign2_h % 2 > uh) {
+					uh = sign2_h / 2 + sign2_h % 2;
+				}
+				w += sign2_w;
+				
+			
+				w += space_w * (pixmap_terms.size() - 1) * 2;
+			
+				central_point = dh;
+				h = dh + uh;
+				pixmap = gdk_pixmap_new(resultview->window, w, h, -1);			
+				draw_background(pixmap, w, h);
+				w = 0;
+				for(size_t i = 0; i < pixmap_terms.size(); i++) {
+					if(i > 0) {
+						w += space_w;
+						if(i == 1) {
+							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - sign_h / 2 - sign_h % 2, layout_sign);
+							w += sign_w;
+						} else {
+							gdk_draw_layout(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], w, uh - sign2_h / 2 - sign2_h % 2, layout_sign2);
+							w += sign2_w;
+						}
+						w += space_w;			
+					}
+					gdk_draw_drawable(GDK_DRAWABLE(pixmap), resultview->style->fg_gc[GTK_WIDGET_STATE(resultview)], GDK_DRAWABLE(pixmap_terms[i]), 0, 0, w, uh - (hpt[i] - cpt[i]), -1, -1);
+					w += wpt[i];
+					g_object_unref(pixmap_terms[i]);
+				}
+				g_object_unref(layout_sign);
+				g_object_unref(layout_sign2);
+				break;
+			}
+		}
+		case STRUCT_COMPARISON: {}		
 		case STRUCT_LOGICAL_XOR: {}
 		case STRUCT_LOGICAL_OR: {}
 		case STRUCT_BITWISE_AND: {}
