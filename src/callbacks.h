@@ -26,7 +26,7 @@
 struct mode_struct {
 	PrintOptions po;
 	EvaluationOptions eo;
-	AssumptionNumberType at;
+	AssumptionType at;
 	AssumptionSign as;
 	int precision;
 	string name;
@@ -328,6 +328,7 @@ void on_menu_item_assumptions_rational_activate(GtkMenuItem *w, gpointer user_da
 void on_menu_item_assumptions_real_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_assumptions_complex_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_assumptions_number_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_assumptions_nonmatrix_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_assumptions_none_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_assumptions_nonzero_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_assumptions_positive_activate(GtkMenuItem *w, gpointer user_data);

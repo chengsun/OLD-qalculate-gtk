@@ -119,7 +119,7 @@ gint compare_categories(gconstpointer a, gconstpointer b) {
 	return strcasecmp((const char*) a, (const char*) b);
 }
 
-void set_assumptions_items(AssumptionNumberType at, AssumptionSign as) {	
+void set_assumptions_items(AssumptionType at, AssumptionSign as) {	
 	switch(as) {
 		case ASSUMPTION_SIGN_POSITIVE: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_positive")), TRUE); break;}
 		case ASSUMPTION_SIGN_NONPOSITIVE: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_nonpositive")), TRUE); break;}
@@ -129,16 +129,17 @@ void set_assumptions_items(AssumptionNumberType at, AssumptionSign as) {
 		default: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_unknown")), TRUE);}
 	}
 	switch(at) {
-		case ASSUMPTION_NUMBER_INTEGER: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_integer")), TRUE); break;}
-		case ASSUMPTION_NUMBER_RATIONAL: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_rational")), TRUE); break;}
-		case ASSUMPTION_NUMBER_REAL: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_real")), TRUE); break;}
-		case ASSUMPTION_NUMBER_COMPLEX: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_complex")), TRUE); break;}
-		case ASSUMPTION_NUMBER_NUMBER: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_number")), TRUE); break;}
+		case ASSUMPTION_TYPE_INTEGER: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_integer")), TRUE); break;}
+		case ASSUMPTION_TYPE_RATIONAL: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_rational")), TRUE); break;}
+		case ASSUMPTION_TYPE_REAL: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_real")), TRUE); break;}
+		case ASSUMPTION_TYPE_COMPLEX: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_complex")), TRUE); break;}
+		case ASSUMPTION_TYPE_NUMBER: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_number")), TRUE); break;}
+		case ASSUMPTION_TYPE_NONMATRIX: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_nonmatrix")), TRUE); break;}
 		default: {gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assumptions_none")), TRUE);}
 	}
 }
 
-void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, AssumptionNumberType at, AssumptionSign as, int precision, bool initial_update) {	
+void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, AssumptionType at, AssumptionSign as, int precision, bool initial_update) {	
 
 	switch(eo.approximation) {
 		case APPROXIMATION_EXACT: {
@@ -416,7 +417,7 @@ create_main_window (void)
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "button_hyp")), hyp_is_on);
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "button_inv")), inv_is_on);
 	
-	set_mode_items(printops, evalops, CALCULATOR->defaultAssumptions()->numberType(), CALCULATOR->defaultAssumptions()->sign(), CALCULATOR->getPrecision(), true);
+	set_mode_items(printops, evalops, CALCULATOR->defaultAssumptions()->type(), CALCULATOR->defaultAssumptions()->sign(), CALCULATOR->getPrecision(), true);
 
 	set_unicode_buttons();
 

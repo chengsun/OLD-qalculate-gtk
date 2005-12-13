@@ -1,3 +1,12 @@
+2005-12-13 Niklas Knutsson  <nq@altern.org>
+
+	* Display AND and OR with lower-case letters
+	* Fix set status text crash
+
+2005-12-11 Niklas Knutsson  <nq@altern.org>
+
+	* No double quotes in in history from set unknowns
+
 2005-12-03 Niklas Knutsson  <nq@altern.org>
 
 	* Display "x < 3 && x > 1" as "1 < x < 3"

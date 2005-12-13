@@ -295,6 +295,14 @@
 			  <property name="use_underline">True</property>
 			</widget>
 		      </child>
+		      
+		      <child>
+			<widget class="GtkMenuItem" id="itemNonMatrix">
+			  <property name="visible">True</property>
+			  <property name="label" translatable="yes">Not Matrix</property>
+			  <property name="use_underline">True</property>
+			</widget>
+		      </child>
 
 		      <child>
 			<widget class="GtkMenuItem" id="item2">
