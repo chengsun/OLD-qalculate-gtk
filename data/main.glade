@@ -1371,6 +1371,17 @@
 			    </widget>
 			  </child>
 			  
+			  <child>
+			    <widget class="GtkCheckMenuItem" id="menu_item_warn_about_denominators_assumed_nonzero">
+			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Warn when unknown denominators are assumed non-zero</property>
+			      <property name="label" translatable="yes">Warn About Denominators Assumed Non-Zero</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <signal name="activate" handler="on_menu_item_warn_about_denominators_assumed_nonzero_activate" last_modification_time="Tue, 20 Dec 2005 14:02:13 GMT"/>
+			    </widget>
+			  </child>
+			  
 		  	</widget>
 		      </child>
 		    </widget>

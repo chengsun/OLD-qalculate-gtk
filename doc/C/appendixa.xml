@@ -1937,11 +1937,23 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Greatest Common Divisor</emphasis></term>
 <listitem>
-<para><command>gcd(1st Number, 2nd Number)</command></para>
+<para><command>gcd(1st Value, 2nd Value)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>1st Number: an integer</para></listitem>
-<listitem><para>2nd Number: an integer</para></listitem>
+<listitem><para>1st Value: a free value that is rational (polynomial)</para></listitem>
+<listitem><para>2nd Value: a free value that is rational (polynomial)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Least Common Multiplier</emphasis></term>
+<listitem>
+<para><command>lcm(1st Value, 2nd Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1st Value: a free value that is rational (polynomial)</para></listitem>
+<listitem><para>2nd Value: a free value that is rational (polynomial)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1957,6 +1969,17 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Terms: a vector</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Denominator</emphasis></term>
+<listitem>
+<para><command>denominator(Number)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Number: a rational number</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2003,6 +2026,17 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Value: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Numerator</emphasis></term>
+<listitem>
+<para><command>numerator(Number)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Number: a rational number</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2141,6 +2175,108 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Octal Number: a text string</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="qalculate-definitions-functions-2-Polynomials">
+<title>Polynomials</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Coefficient</emphasis></term>
+<listitem>
+<para><command>coeff(Polynomial, Variable[, argument 3])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Polynomial: a free value that is rational (polynomial)</para></listitem>
+<listitem><para>Variable: an integer &gt;= 0</para></listitem>
+<listitem><para>3: an unknown variable/symbol (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Content Part</emphasis></term>
+<listitem>
+<para><command>pcontent(Polynomial[, Variable])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Polynomial: a free value that is rational (polynomial)</para></listitem>
+<listitem><para>Variable: an unknown variable/symbol (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Degree</emphasis></term>
+<listitem>
+<para><command>degree(Polynomial[, Variable])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Polynomial: a free value that is rational (polynomial)</para></listitem>
+<listitem><para>Variable: an unknown variable/symbol (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Leading Coefficient</emphasis></term>
+<listitem>
+<para><command>lcoeff(Polynomial[, Variable])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Polynomial: a free value that is rational (polynomial)</para></listitem>
+<listitem><para>Variable: an unknown variable/symbol (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Lowest Degree (Valuation)</emphasis></term>
+<listitem>
+<para><command>ldegree(Polynomial[, Variable])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Polynomial: a free value that is rational (polynomial)</para></listitem>
+<listitem><para>Variable: an unknown variable/symbol (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Primitive Part</emphasis></term>
+<listitem>
+<para><command>primpart(Polynomial[, Variable])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Polynomial: a free value that is rational (polynomial)</para></listitem>
+<listitem><para>Variable: an unknown variable/symbol (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Trailing Coefficient</emphasis></term>
+<listitem>
+<para><command>tcoeff(Polynomial[, Variable])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Polynomial: a free value that is rational (polynomial)</para></listitem>
+<listitem><para>Variable: an unknown variable/symbol (optional)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Unit Part</emphasis></term>
+<listitem>
+<para><command>punit(Polynomial[, Variable])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Polynomial: a free value that is rational (polynomial)</para></listitem>
+<listitem><para>Variable: an unknown variable/symbol (optional)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>

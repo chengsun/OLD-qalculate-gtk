@@ -2,9 +2,9 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
     "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
   <!ENTITY legal SYSTEM "legal.xml">
-  <!ENTITY appversion "0.9.0">
-  <!ENTITY manrevision "0.9.0">
-  <!ENTITY date "October 2005">
+  <!ENTITY appversion "0.9.2">
+  <!ENTITY manrevision "0.9.2">
+  <!ENTITY date "December 2005">
   <!ENTITY app "Qalculate!">
   <!ENTITY appendixa SYSTEM "appendixa.xml">
   <!ENTITY appendixb SYSTEM "appendixb.xml">
@@ -291,10 +291,14 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 			<row valign="top">
 				<entry><para>Manage Data Sets</para></entry>
 				<entry><para>Opens the data set manager.</para></entry>
-			</row>
+			</row>			
 			<row valign="top">
 				<entry><para>Factorize</para></entry>
-				<entry><para>Factorizes the current result. Only rational roots of univariate polynomials can be found.</para></entry>
+				<entry><para>Factorizes the current result. For multivariate rational polynomials, only square free factorization is supported.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Simplify</para></entry>
+				<entry><para>Simplifies the current result. Note that easy simplifications are always automatically performed.</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Set Unknowns...</para></entry>
@@ -380,8 +384,8 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Submenu which changes default assumptions for unknown variables.</para></entry>
 			</row>
 			<row valign="top">
-				<entry><para>Non-Zero Denominators</para></entry>
-				<entry><para>Toggles on/off use of the assumption that unknown denominators not are zero. This alternative makes it possible to avoid the situation where expressions such as <quote>(x-1)/(x-1)</quote> can not be further simplified because the denominator might be zero (if x equals 1).</para></entry>
+				<entry><para>Algebraic Mode</para></entry>
+				<entry><para>Submenu with options to automatically simplify or factorize the final result. Note that even if this is set to none, easy simplifications will be performed. In this menu, the option toggle on/off use of the assumption that unknown denominators not are zero is also found. This alternative makes it possible to avoid the situation where expressions such as <quote>(x-1)/(x-1)</quote> can not be further simplified because the denominator might be zero (if x equals 1).</para></entry>
 			</row>
 			<row valign="top">
 				<entry><para>Read Precision</para></entry>

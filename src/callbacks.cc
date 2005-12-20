@@ -406,7 +406,7 @@ void set_status_text(string text, bool break_begin = false, bool had_errors = fa
 	else str += text;
 	str += "</span>";
 
-#if GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION < 10
+#if GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION < 8
 	gint w, h;
 	int l = 0;
 	while(true) {
@@ -846,6 +846,7 @@ void display_parse_status() {
 		po.improve_division_multipliers = false;
 		po.can_display_unicode_string_function = &can_display_unicode_string_function;
 		po.can_display_unicode_string_arg = (void*) statuslabel_l;
+		po.spell_out_logical_operators = printops.spell_out_logical_operators;
 		mparse.format(po);
 		parsed_expression = mparse.print(po);
 		if(!str_u.empty()) {
@@ -3898,9 +3899,11 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 					}
 				}
 			} else if(m.type() == STRUCT_LOGICAL_AND) {
-				str += "and";
+				if(po.spell_out_logical_operators) str += _("and");
+				else str += "&amp;&amp;";
 			} else if(m.type() == STRUCT_LOGICAL_OR) {
-				str += "or";
+				if(po.spell_out_logical_operators) str += _("or");
+				else str += "||";
 			} else if(m.type() == STRUCT_LOGICAL_XOR) {
 				str += "XOR";
 			} else if(m.type() == STRUCT_BITWISE_AND) {
@@ -4502,12 +4505,8 @@ void *view_proc(void *pipe) {
 				po.excessive_parenthesis = true;
 				po.improve_division_multipliers = false;
 				po.can_display_unicode_string_function = &can_display_unicode_string_function;
-				po.can_display_unicode_string_arg = (void*) statuslabel_l;				
-				/*PrintOptions po = printops;
-				po.short_multiplication = false;
-				po.excessive_parenthesis = true;
-				po.improve_division_multipliers = false;
-				po.base = evalops.parse_options.base;*/
+				po.can_display_unicode_string_arg = (void*) statuslabel_l;
+				po.spell_out_logical_operators = printops.spell_out_logical_operators;
 				MathStructure mp(*((MathStructure*) x));								
 				fread(&po.is_approximate, sizeof(bool*), 1, view_pipe);
 				mp.format(po);
@@ -8155,6 +8154,7 @@ void load_preferences() {
 	printops.limit_implicit_multiplication = false;
 	printops.can_display_unicode_string_function = &can_display_unicode_string_function;
 	printops.allow_factorization = false;
+	printops.spell_out_logical_operators = true;
 	
 	evalops.approximation = APPROXIMATION_TRY_EXACT;
 	evalops.sync_units = true;
@@ -8165,7 +8165,8 @@ void load_preferences() {
 	evalops.allow_complex = true;
 	evalops.allow_infinite = true;
 	evalops.auto_post_conversion = POST_CONVERSION_NONE;
-	evalops.assume_denominators_nonzero = false;
+	evalops.assume_denominators_nonzero = true;
+	evalops.warn_about_denominators_assumed_nonzero = true;
 	evalops.parse_options.limit_implicit_multiplication = false;
 	evalops.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 	
@@ -8208,7 +8209,7 @@ void load_preferences() {
 		first_qalculate_run = false;
 		closedir(dir);
 	}
-	int version_numbers[] = {0, 9, 1};
+	int version_numbers[] = {0, 9, 2};
 
 	FILE *file = NULL;
 	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate-gtk.cfg", NULL);
@@ -8370,6 +8371,9 @@ void load_preferences() {
 				} else if(svar == "assume_denominators_nonzero") {
 					if(mode_index == 1) evalops.assume_denominators_nonzero = v;
 					else modes[mode_index].eo.assume_denominators_nonzero = v;
+				} else if(svar == "warn_about_denominators_assumed_nonzero") {
+					if(mode_index == 1) evalops.warn_about_denominators_assumed_nonzero = v;
+					else modes[mode_index].eo.warn_about_denominators_assumed_nonzero = v;
 				} else if(svar == "structuring") {
 					if(v >= STRUCTURING_NONE && v <= STRUCTURING_FACTORIZE) {
 						if(mode_index == 1) {
@@ -8495,6 +8499,8 @@ void load_preferences() {
 					printops.lower_case_numbers = v;	
 				} else if(svar == "lower_case_e") {
 					printops.lower_case_e = v;	
+				} else if(svar == "spell_out_logical_operators") {
+					printops.spell_out_logical_operators = v;	
 				} else if(svar == "use_custom_result_font") {
 					use_custom_result_font = v;
 				} else if(svar == "use_custom_expression_font") {
@@ -8710,6 +8716,7 @@ void save_preferences(bool mode) {
 	fprintf(file, "use_unicode_signs=%i\n", printops.use_unicode_signs);
 	fprintf(file, "lower_case_numbers=%i\n", printops.lower_case_numbers);
 	fprintf(file, "lower_case_e=%i\n", printops.lower_case_e);
+	fprintf(file, "spell_out_logical_operators=%i\n", printops.spell_out_logical_operators);
 	fprintf(file, "use_custom_result_font=%i\n", use_custom_result_font);	
 	fprintf(file, "use_custom_expression_font=%i\n", use_custom_expression_font);	
 	fprintf(file, "use_custom_status_font=%i\n", use_custom_status_font);	
@@ -8833,6 +8840,7 @@ void save_preferences(bool mode) {
 		fprintf(file, "number_base_expression=%i\n", modes[i].eo.parse_options.base);
 		fprintf(file, "read_precision=%i\n", modes[i].eo.parse_options.read_precision);
 		fprintf(file, "assume_denominators_nonzero=%i\n", modes[i].eo.assume_denominators_nonzero);
+		fprintf(file, "warn_about_denominators_assumed_nonzero=%i\n", modes[i].eo.warn_about_denominators_assumed_nonzero);
 		fprintf(file, "structuring=%i\n", modes[i].eo.structuring);
 		fprintf(file, "angle_unit=%i\n", modes[i].eo.parse_options.angle_unit);
 		fprintf(file, "functions_enabled=%i\n", modes[i].eo.parse_options.functions_enabled);
@@ -9124,6 +9132,10 @@ void on_preferences_checkbutton_lower_case_numbers_toggled(GtkToggleButton *w, g
 }
 void on_preferences_checkbutton_lower_case_e_toggled(GtkToggleButton *w, gpointer) {
 	printops.lower_case_e = gtk_toggle_button_get_active(w);
+	result_display_updated();
+}
+void on_preferences_checkbutton_spell_out_logical_operators_toggled(GtkToggleButton *w, gpointer) {
+	printops.spell_out_logical_operators = gtk_toggle_button_get_active(w);
 	result_display_updated();
 }
 void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpointer) {
@@ -10080,6 +10092,10 @@ void on_menu_item_allow_infinite_activate(GtkMenuItem *w, gpointer) {
 void on_menu_item_assume_nonzero_denominators_activate(GtkMenuItem *w, gpointer) {
 	evalops.assume_denominators_nonzero = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	expression_calculation_updated();
+}
+void on_menu_item_warn_about_denominators_assumed_nonzero_activate(GtkMenuItem *w, gpointer) {
+	evalops.warn_about_denominators_assumed_nonzero = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
+	if(evalops.warn_about_denominators_assumed_nonzero) expression_calculation_updated();
 }
 void on_menu_item_algebraic_mode_simplify_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;

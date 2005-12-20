@@ -1,3 +1,12 @@
+2005-12-20 Niklas Knutsson  <nq@altern.org>
+
+	* Warn about denominators assumed non-zero option
+
+2005-12-19 Niklas Knutsson  <nq@altern.org>
+
+	* Update Swedish translation
+	* Update documentation
+
 2005-12-13 Niklas Knutsson  <nq@altern.org>
 
 	* Display AND and OR with lower-case letters
