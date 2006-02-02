@@ -2815,7 +2815,7 @@ void create_pmenu(GtkWidget *item) {
 	int index = 0;
 	Prefix *p = CALCULATOR->getPrefix(index);
 	while(p) {
-		gchar *gstr;
+		gchar *gstr = NULL;
 		switch(p->type()) {
 			case PREFIX_DECIMAL: {
 				gstr = g_strdup_printf("%s (10<sup>%i</sup>)", p->name(false, true, &can_display_unicode_string_function, (void*) item).c_str(), ((DecimalPrefix*) p)->exponent());
@@ -2850,7 +2850,7 @@ void create_pmenu2() {
 	MENU_ITEM_WITH_POINTER(_("No Prefix"), set_prefix, CALCULATOR->decimal_null_prefix)
 	Prefix *p = CALCULATOR->getPrefix(index);
 	while(p) {
-		gchar *gstr;
+		gchar *gstr = NULL;
 		switch(p->type()) {
 			case PREFIX_DECIMAL: {
 				gstr = g_strdup_printf("%s (10<sup>%i</sup>)", p->name(false, true, &can_display_unicode_string_function, (void*) item).c_str(), ((DecimalPrefix*) p)->exponent());
@@ -4860,6 +4860,10 @@ void *command_proc(void *pipe) {
 }
 
 void executeCommand(int command_type) {
+
+	if(expression_has_changed) {
+		execute_expression();
+	}
 
 	do_timeout = false;
 	b_busy = true;	
@@ -8369,6 +8373,9 @@ void load_preferences() {
 						else modes[mode_index].eo.parse_options.read_precision = (ReadPrecisionMode) v;
 					}
 				} else if(svar == "assume_denominators_nonzero") {
+					if(version_numbers[0] == 0 && (version_numbers[1] < 9 || (version_numbers[1] == 9 && version_numbers[2] == 0))) {
+						v = true;
+					}
 					if(mode_index == 1) evalops.assume_denominators_nonzero = v;
 					else modes[mode_index].eo.assume_denominators_nonzero = v;
 				} else if(svar == "warn_about_denominators_assumed_nonzero") {
@@ -8477,6 +8484,9 @@ void load_preferences() {
 					}
 				} else if(svar == "default_assumption_sign") {
 					if(v >= ASSUMPTION_SIGN_UNKNOWN && v <= ASSUMPTION_SIGN_NONZERO) {
+						if(v == ASSUMPTION_SIGN_NONZERO && version_numbers[0] == 0 && (version_numbers[1] < 9 || (version_numbers[1] == 9 && version_numbers[2] == 0))) {
+							v = ASSUMPTION_SIGN_UNKNOWN;
+						}
 						if(mode_index == 1) CALCULATOR->defaultAssumptions()->setSign((AssumptionSign) v);
 						else modes[mode_index].as = (AssumptionSign) v;
 					}
@@ -9867,7 +9877,9 @@ void on_button_brace_close_clicked(GtkButton*, gpointer) {
 	insert_text(")");
 }
 void on_button_times_clicked(GtkButton*, gpointer) {
-	wrap_expression_selection();
+	if(!evalops.parse_options.rpn) {
+		wrap_expression_selection();
+	}
 	if(printops.use_unicode_signs && printops.multiplication_sign == MULTIPLICATION_SIGN_DOT && can_display_unicode_string_function(SIGN_MULTIDOT, (void*) expression)) {
 		insert_text(SIGN_MULTIDOT);
 	} else if(printops.use_unicode_signs && printops.multiplication_sign == MULTIPLICATION_SIGN_DOT && can_display_unicode_string_function(SIGN_SMALLCIRCLE, (void*) expression)) {
@@ -9879,18 +9891,24 @@ void on_button_times_clicked(GtkButton*, gpointer) {
 	}
 }
 void on_button_add_clicked(GtkButton*, gpointer) {
-	wrap_expression_selection();
+	if(!evalops.parse_options.rpn) {
+		wrap_expression_selection();
+	}
 //	if(printops.use_unicode_signs) insert_text(SIGN_PLUS);
 //	else 
 	insert_text("+");
 }
 void on_button_sub_clicked(GtkButton*, gpointer) {
-	wrap_expression_selection();
+	if(!evalops.parse_options.rpn) {
+		wrap_expression_selection();
+	}
 	if(printops.use_unicode_signs && can_display_unicode_string_function(SIGN_MINUS, (void*) expression)) insert_text(SIGN_MINUS);
 	else insert_text("-");
 }
 void on_button_divide_clicked(GtkButton*, gpointer) {
-	wrap_expression_selection();
+	if(!evalops.parse_options.rpn) {
+		wrap_expression_selection();
+	}
 	if(printops.use_unicode_signs && printops.division_sign == DIVISION_SIGN_DIVISION && can_display_unicode_string_function(SIGN_DIVISION, (void*) expression)) {
 		insert_text(SIGN_DIVISION);
 	} else {
@@ -9901,17 +9919,22 @@ void on_button_ans_clicked(GtkButton*, gpointer) {
 	insert_text(vans[0]->preferredInputName(printops.abbreviate_names, printops.use_unicode_signs, false, false, &can_display_unicode_string_function, (void*) expression).name.c_str());
 }
 void on_button_exp_clicked(GtkButton*, gpointer) {
-	wrap_expression_selection();
 	if(printops.lower_case_e) insert_text("e");
 	else insert_text("E");	
 }
 void on_button_xy_clicked(GtkButton*, gpointer) {
-	wrap_expression_selection();
+	if(!evalops.parse_options.rpn) {
+		wrap_expression_selection();
+	}
 	insert_text("^");
 }
 void on_button_square_clicked(GtkButton*, gpointer) {
-	wrap_expression_selection();
-	insert_text("^2");
+	if(evalops.parse_options.rpn) {
+		insertButtonFunction(CALCULATOR->f_sq);
+	} else {
+		wrap_expression_selection();
+		insert_text("^2");
+	}
 }
 
 /*
@@ -11393,7 +11416,9 @@ gboolean on_expression_key_press_event(GtkWidget*, GdkEventKey *event, gpointer)
 	switch(event->keyval) {
 		case GDK_dead_circumflex: {
 			gint end = 0;
-			wrap_expression_selection();
+			if(!evalops.parse_options.rpn) {
+				wrap_expression_selection();
+			}
 			end = gtk_editable_get_position(GTK_EDITABLE(expression));
 			gtk_editable_insert_text(GTK_EDITABLE(expression), "^", -1, &end);				
 			gtk_editable_set_position(GTK_EDITABLE(expression), end);
@@ -11407,7 +11432,9 @@ gboolean on_expression_key_press_event(GtkWidget*, GdkEventKey *event, gpointer)
 		case GDK_asterisk: {}				
 		case GDK_plus: {}				
 		case GDK_minus: {
-			wrap_expression_selection();
+			if(!evalops.parse_options.rpn) {
+				wrap_expression_selection();
+			}
 			break;
 		}
 		case GDK_Page_Up: {

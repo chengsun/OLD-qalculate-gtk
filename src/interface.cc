@@ -1610,7 +1610,7 @@ GtkWidget* get_periodic_dialog (void) {
 		periodic_tooltips = gtk_tooltips_new();
 		string tip;
 		GtkStyle *e_style[] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-		GtkStyle *l_style;
+		GtkStyle *l_style = NULL;
 		GdkColor c_black;
 		c_black.red = 0x0000;
 		c_black.green = 0x0000;
@@ -1622,7 +1622,7 @@ GtkWidget* get_periodic_dialog (void) {
 		DataProperty *p_symbol = dc->getProperty("symbol");
 		DataProperty *p_class = dc->getProperty("class");
 		DataProperty *p_name = dc->getProperty("name");
-		int x_pos, y_pos, group;
+		int x_pos = 0, y_pos = 0, group = 0;
 		string weight;
 		for(size_t i = 1; i < 120; i++) {
 			e = dc->getObject(i2s(i));

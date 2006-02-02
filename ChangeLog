@@ -1,3 +1,7 @@
+2005-02-01 Niklas Knutsson  <nq@altern.org>
+
+	* When in RPN mode, do not put selection in parenthesis and place operator after
+
 2005-12-20 Niklas Knutsson  <nq@altern.org>
 
 	* Warn about denominators assumed non-zero option
