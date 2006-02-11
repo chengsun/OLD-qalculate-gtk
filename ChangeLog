@@ -1,4 +1,12 @@
-2005-02-01 Niklas Knutsson  <nq@altern.org>
+2006-02-11 Niklas Knutsson  <nq@altern.org>
+
+	* Do not use "Read Precision" in plot
+
+2006-02-07 Niklas Knutsson  <nq@altern.org>
+
+	* "RPN Mode" -> "RPN Syntax"
+
+2006-02-01 Niklas Knutsson  <nq@altern.org>
 
 	* When in RPN mode, do not put selection in parenthesis and place operator after
 
