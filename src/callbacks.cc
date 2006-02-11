@@ -12149,6 +12149,7 @@ void generate_plot_series(MathStructure **x_vector, MathStructure **y_vector, in
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	eo.parse_options = evalops.parse_options;
+	eo.parse_options.read_precision = DONT_READ_PRECISION;
 	if(type == 1 || type == 2) {
 		*y_vector = new MathStructure(CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(str), eo));
 		*x_vector = NULL;
