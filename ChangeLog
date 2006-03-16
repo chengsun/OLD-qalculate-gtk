@@ -1,3 +1,8 @@
+2006-03-13 Niklas Knutsson  <nq@altern.org>
+
+	* Do not do any unnecessary result updates when loading meta mode
+	* Show original parsed precision of enetered numbers
+
 2006-02-11 Niklas Knutsson  <nq@altern.org>
 
 	* Do not use "Read Precision" in plot

@@ -1418,7 +1418,7 @@
 		  <child>
 		    <widget class="GtkCheckMenuItem" id="menu_item_rpn_mode">
 		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">(De)activate use of reverse polish notation in expressions</property>
+		      <property name="tooltip" translatable="yes">(De)activate use of Reverse Polish Notation syntax in expressions</property>
 		      <property name="label" translatable="yes">RPN Syntax</property>
 		      <property name="use_underline">True</property>
 		      <property name="active">False</property>

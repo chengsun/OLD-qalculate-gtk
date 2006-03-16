@@ -2,9 +2,9 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
     "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
   <!ENTITY legal SYSTEM "legal.xml">
-  <!ENTITY appversion "0.9.2">
-  <!ENTITY manrevision "0.9.2">
-  <!ENTITY date "December 2005">
+  <!ENTITY appversion "0.9.3">
+  <!ENTITY manrevision "0.9.3">
+  <!ENTITY date "Mars 2006">
   <!ENTITY app "Qalculate!">
   <!ENTITY appendixa SYSTEM "appendixa.xml">
   <!ENTITY appendixb SYSTEM "appendixb.xml">

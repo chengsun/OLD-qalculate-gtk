@@ -90,7 +90,7 @@ AC_SUBST(GTK_LIBS)
 GTK_LIBS="-export-dynamic $GTK_LIBS"
 
 PKG_CHECK_MODULES(QALCULATE, [
-	libqalculate >= 0.9.2
+	libqalculate >= 0.9.3
 	])
 AC_SUBST(QALCULATE_CFLAGS)
 AC_SUBST(QALCULATE_LIBS)

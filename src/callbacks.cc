@@ -847,6 +847,7 @@ void display_parse_status() {
 		po.can_display_unicode_string_function = &can_display_unicode_string_function;
 		po.can_display_unicode_string_arg = (void*) statuslabel_l;
 		po.spell_out_logical_operators = printops.spell_out_logical_operators;
+		po.restrict_to_parent_precision = false;
 		mparse.format(po);
 		parsed_expression = mparse.print(po);
 		if(!str_u.empty()) {
@@ -4507,6 +4508,7 @@ void *view_proc(void *pipe) {
 				po.can_display_unicode_string_function = &can_display_unicode_string_function;
 				po.can_display_unicode_string_arg = (void*) statuslabel_l;
 				po.spell_out_logical_operators = printops.spell_out_logical_operators;
+				po.restrict_to_parent_precision = false;
 				MathStructure mp(*((MathStructure*) x));								
 				fread(&po.is_approximate, sizeof(bool*), 1, view_pipe);
 				mp.format(po);
@@ -7835,10 +7837,14 @@ void load_mode(const mode_struct &mode) {
 	block_expression_execution = false;
 	block_display_parse = false;
 	printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
-	setResult(NULL, true, false, false);
+	string str = gtk_entry_get_text(GTK_ENTRY(expression));	
+	if(expression_has_changed || str.find_first_not_of(SPACES) == string::npos) {
+		setResult(NULL, true, false, false);
+	} else {
+		execute_expression(false);
+	}
 	expression_has_changed2 = true;
 	display_parse_status();
-	execute_expression(false);
 }
 void load_mode(string name) {
 	for(size_t i = 0; i < modes.size(); i++) {
