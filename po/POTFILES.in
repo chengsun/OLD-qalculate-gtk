@@ -3,6 +3,7 @@
 data/qalculate-gtk.desktop.in
 data/about.glade
 data/argumentrules.glade
+data/setbase.glade
 data/csvexport.glade
 data/csvimport.glade
 data/datasetedit.glade
@@ -14,7 +15,6 @@ data/main.glade
 data/matrixedit.glade
 data/namesedit.glade
 data/nbases.glade
-data/nbexpression.glade
 data/plot.glade
 data/precision.glade
 data/preferences.glade

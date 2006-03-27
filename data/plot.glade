@@ -145,7 +145,7 @@
 			  <property name="max_length">0</property>
 			  <property name="text" translatable="yes"></property>
 			  <property name="has_frame">True</property>
-			  <property name="invisible_char" translatable="yes">*</property>
+			  <property name="invisible_char">*</property>
 			  <property name="activates_default">False</property>
 			  <signal name="activate" handler="gtk_widget_grab_focus" object="plot_entry_expression" last_modification_time="Fri, 10 Oct 2003 00:10:44 GMT"/>
 			</widget>
@@ -199,7 +199,7 @@
 			  <property name="max_length">0</property>
 			  <property name="text" translatable="yes"></property>
 			  <property name="has_frame">True</property>
-			  <property name="invisible_char" translatable="yes">*</property>
+			  <property name="invisible_char">*</property>
 			  <property name="activates_default">False</property>
 			  <signal name="activate" handler="on_plot_entry_expression_activate" last_modification_time="Fri, 10 Oct 2003 00:09:59 GMT"/>
 			</widget>
@@ -259,7 +259,7 @@
 			    <widget class="GtkRadioButton" id="plot_radiobutton_vector">
 			      <property name="visible">True</property>
 			      <property name="can_focus">True</property>
-			      <property name="label" translatable="yes">Vector/Matrix</property>
+			      <property name="label" translatable="yes">Vector/matrix</property>
 			      <property name="use_underline">True</property>
 			      <property name="relief">GTK_RELIEF_NORMAL</property>
 			      <property name="focus_on_click">True</property>
@@ -363,7 +363,7 @@
 			  <property name="max_length">0</property>
 			  <property name="text" translatable="yes">x</property>
 			  <property name="has_frame">True</property>
-			  <property name="invisible_char" translatable="yes">*</property>
+			  <property name="invisible_char">*</property>
 			  <property name="activates_default">False</property>
 			  <property name="width_chars">4</property>
 			</widget>
@@ -444,7 +444,7 @@
 			      <child>
 				<widget class="GtkMenuItem" id="item40">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Boxes/Bars</property>
+				  <property name="label" translatable="yes">Boxes/bars</property>
 				  <property name="use_underline">True</property>
 				</widget>
 			      </child>
@@ -854,7 +854,7 @@
 			  <property name="max_length">0</property>
 			  <property name="text" translatable="yes">0</property>
 			  <property name="has_frame">True</property>
-			  <property name="invisible_char" translatable="yes">*</property>
+			  <property name="invisible_char">*</property>
 			  <property name="activates_default">False</property>
 			</widget>
 			<packing>
@@ -907,7 +907,7 @@
 			  <property name="max_length">0</property>
 			  <property name="text" translatable="yes">10</property>
 			  <property name="has_frame">True</property>
-			  <property name="invisible_char" translatable="yes">*</property>
+			  <property name="invisible_char">*</property>
 			  <property name="activates_default">False</property>
 			</widget>
 			<packing>
@@ -1013,7 +1013,7 @@
 			  <property name="max_length">0</property>
 			  <property name="text" translatable="yes">1</property>
 			  <property name="has_frame">True</property>
-			  <property name="invisible_char" translatable="yes">*</property>
+			  <property name="invisible_char">*</property>
 			  <property name="activates_default">False</property>
 			</widget>
 			<packing>
@@ -1124,7 +1124,7 @@
 			  <property name="max_length">0</property>
 			  <property name="text" translatable="yes"></property>
 			  <property name="has_frame">True</property>
-			  <property name="invisible_char" translatable="yes">*</property>
+			  <property name="invisible_char">*</property>
 			  <property name="activates_default">False</property>
 			</widget>
 			<packing>
@@ -1334,7 +1334,7 @@
 			  <property name="max_length">0</property>
 			  <property name="text" translatable="yes"></property>
 			  <property name="has_frame">True</property>
-			  <property name="invisible_char" translatable="yes">*</property>
+			  <property name="invisible_char">*</property>
 			  <property name="activates_default">False</property>
 			</widget>
 			<packing>
@@ -1387,7 +1387,7 @@
 			  <property name="max_length">0</property>
 			  <property name="text" translatable="yes"></property>
 			  <property name="has_frame">True</property>
-			  <property name="invisible_char" translatable="yes">*</property>
+			  <property name="invisible_char">*</property>
 			  <property name="activates_default">False</property>
 			</widget>
 			<packing>
@@ -1537,7 +1537,7 @@
 			      <child>
 				<widget class="GtkMenuItem" id="item48">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Top-Left</property>
+				  <property name="label" translatable="yes">Top-left</property>
 				  <property name="use_underline">True</property>
 				</widget>
 			      </child>
@@ -1545,7 +1545,7 @@
 			      <child>
 				<widget class="GtkMenuItem" id="item50">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Top-Right</property>
+				  <property name="label" translatable="yes">Top-right</property>
 				  <property name="use_underline">True</property>
 				</widget>
 			      </child>
@@ -1553,7 +1553,7 @@
 			      <child>
 				<widget class="GtkMenuItem" id="item51">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Bottom-Left</property>
+				  <property name="label" translatable="yes">Bottom-left</property>
 				  <property name="use_underline">True</property>
 				</widget>
 			      </child>
@@ -1561,7 +1561,7 @@
 			      <child>
 				<widget class="GtkMenuItem" id="item53">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Bottom-Right</property>
+				  <property name="label" translatable="yes">Bottom-right</property>
 				  <property name="use_underline">True</property>
 				</widget>
 			      </child>

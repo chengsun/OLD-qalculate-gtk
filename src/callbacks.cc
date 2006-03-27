@@ -36,7 +36,7 @@
 extern bool do_timeout, check_expression_position;
 extern gint expression_position;
 
-extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *nbexpression_glade, *datasetedit_glade, *datasets_glade, *decimals_glade;
+extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *setbase_glade, *datasetedit_glade, *datasets_glade, *decimals_glade;
 extern GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *namesedit_glade, *nbases_glade, *plot_glade, *precision_glade;
 extern GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
 extern GladeXML *periodictable_glade;
@@ -10235,65 +10235,11 @@ void on_menu_item_no_default_angle_unit_activate(GtkMenuItem *w, gpointer) {
 	}
 }
 
-void on_menu_item_binary_activate(GtkMenuItem *w, gpointer) {
-	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
-		return;
-	printops.base = BASE_BINARY;
-	result_format_updated();
-	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "number_base_spinbutton_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_number_base_spinbutton_base_value_changed, NULL);
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (main_glade, "number_base_spinbutton_base")), 2);
-	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "number_base_spinbutton_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_number_base_spinbutton_base_value_changed, NULL);
-	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 0);
-	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
-}
-void on_menu_item_octal_activate(GtkMenuItem *w, gpointer) {
-	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
-		return;
-	printops.base = BASE_OCTAL;
-	result_format_updated();
-	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "number_base_spinbutton_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_number_base_spinbutton_base_value_changed, NULL);
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (main_glade, "number_base_spinbutton_base")), 8);
-	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "number_base_spinbutton_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_number_base_spinbutton_base_value_changed, NULL);
-	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 1);
-	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
-}
-void on_menu_item_decimal_activate(GtkMenuItem *w, gpointer) {
-	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
-		return;
-	printops.base = BASE_DECIMAL;
-	result_format_updated();
-	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "number_base_spinbutton_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_number_base_spinbutton_base_value_changed, NULL);
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (main_glade, "number_base_spinbutton_base")), 10);
-	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "number_base_spinbutton_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_number_base_spinbutton_base_value_changed, NULL);
-	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 2);
-	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
-}
-void on_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer) {
-	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
-		return;
-	printops.base = BASE_HEXADECIMAL;
-	result_format_updated();
-	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "number_base_spinbutton_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_number_base_spinbutton_base_value_changed, NULL);
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (main_glade, "number_base_spinbutton_base")), 16);
-	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "number_base_spinbutton_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_number_base_spinbutton_base_value_changed, NULL);
-	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 3);
-	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
-}
-void on_menu_item_custom_base_activate(GtkMenuItem *w, gpointer) {
-	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
-		return;
-	gtk_widget_show(glade_xml_get_widget (main_glade, "number_base_dialog"));
-	gtk_window_present(GTK_WINDOW(glade_xml_get_widget (main_glade, "number_base_dialog")));
-	on_number_base_spinbutton_base_value_changed(GTK_SPIN_BUTTON(glade_xml_get_widget (main_glade, "number_base_spinbutton_base")), NULL);
-}
-void on_number_base_spinbutton_base_value_changed(GtkSpinButton *w, gpointer) {
-	printops.base = gtk_spin_button_get_value_as_int(w);
+void set_output_base_from_dialog(int base) {
+	bool b = (printops.base == base);
+	printops.base = base;
 	switch(printops.base) {
-		case 2: {
+		case BASE_BINARY: {
 			g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_binary"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_binary_activate, NULL);
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_binary")), TRUE);
 			g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_binary"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_binary_activate, NULL);
@@ -10302,7 +10248,7 @@ void on_number_base_spinbutton_base_value_changed(GtkSpinButton *w, gpointer) {
 			g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
 			break;
 		}
-		case 8: {
+		case BASE_OCTAL: {
 			g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_octal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_octal_activate, NULL);
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_octal")), TRUE);
 			g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_octal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_octal_activate, NULL);
@@ -10311,7 +10257,7 @@ void on_number_base_spinbutton_base_value_changed(GtkSpinButton *w, gpointer) {
 			g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
 			break;
 		}
-		case 10: {
+		case BASE_DECIMAL: {
 			g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_decimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_decimal_activate, NULL);
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_decimal")), TRUE);
 			g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_decimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_decimal_activate, NULL);
@@ -10320,12 +10266,39 @@ void on_number_base_spinbutton_base_value_changed(GtkSpinButton *w, gpointer) {
 			g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
 			break;
 		}
-		case 16: {
+		case BASE_HEXADECIMAL: {
 			g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_hexadecimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_hexadecimal_activate, NULL);
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_hexadecimal")), TRUE);
 			g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_hexadecimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_hexadecimal_activate, NULL);
 			g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
 			gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 3);
+			g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
+			break;
+		}
+		case BASE_SEXAGESIMAL: {
+			g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_sexagesimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_hexadecimal_activate, NULL);
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_sexagesimal")), TRUE);
+			g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_sexagesimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_hexadecimal_activate, NULL);
+			g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
+			gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 4);
+			g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
+			break;
+		}
+		case BASE_TIME: {
+			g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_time_format"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_hexadecimal_activate, NULL);
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_time_format")), TRUE);
+			g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_time_format"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_hexadecimal_activate, NULL);
+			g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
+			gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 5);
+			g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
+			break;
+		}
+		case BASE_ROMAN_NUMERALS: {
+			g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_roman"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_hexadecimal_activate, NULL);
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_roman")), TRUE);
+			g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_roman"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_hexadecimal_activate, NULL);
+			g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
+			gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 6);
 			g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
 			break;
 		}
@@ -10339,12 +10312,129 @@ void on_number_base_spinbutton_base_value_changed(GtkSpinButton *w, gpointer) {
 			break;
 		}
 	}
+	if(!b) result_format_updated();
+}
+void output_base_updated_from_menu() {
+	if(setbase_glade) {
+		switch(printops.base) {
+			case BASE_BINARY: {
+				g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_radiobutton_output_binary"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_radiobutton_output_binary_toggled, NULL);
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (setbase_glade, "set_base_radiobutton_output_binary")), TRUE);
+				g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_radiobutton_output_binary"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_radiobutton_output_binary_toggled, NULL);
+				gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"), FALSE);
+				break;
+			}
+			case BASE_OCTAL: {
+				g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_radiobutton_output_octal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_radiobutton_output_octal_toggled, NULL);
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (setbase_glade, "set_base_radiobutton_output_octal")), TRUE);
+				g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_radiobutton_output_octal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_radiobutton_output_octal_toggled, NULL);
+				gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"), FALSE);
+				break;
+			}
+			case BASE_DECIMAL: {
+				g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_radiobutton_output_decimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_radiobutton_output_decimal_toggled, NULL);
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (setbase_glade, "set_base_radiobutton_output_decimal")), TRUE);
+				g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_radiobutton_output_decimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_radiobutton_output_decimal_toggled, NULL);
+				gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"), FALSE);
+				break;
+			}
+			case BASE_HEXADECIMAL: {
+				g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_radiobutton_output_hexadecimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_radiobutton_output_hexadecimal_toggled, NULL);
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (setbase_glade, "set_base_radiobutton_output_hexadecimal")), TRUE);
+				g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_radiobutton_output_hexadecimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_radiobutton_output_hexadecimal_toggled, NULL);
+				gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"), FALSE);
+				break;
+			}
+			case BASE_SEXAGESIMAL: {
+				g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_radiobutton_output_sexagesimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_radiobutton_output_sexagesimal_toggled, NULL);
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (setbase_glade, "set_base_radiobutton_output_sexagesimal")), TRUE);
+				g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_radiobutton_output_sexagesimal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_radiobutton_output_sexagesimal_toggled, NULL);
+				gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"), FALSE);
+				break;
+			}
+			case BASE_TIME: {
+				g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_radiobutton_output_time"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_radiobutton_output_time_toggled, NULL);
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (setbase_glade, "set_base_radiobutton_output_time")), TRUE);
+				g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_radiobutton_output_time"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_radiobutton_output_time_toggled, NULL);
+				gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"), FALSE);
+				break;
+			}
+			case BASE_ROMAN_NUMERALS: {
+				g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_radiobutton_output_roman"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_radiobutton_output_roman_toggled, NULL);
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (setbase_glade, "set_base_radiobutton_output_roman")), TRUE);
+				g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_radiobutton_output_roman"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_radiobutton_output_roman_toggled, NULL);
+				gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"), FALSE);
+				break;
+			}
+			default: {
+				g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_radiobutton_output_other"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_radiobutton_output_other_toggled, NULL);
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (setbase_glade, "set_base_radiobutton_output_other")), TRUE);
+				g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_radiobutton_output_other"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_radiobutton_output_other_toggled, NULL);
+				gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"), TRUE);
+				g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_spinbutton_output_other"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_spinbutton_output_other_value_changed, NULL);
+				gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other")), printops.base);
+				g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(setbase_glade, "set_base_spinbutton_output_other"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_set_base_spinbutton_output_other_value_changed, NULL);
+			}
+		}
+	}
+}
+
+
+void on_menu_item_binary_activate(GtkMenuItem *w, gpointer) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
+		return;
+	printops.base = BASE_BINARY;
 	result_format_updated();
+	output_base_updated_from_menu();
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 0);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
+}
+void on_menu_item_octal_activate(GtkMenuItem *w, gpointer) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
+		return;
+	printops.base = BASE_OCTAL;
+	result_format_updated();
+	output_base_updated_from_menu();
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 1);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
+}
+void on_menu_item_decimal_activate(GtkMenuItem *w, gpointer) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
+		return;
+	printops.base = BASE_DECIMAL;
+	result_format_updated();
+	output_base_updated_from_menu();
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 2);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
+}
+void on_menu_item_hexadecimal_activate(GtkMenuItem *w, gpointer) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
+		return;
+	printops.base = BASE_HEXADECIMAL;
+	result_format_updated();
+	output_base_updated_from_menu();
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 3);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
+}
+void on_menu_item_custom_base_activate(GtkMenuItem *w, gpointer) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
+		return;
+	GtkWidget *dialog = get_set_base_dialog();
+	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
+	gtk_widget_show(dialog);
+	gtk_window_present(GTK_WINDOW(dialog));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (setbase_glade, "set_base_radiobutton_output_other")), TRUE);
+	gtk_widget_grab_focus(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"));
 }
 void on_menu_item_roman_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.base = BASE_ROMAN_NUMERALS;
+	output_base_updated_from_menu();
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 6);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
@@ -10354,6 +10444,7 @@ void on_menu_item_sexagesimal_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.base = BASE_SEXAGESIMAL;
+	output_base_updated_from_menu();
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 4);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
@@ -10363,62 +10454,114 @@ void on_menu_item_time_format_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.base = BASE_TIME;
+	output_base_updated_from_menu();
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_base")), 5);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_base_changed, NULL);
 	result_format_updated();
 }
-void on_menu_item_expression_base_activate(GtkMenuItem*, gpointer) {
-	GtkWidget *dialog = get_number_base_expression_dialog();
+void on_set_base_spinbutton_output_other_value_changed(GtkSpinButton *w, gpointer) {
+	set_output_base_from_dialog(gtk_spin_button_get_value_as_int(w));
+}
+void on_set_base_radiobutton_output_binary_toggled(GtkToggleButton *w, gpointer) {
+	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+		return;
+	set_output_base_from_dialog(BASE_BINARY);
+	gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"), FALSE);
+}
+void on_set_base_radiobutton_output_octal_toggled(GtkToggleButton *w, gpointer) {
+	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+		return;
+	set_output_base_from_dialog(BASE_OCTAL);
+	gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"), FALSE);
+}
+void on_set_base_radiobutton_output_decimal_toggled(GtkToggleButton *w, gpointer) {
+	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+		return;
+	set_output_base_from_dialog(BASE_DECIMAL);
+	gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"), FALSE);
+}
+void on_set_base_radiobutton_output_hexadecimal_toggled(GtkToggleButton *w, gpointer) {
+	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+		return;
+	set_output_base_from_dialog(BASE_HEXADECIMAL);	
+	gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"), FALSE);
+}
+void on_set_base_radiobutton_output_sexagesimal_toggled(GtkToggleButton *w, gpointer) {
+	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+		return;
+	set_output_base_from_dialog(BASE_SEXAGESIMAL);	
+	gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"), FALSE);
+}
+void on_set_base_radiobutton_output_time_toggled(GtkToggleButton *w, gpointer) {
+	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+		return;
+	set_output_base_from_dialog(BASE_TIME);
+	gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"), FALSE);
+}
+void on_set_base_radiobutton_output_roman_toggled(GtkToggleButton *w, gpointer) {
+	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+		return;
+	set_output_base_from_dialog(BASE_ROMAN_NUMERALS);
+	gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"), FALSE);
+}
+void on_set_base_radiobutton_output_other_toggled(GtkToggleButton *w, gpointer) {
+	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+		return;
+	set_output_base_from_dialog(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"))));
+	gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_output_other"), TRUE);
+}
+void on_menu_item_set_base_activate(GtkMenuItem*, gpointer) {
+	GtkWidget *dialog = get_set_base_dialog();
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
 	gtk_widget_show(dialog);
 	gtk_window_present(GTK_WINDOW(dialog));
 }
-void on_number_base_expression_radiobutton_binary_toggled(GtkToggleButton *w, gpointer) {
+void on_set_base_radiobutton_input_binary_toggled(GtkToggleButton *w, gpointer) {
 	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 		return;
 	evalops.parse_options.base = BASE_BINARY;
 	expression_format_updated(true);
-	gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
+	gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_input_other"), FALSE);
 }
-void on_number_base_expression_radiobutton_octal_toggled(GtkToggleButton *w, gpointer) {
+void on_set_base_radiobutton_input_octal_toggled(GtkToggleButton *w, gpointer) {
 	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 		return;
 	evalops.parse_options.base = BASE_OCTAL;
 	expression_format_updated(true);
-	gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
+	gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_input_other"), FALSE);
 }
-void on_number_base_expression_radiobutton_decimal_toggled(GtkToggleButton *w, gpointer) {
+void on_set_base_radiobutton_input_decimal_toggled(GtkToggleButton *w, gpointer) {
 	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 		return;
 	evalops.parse_options.base = BASE_DECIMAL;
 	expression_format_updated(true);
-	gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
+	gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_input_other"), FALSE);
 }
-void on_number_base_expression_radiobutton_hexadecimal_toggled(GtkToggleButton *w, gpointer) {
+void on_set_base_radiobutton_input_hexadecimal_toggled(GtkToggleButton *w, gpointer) {
 	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 		return;
 	evalops.parse_options.base = BASE_HEXADECIMAL;
 	expression_format_updated(true);
-	gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
+	gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_input_other"), FALSE);
 }
-void on_number_base_expression_radiobutton_custom_base_toggled(GtkToggleButton *w, gpointer) {
+void on_set_base_radiobutton_input_other_toggled(GtkToggleButton *w, gpointer) {
 	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 		return;
-	evalops.parse_options.base = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base")));
+	evalops.parse_options.base = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_input_other")));
 	expression_format_updated(true);
-	gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), TRUE);
+	gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_input_other"), TRUE);
 }
-void on_number_base_expression_spinbutton_base_value_changed(GtkSpinButton *w, gpointer) {
+void on_set_base_spinbutton_input_other_value_changed(GtkSpinButton *w, gpointer) {
 	evalops.parse_options.base = gtk_spin_button_get_value_as_int(w);
 	expression_format_updated(true);
 }
-void on_number_base_expression_radiobutton_roman_toggled(GtkToggleButton *w, gpointer) {
+void on_set_base_radiobutton_input_roman_toggled(GtkToggleButton *w, gpointer) {
 	if(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 		return;
 	evalops.parse_options.base = BASE_ROMAN_NUMERALS;
 	expression_format_updated(true);
-	gtk_widget_set_sensitive(glade_xml_get_widget (nbexpression_glade, "number_base_expression_spinbutton_custom_base"), FALSE);
+	gtk_widget_set_sensitive(glade_xml_get_widget (setbase_glade, "set_base_spinbutton_input_other"), FALSE);
 }
 void on_menu_item_abbreviate_names_activate(GtkMenuItem *w, gpointer) {
 	printops.abbreviate_names = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));

@@ -269,8 +269,7 @@
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Convert Number Bases</property>
 		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_menu_item_convert_number_bases_activate" last_modification_time="Sun, 19 Oct 2003 15:11:19 GMT"/>
-		      <accelerator key="B" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+		      <signal name="activate" handler="on_menu_item_convert_number_bases_activate" last_modification_time="Sun, 19 Oct 2003 15:11:19 GMT"/>		      
 
 		      <child internal-child="image">
 			<widget class="GtkImage" id="image1342">
@@ -411,7 +410,7 @@
 		  <child>
 		    <widget class="GtkImageMenuItem" id="menu_item_result_units">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Convert To Unit</property>
+		      <property name="label" translatable="yes">Convert to Unit</property>
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
@@ -439,7 +438,7 @@
 		  <child>
 		    <widget class="GtkImageMenuItem" id="menu_item_convert_to_custom_unit">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Convert To Unit Expression...</property>
+		      <property name="label" translatable="yes">Convert to Unit Expression...</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_convert_to_unit_expression_activate" last_modification_time="Wed, 10 Mar 2004 15:28:33 GMT"/>
 		      <accelerator key="T" modifiers="GDK_CONTROL_MASK" signal="activate"/>
@@ -461,7 +460,7 @@
 		  <child>
 		    <widget class="GtkImageMenuItem" id="menu_item_convert_to_base_units">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Convert To Base Units</property>
+		      <property name="label" translatable="yes">Convert to Base Units</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_convert_to_base_units_activate" last_modification_time="Sun, 21 Mar 2004 08:14:57 GMT"/>
 
@@ -482,7 +481,7 @@
 		  <child>
 		    <widget class="GtkImageMenuItem" id="menu_item_convert_to_best_unit">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Convert To Best Unit</property>
+		      <property name="label" translatable="yes">Convert to Best Unit</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_menu_item_convert_to_best_unit_activate" last_modification_time="Sun, 21 Mar 2004 08:14:57 GMT"/>
 
@@ -578,6 +577,22 @@
 			<widget class="GtkMenu" id="number_base1_menu">
 
 			  <child>
+			    <widget class="GtkMenuItem" id="menu_item_set_base">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Select Result and Expression Base</property>
+			      <property name="use_underline">True</property>
+			      <signal name="activate" handler="on_menu_item_set_base_activate" last_modification_time="Thu, 15 Jul 2004 21:02:41 GMT"/>
+			      <accelerator key="B" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="separator32">
+			      <property name="visible">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
 			    <widget class="GtkRadioMenuItem" id="menu_item_binary">
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Binary</property>
@@ -670,20 +685,6 @@
 			    </widget>
 			  </child>
 
-			  <child>
-			    <widget class="GtkMenuItem" id="separator32">
-			      <property name="visible">True</property>
-			    </widget>
-			  </child>
-
-			  <child>
-			    <widget class="GtkMenuItem" id="menu_item_expression_base">
-			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Set Base In Expression</property>
-			      <property name="use_underline">True</property>
-			      <signal name="activate" handler="on_menu_item_expression_base_activate" last_modification_time="Thu, 15 Jul 2004 21:02:41 GMT"/>
-			    </widget>
-			  </child>
 			</widget>
 		      </child>
 		    </widget>
@@ -770,7 +771,7 @@
 			  <child>
 			    <widget class="GtkCheckMenuItem" id="menu_item_round_halfway_to_even">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Round Halfway Numbers To Even</property>
+			      <property name="label" translatable="yes">Round Halfway Numbers to Even</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">False</property>
 			      <signal name="activate" handler="on_menu_item_round_halfway_to_even_activate" last_modification_time="Sun, 07 Sep 2003 23:09:27 GMT"/>
@@ -908,7 +909,7 @@
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="menu_item_post_conversion_base">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Convert To Base Units</property>
+			      <property name="label" translatable="yes">Convert to Base Units</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">False</property>
 			      <property name="group">menu_item_post_conversion_none</property>
@@ -919,7 +920,7 @@
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="menu_item_post_conversion_best">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Convert To Best Unit</property>
+			      <property name="label" translatable="yes">Convert to Best Unit</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">False</property>
 			      <property name="group">menu_item_post_conversion_none</property>
@@ -2094,7 +2095,7 @@ Octal
 Decimal
 Hexadecimal
 Sexagesimal
-Time Format
+Time format
 Roman
 Other...</property>
 				  <signal name="changed" handler="on_combobox_base_changed" last_modification_time="Fri, 21 Oct 2005 09:49:02 GMT"/>
@@ -3450,7 +3451,7 @@ Other...</property>
   <child>
     <widget class="GtkImageMenuItem" id="popup_menu_item_convert_to_base_units">
       <property name="visible">True</property>
-      <property name="label" translatable="yes">Convert To Base _Units</property>
+      <property name="label" translatable="yes">Convert to Base _Units</property>
       <property name="use_underline">True</property>
       <signal name="activate" handler="on_menu_item_convert_to_base_units_activate" last_modification_time="Sun, 21 Mar 2004 20:29:28 GMT"/>
 
@@ -3471,7 +3472,7 @@ Other...</property>
   <child>
     <widget class="GtkImageMenuItem" id="popup_menu_item_convert_to_best_unit">
       <property name="visible">True</property>
-      <property name="label" translatable="yes">Convert _To Best Unit</property>
+      <property name="label" translatable="yes">Convert _to Best Unit</property>
       <property name="use_underline">True</property>
       <signal name="activate" handler="on_menu_item_convert_to_best_unit_activate" last_modification_time="Sun, 21 Mar 2004 20:29:28 GMT"/>
 
@@ -3588,114 +3589,6 @@ Other...</property>
 	    </widget>
 	  </child>
 	</widget>
-      </child>
-    </widget>
-  </child>
-</widget>
-
-<widget class="GtkDialog" id="number_base_dialog">
-  <property name="border_width">5</property>
-  <property name="title" translatable="yes">Number Base (Result)</property>
-  <property name="type">GTK_WINDOW_TOPLEVEL</property>
-  <property name="window_position">GTK_WIN_POS_NONE</property>
-  <property name="modal">False</property>
-  <property name="resizable">False</property>
-  <property name="destroy_with_parent">False</property>
-  <property name="decorated">True</property>
-  <property name="skip_taskbar_hint">False</property>
-  <property name="skip_pager_hint">False</property>
-  <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
-  <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
-  <property name="has_separator">False</property>
-  <signal name="delete_event" handler="gtk_widget_hide" object="number_base_dialog" last_modification_time="Mon, 12 Jul 2004 20:52:47 GMT"/>
-  <signal name="destroy_event" handler="gtk_widget_hide" object="number_base_dialog" last_modification_time="Mon, 12 Jul 2004 20:52:57 GMT"/>
-
-  <child internal-child="vbox">
-    <widget class="GtkVBox" id="vbox59">
-      <property name="visible">True</property>
-      <property name="homogeneous">False</property>
-      <property name="spacing">0</property>
-
-      <child internal-child="action_area">
-	<widget class="GtkHButtonBox" id="hbuttonbox6">
-	  <property name="visible">True</property>
-	  <property name="layout_style">GTK_BUTTONBOX_END</property>
-
-	  <child>
-	    <widget class="GtkButton" id="number_base_button_close">
-	      <property name="visible">True</property>
-	      <property name="can_default">True</property>
-	      <property name="can_focus">True</property>
-	      <property name="label">gtk-close</property>
-	      <property name="use_stock">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="focus_on_click">True</property>
-	      <property name="response_id">-7</property>
-	      <signal name="clicked" handler="gtk_widget_hide" object="number_base_dialog" last_modification_time="Mon, 12 Jul 2004 20:53:29 GMT"/>
-	    </widget>
-	  </child>
-	</widget>
-	<packing>
-	  <property name="padding">0</property>
-	  <property name="expand">False</property>
-	  <property name="fill">True</property>
-	  <property name="pack_type">GTK_PACK_END</property>
-	</packing>
-      </child>
-
-      <child>
-	<widget class="GtkHBox" id="hbox59">
-	  <property name="border_width">6</property>
-	  <property name="visible">True</property>
-	  <property name="homogeneous">True</property>
-	  <property name="spacing">6</property>
-
-	  <child>
-	    <widget class="GtkLabel" id="label1">
-	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">Number Base</property>
-	      <property name="use_underline">False</property>
-	      <property name="use_markup">False</property>
-	      <property name="justify">GTK_JUSTIFY_LEFT</property>
-	      <property name="wrap">False</property>
-	      <property name="selectable">False</property>
-	      <property name="xalign">0</property>
-	      <property name="yalign">0.5</property>
-	      <property name="xpad">0</property>
-	      <property name="ypad">0</property>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">False</property>
-	      <property name="fill">True</property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkSpinButton" id="number_base_spinbutton_base">
-	      <property name="visible">True</property>
-	      <property name="can_focus">True</property>
-	      <property name="climb_rate">1</property>
-	      <property name="digits">0</property>
-	      <property name="numeric">True</property>
-	      <property name="update_policy">GTK_UPDATE_ALWAYS</property>
-	      <property name="snap_to_ticks">False</property>
-	      <property name="wrap">False</property>
-	      <property name="adjustment">10 2 36 1 10 10</property>
-	      <signal name="value_changed" handler="on_number_base_spinbutton_base_value_changed" last_modification_time="Mon, 12 Jul 2004 20:46:45 GMT"/>
-	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">True</property>
-	      <property name="fill">True</property>
-	    </packing>
-	  </child>
-	</widget>
-	<packing>
-	  <property name="padding">0</property>
-	  <property name="expand">False</property>
-	  <property name="fill">False</property>
-	</packing>
       </child>
     </widget>
   </child>

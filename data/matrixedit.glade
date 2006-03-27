@@ -12,6 +12,11 @@
   <property name="default_height">400</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
+  <property name="decorated">True</property>
+  <property name="skip_taskbar_hint">False</property>
+  <property name="skip_pager_hint">False</property>
+  <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
+  <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="has_separator">False</property>
 
   <child internal-child="vbox">
@@ -24,7 +29,7 @@
 	<widget class="GtkHButtonBox" id="hbuttonbox8">
 	  <property name="visible">True</property>
 	  <property name="layout_style">GTK_BUTTONBOX_END</property>
-	  
+
 	  <child>
 	    <widget class="GtkButton" id="matrix_edit_button_help">
 	      <property name="visible">True</property>
@@ -47,6 +52,7 @@
 	      <property name="label">gtk-cancel</property>
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-6</property>
 	    </widget>
 	  </child>
@@ -60,6 +66,7 @@
 	      <property name="label">gtk-ok</property>
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-5</property>
 	      <accessibility>
 		<atkproperty name="AtkObject::accessible_description" translatable="yes">Accept the creation/modification of this matrix/vector</atkproperty>
@@ -108,7 +115,7 @@
 		      <property name="max_length">0</property>
 		      <property name="text" translatable="yes">0</property>
 		      <property name="has_frame">True</property>
-		      <property name="invisible_char" translatable="yes">*</property>
+		      <property name="invisible_char">*</property>
 		      <property name="activates_default">False</property>
 		      <property name="width_chars">10</property>
 		    </widget>
@@ -196,7 +203,7 @@
 			      <property name="max_length">0</property>
 			      <property name="text" translatable="yes"></property>
 			      <property name="has_frame">True</property>
-			      <property name="invisible_char" translatable="yes">*</property>
+			      <property name="invisible_char">*</property>
 			      <property name="activates_default">False</property>
 			      <signal name="changed" handler="on_variable_edit_entry_name_changed" last_modification_time="Mon, 11 Aug 2003 12:07:28 GMT"/>
 			    </widget>
@@ -221,6 +228,10 @@
 			  <property name="yalign">0.5</property>
 			  <property name="xscale">0</property>
 			  <property name="yscale">1</property>
+			  <property name="top_padding">0</property>
+			  <property name="bottom_padding">0</property>
+			  <property name="left_padding">0</property>
+			  <property name="right_padding">0</property>
 
 			  <child>
 			    <widget class="GtkHBox" id="hbox75">
@@ -256,6 +267,7 @@
 				  <property name="label" translatable="yes">Names Details</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
+				  <property name="focus_on_click">True</property>
 				  <signal name="clicked" handler="on_matrix_edit_button_names_clicked" last_modification_time="Sat, 07 Aug 2004 18:30:50 GMT"/>
 				</widget>
 				<packing>
@@ -341,7 +353,7 @@
 		      <property name="max_length">0</property>
 		      <property name="text" translatable="yes">Matrices</property>
 		      <property name="has_frame">True</property>
-		      <property name="invisible_char" translatable="yes">*</property>
+		      <property name="invisible_char">*</property>
 		      <property name="activates_default">False</property>
 		    </widget>
 		  </child>
@@ -376,7 +388,7 @@
 	      <child>
 		<widget class="GtkLabel" id="label66">
 		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">Descriptive Name</property>
+		  <property name="label" translatable="yes">Descriptive name</property>
 		  <property name="use_underline">False</property>
 		  <property name="use_markup">False</property>
 		  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -404,7 +416,7 @@
 		  <property name="max_length">0</property>
 		  <property name="text" translatable="yes"></property>
 		  <property name="has_frame">True</property>
-		  <property name="invisible_char" translatable="yes">*</property>
+		  <property name="invisible_char">*</property>
 		  <property name="activates_default">False</property>
 		</widget>
 		<packing>
@@ -566,6 +578,7 @@
 		  <property name="label" translatable="yes">Matrix</property>
 		  <property name="use_underline">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
 		  <property name="active">True</property>
 		  <property name="inconsistent">False</property>
 		  <property name="draw_indicator">True</property>
@@ -586,6 +599,7 @@
 		  <property name="label" translatable="yes">Vector</property>
 		  <property name="use_underline">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
 		  <property name="active">False</property>
 		  <property name="inconsistent">False</property>
 		  <property name="draw_indicator">True</property>

@@ -145,7 +145,7 @@
 		  <child>
 		    <widget class="GtkLabel" id="label84">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Data File</property>
+		      <property name="label" translatable="yes">Data file</property>
 		      <property name="use_underline">False</property>
 		      <property name="use_markup">False</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -698,7 +698,7 @@
 		  <child>
 		    <widget class="GtkLabel" id="label80">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Object Argument Name</property>
+		      <property name="label" translatable="yes">Object argument name</property>
 		      <property name="use_underline">False</property>
 		      <property name="use_markup">False</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -751,7 +751,7 @@
 		  <child>
 		    <widget class="GtkLabel" id="label81">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Property Argument Name</property>
+		      <property name="label" translatable="yes">Property argument name</property>
 		      <property name="use_underline">False</property>
 		      <property name="use_markup">False</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -804,7 +804,7 @@
 		  <child>
 		    <widget class="GtkLabel" id="label100">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Default Property</property>
+		      <property name="label" translatable="yes">Default property</property>
 		      <property name="use_underline">False</property>
 		      <property name="use_markup">False</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1080,7 +1080,7 @@
 	      <child>
 		<widget class="GtkLabel" id="label87">
 		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">Descriptive Name</property>
+		  <property name="label" translatable="yes">Descriptive name</property>
 		  <property name="use_underline">False</property>
 		  <property name="use_markup">False</property>
 		  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1422,7 +1422,7 @@
 	      <child>
 		<widget class="GtkLabel" id="label99">
 		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">Unit Expression</property>
+		  <property name="label" translatable="yes">Unit expression</property>
 		  <property name="use_underline">False</property>
 		  <property name="use_markup">False</property>
 		  <property name="justify">GTK_JUSTIFY_LEFT</property>
