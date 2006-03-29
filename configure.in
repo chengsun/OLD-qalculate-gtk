@@ -96,12 +96,19 @@ AC_SUBST(QALCULATE_CFLAGS)
 AC_SUBST(QALCULATE_LIBS)
 
 LIBGNOME_REQUIRED=2.0.0
+LIBGNOMEUI_REQUIRED=2.0.0
 
-PKG_CHECK_MODULES(GNOME_UTILS, libgnome-2.0 >= $LIBGNOME_REQUIRED, [
-	AC_SUBST(GNOME_UTILS_CFLAGS)
-	AC_SUBST(GNOME_UTILS_LIBS)
+PKG_CHECK_MODULES(LIBGNOME, libgnome-2.0 >= $LIBGNOME_REQUIRED, [
+	AC_SUBST(LIBGNOME_CFLAGS)
+	AC_SUBST(LIBGNOME_LIBS)
 	AC_DEFINE(HAVE_LIBGNOME,1,[If libgnome is available])
 ], AC_MSG_WARN([libgnome-2.0 was not found. The manual will not be accessible from within Qalculate!]))
+
+PKG_CHECK_MODULES(LIBGNOMEUI, libgnomeui-2.0 >= $LIBGNOMEUI_REQUIRED, [
+	AC_SUBST(LIBGNOMEUI_CFLAGS)
+	AC_SUBST(LIBGNOMEUI_LIBS)
+	AC_DEFINE(HAVE_LIBGNOMEUI,1,[If libgnomeui is available])
+], AC_MSG_WARN([libgnomeui-2.0 was not found.]))
 
 dnl ********************
 dnl scrollkeeper checks

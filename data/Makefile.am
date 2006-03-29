@@ -15,8 +15,12 @@ desktop_DATA = $(desktop_IN_FILES:.desktop.in=.desktop)
 desktopdir = $(datadir)/applications
 @INTLTOOL_DESKTOP_RULE@
 
+pixmapsdir = $(datadir)/pixmaps
+pixmaps_DATA = qalculate.png
+
 EXTRA_DIST = \
 	$(desktop_IN_FILES)	\
 	$(glade_DATA)	\
+	$(pixmaps_DATA)	\
 	icon.xpm
 

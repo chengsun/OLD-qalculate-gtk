@@ -20,6 +20,9 @@
 #ifdef HAVE_LIBGNOME
 #include <libgnome/libgnome.h>
 #endif
+#ifdef HAVE_LIBGNOMEUI
+#include <libgnomeui/libgnomeui.h>
+#endif
 #include <unistd.h>
 
 #include "support.h"
@@ -68,6 +71,13 @@ bool command_thread_started;
 bool do_timeout, check_expression_position;
 gint expression_position;
 
+#ifdef HAVE_LIBGNOME
+static poptContext pctx;
+static struct poptOption options[] = {
+	{NULL, '\0', 0, NULL, 0, NULL, NULL}
+};
+#endif
+
 int main (int argc, char **argv) {
 
 #ifdef ENABLE_NLS
@@ -76,17 +86,43 @@ int main (int argc, char **argv) {
 	textdomain (GETTEXT_PACKAGE);
 #endif
 
-#ifdef HAVE_LIBGNOME
-	gnome_program_init("qalculate-gtk", VERSION, LIBGNOME_MODULE, argc, argv, 
-					GNOME_PARAM_APP_DATADIR, PACKAGE_DATA_DIR,
-					NULL);
-#endif
+#ifdef HAVE_LIBGNOMEUI
+	GnomeProgram *program = gnome_program_init("qalculate-gtk", VERSION, LIBGNOMEUI_MODULE, argc, argv, GNOME_PARAM_POPT_TABLE, options, GNOME_PARAM_APP_DATADIR, PACKAGE_DATA_DIR, NULL);
 
+	char *icon = gnome_program_locate_file(program, GNOME_FILE_DOMAIN_APP_PIXMAP, "qalculate.png", TRUE, NULL);
+
+	if(icon) gnome_window_icon_set_default_from_file (icon);
+	g_free (icon);
+
+	g_object_get(G_OBJECT(program), GNOME_PARAM_POPT_CONTEXT, &pctx, NULL);
+
+#else
+#ifdef HAVE_LIBGNOME
+	gnome_program_init("qalculate-gtk", VERSION, LIBGNOME_MODULE, argc, argv, GNOME_PARAM_POPT_TABLE, options, GNOME_PARAM_APP_DATADIR, PACKAGE_DATA_DIR, NULL);
+	g_object_get(G_OBJECT(program), GNOME_PARAM_POPT_CONTEXT, &pctx, NULL);
+#else
 	gtk_init(&argc, &argv);
+#endif
+#endif
 
 	glade_init();
 
 	string calc_arg;
+#ifdef HAVE_LIBGNOME
+	const char **args = poptGetArgs (pctx);
+	for(int i = 0; args && args[i]; i++) {
+		if(i > 1) {
+			calc_arg += " ";
+		}
+		if(strlen(args[i]) >= 2 && ((args[i][0] == '\"' && args[i][strlen(args[i]) - 1] == '\"') || (args[i][0] == '\'' && args[i][strlen(args[i]) - 1] == '\''))) {
+			calc_arg += args[i] + 1;
+			calc_arg.erase(calc_arg.length() - 1);
+		} else {
+			calc_arg += args[i];
+		}
+	}
+	poptFreeContext (pctx);
+#else	
 	for(int i = 1; i < argc; i++) {
 		if(i > 1) {
 			calc_arg += " ";
@@ -98,7 +134,7 @@ int main (int argc, char **argv) {
 			calc_arg += argv[i];
 		}
 	}
-
+#endif
 	b_busy = false;
 
 	

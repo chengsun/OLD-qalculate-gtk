@@ -594,7 +594,9 @@ create_main_window (void)
 	if(show_history || show_buttons) gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), 1, 1);
 	else gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), win_width, 1);
 
+#ifndef HAVE_LIBGNOMEUI
 	gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), icon_pixbuf);
+#endif
 
 	update_status_text();
 	
@@ -648,7 +650,9 @@ get_functions_dialog (void)
 
 		update_functions_tree();
 		
+#ifndef HAVE_LIBGNOMEUI
 		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (functions_glade, "functions_dialog")), icon_pixbuf);
+#endif
 	}
 
 	return glade_xml_get_widget (functions_glade, "functions_dialog");
@@ -703,8 +707,10 @@ get_variables_dialog (void)
 		glade_xml_signal_autoconnect(variables_glade);
 
 		update_variables_tree();
-		
+
+#ifndef HAVE_LIBGNOMEUI
 		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (variables_glade, "variables_dialog")), icon_pixbuf);
+#endif
 
 	}
 	
@@ -772,7 +778,9 @@ get_units_dialog (void)
 		gtk_entry_set_alignment(GTK_ENTRY(glade_xml_get_widget (units_glade, "units_entry_from_val")), 1.0);
 		gtk_entry_set_alignment(GTK_ENTRY(glade_xml_get_widget (units_glade, "units_entry_to_val")), 1.0);
 		
+#ifndef HAVE_LIBGNOMEUI
 		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (units_glade, "units_dialog")), icon_pixbuf);
+#endif
 	
 	}
 	
@@ -834,8 +842,10 @@ get_datasets_dialog (void)
 		glade_xml_signal_autoconnect(datasets_glade);
 
 		update_datasets_tree();
-		
+
+#ifndef HAVE_LIBGNOMEUI		
 		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (datasets_glade, "datasets_dialog")), icon_pixbuf);
+#endif
 		
 	}
 
@@ -1445,7 +1455,9 @@ get_nbases_dialog (void)
 		
 		glade_xml_signal_autoconnect(nbases_glade);
 		
+#ifndef HAVE_LIBGNOMEUI
 		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (nbases_glade, "nbases_dialog")), icon_pixbuf);
+#endif
 	
 	}
 
@@ -1488,7 +1500,9 @@ GtkWidget* get_about_dialog (void) {
 		
 		glade_xml_signal_autoconnect(about_glade);
 		
+#ifndef HAVE_LIBGNOMEUI
 		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (about_glade, "about_dialog")), icon_pixbuf);
+#endif
 	
 	}
 
@@ -1558,7 +1572,9 @@ GtkWidget* get_plot_dialog (void) {
 
 		glade_xml_signal_autoconnect(plot_glade);
 		
+#ifndef HAVE_LIBGNOMEUI
 		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (plot_glade, "plot_dialog")), icon_pixbuf);
+#endif
 	
 	}
 		
@@ -1778,7 +1794,9 @@ GtkWidget* get_periodic_dialog (void) {
 			}
 		}
 		
+#ifndef HAVE_LIBGNOMEUI
 		gtk_window_set_icon(GTK_WINDOW(glade_xml_get_widget (periodictable_glade, "periodic_dialog")), icon_pixbuf);
+#endif
 	
 	}
 

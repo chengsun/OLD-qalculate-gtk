@@ -12095,7 +12095,7 @@ void on_names_edit_entry_name_changed(GtkEditable *editable, gpointer) {
 }
 
 
-bool generate_plot(plot_parameters &pp, vector<MathStructure> &y_vectors, vector<MathStructure> &x_vectors, vector<plot_data_parameters*> &pdps) {
+bool generate_plot(PlotParameters &pp, vector<MathStructure> &y_vectors, vector<MathStructure> &x_vectors, vector<PlotDataParameters*> &pdps) {
 	GtkTreeIter iter;
 	bool b = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tPlotFunctions_store), &iter);
 	if(!b) {
@@ -12166,7 +12166,7 @@ bool generate_plot(plot_parameters &pp, vector<MathStructure> &y_vectors, vector
 			x_vectors.push_back(*x_vector);
 		}
 		for(int i = 0; i < count; i++) {
-			plot_data_parameters *pdp = new plot_data_parameters();
+			PlotDataParameters *pdp = new PlotDataParameters();
 			pdp->title = gstr1;
 			if(count > 1) {
 				pdp->title += " :";
@@ -12264,8 +12264,8 @@ void on_plot_button_save_clicked(GtkButton*, gpointer) {
 	if(gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT) {
 		vector<MathStructure> y_vectors;
 		vector<MathStructure> x_vectors;
-		vector<plot_data_parameters*> pdps;
-		plot_parameters pp;
+		vector<PlotDataParameters*> pdps;
+		PlotParameters pp;
 		if(generate_plot(pp, y_vectors, x_vectors, pdps)) {
 			pp.filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d));
 			pp.filetype = PLOT_FILETYPE_AUTO;
@@ -12280,8 +12280,8 @@ void on_plot_button_save_clicked(GtkButton*, gpointer) {
 void update_plot() {
 	vector<MathStructure> y_vectors;
 	vector<MathStructure> x_vectors;
-	vector<plot_data_parameters*> pdps;
-	plot_parameters pp;
+	vector<PlotDataParameters*> pdps;
+	PlotParameters pp;
 	if(!generate_plot(pp, y_vectors, x_vectors, pdps)) {
 		CALCULATOR->closeGnuplot();
 		gtk_widget_set_sensitive(glade_xml_get_widget(plot_glade, "plot_button_save"), false);

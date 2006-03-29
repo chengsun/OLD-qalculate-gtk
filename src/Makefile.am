@@ -5,7 +5,8 @@
 INCLUDES = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
-	@GNOME_UTILS_CFLAGS@ \
+	@LIBGNOME_CFLAGS@ \
+	@LIBGNOMEUI_CFLAGS@ \
 	@GTK_CFLAGS@ \
 	@GLIB_CFLAGS@ \
 	@QALCULATE_CFLAGS@
@@ -22,7 +23,8 @@ qalculate_gtk_SOURCES = \
 qalculate_gtk_LDADD = \
 	@GLIB_LIBS@ \
 	@GTK_LIBS@ \
-	@GNOME_UTILS_LIBS@ \
+	@LIBGNOME_LIBS@ \
+	@LIBGNOMEUI_LIBS@ \
 	@QALCULATE_LIBS@
 
 install-exec-local:

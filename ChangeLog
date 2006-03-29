@@ -1,3 +1,8 @@
+2006-03-28 Niklas Knutsson  <nq@altern.org>
+
+	* New icons
+	* Use libgnomeui to set icon
+
 2006-03-27 Niklas Knutsson  <nq@altern.org>
 
 	* Check capitalization
