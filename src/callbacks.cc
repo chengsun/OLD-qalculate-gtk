@@ -816,10 +816,10 @@ void display_parse_status() {
 		evalops.parse_options.unended_function = NULL;
 	}
 	if(mfunc.isFunction()) {
-		if(mfunc.countChilds() == 0) {
+		if(mfunc.countChildren() == 0) {
 			display_function_hint(mfunc.function(), 1);
 		} else {
-			display_function_hint(mfunc.function(), mfunc.countChilds());
+			display_function_hint(mfunc.function(), mfunc.countChildren());
 		}
 	} else if(expression_has_changed2) {
 		if(!full_parsed) {
@@ -2151,7 +2151,6 @@ void update_datasets_tree() {
 		selected_dataset = NULL;
 	}
 }
-
 
 void on_tDatasets_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 	GtkTreeModel *model, *model2;
@@ -5756,12 +5755,14 @@ run_unit_edit_dialog:
 		GtkTreeIter iter;
 		if(str.empty() && (!names_edited || !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter))) {
 			//no name given
+			gtk_widget_grab_focus(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_name"));
 			show_message(_("Empty name field."), dialog);
 			goto run_unit_edit_dialog;
 		}
 
 		//unit with the same name exists -- overwrite or open the dialog again
 		if((!u || !u->hasName(str)) && (!names_edited || !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter)) && CALCULATOR->unitNameTaken(str, u) && !ask_question(_("A variable or unit with the same name already exists.\nDo you want to overwrite it?"), dialog)) {
+			gtk_widget_grab_focus(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_name"));
 			goto run_unit_edit_dialog;
 		}
 		bool add_unit = false;
@@ -5781,6 +5782,7 @@ run_unit_edit_dialog:
 						Unit *bu = CALCULATOR->getUnit(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base"))));
 						if(!bu) bu = CALCULATOR->getCompositeUnit(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base"))));
 						if(!bu) {
+							gtk_widget_grab_focus(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base"));
 							show_message(_("Base unit does not exist."), dialog);
 							goto run_unit_edit_dialog;
 						}
@@ -5824,6 +5826,7 @@ run_unit_edit_dialog:
 					Unit *bu = CALCULATOR->getUnit(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base"))));
 					if(!bu) bu = CALCULATOR->getCompositeUnit(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base"))));
 					if(!bu) {
+						gtk_widget_grab_focus(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base"));
 						show_message(_("Base unit does not exist."), dialog);
 						goto run_unit_edit_dialog;
 					}
@@ -6120,6 +6123,8 @@ run_function_edit_dialog:
 		GtkTreeIter iter;
 		if(str.empty() && (!names_edited || !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter))) {
 			//no name -- open dialog again
+			gtk_notebook_set_current_page(GTK_NOTEBOOK(glade_xml_get_widget (functionedit_glade, "function_edit_tabs")), 0);
+			gtk_widget_grab_focus(glade_xml_get_widget (functionedit_glade, "function_edit_entry_name"));
 			show_message(_("Empty name field."), dialog);
 			goto run_function_edit_dialog;
 		}
@@ -6131,6 +6136,8 @@ run_function_edit_dialog:
 		gsub("\n", " ", str2);
 		if(!(f && f->isBuiltin()) && str2.empty()) {
 			//no expression/relation -- open dialog again
+			gtk_notebook_set_current_page(GTK_NOTEBOOK(glade_xml_get_widget (functionedit_glade, "function_edit_tabs")), 1);
+			gtk_widget_grab_focus(glade_xml_get_widget (functionedit_glade, "function_edit_textview_expression"));
 			show_message(_("Empty expression field."), dialog);
 			goto run_function_edit_dialog;
 		}
@@ -6139,6 +6146,8 @@ run_function_edit_dialog:
 		gtk_text_buffer_get_end_iter(description_buffer, &d_iter_e);
 		//function with the same name exists -- overwrite or open the dialog again
 		if((!f || !f->hasName(str)) && (!names_edited || !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter)) && CALCULATOR->functionNameTaken(str, f) && !ask_question(_("A function with the same name already exists.\nDo you want to overwrite the function?"), dialog)) {
+			gtk_notebook_set_current_page(GTK_NOTEBOOK(glade_xml_get_widget (functionedit_glade, "function_edit_tabs")), 0);
+			gtk_widget_grab_focus(glade_xml_get_widget (functionedit_glade, "function_edit_entry_name"));
 			goto run_function_edit_dialog;
 		}
 		bool add_func = false;
@@ -6351,12 +6360,14 @@ run_unknown_edit_dialog:
 		GtkTreeIter iter;
 		if(str.empty() && (!names_edited || !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter))) {
 			//no name -- open dialog again
+			gtk_widget_grab_focus(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_name"));
 			show_message(_("Empty name field."), dialog);
 			goto run_unknown_edit_dialog;
 		}
 
 		//unknown with the same name exists -- overwrite or open dialog again
 		if((!v || !v->hasName(str)) && (!names_edited || !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter)) && CALCULATOR->variableNameTaken(str, v) && !ask_question(_("An unit or variable with the same name already exists.\nDo you want to overwrite it?"), dialog)) {
+			gtk_widget_grab_focus(glade_xml_get_widget (unknownedit_glade, "unknown_edit_entry_name"));
 			goto run_unknown_edit_dialog;
 		}
 		if(!v) {
@@ -6509,16 +6520,19 @@ run_variable_edit_dialog:
 		GtkTreeIter iter;
 		if(str.empty() && (!names_edited || !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter))) {
 			//no name -- open dialog again
+			gtk_widget_grab_focus(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_name"));
 			show_message(_("Empty name field."), dialog);
 			goto run_variable_edit_dialog;
 		}
 		if(str2.empty() && !mstruct_) {
 			//no value -- open dialog again
+			gtk_widget_grab_focus(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_value"));
 			show_message(_("Empty value field."), dialog);
 			goto run_variable_edit_dialog;
 		}
 		//variable with the same name exists -- overwrite or open dialog again
 		if((!v || !v->hasName(str)) && (!names_edited || !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter)) && CALCULATOR->variableNameTaken(str, v) && !ask_question(_("An unit or variable with the same name already exists.\nDo you want to overwrite it?"), dialog)) {
+			gtk_widget_grab_focus(glade_xml_get_widget (variableedit_glade, "variable_edit_entry_name"));
 			goto run_variable_edit_dialog;
 		}
 		if(!v) {
@@ -6696,7 +6710,7 @@ void edit_matrix(const char *category, Variable *var, MathStructure *mstruct_, G
 
 	if(create_vector) {
 		if(old_vctr) {
-			r = old_vctr->components();
+			r = old_vctr->countChildren();
 			c = (int) ::sqrt((double) r) + 4;
 			if(r % c > 0) {
 				r = r / c + 1;
@@ -6720,8 +6734,8 @@ void edit_matrix(const char *category, Variable *var, MathStructure *mstruct_, G
 	for(size_t index_r = 0; index_r < element_entries.size(); index_r++) {
 		for(size_t index_c = 0; index_c < element_entries[index_r].size(); index_c++) {
 			if(create_vector) {
-				if(old_vctr && index_r * element_entries[index_r].size() + index_c < old_vctr->components()) {
-					gtk_entry_set_text(GTK_ENTRY(element_entries[index_r][index_c]), old_vctr->getComponent(index_r * element_entries[index_r].size() + index_c + 1)->print(po).c_str());
+				if(old_vctr && index_r * element_entries[index_r].size() + index_c < old_vctr->countChildren()) {
+					gtk_entry_set_text(GTK_ENTRY(element_entries[index_r][index_c]), old_vctr->getChild(index_r * element_entries[index_r].size() + index_c + 1)->print(po).c_str());
 				} else {
 					gtk_entry_set_text(GTK_ENTRY(element_entries[index_r][index_c]), "");
 				}
@@ -6748,12 +6762,14 @@ run_matrix_edit_dialog:
 		GtkTreeIter iter;
 		if(str.empty() && (!names_edited || !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter))) {
 			//no name -- open dialog again
+			gtk_widget_grab_focus(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_name"));
 			show_message(_("Empty name field."), dialog);
 			goto run_matrix_edit_dialog;
 		}
 
 		//variable with the same name exists -- overwrite or open dialog again
 		if((!v || !v->hasName(str)) && (!names_edited || !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter)) && CALCULATOR->variableNameTaken(str) && !ask_question(_("An unit or variable with the same name already exists.\nDo you want to overwrite it?"), dialog)) {
+			gtk_widget_grab_focus(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_name"));
 			goto run_matrix_edit_dialog;
 		}
 		if(!v) {
@@ -6771,7 +6787,7 @@ run_matrix_edit_dialog:
 						str = gtk_entry_get_text(GTK_ENTRY(element_entries[index_r][index_c]));
 						remove_blank_ends(str);
 						if(!str.empty()) {
-							mstruct_new.addComponent(CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(str)));
+							mstruct_new.addChild(CALCULATOR->calculate(CALCULATOR->unlocalizeExpression(str)));
 						}
 					}
 				}
@@ -7041,6 +7057,7 @@ bool edit_dataproperty(DataProperty *dp) {
 		GtkTreeIter iter;
 		if(str.empty() && (!names_edited || !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter))) {
 			//no name -- open dialog again
+			gtk_widget_grab_focus(glade_xml_get_widget (datasetedit_glade, "dataproperty_edit_entry_name"));
 			show_message(_("Empty name field."), dialog);
 			goto run_dataproperty_edit_dialog;
 		}
@@ -7186,6 +7203,8 @@ void edit_dataset(DataSet *ds, GtkWidget *win) {
 		GtkTreeIter iter;
 		if(str.empty() && (!names_edited || !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter))) {
 			//no name -- open dialog again
+			gtk_notebook_set_current_page(GTK_NOTEBOOK(glade_xml_get_widget (datasetedit_glade, "dataset_edit_tabs")), 2);
+			gtk_widget_grab_focus(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_name"));
 			show_message(_("Empty name field."), dialog);
 			goto run_dataset_edit_dialog;
 		}
@@ -7197,6 +7216,8 @@ void edit_dataset(DataSet *ds, GtkWidget *win) {
 		gtk_text_buffer_get_end_iter(copyright_buffer, &c_iter_e);
 		//dataset with the same name exists -- overwrite or open the dialog again
 		if((!ds || !ds->hasName(str)) && (!names_edited || !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tNames_store), &iter)) && CALCULATOR->functionNameTaken(str, ds) && !ask_question(_("A function with the same name already exists.\nDo you want to overwrite the function?"), dialog)) {
+			gtk_notebook_set_current_page(GTK_NOTEBOOK(glade_xml_get_widget (datasetedit_glade, "dataset_edit_tabs")), 2);
+			gtk_widget_grab_focus(glade_xml_get_widget (datasetedit_glade, "dataset_edit_entry_name"));
 			goto run_dataset_edit_dialog;
 		}
 		bool add_func = false;
@@ -7286,6 +7307,7 @@ run_csv_import_dialog:
 		remove_blank_ends(str);
 		if(str.empty()) {
 			//no filename -- open dialog again
+			gtk_widget_grab_focus(glade_xml_get_widget (csvimport_glade, "csv_import_entry_file"));
 			show_message(_("No file name entered."), dialog);
 			goto run_csv_import_dialog;
 		}
@@ -7314,6 +7336,7 @@ run_csv_import_dialog:
 		}
 		if(delimiter.empty()) {
 			//no filename -- open dialog again
+			gtk_widget_grab_focus(glade_xml_get_widget (csvimport_glade, "csv_import_entry_delimiter_other"));
 			show_message(_("No delimiter selected."), dialog);
 			goto run_csv_import_dialog;
 		}		
@@ -7363,6 +7386,7 @@ run_csv_export_dialog:
 		remove_blank_ends(str);
 		if(str.empty()) {
 			//no filename -- open dialog again
+			gtk_widget_grab_focus(glade_xml_get_widget (csvexport_glade, "csv_export_entry_file"));
 			show_message(_("No file name entered."), dialog);
 			goto run_csv_export_dialog;
 		}
@@ -7391,6 +7415,7 @@ run_csv_export_dialog:
 		}
 		if(delimiter.empty()) {
 			//no delimiter -- open dialog again
+			gtk_widget_grab_focus(glade_xml_get_widget (csvexport_glade, "csv_export_entry_delimiter_other"));
 			show_message(_("No delimiter selected."), dialog);
 			goto run_csv_export_dialog;
 		}
@@ -7403,6 +7428,7 @@ run_csv_export_dialog:
 			string str2 = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (csvexport_glade, "csv_export_entry_matrix")));
 			remove_blank_ends(str2);
 			if(str2.empty()) {
+				gtk_widget_grab_focus(glade_xml_get_widget (csvexport_glade, "csv_export_entry_matrix"));
 				show_message(_("No variable name entered."), dialog);
 				goto run_csv_export_dialog;
 			}
@@ -7414,6 +7440,7 @@ run_csv_export_dialog:
 				}
 			}
 			if(!var || !var->isKnown()) {
+				gtk_widget_grab_focus(glade_xml_get_widget (csvexport_glade, "csv_export_entry_matrix"));
 				show_message(_("No known variable with entered name found."), dialog);
 				goto run_csv_export_dialog;
 			}
@@ -8691,7 +8718,6 @@ void load_preferences() {
 */
 
 void save_preferences(bool mode) {
-
 	FILE *file = NULL;
 	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", NULL);
 	mkdir(gstr, S_IRWXU);
@@ -8816,7 +8842,7 @@ void save_preferences(bool mode) {
 		fprintf(file, "%s", recent_functions[i]->referenceName().c_str()); 
 		if(i != 0) fprintf(file, ","); 
 	}
-	fprintf(file, "\n"); 
+	fprintf(file, "\n");
 	fprintf(file, "recent_variables="); 
 	for(int i = (int) (recent_variables.size()) - 1; i >= 0; i--) {
 		fprintf(file, "%s", recent_variables[i]->referenceName().c_str()); 
@@ -8880,7 +8906,6 @@ void save_preferences(bool mode) {
 		fprintf(file, "default_assumption_type=%i\n", modes[i].at);
 		fprintf(file, "default_assumption_sign=%i\n", modes[i].as);
 	}
-	
 	fprintf(file, "\n[Plotting]\n");
 	fprintf(file, "plot_legend_placement=%i\n", default_plot_legend_placement);
 	fprintf(file, "plot_style=%i\n", default_plot_style);
@@ -11300,9 +11325,18 @@ void on_datasets_button_editset_clicked(GtkButton*, gpointer) {
 }
 void on_datasets_button_delset_clicked(GtkButton*, gpointer) {
 	if(selected_dataset && selected_dataset->isLocal()) {
+		for(size_t i = 0; i < recent_functions.size(); i++) {
+			if(recent_functions[i] == selected_dataset) {
+				recent_functions.erase(recent_functions.begin() + i);
+				gtk_widget_destroy(recent_function_items[i]);
+				recent_function_items.erase(recent_function_items.begin() + i);
+				break;
+			}
+		}
 		selected_dataset->destroy();
-		selected_dataobject = NULL;
+		selected_dataobject = NULL;		
 		update_datasets_tree();
+		on_tDatasets_selection_changed(gtk_tree_view_get_selection(GTK_TREE_VIEW(tDatasets)), NULL);
 	}
 }
 void on_datasets_button_newobject_clicked(GtkButton*, gpointer) {
@@ -11677,14 +11711,14 @@ void on_matrix_edit_radiobutton_matrix_toggled(GtkToggleButton *w, gpointer) {
 	if(gtk_toggle_button_get_active(w)) {
 		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (matrixedit_glade, "matrix_edit_label_elements")), _("Elements"));
 	} else {
-		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (matrixedit_glade, "matrix_edit_label_elements")), _("Components (in horizontal order)"));
+		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (matrixedit_glade, "matrix_edit_label_elements")), _("Elements (in horizontal order)"));
 	}
 }
 void on_matrix_edit_radiobutton_vector_toggled(GtkToggleButton *w, gpointer) {
 	if(!gtk_toggle_button_get_active(w)) {
 		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (matrixedit_glade, "matrix_edit_label_elements")), _("Elements"));
 	} else {
-		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (matrixedit_glade, "matrix_edit_label_elements")), _("Components (in horizontal order)"));
+		gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (matrixedit_glade, "matrix_edit_label_elements")), _("Elements (in horizontal order)"));
 	}
 }
 void on_csv_import_radiobutton_matrix_toggled(GtkToggleButton*, gpointer) {
@@ -12010,6 +12044,7 @@ void on_names_edit_checkbutton_abbreviation_toggled(GtkToggleButton *w, gpointer
 }
 void on_names_edit_button_add_clicked(GtkButton*, gpointer) {
 	if(strlen(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name")))) == 0) {
+		gtk_widget_grab_focus(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"));
 		show_message(_("Empty name field."), glade_xml_get_widget (namesedit_glade, "names_edit_dialog"));
 		return;
 	}
@@ -12021,7 +12056,10 @@ void on_names_edit_button_add_clicked(GtkButton*, gpointer) {
 	else if(editing_function && CALCULATOR->functionNameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), get_edited_function())) name_taken = true;
 	else if(editing_dataset && CALCULATOR->functionNameTaken(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"))), get_edited_dataset())) name_taken = true;
 	if(name_taken) {
-		if(!ask_question(_("A conflicting object with the same name exists. If you proceed and save changes, the conflicting object will be overwritten or deactivated.\nDo you want to proceed?"), glade_xml_get_widget (namesedit_glade, "names_edit_dialog"))) return;
+		if(!ask_question(_("A conflicting object with the same name exists. If you proceed and save changes, the conflicting object will be overwritten or deactivated.\nDo you want to proceed?"), glade_xml_get_widget (namesedit_glade, "names_edit_dialog"))) {
+			gtk_widget_grab_focus(glade_xml_get_widget (namesedit_glade, "names_edit_entry_name"));
+			return;
+		}
 	}
 	GtkTreeIter iter;
 	gtk_list_store_append(tNames_store, &iter);
@@ -12317,6 +12355,7 @@ void generate_plot_series(MathStructure **x_vector, MathStructure **y_vector, in
 void on_plot_button_add_clicked(GtkButton*, gpointer) {
 	string expression = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_expression")));
 	if(expression.find_first_not_of(SPACES) == string::npos) {
+		gtk_widget_grab_focus(glade_xml_get_widget (plot_glade, "plot_entry_expression"));
 		show_message(_("Empty expression."), glade_xml_get_widget(plot_glade, "plot_dialog"));
 		return;
 	}
@@ -12330,6 +12369,7 @@ void on_plot_button_add_clicked(GtkButton*, gpointer) {
 	string str_x = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_variable")));
 	remove_blank_ends(str_x);
 	if(str_x.empty() && type == 0) {
+		gtk_widget_grab_focus(glade_xml_get_widget (plot_glade, "plot_entry_variable"));
 		show_message(_("Empty x variable."), glade_xml_get_widget(plot_glade, "plot_dialog"));
 		return;
 	}
@@ -12359,6 +12399,7 @@ void on_plot_button_modify_clicked(GtkButton*, gpointer) {
 	if(gtk_tree_selection_get_selected(select, &model, &iter)) {	
 		string expression = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_expression")));
 		if(expression.find_first_not_of(SPACES) == string::npos) {
+			gtk_widget_grab_focus(glade_xml_get_widget (plot_glade, "plot_entry_expression"));
 			show_message(_("Empty expression."), glade_xml_get_widget(plot_glade, "plot_dialog"));
 			return;
 		}
@@ -12372,6 +12413,7 @@ void on_plot_button_modify_clicked(GtkButton*, gpointer) {
 		string str_x = gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (plot_glade, "plot_entry_variable")));
 		remove_blank_ends(str_x);
 		if(str_x.empty() && type == 0) {
+			gtk_widget_grab_focus(glade_xml_get_widget (plot_glade, "plot_entry_variable"));
 			show_message(_("Empty x variable."), glade_xml_get_widget(plot_glade, "plot_dialog"));
 			return;
 		}

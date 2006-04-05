@@ -1,3 +1,13 @@
+2006-04-02 Niklas Knutsson  <nq@altern.org>
+
+	* Documentation updates
+
+2006-03-29 Niklas Knutsson  <nq@altern.org>
+
+	* Focus text field that caused error after error message
+	* Remove delete data sets from recent functions
+	* Clear description and object list on data set deletion
+
 2006-03-28 Niklas Knutsson  <nq@altern.org>
 
 	* New icons
