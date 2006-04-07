@@ -68,7 +68,7 @@ GtkListStore *tDataProperties_store;
 GtkWidget *tNames;
 GtkListStore *tNames_store;
 
-GtkWidget *tabs, *expander_keypad, *expander_history;
+GtkWidget *tabs, *expander_keypad, *expander_history, *expander_stack;
 GtkEntryCompletion *completion;
 GtkListStore *completion_store;
 
@@ -80,18 +80,20 @@ GtkListStore *tSubfunctions_store;
 GtkWidget *tPlotFunctions;
 GtkListStore *tPlotFunctions_store;
 
-GtkCellRenderer *renderer;
-GtkTreeViewColumn *column;
+GtkCellRenderer *renderer, *register_renderer;
+GtkTreeViewColumn *column, *register_column;
 GtkTreeSelection *selection;
 
 GtkWidget *expression;
 GtkWidget *resultview;
 GtkWidget *historyview;
+GtkWidget *stackview;
+GtkListStore *stackstore;
 GtkWidget *statuslabel_l, *statuslabel_r;
 GtkWidget *f_menu ,*v_menu, *u_menu, *u_menu2, *recent_menu;
 GtkAccelGroup *accel_group;
 
-extern bool show_buttons, show_history;
+extern bool show_buttons, show_history, show_stack;
 extern bool save_mode_on_exit, save_defs_on_exit, load_global_defs, hyp_is_on, inv_is_on, fetch_exchange_rates_at_startup;
 extern bool display_expression_status, enable_completion;
 extern bool use_custom_result_font, use_custom_expression_font, use_custom_status_font;
@@ -101,9 +103,11 @@ extern string status_error_color, status_warning_color;
 extern PrintOptions printops;
 extern EvaluationOptions evalops;
 
+extern bool rpn_mode;
+
 extern vector<vector<GtkWidget*> > element_entries;
 
-GtkTooltips *periodic_tooltips;
+GtkTooltips *periodic_tooltips, *main_tooltips;
 
 extern GdkPixbuf *icon_pixbuf;
 
@@ -139,7 +143,9 @@ void set_assumptions_items(AssumptionType at, AssumptionSign as) {
 	}
 }
 
-void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, AssumptionType at, AssumptionSign as, int precision, bool initial_update) {	
+void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, AssumptionType at, AssumptionSign as, bool in_rpn_mode, int precision, bool initial_update) {
+
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_rpn_mode")), in_rpn_mode);
 
 	switch(eo.approximation) {
 		case APPROXIMATION_EXACT: {
@@ -198,7 +204,7 @@ void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, Assumpt
 	}
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_read_precision")), eo.parse_options.read_precision != DONT_READ_PRECISION);
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_rpn_mode")), eo.parse_options.rpn);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_rpn_syntax")), eo.parse_options.rpn);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_limit_implicit_multiplication")), eo.parse_options.limit_implicit_multiplication);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_assume_nonzero_denominators")), eo.assume_denominators_nonzero);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_warn_about_denominators_assumed_nonzero")), eo.warn_about_denominators_assumed_nonzero);
@@ -379,9 +385,7 @@ void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, Assumpt
 
 }
 
-void
-create_main_window (void)
-{
+void create_main_window (void) {
 	
 	gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "main.glade", NULL);
 	main_glade = glade_xml_new(gstr, NULL, NULL);
@@ -399,6 +403,7 @@ create_main_window (void)
 	expression = glade_xml_get_widget (main_glade, "expression");
 	resultview = glade_xml_get_widget (main_glade, "resultview");
 	historyview = glade_xml_get_widget (main_glade, "history");
+	stackview = glade_xml_get_widget (main_glade, "stackview");
 	statuslabel_l = glade_xml_get_widget (main_glade, "label_status_left");
 	statuslabel_r = glade_xml_get_widget (main_glade, "label_status_right");
 	gtk_text_buffer_create_tag(gtk_text_view_get_buffer(GTK_TEXT_VIEW(glade_xml_get_widget (main_glade, "history"))), "history_parse", "foreground", "gray40", "style", PANGO_STYLE_ITALIC, NULL);
@@ -416,7 +421,7 @@ create_main_window (void)
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "button_hyp")), hyp_is_on);
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (glade_xml_get_widget (main_glade, "button_inv")), inv_is_on);
 	
-	set_mode_items(printops, evalops, CALCULATOR->defaultAssumptions()->type(), CALCULATOR->defaultAssumptions()->sign(), CALCULATOR->getPrecision(), true);
+	set_mode_items(printops, evalops, CALCULATOR->defaultAssumptions()->type(), CALCULATOR->defaultAssumptions()->sign(), rpn_mode, CALCULATOR->getPrecision(), true);
 
 	set_unicode_buttons();
 
@@ -455,15 +460,19 @@ create_main_window (void)
 
 	expander_keypad = glade_xml_get_widget(main_glade, "expander_keypad");
 	expander_history = glade_xml_get_widget(main_glade, "expander_history");
+	expander_stack = glade_xml_get_widget(main_glade, "expander_stack");
 	gtk_expander_set_expanded(GTK_EXPANDER(expander_keypad), show_buttons);
-	gtk_expander_set_expanded(GTK_EXPANDER(expander_history), show_history && !show_buttons);
+	gtk_expander_set_expanded(GTK_EXPANDER(expander_history), show_history);
+	gtk_expander_set_expanded(GTK_EXPANDER(expander_stack), show_stack);
 	tabs = glade_xml_get_widget(main_glade, "tabs");
 	if(show_history) {
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(tabs), 1);
+	} else if(show_stack) {
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(tabs), 2);
 	} else {
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(tabs), 0);
 	}
-	if(show_history || show_buttons) {
+	if(show_history || show_buttons || show_stack) {
 		gtk_widget_show(tabs);
 	} else {
 		gtk_widget_hide(tabs);
@@ -543,6 +552,35 @@ create_main_window (void)
 		
 	}
 
+	stackstore = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(stackview), GTK_TREE_MODEL(stackstore));
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(stackview));
+	gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
+	renderer = gtk_cell_renderer_text_new();
+	g_object_set (G_OBJECT(renderer), "xalign", 0.5, NULL);
+	column = gtk_tree_view_column_new_with_attributes(_("Index"), renderer, "text", 0, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(stackview), column);
+	register_renderer = gtk_cell_renderer_text_new();
+#if GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION < 6
+	g_object_set (G_OBJECT(register_renderer), "editable", TRUE, "mode", GTK_CELL_RENDERER_MODE_EDITABLE, NULL);
+#else
+	g_object_set (G_OBJECT(register_renderer), "editable", TRUE, "ellipsize", PANGO_ELLIPSIZE_END, "xalign", 1.0, "mode", GTK_CELL_RENDERER_MODE_EDITABLE, NULL);
+#endif
+	g_signal_connect((gpointer) register_renderer, "edited", G_CALLBACK(on_stackview_item_edited), NULL);
+	register_column = gtk_tree_view_column_new_with_attributes(_("Value"), register_renderer, "text", 1, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(stackview), register_column);
+	g_signal_connect((gpointer) selection, "changed", G_CALLBACK(on_stackview_selection_changed), NULL);
+
+	main_tooltips = gtk_tooltips_new();
+
+	if(rpn_mode) {
+		gtk_button_set_label(GTK_BUTTON(glade_xml_get_widget(main_glade, "button_equals")), _("Ent"));
+		gtk_tooltips_set_tip(main_tooltips, glade_xml_get_widget(main_glade, "button_equals"), _("Calculate expression and add to stack"), NULL);
+		gtk_tooltips_set_tip(main_tooltips, glade_xml_get_widget(main_glade, "button_execute"), _("Calculate expression and add to stack"), NULL);
+	} else {
+		gtk_widget_hide(expander_stack);
+	}
+
 #ifndef HAVE_LIBGNOME
 	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_help"), FALSE);
 #endif
@@ -583,7 +621,7 @@ create_main_window (void)
 	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_result_popup_meta_mode_delete"), modes.size() > 2);
 	
 	if(win_width > 0) {
-		if(show_history || show_buttons) gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), 1, win_height);
+		if(show_history || show_buttons || show_stack) gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), 1, win_height);
 		else gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), win_width, win_height);
 	}
 
@@ -591,7 +629,7 @@ create_main_window (void)
 	
 	set_result_size_request();
 	
-	if(show_history || show_buttons) gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), 1, 1);
+	if(show_history || show_buttons || show_stack) gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), 1, 1);
 	else gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), win_width, 1);
 
 #ifndef HAVE_LIBGNOMEUI

@@ -137,7 +137,6 @@ int main (int argc, char **argv) {
 #endif
 	b_busy = false;
 
-	
 	main_glade = NULL; about_glade = NULL; argumentrules_glade = NULL; 
 	csvimport_glade = NULL; datasetedit_glade = NULL; datasets_glade = NULL; decimals_glade = NULL; functionedit_glade = NULL; 
 	functions_glade = NULL; matrixedit_glade = NULL; namesedit_glade = NULL; nbases_glade = NULL; plot_glade = NULL; 
@@ -242,7 +241,7 @@ int main (int argc, char **argv) {
 	
 	gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "menu_item_plot_functions"), canplot);
 	gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "menu_item_fetch_exchange_rates"), canfetch);
-		
+
 	//create dynamic menus
 	generate_units_tree_struct();
 	generate_functions_tree_struct();

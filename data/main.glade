@@ -45,7 +45,7 @@
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1336">
+			<widget class="GtkImage" id="image1400">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-new</property>
 			  <property name="icon_size">1</property>
@@ -134,7 +134,7 @@
 		      <signal name="activate" handler="on_menu_item_import_csv_file_activate" last_modification_time="Wed, 10 Mar 2004 15:40:44 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1337">
+			<widget class="GtkImage" id="image1401">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -155,7 +155,7 @@
 		      <signal name="activate" handler="on_menu_item_export_csv_file_activate" last_modification_time="Wed, 14 Jul 2004 17:15:07 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1338">
+			<widget class="GtkImage" id="image1402">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -177,7 +177,7 @@
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1339">
+			<widget class="GtkImage" id="image1403">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -198,7 +198,7 @@
 		      <signal name="activate" handler="on_menu_item_save_image_activate" last_modification_time="Sun, 22 Aug 2004 21:05:32 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1340">
+			<widget class="GtkImage" id="image1404">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -212,7 +212,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator21">
+		    <widget class="GtkSeparatorMenuItem" id="separator21">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -226,7 +226,7 @@
 		      <signal name="activate" handler="on_menu_item_save_defs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1341">
+			<widget class="GtkImage" id="image1405">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -250,7 +250,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator18">
+		    <widget class="GtkSeparatorMenuItem" id="separator18">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -269,10 +269,10 @@
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Convert Number Bases</property>
 		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_menu_item_convert_number_bases_activate" last_modification_time="Sun, 19 Oct 2003 15:11:19 GMT"/>		      
+		      <signal name="activate" handler="on_menu_item_convert_number_bases_activate" last_modification_time="Sun, 19 Oct 2003 15:11:19 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1342">
+			<widget class="GtkImage" id="image1406">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -295,7 +295,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator22">
+		    <widget class="GtkSeparatorMenuItem" id="separator22">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -309,7 +309,7 @@
 		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1343">
+			<widget class="GtkImage" id="image1407">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -375,7 +375,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator27">
+		    <widget class="GtkSeparatorMenuItem" id="separator27">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -388,7 +388,7 @@
 		      <signal name="activate" handler="on_menu_item_factorize_activate" last_modification_time="Wed, 29 Oct 2003 09:14:28 GMT"/>
 		    </widget>
 		  </child>
-		  
+
 		  <child>
 		    <widget class="GtkMenuItem" id="menu_item_simplify">
 		      <property name="visible">True</property>
@@ -414,7 +414,7 @@
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1344">
+			<widget class="GtkImage" id="image1408">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -444,7 +444,7 @@
 		      <accelerator key="T" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1345">
+			<widget class="GtkImage" id="image1409">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -465,7 +465,7 @@
 		      <signal name="activate" handler="on_menu_item_convert_to_base_units_activate" last_modification_time="Sun, 21 Mar 2004 08:14:57 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1346">
+			<widget class="GtkImage" id="image1410">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -486,7 +486,7 @@
 		      <signal name="activate" handler="on_menu_item_convert_to_best_unit_activate" last_modification_time="Sun, 21 Mar 2004 08:14:57 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1347">
+			<widget class="GtkImage" id="image1411">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-convert</property>
 			  <property name="icon_size">1</property>
@@ -500,7 +500,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator23">
+		    <widget class="GtkSeparatorMenuItem" id="separator23">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -514,7 +514,7 @@
 		      <accelerator key="C" modifiers="GDK_CONTROL_MASK | GDK_MOD1_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1348">
+			<widget class="GtkImage" id="image1412">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-copy</property>
 			  <property name="icon_size">1</property>
@@ -528,7 +528,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator24">
+		    <widget class="GtkSeparatorMenuItem" id="separator24">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -541,7 +541,7 @@
 		      <signal name="activate" handler="on_menu_item_edit_prefs_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1349">
+			<widget class="GtkImage" id="image1413">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -587,7 +587,7 @@
 			  </child>
 
 			  <child>
-			    <widget class="GtkMenuItem" id="separator32">
+			    <widget class="GtkSeparatorMenuItem" id="separator32">
 			      <property name="visible">True</property>
 			    </widget>
 			  </child>
@@ -647,7 +647,7 @@
 			  </child>
 
 			  <child>
-			    <widget class="GtkMenuItem" id="separator28">
+			    <widget class="GtkSeparatorMenuItem" id="separator28">
 			      <property name="visible">True</property>
 			    </widget>
 			  </child>
@@ -684,7 +684,6 @@
 			      <signal name="activate" handler="on_menu_item_roman_activate" last_modification_time="Thu, 25 Mar 2004 14:44:14 GMT"/>
 			    </widget>
 			  </child>
-
 			</widget>
 		      </child>
 		    </widget>
@@ -743,7 +742,7 @@
 			  </child>
 
 			  <child>
-			    <widget class="GtkMenuItem" id="separator5">
+			    <widget class="GtkSeparatorMenuItem" id="separator5">
 			      <property name="visible">True</property>
 			    </widget>
 			  </child>
@@ -891,7 +890,7 @@
 			  </child>
 
 			  <child>
-			    <widget class="GtkMenuItem" id="separatorS1">
+			    <widget class="GtkSeparatorMenuItem" id="separatorS1">
 			      <property name="visible">True</property>
 			    </widget>
 			  </child>
@@ -947,7 +946,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Degrees</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
+			      <property name="active">True</property>
 			      <signal name="activate" handler="on_menu_item_degrees_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 			    </widget>
 			  </child>
@@ -957,7 +956,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Radians</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">True</property>
+			      <property name="active">False</property>
 			      <property name="group">menu_item_degrees</property>
 			      <signal name="activate" handler="on_menu_item_radians_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 			    </widget>
@@ -1000,7 +999,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator19">
+		    <widget class="GtkSeparatorMenuItem" id="separator19">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -1055,7 +1054,7 @@
 			  </child>
 
 			  <child>
-			    <widget class="GtkMenuItem" id="separator29">
+			    <widget class="GtkSeparatorMenuItem" id="separator29">
 			      <property name="visible">True</property>
 			    </widget>
 			  </child>
@@ -1072,7 +1071,7 @@
 			  </child>
 
 			  <child>
-			    <widget class="GtkMenuItem" id="separator29">
+			    <widget class="GtkSeparatorMenuItem" id="separator29">
 			      <property name="visible">True</property>
 			    </widget>
 			  </child>
@@ -1104,7 +1103,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator26">
+		    <widget class="GtkSeparatorMenuItem" id="separator26">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -1172,7 +1171,7 @@
 			      <signal name="activate" handler="on_menu_item_assumptions_none_activate" last_modification_time="Wed, 16 Jun 2004 10:14:23 GMT"/>
 			    </widget>
 			  </child>
-			  
+
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="menu_item_assumptions_nonmatrix">
 			      <property name="visible">True</property>
@@ -1240,7 +1239,7 @@
 			  </child>
 
 			  <child>
-			    <widget class="GtkMenuItem" id="separator30">
+			    <widget class="GtkSeparatorMenuItem" id="separator30">
 			      <property name="visible">True</property>
 			    </widget>
 			  </child>
@@ -1298,7 +1297,7 @@
 			      <signal name="activate" handler="on_menu_item_assumptions_negative_activate" last_modification_time="Wed, 16 Jun 2004 10:14:23 GMT"/>
 			    </widget>
 			  </child>
-			  
+
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="menu_item_assumptions_nonpositive">
 			      <property name="visible">True</property>
@@ -1354,13 +1353,13 @@
 			      <signal name="activate" handler="on_menu_item_algebraic_mode_none_activate" last_modification_time="Thu, 17 Nov 2005 20:50:56 GMT"/>
 			    </widget>
 			  </child>
-			  
+
 			  <child>
-			    <widget class="GtkMenuItem" id="separator_algebraic_mode">
+			    <widget class="GtkSeparatorMenuItem" id="separator_algebraic_mode">
 			      <property name="visible">True</property>
 			    </widget>
 			  </child>
-			  
+
 			  <child>
 			    <widget class="GtkCheckMenuItem" id="menu_item_assume_nonzero_denominators">
 			      <property name="visible">True</property>
@@ -1371,7 +1370,7 @@
 			      <signal name="activate" handler="on_menu_item_assume_nonzero_denominators_activate" last_modification_time="Tue, 16 Nov 2004 09:14:28 GMT"/>
 			    </widget>
 			  </child>
-			  
+
 			  <child>
 			    <widget class="GtkCheckMenuItem" id="menu_item_warn_about_denominators_assumed_nonzero">
 			      <property name="visible">True</property>
@@ -1382,14 +1381,13 @@
 			      <signal name="activate" handler="on_menu_item_warn_about_denominators_assumed_nonzero_activate" last_modification_time="Tue, 20 Dec 2005 14:02:13 GMT"/>
 			    </widget>
 			  </child>
-			  
-		  	</widget>
+			</widget>
 		      </child>
 		    </widget>
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator7">
+		    <widget class="GtkSeparatorMenuItem" id="separator7">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -1419,8 +1417,8 @@
 		  <child>
 		    <widget class="GtkCheckMenuItem" id="menu_item_rpn_mode">
 		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">(De)activate use of Reverse Polish Notation syntax in expressions</property>
-		      <property name="label" translatable="yes">RPN Syntax</property>
+		      <property name="tooltip" translatable="yes">(De)activate the Reverse Polish Notation mode</property>
+		      <property name="label" translatable="yes">RPN Mode</property>
 		      <property name="use_underline">True</property>
 		      <property name="active">False</property>
 		      <signal name="activate" handler="on_menu_item_rpn_mode_activate" last_modification_time="Sat, 20 Sep 2003 15:21:55 GMT"/>
@@ -1429,7 +1427,18 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator6">
+		    <widget class="GtkCheckMenuItem" id="menu_item_rpn_syntax">
+		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">(De)activate use of Reverse Polish Notation syntax in expressions</property>
+		      <property name="label" translatable="yes">RPN Syntax</property>
+		      <property name="use_underline">True</property>
+		      <property name="active">False</property>
+		      <signal name="activate" handler="on_menu_item_rpn_syntax_activate" last_modification_time="Fri, 07 Apr 2006 08:02:09 GMT"/>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkSeparatorMenuItem" id="separator6">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -1453,7 +1462,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator20">
+		    <widget class="GtkSeparatorMenuItem" id="separator20">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -1468,7 +1477,7 @@
 			<widget class="GtkMenu" id="menu_meta_modes">
 
 			  <child>
-			    <widget class="GtkMenuItem" id="separator_meta_modes">
+			    <widget class="GtkSeparatorMenuItem" id="separator_meta_modes">
 			      <property name="visible">True</property>
 			    </widget>
 			  </child>
@@ -1481,7 +1490,7 @@
 			      <signal name="activate" handler="on_menu_item_meta_mode_save_activate" last_modification_time="Tue, 18 Oct 2005 01:14:23 GMT"/>
 
 			      <child internal-child="image">
-				<widget class="GtkImage" id="image_meta_mode_save">
+				<widget class="GtkImage" id="image1414">
 				  <property name="visible">True</property>
 				  <property name="stock">gtk-save</property>
 				  <property name="icon_size">1</property>
@@ -1502,7 +1511,7 @@
 			      <signal name="activate" handler="on_menu_item_meta_mode_delete_activate" last_modification_time="Tue, 18 Oct 2005 01:14:23 GMT"/>
 
 			      <child internal-child="image">
-				<widget class="GtkImage" id="image_meta_mode_delete">
+				<widget class="GtkImage" id="image1415">
 				  <property name="visible">True</property>
 				  <property name="stock">gtk-delete</property>
 				  <property name="icon_size">1</property>
@@ -1527,7 +1536,7 @@
 		      <signal name="activate" handler="on_menu_item_save_mode_activate" last_modification_time="Sun, 10 Aug 2003 22:23:16 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1350">
+			<widget class="GtkImage" id="image1416">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -1586,7 +1595,7 @@
 		      <accelerator key="F1" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1351">
+			<widget class="GtkImage" id="image1417">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
@@ -1607,7 +1616,7 @@
 		      <signal name="activate" handler="on_menu_item_about_activate" last_modification_time="Thu, 14 Aug 2003 22:31:50 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1352">
+			<widget class="GtkImage" id="image1418">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-dialog-info</property>
 			  <property name="icon_size">1</property>
@@ -1991,6 +2000,45 @@
 			  <property name="fill">True</property>
 			</packing>
 		      </child>
+
+		      <child>
+			<widget class="GtkExpander" id="expander_stack">
+			  <property name="visible">True</property>
+			  <property name="can_focus">True</property>
+			  <property name="expanded">False</property>
+			  <property name="spacing">0</property>
+			  <signal name="notify::expanded" handler="on_expander_stack_expanded" last_modification_time="Fri, 07 Apr 2006 09:04:44 GMT"/>
+			  <accelerator key="H" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+
+			  <child>
+			    <placeholder/>
+			  </child>
+
+			  <child>
+			    <widget class="GtkLabel" id="label5">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">RPN Stack</property>
+			      <property name="use_underline">False</property>
+			      <property name="use_markup">False</property>
+			      <property name="justify">GTK_JUSTIFY_LEFT</property>
+			      <property name="wrap">False</property>
+			      <property name="selectable">False</property>
+			      <property name="xalign">0.5</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xpad">0</property>
+			      <property name="ypad">0</property>
+			    </widget>
+			    <packing>
+			      <property name="type">label_item</property>
+			    </packing>
+			  </child>
+			</widget>
+			<packing>
+			  <property name="padding">0</property>
+			  <property name="expand">True</property>
+			  <property name="fill">True</property>
+			</packing>
+		      </child>
 		    </widget>
 		  </child>
 		</widget>
@@ -2263,7 +2311,7 @@ Other...</property>
 				  <child>
 				    <widget class="GtkButton" id="button_square">
 				      <property name="visible">True</property>
-				      <property name="tooltip" translatable="yes">Raise</property>
+				      <property name="tooltip" translatable="yes">Raise by two</property>
 				      <property name="can_focus">True</property>
 				      <property name="label" translatable="yes">x&lt;sup&gt;2&lt;/sup&gt;</property>
 				      <property name="use_underline">True</property>
@@ -2282,7 +2330,7 @@ Other...</property>
 				  <child>
 				    <widget class="GtkButton" id="button_xy">
 				      <property name="visible">True</property>
-				      <property name="tooltip" translatable="yes">Raise</property>
+				      <property name="tooltip" translatable="yes">Raise (Ctrl+*)</property>
 				      <property name="can_focus">True</property>
 				      <property name="label" translatable="yes">x&lt;sup&gt;y&lt;/sup&gt;</property>
 				      <property name="use_underline">True</property>
@@ -2865,6 +2913,7 @@ Other...</property>
 			      <child>
 				<widget class="GtkButton" id="button_equals">
 				  <property name="visible">True</property>
+				  <property name="tooltip" translatable="yes">Calculate expression</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">=</property>
 				  <property name="use_underline">True</property>
@@ -2925,7 +2974,7 @@ Other...</property>
 		      <property name="can_focus">True</property>
 		      <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
 		      <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
-		      <property name="shadow_type">GTK_SHADOW_IN</property>
+		      <property name="shadow_type">GTK_SHADOW_NONE</property>
 		      <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
 
 		      <child>
@@ -2959,6 +3008,236 @@ Other...</property>
 		    <widget class="GtkLabel" id="label3">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">History</property>
+		      <property name="use_underline">False</property>
+		      <property name="use_markup">False</property>
+		      <property name="justify">GTK_JUSTIFY_LEFT</property>
+		      <property name="wrap">False</property>
+		      <property name="selectable">False</property>
+		      <property name="xalign">0.5</property>
+		      <property name="yalign">0.5</property>
+		      <property name="xpad">0</property>
+		      <property name="ypad">0</property>
+		    </widget>
+		    <packing>
+		      <property name="type">tab</property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkHBox" id="hbox65">
+		      <property name="visible">True</property>
+		      <property name="homogeneous">False</property>
+		      <property name="spacing">6</property>
+
+		      <child>
+			<widget class="GtkScrolledWindow" id="scrolledwindow2">
+			  <property name="visible">True</property>
+			  <property name="can_focus">True</property>
+			  <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+			  <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+			  <property name="shadow_type">GTK_SHADOW_IN</property>
+			  <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
+
+			  <child>
+			    <widget class="GtkTreeView" id="stackview">
+			      <property name="visible">True</property>
+			      <property name="can_focus">True</property>
+			      <property name="headers_visible">True</property>
+			      <property name="rules_hint">False</property>
+			      <property name="reorderable">False</property>
+			      <property name="enable_search">False</property>
+			    </widget>
+			  </child>
+			</widget>
+			<packing>
+			  <property name="padding">0</property>
+			  <property name="expand">True</property>
+			  <property name="fill">True</property>
+			</packing>
+		      </child>
+
+		      <child>
+			<widget class="GtkAlignment" id="alignment4">
+			  <property name="visible">True</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0</property>
+			  <property name="xscale">1</property>
+			  <property name="yscale">0</property>
+			  <property name="top_padding">0</property>
+			  <property name="bottom_padding">0</property>
+			  <property name="left_padding">0</property>
+			  <property name="right_padding">0</property>
+
+			  <child>
+			    <widget class="GtkVBox" id="vbox64">
+			      <property name="visible">True</property>
+			      <property name="homogeneous">True</property>
+			      <property name="spacing">4</property>
+
+			      <child>
+				<widget class="GtkButton" id="button_registerup">
+				  <property name="visible">True</property>
+				  <property name="sensitive">False</property>
+				  <property name="tooltip" translatable="yes">Move selected register up</property>
+				  <property name="can_focus">True</property>
+				  <property name="relief">GTK_RELIEF_NORMAL</property>
+				  <property name="focus_on_click">True</property>
+				  <signal name="clicked" handler="on_button_registerup_clicked" last_modification_time="Fri, 07 Apr 2006 08:17:55 GMT"/>
+
+				  <child>
+				    <widget class="GtkImage" id="image1419">
+				      <property name="visible">True</property>
+				      <property name="stock">gtk-go-up</property>
+				      <property name="icon_size">4</property>
+				      <property name="xalign">0.5</property>
+				      <property name="yalign">0.5</property>
+				      <property name="xpad">0</property>
+				      <property name="ypad">0</property>
+				    </widget>
+				  </child>
+				</widget>
+				<packing>
+				  <property name="padding">0</property>
+				  <property name="expand">False</property>
+				  <property name="fill">False</property>
+				</packing>
+			      </child>
+
+			      <child>
+				<widget class="GtkButton" id="button_registerdown">
+				  <property name="visible">True</property>
+				  <property name="sensitive">False</property>
+				  <property name="tooltip" translatable="yes">Move selected register down</property>
+				  <property name="can_focus">True</property>
+				  <property name="relief">GTK_RELIEF_NORMAL</property>
+				  <property name="focus_on_click">True</property>
+				  <signal name="clicked" handler="on_button_registerdown_clicked" last_modification_time="Fri, 07 Apr 2006 08:17:55 GMT"/>
+
+				  <child>
+				    <widget class="GtkImage" id="image1424">
+				      <property name="visible">True</property>
+				      <property name="stock">gtk-go-down</property>
+				      <property name="icon_size">4</property>
+				      <property name="xalign">0.5</property>
+				      <property name="yalign">0.5</property>
+				      <property name="xpad">0</property>
+				      <property name="ypad">0</property>
+				    </widget>
+				  </child>
+				</widget>
+				<packing>
+				  <property name="padding">0</property>
+				  <property name="expand">False</property>
+				  <property name="fill">False</property>
+				</packing>
+			      </child>
+
+			      <child>
+				<widget class="GtkButton" id="button_editregister">
+				  <property name="visible">True</property>
+				  <property name="sensitive">False</property>
+				  <property name="tooltip" translatable="yes">Edit value of selected register</property>
+				  <property name="can_focus">True</property>
+				  <property name="relief">GTK_RELIEF_NORMAL</property>
+				  <property name="focus_on_click">True</property>
+				  <signal name="clicked" handler="on_button_editregister_clicked" last_modification_time="Fri, 07 Apr 2006 08:18:07 GMT"/>
+
+				  <child>
+				    <widget class="GtkImage" id="image1421">
+				      <property name="visible">True</property>
+				      <property name="stock">gtk-edit</property>
+				      <property name="icon_size">4</property>
+				      <property name="xalign">0.5</property>
+				      <property name="yalign">0.5</property>
+				      <property name="xpad">0</property>
+				      <property name="ypad">0</property>
+				    </widget>
+				  </child>
+				</widget>
+				<packing>
+				  <property name="padding">0</property>
+				  <property name="expand">False</property>
+				  <property name="fill">False</property>
+				</packing>
+			      </child>
+
+			      <child>
+				<widget class="GtkButton" id="button_deleteregister">
+				  <property name="visible">True</property>
+				  <property name="sensitive">False</property>
+				  <property name="tooltip" translatable="yes">Delete selected register</property>
+				  <property name="can_focus">True</property>
+				  <property name="relief">GTK_RELIEF_NORMAL</property>
+				  <property name="focus_on_click">True</property>
+				  <signal name="clicked" handler="on_button_deleteregister_clicked" last_modification_time="Fri, 07 Apr 2006 08:18:13 GMT"/>
+
+				  <child>
+				    <widget class="GtkImage" id="image1422">
+				      <property name="visible">True</property>
+				      <property name="stock">gtk-delete</property>
+				      <property name="icon_size">4</property>
+				      <property name="xalign">0.5</property>
+				      <property name="yalign">0.5</property>
+				      <property name="xpad">0</property>
+				      <property name="ypad">0</property>
+				    </widget>
+				  </child>
+				</widget>
+				<packing>
+				  <property name="padding">0</property>
+				  <property name="expand">False</property>
+				  <property name="fill">False</property>
+				</packing>
+			      </child>
+
+			      <child>
+				<widget class="GtkButton" id="button_clearstack">
+				  <property name="visible">True</property>
+				  <property name="sensitive">False</property>
+				  <property name="tooltip" translatable="yes">Clear the RPN stack</property>
+				  <property name="can_focus">True</property>
+				  <property name="relief">GTK_RELIEF_NORMAL</property>
+				  <property name="focus_on_click">True</property>
+				  <signal name="clicked" handler="on_button_clearstack_clicked" last_modification_time="Fri, 07 Apr 2006 08:18:20 GMT"/>
+
+				  <child>
+				    <widget class="GtkImage" id="image1423">
+				      <property name="visible">True</property>
+				      <property name="stock">gtk-clear</property>
+				      <property name="icon_size">4</property>
+				      <property name="xalign">0.5</property>
+				      <property name="yalign">0.5</property>
+				      <property name="xpad">0</property>
+				      <property name="ypad">0</property>
+				    </widget>
+				  </child>
+				</widget>
+				<packing>
+				  <property name="padding">0</property>
+				  <property name="expand">False</property>
+				  <property name="fill">False</property>
+				</packing>
+			      </child>
+			    </widget>
+			  </child>
+			</widget>
+			<packing>
+			  <property name="padding">0</property>
+			  <property name="expand">False</property>
+			  <property name="fill">True</property>
+			</packing>
+		      </child>
+		    </widget>
+		    <packing>
+		      <property name="tab_expand">False</property>
+		      <property name="tab_fill">True</property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkLabel" id="label6">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">label6</property>
 		      <property name="use_underline">False</property>
 		      <property name="use_markup">False</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -3178,7 +3457,7 @@ Other...</property>
       <signal name="activate" handler="on_menu_item_factorize_activate" last_modification_time="Sat, 20 Mar 2004 09:40:15 GMT"/>
     </widget>
   </child>
-  
+
   <child>
     <widget class="GtkMenuItem" id="popup_menu_item_simplify">
       <property name="visible">True</property>
