@@ -91,7 +91,7 @@ void on_tUnitSelector_selection_changed(GtkTreeSelection *treeselection, gpointe
 void on_tUnitSelectorCategories_selection_changed(GtkTreeSelection *treeselection, gpointer user_data);
 
 void execute_expression(bool force = true, bool do_mathoperation = false, MathOperation op = OPERATION_ADD, MathFunction *f = NULL, bool do_stack = false, size_t stack_index = 0);
-void setResult(Prefix *prefix = NULL, bool update_history = true, bool update_parse = false, bool force = false, string transformation = "", size_t stack_index = 0);
+void setResult(Prefix *prefix = NULL, bool update_history = true, bool update_parse = false, bool force = false, string transformation = "", size_t stack_index = 0, bool register_moved = false);
 
 void set_rpn_mode(bool b);
 void calculateRPN(int op);
@@ -213,6 +213,8 @@ void on_preferences_checkbutton_enable_completion_toggled(GtkToggleButton *w, gp
 void on_preferences_checkbutton_fetch_exchange_rates_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_save_defs_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_save_mode_toggled(GtkToggleButton *w, gpointer user_data);
+void on_preferences_checkbutton_rpn_keypad_only_toggled(GtkToggleButton *w, gpointer);
+void on_preferences_checkbutton_dot_as_separator_toggled(GtkToggleButton *w, gpointer);
 void on_preferences_checkbutton_load_defs_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_custom_result_font_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_custom_expression_font_toggled(GtkToggleButton *w, gpointer user_data);

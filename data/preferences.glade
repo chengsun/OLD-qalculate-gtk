@@ -153,6 +153,48 @@
 	      </child>
 
 	      <child>
+		<widget class="GtkCheckButton" id="preferences_checkbutton_rpn_keypad_only">
+		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Use only keypad keys for RPN operations (+-*/^) and use the rest of the keyboard for expression entry</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Use only keypad keys for RPN</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">True</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_preferences_checkbutton_rpn_keypad_only_toggled" last_modification_time="Sat, 08 Apr 2006 14:19:15 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkCheckButton" id="preferences_checkbutton_dot_as_separator">
+		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Allow dots, '.',  to be used as thousands separator instead of as an alternative to decimal sign</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Ignore dots in numbers</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">True</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_preferences_checkbutton_dot_as_separator_toggled" last_modification_time="Sat, 08 Apr 2006 17:19:15 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
 		<widget class="GtkCheckButton" id="preferences_checkbutton_unicode_signs">
 		  <property name="visible">True</property>
 		  <property name="tooltip" translatable="yes">Disable this if you have problems with some fancy characters</property>
@@ -214,7 +256,7 @@
 		  <property name="fill">False</property>
 		</packing>
 	      </child>
-	      
+
 	      <child>
 		<widget class="GtkCheckButton" id="preferences_checkbutton_spell_out_logical_operators">
 		  <property name="visible">True</property>

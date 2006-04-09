@@ -18,6 +18,7 @@
   <signal name="focus_in_event" handler="on_main_window_focus_in_event" last_modification_time="Tue, 20 Jul 2004 00:20:56 GMT"/>
   <signal name="destroy_event" handler="on_gcalc_exit" last_modification_time="Fri, 21 Oct 2005 18:49:25 GMT"/>
   <signal name="delete_event" handler="on_gcalc_exit" last_modification_time="Fri, 21 Oct 2005 18:50:20 GMT"/>
+  <signal name="key_press_event" handler="on_key_press_event" last_modification_time="Fri, 07 Apr 2006 22:44:38 GMT"/>
 
   <child>
     <widget class="GtkVBox" id="top_vbox">
@@ -1805,7 +1806,7 @@
 			  <property name="tooltip" translatable="yes">Calculate expression</property>
 			  <property name="can_focus">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
-			  <property name="focus_on_click">True</property>
+			  <property name="focus_on_click">False</property>
 			  <signal name="clicked" handler="on_button_execute_clicked" last_modification_time="Sat, 22 Oct 2005 10:16:23 GMT"/>
 
 			  <child>
@@ -1833,7 +1834,7 @@
 			  <property name="tooltip" translatable="yes">Store result as a variable</property>
 			  <property name="can_focus">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
-			  <property name="focus_on_click">True</property>
+			  <property name="focus_on_click">False</property>
 			  <signal name="clicked" handler="on_button_store_clicked" last_modification_time="Sat, 22 Oct 2005 10:18:04 GMT"/>
 
 			  <child>
@@ -1861,7 +1862,7 @@
 			  <property name="tooltip" translatable="yes">Convert units in result</property>
 			  <property name="can_focus">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
-			  <property name="focus_on_click">True</property>
+			  <property name="focus_on_click">False</property>
 			  <signal name="clicked" handler="on_button_convert_clicked" last_modification_time="Sat, 22 Oct 2005 10:18:20 GMT"/>
 
 			  <child>
@@ -2084,7 +2085,7 @@
 				  <property name="label" translatable="yes">Exact</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <property name="active">False</property>
 				  <property name="inconsistent">False</property>
 				  <signal name="toggled" handler="on_button_exact_toggled" last_modification_time="Fri, 21 Oct 2005 09:48:24 GMT"/>
@@ -2099,7 +2100,7 @@
 				  <property name="label" translatable="yes">Fraction</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <property name="active">False</property>
 				  <property name="inconsistent">False</property>
 				  <signal name="toggled" handler="on_button_fraction_toggled" last_modification_time="Fri, 21 Oct 2005 09:48:04 GMT"/>
@@ -2198,7 +2199,7 @@ Other...</property>
 				      <property name="label" translatable="yes">cos</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="focus_on_click">True</property>
+				      <property name="focus_on_click">False</property>
 				      <signal name="clicked" handler="on_button_cosine_clicked" last_modification_time="Sun, 10 Aug 2003 21:45:55 GMT"/>
 				    </widget>
 				    <packing>
@@ -2217,7 +2218,7 @@ Other...</property>
 				      <property name="label" translatable="yes">tan</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="focus_on_click">True</property>
+				      <property name="focus_on_click">False</property>
 				      <signal name="clicked" handler="on_button_tan_clicked" last_modification_time="Sun, 10 Aug 2003 21:45:48 GMT"/>
 				    </widget>
 				    <packing>
@@ -2236,7 +2237,7 @@ Other...</property>
 				      <property name="label" translatable="yes">hyp</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="focus_on_click">True</property>
+				      <property name="focus_on_click">False</property>
 				      <property name="active">False</property>
 				      <property name="inconsistent">False</property>
 				      <signal name="toggled" handler="on_button_hyp_toggled" last_modification_time="Sun, 10 Aug 2003 21:45:34 GMT"/>
@@ -2257,7 +2258,7 @@ Other...</property>
 				      <property name="label" translatable="yes">inv</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="focus_on_click">True</property>
+				      <property name="focus_on_click">False</property>
 				      <property name="active">False</property>
 				      <property name="inconsistent">False</property>
 				      <signal name="toggled" handler="on_button_inv_toggled" last_modification_time="Fri, 21 Oct 2005 21:52:36 GMT"/>
@@ -2278,7 +2279,7 @@ Other...</property>
 				      <property name="label" translatable="yes">x!</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="focus_on_click">True</property>
+				      <property name="focus_on_click">False</property>
 				      <signal name="clicked" handler="on_button_factorial_clicked" last_modification_time="Fri, 21 Oct 2005 09:47:59 GMT"/>
 				    </widget>
 				    <packing>
@@ -2297,7 +2298,7 @@ Other...</property>
 				      <property name="label" translatable="yes">sin</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="focus_on_click">True</property>
+				      <property name="focus_on_click">False</property>
 				      <signal name="clicked" handler="on_button_sine_clicked" last_modification_time="Sun, 10 Aug 2003 21:46:02 GMT"/>
 				    </widget>
 				    <packing>
@@ -2316,7 +2317,7 @@ Other...</property>
 				      <property name="label" translatable="yes">x&lt;sup&gt;2&lt;/sup&gt;</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="focus_on_click">True</property>
+				      <property name="focus_on_click">False</property>
 				      <signal name="clicked" handler="on_button_square_clicked" last_modification_time="Mon, 24 Oct 2005 11:15:22 GMT"/>
 				    </widget>
 				    <packing>
@@ -2335,7 +2336,7 @@ Other...</property>
 				      <property name="label" translatable="yes">x&lt;sup&gt;y&lt;/sup&gt;</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="focus_on_click">True</property>
+				      <property name="focus_on_click">False</property>
 				      <signal name="clicked" handler="on_button_xy_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:08 GMT"/>
 				    </widget>
 				    <packing>
@@ -2354,7 +2355,7 @@ Other...</property>
 				      <property name="label" translatable="yes">&lt;i&gt;f(x)&lt;/i&gt;</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="focus_on_click">True</property>
+				      <property name="focus_on_click">False</property>
 				      <signal name="clicked" handler="on_button_functions_clicked" last_modification_time="Mon, 24 Oct 2005 10:31:25 GMT"/>
 				    </widget>
 				    <packing>
@@ -2373,7 +2374,7 @@ Other...</property>
 				      <property name="label" translatable="yes">ln</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="focus_on_click">True</property>
+				      <property name="focus_on_click">False</property>
 				      <signal name="clicked" handler="on_button_ln_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:29 GMT"/>
 				    </widget>
 				    <packing>
@@ -2392,7 +2393,7 @@ Other...</property>
 				      <property name="label" translatable="yes">log</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="focus_on_click">True</property>
+				      <property name="focus_on_click">False</property>
 				      <signal name="clicked" handler="on_button_log_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:22 GMT"/>
 				    </widget>
 				    <packing>
@@ -2411,7 +2412,7 @@ Other...</property>
 				      <property name="label" translatable="yes">sqrt</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="focus_on_click">True</property>
+				      <property name="focus_on_click">False</property>
 				      <signal name="clicked" handler="on_button_sqrt_clicked" last_modification_time="Sun, 10 Aug 2003 22:00:02 GMT"/>
 				    </widget>
 				    <packing>
@@ -2456,7 +2457,7 @@ Other...</property>
 					  <property name="label" translatable="yes">Deg</property>
 					  <property name="use_underline">True</property>
 					  <property name="relief">GTK_RELIEF_NORMAL</property>
-					  <property name="focus_on_click">True</property>
+					  <property name="focus_on_click">False</property>
 					  <property name="active">False</property>
 					  <property name="inconsistent">False</property>
 					  <property name="draw_indicator">True</property>
@@ -2477,7 +2478,7 @@ Other...</property>
 					  <property name="label" translatable="yes">Rad</property>
 					  <property name="use_underline">True</property>
 					  <property name="relief">GTK_RELIEF_NORMAL</property>
-					  <property name="focus_on_click">True</property>
+					  <property name="focus_on_click">False</property>
 					  <property name="active">False</property>
 					  <property name="inconsistent">False</property>
 					  <property name="draw_indicator">True</property>
@@ -2499,7 +2500,7 @@ Other...</property>
 					  <property name="label" translatable="yes">Gra</property>
 					  <property name="use_underline">True</property>
 					  <property name="relief">GTK_RELIEF_NORMAL</property>
-					  <property name="focus_on_click">True</property>
+					  <property name="focus_on_click">False</property>
 					  <property name="active">False</property>
 					  <property name="inconsistent">False</property>
 					  <property name="draw_indicator">True</property>
@@ -2520,7 +2521,7 @@ Other...</property>
 					  <property name="label" translatable="yes">None</property>
 					  <property name="use_underline">True</property>
 					  <property name="relief">GTK_RELIEF_NORMAL</property>
-					  <property name="focus_on_click">True</property>
+					  <property name="focus_on_click">False</property>
 					  <property name="active">False</property>
 					  <property name="inconsistent">False</property>
 					  <property name="draw_indicator">True</property>
@@ -2566,7 +2567,7 @@ Other...</property>
 				  <property name="label" translatable="yes">7</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_seven_clicked" last_modification_time="Sun, 10 Aug 2003 21:58:29 GMT"/>
 				</widget>
 				<packing>
@@ -2584,7 +2585,7 @@ Other...</property>
 				  <property name="label" translatable="yes">4</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_four_clicked" last_modification_time="Sun, 10 Aug 2003 21:58:35 GMT"/>
 				</widget>
 				<packing>
@@ -2602,7 +2603,7 @@ Other...</property>
 				  <property name="label" translatable="yes">1</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_one_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:32 GMT"/>
 				</widget>
 				<packing>
@@ -2620,7 +2621,7 @@ Other...</property>
 				  <property name="label" translatable="yes">8</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_eight_clicked" last_modification_time="Sun, 10 Aug 2003 21:58:17 GMT"/>
 				</widget>
 				<packing>
@@ -2638,7 +2639,7 @@ Other...</property>
 				  <property name="label" translatable="yes">9</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_nine_clicked" last_modification_time="Sun, 10 Aug 2003 21:58:13 GMT"/>
 				</widget>
 				<packing>
@@ -2656,7 +2657,7 @@ Other...</property>
 				  <property name="label" translatable="yes">5</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_five_clicked" last_modification_time="Sun, 10 Aug 2003 21:58:40 GMT"/>
 				</widget>
 				<packing>
@@ -2674,7 +2675,7 @@ Other...</property>
 				  <property name="label" translatable="yes">6</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_six_clicked" last_modification_time="Sun, 10 Aug 2003 21:58:45 GMT"/>
 				</widget>
 				<packing>
@@ -2692,7 +2693,7 @@ Other...</property>
 				  <property name="label" translatable="yes">2</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_two_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:27 GMT"/>
 				</widget>
 				<packing>
@@ -2710,7 +2711,7 @@ Other...</property>
 				  <property name="label" translatable="yes">3</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_three_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:22 GMT"/>
 				</widget>
 				<packing>
@@ -2728,7 +2729,7 @@ Other...</property>
 				  <property name="label" translatable="yes">0</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_zero_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:38 GMT"/>
 				</widget>
 				<packing>
@@ -2747,7 +2748,7 @@ Other...</property>
 				  <property name="label" translatable="yes">.</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_dot_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:45 GMT"/>
 				</widget>
 				<packing>
@@ -2766,7 +2767,7 @@ Other...</property>
 				  <property name="label" translatable="yes">EXP</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_exp_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:51 GMT"/>
 				</widget>
 				<packing>
@@ -2785,7 +2786,7 @@ Other...</property>
 				  <property name="label" translatable="yes">DEL</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_del_clicked" last_modification_time="Sun, 10 Aug 2003 21:46:21 GMT"/>
 				</widget>
 				<packing>
@@ -2804,7 +2805,7 @@ Other...</property>
 				  <property name="label" translatable="yes">AC</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_ac_clicked" last_modification_time="Sun, 10 Aug 2003 21:46:27 GMT"/>
 				</widget>
 				<packing>
@@ -2823,7 +2824,7 @@ Other...</property>
 				  <property name="label" translatable="yes">*</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_times_clicked" last_modification_time="Sun, 10 Aug 2003 21:58:51 GMT"/>
 				</widget>
 				<packing>
@@ -2842,7 +2843,7 @@ Other...</property>
 				  <property name="label" translatable="yes">/</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_divide_clicked" last_modification_time="Sun, 10 Aug 2003 21:58:57 GMT"/>
 				</widget>
 				<packing>
@@ -2861,7 +2862,7 @@ Other...</property>
 				  <property name="label" translatable="yes">+</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_add_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:09 GMT"/>
 				</widget>
 				<packing>
@@ -2880,7 +2881,7 @@ Other...</property>
 				  <property name="label" translatable="yes">-</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_sub_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:03 GMT"/>
 				</widget>
 				<packing>
@@ -2899,7 +2900,7 @@ Other...</property>
 				  <property name="label" translatable="yes">Ans</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_ans_clicked" last_modification_time="Sun, 10 Aug 2003 21:59:56 GMT"/>
 				</widget>
 				<packing>
@@ -2918,7 +2919,7 @@ Other...</property>
 				  <property name="label" translatable="yes">=</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
+				  <property name="focus_on_click">False</property>
 				  <signal name="clicked" handler="on_button_execute_clicked" last_modification_time="Sun, 10 Aug 2003 21:40:33 GMT"/>
 				</widget>
 				<packing>

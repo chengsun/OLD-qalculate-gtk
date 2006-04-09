@@ -1,10 +1,19 @@
-2006-04-02 Niklas Knutsson  <nq@altern.org>
+2006-04-08 Niklas Knutsson  <nq@altern.org>
 
-	* Documentation updates
+	* Improve RPN mode
+	* "Use only keypad keys for RPN operations" option
+	* Redirect all unused input to expression entry
+	* Avoid focus flicker
+	* Localize expressions in unit manager
+	* Options to use dot as thousands separator when it is not the default decimal sign
 
 2006-04-07 Niklas Knutsson  <nq@altern.org>
 
 	* True RPN mode
+
+2006-04-02 Niklas Knutsson  <nq@altern.org>
+
+	* Documentation updates
 
 2006-03-29 Niklas Knutsson  <nq@altern.org>
 

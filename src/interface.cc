@@ -103,7 +103,7 @@ extern string status_error_color, status_warning_color;
 extern PrintOptions printops;
 extern EvaluationOptions evalops;
 
-extern bool rpn_mode;
+extern bool rpn_mode, rpn_keypad_only;
 
 extern vector<vector<GtkWidget*> > element_entries;
 
@@ -910,6 +910,9 @@ get_preferences_dialog (void)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_lower_case_e")), printops.lower_case_e);	
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_spell_out_logical_operators")), printops.spell_out_logical_operators);	
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_save_defs")), save_defs_on_exit);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_rpn_keypad_only")), rpn_keypad_only);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_dot_as_separator")), evalops.parse_options.dot_as_separator);
+		if(CALCULATOR->getDecimalPoint() == ".") gtk_widget_hide(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_dot_as_separator"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_custom_result_font")), use_custom_result_font);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_custom_expression_font")), use_custom_expression_font);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_custom_status_font")), use_custom_status_font);
