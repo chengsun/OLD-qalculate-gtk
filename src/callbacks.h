@@ -18,7 +18,7 @@
 							gtk_tree_view_expand_to_path(GTK_TREE_VIEW(view), path); \
 							gtk_tree_path_free(path);
 #define EXPAND_ITER(model, view, iter)			GtkTreePath *path = gtk_tree_model_get_path(model, &iter); \
-							gtk_tree_view_expand_row(GTK_TREE_VIEW(view), path, false); \
+							gtk_tree_view_expand_row(GTK_TREE_VIEW(view), path, FALSE); \
 							gtk_tree_path_free(path);							
 
 #include "main.h"
@@ -171,6 +171,7 @@ void edit_argument(Argument *arg = NULL);
 void edit_unknown(const char *category = "", Variable *v = NULL, GtkWidget *win = NULL);
 void edit_variable(const char *category = "", Variable *v = NULL, MathStructure *mstruct_ = NULL, GtkWidget *win = NULL);
 void edit_matrix(const char *category = "", Variable *v = NULL, MathStructure *mstruct_ = NULL, GtkWidget *win = NULL, gboolean create_vector = FALSE);
+void insert_matrix(const MathStructure *initial_value = NULL, GtkWidget *win = NULL, gboolean create_vector = FALSE, bool is_text_struct = false, bool is_result = false);
 void import_csv_file(GtkWidget *win = NULL);
 void export_csv_file(KnownVariable *v = NULL, GtkWidget *win = NULL);
 
@@ -292,6 +293,8 @@ void on_menu_item_export_csv_file_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_convert_to_unit_expression_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_convert_to_base_units_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_convert_to_best_unit_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_insert_matrix_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_insert_vector_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_enable_variables_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_enable_functions_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_enable_units_activate(GtkMenuItem *w, gpointer user_data);
@@ -382,6 +385,8 @@ void on_popup_menu_item_custom_base_activate(GtkMenuItem *w, gpointer user_data)
 void on_popup_menu_item_abbreviate_names_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_all_prefixes_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_denominator_prefixes_activate(GtkMenuItem *w, gpointer user_data);
+void on_popup_menu_item_view_matrix_activate(GtkMenuItem *w, gpointer user_data);
+void on_popup_menu_item_view_vector_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer user_data);
@@ -496,6 +501,12 @@ void on_matrix_edit_spinbutton_rows_value_changed(GtkSpinButton *w, gpointer use
 
 void on_matrix_edit_radiobutton_matrix_toggled(GtkToggleButton *w, gpointer user_data);
 void on_matrix_edit_radiobutton_vector_toggled(GtkToggleButton *w, gpointer user_data);
+
+void on_matrix_spinbutton_columns_value_changed(GtkSpinButton *w, gpointer user_data);
+void on_matrix_spinbutton_rows_value_changed(GtkSpinButton *w, gpointer user_data);
+
+void on_matrix_radiobutton_matrix_toggled(GtkToggleButton *w, gpointer user_data);
+void on_matrix_radiobutton_vector_toggled(GtkToggleButton *w, gpointer user_data);
 
 void on_csv_import_radiobutton_matrix_toggled(GtkToggleButton *w, gpointer user_data);
 void on_csv_import_radiobutton_vectors_toggled(GtkToggleButton *w, gpointer user_data);

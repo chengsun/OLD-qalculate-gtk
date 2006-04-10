@@ -59,7 +59,7 @@ GdkPixbuf *icon_pixbuf;
 extern PrintOptions printops;
 
 GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *setbase_glade, *datasetedit_glade, *datasets_glade, *decimals_glade;
-GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *namesedit_glade, *nbases_glade, *plot_glade, *precision_glade;
+GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *matrix_glade, *namesedit_glade, *nbases_glade, *plot_glade, *precision_glade;
 GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
 GladeXML *periodictable_glade;
 
@@ -139,7 +139,7 @@ int main (int argc, char **argv) {
 
 	main_glade = NULL; about_glade = NULL; argumentrules_glade = NULL; 
 	csvimport_glade = NULL; datasetedit_glade = NULL; datasets_glade = NULL; decimals_glade = NULL; functionedit_glade = NULL; 
-	functions_glade = NULL; matrixedit_glade = NULL; namesedit_glade = NULL; nbases_glade = NULL; plot_glade = NULL; 
+	functions_glade = NULL; matrixedit_glade = NULL; matrix_glade = NULL; namesedit_glade = NULL; nbases_glade = NULL; plot_glade = NULL; 
 	precision_glade = NULL; preferences_glade = NULL; unit_glade = NULL; 
 	unitedit_glade = NULL; units_glade = NULL; unknownedit_glade = NULL; variableedit_glade = NULL; 
 	variables_glade = NULL;	csvexport_glade = NULL; setbase_glade = NULL; periodictable_glade = NULL;

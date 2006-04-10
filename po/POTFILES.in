@@ -12,6 +12,7 @@ data/decimals.glade
 data/functionedit.glade
 data/functions.glade
 data/main.glade
+data/matrix.glade
 data/matrixedit.glade
 data/namesedit.glade
 data/nbases.glade

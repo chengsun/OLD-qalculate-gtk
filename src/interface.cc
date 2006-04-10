@@ -32,7 +32,7 @@
 #include <deque>
 
 extern GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *datasetedit_glade, *datasets_glade, *setbase_glade, *decimals_glade;
-extern GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *namesedit_glade, *nbases_glade, *plot_glade, *precision_glade;
+extern GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *matrix_glade, *namesedit_glade, *nbases_glade, *plot_glade, *precision_glade;
 extern GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
 extern GladeXML *periodictable_glade;
 extern vector<mode_struct> modes;
@@ -105,7 +105,7 @@ extern EvaluationOptions evalops;
 
 extern bool rpn_mode, rpn_keypad_only;
 
-extern vector<vector<GtkWidget*> > element_entries;
+extern vector<vector<GtkWidget*> > element_entries, insert_element_entries;
 
 GtkTooltips *periodic_tooltips, *main_tooltips;
 
@@ -461,18 +461,18 @@ void create_main_window (void) {
 	expander_keypad = glade_xml_get_widget(main_glade, "expander_keypad");
 	expander_history = glade_xml_get_widget(main_glade, "expander_history");
 	expander_stack = glade_xml_get_widget(main_glade, "expander_stack");
-	gtk_expander_set_expanded(GTK_EXPANDER(expander_keypad), show_buttons);
-	gtk_expander_set_expanded(GTK_EXPANDER(expander_history), show_history);
-	gtk_expander_set_expanded(GTK_EXPANDER(expander_stack), show_stack);
 	tabs = glade_xml_get_widget(main_glade, "tabs");
-	if(show_history) {
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(tabs), 1);
-	} else if(show_stack) {
+	if(show_stack && rpn_mode) {
+		gtk_expander_set_expanded(GTK_EXPANDER(expander_stack), TRUE);
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(tabs), 2);
-	} else {
+		gtk_widget_show(tabs);
+	} else if(show_buttons) {
+		gtk_expander_set_expanded(GTK_EXPANDER(expander_keypad), TRUE);
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(tabs), 0);
-	}
-	if(show_history || show_buttons || show_stack) {
+		gtk_widget_show(tabs);
+	} else if(show_history) {
+		gtk_expander_set_expanded(GTK_EXPANDER(expander_history), TRUE);
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(tabs), 1);
 		gtk_widget_show(tabs);
 	} else {
 		gtk_widget_hide(tabs);
@@ -621,7 +621,7 @@ void create_main_window (void) {
 	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_result_popup_meta_mode_delete"), modes.size() > 2);
 	
 	if(win_width > 0) {
-		if(show_history || show_buttons || show_stack) gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), 1, win_height);
+		if(show_history || show_buttons || (show_stack && rpn_mode)) gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), 1, win_height);
 		else gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), win_width, win_height);
 	}
 
@@ -629,7 +629,7 @@ void create_main_window (void) {
 	
 	set_result_size_request();
 	
-	if(show_history || show_buttons || show_stack) gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), 1, 1);
+	if(show_history || show_buttons || (show_stack && rpn_mode)) gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), 1, 1);
 	else gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), win_width, 1);
 
 #ifndef HAVE_LIBGNOMEUI
@@ -1194,6 +1194,7 @@ get_matrix_edit_dialog (void)
 		if(element_entries.size() == 0) {
 			element_entries.resize(1);
 			element_entries[0].push_back(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_1x1"));
+			gtk_entry_set_alignment(GTK_ENTRY(glade_xml_get_widget (matrixedit_glade, "matrix_edit_entry_1x1")), 1.0);
 		}
 	
 	}
@@ -1218,6 +1219,30 @@ get_matrix_edit_dialog (void)
 
 
 	return glade_xml_get_widget (matrixedit_glade, "matrix_edit_dialog");
+}
+GtkWidget*
+get_matrix_dialog (void)
+{
+	if(!matrix_glade) {
+	
+		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "matrix.glade", NULL);
+		matrix_glade = glade_xml_new(gstr, NULL, NULL);
+		g_assert(matrix_glade != NULL);
+		g_free(gstr);
+	
+		g_assert (glade_xml_get_widget (matrix_glade, "matrix_dialog") != NULL);
+		
+		glade_xml_signal_autoconnect(matrix_glade);
+
+		if(insert_element_entries.size() == 0) {
+			insert_element_entries.resize(1);
+			insert_element_entries[0].push_back(glade_xml_get_widget (matrix_glade, "matrix_entry_1x1"));
+			gtk_entry_set_alignment(GTK_ENTRY(glade_xml_get_widget (matrix_glade, "matrix_entry_1x1")), 1.0);
+		}
+
+	}
+
+	return glade_xml_get_widget (matrix_glade, "matrix_dialog");
 }
 GtkWidget*
 get_dataobject_edit_dialog (void)
