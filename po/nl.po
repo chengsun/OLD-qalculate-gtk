@@ -1,0 +1,3069 @@
+# translation of qalculate-gtk.po to Nederlands
+# translation of qalculate-gtk.po to
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
+# Rinse de Vries <RinseDeVries@home.nl>, 2006.
+# Jaap Woldringh <jjh.woldringh@planet.nl>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: qalculate-gtk\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-03-21 07:58+0100\n"
+"PO-Revision-Date: 2006-03-30 10:23\n"
+"Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
+"Language-Team: Nederlands <kde-i18n-nl@kde.org.>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.10.2\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+
+#: ../data/qalculate-gtk.desktop.in.h:1
+msgid "Powerful and easy to use calculator"
+msgstr "Gemakkelijk te gebruiken rekenmachine met veel mogelijkheden"
+
+#: ../data/qalculate-gtk.desktop.in.h:2 ../data/main.glade.h:145
+msgid "Qalculate!"
+msgstr "Qalculate!"
+
+#: ../data/about.glade.h:1
+msgid ""
+"<span weight=\"bold\" size=\"xx-large\"><span foreground=\"#cc4499\">Q</"
+"span>alculate!</span> (v. 0.9.3)\n"
+"<span size=\"large\">- the queer calculator</span>\n"
+"\n"
+"<i>http://qalculate.sourceforge.net/</i>\n"
+"\n"
+"<i>License:</i> \tGNU General Public Licence\n"
+"<i>Author:</i> \tNiklas Knutsson\n"
+"\t<i>with some past help from</i>\n"
+"\tSven Herzberg\n"
+"\n"
+"Copyright (c) 2003-2004 Niklas Knutsson\n"
+msgstr ""
+"<span weight=\"bold\" size=\"xx-large\"><span foreground=\"#cc4499\">Q</"
+"span>alculate!</span> (v. 0.9.3)\n"
+"<span size=\"large\">- de merkwaardige rekenmachine</span>\n"
+"\n"
+"<i>http://qalculate.sourceforge.net/</i>\n"
+"\n"
+"<i>Licentie:</i> \tGNU General Public Licence\n"
+"<i>Auteur:</i> \tNiklas Knutsson\n"
+"\t<i>met wat vroegere hulp van</i>\n"
+"\tSven Herzberg\n"
+"\n"
+"Copyright (c) 2003-2004 Niklas Knutsson\n"
+
+#: ../data/about.glade.h:13
+msgid "About Qalculate!"
+msgstr "Over Qalculate!"
+
+#: ../data/argumentrules.glade.h:1 ../data/csvexport.glade.h:1
+#: ../data/main.glade.h:3 ../data/matrixedit.glade.h:1
+#: ../data/namesedit.glade.h:1 ../data/nbases.glade.h:1 ../data/plot.glade.h:1
+#: ../data/preferences.glade.h:1 ../data/unitedit.glade.h:2
+#: ../data/units.glade.h:2 ../data/unknownedit.glade.h:1
+msgid "*"
+msgstr "*"
+
+#: ../data/argumentrules.glade.h:2
+msgid "Accept the modification of argument rules"
+msgstr "De wijziging van de regels accepteren met betrekking tot argumenten"
+
+#: ../data/argumentrules.glade.h:3
+msgid "Allow matrix"
+msgstr "Matrix toestaan"
+
+#: ../data/argumentrules.glade.h:4
+msgid "Argument Rules"
+msgstr "Regels met betrekking tot argumenten"
+
+#: ../data/argumentrules.glade.h:5
+msgid "Custom Condition"
+msgstr "Aangepaste conditie"
+
+#: ../data/argumentrules.glade.h:6
+msgid "Do not save modifications"
+msgstr "Wijzigingen niet opslaan"
+
+#: ../data/argumentrules.glade.h:7
+msgid "Enable rules and type test"
+msgstr "Test voor regels en type toestaan"
+
+#: ../data/argumentrules.glade.h:8
+msgid ""
+"Ex. if argument is a matrix that must have equal number of rows and columns: "
+"rows(\\x) = columns(\\x)"
+msgstr ""
+"Vb. indien het argument een matrix is die evenveel rijen als kolommen moet hebben: "
+"rijen(\\x) = kolommen(\\x)"
+
+#: ../data/argumentrules.glade.h:9
+msgid "Forbid zero"
+msgstr "Nul niet toestaan"
+
+#: ../data/argumentrules.glade.h:10 ../data/plot.glade.h:29
+msgid "Max"
+msgstr "Max"
+
+#: ../data/argumentrules.glade.h:11 ../data/plot.glade.h:30
+msgid "Min"
+msgstr "Min"
+
+#: ../data/argumentrules.glade.h:12
+msgid "include equals"
+msgstr "ook is gelijk aan"
+
+#: ../data/csvexport.glade.h:2 ../data/csvimport.glade.h:3
+msgid "Comma"
+msgstr "Komma"
+
+#: ../data/csvexport.glade.h:3
+msgid "Current Result"
+msgstr "Huidig antwoord"
+
+#: ../data/csvexport.glade.h:4 ../data/csvimport.glade.h:5
+msgid "Delimiter"
+msgstr "Scheidingsteken"
+
+#: ../data/csvexport.glade.h:5
+msgid "Export CSV File"
+msgstr "CSV-bestand exporteren"
+
+#: ../data/csvexport.glade.h:6 ../data/csvimport.glade.h:9
+#: ../data/functionedit.glade.h:25
+msgid "File"
+msgstr "Bestand"
+
+#: ../data/csvexport.glade.h:7
+msgid "Matrix/Vector Variable"
+msgstr "Matrix/vector-variabele"
+
+#: ../data/csvexport.glade.h:8 ../data/csvimport.glade.h:23
+#: ../data/nbexpression.glade.h:6
+msgid "Other"
+msgstr "Overig"
+
+#: ../data/csvexport.glade.h:9 ../data/csvimport.glade.h:25
+msgid "Semicolon"
+msgstr "Puntkomma"
+
+#: ../data/csvexport.glade.h:10 ../data/csvimport.glade.h:26
+msgid "Space"
+msgstr "Spatie"
+
+#: ../data/csvexport.glade.h:11 ../data/csvimport.glade.h:27
+msgid "Tabulator"
+msgstr "Tabtoets"
+
+#: ../data/csvimport.glade.h:1 ../data/functionedit.glade.h:10
+#: ../data/functions.glade.h:3 ../data/matrixedit.glade.h:4
+#: ../data/unit.glade.h:1 ../data/unitedit.glade.h:10 ../data/units.glade.h:5
+#: ../data/unknownedit.glade.h:3 ../data/variableedit.glade.h:2
+#: ../data/variables.glade.h:3 ../src/interface.cc:638 ../src/interface.cc:698
+#: ../src/interface.cc:761 ../src/interface.cc:1575
+msgid "Category"
+msgstr "Categorie"
+
+#: ../data/csvimport.glade.h:2
+msgid "Category that the generated variable(s) shall belong to"
+msgstr "Categorie voor de nieuwe varabele(n)"
+
+#: ../data/csvimport.glade.h:4
+msgid "Custom delimiter"
+msgstr "Standaard scheidingsteken"
+
+#: ../data/csvimport.glade.h:6
+msgid "Delimiter used to separate columns in the file"
+msgstr "Scheidingsteken voor de kolommen in het bestand"
+
+#: ../data/csvimport.glade.h:7 ../data/datasetedit.glade.h:11
+#: ../data/functionedit.glade.h:20 ../data/matrixedit.glade.h:8
+#: ../data/unitedit.glade.h:13 ../data/unknownedit.glade.h:5
+#: ../data/variableedit.glade.h:3
+msgid "Descriptive Name"
+msgstr "Beschrijvende naam"
+
+#: ../data/csvimport.glade.h:8
+msgid "Do not import the file"
+msgstr "Bestand niet importeren"
+
+#: ../data/csvimport.glade.h:10
+msgid "First Row"
+msgstr "Eerste rij"
+
+#: ../data/csvimport.glade.h:11
+msgid "If a matrix or vectors shall be generated from the contents of the file"
+msgstr "Of een matrix of vectoren moeten worden aangemaakt van de inhoud van het bestand"
+
+#: ../data/csvimport.glade.h:12
+msgid "If a matrix or vectors shall be generated from the contents of the file "
+msgstr "Of een matrix of vectoren moeten worden aangemaakt van de inhoud van het bestand"
+
+#: ../data/csvimport.glade.h:13
+msgid "If the first row contains column headings"
+msgstr "Of de eerste rij kolomkoppen bevat"
+
+#: ../data/csvimport.glade.h:14
+msgid "Import As"
+msgstr "Importeren als"
+
+#: ../data/csvimport.glade.h:15
+msgid "Import CSV File"
+msgstr "CSV-bestand importeren"
+
+#: ../data/csvimport.glade.h:16
+msgid "Import the file"
+msgstr "Het bestand importeren"
+
+#: ../data/csvimport.glade.h:17
+msgid "Includes headings"
+msgstr "Koppen inbegrepen"
+
+#: ../data/csvimport.glade.h:18 ../data/matrixedit.glade.h:13
+#: ../src/callbacks.cc:7536 ../src/callbacks.cc:10159
+msgid "Matrices"
+msgstr "Matrices"
+
+#: ../data/csvimport.glade.h:19 ../data/functionedit.glade.h:31
+#: ../data/main.glade.h:113 ../data/matrixedit.glade.h:14
+msgid "Matrix"
+msgstr "Matrix"
+
+#: ../data/csvimport.glade.h:20 ../data/datasetedit.glade.h:20
+#: ../data/functionedit.glade.h:34 ../data/matrixedit.glade.h:15
+#: ../data/namesedit.glade.h:5 ../data/unitedit.glade.h:21
+#: ../data/unknownedit.glade.h:9 ../data/variableedit.glade.h:6
+#: ../src/interface.cc:737 ../src/interface.cc:992 ../src/interface.cc:1202
+#: ../src/interface.cc:1256 ../src/interface.cc:1564 ../src/callbacks.cc:8035
+msgid "Name"
+msgstr "Naam"
+
+#: ../data/csvimport.glade.h:21
+msgid "Name (or name prefix) used to reference generated variable(s) in expressions"
+msgstr "Naam (of voorvoegsel voor naam) gebruikt voor aangemaakte variabele(n) in expressies"
+
+#: ../data/csvimport.glade.h:22
+msgid "Name of the data file to import"
+msgstr "Naam van het te importeren gegevensbestand"
+
+#: ../data/csvimport.glade.h:24
+msgid "Select a file"
+msgstr "Selecteer een bestand"
+
+#: ../data/csvimport.glade.h:28
+msgid "The first row with data to import in the file"
+msgstr "De eerste rij gegevens die in het bestand moet worden geïmporteerd"
+
+#: ../data/csvimport.glade.h:29 ../data/matrixedit.glade.h:21
+#: ../data/unknownedit.glade.h:23 ../data/variableedit.glade.h:10
+msgid "Title displayed in menus and in variable manager"
+msgstr "Titel getoond in menu's en in variabelenbeheerder"
+
+#: ../data/csvimport.glade.h:30 ../src/callbacks.cc:7543
+#: ../src/callbacks.cc:10162
+msgid "Vectors"
+msgstr "Vectoren"
+
+#: ../data/datasetedit.glade.h:1
+msgid "Accept the creation/modification of this data set"
+msgstr "Aanmaken/wijziging accepteren van deze gegevensverzameling"
+
+#: ../data/datasetedit.glade.h:2
+msgid "Approximate value"
+msgstr "Benaderde waarde"
+
+#: ../data/datasetedit.glade.h:3
+msgid "Case sensitive value"
+msgstr "Hoofdlettergevoelige waarde"
+
+#: ../data/datasetedit.glade.h:4
+msgid "Copyright"
+msgstr "Copyright"
+
+#: ../data/datasetedit.glade.h:5
+msgid "Data File"
+msgstr "Gegevensbestand"
+
+#: ../data/datasetedit.glade.h:6
+msgid "Default Property"
+msgstr "Standaardeigenschap"
+
+#: ../data/datasetedit.glade.h:7
+msgid "Definition of the properties of this data set"
+msgstr "Definitie van de eigenschappen van deze gegevensverzameling"
+
+#: ../data/datasetedit.glade.h:8 ../data/functionedit.glade.h:18
+#: ../data/functions.glade.h:8
+msgid "Description"
+msgstr "Beschrijving"
+
+#: ../data/datasetedit.glade.h:9
+msgid "Description of this data property"
+msgstr "Beschrijving van deze gegevenseigenschap"
+
+#: ../data/datasetedit.glade.h:10
+msgid "Description of this data set"
+msgstr "Beschrijving van deze gegevensverzameling"
+
+#: ../data/datasetedit.glade.h:12
+msgid "Do not create/modify this data set"
+msgstr "Deze gegevensverzameling niet aanmaken/wijzigen"
+
+#: ../data/datasetedit.glade.h:13
+msgid "Edit"
+msgstr "Bewerken"
+
+#: ../data/datasetedit.glade.h:14
+msgid "Edit Data Property"
+msgstr "Gegevenseigenschap bewerken"
+
+#: ../data/datasetedit.glade.h:15 ../src/callbacks.cc:7120
+msgid "Edit Data Set"
+msgstr "Gegevensverzameling bewerken"
+
+#: ../data/datasetedit.glade.h:16 ../data/functionedit.glade.h:24
+#: ../data/plot.glade.h:20 ../src/interface.cc:1008 ../src/interface.cc:1509
+msgid "Expression"
+msgstr "Expressie"
+
+#: ../data/datasetedit.glade.h:17 ../data/functionedit.glade.h:27
+#: ../data/functions.glade.h:10 ../data/main.glade.h:97
+#: ../data/plot.glade.h:21 ../src/interface.cc:626
+msgid "Function"
+msgstr "Functie"
+
+#: ../data/datasetedit.glade.h:18 ../data/functionedit.glade.h:28
+#: ../data/preferences.glade.h:15
+msgid "General"
+msgstr "Algemeen"
+
+#: ../data/datasetedit.glade.h:19
+msgid "Hide"
+msgstr "Verbergen"
+
+#: ../data/datasetedit.glade.h:21
+msgid "Name used for reference"
+msgstr "Naam voor referentie"
+
+#: ../data/datasetedit.glade.h:22
+msgid "Name used to invoke the function in expressions"
+msgstr "Naam voor functie in expressies"
+
+#: ../data/datasetedit.glade.h:23 ../data/functionedit.glade.h:36
+#: ../data/matrixedit.glade.h:17 ../data/unitedit.glade.h:22
+#: ../data/unknownedit.glade.h:11 ../data/variableedit.glade.h:8
+msgid "Names Details"
+msgstr "Namen van onderdelen"
+
+#: ../data/datasetedit.glade.h:24 ../data/functionedit.glade.h:41
+#: ../data/main.glade.h:130 ../data/unknownedit.glade.h:17
+msgid "Number"
+msgstr "Getal"
+
+#: ../data/datasetedit.glade.h:25
+msgid "Object Argument Name"
+msgstr "Naam objectargument"
+
+#: ../data/datasetedit.glade.h:26 ../src/callbacks.cc:1443
+#: ../src/callbacks.cc:2212
+msgid "Properties"
+msgstr "Eigenschappen"
+
+#: ../data/datasetedit.glade.h:27
+msgid "Properties:"
+msgstr "Eigenschappen:"
+
+#: ../data/datasetedit.glade.h:28
+msgid "Property Argument Name"
+msgstr "Naam eigenschapsargument"
+
+#: ../data/datasetedit.glade.h:29 ../data/functionedit.glade.h:51
+msgid "Text"
+msgstr "Tekst"
+
+#: ../data/datasetedit.glade.h:30 ../data/plot.glade.h:49
+#: ../src/interface.cc:1199 ../src/interface.cc:1506
+msgid "Title"
+msgstr "Titel"
+
+#: ../data/datasetedit.glade.h:31
+msgid "Title displayed in menus and in data set manager"
+msgstr "Titel getoond in menu's en in beheerder voor gegevensverzamelingen"
+
+#: ../data/datasetedit.glade.h:32
+msgid "Unit Expression"
+msgstr "Eenheidexpressie"
+
+#: ../data/datasetedit.glade.h:33
+msgid "Use as key"
+msgstr "Gebruiken als toets"
+
+#: ../data/datasetedit.glade.h:34
+msgid "Value Type"
+msgstr "Waardetype"
+
+#: ../data/datasetedit.glade.h:35
+msgid "Value uses brackets"
+msgstr "Waarde met vierkante haakjes"
+
+#: ../data/datasets.glade.h:1
+msgid "Accept the creation/modification of this data object"
+msgstr "Aanmaken/wijzigen accepteren van dit gegevensobject"
+
+#: ../data/datasets.glade.h:2 ../data/decimals.glade.h:1
+#: ../data/functions.glade.h:4 ../data/nbases.glade.h:4
+#: ../data/plot.glade.h:13 ../data/precision.glade.h:1
+#: ../data/preferences.glade.h:5 ../data/unit.glade.h:2
+#: ../data/units.glade.h:6 ../data/variables.glade.h:4
+msgid "Close this window"
+msgstr "Dit venster sluiten"
+
+#: ../data/datasets.glade.h:3 ../data/main.glade.h:63 ../src/interface.cc:825
+msgid "Data Set"
+msgstr "Gegevensverzameling"
+
+#: ../data/datasets.glade.h:4
+msgid "Data Set Description"
+msgstr "Beschrijving gegevensverzameling"
+
+#. new dataset
+#: ../data/datasets.glade.h:5 ../src/callbacks.cc:7210
+msgid "Data Sets"
+msgstr "Gegevensverzamelingen"
+
+#: ../data/datasets.glade.h:6
+msgid "Do not create/modify this data object"
+msgstr "Dit gegevensobject niet aanmaken/wijzigen"
+
+#: ../data/datasets.glade.h:7 ../src/callbacks.cc:6853
+msgid "Edit Data Object"
+msgstr "Gegevensobject bewerken"
+
+#: ../data/datasets.glade.h:8
+msgid "Object Attributes"
+msgstr "Objectattributen"
+
+#: ../data/datasets.glade.h:9
+msgid "Objects"
+msgstr "Objecten"
+
+#: ../data/decimals.glade.h:2
+msgid "Decimals"
+msgstr "Decimalen"
+
+#: ../data/decimals.glade.h:3
+msgid "Max Decimals"
+msgstr "Max decimalen"
+
+#: ../data/decimals.glade.h:4
+msgid "Maximal number of decimals to display (and round to)"
+msgstr "Maximum aantal te tonen decimalen (en voor afronden)"
+
+#: ../data/decimals.glade.h:5
+msgid "Min Decimals"
+msgstr "Min decimalen"
+
+#: ../data/decimals.glade.h:6
+msgid "Minimal number of displayed decimals"
+msgstr "Minimum aantal te tonen decimalen"
+
+#: ../data/functionedit.glade.h:1
+msgid "Accept the creation/modification of this function"
+msgstr "Aanmaken/wijzigen accepteren van deze functie"
+
+#: ../data/functionedit.glade.h:2
+msgid "Add entered argument definition"
+msgstr "Ingevoerde argumentdefinitie toevoegen"
+
+#: ../data/functionedit.glade.h:3
+msgid "Add entered subfunction"
+msgstr "Ingevoerde subfunctie toevoegen"
+
+#: ../data/functionedit.glade.h:4
+msgid "Angle"
+msgstr "Hoek"
+
+#: ../data/functionedit.glade.h:5
+msgid "Argument name"
+msgstr "Naam van argument"
+
+#: ../data/functionedit.glade.h:6
+msgid "Argument type"
+msgstr "Type van argument"
+
+#: ../data/functionedit.glade.h:7
+msgid "Arguments:"
+msgstr "Argumenten:"
+
+#: ../data/functionedit.glade.h:8
+msgid "Boolean"
+msgstr "Booleaans"
+
+#: ../data/functionedit.glade.h:9
+msgid "Calculate the subfunction only once, before the parent function"
+msgstr "Bereken de subfunctie slechts een keer, nog voor de functie waarin die wordt gebruikt"
+
+#: ../data/functionedit.glade.h:11
+msgid "Close this dialog"
+msgstr "Dit dialoog sluiten"
+
+#: ../data/functionedit.glade.h:12
+msgid "Condition"
+msgstr "Conditie"
+
+#: ../data/functionedit.glade.h:13
+msgid ""
+"Condition that must be true for the function. Ex. if the second argument "
+"must be greater than the first: \"\\y > \\x\""
+msgstr ""
+"Conditie die waar moet zijn voor de functie. Bv. indien het tweede argument groter "
+"moet zijn dan het eerste: \"\\y > \\x\""
+
+#: ../data/functionedit.glade.h:14
+msgid "Data Object"
+msgstr "Gegevensobject"
+
+#: ../data/functionedit.glade.h:15
+msgid "Data Property"
+msgstr "Gegevenseigenschap"
+
+#: ../data/functionedit.glade.h:16
+msgid "Date"
+msgstr "Datum"
+
+#: ../data/functionedit.glade.h:17
+msgid "Definition of this function's arguments"
+msgstr "Definitie van de argumenten voor deze functie"
+
+#: ../data/functionedit.glade.h:19
+msgid "Description of this function"
+msgstr "Beschrijving van deze functie"
+
+#: ../data/functionedit.glade.h:21
+msgid "Do not create/modify this function"
+msgstr "Deze functie niet aanmaken/wijzigen"
+
+#: ../data/functionedit.glade.h:22 ../src/callbacks.cc:6045
+msgid "Edit Function"
+msgstr "Functie bewerken"
+
+#: ../data/functionedit.glade.h:23
+msgid "Edit conditions for selected argument"
+msgstr "Condities bewerken voor geselecteerd argument"
+
+#: ../data/functionedit.glade.h:26
+msgid "Free"
+msgstr "Vrij"
+
+#: ../data/functionedit.glade.h:29
+msgid "If this function shall be hidden in menus"
+msgstr "Of deze functie in de menu's verborgen moet zijn"
+
+#: ../data/functionedit.glade.h:30 ../data/main.glade.h:106
+#: ../data/unknownedit.glade.h:8
+msgid "Integer"
+msgstr "Geheel"
+
+#: ../data/functionedit.glade.h:32
+msgid "Modify selected argument"
+msgstr "Geselecteerd argument wijzigen"
+
+#: ../data/functionedit.glade.h:33
+msgid "Modify selected subfunction"
+msgstr "Geselecteerde subfunctie wijzigen"
+
+#: ../data/functionedit.glade.h:35
+msgid "Name used to invoke this function in expressions"
+msgstr "Naam voor deze functie in expressies"
+
+#: ../data/functionedit.glade.h:37
+msgid "Non-negative integer"
+msgstr "Niet-negatief geheel getal"
+
+#: ../data/functionedit.glade.h:38
+msgid "Non-negative number"
+msgstr "Niet negatief getal"
+
+#: ../data/functionedit.glade.h:39
+msgid "Non-zero integer"
+msgstr "Geheel getal ongelijk aan nul"
+
+#: ../data/functionedit.glade.h:40
+msgid "Non-zero number"
+msgstr "Getal ongelijk aan nul"
+
+#: ../data/functionedit.glade.h:42 ../src/callbacks.cc:7217
+msgid "Object"
+msgstr "Object"
+
+#: ../data/functionedit.glade.h:43
+msgid "Positive integer"
+msgstr "Positief geheel getal"
+
+#: ../data/functionedit.glade.h:44
+msgid "Positive number"
+msgstr "Positief getal"
+
+#: ../data/functionedit.glade.h:45 ../src/interface.cc:1011
+msgid "Precalculate"
+msgstr "Voorberekenen"
+
+#: ../data/functionedit.glade.h:46
+msgid "Remove selected argument"
+msgstr "Geselecteerd argument verwijderen"
+
+#: ../data/functionedit.glade.h:47
+msgid "Remove selected subfunction"
+msgstr "Geselecteerde subfunctie verwijderen"
+
+#: ../data/functionedit.glade.h:48
+msgid "Rules"
+msgstr "Regels"
+
+#: ../data/functionedit.glade.h:49
+msgid "Sub-Functions"
+msgstr "Subfuncties"
+
+#: ../data/functionedit.glade.h:50
+msgid "Symbol"
+msgstr "Symbool"
+
+#: ../data/functionedit.glade.h:52
+msgid "The category this function belongs to"
+msgstr "De categorie waartoe deze functie behoort"
+
+#: ../data/functionedit.glade.h:53
+msgid "Title displayed in menus and in function manager"
+msgstr "Titel getoond in menu's en in functiebeheerder"
+
+#: ../data/functionedit.glade.h:54 ../data/main.glade.h:184
+#: ../data/unit.glade.h:7 ../data/units.glade.h:16 ../src/interface.cc:741
+#: ../src/interface.cc:745
+msgid "Unit"
+msgstr "Eenheid"
+
+#: ../data/functionedit.glade.h:55 ../data/main.glade.h:191
+#: ../data/variables.glade.h:11 ../src/interface.cc:679
+msgid "Variable"
+msgstr "Variabele"
+
+#: ../data/functionedit.glade.h:56 ../data/main.glade.h:193
+#: ../data/matrixedit.glade.h:22
+msgid "Vector"
+msgstr "Vector"
+
+#: ../data/functionedit.glade.h:57
+msgid "a function, unit or variable"
+msgstr "een functie, eenheid of variabele"
+
+#: ../data/functionedit.glade.h:58
+msgid "hide function"
+msgstr "functie verbergen"
+
+#: ../data/functions.glade.h:1
+msgid "(De)activate the selected function"
+msgstr "De geselecteerde functie (de)activeren"
+
+#: ../data/functions.glade.h:2 ../data/units.glade.h:4
+#: ../data/variables.glade.h:2
+msgid "Action"
+msgstr "Actie"
+
+#: ../data/functions.glade.h:5
+msgid "Create a new function"
+msgstr "Maak een nieuwe functie aan"
+
+#: ../data/functions.glade.h:6 ../data/units.glade.h:12
+#: ../data/variables.glade.h:6 ../src/callbacks.cc:1480
+#: ../src/callbacks.cc:1713 ../src/callbacks.cc:1971
+msgid "Deactivate"
+msgstr "Uitschakelen"
+
+#: ../data/functions.glade.h:7
+msgid "Delete the selected function"
+msgstr "De geselecteerde functie wissen"
+
+#: ../data/functions.glade.h:9
+msgid "Edit the selected function"
+msgstr "De geselecteerde functie bewerken"
+
+#: ../data/functions.glade.h:11 ../data/main.glade.h:98
+msgid "Functions"
+msgstr "Functies"
+
+#: ../data/functions.glade.h:12
+msgid "Insert (or execute) the selected function into the expression entry"
+msgstr "De geselecteerde functie invoegen (of uitvoeren) bij het invoeren van de expressie"
+
+#: ../data/functions.glade.h:13 ../data/main.glade.h:204
+#: ../data/units.glade.h:21 ../data/variables.glade.h:13
+msgid "_Edit"
+msgstr "B_ewerken"
+
+#: ../data/functions.glade.h:14 ../data/units.glade.h:22
+#: ../data/variables.glade.h:14
+msgid "_Insert"
+msgstr "_Invoegen"
+
+#: ../data/main.glade.h:1
+msgid "(De)activate limits to implicit multiplication"
+msgstr "Beperkingen (de)activeren voor impliciete vermenigvuldiging"
+
+#: ../data/main.glade.h:2
+msgid "(De)activate use of Reverse Polish Notation syntax in expressions"
+msgstr "Expressies in RPN (omgekeerde Poolse notatie) (de)activeren"
+
+#: ../data/main.glade.h:4
+msgid "+"
+msgstr "+"
+
+#: ../data/main.glade.h:5
+msgid "-"
+msgstr "-"
+
+#: ../data/main.glade.h:6 ../data/preferences.glade.h:2
+msgid "."
+msgstr "."
+
+#: ../data/main.glade.h:7 ../data/preferences.glade.h:3
+msgid "/"
+msgstr "/"
+
+#: ../data/main.glade.h:8 ../data/matrixedit.glade.h:2 ../data/plot.glade.h:2
+msgid "0"
+msgstr "0"
+
+#: ../data/main.glade.h:9 ../data/plot.glade.h:3
+msgid "1"
+msgstr "1"
+
+#: ../data/main.glade.h:10
+msgid "10^x"
+msgstr "10^x"
+
+#: ../data/main.glade.h:11
+msgid "2"
+msgstr "2"
+
+#: ../data/main.glade.h:12
+msgid "3"
+msgstr "3"
+
+#: ../data/main.glade.h:13
+msgid "4"
+msgstr "4"
+
+#: ../data/main.glade.h:14
+msgid "5"
+msgstr "5"
+
+#: ../data/main.glade.h:15
+msgid "6"
+msgstr "6"
+
+#: ../data/main.glade.h:16
+msgid "7"
+msgstr "7"
+
+#: ../data/main.glade.h:17
+msgid "8"
+msgstr "8"
+
+#: ../data/main.glade.h:18
+msgid "9"
+msgstr "9"
+
+#: ../data/main.glade.h:19
+msgid "<i>f(x)</i>"
+msgstr "<i>f(x)</i>"
+
+#: ../data/main.glade.h:20
+msgid "<span size=\"small\"> </span>"
+msgstr "<span size=\"small\"> </span>"
+
+#: ../data/main.glade.h:21
+msgid "<span size=\"small\">STATUS</span>"
+msgstr "<span size=\"small\">STATUS</span>"
+
+#: ../data/main.glade.h:22 ../data/units.glade.h:3
+msgid "="
+msgstr "="
+
+#: ../data/main.glade.h:23
+msgid "AC"
+msgstr "AC"
+
+#: ../data/main.glade.h:24
+msgid "Abbreviate Names"
+msgstr "Namen afkorten"
+
+#: ../data/main.glade.h:25
+msgid "Abort operation"
+msgstr "Bewerking afbreken"
+
+#: ../data/main.glade.h:26
+msgid "Add"
+msgstr "Optellen"
+
+#: ../data/main.glade.h:27
+msgid "Algebraic Mode"
+msgstr "Algebraïsche modus"
+
+#: ../data/main.glade.h:28
+msgid "Allow Complex Result"
+msgstr "Complexe antwoorden toestaan"
+
+#: ../data/main.glade.h:29
+msgid "Allow Infinite Result"
+msgstr "Oneindige antwoorden toestaan"
+
+#: ../data/main.glade.h:30
+msgid "Always Exact"
+msgstr "Altijd exact"
+
+#: ../data/main.glade.h:31
+msgid "Angle Unit"
+msgstr "Hoekeenheid"
+
+#: ../data/main.glade.h:32
+msgid "Ans"
+msgstr "Antw"
+
+#: ../data/main.glade.h:33
+msgid "Approximate"
+msgstr "Benaderd"
+
+#: ../data/main.glade.h:34
+msgid "Approximation"
+msgstr "Benadering"
+
+#: ../data/main.glade.h:35
+msgid "Assume that unknown denominators are non-zero"
+msgstr "Onbekende noemers ongelijk aan nul aannemen"
+
+#: ../data/main.glade.h:36
+msgid "Assumptions"
+msgstr "Aannames"
+
+#: ../data/main.glade.h:37
+msgid "Base-10 logarithm"
+msgstr "Logaritme met grondtal 10"
+
+#: ../data/main.glade.h:38 ../data/nbases.glade.h:2
+#: ../data/nbexpression.glade.h:1
+msgid "Binary"
+msgstr "Binair"
+
+#: ../data/main.glade.h:39
+msgid ""
+"Binary\n"
+"Octal\n"
+"Decimal\n"
+"Hexadecimal\n"
+"Sexagesimal\n"
+"Time Format\n"
+"Roman\n"
+"Other..."
+msgstr ""
+"Binair\n"
+"Octaal\n"
+"Decimaal\n"
+"Hexadecimaal\n"
+"Sexagesimaal\n"
+"Tijdnotatie\n"
+"Romeins\n"
+"Overig..."
+
+#: ../data/main.glade.h:47
+msgid "C_onvert..."
+msgstr "C_onverteren..."
+
+#: ../data/main.glade.h:48
+msgid "Calculate Variables"
+msgstr "Variabelen berekenen"
+
+#: ../data/main.glade.h:49
+msgid "Calculate expression"
+msgstr "Expressie berekenen"
+
+#: ../data/main.glade.h:50
+msgid "Clear"
+msgstr "Leegmaken"
+
+#: ../data/main.glade.h:51
+msgid "Combined"
+msgstr "Gecombineerd"
+
+#: ../data/main.glade.h:52
+msgid "Complex"
+msgstr "Complex"
+
+#: ../data/main.glade.h:53
+msgid "Convert Number Bases"
+msgstr "Getallen converteren naar ander grondtal"
+
+#: ../data/main.glade.h:54
+msgid "Convert To Base Units"
+msgstr "Converteren naar basiseenheden"
+
+#: ../data/main.glade.h:55
+msgid "Convert To Base _Units"
+msgstr "Converteren naar basis_eenheden"
+
+#: ../data/main.glade.h:56
+msgid "Convert To Best Unit"
+msgstr "Converteren naar meest geschikte eenheid"
+
+#: ../data/main.glade.h:57
+msgid "Convert To Unit"
+msgstr "Converteren naar eenheid"
+
+#: ../data/main.glade.h:58
+msgid "Convert To Unit Expression..."
+msgstr "Converteren naar eenheidexpressie..."
+
+#: ../data/main.glade.h:59
+msgid "Convert _To Best Unit"
+msgstr "Converteren _naar meest geschikte eenheid"
+
+#: ../data/main.glade.h:60
+msgid "Convert units in result"
+msgstr "Eenheden in het antwoord converteren"
+
+#: ../data/main.glade.h:61
+msgid "Cosine"
+msgstr "Cosinus"
+
+#: ../data/main.glade.h:62
+msgid "DEL"
+msgstr "DEL"
+
+#: ../data/main.glade.h:64 ../data/nbases.glade.h:5
+#: ../data/nbexpression.glade.h:2
+msgid "Decimal"
+msgstr "Decimaal"
+
+#: ../data/main.glade.h:65
+msgid "Decimal (Try Exact)"
+msgstr "Decimaal (Exact proberen)"
+
+#: ../data/main.glade.h:66
+msgid "Decimal Point"
+msgstr "Decimale komma"
+
+#: ../data/main.glade.h:67
+msgid "Deg"
+msgstr "Deg"
+
+#: ../data/main.glade.h:68
+msgid "Degrees"
+msgstr "Graden (90 graden in rechte hoek)"
+
+#: ../data/main.glade.h:69
+msgid "Delete"
+msgstr "Wissen"
+
+#: ../data/main.glade.h:70 ../src/callbacks.cc:7920
+msgid "Delete Mode..."
+msgstr "Modus wissen..."
+
+#: ../data/main.glade.h:71
+msgid "Disables/enables complex numbers in result"
+msgstr "Complexe antwoorden wel/niet toestaan"
+
+#: ../data/main.glade.h:72
+msgid "Disables/enables infinite numbers in result"
+msgstr "Oneindige antwoorden wel/niet toestaan"
+
+#: ../data/main.glade.h:73
+msgid "Divide"
+msgstr "Delen"
+
+#: ../data/main.glade.h:74
+msgid "EXP"
+msgstr "EXP"
+
+#: ../data/main.glade.h:75
+msgid "Enable All SI Prefi_xes"
+msgstr "Alle _SI-voorvoegsels toestaan"
+
+#: ../data/main.glade.h:76
+msgid "Enable All SI Prefixes"
+msgstr "Alle SI-voorvoegsels toestaan"
+
+#: ../data/main.glade.h:77
+msgid "Enable Denominator Prefixes"
+msgstr "Voorvoegsel voor noemer toestaan"
+
+#: ../data/main.glade.h:78
+msgid "Enable Prefixes"
+msgstr "Voorvoegsels toestaan"
+
+#: ../data/main.glade.h:79
+msgid "Enable _Prefixes"
+msgstr "_Voorvoegsels toestaan"
+
+#: ../data/main.glade.h:80
+msgid "Enabled Objects"
+msgstr "Ingeschakelde objecten"
+
+#: ../data/main.glade.h:81
+msgid ""
+"Enables automatic setting of prefix for denominator in addition to the "
+"numerator"
+msgstr ""
+"Hiermee is het automatisch instellen van een voorvoegsel mogelijk voor de noemer naast "
+"dat voor de teller"
+
+#: ../data/main.glade.h:82
+msgid "Enables automatic use of hekto, deka, deci and centi when prefixes is enabled"
+msgstr "Automatisch gebruik van hecto, deca, deci en centi is mogelijk wanneer voorvoegsels zijn toegestaan"
+
+#: ../data/main.glade.h:83
+msgid "Enables separate placement of units"
+msgstr "Afzonderlijk plaatsen van eenheden wordt toegestaan"
+
+#: ../data/main.glade.h:84
+msgid "Enter expression here"
+msgstr "Expressie hier invoeren"
+
+#: ../data/main.glade.h:85
+msgid "Exact"
+msgstr "Exact"
+
+#: ../data/main.glade.h:86
+msgid "Export CSV File..."
+msgstr "CSV-bestand exporteren..."
+
+#: ../data/main.glade.h:87
+msgid "Factorial"
+msgstr "Faculteit"
+
+#: ../data/main.glade.h:88
+msgid "Factorize"
+msgstr "Ontbinden in factoren"
+
+#: ../data/main.glade.h:89
+msgid "Fetch current exchange rates from the Internet"
+msgstr "Haal huidige wisselkoersen op van het internet"
+
+#: ../data/main.glade.h:90
+msgid "Fraction"
+msgstr "Breuk"
+
+#: ../data/main.glade.h:91
+msgid "Fraction Co_mbined"
+msgstr "Breuk geco_mbineerd"
+
+#: ../data/main.glade.h:92
+msgid "Fraction D_ecimal"
+msgstr "D_ecimale breuk"
+
+#: ../data/main.glade.h:93
+msgid "Fraction Decimal (Try Exact)"
+msgstr "Decimale breuk (Exact proberen)"
+
+#: ../data/main.glade.h:94
+msgid "Fraction F_ractional"
+msgstr "F_ractionele breuk"
+
+#: ../data/main.glade.h:95
+msgid "Fractional Display"
+msgstr "Tonen breuk"
+
+#: ../data/main.glade.h:96
+msgid "Fu_nctions"
+msgstr "F_uncties"
+
+#: ../data/main.glade.h:99
+msgid "Gra"
+msgstr "Gra"
+
+#: ../data/main.glade.h:100
+msgid "Gradians"
+msgstr "Grads (100 grads in rechte hoek)"
+
+#: ../data/main.glade.h:101 ../data/nbases.glade.h:7
+#: ../data/nbexpression.glade.h:3
+msgid "Hexadecimal"
+msgstr "Hexadecimaal"
+
+#: ../data/main.glade.h:102
+msgid "History"
+msgstr "Geschiedenis"
+
+#: ../data/main.glade.h:103
+msgid "If not enabled, treats all variables as unknown"
+msgstr "Indien niet ingeschakeld worden alle variabelen als onbekenden beschouwd"
+
+#: ../data/main.glade.h:104
+msgid "Import CSV File..."
+msgstr "CSV-bestand importeren..."
+
+#: ../data/main.glade.h:105
+msgid "Indicate Infinite Series"
+msgstr "Oneindige reeksen aangeven"
+
+#: ../data/main.glade.h:107
+msgid "Keypad"
+msgstr "Toetsenbord"
+
+#: ../data/main.glade.h:108 ../src/callbacks.cc:7908
+msgid "Limit Implicit Multiplication"
+msgstr "Impliciet vermenigvuldigen beperken"
+
+#: ../data/main.glade.h:109
+msgid "Manage Data Sets"
+msgstr "Gegevensverzamelingen beheren"
+
+#: ../data/main.glade.h:110
+msgid "Manage Functions"
+msgstr "Functies beheren"
+
+#: ../data/main.glade.h:111
+msgid "Manage Units"
+msgstr "Eenheden beheren"
+
+#: ../data/main.glade.h:112
+msgid "Manage Variables"
+msgstr "Variabelen beheren"
+
+#: ../data/main.glade.h:114 ../src/callbacks.cc:7911
+msgid "Meta Modes"
+msgstr "Metamodes"
+
+#: ../data/main.glade.h:115
+msgid "Multiply"
+msgstr "Vermenigvuldigen"
+
+#: ../data/main.glade.h:116
+msgid "Natural logarithm"
+msgstr "Natuurlijke logaritme"
+
+#: ../data/main.glade.h:117 ../data/unknownedit.glade.h:12
+msgid "Negative"
+msgstr "Negatief"
+
+#: ../data/main.glade.h:118
+msgid "No Additional Conversion"
+msgstr "Geen extra conversie"
+
+#: ../data/main.glade.h:119 ../data/unknownedit.glade.h:13
+msgid "Non-Negative"
+msgstr "Niet-negatief"
+
+#: ../data/main.glade.h:120 ../data/unknownedit.glade.h:14
+msgid "Non-Positive"
+msgstr "Niet-positief"
+
+#: ../data/main.glade.h:121 ../data/unknownedit.glade.h:15
+msgid "Non-Zero"
+msgstr "Ongelijk aan nul"
+
+#: ../data/main.glade.h:122
+msgid "Non-Zero Denominators"
+msgstr "Noemers ongelijk aan nul"
+
+#: ../data/main.glade.h:123 ../data/plot.glade.h:34
+msgid "None"
+msgstr "Geen"
+
+#: ../data/main.glade.h:124
+msgid "Normal"
+msgstr "Normaal"
+
+#: ../data/main.glade.h:125
+msgid ""
+"Normal\n"
+"Scientific\n"
+"Pure\n"
+"Simple"
+msgstr ""
+"Normaal\n"
+"Wetenschappelijk\n"
+"Zuiver\n"
+"Eenvoudig"
+
+#: ../data/main.glade.h:129 ../data/unknownedit.glade.h:16
+msgid "Not Matrix"
+msgstr "Geen matrix"
+
+#: ../data/main.glade.h:131
+msgid "Number Base"
+msgstr "Grondtal talstelsel"
+
+#: ../data/main.glade.h:132
+msgid "Number Base (Result)"
+msgstr "Grondtal talstelsel (antwoord)"
+
+#: ../data/main.glade.h:133
+msgid "Numerical Display"
+msgstr "Tonen getal"
+
+#: ../data/main.glade.h:134 ../data/nbases.glade.h:10
+#: ../data/nbexpression.glade.h:5
+msgid "Octal"
+msgstr "Octaal"
+
+#: ../data/main.glade.h:135
+msgid "Other..."
+msgstr "Overig..."
+
+#: ../data/main.glade.h:136
+msgid ""
+"Parse decimal numbers as approximate with precision equal to the number of "
+"digits"
+msgstr ""
+"Lees decimale getallen in als benadering met een nauwkeurigheid die overeenkomt met "
+"het aantal cijfers"
+
+#: ../data/main.glade.h:137
+msgid "Periodic Table"
+msgstr "Periodiek systeem"
+
+#: ../data/main.glade.h:138
+msgid "Place Units Separately"
+msgstr "Eenheden afzonderlijk plaatsen"
+
+#: ../data/main.glade.h:139
+msgid "Plot Functions/Data"
+msgstr "Functies/gegevens plotten"
+
+#: ../data/main.glade.h:140 ../data/unknownedit.glade.h:18
+msgid "Positive"
+msgstr "Positief"
+
+#: ../data/main.glade.h:141
+msgid "Previous result"
+msgstr "Vorig antwoord"
+
+#: ../data/main.glade.h:142
+msgid "Progress..."
+msgstr "Voortgang..."
+
+#: ../data/main.glade.h:143
+msgid "Purel_y Scientific"
+msgstr "_Zuiver wetenschappelijk"
+
+#: ../data/main.glade.h:144
+msgid "Purely Scientific"
+msgstr "Zuiver wetenschappelijk"
+
+#: ../data/main.glade.h:146
+msgid "RPN Syntax"
+msgstr "RPN-notatie"
+
+#: ../data/main.glade.h:147
+msgid "Rad"
+msgstr "Rad"
+
+#: ../data/main.glade.h:148
+msgid "Radians"
+msgstr "Radialen"
+
+#: ../data/main.glade.h:149
+msgid "Raise"
+msgstr "Machtverheffen"
+
+#: ../data/main.glade.h:150
+msgid "Rational"
+msgstr "Rationaal"
+
+#: ../data/main.glade.h:151 ../src/callbacks.cc:7907
+msgid "Read Precision"
+msgstr "Nauwkeurigheid lezen"
+
+#: ../data/main.glade.h:152
+msgid "Real"
+msgstr "Reëel"
+
+#: ../data/main.glade.h:153
+msgid "Result"
+msgstr "Antwoord"
+
+#: ../data/main.glade.h:154
+msgid "Roman"
+msgstr "Romeins"
+
+#: ../data/main.glade.h:155 ../data/nbexpression.glade.h:7
+msgid "Roman Numerals"
+msgstr "Romeinse cijfers"
+
+#: ../data/main.glade.h:156
+msgid "Round Halfway Numbers To Even"
+msgstr "Tussenliggende getallen naar even afronden"
+
+#: ../data/main.glade.h:157
+msgid "Save Default _Mode"
+msgstr "Standaard_modus opslaan"
+
+#: ../data/main.glade.h:158
+msgid "Save Definitions"
+msgstr "Definities opslaan"
+
+#: ../data/main.glade.h:159
+msgid "Save Image..."
+msgstr "Afbeelding opslaan..."
+
+#: ../data/main.glade.h:160 ../src/callbacks.cc:7919
+msgid "Save Mode..."
+msgstr "Modus opslaan..."
+
+#: ../data/main.glade.h:161
+msgid "Save Result Image..."
+msgstr "Afbeelding van het antwoord opslaan..."
+
+#: ../data/main.glade.h:162
+msgid "Save local functions, variables and units"
+msgstr "Lokale functies, variabelen en eenheden opslaan"
+
+#: ../data/main.glade.h:163
+msgid "Sc_ientific"
+msgstr "Wetenschappel_ijk"
+
+#: ../data/main.glade.h:164
+msgid "Scientific"
+msgstr "Wetenschappelijk"
+
+#: ../data/main.glade.h:165
+msgid "Set Base In Expression"
+msgstr "Grondtal in expressie instellen"
+
+#: ../data/main.glade.h:166
+msgid "Set Prefix"
+msgstr "Voorvoegsel instellen"
+
+#: ../data/main.glade.h:167
+msgid "Set Unknowns..."
+msgstr "Onbekenden een waarde geven..."
+
+#: ../data/main.glade.h:168
+msgid "Sexagesimal"
+msgstr "Sexagesimaal"
+
+#: ../data/main.glade.h:169
+msgid "Show Ending Zeroes"
+msgstr "Afsluitende nullen weergeven"
+
+#: ../data/main.glade.h:170
+msgid "Simp_le"
+msgstr "Een_voudig"
+
+#: ../data/main.glade.h:171
+msgid "Simple"
+msgstr "Eenvoudig"
+
+#: ../data/main.glade.h:172
+msgid "Simplify"
+msgstr "Vereenvoudigen"
+
+#: ../data/main.glade.h:173
+msgid "Sine"
+msgstr "Sinus"
+
+#: ../data/main.glade.h:174
+msgid "Square root"
+msgstr "Vierkantswortel"
+
+#: ../data/main.glade.h:175
+msgid "Store result as a variable"
+msgstr "Antwoord opslaan als variabele"
+
+#: ../data/main.glade.h:176
+msgid "Subtract"
+msgstr "Aftrekken"
+
+#: ../data/main.glade.h:177
+msgid "Tangent"
+msgstr "Tangens"
+
+#: ../data/main.glade.h:178
+msgid "Time Format"
+msgstr "Tijdnotatie"
+
+#: ../data/main.glade.h:179
+msgid "Toggle exact mode"
+msgstr "Exactmodus aan/uit"
+
+#: ../data/main.glade.h:180
+msgid "Toggle fractional number display"
+msgstr "Tonen van breuken aan/uit"
+
+#: ../data/main.glade.h:181
+msgid "Toggle hyperbolic functions"
+msgstr "Hyperbolische functies aan/uit"
+
+#: ../data/main.glade.h:182
+msgid "Toggle inverse functions"
+msgstr "Inverse functies aan/uit"
+
+#: ../data/main.glade.h:183
+msgid "Try Exact"
+msgstr "Exact proberen"
+
+#: ../data/main.glade.h:185
+msgid "Unit Display"
+msgstr "Tonen eenheid"
+
+#: ../data/main.glade.h:186 ../data/units.glade.h:18
+msgid "Units"
+msgstr "Eenheden"
+
+#: ../data/main.glade.h:187 ../data/unknownedit.glade.h:25
+#: ../src/callbacks.cc:12456
+msgid "Unknown"
+msgstr "Onbekende"
+
+#: ../data/main.glade.h:188
+msgid "Unknown Variable"
+msgstr "Onbekende variabele"
+
+#: ../data/main.glade.h:189
+msgid "Unknowns"
+msgstr "Onbekenden"
+
+#: ../data/main.glade.h:190
+msgid "Update Exchange Rates"
+msgstr "Wisselkoersen bijwerken"
+
+#: ../data/main.glade.h:192 ../data/variables.glade.h:12
+msgid "Variables"
+msgstr "Variabelen"
+
+#: ../data/main.glade.h:194
+msgid "Warn About Denominators Assumed Non-Zero"
+msgstr "Waarschuwen als noemers ongelijk nul worden aangenomen"
+
+#: ../data/main.glade.h:195
+msgid "Warn when unknown denominators are assumed non-zero"
+msgstr "Waarschuwen wanneer onbekende noemers ongelijk nul worden aangenomen"
+
+#: ../data/main.glade.h:196
+msgid "_Abbreviate Names"
+msgstr "Namen _afkorten"
+
+#: ../data/main.glade.h:197
+msgid "_About"
+msgstr "_Info over"
+
+#: ../data/main.glade.h:198
+msgid "_Binary"
+msgstr "_Binair"
+
+#: ../data/main.glade.h:199
+msgid "_Contents"
+msgstr "_Inhoud"
+
+#: ../data/main.glade.h:200
+msgid "_Copy"
+msgstr "_Kopiëren"
+
+#: ../data/main.glade.h:201
+msgid "_Copy Result"
+msgstr "_Antwoord kopiëren"
+
+#: ../data/main.glade.h:202
+msgid "_Decimal"
+msgstr "_Decimaal"
+
+#: ../data/main.glade.h:203
+msgid "_Decimals"
+msgstr "_Decimalen"
+
+#: ../data/main.glade.h:205
+msgid "_Factorize"
+msgstr "_Ontbinden in factoren"
+
+#: ../data/main.glade.h:206
+msgid "_File"
+msgstr "_Bestand"
+
+#: ../data/main.glade.h:207
+msgid "_Help"
+msgstr "_Help"
+
+#: ../data/main.glade.h:208
+msgid "_Hexadecimal"
+msgstr "_Hexadecimaal"
+
+#: ../data/main.glade.h:209
+msgid "_Mode"
+msgstr "_Modus"
+
+#: ../data/main.glade.h:210
+msgid "_New"
+msgstr "_Nieuw"
+
+#: ../data/main.glade.h:211
+msgid "_Normal"
+msgstr "_Normaal"
+
+#: ../data/main.glade.h:212
+msgid "_Octal"
+msgstr "_Octaal"
+
+#: ../data/main.glade.h:213
+msgid "_Precision"
+msgstr "_Nauwkeurigheid"
+
+#: ../data/main.glade.h:214
+msgid "_Preferences"
+msgstr "_Voorkeuren"
+
+#: ../data/main.glade.h:215
+msgid "_Quit"
+msgstr "A_fsluiten"
+
+#: ../data/main.glade.h:216
+msgid "_Simplify"
+msgstr "_Vereenvoudigen"
+
+#: ../data/main.glade.h:217
+msgid "_Store Result..."
+msgstr "_Antwoord opslaan..."
+
+#: ../data/main.glade.h:218
+msgid "_Store..."
+msgstr "_Opslaan..."
+
+#: ../data/main.glade.h:219
+msgid "_Units"
+msgstr "_Eenheden"
+
+#: ../data/main.glade.h:220
+msgid "_Variables"
+msgstr "_Variabelen"
+
+#: ../data/main.glade.h:221
+msgid "change angle unit used in trigonometric functions"
+msgstr "hoekeenheid in goniometrische functies wijzigen"
+
+#: ../data/main.glade.h:222
+msgid "cos"
+msgstr "cos"
+
+#: ../data/main.glade.h:223
+msgid "hyp"
+msgstr "hyp"
+
+#: ../data/main.glade.h:224
+msgid "inv"
+msgstr "inv"
+
+#: ../data/main.glade.h:225
+msgid "ln"
+msgstr "ln"
+
+#: ../data/main.glade.h:226
+msgid "log"
+msgstr "log"
+
+#: ../data/main.glade.h:227
+msgid "sin"
+msgstr "sin"
+
+#: ../data/main.glade.h:228
+msgid "sqrt"
+msgstr "sqrt"
+
+#: ../data/main.glade.h:229
+msgid "tan"
+msgstr "tan"
+
+#: ../data/main.glade.h:230
+msgid "x!"
+msgstr "x!"
+
+#: ../data/main.glade.h:231
+msgid "x<sup>2</sup>"
+msgstr "x<sup>2</sup>"
+
+#: ../data/main.glade.h:232
+msgid "x<sup>y</sup>"
+msgstr "x<sup>y</sup>"
+
+#: ../data/matrixedit.glade.h:3
+msgid "Accept the creation/modification of this matrix/vector"
+msgstr "Aanmaken/wijzigen van deze matrix/vector accepteren"
+
+#: ../data/matrixedit.glade.h:5
+msgid "Category that this variable belongs to"
+msgstr "Categorie waartoe deze variabele behoort"
+
+#: ../data/matrixedit.glade.h:6
+msgid "Columns"
+msgstr "Kolommen"
+
+#: ../data/matrixedit.glade.h:7
+msgid "Create/modify the matrix/vector"
+msgstr "Aanmaken/wijzigen van de matrix/vector"
+
+#: ../data/matrixedit.glade.h:9
+msgid "Do not create/modify this matrix/vector"
+msgstr "Deze matrix/vector niet aanmaken/wijzigen"
+
+#: ../data/matrixedit.glade.h:10 ../src/callbacks.cc:6636
+msgid "Edit Matrix"
+msgstr "Matrix bewerken"
+
+#: ../data/matrixedit.glade.h:11 ../src/callbacks.cc:11535
+#: ../src/callbacks.cc:11542
+msgid "Elements"
+msgstr "Elementen"
+
+#: ../data/matrixedit.glade.h:12
+msgid "If this is a matrix or vector"
+msgstr "Indien dit een matrix of vector is"
+
+#: ../data/matrixedit.glade.h:16 ../data/variableedit.glade.h:7
+msgid "Name used to reference this variable in expressions"
+msgstr "Naam voor deze variabele in expressies"
+
+#: ../data/matrixedit.glade.h:18
+msgid "Number of columns in this matrix (columns displayed for vectors)"
+msgstr "Aantal kolommen in deze matrix (vectoren worden als kolommen getoond)"
+
+#: ../data/matrixedit.glade.h:19
+msgid "Number of rows in this matrix (rows displayed for vectors)"
+msgstr "Aantal rijen in deze matrix (vectoren worden als rijen getoond)"
+
+#: ../data/matrixedit.glade.h:20 ../data/plot.glade.h:40
+msgid "Rows"
+msgstr "Rijen"
+
+#: ../data/namesedit.glade.h:2 ../src/interface.cc:1261
+msgid "Abbreviation"
+msgstr "Afkorting"
+
+#: ../data/namesedit.glade.h:3
+msgid "Avoid Input"
+msgstr "Invoer vermijden"
+
+#: ../data/namesedit.glade.h:4
+msgid "Case Sensitive"
+msgstr "Hoofdlettergevoelig"
+
+#: ../data/namesedit.glade.h:6
+msgid "Names"
+msgstr "Namen"
+
+#: ../data/namesedit.glade.h:7 ../src/interface.cc:1265
+msgid "Plural"
+msgstr "Meervoud"
+
+#: ../data/namesedit.glade.h:8 ../src/interface.cc:1005
+#: ../src/interface.cc:1269
+msgid "Reference"
+msgstr "Referentie"
+
+#: ../data/namesedit.glade.h:9
+msgid "Suffix"
+msgstr "Achtervoegsel"
+
+#: ../data/namesedit.glade.h:10
+msgid "Unicode"
+msgstr "Unicode"
+
+#: ../data/nbases.glade.h:3
+msgid "Binary value"
+msgstr "Binaire waarde"
+
+#: ../data/nbases.glade.h:6
+msgid "Decimal value"
+msgstr "Decimale waarde"
+
+#: ../data/nbases.glade.h:8
+msgid "Hexadecimal value"
+msgstr "Hexadecimale waarde"
+
+#: ../data/nbases.glade.h:9
+msgid "Number Bases"
+msgstr "Grondtallen voor talstelsels"
+
+#: ../data/nbases.glade.h:11
+msgid "Octal value"
+msgstr "Octale waarde"
+
+#: ../data/nbexpression.glade.h:4
+msgid "Number Base (Expression)"
+msgstr "Grondtal talstelsel (Expressie)"
+
+#: ../data/plot.glade.h:4
+msgid "10"
+msgstr "10"
+
+#: ../data/plot.glade.h:5
+msgid "Appearance"
+msgstr "Uiterlijk"
+
+#: ../data/plot.glade.h:6
+msgid "Below"
+msgstr "Onder"
+
+#: ../data/plot.glade.h:7
+msgid "Bezier"
+msgstr "Bézier"
+
+#: ../data/plot.glade.h:8
+msgid "Bezier (monotonic)"
+msgstr "Bézier (monotoon)"
+
+#: ../data/plot.glade.h:9
+msgid "Bottom-Left"
+msgstr "Linksonder"
+
+#: ../data/plot.glade.h:10
+msgid "Bottom-Right"
+msgstr "Rechtsonder"
+
+#: ../data/plot.glade.h:11
+msgid "Boxes/Bars"
+msgstr "Balken"
+
+#: ../data/plot.glade.h:12
+msgid "Candlesticks"
+msgstr "Kaarsdiagrammen"
+
+#: ../data/plot.glade.h:14
+msgid "Color"
+msgstr "Kleur"
+
+#: ../data/plot.glade.h:15
+msgid "Color display"
+msgstr "Kleuren"
+
+#: ../data/plot.glade.h:16
+msgid "Data"
+msgstr "Gegevens"
+
+#: ../data/plot.glade.h:17
+msgid "Display full border"
+msgstr "Volledige rand tonen"
+
+#: ../data/plot.glade.h:18
+msgid "Display grid"
+msgstr "Rooster tonen"
+
+#: ../data/plot.glade.h:19
+msgid "Dots"
+msgstr "Puntjes"
+
+#: ../data/plot.glade.h:22
+msgid "Function Range"
+msgstr "Functiebereik"
+
+#: ../data/plot.glade.h:23
+msgid "Histogram"
+msgstr "Histogram"
+
+#: ../data/plot.glade.h:24
+msgid "Legend placement"
+msgstr "Plaatsen legenda"
+
+#: ../data/plot.glade.h:25
+msgid "Line"
+msgstr "Lijn"
+
+#: ../data/plot.glade.h:26
+msgid "Line with points"
+msgstr "Lijn met punten"
+
+#: ../data/plot.glade.h:27
+msgid "Logarithmic x scale"
+msgstr "Logaritmische schaal x-as"
+
+#: ../data/plot.glade.h:28
+msgid "Logarithmic y scale"
+msgstr "Logaritmische schaal y-as"
+
+#: ../data/plot.glade.h:31
+msgid "Monochrome"
+msgstr "Zwartwit"
+
+#: ../data/plot.glade.h:32
+msgid "Monotonic"
+msgstr "Monotoon"
+
+#: ../data/plot.glade.h:33
+msgid "Natural cubic splines"
+msgstr "Natuurlijke kubische splines"
+
+#: ../data/plot.glade.h:35
+msgid "Outside"
+msgstr "Er buiten"
+
+#: ../data/plot.glade.h:36
+msgid "Paired matrix"
+msgstr "Gepaarde matrix"
+
+#: ../data/plot.glade.h:37
+msgid "Plot"
+msgstr "Plot"
+
+#: ../data/plot.glade.h:38
+msgid "Points"
+msgstr "Punten"
+
+#: ../data/plot.glade.h:39
+msgid "Primary"
+msgstr "Primair"
+
+#: ../data/plot.glade.h:41
+msgid "Sampling rate"
+msgstr "Bemonsteringsfrequentie"
+
+#: ../data/plot.glade.h:42
+msgid "Save as png, svg, postscript, eps, latex or fig"
+msgstr "Opslaan als png, svg, postscript, eps, latex of fig"
+
+#: ../data/plot.glade.h:43
+msgid "Secondary"
+msgstr "Secondair"
+
+#: ../data/plot.glade.h:44
+msgid "Smoothing"
+msgstr "Gladstrijken"
+
+#: ../data/plot.glade.h:45
+msgid "Step size"
+msgstr "Stapgrootte"
+
+#: ../data/plot.glade.h:46
+msgid "Steps"
+msgstr "Stappen"
+
+#: ../data/plot.glade.h:47
+msgid "Style"
+msgstr "Stijl"
+
+#: ../data/plot.glade.h:48
+msgid "The variable name used in expression"
+msgstr "De naam van de variabele in expressie"
+
+#: ../data/plot.glade.h:50
+msgid "Top-Left"
+msgstr "Linksboven"
+
+#: ../data/plot.glade.h:51
+msgid "Top-Right"
+msgstr "Rechtsboven"
+
+#: ../data/plot.glade.h:52
+msgid "Vector/Matrix"
+msgstr "Vector/matrix"
+
+#: ../data/plot.glade.h:53
+msgid "X variable"
+msgstr "Variabele x"
+
+#: ../data/plot.glade.h:54
+msgid "X-axis label"
+msgstr "Tekst bij de x-as"
+
+#: ../data/plot.glade.h:55
+msgid "Y-axis"
+msgstr "Y-as:"
+
+#: ../data/plot.glade.h:56
+msgid "Y-axis label"
+msgstr "Tekst bij de y-as"
+
+#: ../data/plot.glade.h:57
+msgid "if you want to split matrix in rows instead of columns"
+msgstr "indien u matrix wilt splitsen in rijen in plaats van kolommen"
+
+#: ../data/plot.glade.h:58 ../data/preferences.glade.h:38
+msgid "x"
+msgstr "x"
+
+#: ../data/precision.glade.h:2
+msgid "Precision"
+msgstr "Nauwkeurigheid"
+
+#: ../data/precision.glade.h:3
+msgid "Recalculate"
+msgstr "Opnieuw berekenen"
+
+#: ../data/precision.glade.h:4
+msgid "Recalculate expression"
+msgstr "Expressie opnieuw berekenen"
+
+#: ../data/precision.glade.h:5
+msgid ""
+"The number of significant digits to display/calculate (simple arithmetics "
+"are always calculated exact)"
+msgstr "Het aantal te tonen/berekenen significante cijfers (eenvoudige berekeningen zijn altijd exact)"
+
+#: ../data/preferences.glade.h:4
+msgid ""
+"Arguments (in addition to timeout and output file) passed to wget when "
+"fetching exchange rates."
+msgstr ""
+"Argumenten (naast tijdlimiet en uitvoerbestand) doorgegeven aan wget wanneer wisselkoersen "
+"worden opgehaald."
+
+#: ../data/preferences.glade.h:6
+msgid "Custom expression font"
+msgstr "Aangepast lettertype voor expressie"
+
+#: ../data/preferences.glade.h:7
+msgid "Custom result font"
+msgstr "Aangepast lettertype voor antwoord"
+
+#: ../data/preferences.glade.h:8
+msgid "Custom status font"
+msgstr "Aangepast lettertype voor status"
+
+#: ../data/preferences.glade.h:9
+msgid "Disable this if you have problems with some fancy characters"
+msgstr "Dit uitschakelen als er problemen zijn met bijzondere karakters"
+
+#: ../data/preferences.glade.h:10
+msgid "Display expression status"
+msgstr "Expressiestatus tonen"
+
+#: ../data/preferences.glade.h:11
+msgid "Division sign"
+msgstr "Teken voor deling"
+
+#: ../data/preferences.glade.h:12
+msgid "Enable unicode signs"
+msgstr "Unicode toestaan"
+
+#: ../data/preferences.glade.h:13
+msgid "Font"
+msgstr "Lettertype"
+
+#: ../data/preferences.glade.h:14
+msgid "Fonts"
+msgstr "Lettertypen"
+
+#: ../data/preferences.glade.h:16
+msgid "If \"e\" shall be used instead of \"E\" in numbers"
+msgstr "Indien in getallen \"e\" moet worden gebruikt in plaats van \"E\""
+
+#: ../data/preferences.glade.h:17
+msgid ""
+"If as-you-type expression status shall be displayed below the expression "
+"entry"
+msgstr "Indien status expressie zoals u-die-intypt moet worden getoond onder de invoer van de expressie"
+
+#: ../data/preferences.glade.h:18
+msgid "If changes to functions, units and variables shall be saved automatically"
+msgstr "Indien veranderingen in functies, eenheden en variabelen automatisch moeten worden opgeslagen"
+
+#: ../data/preferences.glade.h:19
+msgid ""
+"If current exchange rates shall be downloaded from the internet at program "
+"start"
+msgstr "Indien huidige wisselkoersen moeten worden opgehaald van het internet bij het starten van het programma"
+
+#: ../data/preferences.glade.h:20
+msgid "If logical and/or shall be displayed as \"&&\"/\"||\" or \"and\"/\"or\""
+msgstr "Indien logische and/or moeten worden getoond als \"&&\"/\"||\" of als \"and\"/\"or\""
+
+#: ../data/preferences.glade.h:21
+msgid "If lower case letters should be used in numbers with non-decimal base"
+msgstr "Indien kleine letters moeten worden gebruikt in niet-decimale getallen"
+
+#: ../data/preferences.glade.h:22
+msgid "If the mode of the calculator shall be restored"
+msgstr "Indien de modus van de rekenmachine moet worden teruggezet"
+
+#: ../data/preferences.glade.h:23
+msgid "If you want to use a font other than the default in the expression entry"
+msgstr "Indien u bij het invoeren van expressies een ander dan het standaardfont wilt gebruiken"
+
+#: ../data/preferences.glade.h:24
+msgid "If you want to use a font other than the default in the result display"
+msgstr "Indien u voor het tonen van het antwoord een ander dan het standaardfont wilt gebruiken"
+
+#: ../data/preferences.glade.h:25
+msgid ""
+"If you want to use a font other than the default in the status display below "
+"the expression entry"
+msgstr "Indien u voor het tonen van de status onder de invoer van expressies een ander dan het standaardfont wilt gebruiken"
+
+#: ../data/preferences.glade.h:26
+msgid "Multiplication sign"
+msgstr "Teken voor vermenigvuldigen"
+
+#: ../data/preferences.glade.h:27
+msgid "Preferences"
+msgstr "Voorkeuren"
+
+#: ../data/preferences.glade.h:28
+msgid "Save definitions on exit"
+msgstr "Definities opslaan bij verlaten"
+
+#: ../data/preferences.glade.h:29
+msgid "Save mode on exit"
+msgstr "Modus opslaan bij verlaten"
+
+#: ../data/preferences.glade.h:30
+msgid "Select custom font"
+msgstr "Aangepast lettertype selecteren"
+
+#: ../data/preferences.glade.h:31
+msgid "Spell out logical operators"
+msgstr "Logische operatoren voluit spellen"
+
+#: ../data/preferences.glade.h:32
+msgid "Status error color"
+msgstr "Kleur foutstatus"
+
+#: ../data/preferences.glade.h:33
+msgid "Status warning color"
+msgstr "Kleur waarschuwingstatus"
+
+#: ../data/preferences.glade.h:34
+msgid "Update exchange rates on start"
+msgstr "Wisselkoersen ophalen bij opstarten"
+
+#: ../data/preferences.glade.h:35
+msgid "Use lower case \"e\""
+msgstr "Kleine letter \"e\" gebruiken"
+
+#: ../data/preferences.glade.h:36
+msgid "Use lower case in numbers"
+msgstr "Kleine letters voor getallen gebruiken"
+
+#: ../data/preferences.glade.h:37
+msgid "Wget arguments"
+msgstr "Argumenten voor wget"
+
+#: ../data/unit.glade.h:3
+msgid "Convert result to entered unit expression"
+msgstr "Antwoord converteren naar ingevoerde expressie voor eenheid"
+
+#: ../data/unit.glade.h:4
+msgid "Convert to unit"
+msgstr "Converteren naar eenheid"
+
+#: ../data/unit.glade.h:5
+msgid "Do the conversion and close this window"
+msgstr "De conversie doorvoeren en dit venster sluiten"
+
+#: ../data/unit.glade.h:6
+msgid "Selector"
+msgstr "Keuze"
+
+#: ../data/unit.glade.h:8
+msgid "Unit expression"
+msgstr "Eenheidexpressie"
+
+#: ../data/unit.glade.h:9
+msgid "Unit(s) and prefix to convert result to"
+msgstr "Eenhe(i)d(en) en voorvoegsel waarin antwoord moet worden uitgedrukt"
+
+#: ../data/unitedit.glade.h:1
+msgid "    "
+msgstr "    "
+
+#: ../data/unitedit.glade.h:3
+msgid "<span weight='bold'>Name</span>"
+msgstr "<span weight='bold'>Naam</span>"
+
+#: ../data/unitedit.glade.h:4
+msgid "<span weight='bold'>Relation</span>"
+msgstr "<span weight='bold'>Relatie</span>"
+
+#: ../data/unitedit.glade.h:5
+msgid "<span weight='bold'>Type</span>"
+msgstr "<span weight='bold'>Type</span>"
+
+#: ../data/unitedit.glade.h:6
+msgid "Accept the creation/modification of this unit"
+msgstr "Aanmaken/wijzigen van deze eenheid accepteren"
+
+#: ../data/unitedit.glade.h:7
+msgid "Alias"
+msgstr "Alias"
+
+#: ../data/unitedit.glade.h:8
+msgid "Base Unit"
+msgstr "Basiseenheid"
+
+#: ../data/unitedit.glade.h:9
+msgid "CGS"
+msgstr "CGS"
+
+#: ../data/unitedit.glade.h:11
+msgid "Class"
+msgstr "Klasse"
+
+#: ../data/unitedit.glade.h:12
+msgid "Composite Unit"
+msgstr "Samengestelde eenheid"
+
+#: ../data/unitedit.glade.h:14
+msgid "Do not create/modify this unit"
+msgstr "Deze eenheid niet aanmaken/wijzigen"
+
+#: ../data/unitedit.glade.h:15 ../src/callbacks.cc:5673
+msgid "Edit Unit"
+msgstr "Eenheid bewerken"
+
+#: ../data/unitedit.glade.h:16
+msgid "Exponent"
+msgstr "Exponent"
+
+#: ../data/unitedit.glade.h:17
+msgid "Exponent of the base unit"
+msgstr "Exponent van de basiseenheid"
+
+#: ../data/unitedit.glade.h:18
+msgid "If the relation is precise"
+msgstr "Indien de relatie precies is"
+
+#: ../data/unitedit.glade.h:19
+msgid "If this unit shall be hidden in menus"
+msgstr "Indien deze eenheid in de menu's verborgen moet zijn"
+
+#: ../data/unitedit.glade.h:20
+msgid "Imperial"
+msgstr "Imperial"
+
+#: ../data/unitedit.glade.h:23
+msgid "Relation"
+msgstr "Relatie"
+
+#: ../data/unitedit.glade.h:24
+msgid "Relation to the base unit (usually just a number)"
+msgstr "Relatie tot de basiseenheid (gewoonlijk een getal)"
+
+#: ../data/unitedit.glade.h:25
+msgid "Reversed Relation"
+msgstr "Inverse relatie"
+
+#: ../data/unitedit.glade.h:26
+msgid "SI"
+msgstr "SI"
+
+#: ../data/unitedit.glade.h:27
+msgid "Singular form of this unit's name"
+msgstr "Enkelvoud voor deze eenheid"
+
+#: ../data/unitedit.glade.h:28
+msgid "System"
+msgstr "Systeem"
+
+#: ../data/unitedit.glade.h:29
+msgid "The category this unit belongs to"
+msgstr "De categorie van deze eenheid"
+
+#: ../data/unitedit.glade.h:30
+msgid ""
+"The class that this unit belongs to. Alias units is defined in relation to "
+"another unit, composite units is a composition of a number of other units "
+"Base units is not defined in relation to other units."
+msgstr ""
+"De klasse waartoe deze eenheid behoort. Aliaseenheden worden gedefinieerd in relatie tot een andere "
+"eenheid, samengestelde eenheden worden samengesteld uit een aantal andere eenheden. Basiseenheden "
+"worden niet gedefinieerd in relatie tot andere eenheden."
+
+#: ../data/unitedit.glade.h:31
+msgid "Title displayed in menus and in unit manager"
+msgstr "Titel getoond in menu's en in eenheidbeheerder"
+
+#: ../data/unitedit.glade.h:32
+msgid "US Survey"
+msgstr "US Survey"
+
+#: ../data/unitedit.glade.h:33
+msgid ""
+"Unit (for alias unit) or units (for composite unit) that this unit as "
+"defined in relation to"
+msgstr ""
+"Eenheid (voor aliaseenheid) of eenheden (voor samengestelde eenheid) in relatie tot "
+"welke deze eenheid is gedefinieerd"
+
+#: ../data/unitedit.glade.h:34
+msgid "You probably do not need to define this"
+msgstr "U hoeft dit waarschijnlijk niet te definiëren"
+
+#: ../data/unitedit.glade.h:35
+msgid "hide unit"
+msgstr "eenheid verbergen"
+
+#: ../data/unitedit.glade.h:36
+msgid "relation is exact"
+msgstr "relatie is exact"
+
+#: ../data/units.glade.h:1
+msgid "(De)activate the selected unit"
+msgstr "De geselecteerde eenheid (de)activeren"
+
+#: ../data/units.glade.h:7
+msgid "Conversion"
+msgstr "Conversie"
+
+#: ../data/units.glade.h:8
+msgid "Convert between units"
+msgstr "Converteren tussen eenheden"
+
+#: ../data/units.glade.h:9
+msgid "Convert the result to the selected unit"
+msgstr "Het antwoord converteren naar de geselecteerde eenheid"
+
+#: ../data/units.glade.h:10
+msgid "Converted value"
+msgstr "Geconverteerde waarde"
+
+#: ../data/units.glade.h:11
+msgid "Create a new unit"
+msgstr "Een nieuwe eenheid aanmaken"
+
+#: ../data/units.glade.h:13
+msgid "Delete the selected unit"
+msgstr "De geselecteerde eenheid wissen"
+
+#: ../data/units.glade.h:14
+msgid "Edit the selected unit"
+msgstr "De geselecteerde eenheid bewerken"
+
+#: ../data/units.glade.h:15
+msgid "Insert the selected unit into the expression entry"
+msgstr "De geselecteerde eenheid in de ingevoerde expressie invoegen"
+
+#: ../data/units.glade.h:17
+msgid "Unit to convert to"
+msgstr "Eenheid waarnaar moet worden geconverteerd"
+
+#: ../data/units.glade.h:19
+msgid "Value to convert from"
+msgstr "Waarde die moet worden geconverteerd"
+
+#: ../data/units.glade.h:20
+msgid "_Convert result"
+msgstr "Antwoord _converteren"
+
+#: ../data/unknownedit.glade.h:2
+msgid "Accept the creation/modification of this unknown variable"
+msgstr "Aanmaken/wijzigen van deze onbekende variabele accepteren"
+
+#: ../data/unknownedit.glade.h:4
+msgid "Complex Number"
+msgstr "Complex getal"
+
+#: ../data/unknownedit.glade.h:6
+msgid "Do not create/modify this unknown variable"
+msgstr "Deze onbekende variabele niet aanmaken/wijzigen"
+
+#: ../data/unknownedit.glade.h:7 ../src/callbacks.cc:6291
+msgid "Edit Unknown Variable"
+msgstr "Onbekende variabele bewerken"
+
+#: ../data/unknownedit.glade.h:10
+msgid "Name used to reference this unknown variable in expressions"
+msgstr "Naam voor deze onbekende variabele in expressies"
+
+#: ../data/unknownedit.glade.h:19
+msgid "Rational Number"
+msgstr "Rationaal getal"
+
+#: ../data/unknownedit.glade.h:20
+msgid "Real Number"
+msgstr "Reëel getal"
+
+#: ../data/unknownedit.glade.h:21
+msgid "Sign"
+msgstr "Teken"
+
+#: ../data/unknownedit.glade.h:22
+msgid "The category this unknown variable belongs to"
+msgstr "De categorie van deze onbekende variabele"
+
+#: ../data/unknownedit.glade.h:24 ../src/interface.cc:995
+#: ../src/interface.cc:1205
+msgid "Type"
+msgstr "Type"
+
+#: ../data/unknownedit.glade.h:26
+msgid "Use custom assumptions"
+msgstr "Aangepaste aannames gebruiken"
+
+#: ../data/variableedit.glade.h:1
+msgid "Accept the creation/modification of this variable"
+msgstr "Aanmaken/wijzigen van deze variabele accepteren"
+
+#: ../data/variableedit.glade.h:4 ../src/callbacks.cc:6452
+msgid "Edit Variable"
+msgstr "Variabele bewerken"
+
+#: ../data/variableedit.glade.h:5
+msgid "If the value is precise"
+msgstr "Indien de waarde precies is"
+
+#: ../data/variableedit.glade.h:9
+msgid "The category this variable belongs to"
+msgstr "De categorie van deze variabele"
+
+#: ../data/variableedit.glade.h:11 ../src/interface.cc:683
+#: ../src/callbacks.cc:5344
+msgid "Value"
+msgstr "Waarde"
+
+#: ../data/variableedit.glade.h:12
+msgid "Value of this variable (expression)"
+msgstr "Waarde van deze variabele (expressie)"
+
+#: ../data/variableedit.glade.h:13
+msgid "value is exact"
+msgstr "waarde is exact"
+
+#: ../data/variables.glade.h:1
+msgid "(De)activate the selected variable"
+msgstr "De geselecteerde variabele (de)activeren"
+
+#: ../data/variables.glade.h:5
+msgid "Create a new variable"
+msgstr "Een nieuwe variabele aanmaken"
+
+#: ../data/variables.glade.h:7
+msgid "Delete the selected variable"
+msgstr "De geselecteerde variabele wissen"
+
+#: ../data/variables.glade.h:8
+msgid "Edit the selected variable"
+msgstr "De geselecteerde variabele bewerken"
+
+#: ../data/variables.glade.h:9
+msgid "Export"
+msgstr "Exporteren"
+
+#: ../data/variables.glade.h:10
+msgid "Insert the selected variable into the expression entry"
+msgstr "De geselecteerde variabele invoegen in de ingevoerde expressie"
+
+#: ../src/main.cc:140
+msgid "Enter a mathematical expression above. Ex. 5 + 2 / 3"
+msgstr "Een wiskundige expressie hierboven invoeren. Bv. 5 + 2 / 3"
+
+#: ../src/main.cc:150
+msgid ""
+"You need to download exchange rates to be able to convert between different "
+"currencies. You can later get current exchange rates by selecting \"Update "
+"Exchange Rates\" under the File menu.\n"
+"\n"
+"Do you want to fetch exchange rates now from the Internet?"
+msgstr ""
+"U moet de wisselkoersen ophalen om van de ene naar de andere munteenheid te kunnen converteren. U kunt de "
+"huidige wisselkoersen ophalen door \"Wisselkoersen ophalen\" te selecteren in het menu Bestand.\n"
+"\n"
+"Wilt u de wisselkoersen nu ophalen van het internet?"
+
+#: ../src/main.cc:165
+msgid "ans"
+msgstr "antw"
+
+#: ../src/main.cc:166 ../src/main.cc:169 ../src/main.cc:170 ../src/main.cc:171
+#: ../src/main.cc:172 ../src/callbacks.cc:7515
+msgid "Temporary"
+msgstr "Tijdelijk"
+
+#: ../src/main.cc:166
+msgid "Last Answer"
+msgstr "Laatste antwoord"
+
+#: ../src/main.cc:167
+msgid "answer"
+msgstr "antwoord"
+
+#: ../src/main.cc:169
+msgid "Answer 2"
+msgstr "Antwoord 2"
+
+#: ../src/main.cc:170
+msgid "Answer 3"
+msgstr "Antwoord 3"
+
+#: ../src/main.cc:171
+msgid "Answer 4"
+msgstr "Antwoord 4"
+
+#: ../src/main.cc:172
+msgid "Answer 5"
+msgstr "Antwoord 5"
+
+#: ../src/main.cc:176
+msgid "Failed to load global definitions!\n"
+msgstr "Inlezen van globale definities is mislukt!\n"
+
+#. if no category has been selected (previously selected has been renamed/deleted), select "All"
+#: ../src/main.cc:184 ../src/main.cc:187 ../src/main.cc:190
+#: ../src/callbacks.cc:1187 ../src/callbacks.cc:1248 ../src/callbacks.cc:1282
+#: ../src/callbacks.cc:1511 ../src/callbacks.cc:1574 ../src/callbacks.cc:1654
+#: ../src/callbacks.cc:1744 ../src/callbacks.cc:1804 ../src/callbacks.cc:1872
+#: ../src/callbacks.cc:1998 ../src/callbacks.cc:2050 ../src/callbacks.cc:2082
+msgid "All"
+msgstr "Alles"
+
+#: ../src/interface.cc:510 ../src/callbacks.cc:4435 ../src/callbacks.cc:4775
+#: ../src/callbacks.cc:4796
+msgid "approx."
+msgstr "benadering"
+
+#: ../src/callbacks.cc:496
+msgid "EXACT"
+msgstr "EXACT"
+
+#: ../src/callbacks.cc:499
+msgid "APPROX"
+msgstr "BENADERING"
+
+#: ../src/callbacks.cc:503
+msgid "RPN"
+msgstr "RPN"
+
+#: ../src/callbacks.cc:511
+msgid "BIN"
+msgstr "BIN"
+
+#: ../src/callbacks.cc:516
+msgid "OCT"
+msgstr "OCT"
+
+#: ../src/callbacks.cc:521
+msgid "HEX"
+msgstr "HEX"
+
+#: ../src/callbacks.cc:526
+msgid "ROMAN"
+msgstr "ROMEINS"
+
+#: ../src/callbacks.cc:538
+msgid "DEG"
+msgstr "DEG"
+
+#: ../src/callbacks.cc:543
+msgid "RAD"
+msgstr "RAD"
+
+#: ../src/callbacks.cc:548
+msgid "GRA"
+msgstr "GRA"
+
+#: ../src/callbacks.cc:555
+msgid "PREC"
+msgstr "PREC"
+
+#: ../src/callbacks.cc:560
+msgid "FUNC"
+msgstr "FUNC"
+
+#: ../src/callbacks.cc:566
+msgid "UNIT"
+msgstr "EENH"
+
+#: ../src/callbacks.cc:572
+msgid "VAR"
+msgstr "VAR"
+
+#: ../src/callbacks.cc:578
+msgid "INF"
+msgstr "INF"
+
+#: ../src/callbacks.cc:584
+msgid "CPLX"
+msgstr "CPLX"
+
+#: ../src/callbacks.cc:691
+#, c-format
+msgid "Too many arguments for %s()."
+msgstr "Te veel argumenten voor %s()."
+
+#: ../src/callbacks.cc:718 ../src/callbacks.cc:1356 ../src/callbacks.cc:2275
+msgid "argument"
+msgstr "argument"
+
+#: ../src/callbacks.cc:1232 ../src/callbacks.cc:1233 ../src/callbacks.cc:1284
+#: ../src/callbacks.cc:1558 ../src/callbacks.cc:1559 ../src/callbacks.cc:1656
+#: ../src/callbacks.cc:1788 ../src/callbacks.cc:1789 ../src/callbacks.cc:1874
+#: ../src/callbacks.cc:2042 ../src/callbacks.cc:2043 ../src/callbacks.cc:2084
+#: ../src/callbacks.cc:5860 ../src/callbacks.cc:6195 ../src/callbacks.cc:6397
+#: ../src/callbacks.cc:6564 ../src/callbacks.cc:6820
+msgid "Uncategorized"
+msgstr "Niet-gecategoriseerd"
+
+#: ../src/callbacks.cc:1241 ../src/callbacks.cc:1242 ../src/callbacks.cc:1286
+#: ../src/callbacks.cc:1567 ../src/callbacks.cc:1568 ../src/callbacks.cc:1658
+#: ../src/callbacks.cc:1796 ../src/callbacks.cc:1797 ../src/callbacks.cc:1876
+#: ../src/callbacks.cc:5858 ../src/callbacks.cc:6193 ../src/callbacks.cc:6395
+#: ../src/callbacks.cc:6562 ../src/callbacks.cc:6818
+msgid "Inactive"
+msgstr "Inactief"
+
+#: ../src/callbacks.cc:1383
+#, c-format
+msgid ""
+"Retrieves data from the %s data set for a given object and property. If "
+"\"info\" is typed as property, a dialog window will pop up with all "
+"properties of the object."
+msgstr ""
+"Haalt gegevens op van een gegeven object of eigenschap uit de gegevensverzameling %s. Indien "
+"als eigenschap \"info\" wordt ingetypt krijgt u een dialoogvenster te zien waarin alle eigenschappen "
+"van het object worden genoemd."
+
+#: ../src/callbacks.cc:1402
+msgid "Arguments"
+msgstr "Argumenten"
+
+#: ../src/callbacks.cc:1421 ../src/callbacks.cc:5436 ../src/callbacks.cc:5459
+msgid "optional"
+msgstr "optioneel"
+
+#: ../src/callbacks.cc:1433
+msgid "Requirement"
+msgstr "Vereiste"
+
+#: ../src/callbacks.cc:1461 ../src/callbacks.cc:2230 ../src/callbacks.cc:6976
+msgid "key"
+msgstr "toets"
+
+#: ../src/callbacks.cc:1482 ../src/callbacks.cc:1715 ../src/callbacks.cc:1973
+msgid "Activate"
+msgstr "Activeren"
+
+#: ../src/callbacks.cc:1585
+msgid "a previous result"
+msgstr "een vorig antwoord"
+
+#: ../src/callbacks.cc:1595
+msgid "matrix"
+msgstr "matrix"
+
+#: ../src/callbacks.cc:1597
+msgid "vector"
+msgstr "vector"
+
+#: ../src/callbacks.cc:1605
+msgid "positive"
+msgstr "positief"
+
+#: ../src/callbacks.cc:1606
+msgid "non-positive"
+msgstr "niet-positief"
+
+#: ../src/callbacks.cc:1607
+msgid "negative"
+msgstr "negatief"
+
+#: ../src/callbacks.cc:1608
+msgid "non-negative"
+msgstr "niet-negatief"
+
+#: ../src/callbacks.cc:1609
+msgid "non-zero"
+msgstr "ongelijk nul"
+
+#: ../src/callbacks.cc:1614
+msgid "integer"
+msgstr "geheel"
+
+#: ../src/callbacks.cc:1615
+msgid "rational"
+msgstr "rationaal"
+
+#: ../src/callbacks.cc:1616
+msgid "real"
+msgstr "reëel"
+
+#: ../src/callbacks.cc:1617
+msgid "complex"
+msgstr "complex"
+
+#: ../src/callbacks.cc:1618 ../src/callbacks.cc:6962
+msgid "number"
+msgstr "getal"
+
+#: ../src/callbacks.cc:1619
+msgid "(not matrix)"
+msgstr "(geen matrix)"
+
+#: ../src/callbacks.cc:1622
+msgid "unknown"
+msgstr "onbekend"
+
+#: ../src/callbacks.cc:1624
+msgid "default assumptions"
+msgstr "standaard aannames"
+
+#: ../src/callbacks.cc:1699 ../src/callbacks.cc:5590 ../src/callbacks.cc:11001
+#: ../src/callbacks.cc:11016 ../src/callbacks.cc:11034
+#: ../src/callbacks.cc:11066
+msgid "Variable does not exist anymore."
+msgstr "Variabele bestaat niet meer."
+
+#: ../src/callbacks.cc:2246
+msgid "Data Retrieval Function"
+msgstr "Functie voor ophalen gegevens"
+
+#: ../src/callbacks.cc:2672
+msgid "Prefixes"
+msgstr "Voorvoegsels"
+
+#: ../src/callbacks.cc:2851
+msgid "No Prefix"
+msgstr "Geen voorvoegsel"
+
+#: ../src/callbacks.cc:3903
+msgid "and"
+msgstr "and"
+
+#: ../src/callbacks.cc:3906
+msgid "or"
+msgstr "or"
+
+#: ../src/callbacks.cc:4387
+msgid "undefined"
+msgstr "ongedefinieerd"
+
+#: ../src/callbacks.cc:4550
+msgid ""
+"result is too long\n"
+"see history"
+msgstr ""
+"antwoord te lang\n"
+"zie geschiedenis"
+
+#: ../src/callbacks.cc:4558
+msgid "aborted"
+msgstr "afgebroken"
+
+#: ../src/callbacks.cc:4560
+msgid "calculation was aborted"
+msgstr "berekening werd afgebroken"
+
+#: ../src/callbacks.cc:4693 ../src/callbacks.cc:4694
+msgid "Processing..."
+msgstr "Verwerken..."
+
+#: ../src/callbacks.cc:4714
+msgid "result processing was aborted"
+msgstr "berekening werd afgebroken"
+
+#: ../src/callbacks.cc:4903
+msgid "Factorizing..."
+msgstr "Ontbinden in factoren..."
+
+#: ../src/callbacks.cc:4907
+msgid "Simplifying..."
+msgstr "Vereenvoudigen..."
+
+#: ../src/callbacks.cc:5043 ../src/callbacks.cc:5044
+msgid "Calculating..."
+msgstr "Berekenen..."
+
+#: ../src/callbacks.cc:5282
+msgid "Execute"
+msgstr "Uitvoeren"
+
+#: ../src/callbacks.cc:5291
+msgid "Insert"
+msgstr "Invoegen"
+
+#: ../src/callbacks.cc:5346
+msgid "Argument"
+msgstr "Argument"
+
+#: ../src/callbacks.cc:5393
+msgid "True"
+msgstr "Waar"
+
+#: ../src/callbacks.cc:5395
+msgid "False"
+msgstr "Onwaar"
+
+#: ../src/callbacks.cc:5429
+msgid "Info"
+msgstr "Info"
+
+#: ../src/callbacks.cc:5675
+msgid "Edit Unit (global)"
+msgstr "Eenheid bewerken (globaal)"
+
+#: ../src/callbacks.cc:5677
+msgid "New Unit"
+msgstr "Nieuwe eenheid"
+
+#. no name given
+#. no name -- open dialog again
+#: ../src/callbacks.cc:5759 ../src/callbacks.cc:6123 ../src/callbacks.cc:6354
+#: ../src/callbacks.cc:6512 ../src/callbacks.cc:6751 ../src/callbacks.cc:7044
+#: ../src/callbacks.cc:7189 ../src/callbacks.cc:8056 ../src/callbacks.cc:11870
+msgid "Empty name field."
+msgstr "Geen naam opgegeven."
+
+#. unit with the same name exists -- overwrite or open the dialog again
+#: ../src/callbacks.cc:5764
+msgid ""
+"A variable or unit with the same name already exists.\n"
+"Do you want to overwrite it?"
+msgstr ""
+"Er bestaat al een variabele of eenheid met deze naam.\n"
+"Wilt u die overschrijven?"
+
+#: ../src/callbacks.cc:5784 ../src/callbacks.cc:5827
+msgid "Base unit does not exist."
+msgstr "Basiseenheid bestaat niet."
+
+#: ../src/callbacks.cc:5874 ../src/callbacks.cc:6211 ../src/callbacks.cc:6411
+#: ../src/callbacks.cc:6578 ../src/callbacks.cc:6834 ../src/callbacks.cc:12087
+#, c-format
+msgid ""
+"Could not display help.\n"
+"%s"
+msgstr ""
+"Help kan niet worden getoond.\n"
+"%s"
+
+#: ../src/callbacks.cc:6047
+msgid "Edit Function (global)"
+msgstr "Functie bewerken (globaal)"
+
+#: ../src/callbacks.cc:6049
+msgid "New Function"
+msgstr "Nieuwe functie"
+
+#: ../src/callbacks.cc:6099 ../src/callbacks.cc:11638
+#: ../src/callbacks.cc:11649
+msgid "Yes"
+msgstr "Ja"
+
+#: ../src/callbacks.cc:6101 ../src/callbacks.cc:11640
+#: ../src/callbacks.cc:11651
+msgid "No"
+msgstr "Nee"
+
+#. no expression/relation -- open dialog again
+#: ../src/callbacks.cc:6134
+msgid "Empty expression field."
+msgstr "Expressieveld is leeg."
+
+#. function with the same name exists -- overwrite or open the dialog again
+#. dataset with the same name exists -- overwrite or open the dialog again
+#: ../src/callbacks.cc:6141 ../src/callbacks.cc:7199
+msgid ""
+"A function with the same name already exists.\n"
+"Do you want to overwrite the function?"
+msgstr ""
+"Er bestaat al een functie met deze naam.\n"
+"Wilt u die overschrijven?"
+
+#: ../src/callbacks.cc:6262
+msgid "Unit does not exist"
+msgstr "Eenheid bestaat niet"
+
+#: ../src/callbacks.cc:6293
+msgid "Edit Unknown Variable (global)"
+msgstr "Onbekende variabele bewerken (globaal)"
+
+#: ../src/callbacks.cc:6295
+msgid "New Unknown Variable"
+msgstr "Nieuwe onbekende variabele"
+
+#. unknown with the same name exists -- overwrite or open dialog again
+#. variable with the same name exists -- overwrite or open dialog again
+#: ../src/callbacks.cc:6359 ../src/callbacks.cc:6521 ../src/callbacks.cc:6756
+msgid ""
+"An unit or variable with the same name already exists.\n"
+"Do you want to overwrite it?"
+msgstr ""
+"Er bestaat al een eenheid of variabele met deze naam.\n"
+"Wilt u die overschrijven?"
+
+#: ../src/callbacks.cc:6454
+msgid "Edit Variable (global)"
+msgstr "Variabele bewerken (globaal)"
+
+#: ../src/callbacks.cc:6456
+msgid "New Variable"
+msgstr "Nieuwe variabele"
+
+#. no value -- open dialog again
+#: ../src/callbacks.cc:6517
+msgid "Empty value field."
+msgstr "Geen waarde opgegeven."
+
+#: ../src/callbacks.cc:6627
+msgid "Edit Vector"
+msgstr "Vector bewerken"
+
+#: ../src/callbacks.cc:6629
+msgid "Edit Vector (global)"
+msgstr "Vector bewerken (globaal)"
+
+#: ../src/callbacks.cc:6631
+msgid "New Vector"
+msgstr "Nieuwe vector"
+
+#: ../src/callbacks.cc:6638
+msgid "Edit Matrix (global)"
+msgstr "Matrix bewerken (globaal)"
+
+#: ../src/callbacks.cc:6640
+msgid "New Matrix"
+msgstr "Nieuwe matrix"
+
+#: ../src/callbacks.cc:6855
+msgid "New Data Object"
+msgstr "Nieuw gegevensobject"
+
+#: ../src/callbacks.cc:6954
+msgid "text"
+msgstr "tekst"
+
+#: ../src/callbacks.cc:6959 ../src/callbacks.cc:6967
+msgid "approximate"
+msgstr "benaderd"
+
+#: ../src/callbacks.cc:6970
+msgid "expression"
+msgstr "expressie"
+
+#: ../src/callbacks.cc:7122
+msgid "Edit Data Set (global)"
+msgstr "Gegevensverzameling bewerken (globaal)"
+
+#: ../src/callbacks.cc:7124
+msgid "New Data Set"
+msgstr "Nieuwe gegevensverzameling"
+
+#: ../src/callbacks.cc:7141
+msgid "info"
+msgstr "info"
+
+#: ../src/callbacks.cc:7224
+msgid "Property"
+msgstr "Eigenschap"
+
+#. no filename -- open dialog again
+#: ../src/callbacks.cc:7289 ../src/callbacks.cc:7366
+msgid "No file name entered."
+msgstr "Geen bestandsnaam opgegeven."
+
+#. no filename -- open dialog again
+#. no delimiter -- open dialog again
+#: ../src/callbacks.cc:7317 ../src/callbacks.cc:7394
+msgid "No delimiter selected."
+msgstr "Geen scheidingsteken geselecteerd."
+
+#: ../src/callbacks.cc:7328
+#, c-format
+msgid ""
+"Could not import from file \n"
+"%s"
+msgstr ""
+"Kon niet importeren uit bestand \n"
+"%s"
+
+#: ../src/callbacks.cc:7406
+msgid "No variable name entered."
+msgstr "Geen naam opgegeven voor variabele."
+
+#: ../src/callbacks.cc:7417
+msgid "No known variable with entered name found."
+msgstr "Geen bekende variabele met opgegeven naam gevonden."
+
+#: ../src/callbacks.cc:7430
+#, c-format
+msgid ""
+"Could not export to file \n"
+"%s"
+msgstr ""
+"Kon niet exporteren naar bestand \n"
+"%s"
+
+#: ../src/callbacks.cc:7520 ../src/callbacks.cc:7528 ../src/callbacks.cc:10153
+#: ../src/callbacks.cc:10156
+msgid "My Variables"
+msgstr "Mijn variabelen"
+
+#: ../src/callbacks.cc:7782
+msgid "Couldn't write definitions"
+msgstr "Kon definities niet schrijven"
+
+#: ../src/callbacks.cc:7902
+msgid "Disable Completion"
+msgstr "Voltooien uitschakelen"
+
+#: ../src/callbacks.cc:7904
+msgid "Enable Completion"
+msgstr "Voltooien toestaan"
+
+#: ../src/callbacks.cc:7909
+msgid "RPN Mode"
+msgstr "RPN"
+
+#: ../src/callbacks.cc:8028
+msgid "Save Mode"
+msgstr "Modus opslaan"
+
+#: ../src/callbacks.cc:8060
+msgid "Preset mode cannot be overwritten."
+msgstr "Vooringestelde modus kan niet worden overschreven."
+
+#: ../src/callbacks.cc:8082
+msgid "Delete Mode"
+msgstr "Modus wissen"
+
+#: ../src/callbacks.cc:8089
+msgid "Mode"
+msgstr "Modus"
+
+#: ../src/callbacks.cc:8183
+msgid "Preset"
+msgstr "Voorinstelling"
+
+#: ../src/callbacks.cc:8184
+msgid "Default"
+msgstr "Standaard"
+
+#: ../src/callbacks.cc:8709
+#, c-format
+msgid ""
+"Couldn't write preferences to\n"
+"%s"
+msgstr ""
+"Kon de voorkeurinstellingen niet schrijven naar\n"
+"%s"
+
+#: ../src/callbacks.cc:9273
+msgid "Select result font"
+msgstr "Lettertype voor antwoord selecteren"
+
+#: ../src/callbacks.cc:9286
+msgid "Select expression font"
+msgstr "Lettertype voor expressie selecteren"
+
+#: ../src/callbacks.cc:9298
+msgid "Select status font"
+msgstr "Lettertype voor status selecteren"
+
+#: ../src/callbacks.cc:10186 ../src/callbacks.cc:10188
+msgid "Fetching exchange rates."
+msgstr "Wisselkoersen worden opgehaald."
+
+#: ../src/callbacks.cc:10813
+msgid "Select file to save PNG image to"
+msgstr "Bestand voor opslaan PNG-afbeelding selecteren"
+
+#: ../src/callbacks.cc:10818 ../src/callbacks.cc:12102
+msgid "Allowed File Types"
+msgstr "Toegestane bestandstypes"
+
+#: ../src/callbacks.cc:10823 ../src/callbacks.cc:12112
+msgid "All Files"
+msgstr "Alle bestanden"
+
+#. do not delete units that are used by other units
+#: ../src/callbacks.cc:10955
+msgid "Cannot delete unit as it is needed by other units."
+msgstr "Kan eenheid niet wissen omdat die nodig is voor andere eenheden."
+
+#: ../src/callbacks.cc:11360
+#, c-format
+msgid ""
+"Could not display help for Qalculate!.\n"
+"%s"
+msgstr ""
+"Help kan niet worden getoond voor Qalculate!.\n"
+"%s"
+
+#: ../src/callbacks.cc:11537 ../src/callbacks.cc:11544
+msgid "Components (in horizontal order)"
+msgstr "Componenten (horizontale volgorde)"
+
+#: ../src/callbacks.cc:11555 ../src/callbacks.cc:11596
+msgid "Select file to import"
+msgstr "Te importeren bestand selecteren"
+
+#: ../src/callbacks.cc:11567
+msgid "Select file to export to"
+msgstr "Bestand waarnaar moet worden geëxporteerd selecteren"
+
+#: ../src/callbacks.cc:11582
+msgid "Select date"
+msgstr "Datum selecteren"
+
+#: ../src/callbacks.cc:11881 ../src/callbacks.cc:11905
+msgid ""
+"A conflicting object with the same name exists. If you proceed and save "
+"changes, the conflicting object will be overwritten or deactivated.\n"
+"Do you want to proceed?"
+msgstr ""
+"Er is een conflicterend object met dezelfde naam. Indien u verder gaat en veranderingen opslaat wordt "
+"dit conflicterend object overschreven of inactief gemaakt.\n"
+"Wilt u verdergaan?"
+
+#: ../src/callbacks.cc:12097
+msgid "Select file to export"
+msgstr "Te exporteren bestand selecteren"
+
+#: ../src/callbacks.cc:12177 ../src/callbacks.cc:12219
+msgid "Empty expression."
+msgstr "Expressie niet gegeven."
+
+#: ../src/callbacks.cc:12190 ../src/callbacks.cc:12232
+msgid "Empty x variable."
+msgstr "Variabele x niet gegeven."
+
+#: ../src/callbacks.cc:12440
+msgid "Classification"
+msgstr "Indeling"
+
+#: ../src/callbacks.cc:12445
+msgid "Alkali Metal"
+msgstr "Alkalisch metaal"
+
+#: ../src/callbacks.cc:12446
+msgid "Alkaline-Earth Metal"
+msgstr "Alkalisch aardmetaal"
+
+#: ../src/callbacks.cc:12447
+msgid "Lanthanide"
+msgstr "Lanthanide"
+
+#: ../src/callbacks.cc:12448
+msgid "Actinide"
+msgstr "Actinide"
+
+#: ../src/callbacks.cc:12449
+msgid "Transition Metal"
+msgstr "Overgangsmetaal"
+
+#: ../src/callbacks.cc:12450
+msgid "Metal"
+msgstr "Metaal"
+
+#: ../src/callbacks.cc:12451
+msgid "Metalloid"
+msgstr "Metalloïde (halfmetaal)"
+
+#: ../src/callbacks.cc:12452
+msgid "Non-Metal"
+msgstr "Niet-metaal"
+
+#: ../src/callbacks.cc:12453
+msgid "Halogen"
+msgstr "Halogeen"
+
+#: ../src/callbacks.cc:12454
+msgid "Noble Gas"
+msgstr "Edelgas"
+
+#: ../src/callbacks.cc:12455
+msgid "Transactinide"
+msgstr "Transactinide"
+
+#: ../src/callbacks.cc:12548
+msgid "No unknowns in result."
+msgstr "Geen onbekenden in antwoord."
+
+#: ../src/callbacks.cc:12551
+msgid "Set Unknowns"
+msgstr "Onbekenden een waarde geven"
+
