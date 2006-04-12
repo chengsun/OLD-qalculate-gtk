@@ -2999,7 +2999,7 @@ Other...</property>
 		      <property name="can_focus">True</property>
 		      <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
 		      <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
-		      <property name="shadow_type">GTK_SHADOW_NONE</property>
+		      <property name="shadow_type">GTK_SHADOW_IN</property>
 		      <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
 
 		      <child>
@@ -3920,7 +3920,6 @@ Other...</property>
       <signal name="activate" handler="on_popup_menu_item_view_vector_activate" last_modification_time="Mon, 10 Apr 2006 09:14:28 GMT"/>
     </widget>
   </child>
-
 </widget>
 
 </glade-interface>

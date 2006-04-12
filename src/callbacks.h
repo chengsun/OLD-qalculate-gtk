@@ -496,11 +496,19 @@ gboolean on_expression_key_press_event(GtkWidget *w, GdkEventKey *event, gpointe
 
 gboolean on_resultview_expose_event(GtkWidget *w, GdkEventExpose *event, gpointer user_data);
 
+gboolean on_tMatrixEdit_key_press_event(GtkWidget *w, GdkEventKey *event, gpointer user_data);
+gboolean on_tMatrixEdit_button_press_event(GtkWidget *w, GdkEventButton *event, gpointer user_data);
+gboolean on_tMatrixEdit_cursor_changed(GtkTreeView *w, gpointer user_data);
+
 void on_matrix_edit_spinbutton_columns_value_changed(GtkSpinButton *w, gpointer user_data);
 void on_matrix_edit_spinbutton_rows_value_changed(GtkSpinButton *w, gpointer user_data);
 
 void on_matrix_edit_radiobutton_matrix_toggled(GtkToggleButton *w, gpointer user_data);
 void on_matrix_edit_radiobutton_vector_toggled(GtkToggleButton *w, gpointer user_data);
+
+gboolean on_tMatrix_key_press_event(GtkWidget *w, GdkEventKey *event, gpointer user_data);
+gboolean on_tMatrix_button_press_event(GtkWidget *w, GdkEventButton *event, gpointer user_data);
+gboolean on_tMatrix_cursor_changed(GtkTreeView *w, gpointer user_data);
 
 void on_matrix_spinbutton_columns_value_changed(GtkSpinButton *w, gpointer user_data);
 void on_matrix_spinbutton_rows_value_changed(GtkSpinButton *w, gpointer user_data);

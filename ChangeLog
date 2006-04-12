@@ -1,3 +1,7 @@
+2006-04-12 Niklas Knutsson  <nq@altern.org>
+
+	* New matrix editing using GtkTreeView
+
 2006-04-10 Niklas Knutsson  <nq@altern.org>
 
 	* Align matrix/vector table items right
