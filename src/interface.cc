@@ -1190,41 +1190,21 @@ get_matrix_edit_dialog (void)
 #ifndef HAVE_LIBGNOME
 		gtk_widget_hide(glade_xml_get_widget (matrixedit_glade, "matrix_edit_button_help"));
 #endif		
-		
-		glade_xml_signal_autoconnect(matrixedit_glade);
 
-		GType types[30000];
-		for(gint i = 0; i < 30000; i += 3) {
+		GType types[20000];
+		for(gint i = 0; i < 20000; i += 2) {
 			types[i] = G_TYPE_STRING;
 			types[i + 1] = GDK_TYPE_COLOR;
-			types[i + 2] = G_TYPE_FLOAT;
 		}
 		tMatrixEdit_store = gtk_list_store_newv(10000, types);
-		tMatrixEdit = gtk_tree_view_new_with_model (GTK_TREE_MODEL (tMatrixEdit_store));
+		tMatrixEdit = glade_xml_get_widget (matrixedit_glade, "matrix_edit_view");
+		gtk_tree_view_set_model (GTK_TREE_VIEW(tMatrixEdit), GTK_TREE_MODEL(tMatrixEdit_store));
 		gtk_widget_modify_base(tMatrixEdit, GTK_STATE_NORMAL, &stackview->style->bg[GTK_STATE_NORMAL]);
-		gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tMatrixEdit), FALSE);
-		gtk_tree_view_set_enable_search(GTK_TREE_VIEW(tMatrixEdit), FALSE);
-		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tMatrixEdit), FALSE);
-		gtk_widget_show(tMatrixEdit);
-		gtk_container_add(GTK_CONTAINER(glade_xml_get_widget(matrixedit_glade, "matrix_edit_scrolled_table")), tMatrixEdit);
 		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tMatrixEdit));
 		gtk_tree_selection_set_mode(selection, GTK_SELECTION_NONE);
 
-		renderer = gtk_cell_renderer_text_new();
-		g_object_set(G_OBJECT(renderer), "xalign", 0.5, NULL);
-		g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(0));
-		column = gtk_tree_view_column_new_with_attributes("Rows", renderer, "text", 0, "background-gdk", 1, "xalign", 2, NULL);
-		matrix_edit_columns.push_back(column);
-		gtk_tree_view_column_set_min_width(column, 25);
-		gtk_tree_view_append_column(GTK_TREE_VIEW(tMatrixEdit), column);
-		GtkTreeIter iter;
-		gtk_list_store_append(GTK_LIST_STORE(tMatrixEdit_store), &iter);
-		gtk_list_store_set(GTK_LIST_STORE(tMatrixEdit_store), &iter, 0, "", 1, &stackview->style->bg[GTK_STATE_NORMAL], 2, 0.5, -1);
-
-		g_signal_connect((gpointer) tMatrixEdit, "key-press-event", G_CALLBACK(on_tMatrixEdit_key_press_event), NULL);
-		g_signal_connect((gpointer) tMatrixEdit, "button-press-event", G_CALLBACK(on_tMatrixEdit_button_press_event), NULL);
-		g_signal_connect((gpointer) tMatrixEdit, "cursor-changed", G_CALLBACK(on_tMatrixEdit_cursor_changed), NULL);
-
+		glade_xml_signal_autoconnect(matrixedit_glade);
+		
 	}
 
 	/* populate combo menu */
@@ -1259,41 +1239,21 @@ get_matrix_dialog (void)
 		g_free(gstr);
 	
 		g_assert (glade_xml_get_widget (matrix_glade, "matrix_dialog") != NULL);
-		
-		glade_xml_signal_autoconnect(matrix_glade);
 
-		GType types[30000];
-		for(gint i = 0; i < 30000; i += 3) {
+		GType types[20000];
+		for(gint i = 0; i < 20000; i += 2) {
 			types[i] = G_TYPE_STRING;
 			types[i + 1] = GDK_TYPE_COLOR;
-			types[i + 2] = G_TYPE_FLOAT;
 		}
 		tMatrix_store = gtk_list_store_newv(10000, types);
-		tMatrix = gtk_tree_view_new_with_model (GTK_TREE_MODEL (tMatrix_store));
+		tMatrix = glade_xml_get_widget (matrix_glade, "matrix_view");
+		gtk_tree_view_set_model (GTK_TREE_VIEW(tMatrix), GTK_TREE_MODEL(tMatrix_store));
 		gtk_widget_modify_base(tMatrix, GTK_STATE_NORMAL, &stackview->style->bg[GTK_STATE_NORMAL]);
-		gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tMatrix), FALSE);
-		gtk_tree_view_set_enable_search(GTK_TREE_VIEW(tMatrix), FALSE);
-		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tMatrix), FALSE);
-		gtk_widget_show(tMatrix);
-		gtk_container_add(GTK_CONTAINER(glade_xml_get_widget(matrix_glade, "matrix_scrolled_table")), tMatrix);
 		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tMatrix));
 		gtk_tree_selection_set_mode(selection, GTK_SELECTION_NONE);
 
-		renderer = gtk_cell_renderer_text_new();
-		g_object_set(G_OBJECT(renderer), "xalign", 0.5, NULL);
-		g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(0));
-		column = gtk_tree_view_column_new_with_attributes("Rows", renderer, "text", 0, "background-gdk", 1, "xalign", 2, NULL);
-		matrix_columns.push_back(column);
-		gtk_tree_view_column_set_min_width(column, 25);
-		gtk_tree_view_append_column(GTK_TREE_VIEW(tMatrix), column);
-		GtkTreeIter iter;
-		gtk_list_store_append(GTK_LIST_STORE(tMatrix_store), &iter);
-		gtk_list_store_set(GTK_LIST_STORE(tMatrix_store), &iter, 0, "", 1, &stackview->style->bg[GTK_STATE_NORMAL], 2, 0.5, -1);
+		glade_xml_signal_autoconnect(matrix_glade);
 
-		g_signal_connect((gpointer) tMatrix, "key-press-event", G_CALLBACK(on_tMatrix_key_press_event), NULL);
-		g_signal_connect((gpointer) tMatrix, "button-press-event", G_CALLBACK(on_tMatrix_button_press_event), NULL);
-		g_signal_connect((gpointer) tMatrix, "cursor-changed", G_CALLBACK(on_tMatrix_cursor_changed), NULL);
-		
 	}
 
 	return glade_xml_get_widget (matrix_glade, "matrix_dialog");

@@ -324,7 +324,7 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkLabel" id="label26">
+		<widget class="GtkLabel" id="unit_edit_label_name_title">
 		  <property name="visible">True</property>
 		  <property name="label" translatable="yes">&lt;b&gt;Name&lt;/b&gt;</property>
 		  <property name="use_underline">False</property>
@@ -634,7 +634,7 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkLabel" id="label27">
+		<widget class="GtkLabel" id="unit_edit_label_type_title">
 		  <property name="visible">True</property>
 		  <property name="label" translatable="yes">&lt;b&gt;Type&lt;/b&gt;</property>
 		  <property name="use_underline">False</property>
@@ -966,7 +966,7 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkLabel" id="label28">
+		<widget class="GtkLabel" id="unit_edit_label_relation_title">
 		  <property name="visible">True</property>
 		  <property name="label" translatable="yes">&lt;b&gt;Relation&lt;/b&gt;</property>
 		  <property name="use_underline">False</property>

@@ -1,6 +1,17 @@
+2006-04-21 Niklas Knutsson  <nq@altern.org>
+
+	* Display position of current element instead of using bad headers
+	* Handle empty matrices
+
+2006-04-18 Niklas Knutsson  <nq@altern.org>
+
+	* unit_edit_label_relation_title did not exist
+	* Scroll to current matrix cell
+
 2006-04-12 Niklas Knutsson  <nq@altern.org>
 
 	* New matrix editing using GtkTreeView
+	* Show matrix result dialog automatically for all but the smallest of matrices
 
 2006-04-10 Niklas Knutsson  <nq@altern.org>
 

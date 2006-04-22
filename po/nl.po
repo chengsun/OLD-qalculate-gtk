@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: qalculate-gtk\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-21 07:58+0100\n"
-"PO-Revision-Date: 2006-03-30 10:23\n"
+"PO-Revision-Date: 2006-04-04 10:57\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team: Nederlands <kde-i18n-nl@kde.org.>\n"
 "MIME-Version: 1.0\n"
@@ -398,7 +398,7 @@ msgstr "Eenheidexpressie"
 
 #: ../data/datasetedit.glade.h:33
 msgid "Use as key"
-msgstr "Gebruiken als toets"
+msgstr "Gebruiken als sleutelwaarde"
 
 #: ../data/datasetedit.glade.h:34
 msgid "Value Type"
