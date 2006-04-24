@@ -325,6 +325,14 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 				<entry><para>Tries to convert the units in the current result so that as few units as possible is used. Base units are prioritized.</para></entry>
 			</row>
 			<row valign="top">
+				<entry><para>Insert Matrix</para></entry>
+				<entry><para>Opens a dialog where you can create a matrix in a spreadsheet-like table and insert into the expression entry. If selected expression text is a matrix, then the matrix is edited.</para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>Insert Vector</para></entry>
+				<entry><para>Opens a dialog where you can create a vector in a spreadsheet-like table and insert into the expression entry. If selected expression text is a vector, then the vector is edited.</para></entry>
+			</row>
+			<row valign="top">
 				<entry><para>Copy Result (<keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>C</keycap></keycombo>)</para></entry>
 				<entry><para>Copies the current result to the clipboard.</para></entry>
 			</row>
@@ -397,6 +405,10 @@ The menus in the menu bar provides access to most of the functionality of Qalcul
 			</row>
 			<row valign="top">
 				<entry><para>RPN Mode (<keycombo><keycap>Ctrl</keycap><keycap>R</keycap></keycombo>)</para></entry>
+				<entry><para>Toggles Reverse Polish Notation mode on/off. For details see <xref linkend="qalculate-rpn"/></para></entry>
+			</row>
+			<row valign="top">
+				<entry><para>RPN Syntax</para></entry>
 				<entry><para>Toggles use of Reverse Polish Notation syntax in expressions on/off.</para></entry>
 			</row>
 			<row valign="top">
@@ -596,7 +608,7 @@ In Qalculate! mathematical entities, such as numbers and variables, are referred
 	<varlistentry>
 		<term>Numbers</term>
 		<listitem><para>
-		These are the regular numbers composed by digits 0-9 and a decimal point — a dot, and a comma if it is the default decimal point in the locale/language used. Separators (ex. <quote>1,000.00</quote>), usually comma or dot whichever is not the decimal point, are not allowed. Numbers include integers, real numbers, and complex numbers. The imaginary part of complex numbers are written with as regular number followed by the special variable <quote>i</quote>, which represents the square root of -1 (ex. <quote>2 + 3i</quote>). Spaces between digits are ignored (<quote>5  5 = 55</quote>). <quote>E</quote> (or <quote>e</quote>) can be considered as a shortcut for writing many zeroes and is equivalent to multiplication by 10 raised to the power of the right-hand value (ex. <quote>5E3 = 5000</quote>).</para>
+		These are the regular numbers composed by digits 0-9 and a decimal sign — a dot, or a comma if it is the default decimal point in the locale/language used. If comma is used as decimal sign, the dot is still kept as an alternative decimal sign, if not explicitely turned off in the preferences dialog with <guibutton>Ignore dots in number</guibutton> (to allow it to be used as thousand separator instead). Numbers include integers, real numbers, and complex numbers. The imaginary part of complex numbers are written with as regular number followed by the special variable <quote>i</quote>, which represents the square root of -1 (ex. <quote>2 + 3i</quote>). Spaces between digits are ignored (<quote>5  5 = 55</quote>). <quote>E</quote> (or <quote>e</quote>) can be considered as a shortcut for writing many zeroes and is equivalent to multiplication by 10 raised to the power of the right-hand value (ex. <quote>5E3 = 5000</quote>).</para>
 		<para>Sexagesimal numbers (and time) can be entered directly using colons (ex. <quote>5:30 = 5.5</quote>). A number immediately preceeded <quote>0b</quote>, <quote>0o</quote> or <quote>0x</quote> are interpreted as a number with base 2, 8 or 16, respectively (if the default base is 10, ex. <quote>0x3f = 63</quote>). The number base in can also be selected, either by using the <command>base()</command>, <command>bin()</command>, <command>oct()</command>, <command>hex()</command> and <command>roman()</command> functions, or by setting the base used for all numbers in the whole expression from <menuchoice><guimenu>Mode</guimenu><guisubmenu>Number Base</guisubmenu><guimenuitem>Select Result and Expression Base...</guimenuitem></menuchoice>.
 		</para></listitem>
 	</varlistentry>
@@ -944,6 +956,40 @@ If the limit implicit multiplication mode is activated, the use of implicite mul
 </varlistentry>
 </variablelist>
 </para>
+<sect1 id="qalculate-rpn">
+<title>The RPN Mode</title>
+<para>
+The Reverse Polish Notation mode can be activated with <menuchoice><guimenu>Mode</guimenu><guimenuitem>RPN Mode</guimenuitem></menuchoice>, <keycombo><keycap>Ctrl</keycap><keycap>R</keycap></keycombo> or from the context menu of the expression entry. For details about what Reverse Polish Notation is and how it generally works, see for example the <ulink url="http://en.wikipedia.org/wiki/Reverse_Polish_notation">RPN article at Wikipedia</ulink>.
+</para>
+<para>
+Central to the RPN mode is the stack, a list of registers/values that is operated on by functions and operators. The stack has a variable number of registers which can hold an unlimited number of values. The stack size is dynamically changed when a new value is added and the first value on the stack is shown in the result display. Mathematical operators such as plus and minus then operates on the first two, last added, values on the stack.  The second value is changed with input from the first value. For example, the minus operator subtracts the first value from the second. Functions which require exactly one argument operates on the first value on the stack. Other functions, which require multiple arguments, must be entered in normal expression based way.
+</para>
+<para>
+The RPN mode still allows full expression to be entered (you can add <quote>5x+3+23+sin(2)</quote> directly to the stack). The buttons on the keypad do not insert operators and functions in the expression entry, but instead applies them to the stack. This is also true for the keypad keys on the keyboard. <keycap>Enter</keycap> calculates the current expressions and adds it to the stack. If the expression entry is not empty when applying an operator or function to the stack, the expression is first calculated and added to the stack. All keys on the main part of the keyboard add the corresponding characters in expression entry, unless the <guilabel>Use only keypad keys for RPN</guilabel> option is deactivated from the preferences dialog. To apply the raise operator '^' to the stack, without clicking the keypad button with the mouse, use the <keycombo><keycap>Ctrl</keycap><keycap>* (keypad)</keycap></keycombo> shortcut. If the expression only contains an operator or a function, which requires exactly one argument, the operator/function is applied to the stack.
+</para>
+<para>
+For example, <command>5 ENTER 3 + 2 /</command> adds 5 to the stack, then adds 3 to the stack and moves 5 down a step and adds 3 to 5. The first value, 3, is removed from the stack and the value left is 8. Then 2 is added to the stack and 8 is divided by 2, resulting in 4. This would in a single expression be entered as <quote>(5+3)/2</quote>.
+</para>
+<figure id="qalculate-FIG-rpn-mode">
+	<title>RPN Mode</title>
+	<screenshot>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="figures/rpn-mode.png" format="PNG"/>
+			</imageobject>
+		</mediaobject>
+	</screenshot>
+</figure>
+<para>
+The RPN mode adds a third page to the main window, for display and manipulation of the values on the stack. This shows a list of values on the stack, with the last added value on the top. On the right are buttons for moving the selected value up or down, editing or removing the selected value, or remove all values from the stack. The equals buttons do in RPN mode in addition to calculating the expression, add it to the stack.
+</para>
+<para>
+Changes in the display of result only affects the first value on the stack.
+</para>
+<para>
+Note that Qalculate! in addition to the RPN mode, has a RPN syntax. The RPN syntax controls how expressions is interpreted. This means that instead of as with a traditional RPN calculator, where each value and operator is put on the stack separately, all values and operators are entered directly in an expression, with ENTER replaced by space (ex. <quote>5 2 +</quote> which corresponds to <command>5 ENTER 2 ENTER +</command>, and equals <quote>5 + 2</quote> in regular notation).
+</para>
+</sect1>
 </chapter>
 
 <chapter id="qalculate-variables">

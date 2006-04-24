@@ -176,7 +176,7 @@
 	      <child>
 		<widget class="GtkCheckButton" id="preferences_checkbutton_dot_as_separator">
 		  <property name="visible">True</property>
-		  <property name="tooltip" translatable="yes">Allow dots, '.',  to be used as thousands separator instead of as an alternative to decimal sign</property>
+		  <property name="tooltip" translatable="yes">Allow dots, '.',  to be used as thousands separator instead of as an alternative decimal sign</property>
 		  <property name="can_focus">True</property>
 		  <property name="label" translatable="yes">Ignore dots in numbers</property>
 		  <property name="use_underline">True</property>
@@ -526,7 +526,7 @@
 		  <child>
 		    <widget class="GtkEntry" id="preferences_entry_wget_args">
 		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">Arguments (in addition to timeout and output file) passed to wget when fetching exchange rates.</property>
+		      <property name="tooltip" translatable="yes">Arguments (in addition to timeout and output file) passed to wget when fetching exchange rates</property>
 		      <property name="can_focus">True</property>
 		      <property name="editable">True</property>
 		      <property name="visibility">True</property>

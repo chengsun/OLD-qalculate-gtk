@@ -1476,6 +1476,7 @@ void on_tFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer) 
 							}
 							if(dp->isKey()) {
 								str += " (";
+								//indicating that the property is a data set key
 								str += _("key");
 								str += ")";
 							}
@@ -5606,7 +5607,7 @@ void unit_inserted(Unit *object) {
 	gtk_signal_connect(GTK_OBJECT(item), "activate", GTK_SIGNAL_FUNC(insert_unit), (gpointer) object);
 }
 
-void apply_function(MathFunction *f, GtkWidget *parent = NULL) {
+void apply_function(MathFunction *f, GtkWidget* = NULL) {
 	if(rpn_mode) {
 		calculateRPN(f);
 		return;
@@ -7320,7 +7321,6 @@ void insert_matrix(const MathStructure *initial_value, GtkWidget *win, gboolean 
 
 
 	printops.can_display_unicode_string_arg = (void*) tMatrix;
-	MathStructure *mtext = NULL;
 	while(gtk_events_pending()) gtk_main_iteration();
 	GtkTreeIter iter;
 	bool b = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tMatrix_store), &iter);
@@ -11850,7 +11850,7 @@ void on_stackview_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 		gtk_widget_set_sensitive(glade_xml_get_widget (main_glade, "button_deleteregister"), FALSE);
 	}
 }
-void on_stackview_item_edited(GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpointer) {
+void on_stackview_item_edited(GtkCellRendererText*, gchar *path, gchar *new_text, gpointer) {
 	int index = s2i(path);
 	GtkTreeIter iter;
 	gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(stackstore), &iter, NULL, index);
@@ -12284,7 +12284,7 @@ gboolean on_tMatrixEdit_button_press_event(GtkWidget*, GdkEventButton *event, gp
 GtkTreeIter matrix_edit_prev_iter;
 gint matrix_edit_prev_column;
 bool block_matrix_edit_update_cursor = false;
-gboolean on_tMatrixEdit_cursor_changed(GtkTreeView *w, gpointer user_data) {
+gboolean on_tMatrixEdit_cursor_changed(GtkTreeView*, gpointer) {
 	if(block_matrix_edit_update_cursor) return FALSE;
 	GtkTreeViewColumn *column = NULL;
 	GtkTreePath *path = NULL;
@@ -12450,7 +12450,7 @@ gboolean on_tMatrix_button_press_event(GtkWidget*, GdkEventButton *event, gpoint
 GtkTreeIter matrix_prev_iter;
 gint matrix_prev_column;
 bool block_matrix_update_cursor = false;
-gboolean on_tMatrix_cursor_changed(GtkTreeView *w, gpointer user_data) {
+gboolean on_tMatrix_cursor_changed(GtkTreeView*, gpointer) {
 	if(block_matrix_update_cursor) return FALSE;
 	GtkTreeViewColumn *column = NULL;
 	GtkTreePath *path = NULL;
