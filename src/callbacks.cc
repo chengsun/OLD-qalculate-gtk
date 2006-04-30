@@ -6097,7 +6097,7 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base")), ((CompositeUnit*) (au->firstBaseUnit()))->preferredDisplayName(printops.abbreviate_names, true, false, false, &can_display_unicode_string_function, (void*) glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base")).name.c_str());
 				gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (unitedit_glade, "unit_edit_spinbutton_exp")), au->firstBaseExp());
 				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_relation")), CALCULATOR->localizeExpression(au->expression()).c_str());
-				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_reversed")), CALCULATOR->localizeExpression(au->reverseExpression()).c_str());
+				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_reversed")), CALCULATOR->localizeExpression(au->inverseExpression()).c_str());
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (unitedit_glade, "unit_edit_checkbutton_exact")), !au->isApproximate());
 				gtk_widget_set_sensitive(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_relation"), !u->isBuiltin());
 				gtk_widget_set_sensitive(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_reversed"), !u->isBuiltin());
@@ -6163,7 +6163,7 @@ run_unit_edit_dialog:
 						}
 						au->setBaseUnit(bu);
 						au->setExpression(CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_relation"))), evalops.parse_options));
-						au->setReverseExpression(CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_reversed"))), evalops.parse_options));
+						au->setInverseExpression(CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_reversed"))), evalops.parse_options));
 						au->setExponent(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (unitedit_glade, "unit_edit_spinbutton_exp"))));
 						au->setApproximate(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (unitedit_glade, "unit_edit_checkbutton_exact"))));
 					}
@@ -6460,7 +6460,7 @@ void edit_function(const char *category = "", MathFunction *f = NULL, GtkWidget 
 		//fill in original paramaters
 		set_name_label_and_entry(f, glade_xml_get_widget (functionedit_glade, "function_edit_entry_name"), glade_xml_get_widget (functionedit_glade, "function_edit_label_names"));
 		if(!f->isBuiltin()) {
-			gtk_text_buffer_set_text(expression_buffer, CALCULATOR->localizeExpression(((UserFunction*) f)->equation()).c_str(), -1);
+			gtk_text_buffer_set_text(expression_buffer, CALCULATOR->localizeExpression(((UserFunction*) f)->formula()).c_str(), -1);
 		}
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_category")), f->category().c_str());
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_desc")), f->title(false).c_str());
@@ -6532,13 +6532,12 @@ run_function_edit_dialog:
 			f->setCategory(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_category"))));
 			f->setTitle(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_desc"))));
 			f->setDescription(gtk_text_buffer_get_text(description_buffer, &d_iter_s, &d_iter_e, FALSE));
-			if(!f->isBuiltin()) {
-				((UserFunction*) f)->setEquation(str2);
+			if(!f->isBuiltin()) {				
 				f->clearArgumentDefinitions();
 			}	
 		} else {
 			//new function
-			f = new UserFunction(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_category"))), "", str2, true, -1, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_desc"))), gtk_text_buffer_get_text(description_buffer, &d_iter_s, &d_iter_e, FALSE));
+			f = new UserFunction(gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_category"))), "", "", true, -1, gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget (functionedit_glade, "function_edit_entry_desc"))), gtk_text_buffer_get_text(description_buffer, &d_iter_s, &d_iter_e, FALSE));
 			add_func = true;
 		}
 		if(f) {
@@ -6558,16 +6557,19 @@ run_function_edit_dialog:
 				b = gtk_tree_model_iter_next(GTK_TREE_MODEL(tFunctionArguments_store), &iter);
 				i++;
 			}
-			b = !f->isBuiltin() && gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tSubfunctions_store), &iter);
-			if(!f->isBuiltin()) ((UserFunction*) f)->clearSubfunctions();
-			while(b) {
-				gchar *gstr;
-				gboolean g_b = FALSE;
-				gtk_tree_model_get(GTK_TREE_MODEL(tSubfunctions_store), &iter, 1, &gstr, 4, &g_b, -1);
-				((UserFunction*) f)->addSubfunction(gstr, g_b);
-				b = gtk_tree_model_iter_next(GTK_TREE_MODEL(tSubfunctions_store), &iter);
-				g_free(gstr);
-			}		
+			if(!f->isBuiltin()) {
+				((UserFunction*) f)->clearSubfunctions();
+				b = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(tSubfunctions_store), &iter);
+				while(b) {
+					gchar *gstr;
+					gboolean g_b = FALSE;
+					gtk_tree_model_get(GTK_TREE_MODEL(tSubfunctions_store), &iter, 1, &gstr, 4, &g_b, -1);
+					((UserFunction*) f)->addSubfunction(gstr, g_b);
+					b = gtk_tree_model_iter_next(GTK_TREE_MODEL(tSubfunctions_store), &iter);
+					g_free(gstr);
+				}
+				((UserFunction*) f)->setFormula(str2);
+			}
 			f->setHidden(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (functionedit_glade, "function_edit_checkbutton_hidden"))));
 			set_edited_names(f, str);
 			if(add_func) {

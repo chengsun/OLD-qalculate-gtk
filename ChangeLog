@@ -1,11 +1,16 @@
-2006-04-21 Niklas Knutsson  <nq@altern.org>
+2006-04-28 Niklas Knutsson  <nq@altern.org>
 
-	* Display position of current element instead of using bad headers
-	* Handle empty matrices
+	* Fix function editing with subfunctions
+
 2006-04-23 Niklas Knutsson  <nq@altern.org>
 
 	* Update documentation
 	* Update Swedish translation
+
+2006-04-21 Niklas Knutsson  <nq@altern.org>
+
+	* Display position of current element instead of using bad headers
+	* Handle empty matrices
 
 2006-04-18 Niklas Knutsson  <nq@altern.org>
 
