@@ -1847,9 +1847,9 @@ void setUnitTreeItem(GtkTreeIter &iter2, Unit *u) {
 		case SUBTYPE_ALIAS_UNIT: {
 			au = (AliasUnit*) u;
 			sbase = au->firstBaseUnit()->preferredDisplayName(printops.abbreviate_names, printops.use_unicode_signs, false, false, &can_display_unicode_string_function, (void*) tUnits).name;
-			if(au->firstBaseExp() != 1) {
+			if(au->firstBaseExponent() != 1) {
 				sbase += POWER;
-				sbase += i2s(au->firstBaseExp());
+				sbase += i2s(au->firstBaseExponent());
 			}
 			break;
 		}
@@ -5312,7 +5312,8 @@ void execute_expression(bool force, bool do_mathoperation, MathOperation op, Mat
 	if(rpn_mode && (!do_stack || stack_index == 0)) {
 		mstruct->unref();
 		mstruct = CALCULATOR->getRPNRegister(1);
-		mstruct->ref();
+		if(!mstruct) mstruct = new MathStructure();
+		else mstruct->ref();
 	}
 	
 	//update "ans" variables
@@ -6095,7 +6096,7 @@ edit_unit(const char *category = "", Unit *u = NULL, GtkWidget *win = NULL)
 			case SUBTYPE_ALIAS_UNIT: {
 				AliasUnit *au = (AliasUnit*) u;
 				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base")), ((CompositeUnit*) (au->firstBaseUnit()))->preferredDisplayName(printops.abbreviate_names, true, false, false, &can_display_unicode_string_function, (void*) glade_xml_get_widget (unitedit_glade, "unit_edit_entry_base")).name.c_str());
-				gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (unitedit_glade, "unit_edit_spinbutton_exp")), au->firstBaseExp());
+				gtk_spin_button_set_value(GTK_SPIN_BUTTON(glade_xml_get_widget (unitedit_glade, "unit_edit_spinbutton_exp")), au->firstBaseExponent());
 				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_relation")), CALCULATOR->localizeExpression(au->expression()).c_str());
 				gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget (unitedit_glade, "unit_edit_entry_reversed")), CALCULATOR->localizeExpression(au->inverseExpression()).c_str());
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (unitedit_glade, "unit_edit_checkbutton_exact")), !au->isApproximate());
