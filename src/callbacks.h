@@ -207,6 +207,7 @@ void on_colorbutton_status_warning_color_color_set(GtkColorButton *w, gpointer u
 void on_preferences_entry_wget_args_changed(GtkEditable *w, gpointer user_data);
 void on_preferences_checkbutton_lower_case_numbers_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_lower_case_e_toggled(GtkToggleButton *w, gpointer user_data);
+void on_preferences_checkbutton_alternative_base_prefixes_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_spell_out_logical_operators_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_unicode_signs_toggled(GtkToggleButton *w, gpointer user_data);
 void on_preferences_checkbutton_display_expression_status_toggled(GtkToggleButton *w, gpointer user_data);

@@ -97,7 +97,7 @@ GtkWidget *statuslabel_l, *statuslabel_r;
 GtkWidget *f_menu ,*v_menu, *u_menu, *u_menu2, *recent_menu;
 GtkAccelGroup *accel_group;
 
-extern bool show_buttons, show_history, show_stack;
+extern bool show_keypad, show_history, show_stack;
 extern bool save_mode_on_exit, save_defs_on_exit, load_global_defs, hyp_is_on, inv_is_on, fetch_exchange_rates_at_startup;
 extern bool display_expression_status, enable_completion;
 extern bool use_custom_result_font, use_custom_expression_font, use_custom_status_font;
@@ -468,7 +468,7 @@ void create_main_window (void) {
 		gtk_expander_set_expanded(GTK_EXPANDER(expander_stack), TRUE);
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(tabs), 2);
 		gtk_widget_show(tabs);
-	} else if(show_buttons) {
+	} else if(show_keypad) {
 		gtk_expander_set_expanded(GTK_EXPANDER(expander_keypad), TRUE);
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(tabs), 0);
 		gtk_widget_show(tabs);
@@ -623,7 +623,7 @@ void create_main_window (void) {
 	gtk_widget_set_sensitive(glade_xml_get_widget(main_glade, "menu_item_result_popup_meta_mode_delete"), modes.size() > 2);
 	
 	if(win_width > 0) {
-		if(show_history || show_buttons || (show_stack && rpn_mode)) gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), 1, win_height);
+		if(show_history || show_keypad || (show_stack && rpn_mode)) gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), 1, win_height);
 		else gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), win_width, win_height);
 	}
 
@@ -631,7 +631,7 @@ void create_main_window (void) {
 	
 	set_result_size_request();
 	
-	if(show_history || show_buttons || (show_stack && rpn_mode)) gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), 1, 1);
+	if(show_history || show_keypad || (show_stack && rpn_mode)) gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), 1, 1);
 	else gtk_window_resize(GTK_WINDOW(glade_xml_get_widget(main_glade, "main_window")), win_width, 1);
 
 #ifndef HAVE_LIBGNOMEUI
@@ -909,7 +909,8 @@ get_preferences_dialog (void)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_save_mode")), save_mode_on_exit);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_unicode_signs")), printops.use_unicode_signs);	
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_lower_case_numbers")), printops.lower_case_numbers);	
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_lower_case_e")), printops.lower_case_e);	
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_lower_case_e")), printops.lower_case_e);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_alternative_base_prefixes")), printops.base_display == BASE_DISPLAY_ALTERNATIVE);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_spell_out_logical_operators")), printops.spell_out_logical_operators);	
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_save_defs")), save_defs_on_exit);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (preferences_glade, "preferences_checkbutton_rpn_keypad_only")), rpn_keypad_only);

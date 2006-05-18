@@ -21,19 +21,19 @@
 <varlistentry>
 <term><emphasis>Product</emphasis></term>
 <listitem>
-<para><command>product(Factor Expression, Lower Limit (i), Upper Limit (n)[, Index Variable])</command></para>
+<para><command>product(Factor expression, Lower limit (i), Upper limit (n)[, Index variable])</command></para>
 <para><command>Π</command></para><para>Corresponds to the product symbol. Multiplies factors for each x ranging from the lower to the upper limit.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Factor Expression: a free value</para></listitem>
-<listitem><para>Lower Limit (i): an integer</para></listitem>
-<listitem><para>Upper Limit (n): an integer</para></listitem>
-<listitem><para>Index Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Factor expression: a free value</para></listitem>
+<listitem><para>Lower limit (i): an integer</para></listitem>
+<listitem><para>Upper limit (n): an integer</para></listitem>
+<listitem><para>Index variable: an unknown variable/symbol (optional, default: x)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 <formalpara>
 <title>Requirement</title><para>
-"Upper Limit (n)" &gt;= "Lower Limit (i)"
+"Upper limit (n)" &gt;= "Lower limit (i)"
 </para>
 </formalpara>
 </listitem>
@@ -45,7 +45,7 @@
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Equation: a free value</para></listitem>
-<listitem><para>With respect to: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>With respect to: an unknown variable/symbol (optional, default: x)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -53,16 +53,16 @@
 <varlistentry>
 <term><emphasis>Solve for multiple variables</emphasis></term>
 <listitem>
-<para><command>multisolve(Equation Vector, Variable Vector)</command></para>
+<para><command>multisolve(Equation vector, Variable vector)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Equation Vector: a vector</para></listitem>
-<listitem><para>Variable Vector: a vector with an unknown variable/symbol, ...</para></listitem>
+<listitem><para>Equation vector: a vector</para></listitem>
+<listitem><para>Variable vector: a vector with an unknown variable/symbol, ...</para></listitem>
 </itemizedlist></para>
 </formalpara>
 <formalpara>
 <title>Requirement</title><para>
-dimension("Equation Vector")=dimension("Variable Vector")
+dimension("Equation vector")=dimension("Variable vector")
 </para>
 </formalpara>
 </listitem>
@@ -76,8 +76,8 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Equation 1: a free value</para></listitem>
 <listitem><para>Equation 2: a free value</para></listitem>
-<listitem><para>Variable 1: an unknown variable/symbol (optional)</para></listitem>
-<listitem><para>Variable 2: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Variable 1: an unknown variable/symbol (optional, default: x)</para></listitem>
+<listitem><para>Variable 2: an unknown variable/symbol (optional, default: y)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -85,19 +85,19 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Sum</emphasis></term>
 <listitem>
-<para><command>sum(Term Expression, Lower Limit (i), Upper Limit (n)[, Index Variable])</command></para>
+<para><command>sum(Term expression, Lower limit (i), Upper limit (n)[, Index variable])</command></para>
 <para><command>Σ</command></para><para>Corresponds to the sum symbol. Adds terms for each x ranging from the lower to the upper limit.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Term Expression: a free value</para></listitem>
-<listitem><para>Lower Limit (i): an integer</para></listitem>
-<listitem><para>Upper Limit (n): an integer</para></listitem>
-<listitem><para>Index Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Term expression: a free value</para></listitem>
+<listitem><para>Lower limit (i): an integer</para></listitem>
+<listitem><para>Upper limit (n): an integer</para></listitem>
+<listitem><para>Index variable: an unknown variable/symbol (optional, default: x)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 <formalpara>
 <title>Requirement</title><para>
-"Upper Limit (n)" &gt;= "Lower Limit (i)"
+"Upper limit (n)" &gt;= "Lower limit (i)"
 </para>
 </formalpara>
 </listitem>
@@ -133,10 +133,10 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Imaginary Part</emphasis></term>
 <listitem>
-<para><command>im(Complex Number)</command></para>
+<para><command>im(Complex number)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Complex Number: a number</para></listitem>
+<listitem><para>Complex number: a number</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -144,10 +144,10 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Real Part</emphasis></term>
 <listitem>
-<para><command>re(Complex Number)</command></para>
+<para><command>re(Complex number)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Complex Number: a number</para></listitem>
+<listitem><para>Complex number: a number</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -164,8 +164,8 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Function: a free value</para></listitem>
-<listitem><para>With respect to: an unknown variable/symbol (optional)</para></listitem>
-<listitem><para>Order: an integer &gt;= 1 (optional)</para></listitem>
+<listitem><para>With respect to: an unknown variable/symbol (optional, default: x)</para></listitem>
+<listitem><para>Order: an integer &gt;= 1 (optional, default: 1)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -177,7 +177,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Function: a free value</para></listitem>
-<listitem><para>With respect to: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>With respect to: an unknown variable/symbol (optional, default: x)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -185,11 +185,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Integrate</emphasis></term>
 <listitem>
-<para><command>integrate(Function[, Variable of Integration])</command></para>
+<para><command>integrate(Function[, Variable of integration])</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Function: a free value</para></listitem>
-<listitem><para>Variable of Integration: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Variable of integration: an unknown variable/symbol (optional, default: x)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -220,6 +220,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Combinations</emphasis></term>
 <listitem>
 <para><command>comb(Objects, Size)</command></para>
+<para>Returns the number of possible arrangements of an unordered list with a number of objects to choose from and a list size. If there are three objects (1, 2 and 3) that is put in a list with place for two, the alternatives are [1, 2], [1, 3], and [2, 3], and thus the number of combinations is 3.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Objects: a free value</para></listitem>
@@ -231,10 +232,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Derangements</emphasis></term>
 <listitem>
-<para><command>derangements(Number of Elements)</command></para>
+<para><command>derangements(Number of elements)</command></para>
+<para>Returns the number of possible rearrangements of an ordered list, of a certain size, where none of the objects are on their original position. If the original list is [1, 2, 3], the possible derangements is [2, 3, 1] and [3, 1, 2], and thus the number of derangements is 2.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Number of Elements: an integer &gt;= 1</para></listitem>
+<listitem><para>Number of elements: an integer &gt;= 1</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -243,6 +245,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Double Factorial</emphasis></term>
 <listitem>
 <para><command>factorial2(Value)</command></para>
+<para>Calculates the doublefactorial of an integer. Mulitplies the argument with every second lesser positive integer (n(n-2)(n-4)...). Can also be entered as a number followed by two exclamation marks.</para><para></para><para>ex. factorial2(5) = 5!! = 5 * 3 * 1 = 15</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Value: an integer &gt;= -1</para></listitem>
@@ -254,6 +257,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Factorial</emphasis></term>
 <listitem>
 <para><command>factorial(Value)</command></para>
+<para>Calculates the factorial of an integer. Mulitplies the argument with every lesser positive integer (n(n-1)(n-2)...2*1). Can also be entered as a number followed by one exclamation mark.</para><para></para><para>ex. factorial(5) = 5! = 5 * 4 * 3 * 2 * 1 = 120</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Value: an integer</para></listitem>
@@ -265,6 +269,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Hyperfactorial</emphasis></term>
 <listitem>
 <para><command>hyperfactorial(Value)</command></para>
+<para>Calculates the hyperfactorial of an integer. Mulitplies the argument raised by itself with every lesser positive integer raised by themselves (1^1 * 2^2 ... n^n). </para><para></para><para>ex. hyperfactorial(3) = (3^3) * (2^2) * (1^1) = 108</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Value: an integer &gt;= 1</para></listitem>
@@ -276,6 +281,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Multifactorial</emphasis></term>
 <listitem>
 <para><command>multifactorial(Value, Factorial)</command></para>
+<para>Calculates the multifactorial of an integer. Mulitplies the argument with every x lesser positive integer (n(n-x)(n-2x)...). Can also be entered as a number followed by three or more exclamation marks.</para><para></para><para>ex. multifactorial(18, 4) = 18!!!! = 18 * 14 * 10 * 6 * 2 = 30 240</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Value: an integer &gt;= 0</para></listitem>
@@ -288,6 +294,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Permutations</emphasis></term>
 <listitem>
 <para><command>perm(Objects, Size)</command></para>
+<para>Returns the number of possible arrangements of an ordered list with a number of objects to choose from and a list size. If there are three objects (1, 2 and 3) that is put in a list with two positions, the alternatives are [1, 2], [2, 1], [1, 3], [3, 1], [2, 3] and [3, 2], and thus the number of permutations is 6.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Objects: a free value</para></listitem>
@@ -300,6 +307,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Superfactorial</emphasis></term>
 <listitem>
 <para><command>superfactorial(Value)</command></para>
+<para>Calculates the superfactorial of an integer. Mulitplies the factorial of the argument with the factorial of every lesser positive integer (1! * 2! ... n^n). </para><para></para><para>ex. superfactorial(5) = 5! * 4! * 3! * 2! * 1! = 34 560</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Value: an integer &gt;= 0</para></listitem>
@@ -319,7 +327,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <para>Retrieves data from the Elements data set for a given object and property. If "info" is typed as property, all properties of the object will be listed.</para><formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Element: an object from "Elements" (use symbol, number, or name)</para></listitem>
-<listitem><para>Property: name of a data property (symbol, number, name, class, or weight) (optional)</para></listitem>
+<listitem><para>Property: name of a data property (symbol, number, name, class, or weight) (optional, default: info)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 <formalpara>
@@ -341,7 +349,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Planet: an object from "Planets" (use name)</para></listitem>
-<listitem><para>Property: name of a data property (name, year, speed, eccentricity, inclination, satellites, mass, density, area, gravity, or temperature) (optional)</para></listitem>
+<listitem><para>Property: name of a data property (name, year, speed, eccentricity, inclination, satellites, mass, density, area, gravity, or temperature) (optional, default: info)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 <formalpara>
@@ -373,12 +381,23 @@ dimension("Equation Vector")=dimension("Variable Vector")
 </listitem>
 </varlistentry>
 <varlistentry>
+<term><emphasis>Date to Unix Timestamp</emphasis></term>
+<listitem>
+<para><command>timestamp([Date])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Date: a date (optional, default: now)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
 <term><emphasis>Day of Month</emphasis></term>
 <listitem>
 <para><command>day([Date])</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Date: a date (optional)</para></listitem>
+<listitem><para>Date: a date (optional, default: today)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -389,8 +408,8 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <para><command>weekday([Date][, Week begins on Sunday])</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Date: a date (optional)</para></listitem>
-<listitem><para>Week begins on Sunday: a boolean (0 or 1) (optional)</para></listitem>
+<listitem><para>Date: a date (optional, default: today)</para></listitem>
+<listitem><para>Week begins on Sunday: a boolean (0 or 1) (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -401,7 +420,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <para><command>yearday([Date])</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Date: a date (optional)</para></listitem>
+<listitem><para>Date: a date (optional, default: today)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -409,14 +428,25 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Days between two dates</emphasis></term>
 <listitem>
-<para><command>days(First Date, Second Date[, Day Counting Basis][, Financial function mode])</command></para>
+<para><command>days(First date, Second date[, Day counting basis][, Financial function mode])</command></para>
 <para>Returns the number of days between two dates.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>First Date: a date</para></listitem>
-<listitem><para>Second Date: a date</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
-<listitem><para>Financial function mode: a boolean (0 or 1) (optional)</para></listitem>
+<listitem><para>First date: a date</para></listitem>
+<listitem><para>Second date: a date</para></listitem>
+<listitem><para>Day counting basis: an integer &gt;= 0 and &lt;= 4 (optional, default: 1)</para></listitem>
+<listitem><para>Financial function mode: a boolean (0 or 1) (optional, default: 0)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Local Date Format</emphasis></term>
+<listitem>
+<para><command>localdate([Date])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Date: a date (optional, default: today)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -427,7 +457,29 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <para><command>month([Date])</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Date: a date (optional)</para></listitem>
+<listitem><para>Date: a date (optional, default: today)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Standard Date Format</emphasis></term>
+<listitem>
+<para><command>isodate([Date])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Date: a date (optional, default: today)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Unix Timestamp to Date</emphasis></term>
+<listitem>
+<para><command>stamptodate(Timestamp)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Timestamp: an integer</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -438,8 +490,8 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <para><command>week([Date][, Week begins on Sunday])</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Date: a date (optional)</para></listitem>
-<listitem><para>Week begins on Sunday: a boolean (0 or 1) (optional)</para></listitem>
+<listitem><para>Date: a date (optional, default: today)</para></listitem>
+<listitem><para>Week begins on Sunday: a boolean (0 or 1) (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -450,7 +502,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <para><command>year([Date])</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Date: a date (optional)</para></listitem>
+<listitem><para>Date: a date (optional, default: today)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -458,14 +510,14 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Years between two dates</emphasis></term>
 <listitem>
-<para><command>yearfrac(First Date, Second Date[, Day Counting Basis][, Financial function mode])</command></para>
+<para><command>yearfrac(First date, Second date[, Day counting basis][, Financial function mode])</command></para>
 <para>Returns the number of years (fractional) between two dates.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>First Date: a date</para></listitem>
-<listitem><para>Second Date: a date</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
-<listitem><para>Financial function mode: a boolean (0 or 1) (optional)</para></listitem>
+<listitem><para>First date: a date</para></listitem>
+<listitem><para>Second date: a date</para></listitem>
+<listitem><para>Day counting basis: an integer &gt;= 0 and &lt;= 4 (optional, default: 1)</para></listitem>
+<listitem><para>Financial function mode: a boolean (0 or 1) (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -480,15 +532,15 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Accrued interest of security paying at maturity</emphasis></term>
 <listitem>
-<para><command>accrintm(Issue Date, Settlement Date, Annual Rate of Security[, Par Value][, Day Counting Basis])</command></para>
+<para><command>accrintm(Issue date, Settlement date, Annual rate of security[, Par value][, Day counting basis])</command></para>
 <para>Returns the accrued interest for a security which pays interest at maturity date.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Issue Date: a date</para></listitem>
-<listitem><para>Settlement Date: a date</para></listitem>
-<listitem><para>Annual Rate of Security: a free value</para></listitem>
-<listitem><para>Par Value: a free value (optional)</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
+<listitem><para>Issue date: a date</para></listitem>
+<listitem><para>Settlement date: a date</para></listitem>
+<listitem><para>Annual rate of security: a free value</para></listitem>
+<listitem><para>Par value: a free value (optional, default: 1000)</para></listitem>
+<listitem><para>Day counting basis: an integer &gt;= 0 and &lt;= 4 (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -496,17 +548,17 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Accrued interest of security with periodic interest payments</emphasis></term>
 <listitem>
-<para><command>accrint(Issue Date, First Interest, Settlement Date, Annual Rate of Security, Par Value, Frequency[, Day Counting Basis])</command></para>
+<para><command>accrint(Issue date, First interest, Settlement date, Annual rate of security, Par value, Frequency[, Day counting basis])</command></para>
 <para>Returns accrued interest for a security which pays periodic interest.</para><para></para><para>Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Issue Date: a date</para></listitem>
-<listitem><para>First Interest: a date</para></listitem>
-<listitem><para>Settlement Date: a date</para></listitem>
-<listitem><para>Annual Rate of Security: a free value</para></listitem>
-<listitem><para>Par Value: a free value</para></listitem>
+<listitem><para>Issue date: a date</para></listitem>
+<listitem><para>First interest: a date</para></listitem>
+<listitem><para>Settlement date: a date</para></listitem>
+<listitem><para>Annual rate of security: a free value</para></listitem>
+<listitem><para>Par value: a free value</para></listitem>
 <listitem><para>Frequency: an integer &gt;= 1 and &lt;= 4</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
+<listitem><para>Day counting basis: an integer &gt;= 0 and &lt;= 4 (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -514,15 +566,15 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Amount received at maturity for a security bond</emphasis></term>
 <listitem>
-<para><command>received(Settlement Date, Maturity Date, Investment, Discount Rate[, Day Counting Basis])</command></para>
+<para><command>received(Settlement date, Maturity date, Investment, Discount rate[, Day counting basis])</command></para>
 <para>Returns the amount received at the maturity date for an invested security.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360. The settlement date must be before maturity date.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Settlement Date: a date</para></listitem>
-<listitem><para>Maturity Date: a date</para></listitem>
+<listitem><para>Settlement date: a date</para></listitem>
+<listitem><para>Maturity date: a date</para></listitem>
 <listitem><para>Investment: a free value</para></listitem>
-<listitem><para>Discount Rate: a free value</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
+<listitem><para>Discount rate: a free value</para></listitem>
+<listitem><para>Day counting basis: an integer &gt;= 0 and &lt;= 4 (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -530,12 +582,12 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Compound</emphasis></term>
 <listitem>
-<para><command>compound(Principal, Nominal Interest Rate, Periods per year, Years)</command></para>
+<para><command>compound(Principal, Nominal interest rate, Periods per year, Years)</command></para>
 <para>Returns the value of an investment, given the principal, nominal interest rate, compounding frequency and time.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Principal: a free value</para></listitem>
-<listitem><para>Nominal Interest Rate: a free value</para></listitem>
+<listitem><para>Nominal interest rate: a free value</para></listitem>
 <listitem><para>Periods per year: a free value</para></listitem>
 <listitem><para>Years: a free value</para></listitem>
 </itemizedlist></para>
@@ -545,15 +597,15 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Discount rate for a security</emphasis></term>
 <listitem>
-<para><command>disc(Settlement Date, Maturity Date, Price per $100 face value, Redemption[, Day Counting Basis])</command></para>
+<para><command>disc(Settlement date, Maturity date, Price per $100 face value, Redemption[, Day counting basis])</command></para>
 <para>Returns the discount rate for a security.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Settlement Date: a date</para></listitem>
-<listitem><para>Maturity Date: a date</para></listitem>
+<listitem><para>Settlement date: a date</para></listitem>
+<listitem><para>Maturity date: a date</para></listitem>
 <listitem><para>Price per $100 face value: a free value</para></listitem>
 <listitem><para>Redemption: a free value</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
+<listitem><para>Day counting basis: an integer &gt;= 0 and &lt;= 4 (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -561,12 +613,12 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Dollar Decimal</emphasis></term>
 <listitem>
-<para><command>dollarde(Fractional Dollar, Denominator of Fraction)</command></para>
+<para><command>dollarde(Fractional dollar, Denominator of fraction)</command></para>
 <para>Converts a dollar price expressed as a fraction into a dollar price expressed as a decimal number.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Fractional Dollar: a free value</para></listitem>
-<listitem><para>Denominator of Fraction: an integer &gt;= 1</para></listitem>
+<listitem><para>Fractional dollar: a free value</para></listitem>
+<listitem><para>Denominator of fraction: an integer &gt;= 1</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -574,12 +626,12 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Dollar Fraction</emphasis></term>
 <listitem>
-<para><command>dollarfr(Decimal Dollar, Denominator of Fraction)</command></para>
+<para><command>dollarfr(Decimal dollar, Denominator of fraction)</command></para>
 <para>Converts a decimal dollar price into a dollar price expressed as a fraction.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Decimal Dollar: a free value</para></listitem>
-<listitem><para>Denominator of Fraction: an integer &gt;= 1</para></listitem>
+<listitem><para>Decimal dollar: a free value</para></listitem>
+<listitem><para>Denominator of fraction: an integer &gt;= 1</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -587,11 +639,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Effective Interest Rate</emphasis></term>
 <listitem>
-<para><command>effect(Nominal Interest Rate, Periods)</command></para>
+<para><command>effect(Nominal interest rate, Periods)</command></para>
 <para>Calculates the effective interest for a given nominal rate.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Nominal Interest Rate: a free value</para></listitem>
+<listitem><para>Nominal interest rate: a free value</para></listitem>
 <listitem><para>Periods: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
@@ -600,15 +652,15 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Future Value</emphasis></term>
 <listitem>
-<para><command>fv(Interest Rate, Number of Periods, Payment made each period[, Present Value][, Type])</command></para>
+<para><command>fv(Interest rate, Number of periods, Payment made each period[, Present value][, Type])</command></para>
 <para>Computes the future value of an investment. This is based on periodic, constant payments and a constant interest rate.</para><para></para><para>If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Interest Rate: a free value</para></listitem>
-<listitem><para>Number of Periods: a free value</para></listitem>
+<listitem><para>Interest rate: a free value</para></listitem>
+<listitem><para>Number of periods: a free value</para></listitem>
 <listitem><para>Payment made each period: a free value</para></listitem>
-<listitem><para>Present Value: a free value (optional)</para></listitem>
-<listitem><para>Type: a boolean (0 or 1) (optional)</para></listitem>
+<listitem><para>Present value: a free value (optional, default: 0)</para></listitem>
+<listitem><para>Type: a boolean (0 or 1) (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -616,14 +668,14 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Interest paid on a given period of an investment (ISPMT)</emphasis></term>
 <listitem>
-<para><command>ispmt(Periodic Interest Rate, Amortizement Period, Number of Periods, Present Value)</command></para>
+<para><command>ispmt(Periodic interest rate, Amortizement period, Number of periods, Present value)</command></para>
 <para>Calculates the interest paid on a given period of an investment.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Periodic Interest Rate: a free value</para></listitem>
-<listitem><para>Amortizement Period: an integer &gt;= 1</para></listitem>
-<listitem><para>Number of Periods: an integer &gt;= 1</para></listitem>
-<listitem><para>Present Value: a free value</para></listitem>
+<listitem><para>Periodic interest rate: a free value</para></listitem>
+<listitem><para>Amortizement period: an integer &gt;= 1</para></listitem>
+<listitem><para>Number of periods: an integer &gt;= 1</para></listitem>
+<listitem><para>Present value: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -631,15 +683,15 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Interest rate for a fully invested security</emphasis></term>
 <listitem>
-<para><command>intrate(Settlement Date, Maturity Date, Investment, Redemption[, Day Counting Basis])</command></para>
+<para><command>intrate(Settlement date, Maturity date, Investment, Redemption[, Day counting basis])</command></para>
 <para>Returns the interest rate for a fully invested security.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Settlement Date: a date</para></listitem>
-<listitem><para>Maturity Date: a date</para></listitem>
+<listitem><para>Settlement date: a date</para></listitem>
+<listitem><para>Maturity date: a date</para></listitem>
 <listitem><para>Investment: a free value</para></listitem>
 <listitem><para>Redemption: a free value</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
+<listitem><para>Day counting basis: an integer &gt;= 0 and &lt;= 4 (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -647,15 +699,15 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Level-Coupon Bond</emphasis></term>
 <listitem>
-<para><command>level_coupon(Face Value, Coupon Rate, Coupons per Year, Years, Market Interest Rate)</command></para>
+<para><command>level_coupon(Face value, Coupon rate, Coupons per year, Years, Market interest rate)</command></para>
 <para>Calculates the value of a level-coupon bond.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Face Value: a free value</para></listitem>
-<listitem><para>Coupon Rate: a free value</para></listitem>
-<listitem><para>Coupons per Year: a free value</para></listitem>
+<listitem><para>Face value: a free value</para></listitem>
+<listitem><para>Coupon rate: a free value</para></listitem>
+<listitem><para>Coupons per year: a free value</para></listitem>
 <listitem><para>Years: a free value</para></listitem>
-<listitem><para>Market Interest Rate: a free value</para></listitem>
+<listitem><para>Market interest rate: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -663,11 +715,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Nominal Interest Rate</emphasis></term>
 <listitem>
-<para><command>nominal(Effective Interest Rate, Periods)</command></para>
+<para><command>nominal(Effective interest rate, Periods)</command></para>
 <para>Calculates the nominal interest rate from a given effective interest rate compounded at given intervals.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Effective Interest Rate: a free value</para></listitem>
+<listitem><para>Effective interest rate: a free value</para></listitem>
 <listitem><para>Periods: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
@@ -676,14 +728,14 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Number of coupons to be paid</emphasis></term>
 <listitem>
-<para><command>coupnum(Settlement Date, Maturity Date, Frequency[, Day Counting Basis])</command></para>
+<para><command>coupnum(Settlement date, Maturity date, Frequency[, Day counting basis])</command></para>
 <para>Returns the number of coupons to be paid between the settlement and the maturity.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Settlement Date: a date</para></listitem>
-<listitem><para>Maturity Date: a date</para></listitem>
+<listitem><para>Settlement date: a date</para></listitem>
+<listitem><para>Maturity date: a date</para></listitem>
 <listitem><para>Frequency: an integer &gt;= 1 and &lt;= 12</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
+<listitem><para>Day counting basis: an integer &gt;= 0 and &lt;= 4 (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -691,15 +743,15 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Payment for a loan</emphasis></term>
 <listitem>
-<para><command>pmt(Rate, Number of Periods, Present Value[, Future Value][, Type])</command></para>
+<para><command>pmt(Rate, Number of periods, Present value[, Future value][, Type])</command></para>
 <para>Returns the amount of payment for a loan based on a constant interest rate and constant payments (each payment is equal amount).</para><para></para><para>If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Rate: a free value</para></listitem>
-<listitem><para>Number of Periods: a free value</para></listitem>
-<listitem><para>Present Value: a free value</para></listitem>
-<listitem><para>Future Value: a free value (optional)</para></listitem>
-<listitem><para>Type: a boolean (0 or 1) (optional)</para></listitem>
+<listitem><para>Number of periods: a free value</para></listitem>
+<listitem><para>Present value: a free value</para></listitem>
+<listitem><para>Future value: a free value (optional, default: 0)</para></listitem>
+<listitem><para>Type: a boolean (0 or 1) (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -707,16 +759,16 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Payment of an annuity going towards interest (IPMT)</emphasis></term>
 <listitem>
-<para><command>ipmt(Periodic Interest Rate, Period, Number of Periods, Present Value[, Future Value][, Type])</command></para>
+<para><command>ipmt(Periodic interest rate, Period, Number of periods, Present value[, Future value][, Type])</command></para>
 <para>Calculates the amount of a payment of an annuity going towards interest.</para><para></para><para>Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Periodic Interest Rate: a free value</para></listitem>
+<listitem><para>Periodic interest rate: a free value</para></listitem>
 <listitem><para>Period: an integer &gt;= 1</para></listitem>
-<listitem><para>Number of Periods: an integer &gt;= 1</para></listitem>
-<listitem><para>Present Value: a free value</para></listitem>
-<listitem><para>Future Value: a free value (optional)</para></listitem>
-<listitem><para>Type: a boolean (0 or 1) (optional)</para></listitem>
+<listitem><para>Number of periods: an integer &gt;= 1</para></listitem>
+<listitem><para>Present value: a free value</para></listitem>
+<listitem><para>Future value: a free value (optional, default: 0)</para></listitem>
+<listitem><para>Type: a boolean (0 or 1) (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -724,16 +776,16 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Payment of an annuity going towards principal (PPMT)</emphasis></term>
 <listitem>
-<para><command>ppmt(Periodic Interest Rate, Amortizement Period, Number of Periods, Present Value[, Desired Future Value][, Type])</command></para>
+<para><command>ppmt(Periodic interest rate, Amortizement period, Number of periods, Present value[, Desired future value][, Type])</command></para>
 <para>Calculates the amount of a payment of an annuity going towards principal.</para><para></para><para>Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Periodic Interest Rate: a free value</para></listitem>
-<listitem><para>Amortizement Period: an integer &gt;= 1</para></listitem>
-<listitem><para>Number of Periods: an integer &gt;= 1</para></listitem>
-<listitem><para>Present Value: a free value</para></listitem>
-<listitem><para>Desired Future Value: a free value (optional)</para></listitem>
-<listitem><para>Type: a boolean (0 or 1) (optional)</para></listitem>
+<listitem><para>Periodic interest rate: a free value</para></listitem>
+<listitem><para>Amortizement period: an integer &gt;= 1</para></listitem>
+<listitem><para>Number of periods: an integer &gt;= 1</para></listitem>
+<listitem><para>Present value: a free value</para></listitem>
+<listitem><para>Desired future value: a free value (optional, default: 0)</para></listitem>
+<listitem><para>Type: a boolean (0 or 1) (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -741,13 +793,13 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Periods for investment to attain desired value</emphasis></term>
 <listitem>
-<para><command>g_duration(Rate, Present Value, Future Value)</command></para>
+<para><command>g_duration(Rate, Present value, Future value)</command></para>
 <para>Returns the number of periods needed for an investment to attain a desired value.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Rate: a free value</para></listitem>
-<listitem><para>Present Value: a free value</para></listitem>
-<listitem><para>Future Value: a free value</para></listitem>
+<listitem><para>Present value: a free value</para></listitem>
+<listitem><para>Future value: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -755,15 +807,15 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Periods of an investment</emphasis></term>
 <listitem>
-<para><command>nper(Interest Rate, Payment made each period, Present Value[, Future Value][, Type])</command></para>
+<para><command>nper(Interest rate, Payment made each period, Present value[, Future value][, Type])</command></para>
 <para>Calculates number of periods of an investment based on periodic constant payments and a constant interest rate.</para><para></para><para>Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Interest Rate: a free value</para></listitem>
+<listitem><para>Interest rate: a free value</para></listitem>
 <listitem><para>Payment made each period: a free value</para></listitem>
-<listitem><para>Present Value: a free value</para></listitem>
-<listitem><para>Future Value: a free value (optional)</para></listitem>
-<listitem><para>Type: a free value (optional)</para></listitem>
+<listitem><para>Present value: a free value</para></listitem>
+<listitem><para>Future value: a free value (optional, default: 0)</para></listitem>
+<listitem><para>Type: a free value (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -771,15 +823,15 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Present Value</emphasis></term>
 <listitem>
-<para><command>pv(Interest Rate, Number of Periods, Payment made each period[, Future Value][, Type])</command></para>
+<para><command>pv(Interest rate, Number of periods, Payment made each period[, Future value][, Type])</command></para>
 <para>Returns the present value of an investment.</para><para></para><para>If type = 1 then the payment is made at the beginning of the period, If type = 0 (or omitted) it is made at the end of each period.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Interest Rate: a free value</para></listitem>
-<listitem><para>Number of Periods: a free value</para></listitem>
+<listitem><para>Interest rate: a free value</para></listitem>
+<listitem><para>Number of periods: a free value</para></listitem>
 <listitem><para>Payment made each period: a free value</para></listitem>
-<listitem><para>Future Value: a free value (optional)</para></listitem>
-<listitem><para>Type: a boolean (0 or 1) (optional)</para></listitem>
+<listitem><para>Future value: a free value (optional, default: 0)</para></listitem>
+<listitem><para>Type: a boolean (0 or 1) (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -787,16 +839,16 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Price per $100 face value of a security</emphasis></term>
 <listitem>
-<para><command>pricemat(Settlement Date, Maturity Date, Issue Date, Discount Rate, Annual Yield[, Day Counting Basis])</command></para>
+<para><command>pricemat(Settlement date, Maturity date, Issue date, Discount rate, Annual yield[, Day counting basis])</command></para>
 <para>Calculates and returns the price per $100 face value of a security. The security pays interest at maturity.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Settlement Date: a date</para></listitem>
-<listitem><para>Maturity Date: a date</para></listitem>
-<listitem><para>Issue Date: a date</para></listitem>
-<listitem><para>Discount Rate: a free value</para></listitem>
-<listitem><para>Annual Yield: a free value</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
+<listitem><para>Settlement date: a date</para></listitem>
+<listitem><para>Maturity date: a date</para></listitem>
+<listitem><para>Issue date: a date</para></listitem>
+<listitem><para>Discount rate: a free value</para></listitem>
+<listitem><para>Annual yield: a free value</para></listitem>
+<listitem><para>Day counting basis: an integer &gt;= 0 and &lt;= 4 (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -804,15 +856,15 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Price per $100 face value of a security bond</emphasis></term>
 <listitem>
-<para><command>pricedisc(Settlement Date, Maturity Date, Discount, Redemption[, Day Counting Basis])</command></para>
+<para><command>pricedisc(Settlement date, Maturity date, Discount, Redemption[, Day counting basis])</command></para>
 <para>Calculates and returns the price per $100 face value of a security bond. The security does not pay interest at maturity.</para><para></para><para>Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Settlement Date: a date</para></listitem>
-<listitem><para>Maturity Date: a date</para></listitem>
+<listitem><para>Settlement date: a date</para></listitem>
+<listitem><para>Maturity date: a date</para></listitem>
 <listitem><para>Discount: a free value</para></listitem>
 <listitem><para>Redemption: a free value</para></listitem>
-<listitem><para>Day Counting Basis: an integer &gt;= 0 and &lt;= 4 (optional)</para></listitem>
+<listitem><para>Day counting basis: an integer &gt;= 0 and &lt;= 4 (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -820,12 +872,12 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Return on continuously compounded interest</emphasis></term>
 <listitem>
-<para><command>countinuous(Principal, Interest Rate, Years)</command></para>
+<para><command>continuous(Principal, Interest rate, Years)</command></para>
 <para>Calculates the return on continuously compounded interest, given the principal, nominal rate and time in years.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Principal: a free value</para></listitem>
-<listitem><para>Interest Rate: a free value</para></listitem>
+<listitem><para>Interest rate: a free value</para></listitem>
 <listitem><para>Years: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
@@ -848,12 +900,12 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Sum-of-Years Digits Depreciation</emphasis></term>
 <listitem>
-<para><command>syd(Cost, Salvage Value, Life, Period)</command></para>
+<para><command>syd(Cost, Salvage value, Life, Period)</command></para>
 <para>Calculates the sum-of-years digits depreciation for an asset based on its cost, salvage value, anticipated life, and a particular period. This method accelerates the rate of the depreciation, so that more depreciation expense occurs in earlier periods than in later ones. The depreciable cost is the actual cost minus the salvage value. The useful life is the number of periods (typically years) over which the asset is depreciated.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Cost: a free value</para></listitem>
-<listitem><para>Salvage Value: a free value</para></listitem>
+<listitem><para>Salvage value: a free value</para></listitem>
 <listitem><para>Life: a free value</para></listitem>
 <listitem><para>Period: a free value</para></listitem>
 </itemizedlist></para>
@@ -863,13 +915,13 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Treasury Bill Equivalent</emphasis></term>
 <listitem>
-<para><command>tbilleq(Settlement Date, Maturity Date, Discount Rate)</command></para>
+<para><command>tbilleq(Settlement date, Maturity date, Discount rate)</command></para>
 <para>Returns the bond equivalent for a treasury bill.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Settlement Date: a date</para></listitem>
-<listitem><para>Maturity Date: a date</para></listitem>
-<listitem><para>Discount Rate: a free value</para></listitem>
+<listitem><para>Settlement date: a date</para></listitem>
+<listitem><para>Maturity date: a date</para></listitem>
+<listitem><para>Discount rate: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -877,13 +929,13 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Treasury Bill Price</emphasis></term>
 <listitem>
-<para><command>tbillprice(Settlement Date, Maturity Date, Discount Rate)</command></para>
+<para><command>tbillprice(Settlement date, Maturity date, Discount rate)</command></para>
 <para>Returns the price per $100 value for a treasury bill.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Settlement Date: a date</para></listitem>
-<listitem><para>Maturity Date: a date</para></listitem>
-<listitem><para>Discount Rate: a free value</para></listitem>
+<listitem><para>Settlement date: a date</para></listitem>
+<listitem><para>Maturity date: a date</para></listitem>
+<listitem><para>Discount rate: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -891,12 +943,12 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Treasury Bill Yield</emphasis></term>
 <listitem>
-<para><command>tbillyield(Settlement Date, Maturity Date, Price per $100 face value)</command></para>
+<para><command>tbillyield(Settlement date, Maturity date, Price per $100 face value)</command></para>
 <para>Returns the yield for a treasury bill.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Settlement Date: a date</para></listitem>
-<listitem><para>Maturity Date: a date</para></listitem>
+<listitem><para>Settlement date: a date</para></listitem>
+<listitem><para>Maturity date: a date</para></listitem>
 <listitem><para>Price per $100 face value: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
@@ -905,12 +957,12 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Zero Coupon</emphasis></term>
 <listitem>
-<para><command>zero_coupon(Face Value, Interest Rate, Years)</command></para>
+<para><command>zero_coupon(Face value, Interest rate, Years)</command></para>
 <para>Calculates the value of a zero-coupon (pure discount) bond.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Face Value: a free value</para></listitem>
-<listitem><para>Interest Rate: a free value</para></listitem>
+<listitem><para>Face value: a free value</para></listitem>
+<listitem><para>Interest rate: a free value</para></listitem>
 <listitem><para>Years: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
@@ -924,13 +976,13 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Elasticity</emphasis></term>
 <listitem>
-<para><command>elasticity(Demand Function, Price[, Price Variable])</command></para>
+<para><command>elasticity(Demand function, Price[, Price variable])</command></para>
 <para>Calculates the demand elesticity. Also works for supply elasticity, income elasticity, cross-price elasticity, etc. Just replace demand, with supply, or price with income...</para><para></para><para>Ex. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 for the function "Q = 100 - x^2" where x is the default price variable.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Demand Function: a free value</para></listitem>
+<listitem><para>Demand function: a free value</para></listitem>
 <listitem><para>Price: a free value</para></listitem>
-<listitem><para>Price Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Price variable: an unknown variable/symbol (optional, default: x)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -994,7 +1046,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Value: a number that is nonzero</para></listitem>
-<listitem><para>Base: a number that is nonzero (optional)</para></listitem>
+<listitem><para>Base: a number that is nonzero (optional, default: e)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1080,11 +1132,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Square root (x * pi)</emphasis></term>
 <listitem>
-<para><command>sqrtpi(Non-Negative Value)</command></para>
+<para><command>sqrtpi(Non-negative value)</command></para>
 <para>Returns the non-negative square root of x * pi</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Non-Negative Value: a number &gt;= 0</para></listitem>
+<listitem><para>Non-negative value: a number &gt;= 0</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1169,10 +1221,10 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Cube Volume</emphasis></term>
 <listitem>
-<para><command>cube(Length of Side)</command></para>
+<para><command>cube(Length of side)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Length of Side: a free value</para></listitem>
+<listitem><para>Length of side: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1180,10 +1232,10 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Surface Area of Cube</emphasis></term>
 <listitem>
-<para><command>cube_sa(Length of Side)</command></para>
+<para><command>cube_sa(Length of side)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Length of Side: a free value</para></listitem>
+<listitem><para>Length of side: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1226,6 +1278,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Parallelogram Area</emphasis></term>
 <listitem>
 <para><command>parallelogram(Base, Height)</command></para>
+<para>Calculates the area of a four-sided figure whose opposite sides are both parallel and equal in length.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Base: a free value</para></listitem>
@@ -1238,6 +1291,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Parallelogram Perimeter</emphasis></term>
 <listitem>
 <para><command>parallelogram_perimeter(Side A, Side B)</command></para>
+<para>Calculates the perimeter of a four-sided figure whose opposite sides are both parallel and equal in length.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Side A: a free value</para></listitem>
@@ -1255,6 +1309,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Surface Area of Rectangular Prism</emphasis></term>
 <listitem>
 <para><command>rectprism_sa(Length, Width, Height)</command></para>
+<para>Calculates the surface area of a prism with rectangular base.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Length: a free value</para></listitem>
@@ -1268,6 +1323,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Volume of Rectangular Prism</emphasis></term>
 <listitem>
 <para><command>rectprism(Length, Width, Height)</command></para>
+<para>Calculates the volume of a prism with rectangular base.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Length: a free value</para></listitem>
@@ -1281,6 +1337,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Volume of Triangular Prism</emphasis></term>
 <listitem>
 <para><command>triangleprism(Length, Width, Height)</command></para>
+<para>Calculates the volume of a prism with triangular base.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Length: a free value</para></listitem>
@@ -1296,14 +1353,81 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <title>Pyramid</title>
 <variablelist>
 <varlistentry>
-<term><emphasis>Pyramid Volume</emphasis></term>
+<term><emphasis>Height of Regular Tetrahedron</emphasis></term>
 <listitem>
-<para><command>pyramid(Length of Base, Width of Base, Height)</command></para>
+<para><command>tetrahedron_height(Length of side)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Length of Base: a free value</para></listitem>
-<listitem><para>Width of Base: a free value</para></listitem>
+<listitem><para>Length of side: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Height of Square Pyramid</emphasis></term>
+<listitem>
+<para><command>sqpyramid_height(Length of side)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Length of side: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Pyramid Volume</emphasis></term>
+<listitem>
+<para><command>pyramid(Length of base, Width of base, Height)</command></para>
+<para>Calculates the volume of a 3-dimensional shape standing on a rectangular base and terminating in a point at the top.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Length of base: a free value</para></listitem>
+<listitem><para>Width of base: a free value</para></listitem>
 <listitem><para>Height: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Surface Area of Regular Tetrahedron</emphasis></term>
+<listitem>
+<para><command>tetrahedron_sa(Length of side)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Length of side: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Surface Area of Square Pyramid</emphasis></term>
+<listitem>
+<para><command>sqpyramid_sa(Length of side)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Length of side: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Volume of Regular Tetrahedron</emphasis></term>
+<listitem>
+<para><command>tetrahedron(Length of side)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Length of side: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Volume of Square Pyramid</emphasis></term>
+<listitem>
+<para><command>sqpyramid(Length of side)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Length of side: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1372,10 +1496,10 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Square Area</emphasis></term>
 <listitem>
-<para><command>square(Length of Side)</command></para>
+<para><command>square(Length of side)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Length of Side: a free value</para></listitem>
+<listitem><para>Length of side: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1383,10 +1507,10 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Square Perimeter</emphasis></term>
 <listitem>
-<para><command>square_perimeter(Length of Side)</command></para>
+<para><command>square_perimeter(Length of side)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Length of Side: a free value</para></listitem>
+<listitem><para>Length of side: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1400,6 +1524,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Trapezoid Area</emphasis></term>
 <listitem>
 <para><command>trapezoid(Side A, Side B, Height)</command></para>
+<para>Calculates the area of a four-sided figure with two parallel sides.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Side A: a free value</para></listitem>
@@ -1483,16 +1608,16 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>For...Do</emphasis></term>
 <listitem>
-<para><command>for(Initial Value of Counter, Counter Variable, For Condition, Counter Update Function, Initial Value, Do Function, Value Variable)</command></para>
+<para><command>for(Initial value of counter, Counter variable, For condition, Counter update function, Initial value, Do function, Value variable)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Initial Value of Counter: a free value</para></listitem>
-<listitem><para>Counter Variable: an unknown variable/symbol</para></listitem>
-<listitem><para>For Condition: a free value</para></listitem>
-<listitem><para>Counter Update Function: a free value</para></listitem>
-<listitem><para>Initial Value: a free value</para></listitem>
-<listitem><para>Do Function: a free value</para></listitem>
-<listitem><para>Value Variable: an unknown variable/symbol</para></listitem>
+<listitem><para>Initial value of counter: a free value</para></listitem>
+<listitem><para>Counter variable: an unknown variable/symbol</para></listitem>
+<listitem><para>For condition: a free value</para></listitem>
+<listitem><para>Counter update function: a free value</para></listitem>
+<listitem><para>Initial value: a free value</para></listitem>
+<listitem><para>Do function: a free value</para></listitem>
+<listitem><para>Value variable: an unknown variable/symbol</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1529,13 +1654,13 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <title>Matrices &amp; Vectors</title>
 <variablelist>
 <varlistentry>
-<term><emphasis>Adjoint</emphasis></term>
+<term><emphasis>Adjugate (Adjoint)</emphasis></term>
 <listitem>
 <para><command>adj(Matrix)</command></para>
-<para>Returns the adjoint of a matrix.</para>
+<para>Calculates the adjugate or adjoint of a matrix.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Matrix: a symmetric matrix</para></listitem>
+<listitem><para>Matrix: a square matrix</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1543,13 +1668,13 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Cofactor</emphasis></term>
 <listitem>
-<para><command>cofactor(Row, Column, Matrix)</command></para>
-<para>Returns the cofactor of the element at specified position.</para>
+<para><command>cofactor(Matrix, Row, Column)</command></para>
+<para>Calculates the cofactor of the element at specified position.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Matrix: a matrix</para></listitem>
 <listitem><para>Row: an integer &gt;= 1</para></listitem>
 <listitem><para>Column: an integer &gt;= 1</para></listitem>
-<listitem><para>Matrix: a matrix</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1567,23 +1692,10 @@ dimension("Equation Vector")=dimension("Variable Vector")
 </listitem>
 </varlistentry>
 <varlistentry>
-<term><emphasis>Component</emphasis></term>
-<listitem>
-<para><command>component(Component Index, Vector)</command></para>
-<para>Returns the component at specified position in a vector.</para>
-<formalpara>
-<title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Component Index: an integer &gt;= 1</para></listitem>
-<listitem><para>Vector: a vector</para></listitem>
-</itemizedlist></para>
-</formalpara>
-</listitem>
-</varlistentry>
-<varlistentry>
 <term><emphasis>Construct Matrix</emphasis></term>
 <listitem>
 <para><command>matrix(Rows, Columns, Elements)</command></para>
-<para>Returns a matrix with specified order and listed elements. Omitted elements are set to zero.</para>
+<para>Returns a matrix with specified dimensions and listed elements. Omitted elements are set to zero.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Rows: an integer &gt;= 1</para></listitem>
@@ -1597,7 +1709,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Construct Vector</emphasis></term>
 <listitem>
 <para><command>vector([argument 1], ...)</command></para>
-<para>Returns a vector with listed components.</para>
+<para>Returns a vector with listed elements.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>1: a free value (optional)</para></listitem>
@@ -1624,7 +1736,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <para>Calculates the determinant of a matrix.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Matrix: a symmetric matrix</para></listitem>
+<listitem><para>Matrix: a square matrix</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1633,7 +1745,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Dimension</emphasis></term>
 <listitem>
 <para><command>dimension(Vector)</command></para>
-<para><command>components</command></para><para>Returns the number of components in a vector.</para>
+<para>Returns the number of elements in a vector.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Vector: a vector</para></listitem>
@@ -1644,13 +1756,13 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Element</emphasis></term>
 <listitem>
-<para><command>element(Row, Column, Matrix)</command></para>
-<para>Returns the element at specified position in a matrix.</para>
+<para><command>element(Matrix/vector, Row/index[, Column])</command></para>
+<para>Returns the element at specified position in a matrix (row and column) or vector (index).</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Row: an integer &gt;= 1</para></listitem>
-<listitem><para>Column: an integer &gt;= 1</para></listitem>
-<listitem><para>Matrix: a matrix</para></listitem>
+<listitem><para>Matrix/vector: a vector</para></listitem>
+<listitem><para>Row/index: an integer &gt;= 1</para></listitem>
+<listitem><para>Column: an integer (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1658,11 +1770,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Elements</emphasis></term>
 <listitem>
-<para><command>elements(Matrix)</command></para>
-<para>Returns the number of elements in a matrix.</para>
+<para><command>elements(Matrix or vector)</command></para>
+<para>Returns the number of elements in a matrix or vector.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Matrix: a matrix</para></listitem>
+<listitem><para>Matrix or vector: a vector</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1670,13 +1782,13 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Export To CSV File</emphasis></term>
 <listitem>
-<para><command>export(Matrix/Vector, File Name[, Separator])</command></para>
-<para>Imports a CSV data file as a matrix.</para>
+<para><command>export(Matrix/vector, Filename[, Separator])</command></para>
+<para>Exports a matrix to a CSV data file.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Matrix/Vector: a vector</para></listitem>
-<listitem><para>File Name: a valid file name</para></listitem>
-<listitem><para>Separator: a text string (optional)</para></listitem>
+<listitem><para>Matrix/vector: a vector</para></listitem>
+<listitem><para>Filename: a valid file name</para></listitem>
+<listitem><para>Separator: a text string (optional, default: ,)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1684,12 +1796,12 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Extract Column as Vector</emphasis></term>
 <listitem>
-<para><command>column(Column, Matrix)</command></para>
+<para><command>column(Matrix, Column)</command></para>
 <para>Returns a column in a matrix as a vector.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Column: an integer &gt;= 1</para></listitem>
 <listitem><para>Matrix: a matrix</para></listitem>
+<listitem><para>Column: an integer &gt;= 1</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1697,12 +1809,12 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Extract row as vector</emphasis></term>
 <listitem>
-<para><command>row(Row, Matrix)</command></para>
+<para><command>row(Matrix, Row)</command></para>
 <para>Returns a row in a matrix as a vector.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Row: an integer &gt;= 1</para></listitem>
 <listitem><para>Matrix: a matrix</para></listitem>
+<listitem><para>Row: an integer &gt;= 1</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1710,16 +1822,16 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Generate Vector</emphasis></term>
 <listitem>
-<para><command>genvector(Function, Min, Max, Components / Step size[, Variable][, Use step size])</command></para>
-<para>Generates a vector from a function with a variable (default x) running from min to max. The fourth argument is either the requested number of components if the sixth argument is false (default) or the step between each value of the variable.</para>
+<para><command>genvector(Function, Min, Max, Dimension / Step size[, Variable][, Use step size])</command></para>
+<para>Returns a vector generated from a function with a variable (default x) running from min to max. The fourth argument is either the requested number of elements if the sixth argument is false (default) or the step between each value of the variable.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Function: a free value</para></listitem>
 <listitem><para>Min: a free value</para></listitem>
 <listitem><para>Max: a free value</para></listitem>
-<listitem><para>Components / Step size: a free value</para></listitem>
-<listitem><para>Variable: an unknown variable/symbol (optional)</para></listitem>
-<listitem><para>Use step size: a boolean (0 or 1) (optional)</para></listitem>
+<listitem><para>Dimension / Step size: a free value</para></listitem>
+<listitem><para>Variable: an unknown variable/symbol (optional, default: x)</para></listitem>
+<listitem><para>Use step size: a boolean (0 or 1) (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1727,11 +1839,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Identity</emphasis></term>
 <listitem>
-<para><command>identity(Matrix or Rows/Columns)</command></para>
+<para><command>identity(Matrix or rows/columns)</command></para>
 <para>Returns the identity matrix of a matrix or with specified number of rows/columns.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Matrix or Rows/Columns: an integer &gt;= 1 or a symmetric matrix</para></listitem>
+<listitem><para>Matrix or rows/columns: an integer &gt;= 1 or a square matrix</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1739,13 +1851,13 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Load CSV File</emphasis></term>
 <listitem>
-<para><command>load(File Name[, First Data Row][, Separator])</command></para>
-<para>Imports a CSV data file as a matrix.</para>
+<para><command>load(Filename[, First data row][, Separator])</command></para>
+<para>Returns a matrix imported from a CSV data file.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>File Name: a valid file name</para></listitem>
-<listitem><para>First Data Row: an integer &gt;= 1 (optional)</para></listitem>
-<listitem><para>Separator: a text string (optional)</para></listitem>
+<listitem><para>Filename: a valid file name</para></listitem>
+<listitem><para>First data row: an integer &gt;= 1 (optional, default: 1)</para></listitem>
+<listitem><para>Separator: a text string (optional, default: ,)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1753,15 +1865,15 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Matrix Area</emphasis></term>
 <listitem>
-<para><command>area(Start Row, Start Column, End Row, End Column, Matrix)</command></para>
+<para><command>area(Matrix, Start row, Start column, End row, End column)</command></para>
 <para>Returns a part of a matrix.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Start Row: an integer &gt;= 1</para></listitem>
-<listitem><para>Start Column: an integer &gt;= 1</para></listitem>
-<listitem><para>End Row: an integer &gt;= 1</para></listitem>
-<listitem><para>End Column: an integer &gt;= 1</para></listitem>
 <listitem><para>Matrix: a matrix</para></listitem>
+<listitem><para>Start row: an integer &gt;= 1</para></listitem>
+<listitem><para>Start column: an integer &gt;= 1</para></listitem>
+<listitem><para>End row: an integer &gt;= 1</para></listitem>
+<listitem><para>End column: an integer &gt;= 1</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1770,10 +1882,10 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Matrix Inverse</emphasis></term>
 <listitem>
 <para><command>inverse(Matrix)</command></para>
-<para>Returns the inverse of a matrix.</para>
+<para>Calculates the inverse of a matrix. The inverse is the matrix that multiplied by the original matrix equals the identity matrix (AB = BA = I).</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Matrix: a symmetric matrix</para></listitem>
+<listitem><para>Matrix: a square matrix</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1782,6 +1894,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Merge Vectors</emphasis></term>
 <listitem>
 <para><command>mergevectors(Vector 1[, Vector 2], ...)</command></para>
+<para>Returns a vector with the elements from two vectors.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Vector 1: a vector</para></listitem>
@@ -1806,10 +1919,10 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Permanent</emphasis></term>
 <listitem>
 <para><command>permanent(Matrix)</command></para>
-<para>Calculates the permanent of a matrix.</para>
+<para>Calculates the permanent of a matrix. The permanent differs from a determinant in that all signs in the expansion by minors are taken as positive.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Matrix: a symmetric matrix</para></listitem>
+<listitem><para>Matrix: a square matrix</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1818,11 +1931,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Rank</emphasis></term>
 <listitem>
 <para><command>rank(Vector[, Ascending])</command></para>
-<para>Returns a vector with values of components replaced with their mutual ranks.</para>
+<para>Returns a vector with values of elements replaced with their mutual ranks.</para><para></para><para>ex. rank([6, 1, 4]) = [3, 1, 2]</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Vector: a vector</para></listitem>
-<listitem><para>Ascending: a boolean (0 or 1) (optional)</para></listitem>
+<listitem><para>Ascending: a boolean (0 or 1) (optional, default: 1)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1843,11 +1956,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Sort</emphasis></term>
 <listitem>
 <para><command>sort(Vector[, Ascending])</command></para>
-<para>Returns a sorted vector.</para>
+<para>Returns a sorted vector.</para><para></para><para>ex. sort([6, 1, 4])=[1, 4, 6]</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Vector: a vector</para></listitem>
-<listitem><para>Ascending: a boolean (0 or 1) (optional)</para></listitem>
+<listitem><para>Ascending: a boolean (0 or 1) (optional, default: 1)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1867,13 +1980,13 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Vector Limits</emphasis></term>
 <listitem>
-<para><command>limits(Lower Limit, Upper Limit, Vector)</command></para>
-<para>Returns a part of a vector.</para>
+<para><command>limits(Vector, Lower limit, Upper limit)</command></para>
+<para>Returns a part of a vector between two positions.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Lower Limit: an integer</para></listitem>
-<listitem><para>Upper Limit: an integer</para></listitem>
 <listitem><para>Vector: a vector</para></listitem>
+<listitem><para>Lower limit: an integer</para></listitem>
+<listitem><para>Upper limit: an integer</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1887,7 +2000,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Body Mass Index (BMI)</emphasis></term>
 <listitem>
 <para><command>bmi(Weight, Length)</command></para>
-<para>Calculates the Body Mass Index. The resulting BMI-value is interpreted as follows:</para><para></para><para>Underweight		&lt; 18.5</para><para>Normal weight		18.5-25</para><para>Overweight		25-30</para><para>Obesity			&gt; 30</para><para></para><para>Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</para>
+<para>Calculates the Body Mass Index. The resulting BMI-value is sometimes interpreted as follows (although varies with age, sex, etc.):</para><para></para><para>Underweight		&lt; 18.5</para><para>Normal weight		18.5-25</para><para>Overweight		25-30</para><para>Obesity			&gt; 30</para><para></para><para>Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Weight: a free value</para></listitem>
@@ -1899,10 +2012,10 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Riemann Zeta</emphasis></term>
 <listitem>
-<para><command>zeta(Integral Point)</command></para>
+<para><command>zeta(Integral point)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Integral Point: an integer</para></listitem>
+<listitem><para>Integral point: an integer &gt;= 1 and &lt;= 2.1474836E9</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1910,10 +2023,10 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Roman Number</emphasis></term>
 <listitem>
-<para><command>roman(Roman Number)</command></para>
+<para><command>roman(Roman number)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Roman Number: a text string</para></listitem>
+<listitem><para>Roman number: a text string</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1937,11 +2050,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Greatest Common Divisor</emphasis></term>
 <listitem>
-<para><command>gcd(1st Value, 2nd Value)</command></para>
+<para><command>gcd(1st value, 2nd value)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>1st Value: a free value that is rational (polynomial)</para></listitem>
-<listitem><para>2nd Value: a free value that is rational (polynomial)</para></listitem>
+<listitem><para>1st value: a free value that is rational (polynomial)</para></listitem>
+<listitem><para>2nd value: a free value that is rational (polynomial)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1949,11 +2062,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Least Common Multiplier</emphasis></term>
 <listitem>
-<para><command>lcm(1st Value, 2nd Value)</command></para>
+<para><command>lcm(1st value, 2nd value)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>1st Value: a free value that is rational (polynomial)</para></listitem>
-<listitem><para>2nd Value: a free value that is rational (polynomial)</para></listitem>
+<listitem><para>1st value: a free value that is rational (polynomial)</para></listitem>
+<listitem><para>2nd value: a free value that is rational (polynomial)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2133,11 +2246,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Binary</emphasis></term>
 <listitem>
-<para><command>bin(Binary Number)</command></para>
+<para><command>bin(Binary number)</command></para>
 <para>Returns a decimal integer from a binary number</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Binary Number: a text string</para></listitem>
+<listitem><para>Binary number: a text string</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2145,11 +2258,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Hexadecimal</emphasis></term>
 <listitem>
-<para><command>hex(Hexadecimal Number)</command></para>
+<para><command>hex(Hexadecimal number)</command></para>
 <para>Returns a decimal value from a hexadecimal number</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Hexadecimal Number: a text string</para></listitem>
+<listitem><para>Hexadecimal number: a text string</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2170,11 +2283,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Octal</emphasis></term>
 <listitem>
-<para><command>oct(Octal Number)</command></para>
+<para><command>oct(Octal number)</command></para>
 <para>Returns a decimal integer from an octal number</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Octal Number: a text string</para></listitem>
+<listitem><para>Octal number: a text string</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2187,12 +2300,12 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Coefficient</emphasis></term>
 <listitem>
-<para><command>coeff(Polynomial, Variable[, argument 3])</command></para>
+<para><command>coeff(Polynomial, Number[, Variable])</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Polynomial: a free value that is rational (polynomial)</para></listitem>
-<listitem><para>Variable: an integer &gt;= 0</para></listitem>
-<listitem><para>3: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Number: an integer &gt;= 0</para></listitem>
+<listitem><para>Variable: an unknown variable/symbol (optional, default: x)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2204,19 +2317,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Polynomial: a free value that is rational (polynomial)</para></listitem>
-<listitem><para>Variable: an unknown variable/symbol (optional)</para></listitem>
-</itemizedlist></para>
-</formalpara>
-</listitem>
-</varlistentry>
-<varlistentry>
-<term><emphasis>Degree</emphasis></term>
-<listitem>
-<para><command>degree(Polynomial[, Variable])</command></para>
-<formalpara>
-<title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Polynomial: a free value that is rational (polynomial)</para></listitem>
-<listitem><para>Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Variable: an unknown variable/symbol (optional, default: x)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2228,7 +2329,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Polynomial: a free value that is rational (polynomial)</para></listitem>
-<listitem><para>Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Variable: an unknown variable/symbol (optional, default: x)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2240,7 +2341,19 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Polynomial: a free value that is rational (polynomial)</para></listitem>
-<listitem><para>Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Variable: an unknown variable/symbol (optional, default: x)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Polynomial Degree</emphasis></term>
+<listitem>
+<para><command>degree(Polynomial[, Variable])</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Polynomial: a free value that is rational (polynomial)</para></listitem>
+<listitem><para>Variable: an unknown variable/symbol (optional, default: x)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2252,7 +2365,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Polynomial: a free value that is rational (polynomial)</para></listitem>
-<listitem><para>Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Variable: an unknown variable/symbol (optional, default: x)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2264,7 +2377,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Polynomial: a free value that is rational (polynomial)</para></listitem>
-<listitem><para>Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Variable: an unknown variable/symbol (optional, default: x)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2276,7 +2389,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Polynomial: a free value that is rational (polynomial)</para></listitem>
-<listitem><para>Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Variable: an unknown variable/symbol (optional, default: x)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2365,7 +2478,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <para>Generates a pseudo-random number. Returns a real number between 0 and 1, if ceil is zero (default), or an integer between 1 and (including) ceil.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Ceil: an integer (optional)</para></listitem>
+<listitem><para>Ceil: an integer (optional, default: -1)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2395,11 +2508,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Decile</emphasis></term>
 <listitem>
-<para><command>decile(Decile, Data)</command></para>
+<para><command>decile(Data, Decile)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Decile: a number &gt;= 0 and &lt;= 100</para></listitem>
 <listitem><para>Data: a vector</para></listitem>
+<listitem><para>Decile: a number &gt;= 0 and &lt;= 100</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2464,7 +2577,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 </listitem>
 </varlistentry>
 <varlistentry>
-<term><emphasis>Number</emphasis></term>
+<term><emphasis>Number of Samples</emphasis></term>
 <listitem>
 <para><command>number(Data)</command></para>
 <para>Returns the number of samples.</para>
@@ -2478,11 +2591,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Percentile</emphasis></term>
 <listitem>
-<para><command>percentile(Percentile (%), Vector)</command></para>
+<para><command>percentile(Vector, Percentile (%))</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Percentile (%): a number &gt; 0 and &lt; 99</para></listitem>
 <listitem><para>Vector: a vector</para></listitem>
+<listitem><para>Percentile (%): a number &gt; 0 and &lt; 99</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2490,11 +2603,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Quartile</emphasis></term>
 <listitem>
-<para><command>quartile(Quartile, Data)</command></para>
+<para><command>quartile(Data, Quartile)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Quartile: an integer &gt;= 1 and &lt;= 3</para></listitem>
 <listitem><para>Data: a vector</para></listitem>
+<listitem><para>Quartile: an integer &gt;= 1 and &lt;= 3</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2514,10 +2627,10 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Sum (total)</emphasis></term>
 <listitem>
-<para><command>total(Vector)</command></para>
+<para><command>total(Data)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Vector: a vector</para></listitem>
+<listitem><para>Data: a vector</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2570,12 +2683,12 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Rayleigh Tail Distribution</emphasis></term>
 <listitem>
-<para><command>rayleightail(X, Lower Limit, Sigma)</command></para>
+<para><command>rayleightail(X, Lower limit, Sigma)</command></para>
 <para>Returns the probability density p(x) at x for a Rayleigh tail distribution with scale parameter sigma and a lower limit. (from Gnumeric)</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>X: a free value</para></listitem>
-<listitem><para>Lower Limit: a free value</para></listitem>
+<listitem><para>Lower limit: a free value</para></listitem>
 <listitem><para>Sigma: a number &gt;= 0</para></listitem>
 </itemizedlist></para>
 </formalpara>
@@ -2612,7 +2725,7 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <term><emphasis>Mean</emphasis></term>
 <listitem>
 <para><command>mean(Data)</command></para>
-<formalpara>
+<para><command>average</command></para><formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Data: a vector</para></listitem>
 </itemizedlist></para>
@@ -2633,11 +2746,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Trimmed Mean</emphasis></term>
 <listitem>
-<para><command>trimmean(Trimmed Percentage (at each end), Data)</command></para>
+<para><command>trimmean(Data, Trimmed percentage (at each end))</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Trimmed Percentage (at each end): a free value</para></listitem>
 <listitem><para>Data: a vector</para></listitem>
+<listitem><para>Trimmed percentage (at each end): a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2657,11 +2770,11 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Winsorized Mean</emphasis></term>
 <listitem>
-<para><command>winsormean(Winsorized Percentage (at each end), Data)</command></para>
+<para><command>winsormean(Data, Winsorized percentage (at each end))</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Winsorized Percentage (at each end): a free value</para></listitem>
 <listitem><para>Data: a vector</para></listitem>
+<listitem><para>Winsorized percentage (at each end): a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2674,8 +2787,8 @@ dimension("Equation Vector")=dimension("Variable Vector")
 <varlistentry>
 <term><emphasis>Covariance</emphasis></term>
 <listitem>
-<para><command>covar(Data 1, Data 2)</command></para>
-<formalpara>
+<para><command>cov(Data 1, Data 2)</command></para>
+<para><command>covar</command></para><formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Data 1: a vector</para></listitem>
 <listitem><para>Data 2: a vector</para></listitem>
@@ -3013,6 +3126,17 @@ dimension("Data 1")=dimension("Data 2")
 </listitem>
 </varlistentry>
 <varlistentry>
+<term><emphasis>Inverse Hyperbolic Secant</emphasis></term>
+<listitem>
+<para><command>asech(argument 1)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>1: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
 <term><emphasis>Inverse Hyperbolic Sine</emphasis></term>
 <listitem>
 <para><command>asinh(argument 1)</command></para>
@@ -3030,17 +3154,6 @@ dimension("Data 1")=dimension("Data 2")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>1: a number</para></listitem>
-</itemizedlist></para>
-</formalpara>
-</listitem>
-</varlistentry>
-<varlistentry>
-<term><emphasis>Inverse Hyperbolic secant</emphasis></term>
-<listitem>
-<para><command>asech(argument 1)</command></para>
-<formalpara>
-<title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>1: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -3152,30 +3265,30 @@ dimension("Data 1")=dimension("Data 2")
 <varlistentry>
 <term><emphasis>Concatenate Strings</emphasis></term>
 <listitem>
-<para><command>concatenate(Text String 1[, Text String 2], ...)</command></para>
+<para><command>concatenate(Text string 1[, Text string 2], ...)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Text String 1: a text string</para></listitem>
-<listitem><para>Text String 2: a text string (optional)</para></listitem>
+<listitem><para>Text string 1: a text string</para></listitem>
+<listitem><para>Text string 2: a text string (optional)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
 </varlistentry>
 <varlistentry>
-<term><emphasis>Custom Sum of Components</emphasis></term>
+<term><emphasis>Custom Sum of Elements</emphasis></term>
 <listitem>
-<para><command>csum(First Component, Last Component, Initial Value, Function, Value Variable, Component Variable, Vector[, Index Variable][, Vector Variable])</command></para>
+<para><command>csum(First element, Last element, Initial value, Function, Value variable, Element variable, Vector[, Index variable][, Vector variable])</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>First Component: an integer</para></listitem>
-<listitem><para>Last Component: an integer</para></listitem>
-<listitem><para>Initial Value: a free value</para></listitem>
+<listitem><para>First element: an integer</para></listitem>
+<listitem><para>Last element: an integer</para></listitem>
+<listitem><para>Initial value: a free value</para></listitem>
 <listitem><para>Function: a free value</para></listitem>
-<listitem><para>Value Variable: an unknown variable/symbol</para></listitem>
-<listitem><para>Component Variable: an unknown variable/symbol</para></listitem>
+<listitem><para>Value variable: an unknown variable/symbol</para></listitem>
+<listitem><para>Element variable: an unknown variable/symbol</para></listitem>
 <listitem><para>Vector: a vector</para></listitem>
-<listitem><para>Index Variable: an unknown variable/symbol (optional)</para></listitem>
-<listitem><para>Vector Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Index variable: an unknown variable/symbol (optional, default: "")</para></listitem>
+<listitem><para>Vector variable: an unknown variable/symbol (optional, default: "")</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -3239,44 +3352,64 @@ dimension("Data 1")=dimension("Data 2")
 <varlistentry>
 <term><emphasis>Process Matrix Elements</emphasis></term>
 <listitem>
-<para><command>processm(Function, Element Variable, Matrix[, Row Variable][, Column Variable][, Matrix Variable])</command></para>
+<para><command>processm(Function, Element variable, Matrix[, Row variable][, Column variable][, Matrix variable])</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Function: a free value</para></listitem>
-<listitem><para>Element Variable: an unknown variable/symbol</para></listitem>
+<listitem><para>Element variable: an unknown variable/symbol</para></listitem>
 <listitem><para>Matrix: a matrix</para></listitem>
-<listitem><para>Row Variable: an unknown variable/symbol (optional)</para></listitem>
-<listitem><para>Column Variable: an unknown variable/symbol (optional)</para></listitem>
-<listitem><para>Matrix Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Row variable: an unknown variable/symbol (optional, default: "")</para></listitem>
+<listitem><para>Column variable: an unknown variable/symbol (optional, default: "")</para></listitem>
+<listitem><para>Matrix variable: an unknown variable/symbol (optional, default: "")</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
 </varlistentry>
 <varlistentry>
-<term><emphasis>Process Vector Components</emphasis></term>
+<term><emphasis>Process Vector Elements</emphasis></term>
 <listitem>
-<para><command>process(Function, Component Variable, Vector[, Index Variable][, Vector Variable])</command></para>
+<para><command>process(Function, Element variable, Vector[, Index variable][, Vector variable])</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Function: a free value</para></listitem>
-<listitem><para>Component Variable: an unknown variable/symbol</para></listitem>
+<listitem><para>Element variable: an unknown variable/symbol</para></listitem>
 <listitem><para>Vector: a vector</para></listitem>
-<listitem><para>Index Variable: an unknown variable/symbol (optional)</para></listitem>
-<listitem><para>Vector Variable: an unknown variable/symbol (optional)</para></listitem>
+<listitem><para>Index variable: an unknown variable/symbol (optional, default: "")</para></listitem>
+<listitem><para>Vector variable: an unknown variable/symbol (optional, default: "")</para></listitem>
 </itemizedlist></para>
 </formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>RPN Stack Register</emphasis></term>
+<listitem>
+<para><command>register(Index)</command></para>
+<para>Returns the value of a RPN stack register.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Index: an integer &gt;= 1</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>RPN Stack Vector</emphasis></term>
+<listitem>
+<para><command>stack()</command></para>
+<para>Returns the RPN stack as a vector.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
 <term><emphasis>Replace</emphasis></term>
 <listitem>
-<para><command>replace(Expression, Original Value, New Value[, Precalculate expression])</command></para>
+<para><command>replace(Expression, Original value, New value[, Precalculate expression])</command></para>
+<para>Replaces a certain value in an expression with a new value. The expression is calculated before the replacement if the fourth argument is true.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Expression: a free value</para></listitem>
-<listitem><para>Original Value: a free value</para></listitem>
-<listitem><para>New Value: a free value</para></listitem>
-<listitem><para>Precalculate expression: a boolean (0 or 1) (optional)</para></listitem>
+<listitem><para>Original value: a free value</para></listitem>
+<listitem><para>New value: a free value</para></listitem>
+<listitem><para>Precalculate expression: a boolean (0 or 1) (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -3289,22 +3422,22 @@ dimension("Data 1")=dimension("Data 2")
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Value: a free value</para></listitem>
 <listitem><para>Name: a text string</para></listitem>
-<listitem><para>Category: a text string (optional)</para></listitem>
+<listitem><para>Category: a text string (optional, default: Temporary)</para></listitem>
 <listitem><para>Title: a text string (optional)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
 </varlistentry>
 <varlistentry>
-<term><emphasis>Select Vector Components</emphasis></term>
+<term><emphasis>Select Vector Elements</emphasis></term>
 <listitem>
-<para><command>select(Vector, Condition[, Component Variable][, Select first match])</command></para>
+<para><command>select(Vector, Condition[, Element variable][, Select first match])</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Vector: a free value</para></listitem>
 <listitem><para>Condition: a free value</para></listitem>
-<listitem><para>Component Variable: an unknown variable/symbol (optional)</para></listitem>
-<listitem><para>Select first match: a boolean (0 or 1) (optional)</para></listitem>
+<listitem><para>Element variable: an unknown variable/symbol (optional, default: x)</para></listitem>
+<listitem><para>Select first match: a boolean (0 or 1) (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -3313,7 +3446,8 @@ dimension("Data 1")=dimension("Data 2")
 <term><emphasis>Strip Units</emphasis></term>
 <listitem>
 <para><command>nounit(Expression)</command></para>
-<para><command>strip_units</command></para><formalpara>
+<para><command>strip_units</command></para><para>Removes all units from an expression. The expression is calculated before the removal.</para>
+<formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Expression: a free value</para></listitem>
 </itemizedlist></para>

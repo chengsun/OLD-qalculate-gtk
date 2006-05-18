@@ -276,13 +276,13 @@
 <entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
-<entry><para>Austrian shilling</para></entry>
-<entry><para>ATS / shilling</para></entry>
+<entry><para>Austrian Schilling</para></entry>
+<entry><para>ATS / schilling</para></entry>
 <entry><para>€</para></entry>
 <entry><para>1/13.7603</para></entry>
 </row>
 <row valign="top">
-<entry><para>Belgian franc</para></entry>
+<entry><para>Belgian Franc</para></entry>
 <entry><para>BEF</para></entry>
 <entry><para>€</para></entry>
 <entry><para>1/40.3399</para></entry>
@@ -342,7 +342,7 @@
 <entry><para>1/1.95583</para></entry>
 </row>
 <row valign="top">
-<entry><para>Dutch guilder</para></entry>
+<entry><para>Dutch Guilder</para></entry>
 <entry><para>NLG / guilder</para></entry>
 <entry><para>€</para></entry>
 <entry><para>1/2.20371</para></entry>
@@ -366,19 +366,19 @@
 <entry><para></para></entry>
 </row>
 <row valign="top">
-<entry><para>Finnish markka</para></entry>
+<entry><para>Finnish Markka</para></entry>
 <entry><para>FIM / markka</para></entry>
 <entry><para>€</para></entry>
 <entry><para>1/5.94573</para></entry>
 </row>
 <row valign="top">
-<entry><para>French franc</para></entry>
+<entry><para>French Franc</para></entry>
 <entry><para>FRF / franc</para></entry>
 <entry><para>€</para></entry>
 <entry><para>1/6.55957</para></entry>
 </row>
 <row valign="top">
-<entry><para>Greek drachma</para></entry>
+<entry><para>Greek Drachma</para></entry>
 <entry><para>GRD</para></entry>
 <entry><para>€</para></entry>
 <entry><para>1/340.750</para></entry>
@@ -403,18 +403,18 @@
 </row>
 <row valign="top">
 <entry><para>Indonesian Rupiah</para></entry>
-<entry><para>CYP / IDR</para></entry>
+<entry><para>IDR</para></entry>
 <entry><para>€</para></entry>
 <entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
-<entry><para>Irish pound</para></entry>
+<entry><para>Irish Pound</para></entry>
 <entry><para>IEP</para></entry>
 <entry><para>€</para></entry>
 <entry><para>1/0.787564</para></entry>
 </row>
 <row valign="top">
-<entry><para>Italian lira</para></entry>
+<entry><para>Italian Lira</para></entry>
 <entry><para>ITL / lira</para></entry>
 <entry><para>€</para></entry>
 <entry><para>1/1936.27</para></entry>
@@ -438,7 +438,7 @@
 <entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
-<entry><para>Luxembourg franc</para></entry>
+<entry><para>Luxembourg Franc</para></entry>
 <entry><para>LUF</para></entry>
 <entry><para>€</para></entry>
 <entry><para>1/40.3399</para></entry>
@@ -480,14 +480,14 @@
 <entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
-<entry><para>Portuguese escudo</para></entry>
+<entry><para>Portuguese Escudo</para></entry>
 <entry><para>PTE / escudo</para></entry>
 <entry><para>€</para></entry>
 <entry><para>1/200.482</para></entry>
 </row>
 <row valign="top">
 <entry><para>Romanian New Leu</para></entry>
-<entry><para>leu / ROL / RON</para></entry>
+<entry><para>leu / RON</para></entry>
 <entry><para>€</para></entry>
 <entry><para>exchange rate</para></entry>
 </row>
@@ -528,7 +528,7 @@
 <entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
-<entry><para>Spanish peseta</para></entry>
+<entry><para>Spanish Peseta</para></entry>
 <entry><para>ESP / peseta / pesetas</para></entry>
 <entry><para>€</para></entry>
 <entry><para>1/166.386</para></entry>
@@ -675,7 +675,7 @@
 </row>
 <row valign="top">
 <entry><para>Statcoloumb (Franklin)</para></entry>
-<entry><para>statcoulomb / statcoulombs / statC / franklin / Fr</para></entry>
+<entry><para>statcoulomb / statcoulombs / statC / franklin / Fr / franklins</para></entry>
 <entry><para>C</para></entry>
 <entry><para>3.3356410E-10 (approximate)</para></entry>
 </row>
@@ -737,7 +737,7 @@
 </row>
 <row valign="top">
 <entry><para>Siemens</para></entry>
-<entry><para>S / siemens / siemens</para></entry>
+<entry><para>S / siemens</para></entry>
 <entry><para>A_p_V</para></entry>
 <entry><para>1</para></entry>
 </row>
@@ -1044,31 +1044,31 @@
 </row>
 <row valign="top">
 <entry><para>Calorie (15 degrees Celcius)</para></entry>
-<entry><para>calorie_fifteen / calories_fifteen</para></entry>
+<entry><para>cal_fifteen</para></entry>
 <entry><para>J</para></entry>
 <entry><para>4.185880 (approximate)</para></entry>
 </row>
 <row valign="top">
 <entry><para>Calorie (capital C)</para></entry>
 <entry><para>Calorie / Calories</para></entry>
-<entry><para>cal</para></entry>
+<entry><para>cal_IT</para></entry>
 <entry><para>1000</para></entry>
 </row>
 <row valign="top">
 <entry><para>Calorie (international table)</para></entry>
-<entry><para>cal / calorie / calories</para></entry>
+<entry><para>cal_IT / cal / calorie / calories</para></entry>
 <entry><para>J</para></entry>
 <entry><para>4.1868</para></entry>
 </row>
 <row valign="top">
 <entry><para>Calorie (mean)</para></entry>
-<entry><para>cal_mean / mean_calorie / mean_calories</para></entry>
+<entry><para>cal_mean</para></entry>
 <entry><para>J</para></entry>
 <entry><para>4.19002 (approximate)</para></entry>
 </row>
 <row valign="top">
 <entry><para>Calorie (thermochemical)</para></entry>
-<entry><para>cal_th / thermo_calorie / thermo_calories</para></entry>
+<entry><para>cal_th</para></entry>
 <entry><para>J</para></entry>
 <entry><para>4.184</para></entry>
 </row>
@@ -1489,7 +1489,7 @@
 </row>
 <row valign="top">
 <entry><para>Stokes</para></entry>
-<entry><para>St / stokes / stokes</para></entry>
+<entry><para>St / stokes</para></entry>
 <entry><para>sqm_p_s</para></entry>
 <entry><para>0.0001</para></entry>
 </row>
@@ -1936,7 +1936,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Foot-Candle</para></entry>
-<entry><para>fc / footcandle</para></entry>
+<entry><para>fc / footcandle / footcandles</para></entry>
 <entry><para>lm_p_sqft</para></entry>
 <entry><para>1</para></entry>
 </row>
@@ -2712,7 +2712,7 @@
 <tbody>
 <row valign="top">
 <entry><para>Bel</para></entry>
-<entry><para>B</para></entry>
+<entry><para>B / bel / bels</para></entry>
 <entry><para>Np</para></entry>
 <entry><para>0.5*ln(10)</para></entry>
 </row>
@@ -3291,7 +3291,7 @@
 </row>
 <row valign="top">
 <entry><para>Imperial Gill</para></entry>
-<entry><para>imperial_gill / imperial_gills</para></entry>
+<entry><para>UK_gi / imperial_gill / imperial_gills</para></entry>
 <entry><para>UK_fl_oz</para></entry>
 <entry><para>5</para></entry>
 </row>
@@ -3304,7 +3304,7 @@
 <row valign="top">
 <entry><para>Imperial Pint</para></entry>
 <entry><para>UK_pt / imperial_pint / imperial_pints</para></entry>
-<entry><para>imperial_gill</para></entry>
+<entry><para>UK_gi</para></entry>
 <entry><para>4</para></entry>
 </row>
 <row valign="top">
@@ -3413,7 +3413,7 @@
 </row>
 <row valign="top">
 <entry><para>U.S. Liquid Pints</para></entry>
-<entry><para>liq_pt / luquid_pint / liquid_pints</para></entry>
+<entry><para>liq_pt / liquid_pint / liquid_pints</para></entry>
 <entry><para>gi</para></entry>
 <entry><para>4</para></entry>
 </row>

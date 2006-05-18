@@ -1,10 +1,2 @@
 * Instant apply for all parameters in plot
-* Improve matrix editing
 * Split up interface code
-
-* More functions
-* More units
-
-* Increase support for non-glibc systems
-
-* Better graphs/charts (do not use gnuplot)

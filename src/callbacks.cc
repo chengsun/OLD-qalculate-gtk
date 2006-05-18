@@ -105,7 +105,7 @@ bool save_defs_on_exit;
 bool use_custom_result_font, use_custom_expression_font, use_custom_status_font;
 string custom_result_font, custom_expression_font, custom_status_font, wget_args;
 bool hyp_is_on, inv_is_on;
-bool show_buttons, show_history, show_stack;
+bool show_keypad, show_history, show_stack;
 extern bool load_global_defs, fetch_exchange_rates_at_startup, first_time, first_qalculate_run;
 bool display_expression_status, enable_completion;
 extern GtkWidget *omToUnit_menu;
@@ -832,7 +832,8 @@ void display_parse_status() {
 		} else {
 			display_function_hint(mfunc.function(), mfunc.countChildren());
 		}
-	} else if(expression_has_changed2) {
+	}
+	if(expression_has_changed2) {
 		if(!full_parsed) {
 			CALCULATOR->beginTemporaryStopMessages();
 			str_e = CALCULATOR->unlocalizeExpression(gtk_entry_get_text(GTK_ENTRY(expression)), evalops.parse_options);
@@ -847,6 +848,7 @@ void display_parse_status() {
 		po.show_ending_zeroes = true;
 		po.lower_case_e = printops.lower_case_e;
 		po.lower_case_numbers = printops.lower_case_numbers;
+		po.base_display = printops.base_display;
 		po.abbreviate_names = false;
 		po.hide_underscore_spaces = true;
 		po.use_unicode_signs = printops.use_unicode_signs;
@@ -876,9 +878,9 @@ void display_parse_status() {
 		gsub("&", "&amp;", parsed_expression);
 		gsub(">", "&gt;", parsed_expression);
 		gsub("<", "&lt;", parsed_expression);
-		set_status_text(parsed_expression.c_str(), true, had_errors, had_warnings);
+		if(!mfunc.isFunction()) set_status_text(parsed_expression.c_str(), true, had_errors, had_warnings);
 		expression_has_changed2 = false;
-	} else {
+	} else if(!mfunc.isFunction()) {
 		set_status_text(parsed_expression.c_str(), true, parsed_had_errors, parsed_had_warnings);
 	}
 	evalops.parse_options.preserve_format = false;
@@ -1431,9 +1433,11 @@ void on_tFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer) 
 						}
 						if(i2 > f->minargs()) {
 							str2 += " (";
+							//optional argument
 							str2 += _("optional");
 							if(!f->getDefaultValue(i2).empty()) {
 								str2 += ", ";
+								//argument default, in description
 								str2 += _("default: ");
 								str2 += f->getDefaultValue(i2);
 							}
@@ -4540,6 +4544,7 @@ void *view_proc(void *pipe) {
 				po.show_ending_zeroes = true;
 				po.lower_case_e = printops.lower_case_e;
 				po.lower_case_numbers = printops.lower_case_numbers;
+				po.base_display = printops.base_display;
 				po.abbreviate_names = false;
 				po.use_unicode_signs = printops.use_unicode_signs;
 				po.multiplication_sign = printops.multiplication_sign;
@@ -5359,9 +5364,9 @@ void set_rpn_mode(bool b) {
 		gtk_tooltips_set_tip(main_tooltips, glade_xml_get_widget(main_glade, "button_equals"), _("Calculate expression and add to stack"), NULL);
 		gtk_tooltips_set_tip(main_tooltips, glade_xml_get_widget(main_glade, "button_execute"), _("Calculate expression and add to stack"), NULL);
 		gtk_widget_show(expander_stack);
+		show_history = gtk_expander_get_expanded(GTK_EXPANDER(expander_history));
+		show_keypad = gtk_expander_get_expanded(GTK_EXPANDER(expander_keypad));
 		if(show_stack) {
-			show_history = gtk_expander_get_expanded(GTK_EXPANDER(expander_history));
-			show_buttons = gtk_expander_get_expanded(GTK_EXPANDER(expander_keypad));
 			gtk_expander_set_expanded(GTK_EXPANDER(expander_stack), TRUE);
 		}
 	} else {
@@ -5372,7 +5377,7 @@ void set_rpn_mode(bool b) {
 		show_stack = gtk_expander_get_expanded(GTK_EXPANDER(expander_stack));
 		if(show_stack) {
 			if(show_history) gtk_expander_set_expanded(GTK_EXPANDER(expander_history), TRUE);
-			else if(show_buttons) gtk_expander_set_expanded(GTK_EXPANDER(expander_keypad), TRUE);
+			else if(show_keypad) gtk_expander_set_expanded(GTK_EXPANDER(expander_keypad), TRUE);
 			else gtk_expander_set_expanded(GTK_EXPANDER(expander_stack), FALSE);
 		}
 		CALCULATOR->clearRPNStack();
@@ -8777,6 +8782,7 @@ void load_preferences() {
 	printops.allow_non_usable = false;
 	printops.lower_case_numbers = false;
 	printops.lower_case_e = false;
+	printops.base_display = BASE_DISPLAY_NORMAL;
 	printops.limit_implicit_multiplication = false;
 	printops.can_display_unicode_string_function = &can_display_unicode_string_function;
 	printops.allow_factorization = false;
@@ -8795,7 +8801,7 @@ void load_preferences() {
 	evalops.warn_about_denominators_assumed_nonzero = true;
 	evalops.parse_options.limit_implicit_multiplication = false;
 	evalops.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
-	evalops.parse_options.dot_as_separator = false;
+	evalops.parse_options.dot_as_separator = CALCULATOR->default_dot_as_separator;
 
 	rpn_mode = false;
 	rpn_keypad_only = true;
@@ -8818,7 +8824,7 @@ void load_preferences() {
 	custom_status_font = "";
 	status_error_color = "#FF0000";
 	status_warning_color = "#0000FF";
-	show_buttons = true;
+	show_keypad = true;
 	show_history = false;
 	show_stack = true;
 	load_global_defs = true;
@@ -8876,8 +8882,8 @@ void load_preferences() {
 					fetch_exchange_rates_at_startup = v;
 				} else if(svar == "wget_args") {
 					wget_args = svalue;
-				} else if(svar == "show_buttons") {
-					show_buttons = v;
+				} else if(svar == "show_keypad") {
+					show_keypad = v;
 				} else if(svar == "show_history") {
 					show_history = v;
 				} else if(svar == "show_stack") {
@@ -9143,6 +9149,8 @@ void load_preferences() {
 					printops.lower_case_numbers = v;	
 				} else if(svar == "lower_case_e") {
 					printops.lower_case_e = v;	
+				} else if(svar == "base_display") {
+					if(v >= BASE_DISPLAY_NONE && v <= BASE_DISPLAY_ALTERNATIVE) printops.base_display = (BaseDisplay) v;
 				} else if(svar == "spell_out_logical_operators") {
 					printops.spell_out_logical_operators = v;	
 				} else if(svar == "dot_as_separator") {
@@ -9311,6 +9319,7 @@ void load_preferences() {
 	} else {
 		first_time = true;
 	}
+	if(show_keypad) show_history = false;
 	set_saved_mode();
 
 }
@@ -9354,7 +9363,7 @@ void save_preferences(bool mode) {
 	fprintf(file, "load_global_definitions=%i\n", load_global_defs);
 	fprintf(file, "fetch_exchange_rates_at_startup=%i\n", fetch_exchange_rates_at_startup);
 	fprintf(file, "wget_args=%s\n", wget_args.c_str());
-	fprintf(file, "show_buttons=%i\n", (rpn_mode && show_buttons && gtk_expander_get_expanded(GTK_EXPANDER(expander_stack))) || gtk_expander_get_expanded(GTK_EXPANDER(expander_keypad)));
+	fprintf(file, "show_keypad=%i\n", (rpn_mode && show_keypad && gtk_expander_get_expanded(GTK_EXPANDER(expander_stack))) || gtk_expander_get_expanded(GTK_EXPANDER(expander_keypad)));
 	fprintf(file, "show_history=%i\n", (rpn_mode && show_history && gtk_expander_get_expanded(GTK_EXPANDER(expander_stack))) || gtk_expander_get_expanded(GTK_EXPANDER(expander_history)));
 	fprintf(file, "show_stack=%i\n", rpn_mode ? gtk_expander_get_expanded(GTK_EXPANDER(expander_stack)) : show_stack);
 	fprintf(file, "rpn_keypad_only=%i\n", rpn_keypad_only);
@@ -9363,6 +9372,7 @@ void save_preferences(bool mode) {
 	fprintf(file, "use_unicode_signs=%i\n", printops.use_unicode_signs);
 	fprintf(file, "lower_case_numbers=%i\n", printops.lower_case_numbers);
 	fprintf(file, "lower_case_e=%i\n", printops.lower_case_e);
+	fprintf(file, "base_display=%i\n", printops.base_display);
 	fprintf(file, "spell_out_logical_operators=%i\n", printops.spell_out_logical_operators);
 	fprintf(file, "dot_as_separator=%i\n", evalops.parse_options.dot_as_separator);
 	fprintf(file, "use_custom_result_font=%i\n", use_custom_result_font);	
@@ -9780,6 +9790,11 @@ void on_preferences_checkbutton_lower_case_numbers_toggled(GtkToggleButton *w, g
 }
 void on_preferences_checkbutton_lower_case_e_toggled(GtkToggleButton *w, gpointer) {
 	printops.lower_case_e = gtk_toggle_button_get_active(w);
+	result_display_updated();
+}
+void on_preferences_checkbutton_alternative_base_prefixes_toggled(GtkToggleButton *w, gpointer) {
+	if(gtk_toggle_button_get_active(w)) printops.base_display = BASE_DISPLAY_ALTERNATIVE;
+	else printops.base_display = BASE_DISPLAY_NORMAL;
 	result_display_updated();
 }
 void on_preferences_checkbutton_spell_out_logical_operators_toggled(GtkToggleButton *w, gpointer) {
@@ -10700,7 +10715,9 @@ void on_menu_item_insert_matrix_activate(GtkMenuItem*, gpointer) {
 	}
 	if(!str.empty()) {
 		MathStructure mstruct_sel;
+		CALCULATOR->beginTemporaryStopMessages();
 		CALCULATOR->parse(&mstruct_sel, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), evalops.parse_options);
+		CALCULATOR->endTemporaryStopMessages();
 		if(mstruct_sel.isMatrix() && mstruct_sel[0].size() > 0) {
 			insert_matrix(&mstruct_sel, glade_xml_get_widget (main_glade, "main_window"), false);
 			return;
@@ -10719,7 +10736,9 @@ void on_menu_item_insert_vector_activate(GtkMenuItem*, gpointer) {
 	}
 	if(!str.empty()) {
 		MathStructure mstruct_sel;
+		CALCULATOR->beginTemporaryStopMessages();
 		CALCULATOR->parse(&mstruct_sel, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), evalops.parse_options);
+		CALCULATOR->endTemporaryStopMessages();
 		if(mstruct_sel.isVector() && !mstruct_sel.isMatrix()) {
 			insert_matrix(&mstruct_sel, glade_xml_get_widget (main_glade, "main_window"), true);
 			return;
