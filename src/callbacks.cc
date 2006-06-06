@@ -1,7 +1,7 @@
 /*
     Qalculate
 
-    Copyright (C) 2003  Niklas Knutsson (nq@altern.org)
+    Copyright (C) 2003-2006  Niklas Knutsson (nq@altern.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -2111,13 +2111,13 @@ void on_tUnitSelectorCategories_selection_changed(GtkTreeSelection *treeselectio
 		if(!b_all && !no_cat && selected_unit_selector_category[0] == '/') {
 			string str = selected_unit_selector_category.substr(1, selected_unit_selector_category.length() - 1);
 			for(size_t i = 0; i < CALCULATOR->units.size(); i++) {	
-				if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->category().substr(0, selected_unit_selector_category.length() - 1) == str) {
+				if(CALCULATOR->units[i]->isActive() && !CALCULATOR->units[i]->isHidden() && CALCULATOR->units[i]->category().substr(0, selected_unit_selector_category.length() - 1) == str) {
 					setUnitSelectorTreeItem(iter2, CALCULATOR->units[i]);
 				}
 			}
 		} else {
 			for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
-				if(CALCULATOR->units[i]->isActive() && (b_all || (no_cat && CALCULATOR->units[i]->category().empty()) || CALCULATOR->units[i]->category() == selected_unit_selector_category)) {
+				if(CALCULATOR->units[i]->isActive() && !CALCULATOR->units[i]->isHidden() && (b_all || (no_cat && CALCULATOR->units[i]->category().empty()) || CALCULATOR->units[i]->category() == selected_unit_selector_category)) {
 					setUnitSelectorTreeItem(iter2, CALCULATOR->units[i]);			
 				}
 			}
@@ -12727,7 +12727,7 @@ void on_unknown_edit_optionmenu_sign_changed(GtkOptionMenu *om, gpointer) {
 }
 
 gboolean on_key_press_event(GtkWidget*, GdkEventKey *event, gpointer) {
-	if(!GTK_WIDGET_HAS_FOCUS(expression)) {
+	if(!GTK_WIDGET_HAS_FOCUS(expression) && (event->keyval > GDK_Hyper_R || event->keyval < GDK_Shift_L)) {
 		bool return_val = FALSE;
 		GtkWidget *w = gtk_window_get_focus(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
 		if(w) g_signal_emit_by_name((gpointer) w, "key_press_event", event, &return_val);

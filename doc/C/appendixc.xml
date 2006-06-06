@@ -1574,6 +1574,18 @@
 <entry><para>1</para></entry>
 </row>
 <row valign="top">
+<entry><para>Pound-force per Square Inch</para></entry>
+<entry><para>(lbf_p_sqin)</para></entry>
+<entry><para>lbf/in^2</para></entry>
+<entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Pound-force per Square Inch (psi)</para></entry>
+<entry><para>psi</para></entry>
+<entry><para>lbf_p_sqin</para></entry>
+<entry><para>1</para></entry>
+</row>
+<row valign="top">
 <entry><para>Torr</para></entry>
 <entry><para>torr / torrs</para></entry>
 <entry><para>atm</para></entry>

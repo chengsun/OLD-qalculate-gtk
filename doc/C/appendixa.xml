@@ -307,7 +307,7 @@ dimension("Equation vector")=dimension("Variable vector")
 <term><emphasis>Superfactorial</emphasis></term>
 <listitem>
 <para><command>superfactorial(Value)</command></para>
-<para>Calculates the superfactorial of an integer. Mulitplies the factorial of the argument with the factorial of every lesser positive integer (1! * 2! ... n^n). </para><para></para><para>ex. superfactorial(5) = 5! * 4! * 3! * 2! * 1! = 34 560</para>
+<para>Calculates the superfactorial of an integer. Mulitplies the factorial of the argument with the factorial of every lesser positive integer (1! * 2! ... n!). </para><para></para><para>ex. superfactorial(5) = 5! * 4! * 3! * 2! * 1! = 34 560</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Value: an integer &gt;= 0</para></listitem>
