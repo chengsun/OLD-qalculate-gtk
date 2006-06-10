@@ -276,13 +276,18 @@ void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, Assumpt
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_normal")), TRUE);
 			break;
 		}
-		case EXP_SCIENTIFIC: {
+		case EXP_BASE_3: {
 			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 1);
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_engineering")), TRUE);
+			break;
+		}
+		case EXP_SCIENTIFIC: {
+			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 2);
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_scientific")), TRUE);
 			break;
 		}
 		case EXP_PURE: {
-			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 2);
+			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 3);
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_purely_scientific")), TRUE);
 			break;
 		}

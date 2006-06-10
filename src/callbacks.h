@@ -367,6 +367,7 @@ void on_menu_item_assumptions_nonpositive_activate(GtkMenuItem *w, gpointer user
 void on_menu_item_assumptions_unknown_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_assume_nonzero_denominators_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data);
+void on_popup_menu_item_display_engineering_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer user_data);
@@ -389,6 +390,7 @@ void on_popup_menu_item_denominator_prefixes_activate(GtkMenuItem *w, gpointer u
 void on_popup_menu_item_view_matrix_activate(GtkMenuItem *w, gpointer user_data);
 void on_popup_menu_item_view_vector_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_display_normal_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_display_engineering_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer user_data);

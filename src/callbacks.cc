@@ -8568,14 +8568,18 @@ void on_combobox_numerical_display_changed(GtkComboBox *w, gpointer) {
 			break;
 		}
 		case 1: {
-			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_scientific")), TRUE);
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_engineering")), TRUE);
 			break;
 		}
 		case 2: {
-			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_purely_scientific")), TRUE);
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_scientific")), TRUE);
 			break;
 		}
 		case 3: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_purely_scientific")), TRUE);
+			break;
+		}
+		case 4: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_non_scientific")), TRUE);
 			break;
 		}
@@ -10016,6 +10020,7 @@ void update_resultview_popup() {
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_time_format"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_time_format_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_custom_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_custom_base_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_normal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_normal_activate, NULL);
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_engineering"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_engineering_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_scientific"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_scientific_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_purely_scientific"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_purely_scientific_activate, NULL);
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_non_scientific"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_non_scientific_activate, NULL);
@@ -10048,6 +10053,7 @@ void update_resultview_popup() {
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_custom_base"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "separator_popup_base"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_normal"));
+		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_engineering"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_scientific"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_purely_scientific"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_non_scientific"));
@@ -10072,6 +10078,7 @@ void update_resultview_popup() {
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_custom_base"));
 		gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_base"));
 		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_display_normal"));
+		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_display_engineering"));
 		gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_display_scientific"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_purely_scientific"));
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_display_non_scientific"));
@@ -10160,6 +10167,10 @@ void update_resultview_popup() {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_display_normal")), TRUE);
 			break;
 		}
+		case EXP_BASE_3: {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_display_engineering")), TRUE);
+			break;
+		}
 		case EXP_SCIENTIFIC: {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "popup_menu_item_display_scientific")), TRUE);
 			break;
@@ -10205,6 +10216,7 @@ void update_resultview_popup() {
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_time_format"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_time_format_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_custom_base"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_custom_base_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_normal"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_normal_activate, NULL);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_engineering"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_engineering_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_scientific"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_scientific_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_purely_scientific"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_purely_scientific_activate, NULL);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "popup_menu_item_display_non_scientific"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_popup_menu_item_display_non_scientific_activate, NULL);
@@ -11486,6 +11498,10 @@ void on_popup_menu_item_display_normal_activate(GtkMenuItem *w, gpointer) {
 void on_popup_menu_item_assume_nonzero_denominators_activate(GtkMenuItem *w, gpointer) {
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_assume_nonzero_denominators")), gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
 }
+void on_popup_menu_item_display_engineering_activate(GtkMenuItem *w, gpointer) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_engineering")), TRUE);
+}
 void on_popup_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_scientific")), TRUE);
@@ -11576,6 +11592,17 @@ void on_menu_item_display_normal_activate(GtkMenuItem *w, gpointer) {
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
 	result_format_updated();
 }
+void on_menu_item_display_engineering_activate(GtkMenuItem *w, gpointer) {
+	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
+		return;
+	printops.min_exp = EXP_BASE_3;
+	printops.negative_exponents = true;
+	printops.sort_options.minus_last = false;
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 1);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
+	result_format_updated();
+}
 void on_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
@@ -11583,7 +11610,7 @@ void on_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer) {
 	printops.negative_exponents = true;
 	printops.sort_options.minus_last = false;
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 1);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 2);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
 	result_format_updated();
 }
@@ -11594,7 +11621,7 @@ void on_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer) {
 	printops.negative_exponents = true;
 	printops.sort_options.minus_last = false;
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 2);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 3);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
 	result_format_updated();
 }
@@ -11605,7 +11632,7 @@ void on_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer) {
 	printops.negative_exponents = false;
 	printops.sort_options.minus_last = true;
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 3);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 4);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
 	result_format_updated();
 }
