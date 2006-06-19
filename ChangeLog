@@ -1,3 +1,8 @@
+2006-06-19 Niklas Knutsson  <nq@altern.org>
+
+	* Use localized comma for insert matrix/vector
+	* Display parentheses correctly with flat division when "Place units separately" is activated
+
 2006-06-10 Niklas Knutsson  <nq@altern.org>
 
 	* Add "Engineering" display mode

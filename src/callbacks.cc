@@ -3534,7 +3534,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			
 			GdkPixmap *num_pixmap = NULL, *den_pixmap = NULL, *pixmap_one = NULL;
 			if(m.type() == STRUCT_DIVISION) {
-				ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 1, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+				ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 1, flat, ips.power_depth > 0);
 				num_pixmap = draw_structure(m[0], po, ips_n, &num_dh, scaledown);
 				gdk_drawable_get_size(GDK_DRAWABLE(num_pixmap), &num_w, &h);
 				num_uh = h - num_dh;
@@ -3546,10 +3546,10 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 				num_w = one_w; num_dh = one_h / 2; num_uh = one_h - num_dh;
 			}
 			if(m.type() == STRUCT_DIVISION) {
-				ips_n.wrap = m[1].needsParenthesis(po, ips_n, m, 2, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+				ips_n.wrap = m[1].needsParenthesis(po, ips_n, m, 2, flat, ips.power_depth > 0);
 				den_pixmap = draw_structure(m[1], po, ips_n, &den_dh, scaledown);
 			} else {
-				ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 2, ips.division_depth > 0 || ips.power_depth > 0, ips.power_depth > 0);
+				ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 2, flat, ips.power_depth > 0);
 				den_pixmap = draw_structure(m[0], po, ips_n, &den_dh, scaledown);
 			}
 			gdk_drawable_get_size(GDK_DRAWABLE(den_pixmap), &den_w, &h);
@@ -7384,7 +7384,8 @@ void insert_matrix(const MathStructure *initial_value, GtkWidget *win, gboolean 
 					remove_blank_ends(str);
 					if(!str.empty()) {
 						if(b) {
-							matrixstr += ", ";
+							matrixstr += CALCULATOR->getComma();
+							matrixstr += " ";
 						} else {
 							b = true;
 						}
@@ -7399,7 +7400,8 @@ void insert_matrix(const MathStructure *initial_value, GtkWidget *win, gboolean 
 			bool b1 = false;
 			for(size_t index_r = 0; index_r < (size_t) r && b; index_r++) {
 				if(b1) {
-					matrixstr += ", ";
+					matrixstr += CALCULATOR->getComma();
+					matrixstr += " ";
 				} else {
 					b1 = true;
 				}
@@ -7407,7 +7409,8 @@ void insert_matrix(const MathStructure *initial_value, GtkWidget *win, gboolean 
 				bool b2 = false;
 				for(size_t index_c = 0; index_c < (size_t) c; index_c++) {
 					if(b2) {
-						matrixstr += ", ";
+						matrixstr += CALCULATOR->getComma();
+						matrixstr += " ";
 					} else {
 						b2 = true;
 					}
@@ -12428,9 +12431,7 @@ void on_tMatrix_edited(GtkCellRendererText *cell, gchar *path_string, gchar *new
 	GtkTreeIter iter;
 	gint i_column = GPOINTER_TO_INT (g_object_get_data(G_OBJECT(cell), "column"));
 	gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL(model), &iter, path_string);
-	if(i_column != 0) {
-		gtk_list_store_set(GTK_LIST_STORE (model), &iter, i_column * 3, new_text, -1);
-	}
+	gtk_list_store_set(GTK_LIST_STORE (model), &iter, i_column * 2, new_text, -1);
 }
 gboolean on_tMatrix_key_press_event(GtkWidget*, GdkEventKey *event, gpointer) {
 	switch(event->keyval) {
