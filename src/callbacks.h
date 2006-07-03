@@ -38,10 +38,13 @@ enum {
 	QALCULATE_HISTORY_TRANSFORMATION,
 	QALCULATE_HISTORY_RESULT,
 	QALCULATE_HISTORY_RESULT_APPROXIMATE,
+	QALCULATE_HISTORY_PARSE_WITHEQUALS,
 	QALCULATE_HISTORY_PARSE,
+	QALCULATE_HISTORY_PARSE_APPROXIMATE,
 	QALCULATE_HISTORY_WARNING,
 	QALCULATE_HISTORY_ERROR,
-	QALCULATE_HISTORY_OLD
+	QALCULATE_HISTORY_OLD,
+	QALCULATE_HISTORY_REGISTER_MOVED
 };
 
 bool can_display_unicode_string_function(const char *str, void *w);
@@ -395,6 +398,11 @@ void on_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer user_data
 void on_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_display_prefixes_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_indicate_infinite_series_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_show_ending_zeroes_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_round_halfway_to_even_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_negative_exponents_activate(GtkMenuItem *w, gpointer user_data);
+void on_menu_item_sort_minus_last_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_fraction_decimal_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_fraction_decimal_exact_activate(GtkMenuItem *w, gpointer user_data);
 void on_menu_item_fraction_combined_activate(GtkMenuItem *w, gpointer user_data);

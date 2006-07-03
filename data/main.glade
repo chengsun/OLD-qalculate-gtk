@@ -812,6 +812,26 @@
 			      <signal name="activate" handler="on_menu_item_round_halfway_to_even_activate" last_modification_time="Sun, 07 Sep 2003 23:09:27 GMT"/>
 			    </widget>
 			  </child>
+
+			  <child>
+			    <widget class="GtkCheckMenuItem" id="menu_item_negative_exponents">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Negative Exponents</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <signal name="activate" handler="on_menu_item_negative_exponents_activate" last_modification_time="Mon, 03 Jul 2006 11:09:27 GMT"/>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkCheckMenuItem" id="menu_item_sort_minus_last">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Sort Minus Last</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <signal name="activate" handler="on_menu_item_sort_minus_last_activate" last_modification_time="Mon, 03 Jul 2006 11:09:27 GMT"/>
+			    </widget>
+			  </child>
 			</widget>
 		      </child>
 		    </widget>

@@ -3534,7 +3534,7 @@ GdkPixmap *draw_structure(MathStructure &m, PrintOptions po, InternalPrintStruct
 			
 			GdkPixmap *num_pixmap = NULL, *den_pixmap = NULL, *pixmap_one = NULL;
 			if(m.type() == STRUCT_DIVISION) {
-				ips_n.wrap = m[0].needsParenthesis(po, ips_n, m, 1, flat, ips.power_depth > 0);
+				ips_n.wrap = (!m[0].isDivision() || !flat || ips.division_depth > 0 || ips.power_depth > 0) && m[0].needsParenthesis(po, ips_n, m, 1, flat, ips.power_depth > 0);
 				num_pixmap = draw_structure(m[0], po, ips_n, &num_dh, scaledown);
 				gdk_drawable_get_size(GDK_DRAWABLE(num_pixmap), &num_w, &h);
 				num_uh = h - num_dh;
@@ -4686,14 +4686,16 @@ void setResult(Prefix *prefix, bool update_history, bool update_parse, bool forc
 		if(update_parse || register_moved) {
 			if(register_moved) {
 				result_text = _("RPN Register Moved");
+				inhistory_type.push_front(QALCULATE_HISTORY_REGISTER_MOVED);
+				inhistory.push_front("");
 			} else {
 				remove_blank_ends(result_text);
 				gsub("\n", " ", result_text);
+				inhistory_type.push_front(QALCULATE_HISTORY_EXPRESSION);
+				inhistory.push_front(result_text);
 			}
 			gtk_text_buffer_get_start_iter(tb, &iter);
 			gtk_text_buffer_insert(tb, &iter, result_text.c_str(), -1);
-			inhistory.push_front(result_text);
-			inhistory_type.push_front(QALCULATE_HISTORY_EXPRESSION);
 			inhistory_index++;
 			gtk_text_buffer_insert(tb, &iter, " ", -1);
 			gtk_text_buffer_insert_with_tags_by_name(tb, &iter, "\n", -1, "history_separator", NULL);
@@ -4887,18 +4889,19 @@ void setResult(Prefix *prefix, bool update_history, bool update_parse, bool forc
 			string str = "  ";
 			if(!parsed_approx) {
 				str += "=";
+				inhistory_type.insert(inhistory_type.begin() + inhistory_index, QALCULATE_HISTORY_PARSE);
 			} else {
 				if(printops.use_unicode_signs && can_display_unicode_string_function(SIGN_ALMOST_EQUAL, (void*) historyview)) {
 					str += SIGN_ALMOST_EQUAL;
 				} else {
 					str += _("approx.");
 				}
+				inhistory_type.insert(inhistory_type.begin() + inhistory_index, QALCULATE_HISTORY_PARSE_APPROXIMATE);
 			}
 			str += " ";
 			str += parsed_text;
 			gtk_text_buffer_insert_with_tags_by_name(tb, &iter, str.c_str(), -1, "history_parse", NULL);
-			inhistory.insert(inhistory.begin() + inhistory_index, str);
-			inhistory_type.insert(inhistory_type.begin() + inhistory_index, QALCULATE_HISTORY_PARSE);
+			inhistory.insert(inhistory.begin() + inhistory_index, parsed_text);
 			inhistory_index++;
 			gtk_text_buffer_insert(tb, &iter, "\n", -1);
 		}
@@ -4925,13 +4928,13 @@ void setResult(Prefix *prefix, bool update_history, bool update_parse, bool forc
 			gtk_text_buffer_insert_with_tags_by_name(tb, &iter, result_text.c_str(), -1, "history_result", NULL);
 			gtk_text_buffer_insert(tb, &iter, "\n", -1);
 			initial_result_pos = gtk_text_buffer_create_mark(tb, NULL, &iter, FALSE);
-			initial_result_index = inhistory_index + 1;
 		} else {
 			gtk_text_buffer_insert(tb, &iter, str.c_str(), -1);
 			gtk_text_buffer_insert_with_tags_by_name(tb, &iter, result_text.c_str(), -1, "history_result", NULL);
 			gtk_text_buffer_insert(tb, &iter, "\n", -1);
 		}
 		inhistory.insert(inhistory.begin() + inhistory_index, result_text);
+		initial_result_index = inhistory_index + 1;
 		if(b_approx) {
 			inhistory_type.insert(inhistory_type.begin() + inhistory_index, QALCULATE_HISTORY_RESULT_APPROXIMATE);
 		} else {
@@ -8567,6 +8570,8 @@ void on_combobox_base_changed(GtkComboBox *w, gpointer) {
 void on_combobox_numerical_display_changed(GtkComboBox *w, gpointer) {
 	switch(gtk_combo_box_get_active(w)) {
 		case 0: {
+			printops.negative_exponents = false;
+			printops.sort_options.minus_last = true;
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_normal")), TRUE);
 			break;
 		}
@@ -8575,18 +8580,30 @@ void on_combobox_numerical_display_changed(GtkComboBox *w, gpointer) {
 			break;
 		}
 		case 2: {
+			printops.negative_exponents = true;
+			printops.sort_options.minus_last = false;
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_scientific")), TRUE);
 			break;
 		}
 		case 3: {
+			printops.negative_exponents = true;
+			printops.sort_options.minus_last = false;
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_purely_scientific")), TRUE);
 			break;
 		}
 		case 4: {
+			printops.negative_exponents = false;
+			printops.sort_options.minus_last = true;
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_non_scientific")), TRUE);
 			break;
 		}
 	}
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_negative_exponents"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_negative_exponents_activate, NULL);
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_sort_minus_last"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_sort_minus_last_activate, NULL);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_negative_exponents")), printops.negative_exponents);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_sort_minus_last")), printops.sort_options.minus_last);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_negative_exponents"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_negative_exponents_activate, NULL);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_sort_minus_last"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_sort_minus_last_activate, NULL);
 }
 
 void show_tabs(bool do_show) {
@@ -8853,7 +8870,8 @@ void load_preferences() {
 		first_qalculate_run = false;
 		closedir(dir);
 	}
-	int version_numbers[] = {0, 9, 4};
+	int version_numbers[] = {0, 9, 5};
+	bool old_history_format = false;
 
 	FILE *file = NULL;
 	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate-gtk.cfg", NULL);
@@ -8877,6 +8895,7 @@ void load_preferences() {
 				v = s2i(svalue);
 				if(svar == "version") {
 					parse_qalculate_version(svalue, version_numbers);
+					old_history_format = (version_numbers[0] == 0 && (version_numbers[1] < 9 || (version_numbers[1] == 9 && version_numbers[2] <= 4)));
 				} else if(svar == "width") {
 					win_width = v;
 				} else if(svar == "height") {
@@ -9298,9 +9317,19 @@ void load_preferences() {
 				} else if(svar == "history_result_approximate") {
 					inhistory.push_back(svalue);
 					inhistory_type.push_back(QALCULATE_HISTORY_RESULT_APPROXIMATE);
-				} else if(svar == "history_parse") {
+				} else if(svar == "history_parse") {					
 					inhistory.push_back(svalue);
-					inhistory_type.push_back(QALCULATE_HISTORY_PARSE);
+					if(old_history_format) inhistory_type.push_back(QALCULATE_HISTORY_PARSE_WITHEQUALS);
+					else inhistory_type.push_back(QALCULATE_HISTORY_PARSE);
+				} else if(svar == "history_parse_withequals") {
+					inhistory.push_back(svalue);
+					inhistory_type.push_back(QALCULATE_HISTORY_PARSE_WITHEQUALS);
+				} else if(svar == "history_parse_approximate") {
+					inhistory.push_back(svalue);
+					inhistory_type.push_back(QALCULATE_HISTORY_PARSE_APPROXIMATE);
+				} else if(svar == "history_register_moved") {
+					inhistory.push_back(svalue);
+					inhistory_type.push_back(QALCULATE_HISTORY_REGISTER_MOVED);
 				} else if(svar == "history_warning") {
 					inhistory.push_back(svalue);
 					inhistory_type.push_back(QALCULATE_HISTORY_WARNING);
@@ -9360,7 +9389,7 @@ void save_preferences(bool mode) {
 	}
 	g_free(gstr2);
 	fprintf(file, "\n[General]\n");
-	fprintf(file, "version=%s\n", VERSION);	
+	fprintf(file, "version=%s\n", VERSION);
 	gint w, h;
 	gtk_window_get_size(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), &w, &h);
 	fprintf(file, "width=%i\n", w);
@@ -9401,7 +9430,7 @@ void save_preferences(bool mode) {
 	for(size_t i = 0; i < inhistory.size() && !doend; i++) {
 		switch(inhistory_type[i]) {
 			case QALCULATE_HISTORY_EXPRESSION: {
-				fprintf(file, "history_expression=");				
+				fprintf(file, "history_expression=");
 				break;
 			}
 			case QALCULATE_HISTORY_TRANSFORMATION: {
@@ -9424,6 +9453,22 @@ void save_preferences(bool mode) {
 				fprintf(file, "history_parse=");
 				lines--;
 				if(lines < 0) end_after_result = true;
+				break;
+			}
+			case QALCULATE_HISTORY_PARSE_WITHEQUALS: {
+				fprintf(file, "history_parse_withequals=");
+				lines--;
+				if(lines < 0) end_after_result = true;
+				break;
+			}
+			case QALCULATE_HISTORY_PARSE_APPROXIMATE: {
+				fprintf(file, "history_parse_approximate=");
+				lines--;
+				if(lines < 0) end_after_result = true;
+				break;
+			}
+			case QALCULATE_HISTORY_REGISTER_MOVED: {
+				fprintf(file, "history_register_moved=");
 				break;
 			}
 			case QALCULATE_HISTORY_WARNING: {
@@ -11496,7 +11541,16 @@ void on_plot_dialog_hide(GtkWidget*, gpointer) {
 }
 void on_popup_menu_item_display_normal_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
+	printops.negative_exponents = false;
+	printops.sort_options.minus_last = true;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_normal")), TRUE);
+
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_negative_exponents"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_negative_exponents_activate, NULL);
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_sort_minus_last"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_sort_minus_last_activate, NULL);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_negative_exponents")), printops.negative_exponents);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_sort_minus_last")), printops.sort_options.minus_last);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_negative_exponents"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_negative_exponents_activate, NULL);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_sort_minus_last"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_sort_minus_last_activate, NULL);
 }
 void on_popup_menu_item_assume_nonzero_denominators_activate(GtkMenuItem *w, gpointer) {
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_assume_nonzero_denominators")), gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
@@ -11507,15 +11561,42 @@ void on_popup_menu_item_display_engineering_activate(GtkMenuItem *w, gpointer) {
 }
 void on_popup_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
+	printops.negative_exponents = true;
+	printops.sort_options.minus_last = false;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_scientific")), TRUE);
+
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_negative_exponents"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_negative_exponents_activate, NULL);
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_sort_minus_last"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_sort_minus_last_activate, NULL);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_negative_exponents")), printops.negative_exponents);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_sort_minus_last")), printops.sort_options.minus_last);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_negative_exponents"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_negative_exponents_activate, NULL);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_sort_minus_last"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_sort_minus_last_activate, NULL);
 }
 void on_popup_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
+	printops.negative_exponents = true;
+	printops.sort_options.minus_last = false;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_purely_scientific")), TRUE);
+
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_negative_exponents"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_negative_exponents_activate, NULL);
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_sort_minus_last"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_sort_minus_last_activate, NULL);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_negative_exponents")), printops.negative_exponents);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_sort_minus_last")), printops.sort_options.minus_last);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_negative_exponents"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_negative_exponents_activate, NULL);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_sort_minus_last"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_sort_minus_last_activate, NULL);
 }
 void on_popup_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) return;
+	printops.negative_exponents = false;
+	printops.sort_options.minus_last = true;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_non_scientific")), TRUE);
+
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_negative_exponents"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_negative_exponents_activate, NULL);
+	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_sort_minus_last"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_sort_minus_last_activate, NULL);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_negative_exponents")), printops.negative_exponents);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_sort_minus_last")), printops.sort_options.minus_last);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_negative_exponents"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_negative_exponents_activate, NULL);
+	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "menu_item_sort_minus_last"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_menu_item_sort_minus_last_activate, NULL);
 }
 void on_popup_menu_item_display_prefixes_activate(GtkMenuItem *w, gpointer) {
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_display_prefixes")), gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
@@ -11588,8 +11669,6 @@ void on_menu_item_display_normal_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.min_exp = EXP_PRECISION;
-	printops.negative_exponents = false;
-	printops.sort_options.minus_last = true;
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 0);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
@@ -11599,8 +11678,6 @@ void on_menu_item_display_engineering_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.min_exp = EXP_BASE_3;
-	printops.negative_exponents = true;
-	printops.sort_options.minus_last = false;
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 1);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
@@ -11610,8 +11687,6 @@ void on_menu_item_display_scientific_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.min_exp = EXP_SCIENTIFIC;
-	printops.negative_exponents = true;
-	printops.sort_options.minus_last = false;
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 2);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
@@ -11621,8 +11696,6 @@ void on_menu_item_display_purely_scientific_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.min_exp = EXP_PURE;
-	printops.negative_exponents = true;
-	printops.sort_options.minus_last = false;
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 3);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
@@ -11632,8 +11705,6 @@ void on_menu_item_display_non_scientific_activate(GtkMenuItem *w, gpointer) {
 	if(!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
 		return;
 	printops.min_exp = EXP_NONE;
-	printops.negative_exponents = false;
-	printops.sort_options.minus_last = true;
 	g_signal_handlers_block_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 4);
 	g_signal_handlers_unblock_matched((gpointer) glade_xml_get_widget(main_glade, "combobox_numerical_display"), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (gpointer) on_combobox_numerical_display_changed, NULL);
@@ -11653,6 +11724,14 @@ void on_menu_item_show_ending_zeroes_activate(GtkMenuItem *w, gpointer) {
 }
 void on_menu_item_round_halfway_to_even_activate(GtkMenuItem *w, gpointer) {
 	printops.round_halfway_to_even = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
+	result_format_updated();
+}
+void on_menu_item_negative_exponents_activate(GtkMenuItem *w, gpointer) {
+	printops.negative_exponents = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
+	result_format_updated();
+}
+void on_menu_item_sort_minus_last_activate(GtkMenuItem *w, gpointer) {
+	printops.sort_options.minus_last = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 	result_format_updated();
 }
 void on_menu_item_always_exact_activate(GtkMenuItem *w, gpointer) {

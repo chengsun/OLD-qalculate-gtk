@@ -292,7 +292,7 @@ void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, Assumpt
 			break;
 		}
 		case EXP_NONE: {
-			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 3);
+			if(initial_update) gtk_combo_box_set_active(GTK_COMBO_BOX(glade_xml_get_widget (main_glade, "combobox_numerical_display")), 4);
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_non_scientific")), TRUE);
 			break;
 		}
@@ -301,6 +301,8 @@ void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, Assumpt
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_indicate_infinite_series")), po.indicate_infinite_series);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_show_ending_zeroes")), po.show_ending_zeroes);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_round_halfway_to_even")), po.round_halfway_to_even);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_negative_exponents")), po.negative_exponents);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget(main_glade, "menu_item_sort_minus_last")), po.sort_options.minus_last);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_display_prefixes")), po.use_unit_prefixes);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_all_prefixes")), po.use_all_prefixes);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(glade_xml_get_widget (main_glade, "menu_item_denominator_prefixes")), po.use_denominator_prefix);
@@ -503,6 +505,15 @@ void create_main_window (void) {
 				prev_parse = false;
 				break;
 			}
+			case QALCULATE_HISTORY_REGISTER_MOVED: {
+				if(i != 0) {
+					gtk_text_buffer_insert_with_tags_by_name(tb, &iter, "\n", -1, "history_separator", NULL);
+				}
+				gtk_text_buffer_insert(tb, &iter, _("RPN Register Moved"), -1);
+				gtk_text_buffer_insert(tb, &iter, " ", -1);
+				prev_parse = false;
+				break;
+			}
 			case QALCULATE_HISTORY_TRANSFORMATION: {
 				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_transformation", NULL);
 				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, ":  ", -1, "history_transformation", NULL);
@@ -516,11 +527,11 @@ void create_main_window (void) {
 				break;
 			}
 			case QALCULATE_HISTORY_RESULT_APPROXIMATE: {
-				string str;
+				string str = "  ";
 				if(printops.use_unicode_signs && can_display_unicode_string_function(SIGN_ALMOST_EQUAL, (void*) historyview)) {
-					str = SIGN_ALMOST_EQUAL " ";
+					str += SIGN_ALMOST_EQUAL " ";
 				} else {
-					str = "= ";
+					str += "= ";
 					str += _("approx.");
 					str += " ";
 				}
@@ -530,8 +541,30 @@ void create_main_window (void) {
 				prev_parse = false;
 				break;
 			}
-			case QALCULATE_HISTORY_PARSE: {
+			case QALCULATE_HISTORY_PARSE_WITHEQUALS: {
 				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, " ", -1, "history_parse", NULL);
+				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_parse", NULL);
+				gtk_text_buffer_insert(tb, &iter, "\n", -1);
+				prev_parse = true;
+				break;
+			}
+			case QALCULATE_HISTORY_PARSE: {
+				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, "  = ", -1, "history_parse", NULL);
+				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_parse", NULL);
+				gtk_text_buffer_insert(tb, &iter, "\n", -1);
+				prev_parse = true;
+				break;
+			}
+			case QALCULATE_HISTORY_PARSE_APPROXIMATE: {
+				string str;
+				if(printops.use_unicode_signs && can_display_unicode_string_function(SIGN_ALMOST_EQUAL, (void*) historyview)) {
+					str = SIGN_ALMOST_EQUAL " ";
+				} else {
+					str = "= ";
+					str += _("approx.");
+					str += " ";
+				}
+				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, str.c_str(), -1, "history_parse", NULL);
 				gtk_text_buffer_insert_with_tags_by_name(tb, &iter, inhistory[i].c_str(), -1, "history_parse", NULL);
 				gtk_text_buffer_insert(tb, &iter, "\n", -1);
 				prev_parse = true;
@@ -555,8 +588,7 @@ void create_main_window (void) {
 				prev_parse = false;
 				break;
 			}
-		}
-		
+		}		
 	}
 
 	stackstore = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);

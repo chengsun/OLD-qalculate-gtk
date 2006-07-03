@@ -1,7 +1,15 @@
+2006-07-03 Niklas Knutsson  <nq@altern.org>
+
+	* Make separate options for "Sort Minus Last" and "Negative Exponents" in numerical display menu
+	* Do not save equal signs for parse history and do not save "RPN Register Moved" as text
+	* Do not put numerator in parenthesis in (1/2)/m, with "Place Units Separately" activated
+	* Increment version number
+
 2006-06-19 Niklas Knutsson  <nq@altern.org>
 
 	* Use localized comma for insert matrix/vector
 	* Display parentheses correctly with flat division when "Place units separately" is activated
+	* Fix insert matrix/vector dialog
 
 2006-06-10 Niklas Knutsson  <nq@altern.org>
 
