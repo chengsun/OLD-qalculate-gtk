@@ -1500,9 +1500,9 @@ void on_tFunctions_selection_changed(GtkTreeSelection *treeselection, gpointer) 
 				gtk_widget_set_sensitive(glade_xml_get_widget (functions_glade, "functions_button_edit"), TRUE);
 				gtk_widget_set_sensitive(glade_xml_get_widget (functions_glade, "functions_button_deactivate"), TRUE);
 				if(CALCULATOR->functions[i]->isActive()) {
-					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (functions_glade, "functions_buttonlabel_deactivate")), _("Deactivate"));
+					gtk_label_set_text_with_mnemonic(GTK_LABEL(glade_xml_get_widget (functions_glade, "functions_buttonlabel_deactivate")), _("Deacti_vate"));
 				} else {
-					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (functions_glade, "functions_buttonlabel_deactivate")), _("Activate"));
+					gtk_label_set_text_with_mnemonic(GTK_LABEL(glade_xml_get_widget (functions_glade, "functions_buttonlabel_deactivate")), _("Acti_vate"));
 				}
 				gtk_widget_set_sensitive(glade_xml_get_widget (functions_glade, "functions_button_insert"), CALCULATOR->functions[i]->isActive());
 				gtk_widget_set_sensitive(glade_xml_get_widget (functions_glade, "functions_button_apply"), CALCULATOR->functions[i]->isActive() && CALCULATOR->functions[i]->minargs() <= 1);
@@ -1734,9 +1734,9 @@ void on_tVariables_selection_changed(GtkTreeSelection *treeselection, gpointer) 
 				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_deactivate"), !is_answer_variable(CALCULATOR->variables[i]));
 				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_export"), CALCULATOR->variables[i]->isKnown());
 				if(CALCULATOR->variables[i]->isActive()) {
-					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (variables_glade, "variables_buttonlabel_deactivate")), _("Deactivate"));
+					gtk_label_set_text_with_mnemonic(GTK_LABEL(glade_xml_get_widget (variables_glade, "variables_buttonlabel_deactivate")), _("Deacti_vate"));
 				} else {
-					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (variables_glade, "variables_buttonlabel_deactivate")), _("Activate"));
+					gtk_label_set_text_with_mnemonic(GTK_LABEL(glade_xml_get_widget (variables_glade, "variables_buttonlabel_deactivate")), _("Acti_vate"));
 				}
 				//user cannot delete global definitions
 				gtk_widget_set_sensitive(glade_xml_get_widget (variables_glade, "variables_button_delete"), CALCULATOR->variables[i]->isLocal() && !is_answer_variable(CALCULATOR->variables[i]) && CALCULATOR->variables[i] != CALCULATOR->v_x && CALCULATOR->variables[i] != CALCULATOR->v_y && CALCULATOR->variables[i] != CALCULATOR->v_z);
@@ -1992,9 +1992,9 @@ void on_tUnits_selection_changed(GtkTreeSelection *treeselection, gpointer) {
 				gtk_widget_set_sensitive(glade_xml_get_widget (units_glade, "units_button_edit"), TRUE);
 				gtk_widget_set_sensitive(glade_xml_get_widget (units_glade, "units_button_deactivate"), TRUE);
 				if(CALCULATOR->units[i]->isActive()) {
-					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (units_glade, "units_buttonlabel_deactivate")), _("Deactivate"));
+					gtk_label_set_text_with_mnemonic(GTK_LABEL(glade_xml_get_widget (units_glade, "units_buttonlabel_deactivate")), _("Deacti_vate"));
 				} else {
-					gtk_label_set_text(GTK_LABEL(glade_xml_get_widget (units_glade, "units_buttonlabel_deactivate")), _("Activate"));
+					gtk_label_set_text_with_mnemonic(GTK_LABEL(glade_xml_get_widget (units_glade, "units_buttonlabel_deactivate")), _("Acti_vate"));
 				}
 			}
 		}
@@ -5662,7 +5662,7 @@ void insert_function(MathFunction *f, GtkWidget *parent = NULL) {
 	GtkWidget *b_exec = gtk_button_new();
 	GtkWidget *b_hbox = gtk_hbox_new(FALSE, 2);
 	gtk_box_pack_start(GTK_BOX(b_hbox), gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(b_hbox), gtk_label_new(_("Execute")), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(b_hbox), gtk_label_new_with_mnemonic(_("_Execute")), FALSE, FALSE, 0);
 	GtkWidget *b_align = gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
 	gtk_container_add(GTK_CONTAINER(b_align), b_hbox);
 	gtk_container_add(GTK_CONTAINER(b_exec), b_align);
@@ -14081,7 +14081,7 @@ void on_dataproperty_edit_button_names_clicked(GtkButton*, gpointer) {
 }
 
 void on_menu_item_set_unknowns_activate(GtkMenuItem*, gpointer) {
-	if(expression_has_changed) execute_expression(true);
+	if(expression_has_changed && !rpn_mode) execute_expression(true);
 	MathStructure unknowns;
 	mstruct->findAllUnknowns(unknowns);
 	if(unknowns.size() == 0) {

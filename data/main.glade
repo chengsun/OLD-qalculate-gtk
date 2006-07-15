@@ -1995,8 +1995,8 @@
 			  <child>
 			    <widget class="GtkLabel" id="label3">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Keypad</property>
-			      <property name="use_underline">False</property>
+			      <property name="label" translatable="yes">_Keypad</property>
+			      <property name="use_underline">True</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>
 			      <property name="wrap">False</property>
@@ -2034,8 +2034,8 @@
 			  <child>
 			    <widget class="GtkLabel" id="label4">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">History</property>
-			      <property name="use_underline">False</property>
+			      <property name="label" translatable="yes">H_istory</property>
+			      <property name="use_underline">True</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>
 			      <property name="wrap">False</property>
@@ -2064,7 +2064,6 @@
 			  <property name="expanded">False</property>
 			  <property name="spacing">0</property>
 			  <signal name="notify::expanded" handler="on_expander_stack_expanded" last_modification_time="Fri, 07 Apr 2006 09:04:44 GMT"/>
-			  <accelerator key="H" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 			  <child>
 			    <placeholder/>
@@ -2073,8 +2072,8 @@
 			  <child>
 			    <widget class="GtkLabel" id="label5">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">RPN Stack</property>
-			      <property name="use_underline">False</property>
+			      <property name="label" translatable="yes">_RPN Stack</property>
+			      <property name="use_underline">True</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>
 			      <property name="wrap">False</property>

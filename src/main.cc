@@ -86,7 +86,9 @@ int main (int argc, char **argv) {
 	textdomain (GETTEXT_PACKAGE);
 #endif
 
-#ifdef HAVE_LIBGNOMEUI
+#ifdef HAVE_LIBGNOME
+#  ifdef HAVE_LIBGNOMEUI
+
 	GnomeProgram *program = gnome_program_init("qalculate-gtk", VERSION, LIBGNOMEUI_MODULE, argc, argv, GNOME_PARAM_POPT_TABLE, options, GNOME_PARAM_APP_DATADIR, PACKAGE_DATA_DIR, NULL);
 
 	char *icon = gnome_program_locate_file(program, GNOME_FILE_DOMAIN_APP_PIXMAP, "qalculate.png", TRUE, NULL);
@@ -96,13 +98,17 @@ int main (int argc, char **argv) {
 
 	g_object_get(G_OBJECT(program), GNOME_PARAM_POPT_CONTEXT, &pctx, NULL);
 
-#else
-#ifdef HAVE_LIBGNOME
-	gnome_program_init("qalculate-gtk", VERSION, LIBGNOME_MODULE, argc, argv, GNOME_PARAM_POPT_TABLE, options, GNOME_PARAM_APP_DATADIR, PACKAGE_DATA_DIR, NULL);
+#  else
+
+	GnomeProgram *program = gnome_program_init("qalculate-gtk", VERSION, LIBGNOME_MODULE, argc, argv, GNOME_PARAM_POPT_TABLE, options, GNOME_PARAM_APP_DATADIR, PACKAGE_DATA_DIR, NULL);
 	g_object_get(G_OBJECT(program), GNOME_PARAM_POPT_CONTEXT, &pctx, NULL);
-#else
 	gtk_init(&argc, &argv);
-#endif
+
+#  endif
+#else
+
+	gtk_init(&argc, &argv);
+
 #endif
 
 	glade_init();

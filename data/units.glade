@@ -108,8 +108,8 @@
 		      <child>
 			<widget class="GtkLabel" id="label82">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Category</property>
-			  <property name="use_underline">False</property>
+			  <property name="label" translatable="yes">Categor_y</property>
+			  <property name="use_underline">True</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
 			  <property name="wrap">False</property>
@@ -118,6 +118,7 @@
 			  <property name="yalign">0.5</property>
 			  <property name="xpad">0</property>
 			  <property name="ypad">0</property>
+			  <property name="mnemonic_widget">units_treeview_category</property>
 			</widget>
 			<packing>
 			  <property name="type">label_item</property>
@@ -163,8 +164,8 @@
 		      <child>
 			<widget class="GtkLabel" id="label81">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Unit</property>
-			  <property name="use_underline">False</property>
+			  <property name="label" translatable="yes">_Unit</property>
+			  <property name="use_underline">True</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
 			  <property name="wrap">False</property>
@@ -173,6 +174,7 @@
 			  <property name="yalign">0.5</property>
 			  <property name="xpad">0</property>
 			  <property name="ypad">0</property>
+			  <property name="mnemonic_widget">units_treeview_unit</property>
 			</widget>
 			<packing>
 			  <property name="type">label_item</property>
@@ -380,8 +382,8 @@
 		  <child>
 		    <widget class="GtkLabel" id="label62">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Conversion</property>
-		      <property name="use_underline">False</property>
+		      <property name="label" translatable="yes">Conver_sion</property>
+		      <property name="use_underline">True</property>
 		      <property name="use_markup">False</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>
 		      <property name="wrap">False</property>
@@ -390,6 +392,7 @@
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
 		      <property name="ypad">0</property>
+		      <property name="mnemonic_widget">units_entry_from_val</property>
 		    </widget>
 		    <packing>
 		      <property name="type">label_item</property>
@@ -630,7 +633,7 @@
 			      <child>
 				<widget class="GtkLabel" id="label9">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">_Convert Result</property>
+				  <property name="label" translatable="yes">C_onvert Result</property>
 				  <property name="use_underline">True</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -716,7 +719,7 @@
 			      <child>
 				<widget class="GtkLabel" id="units_buttonlabel_deactivate">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Deactivate</property>
+				  <property name="label" translatable="yes">Deacti_vate</property>
 				  <property name="use_underline">True</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>

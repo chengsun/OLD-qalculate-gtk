@@ -527,11 +527,11 @@ void create_main_window (void) {
 				break;
 			}
 			case QALCULATE_HISTORY_RESULT_APPROXIMATE: {
-				string str = "  ";
+				string str;
 				if(printops.use_unicode_signs && can_display_unicode_string_function(SIGN_ALMOST_EQUAL, (void*) historyview)) {
-					str += SIGN_ALMOST_EQUAL " ";
+					str = SIGN_ALMOST_EQUAL " ";
 				} else {
-					str += "= ";
+					str = "= ";
 					str += _("approx.");
 					str += " ";
 				}
@@ -556,11 +556,11 @@ void create_main_window (void) {
 				break;
 			}
 			case QALCULATE_HISTORY_PARSE_APPROXIMATE: {
-				string str;
+				string str = "  ";
 				if(printops.use_unicode_signs && can_display_unicode_string_function(SIGN_ALMOST_EQUAL, (void*) historyview)) {
-					str = SIGN_ALMOST_EQUAL " ";
+					str += SIGN_ALMOST_EQUAL " ";
 				} else {
-					str = "= ";
+					str += "= ";
 					str += _("approx.");
 					str += " ";
 				}
