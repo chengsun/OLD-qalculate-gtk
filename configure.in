@@ -125,37 +125,6 @@ if test "$USE_LIBGNOME" = auto ; then
 	], AC_MSG_WARN([libgnome-2.0 was not found. The manual will not be accessible from within Qalculate!]))
 fi
 
-if test "$USE_LIBGNOME" != no ; then
-
-USE_LIBGNOMEUI="auto"
-
-AC_MSG_CHECKING([whether to use libgnomeui])
-AC_ARG_WITH(libgnomeui,
-[  --with-libgnomeui         use libgnomeui [default=auto]],
-[case "${withval}" in
-	yes) USE_LIBGNOMEUI="yes" ; AC_MSG_RESULT([yes]) ;;
-	no) USE_LIBGNOMEUI="no" ; AC_MSG_RESULT([no]) ;;
-	auto) USE_LIBGNOMEUI="auto" ; AC_MSG_RESULT([auto]) ;;
-	*) USE_LIBGNOMEUI="yes" ; AC_MSG_RESULT([yes]) ;;
-esac],[AC_MSG_RESULT([${USE_LIBGNOMEUI}])])
-
-if test "$USE_LIBGNOMEUI" = yes ; then
-	PKG_CHECK_MODULES(LIBGNOMEUI, libgnomeui-2.0 >= $LIBGNOMEUI_REQUIRED, [
-		AC_SUBST(LIBGNOMEUI_CFLAGS)
-		AC_SUBST(LIBGNOMEUI_LIBS)
-		AC_DEFINE(HAVE_LIBGNOMEUI,1,[If libgnomeui is available])
-	], AC_MSG_ERROR([libgnomeui-2.0 was not found.]))
-fi
-if test "$USE_LIBGNOMEUI" = auto ; then
-	PKG_CHECK_MODULES(LIBGNOMEUI, libgnomeui-2.0 >= $LIBGNOMEUI_REQUIRED, [
-		AC_SUBST(LIBGNOMEUI_CFLAGS)
-		AC_SUBST(LIBGNOMEUI_LIBS)
-		AC_DEFINE(HAVE_LIBGNOMEUI,1,[If libgnomeui is available])
-	], AC_MSG_WARN([libgnomeui-2.0 was not found.]))
-fi
-
-fi
-
 dnl ********************
 dnl scrollkeeper checks
 dnl ********************

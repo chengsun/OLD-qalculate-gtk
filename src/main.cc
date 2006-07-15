@@ -20,16 +20,12 @@
 #ifdef HAVE_LIBGNOME
 #include <libgnome/libgnome.h>
 #endif
-#ifdef HAVE_LIBGNOMEUI
-#include <libgnomeui/libgnomeui.h>
-#endif
 #include <unistd.h>
 
 #include "support.h"
 #include "interface.h"
 #include "callbacks.h"
 #include "main.h"
-#include "data/icon.xpm"
 
 MathStructure *mstruct, *matrix_mstruct, *parsed_mstruct, *parsed_tostruct;
 bool prev_result_approx;
@@ -55,7 +51,6 @@ extern vector<string> recent_functions_pre;
 extern vector<string> recent_variables_pre;
 extern vector<string> recent_units_pre;
 extern GtkWidget *expression;
-GdkPixbuf *icon_pixbuf;
 extern PrintOptions printops;
 
 GladeXML *main_glade, *about_glade, *argumentrules_glade, *csvimport_glade, *csvexport_glade, *setbase_glade, *datasetedit_glade, *datasets_glade, *decimals_glade;
@@ -87,25 +82,21 @@ int main (int argc, char **argv) {
 #endif
 
 #ifdef HAVE_LIBGNOME
-#  ifdef HAVE_LIBGNOMEUI
 
-	GnomeProgram *program = gnome_program_init("qalculate-gtk", VERSION, LIBGNOMEUI_MODULE, argc, argv, GNOME_PARAM_POPT_TABLE, options, GNOME_PARAM_APP_DATADIR, PACKAGE_DATA_DIR, NULL);
+	GnomeProgram *program = gnome_program_init("qalculate-gtk", VERSION, LIBGNOME_MODULE, argc, argv, GNOME_PARAM_POPT_TABLE, options, GNOME_PARAM_APP_DATADIR, PACKAGE_DATA_DIR, NULL);
 
 	char *icon = gnome_program_locate_file(program, GNOME_FILE_DOMAIN_APP_PIXMAP, "qalculate.png", TRUE, NULL);
 
-	if(icon) gnome_window_icon_set_default_from_file (icon);
-	g_free (icon);
-
+	if(icon) gtk_window_set_default_icon_from_file(icon, NULL);
+	g_free(icon);
+	
 	g_object_get(G_OBJECT(program), GNOME_PARAM_POPT_CONTEXT, &pctx, NULL);
 
-#  else
-
-	GnomeProgram *program = gnome_program_init("qalculate-gtk", VERSION, LIBGNOME_MODULE, argc, argv, GNOME_PARAM_POPT_TABLE, options, GNOME_PARAM_APP_DATADIR, PACKAGE_DATA_DIR, NULL);
-	g_object_get(G_OBJECT(program), GNOME_PARAM_POPT_CONTEXT, &pctx, NULL);
 	gtk_init(&argc, &argv);
 
-#  endif
 #else
+
+	gtk_window_set_default_icon_from_file(PACKAGE_DATA_DIR "/pixmaps/qalculate.png", NULL);
 
 	gtk_init(&argc, &argv);
 
@@ -167,8 +158,6 @@ int main (int argc, char **argv) {
 	bool canplot = CALCULATOR->canPlot();
 	bool canfetch = CALCULATOR->canFetch();
 	
-	icon_pixbuf = gdk_pixbuf_new_from_xpm_data((const char**) icon_xpm);
-
 	//create main window
 	create_main_window();
 

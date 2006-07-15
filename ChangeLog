@@ -1,3 +1,7 @@
+2006-07-16 Niklas Knutsson  <nq@altern.org>
+
+	* Remove use of libgnomeui completely as gtk_window_set_default_icon_from_file() can be used instead
+
 2006-07-15 Niklas Knutsson  <nq@altern.org>
 
 	* Add --with-libgnome and --with-libgnomeui configure options
