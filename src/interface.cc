@@ -410,6 +410,9 @@ void create_main_window (void) {
 	expression = glade_xml_get_widget (main_glade, "expression");
 	resultview = glade_xml_get_widget (main_glade, "resultview");
 	historyview = glade_xml_get_widget (main_glade, "history");
+
+	//gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(historyview), TRUE);
+	
 	stackview = glade_xml_get_widget (main_glade, "stackview");
 	statuslabel_l = glade_xml_get_widget (main_glade, "label_status_left");
 	statuslabel_r = glade_xml_get_widget (main_glade, "label_status_right");

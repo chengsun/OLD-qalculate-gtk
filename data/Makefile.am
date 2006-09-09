@@ -21,6 +21,5 @@ pixmaps_DATA = qalculate.png
 EXTRA_DIST = \
 	$(desktop_IN_FILES)	\
 	$(glade_DATA)	\
-	$(pixmaps_DATA)	\
-	icon.xpm
+	$(pixmaps_DATA)
 

@@ -4981,7 +4981,9 @@ void *command_proc(void *pipe) {
 		fread(&x, sizeof(void*), 1, command_pipe);
 		switch(command_type) {
 			case COMMAND_FACTORIZE: {
-				((MathStructure*) x)->factorize(evalops);
+				if(!((MathStructure*) x)->integerFactorize()) {
+					((MathStructure*) x)->factorize(evalops);
+				}
 				break;
 			}
 			case COMMAND_SIMPLIFY: {
@@ -4997,7 +4999,7 @@ void *command_proc(void *pipe) {
 
 void executeCommand(int command_type) {
 
-	if(expression_has_changed) {
+	if(expression_has_changed && !rpn_mode) {
 		execute_expression();
 	}
 
@@ -10152,7 +10154,12 @@ void update_resultview_popup() {
 		}
 		gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_factorize"));
 	} else {
-		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_factorize"));
+		if(mstruct && mstruct->isNumber() && mstruct->number().isInteger() && !mstruct->number().isZero()) {
+			gtk_widget_show(glade_xml_get_widget(main_glade, "popup_menu_item_factorize"));
+			gtk_widget_show(glade_xml_get_widget(main_glade, "separator_popup_factorize"));
+		} else {
+			gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_factorize"));
+		}
 		gtk_widget_hide(glade_xml_get_widget(main_glade, "popup_menu_item_simplify"));
 	}
 	if(mstruct && mstruct->containsDivision()) {
