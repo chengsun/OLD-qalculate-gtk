@@ -2817,7 +2817,7 @@ Other...</property>
 			      <child>
 				<widget class="GtkButton" id="button_exp">
 				  <property name="visible">True</property>
-				  <property name="tooltip" translatable="yes">10^x</property>
+				  <property name="tooltip" translatable="yes">10^x (Ctrl+Shift+E)</property>
 				  <property name="can_focus">True</property>
 				  <property name="label" translatable="yes">EXP</property>
 				  <property name="use_underline">True</property>

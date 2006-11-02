@@ -3049,8 +3049,54 @@ void update_completion() {
 					str += "</i>";
 				}
 			}
-			if(b) gtk_list_store_set(completion_store, &iter, 0, str.c_str(), 1, CALCULATOR->variables[i]->title().c_str(), 2, CALCULATOR->variables[i], -1);
-			else gtk_list_store_set(completion_store, &iter, 0, ename_r->name.c_str(), 1, CALCULATOR->variables[i]->title().c_str(), 2, CALCULATOR->variables[i], -1);
+			if(!CALCULATOR->variables[i]->title(false).empty()) {
+				if(b) gtk_list_store_set(completion_store, &iter, 0, str.c_str(), 1, CALCULATOR->variables[i]->title().c_str(), 2, CALCULATOR->variables[i], -1);
+				else gtk_list_store_set(completion_store, &iter, 0, ename_r->name.c_str(), 1, CALCULATOR->variables[i]->title().c_str(), 2, CALCULATOR->variables[i], -1);
+			} else {
+				Variable *v = CALCULATOR->variables[i];
+				string title;
+				if(is_answer_variable(v)) {
+					title = _("a previous result");
+				} else if(v->isKnown()) {
+					if(((KnownVariable*) v)->isExpression()) {
+						title = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression());
+					} else {
+						if(((KnownVariable*) v)->get().isMatrix()) {
+							title = _("matrix");
+						} else if(((KnownVariable*) v)->get().isVector()) {
+							title = _("vector");
+						} else {
+							title = CALCULATOR->printMathStructureTimeOut(((KnownVariable*) v)->get(), 30);
+						}
+					}
+				} else {
+					if(((UnknownVariable*) v)->assumptions()) {
+						switch(((UnknownVariable*) v)->assumptions()->sign()) {
+							case ASSUMPTION_SIGN_POSITIVE: {title = _("positive"); break;}
+							case ASSUMPTION_SIGN_NONPOSITIVE: {title = _("non-positive"); break;}
+							case ASSUMPTION_SIGN_NEGATIVE: {title = _("negative"); break;}
+							case ASSUMPTION_SIGN_NONNEGATIVE: {title = _("non-negative"); break;}
+							case ASSUMPTION_SIGN_NONZERO: {title = _("non-zero"); break;}
+							default: {}
+						}
+						if(!title.empty() && !((UnknownVariable*) v)->assumptions()->type() == ASSUMPTION_TYPE_NONE) title += " ";
+						switch(((UnknownVariable*) v)->assumptions()->type()) {
+							case ASSUMPTION_TYPE_INTEGER: {title += _("integer"); break;}
+							case ASSUMPTION_TYPE_RATIONAL: {title += _("rational"); break;}
+							case ASSUMPTION_TYPE_REAL: {title += _("real"); break;}
+							case ASSUMPTION_TYPE_COMPLEX: {title += _("complex"); break;}
+							case ASSUMPTION_TYPE_NUMBER: {title += _("number"); break;}
+							case ASSUMPTION_TYPE_NONMATRIX: {title += _("(not matrix)"); break;}
+							default: {}
+						}
+						if(title.empty()) title = _("unknown");
+					} else {
+						title = _("default assumptions");
+					}		
+				}
+				if(b) gtk_list_store_set(completion_store, &iter, 0, str.c_str(), 1, title.c_str(), 2, CALCULATOR->variables[i], -1);
+				else gtk_list_store_set(completion_store, &iter, 0, ename_r->name.c_str(), 1, title.c_str(), 2, CALCULATOR->variables[i], -1);
+			}
 		}
 	}
 	for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
@@ -10680,6 +10726,10 @@ void on_button_ans_clicked(GtkButton*, gpointer) {
 	insert_text(vans[0]->preferredInputName(printops.abbreviate_names, printops.use_unicode_signs, false, false, &can_display_unicode_string_function, (void*) expression).name.c_str());
 }
 void on_button_exp_clicked(GtkButton*, gpointer) {
+	if(rpn_mode) {
+		calculateRPN(OPERATION_EXP10);
+		return;
+	}
 	if(printops.lower_case_e) insert_text("e");
 	else insert_text("E");	
 }
@@ -12960,6 +13010,24 @@ gboolean on_expression_key_press_event(GtkWidget*, GdkEventKey *event, gpointer)
 			}
 			if(!evalops.parse_options.rpn) {
 				wrap_expression_selection();
+			}
+			break;
+		}
+		case GDK_E: {
+			if(event->state & GDK_CONTROL_MASK) {
+				if(rpn_mode) {
+					calculateRPN(OPERATION_EXP10);
+					return TRUE;
+				}
+				gint end = 0;
+				if(!evalops.parse_options.rpn) {
+					wrap_expression_selection();
+				}
+				end = gtk_editable_get_position(GTK_EDITABLE(expression));
+				if(printops.lower_case_e) gtk_editable_insert_text(GTK_EDITABLE(expression), "e", -1, &end);
+				else gtk_editable_insert_text(GTK_EDITABLE(expression), "E", -1, &end);
+				gtk_editable_set_position(GTK_EDITABLE(expression), end);
+				return TRUE;
 			}
 			break;
 		}
