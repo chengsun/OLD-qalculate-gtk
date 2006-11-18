@@ -279,7 +279,7 @@ int main (int argc, char **argv) {
 	
 	if(!calc_arg.empty()) {
 		execute_expression();
-	} else {
+	} else if(!first_time) {
 		int base = printops.base;
 		printops.base = 10;
 		setResult(NULL, false, false, false);

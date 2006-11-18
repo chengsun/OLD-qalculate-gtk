@@ -4,7 +4,7 @@
   <!ENTITY legal SYSTEM "legal.xml">
   <!ENTITY appversion "0.9.5">
   <!ENTITY manrevision "0.9.5">
-  <!ENTITY date "June 2006">
+  <!ENTITY date "November 2006">
   <!ENTITY app "Qalculate!">
   <!ENTITY appendixa SYSTEM "appendixa.xml">
   <!ENTITY appendixb SYSTEM "appendixb.xml">
@@ -14,7 +14,7 @@
 <title>&app; Manual v&manrevision;</title>
 <bookinfo>
 	<copyright>
-		<year>2005</year>
+		<year>2005-2006</year>
 		<holder>Niklas Knutsson</holder>
 	</copyright>
 	<publisher> 
@@ -874,90 +874,102 @@ Usually, mathematical expressions are written as normally expected. Standard ope
 <title>Calculator Modes</title>
 <para>
 Qalculate! provides flexible parsing, calculation output and result display. There are several ways in which parsing of expression and display of results can be customized. These modes can generally be changed through the mode menu. The state of each mode can be saved under a name in <menuchoice><guimenu>Mode</guimenu><guisubmenu>Meta Modes</guisubmenu></menuchoice> for quick access. The Preset and Default meta modes are always available and represents the state when Qalculate! is load for the first time and the mode settings automatically loaded at each startup (and by default saved on exit), respectively. Different modes are summarized below.
-<variablelist>
-<varlistentry>
-<term>Number Bases</term>
-<listitem><para>
-Non-decimal bases can be selected for display of numbers in the result. This include regular number bases (binary, octal, hexadecimal, sexagesimal) as well as sexagesimal time format and roman numerals. All number bases between 2 and 36, and base for expression input, can be selected from a dialog window accessed from <menuchoice><guimenu>Mode</guimenu><guisubmenu>Number Base</guisubmenu><guimenuitem>Other...</guimenuitem></menuchoice> or <menuchoice><guimenu>Mode</guimenu><guisubmenu>Number Base</guisubmenu><guimenuitem>Select Result and Expression Base...</guimenuitem></menuchoice>. The convert number bases dialog (see <xref linkend="qalculate-convert-number-bases-dialog"/>) is efficient for simple conversion between common bases.
-</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Numerical Display</term>
-<listitem><para>
-These modes mainly control when numbers are displayed exponentially (ex. <quote>2.62E3</quote> which equals <quote>2620</quote>). In the default normal mode, numbers are displayed in exponential format if the exponent will be greater than the current precision. In scientific mode the lowest exponent is 3. In simple numerical mode the exponential format is never used and it is always used in purely scientific mode. This is naturally equivalently true for numbers less than one and negative exponents. In scientific modes, division is shown as a negative power (ex. <quote>x * y^-1</quote> instead of <quote>x / y</quote>).
-</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Indicate Infinite Series</term>
-<listitem><para>
-If this option is on, Qalculate! will not round infinitely repeating digit sequences if discovered. Instead <quote>...</quote> will be displayed after the maximal number of decimals and the result indicated as exact (compare <quote>2/3 = 0.666667</quote> with <quote>2/3 = 0.666666...</quote>).
-</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Round Halfway Number To Even</term>
-<listitem><para>
-With this option, halfway numbers will be rounded to even instead of upwards (ex. 2.65 is then rounded to 2.6 instead of 2.7). Note that this behavior is always applied in the <command>round()</command> function.
-</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Show Ending Zeroes</term>
-<listitem><para>
-if this option is on, approximate numbers in the result will be appended with zeroes, so that the number of digits (after preceding zeroes) will equal the precision.
-</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Fractional Display</term>
-<listitem><para>
-This controls if numbers are displayed in fractional or decimal mode. Decimal mode displays numbers as usually expected (<quote>6/4 = 1.5</quote>), combined displays a whole number and a fraction (<quote>6/4 = 1 1/2</quote>) and fractional only displays as fraction (<quote>6/4 = 3/2</quote>).
-</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Unit Display</term>
-<listitem><para>
-The use of prefixes for units can be toggled on and off. By default prefixes representing a power of ten not dividable by three (centi, deci, deca and hekto) are not used and need to be enabled. If denominator prefixes are not explicitly enabled, prefixes will only be set for the numerator in a fractional unit expression (ex. <quote>1 Mg/m</quote> or <quote>1 kg/mm</quote>). The place units separately alternative controls the display of unit expressions in result. If it is enabled (default) units will be displayed separate from other parts of the expression at the end (compare <quote>(5x*m)/(y*s)</quote> and <quote>5x/y m/s</quote>).
-</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Abbreviate Names</term>
-<listitem><para>
-The display of unit, prefix, variable and function names can be controlled by selecting to display abbreviations or full length names (ex. <quote>5 cm</quote> or <quote>5 centimeters</quote>). Both abbreviations and long names can however always be entered in expressions.
-</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Approximation</term>
-<listitem><para>
-When always exact mode is on, the calculation will not go further than what can be calculated exactly (ex. <quote>sqrt(2+3) = sqrt(5)</quote>). The  default <quote>Try Exact</quote> mode, will calculate the result exact as far as possible and then approximately. Approximate mode will directly calculate a approximate result, thus being a bit faster but giving a less correct approximate indication (<quote>sin(pi/2)</quote> return approximately one instead of exactly one).
-</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Assumptions</term>
-<listitem><para>
-This controls the default assumptions for unknown variables without explicitly defined assumptions. See <xref linkend="qalculate-variables"/>.
-The assume denominators non-zero alternative makes it possible to avoid the situation where expressions such as <quote>(x-1)/(x-1)</quote> can not be further simplified because the denominator might be zero (if x equals 1). With this alternative activated the example can be reduced to 1.
-</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Precision</term>
-<listitem><para>
-Precision controls the precision in approximate numbers and the number of significant digits. If the read precision option is turned on, input numbers with decimals will be interpreted as approximate with a precision equal to the number of digits (ex. <quote>2.50 + 3.4567 = 5.96</quote>).
-</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Decimals</term>
-<listitem><para>
-In the decimals dialog, the number of decimals displayed can be controlled. This includes minimal (will fill out with zeroes) and maximal number of decimals (will round numbers).
-</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Limit Implicit Multiplication</term>
-<listitem><para>
-If the limit implicit multiplication mode is activated, the use of implicite multiplication when parsing expressions and displaying results will be limited to avoid confusion. For example, if this mode is not activated and <quote>integrte(5x)</quote> is accidently typed instead of <quote>integrate(5x)</quote>, the expression is interpreted as <quote>int(e * e * (5 * x) * gr * t)</quote> (displayed in history window). The result will then without any error be <quote>int(2.3940139x * km^2)</quote> instead of <quote>2.5x^2</quote>. If limit implicit multiplication is turned on to mistyped expression would instead show an error telling that <quote>integrte</quote> is not a valid variable, function or unit (unless unknowns is not enabled in which case the result will be <quote>5 "integrate" * x</quote>). When implicit multiplication is limited variables, functions and units must be separated by a space, opertor or parenthesis (<quote>xy</quote> does not equal <quote>x * y</quote>).
-</para></listitem>
-</varlistentry>
-</variablelist>
 </para>
 <sect1 id="qalculate-rpn">
 <title>The RPN Mode</title>
+<variablelist>
+	<varlistentry>
+		<term>Number Bases</term>
+		<listitem><para>
+				Non-decimal bases can be selected for display of numbers in the result. This include regular number bases (binary, octal, hexadecimal, sexagesimal) as well as sexagesimal time format and roman numerals. All number bases between 2 and 36, and base for expression input, can be selected from a dialog window accessed from <menuchoice><guimenu>Mode</guimenu><guisubmenu>Number Base</guisubmenu><guimenuitem>Other...</guimenuitem></menuchoice> or <menuchoice><guimenu>Mode</guimenu><guisubmenu>Number Base</guisubmenu><guimenuitem>Select Result and Expression Base...</guimenuitem></menuchoice>. The convert number bases dialog (see <xref linkend="qalculate-convert-number-bases-dialog"/>) is efficient for simple conversion between common bases.
+			</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>Numerical Display</term>
+		<listitem><para>
+				These modes mainly control when numbers are displayed exponentially (ex. <quote>2.62E3</quote> which equals <quote>2620</quote>). In the default normal mode, numbers are displayed in exponential format if the exponent will be greater than the current precision. In scientific mode the lowest exponent is 3. In simple numerical mode the exponential format is never used and it is always used in purely scientific mode. In the engineering mode, the exponent is always a multiple of three. This is naturally equivalently true for numbers less than one and negative exponents. When the scientific modes are selected in the keypad (not from the menubar), negative exponents are automatically activated and sort minus last deactivated, while normal and simple modes do the opposite.
+			</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>Indicate Infinite Series</term>
+		<listitem><para>
+				If this option is on, Qalculate! will not round infinitely repeating digit sequences if discovered. Instead <quote>...</quote> will be displayed after the maximal number of decimals and the result indicated as exact (compare <quote>2/3 = 0.666667</quote> with <quote>2/3 = 0.666666...</quote>).
+			</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>Round Halfway Number To Even</term>
+		<listitem><para>
+				With this option, halfway numbers will be rounded to even instead of upwards (ex. 2.65 is then rounded to 2.6 instead of 2.7). Note that this behavior is always applied in the <command>round()</command> function.
+			</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>Show Ending Zeroes</term>
+		<listitem><para>
+				if this option is on, approximate numbers in the result will be appended with zeroes, so that the number of digits (after preceding zeroes) will equal the precision.
+			</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>Negative Exponents</term>
+		<listitem><para>
+				If negative exponents is activated, division is shown as a negative power (ex. <quote>x * y^-1</quote> instead of <quote>x / y</quote>). 
+			</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>Sort Minus Last</term>
+		<listitem><para>
+				This option decides if minus signs should be avoided in the first positions of the result expression.
+			</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>Fractional Display</term>
+		<listitem><para>
+				This controls if numbers are displayed in fractional or decimal mode. Decimal mode displays numbers as usually expected (<quote>6/4 = 1.5</quote>), combined displays a whole number and a fraction (<quote>6/4 = 1 1/2</quote>) and fractional only displays as fraction (<quote>6/4 = 3/2</quote>).
+			</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>Unit Display</term>
+		<listitem><para>
+				The use of prefixes for units can be toggled on and off. By default prefixes representing a power of ten not dividable by three (centi, deci, deca and hekto) are not used and need to be enabled. If denominator prefixes are not explicitly enabled, prefixes will only be set for the numerator in a fractional unit expression (ex. <quote>1 Mg/m</quote> or <quote>1 kg/mm</quote>). The place units separately alternative controls the display of unit expressions in result. If it is enabled (default) units will be displayed separate from other parts of the expression at the end (compare <quote>(5x*m)/(y*s)</quote> and <quote>5x/y m/s</quote>).
+			</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>Abbreviate Names</term>
+		<listitem><para>
+				The display of unit, prefix, variable and function names can be controlled by selecting to display abbreviations or full length names (ex. <quote>5 cm</quote> or <quote>5 centimeters</quote>). Both abbreviations and long names can however always be entered in expressions.
+			</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>Approximation</term>
+		<listitem><para>
+				When always exact mode is on, the calculation will not go further than what can be calculated exactly (ex. <quote>sqrt(2+3) = sqrt(5)</quote>). The  default <quote>Try Exact</quote> mode, will calculate the result exact as far as possible and then approximately. Approximate mode will directly calculate a approximate result, thus being a bit faster but giving a less correct approximate indication (<quote>sin(pi/2)</quote> return approximately one instead of exactly one).
+			</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>Assumptions</term>
+		<listitem><para>
+				This controls the default assumptions for unknown variables without explicitly defined assumptions. See <xref linkend="qalculate-variables"/>.
+				The assume denominators non-zero alternative makes it possible to avoid the situation where expressions such as <quote>(x-1)/(x-1)</quote> can not be further simplified because the denominator might be zero (if x equals 1). With this alternative activated the example can be reduced to 1.
+			</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>Precision</term>
+		<listitem><para>
+				Precision controls the precision in approximate numbers and the number of significant digits. If the read precision option is turned on, input numbers with decimals will be interpreted as approximate with a precision equal to the number of digits (ex. <quote>2.50 + 3.4567 = 5.96</quote>).
+			</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>Decimals</term>
+		<listitem><para>
+				In the decimals dialog, the number of decimals displayed can be controlled. This includes minimal (will fill out with zeroes) and maximal number of decimals (will round numbers).
+			</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>Limit Implicit Multiplication</term>
+		<listitem><para>
+				If the limit implicit multiplication mode is activated, the use of implicite multiplication when parsing expressions and displaying results will be limited to avoid confusion. For example, if this mode is not activated and <quote>integrte(5x)</quote> is accidently typed instead of <quote>integrate(5x)</quote>, the expression is interpreted as <quote>int(e * e * (5 * x) * gr * t)</quote> (displayed in history window). The result will then without any error be <quote>int(2.3940139x * km^2)</quote> instead of <quote>2.5x^2</quote>. If limit implicit multiplication is turned on to mistyped expression would instead show an error telling that <quote>integrte</quote> is not a valid variable, function or unit (unless unknowns is not enabled in which case the result will be <quote>5 "integrate" * x</quote>). When implicit multiplication is limited variables, functions and units must be separated by a space, opertor or parenthesis (<quote>xy</quote> does not equal <quote>x * y</quote>).
+			</para></listitem>
+	</varlistentry>
+</variablelist>
 <para>
 The Reverse Polish Notation mode can be activated with <menuchoice><guimenu>Mode</guimenu><guimenuitem>RPN Mode</guimenuitem></menuchoice>, <keycombo><keycap>Ctrl</keycap><keycap>R</keycap></keycombo> or from the context menu of the expression entry. For details about what Reverse Polish Notation is and how it generally works, see for example the <ulink url="http://en.wikipedia.org/wiki/Reverse_Polish_notation">RPN article at Wikipedia</ulink>.
 </para>

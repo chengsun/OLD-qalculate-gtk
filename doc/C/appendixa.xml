@@ -185,11 +185,13 @@ dimension("Equation vector")=dimension("Variable vector")
 <varlistentry>
 <term><emphasis>Integrate</emphasis></term>
 <listitem>
-<para><command>integrate(Function[, Variable of integration])</command></para>
+<para><command>integrate(Function[, Variable of integration][, Lower limit][, Upper limit])</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Function: a free value</para></listitem>
 <listitem><para>Variable of integration: an unknown variable/symbol (optional, default: x)</para></listitem>
+<listitem><para>Lower limit: a free value (optional, default: undefined)</para></listitem>
+<listitem><para>Upper limit: a free value (optional, default: undefined)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1175,11 +1177,11 @@ dimension("Equation vector")=dimension("Variable vector")
 <varlistentry>
 <term><emphasis>Circle Circumference</emphasis></term>
 <listitem>
-<para><command>circumference(Diameter)</command></para>
-<para>Calculates the area of a circle using the diameter</para>
+<para><command>circumference(Radius)</command></para>
+<para>Calculates the area of a circle using the radius</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Diameter: a free value</para></listitem>
+<listitem><para>Radius: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1730,6 +1732,19 @@ dimension("Equation vector")=dimension("Variable vector")
 </listitem>
 </varlistentry>
 <varlistentry>
+<term><emphasis>Cross Product</emphasis></term>
+<listitem>
+<para><command>cross(Vector 1, Vector 2)</command></para>
+<para>Calculates the cross product of a 3-dimensional vector.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Vector 1: a vector that fulfills the condition: "dimension(\x)==3"</para></listitem>
+<listitem><para>Vector 2: a vector that fulfills the condition: "dimension(\x)==3"</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
 <term><emphasis>Determinant</emphasis></term>
 <listitem>
 <para><command>det(Matrix)</command></para>
@@ -2005,6 +2020,19 @@ dimension("Equation vector")=dimension("Variable vector")
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Weight: a free value</para></listitem>
 <listitem><para>Length: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Kronecker Delta</emphasis></term>
+<listitem>
+<para><command>kronecker(Value 1 (i)[, Value 2 (j)])</command></para>
+<para>Returns 0 if i != j and 1 if i = j.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value 1 (i): a real number</para></listitem>
+<listitem><para>Value 2 (j): a real number (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2956,6 +2984,78 @@ dimension("Data 1")=dimension("Data 2")
 </varlistentry>
 </variablelist>
 </sect2>
+</sect1>
+<sect1 id="qalculate-definitions-functions-1-Step-Functions">
+<title>Step Functions</title>
+<variablelist>
+<varlistentry>
+<term><emphasis>Heaviside Step Function</emphasis></term>
+<listitem>
+<para><command>heaviside(Value)</command></para>
+<para>Discontinuous function also known as "unit step function". Returns 0 if x &lt; 0, 1 if x &gt; 0, and 1/2 if x = 0.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a real number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Logit Transformation</emphasis></term>
+<listitem>
+<para><command>logit(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Ramp Function</emphasis></term>
+<listitem>
+<para><command>ramp(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a real number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Rectangular Function</emphasis></term>
+<listitem>
+<para><command>rectangular(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a real number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Sigmoid Function</emphasis></term>
+<listitem>
+<para><command>sigmoid(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Triangular Function</emphasis></term>
+<listitem>
+<para><command>triangular(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a real number</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+</variablelist>
 </sect1>
 <sect1 id="qalculate-definitions-functions-1-Trigonometry">
 <title>Trigonometry</title>
