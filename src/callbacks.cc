@@ -12890,12 +12890,11 @@ void on_unknown_edit_optionmenu_sign_changed(GtkOptionMenu *om, gpointer) {
 	}
 }
 
-gboolean on_key_press_event(GtkWidget*, GdkEventKey *event, gpointer) {
+gboolean on_key_press_event(GtkWidget *o, GdkEventKey *event, gpointer) {
 	if(!GTK_WIDGET_HAS_FOCUS(expression) && (event->keyval > GDK_Hyper_R || event->keyval < GDK_Shift_L)) {
-		bool return_val = FALSE;
 		GtkWidget *w = gtk_window_get_focus(GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")));
-		if(w) g_signal_emit_by_name((gpointer) w, "key_press_event", event, &return_val);
-		if(return_val) return TRUE;
+		if(gtk_bindings_activate_event(GTK_OBJECT(o), event)) return TRUE;
+		if(w && gtk_bindings_activate_event(GTK_OBJECT(w), event)) return TRUE;
 		focus_keeping_selection();
 	}
 	return FALSE;

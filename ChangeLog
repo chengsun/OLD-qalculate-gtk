@@ -1,3 +1,7 @@
+2007-01-17 Niklas Knutsson  <nq@altern.org>
+
+	* Fix crash when expression entry reclaims focus if compiled with optimizations
+
 2006-11-18 Niklas Knutsson  <nq@altern.org>
 
 	* Update Swedish translation
