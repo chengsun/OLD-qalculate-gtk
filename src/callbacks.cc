@@ -13061,6 +13061,12 @@ gboolean on_expression_key_press_event(GtkWidget*, GdkEventKey *event, gpointer)
 			}
 			return TRUE;
 		}
+		case GDK_KP_Separator: {
+			gint end = gtk_editable_get_position(GTK_EDITABLE(expression));
+			gtk_editable_insert_text(GTK_EDITABLE(expression), CALCULATOR->getDecimalPoint().c_str(), -1, &end);
+			gtk_editable_set_position(GTK_EDITABLE(expression), end);
+			return TRUE;
+		}
 	}
 	gint pos = gtk_editable_get_position(GTK_EDITABLE(expression));
 	switch(event->keyval) {

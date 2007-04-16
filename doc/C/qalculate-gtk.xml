@@ -861,8 +861,8 @@ Usually, mathematical expressions are written as normally expected. Standard ope
 	<listitem><para>Bitwise OR (|)</para></listitem>
 	<listitem><para>Comparison (&gt;, &lt;, =, &gt;=, &lt;=)</para></listitem>
 	<listitem><para>Logical NOT (!)</para></listitem>
-	<listitem><para>AND (&amp;)</para></listitem>
-	<listitem><para>OR (|)</para></listitem>
+	<listitem><para>Logical AND (&amp;&amp;)</para></listitem>
+	<listitem><para>Logical OR (||)</para></listitem>
 </orderedlist>
 </para>
 <para>
