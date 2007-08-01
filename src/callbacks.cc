@@ -1,7 +1,7 @@
 /*
     Qalculate
 
-    Copyright (C) 2003-2006  Niklas Knutsson (nq@altern.org)
+    Copyright (C) 2003-2007  Niklas Knutsson (nq@altern.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -251,32 +251,34 @@ void result_font_modified() {
 }
 
 
-PangoCoverageLevel get_least_coverage(const gchar *gstr, PangoCoverage *coverage) {
+PangoCoverageLevel get_least_coverage(const gchar *gstr, GtkWidget *widget) {
 
-	if(!coverage) return PANGO_COVERAGE_EXACT;
 	PangoCoverageLevel level = PANGO_COVERAGE_EXACT;
+	PangoContext *context = gtk_widget_get_pango_context(widget);
+	PangoLanguage *language = pango_context_get_language(context);
+	PangoFontset *fontset = pango_context_load_fontset(context, gtk_widget_get_style(widget)->font_desc, language);
 	while(gstr[0] != '\0') {
 		if(gstr[0] < 0) {
 			gunichar gu = g_utf8_get_char_validated(gstr, -1);
 			if(gu != (gunichar) -1 && gu != (gunichar) -2) {
-				if(pango_coverage_get(coverage, (int) gu) < level) {
-					level = pango_coverage_get(coverage, gu);
+				PangoFont *font = pango_fontset_get_font(fontset, (guint) gu);
+				if(font) {
+					PangoCoverage *coverage = pango_font_get_coverage(font, language);
+					if(pango_coverage_get(coverage, (int) gu) < level) {
+						level = pango_coverage_get(coverage, gu);
+					}
+					g_object_unref(font);
+					pango_coverage_unref(coverage);
+				} else {
+					level = PANGO_COVERAGE_NONE;
 				}
 			}
 		}
 		gstr = g_utf8_find_next_char(gstr, NULL);
 		if(!gstr) break;
 	}
+	g_object_unref(fontset);
 	return level;
-
-}
-
-PangoCoverageLevel get_least_coverage(const gchar *gstr, GtkWidget *widget) {
-	
-	PangoContext *context = gtk_widget_get_pango_context(widget);
-	PangoFont *font = pango_context_load_font(context, gtk_widget_get_style(widget)->font_desc);
-	PangoLanguage *language = pango_context_get_language(context);
-	return get_least_coverage(gstr, pango_font_get_coverage(font, language));
 
 }
 
@@ -7425,7 +7427,7 @@ void insert_matrix(const MathStructure *initial_value, GtkWidget *win, gboolean 
 		r = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(glade_xml_get_widget (matrix_glade, "matrix_spinbutton_rows")));
 		gchar *gstr = NULL;
 		if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget (matrix_glade, "matrix_radiobutton_vector")))) {
-			bool b = false;
+			bool b1 = false;
 			matrixstr = "[";
 			for(size_t index_r = 0; index_r < (size_t) r && b; index_r++) {
 				for(size_t index_c = 0; index_c < (size_t) c; index_c++) {
@@ -7434,11 +7436,11 @@ void insert_matrix(const MathStructure *initial_value, GtkWidget *win, gboolean 
 					g_free(gstr);
 					remove_blank_ends(str);
 					if(!str.empty()) {
-						if(b) {
+						if(b1) {
 							matrixstr += CALCULATOR->getComma();
 							matrixstr += " ";
 						} else {
-							b = true;
+							b1 = true;
 						}
 						matrixstr += str;
 					}
@@ -8918,7 +8920,7 @@ void load_preferences() {
 		first_qalculate_run = false;
 		closedir(dir);
 	}
-	int version_numbers[] = {0, 9, 5};
+	int version_numbers[] = {0, 9, 6};
 	bool old_history_format = false;
 
 	FILE *file = NULL;

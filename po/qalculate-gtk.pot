@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-11-18 22:03+0100\n"
+"POT-Creation-Date: 2007-05-08 14:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,7 +27,7 @@ msgstr ""
 #: ../data/about.glade.h:1
 msgid ""
 "<span weight=\"bold\" size=\"xx-large\"><span foreground=\"#cc4499\">Q</"
-"span>alculate!</span> (v. 0.9.5)\n"
+"span>alculate!</span> (v. 0.9.6)\n"
 "<span size=\"large\">- the queer calculator</span>\n"
 "\n"
 "<i>http://qalculate.sourceforge.net/</i>\n"
@@ -1466,7 +1466,7 @@ msgid "Units"
 msgstr ""
 
 #: ../data/main.glade.h:201 ../data/unknownedit.glade.h:24
-#: ../src/callbacks.cc:14071
+#: ../src/callbacks.cc:14076
 msgid "Unknown"
 msgstr ""
 
@@ -1663,8 +1663,8 @@ msgid "Current element:"
 msgstr ""
 
 #: ../data/matrix.glade.h:4 ../data/matrixedit.glade.h:10
-#: ../src/callbacks.cc:13123 ../src/callbacks.cc:13131
-#: ../src/callbacks.cc:13139 ../src/callbacks.cc:13147
+#: ../src/callbacks.cc:13128 ../src/callbacks.cc:13136
+#: ../src/callbacks.cc:13144 ../src/callbacks.cc:13152
 msgid "Elements"
 msgstr ""
 
@@ -2439,11 +2439,11 @@ msgstr ""
 msgid "_Variable"
 msgstr ""
 
-#: ../src/main.cc:171
+#: ../src/main.cc:173
 msgid "Enter a mathematical expression above. Ex. 5 + 2 / 3"
 msgstr ""
 
-#: ../src/main.cc:181
+#: ../src/main.cc:183
 msgid ""
 "You need to download exchange rates to be able to convert between different "
 "currencies. You can later get current exchange rates by selecting \"Update "
@@ -2452,45 +2452,45 @@ msgid ""
 "Do you want to fetch exchange rates now from the Internet?"
 msgstr ""
 
-#: ../src/main.cc:196
+#: ../src/main.cc:198
 msgid "ans"
 msgstr ""
 
-#: ../src/main.cc:197 ../src/main.cc:200 ../src/main.cc:201 ../src/main.cc:202
-#: ../src/main.cc:203 ../src/callbacks.cc:8162
+#: ../src/main.cc:199 ../src/main.cc:202 ../src/main.cc:203 ../src/main.cc:204
+#: ../src/main.cc:205 ../src/callbacks.cc:8162
 msgid "Temporary"
 msgstr ""
 
-#: ../src/main.cc:197
+#: ../src/main.cc:199
 msgid "Last Answer"
 msgstr ""
 
-#: ../src/main.cc:198
+#: ../src/main.cc:200
 msgid "answer"
 msgstr ""
 
-#: ../src/main.cc:200
+#: ../src/main.cc:202
 msgid "Answer 2"
 msgstr ""
 
-#: ../src/main.cc:201
+#: ../src/main.cc:203
 msgid "Answer 3"
 msgstr ""
 
-#: ../src/main.cc:202
+#: ../src/main.cc:204
 msgid "Answer 4"
 msgstr ""
 
-#: ../src/main.cc:203
+#: ../src/main.cc:205
 msgid "Answer 5"
 msgstr ""
 
-#: ../src/main.cc:207
+#: ../src/main.cc:209
 msgid "Failed to load global definitions!\n"
 msgstr ""
 
 #. if no category has been selected (previously selected has been renamed/deleted), select "All"
-#: ../src/main.cc:215 ../src/main.cc:218 ../src/main.cc:221
+#: ../src/main.cc:217 ../src/main.cc:220 ../src/main.cc:223
 #: ../src/callbacks.cc:1201 ../src/callbacks.cc:1262 ../src/callbacks.cc:1297
 #: ../src/callbacks.cc:1535 ../src/callbacks.cc:1598 ../src/callbacks.cc:1678
 #: ../src/callbacks.cc:1768 ../src/callbacks.cc:1828 ../src/callbacks.cc:1896
@@ -2811,7 +2811,7 @@ msgstr ""
 
 #: ../src/callbacks.cc:6191 ../src/callbacks.cc:6560 ../src/callbacks.cc:6798
 #: ../src/callbacks.cc:6958 ../src/callbacks.cc:7214 ../src/callbacks.cc:7681
-#: ../src/callbacks.cc:7828 ../src/callbacks.cc:8749 ../src/callbacks.cc:13478
+#: ../src/callbacks.cc:7828 ../src/callbacks.cc:8749 ../src/callbacks.cc:13483
 msgid "Empty name field."
 msgstr ""
 
@@ -2827,7 +2827,7 @@ msgid "Base unit does not exist."
 msgstr ""
 
 #: ../src/callbacks.cc:6309 ../src/callbacks.cc:6654 ../src/callbacks.cc:6856
-#: ../src/callbacks.cc:7026 ../src/callbacks.cc:7310 ../src/callbacks.cc:13698
+#: ../src/callbacks.cc:7026 ../src/callbacks.cc:7310 ../src/callbacks.cc:13703
 #, c-format
 msgid ""
 "Could not display help.\n"
@@ -2842,13 +2842,13 @@ msgstr ""
 msgid "New Function"
 msgstr ""
 
-#: ../src/callbacks.cc:6534 ../src/callbacks.cc:13245
-#: ../src/callbacks.cc:13256
+#: ../src/callbacks.cc:6534 ../src/callbacks.cc:13250
+#: ../src/callbacks.cc:13261
 msgid "Yes"
 msgstr ""
 
-#: ../src/callbacks.cc:6536 ../src/callbacks.cc:13247
-#: ../src/callbacks.cc:13258
+#: ../src/callbacks.cc:6536 ../src/callbacks.cc:13252
+#: ../src/callbacks.cc:13263
 msgid "No"
 msgstr ""
 
@@ -3058,11 +3058,11 @@ msgstr ""
 msgid "Select file to save PNG image to"
 msgstr ""
 
-#: ../src/callbacks.cc:11880 ../src/callbacks.cc:13713
+#: ../src/callbacks.cc:11880 ../src/callbacks.cc:13718
 msgid "Allowed File Types"
 msgstr ""
 
-#: ../src/callbacks.cc:11885 ../src/callbacks.cc:13723
+#: ../src/callbacks.cc:11885 ../src/callbacks.cc:13728
 msgid "All Files"
 msgstr ""
 
@@ -3082,94 +3082,94 @@ msgid ""
 "%s"
 msgstr ""
 
-#: ../src/callbacks.cc:13125 ../src/callbacks.cc:13133
-#: ../src/callbacks.cc:13141 ../src/callbacks.cc:13149
+#: ../src/callbacks.cc:13130 ../src/callbacks.cc:13138
+#: ../src/callbacks.cc:13146 ../src/callbacks.cc:13154
 msgid "Elements (in horizontal order)"
 msgstr ""
 
-#: ../src/callbacks.cc:13162 ../src/callbacks.cc:13203
+#: ../src/callbacks.cc:13167 ../src/callbacks.cc:13208
 msgid "Select file to import"
 msgstr ""
 
-#: ../src/callbacks.cc:13174
+#: ../src/callbacks.cc:13179
 msgid "Select file to export to"
 msgstr ""
 
-#: ../src/callbacks.cc:13189
+#: ../src/callbacks.cc:13194
 msgid "Select date"
 msgstr ""
 
-#: ../src/callbacks.cc:13489 ../src/callbacks.cc:13516
+#: ../src/callbacks.cc:13494 ../src/callbacks.cc:13521
 msgid ""
 "A conflicting object with the same name exists. If you proceed and save "
 "changes, the conflicting object will be overwritten or deactivated.\n"
 "Do you want to proceed?"
 msgstr ""
 
-#: ../src/callbacks.cc:13708
+#: ../src/callbacks.cc:13713
 msgid "Select file to export"
 msgstr ""
 
-#: ../src/callbacks.cc:13789 ../src/callbacks.cc:13833
+#: ../src/callbacks.cc:13794 ../src/callbacks.cc:13838
 msgid "Empty expression."
 msgstr ""
 
-#: ../src/callbacks.cc:13803 ../src/callbacks.cc:13847
+#: ../src/callbacks.cc:13808 ../src/callbacks.cc:13852
 msgid "Empty x variable."
 msgstr ""
 
-#: ../src/callbacks.cc:14055
+#: ../src/callbacks.cc:14060
 msgid "Classification"
 msgstr ""
 
-#: ../src/callbacks.cc:14060
+#: ../src/callbacks.cc:14065
 msgid "Alkali Metal"
 msgstr ""
 
-#: ../src/callbacks.cc:14061
+#: ../src/callbacks.cc:14066
 msgid "Alkaline-Earth Metal"
 msgstr ""
 
-#: ../src/callbacks.cc:14062
+#: ../src/callbacks.cc:14067
 msgid "Lanthanide"
 msgstr ""
 
-#: ../src/callbacks.cc:14063
+#: ../src/callbacks.cc:14068
 msgid "Actinide"
 msgstr ""
 
-#: ../src/callbacks.cc:14064
+#: ../src/callbacks.cc:14069
 msgid "Transition Metal"
 msgstr ""
 
-#: ../src/callbacks.cc:14065
+#: ../src/callbacks.cc:14070
 msgid "Metal"
 msgstr ""
 
-#: ../src/callbacks.cc:14066
+#: ../src/callbacks.cc:14071
 msgid "Metalloid"
 msgstr ""
 
-#: ../src/callbacks.cc:14067
+#: ../src/callbacks.cc:14072
 msgid "Non-Metal"
 msgstr ""
 
-#: ../src/callbacks.cc:14068
+#: ../src/callbacks.cc:14073
 msgid "Halogen"
 msgstr ""
 
-#: ../src/callbacks.cc:14069
+#: ../src/callbacks.cc:14074
 msgid "Noble Gas"
 msgstr ""
 
-#: ../src/callbacks.cc:14070
+#: ../src/callbacks.cc:14075
 msgid "Transactinide"
 msgstr ""
 
-#: ../src/callbacks.cc:14163
+#: ../src/callbacks.cc:14168
 msgid "No unknowns in result."
 msgstr ""
 
-#: ../src/callbacks.cc:14166
+#: ../src/callbacks.cc:14171
 msgid "Set Unknowns"
 msgstr ""

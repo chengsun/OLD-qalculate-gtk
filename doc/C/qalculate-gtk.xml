@@ -2,9 +2,9 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
     "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
   <!ENTITY legal SYSTEM "legal.xml">
-  <!ENTITY appversion "0.9.5">
-  <!ENTITY manrevision "0.9.5">
-  <!ENTITY date "November 2006">
+  <!ENTITY appversion "0.9.6">
+  <!ENTITY manrevision "0.9.6">
+  <!ENTITY date "May 2007">
   <!ENTITY app "Qalculate!">
   <!ENTITY appendixa SYSTEM "appendixa.xml">
   <!ENTITY appendixb SYSTEM "appendixb.xml">
@@ -14,7 +14,7 @@
 <title>&app; Manual v&manrevision;</title>
 <bookinfo>
 	<copyright>
-		<year>2005-2006</year>
+		<year>2005-2007</year>
 		<holder>Niklas Knutsson</holder>
 	</copyright>
 	<publisher> 

@@ -510,12 +510,6 @@
 <entry><para>exchange rate</para></entry>
 </row>
 <row valign="top">
-<entry><para>Slovenian Tolar</para></entry>
-<entry><para>tolar / SIT</para></entry>
-<entry><para>€</para></entry>
-<entry><para>exchange rate</para></entry>
-</row>
-<row valign="top">
 <entry><para>South African Rand</para></entry>
 <entry><para>ZAR</para></entry>
 <entry><para>€</para></entry>
@@ -1097,6 +1091,12 @@
 <entry><para></para></entry>
 </row>
 <row valign="top">
+<entry><para>Gram of TNT</para></entry>
+<entry><para>gTNT / gramTNT</para></entry>
+<entry><para>cal_th</para></entry>
+<entry><para>1000</para></entry>
+</row>
+<row valign="top">
 <entry><para>Joule</para></entry>
 <entry><para>J / joule / joules</para></entry>
 <entry><para>N_m</para></entry>
@@ -1107,6 +1107,12 @@
 <entry><para>(W_h)</para></entry>
 <entry><para>kW h</para></entry>
 <entry><para></para></entry>
+</row>
+<row valign="top">
+<entry><para>Ton of TNT</para></entry>
+<entry><para>tTNT / tonTNT</para></entry>
+<entry><para>gTNT</para></entry>
+<entry><para>1000000</para></entry>
 </row>
 <row valign="top">
 <entry><para>Watt Hour</para></entry>
@@ -1556,6 +1562,12 @@
 <entry><para>100000</para></entry>
 </row>
 <row valign="top">
+<entry><para>Inch of Mercury</para></entry>
+<entry><para>inHg</para></entry>
+<entry><para>mmHg</para></entry>
+<entry><para>25.4</para></entry>
+</row>
+<row valign="top">
 <entry><para>Millimeter of Mercury</para></entry>
 <entry><para>mmHg</para></entry>
 <entry><para>atm</para></entry>
@@ -1845,6 +1857,12 @@
 <entry><para>9460730472580800</para></entry>
 </row>
 <row valign="top">
+<entry><para>Ligne</para></entry>
+<entry><para>ligne</para></entry>
+<entry><para>pouce</para></entry>
+<entry><para>1/12</para></entry>
+</row>
+<row valign="top">
 <entry><para>Link</para></entry>
 <entry><para>li / link / links</para></entry>
 <entry><para>ft</para></entry>
@@ -1887,10 +1905,28 @@
 <entry><para>648000/pi</para></entry>
 </row>
 <row valign="top">
+<entry><para>Pied du roi (French Royal Foot)</para></entry>
+<entry><para>pied_du_roi</para></entry>
+<entry><para>m</para></entry>
+<entry><para>9000/27706</para></entry>
+</row>
+<row valign="top">
+<entry><para>Pouce (French Royal Inch)</para></entry>
+<entry><para>pouce</para></entry>
+<entry><para>pied_du_roi</para></entry>
+<entry><para>1/12</para></entry>
+</row>
+<row valign="top">
 <entry><para>Rod (pole/perch)</para></entry>
 <entry><para>rd / rod / rods</para></entry>
 <entry><para>US_ft</para></entry>
 <entry><para>16.5</para></entry>
+</row>
+<row valign="top">
+<entry><para>Toise</para></entry>
+<entry><para>toise</para></entry>
+<entry><para>pied_du_roi</para></entry>
+<entry><para>6</para></entry>
 </row>
 <row valign="top">
 <entry><para>U.S. Survey Foot</para></entry>
@@ -2337,6 +2373,12 @@
 </thead>
 <tbody>
 <row valign="top">
+<entry><para>Atomic Mass Unit</para></entry>
+<entry><para>u / AMU / atomic_mass_unit / atomic_mass_units</para></entry>
+<entry><para>g_p_mol</para></entry>
+<entry><para>1</para></entry>
+</row>
+<row valign="top">
 <entry><para>Carat</para></entry>
 <entry><para>carat / carats</para></entry>
 <entry><para>g</para></entry>
@@ -2477,12 +2519,6 @@
 </row>
 </thead>
 <tbody>
-<row valign="top">
-<entry><para>Atomic Mass Unit</para></entry>
-<entry><para>u / atomic_mass_unit / atomic_mass_units</para></entry>
-<entry><para>g_p_mol</para></entry>
-<entry><para>1</para></entry>
-</row>
 <row valign="top">
 <entry><para>Gram per Cubic Centimeter</para></entry>
 <entry><para>(g_p_cucm)</para></entry>
@@ -3103,6 +3139,70 @@
 </tgroup>
 </table>
 </sect2>
+</sect1>
+<sect1 id="qalculate-definitions-units-1-Typography">
+<title>Typography</title>
+<table id="qalculate-TBL-units-Typography" frame="topbot" colsep="1">
+<title>Units: Typography</title>
+<tgroup cols="4" colsep="1" rowsep="0">
+<colspec colname="COLSPEC0"/>
+<colspec colname="COLSPEC1"/>
+<colspec colname="COLSPEC2"/>
+<colspec colname="COLSPEC3"/>
+<thead>
+<row valign="top">
+<entry colname="COLSPEC0"><para>Title</para></entry>
+<entry colname="COLSPEC1"><para>Names</para></entry>
+<entry colname="COLSPEC2"><para>Base Unit(s)</para></entry>
+<entry colname="COLSPEC3"><para>Relation</para></entry>
+</row>
+</thead>
+<tbody>
+<row valign="top">
+<entry><para>ATA Pica</para></entry>
+<entry><para>ata_pica / ata_picas</para></entry>
+<entry><para>in</para></entry>
+<entry><para>0.166</para></entry>
+</row>
+<row valign="top">
+<entry><para>ATA Point</para></entry>
+<entry><para>ata_point / ata_pt / ata_points</para></entry>
+<entry><para>ata_pica</para></entry>
+<entry><para>1/12</para></entry>
+</row>
+<row valign="top">
+<entry><para>Cicero</para></entry>
+<entry><para>cicero</para></entry>
+<entry><para>dd</para></entry>
+<entry><para>12</para></entry>
+</row>
+<row valign="top">
+<entry><para>Didot Point</para></entry>
+<entry><para>didot / dd</para></entry>
+<entry><para>pouce</para></entry>
+<entry><para>1/72</para></entry>
+</row>
+<row valign="top">
+<entry><para>New Didot Point</para></entry>
+<entry><para>new_didot</para></entry>
+<entry><para>m</para></entry>
+<entry><para>0.000375</para></entry>
+</row>
+<row valign="top">
+<entry><para>PostScript Pica</para></entry>
+<entry><para>pica / picas</para></entry>
+<entry><para>pt</para></entry>
+<entry><para>12</para></entry>
+</row>
+<row valign="top">
+<entry><para>PostScript Point</para></entry>
+<entry><para>pt / pts / point / points</para></entry>
+<entry><para>in</para></entry>
+<entry><para>1/72</para></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
 </sect1>
 <sect1 id="qalculate-definitions-units-1-Volume">
 <title>Volume</title>

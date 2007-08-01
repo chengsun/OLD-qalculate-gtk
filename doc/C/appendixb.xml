@@ -27,6 +27,11 @@
 <entry><para>3.1415927 (approximate)</para></entry>
 </row>
 <row valign="top">
+<entry><para>Base of Natural Logarithms (e)</para></entry>
+<entry><para>e</para></entry>
+<entry><para>2.7182818 (approximate)</para></entry>
+</row>
+<row valign="top">
 <entry><para>Catalan's Constant</para></entry>
 <entry><para>catalan</para></entry>
 <entry><para>0.91596559 (approximate)</para></entry>
@@ -37,19 +42,19 @@
 <entry><para>0.57721566 (approximate)</para></entry>
 </row>
 <row valign="top">
+<entry><para>Golden Ratio</para></entry>
+<entry><para>golden / φ</para></entry>
+<entry><para>(1+sqrt(5))/2</para></entry>
+</row>
+<row valign="top">
+<entry><para>Omega Constant</para></entry>
+<entry><para>omega</para></entry>
+<entry><para>lambertw(1)</para></entry>
+</row>
+<row valign="top">
 <entry><para>Pythagora's Constant (sqrt 2)</para></entry>
 <entry><para>pythagoras</para></entry>
 <entry><para>sqrt(2)</para></entry>
-</row>
-<row valign="top">
-<entry><para>The Base of Natural Logarithms (e)</para></entry>
-<entry><para>e</para></entry>
-<entry><para>2.7182818 (approximate)</para></entry>
-</row>
-<row valign="top">
-<entry><para>The Golden Ratio</para></entry>
-<entry><para>golden / φ</para></entry>
-<entry><para>(1+sqrt(5))/2</para></entry>
 </row>
 </tbody>
 </tgroup>

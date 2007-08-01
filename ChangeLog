@@ -1,3 +1,15 @@
+2007-08-01 Niklas Knutsson  <nq@altern.org>
+
+	* Better method for determining if a unicode character can be displayed
+
+2007-07-02 Niklas Knutsson  <nq@altern.org>
+
+	* Fix insert vector
+
+2007-04-30 Niklas Knutsson  <nq@altern.org>
+
+	* Do not try to free null icon
+
 2007-04-16 Niklas Knutsson  <nq@altern.org>
 
 	* Always input decimal separator sign on keypad separator press

@@ -293,10 +293,10 @@ dimension("Equation vector")=dimension("Variable vector")
 </listitem>
 </varlistentry>
 <varlistentry>
-<term><emphasis>Permutations</emphasis></term>
+<term><emphasis>Permutations (Variations)</emphasis></term>
 <listitem>
 <para><command>perm(Objects, Size)</command></para>
-<para>Returns the number of possible arrangements of an ordered list with a number of objects to choose from and a list size. If there are three objects (1, 2 and 3) that is put in a list with two positions, the alternatives are [1, 2], [2, 1], [1, 3], [3, 1], [2, 3] and [3, 2], and thus the number of permutations is 6.</para>
+<para><command>variations</command></para><para>Returns the number of possible arrangements of an ordered list with a number of objects to choose from and a list size. If there are three objects (1, 2 and 3) that is put in a list with two positions, the alternatives are [1, 2], [2, 1], [1, 3], [3, 1], [2, 3] and [3, 2], and thus the number of permutations is 6.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Objects: a free value</para></listitem>
@@ -329,7 +329,7 @@ dimension("Equation vector")=dimension("Variable vector")
 <para>Retrieves data from the Elements data set for a given object and property. If "info" is typed as property, all properties of the object will be listed.</para><formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Element: an object from "Elements" (use symbol, number, or name)</para></listitem>
-<listitem><para>Property: name of a data property (symbol, number, name, class, or weight) (optional, default: info)</para></listitem>
+<listitem><para>Property: name of a data property (symbol, number, name, class, weight, boiling, melting, density, ionization, or covalent) (optional, default: info)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 <formalpara>
@@ -339,6 +339,11 @@ dimension("Equation vector")=dimension("Variable vector")
 <listitem><para>Name: name (key)</para></listitem>
 <listitem><para>Classification: class</para><para>A number representing an element group:</para><para>1 Alkali Metal</para><para>2 Alkaline-Earth Metal</para><para>3 Lanthanide</para><para>4 Actinide</para><para>5 Transition Metal</para><para>6 Metal</para><para>7 Metalloid</para><para>8 Non-Metal</para><para>9 Halogen</para><para>10 Noble Gas</para><para>11 Transactinide</para></listitem>
 <listitem><para>Weight: weight, mass</para></listitem>
+<listitem><para>Boiling Point: boiling</para></listitem>
+<listitem><para>Melting Point: melting</para></listitem>
+<listitem><para>Density: density</para><para>Density at 295K</para></listitem>
+<listitem><para>Ionization Potential: ionization</para></listitem>
+<listitem><para>Covalent Radius: covalent</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -376,6 +381,55 @@ dimension("Equation vector")=dimension("Variable vector")
 <sect1 id="qalculate-definitions-functions-1-Date--Time">
 <title>Date &amp; Time</title>
 <variablelist>
+<varlistentry>
+<term><emphasis>Add Days</emphasis></term>
+<listitem>
+<para><command>addDays(Date, Days)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Date: a date</para></listitem>
+<listitem><para>Days: an integer</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Add Months</emphasis></term>
+<listitem>
+<para><command>addMonths(Date, Months)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Date: a date</para></listitem>
+<listitem><para>Months: an integer</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Add Time</emphasis></term>
+<listitem>
+<para><command>addTime(Date, Time)</command></para>
+<para>Adds a time value to a date. The value can be positive or negative, but must use a unit based on seconds (such as day and year). Fractions of days are truncated.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Date: a date</para></listitem>
+<listitem><para>Time: a free value that fulfills the condition: "isNumber(Time/day)"</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Add Years</emphasis></term>
+<listitem>
+<para><command>addYears(Date, Years)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Date: a date</para></listitem>
+<listitem><para>Years: an integer</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
 <varlistentry>
 <term><emphasis>Current Time</emphasis></term>
 <listitem>
@@ -979,7 +1033,7 @@ dimension("Equation vector")=dimension("Variable vector")
 <term><emphasis>Elasticity</emphasis></term>
 <listitem>
 <para><command>elasticity(Demand function, Price[, Price variable])</command></para>
-<para>Calculates the demand elesticity. Also works for supply elasticity, income elasticity, cross-price elasticity, etc. Just replace demand, with supply, or price with income...</para><para></para><para>Ex. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 for the function "Q = 100 - x^2" where x is the default price variable.</para>
+<para>Calculates the demand elasticity. Also works for supply elasticity, income elasticity, cross-price elasticity, etc. Just replace demand, with supply, or price with income...</para><para></para><para>Ex. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 for the function "Q = 100 - x^2" where x is the default price variable.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Demand function: a free value</para></listitem>
@@ -1082,6 +1136,18 @@ dimension("Equation vector")=dimension("Variable vector")
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Exponent: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Lambert W Function (Omega Function, Product Log)</emphasis></term>
+<listitem>
+<para><command>lambertw(Value)</command></para>
+<para><command>productlog</command></para><para>Returns the inverse function for mx*e^x as ln() does for e^x.</para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a real number</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -1735,11 +1801,11 @@ dimension("Equation vector")=dimension("Variable vector")
 <term><emphasis>Cross Product</emphasis></term>
 <listitem>
 <para><command>cross(Vector 1, Vector 2)</command></para>
-<para>Calculates the cross product of a 3-dimensional vector.</para>
+<para>Calculates the cross product of two 3-dimensional vectors.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Vector 1: a vector that fulfills the condition: "dimension(\x)==3"</para></listitem>
-<listitem><para>Vector 2: a vector that fulfills the condition: "dimension(\x)==3"</para></listitem>
+<listitem><para>Vector 1: a vector that fulfills the condition: "dimension(Vector 1)==3"</para></listitem>
+<listitem><para>Vector 2: a vector that fulfills the condition: "dimension(Vector 2)==3"</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -2052,6 +2118,7 @@ dimension("Equation vector")=dimension("Variable vector")
 <term><emphasis>Roman Number</emphasis></term>
 <listitem>
 <para><command>roman(Roman number)</command></para>
+<para>Returns the value of a roman number.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Roman number: a text string</para></listitem>
@@ -2275,7 +2342,7 @@ dimension("Equation vector")=dimension("Variable vector")
 <term><emphasis>Binary</emphasis></term>
 <listitem>
 <para><command>bin(Binary number)</command></para>
-<para>Returns a decimal integer from a binary number</para>
+<para>Returns an integer from a binary number</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Binary number: a text string</para></listitem>
@@ -2287,7 +2354,7 @@ dimension("Equation vector")=dimension("Variable vector")
 <term><emphasis>Hexadecimal</emphasis></term>
 <listitem>
 <para><command>hex(Hexadecimal number)</command></para>
-<para>Returns a decimal value from a hexadecimal number</para>
+<para>Returns a value from a hexadecimal number</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Hexadecimal number: a text string</para></listitem>
@@ -2299,7 +2366,7 @@ dimension("Equation vector")=dimension("Variable vector")
 <term><emphasis>Number Base</emphasis></term>
 <listitem>
 <para><command>base(Number, Base)</command></para>
-<para>Returns a decimal integer from a number of specified base between 2 and 36</para>
+<para>Returns an integer from a number of specified base between 2 and 36</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Number: a text string</para></listitem>
@@ -2312,7 +2379,7 @@ dimension("Equation vector")=dimension("Variable vector")
 <term><emphasis>Octal</emphasis></term>
 <listitem>
 <para><command>oct(Octal number)</command></para>
-<para>Returns a decimal integer from an octal number</para>
+<para>Returns an integer from an octal number</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
 <listitem><para>Octal number: a text string</para></listitem>
@@ -2506,7 +2573,7 @@ dimension("Equation vector")=dimension("Variable vector")
 <para>Generates a pseudo-random number. Returns a real number between 0 and 1, if ceil is zero (default), or an integer between 1 and (including) ceil.</para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Ceil: an integer (optional, default: -1)</para></listitem>
+<listitem><para>Ceil: an integer (optional, default: 0)</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -3357,7 +3424,7 @@ dimension("Data 1")=dimension("Data 2")
 <para><command>code(Character)</command></para>
 <formalpara>
 <title>Arguments</title><para><itemizedlist spacing="compact">
-<listitem><para>Character: a text string that fulfills the condition: "len(\x) = 1"</para></listitem>
+<listitem><para>Character: a text string that fulfills the condition: "len(Character) = 1"</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>
@@ -3439,6 +3506,50 @@ dimension("Data 1")=dimension("Data 2")
 </listitem>
 </varlistentry>
 <varlistentry>
+<term><emphasis>Is Integer</emphasis></term>
+<listitem>
+<para><command>isInteger(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Is Number</emphasis></term>
+<listitem>
+<para><command>isNumber(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Is Rational</emphasis></term>
+<listitem>
+<para><command>isRational(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Is Real</emphasis></term>
+<listitem>
+<para><command>isReal(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
 <term><emphasis>Length of string</emphasis></term>
 <listitem>
 <para><command>len(Text)</command></para>
@@ -3510,6 +3621,50 @@ dimension("Data 1")=dimension("Data 2")
 <listitem><para>Original value: a free value</para></listitem>
 <listitem><para>New value: a free value</para></listitem>
 <listitem><para>Precalculate expression: a boolean (0 or 1) (optional, default: 0)</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Represents Integer</emphasis></term>
+<listitem>
+<para><command>representsInteger(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Represents Number</emphasis></term>
+<listitem>
+<para><command>representsNumber(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Represents Rational</emphasis></term>
+<listitem>
+<para><command>representsRational(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a free value</para></listitem>
+</itemizedlist></para>
+</formalpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis>Represents Real</emphasis></term>
+<listitem>
+<para><command>representsReal(Value)</command></para>
+<formalpara>
+<title>Arguments</title><para><itemizedlist spacing="compact">
+<listitem><para>Value: a free value</para></listitem>
 </itemizedlist></para>
 </formalpara>
 </listitem>

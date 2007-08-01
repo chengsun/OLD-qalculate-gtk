@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qalculate-gtk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-11-05 10:14+0100\n"
+"POT-Creation-Date: 2007-05-08 14:47+0200\n"
 "PO-Revision-Date: 12.11.YYYY 19:40\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org.>\n"
@@ -29,7 +29,7 @@ msgstr "Qalculate!"
 #: ../data/about.glade.h:1
 msgid ""
 "<span weight=\"bold\" size=\"xx-large\"><span foreground=\"#cc4499\">Q</"
-"span>alculate!</span> (v. 0.9.5)\n"
+"span>alculate!</span> (v. 0.9.6)\n"
 "<span size=\"large\">- the queer calculator</span>\n"
 "\n"
 "<i>http://qalculate.sourceforge.net/</i>\n"
@@ -42,7 +42,7 @@ msgid ""
 "Copyright (c) 2003-2006 Niklas Knutsson\n"
 msgstr ""
 "<span weight=\"bold\" size=\"xx-large\"><span foreground=\"#cc4499\">Q</"
-"span>alculate!</span> (v. 0.9.5)\n"
+"span>alculate!</span> (v. 0.9.6)\n"
 "<span size=\"large\">- de \"queer\" rekenmachine</span>\n"
 "\n"
 "<i>http://qalculate.sourceforge.net/</i>\n"
@@ -231,7 +231,8 @@ msgstr ""
 "bestand"
 
 #: ../data/csvimport.glade.h:12
-msgid "If a matrix or vectors shall be generated from the contents of the file "
+msgid ""
+"If a matrix or vectors shall be generated from the contents of the file "
 msgstr ""
 "Of een matrix of vectoren moeten worden aangemaakt van de inhoud van het "
 "bestand"
@@ -277,7 +278,8 @@ msgid "Name"
 msgstr "Naam"
 
 #: ../data/csvimport.glade.h:21
-msgid "Name (or name prefix) used to reference generated variable(s) in expressions"
+msgid ""
+"Name (or name prefix) used to reference generated variable(s) in expressions"
 msgstr ""
 "Naam (of voorvoegsel voor naam) gebruikt voor aangemaakte variabele(n) in "
 "expressies"
@@ -778,7 +780,8 @@ msgstr "De RPN-modus (omgekeerde Poolse notatie) (de)activeren"
 
 #: ../data/main.glade.h:3
 msgid "(De)activate use of Reverse Polish Notation syntax in expressions"
-msgstr "Gebruik van expressies in RPN (omgekeerde Poolse notatie) (de)activeren"
+msgstr ""
+"Gebruik van expressies in RPN (omgekeerde Poolse notatie) (de)activeren"
 
 #: ../data/main.glade.h:4 ../data/nbases.glade.h:1
 #: ../data/preferences.glade.h:1
@@ -1090,7 +1093,8 @@ msgstr ""
 "noemer naast dat voor de teller"
 
 #: ../data/main.glade.h:86
-msgid "Enables automatic use of hekto, deka, deci and centi when prefixes is enabled"
+msgid ""
+"Enables automatic use of hekto, deka, deci and centi when prefixes is enabled"
 msgstr ""
 "Automatisch gebruik van hecto, deca, deci en centi is mogelijk wanneer "
 "voorvoegsels zijn toegestaan"
@@ -1173,7 +1177,8 @@ msgstr "Geschiedenis"
 
 #: ../data/main.glade.h:109
 msgid "If not enabled, treats all variables as unknown"
-msgstr "Indien niet ingeschakeld worden alle variabelen als onbekenden beschouwd"
+msgstr ""
+"Indien niet ingeschakeld worden alle variabelen als onbekenden beschouwd"
 
 #: ../data/main.glade.h:110
 msgid "Import CSV File..."
@@ -1510,7 +1515,7 @@ msgid "Units"
 msgstr "Eenheden"
 
 #: ../data/main.glade.h:201 ../data/unknownedit.glade.h:24
-#: ../src/callbacks.cc:14071
+#: ../src/callbacks.cc:14076
 msgid "Unknown"
 msgstr "Onbekende"
 
@@ -1707,8 +1712,8 @@ msgid "Current element:"
 msgstr "Huidig element:"
 
 #: ../data/matrix.glade.h:4 ../data/matrixedit.glade.h:10
-#: ../src/callbacks.cc:13123 ../src/callbacks.cc:13131
-#: ../src/callbacks.cc:13139 ../src/callbacks.cc:13147
+#: ../src/callbacks.cc:13128 ../src/callbacks.cc:13136
+#: ../src/callbacks.cc:13144 ../src/callbacks.cc:13152
 msgid "Elements"
 msgstr "Elementen"
 
@@ -2083,7 +2088,8 @@ msgstr ""
 "invoer van de expressie"
 
 #: ../data/preferences.glade.h:20
-msgid "If changes to functions, units and variables shall be saved automatically"
+msgid ""
+"If changes to functions, units and variables shall be saved automatically"
 msgstr ""
 "Indien veranderingen in functies, eenheden en variabelen automatisch moeten "
 "worden opgeslagen"
@@ -2119,7 +2125,8 @@ msgid "If the mode of the calculator shall be restored"
 msgstr "Indien de modus van de rekenmachine moet worden teruggezet"
 
 #: ../data/preferences.glade.h:26
-msgid "If you want to use a font other than the default in the expression entry"
+msgid ""
+"If you want to use a font other than the default in the expression entry"
 msgstr ""
 "Indien u bij het invoeren van expressies een ander dan het standaardfont "
 "wilt gebruiken"
@@ -2511,11 +2518,11 @@ msgstr "De geselecteerde variabele invoegen in de ingevoerde expressie"
 msgid "_Variable"
 msgstr "_Variabele"
 
-#: ../src/main.cc:171
+#: ../src/main.cc:173
 msgid "Enter a mathematical expression above. Ex. 5 + 2 / 3"
 msgstr "Een wiskundige expressie hierboven invoeren. Bv. 5 + 2 / 3"
 
-#: ../src/main.cc:181
+#: ../src/main.cc:183
 msgid ""
 "You need to download exchange rates to be able to convert between different "
 "currencies. You can later get current exchange rates by selecting \"Update "
@@ -2529,45 +2536,45 @@ msgstr ""
 "\n"
 "Wilt u de wisselkoersen nu ophalen van het internet?"
 
-#: ../src/main.cc:196
+#: ../src/main.cc:198
 msgid "ans"
 msgstr "antw"
 
-#: ../src/main.cc:197 ../src/main.cc:200 ../src/main.cc:201 ../src/main.cc:202
-#: ../src/main.cc:203 ../src/callbacks.cc:8162
+#: ../src/main.cc:199 ../src/main.cc:202 ../src/main.cc:203 ../src/main.cc:204
+#: ../src/main.cc:205 ../src/callbacks.cc:8162
 msgid "Temporary"
 msgstr "Tijdelijk"
 
-#: ../src/main.cc:197
+#: ../src/main.cc:199
 msgid "Last Answer"
 msgstr "Laatste antwoord"
 
-#: ../src/main.cc:198
+#: ../src/main.cc:200
 msgid "answer"
 msgstr "antwoord"
 
-#: ../src/main.cc:200
+#: ../src/main.cc:202
 msgid "Answer 2"
 msgstr "Antwoord 2"
 
-#: ../src/main.cc:201
+#: ../src/main.cc:203
 msgid "Answer 3"
 msgstr "Antwoord 3"
 
-#: ../src/main.cc:202
+#: ../src/main.cc:204
 msgid "Answer 4"
 msgstr "Antwoord 4"
 
-#: ../src/main.cc:203
+#: ../src/main.cc:205
 msgid "Answer 5"
 msgstr "Antwoord 5"
 
-#: ../src/main.cc:207
+#: ../src/main.cc:209
 msgid "Failed to load global definitions!\n"
 msgstr "Inlezen van globale definities is mislukt!\n"
 
 #. if no category has been selected (previously selected has been renamed/deleted), select "All"
-#: ../src/main.cc:215 ../src/main.cc:218 ../src/main.cc:221
+#: ../src/main.cc:217 ../src/main.cc:220 ../src/main.cc:223
 #: ../src/callbacks.cc:1201 ../src/callbacks.cc:1262 ../src/callbacks.cc:1297
 #: ../src/callbacks.cc:1535 ../src/callbacks.cc:1598 ../src/callbacks.cc:1678
 #: ../src/callbacks.cc:1768 ../src/callbacks.cc:1828 ../src/callbacks.cc:1896
@@ -2894,7 +2901,7 @@ msgstr "Nieuwe eenheid"
 
 #: ../src/callbacks.cc:6191 ../src/callbacks.cc:6560 ../src/callbacks.cc:6798
 #: ../src/callbacks.cc:6958 ../src/callbacks.cc:7214 ../src/callbacks.cc:7681
-#: ../src/callbacks.cc:7828 ../src/callbacks.cc:8749 ../src/callbacks.cc:13478
+#: ../src/callbacks.cc:7828 ../src/callbacks.cc:8749 ../src/callbacks.cc:13483
 msgid "Empty name field."
 msgstr "Geen naam opgegeven."
 
@@ -2912,7 +2919,7 @@ msgid "Base unit does not exist."
 msgstr "Basiseenheid bestaat niet."
 
 #: ../src/callbacks.cc:6309 ../src/callbacks.cc:6654 ../src/callbacks.cc:6856
-#: ../src/callbacks.cc:7026 ../src/callbacks.cc:7310 ../src/callbacks.cc:13698
+#: ../src/callbacks.cc:7026 ../src/callbacks.cc:7310 ../src/callbacks.cc:13703
 #, c-format
 msgid ""
 "Could not display help.\n"
@@ -2929,13 +2936,13 @@ msgstr "Functie bewerken (globaal)"
 msgid "New Function"
 msgstr "Nieuwe functie"
 
-#: ../src/callbacks.cc:6534 ../src/callbacks.cc:13245
-#: ../src/callbacks.cc:13256
+#: ../src/callbacks.cc:6534 ../src/callbacks.cc:13250
+#: ../src/callbacks.cc:13261
 msgid "Yes"
 msgstr "Ja"
 
-#: ../src/callbacks.cc:6536 ../src/callbacks.cc:13247
-#: ../src/callbacks.cc:13258
+#: ../src/callbacks.cc:6536 ../src/callbacks.cc:13252
+#: ../src/callbacks.cc:13263
 msgid "No"
 msgstr "Nee"
 
@@ -3155,11 +3162,11 @@ msgstr "Wisselkoersen worden opgehaald."
 msgid "Select file to save PNG image to"
 msgstr "Bestand voor opslaan PNG-afbeelding selecteren"
 
-#: ../src/callbacks.cc:11880 ../src/callbacks.cc:13713
+#: ../src/callbacks.cc:11880 ../src/callbacks.cc:13718
 msgid "Allowed File Types"
 msgstr "Toegestane bestandstypes"
 
-#: ../src/callbacks.cc:11885 ../src/callbacks.cc:13723
+#: ../src/callbacks.cc:11885 ../src/callbacks.cc:13728
 msgid "All Files"
 msgstr "Alle bestanden"
 
@@ -3181,24 +3188,24 @@ msgstr ""
 "Help kan niet worden getoond voor Qalculate!.\n"
 "%s"
 
-#: ../src/callbacks.cc:13125 ../src/callbacks.cc:13133
-#: ../src/callbacks.cc:13141 ../src/callbacks.cc:13149
+#: ../src/callbacks.cc:13130 ../src/callbacks.cc:13138
+#: ../src/callbacks.cc:13146 ../src/callbacks.cc:13154
 msgid "Elements (in horizontal order)"
 msgstr "Elementen (horizontale volgorde)"
 
-#: ../src/callbacks.cc:13162 ../src/callbacks.cc:13203
+#: ../src/callbacks.cc:13167 ../src/callbacks.cc:13208
 msgid "Select file to import"
 msgstr "Te importeren bestand selecteren"
 
-#: ../src/callbacks.cc:13174
+#: ../src/callbacks.cc:13179
 msgid "Select file to export to"
 msgstr "Bestand waarnaar moet worden geëxporteerd selecteren"
 
-#: ../src/callbacks.cc:13189
+#: ../src/callbacks.cc:13194
 msgid "Select date"
 msgstr "Datum selecteren"
 
-#: ../src/callbacks.cc:13489 ../src/callbacks.cc:13516
+#: ../src/callbacks.cc:13494 ../src/callbacks.cc:13521
 msgid ""
 "A conflicting object with the same name exists. If you proceed and save "
 "changes, the conflicting object will be overwritten or deactivated.\n"
@@ -3209,71 +3216,70 @@ msgstr ""
 "inactief gemaakt.\n"
 "Wilt u verdergaan?"
 
-#: ../src/callbacks.cc:13708
+#: ../src/callbacks.cc:13713
 msgid "Select file to export"
 msgstr "Te exporteren bestand selecteren"
 
-#: ../src/callbacks.cc:13789 ../src/callbacks.cc:13833
+#: ../src/callbacks.cc:13794 ../src/callbacks.cc:13838
 msgid "Empty expression."
 msgstr "Expressie niet gegeven."
 
-#: ../src/callbacks.cc:13803 ../src/callbacks.cc:13847
+#: ../src/callbacks.cc:13808 ../src/callbacks.cc:13852
 msgid "Empty x variable."
 msgstr "Variabele x niet gegeven."
 
-#: ../src/callbacks.cc:14055
+#: ../src/callbacks.cc:14060
 msgid "Classification"
 msgstr "Indeling"
 
-#: ../src/callbacks.cc:14060
+#: ../src/callbacks.cc:14065
 msgid "Alkali Metal"
 msgstr "Alkalisch metaal"
 
-#: ../src/callbacks.cc:14061
+#: ../src/callbacks.cc:14066
 msgid "Alkaline-Earth Metal"
 msgstr "Alkalisch aardmetaal"
 
-#: ../src/callbacks.cc:14062
+#: ../src/callbacks.cc:14067
 msgid "Lanthanide"
 msgstr "Lanthanide"
 
-#: ../src/callbacks.cc:14063
+#: ../src/callbacks.cc:14068
 msgid "Actinide"
 msgstr "Actinide"
 
-#: ../src/callbacks.cc:14064
+#: ../src/callbacks.cc:14069
 msgid "Transition Metal"
 msgstr "Overgangsmetaal"
 
-#: ../src/callbacks.cc:14065
+#: ../src/callbacks.cc:14070
 msgid "Metal"
 msgstr "Metaal"
 
-#: ../src/callbacks.cc:14066
+#: ../src/callbacks.cc:14071
 msgid "Metalloid"
 msgstr "Metalloïde (halfmetaal)"
 
-#: ../src/callbacks.cc:14067
+#: ../src/callbacks.cc:14072
 msgid "Non-Metal"
 msgstr "Niet-metaal"
 
-#: ../src/callbacks.cc:14068
+#: ../src/callbacks.cc:14073
 msgid "Halogen"
 msgstr "Halogeen"
 
-#: ../src/callbacks.cc:14069
+#: ../src/callbacks.cc:14074
 msgid "Noble Gas"
 msgstr "Edelgas"
 
-#: ../src/callbacks.cc:14070
+#: ../src/callbacks.cc:14075
 msgid "Transactinide"
 msgstr "Transactinide"
 
-#: ../src/callbacks.cc:14163
+#: ../src/callbacks.cc:14168
 msgid "No unknowns in result."
 msgstr "Geen onbekenden in antwoord."
 
-#: ../src/callbacks.cc:14166
+#: ../src/callbacks.cc:14171
 msgid "Set Unknowns"
 msgstr "Onbekenden een waarde geven"
-
