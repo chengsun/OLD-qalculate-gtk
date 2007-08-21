@@ -1,3 +1,7 @@
+2007-08-21 Niklas Knutsson  <nq@altern.org>
+
+	* Use same behaviour for GDK_asciiscircum as GDK_dead_circumflex to fix keyboard layouts without dead keys (bug 1741299)
+
 2007-08-01 Niklas Knutsson  <nq@altern.org>
 
 	* Better method for determining if a unicode character can be displayed

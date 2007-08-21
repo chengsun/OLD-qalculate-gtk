@@ -12904,6 +12904,7 @@ gboolean on_key_press_event(GtkWidget *o, GdkEventKey *event, gpointer) {
 
 gboolean on_expression_key_press_event(GtkWidget*, GdkEventKey *event, gpointer) {
 	switch(event->keyval) {
+		case GDK_asciicircum: {}
 		case GDK_dead_circumflex: {
 			if(rpn_mode && !rpn_keypad_only) {
 				calculateRPN(OPERATION_RAISE);
