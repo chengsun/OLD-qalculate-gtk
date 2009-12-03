@@ -92,15 +92,17 @@ int main (int argc, char **argv) {
 		g_free(icon);
 	}
 	
+	gtk_init(&argc, &argv);
+
 	g_object_get(G_OBJECT(program), GNOME_PARAM_POPT_CONTEXT, &pctx, NULL);
 
-	gtk_init(&argc, &argv);
 
 #else
 
-	gtk_window_set_default_icon_from_file(PACKAGE_DATA_DIR "/pixmaps/qalculate.png", NULL);
 
 	gtk_init(&argc, &argv);
+
+	gtk_window_set_default_icon_from_file(PACKAGE_DATA_DIR "/pixmaps/qalculate.png", NULL);
 
 #endif
 
