@@ -7,7 +7,7 @@ dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
 AC_INIT(configure.in)
-AM_INIT_AUTOMAKE(qalculate-gtk, 0.9.6)
+AM_INIT_AUTOMAKE(qalculate-gtk, 0.9.7)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
@@ -63,12 +63,6 @@ AC_CHECK_LIB(pthread, pthread_create, [LIBS="$LIBS -lpthread"])
 
 AC_LANG([C++])
 
-AC_PATH_CLN(1.1.0, [
-     	LIBS="$LIBS $CLN_LIBS"
-     	CPPFLAGS="$CPPFLAGS $CLN_CPPFLAGS"
-  	AC_DEFINE(HAVE_LIBCLN,1,[If CLN can be used])
-], AC_MSG_ERROR([No suitable installed version of CLN could be found.]))
-
 PKG_CHECK_MODULES(GLIB, [
 	glib-2.0 >= 2.4
 	libxml-2.0
@@ -94,6 +88,17 @@ PKG_CHECK_MODULES(QALCULATE, [
 	])
 AC_SUBST(QALCULATE_CFLAGS)
 AC_SUBST(QALCULATE_LIBS)
+
+PKG_CHECK_MODULES(CLN, [ cln >= 1.2 ],
+                  [have_recent_cln=yes], [have_recent_cln=no])
+AC_SUBST(CLN_CPPFLAGS)
+AC_SUBST(CLN_LIBS)
+
+if test "$have_recent_cln" = "yes" ; then
+   AC_DEFINE(HAVE_LIBCLN12, 1, [Define if CLN can be used])
+   LIBS="$LIBS $CLN_LIBS"
+   CPPFLAGS="$CPPFLAGS $CLN_CPPFLAGS"
+fi
 
 LIBGNOME_REQUIRED=2.0.0
 
