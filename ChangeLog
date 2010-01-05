@@ -1,3 +1,8 @@
+2009-01-05 Jonathan Stickel <jjstickel@vcn.com>
+
+	* General build updates and bug fixes, including the ability to
+	build against cln >= 1.2.
+
 2007-08-21 Niklas Knutsson  <nq@altern.org>
 
 	* Use same behaviour for GDK_asciiscircum as GDK_dead_circumflex to fix keyboard layouts without dead keys (bug 1741299)
