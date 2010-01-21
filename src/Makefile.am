@@ -25,6 +25,3 @@ qalculate_gtk_LDADD = \
 	@LIBGNOME_LIBS@ \
 	@QALCULATE_LIBS@
 
-install-exec-local:
-	cd $(DESTDIR)$(bindir) && rm -f qalculate; $(LN_S) @LN_QALCULATE@ qalculate
-

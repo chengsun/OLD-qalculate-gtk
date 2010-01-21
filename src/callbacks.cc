@@ -22,9 +22,6 @@
 #include <dirent.h>
 #include <pthread.h>
 #include <glade/glade.h>
-#ifdef HAVE_LIBGNOME
-#include <libgnome/libgnome.h>
-#endif
 
 #include "support.h"
 #include "callbacks.h"
@@ -6303,9 +6300,8 @@ run_unit_edit_dialog:
 		update_umenus();
 		unit_inserted(u);
 	} else if(response == GTK_RESPONSE_HELP) {
-#ifdef HAVE_LIBGNOME
 		GError *error = NULL;
-		gnome_help_display("qalculate-gtk", "qalculate-unit-creation", &error);
+		gtk_show_uri(NULL, "ghelp:qalculate-gtk?qalculate-unit-creation", gtk_get_current_event_time(), &error);
 		if(error) {
 			gchar *error_str = g_locale_to_utf8(error->message, -1, NULL, NULL, NULL);
 			GtkWidget *d = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (unitedit_glade, "unit_edit_dialog")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help.\n%s"), error_str);			
@@ -6314,7 +6310,6 @@ run_unit_edit_dialog:
 			g_free(error_str);
 			g_error_free(error);
 		}
-#endif	
 		goto run_unit_edit_dialog;
 	}
 	edited_unit = NULL;
@@ -6648,9 +6643,8 @@ run_function_edit_dialog:
 		update_fmenu();	
 		function_inserted(f);
 	} else if(response == GTK_RESPONSE_HELP) {
-#ifdef HAVE_LIBGNOME
 		GError *error = NULL;
-		gnome_help_display("qalculate-gtk", "qalculate-function-creation", &error);
+		gtk_show_uri(NULL, "ghelp:qalculate-gtk?qalculate-function-creation", gtk_get_current_event_time(), &error);
 		if(error) {
 			gchar *error_str = g_locale_to_utf8(error->message, -1, NULL, NULL, NULL);
 			GtkWidget *d = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (functionedit_glade, "function_edit_dialog")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help.\n%s"), error_str);
@@ -6659,7 +6653,6 @@ run_function_edit_dialog:
 			g_free(error_str);
 			g_error_free(error);
 		}
-#endif	
 		goto run_function_edit_dialog;
 	}
 	edited_function = NULL;
@@ -6850,9 +6843,8 @@ run_unknown_edit_dialog:
 		update_vmenu();
 		variable_inserted(v);
 	} else if(response == GTK_RESPONSE_HELP) {
-#ifdef HAVE_LIBGNOME
 		GError *error = NULL;
-		gnome_help_display("qalculate-gtk", "qalculate-variable-creation", &error);
+		gtk_show_uri(NULL, "ghelp:qalculate-gtk?qalculate-variable-creation", gtk_get_current_event_time(), &error);
 		if(error) {
 			gchar *error_str = g_locale_to_utf8(error->message, -1, NULL, NULL, NULL);
 			GtkWidget *d = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (unknownedit_glade, "unknown_edit_dialog")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help.\n%s"), error_str);
@@ -6861,7 +6853,6 @@ run_unknown_edit_dialog:
 			g_free(error_str);
 			g_error_free(error);
 		}
-#endif	
 		goto run_unknown_edit_dialog;
 	}
 	edited_unknown = NULL;
@@ -7020,9 +7011,8 @@ run_variable_edit_dialog:
 		update_vmenu();
 		variable_inserted(v);
 	} else if(response == GTK_RESPONSE_HELP) {
-#ifdef HAVE_LIBGNOME
 		GError *error = NULL;
-		gnome_help_display("qalculate-gtk", "qalculate-variable-creation", &error);
+		gtk_show_uri(NULL, "ghelp:qalculate-gtk?qalculate-variable-creation", gtk_get_current_event_time(), &error);
 		if(error) {
 			gchar *error_str = g_locale_to_utf8(error->message, -1, NULL, NULL, NULL);
 			GtkWidget *d = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (variableedit_glade, "variable_edit_dialog")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help.\n%s"), error_str);
@@ -7031,7 +7021,6 @@ run_variable_edit_dialog:
 			g_free(error_str);
 			g_error_free(error);
 		}
-#endif	
 		goto run_variable_edit_dialog;
 	}
 	edited_variable = NULL;
@@ -7304,9 +7293,8 @@ run_matrix_edit_dialog:
 		update_vmenu();
 		variable_inserted(v);
 	} else if(response == GTK_RESPONSE_HELP) {
-#ifdef HAVE_LIBGNOME
 		GError *error = NULL;
-		gnome_help_display("qalculate-gtk", "qalculate-vectors-matrices", &error);
+		gtk_show_uri(NULL, "ghelp:qalculate-gtk?qalculate-vectors-matrices", gtk_get_current_event_time(), &error);
 		if(error) {
 			gchar *error_str = g_locale_to_utf8(error->message, -1, NULL, NULL, NULL);
 			GtkWidget *d = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (matrixedit_glade, "matrix_edit_dialog")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help.\n%s"), error_str);
@@ -7315,7 +7303,6 @@ run_matrix_edit_dialog:
 			g_free(error_str);
 			g_error_free(error);
 		}
-#endif	
 		goto run_matrix_edit_dialog;
 	}
 	edited_matrix = NULL;
@@ -12826,10 +12813,9 @@ void on_menu_item_about_activate(GtkMenuItem*, gpointer) {
 	gtk_widget_hide(dialog);
 }
 void on_menu_item_help_activate(GtkMenuItem*, gpointer) {
-#ifdef HAVE_LIBGNOME
 	GError *error = NULL;
-	//gnome_help_display_desktop(NULL, "qalculate-gtk", "qalculate-gtk", NULL, &error);
-	gnome_help_display("qalculate-gtk", NULL, &error);
+	//gtk_show_uri_desktop(NULL, "qalculate-gtk", "qalculate-gtk", NULL, &error);
+	gtk_show_uri(NULL, "ghelp:qalculate-gtk", gtk_get_current_event_time(), &error);
 	if(error) {
 		gchar *error_str = g_locale_to_utf8(error->message, -1, NULL, NULL, NULL);
 		GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (main_glade, "main_window")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help for Qalculate!.\n%s"), error_str);
@@ -12838,7 +12824,6 @@ void on_menu_item_help_activate(GtkMenuItem*, gpointer) {
 		g_free(error_str);
 		g_error_free(error);
 	}
-#endif	
 }
 
 /*
@@ -13698,9 +13683,8 @@ bool generate_plot(PlotParameters &pp, vector<MathStructure> &y_vectors, vector<
 	return true;
 }
 void on_plot_button_help_clicked(GtkButton, gpointer) {
-#ifdef HAVE_LIBGNOME
 	GError *error = NULL;
-	gnome_help_display("qalculate-gtk", "qalculate-plotting", &error);
+	gtk_show_uri(NULL, "ghelp:qalculate-gtk?qalculate-plotting", gtk_get_current_event_time(), &error);
 	if(error) {
 		gchar *error_str = g_locale_to_utf8(error->message, -1, NULL, NULL, NULL);
 		GtkWidget *d = gtk_message_dialog_new (GTK_WINDOW(glade_xml_get_widget (plot_glade, "plot_dialog")), (GtkDialogFlags) 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Could not display help.\n%s"), error_str);
@@ -13709,7 +13693,6 @@ void on_plot_button_help_clicked(GtkButton, gpointer) {
 		g_free(error_str);
 		g_error_free(error);
 	}
-#endif	
 }
 void on_plot_button_save_clicked(GtkButton*, gpointer) {
 	GtkWidget *d;

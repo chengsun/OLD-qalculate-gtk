@@ -100,34 +100,9 @@ if test "$have_recent_cln" = "yes" ; then
    CPPFLAGS="$CPPFLAGS $CLN_CPPFLAGS"
 fi
 
-LIBGNOME_REQUIRED=2.0.0
-
-USE_LIBGNOME="auto"
-
-AC_MSG_CHECKING([whether to use libgnome])
-AC_ARG_WITH(libgnome,
-[  --with-libgnome         use libgnome [default=auto]],
-[case "${withval}" in
-	yes) USE_LIBGNOME="yes" ; AC_MSG_RESULT([yes]) ;;
-	no) USE_LIBGNOME="no" ; AC_MSG_RESULT([no]) ;;
-	auto) USE_LIBGNOME="auto" ; AC_MSG_RESULT([auto]) ;;
-	*) USE_LIBGNOME="yes" ; AC_MSG_RESULT([yes]) ;;
-esac],[AC_MSG_RESULT([${USE_LIBGNOME}])])
-
-if test "$USE_LIBGNOME" = yes ; then
-	PKG_CHECK_MODULES(LIBGNOME, libgnome-2.0 >= $LIBGNOME_REQUIRED, [
-		AC_SUBST(LIBGNOME_CFLAGS)
-		AC_SUBST(LIBGNOME_LIBS)
-		AC_DEFINE(HAVE_LIBGNOME,1,[If libgnome is available])
-	], AC_MSG_ERROR([libgnome-2.0 was not found. The manual will not be accessible from within Qalculate!]))
-fi
-if test "$USE_LIBGNOME" = auto ; then
-	PKG_CHECK_MODULES(LIBGNOME, libgnome-2.0 >= $LIBGNOME_REQUIRED, [
-		AC_SUBST(LIBGNOME_CFLAGS)
-		AC_SUBST(LIBGNOME_LIBS)
-		AC_DEFINE(HAVE_LIBGNOME,1,[If libgnome is available])
-	], AC_MSG_WARN([libgnome-2.0 was not found. The manual will not be accessible from within Qalculate!]))
-fi
+AC_SUBST(LIBGNOME_CFLAGS)
+AC_SUBST(LIBGNOME_LIBS)
+AC_DEFINE(HAVE_LIBGNOME,1,[If libgnome is available])
 
 dnl ********************
 dnl scrollkeeper checks
