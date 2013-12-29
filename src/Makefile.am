@@ -2,7 +2,7 @@
 # src/Makefile.am for qalculate
 #
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
 	@LIBGNOME_CFLAGS@ \
