@@ -14,8 +14,6 @@
 #  include <config.h>
 #endif
 
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>
@@ -394,7 +392,7 @@ void set_mode_items(const PrintOptions &po, const EvaluationOptions &eo, Assumpt
 
 void create_main_window (void) {
 	
-	gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "main.glade", NULL);
+	gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "main.glade", NULL);
 	main_glade = glade_xml_new(gstr, NULL, NULL);
 	g_assert(main_glade != NULL);
 	g_free(gstr);
@@ -682,7 +680,7 @@ get_functions_dialog (void)
 
 	if(!functions_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "functions.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "functions.glade", NULL);
 		functions_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(functions_glade != NULL);
 		g_free(gstr);
@@ -734,7 +732,7 @@ get_variables_dialog (void)
 {
 	if(!variables_glade) {
 
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "variables.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "variables.glade", NULL);
 		variables_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(variables_glade != NULL);
 		g_free(gstr);
@@ -790,7 +788,7 @@ get_units_dialog (void)
 
 	if(!units_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "units.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "units.glade", NULL);
 		units_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(units_glade != NULL);
 		g_free(gstr);
@@ -856,7 +854,7 @@ get_datasets_dialog (void)
 
 	if(!datasets_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "datasets.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "datasets.glade", NULL);
 		datasets_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(datasets_glade != NULL);
 		g_free(gstr);
@@ -917,7 +915,7 @@ get_preferences_dialog (void)
 {
 	if(!preferences_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "preferences.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "preferences.glade", NULL);
 		preferences_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(preferences_glade != NULL);
 		g_free(gstr);
@@ -1005,7 +1003,7 @@ get_unit_edit_dialog (void)
 
 	if(!unitedit_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "unitedit.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "unitedit.glade", NULL);
 		unitedit_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(unitedit_glade != NULL);
 		g_free(gstr);
@@ -1047,7 +1045,7 @@ get_function_edit_dialog (void)
 
 	if(!functionedit_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "functionedit.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "functionedit.glade", NULL);
 		functionedit_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(functionedit_glade != NULL);
 		g_free(gstr);
@@ -1117,7 +1115,7 @@ get_variable_edit_dialog (void)
 	
 	if(!variableedit_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "variableedit.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "variableedit.glade", NULL);
 		variableedit_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(variableedit_glade != NULL);
 		g_free(gstr);
@@ -1159,7 +1157,7 @@ get_unknown_edit_dialog (void)
 	
 	if(!unknownedit_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "unknownedit.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "unknownedit.glade", NULL);
 		unknownedit_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(unknownedit_glade != NULL);
 		g_free(gstr);
@@ -1200,7 +1198,7 @@ get_matrix_edit_dialog (void)
 {
 	if(!matrixedit_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "matrixedit.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "matrixedit.glade", NULL);
 		matrixedit_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(matrixedit_glade != NULL);
 		g_free(gstr);
@@ -1253,7 +1251,7 @@ get_matrix_dialog (void)
 {
 	if(!matrix_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "matrix.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "matrix.glade", NULL);
 		matrix_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(matrix_glade != NULL);
 		g_free(gstr);
@@ -1293,7 +1291,7 @@ get_dataset_edit_dialog (void)
 
 	if(!datasetedit_glade) {
 
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "datasetedit.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "datasetedit.glade", NULL);
 		datasetedit_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(datasetedit_glade != NULL);
 		g_free(gstr);
@@ -1329,7 +1327,7 @@ get_dataproperty_edit_dialog (void)
 
 	if(!datasetedit_glade) {
 
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "datasetedit.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "datasetedit.glade", NULL);
 		datasetedit_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(datasetedit_glade != NULL);
 		g_free(gstr);
@@ -1349,7 +1347,7 @@ get_names_edit_dialog (void)
 {
 	if(!namesedit_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "namesedit.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "namesedit.glade", NULL);
 		namesedit_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(namesedit_glade != NULL);
 		g_free(gstr);
@@ -1394,7 +1392,7 @@ get_csv_import_dialog (void)
 
 	if(!csvimport_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "csvimport.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "csvimport.glade", NULL);
 		csvimport_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(csvimport_glade != NULL);
 		g_free(gstr);
@@ -1431,7 +1429,7 @@ get_csv_export_dialog (void)
 
 	if(!csvexport_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "csvexport.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "csvexport.glade", NULL);
 		csvexport_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(csvexport_glade != NULL);
 		g_free(gstr);
@@ -1449,7 +1447,7 @@ get_csv_export_dialog (void)
 GtkWidget* get_set_base_dialog (void) {
 	if(!setbase_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "setbase.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "setbase.glade", NULL);
 		setbase_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(setbase_glade != NULL);
 		g_free(gstr);
@@ -1543,7 +1541,7 @@ get_nbases_dialog (void)
 {
 	if(!nbases_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "nbases.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "nbases.glade", NULL);
 		nbases_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(nbases_glade != NULL);
 		g_free(gstr);
@@ -1589,7 +1587,7 @@ GtkWidget *create_InfoWidget(const gchar *text) {
 GtkWidget* get_about_dialog (void) {
 	if(!about_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "about.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "about.glade", NULL);
 		about_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(about_glade != NULL);
 		g_free(gstr);
@@ -1606,7 +1604,7 @@ GtkWidget* get_argument_rules_dialog (void) {
 	
 	if(!argumentrules_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "argumentrules.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "argumentrules.glade", NULL);
 		argumentrules_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(argumentrules_glade != NULL);
 		g_free(gstr);
@@ -1622,7 +1620,7 @@ GtkWidget* get_argument_rules_dialog (void) {
 GtkWidget* get_decimals_dialog (void) {
 	if(!decimals_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "decimals.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "decimals.glade", NULL);
 		decimals_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(decimals_glade != NULL);
 		g_free(gstr);
@@ -1638,7 +1636,7 @@ GtkWidget* get_decimals_dialog (void) {
 GtkWidget* get_plot_dialog (void) {
 	if(!plot_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "plot.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "plot.glade", NULL);
 		plot_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(plot_glade != NULL);
 		g_free(gstr);
@@ -1673,7 +1671,7 @@ GtkWidget* get_plot_dialog (void) {
 GtkWidget* get_precision_dialog (void) {
 	if(!precision_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "precision.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "precision.glade", NULL);
 		precision_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(precision_glade != NULL);
 		g_free(gstr);
@@ -1690,7 +1688,7 @@ GtkWidget* get_unit_dialog (void) {
 
 	if(!unit_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "unit.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "unit.glade", NULL);
 		unit_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(unit_glade != NULL);
 		g_free(gstr);
@@ -1736,7 +1734,7 @@ GtkWidget* get_unit_dialog (void) {
 GtkWidget* get_periodic_dialog (void) {
 	if(!periodictable_glade) {
 	
-		gchar *gstr = g_build_filename (PACKAGE_DATA_DIR, PACKAGE, "glade", "periodictable.glade", NULL);
+		gchar *gstr = g_build_filename (getDataDir().c_str(), PACKAGE, "glade", "periodictable.glade", NULL);
 		periodictable_glade = glade_xml_new(gstr, NULL, NULL);
 		g_assert(periodictable_glade != NULL);
 		g_free(gstr);

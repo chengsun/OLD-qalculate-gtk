@@ -19,8 +19,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <time.h>
-#include <dirent.h>
-#include <pthread.h>
 #include <glade/glade.h>
 
 #include "support.h"
@@ -119,7 +117,7 @@ extern GtkTreeViewColumn *register_column;
 extern GdkPixmap *pixmap_result;
 extern GdkPixbuf *pixbuf_result;
 vector<vector<GtkWidget*> > insert_element_entries;
-bool b_busy;
+volatile bool b_busy;
 GdkPixmap *tmp_pixmap;
 bool expression_has_changed = false, current_object_has_changed = false, expression_has_changed2 = false;
 bool block_result_update = false, block_expression_execution = false, block_display_parse = false;
@@ -168,10 +166,8 @@ EvaluationOptions evalops;
 bool rpn_mode, rpn_keypad_only;
 
 extern FILE *view_pipe_r, *view_pipe_w, *command_pipe_r, *command_pipe_w;
-extern pthread_t view_thread, command_thread;
-extern pthread_attr_t view_thread_attr, command_thread_attr;
+extern Thread *view_thread, *command_thread;
 bool exit_in_progress = false, command_aborted = false;
-extern bool command_thread_started;
 
 vector<mode_struct> modes;
 vector<GtkWidget*> mode_items;
@@ -4556,32 +4552,23 @@ void clearresult() {
 }
 
 void on_abort_display(GtkDialog*, gint, gpointer) {
-	pthread_cancel(view_thread);
+	view_thread->cancel();
 	CALCULATOR->restoreState();
 	CALCULATOR->clearBuffers();
 	b_busy = false;
-	pthread_create(&view_thread, &view_thread_attr, view_proc, view_pipe_r);
+	view_thread->start();
 }
 
-void *view_proc(void *pipe) {
-
-	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);	
-	FILE *view_pipe = (FILE*) pipe;
-	
+void ViewThread::run() {
 	while(true) {
-	
-		void *x = NULL;
-		int scale_n = 0;
-		fread(&scale_n, sizeof(int), 1, view_pipe);
-		fread(&x, sizeof(void*), 1, view_pipe);
+		int scale_n = read<int>();
+		void *x = read<void *>();
 		MathStructure m(*((MathStructure*) x));
-		bool b_stack = false;
-		fread(&b_stack, sizeof(bool), 1, view_pipe);
-		fread(&x, sizeof(void*), 1, view_pipe);
+		bool b_stack = read<bool>();
+		x = read<void *>();
 		MathStructure *mm = (MathStructure*) x;
 		if(scale_n == 0) {
-			fread(&x, sizeof(void*), 1, view_pipe);
+			x = read<void *>();
 			printops.can_display_unicode_string_arg = (void*) historyview;
 			if(x) {
 				PrintOptions po;
@@ -4602,10 +4589,10 @@ void *view_proc(void *pipe) {
 				po.spell_out_logical_operators = printops.spell_out_logical_operators;
 				po.restrict_to_parent_precision = false;
 				MathStructure mp(*((MathStructure*) x));								
-				fread(&po.is_approximate, sizeof(bool*), 1, view_pipe);
+				po.is_approximate = read<bool *>();
 				mp.format(po);
 				parsed_text = mp.print(po);
-				fread(&x, sizeof(void*), 1, view_pipe);
+				x = read<void *>();
 				mp.set(*((MathStructure*) x));
 				if(!mp.isUndefined()) {
 					parsed_text += CALCULATOR->localToString();
@@ -4688,7 +4675,6 @@ void *view_proc(void *pipe) {
 		}
 		b_busy = false;
 	}
-	return NULL;
 }
 gboolean on_event(GtkWidget*, GdkEvent *e, gpointer) {
 	if(e->type == GDK_EXPOSE || e->type == GDK_PROPERTY_NOTIFY || e->type == GDK_CONFIGURE || e->type == GDK_FOCUS_CHANGE || e->type == GDK_VISIBILITY_NOTIFY) {
@@ -4795,37 +4781,34 @@ void setResult(Prefix *prefix, bool update_history, bool update_parse, bool forc
 
 		gulong handler_id = g_signal_connect(G_OBJECT(glade_xml_get_widget (main_glade, "main_window")), "event", G_CALLBACK(on_event), NULL);
 
-		fwrite(&scale_n, sizeof(int), 1, view_pipe_w);
+		view_thread->write(scale_n);
 		if(stack_index == 0) {
-			fwrite(&mstruct, sizeof(void*), 1, view_pipe_w);
+			view_thread->write((void *) mstruct);
 		} else {
 			MathStructure *mreg = CALCULATOR->getRPNRegister(stack_index + 1);
-			fwrite(&mreg, sizeof(void*), 1, view_pipe_w);
+			view_thread->write((void *) mreg);
 		}
 		bool b_stack = stack_index != 0;
-		fwrite(&b_stack, sizeof(bool), 1, view_pipe_w);
+		view_thread->write(b_stack);
 		if(scale_n == 0) {
 			if(b_stack) {
 				void *x = NULL;
-				fwrite(&x, sizeof(void*), 1, view_pipe_w);
+				view_thread->write((void *) x);
 			} else {
 				matrix_mstruct->clear();
-				fwrite(&matrix_mstruct, sizeof(void*), 1, view_pipe_w);
+				view_thread->write((void *) matrix_mstruct);
 			}
 			if(update_parse) {
-				fwrite(&parsed_mstruct, sizeof(void*), 1, view_pipe_w);
+				view_thread->write((void *) parsed_mstruct);
 				bool *parsed_approx_p = &parsed_approx;
-				fwrite(&parsed_approx_p, sizeof(void*), 1, view_pipe_w);
-				fwrite(&parsed_tostruct, sizeof(void*), 1, view_pipe_w);
+				view_thread->write((bool *) parsed_approx_p);
+				view_thread->write((void *) parsed_tostruct);
 			} else {
-				void *x = NULL;
-				fwrite(&x, sizeof(void*), 1, view_pipe_w);
+				view_thread->write((void *) NULL);
 			}
 		} else {
-			void *x = NULL;
-			fwrite(&x, sizeof(void*), 1, view_pipe_w);
+			view_thread->write((void *) NULL);
 		}
-		fflush(view_pipe_w);
 
 		struct timespec rtime;
 		rtime.tv_sec = 0;
@@ -5004,26 +4987,17 @@ void setResult(Prefix *prefix, bool update_history, bool update_parse, bool forc
 }
 
 void on_abort_command(GtkDialog*, gint, gpointer) {
-	pthread_cancel(command_thread);
+	command_thread->cancel();
 	CALCULATOR->restoreState();
 	CALCULATOR->clearBuffers();
 	b_busy = false;
 	command_aborted = true;
-	command_thread_started = false;
 }
 
-void *command_proc(void *pipe) {
-
-	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);	
-	FILE *command_pipe = (FILE*) pipe;
-	
+void CommandThread::run() {
 	while(true) {
-	
-		void *x = NULL;
-		int command_type;
-		fread(&command_type, sizeof(int), 1, command_pipe);
-		fread(&x, sizeof(void*), 1, command_pipe);
+		int command_type = read<int>();
+		void *x = read<void *>();
 		switch(command_type) {
 			case COMMAND_FACTORIZE: {
 				if(!((MathStructure*) x)->integerFactorize()) {
@@ -5039,7 +5013,6 @@ void *command_proc(void *pipe) {
 		b_busy = false;
 		
 	}
-	return NULL;
 }
 
 void executeCommand(int command_type) {
@@ -5054,18 +5027,15 @@ void executeCommand(int command_type) {
 	GtkWidget *dialog = NULL;
 	CALCULATOR->saveState();
 
-	if(!command_thread_started) {
-		pthread_create(&command_thread, &command_thread_attr, command_proc, command_pipe_r);
-		command_thread_started = true;
+	if(!command_thread->running) {
+		command_thread->start();
 	}
 
 	gulong handler_id = g_signal_connect(G_OBJECT(glade_xml_get_widget (main_glade, "main_window")), "event", G_CALLBACK(on_event), NULL);
 
-	fwrite(&command_type, sizeof(int), 1, command_pipe_w);
+	command_thread->write(command_type);
 	MathStructure *mfactor = new MathStructure(*mstruct);
-	fwrite(&mfactor, sizeof(void*), 1, command_pipe_w);
-	
-	fflush(command_pipe_w);
+	command_thread->write((void *) mfactor);
 
 	struct timespec rtime;
 	rtime.tv_sec = 0;
@@ -8896,22 +8866,19 @@ void load_preferences() {
 	first_time = false;
 	expression_history.clear();
 	expression_history_index = -1;
-	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", NULL);
-	DIR *dir = opendir(gstr);
-	g_free(gstr);
-	if(!dir) {
+	const char *gstr = getLocalDir().c_str();
+	if(!g_file_test(gstr, G_FILE_TEST_IS_DIR)) {
 		first_qalculate_run = true;
 		first_time = true;	
 		return;
 	} else {
 		first_qalculate_run = false;
-		closedir(dir);
 	}
 	int version_numbers[] = {0, 9, 6};
 	bool old_history_format = false;
 
 	FILE *file = NULL;
-	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate-gtk.cfg", NULL);
+	gchar *gstr2 = g_build_filename(gstr, "qalculate-gtk.cfg", NULL);
 	file = fopen(gstr2, "r");
 	g_free(gstr2);
 	if(file) {
@@ -9405,7 +9372,7 @@ void load_preferences() {
 void save_preferences(bool mode) {
 	FILE *file = NULL;
 	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", NULL);
-	mkdir(gstr, S_IRWXU);
+	g_mkdir(gstr, S_IRWXU);
 	g_free(gstr);
 	gchar *gstr2 = g_build_filename(g_get_home_dir(), ".qalculate", "qalculate-gtk.cfg", NULL);
 	file = fopen(gstr2, "w+");
@@ -10410,7 +10377,7 @@ gboolean on_gcalc_exit(GtkWidget*, GdkEvent*, gpointer) {
 	if(save_defs_on_exit) {
 		save_defs();
 	}
-	pthread_cancel(view_thread);
+	view_thread->cancel();
 	CALCULATOR->terminateThreads();
 	gtk_main_quit();
 	return FALSE;
@@ -10418,7 +10385,7 @@ gboolean on_gcalc_exit(GtkWidget*, GdkEvent*, gpointer) {
 
 void save_accels() {
 	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", NULL);
-	mkdir(gstr, S_IRWXU);
+	g_mkdir(gstr, S_IRWXU);
 	g_free(gstr);
 	gstr = g_build_filename(g_get_home_dir(), ".qalculate", "accelmap", NULL);
 	gtk_accel_map_save(gstr);

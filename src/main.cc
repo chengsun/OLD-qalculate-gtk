@@ -55,10 +55,7 @@ GladeXML *functionedit_glade, *functions_glade, *matrixedit_glade, *matrix_glade
 GladeXML *preferences_glade, *unit_glade, *unitedit_glade, *units_glade, *unknownedit_glade, *variableedit_glade, *variables_glade;
 GladeXML *periodictable_glade;
 
-FILE *view_pipe_r, *view_pipe_w, *command_pipe_r, *command_pipe_w;
-pthread_t view_thread, command_thread;
-pthread_attr_t view_thread_attr, command_thread_attr;
-bool command_thread_started;
+Thread *view_thread, *command_thread;
 
 bool do_timeout, check_expression_position;
 gint expression_position;
@@ -75,7 +72,9 @@ int main (int argc, char **argv) {
 
 	gtk_init_with_args(&argc, &argv, NULL, options, GETTEXT_PACKAGE, &error);
 
-	gtk_window_set_default_icon_from_file(PACKAGE_DATA_DIR "/pixmaps/qalculate.png", &error);
+	gchar *iconPath = g_build_filename(getDataDir().c_str(), "pixmaps", "qalculate.png", NULL);
+	gtk_window_set_default_icon_from_file(iconPath, &error);
+	g_free(iconPath);
 
 
 	glade_init();
@@ -223,19 +222,9 @@ int main (int argc, char **argv) {
 
 	update_completion();
 	
-	int pipe_wr[] = {0, 0};
-	pipe(pipe_wr);
-	view_pipe_r = fdopen(pipe_wr[0], "r");
-	view_pipe_w = fdopen(pipe_wr[1], "w");
-	pthread_attr_init(&view_thread_attr);
-	pthread_create(&view_thread, &view_thread_attr, view_proc, view_pipe_r);
-	
-	int pipe_wr2[] = {0, 0};
-	pipe(pipe_wr2);
-	command_pipe_r = fdopen(pipe_wr2[0], "r");
-	command_pipe_w = fdopen(pipe_wr2[1], "w");
-	pthread_attr_init(&command_thread_attr);
-	command_thread_started = false;
+	view_thread = new ViewThread;
+	view_thread->start();
+	command_thread = new CommandThread;
 	
 	if(!calc_arg.empty()) {
 		execute_expression();
