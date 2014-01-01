@@ -54,6 +54,14 @@ if test "x$GCC" = "xyes"; then
 fi
 changequote([,])dnl
 
+AC_CANONICAL_HOST
+
+if test "$host_os" = "mingw32"; then
+	AC_DEFINE([_WIN32_WINNT], 0x501, [Target Windows version])
+fi
+AM_CONDITIONAL(PLATFORM_LINUX, test "$host_os" = "linux")
+AM_CONDITIONAL(PLATFORM_WIN32, test "$host_os" = "mingw32")
+
 
 dnl  --------------------------------
 dnl | check for neccessary libraries |-----------------------------------------
@@ -70,8 +78,7 @@ PKG_CHECK_MODULES(GLIB, [
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 
-QALCULATE_GTK="qalculate-gtk"
-LN_QALCULATE="qalculate-gtk"
+QALCULATE_GTK="qalculate-gtk${EXEEXT}"
 
 PKG_CHECK_MODULES(GTK, [
 	gtk+-2.0 >= 2.4
@@ -114,8 +121,6 @@ if test x$SCROLLKEEPER_CONFIG = xno; then
 fi
 
 AC_SUBST(QALCULATE_GTK)
-
-AC_SUBST(LN_QALCULATE)
 
 dnl  -------------------------------------
 dnl | internationalization (i18n) support |------------------------------------
